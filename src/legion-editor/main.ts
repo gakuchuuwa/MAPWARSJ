@@ -28,256 +28,303 @@ import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompos
 
 export type UnitCategory = 'infantry' | 'cavalry' | 'ranged' | 'siege';
 
+/**
+ * 兵种时代（与游戏一致的四时代）。
+ * 🔴 'unknown' = 待核。这不是"该兵种没有时代"，而是没有可靠依据、拒绝编一个值填进去：
+ *    三国 / Chronicles / 契丹 · 女真等较新 DLC 的单位，以及「罗马回归」(AoE1) 素材，
+ *    时代归属需要对着游戏逐个确认。图鉴里可一键筛出这一档来补。
+ */
+export type UnitAge = 'dark' | 'feudal' | 'castle' | 'imperial' | 'unknown';
+
+export const AGE_LABEL: Record<UnitAge, string> = {
+    dark: '黑暗时代',
+    feudal: '封建时代',
+    castle: '城堡时代',
+    imperial: '帝王时代',
+    unknown: '待核',
+};
+
+/** 时代排序权重：按解锁先后，待核永远垫底 */
+export const AGE_ORDER: UnitAge[] = ['dark', 'feudal', 'castle', 'imperial', 'unknown'];
+
+/**
+ * 类别 → 中文标签（全编辑器唯一出处：列表、弹窗页签、图鉴、右侧面板都读它）
+ * 与游戏一致，只有四类：步兵 / 远程 / 骑兵 / 攻城。战象不单列，按其实际作战方式归位——
+ * 冲撞类战象归骑兵、象背弓手归远程、弩炮象属攻城器械。
+ */
+export const CATEGORY_LABEL: Record<UnitCategory, string> = {
+    infantry: '步兵',
+    cavalry: '骑兵',
+    ranged: '远程',
+    siege: '攻城',
+};
+
 export interface DeUnitDef {
     id: string;
     name: string;
+    /**
+     * 兵种类别 —— 唯一真源。
+     * 🔴 [2026-08-17] 原先每条还各带一个手写的 categoryLabel 中文标签，两处双写长期不同步
+     *    （钦察弓骑/蒙古突骑 category 是 cavalry、标签却写"远程"；攻城槌/投石车/大半战象
+     *    被塞进 infantry/ranged，导致"战象/攻城"页签只剩 4 个）。现已删除该字段，
+     *    中文标签一律由 CATEGORY_LABEL[category] 派生，不再有第二处可写坏的地方。
+     */
     category: UnitCategory;
-    categoryLabel: string;
+    /** 该兵种在游戏中的解锁时代；'unknown' 表示待核，见 UnitAge 注释 */
+    age: UnitAge;
     pathPrefix: string;
     defaultScale?: number;
 }
 
 export const DE_UNITS_CATALOG: DeUnitDef[] = [
-    // ── 步兵 (Infantry) ──
-    { id: 'swordsman',                  name: '剑士',           category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SWORDSMAN/' },
-    { id: 'champion',                   name: '冠军剑士',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/CHAMPION/' },
-    { id: 'liao_dao',                   name: '辽刀',           category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/LIAO_DAO/' },
-    { id: 'elite_liao_dao',             name: '精锐辽刀',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
-    { id: 'kamayuk',                    name: '印加枪兵长',     category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/KAMAYUK/' },
-    { id: 'jian_swordsman',             name: '刀剑手',         category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
-    { id: 'ninja',                      name: '忍者',           category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/NINJA/' },
-    { id: 'samurai',                    name: '日本武士',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SAMURAI_DE/' },
-    { id: 'samurai_elite',              name: '精锐武士',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },
-    { id: 'fire_lancer',                name: '火矛手',         category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/FIRE_LANCER/' },
-    { id: 'elite_fire_lancer',          name: '精锐火矛手',     category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITE_FIRE_LANCER/' },
-    { id: 'white_feather_guard',        name: '白毦兵',         category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/WHITE_FEATHER_GUARD/' },
-    { id: 'elite_white_feather_guard',  name: '精锐白毦兵',     category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITE_WHITE_FEATHER_GUARD/' },
-    { id: 'karambit_warrior',           name: '爪刀勇士',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR/' },
-    { id: 'karambit_warrior_elite',     name: '精锐爪刀勇士',   category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR_ELITE/' },
-    { id: 'elite_guardsman',            name: '精锐近卫军',     category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITE_GUARDSMAN/' },
-    { id: 'eastern_swordsman',          name: '东方剑士',       category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/EASTERN_SWORDSMAN/' },
-    { id: 'legionary',                  name: '罗马军团步兵',   category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/LEGIONARY/' },
-    { id: 'throwing_axeman',            name: '掷斧兵',         category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/THROWING_AXEMAN/' },
-    { id: 'heavy_pikeman',              name: '重装长枪兵',     category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/HEAVY_PIKEMAN/' },
-    { id: 'pikeman',                    name: '长枪兵',         category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/PIKEMAN/' },
+    { id: 'swordsman',                  name: '剑士',           category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SWORDSMAN/' },
+    { id: 'champion',                   name: '冠军剑士',       category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
+    { id: 'liao_dao',                   name: '辽刀',           category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/LIAO_DAO/' },
+    { id: 'elite_liao_dao',             name: '精锐辽刀',       category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
+    { id: 'kamayuk',                    name: '印加枪兵长',     category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
+    { id: 'jian_swordsman',             name: '刀剑手',         category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
+    { id: 'ninja',                      name: '忍者',           category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/NINJA/' },
+    { id: 'samurai',                    name: '日本武士',       category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_DE/' },
+    { id: 'samurai_elite',              name: '精锐日本武士',       category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },
+    { id: 'fire_lancer',                name: '火矛手',         category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/FIRE_LANCER/' },
+    { id: 'elite_fire_lancer',          name: '精锐火矛手',     category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_FIRE_LANCER/' },
+    { id: 'white_feather_guard',        name: '白毦兵',         category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/WHITE_FEATHER_GUARD/' },
+    { id: 'elite_white_feather_guard',  name: '精锐白毦兵',     category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_WHITE_FEATHER_GUARD/' },
+    { id: 'karambit_warrior',           name: '爪刀勇士',       category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR/' },
+    { id: 'karambit_warrior_elite',     name: '精锐爪刀勇士',   category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR_ELITE/' },
+    { id: 'elite_guardsman',            name: '精锐近卫军',     category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_GUARDSMAN/' },
+    { id: 'eastern_swordsman',          name: '东方剑士',       category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/EASTERN_SWORDSMAN/' },
+    { id: 'legionary',                  name: '罗马军团步兵',   category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/LEGIONARY/' },
+    { id: 'throwing_axeman',            name: '掷斧兵',         category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/THROWING_AXEMAN/' },
+    { id: 'heavy_pikeman',              name: '重装长枪兵',     category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/HEAVY_PIKEMAN/' },
+    { id: 'pikeman',                    name: '长枪兵',         category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PIKEMAN/' },
 
-    // ── 骑兵 (Cavalry) ──
-    { id: 'tiger_rider',                name: '虎豹骑',         category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/TIGER_RIDER/' },
-    { id: 'xianbei_raider',             name: '鲜卑掠骑兵',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/XIANBEI_RAIDER/' },
-    { id: 'iron_pagoda',                name: '铁浮图',         category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/IRON_PAGODA/' },
-    { id: 'hei_kuang',                  name: '黑光铠骑兵',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/HEI_KUANG/' },
-    { id: 'hei_kuang_heavy',            name: '精锐黑光铠骑兵', category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/HEI_KUANG_HEAVY/' },
-    { id: 'steppe_lancer',              name: '草原枪兵',       category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/STEPPE_LANCER/' },
-    { id: 'elite_steppe_lancer',        name: '精锐草原枪兵',   category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITE_STEPPE_LANCER/' },
-    { id: 'keshik',                     name: '怯薛军',         category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/KESHIK/' },
-    { id: 'tarkan',                     name: '答剌罕骑兵',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/TARKAN/' },
-    { id: 'elite_tarkan',               name: '精锐答剌罕骑兵', category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
-    { id: 'boyar',                      name: '贵族铁骑',       category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/BOYAR/' },
-    { id: 'savar',                      name: '萨瓦尔重骑',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/SAVAR/' },
-    { id: 'camel_heavy',                name: '重装骆驼兵',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
-    { id: 'paladin',                    name: '游侠/圣骑士',    category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/PALADIN/' },
-    { id: 'coustillier',                name: '马上轻装兵',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/COUSTILLIER/' },
-    { id: 'light_riders',               name: '轻骑兵',         category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/LIGHT_RIDERS/' },
+    { id: 'tiger_rider',                name: '虎豹骑',         category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/TIGER_RIDER/' },
+    { id: 'xianbei_raider',             name: '鲜卑掠骑兵',     category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/XIANBEI_RAIDER/' },
+    { id: 'iron_pagoda',                name: '铁浮屠',         category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/IRON_PAGODA/' },
+    { id: 'hei_kuang',                  name: '黑光铠骑兵',     category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/HEI_KUANG/' },
+    { id: 'hei_kuang_heavy',            name: '精锐黑光铠骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/HEI_KUANG_HEAVY/' },
+    { id: 'steppe_lancer',              name: '草原枪兵',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/STEPPE_LANCER/' },
+    { id: 'elite_steppe_lancer',        name: '精锐草原枪兵',   category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_STEPPE_LANCER/' },
+    { id: 'keshik',                     name: '怯薛军',         category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/KESHIK/' },
+    { id: 'tarkan',                     name: '答剌罕骑兵',     category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/TARKAN/' },
+    { id: 'elite_tarkan',               name: '精锐答剌罕骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
+    { id: 'boyar',                      name: '贵族铁骑',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
+    { id: 'savar',                      name: '萨瓦尔重骑',     category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SAVAR/' },
+    { id: 'camel_heavy',                name: '重装骆驼兵',     category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
+    { id: 'paladin',                    name: '游侠/圣骑士',    category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/PALADIN/' },
+    { id: 'coustillier',                name: '马上轻装兵',     category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
+    { id: 'light_riders',               name: '轻骑兵',         category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHT_RIDERS/' },
 
-    // ── 远程 (Ranged) ──
-    { id: 'chukonu',                    name: '诸葛弩',         category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/CHUKONU/' },
-    { id: 'elite_chukonu',              name: '精锐诸葛弩',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/ELITE_CHUKONU/' },
-    { id: 'longbowman_elite',           name: '精锐长弓兵',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/LONGBOWMAN_ELITE/' },
-    { id: 'fire_archer',                name: '火焰弓箭手',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/FIRE_ARCHER/' },
-    { id: 'elite_fire_archer',          name: '精锐火焰弓箭手', category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/ELITE_FIRE_ARCHER/' },
-    { id: 'kipchak',                    name: '钦察弓骑',       category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/KIPCHAK/' },
-    { id: 'elite_kipchak',              name: '精锐钦察弓骑',   category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITE_KIPCHAK/' },
-    { id: 'mangudai',                   name: '蒙古突骑',       category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/MANGUDAI/' },
-    { id: 'mangudai_elite',             name: '精锐蒙古突骑',   category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/MANGUDAI_ELITE/' },
-    { id: 'rattan_archer',              name: '藤弓兵',         category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/RATTAN_ARCHER/' },
-    { id: 'rattan_archer_elite',        name: '精锐藤弓兵',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/RATTAN_ARCHER_ELITE/' },
-    { id: 'imperial_skirmisher',        name: '帝王掷矛手',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
-    { id: 'archer',                     name: '步弓手',         category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/ARCHER/' },
-    { id: 'cav_archer',                 name: '骑射手',         category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAV_ARCHER/' },
-    { id: 'cav_archer_heavy',           name: '重装骑射手',     category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
-    { id: 'pattiyoda_longbowman',       name: '帕提尤达长弓手', category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
-    { id: 'composite_bowman',           name: '复合弓箭手',     category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/COMPOSITE_BOWMAN/' },
-    { id: 'elite_composite_bowman',     name: '精锐复合弓箭手', category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/ELITE_COMPOSITE_BOWMAN/' },
-    { id: 'crossbowman',                name: '弩手',           category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/CROSSBOWMAN/' },
-    { id: 'arbalest',                   name: '劲弩手',         category: 'ranged',   categoryLabel: '远程', pathPrefix: '/SUCAI/ARBALEST/' },
-    { id: 'arambai',                    name: '飞镖骑兵',       category: 'cavalry',  categoryLabel: '骑兵', pathPrefix: '/SUCAI/ARAMBAI/' },
+    { id: 'chukonu',                    name: '诸葛弩',         category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CHUKONU/' },
+    { id: 'elite_chukonu',              name: '精锐诸葛弩',     category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITE_CHUKONU/' },
+    { id: 'longbowman_elite',           name: '精锐长弓兵',     category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/LONGBOWMAN_ELITE/' },
+    { id: 'fire_archer',                name: '火焰弓箭手',     category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/FIRE_ARCHER/' },
+    { id: 'elite_fire_archer',          name: '精锐火焰弓箭手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ELITE_FIRE_ARCHER/' },
+    { id: 'kipchak',                    name: '钦察弓骑',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/KIPCHAK/' },
+    { id: 'elite_kipchak',              name: '精锐钦察弓骑',   category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_KIPCHAK/' },
+    { id: 'mangudai',                   name: '蒙古突骑',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MANGUDAI/' },
+    { id: 'mangudai_elite',             name: '精锐蒙古突骑',   category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MANGUDAI_ELITE/' },
+    { id: 'rattan_archer',              name: '藤弓兵',         category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RATTAN_ARCHER/' },
+    { id: 'rattan_archer_elite',        name: '精锐藤弓兵',     category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/RATTAN_ARCHER_ELITE/' },
+    { id: 'imperial_skirmisher',        name: '帝王掷矛手',     category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
+    { id: 'archer',                     name: '步弓手',         category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
+    { id: 'cav_archer',                 name: '骑射手',         category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAV_ARCHER/' },
+    { id: 'cav_archer_heavy',           name: '重装骑射手',     category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
+    { id: 'pattiyoda_longbowman',       name: '帕提尤达长弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
+    { id: 'composite_bowman',           name: '复合弓箭手',     category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/COMPOSITE_BOWMAN/' },
+    { id: 'elite_composite_bowman',     name: '精锐复合弓箭手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ELITE_COMPOSITE_BOWMAN/' },
+    { id: 'crossbowman',                name: '弩手',           category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CROSSBOWMAN/' },
+    { id: 'arbalest',                   name: '劲弩手',         category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ARBALEST/' },
+    { id: 'arambai',                    name: '飞镖骑兵',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ARAMBAI/' },
 
-    // ── 攻城 / 战象 (Siege & Elephant) ──
-    { id: 'war_elephant',               name: '波斯战象',       category: 'siege',    categoryLabel: '战象/攻城', pathPrefix: '/SUCAI/WAR_ELEPHANT/' },
-    { id: 'armored_elephant',           name: '皮甲战象',       category: 'siege',    categoryLabel: '战象/攻城', pathPrefix: '/SUCAI/ARMORED_ELEPHANT/' },
-    { id: 'ballista_elephant',          name: '弩炮象',         category: 'siege',    categoryLabel: '战象/攻城', pathPrefix: '/SUCAI/BALLISTA_ELEPHANT/' },
-    { id: 'elephant_archer',            name: '象弓骑兵',       category: 'siege',    categoryLabel: '战象/攻城', pathPrefix: '/SUCAI/ELEPHANT_ARCHER/' },
-    { id: 'amazon_archer', name: '亚马逊弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/AMAZONARCHER/' },
-    { id: 'amazon_warrior', name: '亚马逊战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/AMAZONWARRIOR/' },
-    { id: 'bactrian_archer', name: '巴克特里亚弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/BACTRIAN_ARCHER/' },
-    { id: 'battering_ram', name: '攻城槌', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/BATTERINGRAM/' },
-    { id: 'berserk', name: '狂战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/BERSERK/' },
-    { id: 'blackwood_archer', name: '黑木弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/BLACKWOODARCHER/' },
-    { id: 'bolas_rider', name: '流星锤骑手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/BOLASRIDER/' },
-    { id: 'bombard_cannon', name: '火炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/BOMBARDCANNON/' },
-    { id: 'camel_archer', name: '骆驼弓骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAMELARCHER/' },
-    { id: 'camel_raider', name: '骆驼突袭者', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAMEL_RAIDER/' },
-    { id: 'camel_rider', name: '骆驼兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAMELRIDER/' },
-    { id: 'camel_scout', name: '骆驼斥候', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CAMELSCOUT/' },
-    { id: 'capped_ram', name: '覆甲攻城槌', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/CAPPEDRAM/' },
-    { id: 'cataphract', name: '甲胄骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CATAPHRACT/' },
-    { id: 'centurion', name: '百夫长', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CENTURION/' },
-    { id: 'chakram_thrower', name: '查克拉掷环兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/CHAKRAMTHROWER/' },
-    { id: 'champion_runner', name: '冠军剑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
-    { id: 'champion_scout', name: '冠军剑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
-    { id: 'companion_cavalry', name: '伙伴骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/COMPANION_CAVALRY/' },
-    { id: 'condottiero', name: '雇佣军', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/CONDOTTIERO/' },
-    { id: 'conquistador', name: '征服者', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/CONQUISTADOR/' },
-    { id: 'cretan_archer', name: '克里特弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/CRETAN_ARCHER/' },
-    { id: 'eagle_scout', name: '鹰斥候', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/EAGLESCOUT/' },
-    { id: 'eagle_warrior', name: '鹰勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/EAGLEWARRIOR/' },
-    { id: 'ekdromos', name: '埃克德罗摩斯', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/EKDROMOS/' },
-    { id: 'elite_arambai', name: '精锐阿兰拜', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEARAMBAI/' },
-    { id: 'elite_ballista_elephant', name: '精锐弩炮战象', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEBALLISTAELEPHANT/' },
-    { id: 'elite_battle_elephant', name: '精锐战斗象', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEBATTLEELEPHANT/' },
-    { id: 'elite_berserk', name: '精锐狂战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEBERSERK/' },
-    { id: 'elite_blackwood_archer', name: '精锐黑木弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEBLACKWOODARCHER/' },
-    { id: 'elite_bolas_rider', name: '精锐流星锤骑手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEBOLASRIDER/' },
-    { id: 'elite_boyar', name: '精锐波雅尔', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEBOYAR/' },
-    { id: 'elite_camel_archer', name: '精锐骆驼弓骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITECAMELARCHER/' },
-    { id: 'elite_cataphract', name: '精锐甲胄骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITECATAPHRACT/' },
-    { id: 'elite_centurion', name: '精锐百夫长', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITECENTURION/' },
-    { id: 'elite_chakram_thrower', name: '精锐查克拉掷环兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITECHAKRAMTHROWER/' },
-    { id: 'elite_champi_warrior', name: '精锐查姆皮勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITECHAMPIWARRIOR/' },
-    { id: 'elite_conquistador', name: '精锐征服者', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITECONQUISTADOR/' },
-    { id: 'elite_coustillier', name: '精锐库斯蒂耶', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITECOUSTILLIER/' },
-    { id: 'elite_eagle_warrior', name: '精锐鹰勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEEAGLEWARRIOR/' },
-    { id: 'elite_elephant_archer', name: '精锐象弓骑兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEELEPHANTARCHER/' },
-    { id: 'elite_gbeto', name: '精锐格贝托', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEGBETO/' },
-    { id: 'elite_genitour', name: '精锐杰尼图', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEGENITOUR/' },
-    { id: 'elite_genoese_crossbowman', name: '精锐热那亚弩手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEGENOESECROSSBOWMAN/' },
-    { id: 'elite_ghulam', name: '精锐古拉姆', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEGHULAM/' },
-    { id: 'elite_guecha_warrior', name: '精锐格查战士', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEGUECHAWARRIOR/' },
-    { id: 'elite_huskarl', name: '精锐哥特近卫军', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEHUSKARL/' },
-    { id: 'elite_hussite_wagon', name: '精锐胡斯战车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
-    { id: 'elite_ibirapema_warrior', name: '精锐伊比拉佩马勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
-    { id: 'elite_iron_pagoda', name: '精锐铁浮屠', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEIRONPAGODA/' },
-    { id: 'elite_jaguar_warrior', name: '精锐美洲豹勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEJAGUARWARRIOR/' },
-    { id: 'elite_janissary', name: '精锐苏丹亲兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEJANISSARY/' },
-    { id: 'elite_kamayuk', name: '精锐卡马尤克', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEKAMAYUK/' },
-    { id: 'elite_keshik', name: '精锐怯薛', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEKESHIK/' },
-    { id: 'elite_kona', name: '精锐科纳', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEKONA/' },
-    { id: 'elite_konnik', name: '精锐骑士', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEKONNIK/' },
-    { id: 'elite_konnik_foot', name: '精锐下马骑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEFOOTKONNIK/' },
-    { id: 'elite_leitis', name: '精锐列提斯', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITELEITIS/' },
-    { id: 'elite_mameluke', name: '精锐马穆鲁克', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEMAMELUKE/' },
-    { id: 'elite_monaspa', name: '精锐莫纳斯帕', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEMONASPA/' },
-    { id: 'elite_obuch', name: '精锐奥布奇', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEOBUCH/' },
-    { id: 'elite_organ_gun', name: '精锐风琴炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEORGANGUN/' },
-    { id: 'elite_plumed_archer', name: '精锐羽箭手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITEPLUMEDARCHER/' },
-    { id: 'elite_ratha_melee', name: '精锐拉塔战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITERATHAMELEE/' },
-    { id: 'elite_ratha_ranged', name: '精锐拉塔战车（弓）', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITERATHARANGED/' },
-    { id: 'elite_scythian_horse_archer', name: '精锐斯基泰骑射手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/' },
-    { id: 'elite_serjeant', name: '精锐军士长', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITESERJEANT/' },
-    { id: 'elite_shotel_warrior', name: '精锐弯刀勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITESHOTELWARRIOR/' },
-    { id: 'elite_shrivamsha_rider', name: '精锐什里瓦姆沙骑手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITESHRIVAMSHARIDER/' },
-    { id: 'elite_skirmisher', name: '精锐掷矛手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITESKIRMISHER/' },
-    { id: 'elite_temple_guard', name: '精锐神庙守卫', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITETEMPLEGUARD/' },
-    { id: 'elite_teutonic_knight', name: '精锐条顿骑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITETEUTONICKNIGHT/' },
-    { id: 'elite_throwing_axeman', name: '精锐掷斧兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ELITETHROWINGAXEMAN/' },
-    { id: 'elite_tiger_cavalry', name: '精锐猛虎骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITETIGERCAVALRY/' },
-    { id: 'elite_urumi_swordsman', name: '精锐乌拉米剑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEURUMISWORDSMAN/' },
-    { id: 'elite_war_chariot', name: '精锐战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITE_WAR_CHARIOT/' },
-    { id: 'elite_war_dog', name: '精锐军犬', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEWARDOG/' },
-    { id: 'elite_war_elephant', name: '精锐战象', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEWARELEPHANT/' },
-    { id: 'elite_war_wagon', name: '精锐战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/ELITEWARWAGON/' },
-    { id: 'elite_woad_raider', name: '精锐靛蓝突袭者', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITEWOADRAIDER/' },
-    { id: 'flaming_camel', name: '火焰骆驼', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/FLAMINGCAMEL/' },
-    { id: 'flemish_pikeman', name: '佛兰德长枪兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/FLEMISHPIKEMAN/' },
-    { id: 'flemish_pikeman_f', name: '佛兰德长枪兵F', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/FLEMISHPIKEMAN_F/' },
-    { id: 'gbeto', name: '格贝托', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/GBETO/' },
-    { id: 'genitour', name: '杰尼图', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/GENITOUR/' },
-    { id: 'genoese_crossbowman', name: '热那亚弩手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
-    { id: 'ghulam', name: '古拉姆', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/GHULAM/' },
-    { id: 'greek_noble_cavalry', name: '希腊贵族骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/GREEK_NOBLE_CAVALRY/' },
-    { id: 'grenadier', name: '掷弹兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/GRENADIER/' },
-    { id: 'guecha_warrior', name: '格查战士', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/GUECHAWARRIOR/' },
-    { id: 'hand_cannoneer', name: '手炮手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/HANDCANNONEER/' },
-    { id: 'heavy_rocket_cart', name: '重型火箭车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/HEAVYROCKETCART/' },
-    { id: 'heavy_scorpion', name: '重型弩炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/HEAVYSCORPION/' },
-    { id: 'hill_tribesman', name: '山地部落民', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/HILL_TRIBESMAN/' },
-    { id: 'hippeus', name: '希皮乌斯', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/HIPPEUS/' },
-    { id: 'hoplite', name: '希腊重装步兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/HOPLITE/' },
-    { id: 'houfnice', name: '榴弹炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/HOUFNICE/' },
-    { id: 'huskarl', name: '哥特近卫军', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/HUSKARL/' },
-    { id: 'hussar', name: '骠骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/HUSSAR/' },
-    { id: 'hussite_wagon', name: '胡斯战车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
-    { id: 'ibirapema_warrior', name: '伊比拉佩马勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
-    { id: 'immortal', name: '不死军', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/IMMORTAL/' },
-    { id: 'immortal_ranged', name: '不死军弓手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
-    { id: 'imperial_camel_rider', name: '帝王骆驼兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
-    { id: 'imperial_centurion', name: '帝王百夫长', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
-    { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
-    { id: 'iroquois_warrior', name: '易洛魁战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/IROQUOISWARRIOR/' },
-    { id: 'jaguar_warrior', name: '美洲豹勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/JAGUARWARRIOR/' },
-    { id: 'janissary', name: '苏丹亲兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/JANISSARY/' },
-    { id: 'knight', name: '骑士', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/KNIGHT/' },
-    { id: 'kona', name: '科纳', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/KONA/' },
-    { id: 'konnik', name: '骑士', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/KONNIK/' },
-    { id: 'konnik_foot', name: '下马骑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/FOOTKONNIK/' },
-    { id: 'leitis', name: '列提斯', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/LEITIS/' },
-    { id: 'longbowman', name: '长弓兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/LONGBOWMAN/' },
-    { id: 'magyar_huszar', name: '马扎尔骠骑', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/MAGYARHUSZAR/' },
-    { id: 'mameluke', name: '马穆鲁克', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/MAMELUKE/' },
-    { id: 'mangonel', name: '轻型投石车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/MANGONEL/' },
-    { id: 'mercenary_hoplite', name: '雇佣重装步兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/ELITE_HOPLITE/' },
-    { id: 'militia', name: '民兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/MILITIA/' },
-    { id: 'monaspa', name: '莫纳斯帕', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/MONASPA/' },
-    { id: 'mounted_trebuchet', name: '骑乘投石机', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
-    { id: 'obuch', name: '奥布奇', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/OBUCH/' },
-    { id: 'onager', name: '重型投石车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ONAGER/' },
-    { id: 'organ_gun', name: '风琴炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ORGANGUN/' },
-    { id: 'petard', name: '爆破兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/PETARD/' },
-    { id: 'phalangite', name: '马其顿方阵兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/PHALANGITE/' },
-    { id: 'plumed_archer', name: '羽箭手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/PLUMEDARCHER/' },
-    { id: 'qizilbash_warrior', name: '克孜尔巴什', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/QIZILBASHWARRIOR/' },
-    { id: 'ratha_melee', name: '拉塔战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/RATHAMELEE/' },
-    { id: 'ratha_ranged', name: '拉塔战车（弓）', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/RATHARANGED/' },
-    { id: 'rhodian_slinger', name: '罗得岛投石兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/RHODIAN_SLINGER/' },
-    { id: 'rhomphaia_warrior', name: '龙牙战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/RHOMPHAIA_WARRIOR/' },
-    { id: 'rocket_cart', name: '火箭车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ROCKETCART/' },
-    { id: 'royal_janissary', name: '皇家苏丹亲兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
-    { id: 'sacred_band', name: '圣队', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SACRED_BAND/' },
-    { id: 'sannahya', name: '桑纳亚', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SANNAHYA/' },
-    { id: 'scorpion', name: '弩炮', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/SCORPION/' },
-    { id: 'scythian_axe_cavalry', name: '斯基泰斧骑', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
-    { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
-    { id: 'serjeant', name: '军士长', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SERJEANT/' },
-    { id: 'shotel_warrior', name: '弯刀勇士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SHOTELWARRIOR/' },
-    { id: 'shrivamsha_rider', name: '什里瓦姆沙骑手', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/SHRIVAMSHARIDER/' },
-    { id: 'sickle_warrior', name: '镰刀战士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SICKLE_WARRIOR/' },
-    { id: 'siege_onager', name: '攻城投石车', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/SIEGEONAGER/' },
-    { id: 'siege_ram', name: '攻城槌', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SIEGERAM/' },
-    { id: 'skirmisher', name: '掷矛手', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/SKIRMISHER/' },
-    { id: 'slinger', name: '投石兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/SLINGER/' },
-    { id: 'sogdian_cataphract', name: '粟特甲胄骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
-    { id: 'sparabara', name: '斯帕拉巴拉', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SPARABARA/' },
-    { id: 'spearman', name: '长矛兵', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SPEARMAN/' },
-    { id: 'strategos', name: '将军卫队', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/STRATEGOS/' },
-    { id: 'takabara', name: '塔卡巴拉', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
-    { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
-    { id: 'temple_guard', name: '神庙守卫', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/TEMPLEGUARD/' },
-    { id: 'teutonic_knight', name: '条顿骑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },
-    { id: 'thracian_peltast', name: '色雷斯轻装兵', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
-    { id: 'traction_trebuchet', name: '牵引投石机', category: 'ranged', categoryLabel: '远程', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
-    { id: 'two_handed_swordsman', name: '双手剑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
-    { id: 'urumi_swordsman', name: '乌拉米剑士', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/URUMISWORDSMAN/' },
-    { id: 'war_chariot', name: '战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/WAR_CHARIOT/' },
-    { id: 'war_chariot_ranged', name: '远程战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/WARCHARIOT/' },
-    { id: 'war_dog', name: '军犬', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/WARDOG/' },
-    { id: 'war_wagon', name: '战车', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/WARWAGON/' },
-    { id: 'warrior_priest', name: '战士祭司', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/WARRIORPRIEST/' },
-    { id: 'winged_hussar', name: '翼骑兵', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
-    { id: 'woad_raider', name: '靛蓝突袭者', category: 'infantry', categoryLabel: '步兵', pathPrefix: '/SUCAI/WOADRAIDER/' },
-    { id: 'xolotl_warrior', name: '索洛特尔勇士', category: 'cavalry', categoryLabel: '骑兵', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
+    { id: 'war_elephant',               name: '波斯战象',       category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WAR_ELEPHANT/' },
+    { id: 'armored_elephant',           name: '皮甲战象',       category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ARMORED_ELEPHANT/' },
+    { id: 'ballista_elephant',          name: '弩炮战象',         category: 'siege', age: 'castle', pathPrefix: '/SUCAI/BALLISTA_ELEPHANT/' },
+    { id: 'elephant_archer',            name: '象弓骑兵',       category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELEPHANT_ARCHER/' },
+    { id: 'amazon_archer', name: '亚马逊弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/AMAZONARCHER/' },
+    { id: 'amazon_warrior', name: '亚马逊战士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/AMAZONWARRIOR/' },
+    { id: 'bactrian_archer', name: '巴克特里亚弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/BACTRIAN_ARCHER/' },
+    { id: 'battering_ram', name: '攻城槌', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/BATTERINGRAM/' },
+    { id: 'berserk', name: '狂战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/BERSERK/' },
+    { id: 'blackwood_archer', name: '黑木弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/BLACKWOODARCHER/' },
+    { id: 'bolas_rider', name: '流星锤骑手', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOLASRIDER/' },
+    { id: 'bombard_cannon', name: '火炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/BOMBARDCANNON/' },
+    { id: 'camel_archer', name: '骆驼弓骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMELARCHER/' },
+    { id: 'camel_raider', name: '骆驼突袭者', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/CAMEL_RAIDER/' },
+    { id: 'camel_rider', name: '骆驼兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMELRIDER/' },
+    { id: 'camel_scout', name: '骆驼斥候', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAMELSCOUT/' },
+    { id: 'capped_ram', name: '覆甲攻城槌', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/CAPPEDRAM/' },
+    { id: 'cataphract', name: '甲胄骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CATAPHRACT/' },
+    { id: 'centurion', name: '百夫长', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CENTURION/' },
+    { id: 'chakram_thrower', name: '查克拉掷环兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CHAKRAMTHROWER/' },
+    { id: 'champion_runner', name: '冠军剑士 (CHAMPIRUNNER)', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
+    { id: 'champion_scout', name: '冠军剑士 (CHAMPISCOUT)', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
+    { id: 'companion_cavalry', name: '伙伴骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/COMPANION_CAVALRY/' },
+    { id: 'condottiero', name: '雇佣军', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CONDOTTIERO/' },
+    { id: 'conquistador', name: '征服者', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CONQUISTADOR/' },
+    { id: 'cretan_archer', name: '克里特弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/CRETAN_ARCHER/' },
+    { id: 'eagle_scout', name: '鹰斥候', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EAGLESCOUT/' },
+    { id: 'eagle_warrior', name: '鹰勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/EAGLEWARRIOR/' },
+    { id: 'ekdromos', name: '埃克德罗摩斯', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/EKDROMOS/' },
+    { id: 'elite_arambai', name: '精锐飞镖骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEARAMBAI/' },
+    { id: 'elite_ballista_elephant', name: '精锐弩炮战象', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ELITEBALLISTAELEPHANT/' },
+    { id: 'elite_battle_elephant', name: '精锐战斗象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBATTLEELEPHANT/' },
+    { id: 'elite_berserk', name: '精锐狂战士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBERSERK/' },
+    { id: 'elite_blackwood_archer', name: '精锐黑木弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ELITEBLACKWOODARCHER/' },
+    { id: 'elite_bolas_rider', name: '精锐流星锤骑手', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBOLASRIDER/' },
+    { id: 'elite_boyar', name: '精锐贵族铁骑', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBOYAR/' },
+    { id: 'elite_camel_archer', name: '精锐骆驼弓骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITECAMELARCHER/' },
+    { id: 'elite_cataphract', name: '精锐甲胄骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITECATAPHRACT/' },
+    { id: 'elite_centurion', name: '精锐百夫长', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITECENTURION/' },
+    { id: 'elite_chakram_thrower', name: '精锐查克拉掷环兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITECHAKRAMTHROWER/' },
+    { id: 'elite_champi_warrior', name: '精锐查姆皮勇士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITECHAMPIWARRIOR/' },
+    { id: 'elite_conquistador', name: '精锐征服者', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITECONQUISTADOR/' },
+    { id: 'elite_coustillier', name: '精锐马上轻装兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITECOUSTILLIER/' },
+    { id: 'elite_eagle_warrior', name: '精锐鹰勇士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEEAGLEWARRIOR/' },
+    { id: 'elite_elephant_archer', name: '精锐象弓骑兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEELEPHANTARCHER/' },
+    { id: 'elite_gbeto', name: '精锐格贝托', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEGBETO/' },
+    { id: 'elite_genitour', name: '精锐杰尼图', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEGENITOUR/' },
+    { id: 'elite_genoese_crossbowman', name: '精锐热那亚弩手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEGENOESECROSSBOWMAN/' },
+    { id: 'elite_ghulam', name: '精锐古拉姆', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEGHULAM/' },
+    { id: 'elite_guecha_warrior', name: '精锐格查战士', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ELITEGUECHAWARRIOR/' },
+    { id: 'elite_huskarl', name: '精锐哥特近卫军', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSKARL/' },
+    { id: 'elite_hussite_wagon', name: '精锐胡斯战车', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
+    { id: 'elite_ibirapema_warrior', name: '精锐伊比拉佩马勇士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
+    { id: 'elite_iron_pagoda', name: '精锐铁浮屠', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ELITEIRONPAGODA/' },
+    { id: 'elite_jaguar_warrior', name: '精锐美洲豹勇士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEJAGUARWARRIOR/' },
+    { id: 'elite_janissary', name: '精锐苏丹亲兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEJANISSARY/' },
+    { id: 'elite_kamayuk', name: '精锐印加枪兵长', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEKAMAYUK/' },
+    { id: 'elite_keshik', name: '精锐怯薛军', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEKESHIK/' },
+    { id: 'elite_kona', name: '精锐科纳', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ELITEKONA/' },
+    { id: 'elite_konnik', name: '精锐康尼克', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEKONNIK/' },
+    { id: 'elite_konnik_foot', name: '精锐下马康尼克', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEFOOTKONNIK/' },
+    { id: 'elite_leitis', name: '精锐列提斯', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITELEITIS/' },
+    { id: 'elite_mameluke', name: '精锐马穆鲁克', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEMAMELUKE/' },
+    { id: 'elite_monaspa', name: '精锐莫纳斯帕', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEMONASPA/' },
+    { id: 'elite_obuch', name: '精锐奥布奇', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEOBUCH/' },
+    { id: 'elite_organ_gun', name: '精锐风琴炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ELITEORGANGUN/' },
+    { id: 'elite_plumed_archer', name: '精锐羽箭手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEPLUMEDARCHER/' },
+    { id: 'elite_ratha_melee', name: '精锐拉塔战车', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITERATHAMELEE/' },
+    { id: 'elite_ratha_ranged', name: '精锐拉塔战车（弓）', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITERATHARANGED/' },
+    { id: 'elite_scythian_horse_archer', name: '精锐斯基泰骑射手', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/' },
+    { id: 'elite_serjeant', name: '精锐军士长', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITESERJEANT/' },
+    { id: 'elite_shotel_warrior', name: '精锐弯刀勇士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITESHOTELWARRIOR/' },
+    { id: 'elite_shrivamsha_rider', name: '精锐什里瓦姆沙骑手', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITESHRIVAMSHARIDER/' },
+    { id: 'elite_skirmisher', name: '精锐掷矛手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELITESKIRMISHER/' },
+    { id: 'elite_temple_guard', name: '精锐神庙守卫', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITETEMPLEGUARD/' },
+    { id: 'elite_teutonic_knight', name: '精锐条顿骑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITETEUTONICKNIGHT/' },
+    { id: 'elite_throwing_axeman', name: '精锐掷斧兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITETHROWINGAXEMAN/' },
+    { id: 'elite_tiger_cavalry', name: '精锐猛虎骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ELITETIGERCAVALRY/' },
+    { id: 'elite_urumi_swordsman', name: '精锐乌拉米剑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEURUMISWORDSMAN/' },
+    { id: 'elite_war_chariot', name: '精锐战车', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_WAR_CHARIOT/' },
+    { id: 'elite_war_dog', name: '精锐军犬', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITEWARDOG/' },
+    { id: 'elite_war_elephant', name: '精锐波斯战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWARELEPHANT/' },
+    { id: 'elite_war_wagon', name: '精锐朝鲜战车', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWARWAGON/' },
+    { id: 'elite_woad_raider', name: '精锐靛蓝突袭者', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWOADRAIDER/' },
+    { id: 'flaming_camel', name: '火焰骆驼', category: 'siege', age: 'unknown', pathPrefix: '/SUCAI/FLAMINGCAMEL/' },
+    { id: 'flemish_pikeman', name: '佛兰德长枪兵', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/FLEMISHPIKEMAN/' },
+    { id: 'flemish_pikeman_f', name: '佛兰德长枪兵F', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/FLEMISHPIKEMAN_F/' },
+    { id: 'gbeto', name: '格贝托', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GBETO/' },
+    { id: 'genitour', name: '杰尼图', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/GENITOUR/' },
+    { id: 'genoese_crossbowman', name: '热那亚弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
+    { id: 'ghulam', name: '古拉姆', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/GHULAM/' },
+    { id: 'greek_noble_cavalry', name: '希腊贵族骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/GREEK_NOBLE_CAVALRY/' },
+    { id: 'grenadier', name: '掷弹兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/GRENADIER/' },
+    { id: 'guecha_warrior', name: '格查战士', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/GUECHAWARRIOR/' },
+    { id: 'hand_cannoneer', name: '手炮手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/HANDCANNONEER/' },
+    { id: 'heavy_rocket_cart', name: '重型火箭车', category: 'siege', age: 'unknown', pathPrefix: '/SUCAI/HEAVYROCKETCART/' },
+    { id: 'heavy_scorpion', name: '重型弩炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HEAVYSCORPION/' },
+    { id: 'hill_tribesman', name: '山地部落民', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/HILL_TRIBESMAN/' },
+    { id: 'hippeus', name: '希皮乌斯', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/HIPPEUS/' },
+    { id: 'hoplite', name: '希腊重装步兵', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/HOPLITE/' },
+    { id: 'houfnice', name: '榴弹炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HOUFNICE/' },
+    { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HUSKARL/' },
+    { id: 'hussar', name: '骠骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
+    { id: 'hussite_wagon', name: '胡斯战车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
+    { id: 'ibirapema_warrior', name: '伊比拉佩马勇士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
+    { id: 'immortal', name: '不死军', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IMMORTAL/' },
+    { id: 'immortal_ranged', name: '不死军弓手', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
+    { id: 'imperial_camel_rider', name: '帝王骆驼兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
+    { id: 'imperial_centurion', name: '帝王百夫长', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
+    { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
+    { id: 'iroquois_warrior', name: '易洛魁战士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IROQUOISWARRIOR/' },
+    { id: 'jaguar_warrior', name: '美洲豹勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JAGUARWARRIOR/' },
+    { id: 'janissary', name: '苏丹亲兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/JANISSARY/' },
+    { id: 'knight', name: '骑士', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/KNIGHT/' },
+    { id: 'kona', name: '科纳', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/KONA/' },
+    { id: 'konnik', name: '康尼克', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/KONNIK/' },
+    { id: 'konnik_foot', name: '下马康尼克', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FOOTKONNIK/' },
+    { id: 'leitis', name: '列提斯', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LEITIS/' },
+    { id: 'longbowman', name: '长弓兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/LONGBOWMAN/' },
+    { id: 'magyar_huszar', name: '马扎尔骠骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAGYARHUSZAR/' },
+    { id: 'mameluke', name: '马穆鲁克', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAMELUKE/' },
+    { id: 'mangonel', name: '轻型投石车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/MANGONEL/' },
+    { id: 'mercenary_hoplite', name: '雇佣重装步兵', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/ELITE_HOPLITE/' },
+    { id: 'militia', name: '民兵', category: 'infantry', age: 'dark', pathPrefix: '/SUCAI/MILITIA/' },
+    { id: 'monaspa', name: '莫纳斯帕', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MONASPA/' },
+    { id: 'mounted_trebuchet', name: '骑乘投石机', category: 'siege', age: 'unknown', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
+    { id: 'obuch', name: '奥布奇', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/OBUCH/' },
+    { id: 'onager', name: '重型投石车', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ONAGER/' },
+    { id: 'organ_gun', name: '风琴炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ORGANGUN/' },
+    { id: 'petard', name: '爆破兵', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/PETARD/' },
+    { id: 'phalangite', name: '马其顿方阵兵', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/PHALANGITE/' },
+    { id: 'plumed_archer', name: '羽箭手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/PLUMEDARCHER/' },
+    { id: 'qizilbash_warrior', name: '克孜尔巴什', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/QIZILBASHWARRIOR/' },
+    { id: 'ratha_melee', name: '拉塔战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/RATHAMELEE/' },
+    { id: 'ratha_ranged', name: '拉塔战车（弓）', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/RATHARANGED/' },
+    { id: 'rhodian_slinger', name: '罗得岛投石兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/RHODIAN_SLINGER/' },
+    { id: 'rhomphaia_warrior', name: '龙牙战士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/RHOMPHAIA_WARRIOR/' },
+    { id: 'rocket_cart', name: '火箭车', category: 'siege', age: 'unknown', pathPrefix: '/SUCAI/ROCKETCART/' },
+    { id: 'royal_janissary', name: '皇家苏丹亲兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
+    { id: 'sacred_band', name: '圣队', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SACRED_BAND/' },
+    { id: 'sannahya', name: '桑纳亚', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SANNAHYA/' },
+    { id: 'scorpion', name: '弩炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SCORPION/' },
+    { id: 'scythian_axe_cavalry', name: '斯基泰斧骑', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
+    { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
+    { id: 'serjeant', name: '军士长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SERJEANT/' },
+    { id: 'shotel_warrior', name: '弯刀勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SHOTELWARRIOR/' },
+    { id: 'shrivamsha_rider', name: '什里瓦姆沙骑手', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SHRIVAMSHARIDER/' },
+    { id: 'sickle_warrior', name: '镰刀战士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SICKLE_WARRIOR/' },
+    { id: 'siege_onager', name: '攻城投石车', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/SIEGEONAGER/' },
+    { id: 'siege_ram', name: '攻城重槌', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/SIEGERAM/' },
+    { id: 'skirmisher', name: '掷矛手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SKIRMISHER/' },
+    { id: 'slinger', name: '投石兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/SLINGER/' },
+    { id: 'sogdian_cataphract', name: '粟特甲胄骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
+    { id: 'sparabara', name: '斯帕拉巴拉', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SPARABARA/' },
+    { id: 'spearman', name: '长矛兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SPEARMAN/' },
+    { id: 'strategos', name: '将军卫队', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/STRATEGOS/' },
+    { id: 'takabara', name: '塔卡巴拉', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
+    { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
+    { id: 'temple_guard', name: '神庙守卫', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/TEMPLEGUARD/' },
+    { id: 'teutonic_knight', name: '条顿骑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },
+    { id: 'thracian_peltast', name: '色雷斯轻装兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
+    { id: 'traction_trebuchet', name: '牵引投石机', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
+    { id: 'two_handed_swordsman', name: '双手剑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
+    { id: 'urumi_swordsman', name: '乌拉米剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/URUMISWORDSMAN/' },
+    { id: 'war_chariot', name: '战车', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/WAR_CHARIOT/' },
+    { id: 'war_chariot_ranged', name: '远程战车', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/WARCHARIOT/' },
+    { id: 'war_dog', name: '军犬', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/WARDOG/' },
+    { id: 'war_wagon', name: '朝鲜战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WARWAGON/' },
+    { id: 'warrior_priest', name: '战士祭司', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/WARRIORPRIEST/' },
+    { id: 'winged_hussar', name: '翼骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
+    { id: 'woad_raider', name: '靛蓝突袭者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/WOADRAIDER/' },
+    { id: 'xolotl_warrior', name: '索洛特尔勇士', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
 ];
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
+
+/**
+ * 兵种升级档判定：帝国决定版里同一兵种通常有「普通 → 精锐」两档，
+ * 部分文明还有帝王/皇家档。这里按中文名前缀 + 英文 ID 前后缀双路识别，
+ * 二者任一命中即算高级档（例如 samurai_elite / elite_keshik / hei_kuang_heavy「精锐黑光铠骑兵」）。
+ */
+export function getUnitTier(u: DeUnitDef): 'elite' | 'base' {
+    if (/^(精锐|帝王|皇家)/.test(u.name)) return 'elite';
+    if (/^(elite_|imperial_|royal_)/.test(u.id)) return 'elite';
+    if (/_(elite|heavy)$/.test(u.id)) return 'elite';
+    return 'base';
+}
 
 /** 旧版兵种 ID（三国志10体系 S10DB 素材）→ 中文名映射 */
 const LEGACY_UNIT_NAMES: Record<string, string> = {
@@ -339,6 +386,18 @@ let singlePreviewRow: number = 0; // 0=前排, 1=中坚, 2=后排
 let sortCol: string = 'region';
 let sortAsc: boolean = true;
 
+// ── 兵种图鉴视图状态 ──
+type MainView = 'factions' | 'units';
+let mainView: MainView = 'factions';
+let catalogRows: DeUnitDef[] = [];
+let catalogSearch = '';
+let catalogCatFilter: 'all' | UnitCategory = 'all';
+let catalogTierFilter: 'all' | 'elite' | 'base' = 'all';
+let catalogAgeFilter: 'all' | UnitAge = 'all';
+let catalogSortCol: 'name' | 'id' | 'category' | 'tier' | 'age' = 'name';
+let catalogSortAsc = true;
+let selectedUnitId: string | null = null;
+
 // ============================================================
 // 3. UI 初始化与注入
 // ============================================================
@@ -359,7 +418,11 @@ app.innerHTML = `
     <button type="button" id="le-save-all" class="le-btn le-btn-primary">💾 保存全部配置</button>
   </div>
 </header>
-<div class="le-toolbar">
+<div class="le-viewtabs">
+  <button type="button" class="le-viewtab active" data-view="factions">⚔ 势力军团编排</button>
+  <button type="button" class="le-viewtab" data-view="units">🗂 兵种图鉴 (${DE_UNITS_CATALOG.length})</button>
+</div>
+<div class="le-toolbar" id="le-toolbar-factions">
   <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都…" />
   <select id="le-region-filter" class="le-select">
     <option value="all">全部文化区 (18)</option>
@@ -372,10 +435,31 @@ app.innerHTML = `
   </select>
   <span id="le-stats" class="le-stats">加载中…</span>
 </div>
+<div class="le-toolbar" id="le-toolbar-units" style="display:none;">
+  <input id="le-cat-search" class="le-input" type="search" placeholder="搜索兵种 中文名 / ID / 素材目录…" />
+  <select id="le-cat-filter" class="le-select">
+    <option value="all">全部类别</option>
+    <option value="infantry">🛡️ 步兵</option>
+    <option value="cavalry">🐎 骑兵</option>
+    <option value="ranged">🏹 远程</option>
+    <option value="siege">⚙️ 攻城</option>
+  </select>
+  <select id="le-age-filter" class="le-select">
+    <option value="all">全部时代</option>
+    ${AGE_ORDER.map(a => `<option value="${a}">${a === 'unknown' ? '❓ ' : ''}${AGE_LABEL[a]}</option>`).join('')}
+  </select>
+  <select id="le-tier-filter" class="le-select">
+    <option value="all">全部升级档</option>
+    <option value="elite">⭐ 仅精锐 / 帝王档</option>
+    <option value="base">仅普通档</option>
+  </select>
+  <span id="le-cat-stats" class="le-stats">加载中…</span>
+</div>
 <div class="le-body">
-  <!-- 左侧：势力大表 -->
+  <!-- 左侧：势力大表 / 兵种图鉴 -->
   <main class="le-main">
     <div id="le-table-wrap" class="le-table-wrap"></div>
+    <div id="le-cat-table-wrap" class="le-table-wrap" style="display:none;"></div>
   </main>
   <!-- 右侧：军团配置与实时预览面板 -->
   <aside id="le-panel" class="le-panel">
@@ -400,7 +484,24 @@ const els = {
     toast: document.getElementById('le-toast')!,
     btnReload: document.getElementById('le-reload') as HTMLButtonElement,
     btnSaveAll: document.getElementById('le-save-all') as HTMLButtonElement,
+    toolbarFactions: document.getElementById('le-toolbar-factions')!,
+    toolbarUnits: document.getElementById('le-toolbar-units')!,
+    catSearch: document.getElementById('le-cat-search') as HTMLInputElement,
+    catFilter: document.getElementById('le-cat-filter') as HTMLSelectElement,
+    tierFilter: document.getElementById('le-tier-filter') as HTMLSelectElement,
+    ageFilter: document.getElementById('le-age-filter') as HTMLSelectElement,
+    catStats: document.getElementById('le-cat-stats')!,
+    catTableWrap: document.getElementById('le-cat-table-wrap')!,
 };
+
+/** 输入防抖：兵种搜索每敲一个字要重建整张表 + 重画缩略图，不防抖会明显顿。 */
+function debounce<T extends (...args: any[]) => void>(fn: T, ms = 130): (...args: Parameters<T>) => void {
+    let timer: number | undefined;
+    return (...args: Parameters<T>) => {
+        if (timer !== undefined) clearTimeout(timer);
+        timer = window.setTimeout(() => fn(...args), ms);
+    };
+}
 
 function injectStyles(): void {
     const s = document.createElement('style');
@@ -441,6 +542,47 @@ function injectStyles(): void {
       .le-btn-warn { background:#5a2828; border-color:#8a3838; color:#ffdede; }
       .le-btn-warn:hover { background:#703232; }
       .le-btn-sm { padding:3px 8px; font-size:12px; }
+
+      /* 视图切换页签 */
+      .le-viewtabs {
+        display:flex; gap:0; background:#141210; border-bottom:1px solid #2a2620;
+        padding:0 16px; flex-shrink:0;
+      }
+      .le-viewtab {
+        background:none; border:none; border-bottom:2px solid transparent;
+        color:#a89f8f; font-size:13px; font-weight:bold; padding:9px 18px;
+        cursor:pointer; transition:all 0.15s;
+      }
+      .le-viewtab:hover { color:#f5e6c8; }
+      .le-viewtab.active { color:#e0c888; border-bottom-color:#c8a84b; }
+
+      /* 兵种图鉴表 */
+      .tier-tag {
+        display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:bold;
+      }
+      .tier-elite { background:#3a2c10; color:#f5d78e; border:1px solid #7a6224; }
+      .tier-base  { background:#201e1c; color:#8a8276; border:1px solid #36322c; }
+      /* 时代标签：黑暗→封建→城堡→帝王 由暗到亮，待核用醒目的赭红提示需要人工确认 */
+      .age-tag {
+        display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px;
+        font-weight:bold; white-space:nowrap;
+      }
+      .age-dark     { background:#1a1816; color:#8a8276; border:1px solid #332e28; }
+      .age-feudal   { background:#1c2418; color:#9cbe86; border:1px solid #33502c; }
+      .age-castle   { background:#1a2230; color:#8ab0dc; border:1px solid #2c4160; }
+      .age-imperial { background:#2e2410; color:#f0c860; border:1px solid #6e5420; }
+      .age-unknown  { background:#2c1a18; color:#d09080; border:1px solid #5a3028; }
+
+      .cat-tag {
+        display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px;
+        background:#1a2430; color:#8ab4c4; border:1px solid #2c3f52;
+      }
+      .cell-path { color:#6a6258; font-family:monospace; font-size:10px; }
+      td.cell-thumb { padding:2px 8px; }
+      .le-cat-thumb {
+        width:44px; height:44px; display:block; background:#141210;
+        border-radius:3px; image-rendering:pixelated;
+      }
 
       .le-body { flex:1; display:flex; min-height:0; overflow:hidden; }
       .le-main { flex:1; overflow:auto; background:#0e0d0c; }
@@ -1174,7 +1316,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'infantry' ? 'active' : ''}" data-cat="infantry">🛡️ 步兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='infantry').length})</div>
             <div class="le-modal-tab ${currentTab === 'cavalry' ? 'active' : ''}" data-cat="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='cavalry').length})</div>
             <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
-            <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">🐘 战象/攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
+            <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
           </div>
           <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
           <div class="le-modal-body">
@@ -1183,7 +1325,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
                 <div class="le-unit-card-text">
                   <div class="le-unit-card-name">${u.name}</div>
-                  <div class="le-unit-card-cat">${u.categoryLabel}</div>
+                  <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${getUnitTier(u) === 'elite' ? ' · ⭐精锐' : ''}</div>
                 </div>
               </div>
             `).join('')}
@@ -1204,9 +1346,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             });
         });
 
-        // 🔴 兵种搜索：输入即过滤（重建 DOM 后恢复 value 并重新聚焦，避免每敲一字失焦清空）
-        overlay.querySelector('#le-unit-search')?.addEventListener('input', (e) => {
-            unitSearch = (e.target as HTMLInputElement).value;
+        // 🔴 兵种搜索：防抖后过滤（重建 DOM 后恢复 value 并重新聚焦，避免每敲一字失焦清空）
+        const rerenderSearch = debounce(() => {
             renderModalContent();
             const inp = overlay.querySelector('#le-unit-search') as HTMLInputElement | null;
             if (inp) {
@@ -1214,6 +1355,10 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 inp.focus();
                 inp.setSelectionRange(unitSearch.length, unitSearch.length);
             }
+        });
+        overlay.querySelector('#le-unit-search')?.addEventListener('input', (e) => {
+            unitSearch = (e.target as HTMLInputElement).value;
+            rerenderSearch();
         });
 
         overlay.querySelectorAll('.le-unit-card').forEach(card => {
@@ -1228,10 +1373,9 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             });
         });
 
-        // 🔴 缩略图：异步加载 idle 第 0 方向第一帧，缩略显示（loadSprite/loadMeta 有缓存，切 tab/搜索不重复拉网）
-        overlay.querySelectorAll<HTMLCanvasElement>('.le-unit-thumb').forEach(c => {
-            drawUnitThumb(c, c.dataset.uid!);
-        });
+        // 🔴 缩略图：异步加载 idle 朝南第一帧（loadSprite/loadMeta 有缓存，切 tab/搜索不重复拉网），
+        //    只画滚进视口的，避免一次性画满 200+ 张。
+        observeThumbs(overlay);
     };
 
     document.body.appendChild(overlay);
@@ -1240,6 +1384,303 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) closeModal();
     });
+}
+
+// ============================================================
+// 6.5 兵种图鉴 (Unit Catalog) —— 查看 / 排序 / 筛选全部 DE 兵种
+// ============================================================
+
+/** 类别排序权重：按 步兵 → 骑兵 → 远程 → 战象/攻城 的战场站位顺序，而非拼音顺序。 */
+const CATEGORY_ORDER: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege'];
+
+function switchMainView(view: MainView): void {
+    if (mainView === view) return;
+    mainView = view;
+
+    // 切视图必须停掉上一个 Canvas 循环，否则两套预览会同时跑在同一个 rAF 上互相踩。
+    if (animTimer !== null) {
+        cancelAnimationFrame(animTimer);
+        animTimer = null;
+    }
+
+    const isUnits = view === 'units';
+    els.toolbarFactions.style.display = isUnits ? 'none' : '';
+    els.toolbarUnits.style.display = isUnits ? '' : 'none';
+    els.tableWrap.style.display = isUnits ? 'none' : '';
+    els.catTableWrap.style.display = isUnits ? '' : 'none';
+
+    document.querySelectorAll('.le-viewtab').forEach(t => {
+        t.classList.toggle('active', (t as HTMLElement).dataset.view === view);
+    });
+
+    if (isUnits) {
+        applyCatalogFilter();
+        renderCatalogTable();
+        if (selectedUnitId) {
+            renderUnitPanel(selectedUnitId);
+        } else {
+            els.panelContent.innerHTML = `<div class="le-empty-hint">← 请在左侧兵种图鉴中点击任意兵种，查看其动作与素材信息</div>`;
+        }
+    } else {
+        renderTable();
+        const row = allRows.find(r => r.factionId === selectedFactionId);
+        if (row) renderEditPanel(row);
+    }
+}
+
+function applyCatalogFilter(): void {
+    const q = catalogSearch.trim().toLowerCase();
+    catalogRows = DE_UNITS_CATALOG.filter(u => {
+        if (catalogCatFilter !== 'all' && u.category !== catalogCatFilter) return false;
+        if (catalogTierFilter !== 'all' && getUnitTier(u) !== catalogTierFilter) return false;
+        if (catalogAgeFilter !== 'all' && u.age !== catalogAgeFilter) return false;
+        if (q) {
+            const hit = u.name.toLowerCase().includes(q)
+                || u.id.toLowerCase().includes(q)
+                || u.pathPrefix.toLowerCase().includes(q);
+            if (!hit) return false;
+        }
+        return true;
+    });
+
+    sortCatalogRows();
+
+    const eliteTotal = DE_UNITS_CATALOG.filter(u => getUnitTier(u) === 'elite').length;
+    const unknownTotal = DE_UNITS_CATALOG.filter(u => u.age === 'unknown').length;
+    els.catStats.innerHTML =
+        `全部兵种 <b>${DE_UNITS_CATALOG.length}</b> | 精锐档 <b style="color:#f5d78e">${eliteTotal}</b>`
+        + ` | 时代待核 <b style="color:#c88a7a">${unknownTotal}</b> | 当前显示 <b>${catalogRows.length}</b>`;
+}
+
+function sortCatalogRows(): void {
+    const dir = catalogSortAsc ? 1 : -1;
+    catalogRows.sort((a, b) => {
+        if (catalogSortCol === 'category') {
+            const d = CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category);
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'tier') {
+            const ta = getUnitTier(a) === 'elite' ? 1 : 0;
+            const tb = getUnitTier(b) === 'elite' ? 1 : 0;
+            if (ta !== tb) return dir * (ta - tb);
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'age') {
+            const d = AGE_ORDER.indexOf(a.age) - AGE_ORDER.indexOf(b.age);
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'id') return dir * a.id.localeCompare(b.id);
+        return dir * a.name.localeCompare(b.name, 'zh-CN');
+    });
+}
+
+function renderCatalogTable(): void {
+    if (catalogRows.length === 0) {
+        els.catTableWrap.innerHTML = `<div class="le-empty-hint">没有匹配的兵种</div>`;
+        return;
+    }
+
+    const arrow = (col: string) => catalogSortCol === col
+        ? (catalogSortAsc ? ' <span style="color:#e0c888;">▲</span>' : ' <span style="color:#e0c888;">▼</span>')
+        : '';
+
+    els.catTableWrap.innerHTML = `
+    <table class="le-table">
+      <thead>
+        <tr>
+          <th style="width:56px;">预览</th>
+          <th data-col="name" style="color:#f5e6c8;background:#24201a;">兵种名称${arrow('name')}</th>
+          <th data-col="age" style="width:90px;">时代${arrow('age')}</th>
+          <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
+          <th data-col="category" style="width:100px;">类别${arrow('category')}</th>
+          <th data-col="id" style="width:220px;">兵种 ID${arrow('id')}</th>
+          <th>素材目录</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${catalogRows.map(u => {
+            const tier = getUnitTier(u);
+            return `
+          <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
+            <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
+            <td><b style="font-size:13px;">${u.name}</b></td>
+            <td><span class="age-tag age-${u.age}">${AGE_LABEL[u.age]}</span></td>
+            <td>${tier === 'elite'
+                ? `<span class="tier-tag tier-elite">⭐ 精锐</span>`
+                : `<span class="tier-tag tier-base">普通</span>`}</td>
+            <td><span class="cat-tag">${CATEGORY_LABEL[u.category]}</span></td>
+            <td><span class="cell-id" style="margin-left:0;">${u.id}</span></td>
+            <td><span class="cell-path">${u.pathPrefix}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    `;
+
+    els.catTableWrap.querySelectorAll('th[data-col]').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = (th as HTMLElement).dataset.col as typeof catalogSortCol;
+            if (catalogSortCol === col) catalogSortAsc = !catalogSortAsc;
+            else { catalogSortCol = col; catalogSortAsc = true; }
+            sortCatalogRows();
+            renderCatalogTable();
+        });
+    });
+
+    els.catTableWrap.querySelectorAll('tr[data-uid]').forEach(tr => {
+        tr.addEventListener('click', () => {
+            selectedUnitId = (tr as HTMLElement).dataset.uid!;
+            els.catTableWrap.querySelectorAll('tr[data-uid]').forEach(o => {
+                o.classList.toggle('selected', (o as HTMLElement).dataset.uid === selectedUnitId);
+            });
+            renderUnitPanel(selectedUnitId);
+        });
+    });
+
+    observeThumbs(els.catTableWrap);
+}
+
+/** 右侧面板：单兵种动作预览 + 素材帧信息 */
+function renderUnitPanel(unitId: string): void {
+    const u = DE_UNITS_MAP.get(unitId);
+    if (!u) return;
+    const tier = getUnitTier(u);
+
+    els.panelContent.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
+      <div>
+        <div style="font-size:17px;font-weight:bold;color:#f5e6c8;">${u.name}</div>
+        <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span class="age-tag age-${u.age}">${AGE_LABEL[u.age]}</span>
+        <span class="cat-tag">${CATEGORY_LABEL[u.category]}</span>
+        ${tier === 'elite' ? `<span class="tier-tag tier-elite">⭐ 精锐</span>` : `<span class="tier-tag tier-base">普通</span>`}
+      </div>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title"><span>动作预览</span></div>
+      <div class="le-preview-wrap">
+        <canvas id="le-unit-canvas" class="le-preview-canvas" width="480" height="260"></canvas>
+      </div>
+      <div class="le-preview-controls">
+        <button type="button" class="le-btn le-btn-sm ${animState === 'idle' ? 'le-btn-primary' : ''}" id="le-u-idle">🧍 待机</button>
+        <button type="button" class="le-btn le-btn-sm ${animState === 'move' ? 'le-btn-primary' : ''}" id="le-u-move">🚶 移动</button>
+        <button type="button" class="le-btn le-btn-sm ${animState === 'attack' ? 'le-btn-primary' : ''}" id="le-u-attack">⚔️ 攻击</button>
+        <span style="font-size:12px;color:#a89f8f;margin-left:auto;">朝向:</span>
+        <select id="le-u-dir" class="le-select" style="padding:2px 6px;font-size:12px;">
+          ${[[3, '南'], [2, '东南'], [1, '东'], [0, '东北'], [7, '北'], [6, '西北'], [5, '西'], [4, '西南']]
+            .map(([v, t]) => `<option value="${v}" ${animDirection === v ? 'selected' : ''}>${t} (${v})</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title"><span>素材信息</span></div>
+      <div style="font-size:12px;color:#a89f8f;line-height:1.9;">
+        素材目录：<span class="cell-path" style="font-size:11px;">${u.pathPrefix}</span>
+        <div id="le-unit-meta">读取 _meta.json…</div>
+      </div>
+    </div>
+    `;
+
+    document.getElementById('le-u-idle')?.addEventListener('click', () => { animState = 'idle'; renderUnitPanel(unitId); });
+    document.getElementById('le-u-move')?.addEventListener('click', () => { animState = 'move'; renderUnitPanel(unitId); });
+    document.getElementById('le-u-attack')?.addEventListener('click', () => { animState = 'attack'; renderUnitPanel(unitId); });
+    const dirSel = document.getElementById('le-u-dir') as HTMLSelectElement | null;
+    dirSel?.addEventListener('change', () => {
+        animDirection = parseInt(dirSel.value, 10);
+        startUnitCanvasPreview(unitId);
+    });
+
+    startUnitCanvasPreview(unitId);
+    fillUnitMeta(u);
+}
+
+async function fillUnitMeta(u: DeUnitDef): Promise<void> {
+    const meta = await loadMeta(u.pathPrefix);
+    const box = document.getElementById('le-unit-meta');
+    if (!box) return;
+    if (!meta) {
+        box.innerHTML = `<span style="color:#c88a7a;">未找到 _meta.json（按方图兜底切帧）</span>`;
+        return;
+    }
+    const lines = (['idle', 'move', 'attack', 'death'] as const).map(act => {
+        const a = meta[act];
+        if (!a) return `${act}：<span style="color:#7a7266;">无</span>`;
+        const d = a.dirs?.['3'] || Object.values(a.dirs || {})[0];
+        const size = d ? `${Math.round(d.fw)}×${Math.round(d.fh)}` : '?';
+        return `${act}：<b style="color:#e0c888;">${a.frames}</b> 帧 · ${Object.keys(a.dirs || {}).length} 方向 · 帧尺寸 ${size}`;
+    });
+    box.innerHTML = lines.join('<br/>');
+}
+
+/** 图鉴用单兵预览：与方阵预览共用 animTimer，切换时互斥。 */
+function startUnitCanvasPreview(unitId: string): void {
+    if (animTimer !== null) {
+        cancelAnimationFrame(animTimer);
+        animTimer = null;
+    }
+    const canvas = document.getElementById('le-unit-canvas') as HTMLCanvasElement | null;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const prefix = getUnitPathPrefix(unitId);
+    let frame = 0;
+
+    const loop = () => {
+        ctx.fillStyle = '#141812';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#1e241c';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+        for (let y = 0; y < canvas.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+        const action = animState === 'attack' ? 'attack' : (animState === 'move' ? 'move' : 'idle');
+        const imgUrl = `${prefix}${action}_${animDirection}.png`;
+
+        if (!metaCache.has(prefix)) loadMeta(prefix).catch(() => {});
+        const meta = metaCache.get(prefix) || null;
+        const img = spriteCache.get(imgUrl);
+
+        if (img && img.complete && img.naturalWidth > 0) {
+            const actMeta = meta?.[action];
+            const dirMeta = actMeta?.dirs?.[String(animDirection)];
+            let totalFrames: number, fw: number, fh: number, hx: number, hy: number;
+            if (actMeta && dirMeta) {
+                totalFrames = actMeta.frames; fw = dirMeta.fw; fh = dirMeta.fh; hx = dirMeta.hx; hy = dirMeta.hy;
+            } else {
+                totalFrames = Math.max(1, Math.round(img.naturalWidth / img.naturalHeight));
+                fw = img.naturalWidth / totalFrames; fh = img.naturalHeight; hx = fw / 2; hy = fh / 2;
+            }
+            const speedDivisor = animState === 'idle' ? 3 : 2;
+            const cur = Math.floor(frame / speedDivisor) % totalFrames;
+
+            // 自适应放大：让最大边占到画布 72%，小兵种也看得清，大战象不会溢出画布
+            const s = Math.min(canvas.width * 0.72 / fw, canvas.height * 0.72 / fh);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2 + fh * s * 0.15;
+            ctx.drawImage(img, cur * fw, 0, fw, fh, cx - hx * s, cy - hy * s, fw * s, fh * s);
+
+            ctx.fillStyle = '#7a7266';
+            ctx.font = '11px "Microsoft YaHei", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`${action}_${animDirection}.png · 第 ${cur + 1}/${totalFrames} 帧`, 8, canvas.height - 8);
+        } else {
+            loadSprite(imgUrl).catch(() => {});
+            ctx.fillStyle = '#7a7266';
+            ctx.font = '12px "Microsoft YaHei", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`载入 ${action}_${animDirection}.png …`, canvas.width / 2, canvas.height / 2);
+        }
+
+        frame++;
+        animTimer = requestAnimationFrame(loop);
+    };
+    loop();
 }
 
 // ============================================================
@@ -1343,6 +1784,27 @@ async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise
         ctx.clearRect(0, 0, size, size);
         ctx.drawImage(img, 0, 0, fw, fh, dx, dy, dw, dh);   // 第 0 帧（sx=0, sy=0）
     } catch { /* 素材加载失败 → 留空占位，不拖累列表 */ }
+}
+
+/**
+ * 缩略图懒加载：230 个兵种一次性全画会拖慢弹窗/图鉴的每次重建
+ * （实测搜索每敲一字 148ms）。改为只画滚进视口的那些，已画过的打标不重画。
+ */
+let thumbObserver: IntersectionObserver | null = null;
+function observeThumbs(root: ParentNode): void {
+    if (!thumbObserver) {
+        thumbObserver = new IntersectionObserver((entries) => {
+            for (const en of entries) {
+                if (!en.isIntersecting) continue;
+                const c = en.target as HTMLCanvasElement;
+                thumbObserver!.unobserve(c);
+                if (c.dataset.drawn === '1') continue;
+                c.dataset.drawn = '1';
+                drawUnitThumb(c, c.dataset.uid!);
+            }
+        }, { rootMargin: '160px' });
+    }
+    root.querySelectorAll<HTMLCanvasElement>('canvas[data-uid]').forEach(c => thumbObserver!.observe(c));
 }
 
 function startCanvasPreview(): void {
@@ -1631,6 +2093,32 @@ els.statusFilter.addEventListener('change', () => {
     selectedStatusFilter = els.statusFilter.value as any;
     applyFilter();
     renderTable();
+});
+
+// 视图切换：势力军团 ↔ 兵种图鉴
+document.querySelectorAll('.le-viewtab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        switchMainView((tab as HTMLElement).dataset.view as MainView);
+    });
+});
+
+// 兵种图鉴筛选
+const runCatalogFilter = () => { applyCatalogFilter(); renderCatalogTable(); };
+els.catSearch.addEventListener('input', debounce(() => {
+    catalogSearch = els.catSearch.value;
+    runCatalogFilter();
+}));
+els.catFilter.addEventListener('change', () => {
+    catalogCatFilter = els.catFilter.value as typeof catalogCatFilter;
+    runCatalogFilter();
+});
+els.tierFilter.addEventListener('change', () => {
+    catalogTierFilter = els.tierFilter.value as typeof catalogTierFilter;
+    runCatalogFilter();
+});
+els.ageFilter.addEventListener('change', () => {
+    catalogAgeFilter = els.ageFilter.value as typeof catalogAgeFilter;
+    runCatalogFilter();
 });
 
 els.btnReload.addEventListener('click', () => {
