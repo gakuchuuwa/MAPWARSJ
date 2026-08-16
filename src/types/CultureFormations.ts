@@ -56,7 +56,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     KOREA:        'MIXED',
     HEXI:         'MIXED',
     WESTERN:      'MIXED',
-    JAPAN:        'MIXED',   // 日本战国步骑铁炮
+    JAPAN:        'INFANTRY', // 日本纯步兵
     BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
     LINGNAN:      'ELEPHANT',
@@ -76,15 +76,15 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
  *  三角阵（triangle 2+3+4，9人）: 岭南、滇缅、朝鲜、东北、拉丁、中原
  *  雁行阵（echelon 4+3+2，9人）: 北方、西域、河西、青藏、西亚、斯拉夫、日耳曼 */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
-    // 鱼鳞阵 (5区)
+    // 鱼鳞阵 (6区)
+    JAPAN:        'square',   // 日本鱼鳞方阵
     STEPPE:       'square',
     BASHU:        'square',
     JIANGNAN:     'square',
     CENTRAL_ASIA: 'square',
     GREEK:        'square',
 
-    // 三角阵 (7区)
-    JAPAN:        'triangle', // 日本战国三角阵
+    // 三角阵 (6区)
     LINGNAN:      'triangle',
     DIANQIAN:     'triangle',
     KOREA:        'triangle',
@@ -199,35 +199,112 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 // ============================================================
 
 /**
- * 秦国固定 3×3 方阵：枪兵 + 轻骑/刀骑/轻骑 + 弩手。
- * 中列中心 general_cavalry 写死，全项目不可省略。
- *
- * 适用范围（凡 factionId === 'qin' 的现役军团）：
- *   · 据点军团 — LegionManager.createArmy / createLegion
- *   · 远征军团 — applyExpeditionEliteRename 下令时重申
+ * 秦国·雁行阵（4+3+2）：白毦兵(4) + 诸葛弩(3) + 黑光铠骑兵(2)
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'spear', count: 3 },
-    { type: 'lancer', count: 1 },
-    { type: 'general_cavalry', count: 1 },
-    { type: 'lancer', count: 1 },
-    { type: 'crossbow', count: 3 },
+    { type: 'white_feather_guard', count: 4 }, // Row 0 宽阵 = 白毦兵 4人
+    { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩 3人
+    { type: 'hei_kuang', count: 2 },           // Row 2 压阵 = 黑光铠骑兵 2人
 ];
 
+/**
+ * 汉国·三角阵（2+3+4）：白毦兵(2) + 诸葛弩(3) + 黑光铠骑兵(4)
+ */
+export const HAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'white_feather_guard', count: 2 }, // Row 0 尖刀 = 白毦兵 2人
+    { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩 3人
+    { type: 'hei_kuang', count: 4 },           // Row 2 底边 = 黑光铠骑兵 4人
+];
+
+/** 秦朝名将 ID 集合 */
+export const QIN_DYNASTY_GENERAL_IDS = new Set([
+    'qin_simacuo',          // 司马错
+    'xin_baiqi',            // 白起
+    'ruo_wangjian',         // 王翦
+    'baiyang_mengtian',     // 蒙恬
+    'wazhai_zhanghan',      // 章邯
+    'shangzhou_shangyang',  // 商鞅
+    'nanyue_zhaotuo',       // 赵佗
+]);
+
+/** 秦朝势力 ID 集合 */
+export const QIN_DYNASTY_FACTION_IDS = new Set([
+    'qin', 'xin', 'ruo', 'baiyang', 'wazhai', 'shangzhou', 'nanyue'
+]);
+
+/** 汉朝名将 ID 集合（含西汉、东汉、蜀汉/季汉） */
+export const HAN_DYNASTY_GENERAL_IDS = new Set([
+    'han_d_liubang',                // 刘邦
+    'xianyu_hanxin',                // 韩信
+    'suzhou_huoqubing',             // 霍去病
+    'shuofang_weiqing',             // 卫青
+    'li_lx_d_liguang',              // 李广
+    'huaiyang_zhouyafu',            // 周亚夫
+    'yangshao_zhoubo',              // 周勃
+    'lanzhou_zhaochongguo',         // 赵充国
+    'quli_chentang',                // 陈汤
+    'xiyuduhu_banchao',             // 班超
+    'jiluo_d_douxian',              // 窦宪
+    'lulin_liuxiu',                 // 刘秀
+    'you_gengyan',                  // 耿弇
+    'jingzhou_gs_huangfusong',      // 皇甫嵩
+    'huizhou_zhugeliang',           // 诸葛亮
+    'shu_liubei',                   // 刘备
+    'chu_guanyu',                   // 关羽
+    'langzhou_zhangfei',            // 张飞
+    'jingmen_zhaoyun',              // 赵云
+    'cangsong_machao',              // 马超
+    'qingqiang_jiangwei',           // 姜维
+    'dongsheng_weishang',           // 魏尚
+    'liu_yingbu',                   // 英布
+]);
+
+/** 汉朝势力 ID 集合 */
+export const HAN_DYNASTY_FACTION_IDS = new Set([
+    'han', 'han_d', 'xianyu', 'suzhou', 'shuofang', 'li_lx_d',
+    'huaiyang', 'yangshao', 'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
+    'lulin', 'you', 'jingzhou_gs', 'huizhou_d', 'shu', 'chu',
+    'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
+]);
+
+/** 判断是否为秦朝武将或势力 */
+export function isQinDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && QIN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && QIN_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+/** 判断是否为汉朝武将或势力 */
+export function isHanDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && HAN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && HAN_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
-export function getFactionCompositionSlots(factionId: string): CompositionSlot[] | null {
+export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
+    // 1. 武将专属判断优先
+    if (generalId) {
+        if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
+        if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
+    }
+    // 2. 势力判断
     const custom = FACTION_COMPOSITIONS[factionId];
     if (custom) {
         return [...custom.slots];
     }
-    if (factionId === 'qin') {
+    if (isQinDynasty(factionId)) {
         return [...QIN_FACTION_COMPOSITION];
+    }
+    if (isHanDynasty(factionId)) {
+        return [...HAN_FACTION_COMPOSITION];
     }
     return null;
 }
 
 export interface LegionCompositionTarget {
     factionId: string;
+    generalId?: string | null;
     cultureRegion: RegionType | null;
     cultureSlots: string[] | null;
     cultureScales: number[] | null;
@@ -237,27 +314,36 @@ export interface LegionCompositionTarget {
     getTroops(): number;
 }
 
-/** 写入军团 cultureSlots / cultureScales / legionType / formationMode（势力专属优先于文化区） */
+/** 写入军团 cultureSlots / cultureScales / legionType / formationMode（武将与势力专属优先于文化区） */
 export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
+    const isQin = isQinDynasty(army.factionId, army.generalId);
+    const isHan = isHanDynasty(army.factionId, army.generalId);
+
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
-    const custom = FACTION_COMPOSITIONS[army.factionId];
-    const factionSlots = custom ? custom.slots : getFactionCompositionSlots(army.factionId);
+    const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
     const slots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
     if (!slots) return;
 
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        army.factionId === 'qin'
+        isQin || isHan
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
-    // 阵型：势力专属固定方阵（秦国/自定义配置）→ 文化区默认；slot 结构能反推时以反推为准
-    army.formationMode = custom?.formationMode
-        ?? (army.factionId === 'qin'
-            ? 'square'
-            : (inferFormationModeFromSlots(slots) ?? getCultureFormationMode(culture)));
+
+    // 阵型判定：秦国雁行阵、汉国三角阵、势力配置、最后文化区默认
+    if (isQin) {
+        army.formationMode = 'echelon';
+    } else if (isHan) {
+        army.formationMode = 'triangle';
+    } else {
+        const custom = FACTION_COMPOSITIONS[army.factionId];
+        army.formationMode = custom?.formationMode
+            ?? inferFormationModeFromSlots(slots)
+            ?? getCultureFormationMode(culture);
+    }
 }
 
 // ============================================================
@@ -320,32 +406,47 @@ export const KOREA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 5. 日本战国 手炮手+黑光铠骑兵+精锐武士（三角阵 2+3+4：手炮手尖刀前 + 黑光铠骑兵中坚 + 精锐武士底边） */
+/** 5. 日本 印加枪兵长+日本武士+精锐武士（鱼鳞阵 3×3：印加枪兵长前 + 日本武士中 + 精锐武士后） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hand_cannoneer', count: 2 },   // Row 0 尖刀 = 手炮手 (铁炮前列齐射)
-            { type: 'hei_kuang', count: 3 },        // Row 1 中坚 = 黑光铠骑兵 (具足骑兵突击)
-            { type: 'samurai_elite', count: 4 }     // Row 2 底边 = 精锐武士 (大太刀精锐合围)
+            { type: 'kamayuk', count: 3 },          // Row 0 前排 = 印加枪兵长 步兵
+            { type: 'samurai', count: 1 },          // Row 1 左 = 日本武士 步兵
+            { type: 'samurai', count: 1 },          // Row 1 中 = 日本武士 步兵
+            { type: 'samurai', count: 1 },          // Row 1 右 = 日本武士 步兵
+            { type: 'samurai_elite', count: 3 }     // Row 2 后排 = 精锐武士 步兵
         ]
     }
 ];
-export const SENGOKU_TIERS = JAPAN_TIERS;
 
-/** 6. 草原 草原枪兵+怯薛+精锐蒙古突骑（鱼鳞阵 3×3：草原枪兵前 + 怯薛中 + 精锐蒙古突骑后） */
+/** 日本战国 忍者+黑光铠骑兵+精锐武士（三角阵 2+3+4：忍者尖刀前 + 黑光铠骑兵中坚 + 精锐武士底边） */
+export const SENGOKU_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'ninja', count: 2 },            // Row 0 尖刀 = 忍者 步兵
+            { type: 'hei_kuang', count: 3 },        // Row 1 中坚 = 黑光铠骑兵 骑兵
+            { type: 'samurai_elite', count: 4 }     // Row 2 底边 = 精锐武士 步兵
+        ]
+    }
+];
+
+/** 6. 草原 怯薛+草原枪兵+精锐蒙古突骑（鱼鳞阵 3×3：怯薛前 + 草原枪兵中 + 精锐蒙古突骑后） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'steppe_lancer', count: 3 },    // Row 0 前排 = 草原枪兵 骑兵
-            { type: 'keshik', count: 1 },           // Row 1 左 = 怯薛军 骑兵
-            { type: 'keshik', count: 1 },           // Row 1 中 = 怯薛军 骑兵
-            { type: 'keshik', count: 1 },           // Row 1 右 = 怯薛军 骑兵
+            { type: 'keshik', count: 3 },           // Row 0 前排 = 怯薛军 骑兵
+            { type: 'steppe_lancer', count: 1 },    // Row 1 左 = 草原枪兵 骑兵
+            { type: 'steppe_lancer', count: 1 },    // Row 1 中 = 草原枪兵 骑兵
+            { type: 'steppe_lancer', count: 1 },    // Row 1 右 = 草原枪兵 骑兵
             { type: 'mangudai_elite', count: 3 }    // Row 2 后排 = 精锐蒙古突骑 弓骑
         ]
     }
