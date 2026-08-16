@@ -267,6 +267,42 @@ export const HAN_DYNASTY_FACTION_IDS = new Set([
     'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
 ]);
 
+/** 日本战国名将 ID 集合 */
+export const SENGOKU_GENERAL_IDS = new Set([
+    'owari_zhitianxinchang',            // 织田信长
+    'kai_wutianxinxuan',                // 武田信玄
+    'echigo_shangshanqianxin',          // 上杉谦信
+    'edo_dechuanjiakang',               // 德川家康
+    'hashiba_fengchenxiuji',            // 丰臣秀吉
+    'date_d_yidazhengzong',             // 伊达政宗
+    'sanada_d_zhentianxingcun',         // 真田幸村
+    'sagami_beitiaoshikang',            // 北条氏康
+    'chosokabe_changzongwobuyuanqin',   // 长宗我部元亲
+    'satsuma_daojinjiajiu',             // 岛津家久
+    'aki_maoliyuanjiu',                 // 毛利元就
+    'jinchuan_jinchuanyiyuan',          // 今川义元
+    'totomi_jiujingzhongci',            // 酒井忠次
+    'mino_dagujiji',                    // 大谷吉继
+    'aizu_pushengshixiang',             // 蒲生氏乡
+    'iga_d_baididanbo',                 // 百地丹波
+    'kaga_d_xiajianlailian',            // 下间赖廉
+    'otomo_d_lihuadaoxue',              // 立花道雪
+    'suwa_d_zoufanglaizhong',           // 诹访赖重
+    'shimotsuke_yudougongguanggang',    // 宇都宫广纲
+    'izumo_shanzhonglujie',             // 山中鹿介
+    'jibei2_qingshuizongzhi',           // 清水宗治
+    'kakizaki_liqiqingguang',           // 蛎崎庆广
+    'so_zongyizhi',                     // 宗义智
+]);
+
+/** 日本战国势力 ID 集合 */
+export const SENGOKU_FACTION_IDS = new Set([
+    'owari', 'kai', 'echigo', 'edo', 'hashiba', 'date_d', 'sanada_d',
+    'sagami', 'chosokabe', 'satsuma', 'aki', 'jinchuan', 'totomi',
+    'mino', 'aizu', 'iga_d', 'kaga_d', 'otomo_d', 'suwa_d',
+    'shimotsuke', 'izumo', 'jibei2', 'kakizaki', 'so'
+]);
+
 /** 判断是否为秦朝武将或势力 */
 export function isQinDynasty(factionId?: string | null, generalId?: string | null): boolean {
     if (generalId && QIN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
@@ -281,12 +317,20 @@ export function isHanDynasty(factionId?: string | null, generalId?: string | nul
     return false;
 }
 
+/** 判断是否为日本战国武将或势力 */
+export function isSengoku(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && SENGOKU_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && SENGOKU_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
     // 1. 武将专属判断优先
     if (generalId) {
         if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
         if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
+        if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 2. 势力判断
     const custom = FACTION_COMPOSITIONS[factionId];
@@ -298,6 +342,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isHanDynasty(factionId)) {
         return [...HAN_FACTION_COMPOSITION];
+    }
+    if (isSengoku(factionId)) {
+        return [...SENGOKU_TIERS[0].slots];
     }
     return null;
 }
@@ -318,6 +365,7 @@ export interface LegionCompositionTarget {
 export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
     const isQin = isQinDynasty(army.factionId, army.generalId);
     const isHan = isHanDynasty(army.factionId, army.generalId);
+    const isSen = isSengoku(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
@@ -327,16 +375,16 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan
+        isQin || isHan || isSen
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：秦国雁行阵、汉国三角阵、势力配置、最后文化区默认
+    // 阵型判定：秦国雁行阵、汉国/战国三角阵、势力配置、最后文化区默认
     if (isQin) {
         army.formationMode = 'echelon';
-    } else if (isHan) {
+    } else if (isHan || isSen) {
         army.formationMode = 'triangle';
     } else {
         const custom = FACTION_COMPOSITIONS[army.factionId];
