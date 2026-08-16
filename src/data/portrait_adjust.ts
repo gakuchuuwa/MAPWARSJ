@@ -1718,7 +1718,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -32
         },
         "/assets/STEPPE/geluolu_chisipijia.png": {
-            "scale": 1.11,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 15
         },

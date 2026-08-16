@@ -39,7 +39,6 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
             // 挡着热更新，刷都刷不回来。实测采样：elapsed 十次全是 0。
             if (app.cityManager && app.battleScene?.isStrategyPausedByScene()) {
                 const sceneDelta = deltaTime * GameConfig.COMBAT.SCENE13_TIME_SCALE;
-                app.historicalEventManager?.updateLegions(sceneDelta);
                 app.combatSystem?.update(sceneDelta, app.battleScene.getFollowUnitId());
                 // [2026-08-11 13 v2] 后台心跳同样驱动出兵口互攻演出（否则切后台演出停摆，
                 // 胜负推不出、场景不退出——与「战术层后台死锁」同族问题）
@@ -114,19 +113,15 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.endTimer('recruitment');
         } else if (app.battleScene?.isStrategyPausedByScene()) {
             // ── [2026-08-10 13 独立时钟] 战术层：大地图停着，只有镜头里这场战斗在跑 ──
-            // 停的：年历、城池纪年、历史事件、AI 决策、募兵（大战略整体冻结）
-            // 跑的：① 被跟拍的那一场战斗  ② 军团行军
-            //   ②必须放行，否则援军永远走不到战场 —— 双将战「+10s/只」的加时和援军入场
-            //   这个高光镜头会整个失效（援军是靠行军抵达的，不是凭空出现）。
-            //   代价：暂停期间部队在动但年份不走，逻辑上略怪，视觉上无感（镜头在 13 里）。
+            // 停的：年历、城池纪年、历史事件、AI 决策、募兵、军团行军（大战略整体冻结）
+            // 跑的：只有被跟拍的那一场战斗（军团行军不再放行，见下）
+            // [2026-08-16 主人定·含援军] 军团行军一并冻结：进 13 时开战圈（0.35°）内援军
+            //   已全部编入（GameAppCombatHooks「开战时编入的援军就是全部、不会有中途加入」），
+            //   13 期间放行行军只会让全图无关军团偷跑 60 秒——走到目标城因 AI 冻结傻等、
+            //   途中撞敌因其他战斗冻结傻站。彻底定格 = 大战略 100% 冻结、时钟不再割裂。
             // 战术层走**真实秒**，不乘游戏倍速：主人定「13 战斗固定 1 分钟」，
             // 乘倍速的话开 4x 就变成 15 秒，固定时长就名存实亡了。
             const sceneDelta = deltaTime * GameConfig.COMBAT.SCENE13_TIME_SCALE;
-            if (app.historicalEventManager) {
-                perfMonitor.startTimer('legion');
-                app.historicalEventManager.updateLegions(sceneDelta);
-                perfMonitor.endTimer('legion');
-            }
             if (app.combatSystem) {
                 perfMonitor.startTimer('combat');
                 app.combatSystem.update(sceneDelta, app.battleScene.getFollowUnitId());
