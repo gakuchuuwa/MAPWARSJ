@@ -129,6 +129,7 @@ app.innerHTML = `
   <div class="bm-title">MAPWAR 实体批量管理</div>
   <div class="bm-header-actions">
     <a href="/" class="bm-link">← 返回游戏</a>
+    <a href="/legion-editor.html" class="bm-link">军团方阵</a>
     <a href="/portrait-tuner.html" class="bm-link">立绘调校</a>
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
     <button type="button" id="bm-export" class="bm-btn">导出名册</button>

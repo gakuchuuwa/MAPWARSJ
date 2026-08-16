@@ -823,6 +823,36 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // [NEW 2026-08-16] 势力军团方阵配置 FactionCompositions.ts
+                // ========================================================
+                const factionCompositionsPath = path.resolve(__dirname, 'src/data/FactionCompositions.ts');
+
+                server.middlewares.use('/api/save-faction-compositions', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    req.on('data', chunk => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(body || '{}');
+                            const formatted = serverFormatFactionCompositions(data.compositions || {});
+                            serverSafeWriteFileSync(factionCompositionsPath, formatted);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                            console.log(`[SaveFactionCompositions] ✅ 势力军团配置已写入 FactionCompositions.ts`);
+                        } catch (err: any) {
+                            console.error(`❌ [SaveFactionCompositions] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // [NEW 2026-06-13] 立绘显示调校 portrait_adjust.ts
                 // ========================================================
                 const portraitAdjustPath = path.resolve(__dirname, 'src/data/portrait_adjust.ts');
@@ -1822,6 +1852,42 @@ function getBigrams(s: string): string[] {
     const result: string[] = [];
     for (let i = 0; i < s.length - 1; i++) result.push(s[i] + s[i + 1]);
     return result;
+}
+
+/** 序列化 FactionCompositions.ts */
+function serverFormatFactionCompositions(compositions: Record<string, any>): string {
+    const lines: string[] = [];
+    lines.push(`/**`);
+    lines.push(` * 势力自定义军团方阵数据表 (Faction Legion Compositions)`);
+    lines.push(` * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。`);
+    lines.push(` */`);
+    lines.push(``);
+    lines.push(`import type { FormationMode } from '../types/CultureFormations';`);\r
+    lines.push(`import type { CompositionSlot } from '../types/LegionComposition';`);
+    lines.push(``);
+    lines.push(`export interface CustomFactionLegion {`);
+    lines.push(`    formationMode: FormationMode;`);
+    lines.push(`    slots: CompositionSlot[];`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {`);
+    for (const [fid, comp] of Object.entries(compositions)) {
+        if (!comp || !Array.isArray(comp.slots)) continue;
+        lines.push(`    ${JSON.stringify(fid)}: {`);
+        lines.push(`        formationMode: ${JSON.stringify(comp.formationMode || 'square')},`);
+        lines.push(`        slots: [`);
+        for (const slot of comp.slots) {
+            const scaleStr = slot.scale != null && !Number.isNaN(Number(slot.scale)) && Number(slot.scale) !== 1.0
+                ? `, scale: ${Number(slot.scale)}`
+                : '';
+            lines.push(`            { type: ${JSON.stringify(slot.type)}, count: ${slot.count}${scaleStr} },`);
+        }
+        lines.push(`        ],`);
+        lines.push(`    },`);
+    }
+    lines.push(`};`);
+    lines.push(``);
+    return lines.join('\n');
 }
 
 /** 

@@ -172,6 +172,8 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
     ];
 }
 
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+
 // ============================================================
 // 势力专属方阵（优先于文化区默认）
 // ============================================================
@@ -194,6 +196,10 @@ export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string): CompositionSlot[] | null {
+    const custom = FACTION_COMPOSITIONS[factionId];
+    if (custom) {
+        return [...custom.slots];
+    }
     if (factionId === 'qin') {
         return [...QIN_FACTION_COMPOSITION];
     }
@@ -214,7 +220,8 @@ export interface LegionCompositionTarget {
 /** 写入军团 cultureSlots / cultureScales / legionType / formationMode（势力专属优先于文化区） */
 export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
-    const factionSlots = getFactionCompositionSlots(army.factionId);
+    const custom = FACTION_COMPOSITIONS[army.factionId];
+    const factionSlots = custom ? custom.slots : getFactionCompositionSlots(army.factionId);
     const slots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
     if (!slots) return;
 
@@ -226,10 +233,11 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
-    // 阵型：势力专属固定方阵（秦国）→ 文化区默认；slot 结构能反推时以反推为准
-    army.formationMode = army.factionId === 'qin'
-        ? 'square'
-        : (inferFormationModeFromSlots(slots) ?? getCultureFormationMode(culture));
+    // 阵型：势力专属固定方阵（秦国/自定义配置）→ 文化区默认；slot 结构能反推时以反推为准
+    army.formationMode = custom?.formationMode
+        ?? (army.factionId === 'qin'
+            ? 'square'
+            : (inferFormationModeFromSlots(slots) ?? getCultureFormationMode(culture)));
 }
 
 // ============================================================
