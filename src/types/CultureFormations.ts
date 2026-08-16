@@ -364,33 +364,33 @@ export const HEXI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 8. 川蜀 精锐诸葛弩+白毦兵+藤弓兵（鱼鳞阵 3×3：精锐诸葛弩前 + 白毦兵中 + 藤弓兵后） */
+/** 8. 川蜀 白毦兵+精锐诸葛弩+藤弓兵（鱼鳞阵 3×3：白毦兵前 + 精锐诸葛弩中 + 藤弓兵后） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_chukonu', count: 3 },        // Row 0 前排 = 精锐诸葛弩 弩手
-            { type: 'white_feather_guard', count: 1 },  // Row 1 左 = 白毦兵 步兵
-            { type: 'white_feather_guard', count: 1 },  // Row 1 中 = 白毦兵 步兵
-            { type: 'white_feather_guard', count: 1 },  // Row 1 右 = 白毦兵 步兵
+            { type: 'white_feather_guard', count: 3 },  // Row 0 前排 = 白毦兵 步兵
+            { type: 'elite_chukonu', count: 1 },        // Row 1 左 = 精锐诸葛弩 弩手
+            { type: 'elite_chukonu', count: 1 },        // Row 1 中 = 精锐诸葛弩 弩手
+            { type: 'elite_chukonu', count: 1 },        // Row 1 右 = 精锐诸葛弩 弩手
             { type: 'rattan_archer', count: 3 }         // Row 2 后排 = 藤弓兵 弓手
         ]
     }
 ];
 
-/** 9. 江南 精锐火焰弓箭手+剑士+诸葛弩（鱼鳞阵 3×3：精锐火焰弓箭手前 + 剑士中 + 诸葛弩后） */
+/** 9. 江南 剑士+精锐火焰弓箭手+诸葛弩（鱼鳞阵 3×3：剑士前 + 精锐火焰弓箭手中 + 诸葛弩后） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_fire_archer', count: 3 },  // Row 0 前排 = 精锐火焰弓箭手 弓手
-            { type: 'swordsman', count: 1 },          // Row 1 左 = 剑士 步兵
-            { type: 'swordsman', count: 1 },          // Row 1 中 = 剑士 步兵
-            { type: 'swordsman', count: 1 },          // Row 1 右 = 剑士 步兵
+            { type: 'swordsman', count: 3 },          // Row 0 前排 = 剑士 步兵
+            { type: 'elite_fire_archer', count: 1 },  // Row 1 左 = 精锐火焰弓箭手 弓手
+            { type: 'elite_fire_archer', count: 1 },  // Row 1 中 = 精锐火焰弓箭手 弓手
+            { type: 'elite_fire_archer', count: 1 },  // Row 1 右 = 精锐火焰弓箭手 弓手
             { type: 'chukonu', count: 3 }             // Row 2 后排 = 诸葛弩 弩手
         ]
     }
