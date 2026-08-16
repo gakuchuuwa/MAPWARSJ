@@ -1762,6 +1762,10 @@ export class CityAssetManager {
         if (factionId === 'suzhou' && (window as any).__huoqubingExpeditionActive) {
             textToRender = '汉';
         }
+        // 诸葛亮北伐中原脚本进行中：季汉旗面临时改「漢」（结束/覆没后恢复）
+        if (factionId === 'huizhou_d' && (window as any).__zhugeliangExpeditionActive) {
+            textToRender = '漢';
+        }
 
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;

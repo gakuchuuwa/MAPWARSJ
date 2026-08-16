@@ -48,6 +48,7 @@ import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视�
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆梦脚本
 import { HuoQubingExpedition } from './HuoQubingExpedition'; // 霍去病封狼居胥 脚本
+import { ZhugeLiangExpedition } from './ZhugeLiangExpedition'; // 诸葛亮北伐中原 圆梦脚本
 import { ZoomController } from './ZoomController'; // 自动缩放控制
 import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
@@ -119,6 +120,7 @@ export class GameApp {
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
     public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
     public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
+    public zhugeliangExpedition!: ZhugeLiangExpedition; // 诸葛亮北伐中原 圆梦脚本
     public zoomController!: ZoomController; // 自动缩放控制（行军 9 / 战斗 10）
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
@@ -650,6 +652,30 @@ export class GameApp {
                     this.aiController?.tickArmyById(armyId);
                 },
             });
+
+            // 诸葛亮北伐中原 脚本
+            this.zhugeliangExpedition = new ZhugeLiangExpedition({
+                legionManager,
+                cityManager: this.cityManager,
+                cameraFollowUI: this.cameraFollowUI,
+                notify: (msg) => gameLog('expedition', msg),
+                ensureUnpaused: () => {
+                    if (this.timeSystem.isGamePaused()) {
+                        this.timeSystem.setPaused(false);
+                    }
+                },
+                snapCameraToArmy: (armyId) => {
+                    const army = legionManager.getLegionById(armyId);
+                    if (!army) return;
+                    const pos = army.getPosition();
+                    const lMap = this.map.getLeafletMap();
+                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
+                },
+                kickLegionAi: (armyId) => {
+                    this.aiController?.tickArmyById(armyId);
+                },
+            });
+            this.cameraFollowUI.setZhugeLiangHandler(() => this.zhugeliangExpedition.start());
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
