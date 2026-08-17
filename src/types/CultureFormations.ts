@@ -858,7 +858,7 @@ export const GREEK_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 亚历山大·马其顿帝国军团（雁行阵 4+3+2：马其顿方阵兵宽阵前 + 克里特弓手中坚 + 伙伴骑兵压阵后） */
+/** 亚历山大·马其顿帝国军团（雁行阵 4+3+2：马其顿方阵兵宽阵前 + 伙伴骑兵中坚 + 克里特弓手压阵后） */
 export const ALEXANDER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -866,8 +866,8 @@ export const ALEXANDER_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵 步兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手 弓手
-            { type: 'companion_cavalry', count: 2 }   // Row 2 压阵 = 伙伴骑兵 骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵 骑兵
+            { type: 'cretan_archer', count: 2 }       // Row 2 压阵 = 克里特弓手 弓手
         ]
     }
 ];
