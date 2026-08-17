@@ -369,6 +369,50 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
 /** 单兵绘制尺寸（px，可调；2026-08-11 主人「单兵尺寸放大些」30 → 50） */
 const UNIT_PX = 50;
 
+/**
+ * 落点散开半径（px）——每个兵出生时分到一个**固定**偏移，终身不变。
+ *
+ * 治的病（2026-08-17 主人提问「攻方上路强、守方下路强会不会正好错开，导致战斗结束不了」）：
+ *   aimAt 的后两级兜底（敌方出兵口 / 敌军重心）对全军返回**同一个坐标**，几百人挤向一个点，
+ *   球心里的人身边全是自己人、65px 内找不到敌人 → 不寻敌、原地打转；两边强弱翼交错时
+ *   还会磨成打不完的局（游戏 2026-08-16 已取消 120s 时间限制，打不完 = 引擎一直冻结、军团不动）。
+ *
+ * 实测（`scratch/war_sim.mjs`，量具已按本文件三处对齐：WING=0 / 敌口筛 pool>0 / 重心兜底）：
+ *   | 局面（12 或 6 种子）           | 不散开        | 散开 120 |
+ *   |--------------------------------|---------------|----------|
+ *   | 强弱翼交错（攻上强/守下强）    | **1 局打不完** | 12/12 结束 |
+ *   | 强弱翼同路                     | 6/6 结束      | 6/6 结束 |
+ *   | 同兵种对镜                     | 6/6 结束      | 6/6 结束 |
+ *   收尾干净度不变（败方余兵仍归 0）；平均时长 147s → 152s。
+ *
+ * 🔴 只许加在共用坐标上。加在「最近的那个敌兵」上会让兵停在敌人身旁 120px 处够不着，
+ *    接战距离只有 65px，那等于把所有近战废掉。
+ */
+const AIM_JITTER = 120;
+
+/**
+ * ── 兜底：这场仗一定会结束（主人 2026-08-17 定：「不要让 13 战斗没有结束时间、士兵原地打转、无法结束」）──
+ *
+ * 背景：2026-08-16 主人取消了原来的 120s 看门狗，理由是它会把还在正常打的仗一刀砍断。
+ * 那次取消之后，13 的唯一结束条件就只剩「一方兵力全灭」，一旦演出磨住，
+ * 引擎会一直冻结（`BattleField.update` 在 `scene13Frozen` 时直接 return）→ 军团永远不动。
+ *
+ * 所以这里**不是**把那个 120s 看门狗装回来，而是两道只在「确实出事」时才响的闸：
+ *   · NO_KILL_SEC：连续这么久一个人都没死 = 真的卡住（谁也够不着谁），立刻按兵力比判。
+ *     正常仗每秒都在死人（实测一场 150s 的仗留下 1000~1700 具尸体），碰不到这条。
+ *     🔴 60 秒不是拍脑袋：**最慢的兵**（象兵/攻城器械 spd=40）横穿全场 1900px 要 47 秒，
+ *        收尾期胜方走去补最后几个人时，本来就会有几十秒没人死。定 25s 会把这种正常收尾误判掉
+ *        （误判虽然赢家不变，但败方会剩一点残兵而不是被全歼，战果要写回引擎，不能马虎）。
+ *     🔴 第一滴血之前不计时：开局双方要相向而行，步兵 spd=50 走完 1650px 需要 33 秒，
+ *        从 0 开始计时会把每一场步兵仗都在 25~60 秒时掐掉。所以只有「已经死过人」才启用这条闸。
+ *   · HARD_STOP_SEC：绝对上限，兜住「还在慢慢磨但明显打不完」的拉锯。
+ *     实测健康局 110~170s 结束（线上 probe 81~150s），240s 给了 1.5 倍余量，正常仗碰不到。
+ * 两道闸都走 `forceResultByRatio` —— 与素材防死锁同一条通道（onDecision → 引擎解冻结算），
+ * 按当时兵力比判胜负，守方吃 0.85 城防折扣。不会出现"没人赢"的悬空局面。
+ */
+const NO_KILL_SEC = 60;
+const HARD_STOP_SEC = 240;
+
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CAV_ARCHER_HEAVY/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/SAVAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/', '/SUCAI/AMAZONARCHER/', '/SUCAI/AMAZONWARRIOR/', '/SUCAI/BACTRIAN_ARCHER/', '/SUCAI/BATTERINGRAM/', '/SUCAI/BERSERK/', '/SUCAI/BLACKWOODARCHER/', '/SUCAI/BOLASRIDER/', '/SUCAI/BOMBARDCANNON/', '/SUCAI/CAMELARCHER/', '/SUCAI/CAMEL_RAIDER/', '/SUCAI/CAMELRIDER/', '/SUCAI/CAMELSCOUT/', '/SUCAI/CAPPEDRAM/', '/SUCAI/CATAPHRACT/', '/SUCAI/CENTURION/', '/SUCAI/CHAKRAMTHROWER/', '/SUCAI/CHAMPIRUNNER/', '/SUCAI/CHAMPISCOUT/', '/SUCAI/COMPANION_CAVALRY/', '/SUCAI/CONDOTTIERO/', '/SUCAI/CONQUISTADOR/', '/SUCAI/CRETAN_ARCHER/', '/SUCAI/EAGLESCOUT/', '/SUCAI/EAGLEWARRIOR/', '/SUCAI/EKDROMOS/', '/SUCAI/ELITEARAMBAI/', '/SUCAI/ELITEBALLISTAELEPHANT/', '/SUCAI/ELITEBATTLEELEPHANT/', '/SUCAI/ELITEBERSERK/', '/SUCAI/ELITEBLACKWOODARCHER/', '/SUCAI/ELITEBOLASRIDER/', '/SUCAI/ELITEBOYAR/', '/SUCAI/ELITECAMELARCHER/', '/SUCAI/ELITECATAPHRACT/', '/SUCAI/ELITECENTURION/', '/SUCAI/ELITECHAKRAMTHROWER/', '/SUCAI/ELITECHAMPIWARRIOR/', '/SUCAI/ELITECONQUISTADOR/', '/SUCAI/ELITECOUSTILLIER/', '/SUCAI/ELITEEAGLEWARRIOR/', '/SUCAI/ELITEELEPHANTARCHER/', '/SUCAI/ELITEGBETO/', '/SUCAI/ELITEGENITOUR/', '/SUCAI/ELITEGENOESECROSSBOWMAN/', '/SUCAI/ELITEGHULAM/', '/SUCAI/ELITEGUECHAWARRIOR/', '/SUCAI/ELITEHUSKARL/', '/SUCAI/ELITEHUSSITEWAGON/', '/SUCAI/ELITEIBIRAPEMAWARRIOR/', '/SUCAI/ELITEIRONPAGODA/', '/SUCAI/ELITEJAGUARWARRIOR/', '/SUCAI/ELITEJANISSARY/', '/SUCAI/ELITEKAMAYUK/', '/SUCAI/ELITEKESHIK/', '/SUCAI/ELITEKONA/', '/SUCAI/ELITEKONNIK/', '/SUCAI/ELITEFOOTKONNIK/', '/SUCAI/ELITELEITIS/', '/SUCAI/ELITEMAMELUKE/', '/SUCAI/ELITEMONASPA/', '/SUCAI/ELITEOBUCH/', '/SUCAI/ELITEORGANGUN/', '/SUCAI/ELITEPLUMEDARCHER/', '/SUCAI/ELITERATHAMELEE/', '/SUCAI/ELITERATHARANGED/', '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/', '/SUCAI/ELITESERJEANT/', '/SUCAI/ELITESHOTELWARRIOR/', '/SUCAI/ELITESHRIVAMSHARIDER/', '/SUCAI/ELITESKIRMISHER/', '/SUCAI/ELITETEMPLEGUARD/', '/SUCAI/ELITETEUTONICKNIGHT/', '/SUCAI/ELITETHROWINGAXEMAN/', '/SUCAI/ELITETIGERCAVALRY/', '/SUCAI/ELITEURUMISWORDSMAN/', '/SUCAI/ELITE_WAR_CHARIOT/', '/SUCAI/ELITEWARDOG/', '/SUCAI/ELITEWARELEPHANT/', '/SUCAI/ELITEWARWAGON/', '/SUCAI/ELITEWOADRAIDER/', '/SUCAI/FLAMINGCAMEL/', '/SUCAI/FLEMISHPIKEMAN/', '/SUCAI/FLEMISHPIKEMAN_F/', '/SUCAI/GBETO/', '/SUCAI/GENITOUR/', '/SUCAI/GENOESECROSSBOWMAN/', '/SUCAI/GHULAM/', '/SUCAI/GREEK_NOBLE_CAVALRY/', '/SUCAI/GRENADIER/', '/SUCAI/GUECHAWARRIOR/', '/SUCAI/HANDCANNONEER/', '/SUCAI/HEAVYROCKETCART/', '/SUCAI/HEAVYSCORPION/', '/SUCAI/HILL_TRIBESMAN/', '/SUCAI/HIPPEUS/', '/SUCAI/HOPLITE/', '/SUCAI/HOUFNICE/', '/SUCAI/HUSKARL/', '/SUCAI/HUSSAR/', '/SUCAI/HUSSITEWAGON/', '/SUCAI/IBIRAPEMAWARRIOR/', '/SUCAI/IMMORTAL/', '/SUCAI/RANGED_IMMORTAL/', '/SUCAI/IMPERIALCAMELRIDER/', '/SUCAI/IMPERIALCENTURION/', '/SUCAI/INDIAN_TRIBESMAN/', '/SUCAI/IROQUOISWARRIOR/', '/SUCAI/JAGUARWARRIOR/', '/SUCAI/JANISSARY/', '/SUCAI/KNIGHT/', '/SUCAI/KONA/', '/SUCAI/KONNIK/', '/SUCAI/FOOTKONNIK/', '/SUCAI/LEITIS/', '/SUCAI/LONGBOWMAN/', '/SUCAI/MAGYARHUSZAR/', '/SUCAI/MAMELUKE/', '/SUCAI/MANGONEL/', '/SUCAI/ELITE_HOPLITE/', '/SUCAI/MILITIA/', '/SUCAI/MONASPA/', '/SUCAI/MOUNTEDTREBUCHET/', '/SUCAI/OBUCH/', '/SUCAI/ONAGER/', '/SUCAI/ORGANGUN/', '/SUCAI/PETARD/', '/SUCAI/PHALANGITE/', '/SUCAI/PLUMEDARCHER/', '/SUCAI/QIZILBASHWARRIOR/', '/SUCAI/RATHAMELEE/', '/SUCAI/RATHARANGED/', '/SUCAI/RHODIAN_SLINGER/', '/SUCAI/RHOMPHAIA_WARRIOR/', '/SUCAI/ROCKETCART/', '/SUCAI/ROYALJANISSARY/', '/SUCAI/SACRED_BAND/', '/SUCAI/SANNAHYA/', '/SUCAI/SCORPION/', '/SUCAI/SCYTHIAN_AXE_CAVALRY/', '/SUCAI/SCYTHIAN_HORSE_ARCHER/', '/SUCAI/SERJEANT/', '/SUCAI/SHOTELWARRIOR/', '/SUCAI/SHRIVAMSHARIDER/', '/SUCAI/SICKLE_WARRIOR/', '/SUCAI/SIEGEONAGER/', '/SUCAI/SIEGERAM/', '/SUCAI/SKIRMISHER/', '/SUCAI/SLINGER/', '/SUCAI/SOGDIANCATAPHRACT/', '/SUCAI/SPARABARA/', '/SUCAI/SPEARMAN/', '/SUCAI/STRATEGOS/', '/SUCAI/SAKAN_AXEMAN/', '/SUCAI/TARANTINE_CAVALRY/', '/SUCAI/TEMPLEGUARD/', '/SUCAI/TEUTONICKNIGHT/', '/SUCAI/THRACIAN_PELTAST/', '/SUCAI/TRACTIONTREBUCHET/', '/SUCAI/TWOHANDEDSWORDSMAN/', '/SUCAI/URUMISWORDSMAN/', '/SUCAI/WAR_CHARIOT/', '/SUCAI/WARCHARIOT/', '/SUCAI/WARDOG/', '/SUCAI/WARWAGON/', '/SUCAI/WARRIORPRIEST/', '/SUCAI/WINGEDHUSSAR/', '/SUCAI/WOADRAIDER/', '/SUCAI/XOLOTLWARRIOR/'];
 
@@ -733,6 +777,12 @@ interface WarMan {
     fadeMax: number;
     /** 攻击动作交替标志：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，两套攻击动作轮播 */
     atkFlip: boolean;
+    /**
+     * 落点散开偏移（出生时定死，终身不变；见 AIM_JITTER）。
+     * 只加在「全军共用的那个坐标」上（敌口/敌军重心），不加在「最近的那个敌兵」上。
+     */
+    jx: number;
+    jy: number;
     /** 本轮是否已放箭（远程）：动画播到放箭相位才射，避免箭和拉弓动作脱节 */
     shot?: boolean;
     /** 本轮是否已出刀/出枪（近战）：动画播到命中相位才触发刀光与火花 */
@@ -986,6 +1036,10 @@ export class Scene13WarLayer {
     private initPool: [number, number] = [1, 1];
     /** 尸体保留累加器（攒够 1 留一具）：确定性均匀，不随机斑驳。见 CORPSE_KEEP */
     private corpseAcc = 0;
+    /** 本场已打了多少秒（真实秒，开场列阵也算）。见 HARD_STOP_SEC / NO_KILL_SEC */
+    private battleSec = 0;
+    /** 最近一次有人阵亡的时刻（秒，battleSec 计）。长时间没人死 = 卡住了 */
+    private lastKillSec = 0;
 
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
@@ -1076,7 +1130,9 @@ export class Scene13WarLayer {
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.bank = {};
         this.pending = 0;
-        this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 10s）
+        this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 30s）
+        this.battleSec = 0;          // 本场计时归零（HARD_STOP_SEC / NO_KILL_SEC 都按它算）
+        this.lastKillSec = 0;
         this.enemyCen = [null, null];
         this.gm = new Map();
         this.gr = new Map();
@@ -1796,14 +1852,17 @@ export class Scene13WarLayer {
                 batch--;
                 const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
                 if (!tgt) break;
+                // 本兵终身固定的落点偏移（见 AIM_JITTER）：出生时抽一次，之后 aimAt 的共用坐标都加它
+                const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
+                const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
                 // 旗手身份出生时定死（勿改成每帧现挑，见 FLAG_EVERY）。
                 // 每个出兵口独立计数：本口每出满 FLAG_EVERY 个精灵出一面旗 → 旗帜按口平均分布。
                 s.spawned++;
                 const bearer = (s.spawned % FLAG_EVERY === 0);
                 this.men.push({
-                    f: s.f, key: s.key,
+                    f: s.f, key: s.key, jx, jy,
                     x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
-                    tx: tgt.x, ty: tgt.y, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
+                    tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     flag: bearer, fo: Math.random() * 600,
@@ -1956,9 +2015,11 @@ export class Scene13WarLayer {
      * 出兵口不再是攻击目标，只是「敌人在那边」的路标。
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
-        // ① 视野内最近的敌兵（找最近，不是逮到就算）
+        // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         const near = this.search(m, MARCH_R);
         if (near) return { x: near.x, y: near.y };
+        // ②③④ 都是全军共用的坐标 → 一律加本兵终身固定的散开偏移，把「一个点」摊成「一个面」（见 AIM_JITTER）
+        const jit = (p: { x: number; y: number }): { x: number; y: number } => ({ x: p.x + m.jx, y: p.y + m.jy });
         // ② 身边没人 → 朝**还在出兵的敌口**走（纵向加权 = 同一路优先）。
         //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。
         //    🔴 必须筛 pool>0：我一度不筛（想让空口继续当路标），结果上路敌人死光、上路敌口也空了之后，
@@ -1970,15 +2031,15 @@ export class Scene13WarLayer {
             const dd = (s.x - m.x) ** 2 + dy * dy;
             if (dd < bd) { bd = dd; best = { x: s.x, y: s.y }; }
         }
-        if (best) return best;
+        if (best) return jit(best);
         // ③ 敌口全空（收尾阶段）→ 扑向敌军重心，去补最后的刀。
         //    🔴 重心 = 全场敌人的平均位置 = 屏幕正中，只能当**兜底**：
         //       当主力兜底会让所有兵都往中间挤（主人 2026-08-11 实锤「上路兵下路兵怎么都去打中路」）。
         //       但战斗中途口都还有兵，走不到这一步，所以各路照样各走各的。
         const cen = this.enemyCen[1 - m.f];
-        if (cen) return cen;
+        if (cen) return jit(cen);
         // ④ 场上也没敌人了 → 随便找个敌口（正常打不到这一步）
-        for (const s of this.spawns) if (s.f !== m.f) return { x: s.x, y: s.y };
+        for (const s of this.spawns) if (s.f !== m.f) return jit({ x: s.x, y: s.y });
         return null;
     }
 
@@ -1996,6 +2057,21 @@ export class Scene13WarLayer {
 
     private step(dt: number): void {
         if (this.over) return;
+        // ── 保证这场仗一定会结束（见 NO_KILL_SEC / HARD_STOP_SEC）──
+        this.battleSec += dt;
+        if (this.battleSec > HARD_STOP_SEC) {
+            console.warn(`🏁 [Scene13War] 已打 ${this.battleSec.toFixed(0)}s 超过上限 ${HARD_STOP_SEC}s，按兵力比判负收场`);
+            this.diagPush('hardStop', { sec: +this.battleSec.toFixed(1) });
+            this.forceResultByRatio(0.85);
+            return;
+        }
+        // lastKillSec > 0 = 本场已经死过人；第一滴血之前不启用这条闸（开局双方还在相向而行）
+        if (this.lastKillSec > 0 && this.battleSec - this.lastKillSec > NO_KILL_SEC) {
+            console.warn(`🏁 [Scene13War] 连续 ${NO_KILL_SEC}s 无人阵亡（打转卡住），按兵力比判负收场`);
+            this.diagPush('noKillStall', { sec: +this.battleSec.toFixed(1) });
+            this.forceResultByRatio(0.85);
+            return;
+        }
         this.spawnTick(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) this.deployT -= dt;
@@ -2294,6 +2370,8 @@ export class Scene13WarLayer {
 
     /** 兵阵亡去向：累加器裁定留尸体（死亡动画→烙地面）还是溃逃（反向移动渐隐）——主人 2026-08-16 */
     private pushCorpse(m: WarMan): void {
+        // 死人打点：唯一的死亡入口，卡死检测（NO_KILL_SEC）就靠它。留尸/溃逃两条路都要记。
+        this.lastKillSec = this.battleSec;
         if (this.takeCorpseSlot()) {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: m.dir, t: 0 });
             return;
