@@ -79,14 +79,10 @@ export class BattleSceneLayer {
             this.strategyPausedByScene = false;
         }
 
-        // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起
+        // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起（记录状态供退出时还原）
         const game = (window as any).game;
-        if (game?.cameraFollowUI) {
-            game.cameraFollowUI.closeList();
-        }
-        if (game?.brawlFeedPanel) {
-            game.brawlFeedPanel.setExpanded(false);
-        }
+        game?.cameraFollowUI?.onEnterBattleScene13?.();
+        game?.brawlFeedPanel?.onEnterBattleScene13?.();
         const lMap = this.map?.getLeafletMap();
         if (!lMap) return;
         // 记住进入前 zoom，退出时带回（ZoomController.currentZoom 不感知 flyTo）
@@ -225,6 +221,10 @@ export class BattleSceneLayer {
             this.strategyPausedByScene = false;
             this.pauseHook?.setPaused(false);
         }
+        // [2026-08-17 主人需求] 13 战斗模式结束后，恢复展开军团面板与军情面板
+        const game = (window as any).game;
+        game?.cameraFollowUI?.onExitBattleScene13?.();
+        game?.brawlFeedPanel?.onExitBattleScene13?.();
         const lMap = this.map?.getLeafletMap();
         if (!lMap) return;
         if (Math.abs(lMap.getZoom() - this.preZoom) > 0.01) {
