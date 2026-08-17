@@ -464,11 +464,29 @@ const PROJ_SCALE = UNIT_PX / 64;
 const PROJ_TYPE: Record<string, string> = {
     fire_archer: 'PROJ_ARROW_FIRE',
     elite_fire_archer: 'PROJ_ARROW_FIRE',
+    rocket_cart: 'PROJ_ARROW_FIRE',
+    heavy_rocket_cart: 'PROJ_ARROW_FIRE',
+    skirmisher: 'PROJ_SPEAR',
+    elite_skirmisher: 'PROJ_SPEAR',
     imperial_skirmisher: 'PROJ_SPEAR',
+    genitour: 'PROJ_SPEAR',
+    elite_genitour: 'PROJ_SPEAR',
+    thracian_peltast: 'PROJ_SPEAR',
     arambai: 'PROJ_DART',
+    elite_arambai: 'PROJ_DART',
     throwing_axeman: 'PROJ_THROWING_AXE',
+    elite_throwing_axeman: 'PROJ_THROWING_AXE',
     ballista: 'PROJ_BOLT',
     ballista_elephant: 'PROJ_BOLT',
+    elite_ballista_elephant: 'PROJ_BOLT',
+    scorpion: 'PROJ_BOLT',
+    heavy_scorpion: 'PROJ_BOLT',
+    // 投石机/重炮（抛石弹/大炮弹，高抛弧线 + 落地冲击）
+    mangonel: 'PROJ_BALL',
+    onager: 'PROJ_BALL',
+    siege_onager: 'PROJ_BALL',
+    traction_trebuchet: 'PROJ_BALL',
+    mounted_trebuchet: 'PROJ_BALL',
     // 热兵器（2026-08-16 主人定：火枪/火炮/掷弹兵用 DE 独立抛射物）
     hand_cannoneer: 'PROJ_SHOT',
     janissary: 'PROJ_SHOT',
@@ -484,18 +502,26 @@ const PROJ_TYPE: Record<string, string> = {
 };
 /** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
 const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT']);
-/** 高抛弧线抛射物（炮弹/手榴弹）：弧高翻倍（投石式高抛）。 */
+/** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
+/** 具有火药发射炮口焰/枪口焰的火器单位。 */
+const FIREARM_TYPES = new Set([
+    'bombard_cannon', 'houfnice', 'hand_cannoneer',
+    'janissary', 'elite_janissary', 'royal_janissary',
+    'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun',
+]);
 /** 抛射物基准朝向偏移（素材竖向朝上 vs 横向朝东）：火枪弹竖向，旋转需 +90°。 */
 const PROJ_ANGLE_OFFSET: Record<string, number> = {
     PROJ_SHOT: Math.PI / 2,
 };
-/** 连弩连发箭数（AoE2 wiki：诸葛弩 3 支、精锐诸葛弩 5 支；其余远程每轮 1 支）。 */
+/** 连弩/火箭车连发箭数（AoE2 wiki：诸葛弩 3/5 支；风琴炮 5 弹；火箭车 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
     chukonu: 3,
     elite_chukonu: 5,
     organ_gun: 5,        // 风琴炮一次齐射 5 弹（AoE2 DE）
     elite_organ_gun: 5,
+    rocket_cart: 5,      // 火箭车/一窝蜂一次齐射 5 支火箭
+    heavy_rocket_cart: 5,
 };
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
@@ -2033,8 +2059,8 @@ export class Scene13WarLayer {
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
-                        // 火炮炮口焰：发射瞬间炮口火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
-                        if (proj === 'PROJ_BALL') this.muzzleFlash(m, ax, ay);
+                        // 火器炮口焰/枪口焰：发射瞬间火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
+                        if (FIREARM_TYPES.has(m.key)) this.muzzleFlash(m, ax, ay);
                     }
                 }
                 m.atkSt = m.st;
