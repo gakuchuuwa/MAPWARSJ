@@ -786,30 +786,104 @@ const ARROW_DUR = 0.42;
  * - 默认（常规弓弩/标枪等）：播到中点（ph=4，拉弓→放箭→收弓）。
  */
 const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
-    bombard_cannon: 1.0,
-    houfnice: 1.0,
-    organ_gun: 0.5,
-    elite_organ_gun: 0.5,
+    // [2026-08-17 补全] 用 DE 真实数据精确对齐每个远程兵种的放箭相位：
+    //   shootPhase = type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
+    //   替代此前只登记 26 个特殊兵种、其余远程全吃 DEFAULT=4 大锅饭的表（「远程动作和箭不同步」的次要根因）。
+    //   异常兜底：投石车 frame_delay=0（数据缺）保留观察值 0.5；精英/皇家苏丹亲兵 frame_delay=0（bug）沿用普通版 3.2；
+    //   精锐斯基泰骑射手 frame_delay=46 > 动画 45 帧 → clamp 7.5。
     mangonel: 0.5,
     onager: 0.5,
     siege_onager: 0.5,
-    traction_trebuchet: 1.5,
-    mounted_trebuchet: 2.5,
-    scorpion: 0.6,
-    heavy_scorpion: 0.6,
-    rocket_cart: 0.5,
-    heavy_rocket_cart: 0.5,
-    hand_cannoneer: 2.7,
-    janissary: 2.7,
-    elite_janissary: 2.7,
-    royal_janissary: 2.7,
-    conquistador: 4.0,
-    elite_conquistador: 4.0,
-    flamethrower: 4.0,
-    longbowman: 2.0,
-    elite_longbowman: 2.0,
-    mangudai: 2.0,
-    elite_mangudai: 2.0,
+    heavy_rocket_cart: 0.13,
+    rocket_cart: 0.13,
+    war_chariot_ranged: 0.8,
+    bombard_cannon: 0.93,
+    houfnice: 0.93,
+    ballista: 1.6,
+    elite_mameluke: 1.6,
+    elite_organ_gun: 1.6,
+    heavy_scorpion: 1.6,
+    organ_gun: 1.6,
+    scorpion: 1.6,
+    traction_trebuchet: 1.78,
+    conquistador: 2.31,
+    elite_conquistador: 2.31,
+    chukonu: 2.53,
+    elite_chukonu: 2.53,
+    fire_archer: 2.67,
+    longbowman_elite: 2.67,
+    elite_fire_archer: 2.67,
+    pattiyoda_longbowman: 2.67,
+    amazon_archer: 2.67,
+    elite_plumed_archer: 2.67,
+    longbowman: 2.67,
+    plumed_archer: 2.67,
+    kipchak: 2.8,
+    elite_kipchak: 2.8,
+    mounted_trebuchet: 2.8,
+    mangudai: 3.07,
+    mangudai_elite: 3.07,
+    elite_composite_bowman: 3.2,
+    composite_bowman: 3.2,
+    ballista_elephant: 3.2,
+    elephant_archer: 3.2,
+    elite_ballista_elephant: 3.2,
+    elite_elephant_archer: 3.2,
+    elite_genitour: 3.2,
+    genitour: 3.2,
+    janissary: 3.2,
+    elite_janissary: 3.2,
+    royal_janissary: 3.2,
+    mameluke: 3.2,
+    tarantine_cavalry: 3.2,
+    elite_guecha_warrior: 3.33,
+    guecha_warrior: 3.33,
+    imperial_skirmisher: 3.38,
+    elite_skirmisher: 3.38,
+    skirmisher: 3.38,
+    thracian_peltast: 3.38,
+    arbalest: 3.56,
+    elite_hussite_wagon: 3.56,
+    hussite_wagon: 3.56,
+    elite_ratha_ranged: 3.73,
+    grenadier: 3.73,
+    ratha_ranged: 3.73,
+    rhodian_slinger: 3.73,
+    slinger: 3.73,
+    arambai: 4.0,
+    crossbowman: 4.0,
+    archer: 4.0,
+    crossbow: 4.0,
+    blackwood_archer: 4.0,
+    camel_archer: 4.0,
+    chakram_thrower: 4.0,
+    elite_arambai: 4.0,
+    elite_blackwood_archer: 4.0,
+    elite_camel_archer: 4.0,
+    elite_chakram_thrower: 4.0,
+    elite_gbeto: 4.0,
+    elite_genoese_crossbowman: 4.0,
+    gbeto: 4.0,
+    genoese_crossbowman: 4.0,
+    hand_cannoneer: 4.0,
+    immortal_ranged: 4.0,
+    rattan_archer: 4.09,
+    rattan_archer_elite: 4.09,
+    cretan_archer: 4.27,
+    throwing_axeman: 4.98,
+    elite_throwing_axeman: 4.98,
+    bactrian_archer: 5.07,
+    bolas_rider: 5.07,
+    elite_bolas_rider: 5.07,
+    phalangite: 5.07,
+    elite_war_wagon: 5.69,
+    war_wagon: 5.69,
+    cav_archer_heavy: 6.13,
+    cav_archer: 6.22,
+    xianbei_raider: 6.22,
+    horse_archer: 6.22,
+    scythian_horse_archer: 6.22,
+    elite_scythian_horse_archer: 7.5,
 };
 const DEFAULT_SHOOT_PHASE = 4;
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
@@ -1356,6 +1430,8 @@ export class Scene13WarLayer {
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
     private stallReported = false;
+    /** 首批素材是否已经全部就绪过一次：之后再有素材加载都不许冻结演出（见 tick 里那道闸） */
+    private assetsReadyOnce = false;
 
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
@@ -1450,6 +1526,7 @@ export class Scene13WarLayer {
         this.battleSec = 0;          // 本场计时归零（HARD_STOP_SEC / NO_KILL_SEC 都按它算）
         this.lastKillSec = 0;
         this.stallReported = false;
+        this.assetsReadyOnce = false;
         this.enemyCen = [null, null];
         this.gm = new Map();
         this.gr = new Map();
@@ -1507,6 +1584,15 @@ export class Scene13WarLayer {
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key);
+                    // 🔴 [2026-08-17 修·「刚一交战就卡一下」] 抛射物素材必须**开战前**就跟着兵种一起预载。
+                    //    原来是第一次放箭那一刻才 ensureProj（懒加载），而 ensureProj 会把 pending +1，
+                    //    tick() 只要 pending>0 就整场 return —— 不推进也不渲染。
+                    //    于是每个远程兵种第一次出手，整个战场**当场冻住**，等一次 meta.json + 一张图
+                    //    （两趟请求，冷启动时几百毫秒）。主人实锤：「每次远程准备攻击的时候就卡一下」。
+                    //    放到这里 = 并进开场那批素材，由列阵待命阶段吸收，战斗中途不再有任何懒加载。
+                    //    口径与出手那一处保持一致：射程 > 65 才会真的放弹丸，未登记的一律落 PROJ_ARROW。
+                    if (statsOf(key).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
+                    if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
                     // 布局：row 0 最靠中线（越靠前越深入敌阵）；三阵型 9 口走 LAYOUT 查找表
                     const cell = LAYOUT[mode][idx];
                     const back = mx + (2 - cell.row) * depth;
@@ -2553,10 +2639,13 @@ export class Scene13WarLayer {
                 } else {
                     // 攻击动画推进：
                     // 动作以自然节奏（~1.2-1.5s）播满 8 相位后收势，长装填兵种（火炮 6.5s、火枪 3.45s 等）在发射后等待装填完毕。
+                    // 🔴 [2026-08-17 定] 职责划分：**ph 只管计时，"播一遍还是循环"由渲染层决定**。
+                    //    所以这里不再给 ph 封顶（封顶会让装填期的待命帧定格在第 0 帧不动）：
+                    //      · 攻击类帧（atk/charge/melee）渲染时 clamp 到末帧 → 播满自然停住；
+                    //      · 待命/移动帧渲染时取模循环 → ph 继续涨才能动起来。
+                    //    动作节奏固定 ~1.5s 播完一遍，装填时间另算（长装填兵种播完就回待命站姿）。
                     const animDur = Math.min(reloadTime, 1.5);
-                    if (m.ph < 8) {
-                        m.ph += dt * 8 / animDur;
-                    }
+                    m.ph += dt * 8 / animDur;
                     // 放箭/开火：动画播到该兵种专属发射相位（shootPhase）才射出，和动作对齐。
                     // 只有真正在放箭/开火的那一轮才有弹丸：被贴身改白刃（st=2）或处于攻城盲区（minRange）时不射。
                     // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭/炮弹/弹丸），
@@ -2659,6 +2748,10 @@ export class Scene13WarLayer {
                 if ((m.lock ?? 0) > 0) {
                     m.lock -= dt;
                     m.st = (m.atkSt || 1) as 0 | 1 | 2;
+                    // 🔴 [2026-08-17 修] 目标消失后收势：攻击动画**播完就停在末帧**，
+                    //    不再从头无限循环（这就是「像得了羊癫疯」的直接来源）。
+                    //    停住这件事由渲染层的 clamp 负责，这里照常推进 ph（见上「职责划分」），
+                    //    ph 继续涨，装填完那一刻若还没敌人就正好接上待命帧循环。
                     m.ph += dt * 8 / 1.5;
                     continue;
                 }
@@ -2678,7 +2771,10 @@ export class Scene13WarLayer {
                 }
             }
             if (m.fadeT > 0) m.fadeT -= dt;
-            m.ph += dt * (m.st ? 8 / 1.5 : 8);
+            // 🔴 [2026-08-17 修] 只有走路（st=0）在循环尾部推进 ph。攻击（st=1/2）的 ph 已在
+            //    攻击分支（animDur 速度，见上「攻击动画推进」）或收势分支（foe 消失 lock>0）推进过——
+            //    这里再推一次 = 双重推进，攻击动画快近一倍，箭射出的相位和拉弓动作脱节（「远程动作和箭不同步」根因）。
+            if (m.st === 0) m.ph += dt * 8;
         }
 
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
@@ -2836,7 +2932,12 @@ export class Scene13WarLayer {
             return;
         }
         if (!this.active) return;
-        if (this.pending > 0) {
+        // 🔴 [2026-08-17 修·根治「加载什么都会卡一下」] 这道等素材的闸**只在开战前**有效。
+        //    开战后再有任何素材没就绪，都不许冻结整场：`return` 掉的是 step + render，
+        //    也就是全场静止一下 —— 主人反复报的「刚一交战卡一下」「打到一半卡一下」都是它。
+        //    开战后缺图不影响推演：抛射物渲染本来就是「img 未就绪跳过不画」，顶多少画几支箭。
+        //    （这一版还顺手把抛射物挪到开场预载了，正常已经不会走到这条；留着是防下一次有人再加懒加载。）
+        if (this.pending > 0 && !this.assetsReadyOnce) {
             // 🔴 [2026-08-11 实锤] 素材 pending 卡死 = 演出冻结 + 引擎冻结（scene13Frozen）
             //    → 跟随军团永远不动、战斗面板数字不动（主人截图实锤）。
             //    素材若 30 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
@@ -2859,6 +2960,8 @@ export class Scene13WarLayer {
         //      双方场上还各有 291/288 精灵、池里还有 1050/1203 —— 图其实是秒回的，纯属计时器记错了起点。
         //    归零后：30 秒只用来兜「这一次真的卡住不动」，正常懒加载几毫秒就过去，不再误杀。
         this.pendingStartedAt = 0;
+        // 首批素材齐了 → 从此这场仗不再为任何素材停下（见上面那道闸）
+        if (this.pending <= 0) this.assetsReadyOnce = true;
         if (!this.diagAssetsReady) {   // 素材就绪的那一刻打点（诊断用，见 diagPush）
             this.diagAssetsReady = true;
             this.diagPush('assetsReady');
@@ -2896,7 +2999,7 @@ export class Scene13WarLayer {
         if (!ctx || !cv) return;
         ctx.clearRect(0, 0, cv.width, cv.height);
 
-        const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number }[] = [];
+        const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number }[] = [];
         // 湖：贴地水域，画在最底层（ground 尸体层之下），不参与 y 排序；本季一张图，随机镜像
         for (const lk of this.lakes) {
             if (!lk.img) continue;
@@ -2954,11 +3057,20 @@ export class Scene13WarLayer {
                 const odd = Math.floor(m.ph / CHARGE_CYCLE) % 2 === 1;
                 set = (hasChg && odd) ? 'charge' : 'move';
             }
+            // 🔴 [2026-08-17] 攻击动作播完、还在等装填 → 回待命姿势，别定格在最后一帧。
+            //    DE 的做法就是这样：攻击动画只播一遍，播完回 idle 站姿，装填走它自己的计时。
+            //    不加这条的话，长装填兵种会**保持挥/举的姿势僵住好几秒**：
+            //    动作固定 1.5s 播完，而火炮装填 6.5s（僵 5s）、牵引投石机 11s（僵 9.5s）。
+            //    （短装填兵种 reload≈2s 只僵 0.5s，本来就看不出来。）
+            //    没有 idle 素材的兵种退回原样定格末帧 —— 绝不退回 move，站着原地迈腿更假。
+            else if (m.ph >= 8 && (m.lock ?? 0) > 0 && this.bank[m.key]?.sets.idle?.[0]?.length) {
+                set = 'idle';
+            }
             else if (m.st === 2) set = 'melee';
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
-            vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade });
+            vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
         }
         vis.sort((a, b) => a.y - b.y);
 
@@ -2982,7 +3094,9 @@ export class Scene13WarLayer {
             const n = b.frames[v.set] ?? 8;
             const fr = v.set === 'die'
                 ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
-                : Math.floor(v.fr * n / 8) % n;                        // 活人：8 相位/秒 → 换算该动作帧号
+                : (v.set === 'move' || v.set === 'idle' || v.st === 0)
+                    ? Math.floor(v.fr * n / 8) % n                     // 移动/待命/走路：循环
+                    : Math.min(n - 1, Math.floor(v.fr * n / 8));       // 攻击/近战/冲锋：播满停末帧（ph=8 不再溢出回第一帧）
             if (v.a < 1) ctx.globalAlpha = v.a;
             const dm = b.dyn?.[v.set]?.[v.dir];
             if (dm) {
