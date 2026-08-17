@@ -4142,11 +4142,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/WEST_ASIA/__闲��__WEST_ASIA_14.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_16.png": {
             "scale": 1.08,
             "offsetX": 0,
@@ -5867,11 +5862,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/LATIN/baizanting_fulajimier.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/SLAVIC/dabolan_puremeisi.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -6586,6 +6576,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -29
+        },
+        "/assets/LATIN/0723d971-d438-4f9d-8225-9f325a6e74a6.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/96f58f3d-76b6-4c6a-aa32-0e61cd2f53de.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/LATIN/__闲置__LATIN_13.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/LATIN/baizanting_fulajimier.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {
