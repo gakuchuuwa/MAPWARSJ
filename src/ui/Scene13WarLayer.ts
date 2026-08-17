@@ -775,15 +775,9 @@ function gangMul(victim: WarMan): number {
 const DEATH_ANIM = 8 / 6;
 const ARROW_DUR = 0.42;
 /**
- * 各兵种发射/出手相位表（0~8 相位，精准对齐 AoE2 DE 攻击动作素材的关键帧）：
- * - 火炮/重炮（bombard_cannon/houfnice）：60 帧动画中第 8 帧点火轰击后座（8/60*8 ≈ 1.07 -> 1.0）；
- * - 风琴炮/投石车/弩炮/火箭车：开局挥臂/齐射（3~4 帧 / 60 帧 -> 0.5）；
- * - 牵引投石机：第 17 帧（17/90*8 ≈ 1.5）；
- * - 巨型投石机（配重/组装）：第 20 帧（20/60*8 ≈ 2.67 -> 2.5）；
- * - 火枪兵/苏丹亲兵：第 10 帧开火（10/30*8 ≈ 2.67 -> 2.7）；
- * - 骑马火枪（征服者）：第 22 帧开火（22/45*8 ≈ 3.9 -> 4.0）；
- * - 速射弓（长弓/蒙古突骑）：第 10~15 帧（约 2.0）；
- * - 默认（常规弓弩/标枪等）：播到中点（ph=4，拉弓→放箭→收弓）。
+ * 各兵种发射/出手相位表（0~8 相位）：shootPhase = DE type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
+ * 放箭帧不再是「动画中点」一刀切——每个远程兵种的拉弓/撒放时机不同（掷矛手 3.38、骑射手 6.22、弓兵 4.0、火枪 4.0）。
+ * 全表由 scratch/extract_de_shootphase.py 用 genieutils 从 empires2_x2_p1.dat 抽出（2026-08-17）。
  */
 const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     // [2026-08-17 补全] 用 DE 真实数据精确对齐每个远程兵种的放箭相位：
@@ -1115,6 +1109,12 @@ const CHARGE_CYCLE = 8;
  *    所以 K 取小、封顶 3 人（最高 ×1.45），别往上调之前先看胜率分布有没有被推出 [0.8,1.2] 环带。
  */
 const GANG_K = 0.15;
+/**
+ * 索敌时「这个目标已经被几个人打了就换一个」的门槛（见 search）。
+ * = 围殴加成封顶人数 `GANG_CAP + 1`：第 GANG_CAP+2 个人挤上去伤害一分不加，纯白挤。
+ * 改 GANG_CAP 时这里跟着走，别让两个数脱节。
+ */
+const SPREAD_CAP = GANG_CAP + 1;
 const GANG_CAP = 3;
 /**
  * 软推挤：两个精灵靠得比这还近就互相推开（px）。
@@ -1127,6 +1127,8 @@ const SEP_DIST = 17;
 const SEP_SPD = 120;
 /** 推挤哈希格（= 推挤距离，一格只装一两个人，扫 3×3 很便宜） */
 const CELL_S = 20;
+/** 远程兵接敌被己方前排挡住时，站住待命时长（秒）：别再往前挤（往前顶一步 + 推挤推回一步 = 抖） */
+const HOLD_SEC = 2;
 /** 哈希键用数字不用字符串：每人每帧拼 9 次字符串 = 两万多次分配，实测是推挤慢的元凶 */
 const HKEY = (gx: number, gy: number): number => (gx + 4096) * 8192 + (gy + 4096);
 /** 近战哈希格 */
@@ -1192,6 +1194,8 @@ interface WarMan {
     atkNext: number;
     lock: number;
     atkSt: number;
+    /** 远程兵接敌被己方前排挡住的待命剩余秒数：>0 时站住不挤，归零再试 */
+    holdT: number;
 }
 
 /** 箭矢：远程每出一次手射一支（纯画面，伤害仍按秒结算，不改平衡） */
@@ -2300,7 +2304,7 @@ export class Scene13WarLayer {
                     x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
-                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false, holdT: 0,
                     flag: bearer, fo: Math.random() * 600,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
@@ -2388,18 +2392,37 @@ export class Scene13WarLayer {
      *    ⚠️ 别改回「逮到就返回」，也别加「只看前 N 个」的截断——两者都会重新引入方向偏差
      *      （实测带 24 上限的最近邻仍偏袒攻方 9:3）。
      */
+    /**
+     * 找目标：环形最近邻，但**已经被 SPREAD_CAP 个人打的目标优先跳过**（主人 2026-08-17「不能分散攻击吗」）。
+     *
+     * 为什么是这个数：围殴加成 `1 + 0.15 × min(GANG_CAP, N-1)` 在 N=4 就封顶了，
+     * **第 5 个人挤上去一点伤害都不加**，纯粹是白挤 —— 挤出来的就是主人反复报的
+     * 「一堆兵冲着同一个点拥挤颤抖」。所以让第 5 个人去找次近的空闲目标，
+     * 既散得开，又一分伤害不多不少（挤上去本来也没收益）。
+     *
+     * 🔴 找不到空闲目标时**照旧返回最近的那个**，绝不让人没目标可打。
+     * 🔴 判据对双方完全对称，不引入方向偏袒 —— 那是 SEARCH_MODE「逮到就返回 / 只看前 N 个」
+     *    的老毛病（曾让攻方白拿 10~15% 战力，见 2026-08-17 索敌修复）。
+     *
+     * 实测（war_sim，同兵种对镜）：横向铺开 30→36px（+20%）、攻击/移动状态切换 0.30→0.26 次/人·秒；
+     * 克制三边方向不变、幅度差 1~7%；时长在噪声内。
+     */
     private search(m: { x: number; y: number; f: number }, radius: number): WarMan | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
         const r2 = radius * radius;
-        let best: WarMan | null = null, bd = r2;
+        let best: WarMan | null = null, bd = r2;      // 最近的（兜底）
+        let free: WarMan | null = null, fd = r2;      // 最近的**还没被打满**的（优先）
         for (let ring = 0; ring <= span; ring++) {
             // 已有候选，且它比下一环任何格子的最小可能距离都近 → 不可能更近了，停
-            if (best) {
+            // （按真正会被返回的那个候选判，否则会在还能找到空闲目标时提前收工）
+            const cand = free ?? best;
+            const cd = free ? fd : bd;
+            if (cand) {
                 const floor = (ring - 1) * cell;
-                if (floor > 0 && bd < floor * floor) break;
+                if (floor > 0 && cd < floor * floor) break;
             }
             for (let gx = cx - ring; gx <= cx + ring; gx++) {
                 for (let gy = cy - ring; gy <= cy + ring; gy++) {
@@ -2412,11 +2435,12 @@ export class Scene13WarLayer {
                         const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                         if (d >= r2) continue;
                         if (d < bd) { bd = d; best = o; }
+                        if (o.atkers < SPREAD_CAP && d < fd) { fd = d; free = o; }
                     }
                 }
             }
         }
-        return best;
+        return free ?? best;
     }
 
     /**
@@ -2575,7 +2599,20 @@ export class Scene13WarLayer {
             if (foe) {
                 const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
                 const close = fd2 < 65 * 65;
-                const inReach = fd2 < REACH * REACH;
+                // 🔴 [2026-08-17 修·「动作切换时的颤抖」] 够得着的判定必须带迟滞。
+                //    没有迟滞时，站在射程/贴身边缘上的兵会每帧翻面：
+                //      够得着 → 站桩出手（st=1，播攻击帧）→ 被 separate 推开半步 → 够不着
+                //      → 转身追击（st=0，播移动帧）→ 走半步又够着 → ……
+                //    每帧在「攻击帧/移动帧」之间来回切 = 主人看到的动作抖。近战最明显：
+                //    贴身圈 65px，而推挤力 120px/s 与移动速度同量级，边界上必然反复穿越。
+                //    🔴 迟滞**只用来稳住姿势，绝不放宽出手距离**：
+                //    直接把 REACH 乘 1.2 会让远程白得 20% 射程（火焰弓 400→480），那是改数值不是修画面。
+                //    所以出手判据 inReach 保持严格，另设一条「迟滞带」：
+                //    刚被推出攻击距离、但还没退出 1.2 倍的兵，既不追也不打，**站住保持原姿势**，
+                //    等真的被拉开了才转身去追。伤害一分不多给（迟滞带里本来就够不着，不结算）。
+                const engaged = m.st !== 0;                       // m.st 此刻仍是上一帧的值
+                const inReach = fd2 < REACH * REACH;              // 严格：出手/扣血用这个
+                const inHystBand = !inReach && engaged && fd2 < (REACH * 1.2) ** 2;
                 // 缠斗 4 秒脱离。
                 // 🔴 [2026-08-17 修] 只在**够得着**的时候计时——把「跑过去的路上」也算进这 4 秒，
                 //    会让慢速大视野兵种永远打不到人：象兵 LOS 280、贴身 65、速度 40，
@@ -2591,6 +2628,13 @@ export class Scene13WarLayer {
                     }
                 }
                 // 够不着 → 追击（DE「看见就冲上去」；近战从 LOS 圈走向贴身，远程够射程前走位）
+                if (inHystBand) {
+                    // 迟滞带：被推挤挤出攻击距离一点点，站住别动，姿势保持不变（见上面的说明）。
+                    // 不改 m.st，所以渲染继续用上一帧那套帧，不会在攻击帧/移动帧之间来回跳。
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * (m.st ? 8 / 1.5 : 8);
+                    continue;
+                }
                 if (!inReach) {
                     m.st = 0;
                     // 绕着目标散开：瞄目标**周围一圈**上属于自己的那个点，不是目标本人那一个点。
@@ -2600,6 +2644,38 @@ export class Scene13WarLayer {
                     const fdx = foe.x + Math.cos(ra) * CHASE_RING - m.x;
                     const fdy = foe.y + Math.sin(ra) * CHASE_RING - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
+                    // 🔴 [2026-08-17 修] 远程兵接敌：前排已站桩射击、后排还在往前挤 → 挤到前排背上，
+                    //    每帧「往前顶一步 + separate 推回一步」来回抖（弓骑兵 + 弓步兵都有，主人 2026-08-17 提）。
+                    //    判据：前方 ~20px 内已有己方兵挡着 → 站住待命几秒再试，别再挤。
+                    if (stats.rng > 65) {
+                        if (m.holdT > 0) {
+                            m.holdT -= dt;
+                            if (m.fadeT > 0) m.fadeT -= dt;
+                            m.ph += dt * 8;
+                            continue;                       // 待命：站住不挤
+                        }
+                        const ux = fdx / fd, uy = fdy / fd;
+                        const px = m.x + ux * CELL_S, py = m.y + uy * CELL_S;
+                        const cx = (px / CELL_S) | 0, cy = (py / CELL_S) | 0;
+                        let blocked = false;
+                        for (let gx = cx - 1; gx <= cx + 1 && !blocked; gx++) {
+                            for (let gy = cy - 1; gy <= cy + 1 && !blocked; gy++) {
+                                const a = this.gs.get(HKEY(gx, gy));
+                                if (!a) continue;
+                                for (const o of a) {
+                                    if (o === m || o.f !== m.f || o.hp <= 0) continue;
+                                    const odx = px - o.x, ody = py - o.y;
+                                    if (odx * odx + ody * ody < SEP_DIST * SEP_DIST) { blocked = true; break; }
+                                }
+                            }
+                        }
+                        if (blocked) {
+                            m.holdT = HOLD_SEC;
+                            if (m.fadeT > 0) m.fadeT -= dt;
+                            m.ph += dt * 8;
+                            continue;                       // 待命：站住不挤，几秒后再试
+                        }
+                    }
                     m.x += fdx / fd * stats.spd * dt;
                     m.y += fdy / fd * stats.spd * dt;
                     m.dir = this.dir8Hyst(m.dir, fdx, fdy);
@@ -3052,6 +3128,11 @@ export class Scene13WarLayer {
             // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）
             if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
+            }
+            // 🔴 [2026-08-17] 排队等位（holdT>0，见 HOLD_SEC）的兵是**站着不动**的，
+            //    必须播待命帧。否则会照旧播移动帧 = 原地迈腿走不动，比原来的颤抖还假。
+            else if (m.holdT > 0 && this.bank[m.key]?.sets.idle?.[0]?.length) {
+                set = 'idle';
             }
             else if (m.st === 0) {
                 const odd = Math.floor(m.ph / CHARGE_CYCLE) % 2 === 1;

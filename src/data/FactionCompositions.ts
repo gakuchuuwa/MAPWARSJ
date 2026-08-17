@@ -43,13 +43,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑
         ],
     },
-    // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，雁行阵 4+3+2：马其顿方阵兵 + 克里特弓手 + 伙伴骑兵）
+    // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，雁行阵 4+3+2：马其顿方阵兵 + 伙伴骑兵 + 克里特弓手）
     maqidun: {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 托勒密（亚历山大旧部，套用亚历山大帝国军团配置）
@@ -57,8 +57,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 塞琉古帝国（安提俄基亚 · 塞琉古一世/安条克，银盾方阵体系）
@@ -66,8 +66,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 佩尔加蒙（欧迈尼斯 · 亚历山大王家秘书长与近卫方阵统帅）
@@ -75,8 +75,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 贝雷尼斯（托勒密二世 · 托勒密王朝红海据点）
@@ -84,8 +84,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
@@ -93,8 +93,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
-            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
-            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
     // 日本战国·织田信长军团（雁行阵 4+3+2：精锐武士 4 + 藤弓兵 3 + 忍者 2）
