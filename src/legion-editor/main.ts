@@ -980,9 +980,11 @@ function renderTable(): void {
 
 function getFormationModeLabel(mode: FormationMode): string {
     switch (mode) {
-        case 'square': return '3×3 鱼鳞';
+        case 'fish_scale': return '3+4+2 鱼鳞';
         case 'triangle': return '2+3+4 三角';
         case 'echelon': return '4+3+2 雁行';
+        case 'crane_wing': return '2+4+3 鹤翼';
+        case 'square': return '3+3+3 方阵';
         default: return mode;
     }
 }
@@ -1022,7 +1024,13 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     const rowLabels = mode === 'triangle'
         ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人)']
-        : (mode === 'echelon' ? ['前排宽阵 (4人)', '中坚力量 (3人)', '后排压阵 (2人)'] : ['前排战线 (3人)', '中列核心 (3人)', '后排远程 (3人)']);
+        : (mode === 'echelon'
+            ? ['前排宽阵 (4人)', '中坚力量 (3人)', '后排压阵 (2人)']
+            : (mode === 'fish_scale'
+                ? ['前排抵挡 (3人)', '中阔鳞叠 (4人)', '后排尾收 (2人)']
+                : (mode === 'crane_wing'
+                    ? ['前排双锋 (2人)', '两翼展开 (4人)', '后排中军 (3人)']
+                    : ['前排正线 (3人)', '中列核心 (3人)', '后排压阵 (3人)'])));
 
     // 归一化 slot
     const row1Type = slots[0]?.type || 'swordsman';
@@ -1057,10 +1065,10 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span>1. 阵型选择</span>
         <span style="font-size:11px;color:#a89f8f;font-weight:normal;">全阵型均为 9 人</span>
       </div>
-      <div class="le-mode-grid">
-        <div class="le-mode-btn ${mode === 'square' ? 'active' : ''}" data-mode="square">
-          <div>3×3 鱼鳞阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">步前 / 骑中 / 弓后</div>
+      <div class="le-mode-grid" style="grid-template-columns: repeat(5, 1fr);">
+        <div class="le-mode-btn ${mode === 'fish_scale' ? 'active' : ''}" data-mode="fish_scale">
+          <div>3+4+2 鱼鳞阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">前抵 / 鳞叠 / 尾收</div>
         </div>
         <div class="le-mode-btn ${mode === 'triangle' ? 'active' : ''}" data-mode="triangle">
           <div>2+3+4 三角阵</div>
@@ -1069,6 +1077,14 @@ function renderEditPanel(row: FactionLegionRow): void {
         <div class="le-mode-btn ${mode === 'echelon' ? 'active' : ''}" data-mode="echelon">
           <div>4+3+2 雁行阵</div>
           <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">宽正面远程展开</div>
+        </div>
+        <div class="le-mode-btn ${mode === 'crane_wing' ? 'active' : ''}" data-mode="crane_wing">
+          <div>2+4+3 鹤翼阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">两翼合围包抄</div>
+        </div>
+        <div class="le-mode-btn ${mode === 'square' ? 'active' : ''}" data-mode="square">
+          <div>3+3+3 方阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">九宫等边固守</div>
         </div>
       </div>
     </div>
@@ -1306,40 +1322,18 @@ function updateRowUnit(legion: CustomFactionLegion, rowIdx: number, unitId: stri
     const def = DE_UNITS_MAP.get(unitId);
     const defScale = def?.defaultScale ?? 1.0;
 
-    if (mode === 'square') {
-        // 5 slots: 0(前3), 1(中左), 2(中中), 3(中右), 4(后3)
-        if (rowIdx === 0) {
-            legion.slots[0] = { type: unitId, count: 3, scale: legion.slots[0]?.scale ?? defScale };
-        } else if (rowIdx === 1) {
-            legion.slots[1] = { type: unitId, count: 1, scale: legion.slots[1]?.scale ?? defScale };
-            legion.slots[2] = { type: unitId, count: 1, scale: legion.slots[2]?.scale ?? defScale };
-            legion.slots[3] = { type: unitId, count: 1, scale: legion.slots[3]?.scale ?? defScale };
-        } else if (rowIdx === 2) {
-            legion.slots[4] = { type: unitId, count: 3, scale: legion.slots[4]?.scale ?? defScale };
-        }
-    } else if (mode === 'triangle') {
-        const counts = [2, 3, 4];
-        legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
-    } else if (mode === 'echelon') {
-        const counts = [4, 3, 2];
-        legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
-    }
+    let counts = [3, 3, 3];
+    if (mode === 'triangle') counts = [2, 3, 4];
+    else if (mode === 'echelon') counts = [4, 3, 2];
+    else if (mode === 'fish_scale') counts = [3, 4, 2];
+    else if (mode === 'crane_wing') counts = [2, 4, 3];
+    else if (mode === 'square') counts = [3, 3, 3];
+
+    legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
 }
 
 function updateRowScale(legion: CustomFactionLegion, rowIdx: number, scale: number): void {
-    const mode = legion.formationMode;
-    if (mode === 'square') {
-        if (rowIdx === 0 && legion.slots[0]) legion.slots[0].scale = scale;
-        else if (rowIdx === 1) {
-            // 🔴 [2026-08-16 修] 中坚三个槽（左/中/右）必须一起缩放，与 updateRowUnit 改兵种同口径。
-            //    之前漏了 slots[2]（中中），改缩放时中间那个兵不动、左右动，预览里中坚三兵大小不一。
-            if (legion.slots[1]) legion.slots[1].scale = scale;
-            if (legion.slots[2]) legion.slots[2].scale = scale;
-            if (legion.slots[3]) legion.slots[3].scale = scale;
-        } else if (rowIdx === 2 && legion.slots[4]) legion.slots[4].scale = scale;
-    } else {
-        if (legion.slots[rowIdx]) legion.slots[rowIdx].scale = scale;
-    }
+    if (legion.slots[rowIdx]) legion.slots[rowIdx].scale = scale;
 }
 
 // ============================================================
@@ -2023,28 +2017,67 @@ function startCanvasPreview(): void {
             // 后2 (r=2, c=-0.5, 0.5)
             addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
             addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
-        } else {
+        } else if (mode === 'fish_scale') {
             const t0 = slots[0]?.type || 'swordsman';
             const s0 = (slots[0]?.scale ?? 1.0) * pScale;
             const t1 = slots[1]?.type || 'lancer';
             const s1 = (slots[1]?.scale ?? 1.0) * pScale;
-            const t1c = slots[2]?.type || t1;
-            const s1c = (slots[2]?.scale ?? s1) * pScale;
-            const t2 = slots[4]?.type || 'archer';
-            const s2 = (slots[4]?.scale ?? 1.0) * pScale;
+            const t2 = slots[2]?.type || 'archer';
+            const s2 = (slots[2]?.scale ?? 1.0) * pScale;
 
-            // 前3 (r=0)
-            addUnitWithRot(-spacingX, -spacingY, t0, s0, '');
+            // 前3 (r=0, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, -spacingY, t0, s0, '');
             addUnitWithRot(0, -spacingY, t0, s0, '');
-            addUnitWithRot(spacingX, -spacingY, t0, s0, '');
-            // 中3 (r=1)
-            addUnitWithRot(-spacingX, 0, t1, s1, '');
-            addUnitWithRot(0, 0, t1c, s1c, '');
-            addUnitWithRot(spacingX, 0, t1, s1, '');
-            // 后3 (r=2)
-            addUnitWithRot(-spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(1.0 * spacingX, -spacingY, t0, s0, '');
+            // 中4 (r=1, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(1.5 * spacingX, 0, t1, s1, '');
+            // 后2 (r=2, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
+        } else if (mode === 'crane_wing') {
+            const t0 = slots[0]?.type || 'swordsman';
+            const s0 = (slots[0]?.scale ?? 1.0) * pScale;
+            const t1 = slots[1]?.type || 'lancer';
+            const s1 = (slots[1]?.scale ?? 1.0) * pScale;
+            const t2 = slots[2]?.type || 'archer';
+            const s2 = (slots[2]?.scale ?? 1.0) * pScale;
+
+            // 前2 (r=0, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0.5 * spacingX, -spacingY, t0, s0, '');
+            // 中4 (r=1, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(1.5 * spacingX, 0, t1, s1, '');
+            // 后3 (r=2, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, spacingY, t2, s2, '');
             addUnitWithRot(0, spacingY, t2, s2, '');
-            addUnitWithRot(spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(1.0 * spacingX, spacingY, t2, s2, '');
+        } else {
+            // square: 3+3+3 方阵
+            const t0 = slots[0]?.type || 'swordsman';
+            const s0 = (slots[0]?.scale ?? 1.0) * pScale;
+            const t1 = slots[1]?.type || 'lancer';
+            const s1 = (slots[1]?.scale ?? 1.0) * pScale;
+            const t2 = slots[2]?.type || 'archer';
+            const s2 = (slots[2]?.scale ?? 1.0) * pScale;
+
+            // 前3 (r=0, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0, -spacingY, t0, s0, '');
+            addUnitWithRot(1.0 * spacingX, -spacingY, t0, s0, '');
+            // 中3 (r=1, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0, 0, t1, s1, '');
+            addUnitWithRot(1.0 * spacingX, 0, t1, s1, '');
+            // 后3 (r=2, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0, spacingY, t2, s2, '');
+            addUnitWithRot(1.0 * spacingX, spacingY, t2, s2, '');
         }
     }
 

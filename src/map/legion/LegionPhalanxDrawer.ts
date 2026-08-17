@@ -49,6 +49,30 @@ export class LegionPhalanxDrawer {
         { r: 2, c: -0.5 }, { r: 2, c: 0.5 },
     ] as const;
 
+    /** 主阵·鱼鳞 3+4+2（9 格位）：前排 3（排 0），中阔鳞叠 4（排 1），后收尾 2（排 2）。
+     *  2026-08-18 主人定：鱼鳞阵升级为 3-4-2（前抵·鳞叠·尾收）。 */
+    private static readonly FISH_SCALE_9_LAYOUT = [
+        { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
+        { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
+        { r: 2, c: -0.5 }, { r: 2, c: 0.5 },
+    ] as const;
+
+    /** 主阵·鹤翼 2+4+3（9 格位）：前锋 2 引敌（排 0），中排两翼展开 4（排 1），后排中军托底 3（排 2）。
+     *  2026-08-18 主人定：新增鹤翼阵（双锋引敌·两翼合围）。 */
+    private static readonly CRANE_WING_9_LAYOUT = [
+        { r: 0, c: -0.5 }, { r: 0, c: 0.5 },
+        { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
+        { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+    ] as const;
+
+    /** 主阵·方阵 3+3+3（9 格位）：前排 3（排 0），中排 3（排 1），后排 3（排 2）。
+     *  2026-08-18 主人定：新增方阵（九宫等边·坚若磐石）。 */
+    private static readonly SQUARE_9_LAYOUT = [
+        { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
+        { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
+        { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+    ] as const;
+
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
 
     /**
@@ -931,7 +955,7 @@ export class LegionPhalanxDrawer {
         /** [2026-08-09 编队级朝向] 9 个格位各自的朝向（0-7，面向自己的目标）；null = 整军 direction。
          *  默认不传 → 其他 zoom 与改动前逐像素一致。 */
         squadDirections: readonly number[] | null = null,
-        /** 三值阵型（square 鱼鳞 / triangle 三角 / echelon 雁行）；null = 靠 slots.length 兜底（旧 6 人=三角）。 */
+        /** 五阵型（triangle / echelon / fish_scale / crane_wing / square）；null = 靠 slots.length 兜底（6 人=三角，否则方阵）。 */
         formationMode: FormationMode | null = null
     ): void {
         if (!this.isLoaded) return;
@@ -940,14 +964,14 @@ export class LegionPhalanxDrawer {
         // [CLEANED] Data-driven: cultureSlots defines count. No more hardcoded legionType checks.
         let count = 9; // Default for 3x3
         let gridSize = 3; // Default 3x3
-        // 三值阵型（2026-08-15）：三种阵型都是 9 人，不能再靠 count===6 区分，必须显式传 formationMode。
+        // 五阵型（2026-08-18）：五种阵型都是 9 人，不能再靠 count===6 区分，必须显式传 formationMode。
         let formationKind: FormationMode = 'square';
 
         // Priority 1: Use cultureSlots length (from editor / CultureFormations.ts)
         if (cultureSlots && cultureSlots.length > 0) {
             count = cultureSlots.length;
             gridSize = 3;
-            // 显式 formationMode 优先；null 时兜底：6 人=三角（旧），9 人=鱼鳞
+            // 显式 formationMode 优先；null 时兜底：6 人=三角（旧），否则=方阵
             formationKind = formationMode ?? (count === 6 ? 'triangle' : 'square');
         } else {
             // Priority 2: Try legacy getCompositionTier fallback
@@ -1985,6 +2009,18 @@ export class LegionPhalanxDrawer {
             originalX = pos.c * spacingX;
         } else if (formationMode === 'echelon' && index < 9) {
             const pos = LegionPhalanxDrawer.ECHELON_9_LAYOUT[index] ?? LegionPhalanxDrawer.ECHELON_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX;
+        } else if (formationMode === 'fish_scale' && index < 9) {
+            const pos = LegionPhalanxDrawer.FISH_SCALE_9_LAYOUT[index] ?? LegionPhalanxDrawer.FISH_SCALE_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX;
+        } else if (formationMode === 'crane_wing' && index < 9) {
+            const pos = LegionPhalanxDrawer.CRANE_WING_9_LAYOUT[index] ?? LegionPhalanxDrawer.CRANE_WING_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX;
+        } else if (formationMode === 'square' && index < 9) {
+            const pos = LegionPhalanxDrawer.SQUARE_9_LAYOUT[index] ?? LegionPhalanxDrawer.SQUARE_9_LAYOUT[0];
             originalY = (pos.r - 1.0) * spacingY;
             originalX = pos.c * spacingX;
         } else {
