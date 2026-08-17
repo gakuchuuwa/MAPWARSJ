@@ -28,7 +28,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider']);
 
 /** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
  *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
@@ -81,6 +81,7 @@ interface WarType {
 // 移速 spd 保留原值（「五维」不含移速，主人未要求动，后续按需调）。
 // rng = DE max_range × 40（px）；0 = 贴身白刃。
 export const WAR_TYPES: Record<string, WarType> = {
+    tarantine_cavalry: { name: '塔兰丁骑兵', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.7, spd: 130, dmgType: 'pierce', bonus: { 1: 3, 15: 4, 27: 4, 28: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
     light_infantry: { name: '轻步兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 52, dmgType: 'melee', armorTags: [1, 31] },
     shield: { name: '近卫兵', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
@@ -335,12 +336,14 @@ export const WAR_TYPES: Record<string, WarType> = {
     jian_swordman_unshielded: {name:"双手剑士(华夏)",cls:"melee",sz:1,hp:70,atk:11,meleeArmor:0,pierceArmor:2,rng:0,reload:1.9,spd:50,dmgType:"melee",bonus:{21:2,15:4},armorTags:[1,31]},
     cavalier: {name:"重装骑士",cls:"cav",sz:1.2,hp:120,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd:130,dmgType:"melee",armorTags:[8,31]},
     ant_scout: {name:"斥候骑兵",cls:"cav",sz:1.1,hp:45,atk:3,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd:130,dmgType:"melee",bonus:{25:6},armorTags:[8,31]},
-    flamethrower: { name: '猛火油柜(喷火器)',cls:"siege",sz:1.1,aoe:true,hp:160,atk:4,meleeArmor:2,pierceArmor:2,rng:200,reload:0.2,spd:40,dmgType:"melee",bonus:{11:4,13:10},armorTags:[20,31]},
-    helepolis: { name: '希腊赫勒波利斯攻城塔',cls:"siege",sz:1.4,hp:350,atk:20,meleeArmor:-2,pierceArmor:100,rng:440,reload:5,spd:30,dmgType:"pierce",bonus:{16:50},armorTags:[20,17,31]},
+    flamethrower: { name: '猛火油柜(喷火器)',cls:"ranged",sz:1.1,aoe:true,hp:160,atk:4,meleeArmor:2,pierceArmor:2,rng:200,reload:0.2,spd:40,dmgType:"melee",bonus:{11:4,13:10},armorTags:[20,31]},
+    helepolis: { name: '希腊赫勒波利斯攻城塔',cls:"ranged",sz:1.4,hp:350,atk:20,meleeArmor:-2,pierceArmor:100,rng:440,reload:5,spd:30,dmgType:"pierce",bonus:{16:50},armorTags:[20,17,31]},
+    siege_tower: { name: '攻城塔', cls: 'ranged', sz: 1.4, hp: 220, atk: 6, meleeArmor: -2, pierceArmor: 100, rng: 240, reload: 4.0, spd: 40, dmgType: 'pierce', bonus: { 11: 6 }, armorTags: [20, 17, 31] },
 };
 
 
 const SIGHT_MAP: Record<string, number> = {
+    tarantine_cavalry: 240,
     amazon_archer: 240,
     amazon_warrior: 120,
     arambai: 280,
@@ -597,6 +600,7 @@ const SIGHT_MAP: Record<string, number> = {
     ant_scout: 200,
     flamethrower: 200,
     helepolis: 360,
+    siege_tower: 320,
 };
 
 /** 取某兵种完整数据（WAR_TYPES 已是 DE 五维全量，无组别覆盖） */
@@ -806,6 +810,7 @@ const ARROW_DUR = 0.42;
  * 全表由 scratch/extract_de_shootphase.py 用 genieutils 从 empires2_x2_p1.dat 抽出（2026-08-17）。
  */
 const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
+    tarantine_cavalry: 3.2,
     // [2026-08-17 补全] 用 DE 真实数据精确对齐每个远程兵种的放箭相位：
     //   shootPhase = type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
     //   替代此前只登记 26 个特殊兵种、其余远程全吃 DEFAULT=4 大锅饭的表（「远程动作和箭不同步」的次要根因）。
@@ -1163,6 +1168,7 @@ const SEP_DIST = 17;
 const UNIT_RADIUS: Record<string, number> = {
     amazon_archer: 8.0,
     amazon_warrior: 8.0,
+    ant_scout: 10.0,
     arambai: 10.0,
     arbalest: 8.0,
     archer: 8.0,
@@ -1189,7 +1195,11 @@ const UNIT_RADIUS: Record<string, number> = {
     cataphract: 10.0,
     cav_archer: 10.0,
     cav_archer_heavy: 10.0,
+    cavalier: 10.0,
     centurion: 10.0,
+    champi_runner: 8.0,
+    champi_scout: 8.0,
+    champi_warrior: 8.0,
     champion: 8.0,
     champion_runner: 8.0,
     champion_scout: 8.0,
@@ -1265,6 +1275,7 @@ const UNIT_RADIUS: Record<string, number> = {
     elite_woad_raider: 8.0,
     fire_archer: 8.0,
     fire_lancer: 8.0,
+    flamethrower: 16.0,
     flaming_camel: 10.0,
     flemish_pikeman: 8.0,
     flemish_pikeman_f: 8.0,
@@ -1284,6 +1295,7 @@ const UNIT_RADIUS: Record<string, number> = {
     heavy_scorpion: 20.0,
     hei_kuang: 10.0,
     hei_kuang_heavy: 10.0,
+    helepolis: 18.0,
     hill_tribesman: 8.0,
     hippeus: 8.0,
     hoplite: 8.0,
@@ -1302,6 +1314,7 @@ const UNIT_RADIUS: Record<string, number> = {
     iroquois_warrior: 8.0,
     jaguar_warrior: 8.0,
     janissary: 8.0,
+    jian_swordman_unshielded: 8.0,
     jian_swordsman: 8.0,
     kamayuk: 8.0,
     karambit_warrior: 6.0,
@@ -1320,6 +1333,7 @@ const UNIT_RADIUS: Record<string, number> = {
     light_riders: 10.0,
     longbowman: 8.0,
     longbowman_elite: 8.0,
+    longswordsman: 8.0,
     magyar_huszar: 10.0,
     mameluke: 10.0,
     mangonel: 20.0,
@@ -1364,6 +1378,7 @@ const UNIT_RADIUS: Record<string, number> = {
     sickle_warrior: 8.0,
     siege_onager: 20.0,
     siege_ram: 18.0,
+    siege_tower: 18.0,
     skirmisher: 8.0,
     slinger: 8.0,
     sogdian_cataphract: 10.0,
@@ -1374,6 +1389,7 @@ const UNIT_RADIUS: Record<string, number> = {
     strategos: 8.0,
     swordsman: 8.0,
     takabara: 8.0,
+    tarantine_cavalry: 10.0,
     tarkan: 10.0,
     temple_guard: 8.0,
     teutonic_knight: 8.0,
@@ -1650,6 +1666,14 @@ interface WarFleer {
 
 /** 帧素材缓存：key -> { fh, frames, sets: {move,atk,die,melee}[faction][dir] } */
 interface WarBank {
+    /**
+     * 这个兵种是否**真的有一套单独的近战动作**。
+     * 🔴 只有它为真时，远程兵被贴脸才切近战姿态（st=2，不放弹丸）。
+     *    DE 素材的 SHOOT 和 ATTACK 指向的是**同一批图**（如投石兵两者都是 attack_*.png），
+     *    切过去动画一模一样、却把弹丸掐掉了 —— 主人 2026-08-17 实锤「看不到投石兵的石弹」。
+     *    真正有两套动作的是老 S10DB 混编兵（114 个，SHOOT 与 ATTACK 指向不同文件）。
+     */
+    realMelee: boolean;
     /** 帧高（S10DB 所有动作共享同一帧框高度；DE 动态帧框不依赖此值，见 dyn） */
     fh: number;
     /** 各动作的帧数（S10DB=8，AoE2 武士/弓手=30~60；缺失兜底 8） */
@@ -2346,8 +2370,8 @@ export class Scene13WarLayer {
         if (this.bank[key]) return;
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
-            if (!assets) { this.bank[key] = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
-            const b: WarBank = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            if (!assets) { this.bank[key] = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
+            const b: WarBank = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
             const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
             const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
@@ -2364,10 +2388,14 @@ export class Scene13WarLayer {
             // 冲锋组：**象兵 637-644 / 弓骑 688-695**（2026-08-11 主人口述）。
             // 🔴 冲锋属于「进攻的一种」，所以攻击时在**攻击帧和冲锋帧之间来回切**，
             //    不是拿它当赶路动画（我一度把突骑赶路改成冲锋，被主人纠正）。
+            const atkUrls = ranged ? (assets.SHOOT ?? assets.ATTACK ?? []) : (assets.ATTACK ?? []);
+            const meleeUrls = ranged ? (assets.ATTACK ?? []) : [];
+            // 两套图完全一样 = 没有真正的近战动作（DE 素材普遍如此），贴脸时就别切姿态掐弹丸
+            b.realMelee = meleeUrls.length > 0 && meleeUrls.join('|') !== atkUrls.join('|');
             const groups: [string, string[]][] = [
                 ['move', assets.MOVE ?? []],
-                ['atk', ranged ? (assets.SHOOT ?? assets.ATTACK ?? []) : (assets.ATTACK ?? [])],
-                ['melee', ranged ? (assets.ATTACK ?? []) : []],
+                ['atk', atkUrls],
+                ['melee', meleeUrls],
                 ['die', assets.DEATH ?? []],
                 ['charge', assets.CHARGE ?? []],
                 // 待命帧：战斗结束后的 5 秒残局用（全军待命，见 beginLinger）
@@ -2432,7 +2460,7 @@ export class Scene13WarLayer {
             this.bank[key] = b;
         } catch (e) {
             console.warn('[Scene13WarLayer] 素材加载失败（回退空帧）:', key, e);
-            this.bank[key] = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            this.bank[key] = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
         }
     }
 
@@ -2748,7 +2776,7 @@ export class Scene13WarLayer {
      * 实测（war_sim，同兵种对镜）：横向铺开 30→36px（+20%）、攻击/移动状态切换 0.30→0.26 次/人·秒；
      * 克制三边方向不变、幅度差 1~7%；时长在噪声内。
      */
-    private search(m: { x: number; y: number; f: number }, radius: number): WarMan | null {
+    private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0): WarMan | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
@@ -2756,6 +2784,11 @@ export class Scene13WarLayer {
         const r2 = radius * radius;
         let best: WarMan | null = null, bd = r2;      // 最近的（兜底）
         let free: WarMan | null = null, fd = r2;      // 最近的**还没被打满**的（优先）
+        // 🔴 [2026-08-17] 投石车/投石机有最小射程：贴太近就抛不出去（DE 同款）。
+        //    原来只在**放弹丸**那一步判 tooClose，结果贴脸时「照样扣血、就是不出石弹」——
+        //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
+        //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
+        const minR2 = minRange * minRange;
         for (let ring = 0; ring <= span; ring++) {
             // 已有候选，且它比下一环任何格子的最小可能距离都近 → 不可能更近了，停
             // （按真正会被返回的那个候选判，否则会在还能找到空闲目标时提前收工）
@@ -2775,8 +2808,9 @@ export class Scene13WarLayer {
                         if (o.f === m.f || o.hp <= 0) continue;
                         const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                         if (d >= r2) continue;
+                        const tooNear = minR2 > 0 && d < minR2;
                         if (d < bd) { bd = d; best = o; }
-                        if (o.atkers < SPREAD_CAP && d < fd) { fd = d; free = o; }
+                        if (!tooNear && o.atkers < SPREAD_CAP && d < fd) { fd = d; free = o; }
                     }
                 }
             }
@@ -2922,7 +2956,7 @@ export class Scene13WarLayer {
             const keep = m.foe && m.foe.hp > 0
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (!keep && m.next <= 0) {
-                m.foe = this.search(m, SIGHT);
+                m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
 
@@ -3050,7 +3084,7 @@ export class Scene13WarLayer {
                     this.pushCorpse(m);
                     continue;
                 }
-                m.st = (stats.rng && close && this.bank[m.key]?.sets.melee[0].length) ? 2 : 1;
+                m.st = (stats.rng && close && this.bank[m.key]?.realMelee) ? 2 : 1;
                 // 交战中也走迟滞：贴身互推时目标方位每帧摆动，直接 dir8 会让贴图在两个朝向间跳
                 m.dir = this.dir8Hyst(m.dir, foe.x - m.x, foe.y - m.y);
                 m.lock = (m.lock ?? 0) - dt;
