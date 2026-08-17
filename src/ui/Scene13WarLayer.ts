@@ -16,7 +16,8 @@
  * 渲染：全屏透明 canvas 叠在地图上，只画精灵/尸体；出兵口不画。
  */
 
-import { getCultureTier, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
@@ -27,7 +28,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider']);
 
 /** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
  *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
@@ -79,7 +80,7 @@ interface WarType {
 // 相克不再用全局 C=1.8：改用 DE 加成伤害（bonus：护甲类 → 额外攻击）+ 近/远防减法。
 // 移速 spd 保留原值（「五维」不含移速，主人未要求动，后续按需调）。
 // rng = DE max_range × 40（px）；0 = 贴身白刃。
-const WAR_TYPES: Record<string, WarType> = {
+export const WAR_TYPES: Record<string, WarType> = {
     light_infantry: { name: '轻步兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 52, dmgType: 'melee', armorTags: [1, 31] },
     shield: { name: '近卫兵', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
@@ -498,6 +499,10 @@ const PROJ_VOLLEY: Record<string, number> = {
 };
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
+/** 火矛手（DE 充能喷火兵）：进战先喷 3 发低精度短程火枪弹，30 秒充能（AoE2 DE update 141935）。 */
+const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
+const FIRE_LANCER_VOLLEY = 3;
+const FIRE_LANCER_CHARGE = 30;
 /**
  * 每方开局数 + 每次补兵批量 = 300（2026-08-13 主人定）。
  * 成批补：开局双方各出 300；之后一方场上 < 150 才再补 300（见 TRIGGER）。
@@ -676,6 +681,8 @@ interface WarMan {
     atkFlip: boolean;
     /** 本轮是否已放箭（远程）：动画播到放箭相位才射，避免箭和拉弓动作脱节 */
     shot?: boolean;
+    /** 火矛手充能冷却（秒）：进战先喷一轮火枪弹，30 秒充能（DE 充能攻击） */
+    chargeCd?: number;
     /** 是否旗手（出生时定死，见 FLAG_EVERY）：头顶画一面势力旗，战死则军旗倒地 */
     flag: boolean;
     /**
@@ -985,6 +992,14 @@ export class Scene13WarLayer {
 
     /** 战斗开始 → 初始化出兵口（编制槽位派生）+ 开始加载素材 */
     public start(init: Scene13WarInit): void {
+        this.diagT0 = performance.now();
+        this.diagEvents = [];
+        this.diagSent = false;
+        this.diagPush('start', {
+            att: init.attackerTroops, def: init.defenderTroops,
+            attR: init.attackerRegion, defR: init.defenderRegion,
+            attB: init.attackerBonus, defB: init.defenderBonus,
+        });
         this.attach();
         this.active = true;
         this.over = false;
@@ -1040,9 +1055,9 @@ export class Scene13WarLayer {
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）
-            const sides: { region: string; troops: number; f: 0 | 1 }[] = [
-                { region: init.attackerRegion, troops: init.attackerTroops, f: 0 },
-                { region: init.defenderRegion, troops: init.defenderTroops, f: 1 },
+            const sides: { region: string; troops: number; f: 0 | 1; factionId?: string | null }[] = [
+                { region: init.attackerRegion, troops: init.attackerTroops, f: 0, factionId: init.attackerFactionId },
+                { region: init.defenderRegion, troops: init.defenderTroops, f: 1, factionId: init.defenderFactionId },
             ];
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
@@ -1052,9 +1067,9 @@ export class Scene13WarLayer {
             const spanY = VH * 0.80;
 
             for (const side of sides) {
-                const lanes = this.slotsOf(side.region);
+                const lanes = this.slotsOf(side.region, side.factionId);
                 const n = lanes.length;
-                const mode = this.formationModeOf(side.region);
+                const mode = this.formationModeOf(side.region, side.factionId);
                 // 🔴 前中后固定（主人 2026-08-15 定）：不再随机换序，出兵口顺序 = 编制槽位展开序
                 //    （鱼鳞 步骑弓 / 三角 近战+远程+近战 / 雁行 远程+近战+远程）。
                 const lanes2 = lanes;
@@ -1116,6 +1131,8 @@ export class Scene13WarLayer {
         const attackerWins = att > def;
         this.over = true;
         console.warn(`🏁 [Scene13War] 防死锁判负：攻 ${alive[0]} 守 ${alive[1]}（守方×${homeDiscount}）→ ${attackerWins ? '攻方胜' : '守方胜'}`);
+        this.diagPush('forceByRatio', { alive, homeDiscount, winner: attackerWins ? 'attacker' : 'defender' });
+        this.diagFlush('forceByRatio');
         this.onDecision(
             attackerWins ? 'attacker' : 'defender',
             { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
@@ -1178,7 +1195,45 @@ export class Scene13WarLayer {
         }
     }
 
+    /**
+     * [2026-08-17 诊断] 13 生命周期打点 → `scratch/scene13_probe_latest.json` + `scene13_probe_log.jsonl`。
+     * 装它是因为主人报「刚开战卡一下、10 秒左右就退」，而我这边多次实测复现不出（素材 0.7s 就绪、
+     * 演出跑满 2 分钟）。与其反复试，不如让现场数据自己落盘：一场 13 结束时自动 POST，
+     * 事后读 jsonl 就能看出是「演出正常判负」「素材超时强判」还是「被外部提前停掉」。
+     * 仅 DEV 生效；定位完连同 diag* 一起删。
+     */
+    private diagT0 = 0;
+    private diagEvents: Array<[number, string, unknown]> = [];
+    private diagSent = false;
+    private diagAssetsReady = false;
+
+    private diagPush(ev: string, data?: unknown): void {
+        if (!import.meta.env.DEV) return;
+        this.diagEvents.push([+((performance.now() - this.diagT0) / 1000).toFixed(2), ev, data ?? null]);
+    }
+
+    private diagFlush(why: string): void {
+        if (!import.meta.env.DEV || this.diagSent || this.diagEvents.length === 0) return;
+        this.diagSent = true;
+        const field = [0, 0], pool = [0, 0];
+        for (const m of this.men) if (m.hp > 0) field[m.f]++;
+        for (const sp of this.spawns) pool[sp.f] += Math.max(0, sp.pool);
+        const body = JSON.stringify({
+            at: new Date().toISOString(),
+            why,
+            totalSec: +((performance.now() - this.diagT0) / 1000).toFixed(2),
+            field, pool,
+            events: this.diagEvents,
+        });
+        try {
+            fetch('/api/scene13-probe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
+                .catch(() => { /* 诊断失败绝不影响演出 */ });
+        } catch { /* 同上 */ }
+    }
+
     public stop(reason = 'unknown', keepFrame = false): void {
+        this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
+        this.diagFlush('stop:' + reason);
         this.lingering = false;
         if (this.active) {
             // [2026-08-11 诊断] 谁把演出停掉的。over=false 还被停 = 外部提前收场
@@ -1210,9 +1265,11 @@ export class Scene13WarLayer {
      *   - 三阵型（鱼鳞 3×3 / 三角 2+3+4 / 雁行 4+3+2）展开后均为 9 口，展开序 = 前/中/后三排
      * 口内 key 为兵种 id，与 UNIT_ASSETS 键一致。
      */
-    private slotsOf(region: string): { key: string }[] {
+    private slotsOf(region: string, factionId?: string | null): { key: string }[] {
         try {
-            const tier = getCultureTier(region as any, 50000);
+            // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
+            const factionSlots = factionId ? getFactionCompositionSlots(factionId) : null;
+            const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
                 const types = expandCompositionSlots(tier.slots);
                 // 三阵型展开均为 9 口
@@ -1234,8 +1291,14 @@ export class Scene13WarLayer {
     }
 
     /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
-    private formationModeOf(region: string): FormationMode {
+    private formationModeOf(region: string, factionId?: string | null): FormationMode {
         try {
+            if (factionId) {
+                const custom = FACTION_COMPOSITIONS[factionId];
+                if (custom?.formationMode) return custom.formationMode;
+                const factionSlots = getFactionCompositionSlots(factionId);
+                if (factionSlots?.length) return inferFormationModeFromSlots(factionSlots);
+            }
             const tier = getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
                 return inferFormationModeFromSlots(tier.slots);
@@ -1568,6 +1631,64 @@ export class Scene13WarLayer {
         }
     }
 
+    /** 火炮炮口焰：发射瞬间炮口火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）。 */
+    private muzzleFlash(m: WarMan, ax: number, ay: number): void {
+        const ang = Math.atan2(ay, ax);
+        const ox = m.x + Math.cos(ang) * UNIT_PX * 0.6;
+        const oy = m.y + Math.sin(ang) * UNIT_PX * 0.6 - UNIT_PX * 0.4;
+        const colors = ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'];
+        for (let i = 0; i < 6; i++) {
+            const spd = 20 + Math.random() * 40;
+            const spread = (Math.random() - 0.5) * 0.8;
+            this.sparks.push({
+                x: ox, y: oy,
+                vx: Math.cos(ang + spread) * spd,
+                vy: Math.sin(ang + spread) * spd - 6,
+                t: 0,
+                dur: 0.10 + Math.random() * 0.14,
+                color: colors[(Math.random() * colors.length) | 0],
+                size: 1.4 + Math.random() * 1.6,
+            });
+        }
+    }
+
+    /** 火矛手充能喷火（DE 进战先喷）：3 发低精度短程火枪弹 + 矛头火焰喷射。 */
+    private fireLanceVolley(m: WarMan, foe: WarMan): void {
+        const ax = foe.x - m.x, ay = foe.y - m.y;
+        const ad = Math.hypot(ax, ay) || 1;
+        const ang = Math.atan2(ay, ax);
+        this.ensureProj('PROJ_SHOT');
+        for (let v = 0; v < FIRE_LANCER_VOLLEY; v++) {
+            const spread = (Math.random() - 0.5) * 0.55;   // 低精度散射
+            const c = Math.cos(spread), s = Math.sin(spread);
+            this.arrows.push({
+                x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出
+                dx: ax / ad * c - ay / ad * s,
+                dy: ax / ad * s + ay / ad * c,
+                len: Math.min(ad, 170),            // 短程火枪弹（DE range 4 ≈ 160px）
+                t: 0, dur: ARROW_DUR + Math.random() * 0.05, f: m.f,
+                proj: 'PROJ_SHOT',
+            });
+        }
+        // 矛头喷火：沿朝向喷一串橙红火焰火星
+        const ox = m.x + Math.cos(ang) * UNIT_PX * 0.5;
+        const oy = m.y + Math.sin(ang) * UNIT_PX * 0.5 - UNIT_PX * 0.45;
+        const flame = ['#FFD800', '#FF8C00', '#FF4500', '#FFF4D0'];
+        for (let i = 0; i < 9; i++) {
+            const spd = 26 + Math.random() * 54;
+            const spread = (Math.random() - 0.5) * 1.0;
+            this.sparks.push({
+                x: ox, y: oy,
+                vx: Math.cos(ang + spread) * spd,
+                vy: Math.sin(ang + spread) * spd - 8,
+                t: 0,
+                dur: 0.14 + Math.random() * 0.22,
+                color: flame[(Math.random() * flame.length) | 0],
+                size: 1.2 + Math.random() * 1.5,
+            });
+        }
+    }
+
     private dir8(dx: number, dy: number): number {
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
@@ -1842,6 +1963,8 @@ export class Scene13WarLayer {
             const wt = WAR_TYPES[m.key];
             const stats = statsOf(m.key);
             const R = stats.rng || 65;
+            // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
+            if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
             m.next -= dt;
@@ -1882,6 +2005,11 @@ export class Scene13WarLayer {
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
+                    // 火矛手充能喷火（DE：进战先喷 3 发短程火枪弹，30 秒充能）
+                    if (FIRE_LANCER_TYPES.has(m.key) && (m.chargeCd ?? 0) <= 0 && foe) {
+                        m.chargeCd = FIRE_LANCER_CHARGE;
+                        this.fireLanceVolley(m, foe);
+                    }
                 } else {
                     // 攻击动画推进：拉弓→放箭→收弓（原 foe 分支不推 ph，动画卡在第一帧）。
                     m.ph += dt * 8 / 1.5;
@@ -1905,6 +2033,8 @@ export class Scene13WarLayer {
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
+                        // 火炮炮口焰：发射瞬间炮口火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
+                        if (proj === 'PROJ_BALL') this.muzzleFlash(m, ax, ay);
                     }
                 }
                 m.atkSt = m.st;
@@ -2065,6 +2195,8 @@ export class Scene13WarLayer {
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
             console.warn(`🏁 [Scene13War] 演出判负：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=10兵）`);
+            this.diagPush('decision', { winner: attackerLost ? 'defender' : 'attacker', alive });
+            this.diagFlush('decision');
             this.onDecision?.(
                 attackerLost ? 'defender' : 'attacker',
                 { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
@@ -2155,9 +2287,14 @@ export class Scene13WarLayer {
             if (this.pendingStartedAt === 0) this.pendingStartedAt = performance.now();
             if (performance.now() - this.pendingStartedAt > 30000) {
                 console.warn(`🏁 [Scene13War] 素材 30s 未就绪（pending=${this.pending}），强制判负防死锁`);
+                this.diagPush('assetTimeout', { pending: this.pending });
                 this.forceResultByRatio(0.85);
             }
             return;
+        }
+        if (!this.diagAssetsReady) {   // 素材就绪的那一刻打点（诊断用，见 diagPush）
+            this.diagAssetsReady = true;
+            this.diagPush('assetsReady');
         }
         const now = performance.now();
         this.step(dt);

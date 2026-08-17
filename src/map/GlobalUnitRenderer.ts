@@ -32,7 +32,7 @@ import {
     expandCompositionScales,
     expandCompositionSlots,
 } from '../types/LegionComposition';
-import { getCultureTier } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots } from '../types/CultureFormations';
 
 /** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
 interface SquadHit {
@@ -1390,8 +1390,9 @@ export class GlobalUnitRenderer {
         const cityPos = { lat: city.latitude, lng: city.longitude };
         const scale = Math.pow(2, Math.min(this.map.getZoom(), 10) - 9) * 0.7;
 
-        // 守军：城文化区 9 槽（与 renderSiegeDefenders 同源），面向攻方
-        const tier = getCultureTier((city.region ?? 'CENTRAL') as any, city.troops);
+        // 守军：城所属势力专属 9 槽（如伊贺/大秦等）或文化区 9 槽，面向攻方
+        const factionSlots = city.factionId ? getFactionCompositionSlots(city.factionId) : null;
+        const tier = factionSlots ? { slots: factionSlots } : getCultureTier((city.region ?? 'CENTRAL') as any, city.troops);
         const slots = tier?.slots;
         if (!slots || slots.length === 0) return fallback;
         const defSlots = expandCompositionSlots(slots);
@@ -2826,9 +2827,10 @@ export class GlobalUnitRenderer {
             const anchor = this.computeSiegeDefenderAnchor(city, atkPos);
             if (!anchor) continue;
 
-            // 守军编队：按城市文化区生成 9 槽（与攻方军团同一套）
+            // 守军编队：按城市势力专属或文化区生成 9 槽（与攻方军团同一套）
             const region = (city.region ?? 'CENTRAL') as any;
-            const tier = getCultureTier(region, city.troops);
+            const factionSlots = city.factionId ? getFactionCompositionSlots(city.factionId) : null;
+            const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region, city.troops);
             const slots = tier?.slots;
             if (!slots || slots.length === 0) continue;
             const cultureSlots = expandCompositionSlots(slots);
