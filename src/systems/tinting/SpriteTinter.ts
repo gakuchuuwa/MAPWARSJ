@@ -13,7 +13,10 @@
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
 
 /**
- * 有玩家色遮罩 `.pc.png` 的素材目录（AoE2 DE SLD 提取，全部 58 个）。
+ * 有玩家色遮罩 `.pc.png` 的素材目录（AoE2 DE SLD 提取）。
+ * [2026-08-17 校准] 原注释写「全部 58 个」，实际本数组已有 231 条；素材侧共 286 个目录带遮罩
+ * （多出的是未被引擎引用的重复/投射物目录）。已核对：引擎渲染表 DE_DYN_DIRS 的 230 个目录
+ * 100% 在本白名单内，无漏登记。
  * 这些目录走 mask 精确染色（玩家色 × 遮罩灰度）；其余（三国志10 S10DB / 帝国征服原版）走原有亮度染色，绝不改动它们的既有逻辑。
  * ⚠️ 新增 DE 兵种提取后必须同步加进这里，否则会误走亮度染色把金属/脸/马全染成势力色。
  */
@@ -174,23 +177,33 @@ export class SpriteTinter {
         const maskImageData = mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height);
         const maskData = maskImageData.data;
 
-        // AoE2 DE 原生玩家色渲染 = 玩家色 × main 图灰阶（明暗烘焙在 main 玩家色区的灰阶里）：
-        //   main 玩家色区是「有明暗的灰色占位」（褶皱高光→灰白、阴影→灰黑），
-        //   玩家色遮罩（.pc.png alpha）只标记「哪些像素是玩家色」，不是明暗来源。
-        //   ⚠️ 之前误用遮罩 alpha 做明暗 → 披风变成无褶皱的纯色方块（血训 08-15）。
-        //   增益 2.2：main 灰阶整体偏暗（均值 ~42），×2.2 提亮到接近 AoE2「高光耀眼/阴影分明」的对比度。
+        // AoE2 DE 原生玩家色渲染，两个来源各司其职，别混为一谈：
+        //   ① 明暗 ← main 图灰阶。main 玩家色区是「有明暗的灰色占位」（褶皱高光→灰白、阴影→灰黑）。
+        //      ⚠️ 之前误用遮罩 alpha 做明暗 → 披风变成无褶皱的纯色方块（血训 08-15）。这条教训依然成立，
+        //         明暗只能来自 main 灰阶，绝不要改回去用 alpha。
+        //   ② 覆盖权重 ← 遮罩 alpha。
+        //      🔴 [2026-08-17] 但当年连带把 alpha 的「权重」用途也一起弃用了（退化成 alpha>0 的布尔判断），
+        //         那是矫枉过正。实测 .pc.png：RGB 恒为纯白 (255,255,255)，alpha 是 13~255 的连续梯度，
+        //         且与 main 灰阶的相关系数仅 0.11 / -0.009 / 0.16（冠军剑士/骑士/游侠）——两者互不相关，
+        //         证明 alpha 编码的是另一个维度：玩家色的覆盖强度（中心实覆盖 255，边缘渐降做过渡带）。
+        //         二值化等于把 DE 做好的过渡带削成硬边，披风/马披糊成一整块纯色，即所谓「塑料单色感」。
+        //         恢复按权重混合后，褶皱层次与金属高光都回来了（对比图见 scripts/tint_experiment.cjs）。
+        //   增益 2.2：把 main 灰阶提亮到接近 AoE2「高光耀眼/阴影分明」的对比度。
+        //      注：原注释称 main 灰阶均值 ~42，实测为 48~90（因兵种而异），但 2.2 的实际观感经对比图验证仍最好，
+        //      故保持不变；试过配 gamma 色阶曲线替代，在暗底兵种（条顿骑士均值 48）上反而更闷，已否决。
         const GAIN = 2.2;
         const n = Math.min(main.length, maskData.length);
         for (let i = 0; i < n; i += 4) {
-            const isPlayerColor = maskData[i + 3] > 0;
-            if (!isPlayerColor) continue; // 非玩家色区域（脸/皮肤/金属/武器/马），保持 main 原样
+            const w = maskData[i + 3] / 255;   // 玩家色覆盖权重（DE 原生渐变）
+            if (w === 0) continue;             // 非玩家色区域（脸/皮肤/金属/武器/马），保持 main 原样
 
             // main 灰阶 = 布料明暗（褶皱），作为玩家色的亮度调制
             const lum = 0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2];
             const s = Math.min(255, lum * GAIN);
-            main[i] = Math.round(tint.r * s / 255);
-            main[i + 1] = Math.round(tint.g * s / 255);
-            main[i + 2] = Math.round(tint.b * s / 255);
+            // 按覆盖权重混回原像素：w=1 纯玩家色，w 越低越保留原色，边缘自然过渡
+            main[i] = Math.round((tint.r * s / 255) * w + main[i] * (1 - w));
+            main[i + 1] = Math.round((tint.g * s / 255) * w + main[i + 1] * (1 - w));
+            main[i + 2] = Math.round((tint.b * s / 255) * w + main[i + 2] * (1 - w));
             // Alpha 保持 main 的 alpha（不透明/抗锯齿边缘）
         }
 
