@@ -328,17 +328,18 @@ export function isSengoku(factionId?: string | null, generalId?: string | null):
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    // 1. 武将专属判断优先
+    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团）
+    const custom = FACTION_COMPOSITIONS[factionId];
+    if (custom) {
+        return [...custom.slots];
+    }
+    // 2. 武将专属判断
     if (generalId) {
         if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
         if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
-    // 2. 势力判断
-    const custom = FACTION_COMPOSITIONS[factionId];
-    if (custom) {
-        return [...custom.slots];
-    }
+    // 3. 文化区判定
     if (isQinDynasty(factionId)) {
         return [...QIN_FACTION_COMPOSITION];
     }
@@ -383,15 +384,16 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：秦国/日本战国雁行阵、汉国三角阵、势力配置、最后文化区默认
-    if (isQin || isSen) {
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦国/日本战国雁行阵、汉国三角阵 → 文化区默认
+    const custom = FACTION_COMPOSITIONS[army.factionId];
+    if (custom?.formationMode) {
+        army.formationMode = custom.formationMode;
+    } else if (isQin || isSen) {
         army.formationMode = 'echelon';
     } else if (isHan) {
         army.formationMode = 'triangle';
     } else {
-        const custom = FACTION_COMPOSITIONS[army.factionId];
-        army.formationMode = custom?.formationMode
-            ?? inferFormationModeFromSlots(slots)
+        army.formationMode = inferFormationModeFromSlots(slots)
             ?? getCultureFormationMode(culture);
     }
 }
@@ -622,7 +624,7 @@ export const WESTERN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 15. 西亚 精锐复合弓箭手+重装骑射手+东方剑士（雁行阵 4+3+2：精锐复合弓箭手前 + 重装骑射手中 + 东方剑士后） */
+/** 15. 西亚 精锐复合弓箭手+东方剑士+重装骑射手（雁行阵 4+3+2：精锐复合弓箭手前 + 东方剑士中 + 重装骑射手后） */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -630,8 +632,8 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'elite_composite_bowman', count: 4 }, // Row 0 前排 = 精锐复合弓箭手 弓手
-            { type: 'cav_archer_heavy', count: 3 },       // Row 1 中排 = 重装骑射手 弓骑
-            { type: 'eastern_swordsman', count: 2 }       // Row 2 后排 = 东方剑士 步兵
+            { type: 'eastern_swordsman', count: 3 },      // Row 1 中排 = 东方剑士 步兵
+            { type: 'cav_archer_heavy', count: 2 }        // Row 2 后排 = 重装骑射手 弓骑
         ]
     }
 ];
