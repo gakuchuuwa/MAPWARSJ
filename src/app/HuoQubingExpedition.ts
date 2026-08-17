@@ -71,7 +71,7 @@ const QUDIAOALAN_ID = 'city_qudiaoalan';
 const ZUOXIAN_FACTION = 'xiongnu';
 const ZUOXIAN_GENERAL = 'chenli_d_zuoxianwang';
 const ZUOXIAN_NAME = '左贤王';
-const ZUOXIAN_PORTRAIT = '/assets/STEPPE/chenli_d_wutang.png';
+const ZUOXIAN_PORTRAIT = '/assets/STEPPE/chenli_d_zuoxianwang.png';
 /** 祷余山：左贤王主力 8 万 */
 const ZUOXIAN_TROOPS_DAOYU = 80000;
 /** 弓庐水：左贤王残部 4 万 */
