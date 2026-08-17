@@ -1618,7 +1618,7 @@ export class Scene13WarLayer {
                 this.men.push({
                     f: s.f, key: s.key,
                     x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
-                    tx: tgt.x, ty: tgt.y, hp: statsOf(s.key).hp, dir: 0,
+                    tx: tgt.x, ty: tgt.y, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     flag: bearer, fo: Math.random() * 600,
@@ -1908,13 +1908,14 @@ export class Scene13WarLayer {
                     foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * dt;
                     if (foe.hp <= 0) this.pushCorpse(foe);
                 }
-                // ── 近战出手：生成刀光剑影（半月斩击弧光 / 突刺枪芒）与碰撞金属火花 ──
-                const isMeleeAttacking = stats.rng <= 65 || m.st === 2 || close;
+                // ── 近战出手：生成刀光剑影（微弯斩击刀痕 / 突刺枪芒）与碰撞金属火花 ──
+                const keyStr = m.key.toLowerCase();
+                const isHeavyNonBlade = keyStr.includes('elephant') || keyStr.includes('ram') || keyStr.includes('wagon');
+                const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
                 if (isMeleeAttacking && m.lock >= 1.45) {
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     const contactY = (m.y * 0.45 + foe.y * 0.55) - UNIT_PX * 0.35;
-                    const keyStr = m.key.toLowerCase();
                     const isThrust = keyStr.includes('spear') || keyStr.includes('pike') ||
                         keyStr.includes('lancer') || keyStr.includes('kamayuk') ||
                         keyStr.includes('kuang') || keyStr.includes('hoplite');
@@ -1928,28 +1929,28 @@ export class Scene13WarLayer {
                         angle: attackAngle,
                         kind,
                         t: 0,
-                        dur: kind === 'thrust' ? 0.12 : 0.16,
-                        radius: (kind === 'thrust' ? 24 : 20) * (stats.sz || 1),
+                        dur: kind === 'thrust' ? 0.08 : 0.09,
+                        radius: kind === 'thrust' ? 10 : 12,
                         color,
                         flip: Math.random() < 0.5,
                     });
 
-                    // 出手伴随 2~4 颗金属飞溅火花线
-                    const sparkCount = 2 + ((Math.random() * 3) | 0);
+                    // 出手伴随 1~2 颗微小金属飞溅火花
+                    const sparkCount = Math.random() < 0.7 ? 1 : 2;
                     const sparkColors = ['#FFF9E6', '#FFE066', '#FFB830', '#FFFFFF'];
                     for (let i = 0; i < sparkCount; i++) {
-                        const spd = 35 + Math.random() * 65;
+                        const spd = 14 + Math.random() * 20;
                         const baseAng = attackAngle + Math.PI * 0.5 * (Math.random() > 0.5 ? 1 : -1);
-                        const ang = baseAng + (Math.random() - 0.5) * 1.2;
+                        const ang = baseAng + (Math.random() - 0.5) * 0.8;
                         this.sparks.push({
-                            x: contactX + (Math.random() - 0.5) * 6,
-                            y: contactY + (Math.random() - 0.5) * 6,
+                            x: contactX + (Math.random() - 0.5) * 3,
+                            y: contactY + (Math.random() - 0.5) * 3,
                             vx: Math.cos(ang) * spd,
-                            vy: Math.sin(ang) * spd - 20,
+                            vy: Math.sin(ang) * spd - 8,
                             t: 0,
-                            dur: 0.12 + Math.random() * 0.12,
+                            dur: 0.08 + Math.random() * 0.05,
                             color: sparkColors[(Math.random() * sparkColors.length) | 0],
-                            size: 1.2 + Math.random() * 1.0,
+                            size: 0.6 + Math.random() * 0.3,
                         });
                     }
                 }
@@ -2359,61 +2360,59 @@ export class Scene13WarLayer {
             ctx.globalAlpha = 1;
         }
 
-        // ── 刀光剑影（半月斩击弧光 & 突刺枪芒）──
+        // ── 刀光剑影（轻微半月斩击弧光 & 突刺枪芒，小巧克制）──
         if (this.slashes.length) {
             ctx.save();
             for (const s of this.slashes) {
                 const p = Math.min(1, s.t / s.dur);
-                const alpha = Math.max(0, 1 - p * p);
+                const alpha = Math.max(0, 1 - p * p) * 0.85;
                 ctx.save();
                 ctx.translate(s.x, s.y);
                 ctx.rotate(s.angle);
                 ctx.globalAlpha = alpha;
 
                 if (s.kind === 'slash') {
-                    // 半月弧形刀光
-                    const startAng = s.flip ? -Math.PI * 0.45 : Math.PI * 0.45;
-                    const endAng = s.flip ? Math.PI * 0.45 : -Math.PI * 0.45;
-                    const r = s.radius * (0.8 + p * 0.4);
+                    // 刀剑微弯斩击刀痕（非圆圈，短促贝塞尔弧刃）
+                    const len = s.radius * (0.9 + p * 0.2);
+                    const h = s.flip ? -2.8 : 2.8;
 
-                    // 外层辉光弧
+                    // 外层微光
                     ctx.beginPath();
-                    ctx.arc(0, 0, r, startAng, endAng, s.flip);
+                    ctx.moveTo(0, -len * 0.5);
+                    ctx.quadraticCurveTo(h, 0, 0, len * 0.5);
                     ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 3.2 * (1 - p * 0.6);
+                    ctx.lineWidth = 1.4 * (1 - p);
                     ctx.lineCap = 'round';
                     ctx.shadowColor = s.color;
-                    ctx.shadowBlur = 8;
+                    ctx.shadowBlur = 2;
                     ctx.stroke();
-
-                    // 内层高亮核心弧线（纯白）
-                    ctx.beginPath();
-                    ctx.arc(0, 0, r * 0.98, startAng * 0.85, endAng * 0.85, s.flip);
-                    ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 1.4 * (1 - p * 0.6);
-                    ctx.stroke();
-                } else {
-                    // 长枪/矛突刺锐芒（锥形锋刃）
-                    const len = s.radius * 1.4 * (0.7 + p * 0.5);
-                    const w = 3.5 * (1 - p * 0.7);
-
-                    ctx.beginPath();
-                    ctx.moveTo(len, 0);
-                    ctx.lineTo(0, -w);
-                    ctx.lineTo(-len * 0.25, 0);
-                    ctx.lineTo(0, w);
-                    ctx.closePath();
-                    ctx.fillStyle = s.color;
-                    ctx.shadowColor = '#FFFFFF';
-                    ctx.shadowBlur = 10;
-                    ctx.fill();
 
                     // 核心白亮线
                     ctx.beginPath();
-                    ctx.moveTo(-len * 0.1, 0);
-                    ctx.lineTo(len * 1.05, 0);
+                    ctx.moveTo(0, -len * 0.38);
+                    ctx.quadraticCurveTo(h * 0.7, 0, 0, len * 0.38);
                     ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 1.6 * (1 - p * 0.7);
+                    ctx.lineWidth = 0.7 * (1 - p);
+                    ctx.stroke();
+                } else {
+                    // 长枪/矛突刺短芒（沿刺击方向的细直短线）
+                    const len = s.radius * (0.8 + p * 0.3);
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(len, 0);
+                    ctx.strokeStyle = s.color;
+                    ctx.lineWidth = 1.3 * (1 - p);
+                    ctx.lineCap = 'round';
+                    ctx.shadowColor = '#FFFFFF';
+                    ctx.shadowBlur = 2;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(len * 0.75, 0);
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 0.6 * (1 - p);
                     ctx.stroke();
                 }
                 ctx.restore();
@@ -2421,18 +2420,18 @@ export class Scene13WarLayer {
             ctx.restore();
         }
 
-        // ── 兵刃交锋火花（金属飞溅细线）──
+        // ── 兵刃交锋火花（微小金属细线）──
         if (this.sparks.length) {
             ctx.save();
             for (const s of this.sparks) {
-                const alpha = Math.max(0, 1 - s.t / s.dur);
+                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.85;
                 ctx.globalAlpha = alpha;
                 ctx.strokeStyle = s.color;
                 ctx.lineWidth = s.size;
                 ctx.lineCap = 'round';
 
-                // 沿速度反方向拉出火星尾迹线
-                const tailScale = 0.04;
+                // 沿速度反方向拉出极短火星尾迹线
+                const tailScale = 0.018;
                 const tailX = s.x - s.vx * tailScale;
                 const tailY = s.y - s.vy * tailScale;
 
@@ -2441,10 +2440,10 @@ export class Scene13WarLayer {
                 ctx.lineTo(tailX, tailY);
                 ctx.stroke();
 
-                // 火星头部高亮圆点
+                // 火星头部微小亮点
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size * 0.5, 0, Math.PI * 2);
+                ctx.arc(s.x, s.y, s.size * 0.4, 0, Math.PI * 2);
                 ctx.fill();
             }
             ctx.restore();
