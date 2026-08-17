@@ -1982,11 +1982,11 @@ export class LegionPhalanxDrawer {
         if (formationMode === 'triangle' && index < 9) {
             const pos = LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[index] ?? LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[0];
             originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX * 0.7;
+            originalX = pos.c * spacingX;
         } else if (formationMode === 'echelon' && index < 9) {
             const pos = LegionPhalanxDrawer.ECHELON_9_LAYOUT[index] ?? LegionPhalanxDrawer.ECHELON_9_LAYOUT[0];
             originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX * 0.7;
+            originalX = pos.c * spacingX;
         } else {
             const gridSize = gridSizeInput || 3;
             const rows = gridSize;

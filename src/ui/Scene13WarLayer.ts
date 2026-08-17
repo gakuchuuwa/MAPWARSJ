@@ -637,6 +637,23 @@ const UNIT_PX = 50;
 const AIM_JITTER = 120;
 
 /**
+ * 「我已经站到这个敌口门口了」的判定半径（px）。见 aimAt ② 里的用法。
+ * 🔴 必须大于 AIM_JITTER（120），否则带偏移停在 120px 外的兵永远判不到"已到门口"。
+ */
+const NEAR_PORT = 200;
+
+/**
+ * 追击时绕着目标散开的半径（px）——治「一群兵冲着同一个点挤成团、来回颤抖」。
+ *
+ * 每个兵按自身固定角度（由 jx/jy 推出，终身不变）瞄准目标**周围一圈**而不是目标那一个点，
+ * 于是从不同方向围上去，而不是全挤在同一条直线上。
+ * 🔴 必须**小于近战够得着的 65px**：停不停手看的是「离目标本人多远」，
+ *    偏移比 65 大就会出现「瞄着敌人旁边的空地、永远进不了攻击距离」——
+ *    这正是共用坐标那个 120px 偏移绝不能套到具体敌兵身上的原因。
+ */
+const CHASE_RING = 45;
+
+/**
  * 🔴 **两道闸当前是「只观察、不动手」**（主人 2026-08-17 傍晚定：
  *    「现在先允许打不完吧，这样才能看到出现的问题；如果没有问题，这个设计也就没必要了」）。
  *
@@ -666,12 +683,16 @@ const STALL_GUARD_ENFORCE = false;
  *     🔴 第一滴血之前不计时：开局双方要相向而行，步兵 spd=50 走完 1650px 需要 33 秒，
  *        从 0 开始计时会把每一场步兵仗都在 25~60 秒时掐掉。所以只有「已经死过人」才启用这条闸。
  *   · HARD_STOP_SEC：绝对上限，兜住「还在慢慢磨但明显打不完」的拉锯。
- *     实测健康局 110~170s 结束（线上 probe 81~150s），240s 给了 1.5 倍余量，正常仗碰不到。
+ *     🔴 600 不是随手写的，是被象兵打脸后改的：步兵局 168s、骑兵局 127s（真实规模 1350 精灵），
+ *        但**象兵对镜要 415~459s**（450 血 + 高护甲，互相啃得极慢，四个种子实测）。
+ *        原先定 240s 会把每一场象兵战都误判成「打不完」——这正是主人 2026-08-16 删掉
+ *        老 120s 看门狗的同一个毛病（到点就砍正常仗）。600s ≈ 实测最慢局的 1.3 倍。
+ *        真正的「卡住」由 NO_KILL_SEC 抓，那条不看总时长、只看有没有进展，才是主力判据。
  * 两道闸都走 `forceResultByRatio` —— 与素材防死锁同一条通道（onDecision → 引擎解冻结算），
  * 按当时兵力比判胜负，守方吃 0.85 城防折扣。不会出现"没人赢"的悬空局面。
  */
 const NO_KILL_SEC = 60;
-const HARD_STOP_SEC = 240;
+const HARD_STOP_SEC = 600;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CAV_ARCHER_HEAVY/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/SAVAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/', '/SUCAI/AMAZONARCHER/', '/SUCAI/AMAZONWARRIOR/', '/SUCAI/BACTRIAN_ARCHER/', '/SUCAI/BATTERINGRAM/', '/SUCAI/BERSERK/', '/SUCAI/BLACKWOODARCHER/', '/SUCAI/BOLASRIDER/', '/SUCAI/BOMBARDCANNON/', '/SUCAI/CAMELARCHER/', '/SUCAI/CAMEL_RAIDER/', '/SUCAI/CAMELRIDER/', '/SUCAI/CAMELSCOUT/', '/SUCAI/CAPPEDRAM/', '/SUCAI/CATAPHRACT/', '/SUCAI/CENTURION/', '/SUCAI/CHAKRAMTHROWER/', '/SUCAI/CHAMPIRUNNER/', '/SUCAI/CHAMPISCOUT/', '/SUCAI/COMPANION_CAVALRY/', '/SUCAI/CONDOTTIERO/', '/SUCAI/CONQUISTADOR/', '/SUCAI/CRETAN_ARCHER/', '/SUCAI/EAGLESCOUT/', '/SUCAI/EAGLEWARRIOR/', '/SUCAI/EKDROMOS/', '/SUCAI/ELITEARAMBAI/', '/SUCAI/ELITEBALLISTAELEPHANT/', '/SUCAI/ELITEBATTLEELEPHANT/', '/SUCAI/ELITEBERSERK/', '/SUCAI/ELITEBLACKWOODARCHER/', '/SUCAI/ELITEBOLASRIDER/', '/SUCAI/ELITEBOYAR/', '/SUCAI/ELITECAMELARCHER/', '/SUCAI/ELITECATAPHRACT/', '/SUCAI/ELITECENTURION/', '/SUCAI/ELITECHAKRAMTHROWER/', '/SUCAI/ELITECHAMPIWARRIOR/', '/SUCAI/ELITECONQUISTADOR/', '/SUCAI/ELITECOUSTILLIER/', '/SUCAI/ELITEEAGLEWARRIOR/', '/SUCAI/ELITEELEPHANTARCHER/', '/SUCAI/ELITEGBETO/', '/SUCAI/ELITEGENITOUR/', '/SUCAI/ELITEGENOESECROSSBOWMAN/', '/SUCAI/ELITEGHULAM/', '/SUCAI/ELITEGUECHAWARRIOR/', '/SUCAI/ELITEHUSKARL/', '/SUCAI/ELITEHUSSITEWAGON/', '/SUCAI/ELITEIBIRAPEMAWARRIOR/', '/SUCAI/ELITEIRONPAGODA/', '/SUCAI/ELITEJAGUARWARRIOR/', '/SUCAI/ELITEJANISSARY/', '/SUCAI/ELITEKAMAYUK/', '/SUCAI/ELITEKESHIK/', '/SUCAI/ELITEKONA/', '/SUCAI/ELITEKONNIK/', '/SUCAI/ELITEFOOTKONNIK/', '/SUCAI/ELITELEITIS/', '/SUCAI/ELITEMAMELUKE/', '/SUCAI/ELITEMONASPA/', '/SUCAI/ELITEOBUCH/', '/SUCAI/ELITEORGANGUN/', '/SUCAI/ELITEPLUMEDARCHER/', '/SUCAI/ELITERATHAMELEE/', '/SUCAI/ELITERATHARANGED/', '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/', '/SUCAI/ELITESERJEANT/', '/SUCAI/ELITESHOTELWARRIOR/', '/SUCAI/ELITESHRIVAMSHARIDER/', '/SUCAI/ELITESKIRMISHER/', '/SUCAI/ELITETEMPLEGUARD/', '/SUCAI/ELITETEUTONICKNIGHT/', '/SUCAI/ELITETHROWINGAXEMAN/', '/SUCAI/ELITETIGERCAVALRY/', '/SUCAI/ELITEURUMISWORDSMAN/', '/SUCAI/ELITE_WAR_CHARIOT/', '/SUCAI/ELITEWARDOG/', '/SUCAI/ELITEWARELEPHANT/', '/SUCAI/ELITEWARWAGON/', '/SUCAI/ELITEWOADRAIDER/', '/SUCAI/FLAMINGCAMEL/', '/SUCAI/FLEMISHPIKEMAN/', '/SUCAI/FLEMISHPIKEMAN_F/', '/SUCAI/GBETO/', '/SUCAI/GENITOUR/', '/SUCAI/GENOESECROSSBOWMAN/', '/SUCAI/GHULAM/', '/SUCAI/GREEK_NOBLE_CAVALRY/', '/SUCAI/GRENADIER/', '/SUCAI/GUECHAWARRIOR/', '/SUCAI/HANDCANNONEER/', '/SUCAI/HEAVYROCKETCART/', '/SUCAI/HEAVYSCORPION/', '/SUCAI/HILL_TRIBESMAN/', '/SUCAI/HIPPEUS/', '/SUCAI/HOPLITE/', '/SUCAI/HOUFNICE/', '/SUCAI/HUSKARL/', '/SUCAI/HUSSAR/', '/SUCAI/HUSSITEWAGON/', '/SUCAI/IBIRAPEMAWARRIOR/', '/SUCAI/IMMORTAL/', '/SUCAI/RANGED_IMMORTAL/', '/SUCAI/IMPERIALCAMELRIDER/', '/SUCAI/IMPERIALCENTURION/', '/SUCAI/INDIAN_TRIBESMAN/', '/SUCAI/IROQUOISWARRIOR/', '/SUCAI/JAGUARWARRIOR/', '/SUCAI/JANISSARY/', '/SUCAI/KNIGHT/', '/SUCAI/KONA/', '/SUCAI/KONNIK/', '/SUCAI/FOOTKONNIK/', '/SUCAI/LEITIS/', '/SUCAI/LONGBOWMAN/', '/SUCAI/MAGYARHUSZAR/', '/SUCAI/MAMELUKE/', '/SUCAI/MANGONEL/', '/SUCAI/ELITE_HOPLITE/', '/SUCAI/MILITIA/', '/SUCAI/MONASPA/', '/SUCAI/MOUNTEDTREBUCHET/', '/SUCAI/OBUCH/', '/SUCAI/ONAGER/', '/SUCAI/ORGANGUN/', '/SUCAI/PETARD/', '/SUCAI/PHALANGITE/', '/SUCAI/PLUMEDARCHER/', '/SUCAI/QIZILBASHWARRIOR/', '/SUCAI/RATHAMELEE/', '/SUCAI/RATHARANGED/', '/SUCAI/RHODIAN_SLINGER/', '/SUCAI/RHOMPHAIA_WARRIOR/', '/SUCAI/ROCKETCART/', '/SUCAI/ROYALJANISSARY/', '/SUCAI/SACRED_BAND/', '/SUCAI/SANNAHYA/', '/SUCAI/SCORPION/', '/SUCAI/SCYTHIAN_AXE_CAVALRY/', '/SUCAI/SCYTHIAN_HORSE_ARCHER/', '/SUCAI/SERJEANT/', '/SUCAI/SHOTELWARRIOR/', '/SUCAI/SHRIVAMSHARIDER/', '/SUCAI/SICKLE_WARRIOR/', '/SUCAI/SIEGEONAGER/', '/SUCAI/SIEGERAM/', '/SUCAI/SKIRMISHER/', '/SUCAI/SLINGER/', '/SUCAI/SOGDIANCATAPHRACT/', '/SUCAI/SPARABARA/', '/SUCAI/SPEARMAN/', '/SUCAI/STRATEGOS/', '/SUCAI/SAKAN_AXEMAN/', '/SUCAI/TARANTINE_CAVALRY/', '/SUCAI/TEMPLEGUARD/', '/SUCAI/TEUTONICKNIGHT/', '/SUCAI/THRACIAN_PELTAST/', '/SUCAI/TRACTIONTREBUCHET/', '/SUCAI/TWOHANDEDSWORDSMAN/', '/SUCAI/URUMISWORDSMAN/', '/SUCAI/WAR_CHARIOT/', '/SUCAI/WARCHARIOT/', '/SUCAI/WARDOG/', '/SUCAI/WARWAGON/', '/SUCAI/WARRIORPRIEST/', '/SUCAI/WINGEDHUSSAR/', '/SUCAI/WOADRAIDER/', '/SUCAI/XOLOTLWARRIOR/'];
@@ -2118,6 +2139,25 @@ export class Scene13WarLayer {
         return (9 - Math.floor(((a + 22.5) % 360) / 45)) % 8;
     }
 
+    /**
+     * 带迟滞的八向朝向：角度**贴着扇区边界**时不换向。
+     *
+     * 治的是主人反复报的「颤抖」里属于朝向的那一半：8 个方向每格 45°，
+     * 一旦目标方位卡在两格交界（被推挤/目标自己也在动，每帧摆动一两度），
+     * 贴图就会在两个朝向之间每帧来回跳。行军分支早有防抖（到达判定 + 只在真的走时才转向），
+     * 但 2026-08-17 新加的追击分支没有 —— 追击时目标一直在动，正好长期贴在边界上。
+     * 这里留 10° 缓冲：越过边界 10° 以上才真的换朝向。
+     */
+    private dir8Hyst(cur: number, dx: number, dy: number): number {
+        const next = this.dir8(dx, dy);
+        if (next === cur) return cur;
+        let a = Math.atan2(-dy, dx) * 180 / Math.PI;
+        a = ((a % 360) + 360) % 360;
+        const off = (a + 22.5) % 45;      // 在本扇区内的位置：0 或 45 都表示正贴边界
+        if (off < 10 || off > 35) return cur;
+        return next;
+    }
+
     /** 对面最近的**还在出兵的**敌口（纵向加权 = 同一路优先）。空口不算——认死空口会让整路兵原地朝前走不转向 */
     private nearestEnemySpawn(s: WarSpawn): WarSpawn | null {
         let best: WarSpawn | null = null, bd = Infinity;
@@ -2334,11 +2374,22 @@ export class Scene13WarLayer {
         //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。
         //    🔴 必须筛 pool>0：我一度不筛（想让空口继续当路标），结果上路敌人死光、上路敌口也空了之后，
         //       上路的兵还认死那个空口一直往前走，屏幕下方全是敌人也不去（主人 2026-08-11 实锤）。
+        //    🔴 [2026-08-17 修·分路顶头死锁] 还要筛掉「我已经站到这个口门口了」的口。
+        //       实测死局（scratch/scene13_probe_log.jsonl 2026-08-17T11:57Z 那条）：
+        //         上路攻方杀光上路守军、下路守方杀光下路攻军 → 两拨人各自被同路敌口吸到屏幕两端顶头 →
+        //         相距远超视野互相看不见 → 60 秒零阵亡 → 双方场上 170/219 都 ≥ TRIGGER(150) →
+        //         补兵闸门两边同时焊死 → 永远没人死，环闭上了，打到天荒地老。
+        //       门口这个口还有 pool 是真的，但**兵堵在门口它也不会出人**（出兵要等场上跌破 150），
+        //       所以「已经到门口」就该换目标：先换别的敌口，全都到过 → 落到 ③ 扑敌军重心 = 回头去有人的地方。
+        //    🔴 NEAR_PORT 必须 **大于 AIM_JITTER(120)**：每个兵的落点带 ±120px 终身偏移，
+        //       停下的位置离口最远 120px，判定圈比它小的话那些兵永远触发不了跳过，照样钉死。
         let best: { x: number; y: number } | null = null, bd = Infinity;
         for (const s of this.spawns) {
             if (s.f === m.f || s.pool <= 0) continue;
-            const dy = (s.y - m.y) * LANE_W;                 // 纵向加权 = 优先同一路
-            const dd = (s.x - m.x) ** 2 + dy * dy;
+            const rdx = s.x - m.x, rdy = s.y - m.y;
+            if (rdx * rdx + rdy * rdy < NEAR_PORT * NEAR_PORT) continue;   // 已堵到这个口 → 换目标
+            const dy = rdy * LANE_W;                         // 纵向加权 = 优先同一路
+            const dd = rdx * rdx + dy * dy;
             if (dd < bd) { bd = dd; best = { x: s.x, y: s.y }; }
         }
         if (best) return jit(best);
@@ -2456,11 +2507,16 @@ export class Scene13WarLayer {
                 // 够不着 → 追击（DE「看见就冲上去」；近战从 LOS 圈走向贴身，远程够射程前走位）
                 if (!inReach) {
                     m.st = 0;
-                    const fdx = foe.x - m.x, fdy = foe.y - m.y;
+                    // 绕着目标散开：瞄目标**周围一圈**上属于自己的那个点，不是目标本人那一个点。
+                    // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
+                    // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
+                    const ra = Math.atan2(m.jy, m.jx);
+                    const fdx = foe.x + Math.cos(ra) * CHASE_RING - m.x;
+                    const fdy = foe.y + Math.sin(ra) * CHASE_RING - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
                     m.x += fdx / fd * stats.spd * dt;
                     m.y += fdy / fd * stats.spd * dt;
-                    m.dir = this.dir8(fdx, fdy);
+                    m.dir = this.dir8Hyst(m.dir, fdx, fdy);
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
                     //    刚出生就开始追的兵还会**一直半透明**（fadeT 不递减）。
@@ -2478,7 +2534,8 @@ export class Scene13WarLayer {
                     continue;
                 }
                 m.st = (stats.rng && close && this.bank[m.key]?.sets.melee[0].length) ? 2 : 1;
-                m.dir = this.dir8(foe.x - m.x, foe.y - m.y);
+                // 交战中也走迟滞：贴身互推时目标方位每帧摆动，直接 dir8 会让贴图在两个朝向间跳
+                m.dir = this.dir8Hyst(m.dir, foe.x - m.x, foe.y - m.y);
                 m.lock = (m.lock ?? 0) - dt;
                 const reloadTime = stats.reload || 2.0;
                 if (m.lock <= 0) {
