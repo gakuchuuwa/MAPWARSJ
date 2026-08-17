@@ -992,14 +992,10 @@ export class Scene13WarLayer {
         const cv = this.canvas;
         if (cv) { cv.style.display = 'block'; }
 
-        // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起
+        // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起（记录状态供退出时还原）
         const game = (window as any).game;
-        if (game?.cameraFollowUI) {
-            game.cameraFollowUI.closeList();
-        }
-        if (game?.brawlFeedPanel) {
-            game.brawlFeedPanel.setExpanded(false);
-        }
+        game?.cameraFollowUI?.onEnterBattleScene13?.();
+        game?.brawlFeedPanel?.onEnterBattleScene13?.();
 
         // [2026-08-11 势力本色] 攻守双方交给主游戏的 SpriteTinter 按 factionId 染色，
         // 与地图上的军团、旗帜、领土同一套色，不另起炉灶。

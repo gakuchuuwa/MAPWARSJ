@@ -48,7 +48,8 @@ export class CameraFollowUI {
     private listButton: HTMLButtonElement | null = null;
     private listPanel: HTMLDivElement | null = null;
     private followBanner: HTMLDivElement | null = null;
-    private isListOpen: boolean = false;
+    public isListOpen: boolean = false;
+    private preScene13ListOpen: boolean = false;
 
     // State
     private followedArmyId: string | null = null;
@@ -626,6 +627,24 @@ export class CameraFollowUI {
             this.listPanel!.style.display = 'block';
         } else {
             this.listPanel!.style.display = 'none';
+        }
+    }
+
+
+
+    /** 进 13 战斗场景时保存状态并收起面板 */
+    public onEnterBattleScene13(): void {
+        if (this.isListOpen) {
+            this.preScene13ListOpen = true;
+        }
+        this.closeList();
+    }
+
+    /** 退 13 战斗场景时恢复展开状态 */
+    public onExitBattleScene13(): void {
+        if (this.preScene13ListOpen) {
+            this.preScene13ListOpen = false;
+            this.openList();
         }
     }
 

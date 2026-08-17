@@ -134,11 +134,32 @@ export class BrawlFeedPanel {
     private toggleBtn: HTMLElement | null = null;
     private expanded = true;
     private passSiegeCooldowns: Map<string, number> = new Map();
+    private preScene13Expanded = false;
 
     constructor(
         private timeSystem: TimeSystem,
         private cityManager: CityManager
     ) {}
+
+    public isExpanded(): boolean {
+        return this.expanded;
+    }
+
+    /** 进 13 战斗场景时保存状态并收起面板 */
+    public onEnterBattleScene13(): void {
+        if (this.expanded) {
+            this.preScene13Expanded = true;
+        }
+        this.setExpanded(false);
+    }
+
+    /** 退 13 战斗场景时恢复展开状态 */
+    public onExitBattleScene13(): void {
+        if (this.preScene13Expanded) {
+            this.preScene13Expanded = false;
+            this.setExpanded(true);
+        }
+    }
 
     /** 设置展开/收起状态（由直播模式或手动点击调用） */
     setExpanded(expanded: boolean): void {
