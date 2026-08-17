@@ -2438,7 +2438,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    panyao_panhu: { generalId: 'panyao_panhu', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_718', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},
+    panyao_pandaxiao: { generalId: 'panyao_pandaxiao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_718', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},
 
 
 
@@ -2935,7 +2935,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     susa_xiuteluke: { generalId: 'susa_xiuteluke', tier: 'famous', tacticalSkillId: 'ts_218', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_560', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_408', defDisadvantageSkillId: 'ts_006', aptitude: 'leverage', attackStyle: 'attack' }, // 舒特鲁克：埃兰攻掠巴比伦 → 擅攻
     yi_yuqian: { generalId: 'yi_yuqian', tier: 'famous', tacticalSkillId: 'ts_806', defAdvantageSkillId: 'ts_806', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_584', atkDisadvantageSkillId: 'ts_179', defBalanceSkillId: 'ts_433', defDisadvantageSkillId: 'ts_294', aptitude: 'reverse', attackStyle: 'defense' },
     safawei_d_abasi: { generalId: 'safawei_d_abasi', tier: 'famous', tacticalSkillId: 'ts_239', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_628', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_513', aptitude: 'leverage', attackStyle: 'balanced' },
-    sumeier_lugaerbanda: { generalId: 'sumeier_lugaerbanda', tier: 'ordinary', tacticalSkillId: 'ts_005', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'defense' },
+    sumeier_zhajixi: { generalId: 'sumeier_zhajixi', tier: 'ordinary', tacticalSkillId: 'ts_005', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'defense' },
     ayoubu_salaheding: { generalId: 'ayoubu_salaheding', tier: 'famous', tacticalSkillId: 'ts_220', defBalanceSkillId: 'ts_286', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_718', atkDisadvantageSkillId: 'ts_415', defAdvantageSkillId: 'ts_770', defDisadvantageSkillId: 'ts_650', aptitude: 'leverage', attackStyle: 'balanced' },
     // ── 2026-08-04 新增：鲍德温 @ 埃德萨／奥斯若恩 ──
     aosiruowen_baodewen: { generalId: 'aosiruowen_baodewen', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_109', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },

@@ -43,7 +43,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     nabatai: { name: '纳巴驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
     aiji: { name: '麦查伊军', tier: 3 },           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
-    sumeier: { name: '苏美尔方阵', tier: 3 },      // 乌鲁克·吉尔伽美什：乌尔军旗／鹰碑所载人类最早重装密集阵
+    sumeier: { name: '苏美尔方阵', tier: 3 },      // 乌鲁克·扎吉西：乌尔军旗／鹰碑所载人类最早重装密集阵
     ldiya: { name: '吕底亚骑', tier: 3 },          // 斯法尔德·克罗伊斯：希罗多德称当时最强骑兵，铸币与其名同为符号
     aiaoniya: { name: '爱奥尼亚团', tier: 3 },
     jialatai: { name: '加拉太卫', tier: 3 },       // 安卡拉·德奥塔鲁斯：加拉太凯尔特雇佣兵在希腊化世界赫赫有名

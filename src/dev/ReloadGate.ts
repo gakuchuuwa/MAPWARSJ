@@ -36,22 +36,21 @@ function shouldBlock(): boolean {
 }
 
 /**
- * 本页面实例是否还没上报过。
+ * 本页面的加载时刻（epoch ms）。
  *
- * [2026-08-04 修] 首次上报要带 fresh=true，让服务端把闸门关闭期间积压的那次整页刷新丢掉：
- * 积压的刷新是「让页面拿到最新代码」，而新页面本来就是从磁盘读的最新代码——补发给它纯属
- * 白烧一次启动（本项目一次启动 10~80s）。实测症状即「刚进入地图就又重启一次」，
- * 启动打点 scratch/boot_timing_log.jsonl 里表现为连着 2~3 次、间隔≈一次启动耗时。
+ * [2026-08-17 改] 每次上报都带上它，服务端拿它跟「最近一次本该整页刷新的时刻」比：
+ *   磁盘代码比本页新 → 开闸时补刷；本页更新 → 一定不刷。
+ * 取代 08-04 的 fresh 标志与 08-10 的看门狗（那两处都是在给「布尔积压队列」打补丁：
+ * 队列既会把该刷的丢掉——心跳被后台节流后闸门提前到期即丢——也会把过期刷新补给新页面）。
+ * 用 performance.timeOrigin 而不是模块加载时刻：模块可能晚于页面几秒才被动态 import 进来。
  */
-let firstReport = true;
+const PAGE_LOADED_AT = Math.round(performance.timeOrigin || (Date.now() - performance.now()));
 
 function report(): void {
-    const fresh = firstReport;
-    firstReport = false;
     void fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ block: shouldBlock(), fresh }),
+        body: JSON.stringify({ block: shouldBlock(), loadedAt: PAGE_LOADED_AT }),
         keepalive: true,
     }).catch(() => {
         /* dev server 正在重启或已关闭，忽略即可——服务端 15 秒后自动开闸 */
@@ -74,6 +73,12 @@ export function initReloadGate(): void {
     tryHookPauseChange();
     // F2 校正器关闭后主动补报一次（若恢复后的暂停状态与打开前相同，setPaused 不触发 onPauseChange）
     window.addEventListener('reload-gate-ping', () => report());
+    // [2026-08-17] 页面被编辑器盖住 / 最小化时，Chrome 把 setInterval 压到 ~1 次/分，
+    // 5 秒心跳会断档。回到前台立刻补报一次：既及时续上闸门，也让「暂停期间改的文件」马上刷。
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) report();
+    });
+    window.addEventListener('focus', () => report());
     window.setInterval(() => {
         tryHookPauseChange();
         report();

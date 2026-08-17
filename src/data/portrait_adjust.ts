@@ -3683,7 +3683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/KOREA/xinluo_jinyuxin.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 2,
             "offsetY": 0
         },
@@ -4182,7 +4182,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_25.png": {
+        "/assets/CENTRAL_ASIA/__闲���__WEST_ASIA_25.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 28
@@ -6572,12 +6572,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -29
         },
-        "/assets/LATIN/0723d971-d438-4f9d-8225-9f325a6e74a6.png": {
+        "/assets/LATIN/__多余__LATIN_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LATIN/96f58f3d-76b6-4c6a-aa32-0e61cd2f53de.png": {
+        "/assets/LATIN/__闲置__LATIN_14.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 6

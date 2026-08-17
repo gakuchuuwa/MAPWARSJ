@@ -85,10 +85,27 @@ function markRoadSaveWrite(): void {
 // 并把闸门关着期间积压的那一次立即补上。状态由页面每 5 秒续期上报（src/dev/ReloadGate.ts）。
 // 用「续期到期时间」而不是布尔值：页面关掉后没人续期，15 秒后自动开闸，
 // 否则关掉浏览器就等于把 dev server 的刷新永久焊死。
+//
+// [2026-08-17 重做·根因「改了半天页面不刷新」] 原实现用一个布尔 runGateQueuedReload 记「欠一次刷新」，
+// 有两条丢刷新的路径，两条都会让主人改完文件干等：
+//   ① 心跳被浏览器节流：游戏窗口被编辑器盖住 / 最小化时 Chrome 把 setInterval 压到 ~1 次/分，
+//      5 秒心跳撑不住 15 秒续期 → 闸门在页面还活着、推演还在跑的时候就到期了；
+//   ② 闸门一到期，看门狗（每 2 秒）就把积压的那次刷新**丢掉**（08-10 为治「重启两遍」加的）。
+//      ①+② 合起来：改动被拦下 → 15 秒后被丢弃 → 主人回到窗口暂停推演，什么也不会发生。
+// 改成「时间戳比对」，不再存布尔队列：
+//   服务端只记 lastReloadNeedAtMs（最近一次「本该整页刷新」的时刻）；
+//   页面每次上报带自己的 loadedAt（本页加载时刻）。闸门开时若 lastReloadNeedAtMs > loadedAt，
+//   说明这张页面确实是旧代码 → 刷；否则一定不刷。
+// 这样：丢心跳不再丢刷新（下次上报照样比得出旧）；刚加载的新页面 loadedAt 更大，
+// 天然不会被过期刷新补发（08-04 fresh 标志、08-10 看门狗都是在补这个洞，现已可删）。
 let runGateUntil = 0;
-let runGateQueuedReload = false;
+let lastReloadNeedAtMs = 0;
 function isRunGateClosed(): boolean {
     return Date.now() < runGateUntil;
+}
+/** 记一笔「此刻磁盘代码已比页面新」。页面下次上报且闸门开着时按时间戳决定补不补刷新。 */
+function markReloadNeeded(): void {
+    lastReloadNeedAtMs = Date.now();
 }
 
 // ============================================================
@@ -213,66 +230,50 @@ export default defineConfig({
                         return;
                     }
                     pendingBatchReloadTimer = null;
-                    // 推演运行中则不补发，转交运行闸门排队，等推演暂停再刷
+                    // 推演运行中则不补发，交给运行闸门：记一笔时间戳，等推演暂停时页面上报再刷
                     if (isRunGateClosed()) {
-                        runGateQueuedReload = true;
-                        console.log('[HMR-Suppress] 批量保存窗口结束，但推演运行中 → 转由运行闸门排队');
+                        markReloadNeeded();
+                        console.log('[HMR-Suppress] 批量保存窗口结束，但推演运行中 → 转由运行闸门（暂停即刷）');
                         return;
                     }
                     console.log('[HMR-Suppress] 批量保存窗口结束，自动补发整页刷新');
                     origSend({ type: 'full-reload' });
                 };
-                // 运行闸门：页面上报「现在能不能刷」。block=true 续期 15 秒，false 立即开闸补发。
-                const openRunGate = (): void => {
-                    runGateUntil = 0;
-                    if (runGateQueuedReload) {
-                        runGateQueuedReload = false;
-                        console.log('[HMR-Suppress] 推演已暂停，补发闸门关闭期间积压的整页刷新');
-                        origSend({ type: 'full-reload' });
-                    }
-                };
+                // 运行闸门：页面上报「现在能不能刷 + 我是什么时候加载的」。
+                //   block=true  → 续期 15 秒（关闸）。
+                //   block=false → 开闸；若磁盘代码比这张页面新（lastReloadNeedAtMs > loadedAt）就立刻刷。
+                // 判据是时间戳而不是「有没有积压的那一次」，所以心跳被节流、页面被关、手动 F5
+                // 这些情况都不会再把该刷的刷新弄丢，也不会把过期刷新补给刚加载的新页面。
                 server.middlewares.use('/__dev/reload-gate', (req, res) => {
                     let body = '';
                     req.on('data', (chunk) => { body += chunk; });
                     req.on('end', () => {
                         let block = false;
-                        let fresh = false;
+                        let loadedAt = 0;
                         try {
                             const parsed = JSON.parse(body || '{}');
                             block = parsed.block === true;
-                            fresh = parsed.fresh === true;
+                            loadedAt = typeof parsed.loadedAt === 'number' ? parsed.loadedAt : 0;
                         } catch {
                             // 上报体损坏时按「放行」处理，宁可多刷一次也别焊死闸门
                         }
-                        // [2026-08-04 修] 页面刚加载 = 已经是磁盘上的最新代码，闸门关闭期间积压的
-                        // 那次整页刷新就是过期的，补发只会让刚进地图的页面再白烧一次启动（10~80s）。
-                        // 症状：主人反馈「刚进入地图就又重启」；boot_timing_log.jsonl 里是连着 2~3 次。
-                        // 注意必须在 openRunGate() 之前丢弃，否则开闸那一下就把它发出去了。
-                        if (fresh && runGateQueuedReload) {
-                            runGateQueuedReload = false;
-                            console.log('[HMR-Suppress] 页面已重新加载（自带最新代码），丢弃积压的过期刷新');
+                        if (block) {
+                            runGateUntil = Date.now() + 15_000;
+                        } else {
+                            runGateUntil = 0;
+                            // loadedAt=0（老页面/上报体损坏）时按 Date.now() 处理：不认为它是旧代码，
+                            // 宁可少刷一次也别在没根据的情况下炸掉可能正在直播的页面。
+                            const pageAt = loadedAt || Date.now();
+                            if (lastReloadNeedAtMs > pageAt) {
+                                lastReloadNeedAtMs = 0;
+                                console.log('[HMR-Suppress] 推演已暂停且页面代码已过期 → 补发整页刷新');
+                                origSend({ type: 'full-reload' });
+                            }
                         }
-                        if (block) runGateUntil = Date.now() + 15_000;
-                        else openRunGate();
                         res.statusCode = 204;
                         res.end();
                     });
                 });
-                // 页面被关掉/崩了/正在重新加载就没人续期了 → 闸门到期时**丢弃**积压刷新，不补发。
-                // [2026-08-10 修·双重启根因] 原来这里到期即补发，理由是「页面崩了要补上」——
-                // 但这理由不成立，与 08-04 的 fresh 规则是同一个道理：
-                //   页面真没了 → 没有刷新对象，发了也是空放；
-                //   页面回来了 → 它是从磁盘读的最新代码，补发纯属白烧一次启动（10~80s）。
-                // 而积压刷新最常见的去处恰恰是第三种：主人手动 F5，新页面还在 boot（11s 起），
-                // 老页面心跳早断（+15s 到期）→ 看门狗抢在新页面发出 fresh 上报之前补发 →
-                // 主人反馈的「刷新页面要重启两次」。真正需要刷新时，页面上报 block=false 走
-                // openRunGate() 即可，那条路径不受影响。
-                setInterval(() => {
-                    if (runGateQueuedReload && !isRunGateClosed()) {
-                        runGateQueuedReload = false;
-                        console.log('[HMR-Suppress] 闸门到期且无页面续期 → 丢弃积压的过期刷新（不补发）');
-                    }
-                }, 2000).unref?.();
 
                 server.ws.send = (payload: unknown) => {
                     if (
@@ -285,7 +286,7 @@ export default defineConfig({
                         const inBatch = now < batchSaveSuppressReloadUntil;
                         const inRoad = now < roadSaveSuppressReloadUntil;
                         if (!inPortrait && !inBatch && !inRoad && isRunGateClosed()) {
-                            runGateQueuedReload = true;
+                            markReloadNeeded();
                             console.log('[HMR-Suppress] 已拦截整页刷新（推演运行中；暂停推演即刷新）');
                             return;
                         }

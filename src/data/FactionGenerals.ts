@@ -846,7 +846,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     miao: { generalId: 'miao_amishi', generalName: '阿迷氏', portrait: '/assets/LINGNAN/miao_amishi.png' },
     jiang_s: { generalId: 'jiang_s_huanggai', generalName: '黄盖', portrait: '/assets/JIANGNAN/jiang_s_huanggai.png' },
     muong: { generalId: 'muong_shencongyue', generalName: '申从岳', portrait: '/assets/LINGNAN/muong_shencongyue.png' },
-    panyao: { generalId: 'panyao_panhu', generalName: '盘瓠', portrait: '/assets/LINGNAN/panyao_panhu.png' },
+    panyao: { generalId: 'panyao_pandaxiao', generalName: '盘大孝', portrait: '/assets/LINGNAN/panyao_pandaxiao.png' },
     chen2: { generalId: 'chen2_zhaofan', generalName: '赵范', portrait: '/assets/LINGNAN/chen2_zhaofan.png' },
     qian: { generalId: 'qian_songjingyang', generalName: '宋景阳', portrait: '/assets/LINGNAN/qian_songjingyang.png' },
     qinghai: { generalId: 'qinghai_yuezhongqi', generalName: '岳钟琪', portrait: '/assets/manqing/qinghai_yuezhongqi.png' },
@@ -990,7 +990,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qiliqiya: { generalId: 'qiliqiya_pangpei', generalName: '庞培', portrait: '/assets/WEST_ASIA/qiliqiya_pangpei.png' },
     aqimeinide: { generalId: 'aqimeinide_daliushi', generalName: '大流士', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
-    sumeier: { generalId: 'sumeier_lugaerbanda', generalName: '卢伽尔班达', portrait: '/assets/WEST_ASIA/sumeier_jierjiameishen.png' },
+    sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
