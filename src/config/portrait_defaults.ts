@@ -63,12 +63,22 @@ export function normalizePortraitWebPath(url: string): string {
     }
 }
 
+const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
+    GREEK: 'LATIN',
+    NUERGAN: 'NORTHEAST',
+};
+
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
     // 例：HEXI 文件夹可能返回 /assets/hexi/ 或 /assets/HEXI/，用小写比较兜底
     const prefix = cultureCircleFolderPrefix(region).toLowerCase();
-    const pool = _allPortraitPaths
+    let pool = _allPortraitPaths
         .filter((p) => p.toLowerCase().startsWith(prefix));
+    if (pool.length === 0 && REGION_FOLDER_ALIASES[region]) {
+        const aliasRegion = REGION_FOLDER_ALIASES[region]!;
+        const aliasPrefix = cultureCircleFolderPrefix(aliasRegion).toLowerCase();
+        pool = _allPortraitPaths.filter((p) => p.toLowerCase().startsWith(aliasPrefix));
+    }
     if (pool.length === 0) {
         console.warn(`[Portrait] ⚠️ 文化区 ${region} 立绘池为空！检查 public/assets/${region}/ 文件夹及 Vite glob 大小写`);
     }
@@ -836,7 +846,7 @@ export function resolveGeneralPortraitPath(
     dedicatedPath: string | undefined,
     options?: { factionId?: string; region?: RegionType; exclude?: string },
 ): string {
-    if (dedicatedPath?.trim()) {
+    if (dedicatedPath?.trim() && portraitAssetExists(dedicatedPath)) {
         return normalizePortraitWebPath(dedicatedPath);
     }
     const cultureRegion = (options?.region
@@ -951,7 +961,7 @@ export function resolvePortraitAssetPath(
 ): string {
     const { factionId, region, exclude } = options ?? {};
 
-    if (requested?.trim()) {
+    if (requested?.trim() && portraitAssetExists(requested)) {
         return normalizePortraitWebPath(requested);
     }
 

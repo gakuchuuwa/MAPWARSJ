@@ -2436,16 +2436,23 @@ export class Scene13WarLayer {
 
             const foe = m.foe;
             if (foe) {
-                m.fightT = (m.fightT || 0) + dt;
-                // 缠斗 4 秒脱离
-                if (m.fightT > 4) {
-                    m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
-                    const aim = this.aimAt(m);
-                    if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
-                    continue;
+                const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
+                const close = fd2 < 65 * 65;
+                const inReach = fd2 < REACH * REACH;
+                // 缠斗 4 秒脱离。
+                // 🔴 [2026-08-17 修] 只在**够得着**的时候计时——把「跑过去的路上」也算进这 4 秒，
+                //    会让慢速大视野兵种永远打不到人：象兵 LOS 280、贴身 65、速度 40，
+                //    从视野边缘跑到跟前要 5.4s（精锐战象 320/6.4s），4 秒一到就丢目标重找，
+                //    再锁再跑再丢，一刀都砍不出去。实测这样的兵种共 6 个（全是象 + 桑纳亚）。
+                if (inReach) {
+                    m.fightT = (m.fightT || 0) + dt;
+                    if (m.fightT > 4) {
+                        m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
+                        const aim = this.aimAt(m);
+                        if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                        continue;
+                    }
                 }
-                const close = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < 65 * 65;
-                const inReach = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < REACH * REACH;
                 // 够不着 → 追击（DE「看见就冲上去」；近战从 LOS 圈走向贴身，远程够射程前走位）
                 if (!inReach) {
                     m.st = 0;
@@ -2454,6 +2461,11 @@ export class Scene13WarLayer {
                     m.x += fdx / fd * stats.spd * dt;
                     m.y += fdy / fd * stats.spd * dt;
                     m.dir = this.dir8(fdx, fdy);
+                    // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
+                    //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
+                    //    刚出生就开始追的兵还会**一直半透明**（fadeT 不递减）。
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * 8;          // st=0 走路节奏，与尾部同式
                     continue;
                 }
                 // 炸药自爆兵（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性范围 AoE 伤害并自爆牺牲）

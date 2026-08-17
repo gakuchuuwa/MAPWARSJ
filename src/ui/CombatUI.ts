@@ -4564,7 +4564,10 @@ export class CombatUI {
             }
 
             rememberFacing(finalUrl);
+            let loaded = false;
             const onLoad = () => {
+                if (loaded) return;
+                loaded = true;
                 applyFacing();
                 applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
             };
@@ -4577,17 +4580,10 @@ export class CombatUI {
                     if (!portraitUrlsEqual(finalUrl, BATTLE_PORTRAIT_FALLBACK)) {
                         unregisterPortraitPathRuntime(finalUrl);
                     }
-                    if (!unit) {
-                        if (finalUrl !== BATTLE_PORTRAIT_FALLBACK) {
-                            setSrc(BATTLE_PORTRAIT_FALLBACK, true);
-                        }
-                        return;
-                    }
-                    const fallback = getCombatPortraitPath(unit, excludePath);
-                    const alt =
-                        fallback?.trim() && !portraitUrlsEqual(fallback, finalUrl)
-                            ? fallback
-                            : BATTLE_PORTRAIT_FALLBACK;
+                    const alt = getRandomRegionPortraitPath(cultureRegion, {
+                        factionId: portraitOpts.factionId,
+                        exclude: finalUrl,
+                    }) || BATTLE_PORTRAIT_FALLBACK;
                     if (!portraitUrlsEqual(alt, finalUrl)) {
                         setSrc(alt, true);
                     }
@@ -4598,8 +4594,12 @@ export class CombatUI {
             img.src = this.portraitPickerCatalogRev
                 ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
                 : finalUrl;
-            applyFacing();
-            applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
+            if (img.complete && img.naturalWidth > 0) {
+                onLoad();
+            } else {
+                applyFacing();
+                applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
+            }
         };
 
         const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';
