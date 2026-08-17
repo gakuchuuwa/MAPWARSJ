@@ -1229,29 +1229,8 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/death_${dir}.png`),
         },
         // 【华夏具装铁骑 / 玄甲军】Huaxia Iron Cavalry（8方向具装重骑）
-        'huaxia_iron_cavalry': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/death_${dir}.png`),
-        },
         // 【草原游牧骑射手 / 曼古歹】Steppe Horse Archer（8方向回身射箭弓骑）
-        'steppe_horse_archer': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/death_${dir}.png`),
-        },
         // 【华夏神臂弩手 / 强弩兵】Huaxia Crossbow（8方向重弩）
-        'huaxia_crossbow': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/death_${dir}.png`),
-        },
         'amazon_archer': {
             // 【亚马逊弓手】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AMAZONARCHER/move_${dir}.png`),
@@ -2563,15 +2542,6 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAKAN_AXEMAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAKAN_AXEMAN/death_${dir}.png`),
         },
-        'tarantine_cavalry': {
-            // 【塔兰丁骑兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/death_${dir}.png`),
-        },
         'temple_guard': {
             // 【神庙守卫】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEMPLEGUARD/move_${dir}.png`),
@@ -2776,22 +2746,6 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/death_${dir}.png`),
         },
-        'macedon_infantry': {
-            // 【马其顿重步兵】AoE2 DE 素材
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/death_${dir}.png`),
-        },
-        'roman_legion': {
-            // 【罗马军团步兵】AoE2 DE 素材
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/death_${dir}.png`),
-        },
         'sakan_axeman': {
             // 【塞种战斧兵】AoE2 DE 素材
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAKAN_AXEMAN/move_${dir}.png`),
@@ -2919,15 +2873,6 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/death_${dir}.png`),
-        },
-        'tarantine_cavarly': {
-            // 【塔兰托标枪骑兵】AoE2 DE 素材
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARANTINE_CAVALRY/death_${dir}.png`),
         },
         'camel_imperial': {
             // 【帝王骆驼兵】AoE2 DE 素材
