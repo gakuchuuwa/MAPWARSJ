@@ -1671,29 +1671,54 @@ export class Scene13WarLayer {
         }
     }
 
-    private search(m: { x: number; y: number; f: number }, radius: number, nearest = false): WarMan | null {
+    /**
+     * 索敌：以自身为中心**环形向外扩展**，返回半径内**最近**的敌人（精确最近邻）。
+     *
+     * 🔴 [2026-08-17 修「攻方白拿 10~15% 战力」] 旧实现是「gx 从 cx-span 递增扫，逮到就返回」，
+     *    这让胜负取决于网格遍历方向而非战力：攻方在左、守方在右，攻方的兵先扫到的是离自己
+     *    最近的敌人，守方的兵先扫到的却是离自己最远的。实测（war_sim，同兵种对镜）：
+     *      · 旧实现          → 攻方 16 胜 0 负
+     *      · 仅翻转扫描方向  → 守方 16 胜 0 负（完全镜像，证明根因就是遍历顺序）
+     *      · 本实现（最近邻）→ 6 : 6，对称
+     *    等效战力约 10~15%：给劣势方 1.15 倍八环加成、或多 10~20% 兵力即可翻盘。因为 13 是
+     *    **裁决层**（onDecision → forceScene13Result 写死战果、跳过八环推演），这个偏袒直接
+     *    决定真实胜负，不是观感问题。
+     *
+     *    改法依据帝国决定版：DE 的单位自动索敌一律选**最近**的敌人，克制关系由护甲与加成
+     *    伤害实现（本作 dmgVs 已照搬 DE 数值：骑士 100/10/2/2、弓兵 30/4/0/0），不靠目标
+     *    选择偏差去撑。实测三种索敌模式下「骑克弩」都成立，旧注释担心的「nearest 会把
+     *    cav vs ranged 从 92% 打到 25%」在 08-13 数值定稿后已复现不出来。
+     *
+     *    环形 + 提前退出（当前最优已近于下一环的最小可能距离就停）在数学上等价于全翻找最近，
+     *    war_sim 逐种子比对余兵完全一致，但通常只需展开 1~2 环，不必把 span²（远程 25）格翻完。
+     *    ⚠️ 别改回「逮到就返回」，也别加「只看前 N 个」的截断——两者都会重新引入方向偏差
+     *      （实测带 24 上限的最近邻仍偏袒攻方 9:3）。
+     */
+    private search(m: { x: number; y: number; f: number }, radius: number): WarMan | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
-        // 🔴 2026-08-13 回退到 08-11 原状（打架逮到就返回 + 行军 nearest 24 上限）：
-        //   nearest 全翻虽让镜像对称（A55%），但破坏「骑克弩」克制边（cav vs ranged 92%→25%，
-        //   远程集群集中集火最近骑兵 + 围殴放大）。克制三边是 08-11 主人拍板的核心，优先保住。
-        //   镜像偏袒（攻方 10% 偏守方）作为已知遗留，与「哪边兵少补哪边」的平衡诉求一并另议。
         const r2 = radius * radius;
-        let best: WarMan | null = null, bd = r2, seen = 0;
-        for (let gx = cx - span; gx <= cx + span; gx++) {
-            for (let gy = cy - span; gy <= cy + span; gy++) {
-                const a = map.get(HKEY(gx, gy));
-                if (!a) continue;
-                for (let i = 0; i < a.length; i++) {
-                    const o = a[i];
-                    if (o.f === m.f || o.hp <= 0) continue;
-                    const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
-                    if (d >= r2) continue;
-                    if (!nearest) return o;              // 打架：逮到就打，别翻完
-                    if (d < bd) { bd = d; best = o; }
-                    if (++seen >= 24) return best;       // 行军：找最近，但最多看 24 个
+        let best: WarMan | null = null, bd = r2;
+        for (let ring = 0; ring <= span; ring++) {
+            // 已有候选，且它比下一环任何格子的最小可能距离都近 → 不可能更近了，停
+            if (best) {
+                const floor = (ring - 1) * cell;
+                if (floor > 0 && bd < floor * floor) break;
+            }
+            for (let gx = cx - ring; gx <= cx + ring; gx++) {
+                for (let gy = cy - ring; gy <= cy + ring; gy++) {
+                    if (Math.max(Math.abs(gx - cx), Math.abs(gy - cy)) !== ring) continue;   // 只走本环
+                    const a = map.get(HKEY(gx, gy));
+                    if (!a) continue;
+                    for (let i = 0; i < a.length; i++) {
+                        const o = a[i];
+                        if (o.f === m.f || o.hp <= 0) continue;
+                        const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                        if (d >= r2) continue;
+                        if (d < bd) { bd = d; best = o; }
+                    }
                 }
             }
         }
@@ -1733,7 +1758,7 @@ export class Scene13WarLayer {
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）
-        const near = this.search(m, MARCH_R, true);
+        const near = this.search(m, MARCH_R);
         if (near) return { x: near.x, y: near.y };
         // ② 身边没人 → 朝**还在出兵的敌口**走（纵向加权 = 同一路优先）。
         //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。
