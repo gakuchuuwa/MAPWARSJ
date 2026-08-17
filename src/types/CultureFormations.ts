@@ -85,7 +85,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL_ASIA: 'square',
     GREEK:        'square',
 
-    // 三角阵 (6区)
+    // 三角阵
     LINGNAN:      'triangle',
     DIANQIAN:     'triangle',
     KOREA:        'triangle',
@@ -93,11 +93,11 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LATIN:        'triangle',
     CENTRAL:      'triangle',
     NUERGAN:      'triangle',
+    HEXI:         'triangle',
 
-    // 雁行阵 (7区)
+    // 雁行阵
     NORTH:        'echelon',
     WESTERN:      'echelon',
-    HEXI:         'echelon',
     TIBET:        'echelon',
     WEST_ASIA:    'echelon',
     SLAVIC:       'echelon',
@@ -414,16 +414,16 @@ export const CENTRAL_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 2. 北方 印加枪兵长+精锐黑光铠骑兵+辽刀（雁行阵 4+3+2：印加枪兵长前 + 精锐黑光铠骑兵中 + 辽刀后） */
+/** 2. 北方 辽刀+精锐黑光铠骑兵+诸葛弩（雁行阵 4+3+2：辽刀前 + 精锐黑光铠骑兵中 + 诸葛弩后） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'kamayuk', count: 4 },        // Row 0 前排 = 印加枪兵长 步兵
+            { type: 'liao_dao', count: 4 },        // Row 0 前排 = 辽刀 步兵
             { type: 'hei_kuang_heavy', count: 3 }, // Row 1 中排 = 精锐黑光铠骑兵 骑兵
-            { type: 'liao_dao', count: 2 }        // Row 2 后排 = 辽刀 步兵
+            { type: 'chukonu', count: 2 }          // Row 2 后排 = 诸葛弩 弩手
         ]
     }
 ];
@@ -502,16 +502,16 @@ export const STEPPE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 7. 河西 精锐火矛手+黑光铠骑兵+精锐辽刀（雁行阵 4+3+2：精锐火矛手前 + 黑光铠骑兵中 + 精锐辽刀后） */
+/** 7. 河西 诸葛弩+黑光铠骑兵+精锐辽刀（三角阵 2+3+4：诸葛弩尖刀前 + 黑光铠骑兵中坚 + 精锐辽刀底边） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_fire_lancer', count: 4 },// Row 0 前排 = 精锐火矛手 步兵
-            { type: 'hei_kuang', count: 3 },        // Row 1 中排 = 黑光铠骑兵 骑兵
-            { type: 'elite_liao_dao', count: 2 }    // Row 2 后排 = 精锐辽刀 步兵
+            { type: 'chukonu', count: 2 },        // Row 0 尖刀 = 诸葛弩 弩手
+            { type: 'hei_kuang', count: 3 },       // Row 1 中坚 = 黑光铠骑兵 骑兵
+            { type: 'elite_liao_dao', count: 4 }   // Row 2 底边 = 精锐辽刀 步兵
         ]
     }
 ];
