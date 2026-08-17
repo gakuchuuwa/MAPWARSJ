@@ -61,4 +61,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 2 },            // Row 2 压阵 = 忍者
         ],
     },
+    // 伊贺·忍者军团（鱼鳞阵 3×3：忍者 + 忍者 + 藤弓兵）
+    iga_d: {
+        formationMode: 'square',
+        slots: [
+            { type: 'ninja', count: 3 },        // Row 0 前排 = 忍者
+            { type: 'ninja', count: 1 },        // Row 1 左 = 忍者
+            { type: 'ninja', count: 1 },        // Row 1 中 = 忍者
+            { type: 'ninja', count: 1 },        // Row 1 右 = 忍者
+            { type: 'rattan_archer', count: 3 } // Row 2 后排 = 藤弓兵
+        ],
+    },
 };
