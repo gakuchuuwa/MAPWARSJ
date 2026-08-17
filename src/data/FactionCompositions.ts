@@ -52,13 +52,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 4 },      // Row 2 底边 = 克里特弓手
         ],
     },
-    // 日本战国·织田信长军团（三角阵 2+3+4：忍者 2 + 黑光铠骑兵 3 + 精锐武士 4）
+    // 日本战国·织田信长军团（雁行阵 4+3+2：精锐武士 4 + 藤弓兵 3 + 忍者 2）
     owari: {
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         slots: [
-            { type: 'ninja', count: 2 },            // Row 0 尖刀 = 忍者
-            { type: 'hei_kuang', count: 3 },        // Row 1 中坚 = 黑光铠骑兵
-            { type: 'samurai_elite', count: 4 },    // Row 2 底边 = 精锐武士
+            { type: 'samurai_elite', count: 4 },    // Row 0 宽阵 = 精锐武士
+            { type: 'rattan_archer', count: 3 },    // Row 1 中坚 = 藤弓兵
+            { type: 'ninja', count: 2 },            // Row 2 压阵 = 忍者
         ],
     },
 };
