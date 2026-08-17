@@ -4593,6 +4593,8 @@ export class CombatUI {
                     }
                 };
             }
+            // 切换立绘先清空旧图：img.src 是异步加载，不清空会残留上一场人物（新图 onload 才替换）
+            img.removeAttribute('src');
             img.src = this.portraitPickerCatalogRev
                 ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
                 : finalUrl;
