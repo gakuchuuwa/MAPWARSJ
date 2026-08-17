@@ -167,19 +167,19 @@ export const WAR_TYPES: Record<string, WarType> = {
     bactrian_archer: { name: '巴克特里亚弓手', cls: 'ranged', sz: 1, hp: 60, atk: 6, meleeArmor: 3, pierceArmor: 1, rng: 200, reload: 1.8, spd: 50, dmgType: 'pierce', bonus: { 8: 5, 27: 2 }, armorTags: [15, 31] },
     battering_ram: { name: '轻型攻城槌', cls: 'melee', sz: 1, hp: 175, atk: 2, meleeArmor: -3, pierceArmor: 180, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 150, 20: 40 }, armorTags: [17, 20, 31] },
     berserk: { name: '维京狂战士', cls: 'melee', sz: 1, hp: 54, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
-    blackwood_archer: { name: '黑木弓箭手', cls: 'ranged', sz: 1, hp: 20, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    bolas_rider: { name: '南美套索骑兵', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 2, 17: 2, 30: 2 }, armorTags: [19, 28, 15, 8, 31] },
+    blackwood_archer: { name: '图皮黑木弓箭手', cls: 'ranged', sz: 1, hp: 20, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    bolas_rider: { name: '马普切套索骑兵', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 2, 17: 2, 30: 2 }, armorTags: [19, 28, 15, 8, 31] },
     bombard_cannon: { name: '火炮', cls: 'ranged', aoe: true, sz: 1, hp: 80, atk: 40, meleeArmor: 2, pierceArmor: 5, rng: 480, reload: 6.5, spd: 50, dmgType: 'melee', bonus: { 11: 200, 13: 40, 16: 40, 20: 20, 37: 40 }, armorTags: [20, 23, 31] },
     camel_archer: { name: '柏柏尔骆驼弓骑', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 28: 4 }, armorTags: [19, 28, 30, 15, 31, 39] },
     camel_raider: { name: '骆驼突袭者', cls: 'cav', sz: 1, hp: 90, atk: 10, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
     camel_rider: { name: '骆驼骑兵', cls: 'cav', sz: 1, hp: 100, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 9, 16: 5, 30: 5 }, armorTags: [30, 31, 39] },
-    camel_scout: { name: '骆驼斥候', cls: 'cav', sz: 1, hp: 70, atk: 2, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [30, 31, 39] },
+    camel_scout: { name: '古吉拉特骆驼斥候', cls: 'cav', sz: 1, hp: 70, atk: 2, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [30, 31, 39] },
     capped_ram: { name: '装甲攻城槌', cls: 'melee', sz: 1, hp: 200, atk: 3, meleeArmor: -2, pierceArmor: 190, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 160, 20: 50 }, armorTags: [17, 20, 31] },
     cataphract: { name: '拜占庭圣骑兵', cls: 'cav', sz: 1, hp: 110, atk: 9, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 9 }, armorTags: [8, 19, 31] },
     centurion: { name: '罗马百夫长', cls: 'cav', sz: 1, hp: 110, atk: 13, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     chakram_thrower: { name: '古吉拉特飞轮掷手', cls: 'ranged', sz: 1, hp: 40, atk: 3, meleeArmor: 1, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 1, 29: 1 }, armorTags: [1, 19, 31] },
-    champion_runner: { name: '冠军剑士', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 20: 2, 29: 1 }, armorTags: [1, 31] },
-    champion_scout: { name: '冠军剑士', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 1, 20: 2, 29: 3, 30: 1 }, armorTags: [1, 31] },
+    champion_runner: { name: '印加尚皮飞毛腿', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 20: 2, 29: 1 }, armorTags: [1, 31] },
+    champion_scout: { name: '印加尚皮斥候', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 1, 20: 2, 29: 3, 30: 1 }, armorTags: [1, 31] },
     companion_cavalry: { name: '马其顿伙伴骑兵', cls: 'cav', sz: 1, hp: 90, atk: 11, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 19: 5 }, armorTags: [8, 31, 19] },
     condottiero: { name: '意大利佣兵', cls: 'melee', sz: 1, hp: 80, atk: 10, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 1.9, spd: 55, dmgType: 'melee', bonus: { 21: 2, 23: 10 }, armorTags: [1, 19, 31, 32] },
     conquistador: { name: '西班牙征服者', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 240, reload: 2.9, spd: 130, dmgType: 'pierce', bonus: { 17: 4 }, armorTags: [15, 8, 19, 23, 28, 31] },
@@ -191,8 +191,8 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_ballista_elephant: { name: '精锐高棉弩炮战象', cls: 'ranged', sz: 1, kite: 60, aoe: true, hp: 280, atk: 10, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 40, dmgType: 'pierce', bonus: { 11: 4, 13: 4, 16: 8, 18: 100, 21: 4 }, armorTags: [8, 19, 5, 20, 31, 37] },
     elite_battle_elephant: { name: '精锐东南亚战斗象', cls: 'melee', sz: 1, aoe: true, hp: 300, atk: 14, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 7, 13: 7 }, armorTags: [5, 8, 31] },
     elite_berserk: { name: '精锐维京狂战士', cls: 'melee', sz: 1, hp: 62, atk: 14, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
-    elite_blackwood_archer: { name: '精锐黑木弓箭手', cls: 'ranged', sz: 1, hp: 25, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    elite_bolas_rider: { name: '精锐南美套索骑兵', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 3, 17: 2, 30: 3 }, armorTags: [19, 28, 15, 8, 31] },
+    elite_blackwood_archer: { name: '图皮精锐黑木弓箭手', cls: 'ranged', sz: 1, hp: 25, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    elite_bolas_rider: { name: '马普切精锐套索骑兵', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 3, 17: 2, 30: 3 }, armorTags: [19, 28, 15, 8, 31] },
     elite_boyar: { name: '精锐斯拉夫贵族铁骑', cls: 'cav', sz: 1, hp: 130, atk: 14, meleeArmor: 8, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_camel_archer: { name: '精锐柏柏尔骆驼弓骑', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 28: 6 }, armorTags: [19, 28, 30, 15, 31, 39] },
     elite_cataphract: { name: '精锐拜占庭圣骑兵', cls: 'cav', sz: 1, hp: 150, atk: 12, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.7, spd: 130, dmgType: 'melee', bonus: { 1: 12 }, armorTags: [8, 19, 31] },
@@ -205,7 +205,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_elephant_archer: { name: '精锐印度象弓骑兵', cls: 'ranged', sz: 1, kite: 60, hp: 450, atk: 15, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 40, dmgType: 'pierce', bonus: { 13: 4, 21: 4 }, armorTags: [15, 8, 19, 5, 28, 31, 36] },
     elite_gbeto: { name: '精锐马里格贝托女兵', cls: 'ranged', sz: 1, hp: 50, atk: 13, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 1 }, armorTags: [1, 19, 31] },
     elite_genitour: { name: '精锐柏柏尔标枪骑兵', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 3.0, spd: 130, dmgType: 'pierce', bonus: { 15: 5, 27: 3, 28: 2, 35: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
-    elite_genoese_crossbowman: { name: '精锐热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 5: 7, 8: 7, 16: 5, 30: 6 }, armorTags: [15, 19, 31] },
+    elite_genoese_crossbowman: { name: '意大利精锐热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 5: 7, 8: 7, 16: 5, 30: 6 }, armorTags: [15, 19, 31] },
     elite_ghulam: { name: '精锐印度斯坦古拉姆', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 6, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 6, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     elite_guecha_warrior: { name: '精锐穆伊斯卡格查勇士', cls: 'ranged', sz: 1, hp: 60, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 2, 28: 2 }, armorTags: [15, 31, 38, 19] },
     elite_huskarl: { name: '精锐哥特近卫军', cls: 'melee', sz: 1, hp: 70, atk: 12, meleeArmor: 0, pierceArmor: 8, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 10, 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
@@ -216,7 +216,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_janissary: { name: '精锐土耳其禁卫军', cls: 'ranged', sz: 1, hp: 40, atk: 22, meleeArmor: 2, pierceArmor: 0, rng: 320, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 3 }, armorTags: [15, 19, 23, 31] },
     elite_kamayuk: { name: '精锐印加枪兵长', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 40, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 12, 30: 10 }, armorTags: [1, 19, 31] },
     elite_keshik: { name: '精锐鞑靼怯薛军', cls: 'cav', sz: 1, hp: 230, atk: 19, meleeArmor: 7, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31, 36] },
-    elite_kona: { name: '精锐波利尼西亚科纳勇士', cls: 'cav', sz: 1, hp: 145, atk: 11, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [8, 19, 31] },
+    elite_kona: { name: '马普切精锐科纳勇士', cls: 'cav', sz: 1, hp: 145, atk: 11, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [8, 19, 31] },
     elite_konnik: { name: '精锐保加利亚骑兵', cls: 'cav', sz: 1, hp: 120, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_konnik_foot: { name: '精锐下马保加利亚骑兵', cls: 'melee', sz: 1, hp: 50, atk: 13, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     elite_leitis: { name: '精锐立陶宛列提斯', cls: 'cav', sz: 1, hp: 130, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
@@ -232,7 +232,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_shotel_warrior: { name: '精锐埃塞俄比亚弯刀勇士', cls: 'melee', sz: 1, hp: 50, atk: 18, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 39] },
     elite_shrivamsha_rider: { name: '精锐古吉拉特什里瓦姆沙骑手', cls: 'cav', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_skirmisher: { name: '精锐掷矛手', cls: 'ranged', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
-    elite_temple_guard: { name: '精锐高棉神庙守卫', cls: 'melee', sz: 1, hp: 115, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 16: 6, 21: 2, 30: 6 }, armorTags: [1, 19, 31, 29] },
+    elite_temple_guard: { name: '穆伊斯卡精锐神庙守卫', cls: 'melee', sz: 1, hp: 115, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 16: 6, 21: 2, 30: 6 }, armorTags: [1, 19, 31, 29] },
     elite_teutonic_knight: { name: '精锐条顿武士', cls: 'melee', sz: 1, hp: 110, atk: 17, meleeArmor: 10, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 4 }, armorTags: [1, 19, 31] },
     elite_throwing_axeman: { name: '精锐法兰克掷斧兵', cls: 'ranged', sz: 1, hp: 70, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     elite_tiger_cavalry: { name: '精锐曹魏虎豹骑', cls: 'cav', sz: 1, hp: 125, atk: 13, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 7 }, armorTags: [8, 19, 31] },
@@ -247,16 +247,16 @@ export const WAR_TYPES: Record<string, WarType> = {
     flemish_pikeman_f: { name: '勃艮第佛兰德民兵F', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 6, 8: 6, 16: 4, 29: 2, 30: 4 }, armorTags: [1, 19, 31] },
     gbeto: { name: '马里格贝托女兵', cls: 'ranged', sz: 1, hp: 40, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 1 }, armorTags: [1, 19, 31] },
     genitour: { name: '柏柏尔标枪骑兵', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 3.0, spd: 130, dmgType: 'pierce', bonus: { 15: 4, 27: 3, 35: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
-    genoese_crossbowman: { name: '热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 50, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
+    genoese_crossbowman: { name: '意大利热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 50, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
     ghulam: { name: '印度斯坦古拉姆', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 5, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     greek_noble_cavalry: { name: '希腊贵族骑兵', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    grenadier: { name: '掷弹兵', cls: 'ranged', sz: 1, hp: 40, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 9, 17: 3, 21: 4, 27: 1 }, armorTags: [15, 19, 31, 23] },
+    grenadier: { name: '女真掷弹兵', cls: 'ranged', sz: 1, hp: 40, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 9, 17: 3, 21: 4, 27: 1 }, armorTags: [15, 19, 31, 23] },
     guecha_warrior: { name: '穆伊斯卡格查勇士', cls: 'ranged', sz: 1, hp: 55, atk: 6, meleeArmor: 0, pierceArmor: 3, rng: 120, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 3, 27: 2, 28: 2 }, armorTags: [15, 31, 38, 19] },
     hand_cannoneer: { name: '手炮手', cls: 'ranged', sz: 1, hp: 40, atk: 17, meleeArmor: 1, pierceArmor: 0, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 10, 17: 2, 27: 1 }, armorTags: [15, 23, 31] },
     heavy_rocket_cart: { name: '重型火箭车', cls: 'ranged', aoe: true, sz: 1, hp: 65, atk: 5, meleeArmor: 0, pierceArmor: 8, rng: 320, reload: 5.35, spd: 50, dmgType: 'melee', bonus: { 11: 12, 20: 2, 22: 7, 26: 7, 37: 5 }, armorTags: [20, 31, 23] },
     heavy_scorpion: { name: '重型弩炮', cls: 'ranged', sz: 1, hp: 60, atk: 14, meleeArmor: 1, pierceArmor: 8, rng: 280, reload: 3.6, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 5: 10, 11: 6, 17: 2 }, armorTags: [20, 31] },
     hill_tribesman: { name: '山地部落民', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 5, 29: 6 }, armorTags: [1, 19, 31] },
-    hippeus: { name: '希腊古骑兵(希皮乌斯)', cls: 'melee', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 4, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    hippeus: { name: '斯巴达希皮乌斯', cls: 'melee', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 4, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     hoplite: { name: '希腊重装步兵', cls: 'melee', sz: 1, hp: 55, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 20, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
     houfnice: { name: '波希米亚榴弹炮', cls: 'ranged', aoe: true, sz: 1, hp: 90, atk: 50, meleeArmor: 2, pierceArmor: 6, rng: 480, reload: 6.5, spd: 50, dmgType: 'melee', bonus: { 11: 250, 13: 50, 16: 50, 20: 20, 37: 50 }, armorTags: [20, 23, 31] },
     huskarl: { name: '哥特近卫军', cls: 'melee', sz: 1, hp: 60, atk: 10, meleeArmor: 0, pierceArmor: 6, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 6, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
@@ -272,7 +272,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     jaguar_warrior: { name: '阿兹特克豹勇士', cls: 'melee', sz: 1, hp: 65, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 1: 5, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     janissary: { name: '土耳其禁卫军', cls: 'ranged', sz: 1, hp: 35, atk: 17, meleeArmor: 1, pierceArmor: 0, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 2 }, armorTags: [15, 19, 23, 31] },
     knight: { name: '骑士', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    kona: { name: '波利尼西亚科纳勇士', cls: 'cav', sz: 1, hp: 125, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [19, 8, 31] },
+    kona: { name: '马普切科纳勇士', cls: 'cav', sz: 1, hp: 125, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [19, 8, 31] },
     konnik: { name: '保加利亚骑兵', cls: 'cav', sz: 1, hp: 100, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     konnik_foot: { name: '下马保加利亚骑兵', cls: 'melee', sz: 1, hp: 45, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     leitis: { name: '立陶宛列提斯', cls: 'cav', sz: 1, hp: 100, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
@@ -283,7 +283,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     militia: { name: '民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     monaspa: { name: '格鲁吉亚莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
-    mounted_trebuchet: { name: '巨型投石机', cls: 'cav', sz: 1, kite: 60, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
+    mounted_trebuchet: { name: '契丹巨型投石机', cls: 'cav', sz: 1, kite: 60, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
     obuch: { name: '波兰奥布奇战锤兵', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 2 }, armorTags: [1, 19, 31] },
     onager: { name: '中型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 60, atk: 50, meleeArmor: 0, pierceArmor: 7, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 45, 20: 12, 37: 50 }, armorTags: [20, 31] },
     organ_gun: { name: '葡萄牙风琴炮', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 2, pierceArmor: 4, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
@@ -313,19 +313,19 @@ export const WAR_TYPES: Record<string, WarType> = {
     sogdian_cataphract: { name: '粟特甲胄骑兵', cls: 'cav', sz: 1, hp: 110, atk: 12, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
     sparabara: { name: '波斯持盾步兵', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
     spearman: { name: '长矛兵', cls: 'melee', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 15, 8: 15, 16: 9, 21: 1, 29: 1, 30: 12 }, armorTags: [27, 1, 31] },
-    strategos: { name: '希腊将军卫队', cls: 'melee', sz: 1, hp: 60, atk: 15, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 19, 31] },
+    strategos: { name: '雅典将军卫队', cls: 'melee', sz: 1, hp: 60, atk: 15, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 19, 31] },
     takabara: { name: '波斯轻盾标枪兵', cls: 'melee', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 19, 31, 36] },
-    temple_guard: { name: '高棉神庙守卫', cls: 'melee', sz: 1, hp: 100, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 30: 4 }, armorTags: [1, 19, 31, 29] },
+    temple_guard: { name: '穆伊斯卡神庙守卫', cls: 'melee', sz: 1, hp: 100, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 30: 4 }, armorTags: [1, 19, 31, 29] },
     teutonic_knight: { name: '条顿武士', cls: 'melee', sz: 1, hp: 90, atk: 14, meleeArmor: 7, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 4 }, armorTags: [1, 19, 31] },
     thracian_peltast: { name: '色雷斯轻装兵', cls: 'ranged', sz: 1, hp: 40, atk: 7, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3, 28: 3 }, armorTags: [15, 31, 38] },
     traction_trebuchet: { name: '牵引投石机', cls: 'ranged', sz: 1, hp: 115, atk: 50, meleeArmor: 1, pierceArmor: 8, rng: 560, reload: 11.0, spd: 50, dmgType: 'melee', bonus: { 11: 230 }, armorTags: [17, 20, 31] },
     two_handed_swordsman: { name: '双手剑士', cls: 'melee', sz: 1, hp: 65, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
     urumi_swordsman: { name: '达罗毗荼软剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
-    war_chariot: { name: '双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
-    war_chariot_ranged: { name: '双轮远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_chariot: { name: '蜀双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
+    war_chariot_ranged: { name: '蜀双轮远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, kite: 60, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
-    warrior_priest: { name: '格鲁吉亚修士战士', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
+    warrior_priest: { name: '亚美尼亚修士战士', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
     winged_hussar: { name: '波兰翼骑兵', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
     woad_raider: { name: '凯尔特靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     xolotl_warrior: { name: '阿兹特克索洛特尔骑兵', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
@@ -666,11 +666,12 @@ const UNIT_PX = 50;
  */
 const AIM_JITTER = 120;
 
+
 /**
- * 「我已经站到这个敌口门口了」的判定半径（px）。见 aimAt ② 里的用法。
- * 🔴 必须大于 AIM_JITTER（120），否则带偏移停在 120px 外的兵永远判不到"已到门口"。
+ * 巡逻航路的「到达」判定半径（px）——见 aimAt。
+ * 必须大于落点偏移 AIM_JITTER(120)，否则带偏移的兵永远判不到到达，会钉死在航点旁边。
  */
-const NEAR_PORT = 200;
+const ROUTE_ARRIVE = 200;
 
 /**
  * 追击时绕着目标散开的半径（px）——治「一群兵冲着同一个点挤成团、来回颤抖」。
@@ -1497,6 +1498,10 @@ interface WarMan {
     /** 推挤力的平滑量（见 SEP_SMOOTH，逐帧向当前推力靠拢，防方向突变导致原地哆嗦） */
     sepX: number;
     sepY: number;
+    /** 出生时所在的 y（巡逻航路要用：航点①是敌方底边的**本路** y，航点③是己方底边的对角 y） */
+    y0: number;
+    /** 当前航点序号（见 aimAt 的巡逻航路） */
+    wp: number;
     /** 上一帧位置（算真实位移用，见 stuckT） */
     prevX: number;
     prevY: number;
@@ -2655,7 +2660,7 @@ export class Scene13WarLayer {
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0,
+                    prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0, y0: s.y, wp: 0,
                     flag: bearer, fo: Math.random() * 600,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
@@ -2853,40 +2858,43 @@ export class Scene13WarLayer {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         const near = this.search(m, MARCH_R);
         if (near) return { x: near.x, y: near.y };
-        // ②③④ 都是全军共用的坐标 → 一律加本兵终身固定的散开偏移，把「一个点」摊成「一个面」（见 AIM_JITTER）
+
+        // ── ② 没人可打时走「巡逻航路」（主人 2026-08-17 定）──────────────────────────
+        //
+        // 为什么不再用「走敌方出兵口 → 扑敌军重心」那套：
+        //   出兵口是**静止的路标**，兵冲到敌方底边发现没人，下一个候选还是另一个出兵口
+        //   （彼此相距远超 NEAR_PORT 判定圈），于是**沿着敌方底边从一个口挪到另一个口来回转悠**，
+        //   永远轮不到「扑重心」那一级，也就永远不会掉头回中间找人。
+        //   实测死局有据：scratch/scene13_probe_log.jsonl 2026-08-17T11:57Z 那条 ——
+        //   60 秒零阵亡、双方场上 170/219 都卡在补兵线 150 以上，补兵闸门两边同时焊死，打到天荒地老。
+        //
+        // 主人的方案（已实测）：给每个兵一条**循环航路**，两军航路必然交叉，不可能一直碰不上。
+        //   ⓵ 敌方底边·本路 y（各走各的路，不汇中间，保留原来的分路作战）
+        //   ⓶ 战场中心
+        //   ⓷ 己方底边·**对角** y（上路兵去己方下边）
+        //   ⓸ 回中心，循环
+        // 任何时候视野内出现敌人，上面的 ① 立刻接管，航路只管「没人可打时往哪走」。
+        //
+        // war_sim 实测（12 局，与旧兜底对照）：时长持平（步 184/178 vs 202/174s、
+        // 骑 141/158 vs 147/144s、远程 171/121 vs 129/130s）；克制三边方向不变；
+        // 收尾更干净（三个种子败方余兵全归 0，旧兜底有两局残兵收不掉）。
         const jit = (p: { x: number; y: number }): { x: number; y: number } => ({ x: p.x + m.jx, y: p.y + m.jy });
-        // ② 身边没人 → 朝**还在出兵的敌口**走（纵向加权 = 同一路优先）。
-        //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。
-        //    🔴 必须筛 pool>0：我一度不筛（想让空口继续当路标），结果上路敌人死光、上路敌口也空了之后，
-        //       上路的兵还认死那个空口一直往前走，屏幕下方全是敌人也不去（主人 2026-08-11 实锤）。
-        //    🔴 [2026-08-17 修·分路顶头死锁] 还要筛掉「我已经站到这个口门口了」的口。
-        //       实测死局（scratch/scene13_probe_log.jsonl 2026-08-17T11:57Z 那条）：
-        //         上路攻方杀光上路守军、下路守方杀光下路攻军 → 两拨人各自被同路敌口吸到屏幕两端顶头 →
-        //         相距远超视野互相看不见 → 60 秒零阵亡 → 双方场上 170/219 都 ≥ TRIGGER(150) →
-        //         补兵闸门两边同时焊死 → 永远没人死，环闭上了，打到天荒地老。
-        //       门口这个口还有 pool 是真的，但**兵堵在门口它也不会出人**（出兵要等场上跌破 150），
-        //       所以「已经到门口」就该换目标：先换别的敌口，全都到过 → 落到 ③ 扑敌军重心 = 回头去有人的地方。
-        //    🔴 NEAR_PORT 必须 **大于 AIM_JITTER(120)**：每个兵的落点带 ±120px 终身偏移，
-        //       停下的位置离口最远 120px，判定圈比它小的话那些兵永远触发不了跳过，照样钉死。
-        let best: { x: number; y: number } | null = null, bd = Infinity;
-        for (const s of this.spawns) {
-            if (s.f === m.f || s.pool <= 0) continue;
-            const rdx = s.x - m.x, rdy = s.y - m.y;
-            if (rdx * rdx + rdy * rdy < NEAR_PORT * NEAR_PORT) continue;   // 已堵到这个口 → 换目标
-            const dy = rdy * LANE_W;                         // 纵向加权 = 优先同一路
-            const dd = rdx * rdx + dy * dy;
-            if (dd < bd) { bd = dd; best = { x: s.x, y: s.y }; }
+        const vw = this.canvas?.width ?? 1920;
+        const vh = this.canvas?.height ?? 1080;
+        const homeX = m.f === 0 ? vw * 0.07 : vw * 0.93;   // 己方底边
+        const foeX = m.f === 0 ? vw * 0.93 : vw * 0.07;    // 敌方底边
+        const route = [
+            { x: foeX, y: m.y0 },
+            { x: vw / 2, y: vh / 2 },
+            { x: homeX, y: vh - m.y0 },
+            { x: vw / 2, y: vh / 2 },
+        ];
+        const wp = route[m.wp % route.length];
+        // 到达当前航点就推进到下一个（判定圈要大于落点偏移 AIM_JITTER，否则带偏移的兵永远到不了）
+        if ((wp.x - m.x) ** 2 + (wp.y - m.y) ** 2 < ROUTE_ARRIVE * ROUTE_ARRIVE) {
+            m.wp = (m.wp + 1) % route.length;
         }
-        if (best) return jit(best);
-        // ③ 敌口全空（收尾阶段）→ 扑向敌军重心，去补最后的刀。
-        //    🔴 重心 = 全场敌人的平均位置 = 屏幕正中，只能当**兜底**：
-        //       当主力兜底会让所有兵都往中间挤（主人 2026-08-11 实锤「上路兵下路兵怎么都去打中路」）。
-        //       但战斗中途口都还有兵，走不到这一步，所以各路照样各走各的。
-        const cen = this.enemyCen[1 - m.f];
-        if (cen) return jit(cen);
-        // ④ 场上也没敌人了 → 随便找个敌口（正常打不到这一步）
-        for (const s of this.spawns) if (s.f !== m.f) return jit({ x: s.x, y: s.y });
-        return null;
+        return jit(wp);
     }
 
     /**

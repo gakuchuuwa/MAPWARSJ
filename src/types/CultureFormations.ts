@@ -245,6 +245,16 @@ export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'bombard_cannon', count: 2 },    // Row 2 压阵 = 火炮 2人
 ];
 
+/**
+ * 罗马军团·三角阵（2+3+4）：掷矛手(2) + 精锐罗马百夫长(3) + 罗马军团步兵(4)
+ */
+export const ROMAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'skirmisher', count: 2 },      // Row 0 尖刀 = 掷矛手 2人
+    { type: 'elite_centurion', count: 3 }, // Row 1 中坚 = 精锐罗马百夫长 3人
+    { type: 'legionary', count: 4 },       // Row 2 底边 = 罗马军团步兵 4人
+];
+
+
 /** 秦朝名将 ID 集合 */
 export const QIN_DYNASTY_GENERAL_IDS = new Set([
     'qin_simacuo',          // 司马错
@@ -429,6 +439,24 @@ export const SENGOKU_FACTION_IDS = new Set([
     'shimotsuke', 'izumo', 'jibei2', 'kakizaki', 'so'
 ]);
 
+/** 罗马帝国名将 ID 集合 */
+export const ROMAN_DYNASTY_GENERAL_IDS = new Set([
+    'gen_julius_caesar',       // 恺撒
+    'gen_scipio',              // 大西庇阿
+    'gen_constantine_great',   // 君士坦丁
+    'gen_julian_apostate',     // 尤里安
+    'gen_clovis_i',            // 克洛维
+]);
+
+/** 罗马帝国/罗曼势力 ID 集合 */
+export const ROMAN_DYNASTY_FACTION_IDS = new Set([
+    'luoma_diguo',  // 罗马帝国
+    'gaolu_luoma',  // 高卢罗曼
+    'mozeer',       // 摩泽尔（君士坦丁）
+    'aersasi',      // 阿尔萨斯（尤里安）
+]);
+
+
 /** 判断是否为秦朝武将或势力 */
 export function isQinDynasty(factionId?: string | null, generalId?: string | null): boolean {
     if (generalId && QIN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
@@ -471,6 +499,14 @@ export function isSengoku(factionId?: string | null, generalId?: string | null):
     return false;
 }
 
+/** 判断是否为罗马军团武将或势力 */
+export function isRomanDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && ROMAN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && ROMAN_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
     // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团）
@@ -485,6 +521,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         if (TANG_DYNASTY_GENERAL_IDS.has(generalId)) return [...TANG_FACTION_COMPOSITION];
         if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
         if (MING_DYNASTY_GENERAL_IDS.has(generalId)) return [...MING_FACTION_COMPOSITION];
+        if (ROMAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...ROMAN_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 3. 文化区判定
@@ -502,6 +539,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isMingDynasty(factionId)) {
         return [...MING_FACTION_COMPOSITION];
+    }
+    if (isRomanDynasty(factionId)) {
+        return [...ROMAN_FACTION_COMPOSITION];
     }
     if (isSengoku(factionId)) {
         return [...SENGOKU_TIERS[0].slots];
@@ -529,6 +569,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     const isSong = isSongDynasty(army.factionId, army.generalId);
     const isMing = isMingDynasty(army.factionId, army.generalId);
     const isSen = isSengoku(army.factionId, army.generalId);
+    const isRom = isRomanDynasty(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
@@ -538,19 +579,19 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan || isTang || isSong || isMing || isSen
+        isQin || isHan || isTang || isSong || isMing || isSen || isRom
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/明/日本战国雁行阵、汉国三角阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/明/日本战国雁行阵、汉国/罗马三角阵 → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
     } else if (isQin || isTang || isSong || isMing || isSen) {
         army.formationMode = 'echelon';
-    } else if (isHan) {
+    } else if (isHan || isRom) {
         army.formationMode = 'triangle';
     } else {
         army.formationMode = inferFormationModeFromSlots(slots)
@@ -726,16 +767,16 @@ export const LINGNAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 11. 滇缅 象兵+步弓手+精锐爪刀勇士（三角阵 2+3+4：象兵尖刀前 + 步弓手中坚 + 精锐爪刀勇士底边） */
+/** 11. 滇缅 东南亚战斗象+步弓手+马来爪刀勇士（三角阵 2+3+4：东南亚战斗象尖刀前 + 步弓手中坚 + 马来爪刀勇士底边） */
 export const DIANQIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 2 },          // Row 0 尖刀 = 象兵 战象
+            { type: 'battle_elephant', count: 2 },       // Row 0 尖刀 = 东南亚战斗象 战象
             { type: 'archer', count: 3 },                // Row 1 中坚 = 步弓手 弓手
-            { type: 'karambit_warrior_elite', count: 4 } // Row 2 底边 = 精锐爪刀勇士 步兵
+            { type: 'karambit_warrior', count: 4 }       // Row 2 底边 = 马来爪刀勇士 步兵
         ]
     }
 ];

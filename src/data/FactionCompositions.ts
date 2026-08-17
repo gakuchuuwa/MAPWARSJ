@@ -117,4 +117,41 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rattan_archer', count: 3 } // Row 2 后排 = 藤弓兵
         ],
     },
+    // 罗马帝国·罗马军团（三角阵 2+3+4：掷矛手 2 + 精锐罗马百夫长 3 + 罗马军团步兵 4）
+    luoma_diguo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'skirmisher', count: 2 },          // Row 0 尖刀 = 掷矛手
+            { type: 'elite_centurion', count: 3 },     // Row 1 中坚 = 精锐罗马百夫长
+            { type: 'legionary', count: 4 },           // Row 2 底边 = 罗马军团步兵
+        ],
+    },
+    // 高卢罗曼（克洛维，套用罗马军团三角阵体系）
+    gaolu_luoma: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'skirmisher', count: 2 },          // Row 0 尖刀 = 掷矛手
+            { type: 'elite_centurion', count: 3 },     // Row 1 中坚 = 精锐罗马百夫长
+            { type: 'legionary', count: 4 },           // Row 2 底边 = 罗马军团步兵
+        ],
+    },
+    // 摩泽尔（君士坦丁大帝，套用罗马军团三角阵体系）
+    mozeer: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'skirmisher', count: 2 },          // Row 0 尖刀 = 掷矛手
+            { type: 'elite_centurion', count: 3 },     // Row 1 中坚 = 精锐罗马百夫长
+            { type: 'legionary', count: 4 },           // Row 2 底边 = 罗马军团步兵
+        ],
+    },
+    // 阿尔萨斯（尤里安，套用罗马军团三角阵体系）
+    aersasi: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'skirmisher', count: 2 },          // Row 0 尖刀 = 掷矛手
+            { type: 'elite_centurion', count: 3 },     // Row 1 中坚 = 精锐罗马百夫长
+            { type: 'legionary', count: 4 },           // Row 2 底边 = 罗马军团步兵
+        ],
+    },
 };
+
