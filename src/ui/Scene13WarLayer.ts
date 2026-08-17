@@ -525,6 +525,22 @@ const PROJ_VOLLEY: Record<string, number> = {
 };
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
+/** 抛射物飞行基准时长（秒）：火枪弹丸极速穿梭（0.22s），重炮/石弹沉重高抛（0.65s），手榴弹（0.55s），其余标准（0.42s）。 */
+const PROJ_DUR: Record<string, number> = {
+    PROJ_SHOT: 0.22,
+    PROJ_BALL: 0.65,
+    PROJ_GRENADE: 0.55,
+};
+/** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
+const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
+/** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格；1 格 = 40px，与 rng 同换算）。 */
+const MIN_RANGE_TYPES: Record<string, number> = {
+    mangonel: 120,
+    onager: 120,
+    siege_onager: 120,
+    traction_trebuchet: 160,
+    mounted_trebuchet: 160,
+};
 /** 火矛手（DE 充能喷火兵）：进战先喷 3 发低精度短程火枪弹，30 秒充能（AoE2 DE update 141935）。 */
 const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 const FIRE_LANCER_VOLLEY = 3;
@@ -707,6 +723,8 @@ interface WarMan {
     atkFlip: boolean;
     /** 本轮是否已放箭（远程）：动画播到放箭相位才射，避免箭和拉弓动作脱节 */
     shot?: boolean;
+    /** 本轮是否已出刀/出枪（近战）：动画播到命中相位才触发刀光与火花 */
+    slashed?: boolean;
     /** 火矛手充能冷却（秒）：进战先喷一轮火枪弹，30 秒充能（DE 充能攻击） */
     chargeCd?: number;
     /** 是否旗手（出生时定死，见 FLAG_EVERY）：头顶画一面势力旗，战死则军旗倒地 */
@@ -2022,12 +2040,23 @@ export class Scene13WarLayer {
                     continue;
                 }
                 const close = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < 65 * 65;
+                // 炸药自爆兵（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性范围 AoE 伤害并自爆牺牲）
+                if (SUICIDE_TYPES.has(m.key) && close && m.hp > 0) {
+                    this.explode(m.x, m.y);
+                    const shooter = WAR_TYPES[m.key] ?? WAR_TYPES.petard;
+                    this.splash(m, 75, shooter, 1.0);
+                    m.hp = 0;
+                    this.pushCorpse(m);
+                    continue;
+                }
                 m.st = (stats.rng && close && this.bank[m.key]?.sets.melee[0].length) ? 2 : 1;
                 m.dir = this.dir8(foe.x - m.x, foe.y - m.y);
                 m.lock = (m.lock ?? 0) - dt;
+                const reloadTime = stats.reload || 2.0;
                 if (m.lock <= 0) {
-                    m.lock = 1.5; m.ph = 0;
+                    m.lock = reloadTime; m.ph = 0;
                     m.shot = false;   // 新一轮：等攻击动画播到放箭相位再射
+                    m.slashed = false;
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
@@ -2037,30 +2066,43 @@ export class Scene13WarLayer {
                         this.fireLanceVolley(m, foe);
                     }
                 } else {
-                    // 攻击动画推进：拉弓→放箭→收弓（原 foe 分支不推 ph，动画卡在第一帧）。
-                    m.ph += dt * 8 / 1.5;
-                    // 放箭：动画播到放箭相位（SHOOT_PHASE）才射出箭，和拉弓动作对齐。
-                    // 只有真正在放箭的那一轮才有箭：被贴身改白刃（st=2）时不射。
-                    // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭），
-                    //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），其余每轮 1 支。
-                    if (!m.shot && m.ph >= SHOOT_PHASE && stats.rng > 65 && m.st === 1) {
+                    // 攻击动画推进：
+                    // 动作以自然节奏（~1.2-1.5s）播满 8 相位后收势，长装填兵种（火炮 6.5s、火枪 3.45s 等）在发射后等待装填完毕。
+                    const animDur = Math.min(reloadTime, 1.5);
+                    if (m.ph < 8) {
+                        m.ph += dt * 8 / animDur;
+                    }
+                    // 放箭/开火：动画播到放箭相位（SHOOT_PHASE）才射出，和动作对齐。
+                    // 只有真正在放箭/开火的那一轮才有弹丸：被贴身改白刃（st=2）或处于攻城盲区（minRange）时不射。
+                    // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭/炮弹/弹丸），
+                    //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），风琴炮 5 弹，火箭车 5 支，其余每轮 1 支。
+                    const minR = MIN_RANGE_TYPES[m.key] ?? 0;
+                    const tooClose = minR > 0 && ((foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < minR * minR);
+                    if (!m.shot && m.ph >= SHOOT_PHASE && stats.rng > 65 && m.st === 1 && !tooClose) {
                         m.shot = true;
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
                         const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
                         const volley = PROJ_VOLLEY[m.key] ?? 1;
+                        const baseDur = PROJ_DUR[proj] ?? ARROW_DUR;
                         this.ensureProj(proj);
+                        const isFirearm = FIREARM_TYPES.has(m.key);
                         for (let v = 0; v < volley; v++) {
+                            // 火枪兵/火器轻微自然散射（DE 65%~75% 精度模拟）
+                            const spread = isFirearm ? (Math.random() - 0.5) * 0.14 : 0;
+                            const c = Math.cos(spread), s = Math.sin(spread);
+                            const ndx = (ax / ad) * c - (ay / ad) * s;
+                            const ndy = (ax / ad) * s + (ay / ad) * c;
                             this.arrows.push({
                                 x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
-                                dx: ax / ad, dy: ay / ad, len: ad,
-                                t: 0, dur: ARROW_DUR + Math.random() * 0.06, f: m.f,
+                                dx: ndx, dy: ndy, len: ad,
+                                t: 0, dur: baseDur + Math.random() * 0.05, f: m.f,
                                 proj,
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
                         // 火器炮口焰/枪口焰：发射瞬间火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
-                        if (FIREARM_TYPES.has(m.key)) this.muzzleFlash(m, ax, ay);
+                        if (isFirearm) this.muzzleFlash(m, ax, ay);
                     }
                 }
                 m.atkSt = m.st;
@@ -2080,7 +2122,8 @@ export class Scene13WarLayer {
                 const keyStr = m.key.toLowerCase();
                 const isHeavyNonBlade = keyStr.includes('elephant') || keyStr.includes('ram') || keyStr.includes('wagon');
                 const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
-                if (isMeleeAttacking && m.lock >= 1.45) {
+                if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
+                    m.slashed = true;
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     const contactY = (m.y * 0.45 + foe.y * 0.55) - UNIT_PX * 0.35;
