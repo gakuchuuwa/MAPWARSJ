@@ -144,9 +144,14 @@ export const WAR_TYPES: Record<string, WarType> = {
     hei_kuang_heavy: { name: '精锐黑光铠骑兵', cls: 'cav', sz: 1, hp: 90, atk: 12, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 1 }, armorTags: [8, 31] },
     mangudai_elite: { name: '精锐蒙古突骑', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.1, spd: 130, dmgType: 'pierce', bonus: { 20: 5, 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
     pattiyoda_longbowman: { name: '帕提尤达长弓手', cls: 'ranged', sz: 1, hp: 50, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 50, dmgType: 'pierce', bonus: { 5: 4, 27: 2 }, armorTags: [15, 19, 31] },
-    armored_elephant: { name: '皮甲战象', cls: 'melee', sz: 1, aoe: true, hp: 250, atk: 12, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 4, 13: 4 }, armorTags: [5, 8, 31] },
+    battle_elephant: { name: '战斗象', cls: 'melee', sz: 1, aoe: true, hp: 250, atk: 12, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 4, 13: 4 }, armorTags: [5, 8, 31] },
+    armored_elephant: { name: '皮甲战象', cls: 'melee', sz: 1, aoe: true, hp: 180, atk: 4, meleeArmor: -2, pierceArmor: 140, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 11: 90, 20: 25 }, armorTags: [5, 8, 20, 17, 31] },
+    elite_armored_elephant: { name: '精锐皮甲战象', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 11: 105, 20: 35 }, armorTags: [5, 8, 20, 17, 31] },
     ballista_elephant: { name: '重弩战象', cls: 'ranged', sz: 1, hp: 250, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 40, dmgType: 'pierce', bonus: { 11: 2, 13: 3, 16: 8, 18: 100, 21: 3 }, armorTags: [8, 19, 5, 20, 31, 37] },
     elephant_archer: { name: '骑象射手', cls: 'ranged', sz: 1, hp: 230, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.0, spd: 40, dmgType: 'pierce', armorTags: [15, 8, 5, 28, 31] },
+    bayinnaung_elephant: { name: '莽应龙战象', cls: 'melee', sz: 1.1, aoe: true, hp: 400, atk: 18, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 10, 13: 10 }, armorTags: [5, 8, 19, 31] },
+    dagnajan_elephant: { name: '达格纳詹战象', cls: 'ranged', sz: 1.1, hp: 930, atk: 12, meleeArmor: 1, pierceArmor: 7, rng: 160, reload: 2.5, spd: 40, dmgType: 'pierce', bonus: { 21: 4, 13: 4 }, armorTags: [15, 8, 19, 5, 28, 31, 36] },
+    porus_elephant: { name: '波鲁斯战象', cls: 'melee', sz: 1.1, aoe: true, hp: 530, atk: 16, meleeArmor: 1, pierceArmor: 5, rng: 0, reload: 2.5, spd: 40, dmgType: 'melee', bonus: { 21: 4, 13: 4 }, armorTags: [5, 8, 19, 31] },
     rattan_archer_elite: { name: '精锐藤弓兵', cls: 'ranged', sz: 1, hp: 45, atk: 7, meleeArmor: 0, pierceArmor: 6, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     legionary: { name: '罗马军', cls: 'melee', sz: 1, hp: 75, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     lancer: { name: '轻骑兵', cls: 'cav', sz: 1.15, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
@@ -292,7 +297,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     rocket_cart: { name: '火箭车', cls: 'ranged', aoe: true, sz: 1, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 5.5, spd: 50, dmgType: 'melee', bonus: { 11: 7, 20: 2, 22: 6, 26: 7, 37: 5 }, armorTags: [20, 31, 23] },
     royal_janissary: { name: '皇家苏丹亲兵', cls: 'ranged', sz: 1, hp: 55, atk: 22, meleeArmor: 2, pierceArmor: 0, rng: 320, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 3 }, armorTags: [15, 19, 23, 31] },
     sacred_band: { name: '圣队', cls: 'melee', sz: 1, hp: 65, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 20, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
-    sannahya: { name: '桑纳亚', cls: 'melee', sz: 1, aoe: true, hp: 300, atk: 10, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 13: 4, 21: 4 }, armorTags: [5, 8, 31, 19] },
+    sannahya: { name: '桑纳亚象兵', cls: 'melee', sz: 1, aoe: true, hp: 300, atk: 10, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 13: 4, 21: 4 }, armorTags: [5, 8, 31, 19] },
     scorpion: { name: '弩炮', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
     scythian_axe_cavalry: { name: '斯基泰斧骑', cls: 'cav', sz: 1, hp: 130, atk: 10, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     scythian_horse_archer: { name: '斯基泰骑射手', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
@@ -324,6 +329,49 @@ export const WAR_TYPES: Record<string, WarType> = {
     winged_hussar: { name: '翼骑兵', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
     woad_raider: { name: '靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     xolotl_warrior: { name: '索洛特尔勇士', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    manatarms: {name:"装甲步兵",cls:"melee",sz:1,hp:50,atk:6,meleeArmor:0,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{21:2},armorTags:[1,31]},
+    longswordsman: {name:"长剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{21:3},armorTags:[1,31]},
+    halberdier: {name:"戟兵",cls:"melee",sz:1,hp:60,atk:6,meleeArmor:0,pierceArmor:0,rng:0,reload:3,spd:50,dmgType:"melee",bonus:{5:28,8:32,11:60,13:60},armorTags:[1,2,31]},
+    foot_konnik: {name:"贵族近卫步兵",cls:"melee",sz:1,hp:50,atk:12,meleeArmor:2,pierceArmor:1,rng:0,reload:2.4,spd:45,dmgType:"melee",armorTags:[1,31]},
+    champi_warrior: {name:"尚皮勇士",cls:"melee",sz:1,hp:65,atk:9,meleeArmor:1,pierceArmor:2,rng:0,reload:2,spd:55,dmgType:"melee",bonus:{8:4},armorTags:[1,31]},
+    champi_runner: {name:"尚皮飞毛腿",cls:"melee",sz:1,hp:55,atk:7,meleeArmor:0,pierceArmor:2,rng:0,reload:1.8,spd:65,dmgType:"melee",armorTags:[1,31]},
+    champi_scout: {name:"尚皮斥候",cls:"melee",sz:1,hp:45,atk:5,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd:60,dmgType:"melee",armorTags:[1,31]},
+    jian_swordsman_shielded: {name:"持盾刀剑手",cls:"melee",sz:1,hp:70,atk:10,meleeArmor:2,pierceArmor:2,rng:0,reload:2,spd:50,dmgType:"melee",bonus:{1:2},armorTags:[1,31]},
+    jian_swordman_unshielded: {name:"双手剑士(华夏)",cls:"melee",sz:1,hp:65,atk:11,meleeArmor:1,pierceArmor:1,rng:0,reload:1.9,spd:50,dmgType:"melee",bonus:{1:2},armorTags:[1,31]},
+    ji_infantry: {name:"华夏戟兵",cls:"melee",sz:1,hp:55,atk:7,meleeArmor:0,pierceArmor:0,rng:0,reload:3,spd:50,dmgType:"melee",bonus:{5:20,8:25},armorTags:[1,2,31]},
+    ji_infantry_elite: {name:"精锐华夏戟兵",cls:"melee",sz:1,hp:65,atk:8,meleeArmor:1,pierceArmor:0,rng:0,reload:3,spd:50,dmgType:"melee",bonus:{5:30,8:35},armorTags:[1,2,31]},
+    macedon_infantry: {name:"马其顿重步兵",cls:"melee",sz:1,hp:75,atk:11,meleeArmor:3,pierceArmor:2,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{8:8},armorTags:[1,31]},
+    roman_legion: {name:"罗马军团步兵",cls:"melee",sz:1,hp:75,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:2,spd:50,dmgType:"melee",bonus:{21:2,29:2},armorTags:[1,31]},
+    sakan_axeman: {name:"塞种战斧兵",cls:"melee",sz:1,hp:65,atk:10,meleeArmor:1,pierceArmor:1,rng:0,reload:1.9,spd:55,dmgType:"melee",bonus:{1:3,21:2},armorTags:[1,31]},
+    ibirapema_elite: {name:"精锐伊比拉佩马勇士",cls:"melee",sz:1,hp:70,atk:10,meleeArmor:1,pierceArmor:2,rng:0,reload:2,spd:55,dmgType:"melee",armorTags:[1,31]},
+    levy: {name:"征召民兵",cls:"melee",sz:1,hp:40,atk:4,meleeArmor:0,pierceArmor:0,rng:0,reload:2,spd:45,dmgType:"melee",armorTags:[1,31]},
+    norse_warrior: {name:"诺斯狂战士步兵",cls:"melee",sz:1,hp:65,atk:12,meleeArmor:1,pierceArmor:1,rng:0,reload:1.8,spd:55,dmgType:"melee",bonus:{8:3},armorTags:[1,31]},
+    paragon: {name:"圣殿楷模武士",cls:"melee",sz:1,hp:85,atk:14,meleeArmor:3,pierceArmor:3,rng:0,reload:1.9,spd:50,dmgType:"melee",bonus:{1:4},armorTags:[1,31]},
+    sosso_guard: {name:"索索禁卫军",cls:"melee",sz:1,hp:70,atk:10,meleeArmor:2,pierceArmor:2,rng:0,reload:2,spd:50,dmgType:"melee",bonus:{8:6},armorTags:[1,31]},
+    vanguard: {name:"先锋突击步兵",cls:"melee",sz:1,hp:75,atk:11,meleeArmor:2,pierceArmor:1,rng:0,reload:1.9,spd:50,dmgType:"melee",armorTags:[1,31]},
+    cavalier: {name:"重装骑士",cls:"cav",sz:1.2,hp:120,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd:130,dmgType:"melee",bonus:{1:1},armorTags:[8,31]},
+    light_cavalry: {name:"轻骑兵",cls:"cav",sz:1.1,hp:60,atk:7,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd:130,dmgType:"melee",bonus:{25:10},armorTags:[8,31]},
+    huaxia_iron_cavalry: {name:"华夏具装铁骑",cls:"cav",sz:1.25,hp:140,atk:13,meleeArmor:4,pierceArmor:3,rng:0,reload:1.9,spd:120,dmgType:"melee",bonus:{1:2},armorTags:[8,31]},
+    ant_scout: {name:"古典斥候骑兵",cls:"cav",sz:1.1,hp:50,atk:5,meleeArmor:0,pierceArmor:1,rng:0,reload:2,spd:135,dmgType:"melee",armorTags:[8,31]},
+    aztec_raider: {name:"阿兹特克突击兵",cls:"cav",sz:1.1,hp:65,atk:8,meleeArmor:1,pierceArmor:1,rng:0,reload:1.9,spd:130,dmgType:"melee",armorTags:[8,31]},
+    elite_greek_cavalry: {name:"精锐希腊贵族骑兵",cls:"cav",sz:1.2,hp:130,atk:13,meleeArmor:3,pierceArmor:2,rng:0,reload:1.8,spd:130,dmgType:"melee",armorTags:[8,31]},
+    equites: {name:"罗马伴随骑士",cls:"cav",sz:1.15,hp:100,atk:10,meleeArmor:2,pierceArmor:2,rng:0,reload:1.9,spd:130,dmgType:"melee",armorTags:[8,31]},
+    imperial_cavalry: {name:"帝国具装骑兵",cls:"cav",sz:1.25,hp:150,atk:14,meleeArmor:4,pierceArmor:3,rng:0,reload:1.9,spd:120,dmgType:"melee",bonus:{1:3},armorTags:[8,31]},
+    sarmatian: {name:"萨尔马提亚重骑兵",cls:"cav",sz:1.2,hp:110,atk:11,meleeArmor:2,pierceArmor:2,rng:0,reload:1.9,spd:130,dmgType:"melee",armorTags:[8,31]},
+    shock_cavalry: {name:"冲击重骑兵",cls:"cav",sz:1.2,hp:115,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd:130,dmgType:"melee",armorTags:[8,31]},
+    tarantine_cavarly: {name:"塔兰托标枪骑兵",cls:"cav",sz:1.1,kite:40,hp:60,atk:6,meleeArmor:0,pierceArmor:1,rng:140,reload:2,spd:135,dmgType:"pierce",bonus:{15:4},armorTags:[28,8,31]},
+    camel_imperial: {name:"帝王骆驼兵",cls:"cav",sz:1.2,hp:140,atk:9,meleeArmor:0,pierceArmor:0,rng:0,reload:2,spd:130,dmgType:"melee",bonus:{8:18},armorTags:[8,30,31]},
+    huaxia_crossbow: {name:"华夏连弩兵",cls:"ranged",sz:1,hp:45,atk:6,meleeArmor:0,pierceArmor:0,rng:180,reload:1.6,spd:50,dmgType:"pierce",bonus:{1:1},armorTags:[15,31]},
+    steppe_horse_archer: {name:"草原弓骑兵",cls:"cav",sz:1.1,kite:50,hp:55,atk:7,meleeArmor:0,pierceArmor:0,rng:150,reload:2,spd:130,dmgType:"pierce",bonus:{1:1},armorTags:[28,15,8,31]},
+    elite_peltast: {name:"精锐皮盾标枪手",cls:"ranged",sz:1,hp:45,atk:4,meleeArmor:1,pierceArmor:4,rng:160,reload:2,spd:50,dmgType:"pierce",bonus:{15:5,28:4},armorTags:[15,31]},
+    gastraphetes: {name:"希腊腹弩手",cls:"ranged",sz:1,hp:50,atk:9,meleeArmor:0,pierceArmor:2,rng:200,reload:2.5,spd:45,dmgType:"pierce",bonus:{1:2},armorTags:[15,31]},
+    guecha_elite: {name:"精锐格查投石射手",cls:"ranged",sz:1,hp:50,atk:7,meleeArmor:0,pierceArmor:2,rng:180,reload:2,spd:55,dmgType:"pierce",bonus:{1:2},armorTags:[15,31]},
+    laminated_bowman: {name:"层压复合弓手",cls:"ranged",sz:1,hp:45,atk:6,meleeArmor:0,pierceArmor:0,rng:180,reload:1.9,spd:50,dmgType:"pierce",armorTags:[15,31]},
+    recurve_bowman: {name:"反曲长弓手",cls:"ranged",sz:1,hp:45,atk:7,meleeArmor:0,pierceArmor:0,rng:200,reload:2,spd:50,dmgType:"pierce",armorTags:[15,31]},
+    ranged_immortal: {name:"波斯不死军(投矛)",cls:"ranged",sz:1,hp:60,atk:7,meleeArmor:1,pierceArmor:2,rng:160,reload:2,spd:50,dmgType:"pierce",bonus:{1:2},armorTags:[15,31]},
+    flamethrower: {name:"猛火油柜",cls:"ranged",sz:1.1,aoe:true,hp:120,atk:15,meleeArmor:1,pierceArmor:10,rng:100,reload:1.5,spd:40,dmgType:"melee",bonus:{11:30},armorTags:[20,31]},
+    helepolis: {name:"赫勒波利斯巨型攻城塔",cls:"ranged",sz:1.4,hp:300,atk:25,meleeArmor:3,pierceArmor:100,rng:250,reload:3,spd:30,dmgType:"pierce",bonus:{11:150},armorTags:[20,17,31]},
+    organ_elite: {name:"精锐风琴炮",cls:"ranged",sz:1.1,aoe:true,hp:70,atk:20,meleeArmor:2,pierceArmor:6,rng:220,reload:3,spd:40,dmgType:"pierce",bonus:{1:2},armorTags:[20,31]},
 };
 
 
@@ -334,11 +382,14 @@ const SIGHT_MAP: Record<string, number> = {
     arbalest: 280,
     archer: 240,
     armored: 160,
-    armored_elephant: 280,
+    armored_elephant: 160,
     axe: 120,
     bactrian_archer: 280,
     ballista: 360,
     ballista_elephant: 280,
+    battle_elephant: 280,
+    bayinnaung_elephant: 200,
+    dagnajan_elephant: 280,
     battering_ram: 120,
     berserk: 120,
     blackwood_archer: 240,
@@ -375,6 +426,7 @@ const SIGHT_MAP: Record<string, number> = {
     elephant: 280,
     elephant_archer: 280,
     elite_arambai: 280,
+    elite_armored_elephant: 160,
     elite_ballista_elephant: 280,
     elite_battle_elephant: 320,
     elite_berserk: 200,
@@ -516,6 +568,7 @@ const SIGHT_MAP: Record<string, number> = {
     phalangite: 160,
     pikeman: 160,
     plumed_archer: 240,
+    porus_elephant: 280,
     qizilbash_warrior: 160,
     ratha_melee: 240,
     ratha_ranged: 240,
@@ -571,6 +624,50 @@ const SIGHT_MAP: Record<string, number> = {
     woad_raider: 120,
     xianbei_raider: 240,
     xolotl_warrior: 160,
+    manatarms: 160,
+    longswordsman: 160,
+    halberdier: 160,
+    foot_konnik: 160,
+    champi_warrior: 160,
+    champi_runner: 200,
+    champi_scout: 200,
+    jian_swordsman_shielded: 160,
+    jian_swordman_unshielded: 160,
+    ji_infantry: 160,
+    ji_infantry_elite: 160,
+    macedon_infantry: 160,
+    roman_legion: 160,
+    sakan_axeman: 160,
+    ibirapema_elite: 160,
+    levy: 120,
+    norse_warrior: 160,
+    paragon: 200,
+    sosso_guard: 160,
+    vanguard: 160,
+    cavalier: 200,
+    light_cavalry: 200,
+    huaxia_iron_cavalry: 200,
+    ant_scout: 200,
+    aztec_raider: 200,
+    elite_greek_cavalry: 200,
+    equites: 200,
+    imperial_cavalry: 200,
+    sarmatian: 200,
+    shock_cavalry: 200,
+    tarantine_cavarly: 240,
+    camel_imperial: 200,
+    huaxia_crossbow: 240,
+    steppe_horse_archer: 240,
+    elite_peltast: 240,
+    gastraphetes: 280,
+    guecha_elite: 240,
+    laminated_bowman: 240,
+    recurve_bowman: 280,
+    ranged_immortal: 240,
+    flamethrower: 200,
+    helepolis: 360,
+    organ_elite: 360,
+    siege_ballista: 360,
 };
 
 /** 取某兵种完整数据（WAR_TYPES 已是 DE 五维全量，无组别覆盖） */
@@ -1109,13 +1206,13 @@ const CHARGE_CYCLE = 8;
  *    所以 K 取小、封顶 3 人（最高 ×1.45），别往上调之前先看胜率分布有没有被推出 [0.8,1.2] 环带。
  */
 const GANG_K = 0.15;
+const GANG_CAP = 3;
 /**
  * 索敌时「这个目标已经被几个人打了就换一个」的门槛（见 search）。
  * = 围殴加成封顶人数 `GANG_CAP + 1`：第 GANG_CAP+2 个人挤上去伤害一分不加，纯白挤。
  * 改 GANG_CAP 时这里跟着走，别让两个数脱节。
  */
 const SPREAD_CAP = GANG_CAP + 1;
-const GANG_CAP = 3;
 /**
  * 软推挤：两个精灵靠得比这还近就互相推开（px）。
  * 🔴 这**不是**被禁的 fan-out 瞬移（那是一帧之内把人挪走、看着像闪现）——
@@ -1123,12 +1220,275 @@ const GANG_CAP = 3;
  *    弧形战线和两翼包抄就是这么自己长出来的（主人 2026-08-11 提，帝国时代同款）。
  */
 const SEP_DIST = 17;
+/**
+ * 每个兵的**占地半径**（px）——DE 真值 `collision_size_x/y × 40`（与射程同尺），
+ * 由 `scratch/extract_de_radius.py` 从 `empires2_x2_p1.dat` 抽出，226 个兵种。
+ *
+ * 为什么要按兵种分（主人 2026-08-17 提「帝国时代被挡住会形成弧形，我们能不能照做」）：
+ * 弧形阵面的物理基础就是**每个兵占多大地方不一样**。原来全兵种共用 SEP_DIST=17px，
+ * 于是攻城槌和弓箭手挤得一样密（DE 里攻城槌半径 18px、火炮 20px，是步兵 8px 的两倍多），
+ * 大家伙不占地方，人群就摊不出层次。
+ * 取值只有 7 档：爪刀 6 / 步兵 8 / 方阵兵 9 / 骑兵象兵 10 / 风琴炮 16 / 攻城槌战车 18 / 重型攻城 20。
+ * 表里没有的（老 S10DB 兵种等）落 SEP_DIST/2，与旧行为一致。
+ */
+const UNIT_RADIUS: Record<string, number> = {
+    amazon_archer: 8.0,
+    amazon_warrior: 8.0,
+    arambai: 10.0,
+    arbalest: 8.0,
+    archer: 8.0,
+    armored: 8.0,
+    armored_elephant: 10.0,
+    axe: 8.0,
+    bactrian_archer: 8.0,
+    ballista: 20.0,
+    ballista_elephant: 10.0,
+    battering_ram: 18.0,
+    berserk: 8.0,
+    blackwood_archer: 8.0,
+    bolas_rider: 10.0,
+    bombard_cannon: 20.0,
+    boyar: 10.0,
+    camel_archer: 10.0,
+    camel_heavy: 10.0,
+    camel_raider: 10.0,
+    camel_rider: 10.0,
+    camel_scout: 10.0,
+    capped_ram: 18.0,
+    cataphract: 10.0,
+    cav_archer: 10.0,
+    cav_archer_heavy: 10.0,
+    centurion: 10.0,
+    champion: 8.0,
+    champion_runner: 8.0,
+    champion_scout: 8.0,
+    chukonu: 8.0,
+    companion_cavalry: 10.0,
+    composite_bowman: 8.0,
+    condottiero: 8.0,
+    conquistador: 10.0,
+    coustillier: 10.0,
+    cretan_archer: 8.0,
+    crossbow: 8.0,
+    crossbowman: 8.0,
+    eagle_scout: 8.0,
+    eagle_warrior: 8.0,
+    eastern_swordsman: 8.0,
+    ekdromos: 8.0,
+    elephant: 10.0,
+    elephant_archer: 10.0,
+    elite_arambai: 10.0,
+    elite_berserk: 8.0,
+    elite_blackwood_archer: 8.0,
+    elite_bolas_rider: 10.0,
+    elite_camel_archer: 10.0,
+    elite_cataphract: 10.0,
+    elite_centurion: 10.0,
+    elite_chukonu: 8.0,
+    elite_composite_bowman: 8.0,
+    elite_conquistador: 10.0,
+    elite_eagle_warrior: 8.0,
+    elite_fire_archer: 8.0,
+    elite_fire_lancer: 8.0,
+    elite_gbeto: 8.0,
+    elite_genitour: 10.0,
+    elite_genoese_crossbowman: 8.0,
+    elite_ghulam: 8.0,
+    elite_guardsman: 8.0,
+    elite_guecha_warrior: 8.0,
+    elite_huskarl: 8.0,
+    elite_hussite_wagon: 18.0,
+    elite_jaguar_warrior: 8.0,
+    elite_janissary: 8.0,
+    elite_kipchak: 10.0,
+    elite_kona: 10.0,
+    elite_konnik: 10.0,
+    elite_konnik_foot: 8.0,
+    elite_leitis: 10.0,
+    elite_liao_dao: 8.0,
+    elite_mameluke: 10.0,
+    elite_monaspa: 10.0,
+    elite_obuch: 8.0,
+    elite_organ_gun: 16.0,
+    elite_plumed_archer: 8.0,
+    elite_ratha_melee: 10.0,
+    elite_ratha_ranged: 10.0,
+    elite_scythian_horse_archer: 10.0,
+    elite_serjeant: 8.0,
+    elite_shotel_warrior: 8.0,
+    elite_shrivamsha_rider: 10.0,
+    elite_skirmisher: 8.0,
+    elite_steppe_lancer: 10.0,
+    elite_tarkan: 10.0,
+    elite_temple_guard: 8.0,
+    elite_teutonic_knight: 8.0,
+    elite_urumi_swordsman: 8.0,
+    elite_war_chariot: 10.0,
+    elite_war_dog: 8.0,
+    elite_war_wagon: 18.0,
+    elite_white_feather_guard: 8.0,
+    elite_woad_raider: 8.0,
+    fire_archer: 8.0,
+    fire_lancer: 8.0,
+    flaming_camel: 10.0,
+    flemish_pikeman: 8.0,
+    flemish_pikeman_f: 8.0,
+    gbeto: 8.0,
+    general_cavalry: 10.0,
+    genitour: 10.0,
+    genoese_crossbowman: 8.0,
+    ghulam: 8.0,
+    greek_noble_cavalry: 10.0,
+    grenadier: 8.0,
+    guecha_warrior: 8.0,
+    hand_cannoneer: 8.0,
+    heavy_cavalry: 10.0,
+    heavy_infantry: 8.0,
+    heavy_pikeman: 8.0,
+    heavy_rocket_cart: 20.0,
+    heavy_scorpion: 20.0,
+    hei_kuang: 10.0,
+    hei_kuang_heavy: 10.0,
+    hill_tribesman: 8.0,
+    hippeus: 8.0,
+    hoplite: 8.0,
+    horse_archer: 10.0,
+    houfnice: 20.0,
+    huskarl: 8.0,
+    hussar: 10.0,
+    hussite_wagon: 18.0,
+    immortal: 8.0,
+    immortal_ranged: 8.0,
+    imperial_camel_rider: 10.0,
+    imperial_centurion: 10.0,
+    imperial_skirmisher: 8.0,
+    indian_tribesman: 8.0,
+    iron_pagoda: 10.0,
+    iroquois_warrior: 8.0,
+    jaguar_warrior: 8.0,
+    janissary: 8.0,
+    jian_swordsman: 8.0,
+    kamayuk: 8.0,
+    karambit_warrior: 6.0,
+    karambit_warrior_elite: 6.0,
+    keshik: 10.0,
+    kipchak: 10.0,
+    knight: 10.0,
+    kona: 10.0,
+    konnik: 10.0,
+    konnik_foot: 8.0,
+    lancer: 10.0,
+    legionary: 8.0,
+    leitis: 10.0,
+    liao_dao: 8.0,
+    light_infantry: 8.0,
+    light_riders: 10.0,
+    longbowman: 8.0,
+    longbowman_elite: 8.0,
+    magyar_huszar: 10.0,
+    mameluke: 10.0,
+    mangonel: 20.0,
+    mangudai: 10.0,
+    mangudai_elite: 10.0,
+    mercenary_hoplite: 8.0,
+    militia: 8.0,
+    monaspa: 10.0,
+    mounted_trebuchet: 20.0,
+    ninja: 8.0,
+    obuch: 8.0,
+    onager: 20.0,
+    organ_gun: 16.0,
+    paladin: 10.0,
+    pattiyoda_longbowman: 8.0,
+    petard: 8.0,
+    phalangite: 9.0,
+    pikeman: 8.0,
+    plumed_archer: 8.0,
+    qizilbash_warrior: 10.0,
+    ratha_melee: 10.0,
+    ratha_ranged: 10.0,
+    rattan_archer: 8.0,
+    rattan_archer_elite: 8.0,
+    rhodian_slinger: 8.0,
+    rhomphaia_warrior: 8.0,
+    rocket_cart: 20.0,
+    royal_janissary: 8.0,
+    sacred_band: 8.0,
+    samurai: 8.0,
+    samurai_elite: 8.0,
+    sannahya: 10.0,
+    savar: 10.0,
+    scorpion: 20.0,
+    scythian_axe_cavalry: 10.0,
+    scythian_horse_archer: 10.0,
+    serjeant: 8.0,
+    shield: 8.0,
+    shotel_warrior: 8.0,
+    shrivamsha_rider: 10.0,
+    sickle_warrior: 8.0,
+    siege_onager: 20.0,
+    siege_ram: 18.0,
+    skirmisher: 8.0,
+    slinger: 8.0,
+    sogdian_cataphract: 10.0,
+    sparabara: 8.0,
+    spear: 8.0,
+    spearman: 8.0,
+    steppe_lancer: 10.0,
+    strategos: 8.0,
+    swordsman: 8.0,
+    takabara: 8.0,
+    tarantine_cavalry: 10.0,
+    tarkan: 10.0,
+    temple_guard: 8.0,
+    teutonic_knight: 8.0,
+    thracian_peltast: 8.0,
+    throwing_axeman: 8.0,
+    tiger_rider: 10.0,
+    traction_trebuchet: 20.0,
+    two_handed_swordsman: 8.0,
+    urumi_swordsman: 8.0,
+    war_chariot: 10.0,
+    war_chariot_ranged: 20.0,
+    war_dog: 8.0,
+    war_elephant: 10.0,
+    war_wagon: 18.0,
+    warrior_priest: 8.0,
+    white_feather_guard: 8.0,
+    winged_hussar: 10.0,
+    woad_raider: 8.0,
+    xianbei_raider: 10.0,
+};
+
+/**
+ * 推挤力的低通平滑系数（0~1，每帧向目标推力靠拢的比例）——治「站着不动的兵还在轻微哆嗦」。
+ *
+ * 病因：挤成一坨时，每个兵的邻居集合每帧都在变，合力方向随之翻来覆去，
+ * 于是人在原地高频振动（实测稳态每帧抖 1.22px，60 帧走了 75px 的步子净位移却只有 6px）。
+ * 光按重叠深度缩放推力（2026-08-17 早先那次）只压住了幅度，方向照样翻。
+ *
+ * 给推力加惯性后方向不再突变（实测每帧抖动 1.22 → 0.25px，−80%），
+ * **而且人群反而散得更开**（平均最近邻距 6.9 → 9.9px）：推力方向能连贯持续，
+ * 兵是真被推开，而不是在原地左右互搏。
+ * ⚠️ 试过「重叠很浅就不推」的死区方案，实测无效（抖动不降、间距还更挤），别再试。
+ */
+const SEP_SMOOTH = 0.15;
 /** 推开速度（px/秒）：要顶得住 130 的行军速度。实测 55 太小——仍有 17% 完全叠住，120 降到 3% */
 const SEP_SPD = 120;
 /** 推挤哈希格（= 推挤距离，一格只装一两个人，扫 3×3 很便宜） */
 const CELL_S = 20;
 /** 远程兵接敌被己方前排挡住时，站住待命时长（秒）：别再往前挤（往前顶一步 + 推挤推回一步 = 抖） */
-const HOLD_SEC = 2;
+/**
+ * 「想走但走不动」持续多久就改播待命帧（秒）。见 WarMan.stuckT。
+ * 0.3s ≈ 走路动画的四分之一个循环：短于它的卡顿不切（避免走/停边界上每帧切动画，那又是一种抖），
+ * 长于它就说明是真被前面的人堵住了，站住别迈腿。
+ */
+const STUCK_IDLE_SEC = 0.3;
+/**
+ * 绕行时的速度比例（相对本兵移速）。被己方兵挡住时沿垂直方向侧滑绕过去，
+ * 比直冲慢一点：既像人挤过人群，也让后面的人有机会先补上空位、自然铺成弧形阵面。
+ */
+const SLIDE_RATE = 0.8;
 /** 哈希键用数字不用字符串：每人每帧拼 9 次字符串 = 两万多次分配，实测是推挤慢的元凶 */
 const HKEY = (gx: number, gy: number): number => (gx + 4096) * 8192 + (gy + 4096);
 /** 近战哈希格 */
@@ -1167,6 +1527,18 @@ interface WarMan {
     fadeMax: number;
     /** 攻击动作交替标志：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，两套攻击动作轮播 */
     atkFlip: boolean;
+    /** 推挤力的平滑量（见 SEP_SMOOTH，逐帧向当前推力靠拢，防方向突变导致原地哆嗦） */
+    sepX: number;
+    sepY: number;
+    /** 上一帧位置（算真实位移用，见 stuckT） */
+    prevX: number;
+    prevY: number;
+    /**
+     * 「想走但走不动」已持续多久（秒）。
+     * 走路动画只在**真的位移**时播：被前面的人堵住时位移≈0，再播移动帧就是原地迈腿（主人 2026-08-17 提）。
+     * 用累计时间而不是单帧判定，避免在走/停边界上每帧切动画（那又是一种抖）。
+     */
+    stuckT: number;
     /**
      * 落点散开偏移（出生时定死，终身不变；见 AIM_JITTER）。
      * 只加在「全军共用的那个坐标」上（敌口/敌军重心），不加在「最近的那个敌兵」上。
@@ -1195,7 +1567,6 @@ interface WarMan {
     lock: number;
     atkSt: number;
     /** 远程兵接敌被己方前排挡住的待命剩余秒数：>0 时站住不挤，归零再试 */
-    holdT: number;
 }
 
 /** 箭矢：远程每出一次手射一支（纯画面，伤害仍按秒结算，不改平衡） */
@@ -2304,7 +2675,8 @@ export class Scene13WarLayer {
                     x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
-                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false, holdT: 0,
+                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                    prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0,
                     flag: bearer, fo: Math.random() * 600,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
@@ -2333,13 +2705,20 @@ export class Scene13WarLayer {
      * 软推挤：贴太近的两个人互相推开一点，谁也不完全重叠。
      * 敌我都推（战线才会顶住而不是穿过去）。每人最多看 6 个邻居，保证 O(n)。
      */
+    /** 本兵占地半径（DE 真值，见 UNIT_RADIUS）；表里没有的落旧行为 SEP_DIST/2 */
+    private radiusOf(key: string): number {
+        return UNIT_RADIUS[key] ?? SEP_DIST / 2;
+    }
+
     private separate(dt: number): void {
         const push = SEP_SPD * dt;
-        const d2 = SEP_DIST * SEP_DIST;
         for (const m of this.men) {
             if (m.hp <= 0) continue;
             const cx = (m.x / CELL_S) | 0, cy = (m.y / CELL_S) | 0;
-            let ox = 0, oy = 0, seen = 0, nearest2 = d2;
+            // 两个兵的最小间距 = 各自占地半径之和（DE 同款）。象兵/攻城器械因此真的占地方，
+            // 挤不进去的兵沿接触面铺开 —— 弧形阵面就是这么长出来的。
+            const rm = this.radiusOf(m.key);
+            let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
             for (let gx = cx - 1; gx <= cx + 1 && seen < 6; gx++) {
                 for (let gy = cy - 1; gy <= cy + 1 && seen < 6; gy++) {
                     const a = this.gs.get(HKEY(gx, gy));
@@ -2349,8 +2728,9 @@ export class Scene13WarLayer {
                         if (o === m || o.hp <= 0) continue;
                         const dx = m.x - o.x, dy = m.y - o.y;
                         const dd = dx * dx + dy * dy;
-                        if (dd >= d2) continue;
-                        if (dd < nearest2) nearest2 = dd;
+                        const gap = rm + this.radiusOf(o.key);      // 这一对的最小间距
+                        if (dd >= gap * gap) continue;
+                        if (dd < nearest2) { nearest2 = dd; minGap = gap; }
                         seen++;
                         if (dd < 1e-4) { ox += (Math.random() - .5); oy += (Math.random() - .5); continue; }
                         const inv = 1 / Math.sqrt(dd);
@@ -2358,14 +2738,24 @@ export class Scene13WarLayer {
                     }
                 }
             }
-            if (!seen) continue;
+            // 邻居为空也要让平滑量衰减回 0，否则会带着上一次的推力继续滑
+            if (!seen) {
+                m.sepX += (0 - m.sepX) * SEP_SMOOTH;
+                m.sepY += (0 - m.sepY) * SEP_SMOOTH;
+                m.x += m.sepX; m.y += m.sepY;
+                continue;
+            }
             const l = Math.hypot(ox, oy) || 1;
             // 🔴 按**重叠深度**缩放推力：几乎不重叠时几乎不推。
             //    原来不管挤多深都按全速推，而邻居集合每帧都在变（只看 6 个），
             //    推的方向来回摆 → 人在原地微微发抖。
-            const depth = Math.max(0, 1 - Math.sqrt(nearest2) / SEP_DIST);
-            m.x += ox / l * push * depth;
-            m.y += oy / l * push * depth;
+            const depth = Math.max(0, 1 - Math.sqrt(nearest2) / minGap);
+            // 先算出「这一帧本该推多少」，再让实际推力慢慢向它靠拢（见 SEP_SMOOTH）
+            const vx = ox / l * push * depth, vy = oy / l * push * depth;
+            m.sepX += (vx - m.sepX) * SEP_SMOOTH;
+            m.sepY += (vy - m.sepY) * SEP_SMOOTH;
+            m.x += m.sepX;
+            m.y += m.sepY;
         }
     }
 
@@ -2612,7 +3002,12 @@ export class Scene13WarLayer {
                 //    等真的被拉开了才转身去追。伤害一分不多给（迟滞带里本来就够不着，不结算）。
                 const engaged = m.st !== 0;                       // m.st 此刻仍是上一帧的值
                 const inReach = fd2 < REACH * REACH;              // 严格：出手/扣血用这个
-                const inHystBand = !inReach && engaged && fd2 < (REACH * 1.2) ** 2;
+                // 🔴 [2026-08-17 再修] 迟滞带宽度取「20% 射程」与「25px」的**较小值**。
+                //    原来只按比例算，远程兵会宽得离谱：射程 400 的火焰弓，400~480px 之间
+                //    既不放箭也不挪窝 —— 主人反馈「离敌军很近还在待命」就有这一份。
+                //    抖动来自贴身互推（每帧一两个像素），25px 足够盖住，不需要更宽。
+                const hystBand = REACH + Math.min(REACH * 0.2, 25);
+                const inHystBand = !inReach && engaged && fd2 < hystBand ** 2;
                 // 缠斗 4 秒脱离。
                 // 🔴 [2026-08-17 修] 只在**够得着**的时候计时——把「跑过去的路上」也算进这 4 秒，
                 //    会让慢速大视野兵种永远打不到人：象兵 LOS 280、贴身 65、速度 40，
@@ -2644,41 +3039,37 @@ export class Scene13WarLayer {
                     const fdx = foe.x + Math.cos(ra) * CHASE_RING - m.x;
                     const fdy = foe.y + Math.sin(ra) * CHASE_RING - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
-                    // 🔴 [2026-08-17 修] 远程兵接敌：前排已站桩射击、后排还在往前挤 → 挤到前排背上，
-                    //    每帧「往前顶一步 + separate 推回一步」来回抖（弓骑兵 + 弓步兵都有，主人 2026-08-17 提）。
-                    //    判据：前方 ~20px 内已有己方兵挡着 → 站住待命几秒再试，别再挤。
-                    if (stats.rng > 65) {
-                        if (m.holdT > 0) {
-                            m.holdT -= dt;
-                            if (m.fadeT > 0) m.fadeT -= dt;
-                            m.ph += dt * 8;
-                            continue;                       // 待命：站住不挤
-                        }
-                        const ux = fdx / fd, uy = fdy / fd;
-                        const px = m.x + ux * CELL_S, py = m.y + uy * CELL_S;
-                        const cx = (px / CELL_S) | 0, cy = (py / CELL_S) | 0;
-                        let blocked = false;
-                        for (let gx = cx - 1; gx <= cx + 1 && !blocked; gx++) {
-                            for (let gy = cy - 1; gy <= cy + 1 && !blocked; gy++) {
-                                const a = this.gs.get(HKEY(gx, gy));
-                                if (!a) continue;
-                                for (const o of a) {
-                                    if (o === m || o.f !== m.f || o.hp <= 0) continue;
-                                    const odx = px - o.x, ody = py - o.y;
-                                    if (odx * odx + ody * ody < SEP_DIST * SEP_DIST) { blocked = true; break; }
-                                }
+                    // ── 前方被己方兵挡住 → **绕过去**，不是站着等 ──────────────────────
+                    // 🔴 [2026-08-17 主人拍板] 「战场上被挡着就站 2 秒」不成立，人会绕。
+                    //    帝国时代的弧形阵面就是这么长出来的：每个兵有自己的占地，被前面的人挡住时
+                    //    寻路把他从侧面带过去，一层层绕不过去的就沿接触面铺开 = 弧形。
+                    //    我们没有寻路，用最省的等效做法：**沿垂直方向侧滑**。
+                    //    绕行方向按本兵固定（取自 jy 的符号），不每帧现挑 —— 现挑会左右摇摆，又是一种抖。
+                    //    绕开之后下一帧自然判定不堵，立刻恢复直冲。
+                    const ux = fdx / fd, uy = fdy / fd;
+                    const px = m.x + ux * CELL_S, py = m.y + uy * CELL_S;
+                    const bcx = (px / CELL_S) | 0, bcy = (py / CELL_S) | 0;
+                    let blocked = false;
+                    for (let gx = bcx - 1; gx <= bcx + 1 && !blocked; gx++) {
+                        for (let gy = bcy - 1; gy <= bcy + 1 && !blocked; gy++) {
+                            const a = this.gs.get(HKEY(gx, gy));
+                            if (!a) continue;
+                            for (const o of a) {
+                                if (o === m || o.f !== m.f || o.hp <= 0) continue;
+                                const odx = px - o.x, ody = py - o.y;
+                                const rr = this.radiusOf(m.key) + this.radiusOf(o.key);
+                                if (odx * odx + ody * ody < rr * rr) { blocked = true; break; }
                             }
                         }
-                        if (blocked) {
-                            m.holdT = HOLD_SEC;
-                            if (m.fadeT > 0) m.fadeT -= dt;
-                            m.ph += dt * 8;
-                            continue;                       // 待命：站住不挤，几秒后再试
-                        }
                     }
-                    m.x += fdx / fd * stats.spd * dt;
-                    m.y += fdy / fd * stats.spd * dt;
-                    m.dir = this.dir8Hyst(m.dir, fdx, fdy);
+                    let mvx = ux, mvy = uy;
+                    if (blocked) {
+                        const side = m.jy >= 0 ? 1 : -1;      // 本兵固定绕行侧，避免左右摇摆
+                        mvx = -uy * side; mvy = ux * side;    // 垂直于前进方向 = 贴着人墙侧滑
+                    }
+                    m.x += mvx * stats.spd * (blocked ? SLIDE_RATE : 1) * dt;
+                    m.y += mvy * stats.spd * (blocked ? SLIDE_RATE : 1) * dt;
+                    m.dir = this.dir8Hyst(m.dir, mvx, mvy);   // 朝向跟着实际走向（绕行时朝侧面）
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
                     //    刚出生就开始追的兵还会**一直半透明**（fadeT 不递减）。
@@ -2859,6 +3250,17 @@ export class Scene13WarLayer {
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
         for (const m of this.men) { [m.x, m.y] = this.fieldBound(m.x, m.y); }
+        // 🔴 [2026-08-17] 结算「这一帧到底挪了没有」——推挤和边界都收口之后才算得准。
+        //    想走却被前面的人堵住时位移≈0，此时再播移动帧就是**原地迈腿**（主人实锤）。
+        //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
+        for (const m of this.men) {
+            const dx = m.x - m.prevX, dy = m.y - m.prevY;
+            const want = (statsOf(m.key).spd || 0) * dt;
+            // 实际位移不到「想走的距离」的四分之一 = 基本没挪动
+            if (m.st === 0 && want > 0 && (dx * dx + dy * dy) < (want * 0.25) ** 2) m.stuckT += dt;
+            else m.stuckT = 0;
+            m.prevX = m.x; m.prevY = m.y;
+        }
         // 旗手战死 → 原地留下一面倒下的军旗。men 数组只在这一处出人，死亡侦测放这里最稳。
         for (const m of this.men) {
             if (m.hp <= 0 && m.flag) this.fallenFlags.push({ x: m.x, y: m.y, f: m.f, t: 0, fo: m.fo });
@@ -3129,9 +3531,10 @@ export class Scene13WarLayer {
             if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
             }
-            // 🔴 [2026-08-17] 排队等位（holdT>0，见 HOLD_SEC）的兵是**站着不动**的，
-            //    必须播待命帧。否则会照旧播移动帧 = 原地迈腿走不动，比原来的颤抖还假。
-            else if (m.holdT > 0 && this.bank[m.key]?.sets.idle?.[0]?.length) {
+            // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
+            //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
+            //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
+            else if (m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[0]?.length) {
                 set = 'idle';
             }
             else if (m.st === 0) {
