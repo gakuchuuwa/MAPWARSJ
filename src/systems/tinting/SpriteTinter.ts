@@ -26,6 +26,13 @@ const MASK_DIRS = ['/SUCAI/ARAMBAI/', '/SUCAI/ARBALEST/', '/SUCAI/ARCHER/', '/SU
  * 精灵染色器
  */
 export class SpriteTinter {
+    /** 玩家色覆盖率低于此值 = 缩到战场尺寸后认不出阵营（实测 306 个目录里 30 个，约 9%） */
+    private static readonly WEAK_PC_COVERAGE = 0.10;
+    /** 低覆盖兵种全身额外混入的势力色比例（保留自身明暗，金属/皮肤只略微偏色） */
+    private static readonly WEAK_EXTRA_TINT = 0.15;
+    /** 「玩家色覆盖是否过低」的判定缓存（key = 遮罩 URL；同一遮罩两阵营共用，只算一次） */
+    private static weakCoverCache: Map<string, boolean> = new Map();
+
     // 缓存染色后的精灵图，避免每帧重复处理
     // Key: `${originalSrc}_${factionId}`；mask 染色的 key 前缀 `mask:` 区分
     private static tintedSpriteCache: Map<string, HTMLImageElement> = new Map();
@@ -92,7 +99,7 @@ export class SpriteTinter {
         if (maskState && maskState.complete) {
             // 遮罩就绪 → mask 精确染色
             if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
-            const tinted = this.applyMaskTint(sprite, maskState, tint);
+            const tinted = this.applyMaskTint(sprite, maskState, tint, maskSrc);
             this.tintedSpriteCache.set(cacheKey, tinted);
             return tinted;
         }
@@ -136,7 +143,8 @@ export class SpriteTinter {
     private static applyMaskTint(
         sprite: HTMLImageElement,
         mask: HTMLImageElement,
-        tint: TintColor
+        tint: TintColor,
+        maskSrc: string
     ): HTMLImageElement {
         // 分别初始化主图/遮罩两个 canvas（applyTint 可能已初始化 tempCanvas 但未初始化 maskCanvas）
         // 🔴 [2026-08-17 修 13 开场卡 12.8 秒] 必须带 willReadFrequently。
@@ -199,9 +207,43 @@ export class SpriteTinter {
         //      故保持不变；试过配 gamma 色阶曲线替代，在暗底兵种（条顿骑士均值 48）上反而更闷，已否决。
         const GAIN = 2.2;
         const n = Math.min(main.length, maskData.length);
+
+        // 🔴 [2026-08-17 主人定] 玩家色覆盖太少的兵种，额外叠一层整体淡色。
+        //    起因：主人「有的染了红色，有的没染色」。实测 306 个目录的玩家色覆盖率差 30 倍——
+        //    条顿骑士 79.9%（整个人通红）、投石车只有 2.6%（一小块布，缩到 40px 根本看不见）。
+        //    这是 DE 美术本身的分布，不是漏染；但我们把人缩得比帝国时代小得多，低覆盖的就认不出阵营了。
+        //    做法：覆盖率 < WEAK_PC_COVERAGE 时，全身按 WEAK_EXTRA_TINT 的比例混入势力色，
+        //    并保留各自的明暗（按像素自身灰阶调制），所以金属/皮肤只是**略微偏色**而不是被涂平。
+        //    实测命中 30 个目录（约 9%）：投石车/弩炮/攻城槌/战犬/骑士/游侠/骠骑兵等。
+        //    🔴 必须**逐像素全采**，别图省事隔几个采一次：精灵图是横向排帧的，
+        //       采样步长会和帧宽产生混叠 —— 实测隔 8 采样把精锐轻标枪兵的 26.0% 采成 8.4%，
+        //       154 个边界带目录里误判了 5 个。全采一遍 384 张约 281ms，
+        //       再按**遮罩 URL 缓存**（同一张遮罩两个阵营各染一次，缓存后只算一次）就够便宜了。
+        let weak = this.weakCoverCache.get(maskSrc);
+        if (weak === undefined) {
+            let bodyPx = 0, pcPx = 0;
+            for (let i = 3; i < n; i += 4) {
+                if (main[i] > 16) bodyPx++;
+                if (maskData[i] > 16) pcPx++;
+            }
+            weak = bodyPx > 0 && pcPx / bodyPx < SpriteTinter.WEAK_PC_COVERAGE;
+            this.weakCoverCache.set(maskSrc, weak);
+        }
+        const K = weak ? SpriteTinter.WEAK_EXTRA_TINT : 0;
+
         for (let i = 0; i < n; i += 4) {
             const w = maskData[i + 3] / 255;   // 玩家色覆盖权重（DE 原生渐变）
-            if (w === 0) continue;             // 非玩家色区域（脸/皮肤/金属/武器/马），保持 main 原样
+            if (w === 0) {
+                // 非玩家色区域（脸/皮肤/金属/武器/马）：正常情况保持 main 原样；
+                // 低覆盖兵种额外混入一点势力色，好歹能认出是哪一方（见上方 WEAK_* 说明）。
+                if (K > 0 && main[i + 3] > 16) {
+                    const l0 = (0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2]) / 255;
+                    main[i] = Math.round(main[i] * (1 - K) + tint.r * l0 * K);
+                    main[i + 1] = Math.round(main[i + 1] * (1 - K) + tint.g * l0 * K);
+                    main[i + 2] = Math.round(main[i + 2] * (1 - K) + tint.b * l0 * K);
+                }
+                continue;
+            }
 
             // main 灰阶 = 布料明暗（褶皱），作为玩家色的亮度调制
             const lum = 0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2];

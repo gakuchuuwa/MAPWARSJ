@@ -302,6 +302,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'takabara', name: '波斯轻盾标枪兵', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
     { id: 'temple_guard', name: '高棉神庙守卫', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/TEMPLEGUARD/' },
     { id: 'teutonic_knight', name: '条顿武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },
+    { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
     { id: 'thracian_peltast', name: '色雷斯轻装兵', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
     { id: 'traction_trebuchet', name: '牵引投石机', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
     { id: 'two_handed_swordsman', name: '双手剑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
@@ -314,43 +315,23 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'winged_hussar', name: '波兰翼骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
     { id: 'woad_raider', name: '凯尔特靛蓝突袭者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/WOADRAIDER/' },
     { id: 'xolotl_warrior', name: '阿兹特克索洛特尔骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
-    { id: 'manatarms', name: '装甲步兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
+
     { id: 'longswordsman', name: '长剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },
-    { id: 'halberdier', name: '戟兵', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/HALBERDIER/' },
-    { id: 'foot_konnik', name: '保加利亚近卫步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FOOTKONNIK/' },
+
     { id: 'champi_warrior', name: '印加尚皮勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIWARRIOR/' },
     { id: 'champi_runner', name: '印加尚皮飞毛腿', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
     { id: 'champi_scout', name: '印加尚皮斥候', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
-    { id: 'jian_swordsman_shielded', name: '持盾刀剑手', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
+
     { id: 'jian_swordman_unshielded', name: '双手剑士(华夏)', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDMAN_UNSHIELDED/' },
-    { id: 'ji_infantry', name: '华夏戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JI_INFANTRY/' },
-    { id: 'ji_infantry_elite', name: '精锐华夏戟兵', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/JI_INFANTRY_ELITE/' },
-    { id: 'sakan_axeman', name: '塞种战斧兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
-    { id: 'ibirapema_elite', name: '精锐图皮战棍勇士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/IBIRAPEMA_ELITE/' },
-    { id: 'levy', name: '征召民兵', category: 'infantry', age: 'dark', pathPrefix: '/SUCAI/LEVY/' },
-    { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
-    { id: 'paragon', name: '圣殿楷模武士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/PARAGON/' },
-    { id: 'sosso_guard', name: '西非索索禁卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
-    { id: 'vanguard', name: '先锋重装步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/VANGUARD/' },
+
     { id: 'cavalier', name: '重装骑士', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAVALIER/' },
-    { id: 'light_cavalry', name: '轻骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
+
     { id: 'ant_scout', name: '古典斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ANT_SCOUT/' },
-    { id: 'aztec_raider', name: '阿兹特克突击兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/AZTEC_RAIDER/' },
-    { id: 'elite_greek_cavalry', name: '精锐希腊贵族骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
-    { id: 'equites', name: '罗马伴随骑士', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/EQUITES/' },
-    { id: 'imperial_cavalry', name: '帝国具装骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
-    { id: 'sarmatian', name: '萨尔马提亚重骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SARMATIAN/' },
-    { id: 'shock_cavalry', name: '冲击重骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
-    { id: 'camel_imperial', name: '印度斯坦帝王骆驼', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAMEL_IMPERIAL/' },
-    { id: 'elite_peltast', name: '精锐皮盾标枪手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
-    { id: 'gastraphetes', name: '希腊腹弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GASTRAPHETES/' },
-    { id: 'guecha_elite', name: '精锐穆伊斯卡格查勇士', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/GUECHA_ELITE/' },
-    { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
-    { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
-    { id: 'ranged_immortal', name: '波斯长生军(投矛)', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
+
     { id: 'flamethrower', name: '猛火油柜(喷火器)', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/FLAMETHROWER/' },
     { id: 'helepolis', name: '希腊赫勒波利斯攻城塔', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HELEPOLIS/' },
-    { id: 'organ_elite', name: '精锐葡萄牙风琴炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ORGAN_ELITE/' },
+    { id: 'siege_tower', name: '攻城塔', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGETOWER/' },
+
 ];
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
