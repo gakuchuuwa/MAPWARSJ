@@ -637,6 +637,7 @@ const SIGHT_MAP: Record<string, number> = {
     flamethrower: 200,
     helepolis: 360,
     siege_tower: 320,
+    recurve_bowman: 240,
 };
 
 /** 取某兵种完整数据（WAR_TYPES 已是 DE 五维全量，无组别覆盖） */
@@ -2239,14 +2240,14 @@ export class Scene13WarLayer {
     // ── 场景树/湖：随机布景 + 加载（纯装饰，不参与战斗逻辑，也不进 pending）──
     /**
      * 随机分布湖：**本场季节一张**（夏/秋/冬三选一，由 scatterLakes 开头按游戏日历定，树/湖同季）：
-     * - 每场 1–2 个（主人 2026-08-12：每局1-2个即可）
+     * - 每场 1 个（主人 2026-08-18 定：只贴一个湖泊）
      * - 避开中央对攻走廊与出兵口
      * - 湖与湖之间留距（不叠成一大片）
      * 湖是贴地水域，画在最底层（ground 之下），不参与 y 深度排序。
      */
     private scatterLakes(VW: number, VH: number): void {
         this.sceneSeason = this.currentSeasonKind();
-        const lakeWant = 1 + ((Math.random() * 2) | 0);   // 1 或 2 个湖
+        const lakeWant = 1;   // 固定 1 个湖
         let guard = 0;
         while (this.lakes.length < lakeWant && guard++ < 200) {
             const x = LAKE_W * 0.6 + Math.random() * (VW - LAKE_W * 1.2);
