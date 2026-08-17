@@ -748,7 +748,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/BASHU/ba_bamanzi.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -756,11 +756,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -15
-        },
-        "/assets/BASHU/bandun_fanmu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/BASHU/chenzhou_d_zhanghao.png": {
             "scale": 0.92,
@@ -6596,6 +6591,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/BASHU/__闲置__BASHU_01.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/BASHU/bandun_fanmu.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 33
         }
     },
     "folderGuides": {
