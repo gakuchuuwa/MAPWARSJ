@@ -216,6 +216,8 @@ export class CombatUI {
     private leftCenterSixBadge!: HTMLSpanElement;
     private rightCenterSixBadge!: HTMLSpanElement;
     private centerSixBadgeGroup!: HTMLDivElement;
+    private toggleCollapseBtn!: HTMLButtonElement;
+    private isCollapsed: boolean = false;
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
@@ -479,6 +481,47 @@ export class CombatUI {
                 border-bottom: 2px solid rgba(255, 215, 0, 0.9) !important;
                 box-shadow: 0 0 10px rgba(255, 200, 60, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.12) !important;
             }
+            .combat-ui-collapse-btn {
+                position: absolute;
+                top: -24px;
+                left: 50%;
+                transform: translateX(-50%);
+                height: 24px;
+                padding: 0 18px;
+                background: linear-gradient(180deg, rgba(28, 22, 16, 0.94) 0%, rgba(12, 10, 8, 0.96) 100%);
+                border: 1px solid rgba(212, 175, 55, 0.6);
+                border-bottom: none;
+                border-radius: 8px 8px 0 0;
+                color: #f5e6c8;
+                font-family: 'Noto Serif SC', 'Cinzel', serif;
+                font-size: 12px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                cursor: pointer;
+                pointer-events: auto;
+                z-index: 40;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 215, 0, 0.25);
+                transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+                user-select: none;
+                outline: none;
+            }
+            .combat-ui-collapse-btn:hover {
+                background: linear-gradient(180deg, rgba(55, 42, 28, 0.98) 0%, rgba(30, 22, 15, 0.98) 100%) !important;
+                border-color: rgba(255, 215, 0, 0.9) !important;
+                color: #FFF !important;
+                box-shadow: 0 -3px 14px rgba(255, 215, 0, 0.45), inset 0 1px 3px rgba(255, 215, 0, 0.4) !important;
+            }
+            .combat-ui-collapse-btn:active {
+                filter: brightness(0.9);
+            }
+            #combat-ui-panel.is-collapsed > *:not(.combat-ui-collapse-btn) {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -627,8 +670,9 @@ export class CombatUI {
             -webkit-mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
             mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
         `;
-
+        this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
+        this.centerPanel.style.transition = 'opacity 0.3s ease';
         this.centerPanel.style.cssText = `
             position: absolute;
             left: ${backdropEdge};
@@ -929,6 +973,17 @@ export class CombatUI {
         this.container.appendChild(this.centerPanel);
         this.container.appendChild(leftFrame);
         this.container.appendChild(rightFrame);
+
+        // --- 隐藏/展开战斗面板 下拉箭头按钮（点击收起面板，避开遮挡战场）---
+        this.toggleCollapseBtn = document.createElement('button');
+        this.toggleCollapseBtn.className = 'combat-ui-collapse-btn';
+        this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
+        this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
+        this.toggleCollapseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleCollapse();
+        });
+        this.container.appendChild(this.toggleCollapseBtn);
 
         this.applyPortraitFacing('attacker');
         this.applyPortraitFacing('defender');
@@ -2167,6 +2222,7 @@ export class CombatUI {
             overflow: visible;
             pointer-events: auto;
             z-index: ${T.zIndex.portrait};
+            transition: opacity 0.3s ease;
         `;
         return frame;
     }
@@ -2403,6 +2459,8 @@ export class CombatUI {
         this.updateMultiplierBadges(battle.attacker, battle.defender);
         this.updateSkillBadges(battle.attacker, battle.defender);
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
     }
@@ -2507,6 +2565,8 @@ export class CombatUI {
         setGeneralName(this.rightGeneralNameTag, defender, 'defender');
 
         this.updateStats();
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
     }
@@ -3692,12 +3752,45 @@ export class CombatUI {
         this.attackerFactionId = null;
         this.defenderFactionId = null;
         this.resetBattleOverlays();
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
         this.container.style.animation = 'none';
         this.container.style.transform = 'translate(-50%, 250%)';
         this.leftPortraitFrame.style.animation = 'none';
         this.rightPortraitFrame.style.animation = 'none';
         this.leftPortraitFrame.style.transform = '';
         this.rightPortraitFrame.style.transform = '';
+    }
+
+    /** 切换战斗面板的折叠/展开状态（点击面板顶部箭头避开遮挡战场） */
+    public toggleCollapse(): void {
+        this.isCollapsed = !this.isCollapsed;
+        this.updateCollapseState(false);
+    }
+
+    /** 更新折叠状态渲染 */
+    private updateCollapseState(skipAnimation: boolean = false): void {
+        if (!this.toggleCollapseBtn) return;
+        if (skipAnimation) {
+            this.container.style.transition = 'none';
+        } else {
+            this.container.style.animation = 'none';
+            this.container.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
+        }
+
+        if (this.isCollapsed) {
+            this.container.classList.add('is-collapsed');
+            this.container.style.transform = 'translate(-50%, 100%)';
+            this.toggleCollapseBtn.innerHTML = `<span>▲</span>`;
+            this.toggleCollapseBtn.title = '展开战斗面板 (点击显示)';
+        } else {
+            this.container.classList.remove('is-collapsed');
+            if (!skipAnimation) {
+                this.container.style.transform = 'translate(-50%, 0)';
+            }
+            this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
+            this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
+        }
     }
 
     /** 区域战结束回调：仅当绑定的战场确实结束时才收尾 */

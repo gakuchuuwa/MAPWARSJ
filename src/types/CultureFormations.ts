@@ -237,12 +237,12 @@ export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 大明·雁行阵（4+3+2）：精锐火矛手(4) + 黑光铠骑兵(3) + 火炮(2)
+ * 大明·三角阵（2+3+4）：华夏火箭手精锐(2) + 南宋火矛手精锐(3) + 南北朝黑光铠骑兵(4)
  */
 export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_fire_lancer', count: 4 }, // Row 0 宽阵 = 精锐火矛手 4人
-    { type: 'hei_kuang', count: 3 },         // Row 1 中坚 = 黑光铠骑兵 3人
-    { type: 'bombard_cannon', count: 2 },    // Row 2 压阵 = 火炮 2人
+    { type: 'elite_fire_archer', count: 2 }, // Row 0 尖刀 = 华夏火箭手精锐 2人
+    { type: 'elite_fire_lancer', count: 3 }, // Row 1 中坚 = 南宋火矛手精锐 3人
+    { type: 'hei_kuang', count: 4 },         // Row 2 底边 = 南北朝黑光铠骑兵 4人
 ];
 
 /**
@@ -585,13 +585,13 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/明/日本战国雁行阵、汉国/罗马三角阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/日本战国雁行阵、汉国/大明/罗马三角阵 → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
-    } else if (isQin || isTang || isSong || isMing || isSen) {
+    } else if (isQin || isTang || isSong || isSen) {
         army.formationMode = 'echelon';
-    } else if (isHan || isRom) {
+    } else if (isHan || isRom || isMing) {
         army.formationMode = 'triangle';
     } else {
         army.formationMode = inferFormationModeFromSlots(slots)
@@ -913,16 +913,16 @@ export const ALEXANDER_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 20. 奴儿干 藤弓兵+答剌罕骑兵+鲜卑掠骑兵（三角阵 2+3+4：藤弓兵尖刀前 + 答剌罕骑兵中坚 + 鲜卑掠骑兵底边） */
+/** 20. 奴儿干 反曲长弓手+答剌罕骑兵+鲜卑掠骑兵（三角阵 2+3+4：反曲长弓手尖刀前 + 答剌罕骑兵中坚 + 鲜卑掠骑兵底边） */
 export const NUERGAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rattan_archer', count: 2 },    // Row 0 尖刀 = 藤弓兵 弓手
-            { type: 'tarkan', count: 3 },           // Row 1 中坚 = 答剌罕骑兵 骑兵
-            { type: 'xianbei_raider', count: 4 }    // Row 2 底边 = 鲜卑掠骑兵 骑兵
+            { type: 'recurve_bowman', count: 2 },    // Row 0 尖刀 = 反曲长弓手 2人
+            { type: 'tarkan', count: 3 },           // Row 1 中坚 = 答剌罕骑兵 3人
+            { type: 'xianbei_raider', count: 4 }    // Row 2 底边 = 鲜卑掠骑兵 4人
         ]
     }
 ];

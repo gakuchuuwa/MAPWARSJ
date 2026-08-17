@@ -1196,13 +1196,6 @@ export const SPRITE_PATHS = {
             DEATH: [981, 982, 983, 984, 985, 986, 987, 988].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
         // 【马其顿方阵】Macedonian Phalanx（8方向萨里沙超长矛方阵）
-        'macedon_phalanx': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/death_${dir}.png`),
-        },
         // 【马其顿伙友重骑兵】Companion Cavalry（8方向突骑）
         'companion_cavalry': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/move_${dir}.png`),
@@ -1221,13 +1214,6 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/death_${dir}.png`),
         },
         // 【罗马军团步兵】Roman Legionary（8方向方盾重步兵）
-        'roman_legionary': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/death_${dir}.png`),
-        },
         // 【华夏具装铁骑 / 玄甲军】Huaxia Iron Cavalry（8方向具装重骑）
         // 【草原游牧骑射手 / 曼古歹】Steppe Horse Archer（8方向回身射箭弓骑）
         // 【华夏神臂弩手 / 强弩兵】Huaxia Crossbow（8方向重弩）
@@ -2749,6 +2735,15 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGETOWER/attack_${dir}.png`),
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGETOWER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGETOWER/death_${dir}.png`),
+        },
+        'recurve_bowman': {
+            // 【反曲长弓手】AoE2 DE 素材
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/death_${dir}.png`),
         },
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
