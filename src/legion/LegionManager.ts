@@ -558,7 +558,7 @@ export class LegionManager {
     }
 
     /**
-     * 触发攻城。返回 'siege' = 正常开战；'skipped' = 越城而走（str_21）触发，已跳过此城。
+     * 触发攻城。返回 'siege' = 正常开战；'skipped' = 已跳过。
      */
     public triggerSiege(army: Army, targetCity: City): 'siege' | 'skipped' {
         if (!this.siegeManager) {
@@ -582,46 +582,10 @@ export class LegionManager {
         const lockedTargetId = army.expeditionTargetCityId ?? army.homeCityId;
         const isLockedTarget = !!lockedTargetId && targetCity.id === lockedTargetId;
 
-        // 越城而走（str_21）跳过的城：冷却期内绝不开战（2026-08-07 修）。
-        // 跳过后军团仍停在城 ZOC 内，ZOC 强制攻城路径（findHostileCityInZOC）每帧触发——
-        // 若不在此拦截，下一帧 90% 概率不跳、直接开战 =「脉冲越城而走，然后开战了」。
-        if (!isLockedTarget && army.isSiegeSkipped(targetCity.id)) {
-            return 'skipped';
-        }
-
         if (targetCity.factionId === army.getFactionId()) {
             army.setTargetCity(null);
             army.stopMovement(true);
             return 'siege';
-        }
-
-        // ── 威慑·越城而走：**险要之外都可跳**（2026-08-12 主人拍板，纠正 08-07 的反向逻辑）──
-        // 🔴 旧规则是「仅小城可跳」，方向正好反了：现实里该绕开的恰恰是**啃不动的坚城**
-        //    （避实击虚、避坚城取要害是常规操作），而软柿子没有理由绕。
-        // 🔴 唯一保留的例外是**险要（pass）**：它挡在必经之路上，绕过去没有意义，必须打通
-        //    （这一条是 08-07 定的，地形上成立，予以保留）。
-        // 触发前提仍是「我方兵力劣势」+ 概率，所以"绕"永远只发生在打不过的时候。
-        // 脉冲只在成功跳过时显示（失败不显示）。
-        if (!isLockedTarget && targetCity.type !== 'pass' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
-            const myTroops = army.getTroops();
-            const enemyTroops = targetCity.troops ?? 0;
-            if (myTroops < enemyTroops) {
-                const chance = getGeneralStrategicMagnitude(army, 'skip_disadvantaged_siege', 0.10);
-                if (Math.random() < chance) {
-                    gameLog('legionSiege', `[威慑] 越城而走：${army.name} 跳过【${targetCity.name}】`);
-                    const pos = army.getPosition();
-                    emitFollowedGeneralStrategicMapFx(army, 'skip_disadvantaged_siege', pos.lat, pos.lng, 'pulse');
-                    army.setTargetCity(null);
-                    // 越城而走（2026-08-07 修）：标记跳过冷却 + 停步等重决策。
-                    // 此前只清 targetCity：战略目标/行军段目标还在 → 军团反复走回该城，
-                    // 10% 假跳 / 90% 还是打它，技能实际无效。现在该城 60s 内被
-                    // findFirstHostileAlongPolyline（逐段清障）/ buildExcludeTargetIds（选目标）排除，
-                    // 军团绕开它去打别的城——「绕开打不过的城」名副其实。
-                    army.markSiegeSkipped(targetCity.id);
-                    army.stopMovement?.(false);
-                    return 'skipped';
-                }
-            }
         }
 
         gameLog('legionSiege', `🏯 ${army.name} 攻城【${targetCity.name}】`);

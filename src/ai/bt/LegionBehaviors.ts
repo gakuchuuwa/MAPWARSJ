@@ -235,10 +235,6 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
             ctx.recentFailedTargets.delete(targetId);
         }
     }
-    // 越城而走（str_21）跳过的城：60s 内不得再被选为目标（2026-08-07 修）
-    for (const cityId of ctx.army.getSkipSiegeCityIds()) {
-        excludeTargetIds.add(cityId);
-    }
     return excludeTargetIds;
 }
 
@@ -397,23 +393,6 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     if (!strategicId) return false;
 
     const city = ctx.cityManager.getCity(strategicId);
-
-    // 越城而走（str_21）跳过的城：战略目标已不可攻（60s 冷却）→ 清目标重抽（2026-08-07 修）。
-    // 覆盖 LegionRoadMarch / ZOC 等不走行为树 TriggerSiege 节点的路径——它们触发越城而走后
-    // 战略目标还在，若不在此兜底，下一帧 MoveToTarget 又会走回该城。
-    if (city && ctx.army.isSiegeSkipped(strategicId)) {
-        markTargetCooldown(ctx, strategicId, 'skip_disadvantaged_siege');
-        btLog(
-            ctx,
-            `skip_siege:${strategicId}`,
-            `[AI] ${ctx.army.name} 目标【${city.name}】越城而走，冷却后重抽别的城`,
-        );
-        clearStrategicTarget(ctx);
-        ctx.army.setTargetCity(null);
-        ctx.army.stopMovement?.();
-        return false;
-    }
-
     if (!city || city.factionId === ctx.army.getFactionId()) {
         if (strategicId) {
             markTargetCooldown(ctx, strategicId, 'friendly_or_missing');
@@ -805,13 +784,6 @@ export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
 
     const result = ctx.legionManager.triggerSiege(ctx.army, targetCity);
     ctx.army.setTargetCity(null);
-
-    // 越城而走（str_21）触发：军团已停步 + 该城进 60s 跳过冷却。
-    // 战略目标处理交给 HasTarget 兜底（hop 场景保留原目标、逐段清障绕开；
-    // 终极场景由 HasTarget 的 skip_siege 分支清目标重抽），此处不再重复判断。
-    if (result === 'skipped') {
-        return BTStatus.SUCCESS;
-    }
 
     if (isMarchHop) {
         return BTStatus.SUCCESS;

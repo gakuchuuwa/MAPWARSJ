@@ -35,12 +35,6 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
-/**
- * 越城而走（str_21）跳过冷却时长：触发后该城 60s 内不得再被选为目标/行军段目标。
- * 兵力劣势短期不会反转，60s 保证「绕开打不过的城」名副其实（2026-08-07）。
- */
-export const SKIP_SIEGE_COOLDOWN_MS = 60_000;
-
 export class Army implements IBattleUnit {
     private map: GameMap;
     private position: LatLng;
@@ -127,44 +121,10 @@ export class Army implements IBattleUnit {
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
 
     /**
-     * 越城而走（str_21）跳过冷却：cityId → 时间戳（performance.now 基准）。
-     * 兵力劣势触发「跳过此城」后，该城在冷却期内不得再被选为行军段目标/战略目标，
-     * 军团绕开它继续打别的城（2026-08-07 修：此前跳完不冷却、目标没清，军团反复走回该城，
-     * 10% 假跳 / 90% 还是打它，技能实际无效）。
-     */
-    /**
      * 锚点滞回状态：上一次决策用的是「老家锚点」吗（见 LegionBehaviors 的 ANCHOR_HYSTERESIS_*）。
      * undefined = 还没决策过，按当前兵力直接判。
      */
     public usingHomeAnchor?: boolean;
-    public skipSiegeUntil: Map<string, number> = new Map();
-
-    /** 越城而走触发：标记该城进入跳过冷却 */
-    public markSiegeSkipped(cityId: string): void {
-        this.skipSiegeUntil.set(cityId, performance.now() + SKIP_SIEGE_COOLDOWN_MS);
-    }
-
-    /** 该城是否处于越城而走跳过冷却中 */
-    public isSiegeSkipped(cityId: string): boolean {
-        const until = this.skipSiegeUntil.get(cityId);
-        if (until === undefined) return false;
-        if (performance.now() >= until) {
-            this.skipSiegeUntil.delete(cityId);
-            return false;
-        }
-        return true;
-    }
-
-    /** 当前处于跳过冷却中的城 id 集合（供目标选择/逐段清障排除） */
-    public getSkipSiegeCityIds(): Set<string> {
-        const now = performance.now();
-        const active = new Set<string>();
-        for (const [cityId, until] of this.skipSiegeUntil) {
-            if (now < until) active.add(cityId);
-            else this.skipSiegeUntil.delete(cityId);
-        }
-        return active;
-    }
     /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图（已去抖，见 updateTerrainSpeed） */
     public isOnSea: boolean = false;
     /** 反向判定已累计走过的距离（度）；见 updateTerrainSpeed 的翻转闸 */

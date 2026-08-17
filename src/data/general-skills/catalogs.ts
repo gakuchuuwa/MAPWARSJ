@@ -133,7 +133,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     //   守军望见来势即先垮一成，属纯威慑，改用《上林赋》「应风披靡」之典。
     str_20: { id: 'str_20', grid: 'S⑳', displayName: '望风披靡', effect: 'pre_battle_intimidate', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '攻城前削守军10%（均势）' },
 
-    str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '劣势10%跳城重选（逆势；仅小城可跳，2026-08-07）' },
+    str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'retired', category: 'deterrence', note: '【已退役】（2026-08-17 主人令：删除越城而走防卡死）' },
 
     // ── 纵横类 ──
 

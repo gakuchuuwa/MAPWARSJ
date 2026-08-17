@@ -983,10 +983,10 @@ export function getStrategicBattlePowerMultiplier(
 
 // ━━━ 战略技运行时随机池与 override ━━━
 
-/** 活跃战略技池（剔除退役技、远征专用技 str_11）；战后随机换技从此抽取 */
+/** 活跃战略技池（剔除退役技、远征专用技 str_11、已退役越城而走 str_21）；战后随机换技从此抽取 */
 export const ACTIVE_STRATEGIC_SKILL_POOL: string[] = [
     'str_01', 'str_06', 'str_07', 'str_10', 'str_12', 'str_13',
-    'str_16', 'str_19', 'str_20', 'str_21', 'str_22', 'str_23',
+    'str_16', 'str_19', 'str_20', 'str_22', 'str_23',
     'str_24', 'str_29',
 ];
 
