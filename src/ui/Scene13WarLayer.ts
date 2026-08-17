@@ -391,6 +391,20 @@ const UNIT_PX = 50;
 const AIM_JITTER = 120;
 
 /**
+ * 🔴 **两道闸当前是「只观察、不动手」**（主人 2026-08-17 傍晚定：
+ *    「现在先允许打不完吧，这样才能看到出现的问题；如果没有问题，这个设计也就没必要了」）。
+ *
+ * 所以下面 NO_KILL_SEC / HARD_STOP_SEC 命中时**不再强制收场**，只做两件事：
+ *   ① 控制台 warn 一条；② 往 `scratch/scene13_probe_log.jsonl` 单独落一条 `stallDetected` 记录。
+ * 这很关键：挂住的那一局原本**一条记录都不会留**（诊断只在判负/停止时发一次），
+ * 于是"卡了没有、卡在什么局面"事后无从查证。现在挂住会立刻留档，含双方场上/池里人数、
+ * 已打多久、多久没死人 —— 之后要不要装这道闸，看这些记录说话。
+ *
+ * 要真正启用（一行）：把 `STALL_GUARD_ENFORCE` 改成 true。
+ */
+const STALL_GUARD_ENFORCE = false;
+
+/**
  * ── 兜底：这场仗一定会结束（主人 2026-08-17 定：「不要让 13 战斗没有结束时间、士兵原地打转、无法结束」）──
  *
  * 背景：2026-08-16 主人取消了原来的 120s 看门狗，理由是它会把还在正常打的仗一刀砍断。
@@ -1040,6 +1054,8 @@ export class Scene13WarLayer {
     private battleSec = 0;
     /** 最近一次有人阵亡的时刻（秒，battleSec 计）。长时间没人死 = 卡住了 */
     private lastKillSec = 0;
+    /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
+    private stallReported = false;
 
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
@@ -1133,6 +1149,7 @@ export class Scene13WarLayer {
         this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 30s）
         this.battleSec = 0;          // 本场计时归零（HARD_STOP_SEC / NO_KILL_SEC 都按它算）
         this.lastKillSec = 0;
+        this.stallReported = false;
         this.enemyCen = [null, null];
         this.gm = new Map();
         this.gr = new Map();
@@ -1327,6 +1344,20 @@ export class Scene13WarLayer {
     private diagFlush(why: string): void {
         if (!import.meta.env.DEV || this.diagSent || this.diagEvents.length === 0) return;
         this.diagSent = true;
+        this.diagPost(why);
+    }
+
+    /**
+     * 单独发一条记录，**不占用**「一局只发一次」的名额（diagSent 不动）。
+     * 给「卡住了但还在打」这种情况用：那一局如果最后真的挂死，永远走不到 decision/stop，
+     * 就永远不会落盘 —— 事后查无对证。所以卡住的当下先补一条快照。
+     */
+    private diagReport(why: string): void {
+        if (!import.meta.env.DEV) return;
+        this.diagPost(why);
+    }
+
+    private diagPost(why: string): void {
         const field = [0, 0], pool = [0, 0];
         for (const m of this.men) if (m.hp > 0) field[m.f]++;
         for (const sp of this.spawns) pool[sp.f] += Math.max(0, sp.pool);
@@ -2057,20 +2088,25 @@ export class Scene13WarLayer {
 
     private step(dt: number): void {
         if (this.over) return;
-        // ── 保证这场仗一定会结束（见 NO_KILL_SEC / HARD_STOP_SEC）──
+        // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──
         this.battleSec += dt;
-        if (this.battleSec > HARD_STOP_SEC) {
-            console.warn(`🏁 [Scene13War] 已打 ${this.battleSec.toFixed(0)}s 超过上限 ${HARD_STOP_SEC}s，按兵力比判负收场`);
-            this.diagPush('hardStop', { sec: +this.battleSec.toFixed(1) });
-            this.forceResultByRatio(0.85);
-            return;
-        }
-        // lastKillSec > 0 = 本场已经死过人；第一滴血之前不启用这条闸（开局双方还在相向而行）
-        if (this.lastKillSec > 0 && this.battleSec - this.lastKillSec > NO_KILL_SEC) {
-            console.warn(`🏁 [Scene13War] 连续 ${NO_KILL_SEC}s 无人阵亡（打转卡住），按兵力比判负收场`);
-            this.diagPush('noKillStall', { sec: +this.battleSec.toFixed(1) });
-            this.forceResultByRatio(0.85);
-            return;
+        const hardStop = this.battleSec > HARD_STOP_SEC;
+        // lastKillSec > 0 = 本场已经死过人；第一滴血之前不启用这条（开局双方还在相向而行）
+        const noKill = this.lastKillSec > 0 && this.battleSec - this.lastKillSec > NO_KILL_SEC;
+        if ((hardStop || noKill) && !this.stallReported) {
+            this.stallReported = true;
+            const why = hardStop ? 'hardStop' : 'noKillStall';
+            const quietSec = +(this.battleSec - this.lastKillSec).toFixed(1);
+            console.warn(
+                `⚠️ [Scene13War] 这一局判定为「打不完」（${why}）：已打 ${this.battleSec.toFixed(0)}s、`
+                + `${quietSec}s 没人阵亡。当前放行不收场（STALL_GUARD_ENFORCE=false），已落一条 stallDetected 记录。`,
+            );
+            this.diagPush(why, { sec: +this.battleSec.toFixed(1), quietSec });
+            this.diagReport('stallDetected:' + why);   // 挂死也留档（不占最终那条记录的名额）
+            if (STALL_GUARD_ENFORCE) {
+                this.forceResultByRatio(0.85);
+                return;
+            }
         }
         this.spawnTick(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）

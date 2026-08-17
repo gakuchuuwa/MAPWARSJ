@@ -754,18 +754,18 @@ export const TIBET_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 13. 中亚 贵族铁骑+萨瓦尔+精锐钦察（鱼鳞阵 3×3：贵族铁骑前 + 萨瓦尔中 + 精锐钦察后） */
+/** 13. 中亚 精锐草原枪兵+萨瓦尔+精锐钦察（鱼鳞阵 3×3：精锐草原枪兵前 + 萨瓦尔中 + 精锐钦察后） */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'boyar', count: 3 },         // Row 0 前排 = 贵族铁骑 骑兵
-            { type: 'savar', count: 1 },         // Row 1 左 = 萨瓦尔 骑兵
-            { type: 'savar', count: 1 },         // Row 1 中 = 萨瓦尔 骑兵
-            { type: 'savar', count: 1 },         // Row 1 右 = 萨瓦尔 骑兵
-            { type: 'elite_kipchak', count: 3 }  // Row 2 后排 = 精锐钦察 弓骑
+            { type: 'elite_steppe_lancer', count: 3 }, // Row 0 前排 = 精锐草原枪兵 骑兵
+            { type: 'savar', count: 1 },               // Row 1 左 = 萨瓦尔 骑兵
+            { type: 'savar', count: 1 },               // Row 1 中 = 萨瓦尔 骑兵
+            { type: 'savar', count: 1 },               // Row 1 右 = 萨瓦尔 骑兵
+            { type: 'elite_kipchak', count: 3 }        // Row 2 后排 = 精锐钦察 弓骑
         ]
     }
 ];
@@ -800,16 +800,16 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 16. 斯拉夫 精锐草原枪兵+罗马军+复合弓箭手（雁行阵 4+3+2：精锐草原枪兵前 + 罗马军中 + 复合弓箭手后） */
+/** 16. 斯拉夫 精锐贵族铁骑+双手剑士+复合弓箭手（雁行阵 4+3+2：精锐贵族铁骑前 + 双手剑士中 + 复合弓箭手后） */
 export const SLAVIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_steppe_lancer', count: 4 }, // Row 0 前排 = 精锐草原枪兵 骑兵
-            { type: 'legionary', count: 3 },           // Row 1 中排 = 罗马军团步兵 步兵
-            { type: 'composite_bowman', count: 2 }     // Row 2 后排 = 复合弓箭手 弓手
+            { type: 'elite_boyar', count: 4 },          // Row 0 前排 = 精锐贵族铁骑 骑兵
+            { type: 'two_handed_swordsman', count: 3 }, // Row 1 中排 = 双手剑士 步兵
+            { type: 'composite_bowman', count: 2 }      // Row 2 后排 = 复合弓箭手 弓手
         ]
     }
 ];
