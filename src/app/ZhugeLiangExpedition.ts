@@ -18,7 +18,7 @@
  * 木牛流马：战后兵力低于 2 万触发，补到 [22222, 29000] 随机（与忠义归顺同参数）。
  */
 
-import { applyLegionCultureComposition } from '../types/CultureFormations';
+import { applyLegionCultureComposition, type FormationMode } from '../types/CultureFormations';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
@@ -97,7 +97,7 @@ interface ScriptArmy {
     expeditionSavedName: string | null;
     expeditionUnlocked: boolean;
     isElite?: boolean;
-    formationMode?: 'square' | 'triangle' | 'echelon';
+    formationMode?: FormationMode;
     slots?: any[];
 }
 

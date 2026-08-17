@@ -4,6 +4,7 @@ import { GlobalUnitRenderer, IAnimatedUnit } from './GlobalUnitRenderer';
 import { LegionType } from '../types/UnitTypes';
 import { GameConfig } from '../config/GameConfig';
 import type { NavalShipAssetId } from '../types/NavalShipTiers';
+import type { FormationMode } from '../types/CultureFormations';
 
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
@@ -114,8 +115,8 @@ export class UnitRenderer implements IAnimatedUnit {
         return (this.unit as any).cultureScales || null;
     }
 
-    /** 三值阵型（square/triangle/echelon），委托底层 Army；渲染层据此定布局 */
-    public get formationMode(): 'square' | 'triangle' | 'echelon' | null {
+    /** 五阵型（triangle/echelon/fish_scale/crane_wing/square），委托底层 Army；渲染层据此定布局 */
+    public get formationMode(): FormationMode | null {
         return (this.unit as any).formationMode ?? null;
     }
 

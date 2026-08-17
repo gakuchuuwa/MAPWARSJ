@@ -24,6 +24,7 @@ import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
+import { getRegion } from '../systems/RegionSystem';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -379,6 +380,42 @@ export const WAR_TYPES: Record<string, WarType> = {
 
 
 const SIGHT_MAP: Record<string, number> = {
+    // ── [2026-08-18 补齐] 新补录兵种：同族继承其基准单位；无同族者远程取射程+80、骑兵200、象/攻城280、步兵160（对齐 DE 规律：视野必须 ≥ 射程） ──
+    antiquity_battering_ram: 120,
+    antiquity_capped_ram: 120,
+    antiquity_cavalry_archer: 240,
+    antiquity_heavy_cavalry_archer: 240,
+    antiquity_heavy_scorpion: 360,
+    antiquity_light_cavalry: 200,
+    antiquity_mangonel: 360,
+    antiquity_onager: 400,
+    antiquity_scorpion: 360,
+    antiquity_scout_cavalry: 200,
+    antiquity_siege_onager: 400,
+    antiquity_siege_ram: 120,
+    antiquity_siege_tower: 320,
+    antiquity_skirmisher: 240,
+    antiquity_spearman: 160,
+    bowman: 280,
+    crusader_knight: 200,
+    elite_antiquity_skirmisher: 240,
+    elite_greek_cavalry: 200,
+    elite_peltast: 280,
+    equites: 200,
+    gastraphetes: 280,
+    guardsman: 160,
+    halberdier: 160,
+    imperial_cavalry: 200,
+    jian_swordman_shielded: 160,
+    laminated_bowman: 280,
+    levy: 160,
+    norse_warrior: 160,
+    paragon: 160,
+    raider: 200,
+    sarmatian: 200,
+    shock_cavalry: 200,
+    sosso_guard: 160,
+    vanguard: 160,
     tarantine_cavalry: 240,
     amazon_archer: 240,
     amazon_warrior: 120,
@@ -635,7 +672,7 @@ const SIGHT_MAP: Record<string, number> = {
     cavalier: 200,
     ant_scout: 200,
     flamethrower: 200,
-    helepolis: 360,
+    helepolis: 520,   // [2026-08-18 修] 原 360 < 射程 440：看不见自己射程内的敌人，永远打不出去。按 DE 规律取射程+80
     siege_tower: 320,
     recurve_bowman: 240,
 };
@@ -657,16 +694,13 @@ function dmgVs(shooter: WarType, target: WarType): number {
     return Math.max(1, shooter.atk + bonus - armor);
 }
 
-/** 三阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
- *  square 鱼鳞 3×3 = 五通道（前中步3 / 上翼骑·中军·下翼骑 / 后中弓3）
+/** 五阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
  *  triangle 三角 2+3+4 = 尖刀2 / 中坚3 / 后4（近战尖刀前、弓骑后）
- *  echelon 雁行 4+3+2 = 前4 / 中3 / 后2（近战顶前、远程后） */
+ *  echelon 雁行 4+3+2 = 前4 / 中3 / 后2（近战顶前、远程后）
+ *  fish_scale 鱼鳞 3+4+2 = 前3 / 中4 / 后2（前抵·鳞叠·尾收）
+ *  crane_wing 鹤翼 2+4+3 = 双锋2 / 鹤翼4 / 中军3（双锋引敌·两翼合围）
+ *  square 方阵 3+3+3 = 前3 / 中3 / 后3（九宫等边·坚若磐石） */
 const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]> = {
-    square: [
-        { col: 0, row: 0, cols: 3 }, { col: 1, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
-        { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
-        { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
-    ],
     triangle: [
         { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
         { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
@@ -676,6 +710,21 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
         { col: 0, row: 0, cols: 4 }, { col: 1, row: 0, cols: 4 }, { col: 2, row: 0, cols: 4 }, { col: 3, row: 0, cols: 4 },
         { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
         { col: 0, row: 2, cols: 2 }, { col: 1, row: 2, cols: 2 },
+    ],
+    fish_scale: [
+        { col: 0, row: 0, cols: 3 }, { col: 1, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
+        { col: 0, row: 1, cols: 4 }, { col: 1, row: 1, cols: 4 }, { col: 2, row: 1, cols: 4 }, { col: 3, row: 1, cols: 4 },
+        { col: 0, row: 2, cols: 2 }, { col: 1, row: 2, cols: 2 },
+    ],
+    crane_wing: [
+        { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
+        { col: 0, row: 1, cols: 4 }, { col: 1, row: 1, cols: 4 }, { col: 2, row: 1, cols: 4 }, { col: 3, row: 1, cols: 4 },
+        { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
+    ],
+    square: [
+        { col: 0, row: 0, cols: 3 }, { col: 1, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
+        { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
+        { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
     ],
 };
 
@@ -848,6 +897,25 @@ const ARROW_DUR = 0.42;
  * 全表由 scratch/extract_de_shootphase.py 用 genieutils 从 empires2_x2_p1.dat 抽出（2026-08-17）。
  */
 const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
+    // ── [2026-08-18 补齐] 新补录远程兵种：同族继承；无同族者用弓兵基准 3.73（DE 无对应单位，无法取真值） ──
+    antiquity_cavalry_archer: 3.73,
+    antiquity_heavy_cavalry_archer: 3.73,
+    antiquity_heavy_scorpion: 1.6,
+    antiquity_mangonel: 0.5,
+    antiquity_onager: 0.5,
+    antiquity_scorpion: 1.6,
+    antiquity_siege_onager: 0.5,
+    antiquity_siege_tower: 3.73,
+    antiquity_skirmisher: 3.38,
+    bowman: 3.73,
+    elite_antiquity_skirmisher: 3.38,
+    elite_peltast: 3.73,
+    flamethrower: 3.73,
+    gastraphetes: 3.73,
+    helepolis: 3.73,
+    laminated_bowman: 3.73,
+    recurve_bowman: 3.73,
+    siege_tower: 3.73,
     tarantine_cavalry: 3.2,
     // [2026-08-17 补全] 用 DE 真实数据精确对齐每个远程兵种的放箭相位：
     //   shootPhase = type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
@@ -1204,6 +1272,58 @@ const SEP_DIST = 17;
  * 表里没有的（老 S10DB 兵种等）落 SEP_DIST/2，与旧行为一致。
  */
 const UNIT_RADIUS: Record<string, number> = {
+    // ── [2026-08-18 补齐] 新补录兵种：同族继承；无同族者按类别取 DE 档位（步/远 8、骑 10、象与攻城 20） ──
+    antiquity_battering_ram: 18.0,
+    antiquity_capped_ram: 18.0,
+    antiquity_cavalry_archer: 10.0,
+    antiquity_heavy_cavalry_archer: 10.0,
+    antiquity_heavy_scorpion: 20.0,
+    antiquity_light_cavalry: 10.0,
+    antiquity_mangonel: 20.0,
+    antiquity_onager: 20.0,
+    antiquity_scorpion: 20.0,
+    antiquity_scout_cavalry: 10.0,
+    antiquity_siege_onager: 20.0,
+    antiquity_siege_ram: 18.0,
+    antiquity_siege_tower: 18.0,
+    antiquity_skirmisher: 8.0,
+    antiquity_spearman: 8.0,
+    bowman: 8.0,
+    chakram_thrower: 8.0,
+    crusader_knight: 10.0,
+    elite_antiquity_skirmisher: 8.0,
+    elite_boyar: 10.0,
+    elite_chakram_thrower: 8.0,
+    elite_champi_warrior: 8.0,
+    elite_coustillier: 10.0,
+    elite_elephant_archer: 10.0,
+    elite_greek_cavalry: 10.0,
+    elite_ibirapema_warrior: 8.0,
+    elite_iron_pagoda: 10.0,
+    elite_kamayuk: 8.0,
+    elite_keshik: 10.0,
+    elite_peltast: 8.0,
+    elite_throwing_axeman: 8.0,
+    elite_tiger_cavalry: 10.0,
+    elite_war_elephant: 10.0,
+    equites: 10.0,
+    gastraphetes: 8.0,
+    guardsman: 8.0,
+    halberdier: 8.0,
+    ibirapema_warrior: 8.0,
+    imperial_cavalry: 10.0,
+    jian_swordman_shielded: 8.0,
+    laminated_bowman: 8.0,
+    levy: 8.0,
+    norse_warrior: 8.0,
+    paragon: 8.0,
+    raider: 10.0,
+    recurve_bowman: 8.0,
+    sarmatian: 10.0,
+    shock_cavalry: 10.0,
+    sosso_guard: 8.0,
+    vanguard: 8.0,
+    xolotl_warrior: 10.0,
     amazon_archer: 8.0,
     amazon_warrior: 8.0,
     ant_scout: 10.0,
@@ -2232,7 +2352,7 @@ export class Scene13WarLayer {
                 return inferFormationModeFromSlots(tier.slots);
             }
         } catch (e) {
-            console.warn('[Scene13WarLayer] 阵型推断失败，回退鱼鳞:', e);
+            console.warn('[Scene13WarLayer] 阵型推断失败，回退方阵:', e);
         }
         return 'square';
     }
@@ -2261,13 +2381,13 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 本场树/湖季节 = **战场真实海拔**（主人 2026-08-12 定「应该根据海拔」）：
-     *   ≥2500m（高原/高山，如青藏/帕米尔）→ 白(2)
-     *   600–2500m（山地/高原边缘，如云贵/东北/高加索）→ 橙(1)
+     * 本场树/湖季节 = **战场真实海拔**（2026-08-18 主人定稿）：
+     *   ≥3600m（雪线高原/高山雪顶，如青藏高原、帕米尔/昆仑雪峰）→ 白(2)
+     *   600–3600m（山地/黄土高原/戈壁山麓/西域播仙一带/蒙古草原）→ 橙/秋(1)
      *   <600m（低地/平原）→ 绿(0)     [600m = LandTerrainSystem.MOUNTAIN_ELEVATION_M 同源]
      * 数据源 = 项目现成 ElevationSampler（Terrarium 高程瓦片 + LRU 缓存）：
      *   - 瓦片已缓存 → 同步命中，直接定色
-     *   - 未缓存 → 后台拉取 + 日历季节兜底（装饰绝不等待网络）
+     *   - 未缓存 → 后台拉取 + 文化区地貌/日历季节兜底（装饰绝不等待网络）
      * 无坐标/采样失败（防御）→ 日历季节：春/夏绿、秋橙、冬白。
      */
     private currentSeasonKind(): 0 | 1 | 2 {
@@ -2276,11 +2396,18 @@ export class Scene13WarLayer {
                 const sampler = LandSeaSystem.getSampler();
                 const elev = sampler.getElevationSync(this.centerLat, this.centerLng);
                 if (elev !== null) {
-                    if (elev >= 2500) return 2;   // 高原 → 白
-                    if (elev >= 600) return 1;    // 山地 → 橙
-                    return 0;                     // 低地 → 绿
+                    if (elev >= 3600) return 2;   // 高原雪线 → 白
+                    if (elev >= 600) return 1;    // 山地/黄土/西域高地 → 橙
+                    return 0;                     // 低地平原 → 绿
                 }
                 sampler.scheduleFetch(this.centerLat, this.centerLng);   // 预取，下局命中
+
+                // 首次未缓存时文化区地貌智能兜底：
+                const reg = getRegion(this.centerLat, this.centerLng);
+                if (reg === 'TIBET') return 2;
+                if (reg === 'WESTERN' || reg === 'STEPPE' || reg === 'HEXI' || reg === 'NORTH' || reg === 'CENTRAL_ASIA' || reg === 'NORTHEAST') {
+                    return 1; // 西域、草原、河西等黄色海拔带优先秋景
+                }
             } catch (e) {
                 // 采样异常 → 走日历兜底
             }
@@ -2525,8 +2652,8 @@ export class Scene13WarLayer {
     /** 按需加载 DE 抛射物素材（透明底 fly_0.png，不抠绿不染色——箭/标枪/飞斧 DE 里无玩家色）。 */
     private ensureProj(key: string): void {
         if (this.projBank[key]) return;
-        // 轻石弹（投石兵/投索兵）复用重炮石弹素材，但弹道独立（标准弧线、无爆炸、标准速度）
-        const dir = key === 'PROJ_SLING' ? '/SUCAI/PROJ_BALL/' : `/SUCAI/${key}/`;
+        // 抛射物素材目录：投石索 PROJ_SLING 已提取真实小石弹素材（2026-08-18，此前误复用大炮弹 PROJ_BALL）
+        const dir = `/SUCAI/${key}/`;
         // 占位先立（img=null），防同一 key 重复加载；渲染时 img 未就绪就跳过不画。
         this.projBank[key] = { img: null, n: 8, fw: 0, fh: 0, hx: 0, hy: 0 };
         this.pending++;

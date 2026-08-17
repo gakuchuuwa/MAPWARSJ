@@ -32,7 +32,7 @@ import {
     expandCompositionScales,
     expandCompositionSlots,
 } from '../types/LegionComposition';
-import { getCultureTier, getFactionCompositionSlots } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, type FormationMode } from '../types/CultureFormations';
 
 /** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
 interface SquadHit {
@@ -100,7 +100,7 @@ export interface IAnimatedUnit extends IRenderable {
     destroyTime?: number;
     cultureSlots?: string[] | null; // [NEW] 14-culture formation slots
     cultureScales?: number[] | null; // [NEW] Scales for each slot
-    formationMode?: 'square' | 'triangle' | 'echelon' | null; // [NEW] 三值阵型（渲染层据此定布局）
+    formationMode?: FormationMode | null; // [NEW] 阵型（渲染层据此定布局）
     /** 海域 hex：渲染船贴图而非陆地方阵 */
     isOnSea?: boolean;
     /** 登船时锁定的船型（小/中/大）；null/缺省=按实时兵力算 */
