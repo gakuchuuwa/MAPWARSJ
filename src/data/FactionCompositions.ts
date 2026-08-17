@@ -43,13 +43,58 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑
         ],
     },
-    // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，三角阵 2+3+4：希腊重装步兵 + 伙伴骑兵 + 克里特弓手）
+    // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，雁行阵 4+3+2：马其顿方阵兵 + 克里特弓手 + 伙伴骑兵）
     maqidun: {
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         slots: [
-            { type: 'hoplite', count: 2 },            // Row 0 尖刀 = 希腊重装步兵
-            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
-            { type: 'cretan_archer', count: 4 },      // Row 2 底边 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+        ],
+    },
+    // 托勒密（亚历山大旧部，套用亚历山大帝国军团配置）
+    tuolemi: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+        ],
+    },
+    // 塞琉古帝国（安提俄基亚 · 塞琉古一世/安条克，银盾方阵体系）
+    sailiugu: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+        ],
+    },
+    // 佩尔加蒙（欧迈尼斯 · 亚历山大王家秘书长与近卫方阵统帅）
+    pajiama: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+        ],
+    },
+    // 贝雷尼斯（托勒密二世 · 托勒密王朝红海据点）
+    beileinisi: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
+        ],
+    },
+    // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
+    jileinaijia: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手
+            { type: 'companion_cavalry', count: 2 },  // Row 2 压阵 = 伙伴骑兵
         ],
     },
     // 日本战国·织田信长军团（雁行阵 4+3+2：精锐武士 4 + 藤弓兵 3 + 忍者 2）

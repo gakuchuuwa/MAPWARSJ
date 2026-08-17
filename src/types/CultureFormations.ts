@@ -606,7 +606,7 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 4. 朝鲜 剑士+藤弓兵+精锐黑光铠骑兵（三角阵 2+3+4：剑士尖刀前 + 藤弓兵中坚 + 精锐黑光铠骑兵底边） */
+/** 4. 朝鲜 剑士+火焰弓箭手+精锐黑光铠骑兵（三角阵 2+3+4：剑士尖刀前 + 火焰弓箭手中坚 + 精锐黑光铠骑兵底边） */
 export const KOREA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -614,7 +614,7 @@ export const KOREA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'swordsman', count: 2 },        // Row 0 尖刀 = 剑士 步兵
-            { type: 'rattan_archer', count: 3 },    // Row 1 中坚 = 藤弓兵 弓手
+            { type: 'fire_archer', count: 3 },      // Row 1 中坚 = 火焰弓箭手 弓手
             { type: 'hei_kuang_heavy', count: 4 }   // Row 2 底边 = 精锐黑光铠骑兵 重骑
         ]
     }
@@ -858,16 +858,16 @@ export const GREEK_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 亚历山大·马其顿帝国军团（三角阵 2+3+4：希腊重装步兵尖刀前 + 伙伴骑兵中坚 + 克里特弓手底边） */
+/** 亚历山大·马其顿帝国军团（雁行阵 4+3+2：马其顿方阵兵宽阵前 + 克里特弓手中坚 + 伙伴骑兵压阵后） */
 export const ALEXANDER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 2 },            // Row 0 尖刀 = 希腊重装步兵 步兵
-            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵 骑兵
-            { type: 'cretan_archer', count: 4 }       // Row 2 底边 = 克里特弓手 弓手
+            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵 步兵
+            { type: 'cretan_archer', count: 3 },      // Row 1 中坚 = 克里特弓手 弓手
+            { type: 'companion_cavalry', count: 2 }   // Row 2 压阵 = 伙伴骑兵 骑兵
         ]
     }
 ];
