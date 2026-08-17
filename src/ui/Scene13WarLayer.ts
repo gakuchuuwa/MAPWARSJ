@@ -508,10 +508,43 @@ function gangMul(victim: WarMan): number {
 const DEATH_ANIM = 8 / 6;
 const ARROW_DUR = 0.42;
 /**
- * 放箭相位：攻击动画播到中点（ph=4，8 相位/秒 × 1.5s 装填周期）才射出箭，
- * 和「拉弓→放箭→收弓」动画里的放箭动作对齐（主人报「箭和士兵动作对不上」）。
+ * 各兵种发射/出手相位表（0~8 相位，精准对齐 AoE2 DE 攻击动作素材的关键帧）：
+ * - 火炮/重炮（bombard_cannon/houfnice）：60 帧动画中第 8 帧点火轰击后座（8/60*8 ≈ 1.07 -> 1.0）；
+ * - 风琴炮/投石车/弩炮/火箭车：开局挥臂/齐射（3~4 帧 / 60 帧 -> 0.5）；
+ * - 牵引投石机：第 17 帧（17/90*8 ≈ 1.5）；
+ * - 巨型投石机（配重/组装）：第 20 帧（20/60*8 ≈ 2.67 -> 2.5）；
+ * - 火枪兵/苏丹亲兵：第 10 帧开火（10/30*8 ≈ 2.67 -> 2.7）；
+ * - 骑马火枪（征服者）：第 22 帧开火（22/45*8 ≈ 3.9 -> 4.0）；
+ * - 速射弓（长弓/蒙古突骑）：第 10~15 帧（约 2.0）；
+ * - 默认（常规弓弩/标枪等）：播到中点（ph=4，拉弓→放箭→收弓）。
  */
-const SHOOT_PHASE = 4;
+const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
+    bombard_cannon: 1.0,
+    houfnice: 1.0,
+    organ_gun: 0.5,
+    elite_organ_gun: 0.5,
+    mangonel: 0.5,
+    onager: 0.5,
+    siege_onager: 0.5,
+    traction_trebuchet: 1.5,
+    mounted_trebuchet: 2.5,
+    scorpion: 0.6,
+    heavy_scorpion: 0.6,
+    rocket_cart: 0.5,
+    heavy_rocket_cart: 0.5,
+    hand_cannoneer: 2.7,
+    janissary: 2.7,
+    elite_janissary: 2.7,
+    royal_janissary: 2.7,
+    conquistador: 4.0,
+    elite_conquistador: 4.0,
+    flamethrower: 4.0,
+    longbowman: 2.0,
+    elite_longbowman: 2.0,
+    mangudai: 2.0,
+    elite_mangudai: 2.0,
+};
+const DEFAULT_SHOOT_PHASE = 4;
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
 /**
@@ -2197,13 +2230,14 @@ export class Scene13WarLayer {
                     if (m.ph < 8) {
                         m.ph += dt * 8 / animDur;
                     }
-                    // 放箭/开火：动画播到放箭相位（SHOOT_PHASE）才射出，和动作对齐。
+                    // 放箭/开火：动画播到该兵种专属发射相位（shootPhase）才射出，和动作对齐。
                     // 只有真正在放箭/开火的那一轮才有弹丸：被贴身改白刃（st=2）或处于攻城盲区（minRange）时不射。
                     // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭/炮弹/弹丸），
                     //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），风琴炮 5 弹，火箭车 5 支，其余每轮 1 支。
                     const minR = MIN_RANGE_TYPES[m.key] ?? 0;
                     const tooClose = minR > 0 && ((foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < minR * minR);
-                    if (!m.shot && m.ph >= SHOOT_PHASE && stats.rng > 65 && m.st === 1 && !tooClose) {
+                    const shootPhase = SHOOT_PHASE_BY_TYPE[m.key] ?? DEFAULT_SHOOT_PHASE;
+                    if (!m.shot && m.ph >= shootPhase && stats.rng > 65 && m.st === 1 && !tooClose) {
                         m.shot = true;
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
