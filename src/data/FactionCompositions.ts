@@ -17,13 +17,13 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 秦国·雁行阵（4+3+2：白毦兵 4 + 诸葛弩 3 + 黑光铠骑兵 2）
+    // 秦国·雁行阵（4+3+2：印加枪兵长 4 + 诸葛弩 3 + 虎豹骑 2）
     qin: {
         formationMode: 'echelon',
         slots: [
-            { type: 'white_feather_guard', count: 4 }, // Row 0 宽阵 = 白毦兵
+            { type: 'kamayuk', count: 4 },             // Row 0 宽阵 = 印加枪兵长
             { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩
-            { type: 'hei_kuang', count: 2 },           // Row 2 压阵 = 黑光铠骑兵
+            { type: 'tiger_rider', count: 2 },         // Row 2 压阵 = 虎豹骑
         ],
     },
     // 汉国·三角阵（2+3+4：白毦兵 2 + 诸葛弩 3 + 黑光铠骑兵 4）
@@ -38,9 +38,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     han_d: {
         formationMode: 'triangle',
         slots: [
-            { type: 'white_feather_guard', count: 2 }, // Row 0 尖刀 = 白毦兵
+            { type: 'jian_swordsman', count: 2 },      // Row 0 尖刀 = 刀剑手
             { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩
-            { type: 'hei_kuang', count: 4 },           // Row 2 底边 = 黑光铠骑兵
+            { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑
         ],
     },
     // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，三角阵 2+3+4：希腊重装步兵 + 伙伴骑兵 + 克里特弓手）
