@@ -139,13 +139,19 @@ export class SpriteTinter {
         tint: TintColor
     ): HTMLImageElement {
         // 分别初始化主图/遮罩两个 canvas（applyTint 可能已初始化 tempCanvas 但未初始化 maskCanvas）
+        // 🔴 [2026-08-17 修 13 开场卡 12.8 秒] 必须带 willReadFrequently。
+        //    这两张 canvas 的用途就是 getImageData 逐像素读，不带这个标志时浏览器会把 canvas
+        //    放在 GPU 上，每次 getImageData 都要 GPU→CPU 回读，单次几十毫秒。
+        //    实测一场 13 开场染 384 张图 = 768 次 getImageData（主图 + 遮罩各一次），
+        //    合计 12757ms 主线程阻塞——这就是「13 有点卡」的真凶，不是索敌也不是渲染
+        //    （稳态实测 step 0.8ms + render 3.1ms，仅占 60fps 预算 23%）。
         if (!this.tempCanvas) {
             this.tempCanvas = document.createElement('canvas');
-            this.tempCtx = this.tempCanvas.getContext('2d');
+            this.tempCtx = this.tempCanvas.getContext('2d', { willReadFrequently: true });
         }
         if (!this.maskCanvas) {
             this.maskCanvas = document.createElement('canvas');
-            this.maskCtx = this.maskCanvas.getContext('2d');
+            this.maskCtx = this.maskCanvas.getContext('2d', { willReadFrequently: true });
         }
 
         const canvas = this.tempCanvas!;
@@ -224,7 +230,10 @@ export class SpriteTinter {
         // 初始化临时Canvas
         if (!this.tempCanvas) {
             this.tempCanvas = document.createElement('canvas');
-            this.tempCtx = this.tempCanvas.getContext('2d');
+            // 🔴 与 applyMaskTint 里那处必须一致：tempCanvas 是两个方法共用的，
+            //    谁先初始化谁定 context。少写一处，先跑到的那条路径就会创建不带
+            //    willReadFrequently 的 context，另一处的修复被静默绕过。
+            this.tempCtx = this.tempCanvas.getContext('2d', { willReadFrequently: true });
         }
 
         const canvas = this.tempCanvas!;
