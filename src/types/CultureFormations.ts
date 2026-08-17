@@ -218,6 +218,33 @@ export const HAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'hei_kuang', count: 4 },           // Row 2 底边 = 黑光铠骑兵 4人
 ];
 
+/**
+ * 唐朝·雁行阵（4+3+2）：精锐黑光铠骑兵(4) + 辽刀(3) + 诸葛弩(2)
+ */
+export const TANG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'hei_kuang_heavy', count: 4 }, // Row 0 宽阵 = 精锐黑光铠骑兵 4人
+    { type: 'liao_dao', count: 3 },        // Row 1 中坚 = 辽刀 3人
+    { type: 'chukonu', count: 2 },         // Row 2 压阵 = 诸葛弩 2人
+];
+
+/**
+ * 宋朝·雁行阵（4+3+2）：精锐火矛手(4) + 辽刀(3) + 诸葛弩(2)
+ */
+export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'elite_fire_lancer', count: 4 }, // Row 0 宽阵 = 精锐火矛手 4人
+    { type: 'liao_dao', count: 3 },          // Row 1 中坚 = 辽刀 3人
+    { type: 'chukonu', count: 2 },           // Row 2 压阵 = 诸葛弩 2人
+];
+
+/**
+ * 大明·雁行阵（4+3+2）：精锐火矛手(4) + 黑光铠骑兵(3) + 火炮(2)
+ */
+export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'elite_fire_lancer', count: 4 }, // Row 0 宽阵 = 精锐火矛手 4人
+    { type: 'hei_kuang', count: 3 },         // Row 1 中坚 = 黑光铠骑兵 3人
+    { type: 'bombard_cannon', count: 2 },    // Row 2 压阵 = 火炮 2人
+];
+
 /** 秦朝名将 ID 集合 */
 export const QIN_DYNASTY_GENERAL_IDS = new Set([
     'qin_simacuo',          // 司马错
@@ -267,6 +294,103 @@ export const HAN_DYNASTY_FACTION_IDS = new Set([
     'huaiyang', 'yangshao', 'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
     'lulin', 'you', 'jingzhou_gs', 'huizhou_d', 'shu', 'chu',
     'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
+]);
+
+/** 唐朝名将 ID 集合 */
+export const TANG_DYNASTY_GENERAL_IDS = new Set([
+    'tang_lishimin',                // 李世民
+    'liang_d_zhangxun',             // 张巡
+    'bing_liji',                    // 李勣
+    'hepan_gaoxianzhi',             // 高仙芝
+    'anxi_guoxin',                  // 郭昕
+    'juandu_peixingjian',           // 裴行俭
+    'heyuan_d_heichichangzhi',      // 黑齿常之
+    'song2_houjunji',               // 侯君集
+    'gaoliang_geshuhan',            // 哥舒翰
+    'shazhou_zhangyichao',          // 张议潮
+    'pugu_puguhuaien',              // 仆固怀恩
+    'zhongshan_yangaoqing',         // 颜杲卿
+    'liwang_liguangbi',             // 李光弼
+    'yuan_cj_d_lishuo',             // 李愬
+    'lingwu_guoziyi',               // 郭子仪
+    'pingyuan_yanzhenqing',         // 颜真卿
+    'loufan_xuerengui',             // 薛仁贵
+    'weihaiwei_sudingfang',         // 苏定方
+    'dingxiang_d_lijing',           // 李靖
+    'jiashi_wangxuance',            // 王玄策
+    'zhuoshi_gaopian',              // 高骈
+    'qianzhou_lisheng',             // 李晟
+    'shanzhou_wangzhongsi',         // 王忠嗣
+    'weizhou_weigao',               // 韦皋
+]);
+
+/** 唐朝势力 ID 集合 */
+export const TANG_DYNASTY_FACTION_IDS = new Set([
+    'tang', 'liang_d', 'bing', 'hepan', 'anxi', 'juandu', 'heyuan_d',
+    'song2', 'gaoliang', 'shazhou', 'lingzhou', 'zhongshan', 'liwang',
+    'yuan_cj_d', 'xinping', 'pingyuan', 'loufan', 'weihaiwei',
+    'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou'
+]);
+
+/** 宋朝名将 ID 集合 */
+export const SONG_DYNASTY_GENERAL_IDS = new Set([
+    'sizhou_hanshizhong',           // 韩世忠
+    'luoping_zhangshijie',          // 张世杰
+    'xiangzhou_lvwenhuan',          // 吕文焕
+    'zaoyang_d_menggong',           // 孟珙
+    'fengzhou_wujie',               // 吴玠
+    'hezhou_wangjian',              // 王坚
+    'didao_wangshao',               // 王韶
+    'zhai_han_diqing',              // 狄青
+    'kang_liangshidou',             // 梁师都
+    'huan_zhongshidao',             // 种师道
+    'wei2_hunjian',                 // 浑瑊
+    'yingzhou_d_liuqi',             // 刘锜
+    'qing_quduan',                  // 曲端
+    'changshan_yangyanzhao',        // 杨延昭
+    'heng1_yangye',                 // 杨业
+    'tingzhou_d_chenmin',           // 陈敏
+    'changshaguo_xinqiji',          // 辛弃疾
+    'shenshi_shenqingzhi',          // 文天祥
+    'yanchuan_d_yuefei',            // 岳飞
+    'song_zhaokuangyin',            // 赵匡胤
+    'yanzhou_zhongshiheng',         // 种世衡
+]);
+
+/** 宋朝势力 ID 集合 */
+export const SONG_DYNASTY_FACTION_IDS = new Set([
+    'sizhou', 'luoping', 'xiangzhou', 'zaoyang_d', 'fengzhou', 'hezhou',
+    'didao', 'zhai_han', 'kang', 'huan', 'wei2', 'yingzhou_d', 'qing',
+    'changshan', 'heng1', 'tingzhou_d', 'changshaguo', 'shenshi',
+    'yanchuan_d', 'song', 'yanzhou'
+]);
+
+/** 大明名将 ID 集合 */
+export const MING_DYNASTY_GENERAL_IDS = new Set([
+    'ming_d_zhudi',             // 朱棣
+    'pingnan_muying',           // 沐英
+    'guizhou_lidingguo',        // 李定国
+    'dongshengwei_wangyue',     // 王越
+    'jinan_tiexuan',            // 铁铉
+    'suzhou_d_shikefa',         // 史可法
+    'huai_zhuyuanzhang',        // 朱元璋
+    'shanrong_lanyu',           // 蓝玉
+    'yi_yuqian',                // 于谦
+    'jinzhou_lichengliang',     // 李成梁
+    'zu_d_yuanchonghuan',       // 袁崇焕
+    'xuan_xuda',                // 徐达
+    'linyu_wusangui',           // 吴三桂
+    'qi_d_qijiguang',           // 戚继光
+    'chizhou_changyuchun',      // 常遇春
+    'luming_luxiangsheng',      // 卢象升
+    'yansui_wangwei',           // 王威
+]);
+
+/** 大明势力 ID 集合 */
+export const MING_DYNASTY_FACTION_IDS = new Set([
+    'ming_d', 'pingnan', 'guizhou', 'dongshengwei', 'jinan',
+    'suzhou_d', 'huai', 'shanrong', 'yi', 'jinzhou', 'zu_d',
+    'xuan', 'linyu', 'qi_d', 'chizhou', 'luming', 'yansui'
 ]);
 
 /** 日本战国名将 ID 集合 */
@@ -319,6 +443,27 @@ export function isHanDynasty(factionId?: string | null, generalId?: string | nul
     return false;
 }
 
+/** 判断是否为唐朝武将或势力 */
+export function isTangDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && TANG_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && TANG_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+/** 判断是否为宋朝武将或势力 */
+export function isSongDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && SONG_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && SONG_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+/** 判断是否为大明武将或势力 */
+export function isMingDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && MING_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && MING_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 /** 判断是否为日本战国武将或势力 */
 export function isSengoku(factionId?: string | null, generalId?: string | null): boolean {
     if (generalId && SENGOKU_GENERAL_IDS.has(generalId)) return true;
@@ -337,6 +482,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     if (generalId) {
         if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
         if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
+        if (TANG_DYNASTY_GENERAL_IDS.has(generalId)) return [...TANG_FACTION_COMPOSITION];
+        if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
+        if (MING_DYNASTY_GENERAL_IDS.has(generalId)) return [...MING_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 3. 文化区判定
@@ -345,6 +493,15 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isHanDynasty(factionId)) {
         return [...HAN_FACTION_COMPOSITION];
+    }
+    if (isTangDynasty(factionId)) {
+        return [...TANG_FACTION_COMPOSITION];
+    }
+    if (isSongDynasty(factionId)) {
+        return [...SONG_FACTION_COMPOSITION];
+    }
+    if (isMingDynasty(factionId)) {
+        return [...MING_FACTION_COMPOSITION];
     }
     if (isSengoku(factionId)) {
         return [...SENGOKU_TIERS[0].slots];
@@ -368,6 +525,9 @@ export interface LegionCompositionTarget {
 export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
     const isQin = isQinDynasty(army.factionId, army.generalId);
     const isHan = isHanDynasty(army.factionId, army.generalId);
+    const isTang = isTangDynasty(army.factionId, army.generalId);
+    const isSong = isSongDynasty(army.factionId, army.generalId);
+    const isMing = isMingDynasty(army.factionId, army.generalId);
     const isSen = isSengoku(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
@@ -378,17 +538,17 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan || isSen
+        isQin || isHan || isTang || isSong || isMing || isSen
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦国/日本战国雁行阵、汉国三角阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/明/日本战国雁行阵、汉国三角阵 → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
-    } else if (isQin || isSen) {
+    } else if (isQin || isTang || isSong || isMing || isSen) {
         army.formationMode = 'echelon';
     } else if (isHan) {
         army.formationMode = 'triangle';
@@ -402,14 +562,14 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 // 15 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
-/** 1. 中原 剑士+诸葛弩+虎豹骑（三角阵 2+3+4：剑士尖刀前 + 诸葛弩中坚 + 虎豹骑底边） */
+/** 1. 中原 刀剑手+诸葛弩+虎豹骑（三角阵 2+3+4：刀剑手尖刀前 + 诸葛弩中坚 + 虎豹骑底边） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 2 },      // Row 0 尖刀 = 剑士 步兵
+            { type: 'jian_swordsman', count: 2 }, // Row 0 尖刀 = 刀剑手 步兵
             { type: 'chukonu', count: 3 },        // Row 1 中坚 = 诸葛弩 弩手
             { type: 'tiger_rider', count: 4 }     // Row 2 底边 = 虎豹骑 骑兵
         ]
