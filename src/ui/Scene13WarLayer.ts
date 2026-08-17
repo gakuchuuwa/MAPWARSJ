@@ -448,6 +448,11 @@ function gangMul(victim: WarMan): number {
 /** 死亡动画时长（8 帧 × 6fps）。播完就把最后一帧烙进地面图，尸体永久保留 */
 const DEATH_ANIM = 8 / 6;
 const ARROW_DUR = 0.42;
+/**
+ * 放箭相位：攻击动画播到中点（ph=4，8 相位/秒 × 1.5s 装填周期）才射出箭，
+ * 和「拉弓→放箭→收弓」动画里的放箭动作对齐（主人报「箭和士兵动作对不上」）。
+ */
+const SHOOT_PHASE = 4;
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
 /**
@@ -669,6 +674,8 @@ interface WarMan {
     fadeMax: number;
     /** 攻击动作交替标志：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，两套攻击动作轮播 */
     atkFlip: boolean;
+    /** 本轮是否已放箭（远程）：动画播到放箭相位才射，避免箭和拉弓动作脱节 */
+    shot?: boolean;
     /** 是否旗手（出生时定死，见 FLAG_EVERY）：头顶画一面势力旗，战死则军旗倒地 */
     flag: boolean;
     /**
@@ -1871,14 +1878,19 @@ export class Scene13WarLayer {
                 m.lock = (m.lock ?? 0) - dt;
                 if (m.lock <= 0) {
                     m.lock = 1.5; m.ph = 0;
+                    m.shot = false;   // 新一轮：等攻击动画播到放箭相位再射
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
-                    // 一轮出手开始 = 射箭（主人 2026-08-11「每个远程应该拥有自己的弓箭」）。
+                } else {
+                    // 攻击动画推进：拉弓→放箭→收弓（原 foe 分支不推 ph，动画卡在第一帧）。
+                    m.ph += dt * 8 / 1.5;
+                    // 放箭：动画播到放箭相位（SHOOT_PHASE）才射出箭，和拉弓动作对齐。
                     // 只有真正在放箭的那一轮才有箭：被贴身改白刃（st=2）时不射。
                     // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭），
                     //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），其余每轮 1 支。
-                    if (stats.rng > 65 && m.st === 1) {
+                    if (!m.shot && m.ph >= SHOOT_PHASE && stats.rng > 65 && m.st === 1) {
+                        m.shot = true;
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
                         const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
