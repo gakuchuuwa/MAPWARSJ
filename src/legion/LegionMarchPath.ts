@@ -43,15 +43,10 @@ export function findFirstHostileAlongPolyline(
     path: LatLng[],
     fallbackTargetId: string,
     cities: MarchCityAccess,
-    options?: { minAlong?: number; skipCityIds?: Set<string> },
+    options?: { minAlong?: number },
 ): string {
     const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
     const minAlong = options?.minAlong ?? 0;
-    const skipCityIds = options?.skipCityIds;
-    // 越城而走（str_21）跳过的城不选为行军段目标：目标城本身被跳 → 无 hop（返回 ''，
-    // 上层 moveLegionToCity 寻路失败 → 冷却重抽别的城）；路上其他被跳的城 → 直接跳过，
-    // 军团绕开它继续走（这正是「绕开打不过的城」的语义，2026-08-07 修）。
-    if (skipCityIds?.has(fallbackTargetId)) return '';
     let bestId = fallbackTargetId;
     const fallbackCity = cities.getCity(fallbackTargetId);
     let bestAlong = fallbackCity
@@ -63,7 +58,6 @@ export function findFirstHostileAlongPolyline(
 
     for (const city of cities.getCities()) {
         if (!city.factionId || city.factionId === factionId) continue;
-        if (skipCityIds?.has(city.id)) continue;
         const cpos = { lat: city.latitude, lng: city.longitude };
         // 军团脚下的城不算行军目标（路径会退化成 0 点）；交给 ZOC 就地开战
         if (getEuclideanDistance(cpos, path[0]) <= zoc) continue;

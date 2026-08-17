@@ -481,6 +481,18 @@ const PROJ_TYPE: Record<string, string> = {
     elite_ballista_elephant: 'PROJ_BOLT',
     scorpion: 'PROJ_BOLT',
     heavy_scorpion: 'PROJ_BOLT',
+    // 投石兵/投索兵（投掷轻石弹：标准弧线、落地无爆炸；复用重炮石弹素材但弹道独立）
+    slinger: 'PROJ_SLING',
+    rhodian_slinger: 'PROJ_SLING',
+    bolas_rider: 'PROJ_SLING',
+    elite_bolas_rider: 'PROJ_SLING',
+    // 飞刀/飞轮/弯刀（独立飞刃素材）
+    gbeto: 'PROJ_DART',
+    elite_gbeto: 'PROJ_DART',
+    chakram_thrower: 'PROJ_THROWING_AXE',
+    elite_chakram_thrower: 'PROJ_THROWING_AXE',
+    mameluke: 'PROJ_DART',
+    elite_mameluke: 'PROJ_DART',
     // 投石机/重炮（抛石弹/大炮弹，高抛弧线 + 落地冲击）
     mangonel: 'PROJ_BALL',
     onager: 'PROJ_BALL',
@@ -1637,7 +1649,8 @@ export class Scene13WarLayer {
     /** 按需加载 DE 抛射物素材（透明底 fly_0.png，不抠绿不染色——箭/标枪/飞斧 DE 里无玩家色）。 */
     private ensureProj(key: string): void {
         if (this.projBank[key]) return;
-        const dir = `/SUCAI/${key}/`;
+        // 轻石弹（投石兵/投索兵）复用重炮石弹素材，但弹道独立（标准弧线、无爆炸、标准速度）
+        const dir = key === 'PROJ_SLING' ? '/SUCAI/PROJ_BALL/' : `/SUCAI/${key}/`;
         // 占位先立（img=null），防同一 key 重复加载；渲染时 img 未就绪就跳过不画。
         this.projBank[key] = { img: null, n: 8, fw: 0, fh: 0, hx: 0, hy: 0 };
         this.pending++;
@@ -2351,7 +2364,7 @@ export class Scene13WarLayer {
         if (this.pending > 0) {
             // 🔴 [2026-08-11 实锤] 素材 pending 卡死 = 演出冻结 + 引擎冻结（scene13Frozen）
             //    → 跟随军团永远不动、战斗面板数字不动（主人截图实锤）。
-            //    素材若 10 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
+            //    素材若 30 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
             //    按当前兵力比判（池+场上），守方（f=1）吃 0.85 城防/主场折扣。
             if (this.pendingStartedAt === 0) this.pendingStartedAt = performance.now();
             if (performance.now() - this.pendingStartedAt > 30000) {
@@ -2361,6 +2374,16 @@ export class Scene13WarLayer {
             }
             return;
         }
+        // 🔴 [2026-08-17 修·「打到一半突然卡一下就退场」] 计时器必须在素材就绪时归零。
+        //    原来只在 start() 里置 0，于是它记的是**开战时刻**而不是「本次卡住的时刻」：
+        //      t=0 首批素材加载 → pendingStartedAt=t0；t≈2.4s 全部就绪（pending=0）但计时器不清；
+        //      战斗打到 30s 后，任何一次**中途懒加载**（ensureProj 首次放某种抛射物 / ensureType 新兵种）
+        //      把 pending 抬回 1 → 上面那段立刻算出「已卡 30 秒」→ 当场强制判负退场。
+        //    实测证据 scratch/scene13_probe_log.jsonl（2026-08-17T07:57Z 那条，主人当场报「卡顿退出」）：
+        //      assetsReady 在 2.42s，assetTimeout 在 30.2s 且 pending 只有 1，
+        //      双方场上还各有 291/288 精灵、池里还有 1050/1203 —— 图其实是秒回的，纯属计时器记错了起点。
+        //    归零后：30 秒只用来兜「这一次真的卡住不动」，正常懒加载几毫秒就过去，不再误杀。
+        this.pendingStartedAt = 0;
         if (!this.diagAssetsReady) {   // 素材就绪的那一刻打点（诊断用，见 diagPush）
             this.diagAssetsReady = true;
             this.diagPush('assetsReady');
