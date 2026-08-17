@@ -55,7 +55,9 @@
     "tactical:assign-audit": "tsx tools/tactical-assign-audit.ts",
     "tactical:triclass": "tsx tools/tactical-triclass-audit.ts",
     "general:ecology-audit": "tsx tools/general-profile-ecology-audit.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "era:audit": "node scripts/audit_general_centuries.cjs",
+    "era:todo": "node scripts/audit_general_centuries.cjs --todo"
   },
   "type": "module",
   "keywords": [],
