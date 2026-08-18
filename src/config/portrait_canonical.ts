@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/17 17:21:59（共 25 条）
+ * 生成时间：2026/8/18 10:28:48（共 27 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -19,6 +19,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/baizanting_fulajimier.png": "/assets/LATIN/__多余__LATIN_01.png",
     "/assets/LINGNAN/funan_fanman.png": "/assets/LINGNAN/__多余__LINGNAN_20.png",
     "/assets/LINGNAN/luchuan_sirenfa.png": "/assets/LINGNAN/__多余__LINGNAN_21.png",
+    "/assets/LINGNAN/panyao_pandaxiao.png": "/assets/LINGNAN/__多余__LINGNAN_22.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",
     "/assets/SLAVIC/dunhe_tatalinuofu.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/TIBET/__多余__TIBET_02.png": "/assets/STEPPE/qidan_shulvping.png",
@@ -28,5 +29,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/WESTERN/__多余__WESTERN_05.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/TIBET/kangba_suonuomugunbu.png": "/assets/TIBET/__多余__WESTERN_08.png",
     "/assets/TIBET/nvguo_mojie.png": "/assets/TIBET/__多余__TIBET_09.png",
+    "/assets/WEST_ASIA/sumeier_zhajixi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png",
     "/assets/xianqin/quanrong_yiquhai.png": "/assets/xianqin/__多余__xianqin_01.png"
 };

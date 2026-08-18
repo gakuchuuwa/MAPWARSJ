@@ -89,4 +89,5 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     mengtainiya: { name: '巴萨拉布团', tier: 2 },          // 布加勒斯特·巴萨拉布；避势力「蒙泰尼亚」叠字,
     baizanting: { name: '铁甲圣骑', tier: 1 },
     mozeer: { name: '特里尔步兵', tier: 3 },
+    seleisi: { name: '西美昂军团', tier: 3 },
 };

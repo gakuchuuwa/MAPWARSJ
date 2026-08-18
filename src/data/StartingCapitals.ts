@@ -52,7 +52,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'jiatailuoniya': 'city_barcelona',
   'nasier': 'city_granada',
   'liguliya': 'city_genoa',
-  'seleisi': 'city_plovdiv',
+'seleisi': 'city_plovdiv',
   'bolisiya': 'city_brest',
   'zhituo': 'city_zhytomyr',
 

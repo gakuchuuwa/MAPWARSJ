@@ -107,4 +107,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     quanrong: { name: '西戎骑兵', tier: 4 },
     ashide: { name: '阿史德骑', tier: 4 },
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
+    helian: { name: '铁弗宿卫', tier: 3 },
 };

@@ -83,6 +83,300 @@ export const SPRITE_PATHS = {
     // [NEW] Granular Unit Asset Configuration
     // Allows defining sprites for specific unit types (e.g. 'huaxia_infantry', 'roman_legion')
     UNIT_ASSETS: {
+        'jian_swordman_shielded': {
+            // 【jian_swordman_shielded】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/death_${dir}.png`),
+        },
+        'crusader_knight': {
+            // 【crusader_knight】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/death_${dir}.png`),
+        },
+        'antiquity_battering_ram': {
+            // 【antiquity_battering_ram】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_BATTERINGRAM/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_BATTERINGRAM/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_BATTERINGRAM/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_BATTERINGRAM/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_BATTERINGRAM/death_${dir}.png`),
+        },
+        'halberdier': {
+            // 【halberdier】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/death_${dir}.png`),
+        },
+        'norse_warrior': {
+            // 【norse_warrior】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NORSE_WARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NORSE_WARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NORSE_WARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NORSE_WARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NORSE_WARRIOR/death_${dir}.png`),
+        },
+        'sosso_guard': {
+            // 【sosso_guard】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/death_${dir}.png`),
+        },
+        'elite_greek_cavalry': {
+            // 【elite_greek_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/death_${dir}.png`),
+        },
+        'levy': {
+            // 【levy】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEVY/death_${dir}.png`),
+        },
+        'gastraphetes': {
+            // 【gastraphetes】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GASTRAPHETES/death_${dir}.png`),
+        },
+        'laminated_bowman': {
+            // 【laminated_bowman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LAMINATED_BOWMAN/death_${dir}.png`),
+        },
+        'paragon': {
+            // 【paragon】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PARAGON/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PARAGON/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PARAGON/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PARAGON/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PARAGON/death_${dir}.png`),
+        },
+        'shock_cavalry': {
+            // 【shock_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHOCK_CAVALRY/death_${dir}.png`),
+        },
+        'imperial_cavalry': {
+            // 【imperial_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_CAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_CAVALRY/death_${dir}.png`),
+        },
+        'equites': {
+            // 【equites】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EQUITES/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EQUITES/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EQUITES/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EQUITES/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EQUITES/death_${dir}.png`),
+        },
+        'sarmatian': {
+            // 【sarmatian】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SARMATIAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SARMATIAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SARMATIAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SARMATIAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SARMATIAN/death_${dir}.png`),
+        },
+        'elite_peltast': {
+            // 【elite_peltast】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/death_${dir}.png`),
+        },
+        'vanguard': {
+            // 【vanguard】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/death_${dir}.png`),
+        },
+        'bowman': {
+            // 【bowman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOWMAN/death_${dir}.png`),
+        },
+        'raider': {
+            // 【raider】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RAIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RAIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RAIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RAIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RAIDER/death_${dir}.png`),
+        },
+        'guardsman': {
+            // 【guardsman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUARDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUARDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUARDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUARDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUARDSMAN/death_${dir}.png`),
+        },
+        'antiquity_skirmisher': {
+            // 【antiquity_skirmisher】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SKIRMISHER/death_${dir}.png`),
+        },
+        'elite_antiquity_skirmisher': {
+            // 【elite_antiquity_skirmisher】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/death_${dir}.png`),
+        },
+        'antiquity_cavalry_archer': {
+            // 【antiquity_cavalry_archer】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAVALRY_ARCHER/death_${dir}.png`),
+        },
+        'antiquity_heavy_cavalry_archer': {
+            // 【antiquity_heavy_cavalry_archer】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/death_${dir}.png`),
+        },
+        'antiquity_light_cavalry': {
+            // 【antiquity_light_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_LIGHT_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_LIGHT_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_LIGHT_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_LIGHT_CAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_LIGHT_CAVALRY/death_${dir}.png`),
+        },
+        'antiquity_scout_cavalry': {
+            // 【antiquity_scout_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/death_${dir}.png`),
+        },
+        'antiquity_spearman': {
+            // 【antiquity_spearman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/death_${dir}.png`),
+        },
+        'antiquity_capped_ram': {
+            // 【antiquity_capped_ram】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAPPED_RAM/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAPPED_RAM/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAPPED_RAM/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAPPED_RAM/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_CAPPED_RAM/death_${dir}.png`),
+        },
+        'antiquity_scorpion': {
+            // 【antiquity_scorpion】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCORPION/death_${dir}.png`),
+        },
+        'antiquity_heavy_scorpion': {
+            // 【antiquity_heavy_scorpion】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_HEAVY_SCORPION/death_${dir}.png`),
+        },
+        'antiquity_mangonel': {
+            // 【antiquity_mangonel】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_MANGONEL/death_${dir}.png`),
+        },
+        'antiquity_onager': {
+            // 【antiquity_onager】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_ONAGER/death_${dir}.png`),
+        },
+        'antiquity_siege_onager': {
+            // 【antiquity_siege_onager】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_ONAGER/death_${dir}.png`),
+        },
+        'antiquity_siege_ram': {
+            // 【antiquity_siege_ram】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_RAM/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_RAM/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_RAM/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_RAM/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_RAM/death_${dir}.png`),
+        },
+        'antiquity_siege_tower': {
+            // 【antiquity_siege_tower】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SIEGE_TOWER/death_${dir}.png`),
+        },
         'mixed': {
             // 第一排：轻步兵
             MOVE: [1, 2, 3, 4, 5, 6, 7, 8].map(id => `/SUCAI/S10DB/${id}-1.png`),
