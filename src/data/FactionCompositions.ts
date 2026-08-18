@@ -571,13 +571,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
-    // 贝雷尼斯（托勒密二世 · 托勒密王朝红海据点）
+    // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
     beileinisi: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: 'shotel_warrior', count: 4 },        // Row 0 前卫主力破盾 = 埃塞俄比亚弯刀勇士 4人（纯步兵·无马，手持半月双曲弯刀极速钩杀破甲）
+            { type: 'elite_shotel_warrior', count: 3 },  // Row 1 中军精锐绞杀 = 埃塞俄比亚弯刀勇士精锐 3人（纯步兵·无马，王牌重装肖特尔弯刀死士）
+            { type: 'dagnajan_elephant', count: 2 },     // Row 2 尾收御驾巨象 = 达格纳詹御驾战象 2头（全游最高 HP 930 御驾巨象，压阵毁灭性践踏冲锋）
         ],
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
@@ -593,9 +593,18 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     lagoniya: {
         formationMode: 'square',
         slots: [
-            { type: 'hippeus', count: 3 },             // Row 0 前排 = 斯巴达希皮乌斯 3人
-            { type: 'hippeus', count: 3 },             // Row 1 中坚 = 斯巴达希皮乌斯 3人
-            { type: 'hippeus', count: 3 },             // Row 2 后排 = 斯巴达希皮乌斯 3人
+            { type: 'hippeus', count: 3 },             // Row 0 前排 = 斯巴达希皮乌斯 3人（纯步兵·无马，斯巴达国王300近卫死士）
+            { type: 'hippeus', count: 3 },             // Row 1 中坚 = 斯巴达希皮乌斯 3人（纯步兵·无马，全钢青铜大盾同袍誓死不退）
+            { type: 'hippeus', count: 3 },             // Row 2 后排 = 斯巴达希皮乌斯 3人（纯步兵·无马，温泉关300勇士九宫死守）
+        ],
+    },
+    // 伊庇鲁斯王国·安布拉基亚（皮洛士大帝 · 战象与希腊长枪铁骑大阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 战象 2）
+    yipilusi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，青铜圆盾重长枪抗线拒马）
+            { type: 'shock_cavalry', count: 3 },       // Row 1 中军铁骑 = 冲击重骑兵 3骑（皮洛士近卫贵族突击铁骑中坚冲击）
+            { type: 'war_elephant', count: 2 },        // Row 2 尾收战象 = 战象 2头（皮洛士远征东方战象，后排践踏敌阵）
         ],
     },
     // 底比斯（伊巴密浓达 · 方形阵 3+3+3：全底比斯圣队死士同袍阵）
@@ -652,45 +661,54 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
         ],
     },
-    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 百夫长精锐军团（雁行阵 4+3+2：军团步兵前锋 4 + 精锐百夫长中坚 3 + 百夫长压阵 2）
+    // 塔兰托·大希腊古都（阿契塔 · 塔兰丁标枪轻骑与重步兵方阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 塔兰丁骑兵 3 + 罗得岛投石兵 2）
+    talanduo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫长枪坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，大希腊青铜圆盾长枪抗线）
+            { type: 'tarantine_cavalry', count: 3 },   // Row 1 中军标枪突击 = 塔兰丁骑兵 3骑（大希腊王牌机动穿甲轻标枪轻骑）
+            { type: 'rhodian_slinger', count: 2 },     // Row 2 尾收超远投石 = 罗得岛投石兵 2人（纯步兵·无马，地中海重铅弹超视距压制）
+        ],
+    },
+    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 罗马军团步兵与百夫长伴随骑士战阵（雁行阵 4+3+2：军团步兵前锋 4 + 罗马百夫长中坚 3 + 掷矛手压阵 2）
     luoma_diguo: {
         formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军团步兵 4人
-            { type: 'elite_centurion', count: 3 },     // Row 1 中军主力突击 = 罗马百夫长精锐 3骑
-            { type: 'centurion', count: 2 },           // Row 2 尾收指挥调度 = 罗马百夫长 2骑
+            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军团步兵 4人（纯步兵·无马，矩形大盾短剑正面推进）
+            { type: 'equites', count: 3 },             // Row 1 中军铁骑突击 = 罗马百夫长 3骑（罗马贵族伴随战马重骑中坚突贯）
+            { type: 'skirmisher', count: 2 },          // Row 2 尾收标枪压制 = 掷矛手 2人（纯步兵·无马，青年维利特斯重标枪破盾抛射）
         ],
     },
     gaolu_luoma: {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'centurion', count: 2 },
+            { type: 'equites', count: 3 },
+            { type: 'skirmisher', count: 2 },
         ],
     },
     mozeer: {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'centurion', count: 2 },
+            { type: 'equites', count: 3 },
+            { type: 'skirmisher', count: 2 },
         ],
     },
     aersasi: {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'centurion', count: 2 },
+            { type: 'equites', count: 3 },
+            { type: 'skirmisher', count: 2 },
         ],
     },
     qiliqiya: {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'centurion', count: 2 },
+            { type: 'equites', count: 3 },
+            { type: 'skirmisher', count: 2 },
         ],
     },
     // 阿契美尼德·波斯帝国军团（大流士 · 三角阵 2+3+4：萨珊铁骑 2 + 不死战士 3 + 波斯弓手主力 4）
@@ -1308,6 +1326,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },           // Row 2 尾收远程压制 = 劲弩手 2人（纯步兵·无马，城市行会强弩持续压制）
         ],
     },
+    // 勃艮第公国·第戎（大胆查理 · 敕令军团马上轻骑爆发冲锋大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 马上轻骑精锐 3 + 劲弩手 2）
+    bogendi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，前排长矛筑起坚固拒马线）
+            { type: 'elite_coustillier', count: 3 },    // Row 1 中军铁骑冲击 = 马上轻骑精锐 3骑（勃艮第敕令军团王牌，骑枪爆发充能冲锋）
+            { type: 'arbalest', count: 2 },             // Row 2 尾收城市劲弩 = 劲弩手 2人（纯步兵·无马，后排高穿透强弩射击）
+        ],
+    },
     // 萨拉森与阿拉伯·萨拉赫丁 / 穆阿维叶 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
     ayoubu: {
         formationMode: 'fish_scale',
@@ -1341,6 +1368,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rhomphaia_warrior', count: 4 },   // Row 0 前卫主力破坚 = 色雷斯长刃斩手 4人（纯步兵·无马，手持双手逆刃大刀斩马破甲）
             { type: 'shock_cavalry', count: 3 },       // Row 1 中军铁骑突击 = 冲击重骑兵 3骑（色雷斯重装贵族铁骑中坚冲击）
             { type: 'elite_peltast', count: 2 },       // Row 2 尾收远程压制 = 色雷斯标枪手精锐 2人（纯步兵·无马，地中海高穿透投枪压制）
+        ],
+    },
+    // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鱼鳞阵 4+3+2：下马保加利亚勇士 4 + 保加利亚骑兵精锐 3 + 复合弓手 2）
+    baojialiya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'konnik_foot', count: 4 },          // Row 0 前卫坚壁 = 下马保加利亚骑兵 4人（纯步兵·无马，重盾前卫筑起铜墙铁壁）
+            { type: 'elite_konnik', count: 3 },         // Row 1 中军主力 = 保加利亚骑兵精锐 3骑（王牌具装近卫重骑，重锤破甲摧城拔寨）
+            { type: 'composite_bowman', count: 2 },     // Row 2 尾收远射 = 复合弓手 2人（纯步兵·无马，巴尔干角木重弓精准射击掩护）
         ],
     },
     // 保加利亚帝国·克鲁姆大汗 下马保加利亚勇士死斗军团（鱼鳞阵 3+4+2：下马保加利亚骑兵前卫 3 + 下马保加利亚骑兵精锐主力 4 + 复合弓手 2）
@@ -1394,20 +1430,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
+    // 摩揭陀王国·王舍城（频毗娑罗王 · 弧刃弯刀死士与披甲战象大阵 · 鱼鳞阵 4+3+2：达罗毗荼镰刀战士 4 + 帕提尤达长弓手 3 + 孔雀王朝战象 2）
     mojietuo: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 3 },
+            { type: 'sickle_warrior', count: 4 },           // Row 0 前卫主力突击 = 达罗毗荼镰刀战士 4人（纯步兵·无马，手持弧刃弯刀近身极速砍杀破盾）
+            { type: 'pattiyoda_longbowman', count: 3 },     // Row 1 中军长弓神射 = 僧伽罗帕提尤达长弓手 3人（纯步兵·无马，古印度竹木重长弓连绵抛射）
+            { type: 'sannahya', count: 2 },                 // Row 2 尾收装甲巨象 = 孔雀王朝战象 2头（披甲巨象压阵发起毁灭性践踏冲锋）
         ],
     },
+    // 波罗帝国·高达城/孟加拉（达磨波罗 · 拉塔重装双栖战车与长弓大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 帕提尤达长弓手 3 + 孟加拉拉塔战车精锐 2）
     boluo: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 3 },
+            { type: 'heavy_pikeman', count: 4 },           // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，前排筑起钢铁长矛拒马线）
+            { type: 'pattiyoda_longbowman', count: 3 },    // Row 1 中军长弓神射 = 僧伽罗帕提尤达长弓手 3人（纯步兵·无马，孟加拉竹木重长弓连绵抛射）
+            { type: 'elite_ratha_melee', count: 2 },       // Row 2 尾收重装战车 = 孟加拉拉塔战车精锐 2乘（双马重装战车，压阵发起毁灭性碾压冲锋）
         ],
     },
     jiashi_d: {
@@ -1426,13 +1464,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
-    // 印度斯坦与德里苏丹·阿拉乌丁·卡尔吉 / 莫卧儿·阿克巴 帝王骆驼与古拉姆近卫军团（鱼鳞阵 3+4+2：古拉姆前卫 3 + 印度斯坦帝王骆驼主力 4 + 象弓骑兵 2）
+    // 德里苏丹国·德里（阿拉乌丁·卡尔吉 · 象背重弓高台与近卫古拉姆铁甲大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 古拉姆精锐 3 + 象弓骑兵精锐 2）
     deli: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'ghulam', count: 3 },                  // Row 0 前卫坚壁 = 印度斯坦古拉姆 3人（纯步兵·无马，持长枪重剑正面结阵抗线）
-            { type: 'imperial_camel_rider', count: 4 },    // Row 1 中军主力 = 印度斯坦帝王骆驼骑兵 4骑（王牌重装反骑骆驼突贯决战）
-            { type: 'elephant_archer', count: 2 },         // Row 2 尾收远程压制 = 印度象弓骑兵 2头（战象背负箭楼高台抛射）
+            { type: 'heavy_pikeman', count: 4 },            // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，前排死守筑起钢铁长矛拒马线）
+            { type: 'elite_ghulam', count: 3 },             // Row 1 中军铁甲近卫 = 印度斯坦古拉姆精锐 3人（纯步兵·无马，卡尔吉近卫手持重剑死斗撕裂）
+            { type: 'elite_elephant_archer', count: 2 },    // Row 2 尾收重装象弓 = 象弓骑兵精锐 2头（双象高空铁甲箭楼，居高临下连续发射高穿透重箭）
         ],
     },
     mowoer: {
@@ -1560,12 +1598,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_battle_elephant', count: 2 },     // 压阵巨兽 = 精锐战斗象 2（🔴 象是王室精锐，少而精）
         ],
     },
+    // 高棉帝国·吴哥/真腊（阇耶跋摩七世 · 象背机械弩炮与皇家爪刀卫队 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 爪刀勇士精锐 3 + 高棉弩炮战象 2）
     chenla: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'archer', count: 4 },                    // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是征召弓手与步兵）
-            { type: 'karambit_warrior', count: 3 },          // 中军接应 = 爪刀勇士 3
-            { type: 'elite_battle_elephant', count: 2 },     // 压阵巨兽 = 精锐战斗象 2（🔴 象是王室精锐，少而精）
+            { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长矛坚壁 = 重装长枪兵 4人（纯步兵·无马，前排筑起长矛拒马线）
+            { type: 'karambit_warrior_elite', count: 3 },    // Row 1 中军精锐突刺 = 爪刀勇士精锐 3人（纯步兵·无马，高棉王牌近战极速绞杀）
+            { type: 'ballista_elephant', count: 2 },         // Row 2 尾收机械重弩 = 高棉弩炮战象 2头（象背双人机械床弩，后排超远距离贯穿重箭）
         ],
     },
     // 阿拉伯与近东·哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 骆驼弓骑精锐军团（三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
@@ -1659,13 +1698,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 2 },
         ],
     },
-    // 西北印度与兴都库什·米南德 / 谢尔 / 艾哈迈德 什里瓦姆沙避箭神骑精锐军团（鱼鳞阵 3+4+2：什里瓦姆沙骑手前卫 3 + 什里瓦姆沙骑手精锐主力 4 + 步弓手 2）
+    // 印度-希腊王国·那竭/顶骨城（米南德一世 · 巴克特里亚神弓与希腊铁骑战阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 巴克特里亚弓手 2）
     najie: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'shrivamsha_rider', count: 3 },        // Row 0 前卫突击 = 什里瓦姆沙骑手 3骑（大漠与高原神速先锋破阵）
-            { type: 'elite_shrivamsha_rider', count: 4 },  // Row 1 中军主力 = 什里瓦姆沙骑手精锐 4骑（王牌避箭神骑主力突贯决战）
-            { type: 'archer', count: 2 },                  // Row 2 尾收远射 = 步弓手 2人（纯步兵·无马，后方步弓压制）
+            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫长枪坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，大夏希腊青铜圆盾长枪抗线）
+            { type: 'shock_cavalry', count: 3 },       // Row 1 中军铁骑突击 = 冲击重骑兵 3骑（希腊-大夏突击铁骑中坚冲击）
+            { type: 'bactrian_archer', count: 2 },     // Row 2 尾收复合神弓 = 巴克特里亚弓手 2人（纯步兵·无马，中亚希腊化复合重弓超远距离高伤害抛射）
         ],
     },
     fanyanna: {

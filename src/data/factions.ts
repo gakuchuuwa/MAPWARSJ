@@ -18,6 +18,7 @@ export const FACTIONS: Faction[] = [
   { id: 'xixiliwangguo', name: '西西里' },
   { id: 'weixi', name: '威悉' },
 
+  { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '拉哥尼亚' },
   { id: 'maqidun', name: '马其顿' },
   { id: 'lagusa', name: '达尔马提亚' },
@@ -32,6 +33,7 @@ export const FACTIONS: Faction[] = [
   { id: 'sading', name: '萨丁' },
   { id: 'yidelisi', name: '伊德里斯' },
   { id: 'qiekase', name: '第聂伯' },
+  { id: 'baojialiya', name: '保加利亚' },
   { id: 'saierdika', name: '塞尔迪卡' },
   { id: 'bosiniya', name: '波斯尼亚' },
 
@@ -53,6 +55,7 @@ export const FACTIONS: Faction[] = [
   { id: 'aermolika', name: '阿尔摩里卡' },
   { id: 'tuosikana', name: '托斯卡纳' },
   { id: 'yadelaiya', name: '亚得里亚' },
+  { id: 'talanduo', name: '塔兰托' },
   { id: 'kanpaniya', name: '坎帕尼亚' },
   { id: 'jiatailuoniya', name: '加泰罗尼亚' },
   { id: 'nasier', name: '纳斯尔' },
@@ -81,6 +84,7 @@ export const FACTIONS: Faction[] = [
   { id: 'xila', name: '阿提卡' },
   { id: 'xilagu', name: '西西里东' },
   { id: 'fulandesi', name: '阿图瓦' },
+  { id: 'bogendi', name: '勃艮第' },
   { id: 'gaolu', name: '法兰西' },
   { id: 'anggelu', name: '盎格鲁' },
   { id: 'piketai', name: '皮克特' },

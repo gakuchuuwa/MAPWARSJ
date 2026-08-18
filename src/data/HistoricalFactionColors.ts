@@ -880,6 +880,7 @@ const _FIXED: Record<string, string> = {
     'boootiya': '#5E2A84', // 底比斯·底比斯（底比斯圣队紫）
     'luodesi': '#C51E2E', // 医院骑士·罗得城（白底红十字）
     'kelite': '#8A3A2A', // 克里特·诺索斯（米诺斯陶红）
+    'yipilusi': '#8B1E28', // 伊庇鲁斯·战神深绯红
     'lagoniya': '#B02A1E', // 斯巴达·斯巴达（斯巴达红披风）
     'anuo': '#C4303A', // 比萨·比萨（海权红）
     'balunxiya': '#A8322E', // 巴伦西亚·巴伦西亚（金红旗）
@@ -895,6 +896,7 @@ const _FIXED: Record<string, string> = {
     'langgeduoke': '#A83232', // 图卢兹·图卢兹（朗格多克红）
     'aermolika': '#2E2E34', // 阿摩尔利卡·南特（布列塔尼黑）
     'tuosikana': '#C84040', // 佛罗伦萨·佛罗伦萨（百合红）
+    'talanduo': '#2B6EA0', // 塔兰托·大希腊海洋蓝
     'kanpaniya': '#2E5E9E', // 那不勒斯·那不勒斯（安茹蓝）
     'jiatailuoniya': '#C93A2E', // 阿拉贡·巴塞罗那（金红条旗）
     'nasier': '#8C2A2A', // 纳斯里德·格拉纳达（阿尔罕布拉红）
@@ -908,6 +910,7 @@ const _FIXED: Record<string, string> = {
     'alagong': '#D4A020', // 萨拉戈萨·萨拉戈萨（阿拉贡金）
     'feiniqi': '#8A3A7E', // 腓尼基·加的斯（腓尼基紫红）
     'xilagu': '#B7860B', // 叙拉古·锡拉库萨（叙拉古金）
+    'bogendi': '#800020', // 勃艮第·经典酒红
     'fulandesi': '#B8912E', // 佛兰德斯·加莱（佛兰德斯金）
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
     'mengtainiya': '#A03030', // 蒙泰尼亚·布加勒斯特（瓦拉几亚红）
@@ -955,6 +958,7 @@ const _FIXED: Record<string, string> = {
     'mosike_gongguo': '#8A1A1A', // 莫斯科公国·莫斯科（莫斯科红）
     'liulike': '#3A6DA8', // 诺夫哥罗德·诺夫哥罗德（诺夫哥罗德蓝）
     'bolisiya': '#B73030', // 布列斯特·布列斯特（罗斯红白）
+    'baojialiya': '#1B7340', // 保加利亚·帝国森林绿
     'saierdika': '#D89028', // 保加利亚·索非亚（金狮橙金）
     'saierweiya': '#9F2020', // 塞尔维亚·贝尔格莱德（塞尔维亚红）
     'bosiniya': '#8A6A2E', // 波斯尼亚·萨拉热窝（波斯尼亚金）
