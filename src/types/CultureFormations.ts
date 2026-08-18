@@ -114,14 +114,14 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
-    BASHU:        'fish_scale',   // 川蜀：白羽卫兵前卫(3) + 精锐白羽卫兵主力(4) + 诸葛弩后排(2)
+    BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
     TIBET:        'fish_scale',   // 青藏：答剌罕前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
-    CENTRAL:      'triangle',     // 中原：刀剑手(2) + 诸葛弩(3) + 精锐诸葛弩主力(4)
+    CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：草原枪兵(2) + 蒙古突骑(3) + 精锐蒙古突骑主力(4)
-    JIANGNAN:     'triangle',     // 江南：剑士(2) + 火焰弓(3) + 精锐火焰弓主力(4)
+    JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 藤弓兵(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
     CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
@@ -309,16 +309,13 @@ export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 大明·鹤翼阵（2+4+3）：精锐火矛手(2) + 黑光铠骑兵(4) + 诸葛弩(3)
- * 2026-08-18 改：原编制有**两个热兵器**（火矛手 4 + 掷弹兵 2），而一个编制只有一个 2 档位，
- * 按主人「热兵器只许占 2 档」必须去掉一个。留火矛手（神机营火铳是明军本色），
- * 去掉「女真掷弹兵」（女真是明的对手，挂在大明本就不合史）。主力改黑光铠骑兵 = 三千营骑兵。
- * ⚠️ 若主人更想保掷弹兵、去火矛手，把这两行对调即可。
+ * 大明·鱼鳞阵（3+4+2）：持盾刀剑手(3) + 黑光铠骑兵(4) + 神机箭重型火箭车(2)
+ * 明军三大营步骑火协同编制：五军营大盾刀牌手前卫抗线 + 三千营精锐铁骑中军主力 + 神机营重型火箭车后排弹幕覆盖
  */
 export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_fire_lancer', count: 2 }, // Row 0 前排火器齐射 = 精锐火矛手 2人（🔴 热兵器只许 2 档）
-    { type: 'hei_kuang', count: 4 },         // Row 1 主力·两翼合围 = 黑光铠骑兵 4人
-    { type: 'chukonu', count: 3 },           // Row 2 中军后排支援 = 诸葛弩 3人
+    { type: 'jian_swordman_shielded', count: 3 }, // Row 0 前卫抗线 = 持盾刀剑手 3人（大盾刀牌手正面抗线防矢）
+    { type: 'hei_kuang', count: 4 },              // Row 1 中军主力 = 黑光铠骑兵 4骑（三千营精锐重骑主力突破）
+    { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
 ];
 
 /**
@@ -783,7 +780,6 @@ export const BYZANTINE_DYNASTY_GENERAL_IDS = new Set([
 /** 拜占庭势力 ID 集合 */
 export const BYZANTINE_DYNASTY_FACTION_IDS = new Set([
     'baizanting',               // 拜占庭帝国（君士坦丁堡）
-    'taolika',                  // 陶里卡/赫尔松涅斯（拜占庭克里米亚军区）
     'teluoyi',                  // 达尔达尼亚（达达尼尔要冲）
     'maerta_qishi',             // 圣约翰/医院骑士团（马耳他）
 ]);
@@ -953,7 +949,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 // 20 文化区阵型（2026-08-18 用户拍板：四个阵型均为 2+3+4 结构，文化主力为 4，远程/弓骑在后排）
 // ============================================================
 
-/** 1. 中原 刀剑手+诸葛弩+精锐诸葛弩（三角阵 2+3+4：刀剑手尖刀 + 诸葛弩中坚 + 精锐诸葛弩主力底边） */
+/** 1. 中原 刀剑手+火焰弓箭手+精锐诸葛弩（三角阵 2+3+4：刀剑手尖刀 + 火焰弓箭手中坚 + 精锐诸葛弩主力底边） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -961,7 +957,7 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'jian_swordsman', count: 2 }, // Row 0 尖刀先锋 = 刀剑手 2人
-            { type: 'chukonu', count: 3 },        // Row 1 齐射中坚 = 诸葛弩 3人
+            { type: 'fire_archer', count: 3 },    // Row 1 齐射中坚 = 火焰弓箭手 3人
             { type: 'elite_chukonu', count: 4 }   // Row 2 底边主力齐射 = 精锐诸葛弩 4人
         ]
     }
@@ -1065,29 +1061,29 @@ export const HEXI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 8. 川蜀 白羽卫兵+精锐白羽卫兵+诸葛弩（鱼鳞阵 3+4+2：白羽卫兵前卫 + 精锐白羽卫兵突击主力 + 诸葛弩后排支援） */
+/** 8. 川蜀 白毦兵+精锐白毦兵+诸葛弩（鱼鳞阵 3+4+2：白毦兵前卫 + 精锐白毦兵突击主力 + 诸葛弩后排支援） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 白羽卫兵 3人
-            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白羽卫兵 4人
+            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 白毦兵 3人
+            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白毦兵 4人
             { type: 'chukonu', count: 2 }                    // Row 2 尾收支援 = 诸葛弩 2人
         ]
     }
 ];
 
-/** 9. 江南 剑士+火焰弓箭手+精锐火焰弓箭手（三角阵 2+3+4：剑士尖刀 + 火焰弓中坚 + 精锐火焰弓主力底边） */
+/** 9. 江南 刀剑手+诸葛弩+精锐火焰弓箭手（三角阵 2+3+4：刀剑手尖刀 + 诸葛弩中坚 + 精锐火焰弓箭手主力底边） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 2 },         // Row 0 尖刀先锋 = 剑士 2人
-            { type: 'fire_archer', count: 3 },       // Row 1 齐射中坚 = 火焰弓箭手 3人
+            { type: 'jian_swordsman', count: 2 },    // Row 0 尖刀先锋 = 刀剑手 2人
+            { type: 'chukonu', count: 3 },           // Row 1 齐射中坚 = 诸葛弩 3人
             { type: 'elite_fire_archer', count: 4 }  // Row 2 底边主力齐射 = 精锐火焰弓箭手 4人
         ]
     }

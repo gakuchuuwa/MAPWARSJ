@@ -2387,7 +2387,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/death_${dir}.png`),
         },
         'imperial_camel_rider': {
-            // 【帝王骆驼兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            // 【印度斯坦帝王骆驼骑兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/idle_${dir}.png`),
