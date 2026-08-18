@@ -1037,6 +1037,29 @@ export class LegionPhalanxDrawer {
             );
             spacingX = dense.x;
             spacingY = dense.y;
+        } else {
+            // 🔴 [2026-08-18 修·战斗象糊成一坨] 上面那两个间距是**与素材尺寸无关的固定常数**
+            //    （estRatio 0.8 + baseHeight 75 全写死），而单兵**绘制尺寸是按素材帧尺寸走的**
+            //    （DE 路径 dw = frameW × 60×scale/64）。两者不挂钩 → 帧越大的兵种被压得越狠：
+            //      戟兵   48×44  → 画 45×41px，占 30×45px 格 = 横向 1.5 倍重叠（正常的密集队列）
+            //      战斗象 104×144 → 画 97×135px，占**同样** 30×45px 格 = 横向 3.3 / 纵向 3.0 倍
+            //      → 二十头象叠成一整块，象背的鞍布连成一片（主人实锤「东南亚战斗象」）。
+            //    修法：按本兵种真实绘制尺寸给间距加一条**下限，只抬不降**。
+            //    基准取素材参考尺寸 64px 见方的标准兵：它按绘制口径画 60×60px、占 30×45px 格，
+            //    所以占位比 = 横向 0.5、纵向 0.75 —— 代进去正好还原今天的 30/45，现状零改动。
+            //    ⚠️ 别拿上面那个 estRatio(0.8) 推系数：绘制路径根本不用它，用它会算出 37.5 反把
+            //       S10DB 全体撑开。系数只能从**绘制口径**（dw = frameW × 60×scale/64）推。
+            //    效果：≤ 参考尺寸的兵种间距逐像素不变（戟兵算下来 22.5/30.9，都低于现值 30/45），
+            //    超大素材被撑开的倍数正好等于它比标准兵大的倍数 ——
+            //    战斗象 30→48.8 / 45→101.3，压叠比回到 2.0 倍，**与所有其他兵种完全一致**。
+            const dyn = (assets as any).dyn?.IDLE?.dirs?.[String(direction)];
+            const maxSlotScale = cultureScales && cultureScales.length ? Math.max(...cultureScales) : 1;
+            const unitScale = 60 * scale * maxSlotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
+            // DE 有 dyn 元数据 → 用真实帧框；S10DB 无 dyn → 用整图比例推（帧为正方形，宽=高）
+            const fw = dyn ? dyn.fw : refSprite.height;
+            const fh = dyn ? dyn.fh : refSprite.height;
+            spacingX = Math.max(spacingX, fw * unitScale * 0.5);
+            spacingY = Math.max(spacingY, fh * unitScale * 0.75);
         }
 
         // --- 2. UPDATE STATE ---

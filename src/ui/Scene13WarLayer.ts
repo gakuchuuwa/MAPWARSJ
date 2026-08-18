@@ -1130,10 +1130,10 @@ const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 const FIRE_LANCER_VOLLEY = 3;
 const FIRE_LANCER_CHARGE = 30;
 /**
- * 每方开局数 + 每次补兵批量 = 300（2026-08-13 主人定）。
- * 成批补：开局双方各出 300；之后一方场上 < 150 才再补 300（见 TRIGGER）。
+ * 每方开局数 + 每次补兵批量 = 324（2026-08-18 主人改：9 口 × 36 = 每口 6×6 方正）。
+ * 成批补：开局双方各出 324；之后一方场上 < 150 才再补 324（见 TRIGGER）。
  */
-const SIDE_CAP = 300;
+const SIDE_CAP = 324;
 /**
  * 补兵触发线 = 150（2026-08-13 主人定）：一方场上掉到 150 以下才再补一波 300。
  * 成批补制造「兵力波次」：一方打掉一半（300→150）才补，战线来回摆动，尸体沿途铺开。
@@ -1217,19 +1217,22 @@ const ARRIVE_EPS = 8;
  *
  * 原来：待命一结束，600 个兵各自 search(SIGHT) 找自己最近的敌人扑上去，
  *       出生时按 LAYOUT（鱼鳞/三角/雁行）摆好的阵型**一开动就散**，看着不像军队像人潮。
- * 现在：开局那批（每方 300）在各自出兵口列成方阵，整体平移压向敌方，
+ * 现在：开局那批（每方 324）在各自出兵口列成 6×6 方阵，整体平移压向敌方，
  *       期间**不脱离队形去追人**；索敌与出手照旧 —— 远程在队形里够得着就放箭，不出列。
  *       两军「前锋线」逼近到 MARCH_REL 时全军**同时**解除，无缝切回原有的索敌散开逻辑。
  *
- * 🔴 只有开局那批列阵。补兵（一方场上 < TRIGGER 才补 300）永远发生在混战正酣时，
- *    让新兵列队穿过自己人的战团 = 2026-08-10 判死路的「编队被友军挡住」问题，绝不要加。
+ * 🔴 补兵也排方阵出生（主人 2026-08-18：比一盘散沙好），但 march=false **不迁就速度**、
+ *    各自按兵种速度走；只有开局那批整体平移迁就最慢（阵型刚体）。
  *
  * 🔴 不禁火：行军段禁止远程开火会让它们白白损失一整段射击窗口（火焰弓射程 400，
  *    前锋线还差 250px 就已经够得着），实测口径下「弩克步」这条边会被动过 —— 所以只压移动，不压开火。
  *
- * 平衡实测（war_sim，MARCH=1/0 两臂各 6 种子 × 9 组对局，N=1350 真实规模，WING=0 SPREAD=4 AIM_JITTER=120）：
- *   镜像 步 4:2→4:2 / 骑 0:6→1:5 / 远程 3:3→4:2；克制三边方向与换位结论全部不变；打不完 0/0；
- *   时长仅步兵镜像 +8%（183→198s，约等于列阵那 8 秒）。量具：scratch/march_ab.mjs
+ * 平衡实测（war_sim，SIDE_CAP=324，MARCH=1/0 两臂各 6 种子 × 9 组对局，N=1350，WING=0 SPREAD=4 AIM_JITTER=120）：
+ *   克制三边（骑克弩/骑克步/弩克步）方向与换位结论全部不变；打不完 0/0；时长持平。
+ *   镜像 步 2:4→2:4 / 远程 2:4→2:4；镜像 骑 2:4→0:6 —— 见下。
+ *   ⚠️ 镜像骑兵 0:6 守方通杀是**既有方向偏袒**（SIDE_CAP=300 散兵基线本就是这个数），
+ *     对补兵排布/批量极敏感（300散兵 0:6 → 324散兵 2:4 → 324列阵 0:6），非补兵列阵引入的新克制。
+ *   量具：scratch/march_ab.mjs
  */
 /** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
 const MARCH_REL = 160;
@@ -1663,7 +1666,7 @@ interface WarSpawn {
     pool: number;
     /** 本口累计已出生精灵数（旗手判定：每满 FLAG_EVERY 出一面旗，按口平均分布，跨批不重置） */
     spawned: number;
-    /** 本口列阵方阵已发出的槽位数（只在开局那批用，见 MARCH_*） */
+    /** 本口列阵方阵已发出的槽位数（开局 + 补兵每批都排方阵；每批重置，见 MARCH_*） */
     slotN: number;
 }
 
@@ -2856,7 +2859,8 @@ export class Scene13WarLayer {
 
             const ports = this.spawns.filter(s => s.f === f && s.pool > 0);
             if (!ports.length) continue;
-            let batch = SIDE_CAP;                  // 一次补 300（固定批量）
+            let batch = SIDE_CAP;                  // 一次补 324（固定批量）
+            for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
@@ -2878,16 +2882,16 @@ export class Scene13WarLayer {
                 // 每个出兵口独立计数：本口每出满 FLAG_EVERY 个精灵出一面旗 → 旗帜按口平均分布。
                 s.spawned++;
                 const bearer = (s.spawned % FLAG_EVERY === 0);
-                // 列阵推进：只有**开局那批**（待命阶段内出生的）列方阵，补兵一律沿用原来的散兵直扑。
-                // rank = 沿推进方向的纵深（0 = 最前排）、file = 横列；出生就站在自己的槽位上，不再随机散布。
+                // 列阵推进：**所有批次**都按口排方阵（rank=沿 x 纵深、file=沿 y 横列），补兵不再随机散布；
+                // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
                 const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
-                const dep = inMarch ? ((slotIdx / MARCH_FILES) | 0) * MARCH_SP : 0;
-                const slotY = inMarch ? ((slotIdx % MARCH_FILES) - (MARCH_FILES - 1) / 2) * MARCH_SP : 0;
+                const dep = ((slotIdx / MARCH_FILES) | 0) * MARCH_SP;
+                const slotY = ((slotIdx % MARCH_FILES) - (MARCH_FILES - 1) / 2) * MARCH_SP;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
-                    x: inMarch ? s.x + (s.f === 0 ? -dep : dep) : s.x + (Math.random() - .5) * 60,
-                    y: inMarch ? s.y + slotY : s.y + (Math.random() - .5) * 110,
+                    x: s.x + (s.f === 0 ? -dep : dep),
+                    y: s.y + slotY,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
