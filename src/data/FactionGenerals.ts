@@ -150,7 +150,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xideweina: { generalId: 'gen_breslav', generalName: '布列斯拉夫', portrait: '/assets/SLAVIC/xideweina_buliesilafu.png' },
     jinzhang: { generalId: 'gen_batu', generalName: '拔都', portrait: '/assets/SLAVIC/jinzhang_badou.png' },
     baojiaer: { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
-    baizanting: { generalId: 'gen_vladimir_great', generalName: '弗拉基米尔', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
+    baizanting: { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     kelimiya: { generalId: 'gen_haci_giray', generalName: '哈吉格来', portrait: '/assets/SLAVIC/kelimiya_hajigelai.png' },
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
