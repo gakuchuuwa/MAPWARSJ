@@ -43,13 +43,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
         ],
     },
-    // 曹魏·曹操军团（鹤翼阵 2+4+3：曹魏虎豹骑 2 + 曹魏虎豹骑精锐 4 + 华夏诸葛弩 3）
+    // 曹魏·曹操军团（鹤翼阵 2+4+3：魏虎豹骑 2 + 魏虎豹骑精锐 4 + 中国诸葛弩 3）
     cao_d: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 曹魏虎豹骑 2人
-            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 曹魏虎豹骑精锐 4人
-            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 华夏诸葛弩 3人
+            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏虎豹骑 2人
+            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏虎豹骑精锐 4人
+            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 中国诸葛弩 3人
         ],
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
@@ -58,7 +58,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'fire_lancer', count: 3 },         // Row 0 前卫 = 南宋火矛手 3人
             { type: 'elite_fire_lancer', count: 4 },   // Row 1 中军火器突击主力 = 南宋火矛手精锐 4人
-            { type: 'chukonu', count: 2 },             // Row 2 尾收神机弩 = 华夏诸葛弩 2人
+            { type: 'chukonu', count: 2 },             // Row 2 尾收神机弩 = 中国诸葛弩 2人
         ],
     },
     sizhou: {
@@ -207,12 +207,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
+    // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦卫精锐军团（鱼鳞阵 3+4+2：白毦卫前卫 3 + 精锐白毦卫主力 4 + 诸葛弩 2）
     shu: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀汉白毦兵 3人
-            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白毦兵 4人
+            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀白毦卫 3人
+            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 蜀白毦卫精锐 4人
             { type: 'chukonu', count: 2 },                   // Row 2 尾收支援 = 诸葛弩 2人
         ],
     },
@@ -306,14 +306,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'crossbowman', count: 3 },     // Row 2 后排支援 = 弩手
         ],
     },
-    // 西亚·奥斯曼帝国 苏丹亲兵军团（雁行阵 4+3+2：苏丹亲兵火枪齐射 4 + 西帕希重骑接应 3 + 阿金吉骑射压阵 2）
-    // 2026-08-18 主人定：新增奥斯曼势力，城堡兵「苏丹亲兵」作主力
+    // 西亚·奥斯曼帝国 苏丹亲兵军团（鱼鳞阵 3+4+2：土耳其苏丹亲兵 3 + 土耳其苏丹亲兵精锐 4 + 翼骑兵护卫 2）
+    // 2026-08-18 主人定：新增奥斯曼势力，城堡兵「土耳其苏丹亲兵」作主力，高低搭配
     osman: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'janissary', count: 4 },         // Row 0 前排火枪宽线齐射 = 苏丹亲兵
-            { type: 'paladin', count: 3 },           // Row 1 中排重骑接应 = 西帕希（游侠贴图）
-            { type: 'cav_archer_heavy', count: 2 },  // Row 2 后排压阵骑射 = 阿金吉（重装骑射手）
+            { type: 'janissary', count: 3 },         // Row 0 前排火枪 = 土耳其苏丹亲兵
+            { type: 'elite_janissary', count: 4 },   // Row 1 核心主力 = 土耳其苏丹亲兵精锐
+            { type: 'hussar', count: 2 },            // Row 2 后排接应 = 翼骑兵（土耳其特色肉盾）
         ],
     },
     // 草原与中亚诸大汗·鞑靼怯薛军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
