@@ -1212,6 +1212,31 @@ const DEPLOY_SECS = 2.5;
 const DEPLOY_FADE = 2.0;
 /** 到达判定阈值（px）：离目标比这更近就停，防原地抖动 */
 const ARRIVE_EPS = 8;
+
+/* ── 【列阵推进】2026-08-18 主人定，对齐帝国时代 DE 的阵型行军 ──────────────────────────
+ *
+ * 原来：待命一结束，600 个兵各自 search(SIGHT) 找自己最近的敌人扑上去，
+ *       出生时按 LAYOUT（鱼鳞/三角/雁行）摆好的阵型**一开动就散**，看着不像军队像人潮。
+ * 现在：开局那批（每方 300）在各自出兵口列成方阵，整体平移压向敌方，
+ *       期间**不脱离队形去追人**；索敌与出手照旧 —— 远程在队形里够得着就放箭，不出列。
+ *       两军「前锋线」逼近到 MARCH_REL 时全军**同时**解除，无缝切回原有的索敌散开逻辑。
+ *
+ * 🔴 只有开局那批列阵。补兵（一方场上 < TRIGGER 才补 300）永远发生在混战正酣时，
+ *    让新兵列队穿过自己人的战团 = 2026-08-10 判死路的「编队被友军挡住」问题，绝不要加。
+ *
+ * 🔴 不禁火：行军段禁止远程开火会让它们白白损失一整段射击窗口（火焰弓射程 400，
+ *    前锋线还差 250px 就已经够得着），实测口径下「弩克步」这条边会被动过 —— 所以只压移动，不压开火。
+ *
+ * 平衡实测（war_sim，MARCH=1/0 两臂各 6 种子 × 9 组对局，N=1350 真实规模，WING=0 SPREAD=4 AIM_JITTER=120）：
+ *   镜像 步 4:2→4:2 / 骑 0:6→1:5 / 远程 3:3→4:2；克制三边方向与换位结论全部不变；打不完 0/0；
+ *   时长仅步兵镜像 +8%（183→198s，约等于列阵那 8 秒）。量具：scratch/march_ab.mjs
+ */
+/** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
+const MARCH_REL = 160;
+/** 每个出兵口方阵的横向列数（沿 y）。6 列 × MARCH_SP = 144px < 出兵口纵向间距，相邻口不重叠 */
+const MARCH_FILES = 6;
+/** 槽位间距（px）：必须 ≥ 两兵半径之和（UNIT_RADIUS 最大档 20），否则软推挤会把队形挤散 */
+const MARCH_SP = 24;
 /**
  * 选敌口时纵向（y）的权重。
  * 🔴 用直线距离选「最近的敌口」对 3×3 没问题，但对**纯骑的 1-2-3 三角阵是灾难**：
@@ -1638,6 +1663,8 @@ interface WarSpawn {
     pool: number;
     /** 本口累计已出生精灵数（旗手判定：每满 FLAG_EVERY 出一面旗，按口平均分布，跨批不重置） */
     spawned: number;
+    /** 本口列阵方阵已发出的槽位数（只在开局那批用，见 MARCH_*） */
+    slotN: number;
 }
 
 interface WarMan {
@@ -1696,6 +1723,16 @@ interface WarMan {
      *    ⚠️ 不能拿 m.ph 当偏移——那个每秒涨 8，会让旗越飘越快且随战斗状态变速。
      */
     fo: number;
+    /**
+     * 列阵推进（见 MARCH_REL）：本兵是否还在开局的列阵行军阶段。
+     * true 期间移动只跟自己的槽位，够不着敌人**不追**；索敌与出手照旧（远程在队形里放箭）。
+     */
+    march: boolean;
+    /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
+    port: WarSpawn | null;
+    /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
+    dep: number;
+    slotY: number;
     /** 上一帧同时打他的敌人数（围殴加成用；当帧计数见 atkNext） */
     atkers: number;
     /** 本帧累计的攻击者数，帧末结转给 atkers */
@@ -1947,6 +1984,10 @@ export class Scene13WarLayer {
     private batchCd = 0;
     /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
     private deployT = 0;
+    /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
+    private marching = false;
+    /** 两方阵型各自已推进的距离（px），列阵解除后不再使用 */
+    private adv: [number, number] = [0, 0];
     /** 开局总兵力（精灵），攻/守各一 —— 补兵触发线按「剩余占比」缩放时当分母 */
     private initPool: [number, number] = [1, 1];
     /** 尸体保留累加器（攒够 1 留一具）：确定性均匀，不随机斑驳。见 CORPSE_KEEP */
@@ -2084,6 +2125,8 @@ export class Scene13WarLayer {
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
+        this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
+        this.adv = [0, 0];
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
 
@@ -2131,6 +2174,7 @@ export class Scene13WarLayer {
                         f: side.f, key, x, y,
                         pool: poolPer,
                         spawned: 0,
+                        slotN: 0,
                     });
                 });
             }
@@ -2834,14 +2878,22 @@ export class Scene13WarLayer {
                 // 每个出兵口独立计数：本口每出满 FLAG_EVERY 个精灵出一面旗 → 旗帜按口平均分布。
                 s.spawned++;
                 const bearer = (s.spawned % FLAG_EVERY === 0);
+                // 列阵推进：只有**开局那批**（待命阶段内出生的）列方阵，补兵一律沿用原来的散兵直扑。
+                // rank = 沿推进方向的纵深（0 = 最前排）、file = 横列；出生就站在自己的槽位上，不再随机散布。
+                const inMarch = this.deployT > 0;
+                const slotIdx = s.slotN++;
+                const dep = inMarch ? ((slotIdx / MARCH_FILES) | 0) * MARCH_SP : 0;
+                const slotY = inMarch ? ((slotIdx % MARCH_FILES) - (MARCH_FILES - 1) / 2) * MARCH_SP : 0;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
-                    x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
+                    x: inMarch ? s.x + (s.f === 0 ? -dep : dep) : s.x + (Math.random() - .5) * 60,
+                    y: inMarch ? s.y + slotY : s.y + (Math.random() - .5) * 110,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
                     flag: bearer, fo: Math.random() * 600,
+                    march: inMarch, port: inMarch ? s : null, dep, slotY,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -3062,6 +3114,37 @@ export class Scene13WarLayer {
         }
     }
 
+    /**
+     * 列阵推进：整体平移 + 前锋线接触解除（见 MARCH_REL）。
+     * 待命阶段不推进（那时全军静止渐显）；解除后本方法整场空转。
+     */
+    private marchTick(dt: number, deploying: boolean): void {
+        if (!this.marching || deploying) return;
+        // 阵型速度 = 本方列阵兵里**最慢**的那个。
+        // 阵型行军的定义就是全队迁就最慢的人 —— 不这么做骑兵会把步兵甩下，队形当场散架。
+        const spdMin = [Infinity, Infinity];
+        let anyMarcher = false;
+        for (const m of this.men) {
+            if (m.hp <= 0 || !m.march) continue;
+            anyMarcher = true;
+            const sp = statsOf(m.key).spd;
+            if (sp < spdMin[m.f]) spdMin[m.f] = sp;
+        }
+        if (!anyMarcher) { this.marching = false; return; }   // 列阵那批没了（理论上到不了），直接放开
+        for (let f = 0; f < 2; f++) if (spdMin[f] < Infinity) this.adv[f] += spdMin[f] * dt;
+        // 前锋线 = 本方最靠前那排出兵口的 x ± 已推进距离。
+        // 阵型是刚体，直接由锚点算即可，不受个别掉队/落单兵影响（拿存活兵均值算会被拖后腿）。
+        let front0 = -Infinity, front1 = Infinity;
+        for (const sp of this.spawns) {
+            if (sp.f === 0) front0 = Math.max(front0, sp.x + this.adv[0]);
+            else front1 = Math.min(front1, sp.x - this.adv[1]);
+        }
+        if (front1 - front0 < MARCH_REL) {
+            this.marching = false;
+            for (const m of this.men) m.march = false;   // 全军同时解除，双方一起炸开接战
+        }
+    }
+
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         const near = this.search(m, MARCH_R);
@@ -3144,6 +3227,7 @@ export class Scene13WarLayer {
         for (const m of this.men) { cx[m.f] += m.x; cy[m.f] += m.y; cn[m.f]++; }
         this.enemyCen = [0, 1].map(f => cn[f] ? { x: cx[f] / cn[f], y: cy[f] / cn[f] } : null);
         this.advanceRoute();
+        this.marchTick(dt, deploying);
 
         this.rebuild();
         for (const m of this.men) {
@@ -3173,8 +3257,13 @@ export class Scene13WarLayer {
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
 
-            // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
-            if (!m.foe) {
+            // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
+            // 索敌（上面那段）照旧执行 —— 远程够得着就在队形里放箭，只是不许脱队去追（见下）。
+            if (m.march && m.port) {
+                const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
+                [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
+            } else if (!m.foe) {
+                // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 m.aimT = (m.aimT ?? 0) - dt;
                 if (m.aimT <= 0) {
                     const aim = this.aimAt(m);
@@ -3227,6 +3316,24 @@ export class Scene13WarLayer {
                         if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                         continue;
                     }
+                }
+                // 列阵推进期间**够不着就不追**（帝国 DE 的 Stand Ground 行军）：回自己的槽位随队压上。
+                // 放在迟滞带之前：迟滞带会让人站住不动，那是接战后的防抖装置，列阵段必须继续走。
+                // 够得着的照常落到下面的攻击分支 —— 远程在队形里放箭，不禁火。
+                if (m.march && !inReach) {
+                    m.st = 0;
+                    const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
+                    const step = stats.spd * dt;
+                    if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
+                        m.x += dx / d * step;
+                        m.y += dy / d * step;
+                        m.dir = this.dir8(dx, dy);
+                    }
+                    // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
+                    //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * 8;
+                    continue;
                 }
                 // 够不着 → 追击（DE「看见就冲上去」；近战从 LOS 圈走向贴身，远程够射程前走位）
                 if (inHystBand) {

@@ -26,21 +26,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'tiger_rider', count: 2 },         // Row 2 压阵 = 虎豹骑
         ],
     },
-    // 汉国·三角阵（2+3+4：白毦兵 2 + 诸葛弩 3 + 黑光铠骑兵 4）
+    // 汉国·三角阵（2+3+4：刀剑手 2 + 诸葛弩 3 + 虎豹骑 4）
     han: {
         formationMode: 'triangle',
         slots: [
-            { type: 'white_feather_guard', count: 2 }, // Row 0 尖刀 = 白毦兵
-            { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩
-            { type: 'hei_kuang', count: 4 },           // Row 2 底边 = 黑光铠骑兵
+            { type: 'jian_swordsman', count: 2 },      // Row 0 尖刀 = 刀剑手 2人
+            { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩 3人
+            { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑 4人
         ],
     },
     han_d: {
         formationMode: 'triangle',
         slots: [
-            { type: 'jian_swordsman', count: 2 },      // Row 0 尖刀 = 刀剑手
-            { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩
-            { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑
+            { type: 'jian_swordsman', count: 2 },      // Row 0 尖刀 = 刀剑手 2人
+            { type: 'chukonu', count: 3 },             // Row 1 中坚 = 诸葛弩 3人
+            { type: 'tiger_rider', count: 4 },         // Row 2 底边 = 虎豹骑 4人
         ],
     },
     // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，雁行阵 4+3+2：马其顿方阵兵 + 伙伴骑兵 + 克里特弓手）
@@ -97,22 +97,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 2 },      // Row 2 压阵 = 克里特弓手
         ],
     },
-    // 日本战国·织田信长军团（雁行阵 4+3+2：精锐武士 4 + 藤弓兵 3 + 忍者 2）
+    // 日本战国·织田信长军团（鹤翼阵 2+4+3：忍者 2 + 精锐武士 4 + 藤弓兵 3）
     owari: {
-        formationMode: 'echelon',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'samurai_elite', count: 4 },    // Row 0 宽阵 = 精锐武士
-            { type: 'rattan_archer', count: 3 },    // Row 1 中坚 = 藤弓兵
-            { type: 'ninja', count: 2 },            // Row 2 压阵 = 忍者
+            { type: 'ninja', count: 2 },            // Row 0 前哨 = 忍者 2人
+            { type: 'samurai_elite', count: 4 },    // Row 1 两翼合围 = 精锐武士 4人
+            { type: 'rattan_archer', count: 3 },    // Row 2 中军托底 = 藤弓兵 3人
         ],
     },
-    // 伊贺·忍者军团（鱼鳞阵 3+4+2：忍者 + 忍者 + 藤弓兵）
+    // 伊贺·忍者军团（方阵 3+3+3：忍者 3 + 忍者 3 + 忍者 3）
     iga_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'square',
         slots: [
             { type: 'ninja', count: 3 },        // Row 0 前排 = 忍者 3人
-            { type: 'ninja', count: 4 },        // Row 1 中坚 = 忍者 4人
-            { type: 'rattan_archer', count: 2 } // Row 2 后排 = 藤弓兵 2人
+            { type: 'ninja', count: 3 },        // Row 1 中坚 = 忍者 3人
+            { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
         ],
     },
     // 罗马帝国·罗马军团（三角阵 2+3+4：掷矛手 2 + 精锐罗马百夫长 3 + 罗马军团步兵 4）
