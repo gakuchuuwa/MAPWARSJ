@@ -101,6 +101,249 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'fire_archer', count: 3 },
         ],
     },
+    // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
+    yanchuan_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },         // Row 0 前卫 = 南宋火矛手 3人
+            { type: 'elite_fire_lancer', count: 4 },   // Row 1 中军火器突击主力 = 南宋火矛手精锐 4人
+            { type: 'chukonu', count: 2 },             // Row 2 尾收神机弩 = 华夏诸葛弩 2人
+        ],
+    },
+    sizhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    yingzhou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    zaoyang_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    fengzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    hezhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    changshaguo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    shenshi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    luoping: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    // 草原与中亚诸大汗·鞑靼怯薛军团（鹤翼阵 2+4+3：怯薛军前卫 2 + 精锐怯薛军主力合围 4 + 钦察弓骑 3）
+    // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
+    menggu_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },          // Row 0 前哨 = 鞑靼怯薛军 2人
+            { type: 'elite_keshik', count: 4 },    // Row 1 王庭宿卫铁骑两翼合围 = 鞑靼怯薛军精锐 4人
+            { type: 'kipchak', count: 3 },         // Row 2 中军后排齐射 = 库曼钦察弓骑 3人
+        ],
+    },
+    jinzhang: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    yuan_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    tiemuer: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    asaibaijiang: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    wuliangha: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    jalair: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    kiyad: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    zhadalan: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    wala: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    oirat_ming: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    an: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    babuer: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    da_yuan: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    chahar: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    zhaowu: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    manghuti: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    khoshut: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    yilihanguo_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    yilihanguo: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+    salai: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'keshik', count: 2 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
     // 马其顿·亚历山大帝国军团（鹤翼阵 2+4+3：马其顿方阵兵 2 + 伙伴骑兵主力 4 + 克里特弓手 3）
     maqidun: {
         formationMode: 'crane_wing',
@@ -191,40 +434,45 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
         ],
     },
-    // 罗马帝国·罗马军团（鱼鳞阵 3+4+2：精锐罗马百夫长 3 + 罗马军团步兵主力 4 + 掷矛手 2）
+    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 百夫长精锐军团（鱼鳞阵 3+4+2：军团步兵前卫 3 + 精锐百夫长主力 4 + 百夫长 2）
     luoma_diguo: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_centurion', count: 3 },     // Row 0 前卫 = 精锐罗马百夫长
-            { type: 'legionary', count: 4 },           // Row 1 中军主力突破 = 罗马军团步兵
-            { type: 'skirmisher', count: 2 },          // Row 2 尾收压阵 = 掷矛手
+            { type: 'legionary', count: 3 },           // Row 0 前卫大盾抗线 = 罗马军团步兵 3人
+            { type: 'elite_centurion', count: 4 },     // Row 1 中军突击主力 = 罗马百夫长精锐 4人
+            { type: 'centurion', count: 2 },           // Row 2 尾收指挥调度 = 罗马百夫长 2人
         ],
     },
-    // 高卢罗曼（克洛维，套用罗马军团鱼鳞阵体系）
     gaolu_luoma: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_centurion', count: 3 },     // Row 0 前卫 = 精锐罗马百夫长
-            { type: 'legionary', count: 4 },           // Row 1 中军主力突破 = 罗马军团步兵
-            { type: 'skirmisher', count: 2 },          // Row 2 尾收压阵 = 掷矛手
+            { type: 'legionary', count: 3 },
+            { type: 'elite_centurion', count: 4 },
+            { type: 'centurion', count: 2 },
         ],
     },
-    // 摩泽尔（君士坦丁大帝，套用罗马军团鱼鳞阵体系）
     mozeer: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_centurion', count: 3 },     // Row 0 前卫 = 精锐罗马百夫长
-            { type: 'legionary', count: 4 },           // Row 1 中军主力突破 = 罗马军团步兵
-            { type: 'skirmisher', count: 2 },          // Row 2 尾收压阵 = 掷矛手
+            { type: 'legionary', count: 3 },
+            { type: 'elite_centurion', count: 4 },
+            { type: 'centurion', count: 2 },
         ],
     },
-    // 阿尔萨斯（尤里安，套用罗马军团鱼鳞阵体系）
     aersasi: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_centurion', count: 3 },     // Row 0 前卫 = 精锐罗马百夫长
-            { type: 'legionary', count: 4 },           // Row 1 中军主力突破 = 罗马军团步兵
-            { type: 'skirmisher', count: 2 },          // Row 2 尾收压阵 = 掷矛手
+            { type: 'legionary', count: 3 },
+            { type: 'elite_centurion', count: 4 },
+            { type: 'centurion', count: 2 },
+        ],
+    },
+    qiliqiya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'legionary', count: 3 },
+            { type: 'elite_centurion', count: 4 },
+            { type: 'centurion', count: 2 },
         ],
     },
     // 阿契美尼德·波斯帝国军团（大流士 · 鹤翼阵 2+4+3：不死军长矛步兵 2 + 萨珊萨瓦尔铁骑主力 4 + 不死军复合弓箭手 3）
@@ -434,13 +682,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 3 },
         ],
     },
-    // 拜占庭帝国·君士坦丁堡（弗拉基米尔 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 复合弓手 2）
+    // 拜占庭帝国·君士坦丁堡（巴西尔二世 / 福卡斯 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 复合弓手 2）
     baizanting: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3人
             { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4人
             { type: 'composite_bowman', count: 2 },  // Row 2 尾收压阵 = 复合弓手 2人
+        ],
+    },
+    kelite: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'cataphract', count: 3 },
+            { type: 'elite_cataphract', count: 4 },
+            { type: 'composite_bowman', count: 2 },
         ],
     },
     // 陶里卡·赫尔松涅斯（拜占庭克里米亚军区要塞）
@@ -452,22 +708,146 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },
         ],
     },
-    // 达尔达尼亚·达达尼尔（海峡要冲）
+    // 达尔达尼亚·特洛伊（赫克托耳 · 古典希腊重骑战阵）
     teluoyi: {
-        formationMode: 'fish_scale',
+        formationMode: 'square',
         slots: [
-            { type: 'cataphract', count: 3 },
-            { type: 'elite_cataphract', count: 4 },
-            { type: 'composite_bowman', count: 2 },
+            { type: 'hippeus', count: 3 },
+            { type: 'hippeus', count: 3 },
+            { type: 'hippeus', count: 3 },
         ],
     },
-    // 马耳他·圣约翰医院骑士团（瓦莱特）
+    // 马耳他·圣约翰医院骑士团（瓦莱特 · 十字军骑士战阵）
     maerta_qishi: {
+        formationMode: 'square',
+        slots: [
+            { type: 'crusader_knight', count: 3 },
+            { type: 'crusader_knight', count: 3 },
+            { type: 'crusader_knight', count: 3 },
+        ],
+    },
+    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 紫杉长弓兵精锐军团（三角阵 2+3+4：双手剑士前卫 2 + 长弓兵 3 + 精锐长弓兵主力 4）
+    aquidan: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'two_handed_swordsman', count: 2 }, // Row 0 尖刀坚壁 = 双手剑士 2人
+            { type: 'longbowman', count: 3 },           // Row 1 齐射中坚 = 不列颠长弓兵 3人
+            { type: 'longbowman_elite', count: 4 },     // Row 2 底边主力齐射 = 不列颠长弓兵精锐 4人
+        ],
+    },
+    anggelu: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'two_handed_swordsman', count: 2 },
+            { type: 'longbowman', count: 3 },
+            { type: 'longbowman_elite', count: 4 },
+        ],
+    },
+    // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯 掷斧兵与圣骑士精锐军团（鹤翼阵 2+4+3：掷斧兵前哨 2 + 精锐掷斧兵主力 4 + 游侠圣骑 3）
+    jialuolin: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'throwing_axeman', count: 2 },       // Row 0 前哨飞斧破盾 = 法兰克掷斧兵 2人
+            { type: 'elite_throwing_axeman', count: 4 }, // Row 1 狂暴突贯主力 = 法兰克掷斧兵精锐 4人
+            { type: 'paladin', count: 3 },               // Row 2 中军后排圣骑驰援 = 游侠圣骑士 3人
+        ],
+    },
+    falanji: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'throwing_axeman', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
+            { type: 'paladin', count: 3 },
+        ],
+    },
+    gaolu: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'throwing_axeman', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
+            { type: 'paladin', count: 3 },
+        ],
+    },
+    aermolika: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'throwing_axeman', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
+            { type: 'paladin', count: 3 },
+        ],
+    },
+    // 西班牙·熙德 / 费尔南多三世 / 阿方索诸王 征服者火枪骑兵精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 征服者 3 + 精锐征服者主力 4）
+    balunxiya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },     // Row 0 尖刀坚壁 = 重装长枪兵 2人（大方阵前排抗线）
+            { type: 'conquistador', count: 3 },       // Row 1 齐射中坚 = 西班牙征服者 3人
+            { type: 'elite_conquistador', count: 4 }, // Row 2 底边主力齐射 = 西班牙征服者精锐 4人
+        ],
+    },
+    guadaer: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+    },
+    kasidiliya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+    },
+    leangongguo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+    },
+    xigete: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+    },
+    alagong: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_spearman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+    },
+    // 北欧与维京·阿布萨隆 / 卡尔九世 / 比尔格雅尔 狂战士精锐军团（鱼鳞阵 3+4+2：狂战士前卫 3 + 精锐狂战士主力 4 + 弓兵 2）
+    danmai: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'cataphract', count: 3 },
-            { type: 'elite_cataphract', count: 4 },
-            { type: 'composite_bowman', count: 2 },
+            { type: 'berserk', count: 3 },       // Row 0 前卫冲锋 = 维京狂战士 3人
+            { type: 'elite_berserk', count: 4 }, // Row 1 中军狂暴主力 = 维京狂战士精锐 4人
+            { type: 'bowman', count: 2 },        // Row 2 尾收吊射掩护 = 弓兵 2人
+        ],
+    },
+    ruidian_yota: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'berserk', count: 3 },
+            { type: 'elite_berserk', count: 4 },
+            { type: 'bowman', count: 2 },
+        ],
+    },
+    ruidian_si: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'berserk', count: 3 },
+            { type: 'elite_berserk', count: 4 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // 扎扬王朝·特莱姆森（亚格姆拉森 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
