@@ -43,12 +43,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
         ],
     },
-    // 曹魏·曹操军团（鹤翼阵 2+4+3：魏虎豹骑 2 + 魏虎豹骑精锐 4 + 中国诸葛弩 3）
+    // 曹魏·曹操军团（鹤翼阵 2+4+3：魏虎骑兵 2 + 魏虎骑兵精锐 4 + 中国诸葛弩 3）
     cao_d: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏虎豹骑 2人
-            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏虎豹骑精锐 4人
+            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏虎骑兵 2人
+            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏虎骑兵精锐 4人
             { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 中国诸葛弩 3人
         ],
     },
@@ -207,12 +207,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦卫精锐军团（鱼鳞阵 3+4+2：白毦卫前卫 3 + 精锐白毦卫主力 4 + 诸葛弩 2）
+    // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白羽卫兵精锐军团（鱼鳞阵 3+4+2：白羽卫兵前卫 3 + 精锐白羽卫兵主力 4 + 诸葛弩 2）
     shu: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀白毦卫 3人
-            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 蜀白毦卫精锐 4人
+            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀白羽卫兵 3人
+            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 蜀白羽卫兵精锐 4人
             { type: 'chukonu', count: 2 },                   // Row 2 尾收支援 = 诸葛弩 2人
         ],
     },

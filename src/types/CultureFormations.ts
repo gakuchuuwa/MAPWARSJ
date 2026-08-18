@@ -114,7 +114,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐辽刀突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
-    BASHU:        'fish_scale',   // 川蜀：白毦卫前卫(3) + 精锐白毦卫主力(4) + 诸葛弩后排(2)
+    BASHU:        'fish_scale',   // 川蜀：白羽卫兵前卫(3) + 精锐白羽卫兵主力(4) + 诸葛弩后排(2)
     TIBET:        'fish_scale',   // 青藏：答剌罕前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
@@ -1026,15 +1026,15 @@ export const HEXI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 8. 川蜀 白毦卫+精锐白毦卫+诸葛弩（鱼鳞阵 3+4+2：白毦卫前卫 + 精锐白毦卫突击主力 + 诸葛弩后排支援） */
+/** 8. 川蜀 白羽卫兵+精锐白羽卫兵+诸葛弩（鱼鳞阵 3+4+2：白羽卫兵前卫 + 精锐白羽卫兵突击主力 + 诸葛弩后排支援） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 白毦卫 3人
-            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白毦卫 4人
+            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 白羽卫兵 3人
+            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白羽卫兵 4人
             { type: 'chukonu', count: 2 }                    // Row 2 尾收支援 = 诸葛弩 2人
         ]
     }

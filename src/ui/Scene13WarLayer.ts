@@ -97,7 +97,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elephant: { name: '象兵', cls: 'melee', sz: 1.6, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
     eastern_swordsman: { name: '东方剑士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
     hei_kuang: { name: '南北朝黑光铠骑兵', cls: 'cav', sz: 1, hp: 60, atk: 11, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    fire_archer: { name: '吴火箭手', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 3, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
+    fire_archer: { name: '吴火焰弓箭手', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 3, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
     iron_pagoda: { name: '女真铁浮屠', cls: 'cav', sz: 1, hp: 115, atk: 12, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.15, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     kipchak: { name: '库曼钦察弓骑', cls: 'cav', sz: 1, kite: 60, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
     longbowman_elite: { name: '不列颠长弓兵精锐', cls: 'ranged', sz: 1, hp: 40, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
@@ -105,24 +105,24 @@ export const WAR_TYPES: Record<string, WarType> = {
     cav_archer: { name: '骑射手', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
     light_riders: { name: '轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     chukonu: { name: '中国诸葛弩', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    white_feather_guard: { name: '蜀白毦卫', cls: 'melee', sz: 1, hp: 95, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 6 }, armorTags: [1, 19, 31] },
-    elite_white_feather_guard: { name: '蜀白毦卫精锐', cls: 'melee', sz: 1, hp: 100, atk: 8, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 7 }, armorTags: [1, 19, 31] },
+    white_feather_guard: { name: '蜀白羽卫兵', cls: 'melee', sz: 1, hp: 95, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 6 }, armorTags: [1, 19, 31] },
+    elite_white_feather_guard: { name: '蜀白羽卫兵精锐', cls: 'melee', sz: 1, hp: 100, atk: 8, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 7 }, armorTags: [1, 19, 31] },
     rattan_archer: { name: '越南藤弓兵', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     elite_fire_lancer: { name: '南宋火矛手精锐', cls: 'melee', sz: 1, hp: 85, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 15, 8: 15, 16: 12, 21: 1, 30: 12 }, armorTags: [29, 1, 31, 23] },
-    elite_fire_archer: { name: '吴火箭手精锐', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 400, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 4, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
+    elite_fire_archer: { name: '吴火焰弓箭手精锐', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 400, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 4, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
     elite_chukonu: { name: '中国诸葛弩精锐', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     tarkan: { name: '匈奴答剌罕骑兵', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 8, 13: 12, 22: 8, 26: 10 }, armorTags: [8, 19, 31] },
     elite_tarkan: { name: '匈奴答剌罕骑兵精锐', cls: 'cav', sz: 1, hp: 150, atk: 11, meleeArmor: 1, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 10, 13: 12, 22: 10, 26: 10 }, armorTags: [8, 19, 31] },
     elite_guardsman: { name: '近卫军精锐', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     steppe_lancer: { name: '草原枪骑兵', cls: 'cav', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     ninja: { name: '日本忍者', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
-    liao_dao: { name: '契丹辽刀', cls: 'melee', sz: 1, hp: 75, atk: 9, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
-    elite_liao_dao: { name: '契丹辽刀精锐', cls: 'melee', sz: 1, hp: 85, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    liao_dao: { name: '契丹辽刀手', cls: 'melee', sz: 1, hp: 75, atk: 9, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_liao_dao: { name: '契丹辽刀手精锐', cls: 'melee', sz: 1, hp: 85, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
     fire_lancer: { name: '南宋火矛手', cls: 'melee', sz: 1, hp: 65, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 21: 1, 30: 4 }, armorTags: [29, 1, 31, 23] },
     swordsman: { name: '剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     kamayuk: { name: '印加枪兵长', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 1, pierceArmor: 0, rng: 40, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 20, 8: 8, 30: 6 }, armorTags: [1, 19, 31] },
     xianbei_raider: { name: '鲜卑掠骑兵', cls: 'cav', sz: 1, hp: 30, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 1.8, spd: 130, dmgType: 'pierce', bonus: { 1: 1, 27: 3 }, armorTags: [28, 15, 8, 19, 31] },
-    tiger_rider: { name: '魏虎豹骑', cls: 'cav', sz: 1, hp: 110, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
+    tiger_rider: { name: '魏虎骑兵', cls: 'cav', sz: 1, hp: 110, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
     jian_swordsman: { name: '华夏刀剑手', cls: 'melee', sz: 1, hp: 70, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 15: 4, 21: 2 }, armorTags: [1, 31, 29, 19] },
     imperial_skirmisher: { name: '帝王掷矛手', cls: 'ranged', sz: 1, hp: 35, atk: 4, meleeArmor: 0, pierceArmor: 5, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 5, 27: 4, 28: 3, 35: 3 }, armorTags: [15, 31, 38] },
     war_elephant: { name: '波斯战象', cls: 'melee', sz: 1, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
@@ -239,7 +239,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_temple_guard: { name: '穆伊斯卡神庙守卫精锐', cls: 'melee', sz: 1, hp: 115, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 16: 6, 21: 2, 30: 6 }, armorTags: [1, 19, 31, 29] },
     elite_teutonic_knight: { name: '条顿武士精锐', cls: 'melee', sz: 1, hp: 110, atk: 17, meleeArmor: 10, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 4 }, armorTags: [1, 19, 31] },
     elite_throwing_axeman: { name: '法兰克掷斧兵精锐', cls: 'ranged', sz: 1, hp: 70, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
-    elite_tiger_cavalry: { name: '魏虎豹骑精锐', cls: 'cav', sz: 1, hp: 125, atk: 13, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 7 }, armorTags: [8, 19, 31] },
+    elite_tiger_cavalry: { name: '魏虎骑兵精锐', cls: 'cav', sz: 1, hp: 125, atk: 13, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 7 }, armorTags: [8, 19, 31] },
     elite_urumi_swordsman: { name: '达罗毗荼软剑士精锐', cls: 'melee', sz: 1, hp: 65, atk: 11, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 3 }, armorTags: [1, 19, 31] },
     elite_war_chariot: { name: '双轮战车精锐', cls: 'cav', sz: 1, hp: 125, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
     elite_war_dog: { name: '战犬精锐', cls: 'melee', sz: 1, hp: 55, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
@@ -254,7 +254,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     genoese_crossbowman: { name: '意大利热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 50, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
     ghulam: { name: '印度斯坦古拉姆', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 5, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     greek_noble_cavalry: { name: '希腊贵族骑兵', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    grenadier: { name: '女真掷弹兵', cls: 'ranged', sz: 1, hp: 40, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 9, 17: 3, 21: 4, 27: 1 }, armorTags: [15, 19, 31, 23] },
+    grenadier: { name: '掷弹兵', cls: 'ranged', sz: 1, hp: 40, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 9, 17: 3, 21: 4, 27: 1 }, armorTags: [15, 19, 31, 23] },
     guecha_warrior: { name: '穆伊斯卡格查勇士', cls: 'ranged', sz: 1, hp: 55, atk: 6, meleeArmor: 0, pierceArmor: 3, rng: 120, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 3, 27: 2, 28: 2 }, armorTags: [15, 31, 38, 19] },
     hand_cannoneer: { name: '手炮手', cls: 'ranged', sz: 1, hp: 40, atk: 17, meleeArmor: 1, pierceArmor: 0, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 10, 17: 2, 27: 1 }, armorTags: [15, 23, 31] },
     heavy_rocket_cart: { name: '重型火箭车', cls: 'ranged', aoe: true, sz: 1, hp: 65, atk: 5, meleeArmor: 0, pierceArmor: 8, rng: 320, reload: 5.35, spd: 50, dmgType: 'melee', bonus: { 11: 12, 20: 2, 22: 7, 26: 7, 37: 5 }, armorTags: [20, 31, 23] },
@@ -287,7 +287,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     militia: { name: '民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     monaspa: { name: '格鲁吉亚莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
-    mounted_trebuchet: { name: '契丹巨型投石机', cls: 'cav', sz: 1, kite: 60, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
+    mounted_trebuchet: { name: '骆驼投石机', cls: 'cav', sz: 1, kite: 60, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
     obuch: { name: '波兰奥布奇战锤兵', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 2 }, armorTags: [1, 19, 31] },
     onager: { name: '中型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 60, atk: 50, meleeArmor: 0, pierceArmor: 7, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 45, 20: 12, 37: 50 }, armorTags: [20, 31] },
     organ_gun: { name: '葡萄牙风琴炮', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 2, pierceArmor: 4, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
@@ -2151,6 +2151,9 @@ export class Scene13WarLayer {
     private techYear: number = GameConfig.TIME.TIMELINE_START_YEAR;
     /** [军事科技] 年份 getter（由 GameAppCombatHooks 注入；解耦 TimeSystem） */
     private techYearGetter: (() => number) | null = null;
+    /** [性能] getSideTechs 的按年缓存（面板每帧调，科技只随跨年变） */
+    private techListYear = Number.NaN;
+    private techListCache: { attacker: MilitaryTech[]; defender: MilitaryTech[] } | null = null;
     /** [军事科技] 双方兵种分表（key → 基础档 + 该方已解锁科技；🔴 绝不原地改 WAR_TYPES，否则逐场累积爆表） */
     private techStats: [Map<string, WarType & { sight?: number }>, Map<string, WarType & { sight?: number }>] = [new Map(), new Map()];
     /** 成批增援冷却（秒），一次只补一边所以单值 */
@@ -2269,10 +2272,17 @@ export class Scene13WarLayer {
         //    2026-08-18 曾返回精简的 {id,name}，`summarizeTechEffects` 遍历 t.effects 当场抛
         //    `t.effects is not iterable`，整个 updateStats 中断 → 面板什么都不显示（主人实锤「科技呢，去哪了」）。
         //    当时用 `as never` 把类型错误压掉了，tsc 不报、运行时每帧炸。别再压类型。
-        return {
-            attacker: unlockedTechs(year, this.sideCulture[0] as RegionType),
-            defender: unlockedTechs(year, this.sideCulture[1] as RegionType),
-        };
+        // 🔴 [性能 2026-08-18] 面板每帧都调这里，而 unlockedTechs 每次都 filter 一遍并**新建数组**。
+        //    科技只随「跨年」变，按年缓存即可 —— 每帧两次数组分配纯属白烧（600 兵的战场上
+        //    每一点每帧开销都要算清，见 perfStep/perfRender 探针）。
+        if (this.techListYear !== year || !this.techListCache) {
+            this.techListYear = year;
+            this.techListCache = {
+                attacker: unlockedTechs(year, this.sideCulture[0] as RegionType),
+                defender: unlockedTechs(year, this.sideCulture[1] as RegionType),
+            };
+        }
+        return this.techListCache;
     }
 
     /** 战斗开始 → 初始化出兵口（编制槽位派生）+ 开始加载素材 */
@@ -3645,7 +3655,8 @@ export class Scene13WarLayer {
                 if (SUICIDE_TYPES.has(m.key) && close && m.hp > 0) {
                     this.explode(m.x, m.y);
                     // 自爆兵 key 出生时已校验在 WAR_TYPES（原 petard 兜底不会触发；statsFor 内部有 light_infantry 防崩）
-                    const shooter = this.statsFor(m.key, m.f);
+                    // [性能] 复用本轮已取的 wt，别再查一遍分表（同一循环内同一个兵，结果必然相同）
+                    const shooter = wt;
                     this.splash(m, 75, shooter, 1.0);
                     m.hp = 0;
                     this.pushCorpse(m);
@@ -3719,7 +3730,7 @@ export class Scene13WarLayer {
                 // 总加成：把战略层强弱（将领/精锐/武将技/文化/运气）带进每一刀
                 // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
-                const shooter = this.statsFor(m.key, m.f);
+                const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
                 const dps = dmgVs(shooter, target) / shooter.reload;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
