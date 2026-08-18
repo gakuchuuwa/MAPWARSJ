@@ -1457,11 +1457,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/LINGNAN/__闲置__LINGNAN_19.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 30
-        },
         "/assets/xianqin/yan_leyi.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -4157,11 +4152,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_57.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": 29
-        },
         "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_22.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -6592,25 +6582,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 33
         },
-        "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/WEST_ASIA/sumeier_zhajixi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -30
-        },
-        "/assets/LINGNAN/__闲置__LINGNAN_18.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 32
-        },
-        "/assets/LINGNAN/__多余__LINGNAN_22.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/LINGNAN/panyao_pandaxiao.png": {
             "scale": 0.99,
