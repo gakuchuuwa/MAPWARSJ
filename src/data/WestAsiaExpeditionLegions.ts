@@ -34,6 +34,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
     abasi: { name: '黑衣卫', tier: 2 },          // 巴格达·曼苏尔：黑衣大食近卫，避「阿拔斯」撞将名
     bendou: { name: '阿克里泰', tier: 2 },         // 特拉布宗·阿历克塞：科穆宁边防军史载专名，长期抗突厥袭扰有实绩
+    saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
     dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团，底比斯即阿蒙信仰中心；

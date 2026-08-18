@@ -568,6 +568,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_basarab_i': 14,                                 // 巴萨拉布 · mengtainiya · 布加勒斯特
     'gen_black_prince': 14,                              // 黑太子 · aquidan · 波尔多
     'gen_cangrande': 14,                                 // 坎格兰德 · bohepingyuan · 维罗纳
+    'safuyi_ameidi': 14,                                  // 阿梅迪奥 · safuyi · 尚贝里
     'talanduo_aqita': -4,                                // 阿契塔 · talanduo · 塔兰托
     'gen_charles_i_naples': 13,                          // 卡洛 · kanpaniya · 那不勒斯
     'bogendi_chali': 15,                                 // 大胆查理 · bogendi · 第戎
@@ -673,6 +674,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_gastold': 15,                                   // 加斯托尔德 · bolisiya · 布列斯特
     'gen_gediminas': 14,                                 // 格迪米纳斯 · litaowan · 维尔纽斯
     'gen_grigory_donets': 17,                            // 多涅茨 · siluoboda · 哈尔科夫
+    'bosi_puluosi_liukong': -4,                           // 琉孔一世 · bosi_puluosi · 潘提卡彭
     'gen_haci_giray': 15,                                // 哈吉格来 · kelimiya · 卡法
     'gen_jogaila': 15,                                   // 雅盖沃 · bolan · 华沙
     'gen_krum': 9,                                      // 克鲁姆 · saierdika · 索非亚
@@ -835,6 +837,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ayoubu_salaheding': 12,                             // 萨拉赫丁 · ayoubu · 阿勒颇
     'beileinisi_tuolemiershi': -3,                       // 托勒密二世 · beileinisi · 贝雷尼斯
     'bendou_alikesai': 13,                               // 阿历克塞 · bendou · 特拉布宗
+    'saipulusi_juyi': 12,                                 // 居伊 · saipulusi · 尼科西亚
     'bendou_d_mitelidati': -1,                           // 密特里达梯 · bendou_d · 阿马西亚
     'bitiniya_diaoduoer': 13,                            // 狄奥多尔 · bitiniya · 尼凯亚
     'dedan_dedanwang': -6,                               // 卡比里尔 · dedan · 泰马

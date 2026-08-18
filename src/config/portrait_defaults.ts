@@ -181,8 +181,15 @@ function assertCultureCirclePoolsSingleFolder(): void {
     if (!import.meta.env?.DEV) return;
     for (const region of REGION_ORDER) {
         const prefix = cultureCircleFolderPrefix(region);
+        // 别名夹（GREEK→LATIN、NUERGAN→NORTHEAST）是合法池来源：本区夹为空时 collectRegionPortraitPool 会用别名夹
+        const aliasPrefix = REGION_FOLDER_ALIASES[region]
+            ? cultureCircleFolderPrefix(REGION_FOLDER_ALIASES[region]!)
+            : null;
         for (const p of REGION_PORTRAIT_POOLS[region]) {
-            if (!p.startsWith(prefix)) {
+            const n = normalizePortraitWebPath(p).toLowerCase();
+            const ok = n.startsWith(prefix.toLowerCase())
+                || (aliasPrefix != null && n.startsWith(aliasPrefix.toLowerCase()));
+            if (!ok) {
                 console.warn(`[portrait] 文化区 ${region} 池混入非本夹路径: ${p}`);
             }
         }
