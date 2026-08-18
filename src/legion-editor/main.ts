@@ -2034,9 +2034,9 @@ function startCanvasPreview(): void {
             addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
             addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
             addUnitWithRot(1.5 * spacingX, 0, t1, s1, '');
-            // 后2 (r=2, c=-0.5, 0.5)
-            addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
-            addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
+            // 后2 (r=2, c=-1, 1)
+            addUnitWithRot(-1.0 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(1.0 * spacingX, spacingY, t2, s2, '');
         } else if (mode === 'crane_wing') {
             const t0 = slots[0]?.type || 'swordsman';
             const s0 = (slots[0]?.scale ?? 1.0) * pScale;
@@ -2045,9 +2045,9 @@ function startCanvasPreview(): void {
             const t2 = slots[2]?.type || 'archer';
             const s2 = (slots[2]?.scale ?? 1.0) * pScale;
 
-            // 前2 (r=0, c=-0.5, 0.5)
-            addUnitWithRot(-0.5 * spacingX, -spacingY, t0, s0, '');
-            addUnitWithRot(0.5 * spacingX, -spacingY, t0, s0, '');
+            // 前2 (r=0, c=-1, 1)
+            addUnitWithRot(-1.0 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(1.0 * spacingX, -spacingY, t0, s0, '');
             // 中4 (r=1, c=-1.5, -0.5, 0.5, 1.5)
             addUnitWithRot(-1.5 * spacingX, 0, t1, s1, '');
             addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');

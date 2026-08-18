@@ -714,10 +714,10 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
     fish_scale: [
         { col: 0, row: 0, cols: 3 }, { col: 1, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
         { col: 0, row: 1, cols: 4 }, { col: 1, row: 1, cols: 4 }, { col: 2, row: 1, cols: 4 }, { col: 3, row: 1, cols: 4 },
-        { col: 0, row: 2, cols: 2 }, { col: 1, row: 2, cols: 2 },
+        { col: 0, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
     ],
     crane_wing: [
-        { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
+        { col: 0, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
         { col: 0, row: 1, cols: 4 }, { col: 1, row: 1, cols: 4 }, { col: 2, row: 1, cols: 4 }, { col: 3, row: 1, cols: 4 },
         { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
     ],

@@ -584,59 +584,6 @@ export const TACTICAL_SKILL_TAGS: readonly TacticalSkillTagEntry[] = [
     },
 ] as const;
 
-/** @deprecated archetype → 已退役 tac_* ID，仅供旧数据迁移 */
-export const ARCHETYPE_TO_TACTICAL: Record<
-    SkillArchetype,
-    { famous: string; ordinary: string }
-> = {
-    steadfast_counter: { famous: 'tac_01', ordinary: 'tac_06' },
-    mobile_raid: { famous: 'tac_02', ordinary: 'tac_07' },
-    assault_break: { famous: 'tac_03', ordinary: 'tac_08' },
-    stratagem_weaken: { famous: 'tac_04', ordinary: 'tac_09' },
-    siege_hold: { famous: 'tac_05', ordinary: 'tac_10' },
-};
-
-/**
- * 【历史迁移蓝图 · 2026-07-03】旧 archetype → ts_xxx
- *
- * 已退役 tac_* → ts_xxx 的迁移总图。迁移已完成，仅保留查错用途。
- *
- * engineReady = 该 v1 技当前是否已在 BattleField 引擎生效。
- * 迁移已全部完成（2026-07-03），禁止据此给新武将配技。
- */
-export const ARCHETYPE_TO_V1_TACTICAL: Record<
-    SkillArchetype,
-    {
-        famous: { id: string; displayName: string; engineReady: boolean; reason: string };
-        ordinary: { id: string; displayName: string; engineReady: boolean; reason: string };
-    }
-> = {
-    // 稳健防反：稳字当头，消方差 / 战后恢复
-    steadfast_counter: {
-        famous: { id: 'ts_014', displayName: '步步为营', engineReady: true, reason: 'luck 锁 1.0，稳扎稳打不浪' },
-        ordinary: { id: 'ts_035', displayName: '休养生息', engineReady: true, reason: '战后恢复 50%，防反续航' },
-    },
-    // 机动奇袭：先手削敌真实兵
-    mobile_raid: {
-        famous: { id: 'ts_022', displayName: '攻其不备', engineReady: true, reason: '开局削敌 20%' },
-        ordinary: { id: 'ts_021', displayName: '先声夺人', engineReady: true, reason: '开局削敌 10%' },
-    },
-    // 突击破阵：决死博命方差
-    assault_break: {
-        famous: { id: 'ts_013', displayName: '背水一战', engineReady: true, reason: '无条件 luck[0.65,1.35]，主动博命' },
-        ordinary: { id: 'ts_018', displayName: '死地后生', engineReady: true, reason: '劣势时 luck[0.5,1.5]，绝境搏杀' },
-    },
-    // 智将谋略：否决敌技 / 断敌恢复
-    stratagem_weaken: {
-        famous: { id: 'ts_042', displayName: '料敌机先', engineReady: true, reason: '完全否决敌战术技' },
-        ordinary: { id: 'ts_039', displayName: '斩草除根', engineReady: true, reason: '我败令胜方战后不恢复，削敌根本' },
-    },
-    // 死守殿后：胜则省兵 / 败则咬人
-    siege_hold: {
-        famous: { id: 'ts_031', displayName: '游刃有余', engineReady: true, reason: '胜方战损 -30%，守城名将省兵存活' },
-        ordinary: { id: 'ts_033', displayName: '困兽犹斗', engineReady: true, reason: '败时胜方战损 ×1.5，边陲死守让敌肉疼' },
-    },
-};
 
 /**
  * 【v1 战术技 → 风格映射 · 2026-07-03】按技能语义归类（非机械按 series 字段）
@@ -742,10 +689,6 @@ export function getTacticalSkillTags(tacticalId: string): TacticalSkillTagEntry 
     return TACTICAL_SKILL_TAGS.find((e) => e.tacticalId === tacticalId) ?? null;
 }
 
-/** 品阶 + 风格 → 战术 id */
-export function resolveTacticalId(tier: GeneralTier, archetype: SkillArchetype): string {
-    return ARCHETYPE_TO_TACTICAL[archetype][tier === 'famous' ? 'famous' : 'ordinary'];
-}
 
 /**
  * @deprecated 旧 archetype 批量分配提示已停用。
