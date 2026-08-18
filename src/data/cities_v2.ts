@@ -1098,7 +1098,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     { id: 'city_fanyang', name: '范阳', factionId: 'zhuozhou', lat: 39.48, lng: 115.98, type: 'medium_city', troops: 30000, region: 'NORTH' },
-    { id: 'city_chenjun', name: '新蔡', factionId: 'cai', lat: 32.75, lng: 114.98, type: 'small_city', troops: 30000, region: 'CENTRAL' },
+    { id: 'city_chenjun', name: '新蔡', factionId: 'cai', lat: 32.75, lng: 114.98, type: 'small_city', troops: 20000, region: 'NORTH' },
 
 
     { id: 'city_qufu', name: '曲阜', factionId: 'kong_d', lat: 35.6, lng: 116.98, type: 'small_city', troops: 30000, region: 'CENTRAL' },

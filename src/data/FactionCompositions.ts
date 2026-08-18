@@ -101,159 +101,159 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
         ],
     },
-    // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
+    // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     yanchuan_d: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     sizhou: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     yingzhou_d: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     zaoyang_d: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     fengzhou: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     hezhou: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     changshaguo: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     shenshi: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     luoping: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     // 北宋·赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 等火矛手军团（鱼鳞阵 3+4+2）
-    // 2026-08-18 主人定「所有宋武将统一此阵」：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2
+    // 2026-08-18 主人定「所有宋武将统一此阵」：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2
     song: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     heng1: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     changshan: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     zhai_han: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     yanzhou: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     huan: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     didao: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     qing: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     xiangzhou: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     tingzhou_d: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
-            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
-            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
+            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
+            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
+            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）

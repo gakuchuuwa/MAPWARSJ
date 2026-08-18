@@ -74,4 +74,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     // 武川镇·宇文泰：边镇骑射出身「武川铁骑」；不可代称六镇总称。档 T3（风土，不抬）
     yuwen: { name: '武川铁骑', tier: 3 },
     ssangseong: { name: '和宁戍骑', tier: 4 },
+    cai: { name: '汲桑所与', tier: 2 },
 };

@@ -1117,11 +1117,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -45
         },
-        "/assets/HEXI/guiyi_caoyijin.png": {
-            "scale": 0.81,
-            "offsetX": 10,
-            "offsetY": -30
-        },
         "/assets/HEXI/helian_helianbobo.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -3587,11 +3582,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 23,
             "offsetY": 14
         },
-        "/assets/HEXI/__闲置__CENTRAL_21.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/BASHU/kui_gongsunshu.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -4178,7 +4168,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 22
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_30.png": {
-            "scale": 1,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -17
         },
@@ -5241,11 +5231,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 14
-        },
-        "/assets/LATIN/buni_hanniba.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 24
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_109.png": {
             "scale": 0.91,
@@ -6603,7 +6588,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 22
         },
         "/assets/LATIN/Gemini_Generated_Image_19lgvf19lgvf19lg.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -6613,7 +6598,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/LATIN/Gemini_Generated_Image_6q0cou6q0cou6q0c.png": {
-            "scale": 1,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 18
         },
@@ -6641,6 +6626,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/LATIN/bosi_puluosi_liukongyishi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/LATIN/saipulusi_juyi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LATIN/__闲置__LATIN_15.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_57.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_56.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/WEST_ASIA/Gemini_Generated_Image_mpqiaumpqiaumpqi.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/WEST_ASIA/osman_muhanmodeershi.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/HEXI/__闲置__HEXI_18.png": {
+            "scale": 0.81,
+            "offsetX": 10,
+            "offsetY": -30
+        },
+        "/assets/HEXI/guiyi_caoyijin.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
