@@ -26,6 +26,7 @@ import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
+import type { MilitaryTech } from '../data/MilitaryTechs';
 import { GameConfig } from '../config/GameConfig';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
@@ -2257,17 +2258,25 @@ export class Scene13WarLayer {
      * [军事科技] 双方各自已解锁的科技名（13 战斗面板「科技行」用；表顺序）。
      * 每方按自己文化区 + 当前年份算——同一时刻双方科技树可能不同（门控），观众一目了然。
      */
-    public getSideTechs(): { attacker: TechBrief[]; defender: TechBrief[] } | null {
+    public getSideTechs(): { attacker: MilitaryTech[]; defender: MilitaryTech[] } | null {
         if (!this.active && !this.lingering) return null;
         const year = this.techYearGetter?.() ?? this.techYear;
-        const brief = (f: number): TechBrief[] =>
-            unlockedTechs(year, this.sideCulture[f] as RegionType).map((t) => ({ id: t.id, name: t.name }));
-        return { attacker: brief(0), defender: brief(1) };
+        // 🔴 必须返回**完整科技对象**：面板要用 `effects` 汇总数值。
+        //    2026-08-18 曾返回精简的 {id,name}，`summarizeTechEffects` 遍历 t.effects 当场抛
+        //    `t.effects is not iterable`，整个 updateStats 中断 → 面板什么都不显示（主人实锤「科技呢，去哪了」）。
+        //    当时用 `as never` 把类型错误压掉了，tsc 不报、运行时每帧炸。别再压类型。
+        return {
+            attacker: unlockedTechs(year, this.sideCulture[0] as RegionType),
+            defender: unlockedTechs(year, this.sideCulture[1] as RegionType),
+        };
     }
 
     /** 战斗开始 → 初始化出兵口（编制槽位派生）+ 开始加载素材 */
     public start(init: Scene13WarInit): void {
         this.diagT0 = performance.now();
+        this.perfStep = [];
+        this.perfRender = [];
+        this.perfFrames = 0;
         this.diagEvents = [];
         this.diagSent = false;
         this.diagPush('start', {
@@ -2502,6 +2511,14 @@ export class Scene13WarLayer {
      * 仅 DEV 生效；定位完连同 diag* 一起删。
      */
     private diagT0 = 0;
+    /**
+     * [性能探针 2026-08-18] 逐帧耗时采样（DEV，主人报「13 有点卡」）。
+     * 只累加不排序，落盘时才算分位；开销 ≈ 两次 performance.now()/帧，可忽略。
+     * 记 step（推演）与 render（绘制）分开，才能判断卡在算还是卡在画。
+     */
+    private perfStep: number[] = [];
+    private perfRender: number[] = [];
+    private perfFrames = 0;
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -2536,6 +2553,14 @@ export class Scene13WarLayer {
             why,
             totalSec: +((performance.now() - this.diagT0) / 1000).toFixed(2),
             field, pool,
+            // [性能探针] 逐帧耗时（ms）：step = 推演，render = 绘制。
+            // 60fps 的预算是 16.7ms/帧；两项之和逼近或超过它就是「卡」。
+            perf: {
+                frames: this.perfFrames,
+                onField: field[0] + field[1],
+                step: this.perfStat(this.perfStep),
+                render: this.perfStat(this.perfRender),
+            },
             events: this.diagEvents,
         });
         try {
@@ -3984,8 +4009,21 @@ export class Scene13WarLayer {
             this.diagPush('assetsReady');
         }
         const now = performance.now();
-        this.step(dt);
-        this.render();
+        // [性能探针 2026-08-18] step/render 分开计时，落盘时随诊断一起发（DEV 才采）
+        if (import.meta.env.DEV) {
+            const t0 = performance.now();
+            this.step(dt);
+            const t1 = performance.now();
+            this.render();
+            const t2 = performance.now();
+            this.perfStep.push(t1 - t0);
+            this.perfRender.push(t2 - t1);
+            this.perfFrames++;
+            if (this.perfStep.length > 1800) { this.perfStep.shift(); this.perfRender.shift(); }
+        } else {
+            this.step(dt);
+            this.render();
+        }
         this.last = now;
     }
 
@@ -4011,6 +4049,15 @@ export class Scene13WarLayer {
     }
 
     // ── 绘制：只画精灵 + 尸体（出兵口 UI 不渲染）──
+    /** 采样统计：返回 {n, avg, p50, p95, max}，全部保留两位 */
+    private perfStat(a: number[]): Record<string, number> | null {
+        if (!a.length) return null;
+        const s = [...a].sort((x, y) => x - y);
+        const sum = a.reduce((p, c) => p + c, 0);
+        const q = (f: number) => +s[Math.min(s.length - 1, Math.floor(s.length * f))].toFixed(2);
+        return { n: a.length, avg: +(sum / a.length).toFixed(2), p50: q(0.5), p95: q(0.95), max: +s[s.length - 1].toFixed(2) };
+    }
+
     private render(): void {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
