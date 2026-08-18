@@ -74,15 +74,37 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
     return CULTURE_MOVEMENT_CLASS[culture] ?? 'MIXED';
 }
 
-/** 20 文化区默认阵型（2026-08-18 用户拍板：四个阵型都是2个3个4个构成，文化主力兵种必须是4个，远程/弓骑尽量在后排）：
- *  鹤翼阵（crane_wing 2+4+3，9人，步骑远）：中原、北方、河西、朝鲜、青藏、斯拉夫、日耳曼、拉丁
- *  鱼鳞阵（fish_scale 3+4+2，9人，2近战+1远程）：日本、希腊、滇缅、奴儿干
- *  三角阵（triangle 2+3+4，9人，骑兵+弓骑）：草原、东北、中亚、西域
- *  雁行阵（echelon 4+3+2，9人，2远程+1近战）：川蜀、江南、岭南、西亚
+/**
+ * 【2026-08-18 主人定稿 · 20 文化区阵型规则】合规审计：`node scratch/audit_culture_formations.mjs`（现 0/20 违规）
+ *
+ *   ① 四个阵型都是 2/3/4 三排，**文化主力兵种必须占 4 档**（方阵 3+3+3 是主人指定的，不参与本规则）
+ *   ② 主力类型 → 阵型：远→雁行 / 步→鱼鳞 / 近战骑→鹤翼 / 弓骑→三角
+ *   ③ **象兵、火器不得当主力**（主人原话「太强大了」）
+ *   ④ 骑兵只有近战骑、远程骑（弓骑）两类，没有「冲锋骑兵」；按兵种样子归类，不按 ID 名字猜
+ *
+ * 🔴 这条规则**不是排版，是平衡改动**——4 档 = 军团 4/9 的兵，换谁占 4 档直接改战力。
+ *    落地时逐条实测过（`scratch/echelon_ab.mjs` / `echelon_ab2.mjs`，20 种子，新旧编制直接对打）：
+ *      川蜀  9:11  → 两种排法强度相当，白换
+ *      江南  0:20  → **变强**（精锐火焰弓 rng 400 从 3 档升 4 档，收益极大）
+ *      西亚 17:3   → **变弱**（复合弓本身弱，东方剑士从 4 降 3）。已用「近战留 3 档」的排法补偿，
+ *                    比直接降到 2 档少削一半（直接换是 20:0）。
+ *      岭南 20:0   → **变弱**，且这正是主人要的：旧数据让皮甲战象占 4 档，实测碾压合规版 20:0，
+ *                    坐实「象兵当主力太强大」。象已降到 3 档。
+ *    ⚠️ 后续若要拉平这些差，改 `GameConfig.CULTURE_COMBAT` 的六维系数，别回头动 4 档归属。
+ *
+ * ⚠️ 雁行的「4」在**最前排**（`LAYOUT.echelon` row0 = 离敌最近那排），所以远程主力文化是
+ *    「弓弩宽线在前齐射、近战居中接应、第二远程压阵」。这是雁行阵本义（张两翼、利弓弩），
+ *    不是排错了。若哪天要改成「远程在后」，只能把 4 挪到后排 —— 但那样格位就和三角完全相同，
+ *    五大阵型会少一个形状，**别顺手改**。
+ *
+ * 分组（2026-08-18 用户拍板：四个阵型都是2个3个4个构成，文化主力兵种必须是4个）：
+ *  鹤翼阵（crane_wing 2+4+3，4 档在中排，近战骑主力）：北方、河西、朝鲜、青藏、斯拉夫、日耳曼、拉丁
+ *  鱼鳞阵（fish_scale 3+4+2，4 档在中排，步兵主力）：日本、希腊、滇缅
+ *  三角阵（triangle 2+3+4，4 档在后排，弓骑主力）：草原、东北、中亚、西域、奴儿干
+ *  雁行阵（echelon 4+3+2，4 档在前排，远程主力）：中原、川蜀、江南、岭南、西亚
  */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
-    CENTRAL:      'crane_wing',   // 中原：刀剑手(2) + 虎豹铁骑主力(4) + 诸葛弩后排(3)
     NORTH:        'crane_wing',   // 北方：辽刀步兵(2) + 黑光铠重骑主力(4) + 诸葛弩后排(3)
     HEXI:         'crane_wing',   // 河西：精锐辽刀(2) + 黑光铠骑兵主力(4) + 诸葛弩后排(3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 精锐黑光铠主力(4) + 火焰弓后排(3)
@@ -95,15 +117,16 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤甲弓后排(2)
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
     DIANQIAN:     'fish_scale',   // 滇缅：战斗象前卫(3) + 爪刀勇士主力(4) + 步弓手后排(2)
-    NUERGAN:      'fish_scale',   // 奴儿干：答剌罕骑兵(3) + 鲜卑突骑主力(4) + 反曲弓后排(2)
 
     // 三角阵 (2+3+4，骑兵+弓骑纯骑体系：尖刀先锋2 + 冲击中坚3 + 弓骑/骑兵主力底边4)
     STEPPE:       'triangle',     // 草原：草原枪骑(2) + 怯薛重骑(3) + 精锐蒙古突骑主力(4)
     NORTHEAST:    'triangle',     // 东北：铁浮图前锋(2) + 虎豹骑中坚(3) + 钦察弓骑主力(4)
     CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
+    NUERGAN:      'triangle',     // 奴儿干：答剌罕(2) + 反曲长弓(3) + 鲜卑掠骑主力(4后)
     WESTERN:      'triangle',     // 西域：塞西亚斧骑(2) + 塞西亚弓骑(3) + 精锐塞西亚弓骑主力(4)
 
     // 雁行阵 (4+3+2，2远程+1近战：前排宽线肉盾4 + 第一远程中坚3 + 第二远程压阵2)
+    CENTRAL:      'echelon',      // 中原：精锐诸葛弩主力(4前) + 刀剑手(3中) + 虎豹骑压阵(2后)
     BASHU:        'echelon',      // 川蜀：白羽兵肉盾抗线(4) + 精锐诸葛弩(3) + 藤甲弓(2)
     JIANGNAN:     'echelon',      // 江南：剑士宽线抗线(4) + 精锐火焰弓(3) + 诸葛弩(2)
     LINGNAN:      'echelon',      // 岭南：装甲战象破防抗线(4) + 帝王掷矛手(3) + 精锐藤甲弓(2)
@@ -265,21 +288,27 @@ export const TANG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 宋朝·鹤翼阵（2+4+3）：辽刀(2) + 精锐火矛手(4) + 诸葛弩(3)
+ * 宋朝·雁行阵（4+3+2）：诸葛弩(4) + 辽刀(3) + 精锐火矛手(2)
+ * 2026-08-18 改：原「精锐火矛手 4 档主力」违反主人两条规矩（火器不得当主力 / 热兵器只许占 2 档）。
+ * 主力改诸葛弩 —— 宋以强弩立国（神臂弓、床子弩），弩手宽线齐射正是雁行本义。
  */
 export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'liao_dao', count: 2 },          // Row 0 步兵前锋 = 辽刀 2人
-    { type: 'elite_fire_lancer', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐火矛手 4人
-    { type: 'chukonu', count: 3 },           // Row 2 中军后排支援 = 诸葛弩 3人
+    { type: 'chukonu', count: 4 },           // Row 0 主力·宽线齐射 = 诸葛弩 4人
+    { type: 'liao_dao', count: 3 },          // Row 1 中军接应 = 辽刀 3人
+    { type: 'elite_fire_lancer', count: 2 }, // Row 2 压阵火器 = 精锐火矛手 2人（🔴 热兵器只许 2 档）
 ];
 
 /**
- * 大明·鱼鳞阵（3+4+2）：黑光铠骑兵(3) + 精锐火矛手(4) + 女真掷弹兵(2)
+ * 大明·鹤翼阵（2+4+3）：精锐火矛手(2) + 黑光铠骑兵(4) + 诸葛弩(3)
+ * 2026-08-18 改：原编制有**两个热兵器**（火矛手 4 + 掷弹兵 2），而一个编制只有一个 2 档位，
+ * 按主人「热兵器只许占 2 档」必须去掉一个。留火矛手（神机营火铳是明军本色），
+ * 去掉「女真掷弹兵」（女真是明的对手，挂在大明本就不合史）。主力改黑光铠骑兵 = 三千营骑兵。
+ * ⚠️ 若主人更想保掷弹兵、去火矛手，把这两行对调即可。
  */
 export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'hei_kuang', count: 3 },         // Row 0 前卫 = 黑光铠骑兵 3人
-    { type: 'elite_fire_lancer', count: 4 }, // Row 1 中军突破主力 = 精锐火矛手 4人
-    { type: 'grenadier', count: 2 },         // Row 2 尾收压阵 = 女真掷弹兵 2人
+    { type: 'elite_fire_lancer', count: 2 }, // Row 0 前排火器齐射 = 精锐火矛手 2人（🔴 热兵器只许 2 档）
+    { type: 'hei_kuang', count: 4 },         // Row 1 主力·两翼合围 = 黑光铠骑兵 4人
+    { type: 'chukonu', count: 3 },           // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
@@ -863,9 +892,9 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordsman', count: 2 }, // Row 0 步兵前锋 = 刀剑手 2人
-            { type: 'tiger_rider', count: 4 },    // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
-            { type: 'chukonu', count: 3 }         // Row 2 中军后排支援 = 诸葛弩 3人
+            { type: 'chukonu', count: 4 },        // Row 0 主力·宽线齐射 = 诸葛弩 4人
+            { type: 'jian_swordsman', count: 3 }, // Row 1 中军接应 = 刀剑手 3人
+            { type: 'tiger_rider', count: 2 }     // Row 2 压阵待机突击 = 虎豹骑 2人
         ]
     }
 ];
@@ -975,8 +1004,8 @@ export const BASHU_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 4 },  // Row 0 前排宽线肉盾主力 = 白毦兵 4人
-            { type: 'elite_chukonu', count: 3 },        // Row 1 中坚远程 = 精锐诸葛弩 3人
+            { type: 'elite_chukonu', count: 4 },        // Row 0 主力·宽线齐射 = 精锐诸葛弩 4人
+            { type: 'white_feather_guard', count: 3 },  // Row 1 中军接应 = 白毦兵 3人
             { type: 'rattan_archer', count: 2 }         // Row 2 压阵远程 = 藤弓兵 2人
         ]
     }
@@ -989,8 +1018,8 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 4 },          // Row 0 前排宽线肉盾主力 = 剑士 4人
-            { type: 'elite_fire_archer', count: 3 },  // Row 1 中坚远程 = 精锐火焰弓 3人
+            { type: 'elite_fire_archer', count: 4 },  // Row 0 主力·宽线齐射 = 精锐火焰弓 4人
+            { type: 'swordsman', count: 3 },          // Row 1 中军接应 = 剑士 3人
             { type: 'chukonu', count: 2 }             // Row 2 压阵远程 = 诸葛弩 2人
         ]
     }
@@ -1003,9 +1032,9 @@ export const LINGNAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored_elephant', count: 4 },    // Row 0 前排巨兽肉盾主力 = 皮甲战象 4人
-            { type: 'imperial_skirmisher', count: 3 }, // Row 1 中坚投掷 = 帝王掷矛手 3人
-            { type: 'rattan_archer_elite', count: 2 }  // Row 2 压阵远程 = 精锐藤弓兵 2人
+            { type: 'rattan_archer_elite', count: 4 }, // Row 0 主力·宽线齐射 = 精锐藤弓兵 4人
+            { type: 'imperial_skirmisher', count: 3 }, // Row 1 中军投掷 = 帝王掷矛手 3人
+            { type: 'armored_elephant', count: 2 }     // Row 2 压阵巨兽 = 皮甲战象 2人（🔴 象只许 2 档）
         ]
     }
 ];
@@ -1017,9 +1046,9 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 3 },       // Row 0 前卫 = 东南亚战斗象 3人
+            { type: 'archer', count: 3 },                // Row 0 前卫散射 = 步弓手 3人
             { type: 'karambit_warrior', count: 4 },      // Row 1 中军突击主力 = 马来爪刀勇士 4人
-            { type: 'archer', count: 2 }                 // Row 2 尾收支援 = 步弓手 2人
+            { type: 'battle_elephant', count: 2 }        // Row 2 压阵巨兽 = 东南亚战斗象 2人（🔴 象只许 2 档）
         ]
     }
 ];
@@ -1073,9 +1102,9 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eastern_swordsman', count: 4 },      // Row 0 前排宽线肉盾主力 = 东方剑士 4人
-            { type: 'cav_archer_heavy', count: 3 },       // Row 1 中坚远程 = 重装骑射手 3人
-            { type: 'elite_composite_bowman', count: 2 }  // Row 2 压阵远程 = 精锐复合弓箭手 2人
+            { type: 'elite_composite_bowman', count: 4 }, // Row 0 主力·宽线齐射 = 精锐复合弓箭手 4人
+            { type: 'eastern_swordsman', count: 3 },      // Row 1 中军接应 = 东方剑士 3人（留 3 档补偿，见文件头）
+            { type: 'cav_archer_heavy', count: 2 }        // Row 2 压阵骑射 = 重装骑射手 2人
         ]
     }
 ];
@@ -1157,9 +1186,9 @@ export const NUERGAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tarkan', count: 3 },           // Row 0 前卫 = 答剌罕骑兵 3人
-            { type: 'xianbei_raider', count: 4 },   // Row 1 中军突击主力 = 鲜卑掠骑兵 4人
-            { type: 'recurve_bowman', count: 2 }    // Row 2 尾收支援 = 反曲长弓手 2人
+            { type: 'tarkan', count: 2 },           // Row 0 尖刀先锋 = 答剌罕骑兵 2人
+            { type: 'recurve_bowman', count: 3 },   // Row 1 中坚步射 = 反曲长弓手 3人
+            { type: 'xianbei_raider', count: 4 }    // Row 2 主力·骑射底边 = 鲜卑掠骑兵 4人
         ]
     }
 ];
