@@ -32,6 +32,7 @@ import {
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
 import { summarizeTechEffects, unlockedTechs } from '../systems/MilitaryTechState';
+import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
@@ -973,10 +974,7 @@ export class CombatUI {
         this.bottomInfoRow = document.createElement('div');
         this.bottomInfoRow.style.display = 'none';
 
-        // [军事科技] 年份行三栏：左攻科技效果 ｜ 年份 ｜ 右守科技效果。
-        // 🔴 放这里而不是面板底部：底部是**援军行**的地盘（主人 2026-08-18 指出挤在一起不合适）；
-        //    而科技本来就是年份的函数，跟年份同一行，因果关系一眼就明白。
-        this.centerPanel.appendChild(this.techRow);
+        this.centerPanel.appendChild(this.battleYear);
         this.centerPanel.appendChild(this.battleTitle);
         this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
@@ -1025,16 +1023,39 @@ export class CombatUI {
      *    科技名只留「本方独有、对面没有」那几条 —— 那才是本场科技差距的故事。
      */
     private buildTechRow(): HTMLDivElement {
-        const row = document.createElement('div');
-        row.style.cssText = `
-            width: 100%;
+        // 见下方实现说明
+        return this.buildTechTopBar();
+    }
+
+    /**
+     * [军事科技] **屏幕顶部**的科技条（主人 2026-08-18 定：「显示在顶上」）。
+     *
+     * 位置沿革（都被否掉了，别再往回搬）：
+     *   ① 面板底部 → 那是**援军行**的地盘，挤在一起（主人否）
+     *   ② 年份行三栏 → 与立绘、「名将」角标撞车，观感乱（主人否）
+     *   ③ **屏幕顶部** ← 现在这个：横幅左右本来就是空的，谁也不挡
+     *
+     * 🔴 必须挂 `document.body`，不能挂 `this.container`：
+     *    容器是 `position: fixed; bottom: 0` 且收起时整体 `translate` 出屏幕，
+     *    挂里面会跟着一起消失。
+     * 中间留出横幅宽度，左攻右守各占一边。
+     */
+    private buildTechTopBar(): HTMLDivElement {
+        const bar = document.createElement('div');
+        bar.id = 'combat-tech-topbar';
+        bar.style.cssText = `
+            position: fixed;
+            top: ${uiPx(10)};
+            left: ${uiPx(16)};
+            right: ${uiPx(16)};
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            column-gap: ${uiPx(14)};
-            padding: 0 ${uiPx(T.portraitHorizontalReserve)};
-            box-sizing: border-box;
+            grid-template-columns: 1fr ${uiPx(560)} 1fr;
+            align-items: start;
+            column-gap: ${uiPx(12)};
             pointer-events: none;
+            z-index: ${T.zIndex.panel};
+            opacity: 0;
+            transition: opacity 0.25s ease;
         `;
         const mk = (isAtt: boolean) => {
             const box = document.createElement('div');
@@ -1048,16 +1069,18 @@ export class CombatUI {
                 gap: ${uiPx(1)};
                 align-items: ${isAtt ? 'flex-start' : 'flex-end'};
                 text-align: ${isAtt ? 'left' : 'right'};
-                text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+                text-shadow: 0 1px 5px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.85);
             `;
             return box;
         };
         this.leftTechBox = mk(true);
         this.rightTechBox = mk(false);
-        row.appendChild(this.leftTechBox);
-        row.appendChild(this.battleYear);
-        row.appendChild(this.rightTechBox);
-        return row;
+        const spacer = document.createElement('div');
+        bar.appendChild(this.leftTechBox);
+        bar.appendChild(spacer);
+        bar.appendChild(this.rightTechBox);
+        document.body.appendChild(bar);
+        return bar;
     }
 
     /**
@@ -1066,8 +1089,8 @@ export class CombatUI {
      */
     private renderTechSide(
         box: HTMLDivElement,
-        own: { id: string; name: string }[],
-        foe: { id: string; name: string }[],
+        own: MilitaryTech[],
+        foe: MilitaryTech[],
         isAtt: boolean,
     ): void {
         const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',');
@@ -1078,7 +1101,7 @@ export class CombatUI {
         const accent = isAtt ? T.colors.attackerGold : T.colors.defenderJade;
 
         // ── 第一行：累计效果（这才是「科技效果要体现」）──
-        const eff = summarizeTechEffects(own as never);
+        const eff = summarizeTechEffects(own);
         if (eff.length) {
             const line = document.createElement('div');
             line.style.cssText = `
@@ -1095,19 +1118,26 @@ export class CombatUI {
             box.appendChild(line);
         }
 
-        // ── 第二行：本方独有科技（对面没有的）——本场科技差距的故事 ──
-        const foeHas = new Set(foe.map((t) => t.id));
-        const only = own.filter((t) => !foeHas.has(t.id));
-        if (only.length) {
+        // ── 第二行：本方**全部**已解锁科技名 ──
+        // 🔴 [2026-08-18 主人定] 原来只列「对面没有的独有科技」，主人要的是
+        //    「都拥有哪些特效」——所以列全部，不做差集。对面也有的照列不误。
+        if (own.length) {
             const line = document.createElement('div');
             line.style.cssText = `
                 color: ${accent}; opacity: 0.95; font-size: 0.94em;
-                max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                max-width: 100%; line-height: 1.4;
+                display: flex; flex-wrap: wrap; gap: 0 0.45em;
+                justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
             `;
-            const names = only.map((t) => t.name).join(' · ');
-            line.textContent = isAtt ? `▸ ${names}` : `${names} ◂`;
+            for (const t of own) {
+                const chip = document.createElement('span');
+                chip.textContent = t.name;
+                chip.style.cssText = 'white-space: nowrap;';
+                line.appendChild(chip);
+            }
             box.appendChild(line);
         }
+        void foe;
     }
 
     /** 中央面板底部：左半攻 / 右半守，「军团名: 兵力」+ 小血条 */
@@ -4097,7 +4127,6 @@ export class CombatUI {
 
         // [军事科技] 13 出兵口互攻时显示双方科技行（各按自己文化区+年份）；非 13 隐藏
         if (this.techRow) {
-            // 🔴 这一行**包着年份**，所以绝不能整行 display:none —— 那会把年份一起藏掉（非 13 战斗全没年份）。
             //
             // 🔴 [2026-08-18 修·主人报「科技呢，去哪了」] 原来只认 Scene13 的 getSideTechs()，
             //    而 13 要同时满足「双将 + 跟拍 + zoom≥13 + 兵力≥1万」，缩放不到 13 就整行空白。
@@ -4112,18 +4141,19 @@ export class CombatUI {
                         const u = this.getPrimaryBattler(side);
                         return (u ? resolveUnitCultureRegion(u) : 'CENTRAL') as RegionType;
                     };
-                    const brief = (r: RegionType) => unlockedTechs(year, r).map((t) => ({ id: t.id, name: t.name }));
-                    sideTechs = { attacker: brief(cultureOf('attacker')), defender: brief(cultureOf('defender')) };
+                    sideTechs = { attacker: unlockedTechs(year, cultureOf('attacker')), defender: unlockedTechs(year, cultureOf('defender')) };
                 }
             }
             if (sideTechs) {
                 this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
                 this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
+                this.techRow.style.opacity = '1';
             } else if (this.leftTechBox.dataset.sig !== '') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
                 this.leftTechBox.textContent = '';
                 this.rightTechBox.textContent = '';
+                this.techRow.style.opacity = '0';
             }
         }
 
