@@ -116,6 +116,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
     BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
     TIBET:        'fish_scale',   // 青藏：答剌罕前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
+    NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 诸葛弩(3) + 精锐诸葛弩主力(4)
@@ -128,7 +129,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
-    NORTHEAST:    'echelon',      // 东北：精锐铁浮图宽线主力(4) + 钦察中坚(3) + 火焰弓后排(2)
     HEXI:         'echelon',      // 河西：辽刀主力(4前) + 诸葛弩中坚(3中) + 精锐黑光铠骑兵(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 };
@@ -913,16 +913,16 @@ export const NORTH_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 3. 东北 精锐铁浮图+钦察+火焰弓箭手（雁行阵 4+3+2：精锐铁浮图宽线主力 + 钦察中坚 + 火焰弓箭手后排支援） */
+/** 3. 东北 铁浮图+精锐铁浮图+钦察（鱼鳞阵 3+4+2：铁浮图前卫 + 精锐铁浮图主力 + 钦察后排支援） */
 export const NORTHEAST_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_iron_pagoda', count: 4 },  // Row 0 宽线前锋主力 = 精锐铁浮图 4人
-            { type: 'kipchak', count: 3 },            // Row 1 冲击中坚 = 钦察 3人
-            { type: 'fire_archer', count: 2 }         // Row 2 尾收支援 = 火焰弓箭手 2人
+            { type: 'iron_pagoda', count: 3 },        // Row 0 前卫突破 = 金国铁浮图 3骑
+            { type: 'elite_iron_pagoda', count: 4 },  // Row 1 中军主力 = 精锐铁浮图 4骑
+            { type: 'kipchak', count: 2 }             // Row 2 尾收支援 = 钦察弓骑 2骑
         ]
     }
 ];

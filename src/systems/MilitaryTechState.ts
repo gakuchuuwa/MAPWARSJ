@@ -98,31 +98,43 @@ export function applyTechsToStats<T extends TechModifiableStats>(
 }
 
 /**
- * 本年度**新解锁**的科技（用于播报）：去年没有、今年有的。
- * 静默改数值观众看不见，所以解锁必须播报（项目铁律：技能必须有可见演出）。
+ * 【面板用】把已解锁科技汇总成「效果」短语，而不是科技名。
+ *
+ * 🔴 主人 2026-08-18 定：**科技效果要体现**。面板列「锁子甲·板甲·板甲马铠」观众读不出强弱，
+ *    列「甲 步+3/4」才知道到底强了多少。所以面板显示的是**累计数值增量**，名字只留独有那几条。
+ *
+ * 护甲按 unit class 分三路统计（步6 / 骑12 / 射0）——它们的门控不同，不能合成一个数。
  */
-export function newlyUnlocked(year: number, culture: RegionType): MilitaryTech[] {
-    const now = unlockedTechs(year, culture);
-    const before = unlockedTechs(year - 1, culture);
-    const had = new Set(before.map((t) => t.id));
-    return now.filter((t) => !had.has(t.id));
-}
-
-/** 播报文案：「1400 年 · 板甲问世 —— 近战防御+1、远程防御+2」 */
-export function techAnnouncement(tech: MilitaryTech): string {
-    const LABEL: Record<string, string> = {
-        meleeAttack: '近战攻击', pierceAttack: '远程攻击',
-        meleeArmor: '近战防御', pierceArmor: '远程防御',
-        hp: '兵员耐久', speed: '行进速度', reload: '出手速度',
-        range: '射程', los: '视野',
-    };
-    const parts: string[] = [];
-    for (const e of tech.effects) {
-        const name = LABEL[e.attr] ?? e.attr;
-        if (parts.some((p) => p.startsWith(name))) continue;
-        parts.push(e.op === 'mul'
-            ? `${name}${e.value < 1 ? '加快' : '提升'} ${Math.round(Math.abs(1 - e.value) * 100)}%`
-            : `${name}+${e.value}`);
+export function summarizeTechEffects(techs: readonly MilitaryTech[]): string[] {
+    let meleeAtk = 0, pierceAtk = 0, range = 0;
+    const arm = { 6: [0, 0], 12: [0, 0], 0: [0, 0] } as Record<number, [number, number]>;
+    let spdMul = 1, reloadMul = 1, hp = 0;
+    for (const t of techs) {
+        for (const e of t.effects) {
+            const hit = (c: number) => e.classes.includes(c);
+            switch (e.attr) {
+                case 'meleeAttack': if (hit(6) || hit(12)) meleeAtk += e.value; break;
+                case 'pierceAttack': if (hit(0) || hit(36)) pierceAtk += e.value; break;
+                case 'range': if (hit(0) || hit(36)) range += e.value; break;
+                case 'meleeArmor': for (const c of [6, 12, 0]) if (hit(c)) arm[c][0] += e.value; break;
+                case 'pierceArmor': for (const c of [6, 12, 0]) if (hit(c)) arm[c][1] += e.value; break;
+                case 'speed': spdMul *= e.op === 'mul' ? e.value : 1; break;
+                case 'reload': reloadMul *= e.op === 'mul' ? e.value : 1; break;
+                case 'hp': hp += e.value; break;
+            }
+        }
     }
-    return `${tech.name}问世 —— ${parts.join('、')}`;
+    const out: string[] = [];
+    if (meleeAtk) out.push(`近攻+${meleeAtk}`);
+    if (pierceAtk) out.push(`远攻+${pierceAtk}`);
+    if (range) out.push(`射程+${range}`);
+    const armTag = (c: number, label: string) => {
+        const [m, p] = arm[c];
+        if (m || p) out.push(`${label}甲+${m}/${p}`);
+    };
+    armTag(6, '步'); armTag(12, '骑'); armTag(0, '射');
+    if (hp) out.push(`血+${hp}`);
+    if (spdMul !== 1) out.push(`速+${Math.round((spdMul - 1) * 100)}%`);
+    if (reloadMul !== 1) out.push(`装填快${Math.round((1 - reloadMul) * 100)}%`);
+    return out;
 }
