@@ -95,7 +95,11 @@ for (const r of ORDER) {
 }
 if (!keyBad) console.log('  ✓ 齐全');
 
-const rows = ORDER.map((r) => {
+// 缺键的文化区无法算六维（引擎对它们静默回落 ×1.0）——上面已报红，这里跳过以免审计中途崩溃
+const SKIPPED = ORDER.filter((r) => !TABLES.TIER_TABLE[r]);
+if (SKIPPED.length) console.log(`  ↳ 以下区缺数值，不入后续六维表与平衡检查: ${SKIPPED.join(', ')}`);
+
+const rows = ORDER.filter((r) => !SKIPPED.includes(r)).map((r) => {
     const x = {
         r, name: NAMES[r] ?? r,
         atk: TABLES.TIER_TABLE[r][0], def: TABLES.TIER_TABLE[r][1],
