@@ -317,6 +317,15 @@ export const TEUTONIC_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'longbowman', count: 2 },            // Row 2 压阵 = 长弓兵 2人
 ];
 
+/**
+ * 拜占庭帝国·三角阵（2+3+4）：拜占庭圣骑兵精锐(2) + 复合弓手(3) + 拜占庭圣骑兵(4)
+ */
+export const BYZANTINE_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'elite_cataphract', count: 2 },  // Row 0 尖刀 = 拜占庭圣骑兵精锐 2人
+    { type: 'composite_bowman', count: 3 },  // Row 1 中坚 = 复合弓手 3人
+    { type: 'cataphract', count: 4 },        // Row 2 底边 = 拜占庭圣骑兵 4人
+];
+
 
 /** 秦朝名将 ID 集合 */
 export const QIN_DYNASTY_GENERAL_IDS = new Set([
@@ -661,10 +670,31 @@ export function isTeutonicDynasty(factionId?: string | null, generalId?: string 
     return false;
 }
 
+/** 拜占庭名将 ID 集合 */
+export const BYZANTINE_DYNASTY_GENERAL_IDS = new Set([
+    'gen_vladimir_great',       // 弗拉基米尔（拜占庭同盟 · 君士坦丁堡）
+    'maerta_qishi_walaite',     // 瓦莱特（医院骑士团/马耳他）
+]);
+
+/** 拜占庭势力 ID 集合 */
+export const BYZANTINE_DYNASTY_FACTION_IDS = new Set([
+    'baizanting',               // 拜占庭帝国（君士坦丁堡）
+    'taolika',                  // 陶里卡/赫尔松涅斯（拜占庭克里米亚军区）
+    'teluoyi',                  // 达尔达尼亚（达达尼尔要冲）
+    'maerta_qishi',             // 圣约翰/医院骑士团（马耳他）
+]);
+
+/** 判断是否为拜占庭武将或势力 */
+export function isByzantineDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && BYZANTINE_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && BYZANTINE_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团）
+    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团、拜占庭圣骑兵军团）
     const custom = FACTION_COMPOSITIONS[factionId];
     if (custom) {
         return [...custom.slots];
@@ -680,6 +710,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         if (PERSIAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...PERSIAN_FACTION_COMPOSITION];
         if (POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return [...POLISH_FACTION_COMPOSITION];
         if (TEUTONIC_DYNASTY_GENERAL_IDS.has(generalId)) return [...TEUTONIC_FACTION_COMPOSITION];
+        if (BYZANTINE_DYNASTY_GENERAL_IDS.has(generalId)) return [...BYZANTINE_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 3. 文化区判定
@@ -709,6 +740,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isTeutonicDynasty(factionId)) {
         return [...TEUTONIC_FACTION_COMPOSITION];
+    }
+    if (isByzantineDynasty(factionId)) {
+        return [...BYZANTINE_FACTION_COMPOSITION];
     }
     if (isSengoku(factionId)) {
         return [...SENGOKU_TIERS[0].slots];
@@ -740,6 +774,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     const isPer = isPersianDynasty(army.factionId, army.generalId);
     const isPol = isPolishDynasty(army.factionId, army.generalId);
     const isTeu = isTeutonicDynasty(army.factionId, army.generalId);
+    const isByz = isByzantineDynasty(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
@@ -749,13 +784,13 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu
+        isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu || isByz
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/条顿雁行阵、日本战国鹤翼阵、汉国/大明/罗马/波兰三角阵、波斯鱼鳞阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/条顿雁行阵、日本战国鹤翼阵、汉国/大明/罗马/波兰/拜占庭三角阵、波斯鱼鳞阵 → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
@@ -763,7 +798,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
         army.formationMode = 'echelon';
     } else if (isSen) {
         army.formationMode = 'crane_wing';
-    } else if (isHan || isRom || isMing || isPol) {
+    } else if (isHan || isRom || isMing || isPol || isByz) {
         army.formationMode = 'triangle';
     } else if (isPer) {
         army.formationMode = 'fish_scale';
