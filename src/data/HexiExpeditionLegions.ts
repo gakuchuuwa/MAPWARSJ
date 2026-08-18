@@ -35,7 +35,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     woye: { name: '沃野镇兵', tier: 3 },
     chile: { name: '两池军', tier: 3 },
     weiyuan: { name: '永安营兵', tier: 3 },
-    helian: { name: '铁弗宿卫', tier: 3 },
     xiazhou: { name: '平夏部骑', tier: 3 },
     yanzhou: { name: '步跋子', tier: 3 },
     cangsong: { name: '西凉铁骑', tier: 2 },

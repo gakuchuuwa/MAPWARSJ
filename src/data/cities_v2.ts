@@ -964,7 +964,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_qishan', name: '岐山', factionId: 'zhou', lat: 34.506539, lng: 107.487488, type: 'pass', region: 'CENTRAL', troops: 30000,
         note: '岐山；周国小城',
     },
-    { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.14917, type: 'medium_city', troops: 30000, region: 'HEXI' },
+    { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.14917, type: 'medium_city', troops: 20000, region: 'STEPPE' },
 
 
     { id: 'city_qiuchi', name: '上禄', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', troops: 30000, region: 'BASHU' },
@@ -1966,7 +1966,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_genoa', name: '热那亚', factionId: 'liguliya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 20000, region: 'LATIN' },
     { id: 'city_brest', name: '布列斯特', factionId: 'bolisiya', lat: 52.09, lng: 23.68, type: 'pass', troops: 30000, region: 'SLAVIC' },
     { id: 'city_zhytomyr', name: '日托米尔', factionId: 'zhituo', lat: 50.25, lng: 28.65, type: 'small_city', troops: 30000, region: 'SLAVIC' },
 

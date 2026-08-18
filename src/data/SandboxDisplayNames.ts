@@ -65,7 +65,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   jiatailuoniya: '加泰',
   nasier: '纳斯',
   liguliya: '利古',
-  seleisi: '色雷',
+'seleisi': '色雷',
   bolisiya: '波利',
   zhituo: '沃伦',
 

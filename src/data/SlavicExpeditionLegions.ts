@@ -63,7 +63,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // 日托米尔：哥萨克已挂 gesake；此地无专名 → T4
     zhituo: { name: '沼泽猎手', tier: 4 },
     bosiniya: { name: '萨拉热窝营', tier: 4 },
-    seleisi: { name: '西美昂军团', tier: 3 },          // 普罗夫迪夫·西美昂；避势力「色雷斯」叠字
     chude: { name: '楚德湖兵', tier: 3 },          // 尤里耶夫(塔尔图)·维切斯拉夫：守城抗条顿；冰湖主力已挂诺城民兵 → 事件文化 T3
     qiekase: { name: '切尔卡瑟骑', tier: 4 },          // 切尔卡瑟·拜达；避势力「第聂伯」叠字
 };
