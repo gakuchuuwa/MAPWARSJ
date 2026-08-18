@@ -62,7 +62,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     sading: { generalId: 'gen_eleanor', generalName: '埃莱奥诺拉', portrait: '/assets/LATIN/sading_ailaiaonuola.png' },
     yidelisi: { generalId: 'gen_idris_i', generalName: '伊德里斯', portrait: '/assets/LATIN/yidelisi_yidelisi.png' },
     qiekase: { generalId: 'gen_vyshnevetsky', generalName: '拜达', portrait: '/assets/SLAVIC/qiekase_weishenniao.png' },
-    baojialiya: { generalId: 'baojialiya_aseni', generalName: '阿森一世', portrait: '/assets/SLAVIC/baojialiya_aseni.png' },
+    baojialiya: { generalId: 'baojialiya_aseni', generalName: '阿森一世', portrait: '/assets/LATIN/baojialiya_asenyishi.png' },
     saierdika: { generalId: 'gen_krum', generalName: '克鲁姆', portrait: '/assets/SLAVIC/saierdika_kelumu.png' },
     bosiniya: { generalId: 'gen_tvrtko', generalName: '特夫尔特科', portrait: '/assets/SLAVIC/bosiniya_tefuerteke.png' },
 
@@ -85,7 +85,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tuosikana: { generalId: 'gen_lorenzo_medici', generalName: '洛伦佐', portrait: '/assets/LATIN/tuosikana_luolunzuo.png' },
     yadelaiya: { generalId: 'gen_dandolo', generalName: '丹多洛', portrait: '/assets/LATIN/yadelaiya_danduoluo.png' },
     talanduo: { generalId: 'talanduo_aqita', generalName: '阿契塔', portrait: '/assets/LATIN/talanduo_aqita.png' },
-    safuyi: { generalId: 'safuyi_ameidi', generalName: '阿梅迪奥', portrait: '/assets/LATIN/safuyi_ameidi.png' },
+    safuyi: { generalId: 'safuyi_ameidi', generalName: '阿梅迪奥', portrait: '/assets/GERMANIC/safuyi_ameidiao.png' },
     kanpaniya: { generalId: 'gen_charles_i_naples', generalName: '卡洛', portrait: '/assets/LATIN/kanpaniya_kaluo.png' },
     jiatailuoniya: { generalId: 'gen_wifred_hairy', generalName: '威弗雷德', portrait: '/assets/LATIN/jiatailuoniya_weifuleide.png' },
     nasier: { generalId: 'gen_muhammad_i', generalName: '穆罕默德', portrait: '/assets/LATIN/nasier_muhanmode.png' },
