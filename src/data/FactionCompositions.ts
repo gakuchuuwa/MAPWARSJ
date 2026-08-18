@@ -207,6 +207,115 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
+    // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
+    shu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀汉白毦兵 3人
+            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白毦兵 4人
+            { type: 'chukonu', count: 2 },                   // Row 2 尾收支援 = 诸葛弩 2人
+        ],
+    },
+    huizhou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    chu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    langzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    jingmen: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    cangsong: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    qingqiang: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    yangzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    yueyi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    lizhou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    fu_zhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    // 中欧·匈牙利 马扎尔骠骑军团（鹤翼阵 2+4+3：冠军剑士前锋 2 + 马扎尔骠骑主力 4 + 弩手后排 3）
+    // 2026-08-18 主人定：马扎尔城堡兵「马扎尔骠骑」配给匈牙利（布达佩斯）
+    mazhaer: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'champion', count: 2 },        // Row 0 步兵前锋 = 冠军剑士
+            { type: 'magyar_huszar', count: 4 },   // Row 1 骑兵主力两翼合围 = 马扎尔骠骑
+            { type: 'crossbowman', count: 3 },     // Row 2 后排支援 = 弩手
+        ],
+    },
+    // 西亚·奥斯曼帝国 苏丹亲兵军团（雁行阵 4+3+2：苏丹亲兵火枪齐射 4 + 西帕希重骑接应 3 + 阿金吉骑射压阵 2）
+    // 2026-08-18 主人定：新增奥斯曼势力，城堡兵「苏丹亲兵」作主力
+    osman: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'janissary', count: 4 },         // Row 0 前排火枪宽线齐射 = 苏丹亲兵
+            { type: 'paladin', count: 3 },           // Row 1 中排重骑接应 = 西帕希（游侠贴图）
+            { type: 'cav_archer_heavy', count: 2 },  // Row 2 后排压阵骑射 = 阿金吉（重装骑射手）
+        ],
+    },
     // 草原与中亚诸大汗·鞑靼怯薛军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
     menggu_d: {

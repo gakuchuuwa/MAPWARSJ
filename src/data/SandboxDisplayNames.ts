@@ -1037,6 +1037,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pajiama': '帕加',
 'bitiniya': '比提',
       'luomu': '罗姆',
+      'osman': '奥斯',
 'sailiugu': '塞琉',
 'womaya': '倭马',
     'xibolai': '希伯',

@@ -524,6 +524,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'wuling': 'city_wulingshan',
     'seljuq': 'city_merv',
+    'osman': 'city_buersa',
 'bandun': 'city_hanchang',
 
 'wang_s': 'city_yixian',
