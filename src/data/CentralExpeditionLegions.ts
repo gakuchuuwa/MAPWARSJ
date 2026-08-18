@@ -67,7 +67,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
     mi: { name: '朐山弩手', tier: 4 },
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
-    cai: { name: '汲桑所与', tier: 2 },
     wazhai: { name: '骊山刑徒', tier: 3 },
   huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
     yao: { name: '屠各精骑', tier: 3 },

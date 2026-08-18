@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/18 11:48:42（共 27 条）
+ * 生成时间：2026/8/19 00:04:58（共 36 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -13,10 +13,18 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/__多余__TIBET_04.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
     "/assets/WESTERN/__多余__WESTERN_01.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
+    "/assets/GERMANIC/bogendi_dadanchali.png": "/assets/GERMANIC/Gemini_Generated_Image_kvvdztkvvdztkvvd.png",
+    "/assets/GERMANIC/safuyi_ameidiao.png": "/assets/GERMANIC/Gemini_Generated_Image_g5mawzg5mawzg5ma.png",
     "/assets/GERMANIC/keluodiya_zilinsiji.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
     "/assets/JAPAN/beihai_shamusheyun.png": "/assets/JAPAN/__多余__JAPAN_02.png",
     "/assets/JAPAN/yamato_nanmuzhengcheng.png": "/assets/JAPAN/__多余__JAPAN_01.png",
     "/assets/LATIN/baizanting_fulajimier.png": "/assets/LATIN/__多余__LATIN_01.png",
+    "/assets/LATIN/baojialiya_asenyishi.png": "/assets/LATIN/Gemini_Generated_Image_19lgvf19lgvf19lg.png",
+    "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/LATIN/Gemini_Generated_Image_tt6nq2tt6nq2tt6n.png",
+    "/assets/LATIN/buni_hanniba.png": "/assets/LATIN/Gemini_Generated_Image_csekqbcsekqbcsek.png",
+    "/assets/LATIN/yipilusi_piluoshi.png": "/assets/LATIN/dbe814db-277f-4036-b148-2ac0edfaf303.png",
+    "/assets/LATIN/saipulusi_juyi.png": "/assets/LATIN/Gemini_Generated_Image_6q0cou6q0cou6q0c.png",
+    "/assets/LATIN/talanduo_aqita.png": "/assets/LATIN/Gemini_Generated_Image_uio81tuio81tuio8.png",
     "/assets/LINGNAN/funan_fanman.png": "/assets/LINGNAN/__多余__LINGNAN_20.png",
     "/assets/LINGNAN/luchuan_sirenfa.png": "/assets/LINGNAN/__多余__LINGNAN_21.png",
     "/assets/LINGNAN/panyao_pandaxiao.png": "/assets/LINGNAN/__多余__LINGNAN_22.png",
@@ -29,6 +37,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/WESTERN/__多余__WESTERN_05.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/TIBET/kangba_suonuomugunbu.png": "/assets/TIBET/__多余__WESTERN_08.png",
     "/assets/TIBET/nvguo_mojie.png": "/assets/TIBET/__多余__TIBET_09.png",
+    "/assets/WEST_ASIA/osman_muhanmodeershi.png": "/assets/WEST_ASIA/gulaishi_aibusufuyang.png",
     "/assets/WEST_ASIA/sumeier_zhajixi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png",
     "/assets/xianqin/quanrong_yiquhai.png": "/assets/xianqin/__多余__xianqin_01.png"
 };

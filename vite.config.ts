@@ -3585,63 +3585,8 @@ function serverValidateEntities(): {
     //   一将可拥有多个签名技（不同六计），但六槽只有 6 个、按六计各装一个，装不下的签名技只挂归属不出场。
     //   且它读的是旧的 sourceQuote【名字】而非现在权威的内联 ownerName，双重过时。故移除。
 
-    // 11.12. [NEW 2026-07-14] 六计齐全：每将六技须覆盖 攻战/胜战/敌战/混战/并战/败战 各一。
-    //   六槽 = 攻/守 × 优/均/劣；两优势格=攻战+胜战、两均势格=敌战+混战、两劣势格=并战+败战。
-    //   判据 = SIX_CLASS_BY_EFFECT[baseEffect].label（effect→六计，与武将技编辑器同源）。
-    //   缺格/未知效果由 11.9 报，本条只查"六格已配齐但六计分布不对"（缺某计 / 某计重复）。
-    {
-        const tscForSix = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
-        const effectById = new Map<string, string>();
-        const condById = new Map<string, string>();
-        // Extract each entry block, then parse effect + condition inside it
-        const entryRe = /\{\s*\n?\s*id:\s*'(ts_\d+)'[\s\S]*?\},?\s*\n/g;
-        let em;
-        while ((em = entryRe.exec(tscForSix)) !== null) {
-            const block = em[0];
-            const sid = em[1];
-            if (effectById.has(sid)) continue;
-            const effM = block.match(/baseEffect:\s*'(\w+)'/);
-            const condM = block.match(/condition:\s*'(\w+)'/);
-            if (effM) effectById.set(sid, effM[1]);
-            if (condM) condById.set(sid, condM[1]);
-        }
-        const sixOf = (id?: string): string | null => {
-            if (!id) return null;
-            const eff = effectById.get(id);
-            if (!eff) return null;
-            return SIX_CLASS_BY_EFFECT[eff]?.label ?? null;
-        };
-        const ALL_SIX = ['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'];
-        const SIX_SLOTS = [
-            'atkAdvantageSkillId', 'atkBalanceSkillId', 'atkDisadvantageSkillId',
-            'defAdvantageSkillId', 'defBalanceSkillId', 'defDisadvantageSkillId',
-        ] as const;
-        for (const [fId, g] of Object.entries(data.generals)) {
-            const prof = data.profiles[g.generalId];
-            if (!prof) continue;
-            const got: string[] = [];
-            let incomplete = false;
-            for (const k of SIX_SLOTS) {
-                const six = sixOf((prof as any)[k]);
-                if (six) got.push(six); else { incomplete = true; break; }
-            }
-            if (incomplete) continue; // 缺格/未知效果技 → 交 11.9，避免重复报
-            const counts = new Map<string, number>();
-            for (const s of got) counts.set(s, (counts.get(s) ?? 0) + 1);
-            const missing = ALL_SIX.filter(s => !counts.has(s));
-            const dup = [...counts.entries()].filter(([, n]) => n > 1).map(([s, n]) => `${s}×${n}`);
-            if (missing.length || dup.length) {
-                const parts: string[] = [];
-                if (missing.length) parts.push(`缺【${missing.join('/')}】`);
-                if (dup.length) parts.push(`重【${dup.join('/')}】`);
-                issues.push({
-                    level: 'error',
-                    msg: `武将 "${g.generalName}"(${g.generalId}) 六计不齐：${parts.join('，')}（六技应=攻战/胜战/敌战/混战/并战/败战各一）`,
-                    factionId: fId,
-                });
-            }
-        }
-    }
+    // 11.12.（已废弃 2026-08-18）六槽六计齐全校验：六槽字段已废弃（铁律一 08-04），
+    //   选技改走「不在册通用池 + 本人专属在册技」，武将专属技无需六计各一，故移除。
 
     // 11.13. [NEW 2026-07-22] 数值漂移：每条武将技的 magnitude / luck 区间必须命中 SE_TIERS 该家族的标准档。
     //   模板（SE_TIERS）= 武将技数值唯一标准源；杜绝手改 / 复制行 / 老数据留下带外值（曾攒出 93 条越带）。

@@ -1918,7 +1918,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    cai_lishuo: { generalId: 'cai_lishuo', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_349', atkDisadvantageSkillId: 'ts_238', defAdvantageSkillId: 'ts_311', atkBalanceSkillId: 'ts_742', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_417', aptitude: 'create', attackStyle: 'attack' },
+    cai_lishuo: { generalId: 'cai_lishuo', tier: 'famous', tacticalSkillId: 'ts_349', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_349', atkBalanceSkillId: 'ts_742', atkDisadvantageSkillId: 'ts_238', defAdvantageSkillId: 'ts_311', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_417', aptitude: 'create', attackStyle: 'attack' },
 
 
 
