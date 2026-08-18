@@ -473,6 +473,7 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
     'qianzhou_lisheng',             // 李晟
     'shanzhou_wangzhongsi',         // 王忠嗣
     'weizhou_weigao',               // 韦皋
+    'wei2_hunjian',                 // 浑瑊
 ]);
 
 /** 唐朝势力 ID 集合 */
@@ -480,7 +481,7 @@ export const TANG_DYNASTY_FACTION_IDS = new Set([
     'tang', 'liang_d', 'bing', 'hepan', 'anxi', 'juandu', 'heyuan_d',
     'song2', 'gaoliang', 'shazhou', 'lingzhou', 'zhongshan', 'liwang',
     'yuan_cj_d', 'xinping', 'pingyuan', 'loufan', 'weihaiwei',
-    'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou'
+    'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou', 'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */
@@ -493,16 +494,14 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
     'hezhou_wangjian',              // 王坚
     'didao_wangshao',               // 王韶
     'zhai_han_diqing',              // 狄青
-    'kang_liangshidou',             // 梁师都
     'huan_zhongshidao',             // 种师道
-    'wei2_hunjian',                 // 浑瑊
     'yingzhou_d_liuqi',             // 刘锜
     'qing_quduan',                  // 曲端
     'changshan_yangyanzhao',        // 杨延昭
     'heng1_yangye',                 // 杨业
     'tingzhou_d_chenmin',           // 陈敏
     'changshaguo_xinqiji',          // 辛弃疾
-    'shenshi_shenqingzhi',          // 文天祥
+    'shenshi_wentianxiang',         // 文天祥
     'yanchuan_d_yuefei',            // 岳飞
     'song_zhaokuangyin',            // 赵匡胤
     'yanzhou_zhongshiheng',         // 种世衡
@@ -511,7 +510,7 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
 /** 宋朝势力 ID 集合 */
 export const SONG_DYNASTY_FACTION_IDS = new Set([
     'sizhou', 'luoping', 'xiangzhou', 'zaoyang_d', 'fengzhou', 'hezhou',
-    'didao', 'zhai_han', 'kang', 'huan', 'wei2', 'yingzhou_d', 'qing',
+    'didao', 'zhai_han', 'huan', 'yingzhou_d', 'qing',
     'changshan', 'heng1', 'tingzhou_d', 'changshaguo', 'shenshi',
     'yanchuan_d', 'song', 'yanzhou'
 ]);

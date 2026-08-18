@@ -21,18 +21,18 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     qin: {
         formationMode: 'echelon',
         slots: [
-            { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 印加枪兵长 4人
-            { type: 'war_chariot_ranged', count: 3 },  // Row 1 中排 = 双轮远程战车 3人
-            { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 弩兵 4（秦弩／汉强弩是军中主力）
+            { type: 'kamayuk', count: 3 },                   // 中军接应 = 长矛兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 双轮远程战车 2（🔴 占人口的只许 2 档）
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）——2026-08-18 主人定「秦国及以前武将都套此阵」
     han: {
         formationMode: 'echelon',
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 弩兵 4（秦弩／汉强弩是军中主力）
+            { type: 'kamayuk', count: 3 },                   // 中军接应 = 长矛兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 双轮远程战车 2（🔴 占人口的只许 2 档）
         ],
     },
     han_d: {
@@ -54,157 +54,157 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
     yanchuan_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },         // Row 0 前卫 = 南宋火矛手 3人
-            { type: 'elite_fire_lancer', count: 4 },   // Row 1 中军火器突击主力 = 南宋火矛手精锐 4人
-            { type: 'chukonu', count: 2 },             // Row 2 尾收神机弩 = 华夏诸葛弩 2人
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     sizhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     yingzhou_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     zaoyang_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     fengzhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     hezhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     changshaguo: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     shenshi: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     luoping: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     // 北宋·赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 等火矛手军团（鱼鳞阵 3+4+2）
     // 2026-08-18 主人定「所有宋武将统一此阵」：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2
     song: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     heng1: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     changshan: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     zhai_han: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     yanzhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     huan: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     didao: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     qing: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     xiangzhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     tingzhou_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 诸葛弩 4（宋以强弩立国：神臂弓、床子弩）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_fire_lancer', count: 2 },         // 压阵火器 = 精锐火矛手 2（🔴 热兵器只许 2 档）
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
@@ -309,11 +309,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 西亚·奥斯曼帝国 苏丹亲兵军团（雁行阵 4+3+2：苏丹亲兵火枪齐射 4 + 西帕希重骑接应 3 + 阿金吉骑射压阵 2）
     // 2026-08-18 主人定：新增奥斯曼势力，城堡兵「苏丹亲兵」作主力
     osman: {
-        formationMode: 'echelon',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'janissary', count: 4 },         // Row 0 前排火枪宽线齐射 = 苏丹亲兵
-            { type: 'paladin', count: 3 },           // Row 1 中排重骑接应 = 西帕希（游侠贴图）
-            { type: 'cav_archer_heavy', count: 2 },  // Row 2 后排压阵骑射 = 阿金吉（重装骑射手）
+            { type: 'janissary', count: 2 },                 // 前排火绳枪 = 苏丹亲兵 2（🔴 热兵器只许 2 档；亲兵是少而精的常备步兵）
+            { type: 'paladin', count: 4 },                   // 主力·两翼合围 = 西帕希封建重骑 4（奥斯曼军队主体）
+            { type: 'cav_archer_heavy', count: 3 },          // 中军骑射 = 重装骑射手 3
         ],
     },
     // 草原与中亚诸大汗·鞑靼怯薛军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
@@ -560,11 +560,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 日本战国·织田信长军团（方阵 3+3+3：日本武士 3 + 火枪兵 3 + 火枪兵 3）
     owari: {
-        formationMode: 'square',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'samurai', count: 3 },          // Row 0 前排抗线 = 日本武士 3人
-            { type: 'hand_cannoneer', count: 3 },   // Row 1 中军铁炮齐射 = 火枪兵 3人
-            { type: 'hand_cannoneer', count: 3 },   // Row 2 后排铁炮齐射 = 火枪兵 3人
+            { type: 'samurai', count: 3 },                   // 前卫 = 武士 3
+            { type: 'samurai_elite', count: 4 },             // 主力 = 精锐武士 4
+            { type: 'hand_cannoneer', count: 2 },            // 压阵铁炮 = 手炮手 2（🔴 热兵器只许 2 档）
         ],
     },
     // 伊贺·忍者军团（方阵 3+3+3：忍者 3 + 忍者 3 + 忍者 3）
@@ -617,22 +617,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'centurion', count: 2 },
         ],
     },
-    // 阿契美尼德·波斯帝国军团（大流士 · 鹤翼阵 2+4+3：不死军长矛步兵 2 + 萨珊萨瓦尔铁骑主力 4 + 不死军复合弓箭手 3）
+    // 阿契美尼德·波斯帝国军团（大流士 · 三角阵 2+3+4：萨珊铁骑 2 + 不死战士 3 + 波斯弓手主力 4）
     aqimeinide: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },        // Row 0 步兵前锋 = 不死军长矛步兵 2人
-            { type: 'savar', count: 4 },           // Row 1 骑兵主力两翼合围 = 萨珊萨瓦尔铁骑 4人
-            { type: 'immortal_ranged', count: 3 }, // Row 2 中军后排支援 = 不死军复合弓箭手 3人
+            { type: 'savar', count: 2 },           // Row 0 尖刀突击 = 萨珊萨瓦尔铁骑 2骑
+            { type: 'immortal', count: 3 },        // Row 1 冲击中坚 = 不死战士 3人
+            { type: 'immortal_ranged', count: 4 }, // Row 2 底边主力齐射 = 波斯长生军弓手 4人
         ],
     },
     // 萨珊波斯军团（沙普尔大帝 · 尼沙布尔）
     aba: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 萨非波斯军团（阿拔斯大帝 · 伊斯法罕 · 方形阵 3+3+3：全红头骑士奇兹尔巴什圣战死士阵）
@@ -655,92 +655,92 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 安息波斯帝国（阿尔沙克 · 尼萨）
     ansxi: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 苏伦家族（苏伦 · 法拉）
     delan: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 卡伦家族（苏赫拉 · 图斯）
     kalan: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 米底王国（戴奥凯斯 · 哈马丹）
     midi: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 萨法尔王朝（雅库布 · 博斯特）
     xisi: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 埃兰古波斯（舒特鲁克 · 苏萨）
     ailan: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 萨尔巴达尔（拉扎克 · 白哈格）
     saerbadaer: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 库米斯（阿尔普 · 达姆甘）
     kumisi: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 哈利（戈达尔兹 · 萨拉赫斯）
     hali: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 巴哈尔兹（盖瓦姆 · 泰巴德）
     baha: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'immortal_ranged', count: 4 },
         ],
     },
     // 波兰王国·华沙（雅盖沃 · 鹤翼阵 2+4+3：战锤破甲勇士 2 + 精锐翼骑兵主力 4 + 劲弩手 3）
@@ -787,13 +787,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },
         ],
     },
-    // 条顿骑士团·柯尼斯堡（容金根 · 鹤翼阵 2+4+3：精锐条顿武士 2 + 十字军圣殿骑士主力 4 + 长弓兵 3）
+    // 条顿骑士团·柯尼斯堡（容金根 · 鱼鳞阵 3+4+2：条顿武士 3 + 精锐条顿武士主力 4 + 十字军骑士 2）
     tiaodun_qishi: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_teutonic_knight', count: 2 }, // Row 0 步兵前锋 = 精锐条顿武士 2人
-            { type: 'crusader_knight', count: 4 },       // Row 1 骑兵主力两翼合围 = 十字军圣殿骑士 4人
-            { type: 'longbowman', count: 3 },            // Row 2 中军后排支援 = 长弓兵 3人
+            { type: 'teutonic_knight', count: 3 },        // Row 0 前卫抗线 = 条顿武士 3人（全钢板甲双手阔剑步行铁罐头）
+            { type: 'elite_teutonic_knight', count: 4 },  // Row 1 中军主力 = 条顿武士精锐 4人（王牌重甲剑士主力决战）
+            { type: 'crusader_knight', count: 2 },        // Row 2 尾收铁骑 = 十字军骑士 2骑（圣殿战马重骑后排策应）
         ],
     },
     // 圣殿骑士团·阿卡（莫莱 · 方形阵 3+3+3：全十字军骑士纯圣堂重骑冲击阵）
@@ -807,20 +807,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 宝剑骑士团·里加（阿尔伯特）
     baojian_qishi: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_teutonic_knight', count: 2 },
-            { type: 'crusader_knight', count: 4 },
-            { type: 'longbowman', count: 3 },
+            { type: 'teutonic_knight', count: 3 },
+            { type: 'elite_teutonic_knight', count: 4 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     // 利沃尼亚骑士团·塔林（普雷特贝格）
     liwoniya: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_teutonic_knight', count: 2 },
-            { type: 'crusader_knight', count: 4 },
-            { type: 'longbowman', count: 3 },
+            { type: 'teutonic_knight', count: 3 },
+            { type: 'elite_teutonic_knight', count: 4 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     // 拜占庭帝国·君士坦丁堡（巴西尔二世 / 福卡斯 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 复合弓手 2）
@@ -919,51 +919,51 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 西班牙·熙德 / 费尔南多三世 / 阿方索诸王 征服者火枪骑兵精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 征服者 3 + 精锐征服者主力 4）
     balunxiya: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },     // Row 0 尖刀坚壁 = 重长枪兵 2人（LATIN 文化区标准前排）
-            { type: 'conquistador', count: 3 },       // Row 1 齐射中坚 = 西班牙征服者 3人
-            { type: 'elite_conquistador', count: 4 }, // Row 2 底边主力齐射 = 西班牙征服者精锐 4人
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     guadaer: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
-            { type: 'elite_conquistador', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     kasidiliya: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
-            { type: 'elite_conquistador', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     leangongguo: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
-            { type: 'elite_conquistador', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     xigete: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
-            { type: 'elite_conquistador', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     alagong: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
-            { type: 'elite_conquistador', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4（西班牙大方阵 tercio 的主体）
+            { type: 'elite_conquistador', count: 2 },        // 压阵火绳枪骑 = 精锐征服者 2（🔴 热兵器只许 2 档）
         ],
     },
     // 北欧与维京·阿布萨隆 / 卡尔九世 / 比尔格雅尔 狂战士精锐军团（鱼鳞阵 3+4+2：狂战士前卫 3 + 精锐狂战士主力 4 + 掷矛手 2）
@@ -995,41 +995,41 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     goryeo: {
         formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 4 },    // Row 0 前排抗线 = 华夏刀剑手 4人（车前近战抗线）
-            { type: 'elite_war_wagon', count: 3 },  // Row 1 中军主力 = 高丽战车精锐 3台（重型移动装甲战车核心输出）
-            { type: 'war_wagon', count: 2 },        // Row 2 后排战车 = 高丽战车 2台（后排移动车垒护卫）
+            { type: 'fire_archer', count: 4 },               // 主力·宽线齐射 = 火焰弓箭手 4（高丽以弓术著称）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_war_wagon', count: 2 },           // 压阵战车 = 精锐高丽战车 2（🔴 占人口的只许 2 档）
         ],
     },
     chungju_d: {
         formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'elite_war_wagon', count: 3 },
-            { type: 'war_wagon', count: 2 },
+            { type: 'fire_archer', count: 4 },               // 主力·宽线齐射 = 火焰弓箭手 4（高丽以弓术著称）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_war_wagon', count: 2 },           // 压阵战车 = 精锐高丽战车 2（🔴 占人口的只许 2 档）
         ],
     },
     sabeol: {
         formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'elite_war_wagon', count: 3 },
-            { type: 'war_wagon', count: 2 },
+            { type: 'fire_archer', count: 4 },               // 主力·宽线齐射 = 火焰弓箭手 4（高丽以弓术著称）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_war_wagon', count: 2 },           // 压阵战车 = 精锐高丽战车 2（🔴 占人口的只许 2 档）
         ],
     },
     hai2: {
         formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'elite_war_wagon', count: 3 },
-            { type: 'war_wagon', count: 2 },
+            { type: 'fire_archer', count: 4 },               // 主力·宽线齐射 = 火焰弓箭手 4（高丽以弓术著称）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_war_wagon', count: 2 },           // 压阵战车 = 精锐高丽战车 2（🔴 占人口的只许 2 档）
         ],
     },
     woju: {
         formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'elite_war_wagon', count: 3 },
-            { type: 'war_wagon', count: 2 },
+            { type: 'fire_archer', count: 4 },               // 主力·宽线齐射 = 火焰弓箭手 4（高丽以弓术著称）
+            { type: 'jian_swordsman', count: 3 },            // 中军接应 = 刀剑手 3
+            { type: 'elite_war_wagon', count: 2 },           // 压阵战车 = 精锐高丽战车 2（🔴 占人口的只许 2 档）
         ],
     },
     // 波希米亚与捷克·扬·杰式卡 胡斯车阵军团（雁行 4+3+2：劲弩手主力 4 + 双手剑士 3 + 胡斯战车 2）
@@ -1047,62 +1047,62 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_hussite_wagon', count: 2 }, // Row 2 车阵骨架 = 精锐胡斯战车 2（🔴 攻城类只许 2 档）
         ],
     },
-    // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 / 斯福尔扎 / 乌戈里诺 大盾重弩与长枪精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 热那亚弩手 3 + 精锐热那亚弩手主力 4）
+    // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 全甲佣兵与大盾热那亚重弩军团（鱼鳞阵 3+4+2：意大利佣兵 3 + 精锐热那亚弩手主力 4 + 热那亚弩手 2）
     liguliya: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },              // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，长枪结阵阻击骑兵）
-            { type: 'genoese_crossbowman', count: 3 },        // Row 1 齐射中坚 = 意大利热那亚弩手 3人（背负大盾强弩齐射）
-            { type: 'elite_genoese_crossbowman', count: 4 },  // Row 2 底边主力齐射 = 意大利热那亚弩手精锐 4人（超远破甲重弩主力齐射）
+            { type: 'condottiero', count: 3 },                // Row 0 前卫抗线 = 意大利佣兵 3人（全钢板甲双手阔剑佣兵统领）
+            { type: 'elite_genoese_crossbowman', count: 4 },  // Row 1 中军主力 = 意大利热那亚弩手精锐 4人（背负大盾超远重弩齐射）
+            { type: 'genoese_crossbowman', count: 2 },        // Row 2 尾收掩护 = 意大利热那亚弩手 2人（大盾步弩后排掩护）
         ],
     },
     anuo: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'condottiero', count: 3 },
             { type: 'elite_genoese_crossbowman', count: 4 },
+            { type: 'genoese_crossbowman', count: 2 },
         ],
     },
     tuosikana: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'condottiero', count: 3 },
             { type: 'elite_genoese_crossbowman', count: 4 },
+            { type: 'genoese_crossbowman', count: 2 },
         ],
     },
     lunbadi: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'condottiero', count: 3 },
             { type: 'elite_genoese_crossbowman', count: 4 },
+            { type: 'genoese_crossbowman', count: 2 },
         ],
     },
     yadelaiya: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'condottiero', count: 3 },
             { type: 'elite_genoese_crossbowman', count: 4 },
+            { type: 'genoese_crossbowman', count: 2 },
         ],
     },
     // 葡萄牙·阿方索一世 / 桑乔一世 风琴炮火器与长枪精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 葡萄牙风琴炮 3 + 精锐风琴炮主力 4）
     putaoya: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },        // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，长枪结阵阻击骑兵护卫炮阵）
-            { type: 'organ_gun', count: 3 },            // Row 1 齐射中坚 = 葡萄牙风琴炮 3台（多管火炮齐射）
-            { type: 'elite_organ_gun', count: 4 },      // Row 2 底边主力齐射 = 葡萄牙风琴炮精锐 4台（重型风琴炮主力轰击）
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4
+            { type: 'elite_organ_gun', count: 2 },           // 压阵火炮 = 精锐风琴炮 2（🔴 热兵器只许 2 档）
         ],
     },
     duluo: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'organ_gun', count: 3 },
-            { type: 'elite_organ_gun', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },      // 前卫剑盾 = 双手剑士 3
+            { type: 'heavy_pikeman', count: 4 },             // 主力·长枪方阵 = 重装长枪兵 4
+            { type: 'elite_organ_gun', count: 2 },           // 压阵火炮 = 精锐风琴炮 2（🔴 热兵器只许 2 档）
         ],
     },
     // 格鲁吉亚·塔玛尔女王 莫纳斯帕王家近卫铁骑精锐军团（鱼鳞阵 3+4+2：莫纳斯帕前卫 3 + 精锐莫纳斯帕主力 4 + 复合弓手 2）
@@ -1114,62 +1114,62 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（WEST_ASIA 文化区标准远程）
         ],
     },
-    // 缅甸与中南半岛·莽应龙 / 莽瑞体 / 雍笈牙 / 摩罗 / 摩奴诃 飞镖骑兵与爪刀精锐军团（鱼鳞阵 3+4+2：飞镖骑兵前卫 3 + 精锐飞镖骑兵主力 4 + 爪刀勇士 2）
+    // 缅甸东吁王朝·莽应龙 / 莽瑞体 / 雍笈牙 白象御驾与飞镖铁骑军团（鱼鳞阵 3+4+2：御驾金鞍战象 3 + 飞镖骑兵精锐主力 4 + 飞镖骑兵 2）
     hantawadi: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'arambai', count: 3 },               // Row 0 前卫袭扰 = 缅甸飞镖骑兵 3骑（高速投掷剧毒飞镖）
-            { type: 'elite_arambai', count: 4 },         // Row 1 中军主力破阵 = 缅甸飞镖骑兵精锐 4骑（主力投掷暴击）
-            { type: 'karambit_warrior', count: 2 },      // Row 2 尾收近战压阵 = 爪刀勇士 2人（纯步兵·无马，持双爪刀近身肉搏护卫）
+            { type: 'bayinnaung_elephant', count: 3 },   // Row 0 前卫冲击 = 莽应龙御驾战象 3头（金鞍披甲巨象践踏破阵）
+            { type: 'elite_arambai', count: 4 },         // Row 1 中军主力 = 缅甸飞镖骑兵精锐 4骑（王牌飞镖破甲高爆输出）
+            { type: 'arambai', count: 2 },               // Row 2 尾收压阵 = 缅甸飞镖骑兵 2骑（密林快骑后方抛射掩护）
         ],
     },
     dongxu: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'arambai', count: 3 },
+            { type: 'bayinnaung_elephant', count: 3 },
             { type: 'elite_arambai', count: 4 },
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'arambai', count: 2 },
         ],
     },
     konbaung: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'arambai', count: 3 },
+            { type: 'bayinnaung_elephant', count: 3 },
             { type: 'elite_arambai', count: 4 },
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'arambai', count: 2 },
         ],
     },
     pyu: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'arambai', count: 3 },
+            { type: 'bayinnaung_elephant', count: 3 },
             { type: 'elite_arambai', count: 4 },
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'arambai', count: 2 },
         ],
     },
     mon: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'arambai', count: 3 },
+            { type: 'bayinnaung_elephant', count: 3 },
             { type: 'elite_arambai', count: 4 },
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'arambai', count: 2 },
         ],
     },
     // 扶南与高棉·范蔓 / 刀更孟 弩炮战象与爪刀精锐军团（三角阵 2+3+4：爪刀勇士前卫 2 + 弩炮战象 3 + 精锐弩炮战象主力 4）
     funan: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'karambit_warrior', count: 2 },            // Row 0 尖刀抗线 = 爪刀勇士 2人（纯步兵·无马，持双爪刀贴身死守战象防线）
-            { type: 'ballista_elephant', count: 3 },          // Row 1 齐射中坚 = 高棉弩炮战象 3头（背负双发重型弩炮齐射）
-            { type: 'elite_ballista_elephant', count: 4 },    // Row 2 底边主力齐射 = 高棉弩炮战象精锐 4头（巨型重装弩炮战象主力超强贯穿火力）
+            { type: 'archer', count: 3 },                    // 前卫散射 = 步弓手 3
+            { type: 'karambit_warrior_elite', count: 4 },    // 主力 = 精锐爪刀勇士 4
+            { type: 'elite_ballista_elephant', count: 2 },   // 压阵巨兽 = 精锐弩战象 2（🔴 象只许 2 档）
         ],
     },
     basha_d: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'karambit_warrior', count: 2 },
-            { type: 'ballista_elephant', count: 3 },
-            { type: 'elite_ballista_elephant', count: 4 },
+            { type: 'archer', count: 3 },                    // 前卫散射 = 步弓手 3
+            { type: 'karambit_warrior_elite', count: 4 },    // 主力 = 精锐爪刀勇士 4
+            { type: 'elite_ballista_elephant', count: 2 },   // 压阵巨兽 = 精锐弩战象 2（🔴 象只许 2 档）
         ],
     },
     // 西西里与诺曼·腓特烈二世 / 罗杰二世 / 埃莱奥诺拉 军士长方阵与劲弩精锐军团（鱼鳞阵 3+4+2：军士长前卫 3 + 精锐军士长主力 4 + 劲弩手 2）
@@ -1368,101 +1368,101 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 迦太基与布匿·汉尼拔 / 哈米尔卡 战象践踏与标枪精锐军团（鱼鳞阵 3+4+2：战象前卫 3 + 精锐战象主力 4 + 掷矛手 2）
     buni: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'war_elephant', count: 3 },            // Row 0 前卫突击 = 战象 3头（前锋战象破障践踏）
-            { type: 'elite_war_elephant', count: 4 },      // Row 1 中军主力破阵 = 战象精锐 4头（主力战象方阵撕裂敌线）
-            { type: 'skirmisher', count: 2 },              // Row 2 尾收远程掩护 = 掷矛手 2人（纯步兵·无马，后排重标枪抛掷压制）
+            { type: 'skirmisher', count: 4 },                // 主力·宽线投射 = 掷矛手 4
+            { type: 'spearman', count: 3 },                  // 中军接应 = 长矛兵 3
+            { type: 'elite_war_elephant', count: 2 },        // 压阵巨兽 = 精锐战象 2（🔴 象只许 2 档）
         ],
     },
     feiniqi: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'war_elephant', count: 3 },
-            { type: 'elite_war_elephant', count: 4 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'skirmisher', count: 4 },                // 主力·宽线投射 = 掷矛手 4
+            { type: 'spearman', count: 3 },                  // 中军接应 = 长矛兵 3
+            { type: 'elite_war_elephant', count: 2 },        // 压阵巨兽 = 精锐战象 2（🔴 象只许 2 档）
         ],
     },
     // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 古典双轮战车车阵军团（雁行阵 4+3+2：波斯持盾步兵 4 + 双轮战车精锐 3 + 双轮战车 2）
     heti: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },          // Row 0 前排抗线 = 波斯持盾步兵 4人（方盾坚壁抗线掩护）
-            { type: 'elite_war_chariot', count: 3 },  // Row 1 中军主力 = 双轮战车精锐 3车（王牌青铜战车冲阵破敌）
-            { type: 'war_chariot', count: 2 },        // Row 2 后排战车 = 双轮战车 2车（战车梯次跟进）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     aiji: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     dibisi: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     sumeier: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     jialedi: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     yashu: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     guyashu: {
         formationMode: 'echelon',
         slots: [
-            { type: 'sparabara', count: 4 },
-            { type: 'elite_war_chariot', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
         ],
     },
     // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（鱼鳞阵 3+4+2：战斗象前卫 3 + 精锐战斗象主力 4 + 步弓手 2）
     siam: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'battle_elephant', count: 3 },        // Row 0 前卫突击 = 东南亚战斗象 3头（前锋战象破阵践踏）
-            { type: 'elite_battle_elephant', count: 4 },  // Row 1 中军主力 = 东南亚战斗象精锐 4头（王家近卫精锐战象主力冲锋）
-            { type: 'archer', count: 2 },                 // Row 2 尾收远射 = 步弓手 2人（纯步兵·无马，后方步弓压制）
+            { type: 'archer', count: 4 },                    // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是征召弓手与步兵）
+            { type: 'karambit_warrior', count: 3 },          // 中军接应 = 爪刀勇士 3
+            { type: 'elite_battle_elephant', count: 2 },     // 压阵巨兽 = 精锐战斗象 2（🔴 象是王室精锐，少而精）
         ],
     },
     pagan: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'battle_elephant', count: 3 },
-            { type: 'elite_battle_elephant', count: 4 },
-            { type: 'archer', count: 2 },
+            { type: 'archer', count: 4 },                    // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是征召弓手与步兵）
+            { type: 'karambit_warrior', count: 3 },          // 中军接应 = 爪刀勇士 3
+            { type: 'elite_battle_elephant', count: 2 },     // 压阵巨兽 = 精锐战斗象 2（🔴 象是王室精锐，少而精）
         ],
     },
     chenla: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'battle_elephant', count: 3 },
-            { type: 'elite_battle_elephant', count: 4 },
-            { type: 'archer', count: 2 },
+            { type: 'archer', count: 4 },                    // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是征召弓手与步兵）
+            { type: 'karambit_warrior', count: 3 },          // 中军接应 = 爪刀勇士 3
+            { type: 'elite_battle_elephant', count: 2 },     // 压阵巨兽 = 精锐战斗象 2（🔴 象是王室精锐，少而精）
         ],
     },
     // 阿拉伯与近东·哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 骆驼弓骑精锐军团（三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
@@ -1679,13 +1679,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },                // Row 2 尾收远射 = 劲弩手 2人（纯步兵·无马，后方重型劲弩压制掩护）
         ],
     },
-    // 中南半岛阿瓦王朝·思机法 拉塔战车车阵军团（方阵 3+3+3：拉塔战车 3 + 精锐拉塔战车主力 3 + 拉塔战车 3）
+    // 中南半岛阿瓦王朝·思机法 拉塔战车车阵军团（雁行阵 4+3+2：步弓手主力 4 + 爪刀勇士 3 + 精锐拉塔战车 2）
     ava: {
-        formationMode: 'square',
+        formationMode: 'echelon',
         slots: [
-            { type: 'ratha_ranged', count: 3 },            // Row 0 前排战车 = 拉塔战车 3车
-            { type: 'elite_ratha_ranged', count: 3 },      // Row 1 中军主力 = 拉塔战车精锐 3车（王牌装甲战车精锐主力冲锋齐射破阵）
-            { type: 'ratha_ranged', count: 3 },            // Row 2 后排战车 = 拉塔战车 3车
+            { type: 'archer', count: 4 },          // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是弓手）
+            { type: 'karambit_warrior', count: 3 }, // 中军接应 = 爪刀勇士 3
+            { type: 'elite_ratha_ranged', count: 2 }, // 战车 = 精锐拉塔战车 2（🔴 占人口只许 2 档）
         ],
     },
 };

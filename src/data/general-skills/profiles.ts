@@ -2310,7 +2310,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    shenshi_shenqingzhi: { generalId: 'shenshi_shenqingzhi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},
+    shenshi_wentianxiang: { generalId: 'shenshi_wentianxiang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},
 
 
 
