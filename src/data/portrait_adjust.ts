@@ -3938,7 +3938,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/WEST_ASIA/luomu_jilijie.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": 22
         },

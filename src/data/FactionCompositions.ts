@@ -17,22 +17,22 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 秦国·鹤翼阵（2+4+3：印加枪兵长 2 + 虎豹骑主力 4 + 诸葛弩 3）
+    // 秦及先秦·雁行阵（4+3+2：印加枪兵长 4 + 双轮远程战车 3 + 诸葛弩 2）——2026-08-18 主人定
     qin: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'kamayuk', count: 2 },             // Row 0 步兵前锋 = 印加枪兵长
-            { type: 'tiger_rider', count: 4 },         // Row 1 骑兵主力两翼合围 = 虎豹骑
-            { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩
+            { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 印加枪兵长 4人
+            { type: 'war_chariot_ranged', count: 3 },  // Row 1 中排 = 双轮远程战车 3人
+            { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
         ],
     },
-    // 汉国·鹤翼阵（2+4+3：刀剑手 2 + 虎豹骑主力 4 + 诸葛弩 3）
+    // 韩国·雁行阵（4+3+2：与秦国同阵）——2026-08-18 主人定「秦国及以前武将都套此阵」
     han: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 2 },      // Row 0 步兵前锋 = 刀剑手 2人
-            { type: 'tiger_rider', count: 4 },         // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
-            { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     han_d: {
@@ -125,174 +125,256 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 草原与中亚诸大汗·鞑靼怯薛军团（鹤翼阵 2+4+3：怯薛军前卫 2 + 精锐怯薛军主力合围 4 + 钦察弓骑 3）
+    // 北宋·赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 等火矛手军团（鱼鳞阵 3+4+2）
+    // 2026-08-18 主人定「所有宋武将统一此阵」：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2
+    song: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    heng1: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    changshan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    zhai_han: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    yanzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    huan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    didao: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    qing: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    xiangzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    tingzhou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    // 草原与中亚诸大汗·鞑靼怯薛军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
     menggu_d: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },          // Row 0 前哨 = 鞑靼怯薛军 2人
-            { type: 'elite_keshik', count: 4 },    // Row 1 王庭宿卫铁骑两翼合围 = 鞑靼怯薛军精锐 4人
-            { type: 'kipchak', count: 3 },         // Row 2 中军后排齐射 = 库曼钦察弓骑 3人
+            { type: 'keshik', count: 3 },          // Row 0 前卫突破 = 鞑靼怯薛军 3骑
+            { type: 'elite_keshik', count: 4 },    // Row 1 中军主力 = 鞑靼怯薛军精锐 4骑
+            { type: 'mangudai', count: 2 },        // Row 2 尾收远射 = 蒙古突骑 2骑
         ],
     },
     jinzhang: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     yuan_d: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     tiemuer: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     asaibaijiang: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     wuliangha: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     jalair: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     kiyad: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     zhadalan: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     wala: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     oirat_ming: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     an: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     babuer: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     da_yuan: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     chahar: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     zhaowu: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     manghuti: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     khoshut: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     yilihanguo_d: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     yilihanguo: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     salai: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'keshik', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'elite_keshik', count: 4 },
-            { type: 'kipchak', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
     },
     // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）
@@ -385,44 +467,44 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
         ],
     },
-    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 百夫长精锐军团（鱼鳞阵 3+4+2：军团步兵前卫 3 + 精锐百夫长主力 4 + 百夫长 2）
+    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 百夫长精锐军团（雁行阵 4+3+2：军团步兵前锋 4 + 精锐百夫长中坚 3 + 百夫长压阵 2）
     luoma_diguo: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 3 },           // Row 0 前卫大盾抗线 = 罗马军团步兵 3人
-            { type: 'elite_centurion', count: 4 },     // Row 1 中军突击主力 = 罗马百夫长精锐 4人
-            { type: 'centurion', count: 2 },           // Row 2 尾收指挥调度 = 罗马百夫长 2人
+            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军团步兵 4人
+            { type: 'elite_centurion', count: 3 },     // Row 1 中军主力突击 = 罗马百夫长精锐 3骑
+            { type: 'centurion', count: 2 },           // Row 2 尾收指挥调度 = 罗马百夫长 2骑
         ],
     },
     gaolu_luoma: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 3 },
-            { type: 'elite_centurion', count: 4 },
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
             { type: 'centurion', count: 2 },
         ],
     },
     mozeer: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 3 },
-            { type: 'elite_centurion', count: 4 },
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
             { type: 'centurion', count: 2 },
         ],
     },
     aersasi: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 3 },
-            { type: 'elite_centurion', count: 4 },
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
             { type: 'centurion', count: 2 },
         ],
     },
     qiliqiya: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 3 },
-            { type: 'elite_centurion', count: 4 },
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
             { type: 'centurion', count: 2 },
         ],
     },
@@ -841,15 +923,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_wagon', count: 3 },
         ],
     },
-    // 奥斯曼与小亚细亚·基利杰阿尔斯兰 耶尼切里禁卫火枪精锐军团（三角阵 2+3+4：东方剑士前卫 2 + 土耳其禁卫军 3 + 精锐土耳其禁卫军主力 4）
-    luomu: {
-        formationMode: 'triangle',
-        slots: [
-            { type: 'eastern_swordsman', count: 2 },  // Row 0 尖刀抗线 = 东方剑士 2人（纯步兵·无马，持弯刀圆盾筑起防线）
-            { type: 'janissary', count: 3 },          // Row 1 齐射中坚 = 土耳其禁卫军 3人
-            { type: 'elite_janissary', count: 4 },    // Row 2 底边主力齐射 = 土耳其禁卫军精锐 4人（重型火绳枪主力齐射破阵）
-        ],
-    },
     // 波希米亚与捷克·扬·杰式卡 胡斯车阵军团（雁行 4+3+2：劲弩手主力 4 + 双手剑士 3 + 胡斯战车 2）
     //
     // 🔴 2026-08-18 改：原编制是**方阵 3+3+3、九档全是胡斯战车**——史实上不成立。
@@ -1201,13 +1274,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'skirmisher', count: 2 },
         ],
     },
-    // 古埃及与美索不达米亚·拉美西斯 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 古典双轮战车车阵军团（方阵 3+3+3：双轮战车 3 + 精锐双轮战车主力 3 + 双轮战车 3）
-    aiji: {
+    // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 古典双轮战车车阵军团（方阵 3+3+3：双轮战车 3 + 精锐双轮战车主力 3 + 双轮战车 3）
+    heti: {
         formationMode: 'square',
         slots: [
             { type: 'war_chariot', count: 3 },          // Row 0 前排战车 = 双轮战车 3乘
             { type: 'elite_war_chariot', count: 3 },    // Row 1 中军主力 = 双轮战车精锐 3乘（王家双轮战车主力撕裂敌阵）
             { type: 'war_chariot', count: 3 },          // Row 2 后排战车 = 双轮战车 3乘
+        ],
+    },
+    aiji: {
+        formationMode: 'square',
+        slots: [
+            { type: 'war_chariot', count: 3 },
+            { type: 'elite_war_chariot', count: 3 },
+            { type: 'war_chariot', count: 3 },
         ],
     },
     dibisi: {

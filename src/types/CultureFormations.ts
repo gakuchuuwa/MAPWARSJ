@@ -261,12 +261,13 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 // ============================================================
 
 /**
- * 秦国·鹤翼阵（2+4+3）：印加枪兵长(2) + 虎豹骑(4) + 诸葛弩(3)
+ * 秦及先秦·雁行阵（4+3+2）：印加枪兵长(4) + 双轮远程战车(3) + 诸葛弩(2)
+ * 2026-08-18 主人定：秦国与所有秦国以前的武将统一套此阵（此前鹤翼 2+4+3 混用虎豹骑/剑手等三国贴图，时代错位）。
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'kamayuk', count: 2 },     // Row 0 步兵前锋 = 印加枪兵长 2人
-    { type: 'tiger_rider', count: 4 }, // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
-    { type: 'chukonu', count: 3 },     // Row 2 中军后排支援 = 诸葛弩 3人
+    { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 印加枪兵长 4人
+    { type: 'war_chariot_ranged', count: 3 },  // Row 1 中排 = 双轮远程战车 3人
+    { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
 ];
 
 /**
@@ -376,6 +377,34 @@ export const QIN_DYNASTY_GENERAL_IDS = new Set([
     'wazhai_zhanghan',      // 章邯
     'shangzhou_shangyang',  // 商鞅
     'nanyue_zhaotuo',       // 赵佗
+    // 2026-08-18 主人定：秦国以前的武将（商/周/春秋/战国）一律并入秦阵（雁行 4+3+2）
+    'shang_fuhao',          // 妇好（商）
+    'yin_dixin',            // 子受（商纣）
+    'zhou_jifa',            // 姬发（周武王）
+    'shen_shenbo',          // 申伯（西周）
+    'yong_lujili',          // 庐戢黎（楚）
+    'jin_xianzhen',         // 先轸（晋）
+    'yangshe_yangshezhi',   // 羊舌职（晋）
+    'qi_simarangju',        // 司马穰苴（齐）
+    'kong_d_caogui',        // 曹刿（鲁）
+    'wu_sunwu',             // 孙武（吴）
+    'yue_goujian',          // 勾践（越）
+    'mi_chu_xionglv',       // 熊旅（楚庄王）
+    'chunshen_huangxie',    // 黄歇（楚春申君）
+    'wei_wuqi',             // 吴起（魏）
+    'yan_leyi',             // 乐毅（燕）
+    'zhao_lianpo',          // 廉颇（赵）
+    'liguo_zhaoshe',        // 赵奢（赵）
+    'lingqiu_zhaowuling',   // 赵雍（赵武灵王）
+    'wuzhou_limu',          // 李牧（赵）
+    'jiaodong_tiandan',     // 田单（齐）
+    'dongxian_sunbin',      // 孙膑（齐）
+    'han_baoyuan',          // 暴鸢（韩）
+    'liangshidu_longjia',   // 龙贾（魏）
+    'dianguo_zhuangqiao',   // 庄蹻（楚/滇）
+    'quanrong_yiquhai',     // 义渠骇（义渠）
+    'yun_wuli',             // 吾离（戎）
+    'ouyue_zouyao',         // 驺摇（东瓯）
 ]);
 
 /** 秦朝势力 ID 集合 */

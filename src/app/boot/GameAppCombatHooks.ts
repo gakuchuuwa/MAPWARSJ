@@ -53,8 +53,8 @@ function unitHasElite(u: { unitType?: string; getEntity?(): any }): boolean {
  */
 function startScene13War(
     app: GameApp,
-    attacker: { factionId: string | null; troops: number; getEntity?(): any },
-    defender: { factionId: string | null; troops: number; getEntity?(): any },
+    attacker: { factionId: string | null; troops: number; generalId?: string | null; getEntity?(): any },
+    defender: { factionId: string | null; troops: number; generalId?: string | null; getEntity?(): any },
     onDecision: (winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void,
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
@@ -67,6 +67,9 @@ function startScene13War(
         defenderRegion: defRegion,
         attackerFactionId: attacker.factionId,
         defenderFactionId: defender.factionId,
+        // 武将 id 传给编制层：武将专属编制（秦及先秦雁行阵等）在 13 里也要生效
+        attackerGeneralId: attacker.generalId ?? null,
+        defenderGeneralId: defender.generalId ?? null,
         attackerTroops: attacker.troops,
         defenderTroops: defender.troops,
         attackerBonus: bonus?.attacker,
