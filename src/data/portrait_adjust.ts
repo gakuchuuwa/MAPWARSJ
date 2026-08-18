@@ -5043,7 +5043,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/boootiya_yibaminongda.png": {
-            "scale": 1.39,
+            "scale": 1.4,
             "offsetX": 0,
             "offsetY": 51
         },
@@ -5088,9 +5088,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/LATIN/__闲置__LATIN_03.png": {
-            "scale": 1.19,
+            "scale": 1.21,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 15
         },
         "/assets/SLAVIC/taolika_asipuergesi.png": {
             "scale": 1,
@@ -5178,7 +5178,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/__闲置__LATIN_04.png": {
-            "scale": 1.05,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5533,7 +5533,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/bulietani_alan.png": {
-            "scale": 0.99,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -5828,12 +5828,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/LATIN/__闲置__LATIN_07.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 4
         },
         "/assets/LATIN/__闲置__LATIN_11.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5848,7 +5848,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -31
         },
         "/assets/LATIN/aosiruowen_baodewen.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -6591,6 +6591,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/LATIN/dbe814db-277f-4036-b148-2ac0edfaf303.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/LATIN/yipilusi_piluoshi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/LATIN/Gemini_Generated_Image_19lgvf19lgvf19lg.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/baojialiya_asenyishi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/Gemini_Generated_Image_6q0cou6q0cou6q0c.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LATIN/Gemini_Generated_Image_uio81tuio81tuio8.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/LATIN/Gemini_Generated_Image_tt6nq2tt6nq2tt6n.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/LATIN/talanduo_aqita.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/GERMANIC/Gemini_Generated_Image_g5mawzg5mawzg5ma.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/GERMANIC/safuyi_ameidiao.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {
