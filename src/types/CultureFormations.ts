@@ -712,7 +712,7 @@ export function isTeutonicDynasty(factionId?: string | null, generalId?: string 
 
 /** 拜占庭名将 ID 集合 */
 export const BYZANTINE_DYNASTY_GENERAL_IDS = new Set([
-    'gen_vladimir_great',       // 弗拉基米尔（拜占庭同盟 · 君士坦丁堡）
+    'gen_basil_ii',       // 巴西尔二世（拜占庭帝国 · 君士坦丁堡）
     'maerta_qishi_walaite',     // 瓦莱特（医院骑士团/马耳他）
 ]);
 

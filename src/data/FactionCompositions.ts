@@ -628,22 +628,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 3 },
         ],
     },
-    // 立陶宛大公国·维尔纽斯（格迪米纳斯）
+    // 立陶宛大公国·维尔纽斯 / 涅曼·格罗德诺（格迪米纳斯 / 维托夫特 列提斯破甲铁骑与劲弩精锐军团 · 鱼鳞阵 3+4+2：列提斯前卫 3 + 精锐列提斯主力 4 + 劲弩手 2）
     litaowan: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'obuch', count: 2 },
-            { type: 'winged_hussar', count: 4 },
-            { type: 'arbalest', count: 3 },
+            { type: 'leitis', count: 3 },        // Row 0 前卫突击 = 立陶宛列提斯 3骑
+            { type: 'elite_leitis', count: 4 },  // Row 1 中军主力撕裂 = 立陶宛列提斯精锐 4骑（无视护甲之王主力突破）
+            { type: 'arbalest', count: 2 },      // Row 2 尾收远程压阵 = 劲弩手 2人（SLAVIC 文化区标准远程）
         ],
     },
-    // 涅曼·格罗德诺（维托夫特大帝）
     nieman: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'obuch', count: 2 },
-            { type: 'winged_hussar', count: 4 },
-            { type: 'arbalest', count: 3 },
+            { type: 'leitis', count: 3 },
+            { type: 'elite_leitis', count: 4 },
+            { type: 'arbalest', count: 2 },
         ],
     },
     // 条顿骑士团·柯尼斯堡（容金根 · 鹤翼阵 2+4+3：精锐条顿武士 2 + 十字军圣殿骑士主力 4 + 长弓兵 3）
@@ -780,7 +779,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     balunxiya: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },     // Row 0 尖刀坚壁 = 重装长枪兵 2人（大方阵前排抗线）
+            { type: 'heavy_pikeman', count: 2 },     // Row 0 尖刀坚壁 = 重长枪兵 2人（LATIN 文化区标准前排）
             { type: 'conquistador', count: 3 },       // Row 1 齐射中坚 = 西班牙征服者 3人
             { type: 'elite_conquistador', count: 4 }, // Row 2 底边主力齐射 = 西班牙征服者精锐 4人
         ],
@@ -788,7 +787,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     guadaer: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'conquistador', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
@@ -796,7 +795,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     kasidiliya: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'conquistador', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
@@ -804,7 +803,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     leangongguo: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'conquistador', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
@@ -812,7 +811,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     xigete: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'conquistador', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
@@ -820,18 +819,18 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     alagong: {
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_spearman', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'conquistador', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
     },
-    // 北欧与维京·阿布萨隆 / 卡尔九世 / 比尔格雅尔 狂战士精锐军团（鱼鳞阵 3+4+2：狂战士前卫 3 + 精锐狂战士主力 4 + 弓兵 2）
+    // 北欧与维京·阿布萨隆 / 卡尔九世 / 比尔格雅尔 狂战士精锐军团（鱼鳞阵 3+4+2：狂战士前卫 3 + 精锐狂战士主力 4 + 掷矛手 2）
     danmai: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'berserk', count: 3 },       // Row 0 前卫冲锋 = 维京狂战士 3人
             { type: 'elite_berserk', count: 4 }, // Row 1 中军狂暴主力 = 维京狂战士精锐 4人
-            { type: 'bowman', count: 2 },        // Row 2 尾收吊射掩护 = 弓兵 2人
+            { type: 'skirmisher', count: 2 },    // Row 2 尾收远程投掷 = 掷矛手 2人（维京接敌前标志性标枪破盾）
         ],
     },
     ruidian_yota: {
@@ -839,7 +838,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'berserk', count: 3 },
             { type: 'elite_berserk', count: 4 },
-            { type: 'bowman', count: 2 },
+            { type: 'skirmisher', count: 2 },
         ],
     },
     ruidian_si: {
@@ -847,7 +846,446 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'berserk', count: 3 },
             { type: 'elite_berserk', count: 4 },
-            { type: 'bowman', count: 2 },
+            { type: 'skirmisher', count: 2 },
+        ],
+    },
+    // 朝鲜与高丽·李舜臣 / 姜邯赞 / 乙支文德 / 渊盖苏文 / 金庾信 / 权栗等 高丽战车箭楼与重步兵精锐军团（三角阵 2+3+4：纯步兵刀剑手前卫 2 + 高丽战车 3 + 精锐高丽战车主力 4）
+    sambyeol: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },   // Row 0 尖刀抗线 = 华夏刀剑手 2人（纯步兵·无马，持盾筑起坚壁掩护）
+            { type: 'war_wagon', count: 3 },        // Row 1 齐射中坚 = 高丽战车 3台
+            { type: 'elite_war_wagon', count: 4 },  // Row 2 底边主力齐射 = 高丽战车精锐 4台（重型移动战车主力破敌）
+        ],
+    },
+    goryeo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    gaogouli: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    xuantu: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    xinluo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    baiji: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    chungju_d: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    sabeol: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    hai2: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    woju: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    joseon: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    sheng_d: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    ssangseong: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    zhen: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    danluo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    gaya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    naju_d: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'jian_swordsman', count: 2 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 4 },
+        ],
+    },
+    // 奥斯曼与突厥·基利杰阿尔斯兰 / 穆罕默德一世 / 迈赫迈德 耶尼切里禁卫火枪精锐军团（三角阵 2+3+4：东方剑士前卫 2 + 土耳其禁卫军 3 + 精锐土耳其禁卫军主力 4）
+    luomu: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'eastern_swordsman', count: 2 },  // Row 0 尖刀抗线 = 东方剑士 2人（纯步兵·无马，持弯刀圆盾筑起防线）
+            { type: 'janissary', count: 3 },          // Row 1 齐射中坚 = 土耳其禁卫军 3人
+            { type: 'elite_janissary', count: 4 },    // Row 2 底边主力齐射 = 土耳其禁卫军精锐 4人（重型火绳枪主力齐射破阵）
+        ],
+    },
+    nasier: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'eastern_swordsman', count: 2 },
+            { type: 'janissary', count: 3 },
+            { type: 'elite_janissary', count: 4 },
+        ],
+    },
+    deniesite: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'eastern_swordsman', count: 2 },
+            { type: 'janissary', count: 3 },
+            { type: 'elite_janissary', count: 4 },
+        ],
+    },
+    // 波希米亚与捷克·扬·杰式卡 胡斯战车车阵精锐军团（三角阵 2+3+4：冠军剑士前卫 2 + 胡斯战车 3 + 精锐胡斯战车主力 4）
+    boximiya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'champion', count: 2 },            // Row 0 尖刀抗线 = 冠军剑士 2人（纯步兵·无马，持重剑抗线护卫车阵）
+            { type: 'hussite_wagon', count: 3 },       // Row 1 齐射中坚 = 波希米亚胡斯战车 3台（装甲车阵要塞）
+            { type: 'elite_hussite_wagon', count: 4 }, // Row 2 底边主力齐射 = 波希米亚胡斯战车精锐 4台（主力重装战车要塞齐射）
+        ],
+    },
+    // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 / 斯福尔扎 / 乌戈里诺 大盾重弩与长枪精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 热那亚弩手 3 + 精锐热那亚弩手主力 4）
+    liguliya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },              // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，长枪结阵阻击骑兵）
+            { type: 'genoese_crossbowman', count: 3 },        // Row 1 齐射中坚 = 意大利热那亚弩手 3人（背负大盾强弩齐射）
+            { type: 'elite_genoese_crossbowman', count: 4 },  // Row 2 底边主力齐射 = 意大利热那亚弩手精锐 4人（超远破甲重弩主力齐射）
+        ],
+    },
+    anuo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'elite_genoese_crossbowman', count: 4 },
+        ],
+    },
+    tuosikana: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'elite_genoese_crossbowman', count: 4 },
+        ],
+    },
+    lunbadi: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'elite_genoese_crossbowman', count: 4 },
+        ],
+    },
+    yadelaiya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'elite_genoese_crossbowman', count: 4 },
+        ],
+    },
+    // 葡萄牙·阿方索一世 / 桑乔一世 风琴炮火器与长枪精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 葡萄牙风琴炮 3 + 精锐风琴炮主力 4）
+    putaoya: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },        // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，长枪结阵阻击骑兵护卫炮阵）
+            { type: 'organ_gun', count: 3 },            // Row 1 齐射中坚 = 葡萄牙风琴炮 3台（多管火炮齐射）
+            { type: 'elite_organ_gun', count: 4 },      // Row 2 底边主力齐射 = 葡萄牙风琴炮精锐 4台（重型风琴炮主力轰击）
+        ],
+    },
+    duluo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'organ_gun', count: 3 },
+            { type: 'elite_organ_gun', count: 4 },
+        ],
+    },
+    // 格鲁吉亚·塔玛尔女王 莫纳斯帕王家近卫铁骑精锐军团（鱼鳞阵 3+4+2：莫纳斯帕前卫 3 + 精锐莫纳斯帕主力 4 + 复合弓手 2）
+    gelujiya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'monaspa', count: 3 },              // Row 0 前卫冲击 = 格鲁吉亚莫纳斯帕 3骑
+            { type: 'elite_monaspa', count: 4 },        // Row 1 中军破阵主力 = 格鲁吉亚莫纳斯帕精锐 4骑（王家近卫铁骑主力）
+            { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（WEST_ASIA 文化区标准远程）
+        ],
+    },
+    // 缅甸与中南半岛·莽应龙 / 莽瑞体 / 雍笈牙 / 摩罗 / 摩奴诃 飞镖骑兵与爪刀精锐军团（鱼鳞阵 3+4+2：飞镖骑兵前卫 3 + 精锐飞镖骑兵主力 4 + 爪刀勇士 2）
+    hantawadi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'arambai', count: 3 },               // Row 0 前卫袭扰 = 缅甸飞镖骑兵 3骑（高速投掷剧毒飞镖）
+            { type: 'elite_arambai', count: 4 },         // Row 1 中军主力破阵 = 缅甸飞镖骑兵精锐 4骑（主力投掷暴击）
+            { type: 'karambit_warrior', count: 2 },      // Row 2 尾收近战压阵 = 爪刀勇士 2人（纯步兵·无马，持双爪刀近身肉搏护卫）
+        ],
+    },
+    dongxu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'arambai', count: 3 },
+            { type: 'elite_arambai', count: 4 },
+            { type: 'karambit_warrior', count: 2 },
+        ],
+    },
+    konbaung: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'arambai', count: 3 },
+            { type: 'elite_arambai', count: 4 },
+            { type: 'karambit_warrior', count: 2 },
+        ],
+    },
+    pyu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'arambai', count: 3 },
+            { type: 'elite_arambai', count: 4 },
+            { type: 'karambit_warrior', count: 2 },
+        ],
+    },
+    mon: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'arambai', count: 3 },
+            { type: 'elite_arambai', count: 4 },
+            { type: 'karambit_warrior', count: 2 },
+        ],
+    },
+    // 扶南与高棉·范蔓 / 刀更孟 弩炮战象与爪刀精锐军团（三角阵 2+3+4：爪刀勇士前卫 2 + 弩炮战象 3 + 精锐弩炮战象主力 4）
+    funan: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'karambit_warrior', count: 2 },            // Row 0 尖刀抗线 = 爪刀勇士 2人（纯步兵·无马，持双爪刀贴身死守战象防线）
+            { type: 'ballista_elephant', count: 3 },          // Row 1 齐射中坚 = 高棉弩炮战象 3头（背负双发重型弩炮齐射）
+            { type: 'elite_ballista_elephant', count: 4 },    // Row 2 底边主力齐射 = 高棉弩炮战象精锐 4头（巨型重装弩炮战象主力超强贯穿火力）
+        ],
+    },
+    basha_d: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'karambit_warrior', count: 2 },
+            { type: 'ballista_elephant', count: 3 },
+            { type: 'elite_ballista_elephant', count: 4 },
+        ],
+    },
+    // 西西里与诺曼·腓特烈二世 / 罗杰二世 / 埃莱奥诺拉 军士长方阵与劲弩精锐军团（鱼鳞阵 3+4+2：军士长前卫 3 + 精锐军士长主力 4 + 劲弩手 2）
+    xixiliwangguo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'serjeant', count: 3 },            // Row 0 前卫坚壁 = 西西里军士长 3人（纯步兵·无马，持诺曼大盾长枪正面结阵抗线）
+            { type: 'elite_serjeant', count: 4 },      // Row 1 中军主力破阵 = 西西里军士长精锐 4人（主力重装步兵方阵推进）
+            { type: 'arbalest', count: 2 },            // Row 2 尾收远程压制 = 劲弩手 2人（纯步兵·无马，后排破甲重弩强力压制）
+        ],
+    },
+    moxina: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'serjeant', count: 3 },
+            { type: 'elite_serjeant', count: 4 },
+            { type: 'arbalest', count: 2 },
+        ],
+    },
+    sading: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'serjeant', count: 3 },
+            { type: 'elite_serjeant', count: 4 },
+            { type: 'arbalest', count: 2 },
+        ],
+    },
+    // 勃艮第与弗兰德·罗贝尔二世 马上轻骑与强弩精锐军团（鱼鳞阵 3+4+2：马上轻骑前卫 3 + 精锐马上轻骑主力 4 + 弩兵 2）
+    fulandesi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'coustillier', count: 3 },        // Row 0 前卫突击 = 勃艮第马上轻骑 3骑（前锋突击）
+            { type: 'elite_coustillier', count: 4 },  // Row 1 中军主力爆发 = 勃艮第马上轻骑精锐 4骑（冲锋一击蓄力爆发主力）
+            { type: 'crossbowman', count: 2 },        // Row 2 尾收远程压制 = 弩兵 2人（纯步兵·无马，后排强弩齐射破盾）
+        ],
+    },
+    // 萨拉森与阿拉伯·萨拉赫丁 / 穆阿维叶 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
+    ayoubu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mameluke', count: 3 },            // Row 0 前卫突击 = 萨拉森马穆鲁克 3骑（弯刀重骑前锋撕裂）
+            { type: 'elite_mameluke', count: 4 },      // Row 1 中军主力劈杀 = 萨拉森马穆鲁克精锐 4骑（近卫重骑主力突破）
+            { type: 'camel_archer', count: 2 },        // Row 2 尾收远程掩护 = 柏柏尔骆驼弓骑 2骑（高机动骆驼骑射压制）
+        ],
+    },
+    womaya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mameluke', count: 3 },
+            { type: 'elite_mameluke', count: 4 },
+            { type: 'camel_archer', count: 2 },
+        ],
+    },
+    // 哥特·狄奥多里克大帝 哥特近卫军盾墙与弩手精锐军团（鱼鳞阵 3+4+2：哥特近卫军前卫 3 + 精锐哥特近卫军主力 4 + 弩兵 2）
+    donggete: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'huskarl', count: 3 },            // Row 0 前卫坚壁 = 哥特近卫军 3人（纯步兵·无马，持重盾顶着箭雨推进）
+            { type: 'elite_huskarl', count: 4 },      // Row 1 中军主力破阵 = 哥特近卫军精锐 4人（主力近卫步兵盾墙撕裂）
+            { type: 'crossbowman', count: 2 },        // Row 2 尾收远程压制 = 弩兵 2人（纯步兵·无马，后排强弩射击压制）
+        ],
+    },
+    // 保加利亚·西美昂大帝 龙骑兵突击与复合弓精锐军团（鱼鳞阵 3+4+2：保加利亚骑兵前卫 3 + 精锐保加利亚骑兵主力 4 + 复合弓手 2）
+    seleisi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'konnik', count: 3 },               // Row 0 前卫突击 = 保加利亚骑兵 3骑（前锋冲锋）
+            { type: 'elite_konnik', count: 4 },         // Row 1 中军主力破阵 = 保加利亚骑兵精锐 4骑（龙骑兵主力突破）
+            { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（纯步兵·无马，后排复合弓吊射）
+        ],
+    },
+    // 凯尔特与苏格兰·威廉·华莱士 / 奥恩格斯 / 多姆纳尔 靛蓝突袭者与长弓精锐军团（鱼鳞阵 3+4+2：靛蓝突袭者前卫 3 + 精锐靛蓝突袭者主力 4 + 长弓兵 2）
+    kanbuliya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'woad_raider', count: 3 },          // Row 0 前卫突袭 = 凯尔特靛蓝突袭者 3人（纯步兵·无马，高速突袭）
+            { type: 'elite_woad_raider', count: 4 },    // Row 1 中军主力破阵 = 凯尔特靛蓝突袭者精锐 4人（主力狂暴劈杀）
+            { type: 'longbowman', count: 2 },           // Row 2 尾收远程吊射 = 长弓兵 2人（纯步兵·无马，后排战弓抛射压制）
+        ],
+    },
+    piketai: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'woad_raider', count: 3 },
+            { type: 'elite_woad_raider', count: 4 },
+            { type: 'longbowman', count: 2 },
+        ],
+    },
+    gaer: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'woad_raider', count: 3 },
+            { type: 'elite_woad_raider', count: 4 },
+            { type: 'longbowman', count: 2 },
+        ],
+    },
+    // 印度与达罗毗荼·旃陀罗笈多 / 戒日王 / 频毗娑罗 / 达磨波罗 / 梵摩达 / 苏摩 软剑士与象弓精锐军团（鱼鳞阵 3+4+2：软剑士前卫 3 + 精锐软剑士主力 4 + 象弓骑兵 2）
+    kongque: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },          // Row 0 前卫突击 = 达罗毗荼软剑士 3人（纯步兵·无马，持双刃软剑高速回旋）
+            { type: 'elite_urumi_swordsman', count: 4 },    // Row 1 中军主力撕裂 = 达罗毗荼软剑士精锐 4人（主力钢带软剑旋斩破阵）
+            { type: 'elephant_archer', count: 2 },          // Row 2 尾收远程压制 = 印度象弓骑兵 2头（战象背负箭楼高台抛射）
+        ],
+    },
+    jieri: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'elephant_archer', count: 2 },
+        ],
+    },
+    mojietuo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'elephant_archer', count: 2 },
+        ],
+    },
+    boluo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'elephant_archer', count: 2 },
+        ],
+    },
+    jiashi_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'elephant_archer', count: 2 },
+        ],
+    },
+    sumo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'elephant_archer', count: 2 },
         ],
     },
     // 扎扬王朝·特莱姆森（亚格姆拉森 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
