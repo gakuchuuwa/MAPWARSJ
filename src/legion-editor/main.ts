@@ -282,7 +282,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'rhomphaia_warrior', name: '色雷斯长刃斩手', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/RHOMPHAIA_WARRIOR/' },
     { id: 'rocket_cart', name: '火箭车', category: 'siege', age: 'unknown', pathPrefix: '/SUCAI/ROCKETCART/' },
     { id: 'royal_janissary', name: '奥斯曼皇家禁卫军', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
-    { id: 'sacred_band', name: '神圣军团步兵', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SACRED_BAND/' },
+    { id: 'sacred_band', name: '底比斯圣队', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/SACRED_BAND/' },
     { id: 'sannahya', name: '孔雀王朝桑纳亚战象', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SANNAHYA/' },
     { id: 'scorpion', name: '弩炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SCORPION/' },
     { id: 'scythian_axe_cavalry', name: '斯基泰斧骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },

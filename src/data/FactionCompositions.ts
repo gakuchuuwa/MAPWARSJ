@@ -97,6 +97,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
         ],
     },
+    // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）
+    lagoniya: {
+        formationMode: 'square',
+        slots: [
+            { type: 'hippeus', count: 3 },             // Row 0 前排 = 斯巴达希皮乌斯 3人
+            { type: 'hippeus', count: 3 },             // Row 1 中坚 = 斯巴达希皮乌斯 3人
+            { type: 'hippeus', count: 3 },             // Row 2 后排 = 斯巴达希皮乌斯 3人
+        ],
+    },
+    // 底比斯（伊巴密浓达 · 方形阵 3+3+3：全底比斯圣队死士同袍阵）
+    boootiya: {
+        formationMode: 'square',
+        slots: [
+            { type: 'sacred_band', count: 3 },         // Row 0 前排 = 底比斯圣队 3人
+            { type: 'sacred_band', count: 3 },         // Row 1 中坚 = 底比斯圣队 3人
+            { type: 'sacred_band', count: 3 },         // Row 2 后排 = 底比斯圣队 3人
+        ],
+    },
     // 日本战国·织田信长军团（鹤翼阵 2+4+3：忍者 2 + 精锐武士 4 + 藤弓兵 3）
     owari: {
         formationMode: 'crane_wing',
@@ -169,22 +187,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'immortal_ranged', count: 3 },
         ],
     },
-    // 萨非波斯军团（阿拔斯大帝 · 伊斯法罕）
+    // 萨非波斯军团（阿拔斯大帝 · 伊斯法罕 · 方形阵 3+3+3：全红头骑士奇兹尔巴什圣战死士阵）
     safawei_d: {
-        formationMode: 'crane_wing',
+        formationMode: 'square',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'qizilbash_warrior', count: 3 },   // Row 0 前排 = 红头骑士 3人
+            { type: 'qizilbash_warrior', count: 3 },   // Row 1 中坚 = 红头骑士 3人
+            { type: 'qizilbash_warrior', count: 3 },   // Row 2 后排 = 红头骑士 3人
         ],
     },
-    // 萨非波斯军团（伊斯玛仪一世 · 加兹温）
+    // 萨非波斯军团（伊斯玛仪一世 · 加兹温 · 方形阵 3+3+3：全红头骑士奇兹尔巴什圣战死士阵）
     safawei: {
-        formationMode: 'crane_wing',
+        formationMode: 'square',
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'qizilbash_warrior', count: 3 },
+            { type: 'qizilbash_warrior', count: 3 },
+            { type: 'qizilbash_warrior', count: 3 },
         ],
     },
     // 安息波斯帝国（阿尔沙克 · 尼萨）
@@ -331,13 +349,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 3 },            // Row 2 中军后排支援 = 长弓兵 3人
         ],
     },
-    // 圣殿骑士团·阿卡（莫莱）
+    // 圣殿骑士团·阿卡（莫莱 · 方形阵 3+3+3：全十字军骑士纯圣堂重骑冲击阵）
     shengdian_qishi: {
-        formationMode: 'crane_wing',
+        formationMode: 'square',
         slots: [
-            { type: 'elite_teutonic_knight', count: 2 },
-            { type: 'crusader_knight', count: 4 },
-            { type: 'longbowman', count: 3 },
+            { type: 'crusader_knight', count: 3 },      // Row 0 前排 = 十字军骑士 3人
+            { type: 'crusader_knight', count: 3 },      // Row 1 中坚 = 十字军骑士 3人
+            { type: 'crusader_knight', count: 3 },      // Row 2 后排 = 十字军骑士 3人
         ],
     },
     // 宝剑骑士团·里加（阿尔伯特）
