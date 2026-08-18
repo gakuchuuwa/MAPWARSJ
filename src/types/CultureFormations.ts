@@ -105,14 +105,13 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
  */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
-    KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 精锐黑光铠主力(4) + 火焰弓后排(3)
+    KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       'crane_wing',   // 斯拉夫：贵族铁骑(2) + 精锐贵族铁骑主力(4) + 复合弓箭手后排(3)
     GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
     LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐辽刀突击主力(4) + 诸葛弩后排(2)
-    NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
     BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
@@ -129,7 +128,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
-    HEXI:         'echelon',      // 河西：精锐辽刀主力(4前) + 诸葛弩(3中) + 黑光铠骑兵(2后)
+    NORTHEAST:    'echelon',      // 东北：精锐铁浮图宽线主力(4) + 钦察中坚(3) + 火焰弓后排(2)
+    HEXI:         'echelon',      // 河西：辽刀主力(4前) + 诸葛弩中坚(3中) + 精锐黑光铠骑兵(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 };
 
@@ -913,21 +913,21 @@ export const NORTH_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 3. 东北 铁浮图+精锐铁浮图+钦察（鱼鳞阵 3+4+2：铁浮图前卫 + 精锐铁浮图突击主力 + 钦察后排支援） */
+/** 3. 东北 精锐铁浮图+钦察+火焰弓箭手（雁行阵 4+3+2：精锐铁浮图宽线主力 + 钦察中坚 + 火焰弓箭手后排支援） */
 export const NORTHEAST_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 3 },       // Row 0 前卫 = 铁浮图 3人
-            { type: 'elite_iron_pagoda', count: 4 }, // Row 1 中军突击主力 = 精锐铁浮图 4人
-            { type: 'kipchak', count: 2 }            // Row 2 尾收支援 = 钦察 2人
+            { type: 'elite_iron_pagoda', count: 4 },  // Row 0 宽线前锋主力 = 精锐铁浮图 4人
+            { type: 'kipchak', count: 3 },            // Row 1 冲击中坚 = 钦察 3人
+            { type: 'fire_archer', count: 2 }         // Row 2 尾收支援 = 火焰弓箭手 2人
         ]
     }
 ];
 
-/** 4. 朝鲜 剑士+精锐黑光铠+火焰弓（鹤翼阵 2+4+3：剑士步兵前锋 + 黑光铠骑兵主力 + 火焰弓后排） */
+/** 4. 朝鲜 剑士+黑光铠骑兵+火焰弓箭手（鹤翼阵 2+4+3：剑士步兵前锋 + 黑光铠骑兵主力 + 火焰弓箭手后排） */
 export const KOREA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -935,7 +935,7 @@ export const KOREA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'swordsman', count: 2 },        // Row 0 步兵前锋 = 剑士 2人
-            { type: 'hei_kuang_heavy', count: 4 },  // Row 1 骑兵主力两翼合围 = 精锐黑光铠骑兵 4人
+            { type: 'hei_kuang', count: 4 },        // Row 1 骑兵主力两翼合围 = 黑光铠骑兵 4人
             { type: 'fire_archer', count: 3 }       // Row 2 中军后排支援 = 火焰弓箭手 3人
         ]
     }
@@ -983,16 +983,16 @@ export const STEPPE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 7. 河西 精锐辽刀+诸葛弩+黑光铠骑兵（雁行阵 4+3+2：精锐辽刀宽线主力 + 诸葛弩中坚 + 黑光铠骑兵压阵） */
+/** 7. 河西 辽刀+诸葛弩+精锐黑光铠骑兵（雁行阵 4+3+2：辽刀宽线主力 + 诸葛弩中坚 + 精锐黑光铠骑兵压阵） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_liao_dao', count: 4 },  // Row 0 主力·宽线抗线 = 精锐辽刀 4人
-            { type: 'chukonu', count: 3 },         // Row 1 中军接应 = 诸葛弩 3人
-            { type: 'hei_kuang', count: 2 }        // Row 2 压阵骑兵 = 黑光铠骑兵 2人
+            { type: 'liao_dao', count: 4 },          // Row 0 主力·宽线抗线 = 辽刀 4人
+            { type: 'chukonu', count: 3 },           // Row 1 中军接应 = 诸葛弩 3人
+            { type: 'hei_kuang_heavy', count: 2 }    // Row 2 压阵骑兵 = 精锐黑光铠骑兵 2人
         ]
     }
 ];

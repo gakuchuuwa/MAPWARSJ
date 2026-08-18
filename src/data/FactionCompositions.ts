@@ -52,55 +52,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 华夏诸葛弩 3人
         ],
     },
-    // 大金·完颜阿骨打 / 完颜宗弼铁浮屠军团（鹤翼阵 2+4+3：金国铁浮屠 2 + 金国铁浮屠精锐 4 + 火焰弓手 3）
-    dajin: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },          // Row 0 前锋游弋 = 金国铁浮屠 2人
-            { type: 'elite_iron_pagoda', count: 4 },    // Row 1 具装主力突贯 = 金国铁浮屠精锐 4人
-            { type: 'fire_archer', count: 3 },          // Row 2 东北射雕火矢 = 火焰弓箭手 3人
-        ],
-    },
-    jurchen: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'fire_archer', count: 3 },
-        ],
-    },
-    mohe: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'fire_archer', count: 3 },
-        ],
-    },
-    yizhou: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'fire_archer', count: 3 },
-        ],
-    },
-    dazhen: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'fire_archer', count: 3 },
-        ],
-    },
-    xiqin: {
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'fire_archer', count: 3 },
-        ],
-    },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
     yanchuan_d: {
         formationMode: 'fish_scale',
@@ -416,13 +367,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'sacred_band', count: 3 },         // Row 2 后排 = 底比斯圣队 3人
         ],
     },
-    // 日本战国·织田信长军团（鹤翼阵 2+4+3：火枪兵 2 + 精锐日本武士 4 + 日本武士 3）
+    // 日本战国·织田信长军团（方阵 3+3+3：日本武士 3 + 火枪兵 3 + 火枪兵 3）
     owari: {
-        formationMode: 'crane_wing',
+        formationMode: 'square',
         slots: [
-            { type: 'hand_cannoneer', count: 2 },   // Row 0 前哨铁炮齐射 = 火枪兵 2人（战国铁炮三段击压制）
-            { type: 'samurai_elite', count: 4 },    // Row 1 两翼合围主力 = 日本武士精锐 4人（近卫武士主力突击）
-            { type: 'samurai', count: 3 },          // Row 2 中军后排支援 = 日本武士 3人（中军坚壁压阵）
+            { type: 'samurai', count: 3 },          // Row 0 前排抗线 = 日本武士 3人
+            { type: 'hand_cannoneer', count: 3 },   // Row 1 中军铁炮齐射 = 火枪兵 3人
+            { type: 'hand_cannoneer', count: 3 },   // Row 2 后排铁炮齐射 = 火枪兵 3人
         ],
     },
     // 伊贺·忍者军团（方阵 3+3+3：忍者 3 + 忍者 3 + 忍者 3）
@@ -1284,53 +1235,145 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_war_chariot', count: 4 },
         ],
     },
-    // 斯拉夫与罗斯公国·雅罗斯拉夫 / 涅夫斯基 / 顿斯科伊 / 安德烈 / 莫诺马赫 / 姆斯季斯拉夫 波雅尔贵族铁骑与弓手精锐军团（鹤翼阵 2+4+3：贵族铁骑前卫 2 + 精锐贵族铁骑主力 4 + 复合弓手 3）
-    luosi: {
-        formationMode: 'crane_wing',
+    // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（鱼鳞阵 3+4+2：战斗象前卫 3 + 精锐战斗象主力 4 + 步弓手 2）
+    siam: {
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'boyar', count: 2 },                  // Row 0 前哨牵制 = 斯拉夫贵族铁骑 2骑
-            { type: 'elite_boyar', count: 4 },            // Row 1 两翼主力合围 = 斯拉夫贵族铁骑精锐 4骑（波雅尔近卫主力突破）
-            { type: 'composite_bowman', count: 3 },       // Row 2 中军后排支援 = 复合弓手 3人（纯步兵·无马，后排步弓抛射压制）
+            { type: 'battle_elephant', count: 3 },        // Row 0 前卫突击 = 东南亚战斗象 3头（前锋战象破阵践踏）
+            { type: 'elite_battle_elephant', count: 4 },  // Row 1 中军主力 = 东南亚战斗象精锐 4头（王家近卫精锐战象主力冲锋）
+            { type: 'archer', count: 2 },                 // Row 2 尾收远射 = 步弓手 2人（纯步兵·无马，后方步弓压制）
         ],
     },
-    liulike: {
-        formationMode: 'crane_wing',
+    pagan: {
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'battle_elephant', count: 3 },
+            { type: 'elite_battle_elephant', count: 4 },
+            { type: 'archer', count: 2 },
         ],
     },
-    mosike_gongguo: {
-        formationMode: 'crane_wing',
+    chenla: {
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'battle_elephant', count: 3 },
+            { type: 'elite_battle_elephant', count: 4 },
+            { type: 'archer', count: 2 },
         ],
     },
-    fulajimier_gongguo: {
-        formationMode: 'crane_wing',
+    // 阿拉伯与近东·哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 骆驼弓骑精锐军团（三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
+    maidina: {
+        formationMode: 'triangle',
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'eastern_swordsman', count: 2 },      // Row 0 尖刀先锋 = 东方剑士 2人（纯步兵·无马，弯刀前排坚壁抗线）
+            { type: 'camel_archer', count: 3 },           // Row 1 冲击中坚 = 骆驼弓骑兵 3骑（大漠机动奔袭）
+            { type: 'elite_camel_archer', count: 4 },     // Row 2 底边主力齐射 = 精锐骆驼弓骑兵 4骑（王牌精锐大漠重弓齐射）
         ],
     },
-    peilieya_gongguo: {
-        formationMode: 'crane_wing',
+    abasi: {
+        formationMode: 'triangle',
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'eastern_swordsman', count: 2 },
+            { type: 'camel_archer', count: 3 },
+            { type: 'elite_camel_archer', count: 4 },
         ],
     },
-    qiernigeweifu_gongguo: {
-        formationMode: 'crane_wing',
+    gulaishi: {
+        formationMode: 'triangle',
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'eastern_swordsman', count: 2 },
+            { type: 'camel_archer', count: 3 },
+            { type: 'elite_camel_archer', count: 4 },
+        ],
+    },
+    alabo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'eastern_swordsman', count: 2 },
+            { type: 'camel_archer', count: 3 },
+            { type: 'elite_camel_archer', count: 4 },
+        ],
+    },
+    // 小亚细亚·密特里达梯 / 克罗伊斯 / 迈达斯 / 狄奥多尔 古代重装近卫军精锐军团（鱼鳞阵 3+4+2：重装近卫前卫 3 + 重装近卫精锐主力 4 + 复合弓手 2）
+    bendou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'guardsman', count: 3 },              // Row 0 前卫抗线 = 古代重装近卫军 3人（纯步兵·无马，重装铜铠大盾前线坚壁抗线）
+            { type: 'elite_guardsman', count: 4 },        // Row 1 中军主力 = 古代重装近卫军精锐 4人（纯步兵·无马，王家近卫精锐长矛主力突击）
+            { type: 'composite_bowman', count: 2 },       // Row 2 尾收远射 = 复合弓手 2人（纯步兵·无马，后排步弓远射压制）
+        ],
+    },
+    ldiya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'guardsman', count: 3 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'composite_bowman', count: 2 },
+        ],
+    },
+    fulijiya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'guardsman', count: 3 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'composite_bowman', count: 2 },
+        ],
+    },
+    bitiniya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'guardsman', count: 3 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'composite_bowman', count: 2 },
+        ],
+    },
+    // 古典希腊与黑海·阿里斯塔 / 阿历克塞 / 舒伦堡 希腊贵族骑兵与克里特神弓精锐军团（鱼鳞阵 3+4+2：贵族骑兵前卫 3 + 贵族骑兵精锐主力 4 + 克里特弓箭手 2）
+    aiaoniya: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'greek_noble_cavalry', count: 3 },    // Row 0 前卫突击 = 希腊贵族骑兵 3骑（重装前锋破线）
+            { type: 'elite_greek_cavalry', count: 4 },    // Row 1 中军主力 = 希腊贵族骑兵精锐 4骑（王牌精锐贵族重骑主力突贯决战）
+            { type: 'cretan_archer', count: 2 },          // Row 2 尾收远射 = 克里特弓箭手 2人（纯步兵·无马，后方步弓压制）
+        ],
+    },
+    bendou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'greek_noble_cavalry', count: 3 },
+            { type: 'elite_greek_cavalry', count: 4 },
+            { type: 'cretan_archer', count: 2 },
+        ],
+    },
+    kejila: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'greek_noble_cavalry', count: 3 },
+            { type: 'elite_greek_cavalry', count: 4 },
+            { type: 'cretan_archer', count: 2 },
+        ],
+    },
+    // 西北印度与兴都库什·米南德 / 谢尔 / 艾哈迈德 什里瓦姆沙避箭神骑精锐军团（鱼鳞阵 3+4+2：什里瓦姆沙骑手前卫 3 + 什里瓦姆沙骑手精锐主力 4 + 步弓手 2）
+    najie: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'shrivamsha_rider', count: 3 },        // Row 0 前卫突击 = 什里瓦姆沙骑手 3骑（大漠与高原神速先锋破阵）
+            { type: 'elite_shrivamsha_rider', count: 4 },  // Row 1 中军主力 = 什里瓦姆沙骑手精锐 4骑（王牌避箭神骑主力突贯决战）
+            { type: 'archer', count: 2 },                  // Row 2 尾收远射 = 步弓手 2人（纯步兵·无马，后方步弓压制）
+        ],
+    },
+    fanyanna: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'shrivamsha_rider', count: 3 },
+            { type: 'elite_shrivamsha_rider', count: 4 },
+            { type: 'archer', count: 2 },
+        ],
+    },
+    dulan_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'shrivamsha_rider', count: 3 },
+            { type: 'elite_shrivamsha_rider', count: 4 },
+            { type: 'archer', count: 2 },
         ],
     },
     // 扎扬王朝·特莱姆森（亚格姆拉森 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
@@ -1403,6 +1446,23 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'mameluke', count: 2 },
             { type: 'genitour', count: 3 },
             { type: 'camel_archer', count: 4 },
+        ],
+    },
+    // 中南半岛·占婆王国·制蓬峨 / 制旻 爪刀勇士与藤弓精锐军团（鱼鳞阵 3+4+2：爪刀勇士前卫 3 + 爪刀勇士精锐主力 4 + 藤弓兵 2）
+    champa: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'karambit_warrior', count: 3 },        // Row 0 前卫突入 = 爪刀勇士 3人（纯步兵·无马，前排双持近战弯刃）
+            { type: 'karambit_warrior_elite', count: 4 },  // Row 1 中军主力 = 爪刀勇士精锐 4人（纯步兵·无马，主力极速贴身近战突刺）
+            { type: 'rattan_archer', count: 2 },           // Row 2 尾收远射 = 藤弓兵 2人（纯步兵·无马，后方步弓压制掩护）
+        ],
+    },
+    zhancheng: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'karambit_warrior', count: 3 },
+            { type: 'karambit_warrior_elite', count: 4 },
+            { type: 'rattan_archer', count: 2 },
         ],
     },
 };
