@@ -11,6 +11,7 @@ import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../
 import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
+import { popCostOf } from '../../data/UnitPopCost';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 import { NavalPhalanxStateManager } from './NavalPhalanxState';
@@ -145,7 +146,16 @@ export class LegionPhalanxDrawer {
      * 冲车/井阑/投石为独立器械系统（SIEGE_GEAR_DEFS），不占编队槽位。
      */
     private static isSiegeType(type: string): boolean {
-        return type === 'elephant' || type === 'ballista';
+        // 🔴 [2026-08-18 修·主人报「双轮战车的阵型不对」]
+        //    原来只认老 S10DB 的 'elephant' / 'ballista' 两个键，于是**七种战车与全部 DE 战象
+        //    一个分类都不命中**（不含 'cavalry'、不在 DE_CAVALRY_TYPES、不是 archer/crossbow、
+        //    不在 INFANTRY_TYPES）→ 落到「未知兵种」兜底，被按步兵的 5×2 交错方阵展开。
+        //    车马象这种大家伙挤成步兵棋盘格，就是主人看到的「阵型不对」。
+        //
+        //    判据改用**占人口**（popCostOf > 1），与 13 战斗那边同源（src/data/UnitPopCost.ts）：
+        //    象 2 / 战车 3.75~5 / 火炮攻城 3 —— 一次覆盖，将来加新大型单位自动生效，不用再维护名单。
+        //    攻城类走的是「1×4 一字横排」（主人 2026-08-10 定「把大象排成一排」），车正该走这条。
+        return type === 'elephant' || type === 'ballista' || popCostOf(type) > 1;
     }
 
     /** S10DB 多数步兵/弩弓条带行高 64px；长枪、骑兵条带为 84px。绘制时按 64 归一化，避免同 scale 下 84px 素材显小。 */
