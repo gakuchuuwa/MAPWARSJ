@@ -1288,6 +1288,65 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elephant_archer', count: 2 },
         ],
     },
+    // 印度斯坦与德里苏丹·阿拉乌丁·卡尔吉 / 阿克巴大帝 古拉姆重装近卫与象弓精锐军团（鱼鳞阵 3+4+2：古拉姆前卫 3 + 精锐古拉姆主力 4 + 象弓骑兵 2）
+    deli: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'ghulam', count: 3 },              // Row 0 前卫坚壁 = 印度斯坦古拉姆 3人（纯步兵·无马，持长枪重剑正面结阵）
+            { type: 'elite_ghulam', count: 4 },        // Row 1 中军主力破阵 = 印度斯坦古拉姆精锐 4人（近卫铁甲主力强力破阵）
+            { type: 'elephant_archer', count: 2 },     // Row 2 尾收远程压制 = 印度象弓骑兵 2头（战象背负箭楼高台抛射）
+        ],
+    },
+    mowoer: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'ghulam', count: 3 },
+            { type: 'elite_ghulam', count: 4 },
+            { type: 'elephant_archer', count: 2 },
+        ],
+    },
+    // 印度与锡克·兰季特·辛格 / 拉其特 / 哈里·辛格 飞轮掷手漫天破阵精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 飞轮掷手 3 + 精锐飞轮掷手主力 4）
+    xike: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },           // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，前排抗线拒马）
+            { type: 'chakram_thrower', count: 3 },         // Row 1 中军投射 = 古吉拉特飞轮掷手 3人（纯步兵·无马，中距离回旋飞轮）
+            { type: 'elite_chakram_thrower', count: 4 },   // Row 2 底边主力弹幕 = 古吉拉特飞轮掷手精锐 4人（纯步兵·无马，漫天飞轮破阵）
+        ],
+    },
+    ahaomu: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'chakram_thrower', count: 3 },
+            { type: 'elite_chakram_thrower', count: 4 },
+        ],
+    },
+    pangzha: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'heavy_pikeman', count: 2 },
+            { type: 'chakram_thrower', count: 3 },
+            { type: 'elite_chakram_thrower', count: 4 },
+        ],
+    },
+    // 迦太基与布匿·汉尼拔 / 哈米尔卡 战象践踏与标枪精锐军团（鱼鳞阵 3+4+2：战象前卫 3 + 精锐战象主力 4 + 掷矛手 2）
+    buni: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'war_elephant', count: 3 },            // Row 0 前卫突击 = 战象 3头（前锋战象破障践踏）
+            { type: 'elite_war_elephant', count: 4 },      // Row 1 中军主力破阵 = 战象精锐 4头（主力战象方阵撕裂敌线）
+            { type: 'skirmisher', count: 2 },              // Row 2 尾收远程掩护 = 掷矛手 2人（纯步兵·无马，后排重标枪抛掷压制）
+        ],
+    },
+    feiniqi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'war_elephant', count: 3 },
+            { type: 'elite_war_elephant', count: 4 },
+            { type: 'skirmisher', count: 2 },
+        ],
+    },
     // 扎扬王朝·特莱姆森（亚格姆拉森 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
     zhayan: {
         formationMode: 'triangle',
