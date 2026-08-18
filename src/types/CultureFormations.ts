@@ -122,7 +122,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：草原枪兵(2) + 怯薛军(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
-    LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 藤弓兵(3) + 精锐藤弓兵主力(4)
+    LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 帝王掷矛手(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
     CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
     NUERGAN:      'triangle',     // 奴儿干：答剌罕(2) + 反曲长弓(3) + 鲜卑掠骑主力(4后)
@@ -311,11 +311,22 @@ export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 /**
  * 大明·鱼鳞阵（3+4+2）：持盾刀剑手(3) + 黑光铠骑兵(4) + 神机箭重型火箭车(2)
  * 明军三大营步骑火协同编制：五军营大盾刀牌手前卫抗线 + 三千营精锐铁骑中军主力 + 神机营重型火箭车后排弹幕覆盖
+ * 2026-08-18 主人定：仅朱棣保留此阵；其他大明武将/明朝势力改用 MING_GENERAL_COMPOSITION（火矛手+黑光铠骑兵+精锐火焰弓手）。
  */
 export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'jian_swordman_shielded', count: 3 }, // Row 0 前卫抗线 = 持盾刀剑手 3人（大盾刀牌手正面抗线防矢）
     { type: 'hei_kuang', count: 4 },              // Row 1 中军主力 = 黑光铠骑兵 4骑（三千营精锐重骑主力突破）
     { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
+];
+
+/**
+ * 大明常规军团·鱼鳞阵（3+4+2）：火矛手(3) + 黑光铠骑兵(4) + 精锐火焰弓手(2)
+ * 2026-08-18 主人定：除朱棣外的其他大明武将及明朝势力统一使用。
+ */
+export const MING_GENERAL_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'fire_lancer', count: 3 },       // Row 0 前卫抗线 = 火矛手 3人（火器长矛步兵前排破阵）
+    { type: 'hei_kuang', count: 4 },         // Row 1 中军主力 = 黑光铠骑兵 4骑（三千营精锐重骑主力突破）
+    { type: 'elite_fire_archer', count: 2 }, // Row 2 尾收远程 = 精锐火焰弓手 2人（后排火箭覆盖压制）
 ];
 
 /**
@@ -836,7 +847,10 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         if (WEI_DYNASTY_GENERAL_IDS.has(generalId)) return [...WEI_FACTION_COMPOSITION];
         if (TANG_DYNASTY_GENERAL_IDS.has(generalId)) return [...TANG_FACTION_COMPOSITION];
         if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
-        if (MING_DYNASTY_GENERAL_IDS.has(generalId)) return [...MING_FACTION_COMPOSITION];
+        if (MING_DYNASTY_GENERAL_IDS.has(generalId)) {
+            if (generalId === 'ming_d_zhudi') return [...MING_FACTION_COMPOSITION]; // 朱棣保留大明鱼鳞阵
+            return [...MING_GENERAL_COMPOSITION]; // 其他大明武将：火矛手+黑光铠骑兵+精锐火焰弓手
+        }
         if (ROMAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...ROMAN_FACTION_COMPOSITION];
         if (PERSIAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...PERSIAN_FACTION_COMPOSITION];
         if (POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return [...POLISH_FACTION_COMPOSITION];
@@ -862,7 +876,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         return [...SONG_FACTION_COMPOSITION];
     }
     if (isMingDynasty(factionId)) {
-        return [...MING_FACTION_COMPOSITION];
+        return [...MING_GENERAL_COMPOSITION];
     }
     if (isRomanDynasty(factionId)) {
         return [...ROMAN_FACTION_COMPOSITION];
@@ -1091,7 +1105,7 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 10. 岭南 皮甲战象+藤弓兵+精锐藤弓兵（三角阵 2+3+4：皮甲战象尖刀 + 藤弓兵中坚 + 精锐藤弓兵主力底边） */
+/** 10. 岭南 皮甲战象+帝王掷矛手+精锐藤弓兵（三角阵 2+3+4：皮甲战象尖刀 + 帝王掷矛手中坚 + 精锐藤弓兵主力底边） */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1099,7 +1113,7 @@ export const LINGNAN_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'armored_elephant', count: 2 },    // Row 0 尖刀巨兽 = 皮甲战象 2人
-            { type: 'rattan_archer', count: 3 },       // Row 1 齐射中坚 = 藤弓兵 3人
+            { type: 'imperial_skirmisher', count: 3 }, // Row 1 掷矛中坚 = 帝王掷矛手 3人
             { type: 'rattan_archer_elite', count: 4 }  // Row 2 底边主力齐射 = 精锐藤弓兵 4人
         ]
     }

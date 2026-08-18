@@ -801,6 +801,7 @@ const _FIXED: Record<string, string> = {
     'gelujiya': '#A52028',
     'bendou': '#1E4E6B',
     'keerjisi': '#386850',
+    'saipulusi': '#2A5EA0', // 塞浦路斯·吕西尼昂蔚蓝（银蓝条纹纹章；原正红 #B22222 与奥斯曼撞色）
     'bendou_d': '#245678',
     'heti': '#955020',
     'fulijiya': '#A06828',
@@ -896,6 +897,7 @@ const _FIXED: Record<string, string> = {
     'langgeduoke': '#A83232', // 图卢兹·图卢兹（朗格多克红）
     'aermolika': '#2E2E34', // 阿摩尔利卡·南特（布列塔尼黑）
     'tuosikana': '#C84040', // 佛罗伦萨·佛罗伦萨（百合红）
+    'safuyi': '#1E6B38', // 萨伏伊·绿伯爵森林绿
     'talanduo': '#2B6EA0', // 塔兰托·大希腊海洋蓝
     'kanpaniya': '#2E5E9E', // 那不勒斯·那不勒斯（安茹蓝）
     'jiatailuoniya': '#C93A2E', // 阿拉贡·巴塞罗那（金红条旗）
@@ -958,6 +960,7 @@ const _FIXED: Record<string, string> = {
     'mosike_gongguo': '#8A1A1A', // 莫斯科公国·莫斯科（莫斯科红）
     'liulike': '#3A6DA8', // 诺夫哥罗德·诺夫哥罗德（诺夫哥罗德蓝）
     'bolisiya': '#B73030', // 布列斯特·布列斯特（罗斯红白）
+    'bosi_puluosi': '#2B4C7E', // 博斯普鲁斯·黑海青蓝
     'baojialiya': '#1B7340', // 保加利亚·帝国森林绿
     'saierdika': '#D89028', // 保加利亚·索非亚（金狮橙金）
     'saierweiya': '#9F2020', // 塞尔维亚·贝尔格莱德（塞尔维亚红）

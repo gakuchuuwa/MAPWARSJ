@@ -6528,7 +6528,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/STEPPE/tujue_ashinatumen.png": {
-            "scale": 1,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 20
         },

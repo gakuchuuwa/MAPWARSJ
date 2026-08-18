@@ -54,6 +54,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
+    safuyi: { name: '萨伏伊卫', tier: 2 },             // 尚贝里·阿梅迪奥六世：萨伏伊圣天使报喜骑士卫队
     talanduo: { name: '塔兰丁骑', tier: 3 },            // 塔兰托·阿契塔
     kanpaniya: { name: '安茹骑士', tier: 3 },
     // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4

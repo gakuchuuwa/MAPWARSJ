@@ -661,6 +661,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
         ],
     },
+    // 萨伏伊公国·尚贝里（阿梅迪奥六世 · 先锋重步兵与萨伏伊铁骑大阵 · 鱼鳞阵 4+3+2：先锋重装步兵 4 + 重装骑士 3 + 劲弩手 2）
+    safuyi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'vanguard', count: 4 },            // Row 0 前卫主力 = 先锋重装步兵 4人（纯步兵·无马，阿尔卑斯山地重装长矛死斗破坚）
+            { type: 'cavalier', count: 3 },            // Row 1 中军铁骑 = 重装骑士 3骑（萨伏伊圣天使报喜骑士团中坚冲击）
+            { type: 'arbalest', count: 2 },            // Row 2 尾收重弩 = 劲弩手 2人（纯步兵·无马，山地高穿透强弩射击掩护）
+        ],
+    },
     // 塔兰托·大希腊古都（阿契塔 · 塔兰丁标枪轻骑与重步兵方阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 塔兰丁骑兵 3 + 罗得岛投石兵 2）
     talanduo: {
         formationMode: 'fish_scale',
@@ -1370,6 +1379,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_peltast', count: 2 },       // Row 2 尾收远程压制 = 色雷斯标枪手精锐 2人（纯步兵·无马，地中海高穿透投枪压制）
         ],
     },
+    // 塞浦路斯王国·尼科西亚（居伊·德·吕西尼昂 · 十字军重骑士与劲弩大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
+    saipulusi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪 = 重装长枪兵 4人（纯步兵·无马，十字军重装长枪抗线拒马）
+            { type: 'cavalier', count: 3 },             // Row 1 中军铁骑 = 重装骑士 3骑（吕西尼昂王家十字军重装铁骑中坚冲击）
+            { type: 'arbalest', count: 2 },             // Row 2 尾收重弩 = 劲弩手 2人（纯步兵·无马，海岛要塞高穿透强弩射击掩护）
+        ],
+    },
+    // 博斯普鲁斯王国·潘提卡彭（琉孔一世 · 萨尔马提亚具装重骑与希腊长枪大阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 帝国具装骑兵 3 + 复合弓手 2）
+    bosi_puluosi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，博斯普鲁斯青铜圆盾长枪抗线）
+            { type: 'imperial_cavalry', count: 3 },    // Row 1 中军铁骑 = 帝国具装骑兵 3骑（萨尔马提亚全具装铁骑中坚冲击）
+            { type: 'composite_bowman', count: 2 },    // Row 2 尾收神弓 = 复合弓手 2人（纯步兵·无马，黑海斯基泰-希腊复合重弓射击掩护）
+        ],
+    },
     // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鱼鳞阵 4+3+2：下马保加利亚勇士 4 + 保加利亚骑兵精锐 3 + 复合弓手 2）
     baojialiya: {
         formationMode: 'fish_scale',
@@ -1828,6 +1855,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'archer', count: 4 },          // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是弓手）
             { type: 'karambit_warrior', count: 3 }, // 中军接应 = 爪刀勇士 3
             { type: 'elite_ratha_ranged', count: 2 }, // 战车 = 精锐拉塔战车 2（🔴 占人口只许 2 档）
+        ],
+    },
+    // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
+    dayue: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨兽 = 皮甲战象 2头（前沿象阵开路冲撞）
+            { type: 'imperial_skirmisher', count: 3 },     // Row 1 掷矛中坚 = 帝王掷矛手 3人（大越专属王牌掷矛手，中距离重标枪穿甲反弓）
+            { type: 'rattan_archer_elite', count: 4 },     // Row 2 底边主力齐射 = 精锐藤弓兵 4人（密林精锐藤弓，后排暴雨抛射）
         ],
     },
 };
