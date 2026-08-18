@@ -238,7 +238,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_throwing_axeman: { name: '法兰克掷斧兵精锐', cls: 'ranged', sz: 1, hp: 70, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     elite_tiger_cavalry: { name: '曹魏虎豹骑精锐', cls: 'cav', sz: 1, hp: 125, atk: 13, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 7 }, armorTags: [8, 19, 31] },
     elite_urumi_swordsman: { name: '达罗毗荼软剑士精锐', cls: 'melee', sz: 1, hp: 65, atk: 11, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 3 }, armorTags: [1, 19, 31] },
-    elite_war_chariot: { name: '蜀双轮战车精锐', cls: 'cav', sz: 1, hp: 125, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
+    elite_war_chariot: { name: '双轮战车精锐', cls: 'cav', sz: 1, hp: 125, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
     elite_war_dog: { name: '战犬精锐', cls: 'melee', sz: 1, hp: 55, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
     elite_war_elephant: { name: '波斯战象精锐', cls: 'melee', sz: 1, aoe: true, hp: 600, atk: 20, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
     elite_war_wagon: { name: '高丽战车精锐', cls: 'cav', sz: 1, kite: 60, hp: 200, atk: 9, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
@@ -322,8 +322,8 @@ export const WAR_TYPES: Record<string, WarType> = {
     traction_trebuchet: { name: '牵引投石机', cls: 'ranged', sz: 1, hp: 115, atk: 50, meleeArmor: 1, pierceArmor: 8, rng: 560, reload: 11.0, spd: 50, dmgType: 'melee', bonus: { 11: 230 }, armorTags: [17, 20, 31] },
     two_handed_swordsman: { name: '双手剑士', cls: 'melee', sz: 1, hp: 65, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
     urumi_swordsman: { name: '达罗毗荼软剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
-    war_chariot: { name: '蜀双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
-    war_chariot_ranged: { name: '蜀双轮远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_chariot: { name: '双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
+    war_chariot_ranged: { name: '双轮远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, kite: 60, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     warrior_priest: { name: '亚美尼亚修士战士', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
@@ -1089,6 +1089,32 @@ const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
+/**
+ * 【无攻击动画的兵种】—— **由数据生成，别手改**：`node scratch/build_no_attack_anim.mjs` 重新生成后整段替换。
+ *
+ * 判据 = 素材目录里 `attack_N.png` 与 `idle_N.png` **字节相同**（扫 339 个目录，命中 7 个）。
+ * 根因不是抽取漏了，是 AoE2 DE 本身没画：dat 铁证 —— 高丽战车 `WarWagon (Attack)` 图 id 7233 与
+ * `WarWagon (Idle)` 图 id 7239 的 file_name 都是 `u_cav_warwagon_idleA_x1`（精锐版 2480/2482 同理）。
+ *
+ * 🔴 **别改回运行时用 URL 比较**（我 2026-08-18 第一版就栽在这，判定恒 false、补救分支一次没进过）：
+ *    抽取时同一份源图被写成了**两个不同文件名**（attack_*.png / idle_*.png），
+ *    `atkUrls.join('|') === IDLE.join('|')` 永远不成立。
+ *    「DE 里攻击图 = 待命图」指的是**同一个源文件**，不是同一个 URL。
+ * 🔴 也别改成运行时逐像素比：那要 getImageData 读整条帧带（战车 5940×116），
+ *    而 13 开场卡 12.8 秒的旧账正是 getImageData 造成的。离线生成一次，运行时零成本。
+ */
+const NO_ATTACK_ANIM = new Set([
+    'elite_hussite_wagon',       // ELITEHUSSITEWAGON
+    'elite_war_wagon',           // ELITEWARWAGON
+    'flaming_camel',             // FLAMINGCAMEL（自爆兵，走 SUICIDE_TYPES 爆炸，不进放箭分支）
+    'hussite_wagon',             // HUSSITEWAGON
+    'petard',                    // PETARD（同上）
+    'war_chariot_ranged',        // WARCHARIOT
+    'war_wagon',                 // WARWAGON
+]);
+
+/** 无攻击动画的车辆开火时的尘烟配色（素色木屑/尘土，区别于火器的橙黄炮口焰） */
+const SHOT_DUST_COLORS = ['#D8CDB8', '#B9A98C', '#8C7F66', '#EDE6D6'] as const;
 const FIREARM_TYPES = new Set([
     'bombard_cannon', 'houfnice', 'hand_cannoneer',
     'janissary', 'elite_janissary', 'royal_janissary',
@@ -1147,6 +1173,86 @@ const TRIGGER = 150;
  *    别调 1:30（池子 1000 太小，对称性难打破，实测有死锁种子）。
  */
 const SPRITE_TROOPS = 20;
+
+/* ── 【兵种人口占用】2026-08-18 主人定，照搬 AoE2 DE population cost ──────────────────
+ *
+ * 口径：**人口 = 一个精灵占几个兵额**。人 1、马 1、车 2、象 2、炮 3。
+ *   → 同样兵力下，象/车只出一半、炮只出三分之一；单个精灵代表的兵额同比增加，**总兵力守恒**。
+ *   （不守恒的话象类文化的面板兵力会凭空缩水，与地图层 unit.troops 对不上。）
+ *
+ * 🔴 不能只按 unit class 发：**战象和战车在 DE 里的 class 都是 12（骑兵）**，与普通骑兵同类，
+ *    所以象/车必须按名字单独点名，其余 class 12 才算 1。
+ *    （class 47 不是战象、是斥候 SCOUT —— 别再拿 47 认象，证据见 scratch/build_unit_class_by_stats.mjs。）
+ */
+/**
+ * 人口占用表 —— **由数据生成，别手改**：`node scratch/build_pop_cost.mjs` 重新生成后整段替换。
+ *
+ * 🔴 初版是三条正则猜名字（/elephant/、/chariot/、/mangonel|onager|…/），2026-08-18 迁走。
+ *    迁移时对账，正则版被抓出 7 处错：
+ *      · 巨弩 ballista 判成 1（漏），实为弩炮 class 55 → 3
+ *      · 掷环兵 chakram_thrower 判成 3 —— 正则 `ram_` 误命中「cha**kram_t**hrower」，它是步兵 → 1
+ *      · 高丽战车／胡斯战车四个判成 1（漏），它们是「车」→ 2
+ *    这就是「看名字不看数据」的典型代价。
+ *
+ * 判据两级（缺一不可，见生成器文件头）：
+ *   ① 炮/攻城/弩炮 → 按 DE unit class {13, 35, 55} → 3
+ *   ② 象/车        → 按 DE **原型名**，不能按 class：**象和车的 class 都是 12（骑兵）**，class 分不开
+ *   其余默认 1（步/弓/骑/弓骑/轻型火器）
+ */
+const POP_COST_BY_KEY: Record<string, number> = {
+    antiquity_battering_ram: 3,     // class 13（攻城器械）
+    antiquity_capped_ram: 3,        // class 13（攻城器械）
+    antiquity_heavy_scorpion: 3,    // class 55（类55）
+    antiquity_mangonel: 3,          // class 13（攻城器械）
+    antiquity_onager: 3,            // class 13（攻城器械）
+    antiquity_scorpion: 3,          // class 55（类55）
+    antiquity_siege_onager: 3,      // class 13（攻城器械）
+    antiquity_siege_ram: 3,         // class 13（攻城器械）
+    antiquity_siege_tower: 3,       // 人工指定
+    ballista: 3,                    // class 55（类55）
+    battering_ram: 3,               // class 13（攻城器械）
+    bombard_cannon: 3,              // class 13（攻城器械）
+    capped_ram: 3,                  // class 13（攻城器械）
+    elite_organ_gun: 3,             // class 13（攻城器械）
+    heavy_rocket_cart: 3,           // class 13（攻城器械）
+    heavy_scorpion: 3,              // class 55（类55）
+    helepolis: 3,                   // 人工指定
+    houfnice: 3,                    // class 13（攻城器械）
+    mangonel: 3,                    // class 13（攻城器械）
+    mounted_trebuchet: 3,           // 人工指定
+    onager: 3,                      // class 13（攻城器械）
+    organ_gun: 3,                   // class 13（攻城器械）
+    rocket_cart: 3,                 // class 13（攻城器械）
+    scorpion: 3,                    // class 55（类55）
+    siege_onager: 3,                // class 13（攻城器械）
+    siege_ram: 3,                   // class 13（攻城器械）
+    siege_tower: 3,                 // 人工指定
+    traction_trebuchet: 3,          // class 13（攻城器械）
+    armored_elephant: 2,            // 人工指定
+    ballista_elephant: 2,           // DE原型 ELEBALI（象）
+    battle_elephant: 2,             // DE原型 BATELE（象）
+    bayinnaung_elephant: 2,         // 人工指定
+    dagnajan_elephant: 2,           // 人工指定
+    elephant: 2,                    // 人工指定
+    elephant_archer: 2,             // DE原型 ELEAR（象）
+    elite_armored_elephant: 2,      // 人工指定
+    elite_ballista_elephant: 2,     // DE原型 EELEBALI（象）
+    elite_battle_elephant: 2,       // DE原型 EBATELE（象）
+    elite_elephant_archer: 2,       // 人工指定
+    elite_hussite_wagon: 2,         // 人工指定
+    elite_war_chariot: 2,           // 人工指定
+    elite_war_elephant: 2,          // 人工指定
+    elite_war_wagon: 2,             // 人工指定
+    hussite_wagon: 2,               // 人工指定
+    porus_elephant: 2,              // 人工指定
+    war_chariot: 2,                 // 人工指定
+    war_chariot_ranged: 2,          // 人工指定
+    war_elephant: 2,                // 人工指定
+    war_wagon: 2,                   // 人工指定
+};
+function popCostOf(key: string): number {
+    return POP_COST_BY_KEY[key] ?? 1;
+}
 /**
  * 成批补（2026-08-11 主人定「取代一个一个补」，2026-08-13 定稿「弱方 < 300 一次补 300」）。
  * 🔴 一个一个补的毛病：双方速率一样、损失立刻被填平，谁也推不动谁 ——
@@ -1674,6 +1780,8 @@ interface WarSpawn {
     spawned: number;
     /** 本口列阵方阵已发出的槽位数（开局 + 补兵每批都排方阵；每批重置，见 MARCH_*） */
     slotN: number;
+    /** 本口兵种的人口占用（1 精灵 = pop × SPRITE_TROOPS 兵；见 popCostOf） */
+    pop: number;
 }
 
 interface WarMan {
@@ -1742,6 +1850,8 @@ interface WarMan {
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
     dep: number;
     slotY: number;
+    /** 人口占用（1 精灵 = pop × SPRITE_TROOPS 兵；出生时从所属出兵口继承，见 popCostOf） */
+    pop: number;
     /** 上一帧同时打他的敌人数（围殴加成用；当帧计数见 atkNext） */
     atkers: number;
     /** 本帧累计的攻击者数，帧末结转给 atkers */
@@ -1890,6 +2000,15 @@ interface WarBank {
      *    真正有两套动作的是老 S10DB 混编兵（114 个，SHOOT 与 ATTACK 指向不同文件）。
      */
     realMelee: boolean;
+    /**
+     * 该兵种**没有攻击动画**（攻击帧与待命帧是同一批图）。
+     * 全库 329 个兵种里只有 7 个这样，且全是车辆/自爆兵 —— 这不是抽取漏了，是 DE 本身就没画：
+     * 实证 `WagonAttack` 图 id 7233 与 `WagonIdle` 图 id 7239 **指向同一个素材文件**
+     * `u_cav_warwagon_idleA_x1`（精锐版 2480/2482 同理）。
+     * 后果：高丽战车/胡斯战车开火时车身纹丝不动，观众完全看不出它在打人（主人 2026-08-18 报）。
+     * 补救沿用项目既有做法 —— 火器那条注释原话「DE 攻击动画含炮口闪光，这里用火花补」，同一套路。
+     */
+    noAttackAnim: boolean;
     /** 帧高（S10DB 所有动作共享同一帧框高度；DE 动态帧框不依赖此值，见 dyn） */
     fh: number;
     /** 各动作的帧数（S10DB=8，AoE2 武士/弓手=30~60；缺失兜底 8） */
@@ -2053,9 +2172,10 @@ export class Scene13WarLayer {
         // 🔴 残局待命（active=false、lingering=true）也必须继续供数，否则战斗一结束
         //    面板会瞬间掉回引擎那套冻结数值 —— 观感就是「数字突然换了个来源」（主人 2026-08-12 实锤）。
         if (!this.active && !this.lingering) return null;
+        // 🔴 按人口加权：象/车 1 精灵 = 2 个兵额、炮 = 3。不加权的话象类文化的兵力会凭空缩水。
         const n = [0, 0];
-        for (const sp of this.spawns) n[sp.f] += Math.max(0, sp.pool);
-        for (const m of this.men) if (m.hp > 0) n[m.f]++;
+        for (const sp of this.spawns) n[sp.f] += Math.max(0, sp.pool) * sp.pop;
+        for (const m of this.men) if (m.hp > 0) n[m.f] += m.pop;
         return { attacker: Math.round(n[0] * SPRITE_TROOPS), defender: Math.round(n[1] * SPRITE_TROOPS) };
     }
 
@@ -2182,7 +2302,9 @@ export class Scene13WarLayer {
                     const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
                     this.spawns.push({
                         f: side.f, key, x, y,
-                        pool: poolPer,
+                        // 人口折算：象/车 2、炮 3 → 精灵数按比例减少，单个精灵代表的兵额同比增加，总兵力守恒
+                        pool: Math.max(1, Math.round(poolPer / popCostOf(key))),
+                        pop: popCostOf(key),
                         spawned: 0,
                         slotN: 0,
                     });
@@ -2190,7 +2312,7 @@ export class Scene13WarLayer {
             }
             // 开局总兵力存档（精灵），供 getInitialTroops 回写战斗面板演出进度用
             this.initPool = [0, 1].map(f =>
-                Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool : 0), 0)),
+                Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool * s.pop : 0), 0)),
             ) as [number, number];
 
             // 场景布景：湖先定（树要避开水域），再撒树；三色（夏/秋/冬）× 六变体随机，
@@ -2221,8 +2343,8 @@ export class Scene13WarLayer {
             return;
         }
         const alive = [0, 0];
-        for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool);
-        for (const m of this.men) if (m.hp > 0) alive[m.f]++;
+        for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
+        for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
         const att = Math.max(1, alive[0]);
         const def = Math.max(1, alive[1] * homeDiscount);
         const attackerWins = att > def;
@@ -2610,8 +2732,8 @@ export class Scene13WarLayer {
         if (this.bank[key]) return;
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
-            if (!assets) { this.bank[key] = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
-            const b: WarBank = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            if (!assets) { this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
+            const b: WarBank = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
             const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
             const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
@@ -2632,6 +2754,8 @@ export class Scene13WarLayer {
             const meleeUrls = ranged ? (assets.ATTACK ?? []) : [];
             // 两套图完全一样 = 没有真正的近战动作（DE 素材普遍如此），贴脸时就别切姿态掐弹丸
             b.realMelee = meleeUrls.length > 0 && meleeUrls.join('|') !== atkUrls.join('|');
+            // 没有攻击动作的兵种（攻击帧与待命帧字节相同），清单由离线扫描生成，见 NO_ATTACK_ANIM
+            b.noAttackAnim = NO_ATTACK_ANIM.has(key);
             const groups: [string, string[]][] = [
                 ['move', assets.MOVE ?? []],
                 ['atk', atkUrls],
@@ -2700,7 +2824,7 @@ export class Scene13WarLayer {
             this.bank[key] = b;
         } catch (e) {
             console.warn('[Scene13WarLayer] 素材加载失败（回退空帧）:', key, e);
-            this.bank[key] = { realMelee: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
         }
     }
 
@@ -2756,11 +2880,11 @@ export class Scene13WarLayer {
     }
 
     /** 火炮炮口焰：发射瞬间炮口火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）。 */
-    private muzzleFlash(m: WarMan, ax: number, ay: number): void {
+    private muzzleFlash(m: WarMan, ax: number, ay: number, palette?: readonly string[]): void {
         const ang = Math.atan2(ay, ax);
         const ox = m.x + Math.cos(ang) * UNIT_PX * 0.6;
         const oy = m.y + Math.sin(ang) * UNIT_PX * 0.6 - UNIT_PX * 0.4;
-        const colors = ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'];
+        const colors = palette ?? ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'];
         for (let i = 0; i < 6; i++) {
             const spd = 20 + Math.random() * 40;
             const spread = (Math.random() - 0.5) * 0.8;
@@ -2905,7 +3029,7 @@ export class Scene13WarLayer {
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
                     flag: bearer, fo: Math.random() * 600,
-                    march: inMarch, port: inMarch ? s : null, dep, slotY,
+                    march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -3475,6 +3599,9 @@ export class Scene13WarLayer {
                         }
                         // 火器炮口焰/枪口焰：发射瞬间火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
                         if (isFirearm) this.muzzleFlash(m, ax, ay);
+                        // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
+                        // 用素色而不是火器的橙黄焰 —— 它们射的是箭，不是火药。
+                        else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
                     }
                 }
                 m.atkSt = m.st;
@@ -3645,8 +3772,8 @@ export class Scene13WarLayer {
 
         // 胜负：一方兵力枯竭（池 + 场上全灭）才算输（2026-08-11 主人修复后口径）
         const alive = [0, 0];
-        for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool);
-        for (const m of this.men) if (m.hp > 0) alive[m.f]++;
+        for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
+        for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
         if (alive[0] <= 0 || alive[1] <= 0) {
             this.over = true;
             const attackerLost = alive[0] <= 0;
