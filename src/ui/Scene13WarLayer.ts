@@ -270,7 +270,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     ibirapema_warrior: { name: '图皮战棍勇士', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
     immortal: { name: '波斯长生军', cls: 'melee', sz: 1, hp: 50, atk: 10, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', armorTags: [15, 19, 31, 1] },
     immortal_ranged: { name: '波斯长生军(弓)', cls: 'ranged', sz: 1, hp: 50, atk: 5, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 1.8, spd: 50, dmgType: 'pierce', armorTags: [15, 19, 31, 1] },
-    imperial_camel_rider: { name: '帝王骆驼', cls: 'cav', sz: 1, hp: 140, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
+    imperial_camel_rider: { name: '印度斯坦帝王骆驼骑兵', cls: 'cav', sz: 1, hp: 140, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
     imperial_centurion: { name: '帝国百夫长', cls: 'cav', sz: 1, hp: 150, atk: 12, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.7, spd: 130, dmgType: 'melee', bonus: { 1: 12 }, armorTags: [8, 19, 31] },
     indian_tribesman: { name: '印度部落民', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.5, spd: 55, dmgType: 'melee', bonus: { 5: 20, 8: 8, 21: 1, 29: 1 }, armorTags: [27, 1, 31] },
     iroquois_warrior: { name: '易洛魁战士', cls: 'melee', sz: 1, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },

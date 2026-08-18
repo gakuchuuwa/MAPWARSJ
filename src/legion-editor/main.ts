@@ -250,7 +250,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'ibirapema_warrior', name: '图皮战棍勇士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'immortal_ranged', name: '波斯长生军(弓)', category: 'ranged', age: 'unknown', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
-    { id: 'imperial_camel_rider', name: '帝王骆驼', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
+    { id: 'imperial_camel_rider', name: '印度斯坦帝王骆驼骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
     { id: 'imperial_centurion', name: '帝国百夫长', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
     { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
     { id: 'iroquois_warrior', name: '易洛魁战士', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/IROQUOISWARRIOR/' },
