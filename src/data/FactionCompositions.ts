@@ -43,6 +43,64 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
         ],
     },
+    // 曹魏·曹操军团（鹤翼阵 2+4+3：曹魏虎豹骑 2 + 曹魏虎豹骑精锐 4 + 华夏诸葛弩 3）
+    cao_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 曹魏虎豹骑 2人
+            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 曹魏虎豹骑精锐 4人
+            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 华夏诸葛弩 3人
+        ],
+    },
+    // 大金·完颜阿骨打 / 完颜宗弼铁浮屠军团（鹤翼阵 2+4+3：金国铁浮屠 2 + 金国铁浮屠精锐 4 + 火焰弓手 3）
+    dajin: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },          // Row 0 前锋游弋 = 金国铁浮屠 2人
+            { type: 'elite_iron_pagoda', count: 4 },    // Row 1 具装主力突贯 = 金国铁浮屠精锐 4人
+            { type: 'fire_archer', count: 3 },          // Row 2 东北射雕火矢 = 火焰弓箭手 3人
+        ],
+    },
+    jurchen: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'fire_archer', count: 3 },
+        ],
+    },
+    mohe: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'fire_archer', count: 3 },
+        ],
+    },
+    yizhou: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'fire_archer', count: 3 },
+        ],
+    },
+    dazhen: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'fire_archer', count: 3 },
+        ],
+    },
+    xiqin: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'fire_archer', count: 3 },
+        ],
+    },
     // 马其顿·亚历山大帝国军团（鹤翼阵 2+4+3：马其顿方阵兵 2 + 伙伴骑兵主力 4 + 克里特弓手 3）
     maqidun: {
         formationMode: 'crane_wing',
