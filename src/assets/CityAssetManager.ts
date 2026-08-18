@@ -862,6 +862,7 @@ export class CityAssetManager {
         'pajiama': '帕加',
 'bitiniya': '比提',
         'luomu': '罗姆',
+        'osman': '奥斯',
 'baizanting': '拜占',
 'sailiugu': '塞琉',
 'womaya': '倭马',

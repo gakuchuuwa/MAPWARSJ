@@ -809,6 +809,7 @@ const _FIXED: Record<string, string> = {
     'bitiniya': '#486078',
     'baizanting': '#6A1B6D',
     'luomu': '#2D6A4F',
+    'osman': '#B22222', // 奥斯曼（红底新月军旗·火砖红；西亚区红色与亚述/阿舒尔/纳巴泰错开）
 
     // ── 西亚区补全（2026-07-30）──
     // 该区原有 9 家已固定色（bendou/bendou_d/heti/fulijiya/ldiya/pajiama/bitiniya/baizhanting/luomu），

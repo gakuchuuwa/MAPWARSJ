@@ -138,3 +138,42 @@ export function summarizeTechEffects(techs: readonly MilitaryTech[]): string[] {
     if (reloadMul !== 1) out.push(`装填快${Math.round((1 - reloadMul) * 100)}%`);
     return out;
 }
+
+/** 把单个科技提炼成对应效果简述（如 "近攻+1", "步甲+1/1", "远攻+1 射程+1"） */
+export function summarizeSingleTechEffect(t: MilitaryTech): string {
+    const parts: string[] = [];
+    let meleeAtk = 0, pierceAtk = 0, range = 0;
+    const arm = { 6: [0, 0], 12: [0, 0], 0: [0, 0] } as Record<number, [number, number]>;
+    let spdMul = 1, reloadMul = 1, hp = 0;
+
+    for (const e of t.effects) {
+        const hit = (c: number) => e.classes.includes(c);
+        switch (e.attr) {
+            case 'meleeAttack': if (hit(6) || hit(12)) meleeAtk += e.value; break;
+            case 'pierceAttack': if (hit(0) || hit(36)) pierceAtk += e.value; break;
+            case 'range': if (hit(0) || hit(36)) range += e.value; break;
+            case 'meleeArmor': for (const c of [6, 12, 0]) if (hit(c)) arm[c][0] += e.value; break;
+            case 'pierceArmor': for (const c of [6, 12, 0]) if (hit(c)) arm[c][1] += e.value; break;
+            case 'speed': spdMul *= e.op === 'mul' ? e.value : 1; break;
+            case 'reload': reloadMul *= e.op === 'mul' ? e.value : 1; break;
+            case 'hp': hp += e.value; break;
+        }
+    }
+
+    if (meleeAtk) parts.push(`近攻+${meleeAtk}`);
+    if (pierceAtk && range) parts.push(`远攻+${pierceAtk} 射程+${range}`);
+    else {
+        if (pierceAtk) parts.push(`远攻+${pierceAtk}`);
+        if (range) parts.push(`射程+${range}`);
+    }
+    const armTag = (c: number, label: string) => {
+        const [m, p] = arm[c];
+        if (m || p) parts.push(`${label}甲+${m}/${p}`);
+    };
+    armTag(6, '步'); armTag(12, '骑'); armTag(0, '射');
+    if (hp) parts.push(`血+${hp}`);
+    if (spdMul !== 1) parts.push(`速+${Math.round((spdMul - 1) * 100)}%`);
+    if (reloadMul !== 1) parts.push(`装填快${Math.round((1 - reloadMul) * 100)}%`);
+
+    return parts.join(' ') || '生效';
+}

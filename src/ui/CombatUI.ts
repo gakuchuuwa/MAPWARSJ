@@ -31,7 +31,7 @@ import {
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
-import { summarizeTechEffects, unlockedTechs } from '../systems/MilitaryTechState';
+import { summarizeTechEffects, summarizeSingleTechEffect, unlockedTechs } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
@@ -1022,70 +1022,66 @@ export class CombatUI {
      *    列「锁子甲·板甲·板甲马铠」观众读不出强弱，列「步甲+3/4」才知道强了多少。
      *    科技名只留「本方独有、对面没有」那几条 —— 那才是本场科技差距的故事。
      */
-    private buildTechRow(): HTMLDivElement {
-        // 见下方实现说明
-        return this.buildTechTopBar();
-    }
-
     /**
-     * [军事科技] **屏幕顶部**的科技条（主人 2026-08-18 定：「显示在顶上」）。
+     * [军事科技] 挂载于顶部中央 HUD 容器（#top-center-hud）左右两翼的科技胶囊。
+     * （2026-08-18 主人定：部署在中央跟随/改名胶囊两边）。
      *
-     * 位置沿革（都被否掉了，别再往回搬）：
-     *   ① 面板底部 → 那是**援军行**的地盘，挤在一起（主人否）
-     *   ② 年份行三栏 → 与立绘、「名将」角标撞车，观感乱（主人否）
-     *   ③ **屏幕顶部** ← 现在这个：横幅左右本来就是空的，谁也不挡
-     *
-     * 🔴 必须挂 `document.body`，不能挂 `this.container`：
-     *    容器是 `position: fixed; bottom: 0` 且收起时整体 `translate` 出屏幕，
-     *    挂里面会跟着一起消失。
-     * 中间留出横幅宽度，左攻右守各占一边。
+     * 结构：
+     *   左翼 (order: -1): 攻方科技胶囊 [ ⚔️ 攻方科技  近攻+3 远攻+4 ... | 科技名列表 ]
+     *   中央 (order:  0): 跟随/改名胶囊 [ 太平 石达开 率 石敢当  ✎改名  ✕取消 ]
+     *   右翼 (order:  1): 守方科技胶囊 [ 科技名列表 | 步甲+2/3 远攻+2 ...  守方科技 🛡️ ]
      */
-    private buildTechTopBar(): HTMLDivElement {
-        const bar = document.createElement('div');
-        bar.id = 'combat-tech-topbar';
-        bar.style.cssText = `
-            position: fixed;
-            top: ${uiPx(10)};
-            left: ${uiPx(16)};
-            right: ${uiPx(16)};
-            display: grid;
-            grid-template-columns: 1fr ${uiPx(560)} 1fr;
-            align-items: start;
-            column-gap: ${uiPx(12)};
-            pointer-events: none;
-            z-index: ${T.zIndex.panel};
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        `;
-        const mk = (isAtt: boolean) => {
+    private buildTechRow(): HTMLDivElement {
+        const mkBox = (isAtt: boolean) => {
             const box = document.createElement('div');
+            box.id = isAtt ? 'combat-tech-left' : 'combat-tech-right';
             box.style.cssText = `
-                font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(T.sideBar.techSize)};
-                line-height: 1.45;
-                min-width: 0;
-                display: flex;
+                display: none;
                 flex-direction: column;
-                gap: ${uiPx(1)};
+                gap: 2px;
+                padding: 4px 14px;
+                font-size: 13px;
+                color: #1a1612;
+                background: linear-gradient(135deg, rgba(248, 242, 230, 0.78) 0%, rgba(235, 220, 198, 0.85) 100%);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(125, 111, 90, 0.25);
+                border-radius: 20px;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
+                font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
+                letter-spacing: 0.5px;
+                pointer-events: auto;
+                white-space: nowrap;
+                min-width: 0;
                 align-items: ${isAtt ? 'flex-start' : 'flex-end'};
                 text-align: ${isAtt ? 'left' : 'right'};
-                text-shadow: 0 1px 5px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.85);
+                order: ${isAtt ? -1 : 1};
+                opacity: 0;
+                transform: scale(0.96);
+                transition: opacity 0.25s ease, transform 0.25s ease;
             `;
             return box;
         };
-        this.leftTechBox = mk(true);
-        this.rightTechBox = mk(false);
-        const spacer = document.createElement('div');
-        bar.appendChild(this.leftTechBox);
-        bar.appendChild(spacer);
-        bar.appendChild(this.rightTechBox);
-        document.body.appendChild(bar);
-        return bar;
+
+        this.leftTechBox = mkBox(true);
+        this.rightTechBox = mkBox(false);
+
+        const container = document.getElementById('top-center-hud');
+        if (container) {
+            container.appendChild(this.leftTechBox);
+            container.appendChild(this.rightTechBox);
+        } else {
+            document.body.appendChild(this.leftTechBox);
+            document.body.appendChild(this.rightTechBox);
+        }
+        return this.leftTechBox;
     }
 
     /**
-     * 重绘一侧的科技显示：第一行效果数值（弱色小字），第二行本方独有科技名（势力色）。
-     * @param own 本方已解锁科技  @param foe 对方已解锁科技（算「独有」用）
+     * 重绘一侧的科技显示（中央跟随胶囊两翼风格）。
+     * 每一个科技的名称与具体效果一一垂直绑定（上名下效，垂直严格对齐）。
+     * @param own 本方已解锁科技  @param foe 对方已解锁科技
+     * @param isAtt 是否攻方（左翼）
      */
     private renderTechSide(
         box: HTMLDivElement,
@@ -1098,45 +1094,91 @@ export class CombatUI {
         box.dataset.sig = sig;
         box.textContent = '';
 
-        const accent = isAtt ? T.colors.attackerGold : T.colors.defenderJade;
-
-        // ── 第一行：累计效果（这才是「科技效果要体现」）──
-        const eff = summarizeTechEffects(own);
-        if (eff.length) {
-            const line = document.createElement('div');
-            line.style.cssText = `
-                color: rgba(245,233,201,0.72); font-size: 0.95em; letter-spacing: 0.02em;
-                display: flex; flex-wrap: wrap; gap: 0 ${uiPx(7)};
-                justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
-            `;
-            for (const t of eff) {
-                const chip = document.createElement('span');
-                chip.textContent = t;
-                chip.style.cssText = 'white-space: nowrap;';
-                line.appendChild(chip);
-            }
-            box.appendChild(line);
+        if (!own.length) {
+            box.style.opacity = '0';
+            box.style.display = 'none';
+            return;
         }
 
-        // ── 第二行：本方**全部**已解锁科技名 ──
-        // 🔴 [2026-08-18 主人定] 原来只列「对面没有的独有科技」，主人要的是
-        //    「都拥有哪些特效」——所以列全部，不做差集。对面也有的照列不误。
-        if (own.length) {
-            const line = document.createElement('div');
-            line.style.cssText = `
-                color: ${accent}; opacity: 0.95; font-size: 0.94em;
-                max-width: 100%; line-height: 1.4;
-                display: flex; flex-wrap: wrap; gap: 0 0.45em;
-                justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
-            `;
-            for (const t of own) {
-                const chip = document.createElement('span');
-                chip.textContent = t.name;
-                chip.style.cssText = 'white-space: nowrap;';
-                line.appendChild(chip);
-            }
-            box.appendChild(line);
+        box.style.display = 'flex';
+        box.style.flexDirection = 'row';
+        box.style.alignItems = 'center';
+        box.style.gap = '8px';
+        requestAnimationFrame(() => {
+            box.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        const nameColor = isAtt ? '#7a5830' : '#2d5e40';
+        const effColor = isAtt ? '#5a2e12' : '#1a4a2c';
+
+        // 攻方左标
+        if (isAtt) {
+            const tag = document.createElement('span');
+            tag.textContent = '⚔️ 攻方科技';
+            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap;';
+            box.appendChild(tag);
         }
+
+        // 科技列表（每个科技一个垂直对齐的独立卡片/小列）
+        const chipsWrap = document.createElement('div');
+        chipsWrap.style.cssText = `
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px 10px;
+            align-items: center;
+            justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
+        `;
+
+        for (const t of own) {
+            const effText = summarizeSingleTechEffect(t);
+            const chip = document.createElement('div');
+            chip.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1px;
+                min-width: 28px;
+            `;
+
+            // 科技名（行 1）
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = t.name;
+            nameSpan.style.cssText = `
+                font-size: 11px;
+                line-height: 1.2;
+                color: ${nameColor};
+                opacity: 0.92;
+                white-space: nowrap;
+            `;
+
+            // 对应效果（行 2）
+            const effSpan = document.createElement('span');
+            effSpan.textContent = effText;
+            effSpan.style.cssText = `
+                font-size: 11px;
+                line-height: 1.2;
+                font-weight: bold;
+                color: ${effColor};
+                white-space: nowrap;
+            `;
+
+            chip.appendChild(nameSpan);
+            chip.appendChild(effSpan);
+            chipsWrap.appendChild(chip);
+        }
+
+        box.appendChild(chipsWrap);
+
+        // 守方右标
+        if (!isAtt) {
+            const tag = document.createElement('span');
+            tag.textContent = '守方科技 🛡️';
+            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap;';
+            box.appendChild(tag);
+        }
+
         void foe;
     }
 
@@ -3911,6 +3953,18 @@ export class CombatUI {
         this.rightPortraitFrame.style.animation = 'none';
         this.leftPortraitFrame.style.transform = '';
         this.rightPortraitFrame.style.transform = '';
+        if (this.leftTechBox) {
+            this.leftTechBox.style.opacity = '0';
+            this.leftTechBox.style.display = 'none';
+            this.leftTechBox.dataset.sig = '';
+            this.leftTechBox.textContent = '';
+        }
+        if (this.rightTechBox) {
+            this.rightTechBox.style.opacity = '0';
+            this.rightTechBox.style.display = 'none';
+            this.rightTechBox.dataset.sig = '';
+            this.rightTechBox.textContent = '';
+        }
     }
 
     /** 切换战斗面板的折叠/展开状态（点击面板顶部箭头避开遮挡战场） */
@@ -4125,35 +4179,21 @@ export class CombatUI {
             defMax = Math.max(defMax, defCurrent);
         }
 
-        // [军事科技] 13 出兵口互攻时显示双方科技行（各按自己文化区+年份）；非 13 隐藏
-        if (this.techRow) {
-            //
-            // 🔴 [2026-08-18 修·主人报「科技呢，去哪了」] 原来只认 Scene13 的 getSideTechs()，
-            //    而 13 要同时满足「双将 + 跟拍 + zoom≥13 + 兵力≥1万」，缩放不到 13 就整行空白。
-            //    但**科技是「这个势力在这一年有什么」，与你缩放到几级无关** —— 所以 13 没开时
-            //    退回按本场双方单位的文化区 + 当前年份自己算，任何战斗都看得到。
-            //    （属性加成仍只在 13 生效，这是主人定的范围；面板显示的是「拥有什么科技」。）
-            let sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
-            if (!sideTechs) {
-                const year = (window as any).game?.timeSystem?.getYear?.();
-                if (typeof year === 'number') {
-                    const cultureOf = (side: 'attacker' | 'defender') => {
-                        const u = this.getPrimaryBattler(side);
-                        return (u ? resolveUnitCultureRegion(u) : 'CENTRAL') as RegionType;
-                    };
-                    sideTechs = { attacker: unlockedTechs(year, cultureOf('attacker')), defender: unlockedTechs(year, cultureOf('defender')) };
-                }
-            }
+        // [军事科技] 只在 13 战斗模式下显示双方科技（2026-08-18 主人定：非 13 战斗模式隐藏）
+        if (this.leftTechBox && this.rightTechBox) {
+            const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
             if (sideTechs) {
                 this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
                 this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
-                this.techRow.style.opacity = '1';
             } else if (this.leftTechBox.dataset.sig !== '') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
                 this.leftTechBox.textContent = '';
                 this.rightTechBox.textContent = '';
-                this.techRow.style.opacity = '0';
+                this.leftTechBox.style.opacity = '0';
+                this.leftTechBox.style.display = 'none';
+                this.rightTechBox.style.opacity = '0';
+                this.rightTechBox.style.display = 'none';
             }
         }
 
