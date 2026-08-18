@@ -111,7 +111,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
-    NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐辽刀突击主力(4) + 诸葛弩后排(2)
+    NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
     BASHU:        'fish_scale',   // 川蜀：白羽卫兵前卫(3) + 精锐白羽卫兵主力(4) + 诸葛弩后排(2)
@@ -129,7 +129,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
-    HEXI:         'echelon',      // 河西：辽刀主力(4前) + 诸葛弩中坚(3中) + 精锐黑光铠骑兵(2后)
+    HEXI:         'echelon',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 };
 
@@ -277,6 +277,15 @@ export const HAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'jian_swordsman', count: 2 }, // Row 0 步兵前锋 = 刀剑手 2人
     { type: 'tiger_rider', count: 4 },    // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
     { type: 'chukonu', count: 3 },        // Row 2 中军后排支援 = 诸葛弩 3人
+];
+
+/**
+ * 曹魏·鹤翼阵（2+4+3）：魏武虎豹骑(2) + 魏武虎豹骑精锐(4) + 诸葛弩(3)
+ */
+export const WEI_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏武虎豹骑 2人
+    { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏武虎豹骑精锐 4人
+    { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
@@ -543,6 +552,33 @@ export const MING_DYNASTY_FACTION_IDS = new Set([
     'xuan', 'linyu', 'qi_d', 'chizhou', 'luming', 'yansui'
 ]);
 
+/** 曹魏名将 ID 集合 */
+export const WEI_DYNASTY_GENERAL_IDS = new Set([
+    'cao_d_caocao',             // 曹操（谯县）
+    'lu_zhangliao',             // 张辽（合肥）
+    'wudu_dengai',              // 邓艾（武都）
+    'sima_d_simayi',            // 司马懿（获嘉）
+    'bozhou_d_yujin',           // 于禁（聊城）
+    'guzhu_tianyu',             // 田豫（肥如）
+]);
+
+/** 曹魏势力 ID 集合 */
+export const WEI_DYNASTY_FACTION_IDS = new Set([
+    'cao_d',                    // 曹魏·谯县
+    'lu',                       // 合肥·张辽
+    'wudu',                     // 武都·邓艾
+    'sima_d',                   // 获嘉·司马懿
+    'bozhou_d',                 // 聊城·于禁
+    'guzhu',                    // 肥如·田豫
+]);
+
+/** 判断是否为曹魏武将或势力 */
+export function isWeiDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && WEI_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && WEI_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 /** 日本战国名将 ID 集合 */
 export const SENGOKU_GENERAL_IDS = new Set([
     'owari_zhitianxinchang',            // 织田信长
@@ -801,6 +837,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     if (generalId) {
         if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
         if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
+        if (WEI_DYNASTY_GENERAL_IDS.has(generalId)) return [...WEI_FACTION_COMPOSITION];
         if (TANG_DYNASTY_GENERAL_IDS.has(generalId)) return [...TANG_FACTION_COMPOSITION];
         if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
         if (MING_DYNASTY_GENERAL_IDS.has(generalId)) return [...MING_FACTION_COMPOSITION];
@@ -818,6 +855,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isHanDynasty(factionId)) {
         return [...HAN_FACTION_COMPOSITION];
+    }
+    if (isWeiDynasty(factionId)) {
+        return [...WEI_FACTION_COMPOSITION];
     }
     if (isTangDynasty(factionId)) {
         return [...TANG_FACTION_COMPOSITION];
@@ -927,7 +967,7 @@ export const CENTRAL_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 2. 北方 辽刀+精锐辽刀+诸葛弩（鱼鳞阵 3+4+2：辽刀前卫 + 精锐辽刀突击主力 + 诸葛弩后排支援） */
+/** 2. 北方 辽刀+精锐黑光铠骑兵+诸葛弩（鱼鳞阵 3+4+2：辽刀前卫 + 精锐黑光铠骑兵主力 + 诸葛弩后排支援） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -935,7 +975,7 @@ export const NORTH_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'liao_dao', count: 3 },        // Row 0 前卫 = 辽刀 3人
-            { type: 'elite_liao_dao', count: 4 },  // Row 1 中军突击主力 = 精锐辽刀 4人
+            { type: 'hei_kuang_heavy', count: 4 }, // Row 1 中军突击主力 = 精锐黑光铠骑兵 4骑
             { type: 'chukonu', count: 2 }          // Row 2 尾收支援 = 诸葛弩 2人
         ]
     }
@@ -1011,16 +1051,16 @@ export const STEPPE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 7. 河西 辽刀+诸葛弩+精锐黑光铠骑兵（雁行阵 4+3+2：辽刀宽线主力 + 诸葛弩中坚 + 精锐黑光铠骑兵压阵） */
+/** 7. 河西 精锐辽刀+黑光铠骑兵+诸葛弩（雁行阵 4+3+2：精锐辽刀宽线主力 + 黑光铠骑兵中坚 + 诸葛弩压阵） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'liao_dao', count: 4 },          // Row 0 主力·宽线抗线 = 辽刀 4人
-            { type: 'chukonu', count: 3 },           // Row 1 中军接应 = 诸葛弩 3人
-            { type: 'hei_kuang_heavy', count: 2 }    // Row 2 压阵骑兵 = 精锐黑光铠骑兵 2人
+            { type: 'elite_liao_dao', count: 4 }, // Row 0 主力·宽线抗线 = 精锐辽刀 4人
+            { type: 'hei_kuang', count: 3 },      // Row 1 中军接应 = 黑光铠骑兵 3骑
+            { type: 'chukonu', count: 2 }         // Row 2 压阵远程 = 诸葛弩 2人
         ]
     }
 ];

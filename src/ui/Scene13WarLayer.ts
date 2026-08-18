@@ -27,6 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
+import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
@@ -1194,75 +1195,6 @@ const SPRITE_TROOPS = 20;
  *    所以象/车必须按名字单独点名，其余 class 12 才算 1。
  *    （class 47 不是战象、是斥候 SCOUT —— 别再拿 47 认象，证据见 scratch/build_unit_class_by_stats.mjs。）
  */
-/**
- * 人口占用表 —— **由数据生成，别手改**：`node scratch/build_pop_cost.mjs` 重新生成后整段替换。
- *
- * 🔴 初版是三条正则猜名字（/elephant/、/chariot/、/mangonel|onager|…/），2026-08-18 迁走。
- *    迁移时对账，正则版被抓出 7 处错：
- *      · 巨弩 ballista 判成 1（漏），实为弩炮 class 55 → 3
- *      · 掷环兵 chakram_thrower 判成 3 —— 正则 `ram_` 误命中「cha**kram_t**hrower」，它是步兵 → 1
- *      · 高丽战车／胡斯战车四个判成 1（漏），它们是「车」→ 2
- *    这就是「看名字不看数据」的典型代价。
- *
- * 判据两级（缺一不可，见生成器文件头）：
- *   ① 炮/攻城/弩炮 → 按 DE unit class {13, 35, 55} → 3
- *   ② 象/车        → 按 DE **原型名**，不能按 class：**象和车的 class 都是 12（骑兵）**，class 分不开
- *   其余默认 1（步/弓/骑/弓骑/轻型火器）
- */
-const POP_COST_BY_KEY: Record<string, number> = {
-    antiquity_battering_ram: 3,     // class 13（攻城器械）
-    antiquity_capped_ram: 3,        // class 13（攻城器械）
-    antiquity_heavy_scorpion: 3,    // class 55（类55）
-    antiquity_mangonel: 3,          // class 13（攻城器械）
-    antiquity_onager: 3,            // class 13（攻城器械）
-    antiquity_scorpion: 3,          // class 55（类55）
-    antiquity_siege_onager: 3,      // class 13（攻城器械）
-    antiquity_siege_ram: 3,         // class 13（攻城器械）
-    antiquity_siege_tower: 3,       // 人工指定
-    ballista: 3,                    // class 55（类55）
-    battering_ram: 3,               // class 13（攻城器械）
-    bombard_cannon: 3,              // class 13（攻城器械）
-    capped_ram: 3,                  // class 13（攻城器械）
-    elite_organ_gun: 3,             // class 13（攻城器械）
-    heavy_rocket_cart: 3,           // class 13（攻城器械）
-    heavy_scorpion: 3,              // class 55（类55）
-    helepolis: 3,                   // 人工指定
-    houfnice: 3,                    // class 13（攻城器械）
-    mangonel: 3,                    // class 13（攻城器械）
-    mounted_trebuchet: 3,           // 人工指定
-    onager: 3,                      // class 13（攻城器械）
-    organ_gun: 3,                   // class 13（攻城器械）
-    rocket_cart: 3,                 // class 13（攻城器械）
-    scorpion: 3,                    // class 55（类55）
-    siege_onager: 3,                // class 13（攻城器械）
-    siege_ram: 3,                   // class 13（攻城器械）
-    siege_tower: 3,                 // 人工指定
-    traction_trebuchet: 3,          // class 13（攻城器械）
-    armored_elephant: 2,            // 人工指定
-    ballista_elephant: 2,           // DE原型 ELEBALI（象）
-    battle_elephant: 2,             // DE原型 BATELE（象）
-    bayinnaung_elephant: 2,         // 人工指定
-    dagnajan_elephant: 2,           // 人工指定
-    elephant: 2,                    // 人工指定
-    elephant_archer: 2,             // DE原型 ELEAR（象）
-    elite_armored_elephant: 2,      // 人工指定
-    elite_ballista_elephant: 2,     // DE原型 EELEBALI（象）
-    elite_battle_elephant: 2,       // DE原型 EBATELE（象）
-    elite_elephant_archer: 2,       // 人工指定
-    elite_hussite_wagon: 5,         // 人工指定
-    elite_war_chariot: 3.75,           // 人工指定
-    elite_war_elephant: 2,          // 人工指定
-    elite_war_wagon: 5,             // 人工指定
-    hussite_wagon: 5,               // 人工指定
-    porus_elephant: 2,              // 人工指定
-    war_chariot: 3.75,                 // 人工指定
-    war_chariot_ranged: 3.75,          // 人工指定
-    war_elephant: 2,                // 人工指定
-    war_wagon: 5,                   // 人工指定
-};
-function popCostOf(key: string): number {
-    return POP_COST_BY_KEY[key] ?? 1;
-}
 /**
  * 成批补（2026-08-11 主人定「取代一个一个补」，2026-08-13 定稿「弱方 < 300 一次补 300」）。
  * 🔴 一个一个补的毛病：双方速率一样、损失立刻被填平，谁也推不动谁 ——

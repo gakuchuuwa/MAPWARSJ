@@ -43,13 +43,53 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
         ],
     },
-    // 曹魏·曹操军团（鹤翼阵 2+4+3：曹魏虎豹骑 2 + 曹魏虎豹骑精锐 4 + 华夏诸葛弩 3）
+    // 曹魏·曹操 / 张辽 / 邓艾 / 司马懿 / 于禁 / 田豫 虎豹铁骑军团（鹤翼阵 2+4+3：魏武虎豹骑 2 + 魏武虎豹骑精锐 4 + 诸葛弩 3）
     cao_d: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 曹魏虎豹骑 2人
-            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 曹魏虎豹骑精锐 4人
-            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 华夏诸葛弩 3人
+            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏武虎豹骑 2骑
+            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏武虎豹骑精锐 4骑
+            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 诸葛弩 3人
+        ],
+    },
+    lu: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 3 },
+        ],
+    },
+    wudu: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 3 },
+        ],
+    },
+    sima_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 3 },
+        ],
+    },
+    bozhou_d: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 3 },
+        ],
+    },
+    guzhu: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tiger_rider', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 3 },
         ],
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：火矛手前卫 3 + 精锐火矛手突击主力 4 + 诸葛弩 2）
@@ -306,14 +346,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'crossbowman', count: 3 },     // Row 2 后排支援 = 弩手
         ],
     },
-    // 西亚·奥斯曼帝国 苏丹亲兵军团（雁行阵 4+3+2：苏丹亲兵火枪齐射 4 + 西帕希重骑接应 3 + 阿金吉骑射压阵 2）
-    // 2026-08-18 主人定：新增奥斯曼势力，城堡兵「苏丹亲兵」作主力
+    // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
     osman: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
-            { type: 'janissary', count: 2 },                 // 前排火绳枪 = 苏丹亲兵 2（🔴 热兵器只许 2 档；亲兵是少而精的常备步兵）
-            { type: 'paladin', count: 4 },                   // 主力·两翼合围 = 西帕希封建重骑 4（奥斯曼军队主体）
-            { type: 'cav_archer_heavy', count: 3 },          // 中军骑射 = 重装骑射手 3
+            { type: 'janissary', count: 2 },                 // Row 0 尖刀前排 = 土耳其禁卫军 2人（苏丹火枪前哨齐射）
+            { type: 'elite_janissary', count: 3 },           // Row 1 冲击中坚 = 土耳其禁卫军精锐 3人（耶尼切里精锐排枪射击）
+            { type: 'royal_janissary', count: 4 },           // Row 2 底边主力 = 奥斯曼皇家禁卫军 4人（皇家最高阶苏丹火枪绝杀）
         ],
     },
     // 草原与中亚诸大汗·鞑靼怯薛军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
@@ -342,12 +381,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'mangudai', count: 2 },
         ],
     },
+    // 帖木儿帝国·撒马尔罕（帖木儿 · 鹤翼阵 2+4+3：火焰破象骆驼 2 + 怯薛具装铁骑主力 4 + 重装骑射 3）
     tiemuer: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'flaming_camel', count: 2 },       // Row 0 前锋奇兵 = 鞑靼火焰骆驼 2头（德里之战火驼破象，自爆烈焰撕裂敌阵）
+            { type: 'elite_keshik', count: 4 },        // Row 1 两翼绝对主力 = 鞑靼怯薛军精锐 4骑（帖木儿亲军重装具装铁骑大合围）
+            { type: 'cav_archer_heavy', count: 3 },    // Row 2 中军后排支援 = 重装骑射手 3骑（突厥-察合台复合强弓漫天箭雨压制）
         ],
     },
     asaibaijiang: {
@@ -741,6 +781,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'savar', count: 2 },
             { type: 'immortal', count: 3 },
             { type: 'immortal_ranged', count: 4 },
+        ],
+    },
+    // 粟特王国·瓦拉赫沙（德瓦什提奇 · 鹤翼阵 2+4+3：持盾步兵 2 + 粟特甲胄铁骑主力 4 + 古典重装骑射 3）
+    sogdian: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'sparabara', count: 2 },                      // Row 0 前哨诱敌 = 波斯持盾步兵 2人（大盾结阵抗线吸引火力）
+            { type: 'sogdian_cataphract', count: 4 },            // Row 1 两翼绝对主力 = 粟特甲胄骑兵 4骑（全人马披挂重装具装铁骑合围突破）
+            { type: 'antiquity_heavy_cavalry_archer', count: 3 }, // Row 2 中军后排支援 = 古典重装骑射手 3骑（重装弓骑兵漫天箭雨压制）
         ],
     },
     // 波兰王国·华沙（雅盖沃 · 鹤翼阵 2+4+3：战锤破甲勇士 2 + 精锐翼骑兵主力 4 + 劲弩手 3）
@@ -1275,53 +1324,53 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 2 },
         ],
     },
-    // 印度与达罗毗荼·旃陀罗笈多 / 戒日王 / 频毗娑罗 / 达磨波罗 / 梵摩达 / 苏摩 软剑士与象弓精锐军团（鱼鳞阵 3+4+2：软剑士前卫 3 + 精锐软剑士主力 4 + 象弓骑兵 2）
+    // 古印度孔雀帝国·旃陀罗笈多 / 戒日王 / 频毗娑罗 桑纳亚装甲战象与恒河长弓军团（鹤翼阵 2+4+3：桑纳亚重象 2 + 软剑士精锐主力 4 + 帕提尤达长弓 3）
     kongque: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },          // Row 0 前卫突击 = 达罗毗荼软剑士 3人（纯步兵·无马，持双刃软剑高速回旋）
-            { type: 'elite_urumi_swordsman', count: 4 },    // Row 1 中军主力撕裂 = 达罗毗荼软剑士精锐 4人（主力钢带软剑旋斩破阵）
-            { type: 'elephant_archer', count: 2 },          // Row 2 尾收远程压制 = 印度象弓骑兵 2头（战象背负箭楼高台抛射）
+            { type: 'sannahya', count: 2 },                 // Row 0 前锋破坚 = 孔雀王朝桑纳亚战象 2头（《政事论》经典巨象开路撞阵）
+            { type: 'elite_urumi_swordsman', count: 4 },    // Row 1 中军主力 = 达罗毗荼软剑士精锐 4人（王牌主力近战双刃钢带旋斩）
+            { type: 'pattiyoda_longbowman', count: 3 },     // Row 2 后排掩护 = 僧伽罗帕提尤达长弓手 3人（古印度高穿透重竹木长弓）
         ],
     },
     jieri: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'elephant_archer', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     mojietuo: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'elephant_archer', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     boluo: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'elephant_archer', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     jiashi_d: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'elephant_archer', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     sumo: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
+            { type: 'sannahya', count: 2 },
             { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'elephant_archer', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
     // 印度斯坦与德里苏丹·阿拉乌丁·卡尔吉 / 阿克巴大帝 古拉姆重装近卫与象弓精锐军团（鱼鳞阵 3+4+2：古拉姆前卫 3 + 精锐古拉姆主力 4 + 象弓骑兵 2）
