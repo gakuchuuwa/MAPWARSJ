@@ -358,5 +358,41 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 2 },
         ],
     },
+    // 拜占庭帝国·君士坦丁堡（弗拉基米尔 · 三角阵 2+3+4：拜占庭圣骑兵精锐 2 + 复合弓手 3 + 拜占庭圣骑兵 4）
+    baizanting: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'elite_cataphract', count: 2 },  // Row 0 尖刀 = 拜占庭圣骑兵精锐 2人
+            { type: 'composite_bowman', count: 3 },  // Row 1 中坚 = 复合弓手 3人
+            { type: 'cataphract', count: 4 },        // Row 2 底边 = 拜占庭圣骑兵 4人
+        ],
+    },
+    // 陶里卡·赫尔松涅斯（拜占庭克里米亚军区要塞）
+    taolika: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'elite_cataphract', count: 2 },
+            { type: 'composite_bowman', count: 3 },
+            { type: 'cataphract', count: 4 },
+        ],
+    },
+    // 达尔达尼亚·达达尼尔（海峡要冲）
+    teluoyi: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'elite_cataphract', count: 2 },
+            { type: 'composite_bowman', count: 3 },
+            { type: 'cataphract', count: 4 },
+        ],
+    },
+    // 马耳他·圣约翰医院骑士团（瓦莱特）
+    maerta_qishi: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'elite_cataphract', count: 2 },
+            { type: 'composite_bowman', count: 3 },
+            { type: 'cataphract', count: 4 },
+        ],
+    },
 };
 
