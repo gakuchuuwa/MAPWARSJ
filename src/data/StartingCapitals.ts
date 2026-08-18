@@ -13,6 +13,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'xixiliwangguo': 'city_palermo',
   'weixi': 'city_bremen',
 
+  'yipilusi': 'city_anbulajiya',
   'lagoniya': 'city_sparta',
   'maqidun': 'city_salonica',
   'lagusa': 'city_ragusa',
@@ -27,6 +28,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'sading': 'city_cagliari',
   'yidelisi': 'city_feisi',
   'qiekase': 'city_cherkasy',
+  'baojialiya': 'city_teernuowo',
   'saierdika': 'city_sofia',
 'bosiniya': 'city_sarajevo',
 
@@ -48,6 +50,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'aermolika': 'city_nantes',
   'tuosikana': 'city_florence',
   'yadelaiya': 'city_venice',
+  'talanduo': 'city_talanduo',
   'kanpaniya': 'city_naples',
   'jiatailuoniya': 'city_barcelona',
   'nasier': 'city_granada',
@@ -76,6 +79,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'xila': 'city_yadian',
   'xilagu': 'city_syracuse',
   'fulandesi': 'city_calais',
+  'bogendi': 'city_dijon',
   'gaolu': 'city_bali',
   'anggelu': 'city_lundun',
   'piketai': 'city_aidingbao',

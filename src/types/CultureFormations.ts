@@ -120,7 +120,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
-    STEPPE:       'triangle',     // 草原：草原枪兵(2) + 蒙古突骑(3) + 精锐蒙古突骑主力(4)
+    STEPPE:       'triangle',     // 草原：草原枪兵(2) + 怯薛军(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 藤弓兵(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
@@ -319,12 +319,12 @@ export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 罗马军团·鱼鳞阵（3+4+2）：精锐罗马百夫长(3) + 罗马军团步兵(4) + 掷矛手(2)
+ * 罗马军团·雁行阵（4+3+2）：罗马军团步兵(4) + 罗马百夫长(3) + 掷矛手(2)
  */
 export const ROMAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_centurion', count: 3 }, // Row 0 前卫 = 精锐罗马百夫长 3人
-    { type: 'legionary', count: 4 },       // Row 1 中军主力突破 = 罗马军团步兵 4人
-    { type: 'skirmisher', count: 2 },      // Row 2 尾收压阵 = 掷矛手 2人
+    { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军团步兵 4人
+    { type: 'equites', count: 3 },             // Row 1 中军主力突击 = 罗马百夫长 3骑
+    { type: 'skirmisher', count: 2 },          // Row 2 尾收标枪压制 = 掷矛手 2人
 ];
 
 /**
@@ -935,7 +935,9 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
         army.formationMode = custom.formationMode;
     } else if (isQin || isHan || isTang || isSong || isPer || isPol || isTeu || isSen) {
         army.formationMode = 'crane_wing';
-    } else if (isRom || isByz || isMing) {
+    } else if (isRom) {
+        army.formationMode = 'echelon';
+    } else if (isByz || isMing) {
         army.formationMode = 'fish_scale';
     } else if (isBer) {
         army.formationMode = 'triangle';
@@ -1033,7 +1035,7 @@ export const SENGOKU_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 6. 草原 草原枪兵+蒙古突骑+精锐蒙古突骑（三角阵 2+3+4：草原枪兵尖刀 + 蒙古突骑中坚 + 精锐突骑主力底边） */
+/** 6. 草原 草原枪兵+怯薛军+精锐蒙古突骑（三角阵 2+3+4：草原枪兵尖刀 + 怯薛军中坚 + 精锐突骑主力底边） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1041,8 +1043,8 @@ export const STEPPE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'steppe_lancer', count: 2 },    // Row 0 尖刀先锋 = 草原枪兵 2人
-            { type: 'mangudai', count: 3 },         // Row 1 冲击中坚 = 蒙古突骑 3人
-            { type: 'mangudai_elite', count: 4 }    // Row 2 底边主力齐射 = 精锐蒙古突骑 4人
+            { type: 'keshik', count: 3 },           // Row 1 冲击中坚 = 怯薛军 3骑
+            { type: 'mangudai_elite', count: 4 }    // Row 2 底边主力齐射 = 精锐蒙古突骑 4骑
         ]
     }
 ];

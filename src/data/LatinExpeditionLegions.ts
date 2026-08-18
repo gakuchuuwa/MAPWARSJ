@@ -19,6 +19,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 汉尼拔主力骑臂=努米底亚骑（坎尼等）；圣团属布匿早期，勿绑汉尼拔 → T2
     buni: { name: '努米底亚骑', tier: 2 },
     xila: { name: '萨拉米斯舰', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯海战；避据点「雅典」叠字
+    yipilusi: { name: '摩罗西亚骑', tier: 2 },          // 安布拉基亚·皮洛士：伊庇鲁斯摩罗西亚战象铁骑
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
     yadelaiya: { name: '圣马可舰', tier: 2 },          // 威尼斯·丹多洛：圣马可旗/兵工厂；避据点「威尼斯」叠字
@@ -53,6 +54,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
+    talanduo: { name: '塔兰丁骑', tier: 3 },            // 塔兰托·阿契塔
     kanpaniya: { name: '安茹骑士', tier: 3 },
     // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4
     tuosikana: { name: '黑带军团', tier: 4 },          // 佛罗伦萨·洛伦佐侧：乔凡尼·德·美第奇 Bande Nere
@@ -85,6 +87,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力；专名偏弱 → T3（勿挂「教皇军」）
     puluowangsi: { name: '圣吉尔骑', tier: 3 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军；金马刺步兵已挂 didi「佛兰德军」，此处不夺步兵符号
+    bogendi: { name: '勃艮第骑', tier: 3 },             // 勃艮第·大胆查理
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
     mengtainiya: { name: '巴萨拉布团', tier: 2 },          // 布加勒斯特·巴萨拉布；避势力「蒙泰尼亚」叠字,
     baizanting: { name: '铁甲圣骑', tier: 1 },

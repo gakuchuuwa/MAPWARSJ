@@ -67,6 +67,9 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     elite_war_wagon: 5,             // 人工指定
     hussite_wagon: 5,               // 人工指定
     porus_elephant: 2,              // 人工指定
+    ratha_melee: 2,                 // 人工指定（孟加拉拉塔战车）
+    ratha_ranged: 2,                // 人工指定（孟加拉拉塔战车弓）
+    elite_ratha_melee: 2,           // 人工指定（孟加拉拉塔战车精锐）
     sannahya: 2,                    // 人工指定（孔雀王朝战象）
     war_chariot: 3.75,                 // 人工指定
     war_chariot_ranged: 3.75,          // 人工指定

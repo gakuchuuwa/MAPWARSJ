@@ -568,7 +568,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_basarab_i': 14,                                 // 巴萨拉布 · mengtainiya · 布加勒斯特
     'gen_black_prince': 14,                              // 黑太子 · aquidan · 波尔多
     'gen_cangrande': 14,                                 // 坎格兰德 · bohepingyuan · 维罗纳
+    'talanduo_aqita': -4,                                // 阿契塔 · talanduo · 塔兰托
     'gen_charles_i_naples': 13,                          // 卡洛 · kanpaniya · 那不勒斯
+    'bogendi_chali': 15,                                 // 大胆查理 · bogendi · 第戎
     'gen_charles_vii': 15,                               // 查理七世 · gaolu · 巴黎
     'gen_clovis_i': 5,                                  // 克洛维 · gaolu_luoma · 里昂
     'gen_constantine_great': 4,                         // 君士坦丁 · mozeer · 特里尔
@@ -674,6 +676,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_haci_giray': 15,                                // 哈吉格来 · kelimiya · 卡法
     'gen_jogaila': 15,                                   // 雅盖沃 · bolan · 华沙
     'gen_krum': 9,                                      // 克鲁姆 · saierdika · 索非亚
+    'baojialiya_aseni': 12,                              // 阿森一世 · baojialiya · 特尔诺沃
     'gen_mehmed_giray': 16,                              // 迈赫迈德 · deniesite · 阿克曼
     'gen_mikhail_tatarinov': 17,                         // 塔塔里诺夫 · dunhe · 阿速城
     'gen_mikhail_tver': 14,                              // 米哈伊尔 · teweier_gongguo · 特维尔
@@ -975,6 +978,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_cassander': -4,                                 // 卡山德 · maqidun · 萨洛尼卡
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
+    'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚
     'gen_leonidas': -5,                                  // 列奥尼达 · lagoniya · 斯巴达
     'gen_nikephoros_phokas': 10,                         // 福卡斯 · kelite · 诺索斯
     'gen_themistocles': -5,                              // 地米斯托 · xila · 雅典
