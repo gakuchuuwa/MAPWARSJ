@@ -295,58 +295,58 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'kipchak', count: 3 },
         ],
     },
-    // 马其顿·亚历山大帝国军团（鹤翼阵 2+4+3：马其顿方阵兵 2 + 伙伴骑兵主力 4 + 克里特弓手 3）
+    // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）
     maqidun: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 托勒密（亚历山大旧部，套用亚历山大帝国军团配置）
     tuolemi: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 塞琉古帝国（安提俄基亚 · 塞琉古一世/安条克，银盾方阵体系）
     sailiugu: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 佩尔加蒙（欧迈尼斯 · 亚历山大王家秘书长与近卫方阵统帅）
     pajiama: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 贝雷尼斯（托勒密二世 · 托勒密王朝红海据点）
     beileinisi: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
     jileinaijia: {
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵
-            { type: 'cretan_archer', count: 3 },      // Row 2 中军后排支援 = 克里特弓手
+            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
+            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
+            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
         ],
     },
     // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）

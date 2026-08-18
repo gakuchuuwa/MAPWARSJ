@@ -264,6 +264,35 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     },
 ];
 
+/**
+ * 【面板展示分组】13 战斗面板的科技徽记按此分四组渲染。
+ *
+ * 为什么要分组：直接列 16 个科技名是一堵文字墙，直播观众扫一眼什么也读不到。
+ * 分成「冶/甲/射/术」四组、每组画点，双方并排时**哪条线点满了一眼可比**。
+ * `split` = 该组内部再按几个一簇分开画（甲组 9 条 = 步甲3｜马铠3｜射甲3）。
+ */
+export interface TechDisplayGroup {
+    label: string;
+    hint: string;
+    ids: readonly string[];
+    /** 每簇几个点；不给则连成一串 */
+    split?: number;
+}
+
+export const TECH_DISPLAY_GROUPS: readonly TechDisplayGroup[] = [
+    { label: '冶', hint: '冶金·近战攻击', ids: ['forging', 'iron_casting', 'blast_furnace'] },
+    {
+        label: '甲', hint: '护甲：步甲｜马铠｜射手甲', split: 3,
+        ids: [
+            'scale_mail', 'chain_mail', 'plate_mail',
+            'scale_barding', 'chain_barding', 'plate_barding',
+            'padded_archer', 'leather_archer', 'ring_archer',
+        ],
+    },
+    { label: '射', hint: '箭术·远程攻击与射程', ids: ['fletching', 'bodkin', 'bracer'] },
+    { label: '术', hint: '畜牧·血统·拇指环·安息战术', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics'] },
+];
+
 /** 取某年、某文化区已解锁的全部科技（year=null 恒解锁） */
 export function getUnlockedTechs(year: number, culture: RegionType): MilitaryTech[] {
     return MILITARY_TECHS.filter(

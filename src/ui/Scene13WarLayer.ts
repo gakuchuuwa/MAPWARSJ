@@ -24,9 +24,8 @@ import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { getRegion, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
-import { unlockedTechs, applyTechsToStats, newlyUnlocked, techAnnouncement } from '../systems/MilitaryTechState';
-import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import { GameConfig } from '../config/GameConfig';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
@@ -1774,6 +1773,9 @@ const CELL_M = 80;
 /** 远程哈希格 */
 const CELL_R = 220;
 
+/** [军事科技] 供战斗面板渲染徽记用的精简结构（id 用于分组比对，name 用于显示） */
+export interface TechBrief { id: string; name: string; }
+
 interface WarSpawn {
     f: 0 | 1;
     key: string;
@@ -2222,18 +2224,22 @@ export class Scene13WarLayer {
         return v;
     }
 
-    /** [军事科技] 跨年：重建双方分表 + 播报新解锁（静默改数值观众看不见 → 项目铁律：技能必须有可见演出） */
+    /** [军事科技] 跨年：重建双方分表。🔴 播报不在这里——已挪 TimeSystem 年变回调（挂 13 循环会漏掉绝大多数解锁年份） */
     private onTechYearChanged(year: number): void {
         this.techYear = year;
         this.techStats = [new Map(), new Map()];
-        for (let f = 0; f < 2; f++) {
-            const cult = this.sideCulture[f] as RegionType;
-            const fresh = newlyUnlocked(year, cult);
-            if (!fresh.length) continue;
-            const cultureName = REGION_LABELS[cult] ?? cult;
-            const body = fresh.map((t) => techAnnouncement(t)).join(' | ');
-            speechAnnouncer.announceTechUnlock(`${year} · ${cultureName}：${body}`);
-        }
+    }
+
+    /**
+     * [军事科技] 双方各自已解锁的科技名（13 战斗面板「科技行」用；表顺序）。
+     * 每方按自己文化区 + 当前年份算——同一时刻双方科技树可能不同（门控），观众一目了然。
+     */
+    public getSideTechs(): { attacker: TechBrief[]; defender: TechBrief[] } | null {
+        if (!this.active && !this.lingering) return null;
+        const year = this.techYearGetter?.() ?? this.techYear;
+        const brief = (f: number): TechBrief[] =>
+            unlockedTechs(year, this.sideCulture[f] as RegionType).map((t) => ({ id: t.id, name: t.name }));
+        return { attacker: brief(0), defender: brief(1) };
     }
 
     /** 战斗开始 → 初始化出兵口（编制槽位派生）+ 开始加载素材 */

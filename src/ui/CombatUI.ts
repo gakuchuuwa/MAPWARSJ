@@ -30,6 +30,7 @@ import {
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
+import { summarizeTechEffects } from '../systems/MilitaryTechState';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
@@ -216,6 +217,11 @@ export class CombatUI {
     private leftCenterSixBadge!: HTMLSpanElement;
     private rightCenterSixBadge!: HTMLSpanElement;
     private centerSixBadgeGroup!: HTMLDivElement;
+    /** [军事科技] 科技行：双方各自已解锁科技名（只在 13 出兵口互攻时显示） */
+    private techRow!: HTMLDivElement;
+    /** [军事科技] 双方科技徽记区（内容由 renderTechSide 重绘） */
+    private leftTechBox!: HTMLDivElement;
+    private rightTechBox!: HTMLDivElement;
     private toggleCollapseBtn!: HTMLButtonElement;
     private isCollapsed: boolean = false;
 
@@ -959,11 +965,17 @@ export class CombatUI {
         rightHud.appendChild(this.rightReinfRow);
         this.sideStatsRow.appendChild(rightHud);
 
+        // [军事科技] 科技行（2026-08-18 主人定：语音播报改 UI 显示，双方各显自己已解锁科技）
+        this.techRow = this.buildTechRow();
+
 
         this.bottomInfoRow = document.createElement('div');
         this.bottomInfoRow.style.display = 'none';
 
-        this.centerPanel.appendChild(this.battleYear);
+        // [军事科技] 年份行三栏：左攻科技效果 ｜ 年份 ｜ 右守科技效果。
+        // 🔴 放这里而不是面板底部：底部是**援军行**的地盘（主人 2026-08-18 指出挤在一起不合适）；
+        //    而科技本来就是年份的函数，跟年份同一行，因果关系一眼就明白。
+        this.centerPanel.appendChild(this.techRow);
         this.centerPanel.appendChild(this.battleTitle);
         this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
@@ -987,6 +999,114 @@ export class CombatUI {
 
         this.applyPortraitFacing('attacker');
         this.applyPortraitFacing('defender');
+    }
+
+    /**
+     * [军事科技] 科技行：左攻右守各显示已解锁科技名（「科技」弱色标签 + 名列表）。
+     * 默认隐藏，updateStats 里按 scene13War.getSideTechs() 开关显示（只在 13 出兵口互攻时）。
+     */
+    /**
+     * [军事科技] 面板底部的科技徽记行（13 战斗专用）。
+     *
+     * 🔴 为什么不是直接列科技名：1450 年拉丁有 16 条科技，平铺就是一堵文字墙，
+     *    直播观众扫一眼什么也读不到。改成**四组点阵徽记 + 独有科技高亮**：
+     *      · 点阵（冶/甲/射/术）→ 双方并排，哪条线点满了一眼可比
+     *      · 独有科技 → 只列「对面没有的」，那才是本场科技差距的故事
+     *    点与独有名都用该方势力色（攻金 / 守青），跟血条、名牌同一套视觉语言。
+     */
+    /**
+     * [军事科技] 年份行 = 「左攻科技效果 ｜ 年份 ｜ 右守科技效果」三栏。
+     *
+     * 🔴 放这里而不是面板底部：底部是**援军行**的地盘（主人 2026-08-18 指出挤在一起不合适）。
+     *    科技本来就是年份的函数，与年份同行，因果一眼就明白。
+     * 🔴 显示的是**效果不是科技名**（主人定「科技效果要体现」）：
+     *    列「锁子甲·板甲·板甲马铠」观众读不出强弱，列「步甲+3/4」才知道强了多少。
+     *    科技名只留「本方独有、对面没有」那几条 —— 那才是本场科技差距的故事。
+     */
+    private buildTechRow(): HTMLDivElement {
+        const row = document.createElement('div');
+        row.style.cssText = `
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            column-gap: ${uiPx(14)};
+            padding: 0 ${uiPx(T.portraitHorizontalReserve)};
+            box-sizing: border-box;
+            pointer-events: none;
+        `;
+        const mk = (isAtt: boolean) => {
+            const box = document.createElement('div');
+            box.style.cssText = `
+                font-family: 'Noto Serif SC', serif;
+                font-size: ${uiPx(T.sideBar.techSize)};
+                line-height: 1.45;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: ${uiPx(1)};
+                align-items: ${isAtt ? 'flex-start' : 'flex-end'};
+                text-align: ${isAtt ? 'left' : 'right'};
+                text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+            `;
+            return box;
+        };
+        this.leftTechBox = mk(true);
+        this.rightTechBox = mk(false);
+        row.appendChild(this.leftTechBox);
+        row.appendChild(this.battleYear);
+        row.appendChild(this.rightTechBox);
+        return row;
+    }
+
+    /**
+     * 重绘一侧的科技显示：第一行效果数值（弱色小字），第二行本方独有科技名（势力色）。
+     * @param own 本方已解锁科技  @param foe 对方已解锁科技（算「独有」用）
+     */
+    private renderTechSide(
+        box: HTMLDivElement,
+        own: { id: string; name: string }[],
+        foe: { id: string; name: string }[],
+        isAtt: boolean,
+    ): void {
+        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',');
+        if (box.dataset.sig === sig) return;   // 每帧调用，内容没变就不重绘 DOM
+        box.dataset.sig = sig;
+        box.textContent = '';
+
+        const accent = isAtt ? T.colors.attackerGold : T.colors.defenderJade;
+
+        // ── 第一行：累计效果（这才是「科技效果要体现」）──
+        const eff = summarizeTechEffects(own as never);
+        if (eff.length) {
+            const line = document.createElement('div');
+            line.style.cssText = `
+                color: rgba(245,233,201,0.72); font-size: 0.95em; letter-spacing: 0.02em;
+                display: flex; flex-wrap: wrap; gap: 0 ${uiPx(7)};
+                justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
+            `;
+            for (const t of eff) {
+                const chip = document.createElement('span');
+                chip.textContent = t;
+                chip.style.cssText = 'white-space: nowrap;';
+                line.appendChild(chip);
+            }
+            box.appendChild(line);
+        }
+
+        // ── 第二行：本方独有科技（对面没有的）——本场科技差距的故事 ──
+        const foeHas = new Set(foe.map((t) => t.id));
+        const only = own.filter((t) => !foeHas.has(t.id));
+        if (only.length) {
+            const line = document.createElement('div');
+            line.style.cssText = `
+                color: ${accent}; opacity: 0.95; font-size: 0.94em;
+                max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            `;
+            const names = only.map((t) => t.name).join(' · ');
+            line.textContent = isAtt ? `▸ ${names}` : `${names} ◂`;
+            box.appendChild(line);
+        }
     }
 
     /** 中央面板底部：左半攻 / 右半守，「军团名: 兵力」+ 小血条 */
@@ -3972,6 +4092,22 @@ export class CombatUI {
             defCurrent = liveWar.defender;
             attMax = Math.max(attMax, attCurrent);
             defMax = Math.max(defMax, defCurrent);
+        }
+
+        // [军事科技] 13 出兵口互攻时显示双方科技行（各按自己文化区+年份）；非 13 隐藏
+        if (this.techRow) {
+            // 🔴 这一行**包着年份**，所以绝不能整行 display:none —— 那会把年份一起藏掉（非 13 战斗全没年份）。
+            //    非 13 时只清空两侧科技栏，年份照常显示。
+            const sideTechs = (window as any).game?.scene13War?.getSideTechs?.();
+            if (sideTechs) {
+                this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
+                this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
+            } else if (this.leftTechBox.dataset.sig !== '') {
+                this.leftTechBox.dataset.sig = '';
+                this.rightTechBox.dataset.sig = '';
+                this.leftTechBox.textContent = '';
+                this.rightTechBox.textContent = '';
+            }
         }
 
         // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）

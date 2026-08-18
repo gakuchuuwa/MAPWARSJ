@@ -100,6 +100,8 @@ export const COMBAT_UI_TOKENS = {
         factionNameSize: 24,
         /** 势力名前的战力系数链字号 */
         factionMultSize: 20,
+        /** [军事科技] 科技行字号（设计 px）：附加信息行，小于侧栏主字号 */
+        techSize: 13,
     },
 
     zIndex: {

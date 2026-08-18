@@ -1,9 +1,9 @@
 /**
  * 【兵种 → DE 组织分类（unit class）】——**由数据生成，别手改**。
- * 重新生成：WAR_TYPES 兵种 294 个：命中 268，未命中 26
+ * 重新生成：WAR_TYPES 兵种 294 个：命中 269，未命中 25
 类别分布: {
   '弓骑': 24,
-  '步兵': 97,
+  '步兵': 98,
   '骑兵': 74,
   '弓箭手': 36,
   '散兵/掷矛': 4,
@@ -12,9 +12,9 @@
   '火枪': 5,
   '类28': 2
 }
-定类来源: { fingerprint: 255, manual: 13 }   （unresolved = 歧义未人工指定，必须补进 MANUAL 才能进科技表）
+定类来源: { fingerprint: 255, manual: 14 }   （unresolved = 歧义未人工指定，必须补进 MANUAL 才能进科技表）
 
-未命中（需人工指定 class）: heavy_infantry, elite_armored_elephant, bayinnaung_elephant, dagnajan_elephant, porus_elephant, elite_elephant_archer, flaming_camel, petard, ant_scout, flamethrower, helepolis, siege_tower, sosso_guard, gastraphetes, laminated_bowman, paragon, shock_cavalry, imperial_cavalry, equites, sarmatian, elite_peltast, vanguard, bowman, guardsman, antiquity_scout_cavalry, antiquity_siege_tower
+未命中（需人工指定 class）: heavy_infantry, elite_armored_elephant, bayinnaung_elephant, dagnajan_elephant, porus_elephant, elite_elephant_archer, flaming_camel, petard, ant_scout, flamethrower, helepolis, siege_tower, sosso_guard, gastraphetes, laminated_bowman, paragon, shock_cavalry, imperial_cavalry, equites, sarmatian, elite_peltast, vanguard, bowman, antiquity_scout_cavalry, antiquity_siege_tower
 
 → scratch/unit_class_by_stats.json 后把产物 unitClass 列刷进来。
  *
@@ -174,6 +174,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     ghulam: 6,
     greek_noble_cavalry: 12,
     grenadier: 44,
+    guardsman: 6,
     guecha_warrior: 0,
     halberdier: 6,
     hand_cannoneer: 44,
