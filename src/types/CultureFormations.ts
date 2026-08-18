@@ -74,39 +74,40 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
     return CULTURE_MOVEMENT_CLASS[culture] ?? 'MIXED';
 }
 
-/** 19 文化默认阵型（可被军队编辑器覆盖保存）——2026-08-18 五大经典战阵定案：
- *  鹤翼阵（crane_wing 2+4+3，9人）: 草原、日本、青藏、滇缅
- *  鱼鳞阵（fish_scale 3+4+2，9人）: 中原、川蜀、江南、中亚、西域
- *  雁行阵（echelon 4+3+2，9人）: 东北、北方、河西、西亚、斯拉夫、日耳曼、希腊
- *  三角阵（triangle 2+3+4，9人）: 朝鲜、岭南、拉丁、奴儿干 */
+/** 20 文化区默认阵型（2026-08-18 用户拍板：四个阵型都是2个3个4个构成，文化主力兵种必须是4个，远程/弓骑尽量在后排）：
+ *  鹤翼阵（crane_wing 2+4+3，9人，步骑远）：中原、北方、河西、朝鲜、青藏、斯拉夫、日耳曼、拉丁
+ *  鱼鳞阵（fish_scale 3+4+2，9人，2近战+1远程）：日本、希腊、滇缅、奴儿干
+ *  三角阵（triangle 2+3+4，9人，骑兵+弓骑）：草原、东北、中亚、西域
+ *  雁行阵（echelon 4+3+2，9人，2远程+1近战）：川蜀、江南、岭南、西亚
+ */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
-    // 鹤翼阵 (2+4+3)
-    STEPPE:       'crane_wing',   // 草原：突骑引敌(2) + 怯薛合围(4) + 枪骑托底(3)
-    JAPAN:        'crane_wing',   // 日本：藤弓引敌(2) + 精锐武士合围(4) + 武士托底(3)
-    TIBET:        'crane_wing',   // 青藏：白毦引敌(2) + 蒙古突骑合围(4) + 答剌罕托底(3)
-    DIANQIAN:     'crane_wing',   // 滇缅：战象引敌(2) + 爪刀勇士合围(4) + 步弓托底(3)
+    // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
+    CENTRAL:      'crane_wing',   // 中原：刀剑手(2) + 虎豹铁骑主力(4) + 诸葛弩后排(3)
+    NORTH:        'crane_wing',   // 北方：辽刀步兵(2) + 黑光铠重骑主力(4) + 诸葛弩后排(3)
+    HEXI:         'crane_wing',   // 河西：精锐辽刀(2) + 黑光铠骑兵主力(4) + 诸葛弩后排(3)
+    KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 精锐黑光铠主力(4) + 火焰弓后排(3)
+    TIBET:        'crane_wing',   // 青藏：精锐白羽兵(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
+    SLAVIC:       'crane_wing',   // 斯拉夫：双手剑士(2) + 精锐波雅尔重骑主力(4) + 复合弓手后排(3)
+    GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
+    LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
 
-    // 鱼鳞阵 (3+4+2)
-    CENTRAL:      'fish_scale',   // 中原：刀剑前卫(3) + 诸葛弩主力(4) + 虎豹骑尾收(2)
-    BASHU:        'fish_scale',   // 川蜀：白毦立盾(3) + 精锐诸葛弩主力(4) + 藤弓尾收(2)
-    JIANGNAN:     'fish_scale',   // 江南：剑士前卫(3) + 精锐火焰弓主力(4) + 诸葛弩尾收(2)
-    CENTRAL_ASIA: 'fish_scale',   // 中亚：草原枪前卫(3) + 萨瓦尔铁骑主力(4) + 精锐钦察尾收(2)
-    WESTERN:      'fish_scale',   // 西域：斯基泰斧骑前卫(3) + 斯基泰骑射主力(4) + 斯基泰骑射精锐尾收(2)
+    // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
+    JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤甲弓后排(2)
+    GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
+    DIANQIAN:     'fish_scale',   // 滇缅：战斗象前卫(3) + 爪刀勇士主力(4) + 步弓手后排(2)
+    NUERGAN:      'fish_scale',   // 奴儿干：答剌罕骑兵(3) + 鲜卑突骑主力(4) + 反曲弓后排(2)
 
-    // 雁行阵 (4+3+2)
-    NORTHEAST:    'echelon',      // 东北：铁浮图横推(4) + 钦察中坚(3) + 虎豹骑压阵(2)
-    NORTH:        'echelon',      // 北方：辽刀宽阵(4) + 诸葛弩中坚(3) + 精锐黑光铠压阵(2)
-    HEXI:         'echelon',      // 河西：精锐辽刀宽阵(4) + 诸葛弩中坚(3) + 黑光铠压阵(2)
-    WEST_ASIA:    'echelon',      // 西亚：精锐复合弓横线(4) + 东方剑士中坚(3) + 重装骑射压阵(2)
-    SLAVIC:       'echelon',      // 斯拉夫：精锐贵族铁骑横推(4) + 双手剑士中坚(3) + 复合弓压阵(2)
-    GERMANIC:     'echelon',      // 日耳曼：游侠前锋横推(4) + 冠军剑士中坚(3) + 弩手压阵(2)
-    GREEK:        'echelon',      // 希腊：希腊重装步兵宽阵(4) + 色雷斯轻装兵中坚(3) + 底比斯圣队压阵(2)
+    // 三角阵 (2+3+4，骑兵+弓骑纯骑体系：尖刀先锋2 + 冲击中坚3 + 弓骑/骑兵主力底边4)
+    STEPPE:       'triangle',     // 草原：草原枪骑(2) + 怯薛重骑(3) + 精锐蒙古突骑主力(4)
+    NORTHEAST:    'triangle',     // 东北：铁浮图前锋(2) + 虎豹骑中坚(3) + 钦察弓骑主力(4)
+    CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
+    WESTERN:      'triangle',     // 西域：塞西亚斧骑(2) + 塞西亚弓骑(3) + 精锐塞西亚弓骑主力(4)
 
-    // 三角阵 (2+3+4)
-    KOREA:        'triangle',     // 朝鲜：剑士尖刀(2) + 火焰弓中坚(3) + 精锐黑光铠底边冲锋(4)
-    LINGNAN:      'triangle',     // 岭南：皮甲战象尖刀(2) + 帝王掷矛手中坚(3) + 精锐藤弓底边漫射(4)
-    LATIN:        'triangle',     // 拉丁：重装长枪尖刀(2) + 劲弩手中坚(3) + 重装骑士底边决胜(4)
-    NUERGAN:      'triangle',     // 奴儿干：反曲长弓尖刀(2) + 答剌罕中坚(3) + 鲜卑掠骑底边席卷(4)
+    // 雁行阵 (4+3+2，2远程+1近战：前排宽线肉盾4 + 第一远程中坚3 + 第二远程压阵2)
+    BASHU:        'echelon',      // 川蜀：白羽兵肉盾抗线(4) + 精锐诸葛弩(3) + 藤甲弓(2)
+    JIANGNAN:     'echelon',      // 江南：剑士宽线抗线(4) + 精锐火焰弓(3) + 诸葛弩(2)
+    LINGNAN:      'echelon',      // 岭南：装甲战象破防抗线(4) + 帝王掷矛手(3) + 精锐藤甲弓(2)
+    WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -237,94 +238,104 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 // ============================================================
 
 /**
- * 秦国·雁行阵（4+3+2）：印加枪兵长(4) + 诸葛弩(3) + 虎豹骑(2)
+ * 秦国·鹤翼阵（2+4+3）：印加枪兵长(2) + 虎豹骑(4) + 诸葛弩(3)
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'kamayuk', count: 4 },     // Row 0 宽阵 = 印加枪兵长 4人
-    { type: 'chukonu', count: 3 },     // Row 1 中坚 = 诸葛弩 3人
-    { type: 'tiger_rider', count: 2 }, // Row 2 压阵 = 虎豹骑 2人
+    { type: 'kamayuk', count: 2 },     // Row 0 步兵前锋 = 印加枪兵长 2人
+    { type: 'tiger_rider', count: 4 }, // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
+    { type: 'chukonu', count: 3 },     // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
- * 汉国·三角阵（2+3+4）：刀剑手(2) + 诸葛弩(3) + 虎豹骑(4)
+ * 汉国·鹤翼阵（2+4+3）：刀剑手(2) + 虎豹骑(4) + 诸葛弩(3)
  */
 export const HAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'jian_swordsman', count: 2 }, // Row 0 尖刀 = 刀剑手 2人
-    { type: 'chukonu', count: 3 },        // Row 1 中坚 = 诸葛弩 3人
-    { type: 'tiger_rider', count: 4 },    // Row 2 底边 = 虎豹骑 4人
+    { type: 'jian_swordsman', count: 2 }, // Row 0 步兵前锋 = 刀剑手 2人
+    { type: 'tiger_rider', count: 4 },    // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
+    { type: 'chukonu', count: 3 },        // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
- * 唐朝·雁行阵（4+3+2）：精锐黑光铠骑兵(4) + 辽刀(3) + 诸葛弩(2)
+ * 唐朝·鹤翼阵（2+4+3）：辽刀(2) + 精锐黑光铠骑兵(4) + 诸葛弩(3)
  */
 export const TANG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'hei_kuang_heavy', count: 4 }, // Row 0 宽阵 = 精锐黑光铠骑兵 4人
-    { type: 'liao_dao', count: 3 },        // Row 1 中坚 = 辽刀 3人
-    { type: 'chukonu', count: 2 },         // Row 2 压阵 = 诸葛弩 2人
+    { type: 'liao_dao', count: 2 },        // Row 0 步兵前锋 = 辽刀 2人
+    { type: 'hei_kuang_heavy', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐黑光铠骑兵 4人
+    { type: 'chukonu', count: 3 },         // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
- * 宋朝·雁行阵（4+3+2）：精锐火矛手(4) + 辽刀(3) + 诸葛弩(2)
+ * 宋朝·鹤翼阵（2+4+3）：辽刀(2) + 精锐火矛手(4) + 诸葛弩(3)
  */
 export const SONG_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_fire_lancer', count: 4 }, // Row 0 宽阵 = 精锐火矛手 4人
-    { type: 'liao_dao', count: 3 },          // Row 1 中坚 = 辽刀 3人
-    { type: 'chukonu', count: 2 },           // Row 2 压阵 = 诸葛弩 2人
+    { type: 'liao_dao', count: 2 },          // Row 0 步兵前锋 = 辽刀 2人
+    { type: 'elite_fire_lancer', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐火矛手 4人
+    { type: 'chukonu', count: 3 },           // Row 2 中军后排支援 = 诸葛弩 3人
 ];
 
 /**
- * 大明·三角阵（2+3+4）：女真掷弹兵(2) + 精锐火矛手(3) + 黑光铠骑兵(4)
+ * 大明·鱼鳞阵（3+4+2）：黑光铠骑兵(3) + 精锐火矛手(4) + 女真掷弹兵(2)
  */
 export const MING_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'grenadier', count: 2 },         // Row 0 尖刀 = 女真掷弹兵 2人
-    { type: 'elite_fire_lancer', count: 3 }, // Row 1 中坚 = 精锐火矛手 3人
-    { type: 'hei_kuang', count: 4 },         // Row 2 底边 = 黑光铠骑兵 4人
+    { type: 'hei_kuang', count: 3 },         // Row 0 前卫 = 黑光铠骑兵 3人
+    { type: 'elite_fire_lancer', count: 4 }, // Row 1 中军突破主力 = 精锐火矛手 4人
+    { type: 'grenadier', count: 2 },         // Row 2 尾收压阵 = 女真掷弹兵 2人
 ];
 
 /**
- * 罗马军团·三角阵（2+3+4）：掷矛手(2) + 精锐罗马百夫长(3) + 罗马军团步兵(4)
+ * 罗马军团·鱼鳞阵（3+4+2）：精锐罗马百夫长(3) + 罗马军团步兵(4) + 掷矛手(2)
  */
 export const ROMAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'skirmisher', count: 2 },      // Row 0 尖刀 = 掷矛手 2人
-    { type: 'elite_centurion', count: 3 }, // Row 1 中坚 = 精锐罗马百夫长 3人
-    { type: 'legionary', count: 4 },       // Row 2 底边 = 罗马军团步兵 4人
+    { type: 'elite_centurion', count: 3 }, // Row 0 前卫 = 精锐罗马百夫长 3人
+    { type: 'legionary', count: 4 },       // Row 1 中军主力突破 = 罗马军团步兵 4人
+    { type: 'skirmisher', count: 2 },      // Row 2 尾收压阵 = 掷矛手 2人
 ];
 
 /**
- * 波斯阿契美尼德帝国·鱼鳞阵（3+4+2）：不死军长矛步兵(3) + 不死军复合弓箭手(4) + 萨珊萨瓦尔铁骑(2)
+ * 波斯阿契美尼德帝国·鹤翼阵（2+4+3）：不死军长矛步兵(2) + 萨珊萨瓦尔铁骑(4) + 不死军复合弓箭手(3)
  */
 export const PERSIAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'immortal', count: 3 },        // Row 0 前卫 = 不死军长矛步兵 3人
-    { type: 'immortal_ranged', count: 4 }, // Row 1 中军主力 = 不死军复合弓箭手 4人
-    { type: 'savar', count: 2 },           // Row 2 尾收 = 萨珊萨瓦尔铁骑 2人
+    { type: 'immortal', count: 2 },        // Row 0 步兵前锋 = 不死军长矛步兵 2人
+    { type: 'savar', count: 4 },           // Row 1 骑兵主力两翼合围 = 萨珊萨瓦尔铁骑 4人
+    { type: 'immortal_ranged', count: 3 }, // Row 2 中军后排支援 = 不死军复合弓箭手 3人
 ];
 
 /**
- * 波兰王国·三角阵（2+3+4）：战锤破甲勇士(2) + 劲弩手(3) + 精锐翼骑兵(4)
+ * 波兰王国·鹤翼阵（2+4+3）：战锤破甲勇士(2) + 精锐翼骑兵(4) + 劲弩手(3)
  */
 export const POLISH_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'obuch', count: 2 },         // Row 0 尖刀 = 战锤破甲勇士 2人
-    { type: 'arbalest', count: 3 },      // Row 1 中坚 = 劲弩手 3人
-    { type: 'winged_hussar', count: 4 }, // Row 2 底边 = 精锐翼骑兵 4人
+    { type: 'obuch', count: 2 },         // Row 0 步兵前锋 = 战锤破甲勇士 2人
+    { type: 'winged_hussar', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐翼骑兵 4人
+    { type: 'arbalest', count: 3 },      // Row 2 中军后排支援 = 劲弩手 3人
 ];
 
 /**
- * 条顿骑士团·雁行阵（4+3+2）：精锐条顿武士(4) + 十字军圣殿骑士(3) + 长弓兵(2)
+ * 条顿骑士团·鹤翼阵（2+4+3）：精锐条顿武士(2) + 十字军圣殿骑士(4) + 长弓兵(3)
  */
 export const TEUTONIC_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_teutonic_knight', count: 4 }, // Row 0 宽阵 = 精锐条顿武士 4人
-    { type: 'crusader_knight', count: 3 },       // Row 1 中坚 = 十字军圣殿骑士 3人
-    { type: 'longbowman', count: 2 },            // Row 2 压阵 = 长弓兵 2人
+    { type: 'elite_teutonic_knight', count: 2 }, // Row 0 步兵前锋 = 精锐条顿武士 2人
+    { type: 'crusader_knight', count: 4 },       // Row 1 骑兵主力两翼合围 = 十字军圣殿骑士 4人
+    { type: 'longbowman', count: 3 },            // Row 2 中军后排支援 = 长弓兵 3人
 ];
 
 /**
- * 拜占庭帝国·三角阵（2+3+4）：拜占庭圣骑兵精锐(2) + 复合弓手(3) + 拜占庭圣骑兵(4)
+ * 拜占庭帝国·鱼鳞阵（3+4+2）：拜占庭圣骑兵(3) + 拜占庭圣骑兵精锐(4) + 复合弓手(2)
  */
 export const BYZANTINE_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'elite_cataphract', count: 2 },  // Row 0 尖刀 = 拜占庭圣骑兵精锐 2人
-    { type: 'composite_bowman', count: 3 },  // Row 1 中坚 = 复合弓手 3人
-    { type: 'cataphract', count: 4 },        // Row 2 底边 = 拜占庭圣骑兵 4人
+    { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3人
+    { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4人
+    { type: 'composite_bowman', count: 2 },  // Row 2 尾收压阵 = 复合弓手 2人
 ];
+
+/**
+ * 柏柏尔/北非马格里布·三角阵（2+3+4）：萨拉森马穆鲁克(2) + 柏柏尔标枪骑兵(3) + 柏柏尔骆驼弓骑(4)
+ */
+export const BERBER_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'mameluke', count: 2 },      // Row 0 尖刀先锋 = 萨拉森马穆鲁克 2人
+    { type: 'genitour', count: 3 },      // Row 1 冲击中坚 = 柏柏尔标枪骑兵 3人
+    { type: 'camel_archer', count: 4 },  // Row 2 底边主力齐射 = 柏柏尔骆驼弓骑 4人
+];
+
 
 
 /** 秦朝名将 ID 集合 */
@@ -691,10 +702,40 @@ export function isByzantineDynasty(factionId?: string | null, generalId?: string
     return false;
 }
 
+/** 柏柏尔/北非名将 ID 集合 */
+export const BERBER_DYNASTY_GENERAL_IDS = new Set([
+    'gen_idris_i',          // 伊德里斯一世（非斯 · yidelisi）
+    'gen_tashfin',          // 塔什芬（马拉喀什 · mulabite）
+    'gen_yaghmurasen',      // 亚格姆拉森（特莱姆森 · zhayan）
+    'gen_hammad',           // 哈马德（布佳亚 · hamade）
+    'gen_uqba',             // 奥克巴（凯鲁万 · aguelabu）
+    'gen_barbarossa',       // 巴巴罗萨·海雷丁（阿尔及尔 · babali）
+    'gen_dragut',           // 德拉古特（的黎波里 · telibolisi）
+]);
+
+/** 柏柏尔/北非势力 ID 集合 */
+export const BERBER_DYNASTY_FACTION_IDS = new Set([
+    'yidelisi',             // 伊德里斯王朝（非斯）
+    'mulabite',             // 穆拉比特王朝（马拉喀什）
+    'zhayan',               // 扎扬王朝（特莱姆森）
+    'hamade',               // 哈马德王朝（布佳亚）
+    'aguelabu',             // 阿格拉布王朝（凯鲁万）
+    'babali',               // 巴巴里海岸（阿尔及尔）
+    'telibolisi',           // 的黎波里塔尼亚（的黎波里）
+    'zhibuluotuo',          // 休达/直布罗陀
+]);
+
+/** 判断是否为柏柏尔/北非武将或势力 */
+export function isBerberDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && BERBER_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && BERBER_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团、拜占庭圣骑兵军团）
+    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团、拜占庭圣骑兵军团、柏柏尔沙漠军团）
     const custom = FACTION_COMPOSITIONS[factionId];
     if (custom) {
         return [...custom.slots];
@@ -711,6 +752,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         if (POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return [...POLISH_FACTION_COMPOSITION];
         if (TEUTONIC_DYNASTY_GENERAL_IDS.has(generalId)) return [...TEUTONIC_FACTION_COMPOSITION];
         if (BYZANTINE_DYNASTY_GENERAL_IDS.has(generalId)) return [...BYZANTINE_FACTION_COMPOSITION];
+        if (BERBER_DYNASTY_GENERAL_IDS.has(generalId)) return [...BERBER_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 3. 文化区判定
@@ -744,6 +786,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     if (isByzantineDynasty(factionId)) {
         return [...BYZANTINE_FACTION_COMPOSITION];
     }
+    if (isBerberDynasty(factionId)) {
+        return [...BERBER_FACTION_COMPOSITION];
+    }
     if (isSengoku(factionId)) {
         return [...SENGOKU_TIERS[0].slots];
     }
@@ -775,6 +820,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     const isPol = isPolishDynasty(army.factionId, army.generalId);
     const isTeu = isTeutonicDynasty(army.factionId, army.generalId);
     const isByz = isByzantineDynasty(army.factionId, army.generalId);
+    const isBer = isBerberDynasty(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
@@ -784,24 +830,22 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu || isByz
+        isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu || isByz || isBer
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/条顿雁行阵、日本战国鹤翼阵、汉国/大明/罗马/波兰/拜占庭三角阵、波斯鱼鳞阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 鹤翼阵(步骑远) / 鱼鳞阵(2近1远) / 三角阵(骑+弓骑) / 雁行阵(2远1近) → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
-    } else if (isQin || isTang || isSong || isTeu) {
-        army.formationMode = 'echelon';
-    } else if (isSen) {
+    } else if (isQin || isHan || isTang || isSong || isPer || isPol || isTeu || isSen) {
         army.formationMode = 'crane_wing';
-    } else if (isHan || isRom || isMing || isPol || isByz) {
-        army.formationMode = 'triangle';
-    } else if (isPer) {
+    } else if (isRom || isByz || isMing) {
         army.formationMode = 'fish_scale';
+    } else if (isBer) {
+        army.formationMode = 'triangle';
     } else {
         army.formationMode = inferFormationModeFromSlots(slots)
             ?? getCultureFormationMode(culture);
@@ -809,75 +853,75 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 }
 
 // ============================================================
-// 15 文化区阵型 (用户 2026-05-30 拍板)
+// 20 文化区阵型（2026-08-18 用户拍板：四个阵型均为 2+3+4 结构，文化主力为 4，远程/弓骑在后排）
 // ============================================================
 
-/** 1. 中原 刀剑手+诸葛弩+虎豹骑（鱼鳞阵 3+4+2：刀剑手前卫 + 诸葛弩主力中军 + 虎豹骑尾收） */
+/** 1. 中原 刀剑手+虎豹骑+诸葛弩（鹤翼阵 2+4+3：刀剑手前锋 + 虎豹铁骑主力两翼包抄 + 诸葛弩中军后排） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordsman', count: 3 }, // Row 0 前卫 = 刀剑手 步兵 3人
-            { type: 'chukonu', count: 4 },        // Row 1 中军主力 = 诸葛弩 弩手 4人
-            { type: 'tiger_rider', count: 2 }     // Row 2 尾收 = 虎豹骑 骑兵 2人
+            { type: 'jian_swordsman', count: 2 }, // Row 0 步兵前锋 = 刀剑手 2人
+            { type: 'tiger_rider', count: 4 },    // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
+            { type: 'chukonu', count: 3 }         // Row 2 中军后排支援 = 诸葛弩 3人
         ]
     }
 ];
 
-/** 2. 北方 辽刀+诸葛弩+精锐黑光铠骑兵（雁行阵 4+3+2：辽刀前排宽阵 + 诸葛弩中排 + 精锐黑光铠骑兵后排） */
+/** 2. 北方 辽刀+黑光铠重骑+诸葛弩（鹤翼阵 2+4+3：辽刀步兵前锋 + 黑光铠重骑主力 + 诸葛弩后排） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'liao_dao', count: 4 },        // Row 0 前排宽阵 = 辽刀 步兵 4人
-            { type: 'chukonu', count: 3 },         // Row 1 中坚 = 诸葛弩 弩手 3人
-            { type: 'hei_kuang_heavy', count: 2 }  // Row 2 压阵 = 精锐黑光铠骑兵 骑兵 2人
+            { type: 'liao_dao', count: 2 },        // Row 0 步兵前锋 = 辽刀 2人
+            { type: 'hei_kuang_heavy', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐黑光铠骑兵 4人
+            { type: 'chukonu', count: 3 }          // Row 2 中军后排支援 = 诸葛弩 3人
         ]
     }
 ];
 
-/** 3. 东北 铁浮图+钦察+虎豹骑（雁行阵 4+3+2：铁浮图前排撞阵 + 钦察中坚 + 虎豹骑后排） */
+/** 3. 东北 铁浮图+虎豹骑+钦察弓骑（三角阵 2+3+4：铁浮图尖刀 + 虎豹骑中坚 + 钦察弓骑主力底边） */
 export const NORTHEAST_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 4 },      // Row 0 前排撞阵 = 铁浮图 重骑兵 4人
-            { type: 'kipchak', count: 3 },          // Row 1 中坚 = 钦察 弓骑兵 3人
-            { type: 'tiger_rider', count: 2 }       // Row 2 压阵 = 虎豹骑 骑兵 2人
+            { type: 'iron_pagoda', count: 2 },      // Row 0 尖刀先锋 = 铁浮图 重骑 2人
+            { type: 'tiger_rider', count: 3 },      // Row 1 冲击中坚 = 虎豹骑 骑兵 3人
+            { type: 'kipchak', count: 4 }           // Row 2 底边主力齐射 = 钦察 弓骑兵 4人
         ]
     }
 ];
 
-/** 4. 朝鲜 剑士+火焰弓箭手+精锐黑光铠骑兵（三角阵 2+3+4：剑士尖刀前 + 火焰弓箭手中坚 + 精锐黑光铠骑兵底边冲锋） */
+/** 4. 朝鲜 剑士+精锐黑光铠+火焰弓（鹤翼阵 2+4+3：剑士步兵前锋 + 黑光铠骑兵主力 + 火焰弓后排） */
 export const KOREA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 2 },        // Row 0 尖刀 = 剑士 步兵 2人
-            { type: 'fire_archer', count: 3 },      // Row 1 中坚 = 火焰弓箭手 弓手 3人
-            { type: 'hei_kuang_heavy', count: 4 }   // Row 2 底边决胜 = 精锐黑光铠骑兵 重骑 4人
+            { type: 'swordsman', count: 2 },        // Row 0 步兵前锋 = 剑士 2人
+            { type: 'hei_kuang_heavy', count: 4 },  // Row 1 骑兵主力两翼合围 = 精锐黑光铠骑兵 4人
+            { type: 'fire_archer', count: 3 }       // Row 2 中军后排支援 = 火焰弓箭手 3人
         ]
     }
 ];
 
-/** 5. 日本 藤弓兵+精锐武士+日本武士（鹤翼阵 2+4+3：藤弓兵引敌 + 精锐武士两翼合围 + 日本武士中军托底） */
+/** 5. 日本 日本武士+精锐武士+藤弓兵（鱼鳞阵 3+4+2：日本武士前卫 + 精锐武士主力突击 + 藤弓兵后排支援） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rattan_archer', count: 2 },    // Row 0 引敌 = 藤弓兵 弓手 2人
-            { type: 'samurai_elite', count: 4 },    // Row 1 两翼合围 = 精锐武士 步兵 4人
-            { type: 'samurai', count: 3 }           // Row 2 中军托底 = 日本武士 步兵 3人
+            { type: 'samurai', count: 3 },          // Row 0 前卫 = 日本武士 步兵 3人
+            { type: 'samurai_elite', count: 4 },    // Row 1 中军突击主力 = 精锐武士 步兵 4人
+            { type: 'rattan_archer', count: 2 }     // Row 2 尾收支援 = 藤弓兵 弓手 2人
         ]
     }
 ];
@@ -890,232 +934,232 @@ export const SENGOKU_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'ninja', count: 2 },            // Row 0 前哨 = 忍者 步兵 2人
-            { type: 'samurai_elite', count: 4 },    // Row 1 两翼合围 = 精锐武士 步兵 4人
+            { type: 'samurai_elite', count: 4 },    // Row 1 两翼合围主力 = 精锐武士 步兵 4人
             { type: 'rattan_archer', count: 3 }     // Row 2 中军托底 = 藤弓兵 弓手 3人
         ]
     }
 ];
 
-/** 6. 草原 精锐蒙古突骑+怯薛+草原枪兵（鹤翼阵 2+4+3：突骑引敌 + 怯薛两翼大包抄 + 草原枪兵中军托底） */
+/** 6. 草原 草原枪骑+怯薛+精锐蒙古突骑（三角阵 2+3+4：草原枪骑尖刀 + 怯薛重骑中坚 + 精锐突骑主力底边） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'mangudai_elite', count: 2 },   // Row 0 诱敌 = 精锐蒙古突骑 弓骑 2人
-            { type: 'keshik', count: 4 },           // Row 1 两翼包抄 = 怯薛军 骑兵 4人
-            { type: 'steppe_lancer', count: 3 }     // Row 2 中军托底 = 草原枪兵 骑兵 3人
+            { type: 'steppe_lancer', count: 2 },    // Row 0 尖刀先锋 = 草原枪兵 骑兵 2人
+            { type: 'keshik', count: 3 },           // Row 1 冲击中坚 = 怯薛军 骑兵 3人
+            { type: 'mangudai_elite', count: 4 }    // Row 2 底边主力齐射 = 精锐蒙古突骑 弓骑 4人
         ]
     }
 ];
 
-/** 7. 河西 精锐辽刀+诸葛弩+黑光铠骑兵（雁行阵 4+3+2：精锐辽刀宽阵 + 诸葛弩中排 + 黑光铠骑兵后排） */
+/** 7. 河西 精锐辽刀+黑光铠骑兵+诸葛弩（鹤翼阵 2+4+3：精锐辽刀前锋 + 黑光铠骑兵主力 + 诸葛弩后排） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_liao_dao', count: 4 },  // Row 0 前排宽阵 = 精锐辽刀 步兵 4人
-            { type: 'chukonu', count: 3 },         // Row 1 中坚 = 诸葛弩 弩手 3人
-            { type: 'hei_kuang', count: 2 }        // Row 2 压阵 = 黑光铠骑兵 骑兵 2人
+            { type: 'elite_liao_dao', count: 2 },  // Row 0 步兵前锋 = 精锐辽刀 2人
+            { type: 'hei_kuang', count: 4 },       // Row 1 骑兵主力两翼合围 = 黑光铠骑兵 4人
+            { type: 'chukonu', count: 3 }          // Row 2 中军后排支援 = 诸葛弩 3人
         ]
     }
 ];
 
-/** 8. 川蜀 白毦兵+精锐诸葛弩+藤弓兵（鱼鳞阵 3+4+2：白毦兵立盾 + 精锐诸葛弩主力中军 + 藤弓兵尾收） */
+/** 8. 川蜀 白毦兵+精锐诸葛弩+藤弓兵（雁行阵 4+3+2：白毦兵宽线肉盾主力 + 精锐诸葛弩中坚 + 藤弓兵压阵） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 3 },  // Row 0 前排立盾 = 白毦兵 步兵 3人
-            { type: 'elite_chukonu', count: 4 },        // Row 1 中军主力 = 精锐诸葛弩 弩手 4人
-            { type: 'rattan_archer', count: 2 }         // Row 2 尾收 = 藤弓兵 弓手 2人
+            { type: 'white_feather_guard', count: 4 },  // Row 0 前排宽线肉盾主力 = 白毦兵 4人
+            { type: 'elite_chukonu', count: 3 },        // Row 1 中坚远程 = 精锐诸葛弩 3人
+            { type: 'rattan_archer', count: 2 }         // Row 2 压阵远程 = 藤弓兵 2人
         ]
     }
 ];
 
-/** 9. 江南 剑士+精锐火焰弓箭手+诸葛弩（鱼鳞阵 3+4+2：剑士前卫 + 精锐火焰弓箭手主力中军 + 诸葛弩尾收） */
+/** 9. 江南 剑士+精锐火焰弓箭手+诸葛弩（雁行阵 4+3+2：剑士宽线肉盾主力 + 精锐火焰弓中坚 + 诸葛弩压阵） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 3 },          // Row 0 前卫 = 剑士 步兵 3人
-            { type: 'elite_fire_archer', count: 4 },  // Row 1 中军主力 = 精锐火焰弓箭手 弓手 4人
-            { type: 'chukonu', count: 2 }             // Row 2 尾收 = 诸葛弩 弩手 2人
+            { type: 'swordsman', count: 4 },          // Row 0 前排宽线肉盾主力 = 剑士 4人
+            { type: 'elite_fire_archer', count: 3 },  // Row 1 中坚远程 = 精锐火焰弓 3人
+            { type: 'chukonu', count: 2 }             // Row 2 压阵远程 = 诸葛弩 2人
         ]
     }
 ];
 
-/** 10. 岭南 皮甲战象+帝王掷矛手+精锐藤弓兵（三角阵 2+3+4：皮甲战象尖刀破防 + 帝王掷矛手中坚 + 精锐藤弓兵底边漫射） */
+/** 10. 岭南 皮甲战象+帝王掷矛手+精锐藤弓兵（雁行阵 4+3+2：皮甲战象重甲破防主力 + 帝王掷矛手中坚 + 精锐藤弓兵压阵） */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored_elephant', count: 2 },    // Row 0 尖刀破防 = 皮甲战象 战象 2人
-            { type: 'imperial_skirmisher', count: 3 }, // Row 1 中坚 = 帝王掷矛手 掷矛手 3人
-            { type: 'rattan_archer_elite', count: 4 }  // Row 2 底边漫射 = 精锐藤弓兵 弓手 4人
+            { type: 'armored_elephant', count: 4 },    // Row 0 前排巨兽肉盾主力 = 皮甲战象 4人
+            { type: 'imperial_skirmisher', count: 3 }, // Row 1 中坚投掷 = 帝王掷矛手 3人
+            { type: 'rattan_archer_elite', count: 2 }  // Row 2 压阵远程 = 精锐藤弓兵 2人
         ]
     }
 ];
 
-/** 11. 滇缅 东南亚战斗象+马来爪刀勇士+步弓手（鹤翼阵 2+4+3：战斗象双锋引敌 + 马来爪刀勇士两翼合围 + 步弓手中军托底） */
+/** 11. 滇缅 战斗象+爪刀勇士+步弓手（鱼鳞阵 3+4+2：战斗象前卫 + 爪刀勇士突击主力 + 步弓手后排支援） */
 export const DIANQIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },       // Row 0 双锋引敌 = 东南亚战斗象 战象 2人
-            { type: 'karambit_warrior', count: 4 },      // Row 1 两翼合围 = 马来爪刀勇士 步兵 4人
-            { type: 'archer', count: 3 }                 // Row 2 中军托底 = 步弓手 弓手 3人
+            { type: 'battle_elephant', count: 3 },       // Row 0 前卫 = 东南亚战斗象 3人
+            { type: 'karambit_warrior', count: 4 },      // Row 1 中军突击主力 = 马来爪刀勇士 4人
+            { type: 'archer', count: 2 }                 // Row 2 尾收支援 = 步弓手 2人
         ]
     }
 ];
 
-/** 12. 青藏 精锐白毦兵+蒙古突骑+精锐答剌罕骑兵（鹤翼阵 2+4+3：白毦兵前哨引敌 + 蒙古突骑两翼合围 + 精锐答剌罕骑兵中军托底） */
+/** 12. 青藏 精锐白毦兵+精锐答剌罕骑兵+蒙古突骑（鹤翼阵 2+4+3：白毦兵前锋 + 答剌罕重骑主力 + 蒙古突骑后排） */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_white_feather_guard', count: 2 },  // Row 0 引敌 = 精锐白毦兵 步兵 2人
-            { type: 'mangudai', count: 4 },                   // Row 1 两翼合围 = 蒙古突骑 弓骑 4人
-            { type: 'elite_tarkan', count: 3 }                // Row 2 中军托底 = 精锐答剌罕骑兵 骑兵 3人
+            { type: 'elite_white_feather_guard', count: 2 },  // Row 0 步兵前锋 = 精锐白毦兵 2人
+            { type: 'elite_tarkan', count: 4 },               // Row 1 骑兵主力两翼合围 = 精锐答剌罕骑兵 4人
+            { type: 'mangudai', count: 3 }                    // Row 2 中军后排支援 = 蒙古突骑 3人
         ]
     }
 ];
 
-/** 13. 中亚 精锐草原枪兵+萨瓦尔+精锐钦察（鱼鳞阵 3+4+2：精锐草原枪兵前卫 + 萨瓦尔铁骑中军主力 + 精锐钦察尾收） */
+/** 13. 中亚 精锐草原枪兵+萨瓦尔+精锐钦察（三角阵 2+3+4：草原枪兵尖刀 + 萨瓦尔铁骑中坚 + 精锐钦察主力底边） */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_steppe_lancer', count: 3 }, // Row 0 前卫 = 精锐草原枪兵 骑兵 3人
-            { type: 'savar', count: 4 },               // Row 1 中军主力 = 萨瓦尔 骑兵 4人
-            { type: 'elite_kipchak', count: 2 }        // Row 2 尾收 = 精锐钦察 弓骑 2人
+            { type: 'elite_steppe_lancer', count: 2 }, // Row 0 尖刀先锋 = 精锐草原枪兵 2人
+            { type: 'savar', count: 3 },               // Row 1 冲击中坚 = 萨瓦尔 3人
+            { type: 'elite_kipchak', count: 4 }        // Row 2 底边主力齐射 = 精锐钦察 4人
         ]
     }
 ];
 
-/** 14. 西域 斯基泰斧骑兵+斯基泰骑射手+斯基泰骑射手精锐（鱼鳞阵 3+4+2：斯基泰斧骑兵前卫 + 斯基泰骑射手中军主力 + 斯基泰骑射手精锐尾收） */
+/** 14. 西域 斯基泰斧骑兵+斯基泰骑射手+斯基泰骑射手精锐（三角阵 2+3+4：斧骑兵尖刀 + 骑射手中坚 + 精锐骑射主力底边） */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'scythian_axe_cavalry', count: 3 },       // Row 0 前卫 = 斯基泰斧骑兵 骑兵 3人
-            { type: 'scythian_horse_archer', count: 4 },      // Row 1 中军主力 = 斯基泰骑射手 弓骑 4人
-            { type: 'elite_scythian_horse_archer', count: 2 } // Row 2 尾收 = 斯基泰骑射手精锐 弓骑 2人
+            { type: 'scythian_axe_cavalry', count: 2 },       // Row 0 尖刀先锋 = 斯基泰斧骑兵 2人
+            { type: 'scythian_horse_archer', count: 3 },      // Row 1 冲击中坚 = 斯基泰骑射手 3人
+            { type: 'elite_scythian_horse_archer', count: 4 } // Row 2 底边主力齐射 = 斯基泰骑射手精锐 4人
         ]
     }
 ];
 
-/** 15. 西亚 精锐复合弓箭手+东方剑士+重装骑射手（雁行阵 4+3+2：精锐复合弓前排横线 + 东方剑士中坚 + 重装骑射手后排） */
+/** 15. 西亚 东方剑士+重装骑射手+精锐复合弓箭手（雁行阵 4+3+2：东方剑士宽线肉盾主力 + 重装骑射中坚 + 精锐复合弓压阵） */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_composite_bowman', count: 4 }, // Row 0 前排横线 = 精锐复合弓箭手 弓手 4人
-            { type: 'eastern_swordsman', count: 3 },      // Row 1 中坚 = 东方剑士 步兵 3人
-            { type: 'cav_archer_heavy', count: 2 }        // Row 2 压阵 = 重装骑射手 弓骑 2人
+            { type: 'eastern_swordsman', count: 4 },      // Row 0 前排宽线肉盾主力 = 东方剑士 4人
+            { type: 'cav_archer_heavy', count: 3 },       // Row 1 中坚远程 = 重装骑射手 3人
+            { type: 'elite_composite_bowman', count: 2 }  // Row 2 压阵远程 = 精锐复合弓箭手 2人
         ]
     }
 ];
 
-/** 16. 斯拉夫 精锐贵族铁骑+双手剑士+复合弓箭手（雁行阵 4+3+2：精锐贵族铁骑前排横推 + 双手剑士中坚 + 复合弓箭手后排） */
+/** 16. 斯拉夫 双手剑士+精锐贵族铁骑+复合弓箭手（鹤翼阵 2+4+3：双手剑士前锋 + 精锐波雅尔重骑主力 + 复合弓后排） */
 export const SLAVIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_boyar', count: 4 },          // Row 0 前排横推 = 精锐贵族铁骑 骑兵 4人
-            { type: 'two_handed_swordsman', count: 3 }, // Row 1 中坚 = 双手剑士 步兵 3人
-            { type: 'composite_bowman', count: 2 }      // Row 2 压阵 = 复合弓箭手 弓手 2人
+            { type: 'two_handed_swordsman', count: 2 }, // Row 0 步兵前锋 = 双手剑士 2人
+            { type: 'elite_boyar', count: 4 },          // Row 1 骑兵主力两翼合围 = 精锐贵族铁骑 4人
+            { type: 'composite_bowman', count: 3 }      // Row 2 中军后排支援 = 复合弓箭手 3人
         ]
     }
 ];
 
-/** 17. 日耳曼 游侠+冠军剑士+弩手（雁行阵 4+3+2：游侠前锋横推 + 冠军剑士中坚 + 弩手后排） */
+/** 17. 日耳曼 冠军剑士+游侠+弩手（鹤翼阵 2+4+3：冠军剑士前锋 + 游侠圣骑主力 + 弩手后排） */
 export const GERMANIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'paladin', count: 4 },    // Row 0 前锋横推 = 游侠 骑兵 4人
-            { type: 'champion', count: 3 },   // Row 1 中坚 = 冠军剑士 步兵 3人
-            { type: 'crossbowman', count: 2 } // Row 2 压阵 = 弩手 弩手 2人
+            { type: 'champion', count: 2 },   // Row 0 步兵前锋 = 冠军剑士 2人
+            { type: 'paladin', count: 4 },    // Row 1 骑兵主力两翼合围 = 游侠 4人
+            { type: 'crossbowman', count: 3 } // Row 2 中军后排支援 = 弩手 3人
         ]
     }
 ];
 
-/** 18. 拉丁 重装长枪兵+劲弩手+重装骑士（三角阵 2+3+4：重装长枪兵尖刀前 + 劲弩手中坚 + 重装骑士底边决战冲锋） */
+/** 18. 拉丁 重装长枪兵+重装骑士+劲弩手（鹤翼阵 2+4+3：重装长枪兵前锋 + 重装骑士主力 + 劲弩手后排） */
 export const LATIN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 2 }, // Row 0 尖刀 = 重装长枪兵 步兵 2人
-            { type: 'arbalest', count: 3 },      // Row 1 中坚 = 劲弩手 弩手 3人
-            { type: 'knight', count: 4 }         // Row 2 底边决战 = 重装骑士 骑兵 4人
+            { type: 'heavy_pikeman', count: 2 }, // Row 0 步兵前锋 = 重装长枪兵 2人
+            { type: 'knight', count: 4 },        // Row 1 骑兵主力两翼合围 = 重装骑士 4人
+            { type: 'arbalest', count: 3 }       // Row 2 中军后排支援 = 劲弩手 3人
         ]
     }
 ];
 
-/** 19. 希腊 希腊重装步兵+色雷斯轻装兵+底比斯圣队（雁行阵 4+3+2：希腊重装步兵宽阵前 + 色雷斯轻装兵中坚 + 底比斯圣队压阵后） */
+/** 19. 希腊 希腊重装步兵+底比斯圣队+色雷斯轻装兵（鱼鳞阵 3+4+2：希腊重装步兵前卫 + 底比斯圣队突破主力 + 色雷斯标枪后排） */
 export const GREEK_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 4 },          // Row 0 宽阵 = 希腊重装步兵 4人
-            { type: 'thracian_peltast', count: 3 }, // Row 1 中坚 = 色雷斯轻装兵 3人
-            { type: 'sacred_band', count: 2 }       // Row 2 压阵 = 底比斯圣队 2人
+            { type: 'hoplite', count: 3 },          // Row 0 前卫 = 希腊重装步兵 3人
+            { type: 'sacred_band', count: 4 },      // Row 1 中军突破主力 = 底比斯圣队 4人
+            { type: 'thracian_peltast', count: 2 }  // Row 2 尾收支援 = 色雷斯轻装兵 2人
         ]
     }
 ];
 
-/** 亚历山大·马其顿帝国军团（雁行阵 4+3+2：马其顿方阵兵宽阵前 + 伙伴骑兵中坚 + 克里特弓手压阵后） */
+/** 亚历山大·马其顿帝国军团（鹤翼阵 2+4+3：马其顿方阵兵前锋 + 伙伴骑兵主力 + 克里特弓手后排） */
 export const ALEXANDER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 宽阵 = 马其顿方阵兵 步兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵 骑兵 3人
-            { type: 'cretan_archer', count: 2 }       // Row 2 压阵 = 克里特弓手 弓手 2人
+            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵 2人
+            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵 4人
+            { type: 'cretan_archer', count: 3 }       // Row 2 中军后排支援 = 克里特弓手 3人
         ]
     }
 ];
 
-/** 20. 奴儿干 反曲长弓手+答剌罕骑兵+鲜卑掠骑兵（三角阵 2+3+4：反曲长弓手尖刀前 + 答剌罕骑兵中坚 + 鲜卑掠骑兵底边席卷） */
+/** 20. 奴儿干 答剌罕骑兵+鲜卑掠骑兵+反曲长弓手（鱼鳞阵 3+4+2：答剌罕骑兵前卫 + 鲜卑掠骑兵突击主力 + 反曲长弓手后排） */
 export const NUERGAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'recurve_bowman', count: 2 },    // Row 0 尖刀 = 反曲长弓手 2人
-            { type: 'tarkan', count: 3 },           // Row 1 中坚 = 答剌罕骑兵 3人
-            { type: 'xianbei_raider', count: 4 }    // Row 2 底边席卷 = 鲜卑掠骑兵 4人
+            { type: 'tarkan', count: 3 },           // Row 0 前卫 = 答剌罕骑兵 3人
+            { type: 'xianbei_raider', count: 4 },   // Row 1 中军突击主力 = 鲜卑掠骑兵 4人
+            { type: 'recurve_bowman', count: 2 }    // Row 2 尾收支援 = 反曲长弓手 2人
         ]
     }
 ];
