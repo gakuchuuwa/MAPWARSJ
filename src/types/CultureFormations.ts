@@ -106,7 +106,7 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 精锐黑光铠主力(4) + 火焰弓后排(3)
-    SLAVIC:       'crane_wing',   // 斯拉夫：双手剑士(2) + 精锐波雅尔重骑主力(4) + 复合弓手后排(3)
+    SLAVIC:       'crane_wing',   // 斯拉夫：贵族铁骑(2) + 精锐贵族铁骑主力(4) + 复合弓箭手后排(3)
     GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
     LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
 
@@ -1109,15 +1109,15 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 16. 斯拉夫 双手剑士+精锐贵族铁骑+复合弓箭手（鹤翼阵 2+4+3：双手剑士前锋 + 精锐波雅尔重骑主力 + 复合弓后排） */
+/** 16. 斯拉夫 贵族铁骑+精锐贵族铁骑+复合弓箭手（鹤翼阵 2+4+3：贵族铁骑前锋 + 精锐波雅尔重骑主力 + 复合弓后排） */
 export const SLAVIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'two_handed_swordsman', count: 2 }, // Row 0 步兵前锋 = 双手剑士 2人
-            { type: 'elite_boyar', count: 4 },          // Row 1 骑兵主力两翼合围 = 精锐贵族铁骑 4人
+            { type: 'boyar', count: 2 },                // Row 0 骑兵前锋 = 贵族铁骑 2骑
+            { type: 'elite_boyar', count: 4 },          // Row 1 骑兵主力两翼合围 = 精锐贵族铁骑 4骑
             { type: 'composite_bowman', count: 3 }      // Row 2 中军后排支援 = 复合弓箭手 3人
         ]
     }
