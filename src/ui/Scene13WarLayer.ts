@@ -2063,6 +2063,10 @@ export interface Scene13WarInit {
     attackerFactionId: string | null;
     /** 守方势力 id（取势力本色染色） */
     defenderFactionId: string | null;
+    /** 攻方武将 id（武将专属编制判断用，如秦及先秦统一雁行阵） */
+    attackerGeneralId?: string | null;
+    /** 守方武将 id（同上） */
+    defenderGeneralId?: string | null;
     /** 攻方总兵力 */
     attackerTroops: number;
     /** 守方总兵力 */
@@ -2351,9 +2355,9 @@ export class Scene13WarLayer {
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）
-            const sides: { region: string; troops: number; f: 0 | 1; factionId?: string | null }[] = [
-                { region: init.attackerRegion, troops: init.attackerTroops, f: 0, factionId: init.attackerFactionId },
-                { region: init.defenderRegion, troops: init.defenderTroops, f: 1, factionId: init.defenderFactionId },
+            const sides: { region: string; troops: number; f: 0 | 1; factionId?: string | null; generalId?: string | null }[] = [
+                { region: init.attackerRegion, troops: init.attackerTroops, f: 0, factionId: init.attackerFactionId, generalId: init.attackerGeneralId },
+                { region: init.defenderRegion, troops: init.defenderTroops, f: 1, factionId: init.defenderFactionId, generalId: init.defenderGeneralId },
             ];
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
@@ -2363,9 +2367,9 @@ export class Scene13WarLayer {
             const spanY = VH * 0.80;
 
             for (const side of sides) {
-                const lanes = this.slotsOf(side.region, side.factionId);
+                const lanes = this.slotsOf(side.region, side.factionId, side.generalId);
                 const n = lanes.length;
-                const mode = this.formationModeOf(side.region, side.factionId);
+                const mode = this.formationModeOf(side.region, side.factionId, side.generalId);
                 // 🔴 前中后固定（主人 2026-08-15 定）：不再随机换序，出兵口顺序 = 编制槽位展开序
                 //    （鱼鳞 步骑弓 / 三角 近战+远程+近战 / 雁行 远程+近战+远程）。
                 const lanes2 = lanes;
@@ -2603,10 +2607,10 @@ export class Scene13WarLayer {
      *   - 三阵型（鱼鳞 3×3 / 三角 2+3+4 / 雁行 4+3+2）展开后均为 9 口，展开序 = 前/中/后三排
      * 口内 key 为兵种 id，与 UNIT_ASSETS 键一致。
      */
-    private slotsOf(region: string, factionId?: string | null): { key: string }[] {
+    private slotsOf(region: string, factionId?: string | null, generalId?: string | null): { key: string }[] {
         try {
             // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
-            const factionSlots = factionId ? getFactionCompositionSlots(factionId) : null;
+            const factionSlots = factionId ? getFactionCompositionSlots(factionId, generalId) : null;
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
                 const types = expandCompositionSlots(tier.slots);
@@ -2629,12 +2633,12 @@ export class Scene13WarLayer {
     }
 
     /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
-    private formationModeOf(region: string, factionId?: string | null): FormationMode {
+    private formationModeOf(region: string, factionId?: string | null, generalId?: string | null): FormationMode {
         try {
             if (factionId) {
                 const custom = FACTION_COMPOSITIONS[factionId];
                 if (custom?.formationMode) return custom.formationMode;
-                const factionSlots = getFactionCompositionSlots(factionId);
+                const factionSlots = getFactionCompositionSlots(factionId, generalId);
                 if (factionSlots?.length) return inferFormationModeFromSlots(factionSlots);
             }
             const tier = getCultureTier(region as any, 50000);
