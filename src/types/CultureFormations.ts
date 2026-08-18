@@ -290,6 +290,33 @@ export const ROMAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'legionary', count: 4 },       // Row 2 底边 = 罗马军团步兵 4人
 ];
 
+/**
+ * 波斯阿契美尼德帝国·鱼鳞阵（3+4+2）：不死军长矛步兵(3) + 不死军复合弓箭手(4) + 萨珊萨瓦尔铁骑(2)
+ */
+export const PERSIAN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'immortal', count: 3 },        // Row 0 前卫 = 不死军长矛步兵 3人
+    { type: 'immortal_ranged', count: 4 }, // Row 1 中军主力 = 不死军复合弓箭手 4人
+    { type: 'savar', count: 2 },           // Row 2 尾收 = 萨珊萨瓦尔铁骑 2人
+];
+
+/**
+ * 波兰王国·三角阵（2+3+4）：战锤破甲勇士(2) + 劲弩手(3) + 精锐翼骑兵(4)
+ */
+export const POLISH_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'obuch', count: 2 },         // Row 0 尖刀 = 战锤破甲勇士 2人
+    { type: 'arbalest', count: 3 },      // Row 1 中坚 = 劲弩手 3人
+    { type: 'winged_hussar', count: 4 }, // Row 2 底边 = 精锐翼骑兵 4人
+];
+
+/**
+ * 条顿骑士团·雁行阵（4+3+2）：精锐条顿武士(4) + 十字军圣殿骑士(3) + 长弓兵(2)
+ */
+export const TEUTONIC_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'elite_teutonic_knight', count: 4 }, // Row 0 宽阵 = 精锐条顿武士 4人
+    { type: 'crusader_knight', count: 3 },       // Row 1 中坚 = 十字军圣殿骑士 3人
+    { type: 'longbowman', count: 2 },            // Row 2 压阵 = 长弓兵 2人
+];
+
 
 /** 秦朝名将 ID 集合 */
 export const QIN_DYNASTY_GENERAL_IDS = new Set([
@@ -542,10 +569,102 @@ export function isRomanDynasty(factionId?: string | null, generalId?: string | n
     return false;
 }
 
+/** 波斯文化名将 ID 集合（阿契美尼德/萨珊/安息/萨非/米底/萨法尔等） */
+export const PERSIAN_DYNASTY_GENERAL_IDS = new Set([
+    'aqimeinide_daliushi',      // 大流士一世（波斯波利斯·阿契美尼德帝国）
+    'bosi_bolisi_daliushi',     // 大流士（别名）
+    'aba_shapuer',              // 沙普尔大帝（尼沙布尔·萨珊波斯帝国）
+    'safawei_d_abasi',          // 阿拔斯大帝（伊斯法罕·萨非波斯帝国）
+    'safawei_aisimaier',        // 艾斯迈尔/伊斯玛仪一世（加兹温·萨非波斯帝国）
+    'delan_sulun',              // 苏伦（法拉·帕提亚安息战神）
+    'ansxi_aershake',           // 阿尔沙克一世（尼萨·安息波斯帝国）
+    'midi_daiaokaisi',          // 戴奥凯斯（哈马丹·米底王国）
+    'ailan_shuteluke',          // 舒特鲁克（苏萨·埃兰古波斯）
+    'kalan_suhela',             // 苏赫拉（图斯·萨珊卡伦家族大统帅）
+    'xisi_yakubusafaer',        // 雅库布（博斯特·萨法尔波斯王朝）
+    'saerbadaer_lazhake',       // 拉扎克（白哈格·萨尔巴达尔起义军）
+    'kumisi_aerpu',             // 阿尔普（达姆甘·库米斯）
+    'hali_gedaerzi',            // 戈达尔兹（萨拉赫斯·波斯统帅）
+    'baha_gaiwamu',             // 盖瓦姆（泰巴德·波斯军团）
+]);
+
+/** 波斯文化势力 ID 集合 */
+export const PERSIAN_DYNASTY_FACTION_IDS = new Set([
+    'aqimeinide',               // 阿契美尼德帝国（波斯波利斯）
+    'aba',                      // 萨珊波斯（尼沙布尔）
+    'safawei_d',                // 萨非波斯帝国（伊斯法罕）
+    'safawei',                  // 萨非帝国（加兹温）
+    'delan',                    // 苏伦家族（法拉）
+    'ansxi',                    // 安息帝国（尼萨）
+    'midi',                     // 米底王国（哈马丹）
+    'ailan',                    // 埃兰王国（苏萨）
+    'kalan',                    // 卡伦家族（图斯）
+    'xisi',                     // 萨法尔王朝（博斯特）
+    'saerbadaer',               // 萨尔巴达尔（白哈格）
+    'kumisi',                   // 库米斯（达姆甘）
+    'hali',                     // 哈利（萨拉赫斯）
+    'baha',                     // 巴哈尔兹（泰巴德）
+]);
+
+/** 判断是否为波斯文化武将或势力 */
+export function isPersianDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && PERSIAN_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && PERSIAN_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+/** 波兰文化名将 ID 集合（波兰王国 / 立陶宛大公国 / 皮雅斯特等） */
+export const POLISH_DYNASTY_GENERAL_IDS = new Set([
+    'gen_jogaila',          // 雅盖沃（波兰国王/立陶宛大公，华沙）
+    'gen_casimir_great',    // 卡齐米日大帝（皮雅斯特王朝，克拉科夫）
+    'gen_przemysl_ii',      // 普热梅斯二世（大波兰公，波兹南）
+    'gen_gediminas',        // 格迪米纳斯（立陶宛大公，维尔纽斯）
+    'gen_vytautas_great',    // 维托夫特大帝（格伦瓦德之战统帅，格罗德诺）
+]);
+
+/** 波兰文化势力 ID 集合 */
+export const POLISH_DYNASTY_FACTION_IDS = new Set([
+    'bolan',                // 波兰王国（华沙）
+    'piyasite',             // 皮雅斯特王朝（克拉科夫）
+    'dabolan',              // 大波兰（波兹南）
+    'litaowan',             // 立陶宛大公国（维尔纽斯）
+    'nieman',               // 涅曼公国（格罗德诺）
+]);
+
+/** 判断是否为波兰文化武将或势力 */
+export function isPolishDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && POLISH_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
+/** 条顿骑士团/十字军名将 ID 集合 */
+export const TEUTONIC_DYNASTY_GENERAL_IDS = new Set([
+    'gen_ulrich_jungingen',      // 容金根（条顿骑士团大团长 · 柯尼斯堡）
+    'shengdian_qishi_demolai',   // 莫莱（圣殿骑士团大团长 · 阿卡）
+    'gen_albert_riga',           // 阿尔伯特（宝剑骑士团创立者 · 里加）
+    'gen_prettenberg',           // 普雷特贝格（利沃尼亚骑士团大统领 · 塔林）
+]);
+
+/** 条顿骑士团/十字军势力 ID 集合 */
+export const TEUTONIC_DYNASTY_FACTION_IDS = new Set([
+    'tiaodun_qishi',            // 条顿骑士团（柯尼斯堡）
+    'shengdian_qishi',          // 圣殿骑士团（阿卡）
+    'baojian_qishi',            // 宝剑骑士团（里加）
+    'liwoniya',                 // 利沃尼亚骑士团（塔林）
+]);
+
+/** 判断是否为条顿骑士团/十字军武将或势力 */
+export function isTeutonicDynasty(factionId?: string | null, generalId?: string | null): boolean {
+    if (generalId && TEUTONIC_DYNASTY_GENERAL_IDS.has(generalId)) return true;
+    if (factionId && TEUTONIC_DYNASTY_FACTION_IDS.has(factionId)) return true;
+    return false;
+}
+
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团）
+    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团）
     const custom = FACTION_COMPOSITIONS[factionId];
     if (custom) {
         return [...custom.slots];
@@ -558,6 +677,9 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
         if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
         if (MING_DYNASTY_GENERAL_IDS.has(generalId)) return [...MING_FACTION_COMPOSITION];
         if (ROMAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...ROMAN_FACTION_COMPOSITION];
+        if (PERSIAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...PERSIAN_FACTION_COMPOSITION];
+        if (POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return [...POLISH_FACTION_COMPOSITION];
+        if (TEUTONIC_DYNASTY_GENERAL_IDS.has(generalId)) return [...TEUTONIC_FACTION_COMPOSITION];
         if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
     }
     // 3. 文化区判定
@@ -578,6 +700,15 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
     }
     if (isRomanDynasty(factionId)) {
         return [...ROMAN_FACTION_COMPOSITION];
+    }
+    if (isPersianDynasty(factionId)) {
+        return [...PERSIAN_FACTION_COMPOSITION];
+    }
+    if (isPolishDynasty(factionId)) {
+        return [...POLISH_FACTION_COMPOSITION];
+    }
+    if (isTeutonicDynasty(factionId)) {
+        return [...TEUTONIC_FACTION_COMPOSITION];
     }
     if (isSengoku(factionId)) {
         return [...SENGOKU_TIERS[0].slots];
@@ -606,6 +737,9 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     const isMing = isMingDynasty(army.factionId, army.generalId);
     const isSen = isSengoku(army.factionId, army.generalId);
     const isRom = isRomanDynasty(army.factionId, army.generalId);
+    const isPer = isPersianDynasty(army.factionId, army.generalId);
+    const isPol = isPolishDynasty(army.factionId, army.generalId);
+    const isTeu = isTeutonicDynasty(army.factionId, army.generalId);
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
@@ -615,22 +749,24 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.cultureSlots = expandCompositionSlots(slots);
     army.cultureScales = expandCompositionScales(slots);
     army.legionType =
-        isQin || isHan || isTang || isSong || isMing || isSen || isRom
+        isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu
             ? 'mixed'
             : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 
-    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋雁行阵、日本战国鹤翼阵、汉国/大明/罗马三角阵 → 文化区默认
+    // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 秦/唐/宋/条顿雁行阵、日本战国鹤翼阵、汉国/大明/罗马/波兰三角阵、波斯鱼鳞阵 → 文化区默认
     const custom = FACTION_COMPOSITIONS[army.factionId];
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
-    } else if (isQin || isTang || isSong) {
+    } else if (isQin || isTang || isSong || isTeu) {
         army.formationMode = 'echelon';
     } else if (isSen) {
         army.formationMode = 'crane_wing';
-    } else if (isHan || isRom || isMing) {
+    } else if (isHan || isRom || isMing || isPol) {
         army.formationMode = 'triangle';
+    } else if (isPer) {
+        army.formationMode = 'fish_scale';
     } else {
         army.formationMode = inferFormationModeFromSlots(slots)
             ?? getCultureFormationMode(culture);
