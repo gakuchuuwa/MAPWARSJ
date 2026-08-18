@@ -15,6 +15,7 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
+import type { RegionType } from '../systems/RegionSystem';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import {
     applyPortraitAdjustToElement,
@@ -30,7 +31,7 @@ import {
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
-import { summarizeTechEffects } from '../systems/MilitaryTechState';
+import { summarizeTechEffects, unlockedTechs } from '../systems/MilitaryTechState';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
@@ -4097,8 +4098,24 @@ export class CombatUI {
         // [军事科技] 13 出兵口互攻时显示双方科技行（各按自己文化区+年份）；非 13 隐藏
         if (this.techRow) {
             // 🔴 这一行**包着年份**，所以绝不能整行 display:none —— 那会把年份一起藏掉（非 13 战斗全没年份）。
-            //    非 13 时只清空两侧科技栏，年份照常显示。
-            const sideTechs = (window as any).game?.scene13War?.getSideTechs?.();
+            //
+            // 🔴 [2026-08-18 修·主人报「科技呢，去哪了」] 原来只认 Scene13 的 getSideTechs()，
+            //    而 13 要同时满足「双将 + 跟拍 + zoom≥13 + 兵力≥1万」，缩放不到 13 就整行空白。
+            //    但**科技是「这个势力在这一年有什么」，与你缩放到几级无关** —— 所以 13 没开时
+            //    退回按本场双方单位的文化区 + 当前年份自己算，任何战斗都看得到。
+            //    （属性加成仍只在 13 生效，这是主人定的范围；面板显示的是「拥有什么科技」。）
+            let sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
+            if (!sideTechs) {
+                const year = (window as any).game?.timeSystem?.getYear?.();
+                if (typeof year === 'number') {
+                    const cultureOf = (side: 'attacker' | 'defender') => {
+                        const u = this.getPrimaryBattler(side);
+                        return (u ? resolveUnitCultureRegion(u) : 'CENTRAL') as RegionType;
+                    };
+                    const brief = (r: RegionType) => unlockedTechs(year, r).map((t) => ({ id: t.id, name: t.name }));
+                    sideTechs = { attacker: brief(cultureOf('attacker')), defender: brief(cultureOf('defender')) };
+                }
+            }
             if (sideTechs) {
                 this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
                 this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);

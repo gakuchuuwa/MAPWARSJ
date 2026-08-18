@@ -528,7 +528,7 @@ const SIGHT_MAP: Record<string, number> = {
     elite_throwing_axeman: 240,
     elite_tiger_cavalry: 200,
     elite_urumi_swordsman: 120,
-    elite_war_chariot: 200,
+    elite_war_chariot: 3.75,
     elite_war_dog: 200,
     elite_war_elephant: 320,
     elite_war_wagon: 320,
@@ -655,8 +655,8 @@ const SIGHT_MAP: Record<string, number> = {
     traction_trebuchet: 720,
     two_handed_swordsman: 200,
     urumi_swordsman: 120,
-    war_chariot: 200,
-    war_chariot_ranged: 320,
+    war_chariot: 3.75,
+    war_chariot_ranged: 3.75,
     war_dog: 200,
     war_elephant: 280,
     war_wagon: 280,
@@ -930,7 +930,7 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     siege_onager: 0.5,
     heavy_rocket_cart: 0.13,
     rocket_cart: 0.13,
-    war_chariot_ranged: 0.8,
+    war_chariot_ranged: 3.75,
     bombard_cannon: 0.93,
     houfnice: 0.93,
     ballista: 1.6,
@@ -1037,6 +1037,11 @@ const PROJ_TYPE: Record<string, string> = {
     antiquity_siege_tower: 'PROJ_ARROW',
     flamethrower: 'PROJ_SHOT',        // 猛火油柜喷火，用火器弹丸
     helepolis: 'PROJ_BOLT',           // 攻城塔射弩箭
+    // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
+    //    DE 里它有专属弹丸 `Projectile Hussite Wagon`(id 1733)，我们没登记 → 落回默认 PROJ_ARROW。
+    //    改用火器弹丸 PROJ_SHOT。（高丽战车弹丸是 `Projectile War Galley` id 373 = 弩箭，射箭是对的，不动。）
+    hussite_wagon: 'PROJ_SHOT',
+    elite_hussite_wagon: 'PROJ_SHOT',
     fire_archer: 'PROJ_ARROW_FIRE',
     elite_fire_archer: 'PROJ_ARROW_FIRE',
     rocket_cart: 'PROJ_ARROW_FIRE',
@@ -1119,6 +1124,7 @@ const NO_ATTACK_ANIM = new Set([
 /** 无攻击动画的车辆开火时的尘烟配色（素色木屑/尘土，区别于火器的橙黄炮口焰） */
 const SHOT_DUST_COLORS = ['#D8CDB8', '#B9A98C', '#8C7F66', '#EDE6D6'] as const;
 const FIREARM_TYPES = new Set([
+    'hussite_wagon', 'elite_hussite_wagon',   // 胡斯火铳车（2026-08-18）
     'bombard_cannon', 'houfnice', 'hand_cannoneer',
     'janissary', 'elite_janissary', 'royal_janissary',
     'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun',
@@ -1242,16 +1248,16 @@ const POP_COST_BY_KEY: Record<string, number> = {
     elite_ballista_elephant: 2,     // DE原型 EELEBALI（象）
     elite_battle_elephant: 2,       // DE原型 EBATELE（象）
     elite_elephant_archer: 2,       // 人工指定
-    elite_hussite_wagon: 2,         // 人工指定
-    elite_war_chariot: 2,           // 人工指定
+    elite_hussite_wagon: 5,         // 人工指定
+    elite_war_chariot: 3.75,           // 人工指定
     elite_war_elephant: 2,          // 人工指定
-    elite_war_wagon: 2,             // 人工指定
-    hussite_wagon: 2,               // 人工指定
+    elite_war_wagon: 5,             // 人工指定
+    hussite_wagon: 5,               // 人工指定
     porus_elephant: 2,              // 人工指定
-    war_chariot: 2,                 // 人工指定
-    war_chariot_ranged: 2,          // 人工指定
+    war_chariot: 3.75,                 // 人工指定
+    war_chariot_ranged: 3.75,          // 人工指定
     war_elephant: 2,                // 人工指定
-    war_wagon: 2,                   // 人工指定
+    war_wagon: 5,                   // 人工指定
 };
 function popCostOf(key: string): number {
     return POP_COST_BY_KEY[key] ?? 1;
@@ -1351,8 +1357,25 @@ const ARRIVE_EPS = 8;
  */
 /** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
 const MARCH_REL = 160;
-/** 每个出兵口方阵的横向列数（沿 y）。6 列 × MARCH_SP = 144px < 出兵口纵向间距，相邻口不重叠 */
-const MARCH_FILES = 6;
+/** 车类兵种（与人口表口径联动：popCost 2.25 ⇔ 4×4 = 16 辆） */
+const WAGON_KEYS = new Set([
+    'war_wagon', 'elite_war_wagon',
+    'hussite_wagon', 'elite_hussite_wagon',
+    'war_chariot', 'elite_war_chariot', 'war_chariot_ranged',
+]);
+/**
+ * 每个出兵口方阵的**边长**（既是横向列数，也决定该口出多少精灵 = 边长²）。
+ *
+ * 主人 2026-08-18 定：**人 6×6 = 36，车 4×4 = 16**（战车体型大，36 辆排出来就是一堵墙）。
+ * 🔴 边长与人口**联动**，改一个必须改另一个：该口出兵数 = 36 / popCost，
+ *    所以车要出 16 辆，popCost 必须 = 36/16 = 2.25。只改排布不改人口 = 还是 36 辆、只是排得更宽。
+ *    这样兵力仍守恒：16 辆 × 2.25 兵额 = 36 = 步兵那一口的兵额。
+ */
+const MARCH_FILES_DEFAULT = 6;
+const MARCH_FILES_WAGON = 4;
+function marchFilesOf(key: string): number {
+    return WAGON_KEYS.has(key) ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
+}
 /** 槽位间距（px）：必须 ≥ 两兵半径之和（UNIT_RADIUS 最大档 20），否则软推挤会把队形挤散 */
 const MARCH_SP = 24;
 /**
@@ -1578,7 +1601,7 @@ const UNIT_RADIUS: Record<string, number> = {
     elite_temple_guard: 8.0,
     elite_teutonic_knight: 8.0,
     elite_urumi_swordsman: 8.0,
-    elite_war_chariot: 10.0,
+    elite_war_chariot: 3.75,
     elite_war_dog: 8.0,
     elite_war_wagon: 18.0,
     elite_white_feather_guard: 8.0,
@@ -1709,8 +1732,8 @@ const UNIT_RADIUS: Record<string, number> = {
     traction_trebuchet: 20.0,
     two_handed_swordsman: 8.0,
     urumi_swordsman: 8.0,
-    war_chariot: 10.0,
-    war_chariot_ranged: 20.0,
+    war_chariot: 3.75,
+    war_chariot_ranged: 3.75,
     war_dog: 8.0,
     war_elephant: 10.0,
     war_wagon: 18.0,
@@ -3075,8 +3098,9 @@ export class Scene13WarLayer {
                 // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
                 const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
-                const dep = ((slotIdx / MARCH_FILES) | 0) * MARCH_SP;
-                const slotY = ((slotIdx % MARCH_FILES) - (MARCH_FILES - 1) / 2) * MARCH_SP;
+                const files = marchFilesOf(s.key);
+                const dep = ((slotIdx / files) | 0) * MARCH_SP;
+                const slotY = ((slotIdx % files) - (files - 1) / 2) * MARCH_SP;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
                     x: s.x + (s.f === 0 ? -dep : dep),
