@@ -74,6 +74,8 @@ function startScene13War(
         // 战场中心坐标 → 树/湖季节按真实海拔判定（2026-08-12 主人定「应该根据海拔」）
         centerLat: center?.lat,
         centerLng: center?.lng,
+        // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
+        getYear: () => app.timeSystem.getYear(),
     });
     gameLog('battle', `🎬 [Scene13War] 出兵口互攻启动: ${attRegion} vs ${defRegion}`);
 }

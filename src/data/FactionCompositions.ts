@@ -1053,6 +1053,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（纯步兵·无马，后排复合弓吊射）
         ],
     },
+    // 保加利亚帝国·克鲁姆大汗 下马保加利亚勇士死斗军团（鱼鳞阵 3+4+2：下马保加利亚骑兵前卫 3 + 下马保加利亚骑兵精锐主力 4 + 复合弓手 2）
+    saierdika: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'konnik_foot', count: 3 },             // Row 0 前卫坚盾 = 下马保加利亚骑兵 3人（纯步兵·无马，重盾前卫抗线破阵）
+            { type: 'elite_konnik_foot', count: 4 },       // Row 1 中军主力 = 下马保加利亚骑兵精锐 4人（纯步兵·无马，王牌重装勇士主力死斗血战）
+            { type: 'composite_bowman', count: 2 },        // Row 2 尾收远射 = 复合弓手 2人（纯步兵·无马，后方步弓压制掩护）
+        ],
+    },
     // 凯尔特与苏格兰·威廉·华莱士 / 奥恩格斯 / 多姆纳尔 靛蓝突袭者与长弓精锐军团（鱼鳞阵 3+4+2：靛蓝突袭者前卫 3 + 精锐靛蓝突袭者主力 4 + 长弓兵 2）
     kanbuliya: {
         formationMode: 'fish_scale',
@@ -1463,6 +1472,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'karambit_warrior', count: 3 },
             { type: 'karambit_warrior_elite', count: 4 },
             { type: 'rattan_archer', count: 2 },
+        ],
+    },
+    // 波美拉尼亚与波罗的海要塞·卡西米尔四世 奥布奇破甲战锤精锐军团（鱼鳞阵 3+4+2：战锤步兵前卫 3 + 战锤精锐主力 4 + 劲弩手 2）
+    boumeilaniyan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'obuch', count: 3 },                   // Row 0 前卫破线 = 奥布奇战锤步兵 3人（纯步兵·无马，破甲战锤前卫破线）
+            { type: 'elite_obuch', count: 4 },             // Row 1 中军主力 = 奥布奇战锤精锐 4人（纯步兵·无马，王牌重装战锤主力撕裂敌甲）
+            { type: 'arbalest', count: 2 },                // Row 2 尾收远射 = 劲弩手 2人（纯步兵·无马，后方重型劲弩压制掩护）
+        ],
+    },
+    // 中南半岛阿瓦王朝·思机法 拉塔战车精锐军团（三角阵 2+3+4：东方剑士 2 + 拉塔战车 3 + 拉塔战车精锐主力 4）
+    ava: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'eastern_swordsman', count: 2 },       // Row 0 尖刀先锋 = 东方剑士 2人（纯步兵·无马，前排短刀抗线）
+            { type: 'ratha_ranged', count: 3 },            // Row 1 冲击中坚 = 拉塔战车 3车（装甲战车引弓冲击）
+            { type: 'elite_ratha_ranged', count: 4 },      // Row 2 底边主力齐射 = 拉塔战车精锐 4车（王牌装甲战车精锐主力冲锋齐射破阵）
         ],
     },
 };
