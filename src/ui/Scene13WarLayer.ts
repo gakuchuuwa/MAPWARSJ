@@ -24,7 +24,10 @@ import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { getRegion } from '../systems/RegionSystem';
+import { getRegion, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
+import { unlockedTechs, applyTechsToStats, newlyUnlocked, techAnnouncement } from '../systems/MilitaryTechState';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { GameConfig } from '../config/GameConfig';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -677,10 +680,11 @@ const SIGHT_MAP: Record<string, number> = {
     recurve_bowman: 240,
 };
 
-/** 取某兵种完整数据（WAR_TYPES 已是 DE 五维全量，无组别覆盖） */
-function statsOf(key: string): WarType {
-    return WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
-}
+/**
+ * 取某兵种完整数据（🔴 已迁入类方法 `Scene13WarLayer.statsFor`：按 side 查科技分表，
+ * 每方按自己文化区 + 当前年份算，同一兵种攻守双方数值可能不同）。
+ * 原模块函数 statsOf 直接读 WAR_TYPES 基础档、不含科技——2026-08-18 军事科技接线时删除。
+ */
 
 /** 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防) */
 function dmgVs(shooter: WarType, target: WarType): number {
@@ -2043,6 +2047,8 @@ export interface Scene13WarInit {
     /** 战场中心坐标（树/湖季节按海拔判定用；由 GameAppCombatHooks 传入） */
     centerLat?: number;
     centerLng?: number;
+    /** [军事科技] 当前年份 getter（由 GameAppCombatHooks 注入；战斗跨年时刷新科技分表） */
+    getYear?: () => number;
 }
 
 export class Scene13WarLayer {
@@ -2109,6 +2115,14 @@ export class Scene13WarLayer {
      * 三类的相对关系不变，只是整体强弱平移。
      */
     private sideBonus: [number, number] = [1, 1];
+    /** [军事科技] 双方文化区（start 时从 init 存；科技按文化门控，每方按自己的算） */
+    private sideCulture: [string, string] = ['CENTRAL', 'STEPPE'];
+    /** [军事科技] 当前生效年份（跨年时重建分表 + 播报新解锁） */
+    private techYear: number = GameConfig.TIME.TIMELINE_START_YEAR;
+    /** [军事科技] 年份 getter（由 GameAppCombatHooks 注入；解耦 TimeSystem） */
+    private techYearGetter: (() => number) | null = null;
+    /** [军事科技] 双方兵种分表（key → 基础档 + 该方已解锁科技；🔴 绝不原地改 WAR_TYPES，否则逐场累积爆表） */
+    private techStats: [Map<string, WarType & { sight?: number }>, Map<string, WarType & { sight?: number }>] = [new Map(), new Map()];
     /** 成批增援冷却（秒），一次只补一边所以单值 */
     private batchCd = 0;
     /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
@@ -2190,6 +2204,38 @@ export class Scene13WarLayer {
         return { attacker: a, defender: d, total: a + d };
     }
 
+    /**
+     * [军事科技] 取某兵种完整数据：基础档 + 该方（f = 0 攻 / 1 守）已解锁科技。
+     * 🔴 每方按自己文化区 + 当前年份算（同一兵种攻守双方数值可能不同）。
+     * 🔴 返回新对象、绝不原地改 WAR_TYPES（就地改会逐场累积爆表）。分表缓存，一年才失效一次。
+     */
+    private statsFor(key: string, f: number): WarType & { sight?: number } {
+        const y = this.techYearGetter?.() ?? this.techYear;
+        if (y !== this.techYear) this.onTechYearChanged(y);
+        let v = this.techStats[f].get(key);
+        if (!v) {
+            const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
+            const techs = unlockedTechs(y, this.sideCulture[f] as RegionType);
+            v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
+            this.techStats[f].set(key, v);
+        }
+        return v;
+    }
+
+    /** [军事科技] 跨年：重建双方分表 + 播报新解锁（静默改数值观众看不见 → 项目铁律：技能必须有可见演出） */
+    private onTechYearChanged(year: number): void {
+        this.techYear = year;
+        this.techStats = [new Map(), new Map()];
+        for (let f = 0; f < 2; f++) {
+            const cult = this.sideCulture[f] as RegionType;
+            const fresh = newlyUnlocked(year, cult);
+            if (!fresh.length) continue;
+            const cultureName = REGION_LABELS[cult] ?? cult;
+            const body = fresh.map((t) => techAnnouncement(t)).join(' | ');
+            speechAnnouncer.announceTechUnlock(`${year} · ${cultureName}：${body}`);
+        }
+    }
+
     /** 战斗开始 → 初始化出兵口（编制槽位派生）+ 开始加载素材 */
     public start(init: Scene13WarInit): void {
         this.diagT0 = performance.now();
@@ -2253,6 +2299,11 @@ export class Scene13WarLayer {
         }
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
+        // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
+        this.sideCulture = [init.attackerRegion || 'CENTRAL', init.defenderRegion || 'STEPPE'];
+        this.techYearGetter = init.getYear ?? null;
+        this.techYear = this.techYearGetter?.() ?? GameConfig.TIME.TIMELINE_START_YEAR;
+        this.techStats = [new Map(), new Map()];
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
@@ -2292,7 +2343,7 @@ export class Scene13WarLayer {
                     //    （两趟请求，冷启动时几百毫秒）。主人实锤：「每次远程准备攻击的时候就卡一下」。
                     //    放到这里 = 并进开场那批素材，由列阵待命阶段吸收，战斗中途不再有任何懒加载。
                     //    口径与出手那一处保持一致：射程 > 65 才会真的放弹丸，未登记的一律落 PROJ_ARROW。
-                    if (statsOf(key).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
+                    if (this.statsFor(key, side.f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
                     if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
                     // 布局：row 0 最靠中线（越靠前越深入敌阵）；三阵型 9 口走 LAYOUT 查找表
                     const cell = LAYOUT[mode][idx];
@@ -3024,7 +3075,7 @@ export class Scene13WarLayer {
                     f: s.f, key: s.key, jx, jy,
                     x: s.x + (s.f === 0 ? -dep : dep),
                     y: s.y + slotY,
-                    tx: tgt.x + jx, ty: tgt.y + jy, hp: statsOf(s.key).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
+                    tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
@@ -3206,7 +3257,7 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, WAR_TYPES[o.key] ?? WAR_TYPES.light_infantry) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) / shooter.reload;
                     o.atkNext++;
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * dt;
                     if (o.hp <= 0) this.pushCorpse(o);
@@ -3263,7 +3314,7 @@ export class Scene13WarLayer {
         for (const m of this.men) {
             if (m.hp <= 0 || !m.march) continue;
             anyMarcher = true;
-            const sp = statsOf(m.key).spd;
+            const sp = this.statsFor(m.key, m.f).spd;
             if (sp < spdMin[m.f]) spdMin[m.f] = sp;
         }
         if (!anyMarcher) { this.marching = false; return; }   // 列阵那批没了（理论上到不了），直接放开
@@ -3377,9 +3428,9 @@ export class Scene13WarLayer {
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
             }
-            const wt = WAR_TYPES[m.key];
-            const stats = statsOf(m.key);
-            const SIGHT = SIGHT_MAP[m.key] ?? 160;   // 寻敌/丢目标迟滞（DE LOS）
+            const wt = this.statsFor(m.key, m.f);
+            const stats = wt;
+            const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
             const REACH = Math.max(stats.rng, 65);   // 出手扣血（近战贴身 65 / 远程 rng）
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
@@ -3444,7 +3495,7 @@ export class Scene13WarLayer {
                     //    ⚠️ 但这条 4 秒换人**不能整个删掉**：实测关掉后骑兵对镜 1/6 打不完（600s 上限），
                     //       它在防同兵种对镜的僵持死锁。只去掉「快死了还走」这个荒唐场面即可。
                     //    实测阈值 0 / 0.3 / 0.5（war_sim 步骑远程各 2 种子）：0.5 与现状持平甚至略快。
-                    const foeMax = statsOf(foe.key).hp;
+                    const foeMax = this.statsFor(foe.key, foe.f).hp;
                     const nearlyDead = foe.hp < foeMax * KEEP_TARGET_HP;
                     if (m.fightT > 4 && !nearlyDead) {
                         m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
@@ -3534,7 +3585,8 @@ export class Scene13WarLayer {
                 // 炸药自爆兵（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性范围 AoE 伤害并自爆牺牲）
                 if (SUICIDE_TYPES.has(m.key) && close && m.hp > 0) {
                     this.explode(m.x, m.y);
-                    const shooter = WAR_TYPES[m.key] ?? WAR_TYPES.petard;
+                    // 自爆兵 key 出生时已校验在 WAR_TYPES（原 petard 兜底不会触发；statsFor 内部有 light_infantry 防崩）
+                    const shooter = this.statsFor(m.key, m.f);
                     this.splash(m, 75, shooter, 1.0);
                     m.hp = 0;
                     this.pushCorpse(m);
@@ -3608,8 +3660,8 @@ export class Scene13WarLayer {
                 // 总加成：把战略层强弱（将领/精锐/武将技/文化/运气）带进每一刀
                 // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
-                const shooter = WAR_TYPES[m.key] ?? WAR_TYPES.light_infantry;
-                const target = WAR_TYPES[foe.key] ?? WAR_TYPES.light_infantry;
+                const shooter = this.statsFor(m.key, m.f);
+                const target = this.statsFor(foe.key, foe.f);
                 const dps = dmgVs(shooter, target) / shooter.reload;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
@@ -3712,7 +3764,7 @@ export class Scene13WarLayer {
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
         for (const m of this.men) {
             const dx = m.x - m.prevX, dy = m.y - m.prevY;
-            const want = (statsOf(m.key).spd || 0) * dt;
+            const want = (this.statsFor(m.key, m.f).spd || 0) * dt;
             // 实际位移不到「想走的距离」的四分之一 = 基本没挪动
             if (m.st === 0 && want > 0 && (dx * dx + dy * dy) < (want * 0.25) ** 2) m.stuckT += dt;
             else m.stuckT = 0;

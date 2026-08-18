@@ -608,6 +608,11 @@ export class SpeechAnnouncer {
   }
 
   /** 援军参战：只有「武将+精锐」或「无将无精锐」两种；势取本场开局锁定值。 */
+  /** 军事科技解锁播报（13 战斗跨年时触发；静默改数值观众看不见 → 项目铁律：技能必须有可见演出） */
+  public announceTechUnlock(text: string): void {
+    this.speak(text);
+  }
+
   public announceReinforcementJoin(opts: {
     factionId: string;
     ju: CaptureJu;                        // 援军加入时该侧的势（兵力比判定）
