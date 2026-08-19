@@ -2081,22 +2081,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rattan_archer_elite', count: 4 },     // Row 2 底边主力齐射 = 精锐藤弓兵 4人（密林精锐藤弓，后排暴雨抛射）
         ],
     },
-    // 扎波罗热哥萨克·塞契（赫梅利 · 哥萨克马刀轻骑与火枪战车大阵 · 鹤翼阵 2+4+3：手炮火枪前锋 2 + 哥萨克骠骑主力 4 + 草原步弓 3）
+    // 扎波罗热哥萨克·塞契（赫梅利 · 哥萨克纯骑兵大阵 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     gesake: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'hand_cannoneer', count: 2 },        // Row 0 前锋破线 = 手炮火枪兵 2人（哥萨克火绳枪前沿齐射）
-            { type: 'hussar', count: 4 },                 // Row 1 中军主力 = 骠骑兵 4骑（扎波罗热哥萨克马刀轻骑主力冲击）
-            { type: 'archer', count: 3 },                 // Row 2 尾收远射 = 步弓手 3人（草原快弓后方抛射掩护）
+            { type: 'conquistador', count: 2 },          // Row 0 前锋破线 = 骑马火枪手 2骑（哥萨克战马火枪前哨放排枪破甲）
+            { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（扎波罗热哥萨克精锐战骑核心冲击）
+            { type: 'cav_archer_heavy', count: 3 },      // Row 2 尾收远射 = 重装骑射手 3骑（东欧草原快马重弓后排驰射掩护）
         ],
     },
-    // 顿河哥萨克·阿速城（塔塔里诺夫 · 顿河铁骑与亚速要塞火枪大阵 · 鹤翼阵 2+4+3：手炮火枪前锋 2 + 马扎尔轻装骠骑 4 + 草原步弓 3）
+    // 顿河哥萨克·阿速城（塔塔里诺夫 · 顿河纯骑兵大阵 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     dunhe: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'hand_cannoneer', count: 2 },        // Row 0 前锋散兵 = 手炮火枪兵 2人（亚速要塞火枪齐射）
-            { type: 'magyar_huszar', count: 4 },          // Row 1 中军主力 = 马扎尔骠骑兵 4骑（顿河哥萨克精锐马刀轻骑核心突击）
-            { type: 'archer', count: 3 },                 // Row 2 尾收远射 = 步弓手 3人（快弓箭雨火力压制）
+            { type: 'conquistador', count: 2 },          // Row 0 前锋散兵 = 骑马火枪手 2骑（顿河战马火枪齐射破甲）
+            { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（顿河哥萨克精锐战骑核心突击）
+            { type: 'cav_archer_heavy', count: 3 },      // Row 2 尾收远射 = 重装骑射手 3骑（东欧草原快马重弓火力压制）
         ],
     },
 };
