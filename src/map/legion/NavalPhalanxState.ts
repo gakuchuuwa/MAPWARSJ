@@ -48,26 +48,7 @@ export class NavalPhalanxStateManager {
         return this.states.get(unitId);
     }
 
-    /**
-     * 脱战重置：只清**舰船存活状态**（沉没的船恢复满编），**保留航迹**。
-     * 🔴 [2026-08-19 修] 原实现是 `states.delete(unitId)` 连航迹一起删，而 drawNaval 在
-     *    「非战斗」时每帧都调它 —— 军团航行时 state 恒为 MOVE、isFighting 恒 false，
-     *    于是航迹每帧被删光：pushTrail 开头 `if (!state) return` 又不建 state，
-     *    结果 trail 永远是空数组、后随船 100% 走退化直线排开，转弯照样穿岸。
-     *    航迹是「舰队走过哪」，与「哪几艘还活着」是两回事，脱战不该清。
-     *    真正要连航迹一起丢的场合用 dispose()（单位销毁/换跟拍）。
-     */
-    public static reset(unitId: string): void {
-        const state = this.states.get(unitId);
-        if (!state) return;
-        state.ships = [];          // 置空 → 下次 update() 按当前兵力重建满编
-        state.shipCount = 0;
-        state.maxTroops = 0;
-        state.lastTroops = 0;
-        state.isFighting = false;
-        state.justSank = 0;
-    }
-
+    /** 单位销毁/换跟拍 → 连航迹一起丢（唯一的清理入口）。脱战重建满编由 update() 非战斗分支负责。 */
     public static dispose(unitId: string): void {
         this.states.delete(unitId);
     }

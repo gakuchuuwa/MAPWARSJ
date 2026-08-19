@@ -328,7 +328,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     two_handed_swordsman: { name: '双手剑士', cls: 'melee', sz: 1, hp: 65, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
     urumi_swordsman: { name: '达罗毗荼软剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
     war_chariot: { name: '双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
-    war_chariot_ranged: { name: '双轮远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_chariot_ranged: { name: '先秦远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, kite: 60, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     warrior_priest: { name: '亚美尼亚修士战士', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
@@ -2200,6 +2200,8 @@ export class Scene13WarLayer {
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
     private stallReported = false;
+    /** 本场是否已起过「接触交战」循环音景（land_contact）：接触那一刻起循环，演出退场时停 */
+    private contactSfxPlayed = false;
     /** 首批素材是否已经全部就绪过一次：之后再有素材加载都不许冻结演出（见 tick 里那道闸） */
     private assetsReadyOnce = false;
 
@@ -2389,6 +2391,7 @@ export class Scene13WarLayer {
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
+        this.contactSfxPlayed = false;   // 每场重置：下一场重新等待接触才起循环音景
         this.adv = [0, 0];
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
@@ -2625,6 +2628,8 @@ export class Scene13WarLayer {
             console.warn(`⏹️ [Scene13War] 停止（${reason}）：演出已判负=${this.over} 场上${field}精灵 池${Math.round(pool)}精灵`);
         }
         this.active = false;
+        // 接触交战音景随演出退场淡出（循环音，不停会一直响下去）。
+        audioManager.stopSceneLoop('land_contact');
         this.spawns = [];
         this.men = [];
         this.corpses = [];
@@ -3168,6 +3173,27 @@ export class Scene13WarLayer {
             let batch = SIDE_CAP;                  // 一次补 324（固定批量）
             for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
+            /* ── 【忍者奇袭】主人 2026-08-19 定 ────────────────────────────────────
+             * 开局那批照常列阵正面推进；**第二波起**的补兵，若本方编制里有忍者，
+             * 抽调**一口**忍者绕到敌军背后出生，其余忍者口维持正面。
+             *   · 为什么只改出生点：13 的「编队自主寻敌」试过五次全败（见文件头），
+             *     出路是剧本法。奇袭在这里就是一条剧本 —— 换个地方出生，之后照常索敌，
+             *     不新增任何自主决策，也不碰判负。
+             *   · 为什么取最靠后那一口：前排忍者留着维持阵线，抽后备去绕后才合直觉。
+             *     WarSpawn 没存 row，用 x 判断：f=0 的口 x 越小越靠后，f=1 反之
+             *     （init 里 back = mx + (2-row)*depth，row 越大 back 越小）。
+             *   · 伊贺 9 口全忍者 → 绕后 1/9；战国默认编制 2 口忍者 → 绕后一半。
+             */
+            const isSupplyWave = this.deployT <= 0;   // 开局列阵期 deployT>0，补兵波次才奇袭
+            let flankPort: WarSpawn | null = null;
+            if (isSupplyWave) {
+                const ninjas = ports.filter(s => s.key === 'ninja');
+                if (ninjas.length) {
+                    flankPort = ninjas.reduce((a, b) =>
+                        (f === 0 ? (b.x < a.x ? b : a) : (b.x > a.x ? b : a)));
+                }
+            }
+
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
             while (batch > 0) {
@@ -3179,7 +3205,12 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
+                const isFlank = s === flankPort;
+                // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
+                // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
+                const tgt = isFlank
+                    ? (this.enemyCen[1 - s.f] ?? this.nearestEnemySpawn(s))
+                    : (this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f]);
                 if (!tgt) break;
                 // 本兵终身固定的落点偏移（见 AIM_JITTER）：出生时抽一次，之后 aimAt 的共用坐标都加它
                 const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
@@ -3192,6 +3223,15 @@ export class Scene13WarLayer {
                 // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
                 const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
+                // 奇袭出生点：敌方那一侧的边缘（比敌方出兵口更靠外 = 真的在背后），
+                // 纵向落在敌军重心一线，再按槽位散开，避免一堆人叠在同一点。
+                let flankX = 0, flankY = 0;
+                if (isFlank) {
+                    const VW = this.canvas?.width ?? 1920;
+                    const edge = Math.max(60, VW * 0.07) * 0.5;
+                    flankX = s.f === 0 ? VW - edge : edge;
+                    flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
+                }
                 const files = marchFilesOf(s.key);
                 // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
                 // 出兵口的前后行间距 depth = min(150, VW×0.075)，1920 屏才 144px，
@@ -3203,12 +3243,15 @@ export class Scene13WarLayer {
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
-                    x: s.x + (s.f === 0 ? -dep : dep),
-                    y: s.y + slotY,
-                    tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp, dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
+                    x: isFlank ? flankX : s.x + (s.f === 0 ? -dep : dep),
+                    y: (isFlank ? flankY : s.y) + slotY,
+                    tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp,
+                    // 出生朝向按**实际出生点**算：奇袭兵生在敌后，用本方出兵口算会背对敌人
+                    dir: this.dir8(tgt.x - (isFlank ? flankX : s.x), tgt.y - (isFlank ? flankY : s.y)),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: s.x, prevY: s.y, stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
+                    prevX: isFlank ? flankX : s.x, prevY: (isFlank ? flankY : s.y),
+                    stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
@@ -3618,6 +3661,13 @@ export class Scene13WarLayer {
                 //    从视野边缘跑到跟前要 5.4s（精锐战象 320/6.4s），4 秒一到就丢目标重找，
                 //    再锁再跑再丢，一刀都砍不出去。实测这样的兵种共 6 个（全是象 + 桑纳亚）。
                 if (inReach) {
+                    // 接触交战音景：两军接触起**循环**垫底，直到演出退场（stop 里停）。
+                    // 不在列阵期起（deploying 分支已 continue），只在真正接敌那一刻。
+                    // contactSfxPlayed 只为省掉每帧重复调用，startSceneLoop 本身是幂等的。
+                    if (!this.contactSfxPlayed) {
+                        this.contactSfxPlayed = true;
+                        audioManager.startSceneLoop('land_contact');
+                    }
                     m.fightT = (m.fightT || 0) + dt;
                     // 🔴 [2026-08-17 主人拍板] 目标只剩半血以下就**不换人**，把他打死再走。
                     //    原来不看血量：跟一个人打满 4 秒，哪怕对方只剩一口气也照样掉头去找别人 ——
@@ -3808,7 +3858,6 @@ export class Scene13WarLayer {
                 const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
-                    audioManager.play('sword_clank');
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     const contactY = (m.y * 0.45 + foe.y * 0.55) - UNIT_PX * 0.35;
