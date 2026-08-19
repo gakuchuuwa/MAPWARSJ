@@ -14,7 +14,7 @@ import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
-import { NavalPhalanxStateManager } from './NavalPhalanxState';
+import { NavalPhalanxStateManager, shipCountForTroops } from './NavalPhalanxState';
 import { audioManager } from '../../audio/AudioManager';
 
 // 海战音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
@@ -1666,10 +1666,6 @@ export class LegionPhalanxDrawer {
         }
     }
 
-    /**
-     * 海上五船编队（2026-07-18 主人定）：中大船 + 前 2 小船 + 后 2 中船
-     *   r = 航行方向轴（-1 前 / +1 后），c = 左右横轴；全图统一样式，不按兵力分档
-     */
     /** 舰队逐艘阵亡起始时间（参考陆军 PhalanxAnimState 逐兵阵亡） */
     private static navalDeathStarts = new Map<string, number[]>();
 
@@ -1677,24 +1673,65 @@ export class LegionPhalanxDrawer {
         this.navalDeathStarts.delete(unitId);
     }
 
-    /** 为舰队分配逐艘阵亡起始时间（首次进入 DEATH 时调用） */
+    /** 为舰队分配逐艘阵亡起始时间（首次进入 DEATH 时调用）：队尾先沉、旗舰最后。 */
     private static ensureNavalDeathStarts(unitId: string, shipCount: number, now: number): number[] {
         let starts = this.navalDeathStarts.get(unitId);
         if (!starts) {
-            // 5 艘船：大船最后一个沉（旗舰），小船→中船→大船 各间隔 600ms
-            // 索引 0=大船(中) 1=小船(前左) 2=小船(前右) 3=中船(后左) 4=中船(后右)
-            const delayMs = [1800, 0, 300, 600, 900]; // 前小船先沉 → 后中船 → 旗舰最后
-            starts = delayMs.slice(0, shipCount).map(d => now + d);
+            // 索引 0=旗舰，索引 shipCount-1=队尾；队尾 delayMs 最小（先沉），旗舰最大（最后沉）
+            const delayMs: number[] = [];
+            for (let i = 0; i < shipCount; i++) {
+                delayMs.push((shipCount - 1 - i) * 300);
+            }
+            starts = delayMs.map(d => now + d);
             this.navalDeathStarts.set(unitId, starts);
         }
         return starts;
     }
 
-    private static readonly NAVAL_FORMATION = [
-        { r: 0, c: 0, ship: 'ship_large' },
-        { r: 1, c: -1.5, ship: 'ship_medium' }, { r: 1, c: 1.5, ship: 'ship_small' },
-        { r: -1, c: -1.5, ship: 'ship_medium' }, { r: -1, c: 1.5, ship: 'ship_small' },
-    ] as const;
+    /** 兵力驱动的舰队队形（2026-08-19 主人定）：旗舰居前，后随成列。
+     *  ≤4 艘单纵队（内河/海峡横向最窄不蹭岸）；≥5 艘旗舰 + 后方双列交错（纵向段数压到 ~4 行）。
+     *  r 为沿朝向的段距（旗舰 0，后随为负 = 朝航向反方向排）；c 为横向（±0.45 船宽交错）。 */
+    private static navalFormation(shipCount: number): { r: number; c: number; ship: NavalShipAssetId }[] {
+        const shipType = (i: number): NavalShipAssetId =>
+            i === 0 ? 'ship_large' : i <= 4 ? 'ship_medium' : 'ship_small';
+        const formation: { r: number; c: number; ship: NavalShipAssetId }[] = [
+            { r: 0, c: 0, ship: 'ship_large' },
+        ];
+        if (shipCount <= 4) {
+            // 单纵队：后随船依次向后排
+            for (let i = 1; i < shipCount; i++) {
+                formation.push({ r: -i * 0.8, c: 0, ship: shipType(i) });
+            }
+        } else {
+            // 双列：后 4~7 艘分两列交错（左右各一行，最后单艘补左列）
+            let r = 0.8;
+            for (let i = 1; i < shipCount; i++) {
+                const col = (i % 2 === 1) ? -0.45 : 0.45;
+                formation.push({ r: -r, c: col, ship: shipType(i) });
+                if (i % 2 === 0) r += 0.8;
+            }
+        }
+        return formation;
+    }
+
+    /** 沿航迹取点：从队尾（最新点，靠近旗舰）往回走 distAlong 弧长，落在两采样点间线性插值。 */
+    private static trailPointAt(trail: { x: number; y: number }[], distAlong: number): { x: number; y: number } {
+        let acc = 0;
+        for (let j = trail.length - 1; j > 0; j--) {
+            const a = trail[j], b = trail[j - 1];
+            const seg = Math.hypot(a.x - b.x, a.y - b.y);
+            if (acc + seg >= distAlong) {
+                // 🔴 [2026-08-19 修] 插值方向原先是反的（`b + (a-b)*t`）：
+                //   t=0 表示"恰好落在较新点 a 上"却返回了较旧点 b，t=1 反过来返回 a，
+                //   每个航迹段内后随船都会反向滑一遍 → 队列抖动、间距忽大忽小。
+                //   正确是从 a（新）朝 b（旧）走 t 段：a + (b-a)*t。
+                const t = (distAlong - acc) / (seg || 1);
+                return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+            }
+            acc += seg;
+        }
+        return trail[0];
+    }
 
     public static drawNaval(
         ctx: CanvasRenderingContext2D,
@@ -1707,20 +1744,24 @@ export class LegionPhalanxDrawer {
         factionId: string,
         lockedShipId: NavalShipAssetId | null = null,
         unitId: string = '',
+        trail?: { x: number; y: number }[],
     ): void {
-        // 五船定编（2026-07-18 主人定）：样式全图统一，不按兵力/登船锁定分档；
-        // troops、lockedShipId 保留签名兼容，不再参与船型选择。
+        // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
         const baseHeight = 72;
+        const shipCount = shipCountForTroops(troops);
+        const formation = this.navalFormation(shipCount);
 
         // 逐舰阵亡状态更新（2026-07-18）：参照 LegionPhalanxStateManager 模式
         const isFighting = state === 'ATTACK' || state === 'DAMAGE';
         if (unitId) {
+            // 🔴 [2026-08-19] 这里原本每帧调 NavalPhalanxStateManager.reset()，已删除。
+            //   reset 会 delete 整个 state（含航迹），而军团航行时 state 恒为 MOVE、
+            //   isFighting 恒为 false —— 于是航迹每帧被清空、后随船永远走退化直线排开，
+            //   §4 要的「转弯跟着河道弯」从未真正生效过。
+            //   脱战恢复满编现在由 update() 自己负责（非战斗 + 有沉船/档位变 → 重建），
+            //   既保住航迹，也不必每帧置空重建。
             const navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
-            // 非战时重置状态（战后补员/切换单位）
-            if (!isFighting && state !== 'DEATH') {
-                NavalPhalanxStateManager.reset(unitId);
-            }
             // 跟拍换了船队 → 三条节流归零，新船队从干净相位起算（否则会继承旧队的冷却/待播落水）
             if (navalSfxUnitId !== unitId) {
                 navalSfxUnitId = unitId;
@@ -1778,10 +1819,10 @@ export class LegionPhalanxDrawer {
             typeDraws.set(typeId, { set, totalFrames, w: h * (frameW / frameH), h });
         }
 
-        // 编队间距以旗舰（大船）尺寸为基准：纵向 0.45 船高、横向 0.40 船宽
+        // 编队间距以旗舰（大船）尺寸为基准：纵向 0.75 绘制高 ≈ 0.80 船身长（大船船身占帧 94%）、横向 0.45 船宽
         const flagship = typeDraws.get('ship_large')!;
-        const shipDepth = flagship.h * 0.45;
-        const shipSpread = flagship.w * 0.40;
+        const shipDepth = flagship.h * 0.75;
+        const shipSpread = flagship.w * 0.45;
 
         // 对角朝向（1,3,5,7）c 轴加 0.15 补偿视觉压缩；正朝向不变
         const isDiagonal = direction % 2 === 1;
@@ -1792,18 +1833,30 @@ export class LegionPhalanxDrawer {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
 
-        // 收集 5 艘船的位置（中 1 大船 + 前 2 小船 + 后 2 中船），逐舰读取阵亡状态
-        const ships: { x: number; y: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number }[] = [];
+        // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
+        const ships: { x: number; y: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number }[] = [];
         const navalState = unitId ? NavalPhalanxStateManager.getState(unitId) : undefined;
 
-        for (let i = 0; i < this.NAVAL_FORMATION.length; i++) {
-            const pos = this.NAVAL_FORMATION[i] ?? this.NAVAL_FORMATION[0];
+        for (let i = 0; i < formation.length; i++) {
+            const pos = formation[i] ?? formation[0];
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
-            const ox = pos.r * shipDepth;
+            // 旗舰（r=0）钉在逻辑点；后随船沿航迹取点（距旗舰 |r|×shipDepth 弧长），横向偏移沿当前朝向垂直
+            let dx: number, dy: number;
             const oy = pos.c * shipSpread * cMult;
-            const dx = center.x + (ox * cos - oy * sin);
-            const dy = center.y + (ox * sin + oy * cos);
+            if (pos.r === 0) {
+                dx = center.x;
+                dy = center.y;
+            } else if (trail && trail.length >= 2) {
+                const base = this.trailPointAt(trail, Math.abs(pos.r) * shipDepth);
+                dx = base.x - oy * sin;
+                dy = base.y + oy * cos;
+            } else {
+                // 航迹不足（刚下水/刚转向）：退化沿当前朝向直线排
+                const ox = pos.r * shipDepth;
+                dx = center.x + (ox * cos - oy * sin);
+                dy = center.y + (ox * sin + oy * cos);
+            }
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];
@@ -1825,7 +1878,7 @@ export class LegionPhalanxDrawer {
             } else if (state === 'DEATH') {
                 // 全局 DEATH（战斗结束残余舰统一沉没）
                 rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
-                const starts = this.ensureNavalDeathStarts(unitId, this.NAVAL_FORMATION.length, tick);
+                const starts = this.ensureNavalDeathStarts(unitId, formation.length, tick);
                 const timeDead = Math.max(0, tick - (starts[i] ?? tick));
                 currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
             } else if (state === 'DAMAGE') {
@@ -1847,15 +1900,15 @@ export class LegionPhalanxDrawer {
 
             const tfw = tintedSprite.width / td.totalFrames;
             ships.push({
-                x: dx, y: dy,
+                x: dx, y: dy, r: pos.r,
                 img: tintedSprite,
                 sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
                 w: td.w, h: td.h,
             });
         }
 
-        // 后先画（Y 排序）
-        ships.sort((a, b) => a.y - b.y);
+        // 队尾先画、旗舰最后画（旗舰盖在最上层）
+        ships.sort((a, b) => a.r - b.r);
         for (const s of ships) {
             ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh,
                 s.x - s.w / 2, s.y - s.h / 2, s.w, s.h);

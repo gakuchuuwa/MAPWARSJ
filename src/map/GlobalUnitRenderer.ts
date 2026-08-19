@@ -8,6 +8,7 @@ import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Pre
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
 import type { NavalShipAssetId } from '../types/NavalShipTiers';
 import { LegionPhalanxStateManager } from './legion/LegionPhalanxState';
+import { NavalPhalanxStateManager } from './legion/NavalPhalanxState';
 import {
     actAt, blockOffsetAt, slotPlanAt, easeInOut, SCENE13_CONTACT_RATIO,
 } from './legion/Scene13Choreographer'; // [2026-08-10 剧本法]
@@ -491,6 +492,10 @@ export class GlobalUnitRenderer {
 
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
     private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
+    /** 航迹采样：unitId → 上次采样时的屏幕坐标（按屏幕距离判断是否推入新航迹点） */
+    private navalTrailLast = new Map<string, { x: number; y: number }>();
+    /** 航迹采样最小屏幕间距（px）：约 0.4 旗舰船身，太密会 40 点覆盖不足 8 艘总长 */
+    private static readonly NAVAL_TRAIL_SAMPLE_PX = 16;
     /**
      * [2026-08-04] 攻城外推量平滑缓存：unitId → { push px, 背离城单位方向 }。
      * 开战/停火/城缩回时目标外推量突变，直接套用 = 渲染瞬移（主人红线）。
@@ -2024,6 +2029,19 @@ export class GlobalUnitRenderer {
 
 
             if (useNavalVisual) {
+                // 航迹采样（屏幕距离判断）+ 投影（lat/lng → 屏幕坐标），后随船沿航迹排开、转弯不穿岸
+                let navalTrail: { x: number; y: number }[] = [];
+                if (unit.id) {
+                    const prev = this.navalTrailLast.get(unit.id);
+                    if (!prev || Math.hypot(centerPoint.x - prev.x, centerPoint.y - prev.y) >= GlobalUnitRenderer.NAVAL_TRAIL_SAMPLE_PX) {
+                        NavalPhalanxStateManager.pushTrail(unit.id, unitPos.lat, unitPos.lng);
+                        this.navalTrailLast.set(unit.id, { x: centerPoint.x, y: centerPoint.y });
+                    }
+                    navalTrail = (NavalPhalanxStateManager.getState(unit.id)?.trail ?? []).map(p => {
+                        const c = this.map.latLngToContainerPoint([p.lat, p.lng]);
+                        return { x: c.x, y: c.y };
+                    });
+                }
                 LegionPhalanxDrawer.drawNaval(
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
@@ -2035,6 +2053,7 @@ export class GlobalUnitRenderer {
                     unit.factionId || 'zhonghua',
                     unit.navalShipTierLock ?? null,
                     unit.id ?? '',
+                    navalTrail,
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer
