@@ -449,7 +449,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'seljuq_sangjiaer': 12,                              // 桑贾尔 · seljuq · 木鹿
     'sogdian_dewasitiqi': 8,                            // 德瓦什提奇 · sogdian · 瓦拉赫沙
     'tiemuer_tiemuer': 14,                               // 帖木儿 · tiemuer · 撒马尔罕
-    'wulaertu_ajishenti': -8,                            // 阿吉什提 · wulaertu · 埃里温
+    'wulaertu_ajishenti': 5,                             // 瓦尔丹 · wulaertu · 埃里温
     'xierwan_farukusha': 15,                             // 法鲁克沙 · xierwan · 巴库
     'xisi_yakubusafaer': 9,                             // 雅库布 · xisi · 博斯特
     'yada_ahexiong': 5,                                 // 阿赫雄 · yada · 悉万斤

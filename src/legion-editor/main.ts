@@ -26,7 +26,7 @@ import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompos
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
 // ============================================================
 
-export type UnitCategory = 'infantry' | 'cavalry' | 'ranged' | 'siege';
+export type UnitCategory = 'infantry' | 'cavalry' | 'ranged' | 'siege' | 'hero';
 
 /**
  * 兵种时代（与游戏一致的四时代）。
@@ -57,6 +57,7 @@ export const CATEGORY_LABEL: Record<UnitCategory, string> = {
     cavalry: '骑兵',
     ranged: '远程',
     siege: '攻城',
+    hero: '英雄',
 };
 
 export interface DeUnitDef {
@@ -364,6 +365,89 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'antiquity_siege_ram', name: '古典重型攻城槌', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ANTIQUITY_SIEGE_RAM/' },
     { id: 'antiquity_siege_tower', name: '古典攻城塔', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ANTIQUITY_SIEGE_TOWER/' },
 
+
+    // ── 英雄单位 (Heroes) ──
+    { id: 'hero_alaric', name: '英雄·亚拉里克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ALARIC/' },
+    { id: 'hero_algirdas', name: '英雄·阿尔吉尔达斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ALGIRDAS/' },
+    { id: 'hero_arariboiamelee', name: '英雄·阿拉里博亚', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARARIBOIAMELEE/' },
+    { id: 'hero_aristagoras', name: '英雄·阿里斯塔哥拉斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARISTAGORAS/' },
+    { id: 'hero_aristides', name: '英雄·阿里斯提德', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARISTIDES/' },
+    { id: 'hero_artaphernes', name: '英雄·阿尔塔弗涅斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARTAPHERNES/' },
+    { id: 'hero_ataulf', name: '英雄·阿陶尔夫', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ATAULF/' },
+    { id: 'hero_attila', name: '英雄·阿提拉', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ATTILA/' },
+    { id: 'hero_basileus', name: '英雄·巴西琉斯(皇帝)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BASILEUS/' },
+    { id: 'hero_bayinnaung_elephant', name: '英雄·莽应龙(象驾)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BAYINNAUNG_ELEPHANT/' },
+    { id: 'hero_bernardarmagnac', name: '英雄·贝尔纳·德·阿马尼亚克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BERNARDARMAGNAC/' },
+    { id: 'hero_bohemond', name: '英雄·博希蒙德', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BOHEMOND/' },
+    { id: 'hero_brasidas', name: '英雄·巴西达斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BRASIDAS/' },
+    { id: 'hero_caocao', name: '英雄·曹操', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CAOCAO/' },
+    { id: 'hero_cleitus', name: '英雄·克雷图斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CLEITUS/' },
+    { id: 'hero_cumanchief', name: '英雄·库曼酋长', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CUMANCHIEF/' },
+    { id: 'hero_cunhambebe', name: '英雄·昆汉贝贝', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CUNHAMBEBE/' },
+    { id: 'hero_cusiyupanqui', name: '英雄·库西尤潘基', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CUSIYUPANQUI/' },
+    { id: 'hero_dafyddapgruffydd', name: '英雄·戴菲德', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/DAFYDDAPGRUFFYDD/' },
+    { id: 'hero_dagnajan_elephant', name: '英雄·达格纳扬(象兵)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/DAGNAJAN_ELEPHANT/' },
+    { id: 'hero_datis', name: '英雄·达提斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/DATIS/' },
+    { id: 'hero_dinhle', name: '英雄·丁礼', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/DINHLE/' },
+    { id: 'hero_dismounted_alexander', name: '英雄·步战亚历山大', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/DISMOUNTED_ALEXANDER/' },
+    { id: 'hero_mounted_alexander', name: '英雄·骑马亚历山大', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/MOUNTED_ALEXANDER/' },
+    { id: 'hero_edwardlongshanks', name: '英雄·长腿爱德华', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/EDWARDLONGSHANKS/' },
+    { id: 'hero_gajahmada', name: '英雄·加查·马达', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GAJAHMADA/' },
+    { id: 'hero_galvarino', name: '英雄·加尔瓦里诺', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GALVARINO/' },
+    { id: 'hero_generalaraiyan', name: '英雄·阿赖扬将军', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GENERALARAIYAN/' },
+    { id: 'hero_gidajan', name: '英雄·吉达扬', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GIDAJAN/' },
+    { id: 'hero_gilbertdeclare', name: '英雄·吉尔伯特', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GILBERTDECLARE/' },
+    { id: 'hero_girgenkhan', name: '英雄·吉尔根汗', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GIRGENKHAN/' },
+    { id: 'hero_guacolda', name: '英雄·瓜科尔达', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GUACOLDA/' },
+    { id: 'hero_guanyu', name: '英雄·关羽', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GUANYU/' },
+    { id: 'hero_ivaylo', name: '英雄·伊瓦伊洛(骑马)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/IVAYLO/' },
+    { id: 'hero_ivaylofoot', name: '英雄·伊瓦伊洛(步战)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/IVAYLOFOOT/' },
+    { id: 'hero_janzizka', name: '英雄·扬·杰式卡', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/JANZIZKA/' },
+    { id: 'hero_joanofarc', name: '英雄·圣女贞德(全甲战马)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/JOANOFARC/' },
+    { id: 'hero_joanthemaid', name: '英雄·奥尔良少女贞德', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/JOANTHEMAID/' },
+    { id: 'hero_jogaila', name: '英雄·雅盖沃', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/JOGAILA/' },
+    { id: 'hero_johnthefearless', name: '英雄·无畏的约翰', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/JOHNTHEFEARLESS/' },
+    { id: 'hero_kestutis', name: '英雄·科斯图提斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/KESTUTIS/' },
+    { id: 'hero_kotyankhan', name: '英雄·忽炭汗', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/KOTYANKHAN/' },
+    { id: 'hero_kushluk', name: '英雄·屈出律', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/KUSHLUK/' },
+    { id: 'hero_lautaro', name: '英雄·劳塔罗', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LAUTARO/' },
+    { id: 'hero_leloi', name: '英雄·黎利', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LELOI/' },
+    { id: 'hero_liubei', name: '英雄·刘备', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LIUBEI/' },
+    { id: 'hero_llywelynapgruffydd', name: '英雄·卢埃林', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LLYWELYNAPGRUFFYDD/' },
+    { id: 'hero_lubu', name: '英雄·吕布', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LUBU/' },
+    { id: 'hero_lysander', name: '英雄·吕山德', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/LYSANDER/' },
+    { id: 'hero_macedonian_commander', name: '英雄·马其顿指挥官', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/MACEDONIAN_COMMANDER/' },
+    { id: 'hero_osman', name: '英雄·奥斯曼一世', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/OSMAN/' },
+    { id: 'hero_pacanchique', name: '英雄·帕坎奇克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PACANCHIQUE/' },
+    { id: 'hero_pachacuti', name: '英雄·帕查库特克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PACHACUTI/' },
+    { id: 'hero_parmenion', name: '英雄·帕曼纽', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PARMENION/' },
+    { id: 'hero_perdiccas', name: '英雄·佩尔狄卡斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PERDICCAS/' },
+    { id: 'hero_philipthegood', name: '英雄·好人菲利普', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PHILIPTHEGOOD/' },
+    { id: 'hero_porus_elephant', name: '英雄·波鲁斯(象驾)', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PORUS_ELEPHANT/' },
+    { id: 'hero_prithviraj', name: '英雄·普里特维拉吉', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PRITHVIRAJ/' },
+    { id: 'hero_qutlugh', name: '英雄·忽都鲁', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/QUTLUGH/' },
+    { id: 'hero_rajendrachola', name: '英雄·罗贞陀罗·朱罗', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/RAJENDRACHOLA/' },
+    { id: 'hero_robertguiscard', name: '英雄·罗贝尔·吉斯卡尔', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ROBERTGUISCARD/' },
+    { id: 'hero_rogerbosso', name: '英雄·罗杰·博索', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ROGERBOSSO/' },
+    { id: 'hero_sforza', name: '英雄·斯福尔扎', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SFORZA/' },
+    { id: 'hero_shahismail', name: '英雄·沙阿·伊斯玛仪', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SHAHISMAIL/' },
+    { id: 'hero_strategos', name: '英雄·斯特拉特戈斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/STRATEGOS/' },
+    { id: 'hero_subotai', name: '英雄·速不台', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUBOTAI/' },
+    { id: 'hero_sumanguru', name: '英雄·苏曼古鲁', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUMANGURU/' },
+    { id: 'hero_sunce', name: '英雄·孙策', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUNCE/' },
+    { id: 'hero_sundjata', name: '英雄·松迪亚塔', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUNDJATA/' },
+    { id: 'hero_sunjian', name: '英雄·孙坚', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUNJIAN/' },
+    { id: 'hero_sunquan', name: '英雄·孙权', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/SUNQUAN/' },
+    { id: 'hero_tariqibnziyad', name: '英雄·塔里克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/TARIQIBNZIYAD/' },
+    { id: 'hero_thoros', name: '英雄·托罗斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/THOROS/' },
+    { id: 'hero_thracian_chieftain', name: '英雄·色雷斯酋长', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/THRACIAN_CHIEFTAIN/' },
+    { id: 'hero_tsarkonstantin', name: '英雄·君士坦丁沙皇', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/TSARKONSTANTIN/' },
+    { id: 'hero_ulrichvonjungingen', name: '英雄·容金根', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ULRICHVONJUNGINGEN/' },
+    { id: 'hero_vladdracula', name: '英雄·穿刺公德古拉', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/VLADDRACULA/' },
+    { id: 'hero_vytautasthegreat', name: '英雄·维陶塔斯大帝', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/VYTAUTASTHEGREAT/' },
+    { id: 'hero_williamwallace', name: '英雄·威廉·华莱士', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
+    { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/YODIT/' },
+    { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ZHANGFEI/' },
 ];
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
@@ -500,6 +584,7 @@ app.innerHTML = `
     <option value="cavalry">🐎 骑兵</option>
     <option value="ranged">🏹 远程</option>
     <option value="siege">⚙️ 攻城</option>
+    <option value="hero">👑 英雄</option>
   </select>
   <select id="le-age-filter" class="le-select">
     <option value="all">全部时代</option>
@@ -1374,6 +1459,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'cavalry' ? 'active' : ''}" data-cat="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='cavalry').length})</div>
             <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
             <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
+            <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>u.category==='hero').length})</div>
           </div>
           <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
           <div class="le-modal-body">
@@ -1448,7 +1534,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 // ============================================================
 
 /** 类别排序权重：按 步兵 → 骑兵 → 远程 → 战象/攻城 的战场站位顺序，而非拼音顺序。 */
-const CATEGORY_ORDER: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege'];
+const CATEGORY_ORDER: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege', 'hero'];
 
 function switchMainView(view: MainView): void {
     if (mainView === view) return;
