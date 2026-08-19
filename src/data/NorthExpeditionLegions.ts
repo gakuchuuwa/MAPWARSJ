@@ -75,4 +75,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     yuwen: { name: '武川铁骑', tier: 3 },
     ssangseong: { name: '和宁戍骑', tier: 4 },
     cai: { name: '汲桑所与', tier: 2 },
+    xiongding: { name: '鲜卑燕骑', tier: 3 },
 };

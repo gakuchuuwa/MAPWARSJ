@@ -36,6 +36,17 @@ export interface TargetEvaluateOptions {
      */
     armyStandCityId?: string;
     /**
+     * 【目标失效重抽·继承原方向】刚刚失效（被友军抢占/消失）的那座目标城 id。
+     * 给了就优先保留「到它道路距离最近的一档」候选（≤ 最近 ×1.5），筛空回落全池。
+     * 语义：本来奔那个方向走了一半，目标没了就打那附近的，别当场调头奔反方向
+     * （主人 2026-08-20：「刚路过己方据点又掉头，怪别扭」）。
+     * 🔴 只在失效重抽那一次传，用完即清 —— 正常打完城后的选目标不受影响，
+     *    规则 1「朝老家方向的敌城同样是扩张目标」依旧成立。
+     * 🔴 与已删除的三个机制无关：不按推进轴滤半球（行军惯性）、锚点照常前移（非迟滞）、
+     *    不比较到锚点的距离（非 0.9 倍回头路判据）。
+     */
+    preferNearCityId?: string;
+    /**
      * 本军团兵力。给了就启用「打不打得过」闸门：守军 > 本兵力 × ENEMY_STRENGTH_MAX_RATIO 的城
      * 不进抽签池（2026-08-12 主人批准）。
      * 🔴 **筛空自动回落全池**——四周全是硬骨头时照样得挑一个打，绝不让军团卡死不动。
@@ -104,6 +115,23 @@ export class TargetEvaluator {
                 if (!path || !path.slice(1).includes(homeCityId)) noHomePass.push(s);
             }
             if (noHomePass.length > 0) pool = noHomePass;
+        }
+
+        // ③ 目标失效重抽 → 继承原方向（2026-08-20 主人定，见 AGENTS.md 规则 3.6）
+        const preferNear = options?.preferNearCityId;
+        if (preferNear && pool.length > 1) {
+            const distFromLost = roadRegistry.getRoadDistancesKmFrom(preferNear);
+            if (distFromLost) {
+                const scored = pool
+                    .map((s) => ({ s, d: distFromLost.get(s.targetId) }))
+                    .filter((x): x is { s: TargetScore; d: number } => typeof x.d === 'number');
+                if (scored.length > 0) {
+                    const min = Math.min(...scored.map((x) => x.d));
+                    // 留「最近的一档」而不是只留最近那一个：多军团仍能分散，不会全挤同一座城
+                    const near = scored.filter((x) => x.d <= min * 1.5).map((x) => x.s);
+                    if (near.length > 0) pool = near;
+                }
+            }
         }
 
         // 「打不打得过」闸门（2026-08-12 主人批准）：把明显啃不动的城从抽签池里摘掉。

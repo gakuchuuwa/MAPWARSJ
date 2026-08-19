@@ -2020,7 +2020,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xiongding_murongyong: { generalId: 'xiongding_murongyong', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_018', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'attack'},
+    xiongding_murongyong: { generalId: 'xiongding_murongyong', tier: 'ordinary', tacticalSkillId: 'ts_519', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_018', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
