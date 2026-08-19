@@ -885,7 +885,9 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_piaoyujin', name: '漂渝津', factionId: 'pinghai', lat: 39.02, lng: 117.6, type: 'pass', troops: 30000, region: 'NORTHEAST' },
 
     // ── 太行陉关隘 ──
-    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 30000, region: 'CENTRAL', mirror: true },
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
+
+
 
 ];
 
