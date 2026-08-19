@@ -1,1 +1,1 @@
-{"frames": 30, "frame_w": 120, "frame_h": 120, "dir": 11}
+{"frames": 30, "box_w": 120, "box_h": 120, "anchor_x": 60, "anchor_y": 60, "dir": 11}
