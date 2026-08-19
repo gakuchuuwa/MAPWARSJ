@@ -101,6 +101,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
         ],
     },
+    // 大金帝国·五国城/会宁（完颜宗弼 / 完颜陈和尚 · 铁浮图震天雷大阵 · 鱼鳞阵 4+3+2：女真铁浮屠 4 + 火焰弓 3 + 掷弹兵 2）
+    jurchen: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 4 },            // Row 0 前卫铁骑 = 女真铁浮屠 4骑（女真重甲铁骑前锋，如墙而进正面突贯）
+            { type: 'fire_archer', count: 3 },            // Row 1 中军神弓 = 吴火焰弓箭手 3人（火箭火矢连发，中坚烈焰压制）
+            { type: 'grenadier', count: 2 },              // Row 2 尾收火器 = 掷弹兵 2人（金军震天雷火药弹死士，后排范围轰炸破坚）
+        ],
+    },
+    // 金末忠孝军·真宁（完颜陈和尚 · 忠孝军飞火震天雷大阵 · 鱼鳞阵 4+3+2：铁浮图 4 + 火矛兵 3 + 掷弹兵 2）
+    xiqin: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 4 },            // Row 0 前卫铁骑 = 女真铁浮屠 4骑（忠孝军精锐重铠铁骑，前锋雷霆冲击）
+            { type: 'fire_lancer', count: 3 },            // Row 1 中军火矛 = 火矛手 3人（飞火枪突进，近距离喷火刺杀破阵）
+            { type: 'grenadier', count: 2 },              // Row 2 尾收火器 = 掷弹兵 2人（震天雷铁罐火药弹，后排范围轰炸破坚）
+        ],
+    },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     yanchuan_d: {
         formationMode: 'fish_scale',
