@@ -1304,13 +1304,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'crusader_knight', count: 2 },
         ],
     },
-    // 拜占庭帝国·君士坦丁堡（巴西尔二世 / 福卡斯 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 复合弓手 2）
+    // 拜占庭圣骑兵军团·君士坦丁堡/干尼亚（巴西尔二世 / 福卡斯 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 重装骑射手 2）
     baizanting: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3人
-            { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4人
-            { type: 'composite_bowman', count: 2 },  // Row 2 尾收压阵 = 复合弓手 2人
+            { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3骑（具装重铠甲骑兵前锋突破）
+            { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4骑（帝国王牌圣骑兵重锤冲击）
+            { type: 'cav_archer_heavy', count: 2 },  // Row 2 尾收压阵 = 重装骑射手 2骑（拜占庭重装弓骑兵两翼火力掩护）
         ],
     },
     kelite: {
@@ -1318,7 +1318,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'cataphract', count: 3 },
             { type: 'elite_cataphract', count: 4 },
-            { type: 'composite_bowman', count: 2 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
     // 陶里卡·赫尔松涅斯（阿斯普尔 · 萨尔马提亚具装铁骑军团 · 鹤翼阵 2+4+3：古典长矛兵 2 + 萨尔马提亚重骑主力 4 + 古典重装骑射 3）

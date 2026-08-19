@@ -171,6 +171,22 @@ export class BattleField implements IOpeningPulseSink {
      *    ② 突骑 kite 100→60（Scene13WarLayer，kite < 接战 65 = 被贴脸不能再后撤）——纯突骑守军
      *    不再能无视名将优势。实测 kite 60 不破坏「弓骑略强」：突骑打步兵照赢（损 ~75-82%）、
      *    被骑兵克照旧；混编攻 vs 纯突骑守 k=1.32 → 攻方 3/3 赢。纯 13 层，8/9/10 不读本函数。
+     *
+     * 🔴 [2026-08-19 主人改判：kite 60→70] 主人要「弓骑放一点风筝，不要站撸」。
+     *    kite 60 的代价是弓骑**完全不放风筝**——60 < 接战 65，敌人先进近战开砍、弓骑才退，
+     *    等于挨打后才后撤，观感上就是站着对砍。
+     *    war_sim 实测（PAIR=cav,horse_archer / melee,horse_archer，BONUS=1.32，5 种子）：
+     *      kite  60 → 骑兵克突骑余兵 24510 ｜ 步兵打突骑·突骑余兵 22232
+     *      kite  66 → 18108 ｜ 27150      （← 断崖就在这里）
+     *      kite  68 → 17752 ｜ 25830
+     *      kite  70 → 18522 ｜ 27178
+     *      kite  75 → 18866 ｜ 26636
+     *    🔴 **60→66 是断崖，66 往上全是平的**：65 是近战接战距离，kite 越过它，风筝就从
+     *    「完全不生效」变成「生效」，这是个二元开关；越过之后再往上加几乎不再变强。
+     *    所以「只加一点点」和「加到位」代价完全一样，没有折中档 —— 取 70（与原型 __war.html 一致，
+     *    风筝带更宽、观感更明显）。
+     *    代价：骑兵克突骑的优势下降约 26%（克制方向不变，骑兵仍 5/5 赢）。
+     *    要退回站撸把 Scene13WarLayer + scratch/war_sim.mjs 的 kite 全改回 60（两处必须同步）。
      */
     public getScene13PowerBonus(): { attacker: number; defender: number } {
         const attT = Math.max(1, this.attackerGroup.initialTotalTroops);
