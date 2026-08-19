@@ -1053,6 +1053,11 @@ export class CombatUI {
                 pointer-events: auto;
                 white-space: nowrap;
                 min-width: 0;
+                /* 🔴 [2026-08-19 放宽] 科技全开后每侧最多 16 条（拉丁），按内容自然宽会折成三行密排。
+                   顶部 HUD 是 fit-content 居中容器，两翼本来还空着大片屏幕 —— 给一个期望宽度把它用起来：
+                   flex-basis 取 min(38vw, 700px)（两翼 76vw + 中央跟随胶囊约 400px，1920 视口内放得下），
+                   shrink 保留 1，窄屏仍会自己收回去，不会把中央胶囊挤出屏幕。 */
+                flex: 0 1 min(38vw, 700px);
                 align-items: ${isAtt ? 'flex-start' : 'flex-end'};
                 text-align: ${isAtt ? 'left' : 'right'};
                 order: ${isAtt ? -1 : 1};
@@ -1125,7 +1130,8 @@ export class CombatUI {
         chipsWrap.style.cssText = `
             display: flex;
             flex-wrap: wrap;
-            gap: 2px 10px;
+            gap: 3px 16px;
+            width: 100%;
             align-items: center;
             justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
         `;
@@ -1139,19 +1145,23 @@ export class CombatUI {
                 align-items: center;
                 justify-content: center;
                 gap: 1px;
-                min-width: 28px;
+                min-width: 44px;
             `;
 
-            // 科技名（行 1）
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = t.name;
-            nameSpan.style.cssText = `
-                font-size: 11px;
-                line-height: 1.2;
-                color: ${nameColor};
-                opacity: 0.92;
-                white-space: nowrap;
-            `;
+            // 科技名（行 1）：🔴 乱斗模式（历史脚本关闭）→ 科技全开，晚近科技名（板甲/拇指环等）
+            //   会与时间线穿帮，故只显示效果行（纯数值不穿帮）；历史脚本开启后恢复显示名字。
+            if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) {
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = t.name;
+                nameSpan.style.cssText = `
+                    font-size: 11px;
+                    line-height: 1.2;
+                    color: ${nameColor};
+                    opacity: 0.92;
+                    white-space: nowrap;
+                `;
+                chip.appendChild(nameSpan);
+            }
 
             // 对应效果（行 2）
             const effSpan = document.createElement('span');
@@ -1164,7 +1174,6 @@ export class CombatUI {
                 white-space: nowrap;
             `;
 
-            chip.appendChild(nameSpan);
             chip.appendChild(effSpan);
             chipsWrap.appendChild(chip);
         }

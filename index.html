@@ -30,7 +30,10 @@
     <div id="notification-area"></div>
 
     <!-- 顶部中央统合 HUD 容器 -->
-    <div id="top-center-hud" style="position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:10002; display:flex; gap:10px; align-items:center; pointer-events:none; transition:all 0.3s ease;"></div>
+    <!-- 🔴 [2026-08-19] left:0/right:0 + justify-content:center，不要用 left:50%+translateX(-50%)：
+         后者的收缩宽度上限只有 50vw（包含块右半边），两翼科技胶囊再放宽也会被压回去（实测 304px）。
+         现在容器铺满 100vw 由 flex 居中，视觉位置不变，两翼可用宽度翻倍。 -->
+    <div id="top-center-hud" style="position:fixed; top:16px; left:0; right:0; z-index:10002; display:flex; gap:10px; align-items:center; justify-content:center; pointer-events:none; transition:all 0.3s ease;"></div>
 
     <!-- 左下 HUD：Stitch 833dbd17 -->
     <div id="game-time-hud" style="display: none;">
