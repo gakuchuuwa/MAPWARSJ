@@ -84,13 +84,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },
         ],
     },
-    // 白袍军团·虎牢关（陈庆之 · 白袍破阵纯骑军团 · 鱼鳞阵 3+4+2：精锐虎豹骑 3 + 精锐虎豹骑 4 + 精锐虎豹骑 2 / 9骑纯骑兵大阵）
+    // 白袍军团·虎牢关（陈庆之 · 白袍破阵纯骑军团 · 方形阵 3+3+3：精锐虎豹骑 3 + 精锐虎豹骑 3 + 精锐虎豹骑 3 / 9骑纯骑兵大阵）
     zhengzhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'square',
         slots: [
-            { type: 'elite_tiger_cavalry', count: 3 },       // Row 0 尖刀前锋 = 魏武虎豹骑精锐 3骑（白袍先锋骑兵突击破阵）
-            { type: 'elite_tiger_cavalry', count: 4 },       // Row 1 中军主力 = 魏武虎豹骑精锐 4骑（白袍主力骑兵雷霆贯穿）
-            { type: 'elite_tiger_cavalry', count: 2 },       // Row 2 尾收追击 = 魏武虎豹骑精锐 2骑（白袍扫荡铁骑高速合围）
+            { type: 'elite_tiger_cavalry', count: 3 },       // Row 0 前排 = 魏武虎豹骑精锐 3骑（白袍突骑先锋）
+            { type: 'elite_tiger_cavalry', count: 3 },       // Row 1 中坚 = 魏武虎豹骑精锐 3骑（白袍铁骑中坚）
+            { type: 'elite_tiger_cavalry', count: 3 },       // Row 2 后排 = 魏武虎豹骑精锐 3骑（白袍扫荡后卫）
         ],
     },
     // 先秦军团·朝歌/殷墟/岐山/孤竹（子受 / 妇好 / 姬发 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 双轮远程战车 2）
@@ -317,14 +317,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     xiangzhou: {
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
-        ],
-    },
-    tingzhou_d: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -1087,7 +1079,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },  // Row 2 中军后排支援 = 古典重装骑射手 3骑（斯基泰-萨尔马提亚复合强弓漫天箭雨）
         ],
     },
-    // 达尔达尼亚·特洛伊（赫克托耳 · 古典希腊重骑战阵）
+    // 达尔达尼亚·特洛伊（赫克托耳 · 特洛伊希皮乌斯重装步兵战阵 · 方形阵 3+3+3：纯希皮乌斯 3+3+3）
     teluoyi: {
         formationMode: 'square',
         slots: [
@@ -1155,13 +1147,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'paladin', count: 3 },
         ],
     },
-    // 西班牙·熙德 / 阿方索十一世 / 费尔南多三世 西班牙大方阵与希内特标枪铁骑军团（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 西班牙征服者 2）
+    // 西班牙·熙德 / 费尔南多三世 / 阿方索十一世等 西班牙大方阵与希内特中世纪圣骑战阵（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 十字军圣骑士 2）
     balunxiya: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长枪方阵 = 重装长枪兵 4人（纯步兵·无马，西班牙大方阵 Tercio 坚固长矛之墙）
+            { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长枪方阵 = 重装长枪兵 4人（纯步兵·无马，西班牙大方阵坚固长矛之墙）
             { type: 'elite_genitour', count: 3 },            // Row 1 中军标枪轻骑 = 标枪骑兵精锐 3骑（西班牙希内特 Jinete 穿甲标枪机动穿插）
-            { type: 'conquistador', count: 2 },              // Row 2 尾收火枪铁骑 = 西班牙征服者 2骑（马背火绳枪重装骑士排枪轰击）
+            { type: 'crusader_knight', count: 2 },           // Row 2 尾收圣殿铁骑 = 十字军圣骑士 2骑（收复失地十字军重装圣骑突击压阵）
         ],
     },
     guadaer: {
@@ -1169,7 +1161,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'elite_genitour', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     kasidiliya: {
@@ -1177,7 +1169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'elite_genitour', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     leangongguo: {
@@ -1185,7 +1177,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'elite_genitour', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     xigete: {
@@ -1193,7 +1185,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'elite_genitour', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     alagong: {
@@ -1201,7 +1193,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'elite_genitour', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     // 北欧与维京·奥拉夫 / 阿布萨隆 / 比尔格雅尔 诺斯狂战士军团（鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 精锐狂战士主力 4 + 掷矛手 2）

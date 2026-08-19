@@ -2853,7 +2853,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/zhaosong/kang_liangshidou.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5573,7 +5573,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/SLAVIC/daniebo_luomushenlafu.png": {
-            "scale": 0.93,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -19
         },
@@ -5583,7 +5583,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/luosi_yaluosilafu.png": {
-            "scale": 1.15,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": 10
         },
