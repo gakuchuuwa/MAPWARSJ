@@ -29,7 +29,7 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
-import { holdDeploy, releaseDeploy } from '../legion/DeployGate';
+import { armDeploy } from '../legion/DeployGate';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -95,12 +95,14 @@ export class RecruitmentSystem {
         // 奴儿干并入东北，其余支文化/子文化并入所属主干，开局一文化一军团）。
         const candidates = this.buildInitialSpawnPlan(cities);
 
-        // [2026-08-19 主人定] 开局集结：从现在起 hold，期间全军在都城列阵待命不移动。
-        // 🔴 必须在生成**之前**起闸：先生成再起闸的话，最早那几支已经开拔了几百毫秒
-        //    （错峰生成本身要花 支数×INITIAL_SPAWN_INTERVAL_MS ≈ 4 秒）。
+        // [2026-08-19 主人定] 开局集结：起闸，期间全军在都城列阵待命不移动，
+        // 到点（按**游戏运行时间**计，见 DeployGate）自动「选跟随军团 + 全军同时拔营」。
+        // 🔴 必须在生成**之前**起闸：先生成再起闸的话，最早那几支已经开拔了。
         const holdMs = GameConfig.LEGION.INITIAL_DEPLOY_HOLD_MS;
-        holdDeploy(holdMs);
-        const holdStartedAt = performance.now();
+        armDeploy(holdMs, () => {
+            (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+            gameLog('recruitment', `🚩 [募兵] 集结完毕，全军同时拔营（集结 ${holdMs}ms 游戏运行时间）`);
+        });
 
         // 错峰生成：每隔 INITIAL_SPAWN_INTERVAL_MS 放行 INITIAL_SPAWN_PER_TICK 支，
         // 让军团陆续登场而非同帧爆出（直播观感 + 避免 INP 卡顿）。
@@ -129,15 +131,8 @@ export class RecruitmentSystem {
             } else {
                 // 全部出完后再挂跟随，确保随机池包含全部文化区军团（名将优先随机）
                 gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
-                // 集结剩余时间到点 → 选跟随 + 全军同时拔营。
-                // 生成本身耗时 ≈ 支数×INITIAL_SPAWN_INTERVAL_MS，所以这里等的是**剩下那段**，
-                // 保证「拔营时刻」= runInitialSpawn 起算的 holdMs，与支数多少无关。
-                const rest = Math.max(0, holdMs - (performance.now() - holdStartedAt));
-                setTimeout(() => {
-                    (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
-                    releaseDeploy();   // 闸门本身到点也会自动失效，这里显式放行是为了与选跟随同一帧
-                    gameLog('recruitment', `🚩 [募兵] 集结完毕，全军拔营（集结 ${holdMs}ms）`);
-                }, rest);
+                // 「选跟随 + 拔营」不在这里做：军团是在 boot 阶段（游戏暂停中）生成的，
+                // 此刻主人还没点播放。交给 DeployGate 在游戏跑满 holdMs 后统一触发。
             }
         };
 

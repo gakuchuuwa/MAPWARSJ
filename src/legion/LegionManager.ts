@@ -48,6 +48,7 @@ import {
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
+import { tickDeploy } from './DeployGate';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -395,6 +396,9 @@ export class LegionManager {
     }
 
     public update(deltaTime: number): void {
+        // 开局集结闸门：只在游戏确实在跑（deltaTime>0）时推进，到点触发「选跟随 + 全军拔营」。
+        // 🔴 必须放在这里而不是按真实时间自跑：首发军团在 boot 阶段就生成了，那时游戏还暂停着。
+        if (deltaTime > 0) tickDeploy();
         this.ownCitiesFrameCache.clear(); // 行军减兵复位查城的每帧缓存，跨帧失效
         this.armies.forEach(army => {
             if (army.isDestroyed || army.getTroops() <= 0) return;

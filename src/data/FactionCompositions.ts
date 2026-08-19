@@ -84,12 +84,37 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },
         ],
     },
-    guzhu: {
-        formationMode: 'crane_wing',
+    // 先秦军团·朝歌/殷墟/岐山/孤竹（子受 / 妇好 / 姬发 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 双轮远程战车 2）
+    yin: {
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'tiger_rider', count: 2 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 3 },
+            { type: 'jian_swordsman', count: 3 },            // Row 0 前卫抗线 = 华夏刀剑手 3人（商周戈盾甲士）
+            { type: 'bowman', count: 4 },                    // Row 1 中军主力 = 弓兵 4人（先秦步弓手齐射）
+            { type: 'war_chariot_ranged', count: 2 },        // Row 2 尾收战车 = 双轮远程战车 2乘（先秦驷马戎车压阵轰击）
+        ],
+    },
+    shang: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    zhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    guzhu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
         ],
     },
     // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 明军三大营步骑火协同军团 · 鱼鳞阵 3+4+2：持盾刀剑手 3 + 黑光铠骑兵主力 4 + 神机箭火箭车 2）
@@ -217,86 +242,85 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
         ],
     },
-    // 北宋·赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 等火矛手军团（鱼鳞阵 3+4+2）
-    // 2026-08-18 主人定「所有宋武将统一此阵」：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2
+    // 赵宋军团·开封及宋将（赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 / 宗泽 / 韩世忠 / 文天祥 · 鱼鳞阵 3+4+2：火矛兵 3 + 火矛兵精锐主力 4 + 火焰弓手 2）
     song: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },               // Row 0 前卫突进 = 火矛兵 3人
+            { type: 'elite_fire_lancer', count: 4 },         // Row 1 中军主力 = 精锐火矛兵 4人（赵宋突火枪精锐主力）
+            { type: 'fire_archer', count: 2 },               // Row 2 尾收火矢 = 吴火焰弓箭手 2人（后排烈焰火矢齐射）
         ],
     },
     heng1: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     changshan: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     zhai_han: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     yanzhou: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     huan: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     didao: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     qing: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     xiangzhou: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     tingzhou_d: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
