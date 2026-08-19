@@ -72,7 +72,18 @@ export interface MilitaryTech {
     de: string;
     /** 生效年份；null = 开局自带（早于时间线起点 -334） */
     year: number | null;
-    /** 史实依据（播报与审校用） */
+    /**
+     * 史实依据 = **给 `year` 找的断代锚点**（这条技术什么时候算成立），
+     * 🔴 **不是 `cultures` 的适用范围依据** —— 两者不对应是常态，别拿 basis 去"纠正" cultures：
+     *   · 锁子甲 basis 写凯尔特／罗马，cultures 却含 NORTH/HEXI（发明者 ≠ 普及范围）
+     *   · 鳞马铠 basis 写帕提亚成型，cultures 是全文化
+     *   · 安息战术 basis 写卡莱战役（帕提亚），cultures 反而**不含** WEST_ASIA
+     *     —— 给的是骑射传统文化，不是给帕提亚的地理继承者
+     *   · 血统 basis 写汉武帝得大宛马，cultures 给 HEXI 不给 CENTRAL —— 汉代马政基地在
+     *     河西陇右官牧，且中原自汉以降长期缺马（唐靠陇右牧监、宋保马法失败）。这是**对的**，
+     *     2026-08-19 有 AI 据 basis 提议补 CENTRAL/NORTH，已按史实与平衡（中原已 13 条、
+     *     草原仅 11 条，血统是草原系少数差异化项）否决。
+     */
     basis: string;
     effects: readonly TechEffect[];
     /**

@@ -1153,20 +1153,31 @@ export class CombatUI {
             };
         };
 
+        // 攻/守两翼标签的 title 悬停 = **主人自查工具，不是给观众的信息层**。
+        //   本作无玩家操作、以直播观赏为准：直播画面前的观众没有鼠标，悬停内容他们永远看不到。
+        //   它的用途是调平衡时快速核对某方吃到的全维度累计加成，别再往它上面挂「观众要看的东西」。
+        //   观众侧的强弱表达只能靠常驻可见元素（分色卡片本身）与 13 的战况演出。
         // 攻方左标
         if (isAtt) {
             const tag = document.createElement('span');
             tag.textContent = '⚔️ 攻方科技';
-            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px;';
+            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help;';
+            const totalSummary = summarizeTechEffects(own).join(' · ');
+            tag.title = `⚔️ 攻方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
         }
 
         // 科技列表（每个科技一个垂直对齐的独立卡片/小列）
         const chipsWrap = document.createElement('div');
+        // 🔴 [2026-08-19 实测] 必须 wrap，不能 nowrap：科技全开后拉丁 16 条 / 日耳曼 15 条，
+        //   单行需 937px，而 1920 屏每侧只分得 806px —— nowrap 会压住中央跟随胶囊 200px 并顶出屏幕
+        //   （1600 压 360px、1366 压 477px，只有 2560 超宽屏放得下）。折行后每侧最多两行，
+        //   卡片有边框分色，两行仍然一眼分得清，不会回到「一片数字」的老问题。
         chipsWrap.style.cssText = `
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 3px;
+            max-width: 100%;
             align-items: center;
             justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
         `;
@@ -1226,7 +1237,9 @@ export class CombatUI {
         if (!isAtt) {
             const tag = document.createElement('span');
             tag.textContent = '守方科技 🛡️';
-            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px;';
+            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help;';
+            const totalSummary = summarizeTechEffects(own).join(' · ');
+            tag.title = `🛡️ 守方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
         }
 

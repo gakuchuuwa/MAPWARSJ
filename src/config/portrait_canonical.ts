@@ -36,8 +36,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/guge_chizhaxichabade.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/WESTERN/__多余__WESTERN_05.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/TIBET/kangba_suonuomugunbu.png": "/assets/TIBET/__多余__WESTERN_08.png",
-    "/assets/TIBET/nvguo_mojie.png": "/assets/TIBET/__多余__TIBET_09.png",
-    "/assets/WEST_ASIA/osman_muhanmodeershi.png": "/assets/WEST_ASIA/gulaishi_aibusufuyang.png",
-    "/assets/WEST_ASIA/sumeier_zhajixi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png",
+    "/assets/TIBET/nvguo_mojie.png": "/assets/TIBET/__多余__TIBET_09.png",    "/assets/WEST_ASIA/sumeier_zhajixi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png",
     "/assets/xianqin/quanrong_yiquhai.png": "/assets/xianqin/__多余__xianqin_01.png"
 };
