@@ -225,6 +225,7 @@ export class CombatUI {
     private leftTechBox!: HTMLDivElement;
     private rightTechBox!: HTMLDivElement;
     private toggleCollapseBtn!: HTMLButtonElement;
+    private exitBattleBtn!: HTMLButtonElement;
     private isCollapsed: boolean = false;
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
@@ -995,6 +996,47 @@ export class CombatUI {
             this.toggleCollapse();
         });
         this.container.appendChild(this.toggleCollapseBtn);
+
+        // [2026-08-19 主人指令] 退出战斗按钮：放到右上角边缘安全区域（避开军情），防止误点，全战斗模式通用
+        this.exitBattleBtn = document.createElement('button');
+        this.exitBattleBtn.className = 'combat-ui-exit-btn';
+        this.exitBattleBtn.textContent = '⚔️ 退出战斗';
+        this.exitBattleBtn.title = '点击后按当前战况自动结算战果并退出';
+        this.exitBattleBtn.style.cssText = [
+            'position:fixed',
+            'top:14px',
+            'right:110px',
+            'z-index:450',
+            'padding:5px 14px',
+            'background:linear-gradient(180deg, rgba(28,22,16,0.92) 0%, rgba(12,10,8,0.96) 100%)',
+            'border:1px solid rgba(212,175,55,0.6)',
+            'border-radius:5px',
+            'color:#f5e6c8',
+            "font-family:'Noto Serif SC','Cinzel',serif",
+            'font-size:13px',
+            'font-weight:bold',
+            'cursor:pointer',
+            'pointer-events:auto',
+            'user-select:none',
+            'display:none',
+            'box-shadow:0 2px 10px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,215,0,0.25)',
+            'transition:all 0.2s ease',
+        ].join(';');
+        this.exitBattleBtn.addEventListener('mouseenter', () => {
+            this.exitBattleBtn.style.borderColor = '#ffd700';
+            this.exitBattleBtn.style.color = '#ffffff';
+            this.exitBattleBtn.style.boxShadow = '0 0 12px rgba(255,215,0,0.4), inset 0 1px 2px rgba(255,215,0,0.4)';
+        });
+        this.exitBattleBtn.addEventListener('mouseleave', () => {
+            this.exitBattleBtn.style.borderColor = 'rgba(212,175,55,0.6)';
+            this.exitBattleBtn.style.color = '#f5e6c8';
+            this.exitBattleBtn.style.boxShadow = '0 2px 10px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,215,0,0.25)';
+        });
+        this.exitBattleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.exitCurrentBattle();
+        });
+        document.body.appendChild(this.exitBattleBtn);
 
         this.applyPortraitFacing('attacker');
         this.applyPortraitFacing('defender');
@@ -2683,6 +2725,7 @@ export class CombatUI {
         this.boundRegionalBattleField = null;
         this.currentBattleType = battle.type;
         this.isVisible = true;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
         this.refreshCorrectorDataOnBattleOpen();
         this.resetBattleOverlays();
         this.attackerFactionId = battle.attacker.factionId;
@@ -2716,6 +2759,7 @@ export class CombatUI {
         this.currentBattle = null;
         this.currentRegionalUnits = { attackers, defenders };
         this.boundRegionalBattleField = battleField ?? null;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
         this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
@@ -3975,6 +4019,7 @@ export class CombatUI {
         else this.closePortraitPicker();
         this.clearRegionalTimers();
         this.isVisible = false;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
         this.currentBattle = null;
         this.currentRegionalUnits = null;
         this.boundRegionalBattleField = null;
@@ -4002,6 +4047,30 @@ export class CombatUI {
             this.rightTechBox.style.display = 'none';
             this.rightTechBox.dataset.sig = '';
             this.rightTechBox.textContent = '';
+        }
+    }
+
+    /**
+     * [2026-08-19 主人指令] 点击退出战斗：
+     * 1. 立即隐藏按钮（防连点）；
+     * 2. 若处于 13 战斗模式中，调用 Scene13WarLayer.requestExitWithResult() 自动结算；
+     * 3. 若处于大地图区域战斗/攻城战中，调用 boundRegionalBattleField.forceResolve() 自动结算；
+     * 4. 自动按当前战况与有效战力比秒速结算战果并退出。
+     */
+    public exitCurrentBattle(): void {
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
+
+        const game = (window as any).game;
+        if (game?.scene13War?.isActive?.()) {
+            game.scene13War.requestExitWithResult();
+            return;
+        }
+
+        if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+            this.boundRegionalBattleField.forceResolve();
+            this.hide();
+        } else if (this.currentBattle) {
+            this.hide();
         }
     }
 

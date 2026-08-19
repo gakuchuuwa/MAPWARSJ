@@ -362,12 +362,12 @@ export const TEUTONIC_FACTION_COMPOSITION: readonly CompositionSlot[] = [
 ];
 
 /**
- * 拜占庭帝国·鱼鳞阵（3+4+2）：拜占庭圣骑兵(3) + 拜占庭圣骑兵精锐(4) + 复合弓手(2)
+ * 拜占庭帝国·鱼鳞阵（3+4+2）：拜占庭圣骑兵(3) + 拜占庭圣骑兵精锐(4) + 重装骑射手(2)
  */
 export const BYZANTINE_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3人
-    { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4人
-    { type: 'composite_bowman', count: 2 },  // Row 2 尾收压阵 = 复合弓手 2人
+    { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3骑
+    { type: 'elite_cataphract', count: 4 },  // Row 1 中军突破主力 = 拜占庭圣骑兵精锐 4骑
+    { type: 'cav_archer_heavy', count: 2 },  // Row 2 尾收压阵 = 重装骑射手 2骑
 ];
 
 /**
