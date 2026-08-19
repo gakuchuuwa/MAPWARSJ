@@ -1787,6 +1787,13 @@ const SLIDE_W = 0.4;
  *    实测 0.5 这一档与现状时长持平甚至略快（步 202/174→195/175s、骑 147/144→137/142s）。
  */
 const KEEP_TARGET_HP = 0.5;
+/**
+ * 【放风筝】一轮后撤最多白跑多远（px）—— 主人 2026-08-19 定「撤退多少米、一次攻击都没有就不再撤退」。
+ * 期间只要射出过一次就清零重新计。跑满这个距离仍一箭未发 = 追兵与自己同速（骑兵追骑射），
+ * 风筝在这种对手面前不成立，继续退只是白挨打，改为转身硬拼。
+ * 300px ≈ 6 个身位 ≈ 4 次完整后撤（触发距离 70），够判断「甩不掉」了。
+ */
+const KITE_RETREAT_CAP = 300;
 /** 哈希键用数字不用字符串：每人每帧拼 9 次字符串 = 两万多次分配，实测是推挤慢的元凶 */
 const HKEY = (gx: number, gy: number): number => (gx + 4096) * 8192 + (gy + 4096);
 /** 近战哈希格 */
@@ -1872,6 +1879,27 @@ interface WarMan {
      * true 期间移动只跟自己的槽位，够不着敌人**不追**；索敌与出手照旧（远程在队形里放箭）。
      */
     march: boolean;
+    /**
+     * 【放风筝】本兵**自己的**后撤触发距离（出生时按 wt.kite ±15% 抽一次）。
+     * 🔴 为什么要每人抖一下：全体共用同一个阈值 → 几百个弓骑在同一帧一起触发，
+     *    整条战线像被推着整片平移（主人 2026-08-19 报「有点乱」）。抖开之后前排先退、
+     *    后排后退，是波浪式的，才像各自在躲。
+     */
+    kiteR?: number;
+    /**
+     * 【放风筝】本轮后撤累计跑了多远（px）。**打出一次攻击就清零**。
+     * 见 KITE_RETREAT_CAP：跑够那么远却一箭没射 = 这个敌人根本甩不掉（同速骑兵追杀），
+     * 再跑就是自废武功，此时永久放弃风筝、转身硬拼。
+     */
+    kiteDist?: number;
+    /** 【放风筝】本场已放弃风筝（撤退白跑太远，见 kiteDist）；置位后不再后撤 */
+    kiteGaveUp?: boolean;
+    /**
+     * 【放风筝】当前是否处于「转身跑开」状态（只有带 kite 的弓骑用）。
+     * 带迟滞：敌人逼近到 kite 内进入，拉开到 kite×1.35 才退出 —— 不带迟滞会在阈值上
+     * 每帧翻面（跑半步就回身、敌人再近又跑），动画抖成一团。
+     */
+    kiting?: boolean;
     /**
      * 【忍者奇袭】本兵是否从敌军背后出生（见 spawnTick 的 flankPort）。
      * 用途只有一个：`aimAt` 里不许它走**本方共享的巡逻航路** —— 那条航路的第一站是
@@ -3318,6 +3346,8 @@ export class Scene13WarLayer {
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
                     flank: isFlank,
+                    // 放风筝触发距离：每人 ±15% 抖开，避免整条战线同帧一起后退（见 WarMan.kiteR）
+                    kiteR: (() => { const k = WAR_TYPES[s.key]?.kite; return k ? k * (0.85 + Math.random() * 0.3) : undefined; })(),
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -3707,6 +3737,44 @@ export class Scene13WarLayer {
             const foe = m.foe;
             if (foe) {
                 const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
+                /* ── 【放风筝】主人 2026-08-19 定「不要站撸」──────────────────────────
+                 * 旧实现（在攻击分支末尾）只把坐标往后挪，**不改朝向、不切走路状态**，
+                 * 于是弓骑播着拉弓动作、脸朝敌人、身体向后滑 —— 主人原话「成了向后平移」。
+                 * 现在改成真正的「打了就跑」：
+                 *   · 敌人进 kite → 本帧**不打**，转身朝远离方向跑（dir 按逃跑方向、st=0 走路动画）
+                 *   · 拉开到 kite×1.35 才回身（迟滞，否则在阈值上每帧翻面抖成一团）
+                 * 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替。
+                 */
+                if (wt.kite && !m.kiteGaveUp) {
+                    const kr = m.kiteR ?? wt.kite;       // 每人自己的触发距离（±15%，见 WarMan.kiteR）
+                    const kd = Math.sqrt(fd2);
+                    if (!m.kiting && kd < kr) m.kiting = true;
+                    else if (m.kiting && kd > kr * 1.35) m.kiting = false;
+                    if (m.kiting) {
+                        const dx = m.x - foe.x, dy = m.y - foe.y, d = kd || 1;
+                        const step = stats.spd * dt;
+                        const nx = m.x + dx / d * step, ny = m.y + dy / d * step;
+                        const [bx, by] = this.fieldBound(nx, ny);
+                        // 🔴 退到屏幕边上就**别退了，回身打**（主人 2026-08-19 定）：
+                        //    fieldBound 会把越界的坐标 clamp 回场内，位置不再变化，
+                        //    但 kiting 仍为 true（敌人还在触发距离内）→ 贴着边一直播跑动画、
+                        //    一直不还手，站着白挨打。退不动就说明退无可退，转身射比装死强。
+                        if (Math.abs(bx - nx) > 0.5 || Math.abs(by - ny) > 0.5) {
+                            m.kiting = false;
+                        } else {
+                            m.x = bx; m.y = by;
+                            m.dir = this.dir8(dx, dy);   // 朝向 = 逃跑方向 → 转身跑，不是倒着滑
+                            m.st = 0;                    // 走路状态：尾部才会推走路动画
+                            m.fightT = 0;
+                            // 白跑计数：射出一箭就清零（见下方攻击处）；跑满上限仍零输出 → 本场放弃风筝
+                            m.kiteDist = (m.kiteDist ?? 0) + step;
+                            if (m.kiteDist > KITE_RETREAT_CAP) { m.kiteGaveUp = true; m.kiting = false; }
+                            if (m.fadeT > 0) m.fadeT -= dt;
+                            m.ph += dt * 8;
+                            continue;                    // 跑的这一帧不出手、不计围殴
+                        }
+                    }
+                }
                 const close = fd2 < 65 * 65;
                 // 🔴 [2026-08-17 修·「动作切换时的颤抖」] 够得着的判定必须带迟滞。
                 //    没有迟滞时，站在射程/贴身边缘上的兵会每帧翻面：
@@ -3917,6 +3985,8 @@ export class Scene13WarLayer {
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
                 const dps = dmgVs(shooter, target) / shooter.reload;
+                // 放风筝白跑计数清零：这一帧真的在输出 → 说明退位有效，可以继续风筝（见 KITE_RETREAT_CAP）
+                if (m.kiteDist) m.kiteDist = 0;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
@@ -3969,10 +4039,6 @@ export class Scene13WarLayer {
                             size: 0.6 + Math.random() * 0.3,
                         });
                     }
-                }
-                if (wt.kite) {
-                    const dx = m.x - foe.x, dy = m.y - foe.y, d = Math.hypot(dx, dy) || 1;
-                    if (d < wt.kite) { m.x += dx / d * stats.spd * dt; m.y += dy / d * stats.spd * dt; }
                 }
             } else {
                 if ((m.lock ?? 0) > 0) {
