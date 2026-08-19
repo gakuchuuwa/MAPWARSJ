@@ -5238,7 +5238,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/LATIN/aguelabu_aokeba.png": {
-            "scale": 0.91,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -6657,16 +6657,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_58.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": 2
-        },
-        "/assets/WEST_ASIA/osman_muhanmodeershi.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 25
-        },
         "/assets/HEXI/__闲置__HEXI_18.png": {
             "scale": 0.81,
             "offsetX": 10,
@@ -6676,6 +6666,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/WEST_ASIA/__多余__WEST_ASIA_02.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/WEST_ASIA/osman_muhanmodeershi.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/WEST_ASIA/osman_mehmed_ii.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/LATIN/buni_hanniba.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

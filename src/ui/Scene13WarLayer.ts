@@ -1166,6 +1166,40 @@ const MIN_RANGE_TYPES: Record<string, number> = {
 const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 const FIRE_LANCER_VOLLEY = 3;
 const FIRE_LANCER_CHARGE = 30;
+
+// ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
+// 素材已瘦身到 public/SUCAI_FX/（抽帧 8~10 + 裁透明边 + 16 向降 8 向，7GB→71MB）。
+// 单组（爆炸）= 1 张 fly_0.png；多向（炮口焰）= dir00..dir07 各 1 张，各方向 box/anchor 独立。
+const FX_CFG: Record<string, { path: string; dirs: number }> = {
+    FX_EXPLOSION: { path: 'IMPACT_EXPLOSIONS/IMPACT_EXPLOSION', dirs: 1 },
+    FX_PETARD: { path: 'IMPACT_PETARD', dirs: 1 },
+    FX_MUZZLE_BOMBARD: { path: 'MUZZLE_BOMBARDCANNON', dirs: 8 },
+    FX_MUZZLE_ORGAN: { path: 'MUZZLE_ORGANGUN', dirs: 8 },
+    FX_MUZZLE_HAND: { path: 'MUZZLE_HANDCANNON', dirs: 8 },
+    FX_MUZZLE_CONQ: { path: 'MUZZLE_CONQUISTADOR', dirs: 8 },
+    FX_MUZZLE_FIRELANCE: { path: 'MUZZLE_FIRE_LANCER', dirs: 8 },
+};
+/** 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度，视觉初值待实测调）。 */
+const FX_SCALE: Record<string, number> = {
+    FX_EXPLOSION: 1.3, FX_PETARD: 1.2,
+    FX_MUZZLE_BOMBARD: 0.6, FX_MUZZLE_ORGAN: 0.5, FX_MUZZLE_HAND: 0.5,
+    FX_MUZZLE_CONQ: 0.5, FX_MUZZLE_FIRELANCE: 0.7,
+};
+/** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
+const FX_DUR: Record<string, number> = {
+    FX_EXPLOSION: 0.45, FX_PETARD: 0.4,
+    FX_MUZZLE_BOMBARD: 0.18, FX_MUZZLE_ORGAN: 0.18, FX_MUZZLE_HAND: 0.15,
+    FX_MUZZLE_CONQ: 0.15, FX_MUZZLE_FIRELANCE: 0.25,
+};
+/** 火器兵种 → 炮口焰特效 key（按口径/枪型区分）。 */
+const FIREARM_MUZZLE: Record<string, string> = {
+    bombard_cannon: 'FX_MUZZLE_BOMBARD', houfnice: 'FX_MUZZLE_BOMBARD',
+    organ_gun: 'FX_MUZZLE_ORGAN', elite_organ_gun: 'FX_MUZZLE_ORGAN',
+    hand_cannoneer: 'FX_MUZZLE_HAND', janissary: 'FX_MUZZLE_HAND',
+    elite_janissary: 'FX_MUZZLE_HAND', royal_janissary: 'FX_MUZZLE_HAND',
+    conquistador: 'FX_MUZZLE_CONQ', elite_conquistador: 'FX_MUZZLE_CONQ',
+    hussite_wagon: 'FX_MUZZLE_HAND', elite_hussite_wagon: 'FX_MUZZLE_HAND',
+};
 /**
  * 每方开局数 + 每次补兵批量 = 324（2026-08-18 主人改：9 口 × 36 = 每口 6×6 方正）。
  * 成批补：开局双方各出 324；之后一方场上 < 150 才再补 324（见 TRIGGER）。
@@ -1926,6 +1960,32 @@ interface WarSpark {
     size: number;
 }
 
+/** 一次性 DE 攻击特效实例（2026-08-19 替换手绘火花粒子，独立生命周期不挂兵相位）。 */
+interface WarFx {
+    type: string;   // FX_CFG 的 key
+    x: number;
+    y: number;
+    dir: number;    // 8 向（单组特效取 0）
+    t: number;      // 已播放时长（秒）
+    dur: number;    // 总时长（秒）
+    scale: number;  // 缩放
+}
+
+/** DE 特效单个方向素材（多向特效各方向 box/anchor 独立，紧致裁边）。 */
+interface FxDir {
+    img: HTMLImageElement | null;
+    n: number;
+    fw: number;
+    fh: number;
+    hx: number;
+    hy: number;
+}
+
+/** DE 特效缓存：单组 = 1 个方向，多向（炮口焰）= 8 个方向。 */
+interface FxAsset {
+    dirs: FxDir[];
+}
+
 interface WarCorpse {
     x: number;
     y: number;
@@ -2029,6 +2089,10 @@ export class Scene13WarLayer {
     private arrows: WarArrow[] = [];
     private slashes: WarSlash[] = [];
     private sparks: WarSpark[] = [];
+    /** DE 攻击特效实例（爆炸/炮口焰，一次性生命周期） */
+    private fxs: WarFx[] = [];
+    /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
+    private fxBank: Record<string, FxAsset> = {};
     private fallenFlags: WarFallenFlag[] = [];
     /** 场景树装饰（start 时随机布景，stop 清空） */
     private trees: SceneTree[] = [];
@@ -2911,26 +2975,58 @@ export class Scene13WarLayer {
         }).catch(() => { this.pending--; });
     }
 
-    /** 炮弹/手榴弹落地爆炸：径向散开一片火星（2026-08-16 热兵器特效）。 */
-    private explode(x: number, y: number): void {
-        const colors = ['#FFD800', '#FF8C00', '#FF4500', '#FFF4D0'];
-        const count = 14;
-        for (let i = 0; i < count; i++) {
-            const ang = Math.random() * Math.PI * 2;
-            const spd = 20 + Math.random() * 60;
-            this.sparks.push({
-                x, y,
-                vx: Math.cos(ang) * spd,
-                vy: Math.sin(ang) * spd - 24,   // 略向上偏，模拟爆炸气浪
-                t: 0,
-                dur: 0.25 + Math.random() * 0.30,
-                color: colors[(Math.random() * colors.length) | 0],
-                size: 1.5 + Math.random() * 2.0,
-            });
+    /** 按需加载 DE 攻击特效（单组 1 向 / 炮口焰 8 向，各方向 box/anchor 独立）。 */
+    private ensureFx(type: string): void {
+        if (this.fxBank[type]) return;
+        const cfg = FX_CFG[type];
+        if (!cfg) return;
+        const asset: FxAsset = { dirs: [] };
+        this.fxBank[type] = asset;   // 占位先立，防同一 type 重复加载
+        const base = `/SUCAI_FX/${cfg.path}/`;
+        for (let d = 0; d < cfg.dirs; d++) {
+            const sub = cfg.dirs > 1 ? `dir${String(d).padStart(2, '0')}/` : '';
+            const fd: FxDir = { img: null, n: 0, fw: 0, fh: 0, hx: 0, hy: 0 };
+            asset.dirs.push(fd);
+            this.pending++;
+            this.loadProjMeta(`${base}${sub}`).then(meta => {
+                if (meta) {
+                    fd.n = meta.frames; fd.fw = meta.box_w; fd.fh = meta.box_h;
+                    fd.hx = meta.anchor_x; fd.hy = meta.anchor_y;
+                }
+                const im = new Image();
+                im.onload = () => { fd.img = im; this.pending--; };
+                im.onerror = () => { this.pending--; };
+                im.src = `${base}${sub}fly_0.png`;
+            }).catch(() => { this.pending--; });
         }
     }
 
-    /** 火炮炮口焰：发射瞬间炮口火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）。 */
+    /** 生成一次性 DE 攻击特效（爆炸/炮口焰），独立生命周期，不挂兵相位。 */
+    private spawnFx(type: string, x: number, y: number, dir: number): void {
+        this.ensureFx(type);
+        this.fxs.push({
+            type, x, y, dir,
+            t: 0,
+            dur: FX_DUR[type] ?? 0.3,
+            scale: FX_SCALE[type] ?? 1,
+        });
+    }
+
+    /** 爆炸特效：径向对称（单组 1 向），dir 取 0。 */
+    private explode(type: 'FX_EXPLOSION' | 'FX_PETARD', x: number, y: number): void {
+        this.spawnFx(type, x, y, 0);
+    }
+
+    /** 火器炮口焰：发射瞬间喷出 DE 炮口焰特效（按兵种口径选 MUZZLE_*）。 */
+    private spawnFirearmMuzzle(m: WarMan, ax: number, ay: number): void {
+        const type = FIREARM_MUZZLE[m.key] ?? 'FX_MUZZLE_HAND';
+        const ang = Math.atan2(ay, ax);
+        const ox = m.x + Math.cos(ang) * UNIT_PX * 0.6;
+        const oy = m.y + Math.sin(ang) * UNIT_PX * 0.6 - UNIT_PX * 0.4;
+        this.spawnFx(type, ox, oy, this.dir8(ax, ay));
+    }
+
+    /** 无攻击动画车辆（战车/弩炮）射击尘烟：素色火花，不是火药（射的是箭）。 */
     private muzzleFlash(m: WarMan, ax: number, ay: number, palette?: readonly string[]): void {
         const ang = Math.atan2(ay, ax);
         const ox = m.x + Math.cos(ang) * UNIT_PX * 0.6;
@@ -2969,23 +3065,10 @@ export class Scene13WarLayer {
                 proj: 'PROJ_SHOT',
             });
         }
-        // 矛头喷火：沿朝向喷一串橙红火焰火星
+        // 矛头喷火：DE 火矛炮口焰特效（沿朝向）
         const ox = m.x + Math.cos(ang) * UNIT_PX * 0.5;
         const oy = m.y + Math.sin(ang) * UNIT_PX * 0.5 - UNIT_PX * 0.45;
-        const flame = ['#FFD800', '#FF8C00', '#FF4500', '#FFF4D0'];
-        for (let i = 0; i < 9; i++) {
-            const spd = 26 + Math.random() * 54;
-            const spread = (Math.random() - 0.5) * 1.0;
-            this.sparks.push({
-                x: ox, y: oy,
-                vx: Math.cos(ang + spread) * spd,
-                vy: Math.sin(ang + spread) * spd - 8,
-                t: 0,
-                dur: 0.14 + Math.random() * 0.22,
-                color: flame[(Math.random() * flame.length) | 0],
-                size: 1.2 + Math.random() * 1.5,
-            });
-        }
+        this.spawnFx('FX_MUZZLE_FIRELANCE', ox, oy, this.dir8(ax, ay));
     }
 
     private dir8(dx: number, dy: number): number {
@@ -3585,7 +3668,7 @@ export class Scene13WarLayer {
                 }
                 // 炸药自爆兵（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性范围 AoE 伤害并自爆牺牲）
                 if (SUICIDE_TYPES.has(m.key) && close && m.hp > 0) {
-                    this.explode(m.x, m.y);
+                    this.explode('FX_PETARD', m.x, m.y);
                     // 自爆兵 key 出生时已校验在 WAR_TYPES（原 petard 兜底不会触发；statsFor 内部有 light_infantry 防崩）
                     // [性能] 复用本轮已取的 wt，别再查一遍分表（同一循环内同一个兵，结果必然相同）
                     const shooter = wt;
@@ -3651,8 +3734,8 @@ export class Scene13WarLayer {
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
-                        // 火器炮口焰/枪口焰：发射瞬间火焰闪光（DE 攻击动画含炮口闪光，这里用火花补）
-                        if (isFirearm) this.muzzleFlash(m, ax, ay);
+                        // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效
+                        if (isFirearm) this.spawnFirearmMuzzle(m, ax, ay);
                         // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
                         // 用素色而不是火器的橙黄焰 —— 它们射的是箭，不是火药。
                         else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
@@ -3781,10 +3864,10 @@ export class Scene13WarLayer {
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         for (const a of this.arrows) a.t += dt;
         // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
-        // 炮弹/手榴弹落地瞬间 → 爆炸火花（径向散开，2026-08-16 热兵器特效）。
+        // 炮弹/手榴弹落地瞬间 → DE 爆炸特效（径向对称）。
         for (const a of this.arrows) {
             if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_GRENADE')) {
-                this.explode(a.x + a.dx * a.len, a.y + a.dy * a.len);
+                this.explode(a.proj === 'PROJ_GRENADE' ? 'FX_PETARD' : 'FX_EXPLOSION', a.x + a.dx * a.len, a.y + a.dy * a.len);
             }
         }
         this.arrows = this.arrows.filter(a => a.t < (a.delay ?? 0) + a.dur);

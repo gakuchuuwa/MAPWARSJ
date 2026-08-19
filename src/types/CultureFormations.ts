@@ -112,7 +112,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
-    TIBET:        'fish_scale',   // 青藏：答剌罕前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
+    TIBET:        'fish_scale',   // 青藏：黑光铠骑兵前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
@@ -1129,16 +1129,16 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 12. 青藏 答剌罕骑兵+精锐答剌罕骑兵+蒙古突骑（鱼鳞阵 3+4+2：答剌罕前卫 + 精锐答剌罕突击主力 + 蒙古突骑后排支援） */
+/** 12. 青藏 黑光铠骑兵+精锐答剌罕骑兵+蒙古突骑（鱼鳞阵 3+4+2：黑光铠骑兵前卫 3 + 精锐答剌罕骑兵主力 4 + 蒙古突骑后排支援 2） */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tarkan', count: 3 },       // Row 0 前卫 = 答剌罕骑兵 3人
-            { type: 'elite_tarkan', count: 4 }, // Row 1 中军突击主力 = 精锐答剌罕骑兵 4人
-            { type: 'mangudai', count: 2 }      // Row 2 尾收支援 = 蒙古突骑 2人
+            { type: 'hei_kuang', count: 3 },       // Row 0 前卫 = 黑光铠骑兵 3骑
+            { type: 'elite_tarkan', count: 4 },    // Row 1 中军突击主力 = 精锐答剌罕骑兵 4骑
+            { type: 'mangudai', count: 2 }         // Row 2 尾收支援 = 蒙古突骑 2骑
         ]
     }
 ];
