@@ -38,6 +38,25 @@ public/SUCAI/0AD_UNITS
 public/SUCAI/samurai_sprites
 public/SUCAI/STRONGHOLD_EUROPE
 public/SUCAI/AOE1_DE_UNITS
+# DE 攻击特效原图（17 个，共 ~7GB 高帧率大图）。已瘦身到 public/SUCAI_FX（68MB）供 13 用，
+# 原图是瘦身的唯一上游（抽帧/裁边/降向参数日后要回调），本地保留、不部署、不入库。
+public/SUCAI/FLAMETHROWER_FLAME
+public/SUCAI/EXPLODING_BOLT
+public/SUCAI/IMPACT_PETARD
+public/SUCAI/IMPACT_TREBUCHET_FIRE
+public/SUCAI/IMPACT_TREBUCHET_SMOKE
+public/SUCAI/GROUND_STRIKE
+public/SUCAI/IMPACT_DUST
+public/SUCAI/MUZZLE_CANNONGALLEON
+public/SUCAI/MUZZLE_FIRE_LANCER
+public/SUCAI/MUZZLE_BOMBARDCANNON
+public/SUCAI/MUZZLE_ORGANGUN
+public/SUCAI/MUZZLE_HANDCANNON
+public/SUCAI/MUZZLE_CONQUISTADOR
+public/SUCAI/BLOOD
+public/SUCAI/FIRE
+public/SUCAI/IMPACT_EXPLOSIONS
+public/SUCAI/DUST
 # 根目录 map/ 是同四套瓦片的重复副本，纯本地资料，不上传。
 # 必须写成 /map 锁死根目录——写 map/ 会把 src/map/ 也排除掉，远端构建会报
 # Could not resolve "../map/GameMap"（2026-08-01 踩过）。

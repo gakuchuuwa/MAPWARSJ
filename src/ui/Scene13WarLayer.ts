@@ -851,8 +851,9 @@ const CLOUD_BASE_URL = '/sanguoqunying/云/';
  * 混进来会在天上飘一堆灰疙瘩（主人 2026-08-12 实机指出）。别改回「1..10 全用」。
  */
 const CLOUD_FILES = [9, 10];
-/** 每场云数量。🔴 9/10 是 927×817 的大朵积云，一朵就占近半屏高 —— 4 朵会糊住战场，取 2。 */
-const CLOUD_COUNT = 2;
+/** 每场云数量：1–2 朵随机（9/10 是 927×817 的大朵积云，一朵就占近半屏高，1~2 朵克制自然）。 */
+const CLOUD_COUNT_MIN = 1;
+const CLOUD_COUNT_MAX = 2;
 /**
  * 云的缩放区间（目前 0.5 算最大，大小随机：0.28 ~ 0.50）。
  * ⚠️ 树那边的铁律是「原图多大画多大、绝不缩放」，云这里**可以缩**，原因不同：
@@ -1179,11 +1180,23 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
     FX_MUZZLE_CONQ: { path: 'MUZZLE_CONQUISTADOR', dirs: 8 },
     FX_MUZZLE_FIRELANCE: { path: 'MUZZLE_FIRE_LANCER', dirs: 8 },
 };
-/** 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度，视觉初值待实测调）。 */
+/**
+ * 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度）。
+ * 🔴 定这组数只有一把尺子：**画出来的直径相对兵高（50px）是几倍**——瘦身后各特效的帧框
+ *    大小差了 4 倍以上（炮口焰裁到 79~108px，自爆焰还有 368px），同一个 scale 值在不同
+ *    特效上完全不是一回事，照抄会出事。括号里是按裁后帧框实算的成品尺寸。
+ *    2026-08-19 首版曾按「看着差不多」给值，实算后 FX_PETARD 是 442px = 8.8 倍兵高
+ *    （屏幕 1/4 高、埋掉二十来个兵的演出），已按下表重定。
+ * 仍是初值：真机看一局再微调，但量级已经对了。
+ */
 const FX_SCALE: Record<string, number> = {
-    FX_EXPLOSION: 1.3, FX_PETARD: 1.2,
-    FX_MUZZLE_BOMBARD: 0.6, FX_MUZZLE_ORGAN: 0.5, FX_MUZZLE_HAND: 0.5,
-    FX_MUZZLE_CONQ: 0.5, FX_MUZZLE_FIRELANCE: 0.7,
+    FX_EXPLOSION: 0.6,            //  94px ≈ 1.9 倍兵高：炮弹落点火球，压得住场又不埋人
+    FX_PETARD: 0.4,               // 147px ≈ 2.9 倍兵高：自爆比炮弹更炸，但不许糊住半屏
+    FX_MUZZLE_BOMBARD: 0.35,      //  38px ≈ 0.76 倍：大炮口径最大，焰也最大
+    FX_MUZZLE_ORGAN: 0.30,        //  26px ≈ 0.53 倍
+    FX_MUZZLE_HAND: 0.30,         //  24px ≈ 0.47 倍：火枪枪口焰应明显小于人
+    FX_MUZZLE_CONQ: 0.30,         //  30px ≈ 0.60 倍
+    FX_MUZZLE_FIRELANCE: 0.40,    //  36px ≈ 0.72 倍：火矛是喷射，比枪口焰长
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
 const FX_DUR: Record<string, number> = {
@@ -1923,6 +1936,8 @@ interface SceneCloud {
     vx: number;
     alpha: number;
     scale: number;
+    /** 水平镜像（随机翻转，丰富形态） */
+    flip: boolean;
     img: HTMLImageElement | null;
 }
 
@@ -2304,6 +2319,7 @@ export class Scene13WarLayer {
         this.arrows = [];
         this.slashes = [];
         this.sparks = [];
+        this.fxs = [];
         this.fallenFlags = [];
         this.trees = [];
         this.lakes = [];
@@ -2348,7 +2364,10 @@ export class Scene13WarLayer {
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
-        this.sideCulture = [init.attackerRegion || 'CENTRAL', init.defenderRegion || 'STEPPE'];
+        // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
+        //    这层只防 init 缺字段。绝不能像原来那样守方兜 'STEPPE' —— 攻守用两套不同的兜底，
+        //    会让「同一文化区互攻」在面板上显示成两份完全不同的科技表（主人 2026-08-19 报障）。
+        this.sideCulture = [init.attackerRegion || 'CENTRAL', init.defenderRegion || 'CENTRAL'];
         this.techYearGetter = init.getYear ?? null;
         this.techYear = this.techYearGetter?.() ?? GameConfig.TIME.TIMELINE_START_YEAR;
         this.techStats = [new Map(), new Map()];
@@ -2598,6 +2617,7 @@ export class Scene13WarLayer {
         this.arrows = [];
         this.slashes = [];
         this.sparks = [];
+        this.fxs = [];
         this.fallenFlags = [];
         this.trees = [];
         this.lakes = [];
@@ -2731,7 +2751,8 @@ export class Scene13WarLayer {
      * 🔴 云在**最上层**，所以位置不用避开出兵口/湖/树 —— 它本来就该盖在什么上面都行。
      */
     private scatterClouds(VW: number, VH: number): void {
-        for (let i = 0; i < CLOUD_COUNT; i++) {
+        const count = CLOUD_COUNT_MIN + ((Math.random() * (CLOUD_COUNT_MAX - CLOUD_COUNT_MIN + 1)) | 0);
+        for (let i = 0; i < count; i++) {
             const c: SceneCloud = {
                 x: Math.random() * VW,
                 y: Math.random() * VH,
@@ -2742,6 +2763,7 @@ export class Scene13WarLayer {
                 vx: CLOUD_SPD_MIN + Math.random() * (CLOUD_SPD_MAX - CLOUD_SPD_MIN),
                 alpha: CLOUD_ALPHA_MIN + Math.random() * (CLOUD_ALPHA_MAX - CLOUD_ALPHA_MIN),
                 scale: CLOUD_SCALE_MIN + Math.random() * (CLOUD_SCALE_MAX - CLOUD_SCALE_MIN),
+                flip: Math.random() < 0.5,
                 img: null,
             };
             this.clouds.push(c);
@@ -3879,6 +3901,9 @@ export class Scene13WarLayer {
             s.y += s.vy * dt;
         }
         this.sparks = this.sparks.filter(s => s.t < s.dur);
+        // DE 攻击特效（爆炸/炮口焰）：独立一次性生命周期，播完移除。
+        for (const f of this.fxs) f.t += dt;
+        this.fxs = this.fxs.filter(f => f.t < f.dur);
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来
         // （用原图宽当余量，保证是整朵飘出去、整朵飘进来，绝不在画面里半途闪现）
         if (this.clouds.length && this.canvas) {
@@ -4286,7 +4311,15 @@ export class Scene13WarLayer {
             const iw = c.img.naturalWidth * c.scale, ih = c.img.naturalHeight * c.scale;
             if (!iw || !ih) continue;
             ctx.globalAlpha = c.alpha;
-            ctx.drawImage(c.img, c.x - iw / 2, c.y - ih / 2, iw, ih);
+            if (c.flip) {
+                ctx.save();
+                ctx.translate(c.x, c.y);
+                ctx.scale(-1, 1);
+                ctx.drawImage(c.img, -iw / 2, -ih / 2, iw, ih);
+                ctx.restore();
+            } else {
+                ctx.drawImage(c.img, c.x - iw / 2, c.y - ih / 2, iw, ih);
+            }
             ctx.globalAlpha = 1;
         }
 
@@ -4377,6 +4410,20 @@ export class Scene13WarLayer {
                 ctx.fill();
             }
             ctx.restore();
+        }
+
+        // ── DE 攻击特效（爆炸/炮口焰，画在火花之上）──
+        if (this.fxs.length) {
+            for (const f of this.fxs) {
+                const fx = this.fxBank[f.type];
+                if (!fx) continue;
+                const fd = fx.dirs[f.dir % fx.dirs.length];
+                if (!fd?.img || !fd.fw) continue;   // 素材未就绪跳过
+                const p = Math.min(1, f.t / f.dur);
+                const fr = Math.min(fd.n - 1, Math.floor(p * fd.n));
+                const s = f.scale;
+                ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
+            }
         }
     }
 }

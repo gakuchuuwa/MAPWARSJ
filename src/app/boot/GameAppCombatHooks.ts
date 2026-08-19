@@ -4,6 +4,7 @@ import type { LegionManager } from '../../legion/LegionManager';
 import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
 import { GameConfig } from '../../config/GameConfig';
 import { getFactionCultureRegion } from '../../config/portrait_defaults';
+import { getCityRegion, getRegion } from '../../systems/RegionSystem';
 import { readSiegeGarrisonElite } from '../../combat/SiegeGarrisonTier';
 import {
     setGeneralSkillLegionManager,
@@ -20,12 +21,36 @@ function battleSceneTarget(unit: { id: string; getPosition(): { lat: number; lng
     return { center: rendered ?? unit.getPosition(), id: unit.id };
 }
 
-/** 取单位文化区：优先实体 cultureRegion，退回势力文化（getFactionCultureRegion）。 */
+/**
+ * 取单位文化区：**城池永远按所在地判，军团按募兵城判**。
+ *
+ * 🔴 城池分支必须排在最前，不许先读实体字段、更不许绕势力（2026-08-19 修）：
+ *    守城的文化属于**那座城所在的地方**，不属于此刻插在城头的旗号 —— 与本项目
+ *    「锚定将随城、旗号易主不改变」是同一条原则，史实上也只有这一种讲得通：
+ *    守洛阳用的是洛阳的城防工艺，不会因为守军换了旗就变成草原工艺。
+ *
+ *    改之前是「城池无 cultureRegion → 落到 getFactionCultureRegion(旗号)」，两个实锤错误：
+ *      ① **城池易主后必错**：cities_v2 里 829 势力各恰好一座城，getFactionCultureRegion
+ *         查的是该势力**老家那座城**的 region。中原势力打下草原城之后守这座草原城，
+ *         科技按中原算。攻城占九成战斗，这个错在整局里持续发生。
+ *      ② **叛军城 100% 判成草原**：panjun 在 cities_v2 中无城 → 返回 undefined →
+ *         直接吃下游的 `?? 'STEPPE'` 兜底。叛军守江南城也按草原科技算。
+ *
+ *    走 getCityRegion 而不是直接读 entity.region：它带坐标兜底（region 缺失/未知值时
+ *    按经纬度判），且与城池立绘（BattleUnitFactory）同源。
+ *    注：曾有注释称 cities_v2 有 58 处 SOUTH/NOMADIC 等 legacy 旧值，2026-08-19 实测
+ *    946 处 region 全部是 18 个合法值、legacy 已清零；getCityRegion 的翻译层现在是防未来用的。
+ */
 function unitRegion(unit: {
     factionId: string | null;
+    unitType?: string;
     getEntity?(): any;
 }): string | null {
     const entity = unit.getEntity?.();
+    // 城池判据用「实体带经纬度」：City 有 latitude/longitude，Army 没有（它只有 getPosition()）。
+    if (entity && typeof entity.latitude === 'number' && typeof entity.longitude === 'number') {
+        return getCityRegion({ latitude: entity.latitude, longitude: entity.longitude, region: entity.region });
+    }
     const region = entity?.cultureRegion ?? entity?.getRegion?.() ?? null;
     if (region) return region;
     if (unit.factionId) {
@@ -59,8 +84,13 @@ function startScene13War(
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
 ): void {
-    const attRegion = unitRegion(attacker) ?? 'CENTRAL';
-    const defRegion = unitRegion(defender) ?? 'STEPPE';
+    // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
+    //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
+    //    查不到就按**这场仗打在哪**判——战场坐标落在哪个文化区，双方就都用哪个，
+    //    至少保证「同一块地上打的仗，攻守兜底口径一致」。再查不到才落中原。
+    const terrainRegion = center ? getRegion(center.lat, center.lng) : 'CENTRAL';
+    const attRegion = unitRegion(attacker) ?? terrainRegion;
+    const defRegion = unitRegion(defender) ?? terrainRegion;
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
