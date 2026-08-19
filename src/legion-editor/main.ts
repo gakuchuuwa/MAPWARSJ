@@ -26,7 +26,7 @@ import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompos
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
 // ============================================================
 
-export type UnitCategory = 'infantry' | 'cavalry' | 'ranged' | 'siege' | 'hero';
+export type UnitCategory = 'infantry' | 'cavalry' | 'ranged' | 'siege' | 'naval' | 'hero';
 
 /**
  * 兵种时代（与游戏一致的四时代）。
@@ -49,7 +49,7 @@ export const AGE_ORDER: UnitAge[] = ['dark', 'feudal', 'castle', 'imperial', 'un
 
 /**
  * 类别 → 中文标签（全编辑器唯一出处：列表、弹窗页签、图鉴、右侧面板都读它）
- * 与游戏一致，只有四类：步兵 / 远程 / 骑兵 / 攻城。战象不单列，按其实际作战方式归位——
+ * 与游戏一致：步兵 / 远程 / 骑兵 / 攻城 / 船只 / 英雄。战象不单列，按其实际作战方式归位——
  * 冲撞类战象归骑兵、象背弓手归远程、弩炮象属攻城器械。
  */
 export const CATEGORY_LABEL: Record<UnitCategory, string> = {
@@ -57,7 +57,61 @@ export const CATEGORY_LABEL: Record<UnitCategory, string> = {
     cavalry: '骑兵',
     ranged: '远程',
     siege: '攻城',
+    naval: '船只',
     hero: '英雄',
+};
+
+/**
+ * 二级分类（兵种鉴赏网站用）：在每个大类内部再细分，按「拿什么武器 / 骑什么」归类。
+ * 判据 = 中文名 + DE 真值（class）交叉核对，不看 ID 名字的英文字面。
+ */
+export type SubCategory =
+    // 步兵
+    | 'two_handed' | 'sword_shield' | 'spear' | 'special'
+    // 远程
+    | 'archer' | 'crossbow' | 'thrown' | 'gunpowder'
+    // 骑兵
+    | 'melee_cav' | 'horse_archer' | 'elephant' | 'chariot'
+    // 攻城
+    | 'gunpowder_siege' | 'mechanical'
+    // 船只
+    | 'galley' | 'fire_ship' | 'cannon_ship' | 'demo_ship' | 'warship'
+    // 英雄
+    | 'mounted_hero' | 'foot_hero' | 'elephant_hero';
+
+export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
+    two_handed: '双手',
+    sword_shield: '刀盾',
+    spear: '长矛',
+    special: '特殊',
+    archer: '弓手',
+    crossbow: '弩手',
+    thrown: '投掷',
+    gunpowder: '火器',
+    melee_cav: '战骑',
+    horse_archer: '弓骑',
+    elephant: '象兵',
+    chariot: '战车',
+    gunpowder_siege: '热兵器',
+    mechanical: '冷兵器',
+    galley: '桨帆船',
+    fire_ship: '喷火船',
+    cannon_ship: '炮舰',
+    demo_ship: '爆破船',
+    warship: '战舰',
+    mounted_hero: '骑马',
+    foot_hero: '步战',
+    elephant_hero: '象驾',
+};
+
+/** 每个大类下有哪些子类（图鉴子类过滤下拉 + 排序都用它） */
+export const SUBCATEGORY_BY_CATEGORY: Record<UnitCategory, SubCategory[]> = {
+    infantry: ['two_handed', 'sword_shield', 'spear', 'special'],
+    ranged: ['archer', 'crossbow', 'thrown', 'gunpowder'],
+    cavalry: ['melee_cav', 'horse_archer', 'elephant', 'chariot'],
+    siege: ['gunpowder_siege', 'mechanical'],
+    naval: ['galley', 'fire_ship', 'cannon_ship', 'demo_ship', 'warship'],
+    hero: ['mounted_hero', 'foot_hero', 'elephant_hero'],
 };
 
 export interface DeUnitDef {
@@ -366,6 +420,33 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'antiquity_siege_tower', name: '古典攻城塔', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ANTIQUITY_SIEGE_TOWER/' },
 
 
+    // ── 船只 (Ships) ──
+    // AoE2 DE 海军单位（16 向，已降采样取偶数向）。游戏内现役只有 galley/war_galley/ant_elite_galley 三档，
+    // 其余为图鉴鉴赏用（素材已入库、带 _meta.json）。时代归属除标准线外标 'unknown' 待核。
+    { id: 'galley', name: '桨帆船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/GALLEY/' },
+    { id: 'war_galley', name: '大战舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/WAR_GALLEY/' },
+    { id: 'ant_galley', name: '古典桨帆船', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/ANT_GALLEY/' },
+    { id: 'ant_war_galley', name: '古典大战舰', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/ANT_WAR_GALLEY/' },
+    { id: 'ant_elite_galley', name: '古典精锐桨帆船', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/ANT_ELITE_GALLEY/' },
+    { id: 'fire_galley', name: '喷火桨帆船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/FIRE_GALLEY/' },
+    { id: 'fire_ship', name: '喷火船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/FIRE_SHIP/' },
+    { id: 'fast_fire_ship', name: '快速喷火船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/FAST_FIRE_SHIP/' },
+    { id: 'incendiary_ship', name: '燃烧战船', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/INCENDIARY_SHIP/' },
+    { id: 'heavy_incendiary_ship', name: '重型燃烧战船', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/HEAVY_INCENDIARY_SHIP/' },
+    { id: 'cannon_galleon', name: '炮舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/CANNON_GALLEON/' },
+    { id: 'elite_cannon_galleon', name: '精锐炮舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_CANNON_GALLEON/' },
+    { id: 'caravel', name: '卡拉维尔帆船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/CARAVEL/' },
+    { id: 'elite_caravel', name: '精锐卡拉维尔帆船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_CARAVEL/' },
+    { id: 'demo_ship', name: '爆破舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/DEMO_SHIP/' },
+    { id: 'heavy_demo_ship', name: '重型爆破舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/HEAVY_DEMO_SHIP/' },
+    { id: 'longboat', name: '维京长船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/LONGBOAT/' },
+    { id: 'elite_longboat', name: '维京长船精锐', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_LONGBOAT/' },
+    { id: 'turtle_ship', name: '龟船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/TURTLE_SHIP/' },
+    { id: 'elite_turtle_ship', name: '龟船精锐', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_TURTLE_SHIP/' },
+    { id: 'dragon_ship', name: '龙头战舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/DRAGON_SHIP/' },
+    { id: 'catapult_ship', name: '投石舰', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/CATAPULT_SHIP/' },
+    { id: 'onager_ship', name: '重型投石舰', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
+
     // ── 英雄单位 (Heroes) ──
     { id: 'hero_alaric', name: '英雄·亚拉里克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ALARIC/' },
     { id: 'hero_algirdas', name: '英雄·阿尔吉尔达斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ALGIRDAS/' },
@@ -453,6 +534,160 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
 
 /**
+ * 兵种二级分类映射（id → SubCategory），鉴赏网站「子类」字段的唯一真源。
+ * 判据 = 中文名（描述性）+ DE unit class 交叉核对，逐条手填，不用关键词启发式一把梭。
+ */
+export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
+    // ── 步兵 ──
+    // 刀盾（剑/刀 + 盾，单手近战默认档）
+    swordsman: 'sword_shield', champion: 'sword_shield', liao_dao: 'sword_shield', elite_liao_dao: 'sword_shield',
+    jian_swordsman: 'sword_shield', samurai: 'sword_shield', samurai_elite: 'sword_shield',
+    white_feather_guard: 'sword_shield', elite_white_feather_guard: 'sword_shield', elite_guardsman: 'sword_shield',
+    eastern_swordsman: 'sword_shield', legionary: 'sword_shield', elite_ghulam: 'sword_shield',
+    elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield', elite_shotel_warrior: 'sword_shield',
+    elite_teutonic_knight: 'sword_shield', elite_woad_raider: 'sword_shield', ghulam: 'sword_shield',
+    guardsman: 'sword_shield', jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
+    levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
+    serjeant: 'sword_shield', shotel_warrior: 'sword_shield', teutonic_knight: 'sword_shield',
+    vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield',
+    // 长矛（枪/矛/戟/长枪等长杆兵器）
+    kamayuk: 'spear', fire_lancer: 'spear', elite_fire_lancer: 'spear', heavy_pikeman: 'spear', pikeman: 'spear',
+    ekdromos: 'spear', elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
+    halberdier: 'spear', hippeus: 'spear', hoplite: 'spear', immortal: 'spear', mercenary_hoplite: 'spear',
+    phalangite: 'spear', sacred_band: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
+    strategos: 'spear', takabara: 'spear', antiquity_spearman: 'spear',
+    // 双手（双手剑/巨斧/战锤/长刃）
+    berserk: 'two_handed', elite_berserk: 'two_handed', elite_huskarl: 'two_handed', huskarl: 'two_handed',
+    elite_ibirapema_warrior: 'two_handed', ibirapema_warrior: 'two_handed', elite_obuch: 'two_handed', obuch: 'two_handed',
+    jian_swordman_unshielded: 'two_handed', norse_warrior: 'two_handed', rhomphaia_warrior: 'two_handed',
+    two_handed_swordsman: 'two_handed',
+    // 特殊（野兽/异形兵器/部落奇兵）
+    ninja: 'special', karambit_warrior: 'special', karambit_warrior_elite: 'special', eagle_scout: 'special',
+    eagle_warrior: 'special', elite_eagle_warrior: 'special', elite_jaguar_warrior: 'special',
+    elite_urumi_swordsman: 'special', elite_war_dog: 'special', jaguar_warrior: 'special', urumi_swordsman: 'special',
+    war_dog: 'special', warrior_priest: 'special', temple_guard: 'special', hill_tribesman: 'special',
+    indian_tribesman: 'special', iroquois_warrior: 'special', amazon_warrior: 'special', champi_warrior: 'special',
+    elite_champi_warrior: 'special', champi_runner: 'special', champi_scout: 'special', sickle_warrior: 'special',
+
+    // ── 远程 ──
+    // 弓手
+    archer: 'archer', bowman: 'archer', longbowman: 'archer', longbowman_elite: 'archer',
+    fire_archer: 'archer', elite_fire_archer: 'archer', rattan_archer: 'archer', rattan_archer_elite: 'archer',
+    pattiyoda_longbowman: 'archer', composite_bowman: 'archer', elite_composite_bowman: 'archer',
+    elephant_archer: 'archer', elite_elephant_archer: 'archer', amazon_archer: 'archer', bactrian_archer: 'archer',
+    blackwood_archer: 'archer', elite_blackwood_archer: 'archer', cretan_archer: 'archer',
+    elite_plumed_archer: 'archer', plumed_archer: 'archer', immortal_ranged: 'archer',
+    laminated_bowman: 'archer', recurve_bowman: 'archer',
+    // 弩手
+    chukonu: 'crossbow', elite_chukonu: 'crossbow', crossbowman: 'crossbow', arbalest: 'crossbow',
+    genoese_crossbowman: 'crossbow', elite_genoese_crossbowman: 'crossbow', gastraphetes: 'crossbow',
+    // 投掷
+    throwing_axeman: 'thrown', elite_throwing_axeman: 'thrown', imperial_skirmisher: 'thrown',
+    chakram_thrower: 'thrown', elite_chakram_thrower: 'thrown', gbeto: 'thrown', elite_gbeto: 'thrown',
+    guecha_warrior: 'thrown', elite_guecha_warrior: 'thrown', elite_skirmisher: 'thrown', skirmisher: 'thrown',
+    rhodian_slinger: 'thrown', slinger: 'thrown', thracian_peltast: 'thrown', elite_peltast: 'thrown',
+    antiquity_skirmisher: 'thrown', elite_antiquity_skirmisher: 'thrown',
+    // 火器
+    hand_cannoneer: 'gunpowder', grenadier: 'gunpowder', janissary: 'gunpowder', elite_janissary: 'gunpowder',
+    royal_janissary: 'gunpowder',
+
+    // ── 骑兵 ──
+    // 战骑（近战骑，含骆驼/枪骑/重骑）
+    tiger_rider: 'melee_cav', iron_pagoda: 'melee_cav', hei_kuang: 'melee_cav', hei_kuang_heavy: 'melee_cav',
+    steppe_lancer: 'melee_cav', elite_steppe_lancer: 'melee_cav', keshik: 'melee_cav', tarkan: 'melee_cav',
+    elite_tarkan: 'melee_cav', boyar: 'melee_cav', savar: 'melee_cav', camel_heavy: 'melee_cav', paladin: 'melee_cav',
+    coustillier: 'melee_cav', light_riders: 'melee_cav', camel_raider: 'melee_cav', camel_rider: 'melee_cav',
+    camel_scout: 'melee_cav', cataphract: 'melee_cav', centurion: 'melee_cav', companion_cavalry: 'melee_cav',
+    elite_boyar: 'melee_cav', elite_cataphract: 'melee_cav', elite_centurion: 'melee_cav', elite_coustillier: 'melee_cav',
+    elite_iron_pagoda: 'melee_cav', elite_keshik: 'melee_cav', elite_kona: 'melee_cav', elite_konnik: 'melee_cav',
+    elite_leitis: 'melee_cav', elite_mameluke: 'melee_cav', elite_monaspa: 'melee_cav', elite_shrivamsha_rider: 'melee_cav',
+    elite_tiger_cavalry: 'melee_cav', greek_noble_cavalry: 'melee_cav', hussar: 'melee_cav',
+    imperial_camel_rider: 'melee_cav', imperial_centurion: 'melee_cav', knight: 'melee_cav', kona: 'melee_cav',
+    konnik: 'melee_cav', leitis: 'melee_cav', magyar_huszar: 'melee_cav', mameluke: 'melee_cav', monaspa: 'melee_cav',
+    qizilbash_warrior: 'melee_cav', scythian_axe_cavalry: 'melee_cav', shrivamsha_rider: 'melee_cav',
+    sogdian_cataphract: 'melee_cav', winged_hussar: 'melee_cav', xolotl_warrior: 'melee_cav', cavalier: 'melee_cav',
+    elite_greek_cavalry: 'melee_cav', shock_cavalry: 'melee_cav', imperial_cavalry: 'melee_cav', equites: 'melee_cav',
+    sarmatian: 'melee_cav', crusader_knight: 'melee_cav', raider: 'melee_cav', antiquity_light_cavalry: 'melee_cav',
+    antiquity_scout_cavalry: 'melee_cav',
+    // 弓骑（骑射/骑乘火器/标枪骑，class 36 + 23）
+    xianbei_raider: 'horse_archer', kipchak: 'horse_archer', elite_kipchak: 'horse_archer', mangudai: 'horse_archer',
+    mangudai_elite: 'horse_archer', cav_archer: 'horse_archer', cav_archer_heavy: 'horse_archer', arambai: 'horse_archer',
+    bolas_rider: 'horse_archer', camel_archer: 'horse_archer', conquistador: 'horse_archer', elite_arambai: 'horse_archer',
+    elite_bolas_rider: 'horse_archer', elite_camel_archer: 'horse_archer', elite_conquistador: 'horse_archer',
+    elite_genitour: 'horse_archer', elite_scythian_horse_archer: 'horse_archer', genitour: 'horse_archer',
+    scythian_horse_archer: 'horse_archer', tarantine_cavalry: 'horse_archer', antiquity_cavalry_archer: 'horse_archer',
+    antiquity_heavy_cavalry_archer: 'horse_archer',
+    // 象兵
+    war_elephant: 'elephant', battle_elephant: 'elephant', armored_elephant: 'elephant', elite_armored_elephant: 'elephant',
+    bayinnaung_elephant: 'elephant', dagnajan_elephant: 'elephant', porus_elephant: 'elephant', sannahya: 'elephant',
+    elite_battle_elephant: 'elephant', elite_war_elephant: 'elephant',
+    // 战车
+    war_chariot: 'chariot', war_chariot_ranged: 'chariot', elite_war_chariot: 'chariot', war_wagon: 'chariot',
+    elite_war_wagon: 'chariot', ratha_melee: 'chariot', ratha_ranged: 'chariot', elite_ratha_melee: 'chariot',
+    elite_ratha_ranged: 'chariot',
+
+    // ── 攻城 ──
+    // 热兵器（火药/火）
+    bombard_cannon: 'gunpowder_siege', organ_gun: 'gunpowder_siege', elite_organ_gun: 'gunpowder_siege',
+    houfnice: 'gunpowder_siege', rocket_cart: 'gunpowder_siege', heavy_rocket_cart: 'gunpowder_siege',
+    flamethrower: 'gunpowder_siege', petard: 'gunpowder_siege', flaming_camel: 'gunpowder_siege',
+    // 冷兵器（机械/扭力/重力）
+    ballista_elephant: 'mechanical', elite_ballista_elephant: 'mechanical', battering_ram: 'mechanical',
+    capped_ram: 'mechanical', hussite_wagon: 'mechanical', elite_hussite_wagon: 'mechanical', heavy_scorpion: 'mechanical',
+    mangonel: 'mechanical', mounted_trebuchet: 'mechanical', onager: 'mechanical', scorpion: 'mechanical',
+    siege_onager: 'mechanical', siege_ram: 'mechanical', traction_trebuchet: 'mechanical', helepolis: 'mechanical',
+    siege_tower: 'mechanical', antiquity_battering_ram: 'mechanical', antiquity_capped_ram: 'mechanical',
+    antiquity_scorpion: 'mechanical', antiquity_heavy_scorpion: 'mechanical', antiquity_mangonel: 'mechanical',
+    antiquity_onager: 'mechanical', antiquity_siege_onager: 'mechanical', antiquity_siege_ram: 'mechanical',
+    antiquity_siege_tower: 'mechanical',
+
+    // ── 船只 ──
+    galley: 'galley', war_galley: 'galley', ant_galley: 'galley', ant_war_galley: 'galley', ant_elite_galley: 'galley',
+    fire_galley: 'fire_ship', fire_ship: 'fire_ship', fast_fire_ship: 'fire_ship', incendiary_ship: 'fire_ship',
+    heavy_incendiary_ship: 'fire_ship',
+    cannon_galleon: 'cannon_ship', elite_cannon_galleon: 'cannon_ship', catapult_ship: 'cannon_ship', onager_ship: 'cannon_ship',
+    demo_ship: 'demo_ship', heavy_demo_ship: 'demo_ship',
+    caravel: 'warship', elite_caravel: 'warship', longboat: 'warship', elite_longboat: 'warship', turtle_ship: 'warship',
+    elite_turtle_ship: 'warship', dragon_ship: 'warship',
+
+    // ── 英雄（默认骑马；步战/象驾按名显式标）──
+    hero_alaric: 'mounted_hero', hero_algirdas: 'mounted_hero', hero_arariboiamelee: 'mounted_hero',
+    hero_aristagoras: 'mounted_hero', hero_aristides: 'mounted_hero', hero_artaphernes: 'mounted_hero',
+    hero_ataulf: 'mounted_hero', hero_attila: 'mounted_hero', hero_basileus: 'mounted_hero',
+    hero_bernardarmagnac: 'mounted_hero', hero_bohemond: 'mounted_hero', hero_brasidas: 'mounted_hero',
+    hero_caocao: 'mounted_hero', hero_cleitus: 'mounted_hero', hero_cumanchief: 'mounted_hero',
+    hero_cunhambebe: 'mounted_hero', hero_cusiyupanqui: 'mounted_hero', hero_dafyddapgruffydd: 'mounted_hero',
+    hero_datis: 'mounted_hero', hero_dinhle: 'mounted_hero', hero_mounted_alexander: 'mounted_hero',
+    hero_edwardlongshanks: 'mounted_hero', hero_gajahmada: 'mounted_hero', hero_galvarino: 'mounted_hero',
+    hero_generalaraiyan: 'mounted_hero', hero_gidajan: 'mounted_hero', hero_gilbertdeclare: 'mounted_hero',
+    hero_girgenkhan: 'mounted_hero', hero_guacolda: 'mounted_hero', hero_guanyu: 'mounted_hero', hero_ivaylo: 'mounted_hero',
+    hero_janzizka: 'mounted_hero', hero_joanofarc: 'mounted_hero', hero_jogaila: 'mounted_hero',
+    hero_johnthefearless: 'mounted_hero', hero_kestutis: 'mounted_hero', hero_kotyankhan: 'mounted_hero',
+    hero_kushluk: 'mounted_hero', hero_lautaro: 'mounted_hero', hero_leloi: 'mounted_hero', hero_liubei: 'mounted_hero',
+    hero_llywelynapgruffydd: 'mounted_hero', hero_lubu: 'mounted_hero', hero_lysander: 'mounted_hero',
+    hero_macedonian_commander: 'mounted_hero', hero_osman: 'mounted_hero', hero_pacanchique: 'mounted_hero',
+    hero_pachacuti: 'mounted_hero', hero_parmenion: 'mounted_hero', hero_perdiccas: 'mounted_hero',
+    hero_philipthegood: 'mounted_hero', hero_prithviraj: 'mounted_hero', hero_qutlugh: 'mounted_hero',
+    hero_rajendrachola: 'mounted_hero', hero_robertguiscard: 'mounted_hero', hero_rogerbosso: 'mounted_hero',
+    hero_sforza: 'mounted_hero', hero_shahismail: 'mounted_hero', hero_strategos: 'mounted_hero',
+    hero_subotai: 'mounted_hero', hero_sumanguru: 'mounted_hero', hero_sunce: 'mounted_hero', hero_sundjata: 'mounted_hero',
+    hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero', hero_thoros: 'mounted_hero',
+    hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero', hero_ulrichvonjungingen: 'mounted_hero',
+    hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero', hero_yodit: 'mounted_hero',
+    hero_zhangfei: 'mounted_hero',
+    // 步战英雄
+    hero_dismounted_alexander: 'foot_hero', hero_ivaylofoot: 'foot_hero', hero_joanthemaid: 'foot_hero',
+    hero_williamwallace: 'foot_hero',
+    // 象驾英雄
+    hero_bayinnaung_elephant: 'elephant_hero', hero_dagnajan_elephant: 'elephant_hero', hero_porus_elephant: 'elephant_hero',
+};
+
+/** 取兵种二级分类；未登记返回 undefined（图鉴显示「—」）。 */
+export function getUnitSubcategory(id: string): SubCategory | undefined {
+    return UNIT_SUBCATEGORY[id];
+}
+
+/**
  * 兵种升级档判定：帝国决定版里同一兵种通常有「普通 → 精锐」两档，
  * 部分文明还有帝王/皇家档。这里按中文名前缀 + 英文 ID 前后缀双路识别，
  * 二者任一命中即算高级档（例如 samurai_elite / elite_keshik / hei_kuang_heavy「精锐黑光铠骑兵」）。
@@ -533,9 +768,10 @@ let mainView: MainView = 'factions';
 let catalogRows: DeUnitDef[] = [];
 let catalogSearch = '';
 let catalogCatFilter: 'all' | UnitCategory = 'all';
+let catalogSubFilter: 'all' | SubCategory = 'all';
 let catalogTierFilter: 'all' | 'elite' | 'base' = 'all';
 let catalogAgeFilter: 'all' | UnitAge = 'all';
-let catalogSortCol: 'name' | 'id' | 'category' | 'tier' | 'age' = 'name';
+let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'tier' | 'age' = 'name';
 let catalogSortAsc = true;
 let selectedUnitId: string | null = null;
 
@@ -584,7 +820,11 @@ app.innerHTML = `
     <option value="cavalry">🐎 骑兵</option>
     <option value="ranged">🏹 远程</option>
     <option value="siege">⚙️ 攻城</option>
+    <option value="naval">🚢 船只</option>
     <option value="hero">👑 英雄</option>
+  </select>
+  <select id="le-sub-filter" class="le-select">
+    <option value="all">全部子类</option>
   </select>
   <select id="le-age-filter" class="le-select">
     <option value="all">全部时代</option>
@@ -630,6 +870,7 @@ const els = {
     toolbarUnits: document.getElementById('le-toolbar-units')!,
     catSearch: document.getElementById('le-cat-search') as HTMLInputElement,
     catFilter: document.getElementById('le-cat-filter') as HTMLSelectElement,
+    subFilter: document.getElementById('le-sub-filter') as HTMLSelectElement,
     tierFilter: document.getElementById('le-tier-filter') as HTMLSelectElement,
     ageFilter: document.getElementById('le-age-filter') as HTMLSelectElement,
     catStats: document.getElementById('le-cat-stats')!,
@@ -1533,8 +1774,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 // 6.5 兵种图鉴 (Unit Catalog) —— 查看 / 排序 / 筛选全部 DE 兵种
 // ============================================================
 
-/** 类别排序权重：按 步兵 → 骑兵 → 远程 → 战象/攻城 的战场站位顺序，而非拼音顺序。 */
-const CATEGORY_ORDER: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege', 'hero'];
+/** 类别排序权重：按 步兵 → 骑兵 → 远程 → 攻城 → 船只 → 英雄 的战场站位顺序，而非拼音顺序。 */
+const CATEGORY_ORDER: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege', 'naval', 'hero'];
 
 function switchMainView(view: MainView): void {
     if (mainView === view) return;
@@ -2324,6 +2565,12 @@ els.catSearch.addEventListener('input', debounce(() => {
 }));
 els.catFilter.addEventListener('change', () => {
     catalogCatFilter = els.catFilter.value as typeof catalogCatFilter;
+    catalogSubFilter = 'all';
+    populateSubFilter();
+    runCatalogFilter();
+});
+els.subFilter.addEventListener('change', () => {
+    catalogSubFilter = els.subFilter.value as typeof catalogSubFilter;
     runCatalogFilter();
 });
 els.tierFilter.addEventListener('change', () => {

@@ -53,8 +53,9 @@ export class NavalPhalanxStateManager {
         this.states.delete(unitId);
     }
 
-    /** 航迹最大保留点数（8 艘 × 0.8 中心距 = 6.4 船身长，40 点足够且有余量）。 */
-    public static readonly TRAIL_MAX = 40;
+    /** 航迹最大保留点数。8 艘双列 = 4 段 × 1.15 船长 ≈ 4.6 船长，zoom10 下约 49 点（16px/点），
+     *  取 64 点留足余量，避免航迹短于舰队 → 队尾被迫直线外推插岸。 */
+    public static readonly TRAIL_MAX = 64;
 
     /** 推入一个航迹点（地理坐标）。采样间隔由调用方（GlobalUnitRenderer）按屏幕距离判断。 */
     public static pushTrail(unitId: string, lat: number, lng: number): void {
