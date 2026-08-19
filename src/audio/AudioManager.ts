@@ -16,6 +16,10 @@ export type SoundKey =
     | 'naval_sink'
     | 'naval_explode'
     | 'naval_cannon_splash'
+    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效）
+    | 'gun_fire'
+    | 'sword_clank'
+    | 'explosion'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -85,6 +89,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     naval_sink: sounds('battle', ['naval_sink_1', 'naval_sink_2', 'naval_sink_3', 'naval_sink_4', 'naval_sink_5', 'naval_sink_6'], 0.55, 0),
     naval_explode: sounds('battle', ['naval_explode_1', 'naval_explode_2', 'naval_explode_3', 'naval_explode_4'], 0.7, 0),
     naval_cannon_splash: sounds('battle', ['naval_cannon_splash_1', 'naval_cannon_splash_2', 'naval_cannon_splash_3', 'naval_cannon_splash_4'], 0.45, 250),
+    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效，多源随机变奏）
+    gun_fire: sounds('battle', ['gun_fire_1', 'gun_fire_2', 'gun_fire_3', 'gun_fire_4', 'gun_fire_5', 'gun_fire_6'], 0.5, 150),
+    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.45, 120),
+    explosion: sounds('battle', ['explosion_1', 'explosion_2', 'explosion_3', 'explosion_4', 'explosion_5', 'explosion_6'], 0.65, 200),
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
