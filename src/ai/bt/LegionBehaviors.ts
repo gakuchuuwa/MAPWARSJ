@@ -404,6 +404,9 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
                 }），冷却后重抽`,
             );
         }
+        // [2026-08-20 规则 3.6] 记下刚失效的这座城，供紧接着的 FindTarget 继承原方向重抽
+        //   —— 本来奔那个方向走了一半，别当场调头往回走（主人：「刚路过己方据点又掉头，怪别扭」）。
+        ctx.army.lastLostTargetCityId = strategicId;
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
         // 目标已失效：立即停步，别继续冲向已变友军/消失的旧城（2026-08-05）
@@ -589,8 +592,11 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
             excludeTargetIds,
             armyStandCityId: standCityId ?? undefined,
             myTroops: ctx.army.getTroops(),   // 启用「打不打得过」闸门
+            preferNearCityId: ctx.army.lastLostTargetCityId,   // 规则 3.6：继承原方向
         }
     );
+    // 用完即清：只影响「目标失效」紧接着的这一次重抽，之后的选目标回到常规规则
+    ctx.army.lastLostTargetCityId = undefined;
 
     if (!picked) {
         const anchorName = ctx.cityManager.getCity(anchorId)?.name ?? anchorId;

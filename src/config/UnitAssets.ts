@@ -1398,7 +1398,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/death_${dir}.png`),
         },
-        // 【北方印加枪兵长】Kamayuk 印加长枪步兵（8方向，AoE2 DE SLD 素材，u_inf_kamayuk）
+        // 【枪兵长】Kamayuk 长枪步兵（8方向，AoE2 DE SLD 素材，u_inf_kamayuk）
         'kamayuk': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KAMAYUK/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KAMAYUK/attack_${dir}.png`),
