@@ -1700,7 +1700,7 @@ export class LegionPhalanxDrawer {
 
     /** 兵力驱动的舰队队形（2026-08-19 主人定）：旗舰居前，后随成列。
      *  ≤4 艘单纵队（内河/海峡横向最窄不蹭岸）；≥5 艘旗舰 + 后方双列交错（纵向段数压到 ~4 行）。
-     *  r 为沿朝向的段距（旗舰 0，后随为负 = 朝航向反方向排）；c 为横向（±0.45 船宽交错）。 */
+     *  r 为沿朝向的段距，单位 = 一条船长（旗舰 0，后随为负 = 朝航向反方向排）；c 为横向（±0.5 船宽交错）。 */
     private static navalFormation(shipCount: number): { r: number; c: number; ship: NavalShipAssetId }[] {
         const shipType = (i: number): NavalShipAssetId =>
             i === 0 ? 'ship_large' : i <= 4 ? 'ship_medium' : 'ship_small';
@@ -1710,15 +1710,15 @@ export class LegionPhalanxDrawer {
         if (shipCount <= 4) {
             // 单纵队：后随船依次向后排
             for (let i = 1; i < shipCount; i++) {
-                formation.push({ r: -i * 0.8, c: 0, ship: shipType(i) });
+                formation.push({ r: -i, c: 0, ship: shipType(i) });
             }
         } else {
             // 双列：后 4~7 艘分两列交错（左右各一行，最后单艘补左列）
-            let r = 0.8;
+            let r = 1;
             for (let i = 1; i < shipCount; i++) {
                 const col = (i % 2 === 1) ? -0.5 : 0.5;   // ±0.5 × 船宽 = 两列中心隔一个船宽
                 formation.push({ r: -r, c: col, ship: shipType(i) });
-                if (i % 2 === 0) r += 0.8;
+                if (i % 2 === 0) r += 1;
             }
         }
         return formation;
@@ -1856,15 +1856,18 @@ export class LegionPhalanxDrawer {
             }
         }
 
-        // 编队间距以旗舰（大船）尺寸为基准：纵向 0.75 绘制高 ≈ 0.80 船身长（大船船身占帧 94%）。
+        // 编队间距以旗舰（大船）尺寸为基准。
+        // 🔴 [2026-08-19 修·叠船] 纵向间距原先取「绘制高 × 0.75」：DE 大船 dir0 帧 156 宽 × 132 高，
+        //   船长是**宽**（fw=船首到船尾），高是桅杆+船体——用高当间距再 ×0.75，再被 formation 的
+        //   r 步进 0.8 一乘，实际船距只有 ~0.6 船长 → 后船船首插进前船船尾（叠船）。
+        //   现在 r 步进改为 1.0（r = 多少条船长），间距基准改为「船长（fw）× 1.15」→ 船距 = 1.15 船长，留 15% 间距。
         // 🔴 [2026-08-19 实测修] 横向基准原为 0.45×船宽，配 formation 的 c=±0.45 → 两列中心只隔
         //    0.4 个船宽（zoom10 下 50px，而船宽 116px）—— **两列完全重叠，8 艘看着只有 4 团**。
         //    现在基准 = 整个船宽，c=±0.5 → 两列中心正好隔一个船宽，刚好不叠。
         //    舰队总宽 1.0 船宽，仍比旧菱形阵（±1.5×0.40 = 1.2 船宽）窄。
         const flagship = typeDraws.get('ship_large')!;
         const flagshipW = flagship.dyn ? flagship.fw! * flagship.s! : flagship.w;
-        const flagshipH = flagship.dyn ? flagship.fh! * flagship.s! : flagship.h;
-        const shipDepth = flagshipH * 0.75;
+        const shipDepth = flagshipW * 1.15;
         const shipSpread = flagshipW;
 
         // 对角朝向（1,3,5,7）c 轴加 0.15 补偿视觉压缩；正朝向不变

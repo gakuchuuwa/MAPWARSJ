@@ -1880,13 +1880,6 @@ interface WarMan {
      */
     march: boolean;
     /**
-     * 【放风筝】本兵**自己的**后撤触发距离（出生时按 wt.kite ±15% 抽一次）。
-     * 🔴 为什么要每人抖一下：全体共用同一个阈值 → 几百个弓骑在同一帧一起触发，
-     *    整条战线像被推着整片平移（主人 2026-08-19 报「有点乱」）。抖开之后前排先退、
-     *    后排后退，是波浪式的，才像各自在躲。
-     */
-    kiteR?: number;
-    /**
      * 【放风筝】本轮后撤累计跑了多远（px）。**打出一次攻击就清零**。
      * 见 KITE_RETREAT_CAP：跑够那么远却一箭没射 = 这个敌人根本甩不掉（同速骑兵追杀），
      * 再跑就是自废武功，此时永久放弃风筝、转身硬拼。
@@ -3346,8 +3339,6 @@ export class Scene13WarLayer {
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
                     flank: isFlank,
-                    // 放风筝触发距离：每人 ±15% 抖开，避免整条战线同帧一起后退（见 WarMan.kiteR）
-                    kiteR: (() => { const k = WAR_TYPES[s.key]?.kite; return k ? k * (0.85 + Math.random() * 0.3) : undefined; })(),
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -3746,7 +3737,7 @@ export class Scene13WarLayer {
                  * 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替。
                  */
                 if (wt.kite && !m.kiteGaveUp) {
-                    const kr = m.kiteR ?? wt.kite;       // 每人自己的触发距离（±15%，见 WarMan.kiteR）
+                    const kr = wt.kite;
                     const kd = Math.sqrt(fd2);
                     if (!m.kiting && kd < kr) m.kiting = true;
                     else if (m.kiting && kd > kr * 1.35) m.kiting = false;

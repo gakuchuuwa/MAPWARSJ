@@ -429,6 +429,63 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'grenadier', count: 2 },              // Row 2 尾收火器 = 掷弹兵 2人（震天雷铁罐火药弹，后排范围轰炸破坚）
         ],
     },
+    // 满清军团·抚顺/赫图阿拉/盛京/吉林乌拉/呼伦贝尔/威远营/西宁（努尔哈赤 / 皇太极 / 多尔衮 / 阿桂 / 海兰察 / 年羹尧 / 岳钟琪 · 鱼鳞阵 3+4+2：女真铁浮屠 3 + 草原枪骑兵精锐 4 + 重装骑射手 2）
+    manzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },          // Row 0 前卫重骑 = 女真铁浮屠 3骑（八旗重装铁甲前锋突破）
+            { type: 'elite_steppe_lancer', count: 4 },  // Row 1 中军主力 = 草原枪骑兵精锐 4骑（八旗长枪铁骑中坚突击）
+            { type: 'cav_archer_heavy', count: 2 },     // Row 2 尾收远程 = 重装骑射手 2骑（八旗重装弓骑兵两翼齐射火力支援）
+        ],
+    },
+    aisin_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
+    manzhou_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
+    agui: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
+    xingan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
+    weiyuan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
+    qinghai: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     yanchuan_d: {
         formationMode: 'fish_scale',
@@ -926,13 +983,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_elephant', count: 2 },        // Row 2 尾收战象 = 战象 2头（皮洛士远征东方战象，后排践踏敌阵）
         ],
     },
-    // 底比斯（伊巴密浓达 · 方形阵 3+3+3：全底比斯圣队死士同袍阵）
+    // 底比斯圣队军团·底比斯（伊巴密浓达 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 底比斯圣队 4 + 色雷斯标枪手精锐 2）
     boootiya: {
-        formationMode: 'square',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'sacred_band', count: 3 },         // Row 0 前排 = 底比斯圣队 3人
-            { type: 'sacred_band', count: 3 },         // Row 1 中坚 = 底比斯圣队 3人
-            { type: 'sacred_band', count: 3 },         // Row 2 后排 = 底比斯圣队 3人
+            { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（青铜圆盾长枪正面抗线）
+            { type: 'sacred_band', count: 4 },          // Row 1 中军主力 = 底比斯圣队 4人（300同袍死士王牌突击主力）
+            { type: 'elite_peltast', count: 2 },        // Row 2 尾收远程 = 色雷斯标枪手精锐 2人（希腊高穿透投枪两翼掩护）
         ],
     },
     // 叙拉古·锡拉库萨（阿加索克利斯 / 狄奥尼修斯一世 · 机械腹弩与雇佣重装步兵军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 机械腹弩手 2）
@@ -953,13 +1010,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rhodian_slinger', count: 2 },     // Row 2 尾收超远投石 = 罗得岛投石兵 2人（纯步兵·无马，世界最远射程重铅弹超视距精准压制）
         ],
     },
-    // 雅典·雅典城（地米斯托克利 · 执政将军近卫与克里特神弓纯步兵方阵 · 鱼鳞阵 4+3+2：雅典将军卫队 4 + 希腊雇佣重步兵 3 + 克里特弓箭手 2）
+    // 雅典·雅典城（地米斯托克利 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 雅典将军卫队 4 + 克里特弓箭手 2）
     xila: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'strategos', count: 4 },           // Row 0 前卫主力 = 雅典将军卫队 4人（纯步兵·无马，最高执政官亲军青铜圆盾重步兵前锋突贯）
-            { type: 'mercenary_hoplite', count: 3 },   // Row 1 中军坚壁 = 希腊雇佣重步兵 3人（纯步兵·无马，青铜胸甲长枪方阵中坚抗线）
-            { type: 'cretan_archer', count: 2 },       // Row 2 尾收神弓 = 克里特弓箭手 2人（纯步兵·无马，爱琴海精锐重弓后排精准射击）
+            { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（雅典公民大盾长枪方阵正面抗线）
+            { type: 'strategos', count: 4 },            // Row 1 中军主力 = 雅典将军卫队 4人（地米斯托克利十将军王牌亲军核心）
+            { type: 'cretan_archer', count: 2 },        // Row 2 尾收远程 = 克里特弓箭手 2人（爱琴海神射手后排远距齐射）
         ],
     },
     // 日本战国·织田信长军团（鱼鳞阵 3+4+2：日本武士 3 + 精锐武士 4 + 手炮手 2）
@@ -1330,13 +1387,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },  // Row 2 中军后排支援 = 古典重装骑射手 3骑（斯基泰-萨尔马提亚复合强弓漫天箭雨）
         ],
     },
-    // 达尔达尼亚·特洛伊（赫克托耳 · 特洛伊希皮乌斯重装步兵战阵 · 方形阵 3+3+3：纯希皮乌斯 3+3+3）
+    // 特洛伊卫队军团·特洛伊（赫克托耳 · 鱼鳞阵 3+4+2：希腊雇佣重步兵 3 + 近卫军精锐 4 + 弓兵 2）
     teluoyi: {
-        formationMode: 'square',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'hippeus', count: 3 },
-            { type: 'hippeus', count: 3 },
-            { type: 'hippeus', count: 3 },
+            { type: 'mercenary_hoplite', count: 3 },    // Row 0 前卫抗线 = 希腊雇佣重步兵 3人（青铜大盾结阵御敌）
+            { type: 'elite_guardsman', count: 4 },      // Row 1 中军主力 = 近卫军精锐 4人（赫克托耳重装近卫精锐主力）
+            { type: 'bowman', count: 2 },               // Row 2 尾收远程 = 弓兵 2人（步弓手远距齐射）
         ],
     },
     // 马耳他·圣约翰医院骑士团（瓦莱特 · 十字军骑士战阵）
@@ -2238,7 +2295,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rattan_archer_elite', count: 4 },     // Row 2 底边主力齐射 = 精锐藤弓兵 4人（密林精锐藤弓，后排暴雨抛射）
         ],
     },
-    // 哥萨克纯骑兵军团·塞契/阿速城（赫梅利 / 塔塔里诺夫 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
+    // 哥萨克纯骑兵军团·塞契/阿速城/切尔卡瑟（赫梅利 / 塔塔里诺夫 / 拜达 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     gesake: {
         formationMode: 'crane_wing',
         slots: [
@@ -2248,6 +2305,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dunhe: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'conquistador', count: 2 },
+            { type: 'magyar_huszar', count: 4 },
+            { type: 'cav_archer_heavy', count: 3 },
+        ],
+    },
+    qiekase: {
         formationMode: 'crane_wing',
         slots: [
             { type: 'conquistador', count: 2 },
