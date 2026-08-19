@@ -92,13 +92,38 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },
         ],
     },
-    // 大明帝国·北京（朱棣 / 戚继光 / 于谦 / 徐达 / 常遇春 / 卢象升 明军三大营步骑火协同军团 · 鱼鳞阵 3+4+2：持盾刀剑手 3 + 黑光铠骑兵主力 4 + 神机箭火箭车 2）
+    // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 明军三大营步骑火协同军团 · 鱼鳞阵 3+4+2：持盾刀剑手 3 + 黑光铠骑兵主力 4 + 神机箭火箭车 2）
     ming_d: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'jian_swordman_shielded', count: 3 }, // Row 0 前卫抗线 = 持盾刀剑手 3人（大盾刀牌手正面抗线防矢）
             { type: 'hei_kuang', count: 4 },              // Row 1 中军主力 = 黑光铠骑兵 4骑（三千营精锐重骑主力突破）
             { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
+        ],
+    },
+    // 大明军团·潼关/郧阳/宁远（孙传庭 / 卢象升 / 袁崇焕 · 鱼鳞阵 3+4+2：火矛手 3 + 黑光铠骑兵 4 + 吴火焰弓箭手精锐 2）
+    sunqin: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },            // Row 0 前卫突进 = 火矛手 3人（前锋突火枪突进破坚）
+            { type: 'hei_kuang', count: 4 },              // Row 1 中军主力 = 黑光铠骑兵 4骑（大明精锐重骑主力突破）
+            { type: 'elite_fire_archer', count: 2 },      // Row 2 尾收远射 = 吴火焰弓箭手精锐 2人（烈焰火矢火力压制）
+        ],
+    },
+    luming: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'hei_kuang', count: 4 },
+            { type: 'elite_fire_archer', count: 2 },
+        ],
+    },
+    zu_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'hei_kuang', count: 4 },
+            { type: 'elite_fire_archer', count: 2 },
         ],
     },
     // 大金帝国·五国城/会宁（完颜宗弼 / 完颜陈和尚 · 铁浮图震天雷大阵 · 鱼鳞阵 4+3+2：女真铁浮屠 4 + 火焰弓 3 + 掷弹兵 2）

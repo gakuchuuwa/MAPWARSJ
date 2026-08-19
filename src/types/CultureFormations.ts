@@ -66,8 +66,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SLAVIC:       'MIXED',   // 东欧步骑
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
     LATIN:        'INFANTRY', // 西欧重步/军团
-    GREEK:        'INFANTRY', // 希腊古典方阵重步
-    NUERGAN:      'MIXED',    // 奴儿干步骑混合
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -113,7 +111,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
-    GREEK:        'fish_scale',   // 希腊：希腊重装步兵(3) + 底比斯圣队主力(4) + 色雷斯轻装标枪后排(2)
     BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
     TIBET:        'fish_scale',   // 青藏：答剌罕前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
@@ -125,7 +122,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 帝王掷矛手(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
     CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
-    NUERGAN:      'triangle',     // 奴儿干：答剌罕(2) + 反曲长弓(3) + 鲜卑掠骑主力(4后)
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
@@ -1232,6 +1228,8 @@ export const LATIN_TIERS: CompositionTier[] = [
 ];
 
 /** 19. 希腊 希腊重装步兵+底比斯圣队+色雷斯轻装兵（鱼鳞阵 3+4+2：希腊重装步兵前卫 + 底比斯圣队突破主力 + 色雷斯标枪后排） */
+// [2026-08-19 收敛 18 大文化] 希腊已并入 LATIN，本表不再被 CULTURE_TIERS_MAP 引用。
+//   数据保留不删：将来做「拉丁下辖希腊支文化」时直接复用（主人 2026-08-19「其他都是支文化」）。
 export const GREEK_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1260,6 +1258,8 @@ export const ALEXANDER_TIERS: CompositionTier[] = [
 ];
 
 /** 20. 奴儿干 答剌罕骑兵+鲜卑掠骑兵+反曲长弓手（鱼鳞阵 3+4+2：答剌罕骑兵前卫 + 鲜卑掠骑兵突击主力 + 反曲长弓手后排） */
+// [2026-08-19 收敛 18 大文化] 奴儿干已并入 NORTHEAST，本表不再被 CULTURE_TIERS_MAP 引用。
+//   数据保留不删，同上。
 export const NUERGAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1295,8 +1295,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SLAVIC:       SLAVIC_TIERS,
     GERMANIC:     GERMANIC_TIERS,
     LATIN:        LATIN_TIERS,
-    GREEK:        GREEK_TIERS,
-    NUERGAN:      NUERGAN_TIERS,
 };
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */

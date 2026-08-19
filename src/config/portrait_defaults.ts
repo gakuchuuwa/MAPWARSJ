@@ -63,10 +63,10 @@ export function normalizePortraitWebPath(url: string): string {
     }
 }
 
-const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
-    GREEK: 'LATIN',
-    NUERGAN: 'NORTHEAST',
-};
+// [2026-08-19 收敛 18 大文化] 原有 GREEK→LATIN / NUERGAN→NORTHEAST 两条别名已删：
+//   这两个区已并入拉丁/东北，城池的 region 字段本身就是 LATIN/NORTHEAST，不再需要转发。
+//   表保留为空，是为了将来再出「没有独立立绘目录的支文化」时有地方挂。
+const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {};
 
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
@@ -181,7 +181,7 @@ function assertCultureCirclePoolsSingleFolder(): void {
     if (!import.meta.env?.DEV) return;
     for (const region of REGION_ORDER) {
         const prefix = cultureCircleFolderPrefix(region);
-        // 别名夹（GREEK→LATIN、NUERGAN→NORTHEAST）是合法池来源：本区夹为空时 collectRegionPortraitPool 会用别名夹
+        // 别名夹是合法池来源：本区夹为空时 collectRegionPortraitPool 会用别名夹（当前别名表为空）
         const aliasPrefix = REGION_FOLDER_ALIASES[region]
             ? cultureCircleFolderPrefix(REGION_FOLDER_ALIASES[region]!)
             : null;

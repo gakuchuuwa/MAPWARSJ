@@ -85,11 +85,13 @@ export interface MilitaryTech {
 
 /** 欧亚锁甲分布带 */
 const CHAINMAIL_BELT: readonly RegionType[] = [
-    'LATIN', 'GERMANIC', 'SLAVIC', 'WEST_ASIA', 'CENTRAL_ASIA', 'NORTH', 'HEXI', 'GREEK',
+    // [2026-08-19] 原含 'GREEK'，已并入 LATIN（本表已有 LATIN，覆盖不变）
+    'LATIN', 'GERMANIC', 'SLAVIC', 'WEST_ASIA', 'CENTRAL_ASIA', 'NORTH', 'HEXI',
 ];
 /** 骑射文化（草原／伊朗系）+ 中原扳指传统 */
 const HORSE_ARCHER_CULTURES: readonly RegionType[] = [
-    'STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'NORTHEAST', 'NUERGAN', 'TIBET',
+    // [2026-08-19] 原含 'NUERGAN'，已并入 NORTHEAST（本表已有 NORTHEAST，覆盖不变）
+    'STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'NORTHEAST', 'TIBET',
 ];
 
 export const MILITARY_TECHS: readonly MilitaryTech[] = [

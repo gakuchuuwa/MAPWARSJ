@@ -966,7 +966,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xuantu_yuangaisuwen': 7,                           // 渊盖苏文 · xuantu · 国内城
     'zhen_zhenxuan': 10,                                 // 甄萱 · zhen · 完山
 
-    // ══════ NUERGAN（9 人，已标 0）══════
+    // ══════ NUERGAN（9 人，已标 0）—— 2026-08-19 起属 NORTHEAST 东北支文化 ══════
     'ayinu_hushemoquan': 15,                             // 胡奢魔犬 · ayinu · 白老
     'beihai_shamusheyun': 17,                            // 沙牟奢允 · beihai · 宗谷
     'eluoke_amuhaer': 18,                                // 阿穆哈尔 · eluoke · 诺托罗
@@ -977,7 +977,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kuye_kuye_qichayi': 18,                             // 齐查伊 · kuye · 白主
     'nuergan_kangwang': 15,                              // 康旺 · nuergan · 特林
 
-    // ══════ GREEK（7 人，已标 0）══════
+    // ══════ GREEK（7 人，已标 0）—— 2026-08-19 起属 LATIN 拉丁支文化 ══════
     'gen_cassander': -4,                                 // 卡山德 · maqidun · 萨洛尼卡
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
