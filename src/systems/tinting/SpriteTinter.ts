@@ -100,7 +100,15 @@ export class SpriteTinter {
 
         const maskState = this.maskCache.get(maskSrc);
         if (maskState === 'none') {
-            // 确认无遮罩（onerror 过）→ 回亮度染色
+            // 🔴 [2026-08-20] 分两种情况，别一律回亮度染色：
+            //   ① **本目录别的图有遮罩、只有这一张缺** → 返回原图不染色。
+            //      全项目只有 WAR_ELEPHANT / COMPANION_CAVALRY / CRETAN_ARCHER 三个兵种有 damage 动作组，
+            //      而这三个的 damage 遮罩一张都没提取出来。若这里回亮度染色，受伤那几帧会从
+            //      「只染毯子牙饰」跳成「整只象按亮度混势力色」—— 一挨打就变色，比丢掉几帧势力色难看得多。
+            //      返回原图的代价只是 damage 那几帧毯子暂时没有势力色（占幅 11~19%），几乎看不出。
+            //   ② **整个目录都没有遮罩**（S10DB / 征服版 SLP 那批）→ 照旧亮度染色，
+            //      它们全靠这条才有势力色，绝不能改成不染。
+            if (dir && this.dirHasMask.get(dir) === true) return sprite;
             return this.getLuminanceTinted(sprite, factionId, tint, tintHex);
         }
         if (maskState && maskState.complete) {
@@ -114,7 +122,19 @@ export class SpriteTinter {
         if (!maskState) {
             const m = new Image();
             m.onload = () => { this.maskCache.set(maskSrc, m); if (dir) this.dirHasMask.set(dir, true); };
-            m.onerror = () => { this.maskCache.set(maskSrc, 'none'); if (dir) this.dirHasMask.set(dir, false); };
+            m.onerror = () => {
+                this.maskCache.set(maskSrc, 'none');
+                // 🔴 [2026-08-20 修「象兵颜色时好时坏」] 单张遮罩 404 **不许**把整个目录判成「无遮罩」。
+                //   dirHasMask 原本假设「一个目录要么全有遮罩、要么全没有」，但磁盘实测有 3 个目录是混的：
+                //   WAR_ELEPHANT / COMPANION_CAVALRY / CRETAN_ARCHER 各缺 damage_0~7 这 8 张 .pc.png，
+                //   其余 32 张（move/idle/attack/death）都有。
+                //   于是战象一挨打播 damage 帧 → 那 8 张 404 → 整个目录降级 → 之后**全场所有战象**
+                //   从「只染毯子牙饰」突变成「整只象按亮度混势力色」，而且 dirHasMask 是 static、
+                //   缓存不回滚 = 不可逆。主人看到的「有时颜色不一样」就是这个，与朝向无关，是「受没受过伤」。
+                //   改法：只有**从未成功加载过任何遮罩**的目录才允许标记为无遮罩
+                //   （S10DB 那类整目录无遮罩的性能优化照旧生效），已确认有遮罩的目录永不降级。
+                if (dir && this.dirHasMask.get(dir) !== true) this.dirHasMask.set(dir, false);
+            };
             m.src = maskSrc;
             this.maskCache.set(maskSrc, m);
         }

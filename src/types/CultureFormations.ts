@@ -257,11 +257,11 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 // ============================================================
 
 /**
- * 秦及先秦·雁行阵（4+3+2）：印加枪兵长(4) + 先秦远程战车(3) + 诸葛弩(2)
- * 2026-08-18 主人定：秦国与所有秦国以前的武将统一套此阵（此前鹤翼 2+4+3 混用虎豹骑/剑手等三国贴图，时代错位）。
+ * 秦国军团·雁行阵（4+3+2）：枪兵长(4) + 先秦远程战车(3) + 诸葛弩(2)
+ * 主人定：秦国武将（司马错、白起、王翦、章邯、商鞅、赵佗等，除蒙恬大秦长城军团外）统一为【秦国军团】。
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
-    { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 印加枪兵长 4人
+    { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 枪兵长 4人
     { type: 'war_chariot_ranged', count: 3 },  // Row 1 中排 = 先秦远程战车 3乘
     { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
 ];

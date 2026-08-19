@@ -126,6 +126,12 @@ export class Army implements IBattleUnit {
      * undefined = 还没决策过，按当前兵力直接判。
      */
     public usingHomeAnchor?: boolean;
+    /**
+     * 【目标失效重抽·继承原方向】刚刚失效（被友军抢占/消失）的目标城 id。
+     * HasTarget 判定失效时写入，紧接着那一次 FindTarget 用完即清（见 AGENTS.md 规则 3.6）。
+     * 作用：本来奔那个方向走了一半，目标没了就打那附近的，别当场调头往回走。
+     */
+    public lastLostTargetCityId?: string;
     /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图（已去抖，见 updateTerrainSpeed） */
     public isOnSea: boolean = false;
     /** 反向判定已累计走过的距离（度）；见 updateTerrainSpeed 的翻转闸 */

@@ -17,13 +17,37 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 先秦劲弩军团·咸阳/新郑（白起 / 嬴政 / 申不害 / 韩非 · 雁行阵 4+3+2：诸葛弩 4 + 长枪方阵 3 + 先秦远程战车 2）
+    // 秦国军团·天水/咸阳/长子/武关/骊山/商邑/番禺（司马错 / 白起 / 王翦 / 章邯 / 商鞅 / 赵佗 · 雁行阵 4+3+2：枪兵长 4 + 先秦远程战车 3 + 诸葛弩 2）
     qin: {
         formationMode: 'echelon',
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人（秦强弩大阵主力）
-            { type: 'heavy_pikeman', count: 3 },             // 中军接应 = 长枪方阵 3人（大秦长矛方阵）
-            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 先秦远程战车 2乘（先秦驷马战车压阵）
+            { type: 'kamayuk', count: 4 },                   // Row 0 前排·步兵前锋 = 枪兵长 4人
+            { type: 'war_chariot_ranged', count: 3 },        // Row 1 中排 = 先秦远程战车 3乘
+            { type: 'chukonu', count: 2 },                   // Row 2 后排压阵 = 诸葛弩 2人
+        ],
+    },
+    xin: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    wazhai: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    nanyue: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
@@ -39,7 +63,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     jin: {
         formationMode: 'echelon',
         slots: [
-            { type: 'kamayuk', count: 4 },                   // Row 0 前排坚矛 = 印加枪兵长 4人（春秋长矛步兵列阵抗线）
+            { type: 'kamayuk', count: 4 },                   // Row 0 前排坚矛 = 枪兵长 4人（春秋长矛步兵列阵抗线）
             { type: 'war_chariot_ranged', count: 3 },        // Row 1 中排战车主力 = 先秦远程战车 3乘（晋中军春秋战车核心冲击）
             { type: 'chukonu', count: 2 },                   // Row 2 后排压阵齐射 = 劲弩手 2人（后排劲弩暴雨抛射）
         ],
@@ -306,11 +330,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ruo: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     jiaodong: {
@@ -338,11 +362,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     shangzhou: {
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
+            { type: 'kamayuk', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     ba: {
