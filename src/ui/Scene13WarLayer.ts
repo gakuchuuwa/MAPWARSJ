@@ -1357,8 +1357,22 @@ const MARCH_FILES_WAGON = 4;
 function marchFilesOf(key: string): number {
     return WAGON_KEYS.has(key) ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
-/** 槽位间距（px）：必须 ≥ 两兵半径之和（UNIT_RADIUS 最大档 20），否则软推挤会把队形挤散 */
+/**
+ * 槽位间距基准（px）：步兵半径 8、骑兵 10，两两之和 16~20，24 够用。
+ * 🔴 [2026-08-19 修] 原先这是**全兵种唯一常量**，注释写着「必须 ≥ 两兵半径之和
+ *    （UNIT_RADIUS 最大档 20）」—— 但 20 是**半径本身**，两辆车的半径之和是 40，
+ *    规则从来没被满足过。于是双轮远程战车（r=20，全表最大）、高丽/胡斯战车、攻城锤（r=18）
+ *    列阵时槽位只隔 24px 而车宽 40px，开局方阵直接叠成一堵墙（主人 2026-08-19 截图实锤）。
+ *    现按兵种半径取 max，步骑维持 24 不变（不动已调平的队形），只有大体型单位撑开。
+ */
 const MARCH_SP = 24;
+/** 列阵纵深方向的槽位间距上限：受出兵口前后行间距（depth，1920 屏 144px）约束，见使用处。 */
+const MARCH_SP_DEPTH_MAX = 36;
+/** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
+function marchSpacingOf(key: string): number {
+    const r = UNIT_RADIUS[key] ?? 8;
+    return Math.max(MARCH_SP, r * 2 + 4);
+}
 /**
  * 选敌口时纵向（y）的权重。
  * 🔴 用直线距离选「最近的敌口」对 3×3 没问题，但对**纯骑的 1-2-3 三角阵是灾难**：
@@ -3179,8 +3193,14 @@ export class Scene13WarLayer {
                 const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
                 const files = marchFilesOf(s.key);
-                const dep = ((slotIdx / files) | 0) * MARCH_SP;
-                const slotY = ((slotIdx % files) - (files - 1) / 2) * MARCH_SP;
+                // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
+                // 出兵口的前后行间距 depth = min(150, VW×0.075)，1920 屏才 144px，
+                // 战车 4 排若也用 44 就是 132px，窄屏（1366→102px）会直接压到前后排的口上。
+                // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
+                const sp = marchSpacingOf(s.key);
+                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+                const dep = ((slotIdx / files) | 0) * spDep;
+                const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
                     x: s.x + (s.f === 0 ? -dep : dep),
