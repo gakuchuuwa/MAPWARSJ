@@ -549,16 +549,18 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
     serjeant: 'sword_shield', shotel_warrior: 'sword_shield', teutonic_knight: 'sword_shield',
     vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield',
-    sacred_band: 'sword_shield', takabara: 'sword_shield', champi_warrior: 'sword_shield',
+    takabara: 'sword_shield', champi_warrior: 'sword_shield',
     elite_champi_warrior: 'sword_shield', champi_runner: 'sword_shield', champi_scout: 'sword_shield',
-    norse_warrior: 'sword_shield',
+    norse_warrior: 'sword_shield', strategos: 'sword_shield',
     // 长矛（枪/矛/戟/长枪等长杆兵器）
     kamayuk: 'spear', fire_lancer: 'spear', elite_fire_lancer: 'spear', heavy_pikeman: 'spear', pikeman: 'spear',
     liao_dao: 'spear', elite_liao_dao: 'spear', white_feather_guard: 'spear', elite_white_feather_guard: 'spear',
     ekdromos: 'spear', elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', hoplite: 'spear', immortal: 'spear', mercenary_hoplite: 'spear',
     phalangite: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
-    strategos: 'spear', guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
+    sacred_band: 'spear', amazon_warrior: 'spear',
+    temple_guard: 'spear', elite_temple_guard: 'spear', hill_tribesman: 'spear', indian_tribesman: 'spear',
+    guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
     // 双手（双手剑/巨斧/战锤/长刃）
     berserk: 'two_handed', elite_berserk: 'two_handed', elite_huskarl: 'two_handed', huskarl: 'two_handed',
     elite_ibirapema_warrior: 'two_handed', ibirapema_warrior: 'two_handed', elite_obuch: 'two_handed', obuch: 'two_handed',
@@ -568,9 +570,8 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     ninja: 'special', karambit_warrior: 'special', karambit_warrior_elite: 'special', eagle_scout: 'special',
     eagle_warrior: 'special', elite_eagle_warrior: 'special', elite_jaguar_warrior: 'special',
     elite_urumi_swordsman: 'special', elite_war_dog: 'special', jaguar_warrior: 'special', urumi_swordsman: 'special',
-    war_dog: 'special', warrior_priest: 'special', temple_guard: 'special', elite_temple_guard: 'special', hill_tribesman: 'special',
-    indian_tribesman: 'special', iroquois_warrior: 'special', amazon_warrior: 'special',
-    sickle_warrior: 'special',
+    war_dog: 'special', warrior_priest: 'special',
+    iroquois_warrior: 'special', sickle_warrior: 'special',
 
     // ── 远程 ──
     // 弓手

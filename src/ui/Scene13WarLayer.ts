@@ -1802,11 +1802,19 @@ const KITE_RETREAT_CAP = 300;
  * 为什么不改属性：那些是 AoE2 DE 真值，改了跟帝国时代对不上，285 个兵种牵一发动全身。
  * 改战场规则而不是改单位：全场**同一个倍率**，所有人一起变快 → 兵种相克与强弱排序守恒。
  * 观感上也讲得通：打到后半程士气崩、体力尽、阵型散，伤亡本来就该加速。
- * 90 秒内结束的仗完全不受影响（倍率恒为 1），只收束磨蹭局。
+ * war_sim 实测（3 种子，关闭 → 开启）：
+ *   弓对射 280/281/280s → 228/229/228s（−19%）
+ *   步对砍 449/481/410s → 287/271/278s（−36%）
+ *   骑对砍 294/284/291s → 196/256/206s（−28%）
+ *   步 vs 远 317/332/313s → 193/196/194s（−39%）
+ * ⚠️ 实测顺带纠正一个我原以为的前提：**不是只有弓对射慢，所有对局都要 250~480 秒**，
+ *    混编局也 386s。所以这不是「个别磨蹭局」的补丁，是给 13 战斗普遍提速。
+ * ⚠️ 更陡的档（45s 起 / 每 30s +1 / 封顶 ×5）实测把步对砍打成 900s 打不完（伤害太高 →
+ *    减员过快 → 补兵频繁 → 场上人少互相找不到），别再往那个方向调。
  */
-const ATTRITION_START_SEC = 90;   // 这之前恒为 ×1.0，正常战斗不受任何影响
-const ATTRITION_RAMP_SEC = 90;    // 每过这么久 +1.0 倍
-const ATTRITION_CAP = 3.0;        // 封顶（90s ×1 → 180s ×2 → 270s ×3）
+const ATTRITION_START_SEC = 60;   // 这之前恒为 ×1.0
+const ATTRITION_RAMP_SEC = 45;    // 每过这么久 +1.0 倍
+const ATTRITION_CAP = 4.0;        // 封顶（60s ×1 → 105s ×2 → 150s ×3 → 195s ×4）
 /** 哈希键用数字不用字符串：每人每帧拼 9 次字符串 = 两万多次分配，实测是推挤慢的元凶 */
 const HKEY = (gx: number, gy: number): number => (gx + 4096) * 8192 + (gy + 4096);
 /** 近战哈希格 */
@@ -1922,6 +1930,16 @@ interface WarMan {
     /** 人口占用（1 精灵 = pop × SPRITE_TROOPS 兵；出生时从所属出兵口继承，见 popCostOf） */
     pop: number;
     /** 上一帧同时打他的敌人数（围殴加成用；当帧计数见 atkNext） */
+    /**
+     * 【索敌分流】本帧有多少人把**我**当成目标（m.foe 指向我）—— 含正在赶路的，
+     * 与 atkers（只数够得着并出手的）不同。search 用它判「这人已经被够多人盯上了，换一个」。
+     * 🔴 [2026-08-19 修] 原来那道 SPREAD_CAP 闸用的是 atkers，而赶路中的兵不计入 atkers，
+     *    于是远处一大群人看到目标「身上没人」全都扑过去。实测同一目标被 >4 人锁定占 53.7%、
+     *    12 人以上占 27.9%，而围殴加成 4 人就封顶（×1.45）—— 第 5 个人起纯属白挤，浪费战力。
+     * 与 atkers 同款：每帧重算再结转，不会像「锁定时 +1 / 丢失时 -1」那样计数泄漏。
+     */
+    claims: number;
+    claimsNext: number;
     atkers: number;
     /** 本帧累计的攻击者数，帧末结转给 atkers */
     atkNext: number;
@@ -3355,7 +3373,7 @@ export class Scene13WarLayer {
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
                     flank: isFlank,
-                    atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
+                    claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
         }
@@ -3508,7 +3526,9 @@ export class Scene13WarLayer {
                         if (d >= r2) continue;
                         const tooNear = minR2 > 0 && d < minR2;
                         if (d < bd) { bd = d; best = o; }
-                        if (!tooNear && o.atkers < SPREAD_CAP && d < fd) { fd = d; free = o; }
+                        // 🔴 用 claims（被多少人盯上，含赶路的）而不是 atkers（只数正在打的）：
+                        //    见 WarMan.claims —— 用 atkers 会让一群人同时扑向同一个「看着没人」的目标。
+                        if (!tooNear && o.claims < SPREAD_CAP && d < fd) { fd = d; free = o; }
                     }
                 }
             }
@@ -4092,6 +4112,10 @@ export class Scene13WarLayer {
 
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
+        // 锁定计数结转（见 WarMan.claims）：数「谁被谁盯上」，含赶路中的，供 search 分流用
+        for (const m of this.men) { m.claimsNext = 0; }
+        for (const m of this.men) { if (m.foe && m.foe.hp > 0) m.foe.claimsNext++; }
+        for (const m of this.men) { m.claims = m.claimsNext; }
 
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
