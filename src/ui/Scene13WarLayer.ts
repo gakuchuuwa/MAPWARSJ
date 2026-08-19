@@ -2219,6 +2219,9 @@ export class Scene13WarLayer {
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
 
+    /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
+    private exitBtn: HTMLButtonElement | null = null;
+
     /** 挂到 body（全屏透明 canvas，叠在地图 DOM 之上；透明像素不遮挡地图，只画精灵） */
     public attach(): void {
         if (this.canvas) return;
@@ -2233,6 +2236,35 @@ export class Scene13WarLayer {
         this.ground.width = cv.width;
         this.ground.height = cv.height;
         this.groundCtx = this.ground.getContext('2d', { alpha: true });
+        // [2026-08-19 主人需求] 13 战斗退出按钮：canvas 是 pointer-events:none 的，
+        // 按钮必须独立 DOM（z-index 高于 canvas 的 400），点击后自动结算战果。
+        if (!this.exitBtn) {
+            const btn = document.createElement('button');
+            btn.textContent = '退出战斗';
+            btn.title = '点击后按当前战况自动结算战果并退出';
+            btn.style.cssText = [
+                'position:fixed',
+                'top:14px',
+                'right:14px',
+                'z-index:450',
+                'padding:6px 16px',
+                'background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%)',
+                'border:1px solid rgba(212,175,55,0.6)',
+                'border-radius:6px',
+                'color:#f5e6c8',
+                "font-family:\'Noto Serif SC\',\'Cinzel\',serif",
+                'font-size:14px',
+                'font-weight:bold',
+                'cursor:pointer',
+                'pointer-events:auto',
+                'user-select:none',
+                'display:none',
+                'box-shadow:0 2px 10px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25)',
+            ].join(';');
+            btn.addEventListener('click', () => this.requestExitWithResult());
+            document.body.appendChild(btn);
+            this.exitBtn = btn;
+        }
         const onResize = () => {
             if (!this.canvas) return;
             this.canvas.width = window.innerWidth;
@@ -2372,6 +2404,8 @@ export class Scene13WarLayer {
 
         const cv = this.canvas;
         if (cv) { cv.style.display = 'block'; }
+        // [2026-08-19 主人需求] 战斗开始 → 显示退出按钮（13 演出期间可见）
+        if (this.exitBtn) this.exitBtn.style.display = 'block';
 
         // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起（记录状态供退出时还原）
         const game = (window as any).game;
@@ -2478,6 +2512,18 @@ export class Scene13WarLayer {
     }
 
     /**
+     * [2026-08-19 主人需求] 退出按钮点击 → 按当前兵力比自动结算战果并退出。
+     * 走 forceResultByRatio 同一条通道（onDecision → forceScene13Result → 解冻 + 引擎结算），
+     * 与演出自然判负完全同链路，只是赢家按当前兵力比估算（与素材超时防死锁同口径）。
+     */
+    public requestExitWithResult(): void {
+        if (!this.active || this.over) return;
+        // 点击即隐藏（防重复点击；forceResultByRatio 里 over=true 后按钮本就不该再可点）
+        if (this.exitBtn) this.exitBtn.style.display = 'none';
+        this.forceResultByRatio(0.85);
+    }
+
+    /**
      * [2026-08-11 防死锁] 素材卡死/演出异常时强制判负（绝不永冻引擎）。
      * 按当前兵力比判：守方（f=1）吃 homeDiscount（城防/主场）折扣。
      * 走 onDecision 正常通道（→ forceScene13Result → 解冻 + 结算），
@@ -2496,6 +2542,8 @@ export class Scene13WarLayer {
         const def = Math.max(1, alive[1] * homeDiscount);
         const attackerWins = att > def;
         this.over = true;
+        // [2026-08-19 主人需求] 判负即隐藏退出按钮（防死锁/退出结算共用此通道）
+        if (this.exitBtn) this.exitBtn.style.display = 'none';
         console.warn(`🏁 [Scene13War] 防死锁判负：攻 ${alive[0]} 守 ${alive[1]}（守方×${homeDiscount}）→ ${attackerWins ? '攻方胜' : '守方胜'}`);
         this.diagPush('forceByRatio', { alive, homeDiscount, winner: attackerWins ? 'attacker' : 'defender' });
         this.diagFlush('forceByRatio');
@@ -2524,6 +2572,8 @@ export class Scene13WarLayer {
         if (!this.active) return;
         this.active = false;
         this.lingering = true;
+        // [2026-08-19 主人需求] 战斗已结束（残局待命）→ 退出按钮无意义，隐藏
+        if (this.exitBtn) this.exitBtn.style.display = 'none';
     }
 
     /** 残局待命的每帧推进：只推动画，不推战斗 */
@@ -2653,6 +2703,8 @@ export class Scene13WarLayer {
         this.trees = [];
         this.lakes = [];
         this.clouds = [];
+        // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
+        if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
             this.canvas.style.display = 'none';
         }

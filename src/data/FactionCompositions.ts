@@ -208,7 +208,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_tiger_cavalry', count: 3 },       // Row 2 后排 = 魏武虎豹骑精锐 3骑（白袍扫荡后卫）
         ],
     },
-    // 先秦军团·朝歌/殷墟/岐山/孤竹/姑苏（子受 / 妇好 / 姬发 / 孙武 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 先秦远程战车 2）
+    // 先秦军团·朝歌/殷墟/岐山/孤竹/姑苏/临淄/云梦/会稽/安邑/邯郸/古北口/郯城/武关/即墨/曲阜/上海/商邑/重庆/铜鞮/竟陵/竹山（子受/妇好/姬发/孙武/司马穰苴/熊旅/勾践/吴起/廉颇/乐毅/孙膑/王翦/田单/曹刿/黄歇/商鞅/巴蔓子/羊舌职/鬬廉/庐戢黎 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 先秦远程战车 2）
     yin: {
         formationMode: 'fish_scale',
         slots: [
@@ -242,6 +242,134 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     wu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    qi: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    mi_chu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    yue: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    wei: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    zhao: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    yan: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    dongxian: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    ruo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    jiaodong: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    kong_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    chunshen: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    shangzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    ba: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    yangshe: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    ruochu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    yong: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'jian_swordsman', count: 3 },
