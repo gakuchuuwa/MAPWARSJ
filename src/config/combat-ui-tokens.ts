@@ -8,8 +8,8 @@ export const COMBAT_UI_SCALE = 0.7;
 export const uiPx = (n: number): string => `${Math.round(n * COMBAT_UI_SCALE)}px`;
 
 export const COMBAT_UI_TOKENS = {
-    /** 战斗条设计宽；屏幕宽 = uiPx(panelWidth) ≈ 1190px（勿直接填 1190） */
-    panelWidth: 1700,
+    /** 战斗条设计宽；屏幕宽 = uiPx(panelWidth) ≈ 1365px（勿直接填 1365） */
+    panelWidth: 1950,
     panelHeight: 360,
     portraitSlotWidth: 380,
     /** 黑底条距容器左右边距（越小条越宽） */
@@ -24,7 +24,7 @@ export const COMBAT_UI_TOKENS = {
     centerFadeStopMid: 58,
     centerFadeStopOuter: 84,
     /** 中央对峙血条最大宽度（设计 px）；屏宽 ≈ uiPx(本值)。略伸入立绘槽底缘以铺满中栏黑底 */
-    clashBarTrackWidth: 1280,
+    clashBarTrackWidth: 1480,
     centerMargin: 400,
     portraitBottom: -50,
     portraitInset: 12,

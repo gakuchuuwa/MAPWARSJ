@@ -2589,38 +2589,12 @@ export class CombatUI {
      * 从滑入结束(0.7s)即刻开始，随游戏内 elapsed 缓缩至 0.90，相持阈值处缩到底。
      * 无将侧保持 1.0（对称铁律）；脉冲放完（pulsed）不再二次收缩。
      */
+    /**
+     * 蓄力收缩逐帧驱动：
+     * [2026-08-19 主人指令] 关闭立绘缩小效果，战斗中立绘全程稳固保持常态 scale(1.0)。
+     */
     private updatePortraitWinddown(): void {
-        const bf = this.boundRegionalBattleField;
-        if (!bf || bf.isOver) return;
-        // 【2026-08-16 用户指令】单方有将立绘不缩放：仅双将战才进行蓄力收缩
-        if (!bf.bothSidesHaveGeneral()) return;
-        const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
-        const startSec = 0.7; // 滑入结束即刻蓄力
-        if (bf.elapsed <= startSec) return;
-        for (const side of ['attacker', 'defender'] as const) {
-            const st = this.portraitWind[side];
-            if (st.pulsed) continue;
-            const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
-            if (!pickSideSkillGeneralUnit(units)) continue; // 无技可放 → 不缩，保持两侧对称
-            const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
-            if (!st.driving) {
-                st.driving = true;
-                frame.style.animation = 'none'; // 清掉 settle 的 forwards 填充，让内联 transform 生效
-                console.log(`✨ [PortraitWind] ${side === 'attacker' ? '攻方' : '守方'}立绘开始蓄力收缩 → ${CombatUI.PORTRAIT_WIND_MIN_SCALE}（至 ${threshold.toFixed(1)}s 技能亮相）`);
-            }
-            // 主段：线性缓缩到 0.90，终点 = 相持阈值 + 双方脉冲错开上限（后放侧也缩到它释放那一刻）
-            const endSec = threshold + SKILL_PULSE_STAGGER_IDEAL_SEC;
-            const k = Math.min(1, (bf.elapsed - startSec) / Math.max(0.001, endSec - startSec));
-            if (k < 1) {
-                st.scale = 1 - (1 - CombatUI.PORTRAIT_WIND_MIN_SCALE) * k;
-            } else {
-                // 主段走完技能仍未放（罕见）：不停，极缓下潜到硬底，直至脉冲释放
-                const dt = Math.max(0, bf.elapsed - (st.lastE ?? bf.elapsed));
-                st.scale = Math.max(CombatUI.PORTRAIT_WIND_FLOOR, st.scale - CombatUI.PORTRAIT_WIND_DRIFT_PER_SEC * dt);
-            }
-            st.lastE = bf.elapsed;
-            frame.style.transform = `scale(${st.scale.toFixed(4)})`;
-        }
+        return;
     }
 
     /** 复位上一场的败方褪灰与技能脉冲状态（仅真正换场时清，同场 UI 刷新保留去重） */
