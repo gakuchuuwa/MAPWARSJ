@@ -6577,7 +6577,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LATIN/dbe814db-277f-4036-b148-2ac0edfaf303.png": {
+        "/assets/LATIN/__多余__LATIN_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 22
@@ -6587,7 +6587,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/LATIN/Gemini_Generated_Image_19lgvf19lgvf19lg.png": {
+        "/assets/LATIN/__多余__LATIN_03.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 17
@@ -6597,17 +6597,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/LATIN/Gemini_Generated_Image_6q0cou6q0cou6q0c.png": {
+        "/assets/LATIN/__多余__LATIN_04.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/LATIN/Gemini_Generated_Image_uio81tuio81tuio8.png": {
+        "/assets/LATIN/__多余__LATIN_07.png": {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/LATIN/Gemini_Generated_Image_tt6nq2tt6nq2tt6n.png": {
+        "/assets/LATIN/__多余__LATIN_06.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
@@ -6617,7 +6617,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/GERMANIC/Gemini_Generated_Image_g5mawzg5mawzg5ma.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_02.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 7
@@ -6657,7 +6657,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/WEST_ASIA/Gemini_Generated_Image_mpqiaumpqiaumpqi.png": {
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_58.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 2
