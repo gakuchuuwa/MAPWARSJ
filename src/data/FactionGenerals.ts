@@ -967,7 +967,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yilihanguo: { generalId: 'yilihanguo_yisimeier', generalName: '伊斯梅尔', portrait: '/assets/CENTRAL_ASIA/yilihanguo_yisimeier.png' },
     yilihanguo_d: { generalId: 'yilihanguo_d_hezan', generalName: '合赞', portrait: '/assets/CENTRAL_ASIA/yilihanguo_d_hezan.png' },
     asaibaijiang: { generalId: 'asaibaijiang_xuliewu', generalName: '旭烈兀', portrait: '/assets/CENTRAL_ASIA/asaibaijiang_xuliewu.png' },
-    wulaertu: { generalId: 'wulaertu_ajishenti', generalName: '阿吉什提', portrait: '/assets/CENTRAL_ASIA/wulaertu_ajishenti.png' },
+    wulaertu: { generalId: 'wulaertu_ajishenti', generalName: '瓦尔丹', portrait: '/assets/CENTRAL_ASIA/wulaertu_ajishenti.png' },
     gelujiya: { generalId: 'gelujiya_tamaer', generalName: '塔玛尔', portrait: '/assets/CENTRAL_ASIA/gelujiya_tamaer.png' },
     bendou: { generalId: 'bendou_alikesai', generalName: '阿历克塞', portrait: '/assets/WEST_ASIA/bendou_alikesai.png' },
     keerjisi: { generalId: 'keerjisi_bagelate', generalName: '巴格拉特', portrait: '/assets/CENTRAL_ASIA/keerjisi_bagelate.png' },

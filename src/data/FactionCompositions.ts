@@ -1467,7 +1467,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（WEST_ASIA 文化区标准远程）
         ],
     },
-    // 亚美尼亚·埃里温（阿吉什提 · 战锤修士与高山铁骑军团 · 鱼鳞阵 4+3+2：亚美尼亚修士战士 4 + 重装骑士 3 + 精锐复合弓手 2）
+    // 亚美尼亚·埃里温（瓦尔丹 · 战锤修士与高山铁骑军团 · 鱼鳞阵 4+3+2：亚美尼亚修士战士 4 + 重装骑士 3 + 精锐复合弓手 2）
     wulaertu: {
         formationMode: 'fish_scale',
         slots: [
@@ -2133,6 +2133,71 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'flaming_camel', count: 2 },        // Row 0 前锋奇兵 = 鞑靼火焰骆驼 2头（沙漠火攻突袭）
             { type: 'camel_rider', count: 4 },          // Row 1 中军主力 = 骆驼骑兵 4骑（纳巴泰沙漠重驼骑核心合围）
             { type: 'camel_archer', count: 3 },         // Row 2 尾收远射 = 柏柏尔骆驼弓骑 3骑（沙漠驼背复合弓游射压制）
+        ],
+    },
+    // 奴儿干都司与极北海岛军团·特林/囊哈儿/普禄/诺托罗/白主/宗谷/莫约罗/白老（康旺/吉里迷/费雅喀/鄂罗克/苦夷/阿伊努 · 三角阵 2+3+4：答剌罕骑兵 2 + 反曲长弓手 3 + 鲜卑掠骑兵 4）
+    nuergan: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },           // Row 0 尖刀突骑 = 答剌罕骑兵 2骑（极北通古斯重骑突击）
+            { type: 'recurve_bowman', count: 3 },   // Row 1 中坚步射 = 反曲长弓手 3人（林海强弓齐射）
+            { type: 'xianbei_raider', count: 4 },   // Row 2 主力骑射 = 鲜卑掠骑兵 4骑（雪原快马游射压制）
+        ],
+    },
+    jilimi: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    feiyaka: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    eluoke: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    kuye: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    beihai: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    ayinu_ezo: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
+        ],
+    },
+    ayinu: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'xianbei_raider', count: 4 },
         ],
     },
 };
