@@ -22,13 +22,14 @@ import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
 import { GameTime } from '../core/GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
-import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../systems/RegionSystem';
+import { getCityRegion, REGION_ORDER, REGION_LABELS, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import { holdDeploy, releaseDeploy } from '../legion/DeployGate';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -88,9 +89,18 @@ export class RecruitmentSystem {
         gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
 
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
-        // [2026-08-14 主人定] 开局只出 18 支（每文化区 1 支，名将优先），不填满 MAX_ACTIVE_LEGIONS(99)、
+        // [2026-08-14 主人定] 开局每文化区 1 支（名将优先），不填满 MAX_ACTIVE_LEGIONS(99)、
         // 也不是旧 30 支——上限留给季末 trySpawnLegions 逐季增长。
+        // 支数 = REGION_ORDER.length = **18 大文化**（2026-08-19 主人定：希腊并入拉丁、
+        // 奴儿干并入东北，其余支文化/子文化并入所属主干，开局一文化一军团）。
         const candidates = this.buildInitialSpawnPlan(cities);
+
+        // [2026-08-19 主人定] 开局集结：从现在起 hold，期间全军在都城列阵待命不移动。
+        // 🔴 必须在生成**之前**起闸：先生成再起闸的话，最早那几支已经开拔了几百毫秒
+        //    （错峰生成本身要花 支数×INITIAL_SPAWN_INTERVAL_MS ≈ 4 秒）。
+        const holdMs = GameConfig.LEGION.INITIAL_DEPLOY_HOLD_MS;
+        holdDeploy(holdMs);
+        const holdStartedAt = performance.now();
 
         // 错峰生成：每隔 INITIAL_SPAWN_INTERVAL_MS 放行 INITIAL_SPAWN_PER_TICK 支，
         // 让军团陆续登场而非同帧爆出（直播观感 + 避免 INP 卡顿）。
@@ -117,9 +127,17 @@ export class RecruitmentSystem {
             if (idx < candidates.length && this.legionManager.getActiveLegionCount() < maxLegions) {
                 setTimeout(spawnTick, intervalMs);
             } else {
-                // 全部 18 支出完后再挂跟随，确保随机池包含全部文化区军团（名将优先随机）
+                // 全部出完后再挂跟随，确保随机池包含全部文化区军团（名将优先随机）
                 gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
-                (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+                // 集结剩余时间到点 → 选跟随 + 全军同时拔营。
+                // 生成本身耗时 ≈ 支数×INITIAL_SPAWN_INTERVAL_MS，所以这里等的是**剩下那段**，
+                // 保证「拔营时刻」= runInitialSpawn 起算的 holdMs，与支数多少无关。
+                const rest = Math.max(0, holdMs - (performance.now() - holdStartedAt));
+                setTimeout(() => {
+                    (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+                    releaseDeploy();   // 闸门本身到点也会自动失效，这里显式放行是为了与选跟随同一帧
+                    gameLog('recruitment', `🚩 [募兵] 集结完毕，全军拔营（集结 ${holdMs}ms）`);
+                }, rest);
             }
         };
 
@@ -406,8 +424,10 @@ export class RecruitmentSystem {
     }
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
+        const region = this.getCityRegion(city);
+        const cultureName = REGION_LABELS[region] || '中原';
         const newLegion = this.legionManager.createArmy({
-            name: `${city.name}军团`,
+            name: `${cultureName}军团`,
             factionId: city.factionId,
             position: { lat: city.latitude, lng: city.longitude },
             troops: armySize,

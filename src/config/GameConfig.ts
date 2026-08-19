@@ -70,6 +70,9 @@ export class GameConfig {
         INITIAL_SPAWN_INTERVAL_MS: 200,
         /** 首次出兵错峰：每批最多生成几支 */
         INITIAL_SPAWN_PER_TICK: 1,
+        /** 开局集结待命时长 (ms)：首发军团全部生成后在都城列阵不动，到点选定跟随军团 + 全军同时拔营。
+         *  2026-08-19 主人定 5 秒。改成 0 = 关闭集结、退回「生成即开拔」。 */
+        INITIAL_DEPLOY_HOLD_MS: 5000,
         /** 每季（季度）最多新组建军团数（季末 trySpawnLegions） */
         MAX_LEGIONS_SPAWN_PER_SEASON: 1,
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */

@@ -34,6 +34,7 @@ import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchS
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
+import { isDeployHeld } from './DeployGate';
 
 export class Army implements IBattleUnit {
     private map: GameMap;
@@ -493,6 +494,10 @@ export class Army implements IBattleUnit {
 
     public update(deltaTime: number): void {
         if (this.isDestroyed) return;
+
+        // 开局集结期：全军在都城列阵待命，不移动（见 DeployGate）。
+        // 到点由时间自动放行，不依赖回调，因此不会把军团永久钉死。
+        if (isDeployHeld()) return;
 
         this.updateTerrainSpeed(deltaTime);
 

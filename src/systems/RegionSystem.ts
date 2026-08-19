@@ -37,9 +37,9 @@ export type RegionType =
     | 'KOREA'         // 朝鲜
     | 'JAPAN'         // 日本
     | 'CENTRAL_ASIA' // 中亚伊斯兰 (粟特、河中、大食)
-    | 'WEST_ASIA'    // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
-    | 'GREEK'        // 希腊 (爱琴海、巴尔干南部、希腊化半岛)
-    | 'NUERGAN';     // 奴儿干 (黑龙江下游、库页岛、北海道)
+    | 'WEST_ASIA';   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+// [2026-08-19 主人定·收敛 18 大文化] GREEK → LATIN、NUERGAN → NORTHEAST 已并入，
+//   两者的城池 region 已改写、旧值由 LEGACY_REGION_MAP 兜底。勿再新增这两个枚举。
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
@@ -47,7 +47,7 @@ export const REGION_ORDER: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'WEST_ASIA', 'GREEK', 'NUERGAN'
+    'KOREA', 'DIANQIAN', 'WEST_ASIA'
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -71,8 +71,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     JAPAN: '日本',
     CENTRAL_ASIA: '中亚',
     WEST_ASIA: '西亚',
-    GREEK: '希腊',
-    NUERGAN: '奴儿干'
 };
 
 /**
@@ -102,8 +100,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     DIANQIAN: '滇缅',
     KOREA: '朝鲜',
     JAPAN: '日本',
-    GREEK: '希腊',
-    NUERGAN: '奴儿干',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -130,6 +126,8 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'TROPICS': 'LINGNAN',           // 合并 (老 TROPICS 范围已被 getRegion 自动归岭南)
     'SIBERIA': 'STEPPE',            // 合并 (老 SIBERIA 已被 getRegion 自动归塞外)
     'MIN': 'LINGNAN',               // [2026-05-28] 合并: 14 区方案, 福建归岭南
+    'GREEK': 'LATIN',               // [2026-08-19] 合并: 18 大文化收敛, 希腊归拉丁
+    'NUERGAN': 'NORTHEAST',         // [2026-08-19] 合并: 18 大文化收敛, 奴儿干归东北
     'SOUTH_HEMISPHERE': 'CENTRAL',  // fallback (不该出现)
     'NEW_WORLD': 'CENTRAL',         // fallback (不该出现)
 };
@@ -267,8 +265,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JAPAN: '#c2185b',
     CENTRAL_ASIA: '#455a64',
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
-    GREEK: '#2E6DA4',     // 爱琴海蓝
-    NUERGAN: '#8d6e63',   // 奴儿干
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -450,18 +446,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
-    GREEK: { // ✅ 希腊
-        small: resolvePath('/cities/latin_small.png'),
-        medium: resolvePath('/cities/latin_medium.png'),
-        big: resolvePath('/cities/latin_big.png'),
-        pass: resolvePath('/cities/latin_pass.png')
-    },
-    NUERGAN: { // ✅ 奴儿干（继承东北风格）
-        small: resolvePath('/cities/northeast_small.png'),
-        medium: resolvePath('/cities/northeast_medium.png'),
-        big: resolvePath('/cities/northeast_big.png'),
-        pass: resolvePath('/cities/northeast_pass.png')
-    }
 };
 
 // 5. Main Accessor
@@ -561,8 +545,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
-    GREEK:        ['city_yadian'],                     // 雅典 (希腊城邦核心)
-    NUERGAN:      ['city_nuergan'],                    // 特林 (奴儿干都司)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

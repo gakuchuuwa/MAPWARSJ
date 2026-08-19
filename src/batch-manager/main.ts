@@ -760,7 +760,6 @@ const REGION_LABELS: Record<string, string> = {
     BASHU: '川蜀', DIANQIAN: '滇缅', HEXI: '河西', WESTERN: '西域',
     TIBET: '青藏', STEPPE: '草原', NORTHEAST: '东北', KOREA: '朝鲜',
     JAPAN: '日本', CENTRAL_ASIA: '中亚', WEST_ASIA: '西亚',
-    GREEK: '希腊', NUERGAN: '奴儿干',
 };
 
 async function openEditPanel(factionId: string | null): Promise<void> {
