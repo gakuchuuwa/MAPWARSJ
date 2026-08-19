@@ -17,13 +17,13 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 先秦劲弩军团·咸阳/新郑（白起 / 嬴政 / 申不害 / 韩非 · 雁行阵 4+3+2：诸葛弩 4 + 长枪方阵 3 + 双轮远程战车 2）
+    // 先秦劲弩军团·咸阳/新郑（白起 / 嬴政 / 申不害 / 韩非 · 雁行阵 4+3+2：诸葛弩 4 + 长枪方阵 3 + 先秦远程战车 2）
     qin: {
         formationMode: 'echelon',
         slots: [
             { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人（秦强弩大阵主力）
             { type: 'heavy_pikeman', count: 3 },             // 中军接应 = 长枪方阵 3人（大秦长矛方阵）
-            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 双轮远程战车 2乘（先秦驷马战车压阵）
+            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 先秦远程战车 2乘（先秦驷马战车压阵）
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
@@ -32,7 +32,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人
             { type: 'heavy_pikeman', count: 3 },             // 中军接应 = 长枪方阵 3人
-            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 双轮远程战车 2乘
+            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 先秦远程战车 2乘
+        ],
+    },
+    // 晋国·曲沃（先轸 · 晋中军 · 先秦战车大阵 · 雁行阵 4+3+2：长矛前阵 4 + 先秦战车 3 + 劲弩压阵 2）
+    jin: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'kamayuk', count: 4 },                   // Row 0 前排坚矛 = 印加枪兵长 4人（春秋长矛步兵列阵抗线）
+            { type: 'war_chariot_ranged', count: 3 },        // Row 1 中排战车主力 = 先秦远程战车 3乘（晋中军春秋战车核心冲击）
+            { type: 'chukonu', count: 2 },                   // Row 2 后排压阵齐射 = 劲弩手 2人（后排劲弩暴雨抛射）
         ],
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
@@ -2097,6 +2106,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'conquistador', count: 2 },          // Row 0 前锋散兵 = 骑马火枪手 2骑（顿河战马火枪齐射破甲）
             { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（顿河哥萨克精锐战骑核心突击）
             { type: 'cav_archer_heavy', count: 3 },      // Row 2 尾收远射 = 重装骑射手 3骑（东欧草原快马重弓火力压制）
+        ],
+    },
+    // 奥斯若恩·埃德萨（鲍德温 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军圣殿骑士 3 + 劲弩手 2）
+    aosiruowen: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'paragon', count: 4 },              // Row 0 前卫主力破坚 = 圣殿楷模武士 4人（双手大剑正面破坚）
+            { type: 'crusader_knight', count: 3 },      // Row 1 中军铁骑冲击 = 十字军圣殿骑士 3骑（白袍红十字重装铁骑核心突击）
+            { type: 'arbalest', count: 2 },             // Row 2 尾收远程压制 = 劲弩手 2人（十字军重型劲弩高穿透射击）
         ],
     },
 };

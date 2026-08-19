@@ -18,8 +18,9 @@ export type SoundKey =
     | 'naval_cannon_splash'
     // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效）
     | 'gun_fire'
-    | 'sword_clank'
     | 'explosion'
+    // 陆战接触音景（2026-08-19 主人提供：两军接触起循环垫底、13 退场停，66.9s）
+    | 'land_contact'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -57,6 +58,12 @@ const DUCK = {
     bgmUnderSfx: 0.30,
     /** 行军音效循环时音乐压到 50%（2026-08-04 GAKU 反馈行军几乎听不到 BGM：0.30 叠加 bgm 层 0.55 后音乐仅剩音效一半） */
     bgmUnderMarch: 0.50,
+    /**
+     * 13 接触音景（land_contact）循环时音乐压到 60% —— 比战斗 0.30、行军 0.50 都轻。
+     * 主人 2026-08-19 定「少压一点就行」：这段音景本身是战场底噪、不含旋律，
+     * 压太狠会把 BGM 整个吃掉，只要给它让出一点空间、听得出「音乐退了半步」即可。
+     */
+    bgmUnderBattleAmbience: 0.60,
     /** 播报时音效压到 12%（微弱衬托，不抢语音） */
     sfxUnderSpeech: 0.28,
 } as const;
@@ -76,9 +83,9 @@ const FADE = {
 } as const;
 
 const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
-    march_loop: sound('battle', 'march_loop', 0.25, 0),
+    march_loop: sound('battle', 'march_loop', 0.15, 0),
     // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
-    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.28, 0),
+    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.18, 0),
     battle_loop: sound('battle', 'battle_loop', 0.7, 0),
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
@@ -90,9 +97,12 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     naval_explode: sounds('battle', ['naval_explode_1', 'naval_explode_2', 'naval_explode_3', 'naval_explode_4'], 0.7, 0),
     naval_cannon_splash: sounds('battle', ['naval_cannon_splash_1', 'naval_cannon_splash_2', 'naval_cannon_splash_3', 'naval_cannon_splash_4'], 0.45, 250),
     // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效，多源随机变奏）
-    gun_fire: sounds('battle', ['gun_fire_1', 'gun_fire_2', 'gun_fire_3', 'gun_fire_4', 'gun_fire_5', 'gun_fire_6'], 0.75, 150),
-    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.25, 120),
+    gun_fire: sounds('battle', ['gun_fire_1', 'gun_fire_2', 'gun_fire_3', 'gun_fire_4', 'gun_fire_5', 'gun_fire_6'], 0.55, 150),   // 0.75→0.55：全表最高，且火器成排齐射时多发叠加
     explosion: sounds('battle', ['explosion_1', 'explosion_2', 'explosion_3', 'explosion_4', 'explosion_5', 'explosion_6'], 0.65, 200),
+    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：**循环播放**，
+    // 两军接触起循环垫底、13 退场停。13 期间不播旧的 battle_loop（见 syncFollowedLegionAudio），
+    // 这条就是那块空缺的底噪；具体的刀剑/枪炮事件音效叠在它上面。
+    land_contact: sound('battle', 'land_contact', 0.42, 0),   // 0.70→0.42（约 -4.4dB，主人 2026-08-19「有点吵」）：它从接触响到退场，是底噪不是主角
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
@@ -138,45 +148,54 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
     portraits: 'CENTRAL',
 };
 
-/** 各文化区 BGM 响度补偿（以 CENTRAL -20.9dB 为基准；<1=压低，>1=提升） */
+/**
+ * BGM 响度补偿：把每首曲子拉平到 **-21.0 LUFS**（ITU-R BS.1770 综合响度，非 RMS）。
+ * gain = 10^((-21.0 - 实测LUFS) / 20)，注释里的数字就是该文件的实测值。
+ *
+ * 🔴 **换过 BGM 文件就必须重跑 `npm run bgm:audit`**（tools/bgm_audit.mjs）。
+ *    2026-08-19 实测发现：8-04 那轮校准之后，37 首里有 22 首被统一重压到 -18.0 LUFS，
+ *    而本表还留着重压前的老增益 —— 那 22 首补偿后落在 -19.5~-16.8，最响的 STEPPE
+ *    比基准响 4.2dB（约 1.6 倍振幅），就是主人听到的「有的大有的小」。
+ *    表本身没错，是**文件换了表没跟着换**。审计脚本就是防这个的。
+ */
 const BGM_REGION_GAIN: Record<string, number> = {
-    BASHU: 0.84,         // -19.4 → 压低 1.5dB
-    CENTRAL: 1.0,        // -20.9 基准
-    CENTRAL_ASIA: 0.92,  // -20.2
-    conquest_of_paradise: 0.56, // -15.85 → 最响，大幅压低（2026-08-04 通用随机曲）
-    age_of_kings: 0.43,      // -13.6 LUFS → 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
-    fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
-    game_of_thrones: 0.72, // -17.99 → 压低（2026-08-04 通用随机曲）
-    shadow_assassin: 0.63, // -16.89 → 压低（2026-08-04 通用随机曲·暗影刺客）
-    GERMANIC: 0.60,      // -16.53 → 大幅压低（2026-08-04 新增 The Mass）
-    daming: 0.78,        // -18.70（2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
-    DIANQIAN: 1.0,       // -20.9
-    HEXI: 0.97,          // -20.6
-    helmet_to_helmet: 0.68, // -17.55 → 压低（2026-08-04 通用随机曲）
-    hes_a_pirate: 0.70,  // -17.86 → 压低（2026-08-04 通用随机曲）
-    india: 0.95,         // = daming Nijamena（2026-08-04 印度首选）
-    JAPAN: 1.03,         // -21.2
-    JIANGNAN: 0.89,      // -19.9
-    KOREA: 0.92,         // -20.2
-    LATIN: 0.63,         // -16.95 → 大幅压低（2026-08-04 新增 Star Sky）
-    LINGNAN: 0.76,       // -18.5 → 最响，大幅压低
-    litang: 0.98,        // -20.7
-    liuhan: 1.08,        // -21.6
-    manqing: 0.93,       // -20.3
-    NORTH: 1.0,          // -20.9
-    NORTHEAST: 0.98,     // -20.7
-    pugan: 1.0,          // -20.9
-    rock_house_jail: 0.73, // -18.17 → 压低（2026-08-04 通用随机曲）
-    SLAVIC: 0.69,        // -17.73 → 压低（2026-08-04 新增 Hall om mig）
-    STEPPE: 1.15,        // -22.1 → 最轻，大幅提升
-    TIBET: 0.97,         // -20.6
-    WESTERN: 1.01,       // -21.0
-    WEST_ASIA: 0.59,     // -16.35 → 大幅压低（2026-08-04 新增 出埃及记）
-    victory: 0.59,       // -16.36 → 大幅压低（2026-08-04 通用随机曲）
-    wuzhou: 1.0,         // -20.9
-    xianqin: 0.97,       // -20.6
-    yingqin: 0.97,       // -20.6
-    zhaosong: 0.91,      // -20.1
+    BASHU: 0.708,  // -18.0 LUFS
+    CENTRAL: 0.7,  // -17.9 LUFS
+    CENTRAL_ASIA: 0.708,  // -18.0 LUFS
+    conquest_of_paradise: 0.55,  // -15.8 LUFS · 大幅压低（2026-08-04 通用随机曲）
+    age_of_kings: 0.427,  // -13.6 LUFS · 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
+    fallen_army: 0.603,  // -16.6 LUFS · （2026-08-04 通用随机曲）
+    game_of_thrones: 0.708,  // -18.0 LUFS · （2026-08-04 通用随机曲）
+    shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
+    GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
+    daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
+    DIANQIAN: 0.733,  // -18.3 LUFS
+    HEXI: 0.708,  // -18.0 LUFS
+    helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
+    hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
+    india: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
+    JAPAN: 0.708,  // -18.0 LUFS
+    JIANGNAN: 0.708,  // -18.0 LUFS
+    KOREA: 0.708,  // -18.0 LUFS
+    LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
+    LINGNAN: 0.708,  // -18.0 LUFS · 大幅压低
+    litang: 0.716,  // -18.1 LUFS
+    liuhan: 0.708,  // -18.0 LUFS
+    manqing: 0.708,  // -18.0 LUFS
+    NORTH: 0.716,  // -18.1 LUFS
+    NORTHEAST: 0.708,  // -18.0 LUFS
+    pugan: 0.733,  // -18.3 LUFS
+    rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
+    SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
+    STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
+    TIBET: 0.708,  // -18.0 LUFS
+    WESTERN: 0.708,  // -18.0 LUFS
+    WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
+    victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
+    wuzhou: 0.7,  // -17.9 LUFS
+    xianqin: 0.708,  // -18.0 LUFS
+    yingqin: 0.708,  // -18.0 LUFS
+    zhaosong: 0.708,  // -18.0 LUFS
 };
 
 /**
@@ -312,6 +331,20 @@ export class AudioManager {
             audio.volume = prevVolume;
             // 被策略拦下 —— 什么都不做，等用户手势那条路兜底
         }
+    }
+
+    /**
+     * 场景层的循环音效开关（13 演出用）。内部就是 startLoop/stopLoop，
+     * 只是把它们暴露给场景 —— 那两个原本只由 syncFollowedLegionAudio 驱动（行军/交战底噪），
+     * 而 13 有自己的节奏：接触才起、退场就停，跟大地图的跟拍状态无关。
+     * 幂等：重复 start 不会叠播（startLoop 内部判 audio.paused）。
+     */
+    public startSceneLoop(key: SoundKey): void {
+        this.startLoop(key);
+    }
+
+    public stopSceneLoop(key: SoundKey): void {
+        this.stopLoop(key);
     }
 
     public unlock(): void {
@@ -457,7 +490,7 @@ export class AudioManager {
             this.stopLoop('march_loop');
             this.stopLoop('cavalry_march_loop');
             // 海战：不播陆军 battle_loop（脚步/刀剑声与海战观感冲突），由海战事件音效（naval_sink 等）驱动
-            // 13 微观看：同样不播 battle_loop（旧环境音），由具体 DE 陆战音效（gun_fire/sword_clank/explosion）驱动
+            // 13 微观看：同样不播 battle_loop（旧环境音），由具体 DE 陆战音效（gun_fire/explosion）驱动
             const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
             if (isNaval || inScene13) {
                 this.stopLoop('battle_loop');
@@ -933,6 +966,9 @@ export class AudioManager {
         if (category === 'bgm') {
             if (this.speechDucking) return DUCK.bgmUnderSpeech;
             if (this.wantedLoops.has('battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
+            // 🔴 [2026-08-19] land_contact（13 接触音景）必须在这里登记，否则它循环起来时
+            //    BGM 一点都不会被压 —— 本表只认列出来的 key，新增循环音不登记就是「静默失效」。
+            if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.60（少压一点）
             if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')) {
                 return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
             }

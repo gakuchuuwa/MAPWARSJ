@@ -62,3 +62,8 @@ public/SUCAI/DUST
 # Could not resolve "../map/GameMap"（2026-08-01 踩过）。
 /map
 close_cities_report.json
+
+# 音效源 WAV：游戏只读 .aud（ogg/vorbis），这些原始 WAV 转完就没有任何引用，
+# 但 vite build 会把 public/ 整个复制进 dist —— 28.8MB 白占部署体积。
+# 只排除部署，本地文件保留（转码参数以后要回调时还得用它们）。
+public/sfx/*.WAV
