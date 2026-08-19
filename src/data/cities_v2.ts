@@ -1477,7 +1477,11 @@ export const PERIPHERY: CityDataV2[] = [
         id: 'city_tongjiajiang', name: '浑江', factionId: 'jianzhou_nvzhen',
         lat: 41.2681, lng: 125.3625, type: 'small_city', troops: 30000,
         
-        note: '浑江；建州小城', region: 'NORTH' },
+        // [2026-08-19 修] region 原为 NORTH（北方汉地河朔），与史实和自身 note 矛盾：
+        // 浑江（佟佳江，今吉林白山）是建州女真发祥地，在辽东边墙以东、长白山西麓，
+        // 周边赫图阿拉/萨尔浒/辉发全部 NORTHEAST。错配会让建州女真与海西女真、满洲的
+        // 女真内战变成「一方吃北方汉地科技（鼓风炉+锁子甲）、一方吃东北科技（安息战术+拇指环）」。
+        note: '浑江；建州小城', region: 'NORTHEAST' },
     
     
     // ── 2026-05-26 新增：渤海国王族大氏 ──
@@ -2900,7 +2904,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mubang', name: '木邦', factionId: 'xingwei', lat: 23.32, lng: 97.98, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
     { id: 'city_baihage', name: '白哈格', factionId: 'saerbadaer', lat: 36.21, lng: 57.68, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
     { id: 'city_damugan', name: '达姆甘', factionId: 'kumisi', lat: 36.17, lng: 54.35, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
-    { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
+    // [2026-08-19 修] region 原为 WEST_ASIA，与紧邻的达姆甘、加兹温（均 CENTRAL_ASIA）不一致：
+    // 三城同在伊朗高原北路（呼罗珊大道）上首尾相接，文化同质，雷伊无 note 说明为何单列西亚。
+    // 本项目 WEST_ASIA 的定义是安纳托利亚/黎凡特/阿拉伯/埃及/两河，不含伊朗高原。
+    { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 30000, region: 'CENTRAL_ASIA' },
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei', lat: 36.27, lng: 50, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
 
 
