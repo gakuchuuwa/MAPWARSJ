@@ -15,6 +15,10 @@ import { popCostOf } from '../../data/UnitPopCost';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 import { NavalPhalanxStateManager } from './NavalPhalanxState';
+import { audioManager } from '../../audio/AudioManager';
+
+// 海战开火音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
+let lastNavalFireAt = 0;
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
@@ -1699,10 +1703,21 @@ export class LegionPhalanxDrawer {
         // 逐舰阵亡状态更新（2026-07-18）：参照 LegionPhalanxStateManager 模式
         const isFighting = state === 'ATTACK' || state === 'DAMAGE';
         if (unitId) {
-            NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
+            const navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
             // 非战时重置状态（战后补员/切换单位）
             if (!isFighting && state !== 'DEATH') {
                 NavalPhalanxStateManager.reset(unitId);
+            }
+            // 海战沉没音效：本帧有新船沉没（playNavalSfx 内部判跟拍军团，非跟拍静默）
+            if (navalState.justSank > 0) {
+                audioManager.playNavalSfx(unitId, 'naval_sink');
+            }
+            // 海战开火音效：ATTACK 状态周期性触发（约 1.2s 一次，仅跟拍军团实际发声）
+            if (isFighting) {
+                const now = Date.now();
+                if (now - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
+                    lastNavalFireAt = now;
+                }
             }
         }
 

@@ -710,13 +710,54 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cretan_archer', count: 2 },       // Row 2 尾收神弓 = 克里特弓箭手 2人（纯步兵·无马，爱琴海精锐重弓后排精准射击）
         ],
     },
-    // 日本战国·织田信长军团（方阵 3+3+3：日本武士 3 + 火枪兵 3 + 火枪兵 3）
+    // 日本战国·织田信长军团（鱼鳞阵 3+4+2：日本武士 3 + 精锐武士 4 + 手炮手 2）
     owari: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'samurai', count: 3 },                   // 前卫 = 武士 3
             { type: 'samurai_elite', count: 4 },             // 主力 = 精锐武士 4
             { type: 'hand_cannoneer', count: 2 },            // 压阵铁炮 = 手炮手 2（🔴 热兵器只许 2 档）
+        ],
+    },
+    // 日本战国骑兵军团·甲斐/上田/姬路/仙台/越后（武田信玄 / 真田幸村 / 丰臣秀吉 / 伊达政宗 / 上杉谦信 · 鱼鳞阵 4+3+2：精锐武士 4 + 黑光铠骑兵 3 + 藤弓手 2）
+    kai: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai_elite', count: 4 },             // Row 0 前卫精锐 = 精锐武士 4人（赤备大铠精锐前锋）
+            { type: 'hei_kuang', count: 3 },                 // Row 1 中军铁骑 = 黑光铠骑兵 3骑（战国赤备突骑突贯主力）
+            { type: 'rattan_archer', count: 2 },             // Row 2 尾收远射 = 藤弓手 2人（战国竹藤长弓精准掩护）
+        ],
+    },
+    sanada_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai_elite', count: 4 },
+            { type: 'hei_kuang', count: 3 },
+            { type: 'rattan_archer', count: 2 },
+        ],
+    },
+    hashiba: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai_elite', count: 4 },
+            { type: 'hei_kuang', count: 3 },
+            { type: 'rattan_archer', count: 2 },
+        ],
+    },
+    date_d: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai_elite', count: 4 },
+            { type: 'hei_kuang', count: 3 },
+            { type: 'rattan_archer', count: 2 },
+        ],
+    },
+    echigo: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai_elite', count: 4 },
+            { type: 'hei_kuang', count: 3 },
+            { type: 'rattan_archer', count: 2 },
         ],
     },
     // 伊贺·忍者军团（方阵 3+3+3：忍者 3 + 忍者 3 + 忍者 3）
@@ -726,6 +767,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ninja', count: 3 },        // Row 0 前排 = 忍者 3人
             { type: 'ninja', count: 3 },        // Row 1 中坚 = 忍者 3人
             { type: 'ninja', count: 3 }         // Row 2 后排 = 忍者 3人
+        ],
+    },
+    // 廓尔喀王国·加德满都（巴都尔萨野 · 廓尔喀弯刀军团 · 鱼鳞阵 4+3+2：精锐弯刀勇士 4 + 弯刀勇士 3 + 复合弓手 2）
+    gurkha: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'elite_shotel_warrior', count: 4 },      // Row 0 前卫主力 = 精锐弯刀勇士 4人（廓尔喀库克里反曲弯刀死斗突击）
+            { type: 'shotel_warrior', count: 3 },            // Row 1 中军接应 = 弯刀勇士 3人（山地反曲弯刀近卫中坚突破）
+            { type: 'composite_bowman', count: 2 },          // Row 2 尾收远射 = 复合弓箭手 2人（喜马拉雅山地精锐复合弓精准掩护）
         ],
     },
     // 萨伏伊公国·尚贝里（阿梅迪奥六世 · 先锋重步兵与萨伏伊铁骑大阵 · 鱼鳞阵 4+3+2：先锋重装步兵 4 + 重装骑士 3 + 劲弩手 2）
