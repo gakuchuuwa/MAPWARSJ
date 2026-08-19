@@ -10,6 +10,12 @@ export type SoundKey =
     | 'battle_victory'
     | 'battle_defeat'
     | 'general_skill'
+    // 海战音效（2026-08-19 加：帝国时代2 DE 战斗音效）
+    | 'naval_arrow_fire'
+    | 'naval_cannon_fire'
+    | 'naval_sink'
+    | 'naval_explode'
+    | 'naval_cannon_splash'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -73,6 +79,12 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
+    // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
+    naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.5, 250),
+    naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.6, 400),
+    naval_sink: sounds('battle', ['naval_sink_1', 'naval_sink_2', 'naval_sink_3', 'naval_sink_4', 'naval_sink_5', 'naval_sink_6'], 0.55, 0),
+    naval_explode: sounds('battle', ['naval_explode_1', 'naval_explode_2', 'naval_explode_3', 'naval_explode_4'], 0.7, 0),
+    naval_cannon_splash: sounds('battle', ['naval_cannon_splash_1', 'naval_cannon_splash_2', 'naval_cannon_splash_3', 'naval_cannon_splash_4'], 0.45, 250),
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
@@ -86,6 +98,21 @@ function sound(
         category,
         // 用 .aud 扩展名（非媒体扩展）规避 IDM/迅雷 等下载器按 .ogg 抓取
         sources: [`/sfx/${fileName}.aud`],
+        volume,
+        cooldownMs,
+    };
+}
+
+/** 多源变奏音效：播放时从 sources 随机挑一个（海战开炮/沉没等） */
+function sounds(
+    category: AudioCategory,
+    fileNames: string[],
+    volume: number,
+    cooldownMs: number
+): SoundDefinition {
+    return {
+        category,
+        sources: fileNames.map((n) => `/sfx/${n}.aud`),
         volume,
         cooldownMs,
     };
@@ -186,7 +213,7 @@ export class AudioManager {
     private unlocked = false;
     private gamePaused = false;
     private settings: AudioSettings = mergeSettings(null);
-    private audioCache = new Map<SoundKey, HTMLAudioElement>();
+    private audioCache = new Map<SoundKey, HTMLAudioElement[]>();
     private loopCache = new Map<SoundKey, HTMLAudioElement>();
     private lastPlayedAt = new Map<SoundKey, number>();
     private missingWarned = new Set<SoundKey>();
@@ -376,6 +403,16 @@ export class AudioManager {
         this.play('general_skill', { fadeInMs: FADE.oneShot });
     }
 
+    /** 海战事件音效（沉没/开火等，非跟拍军团不播；返回是否实际播放） */
+    public playNavalSfx(unitId: string | null, key: SoundKey): boolean {
+        if (!unitId || typeof window === 'undefined') return false;
+        const followedId =
+            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
+                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+        if (!followedId || followedId !== unitId) return false;
+        return this.play(key);
+    }
+
     public syncFollowedLegionAudio(state: {
         armyId: string | null;
         marching: boolean;
@@ -411,7 +448,12 @@ export class AudioManager {
         if (state.inCombat) {
             this.stopLoop('march_loop');
             this.stopLoop('cavalry_march_loop');
-            this.startLoop('battle_loop');
+            // 海战：不播陆军 battle_loop（脚步/刀剑声与海战观感冲突），由海战事件音效（naval_sink 等）驱动
+            if (isNaval) {
+                this.stopLoop('battle_loop');
+            } else {
+                this.startLoop('battle_loop');
+            }
             return;
         }
 
@@ -513,35 +555,39 @@ export class AudioManager {
         return cooldownMs > 0 && Date.now() - lastPlayedAt < cooldownMs;
     }
 
-    /** 同步取缓存；未就绪则异步加载并返回 null（首播跳过，预取后即命中）*/
+    /** 同步取缓存（多源随机挑一个）；未就绪则异步加载并返回 null（首播跳过，预取后即命中）*/
     private getAudioElement(key: SoundKey, definition: SoundDefinition): HTMLAudioElement | null {
         const cached = this.audioCache.get(key);
-        if (cached) return cached;
+        if (cached && cached.length > 0) {
+            return cached[Math.floor(Math.random() * cached.length)];
+        }
         void this.ensureAudioElement(key, definition);
         return null;
     }
 
-    /** 异步：fetch blob → 对象 URL → 缓存 Audio 元素 */
+    /** 异步：fetch 所有源 → 对象 URL → 缓存 Audio 元素数组（多源随机变奏） */
     private async ensureAudioElement(
         key: SoundKey,
         definition: SoundDefinition,
     ): Promise<HTMLAudioElement | null> {
         const cached = this.audioCache.get(key);
-        if (cached) return cached;
+        if (cached && cached.length > 0) return cached[0];
 
-        const source = definition.sources[0];
-        if (!source) return null;
-
-        const url = await this.fetchObjectUrl(source);
-        if (!url) {
-            this.warnMissingOnce(key, `fetch 失败: ${source}`);
-            return null;
+        const audios: HTMLAudioElement[] = [];
+        for (const source of definition.sources) {
+            const url = await this.fetchObjectUrl(source);
+            if (!url) {
+                this.warnMissingOnce(key, `fetch 失败: ${source}`);
+                continue;
+            }
+            const audio = new Audio();
+            audio.src = url;
+            audio.preload = 'auto';
+            audios.push(audio);
         }
-        const audio = new Audio();
-        audio.src = url;
-        audio.preload = 'auto';
-        this.audioCache.set(key, audio);
-        return audio;
+        if (audios.length === 0) return null;
+        this.audioCache.set(key, audios);
+        return audios[0];
     }
 
     private startLoop(key: SoundKey): void {

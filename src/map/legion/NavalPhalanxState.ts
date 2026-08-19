@@ -17,6 +17,8 @@ export interface NavalUnitState {
     maxTroops: number;
     lastTroops: number;
     isFighting: boolean;
+    /** 本帧新沉没的舰数（供音效触发，drawNaval 读后自清） */
+    justSank: number;
 }
 
 const NAVAL_SHIP_COUNT = 5;
@@ -62,6 +64,7 @@ export class NavalPhalanxStateManager {
                 maxTroops: troops,
                 lastTroops: troops,
                 isFighting,
+                justSank: 0,
             };
             this.states.set(unitId, state);
             return state;
@@ -75,6 +78,7 @@ export class NavalPhalanxStateManager {
         }
 
         // 战中减员：按健康比计算应存活舰数
+        state.justSank = 0;
         if (state.isFighting && troops < state.lastTroops) {
             const healthRatio = Math.max(0, troops / Math.max(1, state.maxTroops));
             const targetAlive = Math.ceil(NAVAL_SHIP_COUNT * healthRatio);
@@ -99,6 +103,7 @@ export class NavalPhalanxStateManager {
                     ship.state = 'DYING';
                     ship.stateStartTime = tick;
                     ship.deathDirection = Math.floor(Math.random() * 8);
+                    state.justSank++;
                     killNeeded--;
                 }
             }

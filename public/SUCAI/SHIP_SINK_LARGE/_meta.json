@@ -1,0 +1,1 @@
+{"code": "SINK_LARGE", "dirs16": false, "nDir": 1, "source": "AoE2 DE SLD", "idle": {"frames": 8, "src_frames": 10, "dirs": {"0": {"fw": 200, "fh": 104, "hx": 94, "hy": 58}}}, "move": {"frames": 10, "src_frames": 10, "dirs": {"0": {"fw": 200, "fh": 104, "hx": 94, "hy": 58}}}, "attack": {"frames": 10, "src_frames": 10, "dirs": {"0": {"fw": 200, "fh": 104, "hx": 94, "hy": 58}}}}

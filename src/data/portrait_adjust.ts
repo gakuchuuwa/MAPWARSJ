@@ -1693,9 +1693,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/TIBET/tsangpa_pengcuonanjie.png": {
-            "scale": 0.87,
+            "scale": 0.83,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/STEPPE/gaoche_afuzhiluo.png": {
             "scale": 0.84,
