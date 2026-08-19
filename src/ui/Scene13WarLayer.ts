@@ -1794,6 +1794,19 @@ const KEEP_TARGET_HP = 0.5;
  * 300px ≈ 6 个身位 ≈ 4 次完整后撤（触发距离 70），够判断「甩不掉」了。
  */
 const KITE_RETREAT_CAP = 300;
+/* ── 【战场白热化】伤害随战斗时长递增（主人 2026-08-19 定）──────────────────────────
+ * 起因：双方只剩弓弩手对射时「射不死人、又长又无聊」。根因是**减法护甲**：
+ *   伤害 = 攻击 − 对应护甲（保底 1），而远程兵攻击普遍只有 4~11、远防能到 4~7。
+ *   实测远程互射 TTK 中位 23.8s、最慢 880s（越南藤弓兵攻6防4 → 每发只掉 2 点）；
+ *   近战对砍中位 17.5s 作对照。
+ * 为什么不改属性：那些是 AoE2 DE 真值，改了跟帝国时代对不上，285 个兵种牵一发动全身。
+ * 改战场规则而不是改单位：全场**同一个倍率**，所有人一起变快 → 兵种相克与强弱排序守恒。
+ * 观感上也讲得通：打到后半程士气崩、体力尽、阵型散，伤亡本来就该加速。
+ * 90 秒内结束的仗完全不受影响（倍率恒为 1），只收束磨蹭局。
+ */
+const ATTRITION_START_SEC = 90;   // 这之前恒为 ×1.0，正常战斗不受任何影响
+const ATTRITION_RAMP_SEC = 90;    // 每过这么久 +1.0 倍
+const ATTRITION_CAP = 3.0;        // 封顶（90s ×1 → 180s ×2 → 270s ×3）
 /** 哈希键用数字不用字符串：每人每帧拼 9 次字符串 = 两万多次分配，实测是推挤慢的元凶 */
 const HKEY = (gx: number, gy: number): number => (gx + 4096) * 8192 + (gy + 4096);
 /** 近战哈希格 */
@@ -2265,9 +2278,12 @@ export class Scene13WarLayer {
             btn.title = '点击后按当前战况自动结算战果并退出';
             btn.style.cssText = [
                 'position:fixed',
-                'top:14px',
+                // 🔴 [2026-08-19 修「找不到退出按钮」] 原为 top:14px / z-index:450，被顶部科技行整个盖住：
+                //   #top-center-hud 是 z-index 10002 且横跨全屏宽，守方科技胶囊（1920 屏约 730px 宽）
+                //   的右端正好压在 right:14px 这个位置上。改为下移到科技行之下 + 层级抬到 HUD 之上。
+                'top:76px',
                 'right:14px',
-                'z-index:450',
+                'z-index:10050',
                 'padding:6px 16px',
                 'background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%)',
                 'border:1px solid rgba(212,175,55,0.6)',
@@ -3504,6 +3520,16 @@ export class Scene13WarLayer {
      * 范围伤（象兵）。
      * 伤害按 DE 公式逐个受害者算：dmgVs(攻+加成−防) / reload，再乘八环 sideBonus 与围殴。
      */
+    /**
+     * 【战场白热化】当前全场伤害倍率（见 ATTRITION_START_SEC）。
+     * 只按本场已打的真实秒数算，攻守同一个值 —— 双方一起变快，相对强弱不变。
+     */
+    private attritionMul(): number {
+        const over = this.battleSec - ATTRITION_START_SEC;
+        if (over <= 0) return 1;
+        return Math.min(ATTRITION_CAP, 1 + over / ATTRITION_RAMP_SEC);
+    }
+
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
@@ -3517,7 +3543,7 @@ export class Scene13WarLayer {
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) / shooter.reload;
                     o.atkNext++;
-                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * dt;
+                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
                     if (o.hp <= 0) this.pushCorpse(o);
                 }
             }
@@ -3981,7 +4007,7 @@ export class Scene13WarLayer {
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
-                    foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * dt;
+                    foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
                     if (foe.hp <= 0) this.pushCorpse(foe);
                 }
                 // ── 近战出手：生成刀光剑影（微弯斩击刀痕 / 突刺枪芒）与碰撞金属火花 ──

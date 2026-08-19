@@ -539,35 +539,38 @@ export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u =>
  */
 export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     // ── 步兵 ──
-    // 刀盾（剑/刀 + 盾，单手近战默认档）
-    swordsman: 'sword_shield', champion: 'sword_shield', liao_dao: 'sword_shield', elite_liao_dao: 'sword_shield',
+    // 刀盾（单手近战 + 盾：刀/剑/斧/棒/锤等单手兵器，含盾斧兵、盾棒兵）
+    swordsman: 'sword_shield', champion: 'sword_shield',
     jian_swordsman: 'sword_shield', samurai: 'sword_shield', samurai_elite: 'sword_shield',
-    white_feather_guard: 'sword_shield', elite_white_feather_guard: 'sword_shield', elite_guardsman: 'sword_shield',
     eastern_swordsman: 'sword_shield', legionary: 'sword_shield', elite_ghulam: 'sword_shield',
     elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield', elite_shotel_warrior: 'sword_shield',
     elite_teutonic_knight: 'sword_shield', elite_woad_raider: 'sword_shield', ghulam: 'sword_shield',
-    guardsman: 'sword_shield', jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
+    jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
     levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
     serjeant: 'sword_shield', shotel_warrior: 'sword_shield', teutonic_knight: 'sword_shield',
     vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield',
+    sacred_band: 'sword_shield', takabara: 'sword_shield', champi_warrior: 'sword_shield',
+    elite_champi_warrior: 'sword_shield', champi_runner: 'sword_shield', champi_scout: 'sword_shield',
+    norse_warrior: 'sword_shield',
     // 长矛（枪/矛/戟/长枪等长杆兵器）
     kamayuk: 'spear', fire_lancer: 'spear', elite_fire_lancer: 'spear', heavy_pikeman: 'spear', pikeman: 'spear',
+    liao_dao: 'spear', elite_liao_dao: 'spear', white_feather_guard: 'spear', elite_white_feather_guard: 'spear',
     ekdromos: 'spear', elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', hoplite: 'spear', immortal: 'spear', mercenary_hoplite: 'spear',
-    phalangite: 'spear', sacred_band: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
-    strategos: 'spear', takabara: 'spear', antiquity_spearman: 'spear',
+    phalangite: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
+    strategos: 'spear', guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
     // 双手（双手剑/巨斧/战锤/长刃）
     berserk: 'two_handed', elite_berserk: 'two_handed', elite_huskarl: 'two_handed', huskarl: 'two_handed',
     elite_ibirapema_warrior: 'two_handed', ibirapema_warrior: 'two_handed', elite_obuch: 'two_handed', obuch: 'two_handed',
-    jian_swordman_unshielded: 'two_handed', norse_warrior: 'two_handed', rhomphaia_warrior: 'two_handed',
+    jian_swordman_unshielded: 'two_handed', rhomphaia_warrior: 'two_handed',
     two_handed_swordsman: 'two_handed',
     // 特殊（野兽/异形兵器/部落奇兵）
     ninja: 'special', karambit_warrior: 'special', karambit_warrior_elite: 'special', eagle_scout: 'special',
     eagle_warrior: 'special', elite_eagle_warrior: 'special', elite_jaguar_warrior: 'special',
     elite_urumi_swordsman: 'special', elite_war_dog: 'special', jaguar_warrior: 'special', urumi_swordsman: 'special',
-    war_dog: 'special', warrior_priest: 'special', temple_guard: 'special', hill_tribesman: 'special',
-    indian_tribesman: 'special', iroquois_warrior: 'special', amazon_warrior: 'special', champi_warrior: 'special',
-    elite_champi_warrior: 'special', champi_runner: 'special', champi_scout: 'special', sickle_warrior: 'special',
+    war_dog: 'special', warrior_priest: 'special', temple_guard: 'special', elite_temple_guard: 'special', hill_tribesman: 'special',
+    indian_tribesman: 'special', iroquois_warrior: 'special', amazon_warrior: 'special',
+    sickle_warrior: 'special',
 
     // ── 远程 ──
     // 弓手
@@ -797,7 +800,7 @@ app.innerHTML = `
 </header>
 <div class="le-viewtabs">
   <button type="button" class="le-viewtab active" data-view="factions">⚔ 势力军团编排</button>
-  <button type="button" class="le-viewtab" data-view="units">🗂 兵种图鉴 (${DE_UNITS_CATALOG.length})</button>
+  <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
   <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都…" />
@@ -959,6 +962,10 @@ function injectStyles(): void {
       .cat-tag {
         display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px;
         background:#1a2430; color:#8ab4c4; border:1px solid #2c3f52;
+      }
+      .sub-tag {
+        display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px;
+        background:#241f1a; color:#c8b088; border:1px solid #4a3c2a; white-space:nowrap;
       }
       .cell-path { color:#6a6258; font-family:monospace; font-size:10px; }
       td.cell-thumb { padding:2px 8px; }
@@ -1799,6 +1806,7 @@ function switchMainView(view: MainView): void {
     });
 
     if (isUnits) {
+        populateSubFilter();
         applyCatalogFilter();
         renderCatalogTable();
         if (selectedUnitId) {
@@ -1813,10 +1821,23 @@ function switchMainView(view: MainView): void {
     }
 }
 
+/** 根据当前选中大类，刷新子类下拉选项；「全部类别」时列出所有子类（按大类 optgroup 分组）。 */
+function populateSubFilter(): void {
+    const cat = catalogCatFilter;
+    const groups: [string, SubCategory[]][] = cat === 'all'
+        ? (CATEGORY_ORDER as UnitCategory[]).map(c => [CATEGORY_LABEL[c], SUBCATEGORY_BY_CATEGORY[c]])
+        : [[CATEGORY_LABEL[cat], SUBCATEGORY_BY_CATEGORY[cat]]];
+    els.subFilter.innerHTML = `<option value="all">全部子类</option>`
+        + groups.map(([label, subs]) =>
+            `<optgroup label="${label}">${subs.map(s => `<option value="${s}">${SUBCATEGORY_LABEL[s]}</option>`).join('')}</optgroup>`
+        ).join('');
+}
+
 function applyCatalogFilter(): void {
     const q = catalogSearch.trim().toLowerCase();
     catalogRows = DE_UNITS_CATALOG.filter(u => {
         if (catalogCatFilter !== 'all' && u.category !== catalogCatFilter) return false;
+        if (catalogSubFilter !== 'all' && getUnitSubcategory(u.id) !== catalogSubFilter) return false;
         if (catalogTierFilter !== 'all' && getUnitTier(u) !== catalogTierFilter) return false;
         if (catalogAgeFilter !== 'all' && u.age !== catalogAgeFilter) return false;
         if (q) {
@@ -1842,6 +1863,13 @@ function sortCatalogRows(): void {
     catalogRows.sort((a, b) => {
         if (catalogSortCol === 'category') {
             const d = CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category);
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'subcategory') {
+            const sa = getUnitSubcategory(a.id) ?? '';
+            const sb = getUnitSubcategory(b.id) ?? '';
+            const d = sa.localeCompare(sb);
             if (d !== 0) return dir * d;
             return a.name.localeCompare(b.name, 'zh-CN');
         }
@@ -1880,13 +1908,15 @@ function renderCatalogTable(): void {
           <th data-col="age" style="width:90px;">时代${arrow('age')}</th>
           <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
           <th data-col="category" style="width:100px;">类别${arrow('category')}</th>
-          <th data-col="id" style="width:220px;">兵种 ID${arrow('id')}</th>
+          <th data-col="subcategory" style="width:90px;">子类${arrow('subcategory')}</th>
+          <th data-col="id" style="width:200px;">兵种 ID${arrow('id')}</th>
           <th>素材目录</th>
         </tr>
       </thead>
       <tbody>
         ${catalogRows.map(u => {
             const tier = getUnitTier(u);
+            const sub = getUnitSubcategory(u.id);
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
             <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
@@ -1896,6 +1926,7 @@ function renderCatalogTable(): void {
                 ? `<span class="tier-tag tier-elite">⭐ 精锐</span>`
                 : `<span class="tier-tag tier-base">普通</span>`}</td>
             <td><span class="cat-tag">${CATEGORY_LABEL[u.category]}</span></td>
+            <td>${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : `<span style="color:#7a7266;">—</span>`}</td>
             <td><span class="cell-id" style="margin-left:0;">${u.id}</span></td>
             <td><span class="cell-path">${u.pathPrefix}</span></td>
           </tr>`;
@@ -1932,6 +1963,7 @@ function renderUnitPanel(unitId: string): void {
     const u = DE_UNITS_MAP.get(unitId);
     if (!u) return;
     const tier = getUnitTier(u);
+    const sub = getUnitSubcategory(u.id);
 
     els.panelContent.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
@@ -1942,6 +1974,7 @@ function renderUnitPanel(unitId: string): void {
       <div style="display:flex;gap:6px;align-items:center;">
         <span class="age-tag age-${u.age}">${AGE_LABEL[u.age]}</span>
         <span class="cat-tag">${CATEGORY_LABEL[u.category]}</span>
+        ${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : ''}
         ${tier === 'elite' ? `<span class="tier-tag tier-elite">⭐ 精锐</span>` : `<span class="tier-tag tier-base">普通</span>`}
       </div>
     </div>
