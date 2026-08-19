@@ -84,6 +84,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },
         ],
     },
+    // 白袍军团·虎牢关（陈庆之 · 白袍破阵纯骑军团 · 鱼鳞阵 3+4+2：精锐虎豹骑 3 + 精锐虎豹骑 4 + 精锐虎豹骑 2 / 9骑纯骑兵大阵）
+    zhengzhou: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'elite_tiger_cavalry', count: 3 },       // Row 0 尖刀前锋 = 魏武虎豹骑精锐 3骑（白袍先锋骑兵突击破阵）
+            { type: 'elite_tiger_cavalry', count: 4 },       // Row 1 中军主力 = 魏武虎豹骑精锐 4骑（白袍主力骑兵雷霆贯穿）
+            { type: 'elite_tiger_cavalry', count: 2 },       // Row 2 尾收追击 = 魏武虎豹骑精锐 2骑（白袍扫荡铁骑高速合围）
+        ],
+    },
     // 先秦军团·朝歌/殷墟/岐山/孤竹（子受 / 妇好 / 姬发 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 双轮远程战车 2）
     yin: {
         formationMode: 'fish_scale',
