@@ -117,7 +117,10 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_tarkan: { name: '匈奴答剌罕骑兵精锐', cls: 'cav', sz: 1, hp: 150, atk: 11, meleeArmor: 1, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 10, 13: 12, 22: 10, 26: 10 }, armorTags: [8, 19, 31] },
     elite_guardsman: { name: '近卫军精锐', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     steppe_lancer: { name: '草原枪骑兵', cls: 'cav', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    ninja: { name: '日本忍者', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
+    // 🔴 [2026-08-19 主人定] 忍者 spd 55→115：全表骑兵统一 130、近战 40~55，原来的 55 是步兵档，
+    //    绕后奇袭要走很长一段才接敌，慢得看不出突击感。取 115 = 骑兵的 88%，「比骑兵慢一点」。
+    //    与 DE 原型也对得上：AoE2 的 Ninja 速度 1.5，比骑士 1.35 还快，本来就是高机动刺客。
+    ninja: { name: '日本忍者', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 115, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
     liao_dao: { name: '契丹辽刀手', cls: 'melee', sz: 1, hp: 75, atk: 9, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     elite_liao_dao: { name: '契丹辽刀手精锐', cls: 'melee', sz: 1, hp: 85, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
     fire_lancer: { name: '南宋火矛手', cls: 'melee', sz: 1, hp: 65, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 21: 1, 30: 4 }, armorTags: [29, 1, 31, 23] },
@@ -1869,6 +1872,14 @@ interface WarMan {
      * true 期间移动只跟自己的槽位，够不着敌人**不追**；索敌与出手照旧（远程在队形里放箭）。
      */
     march: boolean;
+    /**
+     * 【忍者奇袭】本兵是否从敌军背后出生（见 spawnTick 的 flankPort）。
+     * 用途只有一个：`aimAt` 里不许它走**本方共享的巡逻航路** —— 那条航路的第一站是
+     * 「敌方底边」，而奇袭兵一出生就已经站在敌方底边之外，等于生在终点上；
+     * 航点推进又是全军统一判定的，大部队还在中线厮杀不会推进，于是奇袭兵杵着不动
+     * （主人 2026-08-19 报「忍者出现后不寻敌」）。改为直扑敌军重心。
+     */
+    flank?: boolean;
     /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
     port: WarSpawn | null;
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
@@ -3254,6 +3265,7 @@ export class Scene13WarLayer {
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
+                    flank: isFlank,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -3530,6 +3542,14 @@ export class Scene13WarLayer {
         // 骑 141/158 vs 147/144s、远程 171/121 vs 129/130s）；克制三边方向不变；
         // 收尾更干净（三个种子败方余兵全归 0，旧兜底有两局残兵收不掉）。
         const jit = (p: { x: number; y: number }): { x: number; y: number } => ({ x: p.x + m.jx, y: p.y + m.jy });
+
+        // 【忍者奇袭】绕后兵直扑敌军重心，**不进下面的共享巡逻航路**（原因见 WarMan.flank）。
+        // 重心是每帧按敌方存活兵算的活目标，敌军往哪压它就往哪追，不会像航点那样停在原地等人。
+        if (m.flank) {
+            const cen = this.enemyCen[1 - m.f];
+            if (cen) return jit(cen);
+        }
+
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
         const homeX = m.f === 0 ? vw * 0.07 : vw * 0.93;   // 己方底边
@@ -3835,8 +3855,7 @@ export class Scene13WarLayer {
                         // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
                         // 用素色而不是火器的橙黄焰 —— 它们射的是箭，不是火药。
                         else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
-                        // 其余远程（弓/弩/投石）：箭矢开火音效（cooldown 节流）
-                        else audioManager.play('naval_arrow_fire');
+                        // 其余远程（弓/弩/投石）：箭矢开火音效已关闭（主人 2026-08-19），保留射击动作
                     }
                 }
                 m.atkSt = m.st;

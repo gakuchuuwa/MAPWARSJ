@@ -1,19 +1,19 @@
 /**
- * 海上船型：按军团兵力选 S10DB 船贴图档位（素材定义见 UnitAssets.ts UNIT_ASSETS）
+ * 海上船型：按军团兵力选船贴图档位（素材定义见 UnitAssets.ts UNIT_ASSETS）
  *
  * 三档船 = 运力语义（按实际兵力分档）：
- *   小船（863-902）：兵力 < 2 万
- *   中船（906-945）：2 万 ≤ 兵力 < 5 万
- *   大船（949-988）：兵力 ≥ 5 万
+ *   小船（GALLEY）：兵力 < 2 万
+ *   中船（WAR_GALLEY）：2 万 ≤ 兵力 < 5 万
+ *   大船（ANT_ELITE_GALLEY）：兵力 ≥ 5 万
  */
 
 export type NavalShipAssetId = 'ship_small' | 'ship_medium' | 'ship_large';
 
-/** 地图渲染各档船相对基准的缩放（小船 1.0，中船 0.8，大船 0.6） */
+/** 地图渲染各档船相对基准的缩放（全部 1.0：DE 素材 box 尺寸本身自然分层，不再做 S10DB 贴图占比补偿） */
 const NAVAL_SHIP_DRAW_SCALE: Readonly<Record<NavalShipAssetId, number>> = {
     ship_small: 1.0,
-    ship_medium: 0.8,
-    ship_large: 0.7,
+    ship_medium: 1.0,
+    ship_large: 1.0,
 };
 
 export function getNavalShipDrawScale(shipId: NavalShipAssetId): number {

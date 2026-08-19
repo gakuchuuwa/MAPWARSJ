@@ -188,6 +188,27 @@ function startFieldBattleBetween(
         return;
     }
 
+    // 🔴 [2026-08-19 主人定] 跟拍军团野战**永远攻击方**：若跟拍军团落在守方阵营（被撞方），
+    // 交换攻守，让主角永远是主动进攻的一方。攻守身份不影响胜负（胜负由兵力比 + 八环决定），
+    // 只改变 13 演出的进场方向与叙事视角 —— 观赏直播里主角该是攻势方。
+    const followedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+    if (followedId) {
+        const fArmy = deps.getArmies().find((a) => a.id === followedId);
+        if (
+            fArmy && !fArmy.isDestroyed &&
+            fArmy.getFactionId() === otherArmy.getFactionId() &&
+            fArmy.getFactionId() !== army.getFactionId()
+        ) {
+            // 跟拍军团与守方同势力：须它本身就是被撞首脑、或真在开战圈内才算参与，
+            // 否则是远处同势力的无关军团，不翻转这场野战。
+            const c0 = { lat: (army.getPosition().lat + otherArmy.getPosition().lat) / 2, lng: (army.getPosition().lng + otherArmy.getPosition().lng) / 2 };
+            const inJoin = getEuclideanDistance(fArmy.getPosition(), c0) <= GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
+            if (fArmy.id === otherArmy.id || inJoin) {
+                const t = army; army = otherArmy; otherArmy = t;
+            }
+        }
+    }
+
     const posA = army.getPosition();
     const posB = otherArmy.getPosition();
     const center = { lat: (posA.lat + posB.lat) / 2, lng: (posA.lng + posB.lng) / 2 };
