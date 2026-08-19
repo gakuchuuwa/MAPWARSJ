@@ -29,6 +29,7 @@ import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
+import { audioManager } from '../audio/AudioManager';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -3037,15 +3038,18 @@ export class Scene13WarLayer {
     /** 爆炸特效：径向对称（单组 1 向），dir 取 0。 */
     private explode(type: 'FX_EXPLOSION' | 'FX_PETARD', x: number, y: number): void {
         this.spawnFx(type, x, y, 0);
+        audioManager.play('explosion');
     }
 
-    /** 火器炮口焰：发射瞬间喷出 DE 炮口焰特效（按兵种口径选 MUZZLE_*）。 */
+    /** 火器炮口焰：发射瞬间喷出 DE 炮口焰特效（按兵种口径选 MUZZLE_*）+ 开火音效。 */
     private spawnFirearmMuzzle(m: WarMan, ax: number, ay: number): void {
         const type = FIREARM_MUZZLE[m.key] ?? 'FX_MUZZLE_HAND';
         const ang = Math.atan2(ay, ax);
         const ox = m.x + Math.cos(ang) * UNIT_PX * 0.6;
         const oy = m.y + Math.sin(ang) * UNIT_PX * 0.6 - UNIT_PX * 0.4;
         this.spawnFx(type, ox, oy, this.dir8(ax, ay));
+        // 音效：火炮（bombard/organ）走低沉炮声，火枪（hand/conq）走清脆枪声（cooldown 节流）
+        audioManager.play(type === 'FX_MUZZLE_BOMBARD' || type === 'FX_MUZZLE_ORGAN' ? 'naval_cannon_fire' : 'gun_fire');
     }
 
     /** 无攻击动画车辆（战车/弩炮）射击尘烟：素色火花，不是火药（射的是箭）。 */
@@ -3756,11 +3760,13 @@ export class Scene13WarLayer {
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
-                        // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效
+                        // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效（音效在 spawnFirearmMuzzle 内）
                         if (isFirearm) this.spawnFirearmMuzzle(m, ax, ay);
                         // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
                         // 用素色而不是火器的橙黄焰 —— 它们射的是箭，不是火药。
                         else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
+                        // 其余远程（弓/弩/投石）：箭矢开火音效（cooldown 节流）
+                        else audioManager.play('naval_arrow_fire');
                     }
                 }
                 m.atkSt = m.st;
@@ -3782,6 +3788,7 @@ export class Scene13WarLayer {
                 const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
+                    audioManager.play('sword_clank');
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     const contactY = (m.y * 0.45 + foe.y * 0.55) - UNIT_PX * 0.35;

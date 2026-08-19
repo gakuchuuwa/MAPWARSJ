@@ -1585,13 +1585,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'crossbowman', count: 2 },        // Row 2 尾收远程压制 = 弩兵 2人（纯步兵·无马，后排强弩射击压制）
         ],
     },
-    // 色雷斯·普罗夫迪夫（色雷斯逆刃长刀斩马死士与精锐标枪军团 · 鱼鳞阵 4+3+2：色雷斯长刃斩手主力 4 + 冲击重骑兵 3 + 精锐标枪手 2）
+    // 色雷斯·普罗夫迪夫（西美昂 · 色雷斯长刃斩手与精锐重骑军团 · 鹤翼阵 2+4+3：色雷斯长刃斩手 2 + 冲击重骑兵 4 + 精锐标枪手 3）
     seleisi: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'rhomphaia_warrior', count: 4 },   // Row 0 前卫主力破坚 = 色雷斯长刃斩手 4人（纯步兵·无马，手持双手逆刃大刀斩马破甲）
-            { type: 'shock_cavalry', count: 3 },       // Row 1 中军铁骑突击 = 冲击重骑兵 3骑（色雷斯重装贵族铁骑中坚冲击）
-            { type: 'elite_peltast', count: 2 },       // Row 2 尾收远程压制 = 色雷斯标枪手精锐 2人（纯步兵·无马，地中海高穿透投枪压制）
+            { type: 'rhomphaia_warrior', count: 2 },   // Row 0 前锋坚壁 = 色雷斯长刃斩手 2人（纯步兵·无马，双手逆刃长刀引敌接战）
+            { type: 'shock_cavalry', count: 4 },       // Row 1 中军主力 = 冲击重骑兵 4骑（重装贵族铁骑核心冲锋破阵）
+            { type: 'elite_peltast', count: 3 },       // Row 2 尾收远射 = 精锐标枪手 3人（纯步兵·无马，高穿透投枪两翼火力掩护）
         ],
     },
     // 塞浦路斯王国·尼科西亚（居伊·德·吕西尼昂 · 十字军重骑士与劲弩大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
@@ -1612,13 +1612,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },    // Row 2 尾收神弓 = 复合弓手 2人（纯步兵·无马，黑海斯基泰-希腊复合重弓射击掩护）
         ],
     },
-    // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鱼鳞阵 4+3+2：下马保加利亚勇士 4 + 保加利亚骑兵精锐 3 + 复合弓手 2）
+    // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鹤翼阵 2+4+3：下马保加利亚勇士 2 + 保加利亚骑兵精锐 4 + 复合弓手 3）
     baojialiya: {
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'konnik_foot', count: 4 },          // Row 0 前卫坚壁 = 下马保加利亚骑兵 4人（纯步兵·无马，重盾前卫筑起铜墙铁壁）
-            { type: 'elite_konnik', count: 3 },         // Row 1 中军主力 = 保加利亚骑兵精锐 3骑（王牌具装近卫重骑，重锤破甲摧城拔寨）
-            { type: 'composite_bowman', count: 2 },     // Row 2 尾收远射 = 复合弓手 2人（纯步兵·无马，巴尔干角木重弓精准射击掩护）
+            { type: 'konnik_foot', count: 2 },          // Row 0 前锋坚壁 = 下马保加利亚勇士 2人（纯步兵·无马，重盾前卫引敌接战）
+            { type: 'elite_konnik', count: 4 },         // Row 1 中军主力 = 保加利亚骑兵精锐 4骑（王牌具装近卫重骑，重锤破甲核心冲击）
+            { type: 'composite_bowman', count: 3 },     // Row 2 尾收远射 = 复合弓手 3人（纯步兵·无马，巴尔干角木重弓精准两翼掩护）
         ],
     },
     // 保加利亚帝国·克鲁姆大汗 下马保加利亚勇士死斗军团（鱼鳞阵 3+4+2：下马保加利亚骑兵前卫 3 + 下马保加利亚骑兵精锐主力 4 + 复合弓手 2）
@@ -2063,13 +2063,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },                // Row 2 尾收远射 = 劲弩手 2人（纯步兵·无马，后方重型劲弩压制掩护）
         ],
     },
-    // 中南半岛阿瓦王朝·思机法 拉塔战车车阵军团（雁行阵 4+3+2：步弓手主力 4 + 爪刀勇士 3 + 精锐拉塔战车 2）
+    // 中南半岛阿瓦王朝·思机法 掸族战象与密林劲弓大阵（三角阵 2+3+4：皮甲战象尖刀 2 + 缅刀双手剑士中坚 3 + 步弓手主力 4）
     ava: {
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'archer', count: 4 },          // 主力·宽线齐射 = 步弓手 4（东南亚军队主体是弓手）
-            { type: 'karambit_warrior', count: 3 }, // 中军接应 = 爪刀勇士 3
-            { type: 'elite_ratha_ranged', count: 2 }, // 战车 = 精锐拉塔战车 2（🔴 占人口只许 2 档）
+            { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨象 = 皮甲战象 2头（掸族象卫前沿开路践踏破阵）
+            { type: 'two_handed_swordsman', count: 3 },    // Row 1 刀手近战 = 双手剑士 3人（缅刀近卫中坚贴身接战）
+            { type: 'archer', count: 4 },                  // Row 2 底边主力齐射 = 步弓手 4人（密林步弓后排暴雨抛射）
         ],
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
@@ -2079,6 +2079,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨兽 = 皮甲战象 2头（前沿象阵开路冲撞）
             { type: 'imperial_skirmisher', count: 3 },     // Row 1 掷矛中坚 = 帝王掷矛手 3人（大越专属王牌掷矛手，中距离重标枪穿甲反弓）
             { type: 'rattan_archer_elite', count: 4 },     // Row 2 底边主力齐射 = 精锐藤弓兵 4人（密林精锐藤弓，后排暴雨抛射）
+        ],
+    },
+    // 扎波罗热哥萨克·塞契（赫梅利 · 哥萨克马刀轻骑与火枪战车大阵 · 鹤翼阵 2+4+3：手炮火枪前锋 2 + 哥萨克骠骑主力 4 + 草原步弓 3）
+    gesake: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'hand_cannoneer', count: 2 },        // Row 0 前锋破线 = 手炮火枪兵 2人（哥萨克火绳枪前沿齐射）
+            { type: 'hussar', count: 4 },                 // Row 1 中军主力 = 骠骑兵 4骑（扎波罗热哥萨克马刀轻骑主力冲击）
+            { type: 'archer', count: 3 },                 // Row 2 尾收远射 = 步弓手 3人（草原快弓后方抛射掩护）
+        ],
+    },
+    // 顿河哥萨克·阿速城（塔塔里诺夫 · 顿河铁骑与亚速要塞火枪大阵 · 鹤翼阵 2+4+3：手炮火枪前锋 2 + 马扎尔轻装骠骑 4 + 草原步弓 3）
+    dunhe: {
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'hand_cannoneer', count: 2 },        // Row 0 前锋散兵 = 手炮火枪兵 2人（亚速要塞火枪齐射）
+            { type: 'magyar_huszar', count: 4 },          // Row 1 中军主力 = 马扎尔骠骑兵 4骑（顿河哥萨克精锐马刀轻骑核心突击）
+            { type: 'archer', count: 3 },                 // Row 2 尾收远射 = 步弓手 3人（快弓箭雨火力压制）
         ],
     },
 };

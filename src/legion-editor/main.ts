@@ -163,8 +163,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'cataphract', name: '拜占庭圣骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CATAPHRACT/' },
     { id: 'centurion', name: '罗马百夫长', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CENTURION/' },
     { id: 'chakram_thrower', name: '古吉拉特飞轮掷手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CHAKRAMTHROWER/' },
-    { id: 'champion_runner', name: '印加尚皮飞毛腿', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
-    { id: 'champion_scout', name: '印加尚皮斥候', category: 'infantry', age: 'unknown', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
     { id: 'companion_cavalry', name: '马其顿伙伴骑兵', category: 'cavalry', age: 'unknown', pathPrefix: '/SUCAI/COMPANION_CAVALRY/' },
     { id: 'condottiero', name: '佣兵', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CONDOTTIERO/' },
     { id: 'conquistador', name: '西班牙征服者', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CONQUISTADOR/' },
@@ -326,8 +324,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
 
     { id: 'cavalier', name: '重装骑士', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAVALIER/' },
 
-    { id: 'ant_scout', name: '古典斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ANT_SCOUT/' },
-
     { id: 'flamethrower', name: '猛火油柜(喷火器)', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/FLAMETHROWER/' },
     { id: 'helepolis', name: '希腊赫勒波利斯攻城塔', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HELEPOLIS/' },
     { id: 'siege_tower', name: '攻城塔', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGETOWER/' },
@@ -398,6 +394,9 @@ const LEGACY_UNIT_NAMES: Record<string, string> = {
     'ballista': '床弩兵',
     'heavy_cavalry': '重骑兵',
     'elephant': '象兵',
+    'champion_runner': '印加尚皮飞毛腿',
+    'champion_scout': '印加尚皮斥候',
+    'ant_scout': '古典斥候骑兵',
 };
 
 /** 根据兵种 ID 获取中文显示名（优先 DE 目录 → 旧版映射 → 原始 ID） */
