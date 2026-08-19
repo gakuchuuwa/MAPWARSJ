@@ -208,13 +208,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_tiger_cavalry', count: 3 },       // Row 2 后排 = 魏武虎豹骑精锐 3骑（白袍扫荡后卫）
         ],
     },
-    // 先秦军团·朝歌/殷墟/岐山/孤竹（子受 / 妇好 / 姬发 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 双轮远程战车 2）
+    // 先秦军团·朝歌/殷墟/岐山/孤竹/姑苏（子受 / 妇好 / 姬发 / 孙武 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 先秦远程战车 2）
     yin: {
         formationMode: 'fish_scale',
         slots: [
-            { type: 'jian_swordsman', count: 3 },            // Row 0 前卫抗线 = 华夏刀剑手 3人（商周戈盾甲士）
+            { type: 'jian_swordsman', count: 3 },            // Row 0 前卫抗线 = 华夏刀剑手 3人（商周春秋戈盾甲士）
             { type: 'bowman', count: 4 },                    // Row 1 中军主力 = 弓兵 4人（先秦步弓手齐射）
-            { type: 'war_chariot_ranged', count: 2 },        // Row 2 尾收战车 = 双轮远程战车 2乘（先秦驷马戎车压阵轰击）
+            { type: 'war_chariot_ranged', count: 2 },        // Row 2 尾收战车 = 先秦远程战车 2乘（先秦驷马戎车压阵轰击）
         ],
     },
     shang: {
@@ -234,6 +234,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     guzhu: {
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 2 },
+        ],
+    },
+    wu: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'jian_swordsman', count: 3 },
@@ -1648,7 +1656,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },        // Row 2 尾收远射 = 复合弓手 2人（纯步兵·无马，后方步弓压制掩护）
         ],
     },
-    // 凯尔特与苏格兰·威廉·华莱士 / 奥恩格斯 / 多姆纳尔 靛蓝突袭者与长弓精锐军团（鱼鳞阵 3+4+2：靛蓝突袭者前卫 3 + 精锐靛蓝突袭者主力 4 + 长弓兵 2）
+    // 凯尔特突袭者军团·卡莱尔/斯昆/邓迪（威廉·华莱士 / 奥恩格斯 / 多姆纳尔 · 鱼鳞阵 3+4+2：靛蓝突袭者前卫 3 + 精锐靛蓝突袭者主力 4 + 长弓兵 2）
     kanbuliya: {
         formationMode: 'fish_scale',
         slots: [
@@ -1673,7 +1681,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 2 },
         ],
     },
-    // 古印度孔雀帝国·旃陀罗笈多 / 戒日王 / 频毗娑罗 桑纳亚装甲战象与恒河长弓军团（鹤翼阵 2+4+3：桑纳亚重象 2 + 软剑士精锐主力 4 + 帕提尤达长弓 3）
+    // 孔雀战象软剑军团·华氏城/曲女城/瓦拉纳西/索姆纳特（旃陀罗笈多 / 戒日王 / 频毗娑罗 / 普拉塔帕 · 鹤翼阵 2+4+3：桑纳亚装甲战象 2 + 软剑士精锐主力 4 + 帕提尤达长弓 3）
     kongque: {
         formationMode: 'crane_wing',
         slots: [
@@ -1784,61 +1792,69 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_war_elephant', count: 2 },        // 压阵巨兽 = 精锐战象 2（🔴 象只许 2 档）
         ],
     },
-    // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 古典双轮战车车阵军团（雁行阵 4+3+2：波斯持盾步兵 4 + 双轮战车精锐 3 + 双轮战车 2）
+    // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 / 萨利蒂 双轮战车军团（梯形阵 4+3+2：弓兵 4 + 持盾步兵 3 + 双轮战车精锐 2）
     heti: {
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2（双轮重装战车核心冲锋）
         ],
     },
     aiji: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     dibisi: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     sumeier: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     jialedi: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     yashu: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     guyashu: {
         formationMode: 'echelon',
         slots: [
-            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
             { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
-            { type: 'war_chariot_ranged', count: 2 },        // 战车队 = 双轮远程战车 2（🔴 占人口只许 2 档；战车主武器是弓，非近战）
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
+        ],
+    },
+    xikesuosi: {
+        formationMode: 'echelon',
+        slots: [
+            { type: 'bowman', count: 4 },                    // 主力·宽线齐射 = 弓兵 4
+            { type: 'sparabara', count: 3 },                 // 中军接应 = 持盾步兵 3
+            { type: 'elite_war_chariot', count: 2 },         // 战车队 = 双轮战车精锐 2
         ],
     },
     // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（鱼鳞阵 3+4+2：战斗象前卫 3 + 精锐战斗象主力 4 + 步弓手 2）
@@ -1867,7 +1883,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'ballista_elephant', count: 2 },         // Row 2 尾收机械重弩 = 高棉弩炮战象 2头（象背双人机械床弩，后排超远距离贯穿重箭）
         ],
     },
-    // 阿拉伯与近东·哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 骆驼弓骑精锐军团（三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
+    // 阿拉伯骆驼弓骑军团·麦地那/巴格达/麦加/巴士拉（哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 · 三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
     maidina: {
         formationMode: 'triangle',
         slots: [
@@ -1900,7 +1916,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_camel_archer', count: 4 },
         ],
     },
-    // 小亚细亚·密特里达梯 / 克罗伊斯 / 迈达斯 / 狄奥多尔 古代重装近卫军精锐军团（鱼鳞阵 3+4+2：重装近卫前卫 3 + 重装近卫精锐主力 4 + 复合弓手 2）
+    // 小亚细亚近卫军团·阿马西亚/斯法尔德/戈尔迪翁/尼科米底亚（密特里达梯 / 克罗伊斯 / 迈达斯 / 狄奥多尔 · 鱼鳞阵 3+4+2：重装近卫前卫 3 + 重装近卫精锐主力 4 + 复合弓手 2）
     bendou_d: {
         formationMode: 'fish_scale',
         slots: [
@@ -1933,7 +1949,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },
         ],
     },
-    // 古典希腊与黑海·阿里斯塔 / 阿历克塞 / 舒伦堡 希腊贵族骑兵与克里特神弓精锐军团（鱼鳞阵 3+4+2：贵族骑兵前卫 3 + 贵族骑兵精锐主力 4 + 克里特弓箭手 2）
+    // 希腊贵族铁骑军团·米利都/特拉布宗/科孚（阿里斯塔 / 阿历克塞 / 舒伦堡 · 鱼鳞阵 3+4+2：贵族骑兵前卫 3 + 贵族骑兵精锐主力 4 + 克里特弓箭手 2）
     aiaoniya: {
         formationMode: 'fish_scale',
         slots: [
@@ -1967,6 +1983,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'bactrian_archer', count: 2 },     // Row 2 尾收复合神弓 = 巴克特里亚弓手 2人（纯步兵·无马，中亚希腊化复合重弓超远距离高伤害抛射）
         ],
     },
+    // 刹帝利灵猫骑兵军团·巴米扬/坎大哈（突骑施 / 艾哈迈德沙 · 鱼鳞阵 3+4+2：刹帝利灵猫骑兵前卫 3 + 刹帝利精锐主力 4 + 步弓手 2）
     fanyanna: {
         formationMode: 'fish_scale',
         slots: [
@@ -1983,7 +2000,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'archer', count: 2 },
         ],
     },
-    // 扎扬王朝·特莱姆森（亚格姆拉森 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
+    // 马格里布骆驼弓骑军团·特莱姆森/布佳亚/凯鲁万/非斯/马拉喀什/阿尔及尔/的黎波里（亚格姆拉森 / 哈马德 / 奥克巴 / 伊德里斯 / 塔什芬 / 巴巴罗萨 / 德拉古特 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
     zhayan: {
         formationMode: 'triangle',
         slots: [
@@ -1992,7 +2009,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },  // Row 2 底边主力齐射 = 柏柏尔骆驼弓骑 4人
         ],
     },
-    // 哈马德王朝·布佳亚（哈马德）
     hamade: {
         formationMode: 'triangle',
         slots: [
@@ -2001,7 +2017,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },
         ],
     },
-    // 阿格拉布王朝·凯鲁万（奥克巴）
     aguelabu: {
         formationMode: 'triangle',
         slots: [
@@ -2010,7 +2025,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },
         ],
     },
-    // 伊德里斯王朝·非斯（伊德里斯一世）
     yidelisi: {
         formationMode: 'triangle',
         slots: [
@@ -2019,7 +2033,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },
         ],
     },
-    // 穆拉比特王朝·马拉喀什（塔什芬）
     mulabite: {
         formationMode: 'triangle',
         slots: [
@@ -2028,7 +2041,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },
         ],
     },
-    // 巴巴里海岸·阿尔及尔（巴巴罗萨·海雷丁）
     babali: {
         formationMode: 'triangle',
         slots: [
@@ -2037,7 +2049,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 4 },
         ],
     },
-    // 的黎波里塔尼亚·的黎波里（德拉古特）
     telibolisi: {
         formationMode: 'triangle',
         slots: [
@@ -2055,7 +2066,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },             // Row 2 尾收要塞劲弩 = 劲弩手 2人（纯步兵·无马，海防要塞高穿透强弩射击）
         ],
     },
-    // 中南半岛·占婆王国·制蓬峨 / 制旻 爪刀勇士与藤弓精锐军团（鱼鳞阵 3+4+2：爪刀勇士前卫 3 + 爪刀勇士精锐主力 4 + 藤弓兵 2）
+    // 占婆爪刀藤弓军团·毗阇耶/因陀罗补罗（制蓬峨 / 制旻 · 鱼鳞阵 3+4+2：爪刀勇士前卫 3 + 爪刀勇士精锐主力 4 + 藤弓兵 2）
     champa: {
         formationMode: 'fish_scale',
         slots: [
@@ -2099,22 +2110,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rattan_archer_elite', count: 4 },     // Row 2 底边主力齐射 = 精锐藤弓兵 4人（密林精锐藤弓，后排暴雨抛射）
         ],
     },
-    // 扎波罗热哥萨克·塞契（赫梅利 · 哥萨克纯骑兵大阵 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
+    // 哥萨克纯骑兵军团·塞契/阿速城（赫梅利 / 塔塔里诺夫 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     gesake: {
         formationMode: 'crane_wing',
         slots: [
             { type: 'conquistador', count: 2 },          // Row 0 前锋破线 = 骑马火枪手 2骑（哥萨克战马火枪前哨放排枪破甲）
-            { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（扎波罗热哥萨克精锐战骑核心冲击）
+            { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（哥萨克精锐战骑核心冲击）
             { type: 'cav_archer_heavy', count: 3 },      // Row 2 尾收远射 = 重装骑射手 3骑（东欧草原快马重弓后排驰射掩护）
         ],
     },
-    // 顿河哥萨克·阿速城（塔塔里诺夫 · 顿河纯骑兵大阵 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     dunhe: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'conquistador', count: 2 },          // Row 0 前锋散兵 = 骑马火枪手 2骑（顿河战马火枪齐射破甲）
-            { type: 'magyar_huszar', count: 4 },         // Row 1 中军主力 = 马扎尔骠骑兵 4骑（顿河哥萨克精锐战骑核心突击）
-            { type: 'cav_archer_heavy', count: 3 },      // Row 2 尾收远射 = 重装骑射手 3骑（东欧草原快马重弓火力压制）
+            { type: 'conquistador', count: 2 },
+            { type: 'magyar_huszar', count: 4 },
+            { type: 'cav_archer_heavy', count: 3 },
         ],
     },
     // 奥斯若恩·埃德萨（鲍德温 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军圣殿骑士 3 + 劲弩手 2）
