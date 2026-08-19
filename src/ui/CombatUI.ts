@@ -1037,28 +1037,24 @@ export class CombatUI {
             box.id = isAtt ? 'combat-tech-left' : 'combat-tech-right';
             box.style.cssText = `
                 display: none;
-                flex-direction: column;
-                gap: 2px;
-                padding: 4px 14px;
-                font-size: 13px;
+                flex-direction: row;
+                gap: 6px;
+                padding: 2px 8px;
+                font-size: 12px;
                 color: #1a1612;
-                background: linear-gradient(135deg, rgba(248, 242, 230, 0.78) 0%, rgba(235, 220, 198, 0.85) 100%);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border: 1px solid rgba(125, 111, 90, 0.25);
-                border-radius: 20px;
-                box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
+                background: transparent;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: none;
+                border-radius: 12px;
+                box-shadow: none;
                 font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
                 letter-spacing: 0.5px;
                 pointer-events: auto;
                 white-space: nowrap;
                 min-width: 0;
-                /* 🔴 [2026-08-19 放宽] 科技全开后每侧最多 16 条（拉丁），按内容自然宽会折成三行密排。
-                   顶部 HUD 是 fit-content 居中容器，两翼本来还空着大片屏幕 —— 给一个期望宽度把它用起来：
-                   flex-basis 取 min(38vw, 700px)（两翼 76vw + 中央跟随胶囊约 400px，1920 视口内放得下），
-                   shrink 保留 1，窄屏仍会自己收回去，不会把中央胶囊挤出屏幕。 */
-                flex: 0 1 min(38vw, 700px);
-                align-items: ${isAtt ? 'flex-start' : 'flex-end'};
+                flex: 0 1 auto;
+                align-items: center;
                 text-align: ${isAtt ? 'left' : 'right'};
                 order: ${isAtt ? -1 : 1};
                 opacity: 0;
@@ -1108,20 +1104,60 @@ export class CombatUI {
         box.style.display = 'flex';
         box.style.flexDirection = 'row';
         box.style.alignItems = 'center';
-        box.style.gap = '8px';
+        box.style.gap = '6px';
         requestAnimationFrame(() => {
             box.style.opacity = '1';
             box.style.transform = 'scale(1)';
         });
 
-        const nameColor = isAtt ? '#7a5830' : '#2d5e40';
-        const effColor = isAtt ? '#5a2e12' : '#1a4a2c';
+        // 科技分类色彩与主题辅助
+        const getTechCardTheme = (techId: string) => {
+            if (techId === 'forging' || techId === 'iron_casting' || techId === 'blast_furnace') {
+                return {
+                    border: 'rgba(185, 80, 20, 0.35)',
+                    bg: 'rgba(255, 245, 235, 0.75)',
+                    nameColor: '#8b3500',
+                    effColor: '#b33c00',
+                };
+            }
+            if (techId === 'scale_mail' || techId === 'chain_mail' || techId === 'plate_mail') {
+                return {
+                    border: 'rgba(40, 95, 160, 0.35)',
+                    bg: 'rgba(240, 246, 255, 0.75)',
+                    nameColor: '#1a4c7e',
+                    effColor: '#0f3862',
+                };
+            }
+            if (techId === 'scale_barding' || techId === 'chain_barding' || techId === 'plate_barding') {
+                return {
+                    border: 'rgba(130, 50, 150, 0.35)',
+                    bg: 'rgba(252, 242, 255, 0.75)',
+                    nameColor: '#6d227f',
+                    effColor: '#521262',
+                };
+            }
+            if (techId === 'fletching' || techId === 'bodkin' || techId === 'bracer'
+                || techId.includes('archer') || techId === 'thumb_ring' || techId === 'parthian_tactics') {
+                return {
+                    border: 'rgba(35, 125, 75, 0.35)',
+                    bg: 'rgba(240, 255, 245, 0.75)',
+                    nameColor: '#175c36',
+                    effColor: '#0f4526',
+                };
+            }
+            return {
+                border: 'rgba(100, 90, 80, 0.35)',
+                bg: 'rgba(250, 248, 245, 0.75)',
+                nameColor: '#4a423a',
+                effColor: '#322a22',
+            };
+        };
 
         // 攻方左标
         if (isAtt) {
             const tag = document.createElement('span');
             tag.textContent = '⚔️ 攻方科技';
-            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap;';
+            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px;';
             box.appendChild(tag);
         }
 
@@ -1129,48 +1165,54 @@ export class CombatUI {
         const chipsWrap = document.createElement('div');
         chipsWrap.style.cssText = `
             display: flex;
-            flex-wrap: wrap;
-            gap: 3px 16px;
-            width: 100%;
+            flex-wrap: nowrap;
+            gap: 3px;
             align-items: center;
             justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
         `;
 
         for (const t of own) {
             const effText = summarizeSingleTechEffect(t);
+            const theme = getTechCardTheme(t.id);
             const chip = document.createElement('div');
+            chip.title = `${t.name} (${t.de}): ${effText}${t.basis ? ' · ' + t.basis : ''}`;
             chip.style.cssText = `
-                display: flex;
+                display: inline-flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 1px;
-                min-width: 44px;
+                padding: 1.5px 5px;
+                border-radius: 4px;
+                border: 1px solid ${theme.border};
+                background: ${theme.bg};
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+                box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+                gap: 0px;
+                min-width: 32px;
             `;
 
-            // 科技名（行 1）：🔴 乱斗模式（历史脚本关闭）→ 科技全开，晚近科技名（板甲/拇指环等）
-            //   会与时间线穿帮，故只显示效果行（纯数值不穿帮）；历史脚本开启后恢复显示名字。
-            if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) {
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = t.name;
-                nameSpan.style.cssText = `
-                    font-size: 11px;
-                    line-height: 1.2;
-                    color: ${nameColor};
-                    opacity: 0.92;
-                    white-space: nowrap;
-                `;
-                chip.appendChild(nameSpan);
-            }
+            // 科技名（行 1）
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = t.name;
+            nameSpan.style.cssText = `
+                font-size: 10.5px;
+                font-weight: bold;
+                line-height: 1.1;
+                color: ${theme.nameColor};
+                letter-spacing: 0.2px;
+                white-space: nowrap;
+            `;
+            chip.appendChild(nameSpan);
 
             // 对应效果（行 2）
             const effSpan = document.createElement('span');
             effSpan.textContent = effText;
             effSpan.style.cssText = `
-                font-size: 11px;
-                line-height: 1.2;
-                font-weight: bold;
-                color: ${effColor};
+                font-size: 9.5px;
+                line-height: 1.1;
+                font-weight: 700;
+                color: ${theme.effColor};
                 white-space: nowrap;
             `;
 
@@ -1184,7 +1226,7 @@ export class CombatUI {
         if (!isAtt) {
             const tag = document.createElement('span');
             tag.textContent = '守方科技 🛡️';
-            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap;';
+            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px;';
             box.appendChild(tag);
         }
 
