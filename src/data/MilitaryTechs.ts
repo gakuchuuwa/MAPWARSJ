@@ -295,9 +295,3 @@ export const TECH_DISPLAY_GROUPS: readonly TechDisplayGroup[] = [
     { label: '术', hint: '畜牧·血统·拇指环·安息战术', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics'] },
 ];
 
-/** 取某年、某文化区已解锁的全部科技（year=null 恒解锁） */
-export function getUnlockedTechs(year: number, culture: RegionType): MilitaryTech[] {
-    return MILITARY_TECHS.filter(
-        (t) => (t.year === null || year >= t.year) && (t.cultures === null || t.cultures.includes(culture)),
-    );
-}

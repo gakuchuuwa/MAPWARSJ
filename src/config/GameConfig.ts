@@ -2,7 +2,14 @@ export { SPRITE_PATHS } from './UnitAssets';
 
 export class GameConfig {
     static SYSTEM = {        ENABLE_HISTORY_LOG: true,
-        /** 历史事件链（逐年 JSON 脚本）；默认关 = 纯沙盒乱斗 */
+        /**
+         * 历史事件链（逐年 JSON 脚本）；默认关 = 纯沙盒乱斗。
+         * 🔴 [2026-08-19] 此开关**还兼管军事科技的年份门控**（`MilitaryTechState.unlockedTechs`）：
+         *   false（乱斗）→ 20 条科技全开，只留文化门控；
+         *   true（历史脚本）→ 恢复按 `MilitaryTechs.year` 逐年解锁。
+         *   打开它会同时改变 13 的兵种五维口径（拉丁/日耳曼的板甲等不再开局即有），
+         *   war_sim 的平衡结论按开关分两套，别跨口径引用。
+         */
         ENABLE_HISTORICAL_EVENTS: false,
         SANDBOX_MODE: true,
     };

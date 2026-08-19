@@ -17,8 +17,21 @@ import { popCostOf } from '../../data/UnitPopCost';
 import { NavalPhalanxStateManager } from './NavalPhalanxState';
 import { audioManager } from '../../audio/AudioManager';
 
-// 海战开火音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
+// 海战音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
+//   箭声 1.2s / 炮声 2.6s 两条独立节流，错开后是「持续箭雨 + 偶发重炮」的层次，
+//   同周期会糊成一片。落水声不独立触发：它必须跟在某一发炮之后（炮弹飞行 700ms 才落海），
+//   自己定时播会变成「凭空落水」。
 let lastNavalFireAt = 0;
+let lastNavalCannonAt = 0;
+/** 待播落水声的时刻（0 = 无待播）；由炮声排程，见 NAVAL_SPLASH_DELAY_MS */
+let pendingNavalSplashAt = 0;
+/** 上述三个计时器归属的军团 id —— 跟拍换船队立即清零，否则新船队会继承旧船队的节流相位 */
+let navalSfxUnitId = '';
+
+/** 炮响 → 炮弹落水的间隔（ms），按 DE 里炮弹的飞行观感取值 */
+const NAVAL_SPLASH_DELAY_MS = 700;
+/** 每发炮打空（播落水声）的概率：全中显得没有落点、全空显得没打中，取一半 */
+const NAVAL_SPLASH_CHANCE = 0.5;
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
@@ -1708,16 +1721,38 @@ export class LegionPhalanxDrawer {
             if (!isFighting && state !== 'DEATH') {
                 NavalPhalanxStateManager.reset(unitId);
             }
-            // 海战沉没音效：本帧有新船沉没（playNavalSfx 内部判跟拍军团，非跟拍静默）
-            if (navalState.justSank > 0) {
-                audioManager.playNavalSfx(unitId, 'naval_sink');
+            // 跟拍换了船队 → 三条节流归零，新船队从干净相位起算（否则会继承旧队的冷却/待播落水）
+            if (navalSfxUnitId !== unitId) {
+                navalSfxUnitId = unitId;
+                lastNavalFireAt = 0;
+                lastNavalCannonAt = 0;
+                pendingNavalSplashAt = 0;
             }
-            // 海战开火音效：ATTACK 状态周期性触发（约 1.2s 一次，仅跟拍军团实际发声）
+            const nowMs = Date.now();
+
+            // 海战沉没音效：本帧有新船沉没（playNavalSfx 内部判跟拍军团，非跟拍静默）
+            //   最后一艘沉 = 全队覆没 → 改播爆炸（旗舰殉爆），比第 5 声普通沉没更像收尾。
+            if (navalState.justSank > 0) {
+                const stillAlive = navalState.ships.some((sh) => sh.state === 'ALIVE');
+                audioManager.playNavalSfx(unitId, stillAlive ? 'naval_sink' : 'naval_explode');
+            }
+            // 海战开火音效：ATTACK 状态周期性触发（仅跟拍军团实际发声）
+            //   箭声 1.2s 一轮；炮声 2.6s 一轮，且只有旗舰档（ship_large 在编队里恒存在）开炮。
             if (isFighting) {
-                const now = Date.now();
-                if (now - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
-                    lastNavalFireAt = now;
+                if (nowMs - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
+                    lastNavalFireAt = nowMs;
                 }
+                if (nowMs - lastNavalCannonAt > 2600 && audioManager.playNavalSfx(unitId, 'naval_cannon_fire')) {
+                    lastNavalCannonAt = nowMs;
+                    // 这一发是否打空：打空才排落水声，命中就没有落水
+                    pendingNavalSplashAt =
+                        Math.random() < NAVAL_SPLASH_CHANCE ? nowMs + NAVAL_SPLASH_DELAY_MS : 0;
+                }
+            }
+            // 炮弹落水：到点就播一次并清零（脱战也要播完 —— 炮已经出膛了，半路静音更怪）
+            if (pendingNavalSplashAt > 0 && nowMs >= pendingNavalSplashAt) {
+                pendingNavalSplashAt = 0;
+                audioManager.playNavalSfx(unitId, 'naval_cannon_splash');
             }
         }
 
