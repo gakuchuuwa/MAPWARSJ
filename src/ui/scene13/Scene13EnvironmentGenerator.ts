@@ -5,7 +5,7 @@
  * 加载素材 + 把方案画到离屏画布。这样环境逻辑可以脱离整场战斗单独测试。
  *
  * 五层生成管线（照 AoE2 RMS 顺序）：
- *   LAND → ELEVATION → CLIFF/WATER → TERRAIN → OBJECTS
+ *   LAND → ELEVATION → WATER → TERRAIN → OBJECTS
  *
  * 铁律：只影响 ZOOM 13 视觉；不碰 ZOOM 8/9/10；不碰战斗时间/胜负/兵力/伤害/阵型/出兵；
  * 不新增/修改城池坐标；不虚构历史环境；随机一律走注入的 RandomSource。
@@ -17,7 +17,6 @@ import {
     pickTreeSpecies,
     treeCountFor,
     BIOME_GROUND_DECOR,
-    MOUNTAIN_ASSETS,
     BIOME_GROUND_VARIATION,
     DEFAULT_TERRAIN_TILE,
 } from '../Scene13Biome';
@@ -68,8 +67,12 @@ export interface EnvironmentObjectPlan {
     /** 屏幕像素坐标（画布中心锚点，与 drawDecorSprite 口径一致） */
     x: number;
     y: number;
-    /** 层序：0 低矮地面装饰 / 1 树 / 2 山体 */
+    /** ground 烙入地面；world 作为独立地图对象参与脚点深度排序 */
+    layer: 'ground' | 'world';
+    /** 同层稳定次序；不再用它代替世界对象的 y 深度 */
     z: number;
+    /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
+    obstruction?: { x: number; y: number };
     flip: boolean;
     /** 精灵帧（动画 sheet 用；静态素材忽略） */
     frame: number;
@@ -118,6 +121,30 @@ export interface Scene13EnvironmentInput {
     forceBiome?: Biome;
     /** 测试用：强制水域（覆盖 probeWater 结果），便于验证海岸/湖生成 */
     forceWaterKind?: 'sea' | 'lake' | 'none';
+}
+
+const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
+const DE_HALF_TILE_OBJECTS = new Set([
+    'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
+    'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
+    'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
+    'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'PEACH_BLOSSOM',
+    'PINE', 'ASIAN_PINE', 'SNOW_PINE', 'MONKEY_PUZZLE', 'REEDS',
+    'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
+    'BIRCH_WINTER', 'WILLOW', 'ROCK_FORMATION1', 'ROCK_FORMATION2',
+    'ROCK_LIMESTONE', 'ROCK_JUNGLE', 'ROCK1', 'ROCK2', 'ROCK3',
+    'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC',
+]);
+const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> = {
+    ROCK_FORMATION3: { x: 1.5, y: 1.5 },
+    ROCK_BEACH: { x: 1, y: 1 },
+};
+
+function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
+    for (const object of objects) {
+        object.obstruction = DE_OBJECT_OBSTRUCTION[object.asset]
+            ?? (DE_HALF_TILE_OBJECTS.has(object.asset) ? HALF_TILE_OBSTRUCTION : undefined);
+    }
 }
 
 // ── 种子派生（只用真实数据，禁止凭空假设 battleId） ──────────────
@@ -272,7 +299,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
 
-    // 海拔/坡度（高地比例 + 山地大件用）
+    // 海拔/坡度（用于可行走高地的生成比例）
     let elev: number | null = null;
     let slope: number | null = null;
     if (hasCoord) {
@@ -289,18 +316,18 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // ── 第 2 层 ELEVATION：clump 生长 + 高度等级（低地少丘、高地多丘） ──
         const elevation = generateElevation(gw, gh, elev, slope, rng);
 
-        // ── 第 3 层 CLIFF/WATER ──
-        // CLIFF：山体/悬崖按生成的高程格布局（高程格 ↔ 山体位置关联，不是全局贴边）
-        buildCliffs(elevation, ox, oy, VW, VH, rng, objects);
+        // ── 第 3 层 WATER ──
+        // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
+        // 不把巨型山峰精灵放进士兵活动区，避免单位从山体上穿过。
         if (waterKind === 'sea') {
             // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石/牡蛎共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
             buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied);
             for (let i = 0; i < 4; i++) {
                 const ra = rng.chance(0.5) ? 'ROCK_BEACH' : (rng.chance(0.5) ? 'ROCK_SEA1' : 'ROCK_SEA2');
-                objects.push({ asset: ra, x: sideLeft ? VW * 0.18 + rng.next() * VW * 0.06 : VW * 0.82 - rng.next() * VW * 0.06, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+                objects.push({ asset: ra, x: sideLeft ? VW * 0.18 + rng.next() * VW * 0.06 : VW * 0.82 - rng.next() * VW * 0.06, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
-            objects.push({ asset: 'OYSTERS', x: sideLeft ? VW * 0.15 : VW * 0.85, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            objects.push({ asset: 'OYSTERS', x: sideLeft ? VW * 0.15 : VW * 0.85, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         } else if (waterKind === 'lake') {
             buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
         }
@@ -310,11 +337,12 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildGroundVariation(gw, gh, biome, rng, patches, occupied);
         buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
-        // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 山地大件 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, season, elev, slope, rng, objects);
+        // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
+        buildVegetation(VW, VH, biome, season, rng, objects);
         buildResources(VW, VH, rng, objects);
         buildDebris(VW, VH, rng, objects);
 
+        attachDeObjectObstruction(objects);
         return { seed, biome, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects };
     }
 
@@ -370,38 +398,6 @@ function generateElevation(
         for (const [x, y] of cells) grid[y][x] = 3;
     }
     return grid;
-}
-
-// ── 第 3 层：悬崖/山体（按 elevation[][] 布局，高程格 ↔ 山体位置关联） ──
-
-function buildCliffs(
-    elevation: number[][],
-    ox: number,
-    oy: number,
-    VW: number,
-    VH: number,
-    rng: RandomSource,
-    objects: EnvironmentObjectPlan[]
-): void {
-    const gh = elevation.length;
-    const gw = gh ? elevation[0].length : 0;
-    for (let y = 0; y < gh; y++) {
-        for (let x = 0; x < gw; x++) {
-            const h = elevation[y][x];
-            // 高峰必放山体/悬崖；丘陵 35% 概率放（照 RMS 高峰撒岩石）
-            if (h >= 3 || (h === 2 && rng.chance(0.35))) {
-                const sx = isoCellX(x, y, ox);
-                const sy = isoCellY(x, y, oy);
-                // 🔴 网格比屏幕大，四角格会越界 → 跳过屏幕外格（山体大件，不 clamp 到边缘）
-                if (sx < 0 || sx > VW || sy < 0 || sy > VH) continue;
-                objects.push({
-                    asset: rng.pick(MOUNTAIN_ASSETS),
-                    x: sx, y: sy,
-                    z: 2, flip: rng.chance(0.5), frame: rng.int(0, 99999),
-                });
-            }
-        }
-    }
 }
 
 // ── 第 3 层：海岸线（圈带分层 + 有机边界，照 coastal/water_blending.inc） ──
@@ -491,7 +487,7 @@ function buildLake(
             const sx = 2 + rng.int(0, gw - 4), sy = 2 + rng.int(0, gh - 4);
             patches.push({ tile: iceTile, cells: growClump(sx, sy, 8 + rng.int(0, 6), gw, gh, occupied, rng), alpha: 1, category: 'wetland' });
         }
-        for (let i = 0; i < 3; i++) objects.push({ asset: 'DECAL_ICE', x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        for (let i = 0; i < 3; i++) objects.push({ asset: 'DECAL_ICE', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         return;
     }
     const pond = rng.pick(POND_TILES);
@@ -524,7 +520,7 @@ function buildLake(
         const re = swamp ? 'UNDERBRUSH_JUNGLE' : rng.pick(['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO']);
         const rx = Math.max(0, Math.min(VW, px0 + rng.next() * VW * 0.3 - VW * 0.15));
         const ry = Math.max(0, Math.min(VH, py0 + rng.next() * VH * 0.25 - VH * 0.12));
-        objects.push({ asset: re, x: rx, y: ry, z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        objects.push({ asset: re, x: rx, y: ry, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 
@@ -594,15 +590,13 @@ function buildForestFloor(
     }
 }
 
-// ── 第 5 层：植被（树聚丛 + 地面装饰 + 山地大件 + 落叶） ─────────
+// ── 第 5 层：植被（树聚丛 + 地面装饰 + 落叶） ─────────
 
 function buildVegetation(
     VW: number,
     VH: number,
     biome: Biome,
     season: 0 | 1 | 2,
-    elev: number | null,
-    slope: number | null,
     rng: RandomSource,
     objects: EnvironmentObjectPlan[]
 ): void {
@@ -628,7 +622,7 @@ function buildVegetation(
                 const sy = cy + r * Math.sin(ang);
                 if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH) { tx = sx; ty = sy; break; }
             }
-            objects.push({ asset: rng.pick(treeAssets), x: tx, y: ty, z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            objects.push({ asset: rng.pick(treeAssets), x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             placed++;
         }
     }
@@ -637,32 +631,17 @@ function buildVegetation(
     const ground = BIOME_GROUND_DECOR[biome];
     const decorCount = treeCount * (2 + rng.int(0, 2));
     for (let i = 0; i < decorCount; i++) {
-        objects.push({ asset: rng.pick(ground), x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        objects.push({ asset: rng.pick(ground), x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
     // 秋色落叶贴花（温带系秋季）
     if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
         const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
         for (let i = 0; i < 3; i++) {
-            objects.push({ asset: rng.pick(leaves), x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            objects.push({ asset: rng.pick(leaves), x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         }
     }
 
-    // 山地大件（elev≥800 或坡度≥12°）：贴边撒，别挡中央战场
-    if (elev !== null && (elev >= 800 || (slope !== null && slope >= 12))) {
-        const mCount = 3 + rng.int(0, 3);
-        const edge = 70;
-        for (let i = 0; i < mCount; i++) {
-            const asset = rng.pick(MOUNTAIN_ASSETS);
-            const side = rng.int(0, 3);
-            let x = 0, y = 0;
-            if (side === 0) { x = rng.next() * VW; y = rng.next() * edge; }
-            else if (side === 1) { x = VW - rng.next() * edge; y = rng.next() * VH; }
-            else if (side === 2) { x = rng.next() * VW; y = VH - rng.next() * edge; }
-            else { x = rng.next() * edge; y = rng.next() * VH; }
-            objects.push({ asset, x, y, z: 2, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        }
-    }
 }
 
 // ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
@@ -671,7 +650,7 @@ function buildResources(VW: number, VH: number, rng: RandomSource, objects: Envi
     const resAssets = ['FORAGE_BUSH', 'MINE_STONE'];
     const resCount = 2 + rng.int(0, 3);
     for (let i = 0; i < resCount; i++) {
-        objects.push({ asset: rng.pick(resAssets), x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        objects.push({ asset: rng.pick(resAssets), x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 
@@ -680,9 +659,9 @@ function buildResources(VW: number, VH: number, rng: RandomSource, objects: Envi
 function buildDebris(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[]): void {
     const debrisCount = 1 + rng.int(0, 2);
     for (let i = 0; i < debrisCount; i++) {
-        objects.push({ asset: rng.chance(0.5) ? 'DECAL_CRACK' : 'DECAL_CRATER', x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        objects.push({ asset: rng.chance(0.5) ? 'DECAL_CRACK' : 'DECAL_CRATER', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
-    objects.push({ asset: rng.chance(0.5) ? 'FELLED_GENERIC' : 'STUMP_GENERIC', x: rng.next() * VW, y: rng.next() * VH, z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    objects.push({ asset: rng.chance(0.5) ? 'FELLED_GENERIC' : 'STUMP_GENERIC', x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
 }
 
 // 重新导出 hashString，供测试/验收计算种子校验和

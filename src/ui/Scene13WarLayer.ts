@@ -2032,8 +2032,12 @@ interface DecorSprite {
     x: number;
     y: number;          // 树基/岩心位置（屏幕坐标）
     flip: boolean;
-    /** z 序：0=贴花/灌木/资源，1=树，2=山体/悬崖 */
+    /** ground 烙入地面；world 与士兵按脚点 y 共同排序 */
+    layer: 'ground' | 'world';
+    /** 同一脚点的稳定次序 */
     z: number;
+    /** DE DAT 对象碰撞半径（地图格）；未设置即不阻挡 */
+    obstruction?: { x: number; y: number };
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 interface DecorPatch {
@@ -2228,7 +2232,7 @@ export class Scene13WarLayer {
     /** 本场选中的主地形贴图名（每场一张、全场统一铺，不同场次随机换一张草皮） */
     private terrainTile = '';
     private terrainImg: HTMLImageElement | null = null;
-    /** 装饰层离屏画布（植被 + L3 点缀，画在尸体层 ground 之下，永不遮士兵） */
+    /** 地表装饰离屏画布（地形斑块 + ground 贴花；world 对象不烙入这里） */
     private decor: HTMLCanvasElement | null = null;
     private decorCtx: CanvasRenderingContext2D | null = null;
     private decorSprites: DecorSprite[] = [];
@@ -2999,7 +3003,16 @@ export class Scene13WarLayer {
         }
         for (const o of plan.objects) {
             this.ensureNatureAsset(o.asset);
-            this.decorSprites.push({ asset: o.asset, frame: o.frame, x: o.x, y: o.y, z: o.z, flip: o.flip });
+            this.decorSprites.push({
+                asset: o.asset,
+                frame: o.frame,
+                x: o.x,
+                y: o.y,
+                layer: o.layer,
+                z: o.z,
+                obstruction: o.obstruction,
+                flip: o.flip,
+            });
         }
     }
 
@@ -3037,7 +3050,7 @@ export class Scene13WarLayer {
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
         this.paintElevation(g);
-        const sorted = [...this.decorSprites].sort((a, b) => (a.z - b.z) || (a.y - b.y));
+        const sorted = this.decorSprites.filter((s) => s.layer === 'ground').sort((a, b) => (a.z - b.z) || (a.y - b.y));
         for (const s of sorted) this.drawDecorSprite(g, s);
     }
 
@@ -3866,6 +3879,47 @@ export class Scene13WarLayer {
         return [Math.min(Math.max(x, mx), vw - mx), Math.min(Math.max(y, my), vh - my)];
     }
 
+    /**
+     * 把单位推出 DE 地图对象的占地矩形。碰撞尺寸来自 DAT 的地图格口径，
+     * 在 2:1 投影中先还原为地图坐标，沿较浅穿透轴推出，因而会沿树/岩石边缘滑行。
+     */
+    private resolveWorldObstructions(m: WarMan, x: number, y: number): [number, number] {
+        let px = x, py = y;
+        const unitTileRadius = this.radiusOf(m.key) / 40;
+        for (let pass = 0; pass < 3; pass++) {
+            let changed = false;
+            for (const object of this.decorSprites) {
+                const obstruction = object.obstruction;
+                if (object.layer !== 'world' || !obstruction) continue;
+                const dx = px - object.x, dy = py - object.y;
+                let mapX = dx / TILE_W + dy / TILE_H;
+                let mapY = dy / TILE_H - dx / TILE_W;
+                const limitX = obstruction.x + unitTileRadius;
+                const limitY = obstruction.y + unitTileRadius;
+                if (Math.abs(mapX) >= limitX || Math.abs(mapY) >= limitY) continue;
+
+                const penX = limitX - Math.abs(mapX);
+                const penY = limitY - Math.abs(mapY);
+                if (penX < penY) {
+                    const prevDx = m.prevX - object.x, prevDy = m.prevY - object.y;
+                    const prevMapX = prevDx / TILE_W + prevDy / TILE_H;
+                    const sign = Math.sign(mapX) || Math.sign(prevMapX) || (m.jy >= 0 ? 1 : -1);
+                    mapX = sign * limitX;
+                } else {
+                    const prevDx = m.prevX - object.x, prevDy = m.prevY - object.y;
+                    const prevMapY = prevDy / TILE_H - prevDx / TILE_W;
+                    const sign = Math.sign(mapY) || Math.sign(prevMapY) || (m.jy >= 0 ? 1 : -1);
+                    mapY = sign * limitY;
+                }
+                px = object.x + (mapX - mapY) * (TILE_W / 2);
+                py = object.y + (mapX + mapY) * (TILE_H / 2);
+                changed = true;
+            }
+            if (!changed) break;
+        }
+        return [px, py];
+    }
+
     private step(dt: number): void {
         if (this.over) return;
         // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──
@@ -4307,7 +4361,11 @@ export class Scene13WarLayer {
 
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
-        for (const m of this.men) { [m.x, m.y] = this.fieldBound(m.x, m.y); }
+        for (const m of this.men) {
+            [m.x, m.y] = this.fieldBound(m.x, m.y);
+            [m.x, m.y] = this.resolveWorldObstructions(m, m.x, m.y);
+            [m.x, m.y] = this.fieldBound(m.x, m.y);
+        }
         // 🔴 [2026-08-17] 结算「这一帧到底挪了没有」——推挤和边界都收口之后才算得准。
         //    想走却被前面的人堵住时位移≈0，此时再播移动帧就是**原地迈腿**（主人实锤）。
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
@@ -4563,20 +4621,28 @@ export class Scene13WarLayer {
         // 地形铺地：DE 贴图分块铺满整屏（最底层，尸体/士兵全在它之上）
         if (this.terrain) ctx.drawImage(this.terrain, 0, 0);
 
-        // 装饰层：植被 + L3 点缀（在尸体层之下，永不遮士兵）
+        // 地表装饰层：地形斑块 + ground 贴花；树木等 world 对象稍后与单位共同排序。
         if (this.decor) ctx.drawImage(this.decor, 0, 0);
 
-        const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number }[] = [];
+        type UnitVisual = { kind: 'unit'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number };
+        type EnvironmentVisual = { kind: 'environment'; y: number; z: number; sprite: DecorSprite };
+        const vis: Array<UnitVisual | EnvironmentVisual> = [];
+        // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
+        for (const sprite of this.decorSprites) {
+            if (sprite.layer === 'world') vis.push({ kind: 'environment', y: sprite.y, z: sprite.z, sprite });
+        }
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) vis.push({
+            kind: 'unit',
             y: c.y, x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
             fr: c.t,
             a: 1,
         });
         // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
         for (const f of this.fleers) vis.push({
+            kind: 'unit',
             y: f.y, x: f.x, f: f.f, key: f.key, dir: f.dir, set: 'move',
             fr: f.ph,
             a: Math.max(0, 1 - f.t / FLEE_DUR),
@@ -4615,9 +4681,10 @@ export class Scene13WarLayer {
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
-            vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
+            vis.push({ kind: 'unit', y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
         }
-        vis.sort((a, b) => a.y - b.y);
+        vis.sort((a, b) => (a.y - b.y)
+            || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0)));
 
         // ── 旗杆：画在士兵层**之下**（主人 2026-08-12「只改旗杆，放到士兵层下面」）──
         // 与大地图同序：GlobalUnitRenderer 先 drawPole（Behind Soldiers）、后 drawFlag（On Top）。
@@ -4629,6 +4696,10 @@ export class Scene13WarLayer {
         }
 
         for (const v of vis) {
+            if (v.kind === 'environment') {
+                this.drawDecorSprite(ctx, v.sprite);
+                continue;
+            }
             const b = this.bank[v.key];
             if (!b) continue;
             const img = b.sets[v.set]?.[v.f]?.[v.dir];
