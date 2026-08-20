@@ -2976,6 +2976,8 @@ export class Scene13WarLayer {
     private isoOy = 0;
     private isoGw = 0;
     private isoGh = 0;
+    /** 高程网格 [y][x]：0 平地 / 1 缓坡 / 2 丘陵 / 3 高峰（照 RMS create_elevation 的 clump 生长） */
+    private elevGrid: number[][] = [];
 
     /** 网格 (gx, gy) → 菱形中心屏幕坐标（2:1 等距投影） */
     private isoCellX(gx: number, gy: number): number { return (gx - gy) * (TILE_W / 2) + this.isoOx; }
@@ -3244,10 +3246,38 @@ export class Scene13WarLayer {
 
         // 3.5 地表变体：小 clump 打散单调（低频、低透明）
         const variation = BIOME_GROUND_VARIATION[biome];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
             const t = variation[(Math.random() * variation.length) | 0];
             const sx = 1 + ((Math.random() * (gw - 2)) | 0), sy = 1 + ((Math.random() * (gh - 2)) | 0);
             this.addDecorCells(t, this.growClump(sx, sy, 4 + ((Math.random() * 5) | 0), gw, gh, occupied), 0.55);
+        }
+
+        // 5.5 高地/丘陵：照 RMS create_elevation（clump 生长 + 高度等级；hillshade 着色 + 高峰岩石）
+        this.elevGrid = Array.from({ length: gh }, () => new Array(gw).fill(0));
+        {
+            const elevOcc = new Set<string>();
+            const hillCount = 3 + ((Math.random() * 2) | 0);
+            for (let i = 0; i < hillCount; i++) {
+                const lvl = Math.random() < 0.3 ? 2 : 1;
+                const sx = 3 + ((Math.random() * (gw - 6)) | 0), sy = 3 + ((Math.random() * (gh - 6)) | 0);
+                const cells = this.growClump(sx, sy, 10 + ((Math.random() * 15) | 0), gw, gh, elevOcc);
+                for (const [x, y] of cells) if (this.elevGrid[y][x] < lvl) this.elevGrid[y][x] = lvl;
+            }
+            // 高峰 clump（level 3）
+            if (Math.random() < 0.7) {
+                const sx = 4 + ((Math.random() * (gw - 8)) | 0), sy = 4 + ((Math.random() * (gh - 8)) | 0);
+                const cells = this.growClump(sx, sy, 5 + ((Math.random() * 6) | 0), gw, gh, elevOcc);
+                for (const [x, y] of cells) this.elevGrid[y][x] = 3;
+            }
+            // 丘陵/高峰撒山体岩石
+            for (let y = 0; y < gh; y++) {
+                for (let x = 0; x < gw; x++) {
+                    const h = this.elevGrid[y][x];
+                    if (h >= 3 || (h === 2 && Math.random() < 0.35)) {
+                        this.addDecorSprite(MOUNTAIN_ASSETS[(Math.random() * MOUNTAIN_ASSETS.length) | 0], this.isoCellX(x, y), this.isoCellY(x, y), 2);
+                    }
+                }
+            }
         }
 
         // 4. 资源点（全 biome 低频；已删金矿 + 黄果灌木——主人 2026-08-20 定「金子没必要」）
@@ -3274,8 +3304,37 @@ export class Scene13WarLayer {
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
+        this.paintElevation(g);
         const sorted = [...this.decorSprites].sort((a, b) => (a.z - b.z) || (a.y - b.y));
         for (const s of sorted) this.drawDecorSprite(g, s);
+    }
+
+    /** 高地着色（hillshade）：西北光，面向光的高地边亮、背光边暗，营造丘陵立体感 */
+    private paintElevation(g: CanvasRenderingContext2D): void {
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gh || !gw) return;
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const h = this.elevGrid[y][x];
+                const nw = (x - 1 >= 0 && y + 1 < gh) ? this.elevGrid[y + 1][x - 1] : h;
+                const delta = h - nw;
+                if (delta === 0) continue;
+                const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
+                const a = Math.min(0.35, Math.abs(delta) * 0.13);
+                g.save();
+                g.globalAlpha = a;
+                g.fillStyle = delta > 0 ? '#fff' : '#000';
+                g.beginPath();
+                g.moveTo(sx, sy - TILE_H / 2);
+                g.lineTo(sx + TILE_W / 2, sy);
+                g.lineTo(sx, sy + TILE_H / 2);
+                g.lineTo(sx - TILE_W / 2, sy);
+                g.closePath();
+                g.fill();
+                g.restore();
+            }
+        }
     }
 
     /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰） */
