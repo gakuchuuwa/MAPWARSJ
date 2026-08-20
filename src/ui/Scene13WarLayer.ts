@@ -1032,7 +1032,8 @@ const PROJ_SCALE = UNIT_PX / 64;
 /**
  * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。
  * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察/象弓（默认，不必列）；
- * 火箭：火弓；标枪：掷矛手；飞镖：阿兰拜；飞斧：掷斧兵；弩箭：元戎弩/重弩战象（平直穿透）。
+ * 火箭：火弓；标枪：掷矛手；飞镖：阿兰拜；飞斧：掷斧兵；
+ * 弩箭：元戎弩/重弩战象/**高丽战车**（平直穿透）。
  */
 const PROJ_TYPE: Record<string, string> = {
     // ── [2026-08-18 补] 这些范围伤远程原本没映射，会退回默认的 PROJ_ARROW（投石车射箭矢）──
@@ -1046,9 +1047,14 @@ const PROJ_TYPE: Record<string, string> = {
     helepolis: 'PROJ_BOLT',           // 攻城塔射弩箭
     // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
     //    DE 里它有专属弹丸 `Projectile Hussite Wagon`(id 1733)，我们没登记 → 落回默认 PROJ_ARROW。
-    //    改用火器弹丸 PROJ_SHOT。（高丽战车弹丸是 `Projectile War Galley` id 373 = 弩箭，射箭是对的，不动。）
+    //    改用火器弹丸 PROJ_SHOT。
     hussite_wagon: 'PROJ_SHOT',
     elite_hussite_wagon: 'PROJ_SHOT',
+    // 🔴 [2026-08-20 主人拍板] 高丽战车射的是**弩箭**，不是普通羽箭 —— 车上架的是弩机。
+    //    此前这里写着「射箭是对的，不动」，那条是 AI 自己下的结论，已作废：本项目一切按帝国时代
+    //    原有设计，主人在 DE 里看到的就是判据。改 PROJ_BOLT 后自动走 PROJ_FLAT 平直弹道（不抛弧）。
+    war_wagon: 'PROJ_BOLT',
+    elite_war_wagon: 'PROJ_BOLT',
     fire_archer: 'PROJ_ARROW_FIRE',
     elite_fire_archer: 'PROJ_ARROW_FIRE',
     rocket_cart: 'PROJ_ARROW_FIRE',
@@ -4026,7 +4032,7 @@ export class Scene13WarLayer {
                         // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效（音效在 spawnFirearmMuzzle 内）
                         if (isFirearm) this.spawnFirearmMuzzle(m, ax, ay);
                         // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
-                        // 用素色而不是火器的橙黄焰 —— 它们射的是箭，不是火药。
+                        // 用素色而不是火器的橙黄焰 —— 高丽战车射的是弩箭（非火药），胡斯战车走上面的火器分支。
                         else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
                         // 其余远程（弓/弩/投石）：箭矢开火音效已关闭（主人 2026-08-19），保留射击动作
                     }
