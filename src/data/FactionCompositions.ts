@@ -1187,22 +1187,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'immortal_ranged', count: 4 },
         ],
     },
-    // 萨非波斯军团（阿拔斯大帝 · 伊斯法罕 · 方形阵 3+3+3：全红头骑士奇兹尔巴什圣战死士阵）
+    // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
     safawei_d: {
-        formationMode: 'square',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'qizilbash_warrior', count: 3 },   // Row 0 前排 = 红头骑士 3人
-            { type: 'qizilbash_warrior', count: 3 },   // Row 1 中坚 = 红头骑士 3人
-            { type: 'qizilbash_warrior', count: 3 },   // Row 2 后排 = 红头骑士 3人
+            { type: 'ghulam', count: 2 },            // Row 0 前哨抗线 = 古拉姆近卫战士 2人（高加索重装死士抗线）
+            { type: 'qizilbash_warrior', count: 4 }, // Row 1 两翼主力 = 奇兹尔巴什红头战士 4骑（萨非核心红头狂热战骑雷霆突贯）
+            { type: 'hand_cannoneer', count: 3 },    // Row 2 后排火力 = 火枪兵 3人（波斯正规火枪军团排枪齐射）
         ],
     },
-    // 萨非波斯军团（伊斯玛仪一世 · 加兹温 · 方形阵 3+3+3：全红头骑士奇兹尔巴什圣战死士阵）
     safawei: {
-        formationMode: 'square',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'qizilbash_warrior', count: 3 },
-            { type: 'qizilbash_warrior', count: 3 },
-            { type: 'qizilbash_warrior', count: 3 },
+            { type: 'ghulam', count: 2 },
+            { type: 'qizilbash_warrior', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
         ],
     },
     // 安息波斯帝国（阿尔沙克 · 尼萨）
@@ -1419,13 +1418,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'bowman', count: 2 },               // Row 2 尾收远程 = 弓兵 2人（步弓手远距齐射）
         ],
     },
-    // 马耳他·圣约翰医院骑士团（瓦莱特 · 十字军骑士战阵）
+    // 马耳他·圣约翰（瓦莱特 · 马耳他医院骑士军团 · 鱼鳞阵 3+4+2：重装长枪兵 3 + 十字军圣骑士 4 + 火枪兵 2）
     maerta_qishi: {
-        formationMode: 'square',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'crusader_knight', count: 3 },
-            { type: 'crusader_knight', count: 3 },
-            { type: 'crusader_knight', count: 3 },
+            { type: 'heavy_pikeman', count: 3 },     // Row 0 前卫坚壁 = 重装长枪兵 3人（大盾长矛要塞拒马抗线）
+            { type: 'crusader_knight', count: 4 },   // Row 1 中军主力 = 十字军圣骑士 4人（医院骑士团白十字重铠主力突破）
+            { type: 'hand_cannoneer', count: 2 },    // Row 2 要塞火力 = 火枪兵 2人（城垒火绳枪齐射火力压制）
         ],
     },
     // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 紫杉长弓兵精锐军团（三角阵 2+3+4：双手剑士前卫 2 + 长弓兵 3 + 精锐长弓兵主力 4）
