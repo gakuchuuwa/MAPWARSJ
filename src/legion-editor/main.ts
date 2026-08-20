@@ -20,6 +20,7 @@ import {
     FormationMode,
     getDefaultSlotsForMode,
     convertSlotsToMode,
+    getCultureLegionName,
 } from '../types/CultureFormations';
 import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
@@ -1530,7 +1531,7 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
         <div>
           <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName || row.factionName}</div>
-          <div style="font-size:11px;color:#a89f8f;margin-top:2px;"><b style="color:#c9a86a;">${LEGION_LAYER_LABEL[getLegionLayer(row.factionId)]}</b> | 势力：${row.factionName}${row.generalName ? ` | 武将：${row.generalName}` : ''} | 文化区：${row.regionLabel}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:2px;"><b style="color:#c9a86a;">${getLegionLayer(row.factionId) === 'culture' ? getCultureLegionName(row.region) : LEGION_LAYER_LABEL[getLegionLayer(row.factionId)]}</b> | 势力：${row.factionName}${row.generalName ? ` | 武将：${row.generalName}` : ''} | 文化区：${row.regionLabel}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
         </div>
       </div>
       <div>

@@ -61,6 +61,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
     han: {
+        legionName: "韩卒劲弩军团",
         formationMode: 'echelon',
         slots: [
             { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人
@@ -90,7 +91,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
     suzhou: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },                      // Row 0 尖刀突骑 = 虎豹骑 2骑（轻勇突击先锋）
@@ -99,7 +100,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     shuofang: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -108,7 +109,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     xianyu: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -117,7 +118,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     li_lx_d: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -126,7 +127,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     lingqiu: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -135,7 +136,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     hejian: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -144,7 +145,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     linhu: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -153,7 +154,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jiyuan: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -162,7 +163,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jiluo_d: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -171,7 +172,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     pulei: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -180,7 +181,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     you: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -189,7 +190,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dongsheng: {
-        legionName: "轻勇骑军团",
+        legionName: "汉朝军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -198,6 +199,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     han_d: {
+        legionName: "赤帝军军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'jian_swordsman', count: 2 },      // Row 0 步兵前锋 = 刀剑手 2人
@@ -207,7 +209,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 曹魏·曹操 / 张辽 / 邓艾 / 司马懿 / 于禁 / 田豫 虎豹铁骑军团（鹤翼阵 2+4+3：魏武虎豹骑 2 + 魏武虎豹骑精锐 4 + 诸葛弩 3）
     cao_d: {
-        legionName: "虎豹铁骑军团",
+        legionName: "曹魏军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏武虎豹骑 2骑
@@ -216,7 +218,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     lu: {
-        legionName: "虎豹铁骑军团",
+        legionName: "曹魏军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -225,7 +227,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     wudu: {
-        legionName: "虎豹铁骑军团",
+        legionName: "曹魏军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -234,7 +236,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sima_d: {
-        legionName: "虎豹铁骑军团",
+        legionName: "曹魏军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -243,7 +245,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     bozhou_d: {
-        legionName: "虎豹铁骑军团",
+        legionName: "曹魏军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'tiger_rider', count: 2 },
@@ -491,6 +493,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大金帝国·五国城/会宁（完颜宗弼 / 完颜陈和尚 · 铁浮图震天雷大阵 · 鱼鳞阵 4+3+2：女真铁浮屠 4 + 火焰弓 3 + 掷弹兵 2）
     jurchen: {
+        legionName: "铁浮屠军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'iron_pagoda', count: 4 },            // Row 0 前卫铁骑 = 女真铁浮屠 4骑（女真重甲铁骑前锋，如墙而进正面突贯）
@@ -500,6 +503,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 金末忠孝军·真宁（完颜陈和尚 · 忠孝军飞火震天雷大阵 · 鱼鳞阵 4+3+2：铁浮图 4 + 火矛兵 3 + 掷弹兵 2）
     xiqin: {
+        legionName: "忠孝军军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'iron_pagoda', count: 4 },            // Row 0 前卫铁骑 = 女真铁浮屠 4骑（忠孝军精锐重铠铁骑，前锋雷霆冲击）
@@ -573,7 +577,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     yanchuan_d: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -582,7 +586,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sizhou: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -591,7 +595,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yingzhou_d: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -600,7 +604,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     zaoyang_d: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -609,7 +613,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     fengzhou: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -618,7 +622,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     hezhou: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -627,7 +631,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     changshaguo: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -636,7 +640,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     shenshi: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -645,7 +649,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     luoping: {
-        legionName: "火矛手军团",
+        legionName: "南宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
@@ -655,7 +659,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 赵宋军团·开封及宋将（赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 / 宗泽 / 韩世忠 / 文天祥 · 鱼鳞阵 3+4+2：火矛兵 3 + 火矛兵精锐主力 4 + 火焰弓手 2）
     song: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },               // Row 0 前卫突进 = 火矛兵 3人
@@ -664,7 +668,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     heng1: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -673,7 +677,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     changshan: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -682,7 +686,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     zhai_han: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -691,7 +695,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yanzhou: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -700,7 +704,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     huan: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -709,7 +713,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     didao: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -718,7 +722,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     qing: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -727,7 +731,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     xiangzhou: {
-        legionName: "赵宋军团",
+        legionName: "北宋军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'fire_lancer', count: 3 },
@@ -737,7 +741,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
     shu: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀汉白毦兵 3人
@@ -746,7 +750,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     huizhou_d: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -755,7 +759,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     chu: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -764,7 +768,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     langzhou: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -773,7 +777,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jingmen: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -782,7 +786,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     cangsong: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -791,7 +795,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     qingqiang: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -800,7 +804,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yangzhou: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -809,7 +813,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yueyi: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -818,7 +822,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     lizhou_d: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -827,7 +831,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     fu_zhou: {
-        legionName: "白毦兵精锐军团",
+        legionName: "蜀汉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -847,6 +851,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
     osman: {
+        legionName: "苏丹亲兵军团",
         formationMode: 'triangle',
         slots: [
             { type: 'janissary', count: 2 },                 // Row 0 尖刀前排 = 土耳其禁卫军 2人（苏丹火枪前哨齐射）
@@ -857,7 +862,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 草原与中亚诸大汗·怯薛铁骑军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
     menggu_d: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },          // Row 0 前卫突破 = 鞑靼怯薛军 3骑
@@ -866,7 +871,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jinzhang: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -875,7 +880,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yuan_d: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -885,7 +890,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 帖木儿帝国·撒马尔罕（帖木儿 · 怯薛铁骑军团 · 鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     tiemuer: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },              // Row 0 前卫突骑 = 鞑靼怯薛军 3骑（前沿突击尖刀）
@@ -894,7 +899,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     asaibaijiang: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -903,7 +908,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     wuliangha: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -912,7 +917,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jalair: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -921,7 +926,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     kiyad: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -930,7 +935,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     zhadalan: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -939,7 +944,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     wala: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -948,7 +953,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     oirat_ming: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -957,7 +962,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     an: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -966,7 +971,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     babuer: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -975,7 +980,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     da_yuan: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -984,7 +989,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     chahar: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -993,7 +998,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     zhaowu: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1002,7 +1007,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     manghuti: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1011,7 +1016,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     khoshut: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1020,7 +1025,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yilihanguo_d: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1029,7 +1034,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yilihanguo: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1038,7 +1043,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     salai: {
-        legionName: "怯薛铁骑军团",
+        legionName: "蒙古军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'keshik', count: 3 },
@@ -1048,7 +1053,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）
     maqidun: {
-        legionName: "亚历山大帝国军团",
+        legionName: "马其顿军团",
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
@@ -1058,7 +1063,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 托勒密（亚历山大旧部，套用亚历山大帝国军团配置）
     tuolemi: {
-        legionName: "亚历山大帝国军团",
+        legionName: "马其顿军团",
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
@@ -1068,7 +1073,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 塞琉古帝国（安提俄基亚 · 塞琉古一世/安条克，银盾方阵体系）
     sailiugu: {
-        legionName: "亚历山大帝国军团",
+        legionName: "马其顿军团",
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
@@ -1078,7 +1083,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 佩尔加蒙（欧迈尼斯 · 亚历山大王家秘书长与近卫方阵统帅）
     pajiama: {
-        legionName: "亚历山大帝国军团",
+        legionName: "马其顿军团",
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
@@ -1088,6 +1093,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
     beileinisi: {
+        legionName: "托勒密海军军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'shotel_warrior', count: 4 },        // Row 0 前卫主力破盾 = 埃塞俄比亚弯刀勇士 4人（纯步兵·无马，手持半月双曲弯刀极速钩杀破甲）
@@ -1097,7 +1103,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
     jileinaijia: {
-        legionName: "亚历山大帝国军团",
+        legionName: "马其顿军团",
         formationMode: 'echelon',
         slots: [
             { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
@@ -1107,6 +1113,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）
     lagoniya: {
+        legionName: "斯巴达重装军团",
         formationMode: 'square',
         slots: [
             { type: 'hippeus', count: 3 },             // Row 0 前排 = 斯巴达希皮乌斯 3人（纯步兵·无马，斯巴达国王300近卫死士）
@@ -1116,6 +1123,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 伊庇鲁斯王国·安布拉基亚（皮洛士大帝 · 战象与希腊长枪铁骑大阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 战象 2）
     yipilusi: {
+        legionName: "皮洛士战象军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，青铜圆盾重长枪抗线拒马）
@@ -1155,6 +1163,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 雅典·雅典城（地米斯托克利 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 雅典将军卫队 4 + 克里特弓箭手 2）
     xila: {
+        legionName: "雅典海军军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（雅典公民大盾长枪方阵正面抗线）
@@ -1174,7 +1183,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 战国武士军团·甲斐/上田/姬路/仙台/越后（武田信玄 / 真田幸村 / 丰臣秀吉 / 伊达政宗 / 上杉谦信 · 鱼鳞阵 3+4+2：黑光铠骑兵 3 + 精锐日本武士 4 + 藤弓手 2）
     kai: {
-        legionName: "战国武士军团",
+        legionName: "日本战国军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hei_kuang', count: 3 },                 // Row 0 前卫铁骑 = 黑光铠骑兵 3骑（战国赤备突骑先锋）
@@ -1183,7 +1192,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sanada_d: {
-        legionName: "战国武士军团",
+        legionName: "日本战国军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hei_kuang', count: 3 },
@@ -1192,7 +1201,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     hashiba: {
-        legionName: "战国武士军团",
+        legionName: "日本战国军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hei_kuang', count: 3 },
@@ -1201,7 +1210,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     date_d: {
-        legionName: "战国武士军团",
+        legionName: "日本战国军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hei_kuang', count: 3 },
@@ -1210,7 +1219,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     echigo: {
-        legionName: "战国武士军团",
+        legionName: "日本战国军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hei_kuang', count: 3 },
@@ -1240,6 +1249,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 萨伏伊公国·尚贝里（阿梅迪奥六世 · 先锋重步兵与萨伏伊铁骑大阵 · 鱼鳞阵 4+3+2：先锋重装步兵 4 + 重装骑士 3 + 劲弩手 2）
     safuyi: {
+        legionName: "萨伏伊重骑军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'vanguard', count: 4 },            // Row 0 前卫主力 = 先锋重装步兵 4人（纯步兵·无马，阿尔卑斯山地重装长矛死斗破坚）
@@ -1249,6 +1259,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 塔兰托·大希腊古都（阿契塔 · 塔兰丁标枪轻骑与重步兵方阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 塔兰丁骑兵 3 + 罗得岛投石兵 2）
     talanduo: {
+        legionName: "塔兰托骑兵军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫长枪坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，大希腊青铜圆盾长枪抗线）
@@ -1304,7 +1315,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 阿契美尼德·波斯帝国军团（大流士 · 三角阵 2+3+4：萨珊铁骑 2 + 不死战士 3 + 波斯弓手主力 4）
     aqimeinide: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },           // Row 0 尖刀突击 = 萨珊萨瓦尔铁骑 2骑
@@ -1314,7 +1325,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 波斯帝国军团（沙普尔大帝 · 尼沙布尔）
     aba: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1324,7 +1335,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
     safawei_d: {
-        legionName: "奇兹尔巴什红头军团",
+        legionName: "萨法维军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'ghulam', count: 2 },            // Row 0 前哨抗线 = 古拉姆近卫战士 2人（高加索重装死士抗线）
@@ -1333,7 +1344,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     safawei: {
-        legionName: "奇兹尔巴什红头军团",
+        legionName: "萨法维军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'ghulam', count: 2 },
@@ -1343,7 +1354,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 安息波斯帝国（阿尔沙克 · 尼萨）
     ansxi: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1353,7 +1364,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 苏伦家族（苏伦 · 法拉）
     delan: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1363,7 +1374,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 卡伦家族（苏赫拉 · 图斯）
     kalan: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1373,7 +1384,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 米底王国（戴奥凯斯 · 哈马丹）
     midi: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1383,7 +1394,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 萨法尔王朝（雅库布 · 博斯特）
     xisi: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1393,7 +1404,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 埃兰古波斯（舒特鲁克 · 苏萨）
     ailan: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1403,7 +1414,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 萨尔巴达尔（拉扎克 · 白哈格）
     saerbadaer: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1413,7 +1424,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 库米斯（阿尔普 · 达姆甘）
     kumisi: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1423,7 +1434,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 哈利（戈达尔兹 · 萨拉赫斯）
     hali: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1433,7 +1444,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 巴哈尔兹（盖瓦姆 · 泰巴德）
     baha: {
-        legionName: "波斯帝国军团",
+        legionName: "波斯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'savar', count: 2 },
@@ -1443,6 +1454,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 粟特王国·瓦拉赫沙（德瓦什提奇 · 鹤翼阵 2+4+3：持盾步兵 2 + 粟特甲胄铁骑主力 4 + 古典重装骑射 3）
     sogdian: {
+        legionName: "粟特商队护卫军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'sparabara', count: 2 },                      // Row 0 前哨诱敌 = 波斯持盾步兵 2人（大盾结阵抗线吸引火力）
@@ -1452,6 +1464,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 波兰王国·华沙（雅盖沃 · 鹤翼阵 2+4+3：战锤破甲勇士 2 + 精锐翼骑兵主力 4 + 劲弩手 3）
     bolan: {
+        legionName: "波兰军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'obuch', count: 2 },         // Row 0 步兵前锋 = 战锤破甲勇士 2人
@@ -1461,6 +1474,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 皮雅斯特王朝·克拉科夫（卡齐米日大帝）
     piyasite: {
+        legionName: "波兰军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'obuch', count: 2 },
@@ -1470,6 +1484,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大波兰·波兹南（普热梅斯二世）
     dabolan: {
+        legionName: "波兰军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'obuch', count: 2 },
@@ -1479,7 +1494,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 立陶宛大公国·维尔纽斯 / 涅曼·格罗德诺（格迪米纳斯 / 维托夫特 列提斯破甲铁骑与劲弩精锐军团 · 鱼鳞阵 3+4+2：列提斯前卫 3 + 精锐列提斯主力 4 + 劲弩手 2）
     litaowan: {
-        legionName: "列提斯破甲铁骑与劲弩精锐军团",
+        legionName: "立陶宛军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'leitis', count: 3 },        // Row 0 前卫突击 = 立陶宛列提斯 3骑
@@ -1488,7 +1503,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     nieman: {
-        legionName: "列提斯破甲铁骑与劲弩精锐军团",
+        legionName: "立陶宛军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'leitis', count: 3 },
@@ -1498,6 +1513,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 条顿骑士团·柯尼斯堡（容金根 · 鱼鳞阵 3+4+2：条顿武士 3 + 精锐条顿武士主力 4 + 十字军骑士 2）
     tiaodun_qishi: {
+        legionName: "条顿军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'teutonic_knight', count: 3 },        // Row 0 前卫抗线 = 条顿武士 3人（全钢板甲双手阔剑步行铁罐头）
@@ -1517,6 +1533,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 宝剑骑士团·里加（阿尔伯特）
     baojian_qishi: {
+        legionName: "条顿军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'teutonic_knight', count: 3 },
@@ -1526,6 +1543,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 利沃尼亚骑士团·塔林（普雷特贝格）
     liwoniya: {
+        legionName: "条顿军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'teutonic_knight', count: 3 },
@@ -1535,7 +1553,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 拜占庭圣骑兵军团·君士坦丁堡/干尼亚（巴西尔二世 / 福卡斯 · 鱼鳞阵 3+4+2：拜占庭圣骑兵 3 + 拜占庭圣骑兵精锐主力 4 + 重装骑射手 2）
     baizanting: {
-        legionName: "拜占庭圣骑兵军团",
+        legionName: "拜占庭军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'cataphract', count: 3 },        // Row 0 前卫 = 拜占庭圣骑兵 3骑（具装重铠甲骑兵前锋突破）
@@ -1544,7 +1562,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     kelite: {
-        legionName: "拜占庭圣骑兵军团",
+        legionName: "拜占庭军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'cataphract', count: 3 },
@@ -1584,7 +1602,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 紫杉长弓兵精锐军团（三角阵 2+3+4：双手剑士前卫 2 + 长弓兵 3 + 精锐长弓兵主力 4）
     aquidan: {
-        legionName: "紫杉长弓兵精锐军团",
+        legionName: "英格兰军团",
         formationMode: 'triangle',
         slots: [
             { type: 'two_handed_swordsman', count: 2 }, // Row 0 尖刀坚壁 = 双手剑士 2人
@@ -1593,7 +1611,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     anggelu: {
-        legionName: "紫杉长弓兵精锐军团",
+        legionName: "英格兰军团",
         formationMode: 'triangle',
         slots: [
             { type: 'two_handed_swordsman', count: 2 },
@@ -1603,7 +1621,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯 掷斧兵与圣骑士精锐军团（鹤翼阵 2+4+3：掷斧兵前哨 2 + 精锐掷斧兵主力 4 + 游侠圣骑 3）
     jialuolin: {
-        legionName: "掷斧兵与圣骑士精锐军团",
+        legionName: "法兰克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'throwing_axeman', count: 2 },       // Row 0 前哨飞斧破盾 = 法兰克掷斧兵 2人
@@ -1612,7 +1630,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     falanji: {
-        legionName: "掷斧兵与圣骑士精锐军团",
+        legionName: "法兰克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'throwing_axeman', count: 2 },
@@ -1621,7 +1639,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     gaolu: {
-        legionName: "掷斧兵与圣骑士精锐军团",
+        legionName: "法兰克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'throwing_axeman', count: 2 },
@@ -1630,7 +1648,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     aermolika: {
-        legionName: "掷斧兵与圣骑士精锐军团",
+        legionName: "法兰克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'throwing_axeman', count: 2 },
@@ -1640,6 +1658,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 西班牙·熙德 / 费尔南多三世 / 阿方索十一世等 西班牙大方阵与希内特中世纪圣骑战阵（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 十字军圣骑士 2）
     balunxiya: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长枪方阵 = 重装长枪兵 4人（纯步兵·无马，西班牙大方阵坚固长矛之墙）
@@ -1648,6 +1667,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     guadaer: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
@@ -1656,6 +1676,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     kasidiliya: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
@@ -1664,6 +1685,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     leangongguo: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
@@ -1672,6 +1694,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     xigete: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
@@ -1680,6 +1703,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     alagong: {
+        legionName: "西班牙军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
@@ -1689,7 +1713,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 斯拉夫贵族铁骑 2）
     luosi: {
-        legionName: "瓦兰吉卫队军团",
+        legionName: "罗斯军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },          // Row 0 前卫抗线 = 诺斯狂暴战士 3人（单手持斧配大圆盾，前排结盾墙筑壁抗线）
@@ -1698,7 +1722,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     qiernigeweifu_gongguo: {
-        legionName: "瓦兰吉卫队军团",
+        legionName: "罗斯军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },
@@ -1708,7 +1732,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 北欧与维京·奥拉夫 / 阿布萨隆 / 比尔格雅尔 诺斯狂战士军团（鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 精锐狂战士主力 4 + 掷矛手 2）
     nuosi: {
-        legionName: "诺斯狂战士军团",
+        legionName: "北欧军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 }, // Row 0 前卫冲锋 = 诺斯狂暴战士 3人（双手持战斧狂暴死斗冲锋）
@@ -1717,7 +1741,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     danmai: {
-        legionName: "诺斯狂战士军团",
+        legionName: "北欧军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },
@@ -1726,7 +1750,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ruidian_yota: {
-        legionName: "诺斯狂战士军团",
+        legionName: "北欧军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },
@@ -1735,7 +1759,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ruidian_si: {
-        legionName: "诺斯狂战士军团",
+        legionName: "北欧军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },
@@ -1745,7 +1769,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 高丽王朝·王建 / 姜邯赞 / 崔茂宣 / 尹瓘 / 金就砺 高丽战车车垒军团（雁行阵 4+3+2：火焰弓箭手 4 + 精锐高丽战车 3 + 刀剑手 2）
     goryeo: {
-        legionName: "高丽战车车垒军团",
+        legionName: "高丽军团",
         formationMode: 'echelon',
         slots: [
             { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4（高丽以弓术著称）
@@ -1754,7 +1778,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     chungju_d: {
-        legionName: "高丽战车车垒军团",
+        legionName: "高丽军团",
         formationMode: 'echelon',
         slots: [
             { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
@@ -1763,7 +1787,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sabeol: {
-        legionName: "高丽战车车垒军团",
+        legionName: "高丽军团",
         formationMode: 'echelon',
         slots: [
             { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
@@ -1772,7 +1796,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     hai2: {
-        legionName: "高丽战车车垒军团",
+        legionName: "高丽军团",
         formationMode: 'echelon',
         slots: [
             { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
@@ -1781,7 +1805,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     woju: {
-        legionName: "高丽战车车垒军团",
+        legionName: "高丽军团",
         formationMode: 'echelon',
         slots: [
             { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
@@ -1801,7 +1825,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 全甲佣兵与大盾热那亚重弩军团（鱼鳞阵 3+4+2：意大利佣兵 3 + 精锐热那亚弩手主力 4 + 热那亚弩手 2）
     liguliya: {
-        legionName: "全甲佣兵与大盾热那亚重弩军团",
+        legionName: "意大利军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'condottiero', count: 3 },                // Row 0 前卫抗线 = 意大利佣兵 3人（全钢板甲双手阔剑佣兵统领）
@@ -1810,7 +1834,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     anuo: {
-        legionName: "全甲佣兵与大盾热那亚重弩军团",
+        legionName: "意大利军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'condottiero', count: 3 },
@@ -1819,7 +1843,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     tuosikana: {
-        legionName: "全甲佣兵与大盾热那亚重弩军团",
+        legionName: "意大利军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'condottiero', count: 3 },
@@ -1828,7 +1852,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     lunbadi: {
-        legionName: "全甲佣兵与大盾热那亚重弩军团",
+        legionName: "意大利军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'condottiero', count: 3 },
@@ -1837,7 +1861,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yadelaiya: {
-        legionName: "全甲佣兵与大盾热那亚重弩军团",
+        legionName: "意大利军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'condottiero', count: 3 },
@@ -1887,7 +1911,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 缅甸东吁王朝·莽应龙 / 莽瑞体 / 雍笈牙 白象御驾与飞镖铁骑军团（鱼鳞阵 3+4+2：御驾金鞍战象 3 + 飞镖骑兵精锐主力 4 + 飞镖骑兵 2）
     hantawadi: {
-        legionName: "白象御驾与飞镖铁骑军团",
+        legionName: "缅甸军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'bayinnaung_elephant', count: 3 },   // Row 0 前卫冲击 = 莽应龙御驾战象 3头（金鞍披甲巨象践踏破阵）
@@ -1896,7 +1920,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dongxu: {
-        legionName: "白象御驾与飞镖铁骑军团",
+        legionName: "缅甸军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'bayinnaung_elephant', count: 3 },
@@ -1905,7 +1929,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     konbaung: {
-        legionName: "白象御驾与飞镖铁骑军团",
+        legionName: "缅甸军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'bayinnaung_elephant', count: 3 },
@@ -1914,7 +1938,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     pyu: {
-        legionName: "白象御驾与飞镖铁骑军团",
+        legionName: "缅甸军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'bayinnaung_elephant', count: 3 },
@@ -1923,7 +1947,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     mon: {
-        legionName: "白象御驾与飞镖铁骑军团",
+        legionName: "缅甸军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'bayinnaung_elephant', count: 3 },
@@ -1933,7 +1957,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 扶南与高棉·范蔓 / 刀更孟 弩炮战象与爪刀精锐军团（鱼鳞阵 3+4+2：弩炮战象前卫 3 + 精锐爪刀勇士主力 4 + 步弓手 2）
     funan: {
-        legionName: "弩炮战象与爪刀精锐军团",
+        legionName: "扶南军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_ballista_elephant', count: 3 },   // Row 0 前卫巨兽 = 精锐弩战象 3（主力 3 档，象兵不占 4 档）
@@ -1942,7 +1966,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     basha_d: {
-        legionName: "弩炮战象与爪刀精锐军团",
+        legionName: "扶南军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'elite_ballista_elephant', count: 3 },   // Row 0 前卫巨兽 = 精锐弩战象 3
@@ -1952,7 +1976,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 西西里与诺曼·腓特烈二世 / 罗杰二世 / 埃莱奥诺拉 军士长方阵与劲弩精锐军团（鱼鳞阵 3+4+2：军士长前卫 3 + 精锐军士长主力 4 + 劲弩手 2）
     xixiliwangguo: {
-        legionName: "军士长方阵与劲弩精锐军团",
+        legionName: "西西里军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'serjeant', count: 3 },            // Row 0 前卫坚壁 = 西西里军士长 3人（纯步兵·无马，持诺曼大盾长枪正面结阵抗线）
@@ -1961,7 +1985,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     moxina: {
-        legionName: "军士长方阵与劲弩精锐军团",
+        legionName: "西西里军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'serjeant', count: 3 },
@@ -1970,7 +1994,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sading: {
-        legionName: "军士长方阵与劲弩精锐军团",
+        legionName: "西西里军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'serjeant', count: 3 },
@@ -2000,7 +2024,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 萨拉森、后倭马亚与安达卢西亚·萨拉赫丁 / 穆阿维叶 / 阿卜杜拉 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
     ayoubu: {
-        legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
+        legionName: "马穆鲁克军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mameluke', count: 3 },            // Row 0 前卫突击 = 萨拉森马穆鲁克 3骑（弯刀重骑前锋撕裂）
@@ -2009,7 +2033,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     womaya: {
-        legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
+        legionName: "马穆鲁克军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mameluke', count: 3 },
@@ -2018,7 +2042,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     andaluoxiya: {
-        legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
+        legionName: "马穆鲁克军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mameluke', count: 3 },
@@ -2048,7 +2072,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 塞浦路斯王国·尼科西亚（居伊·德·吕西尼昂 · 十字军重骑士与劲弩大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     saipulusi: {
-        legionName: "1415征服休达葡萄牙要塞军团",
+        legionName: "十字军军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪 = 重装长枪兵 4人（纯步兵·无马，十字军重装长枪抗线拒马）
@@ -2058,6 +2082,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 博斯普鲁斯王国·潘提卡彭（琉孔一世 · 萨尔马提亚具装重骑与希腊长枪大阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 帝国具装骑兵 3 + 复合弓手 2）
     bosi_puluosi: {
+        legionName: "博斯普鲁斯骑兵军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，博斯普鲁斯青铜圆盾长枪抗线）
@@ -2067,6 +2092,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鹤翼阵 2+4+3：下马保加利亚勇士 2 + 保加利亚骑兵精锐 4 + 复合弓手 3）
     baojialiya: {
+        legionName: "阿森王朝军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'konnik_foot', count: 2 },          // Row 0 前锋坚壁 = 下马保加利亚勇士 2人（纯步兵·无马，重盾前卫引敌接战）
@@ -2086,7 +2112,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 凯尔特突袭者军团·卡莱尔/斯昆/邓迪（威廉·华莱士 / 奥恩格斯 / 多姆纳尔 · 鱼鳞阵 3+4+2：靛蓝突袭者前卫 3 + 精锐靛蓝突袭者主力 4 + 长弓兵 2）
     kanbuliya: {
-        legionName: "凯尔特突袭者军团",
+        legionName: "凯尔特军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'woad_raider', count: 3 },          // Row 0 前卫突袭 = 凯尔特靛蓝突袭者 3人（纯步兵·无马，高速突袭）
@@ -2095,7 +2121,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     piketai: {
-        legionName: "凯尔特突袭者军团",
+        legionName: "凯尔特军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'woad_raider', count: 3 },
@@ -2104,7 +2130,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     gaer: {
-        legionName: "凯尔特突袭者军团",
+        legionName: "凯尔特军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'woad_raider', count: 3 },
@@ -2114,7 +2140,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 孔雀战象软剑军团·华氏城/曲女城/瓦拉纳西/索姆纳特（旃陀罗笈多 / 戒日王 / 频毗娑罗 / 普拉塔帕 · 鹤翼阵 2+4+3：桑纳亚装甲战象 2 + 软剑士精锐主力 4 + 帕提尤达长弓 3）
     kongque: {
-        legionName: "孔雀战象软剑军团",
+        legionName: "印度军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'sannahya', count: 2 },                 // Row 0 前锋破坚 = 孔雀王朝桑纳亚战象 2头（《政事论》经典巨象开路撞阵）
@@ -2123,7 +2149,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jieri: {
-        legionName: "孔雀战象软剑军团",
+        legionName: "印度军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'sannahya', count: 2 },
@@ -2133,6 +2159,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 摩揭陀王国·王舍城（频毗娑罗王 · 弧刃弯刀死士与披甲战象大阵 · 鱼鳞阵 4+3+2：达罗毗荼镰刀战士 4 + 帕提尤达长弓手 3 + 孔雀王朝战象 2）
     mojietuo: {
+        legionName: "摩揭陀象兵军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'sickle_warrior', count: 4 },           // Row 0 前卫主力突击 = 达罗毗荼镰刀战士 4人（纯步兵·无马，手持弧刃弯刀近身极速砍杀破盾）
@@ -2142,6 +2169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 波罗帝国·高达城/孟加拉（达磨波罗 · 拉塔重装双栖战车与长弓大阵 · 雁行阵 4+3+2：重装长枪兵 4 + 孟加拉拉塔战车精锐 3 + 僧伽罗长弓手 2）
     boluo: {
+        legionName: "波罗海军军团",
         formationMode: 'echelon',
         slots: [
             { type: 'heavy_pikeman', count: 4 },           // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（前排筑起钢铁长矛拒马线）
@@ -2150,7 +2178,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jiashi_d: {
-        legionName: "孔雀战象软剑军团",
+        legionName: "印度军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'sannahya', count: 2 },
@@ -2159,7 +2187,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sumo: {
-        legionName: "孔雀战象软剑军团",
+        legionName: "印度军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'sannahya', count: 2 },
@@ -2169,6 +2197,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 德里苏丹国·德里（阿拉乌丁·卡尔吉 · 象背重弓高台与近卫古拉姆铁甲大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 象弓骑兵精锐 3 + 古拉姆 2）
     deli: {
+        legionName: "德里苏丹军团",
         formationMode: 'echelon',
         slots: [
             { type: 'heavy_pikeman', count: 4 },            // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（前排筑起钢铁长矛拒马线）
@@ -2177,6 +2206,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     mowoer: {
+        legionName: "阿克巴火器军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'ghulam', count: 3 },
@@ -2186,7 +2216,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 印度与锡克·兰季特·辛格 / 拉其特 / 哈里·辛格 飞轮掷手漫天破阵精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 飞轮掷手 3 + 精锐飞轮掷手主力 4）
     xike: {
-        legionName: "飞轮掷手漫天破阵精锐军团",
+        legionName: "锡克军团",
         formationMode: 'triangle',
         slots: [
             { type: 'heavy_pikeman', count: 2 },           // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，前排抗线拒马）
@@ -2195,7 +2225,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ahaomu: {
-        legionName: "飞轮掷手漫天破阵精锐军团",
+        legionName: "锡克军团",
         formationMode: 'triangle',
         slots: [
             { type: 'heavy_pikeman', count: 2 },
@@ -2205,6 +2235,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 旁遮普·阿托克（哈里·辛格 · 海达斯佩斯河波鲁斯王巨象战阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 帕提尤达长弓手 3 + 波鲁斯王战象 2）
     pangzha: {
+        legionName: "旁遮普军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },           // Row 0 前卫抗线 = 重装长枪兵 4人（纯步兵·无马，长盾重枪筑起坚固拒马防线）
@@ -2214,7 +2245,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 迦太基与布匿·汉尼拔 / 哈米尔卡 战象践踏与标枪精锐军团（雁行阵 4+3+2：掷矛手 4 + 精锐战象 3 + 长矛兵 2）
     buni: {
-        legionName: "战象践踏与标枪精锐军团",
+        legionName: "迦太基军团",
         formationMode: 'echelon',
         slots: [
             { type: 'skirmisher', count: 4 },                // Row 0 前排投射 = 掷矛手 4
@@ -2223,7 +2254,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     feiniqi: {
-        legionName: "战象践踏与标枪精锐军团",
+        legionName: "迦太基军团",
         formationMode: 'echelon',
         slots: [
             { type: 'skirmisher', count: 4 },                // Row 0 前排投射 = 掷矛手 4
@@ -2233,7 +2264,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 / 萨利蒂 双轮战车军团（雁行阵 4+3+2：弓兵 4 + 双轮战车精锐 3 + 持盾步兵 2）
     heti: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
@@ -2242,7 +2273,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     aiji: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2251,7 +2282,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dibisi: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2260,7 +2291,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     sumeier: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2269,7 +2300,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jialedi: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2278,7 +2309,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yashu: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2287,7 +2318,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     guyashu: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2296,7 +2327,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     xikesuosi: {
-        legionName: "双轮战车军团",
+        legionName: "近东军团",
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
@@ -2306,7 +2337,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（雁行阵 4+3+2：步弓手 4 + 精锐战斗象 3 + 爪刀勇士 2）
     siam: {
-        legionName: "东南亚战象与步弓精锐军团",
+        legionName: "暹罗军团",
         formationMode: 'echelon',
         slots: [
             { type: 'archer', count: 4 },                    // Row 0 前排齐射 = 步弓手 4（东南亚军队主体是征召弓手与步兵）
@@ -2315,7 +2346,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     pagan: {
-        legionName: "东南亚战象与步弓精锐军团",
+        legionName: "暹罗军团",
         formationMode: 'echelon',
         slots: [
             { type: 'archer', count: 4 },                    // Row 0 前排齐射 = 步弓手 4
@@ -2325,6 +2356,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 高棉帝国·吴哥/真腊（阇耶跋摩七世 · 象背机械弩炮与皇家爪刀卫队 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 爪刀勇士精锐 3 + 高棉弩炮战象 2）
     chenla: {
+        legionName: "高棉军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长矛坚壁 = 重装长枪兵 4人（纯步兵·无马，前排筑起长矛拒马线）
@@ -2334,7 +2366,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 阿拉伯骆驼弓骑军团·麦地那/巴格达/麦加/巴士拉（哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 · 三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
     maidina: {
-        legionName: "阿拉伯骆驼弓骑军团",
+        legionName: "阿拉伯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'eastern_swordsman', count: 2 },      // Row 0 尖刀先锋 = 东方剑士 2人（纯步兵·无马，弯刀前排坚壁抗线）
@@ -2343,7 +2375,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     abasi: {
-        legionName: "阿拉伯骆驼弓骑军团",
+        legionName: "阿拉伯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'eastern_swordsman', count: 2 },
@@ -2352,7 +2384,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     gulaishi: {
-        legionName: "阿拉伯骆驼弓骑军团",
+        legionName: "阿拉伯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'eastern_swordsman', count: 2 },
@@ -2361,7 +2393,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     alabo: {
-        legionName: "阿拉伯骆驼弓骑军团",
+        legionName: "阿拉伯军团",
         formationMode: 'triangle',
         slots: [
             { type: 'eastern_swordsman', count: 2 },
@@ -2371,7 +2403,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 小亚细亚近卫军团·阿马西亚/斯法尔德/戈尔迪翁/尼科米底亚（密特里达梯 / 克罗伊斯 / 迈达斯 / 狄奥多尔 · 鱼鳞阵 3+4+2：重装近卫前卫 3 + 重装近卫精锐主力 4 + 复合弓手 2）
     bendou_d: {
-        legionName: "小亚细亚近卫军团",
+        legionName: "小亚细亚军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'guardsman', count: 3 },              // Row 0 前卫抗线 = 古代重装近卫军 3人（纯步兵·无马，重装铜铠大盾前线坚壁抗线）
@@ -2380,7 +2412,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ldiya: {
-        legionName: "小亚细亚近卫军团",
+        legionName: "小亚细亚军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'guardsman', count: 3 },
@@ -2389,7 +2421,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     fulijiya: {
-        legionName: "小亚细亚近卫军团",
+        legionName: "小亚细亚军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'guardsman', count: 3 },
@@ -2398,7 +2430,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     bitiniya: {
-        legionName: "小亚细亚近卫军团",
+        legionName: "小亚细亚军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'guardsman', count: 3 },
@@ -2408,7 +2440,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 希腊贵族铁骑军团·米利都/特拉布宗/科孚（阿里斯塔 / 阿历克塞 / 舒伦堡 · 鱼鳞阵 3+4+2：贵族骑兵前卫 3 + 贵族骑兵精锐主力 4 + 克里特弓箭手 2）
     aiaoniya: {
-        legionName: "希腊贵族铁骑军团",
+        legionName: "希腊军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'greek_noble_cavalry', count: 3 },    // Row 0 前卫突击 = 希腊贵族骑兵 3骑（重装前锋破线）
@@ -2417,7 +2449,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     bendou: {
-        legionName: "希腊贵族铁骑军团",
+        legionName: "希腊军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'greek_noble_cavalry', count: 3 },
@@ -2426,7 +2458,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     kejila: {
-        legionName: "希腊贵族铁骑军团",
+        legionName: "希腊军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'greek_noble_cavalry', count: 3 },
@@ -2436,6 +2468,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 印度-希腊王国·那竭/顶骨城（米南德一世 · 巴克特里亚神弓与希腊铁骑战阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 巴克特里亚弓手 2）
     najie: {
+        legionName: "那竭军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫长枪坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，大夏希腊青铜圆盾长枪抗线）
@@ -2445,7 +2478,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 刹帝利灵猫骑兵军团·巴米扬/坎大哈（突骑施 / 艾哈迈德沙 · 鱼鳞阵 3+4+2：刹帝利灵猫骑兵前卫 3 + 刹帝利精锐主力 4 + 步弓手 2）
     fanyanna: {
-        legionName: "刹帝利灵猫骑兵军团",
+        legionName: "阿富汗军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'shrivamsha_rider', count: 3 },
@@ -2454,7 +2487,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dulan_d: {
-        legionName: "刹帝利灵猫骑兵军团",
+        legionName: "阿富汗军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'shrivamsha_rider', count: 3 },
@@ -2464,7 +2497,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 马格里布骆驼弓骑军团·特莱姆森/布佳亚/凯鲁万/非斯/马拉喀什/阿尔及尔/的黎波里（亚格姆拉森 / 哈马德 / 奥克巴 / 伊德里斯 / 塔什芬 / 巴巴罗萨 / 德拉古特 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
     zhayan: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },      // Row 0 尖刀先锋 = 萨拉森马穆鲁克 2人
@@ -2473,7 +2506,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     hamade: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2482,7 +2515,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     aguelabu: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2491,7 +2524,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yidelisi: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2500,7 +2533,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     mulabite: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2509,7 +2542,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     babali: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2518,7 +2551,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     telibolisi: {
-        legionName: "马格里布骆驼弓骑军团",
+        legionName: "马格里布军团",
         formationMode: 'triangle',
         slots: [
             { type: 'mameluke', count: 2 },
@@ -2528,7 +2561,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     zhibuluotuo: {
-        legionName: "1415征服休达葡萄牙要塞军团",
+        legionName: "十字军军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，休达要塞长矛死守抗线）
@@ -2538,7 +2571,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 占婆爪刀藤弓军团·毗阇耶/因陀罗补罗（制蓬峨 / 制旻 · 鱼鳞阵 3+4+2：爪刀勇士前卫 3 + 爪刀勇士精锐主力 4 + 藤弓兵 2）
     champa: {
-        legionName: "占婆爪刀藤弓军团",
+        legionName: "占婆军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'karambit_warrior', count: 3 },        // Row 0 前卫突入 = 爪刀勇士 3人（纯步兵·无马，前排双持近战弯刃）
@@ -2547,7 +2580,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     zhancheng: {
-        legionName: "占婆爪刀藤弓军团",
+        legionName: "占婆军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'karambit_warrior', count: 3 },
@@ -2567,6 +2600,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 中南半岛阿瓦王朝·思机法 掸族战象与密林劲弓大阵（三角阵 2+3+4：皮甲战象尖刀 2 + 缅刀双手剑士中坚 3 + 步弓手主力 4）
     ava: {
+        legionName: "掸族军团",
         formationMode: 'triangle',
         slots: [
             { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨象 = 皮甲战象 2头（掸族象卫前沿开路践踏破阵）
@@ -2576,6 +2610,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
     dayue: {
+        legionName: "白藤江水师军团",
         formationMode: 'triangle',
         slots: [
             { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨兽 = 皮甲战象 2头（前沿象阵开路冲撞）
@@ -2585,7 +2620,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 哥萨克纯骑兵军团·塞契/阿速城/切尔卡瑟（赫梅利 / 塔塔里诺夫 / 拜达 · 鹤翼阵 2+4+3：骑马火枪前锋 2 + 马扎尔骠骑主力 4 + 重装骑射 3）
     gesake: {
-        legionName: "哥萨克纯骑兵军团",
+        legionName: "哥萨克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'conquistador', count: 2 },          // Row 0 前锋破线 = 骑马火枪手 2骑（哥萨克战马火枪前哨放排枪破甲）
@@ -2594,7 +2629,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     dunhe: {
-        legionName: "哥萨克纯骑兵军团",
+        legionName: "哥萨克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'conquistador', count: 2 },
@@ -2603,7 +2638,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     qiekase: {
-        legionName: "哥萨克纯骑兵军团",
+        legionName: "哥萨克军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'conquistador', count: 2 },
@@ -2633,7 +2668,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 奴儿干都司与极北海岛军团·特林/囊哈儿/普禄/诺托罗/白主/宗谷/莫约罗/白老（康旺/吉里迷/费雅喀/鄂罗克/苦夷/阿伊努 · 三角阵 2+3+4：答剌罕骑兵 2 + 反曲长弓手 3 + 鲜卑掠骑兵 4）
     nuergan: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },           // Row 0 尖刀突骑 = 答剌罕骑兵 2骑（极北通古斯重骑突击）
@@ -2642,7 +2677,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jilimi: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2651,7 +2686,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     feiyaka: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2660,7 +2695,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     eluoke: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2669,7 +2704,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     kuye: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2678,7 +2713,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     beihai: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2687,7 +2722,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ayinu_ezo: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2696,7 +2731,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     ayinu: {
-        legionName: "奴儿干都司与极北海岛军团",
+        legionName: "奴儿干军团",
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
@@ -2732,6 +2767,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wenling": {
+        legionName: "澎湖水师军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },

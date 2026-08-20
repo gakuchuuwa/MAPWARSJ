@@ -1316,6 +1316,35 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     LATIN:        LATIN_TIERS,
 };
 
+/** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
+ *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
+ *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
+export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
+    CENTRAL:      '中原军团',
+    NORTH:        '河朔军团',
+    NORTHEAST:    '东北军团',
+    KOREA:        '朝鲜军团',
+    JAPAN:        '日本军团',
+    STEPPE:       '草原军团',
+    HEXI:         '河西军团',
+    BASHU:        '川蜀军团',
+    JIANGNAN:     '江南军团',
+    LINGNAN:      '岭南军团',
+    DIANQIAN:     '滇缅军团',
+    TIBET:        '青藏军团',
+    CENTRAL_ASIA: '中亚军团',
+    WEST_ASIA:    '西亚军团',
+    WESTERN:      '西域军团',
+    SLAVIC:       '斯拉夫军团',
+    GERMANIC:     '日耳曼军团',
+    LATIN:        '拉丁军团',
+};
+
+/** 取第一层文化军团名（未知区兜底中原军团） */
+export function getCultureLegionName(region: RegionType | null | undefined): string {
+    return (region && CULTURE_LEGION_NAMES[region]) || CULTURE_LEGION_NAMES.CENTRAL;
+}
+
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */
 export function applyCultureFormationPatch(
     culture: RegionType,
