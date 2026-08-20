@@ -839,7 +839,9 @@ export default defineConfig({
                     req.on('end', () => {
                         try {
                             const data = JSON.parse(body || '{}');
-                            const formatted = serverFormatFactionCompositions(data.compositions || {});
+                            const prevText = fs.existsSync(factionCompositionsPath)
+                                ? fs.readFileSync(factionCompositionsPath, 'utf-8') : '';
+                            const formatted = serverPatchFactionCompositions(prevText, data.compositions || {});
                             serverSafeWriteFileSync(factionCompositionsPath, formatted);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
@@ -1856,6 +1858,119 @@ function getBigrams(s: string): string[] {
 }
 
 /** 序列化 FactionCompositions.ts */
+/**
+ * 增量写回 FactionCompositions.ts —— **只重写真正改动过的势力条目**。
+ *
+ * 🔴 为什么不能整份重新生成（旧 serverFormatFactionCompositions 的做法）：
+ *    这个文件里有大量手写的中文考据注释（势力沿革、每个 slot 的「前卫抗线」「中军强力突破」等），
+ *    整份重生成会把它们**一条不剩地抹掉**。2026-08-20 实测：479 行注释一次保存后只剩 1 行。
+ *
+ * 策略：逐条比对，内容没变的条目**连同它上面的注释原文照搬**；改过的只替换代码块、保留块前注释；
+ *      编辑器里已删除的条目从文件移除；新增的追加到末尾。
+ */
+function serverPatchFactionCompositions(prevText: string, compositions: Record<string, any>): string {
+    const NL = String.fromCharCode(10);
+    const headIdx = prevText.indexOf('export const FACTION_COMPOSITIONS');
+    if (headIdx < 0) return serverFormatFactionCompositions(compositions);
+    const braceIdx = prevText.indexOf('{', headIdx);
+    if (braceIdx < 0) return serverFormatFactionCompositions(compositions);
+
+    const renderEntry = (fid: string, comp: any): string => {
+        const out: string[] = [];
+        out.push('    ' + JSON.stringify(fid) + ': {');
+        out.push('        formationMode: ' + JSON.stringify(comp.formationMode || 'square') + ',');
+        if (comp.navalFormation && comp.navalFormation !== 'auto') {
+            out.push('        navalFormation: ' + JSON.stringify(comp.navalFormation) + ',');
+        }
+        out.push('        slots: [');
+        for (const slot of comp.slots) {
+            const scaleStr = slot.scale != null && !Number.isNaN(Number(slot.scale)) && Number(slot.scale) !== 1.0
+                ? ', scale: ' + Number(slot.scale)
+                : '';
+            out.push('            { type: ' + JSON.stringify(slot.type) + ', count: ' + slot.count + scaleStr + ' },');
+        }
+        out.push('        ],');
+        out.push('    },');
+        return out.join(NL);
+    };
+
+    /** 把一个条目的原文解析成可比较的形状（判断有没有真的改过） */
+    const parseEntry = (text: string): { formationMode: string; slots: any[] } | null => {
+        const fm = /formationMode:\s*['"]([^'"]+)['"]/.exec(text);
+        if (!fm) return null;
+        const nf = /navalFormation:\s*['"]([^'"]+)['"]/.exec(text);
+        const slots: any[] = [];
+        const re = /\{\s*type:\s*['"]([^'"]+)['"]\s*,\s*count:\s*([0-9.]+)\s*(?:,\s*scale:\s*([0-9.]+)\s*)?\}/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(text)) !== null) {
+            slots.push({ type: m[1], count: Number(m[2]), scale: m[3] != null ? Number(m[3]) : 1.0 });
+        }
+        return { formationMode: fm[1], navalFormation: nf ? nf[1] : 'auto', slots } as any;
+    };
+
+    const sameEntry = (a: any, b: any): boolean => {
+        if (!a || !b) return false;
+        if ((a.formationMode || 'square') !== (b.formationMode || 'square')) return false;
+        if ((a.navalFormation || 'auto') !== (b.navalFormation || 'auto')) return false;
+        const as = a.slots || [], bs = b.slots || [];
+        if (as.length !== bs.length) return false;
+        for (let i = 0; i < as.length; i++) {
+            if (as[i].type !== bs[i].type) return false;
+            if (Number(as[i].count) !== Number(bs[i].count)) return false;
+            if (Number(as[i].scale != null ? as[i].scale : 1.0) !== Number(bs[i].scale != null ? bs[i].scale : 1.0)) return false;
+        }
+        return true;
+    };
+
+    // 扫描现有条目：括号配对定位每个 "fid": { ... },
+    const body = prevText.slice(braceIdx + 1);
+    const entries: { fid: string; text: string }[] = [];
+    const keyRe = /(^|\n)[ \t]*["']?([A-Za-z0-9_]+)["']?\s*:\s*\{/g;
+    let km: RegExpExecArray | null;
+    while ((km = keyRe.exec(body)) !== null) {
+        const fid = km[2];
+        const openIdx = body.indexOf('{', km.index + km[1].length);
+        let depth = 0, i = openIdx;
+        for (; i < body.length; i++) {
+            const ch = body[i];
+            if (ch === '{') depth++;
+            else if (ch === '}') { depth--; if (depth === 0) { i++; break; } }
+        }
+        if (body[i] === ',') i++;
+        // 🔴 起点往前吃掉紧邻其上的注释行，否则重组时这些注释会整批消失（抹注释的同一个坑）
+        let lineStart = km.index + km[1].length;
+        while (lineStart > 0) {
+            const prevNl = body.lastIndexOf(NL, lineStart - 2);
+            const prevLine = body.slice(prevNl + 1, lineStart - 1);
+            if (/^[ \t]*(\/\/|\*|\/\*)/.test(prevLine)) lineStart = prevNl + 1;
+            else break;
+        }
+        entries.push({ fid, text: body.slice(lineStart, i) });
+        keyRe.lastIndex = i;
+    }
+
+    const seen = new Set<string>();
+    const pieces: string[] = [];
+    for (const e of entries) {
+        const comp = compositions[e.fid];
+        seen.add(e.fid);
+        if (!comp || !Array.isArray(comp.slots)) continue;           // 编辑器里删掉了 → 不写回
+        if (sameEntry(parseEntry(e.text), comp)) {
+            pieces.push(e.text.replace(/\s+$/, ''));                 // 没改 → 原文照搬，注释全保
+        } else {
+            const lead = /^((?:[ \t]*(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)[ \t]*\n)*)/.exec(e.text);
+            pieces.push((lead && lead[1] ? lead[1] : '') + renderEntry(e.fid, comp));
+        }
+    }
+    for (const [fid, comp] of Object.entries(compositions)) {
+        if (seen.has(fid)) continue;
+        if (!comp || !Array.isArray((comp as any).slots)) continue;
+        pieces.push(renderEntry(fid, comp as any));
+    }
+
+    return prevText.slice(0, braceIdx + 1) + NL + pieces.join(NL) + NL + '};' + NL;
+}
+
 function serverFormatFactionCompositions(compositions: Record<string, any>): string {
     const lines: string[] = [];
     lines.push(`/**`);
@@ -1863,12 +1978,13 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     lines.push(` * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。`);
     lines.push(` */`);
     lines.push(``);
-    lines.push(`import type { FormationMode } from '../types/CultureFormations';`);
+    lines.push(`import type { FormationMode, NavalFormationMode } from '../types/CultureFormations';`);
     lines.push(`import type { CompositionSlot } from '../types/LegionComposition';`);
     lines.push(``);
     lines.push(`export interface CustomFactionLegion {`);
     lines.push(`    formationMode: FormationMode;`);
     lines.push(`    slots: CompositionSlot[];`);
+    lines.push(`    navalFormation?: NavalFormationMode;`);
     lines.push(`}`);
     lines.push(``);
     lines.push(`export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {`);
@@ -1876,6 +1992,9 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
         if (!comp || !Array.isArray(comp.slots)) continue;
         lines.push(`    ${JSON.stringify(fid)}: {`);
         lines.push(`        formationMode: ${JSON.stringify(comp.formationMode || 'square')},`);
+        if (comp.navalFormation && comp.navalFormation !== 'auto') {
+            lines.push(`        navalFormation: ${JSON.stringify(comp.navalFormation)},`);
+        }
         lines.push(`        slots: [`);
         for (const slot of comp.slots) {
             const scaleStr = slot.scale != null && !Number.isNaN(Number(slot.scale)) && Number(slot.scale) !== 1.0

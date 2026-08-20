@@ -1,4 +1,6 @@
 import { AssetLoader } from '../../core/AssetLoader';
+import type { NavalFormationMode } from '../../types/CultureFormations';
+import { FACTION_COMPOSITIONS } from '../../data/FactionCompositions';
 import { SPRITE_PATHS } from '../../config/GameConfig';
 import { FormationSystem } from '../../core/FormationSystem';
 import { GeneralDrawer } from '../GeneralDrawer';
@@ -1707,13 +1709,34 @@ export class LegionPhalanxDrawer {
     /** 兵力驱动的舰队队形（2026-08-19 主人定）：旗舰居前，后随成列。
      *  ≤4 艘单纵队（内河/海峡横向最窄不蹭岸）；≥5 艘旗舰 + 后方双列交错（纵向段数压到 ~4 行）。
      *  r 为沿朝向的段距，单位 = 一条船长（旗舰 0，后随为负 = 朝航向反方向排）；c 为横向（±0.5 船宽交错）。 */
-    private static navalFormation(shipCount: number): { r: number; c: number; ship: NavalShipAssetId }[] {
+    private static navalFormation(
+        shipCount: number,
+        mode: NavalFormationMode = 'auto',
+    ): { r: number; c: number; ship: NavalShipAssetId }[] {
         const shipType = (i: number): NavalShipAssetId =>
             i === 0 ? 'ship_large' : i <= 4 ? 'ship_medium' : 'ship_small';
         const formation: { r: number; c: number; ship: NavalShipAssetId }[] = [
             { r: 0, c: 0, ship: 'ship_large' },
         ];
-        if (shipCount <= 4) {
+
+        // [2026-08-20] 队形改为可配置（军团编辑器「海军阵型」），auto = 下面的旧行为逐像素不变。
+        if (mode === 'line') {
+            // 一字横阵：全队与航向垂直排开，舷侧齐射面最大。左右交替向外长，旗舰居中。
+            for (let i = 1; i < shipCount; i++) {
+                const k = Math.ceil(i / 2);
+                formation.push({ r: 0, c: (i % 2 === 1 ? -k : k), ship: shipType(i) });
+            }
+            return formation;
+        }
+        if (mode === 'wedge') {
+            // 楔形雁行：旗舰居前，后随向两翼斜后方展开（每多一对，后退一段、外扩一列）
+            for (let i = 1; i < shipCount; i++) {
+                const k = Math.ceil(i / 2);
+                formation.push({ r: -k, c: (i % 2 === 1 ? -k * 0.6 : k * 0.6), ship: shipType(i) });
+            }
+            return formation;
+        }
+        if (mode === 'column' || (mode === 'auto' && shipCount <= 4)) {
             // 单纵队：后随船依次向后排
             for (let i = 1; i < shipCount; i++) {
                 formation.push({ r: -i, c: 0, ship: shipType(i) });
@@ -1777,7 +1800,10 @@ export class LegionPhalanxDrawer {
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
         const baseHeight = 72;
         const shipCount = shipCountForTroops(troops);
-        const formation = this.navalFormation(shipCount);
+        // 海军阵型来自军团编辑器的势力配置；没配过 = 'auto'（旧行为，逐像素不变）
+        const navalMode: NavalFormationMode =
+            (FACTION_COMPOSITIONS as any)[factionId]?.navalFormation ?? 'auto';
+        const formation = this.navalFormation(shipCount, navalMode);
 
         // 逐舰阵亡状态更新（2026-07-18）：参照 LegionPhalanxStateManager 模式
         const isFighting = state === 'ATTACK' || state === 'DAMAGE';
