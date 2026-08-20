@@ -23,8 +23,7 @@ import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
-import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { type RegionType } from '../systems/RegionSystem';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -823,31 +822,10 @@ const HARD_STOP_SEC = 600;
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ANT_SCOUT/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARBALESTER/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/AZTEC_RAIDER/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTAELEPHANT/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_IMPERIAL/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAVALRYARCHER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITEBOWMAN/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANTARCHER/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECHUKONU/","/SUCAI/ELITECOMPOSITEBOWMAN/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFIREARCHER/","/SUCAI/ELITEFIRELANCER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKARAMBITWARRIOR/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKIPCHAK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITELIAODAO/","/SUCAI/ELITELONGBOWMAN/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMANGUDAI/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITERATTANARCHER/","/SUCAI/ELITESAMURAI/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITESTEPPELANCER/","/SUCAI/ELITETARKAN/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWHITEFEATHERGUARD/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIREARCHER/","/SUCAI/FIRELANCER/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/GUECHA_ELITE/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYCAMELRIDER/","/SUCAI/HEAVYCAVALRYARCHER/","/SUCAI/HEAVYHEIKUANG/","/SUCAI/HEAVYPIKEMAN/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEIKUANG/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IBIRAPEMA_ELITE/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIALSKIRMISHER/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRONPAGODA/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/JI_INFANTRY/","/SUCAI/JI_INFANTRY_ELITE/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBITWARRIOR/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAODAO/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/ORGAN_ELITE/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PATTIYODHA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTANARCHER/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEELEPHANT/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPELANCER/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWINGAXEMAN/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGERCAVALRY/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITEFEATHERGUARD/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEIRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
 
-// ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
-// 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
-// 🔴 2026-08-12 主人实机定的两条：
-//   ① 树/湖不遮士兵 —— 固定画在最底层（ground 尸体层之下），士兵/尸体永远在树前。
-//   ② **原图多大画多大，绝不缩放**（主人原话「不要改写比例，不然有的模糊，有的清晰」）。
-//      6 变体的原始尺寸差极大：1 号 184x121、3 号 166x48、2/6 号 707x374。
-//      统一成固定 W×H 会把小的放大糊掉、把大的压扁，清晰度参差 —— 所以一律按 naturalWidth/Height 画。
-//      变体大小不齐是素材本身的设计（单棵树 vs 森林板块），不是要被抹平的问题。
-const TREE_BASE_URL = '/sanguoqunying/樹/';
-// 🔴 6 变体全用（素材主人给的，不擅自筛选）。
-/**
- * 「森林板块」变体（0 基索引：1 = 2.png、5 = 6.png，均为 707×374）。
- * 这两张不是单棵树，是**远景林地板块**，按单棵树的规则撒会盖掉半个战场（主人 2026-08-12 实机否决）。
- * 它们只压画面上下边缘带、每场最多一块 —— 见 scatterTrees。
- */
-const TREE_SLAB_VARIANTS = new Set([1, 5]);
-/** 森林板块允许落在的边缘带高度（占画面高度比例），中间主战区留给战斗 */
-const TREE_SLAB_BAND = 0.18;
-
-// ── 场景云装饰（同批三国群英传素材，`云/1..10.png`，207x80 ~ 328x97）──
-// 🔴 层级与树/湖**完全相反**：树湖垫在最底层不遮兵，云盖在**最上层**（士兵、旗帜、箭矢之上）
-//    半透明横向飘过。俯视视角下云本来就该在人上面，别套树湖那套"画在底层"的规矩。
-// 🔴 与树/湖同规矩的只有两条：① 原图多大画多大，绝不缩放（主人「不要改写比例」）
-//    ② 纯装饰绝不进 pending —— 加载失败就少一朵云，不能拖累演出/引擎。
-// 云没有季节之分（素材本身就一套），不参与 sceneSeason。
+// ── 场景云装饰（三国群英传素材，`云/9..10.png`，927×817 大朵积云）──
+// 🔴 云盖在**最上层**（士兵、旗帜、箭矢之上），半透明横向飘过——俯视视角下云本来就在人上面。
+// 🔴 纯装饰绝不进 pending —— 加载失败就少一朵云，不能拖累演出/引擎。
+// 云没有季节之分（素材本身就一套）。
 const CLOUD_BASE_URL = '/sanguoqunying/云/';
 /**
  * 可用素材编号。🔴 **只有 9/10 是云**（927×817 的积云，自带地面投影）——
@@ -860,9 +838,7 @@ const CLOUD_COUNT_MIN = 1;
 const CLOUD_COUNT_MAX = 2;
 /**
  * 云的缩放区间（目前 0.5 算最大，大小随机：0.28 ~ 0.50）。
- * ⚠️ 树那边的铁律是「原图多大画多大、绝不缩放」，云这里**可以缩**，原因不同：
- *   树的 6 个变体原始尺寸差 4 倍以上，统一到固定 W×H 会把小的放大糊掉、大的压扁，清晰度参差；
- *   云只有 9/10 两张且**尺寸完全相同**（927×817），纯缩小不会有清晰度参差。
+ * ⚠️ 云**可以缩**：9/10 两张尺寸完全相同（927×817），纯缩小不会有清晰度参差。
  */
 const CLOUD_SCALE_MAX = 0.5;
 const CLOUD_SCALE_MIN = 0.28;
@@ -872,25 +848,17 @@ const CLOUD_SPD_MAX = 16;
 /** 不透明度区间：素材本身已是淡灰，再压一档，绝不糊住战斗 */
 const CLOUD_ALPHA_MIN = 0.30;
 const CLOUD_ALPHA_MAX = 0.55;
-const TREE_VARIANTS = [0, 1, 2, 3, 4, 5];
-
-// ── 场景湖装饰（同批三国群英传地形素材；湖/1夏 湖/2秋 湖/3冬，与树同季，本场统一）──
-// 湖是**贴地水域**（俯视贴图），画在最底层（ground 尸体层之下），不参与 y 深度排序。
-// 每季只有一张图（334x221），随机水平镜像增加观感变化。素材自带 tRNS 透明，直接 drawImage。
-// 🔴 2026-08-12 主人实机：湖太多太大 → 每场 1–2 个、尺寸小一半（400x265 → 200x132）。
-const LAKE_BASE_URL = '/sanguoqunying/湖/';
-const LAKE_W = 200;             // 渲染宽（px，原 334 × 0.6）
-const LAKE_H = 132;             // 渲染高（px，原 221 × 0.6）
-
 // ── 场景地形铺地（2026-08-20 主人定：13 全面 DE 化，地面由「透明叠真实地图」改为「DE 地形铺满」）──
-// 铺地 = 屏幕像素坐标分块随机取主地形贴图（512² 无缝平铺），不单张刷满（单张刷满有一眼重复的格子感，
-// 混 2~3 张分块随机打散单调）。铺地烙进离屏 canvas，之后每帧只 drawImage 一次，开销恒定（同 ground 尸体层）。
+// 铺地 = 每场选**一张**主地形贴图（512² 无缝平铺）铺满整屏，全场统一。
+// 🔴 2026-08-20 主人否掉「东一块西一块」：曾把 gr3/gr6/gr8 三张不同深浅的草地**同屏随机分块混铺**，
+//    深浅相邻硬拼成棋盘格，同一战场被切得斑驳割裂。同一战场地面必须统一 → 每场一张，绝不混色块。
+//    （不同场次/不同 biome 换不同贴图，才是「物尽其用」的正解，交给 P1 的 biome→地形映射表。）
+// 铺地烙进离屏 canvas，之后每帧只 drawImage 一次，开销恒定（同 ground 尸体层）。
 // 🔴 P0 硬编码温带森林 biome（中原/江南战场最多，方案 claudedocs/scene13-de-terrain-plan 建议先做这个）；
 //    L1 气候带判定（采样 ESRI 卫星色 + 海拔）接管后，再换成 biome→地形映射表。详见该方案 §三。
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 const TERRAIN_TEMPERATE_FOREST = ['gr3', 'gr6', 'gr8'];
 /** 铺地分块边长（px）：512² 贴图缩到 256² 铺，一屏约 7×4 块，草地颗粒感自然。可调。 */
-const TERRAIN_BLOCK = 256;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2019,23 +1987,9 @@ interface WarFallenFlag {
     fo: number;
 }
 
-/** 场景树（静态装饰，不参与任何战斗逻辑）：树脚中心 = 屏幕坐标，画在最底层（不遮兵） */
-interface SceneTree {
-    x: number;
-    y: number;
-    /** 0=绿 1=橙 2=白 */
-    kind: 0 | 1 | 2;
-    /** 0..5 变体样式 */
-    variant: number;
-    /** 水平镜像（同一棵树图的正反两用，减少重复感；主人 2026-08-12） */
-    flip: boolean;
-    img: HTMLImageElement | null;
-}
-
 /**
  * 场景云（飘动装饰，不参与任何战斗逻辑）。
- * 🔴 层级与树/湖**完全相反**：树湖垫在最底层不遮兵，云盖在**最上层**半透明飘过。
- *    俯视视角下云在人上面才是对的 —— 别套树湖那套"画在底层"的规矩。
+ * 🔴 云盖在**最上层**（士兵、旗帜、箭矢之上）半透明飘过——俯视视角下云本来就在人上面。
  */
 interface SceneCloud {
     x: number;
@@ -2045,15 +1999,6 @@ interface SceneCloud {
     alpha: number;
     scale: number;
     /** 水平镜像（随机翻转，丰富形态） */
-    flip: boolean;
-    img: HTMLImageElement | null;
-}
-
-/** 场景湖（贴地水域装饰，不参与任何战斗逻辑）：中心 = 屏幕坐标，画在最底层 */
-interface SceneLake {
-    x: number;
-    y: number;
-    /** 水平镜像（同一张湖图的正反两用，减少重复感） */
     flip: boolean;
     img: HTMLImageElement | null;
 }
@@ -2189,7 +2134,7 @@ export interface Scene13WarInit {
     /** [2026-08-11] 每兵总加成（八环战力比除掉兵力后的部分，作用在伤害上）；缺省 1 = 无加成 */
     attackerBonus?: number;
     defenderBonus?: number;
-    /** 战场中心坐标（树/湖季节按海拔判定用；由 GameAppCombatHooks 传入） */
+    /** 战场中心坐标（由 GameAppCombatHooks 传入；P2 地形 biome 判定用） */
     centerLat?: number;
     centerLng?: number;
     /** [军事科技] 当前年份 getter（由 GameAppCombatHooks 注入；战斗跨年时刷新科技分表） */
@@ -2217,14 +2162,8 @@ export class Scene13WarLayer {
     /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
     private fxBank: Record<string, FxAsset> = {};
     private fallenFlags: WarFallenFlag[] = [];
-    /** 场景树装饰（start 时随机布景，stop 清空） */
-    private trees: SceneTree[] = [];
-    /** 场景湖装饰（start 时随机布景，stop 清空） */
-    private lakes: SceneLake[] = [];
-    /** 场景云（最上层飘动装饰，与树/湖层级相反） */
+    /** 场景云（最上层飘动装饰） */
     private clouds: SceneCloud[] = [];
-    /** 本场季节（0=绿夏 1=橙秋 2=白冬）：start 时定一次，树/湖全场统一，禁混季 */
-    private sceneSeason: 0 | 1 | 2 = 0;
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     private centerLat: number | undefined;
     private centerLng: number | undefined;
@@ -2239,8 +2178,11 @@ export class Scene13WarLayer {
     /** 地形铺地离屏画布（DE 贴图分块铺满，start 烙一次，之后每帧 drawImage 一次，开销恒定） */
     private terrain: HTMLCanvasElement | null = null;
     private terrainCtx: CanvasRenderingContext2D | null = null;
-    /** 地形贴图缓存（name → img）；纯装饰：加载失败就少一张，绝不进 pending */
-    private terrainImgs: Record<string, HTMLImageElement> = {};
+    /** 本场选中的主地形贴图名（每场一张、全场统一铺，不同场次随机换一张草皮） */
+    private terrainTile = '';
+    /** 铺地朝向随机种子：每场定一次，保证 resize 重铺时图案不跳变 */
+    private terrainSeed = 0;
+    private terrainImg: HTMLImageElement | null = null;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -2476,8 +2418,6 @@ export class Scene13WarLayer {
         this.sparks = [];
         this.fxs = [];
         this.fallenFlags = [];
-        this.trees = [];
-        this.lakes = [];
         this.clouds = [];
         this.clearGround();
         // [2026-08-16 修·进 13 闪旧尸体] 主画布同步清空：stop 只隐藏 canvas 不清内容，
@@ -2591,10 +2531,7 @@ export class Scene13WarLayer {
                 Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool * s.pop : 0), 0)),
             ) as [number, number];
 
-            // 场景布景：湖先定（树要避开水域），再撒树；三色（夏/秋/冬）× 六变体随机，
-            // 位置避开中央对攻走廊与出兵口
-            this.scatterLakes(VW, VH);
-            this.scatterTrees(VW, VH);
+            // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
             this.initTerrain();
         } catch (e) {
@@ -2796,8 +2733,6 @@ export class Scene13WarLayer {
         this.sparks = [];
         this.fxs = [];
         this.fallenFlags = [];
-        this.trees = [];
-        this.lakes = [];
         this.clouds = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -2856,78 +2791,11 @@ export class Scene13WarLayer {
         return 'square';
     }
 
-    // ── 场景树/湖：随机布景 + 加载（纯装饰，不参与战斗逻辑，也不进 pending）──
-    /**
-     * 随机分布湖：**本场季节一张**（夏/秋/冬三选一，由 scatterLakes 开头按游戏日历定，树/湖同季）：
-     * - 每场 1 个（主人 2026-08-18 定：只贴一个湖泊）
-     * - 避开中央对攻走廊与出兵口
-     * - 湖与湖之间留距（不叠成一大片）
-     * 湖是贴地水域，画在最底层（ground 之下），不参与 y 深度排序。
-     */
-    private scatterLakes(VW: number, VH: number): void {
-        this.sceneSeason = this.currentSeasonKind();
-        const lakeWant = 1;   // 固定 1 个湖
-        let guard = 0;
-        while (this.lakes.length < lakeWant && guard++ < 200) {
-            const x = LAKE_W * 0.6 + Math.random() * (VW - LAKE_W * 1.2);
-            const y = LAKE_H * 0.6 + Math.random() * (VH - LAKE_H * 1.2);
-            // 🔴 不避中央（2026-08-12 主人：不用避开中央）——湖/树在最底层不遮兵，全屏随机
-            if (this.spawns.some(s => (s.x - x) ** 2 + (s.y - y) ** 2 < 140 ** 2)) continue;
-            if (this.lakes.some(l => (l.x - x) ** 2 + (l.y - y) ** 2 < (LAKE_W * 0.7) ** 2)) continue;
-            this.lakes.push({ x, y, flip: Math.random() < 0.5, img: null });
-        }
-        for (const lk of this.lakes) this.ensureLake(lk);
-    }
-
-    /**
-     * 本场树/湖季节 = **战场真实海拔**（2026-08-18 主人定稿）：
-     *   ≥3600m（雪线高原/高山雪顶，如青藏高原、帕米尔/昆仑雪峰）→ 白(2)
-     *   600–3600m（山地/黄土高原/戈壁山麓/西域播仙一带/蒙古草原）→ 橙/秋(1)
-     *   <600m（低地/平原）→ 绿(0)     [600m = LandTerrainSystem.MOUNTAIN_ELEVATION_M 同源]
-     * 数据源 = 项目现成 ElevationSampler（Terrarium 高程瓦片 + LRU 缓存）：
-     *   - 瓦片已缓存 → 同步命中，直接定色
-     *   - 未缓存 → 后台拉取 + 文化区地貌/日历季节兜底（装饰绝不等待网络）
-     * 无坐标/采样失败（防御）→ 日历季节：春/夏绿、秋橙、冬白。
-     */
-    private currentSeasonKind(): 0 | 1 | 2 {
-        if (this.centerLat !== undefined && this.centerLng !== undefined) {
-            try {
-                const sampler = LandSeaSystem.getSampler();
-                const elev = sampler.getElevationSync(this.centerLat, this.centerLng);
-                if (elev !== null) {
-                    if (elev >= 3600) return 2;   // 高原雪线 → 白
-                    if (elev >= 600) return 1;    // 山地/黄土/西域高地 → 橙
-                    return 0;                     // 低地平原 → 绿
-                }
-                sampler.scheduleFetch(this.centerLat, this.centerLng);   // 预取，下局命中
-
-                // 首次未缓存时文化区地貌智能兜底：
-                const reg = getRegion(this.centerLat, this.centerLng);
-                if (reg === 'TIBET') return 2;
-                if (reg === 'WESTERN' || reg === 'STEPPE' || reg === 'HEXI' || reg === 'NORTH' || reg === 'CENTRAL_ASIA' || reg === 'NORTHEAST') {
-                    return 1; // 西域、草原、河西等黄色海拔带优先秋景
-                }
-            } catch (e) {
-                // 采样异常 → 走日历兜底
-            }
-        }
-        const ts = (window as any).game?.timeSystem;
-        const season = typeof ts?.getSeason === 'function' ? ts.getSeason() : 0;
-        if (season === 3) return 2;   // 冬 → 白
-        if (season === 2) return 1;   // 秋 → 橙
-        return 0;                     // 春/夏/未知 → 绿
-    }
-
-    /** 加载单湖素材（本季一张；纯装饰：失败就少一个湖，绝不进 pending） */
-    private ensureLake(lk: SceneLake): void {
-        const im = new Image();
-        im.onload = () => { lk.img = im; };
-        im.src = LAKE_BASE_URL + (this.sceneSeason + 1) + '/1.png';
-    }
+    // ── 场景云：随机布景 + 加载（纯装饰，不参与战斗逻辑，也不进 pending）──
 
     /**
      * 随机布云：全屏散开，各自随机方向漂移。云没有季节，10 张随机取。
-     * 🔴 云在**最上层**，所以位置不用避开出兵口/湖/树 —— 它本来就该盖在什么上面都行。
+     * 🔴 云在**最上层**，所以位置不用避开出兵口 —— 它本来就该盖在什么上面都行。
      */
     private scatterClouds(VW: number, VH: number): void {
         const count = CLOUD_COUNT_MIN + ((Math.random() * (CLOUD_COUNT_MAX - CLOUD_COUNT_MIN + 1)) | 0);
@@ -2958,60 +2826,8 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 随机分布树木：**本场季节统一**（绿夏 / 橙秋 / 白冬，随游戏日历，与湖同季，全场一个色系，禁混季）：
-     * - **不避中央**（主人 2026-08-12：树在最底层不遮兵，全屏随机即可）
-     * - 避开出兵口（太近会盖住出生中的兵）
-     * - 避开湖（湖是水域，树不长在水里）
-     * 树脚（图底）中心为锚点。**不参与 y 深度排序**——树固定画在尸体层之下，永远不遮士兵。
-     */
-    private scatterTrees(VW: number, VH: number): void {
-        // 🔴 [2026-08-12 主人实机否决「森林板块占半个战场」] 6 变体全用，但**按尺寸分两类撒**：
-        //   小变体（1/3/4/5，最大 187px）= 单棵树/小树丛 → 全场随机，每种 1–2 棵。
-        //   大变体（2/6，707×374）= **远景森林板块，不是树** → 只压画面上下边缘带、每场最多一块。
-        // 病根：把 707px 的林地板块和 184px 的单棵树丢进同一个池子按同样规则撒，
-        //   一场出现 2–4 块就盖掉半个可战区；而且树画在士兵层之下（主人定的不遮兵），
-        //   单棵小树看不出来，一整片林冠被人踩在脚下就非常穿帮。
-        for (const variant of TREE_VARIANTS) {
-            const isSlab = TREE_SLAB_VARIANTS.has(variant);
-            const want = isSlab
-                ? (Math.random() < 0.5 ? 1 : 0)          // 大板块：一半概率来一块，可以没有
-                : 1 + ((Math.random() * 2) | 0);         // 小树：1–2 棵
-            let got = 0;
-            let guard = 0;                                // 🔴 每个变体各自计数：共享会让后面的变体一棵都摆不出
-            while (got < want && guard++ < 60) {
-                const x = 40 + Math.random() * (VW - 80);
-                // 大板块只落在上下边缘带（各占画面高度的 TREE_SLAB_BAND），中间主战区留给战斗
-                const y = isSlab
-                    ? (Math.random() < 0.5
-                        ? Math.random() * VH * TREE_SLAB_BAND
-                        : VH - Math.random() * VH * TREE_SLAB_BAND)
-                    : 50 + Math.random() * (VH - 150);
-                if (this.spawns.some(s => (s.x - x) ** 2 + (s.y - y) ** 2 < 120 ** 2)) continue;
-                if (this.lakes.some(l => Math.abs(l.x - x) < LAKE_W * 0.6 && Math.abs(l.y - y) < LAKE_H * 0.55)) continue;
-                const t: SceneTree = {
-                    x, y,
-                    kind: this.sceneSeason,
-                    variant,
-                    flip: Math.random() < 0.5,
-                    img: null,
-                };
-                this.trees.push(t);
-                this.ensureTree(t);
-                got++;
-            }
-        }
-    }
-
-    /** 加载单棵树素材。🔴 树是纯装饰：加载失败就少一棵，绝不进 pending（素材卡死不能拖累演出/引擎） */
-    private ensureTree(t: SceneTree): void {
-        const im = new Image();
-        im.onload = () => { t.img = im; };
-        im.src = TREE_BASE_URL + (t.kind + 1) + '/' + (t.variant + 1) + '.png';
-    }
-
-    /**
-     * 加载 DE 地形贴图并铺地（2026-08-20 P0）。start 时调一次，之后各贴图 onload 时增量重铺。
-     * 🔴 与树/湖/云同规矩：纯装饰，加载失败就少一张、铺地露透明（真实地图兜底），绝不进 pending。
+     * 加载 DE 地形贴图并铺地（2026-08-20 P0）。start 时调一次，贴图 onload 时增量重铺。
+     * 🔴 与云同规矩：纯装饰，加载失败就露透明（真实地图兜底），绝不进 pending。
      */
     private initTerrain(): void {
         if (!this.canvas) return;
@@ -3021,30 +2837,46 @@ export class Scene13WarLayer {
         }
         this.terrain.width = this.canvas.width;
         this.terrain.height = this.canvas.height;
-        this.terrainImgs = {};
+        // 每场只选一张主地形，全场统一铺（绝不混色块——主人 2026-08-20 否掉随机混铺）
+        this.terrainTile = TERRAIN_TEMPERATE_FOREST[(Math.random() * TERRAIN_TEMPERATE_FOREST.length) | 0];
+        this.terrainSeed = (Math.random() * 0x7fffffff) | 0;   // 每场一个朝向种子，同场重铺结果稳定
+        this.terrainImg = null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
-        for (const name of TERRAIN_TEMPERATE_FOREST) {
-            const im = new Image();
-            this.terrainImgs[name] = im;
-            im.onload = () => this.paintTerrain();
-            im.src = TERRAIN_BASE_URL + name + '.png';
-        }
+        const im = new Image();
+        im.onload = () => { this.terrainImg = im; this.paintTerrain(); };
+        im.src = TERRAIN_BASE_URL + this.terrainTile + '.png';
     }
 
-    /** 把已加载的 DE 地形贴图分块随机铺满整屏（有就铺，没就透明；分块随机打散单调感）。 */
+    /**
+     * 把本场选中的那张 DE 地形贴图铺满整屏（统一一张，绝不混色块）。
+     *
+     * 🔴 [2026-08-20 修] 两条病根，主人截图实锤「地面有横向条带」：
+     *   ① 原来把 512² 的图**压缩成 256×256** 再铺 —— 纹理细节丢一半，还多一次插值糊；
+     *   ② 每块都是同一张图原样重复，**每 256px 一个完整周期**（1920 宽重复 7.5 次），
+     *      草皮上那几簇特征斑点整整齐齐排成行 = 肉眼一眼看穿的棋盘条带。
+     * 现在：**按原尺寸 512 铺**（重复周期翻倍、无缩放），且每块随机做
+     * 水平/垂直镜像 + 90° 旋转（8 种朝向）。DE 地形是无缝纹理，四边可互接，
+     * 镜像/旋转后接缝仍然对得上，但重复图案被打散 —— 这也是 AoE2 自己的做法。
+     */
     private paintTerrain(): void {
         const cv = this.terrain, g = this.terrainCtx;
         if (!cv || !g) return;
         g.clearRect(0, 0, cv.width, cv.height);
-        const ready = TERRAIN_TEMPERATE_FOREST.filter(n => {
-            const im = this.terrainImgs[n];
-            return im && im.complete && im.naturalWidth > 0;
-        });
-        if (!ready.length) return;
-        for (let y = 0; y < cv.height; y += TERRAIN_BLOCK) {
-            for (let x = 0; x < cv.width; x += TERRAIN_BLOCK) {
-                const im = this.terrainImgs[ready[(Math.random() * ready.length) | 0]];
-                g.drawImage(im, x, y, TERRAIN_BLOCK, TERRAIN_BLOCK);
+        const im = this.terrainImg;
+        if (!im || !im.complete || !im.naturalWidth) return;
+        const T = im.naturalWidth;                       // 原尺寸铺，不缩放
+        // 朝向按格位**确定性**取（同一场重铺结果一致，不会每帧/每次 resize 抖动）
+        const seed = this.terrainSeed;
+        for (let gy = 0, y = 0; y < cv.height; y += T, gy++) {
+            for (let gx = 0, x = 0; x < cv.width; x += T, gx++) {
+                const h = (gx * 73856093) ^ (gy * 19349663) ^ seed;
+                const o = (h >>> 3) & 7;                 // 0..7：4 朝向 × 是否镜像
+                g.save();
+                g.translate(x + T / 2, y + T / 2);
+                g.rotate((o & 3) * Math.PI / 2);
+                if (o & 4) g.scale(-1, 1);
+                g.drawImage(im, -T / 2, -T / 2);
+                g.restore();
             }
         }
     }
@@ -4470,38 +4302,10 @@ export class Scene13WarLayer {
         if (!ctx || !cv) return;
         ctx.clearRect(0, 0, cv.width, cv.height);
 
-        // 地形铺地：DE 贴图分块铺满整屏（最底层，湖/树/尸体/士兵全在它之上）
+        // 地形铺地：DE 贴图分块铺满整屏（最底层，尸体/士兵全在它之上）
         if (this.terrain) ctx.drawImage(this.terrain, 0, 0);
 
         const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number }[] = [];
-        // 湖：贴地水域，画在最底层（ground 尸体层之下），不参与 y 排序；本季一张图，随机镜像
-        for (const lk of this.lakes) {
-            if (!lk.img) continue;
-            if (lk.flip) {
-                ctx.save();
-                ctx.translate(lk.x, lk.y);
-                ctx.scale(-1, 1);
-                ctx.drawImage(lk.img, -LAKE_W / 2, -LAKE_H / 2, LAKE_W, LAKE_H);
-                ctx.restore();
-            } else {
-                ctx.drawImage(lk.img, lk.x - LAKE_W / 2, lk.y - LAKE_H / 2, LAKE_W, LAKE_H);
-            }
-        }
-        // 树：与湖同层（ground 尸体层之下），不参与 y 排序、不遮挡士兵；原图多大画多大，随机镜像。
-        for (const t of this.trees) {
-            if (!t.img) continue;
-            const iw = t.img.naturalWidth, ih = t.img.naturalHeight;
-            if (!iw || !ih) continue;
-            if (t.flip) {
-                ctx.save();
-                ctx.translate(t.x, t.y);
-                ctx.scale(-1, 1);
-                ctx.drawImage(t.img, -iw / 2, -ih, iw, ih);
-                ctx.restore();
-            } else {
-                ctx.drawImage(t.img, t.x - iw / 2, t.y - ih, iw, ih);
-            }
-        }
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
@@ -4659,7 +4463,7 @@ export class Scene13WarLayer {
         }
 
         // ── 云：画在**所有东西之上**（士兵/旗帜/箭矢之后），半透明横向飘过 ──
-        // 🔴 这是全场唯一"盖在人上面"的装饰层，和树/湖的规矩正好相反，别混。
+        // 🔴 这是全场唯一"盖在人上面"的装饰层。
         //    以中心为锚点，各自按 c.scale 缩放绘制。
         for (const c of this.clouds) {
             if (!c.img) continue;
