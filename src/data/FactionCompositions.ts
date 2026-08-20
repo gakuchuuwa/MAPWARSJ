@@ -745,14 +745,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 中欧·匈牙利 马扎尔骠骑军团（鹤翼阵 2+4+3：冠军剑士前锋 2 + 马扎尔骠骑主力 4 + 弩手后排 3）
-    // 2026-08-18 主人定：马扎尔城堡兵「马扎尔骠骑」配给匈牙利（布达佩斯）
+    // 匈牙利王国·布达佩斯（匈雅提亚诺什 · 黑军车堡火器军团 · 鹤翼阵 2+4+3：胡斯战车 2 + 马扎尔骠骑兵 4 + 火枪兵 3）
     mazhaer: {
         formationMode: 'crane_wing',
         slots: [
-            { type: 'champion', count: 2 },        // Row 0 步兵前锋 = 冠军剑士
-            { type: 'magyar_huszar', count: 4 },   // Row 1 骑兵主力两翼合围 = 马扎尔骠骑
-            { type: 'crossbowman', count: 3 },     // Row 2 后排支援 = 弩手
+            { type: 'hussite_wagon', count: 2 },    // Row 0 前排掩体 = 胡斯战车 2辆（战车环列构筑车堡防线）
+            { type: 'magyar_huszar', count: 4 },   // Row 1 两翼主力 = 马扎尔骠骑兵 4骑（匈牙利核心主力两翼雷霆突贯）
+            { type: 'hand_cannoneer', count: 3 },  // Row 2 车堡火力 = 火枪兵 3人（纯步兵·无马，车堡掩体内排枪齐射压制）
         ],
     },
     // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
