@@ -1254,12 +1254,12 @@ const SPRITE_TROOPS = 20;
  *    战线来回摆动，尸体沿途铺开。
  */
 /**
- * 烙进地面的尸体保留比例（主人 2026-08-12：先「减半」，同日改 30%）。
+ * 烙进地面的尸体保留比例（主人 2026-08-12 先「减半」→ 同日 30% → 2026-08-20 定为 50%）。
  * 嫌尸体推挤堆叠、盖住活人才要减。调这个数即可，`bakeCorpse` 的累加器会自动均匀取样。
  */
-const CORPSE_KEEP = 0.3;
+const CORPSE_KEEP = 0.5;
 /**
- * 溃逃（主人 2026-08-16）：不保留尸体的那 70% 兵不再播死亡动画，改为反向移动 + 渐隐，
+ * 溃逃（主人 2026-08-16）：不保留尸体的那 50% 兵不再播死亡动画，改为反向移动 + 渐隐，
  * 模拟兵败溃逃。速度比正常移动快（近战 55 / 骑兵 130）。跑完 FLEE_DUR 秒即消失。
  */
 const FLEE_SPD = 150;
@@ -4068,30 +4068,29 @@ export class Scene13WarLayer {
                         angle: attackAngle,
                         kind,
                         t: 0,
-                        // [2026-08-20 主人：白光有点少] 只加「看得见的量」——延长停留、加密火花，
-                        // 形状/尺寸一律不动（原设计定的就是「小巧克制」，加粗会变成糊脸的光污染）。
-                        dur: kind === 'thrust' ? 0.12 : 0.14,
-                        radius: kind === 'thrust' ? 10 : 12,
+                        // [2026-08-20 主人定] 稍微加大刀光弧度与停留时间，增强近战打击感
+                        dur: kind === 'thrust' ? 0.15 : 0.18,
+                        radius: kind === 'thrust' ? 16 : 20,
                         color,
                         flip: Math.random() < 0.5,
                     });
 
-                    // 出手伴随 2~4 颗微小金属飞溅火花（原 1~2，主人嫌少）
-                    const sparkCount = 2 + ((Math.random() * 3) | 0);
+                    // 出手伴随 4~7 颗金属飞溅火花（范围与尺寸适度放大）
+                    const sparkCount = 4 + ((Math.random() * 4) | 0);
                     const sparkColors = ['#FFF9E6', '#FFE066', '#FFB830', '#FFFFFF'];
                     for (let i = 0; i < sparkCount; i++) {
-                        const spd = 14 + Math.random() * 20;
+                        const spd = 22 + Math.random() * 32;
                         const baseAng = attackAngle + Math.PI * 0.5 * (Math.random() > 0.5 ? 1 : -1);
-                        const ang = baseAng + (Math.random() - 0.5) * 0.8;
+                        const ang = baseAng + (Math.random() - 0.5) * 0.9;
                         this.sparks.push({
-                            x: contactX + (Math.random() - 0.5) * 3,
-                            y: contactY + (Math.random() - 0.5) * 3,
+                            x: contactX + (Math.random() - 0.5) * 4,
+                            y: contactY + (Math.random() - 0.5) * 4,
                             vx: Math.cos(ang) * spd,
-                            vy: Math.sin(ang) * spd - 8,
+                            vy: Math.sin(ang) * spd - 10,
                             t: 0,
-                            dur: 0.13 + Math.random() * 0.09,
+                            dur: 0.16 + Math.random() * 0.12,
                             color: sparkColors[(Math.random() * sparkColors.length) | 0],
-                            size: 0.6 + Math.random() * 0.3,
+                            size: 1.1 + Math.random() * 0.6,
                         });
                     }
                 }
@@ -4249,9 +4248,9 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 这具尸体留不留？[2026-08-12 主人要求：先减半，同日再收到 30%] 战场只留 CORPSE_KEEP 比例。
-     * 用**累加器**而不是随机丢弃：每具加 0.3，攒够 1 才留一具 —— 十具留三具且间隔均匀，
-     * 随机丢弃会让尸体分布斑驳（这也是原来「隔一留一」写死 50% 时的同一个理由）。
+     * 这具尸体留不留？[2026-08-20 主人定：尸体 50% / 溃逃 50%] 战场只留 CORPSE_KEEP 比例。
+     * 用**累加器**而不是随机丢弃：每具加 CORPSE_KEEP，攒够 1 才留一具 —— 均匀取样，
+     * 随机丢弃会让尸体分布斑驳。
      */
     private takeCorpseSlot(): boolean {
         this.corpseAcc += CORPSE_KEEP;
@@ -4595,31 +4594,47 @@ export class Scene13WarLayer {
             ctx.globalAlpha = 1;
         }
 
-        // ── 刀光剑影（轻微半月斩击弧光 & 突刺枪芒，小巧克制）──
+        // ── 刀光剑影（半月斩击弧光 & 突刺枪芒 & 接触星芒）──
         if (this.slashes.length) {
             ctx.save();
             for (const s of this.slashes) {
                 const p = Math.min(1, s.t / s.dur);
-                const alpha = Math.max(0, 1 - p * p) * 0.85;
+                const alpha = Math.max(0, 1 - p * p) * 0.9;
                 ctx.save();
                 ctx.translate(s.x, s.y);
                 ctx.rotate(s.angle);
                 ctx.globalAlpha = alpha;
 
+                // 命中瞬间接触星芒（瞬态十字闪光）
+                if (p < 0.4) {
+                    const fp = p / 0.4;
+                    const fa = (1 - fp) * 0.95;
+                    const sl = (s.kind === 'thrust' ? 5.5 : 7) * (1 - fp * 0.35);
+                    ctx.save();
+                    ctx.globalAlpha = fa;
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 1.2 * (1 - fp);
+                    ctx.beginPath();
+                    ctx.moveTo(-sl, 0); ctx.lineTo(sl, 0);
+                    ctx.moveTo(0, -sl); ctx.lineTo(0, sl);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
                 if (s.kind === 'slash') {
-                    // 刀剑微弯斩击刀痕（非圆圈，短促贝塞尔弧刃）
+                    // 刀剑微弯斩击刀痕（弧刃更清晰张扬）
                     const len = s.radius * (0.9 + p * 0.2);
-                    const h = s.flip ? -2.8 : 2.8;
+                    const h = s.flip ? -3.8 : 3.8;
 
                     // 外层微光
                     ctx.beginPath();
                     ctx.moveTo(0, -len * 0.5);
                     ctx.quadraticCurveTo(h, 0, 0, len * 0.5);
                     ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 1.4 * (1 - p);
+                    ctx.lineWidth = 2.0 * (1 - p);
                     ctx.lineCap = 'round';
                     ctx.shadowColor = s.color;
-                    ctx.shadowBlur = 2;
+                    ctx.shadowBlur = 3;
                     ctx.stroke();
 
                     // 核心白亮线
@@ -4627,27 +4642,27 @@ export class Scene13WarLayer {
                     ctx.moveTo(0, -len * 0.38);
                     ctx.quadraticCurveTo(h * 0.7, 0, 0, len * 0.38);
                     ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 0.7 * (1 - p);
+                    ctx.lineWidth = 1.0 * (1 - p);
                     ctx.stroke();
                 } else {
-                    // 长枪/矛突刺短芒（沿刺击方向的细直短线）
-                    const len = s.radius * (0.8 + p * 0.3);
+                    // 长枪/矛突刺短芒（沿刺击方向的坚挺枪芒）
+                    const len = s.radius * (0.85 + p * 0.3);
 
                     ctx.beginPath();
                     ctx.moveTo(0, 0);
                     ctx.lineTo(len, 0);
                     ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 1.3 * (1 - p);
+                    ctx.lineWidth = 1.8 * (1 - p);
                     ctx.lineCap = 'round';
                     ctx.shadowColor = '#FFFFFF';
-                    ctx.shadowBlur = 2;
+                    ctx.shadowBlur = 3;
                     ctx.stroke();
 
                     ctx.beginPath();
                     ctx.moveTo(0, 0);
                     ctx.lineTo(len * 0.75, 0);
                     ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 0.6 * (1 - p);
+                    ctx.lineWidth = 0.9 * (1 - p);
                     ctx.stroke();
                 }
                 ctx.restore();
@@ -4655,18 +4670,18 @@ export class Scene13WarLayer {
             ctx.restore();
         }
 
-        // ── 兵刃交锋火花（微小金属细线）──
+        // ── 兵刃交锋火花（金属飞溅火星）──
         if (this.sparks.length) {
             ctx.save();
             for (const s of this.sparks) {
-                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.85;
+                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.9;
                 ctx.globalAlpha = alpha;
                 ctx.strokeStyle = s.color;
                 ctx.lineWidth = s.size;
                 ctx.lineCap = 'round';
 
-                // 沿速度反方向拉出极短火星尾迹线
-                const tailScale = 0.018;
+                // 沿速度反方向拉出火星尾迹线
+                const tailScale = 0.024;
                 const tailX = s.x - s.vx * tailScale;
                 const tailY = s.y - s.vy * tailScale;
 
@@ -4675,10 +4690,10 @@ export class Scene13WarLayer {
                 ctx.lineTo(tailX, tailY);
                 ctx.stroke();
 
-                // 火星头部微小亮点
+                // 火星头部亮点
                 ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size * 0.4, 0, Math.PI * 2);
+                ctx.arc(s.x, s.y, s.size * 0.5, 0, Math.PI * 2);
                 ctx.fill();
             }
             ctx.restore();

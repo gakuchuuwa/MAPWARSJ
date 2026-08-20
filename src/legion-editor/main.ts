@@ -747,9 +747,12 @@ interface FactionLegionRow {
     isCustom: boolean;
     /** 该势力的史实将领名（搜索用：主人习惯按武将找势力，如「施琅」→ wenling） */
     generalName?: string;
-    /** 精锐军团番号 + tier（如 wenling → 福建水师 T3），出处 ExpeditionLegions */
+    /** 精锐**番号** + tier（如 wenling → 福建水师 T3），出处 ExpeditionLegions。
+     *  🔴 番号 ≠ 军团名：军团名是这套三排编成自己的名字，存在 legion.legionName。 */
+    eliteName?: string;
+    eliteTier?: number;
+    /** 军团名称（三排编成这支部队的名字，如「瓦兰吉卫队军团」） */
     legionName?: string;
-    legionTier?: number;
     formationMode: FormationMode;
     slots: CompositionSlot[];
     row1Type: string;
@@ -780,7 +783,7 @@ let sortCol: string = 'region';
 let sortAsc: boolean = true;
 
 // ── 兵种图鉴视图状态 ──
-type MainView = 'factions' | 'units';
+type MainView = 'factions' | 'units' | 'naval';
 let mainView: MainView = 'factions';
 let catalogRows: DeUnitDef[] = [];
 let catalogSearch = '';
@@ -814,6 +817,7 @@ app.innerHTML = `
 </header>
 <div class="le-viewtabs">
   <button type="button" class="le-viewtab active" data-view="factions">⚔ 势力军团编排</button>
+  <button type="button" class="le-viewtab" data-view="naval">🚢 海军编排</button>
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
@@ -1208,8 +1212,9 @@ function buildRows(): void {
             regionLabel,
             isCustom,
             generalName: FACTION_GENERALS[f.id]?.generalName,
-            legionName: getExpeditionEliteConfig(f.id)?.name,
-            legionTier: getExpeditionEliteConfig(f.id)?.tier,
+            eliteName: getExpeditionEliteConfig(f.id)?.name,
+            eliteTier: getExpeditionEliteConfig(f.id)?.tier,
+            legionName: (localCustomCompositions[f.id] as any)?.legionName || undefined,
             formationMode,
             slots,
             row1Type: r1,
@@ -1253,6 +1258,7 @@ function applyFilter(): void {
                 || r.flagText.toLowerCase().includes(q)
                 || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q))
                 || (r.generalName && r.generalName.toLowerCase().includes(q))
+                || (r.eliteName && r.eliteName.toLowerCase().includes(q))
                 || (r.legionName && r.legionName.toLowerCase().includes(q));
             if (!match) return false;
         }
@@ -1292,7 +1298,7 @@ function renderTable(): void {
         ${filteredRows.map(r => `
           <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''}">
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
-            <td><b>${r.factionName}</b>${r.generalName ? `<span style="font-size:10px;color:#9a9080;margin-left:6px;">${r.generalName}</span>` : ''}${r.legionName ? `<div style="font-size:10px;color:#c9a86a;">⚔ ${r.legionName}</div>` : ''}</td>
+            <td><b>${r.factionName}</b>${r.generalName ? `<span style="font-size:10px;color:#9a9080;margin-left:6px;">${r.generalName}</span>` : ''}${r.legionName ? `<div style="font-size:10px;color:#c9a86a;">⚔ ${r.legionName}</div>` : ''}${r.eliteName ? `<div style="font-size:10px;color:#8f8676;">${r.eliteName}</div>` : ''}</td>
             <td>${r.capitalCityName}</td>
             <td><span style="color:#e0c888;font-size:11px;font-weight:bold;">${r.regionLabel}</span></td>
             <td><span class="cell-mode">${getFormationModeLabel(r.formationMode)}</span></td>
@@ -1353,6 +1359,7 @@ function selectFaction(factionId: string): void {
     const custom = localCustomCompositions[factionId];
     if (custom) {
         currentEditingLegion = {
+            legionName: (custom as any).legionName,
             formationMode: custom.formationMode,
             navalFormation: custom.navalFormation ?? 'auto',
             slots: custom.slots.map(s => ({ ...s })),
@@ -1370,7 +1377,8 @@ function selectFaction(factionId: string): void {
     borrowFactionId = '__DEFAULT__';
 
     renderTable();
-    renderEditPanel(row);
+    if (mainView === 'naval') renderNavalPanel(row);
+    else renderEditPanel(row);
 }
 
 /** 取某文化区的默认编成（与 buildRows 的兜底同源，勿另起一套） */
@@ -1398,6 +1406,74 @@ function getBorrowFactionOptions(region: RegionType | '', excludeFactionId: stri
         .sort((a, b) => (a.isCustom === b.isCustom
             ? a.factionName.localeCompare(b.factionName, 'zh-Hans-CN')
             : (a.isCustom ? -1 : 1)));
+}
+
+/** 🚢 海军编排面板：独立栏目，与陆军阵型各管各的（主人定：不许混在陆军面板里） */
+function renderNavalPanel(row: FactionLegionRow): void {
+    if (!currentEditingLegion) return;
+    const cur: NavalFormationMode = currentEditingLegion.navalFormation ?? 'auto';
+    const desc: Record<NavalFormationMode, string> = {
+        auto: '≤4 艘单纵 / ≥5 艘双列（旧行为）',
+        column: '鱼贯而行 · 内河海峡最窄不蹭岸',
+        double: '纵深减半 · 正面加宽一个船身',
+        line: '横向排开 · 舷侧齐射面最大',
+        wedge: '旗舰居前 · 后随向两翼斜后展开',
+    };
+    els.panelContent.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
+        <div>
+          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName || row.factionName}</div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>舰队队形</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">船数随兵力自动定（1~8 艘），旗舰领航</span>
+      </div>
+      <div class="le-mode-grid" style="grid-template-columns: repeat(2, 1fr);">
+        ${(['auto', 'column', 'double', 'line', 'wedge'] as NavalFormationMode[]).map(nm => `
+          <div class="le-mode-btn ${cur === nm ? 'active' : ''}" data-naval="${nm}">
+            <div>${NAVAL_FORMATION_LABEL[nm]}</div>
+            <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">${desc[nm]}</div>
+          </div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:#7e7666;margin-top:8px;">海军队形与陆军阵型互不影响：同一势力上岸打陆战用陆军阵型，下水才用这个。</div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button type="button" id="le-btn-save-naval" class="le-btn le-btn-primary" style="flex:1;">💾 保存【${row.factionName}】海军阵型</button>
+    </div>
+    `;
+
+    els.panelContent.querySelectorAll('.le-mode-btn[data-naval]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const nm = (btn as HTMLElement).dataset.naval as NavalFormationMode;
+            if (currentEditingLegion && (currentEditingLegion.navalFormation ?? 'auto') !== nm) {
+                currentEditingLegion.navalFormation = nm;
+                renderNavalPanel(row);
+            }
+        });
+    });
+
+    document.getElementById('le-btn-save-naval')?.addEventListener('click', async () => {
+        if (!currentEditingLegion) return;
+        localCustomCompositions[row.factionId] = {
+            legionName: currentEditingLegion.legionName,
+            formationMode: currentEditingLegion.formationMode,
+            navalFormation: currentEditingLegion.navalFormation ?? 'auto',
+            slots: currentEditingLegion.slots.map(sl => ({ ...sl })),
+        };
+        buildRows();
+        applyFilter();
+        selectFaction(row.factionId);
+        await saveAllCompositions();
+        showToast(`🚢【${row.factionName}】海军阵型已保存并写入文件`);
+    });
 }
 
 function renderEditPanel(row: FactionLegionRow): void {
@@ -1434,13 +1510,24 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div style="display:flex;align-items:center;gap:10px;">
         <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
         <div>
-          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${row.factionName}${row.legionName ? `　<span style="font-size:14px;color:#e0c888;">⚔ ${row.legionName}</span><span style="font-size:11px;color:#8f8676;margin-left:4px;">T${row.legionTier}</span>` : `　<span style="font-size:12px;color:#7e7666;font-weight:normal;">（无精锐番号）</span>`}</div>
-          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}</div>
+          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName ? currentEditingLegion.legionName : row.factionName}</div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">${row.factionName} | 首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
         </div>
       </div>
       <div>
         ${row.isCustom ? `<span class="status-tag status-custom" style="font-size:12px;padding:4px 8px;">专属定制</span>` : `<span class="status-tag status-default" style="font-size:12px;padding:4px 8px;">文化默认</span>`}
       </div>
+    </div>
+
+    <!-- 军团名称（这支三排编成部队自己的名字，不是精锐番号） -->
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>军团名称</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">前中后三排组成的这支部队叫什么</span>
+      </div>
+      <input id="le-legion-name" class="le-input" type="text" style="width:100%;"
+             placeholder="例如：瓦兰吉卫队军团 / 虎豹铁骑军团（留空则用势力名）"
+             value="${(currentEditingLegion?.legionName ?? '').replace(/"/g, '&quot;')}" />
     </div>
 
     <!-- 套用其他军团（两级：先选区、再选势力） -->
@@ -1489,26 +1576,6 @@ function renderEditPanel(row: FactionLegionRow): void {
           <div>3+3+3 方阵</div>
           <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">九宫等边固守</div>
         </div>
-      </div>
-    </div>
-
-        <!-- 1b. 海军阵型（水战/航行时，与陆军阵型各管各的） -->
-    <div class="le-form-section">
-      <div class="le-section-title">
-        <span>1b. 海军阵型</span>
-        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">下水后用这个；船数随兵力自动定（1~8 艘）</span>
-      </div>
-      <div class="le-mode-grid" style="grid-template-columns: repeat(5, 1fr);">
-        ${(['auto', 'column', 'double', 'line', 'wedge'] as NavalFormationMode[]).map(nm => `
-          <div class="le-mode-btn ${(currentEditingLegion!.navalFormation ?? 'auto') === nm ? 'active' : ''}" data-naval="${nm}">
-            <div>${NAVAL_FORMATION_LABEL[nm]}</div>
-            <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">${
-                nm === 'auto' ? '≤4 单纵 / ≥5 双列'
-                : nm === 'column' ? '鱼贯而行 · 内河最窄'
-                : nm === 'double' ? '纵深减半 · 正面加宽'
-                : nm === 'line' ? '横向排开 · 舷侧齐射'
-                : '旗舰居前 · 两翼斜展'}</div>
-          </div>`).join('')}
       </div>
     </div>
 
@@ -1632,15 +1699,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
         });
     });
 
-    // 海军阵型切换
-    els.panelContent.querySelectorAll('.le-mode-btn[data-naval]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const nm = (btn as HTMLElement).dataset.naval as NavalFormationMode;
-            if (currentEditingLegion && (currentEditingLegion.navalFormation ?? 'auto') !== nm) {
-                currentEditingLegion.navalFormation = nm;
-                renderEditPanel(row);
-            }
-        });
+    // 军团名称
+    const nameInput = document.getElementById('le-legion-name') as HTMLInputElement | null;
+    nameInput?.addEventListener('input', () => {
+        if (currentEditingLegion) currentEditingLegion.legionName = nameInput.value.trim() || undefined;
     });
 
     // 兵种选择弹窗打开
@@ -1688,6 +1750,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
         localCustomCompositions[row.factionId] = {
+            legionName: currentEditingLegion.legionName,
             formationMode: currentEditingLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
@@ -1940,6 +2003,7 @@ function switchMainView(view: MainView): void {
     }
 
     const isUnits = view === 'units';
+    const isNaval = view === 'naval';   // 海军栏目复用左侧势力表与搜索栏
     els.panel.classList.toggle('is-units', isUnits);
     els.toolbarFactions.style.display = isUnits ? 'none' : '';
     els.toolbarUnits.style.display = isUnits ? '' : 'none';
@@ -1962,7 +2026,12 @@ function switchMainView(view: MainView): void {
     } else {
         renderTable();
         const row = allRows.find(r => r.factionId === selectedFactionId);
-        if (row) renderEditPanel(row);
+        if (row) {
+            if (isNaval) renderNavalPanel(row);
+            else renderEditPanel(row);
+        } else {
+            els.panelContent.innerHTML = `<div class="le-empty-hint">← 请在左侧点击任意势力</div>`;
+        }
     }
 }
 

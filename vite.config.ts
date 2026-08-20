@@ -1878,6 +1878,7 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
     const renderEntry = (fid: string, comp: any): string => {
         const out: string[] = [];
         out.push('    ' + JSON.stringify(fid) + ': {');
+        if (comp.legionName) out.push('        legionName: ' + JSON.stringify(comp.legionName) + ',');
         out.push('        formationMode: ' + JSON.stringify(comp.formationMode || 'square') + ',');
         if (comp.navalFormation && comp.navalFormation !== 'auto') {
             out.push('        navalFormation: ' + JSON.stringify(comp.navalFormation) + ',');
@@ -1899,19 +1900,21 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
         const fm = /formationMode:\s*['"]([^'"]+)['"]/.exec(text);
         if (!fm) return null;
         const nf = /navalFormation:\s*['"]([^'"]+)['"]/.exec(text);
+        const ln = /legionName:\s*['"]([^'"]*)['"]/.exec(text);
         const slots: any[] = [];
         const re = /\{\s*type:\s*['"]([^'"]+)['"]\s*,\s*count:\s*([0-9.]+)\s*(?:,\s*scale:\s*([0-9.]+)\s*)?\}/g;
         let m: RegExpExecArray | null;
         while ((m = re.exec(text)) !== null) {
             slots.push({ type: m[1], count: Number(m[2]), scale: m[3] != null ? Number(m[3]) : 1.0 });
         }
-        return { formationMode: fm[1], navalFormation: nf ? nf[1] : 'auto', slots } as any;
+        return { formationMode: fm[1], navalFormation: nf ? nf[1] : 'auto', legionName: ln ? ln[1] : '', slots } as any;
     };
 
     const sameEntry = (a: any, b: any): boolean => {
         if (!a || !b) return false;
         if ((a.formationMode || 'square') !== (b.formationMode || 'square')) return false;
         if ((a.navalFormation || 'auto') !== (b.navalFormation || 'auto')) return false;
+        if ((a.legionName || '') !== (b.legionName || '')) return false;
         const as = a.slots || [], bs = b.slots || [];
         if (as.length !== bs.length) return false;
         for (let i = 0; i < as.length; i++) {
@@ -1982,6 +1985,7 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     lines.push(`import type { CompositionSlot } from '../types/LegionComposition';`);
     lines.push(``);
     lines.push(`export interface CustomFactionLegion {`);
+    lines.push(`    legionName?: string;`);
     lines.push(`    formationMode: FormationMode;`);
     lines.push(`    slots: CompositionSlot[];`);
     lines.push(`    navalFormation?: NavalFormationMode;`);
@@ -1991,6 +1995,7 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     for (const [fid, comp] of Object.entries(compositions)) {
         if (!comp || !Array.isArray(comp.slots)) continue;
         lines.push(`    ${JSON.stringify(fid)}: {`);
+        if (comp.legionName) lines.push(`        legionName: ${JSON.stringify(comp.legionName)},`);
         lines.push(`        formationMode: ${JSON.stringify(comp.formationMode || 'square')},`);
         if (comp.navalFormation && comp.navalFormation !== 'auto') {
             lines.push(`        navalFormation: ${JSON.stringify(comp.navalFormation)},`);
