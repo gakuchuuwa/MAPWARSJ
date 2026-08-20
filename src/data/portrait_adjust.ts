@@ -252,11 +252,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -49
         },
-        "/assets/liuhan/han_d_liubang.png": {
-            "scale": 0.94,
-            "offsetX": 2,
-            "offsetY": -29
-        },
         "/assets/litang/qianzhou_lisheng.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -2342,11 +2337,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/liuhan/ganzhou_dourong.png": {
-            "scale": 1.02,
-            "offsetX": 9,
-            "offsetY": -30
-        },
         "/assets/liuhan/li_lx_d_liguang.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -2938,7 +2928,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/JIANGNAN/wang_d_liuyu.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -3593,9 +3583,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -40
         },
         "/assets/LINGNAN/chimei_fanchong.png": {
-            "scale": 0.81,
+            "scale": 0.85,
             "offsetX": 0,
-            "offsetY": 5
+            "offsetY": 6
         },
         "/assets/CENTRAL_ASIA/badakhshan_yaerbeige.png": {
             "scale": 0.92,
@@ -4476,16 +4466,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 1,
             "offsetY": -7
-        },
-        "/assets/liuhan/__闲置__liuhan_19.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -28
-        },
-        "/assets/liuhan/__闲置__liuhan_20.png": {
-            "scale": 1.2,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/liuhan/__闲置__liuhan_22.png": {
             "scale": 1.05,
@@ -6317,16 +6297,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -32
         },
-        "/assets/liuhan/__闲置__liuhan_28.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -5
-        },
-        "/assets/liuhan/__闲置__liuhan_27.png": {
-            "scale": 1.25,
-            "offsetX": -23,
-            "offsetY": 18
-        },
         "/assets/STEPPE/__闲置__STEPPE_74.png": {
             "scale": 0.8,
             "offsetX": 0,
@@ -6716,6 +6686,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -30
+        },
+        "/assets/liuhan/__闲置__liuhan_30.png": {
+            "scale": 1.02,
+            "offsetX": 9,
+            "offsetY": -30
+        },
+        "/assets/liuhan/ganzhou_dourong.png": {
+            "scale": 0.94,
+            "offsetX": 2,
+            "offsetY": -29
+        },
+        "/assets/liuhan/__多余__liuhan_01.png": {
+            "scale": 0.94,
+            "offsetX": 2,
+            "offsetY": -29
+        },
+        "/assets/liuhan/han_d_liubang.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
