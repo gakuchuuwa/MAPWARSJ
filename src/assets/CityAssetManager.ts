@@ -931,6 +931,7 @@ export class CityAssetManager {
         'shengdian_qishi': '圣殿',
         'mozeer': '摩泽',
         'seleisi': '色雷',
+        'maerta_qishi': '马耳',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
