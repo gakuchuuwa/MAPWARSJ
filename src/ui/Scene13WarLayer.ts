@@ -2038,6 +2038,11 @@ interface DecorSprite {
     z: number;
     /** DE DAT 对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
+    /** 树连续阻挡若干秒后仅关闭碰撞；精灵图仍参与绘制。 */
+    obstructionReleaseAfterSec?: number;
+    obstructionContactSec: number;
+    obstructionTouched: boolean;
+    obstructionDisabled: boolean;
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 interface DecorPatch {
@@ -2045,6 +2050,8 @@ interface DecorPatch {
     img: HTMLImageElement | null;
     /** 不规则斑块的网格单元 [gx, gy]（clump 生长，非矩形） */
     cells: Array<[number, number]>;
+    /** 海岸连续遮罩（屏幕坐标）；存在时不再绘制逐格菱形。 */
+    polygon?: Array<{ x: number; y: number }>;
     alpha: number;
 }
 
@@ -2999,7 +3006,7 @@ export class Scene13WarLayer {
         this.isoGh = plan.grid.gh;
         this.elevGrid = plan.elevation;
         for (const p of plan.terrainPatches) {
-            this.addDecorCells(p.tile, p.cells, p.alpha);
+            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon);
         }
         for (const o of plan.objects) {
             this.ensureNatureAsset(o.asset);
@@ -3011,6 +3018,10 @@ export class Scene13WarLayer {
                 layer: o.layer,
                 z: o.z,
                 obstruction: o.obstruction,
+                obstructionReleaseAfterSec: o.obstructionReleaseAfterSec,
+                obstructionContactSec: 0,
+                obstructionTouched: false,
+                obstructionDisabled: false,
                 flip: o.flip,
             });
         }
@@ -3031,9 +3042,14 @@ export class Scene13WarLayer {
     }
 
     /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，等距菱形渲染） */
-    private addDecorCells(tile: string, cells: Array<[number, number]>, alpha = 1): void {
+    private addDecorCells(
+        tile: string,
+        cells: Array<[number, number]>,
+        alpha = 1,
+        polygon?: Array<{ x: number; y: number }>,
+    ): void {
         if (cells.length === 0) return;
-        const p: DecorPatch = { tile, img: null, cells, alpha };
+        const p: DecorPatch = { tile, img: null, cells, polygon, alpha };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.repaintDecor(); };
@@ -3106,15 +3122,23 @@ export class Scene13WarLayer {
         // 1. 白形状（斑块格，等距菱形）
         mctx.clearRect(0, 0, W, H);
         mctx.fillStyle = '#fff';
-        for (const [gx, gy] of p.cells) {
-            const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+        if (p.polygon && p.polygon.length >= 3) {
             mctx.beginPath();
-            mctx.moveTo(sx, sy - TILE_H / 2);
-            mctx.lineTo(sx + TILE_W / 2, sy);
-            mctx.lineTo(sx, sy + TILE_H / 2);
-            mctx.lineTo(sx - TILE_W / 2, sy);
+            mctx.moveTo(p.polygon[0].x, p.polygon[0].y);
+            for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x, p.polygon[i].y);
             mctx.closePath();
             mctx.fill();
+        } else {
+            for (const [gx, gy] of p.cells) {
+                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                mctx.beginPath();
+                mctx.moveTo(sx, sy - TILE_H / 2);
+                mctx.lineTo(sx + TILE_W / 2, sy);
+                mctx.lineTo(sx, sy + TILE_H / 2);
+                mctx.lineTo(sx - TILE_W / 2, sy);
+                mctx.closePath();
+                mctx.fill();
+            }
         }
         // 2. 高斯模糊（软化格子边缘）
         bctx.clearRect(0, 0, W, H);
@@ -3890,13 +3914,14 @@ export class Scene13WarLayer {
             let changed = false;
             for (const object of this.decorSprites) {
                 const obstruction = object.obstruction;
-                if (object.layer !== 'world' || !obstruction) continue;
+                if (object.layer !== 'world' || !obstruction || object.obstructionDisabled) continue;
                 const dx = px - object.x, dy = py - object.y;
                 let mapX = dx / TILE_W + dy / TILE_H;
                 let mapY = dy / TILE_H - dx / TILE_W;
                 const limitX = obstruction.x + unitTileRadius;
                 const limitY = obstruction.y + unitTileRadius;
                 if (Math.abs(mapX) >= limitX || Math.abs(mapY) >= limitY) continue;
+                if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
 
                 const penX = limitX - Math.abs(mapX);
                 const penY = limitY - Math.abs(mapY);
@@ -4361,10 +4386,17 @@ export class Scene13WarLayer {
 
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
+        for (const object of this.decorSprites) object.obstructionTouched = false;
         for (const m of this.men) {
             [m.x, m.y] = this.fieldBound(m.x, m.y);
             [m.x, m.y] = this.resolveWorldObstructions(m, m.x, m.y);
             [m.x, m.y] = this.fieldBound(m.x, m.y);
+        }
+        for (const object of this.decorSprites) {
+            const releaseAfter = object.obstructionReleaseAfterSec;
+            if (releaseAfter === undefined || object.obstructionDisabled) continue;
+            object.obstructionContactSec = object.obstructionTouched ? object.obstructionContactSec + dt : 0;
+            if (object.obstructionContactSec >= releaseAfter) object.obstructionDisabled = true;
         }
         // 🔴 [2026-08-17] 结算「这一帧到底挪了没有」——推挤和边界都收口之后才算得准。
         //    想走却被前面的人堵住时位移≈0，此时再播移动帧就是**原地迈腿**（主人实锤）。
