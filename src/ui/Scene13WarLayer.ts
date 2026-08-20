@@ -23,9 +23,9 @@ import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
-import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { getRegion, type RegionType } from '../systems/RegionSystem';
-import { resolveTerrainTile, DEFAULT_TERRAIN_TILE, detectBiome, BIOME_GROUND_DECOR, MOUNTAIN_ASSETS, BIOME_GROUND_VARIATION, pickTreeSpecies, treeCountFor } from './Scene13Biome';
+import { type RegionType } from '../systems/RegionSystem';
+import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
+import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -2180,6 +2180,8 @@ export interface Scene13WarInit {
     centerLng?: number;
     /** [军事科技] 当前年份 getter（由 GameAppCombatHooks 注入；战斗跨年时刷新科技分表） */
     getYear?: () => number;
+    /** [环境生成] 显式种子（测试用）；不传则从经纬度 + 双方势力/武将 id 派生 */
+    environmentSeed?: string;
 }
 
 export class Scene13WarLayer {
@@ -2207,6 +2209,8 @@ export class Scene13WarLayer {
     private clouds: SceneCloud[] = [];
     /** 本场季节（0=绿夏 1=橙秋 2=白冬）：start 时定一次，树/湖全场统一，禁混季 */
     private sceneSeason: 0 | 1 | 2 = 0;
+    /** 本场环境方案（生成器产出，纯数据；Scene13WarLayer 只负责画） */
+    private environmentPlan: Scene13EnvironmentPlan | null = null;
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     private centerLat: number | undefined;
     private centerLng: number | undefined;
@@ -2590,11 +2594,29 @@ export class Scene13WarLayer {
 
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
-            // P2：先定本场季节（海拔判据，见 currentSeasonKind），再据 biome+季节选地形贴图
-            this.sceneSeason = this.currentSeasonKind();
+            // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
+            this.environmentPlan = generateEnvironment({
+                lat: init.centerLat,
+                lng: init.centerLng,
+                seed: init.environmentSeed,
+                width: VW,
+                height: VH,
+                attackerFactionId: init.attackerFactionId,
+                defenderFactionId: init.defenderFactionId,
+                attackerGeneralId: init.attackerGeneralId,
+                defenderGeneralId: init.defenderGeneralId,
+                getCalendarSeason: () => {
+                    // TimeSystem.getSeason() 枚举：春0 夏1 秋2 冬3；环境只收 绿0/橙1/白2
+                    const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
+                    if (season === 3) return 2;   // 冬 → 白
+                    if (season === 2) return 1;   // 秋 → 橙
+                    return 0;                      // 春/夏 → 绿
+                },
+            });
+            this.sceneSeason = this.environmentPlan.season;
             this.initTerrain();
-            // P3：植被散布 + L3 点缀（画在尸体层之下）
-            this.initDecor(VW, VH);
+            // 按方案绘制装饰层（画在尸体层之下）
+            this.initDecor();
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
             //    跟随军团永远不动）。走 forceResultByRatio 判负通道：它调 onDecision →
@@ -2889,45 +2911,6 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 本场树/湖季节 = **战场真实海拔**（2026-08-18 主人定稿）：
-     *   ≥3600m（雪线高原/高山雪顶，如青藏高原、帕米尔/昆仑雪峰）→ 白(2)
-     *   600–3600m（山地/黄土高原/戈壁山麓/西域播仙一带/蒙古草原）→ 橙/秋(1)
-     *   <600m（低地/平原）→ 绿(0)     [600m = LandTerrainSystem.MOUNTAIN_ELEVATION_M 同源]
-     * 数据源 = 项目现成 ElevationSampler（Terrarium 高程瓦片 + LRU 缓存）：
-     *   - 瓦片已缓存 → 同步命中，直接定色
-     *   - 未缓存 → 后台拉取 + 文化区地貌/日历季节兜底（装饰绝不等待网络）
-     * 无坐标/采样失败（防御）→ 日历季节：春/夏绿、秋橙、冬白。
-     */
-    private currentSeasonKind(): 0 | 1 | 2 {
-        if (this.centerLat !== undefined && this.centerLng !== undefined) {
-            try {
-                const sampler = LandSeaSystem.getSampler();
-                const elev = sampler.getElevationSync(this.centerLat, this.centerLng);
-                if (elev !== null) {
-                    if (elev >= 3600) return 2;   // 高原雪线 → 白
-                    if (elev >= 600) return 1;    // 山地/黄土/西域高地 → 橙
-                    return 0;                     // 低地平原 → 绿
-                }
-                sampler.scheduleFetch(this.centerLat, this.centerLng);   // 预取，下局命中
-
-                // 首次未缓存时文化区地貌智能兜底：
-                const reg = getRegion(this.centerLat, this.centerLng);
-                if (reg === 'TIBET') return 2;
-                if (reg === 'WESTERN' || reg === 'STEPPE' || reg === 'HEXI' || reg === 'NORTH' || reg === 'CENTRAL_ASIA' || reg === 'NORTHEAST') {
-                    return 1; // 西域、草原、河西等黄色海拔带优先秋景
-                }
-            } catch (e) {
-                // 采样异常 → 走日历兜底
-            }
-        }
-        const ts = (window as any).game?.timeSystem;
-        const season = typeof ts?.getSeason === 'function' ? ts.getSeason() : 0;
-        if (season === 3) return 2;   // 冬 → 白
-        if (season === 2) return 1;   // 秋 → 橙
-        return 0;                     // 春/夏/未知 → 绿
-    }
-
-    /**
      * 加载 DE 地形贴图并铺地（2026-08-20 P0→P2）。start 时调一次，贴图 onload 时增量重铺。
      * 🔴 与云同规矩：纯装饰，加载失败就露透明（真实地图兜底），绝不进 pending。
      */
@@ -2940,11 +2923,8 @@ export class Scene13WarLayer {
         this.terrain.width = this.canvas.width;
         this.terrain.height = this.canvas.height;
         // 每场只选一张主地形，全场统一铺（绝不混色块——主人 2026-08-20 否掉随机混铺）
-        // P2：biome 判定选图（雪线→地中海→卫星色→纬度带→文化区 + L2 地貌修正）
-        this.terrainTile =
-            this.centerLat !== undefined && this.centerLng !== undefined
-                ? resolveTerrainTile(this.centerLat, this.centerLng, this.sceneSeason)
-                : DEFAULT_TERRAIN_TILE;
+        // P2：biome 判定选图（雪线→地中海→卫星色→纬度带→文化区 + L2 地貌修正）——由生成器定
+        this.terrainTile = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
         this.terrainImg = null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
         const im = new Image();
@@ -2990,18 +2970,8 @@ export class Scene13WarLayer {
     private isoCellX(gx: number, gy: number): number { return (gx - gy) * (TILE_W / 2) + this.isoOx; }
     private isoCellY(gx: number, gy: number): number { return (gx + gy) * (TILE_H / 2) + this.isoOy; }
 
-    /** 按画布尺寸定菱形网格：2:1 菱形须「整屏覆盖」——菱形总高 H ≥ VW/2 + VH，否则屏幕四角无格子 */
-    private setupIsoGrid(VW: number, VH: number): void {
-        const H = Math.ceil(VW / 2 + VH) + TILE_H;
-        const sum = Math.ceil(H / (TILE_H / 2));
-        this.isoGw = Math.ceil(sum / 2);
-        this.isoGh = sum - this.isoGw;
-        this.isoOx = VW / 2;
-        this.isoOy = (VH - (this.isoGw + this.isoGh) * (TILE_H / 2)) / 2;
-    }
-
-    /** 建装饰层画布 + 撒植被 + 铺 L3 点缀（start 调一次，素材 onload 时增量重画） */
-    private initDecor(VW: number, VH: number): void {
+    /** 建装饰层画布 + 按生成器方案铺贴片/物件（start 调一次，素材 onload 时增量重画） */
+    private initDecor(): void {
         if (!this.canvas) return;
         if (!this.decor) {
             this.decor = document.createElement('canvas');
@@ -3011,10 +2981,26 @@ export class Scene13WarLayer {
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
         this.decorPatches = [];
-        this.setupIsoGrid(VW, VH);
-        this.scatterVegetation(VW, VH);
-        this.paintEmbellishments(VW, VH);
+        this.applyEnvironmentPlan();
         this.repaintDecor();
+    }
+
+    /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
+    private applyEnvironmentPlan(): void {
+        const plan = this.environmentPlan;
+        if (!plan) return;
+        this.isoOx = plan.grid.ox;
+        this.isoOy = plan.grid.oy;
+        this.isoGw = plan.grid.gw;
+        this.isoGh = plan.grid.gh;
+        this.elevGrid = plan.elevation;
+        for (const p of plan.terrainPatches) {
+            this.addDecorCells(p.tile, p.cells, p.alpha);
+        }
+        for (const o of plan.objects) {
+            this.ensureNatureAsset(o.asset);
+            this.decorSprites.push({ asset: o.asset, frame: o.frame, x: o.x, y: o.y, z: o.z, flip: o.flip });
+        }
     }
 
     /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回 */
@@ -3039,267 +3025,6 @@ export class Scene13WarLayer {
         const im = new Image();
         im.onload = () => { p.img = im; this.repaintDecor(); };
         im.src = TERRAIN_BASE_URL + tile + '.png';
-    }
-
-    /** AoE2 clump 生长：从种子格随机向外长成不规则斑块（照搬 RMS 的斑块机制，非圆形也非矩形） */
-    private growClump(seedGx: number, seedGy: number, target: number, gw: number, gh: number, occupied: Set<string>): Array<[number, number]> {
-        const key = (x: number, y: number) => `${x},${y}`;
-        const cells: Array<[number, number]> = [[seedGx, seedGy]];
-        const frontier: Array<[number, number]> = [[seedGx, seedGy]];
-        occupied.add(key(seedGx, seedGy));
-        while (cells.length < target && frontier.length > 0) {
-            const fi = (Math.random() * frontier.length) | 0;
-            const [cx, cy] = frontier[fi];
-            const dirs: Array<[number, number]> = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-            for (let i = 3; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = dirs[i]; dirs[i] = dirs[j]; dirs[j] = t; }
-            let grown = false;
-            for (const [dx, dy] of dirs) {
-                const nx = cx + dx, ny = cy + dy;
-                if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
-                const k = key(nx, ny);
-                if (occupied.has(k)) continue;
-                occupied.add(k);
-                cells.push([nx, ny]);
-                frontier.push([nx, ny]);
-                grown = true;
-                break;
-            }
-            if (!grown) frontier.splice(fi, 1);
-        }
-        return cells;
-    }
-
-    /** 撒一个装饰精灵（所有素材原生尺寸、不缩放——主人 2026-08-20 定，才能与游戏对应） */
-    private addDecorSprite(asset: string, x: number, y: number, z: number, flip?: boolean): void {
-        this.ensureNatureAsset(asset);
-        this.decorSprites.push({
-            asset,
-            frame: (Math.random() * 100000) | 0,
-            x, y, z,
-            flip: flip ?? Math.random() < 0.5,
-        });
-    }
-
-    /** 植被散布：树（biome×季节 2~3 种混布）+ 灌木/花/岩石 + L2 山地大件 */
-    private scatterVegetation(VW: number, VH: number): void {
-        if (this.centerLat === undefined || this.centerLng === undefined) return;
-        const biome = detectBiome(this.centerLat, this.centerLng);
-        const season = this.sceneSeason;
-
-        const treeAssets = pickTreeSpecies(biome, season);
-        const treeCount = treeCountFor(biome);
-        // DE 聚丛成林：树不单独均匀撒，按 3~5 个林斑聚丛（高斯散布），固定缩放（DE 树不随机缩放）
-        const clusterCount = Math.max(2, Math.round(treeCount / 6));
-        const perCluster = Math.max(2, Math.round(treeCount / clusterCount));
-        let placed = 0;
-        for (let c = 0; c < clusterCount && placed < treeCount; c++) {
-            const cx = VW * (0.15 + Math.random() * 0.7);
-            const cy = VH * (0.15 + Math.random() * 0.7);
-            const radius = 60 + Math.random() * 70;   // 林斑半径（px）
-            const n = Math.min(perCluster, treeCount - placed);
-            for (let k = 0; k < n; k++) {
-                const u1 = Math.max(Math.random(), 1e-9), u2 = Math.random();
-                const r = radius * Math.sqrt(-2 * Math.log(u1));   // Box-Muller 高斯散布
-                const ang = u2 * Math.PI * 2;
-                this.addDecorSprite(treeAssets[(Math.random() * treeAssets.length) | 0], cx + r * Math.cos(ang), cy + r * Math.sin(ang), 1);
-                placed++;
-            }
-        }
-
-        const ground = BIOME_GROUND_DECOR[biome];
-        const decorCount = treeCount * (2 + ((Math.random() * 2) | 0));
-        for (let i = 0; i < decorCount; i++) {
-            const asset = ground[(Math.random() * ground.length) | 0];
-            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 0);
-        }
-
-        // 秋色落叶贴花（温带系秋季）
-        if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
-            const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
-            for (let i = 0; i < 3; i++) {
-                this.addDecorSprite(leaves[(Math.random() * leaves.length) | 0], Math.random() * VW, Math.random() * VH, 0);
-            }
-        }
-
-        // L2 山地大件：elev≥800 或坡度≥12°，贴边撒，别挡中央战场
-        const sample = LandSeaSystem.getSampler().getElevationAndSlopeSync(this.centerLat, this.centerLng);
-        if (sample && (sample.elevationM >= 800 || sample.slopeDeg >= 12)) {
-            const mCount = 3 + ((Math.random() * 3) | 0);
-            const edge = 70;
-            for (let i = 0; i < mCount; i++) {
-                const asset = MOUNTAIN_ASSETS[(Math.random() * MOUNTAIN_ASSETS.length) | 0];
-                const side = (Math.random() * 4) | 0;
-                let x = 0, y = 0;
-                if (side === 0) { x = Math.random() * VW; y = Math.random() * edge; }
-                else if (side === 1) { x = VW - Math.random() * edge; y = Math.random() * VH; }
-                else if (side === 2) { x = Math.random() * VW; y = VH - Math.random() * edge; }
-                else { x = Math.random() * edge; y = Math.random() * VH; }
-                this.addDecorSprite(asset, x, y, 2);
-            }
-        }
-    }
-
-    /** 水域探测：近海 → sea，近内陆水 → lake，否则 none */
-    private probeWater(): 'sea' | 'lake' | 'none' {
-        if (this.centerLat === undefined || this.centerLng === undefined) return 'none';
-        const off = 0.8;
-        const probes: Array<[number, number]> = [[0, 0], [off, 0], [-off, 0], [0, off], [0, -off]];
-        for (const [dlat, dlng] of probes) {
-            const lat = this.centerLat + dlat, lng = this.centerLng + dlng;
-            if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
-            if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) return 'lake';
-        }
-        return 'none';
-    }
-
-    /** L3 地图生成：在 biome 主地形上用 clump 生长铺出沙滩海岸线/水塘/道路/农田/地表变体（不规则斑块，非矩形硬拼） */
-    private paintEmbellishments(VW: number, VH: number): void {
-        if (this.centerLat === undefined || this.centerLng === undefined) return;
-        const reg = getRegion(this.centerLat, this.centerLng);
-        const biome = detectBiome(this.centerLat, this.centerLng);
-        const elev = LandSeaSystem.getSampler().getElevationSync(this.centerLat, this.centerLng);
-        const winter = this.sceneSeason === 2;
-        const water = this.probeWater();
-
-        const gw = this.isoGw, gh = this.isoGh;
-        const occupied = new Set<string>();
-
-        // 1. 临海：屏幕侧海岸线——按屏幕 x 分带（海→沙→水线湿沙），菱形格贴边
-        if (water === 'sea') {
-            const sideLeft = Math.random() < 0.5;
-            const sand = ['bch', 'bc2', 'bc3', 'bc4'][(Math.random() * 4) | 0];
-            const seaWater = ['wt2', 'wt3', 'wt4', 'wt5', 'wt6', 'wtr'][(Math.random() * 6) | 0];
-            const seaCells: Array<[number, number]> = [];
-            const sandCells: Array<[number, number]> = [];
-            const wetCells: Array<[number, number]> = [];
-            const seaEdgePx = VW * (0.10 + Math.random() * 0.08);            // 海带宽度（屏幕 x）
-            const sandEdgePx = seaEdgePx + VW * (0.07 + Math.random() * 0.06); // 沙带外缘
-            for (let gy = 0; gy < gh; gy++) {
-                for (let gx = 0; gx < gw; gx++) {
-                    const sx = this.isoCellX(gx, gy);
-                    const sy = this.isoCellY(gx, gy);
-                    if (sy < -TILE_H || sy > VH + TILE_H) continue;
-                    const x = sideLeft ? sx : VW - sx;
-                    if (x < seaEdgePx) seaCells.push([gx, gy]);
-                    else if (x < sandEdgePx) sandCells.push([gx, gy]);
-                    if (x >= seaEdgePx && x < seaEdgePx + TILE_W) wetCells.push([gx, gy]);
-                }
-            }
-            this.addDecorCells(seaWater, seaCells);
-            this.addDecorCells(sand, sandCells);
-            this.addDecorCells('beach_wet', wetCells);
-            for (let i = 0; i < 4; i++) {
-                const ra = Math.random() < 0.5 ? 'ROCK_BEACH' : (Math.random() < 0.5 ? 'ROCK_SEA1' : 'ROCK_SEA2');
-                this.addDecorSprite(ra, sideLeft ? VW * 0.18 + Math.random() * VW * 0.06 : VW * 0.82 - Math.random() * VW * 0.06, Math.random() * VH, 0);
-            }
-            this.addDecorSprite('OYSTERS', sideLeft ? VW * 0.15 : VW * 0.85, Math.random() * VH, 0);
-        } else if (water === 'lake') {
-            const swamp = elev !== null && elev < 200 && Math.random() < 0.35;
-            if (winter) {
-                const iceTile = ['ice', 'ic2', 'ic3', 'ice_beach'][(Math.random() * 4) | 0];
-                const n = 1 + ((Math.random() * 2) | 0);
-                for (let i = 0; i < n; i++) {
-                    const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
-                    this.addDecorCells(iceTile, this.growClump(sx, sy, 8 + ((Math.random() * 6) | 0), gw, gh, occupied));
-                }
-                for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0);
-            } else {
-                const pond = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2'][(Math.random() * 4) | 0];
-                const edgeTile = swamp ? (Math.random() < 0.5 ? 'sh4' : 'sh5') : ['sh2', 'sh3', 'sha'][(Math.random() * 3) | 0];
-                const nClumps = 2 + ((Math.random() * 2) | 0);
-                const allPond: Array<[number, number]> = [];
-                for (let i = 0; i < nClumps; i++) {
-                    const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
-                    allPond.push(...this.growClump(sx, sy, 6 + ((Math.random() * 5) | 0), gw, gh, occupied));
-                }
-                // 描边：水塘外圈相邻格
-                const pondSet = new Set(allPond.map(([x, y]) => `${x},${y}`));
-                const edgeCells: Array<[number, number]> = [];
-                const edgeSet = new Set<string>();
-                for (const [x, y] of allPond) {
-                    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-                        const nx = x + dx, ny = y + dy;
-                        if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
-                        const k = `${nx},${ny}`;
-                        if (!pondSet.has(k) && !edgeSet.has(k)) { edgeSet.add(k); edgeCells.push([nx, ny]); }
-                    }
-                }
-                this.addDecorCells(edgeTile, edgeCells);
-                this.addDecorCells(pond, allPond);
-                const px0 = allPond.length ? this.isoCellX(allPond[0][0], allPond[0][1]) : VW * 0.4;
-                const py0 = allPond.length ? this.isoCellY(allPond[0][0], allPond[0][1]) : VH * 0.4;
-                for (let i = 0; i < 4; i++) {
-                    const re = swamp ? 'UNDERBRUSH_JUNGLE' : ['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO'][(Math.random() * 4) | 0];
-                    this.addDecorSprite(re, px0 + Math.random() * VW * 0.3 - VW * 0.15, py0 + Math.random() * VH * 0.25 - VH * 0.12, 1);
-                }
-            }
-        }
-
-        // 3. 农田/梯田：角落 clump（东亚水田，其余旱田；东亚山地梯田）
-        const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
-        if (elev !== null) {
-            if (isEastAsia && elev >= 800) {
-                const t = ['rm1', 'rm2'][(Math.random() * 2) | 0];
-                this.addDecorCells(t, this.growClump(2, 2, 14 + ((Math.random() * 8) | 0), gw, gh, occupied));
-            } else if (elev < 600) {
-                const canFarm = isEastAsia || reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA';
-                if (canFarm) {
-                    const tiles = isEastAsia ? ['fm1', 'rc1', 'rc2', 'rc3'] : ['fc1', 'fc2', 'fc3', 'fm2'];
-                    const t = tiles[(Math.random() * tiles.length) | 0];
-                    this.addDecorCells(t, this.growClump(gw - 3, gh - 3, 11 + ((Math.random() * 11) | 0), gw, gh, occupied));
-                }
-            }
-        }
-
-        // 3.5 地表变体：小 clump 打散单调（低频、低透明）
-        const variation = BIOME_GROUND_VARIATION[biome];
-        for (let i = 0; i < 5; i++) {
-            const t = variation[(Math.random() * variation.length) | 0];
-            const sx = 1 + ((Math.random() * (gw - 2)) | 0), sy = 1 + ((Math.random() * (gh - 2)) | 0);
-            this.addDecorCells(t, this.growClump(sx, sy, 4 + ((Math.random() * 5) | 0), gw, gh, occupied), 0.22);
-        }
-
-        // 5.5 高地/丘陵：照 RMS create_elevation（clump 生长 + 高度等级；hillshade 着色 + 高峰岩石）
-        this.elevGrid = Array.from({ length: gh }, () => new Array(gw).fill(0));
-        {
-            const elevOcc = new Set<string>();
-            const hillCount = 3 + ((Math.random() * 2) | 0);
-            for (let i = 0; i < hillCount; i++) {
-                const lvl = Math.random() < 0.3 ? 2 : 1;
-                const sx = 3 + ((Math.random() * (gw - 6)) | 0), sy = 3 + ((Math.random() * (gh - 6)) | 0);
-                const cells = this.growClump(sx, sy, 10 + ((Math.random() * 15) | 0), gw, gh, elevOcc);
-                for (const [x, y] of cells) if (this.elevGrid[y][x] < lvl) this.elevGrid[y][x] = lvl;
-            }
-            // 高峰 clump（level 3）
-            if (Math.random() < 0.7) {
-                const sx = 4 + ((Math.random() * (gw - 8)) | 0), sy = 4 + ((Math.random() * (gh - 8)) | 0);
-                const cells = this.growClump(sx, sy, 5 + ((Math.random() * 6) | 0), gw, gh, elevOcc);
-                for (const [x, y] of cells) this.elevGrid[y][x] = 3;
-            }
-            // 丘陵/高峰撒山体岩石
-            for (let y = 0; y < gh; y++) {
-                for (let x = 0; x < gw; x++) {
-                    const h = this.elevGrid[y][x];
-                    if (h >= 3 || (h === 2 && Math.random() < 0.35)) {
-                        this.addDecorSprite(MOUNTAIN_ASSETS[(Math.random() * MOUNTAIN_ASSETS.length) | 0], this.isoCellX(x, y), this.isoCellY(x, y), 2);
-                    }
-                }
-            }
-        }
-
-        // 4. 资源点（全 biome 低频；已删金矿 + 黄果灌木——主人 2026-08-20 定「金子没必要」）
-        const resAssets = ['FORAGE_BUSH', 'MINE_STONE'];
-        const resCount = 2 + ((Math.random() * 3) | 0);
-        for (let i = 0; i < resCount; i++) {
-            this.addDecorSprite(resAssets[(Math.random() * resAssets.length) | 0], Math.random() * VW, Math.random() * VH, 0);
-        }
-
-        // 5. 战后残迹（低频）
-        const debrisCount = 1 + ((Math.random() * 2) | 0);
-        for (let i = 0; i < debrisCount; i++) {
-            this.addDecorSprite(Math.random() < 0.5 ? 'DECAL_CRACK' : 'DECAL_CRATER', Math.random() * VW, Math.random() * VH, 0);
-        }
-        this.addDecorSprite(Math.random() < 0.5 ? 'FELLED_GENERIC' : 'STUMP_GENERIC', Math.random() * VW, Math.random() * VH, 0);
     }
 
     /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
