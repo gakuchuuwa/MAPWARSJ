@@ -57,6 +57,8 @@ export interface TerrainPatchPlan {
     tile: string;
     /** 等距网格格 (gx, gy) */
     cells: Array<[number, number]>;
+    /** 屏幕空间连续遮罩；海岸使用它消除逐格菱形轮廓，cells 仍保留给占地区域判定。 */
+    polygon?: Array<{ x: number; y: number }>;
     alpha: number;
     category: TerrainPatchCategory;
 }
@@ -73,6 +75,8 @@ export interface EnvironmentObjectPlan {
     z: number;
     /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
+    /** 连续接触这么多秒后只关闭阻挡；图像仍作为 world 对象保留。 */
+    obstructionReleaseAfterSec?: number;
     flip: boolean;
     /** 精灵帧（动画 sheet 用；静态素材忽略） */
     frame: number;
@@ -124,6 +128,17 @@ export interface Scene13EnvironmentInput {
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
+const TREE_OBSTRUCTION_RELEASE_SEC = 3;
+const TREE_MIN_CENTER_SPACING_TILES = 1.4;
+const DE_TREE_OBJECTS = new Set([
+    'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
+    'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
+    'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
+    'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'PEACH_BLOSSOM',
+    'PINE', 'ASIAN_PINE', 'SNOW_PINE', 'MONKEY_PUZZLE',
+    'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
+    'BIRCH_WINTER', 'WILLOW',
+]);
 const DE_HALF_TILE_OBJECTS = new Set([
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
@@ -144,6 +159,33 @@ function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
         object.obstruction = DE_OBJECT_OBSTRUCTION[object.asset]
             ?? (DE_HALF_TILE_OBJECTS.has(object.asset) ? HALF_TILE_OBSTRUCTION : undefined);
+        if (DE_TREE_OBJECTS.has(object.asset)) {
+            object.obstructionReleaseAfterSec = TREE_OBSTRUCTION_RELEASE_SEC;
+        }
+    }
+}
+
+function enforceTreeSpacing(objects: EnvironmentObjectPlan[]): void {
+    const accepted: Array<{ x: number; y: number }> = [];
+    for (let i = 0; i < objects.length;) {
+        const object = objects[i];
+        if (!DE_TREE_OBJECTS.has(object.asset)) {
+            i++;
+            continue;
+        }
+        const separated = accepted.every((other) => {
+            const dx = object.x - other.x, dy = object.y - other.y;
+            const mapX = dx / TILE_W + dy / TILE_H;
+            const mapY = dy / TILE_H - dx / TILE_W;
+            return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
+                || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
+        });
+        if (!separated) {
+            objects.splice(i, 1);
+            continue;
+        }
+        accepted.push({ x: object.x, y: object.y });
+        i++;
     }
 }
 
@@ -320,14 +362,13 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
         // 不把巨型山峰精灵放进士兵活动区，避免单位从山体上穿过。
         if (waterKind === 'sea') {
-            // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石/牡蛎共用同一方向（P0 修复，勿再二次随机）
+            // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
             buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied);
             for (let i = 0; i < 4; i++) {
                 const ra = rng.chance(0.5) ? 'ROCK_BEACH' : (rng.chance(0.5) ? 'ROCK_SEA1' : 'ROCK_SEA2');
                 objects.push({ asset: ra, x: sideLeft ? VW * 0.18 + rng.next() * VW * 0.06 : VW * 0.82 - rng.next() * VW * 0.06, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
-            objects.push({ asset: 'OYSTERS', x: sideLeft ? VW * 0.15 : VW * 0.85, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         } else if (waterKind === 'lake') {
             buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
         }
@@ -342,6 +383,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildResources(VW, VH, rng, objects);
         buildDebris(VW, VH, rng, objects);
 
+        enforceTreeSpacing(objects);
         attachDeObjectObstruction(objects);
         return { seed, biome, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects };
     }
@@ -414,16 +456,29 @@ function buildCoastline(
     patches: TerrainPatchPlan[],
     occupied: Set<string>
 ): void {
-    // 海岸线边界逐行随机游走：有机曲线，不是直线。
-    // 🔴 x 已镜像（sideLeft?px:VW-px），左右岸共用同一近岸比例；右岸绝不再用 0.84 把整屏判成深水。
-    const boundary: number[] = [];
+    // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
+    const shoreline: Array<{ x: number; y: number }> = [];
     let bx = VW * 0.18;
     const step = TILE_W * 0.8;
-    for (let gy = 0; gy < gh; gy++) {
-        boundary[gy] = bx;
-        bx += (rng.next() - 0.5) * 2 * step;
+    for (let y = -TILE_H; y <= VH + TILE_H; y += TILE_H) {
+        const x = sideLeft ? bx : VW - bx;
+        shoreline.push({ x, y });
+        bx += (rng.next() - 0.5) * step;
         bx = Math.max(VW * 0.08, Math.min(VW * 0.32, bx));
     }
+
+    const boundaryAt = (y: number): number => {
+        const f = Math.max(0, Math.min(shoreline.length - 1, (y + TILE_H) / TILE_H));
+        const i = Math.min(shoreline.length - 2, Math.floor(f));
+        const t = f - i;
+        return shoreline[i].x + (shoreline[i + 1].x - shoreline[i].x) * t;
+    };
+    const inlandSign = sideLeft ? 1 : -1;
+    const bandPolygon = (outerOffset: number, innerOffset: number): Array<{ x: number; y: number }> => {
+        const outer = shoreline.map((p) => ({ x: p.x + inlandSign * outerOffset, y: p.y }));
+        const inner = shoreline.map((p) => ({ x: p.x + inlandSign * innerOffset, y: p.y })).reverse();
+        return [...outer, ...inner];
+    };
 
     const beachW = TILE_W * 1.5;   // 沙滩带
     const shallowW = TILE_W * 1.2; // 浅水带
@@ -437,29 +492,27 @@ function buildCoastline(
     const wet: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
-        const b = boundary[gy];
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
             if (py < -TILE_H || py > VH + TILE_H) continue; // 越界格不铺
-            const x = sideLeft ? px : VW - px;
-            const inner = b - shallowW - mediumW;
-            if (x < inner) deep.push([gx, gy]);
-            else if (x < b - shallowW) medium.push([gx, gy]);
-            else if (x < b) shallow.push([gx, gy]);
-            else if (x < b + wetW) wet.push([gx, gy]);
-            else if (x < b + wetW + beachW) beach.push([gx, gy]);
+            const signedDistance = (px - boundaryAt(py)) * inlandSign;
+            if (signedDistance < -shallowW - mediumW) deep.push([gx, gy]);
+            else if (signedDistance < -shallowW) medium.push([gx, gy]);
+            else if (signedDistance < 0) shallow.push([gx, gy]);
+            else if (signedDistance < wetW) wet.push([gx, gy]);
+            else if (signedDistance < wetW + beachW) beach.push([gx, gy]);
         }
     }
 
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
     mark(deep); mark(medium); mark(shallow); mark(beach); mark(wet);
 
-    patches.push({ tile: WATER_DEEP, cells: deep, alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(WATER_MEDIUM), cells: medium, alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(WATER_SHALLOW), cells: shallow, alpha: 1, category: 'shore' });
-    patches.push({ tile: BEACH_WET, cells: wet, alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(BEACH_SAND), cells: beach, alpha: 1, category: 'shore' });
+    patches.push({ tile: WATER_DEEP, cells: deep, polygon: bandPolygon(-VW, -shallowW - mediumW), alpha: 1, category: 'shore' });
+    patches.push({ tile: rng.pick(WATER_MEDIUM), cells: medium, polygon: bandPolygon(-shallowW - mediumW, -shallowW), alpha: 1, category: 'shore' });
+    patches.push({ tile: rng.pick(WATER_SHALLOW), cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore' });
+    patches.push({ tile: BEACH_WET, cells: wet, polygon: bandPolygon(0, wetW), alpha: 1, category: 'shore' });
+    patches.push({ tile: rng.pick(BEACH_SAND), cells: beach, polygon: bandPolygon(wetW, wetW + beachW), alpha: 1, category: 'shore' });
 }
 
 // ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────
@@ -605,6 +658,16 @@ function buildVegetation(
     // DE 聚丛成林：3~5 林斑 + 高斯散布
     const clusterCount = Math.max(2, Math.round(treeCount / 6));
     const perCluster = Math.max(2, Math.round(treeCount / clusterCount));
+    const treePositions = objects
+        .filter((object) => DE_TREE_OBJECTS.has(object.asset))
+        .map((object) => ({ x: object.x, y: object.y }));
+    const hasTreePassage = (x: number, y: number): boolean => treePositions.every((other) => {
+        const dx = x - other.x, dy = y - other.y;
+        const mapX = dx / TILE_W + dy / TILE_H;
+        const mapY = dy / TILE_H - dx / TILE_W;
+        return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
+            || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
+    });
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
         const cx = VW * (0.15 + rng.next() * 0.7);
@@ -613,16 +676,24 @@ function buildVegetation(
         const n = Math.min(perCluster, treeCount - placed);
         for (let k = 0; k < n; k++) {
             // 🔴 Box-Muller 高斯半径无上界会越界 → 越界重新采样（非 clamp，避免树堆成边缘直线）
-            let tx = cx, ty = cy;
-            for (let attempt = 0; attempt < 40; attempt++) {
+            let tx = 0, ty = 0;
+            let found = false;
+            for (let attempt = 0; attempt < 80; attempt++) {
                 const u1 = Math.max(rng.next(), 1e-9), u2 = rng.next();
                 const r = radius * Math.sqrt(-2 * Math.log(u1));
                 const ang = u2 * Math.PI * 2;
                 const sx = cx + r * Math.cos(ang);
                 const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH) { tx = sx; ty = sy; break; }
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy)) {
+                    tx = sx;
+                    ty = sy;
+                    found = true;
+                    break;
+                }
             }
+            if (!found) continue;
             objects.push({ asset: rng.pick(treeAssets), x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            treePositions.push({ x: tx, y: ty });
             placed++;
         }
     }
