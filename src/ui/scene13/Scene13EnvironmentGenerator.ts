@@ -149,6 +149,12 @@ const DE_TREE_OBJECTS = new Set([
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW',
 ]);
+const GROUND_COVER_ASSETS = new Set([
+    'GRASS_DRY', 'GRASS_DRY_PATCH', 'GRASS_GREEN', 'GRASS_GREEN_PATCH', 'WEED',
+    'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
+    'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH',
+    'UNDERBRUSH', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
+]);
 const DE_HALF_TILE_OBJECTS = new Set([
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
@@ -508,7 +514,9 @@ function buildCoastline(
         const p2 = controls[Math.min(controls.length - 1, segment + 1)];
         const p3 = controls[Math.min(controls.length - 1, segment + 2)];
         const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
-        shoreline.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
+        const minX = sideLeft ? VW * 0.08 : VW * 0.68;
+        const maxX = sideLeft ? VW * 0.32 : VW * 0.92;
+        shoreline.push({ x: Math.max(minX, Math.min(maxX, catmullRom(p0.x, p1.x, p2.x, p3.x, t))), y });
     }
 
     const boundaryAt = (y: number): number => {
@@ -678,7 +686,7 @@ function buildGroundVariation(
     }
 
     if (elevationBand === 'lowland' || elevationBand === 'snow') return;
-    const dry = biome === 'desert' || biome === 'savanna' || biome === 'temperate_grass';
+    const dry = biome === 'desert' || biome === 'savanna' || biome === 'cold_steppe' || biome === 'temperate_grass';
     const altitudeTiles = elevationBand === 'upland'
         ? (dry ? ['pc1', 'pc2', 'pm1'] : ['pm1', 'rock_wet', 'gravel_wet'])
         : (dry ? ['rck', 'gravel_default', 'qs2'] : ['rck', 'rock_wet', 'gravel_wet']);
@@ -795,7 +803,8 @@ function buildVegetation(
     const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
         const p = sampleLandPos(VW, VH, rng, isWater);
-        objects.push({ asset: rng.pick(ground), x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const asset = rng.pick(ground);
+        objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
     // 秋色落叶贴花（温带系秋季）

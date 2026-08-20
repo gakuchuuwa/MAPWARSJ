@@ -1028,6 +1028,10 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
 const DEFAULT_SHOOT_PHASE = 4;
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
+/** 火枪弹丸渲染放大：DE 原弹丸仅 4×8 像素（渲染 9px 肉眼不可见），放大到可见（游戏合理，主人 2026-08-20 定）。 */
+const PROJ_SCALE_OVERRIDE: Record<string, number> = {
+    PROJ_SHOT: 2.6,
+};
 /**
  * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。
  * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察/象弓（默认，不必列）；
@@ -1042,7 +1046,7 @@ const PROJ_TYPE: Record<string, string> = {
     antiquity_scorpion: 'PROJ_BOLT',
     antiquity_heavy_scorpion: 'PROJ_BOLT',
     antiquity_siege_tower: 'PROJ_BOLT',   // DE: SIEGTWR → Projectile Helepolis → p_bolt（塔上弩机）
-    flamethrower: 'PROJ_SHOT',        // 猛火油柜喷火，用火器弹丸
+    flamethrower: 'PROJ_FIRE',         // 猛火油柜喷火：用火焰抛射物（30 帧火舌，非弹丸）
     helepolis: 'PROJ_BOLT',           // 攻城塔射弩箭
     // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
     //    DE 里它有专属弹丸 `Projectile Hussite Wagon`(id 1733)，我们没登记 → 落回默认 PROJ_ARROW。
@@ -1119,7 +1123,7 @@ const PROJ_TYPE: Record<string, string> = {
     grenadier: 'PROJ_GRENADE',
 };
 /** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
-const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT']);
+const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
@@ -1217,8 +1221,8 @@ const FX_SCALE: Record<string, number> = {
     FX_PETARD: 0.4,               // 147px ≈ 2.9 倍兵高：自爆比炮弹更炸，但不许糊住半屏
     FX_MUZZLE_BOMBARD: 0.35,      //  38px ≈ 0.76 倍：大炮口径最大，焰也最大
     FX_MUZZLE_ORGAN: 0.30,        //  26px ≈ 0.53 倍
-    FX_MUZZLE_HAND: 0.30,         //  24px ≈ 0.47 倍：火枪枪口焰应明显小于人
-    FX_MUZZLE_CONQ: 0.30,         //  30px ≈ 0.60 倍
+    FX_MUZZLE_HAND: 0.42,         //  33px ≈ 0.66 倍：火枪枪口焰放大，让开火可见（原 0.30 太小）
+    FX_MUZZLE_CONQ: 0.40,         //  40px ≈ 0.80 倍
     FX_MUZZLE_FIRELANCE: 0.40,    //  36px ≈ 0.72 倍：火矛是喷射，比枪口焰长
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
@@ -4801,7 +4805,6 @@ export class Scene13WarLayer {
         //   抛物线位置照旧（420ms + 弧高 = 距离×0.3 封顶 100px），只换画法不换飞法。
         if (this.arrows.length) {
             ctx.save();
-            const S = PROJ_SCALE;
             for (const a of this.arrows) {
                 const delay = a.delay ?? 0;
                 if (a.t < delay) continue;          // 连发尚未射出
@@ -4821,10 +4824,14 @@ export class Scene13WarLayer {
                 const vy = a.dy * a.len - (PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * (1 - 2 * p));
                 const angle = Math.atan2(vy, vx) + (PROJ_ANGLE_OFFSET[a.proj] ?? 0);
 
+                const S = PROJ_SCALE * (PROJ_SCALE_OVERRIDE[a.proj] ?? 1);
                 let fr = 0;
                 if (a.proj === 'PROJ_THROWING_AXE') {
                     // 飞斧空中 360° 旋转
                     fr = Math.floor(p * 24) % pa.n;
+                } else if (a.proj === 'PROJ_FIRE') {
+                    // 猛火油柜喷火：30 帧火焰动画循环播放
+                    fr = Math.floor(p * pa.n) % pa.n;
                 } else if (pa.n > 1) {
                     // 箭矢/标枪/飞镖取正水平基准帧，由 rotate(angle) 切线角精确控制全 360° 俯仰与起伏
                     fr = Math.floor(pa.n / 2);
