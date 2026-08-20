@@ -353,7 +353,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/CENTRAL/ruzhou_sunjian.png": {
-            "scale": 1.11,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -3173,9 +3173,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/DIANQIAN/hani_d_zhebi.png": {
-            "scale": 0.76,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": -34
+            "offsetY": -8
         },
         "/assets/daming/zu_d_yuanchonghuan.png": {
             "scale": 1.07,
@@ -6667,10 +6667,20 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/DIANQIAN/konbaung_yongjiya.png": {
+        "/assets/DIANQIAN/d2be4ea8-e622-45be-b615-8f59e7acc6f3.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -31
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_34.png": {
             "scale": 1.2,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/DIANQIAN/konbaung_yongjiya.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -31
         }
     },
     "folderGuides": {
