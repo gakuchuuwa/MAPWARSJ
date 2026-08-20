@@ -1527,13 +1527,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'crusader_knight', count: 2 },
         ],
     },
-    // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 掷斧兵 2）
+    // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 斯拉夫贵族铁骑 2）
     luosi: {
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },          // Row 0 前卫抗线 = 诺斯狂暴战士 3人（单手持斧配大圆盾，前排结盾墙筑壁抗线）
-            { type: 'elite_berserk', count: 4 },          // Row 1 中军主力 = 维京狂战士精锐 4人（瓦兰吉重铠近卫死士，中军强力突破）
-            { type: 'throwing_axeman', count: 2 },        // Row 2 尾收破甲 = 掷斧兵 2人（狂暴重型飞斧齐掷破盾）
+            { type: 'elite_berserk', count: 4 },          // Row 1 中军主力 = 维京狂战士精锐 4人（瓦兰吉双手大斧重铠近卫死士，中军主力突破）
+            { type: 'boyar', count: 2 },                  // Row 2 两翼铁骑 = 斯拉夫贵族铁骑 2骑（罗斯波雅尔亲军战马两翼突击合围）
         ],
     },
     qiernigeweifu_gongguo: {
@@ -1541,7 +1541,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'norse_warrior', count: 3 },
             { type: 'elite_berserk', count: 4 },
-            { type: 'throwing_axeman', count: 2 },
+            { type: 'boyar', count: 2 },
         ],
     },
     // 北欧与维京·奥拉夫 / 阿布萨隆 / 比尔格雅尔 诺斯狂战士军团（鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 精锐狂战士主力 4 + 掷矛手 2）
