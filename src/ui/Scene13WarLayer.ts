@@ -861,10 +861,11 @@ const CLOUD_ALPHA_MAX = 0.55;
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 /** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
-/** 装饰层地面单元格边长（px）：AoE2 clump 生长的粒度（照搬 RMS 的斑块生长，不做矩形硬拼） */
-const DECOR_CELL = 16;
-/** 斑块边界羽化半径（px）：高斯模糊软化格子边缘，纹理经 source-in 保持清晰 */
-const DECOR_BLUR = 8;
+/** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
+const TILE_W = 64;
+const TILE_H = 32;
+/** 斑块边界羽化半径（px）：DE 过渡是硬边菱形阶梯，只留 2px 抗锯齿，不再大羽化 */
+const DECOR_BLUR = 2;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2038,7 +2039,6 @@ interface DecorPatch {
     img: HTMLImageElement | null;
     /** 不规则斑块的网格单元 [gx, gy]（clump 生长，非矩形） */
     cells: Array<[number, number]>;
-    cellSize: number;
     alpha: number;
 }
 
@@ -2971,6 +2971,26 @@ export class Scene13WarLayer {
 
     // ── 装饰层（P3 植被 + L3 点缀）：画在尸体层之下，永不遮士兵 ──────────────
 
+    // ── 等距菱形网格（主人 2026-08-20 定：地面等距菱形，2:1 投影） ──
+    private isoOx = 0;
+    private isoOy = 0;
+    private isoGw = 0;
+    private isoGh = 0;
+
+    /** 网格 (gx, gy) → 菱形中心屏幕坐标（2:1 等距投影） */
+    private isoCellX(gx: number, gy: number): number { return (gx - gy) * (TILE_W / 2) + this.isoOx; }
+    private isoCellY(gx: number, gy: number): number { return (gx + gy) * (TILE_H / 2) + this.isoOy; }
+
+    /** 按画布尺寸定菱形网格：2:1 菱形须「整屏覆盖」——菱形总高 H ≥ VW/2 + VH，否则屏幕四角无格子 */
+    private setupIsoGrid(VW: number, VH: number): void {
+        const H = Math.ceil(VW / 2 + VH) + TILE_H;
+        const sum = Math.ceil(H / (TILE_H / 2));
+        this.isoGw = Math.ceil(sum / 2);
+        this.isoGh = sum - this.isoGw;
+        this.isoOx = VW / 2;
+        this.isoOy = (VH - (this.isoGw + this.isoGh) * (TILE_H / 2)) / 2;
+    }
+
     /** 建装饰层画布 + 撒植被 + 铺 L3 点缀（start 调一次，素材 onload 时增量重画） */
     private initDecor(VW: number, VH: number): void {
         if (!this.canvas) return;
@@ -2982,6 +3002,7 @@ export class Scene13WarLayer {
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
         this.decorPatches = [];
+        this.setupIsoGrid(VW, VH);
         this.scatterVegetation(VW, VH);
         this.paintEmbellishments(VW, VH);
         this.repaintDecor();
@@ -3001,10 +3022,10 @@ export class Scene13WarLayer {
             .catch(() => {});
     }
 
-    /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，非矩形硬拼） */
+    /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，等距菱形渲染） */
     private addDecorCells(tile: string, cells: Array<[number, number]>, alpha = 1): void {
         if (cells.length === 0) return;
-        const p: DecorPatch = { tile, img: null, cells, cellSize: DECOR_CELL, alpha };
+        const p: DecorPatch = { tile, img: null, cells, alpha };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.repaintDecor(); };
@@ -3131,11 +3152,10 @@ export class Scene13WarLayer {
         const winter = this.sceneSeason === 2;
         const water = this.probeWater();
 
-        const gw = Math.max(1, Math.ceil(VW / DECOR_CELL));
-        const gh = Math.max(1, Math.ceil(VH / DECOR_CELL));
+        const gw = this.isoGw, gh = this.isoGh;
         const occupied = new Set<string>();
 
-        // 1. 临海/临河湖/沼泽
+        // 1. 临海：屏幕侧海岸线——按屏幕 x 分带（海→沙→水线湿沙），菱形格贴边
         if (water === 'sea') {
             const sideLeft = Math.random() < 0.5;
             const sand = ['bch', 'bc2', 'bc3', 'bc4'][(Math.random() * 4) | 0];
@@ -3143,12 +3163,18 @@ export class Scene13WarLayer {
             const seaCells: Array<[number, number]> = [];
             const sandCells: Array<[number, number]> = [];
             const wetCells: Array<[number, number]> = [];
+            const seaEdgePx = VW * (0.10 + Math.random() * 0.08);            // 海带宽度（屏幕 x）
+            const sandEdgePx = seaEdgePx + VW * (0.07 + Math.random() * 0.06); // 沙带外缘
             for (let gy = 0; gy < gh; gy++) {
-                const seaW = 7 + ((Math.random() * 10) | 0);
-                const sandW = seaW + 4 + ((Math.random() * 10) | 0);
-                for (let gx = 0; gx < seaW; gx++) seaCells.push([sideLeft ? gx : gw - 1 - gx, gy]);
-                for (let gx = seaW; gx < sandW; gx++) sandCells.push([sideLeft ? gx : gw - 1 - gx, gy]);
-                wetCells.push([sideLeft ? seaW : gw - 1 - seaW, gy]);
+                for (let gx = 0; gx < gw; gx++) {
+                    const sx = this.isoCellX(gx, gy);
+                    const sy = this.isoCellY(gx, gy);
+                    if (sy < -TILE_H || sy > VH + TILE_H) continue;
+                    const x = sideLeft ? sx : VW - sx;
+                    if (x < seaEdgePx) seaCells.push([gx, gy]);
+                    else if (x < sandEdgePx) sandCells.push([gx, gy]);
+                    if (x >= seaEdgePx && x < seaEdgePx + TILE_W) wetCells.push([gx, gy]);
+                }
             }
             this.addDecorCells(seaWater, seaCells);
             this.addDecorCells(sand, sandCells);
@@ -3165,7 +3191,7 @@ export class Scene13WarLayer {
                 const n = 1 + ((Math.random() * 2) | 0);
                 for (let i = 0; i < n; i++) {
                     const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
-                    this.addDecorCells(iceTile, this.growClump(sx, sy, 28 + ((Math.random() * 21) | 0), gw, gh, occupied));
+                    this.addDecorCells(iceTile, this.growClump(sx, sy, 8 + ((Math.random() * 6) | 0), gw, gh, occupied));
                 }
                 for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0);
             } else {
@@ -3175,7 +3201,7 @@ export class Scene13WarLayer {
                 const allPond: Array<[number, number]> = [];
                 for (let i = 0; i < nClumps; i++) {
                     const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
-                    allPond.push(...this.growClump(sx, sy, 21 + ((Math.random() * 21) | 0), gw, gh, occupied));
+                    allPond.push(...this.growClump(sx, sy, 6 + ((Math.random() * 5) | 0), gw, gh, occupied));
                 }
                 // 描边：水塘外圈相邻格
                 const pondSet = new Set(allPond.map(([x, y]) => `${x},${y}`));
@@ -3191,8 +3217,8 @@ export class Scene13WarLayer {
                 }
                 this.addDecorCells(edgeTile, edgeCells);
                 this.addDecorCells(pond, allPond);
-                const px0 = allPond.length ? allPond[0][0] * DECOR_CELL : VW * 0.4;
-                const py0 = allPond.length ? allPond[0][1] * DECOR_CELL : VH * 0.4;
+                const px0 = allPond.length ? this.isoCellX(allPond[0][0], allPond[0][1]) : VW * 0.4;
+                const py0 = allPond.length ? this.isoCellY(allPond[0][0], allPond[0][1]) : VH * 0.4;
                 for (let i = 0; i < 4; i++) {
                     const re = swamp ? 'UNDERBRUSH_JUNGLE' : ['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO'][(Math.random() * 4) | 0];
                     this.addDecorSprite(re, px0 + Math.random() * VW * 0.3 - VW * 0.15, py0 + Math.random() * VH * 0.25 - VH * 0.12, 1);
@@ -3205,13 +3231,13 @@ export class Scene13WarLayer {
         if (elev !== null) {
             if (isEastAsia && elev >= 800) {
                 const t = ['rm1', 'rm2'][(Math.random() * 2) | 0];
-                this.addDecorCells(t, this.growClump(2, 2, 50 + ((Math.random() * 30) | 0), gw, gh, occupied));
+                this.addDecorCells(t, this.growClump(2, 2, 14 + ((Math.random() * 8) | 0), gw, gh, occupied));
             } else if (elev < 600) {
                 const canFarm = isEastAsia || reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA';
                 if (canFarm) {
                     const tiles = isEastAsia ? ['fm1', 'rc1', 'rc2', 'rc3'] : ['fc1', 'fc2', 'fc3', 'fm2'];
                     const t = tiles[(Math.random() * tiles.length) | 0];
-                    this.addDecorCells(t, this.growClump(gw - 3, gh - 3, 42 + ((Math.random() * 42) | 0), gw, gh, occupied));
+                    this.addDecorCells(t, this.growClump(gw - 3, gh - 3, 11 + ((Math.random() * 11) | 0), gw, gh, occupied));
                 }
             }
         }
@@ -3221,7 +3247,7 @@ export class Scene13WarLayer {
         for (let i = 0; i < 3; i++) {
             const t = variation[(Math.random() * variation.length) | 0];
             const sx = 1 + ((Math.random() * (gw - 2)) | 0), sy = 1 + ((Math.random() * (gh - 2)) | 0);
-            this.addDecorCells(t, this.growClump(sx, sy, 14 + ((Math.random() * 17) | 0), gw, gh, occupied), 0.55);
+            this.addDecorCells(t, this.growClump(sx, sy, 4 + ((Math.random() * 5) | 0), gw, gh, occupied), 0.55);
         }
 
         // 4. 资源点（全 biome 低频；已删金矿 + 黄果灌木——主人 2026-08-20 定「金子没必要」）
@@ -3248,7 +3274,7 @@ export class Scene13WarLayer {
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
-        const sorted = [...this.decorSprites].sort((a, b) => a.z - b.z);
+        const sorted = [...this.decorSprites].sort((a, b) => (a.z - b.z) || (a.y - b.y));
         for (const s of sorted) this.drawDecorSprite(g, s);
     }
 
@@ -3261,11 +3287,19 @@ export class Scene13WarLayer {
         const mcv = this.maskCv, mctx = this.maskCtx!;
         const bcv = this.blurCv, bctx = this.blurCtx!;
         if (mcv.width !== W || mcv.height !== H) { mcv.width = W; mcv.height = H; bcv.width = W; bcv.height = H; }
-        // 1. 白形状（斑块格）
+        // 1. 白形状（斑块格，等距菱形）
         mctx.clearRect(0, 0, W, H);
         mctx.fillStyle = '#fff';
-        const cs = p.cellSize;
-        for (const [gx, gy] of p.cells) mctx.fillRect(gx * cs, gy * cs, cs, cs);
+        for (const [gx, gy] of p.cells) {
+            const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+            mctx.beginPath();
+            mctx.moveTo(sx, sy - TILE_H / 2);
+            mctx.lineTo(sx + TILE_W / 2, sy);
+            mctx.lineTo(sx, sy + TILE_H / 2);
+            mctx.lineTo(sx - TILE_W / 2, sy);
+            mctx.closePath();
+            mctx.fill();
+        }
         // 2. 高斯模糊（软化格子边缘）
         bctx.clearRect(0, 0, W, H);
         bctx.filter = `blur(${DECOR_BLUR}px)`;
