@@ -107,12 +107,12 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SLAVIC:       'crane_wing',   // 斯拉夫：贵族铁骑(2) + 精锐贵族铁骑主力(4) + 复合弓箭手后排(3)
     GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
     LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
+    TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
-    TIBET:        'fish_scale',   // 青藏：黑光铠骑兵前卫(3) + 精锐答剌罕主力(4) + 蒙古突骑后排(2)
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
@@ -1129,16 +1129,16 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 12. 青藏 黑光铠骑兵+精锐答剌罕骑兵+蒙古突骑（鱼鳞阵 3+4+2：黑光铠骑兵前卫 3 + 精锐答剌罕骑兵主力 4 + 蒙古突骑后排支援 2） */
+/** 12. 青藏 黑光铠骑兵+精锐答剌罕骑兵+蒙古突骑（鹤翼阵 2+4+3：黑光铠骑兵前锋 2 + 精锐答剌罕骑兵主力 4 + 蒙古突骑后排支援 3） */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hei_kuang', count: 3 },       // Row 0 前卫 = 黑光铠骑兵 3骑
+            { type: 'hei_kuang', count: 2 },       // Row 0 前锋 = 黑光铠骑兵 2骑
             { type: 'elite_tarkan', count: 4 },    // Row 1 中军突击主力 = 精锐答剌罕骑兵 4骑
-            { type: 'mangudai', count: 2 }         // Row 2 尾收支援 = 蒙古突骑 2骑
+            { type: 'mangudai', count: 3 }         // Row 2 尾收支援 = 蒙古突骑 3骑
         ]
     }
 ];

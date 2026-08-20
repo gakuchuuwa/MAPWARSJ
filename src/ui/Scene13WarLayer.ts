@@ -4068,14 +4068,16 @@ export class Scene13WarLayer {
                         angle: attackAngle,
                         kind,
                         t: 0,
-                        dur: kind === 'thrust' ? 0.08 : 0.09,
+                        // [2026-08-20 主人：白光有点少] 只加「看得见的量」——延长停留、加密火花，
+                        // 形状/尺寸一律不动（原设计定的就是「小巧克制」，加粗会变成糊脸的光污染）。
+                        dur: kind === 'thrust' ? 0.12 : 0.14,
                         radius: kind === 'thrust' ? 10 : 12,
                         color,
                         flip: Math.random() < 0.5,
                     });
 
-                    // 出手伴随 1~2 颗微小金属飞溅火花
-                    const sparkCount = Math.random() < 0.7 ? 1 : 2;
+                    // 出手伴随 2~4 颗微小金属飞溅火花（原 1~2，主人嫌少）
+                    const sparkCount = 2 + ((Math.random() * 3) | 0);
                     const sparkColors = ['#FFF9E6', '#FFE066', '#FFB830', '#FFFFFF'];
                     for (let i = 0; i < sparkCount; i++) {
                         const spd = 14 + Math.random() * 20;
@@ -4087,7 +4089,7 @@ export class Scene13WarLayer {
                             vx: Math.cos(ang) * spd,
                             vy: Math.sin(ang) * spd - 8,
                             t: 0,
-                            dur: 0.08 + Math.random() * 0.05,
+                            dur: 0.13 + Math.random() * 0.09,
                             color: sparkColors[(Math.random() * sparkColors.length) | 0],
                             size: 0.6 + Math.random() * 0.3,
                         });
