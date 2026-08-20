@@ -932,6 +932,7 @@ export class CityAssetManager {
         'mozeer': '摩泽',
         'seleisi': '色雷',
         'maerta_qishi': '马耳',
+        'andaluoxiya': '安达',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

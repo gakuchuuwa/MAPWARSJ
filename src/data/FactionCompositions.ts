@@ -1845,7 +1845,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'genoese_crossbowman', count: 2 },
         ],
     },
-    // 葡萄牙军团·吉马良斯/波尔图（阿方索一世 / 桑乔一世 · 鱼鳞阵 3+4+2：双手剑士 3 + 重装长枪兵 4 + 劲弩手 2）
+    // 葡萄牙军团·吉马良斯（阿方索一世 · 鱼鳞阵 3+4+2：双手剑士 3 + 重装长枪兵 4 + 劲弩手 2）
     putaoya: {
         legionName: "葡萄牙军团",
         formationMode: 'fish_scale',
@@ -1855,13 +1855,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },                  // 尾收强弩 = 欧洲劲弩手 2人（开国十字军劲弩精准压制）
         ],
     },
+    // 葡萄牙骑士军团·波尔图（桑乔一世 · 鱼鳞阵 3+4+2：重装长枪兵 3 + 重装骑士 4 + 劲弩手 2）
     duluo: {
-        legionName: "葡萄牙军团",
+        legionName: "葡萄牙骑士军团",
         formationMode: 'fish_scale',
         slots: [
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'arbalest', count: 2 },
+            { type: 'heavy_pikeman', count: 3 },             // Row 0 前卫长枪 = 重装长枪兵 3人（十字军步兵拒马抗线）
+            { type: 'cavalier', count: 4 },                  // Row 1 中军主力 = 重装骑士 4骑（收复失地十字军重装铁骑突贯冲击）
+            { type: 'arbalest', count: 2 },                  // Row 2 尾收强弩 = 劲弩手 2人（后排强弩精准火力掩护）
         ],
     },
     // 格鲁吉亚·塔玛尔女王 莫纳斯帕王家近卫铁骑精锐军团（鱼鳞阵 3+4+2：莫纳斯帕前卫 3 + 精锐莫纳斯帕主力 4 + 复合弓手 2）
@@ -1997,7 +1998,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },             // Row 2 尾收城市劲弩 = 劲弩手 2人（纯步兵·无马，后排高穿透强弩射击）
         ],
     },
-    // 萨拉森与阿拉伯·萨拉赫丁 / 穆阿维叶 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
+    // 萨拉森、后倭马亚与安达卢西亚·萨拉赫丁 / 穆阿维叶 / 阿卜杜拉 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
     ayoubu: {
         legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
         formationMode: 'fish_scale',
@@ -2008,6 +2009,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     womaya: {
+        legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mameluke', count: 3 },
+            { type: 'elite_mameluke', count: 4 },
+            { type: 'camel_archer', count: 2 },
+        ],
+    },
+    andaluoxiya: {
         legionName: "马穆鲁克弯刀重骑与骆驼弓精锐军团",
         formationMode: 'fish_scale',
         slots: [
