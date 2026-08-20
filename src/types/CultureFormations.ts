@@ -31,14 +31,16 @@ import { RegionType } from '../systems/RegionSystem';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
 
-/** 军队编辑器可选阵型（2026-08-18 五大经典阵型，均 9 人）：
- *  triangle   三角阵 = 2+3+4（前2/中3/后4，尖刀破防·楔形突击）
- *  echelon    雁行阵 = 4+3+2（前4/中3/后2，宽线铜墙·远程覆盖）
- *  fish_scale 鱼鳞阵 = 3+4+2（前3/中4/后2，前抵抗线·中腰鳞叠）
- *  crane_wing 鹤翼阵 = 2+4+3（前2/中4/后3，双锋引敌·两翼合围）
- *  square     方阵   = 3+3+3（前3/中3/后3，九宫等边·坚若磐石）
+/** 军队编辑器可选阵型（2026-08-20 七大经典阵型，均 9 人）：
+ *  square       方阵   = 3+3+3（前3/中3/后3，九宫等边·攻守均衡）
+ *  echelon      雁行阵 = 4+3+2（前4/中3/后2，前阔后窄·重装推进）
+ *  fish_scale   鱼鳞阵 = 3+4+2（前3/中4/后2，中腰厚实·重拳突破）
+ *  crane_wing   鹤翼阵 = 2+4+3（前2/中4/后3，两翼展开·合围包抄）
+ *  triangle     锥形阵 = 2+3+4（前2/中3/后4，前尖后宽·后劲冲锋/远程集火）
+ *  crescent     偃月阵 = 3+2+4（前3/中2/后4，前阻中虚·后发制人）
+ *  balance_yoke 衡轭阵 = 4+2+3（前4/中2/后3，前宽后稳·前线硬碰）
  */
-export type FormationMode = 'triangle' | 'echelon' | 'fish_scale' | 'crane_wing' | 'square';
+export type FormationMode = 'triangle' | 'echelon' | 'fish_scale' | 'crane_wing' | 'square' | 'crescent' | 'balance_yoke';
 
 /**
  * 海军舰队队形（水战/航行时用，与陆军 FormationMode 各管各的——
@@ -152,7 +154,7 @@ export function getCultureFormationMode(culture: RegionType): FormationMode {
     return CULTURE_FORMATION_MODE[culture] ?? 'square';
 }
 
-/** 按阵型生成默认 slot 结构（2026-08-18 五阵型：三角2+3+4 / 雁行4+3+2 / 鱼鳞3+4+2 / 鹤翼2+4+3 / 方阵3+3+3，均 9 人） */
+/** 按阵型生成默认 slot 结构（2026-08-20 七大阵型，均 9 人） */
 export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     if (mode === 'triangle') {
         return [
@@ -182,6 +184,20 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
             { type: 'crossbow', count: 3 },
         ];
     }
+    if (mode === 'crescent') {
+        return [
+            { type: 'shield', count: 3 },
+            { type: 'lancer', count: 2 },
+            { type: 'crossbow', count: 4 },
+        ];
+    }
+    if (mode === 'balance_yoke') {
+        return [
+            { type: 'shield', count: 4 },
+            { type: 'lancer', count: 2 },
+            { type: 'crossbow', count: 3 },
+        ];
+    }
     // square (3+3+3 方阵)
     return [
         { type: 'shield', count: 3 },
@@ -190,11 +206,11 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     ];
 }
 
-/** 从 slot 结构推断阵型（兼容旧草稿；五阵型均为 9 人，靠各排 count 分布区分） */
+/** 从 slot 结构推断阵型（兼容旧草稿；七阵型均为 9 人，靠各排 count 分布区分） */
 export function inferFormationModeFromSlots(slots: CompositionSlot[]): FormationMode {
     const counts = slots.map(s => s.count);
     const total = counts.reduce((s, x) => s + x, 0);
-    // 三角 2+3+4（三排）
+    // 锥形/三角 2+3+4（三排）
     if (slots.length === 3 && counts[0] === 2 && counts[1] === 3 && counts[2] === 4) return 'triangle';
     // 雁行 4+3+2（三排）
     if (slots.length === 3 && counts[0] === 4 && counts[1] === 3 && counts[2] === 2) return 'echelon';
@@ -202,6 +218,10 @@ export function inferFormationModeFromSlots(slots: CompositionSlot[]): Formation
     if (slots.length === 3 && counts[0] === 3 && counts[1] === 4 && counts[2] === 2) return 'fish_scale';
     // 鹤翼 2+4+3（三排）
     if (slots.length === 3 && counts[0] === 2 && counts[1] === 4 && counts[2] === 3) return 'crane_wing';
+    // 偃月 3+2+4（三排）
+    if (slots.length === 3 && counts[0] === 3 && counts[1] === 2 && counts[2] === 4) return 'crescent';
+    // 衡轭 4+2+3（三排）
+    if (slots.length === 3 && counts[0] === 4 && counts[1] === 2 && counts[2] === 3) return 'balance_yoke';
     // 方阵 3+3+3（三排）
     if (slots.length === 3 && counts[0] === 3 && counts[1] === 3 && counts[2] === 3) return 'square';
     // 旧 1-2-3 三角（6 人，兼容历史草稿）
@@ -211,7 +231,7 @@ export function inferFormationModeFromSlots(slots: CompositionSlot[]): Formation
     return slots.length <= 3 ? 'triangle' : 'square';
 }
 
-/** 切换阵型时转换 slot（100% 保留已有前排、中坚、后排兵种与缩放；五阵型 2026-08-18） */
+/** 切换阵型时转换 slot（100% 保留已有前排、中坚、后排兵种与缩放；七大阵型 2026-08-20） */
 export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode): CompositionSlot[] {
     const r0 = { type: slots[0]?.type || 'swordsman', scale: slots[0]?.scale };
     let r1 = { type: 'lancer', scale: 1.0 as number | undefined };
@@ -258,6 +278,20 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
         return [
             { type: r0.type, count: 2, scale: r0.scale },
             { type: r1.type, count: 4, scale: r1.scale },
+            { type: r2.type, count: 3, scale: r2.scale },
+        ];
+    }
+    if (mode === 'crescent') {
+        return [
+            { type: r0.type, count: 3, scale: r0.scale },
+            { type: r1.type, count: 2, scale: r1.scale },
+            { type: r2.type, count: 4, scale: r2.scale },
+        ];
+    }
+    if (mode === 'balance_yoke') {
+        return [
+            { type: r0.type, count: 4, scale: r0.scale },
+            { type: r1.type, count: 2, scale: r1.scale },
             { type: r2.type, count: 3, scale: r2.scale },
         ];
     }

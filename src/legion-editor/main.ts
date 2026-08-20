@@ -1338,11 +1338,13 @@ function renderTable(): void {
 
 function getFormationModeLabel(mode: FormationMode): string {
     switch (mode) {
-        case 'fish_scale': return '3+4+2 鱼鳞';
-        case 'triangle': return '2+3+4 三角';
-        case 'echelon': return '4+3+2 雁行';
-        case 'crane_wing': return '2+4+3 鹤翼';
         case 'square': return '3+3+3 方阵';
+        case 'echelon': return '4+3+2 雁行';
+        case 'fish_scale': return '3+4+2 鱼鳞';
+        case 'crane_wing': return '2+4+3 鹤翼';
+        case 'triangle': return '2+3+4 锥形';
+        case 'crescent': return '3+2+4 偃月';
+        case 'balance_yoke': return '4+2+3 衡轭';
         default: return mode;
     }
 }
@@ -1503,14 +1505,18 @@ function renderEditPanel(row: FactionLegionRow): void {
     const slots = currentEditingLegion.slots;
 
     const rowLabels = mode === 'triangle'
-        ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人)']
+        ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人 · 4档主力)']
         : (mode === 'echelon'
-            ? ['前排宽阵 (4人)', '中坚力量 (3人)', '后排压阵 (2人)']
+            ? ['前排宽阵 (4人 · 4档主力)', '中坚力量 (3人)', '后排压阵 (2人)']
             : (mode === 'fish_scale'
-                ? ['前排抵挡 (3人)', '中阔鳞叠 (4人)', '后排尾收 (2人)']
+                ? ['前排抵挡 (3人)', '中阔鳞叠 (4人 · 4档主力)', '后排尾收 (2人)']
                 : (mode === 'crane_wing'
-                    ? ['前排双锋 (2人)', '两翼展开 (4人)', '后排中军 (3人)']
-                    : ['前排正线 (3人)', '中列核心 (3人)', '后排压阵 (3人)'])));
+                    ? ['前排双锋 (2人)', '两翼展开 (4人 · 4档主力)', '后排中军 (3人)']
+                    : (mode === 'crescent'
+                        ? ['前排拒马 (3人)', '中军枢纽 (2人)', '后排决胜 (4人 · 4档主力)']
+                        : (mode === 'balance_yoke'
+                            ? ['前排横推 (4人 · 4档主力)', '中军穿插 (2人)', '后排托底 (3人)']
+                            : ['前排正线 (3人)', '中列核心 (3人)', '后排压阵 (3人)'])))));
 
     // 归一化 slot
     const row1Type = slots[0]?.type || 'swordsman';
@@ -1561,29 +1567,37 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 阵型选择 -->
     <div class="le-form-section">
       <div class="le-section-title">
-        <span>1. 阵型选择</span>
-        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">全阵型均为 9 人</span>
+        <span>1. 阵型选择（七阵体系）</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">全阵型均为 9 人 · 精锐主力优先置于 4 档</span>
       </div>
-      <div class="le-mode-grid" style="grid-template-columns: repeat(5, 1fr);">
-        <div class="le-mode-btn ${mode === 'fish_scale' ? 'active' : ''}" data-mode="fish_scale">
-          <div>3+4+2 鱼鳞阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">前抵 / 鳞叠 / 尾收</div>
-        </div>
-        <div class="le-mode-btn ${mode === 'triangle' ? 'active' : ''}" data-mode="triangle">
-          <div>2+3+4 三角阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">尖刀楔形突击</div>
+      <div class="le-mode-grid" style="grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));">
+        <div class="le-mode-btn ${mode === 'square' ? 'active' : ''}" data-mode="square">
+          <div>3+3+3 方阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">九宫等边·攻守均衡</div>
         </div>
         <div class="le-mode-btn ${mode === 'echelon' ? 'active' : ''}" data-mode="echelon">
           <div>4+3+2 雁行阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">宽正面远程展开</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">前排4档·重装推进</div>
+        </div>
+        <div class="le-mode-btn ${mode === 'fish_scale' ? 'active' : ''}" data-mode="fish_scale">
+          <div>3+4+2 鱼鳞阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">中坚4档·重拳突破</div>
         </div>
         <div class="le-mode-btn ${mode === 'crane_wing' ? 'active' : ''}" data-mode="crane_wing">
           <div>2+4+3 鹤翼阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">两翼合围包抄</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">中坚4档·合围包抄</div>
         </div>
-        <div class="le-mode-btn ${mode === 'square' ? 'active' : ''}" data-mode="square">
-          <div>3+3+3 方阵</div>
-          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">九宫等边固守</div>
+        <div class="le-mode-btn ${mode === 'triangle' ? 'active' : ''}" data-mode="triangle">
+          <div>2+3+4 锥形阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">后排4档·后劲冲锋</div>
+        </div>
+        <div class="le-mode-btn ${mode === 'crescent' ? 'active' : ''}" data-mode="crescent">
+          <div>3+2+4 偃月阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">后排4档·后发制人</div>
+        </div>
+        <div class="le-mode-btn ${mode === 'balance_yoke' ? 'active' : ''}" data-mode="balance_yoke">
+          <div>4+2+3 衡轭阵</div>
+          <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">前排4档·前线硬碰</div>
         </div>
       </div>
     </div>
@@ -1870,6 +1884,8 @@ function updateRowUnit(legion: CustomFactionLegion, rowIdx: number, unitId: stri
     else if (mode === 'echelon') counts = [4, 3, 2];
     else if (mode === 'fish_scale') counts = [3, 4, 2];
     else if (mode === 'crane_wing') counts = [2, 4, 3];
+    else if (mode === 'crescent') counts = [3, 2, 4];
+    else if (mode === 'balance_yoke') counts = [4, 2, 3];
     else if (mode === 'square') counts = [3, 3, 3];
 
     legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
@@ -2631,6 +2647,46 @@ function startCanvasPreview(): void {
             addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
             addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
             addUnitWithRot(1.5 * spacingX, 0, t1, s1, '');
+            // 后3 (r=2, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0, spacingY, t2, s2, '');
+            addUnitWithRot(1.0 * spacingX, spacingY, t2, s2, '');
+        } else if (mode === 'crescent') {
+            const t0 = slots[0]?.type || 'swordsman';
+            const s0 = (slots[0]?.scale ?? 1.0) * pScale;
+            const t1 = slots[1]?.type || 'lancer';
+            const s1 = (slots[1]?.scale ?? 1.0) * pScale;
+            const t2 = slots[2]?.type || 'archer';
+            const s2 = (slots[2]?.scale ?? 1.0) * pScale;
+
+            // 前3 (r=0, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0, -spacingY, t0, s0, '');
+            addUnitWithRot(1.0 * spacingX, -spacingY, t0, s0, '');
+            // 中2 (r=1, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
+            // 后4 (r=2, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(1.5 * spacingX, spacingY, t2, s2, '');
+        } else if (mode === 'balance_yoke') {
+            const t0 = slots[0]?.type || 'swordsman';
+            const s0 = (slots[0]?.scale ?? 1.0) * pScale;
+            const t1 = slots[1]?.type || 'lancer';
+            const s1 = (slots[1]?.scale ?? 1.0) * pScale;
+            const t2 = slots[2]?.type || 'archer';
+            const s2 = (slots[2]?.scale ?? 1.0) * pScale;
+
+            // 前4 (r=0, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(-0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(1.5 * spacingX, -spacingY, t0, s0, '');
+            // 中2 (r=1, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0.5 * spacingX, 0, t1, s1, '');
             // 后3 (r=2, c=-1, 0, 1)
             addUnitWithRot(-1.0 * spacingX, spacingY, t2, s2, '');
             addUnitWithRot(0, spacingY, t2, s2, '');

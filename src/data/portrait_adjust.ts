@@ -2918,9 +2918,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/LINGNAN/zhuang_d_washifuren.png": {
-            "scale": 0.77,
+            "scale": 0.85,
             "offsetX": 0,
-            "offsetY": -14
+            "offsetY": -11
         },
         "/assets/CENTRAL/__闲置__CENTRAL_32.png": {
             "scale": 0.86,
