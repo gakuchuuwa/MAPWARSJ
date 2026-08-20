@@ -15,6 +15,7 @@ export type Biome =
     | 'savanna'
     | 'desert'
     | 'mediterranean'
+    | 'cold_steppe'
     | 'temperate_grass'
     | 'temperate_forest'
     | 'boreal'
@@ -42,11 +43,11 @@ const KOPPEN_CLASS_BY_ID: ReadonlyArray<KoppenClass | null> = [
 
 export const KOPPEN_TO_BIOME: Readonly<Record<KoppenClass, Biome>> = {
     Af: 'tropical_rainforest', Am: 'tropical_rainforest', Aw: 'savanna',
-    BWh: 'desert', BWk: 'desert', BSh: 'savanna', BSk: 'mediterranean',
+    BWh: 'desert', BWk: 'desert', BSh: 'savanna', BSk: 'cold_steppe',
     Csa: 'mediterranean', Csb: 'mediterranean', Csc: 'mediterranean',
     Cwa: 'temperate_forest', Cwb: 'temperate_forest', Cwc: 'boreal',
     Cfa: 'temperate_forest', Cfb: 'temperate_forest', Cfc: 'boreal',
-    Dsa: 'temperate_grass', Dsb: 'temperate_grass', Dsc: 'boreal', Dsd: 'boreal',
+    Dsa: 'cold_steppe', Dsb: 'cold_steppe', Dsc: 'boreal', Dsd: 'boreal',
     Dwa: 'temperate_forest', Dwb: 'temperate_forest', Dwc: 'boreal', Dwd: 'boreal',
     Dfa: 'temperate_forest', Dfb: 'temperate_forest', Dfc: 'boreal', Dfd: 'boreal',
     ET: 'tundra_snow', EF: 'tundra_snow',
@@ -79,6 +80,7 @@ export const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
     savanna: ['grs', 'pc1', 'gr5'],
     desert: ['des', 'ds2', 'qs'],
     mediterranean: ['gr2', 'gr4', 'gr5'],
+    cold_steppe: ['pm2', 'gr4', 'sn2'],
     temperate_grass: ['gr6', 'gr4', 'sn2'],
     temperate_forest: ['gr3', 'for', 'sn2'],
     boreal: ['gr9', 'pm2', 'sno'],
@@ -177,9 +179,10 @@ export const BIOME_TREES: Record<Biome, [string[], string[], string[]]> = {
     savanna: [['ACACIA', 'BAOBAB'], ['ACACIA', 'BAOBAB'], ['ACACIA', 'DEAD_TREE']],
     desert: [['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE']],
     mediterranean: [['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'CYPRESS_DEC'], ['OLIVE', 'CYPRESS'], ['CYPRESS', 'DEAD_TREE']],
+    cold_steppe: [['PINE', 'DEAD_TREE'], ['PINE', 'DEAD_TREE'], ['SNOW_PINE', 'DEAD_TREE']],
     temperate_grass: [['GREEN_OAK', 'BIRCH_GREEN'], ['AUTUMN_OAK', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'BIRCH_WINTER']],
     temperate_forest: [['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN', 'BAMBOO', 'PEACH_BLOSSOM'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
-    boreal: [['PINE', 'ASIAN_PINE', 'MONKEY_PUZZLE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
+    boreal: [['PINE', 'ASIAN_PINE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
     tundra_snow: [['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE']],
 };
 
@@ -189,6 +192,7 @@ export const BIOME_GROUND_DECOR: Record<Biome, string[]> = {
     savanna: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'CACTUS', 'PLANT_DEAD', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
     desert: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'CACTUS', 'PLANT_DEAD', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
     mediterranean: ['FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED', 'SHRUB_GREEN'],
+    cold_steppe: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'PLANT_DEAD', 'ROCK1', 'ROCK2'],
     temperate_grass: ['GRASS_GREEN', 'GRASS_GREEN_PATCH', 'BUSH_GREEN', 'UNDERBRUSH'],
     temperate_forest: ['GRASS_GREEN', 'GRASS_GREEN_PATCH', 'BUSH_GREEN', 'UNDERBRUSH'],
     boreal: ['SHRUB_GREEN', 'ROCK1', 'ROCK2', 'ROCK3', 'DECAL_ICE'],
@@ -214,6 +218,7 @@ export const BIOME_GROUND_VARIATION: Record<Biome, string[]> = {
     savanna: ['gr7', 'pc3', 'sr2'],
     desert: ['ds3', 'ds4', 'ds5', 'pal', 'pal1', 'snd'],
     mediterranean: ['gr7', 'sr2'],
+    cold_steppe: ['pc1', 'pc2', 'pm1', 'r01'],
     temperate_grass: ['gr7', 'sr2'],
     temperate_forest: ['fo2', 'underbrush_leaves'],
     boreal: ['fo2', 'r01', 'gravel_wet'],
@@ -245,6 +250,8 @@ export function treeCountFor(biome: Biome, rng: RandomSource = mathRandomSource)
             return 3 + rng.int(0, 2);        // 2~5 极稀
         case 'desert':
             return 6 + rng.int(0, 4);        // 6~10 稀疏
+        case 'cold_steppe':
+            return 5 + rng.int(0, 4);
         case 'savanna':
         case 'mediterranean':
             return 9 + rng.int(0, 5);        // 9~14
