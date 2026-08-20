@@ -21,6 +21,7 @@ import {
 } from '../types/CultureFormations';
 import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
+import { FACTION_GENERALS } from '../data/FactionGenerals';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -741,6 +742,8 @@ interface FactionLegionRow {
     region: RegionType;
     regionLabel: string;
     isCustom: boolean;
+    /** 该势力的史实将领名（搜索用：主人习惯按武将找势力，如「施琅」→ wenling） */
+    generalName?: string;
     formationMode: FormationMode;
     slots: CompositionSlot[];
     row1Type: string;
@@ -754,6 +757,10 @@ let filteredRows: FactionLegionRow[] = [];
 let selectedFactionId: string | null = null;
 let currentEditingLegion: CustomFactionLegion | null = null;
 let clipboardLegion: CustomFactionLegion | null = null;
+/** 「套用其他军团」两级下拉的当前选择：区 → 该区某势力（'__DEFAULT__' = 该区文化默认编成）。
+ *  面板每次改动都会整体重渲染，所以选择状态必须存在模块级，否则一改阵型下拉就跳回默认。 */
+let borrowRegion: RegionType | '' = '';
+let borrowFactionId: string = '__DEFAULT__';
 
 let searchQuery = '';
 let selectedRegionFilter: string = 'all';
@@ -804,7 +811,7 @@ app.innerHTML = `
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
-  <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都…" />
+  <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都 / 武将…" />
   <select id="le-region-filter" class="le-select">
     <option value="all">全部文化区 (18)</option>
     ${REGION_ORDER.map(r => `<option value="${r}">${REGION_LABELS[r]} (${r})</option>`).join('')}
@@ -1194,6 +1201,7 @@ function buildRows(): void {
             region,
             regionLabel,
             isCustom,
+            generalName: FACTION_GENERALS[f.id]?.generalName,
             formationMode,
             slots,
             row1Type: r1,
@@ -1235,7 +1243,8 @@ function applyFilter(): void {
             const match = r.factionId.toLowerCase().includes(q)
                 || r.factionName.toLowerCase().includes(q)
                 || r.flagText.toLowerCase().includes(q)
-                || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q));
+                || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q))
+                || (r.generalName && r.generalName.toLowerCase().includes(q));
             if (!match) return false;
         }
         return true;
@@ -1274,7 +1283,7 @@ function renderTable(): void {
         ${filteredRows.map(r => `
           <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''}">
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
-            <td><b>${r.factionName}</b></td>
+            <td><b>${r.factionName}</b>${r.generalName ? `<span style="font-size:10px;color:#9a9080;margin-left:6px;">${r.generalName}</span>` : ''}</td>
             <td>${r.capitalCityName}</td>
             <td><span style="color:#e0c888;font-size:11px;font-weight:bold;">${r.regionLabel}</span></td>
             <td><span class="cell-mode">${getFormationModeLabel(r.formationMode)}</span></td>
@@ -1345,8 +1354,39 @@ function selectFaction(factionId: string): void {
         };
     }
 
+    // 「套用其他军团」默认停在本势力所在区（最常见的用法是套同区的友邻）
+    borrowRegion = row.region as RegionType;
+    borrowFactionId = '__DEFAULT__';
+
     renderTable();
     renderEditPanel(row);
+}
+
+/** 取某文化区的默认编成（与 buildRows 的兜底同源，勿另起一套） */
+function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
+    const formationMode: FormationMode = CULTURE_FORMATION_MODE[region] ?? 'square';
+    const slots: CompositionSlot[] = CULTURE_TIERS_MAP[region]?.[0]?.slots
+        ?? getDefaultSlotsForMode(formationMode);
+    return { formationMode, slots: slots.map(s => ({ ...s })) };
+}
+
+/** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
+function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
+    const r1 = slots[0]?.type || '';
+    const r2 = (slots.length > 2 ? slots[1]?.type : slots[0]?.type) || '';
+    const r3 = slots[slots.length - 1]?.type || '';
+    const names = [r1, r2, r3].map(t => (t ? getUnitDisplayName(t) : '—')).join('/');
+    return `${names}（${getFormationModeLabel(mode)}）`;
+}
+
+/** 「套用其他军团」第二级下拉的选项（该区势力，已定制的排前面并打 ★） */
+function getBorrowFactionOptions(region: RegionType | '', excludeFactionId: string): FactionLegionRow[] {
+    if (!region) return [];
+    return allRows
+        .filter(r => r.region === region && r.factionId !== excludeFactionId)
+        .sort((a, b) => (a.isCustom === b.isCustom
+            ? a.factionName.localeCompare(b.factionName, 'zh-Hans-CN')
+            : (a.isCustom ? -1 : 1)));
 }
 
 function renderEditPanel(row: FactionLegionRow): void {
@@ -1384,12 +1424,30 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
         <div>
           <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${row.factionName}</div>
-          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}</div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}</div>
         </div>
       </div>
       <div>
         ${row.isCustom ? `<span class="status-tag status-custom" style="font-size:12px;padding:4px 8px;">专属定制</span>` : `<span class="status-tag status-default" style="font-size:12px;padding:4px 8px;">文化默认</span>`}
       </div>
+    </div>
+
+    <!-- 套用其他军团（两级：先选区、再选势力） -->
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>0. 套用其他军团</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">只把配置拉过来，保存目标仍是【${row.factionName}】</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="le-borrow-region" class="le-select" style="flex:1;">
+          ${REGION_ORDER.map(rg => { const d = getRegionDefaultLegion(rg); return `<option value="${rg}" ${borrowRegion === rg ? 'selected' : ''}>${REGION_LABELS[rg] ?? rg} · ${legionSummary(d.formationMode, d.slots)}</option>`; }).join('')}
+        </select>
+        <select id="le-borrow-faction" class="le-select" style="flex:1.6;">
+          <option value="__DEFAULT__" ${borrowFactionId === '__DEFAULT__' ? 'selected' : ''}>${borrowRegion ? `该区文化默认 · ${legionSummary(getRegionDefaultLegion(borrowRegion as RegionType).formationMode, getRegionDefaultLegion(borrowRegion as RegionType).slots)}` : '该区文化默认编成'}</option>
+          ${getBorrowFactionOptions(borrowRegion, row.factionId).map(r => `<option value="${r.factionId}" ${borrowFactionId === r.factionId ? 'selected' : ''}>${r.isCustom ? '★ ' : ''}${r.factionName}${r.generalName ? `(${r.generalName})` : ''} · ${legionSummary(r.formationMode, r.slots)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="font-size:11px;color:#7e7666;margin-top:6px;">选中即套用，下面三排会立刻跟着变；★ = 已有专属定制的势力。改完记得点下方「保存为专属军团」才会落盘。</div>
     </div>
 
     <!-- 阵型选择 -->
@@ -1606,6 +1664,42 @@ function bindPanelEvents(row: FactionLegionRow): void {
     });
 
     // 复制
+    // ── 套用其他军团：先选区 → 再选势力，**选中即套用**（不再需要点按钮，主人实锤「选了江南没变」）──
+    const applyBorrowed = (): void => {
+        let source: CustomFactionLegion | null = null;
+        let sourceLabel = '';
+        if (borrowFactionId === '__DEFAULT__') {
+            source = getRegionDefaultLegion(borrowRegion as RegionType);
+            sourceLabel = `【${REGION_LABELS[borrowRegion as RegionType] ?? borrowRegion}】文化默认编成`;
+        } else {
+            const src = allRows.find(r => r.factionId === borrowFactionId);
+            if (src) {
+                const custom = localCustomCompositions[src.factionId];
+                source = custom
+                    ? { formationMode: custom.formationMode, slots: custom.slots.map(sl => ({ ...sl })) }
+                    : { formationMode: src.formationMode, slots: src.slots.map(sl => ({ ...sl })) };
+                sourceLabel = `【${src.factionName}】的军团`;
+            }
+        }
+        if (!source) { showToast('找不到来源军团配置', true); return; }
+
+        // 只改「当前正在编辑的副本」，不落盘——与手改阵型/兵种一致，仍要点保存
+        currentEditingLegion = source;
+        renderEditPanel(row);
+        showToast(`⬇ 已套用${sourceLabel}，记得点「保存为专属军团」`);
+    };
+
+    document.getElementById('le-borrow-region')?.addEventListener('change', (e) => {
+        borrowRegion = (e.target as HTMLSelectElement).value as RegionType;
+        borrowFactionId = '__DEFAULT__'; // 换区后旧势力已不在列表里，必须回到默认项
+        applyBorrowed();                 // 选中即生效：选「江南」立刻显示江南默认编成
+    });
+
+    document.getElementById('le-borrow-faction')?.addEventListener('change', (e) => {
+        borrowFactionId = (e.target as HTMLSelectElement).value;
+        applyBorrowed();
+    });
+
     document.getElementById('le-btn-copy')?.addEventListener('click', () => {
         if (!currentEditingLegion) return;
         clipboardLegion = {
@@ -2311,9 +2405,11 @@ function startCanvasPreview(): void {
         const t2 = slots[slots.length - 1]?.type || 'archer';
         const s2 = (slots[slots.length - 1]?.scale ?? 1.0) * 1.7;
 
-        unitPositions.push({ x: cx - 140, y: cy - 10, type: t0, scale: s0, label: `前排 · ${getUnitDisplayName(t0)}` });
+        // [2026-08-20 主人定] 前排在**右**、后排在左：跟拍的军团大多是进攻方，
+        // 接敌面朝右，所以平铺展示的左右顺序要与战场上的前后关系一致（后排 ← 中坚 ← 前排｜敌人）。
+        unitPositions.push({ x: cx + 140, y: cy - 10, type: t0, scale: s0, label: `前排 · ${getUnitDisplayName(t0)}` });
         unitPositions.push({ x: cx,       y: cy - 10, type: t1, scale: s1, label: `中坚 · ${getUnitDisplayName(t1)}` });
-        unitPositions.push({ x: cx + 140, y: cy - 10, type: t2, scale: s2, label: `后排 · ${getUnitDisplayName(t2)}` });
+        unitPositions.push({ x: cx - 140, y: cy - 10, type: t2, scale: s2, label: `后排 · ${getUnitDisplayName(t2)}` });
     } else {
         // 9 人方阵排布模式（根据 animDirection 朝向自然旋转阵型）
         const spacingX = 52;

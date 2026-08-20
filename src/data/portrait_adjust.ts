@@ -6322,11 +6322,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -28
         },
-        "/assets/GERMANIC/mazhaer_xiongyati.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/SLAVIC/__闲置__SLAVIC_02.png": {
             "scale": 1,
             "offsetX": 0,
