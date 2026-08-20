@@ -861,6 +861,10 @@ const CLOUD_ALPHA_MAX = 0.55;
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 /** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
+/** 装饰层地面单元格边长（px）：AoE2 clump 生长的粒度（照搬 RMS 的斑块生长，不做矩形硬拼） */
+const DECOR_CELL = 16;
+/** 斑块边界羽化半径（px）：高斯模糊软化格子边缘，纹理经 source-in 保持清晰 */
+const DECOR_BLUR = 8;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2029,14 +2033,13 @@ interface DecorSprite {
     /** z 序：0=贴花/灌木/资源，1=树，2=山体/悬崖 */
     z: number;
 }
-/** 装饰层地面贴片（沙滩/水塘/道路/农田等，铺 DE 地形贴图） */
+/** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 interface DecorPatch {
     tile: string;       // SUCAI_TERRAIN/<tile>
     img: HTMLImageElement | null;
-    x: number;
-    y: number;
-    w: number;
-    h: number;
+    /** 不规则斑块的网格单元 [gx, gy]（clump 生长，非矩形） */
+    cells: Array<[number, number]>;
+    cellSize: number;
     alpha: number;
 }
 
@@ -2226,6 +2229,11 @@ export class Scene13WarLayer {
     private decorSprites: DecorSprite[] = [];
     private decorPatches: DecorPatch[] = [];
     private natureCache: Record<string, NatureAsset> = {};
+    /** 羽化用离屏画布（白形状 + 模糊 + source-in 填纹理） */
+    private maskCv: HTMLCanvasElement | null = null;
+    private maskCtx: CanvasRenderingContext2D | null = null;
+    private blurCv: HTMLCanvasElement | null = null;
+    private blurCtx: CanvasRenderingContext2D | null = null;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -2994,13 +3002,42 @@ export class Scene13WarLayer {
             .catch(() => {});
     }
 
-    /** 铺一块地形贴图贴片（沙滩/水塘/道路/农田；纯装饰，失败就少一块） */
-    private addDecorPatch(tile: string, x: number, y: number, w: number, h: number, alpha = 1): void {
-        const p: DecorPatch = { tile, img: null, x, y, w, h, alpha };
+    /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，非矩形硬拼） */
+    private addDecorCells(tile: string, cells: Array<[number, number]>, alpha = 1): void {
+        if (cells.length === 0) return;
+        const p: DecorPatch = { tile, img: null, cells, cellSize: DECOR_CELL, alpha };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.repaintDecor(); };
         im.src = TERRAIN_BASE_URL + tile + '.png';
+    }
+
+    /** AoE2 clump 生长：从种子格随机向外长成不规则斑块（照搬 RMS 的斑块机制，非圆形也非矩形） */
+    private growClump(seedGx: number, seedGy: number, target: number, gw: number, gh: number, occupied: Set<string>): Array<[number, number]> {
+        const key = (x: number, y: number) => `${x},${y}`;
+        const cells: Array<[number, number]> = [[seedGx, seedGy]];
+        const frontier: Array<[number, number]> = [[seedGx, seedGy]];
+        occupied.add(key(seedGx, seedGy));
+        while (cells.length < target && frontier.length > 0) {
+            const fi = (Math.random() * frontier.length) | 0;
+            const [cx, cy] = frontier[fi];
+            const dirs: Array<[number, number]> = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+            for (let i = 3; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = dirs[i]; dirs[i] = dirs[j]; dirs[j] = t; }
+            let grown = false;
+            for (const [dx, dy] of dirs) {
+                const nx = cx + dx, ny = cy + dy;
+                if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+                const k = key(nx, ny);
+                if (occupied.has(k)) continue;
+                occupied.add(k);
+                cells.push([nx, ny]);
+                frontier.push([nx, ny]);
+                grown = true;
+                break;
+            }
+            if (!grown) frontier.splice(fi, 1);
+        }
+        return cells;
     }
 
     /** 撒一个装饰精灵 */
@@ -3074,7 +3111,7 @@ export class Scene13WarLayer {
         return 'none';
     }
 
-    /** L3 局部点缀：沙滩/海水/水塘/冰面/道路/农田/梯田/资源点/战后残迹 */
+    /** L3 地图生成：在 biome 主地形上用 clump 生长铺出沙滩海岸线/水塘/道路/农田/地表变体（不规则斑块，非矩形硬拼） */
     private paintEmbellishments(VW: number, VH: number): void {
         if (this.centerLat === undefined || this.centerLng === undefined) return;
         const reg = getRegion(this.centerLat, this.centerLng);
@@ -3083,68 +3120,117 @@ export class Scene13WarLayer {
         const winter = this.sceneSeason === 2;
         const water = this.probeWater();
 
+        const gw = Math.max(1, Math.ceil(VW / DECOR_CELL));
+        const gh = Math.max(1, Math.ceil(VH / DECOR_CELL));
+        const occupied = new Set<string>();
+
+        // 2. 道路：横向带，中心随机游走，边缘不规则（先铺，让水塘/农田避开）
+        const roadTile = (reg === 'LATIN' || reg === 'GERMANIC') ? 'rd1'
+            : ((reg === 'WEST_ASIA' || reg === 'CENTRAL_ASIA') ? 'rd2' : 'rd5');
+        const roadCells: Array<[number, number]> = [];
+        let centerY = gh * 0.5;
+        for (let gx = 0; gx < gw; gx++) {
+            centerY += Math.random() * 2 - 1;
+            centerY = Math.max(2, Math.min(gh - 3, centerY));
+            const cy = Math.round(centerY);
+            for (let dy = -5; dy <= 5; dy++) {
+                const ny = cy + dy;
+                if (ny < 0 || ny >= gh) continue;
+                roadCells.push([gx, ny]);
+                occupied.add(`${gx},${ny}`);
+            }
+        }
+        this.addDecorCells(roadTile, roadCells);
+        const path = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'][(Math.random() * 4) | 0];
+        this.addDecorSprite(path, Math.random() * VW, VH * 0.5, 0, 0.7 + Math.random() * 0.4);
+
         // 1. 临海/临河湖/沼泽
         if (water === 'sea') {
             const sideLeft = Math.random() < 0.5;
-            const sandX = sideLeft ? 0 : VW * 0.72;
             const sand = ['bch', 'bc2', 'bc3', 'bc4'][(Math.random() * 4) | 0];
             const seaWater = ['wt2', 'wt3', 'wt4', 'wt5', 'wt6', 'wtr'][(Math.random() * 6) | 0];
-            this.addDecorPatch(sand, sandX, 0, VW * 0.28, VH);
-            this.addDecorPatch(seaWater, sideLeft ? VW * 0.22 : 0, 0, VW * 0.08, VH);
-            this.addDecorPatch('beach_wet', sandX, 0, VW * 0.06, VH);
+            const seaCells: Array<[number, number]> = [];
+            const sandCells: Array<[number, number]> = [];
+            const wetCells: Array<[number, number]> = [];
+            for (let gy = 0; gy < gh; gy++) {
+                const seaW = 7 + ((Math.random() * 10) | 0);
+                const sandW = seaW + 4 + ((Math.random() * 10) | 0);
+                for (let gx = 0; gx < seaW; gx++) seaCells.push([sideLeft ? gx : gw - 1 - gx, gy]);
+                for (let gx = seaW; gx < sandW; gx++) sandCells.push([sideLeft ? gx : gw - 1 - gx, gy]);
+                wetCells.push([sideLeft ? seaW : gw - 1 - seaW, gy]);
+            }
+            this.addDecorCells(seaWater, seaCells);
+            this.addDecorCells(sand, sandCells);
+            this.addDecorCells('beach_wet', wetCells);
             for (let i = 0; i < 4; i++) {
                 const ra = Math.random() < 0.5 ? 'ROCK_BEACH' : (Math.random() < 0.5 ? 'ROCK_SEA1' : 'ROCK_SEA2');
-                this.addDecorSprite(ra, (sideLeft ? VW * 0.2 : VW * 0.78) + Math.random() * VW * 0.04, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+                this.addDecorSprite(ra, sideLeft ? VW * 0.18 + Math.random() * VW * 0.06 : VW * 0.82 - Math.random() * VW * 0.06, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
             }
-            this.addDecorSprite('OYSTERS', sandX + VW * 0.14, Math.random() * VH, 0, 0.5 + Math.random() * 0.3);
+            this.addDecorSprite('OYSTERS', sideLeft ? VW * 0.15 : VW * 0.85, Math.random() * VH, 0, 0.5 + Math.random() * 0.3);
         } else if (water === 'lake') {
-            const swamp = elev !== null && elev < 200 && Math.random() < 0.35;   // 低海拔湿润 → 沼泽
+            const swamp = elev !== null && elev < 200 && Math.random() < 0.35;
             if (winter) {
-                const ix = Math.random() * VW * 0.5, iy = Math.random() * VH * 0.5;
                 const iceTile = ['ice', 'ic2', 'ic3', 'ice_beach'][(Math.random() * 4) | 0];
-                this.addDecorPatch(iceTile, ix, iy, VW * 0.3, VH * 0.25);
+                const n = 1 + ((Math.random() * 2) | 0);
+                for (let i = 0; i < n; i++) {
+                    const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
+                    this.addDecorCells(iceTile, this.growClump(sx, sy, 28 + ((Math.random() * 21) | 0), gw, gh, occupied));
+                }
                 for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
             } else {
-                const px = Math.random() * VW * 0.55, py = Math.random() * VH * 0.55;
                 const pond = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2'][(Math.random() * 4) | 0];
-                const edge = swamp ? (Math.random() < 0.5 ? 'sh4' : 'sh5') : ['sh2', 'sh3', 'sha'][(Math.random() * 3) | 0];
-                this.addDecorPatch(pond, px, py, VW * 0.26, VH * 0.2);
-                this.addDecorPatch(edge, px - VW * 0.02, py - VH * 0.02, VW * 0.3, VH * 0.24);
+                const edgeTile = swamp ? (Math.random() < 0.5 ? 'sh4' : 'sh5') : ['sh2', 'sh3', 'sha'][(Math.random() * 3) | 0];
+                const nClumps = 2 + ((Math.random() * 2) | 0);
+                const allPond: Array<[number, number]> = [];
+                for (let i = 0; i < nClumps; i++) {
+                    const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
+                    allPond.push(...this.growClump(sx, sy, 21 + ((Math.random() * 21) | 0), gw, gh, occupied));
+                }
+                // 描边：水塘外圈相邻格
+                const pondSet = new Set(allPond.map(([x, y]) => `${x},${y}`));
+                const edgeCells: Array<[number, number]> = [];
+                const edgeSet = new Set<string>();
+                for (const [x, y] of allPond) {
+                    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+                        const nx = x + dx, ny = y + dy;
+                        if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+                        const k = `${nx},${ny}`;
+                        if (!pondSet.has(k) && !edgeSet.has(k)) { edgeSet.add(k); edgeCells.push([nx, ny]); }
+                    }
+                }
+                this.addDecorCells(edgeTile, edgeCells);
+                this.addDecorCells(pond, allPond);
+                const px0 = allPond.length ? allPond[0][0] * DECOR_CELL : VW * 0.4;
+                const py0 = allPond.length ? allPond[0][1] * DECOR_CELL : VH * 0.4;
                 for (let i = 0; i < 4; i++) {
                     const re = swamp ? 'UNDERBRUSH_JUNGLE' : ['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO'][(Math.random() * 4) | 0];
-                    this.addDecorSprite(re, px + Math.random() * VW * 0.26, py + Math.random() * VH * 0.2, 1, 0.6 + Math.random() * 0.4);
+                    this.addDecorSprite(re, px0 + Math.random() * VW * 0.3 - VW * 0.15, py0 + Math.random() * VH * 0.25 - VH * 0.12, 1, 0.6 + Math.random() * 0.4);
                 }
             }
         }
 
-        // 2. 道路（近城池；90% 是攻城战，战场就在城下 → 默认斜穿一条路）
-        const roadTile = (reg === 'LATIN' || reg === 'GERMANIC') ? 'rd1'
-            : ((reg === 'WEST_ASIA' || reg === 'CENTRAL_ASIA') ? 'rd2' : 'rd5');
-        this.addDecorPatch(roadTile, 0, VH * 0.47, VW, VH * 0.06);
-        const path = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'][(Math.random() * 4) | 0];
-        this.addDecorSprite(path, Math.random() * VW, VH * 0.5, 0, 0.7 + Math.random() * 0.4);
-
-        // 3. 农田/梯田（东亚水田，其余旱田；东亚山地梯田）
+        // 3. 农田/梯田：角落 clump（东亚水田，其余旱田；东亚山地梯田）
         const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
         if (elev !== null) {
             if (isEastAsia && elev >= 800) {
                 const t = ['rm1', 'rm2'][(Math.random() * 2) | 0];
-                this.addDecorPatch(t, 0, 0, VW * 0.32, VH * 0.28);
+                this.addDecorCells(t, this.growClump(2, 2, 50 + ((Math.random() * 30) | 0), gw, gh, occupied));
             } else if (elev < 600) {
-                const fx = VW * 0.66, fy = VH * 0.68, fw = VW * 0.34, fh = VH * 0.32;
-                if (isEastAsia) {
-                    this.addDecorPatch(['fm1', 'rc1', 'rc2', 'rc3'][(Math.random() * 4) | 0], fx, fy, fw, fh);
-                } else if (reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA') {
-                    this.addDecorPatch(['fc1', 'fc2', 'fc3', 'fm2'][(Math.random() * 4) | 0], fx, fy, fw, fh);
+                const canFarm = isEastAsia || reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA';
+                if (canFarm) {
+                    const tiles = isEastAsia ? ['fm1', 'rc1', 'rc2', 'rc3'] : ['fc1', 'fc2', 'fc3', 'fm2'];
+                    const t = tiles[(Math.random() * tiles.length) | 0];
+                    this.addDecorCells(t, this.growClump(gw - 3, gh - 3, 42 + ((Math.random() * 42) | 0), gw, gh, occupied));
                 }
             }
         }
 
-        // 3.5 地表变体散贴：用 biome 的备用变体贴图打散单调（低频、低透明，不留硬边感）
+        // 3.5 地表变体：小 clump 打散单调（低频、低透明）
         const variation = BIOME_GROUND_VARIATION[biome];
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             const t = variation[(Math.random() * variation.length) | 0];
-            this.addDecorPatch(t, Math.random() * VW * 0.7, Math.random() * VH * 0.7, VW * 0.32, VH * 0.26, 0.55);
+            const sx = 1 + ((Math.random() * (gw - 2)) | 0), sy = 1 + ((Math.random() * (gh - 2)) | 0);
+            this.addDecorCells(t, this.growClump(sx, sy, 14 + ((Math.random() * 17) | 0), gw, gh, occupied), 0.55);
         }
 
         // 4. 资源点（全 biome 低频）
@@ -3169,12 +3255,40 @@ export class Scene13WarLayer {
         g.clearRect(0, 0, cv.width, cv.height);
         for (const p of this.decorPatches) {
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
-            if (p.alpha < 1) g.globalAlpha = p.alpha;
-            g.drawImage(p.img, p.x, p.y, p.w, p.h);
-            if (p.alpha < 1) g.globalAlpha = 1;
+            this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
         const sorted = [...this.decorSprites].sort((a, b) => a.z - b.z);
         for (const s of sorted) this.drawDecorSprite(g, s);
+    }
+
+    /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰） */
+    private compositeSoftPatch(g: CanvasRenderingContext2D, p: DecorPatch, W: number, H: number): void {
+        const img = p.img;
+        if (!img || !img.complete || !img.naturalWidth) return;
+        if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
+        if (!this.blurCv) { this.blurCv = document.createElement('canvas'); this.blurCtx = this.blurCv.getContext('2d')!; }
+        const mcv = this.maskCv, mctx = this.maskCtx!;
+        const bcv = this.blurCv, bctx = this.blurCtx!;
+        if (mcv.width !== W || mcv.height !== H) { mcv.width = W; mcv.height = H; bcv.width = W; bcv.height = H; }
+        // 1. 白形状（斑块格）
+        mctx.clearRect(0, 0, W, H);
+        mctx.fillStyle = '#fff';
+        const cs = p.cellSize;
+        for (const [gx, gy] of p.cells) mctx.fillRect(gx * cs, gy * cs, cs, cs);
+        // 2. 高斯模糊（软化格子边缘）
+        bctx.clearRect(0, 0, W, H);
+        bctx.filter = `blur(${DECOR_BLUR}px)`;
+        bctx.drawImage(mcv, 0, 0);
+        bctx.filter = 'none';
+        // 3. source-in 填纹理（纹理只在软边形状内，保持清晰）
+        bctx.globalCompositeOperation = 'source-in';
+        const pat = bctx.createPattern(img, 'repeat');
+        if (pat) { bctx.fillStyle = pat; bctx.fillRect(0, 0, W, H); }
+        bctx.globalCompositeOperation = 'source-over';
+        // 4. 合成到装饰层
+        if (p.alpha < 1) g.globalAlpha = p.alpha;
+        g.drawImage(bcv, 0, 0);
+        if (p.alpha < 1) g.globalAlpha = 1;
     }
 
     /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
