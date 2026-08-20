@@ -414,14 +414,18 @@ export class LegionPhalanxDrawer {
     private static dynMetaCache: Map<string, Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }>> = new Map();
 
     /** 读 AoE2 DE 素材的 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），映射到 cacheEntry 字段名。 */
-    private static async loadDynMeta(dir: string): Promise<Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> | null> {
+    private static async loadDynMeta(dir: string): Promise<Record<string, { frames: number; dirs16?: boolean; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> | null> {
         const cached = this.dynMetaCache.get(dir);
         if (cached) return cached;
         try {
             const res = await fetch(`${dir}_meta.json`);
             if (!res.ok) return null;
             const meta: any = await res.json();
-            const dyn: Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> = {};
+            const dyn: Record<string, { frames: number; dirs16?: boolean; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> = {};
+            // 🔴 [2026-08-20] DE 战船等素材是 **16 向**（_meta.json 顶层 dirs16:true，键 0..15），
+            //    而 UnitAssets 只采样偶数向（0,2,..,14）当作游戏的 8 向。元数据必须按 direction*2 查，
+            //    否则 fw/fh/hotspot 全取错 → 战船被竖直切掉一半（主人实锤）。标志位在此保留，勿再丢。
+            const dirs16 = meta.dirs16 === true;
             // _meta.json 的 action 键 → cacheEntry 字段名；DAMAGE/SHOOT/CHARGE 复用 attack。
             const map: Record<string, string[]> = {
                 idle: ['IDLE'], move: ['MOVE'], attack: ['ATTACK', 'DAMAGE', 'SHOOT', 'CHARGE'], death: ['DEATH'],
@@ -429,12 +433,26 @@ export class LegionPhalanxDrawer {
             for (const [act, slots] of Object.entries(map)) {
                 if (!meta[act]) continue;
                 for (const slot of slots) {
-                    dyn[slot] = { frames: meta[act].frames, dirs: meta[act].dirs };
+                    dyn[slot] = { frames: meta[act].frames, dirs16, dirs: meta[act].dirs };
                 }
             }
             this.dynMetaCache.set(dir, dyn);
             return dyn;
         } catch { return null; }
+    }
+
+    /**
+     * DE 动态帧框元数据取向：**唯一入口**，所有读 `_meta.json` 的 dirs 都必须走这里。
+     * 16 向素材（dirs16:true，如全部战船）在 UnitAssets 里按偶数向采样成 8 向，
+     * 所以游戏的 direction k 对应元数据键 2k；8 向素材原样。
+     */
+    private static metaDirFor(
+        dynEntry: { dirs16?: boolean; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> } | undefined,
+        direction: number,
+    ): { fw: number; fh: number; hx: number; hy: number } | undefined {
+        if (!dynEntry?.dirs) return undefined;
+        const idx = dynEntry.dirs16 ? direction * 2 : direction;
+        return dynEntry.dirs[String(idx)];
     }
 
     // [RTS INTERFACE] Expose assets for RTS renderer
@@ -1095,7 +1113,7 @@ export class LegionPhalanxDrawer {
             //    效果：≤ 参考尺寸的兵种间距逐像素不变（戟兵算下来 22.5/30.9，都低于现值 30/45），
             //    超大素材被撑开的倍数正好等于它比标准兵大的倍数 ——
             //    战斗象 30→48.8 / 45→101.3，压叠比回到 2.0 倍，**与所有其他兵种完全一致**。
-            const dyn = (assets as any).dyn?.IDLE?.dirs?.[String(direction)];
+            const dyn = this.metaDirFor((assets as any).dyn?.IDLE, direction);
             const maxSlotScale = cultureScales && cultureScales.length ? Math.max(...cultureScales) : 1;
             const unitScale = 60 * scale * maxSlotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
             // DE 有 dyn 元数据 → 用真实帧框；S10DB 无 dyn → 用整图比例推（帧为正方形，宽=高）
@@ -1380,7 +1398,7 @@ export class LegionPhalanxDrawer {
             //    错方向的 box（东/西向 120×64 vs 南向 40×112），帧切片 sx=fr*frameW 错位、跨帧切到邻帧内容，
             //    靠旗/身体被切碎、尸体贴图错乱（主人实锤「尸体贴图都不正确」）。
             const dynSpriteDir = animState === 'DEATH' ? (slot.deathDirection ?? direction) : effDir;
-            const dynDir = dynEntry?.dirs?.[String(dynSpriteDir)];
+            const dynDir = this.metaDirFor(dynEntry, dynSpriteDir);
             const spriteTotalFrames = dynEntry ? dynEntry.frames : this.getFrameCount(tintedSprite);
             let currentFrameIndex = 0;
 
@@ -1874,8 +1892,10 @@ export class LegionPhalanxDrawer {
             }
             // 🔴 DE 动态帧框（hotspot 对齐）：每向 box 尺寸不同，用 _meta.json 的 fw/fh/hx/hy + 统一缩放 s。
             //    S10DB 走正方形帧（旧逻辑）：frameH 每向一致，按高算 h。
+            // 🔴 [2026-08-20 修复战船裁切] 战船是 16 向素材、按偶数向采样成 8 向 → 元数据键 = direction*2，
+            //    统一走 metaDirFor；旧代码直接查 dirs[direction] 取到一半宽的框，船被竖直切掉半条（主人实锤）。
             const dynEntry = (set as any).dyn?.IDLE;
-            const dynDir = dynEntry?.dirs?.[String(direction)];
+            const dynDir = this.metaDirFor(dynEntry, direction);
             if (dynDir) {
                 const s = baseHeight * scale * getNavalShipDrawScale(typeId) / 64;
                 typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, fw: dynDir.fw, fh: dynDir.fh, hx: dynDir.hx, hy: dynDir.hy });

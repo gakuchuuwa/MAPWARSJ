@@ -513,7 +513,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     daca: { generalId: 'daca_dacajilong', generalName: '达擦济咙', portrait: '/assets/TIBET/daca_dacajilong.png' }, // 八宿宗
     gongtang: { generalId: 'gongtang_gongtangcang', generalName: '贡唐仓', portrait: '/assets/TIBET/gongtang_gongtangcang.png' }, // 吉麦
     nanjie: { generalId: 'nanjie_nanjiewangqiu', generalName: '南杰旺秋', portrait: '/assets/TIBET/nanjie_nanjiewangqiu.png' }, // 日土宗
-    nanzhong: { generalId: 'nanzhong_mazhong', generalName: '马忠', portrait: '/assets/LINGNAN/nanzhong_mazhong.png' },
+    nanzhong: { generalId: 'nanzhong_mazhong', generalName: '马忠', portrait: '/assets/CENTRAL/nanzhong_mazhong.png' },
     yueyi: { generalId: 'yueyi_zhangyi', generalName: '张嶷', portrait: '/assets/BASHU/yueyi_zhangyi.png' },
     pingnan: { generalId: 'pingnan_muying', generalName: '沐英', portrait: '/assets/daming/pingnan_musheng.png' },
     jingdong: { generalId: 'jingdong_taohong', generalName: '陶洪', portrait: '/assets/DIANQIAN/jingdong_taohong.png' }, // 银生城·景东土官
@@ -854,7 +854,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     muong: { generalId: 'muong_shencongyue', generalName: '申从岳', portrait: '/assets/LINGNAN/muong_shencongyue.png' },
     panyao: { generalId: 'panyao_pandaxiao', generalName: '盘大孝', portrait: '/assets/LINGNAN/panyao_pandaxiao.png' },
     chen2: { generalId: 'chen2_zhaofan', generalName: '赵范', portrait: '/assets/LINGNAN/chen2_zhaofan.png' },
-    qian: { generalId: 'qian_songjingyang', generalName: '宋景阳', portrait: '/assets/LINGNAN/qian_songjingyang.png' },
+    qian: { generalId: 'qian_songjingyang', generalName: '宋景阳', portrait: '/assets/CENTRAL/qian_songjingyang.png' },
     qinghai: { generalId: 'qinghai_yuezhongqi', generalName: '岳钟琪', portrait: '/assets/manqing/qinghai_yuezhongqi.png' },
     jiashi: { generalId: 'jiashi_wangxuance', generalName: '王玄策', portrait: '/assets/litang/jiashi_wangxuance.png' },
     yangtong: { generalId: 'yangtong_chisongdezan', generalName: '赤松德赞', portrait: '/assets/TIBET/yangtong_chisongdezan.png' },
