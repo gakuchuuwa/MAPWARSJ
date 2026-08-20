@@ -18,7 +18,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
-    boximiya: { name: '胡斯战车', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
+    boximiya: { name: '胡斯战车军团', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
     mazhaer: { name: '黑军侍卫', tier: 2 },
     anggelu: { name: '盾墙民兵', tier: 2 },          // 伦敦·阿尔弗雷德：埃丁顿盾墙
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
