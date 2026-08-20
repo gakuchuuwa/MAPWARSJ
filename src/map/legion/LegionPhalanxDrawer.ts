@@ -95,6 +95,22 @@ export class LegionPhalanxDrawer {
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
     ] as const;
 
+    /** 主阵·偃月 3+2+4（9 格位）：前排 3（排 0），中窄 2（排 1），后排决胜 4（排 2）。
+     *  2026-08-20 主人定：新增偃月阵（前阻中虚·后发制人）。 */
+    private static readonly CRESCENT_9_LAYOUT = [
+        { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
+        { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
+        { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
+    ] as const;
+
+    /** 主阵·衡轭 4+2+3（9 格位）：前排横推 4（排 0），中窄 2（排 1），后排托底 3（排 2）。
+     *  2026-08-20 主人定：新增衡轭阵（前宽后稳·前线硬碰）。 */
+    private static readonly BALANCE_YOKE_9_LAYOUT = [
+        { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
+        { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
+        { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+    ] as const;
+
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
 
     /**
@@ -2289,6 +2305,14 @@ export class LegionPhalanxDrawer {
             originalX = pos.c * spacingX;
         } else if (formationMode === 'square' && index < 9) {
             const pos = LegionPhalanxDrawer.SQUARE_9_LAYOUT[index] ?? LegionPhalanxDrawer.SQUARE_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX;
+        } else if (formationMode === 'crescent' && index < 9) {
+            const pos = LegionPhalanxDrawer.CRESCENT_9_LAYOUT[index] ?? LegionPhalanxDrawer.CRESCENT_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX;
+        } else if (formationMode === 'balance_yoke' && index < 9) {
+            const pos = LegionPhalanxDrawer.BALANCE_YOKE_9_LAYOUT[index] ?? LegionPhalanxDrawer.BALANCE_YOKE_9_LAYOUT[0];
             originalY = (pos.r - 1.0) * spacingY;
             originalX = pos.c * spacingX;
         } else {

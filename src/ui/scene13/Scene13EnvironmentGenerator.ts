@@ -12,8 +12,12 @@
  */
 import {
     Biome,
-    detectBiome,
-    resolveTerrainTile,
+    type ElevationBand,
+    type KoppenClass,
+    detectBiomeAtElevation,
+    resolveClimateRegion,
+    resolveElevationBand,
+    resolveTerrainTileAtElevation,
     pickTreeSpecies,
     treeCountFor,
     BIOME_GROUND_DECOR,
@@ -94,6 +98,12 @@ export interface ObjectRule {
 
 export interface Scene13EnvironmentPlan {
     seed: string;
+    /** 30 类 Köppen–Geiger 环境地区；无坐标防御分支为 null。 */
+    climateRegion: KoppenClass | null;
+    /** 该气候地区内部的海拔档。 */
+    elevationBand: ElevationBand;
+    elevationM: number | null;
+    slopeDeg: number | null;
     biome: Biome;
     season: 0 | 1 | 2;
     baseTerrain: string;
@@ -351,24 +361,24 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const grid = setupIsoGrid(VW, VH);
     const { gw, gh, ox, oy } = grid;
 
-    // ── 第 1 层 LAND：biome / 季节 / 主地形 / 水域 ──
+    // ── 第 1 层 LAND：环境地区 / 海拔档 / biome / 季节 / 主地形 / 水域 ──
     const hasCoord = input.lat !== undefined && input.lng !== undefined;
-    const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiome(input.lat!, input.lng!) : 'temperate_forest');
-    const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
-    const baseTerrain: string = hasCoord
-        ? resolveTerrainTile(input.lat!, input.lng!, season, rng)
-        : DEFAULT_TERRAIN_TILE;
-    const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
-    const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
-
-    // 海拔/坡度（用于可行走高地的生成比例）
     let elev: number | null = null;
     let slope: number | null = null;
     if (hasCoord) {
-        const s = LandSeaSystem.getSampler().getElevationAndSlopeSync(input.lat!, input.lng!);
-        elev = s?.elevationM ?? null;
-        slope = s?.slopeDeg ?? null;
+        const sample = LandSeaSystem.getSampler().getElevationAndSlopeSync(input.lat!, input.lng!);
+        elev = sample?.elevationM ?? null;
+        slope = sample?.slopeDeg ?? null;
     }
+    const climateRegion = hasCoord ? resolveClimateRegion(input.lat!, input.lng!) : null;
+    const elevationBand = hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev) : 'lowland';
+    const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
+    const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
+    const baseTerrain: string = hasCoord
+        ? resolveTerrainTileAtElevation(input.lat!, input.lng!, elev, season, rng)
+        : DEFAULT_TERRAIN_TILE;
+    const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
+    const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
 
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -397,22 +407,29 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
         // ── 第 4 层 TERRAIN：农田 + 地表变体 + 林地落叶层 ──
         buildFarms(gw, gh, elev, reg, rng, patches, occupied);
-        buildGroundVariation(gw, gh, biome, rng, patches, occupied);
+        buildGroundVariation(gw, gh, biome, elevationBand, slope, rng, patches, occupied);
         buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, season, rng, objects, isWater);
+        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater);
         buildResources(VW, VH, rng, objects, isWater);
         buildDebris(VW, VH, rng, objects, isWater);
 
         enforceTreeSpacing(objects);
         attachDeObjectObstruction(objects);
-        return { seed, biome, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects };
+        return {
+            seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
+            biome, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects,
+        };
     }
 
     // 防御分支：无坐标 → 只有主地形，无斑块/物件/高程
     return {
         seed,
+        climateRegion,
+        elevationBand,
+        elevationM: elev,
+        slopeDeg: slope,
         biome,
         season,
         baseTerrain,
@@ -642,6 +659,8 @@ function buildGroundVariation(
     gw: number,
     gh: number,
     biome: Biome,
+    elevationBand: ElevationBand,
+    slopeDeg: number | null,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
     occupied: Set<string>
@@ -651,6 +670,23 @@ function buildGroundVariation(
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
         patches.push({ tile: t, cells: growClump(sx, sy, 4 + rng.int(0, 5), gw, gh, occupied, rng), alpha: 0.22, category: 'ground-variation' });
+    }
+
+    if (elevationBand === 'lowland' || elevationBand === 'snow') return;
+    const dry = biome === 'desert' || biome === 'savanna' || biome === 'temperate_grass';
+    const altitudeTiles = elevationBand === 'upland'
+        ? (dry ? ['pc1', 'pc2', 'pm1'] : ['pm1', 'rock_wet', 'gravel_wet'])
+        : (dry ? ['rck', 'gravel_default', 'qs2'] : ['rck', 'rock_wet', 'gravel_wet']);
+    const count = (elevationBand === 'alpine' ? 4 : elevationBand === 'mountain' ? 3 : 1)
+        + (slopeDeg !== null && slopeDeg >= 12 ? 1 : 0);
+    for (let i = 0; i < count; i++) {
+        const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
+        patches.push({
+            tile: rng.pick(altitudeTiles),
+            cells: growClump(sx, sy, 4 + rng.int(0, 7), gw, gh, occupied, rng),
+            alpha: elevationBand === 'upland' ? 0.18 : 0.34,
+            category: 'ground-variation',
+        });
     }
 }
 
@@ -680,13 +716,22 @@ function buildVegetation(
     VW: number,
     VH: number,
     biome: Biome,
+    elevationBand: ElevationBand,
     season: 0 | 1 | 2,
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
     isWater: WaterChecker
 ): void {
     const treeAssets = pickTreeSpecies(biome, season, rng);
-    const treeCount = treeCountFor(biome, rng);
+    const baseTreeCount = treeCountFor(biome, rng);
+    const treeFactor: Record<ElevationBand, number> = {
+        lowland: 1,
+        upland: 0.9,
+        mountain: 0.65,
+        alpine: 0.25,
+        snow: 0.15,
+    };
+    const treeCount = Math.max(2, Math.round(baseTreeCount * treeFactor[elevationBand]));
     // DE 聚丛成林：3~5 林斑 + 高斯散布
     const clusterCount = Math.max(2, Math.round(treeCount / 6));
     const perCluster = Math.max(2, Math.round(treeCount / clusterCount));

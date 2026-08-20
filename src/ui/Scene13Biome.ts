@@ -1,16 +1,13 @@
 /**
  * 13 战场 biome 判定（P2，2026-08-20）。
  *
- * 判定顺序（先硬后软）：
- *   1. 雪线（按纬度动态）→ tundra_snow
- *   2. 极地（|lat|≥66°）→ tundra_snow
- *   3. 文化区硬基线（REGION_BIOME，优先于纬度和卫星色）
- * 再叠 L2 地貌修正（海拔/坡度 → 岩石/高原/雪）→ 最终选一张 DE 地形贴图。
+ * 第一层使用 30 个 Köppen–Geiger 气候亚型，第二层再按当地海拔划分
+ * lowland / upland / mountain / alpine / snow。文化区不参与气候判定。
  *
  * 铺地铁律不变：每场一张、全场统一、纯 createPattern 重复铺。
  */
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { koppenClassIdAt } from '../data/KoppenGeigerGrid';
 import { RandomSource, mathRandomSource } from './scene13/Random';
 
 export type Biome =
@@ -22,6 +19,52 @@ export type Biome =
     | 'temperate_forest'
     | 'boreal'
     | 'tundra_snow';
+
+export type KoppenClass =
+    | 'Af' | 'Am' | 'Aw'
+    | 'BWh' | 'BWk' | 'BSh' | 'BSk'
+    | 'Csa' | 'Csb' | 'Csc' | 'Cwa' | 'Cwb' | 'Cwc' | 'Cfa' | 'Cfb' | 'Cfc'
+    | 'Dsa' | 'Dsb' | 'Dsc' | 'Dsd' | 'Dwa' | 'Dwb' | 'Dwc' | 'Dwd'
+    | 'Dfa' | 'Dfb' | 'Dfc' | 'Dfd'
+    | 'ET' | 'EF';
+
+export type ElevationBand = 'lowland' | 'upland' | 'mountain' | 'alpine' | 'snow';
+
+const KOPPEN_CLASS_BY_ID: ReadonlyArray<KoppenClass | null> = [
+    null,
+    'Af', 'Am', 'Aw',
+    'BWh', 'BWk', 'BSh', 'BSk',
+    'Csa', 'Csb', 'Csc', 'Cwa', 'Cwb', 'Cwc', 'Cfa', 'Cfb', 'Cfc',
+    'Dsa', 'Dsb', 'Dsc', 'Dsd', 'Dwa', 'Dwb', 'Dwc', 'Dwd',
+    'Dfa', 'Dfb', 'Dfc', 'Dfd',
+    'ET', 'EF',
+];
+
+export const KOPPEN_TO_BIOME: Readonly<Record<KoppenClass, Biome>> = {
+    Af: 'tropical_rainforest', Am: 'tropical_rainforest', Aw: 'savanna',
+    BWh: 'desert', BWk: 'desert', BSh: 'savanna', BSk: 'temperate_grass',
+    Csa: 'mediterranean', Csb: 'mediterranean', Csc: 'mediterranean',
+    Cwa: 'temperate_forest', Cwb: 'temperate_forest', Cwc: 'boreal',
+    Cfa: 'temperate_forest', Cfb: 'temperate_forest', Cfc: 'boreal',
+    Dsa: 'temperate_grass', Dsb: 'temperate_grass', Dsc: 'boreal', Dsd: 'boreal',
+    Dwa: 'temperate_forest', Dwb: 'temperate_forest', Dwc: 'boreal', Dwd: 'boreal',
+    Dfa: 'temperate_forest', Dfb: 'temperate_forest', Dfc: 'boreal', Dfd: 'boreal',
+    ET: 'tundra_snow', EF: 'tundra_snow',
+};
+
+interface ElevationThresholds {
+    upland: number;
+    mountain: number;
+    alpine: number;
+}
+
+const ELEVATION_THRESHOLDS: Readonly<Record<'A' | 'B' | 'C' | 'D' | 'E', ElevationThresholds>> = {
+    A: { upland: 300, mountain: 1200, alpine: 2800 },
+    B: { upland: 500, mountain: 1500, alpine: 2800 },
+    C: { upland: 200, mountain: 800, alpine: 2000 },
+    D: { upland: 200, mountain: 700, alpine: 1600 },
+    E: { upland: 0, mountain: 300, alpine: 800 },
+};
 
 /** 雪线（按纬度动态）：赤道 4800m → 60° 约 1000m */
 export function snowLineFor(lat: number): number {
@@ -45,73 +88,52 @@ export const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
 /** 无坐标兜底（13 初始化防御分支）：默认温带森林夏季草皮 */
 export const DEFAULT_TERRAIN_TILE = 'gr3';
 
-/**
- * 近海判定：中心或四周 ±1°（≈111km）任一为水 → 近海。
- * 半径取 1° 是因为塞维利亚距海 ~80km，±0.3°（33km）够不着。
- * 瓦片未缓存时 isWaterSync 返回 null（不算水）→ 本局判「内陆」，下局命中。
- */
-/**
- * 文化区 → biome 硬基线（2026-08-20 主人定：区域基线优先于纬度和卫星色）。
- * 高程只能经 L2 修正为山地/高原，不改 biome（不会把湿润区改成沙漠）。
- */
-const REGION_BIOME: Record<RegionType, Biome> = {
-    SLAVIC: 'temperate_forest',      // 东欧温带落叶林
-    GERMANIC: 'temperate_forest',    // 中北欧温带森林
-    LATIN: 'mediterranean',          // 地中海气候（伊比利亚/意大利/法国南部）
-    CENTRAL: 'temperate_forest',     // 中原温带落叶林（较湿润）
-    NORTH: 'temperate_grass',        // 华北北部半干旱草原
-    JIANGNAN: 'temperate_forest',    // 江南湿润亚热带（竹/枫/松/阔叶）
-    LINGNAN: 'tropical_rainforest',  // 岭南亚热带常绿/热带
-    BASHU: 'temperate_forest',       // 四川盆地湿润
-    DIANQIAN: 'temperate_forest',    // 云贵高原湿润山地
-    HEXI: 'desert',                  // 河西走廊干旱
-    WESTERN: 'desert',               // 西域干旱
-    TIBET: 'tundra_snow',            // 青藏高原高寒
-    STEPPE: 'temperate_grass',       // 蒙古高原草原
-    NORTHEAST: 'boreal',             // 东北寒温带针叶林
-    KOREA: 'temperate_forest',       // 朝鲜湿润温带
-    JAPAN: 'temperate_forest',       // 日本湿润温带
-    CENTRAL_ASIA: 'desert',          // 中亚干旱
-    WEST_ASIA: 'desert',             // 西亚以干旱为主（阿拉伯/埃及/两河）
-};
+export function resolveClimateRegion(lat: number, lng: number): KoppenClass | null {
+    const id = koppenClassIdAt(lat, lng);
+    return id === null ? null : (KOPPEN_CLASS_BY_ID[id] ?? null);
+}
 
-function detectBiomeCore(
+function fallbackBiomeForLatitude(lat: number): Biome {
+    const absLat = Math.abs(lat);
+    if (absLat < 12) return 'tropical_rainforest';
+    if (absLat < 23) return 'savanna';
+    if (absLat < 35) return 'temperate_grass';
+    if (absLat < 55) return 'temperate_forest';
+    if (absLat < 66) return 'boreal';
+    return 'tundra_snow';
+}
+
+export function resolveElevationBand(
     lat: number,
-    lng: number,
-    absLat: number,
+    climate: KoppenClass | null,
     elev: number | null,
-    snowLine: number
-): Biome {
-    // 1. 雪线 / 极地（物理最硬，先于区域）
-    if (elev !== null && elev >= snowLine) return 'tundra_snow';
-    if (absLat >= 66) return 'tundra_snow';
+): ElevationBand {
+    if (elev === null) return 'lowland';
+    if (elev >= snowLineFor(lat)) return 'snow';
+    const group = climate?.[0] as 'A' | 'B' | 'C' | 'D' | 'E' | undefined;
+    const thresholds = ELEVATION_THRESHOLDS[group ?? 'C'];
+    if (elev >= thresholds.alpine) return 'alpine';
+    if (elev >= thresholds.mountain) return 'mountain';
+    if (elev >= thresholds.upland) return 'upland';
+    return 'lowland';
+}
 
-    // 2. 文化区硬基线（优先于卫星色和纬度带）
-    return REGION_BIOME[getRegion(lat, lng)];
+function detectBiomeCore(lat: number, lng: number, elev: number | null): Biome {
+    const climate = resolveClimateRegion(lat, lng);
+    const band = resolveElevationBand(lat, climate, elev);
+    if (band === 'snow') return 'tundra_snow';
+    return climate ? KOPPEN_TO_BIOME[climate] : fallbackBiomeForLatitude(lat);
+}
+
+/** 已取得海拔时使用，避免再次触发异步地形瓦片采样。 */
+export function detectBiomeAtElevation(lat: number, lng: number, elev: number | null): Biome {
+    return detectBiomeCore(lat, lng, elev);
 }
 
 /** 公开入口：只判 biome（海拔现采） */
 export function detectBiome(lat: number, lng: number): Biome {
     const elev = LandSeaSystem.getSampler().getElevationSync(lat, lng);
-    return detectBiomeCore(lat, lng, Math.abs(lat), elev, snowLineFor(lat));
-}
-
-/** L2 地貌修正：按海拔/坡度返回地表候选（列表，最终随机取一张） */
-function l2Candidates(
-    biomeMain: string,
-    elev: number | null,
-    slopeDeg: number | null,
-    snowLine: number
-): string[] {
-    if (elev !== null) {
-        if (elev >= snowLine) return ['sno', 'sn2', 'snf'];
-        if (elev >= 2500) return ['pm2', 'qs2', 'gravel_default'];
-        if (elev >= 800 || (slopeDeg !== null && slopeDeg >= 12)) {
-            return ['rck', 'gravel_default', 'rock_wet'];
-        }
-        if (elev >= 200) return [biomeMain, biomeMain, biomeMain, 'pc1', 'pc2', 'pm1'];
-    }
-    return [biomeMain];
+    return detectBiomeCore(lat, lng, elev);
 }
 
 /**
@@ -119,15 +141,31 @@ function l2Candidates(
  * 每场一张、全场统一，纯 createPattern 重复铺（铁律）。
  */
 export function resolveTerrainTile(lat: number, lng: number, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource): string {
-    const snowLine = snowLineFor(lat);
     const sampler = LandSeaSystem.getSampler();
     const sample = sampler.getElevationAndSlopeSync(lat, lng);
     const elev = sample?.elevationM ?? null;
-    const slope = sample?.slopeDeg ?? null;
-    const biome = detectBiomeCore(lat, lng, Math.abs(lat), elev, snowLine);
+    return resolveTerrainTileAtElevation(lat, lng, elev, season, rng);
+}
+
+/** 已取得海拔时使用：保证主地形与本场环境方案使用同一份采样结果。 */
+export function resolveTerrainTileAtElevation(
+    lat: number,
+    lng: number,
+    elev: number | null,
+    season: 0 | 1 | 2,
+    rng: RandomSource = mathRandomSource,
+): string {
+    const climate = resolveClimateRegion(lat, lng);
+    const band = resolveElevationBand(lat, climate, elev);
+    const biome = detectBiomeCore(lat, lng, elev);
     const biomeMain = BIOME_TERRAIN[biome][season];
-    const candidates = l2Candidates(biomeMain, elev, slope, snowLine);
-    return rng.pick(candidates);
+    if (band === 'snow') return rng.pick(['sno', 'sn2', 'snf']);
+    if (band === 'alpine') {
+        return rng.pick(biome === 'desert' || biome === 'temperate_grass'
+            ? ['pm2', 'qs2', 'gravel_default']
+            : [biomeMain, 'pm2', 'rock_wet']);
+    }
+    return biomeMain;
 }
 
 // ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────
