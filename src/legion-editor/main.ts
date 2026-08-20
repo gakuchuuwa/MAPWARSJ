@@ -1389,6 +1389,25 @@ function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
     return { formationMode, slots: slots.map(s => ({ ...s })) };
 }
 
+/** 军团层级（运行时判定）：文化军团=无专属编成；支军团=编成被多武将共享；子军团=单武将专属 */
+function getLegionLayer(factionId: string): 'culture' | 'branch' | 'sub' {
+    const custom = localCustomCompositions[factionId];
+    if (!custom) return 'culture';
+    const sig = (v: CustomFactionLegion) => v.formationMode + '|' + v.slots.map(s => s.type + ':' + s.count).join(',');
+    const thisSig = sig(custom);
+    let genCount = 0;
+    for (const [fid, v] of Object.entries(localCustomCompositions)) {
+        if (sig(v) === thisSig && (FACTION_GENERALS as any)[fid]) genCount++;
+    }
+    return genCount > 1 ? 'branch' : 'sub';
+}
+
+const LEGION_LAYER_LABEL: Record<'culture' | 'branch' | 'sub', string> = {
+    culture: '文化军团',
+    branch: '支军团',
+    sub: '子军团',
+};
+
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
 function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
     const r1 = slots[0]?.type || '';
@@ -1505,29 +1524,18 @@ function renderEditPanel(row: FactionLegionRow): void {
     const row3Scale = slots[backIdx]?.scale ?? DE_UNITS_MAP.get(row3Type)?.defaultScale ?? 1.0;
 
     const html = `
-    <!-- 头部势力名片 -->
+    <!-- 军团信息卡（选中的军团） -->
     <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:10px;">
         <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
         <div>
-          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName ? currentEditingLegion.legionName : row.factionName}</div>
-          <div style="font-size:11px;color:#a89f8f;margin-top:2px;">${row.factionName} | 首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
+          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName || row.factionName}</div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:2px;"><b style="color:#c9a86a;">${LEGION_LAYER_LABEL[getLegionLayer(row.factionId)]}</b> | 势力：${row.factionName}${row.generalName ? ` | 武将：${row.generalName}` : ''} | 文化区：${row.regionLabel}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
         </div>
       </div>
       <div>
         ${row.isCustom ? `<span class="status-tag status-custom" style="font-size:12px;padding:4px 8px;">专属定制</span>` : `<span class="status-tag status-default" style="font-size:12px;padding:4px 8px;">文化默认</span>`}
       </div>
-    </div>
-
-    <!-- 军团名称（这支三排编成部队自己的名字，不是精锐番号） -->
-    <div class="le-form-section">
-      <div class="le-section-title">
-        <span>军团名称</span>
-        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">前中后三排组成的这支部队叫什么</span>
-      </div>
-      <input id="le-legion-name" class="le-input" type="text" style="width:100%;"
-             placeholder="例如：瓦兰吉卫队军团 / 虎豹铁骑军团（留空则用势力名）"
-             value="${(currentEditingLegion?.legionName ?? '').replace(/"/g, '&quot;')}" />
     </div>
 
     <!-- 套用其他军团（两级：先选区、再选势力） -->
@@ -1697,12 +1705,6 @@ function bindPanelEvents(row: FactionLegionRow): void {
                 renderEditPanel(row);
             }
         });
-    });
-
-    // 军团名称
-    const nameInput = document.getElementById('le-legion-name') as HTMLInputElement | null;
-    nameInput?.addEventListener('input', () => {
-        if (currentEditingLegion) currentEditingLegion.legionName = nameInput.value.trim() || undefined;
     });
 
     // 兵种选择弹窗打开

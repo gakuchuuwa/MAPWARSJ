@@ -136,7 +136,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
-    STEPPE:       'triangle',     // 草原：草原枪兵(2) + 怯薛军(3) + 精锐蒙古突骑主力(4)
+    STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 帝王掷矛手(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
@@ -1071,8 +1071,8 @@ export const STEPPE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'steppe_lancer', count: 2 },    // Row 0 尖刀先锋 = 草原枪兵 2人
-            { type: 'keshik', count: 3 },           // Row 1 冲击中坚 = 怯薛军 3骑
+            { type: 'keshik', count: 2 },           // Row 0 尖刀先锋 = 怯薛军 2骑
+            { type: 'steppe_lancer', count: 3 },    // Row 1 冲击中坚 = 草原枪骑兵 3骑
             { type: 'mangudai_elite', count: 4 }    // Row 2 底边主力齐射 = 精锐蒙古突骑 4骑
         ]
     }
