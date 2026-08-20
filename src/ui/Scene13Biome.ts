@@ -34,7 +34,7 @@ export function snowLineFor(lat: number): number {
 /**
  * biome → 主地形（[夏/春, 秋, 冬]，对齐 sceneSeason 0/1/2）。照抄工单 §3，勿自创。
  */
-const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
+export const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
     tropical_rainforest: ['gr8', 'gr8', 'gr8'],
     savanna: ['grs', 'pc1', 'gr5'],
     desert: ['des', 'ds2', 'qs'],

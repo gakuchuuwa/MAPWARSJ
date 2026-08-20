@@ -290,6 +290,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         const elevation = generateElevation(gw, gh, elev, slope, rng);
 
         // ── 第 3 层 CLIFF/WATER ──
+        // CLIFF：山体/悬崖按生成的高程格布局（高程格 ↔ 山体位置关联，不是全局贴边）
+        buildCliffs(elevation, ox, oy, VW, VH, rng, objects);
         if (waterKind === 'sea') {
             // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石/牡蛎共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
@@ -303,9 +305,10 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
         }
 
-        // ── 第 4 层 TERRAIN：农田 + 地表变体 ──
+        // ── 第 4 层 TERRAIN：农田 + 地表变体 + 林地落叶层 ──
         buildFarms(gw, gh, elev, reg, rng, patches, occupied);
         buildGroundVariation(gw, gh, biome, rng, patches, occupied);
+        buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 山地大件 / 资源 / 残迹 / 落叶 ──
         buildVegetation(VW, VH, biome, season, elev, slope, rng, objects);
@@ -367,6 +370,38 @@ function generateElevation(
         for (const [x, y] of cells) grid[y][x] = 3;
     }
     return grid;
+}
+
+// ── 第 3 层：悬崖/山体（按 elevation[][] 布局，高程格 ↔ 山体位置关联） ──
+
+function buildCliffs(
+    elevation: number[][],
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    objects: EnvironmentObjectPlan[]
+): void {
+    const gh = elevation.length;
+    const gw = gh ? elevation[0].length : 0;
+    for (let y = 0; y < gh; y++) {
+        for (let x = 0; x < gw; x++) {
+            const h = elevation[y][x];
+            // 高峰必放山体/悬崖；丘陵 35% 概率放（照 RMS 高峰撒岩石）
+            if (h >= 3 || (h === 2 && rng.chance(0.35))) {
+                const sx = isoCellX(x, y, ox);
+                const sy = isoCellY(x, y, oy);
+                // 🔴 网格比屏幕大，四角格会越界 → 跳过屏幕外格（山体大件，不 clamp 到边缘）
+                if (sx < 0 || sx > VW || sy < 0 || sy > VH) continue;
+                objects.push({
+                    asset: rng.pick(MOUNTAIN_ASSETS),
+                    x: sx, y: sy,
+                    z: 2, flip: rng.chance(0.5), frame: rng.int(0, 99999),
+                });
+            }
+        }
+    }
 }
 
 // ── 第 3 层：海岸线（圈带分层 + 有机边界，照 coastal/water_blending.inc） ──
@@ -487,7 +522,9 @@ function buildLake(
     const py0 = allPond.length ? isoCellY(allPond[0][0], allPond[0][1], oy) : VH * 0.4;
     for (let i = 0; i < 4; i++) {
         const re = swamp ? 'UNDERBRUSH_JUNGLE' : rng.pick(['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO']);
-        objects.push({ asset: re, x: px0 + rng.next() * VW * 0.3 - VW * 0.15, y: py0 + rng.next() * VH * 0.25 - VH * 0.12, z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const rx = Math.max(0, Math.min(VW, px0 + rng.next() * VW * 0.3 - VW * 0.15));
+        const ry = Math.max(0, Math.min(VH, py0 + rng.next() * VH * 0.25 - VH * 0.12));
+        objects.push({ asset: re, x: rx, y: ry, z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 
@@ -534,6 +571,26 @@ function buildGroundVariation(
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
         patches.push({ tile: t, cells: growClump(sx, sy, 4 + rng.int(0, 5), gw, gh, occupied, rng), alpha: 0.22, category: 'ground-variation' });
+    }
+}
+
+// ── 第 4 层：林地落叶层（森林 biome 的 forest-floor 斑块） ─────────
+
+function buildForestFloor(
+    gw: number,
+    gh: number,
+    biome: Biome,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    occupied: Set<string>
+): void {
+    const isForest = biome === 'tropical_rainforest' || biome === 'temperate_forest' || biome === 'boreal';
+    if (!isForest) return;
+    const tiles = ['fo2', 'underbrush_leaves'];
+    const n = 1 + rng.int(0, 1);
+    for (let i = 0; i < n; i++) {
+        const sx = 2 + rng.int(0, gw - 4), sy = 2 + rng.int(0, gh - 4);
+        patches.push({ tile: rng.pick(tiles), cells: growClump(sx, sy, 8 + rng.int(0, 10), gw, gh, occupied, rng), alpha: 0.5, category: 'forest-floor' });
     }
 }
 
