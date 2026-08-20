@@ -741,7 +741,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
     shu: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 蜀汉白毦兵 3人
@@ -750,7 +750,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     huizhou_d: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -759,7 +759,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     chu: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -768,7 +768,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     langzhou: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -777,7 +777,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     jingmen: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -786,7 +786,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     cangsong: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -795,7 +795,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     qingqiang: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -804,7 +804,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yangzhou: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -813,7 +813,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     yueyi: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -822,7 +822,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     lizhou_d: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -831,7 +831,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     fu_zhou: {
-        legionName: "蜀汉军团",
+        legionName: "川蜀军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'white_feather_guard', count: 3 },
@@ -2610,7 +2610,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
     dayue: {
-        legionName: "白藤江水师军团",
+        legionName: "岭南军团",
         formationMode: 'triangle',
         slots: [
             { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨兽 = 皮甲战象 2头（前沿象阵开路冲撞）
@@ -2767,7 +2767,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wenling": {
-        legionName: "澎湖水师军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
