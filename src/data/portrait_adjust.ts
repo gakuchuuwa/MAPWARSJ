@@ -6577,50 +6577,20 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LATIN/__多余__LATIN_02.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 22
-        },
         "/assets/LATIN/yipilusi_piluoshi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 22
-        },
-        "/assets/LATIN/__多余__LATIN_03.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 17
         },
         "/assets/LATIN/baojialiya_asenyishi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/LATIN/__多余__LATIN_04.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 18
-        },
-        "/assets/LATIN/__多余__LATIN_07.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 24
-        },
-        "/assets/LATIN/__多余__LATIN_06.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 16
-        },
         "/assets/LATIN/talanduo_aqita.png": {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 24
-        },
-        "/assets/GERMANIC/__多余__GERMANIC_02.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/GERMANIC/safuyi_ameidiao.png": {
             "scale": 1.05,
@@ -6657,27 +6627,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/HEXI/__闲置__HEXI_18.png": {
-            "scale": 0.81,
-            "offsetX": 10,
-            "offsetY": -30
-        },
         "/assets/HEXI/guiyi_caoyijin.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/WEST_ASIA/__多余__WEST_ASIA_02.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 25
-        },
         "/assets/WEST_ASIA/osman_muhanmodeershi.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": 2
-        },
-        "/assets/WEST_ASIA/osman_mehmed_ii.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 2
