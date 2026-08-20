@@ -6577,12 +6577,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/CENTRAL/8eba6f5a-69d6-4fba-b9eb-4742a79ac877.png": {
+        "/assets/CENTRAL/__多余__CENTRAL_02.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/CENTRAL/87f25bf0-b2a6-4210-a3d9-e72c49d3e3a2.png": {
+        "/assets/CENTRAL/__多余__CENTRAL_01.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -5
@@ -6612,7 +6612,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/DIANQIAN/d2be4ea8-e622-45be-b615-8f59e7acc6f3.png": {
+        "/assets/DIANQIAN/__多余__DIANQIAN_01.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -31
@@ -6627,7 +6627,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -31
         },
-        "/assets/CENTRAL/f3f7e8bf-e684-40b1-8b24-740f272f0c9a.png": {
+        "/assets/CENTRAL/__多余__CENTRAL_03.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -12
@@ -6647,7 +6647,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -29
         },
-        "/assets/HEXI/d3fd85b0-784d-47d9-b04b-6d27569b3405.png": {
+        "/assets/HEXI/__多余__HEXI_02.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -36
@@ -6662,7 +6662,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -36
         },
-        "/assets/HEXI/1339e419-1f30-4eff-b701-caae070d3a08.png": {
+        "/assets/HEXI/__多余__HEXI_01.png": {
             "scale": 1.09,
             "offsetX": 10,
             "offsetY": -10
