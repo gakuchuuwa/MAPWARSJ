@@ -938,7 +938,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_william_silent': 16,                            // 威廉奥兰治 · nidelan · 海牙
     'gen_william_wallace': 13,                           // 华莱士 · kanbuliya · 卡莱尔
     'gen_zwingli': 16,                                   // 茨温利 · ruishi · 巴塞尔
-    'mazhaer_beilasishi': 13,                            // 贝拉四世 · mazhaer · 布达佩斯
+    'mazhaer_xiongyati': 15,                             // 匈雅提亚诺什 · mazhaer · 布达佩斯
     'ruidian_si_biergeyaer': 13,                         // 比尔格雅尔 · ruidian_si · 斯德哥尔摩
 
     // ══════ KOREA（23 人，已标 0）══════

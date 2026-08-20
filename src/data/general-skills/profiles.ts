@@ -3103,7 +3103,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_onas_khan: { generalId: 'gen_onas_khan', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_242', defAdvantageSkillId: 'ts_770', atkBalanceSkillId: 'ts_332', defBalanceSkillId: 'ts_537', atkDisadvantageSkillId: 'ts_689', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage', attackStyle: 'attack' },
     gen_karasakal: { generalId: 'gen_karasakal', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_282', defAdvantageSkillId: 'ts_071', atkBalanceSkillId: 'ts_628', defBalanceSkillId: 'ts_433', atkDisadvantageSkillId: 'ts_711', defDisadvantageSkillId: 'ts_712', aptitude: 'leverage', attackStyle: 'attack' },
     shaiyue_aerpade: { generalId: 'shaiyue_aerpade', tier: 'ordinary', tacticalSkillId: 'ts_679', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_704', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
-    mazhaer_beilasishi: { generalId: 'mazhaer_beilasishi', tier: 'ordinary', tacticalSkillId: 'ts_362', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_768', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_118', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage', attackStyle: 'attack' },
+    mazhaer_xiongyati: { generalId: 'mazhaer_xiongyati', tier: 'famous', tacticalSkillId: 'ts_362', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_768', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_118', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage', attackStyle: 'attack' },
 };
 
 

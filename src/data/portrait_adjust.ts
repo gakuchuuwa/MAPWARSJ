@@ -208,7 +208,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/xianqin/chunshen_huangxie.png": {
-            "scale": 0.91,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": 7
         },
@@ -1293,7 +1293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/JIANGNAN/qian_d_yudayou.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -17
         },
@@ -6322,7 +6322,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -28
         },
-        "/assets/GERMANIC/mazhaer_beilasishi.png": {
+        "/assets/GERMANIC/mazhaer_xiongyati.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 8
