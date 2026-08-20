@@ -14,6 +14,7 @@
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { ImagerySampler } from '../world/land-sea/ImagerySampler';
 import { getRegion } from '../systems/RegionSystem';
+import { RandomSource, mathRandomSource } from './scene13/Random';
 
 export type Biome =
     | 'tropical_rainforest'
@@ -177,7 +178,7 @@ function l2Candidates(
  * 最终入口：给战场中心经纬度 + 本场季节，选一张 DE 地形贴图名。
  * 每场一张、全场统一，纯 createPattern 重复铺（铁律）。
  */
-export function resolveTerrainTile(lat: number, lng: number, season: 0 | 1 | 2): string {
+export function resolveTerrainTile(lat: number, lng: number, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource): string {
     const snowLine = snowLineFor(lat);
     const sampler = LandSeaSystem.getSampler();
     const sample = sampler.getElevationAndSlopeSync(lat, lng);
@@ -186,7 +187,7 @@ export function resolveTerrainTile(lat: number, lng: number, season: 0 | 1 | 2):
     const biome = detectBiomeCore(lat, lng, Math.abs(lat), elev, snowLine);
     const biomeMain = BIOME_TERRAIN[biome][season];
     const candidates = l2Candidates(biomeMain, elev, slope, snowLine);
-    return candidates[(Math.random() * candidates.length) | 0];
+    return rng.pick(candidates);
 }
 
 // ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────
@@ -242,31 +243,31 @@ export const BIOME_GROUND_VARIATION: Record<Biome, string[]> = {
 };
 
 /** 从树种池随机选 2~3 种混布（树可混种，与地形不同） */
-export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2): string[] {
+export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource): string[] {
     const pool = BIOME_TREES[biome][season];
-    const n = Math.min(pool.length, 2 + ((Math.random() * 2) | 0));
+    const n = Math.min(pool.length, 2 + rng.int(0, 1));
     const shuffled = [...pool];
     for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = (Math.random() * (i + 1)) | 0;
+        const j = rng.int(0, i);
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled.slice(0, n);
 }
 
 /** 每场树木数量（按 biome 密度；tundra 极稀、森林茂密） */
-export function treeCountFor(biome: Biome): number {
+export function treeCountFor(biome: Biome, rng: RandomSource = mathRandomSource): number {
     switch (biome) {
         case 'tundra_snow':
-            return 3 + ((Math.random() * 3) | 0);        // 2~5 极稀
+            return 3 + rng.int(0, 2);        // 2~5 极稀
         case 'desert':
-            return 6 + ((Math.random() * 5) | 0);        // 6~10 稀疏
+            return 6 + rng.int(0, 4);        // 6~10 稀疏
         case 'savanna':
         case 'mediterranean':
-            return 9 + ((Math.random() * 6) | 0);        // 9~14
+            return 9 + rng.int(0, 5);        // 9~14
         case 'tropical_rainforest':
         case 'temperate_forest':
-            return 15 + ((Math.random() * 10) | 0);      // 15~24 茂密
+            return 15 + rng.int(0, 9);      // 15~24 茂密
         default:
-            return 11 + ((Math.random() * 8) | 0);       // 11~18 温带草原/寒带
+            return 11 + rng.int(0, 7);       // 11~18 温带草原/寒带
     }
 }

@@ -866,6 +866,8 @@ const TILE_W = 64;
 const TILE_H = 32;
 /** 斑块边界羽化半径（px）：DE 过渡是硬边菱形阶梯，只留 2px 抗锯齿，不再大羽化 */
 const DECOR_BLUR = 2;
+/** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
+const ELEV_BLUR = 12;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2233,6 +2235,11 @@ export class Scene13WarLayer {
     private maskCtx: CanvasRenderingContext2D | null = null;
     private blurCv: HTMLCanvasElement | null = null;
     private blurCtx: CanvasRenderingContext2D | null = null;
+    /** 高地光照离屏画布（白/黑菱形先画这里，再羽化合成，避免硬边方块） */
+    private elevCv: HTMLCanvasElement | null = null;
+    private elevCtx: CanvasRenderingContext2D | null = null;
+    private elevBlurCv: HTMLCanvasElement | null = null;
+    private elevBlurCtx: CanvasRenderingContext2D | null = null;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -3249,7 +3256,7 @@ export class Scene13WarLayer {
         for (let i = 0; i < 5; i++) {
             const t = variation[(Math.random() * variation.length) | 0];
             const sx = 1 + ((Math.random() * (gw - 2)) | 0), sy = 1 + ((Math.random() * (gh - 2)) | 0);
-            this.addDecorCells(t, this.growClump(sx, sy, 4 + ((Math.random() * 5) | 0), gw, gh, occupied), 0.55);
+            this.addDecorCells(t, this.growClump(sx, sy, 4 + ((Math.random() * 5) | 0), gw, gh, occupied), 0.22);
         }
 
         // 5.5 高地/丘陵：照 RMS create_elevation（clump 生长 + 高度等级；hillshade 着色 + 高峰岩石）
@@ -3309,11 +3316,18 @@ export class Scene13WarLayer {
         for (const s of sorted) this.drawDecorSprite(g, s);
     }
 
-    /** 高地着色（hillshade）：西北光，面向光的高地边亮、背光边暗，营造丘陵立体感 */
+    /** 高地着色（hillshade）：西北光，面向光的高地边亮、背光边暗，营造丘陵立体感。先画到离屏再羽化，避免逐格硬菱形方块 */
     private paintElevation(g: CanvasRenderingContext2D): void {
         const gh = this.elevGrid.length;
         const gw = gh ? this.elevGrid[0].length : 0;
         if (!gh || !gw) return;
+        const W = this.decor!.width, H = this.decor!.height;
+        if (!this.elevCv) { this.elevCv = document.createElement('canvas'); this.elevCtx = this.elevCv.getContext('2d')!; }
+        if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
+        const ecv = this.elevCv, ectx = this.elevCtx!;
+        const bcv = this.elevBlurCv, bctx = this.elevBlurCtx!;
+        if (ecv.width !== W || ecv.height !== H) { ecv.width = W; ecv.height = H; bcv.width = W; bcv.height = H; }
+        ectx.clearRect(0, 0, W, H);
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
                 const h = this.elevGrid[y][x];
@@ -3322,19 +3336,24 @@ export class Scene13WarLayer {
                 if (delta === 0) continue;
                 const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
                 const a = Math.min(0.35, Math.abs(delta) * 0.13);
-                g.save();
-                g.globalAlpha = a;
-                g.fillStyle = delta > 0 ? '#fff' : '#000';
-                g.beginPath();
-                g.moveTo(sx, sy - TILE_H / 2);
-                g.lineTo(sx + TILE_W / 2, sy);
-                g.lineTo(sx, sy + TILE_H / 2);
-                g.lineTo(sx - TILE_W / 2, sy);
-                g.closePath();
-                g.fill();
-                g.restore();
+                ectx.globalAlpha = a;
+                ectx.fillStyle = delta > 0 ? '#fff' : '#000';
+                ectx.beginPath();
+                ectx.moveTo(sx, sy - TILE_H / 2);
+                ectx.lineTo(sx + TILE_W / 2, sy);
+                ectx.lineTo(sx, sy + TILE_H / 2);
+                ectx.lineTo(sx - TILE_W / 2, sy);
+                ectx.closePath();
+                ectx.fill();
             }
         }
+        ectx.globalAlpha = 1;
+        // 羽化：高斯模糊硬菱形边 → 平滑光照渐变
+        bctx.clearRect(0, 0, W, H);
+        bctx.filter = `blur(${ELEV_BLUR}px)`;
+        bctx.drawImage(ecv, 0, 0);
+        bctx.filter = 'none';
+        g.drawImage(bcv, 0, 0);
     }
 
     /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰） */
