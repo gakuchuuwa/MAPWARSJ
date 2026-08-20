@@ -881,6 +881,16 @@ const TREE_VARIANTS = [0, 1, 2, 3, 4, 5];
 const LAKE_BASE_URL = '/sanguoqunying/湖/';
 const LAKE_W = 200;             // 渲染宽（px，原 334 × 0.6）
 const LAKE_H = 132;             // 渲染高（px，原 221 × 0.6）
+
+// ── 场景地形铺地（2026-08-20 主人定：13 全面 DE 化，地面由「透明叠真实地图」改为「DE 地形铺满」）──
+// 铺地 = 屏幕像素坐标分块随机取主地形贴图（512² 无缝平铺），不单张刷满（单张刷满有一眼重复的格子感，
+// 混 2~3 张分块随机打散单调）。铺地烙进离屏 canvas，之后每帧只 drawImage 一次，开销恒定（同 ground 尸体层）。
+// 🔴 P0 硬编码温带森林 biome（中原/江南战场最多，方案 claudedocs/scene13-de-terrain-plan 建议先做这个）；
+//    L1 气候带判定（采样 ESRI 卫星色 + 海拔）接管后，再换成 biome→地形映射表。详见该方案 §三。
+const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
+const TERRAIN_TEMPERATE_FOREST = ['gr3', 'gr6', 'gr8'];
+/** 铺地分块边长（px）：512² 贴图缩到 256² 铺，一屏约 7×4 块，草地颗粒感自然。可调。 */
+const TERRAIN_BLOCK = 256;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -1042,19 +1052,33 @@ const PROJ_TYPE: Record<string, string> = {
     antiquity_siege_onager: 'PROJ_BALL',
     antiquity_scorpion: 'PROJ_BOLT',
     antiquity_heavy_scorpion: 'PROJ_BOLT',
-    antiquity_siege_tower: 'PROJ_ARROW',
+    antiquity_siege_tower: 'PROJ_BOLT',   // DE: SIEGTWR → Projectile Helepolis → p_bolt（塔上弩机）
     flamethrower: 'PROJ_SHOT',        // 猛火油柜喷火，用火器弹丸
     helepolis: 'PROJ_BOLT',           // 攻城塔射弩箭
     // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
     //    DE 里它有专属弹丸 `Projectile Hussite Wagon`(id 1733)，我们没登记 → 落回默认 PROJ_ARROW。
     //    改用火器弹丸 PROJ_SHOT。
-    hussite_wagon: 'PROJ_SHOT',
-    elite_hussite_wagon: 'PROJ_SHOT',
-    // 🔴 [2026-08-20 主人拍板] 高丽战车射的是**弩箭**，不是普通羽箭 —— 车上架的是弩机。
-    //    此前这里写着「射箭是对的，不动」，那条是 AI 自己下的结论，已作废：本项目一切按帝国时代
-    //    原有设计，主人在 DE 里看到的就是判据。改 PROJ_BOLT 后自动走 PROJ_FLAT 平直弹道（不抛弧）。
+    hussite_wagon: 'PROJ_HUSSITE_WAGON',
+    elite_hussite_wagon: 'PROJ_HUSSITE_WAGON',
+    // ══ [2026-08-20] 全部「车」类攻击特效按 DE 本体逐个重核 ══
+    //   判据 = genieutils 解析 `empires2_x2_p1.dat` 的 projectile_unit_id → 弹丸单位 → graphic 文件名，
+    //   **不是注释、不是记忆**（探针 scratch/probe_wagons.py，导出表 units_proj.tsv）。实测：
+    //     WAGON(高丽战车)      → 373  Projectile War Galley        → p_bolt          = 弩箭
+    //     HUSSITEWAGON(胡斯)   → 1733 Projectile Hussite Wagon     → p_hussite_wagon = 专属火铳弹
+    //     WARCHAR(先秦战车)    → Projectile War Chariot(Barrage)   → p_spear_small   = 小标枪
+    //     ORGAN(风琴炮)        → 1789 Projectile Organ Gun         → p_shot          = 火器弹（已对）
+    //     RCKTCRT(火箭车)      → Projectile Rocket Cart            → p_arrow_fire    = 火箭（已对）
+    //     SCBAL/HWBAL/ELEBALI  → Scorpion/HeavyScorpion/BallistaEle→ p_bolt          = 弩箭（已对）
+    //     SIEGTWR(攻城塔)      → Projectile Helepolis              → p_bolt          = 弩箭
+    //   高丽战车此前写着「射箭是对的，不动」——那是 AI 自己下的错误结论，已作废。
+    //   PROJ_BOLT / PROJ_SHOT 自动走 PROJ_FLAT 平直弹道（不抛弧）。
     war_wagon: 'PROJ_BOLT',
     elite_war_wagon: 'PROJ_BOLT',
+    // 先秦远程战车：DE `WARCHAR` → `Projectile War Chariot (Barrage/Focus Fire)` → p_spear_small
+    //   = **小标枪**，不是箭。此前没映射、落回 PROJ_ARROW。
+    war_chariot_ranged: 'PROJ_SPEAR_SMALL',
+    // 攻城塔：DE `SIEGTWR` → `Projectile Helepolis` → p_bolt（塔上弩机，非弓手羽箭）
+    siege_tower: 'PROJ_BOLT',
     fire_archer: 'PROJ_ARROW_FIRE',
     elite_fire_archer: 'PROJ_ARROW_FIRE',
     rocket_cart: 'PROJ_ARROW_FIRE',
@@ -2212,6 +2236,11 @@ export class Scene13WarLayer {
      */
     private ground: HTMLCanvasElement | null = null;
     private groundCtx: CanvasRenderingContext2D | null = null;
+    /** 地形铺地离屏画布（DE 贴图分块铺满，start 烙一次，之后每帧 drawImage 一次，开销恒定） */
+    private terrain: HTMLCanvasElement | null = null;
+    private terrainCtx: CanvasRenderingContext2D | null = null;
+    /** 地形贴图缓存（name → img）；纯装饰：加载失败就少一张，绝不进 pending */
+    private terrainImgs: Record<string, HTMLImageElement> = {};
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -2333,6 +2362,11 @@ export class Scene13WarLayer {
             if (this.ground) {
                 this.ground.width = this.canvas.width;
                 this.ground.height = this.canvas.height;   // 尺寸一变内容即清空（已烙的尸体丢失）
+            }
+            if (this.terrain) {
+                this.terrain.width = this.canvas.width;
+                this.terrain.height = this.canvas.height;
+                this.paintTerrain();   // 尺寸变了 → 按新尺寸重铺（贴图已缓存则立即铺满）
             }
         };
         window.addEventListener('resize', onResize);
@@ -2562,6 +2596,7 @@ export class Scene13WarLayer {
             this.scatterLakes(VW, VH);
             this.scatterTrees(VW, VH);
             this.scatterClouds(VW, VH);
+            this.initTerrain();
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
             //    跟随军团永远不动）。走 forceResultByRatio 判负通道：它调 onDecision →
@@ -2972,6 +3007,46 @@ export class Scene13WarLayer {
         const im = new Image();
         im.onload = () => { t.img = im; };
         im.src = TREE_BASE_URL + (t.kind + 1) + '/' + (t.variant + 1) + '.png';
+    }
+
+    /**
+     * 加载 DE 地形贴图并铺地（2026-08-20 P0）。start 时调一次，之后各贴图 onload 时增量重铺。
+     * 🔴 与树/湖/云同规矩：纯装饰，加载失败就少一张、铺地露透明（真实地图兜底），绝不进 pending。
+     */
+    private initTerrain(): void {
+        if (!this.canvas) return;
+        if (!this.terrain) {
+            this.terrain = document.createElement('canvas');
+            this.terrainCtx = this.terrain.getContext('2d')!;
+        }
+        this.terrain.width = this.canvas.width;
+        this.terrain.height = this.canvas.height;
+        this.terrainImgs = {};
+        this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
+        for (const name of TERRAIN_TEMPERATE_FOREST) {
+            const im = new Image();
+            this.terrainImgs[name] = im;
+            im.onload = () => this.paintTerrain();
+            im.src = TERRAIN_BASE_URL + name + '.png';
+        }
+    }
+
+    /** 把已加载的 DE 地形贴图分块随机铺满整屏（有就铺，没就透明；分块随机打散单调感）。 */
+    private paintTerrain(): void {
+        const cv = this.terrain, g = this.terrainCtx;
+        if (!cv || !g) return;
+        g.clearRect(0, 0, cv.width, cv.height);
+        const ready = TERRAIN_TEMPERATE_FOREST.filter(n => {
+            const im = this.terrainImgs[n];
+            return im && im.complete && im.naturalWidth > 0;
+        });
+        if (!ready.length) return;
+        for (let y = 0; y < cv.height; y += TERRAIN_BLOCK) {
+            for (let x = 0; x < cv.width; x += TERRAIN_BLOCK) {
+                const im = this.terrainImgs[ready[(Math.random() * ready.length) | 0]];
+                g.drawImage(im, x, y, TERRAIN_BLOCK, TERRAIN_BLOCK);
+            }
+        }
     }
 
     // ── 素材：按需加载 + 去绿幕 + 染色（同 __war.html / 主游戏启动管线）──
@@ -4394,6 +4469,9 @@ export class Scene13WarLayer {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
         ctx.clearRect(0, 0, cv.width, cv.height);
+
+        // 地形铺地：DE 贴图分块铺满整屏（最底层，湖/树/尸体/士兵全在它之上）
+        if (this.terrain) ctx.drawImage(this.terrain, 0, 0);
 
         const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number }[] = [];
         // 湖：贴地水域，画在最底层（ground 尸体层之下），不参与 y 排序；本季一张图，随机镜像

@@ -1077,11 +1077,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/DIANQIAN/konbaung_yongjiya.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": -12
-        },
         "/assets/DIANQIAN/taiyuan_menglai.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -6666,6 +6661,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_33.png": {
+            "scale": 0.78,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/DIANQIAN/konbaung_yongjiya.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
