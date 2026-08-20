@@ -754,7 +754,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     you: { generalId: 'you_gengyan', generalName: '耿弇', portrait: '/assets/liuhan/you_gengyan.png' },
     lingqiu: { generalId: 'lingqiu_zhaowuling', generalName: '赵雍', portrait: '/assets/xianqin/lingqiu_zhaowuling.png' },
     yi: { generalId: 'yi_yuqian', generalName: '于谦', portrait: '/assets/daming/yi_yuqian.png' },
-    huo: { generalId: 'huo_songlaosheng', generalName: '宋老生', portrait: '/assets/NORTH/huo_songlaosheng.png' },
+    huo: { generalId: 'huo_songlaosheng', generalName: '宋老生', portrait: '/assets/CENTRAL/huo_songlaosheng.png' },
     // ── 北方区 2026-06-18 ──
     jinzhou: { generalId: 'jinzhou_lichengliang', generalName: '李成梁', portrait: '/assets/daming/jinzhou_lichengliang.png' },
     zu_d: { generalId: 'zu_d_yuanchonghuan', generalName: '袁崇焕', portrait: '/assets/daming/zu_d_yuanchonghuan.png' },
@@ -955,7 +955,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     weiyuan: { generalId: 'weiyuan_d_niangengyao', generalName: '年羹尧', portrait: '/assets/manqing/weiyuan_d_niangengyao.png' },
     yansui: { generalId: 'yansui_wangwei', generalName: '王威', portrait: '/assets/daming/yansui_wangwei.png' },
     xiazhou: { generalId: 'xiazhou_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/xiazhou_lijiqian.png' },
-    shizhou: { generalId: 'shizhou_liucong', generalName: '刘聪', portrait: '/assets/STEPPE/shizhou_liucong.png' },
+    shizhou: { generalId: 'shizhou_liucong', generalName: '刘聪', portrait: '/assets/HEXI/shizhou_liucong.png' },
     yanzhou: { generalId: 'yanzhou_zhongshiheng', generalName: '种世衡', portrait: '/assets/zhaosong/yanzhou_zhongshiheng.png' },
     cangsong: { generalId: 'cangsong_machao', generalName: '马超', portrait: '/assets/HEXI/cangsong_machao.png' },
     manghuti: { generalId: 'manghuti_weidaer', generalName: '畏答儿', portrait: '/assets/STEPPE/manghuti_weidaer.png' },

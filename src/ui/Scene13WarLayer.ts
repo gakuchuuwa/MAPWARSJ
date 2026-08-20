@@ -23,7 +23,8 @@ import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
-import { type RegionType } from '../systems/RegionSystem';
+import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
+import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -2164,6 +2165,8 @@ export class Scene13WarLayer {
     private fallenFlags: WarFallenFlag[] = [];
     /** 场景云（最上层飘动装饰） */
     private clouds: SceneCloud[] = [];
+    /** 本场季节（0=绿夏 1=橙秋 2=白冬）：start 时定一次，树/湖全场统一，禁混季 */
+    private sceneSeason: 0 | 1 | 2 = 0;
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     private centerLat: number | undefined;
     private centerLng: number | undefined;
@@ -2180,8 +2183,6 @@ export class Scene13WarLayer {
     private terrainCtx: CanvasRenderingContext2D | null = null;
     /** 本场选中的主地形贴图名（每场一张、全场统一铺，不同场次随机换一张草皮） */
     private terrainTile = '';
-    /** 铺地朝向随机种子：每场定一次，保证 resize 重铺时图案不跳变 */
-    private terrainSeed = 0;
     private terrainImg: HTMLImageElement | null = null;
     private over = false;
     private bank: Record<string, WarBank> = {};
@@ -2826,6 +2827,45 @@ export class Scene13WarLayer {
     }
 
     /**
+     * 本场树/湖季节 = **战场真实海拔**（2026-08-18 主人定稿）：
+     *   ≥3600m（雪线高原/高山雪顶，如青藏高原、帕米尔/昆仑雪峰）→ 白(2)
+     *   600–3600m（山地/黄土高原/戈壁山麓/西域播仙一带/蒙古草原）→ 橙/秋(1)
+     *   <600m（低地/平原）→ 绿(0)     [600m = LandTerrainSystem.MOUNTAIN_ELEVATION_M 同源]
+     * 数据源 = 项目现成 ElevationSampler（Terrarium 高程瓦片 + LRU 缓存）：
+     *   - 瓦片已缓存 → 同步命中，直接定色
+     *   - 未缓存 → 后台拉取 + 文化区地貌/日历季节兜底（装饰绝不等待网络）
+     * 无坐标/采样失败（防御）→ 日历季节：春/夏绿、秋橙、冬白。
+     */
+    private currentSeasonKind(): 0 | 1 | 2 {
+        if (this.centerLat !== undefined && this.centerLng !== undefined) {
+            try {
+                const sampler = LandSeaSystem.getSampler();
+                const elev = sampler.getElevationSync(this.centerLat, this.centerLng);
+                if (elev !== null) {
+                    if (elev >= 3600) return 2;   // 高原雪线 → 白
+                    if (elev >= 600) return 1;    // 山地/黄土/西域高地 → 橙
+                    return 0;                     // 低地平原 → 绿
+                }
+                sampler.scheduleFetch(this.centerLat, this.centerLng);   // 预取，下局命中
+
+                // 首次未缓存时文化区地貌智能兜底：
+                const reg = getRegion(this.centerLat, this.centerLng);
+                if (reg === 'TIBET') return 2;
+                if (reg === 'WESTERN' || reg === 'STEPPE' || reg === 'HEXI' || reg === 'NORTH' || reg === 'CENTRAL_ASIA' || reg === 'NORTHEAST') {
+                    return 1; // 西域、草原、河西等黄色海拔带优先秋景
+                }
+            } catch (e) {
+                // 采样异常 → 走日历兜底
+            }
+        }
+        const ts = (window as any).game?.timeSystem;
+        const season = typeof ts?.getSeason === 'function' ? ts.getSeason() : 0;
+        if (season === 3) return 2;   // 冬 → 白
+        if (season === 2) return 1;   // 秋 → 橙
+        return 0;                     // 春/夏/未知 → 绿
+    }
+
+    /**
      * 加载 DE 地形贴图并铺地（2026-08-20 P0）。start 时调一次，贴图 onload 时增量重铺。
      * 🔴 与云同规矩：纯装饰，加载失败就露透明（真实地图兜底），绝不进 pending。
      */
@@ -2839,7 +2879,6 @@ export class Scene13WarLayer {
         this.terrain.height = this.canvas.height;
         // 每场只选一张主地形，全场统一铺（绝不混色块——主人 2026-08-20 否掉随机混铺）
         this.terrainTile = TERRAIN_TEMPERATE_FOREST[(Math.random() * TERRAIN_TEMPERATE_FOREST.length) | 0];
-        this.terrainSeed = (Math.random() * 0x7fffffff) | 0;   // 每场一个朝向种子，同场重铺结果稳定
         this.terrainImg = null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
         const im = new Image();
@@ -2850,13 +2889,14 @@ export class Scene13WarLayer {
     /**
      * 把本场选中的那张 DE 地形贴图铺满整屏（统一一张，绝不混色块）。
      *
-     * 🔴 [2026-08-20 修] 两条病根，主人截图实锤「地面有横向条带」：
-     *   ① 原来把 512² 的图**压缩成 256×256** 再铺 —— 纹理细节丢一半，还多一次插值糊；
-     *   ② 每块都是同一张图原样重复，**每 256px 一个完整周期**（1920 宽重复 7.5 次），
-     *      草皮上那几簇特征斑点整整齐齐排成行 = 肉眼一眼看穿的棋盘条带。
-     * 现在：**按原尺寸 512 铺**（重复周期翻倍、无缩放），且每块随机做
-     * 水平/垂直镜像 + 90° 旋转（8 种朝向）。DE 地形是无缝纹理，四边可互接，
-     * 镜像/旋转后接缝仍然对得上，但重复图案被打散 —— 这也是 AoE2 自己的做法。
+     * 🔴 [2026-08-20 主人定稿] 纯重复平铺，一行变换都不要：
+     *   原尺寸 512 铺（不压 256）、不镜像、不旋转 —— createPattern('repeat') + fillRect。
+     * 病根复盘：DE 地形贴图带整体光照渐变，镜像/旋转后相邻块的明暗方向对不上，
+     *   块与块之间跳出一条条规则方格边界（主人截图实锤）。贴图本身无缝，
+     *   纯重复铺接缝色差（13.94）反而低于旋转镜像（19.27）。
+     * 重复感现在先不管：AoE2 原版也是同一张纹理重复铺，靠树/石/建筑打断视线；
+     *   等 P1 接回 DE 树再看。若仍嫌单调，正确手段是叠一层极淡的大尺度低频噪声
+     *   （柔和明暗斑块，尺度远大于 tile，无硬边），绝不再用旋转镜像。
      */
     private paintTerrain(): void {
         const cv = this.terrain, g = this.terrainCtx;
@@ -2864,21 +2904,10 @@ export class Scene13WarLayer {
         g.clearRect(0, 0, cv.width, cv.height);
         const im = this.terrainImg;
         if (!im || !im.complete || !im.naturalWidth) return;
-        const T = im.naturalWidth;                       // 原尺寸铺，不缩放
-        // 朝向按格位**确定性**取（同一场重铺结果一致，不会每帧/每次 resize 抖动）
-        const seed = this.terrainSeed;
-        for (let gy = 0, y = 0; y < cv.height; y += T, gy++) {
-            for (let gx = 0, x = 0; x < cv.width; x += T, gx++) {
-                const h = (gx * 73856093) ^ (gy * 19349663) ^ seed;
-                const o = (h >>> 3) & 7;                 // 0..7：4 朝向 × 是否镜像
-                g.save();
-                g.translate(x + T / 2, y + T / 2);
-                g.rotate((o & 3) * Math.PI / 2);
-                if (o & 4) g.scale(-1, 1);
-                g.drawImage(im, -T / 2, -T / 2);
-                g.restore();
-            }
-        }
+        const pat = g.createPattern(im, 'repeat');
+        if (!pat) return;
+        g.fillStyle = pat;
+        g.fillRect(0, 0, cv.width, cv.height);
     }
 
     // ── 素材：按需加载 + 去绿幕 + 染色（同 __war.html / 主游戏启动管线）──
