@@ -25,7 +25,7 @@ import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
-import { resolveTerrainTile, DEFAULT_TERRAIN_TILE } from './Scene13Biome';
+import { resolveTerrainTile, DEFAULT_TERRAIN_TILE, detectBiome, BIOME_GROUND_DECOR, MOUNTAIN_ASSETS, BIOME_GROUND_VARIATION, pickTreeSpecies, treeCountFor } from './Scene13Biome';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -859,6 +859,8 @@ const CLOUD_ALPHA_MAX = 0.55;
 // 🔴 P2（2026-08-20）：biome 判定接管——Scene13Biome.resolveTerrainTile(lat,lng,season)
 //    按「雪线→地中海→卫星色→纬度带→文化区」选一张地形，不再硬编码温带森林。
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
+/** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
+const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2003,6 +2005,41 @@ interface SceneCloud {
     img: HTMLImageElement | null;
 }
 
+/** 自然装饰 sheet 元数据（与 PROJ_* 同格式，静态装饰无 8 方向） */
+interface NatureMeta {
+    frames: number;
+    box_w: number;
+    box_h: number;
+    anchor_x: number;
+    anchor_y: number;
+}
+interface NatureAsset {
+    img: HTMLImageElement | null;
+    meta: NatureMeta | null;
+}
+/** 装饰层精灵（树/灌木/岩石/山体等静态装饰，画在尸体层之下，永不遮士兵） */
+interface DecorSprite {
+    asset: string;      // SUCAI_NATURE/<asset> 目录名
+    /** 随机种子：实际帧 = frame % meta.frames（meta 异步加载后稳定不变） */
+    frame: number;
+    x: number;
+    y: number;          // 树基/岩心位置（屏幕坐标）
+    scale: number;
+    flip: boolean;
+    /** z 序：0=贴花/灌木/资源，1=树，2=山体/悬崖 */
+    z: number;
+}
+/** 装饰层地面贴片（沙滩/水塘/道路/农田等，铺 DE 地形贴图） */
+interface DecorPatch {
+    tile: string;       // SUCAI_TERRAIN/<tile>
+    img: HTMLImageElement | null;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    alpha: number;
+}
+
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
 interface WarSlash {
     x: number;
@@ -2183,6 +2220,12 @@ export class Scene13WarLayer {
     /** 本场选中的主地形贴图名（每场一张、全场统一铺，不同场次随机换一张草皮） */
     private terrainTile = '';
     private terrainImg: HTMLImageElement | null = null;
+    /** 装饰层离屏画布（植被 + L3 点缀，画在尸体层 ground 之下，永不遮士兵） */
+    private decor: HTMLCanvasElement | null = null;
+    private decorCtx: CanvasRenderingContext2D | null = null;
+    private decorSprites: DecorSprite[] = [];
+    private decorPatches: DecorPatch[] = [];
+    private natureCache: Record<string, NatureAsset> = {};
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -2536,6 +2579,8 @@ export class Scene13WarLayer {
             // P2：先定本场季节（海拔判据，见 currentSeasonKind），再据 biome+季节选地形贴图
             this.sceneSeason = this.currentSeasonKind();
             this.initTerrain();
+            // P3：植被散布 + L3 点缀（画在尸体层之下）
+            this.initDecor(VW, VH);
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
             //    跟随军团永远不动）。走 forceResultByRatio 判负通道：它调 onDecision →
@@ -2736,6 +2781,8 @@ export class Scene13WarLayer {
         this.fxs = [];
         this.fallenFlags = [];
         this.clouds = [];
+        this.decorSprites = [];
+        this.decorPatches = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
@@ -2914,6 +2961,242 @@ export class Scene13WarLayer {
         g.fillStyle = pat;
         g.fillRect(0, 0, cv.width, cv.height);
     }
+
+    // ── 装饰层（P3 植被 + L3 点缀）：画在尸体层之下，永不遮士兵 ──────────────
+
+    /** 建装饰层画布 + 撒植被 + 铺 L3 点缀（start 调一次，素材 onload 时增量重画） */
+    private initDecor(VW: number, VH: number): void {
+        if (!this.canvas) return;
+        if (!this.decor) {
+            this.decor = document.createElement('canvas');
+            this.decorCtx = this.decor.getContext('2d')!;
+        }
+        this.decor.width = this.canvas.width;
+        this.decor.height = this.canvas.height;
+        this.decorSprites = [];
+        this.decorPatches = [];
+        this.scatterVegetation(VW, VH);
+        this.paintEmbellishments(VW, VH);
+        this.repaintDecor();
+    }
+
+    /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回 */
+    private ensureNatureAsset(asset: string): void {
+        if (this.natureCache[asset]) return;
+        const na: NatureAsset = { img: null, meta: null };
+        this.natureCache[asset] = na;
+        const im = new Image();
+        im.onload = () => { na.img = im; this.repaintDecor(); };
+        im.src = NATURE_BASE_URL + asset + '/frames.png';
+        fetch(NATURE_BASE_URL + asset + '/_meta.json')
+            .then((r) => (r.ok ? r.json() : null))
+            .then((m) => { if (m) { na.meta = m as NatureMeta; this.repaintDecor(); } })
+            .catch(() => {});
+    }
+
+    /** 铺一块地形贴图贴片（沙滩/水塘/道路/农田；纯装饰，失败就少一块） */
+    private addDecorPatch(tile: string, x: number, y: number, w: number, h: number, alpha = 1): void {
+        const p: DecorPatch = { tile, img: null, x, y, w, h, alpha };
+        this.decorPatches.push(p);
+        const im = new Image();
+        im.onload = () => { p.img = im; this.repaintDecor(); };
+        im.src = TERRAIN_BASE_URL + tile + '.png';
+    }
+
+    /** 撒一个装饰精灵 */
+    private addDecorSprite(asset: string, x: number, y: number, z: number, scale?: number, flip?: boolean): void {
+        this.ensureNatureAsset(asset);
+        this.decorSprites.push({
+            asset,
+            frame: (Math.random() * 100000) | 0,
+            x, y, z,
+            scale: scale ?? (0.7 + Math.random() * 0.6),
+            flip: flip ?? Math.random() < 0.5,
+        });
+    }
+
+    /** 植被散布：树（biome×季节 2~3 种混布）+ 灌木/花/岩石 + L2 山地大件 */
+    private scatterVegetation(VW: number, VH: number): void {
+        if (this.centerLat === undefined || this.centerLng === undefined) return;
+        const biome = detectBiome(this.centerLat, this.centerLng);
+        const season = this.sceneSeason;
+
+        const treeAssets = pickTreeSpecies(biome, season);
+        const treeCount = treeCountFor(biome);
+        for (let i = 0; i < treeCount; i++) {
+            const asset = treeAssets[(Math.random() * treeAssets.length) | 0];
+            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 1, 0.8 + Math.random() * 0.7);
+        }
+
+        const ground = BIOME_GROUND_DECOR[biome];
+        const decorCount = treeCount * (2 + ((Math.random() * 2) | 0));
+        for (let i = 0; i < decorCount; i++) {
+            const asset = ground[(Math.random() * ground.length) | 0];
+            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+        }
+
+        // 秋色落叶贴花（温带系秋季）
+        if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
+            const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
+            for (let i = 0; i < 3; i++) {
+                this.addDecorSprite(leaves[(Math.random() * leaves.length) | 0], Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.4);
+            }
+        }
+
+        // L2 山地大件：elev≥800 或坡度≥12°，贴边撒，别挡中央战场
+        const sample = LandSeaSystem.getSampler().getElevationAndSlopeSync(this.centerLat, this.centerLng);
+        if (sample && (sample.elevationM >= 800 || sample.slopeDeg >= 12)) {
+            const mCount = 3 + ((Math.random() * 3) | 0);
+            const edge = 70;
+            for (let i = 0; i < mCount; i++) {
+                const asset = MOUNTAIN_ASSETS[(Math.random() * MOUNTAIN_ASSETS.length) | 0];
+                const side = (Math.random() * 4) | 0;
+                let x = 0, y = 0;
+                if (side === 0) { x = Math.random() * VW; y = Math.random() * edge; }
+                else if (side === 1) { x = VW - Math.random() * edge; y = Math.random() * VH; }
+                else if (side === 2) { x = Math.random() * VW; y = VH - Math.random() * edge; }
+                else { x = Math.random() * edge; y = Math.random() * VH; }
+                this.addDecorSprite(asset, x, y, 2, 1.0 + Math.random() * 1.0);
+            }
+        }
+    }
+
+    /** 水域探测：近海 → sea，近内陆水 → lake，否则 none */
+    private probeWater(): 'sea' | 'lake' | 'none' {
+        if (this.centerLat === undefined || this.centerLng === undefined) return 'none';
+        const off = 0.8;
+        const probes: Array<[number, number]> = [[0, 0], [off, 0], [-off, 0], [0, off], [0, -off]];
+        for (const [dlat, dlng] of probes) {
+            const lat = this.centerLat + dlat, lng = this.centerLng + dlng;
+            if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+            if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) return 'lake';
+        }
+        return 'none';
+    }
+
+    /** L3 局部点缀：沙滩/海水/水塘/冰面/道路/农田/梯田/资源点/战后残迹 */
+    private paintEmbellishments(VW: number, VH: number): void {
+        if (this.centerLat === undefined || this.centerLng === undefined) return;
+        const reg = getRegion(this.centerLat, this.centerLng);
+        const biome = detectBiome(this.centerLat, this.centerLng);
+        const elev = LandSeaSystem.getSampler().getElevationSync(this.centerLat, this.centerLng);
+        const winter = this.sceneSeason === 2;
+        const water = this.probeWater();
+
+        // 1. 临海/临河湖/沼泽
+        if (water === 'sea') {
+            const sideLeft = Math.random() < 0.5;
+            const sandX = sideLeft ? 0 : VW * 0.72;
+            const sand = ['bch', 'bc2', 'bc3', 'bc4'][(Math.random() * 4) | 0];
+            const seaWater = ['wt2', 'wt3', 'wt4', 'wt5', 'wt6', 'wtr'][(Math.random() * 6) | 0];
+            this.addDecorPatch(sand, sandX, 0, VW * 0.28, VH);
+            this.addDecorPatch(seaWater, sideLeft ? VW * 0.22 : 0, 0, VW * 0.08, VH);
+            this.addDecorPatch('beach_wet', sandX, 0, VW * 0.06, VH);
+            for (let i = 0; i < 4; i++) {
+                const ra = Math.random() < 0.5 ? 'ROCK_BEACH' : (Math.random() < 0.5 ? 'ROCK_SEA1' : 'ROCK_SEA2');
+                this.addDecorSprite(ra, (sideLeft ? VW * 0.2 : VW * 0.78) + Math.random() * VW * 0.04, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+            }
+            this.addDecorSprite('OYSTERS', sandX + VW * 0.14, Math.random() * VH, 0, 0.5 + Math.random() * 0.3);
+        } else if (water === 'lake') {
+            const swamp = elev !== null && elev < 200 && Math.random() < 0.35;   // 低海拔湿润 → 沼泽
+            if (winter) {
+                const ix = Math.random() * VW * 0.5, iy = Math.random() * VH * 0.5;
+                const iceTile = ['ice', 'ic2', 'ic3', 'ice_beach'][(Math.random() * 4) | 0];
+                this.addDecorPatch(iceTile, ix, iy, VW * 0.3, VH * 0.25);
+                for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+            } else {
+                const px = Math.random() * VW * 0.55, py = Math.random() * VH * 0.55;
+                const pond = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2'][(Math.random() * 4) | 0];
+                const edge = swamp ? (Math.random() < 0.5 ? 'sh4' : 'sh5') : ['sh2', 'sh3', 'sha'][(Math.random() * 3) | 0];
+                this.addDecorPatch(pond, px, py, VW * 0.26, VH * 0.2);
+                this.addDecorPatch(edge, px - VW * 0.02, py - VH * 0.02, VW * 0.3, VH * 0.24);
+                for (let i = 0; i < 4; i++) {
+                    const re = swamp ? 'UNDERBRUSH_JUNGLE' : ['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO'][(Math.random() * 4) | 0];
+                    this.addDecorSprite(re, px + Math.random() * VW * 0.26, py + Math.random() * VH * 0.2, 1, 0.6 + Math.random() * 0.4);
+                }
+            }
+        }
+
+        // 2. 道路（近城池；90% 是攻城战，战场就在城下 → 默认斜穿一条路）
+        const roadTile = (reg === 'LATIN' || reg === 'GERMANIC') ? 'rd1'
+            : ((reg === 'WEST_ASIA' || reg === 'CENTRAL_ASIA') ? 'rd2' : 'rd5');
+        this.addDecorPatch(roadTile, 0, VH * 0.47, VW, VH * 0.06);
+        const path = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'][(Math.random() * 4) | 0];
+        this.addDecorSprite(path, Math.random() * VW, VH * 0.5, 0, 0.7 + Math.random() * 0.4);
+
+        // 3. 农田/梯田（东亚水田，其余旱田；东亚山地梯田）
+        const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
+        if (elev !== null) {
+            if (isEastAsia && elev >= 800) {
+                const t = ['rm1', 'rm2'][(Math.random() * 2) | 0];
+                this.addDecorPatch(t, 0, 0, VW * 0.32, VH * 0.28);
+            } else if (elev < 600) {
+                const fx = VW * 0.66, fy = VH * 0.68, fw = VW * 0.34, fh = VH * 0.32;
+                if (isEastAsia) {
+                    this.addDecorPatch(['fm1', 'rc1', 'rc2', 'rc3'][(Math.random() * 4) | 0], fx, fy, fw, fh);
+                } else if (reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA') {
+                    this.addDecorPatch(['fc1', 'fc2', 'fc3', 'fm2'][(Math.random() * 4) | 0], fx, fy, fw, fh);
+                }
+            }
+        }
+
+        // 3.5 地表变体散贴：用 biome 的备用变体贴图打散单调（低频、低透明，不留硬边感）
+        const variation = BIOME_GROUND_VARIATION[biome];
+        for (let i = 0; i < 2; i++) {
+            const t = variation[(Math.random() * variation.length) | 0];
+            this.addDecorPatch(t, Math.random() * VW * 0.7, Math.random() * VH * 0.7, VW * 0.32, VH * 0.26, 0.55);
+        }
+
+        // 4. 资源点（全 biome 低频）
+        const resAssets = ['FORAGE_BUSH', 'FORAGE_FRUIT', 'FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'MINE_GOLD', 'MINE_STONE'];
+        const resCount = 2 + ((Math.random() * 3) | 0);
+        for (let i = 0; i < resCount; i++) {
+            this.addDecorSprite(resAssets[(Math.random() * resAssets.length) | 0], Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.4);
+        }
+
+        // 5. 战后残迹（低频）
+        const debrisCount = 1 + ((Math.random() * 2) | 0);
+        for (let i = 0; i < debrisCount; i++) {
+            this.addDecorSprite(Math.random() < 0.5 ? 'DECAL_CRACK' : 'DECAL_CRATER', Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.5);
+        }
+        this.addDecorSprite(Math.random() < 0.5 ? 'FELLED_GENERIC' : 'STUMP_GENERIC', Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.4);
+    }
+
+    /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
+    private repaintDecor(): void {
+        const cv = this.decor, g = this.decorCtx;
+        if (!cv || !g) return;
+        g.clearRect(0, 0, cv.width, cv.height);
+        for (const p of this.decorPatches) {
+            if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
+            if (p.alpha < 1) g.globalAlpha = p.alpha;
+            g.drawImage(p.img, p.x, p.y, p.w, p.h);
+            if (p.alpha < 1) g.globalAlpha = 1;
+        }
+        const sorted = [...this.decorSprites].sort((a, b) => a.z - b.z);
+        for (const s of sorted) this.drawDecorSprite(g, s);
+    }
+
+    /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
+    private drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite): void {
+        const na = this.natureCache[s.asset];
+        if (!na || !na.img || !na.img.complete || !na.meta) return;
+        const m = na.meta;
+        const fr = m.frames > 0 ? (s.frame % m.frames) : 0;
+        const sw = m.box_w, sh = m.box_h;
+        const dw = sw * s.scale, dh = sh * s.scale;
+        const sx = fr * sw;
+        if (s.flip) {
+            g.save();
+            g.translate(s.x, s.y);
+            g.scale(-1, 1);
+            g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x * s.scale, -m.anchor_y * s.scale, dw, dh);
+            g.restore();
+        } else {
+            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x * s.scale, s.y - m.anchor_y * s.scale, dw, dh);
+        }
+    }
+
 
     // ── 素材：按需加载 + 去绿幕 + 染色（同 __war.html / 主游戏启动管线）──
     private dechroma(img: HTMLImageElement): HTMLCanvasElement {
@@ -4338,6 +4621,9 @@ export class Scene13WarLayer {
 
         // 地形铺地：DE 贴图分块铺满整屏（最底层，尸体/士兵全在它之上）
         if (this.terrain) ctx.drawImage(this.terrain, 0, 0);
+
+        // 装饰层：植被 + L3 点缀（在尸体层之下，永不遮士兵）
+        if (this.decor) ctx.drawImage(this.decor, 0, 0);
 
         const vis: { y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number }[] = [];
         // 已烙的尸体：一张图搞定（在所有活人之下）

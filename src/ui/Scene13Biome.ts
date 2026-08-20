@@ -188,3 +188,85 @@ export function resolveTerrainTile(lat: number, lng: number, season: 0 | 1 | 2):
     const candidates = l2Candidates(biomeMain, elev, slope, snowLine);
     return candidates[(Math.random() * candidates.length) | 0];
 }
+
+// ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────
+// 资产名 = public/SUCAI_NATURE/<名>/ 的目录名（大写）。
+
+/** biome × 季节(0绿/1橙/2白) → 树种候选（每场随机选 2~3 种混布） */
+export const BIOME_TREES: Record<Biome, [string[], string[], string[]]> = {
+    tropical_rainforest: [['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD']],
+    savanna: [['ACACIA', 'BAOBAB'], ['ACACIA', 'BAOBAB'], ['ACACIA', 'DEAD_TREE']],
+    desert: [['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE']],
+    mediterranean: [['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'CYPRESS_DEC'], ['OLIVE', 'CYPRESS'], ['CYPRESS', 'DEAD_TREE']],
+    temperate_grass: [['GREEN_OAK', 'BIRCH_GREEN'], ['AUTUMN_OAK', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'BIRCH_WINTER']],
+    temperate_forest: [['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN', 'BAMBOO', 'PEACH_BLOSSOM'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
+    boreal: [['PINE', 'ASIAN_PINE', 'MONKEY_PUZZLE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
+    tundra_snow: [['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE']],
+};
+
+/** biome → 灌木/草/花/岩石（低频散布，尺寸小、数量约为树的 2~3 倍） */
+export const BIOME_GROUND_DECOR: Record<Biome, string[]> = {
+    tropical_rainforest: ['PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH', 'ROCK_JUNGLE', 'UNDERBRUSH_RAINFOREST'],
+    savanna: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'CACTUS', 'PLANT_DEAD', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
+    desert: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'CACTUS', 'PLANT_DEAD', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
+    mediterranean: ['FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED', 'SHRUB_GREEN'],
+    temperate_grass: ['GRASS_GREEN', 'GRASS_GREEN_PATCH', 'BUSH_GREEN', 'UNDERBRUSH'],
+    temperate_forest: ['GRASS_GREEN', 'GRASS_GREEN_PATCH', 'BUSH_GREEN', 'UNDERBRUSH'],
+    boreal: ['SHRUB_GREEN', 'ROCK1', 'ROCK2', 'ROCK3', 'DECAL_ICE'],
+    tundra_snow: ['SHRUB_GREEN', 'ROCK1', 'ROCK2', 'ROCK3', 'DECAL_ICE'],
+};
+
+/** L2 山地追加大件（elev≥800 或坡度≥12° 时贴边撒） */
+export const MOUNTAIN_ASSETS: string[] = [
+    'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06',
+    'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
+    'CLIFF_DEFAULT', 'CLIFF_LIMESTONE', 'CLIFF_SAND', 'CLIFF_SNOW', 'CLIFF_TERRACE',
+    'ROCK_PILLAR',
+];
+
+/**
+ * 地表备用变体：P2 定稿映射（每季一张）之外的富余贴图，L3 低频散贴打散单调。
+ * 覆盖核对：des/ds2/qs 已进主映射，其余沙漠变体（ds3/ds4/ds5/pal/pal1/snd）、
+ * 草地变体（gr7）、稀树变体（pc3/sr2）、林地地表（fo2/underbrush_leaves）、
+ * 砾石/岩（gravel_wet/r01）全在此表，无一闲置。
+ */
+export const BIOME_GROUND_VARIATION: Record<Biome, string[]> = {
+    tropical_rainforest: ['fo2', 'underbrush_leaves'],
+    savanna: ['gr7', 'pc3', 'sr2'],
+    desert: ['ds3', 'ds4', 'ds5', 'pal', 'pal1', 'snd'],
+    mediterranean: ['gr7', 'sr2'],
+    temperate_grass: ['gr7', 'sr2'],
+    temperate_forest: ['fo2', 'underbrush_leaves'],
+    boreal: ['fo2', 'r01', 'gravel_wet'],
+    tundra_snow: ['r01', 'gravel_wet', 'snd'],
+};
+
+/** 从树种池随机选 2~3 种混布（树可混种，与地形不同） */
+export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2): string[] {
+    const pool = BIOME_TREES[biome][season];
+    const n = Math.min(pool.length, 2 + ((Math.random() * 2) | 0));
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = (Math.random() * (i + 1)) | 0;
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, n);
+}
+
+/** 每场树木数量（按 biome 密度；tundra 极稀、森林茂密） */
+export function treeCountFor(biome: Biome): number {
+    switch (biome) {
+        case 'tundra_snow':
+            return 3 + ((Math.random() * 3) | 0);        // 2~5 极稀
+        case 'desert':
+            return 6 + ((Math.random() * 5) | 0);        // 6~10 稀疏
+        case 'savanna':
+        case 'mediterranean':
+            return 9 + ((Math.random() * 6) | 0);        // 9~14
+        case 'tropical_rainforest':
+        case 'temperate_forest':
+            return 15 + ((Math.random() * 10) | 0);      // 15~24 茂密
+        default:
+            return 11 + ((Math.random() * 8) | 0);       // 11~18 温带草原/寒带
+    }
+}
