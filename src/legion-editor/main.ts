@@ -13,6 +13,8 @@ import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { REGION_LABELS, REGION_ORDER, RegionType, getCityRegion } from '../systems/RegionSystem';
 import {
+    NavalFormationMode,
+    NAVAL_FORMATION_LABEL,
     CULTURE_TIERS_MAP,
     CULTURE_FORMATION_MODE,
     FormationMode,
@@ -22,6 +24,7 @@ import {
 import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -744,6 +747,9 @@ interface FactionLegionRow {
     isCustom: boolean;
     /** 该势力的史实将领名（搜索用：主人习惯按武将找势力，如「施琅」→ wenling） */
     generalName?: string;
+    /** 精锐军团番号 + tier（如 wenling → 福建水师 T3），出处 ExpeditionLegions */
+    legionName?: string;
+    legionTier?: number;
     formationMode: FormationMode;
     slots: CompositionSlot[];
     row1Type: string;
@@ -803,7 +809,7 @@ app.innerHTML = `
     <a href="/portrait-tuner.html" class="le-link">立绘调校</a>
     <a href="/skill-editor.html" class="le-link">技能管理</a>
     <button type="button" id="le-reload" class="le-btn">刷新数据</button>
-    <button type="button" id="le-save-all" class="le-btn le-btn-primary">💾 保存全部配置</button>
+    <button type="button" id="le-save-all" class="le-btn">💾 全部写盘</button>
   </div>
 </header>
 <div class="le-viewtabs">
@@ -811,7 +817,7 @@ app.innerHTML = `
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
-  <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都 / 武将…" />
+  <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都 / 武将 / 军团番号…" />
   <select id="le-region-filter" class="le-select">
     <option value="all">全部文化区 (18)</option>
     ${REGION_ORDER.map(r => `<option value="${r}">${REGION_LABELS[r]} (${r})</option>`).join('')}
@@ -1202,6 +1208,8 @@ function buildRows(): void {
             regionLabel,
             isCustom,
             generalName: FACTION_GENERALS[f.id]?.generalName,
+            legionName: getExpeditionEliteConfig(f.id)?.name,
+            legionTier: getExpeditionEliteConfig(f.id)?.tier,
             formationMode,
             slots,
             row1Type: r1,
@@ -1244,7 +1252,8 @@ function applyFilter(): void {
                 || r.factionName.toLowerCase().includes(q)
                 || r.flagText.toLowerCase().includes(q)
                 || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q))
-                || (r.generalName && r.generalName.toLowerCase().includes(q));
+                || (r.generalName && r.generalName.toLowerCase().includes(q))
+                || (r.legionName && r.legionName.toLowerCase().includes(q));
             if (!match) return false;
         }
         return true;
@@ -1283,7 +1292,7 @@ function renderTable(): void {
         ${filteredRows.map(r => `
           <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''}">
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
-            <td><b>${r.factionName}</b>${r.generalName ? `<span style="font-size:10px;color:#9a9080;margin-left:6px;">${r.generalName}</span>` : ''}</td>
+            <td><b>${r.factionName}</b>${r.generalName ? `<span style="font-size:10px;color:#9a9080;margin-left:6px;">${r.generalName}</span>` : ''}${r.legionName ? `<div style="font-size:10px;color:#c9a86a;">⚔ ${r.legionName}</div>` : ''}</td>
             <td>${r.capitalCityName}</td>
             <td><span style="color:#e0c888;font-size:11px;font-weight:bold;">${r.regionLabel}</span></td>
             <td><span class="cell-mode">${getFormationModeLabel(r.formationMode)}</span></td>
@@ -1345,6 +1354,7 @@ function selectFaction(factionId: string): void {
     if (custom) {
         currentEditingLegion = {
             formationMode: custom.formationMode,
+            navalFormation: custom.navalFormation ?? 'auto',
             slots: custom.slots.map(s => ({ ...s })),
         };
     } else {
@@ -1354,8 +1364,9 @@ function selectFaction(factionId: string): void {
         };
     }
 
-    // 「套用其他军团」默认停在本势力所在区（最常见的用法是套同区的友邻）
-    borrowRegion = row.region as RegionType;
+    // 「套用其他军团」是**动作选择器**不是状态显示：每次进入/保存后都回到中性占位。
+    // 曾预选成本势力所在区 → 套用江南保存后上面却写着「滇缅」，主人以为没保存（实锤）。
+    borrowRegion = '';
     borrowFactionId = '__DEFAULT__';
 
     renderTable();
@@ -1423,7 +1434,7 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div style="display:flex;align-items:center;gap:10px;">
         <span class="cell-flag" style="background:${row.flagColor};width:32px;height:32px;line-height:32px;font-size:16px;">${row.flagText}</span>
         <div>
-          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${row.factionName}</div>
+          <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${row.factionName}${row.legionName ? `　<span style="font-size:14px;color:#e0c888;">⚔ ${row.legionName}</span><span style="font-size:11px;color:#8f8676;margin-left:4px;">T${row.legionTier}</span>` : `　<span style="font-size:12px;color:#7e7666;font-weight:normal;">（无精锐番号）</span>`}</div>
           <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}</div>
         </div>
       </div>
@@ -1440,9 +1451,10 @@ function renderEditPanel(row: FactionLegionRow): void {
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
         <select id="le-borrow-region" class="le-select" style="flex:1;">
+          <option value="" ${borrowRegion === '' ? 'selected' : ''}>— 从哪里拉配置过来 —</option>
           ${REGION_ORDER.map(rg => { const d = getRegionDefaultLegion(rg); return `<option value="${rg}" ${borrowRegion === rg ? 'selected' : ''}>${REGION_LABELS[rg] ?? rg} · ${legionSummary(d.formationMode, d.slots)}</option>`; }).join('')}
         </select>
-        <select id="le-borrow-faction" class="le-select" style="flex:1.6;">
+        <select id="le-borrow-faction" class="le-select" style="flex:1.6;" ${borrowRegion ? '' : 'disabled'}>
           <option value="__DEFAULT__" ${borrowFactionId === '__DEFAULT__' ? 'selected' : ''}>${borrowRegion ? `该区文化默认 · ${legionSummary(getRegionDefaultLegion(borrowRegion as RegionType).formationMode, getRegionDefaultLegion(borrowRegion as RegionType).slots)}` : '该区文化默认编成'}</option>
           ${getBorrowFactionOptions(borrowRegion, row.factionId).map(r => `<option value="${r.factionId}" ${borrowFactionId === r.factionId ? 'selected' : ''}>${r.isCustom ? '★ ' : ''}${r.factionName}${r.generalName ? `(${r.generalName})` : ''} · ${legionSummary(r.formationMode, r.slots)}</option>`).join('')}
         </select>
@@ -1480,7 +1492,27 @@ function renderEditPanel(row: FactionLegionRow): void {
       </div>
     </div>
 
-    <!-- 三排兵种选择 -->
+        <!-- 1b. 海军阵型（水战/航行时，与陆军阵型各管各的） -->
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>1b. 海军阵型</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">下水后用这个；船数随兵力自动定（1~8 艘）</span>
+      </div>
+      <div class="le-mode-grid" style="grid-template-columns: repeat(5, 1fr);">
+        ${(['auto', 'column', 'double', 'line', 'wedge'] as NavalFormationMode[]).map(nm => `
+          <div class="le-mode-btn ${(currentEditingLegion!.navalFormation ?? 'auto') === nm ? 'active' : ''}" data-naval="${nm}">
+            <div>${NAVAL_FORMATION_LABEL[nm]}</div>
+            <div style="font-size:10px;font-weight:normal;opacity:0.75;margin-top:2px;">${
+                nm === 'auto' ? '≤4 单纵 / ≥5 双列'
+                : nm === 'column' ? '鱼贯而行 · 内河最窄'
+                : nm === 'double' ? '纵深减半 · 正面加宽'
+                : nm === 'line' ? '横向排开 · 舷侧齐射'
+                : '旗舰居前 · 两翼斜展'}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+<!-- 三排兵种选择 -->
     <div class="le-form-section">
       <div class="le-section-title">
         <span>2. 三排兵种搭配</span>
@@ -1589,12 +1621,23 @@ function renderEditPanel(row: FactionLegionRow): void {
 
 function bindPanelEvents(row: FactionLegionRow): void {
     // 阵型切换
-    els.panelContent.querySelectorAll('.le-mode-btn').forEach(btn => {
+    els.panelContent.querySelectorAll('.le-mode-btn[data-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
             const mode = (btn as HTMLElement).dataset.mode as FormationMode;
             if (currentEditingLegion && currentEditingLegion.formationMode !== mode) {
                 currentEditingLegion.formationMode = mode;
                 currentEditingLegion.slots = convertSlotsToMode(currentEditingLegion.slots, mode);
+                renderEditPanel(row);
+            }
+        });
+    });
+
+    // 海军阵型切换
+    els.panelContent.querySelectorAll('.le-mode-btn[data-naval]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const nm = (btn as HTMLElement).dataset.naval as NavalFormationMode;
+            if (currentEditingLegion && (currentEditingLegion.navalFormation ?? 'auto') !== nm) {
+                currentEditingLegion.navalFormation = nm;
                 renderEditPanel(row);
             }
         });
@@ -1646,21 +1689,26 @@ function bindPanelEvents(row: FactionLegionRow): void {
         if (!currentEditingLegion) return;
         localCustomCompositions[row.factionId] = {
             formationMode: currentEditingLegion.formationMode,
+            navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
         };
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        showToast(`✅ 已更新【${row.factionName}】专属军团方阵配置！`);
+        // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
+        // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
+        await saveAllCompositions();
+        showToast(`✅【${row.factionName}】专属军团已保存并写入文件`);
     });
 
     // 重置恢复默认
-    document.getElementById('le-btn-reset-single')?.addEventListener('click', () => {
+    document.getElementById('le-btn-reset-single')?.addEventListener('click', async () => {
         delete localCustomCompositions[row.factionId];
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        showToast(`🗑️ 已恢复【${row.factionName}】为文化区默认军团！`);
+        await saveAllCompositions();
+        showToast(`🗑️ 已恢复【${row.factionName}】为文化默认并写入文件`);
     });
 
     // 复制
@@ -1690,8 +1738,9 @@ function bindPanelEvents(row: FactionLegionRow): void {
     };
 
     document.getElementById('le-borrow-region')?.addEventListener('change', (e) => {
-        borrowRegion = (e.target as HTMLSelectElement).value as RegionType;
+        borrowRegion = (e.target as HTMLSelectElement).value as RegionType | '';
         borrowFactionId = '__DEFAULT__'; // 换区后旧势力已不在列表里，必须回到默认项
+        if (!borrowRegion) { renderEditPanel(row); return; } // 选回占位项 = 什么都不做
         applyBorrowed();                 // 选中即生效：选「江南」立刻显示江南默认编成
     });
 
@@ -1722,7 +1771,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     });
 
     // 一键套用全区
-    document.getElementById('le-btn-apply-region')?.addEventListener('click', () => {
+    document.getElementById('le-btn-apply-region')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
         const confirmMsg = `确定要将当前军团方阵配置批量应用到所有【${row.regionLabel}】区(${row.region})的势力吗？`;
         if (!confirm(confirmMsg)) return;
@@ -1740,7 +1789,8 @@ function bindPanelEvents(row: FactionLegionRow): void {
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        showToast(`🌐 成功为【${row.regionLabel}】区的 ${count} 个势力统一设置方阵！`);
+        await saveAllCompositions();
+        showToast(`🌐 已为【${row.regionLabel}】区 ${count} 个势力统一设置方阵并写入文件`);
     });
 }
 
@@ -2652,12 +2702,12 @@ async function saveAllCompositions(): Promise<void> {
 
         if (!res.ok) throw new Error(await res.text());
 
-        showToast('🎉 全量势力军团方阵配置已成功写入 FactionCompositions.ts！');
+        showToast('🎉 已写入 FactionCompositions.ts');
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
     } finally {
         els.btnSaveAll.disabled = false;
-        els.btnSaveAll.textContent = '💾 保存全部配置';
+        els.btnSaveAll.textContent = '💾 全部写盘';
     }
 }
 

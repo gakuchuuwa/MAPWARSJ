@@ -41,6 +41,25 @@ import type { LegionType } from './UnitTypes';
 export type FormationMode = 'triangle' | 'echelon' | 'fish_scale' | 'crane_wing' | 'square';
 
 /**
+ * 海军舰队队形（水战/航行时用，与陆军 FormationMode 各管各的——
+ * 同一个势力上岸打陆战、下水打水战，两套队形互不影响）。
+ *  auto   = 旧的兵力驱动行为（≤4 艘单纵队，≥5 艘双列交错），不配置时的默认值
+ *  column = 一字长蛇：单纵队鱼贯而行，内河/海峡最窄，不蹭岸
+ *  double = 双列交错：纵深压到一半，正面宽一个船身
+ *  line   = 一字横阵：全队横向排开，舷侧齐射面最大
+ *  wedge  = 楔形雁行：旗舰居前，后随向两翼斜后方展开
+ */
+export type NavalFormationMode = 'auto' | 'column' | 'double' | 'line' | 'wedge';
+
+export const NAVAL_FORMATION_LABEL: Record<NavalFormationMode, string> = {
+    auto: '自动（随船数）',
+    column: '一字长蛇',
+    double: '双列交错',
+    line: '一字横阵',
+    wedge: '楔形雁行',
+};
+
+/**
  * 行军兵种大类（与阵型骨架相关但独立映射；速度查表用此，勿仅靠 triangle 布尔）
  * 史地定案 2026-07-09：中亚=纯骑，西域=步骑
  */

@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/20 10:40:45（共 36 条）
+ * 生成时间：2026/8/20 14:05:10（共 37 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -15,6 +15,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
     "/assets/GERMANIC/bogendi_dadanchali.png": "/assets/GERMANIC/__多余__GERMANIC_03.png",
     "/assets/GERMANIC/keluodiya_zilinsiji.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
+    "/assets/GERMANIC/mazhaer_xiongyati.png": "/assets/GERMANIC/mazhaer_beilasishi.png",
     "/assets/GERMANIC/safuyi_ameidiao.png": "/assets/GERMANIC/__多余__GERMANIC_02.png",
     "/assets/JAPAN/beihai_shamusheyun.png": "/assets/JAPAN/__多余__JAPAN_02.png",
     "/assets/JAPAN/yamato_nanmuzhengcheng.png": "/assets/JAPAN/__多余__JAPAN_01.png",
