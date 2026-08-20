@@ -236,6 +236,26 @@ function isoCellY(gx: number, gy: number, oy: number): number {
     return (gx + gy) * (TILE_H / 2) + oy;
 }
 
+/** 水域排斥谓词：屏幕坐标 (x, y) 是否落在水里（海=侧带；湖=中央 clump） */
+type WaterChecker = (x: number, y: number) => boolean;
+
+/** 屏幕坐标 → 等距网格 (gx, gy)（isoCellX/Y 的逆） */
+function screenToGrid(x: number, y: number, ox: number, oy: number): [number, number] {
+    const a = (x - ox) * 2 / TILE_W;   // gx - gy
+    const b = (y - oy) * 2 / TILE_H;   // gx + gy
+    return [Math.round((a + b) / 2), Math.round((b - a) / 2)];
+}
+
+/** 在非水域随机取一个屏幕坐标（水域内重采样，最多 60 次；兜底返回最后随机值） */
+function sampleLandPos(VW: number, VH: number, rng: RandomSource, isWater: WaterChecker): { x: number; y: number } {
+    for (let attempt = 0; attempt < 60; attempt++) {
+        const x = rng.next() * VW;
+        const y = rng.next() * VH;
+        if (!isWater(x, y)) return { x, y };
+    }
+    return { x: rng.next() * VW, y: rng.next() * VH };
+}
+
 // ── 水域探测（照抄 Scene13WarLayer.probeWater 口径，确定性） ──
 
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'none' {
@@ -361,16 +381,18 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // ── 第 3 层 WATER ──
         // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
         // 不把巨型山峰精灵放进士兵活动区，避免单位从山体上穿过。
+        // 水域排斥谓词：陆地物件（植被/资源/残迹）禁止落在水里。
+        let isWater: WaterChecker = () => false;
         if (waterKind === 'sea') {
             // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
-            buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied);
+            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied);
             for (let i = 0; i < 4; i++) {
                 const ra = rng.chance(0.5) ? 'ROCK_BEACH' : (rng.chance(0.5) ? 'ROCK_SEA1' : 'ROCK_SEA2');
                 objects.push({ asset: ra, x: sideLeft ? VW * 0.18 + rng.next() * VW * 0.06 : VW * 0.82 - rng.next() * VW * 0.06, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
         } else if (waterKind === 'lake') {
-            buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
+            isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
         }
 
         // ── 第 4 层 TERRAIN：农田 + 地表变体 + 林地落叶层 ──
@@ -379,9 +401,9 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, season, rng, objects);
-        buildResources(VW, VH, rng, objects);
-        buildDebris(VW, VH, rng, objects);
+        buildVegetation(VW, VH, biome, season, rng, objects, isWater);
+        buildResources(VW, VH, rng, objects, isWater);
+        buildDebris(VW, VH, rng, objects, isWater);
 
         enforceTreeSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -455,7 +477,7 @@ function buildCoastline(
     rng: RandomSource,
     patches: TerrainPatchPlan[],
     occupied: Set<string>
-): void {
+): WaterChecker {
     // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
     const shoreline: Array<{ x: number; y: number }> = [];
     let bx = VW * 0.18;
@@ -513,6 +535,9 @@ function buildCoastline(
     patches.push({ tile: rng.pick(WATER_SHALLOW), cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore' });
     patches.push({ tile: BEACH_WET, cells: wet, polygon: bandPolygon(0, wetW), alpha: 1, category: 'shore' });
     patches.push({ tile: rng.pick(BEACH_SAND), cells: beach, polygon: bandPolygon(wetW, wetW + beachW), alpha: 1, category: 'shore' });
+
+    // 水域排斥：signedDistance < 0 即深/中/浅水（滩/湿沙/陆均不算水）
+    return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
 }
 
 // ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────
@@ -530,7 +555,7 @@ function buildLake(
     VH: number,
     ox: number,
     oy: number
-): void {
+): WaterChecker {
     const swamp = elev !== null && elev < 200 && rng.chance(0.35);
     if (season === 2) {
         // 冬季 → 冰面
@@ -541,7 +566,7 @@ function buildLake(
             patches.push({ tile: iceTile, cells: growClump(sx, sy, 8 + rng.int(0, 6), gw, gh, occupied, rng), alpha: 1, category: 'wetland' });
         }
         for (let i = 0; i < 3; i++) objects.push({ asset: 'DECAL_ICE', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        return;
+        return () => false;
     }
     const pond = rng.pick(POND_TILES);
     const edgeTile = swamp ? rng.pick(SWAMP_EDGE) : rng.pick(POND_EDGE);
@@ -575,6 +600,12 @@ function buildLake(
         const ry = Math.max(0, Math.min(VH, py0 + rng.next() * VH * 0.25 - VH * 0.12));
         objects.push({ asset: re, x: rx, y: ry, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
+
+    // 水域排斥：湖 = 中央 pond 格子集合（pondSet 见上文描边段）
+    return (x, y) => {
+        const [gx, gy] = screenToGrid(x, y, ox, oy);
+        return pondSet.has(`${gx},${gy}`);
+    };
 }
 
 // ── 第 4 层：农田/梯田 ─────────────────────────────────────────
@@ -651,7 +682,8 @@ function buildVegetation(
     biome: Biome,
     season: 0 | 1 | 2,
     rng: RandomSource,
-    objects: EnvironmentObjectPlan[]
+    objects: EnvironmentObjectPlan[],
+    isWater: WaterChecker
 ): void {
     const treeAssets = pickTreeSpecies(biome, season, rng);
     const treeCount = treeCountFor(biome, rng);
@@ -670,8 +702,12 @@ function buildVegetation(
     });
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
-        const cx = VW * (0.15 + rng.next() * 0.7);
-        const cy = VH * (0.15 + rng.next() * 0.7);
+        let cx = 0, cy = 0;
+        for (let a = 0; a < 40; a++) {
+            cx = VW * (0.15 + rng.next() * 0.7);
+            cy = VH * (0.15 + rng.next() * 0.7);
+            if (!isWater(cx, cy)) break;
+        }
         const radius = 60 + rng.next() * 70;
         const n = Math.min(perCluster, treeCount - placed);
         for (let k = 0; k < n; k++) {
@@ -684,7 +720,7 @@ function buildVegetation(
                 const ang = u2 * Math.PI * 2;
                 const sx = cx + r * Math.cos(ang);
                 const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy)) {
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy)) {
                     tx = sx;
                     ty = sy;
                     found = true;
@@ -702,14 +738,16 @@ function buildVegetation(
     const ground = BIOME_GROUND_DECOR[biome];
     const decorCount = treeCount * (2 + rng.int(0, 2));
     for (let i = 0; i < decorCount; i++) {
-        objects.push({ asset: rng.pick(ground), x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const p = sampleLandPos(VW, VH, rng, isWater);
+        objects.push({ asset: rng.pick(ground), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
     // 秋色落叶贴花（温带系秋季）
     if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
         const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
         for (let i = 0; i < 3; i++) {
-            objects.push({ asset: rng.pick(leaves), x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            const p = sampleLandPos(VW, VH, rng, isWater);
+            objects.push({ asset: rng.pick(leaves), x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         }
     }
 
@@ -717,22 +755,25 @@ function buildVegetation(
 
 // ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
 
-function buildResources(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[]): void {
+function buildResources(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
     const resAssets = ['FORAGE_BUSH', 'MINE_STONE'];
     const resCount = 2 + rng.int(0, 3);
     for (let i = 0; i < resCount; i++) {
-        objects.push({ asset: rng.pick(resAssets), x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const p = sampleLandPos(VW, VH, rng, isWater);
+        objects.push({ asset: rng.pick(resAssets), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 
 // ── 第 5 层：战后残迹（低频） ───────────────────────────────────
 
-function buildDebris(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[]): void {
+function buildDebris(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
     const debrisCount = 1 + rng.int(0, 2);
     for (let i = 0; i < debrisCount; i++) {
-        objects.push({ asset: rng.chance(0.5) ? 'DECAL_CRACK' : 'DECAL_CRATER', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const p = sampleLandPos(VW, VH, rng, isWater);
+        objects.push({ asset: rng.chance(0.5) ? 'DECAL_CRACK' : 'DECAL_CRATER', x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
-    objects.push({ asset: rng.chance(0.5) ? 'FELLED_GENERIC' : 'STUMP_GENERIC', x: rng.next() * VW, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    const p2 = sampleLandPos(VW, VH, rng, isWater);
+    objects.push({ asset: rng.chance(0.5) ? 'FELLED_GENERIC' : 'STUMP_GENERIC', x: p2.x, y: p2.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
 }
 
 // 重新导出 hashString，供测试/验收计算种子校验和

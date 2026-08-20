@@ -3,17 +3,14 @@
  *
  * 判定顺序（先硬后软）：
  *   1. 雪线（按纬度动态）→ tundra_snow
- *   2. 地中海气候带（30~45° 近海）→ mediterranean
- *   3. 卫星色（ESRI World Imagery 中位色）→ 直接映射
- *   4. 纬度带兜底
- *   5. 文化区修正（青藏/西域/河西/中亚特化区）
+ *   2. 极地（|lat|≥66°）→ tundra_snow
+ *   3. 文化区硬基线（REGION_BIOME，优先于纬度和卫星色）
  * 再叠 L2 地貌修正（海拔/坡度 → 岩石/高原/雪）→ 最终选一张 DE 地形贴图。
  *
  * 铺地铁律不变：每场一张、全场统一、纯 createPattern 重复铺。
  */
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { ImagerySampler } from '../world/land-sea/ImagerySampler';
-import { getRegion } from '../systems/RegionSystem';
+import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { RandomSource, mathRandomSource } from './scene13/Random';
 
 export type Biome =
@@ -53,35 +50,30 @@ export const DEFAULT_TERRAIN_TILE = 'gr3';
  * 半径取 1° 是因为塞维利亚距海 ~80km，±0.3°（33km）够不着。
  * 瓦片未缓存时 isWaterSync 返回 null（不算水）→ 本局判「内陆」，下局命中。
  */
-function isNearSea(lat: number, lng: number): boolean {
-    const ws = LandSeaSystem.getWaterSampler();
-    const off = 1.0;
-    const pts: Array<[number, number]> = [
-        [lat, lng],
-        [lat + off, lng],
-        [lat - off, lng],
-        [lat, lng + off],
-        [lat, lng - off],
-    ];
-    for (const [la, lo] of pts) {
-        if (ws.isWaterSync(la, lo) === true) return true;
-    }
-    return false;
-}
-
-/** 纬度带：采样未命中时的主判据 */
-function latBand(lat: number, lng: number, green: boolean): Biome {
-    const absLat = Math.abs(lat);
-    if (absLat < 12) return 'tropical_rainforest';
-    if (absLat < 23) return 'savanna';
-    if (absLat < 35) {
-        if (green) return 'mediterranean'; // 绿 → 强制排除 desert
-        return isNearSea(lat, lng) ? 'mediterranean' : 'desert';
-    }
-    if (absLat < 50) return green ? 'temperate_forest' : 'temperate_grass';
-    if (absLat < 66) return 'boreal';
-    return 'tundra_snow';
-}
+/**
+ * 文化区 → biome 硬基线（2026-08-20 主人定：区域基线优先于纬度和卫星色）。
+ * 高程只能经 L2 修正为山地/高原，不改 biome（不会把湿润区改成沙漠）。
+ */
+const REGION_BIOME: Record<RegionType, Biome> = {
+    SLAVIC: 'temperate_forest',      // 东欧温带落叶林
+    GERMANIC: 'temperate_forest',    // 中北欧温带森林
+    LATIN: 'mediterranean',          // 地中海气候（伊比利亚/意大利/法国南部）
+    CENTRAL: 'temperate_forest',     // 中原温带落叶林（较湿润）
+    NORTH: 'temperate_grass',        // 华北北部半干旱草原
+    JIANGNAN: 'temperate_forest',    // 江南湿润亚热带（竹/枫/松/阔叶）
+    LINGNAN: 'tropical_rainforest',  // 岭南亚热带常绿/热带
+    BASHU: 'temperate_forest',       // 四川盆地湿润
+    DIANQIAN: 'temperate_forest',    // 云贵高原湿润山地
+    HEXI: 'desert',                  // 河西走廊干旱
+    WESTERN: 'desert',               // 西域干旱
+    TIBET: 'tundra_snow',            // 青藏高原高寒
+    STEPPE: 'temperate_grass',       // 蒙古高原草原
+    NORTHEAST: 'boreal',             // 东北寒温带针叶林
+    KOREA: 'temperate_forest',       // 朝鲜湿润温带
+    JAPAN: 'temperate_forest',       // 日本湿润温带
+    CENTRAL_ASIA: 'desert',          // 中亚干旱
+    WEST_ASIA: 'desert',             // 西亚以干旱为主（阿拉伯/埃及/两河）
+};
 
 function detectBiomeCore(
     lat: number,
@@ -90,64 +82,12 @@ function detectBiomeCore(
     elev: number | null,
     snowLine: number
 ): Biome {
-    // 1. 雪线 / 极地（最硬）
+    // 1. 雪线 / 极地（物理最硬，先于区域）
     if (elev !== null && elev >= snowLine) return 'tundra_snow';
     if (absLat >= 66) return 'tundra_snow';
 
-    // 2. 地中海气候带（30~45° 近海）：方案 §2.2 + 验收「塞维利亚→gr2」。
-    //    必须先于卫星色，否则 37° 塞维利亚会被「yellow→desert」误判成沙漠。
-    if (absLat >= 30 && absLat < 45 && isNearSea(lat, lng)) return 'mediterranean';
-
-    const reg = getRegion(lat, lng);
-
-    // 3. 卫星色（命中才用）
-    const tone = ImagerySampler.getInstance().getToneSync(lat, lng);
-    if (tone !== null) {
-        switch (tone) {
-            case 'white':
-                return 'tundra_snow';
-            case 'gray':
-                return 'desert'; // 高海拔灰 → L2 换岩石地表
-            case 'yellow':
-                return yellowBiome(lat, lng, absLat, reg);
-            case 'green':
-                return latBand(lat, lng, true);
-            case 'blue':
-                return latBand(lat, lng, false);
-        }
-    }
-
-    // 4. 纬度带兜底
-    const band = latBand(lat, lng, false);
-
-    // 5. 文化区修正（覆盖纬度带对特化区的粗判；采样命中时不会走到这里）
-    if (reg === 'TIBET') return 'tundra_snow';
-    if (isDesertRegion(reg)) return 'desert';
-    // STEPPE/NORTH/NORTHEAST 是干旱草原非荒漠，纬度带已给 temperate_grass，无需改
-
-    return band;
-}
-
-/** 真正荒漠文化区（yellow 在这些区 → 沙漠） */
-function isDesertRegion(reg: ReturnType<typeof getRegion>): boolean {
-    return reg === 'WESTERN' || reg === 'HEXI' || reg === 'CENTRAL_ASIA';
-}
-
-/** 干旱草原文化区（yellow 在这些区 → 温带草原，不是沙漠） */
-function isSteppeRegion(reg: ReturnType<typeof getRegion>): boolean {
-    return reg === 'STEPPE' || reg === 'NORTH' || reg === 'NORTHEAST';
-}
-
-/**
- * 「yellow」（H20~60）既覆盖沙漠沙色、也覆盖草原枯黄——卫星色分不开，
- * 必须用文化区拆：西域/河西/中亚=荒漠，草原/北方/东北=温带草原。
- * 无文化区信息时退回纬度带：<35° 内陆荒漠、≥35° 草原。
- */
-function yellowBiome(lat: number, lng: number, absLat: number, reg: ReturnType<typeof getRegion>): Biome {
-    if (absLat < 23) return 'savanna';
-    if (isDesertRegion(reg)) return 'desert';
-    if (isSteppeRegion(reg)) return 'temperate_grass';
-    return absLat < 35 ? 'desert' : 'temperate_grass';
+    // 2. 文化区硬基线（优先于卫星色和纬度带）
+    return REGION_BIOME[getRegion(lat, lng)];
 }
 
 /** 公开入口：只判 biome（海拔现采） */
