@@ -25,6 +25,7 @@ import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { resolveTerrainTile, DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -853,13 +854,11 @@ const CLOUD_ALPHA_MAX = 0.55;
 // 铺地 = 每场选**一张**主地形贴图（512² 无缝平铺）铺满整屏，全场统一。
 // 🔴 2026-08-20 主人否掉「东一块西一块」：曾把 gr3/gr6/gr8 三张不同深浅的草地**同屏随机分块混铺**，
 //    深浅相邻硬拼成棋盘格，同一战场被切得斑驳割裂。同一战场地面必须统一 → 每场一张，绝不混色块。
-//    （不同场次/不同 biome 换不同贴图，才是「物尽其用」的正解，交给 P1 的 biome→地形映射表。）
+//    （不同场次/不同 biome 换不同贴图，才是「物尽其用」的正解——已由 Scene13Biome.resolveTerrainTile 落地。）
 // 铺地烙进离屏 canvas，之后每帧只 drawImage 一次，开销恒定（同 ground 尸体层）。
-// 🔴 P0 硬编码温带森林 biome（中原/江南战场最多，方案 claudedocs/scene13-de-terrain-plan 建议先做这个）；
-//    L1 气候带判定（采样 ESRI 卫星色 + 海拔）接管后，再换成 biome→地形映射表。详见该方案 §三。
+// 🔴 P2（2026-08-20）：biome 判定接管——Scene13Biome.resolveTerrainTile(lat,lng,season)
+//    按「雪线→地中海→卫星色→纬度带→文化区」选一张地形，不再硬编码温带森林。
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
-const TERRAIN_TEMPERATE_FOREST = ['gr3', 'gr6', 'gr8'];
-/** 铺地分块边长（px）：512² 贴图缩到 256² 铺，一屏约 7×4 块，草地颗粒感自然。可调。 */
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2534,6 +2533,8 @@ export class Scene13WarLayer {
 
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
+            // P2：先定本场季节（海拔判据，见 currentSeasonKind），再据 biome+季节选地形贴图
+            this.sceneSeason = this.currentSeasonKind();
             this.initTerrain();
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
@@ -2866,7 +2867,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 加载 DE 地形贴图并铺地（2026-08-20 P0）。start 时调一次，贴图 onload 时增量重铺。
+     * 加载 DE 地形贴图并铺地（2026-08-20 P0→P2）。start 时调一次，贴图 onload 时增量重铺。
      * 🔴 与云同规矩：纯装饰，加载失败就露透明（真实地图兜底），绝不进 pending。
      */
     private initTerrain(): void {
@@ -2878,7 +2879,11 @@ export class Scene13WarLayer {
         this.terrain.width = this.canvas.width;
         this.terrain.height = this.canvas.height;
         // 每场只选一张主地形，全场统一铺（绝不混色块——主人 2026-08-20 否掉随机混铺）
-        this.terrainTile = TERRAIN_TEMPERATE_FOREST[(Math.random() * TERRAIN_TEMPERATE_FOREST.length) | 0];
+        // P2：biome 判定选图（雪线→地中海→卫星色→纬度带→文化区 + L2 地貌修正）
+        this.terrainTile =
+            this.centerLat !== undefined && this.centerLng !== undefined
+                ? resolveTerrainTile(this.centerLat, this.centerLng, this.sceneSeason)
+                : DEFAULT_TERRAIN_TILE;
         this.terrainImg = null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
         const im = new Image();
