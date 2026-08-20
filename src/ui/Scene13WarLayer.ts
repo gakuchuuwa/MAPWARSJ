@@ -2028,7 +2028,6 @@ interface DecorSprite {
     frame: number;
     x: number;
     y: number;          // 树基/岩心位置（屏幕坐标）
-    scale: number;
     flip: boolean;
     /** z 序：0=贴花/灌木/资源，1=树，2=山体/悬崖 */
     z: number;
@@ -3040,14 +3039,13 @@ export class Scene13WarLayer {
         return cells;
     }
 
-    /** 撒一个装饰精灵 */
-    private addDecorSprite(asset: string, x: number, y: number, z: number, scale?: number, flip?: boolean): void {
+    /** 撒一个装饰精灵（所有素材原生尺寸、不缩放——主人 2026-08-20 定，才能与游戏对应） */
+    private addDecorSprite(asset: string, x: number, y: number, z: number, flip?: boolean): void {
         this.ensureNatureAsset(asset);
         this.decorSprites.push({
             asset,
             frame: (Math.random() * 100000) | 0,
             x, y, z,
-            scale: scale ?? (0.7 + Math.random() * 0.6),
             flip: flip ?? Math.random() < 0.5,
         });
     }
@@ -3060,23 +3058,36 @@ export class Scene13WarLayer {
 
         const treeAssets = pickTreeSpecies(biome, season);
         const treeCount = treeCountFor(biome);
-        for (let i = 0; i < treeCount; i++) {
-            const asset = treeAssets[(Math.random() * treeAssets.length) | 0];
-            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 1, 0.8 + Math.random() * 0.7);
+        // DE 聚丛成林：树不单独均匀撒，按 3~5 个林斑聚丛（高斯散布），固定缩放（DE 树不随机缩放）
+        const clusterCount = Math.max(2, Math.round(treeCount / 6));
+        const perCluster = Math.max(2, Math.round(treeCount / clusterCount));
+        let placed = 0;
+        for (let c = 0; c < clusterCount && placed < treeCount; c++) {
+            const cx = VW * (0.15 + Math.random() * 0.7);
+            const cy = VH * (0.15 + Math.random() * 0.7);
+            const radius = 60 + Math.random() * 70;   // 林斑半径（px）
+            const n = Math.min(perCluster, treeCount - placed);
+            for (let k = 0; k < n; k++) {
+                const u1 = Math.max(Math.random(), 1e-9), u2 = Math.random();
+                const r = radius * Math.sqrt(-2 * Math.log(u1));   // Box-Muller 高斯散布
+                const ang = u2 * Math.PI * 2;
+                this.addDecorSprite(treeAssets[(Math.random() * treeAssets.length) | 0], cx + r * Math.cos(ang), cy + r * Math.sin(ang), 1);
+                placed++;
+            }
         }
 
         const ground = BIOME_GROUND_DECOR[biome];
         const decorCount = treeCount * (2 + ((Math.random() * 2) | 0));
         for (let i = 0; i < decorCount; i++) {
             const asset = ground[(Math.random() * ground.length) | 0];
-            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+            this.addDecorSprite(asset, Math.random() * VW, Math.random() * VH, 0);
         }
 
         // 秋色落叶贴花（温带系秋季）
         if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
             const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
             for (let i = 0; i < 3; i++) {
-                this.addDecorSprite(leaves[(Math.random() * leaves.length) | 0], Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.4);
+                this.addDecorSprite(leaves[(Math.random() * leaves.length) | 0], Math.random() * VW, Math.random() * VH, 0);
             }
         }
 
@@ -3093,7 +3104,7 @@ export class Scene13WarLayer {
                 else if (side === 1) { x = VW - Math.random() * edge; y = Math.random() * VH; }
                 else if (side === 2) { x = Math.random() * VW; y = VH - Math.random() * edge; }
                 else { x = Math.random() * edge; y = Math.random() * VH; }
-                this.addDecorSprite(asset, x, y, 2, 1.0 + Math.random() * 1.0);
+                this.addDecorSprite(asset, x, y, 2);
             }
         }
     }
@@ -3124,26 +3135,6 @@ export class Scene13WarLayer {
         const gh = Math.max(1, Math.ceil(VH / DECOR_CELL));
         const occupied = new Set<string>();
 
-        // 2. 道路：横向带，中心随机游走，边缘不规则（先铺，让水塘/农田避开）
-        const roadTile = (reg === 'LATIN' || reg === 'GERMANIC') ? 'rd1'
-            : ((reg === 'WEST_ASIA' || reg === 'CENTRAL_ASIA') ? 'rd2' : 'rd5');
-        const roadCells: Array<[number, number]> = [];
-        let centerY = gh * 0.5;
-        for (let gx = 0; gx < gw; gx++) {
-            centerY += Math.random() * 2 - 1;
-            centerY = Math.max(2, Math.min(gh - 3, centerY));
-            const cy = Math.round(centerY);
-            for (let dy = -5; dy <= 5; dy++) {
-                const ny = cy + dy;
-                if (ny < 0 || ny >= gh) continue;
-                roadCells.push([gx, ny]);
-                occupied.add(`${gx},${ny}`);
-            }
-        }
-        this.addDecorCells(roadTile, roadCells);
-        const path = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'][(Math.random() * 4) | 0];
-        this.addDecorSprite(path, Math.random() * VW, VH * 0.5, 0, 0.7 + Math.random() * 0.4);
-
         // 1. 临海/临河湖/沼泽
         if (water === 'sea') {
             const sideLeft = Math.random() < 0.5;
@@ -3164,9 +3155,9 @@ export class Scene13WarLayer {
             this.addDecorCells('beach_wet', wetCells);
             for (let i = 0; i < 4; i++) {
                 const ra = Math.random() < 0.5 ? 'ROCK_BEACH' : (Math.random() < 0.5 ? 'ROCK_SEA1' : 'ROCK_SEA2');
-                this.addDecorSprite(ra, sideLeft ? VW * 0.18 + Math.random() * VW * 0.06 : VW * 0.82 - Math.random() * VW * 0.06, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+                this.addDecorSprite(ra, sideLeft ? VW * 0.18 + Math.random() * VW * 0.06 : VW * 0.82 - Math.random() * VW * 0.06, Math.random() * VH, 0);
             }
-            this.addDecorSprite('OYSTERS', sideLeft ? VW * 0.15 : VW * 0.85, Math.random() * VH, 0, 0.5 + Math.random() * 0.3);
+            this.addDecorSprite('OYSTERS', sideLeft ? VW * 0.15 : VW * 0.85, Math.random() * VH, 0);
         } else if (water === 'lake') {
             const swamp = elev !== null && elev < 200 && Math.random() < 0.35;
             if (winter) {
@@ -3176,7 +3167,7 @@ export class Scene13WarLayer {
                     const sx = 2 + ((Math.random() * (gw - 4)) | 0), sy = 2 + ((Math.random() * (gh - 4)) | 0);
                     this.addDecorCells(iceTile, this.growClump(sx, sy, 28 + ((Math.random() * 21) | 0), gw, gh, occupied));
                 }
-                for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.5);
+                for (let i = 0; i < 3; i++) this.addDecorSprite('DECAL_ICE', Math.random() * VW, Math.random() * VH, 0);
             } else {
                 const pond = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2'][(Math.random() * 4) | 0];
                 const edgeTile = swamp ? (Math.random() < 0.5 ? 'sh4' : 'sh5') : ['sh2', 'sh3', 'sha'][(Math.random() * 3) | 0];
@@ -3204,7 +3195,7 @@ export class Scene13WarLayer {
                 const py0 = allPond.length ? allPond[0][1] * DECOR_CELL : VH * 0.4;
                 for (let i = 0; i < 4; i++) {
                     const re = swamp ? 'UNDERBRUSH_JUNGLE' : ['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO'][(Math.random() * 4) | 0];
-                    this.addDecorSprite(re, px0 + Math.random() * VW * 0.3 - VW * 0.15, py0 + Math.random() * VH * 0.25 - VH * 0.12, 1, 0.6 + Math.random() * 0.4);
+                    this.addDecorSprite(re, px0 + Math.random() * VW * 0.3 - VW * 0.15, py0 + Math.random() * VH * 0.25 - VH * 0.12, 1);
                 }
             }
         }
@@ -3233,19 +3224,19 @@ export class Scene13WarLayer {
             this.addDecorCells(t, this.growClump(sx, sy, 14 + ((Math.random() * 17) | 0), gw, gh, occupied), 0.55);
         }
 
-        // 4. 资源点（全 biome 低频）
-        const resAssets = ['FORAGE_BUSH', 'FORAGE_FRUIT', 'FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'MINE_GOLD', 'MINE_STONE'];
+        // 4. 资源点（全 biome 低频；已删金矿 + 黄果灌木——主人 2026-08-20 定「金子没必要」）
+        const resAssets = ['FORAGE_BUSH', 'MINE_STONE'];
         const resCount = 2 + ((Math.random() * 3) | 0);
         for (let i = 0; i < resCount; i++) {
-            this.addDecorSprite(resAssets[(Math.random() * resAssets.length) | 0], Math.random() * VW, Math.random() * VH, 0, 0.5 + Math.random() * 0.4);
+            this.addDecorSprite(resAssets[(Math.random() * resAssets.length) | 0], Math.random() * VW, Math.random() * VH, 0);
         }
 
         // 5. 战后残迹（低频）
         const debrisCount = 1 + ((Math.random() * 2) | 0);
         for (let i = 0; i < debrisCount; i++) {
-            this.addDecorSprite(Math.random() < 0.5 ? 'DECAL_CRACK' : 'DECAL_CRATER', Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.5);
+            this.addDecorSprite(Math.random() < 0.5 ? 'DECAL_CRACK' : 'DECAL_CRATER', Math.random() * VW, Math.random() * VH, 0);
         }
-        this.addDecorSprite(Math.random() < 0.5 ? 'FELLED_GENERIC' : 'STUMP_GENERIC', Math.random() * VW, Math.random() * VH, 0, 0.6 + Math.random() * 0.4);
+        this.addDecorSprite(Math.random() < 0.5 ? 'FELLED_GENERIC' : 'STUMP_GENERIC', Math.random() * VW, Math.random() * VH, 0);
     }
 
     /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
@@ -3298,16 +3289,15 @@ export class Scene13WarLayer {
         const m = na.meta;
         const fr = m.frames > 0 ? (s.frame % m.frames) : 0;
         const sw = m.box_w, sh = m.box_h;
-        const dw = sw * s.scale, dh = sh * s.scale;
         const sx = fr * sw;
         if (s.flip) {
             g.save();
             g.translate(s.x, s.y);
             g.scale(-1, 1);
-            g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x * s.scale, -m.anchor_y * s.scale, dw, dh);
+            g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
             g.restore();
         } else {
-            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x * s.scale, s.y - m.anchor_y * s.scale, dw, dh);
+            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, s.y - m.anchor_y, sw, sh);
         }
     }
 
