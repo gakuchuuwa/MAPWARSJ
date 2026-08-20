@@ -876,6 +876,8 @@ const TILE_W = 64;
 const TILE_H = 32;
 /** 斑块边界羽化半径（px）：DE 过渡是硬边菱形阶梯，只留 2px 抗锯齿，不再大羽化 */
 const DECOR_BLUR = 2;
+/** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
+const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
 const ELEV_BLUR = 12;
 /**
@@ -3075,9 +3077,10 @@ export class Scene13WarLayer {
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
-        this.paintElevation(g);
         const sorted = this.decorSprites.filter((s) => s.layer === 'ground').sort((a, b) => (a.z - b.z) || (a.y - b.y));
         for (const s of sorted) this.drawDecorSprite(g, s);
+        // 丘陵光影最后覆盖所有地面纹理与草花贴花；世界对象和士兵仍在其后绘制。
+        this.paintElevation(g);
     }
 
     /** 高地着色（hillshade）：西北光，面向光的高地边亮、背光边暗，营造丘陵立体感。先画到离屏再羽化，避免逐格硬菱形方块 */
@@ -3099,7 +3102,7 @@ export class Scene13WarLayer {
                 const delta = h - nw;
                 if (delta === 0) continue;
                 const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
-                const a = Math.min(0.35, Math.abs(delta) * 0.13);
+                const a = Math.min(0.55, Math.abs(delta) * 0.22);
                 ectx.globalAlpha = a;
                 ectx.fillStyle = delta > 0 ? '#fff' : '#000';
                 ectx.beginPath();
@@ -3152,7 +3155,7 @@ export class Scene13WarLayer {
         }
         // 2. 高斯模糊（软化格子边缘）
         bctx.clearRect(0, 0, W, H);
-        bctx.filter = `blur(${DECOR_BLUR}px)`;
+        bctx.filter = `blur(${p.polygon ? SHORE_BLUR : DECOR_BLUR}px)`;
         bctx.drawImage(mcv, 0, 0);
         bctx.filter = 'none';
         // 3. source-in 填纹理（纹理只在软边形状内，保持清晰）

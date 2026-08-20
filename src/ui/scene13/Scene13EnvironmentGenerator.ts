@@ -33,12 +33,12 @@ const TILE_W = 64;
 const TILE_H = 32;
 
 // ── 水域/沙滩贴图（真实存在于 public/SUCAI_TERRAIN，勿自创） ──
-/** 深水（离岸最远，最深） */
-const WATER_DEEP = 'wtr';
-/** 中水带 */
-const WATER_MEDIUM = ['wt4', 'wt5'];
-/** 浅水带 */
-const WATER_SHALLOW = ['wt2', 'wt3'];
+/** 深水（离岸最远，最深）——wt4 最深靛蓝（实测 RGB 21,53,90） */
+const WATER_DEEP = 'wt4';
+/** 中水带——wt2/wt3 中深蓝（26,66,107 / 23,82,126） */
+const WATER_MEDIUM = ['wt2', 'wt3'];
+/** 浅水带（近岸最浅）——wtr 标准浅水蓝（32,119,162）；弃 wt5 热带青绿（色不对，主人 2026-08-20 否） */
+const WATER_SHALLOW = ['wtr'];
 /** 沙滩 */
 const BEACH_SAND = ['bch', 'bc2', 'bc3', 'bc4'];
 /** 湿沙（水线） */
@@ -279,32 +279,15 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | '
     return 'none';
 }
 
-// ── 季节判定（照抄 Scene13WarLayer.currentSeasonKind 口径，确定性） ──
+// ── 季节判定（以游戏日历为准：夏绿/秋橙/冬白；海拔/区域不再覆盖季节） ──
 
 function resolveSeason(
-    lat: number | undefined,
-    lng: number | undefined,
+    _lat: number | undefined,
+    _lng: number | undefined,
     getCalendarSeason?: () => 0 | 1 | 2
 ): 0 | 1 | 2 {
-    if (lat !== undefined && lng !== undefined) {
-        try {
-            const sampler = LandSeaSystem.getSampler();
-            const elev = sampler.getElevationSync(lat, lng);
-            if (elev !== null) {
-                if (elev >= 3600) return 2;
-                if (elev >= 600) return 1;
-                return 0;
-            }
-            sampler.scheduleFetch(lat, lng);
-            const reg = getRegion(lat, lng);
-            if (reg === 'TIBET') return 2;
-            if (reg === 'WESTERN' || reg === 'STEPPE' || reg === 'HEXI' || reg === 'NORTH' || reg === 'CENTRAL_ASIA' || reg === 'NORTHEAST') {
-                return 1;
-            }
-        } catch {
-            // 采样异常 → 走日历兜底
-        }
-    }
+    // 🔴 主人 2026-08-20 定：季节唯一权威 = 游戏日历。原「海拔≥600→秋、区域∈中亚/西域→秋」导致
+    //    日历写「夏」战场却出红叶白桦（雷伊血训）。海拔/区域只影响 biome/地表/树密度，绝不改季节。
     return getCalendarSeason?.() ?? 0;
 }
 
@@ -379,6 +362,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         : DEFAULT_TERRAIN_TILE;
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
+    // 东亚限定树种（樱花/竹/亚洲枫）只许在东亚文化区出现（沃罗涅日=斯拉夫 → 无樱花）
+    const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
 
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -411,7 +396,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater);
+        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater, isEastAsia);
         buildResources(VW, VH, rng, objects, isWater);
         buildDebris(VW, VH, rng, objects, isWater);
 
@@ -461,15 +446,15 @@ function generateElevation(
         hillCount = 3 + rng.int(0, 1);   // 3~4
         peakChance = 0.6;
     } else {
-        hillCount = 1 + rng.int(0, 1);   // 1~2 平原少丘
-        peakChance = 0.2;
+        hillCount = 5 + rng.int(0, 2);   // 5~7 平原也有可见起伏（原 1~2 太稀→看似平地）
+        peakChance = 0.4;
     }
     const elevOcc = new Set<string>();
     for (let i = 0; i < hillCount; i++) {
-        const lvl = rng.chance(0.3) ? 2 : 1;
+        const lvl = rng.chance(0.45) ? 2 : 1;
         const sx = 3 + rng.int(0, gw - 6);
         const sy = 3 + rng.int(0, gh - 6);
-        const cells = growClump(sx, sy, 10 + rng.int(0, 15), gw, gh, elevOcc, rng);
+        const cells = growClump(sx, sy, 16 + rng.int(0, 24), gw, gh, elevOcc, rng);
         for (const [x, y] of cells) if (grid[y][x] < lvl) grid[y][x] = lvl;
     }
     if (rng.chance(peakChance)) {
@@ -496,18 +481,38 @@ function buildCoastline(
     occupied: Set<string>
 ): WaterChecker {
     // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
-    const shoreline: Array<{ x: number; y: number }> = [];
+    const controls: Array<{ x: number; y: number }> = [];
     let bx = VW * 0.18;
-    const step = TILE_W * 0.8;
-    for (let y = -TILE_H; y <= VH + TILE_H; y += TILE_H) {
+    const controlStep = TILE_H * 4;
+    for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
         const x = sideLeft ? bx : VW - bx;
-        shoreline.push({ x, y });
-        bx += (rng.next() - 0.5) * step;
+        controls.push({ x, y });
+        bx += (rng.next() - 0.5) * TILE_W * 1.6;
         bx = Math.max(VW * 0.08, Math.min(VW * 0.32, bx));
     }
 
+    // DE watershore 过渡图集的岸缘不是逐格直线：用 Catmull-Rom 穿过稀疏控制点，
+    // 再以 1/4 格密采样，保留自然弯曲但消除一段段小方折线。
+    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+        const t2 = t * t, t3 = t2 * t;
+        return 0.5 * ((2 * p1) + (-p0 + p2) * t
+            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    };
+    const shoreline: Array<{ x: number; y: number }> = [];
+    const sampleStep = TILE_H / 4;
+    for (let y = -TILE_H; y <= VH + TILE_H; y += sampleStep) {
+        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
+        const p0 = controls[Math.max(0, segment - 1)];
+        const p1 = controls[segment];
+        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
+        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
+        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
+        shoreline.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
+    }
+
     const boundaryAt = (y: number): number => {
-        const f = Math.max(0, Math.min(shoreline.length - 1, (y + TILE_H) / TILE_H));
+        const f = Math.max(0, Math.min(shoreline.length - 1, (y + TILE_H) / sampleStep));
         const i = Math.min(shoreline.length - 2, Math.floor(f));
         const t = f - i;
         return shoreline[i].x + (shoreline[i + 1].x - shoreline[i].x) * t;
@@ -720,9 +725,10 @@ function buildVegetation(
     season: 0 | 1 | 2,
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
-    isWater: WaterChecker
+    isWater: WaterChecker,
+    isEastAsia: boolean
 ): void {
-    const treeAssets = pickTreeSpecies(biome, season, rng);
+    const treeAssets = pickTreeSpecies(biome, season, rng, isEastAsia);
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
@@ -745,13 +751,18 @@ function buildVegetation(
         return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
             || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
     });
+    // 中央战斗区留空（攻方左、守方右，中央交火区不长树，主人 2026-08-20 检查植被时定）
+    const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
+    const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
+    const inBattleCenter = (x: number, y: number): boolean =>
+        x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
         let cx = 0, cy = 0;
         for (let a = 0; a < 40; a++) {
             cx = VW * (0.15 + rng.next() * 0.7);
             cy = VH * (0.15 + rng.next() * 0.7);
-            if (!isWater(cx, cy)) break;
+            if (!isWater(cx, cy) && !inBattleCenter(cx, cy)) break;
         }
         const radius = 60 + rng.next() * 70;
         const n = Math.min(perCluster, treeCount - placed);
@@ -765,7 +776,7 @@ function buildVegetation(
                 const ang = u2 * Math.PI * 2;
                 const sx = cx + r * Math.cos(ang);
                 const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy)) {
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inBattleCenter(sx, sy)) {
                     tx = sx;
                     ty = sy;
                     found = true;
@@ -781,10 +792,10 @@ function buildVegetation(
 
     // 地面装饰（灌木/草/花/岩石，围绕地形散布，数量约为树 2~3 倍）
     const ground = BIOME_GROUND_DECOR[biome];
-    const decorCount = treeCount * (2 + rng.int(0, 2));
+    const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
         const p = sampleLandPos(VW, VH, rng, isWater);
-        objects.push({ asset: rng.pick(ground), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        objects.push({ asset: rng.pick(ground), x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
     // 秋色落叶贴花（温带系秋季）

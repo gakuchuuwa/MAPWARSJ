@@ -42,7 +42,7 @@ const KOPPEN_CLASS_BY_ID: ReadonlyArray<KoppenClass | null> = [
 
 export const KOPPEN_TO_BIOME: Readonly<Record<KoppenClass, Biome>> = {
     Af: 'tropical_rainforest', Am: 'tropical_rainforest', Aw: 'savanna',
-    BWh: 'desert', BWk: 'desert', BSh: 'savanna', BSk: 'temperate_grass',
+    BWh: 'desert', BWk: 'desert', BSh: 'savanna', BSk: 'mediterranean',
     Csa: 'mediterranean', Csb: 'mediterranean', Csc: 'mediterranean',
     Cwa: 'temperate_forest', Cwb: 'temperate_forest', Cwc: 'boreal',
     Cfa: 'temperate_forest', Cfb: 'temperate_forest', Cfc: 'boreal',
@@ -220,9 +220,15 @@ export const BIOME_GROUND_VARIATION: Record<Biome, string[]> = {
     tundra_snow: ['r01', 'gravel_wet', 'snd'],
 };
 
-/** 从树种池随机选 2~3 种混布（树可混种，与地形不同） */
-export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource): string[] {
-    const pool = BIOME_TREES[biome][season];
+/** 东亚限定树种（樱花/竹/亚洲枫/亚洲松）：非东亚文化区不得出现（沃罗涅日=斯拉夫 → 无樱花） */
+export const EAST_ASIA_ONLY_TREES: ReadonlySet<string> = new Set([
+    'PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'BAMBOO', 'LUSH_BAMBOO', 'ASIAN_PINE',
+]);
+
+/** 从树种池随机选 2~3 种混布（树可混种，与地形不同；非东亚过滤掉樱花/竹/亚洲枫） */
+export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource, isEastAsia = true): string[] {
+    let pool = BIOME_TREES[biome][season];
+    if (!isEastAsia) pool = pool.filter((t) => !EAST_ASIA_ONLY_TREES.has(t));
     const n = Math.min(pool.length, 2 + rng.int(0, 1));
     const shuffled = [...pool];
     for (let i = shuffled.length - 1; i > 0; i--) {

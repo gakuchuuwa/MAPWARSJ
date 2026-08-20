@@ -1468,7 +1468,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/liuhan/quli_chentang.png": {
-            "scale": 1.19,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": -29
         },
@@ -4783,7 +4783,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/WESTERN/weili_weilifan.png": {
-            "scale": 0.82,
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": 7
         },
