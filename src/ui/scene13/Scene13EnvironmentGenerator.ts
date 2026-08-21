@@ -512,20 +512,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         let isWater: WaterChecker = () => false;
         let isRoad: (x: number, y: number) => boolean = () => false;
 
-        // 🔴 [2026-08-22 主人定] 带状地貌全量配清澈深绿色河流 (river_clean_green / wt_green) + 浅色沙滩 (Beach) + 动态水波
-        if (topology === 'river_crossing' || topology === 'imperial_highway' || waterKind === 'river') {
+        // 🔴 [2026-08-22 遵循 DE 史实与战场合理性] 仅真正有地理江河湖海时才生成水系，陆地攻城战与陆地野战绝不凭空生河切断城堡！
+        if (waterKind === 'river' || topology === 'river_crossing') {
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
-        } else if (topology === 'swamp_marsh' || topology === 'steppe_oasis' || waterKind === 'lake') {
+        } else if (waterKind === 'lake' || topology === 'swamp_marsh') {
             isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
-        } else if (topology === 'canyon_pass') {
-            if (rng.chance(0.5)) {
-                isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
-            }
-        } else {
-            // highland_ridge / dense_forest_clearing 等模式下 25% 概率出现自然清流
-            if (rng.chance(0.25)) {
-                isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
-            }
         }
 
         // 水面保持零高程：严禁高程光影或突起切进水面（保持 100% 平坦如砥）
@@ -697,24 +688,24 @@ function generateElevation(
         return grid;
     }
     
-    // 丘陵数量与高度按真实地理海拔/坡度定：
+    // 🔴 [2026-08-22 主人定] 彻底告别单调大平原：即使是平原低地，亦随机生成 2~3 处自然起伏战术高地与缓坡丘陵
     const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
-        ? 2 + rng.int(0, 2)   // 山地/高原：2~3 片大型连绵高地丘陵
+        ? 3 + rng.int(0, 2)   // 山地/高原：3~4 片大型连绵高地丘陵群
         : (elev !== null && elev >= 300)
-            ? 1 + rng.int(0, 2) // 丘陵台地：1~2 片战术丘陵
-            : 1 + rng.int(0, 1); // 平原低地：1 片自然缓坡丘陵
+            ? 2 + rng.int(0, 2) // 丘陵台地：2~3 片错落战术高地
+            : 2 + rng.int(0, 2); // 平原低地：2~3 片自然缓坡起伏高台，打破一马平川
 
     for (let i = 0; i < hillCount; i++) {
-        // 先在可见战场取丘心，再反算到等距网格。直接分别抽 gx/gy 会让大量丘心落到屏幕外。
-        const hillScreenX = VW * (0.22 + rng.next() * 0.56);
-        const hillScreenY = VH * (0.18 + rng.next() * 0.58);
+        // 先在可见战场取丘心（中北/中南/中央错开分布），再反算到等距网格
+        const hillScreenX = VW * (0.18 + rng.next() * 0.64);
+        const hillScreenY = VH * (0.16 + rng.next() * 0.68);
         const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
         const cx = Math.max(1, Math.min(gw - 2, hillGx));
         const cy = Math.max(1, Math.min(gh - 2, hillGy));
-        const rx = 7 + rng.next() * 5;  // 椭圆长轴 7~12 格
-        const ry = 5.5 + rng.next() * 4; // 椭圆短轴 5.5~9.5 格
-        const hMax = (elev !== null && elev >= 1000) ? 3 : (elev !== null && elev >= 300 ? 2 : 2);
-        const angle = (rng.next() - 0.5) * 0.8; // 随机山脊走向倾角
+        const rx = 8 + rng.next() * 6;  // 椭圆长轴 8~14 格
+        const ry = 6 + rng.next() * 5;  // 椭圆短轴 6~11 格
+        const hMax = (elev !== null && elev >= 800) ? 3 : 2;
+        const angle = (rng.next() - 0.5) * 1.0; // 随机山脊走向倾角
 
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
@@ -724,16 +715,16 @@ function generateElevation(
                 const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
                 const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
                 // 自然有机地形扰动噪声
-                const noise = (Math.sin(x * 1.3 + y * 0.7) + Math.cos(x * 0.8 - y * 1.1)) * 0.07;
+                const noise = (Math.sin(x * 1.2 + y * 0.8) + Math.cos(x * 0.7 - y * 1.1)) * 0.08;
                 const dist = normDist + noise;
 
                 // 经典 AoE2 DE 同心阶梯式战术高地模型（制高顶台 Level 3/2 + 缓坡肩部 Level 2/1 + 坡脚基底 Level 1）
                 let h = 0;
-                if (dist < 0.38) {
+                if (dist < 0.36) {
                     h = hMax; // 峰顶 / 高台制高点（Level 3 或 Level 2）
-                } else if (dist < 0.72) {
+                } else if (dist < 0.70) {
                     h = Math.max(1, hMax - 1); // 斜坡肩部（Level 2 或 Level 1）
-                } else if (dist < 1.05) {
+                } else if (dist < 1.08) {
                     h = 1; // 坡脚基底环（Level 1）
                 }
 
@@ -974,10 +965,10 @@ function buildRiver(
     let isInsideWater: (x: number, y: number) => boolean;
 
     if (orientationChoice === 'diagonal') {
-        // 🌊 拓扑 4-A：斜向天堑大江（从右上斜插向中央偏下，大 S 弯曲蜿蜒流淌）
+        // 🌊 拓扑 4-A：斜向天堑大江（水平镜像：上游发源于左侧攻击方，向右下蜿蜒流淌）
         const numPts = 80;
         const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
-        const startX = VW * 0.86, endX = VW * 0.42;
+        const startX = VW * 0.14, endX = VW * 0.58;
         
         // 随机种子控制河湾方向与起伏
         const phase1 = rng.next() * Math.PI * 2;
@@ -986,7 +977,7 @@ function buildRiver(
         for (let i = 0; i <= numPts; i++) {
             const t = i / numPts;
             // 多阶自然谐波大 S 弯曲（摆动幅度 110px ~ 130px，极大丰富自然曲线感）
-            const curveOffset = (
+            const curveOffset = -(
                 Math.sin(t * Math.PI * 2.2 + phase1) * 115 +
                 Math.cos(t * Math.PI * 4.5 + phase2) * 45 +
                 Math.sin(t * Math.PI * 7.2) * 18

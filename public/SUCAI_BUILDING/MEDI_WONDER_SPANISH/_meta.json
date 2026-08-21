@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_WONDER_SPANISH",
+  "frames": 1,
+  "box_w": 632,
+  "box_h": 720,
+  "anchor_x": 336,
+  "anchor_y": 576,
+  "sld_source": "b_medi_wonder_spanish"
+}

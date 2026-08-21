@@ -1,0 +1,9 @@
+{
+  "name": "EAST_WONDER_TEUTONS",
+  "frames": 1,
+  "box_w": 576,
+  "box_h": 544,
+  "anchor_x": 332,
+  "anchor_y": 428,
+  "sld_source": "b_east_wonder_teutons"
+}

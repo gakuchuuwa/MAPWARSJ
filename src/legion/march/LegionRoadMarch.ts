@@ -22,6 +22,14 @@ export interface LegionRoadMarchDeps {
     triggerSiege: (army: Army, targetCity: City) => void;
 }
 
+function getPathDistance(path: LatLng[]): number {
+    let total = 0;
+    for (let i = 1; i < path.length; i++) {
+        total += getEuclideanDistance(path[i - 1], path[i]);
+    }
+    return total;
+}
+
 function orderRoadMarchStartCandidates(
     army: Army,
     currentPos: LatLng,
@@ -236,7 +244,14 @@ export function moveLegionToCity(
             const rest = roadRegistry.getFullPathToCity(startPos, targetCityId, undefined);
             const restBody = rest.length >= 2 ? rest.slice(1) : [];
             const full = dedupeLatLngPath([...back, ...restBody]);
-            if (full.length >= 2) {
+            const normalPath = roadRegistry.getFullPathToCity(
+                currentPos,
+                targetCityId,
+                sourceCityId ?? nearestStartCityId
+            );
+            const reverseIsShorter =
+                normalPath.length < 2 || getPathDistance(full) < getPathDistance(normalPath);
+            if (full.length >= 2 && reverseIsShorter) {
                 army.setTargetCity(retreatTarget);
                 gameLog(
                     'legionMarch',

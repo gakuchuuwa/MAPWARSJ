@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_WONDER_SLAVS",
+  "frames": 1,
+  "box_w": 508,
+  "box_h": 500,
+  "anchor_x": 288,
+  "anchor_y": 388,
+  "sld_source": "b_scen_wonder_slavs"
+}

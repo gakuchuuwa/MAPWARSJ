@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WONDER_KHMER",
+  "frames": 1,
+  "box_w": 548,
+  "box_h": 564,
+  "anchor_x": 324,
+  "anchor_y": 432,
+  "sld_source": "b_seas_wonder_khmer"
+}

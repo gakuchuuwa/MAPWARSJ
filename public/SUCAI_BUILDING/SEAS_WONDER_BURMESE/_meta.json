@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WONDER_BURMESE",
+  "frames": 1,
+  "box_w": 500,
+  "box_h": 488,
+  "anchor_x": 252,
+  "anchor_y": 364,
+  "sld_source": "b_seas_wonder_burmese"
+}

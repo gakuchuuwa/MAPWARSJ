@@ -1,0 +1,9 @@
+{
+  "name": "EAST_WONDER_HUNS",
+  "frames": 1,
+  "box_w": 484,
+  "box_h": 448,
+  "anchor_x": 268,
+  "anchor_y": 344,
+  "sld_source": "b_east_wonder_huns"
+}
