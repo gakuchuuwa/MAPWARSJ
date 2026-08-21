@@ -37,17 +37,19 @@ export type RegionType =
     | 'KOREA'         // 朝鲜
     | 'JAPAN'         // 日本
     | 'CENTRAL_ASIA' // 中亚伊斯兰 (粟特、河中、大食)
-    | 'WEST_ASIA';   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+    | 'WEST_ASIA'   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+    | 'INDIA'       // 印度 (恒河平原、南亚次大陆)
+    | 'BERBER';     // 柏柏尔 (马格里布、北非)
 // [2026-08-19 主人定·收敛 18 大文化] GREEK → LATIN、NUERGAN → NORTHEAST 已并入，
 //   两者的城池 region 已改写、旧值由 LEGACY_REGION_MAP 兜底。勿再新增这两个枚举。
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
-    'SLAVIC', 'GERMANIC', 'LATIN',
+    'SLAVIC', 'GERMANIC', 'LATIN', 'BERBER',
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'WEST_ASIA'
+    'KOREA', 'DIANQIAN', 'INDIA', 'WEST_ASIA'
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -71,6 +73,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     JAPAN: '日本',
     CENTRAL_ASIA: '中亚',
     WEST_ASIA: '西亚',
+    INDIA: '印度',
+    BERBER: '柏柏尔',
 };
 
 /**
@@ -97,6 +101,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     WESTERN: '西域',
     CENTRAL_ASIA: '中亚',
     WEST_ASIA: '西亚',
+    INDIA: '印度',
+    BERBER: '柏柏尔',
     DIANQIAN: '滇缅',
     KOREA: '朝鲜',
     JAPAN: '日本',
@@ -243,6 +249,8 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_duershelujin', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
     { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_duershelujin', 'city_susa'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
+    { region: 'INDIA', cityIds: ['city_laheer', 'city_deli', 'city_agela', 'city_qunvcheng', 'city_walanaxi', 'city_huashicheng', 'city_wangshecheng', 'city_gaodacheng', 'city_danmoledi', 'city_laheer'] },
+    { region: 'BERBER', cityIds: ['city_feisi', 'city_malajiashen', 'city_teleimusen', 'city_aerjier', 'city_bujiaya', 'city_jiataji', 'city_kailuwan', 'city_deliboli', 'city_banjiaxi', 'city_feisi'] },
 ];
 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
@@ -265,6 +273,8 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JAPAN: '#c2185b',
     CENTRAL_ASIA: '#455a64',
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
+    INDIA: '#d84315',   // 深橙红（印度香料）
+    BERBER: '#00897b',  // 青绿（地中海/绿洲）
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -446,6 +456,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
+    INDIA: { // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    BERBER: { // ⚠️ 暂借拉丁图标（北非地中海，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -545,6 +567,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
+    INDIA:        ['city_deli'],                      // 德里 (德里苏丹国/莫卧儿政治中心, 持续千年印度核心)
+    BERBER:       ['city_malajiashen'],               // 马拉喀什 (穆拉比特/穆瓦希德柏柏尔帝国核心)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
