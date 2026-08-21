@@ -2677,11 +2677,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/DIANQIAN/ava_sijifa.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": -17
-        },
         "/assets/NORTH/mushi_muchong.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -6671,6 +6666,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/DIANQIAN/9a9ba598-ab68-4412-a898-196f32a96e45.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/DIANQIAN/1af8a43a-ff22-45e8-bbdc-0b00319c7207.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_35.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/DIANQIAN/ava_sijifa.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {

@@ -25,6 +25,8 @@ import { getRegion } from '../../systems/RegionSystem';
 import { RandomSource, createRandom, hashString } from './Random';
 import {
     groundTilesForTheme,
+    forestFloorTilesForTheme,
+    decorForTheme,
     resolveDeMapTheme,
     terrainForTheme,
     treesForTheme,
@@ -404,11 +406,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
         buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied);
-        buildForestFloor(gw, gh, theme!, rng, patches, occupied);
+        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater);
-        buildResources(VW, VH, rng, objects, isWater);
+        buildResources(VW, VH, season, rng, objects, isWater);
 
         enforceTreeSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -590,7 +592,8 @@ function buildLake(
     VW: number,
     VH: number,
     ox: number,
-    oy: number
+    oy: number,
+    theme: DeMapThemePalette,
 ): WaterChecker {
     const swamp = elev !== null && elev < 200 && rng.chance(0.35);
     if (season === 2) {
@@ -631,7 +634,7 @@ function buildLake(
     const px0 = allPond.length ? isoCellX(allPond[0][0], allPond[0][1], ox) : VW * 0.4;
     const py0 = allPond.length ? isoCellY(allPond[0][0], allPond[0][1], oy) : VH * 0.4;
     for (let i = 0; i < 4; i++) {
-        const re = swamp ? 'UNDERBRUSH_JUNGLE' : rng.pick(['REEDS', 'WILLOW', 'MANGROVE', 'LUSH_BAMBOO']);
+        const re = rng.pick(theme.waterPlants);
         const rx = Math.max(0, Math.min(VW, px0 + rng.next() * VW * 0.3 - VW * 0.15));
         const ry = Math.max(0, Math.min(VH, py0 + rng.next() * VH * 0.25 - VH * 0.12));
         objects.push({ asset: re, x: rx, y: ry, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
@@ -644,68 +647,23 @@ function buildLake(
     };
 }
 
-// ── 第 4 层：农田/梯田 ─────────────────────────────────────────
-
-function buildFarms(
-    gw: number,
-    gh: number,
-    elev: number | null,
-    reg: ReturnType<typeof getRegion> | null,
-    rng: RandomSource,
-    patches: TerrainPatchPlan[],
-    occupied: Set<string>
-): void {
-    if (elev === null) return;
-    // 东亚水田 / 其余旱田；东亚山地梯田
-    const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
-    if (isEastAsia && elev >= 800) {
-        // 东亚山地梯田
-        const t = rng.pick(['rm1', 'rm2']);
-        patches.push({ tile: t, cells: growClump(2, 2, 14 + rng.int(0, 8), gw, gh, occupied, rng), alpha: 1, category: 'farm' });
-    } else if (elev < 600) {
-        const canFarm = isEastAsia || reg === 'LATIN' || reg === 'GERMANIC' || reg === 'WEST_ASIA' || reg === 'SLAVIC' || reg === 'CENTRAL_ASIA';
-        if (canFarm) {
-            const tiles = isEastAsia ? ['fm1', 'rc1', 'rc2', 'rc3'] : ['fc1', 'fc2', 'fc3', 'fm2'];
-            const t = rng.pick(tiles);
-            patches.push({ tile: t, cells: growClump(gw - 3, gh - 3, 11 + rng.int(0, 11), gw, gh, occupied, rng), alpha: 1, category: 'farm' });
-        }
-    }
-}
-
 // ── 第 4 层：地表变体（低频、低透明） ───────────────────────────
 
 function buildGroundVariation(
     gw: number,
     gh: number,
     biome: Biome,
-    elevationBand: ElevationBand,
-    slopeDeg: number | null,
+    season: 0 | 1 | 2,
+    theme: DeMapThemePalette,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
     occupied: Set<string>
 ): void {
-    const variation = BIOME_GROUND_VARIATION[biome];
+    const variation = groundTilesForTheme(theme, biome, season);
     for (let i = 0; i < 5; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
         patches.push({ tile: t, cells: growClump(sx, sy, 4 + rng.int(0, 5), gw, gh, occupied, rng), alpha: 0.22, category: 'ground-variation' });
-    }
-
-    if (elevationBand === 'lowland' || elevationBand === 'snow') return;
-    const dry = biome === 'desert' || biome === 'savanna' || biome === 'cold_steppe' || biome === 'temperate_grass';
-    const altitudeTiles = elevationBand === 'upland'
-        ? (dry ? ['pc1', 'pc2', 'pm1'] : ['pm1', 'rock_wet', 'gravel_wet'])
-        : (dry ? ['rck', 'gravel_default', 'qs2'] : ['rck', 'rock_wet', 'gravel_wet']);
-    const count = (elevationBand === 'alpine' ? 4 : elevationBand === 'mountain' ? 3 : 1)
-        + (slopeDeg !== null && slopeDeg >= 12 ? 1 : 0);
-    for (let i = 0; i < count; i++) {
-        const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        patches.push({
-            tile: rng.pick(altitudeTiles),
-            cells: growClump(sx, sy, 4 + rng.int(0, 7), gw, gh, occupied, rng),
-            alpha: elevationBand === 'upland' ? 0.18 : 0.34,
-            category: 'ground-variation',
-        });
     }
 }
 
@@ -715,17 +673,18 @@ function buildForestFloor(
     gw: number,
     gh: number,
     biome: Biome,
+    season: 0 | 1 | 2,
+    theme: DeMapThemePalette,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
     occupied: Set<string>
 ): void {
-    const isForest = biome === 'tropical_rainforest' || biome === 'temperate_forest' || biome === 'boreal';
-    if (!isForest) return;
-    const tiles = ['fo2', 'underbrush_leaves'];
+    const tiles = forestFloorTilesForTheme(theme, biome, season);
+    if (tiles.length === 0) return;
     const n = 1 + rng.int(0, 1);
     for (let i = 0; i < n; i++) {
         const sx = 2 + rng.int(0, gw - 4), sy = 2 + rng.int(0, gh - 4);
-        patches.push({ tile: rng.pick(tiles), cells: growClump(sx, sy, 8 + rng.int(0, 10), gw, gh, occupied, rng), alpha: 0.5, category: 'forest-floor' });
+        patches.push({ tile: rng.pick(tiles), cells: growClump(sx, sy, 8 + rng.int(0, 10), gw, gh, occupied, rng), alpha: season === 2 ? 0.35 : 0.5, category: 'forest-floor' });
     }
 }
 
@@ -737,13 +696,12 @@ function buildVegetation(
     biome: Biome,
     elevationBand: ElevationBand,
     season: 0 | 1 | 2,
+    theme: DeMapThemePalette,
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
     isWater: WaterChecker,
-    isEastAsia: boolean,
-    isSubtropical: boolean
 ): void {
-    const treeAssets = pickTreeSpecies(biome, season, rng, isEastAsia, isSubtropical);
+    const treeAssets = treesForTheme(theme, season);
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
@@ -805,8 +763,9 @@ function buildVegetation(
         }
     }
 
-    // 地面装饰（灌木/草/花/岩石，围绕地形散布，数量约为树 2~3 倍）
-    const ground = BIOME_GROUND_DECOR[biome];
+    // 地面装饰（灌木/草/花/岩石，冬季严禁出现绿花/夏草）
+    const themeDecor = decorForTheme(theme, season);
+    const ground = [...themeDecor.flat, ...themeDecor.solid];
     const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
         const p = sampleLandPos(VW, VH, rng, isWater);
@@ -814,38 +773,17 @@ function buildVegetation(
         objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
-    // 秋色落叶贴花（温带系秋季）
-    if (season === 1 && (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'boreal')) {
-        const leaves = ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH'];
-        for (let i = 0; i < 3; i++) {
-            const p = sampleLandPos(VW, VH, rng, isWater);
-            objects.push({ asset: rng.pick(leaves), x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        }
-    }
-
 }
 
 // ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
 
-function buildResources(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
-    const resAssets = ['FORAGE_BUSH', 'MINE_STONE'];
+function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
+    const resAssets = season === 2 ? ['MINE_STONE'] : ['FORAGE_BUSH', 'MINE_STONE'];
     const resCount = 2 + rng.int(0, 3);
     for (let i = 0; i < resCount; i++) {
         const p = sampleLandPos(VW, VH, rng, isWater);
         objects.push({ asset: rng.pick(resAssets), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
-}
-
-// ── 第 5 层：战后残迹（低频） ───────────────────────────────────
-
-function buildDebris(VW: number, VH: number, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
-    const debrisCount = 1 + rng.int(0, 2);
-    for (let i = 0; i < debrisCount; i++) {
-        const p = sampleLandPos(VW, VH, rng, isWater);
-        objects.push({ asset: rng.chance(0.5) ? 'DECAL_CRACK' : 'DECAL_CRATER', x: p.x, y: p.y, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-    }
-    const p2 = sampleLandPos(VW, VH, rng, isWater);
-    objects.push({ asset: rng.chance(0.5) ? 'FELLED_GENERIC' : 'STUMP_GENERIC', x: p2.x, y: p2.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
 }
 
 // 重新导出 hashString，供测试/验收计算种子校验和

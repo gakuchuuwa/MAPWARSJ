@@ -459,15 +459,18 @@ export class LegionPhalanxDrawer {
 
     /**
      * DE 动态帧框元数据取向：**唯一入口**，所有读 `_meta.json` 的 dirs 都必须走这里。
-     * 16 向素材（dirs16:true，如全部战船）在 UnitAssets 里按偶数向采样成 8 向，
+     * 16 向素材（dirs16:true，如全部战船）在 UnitAssets 里按偶数向采样成 8 向（陆军/旗），
      * 所以游戏的 direction k 对应元数据键 2k；8 向素材原样。
+     * 🔴 [2026-08-21 全 16 向船] 战船已挂全 16 向，drawNaval 传 is16=true → 键 = direction 直取（0-15）。
+     *    其余调用（陆军 8 向）不传 → 行为逐像素不变。
      */
     private static metaDirFor(
         dynEntry: { dirs16?: boolean; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> } | undefined,
         direction: number,
+        is16: boolean = false,
     ): { fw: number; fh: number; hx: number; hy: number } | undefined {
         if (!dynEntry?.dirs) return undefined;
-        const idx = dynEntry.dirs16 ? direction * 2 : direction;
+        const idx = dynEntry.dirs16 ? (is16 ? direction : direction * 2) : direction;
         return dynEntry.dirs[String(idx)];
     }
 
@@ -1787,6 +1790,24 @@ export class LegionPhalanxDrawer {
         return formation;
     }
 
+    /**
+     * 航迹方向与当前朝向是否一致（最新段方向与朝向夹角 < 45°）。
+     * 行进中：航迹 = 刚走过的路 = 当前朝向 → true，沿航迹排（转弯跟河道弯）；
+     * 静止/待命/攻城面向：航迹是过去的旧路线，方向 ≠ 当前朝向 → false，改按当前朝向排纵队。
+     * [2026-08-21 修·并排不并列] 原无条件沿航迹排：待命船队船头朝东、船队却沿旧南北航迹堆叠（主人实锤）。
+     * @param hx/hy 船头方向单位向量（= (sin, -cos)，旋转矩阵 x 轴 (cos,sin) 是船头顺时针 90°，非船头本身）
+     */
+    private static trailAlignedWithHeading(trail: { x: number; y: number }[], hx: number, hy: number): boolean {
+        const n = trail.length;
+        if (n < 2) return false;
+        const a = trail[n - 1], b = trail[n - 2];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const len = Math.hypot(dx, dy);
+        if (len < 0.001) return false;
+        const dot = (dx / len) * hx + (dy / len) * hy;
+        return dot > Math.cos(Math.PI / 4); // 夹角 < 45° 视为同向
+    }
+
     /** 沿航迹取点：从队尾（最新点，靠近旗舰）往回走 distAlong 弧长，落在两采样点间线性插值。 */
     private static trailPointAt(trail: { x: number; y: number }[], distAlong: number): { x: number; y: number } {
         let acc = 0;
@@ -1911,7 +1932,7 @@ export class LegionPhalanxDrawer {
             // 🔴 [2026-08-20 修复战船裁切] 战船是 16 向素材、按偶数向采样成 8 向 → 元数据键 = direction*2，
             //    统一走 metaDirFor；旧代码直接查 dirs[direction] 取到一半宽的框，船被竖直切掉半条（主人实锤）。
             const dynEntry = (set as any).dyn?.IDLE;
-            const dynDir = this.metaDirFor(dynEntry, direction);
+            const dynDir = this.metaDirFor(dynEntry, direction, true);
             if (dynDir) {
                 const s = baseHeight * scale * getNavalShipDrawScale(typeId) / 64;
                 typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, fw: dynDir.fw, fh: dynDir.fh, hx: dynDir.hx, hy: dynDir.hy });
@@ -1938,12 +1959,16 @@ export class LegionPhalanxDrawer {
         const shipDepth = flagshipW * 1.15;
         const shipSpread = flagshipW;
 
-        // 对角朝向（1,3,5,7）c 轴加 0.15 补偿视觉压缩；正朝向不变
-        const isDiagonal = direction % 2 === 1;
-        const cMult = isDiagonal ? 1.15 : 1.0;
+        // 对角朝向 c 轴加 0.15 补偿视觉压缩；正朝向不变。
+        // 🔴 [2026-08-21 16 向] d16%4==0 = 视觉 45° 对角（原 8 向奇数向）→1.15；%4==2 = 正方向 →1.0；
+        //    奇数 = 22.5° 中间向 → 1.075（新旧之间）。与 8 向兼容：d16=2·d8 时结果不变。
+        const dMod4 = direction % 4;
+        const cMult = dMod4 === 2 ? 1.0 : (dMod4 === 0 ? 1.15 : 1.075);
 
-        // 旋转角（与陆军一致）
-        const angle = (direction + 1) * Math.PI / 4;
+        // 旋转角（与陆军一致）：
+        // 🔴 [2026-08-21 全 16 向船] direction 现为 16 向（0-15，22.5°/档）→ (direction+2)*π/8。
+        //    8 向时代 (direction+1)*π/4，代入 d16=2·d8 → (2d8+2)π/8 = (d8+1)π/4，逐像素一致。
+        const angle = (direction + 2) * Math.PI / 8;
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
 
@@ -1963,12 +1988,12 @@ export class LegionPhalanxDrawer {
             if (pos.r === 0) {
                 dx = center.x;
                 dy = center.y;
-            } else if (trail && trail.length >= 2) {
+            } else if (trail && trail.length >= 2 && LegionPhalanxDrawer.trailAlignedWithHeading(trail, sin, -cos)) {
                 const base = this.trailPointAt(trail, Math.abs(pos.r) * shipDepth);
                 dx = base.x + origX * cos;
                 dy = base.y + origX * sin;
             } else {
-                // 航迹不足（刚下水/刚转向/静态）：标准旋转矩阵排开（并列长蛇成列）
+                // 航迹不足 / 航迹方向与当前朝向不一致（静止、待命、攻城转向）：标准旋转矩阵排开（并列长蛇成列）
                 dx = center.x + (origX * cos - origY * sin);
                 dy = center.y + (origX * sin + origY * cos);
             }

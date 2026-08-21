@@ -8,7 +8,7 @@ export interface NavalShipSlot {
     state: 'ALIVE' | 'DYING' | 'DEAD';
     /** 进入 DYING 的 tick（用于驱动死亡动画帧） */
     stateStartTime: number;
-    /** 随机死亡方向（0-7） */
+    /** 随机死亡方向（0-15，船全 16 向素材 2026-08-21） */
     deathDirection: number;
 }
 
@@ -96,7 +96,7 @@ export class NavalPhalanxStateManager {
                 ships.push({
                     state: 'ALIVE',
                     stateStartTime: tick,
-                    deathDirection: Math.floor(Math.random() * 8),
+                    deathDirection: Math.floor(Math.random() * 16),
                 });
             }
             state = {

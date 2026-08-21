@@ -1466,28 +1466,29 @@ export const SPRITE_PATHS = {
             // 【船贴图三档】按军团兵力选档（NavalShipTiers.ts）：
             //   小船=GALLEY 桨帆船(<2万) / 中船=WAR_GALLEY 大战舰(2-5万) / 大船=ANT_ELITE_GALLEY 精锐桨帆船(≥5万)
             // 🔴 2026-08-19 换：原 S10DB（三国志10）船 → AoE2 DE 桨帆船系列（同一族统一风格）。
-            //   DE 素材是 16 向，降采样取**偶数向**（0,2,...,14 → 8 向）；无 death 帧 → 沉没走淡出（drawNaval）。
-            //   DAMAGE 复用 idle（DE 船无受伤帧）。
-            MOVE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/GALLEY/move_${d}.png`),
-            ATTACK: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/GALLEY/attack_${d}.png`),
-            IDLE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            // 🔴 2026-08-21 全 16 向接线：DE 素材 16 向齐全（dirs16:true，idle/move/attack 各 16 帧），
+            //    之前只挂偶数向 8 帧 → 船朝向只有 45° 精度。现全 16 向挂载，船头 22.5° 精度（仅船，陆军/旗仍 8 向）。
+            //    无 death 帧 → 沉没走淡出（drawNaval）；DAMAGE 复用 idle（DE 船无受伤帧）。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
             DEATH: [],
         },
         'ship_medium': {
-            // 中船: WAR_GALLEY 大战舰（DE；2-5万）
-            MOVE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/WAR_GALLEY/move_${d}.png`),
-            ATTACK: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/WAR_GALLEY/attack_${d}.png`),
-            IDLE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
+            // 中船: WAR_GALLEY 大战舰（DE；2-5万）· 全 16 向（2026-08-21）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
             DEATH: [],
         },
         'ship_large': {
-            // 大船: ANT_ELITE_GALLEY 精锐桨帆船（DE；≥5万）
-            MOVE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/ANT_ELITE_GALLEY/move_${d}.png`),
-            ATTACK: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/ANT_ELITE_GALLEY/attack_${d}.png`),
-            IDLE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 2, 4, 6, 8, 10, 12, 14].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
+            // 大船: ANT_ELITE_GALLEY 精锐桨帆船（DE；≥5万）· 全 16 向（2026-08-21）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
             DEATH: [],
         },
         // 【马其顿方阵】Macedonian Phalanx（8方向萨里沙超长矛方阵）
