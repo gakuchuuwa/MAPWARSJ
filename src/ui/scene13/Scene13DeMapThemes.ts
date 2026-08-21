@@ -246,15 +246,15 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_tibetan_plateau: {
         id: 'palaearctic_tibetan_plateau',
-        baseTerrain: 'pm2',
-        // 🔴 [2026-08-21 素材全覆盖] 碎石地(rck)/岩地(rc3)入高原地面
-        groundTiles: ['gr4', 'ds5', 'pm1', 'sno', 'rck', 'rc3'],
-        forestFloorTiles: ['ds3', 'snf'],
-        trees: ['PINE', 'DEAD_TREE'],
+        baseTerrain: 'gr2', // 夏季为绿意盎然的羌塘/藏南高寒草甸
+        // 高原多变地表：绿草、高寒冷土、向阳干草、碎石岩地（非冬季绝无白雪sno）
+        groundTiles: ['gr2', 'pm2', 'gr4', 'ds5', 'rck', 'rc3'],
+        forestFloorTiles: ['ds3', 'grs'],
+        trees: ['ASIAN_PINE', 'PINE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
-        flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'DECAL_ICE'],
-        // 🔴 [2026-08-21 素材全覆盖] 高原古墓（石墓）——吐蕃/古格战场
-        solidDecor: ['ROCK1', 'ROCK2', 'GRAVES'],
+        flatDecor: ['FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED', 'FERNPATCH', 'GRASS_GREEN_PATCH'],
+        // 高原古墓（石墓）与高原岩石——吐蕃/古格战场
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -313,10 +313,8 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.indomalayan_tropical;
     }
 
-    // 3. 青藏高原（纯坐标带 + 海拔：lat 26~40、lng 78~105、elev≥2500——对齐大地图色阶 2500 高原起点；
-    //    🔴 2026-08-21 不依赖 region：region polygon 把河西武威误归 TIBET，纯坐标 + 海拔判定即可排除；
-    //    无海拔数据(null)不启用——成都盆地(500m)/武威(1500m)绝不当高原）
-    if (elev !== null && elev >= 2500 && lat > 26 && lat < 40 && lng > 78 && lng < 105) {
+    // 3. 青藏高原（纯坐标带 + 海拔：lat 26~40、lng 78~105；若有海拔需 ≥2500m 排除成都盆地）
+    if (lat > 26 && lat < 40 && lng > 78 && lng < 105 && (elev === null || elev >= 2500)) {
         return DE_MAP_THEMES.palaearctic_tibetan_plateau;
     }
 

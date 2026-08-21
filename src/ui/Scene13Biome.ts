@@ -76,10 +76,14 @@ const ELEVATION_THRESHOLDS: Readonly<Record<'A' | 'B' | 'C' | 'D' | 'E', Elevati
  * - 55°~65°（亚寒带针叶林）：雪线 2600m
  * - 65°+（北极圈与极地）：雪线 1200m~1500m
  */
-export function snowLineFor(lat: number): number {
+export function snowLineFor(lat: number, lng?: number): number {
     const absLat = Math.abs(lat);
+    // 青藏高原地区（高原热岛效应与低纬度高热，真实永久雪线在 5200m~5800m 以上）
+    if (lng !== undefined && lng >= 75 && lng <= 105 && absLat >= 26 && absLat <= 40) {
+        return 5200;
+    }
     if (absLat < 30) return 5000;
-    if (absLat < 45) return 4400;
+    if (absLat < 45) return 4600;
     if (absLat < 55) return 3600;
     if (absLat < 65) return 2600;
     if (absLat < 75) return 1800;
@@ -98,7 +102,7 @@ export const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
     temperate_grass: ['gr6', 'gr4', 'sn2'],
     temperate_forest: ['gr3', 'for', 'sn2'],
     boreal: ['gr9', 'pm2', 'sno'],
-    tundra_snow: ['sno', 'sno', 'ice'],
+    tundra_snow: ['gr2', 'pm2', 'sn2'], // 高寒苔原草甸：夏绿gr2 / 秋黄pm2 / 冬雪sn2
 };
 
 /** 无坐标兜底（13 初始化防御分支）：默认温带森林夏季草皮 */
@@ -132,10 +136,12 @@ export function resolveElevationBand(
     lat: number,
     _climate: KoppenClass | null,
     elev: number | null,
+    lng?: number,
 ): ElevationBand {
     if (elev === null) return 'lowland';
-    if (elev >= snowLineFor(lat) || elev >= 4800) return 'snow';
-    if (elev >= 3800) return 'high_alpine';
+    const snowLine = snowLineFor(lat, lng);
+    if (elev >= snowLine) return 'snow';
+    if (elev >= 4200) return 'high_alpine';
     if (elev >= 2500) return 'alpine';
     if (elev >= 1000) return 'mountain';
     if (elev >= 400) return 'upland';
@@ -144,7 +150,7 @@ export function resolveElevationBand(
 
 function detectBiomeCore(lat: number, lng: number, elev: number | null): Biome {
     const climate = resolveClimateRegion(lat, lng);
-    const band = resolveElevationBand(lat, climate, elev);
+    const band = resolveElevationBand(lat, climate, elev, lng);
     if (band === 'snow') return 'tundra_snow';
     return climate ? KOPPEN_TO_BIOME[climate] : fallbackBiomeForLatitude(lat);
 }
