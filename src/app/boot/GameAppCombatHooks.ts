@@ -84,6 +84,7 @@ function startScene13War(
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
     environmentSeed?: string,
+    battleType?: 'siege' | 'field',
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
@@ -110,6 +111,8 @@ function startScene13War(
         centerLng: center?.lng,
         // 环境唯一种子（Hook 战斗开始时生成一次，同场可复现、不同场不重复）
         environmentSeed,
+        // [2026-08-21] 战斗类型（野战双方都布出兵口建筑、攻城只攻方布）
+        battleType,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -147,7 +150,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             startScene13War(app, battle.attacker, battle.defender, (winner, sv) => {
                 battle.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
-                `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`);
+                `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
+                battle.type);
             app.battleScene?.enter(t.center, t.id);
         }
     };
@@ -214,7 +218,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         },
                         battleField.getScene13PowerBonus(),
                         t.center,
-                        `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`
+                        `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
+                        battleField.type
                     );
                 }
             }

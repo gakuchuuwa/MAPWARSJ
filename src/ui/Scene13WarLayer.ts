@@ -24,6 +24,7 @@ import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { type RegionType } from '../systems/RegionSystem';
+import type { BattleType } from '../combat/CombatSystem';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
@@ -880,6 +881,8 @@ const CLOUD_ALPHA_MAX = 0.55;
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 /** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
+/** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
+const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 /** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
 const TILE_W = 64;
 const TILE_H = 32;
@@ -2284,6 +2287,8 @@ export interface Scene13WarInit {
     getYear?: () => number;
     /** [环境生成] 显式种子（测试用）；不传则从经纬度 + 双方势力/武将 id 派生 */
     environmentSeed?: string;
+    /** [2026-08-21] 战斗类型：siege=攻城（守方守城，只攻方布出兵口建筑）、field=野战（双方都布）。缺省 'field'。 */
+    battleType?: BattleType;
 }
 
 export class Scene13WarLayer {
@@ -2296,6 +2301,8 @@ export class Scene13WarLayer {
      */
     private lingering = false;
     private spawns: WarSpawn[] = [];
+    /** 战斗类型（siege 攻城 / field 野战）——决定出兵口建筑是否双方都布 */
+    private battleType: BattleType = 'field';
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
     private fleers: WarFleer[] = [];
@@ -2639,6 +2646,7 @@ export class Scene13WarLayer {
         }
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
+        this.battleType = init.battleType ?? 'field';
         // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
         this.famousBuff = [
             getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
@@ -3134,7 +3142,46 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
+        this.applySpawnBuildings();
         this.repaintDecor();
+    }
+
+    /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩（核心 3 口随机）+ 行军帐篷（其余 6 口）。
+     *  野战双方都布、攻城只攻方布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
+     *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。守方镜像（营门朝攻方）。
+     *  「核心」= 该侧 9 口几何质心最近的 3 口；其余 6 口为帐篷。 */
+    private applySpawnBuildings(): void {
+        const sides: Array<0 | 1> = this.battleType === 'field' ? [0, 1] : [0];
+        for (const f of sides) this.applyBuildingsForSide(f);
+    }
+
+    private applyBuildingsForSide(f: 0 | 1): void {
+        const side = this.spawns.filter((s) => s.f === f);
+        if (side.length !== 9) return;
+        const cx = side.reduce((a, s) => a + s.x, 0) / side.length;
+        const cy = side.reduce((a, s) => a + s.y, 0) / side.length;
+        const dist = (s: { x: number; y: number }) => Math.hypot(s.x - cx, s.y - cy);
+        const sorted = [...side].sort((a, b) => dist(a) - dist(b));
+        const camps = ['CAMP_ARCHERY_RANGE', 'CAMP_BARRACKS', 'CAMP_STABLE'];
+        const shuffled = [...camps].sort(() => Math.random() - 0.5);
+        const place = (s: { x: number; y: number }, asset: string): DecorSprite => {
+            const full = 'BUILDING:' + asset;
+            this.ensureNatureAsset(full);
+            return {
+                asset: full,
+                frame: 0,
+                x: s.x,
+                y: s.y,
+                flip: f === 1,
+                layer: 'world',
+                z: 0,
+                obstructionContactSec: 0,
+                obstructionTouched: false,
+                obstructionDisabled: false,
+            };
+        };
+        for (let i = 0; i < 3; i++) this.decorSprites.push(place(sorted[i], shuffled[i]));
+        for (let i = 3; i < 9; i++) this.decorSprites.push(place(sorted[i], 'GREEK_WAR_TENT'));
     }
 
     /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
@@ -3169,15 +3216,20 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回 */
+    /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回。
+     *  `BUILDING:` 前缀 = 出兵口军事建筑（SUCAI_BUILDING）：改加载 `preview.png` 单帧，
+     *  规避马厩 180 帧 54720px 超宽 strip（超浏览器 canvas 单边上限，整图 drawImage 会失败）。 */
     private ensureNatureAsset(asset: string): void {
         if (this.natureCache[asset]) return;
         const na: NatureAsset = { img: null, meta: null };
         this.natureCache[asset] = na;
+        const isBuilding = asset.startsWith('BUILDING:');
+        const base = isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL;
+        const name = isBuilding ? asset.slice('BUILDING:'.length) : asset;
         const im = new Image();
         im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
-        im.src = NATURE_BASE_URL + asset + '/frames.png';
-        fetch(NATURE_BASE_URL + asset + '/_meta.json')
+        im.src = base + name + '/' + (isBuilding ? 'preview.png' : 'frames.png');
+        fetch(base + name + '/_meta.json')
             .then((r) => (r.ok ? r.json() : null))
             .then((m) => { if (m) { na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
             .catch(() => {});
@@ -4088,8 +4140,8 @@ export class Scene13WarLayer {
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
         const r2 = radius * radius;
-        let best: WarMan | null = null, bd = r2;      // 最近的（兜底）
-        let free: WarMan | null = null, fd = r2;      // 最近的**还没被打满**的（优先）
+        let best: WarMan | null = null, bd = r2;      // 最近的未满目标（最小射程兜底）
+        let free: WarMan | null = null, fd = r2;      // 最近的未满且满足最小射程目标
         // 🔴 [2026-08-17] 投石车/投石机有最小射程：贴太近就抛不出去（DE 同款）。
         //    原来只在**放弹丸**那一步判 tooClose，结果贴脸时「照样扣血、就是不出石弹」——
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
@@ -4115,15 +4167,16 @@ export class Scene13WarLayer {
                         const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                         if (d >= r2) continue;
                         const tooNear = minR2 > 0 && d < minR2;
+                        if (o.claims >= SPREAD_CAP) continue;
                         if (d < bd) { bd = d; best = o; }
-                        // 🔴 用 claims（被多少人盯上，含赶路的）而不是 atkers（只数正在打的）：
-                        //    见 WarMan.claims —— 用 atkers 会让一群人同时扑向同一个「看着没人」的目标。
-                        if (!tooNear && o.claims < SPREAD_CAP && d < fd) { fd = d; free = o; }
+                        if (!tooNear && d < fd) { fd = d; free = o; }
                     }
                 }
             }
         }
-        return free ?? best;
+        const chosen = free ?? best;
+        if (chosen) chosen.claims++;
+        return chosen;
     }
 
     /**
@@ -4302,8 +4355,10 @@ export class Scene13WarLayer {
                 let mapY = dy / TILE_H - dx / TILE_W;
                 const limitX = obstruction.x + unitTileRadius;
                 const limitY = obstruction.y + unitTileRadius;
+                if (Math.abs(mapX) < limitX + 0.15 && Math.abs(mapY) < limitY + 0.15) {
+                    if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
+                }
                 if (Math.abs(mapX) >= limitX || Math.abs(mapY) >= limitY) continue;
-                if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
 
                 const penX = limitX - Math.abs(mapX);
                 const penY = limitY - Math.abs(mapY);
@@ -4362,6 +4417,9 @@ export class Scene13WarLayer {
         this.marchTick(dt, deploying);
 
         this.rebuild();
+        // 本帧从零登记追击名额；search 选中目标时立即占位，避免同一帧的一批士兵
+        // 都读到上一帧的旧计数后同时扑向同一个人。
+        for (const target of this.men) target.claims = 0;
         for (const m of this.men) {
             if (m.hp <= 0) continue;
             // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
@@ -4383,7 +4441,9 @@ export class Scene13WarLayer {
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
             m.next -= dt;
             const keep = m.foe && m.foe.hp > 0
+                && m.foe.claims < SPREAD_CAP
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
+            if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
                 m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
                 m.next = 0.2;
