@@ -31,7 +31,7 @@ export type KoppenClass =
     | 'Dfa' | 'Dfb' | 'Dfc' | 'Dfd'
     | 'ET' | 'EF';
 
-export type ElevationBand = 'lowland' | 'upland' | 'mountain' | 'alpine' | 'snow';
+export type ElevationBand = 'lowland' | 'upland' | 'mountain' | 'alpine' | 'high_alpine' | 'snow';
 
 const KOPPEN_CLASS_BY_ID: ReadonlyArray<KoppenClass | null> = [
     null,
@@ -107,18 +107,26 @@ function fallbackBiomeForLatitude(lat: number): Biome {
     return 'tundra_snow';
 }
 
+/**
+ * 海拔梯级标准划分（与大地图 HillshadeWorker 6阶海拔染色严格 100% 保持一致）：
+ * - 0 - 400m    lowland     平原水乡与河谷低地（对标平原绿 #96B287）
+ * - 400 - 1000m upland      丘陵低山与台地（对标橄榄黄绿 #B9B991）
+ * - 1000- 2500m mountain    黄土高原与干旱中山（对标黄土金黄 #D4C08A）
+ * - 2500- 3800m alpine      高山草甸与戈壁砾石原（对标高山灰绿 #A0A5A0 ~ #B9AF8C）
+ * - 3800- 4800m high_alpine 极高山石原与高寒冻土（对标冷灰寒漠 #9196A0 ~ #6E788C）
+ * - > 4800m 或雪线 snow     终年积雪雪峰与冰川（对标雪山白 #FFFFFF）
+ */
 export function resolveElevationBand(
     lat: number,
-    climate: KoppenClass | null,
+    _climate: KoppenClass | null,
     elev: number | null,
 ): ElevationBand {
     if (elev === null) return 'lowland';
-    if (elev >= snowLineFor(lat)) return 'snow';
-    const group = climate?.[0] as 'A' | 'B' | 'C' | 'D' | 'E' | undefined;
-    const thresholds = ELEVATION_THRESHOLDS[group ?? 'C'];
-    if (elev >= thresholds.alpine) return 'alpine';
-    if (elev >= thresholds.mountain) return 'mountain';
-    if (elev >= thresholds.upland) return 'upland';
+    if (elev >= snowLineFor(lat) || elev >= 4800) return 'snow';
+    if (elev >= 3800) return 'high_alpine';
+    if (elev >= 2500) return 'alpine';
+    if (elev >= 1000) return 'mountain';
+    if (elev >= 400) return 'upland';
     return 'lowland';
 }
 
@@ -162,7 +170,7 @@ export function resolveTerrainTileAtElevation(
     const climate = resolveClimateRegion(lat, lng);
     const band = resolveElevationBand(lat, climate, elev);
     const biome = detectBiomeCore(lat, lng, elev);
-    const theme = resolveDeMapTheme(lat, lng, biome, getRegion(lat, lng));
+    const theme = resolveDeMapTheme(lat, lng, biome, getRegion(lat, lng), elev);
     void rng;
     return terrainForTheme(theme, biome, season, band);
 }
@@ -178,7 +186,7 @@ export const BIOME_TREES: Record<Biome, [string[], string[], string[]]> = {
     mediterranean: [['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'CYPRESS_DEC'], ['OLIVE', 'CYPRESS'], ['CYPRESS', 'DEAD_TREE']],
     cold_steppe: [['PINE', 'DEAD_TREE'], ['PINE', 'DEAD_TREE'], ['SNOW_PINE', 'DEAD_TREE']],
     temperate_grass: [['GREEN_OAK', 'BIRCH_GREEN'], ['AUTUMN_OAK', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'BIRCH_WINTER']],
-    temperate_forest: [['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN', 'BAMBOO', 'PEACH_BLOSSOM'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
+    temperate_forest: [['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN', 'PEACH_BLOSSOM'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
     boreal: [['PINE', 'ASIAN_PINE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
     tundra_snow: [['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE']],
 };
@@ -200,7 +208,8 @@ export const BIOME_GROUND_DECOR: Record<Biome, string[]> = {
 export const MOUNTAIN_ASSETS: string[] = [
     'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06',
     'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
-    'CLIFF_DEFAULT', 'CLIFF_LIMESTONE', 'CLIFF_SAND', 'CLIFF_SNOW', 'CLIFF_TERRACE',
+    'CLIFF_DEFAULT', 'CLIFF_LIMESTONE', 'CLIFF_SAND', 'CLIFF_SNOW', 'CLIFF_TERRACE', 'CLIFF_MARBLE',
+    'SHORT_CLIFF_ALL', 'SHORT_CLIFF_MARBLE', 'SHORT_CLIFF_SAND', 'SHORT_CLIFF_SNOW',
     'ROCK_PILLAR',
 ];
 

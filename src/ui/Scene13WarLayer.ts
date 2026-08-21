@@ -875,11 +875,11 @@ const NATURE_BASE_URL = '/SUCAI_NATURE/';
 const TILE_W = 64;
 const TILE_H = 32;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
-const DECOR_BLUR = 8;
+const DECOR_BLUR = 20;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
 const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
-const ELEV_BLUR = 12;
+const ELEV_BLUR = 16;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -1032,6 +1032,10 @@ const PROJ_SCALE = UNIT_PX / 64;
 const PROJ_SCALE_OVERRIDE: Record<string, number> = {
     PROJ_SHOT: 2.6,
 };
+/** 多种 DE 弹丸单位可以共用同一张 SLD，但保留独立 key 以使用各自的飞行参数。 */
+const PROJ_ASSET_KEY: Record<string, string> = {
+    PROJ_WAR_WAGON: 'PROJ_BOLT',
+};
 /**
  * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。
  * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察/象弓（默认，不必列）；
@@ -1064,9 +1068,9 @@ const PROJ_TYPE: Record<string, string> = {
     //     SCBAL/HWBAL/ELEBALI  → Scorpion/HeavyScorpion/BallistaEle→ p_bolt          = 弩箭（已对）
     //     SIEGTWR(攻城塔)      → Projectile Helepolis              → p_bolt          = 弩箭
     //   高丽战车此前写着「射箭是对的，不动」——那是 AI 自己下的错误结论，已作废。
-    //   PROJ_BOLT / PROJ_SHOT 自动走 PROJ_FLAT 平直弹道（不抛弧）。
-    war_wagon: 'PROJ_BOLT',
-    elite_war_wagon: 'PROJ_BOLT',
+    //   通用 PROJ_BOLT 仍供弩炮使用；高丽战车单列 PROJ_WAR_WAGON，保留弹丸 373 的 0.05 弧度。
+    war_wagon: 'PROJ_WAR_WAGON',
+    elite_war_wagon: 'PROJ_WAR_WAGON',
     // 先秦远程战车：DE `WARCHAR` → `Projectile War Chariot (Barrage/Focus Fire)` → p_spear_small
     //   = **小标枪**，不是箭。此前没映射、落回 PROJ_ARROW。
     war_chariot_ranged: 'PROJ_SPEAR_SMALL',
@@ -1126,6 +1130,10 @@ const PROJ_TYPE: Record<string, string> = {
 const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
+/** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
+const PROJ_ARC_RATIO: Record<string, number> = {
+    PROJ_WAR_WAGON: 0.05,
+};
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
 /**
  * 【无攻击动画的兵种】—— **由数据生成，别手改**：`node scratch/build_no_attack_anim.mjs` 重新生成后整段替换。
@@ -1180,6 +1188,10 @@ const PROJ_DUR: Record<string, number> = {
     PROJ_BOLT: 0.49,
     PROJ_BALL: 0.65,
     PROJ_GRENADE: 0.55,
+};
+/** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；弹丸 373 的 speed = 6.0 格/秒。 */
+const PROJ_SPEED_PX: Record<string, number> = {
+    PROJ_WAR_WAGON: 6 * 40,
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
 const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
@@ -2272,6 +2284,8 @@ export class Scene13WarLayer {
     private elevCtx: CanvasRenderingContext2D | null = null;
     private elevBlurCv: HTMLCanvasElement | null = null;
     private elevBlurCtx: CanvasRenderingContext2D | null = null;
+    /** 🔴 [2026-08-21 完善·性能] 高地光照缓存就绪标志：elevGrid 静态，全量菱形+blur 只算一次，之后每帧只 drawImage */
+    private elevCacheReady = false;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -3022,6 +3036,7 @@ export class Scene13WarLayer {
         this.isoGw = plan.grid.gw;
         this.isoGh = plan.grid.gh;
         this.elevGrid = plan.elevation;
+        this.elevCacheReady = false; // 新地形 → 高地光照缓存作废，下一帧重算
         for (const p of plan.terrainPatches) {
             this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon);
         }
@@ -3088,7 +3103,7 @@ export class Scene13WarLayer {
         this.paintElevation(g);
     }
 
-    /** 高地着色（hillshade）：西北光，面向光的高地边亮、背光边暗，营造丘陵立体感。先画到离屏再羽化，避免逐格硬菱形方块 */
+    /** 高地立体光影（DE 2.5D Hillshade）：西北 315° 阳光直射 + 东南背光深谷投影 + 棱线高光，呈现真实地貌凹凸与丘陵起伏感 */
     private paintElevation(g: CanvasRenderingContext2D): void {
         const gh = this.elevGrid.length;
         const gw = gh ? this.elevGrid[0].length : 0;
@@ -3098,33 +3113,61 @@ export class Scene13WarLayer {
         if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
         const ecv = this.elevCv, ectx = this.elevCtx!;
         const bcv = this.elevBlurCv, bctx = this.elevBlurCtx!;
-        if (ecv.width !== W || ecv.height !== H) { ecv.width = W; ecv.height = H; bcv.width = W; bcv.height = H; }
-        ectx.clearRect(0, 0, W, H);
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
-                const h = this.elevGrid[y][x];
-                const nw = (x - 1 >= 0 && y + 1 < gh) ? this.elevGrid[y + 1][x - 1] : h;
-                const delta = h - nw;
-                if (delta === 0) continue;
-                const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
-                const a = Math.min(0.55, Math.abs(delta) * 0.22);
-                ectx.globalAlpha = a;
-                ectx.fillStyle = delta > 0 ? '#fff' : '#000';
-                ectx.beginPath();
-                ectx.moveTo(sx, sy - TILE_H / 2);
-                ectx.lineTo(sx + TILE_W / 2, sy);
-                ectx.lineTo(sx, sy + TILE_H / 2);
-                ectx.lineTo(sx - TILE_W / 2, sy);
-                ectx.closePath();
-                ectx.fill();
+        if (ecv.width !== W || ecv.height !== H) { ecv.width = W; ecv.height = H; bcv.width = W; bcv.height = H; this.elevCacheReady = false; }
+        if (!this.elevCacheReady) {
+            // 🔴 [2026-08-21 完善·性能] elevGrid 静态：全量菱形 + 16px 羽化只在缓存失效时算一次，
+            //    之后每帧仅 drawImage（此前每帧重画 ~1000 格 + blur，跟拍 13 战场会掉帧）。
+            ectx.clearRect(0, 0, W, H);
+            for (let y = 0; y < gh; y++) {
+                for (let x = 0; x < gw; x++) {
+                    const h = this.elevGrid[y][x];
+                    // 🔴 [2026-08-21 完善·方向修正] 等距菱形四对角邻格真实方位：
+                    //   NE=右上(x+1,y-1) SE=右下(x+1,y+1) SW=左下(x-1,y+1) NW=左上(x-1,y-1)。
+                    //   原代码 nw/se/ne/sw 四变量全标反 180°（nw 取到左下、se 取到右上…），
+                    //   导致「西北迎光」实际算成东南迎光。现在按真实方位取。
+                    const h_nw = (x - 1 >= 0 && y - 1 >= 0) ? this.elevGrid[y - 1][x - 1] : h;
+                    const h_se = (x + 1 < gw && y + 1 < gh) ? this.elevGrid[y + 1][x + 1] : h;
+                    const h_ne = (x + 1 < gw && y - 1 >= 0) ? this.elevGrid[y - 1][x + 1] : h;
+                    const h_sw = (x - 1 >= 0 && y + 1 < gh) ? this.elevGrid[y + 1][x - 1] : h;
+
+                    // 2.5D 方向坡度法线：西北迎光（NW 光照，SE 背光阴影）
+                    const sunExposure = (h - h_nw) * 0.7 + (h_se - h) * 0.7 + (h_sw - h_ne) * 0.3;
+                    if (Math.abs(sunExposure) < 0.08 && h === 0) continue;
+
+                    const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
+                    ectx.beginPath();
+                    ectx.moveTo(sx, sy - TILE_H / 2);
+                    ectx.lineTo(sx + TILE_W / 2, sy);
+                    ectx.lineTo(sx, sy + TILE_H / 2);
+                    ectx.lineTo(sx - TILE_W / 2, sy);
+                    ectx.closePath();
+
+                    if (sunExposure > 0.08) {
+                        // 迎光坡（西北阳坡）：暖金色阳光漫射
+                        ectx.globalAlpha = Math.min(0.55, sunExposure * 0.35);
+                        ectx.fillStyle = '#fffdf0';
+                        ectx.fill();
+                    } else if (sunExposure < -0.08) {
+                        // 背光坡（东南阴坡）：冷调深谷投影
+                        ectx.globalAlpha = Math.min(0.65, Math.abs(sunExposure) * 0.42);
+                        ectx.fillStyle = '#101e30';
+                        ectx.fill();
+                    } else if (h > 0) {
+                        // 高地顶面：微弱顶光环境提亮
+                        ectx.globalAlpha = Math.min(0.18, h * 0.06);
+                        ectx.fillStyle = '#ffffff';
+                        ectx.fill();
+                    }
+                }
             }
+            ectx.globalAlpha = 1;
+            // 羽化：高斯模糊菱形边缘 → 平滑 3D 起伏光照
+            bctx.clearRect(0, 0, W, H);
+            bctx.filter = `blur(${ELEV_BLUR}px)`;
+            bctx.drawImage(ecv, 0, 0);
+            bctx.filter = 'none';
+            this.elevCacheReady = true;
         }
-        ectx.globalAlpha = 1;
-        // 羽化：高斯模糊硬菱形边 → 平滑光照渐变
-        bctx.clearRect(0, 0, W, H);
-        bctx.filter = `blur(${ELEV_BLUR}px)`;
-        bctx.drawImage(ecv, 0, 0);
-        bctx.filter = 'none';
         g.drawImage(bcv, 0, 0);
     }
 
@@ -3342,7 +3385,7 @@ export class Scene13WarLayer {
     private ensureProj(key: string): void {
         if (this.projBank[key]) return;
         // 抛射物素材目录：投石索 PROJ_SLING 已提取真实小石弹素材（2026-08-18，此前误复用大炮弹 PROJ_BALL）
-        const dir = `/SUCAI/${key}/`;
+        const dir = `/SUCAI/${PROJ_ASSET_KEY[key] ?? key}/`;
         // 占位先立（img=null），防同一 key 重复加载；渲染时 img 未就绪就跳过不画。
         this.projBank[key] = { img: null, n: 8, fw: 0, fh: 0, hx: 0, hy: 0 };
         this.pending++;
@@ -4274,7 +4317,8 @@ export class Scene13WarLayer {
                         const ad = Math.hypot(ax, ay) || 1;
                         const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
                         const volley = PROJ_VOLLEY[m.key] ?? 1;
-                        const baseDur = PROJ_DUR[proj] ?? ARROW_DUR;
+                        const exactSpeed = PROJ_SPEED_PX[proj];
+                        const baseDur = exactSpeed ? ad / exactSpeed : (PROJ_DUR[proj] ?? ARROW_DUR);
                         this.ensureProj(proj);
                         const isFirearm = FIREARM_TYPES.has(m.key);
                         for (let v = 0; v < volley; v++) {
@@ -4286,16 +4330,17 @@ export class Scene13WarLayer {
                             this.arrows.push({
                                 x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
                                 dx: ndx, dy: ndy, len: ad,
-                                t: 0, dur: baseDur + Math.random() * 0.05, f: m.f,
+                                t: 0, dur: exactSpeed ? baseDur : baseDur + Math.random() * 0.05, f: m.f,
                                 proj,
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
                         // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效（音效在 spawnFirearmMuzzle 内）
                         if (isFirearm) this.spawnFirearmMuzzle(m, ax, ay);
-                        // 没有攻击动画的车辆（高丽战车/胡斯战车）：车身不动，靠一簇射击尘烟让观众看出它在开火。
-                        // 用素色而不是火器的橙黄焰 —— 高丽战车射的是弩箭（非火药），胡斯战车走上面的火器分支。
-                        else if (this.bank[m.key]?.noAttackAnim) this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
+                        // 其他没有攻击动画的非火器车辆用素色尘烟提示开火；高丽战车按 DE 原样只发射弩矢。
+                        else if (this.bank[m.key]?.noAttackAnim && m.key !== 'war_wagon' && m.key !== 'elite_war_wagon') {
+                            this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
+                        }
                         // 其余远程（弓/弩/投石）：箭矢开火音效已关闭（主人 2026-08-19），保留射击动作
                     }
                 }
@@ -4813,8 +4858,9 @@ export class Scene13WarLayer {
                 if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
-                // 高抛（炮弹/手榴弹）弧高翻倍；平直（弩炮/火枪弹）无弧。
-                const arcH = PROJ_HIGH_ARC.has(a.proj) ? Math.min(a.len * 0.5, 160) : Math.min(a.len * 0.3, 100);
+                // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
+                const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
+                const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
                 const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const y = a.y + a.dy * d - arc;

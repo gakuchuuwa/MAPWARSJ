@@ -6077,11 +6077,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -63
         },
-        "/assets/LINGNAN/luchuan_sirenfa.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 10
-        },
         "/assets/STEPPE/__闲置__STEPPE_64.png": {
             "scale": 1.26,
             "offsetX": 0,

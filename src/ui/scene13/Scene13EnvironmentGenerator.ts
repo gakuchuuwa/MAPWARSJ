@@ -27,6 +27,7 @@ import {
     groundTilesForTheme,
     forestFloorTilesForTheme,
     decorForTheme,
+    isSnowArea,
     resolveDeMapTheme,
     terrainForTheme,
     treesForTheme,
@@ -148,7 +149,7 @@ const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
 const TREE_OBSTRUCTION_RELEASE_SEC = 3;
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
 const DE_TREE_OBJECTS = new Set([
-    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B',
+    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
     'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
@@ -156,24 +157,34 @@ const DE_TREE_OBJECTS = new Set([
     'PINE', 'ASIAN_PINE', 'SNOW_PINE', 'MONKEY_PUZZLE',
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW',
+    'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D',
+    'SCENARIO_TREE_E', 'SCENARIO_TREE_F', 'SCENARIO_TREE_G', 'SCENARIO_TREE_H',
+    'SCENARIO_TREE_I', 'SCENARIO_TREE_J', 'SCENARIO_TREE_K', 'SCENARIO_TREE_L',
 ]);
 const GROUND_COVER_ASSETS = new Set([
     'GRASS_DRY', 'GRASS_DRY_PATCH', 'GRASS_GREEN', 'GRASS_GREEN_PATCH', 'WEED',
     'FLOWER', 'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
-    'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH',
+    'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH', 'PLANT',
     'UNDERBRUSH', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
 ]);
 const DE_HALF_TILE_OBJECTS = new Set([
-    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B',
+    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
     'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
     'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'PEACH_BLOSSOM',
-    'PINE', 'ASIAN_PINE', 'SNOW_PINE', 'MONKEY_PUZZLE', 'REEDS',
+    'PINE', 'ASIAN_PINE', 'SNOW_PINE', 'MONKEY_PUZZLE', 'REEDS', 'WATER_LILY',
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW', 'ROCK_FORMATION1', 'ROCK_FORMATION2',
     'ROCK_LIMESTONE', 'ROCK_JUNGLE', 'ROCK1', 'ROCK2', 'ROCK3',
-    'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC',
+    'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_BAOBAB', 'FELLED_LUSH_BAMBOO',
+    'STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_BAOBAB', 'STUMP_LUSH_BAMBOO',
+    'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D',
+    'SCENARIO_TREE_E', 'SCENARIO_TREE_F', 'SCENARIO_TREE_G', 'SCENARIO_TREE_H',
+    'SCENARIO_TREE_I', 'SCENARIO_TREE_J', 'SCENARIO_TREE_K', 'SCENARIO_TREE_L',
+    // 🔴 [2026-08-21 完善] 悬崖/矮悬崖 = 地形障碍，士兵不得穿过（buildCliffs 生成）
+    'CLIFF_DEFAULT', 'CLIFF_LIMESTONE', 'CLIFF_SAND', 'CLIFF_SNOW', 'CLIFF_TERRACE', 'CLIFF_MARBLE',
+    'SHORT_CLIFF_ALL', 'SHORT_CLIFF_MARBLE', 'SHORT_CLIFF_SAND', 'SHORT_CLIFF_SNOW',
 ]);
 const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> = {
     ROCK_FORMATION3: { x: 1.5, y: 1.5 },
@@ -374,9 +385,9 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
-    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!) : null;
+    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!, elev) : null;
     const baseTerrain: string = theme
-        ? terrainForTheme(theme, biome, season, elevationBand)
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev)
         : DEFAULT_TERRAIN_TILE;
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -405,11 +416,12 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied);
-        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
+        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
-        // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater);
+        // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
+        buildCliffs(gw, gh, elevation, ox, oy, VW, VH, season, biome, rng, objects, isWater, input.lat, elev);
+        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater, input.lat, elev);
         buildResources(VW, VH, season, rng, objects, isWater);
 
         enforceTreeSpacing(objects);
@@ -540,16 +552,10 @@ function buildCoastline(
         return [...outer, ...inner];
     };
 
-    const beachW = TILE_W * 1.5;   // 沙滩带
-    const shallowW = TILE_W * 1.2; // 浅水带
-    const mediumW = TILE_W * 1.5;  // 中水带
-    const wetW = TILE_W;           // 湿沙水线
+    const beachW = Math.round(TILE_W * 0.75);   // DE 标准自然沙滩边缘（收窄为约 58px，不再多层斑驳）
 
-    const deep: Array<[number, number]> = [];
-    const medium: Array<[number, number]> = [];
-    const shallow: Array<[number, number]> = [];
+    const water: Array<[number, number]> = [];
     const beach: Array<[number, number]> = [];
-    const wet: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
@@ -557,24 +563,20 @@ function buildCoastline(
             const py = isoCellY(gx, gy, oy);
             if (py < -TILE_H || py > VH + TILE_H) continue; // 越界格不铺
             const signedDistance = (px - boundaryAt(py)) * inlandSign;
-            if (signedDistance < -shallowW - mediumW) deep.push([gx, gy]);
-            else if (signedDistance < -shallowW) medium.push([gx, gy]);
-            else if (signedDistance < 0) shallow.push([gx, gy]);
-            else if (signedDistance < wetW) wet.push([gx, gy]);
-            else if (signedDistance < wetW + beachW) beach.push([gx, gy]);
+            if (signedDistance < 0) water.push([gx, gy]);
+            else if (signedDistance < beachW) beach.push([gx, gy]);
         }
     }
 
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-    mark(deep); mark(medium); mark(shallow); mark(beach); mark(wet);
+    mark(water); mark(beach);
 
-    patches.push({ tile: SHALLOW_DEEP, cells: deep, polygon: bandPolygon(-VW, -shallowW - mediumW), alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(SHALLOW_MEDIUM), cells: medium, polygon: bandPolygon(-shallowW - mediumW, -shallowW), alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(SHALLOW_NEAR), cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore' });
-    patches.push({ tile: BEACH_WET, cells: wet, polygon: bandPolygon(0, wetW), alpha: 1, category: 'shore' });
-    patches.push({ tile: theme.beachTerrain, cells: beach, polygon: bandPolygon(wetW, wetW + beachW), alpha: 1, category: 'shore' });
+    // 1. 统一清透浅滩水体（DE 标准纯净浅水，不再多层分段条纹）
+    patches.push({ tile: 'sh2', cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
+    // 2. 柔和沙滩过渡边缘（DE 标准岸线衔接）
+    patches.push({ tile: theme.beachTerrain, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.9, category: 'shore' });
 
-    // 水域排斥：signedDistance < 0 即深/中/浅水（滩/湿沙/陆均不算水）
+    // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
 }
 
@@ -657,9 +659,11 @@ function buildGroundVariation(
     theme: DeMapThemePalette,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
-    occupied: Set<string>
+    occupied: Set<string>,
+    lat?: number,
+    elev?: number | null,
 ): void {
-    const variation = groundTilesForTheme(theme, biome, season);
+    const variation = groundTilesForTheme(theme, biome, season, lat, elev);
     for (let i = 0; i < 5; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
@@ -677,9 +681,11 @@ function buildForestFloor(
     theme: DeMapThemePalette,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
-    occupied: Set<string>
+    occupied: Set<string>,
+    lat?: number,
+    elev?: number | null,
 ): void {
-    const tiles = forestFloorTilesForTheme(theme, biome, season);
+    const tiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
     if (tiles.length === 0) return;
     const n = 1 + rng.int(0, 1);
     for (let i = 0; i < n; i++) {
@@ -700,15 +706,18 @@ function buildVegetation(
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
     isWater: WaterChecker,
+    lat?: number,
+    elev?: number | null,
 ): void {
-    const treeAssets = treesForTheme(theme, season);
+    const treeAssets = treesForTheme(theme, season, lat, elev, biome);
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
         upland: 0.9,
         mountain: 0.65,
-        alpine: 0.25,
-        snow: 0.15,
+        alpine: 0.35,
+        high_alpine: 0.1,
+        snow: 0.05,
     };
     const treeCount = Math.max(2, Math.round(baseTreeCount * treeFactor[elevationBand]));
     // DE 聚丛成林：3~5 林斑 + 高斯散布
@@ -764,7 +773,7 @@ function buildVegetation(
     }
 
     // 地面装饰（灌木/草/花/岩石，冬季严禁出现绿花/夏草）
-    const themeDecor = decorForTheme(theme, season);
+    const themeDecor = decorForTheme(theme, season, lat, elev, biome);
     const ground = [...themeDecor.flat, ...themeDecor.solid];
     const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
@@ -783,6 +792,84 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     for (let i = 0; i < resCount; i++) {
         const p = sampleLandPos(VW, VH, rng, isWater);
         objects.push({ asset: rng.pick(resAssets), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    }
+}
+
+
+// ── 第 5 层：悬崖与山势断崖（DE 经典地貌：高地陡坡生成悬崖组） ──
+
+function buildCliffs(
+    gw: number,
+    gh: number,
+    elevation: number[][],
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    season: 0 | 1 | 2,
+    biome: Biome,
+    rng: RandomSource,
+    objects: EnvironmentObjectPlan[],
+    isWater: WaterChecker,
+    lat?: number,
+    elev?: number | null,
+): void {
+    const cliffCandidates: Array<{ x: number; y: number }> = [];
+    const centerX0 = VW * 0.35, centerX1 = VW * 0.65;
+    const centerY0 = VH * 0.28, centerY1 = VH * 0.72;
+
+    for (let y = 1; y < gh - 1; y++) {
+        for (let x = 1; x < gw - 1; x++) {
+            const h = elevation[y][x];
+            if (h < 2) continue;
+            // 检查周边落差
+            const h_se = elevation[y - 1][x + 1] ?? 0;
+            const h_ne = elevation[y + 1][x + 1] ?? 0;
+            if (h - h_se >= 1 || h - h_ne >= 1) {
+                const px = isoCellX(x, y, ox);
+                const py = isoCellY(x, y, oy);
+                if (px > 80 && px < VW - 80 && py > 80 && py < VH - 80) {
+                    if (!isWater(px, py) && !(px > centerX0 && px < centerX1 && py > centerY0 && py < centerY1)) {
+                        cliffCandidates.push({ x: px, y: py });
+                    }
+                }
+            }
+        }
+    }
+
+    if (cliffCandidates.length === 0) return;
+
+    let cliffPool: string[];
+    const isSnow = season === 2 && lat !== undefined && isSnowArea(lat, elev ?? null, biome);
+
+    if (isSnow) {
+        // 1. 冰天雪地：纯雪山断崖（CLIFF_SNOW），严禁混入黄色沙漠怪石
+        cliffPool = ['CLIFF_SNOW', 'SHORT_CLIFF_SNOW'];
+    } else if (biome === 'desert' || biome === 'savanna') {
+        // 2. 沙漠 / 稀树草原：黄沙断崖与砂岩石塔
+        cliffPool = ['CLIFF_SAND', 'SHORT_CLIFF_SAND', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3'];
+    } else if (biome === 'mediterranean' || biome === 'tropical_rainforest') {
+        // 3. 地中海 / 喀斯特热带：石灰岩山崖与常规断崖
+        cliffPool = ['CLIFF_LIMESTONE', 'SHORT_CLIFF_ALL', 'CLIFF_DEFAULT'];
+    } else {
+        // 4. 草原 / 温带森林 / 平原：自然绿草泥土断崖与石灰岩壁（严禁出现白雪断崖！）
+        cliffPool = ['CLIFF_DEFAULT', 'SHORT_CLIFF_ALL', 'CLIFF_LIMESTONE'];
+    }
+
+    const count = Math.min(cliffCandidates.length, 1 + rng.int(0, 2));
+    for (let i = 0; i < count; i++) {
+        const spot = rng.pick(cliffCandidates);
+        const asset = rng.pick(cliffPool);
+        objects.push({
+            asset,
+            x: spot.x,
+            y: spot.y,
+            layer: 'world',
+            z: 0,
+            // 🔴 悬崖是 DE 西北光照方向性素材，镜像会反转光照朝向 → 禁 flip；岩石组可翻
+            flip: asset.startsWith('CLIFF') ? false : rng.chance(0.5),
+            frame: rng.int(0, 99999),
+        });
     }
 }
 
