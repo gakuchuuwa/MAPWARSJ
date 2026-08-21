@@ -3176,62 +3176,7 @@ export class Scene13WarLayer {
         if (!gh || !gw) return;
         const W = this.decor!.width, H = this.decor!.height;
 
-        // DE 高程不是悬崖物件：同一块地表按高程上移，邻级之间以短坡面连接。
-        // 这里仍使用本场主地形纹理，只改变等距投影位置，不引入任何岩壁素材。
-        const terrainPattern = this.terrainImg?.complete ? g.createPattern(this.terrainImg, 'repeat') : null;
-        if (terrainPattern) {
-            const raised: Array<{ x: number; y: number; h: number; baseSy: number }> = [];
-            for (let y = 0; y < gh; y++) {
-                for (let x = 0; x < gw; x++) {
-                    const h = this.elevGrid[y][x];
-                    if (h > 0) raised.push({ x, y, h, baseSy: this.isoCellY(x, y) });
-                }
-            }
-            raised.sort((a, b) => a.baseSy - b.baseSy);
-            g.save();
-            for (const cell of raised) {
-                const { x, y, h, baseSy } = cell;
-                const sx = this.isoCellX(x, y);
-                const sy = baseSy - h * ELEV_STEP_PX;
-                const hRight = x + 1 < gw ? this.elevGrid[y][x + 1] : h;
-                if (hRight < h) {
-                    const lowY = baseSy - hRight * ELEV_STEP_PX;
-                    g.beginPath();
-                    g.moveTo(sx + TILE_W / 2, sy);
-                    g.lineTo(sx, sy + TILE_H / 2);
-                    g.lineTo(sx, lowY + TILE_H / 2);
-                    g.lineTo(sx + TILE_W / 2, lowY);
-                    g.closePath();
-                    g.globalAlpha = 0.16 + (h - hRight) * 0.08;
-                    g.fillStyle = '#273328';
-                    g.fill();
-                }
-                const hLeft = y + 1 < gh ? this.elevGrid[y + 1][x] : h;
-                if (hLeft < h) {
-                    const lowY = baseSy - hLeft * ELEV_STEP_PX;
-                    g.beginPath();
-                    g.moveTo(sx, sy + TILE_H / 2);
-                    g.lineTo(sx - TILE_W / 2, sy);
-                    g.lineTo(sx - TILE_W / 2, lowY);
-                    g.lineTo(sx, lowY + TILE_H / 2);
-                    g.closePath();
-                    g.globalAlpha = 0.10 + (h - hLeft) * 0.05;
-                    g.fillStyle = '#8b7549';
-                    g.fill();
-                }
-
-                g.beginPath();
-                g.moveTo(sx, sy - TILE_H / 2);
-                g.lineTo(sx + TILE_W / 2, sy);
-                g.lineTo(sx, sy + TILE_H / 2);
-                g.lineTo(sx - TILE_W / 2, sy);
-                g.closePath();
-                g.globalAlpha = 0.72;
-                g.fillStyle = terrainPattern;
-                g.fill();
-            }
-            g.restore();
-        }
+        // 彻底移除未羽化的生硬阶梯侧壁多边形，丘陵起伏完全由下方的 2.5D 平滑光影与高斯羽化呈现
 
         if (!this.elevCv) { this.elevCv = document.createElement('canvas'); this.elevCtx = this.elevCv.getContext('2d')!; }
         if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
