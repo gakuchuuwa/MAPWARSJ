@@ -428,15 +428,11 @@ export function terrainForTheme(
         }
     }
 
-    // 5. 冬季合法降雪（🔴 [2026-08-21 美化·海滨与温带雪原]
-    //    DE 经典冬季是「冷调湿冻土/枯草 + 大面积厚雪斑块 + 湿润冷色海滩」：
-    //    底色为冷灰褐林地冻土（pm1）或枯草（gr4），40%~50% 覆以厚积雪斑块（sn2/snf/sno），
-    //    海滩自动切换为潮汐冲刷的湿润暗色沙滩（beach_wet），杜绝 100% 刺眼死白与干黄沙硬切）
+    // 5. 🔴 [2026-08-22 主人定] 冬季合法降雪地带全量覆盖 DE 原版白雪材质 (sn2 / sno)，彻底告别冬天满地绿草
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        if (biome === 'tundra_snow') return 'pm1';      // 苔原冻土底色（灰褐苔原土）
-        if (biome === 'boreal') return 'sno';           // 极北深雪
-        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'gr4'; // 塞外/温带草原：枯草底色
-        return 'pm1';                                   // 温带林海/沿海平原：冷调林地湿冻土底色
+        if (biome === 'tundra_snow' || biome === 'boreal') return 'sno';  // 苔原/北方针叶林：纯白深雪
+        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'sn2'; // 塞外草地/温带草原：白雪草地
+        return 'sn2';                                                     // 温带林海/平原雪区：DE 经典雪地 (sn2)
     }
 
     // 6. 基础地表
@@ -463,13 +459,11 @@ export function groundTilesForTheme(
     elev: number | null = null,
 ): readonly string[] {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        // 🔴 [2026-08-21 修·净州塞截图] 原全雪（sno/sn2/snf）→ 战场 100% 白无冻土。
-        //    混合冻土（pm1/pm2 苔原冻土）、干草（gr4）、砾石（ds5）——DE 冬季地面
-        //    = 雪 + 露土/枯草斑块，雪盖不住一切（风蚀/地形起伏/牲畜踩踏处露土）。
-        if (biome === 'tundra_snow') return ['sno', 'sn2', 'pm2', 'ds5'];      // 冻土 + 雪斑 + 砾石
-        if (biome === 'boreal') return ['sno', 'sn2', 'snf', 'pm1', 'ds5'];    // 深雪 + 冻土斑
-        if (biome === 'cold_steppe' || biome === 'temperate_grass') return ['sn2', 'snf', 'pm1', 'gr4']; // 枯草 + 雪斑 + 冻土
-        return ['sn2', 'snf', 'gr4', 'pm1'];                                    // 温带林：浅雪 + 枯草 + 冻土斑
+        // 纯正 DE 冬季雪地变体组合（深雪 sno / 浅雪 sn2 / 林雪 snf / 冻冰/残草）
+        if (biome === 'tundra_snow') return ['sno', 'sn2', 'snf', 'ice'];
+        if (biome === 'boreal') return ['sno', 'sn2', 'snf', 'pm1'];
+        if (biome === 'cold_steppe' || biome === 'temperate_grass') return ['sn2', 'sno', 'snf', 'gr4'];
+        return ['sn2', 'sno', 'snf', 'gr4'];
     }
     return theme.groundTiles;
 }
@@ -513,6 +507,45 @@ export function decorForTheme(
     };
 }
 
+export function waterTerrainForTheme(
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
+): string {
+    // 1. 冬季雪区 / 极寒带：深寒暗青蓝冰水 (wt2)
+    if (season === 2 && isSnowArea(lat, elev, biome)) {
+        return 'wt2';
+    }
+    if (biome === 'tundra_snow' || biome === 'boreal') {
+        return 'wt2';
+    }
+    // 2. 华南 / 东南亚 / 非洲热带雨林水乡：DE 经典清澈碧绿翡翠水 (river_clean_green)
+    if (
+        theme.id === 'indomalayan_tropical' ||
+        theme.id === 'afrotropical_tropical' ||
+        theme.id === 'neotropical_tropical'
+    ) {
+        return 'river_clean_green';
+    }
+    // 3. 黄土高原 / 中东沙漠 / 西亚干旱高地 / 塞外草原：黄泥浊流水 (wt_yellow)
+    if (
+        theme.id === 'palaearctic_middle_east_desert' ||
+        theme.id === 'palaearctic_middle_east_highland' ||
+        theme.id === 'palaearctic_asia_steppe' ||
+        biome === 'desert'
+    ) {
+        return 'wt_yellow';
+    }
+    // 4. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
+    if (theme.id === 'palustrine_swamp') {
+        return 'wt6';
+    }
+    // 5. 欧洲温带 / 东亚中原温带平原 / 默认：经典清澈浅蓝水 (wtr)
+    return 'wtr';
+}
+
 export function beachTerrainForTheme(
     theme: DeMapThemePalette,
     season: 0 | 1 | 2,
@@ -521,7 +554,14 @@ export function beachTerrainForTheme(
     biome: Biome = 'temperate_forest',
 ): string {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        return 'beach_wet'; // 冬季潮汐冲刷湿润暗色海滩，绝不用夏日干黄沙
+        return 'ice_beach'; // 冬季结冰覆雪海滩
+    }
+    // 沙漠/黄土带使用干黄细沙
+    if (theme.id === 'palaearctic_middle_east_desert' || biome === 'desert') {
+        return 'des';
+    }
+    if (theme.id === 'palaearctic_asia_steppe' || theme.id === 'palaearctic_middle_east_highland') {
+        return 'ds2';
     }
     return theme.beachTerrain;
 }

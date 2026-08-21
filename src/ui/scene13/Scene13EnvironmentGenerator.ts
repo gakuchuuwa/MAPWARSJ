@@ -28,6 +28,7 @@ import {
     forestFloorTilesForTheme,
     decorForTheme,
     beachTerrainForTheme,
+    waterTerrainForTheme,
     isSnowArea,
     resolveDeMapTheme,
     terrainForTheme,
@@ -958,153 +959,80 @@ function buildRiver(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
-    // 🔴 [2026-08-22 主人定] 彻底告别笔直死板：大江大河全量采用【多阶自然谐波大 S 弯曲 + 宽窄有机收放】
-    // 随机抽取流向：纵向隔河大对峙 (50%) 与 中右大对角天堑 (50%)
-    const orientationChoice = rng.pick(['vertical', 'diagonal']);
+    // 🌊 DE 经典 Rivers 地图：两军中轴隔江对峙 + 中央开阔涉水浅滩渡口 (Shallows) 大决战
+    const numPts = 80;
+    const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
+    const baseCenterX = VW * 0.50;
+    const phase1 = rng.next() * Math.PI * 2;
+    const phase2 = rng.next() * Math.PI * 2;
 
-    let isInsideWater: (x: number, y: number) => boolean;
+    for (let i = 0; i <= numPts; i++) {
+        const t = i / numPts;
+        // 自然大 S 弯曲
+        const curveOffset = (
+            Math.sin(t * Math.PI * 2.2 + phase1) * 105 +
+            Math.cos(t * Math.PI * 4.4 + phase2) * 35
+        );
+        const x = baseCenterX + curveOffset;
+        const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
 
-    if (orientationChoice === 'diagonal') {
-        // 🌊 拓扑 4-A：斜向天堑大江（水平镜像：上游发源于左侧攻击方，向右下蜿蜒流淌）
-        const numPts = 80;
-        const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
-        const startX = VW * 0.14, endX = VW * 0.58;
-        
-        // 随机种子控制河湾方向与起伏
-        const phase1 = rng.next() * Math.PI * 2;
-        const phase2 = rng.next() * Math.PI * 2;
-
-        for (let i = 0; i <= numPts; i++) {
-            const t = i / numPts;
-            // 多阶自然谐波大 S 弯曲（摆动幅度 110px ~ 130px，极大丰富自然曲线感）
-            const curveOffset = -(
-                Math.sin(t * Math.PI * 2.2 + phase1) * 115 +
-                Math.cos(t * Math.PI * 4.5 + phase2) * 45 +
-                Math.sin(t * Math.PI * 7.2) * 18
-            );
-            const x = startX * (1 - t) + endX * t + curveOffset;
-            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t + Math.cos(t * Math.PI * 3.5) * 25;
-            
-            // 宽窄有机收放（宽处 ~65px，窄处 ~42px）
-            const wW = 50 + Math.sin(t * Math.PI * 3.2) * 14 + Math.cos(t * Math.PI * 6.5) * 8;
-            const bW = wW + 36 + Math.sin(t * Math.PI * 4.0) * 10;
-            pts.push({ x, y, nx: 0, ny: 0, wW, bW });
-        }
-
-        // 计算法线切向
-        for (let i = 0; i <= numPts; i++) {
-            const prev = pts[Math.max(0, i - 1)];
-            const next = pts[Math.min(numPts, i + 1)];
-            const dx = next.x - prev.x;
-            const dy = next.y - prev.y;
-            const len = Math.hypot(dx, dy) || 1;
-            pts[i].nx = -dy / len;
-            pts[i].ny = dx / len;
-        }
-
-        const waterCells: Array<[number, number]> = [];
-        const beachCells: Array<[number, number]> = [];
-        for (let gy = 0; gy < gh; gy++) {
-            for (let gx = 0; gx < gw; gx++) {
-                const px = isoCellX(gx, gy, ox);
-                const py = isoCellY(gx, gy, oy);
-                let minDist = 999999;
-                let nearestIdx = 0;
-                for (let k = 0; k <= numPts; k += 2) {
-                    const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
-                    if (d < minDist) { minDist = d; nearestIdx = k; }
-                }
-                if (minDist < pts[nearestIdx].wW) waterCells.push([gx, gy]);
-                else if (minDist < pts[nearestIdx].bW) beachCells.push([gx, gy]);
-            }
-        }
-        for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
-        for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
-
-        const bL = pts.map(p => ({ x: p.x + p.nx * p.bW, y: p.y + p.ny * p.bW * 0.6 }));
-        const bR = pts.map(p => ({ x: p.x - p.nx * p.bW, y: p.y - p.ny * p.bW * 0.6 })).reverse();
-        const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
-        const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
-
-        const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
-        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
-        
-        isInsideWater = (x, y) => {
-            for (let k = 0; k <= numPts; k += 4) {
-                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 25) return true;
-            }
-            return false;
-        };
-    } else {
-        // 🌊 拓扑 4-B：纵贯中轴大江（大 S 弯隔水对峙）
-        const numPts = 80;
-        const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
-        const baseCenterX = VW * 0.50;
-        const phase1 = rng.next() * Math.PI * 2;
-        const phase2 = rng.next() * Math.PI * 2;
-
-        for (let i = 0; i <= numPts; i++) {
-            const t = i / numPts;
-            const curveOffset = (
-                Math.sin(t * Math.PI * 2.4 + phase1) * 95 +
-                Math.cos(t * Math.PI * 4.8 + phase2) * 35 +
-                Math.sin(t * Math.PI * 8.0) * 15
-            );
-            const x = baseCenterX + curveOffset;
-            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
-            const wW = 48 + Math.sin(t * Math.PI * 3.5) * 12 + Math.cos(t * Math.PI * 7.0) * 6;
-            const bW = wW + 35 + Math.sin(t * Math.PI * 4.2) * 8;
-            pts.push({ x, y, nx: 0, ny: 0, wW, bW });
-        }
-
-        for (let i = 0; i <= numPts; i++) {
-            const prev = pts[Math.max(0, i - 1)];
-            const next = pts[Math.min(numPts, i + 1)];
-            const dx = next.x - prev.x;
-            const dy = next.y - prev.y;
-            const len = Math.hypot(dx, dy) || 1;
-            pts[i].nx = -dy / len;
-            pts[i].ny = dx / len;
-        }
-
-        const waterCells: Array<[number, number]> = [];
-        const beachCells: Array<[number, number]> = [];
-        for (let gy = 0; gy < gh; gy++) {
-            for (let gx = 0; gx < gw; gx++) {
-                const px = isoCellX(gx, gy, ox);
-                const py = isoCellY(gx, gy, oy);
-                let minDist = 999999;
-                let nearestIdx = 0;
-                for (let k = 0; k <= numPts; k += 2) {
-                    const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
-                    if (d < minDist) { minDist = d; nearestIdx = k; }
-                }
-                if (minDist < pts[nearestIdx].wW) waterCells.push([gx, gy]);
-                else if (minDist < pts[nearestIdx].bW) beachCells.push([gx, gy]);
-            }
-        }
-        for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
-        for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
-
-        const bL = pts.map(p => ({ x: p.x + p.nx * p.bW, y: p.y + p.ny * p.bW * 0.6 }));
-        const bR = pts.map(p => ({ x: p.x - p.nx * p.bW, y: p.y - p.ny * p.bW * 0.6 })).reverse();
-        const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
-        const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
-
-        const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
-        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
-        
-        isInsideWater = (x, y) => {
-            for (let k = 0; k <= numPts; k += 4) {
-                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 25) return true;
-            }
-            return false;
-        };
+        // 宽阔大江尺度：深水区宽 85~115px，渡口区开阔自然
+        const wW = 85 + Math.sin(t * Math.PI * 3.0) * 18;
+        const bW = wW + 42 + Math.sin(t * Math.PI * 4.0) * 10;
+        pts.push({ x, y, nx: 0, ny: 0, wW, bW });
     }
 
-    return isInsideWater;
+    for (let i = 0; i <= numPts; i++) {
+        const prev = pts[Math.max(0, i - 1)];
+        const next = pts[Math.min(numPts, i + 1)];
+        const dx = next.x - prev.x;
+        const dy = next.y - prev.y;
+        const len = Math.hypot(dx, dy) || 1;
+        pts[i].nx = -dy / len;
+        pts[i].ny = dx / len;
+    }
+
+    const waterCells: Array<[number, number]> = [];
+    const fordingCells: Array<[number, number]> = [];
+    const beachCells: Array<[number, number]> = [];
+
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            let minDist = 999999;
+            let nearestIdx = 0;
+            for (let k = 0; k <= numPts; k += 2) {
+                const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
+                if (d < minDist) { minDist = d; nearestIdx = k; }
+            }
+            if (minDist < pts[nearestIdx].wW) {
+                waterCells.push([gx, gy]);
+            } else if (minDist < pts[nearestIdx].bW) {
+                beachCells.push([gx, gy]);
+            }
+        }
+    }
+
+    for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
+    for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
+
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
+    if (beachCells.length > 0) {
+        patches.push({ tile: actualBeachTile, cells: beachCells, alpha: 0.95, category: 'shore' });
+    }
+    // 全量连贯一体的大江水体（按地理气候精准匹配 DE 原版水色：温带清澈浅蓝 / 热带碧绿 / 荒原黄泥 / 雪区暗青冰水）
+    if (waterCells.length > 0) {
+        patches.push({ tile: actualWaterTile, cells: waterCells, alpha: 1.0, category: 'shore' });
+    }
+
+    return (x, y) => {
+        for (let k = 0; k <= numPts; k += 4) {
+            if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 20) return true;
+        }
+        return false;
+    };
 }
 
 function buildLake(
