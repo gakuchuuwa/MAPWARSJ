@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/21 00:08:25（共 44 条）
+ * 生成时间：2026/8/21 10:59:27（共 44 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -39,7 +39,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/liuhan/ganzhou_dourong.png": "/assets/liuhan/__多余__liuhan_01.png",
     "/assets/SLAVIC/dunhe_tatalinuofu.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/TIBET/__多余__TIBET_02.png": "/assets/STEPPE/qidan_shulvping.png",
-    "/assets/TIBET/__多余__TIBET_01.png": "/assets/STEPPE/xibo_d_tubote.png",
+    "/assets/TIBET/__多余__TIBET_01.png": "/assets/STEPPE/__闲置__STEPPE_84.png",
     "/assets/TIBET/faqiang_niechizanpu.png": "/assets/TIBET/__多余__TIBET_08.png",
     "/assets/TIBET/guge_chizhaxichabade.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/WESTERN/__多余__WESTERN_05.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
