@@ -144,10 +144,13 @@ export interface Scene13EnvironmentInput {
     forceBiome?: Biome;
     /** 测试用：强制水域（覆盖 probeWater 结果），便于验证海岸/湖生成 */
     forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
+    /** 测试/控制用：强制是否生成横贯战场的平坦帝国大道 */
+    forceHasRoad?: boolean;
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
-const TREE_OBSTRUCTION_RELEASE_SEC = 3;
+// 挡路障碍物被单位连续接触满 N 秒后释放碰撞（防卡死）。主人 2026-08-21 定「5 秒一切换，就树和岩石」。
+const OBSTRUCTION_RELEASE_SEC = 5;
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
 const DE_TREE_OBJECTS = new Set([
     'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
@@ -203,8 +206,8 @@ function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
         object.obstruction = DE_OBJECT_OBSTRUCTION[object.asset]
             ?? (DE_HALF_TILE_OBJECTS.has(object.asset) ? HALF_TILE_OBSTRUCTION : undefined);
-        if (DE_TREE_OBJECTS.has(object.asset)) {
-            object.obstructionReleaseAfterSec = TREE_OBSTRUCTION_RELEASE_SEC;
+        if (DE_TREE_OBJECTS.has(object.asset) || object.asset.startsWith('ROCK')) {
+            object.obstructionReleaseAfterSec = OBSTRUCTION_RELEASE_SEC;
         }
     }
 }
@@ -448,6 +451,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 不把巨型山峰精灵放进士兵活动区，避免单位从山体上穿过。
         // 水域排斥谓词：陆地物件（植被/资源/残迹）禁止落在水里。
         let isWater: WaterChecker = () => false;
+        let isRoad: (x: number, y: number) => boolean = () => false;
         if (waterKind === 'sea') {
             // 🔴 每场只抽一次 sideLeft：海岸地形 + 浅滩物件共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
@@ -461,12 +465,20 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
         } else if (waterKind === 'river') {
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
+        } else {
+            // 纯陆地战场：35% 概率生成贯穿东西的平坦帝国行军大道
+            const hasRoad = input.forceHasRoad ?? rng.chance(0.35);
+            if (hasRoad) {
+                isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+            }
         }
 
-        // 水面保持零高程：丘陵只属于陆地，禁止高程光影或抬升纹理切进河流/湖泊。
+        // 水面与大道路面保持零高程：严禁高程光影或突起切进水面或大道路面（保持 100% 平坦如砥）
         for (let gy = 0; gy < gh; gy++) {
             for (let gx = 0; gx < gw; gx++) {
-                if (isWater(isoCellX(gx, gy, ox), isoCellY(gx, gy, oy))) elevation[gy][gx] = 0;
+                const px = isoCellX(gx, gy, ox);
+                const py = isoCellY(gx, gy, oy);
+                if (isWater(px, py) || isRoad(px, py)) elevation[gy][gx] = 0;
             }
         }
 
@@ -854,6 +866,108 @@ function buildLake(
         const [gx, gy] = screenToGrid(x, y, ox, oy);
         return pondSet.has(`${gx},${gy}`);
     };
+}
+
+// ── 第 3 层：横向帝国行军大道（东西水平贯通，平坦开阔，0 阻挡） ──
+
+function buildHorizontalHighway(
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2 = 0,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
+): (x: number, y: number) => boolean {
+    const centerY = VH * (0.48 + (rng.next() - 0.5) * 0.08); // 正中央附近 (44% ~ 52%)
+    const controls: Array<{ x: number; y: number }> = [
+        { x: -VW * 0.25, y: centerY + (rng.next() - 0.5) * 20 },
+        { x: -VW * 0.05, y: centerY + (rng.next() - 0.5) * 25 },
+        { x: VW * 0.25,  y: centerY + (rng.next() - 0.5) * 30 },
+        { x: VW * 0.50,  y: centerY + (rng.next() - 0.5) * 20 },
+        { x: VW * 0.75,  y: centerY + (rng.next() - 0.5) * 30 },
+        { x: VW * 1.05,  y: centerY + (rng.next() - 0.5) * 25 },
+        { x: VW * 1.25,  y: centerY + (rng.next() - 0.5) * 20 },
+    ];
+
+    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+        const t2 = t * t, t3 = t2 * t;
+        return 0.5 * ((2 * p1) + (-p0 + p2) * t
+            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    };
+
+    const roadPts: Array<{ x: number; y: number }> = [];
+    const sampleStep = TILE_W / 2;
+    for (let x = -VW * 0.25; x <= VW * 1.25; x += sampleStep) {
+        const segTotal = controls.length - 3;
+        const u = Math.max(0, Math.min(1, (x + VW * 0.25) / (VW * 1.5)));
+        const segIdx = Math.min(segTotal - 1, Math.floor(u * segTotal));
+        const t = (u * segTotal) - segIdx;
+        const p0 = controls[segIdx];
+        const p1 = controls[segIdx + 1];
+        const p2 = controls[segIdx + 2];
+        const p3 = controls[segIdx + 3];
+        roadPts.push({ x, y: catmullRom(p0.y, p1.y, p2.y, p3.y, t) });
+    }
+
+    const yAt = (x: number): number => {
+        const f = Math.max(0, Math.min(roadPts.length - 1, (x + VW * 0.25) / sampleStep));
+        const i = Math.min(roadPts.length - 2, Math.floor(f));
+        const t = f - i;
+        return roadPts[i].y + (roadPts[i + 1].y - roadPts[i].y) * t;
+    };
+
+    const roadHalfW = 100; // 宽达 200px 的平坦大道
+    const roadPolyLeft: Array<{ x: number; y: number }> = [];
+    const roadPolyRight: Array<{ x: number; y: number }> = [];
+
+    for (let i = 0; i < roadPts.length; i++) {
+        const pt = roadPts[i];
+        const noise = Math.sin(i * 0.2) * 8;
+        roadPolyLeft.push({ x: pt.x, y: pt.y - (roadHalfW + noise) });
+        roadPolyRight.push({ x: pt.x, y: pt.y + (roadHalfW + noise) });
+    }
+    const roadPolygon = [...roadPolyLeft, ...roadPolyRight.reverse()];
+
+    const roadCells: Array<[number, number]> = [];
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            if (Math.abs(py - yAt(px)) <= roadHalfW) {
+                roadCells.push([gx, gy]);
+            }
+        }
+    }
+    for (const [cx, cy] of roadCells) occupied.add(`${cx},${cy}`);
+
+    // 选择适配气候的自然路面材质
+    let roadTile = 'gravel_default';
+    if (season === 2) {
+        roadTile = 'gravel_wet';
+    } else if (biome === 'desert' || biome === 'cold_steppe') {
+        roadTile = 'ds3';
+    } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
+        roadTile = 'fo2';
+    }
+
+    patches.push({
+        tile: roadTile,
+        cells: roadCells,
+        polygon: roadPolygon,
+        alpha: 0.92,
+        category: 'shore', // 使用平滑多边形羽化渲染
+    });
+
+    return (x, y) => Math.abs(y - yAt(x)) <= roadHalfW + 20;
 }
 
 // ── 第 4 层：地表变体（低频、低透明） ───────────────────────────

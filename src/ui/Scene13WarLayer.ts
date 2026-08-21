@@ -2200,6 +2200,13 @@ interface WarBank {
     noAttackAnim: boolean;
     /** 帧高（S10DB 所有动作共享同一帧框高度；DE 动态帧框不依赖此值，见 dyn） */
     fh: number;
+    /**
+     * 是否 DE 素材（走 _meta.json 动态帧框）。🔴 修复「尸体错位」用：
+     * DE 素材的 death strip 每帧宽可达 144px（非 84px 正方形），`_meta.json` 未就绪时
+     * 若走 S10DB 正方形 fallback（dieFw=fh=84）会从 strip 里错位切出碎片。
+     * 故 DE 素材在 dyn 未就绪时**跳过渲染/延迟烙尸**，等 meta 到位再画，绝不切错。
+     */
+    isDE: boolean;
     /** 各动作的帧数（S10DB=8，AoE2 武士/弓手=30~60；缺失兜底 8） */
     frames: Record<string, number>;
     /** 抠绿 + SpriteTinter 染色后的帧带（[阵营][朝向]） */
@@ -2764,8 +2771,7 @@ export class Scene13WarLayer {
         for (const c of this.corpses) {
             c.t += dt;
             if (c.keep !== true && c.t >= DEATH_ANIM) {
-                this.bakeCorpse(c);
-                c.keep = true;
+                if (this.bakeCorpse(c)) c.keep = true;   // 烙成功才标记；DE meta 未就绪返回 false，下帧重试
             }
         }
         this.corpses = this.corpses.filter(c => c.keep !== true);
@@ -3537,11 +3543,12 @@ export class Scene13WarLayer {
         if (this.bank[key]) return;
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
-            if (!assets) { this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
-            const b: WarBank = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            if (!assets) { this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
+            const b: WarBank = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
             const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
             const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
+            b.isDE = isDE;
             if (isDE) {
                 const dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
                 this.pending++;
@@ -3629,7 +3636,7 @@ export class Scene13WarLayer {
             this.bank[key] = b;
         } catch (e) {
             console.warn('[Scene13WarLayer] 素材加载失败（回退空帧）:', key, e);
-            this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
         }
     }
 
@@ -4774,8 +4781,7 @@ export class Scene13WarLayer {
         for (const c of this.corpses) {
             c.t += dt;
             if (c.keep !== true && c.t >= DEATH_ANIM) {
-                this.bakeCorpse(c);
-                c.keep = true;
+                if (this.bakeCorpse(c)) c.keep = true;   // 烙成功才标记；DE meta 未就绪返回 false，下帧重试
             }
         }
         this.corpses = this.corpses.filter(c => c.keep !== true);
@@ -4819,7 +4825,8 @@ export class Scene13WarLayer {
         // 死人打点：唯一的死亡入口，卡死检测（NO_KILL_SEC）就靠它。留尸/溃逃两条路都要记。
         this.lastKillSec = this.battleSec;
         if (this.takeCorpseSlot()) {
-            this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: m.dir, t: 0 });
+            // 尸体朝向随机：每具倒向不同方向，避免全部同朝向呆板（主人 2026-08-21 定）
+            this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
         const back = m.f === 0 ? -1 : 1;   // 攻方在左往左逃、守方在右往右逃
@@ -4845,22 +4852,24 @@ export class Scene13WarLayer {
     }
 
     /** 把一具尸体的死亡末帧永久烙进地面图（留不留已由 takeCorpseSlot 裁定） */
-    private bakeCorpse(c: WarCorpse): void {
+    private bakeCorpse(c: WarCorpse): boolean {
         const g = this.groundCtx;
-        if (!g) return;
+        if (!g) return false;
         const b = this.bank[c.key];
-        if (!b) return;
+        if (!b) return false;
         const img = b.sets.die?.[c.f]?.[c.dir];
-        if (!img) return;
+        if (!img) return false;
         const wt = WAR_TYPES[c.key];
         const dieN = b.frames.die ?? 8;
         const drawY = c.y - this.elevationLiftAt(c.x, c.y);
+        const dm = b.dyn?.die?.[c.dir];
+        // 🔴 DE 素材 meta 未就绪：延迟烙尸，等 dyn 到位再画，绝不走 S10DB 正方形 fallback 切出错位碎片
+        if (!dm && b.isDE) return false;
 
         g.save();
         // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
         g.filter = 'brightness(80%) contrast(95%)';
         g.globalAlpha = 1.0;
-        const dm = b.dyn?.die?.[c.dir];
         if (dm) {
             // 🔴 AoE2 DE 动态帧框（2026-08-15 修复「尸体一个都留不下」）：
             //   之前走 S10DB 正方形假设（dieFw = b.fh = 84）切 DE 动态 sheet（fw 40~120 不等），
@@ -4875,6 +4884,7 @@ export class Scene13WarLayer {
             g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, drawY - px * 0.9, px, px);
         }
         g.restore();
+        return true;
     }
 
     /** 每帧推进（GameAppLoop 场景激活分支调用；dt = 真实秒） */
@@ -5076,8 +5086,10 @@ export class Scene13WarLayer {
                 : (v.set === 'move' || v.set === 'idle' || v.st === 0)
                     ? Math.floor(v.fr * n / 8) % n                     // 移动/待命/走路：循环
                     : Math.min(n - 1, Math.floor(v.fr * n / 8));       // 攻击/近战/冲锋：播满停末帧（ph=8 不再溢出回第一帧）
-            if (v.a < 1) ctx.globalAlpha = v.a;
             const dm = b.dyn?.[v.set]?.[v.dir];
+            // 🔴 DE 素材 meta 未就绪：跳过本帧，S10DB 正方形假设（fh=84）会切错 DE 非正方形 strip（144px 等）
+            if (!dm && b.isDE) continue;
+            if (v.a < 1) ctx.globalAlpha = v.a;
             if (dm) {
                 // 🔴 AoE2 DE 动态帧框（hotspot 对齐，2026-08-15 定稿）：
                 //   游戏里 hotspot = canvas 中心，渲染时 hotspot 对齐单位位置，脚底随动作浮动（倒地时大幅下移）。
