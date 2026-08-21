@@ -1,0 +1,9 @@
+{
+  "name": "WOODEN_FORT",
+  "frames": 1,
+  "box_w": 452,
+  "box_h": 392,
+  "anchor_x": 260,
+  "anchor_y": 292,
+  "sld_source": "b_scen_wooden_fort"
+}
