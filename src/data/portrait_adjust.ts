@@ -5112,7 +5112,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/LATIN/yidelisi_yidelisi.png": {
+        "/assets/BERBER/yidelisi_yidelisi.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 5
@@ -5137,7 +5137,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/LATIN/mulabite_tashenfen.png": {
+        "/assets/BERBER/mulabite_tashenfen.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 16
@@ -5147,17 +5147,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/LATIN/zhayan_yalimoluo.png": {
+        "/assets/BERBER/zhayan_yalimoluo.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/LATIN/babali_babaluosa.png": {
+        "/assets/BERBER/babali_babaluosa.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/LATIN/hamade_hamade.png": {
+        "/assets/BERBER/hamade_hamade.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 14
@@ -5167,17 +5167,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/LATIN/aguelabu_aokeba.png": {
+        "/assets/BERBER/aguelabu_aokeba.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/LATIN/telibolisi_delagute.png": {
+        "/assets/BERBER/telibolisi_delagute.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/LATIN/jileinaijia_majiasi.png": {
+        "/assets/BERBER/jileinaijia_majiasi.png": {
             "scale": 0.81,
             "offsetX": 0,
             "offsetY": 10
@@ -6532,7 +6532,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/LATIN/buni_hanniba.png": {
+        "/assets/BERBER/buni_hanniba.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
