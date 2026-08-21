@@ -48,7 +48,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'ds3'],
         trees: ['MONKEY_PUZZLE'],
         flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'SKELETON'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ANIMAL_SKELETON'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -59,7 +59,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'fo2'],
         trees: ['JUNGLE', 'RAINFOREST'],
         flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'SKELETON'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ANIMAL_SKELETON'],
         waterPlants: ['REEDS', 'MANGROVE'],
         beachTerrain: 'bc2',
     },
@@ -69,10 +69,10 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['grs', 'gr3', 'gr2', 'ds3'],
         forestFloorTiles: ['for', 'underbrush_leaves'],
         trees: ['PINE'],
-        autumnTrees: ['PINE', 'AUTUMN_OAK'],
+        autumnTrees: ['PINE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['BUSH_GREEN', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'BARRELS'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -82,8 +82,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['gr6', 'grs', 'gr3'],
         forestFloorTiles: ['fo2', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO'],
-        flatDecor: ['SHRUB_GREEN', 'GRAVES', 'FLOWERBED'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'RUGS'],
+        flatDecor: ['SHRUB_GREEN', 'BUSH_GREEN', 'WEED'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK_FORMATION1'],
         waterPlants: ['REEDS', 'LUSH_BAMBOO', 'MANGROVE'],
         beachTerrain: 'bch',
     },
@@ -92,11 +92,11 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         baseTerrain: 'gr7',
         groundTiles: ['gr4', 'ds3'],
         forestFloorTiles: ['for', 'fo2'],
-        trees: ['BUSH_TREE_B', 'ASIAN_MAPLE_GREEN'],
-        autumnTrees: ['BUSH_TREE_B', 'AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN'],
+        trees: ['BUSH_TREE_B'],
+        autumnTrees: ['BUSH_TREE_B', 'AUTUMN_OAK'],
         winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'RUGS'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -107,7 +107,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['pal', 'for'],
         trees: ['PALM'],
         flatDecor: ['PLANT_DEAD', 'CACTUS', 'ANIMAL_SKELETON'],
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3'],
         waterPlants: ['REEDS', 'PALM'],
         beachTerrain: 'bch',
     },
@@ -119,8 +119,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['DEAD_TREE', 'PINE'],
         autumnTrees: ['DEAD_TREE', 'PINE', 'AUTUMN_OAK'],
         winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
-        flatDecor: ['FLOWER', 'STUMP_GENERIC'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'SKELETON'],
+        flatDecor: ['SHRUB_GREEN', 'STUMP_GENERIC'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -132,8 +132,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['BUSH_TREE_A', 'OAK'],
         autumnTrees: ['BUSH_TREE_A', 'AUTUMN_OAK'],
         winterTrees: ['DEAD_TREE', 'SNOW_AUTUMN_OAK'],
-        flatDecor: ['FLOWER', 'STUMP_GENERIC'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'SKELETON'],
+        flatDecor: ['FLOWER', 'STUMP_GENERIC', 'BUSH_GREEN'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -144,8 +144,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'underbrush_leaves'],
         trees: ['OLIVE', 'ITALIAN_PINE'],
         winterTrees: ['OLIVE', 'ITALIAN_PINE'],
-        flatDecor: ['FLOWER', 'STUMP_GENERIC'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'BARRELS'],
+        flatDecor: ['FLOWER', 'STUMP_GENERIC', 'SHRUB_GREEN'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'OLIVE'],
         beachTerrain: 'bch',
     },
@@ -158,7 +158,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         autumnTrees: ['BIRCH_AUTUMN'],
         winterTrees: ['BIRCH_WINTER'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'FLOWERBED', 'RUGS'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW'],
         beachTerrain: 'bch',
     },
@@ -175,11 +175,6 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
 };
 
-const ASIAN_REGIONS = new Set<RegionType>([
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'DIANQIAN', 'HEXI',
-    'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA',
-]);
-
 export function resolveDeMapTheme(
     lat: number,
     lng: number,
@@ -193,6 +188,7 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.indomalayan_tropical;
     }
     if (biome === 'savanna') {
+        if (lng >= 55 && lat < 30) return DE_MAP_THEMES.indomalayan_tropical;
         if (region === 'WEST_ASIA' || region === 'CENTRAL_ASIA' || region === 'WESTERN' || region === 'HEXI') {
             return DE_MAP_THEMES.palaearctic_middle_east_desert;
         }
@@ -206,7 +202,7 @@ export function resolveDeMapTheme(
     if (lng < -30) {
         return lat < 0 ? DE_MAP_THEMES.neotropical_temperate : DE_MAP_THEMES.nearctic_temperate;
     }
-    if (ASIAN_REGIONS.has(region)) return DE_MAP_THEMES.palaearctic_asia_temperate;
+    if (lng >= 60) return DE_MAP_THEMES.palaearctic_asia_temperate;
     return DE_MAP_THEMES.palaearctic_europe_temperate;
 }
 
@@ -241,4 +237,31 @@ export function groundTilesForTheme(
         return ['sn2', 'snf', 'sno'];
     }
     return theme.groundTiles;
+}
+
+export function forestFloorTilesForTheme(
+    theme: DeMapThemePalette,
+    biome: Biome,
+    season: 0 | 1 | 2,
+): readonly string[] {
+    if (season === 2 && (biome === 'tundra_snow' || biome === 'boreal' || biome === 'cold_steppe' || biome === 'temperate_grass' || biome === 'temperate_forest')) {
+        return ['snf', 'sno'];
+    }
+    return theme.forestFloorTiles;
+}
+
+export function decorForTheme(
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2,
+): { flat: readonly string[]; solid: readonly string[] } {
+    if (season === 2) {
+        return {
+            flat: ['SHRUB_GREEN', 'DECAL_ICE'],
+            solid: ['ROCK1', 'ROCK2', 'ROCK3', 'DECAL_ICE'],
+        };
+    }
+    return {
+        flat: theme.flatDecor,
+        solid: theme.solidDecor,
+    };
 }

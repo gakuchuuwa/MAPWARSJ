@@ -1976,6 +1976,24 @@ export class GlobalUnitRenderer {
             const useNavalVisual = !this.isBattleScene13()
                 && !!(unit.isOnSea || unit.forceNavalVisual);
 
+            // 🔴 [2026-08-21 全 16 向船] 船单独用 DE 全 16 向素材（22.5° 精度）；陆军/旗帜仍 8 向互不影响。
+            //    directionIndex 是 8 向（get8DirectionIndex）；船方向从平滑移动角 / 目标角直接算 16 向帧：
+            //    DE 帧 d 的朝向（北=0° 顺时针） = 45 + 22.5·d → d = round((deg-45)/22.5) mod 16。
+            let navalDir16 = directionIndex * 2; // 兜底：8 向 ×2 = 偶数向 16 帧（与旧 8 向行为一致）
+            if (useNavalVisual) {
+                let navalAngleRad: number;
+                if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
+                    navalAngleRad = Math.atan2(unit.targetPos.lng - unitPos.lng, unit.targetPos.lat - unitPos.lat);
+                } else if (unit.isMoving) {
+                    navalAngleRad = this.unitVisualAngles.get(unit.id || 'unknown')
+                        ?? (45 + 22.5 * navalDir16) * Math.PI / 180;
+                } else {
+                    navalAngleRad = (45 + 22.5 * navalDir16) * Math.PI / 180;
+                }
+                const navalDeg = navalAngleRad * 180 / Math.PI;
+                navalDir16 = ((Math.round((navalDeg - 45) / 22.5) % 16) + 16) % 16;
+            }
+
             // 攻城外推已在裁剪前 applySiegeVisualPush 做过（含离战收推）
             const unitIdForGear = unit.id || 'unknown';
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
@@ -2046,7 +2064,7 @@ export class GlobalUnitRenderer {
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
                     state,
-                    directionIndex,
+                    navalDir16,
                     scale * (unit.previewScale ?? 1),
                     troops,
                     Date.now(),

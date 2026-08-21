@@ -874,8 +874,8 @@ const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
 const TILE_W = 64;
 const TILE_H = 32;
-/** 斑块边界羽化半径（px）：DE 过渡是硬边菱形阶梯，只留 2px 抗锯齿，不再大羽化 */
-const DECOR_BLUR = 2;
+/** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
+const DECOR_BLUR = 8;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
 const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
@@ -1174,9 +1174,10 @@ const PROJ_VOLLEY: Record<string, number> = {
 };
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
-/** 抛射物飞行基准时长（秒）：火枪弹丸极速穿梭（0.22s），重炮/石弹沉重高抛（0.65s），手榴弹（0.55s），其余标准（0.42s）。 */
+/** 抛射物飞行基准时长（秒）：火枪弹丸极速穿梭（0.22s），重弩矢沉重平射（0.49s，DE 速度 6.0 vs 普通箭 7.0/0.42s），重炮/石弹沉重高抛（0.65s），手榴弹（0.55s），其余标准羽箭（0.42s）。 */
 const PROJ_DUR: Record<string, number> = {
     PROJ_SHOT: 0.22,
+    PROJ_BOLT: 0.49,
     PROJ_BALL: 0.65,
     PROJ_GRENADE: 0.55,
 };
