@@ -1,0 +1,9 @@
+{
+  "name": "_tmp_gate_e",
+  "frames": 1,
+  "box_w": 268,
+  "box_h": 132,
+  "anchor_x": 164,
+  "anchor_y": 128,
+  "sld_source": "b_east_gate_stone_e_open"
+}

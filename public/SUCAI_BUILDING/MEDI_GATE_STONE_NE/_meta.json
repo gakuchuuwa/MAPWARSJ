@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_GATE_STONE_NE",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 208,
+  "anchor_x": 120,
+  "anchor_y": 172,
+  "sld_source": "b_medi_gate_stone_ne_open"
+}
