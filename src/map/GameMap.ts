@@ -17,6 +17,8 @@ export class GameMap {
     private map: L.Map;
     private containerId: string;
     private currentTileLayer: L.TileLayer | null = null;
+    /** 全球总览底图只在 zoom 2–7 生效；8/9/10 继续使用原有本地模式。 */
+    private globalOverviewLayer: L.TileLayer | null = null;
     private zoom11TileLayer: L.TileLayer | null = null; // [NEW] Track 2nd layer
     private currentSourceKey: string = 'LOCAL';
     private hillshadeLayer: HillshadeLayer | null = null;
@@ -62,7 +64,7 @@ export class GameMap {
         this.map = L.map(containerId, {
             center: [lat, lng],
             zoom: 8,
-            minZoom: 4,  // [UPDATE] Macro view enabled
+            minZoom: TILE_CONFIG.MIN_ZOOM,
             maxZoom: 13, // [UPDATE] Detailed view enabled
             zoomSnap: 1,
             zoomDelta: 1,
@@ -286,6 +288,10 @@ export class GameMap {
 
 
     public setMapSource(sourceKey: string) {
+        if (this.globalOverviewLayer) {
+            this.map.removeLayer(this.globalOverviewLayer);
+            this.globalOverviewLayer = null;
+        }
         if (this.currentTileLayer) {
             this.map.removeLayer(this.currentTileLayer);
             this.currentTileLayer = null;
@@ -307,6 +313,20 @@ export class GameMap {
 
         if (sourceKey === 'LOCAL') {
             this.currentSourceKey = sourceKey;
+
+            // 全球总览层：只填补新开放的 zoom 2–7；maxZoom=7 保证 8/9/10 原有模式逐像素不受影响。
+            this.globalOverviewLayer = L.tileLayer(
+                (TILE_CONFIG as any).SOURCES.ESRI_SHADED.url,
+                {
+                    tileSize: 256,
+                    minZoom: TILE_CONFIG.MIN_ZOOM,
+                    maxZoom: 7,
+                    noWrap: true,
+                    bounds: L.latLngBounds([[-85.0511287798, -180], [85.0511287798, 180]]),
+                    zIndex: 0,
+                }
+            );
+            this.globalOverviewLayer.addTo(this.map);
 
             // 加载本地 Google Terrain 512px 瓦片（zoom 8–11，四级全覆盖）
             // 瓦片缺失时透明兜底，不显示裂图，由 HillshadeLayer 补位

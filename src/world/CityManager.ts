@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import { shortestLongitudeDelta } from '../utils/GeoLongitude';
 import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
 import { GridSystem } from '../systems/GridSystem';
@@ -602,7 +603,7 @@ export class CityManager {
             if (factionId === null || city.factionId === factionId) {
                 const avgLatRad = (city.latitude + targetPos.latitude) / 2 * (Math.PI / 180);
                 const dLat = city.latitude - targetPos.latitude;
-                const dLon = (city.longitude - targetPos.longitude) * Math.cos(avgLatRad);
+                const dLon = shortestLongitudeDelta(targetPos.longitude, city.longitude) * Math.cos(avgLatRad);
                 const dist = dLat * dLat + dLon * dLon;
 
                 if (dist < minDist) {

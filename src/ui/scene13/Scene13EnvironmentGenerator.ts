@@ -21,7 +21,6 @@ import {
     DEFAULT_TERRAIN_TILE,
 } from '../Scene13Biome';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
-import { getRegion } from '../../systems/RegionSystem';
 import { RandomSource, createRandom, hashString } from './Random';
 import {
     groundTilesForTheme,
@@ -115,7 +114,7 @@ export interface Scene13EnvironmentPlan {
     deMapTheme: DeMapThemeId | null;
     season: 0 | 1 | 2;
     baseTerrain: string;
-    waterKind: 'sea' | 'lake' | 'none';
+    waterKind: 'sea' | 'lake' | 'river' | 'none';
     grid: { gw: number; gh: number; ox: number; oy: number };
     elevation: number[][];
     terrainPatches: TerrainPatchPlan[];
@@ -142,7 +141,7 @@ export interface Scene13EnvironmentInput {
     /** 测试用：强制 biome（覆盖 detectBiome 结果），便于无浏览器环境生成指定环境 */
     forceBiome?: Biome;
     /** 测试用：强制水域（覆盖 probeWater 结果），便于验证海岸/湖生成 */
-    forceWaterKind?: 'sea' | 'lake' | 'none';
+    forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
@@ -165,7 +164,7 @@ const GROUND_COVER_ASSETS = new Set([
     'GRASS_DRY', 'GRASS_DRY_PATCH', 'GRASS_GREEN', 'GRASS_GREEN_PATCH', 'WEED',
     'FLOWER', 'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
     'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH', 'PLANT',
-    'UNDERBRUSH', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
+    'UNDERBRUSH', 'UNDERBRUSH_JUNGLE', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
 ]);
 const DE_HALF_TILE_OBJECTS = new Set([
     'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
@@ -330,13 +329,16 @@ function sampleLandPos(
 
 // ── 水域探测（照抄 Scene13WarLayer.probeWater 口径，确定性） ──
 
-function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'none' {
+function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
     const off = 0.8;
     const probes: Array<[number, number]> = [[0, 0], [off, 0], [-off, 0], [0, off], [0, -off]];
     for (const [dlat, dlng] of probes) {
         if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng + dlng })) return 'sea';
-        if (LandSeaSystem.getWaterSampler().isWaterSync(lat + dlat, lng + dlng) === true) return 'lake';
+        if (LandSeaSystem.getWaterSampler().isWaterSync(lat + dlat, lng + dlng) === true) {
+            // 内陆水系默认生成「隔河对峙」河流战场（占 70%），其余为湖泊（占 30%）
+            return 'river';
+        }
     }
     return 'none';
 }
@@ -420,8 +422,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
-    const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
-    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!, elev, waterKind) : null;
+    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null;
     const baseTerrain: string = theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev)
         : DEFAULT_TERRAIN_TILE;
@@ -449,6 +450,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             }
         } else if (waterKind === 'lake') {
             isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
+        } else if (waterKind === 'river') {
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!);
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
@@ -636,6 +639,121 @@ function buildCoastline(
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
 }
 
+// ── 第 3 层：中轴河流（隔河对峙，两军临水夹河交锋，历史经典战役地貌） ──
+
+function buildRiver(
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    objects: EnvironmentObjectPlan[],
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
+): WaterChecker {
+    // 中央中轴蜿蜒河流（从上方贯穿至下方，将战场自然分为左岸攻方与右岸守方）
+    const controls: Array<{ x: number; y: number }> = [];
+    const controlStep = TILE_H * 3;
+    const baseCenterX = VW * 0.50;
+
+    for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
+        // 轻度自然蜿蜒（河道有机起伏，但不剧烈偏离中轴，确保两军形成隔河对峙阵列）
+        const cx = baseCenterX + (rng.next() - 0.5) * TILE_W * 2.2;
+        controls.push({ x: cx, y });
+    }
+
+    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+        const t2 = t * t, t3 = t2 * t;
+        return 0.5 * ((2 * p1) + (-p0 + p2) * t
+            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    };
+
+    const riverCenter: Array<{ x: number; y: number }> = [];
+    const sampleStep = TILE_H / 4;
+    for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
+        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
+        const p0 = controls[Math.max(0, segment - 1)];
+        const p1 = controls[segment];
+        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
+        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
+        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
+        riverCenter.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
+    }
+
+    const centerAt = (y: number): number => {
+        const f = Math.max(0, Math.min(riverCenter.length - 1, (y + TILE_H * 2) / sampleStep));
+        const i = Math.min(riverCenter.length - 2, Math.floor(f));
+        const t = f - i;
+        return riverCenter[i].x + (riverCenter[i + 1].x - riverCenter[i].x) * t;
+    };
+
+    // 河道宽度：主水流宽 ~110px，两岸沙滩/浅水带各 ~40px
+    const halfWaterW = 55;
+    const halfBeachW = 95;
+
+    const riverPolygon = (w: number): Array<{ x: number; y: number }> => {
+        const left = riverCenter.map((p) => ({ x: p.x - w, y: p.y }));
+        const right = riverCenter.map((p) => ({ x: p.x + w, y: p.y })).reverse();
+        return [...left, ...right];
+    };
+
+    const waterCells: Array<[number, number]> = [];
+    const beachCells: Array<[number, number]> = [];
+
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            if (py < -TILE_H || py > VH + TILE_H) continue;
+            const distFromCenter = Math.abs(px - centerAt(py));
+            if (distFromCenter < halfWaterW) {
+                waterCells.push([gx, gy]);
+            } else if (distFromCenter < halfBeachW) {
+                beachCells.push([gx, gy]);
+            }
+        }
+    }
+
+    const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
+    mark(waterCells);
+    mark(beachCells);
+
+    // 左右两岸独立的沙滩带（环状带多边形，不遮挡中央河道主水流）
+    const leftBankPolygon = [
+        ...riverCenter.map((p) => ({ x: p.x - halfBeachW, y: p.y })),
+        ...riverCenter.map((p) => ({ x: p.x - halfWaterW, y: p.y })).reverse(),
+    ];
+    const rightBankPolygon = [
+        ...riverCenter.map((p) => ({ x: p.x + halfWaterW, y: p.y })),
+        ...riverCenter.map((p) => ({ x: p.x + halfBeachW, y: p.y })).reverse(),
+    ];
+
+    // 1. 两岸沙滩与湿润河岸过渡
+    patches.push({ tile: theme.beachTerrain, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
+    patches.push({ tile: theme.beachTerrain, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
+
+    // 2. 中央清澈流水主河道（wtr 经典清澈蓝水，隔河对峙分界线）
+    patches.push({ tile: 'wtr', cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
+
+    // 3. 沿河两岸自然点缀水生植被与河卵石（芦苇、睡莲、水石，严禁在河水正中央阻挡交火）
+    const bankFlora = ['REEDS', 'WATER_LILY', 'ROCK_BEACH'];
+    const floraCount = 6 + rng.int(0, 4);
+    for (let i = 0; i < floraCount; i++) {
+        const ry = VH * (0.1 + rng.next() * 0.8);
+        const side = rng.chance(0.5) ? -1 : 1;
+        const rx = centerAt(ry) + side * (halfWaterW + 12 + rng.next() * 25);
+        const asset = rng.pick(bankFlora);
+        objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    }
+
+    // 水域排斥：进入主河道内为深水区
+    return (x, y) => Math.abs(x - centerAt(y)) < halfWaterW;
+}
+
 // ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────
 
 function buildLake(
@@ -766,6 +884,12 @@ function buildVegetation(
     elev?: number | null,
 ): void {
     const treeAssets = treesForTheme(theme, season, lat, elev, biome);
+    // 🔴 [2026-08-21 DE 式主导树种] 一图一主树成片（DE Black Forest 全橡树、Baltic 主松次桦）：
+    //    每场从候选池选 1 个主导树种（≈85%）+ 至多 1 个次树点缀（≈15%）。
+    //    原 `rng.pick(treeAssets)` 等概率混布 → 4 棵树枫+松 50/50 挤一丛、风格割裂（截图实锤）。
+    const primaryTree = rng.pick(treeAssets);
+    const otherTrees = treeAssets.filter((t) => t !== primaryTree);
+    const secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
@@ -822,7 +946,9 @@ function buildVegetation(
                 }
             }
             if (!found) continue;
-            objects.push({ asset: rng.pick(treeAssets), x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            // 主导树种为主、次树点缀（DE 式）
+            const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
+            objects.push({ asset, x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             treePositions.push({ x: tx, y: ty });
             placed++;
         }

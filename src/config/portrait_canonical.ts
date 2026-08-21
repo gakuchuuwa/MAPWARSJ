@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/21 10:59:27（共 44 条）
+ * 生成时间：2026/8/21 13:07:55（共 45 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -15,7 +15,8 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/india/__多余__india_07.png": "/assets/CENTRAL_ASIA/xisi_yakubu.png",
     "/assets/TIBET/__多余__TIBET_04.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
     "/assets/WESTERN/__多余__WESTERN_01.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
-    "/assets/DIANQIAN/konbaung_yongjiya.png": "/assets/DIANQIAN/__多余__DIANQIAN_01.png",
+    "/assets/DIANQIAN/luchuan_sirenfa.png": "/assets/DIANQIAN/1af8a43a-ff22-45e8-bbdc-0b00319c7207.png",
+    "/assets/DIANQIAN/ava_sijifa.png": "/assets/DIANQIAN/9a9ba598-ab68-4412-a898-196f32a96e45.png",
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
     "/assets/GERMANIC/bogendi_dadanchali.png": "/assets/GERMANIC/__多余__GERMANIC_03.png",
     "/assets/GERMANIC/keluodiya_zilinsiji.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
@@ -33,9 +34,9 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/talanduo_aqita.png": "/assets/LATIN/__多余__LATIN_07.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/LATIN/__多余__LATIN_02.png",
     "/assets/LINGNAN/funan_fanman.png": "/assets/LINGNAN/__多余__LINGNAN_20.png",
-    "/assets/LINGNAN/luchuan_sirenfa.png": "/assets/LINGNAN/__多余__LINGNAN_21.png",
     "/assets/LINGNAN/panyao_pandaxiao.png": "/assets/LINGNAN/__多余__LINGNAN_22.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",
+    "/assets/LINGNAN/__闲置__LINGNAN_22.png": "/assets/LINGNAN/__多余__LINGNAN_21.png",
     "/assets/liuhan/ganzhou_dourong.png": "/assets/liuhan/__多余__liuhan_01.png",
     "/assets/SLAVIC/dunhe_tatalinuofu.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/TIBET/__多余__TIBET_02.png": "/assets/STEPPE/qidan_shulvping.png",

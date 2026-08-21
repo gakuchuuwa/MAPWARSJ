@@ -8,6 +8,11 @@
  */
 
 import { GridSystem } from '../systems/GridSystem';
+import {
+    interpolateLongitudeShortest,
+    shortestLongitudeDelta,
+    unwrapLongitudeNear,
+} from '../utils/GeoLongitude';
 
 // ==================== 标准阈值定义 ====================
 /**
@@ -55,7 +60,7 @@ const DEFAULT_CENTER_LAT = 34.26;
  */
 export function getEuclideanDistance(pos1: LatLng, pos2: LatLng): number {
     const dx = pos1.lat - pos2.lat;
-    const dy = pos1.lng - pos2.lng;
+    const dy = shortestLongitudeDelta(pos1.lng, pos2.lng);
     return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -65,7 +70,7 @@ export function getEuclideanDistance(pos1: LatLng, pos2: LatLng): number {
  */
 export function getHexDistance(pos1: LatLng, pos2: LatLng, centerLat: number = DEFAULT_CENTER_LAT): number {
     const hex1 = GridSystem.latLngToAxial(pos1.lat, pos1.lng);
-    const hex2 = GridSystem.latLngToAxial(pos2.lat, pos2.lng);
+    const hex2 = GridSystem.latLngToAxial(pos2.lat, unwrapLongitudeNear(pos2.lng, pos1.lng));
 
     // 六边形距离公式: max(|q1-q2|, |r1-r2|, |s1-s2|)
     // 其中 s = -q - r
@@ -126,14 +131,15 @@ export function minDistanceToPolyline(point: LatLng, polyline: LatLng[]): number
         const a = polyline[i];
         const b = polyline[i + 1];
         const abLat = b.lat - a.lat;
-        const abLng = b.lng - a.lng;
+        const abLng = shortestLongitudeDelta(a.lng, b.lng);
+        const pointLng = shortestLongitudeDelta(a.lng, point.lng);
         const lenSq = abLat * abLat + abLng * abLng;
         let t = 0;
         if (lenSq > 1e-12) {
-            t = ((point.lat - a.lat) * abLat + (point.lng - a.lng) * abLng) / lenSq;
+            t = ((point.lat - a.lat) * abLat + pointLng * abLng) / lenSq;
             t = Math.max(0, Math.min(1, t));
         }
-        const proj = { lat: a.lat + t * abLat, lng: a.lng + t * abLng };
+        const proj = { lat: a.lat + t * abLat, lng: interpolateLongitudeShortest(a.lng, b.lng, t) };
         min = Math.min(min, getEuclideanDistance(point, proj));
     }
     return min;
@@ -169,14 +175,15 @@ export function nearestPointOnPolyline(
         const b = polyline[i + 1];
         const segLen = getEuclideanDistance(a, b);
         const abLat = b.lat - a.lat;
-        const abLng = b.lng - a.lng;
+        const abLng = shortestLongitudeDelta(a.lng, b.lng);
+        const pointLng = shortestLongitudeDelta(a.lng, point.lng);
         const lenSq = abLat * abLat + abLng * abLng;
         let t = 0;
         if (lenSq > 1e-12) {
-            t = ((point.lat - a.lat) * abLat + (point.lng - a.lng) * abLng) / lenSq;
+            t = ((point.lat - a.lat) * abLat + pointLng * abLng) / lenSq;
             t = Math.max(0, Math.min(1, t));
         }
-        const proj = { lat: a.lat + t * abLat, lng: a.lng + t * abLng };
+        const proj = { lat: a.lat + t * abLat, lng: interpolateLongitudeShortest(a.lng, b.lng, t) };
         const dist = getEuclideanDistance(point, proj);
         const along = accumulated + segLen * t;
         if (dist < bestDist - tieEps || (dist <= bestDist + tieEps && along > bestAlong)) {
@@ -206,7 +213,7 @@ export function dedupeLatLngPath(path: LatLng[], eps = 0.0001): LatLng[] {
             continue;
         }
         const last = out[out.length - 1];
-        if (Math.abs(last.lat - p.lat) > eps || Math.abs(last.lng - p.lng) > eps) {
+        if (Math.abs(last.lat - p.lat) > eps || Math.abs(shortestLongitudeDelta(last.lng, p.lng)) > eps) {
             out.push(p);
         }
     }
@@ -259,14 +266,15 @@ export function distanceAlongPolyline(point: LatLng, polyline: LatLng[]): number
         const b = polyline[i + 1];
         const segLen = getEuclideanDistance(a, b);
         const abLat = b.lat - a.lat;
-        const abLng = b.lng - a.lng;
+        const abLng = shortestLongitudeDelta(a.lng, b.lng);
+        const pointLng = shortestLongitudeDelta(a.lng, point.lng);
         const lenSq = abLat * abLat + abLng * abLng;
         let t = 0;
         if (lenSq > 1e-12) {
-            t = ((point.lat - a.lat) * abLat + (point.lng - a.lng) * abLng) / lenSq;
+            t = ((point.lat - a.lat) * abLat + pointLng * abLng) / lenSq;
             t = Math.max(0, Math.min(1, t));
         }
-        const proj = { lat: a.lat + t * abLat, lng: a.lng + t * abLng };
+        const proj = { lat: a.lat + t * abLat, lng: interpolateLongitudeShortest(a.lng, b.lng, t) };
         const dist = getEuclideanDistance(point, proj);
         if (dist < bestDist) {
             bestDist = dist;

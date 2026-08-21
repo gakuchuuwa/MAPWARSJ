@@ -1,5 +1,6 @@
 import { Army } from '../legion/Army';
 import { gameLog } from '../utils/GameLogger';
+import { normalizeLongitude, shortestLongitudeDelta } from '../utils/GeoLongitude';
 
 /**
  * SpatialRegistry
@@ -34,9 +35,23 @@ export class SpatialRegistry {
      * 获取 LatLng 对应的哈希桶键
      */
     public static getBucketKey(lat: number, lng: number): string {
-        const x = Math.floor(lng / SpatialRegistry.BUCKET_SIZE);
+        const x = Math.floor(normalizeLongitude(lng) / SpatialRegistry.BUCKET_SIZE);
         const y = Math.floor(lat / SpatialRegistry.BUCKET_SIZE);
         return `${x},${y}`;
+    }
+
+    /** 日期变更线附近拆成两个规范经度区间，避免 +179.9° 查不到 -179.9°。 */
+    private static getLongitudeBucketRanges(lng: number, radius: number): Array<[number, number]> {
+        const center = normalizeLongitude(lng);
+        const intervals: Array<[number, number]> = [
+            [Math.max(-180, center - radius), Math.min(180, center + radius)],
+        ];
+        if (center + radius >= 180) intervals.push([-180, center + radius - 360]);
+        if (center - radius < -180) intervals.push([center - radius + 360, 180]);
+        return intervals.map(([west, east]) => [
+            Math.floor(west / SpatialRegistry.BUCKET_SIZE),
+            Math.floor(east / SpatialRegistry.BUCKET_SIZE),
+        ]);
     }
 
     public clear(): void {
@@ -96,26 +111,29 @@ export class SpatialRegistry {
      */
     public getArmiesInRadius(lat: number, lng: number, radius: number): Army[] {
         const results: Army[] = [];
+        const seen = new Set<Army>();
         const radiusSq = radius * radius;
 
         // 确定需要搜索的桶的范围
-        const minX = Math.floor((lng - radius) / SpatialRegistry.BUCKET_SIZE);
-        const maxX = Math.floor((lng + radius) / SpatialRegistry.BUCKET_SIZE);
+        const xRanges = SpatialRegistry.getLongitudeBucketRanges(lng, radius);
         const minY = Math.floor((lat - radius) / SpatialRegistry.BUCKET_SIZE);
         const maxY = Math.floor((lat + radius) / SpatialRegistry.BUCKET_SIZE);
 
-        for (let x = minX; x <= maxX; x++) {
-            for (let y = minY; y <= maxY; y++) {
-                const key = `${x},${y}`;
-                const armies = this.armyBuckets.get(key);
-                if (armies) {
-                    for (const army of armies) {
-                        if (army.isDestroyed) continue;
-                        const pos = army.getPosition();
-                        const dx = pos.lng - lng;
-                        const dy = pos.lat - lat;
-                        if (dx * dx + dy * dy <= radiusSq) {
-                            results.push(army);
+        for (const [minX, maxX] of xRanges) {
+            for (let x = minX; x <= maxX; x++) {
+                for (let y = minY; y <= maxY; y++) {
+                    const key = `${x},${y}`;
+                    const armies = this.armyBuckets.get(key);
+                    if (armies) {
+                        for (const army of armies) {
+                            if (army.isDestroyed || seen.has(army)) continue;
+                            const pos = army.getPosition();
+                            const dx = shortestLongitudeDelta(lng, pos.lng);
+                            const dy = pos.lat - lat;
+                            if (dx * dx + dy * dy <= radiusSq) {
+                                seen.add(army);
+                                results.push(army);
+                            }
                         }
                     }
                 }
@@ -129,23 +147,27 @@ export class SpatialRegistry {
      */
     public getCitiesInRadius(lat: number, lng: number, radius: number): { id: string, factionId: string, lat: number, lng: number }[] {
         const results: { id: string, factionId: string, lat: number, lng: number }[] = [];
+        const seen = new Set<string>();
         const radiusSq = radius * radius;
 
-        const minX = Math.floor((lng - radius) / SpatialRegistry.BUCKET_SIZE);
-        const maxX = Math.floor((lng + radius) / SpatialRegistry.BUCKET_SIZE);
+        const xRanges = SpatialRegistry.getLongitudeBucketRanges(lng, radius);
         const minY = Math.floor((lat - radius) / SpatialRegistry.BUCKET_SIZE);
         const maxY = Math.floor((lat + radius) / SpatialRegistry.BUCKET_SIZE);
 
-        for (let x = minX; x <= maxX; x++) {
-            for (let y = minY; y <= maxY; y++) {
-                const key = `${x},${y}`;
-                const cities = this.cityBuckets.get(key);
-                if (cities) {
-                    for (const city of cities) {
-                        const dx = city.lng - lng;
-                        const dy = city.lat - lat;
-                        if (dx * dx + dy * dy <= radiusSq) {
-                            results.push(city);
+        for (const [minX, maxX] of xRanges) {
+            for (let x = minX; x <= maxX; x++) {
+                for (let y = minY; y <= maxY; y++) {
+                    const key = `${x},${y}`;
+                    const cities = this.cityBuckets.get(key);
+                    if (cities) {
+                        for (const city of cities) {
+                            if (seen.has(city.id)) continue;
+                            const dx = shortestLongitudeDelta(lng, city.lng);
+                            const dy = city.lat - lat;
+                            if (dx * dx + dy * dy <= radiusSq) {
+                                seen.add(city.id);
+                                results.push(city);
+                            }
                         }
                     }
                 }

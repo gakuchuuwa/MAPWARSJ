@@ -1,4 +1,3 @@
-import type { RegionType } from '../../systems/RegionSystem';
 import type { Biome, ElevationBand } from '../Scene13Biome';
 
 export type DeMapThemeId =
@@ -36,9 +35,11 @@ export interface DeMapThemePalette {
 export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = {
     afrotropical_tropical: {
         id: 'afrotropical_tropical',
-        baseTerrain: 'des',
-        groundTiles: ['qs', 'pal', 'ds3', 'ds2', 'gr5'],
-        forestFloorTiles: ['des', 'pal', 'for'],
+        // 🔴 [2026-08-21 素材科学审查] 原 baseTerrain='des'（沙漠沙）+ groundTiles 混 qs/pal/ds2/ds3
+        //    （石英沙/棕榈沙/沙漠土）——非洲热带雨林（刚果盆地）是深色腐殖土密林，不是沙地（张冠李戴）。
+        baseTerrain: 'fo2',
+        groundTiles: ['fo2', 'gr3', 'gr7'],
+        forestFloorTiles: ['for', 'fo2'],
         // [2026-08-21 分类修正] 非洲热带雨林用雨林/丛林树；DRAGON_TREE（龙血树）是也门/索科特拉岩岛树，非非洲雨林
         trees: ['JUNGLE', 'RAINFOREST'],
         // flat 改雨林下层植被；原 CACTUS/ANIMAL_SKELETON/PLANT_DEAD 是沙漠/干地物，放雨林 = 张冠李戴
@@ -54,7 +55,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'ds3'],
         trees: ['MONKEY_PUZZLE'],
         flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ANIMAL_SKELETON'],
+        // 🔴 [2026-08-21 素材科学审查] ANIMAL_SKELETON（骸骨=沙漠/干地物）放南美温带（巴塔哥尼亚）→ ROCK3
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -64,8 +66,10 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['fo2', 'gr7', 'gr3', 'for'],
         forestFloorTiles: ['for', 'fo2'],
         trees: ['JUNGLE', 'RAINFOREST'],
-        flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ANIMAL_SKELETON'],
+        // 🔴 [2026-08-21 素材科学审查] 原 flat=WEED/FLOWER/SHRUB_GREEN（温带通用装饰）——亚马逊雨林
+        //    下层是蕨丛/雨林植物/藤蔓（与非洲雨林同模式）；solid 改 ROCK_JUNGLE（雨林岩）。
+        flatDecor: ['FERNPATCH', 'PLANT_RAINFOREST', 'UNDERBRUSH_RAINFOREST'],
+        solidDecor: ['ROCK_JUNGLE', 'ROCK1', 'ROCK_FORMATION1'],
         waterPlants: ['REEDS', 'MANGROVE', 'WATER_LILY'],
         beachTerrain: 'bc2',
     },
@@ -88,7 +92,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['gr6', 'grs', 'gr3'],
         forestFloorTiles: ['fo2', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO'],
-        flatDecor: ['SHRUB_GREEN', 'BUSH_GREEN', 'WEED'],
+        // 🔴 [2026-08-21 素材科学审查] 原 flat=SHRUB_GREEN/BUSH_GREEN/WEED（温带通用）——东南亚雨林/竹丛
+        //    下层是丛林蕨/藤丛（DE UNDERBRUSH_JUNGLE/PLANT_JUNGLE）。
+        flatDecor: ['UNDERBRUSH_JUNGLE', 'PLANT_JUNGLE', 'SHRUB_GREEN'],
         solidDecor: ['ROCK1', 'ROCK2', 'ROCK_JUNGLE'],
         waterPlants: ['REEDS', 'LUSH_BAMBOO', 'MANGROVE', 'WATER_LILY'],
         beachTerrain: 'bch',
@@ -129,8 +135,10 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['DEAD_TREE', 'PINE'],
         autumnTrees: ['DEAD_TREE', 'PINE', 'AUTUMN_OAK'],
         winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
-        flatDecor: ['SHRUB_GREEN', 'STUMP_GENERIC'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        // 🔴 [2026-08-21 素材科学审查] flat 的 STUMP_GENERIC（实体树桩）挪到 solid——平面装饰层放
+        //    枯植/干草更符合寒带针叶林（苔藓地衣/枯枝落叶，DE taiga 下层）
+        flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'GRASS_DRY_PATCH'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -142,8 +150,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['BUSH_TREE_A', 'OAK'],
         autumnTrees: ['BUSH_TREE_A', 'AUTUMN_OAK'],
         winterTrees: ['DEAD_TREE', 'SNOW_AUTUMN_OAK'],
-        flatDecor: ['FLOWER', 'STUMP_GENERIC', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        // 🔴 [2026-08-21 素材科学审查] STUMP 挪 solid；温带 flat = 野花/灌木/杂草（DE 温带下层）
+        flatDecor: ['FLOWER', 'BUSH_GREEN', 'WEED'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -154,15 +163,17 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'underbrush_leaves'],
         trees: ['OLIVE', 'ITALIAN_PINE'],
         winterTrees: ['OLIVE', 'ITALIAN_PINE'],
-        flatDecor: ['FLOWER', 'STUMP_GENERIC', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        // 🔴 [2026-08-21 素材科学审查] STUMP 挪 solid；地中海 flat = 花/灌木/枯植（地中海夏旱，枯植点缀）
+        flatDecor: ['FLOWER', 'SHRUB_GREEN', 'PLANT_DEAD'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'OLIVE', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
     australasian_temperate: {
         id: 'australasian_temperate',
         baseTerrain: 'gr7',
-        groundTiles: ['gr4', 'ds3', 'for', 'ds5'],
+        // 🔴 [2026-08-21 素材科学审查] 去 ds3/ds5（干旱土）——澳洲东南（悉尼/墨尔本）是湿润温带森林
+        groundTiles: ['gr4', 'gr7', 'for', 'gr6'],
         forestFloorTiles: ['for', 'underbrush_leaves'],
         // [2026-08-21 主人定「能套用就套用」] 原 BIRCH（桦树=北半球树，澳洲无）→ WAX_PALM（澳洲热带/亚热带棕榈，DE 无澳洲专属树，取最接近）
         trees: ['WAX_PALM'],
@@ -253,14 +264,11 @@ export function resolveDeMapTheme(
     lat: number,
     lng: number,
     biome: Biome,
-    region: RegionType,
     elev: number | null = null,
-    waterKind: 'sea' | 'lake' | 'none' | undefined = undefined,
+    waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined = undefined,
 ): DeMapThemePalette {
-    // 🔴 [2026-08-21 完善·地理带优先] RegionSystem.getRegion 用城市多边形包含判定，
-    //   粗多边形互相覆盖/漏覆盖（实测：武威→TIBET、大不里士/摩苏尔/拉合尔→CENTRAL_ASIA、
-    //   巴黎→LATIN、游离点→CENTRAL）。故分流以「经纬度地理带 + 海拔」为第一判据，
-    //   region 文化区仅作辅助（polygon 可靠时生效）。这才能满足「地区 × 海拔」两个维度的严格划分。
+    // 🔴 [2026-08-21 完善·气候纯按坐标] 分流完全由「经纬度坐标带 + 柯本 biome + 海拔」决定，
+    //    **不接收 region 文化区参数**——气候是自然边界，文化区是政治边界，二者解耦（主人定）。
 
     // 0. 澳洲大陆（lat < -10 才落澳洲；印尼爪哇/新几内亚是热带雨林，不能被澳洲主题劫持）
     if (lat < -10 && lng >= 100) return DE_MAP_THEMES.australasian_temperate;
@@ -272,20 +280,16 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.indomalayan_tropical;
     }
 
-    // 2. 岭南 / 越南 / 东南亚热带亚热带水乡（限定东亚-东南亚海域 lng 90~130、lat 0~24；
-    //    全世界低纬各归其主：撒哈拉/阿拉伯→沙漠、非洲稀树草原→serengeti、墨西哥→北美；
-    //    🔴 海拔过滤：云贵高原（lat 25+、elev 1900）被岭南 polygon 覆盖，但高海拔是温带不是热带水乡）
-    if ((region === 'LINGNAN' && (elev ?? 500) < 1500) || (lng > 90 && lng < 130 && lat > 0 && lat < 24)) {
+    // 2. 岭南 / 越南 / 东南亚热带亚热带水乡（纯坐标带 lng 90~130、lat 0~24；不依赖 region——
+    //    🔴 2026-08-21 气候按坐标划分：热带纬度(lat<24) + 东南亚经度 = 热带水乡，其余低纬各归其主）
+    if (lng > 90 && lng < 130 && lat > 0 && lat < 24) {
         return DE_MAP_THEMES.indomalayan_tropical;
     }
 
-    // 3. 青藏高原（区域 + 海拔双保险：region polygon 把河西武威误归 TIBET，用海拔排除；
-    //    🔴 阈值对齐大地图海拔染色（HillshadeWorker）：2500m = 高原冷灰绿起点（loessMid→gobiBrown）；
-    //    🔴🔴 [2026-08-21 修 bug] 必须 `elev !== null` 才启用海拔条件：原 `(elev ?? 4000) >= 2500`
-    //    在海拔采样失败（null）时默认 4000m，导致成都盆地(500m)/武威(1500m)被当青藏高原——
-    //    它们坐标恰在 lat 26-40/lng 78-105 带内。无海拔数据时宁可落温带（绿），不可误判高原（黄褐）。
-    //    拉萨 3650 ✓ / 武威 1500 ✗（→ 河西黄土带））
-    if (elev !== null && elev >= 2500 && (region === 'TIBET' || (lat > 26 && lat < 40 && lng > 78 && lng < 105))) {
+    // 3. 青藏高原（纯坐标带 + 海拔：lat 26~40、lng 78~105、elev≥2500——对齐大地图色阶 2500 高原起点；
+    //    🔴 2026-08-21 不依赖 region：region polygon 把河西武威误归 TIBET，纯坐标 + 海拔判定即可排除；
+    //    无海拔数据(null)不启用——成都盆地(500m)/武威(1500m)绝不当高原）
+    if (elev !== null && elev >= 2500 && lat > 26 && lat < 40 && lng > 78 && lng < 105) {
         return DE_MAP_THEMES.palaearctic_tibetan_plateau;
     }
 
@@ -311,13 +315,15 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.palaearctic_asia_steppe;
     }
 
-    // 7. 塞外蒙古草原（region STEPPE 或 蒙古高原带 lng 85~125、lat 42~55）
-    if (region === 'STEPPE' || (lng > 85 && lng < 125 && lat > 42 && lat < 55)) {
+    // 7. 塞外蒙古草原（纯坐标带 lng 85~125、lat 42~55；不依赖 region STEPPE——草原纬度带即草原）
+    if (lng > 85 && lng < 125 && lat > 42 && lat < 55) {
         return DE_MAP_THEMES.palaearctic_asia_steppe;
     }
 
-    // 8. 华北 / 晋北黄土高原（region NORTH 且海拔 ≥ 600 → 黄土高原；低地 → 华北温带）
-    if (region === 'NORTH') {
+    // 8. 华北 / 晋北黄土高原（纯坐标带 lat 34~42、lng 103~120 + 海拔：
+    //    🔴 2026-08-21 不依赖 region NORTH——华北带 = 黄河中下游平原/黄土高原坐标；
+    //    elev≥600（黄土高原核心）→ 黄土草原；低地（华北平原）→ 亚洲温带）
+    if (lat > 34 && lat < 42 && lng > 103 && lng < 120) {
         if (elev !== null && elev >= 600) return DE_MAP_THEMES.palaearctic_asia_steppe;
         return DE_MAP_THEMES.palaearctic_asia_temperate;
     }
@@ -327,9 +333,12 @@ export function resolveDeMapTheme(
         if (lng >= 55 && lat < 30) return DE_MAP_THEMES.indomalayan_tropical;
         return DE_MAP_THEMES.serengeti;
     }
-    // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 低洼湿地（DE Swamp biome） / 寒带
+    // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 温带半干旱草原 / 低洼湿地（DE Swamp biome） / 寒带
     if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
     if (biome === 'mediterranean') return DE_MAP_THEMES.palaearctic_europe_mediterranean;
+    // 🔴 [2026-08-21 全面检查·补 gap] cold_steppe（温带半干旱草原：BSk/Dsa/Dsb——中亚草原/北美大平原/
+    //    马德里高原/巴塔哥尼亚）→ 草原主题。原落默认 europe_temperate（温带绿），马德里半干旱高原出绿草地（违和）。
+    if (biome === 'cold_steppe') return DE_MAP_THEMES.palaearctic_asia_steppe;
     // 🔴 [2026-08-21 补全·Swamp] 内陆水域（lake）+ 低地（<200m）→ 沼泽主题，优先于寒带针叶林：
     //   东北松嫩/三江湿地（boreal）、北欧波罗的海沿岸、中欧低地、洞庭湖边——低洼湿地就是沼泽观感。
     //   只认 lake 不认 sea——海边（东京湾/大连）是海岸战场不是沼泽。
@@ -345,17 +354,10 @@ export function resolveDeMapTheme(
         return lat < 0 ? DE_MAP_THEMES.neotropical_temperate : DE_MAP_THEMES.nearctic_temperate;
     }
 
-    // 12. 欧洲文化区（region polygon 可靠时生效）
-    if (region === 'SLAVIC') return DE_MAP_THEMES.palaearctic_europe_taiga;
-    if (region === 'GERMANIC') return DE_MAP_THEMES.palaearctic_europe_temperate;
-    if (region === 'LATIN') {
-        // 🔴 [2026-08-21 完善] 巴黎被 polygon 归 LATIN（罗马区），但巴黎是温带海洋性不是地中海气候：
-        //    LATIN 区按纬度再分流——lat ≥ 45（法国北部/米兰）→ 温带；< 45（西班牙/意大利南部）→ 地中海
-        if (lat >= 45) return DE_MAP_THEMES.palaearctic_europe_temperate;
-        return DE_MAP_THEMES.palaearctic_europe_mediterranean;
-    }
-
-    // 12.5 → 已并入第 10 步（沼泽优先于寒带；desert/mediterranean 先排除）
+    // 12. 欧洲（🔴 2026-08-21 气候按坐标划分：不再依赖 region SLAVIC/GERMANIC/LATIN——
+    //     欧洲气候由柯本 biome 决定：地中海(Csa/Csb)已在第 10 步分流；寒带(Dfc)→taiga 已在第 10 步；
+    //     温带海洋/大陆(Cfb/Dfb)落默认 europe_temperate。巴黎 Cfb→温带 ✓、罗马 Csa→地中海 ✓、
+    //     莫斯科 Dfb→温带（阔叶林带，比原 taiga 更贴实）、西伯利亚 Dfc→taiga ✓）
 
     // 13. 东亚（日本/朝鲜/华东华北 lng ≥ 60）→ 亚洲温带
     if (lng >= 60) return DE_MAP_THEMES.palaearctic_asia_temperate;

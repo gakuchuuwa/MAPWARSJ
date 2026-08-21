@@ -10,6 +10,11 @@
  */
 import { GameConfig } from '../config/GameConfig';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
+import {
+    normalizeLongitude,
+    shortestLongitudeDelta,
+    unwrapLongitudePath,
+} from '../utils/GeoLongitude';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { smoothRoad } from '../utils/GeometryUtils';
 import { GridSystem } from '../systems/GridSystem';
@@ -249,7 +254,7 @@ export class RoadRegistry {
                 coords[coords.length - 1] = [toNode.lng, toNode.lat];
             }
 
-            const smoothedCoords = smoothRoad(coords, 3);
+            const smoothedCoords = smoothRoad(unwrapLongitudePath(coords), 3);
             const weight = this.calculatePathLength(smoothedCoords);
 
             this.addEdge({
@@ -823,7 +828,7 @@ export class RoadRegistry {
             const edges = this.adjacencyList.get(id);
             if (!edges || edges.length === 0) continue;
             const dLat = node.lat - lat;
-            const dLng = (node.lng - lng) * Math.cos(lat * Math.PI / 180);
+            const dLng = shortestLongitudeDelta(lng, node.lng) * Math.cos(lat * Math.PI / 180);
             const dist = Math.sqrt(dLat * dLat + dLng * dLng);
             if (dist < minDist && dist < maxDistDeg) {
                 minDist = dist;
@@ -848,7 +853,7 @@ export class RoadRegistry {
     private haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
         const R = 6371; // km
         const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const dLon = shortestLongitudeDelta(lon1, lon2) * Math.PI / 180;
         const a = Math.sin(dLat / 2) ** 2 +
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
             Math.sin(dLon / 2) ** 2;
@@ -932,15 +937,16 @@ export class RoadRegistry {
                 const p2 = { lat: coords[i + 1][1], lng: coords[i + 1][0] };
 
                 // Interpolate
-                const dist = Math.sqrt(Math.pow(p1.lat - p2.lat, 2) + Math.pow(p1.lng - p2.lng, 2));
+                const dLng = shortestLongitudeDelta(p1.lng, p2.lng);
+                const dist = Math.sqrt(Math.pow(p1.lat - p2.lat, 2) + dLng * dLng);
                 const steps = Math.ceil(dist / 0.05); // 0.05 deg step (approx 1/3 hex radius)
 
                 for (let s = 0; s <= steps; s++) {
                     const t = s / steps;
                     const lat = p1.lat + (p2.lat - p1.lat) * t;
-                    const lng = p1.lng + (p2.lng - p1.lng) * t;
+                    const lng = p1.lng + dLng * t;
 
-                    const hex = GridSystem.latLngToAxial(lat, lng);
+                    const hex = GridSystem.latLngToAxial(lat, normalizeLongitude(lng));
                     const key = `${hex.q},${hex.r}`;
                     this.cachedVectorHexes.add(key);
 

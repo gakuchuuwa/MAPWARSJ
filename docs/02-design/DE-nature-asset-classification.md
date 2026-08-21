@@ -167,6 +167,21 @@ SKELETON（人骨）、ANIMAL_SKELETON（兽骨）、GRAVES（坟墓）、BARREL
 - `npx tsx --import ./tools/sim-preload.mjs scratch/verify_theme_regions.mts`：34 个真实坐标点全过
   （塞伦盖蒂/撒哈拉/也门/大不里士/摩苏尔/马什哈德/贝鲁特/拉合尔/太原/拉萨/武威/乌兰巴托/广州/曼谷/
   东京/北京/巴黎/米兰/罗马/悉尼/雅加达/莫斯科/亚马逊/金沙萨/加尔各答/云贵高原/洞庭湖/松嫩湿地/东京湾 等）。
+- `scratch/verify_global_sampling.mts`：**33 个全球坐标点全过**（六大洲：伦敦/斯德哥尔摩/马德里/基辅/纽约/
+  洛杉矶/墨西哥城/温哥华/圣保罗/利马/布宜诺斯艾利斯/基多/悉尼/墨尔本/珀斯/奥克兰/达尔文/开罗/拉各斯/
+  内罗毕/开普敦/摩加迪沙/阿尔及尔/上海/曼谷/新德里/雅加达/孟买/贝鲁特/伊斯坦布尔/乌兰巴托/雅典）——
+  **任何坐标都能分到合理主题，全球开放保障**。
+- `scratch/verify_elevation_consistency.mts`：18 点海拔一致性全过。
+- `scratch/verify_desert_regions.mts`：129 干旱区据点 0 错配。
+
+## 2026-08-21 全面检查结论（region 文化区彻底退出气候判定）
+
+- `resolveDeMapTheme` **签名删除 region 参数**（连带删 2 处调用点的 getRegion import）——
+  气候 = f(坐标, 海拔, 柯本 biome)，与文化区完全解耦（主人定「纯按坐标划分」）。
+- 补 gap：**cold_steppe（温带半干旱草原 BSk/Dsa/Dsb）→ asia_steppe 草原主题**（原落默认温带绿，
+  马德里半干旱高原出绿草地违和——全球抽样实测发现）。
+- 全球抽样发现并修正的期望认知：拉各斯/摩加迪沙（Aw/BSh）→ serengeti、内罗毕/基多（Csb 高原地中海）
+  → mediterranean、迈阿密（Am）→ neotropical_tropical、斯德哥尔摩（Dfb）→ 温带——均按柯本数据科学归类。
 
 ## Swamp 沼泽主题补全（2026-08-21，DE biome 全 7 覆盖）
 
@@ -180,9 +195,7 @@ DE 的 7 个气候 biome（Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppe
 - 阈值与 buildLake 的沼泽判定（elev<200）统一，避免「湖是沼泽、主题却不是」割裂。
 - 受益战场：东北松嫩/三江湿地、北欧波罗的海沿岸、中欧低地、洞庭湖/鄱阳湖边。
 
-### 季节与时间配色（DE 19 套 colorcorrection 对照）
-
-| DE 配色 | 13 场景 | 状态 |
+### 季节与时间配色（DE 19 套 colorcorrection 对照）| DE 配色 | 13 场景 | 状态 |
 |---------|---------|------|
 | Spring/Summer/Autumn/Winter | season 0/1/2（绿/秋/雪） | ✅ 已全覆盖（季节唯一权威=游戏日历，主人 08-20 定） |
 | Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppes | 对应主题 | ✅ 7/7 全覆盖 |

@@ -7,6 +7,7 @@ import {
     minDistanceToPolyline,
 } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { interpolateLongitudeShortest } from '../utils/GeoLongitude';
 
 export interface MarchCityAccess {
     getCity(id: string): City | undefined;
@@ -117,7 +118,7 @@ export function trimPathFromEnd(path: LatLng[], distanceToTrim: number): LatLng[
             const p2 = path[i + 1];
             newPath.push({
                 lat: p1.lat + (p2.lat - p1.lat) * ratio,
-                lng: p1.lng + (p2.lng - p1.lng) * ratio,
+                lng: interpolateLongitudeShortest(p1.lng, p2.lng, ratio),
             });
             break;
         }
