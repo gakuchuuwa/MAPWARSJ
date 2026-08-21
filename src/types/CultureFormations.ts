@@ -151,8 +151,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HEXI:         'echelon',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 
-    // 印度（鹤翼 2+4+3：战象前锋 + 精锐软剑士主力 + 长弓后排）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
-    INDIA:        'crane_wing',
+    // 印度（鱼鳞 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
+    INDIA:        'fish_scale',
     BERBER:       'triangle',
 };
 
@@ -1286,16 +1286,16 @@ export const LATIN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 19. 印度 桑纳亚战象+精锐软剑士+帕提尤达长弓（鹤翼阵 2+4+3：战象前锋 + 精锐软剑士主力 + 长弓后排） */
+/** 19. 印度 软剑士+精锐软剑士+桑纳亚战象（鱼鳞阵 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵） */
 export const INDIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'sannahya', count: 2 },              // Row 0 前锋破坚 = 桑纳亚战象 2头
+            { type: 'urumi_swordsman', count: 3 },       // Row 0 前卫抗线 = 软剑士 3人
             { type: 'elite_urumi_swordsman', count: 4 }, // Row 1 中军主力 = 精锐软剑士 4人
-            { type: 'pattiyoda_longbowman', count: 3 },  // Row 2 后排掩护 = 帕提尤达长弓 3人
+            { type: 'sannahya', count: 2 },              // Row 2 尾收压阵 = 桑纳亚战象 2头（象兵只许 2 档）
         ]
     }
 ];

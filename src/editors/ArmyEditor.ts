@@ -54,6 +54,8 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SLAVIC:       'luosi',       // 斯拉夫-基辅 → 罗斯
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
+    INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
+    BERBER:       'mulabite',    // 柏柏尔-马拉喀什 → 穆拉比特
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

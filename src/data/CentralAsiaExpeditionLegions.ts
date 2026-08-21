@@ -75,14 +75,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     ailan: { name: '埃兰战车', tier: 3 },
     kesa: { name: '可萨弓骑', tier: 3 },
     ansxi: { name: '尼萨弓骑', tier: 3 },
-    xike: { name: '卡尔萨战士', tier: 2 },
-    deli: { name: '德里苏丹骑', tier: 3 },
-    mowoer: { name: '莫卧铁骑', tier: 2 },
-    jieri: { name: '戒日象军', tier: 3 },
-    jiashi_d: { name: '迦尸象兵', tier: 4 },
-    mojietuo: { name: '摩揭陀象军', tier: 3 },
-    boluo: { name: '波罗象军', tier: 3 },
-    sumo: { name: '耽摩水师', tier: 4 },
     xierwan: { name: '希尔万骑卫', tier: 4 },
     // ── 2026-07-30 迁出：28 支已随首都归入 WEST_ASIA 区，唯一权威见
     //    WestAsiaExpeditionLegions.ts（原条目与西亚版番号/tier 冲突，靠展开顺序静默覆盖，故清出）──

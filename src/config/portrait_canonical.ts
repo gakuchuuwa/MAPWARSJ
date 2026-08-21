@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/21 13:07:55（共 45 条）
+ * 生成时间：2026/8/21 20:21:03（共 45 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -10,9 +10,9 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/CENTRAL/qian_songjingyang.png": "/assets/CENTRAL/__多余__CENTRAL_02.png",
     "/assets/JIANGNAN/__多余__JIANGNAN_01.png": "/assets/CENTRAL/ruzhou_sunjian.png",
     "/assets/WESTERN/__多余__WESTERN_04.png": "/assets/CENTRAL_ASIA/hali_gedaerzi.png",
-    "/assets/india/__多余__india_06.png": "/assets/CENTRAL_ASIA/safawei_d_abasi.png",
+    "/assets/INDIA/__多余__india_06.png": "/assets/CENTRAL_ASIA/safawei_d_abasi.png",
     "/assets/WESTERN/__多余__WESTERN_02.png": "/assets/CENTRAL_ASIA/wuhu_dukake.png",
-    "/assets/india/__多余__india_07.png": "/assets/CENTRAL_ASIA/xisi_yakubu.png",
+    "/assets/INDIA/__多余__india_07.png": "/assets/CENTRAL_ASIA/xisi_yakubu.png",
     "/assets/TIBET/__多余__TIBET_04.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
     "/assets/WESTERN/__多余__WESTERN_01.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png",
     "/assets/DIANQIAN/luchuan_sirenfa.png": "/assets/DIANQIAN/1af8a43a-ff22-45e8-bbdc-0b00319c7207.png",

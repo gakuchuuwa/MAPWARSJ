@@ -2570,6 +2570,8 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     SLAVIC: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },
     GERMANIC: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },
     LATIN: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },
+    INDIA: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },
+    BERBER: { file: 'BerberExpeditionLegions.ts', varName: 'BERBER_EXPEDITION_ELITE_LEGIONS' },
     JAPAN: { file: 'JapanExpeditionLegions.ts', varName: 'JAPAN_EXPEDITION_ELITE_LEGIONS' },
     KOREA: { file: 'KoreaExpeditionLegions.ts', varName: 'KOREA_EXPEDITION_ELITE_LEGIONS' },
     NORTHEAST: { file: 'NortheastExpeditionLegions.ts', varName: 'NORTHEAST_EXPEDITION_ELITE_LEGIONS' },
