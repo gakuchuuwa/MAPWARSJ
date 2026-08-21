@@ -46,7 +46,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['JUNGLE', 'RAINFOREST'],
         // flat 改雨林下层植被；原 CACTUS/ANIMAL_SKELETON/PLANT_DEAD 是沙漠/干地物，放雨林 = 张冠李戴
         flatDecor: ['FERNPATCH', 'PLANT_RAINFOREST', 'UNDERBRUSH_RAINFOREST'],
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
         waterPlants: ['REEDS', 'MANGROVE', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -58,7 +58,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['MONKEY_PUZZLE'],
         flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
         // 🔴 [2026-08-21 素材科学审查] ANIMAL_SKELETON（骸骨=沙漠/干地物）放南美温带（巴塔哥尼亚）→ ROCK3
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        solidDecor: ['ROCK1', 'ROCK2'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -71,7 +71,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材科学审查] 原 flat=WEED/FLOWER/SHRUB_GREEN（温带通用装饰）——亚马逊雨林
         //    下层是蕨丛/雨林植物/藤蔓（与非洲雨林同模式）；solid 改 ROCK_JUNGLE（雨林岩）。
         flatDecor: ['FERNPATCH', 'PLANT_RAINFOREST', 'UNDERBRUSH_RAINFOREST'],
-        solidDecor: ['ROCK_JUNGLE', 'ROCK1', 'ROCK_FORMATION1'],
+        solidDecor: ['ROCK_JUNGLE', 'ROCK1'],
         waterPlants: ['REEDS', 'MANGROVE', 'WATER_LILY'],
         beachTerrain: 'bc2',
     },
@@ -84,7 +84,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         autumnTrees: ['PINE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['BUSH_GREEN', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        solidDecor: ['ROCK1', 'ROCK2'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -116,11 +116,11 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // [2026-08-21 分类修正] 亚洲温带主树 = 枫树/松；BUSH_TREE_B 是灌木树（下层植被），当主树 = 张冠李戴
         trees: ['ASIAN_MAPLE_GREEN', 'ASIAN_PINE'],
         autumnTrees: ['ASIAN_MAPLE_AUTUMN'],
-        winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
+        winterTrees: ['SNOW_PINE', 'ASIAN_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
         // 🔴 [2026-08-21 素材全覆盖] 秋季枫叶落叶（DE FALLEN_LEAVES_MAPLE）
         autumnFlatDecor: ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FLOWER', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        solidDecor: ['ROCK1', 'ROCK2'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -145,11 +145,11 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'snf', 'underbrush_leaves'],
         trees: ['DEAD_TREE', 'PINE'],
         autumnTrees: ['DEAD_TREE', 'PINE', 'AUTUMN_OAK'],
-        winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
+        winterTrees: ['SNOW_PINE', 'ASIAN_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
         // 🔴 [2026-08-21 素材科学审查] flat 的 STUMP_GENERIC（实体树桩）挪到 solid——平面装饰层放
         //    枯植/干草更符合寒带针叶林（苔藓地衣/枯枝落叶，DE taiga 下层）
         flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'GRASS_DRY_PATCH'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -162,12 +162,12 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         forestFloorTiles: ['for', 'underbrush_leaves'],
         trees: ['BUSH_TREE_A', 'OAK'],
         autumnTrees: ['BUSH_TREE_A', 'AUTUMN_OAK'],
-        winterTrees: ['DEAD_TREE', 'SNOW_AUTUMN_OAK'],
+        winterTrees: ['SNOW_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
         // 🔴 [2026-08-21 素材科学审查] STUMP 挪 solid；温带 flat = 野花/灌木/杂草（DE 温带下层）
         flatDecor: ['FLOWER', 'BUSH_GREEN', 'WEED'],
         // 🔴 [2026-08-21 素材全覆盖] 秋季橡树落叶（DE FALLEN_LEAVES_MAPLE 泛化为欧洲秋叶）
         autumnFlatDecor: ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FLOWER', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -183,7 +183,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材全覆盖] 秋季桃叶落叶（DE FALLEN_LEAVES_PEACH——地中海桃树）
         autumnFlatDecor: ['FALLEN_LEAVES_PEACH', 'FLOWER', 'SHRUB_GREEN'],
         // 🔴 [2026-08-21 素材全覆盖] 地中海商港木桶/地毯（腓尼基/威尼斯商栈）+ 海滩 bc4
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC', 'BARRELS', 'RUGS'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC', 'BARRELS', 'RUGS'],
         waterPlants: ['REEDS', 'OLIVE', 'WATER_LILY'],
         beachTerrain: 'bc4',
     },
@@ -196,7 +196,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // [2026-08-21 主人定「能套用就套用」] 原 BIRCH（桦树=北半球树，澳洲无）→ WAX_PALM（澳洲热带/亚热带棕榈，DE 无澳洲专属树，取最接近）
         trees: ['WAX_PALM'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        solidDecor: ['ROCK1', 'ROCK2'],
         waterPlants: ['REEDS', 'MANGROVE', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -222,10 +222,10 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // [2026-08-21 完善] 伊朗高原无棕榈（棕榈是波斯湾低地绿洲植物）→ PINE（厄尔布尔士/扎格罗斯山松林）替代
         trees: ['OLIVE', 'DEAD_TREE', 'PINE'],
         autumnTrees: ['OLIVE', 'DEAD_TREE'],
-        winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
+        winterTrees: ['SNOW_PINE', 'ASIAN_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地 + 商旅地毯/古墓（高原丝路）
         flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN', 'DECAL_CRACK'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE', 'RUGS', 'GRAVES'],
+        solidDecor: ['ROCK1', 'ROCK2', 'RUGS', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -240,7 +240,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'PLANT_DEAD'],
         // 🔴 [2026-08-21 素材全覆盖] 古战场遗迹（草原石墓/骸骨）——游牧战场
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'GRAVES', 'SKELETON'],
+        solidDecor: ['ROCK1', 'ROCK2', 'GRAVES', 'SKELETON'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -254,7 +254,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'DECAL_ICE'],
         // 🔴 [2026-08-21 素材全覆盖] 高原古墓（石墓）——吐蕃/古格战场
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE', 'GRAVES'],
+        solidDecor: ['ROCK1', 'ROCK2', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -429,14 +429,15 @@ export function terrainForTheme(
         }
     }
 
-    // 5. 冬季合法降雪（🔴 [2026-08-21 修·净州塞截图] 原全换纯雪 → 战场 100% 白、见不到冻土。
-    //    DE 冬季是「雪 + 冻土/干草/砾石」混合：苔原=冻土底色+雪斑、塞外草原=干草+雪斑、
-    //    针叶林=深雪+冻土斑。故 baseTerrain 按 biome 定底色，雪斑由 groundTiles 变化层混入）
+    // 5. 冬季合法降雪（🔴 [2026-08-21 美化·海滨与温带雪原]
+    //    DE 经典冬季是「冷调湿冻土/枯草 + 大面积厚雪斑块 + 湿润冷色海滩」：
+    //    底色为冷灰褐林地冻土（pm1）或枯草（gr4），40%~50% 覆以厚积雪斑块（sn2/snf/sno），
+    //    海滩自动切换为潮汐冲刷的湿润暗色沙滩（beach_wet），杜绝 100% 刺眼死白与干黄沙硬切）
     if (season === 2 && isSnowArea(lat, elev, biome)) {
         if (biome === 'tundra_snow') return 'pm1';      // 苔原冻土底色（灰褐苔原土）
-        if (biome === 'boreal') return 'sno';           // 针叶林深雪
+        if (biome === 'boreal') return 'sno';           // 极北深雪
         if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'gr4'; // 塞外/温带草原：枯草底色
-        return 'sn2';                                   // 温带林浅雪
+        return 'pm1';                                   // 温带林海/沿海平原：冷调林地湿冻土底色
     }
 
     // 6. 基础地表
@@ -511,4 +512,17 @@ export function decorForTheme(
         flat: theme.flatDecor,
         solid: theme.solidDecor,
     };
+}
+
+export function beachTerrainForTheme(
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
+): string {
+    if (season === 2 && isSnowArea(lat, elev, biome)) {
+        return 'beach_wet'; // 冬季潮汐冲刷湿润暗色海滩，绝不用夏日干黄沙
+    }
+    return theme.beachTerrain;
 }

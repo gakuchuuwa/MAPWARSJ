@@ -26,6 +26,7 @@ import {
     groundTilesForTheme,
     forestFloorTilesForTheme,
     decorForTheme,
+    beachTerrainForTheme,
     isSnowArea,
     resolveDeMapTheme,
     terrainForTheme,
@@ -86,7 +87,6 @@ export interface EnvironmentObjectPlan {
     /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
     /** 🔴 [2026-08-21 DE ROCK_GROUP] 成组实体装饰（岩石堆）同组标记——enforceAllObjectSpacing 对同组豁免间距 */
-    spacingGroup?: number;
     /** 连续接触这么多秒后只关闭阻挡；图像仍作为 world 对象保留。 */
     obstructionReleaseAfterSec?: number;
     flip: boolean;
@@ -182,8 +182,9 @@ const DE_HALF_TILE_OBJECTS = new Set([
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW', 'ROCK_FORMATION1', 'ROCK_FORMATION2',
     'ROCK_LIMESTONE', 'ROCK_JUNGLE', 'ROCK1', 'ROCK2', 'ROCK3',
-    // 🔴 [2026-08-21 素材全覆盖] 战场遗迹（木桶/地毯=丝路商栈、墓碑/骸骨=古战场）
-    'BARRELS', 'RUGS', 'GRAVES', 'SKELETON',
+    // 🔴 [2026-08-21 素材全覆盖] 战场遗迹（木桶/墓碑/骸骨）。地毯 RUGS 已移出此集合：
+    //    主人 2026-08-21 定「地毯只贴图」——RUGS 不再挂 HALF_TILE_OBSTRUCTION，不参与碰撞/阻挡，仅作地面装饰。
+    'BARRELS', 'GRAVES', 'SKELETON',
     'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_BAOBAB', 'FELLED_LUSH_BAMBOO',
     'STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_BAOBAB', 'STUMP_LUSH_BAMBOO',
     'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D',
@@ -209,11 +210,11 @@ function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
 }
 
 function getAssetRepulsionRadius(asset: string): number {
-    if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF') || asset.startsWith('MOUNTAIN_')) return 140;
-    if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 90;
-    if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 75;
-    if (DE_TREE_OBJECTS.has(asset)) return 55;
-    return 35; // 平面地饰 / 草花 / 冰面
+    if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF') || asset.startsWith('MOUNTAIN_')) return 150;
+    if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 105;
+    if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 85;
+    if (DE_TREE_OBJECTS.has(asset)) return 65;
+    return 40; // 平面地饰 / 草花 / 冰面
 }
 
 function isObjectOverlapping(
@@ -222,14 +223,11 @@ function isObjectOverlapping(
     asset: string,
     objects: EnvironmentObjectPlan[],
     ignoreIdx = -1,
-    ignoreGroup?: number,
 ): boolean {
     const r1 = getAssetRepulsionRadius(asset);
     for (let i = 0; i < objects.length; i++) {
         if (i === ignoreIdx) continue;
         const other = objects[i];
-        // 🔴 [2026-08-21 DE ROCK_GROUP] 同组块豁免间距（岩石堆相邻成簇）
-        if (ignoreGroup !== undefined && other.spacingGroup === ignoreGroup) continue;
         const r2 = getAssetRepulsionRadius(other.asset);
         const minDist = r1 + r2;
         const dx = x - other.x;
@@ -251,7 +249,7 @@ function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
     const accepted: EnvironmentObjectPlan[] = [];
 
     for (const obj of sorted) {
-        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted, -1, obj.spacingGroup)) {
+        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted, -1)) {
             accepted.push(obj);
         }
     }
@@ -453,7 +451,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         if (waterKind === 'sea') {
             // 🔴 每场只抽一次 sideLeft：海岸地形 + 浅滩物件共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
-            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!);
+            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!, season, input.lat, elev, biome);
             for (let i = 0; i < 4; i++) {
                 const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
                 const oxPos = sideLeft ? VW * 0.12 + rng.next() * VW * 0.08 : VW * 0.88 - rng.next() * VW * 0.08;
@@ -462,7 +460,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         } else if (waterKind === 'lake') {
             isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
         } else if (waterKind === 'river') {
-            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!);
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
         }
 
         // 水面保持零高程：丘陵只属于陆地，禁止高程光影或抬升纹理切进河流/湖泊。
@@ -589,6 +587,10 @@ function buildCoastline(
     patches: TerrainPatchPlan[],
     occupied: Set<string>,
     theme: DeMapThemePalette,
+    season: 0 | 1 | 2 = 0,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
 ): WaterChecker {
     // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
     const controls: Array<{ x: number; y: number }> = [];
@@ -658,7 +660,8 @@ function buildCoastline(
     // 1. 统一清透浅滩水体（DE 标准纯净浅水，不再多层分段条纹）
     patches.push({ tile: 'sh2', cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
     // 2. 柔和沙滩过渡边缘（DE 标准岸线衔接）
-    patches.push({ tile: theme.beachTerrain, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.9, category: 'shore' });
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.92, category: 'shore' });
 
     // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
@@ -678,6 +681,10 @@ function buildRiver(
     objects: EnvironmentObjectPlan[],
     occupied: Set<string>,
     theme: DeMapThemePalette,
+    season: 0 | 1 | 2 = 0,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
 ): WaterChecker {
     // 中央中轴蜿蜒河流（从上方贯穿至下方，将战场自然分为左岸攻方与右岸守方）
     const controls: Array<{ x: number; y: number }> = [];
@@ -758,8 +765,9 @@ function buildRiver(
     ];
 
     // 1. 两岸沙滩与湿润河岸过渡
-    patches.push({ tile: theme.beachTerrain, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
-    patches.push({ tile: theme.beachTerrain, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    patches.push({ tile: actualBeachTile, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
+    patches.push({ tile: actualBeachTile, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
 
     // 2. 中央清澈流水主河道（wtr 经典清澈蓝水，隔河对峙分界线）
     patches.push({ tile: 'wtr', cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
@@ -866,13 +874,16 @@ function buildGroundVariation(
     const variation = groundTilesForTheme(theme, biome, season, lat, elev);
     // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
-    const isWinterMixed = season === 2 && variation.some((t) => t.startsWith('pm') || t === 'gr4' || t === 'ds5');
-    const patchCount = isWinterMixed ? 9 : 5;
+    const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
+    const patchCount = isWinterSnow ? 12 : 6;
     for (let i = 0; i < patchCount; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        const clump = isWinterMixed ? 6 + rng.int(0, 6) : 4 + rng.int(0, 5);
-        patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha: isWinterMixed ? 0.4 : 0.22, category: 'ground-variation' });
+        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 5 + rng.int(0, 6);
+        const alpha = isWinterSnow
+            ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
+            : 0.25;
+        patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
     }
 }
 
@@ -946,28 +957,25 @@ function buildVegetation(
         return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
             || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
     });
-    // 中央战斗区留空（攻方左、守方右，中央交火区不长树，主人 2026-08-20 检查植被时定）
-    const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
-    const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
-    const inBattleCenter = (x: number, y: number): boolean => {
-        // 如果是中轴河流对峙战场，中央河流及两岸交战开阔带（38%~62%）全线保持开阔，严禁大石巨木阻挡
-        if (waterKind === 'river') {
-            return x > VW * 0.38 && x < VW * 0.62;
-        }
-        return x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    // 🔴 [2026-08-21 铁律·行军与交火主走廊 100% 净空]
+    // 两军布阵（左军 0.16~0.34，右军 0.66~0.84）与中间冲锋交战走廊（0.34~0.66）全线净空，
+    // 严禁在部队行军结阵道路上放置阻挡性大石头、树桩或大树！
+    // 实体障碍物（岩石/树林/悬崖）严格只允许点缀在战场四角与最外围边缘（X < 15% 或 X > 85%，或 Y < 10% 或 Y > 90%）。
+    const inArmyCorridor = (x: number, y: number): boolean => {
+        return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
     };
+
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
         let cx = 0, cy = 0;
         for (let a = 0; a < 40; a++) {
-            cx = VW * (0.15 + rng.next() * 0.7);
-            cy = VH * (0.15 + rng.next() * 0.7);
-            if (!isWater(cx, cy) && !inBattleCenter(cx, cy)) break;
+            cx = VW * (0.05 + rng.next() * 0.90);
+            cy = VH * (0.05 + rng.next() * 0.90);
+            if (!isWater(cx, cy) && !inArmyCorridor(cx, cy)) break;
         }
-        const radius = 60 + rng.next() * 70;
+        const radius = 50 + rng.next() * 60;
         const n = Math.min(perCluster, treeCount - placed);
         for (let k = 0; k < n; k++) {
-            // 🔴 Box-Muller 高斯半径无上界会越界 → 越界重新采样（非 clamp，避免树堆成边缘直线）
             let tx = 0, ty = 0;
             let found = false;
             for (let attempt = 0; attempt < 80; attempt++) {
@@ -976,7 +984,7 @@ function buildVegetation(
                 const ang = u2 * Math.PI * 2;
                 const sx = cx + r * Math.cos(ang);
                 const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inBattleCenter(sx, sy) && !isObjectOverlapping(sx, sy, 'PINE', objects)) {
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inArmyCorridor(sx, sy) && !isObjectOverlapping(sx, sy, 'PINE', objects)) {
                     tx = sx;
                     ty = sy;
                     found = true;
@@ -984,7 +992,6 @@ function buildVegetation(
                 }
             }
             if (!found) continue;
-            // 主导树种为主、次树点缀（DE 式）
             const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
             objects.push({ asset, x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             treePositions.push({ x: tx, y: ty });
@@ -992,37 +999,29 @@ function buildVegetation(
         }
     }
 
-    // 地面装饰（DE 模式：平面装饰散点 + 实体装饰成组——DE ROCK_GROUP 岩石/树桩/遗迹堆 2~3 块相邻）
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
-    // ── 平面装饰（草/花/灌木/贴花/落叶）：稀疏散点 ──
-    const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
+    // ── 平面装饰（草/花/小杂草/地表贴花）：无体积碰撞，散点自然点缀 ──
+    const decorCount = 8 + rng.int(0, 8);
     for (let i = 0; i < decorCount; i++) {
         const asset = rng.pick(themeDecor.flat);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
         if (p) objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
-    // ── 实体装饰（岩石/树桩/墓碑/木桶/骸骨）：DE ROCK_GROUP 成堆（2~3 组 × 每组 2~3 块相邻）──
-    const solidGroupCount = 2 + rng.int(0, 2);
-    for (let g = 0; g < solidGroupCount; g++) {
-        const center = sampleLandPos(VW, VH, rng, isWater, undefined, objects, inBattleCenter);
-        if (!center) continue;
-        const n = 2 + rng.int(0, 2); // 每组 2~3 块
-        for (let k = 0; k < n; k++) {
-            let placed = false;
-            for (let a = 0; a < 30; a++) {
-                // 组内 40~90px 椭圆散布（iso 压扁 y）——岩石堆相邻成簇（DE ROCK_GROUP）
-                const ang = rng.next() * Math.PI * 2;
-                const dist = 40 + rng.next() * 50;
-                const sx = center.x + Math.cos(ang) * dist;
-                const sy = center.y + Math.sin(ang) * dist * 0.5;
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !inBattleCenter(sx, sy)) {
-                    const asset = rng.pick(themeDecor.solid);
-                    // spacingGroup 标记同组：enforceAllObjectSpacing 对同组块豁免间距（岩石堆相邻成簇）
-                    objects.push({ asset, x: sx, y: sy, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999), spacingGroup: g });
-                    placed = true;
-                    break;
-                }
-            }
+    // ── 实体装饰（岩石/树桩/遗迹）：独立点缀在边缘与四角，绝对不挡路 ──
+    const solidDecorCount = 2 + rng.int(0, 2); // 仅点缀 2~3 块独立单石
+    for (let i = 0; i < solidDecorCount; i++) {
+        const asset = rng.pick(themeDecor.solid);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+        if (p) {
+            objects.push({
+                asset,
+                x: p.x,
+                y: p.y,
+                layer: 'world',
+                z: 0,
+                flip: rng.chance(0.5),
+                frame: rng.int(0, 99999),
+            });
         }
     }
 
@@ -1046,20 +1045,14 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     } else {
         resAssets = ['MINE_STONE'];
     }
-    const resCount = 2 + rng.int(0, 3);
-    const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
-    const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
-    const inBattleCenter = (x: number, y: number): boolean => {
-        // 如果是中轴河流对峙战场，中央河流及两岸交战开阔带（38%~62%）全线保持开阔，严禁大石巨木阻挡
-        if (waterKind === 'river') {
-            return x > VW * 0.38 && x < VW * 0.62;
-        }
-        return x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    const resCount = 2 + rng.int(0, 2);
+    const inArmyCorridor = (x: number, y: number): boolean => {
+        return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
     };
 
     for (let i = 0; i < resCount; i++) {
         const asset = rng.pick(resAssets);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
         if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }

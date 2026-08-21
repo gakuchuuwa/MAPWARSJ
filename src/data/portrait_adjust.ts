@@ -283,7 +283,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/DIANQIAN/jingdong_taohong.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 1,
             "offsetY": -27
         },
