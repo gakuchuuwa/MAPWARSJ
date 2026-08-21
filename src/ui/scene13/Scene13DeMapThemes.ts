@@ -16,7 +16,8 @@ export type DeMapThemeId =
     | 'palaearctic_europe_temperate'
     | 'palaearctic_europe_mediterranean'
     | 'australasian_temperate'
-    | 'serengeti';
+    | 'serengeti'
+    | 'palustrine_swamp';
 
 export interface DeMapThemePalette {
     id: DeMapThemeId;
@@ -95,7 +96,10 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_asia_temperate: {
         id: 'palaearctic_asia_temperate',
         baseTerrain: 'gr7',
-        groundTiles: ['gr4', 'ds3'],
+        // 🔴 [2026-08-21 修·乌舍城截图] 原 groundTiles 混 ds3（干旱黄褐土）→ 东北/华北战场
+        //    显示黄褐干旱（乌舍城实锤）。亚洲温带湿润区（Dwa/Dwb）是黑土/草绿：
+        //    换 gr2（深绿黑土）+ gr7 + gr4，去掉干旱土。
+        groundTiles: ['gr2', 'gr7', 'gr4'],
         forestFloorTiles: ['for', 'fo2'],
         // [2026-08-21 分类修正] 亚洲温带主树 = 枫树/松；BUSH_TREE_B 是灌木树（下层植被），当主树 = 张冠李戴
         trees: ['ASIAN_MAPLE_GREEN', 'ASIAN_PINE'],
@@ -217,6 +221,21 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
+    // 🔴 [2026-08-21 补全·DE Swamp biome] 沼泽湿地主题（全球低洼湿地通用）：
+    //   DE 沼泽 = 棕/绿水 + 湿泥地 + 芦苇/睡莲 + 枯树柳树 + 湿滩边缘。素材全来自 DE：
+    //   wt_brown/wt_green/wt_yellow（棕绿黄水）、gravel_wet/r01（湿泥）、beach_wet（湿滩）、
+    //   REEDS/WATER_LILY/WILLOW/DEAD_TREE（水岸植物）。
+    palustrine_swamp: {
+        id: 'palustrine_swamp',
+        baseTerrain: 'gravel_wet',
+        groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet'],
+        forestFloorTiles: ['r01', 'underbrush_leaves'],
+        trees: ['DEAD_TREE', 'WILLOW'],
+        flatDecor: ['GRASS_GREEN_PATCH', 'UNDERBRUSH', 'WEED'],
+        solidDecor: ['STUMP_GENERIC', 'ROCK1', 'ROCK2'],
+        waterPlants: ['REEDS', 'WATER_LILY', 'WILLOW'],
+        beachTerrain: 'beach_wet',
+    },
 };
 
 
@@ -236,6 +255,7 @@ export function resolveDeMapTheme(
     biome: Biome,
     region: RegionType,
     elev: number | null = null,
+    waterKind: 'sea' | 'lake' | 'none' | undefined = undefined,
 ): DeMapThemePalette {
     // 🔴 [2026-08-21 完善·地理带优先] RegionSystem.getRegion 用城市多边形包含判定，
     //   粗多边形互相覆盖/漏覆盖（实测：武威→TIBET、大不里士/摩苏尔/拉合尔→CENTRAL_ASIA、
@@ -261,8 +281,11 @@ export function resolveDeMapTheme(
 
     // 3. 青藏高原（区域 + 海拔双保险：region polygon 把河西武威误归 TIBET，用海拔排除；
     //    🔴 阈值对齐大地图海拔染色（HillshadeWorker）：2500m = 高原冷灰绿起点（loessMid→gobiBrown）；
+    //    🔴🔴 [2026-08-21 修 bug] 必须 `elev !== null` 才启用海拔条件：原 `(elev ?? 4000) >= 2500`
+    //    在海拔采样失败（null）时默认 4000m，导致成都盆地(500m)/武威(1500m)被当青藏高原——
+    //    它们坐标恰在 lat 26-40/lng 78-105 带内。无海拔数据时宁可落温带（绿），不可误判高原（黄褐）。
     //    拉萨 3650 ✓ / 武威 1500 ✗（→ 河西黄土带））
-    if ((region === 'TIBET' && (elev ?? 4000) >= 2500) || (lat > 26 && lat < 40 && lng > 78 && lng < 105 && (elev ?? 4000) >= 2500)) {
+    if (elev !== null && elev >= 2500 && (region === 'TIBET' || (lat > 26 && lat < 40 && lng > 78 && lng < 105))) {
         return DE_MAP_THEMES.palaearctic_tibetan_plateau;
     }
 
@@ -304,9 +327,16 @@ export function resolveDeMapTheme(
         if (lng >= 55 && lat < 30) return DE_MAP_THEMES.indomalayan_tropical;
         return DE_MAP_THEMES.serengeti;
     }
-    // 10. 沙漠 / 地中海 / 寒带（按 biome）
+    // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 低洼湿地（DE Swamp biome） / 寒带
     if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
     if (biome === 'mediterranean') return DE_MAP_THEMES.palaearctic_europe_mediterranean;
+    // 🔴 [2026-08-21 补全·Swamp] 内陆水域（lake）+ 低地（<200m）→ 沼泽主题，优先于寒带针叶林：
+    //   东北松嫩/三江湿地（boreal）、北欧波罗的海沿岸、中欧低地、洞庭湖边——低洼湿地就是沼泽观感。
+    //   只认 lake 不认 sea——海边（东京湾/大连）是海岸战场不是沼泽。
+    //   🔴 阈值与 buildLake 的沼泽判定（elev<200）统一，避免「湖是沼泽、主题却不是」的割裂。
+    if (waterKind === 'lake' && elev !== null && elev < 200) {
+        return DE_MAP_THEMES.palustrine_swamp;
+    }
     if (biome === 'boreal' || biome === 'tundra_snow') {
         return lng < -30 ? DE_MAP_THEMES.nearctic_temperate : DE_MAP_THEMES.palaearctic_europe_taiga;
     }
@@ -324,6 +354,8 @@ export function resolveDeMapTheme(
         if (lat >= 45) return DE_MAP_THEMES.palaearctic_europe_temperate;
         return DE_MAP_THEMES.palaearctic_europe_mediterranean;
     }
+
+    // 12.5 → 已并入第 10 步（沼泽优先于寒带；desert/mediterranean 先排除）
 
     // 13. 东亚（日本/朝鲜/华东华北 lng ≥ 60）→ 亚洲温带
     if (lng >= 60) return DE_MAP_THEMES.palaearctic_asia_temperate;

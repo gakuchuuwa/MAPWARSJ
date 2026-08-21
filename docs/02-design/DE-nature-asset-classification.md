@@ -160,9 +160,30 @@ SKELETON（人骨）、ANIMAL_SKELETON（兽骨）、GRAVES（坟墓）、BARREL
 | 高原起点（青藏主题） | **2500m**（已对齐） | 2500m loessMid→gobiBrown | ✓ |
 | 黄土起点（河西/NORTH） | 600m | 1000m sandBeige 满值 | 渐变带，可接受 ✓ |
 | mountain 地形带（树密度） | C 类 800m / D 类 700m | 400m 色相已转黄 | 用途不同（biome 树密度 vs 颜色），不冲突 ✓ |
+| **海拔 null 兜底**（采样失败） | **不启用海拔条件**（青藏必须 elev≥2500 且非 null） | — | 🔴 2026-08-21 修 bug：原 `elev??4000` 默认 4000m 把成都盆地(500m)/武威(1500m)误判青藏高原；现 null → 温带（宁可绿，不可黄褐） |
 
 ### 验证
 
-- `npx tsx --import ./tools/sim-preload.mjs scratch/verify_theme_regions.mts`：29 个真实坐标点全过
+- `npx tsx --import ./tools/sim-preload.mjs scratch/verify_theme_regions.mts`：34 个真实坐标点全过
   （塞伦盖蒂/撒哈拉/也门/大不里士/摩苏尔/马什哈德/贝鲁特/拉合尔/太原/拉萨/武威/乌兰巴托/广州/曼谷/
-  东京/北京/巴黎/米兰/罗马/悉尼/雅加达/莫斯科/亚马逊/金沙萨/加尔各答/云贵高原 等）。
+  东京/北京/巴黎/米兰/罗马/悉尼/雅加达/莫斯科/亚马逊/金沙萨/加尔各答/云贵高原/洞庭湖/松嫩湿地/东京湾 等）。
+
+## Swamp 沼泽主题补全（2026-08-21，DE biome 全 7 覆盖）
+
+DE 的 7 个气候 biome（Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppes + Default）此前缺 Swamp，
+现已补全：
+
+- 新主题 `palustrine_swamp`：baseTerrain=gravel_wet（湿砾石泥地）+ wt_brown/wt_green/r01 棕绿水混铺 +
+  DEAD_TREE/WILLOW 枯树柳树 + REEDS/WATER_LILY/WILLOW 水岸植物 + beach_wet 湿滩边缘（素材全 DE 提取）。
+- 分流：`waterKind==='lake' && elev<200`（内陆水域+低地）→ 沼泽，优先于寒带针叶林；
+  只认 lake 不认 sea（海边=海岸战场，东京湾/大连不沼泽）；desert/mediterranean 先排除（绿洲不沼泽）。
+- 阈值与 buildLake 的沼泽判定（elev<200）统一，避免「湖是沼泽、主题却不是」割裂。
+- 受益战场：东北松嫩/三江湿地、北欧波罗的海沿岸、中欧低地、洞庭湖/鄱阳湖边。
+
+### 季节与时间配色（DE 19 套 colorcorrection 对照）
+
+| DE 配色 | 13 场景 | 状态 |
+|---------|---------|------|
+| Spring/Summer/Autumn/Winter | season 0/1/2（绿/秋/雪） | ✅ 已全覆盖（季节唯一权威=游戏日历，主人 08-20 定） |
+| Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppes | 对应主题 | ✅ 7/7 全覆盖 |
+| Night/Evening/Twilight/Darkness/Misty/Brumous/Murky | — | ⚠️ 13 场景**无昼夜系统**（代码无 hourOfDay/isNight），无触发源，暂不接入；等昼夜机制落地后可加色调滤镜 |

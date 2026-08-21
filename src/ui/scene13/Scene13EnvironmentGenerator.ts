@@ -201,28 +201,53 @@ function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     }
 }
 
-function enforceTreeSpacing(objects: EnvironmentObjectPlan[]): void {
-    const accepted: Array<{ x: number; y: number }> = [];
-    for (let i = 0; i < objects.length;) {
-        const object = objects[i];
-        if (!DE_TREE_OBJECTS.has(object.asset)) {
-            i++;
-            continue;
-        }
-        const separated = accepted.every((other) => {
-            const dx = object.x - other.x, dy = object.y - other.y;
-            const mapX = dx / TILE_W + dy / TILE_H;
-            const mapY = dy / TILE_H - dx / TILE_W;
-            return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
-                || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
-        });
-        if (!separated) {
-            objects.splice(i, 1);
-            continue;
-        }
-        accepted.push({ x: object.x, y: object.y });
-        i++;
+function getAssetRepulsionRadius(asset: string): number {
+    if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF') || asset.startsWith('MOUNTAIN_')) return 140;
+    if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 90;
+    if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 75;
+    if (DE_TREE_OBJECTS.has(asset)) return 55;
+    return 35; // 平面地饰 / 草花 / 冰面
+}
+
+function isObjectOverlapping(
+    x: number,
+    y: number,
+    asset: string,
+    objects: EnvironmentObjectPlan[],
+    ignoreIdx: number = -1
+): boolean {
+    const r1 = getAssetRepulsionRadius(asset);
+    for (let i = 0; i < objects.length; i++) {
+        if (i === ignoreIdx) continue;
+        const other = objects[i];
+        const r2 = getAssetRepulsionRadius(other.asset);
+        const minDist = r1 + r2;
+        const dx = x - other.x;
+        const dy = (y - other.y) * 2; // 等距 2:1 椭圆投影距离
+        if (Math.hypot(dx, dy) < minDist) return true;
     }
+    return false;
+}
+
+/** 全素材独立间距强制约束（悬崖、岩石、树木、矿产、地饰互斥，严禁贴脸穿插） */
+function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
+    const priority = (asset: string): number => {
+        if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF')) return 4;
+        if (asset.startsWith('ROCK') || asset.startsWith('MINE_')) return 3;
+        if (DE_TREE_OBJECTS.has(asset)) return 2;
+        return 1;
+    };
+    const sorted = [...objects].sort((a, b) => priority(b.asset) - priority(a.asset));
+    const accepted: EnvironmentObjectPlan[] = [];
+
+    for (const obj of sorted) {
+        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted)) {
+            accepted.push(obj);
+        }
+    }
+
+    objects.length = 0;
+    objects.push(...accepted);
 }
 
 // ── 种子派生（只用真实数据，禁止凭空假设 battleId） ──────────────
@@ -283,11 +308,22 @@ function screenToGrid(x: number, y: number, ox: number, oy: number): [number, nu
 }
 
 /** 在非水域随机取一个屏幕坐标（水域内重采样，最多 60 次；兜底返回最后随机值） */
-function sampleLandPos(VW: number, VH: number, rng: RandomSource, isWater: WaterChecker): { x: number; y: number } {
-    for (let attempt = 0; attempt < 60; attempt++) {
+function sampleLandPos(
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    isWater: WaterChecker,
+    asset?: string,
+    objects?: EnvironmentObjectPlan[],
+    inBattleCenter?: (x: number, y: number) => boolean,
+): { x: number; y: number } {
+    for (let attempt = 0; attempt < 80; attempt++) {
         const x = rng.next() * VW;
         const y = rng.next() * VH;
-        if (!isWater(x, y)) return { x, y };
+        if (isWater(x, y)) continue;
+        if (inBattleCenter && inBattleCenter(x, y)) continue;
+        if (asset && objects && isObjectOverlapping(x, y, asset, objects)) continue;
+        return { x, y };
     }
     return { x: rng.next() * VW, y: rng.next() * VH };
 }
@@ -385,7 +421,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
-    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!, elev) : null;
+    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!, elev, waterKind) : null;
     const baseTerrain: string = theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev)
         : DEFAULT_TERRAIN_TILE;
@@ -420,11 +456,10 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildCliffs(gw, gh, elevation, ox, oy, VW, VH, season, biome, rng, objects, isWater, input.lat, elev);
         buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater, input.lat, elev);
         buildResources(VW, VH, season, rng, objects, isWater);
 
-        enforceTreeSpacing(objects);
+        enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
         return {
             seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
@@ -453,6 +488,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
 // ── 第 2 层：高地（clump 生长；低地少丘、高地多丘） ─────────────
 
+/**
+ * 经典帝国时代式 2.5D 隆起丘陵与战术高地生成：
+ * 生成连绵起伏的「隆起丘陵高地」（峰顶高台 + 斜坡肩部 + 坡脚基底三级渐进环），
+ * 让地面真实隆起形成战略高地，士兵在高处占领制高点俯瞰交战。
+ */
 function generateElevation(
     gw: number,
     gh: number,
@@ -461,32 +501,48 @@ function generateElevation(
     rng: RandomSource
 ): number[][] {
     const grid: number[][] = Array.from({ length: gh }, () => new Array(gw).fill(0));
-    // 丘陵数量按海拔/坡度定：低地少、高地多
-    let hillCount: number;
-    let peakChance: number;
-    if (elev !== null && (elev >= 800 || (slope !== null && slope >= 12))) {
-        hillCount = 5 + rng.int(0, 1);   // 5~6 山地多丘
-        peakChance = 0.9;
-    } else if (elev !== null && elev >= 200) {
-        hillCount = 3 + rng.int(0, 1);   // 3~4
-        peakChance = 0.6;
-    } else {
-        hillCount = 5 + rng.int(0, 2);   // 5~7 平原也有可见起伏（原 1~2 太稀→看似平地）
-        peakChance = 0.4;
-    }
-    const elevOcc = new Set<string>();
+    
+    // 丘陵数量与高度按真实地理海拔/坡度定：
+    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
+        ? 2 + rng.int(0, 2)   // 山地/高原：2~3 片大型连绵高地丘陵
+        : (elev !== null && elev >= 300)
+            ? 1 + rng.int(0, 2) // 丘陵台地：1~2 片战术丘陵
+            : 1 + rng.int(0, 1); // 平原低地：1 片自然缓坡丘陵
+
     for (let i = 0; i < hillCount; i++) {
-        const lvl = rng.chance(0.45) ? 2 : 1;
-        const sx = 3 + rng.int(0, gw - 6);
-        const sy = 3 + rng.int(0, gh - 6);
-        const cells = growClump(sx, sy, 16 + rng.int(0, 24), gw, gh, elevOcc, rng);
-        for (const [x, y] of cells) if (grid[y][x] < lvl) grid[y][x] = lvl;
-    }
-    if (rng.chance(peakChance)) {
-        const sx = 4 + rng.int(0, gw - 8);
-        const sy = 4 + rng.int(0, gh - 8);
-        const cells = growClump(sx, sy, 5 + rng.int(0, 6), gw, gh, elevOcc, rng);
-        for (const [x, y] of cells) grid[y][x] = 3;
+        // 丘陵中心分布于战场不同方位（左侧高地、右侧山脊、中央制高点）
+        const cx = Math.floor(gw * (0.2 + rng.next() * 0.6));
+        const cy = Math.floor(gh * (0.2 + rng.next() * 0.6));
+        const rx = 7 + rng.next() * 5;  // 椭圆长轴 7~12 格
+        const ry = 5.5 + rng.next() * 4; // 椭圆短轴 5.5~9.5 格
+        const hMax = (elev !== null && elev >= 1000) ? 3 : (elev !== null && elev >= 300 ? 2 : 2);
+        const angle = (rng.next() - 0.5) * 0.8; // 随机山脊走向倾角
+
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const dx = x - cx;
+                const dy = y - cy;
+                const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
+                const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
+                const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
+                // 自然有机地形扰动噪声
+                const noise = (Math.sin(x * 1.3 + y * 0.7) + Math.cos(x * 0.8 - y * 1.1)) * 0.07;
+                const dist = normDist + noise;
+
+                let h = 0;
+                if (dist < 0.38) {
+                    h = hMax; // 峰顶 / 高台制高点（Level 3 或 Level 2）
+                } else if (dist < 0.72) {
+                    h = Math.max(1, hMax - 1); // 斜坡肩部（Level 2 或 Level 1）
+                } else if (dist < 1.05) {
+                    h = 1; // 坡脚基底环（Level 1）
+                }
+
+                if (h > grid[y][x]) {
+                    grid[y][x] = h;
+                }
+            }
+        }
     }
     return grid;
 }
@@ -758,7 +814,7 @@ function buildVegetation(
                 const ang = u2 * Math.PI * 2;
                 const sx = cx + r * Math.cos(ang);
                 const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inBattleCenter(sx, sy)) {
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inBattleCenter(sx, sy) && !isObjectOverlapping(sx, sy, 'PINE', objects)) {
                     tx = sx;
                     ty = sy;
                     found = true;
@@ -777,8 +833,8 @@ function buildVegetation(
     const ground = [...themeDecor.flat, ...themeDecor.solid];
     const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
-        const p = sampleLandPos(VW, VH, rng, isWater);
         const asset = rng.pick(ground);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
         objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
@@ -789,89 +845,18 @@ function buildVegetation(
 function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
     const resAssets = season === 2 ? ['MINE_STONE'] : ['FORAGE_BUSH', 'MINE_STONE'];
     const resCount = 2 + rng.int(0, 3);
+    const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
+    const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
+    const inBattleCenter = (x: number, y: number): boolean =>
+        x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+
     for (let i = 0; i < resCount; i++) {
-        const p = sampleLandPos(VW, VH, rng, isWater);
-        objects.push({ asset: rng.pick(resAssets), x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        const asset = rng.pick(resAssets);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
+        objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 
-
-// ── 第 5 层：悬崖与山势断崖（DE 经典地貌：高地陡坡生成悬崖组） ──
-
-function buildCliffs(
-    gw: number,
-    gh: number,
-    elevation: number[][],
-    ox: number,
-    oy: number,
-    VW: number,
-    VH: number,
-    season: 0 | 1 | 2,
-    biome: Biome,
-    rng: RandomSource,
-    objects: EnvironmentObjectPlan[],
-    isWater: WaterChecker,
-    lat?: number,
-    elev?: number | null,
-): void {
-    const cliffCandidates: Array<{ x: number; y: number }> = [];
-    const centerX0 = VW * 0.35, centerX1 = VW * 0.65;
-    const centerY0 = VH * 0.28, centerY1 = VH * 0.72;
-
-    for (let y = 1; y < gh - 1; y++) {
-        for (let x = 1; x < gw - 1; x++) {
-            const h = elevation[y][x];
-            if (h < 2) continue;
-            // 检查周边落差
-            const h_se = elevation[y - 1][x + 1] ?? 0;
-            const h_ne = elevation[y + 1][x + 1] ?? 0;
-            if (h - h_se >= 1 || h - h_ne >= 1) {
-                const px = isoCellX(x, y, ox);
-                const py = isoCellY(x, y, oy);
-                if (px > 80 && px < VW - 80 && py > 80 && py < VH - 80) {
-                    if (!isWater(px, py) && !(px > centerX0 && px < centerX1 && py > centerY0 && py < centerY1)) {
-                        cliffCandidates.push({ x: px, y: py });
-                    }
-                }
-            }
-        }
-    }
-
-    if (cliffCandidates.length === 0) return;
-
-    let cliffPool: string[];
-    const isSnow = season === 2 && lat !== undefined && isSnowArea(lat, elev ?? null, biome);
-
-    if (isSnow) {
-        // 1. 冰天雪地：纯雪山断崖（CLIFF_SNOW），严禁混入黄色沙漠怪石
-        cliffPool = ['CLIFF_SNOW', 'SHORT_CLIFF_SNOW'];
-    } else if (biome === 'desert' || biome === 'savanna') {
-        // 2. 沙漠 / 稀树草原：黄沙断崖与砂岩石塔
-        cliffPool = ['CLIFF_SAND', 'SHORT_CLIFF_SAND', 'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3'];
-    } else if (biome === 'mediterranean' || biome === 'tropical_rainforest') {
-        // 3. 地中海 / 喀斯特热带：石灰岩山崖与常规断崖
-        cliffPool = ['CLIFF_LIMESTONE', 'SHORT_CLIFF_ALL', 'CLIFF_DEFAULT'];
-    } else {
-        // 4. 草原 / 温带森林 / 平原：自然绿草泥土断崖与石灰岩壁（严禁出现白雪断崖！）
-        cliffPool = ['CLIFF_DEFAULT', 'SHORT_CLIFF_ALL', 'CLIFF_LIMESTONE'];
-    }
-
-    const count = Math.min(cliffCandidates.length, 1 + rng.int(0, 2));
-    for (let i = 0; i < count; i++) {
-        const spot = rng.pick(cliffCandidates);
-        const asset = rng.pick(cliffPool);
-        objects.push({
-            asset,
-            x: spot.x,
-            y: spot.y,
-            layer: 'world',
-            z: 0,
-            // 🔴 悬崖是 DE 西北光照方向性素材，镜像会反转光照朝向 → 禁 flip；岩石组可翻
-            flip: asset.startsWith('CLIFF') ? false : rng.chance(0.5),
-            frame: rng.int(0, 99999),
-        });
-    }
-}
 
 // 重新导出 hashString，供测试/验收计算种子校验和
 export { hashString };
