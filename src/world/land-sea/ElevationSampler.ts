@@ -1,4 +1,5 @@
 import { latLngToTile } from '../../map/TileMapConfig';
+import { normalizeLongitude } from '../../utils/GeoLongitude';
 import {
     DEM_ZOOM,
     TERRARIUM_TILE_SIZE,
@@ -16,6 +17,7 @@ export interface TilePixel {
 }
 
 export function latLngToTilePixel(lat: number, lng: number, zoom = DEM_ZOOM): TilePixel {
+    lng = normalizeLongitude(lng);
     const n = Math.pow(2, zoom);
     const latRad = (lat * Math.PI) / 180;
     const xFrac = ((lng + 180) / 360) * n;
@@ -43,6 +45,7 @@ export function latLngToTilePixel(lat: number, lng: number, zoom = DEM_ZOOM): Ti
  * latLngToTilePixel 完全一致，改这里必须同步改那里。
  */
 export function lngToDemGlobalX(lng: number, zoom = DEM_ZOOM): number {
+    lng = normalizeLongitude(lng);
     const n = Math.pow(2, zoom);
     return ((lng + 180) / 360) * n * TERRARIUM_TILE_SIZE;
 }

@@ -1035,6 +1035,8 @@ const PROJ_SCALE_OVERRIDE: Record<string, number> = {
 /** 多种 DE 弹丸单位可以共用同一张 SLD，但保留独立 key 以使用各自的飞行参数。 */
 const PROJ_ASSET_KEY: Record<string, string> = {
     PROJ_WAR_WAGON: 'PROJ_BOLT',
+    PROJ_GUNPOWDER: 'PROJ_SHOT',
+    PROJ_BOMBARD_BALL: 'PROJ_BALL',
 };
 /**
  * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。
@@ -1114,16 +1116,16 @@ const PROJ_TYPE: Record<string, string> = {
     traction_trebuchet: 'PROJ_BALL',
     mounted_trebuchet: 'PROJ_BALL',
     // 热兵器（2026-08-16 主人定：火枪/火炮/掷弹兵用 DE 独立抛射物）
-    hand_cannoneer: 'PROJ_SHOT',
-    janissary: 'PROJ_SHOT',
-    elite_janissary: 'PROJ_SHOT',
-    royal_janissary: 'PROJ_SHOT',
-    conquistador: 'PROJ_SHOT',
-    elite_conquistador: 'PROJ_SHOT',
-    organ_gun: 'PROJ_SHOT',
-    elite_organ_gun: 'PROJ_SHOT',
-    bombard_cannon: 'PROJ_BALL',
-    houfnice: 'PROJ_BALL',
+    hand_cannoneer: 'PROJ_GUNPOWDER',
+    janissary: 'PROJ_GUNPOWDER',
+    elite_janissary: 'PROJ_GUNPOWDER',
+    royal_janissary: 'PROJ_GUNPOWDER',
+    conquistador: 'PROJ_GUNPOWDER',
+    elite_conquistador: 'PROJ_GUNPOWDER',
+    organ_gun: 'PROJ_GUNPOWDER',
+    elite_organ_gun: 'PROJ_GUNPOWDER',
+    bombard_cannon: 'PROJ_BOMBARD_BALL',
+    houfnice: 'PROJ_BOMBARD_BALL',
     grenadier: 'PROJ_GRENADE',
 };
 /** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
@@ -1133,6 +1135,8 @@ const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
 const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_WAR_WAGON: 0.05,
+    PROJ_GUNPOWDER: 0.05,
+    PROJ_BOMBARD_BALL: -0.05,
 };
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
 /**
@@ -1170,6 +1174,7 @@ const FIREARM_TYPES = new Set([
 /** 抛射物基准朝向偏移（素材竖向朝上 vs 横向朝东）：火枪弹竖向，旋转需 +90°。 */
 const PROJ_ANGLE_OFFSET: Record<string, number> = {
     PROJ_SHOT: Math.PI / 2,
+    PROJ_GUNPOWDER: Math.PI / 2,
 };
 /** 连弩/火箭车连发箭数（AoE2 wiki：诸葛弩 3/5 支；风琴炮 5 弹；火箭车 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
@@ -1192,6 +1197,8 @@ const PROJ_DUR: Record<string, number> = {
 /** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；弹丸 373 的 speed = 6.0 格/秒。 */
 const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_WAR_WAGON: 6 * 40,
+    PROJ_GUNPOWDER: 7.5 * 40,
+    PROJ_BOMBARD_BALL: 4 * 40,
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
 const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
@@ -4483,7 +4490,7 @@ export class Scene13WarLayer {
         // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
         // 炮弹/手榴弹落地瞬间 → DE 爆炸特效（径向对称）。
         for (const a of this.arrows) {
-            if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_GRENADE')) {
+            if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_BOMBARD_BALL' || a.proj === 'PROJ_GRENADE')) {
                 this.explode(a.proj === 'PROJ_GRENADE' ? 'FX_PETARD' : 'FX_EXPLOSION', a.x + a.dx * a.len, a.y + a.dy * a.len);
             }
         }
@@ -4879,6 +4886,8 @@ export class Scene13WarLayer {
                 } else if (a.proj === 'PROJ_FIRE') {
                     // 猛火油柜喷火：30 帧火焰动画循环播放
                     fr = Math.floor(p * pa.n) % pa.n;
+                } else if (a.proj === 'PROJ_BOMBARD_BALL') {
+                    fr = Math.floor((a.t - delay) / 0.0155) % pa.n;
                 } else if (pa.n > 1) {
                     // 箭矢/标枪/飞镖取正水平基准帧，由 rotate(angle) 切线角精确控制全 360° 俯仰与起伏
                     fr = Math.floor(pa.n / 2);

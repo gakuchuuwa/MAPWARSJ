@@ -19,6 +19,8 @@
     "expedition:coverage": "npx tsx scratch/audit_expedition_coverage.mjs",
     "skeleton:audit": "npx tsx scratch/audit_skeleton_anchors.mjs",
     "city:spacing": "npx tsx scratch/audit_city_spacing.mjs",
+    "world:audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_world_readiness.mts",
+    "world:coords": "npx tsx --import ./tools/sim-preload.mjs scratch/verify_global_coordinates.mts",
     "portrait:adjust-cleanup": "node scratch/cleanup_portrait_adjust.mjs",
     "portrait:build-canonical": "node scratch/build_portrait_canonical.mjs",
     "portrait:idle-rename": "node tools/rename_idle_portraits.mjs",

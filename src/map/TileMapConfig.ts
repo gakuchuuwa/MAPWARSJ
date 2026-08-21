@@ -118,7 +118,7 @@ export const TILE_CONFIG: TileConfigType = {
     },
 
     DEFAULT_ZOOM: 9,
-    MIN_ZOOM: 4,
+    MIN_ZOOM: 2,
     MAX_ZOOM: 13,
 
     // 瓦片资源路径（已移除本地瓦片，全程序生成）
