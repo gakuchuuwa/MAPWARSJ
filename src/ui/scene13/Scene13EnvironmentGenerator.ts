@@ -43,6 +43,8 @@ const TILE_H = 32;
 // ── 水域/沙滩贴图（真实存在于 public/SUCAI_TERRAIN，勿自创） ──
 // 🔴 [2026-08-21 主人定] 13 战斗全为陆战，不出现深海大洋；水域全线采用「浅滩（sha/sh2/sh3）」贴图，
 //   清浅透亮，沙石水底，步骑可涉水作战，与沙滩自然过渡。
+/** 🔴 [2026-08-21 主人定] 海洋与海岸线专属浅蓝色/蔚蓝海水（DE 经典 wtr / wt2 / wt4，告别淡水绿） */
+const OCEAN_TILES = ['wtr', 'wt2', 'wt4'];
 /** 深水带（改用标准浅滩 sha） */
 const SHALLOW_DEEP = 'sha';
 /** 中水带（浅滩多变体 sha / sh2 / sh3） */
@@ -480,11 +482,6 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 // 🔴 [2026-08-21 主人定] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
                 const sideLeft = true;
                 isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!, season, input.lat, elev, biome);
-                for (let i = 0; i < 4; i++) {
-                    const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
-                    const oxPos = VW * 0.12 + rng.next() * VW * 0.08;
-                    objects.push({ asset: ra, x: oxPos, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-                }
             } else if (waterKind === 'lake') {
                 isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
             } else if (waterKind === 'river') {
@@ -708,24 +705,12 @@ function buildWaterFromRealESRIZoom13(
         patches.push({ tile: 'sha', cells: fordingCells, alpha: 0.92, category: 'shore' });
     }
 
-    // 4. 沿水岸点缀芦苇与睡莲
-    const flora = ['REEDS', 'WATER_LILY', 'ROCK1', 'ROCK2'];
-    for (let i = 0; i < 6; i++) {
-        const rx = VW * (0.1 + rng.next() * 0.8);
-        const ry = VH * (0.1 + rng.next() * 0.8);
-        const u = rx / VW, v = ry / VH;
-        const val = sampleMaskSmooth(u, v);
-        if (val > 0.15 && val < 0.65) {
-            const asset = rng.pick(flora);
-            objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        }
-    }
-
-    // 水域排斥谓词：水体内部禁止生成陆地大树或干枯石头
+    // 🔴 [2026-08-21 主人定] 水体内部及浅水岸线绝不生成任何岩石、芦苇或阻挡物
+    // 水域排斥谓词：水体及浅水沙滩区域严格禁止生成陆地大树或石头
     return (x, y) => {
         const u = Math.max(0, Math.min(1, x / VW));
         const v = Math.max(0, Math.min(1, y / VH));
-        return sampleMaskSmooth(u, v) > 0.42;
+        return sampleMaskSmooth(u, v) > 0.20;
     };
 }
 
@@ -813,8 +798,9 @@ function buildCoastline(
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
     mark(water); mark(beach);
 
-    // 1. 统一清透浅滩水体（DE 标准纯净浅水，不再多层分段条纹）
-    patches.push({ tile: 'sh2', cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
+    // 1. 🔴 [2026-08-21 主人定] 统一清澈浅蓝色/蔚蓝海洋水体（DE 标准 wtr 浅蓝海水，告别淡水绿）
+    const oceanTile = 'wtr';
+    patches.push({ tile: oceanTile, cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
     // 2. 柔和沙滩过渡边缘（DE 标准岸线衔接）
     const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
     patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.92, category: 'shore' });
@@ -928,19 +914,10 @@ function buildRiver(
     // 2. 中央浅滩河道（可涉水，隔河对峙分界线；主人 08-21 定「水域全线浅滩」）
     patches.push({ tile: rng.pick(SHALLOW_MEDIUM), cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
 
-    // 3. 沿河两岸自然点缀水生植被与河卵石（芦苇、睡莲、水石，严禁在河水正中央阻挡交火）
-    const bankFlora = ['REEDS', 'WATER_LILY', 'ROCK1', 'ROCK2'];
-    const floraCount = 6 + rng.int(0, 4);
-    for (let i = 0; i < floraCount; i++) {
-        const ry = VH * (0.1 + rng.next() * 0.8);
-        const side = rng.chance(0.5) ? -1 : 1;
-        const rx = centerAt(ry) + side * (halfWaterW + 12 + rng.next() * 25);
-        const asset = rng.pick(bankFlora);
-        objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-    }
-
-    // 水域排斥：进入主河道内为深水区
-    return (x, y) => Math.abs(x - centerAt(y)) < halfWaterW;
+    // 🔴 [2026-08-21 主人定] 河流中绝不生成任何岩石、芦苇、睡莲或阻挡物，水面保持 100% 清澈透亮
+    // 水域排斥：河道及两侧沙滩缓冲区（约 130px 净空走廊）严格禁放任何陆地树木与巨石
+    const riverBuffer = halfBeachW + 35;
+    return (x, y) => Math.abs(x - centerAt(y)) < riverBuffer;
 }
 
 // ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────
@@ -996,20 +973,12 @@ function buildLake(
     patches.push({ tile: edgeTile, cells: edgeCells, alpha: 1, category: 'wetland' });
     patches.push({ tile: pond, cells: allPond, alpha: 1, category: 'wetland' });
 
-    // 水岸芦苇/灌木（围绕水域）
-    const px0 = allPond.length ? isoCellX(allPond[0][0], allPond[0][1], ox) : VW * 0.4;
-    const py0 = allPond.length ? isoCellY(allPond[0][0], allPond[0][1], oy) : VH * 0.4;
-    for (let i = 0; i < 4; i++) {
-        const re = rng.pick(theme.waterPlants);
-        const rx = Math.max(0, Math.min(VW, px0 + rng.next() * VW * 0.3 - VW * 0.15));
-        const ry = Math.max(0, Math.min(VH, py0 + rng.next() * VH * 0.25 - VH * 0.12));
-        objects.push({ asset: re, x: rx, y: ry, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-    }
-
-    // 水域排斥：湖 = 中央 pond 格子集合（pondSet 见上文描边段）
+    // 🔴 [2026-08-21 主人定] 水体及近岸绝不生成任何杂乱石头或芦苇
+    // 水域排斥：湖泊水域及岸线边缘格严禁生成陆地大物件
     return (x, y) => {
         const [gx, gy] = screenToGrid(x, y, ox, oy);
-        return pondSet.has(`${gx},${gy}`);
+        const k = `${gx},${gy}`;
+        return pondSet.has(k) || edgeSet.has(k);
     };
 }
 
