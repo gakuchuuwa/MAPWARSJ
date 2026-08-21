@@ -87,7 +87,8 @@ export interface EnvironmentObjectPlan {
     z: number;
     /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
-    /** 🔴 [2026-08-21 DE ROCK_GROUP] 成组实体装饰（岩石堆）同组标记——enforceAllObjectSpacing 对同组豁免间距 */
+    /** 同一成组摆放内的物件可以相互靠近。 */
+    placementGroup?: string;
     /** 连续接触这么多秒后只关闭阻挡；图像仍作为 world 对象保留。 */
     obstructionReleaseAfterSec?: number;
     flip: boolean;
@@ -218,7 +219,7 @@ function getAssetRepulsionRadius(asset: string): number {
     if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 105;
     if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 85;
     if (DE_TREE_OBJECTS.has(asset)) return 65;
-    return 40; // 平面地饰 / 草花 / 冰面
+    return 40;
 }
 
 function isObjectOverlapping(
@@ -227,11 +228,15 @@ function isObjectOverlapping(
     asset: string,
     objects: EnvironmentObjectPlan[],
     ignoreIdx = -1,
+    placementGroup?: string,
 ): boolean {
     const r1 = getAssetRepulsionRadius(asset);
     for (let i = 0; i < objects.length; i++) {
         if (i === ignoreIdx) continue;
         const other = objects[i];
+        if (placementGroup && placementGroup === other.placementGroup) {
+            continue;
+        }
         const r2 = getAssetRepulsionRadius(other.asset);
         const minDist = r1 + r2;
         const dx = x - other.x;
@@ -241,7 +246,7 @@ function isObjectOverlapping(
     return false;
 }
 
-/** 全素材独立间距强制约束（悬崖、岩石、树木、矿产、地饰互斥，严禁贴脸穿插） */
+/** 全素材独立间距强制约束（保留伴生生态，防止异类大型阻挡物穿模） */
 function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
     const priority = (asset: string): number => {
         if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF')) return 4;
@@ -253,7 +258,7 @@ function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
     const accepted: EnvironmentObjectPlan[] = [];
 
     for (const obj of sorted) {
-        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted, -1)) {
+        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted, -1, obj.placementGroup)) {
             accepted.push(obj);
         }
     }
@@ -505,11 +510,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind);
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater, input.lat, elev, waterKind);
+        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind);
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
@@ -1143,6 +1148,7 @@ function buildGroundVariation(
             : 0.25;
         patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
     }
+
 }
 
 // ── 第 4 层：林地落叶层（森林 biome 的 forest-floor 斑块） ─────────
@@ -1174,12 +1180,18 @@ function buildForestFloor(
 function buildVegetation(
     VW: number,
     VH: number,
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
     biome: Biome,
     elevationBand: ElevationBand,
     season: 0 | 1 | 2,
     theme: DeMapThemePalette,
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
+    patches: TerrainPatchPlan[],
+    occupied: Set<string>,
     isWater: WaterChecker,
     lat?: number,
     elev?: number | null,
@@ -1188,7 +1200,6 @@ function buildVegetation(
     const treeAssets = treesForTheme(theme, season, lat, elev, biome);
     // 🔴 [2026-08-21 DE 式主导树种] 一图一主树成片（DE Black Forest 全橡树、Baltic 主松次桦）：
     //    每场从候选池选 1 个主导树种（≈85%）+ 至多 1 个次树点缀（≈15%）。
-    //    原 `rng.pick(treeAssets)` 等概率混布 → 4 棵树枫+松 50/50 挤一丛、风格割裂（截图实锤）。
     const primaryTree = rng.pick(treeAssets);
     const otherTrees = treeAssets.filter((t) => t !== primaryTree);
     const secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
@@ -1202,7 +1213,6 @@ function buildVegetation(
         snow: 0.05,
     };
     const treeCount = Math.max(2, Math.round(baseTreeCount * treeFactor[elevationBand]));
-    // DE 聚丛成林：3~5 林斑 + 高斯散布
     const clusterCount = Math.max(2, Math.round(treeCount / 6));
     const perCluster = Math.max(2, Math.round(treeCount / clusterCount));
     const treePositions = objects
@@ -1215,22 +1225,37 @@ function buildVegetation(
         return Math.abs(mapX) >= TREE_MIN_CENTER_SPACING_TILES
             || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
     });
+
     // 🔴 [2026-08-21 铁律·行军与交火主走廊 100% 净空]
-    // 两军布阵（左军 0.16~0.34，右军 0.66~0.84）与中间冲锋交战走廊（0.34~0.66）全线净空，
-    // 严禁在部队行军结阵道路上放置阻挡性大石头、树桩或大树！
-    // 实体障碍物（岩石/树林/悬崖）严格只允许点缀在战场四角与最外围边缘（X < 15% 或 X > 85%，或 Y < 10% 或 Y > 90%）。
     const inArmyCorridor = (x: number, y: number): boolean => {
         return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
     };
 
+    const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
+    const forestFloorTile = forestFloorTiles.length > 0 ? rng.pick(forestFloorTiles) : 'pc1';
+
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
         let cx = 0, cy = 0;
-        for (let a = 0; a < 40; a++) {
+        for (let a = 0; a < 50; a++) {
             cx = VW * (0.05 + rng.next() * 0.90);
             cy = VH * (0.05 + rng.next() * 0.90);
             if (!isWater(cx, cy) && !inArmyCorridor(cx, cy)) break;
         }
+
+        // 🔴 [2026-08-21 DE 核心林地底层绑定 Forest Floor Binding]
+        // 在林心 (cx, cy) 下方直接铺设松针落叶层斑块，彻底告别光秃秃插在草地上！
+        const [cgx, cgy] = screenToGrid(cx, cy, ox, oy);
+        const floorClumpCells = growClump(cgx, cgy, 10 + rng.int(0, 8), gw, gh, occupied, rng);
+        if (floorClumpCells.length > 0) {
+            patches.push({
+                tile: forestFloorTile,
+                cells: floorClumpCells,
+                alpha: season === 2 ? 0.40 : 0.65,
+                category: 'forest-floor',
+            });
+        }
+
         const radius = 50 + rng.next() * 60;
         const n = Math.min(perCluster, treeCount - placed);
         for (let k = 0; k < n; k++) {
@@ -1258,19 +1283,14 @@ function buildVegetation(
     }
 
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
-    // ── 平面装饰（草/花/小杂草/地表贴花）：无体积碰撞，散点自然点缀 ──
-    const decorCount = 8 + rng.int(0, 8);
-    for (let i = 0; i < decorCount; i++) {
-        const asset = rng.pick(themeDecor.flat);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
-        if (p) objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-    }
-    // ── 实体装饰（岩石/树桩/遗迹）：独立点缀在边缘与四角，绝对不挡路 ──
-    const solidDecorCount = 2 + rng.int(0, 2); // 仅点缀 2~3 块独立单石
+
+    // ── 实体装饰：岩石使用当前主题的地面装饰作伴生物 ──
+    const solidDecorCount = 2 + rng.int(0, 2);
     for (let i = 0; i < solidDecorCount; i++) {
         const asset = rng.pick(themeDecor.solid);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
         if (p) {
+            const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;
             objects.push({
                 asset,
                 x: p.x,
@@ -1279,10 +1299,50 @@ function buildVegetation(
                 z: 0,
                 flip: rng.chance(0.5),
                 frame: rng.int(0, 99999),
+                placementGroup,
             });
+
+            if (placementGroup) {
+                const companionCount = 1 + rng.int(0, 1);
+                for (let companionIndex = 0; companionIndex < companionCount; companionIndex++) {
+                    const angle = rng.next() * Math.PI * 2;
+                    const distance = 18 + rng.next() * 20;
+                    const x = p.x + Math.cos(angle) * distance;
+                    const y = p.y + Math.sin(angle) * distance * 0.6;
+                    if (x < 0 || x > VW || y < 0 || y > VH || isWater(x, y) || inArmyCorridor(x, y)) continue;
+                    const companionAsset = rng.pick(themeDecor.flat);
+                    objects.push({
+                        asset: companionAsset,
+                        x,
+                        y,
+                        layer: GROUND_COVER_ASSETS.has(companionAsset) ? 'ground' : 'world',
+                        z: 0,
+                        flip: rng.chance(0.5),
+                        frame: rng.int(0, 99999),
+                        placementGroup,
+                    });
+                }
+            }
         }
     }
 
+    // ── 开阔平原微点缀（草地微花草/贴花，100% 不挡路，赋予辽阔平原生命力） ──
+    const decorCount = 8 + rng.int(0, 8);
+    for (let i = 0; i < decorCount; i++) {
+        const asset = rng.pick(themeDecor.flat);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
+        if (p) {
+            objects.push({
+                asset,
+                x: p.x,
+                y: p.y,
+                layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world',
+                z: 0,
+                flip: rng.chance(0.5),
+                frame: rng.int(0, 99999),
+            });
+        }
+    }
 }
 
 // ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
