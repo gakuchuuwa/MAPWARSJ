@@ -6567,16 +6567,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/CENTRAL/__多余__CENTRAL_02.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": 10
-        },
-        "/assets/CENTRAL/__多余__CENTRAL_01.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/LINGNAN/__闲置__LINGNAN_20.png": {
             "scale": 0.83,
             "offsetX": 0,
@@ -6602,11 +6592,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/DIANQIAN/__多余__DIANQIAN_01.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -31
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_34.png": {
             "scale": 1.2,
             "offsetX": 0,
@@ -6616,11 +6601,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -31
-        },
-        "/assets/CENTRAL/__多余__CENTRAL_03.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -12
         },
         "/assets/NORTH/__闲置__NORTH_06.png": {
             "scale": 0.83,
@@ -6637,11 +6617,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -29
         },
-        "/assets/HEXI/__多余__HEXI_02.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -36
-        },
         "/assets/HEXI/__闲置__HEXI_19.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -6651,11 +6626,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -36
-        },
-        "/assets/HEXI/__多余__HEXI_01.png": {
-            "scale": 1.09,
-            "offsetX": 10,
-            "offsetY": -10
         },
         "/assets/STEPPE/__闲置__STEPPE_83.png": {
             "scale": 1.12,
@@ -6696,11 +6666,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -5
-        },
-        "/assets/STEPPE/__闲置__STEPPE_84.png": {
-            "scale": 0.85,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/STEPPE/xibo_d_tubote.png": {
             "scale": 1.16,

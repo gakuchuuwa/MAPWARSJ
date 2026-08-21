@@ -17,30 +17,34 @@ import {
     detectBiomeAtElevation,
     resolveClimateRegion,
     resolveElevationBand,
-    resolveTerrainTileAtElevation,
-    pickTreeSpecies,
     treeCountFor,
-    BIOME_GROUND_DECOR,
-    BIOME_GROUND_VARIATION,
     DEFAULT_TERRAIN_TILE,
 } from '../Scene13Biome';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { getRegion } from '../../systems/RegionSystem';
 import { RandomSource, createRandom, hashString } from './Random';
+import {
+    groundTilesForTheme,
+    resolveDeMapTheme,
+    terrainForTheme,
+    treesForTheme,
+    type DeMapThemeId,
+    type DeMapThemePalette,
+} from './Scene13DeMapThemes';
 
 /** 等距菱形瓦片（2:1，DE 同款投影） */
 const TILE_W = 64;
 const TILE_H = 32;
 
 // ── 水域/沙滩贴图（真实存在于 public/SUCAI_TERRAIN，勿自创） ──
-/** 深水（离岸最远，最深）——wt4 最深靛蓝（实测 RGB 21,53,90） */
-const WATER_DEEP = 'wt4';
-/** 中水带——wt2/wt3 中深蓝（26,66,107 / 23,82,126） */
-const WATER_MEDIUM = ['wt2', 'wt3'];
-/** 浅水带（近岸最浅）——wtr 标准浅水蓝（32,119,162）；弃 wt5 热带青绿（色不对，主人 2026-08-20 否） */
-const WATER_SHALLOW = ['wtr'];
-/** 沙滩 */
-const BEACH_SAND = ['bch', 'bc2', 'bc3', 'bc4'];
+// 🔴 [2026-08-21 主人定] 13 战斗全为陆战，不出现深海大洋；水域全线采用「浅滩（sha/sh2/sh3）」贴图，
+//   清浅透亮，沙石水底，步骑可涉水作战，与沙滩自然过渡。
+/** 深水带（改用标准浅滩 sha） */
+const SHALLOW_DEEP = 'sha';
+/** 中水带（浅滩多变体 sha / sh2 / sh3） */
+const SHALLOW_MEDIUM = ['sha', 'sh2', 'sh3'];
+/** 近岸浅水带（透亮浅滩 sh2 / sh3） */
+const SHALLOW_NEAR = ['sh2', 'sh3'];
 /** 湿沙（水线） */
 const BEACH_WET = 'beach_wet';
 /** 内陆湖/水塘 */
@@ -105,6 +109,7 @@ export interface Scene13EnvironmentPlan {
     elevationM: number | null;
     slopeDeg: number | null;
     biome: Biome;
+    deMapTheme: DeMapThemeId | null;
     season: 0 | 1 | 2;
     baseTerrain: string;
     waterKind: 'sea' | 'lake' | 'none';
@@ -141,6 +146,7 @@ const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
 const TREE_OBSTRUCTION_RELEASE_SEC = 3;
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
 const DE_TREE_OBJECTS = new Set([
+    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B',
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
     'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
@@ -151,11 +157,12 @@ const DE_TREE_OBJECTS = new Set([
 ]);
 const GROUND_COVER_ASSETS = new Set([
     'GRASS_DRY', 'GRASS_DRY_PATCH', 'GRASS_GREEN', 'GRASS_GREEN_PATCH', 'WEED',
-    'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
+    'FLOWER', 'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
     'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH',
     'UNDERBRUSH', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
 ]);
 const DE_HALF_TILE_OBJECTS = new Set([
+    'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B',
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
     'PALM', 'WAX_PALM', 'DEAD_TREE', 'OLIVE', 'CYPRESS', 'CYPRESS_DEC',
     'ITALIAN_PINE', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK',
@@ -363,16 +370,12 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const elevationBand = hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev) : 'lowland';
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
-    const baseTerrain: string = hasCoord
-        ? resolveTerrainTileAtElevation(input.lat!, input.lng!, elev, season, rng)
-        : DEFAULT_TERRAIN_TILE;
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
-    // 东亚限定树种（樱花/竹/亚洲枫）只许在东亚文化区出现（沃罗涅日=斯拉夫 → 无樱花）
-    const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
-    // 亚热带（Cwa/Cwb）白桦违和（符合历史）：亚热带常绿阔叶林无北温带白桦
-    const isSubtropical = climateRegion === 'Cwa' || climateRegion === 'Cwb';
-
+    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, reg!) : null;
+    const baseTerrain: string = theme
+        ? terrainForTheme(theme, biome, season, elevationBand)
+        : DEFAULT_TERRAIN_TILE;
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
     const occupied = new Set<string>();
@@ -387,32 +390,31 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 水域排斥谓词：陆地物件（植被/资源/残迹）禁止落在水里。
         let isWater: WaterChecker = () => false;
         if (waterKind === 'sea') {
-            // 🔴 每场只抽一次 sideLeft：海岸地形 + 礁石共用同一方向（P0 修复，勿再二次随机）
+            // 🔴 每场只抽一次 sideLeft：海岸地形 + 浅滩物件共用同一方向（P0 修复，勿再二次随机）
             const sideLeft = rng.chance(0.5);
-            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied);
+            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!);
             for (let i = 0; i < 4; i++) {
-                const ra = rng.chance(0.5) ? 'ROCK_BEACH' : (rng.chance(0.5) ? 'ROCK_SEA1' : 'ROCK_SEA2');
-                objects.push({ asset: ra, x: sideLeft ? VW * 0.18 + rng.next() * VW * 0.06 : VW * 0.82 - rng.next() * VW * 0.06, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS']);
+                const oxPos = sideLeft ? VW * 0.12 + rng.next() * VW * 0.08 : VW * 0.88 - rng.next() * VW * 0.08;
+                objects.push({ asset: ra, x: oxPos, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
         } else if (waterKind === 'lake') {
-            isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy);
+            isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
         }
 
-        // ── 第 4 层 TERRAIN：农田 + 地表变体 + 林地落叶层 ──
-        buildFarms(gw, gh, elev, reg, rng, patches, occupied);
-        buildGroundVariation(gw, gh, biome, elevationBand, slope, rng, patches, occupied);
-        buildForestFloor(gw, gh, biome, rng, patches, occupied);
+        // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied);
+        buildForestFloor(gw, gh, theme!, rng, patches, occupied);
 
-        // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater, isEastAsia, isSubtropical);
+        // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 平面装饰 / 实体装饰 + 通用资源 ──
+        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater);
         buildResources(VW, VH, rng, objects, isWater);
-        buildDebris(VW, VH, rng, objects, isWater);
 
         enforceTreeSpacing(objects);
         attachDeObjectObstruction(objects);
         return {
             seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
-            biome, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects,
+            biome, deMapTheme: theme!.id, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects,
         };
     }
 
@@ -424,6 +426,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         elevationM: elev,
         slopeDeg: slope,
         biome,
+        deMapTheme: null,
         season,
         baseTerrain,
         waterKind,
@@ -486,17 +489,18 @@ function buildCoastline(
     sideLeft: boolean,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
-    occupied: Set<string>
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
 ): WaterChecker {
     // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
     const controls: Array<{ x: number; y: number }> = [];
-    let bx = VW * 0.18;
+    let bx = VW * 0.14;
     const controlStep = TILE_H * 4;
     for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
         const x = sideLeft ? bx : VW - bx;
         controls.push({ x, y });
-        bx += (rng.next() - 0.5) * TILE_W * 1.6;
-        bx = Math.max(VW * 0.08, Math.min(VW * 0.32, bx));
+        bx += (rng.next() - 0.5) * TILE_W * 1.4;
+        bx = Math.max(VW * 0.06, Math.min(VW * 0.24, bx));
     }
 
     // DE watershore 过渡图集的岸缘不是逐格直线：用 Catmull-Rom 穿过稀疏控制点，
@@ -516,8 +520,8 @@ function buildCoastline(
         const p2 = controls[Math.min(controls.length - 1, segment + 1)];
         const p3 = controls[Math.min(controls.length - 1, segment + 2)];
         const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
-        const minX = sideLeft ? VW * 0.08 : VW * 0.68;
-        const maxX = sideLeft ? VW * 0.32 : VW * 0.92;
+        const minX = sideLeft ? VW * 0.05 : VW * 0.76;
+        const maxX = sideLeft ? VW * 0.24 : VW * 0.95;
         shoreline.push({ x: Math.max(minX, Math.min(maxX, catmullRom(p0.x, p1.x, p2.x, p3.x, t))), y });
     }
 
@@ -562,11 +566,11 @@ function buildCoastline(
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
     mark(deep); mark(medium); mark(shallow); mark(beach); mark(wet);
 
-    patches.push({ tile: WATER_DEEP, cells: deep, polygon: bandPolygon(-VW, -shallowW - mediumW), alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(WATER_MEDIUM), cells: medium, polygon: bandPolygon(-shallowW - mediumW, -shallowW), alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(WATER_SHALLOW), cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore' });
+    patches.push({ tile: SHALLOW_DEEP, cells: deep, polygon: bandPolygon(-VW, -shallowW - mediumW), alpha: 1, category: 'shore' });
+    patches.push({ tile: rng.pick(SHALLOW_MEDIUM), cells: medium, polygon: bandPolygon(-shallowW - mediumW, -shallowW), alpha: 1, category: 'shore' });
+    patches.push({ tile: rng.pick(SHALLOW_NEAR), cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore' });
     patches.push({ tile: BEACH_WET, cells: wet, polygon: bandPolygon(0, wetW), alpha: 1, category: 'shore' });
-    patches.push({ tile: rng.pick(BEACH_SAND), cells: beach, polygon: bandPolygon(wetW, wetW + beachW), alpha: 1, category: 'shore' });
+    patches.push({ tile: theme.beachTerrain, cells: beach, polygon: bandPolygon(wetW, wetW + beachW), alpha: 1, category: 'shore' });
 
     // 水域排斥：signedDistance < 0 即深/中/浅水（滩/湿沙/陆均不算水）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;

@@ -8,7 +8,9 @@
  */
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { koppenClassIdAt } from '../data/KoppenGeigerGrid';
+import { getRegion } from '../systems/RegionSystem';
 import { RandomSource, mathRandomSource } from './scene13/Random';
+import { resolveDeMapTheme, terrainForTheme } from './scene13/Scene13DeMapThemes';
 
 export type Biome =
     | 'tropical_rainforest'
@@ -160,14 +162,9 @@ export function resolveTerrainTileAtElevation(
     const climate = resolveClimateRegion(lat, lng);
     const band = resolveElevationBand(lat, climate, elev);
     const biome = detectBiomeCore(lat, lng, elev);
-    const biomeMain = BIOME_TERRAIN[biome][season];
-    if (band === 'snow') return rng.pick(['sno', 'sn2', 'snf']);
-    if (band === 'alpine') {
-        return rng.pick(biome === 'desert' || biome === 'temperate_grass'
-            ? ['pm2', 'qs2', 'gravel_default']
-            : [biomeMain, 'pm2', 'rock_wet']);
-    }
-    return biomeMain;
+    const theme = resolveDeMapTheme(lat, lng, biome, getRegion(lat, lng));
+    void rng;
+    return terrainForTheme(theme, biome, season, band);
 }
 
 // ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────
