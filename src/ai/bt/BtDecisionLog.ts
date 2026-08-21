@@ -1,5 +1,6 @@
 import { GameConfig } from '../../config/GameConfig';
 import { gameLog, gameWarn } from '../../utils/GameLogger';
+import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import type { BTContext } from './BehaviorTree';
 
 export function getStrategicTargetId(ctx: BTContext): string | null {
@@ -27,6 +28,11 @@ export function setStrategicTarget(
     ctx.targetCityId = cityId;
     ctx.targetPosition = position;
     ctx.huntBlockedSinceMs = null;
+    // 🔴 方案 A（2026-08-21 主人定）：提前预取目标城的 ESRI Zoom 13 水域瓦片，
+    //    让军团走到战场前瓦片就绪，进战斗时 getTileMaskSync 命中真实水域
+    //    （否则同步生成 vs 异步拉取的时序 bug 会让第一次战斗永远走程序化回退）。
+    //    scheduleFetch 幂等（缓存/pending 去重），远征每 tick 幂等重设重复调用无副作用。
+    LandSeaSystem.getWaterSampler().scheduleFetch(position.lat, position.lng, 13);
 }
 
 /**

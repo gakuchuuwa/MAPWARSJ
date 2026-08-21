@@ -21,6 +21,7 @@ import {
     DEFAULT_TERRAIN_TILE,
 } from '../Scene13Biome';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
+import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import {
     groundTilesForTheme,
@@ -452,24 +453,50 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 水域排斥谓词：陆地物件（植被/资源/残迹）禁止落在水里。
         let isWater: WaterChecker = () => false;
         let isRoad: (x: number, y: number) => boolean = () => false;
-        if (waterKind === 'sea') {
-            // 🔴 每场只抽一次 sideLeft：海岸地形 + 浅滩物件共用同一方向（P0 修复，勿再二次随机）
-            const sideLeft = rng.chance(0.5);
-            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!, season, input.lat, elev, biome);
-            for (let i = 0; i < 4; i++) {
-                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
-                const oxPos = sideLeft ? VW * 0.12 + rng.next() * VW * 0.08 : VW * 0.88 - rng.next() * VW * 0.08;
-                objects.push({ asset: ra, x: oxPos, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+
+        // 优先尝试从 ESRI Zoom 13 获取真实的真实水体瓦片掩膜
+        let usedRealZoom13Water = false;
+        if (hasCoord && input.forceWaterKind !== 'none') {
+            const { tileX, tileY } = latLngToTilePixel(input.lat!, input.lng!, 13);
+            const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(13, tileX, tileY);
+            // 调度后台拉取（供后续战斗复用）
+            LandSeaSystem.getWaterSampler().scheduleFetch(input.lat!, input.lng!, 13);
+
+            if (maskObj?.mask) {
+                let waterCount = 0;
+                const m = maskObj.mask;
+                for (let i = 0; i < m.length; i++) {
+                    if (m[i] === 1) waterCount++;
+                }
+                if (waterCount > 100) {
+                    isWater = buildWaterFromRealESRIZoom13(
+                        m, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
+                    );
+                    usedRealZoom13Water = true;
+                }
             }
-        } else if (waterKind === 'lake') {
-            isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
-        } else if (waterKind === 'river') {
-            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
-        } else {
-            // 纯陆地战场：35% 概率生成贯穿东西的平坦帝国行军大道
-            const hasRoad = input.forceHasRoad ?? rng.chance(0.35);
-            if (hasRoad) {
-                isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+        }
+
+        if (!usedRealZoom13Water) {
+            if (waterKind === 'sea') {
+                // 🔴 [2026-08-21 主人定] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
+                const sideLeft = true;
+                isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+                for (let i = 0; i < 4; i++) {
+                    const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
+                    const oxPos = VW * 0.12 + rng.next() * VW * 0.08;
+                    objects.push({ asset: ra, x: oxPos, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+                }
+            } else if (waterKind === 'lake') {
+                isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
+            } else if (waterKind === 'river') {
+                isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
+            } else {
+                // 纯陆地战场：35% 概率生成贯穿东西的平坦帝国行军大道
+                const hasRoad = input.forceHasRoad ?? rng.chance(0.35);
+                if (hasRoad) {
+                    isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+                }
             }
         }
 
@@ -583,6 +610,121 @@ function generateElevation(
         }
     }
     return grid;
+}
+
+// ── 第 3 层：真实 ESRI Zoom 13 水系转 DE 战场（超圆滑 SDF 连续场） ──
+
+function buildWaterFromRealESRIZoom13(
+    mask: Uint8Array,
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    objects: EnvironmentObjectPlan[],
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2 = 0,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
+): WaterChecker {
+    // 平滑采样函数（多阶圆滑滤波，彻底消除 256x256 阶梯锯齿）
+    const sampleMaskSmooth = (u: number, v: number): number => {
+        const cx = u * 255;
+        const cy = v * 255;
+        const radius = 6;
+        let sum = 0;
+        let weightSum = 0;
+        const minX = Math.max(0, Math.floor(cx - radius));
+        const maxX = Math.min(255, Math.ceil(cx + radius));
+        const minY = Math.max(0, Math.floor(cy - radius));
+        const maxY = Math.min(255, Math.ceil(cy + radius));
+
+        for (let y = minY; y <= maxY; y++) {
+            for (let x = minX; x <= maxX; x++) {
+                const dx = x - cx;
+                const dy = y - cy;
+                const d2 = dx * dx + dy * dy;
+                if (d2 <= radius * radius) {
+                    const w = 1.0 - Math.sqrt(d2) / (radius + 0.1);
+                    sum += mask[y * 256 + x] * w;
+                    weightSum += w;
+                }
+            }
+        }
+        return weightSum > 0 ? sum / weightSum : 0;
+    };
+
+    const waterCells: Array<[number, number]> = [];
+    const beachCells: Array<[number, number]> = [];
+    const fordingCells: Array<[number, number]> = [];
+
+    // 遍历等轴网格判定水域与岸线
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            if (py < -TILE_H || py > VH + TILE_H) continue;
+
+            const u = Math.max(0, Math.min(1, px / VW));
+            const v = Math.max(0, Math.min(1, py / VH));
+            const waterVal = sampleMaskSmooth(u, v);
+
+            if (waterVal > 0.42) {
+                waterCells.push([gx, gy]);
+                // 中央对冲交战走廊（Y ∈ [35%, 65%], X ∈ [15%, 85%]）自动设置涉水浅滩通道
+                if (py >= VH * 0.35 && py <= VH * 0.65 && px >= VW * 0.15 && px <= VW * 0.85) {
+                    fordingCells.push([gx, gy]);
+                }
+            } else if (waterVal > 0.18) {
+                beachCells.push([gx, gy]);
+            }
+        }
+    }
+
+    const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
+    mark(waterCells);
+    mark(beachCells);
+
+    // 1. 铺设湿泥沙滩层
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    if (beachCells.length > 0) {
+        patches.push({ tile: actualBeachTile, cells: beachCells, alpha: 0.95, category: 'shore' });
+    }
+
+    // 2. 铺设浅水碧波层（sh2）
+    if (waterCells.length > 0) {
+        patches.push({ tile: 'sh2', cells: waterCells, alpha: 1.0, category: 'shore' });
+    }
+
+    // 3. 铺设中央平坦涉水浅滩渡口（sha：部队可全速冲锋，100% 不卡位）
+    if (fordingCells.length > 0) {
+        patches.push({ tile: 'sha', cells: fordingCells, alpha: 0.92, category: 'shore' });
+    }
+
+    // 4. 沿水岸点缀芦苇与睡莲
+    const flora = ['REEDS', 'WATER_LILY', 'ROCK1', 'ROCK2'];
+    for (let i = 0; i < 6; i++) {
+        const rx = VW * (0.1 + rng.next() * 0.8);
+        const ry = VH * (0.1 + rng.next() * 0.8);
+        const u = rx / VW, v = ry / VH;
+        const val = sampleMaskSmooth(u, v);
+        if (val > 0.15 && val < 0.65) {
+            const asset = rng.pick(flora);
+            objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        }
+    }
+
+    // 水域排斥谓词：水体内部禁止生成陆地大树或干枯石头
+    return (x, y) => {
+        const u = Math.max(0, Math.min(1, x / VW));
+        const v = Math.max(0, Math.min(1, y / VH));
+        return sampleMaskSmooth(u, v) > 0.42;
+    };
 }
 
 // ── 第 3 层：海岸线（圈带分层 + 有机边界，照 coastal/water_blending.inc） ──

@@ -66,6 +66,7 @@ function resolveMarchTarget(
     currentPos: LatLng,
 ): string {
     let marchTargetId = targetCityId;
+    let checkedPolyline = false;
 
     // 目标为己方城（回援守城 / 残兵撤退回家）：直取，不做「逐段清障」。
     // 否则回家路径 ZOC 内第一个敌城会被解析为行军目标——回援军团被派去攻打敌城，
@@ -89,8 +90,9 @@ function resolveMarchTarget(
             (fid, start, target, getFaction) =>
                 roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction)
         );
+        checkedPolyline = marchPath.length >= 2;
     }
-    if (marchPath.length >= 2) {
+    if (!checkedPolyline && marchPath.length >= 2) {
         const polylineOpts = isCampaignLegion(army)
             ? { minAlong: Math.max(0, distanceAlongPolyline(currentPos, marchPath) - 0.02) }
             : undefined;
@@ -183,21 +185,23 @@ export function moveLegionToCity(
     const factionId = army.getFactionId();
 
     const nearestStartCityId = roadRegistry.getNearestCityId(currentPos.lat, currentPos.lng);
-    const pathPreviewForResume = nearestStartCityId
-        ? roadRegistry.getFullPathToCity(currentPos, targetCityId, nearestStartCityId)
-        : [];
-    const hopForResume = resolveMarchTarget(
-        deps,
-        army,
-        factionId,
-        nearestStartCityId ?? undefined,
-        targetCityId,
-        pathPreviewForResume,
-        currentPos,
-    );
-    if (tryResumeRoadMarch(deps, army, targetCityId, hopForResume, currentPos)) {
-        notePathfinding();
-        return true;
+    if (army.hasSavedMarchState()) {
+        const pathPreviewForResume = nearestStartCityId
+            ? roadRegistry.getFullPathToCity(currentPos, targetCityId, nearestStartCityId)
+            : [];
+        const hopForResume = resolveMarchTarget(
+            deps,
+            army,
+            factionId,
+            nearestStartCityId ?? undefined,
+            targetCityId,
+            pathPreviewForResume,
+            currentPos,
+        );
+        if (tryResumeRoadMarch(deps, army, targetCityId, hopForResume, currentPos)) {
+            notePathfinding();
+            return true;
+        }
     }
 
     // ── 来路折返（2026-08-04 GAKU 定）──────────────────────────────
@@ -268,11 +272,13 @@ export function moveLegionToCity(
             pathPreview ?? [],
             currentPos,
         );
-        const candidatePath = roadRegistry.getFullPathToCity(
-            currentPos,
-            candidateMarchTargetId,
-            candidateStartId
-        );
+        const candidatePath = candidateMarchTargetId === targetCityId
+            ? pathPreview
+            : roadRegistry.getFullPathToCity(
+                currentPos,
+                candidateMarchTargetId,
+                candidateStartId
+            );
         if (candidatePath && candidatePath.length >= 2) {
             selectedStartCityId = candidateStartId;
             selectedPath = candidatePath;

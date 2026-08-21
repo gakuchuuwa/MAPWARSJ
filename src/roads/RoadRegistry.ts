@@ -707,9 +707,25 @@ export class RoadRegistry {
      * 寻找城市之间的路径 (返回城市ID序列)
      */
     public findCityPath(startId: string, endId: string): string[] | null {
-        const path = this.findPath(startId, endId);
-        if (!path) return null;
-        return path.nodes;
+        if (!this.adjacencyList.has(startId) || !this.adjacencyList.has(endId)) {
+            return null;
+        }
+
+        const cached = this.getDijkstraFrom(startId);
+        if (!cached) return null;
+        if (startId === endId) return [startId];
+        if (!cached.prev.has(endId)) return null;
+
+        const nodes: string[] = [endId];
+        let current = endId;
+        while (current !== startId) {
+            const predecessor = cached.prev.get(current);
+            if (!predecessor) return null;
+            current = predecessor.nodeId;
+            nodes.push(current);
+        }
+        nodes.reverse();
+        return nodes;
     }
 
     /**
