@@ -3547,7 +3547,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_20.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_20.png": {
             "scale": 0.76,
             "offsetX": 0,
             "offsetY": -7
@@ -4202,17 +4202,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 37
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_24.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_24.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_26.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_26.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_27.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_27.png": {
             "scale": 1.44,
             "offsetX": 0,
             "offsetY": 29
@@ -4222,7 +4222,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_29.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_29.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 11
@@ -4232,7 +4232,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/india/__闲置__CENTRAL_ASIA_31.png": {
+        "/assets/INDIA/__闲置__CENTRAL_ASIA_31.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -30
@@ -5767,52 +5767,52 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/india/boluo_damoboluo.png": {
+        "/assets/INDIA/boluo_damoboluo.png": {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/india/fanyanna_xieer.png": {
+        "/assets/INDIA/fanyanna_xieer.png": {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/india/deli_alawuding.png": {
+        "/assets/INDIA/deli_alawuding.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/india/jiashi_d_jiashiwang.png": {
+        "/assets/INDIA/jiashi_d_jiashiwang.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/india/jieri_jieriwang.png": {
+        "/assets/INDIA/jieri_jieriwang.png": {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/india/kongque_zhantuoluojiduo.png": {
+        "/assets/INDIA/kongque_zhantuoluojiduo.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/india/mojietuo_pinpisuoluo.png": {
+        "/assets/INDIA/mojietuo_pinpisuoluo.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/india/mowoer_akeba.png": {
+        "/assets/INDIA/mowoer_akeba.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/india/xike_lanjite.png": {
+        "/assets/INDIA/xike_lanjite.png": {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/india/sumo_sumowang.png": {
+        "/assets/INDIA/sumo_sumowang.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -15

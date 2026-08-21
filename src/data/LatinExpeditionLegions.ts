@@ -17,15 +17,12 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T2 特色之兵 ──
     // 汉尼拔主力骑臂=努米底亚骑（坎尼等）；圣团属布匿早期，勿绑汉尼拔 → T2
-    buni: { name: '努米底亚骑', tier: 2 },
     xila: { name: '萨拉米斯舰', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯海战；避据点「雅典」叠字
     yipilusi: { name: '摩罗西亚骑', tier: 2 },          // 安布拉基亚·皮洛士：伊庇鲁斯摩罗西亚战象铁骑
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
     yadelaiya: { name: '圣马可舰', tier: 2 },          // 威尼斯·丹多洛：圣马可旗/兵工厂；避据点「威尼斯」叠字
     aquidan: { name: '法兰克甲士', tier: 2 },          // 波尔多·黑太子：1356普瓦捷——长弓+下马甲士为主（非骑兵专名；勿与732图尔/查理马特混淆）
-    mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
-    aguelabu: { name: '易弗里军团', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；避势力「阿格拉布」叠字
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
     maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
     kasidiliya: { name: '卡斯蒂骑', tier: 3 },
@@ -41,8 +38,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     guadaer: { name: '圣地亚哥团', tier: 2 },
     andaluoxiya: { name: '安达卢斯骑', tier: 3 },          // 科尔多瓦·阿卜杜拉
     putaoya: { name: '阿维斯骑士', tier: 3 },          // 里斯本·阿方索·恩里克侧阿维斯团（基督骑士已挂休达）
-    babali: { name: '巴巴里舰队', tier: 3 },          // 阿尔及尔·巴巴罗萨
-    telibolisi: { name: '巴巴里海盗', tier: 3 },          // 的黎波里·德拉古特：北非海盗身份可考 → T3
     // 维罗纳·坎格兰德：斯卡拉家族治军，非「铁骑」专名 → T3
     bohepingyuan: { name: '斯卡拉骑士', tier: 3 },
     kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前433西波塔海战；避势力「科基拉」叠字
@@ -67,7 +62,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
     feiniqi: { name: '迦太基圣队', tier: 3 },          // 加的斯·哈米尔卡
-    yidelisi: { name: '伊德里斯团', tier: 4 },          // 非斯·伊德里斯：都城军；避据点「非斯」叠字
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
     leangongguo: { name: '莱昂骑士', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡 → T2
@@ -76,10 +70,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     alagong: { name: '阿尔莫加瓦', tier: 2 },
     // 休达·恩里克：基督骑士团大团长（非阿维斯）→ T2
     zhibuluotuo: { name: '基督骑士', tier: 2 },
-    zhayan: { name: '特莱姆森骑', tier: 4 },          // 特莱姆森·亚格姆拉森；避势力「扎扬」叠字
-    hamade: { name: '贝尼哈马团', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德；避势力「哈马德」叠字
     sading: { name: '岛屿佣兵', tier: 4 },          // 卡利亚里·埃莱奥诺拉
-    jileinaijia: { name: '昔兰尼轻骑', tier: 4 },          // 班加西·马加斯
     kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
     // 南特·吉尔德雷斯：无专名精锐 → T4
     aermolika: { name: '阿尔摩里骑', tier: 4 },

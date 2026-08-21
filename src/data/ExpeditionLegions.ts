@@ -44,6 +44,8 @@ import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 import { SLAVIC_EXPEDITION_ELITE_LEGIONS } from './SlavicExpeditionLegions';
 import { GERMANIC_EXPEDITION_ELITE_LEGIONS } from './GermanicExpeditionLegions';
 import { LATIN_EXPEDITION_ELITE_LEGIONS } from './LatinExpeditionLegions';
+import { INDIA_EXPEDITION_ELITE_LEGIONS } from './IndiaExpeditionLegions';
+import { BERBER_EXPEDITION_ELITE_LEGIONS } from './BerberExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
@@ -73,6 +75,8 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...SLAVIC_EXPEDITION_ELITE_LEGIONS,
   ...GERMANIC_EXPEDITION_ELITE_LEGIONS,
   ...LATIN_EXPEDITION_ELITE_LEGIONS,
+  ...INDIA_EXPEDITION_ELITE_LEGIONS,
+  ...BERBER_EXPEDITION_ELITE_LEGIONS,
 };
 
 function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {
@@ -132,6 +136,8 @@ export {
   CENTRAL_EXPEDITION_ELITE_LEGIONS,
   BASHU_EXPEDITION_ELITE_LEGIONS,
   HEXI_EXPEDITION_ELITE_LEGIONS,
+  INDIA_EXPEDITION_ELITE_LEGIONS,
+  BERBER_EXPEDITION_ELITE_LEGIONS,
 };
 
 /** 数据录入/审计：factionId → 番号（运行时募兵请用 getLegionEliteLegionName） */
@@ -262,6 +268,8 @@ if (import.meta.hot) {
         './CentralExpeditionLegions',
         './BashuExpeditionLegions',
         './HexiExpeditionLegions',
+        './IndiaExpeditionLegions',
+        './BerberExpeditionLegions',
     ], () => {
         console.log('[HMR] 精锐番号数据已更新（F5 生效）');
     });

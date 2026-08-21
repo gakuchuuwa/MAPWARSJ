@@ -98,6 +98,7 @@ export interface MilitaryTech {
 const CHAINMAIL_BELT: readonly RegionType[] = [
     // [2026-08-19] 原含 'GREEK'，已并入 LATIN（本表已有 LATIN，覆盖不变）
     'LATIN', 'GERMANIC', 'SLAVIC', 'WEST_ASIA', 'CENTRAL_ASIA', 'NORTH', 'HEXI',
+    'INDIA', 'BERBER',
 ];
 /** 骑射文化（草原／伊朗系）+ 中原扳指传统 */
 const HORSE_ARCHER_CULTURES: readonly RegionType[] = [
@@ -123,7 +124,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 45, 46, 47, 50] }],
-        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'BASHU', 'JIANGNAN', 'LATIN', 'GERMANIC'],
+        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'BASHU', 'JIANGNAN', 'LATIN', 'GERMANIC', 'INDIA', 'BERBER'],
     },
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
@@ -152,7 +153,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        cultures: ['LATIN', 'GERMANIC'],
+        cultures: ['LATIN', 'GERMANIC', 'BERBER'],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
@@ -181,7 +182,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [12, 47] },
         ],
-        cultures: ['LATIN', 'GERMANIC'],
+        cultures: ['LATIN', 'GERMANIC', 'INDIA', 'BERBER'],
     },
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
@@ -203,7 +204,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'SLAVIC', 'CENTRAL', 'BASHU'],
+        cultures: ['LATIN', 'GERMANIC', 'SLAVIC', 'CENTRAL', 'BASHU', 'INDIA', 'BERBER'],
     },
     {
         id: 'bracer', name: '护腕', de: 'Bracer', year: 1400,
@@ -213,7 +214,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA'],
+        cultures: ['LATIN', 'GERMANIC', 'CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA', 'INDIA', 'BERBER'],
     },
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
@@ -242,7 +243,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA', 'LATIN'],
+        cultures: ['CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA', 'LATIN', 'INDIA', 'BERBER'],
     },
 
     // ── 附加四条 ──────────────────────────────────────────────────────────
@@ -256,14 +257,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
         basis: '汉武帝得大宛汗血马，良种马育种',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 23, 36, 47] }],
-        cultures: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'TIBET', 'HEXI'],
+        cultures: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'TIBET', 'HEXI', 'INDIA', 'BERBER'],
     },
     {
         id: 'thumb_ring', name: '拇指环', de: 'Thumb Ring', year: 1206,
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
-        cultures: [...HORSE_ARCHER_CULTURES, 'CENTRAL'],
+        cultures: [...HORSE_ARCHER_CULTURES, 'CENTRAL', 'INDIA', 'BERBER'],
     },
     {
         id: 'parthian_tactics', name: '安息战术', de: 'Parthian Tactics', year: -53,
@@ -274,6 +275,43 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [36] },
         ],
         cultures: HORSE_ARCHER_CULTURES,
+    },
+
+    // ── 步兵软甲／行军（兵营）─────────────────────────────────────────
+    {
+        id: 'gambesons', name: '软甲', de: 'Gambesons', year: 800,
+        basis: '步兵软垫护甲（gambeson）工艺成熟',
+        // DE 效果 = 步兵线 +1 穿刺护甲；🔴 印度/柏柏尔（DE 印度斯坦/柏柏尔）禁用
+        effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
+        cultures: [
+            'SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
+            'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'NORTHEAST', 'TIBET',
+            'WESTERN', 'KOREA', 'DIANQIAN', 'WEST_ASIA',
+        ],
+    },
+    {
+        id: 'squires', name: '护卫', de: 'Squires', year: 1000,
+        basis: '步兵行军与耐力训练',
+        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],
+        cultures: null,
+    },
+
+    // ── 化学（大学）：远程/火器 +1 穿刺攻击 ────────────────────────────
+    {
+        id: 'chemistry', name: '化学', de: 'Chemistry', year: 1100,
+        basis: '火药兵器（硝石提纯）成熟，远程投射物威力跃升',
+        // DE 效果 = 弓箭手/弓骑/火枪 +1 穿刺攻击
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 44] }],
+        cultures: null,
+    },
+
+    // ── 攻城技师（大学）：攻城器械/弩炮 +1 射程 ────────────────────────
+    {
+        id: 'siege_engineers', name: '攻城技师', de: 'Siege Engineers', year: 1300,
+        basis: '中世纪攻城技术（配重投石机/攻城器械改良）',
+        // DE 还含「对建筑攻击 +20%」，属加成伤害表，本期只落射程
+        effects: [{ attr: 'range', op: 'add', value: 1, classes: [13, 55] }],
+        cultures: null,
     },
 ];
 
@@ -300,9 +338,10 @@ export const TECH_DISPLAY_GROUPS: readonly TechDisplayGroup[] = [
             'scale_mail', 'chain_mail', 'plate_mail',
             'scale_barding', 'chain_barding', 'plate_barding',
             'padded_archer', 'leather_archer', 'ring_archer',
+            'gambesons',
         ],
     },
-    { label: '射', hint: '箭术·远程攻击与射程', ids: ['fletching', 'bodkin', 'bracer'] },
-    { label: '术', hint: '畜牧·血统·拇指环·安息战术', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics'] },
+    { label: '射', hint: '箭术·远程攻击与射程', ids: ['fletching', 'bodkin', 'bracer', 'chemistry'] },
+    { label: '术', hint: '畜牧·血统·拇指环·安息战术·护卫·攻城技师', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics', 'squires', 'siege_engineers'] },
 ];
 
