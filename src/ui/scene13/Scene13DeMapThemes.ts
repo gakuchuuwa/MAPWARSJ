@@ -8,6 +8,7 @@ export type DeMapThemeId =
     | 'indomalayan_tropical'
     | 'palaearctic_asia_temperate'
     | 'palaearctic_asia_steppe'
+    | 'palaearctic_asia_desert'
     | 'palaearctic_tibetan_plateau'
     | 'palaearctic_middle_east_desert'
     | 'palaearctic_middle_east_highland'
@@ -254,6 +255,19 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
+    palaearctic_asia_desert: {
+        id: 'palaearctic_asia_desert',
+        baseTerrain: 'ds2', // 经典干燥戈壁黄土沙原
+        groundTiles: ['des', 'ds2', 'ds3', 'ds5', 'rck', 'qs', 'snd'],
+        forestFloorTiles: ['ds2', 'ds3', 'for'],
+        trees: ['DEAD_TREE', 'DRAGON_TREE', 'BUSH_TREE_A', 'ASIAN_PINE'],
+        autumnTrees: ['DEAD_TREE', 'DRAGON_TREE'],
+        winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
+        flatDecor: ['PLANT_DEAD', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'GRASS_DRY_PATCH', 'WEED'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK1', 'ROCK2', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
+        waterPlants: ['REEDS', 'DEAD_TREE', 'WATER_LILY'],
+        beachTerrain: 'bc3',
+    },
     // 🔴 [2026-08-21 补全·DE Swamp biome] 沼泽湿地主题（全球低洼湿地通用）：
     //   DE 沼泽 = 棕/绿水 + 湿泥地 + 芦苇/睡莲 + 枯树柳树 + 湿滩边缘 + 潮湿岩石 rock_wet。素材全来自 DE：
     //   wt_brown/wt_green/wt_yellow（棕绿黄水）、gravel_wet/r01（湿泥）、beach_wet（湿滩）、
@@ -324,15 +338,20 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.palaearctic_middle_east_highland; // 伊朗高原/扎格罗斯
     }
 
-    // 5. 中亚 / 阿富汗 / 巴基斯坦带（lng 62~90、lat 25~45：伊朗东部/阿富汗/俾路支/旁遮普干旱带）
-    if (lng >= 62 && lng < 90 && lat > 25 && lat < 45) {
+    // 5. 中亚 / 阿富汗 / 巴基斯坦带（lng 62~75、lat 25~45：伊朗东部/阿富汗/俾路支/旁遮普干旱带）
+    if (lng >= 62 && lng < 75 && lat > 25 && lat < 45) {
         if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
         return DE_MAP_THEMES.palaearctic_asia_steppe;
     }
 
-    // 6. 河西 / 陇右黄土高原带（lng 90~110、lat 33~42 且非青藏高海拔：武威/兰州/陇西；
-    //    🔴 阈值与青藏带对称：<2500m 落河西黄土，≥2500m 落青藏（与大地图色阶 2500 高原起点一致））
-    if (lng >= 90 && lng < 110 && lat > 33 && lat < 42 && (elev ?? 1000) < 2500) {
+    // 6. 🔴 [2026-08-22 主人定] 西域与河西走廊戈壁荒漠带（赤金堡/玉门关/敦煌/酒泉/嘉峪关/金塔/居延/哈密/吐鲁番/塔里木：
+    //    lng 75~101.5、lat 36~44 且海拔 < 2500m 排除祁连山/天山雪山）
+    if (lng >= 75 && lng < 101.5 && lat > 36 && lat < 44 && (elev ?? 1000) < 2500) {
+        return DE_MAP_THEMES.palaearctic_asia_desert;
+    }
+
+    // 7. 陇右 / 陇东 / 陕北黄土高原带（天水/兰州/定西/陇西/平凉/庆阳：lng 101.5~110、lat 33~42）
+    if (lng >= 101.5 && lng < 110 && lat > 33 && lat < 42 && (elev ?? 1000) < 2500) {
         return DE_MAP_THEMES.palaearctic_asia_steppe;
     }
 
@@ -392,6 +411,7 @@ export function terrainForTheme(
     elevationBand: ElevationBand,
     lat: number = 35,
     elev: number | null = null,
+    isSiege: boolean = false,
 ): string {
     // 1. 终年积雪雪峰 / 冰川（>4800m 或达到极高纬度真实雪线）
     if (elevationBand === 'snow') {
@@ -414,11 +434,9 @@ export function terrainForTheme(
 
     // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 高原干旱冻土（如哈马丹、安卡拉、河西、晋北）
     if (elevationBand === 'mountain') {
-        // 西亚高寒旱地高原（哈马丹/大不里士/安纳托利亚）：冬季为高寒干草冻土底色（pm1/ds3），绝非 100% 极地白雪
         if (theme.id === 'palaearctic_middle_east_highland') {
             return season === 2 ? 'pm1' : 'ds3';
         }
-        // 塞外干草原（蒙古高原/漠北）：冬季为枯草冻土底色（gr4/pm2）
         if (theme.id === 'palaearctic_asia_steppe') {
             return season === 2 ? 'gr4' : 'pm2';
         }
@@ -428,13 +446,14 @@ export function terrainForTheme(
         }
     }
 
-    // 5. 🔴 [2026-08-22 主人定] 冬季战场拒绝纯白死雪：全量采用「半土半雪」DE 经典雪草地皮 (sn2 / snf)
-    //    底色为雪草交融的浅雪地 (sn2)，雪中露土露草，层次丰富且绝不刺眼；
-    //    配合枯草冻土 (gr4 / pm1) 与残雪砾石 (ds5 / snf) 斑块，呈现真实车马践踏与风蚀雪原。
+    // 5. 🔴 [2026-08-22 主人定] 冬季降雪地表：
+    //    - 攻防战（isSiege）：城郭周围车马践踏，采用「半土半雪」DE 经典雪草地皮 (sn2)，雪中露土露草；
+    //    - 野战（野战遭遇战）：野外茫茫雪原，全量保留 DE 纯正大自然白雪深雪 (sno / sn2)。
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        if (biome === 'boreal' || biome === 'temperate_forest') return 'sn2'; // 针叶林/温带：半土半雪草皮 (sn2)
-        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'sn2'; // 塞外草地：半雪枯草
-        return 'sn2'; // 默认雪区：半土半雪
+        if (isSiege) {
+            return 'sn2'; // 攻防战：半土半雪
+        }
+        return (biome === 'tundra_snow' || biome === 'boreal') ? 'sno' : 'sno'; // 野战：茫茫纯白雪原
     }
 
     // 6. 基础地表
@@ -459,10 +478,15 @@ export function groundTilesForTheme(
     season: 0 | 1 | 2,
     lat: number = 35,
     elev: number | null = null,
+    isSiege: boolean = false,
 ): readonly string[] {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        // 半土半雪丰富组合：浅雪 (sn2) + 枯草冻土 (gr4 / pm1) + 林间残雪 (snf) + 冻土砾石 (ds5)
-        return ['sn2', 'gr4', 'snf', 'pm1', 'ds5'];
+        if (isSiege) {
+            // 攻防战：半土半雪组合（浅雪 sn2 + 枯草冻土 gr4 / pm1 + 林间残雪 snf + 冻土砾石 ds5）
+            return ['sn2', 'gr4', 'snf', 'pm1', 'ds5'];
+        }
+        // 野战：纯正大自然雪原组合（深雪 sno + 浅雪 sn2 + 林雪 snf + 冰面 ice）
+        return ['sno', 'sn2', 'snf', 'ice'];
     }
     return theme.groundTiles;
 }

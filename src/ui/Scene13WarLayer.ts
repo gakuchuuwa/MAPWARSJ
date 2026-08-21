@@ -2789,6 +2789,7 @@ export class Scene13WarLayer {
                 defenderFactionId: init.defenderFactionId,
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
+                isSiege: init.battleType === 'siege',
                 getCalendarSeason: () => {
                     // TimeSystem.getSeason() 枚举：春0 夏1 秋2 冬3；环境只收 绿0/橙1/白2
                     const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
@@ -3268,17 +3269,21 @@ export class Scene13WarLayer {
         if (side.length !== 9) return;
         const camps = ['CAMP_ARCHERY_RANGE', 'CAMP_BARRACKS', 'CAMP_STABLE'];
         const shuffledCamps = [...camps].sort(() => Math.random() - 0.5);
-        const place = (s: { x: number; y: number }, asset: string): DecorSprite => {
+        const place = (
+            s: { x: number; y: number },
+            asset: string,
+            options?: { flip?: boolean; frame?: number; z?: number },
+        ): DecorSprite => {
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
             return {
                 asset: full,
-                frame: 0,
+                frame: options?.frame ?? 0,
                 x: s.x,
                 y: s.y,
-                flip: Math.random() < 0.5,
+                flip: options?.flip ?? (Math.random() < 0.5),
                 layer: 'world',
-                z: 0,
+                z: options?.z ?? 0,
                 obstructionContactSec: 0,
                 obstructionTouched: false,
                 obstructionDisabled: false,
@@ -3298,8 +3303,7 @@ export class Scene13WarLayer {
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
-            // 🔴 [2026-08-22 主人改] 守方城墙：沿「东北-西南」方向（/ 斜线），扼守城建群与交火战场的交界前沿。
-            //   两端箭塔 + 中央城门 + 墙段连接；纯贴图无碰撞（world 层，兵可穿过）。
+                        // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
             for (const s of side) {
                 if (s.x < wMinX) wMinX = s.x;
@@ -3307,23 +3311,55 @@ export class Scene13WarLayer {
                 if (s.y < wMinY) wMinY = s.y;
                 if (s.y > wMaxY) wMaxY = s.y;
             }
-            const wallMargin = 90;
-            const wallSW = { x: wMinX - wallMargin, y: wMaxY + wallMargin }; // 西南端（左下，攻方侧）
-            const wallNE = { x: wMaxX + wallMargin, y: wMinY - wallMargin }; // 东北端（右上，守方侧）
-            const wallItems: Array<[number, string]> = [
-                [0, `${style}_TOWER_AGE3`],
-                [0.15, `${style}_WALL_STONE`],
-                [0.3, `${style}_WALL_STONE`],
-                [0.42, `${style}_WALL_STONE`],
-                [0.5, `${style}_GATE_STONE_NE`],
-                [0.58, `${style}_WALL_STONE`],
-                [0.7, `${style}_WALL_STONE`],
-                [0.85, `${style}_WALL_STONE`],
-                [1, `${style}_TOWER_AGE3`],
-            ];
-            for (const [t, asset] of wallItems) {
-                this.decorSprites.push(place({ x: wallSW.x + (wallNE.x - wallSW.x) * t, y: wallSW.y + (wallNE.y - wallSW.y) * t }, asset));
-            }
+            const vw = this.canvas?.width ?? 1920;
+            const vh = this.canvas?.height ?? 1080;
+
+            // 🔴 [2026-08-22 主人定] 城墙推至交战第一线：起码在最前排军队的前面（城外攻方 vs 城内守方）
+            const wallFrontX = Math.round(vw * 0.50);
+
+            // 1. 中间竖直平档段：上下充分延伸，完全超越最上与最下建筑及部队的极值
+            const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 100) };
+            const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 100) };
+            const gatePos = { x: wallFrontX, y: (towerNW.y + towerSW.y) * 0.5 };
+
+            // 2. 上边与下边斜向段：从正面主墙两端斜向展开直达屏幕右侧边缘
+            const wingLen = Math.max(300, vw - wallFrontX - 20);
+            const towerNE = { x: Math.min(vw - 20, wallFrontX + wingLen), y: Math.max(10, towerNW.y - 140) };
+            const towerSE = { x: Math.min(vw - 20, wallFrontX + wingLen), y: Math.min(vh - 20, towerSW.y + 140) };
+
+            // 城墙分段生成辅助
+            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false): void => {
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const dist = Math.hypot(dx, dy);
+                const count = Math.max(2, Math.ceil(dist / 38));
+                for (let i = 1; i < count; i++) {
+                    const t = i / count;
+                    this.decorSprites.push(place(
+                        { x: p1.x + dx * t, y: p1.y + dy * t },
+                        `${style}_WALL_STONE`,
+                        { flip, z: 1 },
+                    ));
+                }
+            };
+
+            // 中间垂直竖直平档：NW 角楼 -> 中央大门楼 -> SW 角楼
+            buildWallLine(towerNW, gatePos, false);
+            buildWallLine(gatePos, towerSW, false);
+
+            // 上边斜向段：NW 角楼 -> NE 角楼（斜向右上，完全在所有建筑上方）
+            buildWallLine(towerNW, towerNE, true);
+
+            // 下边斜向段：SW 角楼 -> SE 角楼（斜向右下，完全在所有建筑下方）
+            buildWallLine(towerSW, towerSE, false);
+
+            // 四座防御角楼与中央门楼
+            const towerAge = this.defenderCityType === 'small_city' ? 'AGE2' : 'AGE3';
+            this.decorSprites.push(place(gatePos, `${style}_GATE_STONE_NE`, { flip: false, z: 2 }));
+            this.decorSprites.push(place(towerNW, `${style}_TOWER_${towerAge}`, { flip: false, z: 2 }));
+            this.decorSprites.push(place(towerSW, `${style}_TOWER_${towerAge}`, { flip: true, z: 2 }));
+            this.decorSprites.push(place(towerNE, `${style}_TOWER_${towerAge}`, { flip: false, z: 2 }));
+            this.decorSprites.push(place(towerSE, `${style}_TOWER_${towerAge}`, { flip: true, z: 2 }));
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
