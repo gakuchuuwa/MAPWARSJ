@@ -195,7 +195,59 @@ DE 的 7 个气候 biome（Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppe
 - 阈值与 buildLake 的沼泽判定（elev<200）统一，避免「湖是沼泽、主题却不是」割裂。
 - 受益战场：东北松嫩/三江湿地、北欧波罗的海沿岸、中欧低地、洞庭湖/鄱阳湖边。
 
-### 季节与时间配色（DE 19 套 colorcorrection 对照）| DE 配色 | 13 场景 | 状态 |
+## 全素材科学划分·逐主题修复（2026-08-21，DE 模式推广）
+
+树的科学划分推广到**全部素材**（地面/装饰/实体/水岸），挨个区域审查修正（8 处）：
+
+| 主题 | 修正前（张冠李戴） | 修正后（DE 科学模式） |
+|------|-------------------|----------------------|
+| 非洲雨林 afrotropical | baseTerrain=des（沙漠沙）+ 地面混 qs/pal/ds2/ds3（沙土） | fo2 深色腐殖土 + gr3/gr7（刚果盆地密林） |
+| 南美雨林 neotropical | flat=WEED/FLOWER（温带通用）；solid 含 ANIMAL_SKELETON | FERNPATCH/PLANT_RAINFOREST/UNDERBRUSH_RAINFOREST + ROCK_JUNGLE（亚马逊蕨丛/雨林岩） |
+| 东南亚雨林 indomalayan | flat=SHRUB_GREEN/BUSH_GREEN/WEED（温带通用） | UNDERBRUSH_JUNGLE/PLANT_JUNGLE（竹丛藤蔓，DE 丛林下层） |
+| 欧洲温带 | flat 含 STUMP_GENERIC（实体树桩放平面层） | STUMP 挪 solid；flat=FLOWER/BUSH_GREEN/WEED |
+| 欧洲寒带 taiga | flat 含 STUMP_GENERIC | STUMP 挪 solid；flat=SHRUB_GREEN/PLANT_DEAD/GRASS_DRY_PATCH（枯植苔藓） |
+| 地中海 | flat 含 STUMP_GENERIC | STUMP 挪 solid；flat=FLOWER/SHRUB_GREEN/PLANT_DEAD（夏旱枯植） |
+| 南美温带 | solid 含 ANIMAL_SKELETON（骸骨=沙漠物） | ROCK1/2/3 |
+| 澳洲温带 | groundTiles 混 ds3/ds5（干旱土） | gr4/gr7/for/gr6（悉尼湿润森林） |
+
+配套：`GROUND_COVER_ASSETS` 白名单补 `UNDERBRUSH_JUNGLE`（此前缺失 → 东南亚藤蔓不渲染）。
+
+**验证**（`scratch/verify_decor_science.mts` 7 点全过）：刚果雨林→蕨丛/雨林植物；金沙萨（柯本 Aw 稀树草原）→干草/枯植/岩组；亚马逊→雨林岩；雅加达→丛林藤蔓；巴黎/莫斯科→花/灌木/树桩；开罗→仙人掌/骸骨/岩组。
+
+## 冬季冻土混合修复（2026-08-21，净州塞截图：100% 纯白无冻土）
+
+原冬季逻辑：baseTerrain 全换纯雪（sno/sn2）+ 变化层全雪 → 战场 100% 白。
+DE 实际冬季 = **雪 + 冻土/枯草/砾石混合**（雪盖不住一切：风蚀/地形起伏/牲畜踩踏露土）。已修：
+
+| biome（冬季） | 底色 | 变化层（雪 + 露土斑） |
+|--------------|------|---------------------|
+| tundra_snow 苔原 | pm1 冻土灰褐 | sno/sn2 雪斑 + pm2 冻土 + ds5 砾石 |
+| boreal 针叶林 | sno 深雪 | sn2/snf 雪 + **pm1 冻土斑** + ds5 砾石 |
+| cold_steppe 塞外草原 | gr4 枯草 | sn2/snf 雪斑 + **pm1 冻土** + gr4 枯草 |
+| temperate_grass/forest | gr4/sn2 | 雪斑 + 枯草 + 冻土斑 |
+
+配套：冬季变化层斑块 5→9 个、clump 6-12 格、alpha 0.22→0.4（冻土/枯草明显可见）。
+
+**验证**（`scratch/verify_winter_ground.mts` 4/4）：净州塞→枯草底+冻土斑 ✓、西伯利亚/北欧→雪+冻土砾石 ✓、华北→枯草+冻土 ✓。
+
+## DE 模式三审计（2026-08-21：搭配/使用/分布）
+
+**① 素材使用审计**（`scratch/verify_de_usage.mts`）：16 主题 flat/solid 层类别检查——
+平面层无实体、实体层无贴花、树/下层植被/岩石/水岸四件套齐全，16/16 通过。
+（GRAVES 墓碑/SKELETON 骸骨分类为实体道具——DE SOLID_OBJECT）
+
+**② 素材分布审计**（`scratch/verify_de_distribution.mts`）——发现并修复岩石散点问题：
+- 原：岩石单块散落（0% 成组）——DE 是 ROCK_GROUP 岩石堆（2~3 块相邻）
+- 修复：实体装饰改为**成组放置**（2~3 组 × 每组 2~3 块、组内 40~90px 椭圆散布），
+  新增 `spacingGroup` 标记 + `enforceAllObjectSpacing` **同组豁免间距**（否则岩石堆被 180px 间距强制拆散）
+- 实测：巴黎 7/7 成组、洛阳 11/11 成组、开罗 4/6 成组（DE 式岩石堆达成）
+
+**③ 搭配完整性**：16 主题树/下层植被/实体/水岸四件套齐全；平面装饰（草花灌木贴花落叶）
+稀疏散点 8~16 个 + 实体装饰（岩石堆）2~3 组，分布符合 DE rms create_object 模式。
+
+### 季节与时间配色（DE 19 套 colorcorrection 对照）
+
+| DE 配色 | 13 场景 | 状态 |
 |---------|---------|------|
 | Spring/Summer/Autumn/Winter | season 0/1/2（绿/秋/雪） | ✅ 已全覆盖（季节唯一权威=游戏日历，主人 08-20 定） |
 | Jungle/Desert/Savannah/Arctic/Rainforest/Swamp/Steppes | 对应主题 | ✅ 7/7 全覆盖 |
