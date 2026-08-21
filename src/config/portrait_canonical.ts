@@ -1,10 +1,11 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/21 20:21:03（共 45 条）
+ * 生成时间：2026/8/21 21:06:50（共 45 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
+    "/assets/LATIN/__多余__LATIN_05.png": "/assets/BERBER/buni_hanniba.png",
     "/assets/CENTRAL/huo_songlaosheng.png": "/assets/CENTRAL/__多余__CENTRAL_03.png",
     "/assets/CENTRAL/nanzhong_mazhong.png": "/assets/CENTRAL/__多余__CENTRAL_01.png",
     "/assets/CENTRAL/qian_songjingyang.png": "/assets/CENTRAL/__多余__CENTRAL_02.png",
@@ -29,7 +30,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/baizanting_fulajimier.png": "/assets/LATIN/__多余__LATIN_01.png",
     "/assets/LATIN/baojialiya_asenyishi.png": "/assets/LATIN/__多余__LATIN_03.png",
     "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/LATIN/__多余__LATIN_06.png",
-    "/assets/LATIN/buni_hanniba.png": "/assets/LATIN/__多余__LATIN_05.png",
     "/assets/LATIN/saipulusi_juyi.png": "/assets/LATIN/__多余__LATIN_04.png",
     "/assets/LATIN/talanduo_aqita.png": "/assets/LATIN/__多余__LATIN_07.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/LATIN/__多余__LATIN_02.png",
