@@ -50,7 +50,7 @@ const SHALLOW_NEAR = ['sh2', 'sh3'];
 /** 湿沙（水线） */
 const BEACH_WET = 'beach_wet';
 /** 内陆湖/水塘 */
-const POND_TILES = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2'];
+const POND_TILES = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2', 'wt2', 'wt3', 'wt4', 'wt5', 'wt6'];
 /** 湖岸（普通） */
 const POND_EDGE = ['sh2', 'sh3', 'sha'];
 /** 湖岸（湿地/沼泽） */
@@ -85,6 +85,8 @@ export interface EnvironmentObjectPlan {
     z: number;
     /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
+    /** 🔴 [2026-08-21 DE ROCK_GROUP] 成组实体装饰（岩石堆）同组标记——enforceAllObjectSpacing 对同组豁免间距 */
+    spacingGroup?: number;
     /** 连续接触这么多秒后只关闭阻挡；图像仍作为 world 对象保留。 */
     obstructionReleaseAfterSec?: number;
     flip: boolean;
@@ -165,6 +167,10 @@ const GROUND_COVER_ASSETS = new Set([
     'FLOWER', 'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
     'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH', 'PLANT',
     'UNDERBRUSH', 'UNDERBRUSH_JUNGLE', 'UNDERBRUSH_RAINFOREST', 'DECAL_ICE',
+    // 🔴 [2026-08-21 素材全覆盖] 荒漠地面贴花（干裂/陨坑）——沙漠/高原 flat
+    'DECAL_CRACK', 'DECAL_CRATER',
+    // 🔴 [2026-08-21 素材全覆盖] 秋季落叶——温带秋战场地面
+    'FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH',
 ]);
 const DE_HALF_TILE_OBJECTS = new Set([
     'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
@@ -176,6 +182,8 @@ const DE_HALF_TILE_OBJECTS = new Set([
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW', 'ROCK_FORMATION1', 'ROCK_FORMATION2',
     'ROCK_LIMESTONE', 'ROCK_JUNGLE', 'ROCK1', 'ROCK2', 'ROCK3',
+    // 🔴 [2026-08-21 素材全覆盖] 战场遗迹（木桶/地毯=丝路商栈、墓碑/骸骨=古战场）
+    'BARRELS', 'RUGS', 'GRAVES', 'SKELETON',
     'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_BAOBAB', 'FELLED_LUSH_BAMBOO',
     'STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_BAOBAB', 'STUMP_LUSH_BAMBOO',
     'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D',
@@ -213,12 +221,15 @@ function isObjectOverlapping(
     y: number,
     asset: string,
     objects: EnvironmentObjectPlan[],
-    ignoreIdx: number = -1
+    ignoreIdx = -1,
+    ignoreGroup?: number,
 ): boolean {
     const r1 = getAssetRepulsionRadius(asset);
     for (let i = 0; i < objects.length; i++) {
         if (i === ignoreIdx) continue;
         const other = objects[i];
+        // 🔴 [2026-08-21 DE ROCK_GROUP] 同组块豁免间距（岩石堆相邻成簇）
+        if (ignoreGroup !== undefined && other.spacingGroup === ignoreGroup) continue;
         const r2 = getAssetRepulsionRadius(other.asset);
         const minDist = r1 + r2;
         const dx = x - other.x;
@@ -240,7 +251,7 @@ function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
     const accepted: EnvironmentObjectPlan[] = [];
 
     for (const obj of sorted) {
-        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted)) {
+        if (!isObjectOverlapping(obj.x, obj.y, obj.asset, accepted, -1, obj.spacingGroup)) {
             accepted.push(obj);
         }
     }
@@ -315,8 +326,8 @@ function sampleLandPos(
     asset?: string,
     objects?: EnvironmentObjectPlan[],
     inBattleCenter?: (x: number, y: number) => boolean,
-): { x: number; y: number } {
-    for (let attempt = 0; attempt < 80; attempt++) {
+): { x: number; y: number } | null {
+    for (let attempt = 0; attempt < 100; attempt++) {
         const x = rng.next() * VW;
         const y = rng.next() * VH;
         if (isWater(x, y)) continue;
@@ -324,7 +335,7 @@ function sampleLandPos(
         if (asset && objects && isObjectOverlapping(x, y, asset, objects)) continue;
         return { x, y };
     }
-    return { x: rng.next() * VW, y: rng.next() * VH };
+    return null;
 }
 
 // ── 水域探测（照抄 Scene13WarLayer.probeWater 口径，确定性） ──
@@ -432,7 +443,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
     if (hasCoord) {
         // ── 第 2 层 ELEVATION：clump 生长 + 高度等级（低地少丘、高地多丘） ──
-        const elevation = generateElevation(gw, gh, elev, slope, rng);
+        const elevation = generateElevation(gw, gh, ox, oy, VW, VH, elev, slope, rng);
 
         // ── 第 3 层 WATER ──
         // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
@@ -444,7 +455,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             const sideLeft = rng.chance(0.5);
             isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!);
             for (let i = 0; i < 4; i++) {
-                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS']);
+                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
                 const oxPos = sideLeft ? VW * 0.12 + rng.next() * VW * 0.08 : VW * 0.88 - rng.next() * VW * 0.08;
                 objects.push({ asset: ra, x: oxPos, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
@@ -459,8 +470,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater, input.lat, elev);
-        buildResources(VW, VH, season, rng, objects, isWater);
+        buildVegetation(VW, VH, biome, elevationBand, season, theme!, rng, objects, isWater, input.lat, elev, waterKind);
+        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -499,6 +510,10 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 function generateElevation(
     gw: number,
     gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
     elev: number | null,
     slope: number | null,
     rng: RandomSource
@@ -513,9 +528,12 @@ function generateElevation(
             : 1 + rng.int(0, 1); // 平原低地：1 片自然缓坡丘陵
 
     for (let i = 0; i < hillCount; i++) {
-        // 丘陵中心分布于战场不同方位（左侧高地、右侧山脊、中央制高点）
-        const cx = Math.floor(gw * (0.2 + rng.next() * 0.6));
-        const cy = Math.floor(gh * (0.2 + rng.next() * 0.6));
+        // 先在可见战场取丘心，再反算到等距网格。直接分别抽 gx/gy 会让大量丘心落到屏幕外。
+        const hillScreenX = VW * (0.22 + rng.next() * 0.56);
+        const hillScreenY = VH * (0.18 + rng.next() * 0.58);
+        const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
+        const cx = Math.max(1, Math.min(gw - 2, hillGx));
+        const cy = Math.max(1, Math.min(gh - 2, hillGy));
         const rx = 7 + rng.next() * 5;  // 椭圆长轴 7~12 格
         const ry = 5.5 + rng.next() * 4; // 椭圆短轴 5.5~9.5 格
         const hMax = (elev !== null && elev >= 1000) ? 3 : (elev !== null && elev >= 300 ? 2 : 2);
@@ -740,7 +758,7 @@ function buildRiver(
     patches.push({ tile: 'wtr', cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
 
     // 3. 沿河两岸自然点缀水生植被与河卵石（芦苇、睡莲、水石，严禁在河水正中央阻挡交火）
-    const bankFlora = ['REEDS', 'WATER_LILY', 'ROCK_BEACH'];
+    const bankFlora = ['REEDS', 'WATER_LILY', 'ROCK1', 'ROCK2'];
     const floraCount = 6 + rng.int(0, 4);
     for (let i = 0; i < floraCount; i++) {
         const ry = VH * (0.1 + rng.next() * 0.8);
@@ -836,12 +854,18 @@ function buildGroundVariation(
     occupied: Set<string>,
     lat?: number,
     elev?: number | null,
+    waterKind?: 'sea' | 'lake' | 'river' | 'none',
 ): void {
     const variation = groundTilesForTheme(theme, biome, season, lat, elev);
-    for (let i = 0; i < 5; i++) {
+    // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
+    //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
+    const isWinterMixed = season === 2 && variation.some((t) => t.startsWith('pm') || t === 'gr4' || t === 'ds5');
+    const patchCount = isWinterMixed ? 9 : 5;
+    for (let i = 0; i < patchCount; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        patches.push({ tile: t, cells: growClump(sx, sy, 4 + rng.int(0, 5), gw, gh, occupied, rng), alpha: 0.22, category: 'ground-variation' });
+        const clump = isWinterMixed ? 6 + rng.int(0, 6) : 4 + rng.int(0, 5);
+        patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha: isWinterMixed ? 0.4 : 0.22, category: 'ground-variation' });
     }
 }
 
@@ -858,6 +882,7 @@ function buildForestFloor(
     occupied: Set<string>,
     lat?: number,
     elev?: number | null,
+    waterKind?: 'sea' | 'lake' | 'river' | 'none',
 ): void {
     const tiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
     if (tiles.length === 0) return;
@@ -882,6 +907,7 @@ function buildVegetation(
     isWater: WaterChecker,
     lat?: number,
     elev?: number | null,
+    waterKind?: 'sea' | 'lake' | 'river' | 'none',
 ): void {
     const treeAssets = treesForTheme(theme, season, lat, elev, biome);
     // 🔴 [2026-08-21 DE 式主导树种] 一图一主树成片（DE Black Forest 全橡树、Baltic 主松次桦）：
@@ -916,8 +942,13 @@ function buildVegetation(
     // 中央战斗区留空（攻方左、守方右，中央交火区不长树，主人 2026-08-20 检查植被时定）
     const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
     const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
-    const inBattleCenter = (x: number, y: number): boolean =>
-        x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    const inBattleCenter = (x: number, y: number): boolean => {
+        // 如果是中轴河流对峙战场，中央河流及两岸交战开阔带（38%~62%）全线保持开阔，严禁大石巨木阻挡
+        if (waterKind === 'river') {
+            return x > VW * 0.38 && x < VW * 0.62;
+        }
+        return x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    };
     let placed = 0;
     for (let c = 0; c < clusterCount && placed < treeCount; c++) {
         let cx = 0, cy = 0;
@@ -954,32 +985,75 @@ function buildVegetation(
         }
     }
 
-    // 地面装饰（灌木/草/花/岩石，冬季严禁出现绿花/夏草）
+    // 地面装饰（DE 模式：平面装饰散点 + 实体装饰成组——DE ROCK_GROUP 岩石/树桩/遗迹堆 2~3 块相邻）
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
-    const ground = [...themeDecor.flat, ...themeDecor.solid];
+    // ── 平面装饰（草/花/灌木/贴花/落叶）：稀疏散点 ──
     const decorCount = 8 + rng.int(0, 8);   // 8~16 稀疏点缀（原 treeCount*2~4 过密如雪花，主人 2026-08-20 否）
     for (let i = 0; i < decorCount; i++) {
-        const asset = rng.pick(ground);
+        const asset = rng.pick(themeDecor.flat);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
-        objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        if (p) objects.push({ asset, x: p.x, y: p.y, layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    }
+    // ── 实体装饰（岩石/树桩/墓碑/木桶/骸骨）：DE ROCK_GROUP 成堆（2~3 组 × 每组 2~3 块相邻）──
+    const solidGroupCount = 2 + rng.int(0, 2);
+    for (let g = 0; g < solidGroupCount; g++) {
+        const center = sampleLandPos(VW, VH, rng, isWater, undefined, objects, inBattleCenter);
+        if (!center) continue;
+        const n = 2 + rng.int(0, 2); // 每组 2~3 块
+        for (let k = 0; k < n; k++) {
+            let placed = false;
+            for (let a = 0; a < 30; a++) {
+                // 组内 40~90px 椭圆散布（iso 压扁 y）——岩石堆相邻成簇（DE ROCK_GROUP）
+                const ang = rng.next() * Math.PI * 2;
+                const dist = 40 + rng.next() * 50;
+                const sx = center.x + Math.cos(ang) * dist;
+                const sy = center.y + Math.sin(ang) * dist * 0.5;
+                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !inBattleCenter(sx, sy)) {
+                    const asset = rng.pick(themeDecor.solid);
+                    // spacingGroup 标记同组：enforceAllObjectSpacing 对同组块豁免间距（岩石堆相邻成簇）
+                    objects.push({ asset, x: sx, y: sy, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999), spacingGroup: g });
+                    placed = true;
+                    break;
+                }
+            }
+        }
     }
 
 }
 
 // ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
 
-function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker): void {
-    const resAssets = season === 2 ? ['MINE_STONE'] : ['FORAGE_BUSH', 'MINE_STONE'];
+function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome): void {
+    // 🔴 [2026-08-21 素材全覆盖] 资源按 biome 科学分配：
+    //    热带（雨林/稀树草原）= 木瓜/菠萝；温带（林/草原/地中海）= 浆果/果灌；
+    //    干旱（沙漠/冷草原）= 果灌少量；寒带 = 无果（仅石矿）；冬季全部仅石矿。
+    let resAssets: string[];
+    if (season === 2) {
+        resAssets = ['MINE_STONE'];
+    } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
+        resAssets = ['FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'MINE_STONE'];
+    } else if (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'mediterranean') {
+        resAssets = ['FORAGE_BUSH', 'FORAGE_FRUIT', 'MINE_STONE'];
+    } else if (biome === 'desert' || biome === 'cold_steppe') {
+        resAssets = ['FORAGE_FRUIT', 'MINE_STONE'];
+    } else {
+        resAssets = ['MINE_STONE'];
+    }
     const resCount = 2 + rng.int(0, 3);
     const centerX0 = VW * 0.32, centerX1 = VW * 0.68;
     const centerY0 = VH * 0.24, centerY1 = VH * 0.76;
-    const inBattleCenter = (x: number, y: number): boolean =>
-        x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    const inBattleCenter = (x: number, y: number): boolean => {
+        // 如果是中轴河流对峙战场，中央河流及两岸交战开阔带（38%~62%）全线保持开阔，严禁大石巨木阻挡
+        if (waterKind === 'river') {
+            return x > VW * 0.38 && x < VW * 0.62;
+        }
+        return x > centerX0 && x < centerX1 && y > centerY0 && y < centerY1;
+    };
 
     for (let i = 0; i < resCount; i++) {
         const asset = rng.pick(resAssets);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inBattleCenter);
-        objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 }
 

@@ -27,6 +27,8 @@ export interface DeMapThemePalette {
     autumnTrees?: readonly string[];
     winterTrees?: readonly string[];
     flatDecor: readonly string[];
+    // 🔴 [2026-08-21 素材全覆盖] 秋季地面装饰（落叶等）——season 1 时优先于 flatDecor
+    autumnFlatDecor?: readonly string[];
     solidDecor: readonly string[];
     waterPlants: readonly string[];
     beachTerrain: string;
@@ -89,6 +91,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     indomalayan_tropical: {
         id: 'indomalayan_tropical',
         baseTerrain: 'gr7',
+        // 🔴 [2026-08-21 修·截图] 原 rm1/rm2 稻田入地面 → 绿色长条（人工地块，移除）
         groundTiles: ['gr6', 'grs', 'gr3'],
         forestFloorTiles: ['fo2', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO'],
@@ -105,6 +108,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 修·乌舍城截图] 原 groundTiles 混 ds3（干旱黄褐土）→ 东北/华北战场
         //    显示黄褐干旱（乌舍城实锤）。亚洲温带湿润区（Dwa/Dwb）是黑土/草绿：
         //    换 gr2（深绿黑土）+ gr7 + gr4，去掉干旱土。
+        // 🔴 [2026-08-21 修·截图] 原 rm1/rm2/fm1/fm2 稻田/苗田入地面 → 战场出现「绿色长方条」
+        //    （稻田垄沟纹理平铺成斑块）。农田是人工地块（DE farm 是建造物），随机地图自然地形
+        //    从不撒农田——已移除，恢复纯自然黑土绿草。
         groundTiles: ['gr2', 'gr7', 'gr4'],
         forestFloorTiles: ['for', 'fo2'],
         // [2026-08-21 分类修正] 亚洲温带主树 = 枫树/松；BUSH_TREE_B 是灌木树（下层植被），当主树 = 张冠李戴
@@ -112,6 +118,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         autumnTrees: ['ASIAN_MAPLE_AUTUMN'],
         winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
+        // 🔴 [2026-08-21 素材全覆盖] 秋季枫叶落叶（DE FALLEN_LEAVES_MAPLE）
+        autumnFlatDecor: ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FLOWER', 'SHRUB_GREEN'],
         solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
@@ -119,13 +127,16 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_middle_east_desert: {
         id: 'palaearctic_middle_east_desert',
         baseTerrain: 'pal',
-        groundTiles: ['ds2', 'des', 'ds4', 'qs'],
+        // 🔴 [2026-08-21 素材全覆盖] 石英沙/流沙入沙漠地面（qs 石英沙、qs2 流沙绿洲边缘）
+        groundTiles: ['ds2', 'des', 'ds4', 'qs', 'qs2'],
         forestFloorTiles: ['pal', 'for'],
         trees: ['PALM'],
-        flatDecor: ['PLANT_DEAD', 'CACTUS', 'ANIMAL_SKELETON'],
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3'],
+        // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地/ DECAL_CRATER 陨坑（荒漠地貌贴花）
+        flatDecor: ['PLANT_DEAD', 'CACTUS', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'DECAL_CRATER'],
+        // 🔴 [2026-08-21 素材全覆盖] 丝路商栈（木桶/地毯）+ 古战场遗迹（墓碑/骸骨）——荒漠商旅战场
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
         waterPlants: ['REEDS', 'PALM', 'WATER_LILY'],
-        beachTerrain: 'bch',
+        beachTerrain: 'bc3',
     },
     palaearctic_europe_taiga: {
         id: 'palaearctic_europe_taiga',
@@ -145,6 +156,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_europe_temperate: {
         id: 'palaearctic_europe_temperate',
         baseTerrain: 'gr2',
+        // 🔴 [2026-08-21 修·截图] 原 fm/fc 农田/苗田/旱田入地面 → 垄沟条纹斑块违和
+        //    （人工地块，DE 随机地图自然地形无农田，移除）
         groundTiles: ['for', 'gr3', 'gr2'],
         forestFloorTiles: ['for', 'underbrush_leaves'],
         trees: ['BUSH_TREE_A', 'OAK'],
@@ -152,6 +165,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['DEAD_TREE', 'SNOW_AUTUMN_OAK'],
         // 🔴 [2026-08-21 素材科学审查] STUMP 挪 solid；温带 flat = 野花/灌木/杂草（DE 温带下层）
         flatDecor: ['FLOWER', 'BUSH_GREEN', 'WEED'],
+        // 🔴 [2026-08-21 素材全覆盖] 秋季橡树落叶（DE FALLEN_LEAVES_MAPLE 泛化为欧洲秋叶）
+        autumnFlatDecor: ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FLOWER', 'BUSH_GREEN'],
         solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
@@ -165,9 +180,12 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['OLIVE', 'ITALIAN_PINE'],
         // 🔴 [2026-08-21 素材科学审查] STUMP 挪 solid；地中海 flat = 花/灌木/枯植（地中海夏旱，枯植点缀）
         flatDecor: ['FLOWER', 'SHRUB_GREEN', 'PLANT_DEAD'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC'],
+        // 🔴 [2026-08-21 素材全覆盖] 秋季桃叶落叶（DE FALLEN_LEAVES_PEACH——地中海桃树）
+        autumnFlatDecor: ['FALLEN_LEAVES_PEACH', 'FLOWER', 'SHRUB_GREEN'],
+        // 🔴 [2026-08-21 素材全覆盖] 地中海商港木桶/地毯（腓尼基/威尼斯商栈）+ 海滩 bc4
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'STUMP_GENERIC', 'BARRELS', 'RUGS'],
         waterPlants: ['REEDS', 'OLIVE', 'WATER_LILY'],
-        beachTerrain: 'bch',
+        beachTerrain: 'bc4',
     },
     australasian_temperate: {
         id: 'australasian_temperate',
@@ -185,50 +203,58 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     serengeti: {
         id: 'serengeti',
         baseTerrain: 'ds4',
+        // 🔴 [2026-08-21 修·截图] 原 rc1 秸秆地/rd5 道路入地面 → 人工纹理斑块违和（移除；rd1/rd2 原有保留）
         groundTiles: ['gr5', 'rd1', 'rd2', 'ds5', 'des', 'grs', 'gr2', 'gr3'],
         forestFloorTiles: ['gr5', 'ds4'],
         trees: ['ACACIA', 'BAOBAB'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'PLANT_DEAD'],
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE'],
+        // 🔴 [2026-08-21 素材全覆盖] 古战场遗骸（骸骨/墓碑）——非洲草原战场
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE', 'SKELETON', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
     palaearctic_middle_east_highland: {
         id: 'palaearctic_middle_east_highland',
         baseTerrain: 'ds3',
-        groundTiles: ['ds2', 'pm1', 'gr4', 'qs', 'des'],
+        // 🔴 [2026-08-21 素材全覆盖] 岩石地/碎石入伊朗高原（rck 碎石、rc2 岩地）
+        groundTiles: ['ds2', 'pm1', 'gr4', 'rck', 'rc2'],
         forestFloorTiles: ['ds3', 'pal'],
         // [2026-08-21 完善] 伊朗高原无棕榈（棕榈是波斯湾低地绿洲植物）→ PINE（厄尔布尔士/扎格罗斯山松林）替代
         trees: ['OLIVE', 'DEAD_TREE', 'PINE'],
         autumnTrees: ['OLIVE', 'DEAD_TREE'],
         winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
-        flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE'],
+        // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地 + 商旅地毯/古墓（高原丝路）
+        flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN', 'DECAL_CRACK'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE', 'RUGS', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
     palaearctic_asia_steppe: {
         id: 'palaearctic_asia_steppe',
         baseTerrain: 'pm2',
+        // 🔴 [2026-08-21 修·截图] 原 fc 旱田/rc1 秸秆地/rd5 道路入地面 → 人工/线性纹理平铺成斑块违和（移除）
         groundTiles: ['gr4', 'ds3', 'pm1', 'ds5'],
         forestFloorTiles: ['ds3', 'for'],
         trees: ['PINE', 'DEAD_TREE'],
         autumnTrees: ['PINE', 'DEAD_TREE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'PLANT_DEAD'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3'],
+        // 🔴 [2026-08-21 素材全覆盖] 古战场遗迹（草原石墓/骸骨）——游牧战场
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'GRAVES', 'SKELETON'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
     palaearctic_tibetan_plateau: {
         id: 'palaearctic_tibetan_plateau',
         baseTerrain: 'pm2',
-        groundTiles: ['gr4', 'ds5', 'pm1', 'sno'],
+        // 🔴 [2026-08-21 素材全覆盖] 碎石地(rck)/岩地(rc3)入高原地面
+        groundTiles: ['gr4', 'ds5', 'pm1', 'sno', 'rck', 'rc3'],
         forestFloorTiles: ['ds3', 'snf'],
         trees: ['PINE', 'DEAD_TREE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'DECAL_ICE'],
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE'],
+        // 🔴 [2026-08-21 素材全覆盖] 高原古墓（石墓）——吐蕃/古格战场
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ROCK_LIMESTONE', 'GRAVES'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -239,7 +265,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palustrine_swamp: {
         id: 'palustrine_swamp',
         baseTerrain: 'gravel_wet',
-        groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet'],
+        // 🔴 [2026-08-21 素材全覆盖] qs2 流沙入沼泽地面（流沙沼泽）
+        groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet', 'qs2'],
         forestFloorTiles: ['r01', 'underbrush_leaves'],
         trees: ['DEAD_TREE', 'WILLOW'],
         flatDecor: ['GRASS_GREEN_PATCH', 'UNDERBRUSH', 'WEED'],
@@ -397,10 +424,14 @@ export function terrainForTheme(
         }
     }
 
-    // 5. 冬季合法降雪
+    // 5. 冬季合法降雪（🔴 [2026-08-21 修·净州塞截图] 原全换纯雪 → 战场 100% 白、见不到冻土。
+    //    DE 冬季是「雪 + 冻土/干草/砾石」混合：苔原=冻土底色+雪斑、塞外草原=干草+雪斑、
+    //    针叶林=深雪+冻土斑。故 baseTerrain 按 biome 定底色，雪斑由 groundTiles 变化层混入）
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        if (biome === 'tundra_snow' || biome === 'boreal') return 'sno';
-        if (biome === 'cold_steppe' || biome === 'temperate_grass' || biome === 'temperate_forest') return 'sn2';
+        if (biome === 'tundra_snow') return 'pm1';      // 苔原冻土底色（灰褐苔原土）
+        if (biome === 'boreal') return 'sno';           // 针叶林深雪
+        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'gr4'; // 塞外/温带草原：枯草底色
+        return 'sn2';                                   // 温带林浅雪
     }
 
     // 6. 基础地表
@@ -427,8 +458,13 @@ export function groundTilesForTheme(
     elev: number | null = null,
 ): readonly string[] {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        if (biome === 'tundra_snow' || biome === 'boreal') return ['sno', 'sn2', 'snf'];
-        return ['sn2', 'snf', 'sno'];
+        // 🔴 [2026-08-21 修·净州塞截图] 原全雪（sno/sn2/snf）→ 战场 100% 白无冻土。
+        //    混合冻土（pm1/pm2 苔原冻土）、干草（gr4）、砾石（ds5）——DE 冬季地面
+        //    = 雪 + 露土/枯草斑块，雪盖不住一切（风蚀/地形起伏/牲畜踩踏处露土）。
+        if (biome === 'tundra_snow') return ['sno', 'sn2', 'pm2', 'ds5'];      // 冻土 + 雪斑 + 砾石
+        if (biome === 'boreal') return ['sno', 'sn2', 'snf', 'pm1', 'ds5'];    // 深雪 + 冻土斑
+        if (biome === 'cold_steppe' || biome === 'temperate_grass') return ['sn2', 'snf', 'pm1', 'gr4']; // 枯草 + 雪斑 + 冻土
+        return ['sn2', 'snf', 'gr4', 'pm1'];                                    // 温带林：浅雪 + 枯草 + 冻土斑
     }
     return theme.groundTiles;
 }
@@ -457,6 +493,13 @@ export function decorForTheme(
         return {
             flat: ['SHRUB_GREEN', 'DECAL_ICE'],
             solid: ['ROCK1', 'ROCK2', 'DECAL_ICE'],
+        };
+    }
+    // 🔴 [2026-08-21 素材全覆盖] 秋季：主题定义了 autumnFlatDecor（落叶等）时优先
+    if (season === 1 && theme.autumnFlatDecor) {
+        return {
+            flat: theme.autumnFlatDecor,
+            solid: theme.solidDecor,
         };
     }
     return {

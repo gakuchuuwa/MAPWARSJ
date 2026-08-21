@@ -880,6 +880,8 @@ const DECOR_BLUR = 20;
 const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
 const ELEV_BLUR = 16;
+/** DE 等距高程的屏幕抬升量：每级只抬 8px，形成可通行缓坡，不做悬崖断壁。 */
+const ELEV_STEP_PX = 8;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
@@ -2081,6 +2083,10 @@ interface DecorSprite {
     obstructionDisabled: boolean;
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
+function isWaterTile(tile: string): boolean {
+    return tile === 'wtr' || tile.startsWith('wt') || tile.startsWith('sh') || tile === 'sha';
+}
+
 interface DecorPatch {
     tile: string;       // SUCAI_TERRAIN/<tile>
     img: HTMLImageElement | null;
@@ -2089,6 +2095,7 @@ interface DecorPatch {
     /** 海岸连续遮罩（屏幕坐标）；存在时不再绘制逐格菱形。 */
     polygon?: Array<{ x: number; y: number }>;
     alpha: number;
+    isWater?: boolean;
 }
 
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
@@ -2286,6 +2293,8 @@ export class Scene13WarLayer {
     private maskCtx: CanvasRenderingContext2D | null = null;
     private blurCv: HTMLCanvasElement | null = null;
     private blurCtx: CanvasRenderingContext2D | null = null;
+    private waterCv: HTMLCanvasElement | null = null;
+    private waterCtx: CanvasRenderingContext2D | null = null;
     /** 高地光照离屏画布（白/黑菱形先画这里，再羽化合成，避免硬边方块） */
     private elevCv: HTMLCanvasElement | null = null;
     private elevCtx: CanvasRenderingContext2D | null = null;
@@ -2977,7 +2986,12 @@ export class Scene13WarLayer {
         this.terrainImg = null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
         const im = new Image();
-        im.onload = () => { this.terrainImg = im; this.paintTerrain(); };
+        im.onload = () => {
+            this.terrainImg = im;
+            this.paintTerrain();
+            this.elevCacheReady = false;
+            this.repaintDecor();
+        };
         im.src = TERRAIN_BASE_URL + this.terrainTile + '.png';
     }
 
@@ -3018,6 +3032,31 @@ export class Scene13WarLayer {
     /** 网格 (gx, gy) → 菱形中心屏幕坐标（2:1 等距投影） */
     private isoCellX(gx: number, gy: number): number { return (gx - gy) * (TILE_W / 2) + this.isoOx; }
     private isoCellY(gx: number, gy: number): number { return (gx + gy) * (TILE_H / 2) + this.isoOy; }
+
+    /** 屏幕脚点采样连续高程；双线性插值消除单位跨格时的上下跳动。 */
+    private elevationAt(x: number, y: number): number {
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gw || !gh) return 0;
+        const a = (x - this.isoOx) * 2 / TILE_W;
+        const b = (y - this.isoOy) * 2 / TILE_H;
+        const gx = (a + b) / 2;
+        const gy = (b - a) / 2;
+        const x0 = Math.floor(gx), y0 = Math.floor(gy);
+        if (x0 < 0 || y0 < 0 || x0 >= gw || y0 >= gh) return 0;
+        const x1 = Math.min(gw - 1, x0 + 1), y1 = Math.min(gh - 1, y0 + 1);
+        const tx = gx - x0, ty = gy - y0;
+        const h00 = this.elevGrid[y0][x0];
+        const h10 = this.elevGrid[y0][x1];
+        const h01 = this.elevGrid[y1][x0];
+        const h11 = this.elevGrid[y1][x1];
+        return (h00 * (1 - tx) + h10 * tx) * (1 - ty)
+            + (h01 * (1 - tx) + h11 * tx) * ty;
+    }
+
+    private elevationLiftAt(x: number, y: number): number {
+        return this.elevationAt(x, y) * ELEV_STEP_PX;
+    }
 
     /** 建装饰层画布 + 按生成器方案铺贴片/物件（start 调一次，素材 onload 时增量重画） */
     private initDecor(): void {
@@ -3088,7 +3127,8 @@ export class Scene13WarLayer {
         polygon?: Array<{ x: number; y: number }>,
     ): void {
         if (cells.length === 0) return;
-        const p: DecorPatch = { tile, img: null, cells, polygon, alpha };
+        const isWater = isWaterTile(tile);
+        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.repaintDecor(); };
@@ -3101,6 +3141,7 @@ export class Scene13WarLayer {
         if (!cv || !g) return;
         g.clearRect(0, 0, cv.width, cv.height);
         for (const p of this.decorPatches) {
+            if (p.isWater) continue; // 动态水体走每帧实时渲染，不烙入静态背景
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
@@ -3116,6 +3157,64 @@ export class Scene13WarLayer {
         const gw = gh ? this.elevGrid[0].length : 0;
         if (!gh || !gw) return;
         const W = this.decor!.width, H = this.decor!.height;
+
+        // DE 高程不是悬崖物件：同一块地表按高程上移，邻级之间以短坡面连接。
+        // 这里仍使用本场主地形纹理，只改变等距投影位置，不引入任何岩壁素材。
+        const terrainPattern = this.terrainImg?.complete ? g.createPattern(this.terrainImg, 'repeat') : null;
+        if (terrainPattern) {
+            const raised: Array<{ x: number; y: number; h: number; baseSy: number }> = [];
+            for (let y = 0; y < gh; y++) {
+                for (let x = 0; x < gw; x++) {
+                    const h = this.elevGrid[y][x];
+                    if (h > 0) raised.push({ x, y, h, baseSy: this.isoCellY(x, y) });
+                }
+            }
+            raised.sort((a, b) => a.baseSy - b.baseSy);
+            g.save();
+            for (const cell of raised) {
+                const { x, y, h, baseSy } = cell;
+                const sx = this.isoCellX(x, y);
+                const sy = baseSy - h * ELEV_STEP_PX;
+                const hRight = x + 1 < gw ? this.elevGrid[y][x + 1] : h;
+                if (hRight < h) {
+                    const lowY = baseSy - hRight * ELEV_STEP_PX;
+                    g.beginPath();
+                    g.moveTo(sx + TILE_W / 2, sy);
+                    g.lineTo(sx, sy + TILE_H / 2);
+                    g.lineTo(sx, lowY + TILE_H / 2);
+                    g.lineTo(sx + TILE_W / 2, lowY);
+                    g.closePath();
+                    g.globalAlpha = 0.16 + (h - hRight) * 0.08;
+                    g.fillStyle = '#273328';
+                    g.fill();
+                }
+                const hLeft = y + 1 < gh ? this.elevGrid[y + 1][x] : h;
+                if (hLeft < h) {
+                    const lowY = baseSy - hLeft * ELEV_STEP_PX;
+                    g.beginPath();
+                    g.moveTo(sx, sy + TILE_H / 2);
+                    g.lineTo(sx - TILE_W / 2, sy);
+                    g.lineTo(sx - TILE_W / 2, lowY);
+                    g.lineTo(sx, lowY + TILE_H / 2);
+                    g.closePath();
+                    g.globalAlpha = 0.10 + (h - hLeft) * 0.05;
+                    g.fillStyle = '#8b7549';
+                    g.fill();
+                }
+
+                g.beginPath();
+                g.moveTo(sx, sy - TILE_H / 2);
+                g.lineTo(sx + TILE_W / 2, sy);
+                g.lineTo(sx, sy + TILE_H / 2);
+                g.lineTo(sx - TILE_W / 2, sy);
+                g.closePath();
+                g.globalAlpha = 0.72;
+                g.fillStyle = terrainPattern;
+                g.fill();
+            }
+            g.restore();
+        }
+
         if (!this.elevCv) { this.elevCv = document.createElement('canvas'); this.elevCtx = this.elevCv.getContext('2d')!; }
         if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
         const ecv = this.elevCv, ectx = this.elevCtx!;
@@ -3141,7 +3240,38 @@ export class Scene13WarLayer {
                     const sunExposure = (h - h_nw) * 0.7 + (h_se - h) * 0.7 + (h_sw - h_ne) * 0.3;
                     if (Math.abs(sunExposure) < 0.08 && h === 0) continue;
 
-                    const sx = this.isoCellX(x, y), sy = this.isoCellY(x, y);
+                    const sx = this.isoCellX(x, y);
+                    const baseSy = this.isoCellY(x, y);
+                    const sy = baseSy - h * ELEV_STEP_PX;
+
+                    // 高程差只画可通行缓坡的短侧面；右下背光更深、左下受环境光更浅。
+                    const hRight = x + 1 < gw ? this.elevGrid[y][x + 1] : h;
+                    if (hRight < h) {
+                        const lowY = baseSy - hRight * ELEV_STEP_PX;
+                        ectx.beginPath();
+                        ectx.moveTo(sx + TILE_W / 2, sy);
+                        ectx.lineTo(sx, sy + TILE_H / 2);
+                        ectx.lineTo(sx, lowY + TILE_H / 2);
+                        ectx.lineTo(sx + TILE_W / 2, lowY);
+                        ectx.closePath();
+                        ectx.globalAlpha = Math.min(0.42, (h - hRight) * 0.16);
+                        ectx.fillStyle = '#182536';
+                        ectx.fill();
+                    }
+                    const hLeft = y + 1 < gh ? this.elevGrid[y + 1][x] : h;
+                    if (hLeft < h) {
+                        const lowY = baseSy - hLeft * ELEV_STEP_PX;
+                        ectx.beginPath();
+                        ectx.moveTo(sx, sy + TILE_H / 2);
+                        ectx.lineTo(sx - TILE_W / 2, sy);
+                        ectx.lineTo(sx - TILE_W / 2, lowY);
+                        ectx.lineTo(sx, lowY + TILE_H / 2);
+                        ectx.closePath();
+                        ectx.globalAlpha = Math.min(0.28, (h - hLeft) * 0.11);
+                        ectx.fillStyle = '#765f38';
+                        ectx.fill();
+                    }
+
                     ectx.beginPath();
                     ectx.moveTo(sx, sy - TILE_H / 2);
                     ectx.lineTo(sx + TILE_W / 2, sy);
@@ -3176,6 +3306,128 @@ export class Scene13WarLayer {
             this.elevCacheReady = true;
         }
         g.drawImage(bcv, 0, 0);
+    }
+
+    /** DE 真实动态水体渲染：双层等距流速干涉、动态波光粼粼焦散、以及真实的拍岸浪花（Shoreline Waves） */
+    private renderDynamicWater(ctx: CanvasRenderingContext2D, t: number): void {
+        const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
+        if (waterPatches.length === 0) return;
+
+        const W = this.canvas!.width, H = this.canvas!.height;
+        if (!this.waterCv) { this.waterCv = document.createElement('canvas'); this.waterCtx = this.waterCv.getContext('2d')!; }
+        const wcv = this.waterCv, wctx = this.waterCtx!;
+        if (wcv.width !== W || wcv.height !== H) { wcv.width = W; wcv.height = H; }
+
+        for (const p of waterPatches) {
+            const img = p.img!;
+            const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
+
+            // 1. 水域遮罩蒙版
+            wctx.clearRect(0, 0, W, H);
+            wctx.fillStyle = '#fff';
+            if (p.polygon && p.polygon.length >= 3) {
+                wctx.beginPath();
+                wctx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                for (let i = 1; i < p.polygon.length; i++) wctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                wctx.closePath();
+                wctx.fill();
+            } else {
+                for (const [gx, gy] of p.cells) {
+                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                    wctx.beginPath();
+                    wctx.moveTo(sx, sy - TILE_H / 2);
+                    wctx.lineTo(sx + TILE_W / 2, sy);
+                    wctx.lineTo(sx, sy + TILE_H / 2);
+                    wctx.lineTo(sx - TILE_W / 2, sy);
+                    wctx.closePath();
+                    wctx.fill();
+                }
+            }
+
+            // 2. 双层交叉流动水体合成 (Source-In)
+            wctx.globalCompositeOperation = 'source-in';
+
+            // 主水流：沿等距 45° 方向缓缓漂移（14px/s）
+            const dx1 = (t * 14) % tw;
+            const dy1 = (t * 7) % th;
+            wctx.save();
+            wctx.translate(dx1, dy1);
+            const pat1 = wctx.createPattern(img, 'repeat');
+            if (pat1) {
+                wctx.fillStyle = pat1;
+                wctx.fillRect(-tw - dx1, -th - dy1, W + tw * 2, H + th * 2);
+            }
+            wctx.restore();
+
+            // 次水流：反向交叉波纹（半透明叠加，产生 DE 经典干涉波纹）
+            const dx2 = (-t * 10) % tw;
+            const dy2 = (t * 12) % th;
+            wctx.save();
+            wctx.globalAlpha = 0.42;
+            wctx.translate(dx2, dy2);
+            const pat2 = wctx.createPattern(img, 'repeat');
+            if (pat2) {
+                wctx.fillStyle = pat2;
+                wctx.fillRect(-tw - dx2, -th - dy2, W + tw * 2, H + th * 2);
+            }
+            wctx.restore();
+
+            wctx.globalCompositeOperation = 'source-over';
+            wctx.globalAlpha = 1;
+
+            // 3. 将动态水面绘制到主画面
+            if (p.alpha < 1) ctx.globalAlpha = p.alpha;
+            ctx.drawImage(wcv, 0, 0);
+            if (p.alpha < 1) ctx.globalAlpha = 1;
+
+            // 4. DE 经典浪花拍岸（Shoreline Waves / 泡沫边缘呼吸动画）
+            if (p.polygon && p.polygon.length >= 4) {
+                this.drawShorelineWaves(ctx, p.polygon, t);
+            }
+        }
+    }
+
+    /** 绘制 DE 经典海浪拍岸与浪花边缘（随着潮水节奏涌上沙滩并消散） */
+    private drawShorelineWaves(ctx: CanvasRenderingContext2D, polygon: Array<{ x: number; y: number }>, t: number): void {
+        const halfLen = Math.floor(polygon.length / 2);
+        const shores = [
+            { path: polygon.slice(0, halfLen), dir: -1 },
+            { path: polygon.slice(halfLen), dir: 1 },
+        ];
+
+        ctx.save();
+        for (const { path, dir } of shores) {
+            if (path.length < 2) continue;
+            for (let i = 0; i < path.length - 1; i++) {
+                const p0 = path[i], p1 = path[i + 1];
+                const yMid = (p0.y + p1.y) * 0.5;
+                // 周期约 3.2 秒的潮汐波浪相位
+                const wavePhase = t * 2.0 + yMid * 0.02 + Math.sin(yMid * 0.04) * 0.5;
+                const surge = (Math.sin(wavePhase) + 1) * 0.5; // 0 ~ 1
+
+                if (surge > 0.35) {
+                    const offset = surge * 10 * dir;
+                    const alpha = Math.min(0.85, (surge - 0.35) / 0.65);
+
+                    // 1. 白色浪花边缘（浪头泡沫线）
+                    ctx.beginPath();
+                    ctx.moveTo(p0.x + offset, p0.y);
+                    ctx.lineTo(p1.x + offset, p1.y);
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+
+                    // 2. 浅青色潮水湿润反光光晕
+                    ctx.beginPath();
+                    ctx.moveTo(p0.x + offset * 0.6, p0.y);
+                    ctx.lineTo(p1.x + offset * 0.6, p1.y);
+                    ctx.strokeStyle = `rgba(215, 245, 255, ${alpha * 0.4})`;
+                    ctx.lineWidth = 4.5;
+                    ctx.stroke();
+                }
+            }
+        }
+        ctx.restore();
     }
 
     /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰） */
@@ -3225,7 +3477,7 @@ export class Scene13WarLayer {
     }
 
     /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
-    private drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite): void {
+    private drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite, drawY: number = s.y): void {
         const na = this.natureCache[s.asset];
         if (!na || !na.img || !na.img.complete || !na.meta) return;
         const m = na.meta;
@@ -3234,12 +3486,12 @@ export class Scene13WarLayer {
         const sx = fr * sw;
         if (s.flip) {
             g.save();
-            g.translate(s.x, s.y);
+            g.translate(s.x, drawY);
             g.scale(-1, 1);
             g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
             g.restore();
         } else {
-            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, s.y - m.anchor_y, sw, sh);
+            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
         }
     }
 
@@ -4600,6 +4852,7 @@ export class Scene13WarLayer {
         if (!img) return;
         const wt = WAR_TYPES[c.key];
         const dieN = b.frames.die ?? 8;
+        const drawY = c.y - this.elevationLiftAt(c.x, c.y);
 
         g.save();
         // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
@@ -4612,12 +4865,12 @@ export class Scene13WarLayer {
             //   末帧切片错位/越界 → 烙进地面是空白或碎片 → 保留的 1/3 尸体视觉上全丢。
             //   这里与渲染循环同一套 hotspot 对齐 + 动态帧框。
             const s = UNIT_PX * (wt?.sz ?? 1) / 64;
-            g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, c.x - dm.hx * s, c.y - dm.hy * s, dm.fw * s, dm.fh * s);
+            g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, c.x - dm.hx * s, drawY - dm.hy * s, dm.fw * s, dm.fh * s);
         } else {
             // S10DB 正方形帧（原逻辑不变）
             const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
             const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
-            g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, c.y - px * 0.9, px, px);
+            g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, drawY - px * 0.9, px, px);
         }
         g.restore();
     }
@@ -4726,26 +4979,32 @@ export class Scene13WarLayer {
         // 地表装饰层：地形斑块 + ground 贴花；树木等 world 对象稍后与单位共同排序。
         if (this.decor) ctx.drawImage(this.decor, 0, 0);
 
+        // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
+        this.renderDynamicWater(ctx, performance.now() * 0.001);
+
         type UnitVisual = { kind: 'unit'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number };
         type EnvironmentVisual = { kind: 'environment'; y: number; z: number; sprite: DecorSprite };
         const vis: Array<UnitVisual | EnvironmentVisual> = [];
         // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
         for (const sprite of this.decorSprites) {
-            if (sprite.layer === 'world') vis.push({ kind: 'environment', y: sprite.y, z: sprite.z, sprite });
+            if (sprite.layer === 'world') {
+                const drawY = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
+                vis.push({ kind: 'environment', y: drawY, z: sprite.z, sprite });
+            }
         }
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) vis.push({
             kind: 'unit',
-            y: c.y, x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
+            y: c.y - this.elevationLiftAt(c.x, c.y), x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
             fr: c.t,
             a: 1,
         });
         // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
         for (const f of this.fleers) vis.push({
             kind: 'unit',
-            y: f.y, x: f.x, f: f.f, key: f.key, dir: f.dir, set: 'move',
+            y: f.y - this.elevationLiftAt(f.x, f.y), x: f.x, f: f.f, key: f.key, dir: f.dir, set: 'move',
             fr: f.ph,
             a: Math.max(0, 1 - f.t / FLEE_DUR),
         });
@@ -4783,7 +5042,7 @@ export class Scene13WarLayer {
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
-            vis.push({ kind: 'unit', y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
+            vis.push({ kind: 'unit', y: m.y - this.elevationLiftAt(m.x, m.y), x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
         }
         vis.sort((a, b) => (a.y - b.y)
             || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0)));
@@ -4794,12 +5053,12 @@ export class Scene13WarLayer {
         const flagTick = performance.now();
         for (const m of this.men) {
             if (!m.flag) continue;
-            LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
+            LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
         }
 
         for (const v of vis) {
             if (v.kind === 'environment') {
-                this.drawDecorSprite(ctx, v.sprite);
+                this.drawDecorSprite(ctx, v.sprite, v.y);
                 continue;
             }
             const b = this.bank[v.key];
@@ -4838,14 +5097,14 @@ export class Scene13WarLayer {
         //    绝不在 13 里 await 旗帜加载 —— 启动慢那次（89s→11s）就是全屏 24 面旗 await 阻塞。
         for (const m of this.men) {
             if (!m.flag) continue;
-            this.drawOneFlag(ctx, m.x, m.y, m.f, flagTick + m.fo);
+            this.drawOneFlag(ctx, m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
         }
         // 倒下的军旗：前半程转倒 90°，全程淡出。
         // 这里**杆和旗面一起**画在旋转变换里 —— 倒下的是整面旗，杆不能留在原地竖着。
         for (const ff of this.fallenFlags) {
             const p = ff.t / FLAG_FALL;
             ctx.save();
-            ctx.translate(ff.x, ff.y);
+            ctx.translate(ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
             ctx.rotate(Math.PI / 2 * Math.min(1, p * 2));
             ctx.globalAlpha = 1 - p;
             LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
@@ -4870,7 +5129,8 @@ export class Scene13WarLayer {
                 const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
                 const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
-                const y = a.y + a.dy * d - arc;
+                const groundY = a.y + a.dy * d;
+                const y = groundY - this.elevationLiftAt(x, groundY) - arc;
                 // 🔴 [2026-08-16 修复向北及全向弹道切线角]
                 // 用瞬时速度切线角（vx, vy - dArc/dp）驱动全 360° 旋转，
                 // 彻底解决朝北/朝南射击时帧序俯仰变横向摆头、箭头左右晃动或反转倒插的 Bug。
