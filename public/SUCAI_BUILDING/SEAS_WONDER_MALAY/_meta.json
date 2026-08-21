@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WONDER_MALAY",
+  "frames": 1,
+  "box_w": 428,
+  "box_h": 460,
+  "anchor_x": 232,
+  "anchor_y": 364,
+  "sld_source": "b_seas_wonder_malay"
+}

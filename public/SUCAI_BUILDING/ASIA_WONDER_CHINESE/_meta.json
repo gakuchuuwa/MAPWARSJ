@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_WONDER_CHINESE",
+  "frames": 1,
+  "box_w": 448,
+  "box_h": 396,
+  "anchor_x": 244,
+  "anchor_y": 292,
+  "sld_source": "b_asia_wonder_chinese"
+}

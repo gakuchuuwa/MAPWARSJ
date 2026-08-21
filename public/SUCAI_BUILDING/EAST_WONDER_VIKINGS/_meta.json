@@ -1,0 +1,9 @@
+{
+  "name": "EAST_WONDER_VIKINGS",
+  "frames": 1,
+  "box_w": 476,
+  "box_h": 560,
+  "anchor_x": 280,
+  "anchor_y": 448,
+  "sld_source": "b_east_wonder_vikings"
+}

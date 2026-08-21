@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_WONDER_BYZANTINES",
+  "frames": 1,
+  "box_w": 508,
+  "box_h": 448,
+  "anchor_x": 264,
+  "anchor_y": 336,
+  "sld_source": "b_medi_wonder_byzantines"
+}

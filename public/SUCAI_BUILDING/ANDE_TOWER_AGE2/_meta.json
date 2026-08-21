@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWER_AGE2",
+  "frames": 1,
+  "box_w": 192,
+  "box_h": 236,
+  "anchor_x": 132,
+  "anchor_y": 204,
+  "sld_source": "b_ande_tower_age2"
+}

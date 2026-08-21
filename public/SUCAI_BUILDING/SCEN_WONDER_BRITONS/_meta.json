@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_WONDER_BRITONS",
+  "frames": 1,
+  "box_w": 584,
+  "box_h": 504,
+  "anchor_x": 332,
+  "anchor_y": 384,
+  "sld_source": "b_scen_wonder_britons"
+}

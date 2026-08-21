@@ -1,0 +1,9 @@
+{
+  "name": "WEST_WONDER_BRITONS",
+  "frames": 1,
+  "box_w": 608,
+  "box_h": 780,
+  "anchor_x": 354,
+  "anchor_y": 650,
+  "sld_source": "b_west_wonder_britons"
+}

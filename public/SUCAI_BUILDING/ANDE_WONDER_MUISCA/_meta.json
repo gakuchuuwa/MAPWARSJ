@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_WONDER_MUISCA",
+  "frames": 1,
+  "box_w": 472,
+  "box_h": 412,
+  "anchor_x": 240,
+  "anchor_y": 280,
+  "sld_source": "b_ande_wonder_muisca"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_WONDER_POLES",
+  "frames": 1,
+  "box_w": 700,
+  "box_h": 720,
+  "anchor_x": 448,
+  "anchor_y": 592,
+  "sld_source": "b_slav_wonder_poles"
+}

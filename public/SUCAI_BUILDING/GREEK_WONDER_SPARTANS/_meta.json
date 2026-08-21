@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WONDER_SPARTANS",
+  "frames": 1,
+  "box_w": 508,
+  "box_h": 532,
+  "anchor_x": 256,
+  "anchor_y": 416,
+  "sld_source": "b_greek_wonder_spartans"
+}

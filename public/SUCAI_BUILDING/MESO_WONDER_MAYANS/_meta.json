@@ -1,0 +1,9 @@
+{
+  "name": "MESO_WONDER_MAYANS",
+  "frames": 1,
+  "box_w": 500,
+  "box_h": 600,
+  "anchor_x": 244,
+  "anchor_y": 476,
+  "sld_source": "b_meso_wonder_mayans"
+}

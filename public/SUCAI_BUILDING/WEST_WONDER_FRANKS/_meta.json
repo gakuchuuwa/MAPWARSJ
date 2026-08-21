@@ -1,0 +1,9 @@
+{
+  "name": "WEST_WONDER_FRANKS",
+  "frames": 1,
+  "box_w": 676,
+  "box_h": 640,
+  "anchor_x": 408,
+  "anchor_y": 516,
+  "sld_source": "b_west_wonder_franks"
+}
