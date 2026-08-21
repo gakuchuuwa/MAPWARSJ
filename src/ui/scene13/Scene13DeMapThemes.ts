@@ -90,11 +90,11 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     indomalayan_tropical: {
         id: 'indomalayan_tropical',
+        // 🔴 [2026-08-22 主人定] 岭南/华南/东南亚亚热带常绿雨林水乡：纯正深绿湿润黑土与茂密草绿，彻底去除干黄草(grs)
         baseTerrain: 'gr7',
-        // 🔴 [2026-08-21 修·截图] 原 rm1/rm2 稻田入地面 → 绿色长条（人工地块，移除）
-        groundTiles: ['gr6', 'grs', 'gr3'],
-        forestFloorTiles: ['fo2', 'underbrush_leaves'],
-        trees: ['BAMBOO', 'LUSH_BAMBOO'],
+        groundTiles: ['gr2', 'gr7', 'gr9', 'fo2'],
+        forestFloorTiles: ['fo2', 'for', 'underbrush_leaves'],
+        trees: ['BAMBOO', 'LUSH_BAMBOO', 'RAINFOREST'],
         // 🔴 [2026-08-21 素材科学审查] 原 flat=SHRUB_GREEN/BUSH_GREEN/WEED（温带通用）——东南亚雨林/竹丛
         //    下层是丛林蕨/藤丛（DE UNDERBRUSH_JUNGLE/PLANT_JUNGLE）。
         flatDecor: ['UNDERBRUSH_JUNGLE', 'PLANT_JUNGLE', 'SHRUB_GREEN'],

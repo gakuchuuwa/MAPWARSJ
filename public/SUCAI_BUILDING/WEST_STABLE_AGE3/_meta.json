@@ -1,0 +1,9 @@
+{
+  "name": "WEST_STABLE_AGE3",
+  "frames": 90,
+  "box_w": 288,
+  "box_h": 236,
+  "anchor_x": 156,
+  "anchor_y": 164,
+  "sld_source": "b_west_stable_age3"
+}

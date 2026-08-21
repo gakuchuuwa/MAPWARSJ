@@ -112,6 +112,8 @@ export interface ObjectRule {
 
 export interface Scene13EnvironmentPlan {
     seed: string;
+    /** DE 179 张官方地图提炼出的 7 大核心战场拓扑原型 */
+    topology?: Scene13Topology;
     /** 30 类 Köppen–Geiger 环境地区；无坐标防御分支为 null。 */
     climateRegion: KoppenClass | null;
     /** 该气候地区内部的海拔档。 */
@@ -218,9 +220,16 @@ const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> 
 
 function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
-        object.obstruction = DE_OBJECT_OBSTRUCTION[object.asset]
-            ?? (DE_HALF_TILE_OBJECTS.has(object.asset) ? HALF_TILE_OBSTRUCTION : undefined);
-        if (DE_TREE_OBJECTS.has(object.asset) || object.asset.startsWith('ROCK')) {
+        const a = object.asset;
+        // 🔴 [2026-08-21 主人定·方案A] 小 solid 纯贴图（无碰撞）：岩石(ROCK*)/木桶/墓碑/骸骨
+        //    成组密集、反复推挤卡兵 → 一律不阻挡。树（DE_TREE_OBJECTS）+ 悬崖（CLIFF*）保留碰撞。
+        if (a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON') {
+            object.obstruction = undefined;
+            continue;
+        }
+        object.obstruction = DE_OBJECT_OBSTRUCTION[a]
+            ?? (DE_HALF_TILE_OBJECTS.has(a) ? HALF_TILE_OBSTRUCTION : undefined);
+        if (DE_TREE_OBJECTS.has(a)) {
             object.obstructionReleaseAfterSec = OBSTRUCTION_RELEASE_SEC;
         }
     }
@@ -361,7 +370,7 @@ function sampleLandPos(
 
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
-
+    
     // 1. 优先直接检查 ESRI 真实瓦片水体像素（支持 Zoom 13 / 10 / 9 多级瓦片）
     for (const z of [13, 10, 9]) {
         const { tileX, tileY } = latLngToTilePixel(lat, lng, z);
@@ -369,24 +378,23 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | '
         if (maskObj?.mask) {
             let waterPixels = 0;
             const m = maskObj.mask;
-            for (let i = 0; i < m.length; i++) {
-                if (m[i] === 1) waterPixels++;
+            for (let k = 0; k < m.length; k++) {
+                if (m[k] === 1) waterPixels++;
             }
             if (waterPixels > 30) {
-                // 判断是否靠海
-                if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+                // 🔴 [2026-08-22 主人定] 战斗模式彻底删除海滩，临海区域按陆地营地生成，只保留内陆江河
+                if (LandSeaSystem.isSeaAt({ lat, lng })) return 'none';
                 return 'river';
             }
         }
     }
 
     // 2. 高精度多尺度同心圆环密网扫描（500米 ~ 25公里，覆盖城郊所有江河水系）
-    //    彻底解决原先 88 公里巨大步长导致近郊河流被 100% 漏掉的致命问题！
-    const distances = [0.005, 0.015, 0.035, 0.08, 0.20]; // 约 500m, 1.5km, 3.5km, 8km, 22km
+    const distances = [0.005, 0.015, 0.035, 0.08, 0.20];
     const angles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
-
-    // 先查中心点
-    if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+    
+    // 先查中心点（临海不进海滩）
+    if (LandSeaSystem.isSeaAt({ lat, lng })) return 'none';
     if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) return 'river';
 
     // 密网环形雷达扫描
@@ -396,7 +404,7 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | '
             const dlng = dist * Math.sin(ang);
             const curLat = lat + dlat;
             const curLng = lng + dlng;
-            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) return 'sea';
+            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) continue; // 忽略大海，不生成海滩
             if (LandSeaSystem.getWaterSampler().isWaterSync(curLat, curLng) === true) {
                 return 'river';
             }
@@ -484,6 +492,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
+    const topology: Scene13Topology = resolveBattleTopology(hasCoord, waterKind, elev, slope, biome, rng);
     const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null;
     const baseTerrain: string = theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev)
@@ -494,7 +503,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
     if (hasCoord) {
         // ── 第 2 层 ELEVATION：clump 生长 + 高度等级（低地少丘、高地多丘） ──
-        const elevation = generateElevation(gw, gh, ox, oy, VW, VH, elev, slope, rng);
+        const elevation = generateElevation(gw, gh, ox, oy, VW, VH, elev, slope, topology, rng);
 
         // ── 第 3 层 WATER ──
         // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
@@ -503,35 +512,37 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         let isWater: WaterChecker = () => false;
         let isRoad: (x: number, y: number) => boolean = () => false;
 
-        // 优先尝试从 ESRI Zoom 13 获取真实的真实水体瓦片掩膜
+        // 优先从 ESRI 真实瓦片获取水体掩膜（多级回退 Zoom 13→10）：首次进入战斗 Zoom 13 瓦片
+        // 尚未缓存时，用内存中已有的 Zoom 10 瓦片兜底画真实水体，不再直接跌回程序化中轴河。
+        // 🔴 Zoom 9 瓦片过大（≈19km，战场只占 ~1%），水体像素几乎全在战场外 → 跳过，避免误判画错。
         let usedRealZoom13Water = false;
         if (hasCoord && input.forceWaterKind !== 'none') {
-            const { tileX, tileY, pixelX, pixelY } = latLngToTilePixel(input.lat!, input.lng!, 13);
-            const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(13, tileX, tileY);
-            // 调度后台拉取（供后续战斗复用）
-            LandSeaSystem.getWaterSampler().scheduleFetch(input.lat!, input.lng!, 13);
+            for (const z of [13, 10]) {
+                const { tileX, tileY, pixelX, pixelY } = latLngToTilePixel(input.lat!, input.lng!, z);
+                const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(z, tileX, tileY);
+                // 调度后台拉取（供后续战斗复用）
+                LandSeaSystem.getWaterSampler().scheduleFetch(input.lat!, input.lng!, z);
 
-            if (maskObj?.mask) {
-                let waterCount = 0;
-                const m = maskObj.mask;
-                for (let i = 0; i < m.length; i++) {
-                    if (m[i] === 1) waterCount++;
-                }
-                if (waterCount > 100) {
-                    isWater = buildWaterFromRealESRIZoom13(
-                        m, pixelX, pixelY, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
-                    );
-                    usedRealZoom13Water = true;
+                if (maskObj?.mask) {
+                    let waterCount = 0;
+                    const m = maskObj.mask;
+                    for (let i = 0; i < m.length; i++) {
+                        if (m[i] === 1) waterCount++;
+                    }
+                    if (waterCount > 100) {
+                        isWater = buildWaterFromRealESRIZoom13(
+                            m, pixelX, pixelY, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
+                        );
+                        usedRealZoom13Water = true;
+                        break;
+                    }
                 }
             }
         }
 
         if (!usedRealZoom13Water) {
-            if (waterKind === 'sea') {
-                // 🔴 [2026-08-21 主人定] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
-                const sideLeft = true;
-                isWater = buildCoastline(gw, gh, ox, oy, VW, VH, sideLeft, rng, patches, occupied, theme!, season, input.lat, elev, biome);
-            } else if (waterKind === 'lake') {
+            // 🔴 [2026-08-22 主人定] 战斗模式彻底删除海滩，确保左侧营地建筑稳固坐落于陆地，只保留河流/湖泊与平坦行军大道
+            if (waterKind === 'lake') {
                 isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
             } else if (waterKind === 'river') {
                 isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
@@ -564,7 +575,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
         return {
-            seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
+            seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
             biome, deMapTheme: theme!.id, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects,
         };
     }
@@ -588,6 +599,55 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     };
 }
 
+// ── DE 179 张官方地图提炼出的 7 大核心战场拓扑原型 ──────────────────────
+export type Scene13Topology =
+    | 'highland_ridge'         // 1. 高台山脊坡地 (Acclivity / Arabia / Mongolia)
+    | 'canyon_pass'            // 2. 峡谷关隘走廊 (Pass / Canyon / Mountain Pass)
+    | 'dense_forest_clearing'  // 3. 密林环抱与林间空地 (Black Forest / Hideout)
+    | 'river_crossing'         // 4. 大江天堑隔水对峙 (Rivers / Cross / Cenotes)
+    | 'steppe_oasis'           // 5. 苍茫草原戈壁绿洲 (Steppe / Oasis / Atacama)
+    | 'swamp_marsh'            // 6. 湿地沼泽浅泥水泊 (Bogland / Swamp / Salt Marsh)
+    | 'imperial_highway';      // 7. 帝国驿道十字大道 (Highway / Crossroads / Valley)
+
+function resolveBattleTopology(
+    hasCoord: boolean,
+    waterKind: 'sea' | 'lake' | 'river' | 'none',
+    elev: number | null,
+    slope: number | null,
+    biome: Biome,
+    rng: RandomSource
+): Scene13Topology {
+    // 真实水系优先
+    if (waterKind === 'river') return 'river_crossing';
+    if (waterKind === 'lake') return rng.chance(0.6) ? 'swamp_marsh' : 'steppe_oasis';
+    
+    // 真实高山/陡坡优先
+    if (elev !== null && (elev >= 600 || (slope !== null && slope >= 6))) {
+        return rng.chance(0.55) ? 'highland_ridge' : 'canyon_pass';
+    }
+
+    // 森林环境优先
+    if (biome === 'temperate_forest' || biome === 'boreal' || biome === 'tropical_rainforest') {
+        return rng.pick(['dense_forest_clearing', 'imperial_highway', 'highland_ridge']);
+    }
+
+    // 草原/荒漠环境优先
+    if (biome === 'cold_steppe' || biome === 'savanna' || biome === 'desert') {
+        return rng.pick(['steppe_oasis', 'imperial_highway', 'highland_ridge', 'canyon_pass']);
+    }
+
+    // 全局 7 种均衡随机抽选
+    return rng.pick([
+        'highland_ridge', 'highland_ridge',
+        'canyon_pass',
+        'dense_forest_clearing',
+        'steppe_oasis',
+        'swamp_marsh',
+        'imperial_highway', 'imperial_highway'
+    ]);
+}
+
+
 // ── 第 2 层：高地（clump 生长；低地少丘、高地多丘） ─────────────
 
 /**
@@ -603,9 +663,35 @@ function generateElevation(
     VH: number,
     elev: number | null,
     slope: number | null,
+    topology: Scene13Topology,
     rng: RandomSource
 ): number[][] {
     const grid: number[][] = Array.from({ length: gh }, () => new Array(gw).fill(0));
+
+    if (topology === 'canyon_pass') {
+        // 🪨 拓扑 2：峡谷关隘走廊 (Pass / Canyon) —— 北面与南面隆起两道险峻峡谷岩壁，中轴平坦畅通
+        const topCliffY = VH * 0.15, botCliffY = VH * 0.85;
+        const [tgx, tgy] = screenToGrid(VW * 0.5, topCliffY, ox, oy);
+        const [bgx, bgy] = screenToGrid(VW * 0.5, botCliffY, ox, oy);
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const py = isoCellY(x, y, oy);
+                if (py < topCliffY) {
+                    const d = (topCliffY - py) / 60;
+                    grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
+                } else if (py > botCliffY) {
+                    const d = (py - botCliffY) / 60;
+                    grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
+                }
+            }
+        }
+        return grid;
+    }
+
+    if (topology === 'dense_forest_clearing' || topology === 'swamp_marsh') {
+        // 平坦空地/泥泞平缓沼泽：保持低起伏平坦，偶见微丘
+        return grid;
+    }
     
     // 丘陵数量与高度按真实地理海拔/坡度定：
     const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
@@ -744,14 +830,14 @@ function buildWaterFromRealESRIZoom13(
         patches.push({ tile: actualBeachTile, cells: beachCells, alpha: 0.95, category: 'shore' });
     }
 
-    // 2. 铺设浅水碧波层（sh2）
+    // 2. 🔴 [2026-08-22 主人定] 统一铺设古朴深邃自然墨绿水体 (sh4 / sh5)，彻底告别干涸白沙
     if (waterCells.length > 0) {
-        patches.push({ tile: 'sh2', cells: waterCells, alpha: 1.0, category: 'shore' });
+        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, alpha: 1.0, category: 'shore' });
     }
 
-    // 3. 铺设中央平坦涉水浅滩渡口（sha：部队可全速冲锋，100% 不卡位）
+    // 3. 铺设中央平坦涉水浅滩渡口（sh5：深绿涉水河滩）
     if (fordingCells.length > 0) {
-        patches.push({ tile: 'sha', cells: fordingCells, alpha: 0.92, category: 'shore' });
+        patches.push({ tile: 'sh5', cells: fordingCells, alpha: 0.95, category: 'shore' });
     }
 
     // 🔴 [2026-08-21 主人定] 水体内部及浅水岸线绝不生成任何岩石、芦苇或阻挡物
@@ -877,96 +963,137 @@ function buildRiver(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
-    // 中央中轴蜿蜒河流（从上方贯穿至下方，将战场自然分为左岸攻方与右岸守方）
-    const controls: Array<{ x: number; y: number }> = [];
-    const controlStep = TILE_H * 3;
-    const baseCenterX = VW * 0.50;
+    // 🔴 [2026-08-22 主人定] 彻底删除横向河流（防止切断/遮挡左侧营地建筑）！
+    // 仅保留纵向隔河对峙（60%）与中右大对角天堑（40%，严格限制 X >= 36%，100% 避开左侧大本营建筑）
+    const orientationChoice = rng.pick(['vertical', 'vertical', 'vertical', 'diagonal', 'diagonal']);
+    const halfWaterW = 50;
+    const halfBeachW = 82;
 
-    for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
-        // 轻度自然蜿蜒（河道有机起伏，但不剧烈偏离中轴，确保两军形成隔河对峙阵列）
-        const cx = baseCenterX + (rng.next() - 0.5) * TILE_W * 2.2;
-        controls.push({ x: cx, y });
-    }
+    let isInsideWater: (x: number, y: number) => boolean;
 
-    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
-        const t2 = t * t, t3 = t2 * t;
-        return 0.5 * ((2 * p1) + (-p0 + p2) * t
-            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
-            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
-    };
+    if (orientationChoice === 'diagonal') {
+        // 斜向天堑大江：从右上 (VW*0.85, 0) 斜穿向中央偏左下 (VW*0.40, VH)，100% 避开左侧营地 (X < 20%)
+        const numPts = 60;
+        const pts: Array<{ x: number; y: number; nx: number; ny: number }> = [];
+        const startX = VW * 0.85, endX = VW * 0.40;
+        for (let i = 0; i <= numPts; i++) {
+            const t = i / numPts;
+            const x = startX * (1 - t) + endX * t + Math.sin(t * Math.PI * 2) * 30;
+            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t + Math.cos(t * Math.PI * 3) * 12;
+            pts.push({ x, y, nx: 0, ny: 0 });
+        }
+        for (let i = 0; i <= numPts; i++) {
+            const prev = pts[Math.max(0, i - 1)];
+            const next = pts[Math.min(numPts, i + 1)];
+            const dx = next.x - prev.x;
+            const dy = next.y - prev.y;
+            const len = Math.hypot(dx, dy) || 1;
+            pts[i].nx = -dy / len;
+            pts[i].ny = dx / len;
+        }
 
-    const riverCenter: Array<{ x: number; y: number }> = [];
-    const sampleStep = TILE_H / 4;
-    for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
-        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
-        const p0 = controls[Math.max(0, segment - 1)];
-        const p1 = controls[segment];
-        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
-        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
-        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
-        riverCenter.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
-    }
-
-    const centerAt = (y: number): number => {
-        const f = Math.max(0, Math.min(riverCenter.length - 1, (y + TILE_H * 2) / sampleStep));
-        const i = Math.min(riverCenter.length - 2, Math.floor(f));
-        const t = f - i;
-        return riverCenter[i].x + (riverCenter[i + 1].x - riverCenter[i].x) * t;
-    };
-
-    // 河道宽度：主水流宽 ~110px，两岸沙滩/浅水带各 ~40px
-    const halfWaterW = 55;
-    const halfBeachW = 95;
-
-    const riverPolygon = (w: number): Array<{ x: number; y: number }> => {
-        const left = riverCenter.map((p) => ({ x: p.x - w, y: p.y }));
-        const right = riverCenter.map((p) => ({ x: p.x + w, y: p.y })).reverse();
-        return [...left, ...right];
-    };
-
-    const waterCells: Array<[number, number]> = [];
-    const beachCells: Array<[number, number]> = [];
-
-    for (let gy = 0; gy < gh; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-            const px = isoCellX(gx, gy, ox);
-            const py = isoCellY(gx, gy, oy);
-            if (py < -TILE_H || py > VH + TILE_H) continue;
-            const distFromCenter = Math.abs(px - centerAt(py));
-            if (distFromCenter < halfWaterW) {
-                waterCells.push([gx, gy]);
-            } else if (distFromCenter < halfBeachW) {
-                beachCells.push([gx, gy]);
+        const waterCells: Array<[number, number]> = [];
+        const beachCells: Array<[number, number]> = [];
+        for (let gy = 0; gy < gh; gy++) {
+            for (let gx = 0; gx < gw; gx++) {
+                const px = isoCellX(gx, gy, ox);
+                const py = isoCellY(gx, gy, oy);
+                let minDist = 999999;
+                for (let k = 0; k <= numPts; k += 2) {
+                    const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
+                    if (d < minDist) minDist = d;
+                }
+                if (minDist < halfWaterW) waterCells.push([gx, gy]);
+                else if (minDist < halfBeachW) beachCells.push([gx, gy]);
             }
         }
+        const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
+        mark(waterCells); mark(beachCells);
+
+        const bL = pts.map(p => ({ x: p.x + p.nx * halfBeachW, y: p.y + p.ny * halfBeachW * 0.6 }));
+        const bR = pts.map(p => ({ x: p.x - p.nx * halfBeachW, y: p.y - p.ny * halfBeachW * 0.6 })).reverse();
+        const wL = pts.map(p => ({ x: p.x + p.nx * halfWaterW, y: p.y + p.ny * halfWaterW * 0.6 }));
+        const wR = pts.map(p => ({ x: p.x - p.nx * halfWaterW, y: p.y - p.ny * halfWaterW * 0.6 })).reverse();
+
+        const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
+        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, polygon: [...wL, ...wR], alpha: 0.95, category: 'shore' });
+        isInsideWater = (x, y) => {
+            for (let k = 0; k <= numPts; k += 4) {
+                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < halfBeachW + 25) return true;
+            }
+            return false;
+        };
+    } else {
+        // 经典纵贯中轴河 (Vertical River)
+        const controls: Array<{ x: number; y: number }> = [];
+        const controlStep = TILE_H * 3;
+        const baseCenterX = VW * 0.50;
+        for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
+            const cx = baseCenterX + (rng.next() - 0.5) * TILE_W * 2.2;
+            controls.push({ x: cx, y });
+        }
+        const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+            const t2 = t * t, t3 = t2 * t;
+            return 0.5 * ((2 * p1) + (-p0 + p2) * t
+                + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+                + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+        };
+        const riverCenter: Array<{ x: number; y: number }> = [];
+        const sampleStep = TILE_H / 4;
+        for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
+            const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
+            const p0 = controls[Math.max(0, segment - 1)];
+            const p1 = controls[segment];
+            const p2 = controls[Math.min(controls.length - 1, segment + 1)];
+            const p3 = controls[Math.min(controls.length - 1, segment + 2)];
+            const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
+            riverCenter.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
+        }
+        const centerAt = (y: number): number => {
+            const f = Math.max(0, Math.min(riverCenter.length - 1, (y + TILE_H * 2) / sampleStep));
+            const i = Math.min(riverCenter.length - 2, Math.floor(f));
+            const t = f - i;
+            return riverCenter[i].x + (riverCenter[i + 1].x - riverCenter[i].x) * t;
+        };
+
+        const waterCells: Array<[number, number]> = [];
+        const beachCells: Array<[number, number]> = [];
+        for (let gy = 0; gy < gh; gy++) {
+            for (let gx = 0; gx < gw; gx++) {
+                const px = isoCellX(gx, gy, ox);
+                const py = isoCellY(gx, gy, oy);
+                if (py < -TILE_H || py > VH + TILE_H) continue;
+                const distFromCenter = Math.abs(px - centerAt(py));
+                if (distFromCenter < halfWaterW) waterCells.push([gx, gy]);
+                else if (distFromCenter < halfBeachW) beachCells.push([gx, gy]);
+            }
+        }
+        const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
+        mark(waterCells); mark(beachCells);
+
+        const leftBankPolygon = [
+            ...riverCenter.map((p) => ({ x: p.x - halfBeachW, y: p.y })),
+            ...riverCenter.map((p) => ({ x: p.x - halfWaterW, y: p.y })).reverse(),
+        ];
+        const rightBankPolygon = [
+            ...riverCenter.map((p) => ({ x: p.x + halfWaterW, y: p.y })),
+            ...riverCenter.map((p) => ({ x: p.x + halfBeachW, y: p.y })).reverse(),
+        ];
+        const riverPolygon = (w: number): Array<{ x: number; y: number }> => {
+            const left = riverCenter.map((p) => ({ x: p.x - w, y: p.y }));
+            const right = riverCenter.map((p) => ({ x: p.x + w, y: p.y })).reverse();
+            return [...left, ...right];
+        };
+
+        const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
+        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
+        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
+        isInsideWater = (x, y) => Math.abs(x - centerAt(y)) < halfBeachW + 35;
     }
 
-    const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-    mark(waterCells);
-    mark(beachCells);
-
-    // 左右两岸独立的沙滩带（环状带多边形，不遮挡中央河道主水流）
-    const leftBankPolygon = [
-        ...riverCenter.map((p) => ({ x: p.x - halfBeachW, y: p.y })),
-        ...riverCenter.map((p) => ({ x: p.x - halfWaterW, y: p.y })).reverse(),
-    ];
-    const rightBankPolygon = [
-        ...riverCenter.map((p) => ({ x: p.x + halfWaterW, y: p.y })),
-        ...riverCenter.map((p) => ({ x: p.x + halfBeachW, y: p.y })).reverse(),
-    ];
-
-    // 1. 两岸沙滩与湿润河岸过渡
-    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
-    patches.push({ tile: actualBeachTile, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
-    patches.push({ tile: actualBeachTile, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
-
-    // 2. 中央浅滩河道（可涉水，隔河对峙分界线；主人 08-21 定「水域全线浅滩」）
-    patches.push({ tile: rng.pick(SHALLOW_MEDIUM), cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
-
-    // 🔴 [2026-08-21 主人定] 河流中绝不生成任何岩石、芦苇、睡莲或阻挡物，水面保持 100% 清澈透亮
-    // 水域排斥：河道及两侧沙滩缓冲区（约 130px 净空走廊）严格禁放任何陆地树木与巨石
-    const riverBuffer = halfBeachW + 35;
-    return (x, y) => Math.abs(x - centerAt(y)) < riverBuffer;
+    return isInsideWater;
 }
 
 // ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────

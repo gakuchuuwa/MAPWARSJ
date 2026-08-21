@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MILL_AGE3",
+  "frames": 90,
+  "box_w": 304,
+  "box_h": 260,
+  "anchor_x": 200,
+  "anchor_y": 188,
+  "sld_source": "b_west_mill_age3"
+}
