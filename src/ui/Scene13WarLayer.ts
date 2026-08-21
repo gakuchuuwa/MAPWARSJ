@@ -3193,8 +3193,61 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
+        this.applyDefenderCityRoad();
         this.applySpawnBuildings();
         this.repaintDecor();
+    }
+
+    /**
+     * 🔴 [2026-08-22 主人定] 攻城战守方城池基底铺设 DE 原版石板/碎石道路贴图 (rd1 / gravel_default / rd5)
+     * 围绕守方 9 栋城池建筑点辐射铺设城池地基，消除建筑光秃立在荒草地上的违和感。
+     */
+    private applyDefenderCityRoad(): void {
+        if (this.battleType !== 'siege') return;
+        const defenderSpawns = this.spawns.filter((s) => s.f === 1);
+        if (defenderSpawns.length === 0 || this.isoGw === 0 || this.isoGh === 0) return;
+
+        // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图
+        const culture = this.sideCulture[1];
+        let roadTile = 'rd1'; // 默认：DE 经典石板城路 (rd1)
+        if (culture === 'ISLAMIC' || culture === 'STEPPE') {
+            roadTile = 'gravel_default'; // 中东伊斯兰/游牧：碎石土石城基
+        } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
+            roadTile = 'rd1'; // 东方：青石砖大道
+        } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {
+            roadTile = 'rd5'; // 拜占庭/罗马：规整石板大道
+        }
+
+        const roadCells: Array<[number, number]> = [];
+        const visited = new Set<string>();
+
+        // 围绕守方各个建筑点向外辐射 2~3 格，形成连贯自然的城池石基与街道网
+        for (const s of defenderSpawns) {
+            const a = (s.x - this.isoOx) * 2 / TILE_W;
+            const b = (s.y - this.isoOy) * 2 / TILE_H;
+            const cgx = Math.round((a + b) / 2);
+            const cgy = Math.round((b - a) / 2);
+            const radius = 3; // 建筑周围覆盖 3 格半径
+
+            for (let dy = -radius; dy <= radius; dy++) {
+                for (let dx = -radius; dx <= radius; dx++) {
+                    const gx = cgx + dx;
+                    const gy = cgy + dy;
+                    if (gx < 0 || gy < 0 || gx >= this.isoGw || gy >= this.isoGh) continue;
+                    if (Math.abs(dx) + Math.abs(dy) <= radius + 1) {
+                        const key = `${gx},${gy}`;
+                        if (!visited.has(key)) {
+                            visited.add(key);
+                            roadCells.push([gx, gy]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (roadCells.length > 0) {
+            this.addDecorCells(roadTile, roadCells, 0.90);
+        }
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
@@ -3202,7 +3255,7 @@ export class Scene13WarLayer {
      *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。
      *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），建筑朝向随机（左右镜像随机）。
      *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔。
-     *  🔴 [2026-08-22 主人改] 攻城战守方按城等级分时代：大城=帝国 age4（城堡+全建筑）、中城=城堡 age3（城堡+基础+警戒塔）、小城/险要=封建 age2（无城堡，7 封建+瞭望塔+警戒塔）。 */
+     *  🔴 [2026-08-22 主人改] 攻城战守方按城等级分时代：大城=帝国 age4（城堡+全建筑）、中城=城堡 age3（城堡+基础+警戒塔）、险要=封建 age2+城堡（要塞，7 封建+警戒塔）、小城=封建 age2（无城堡，7 封建+瞭望塔+警戒塔）。 */
     private applySpawnBuildings(): void {
         const sides: Array<0 | 1> = [0, 1];
         for (const f of sides) this.applyBuildingsForSide(f);
@@ -3233,8 +3286,8 @@ export class Scene13WarLayer {
         // 攻城战守方：按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
-            // 小城 / 险要：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 警戒塔
-            if (this.defenderCityType === 'small_city' || this.defenderCityType === 'pass') {
+            // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 警戒塔
+            if (this.defenderCityType === 'small_city') {
                 const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], `${style}_${shuffledBuildings[i]}_AGE2`));
@@ -3242,17 +3295,23 @@ export class Scene13WarLayer {
                 this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE3`));
                 return;
             }
-            // 大城 / 中城：有城堡（后排上方 = x 最大 + y 最小）+ 8 口建筑
-            let castleIdx = 0;
-            side.forEach((s, i) => {
-                if (s.x > side[castleIdx].x + 1e-9) castleIdx = i;
-                else if (Math.abs(s.x - side[castleIdx].x) < 1e-9 && s.y < side[castleIdx].y) castleIdx = i;
-            });
+            // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
+            let backX = -Infinity;
+            for (const s of side) if (s.x > backX) backX = s.x;
+            const backRow = side
+                .map((s, i) => ({ s, i }))
+                .filter(({ s }) => s.x >= backX - 1e-9)
+                .sort((a, b) => a.s.y - b.s.y);
+            const castleIdx = backRow[backRow.length === 2 ? 0 : 1].i;
             this.decorSprites.push(place(side[castleIdx], `${style}_CASTLE_AGE3`));
             const rest = side.filter((_, i) => i !== castleIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            // 中城：7 基础建筑（age3）+ 警戒塔；大城（含缺省）：11 全城市建筑随机抽 8
-            if (this.defenderCityType === 'medium_city') {
+            // 险要：封建 age2，7 封建 + 警戒塔；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
+            if (this.defenderCityType === 'pass') {
+                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));
+            } else if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
                 this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));

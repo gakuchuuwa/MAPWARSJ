@@ -177,6 +177,31 @@ export default defineConfig({
             // 取代旧的 import.meta.glob('?url')——后者会把每张图字节也打包一遍（dist 多出 700 张
             // hash 重复图 / +718MB 废重量），而代码只需文件名列表，运行时仍走 /assets/.. 原图。
             name: 'portrait-manifest',
+            configureServer(server) {
+                const assetsRoot = path.resolve(__dirname, 'public/assets');
+                const virtualId = '\0virtual:portrait-manifest';
+                let reloadTimer: ReturnType<typeof setTimeout> | null = null;
+                const scheduleManifestReload = (file: string): void => {
+                    const relative = path.relative(assetsRoot, path.resolve(file));
+                    if (
+                        !relative
+                        || relative.startsWith('..')
+                        || path.isAbsolute(relative)
+                        || path.extname(relative).toLowerCase() !== '.png'
+                    ) {
+                        return;
+                    }
+                    const manifestModule = server.moduleGraph.getModuleById(virtualId);
+                    if (manifestModule) server.moduleGraph.invalidateModule(manifestModule);
+                    if (reloadTimer) clearTimeout(reloadTimer);
+                    reloadTimer = setTimeout(() => {
+                        reloadTimer = null;
+                        server.ws.send({ type: 'full-reload' });
+                    }, 120);
+                };
+                server.watcher.on('add', scheduleManifestReload);
+                server.watcher.on('unlink', scheduleManifestReload);
+            },
             resolveId(id) {
                 if (id === 'virtual:portrait-manifest') return '\0virtual:portrait-manifest';
                 return null;

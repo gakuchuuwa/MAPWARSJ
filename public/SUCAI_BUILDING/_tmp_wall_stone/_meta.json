@@ -1,0 +1,9 @@
+{
+  "name": "_tmp_wall_stone",
+  "frames": 1,
+  "box_w": 112,
+  "box_h": 104,
+  "anchor_x": 68,
+  "anchor_y": 80,
+  "sld_source": "b_east_wall_stone"
+}

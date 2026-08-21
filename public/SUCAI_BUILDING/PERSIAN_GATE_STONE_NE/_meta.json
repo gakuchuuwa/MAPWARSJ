@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_GATE_STONE_NE",
+  "frames": 1,
+  "box_w": 196,
+  "box_h": 224,
+  "anchor_x": 132,
+  "anchor_y": 196,
+  "sld_source": "b_persian_gate_stone_ne_open"
+}
