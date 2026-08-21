@@ -608,6 +608,11 @@ export class Army implements IBattleUnit {
 
         this.syncSpatialRegistry();
         this.updateMarkerPosition();
+        // 预取军团当前位置的 ESRI Zoom 13 水域瓦片：走到哪拉到哪，进 13 战斗时
+        // getTileMaskSync(13) 命中真实水域（否则同步生成 vs 异步拉取的时序 miss，
+        // 回退 zoom 9 判不出线性窄河 → 河畔战场无河，如马格德堡易北河）。
+        // scheduleFetch 幂等（cache/pending 去重），只在跨瓦片时才真正发起拉取。
+        LandSeaSystem.getWaterSampler().scheduleFetch(this.position.lat, this.position.lng, 13);
     }
 
     /** 行军每帧同步空间索引，否则 LegionManager 野战碰撞永远用旧坐标 */
