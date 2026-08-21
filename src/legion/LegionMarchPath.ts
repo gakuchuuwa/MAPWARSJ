@@ -2,9 +2,8 @@ import { GameConfig } from '../config/GameConfig';
 import { Army } from './Army';
 import { City, LatLng } from '../types/core';
 import {
-    distanceAlongPolyline,
     getEuclideanDistance,
-    minDistanceToPolyline,
+    nearestPointOnPolyline,
 } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { interpolateLongitudeShortest } from '../utils/GeoLongitude';
@@ -50,20 +49,22 @@ export function findFirstHostileAlongPolyline(
     const minAlong = options?.minAlong ?? 0;
     let bestId = fallbackTargetId;
     const fallbackCity = cities.getCity(fallbackTargetId);
-    let bestAlong = fallbackCity
-        ? distanceAlongPolyline(
-              { lat: fallbackCity.latitude, lng: fallbackCity.longitude },
-              path
-          )
-        : Infinity;
+    const fallbackProjection = fallbackCity
+        ? nearestPointOnPolyline(
+            { lat: fallbackCity.latitude, lng: fallbackCity.longitude },
+            path
+        )
+        : null;
+    let bestAlong = fallbackProjection?.along ?? Infinity;
 
     for (const city of cities.getCities()) {
         if (!city.factionId || city.factionId === factionId) continue;
         const cpos = { lat: city.latitude, lng: city.longitude };
         // 军团脚下的城不算行军目标（路径会退化成 0 点）；交给 ZOC 就地开战
         if (getEuclideanDistance(cpos, path[0]) <= zoc) continue;
-        if (minDistanceToPolyline(cpos, path) > zoc) continue;
-        const along = distanceAlongPolyline(cpos, path);
+        const projection = nearestPointOnPolyline(cpos, path);
+        if (!projection || projection.distance > zoc) continue;
+        const along = projection.along;
         // 远征军团：忽略身后路径上的敌城，避免后方失守时折返「回援」
         if (along < minAlong) continue;
         if (along < bestAlong) {
