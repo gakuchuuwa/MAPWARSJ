@@ -413,12 +413,17 @@ export function terrainForTheme(
         return 'pm2';
     }
 
-    // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 黄褐土
+    // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 高原干旱冻土（如哈马丹、安卡拉、河西、晋北）
     if (elevationBand === 'mountain') {
-        if (season === 2 && isSnowArea(lat, elev, biome)) return 'sn2';
-        if (theme.id === 'palaearctic_middle_east_highland' || theme.id === 'palaearctic_asia_steppe') {
-            return theme.baseTerrain;
+        // 西亚高寒旱地高原（哈马丹/大不里士/安纳托利亚）：冬季为高寒干草冻土底色（pm1/ds3），绝非 100% 极地白雪
+        if (theme.id === 'palaearctic_middle_east_highland') {
+            return season === 2 ? 'pm1' : 'ds3';
         }
+        // 塞外干草原（蒙古高原/漠北）：冬季为枯草冻土底色（gr4/pm2）
+        if (theme.id === 'palaearctic_asia_steppe') {
+            return season === 2 ? 'gr4' : 'pm2';
+        }
+        if (season === 2 && isSnowArea(lat, elev, biome)) return 'sn2';
         if (theme.id === 'palaearctic_asia_temperate' || theme.id === 'palaearctic_europe_temperate') {
             return 'gr4'; // 温带山地草坡
         }
