@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WAR_TENT",
+  "frames": 6,
+  "box_w": 148,
+  "box_h": 112,
+  "anchor_x": 74,
+  "anchor_y": 74,
+  "sld_source": "s_greek_war_tent"
+}

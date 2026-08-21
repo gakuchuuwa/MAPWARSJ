@@ -1,0 +1,9 @@
+{
+  "name": "CAMP_STABLE",
+  "frames": 180,
+  "box_w": 304,
+  "box_h": 200,
+  "anchor_x": 148,
+  "anchor_y": 132,
+  "sld_source": "b_scen_camp_stable_age2"
+}
