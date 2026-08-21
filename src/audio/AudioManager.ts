@@ -162,7 +162,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     BASHU: 0.708,  // -18.0 LUFS
     CENTRAL: 0.7,  // -17.9 LUFS
     CENTRAL_ASIA: 0.708,  // -18.0 LUFS
-    conquest_of_paradise: 0.55,  // -15.8 LUFS · 大幅压低（2026-08-04 通用随机曲）
+    BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
     age_of_kings: 0.427,  // -13.6 LUFS · 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
     fallen_army: 0.603,  // -16.6 LUFS · （2026-08-04 通用随机曲）
     game_of_thrones: 0.708,  // -18.0 LUFS · （2026-08-04 通用随机曲）
@@ -173,7 +173,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     HEXI: 0.708,  // -18.0 LUFS
     helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
     hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
-    india: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
+    INDIA: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
     JAPAN: 0.708,  // -18.0 LUFS
     JIANGNAN: 0.708,  // -18.0 LUFS
     KOREA: 0.708,  // -18.0 LUFS
@@ -206,10 +206,10 @@ const BGM_REGION_GAIN: Record<string, number> = {
  */
 const BGM_ROTATION_FOLDERS: readonly string[] = [
     ...REGION_ORDER,
-    // 势力夹专属曲（9） + 印度首选（india=Nijamena，2026-08-04 GAKU 定）
-    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong', 'india',
+    // 势力夹专属曲（9）
+    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong',
     // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
-    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate', 'conquest_of_paradise',
+    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate',
     'game_of_thrones', 'shadow_assassin', 'age_of_kings',
 ];
 
