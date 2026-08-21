@@ -847,18 +847,23 @@ function pickFactionThenCulturePath(
 }
 
 /**
- * 武将立绘：专图文件存在则用专图；否则 政权专夹 → 文化区夹。
+ * 武将立绘：专图已登记则直接使用；文化池尚未刷新时也先尝试明确绑定的专图，
+ * 实际加载失败再由 CombatUI 的 onerror 走文化兜底。
  */
 export function resolveGeneralPortraitPath(
     dedicatedPath: string | undefined,
     options?: { factionId?: string; region?: RegionType; exclude?: string },
 ): string {
-    if (dedicatedPath?.trim() && portraitAssetExists(dedicatedPath)) {
-        return normalizePortraitWebPath(dedicatedPath);
-    }
     const cultureRegion = (options?.region
         ?? (options?.factionId ? getFactionCultureRegion(options.factionId) : undefined)
         ?? 'CENTRAL') as RegionType;
+    const culturePoolMissing = (REGION_PORTRAIT_POOLS[cultureRegion]?.length ?? 0) === 0;
+    if (
+        dedicatedPath?.trim()
+        && (portraitAssetExists(dedicatedPath) || culturePoolMissing)
+    ) {
+        return normalizePortraitWebPath(dedicatedPath);
+    }
     return pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude);
 }
 
@@ -955,7 +960,8 @@ export function unregisterPortraitPathRuntime(path: string): void {
 
 /**
  * 立绘路径 fallback：
- * 有 requested 且文件在盘 → 直接用；否则 政权专夹 → 文化区夹 → 全局兜底。
+ * 有 requested 且已登记 → 直接用；文化池尚未刷新时先尝试明确路径；
+ * 否则 政权专夹 → 文化区夹 → 全局兜底。
  */
 export function resolvePortraitAssetPath(
     requested: string | undefined,
@@ -967,14 +973,18 @@ export function resolvePortraitAssetPath(
     },
 ): string {
     const { factionId, region, exclude } = options ?? {};
-
-    if (requested?.trim() && portraitAssetExists(requested)) {
-        return normalizePortraitWebPath(requested);
-    }
-
     const cultureRegion = (region as RegionType | undefined)
         ?? (factionId ? getFactionCultureRegion(factionId) : undefined)
         ?? 'CENTRAL';
+    const culturePoolMissing = (REGION_PORTRAIT_POOLS[cultureRegion]?.length ?? 0) === 0;
+
+    if (
+        requested?.trim()
+        && (portraitAssetExists(requested) || culturePoolMissing)
+    ) {
+        return normalizePortraitWebPath(requested);
+    }
+
     return pickFactionThenCulturePath(factionId, cultureRegion, exclude);
 }
 
