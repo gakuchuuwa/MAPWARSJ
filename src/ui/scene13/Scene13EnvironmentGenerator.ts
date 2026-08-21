@@ -155,6 +155,8 @@ export interface Scene13EnvironmentInput {
     forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
     /** 测试/控制用：强制是否生成横贯战场的平坦帝国大道 */
     forceHasRoad?: boolean;
+    /** 战斗类型：是否为攻防战（攻城战/据点防守战） */
+    isSiege?: boolean;
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
@@ -494,7 +496,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const topology: Scene13Topology = resolveBattleTopology(hasCoord, waterKind, elev, slope, biome, rng);
     const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null;
     const baseTerrain: string = theme
-        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev)
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false)
         : DEFAULT_TERRAIN_TILE;
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -526,7 +528,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false);
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
@@ -1152,8 +1154,9 @@ function buildGroundVariation(
     lat?: number,
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
+    isSiege: boolean = false,
 ): void {
-    const variation = groundTilesForTheme(theme, biome, season, lat, elev);
+    const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege);
     // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
     const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
