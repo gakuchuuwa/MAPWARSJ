@@ -87,6 +87,8 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SLAVIC:       'MIXED',   // 东欧步骑
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
     LATIN:        'INFANTRY', // 西欧重步/军团
+    INDIA:        'ELEPHANT', // 印度战象（步象）
+    BERBER:       'CAVALRY',  // 柏柏尔骆驼骑（纯骑）
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -148,6 +150,10 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
     HEXI:         'echelon',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
+
+    // 印度（鹤翼 2+4+3：战象前锋 + 精锐软剑士主力 + 长弓后排）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
+    INDIA:        'crane_wing',
+    BERBER:       'triangle',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1280,6 +1286,34 @@ export const LATIN_TIERS: CompositionTier[] = [
     }
 ];
 
+/** 19. 印度 桑纳亚战象+精锐软剑士+帕提尤达长弓（鹤翼阵 2+4+3：战象前锋 + 精锐软剑士主力 + 长弓后排） */
+export const INDIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'sannahya', count: 2 },              // Row 0 前锋破坚 = 桑纳亚战象 2头
+            { type: 'elite_urumi_swordsman', count: 4 }, // Row 1 中军主力 = 精锐软剑士 4人
+            { type: 'pattiyoda_longbowman', count: 3 },  // Row 2 后排掩护 = 帕提尤达长弓 3人
+        ]
+    }
+];
+
+/** 20. 柏柏尔 马穆鲁克+标枪骑兵+骆驼弓骑（三角阵 2+3+4：马穆鲁克尖刀 + 标枪骑兵中坚 + 骆驼弓骑主力） */
+export const BERBER_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'mameluke', count: 2 },      // Row 0 尖刀先锋 = 萨拉森马穆鲁克 2人
+            { type: 'genitour', count: 3 },      // Row 1 冲击中坚 = 柏柏尔标枪骑兵 3人
+            { type: 'camel_archer', count: 4 },  // Row 2 底边主力齐射 = 柏柏尔骆驼弓骑 4人
+        ]
+    }
+];
+
 /** 19. 希腊 希腊重装步兵+底比斯圣队+色雷斯轻装兵（鱼鳞阵 3+4+2：希腊重装步兵前卫 + 底比斯圣队突破主力 + 色雷斯标枪后排） */
 // [2026-08-19 收敛 18 大文化] 希腊已并入 LATIN，本表不再被 CULTURE_TIERS_MAP 引用。
 //   数据保留不删：将来做「拉丁下辖希腊支文化」时直接复用（主人 2026-08-19「其他都是支文化」）。
@@ -1348,6 +1382,8 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SLAVIC:       SLAVIC_TIERS,
     GERMANIC:     GERMANIC_TIERS,
     LATIN:        LATIN_TIERS,
+    INDIA:        INDIA_TIERS,
+    BERBER:       BERBER_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -1372,6 +1408,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SLAVIC:       '斯拉夫军团',
     GERMANIC:     '日耳曼军团',
     LATIN:        '拉丁军团',
+    INDIA:        '印度军团',
+    BERBER:       '柏柏尔军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

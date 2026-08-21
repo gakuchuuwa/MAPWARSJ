@@ -257,6 +257,7 @@ export class GameConfig {
             CENTRAL: [1.00, 0.95], WESTERN: [0.90, 1.15], WEST_ASIA: [1.05, 1.10],
             JAPAN: [1.05, 1.05], KOREA: [0.90, 1.20], JIANGNAN: [0.80, 1.00],
             LINGNAN: [0.90, 1.10], DIANQIAN: [1.00, 1.10], BASHU: [0.95, 1.20],
+            INDIA: [1.05, 1.10], BERBER: [1.10, 0.90],
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
@@ -266,6 +267,7 @@ export class GameConfig {
             CENTRAL: 0.88, WESTERN: 1.00, WEST_ASIA: 1.00,
             JAPAN: 0.88, KOREA: 0.92, JIANGNAN: 0.88,
             LINGNAN: 0.92, DIANQIAN: 0.92, BASHU: 0.85,
+            INDIA: 0.90, BERBER: 1.00,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
@@ -275,6 +277,7 @@ export class GameConfig {
             CENTRAL: 1.05, WESTERN: 0.90, WEST_ASIA: 0.95,
             JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 1.05,
             LINGNAN: 1.00, DIANQIAN: 1.00, BASHU: 1.00,
+            INDIA: 1.05, BERBER: 0.90,
         } as Record<string, number>,
         /** region → 军团兵上限 */
         LEGION_TROOP_CAP_TABLE: {
@@ -284,6 +287,7 @@ export class GameConfig {
             CENTRAL: 1.00, WESTERN: 0.85, WEST_ASIA: 0.90,
             JAPAN: 0.85, KOREA: 0.85, JIANGNAN: 1.05,
             LINGNAN: 0.85, DIANQIAN: 0.85, BASHU: 0.85,
+            INDIA: 0.90, BERBER: 0.95,
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
@@ -293,6 +297,7 @@ export class GameConfig {
             CENTRAL: 1.00, WESTERN: 0.90, WEST_ASIA: 0.95,
             JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 0.95,
             LINGNAN: 0.90, DIANQIAN: 0.95, BASHU: 0.95,
+            INDIA: 0.95, BERBER: 0.85,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,
