@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MONASTERY_AGE3",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 348,
+  "anchor_x": 188,
+  "anchor_y": 268,
+  "sld_source": "b_afri_monastery_age3"
+}

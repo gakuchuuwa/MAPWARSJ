@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MILL_AGE3",
+  "frames": 1,
+  "box_w": 284,
+  "box_h": 232,
+  "anchor_x": 184,
+  "anchor_y": 176,
+  "sld_source": "b_medi_mill_age3"
+}

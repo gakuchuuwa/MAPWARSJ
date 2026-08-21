@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_HOUSE_AGE2",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 192,
+  "anchor_x": 116,
+  "anchor_y": 144,
+  "sld_source": "b_seas_house_age2"
+}

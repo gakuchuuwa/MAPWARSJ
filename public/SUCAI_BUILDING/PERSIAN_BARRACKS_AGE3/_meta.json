@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 280,
+  "anchor_x": 160,
+  "anchor_y": 200,
+  "sld_source": "b_persian_barracks_age3"
+}

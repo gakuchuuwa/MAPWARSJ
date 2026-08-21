@@ -3983,7 +3983,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/WEST_ASIA/gulaishi_aibusufuyang.png": {
-            "scale": 1.16,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 25
         },

@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 268,
+  "anchor_x": 184,
+  "anchor_y": 188,
+  "sld_source": "b_orie_barracks_age3"
+}

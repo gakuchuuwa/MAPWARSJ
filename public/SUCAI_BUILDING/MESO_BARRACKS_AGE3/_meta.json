@@ -1,0 +1,9 @@
+{
+  "name": "MESO_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 316,
+  "box_h": 276,
+  "anchor_x": 180,
+  "anchor_y": 196,
+  "sld_source": "b_meso_barracks_age3"
+}

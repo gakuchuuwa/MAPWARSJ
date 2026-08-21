@@ -1,9 +1,9 @@
 {
   "name": "WEST_MILL_AGE2",
-  "frames": 91,
-  "box_w": 304,
-  "box_h": 244,
-  "anchor_x": 196,
+  "frames": 1,
+  "box_w": 288,
+  "box_h": 236,
+  "anchor_x": 180,
   "anchor_y": 176,
   "sld_source": "b_west_mill_age2"
 }

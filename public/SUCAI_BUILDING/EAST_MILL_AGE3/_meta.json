@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MILL_AGE3",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 248,
+  "anchor_x": 220,
+  "anchor_y": 172,
+  "sld_source": "b_east_mill_age3"
+}

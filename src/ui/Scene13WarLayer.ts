@@ -883,6 +883,29 @@ const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
+/** 攻城战守方城堡：按守方文化区匹配 DE 建筑风格（2026-08-22 主人定；TIBET 暂用印度，待查藏式 MOD） */
+const REGION_CASTLE_ASSET: Record<RegionType, string> = {
+    SLAVIC: 'SLAV_CASTLE_AGE3',
+    GERMANIC: 'WEST_CASTLE_AGE3',
+    LATIN: 'MEDI_CASTLE_AGE3',
+    CENTRAL: 'ASIA_CASTLE_AGE3',
+    NORTH: 'ASIA_CASTLE_AGE3',
+    JIANGNAN: 'ASIA_CASTLE_AGE3',
+    LINGNAN: 'ASIA_CASTLE_AGE3',
+    BASHU: 'ASIA_CASTLE_AGE3',
+    DIANQIAN: 'SEAS_CASTLE_AGE3',
+    HEXI: 'ASIA_CASTLE_AGE3',
+    WESTERN: 'CEAS_CASTLE_AGE3',
+    TIBET: 'INDI_CASTLE_AGE3',
+    STEPPE: 'CEAS_CASTLE_AGE3',
+    NORTHEAST: 'ASIA_CASTLE_AGE3',
+    KOREA: 'ASIA_CASTLE_AGE3',
+    JAPAN: 'ASIA_CASTLE_AGE3',
+    CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',
+    WEST_ASIA: 'ORIE_CASTLE_AGE3',
+    INDIA: 'INDI_CASTLE_AGE3',
+    BERBER: 'AFRI_CASTLE_AGE3',
+};
 /** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
 const TILE_W = 64;
 const TILE_H = 32;
@@ -2124,7 +2147,9 @@ interface DecorSprite {
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 function isWaterTile(tile: string): boolean {
-    return tile === 'wtr' || tile.startsWith('wt') || tile.startsWith('sh') || tile === 'sha';
+    // 🔴 [2026-08-22 修复方块流动 Bug] 仅真正的大江大海水体 (river_clean_green / wtr / wt*) 参与动态波纹，
+    //    绝不将地面草皮/泥土贴片误判为动态流动水体，彻底根除地面出现移动菱形方块的 Bug！
+    return tile === 'river_clean_green' || tile === 'wtr' || tile.startsWith('wt');
 }
 
 interface DecorPatch {
@@ -2140,6 +2165,7 @@ interface DecorPatch {
     bbox?: { x: number; y: number; w: number; h: number };
     /** 动态水体纹理 pattern（img 加载后建一次，每帧复用，避免每帧 createPattern） */
     waterPattern?: CanvasPattern | null;
+    waterPattern2?: CanvasPattern | null;
 }
 
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
@@ -3147,19 +3173,18 @@ export class Scene13WarLayer {
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
-     *  野战双方都布、攻城只攻方布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
+     *  野战双方都布；攻城双方也布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
      *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。
-     *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），帐篷朝向统一（不镜像）。 */
+     *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），帐篷朝向统一（不镜像）。
+     *  🔴 [2026-08-22 主人改] 攻城战守方：中间放城堡，其余 8 口随机（3 营地 + 5 帐篷）。 */
     private applySpawnBuildings(): void {
-        const sides: Array<0 | 1> = this.battleType === 'field' ? [0, 1] : [0];
+        const sides: Array<0 | 1> = [0, 1];
         for (const f of sides) this.applyBuildingsForSide(f);
     }
 
     private applyBuildingsForSide(f: 0 | 1): void {
         const side = this.spawns.filter((s) => s.f === f);
         if (side.length !== 9) return;
-        // 9 口位置全部随机（shuffle 后前 3 口放营地、后 6 口放帐篷）
-        const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         const camps = ['CAMP_ARCHERY_RANGE', 'CAMP_BARRACKS', 'CAMP_STABLE'];
         const shuffledCamps = [...camps].sort(() => Math.random() - 0.5);
         const place = (s: { x: number; y: number }, asset: string): DecorSprite => {
@@ -3170,7 +3195,7 @@ export class Scene13WarLayer {
                 frame: 0,
                 x: s.x,
                 y: s.y,
-                flip: false,
+                flip: Math.random() < 0.5,
                 layer: 'world',
                 z: 0,
                 obstructionContactSec: 0,
@@ -3178,6 +3203,27 @@ export class Scene13WarLayer {
                 obstructionDisabled: false,
             };
         };
+
+        // 攻城战守方：中间（离质心最近的口）放城堡，其余 8 口随机（3 营地 + 5 帐篷）
+        if (this.battleType === 'siege' && f === 1) {
+            const cx = side.reduce((a, s) => a + s.x, 0) / side.length;
+            const cy = side.reduce((a, s) => a + s.y, 0) / side.length;
+            let centerIdx = 0;
+            let centerDist = Infinity;
+            side.forEach((s, i) => {
+                const d = Math.hypot(s.x - cx, s.y - cy);
+                if (d < centerDist) { centerDist = d; centerIdx = i; }
+            });
+            this.decorSprites.push(place(side[centerIdx], REGION_CASTLE_ASSET[this.sideCulture[1] as RegionType] ?? 'WEST_CASTLE_AGE3'));
+            const rest = side.filter((_, i) => i !== centerIdx);
+            const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledRest[i], shuffledCamps[i]));
+            for (let i = 3; i < 8; i++) this.decorSprites.push(place(shuffledRest[i], 'GREEK_WAR_TENT'));
+            return;
+        }
+
+        // 野战双方 + 攻城攻方：9 口随机（3 营地 + 6 帐篷）
+        const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
         for (let i = 3; i < 9; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
     }
@@ -3418,35 +3464,55 @@ export class Scene13WarLayer {
                     wctx.closePath();
                     wctx.fill();
                 }
+                // 兜底高斯羽化：杜绝任何直角菱形方块露馅
+                if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
+                if (this.maskCv.width !== bbox.w || this.maskCv.height !== bbox.h) { this.maskCv.width = bbox.w; this.maskCv.height = bbox.h; }
+                this.maskCtx!.clearRect(0, 0, bbox.w, bbox.h);
+                this.maskCtx!.drawImage(wcv, 0, 0);
+                wctx.clearRect(0, 0, bbox.w, bbox.h);
+                wctx.filter = 'blur(16px)';
+                wctx.drawImage(this.maskCv, 0, 0);
+                wctx.filter = 'none';
             }
 
-            // 2. 双层交叉流动水体合成 (Source-In)；pattern 每场建一次缓存复用
+            // 2. 🔴 [2026-08-22 修复水流静止 Bug] 双层交叉流动水体合成 (DOMMatrix 矩阵驱动真实位移流动)
             wctx.globalCompositeOperation = 'source-in';
             if (!p.waterPattern) p.waterPattern = wctx.createPattern(img, 'repeat');
-            const pat = p.waterPattern;
+            if (!p.waterPattern2) p.waterPattern2 = wctx.createPattern(img, 'repeat');
+            const pat1 = p.waterPattern;
+            const pat2 = p.waterPattern2;
 
-            // 主水流：沿等距 45° 方向缓缓漂移（14px/s）
-            const dx1 = (t * 14) % tw;
-            const dy1 = (t * 7) % th;
-            wctx.save();
-            wctx.translate(dx1, dy1);
-            if (pat) {
-                wctx.fillStyle = pat;
-                wctx.fillRect(-tw - dx1, -th - dy1, bbox.w + tw * 2, bbox.h + th * 2);
+            // 主水流：顺河道等距方向奔涌（提升至 52px/s，水流清晰奔腾流淌）
+            const dx1 = (t * 52) % tw;
+            const dy1 = (t * 26) % th;
+            if (pat1) {
+                if (typeof DOMMatrix !== 'undefined') {
+                    const m1 = new DOMMatrix();
+                    m1.translateSelf(dx1, dy1);
+                    pat1.setTransform?.(m1);
+                }
+                wctx.fillStyle = pat1;
+                wctx.fillRect(0, 0, bbox.w, bbox.h);
             }
-            wctx.restore();
 
-            // 次水流：反向交叉波纹（半透明叠加，产生 DE 经典干涉波纹）
-            const dx2 = (-t * 10) % tw;
-            const dy2 = (t * 12) % th;
-            wctx.save();
-            wctx.globalAlpha = 0.42;
-            wctx.translate(dx2, dy2);
-            if (pat) {
-                wctx.fillStyle = pat;
-                wctx.fillRect(-tw - dx2, -th - dy2, bbox.w + tw * 2, bbox.h + th * 2);
+            // 次水流：反向波纹干涉（-32px/s，半透明叠加形成 DE 经典波光粼粼折射）
+            const dx2 = (-t * 36) % tw;
+            const dy2 = (t * 40) % th;
+            if (pat2) {
+                if (typeof DOMMatrix !== 'undefined') {
+                    const m2 = new DOMMatrix();
+                    m2.translateSelf(dx2, dy2);
+                    pat2.setTransform?.(m2);
+                }
+                wctx.globalAlpha = 0.48;
+                wctx.fillStyle = pat2;
+                wctx.fillRect(0, 0, bbox.w, bbox.h);
             }
-            wctx.restore();
+
+            // 动态水面水光闪烁（Caustics Shimmer 高光脉冲）
+            wctx.globalAlpha = 0.18 + Math.sin(t * 2.8) * 0.08;
+            wctx.fillStyle = '#b8f0dc';
+            wctx.fillRect(0, 0, bbox.w, bbox.h);
 
             wctx.globalCompositeOperation = 'source-over';
             wctx.globalAlpha = 1;
@@ -3554,20 +3620,18 @@ export class Scene13WarLayer {
             mctx.closePath();
             mctx.fill();
         } else {
+            // 🔴 [2026-08-22 彻底杜绝方块菱形边缘] 地表变体与树下落叶改用有机连续椭圆光晕合成，绝不画任何菱形线！
             for (const [gx, gy] of p.cells) {
                 const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - by;
                 mctx.beginPath();
-                mctx.moveTo(sx, sy - TILE_H / 2);
-                mctx.lineTo(sx + TILE_W / 2, sy);
-                mctx.lineTo(sx, sy + TILE_H / 2);
-                mctx.lineTo(sx - TILE_W / 2, sy);
-                mctx.closePath();
+                mctx.ellipse(sx, sy, TILE_W * 0.65, TILE_H * 0.75, 0, 0, Math.PI * 2);
                 mctx.fill();
             }
         }
-        // 2. 高斯模糊（软化格子边缘；只在 bbox 内）
+        // 2. 超柔和高斯模糊（彻底消除任何边缘硬边，地表变体如自然光晕般平滑渐变）
         bctx.clearRect(0, 0, bw, bh);
-        bctx.filter = `blur(${p.polygon ? SHORE_BLUR : DECOR_BLUR}px)`;
+        const blurRadius = p.polygon ? SHORE_BLUR : 32;
+        bctx.filter = `blur(${blurRadius}px)`;
         bctx.drawImage(mcv, 0, 0);
         bctx.filter = 'none';
         // 3. source-in 填纹理（纹理只在软边形状内，保持清晰；pattern 平铺原点对齐全局坐标）

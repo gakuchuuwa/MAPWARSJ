@@ -1,9 +1,9 @@
 {
   "name": "WEST_HOUSE_AGE2",
-  "frames": 3,
-  "box_w": 220,
+  "frames": 1,
+  "box_w": 200,
   "box_h": 176,
-  "anchor_x": 120,
+  "anchor_x": 108,
   "anchor_y": 128,
   "sld_source": "b_west_house_age2"
 }

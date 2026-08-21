@@ -17,6 +17,7 @@ import { popCostOf } from '../../data/UnitPopCost';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 import { NavalPhalanxStateManager, shipCountForTroops } from './NavalPhalanxState';
+import { NavalWakeDrawer } from './NavalWakeDrawer';
 import { audioManager } from '../../audio/AudioManager';
 
 // 海战音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
@@ -1974,6 +1975,7 @@ export class LegionPhalanxDrawer {
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
         const ships: { x: number; y: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; isHotspot?: boolean }[] = [];
+        const shipPositions: { x: number; y: number; r: number; isAlive: boolean }[] = [];
         const navalState = unitId ? NavalPhalanxStateManager.getState(unitId) : undefined;
 
         for (let i = 0; i < formation.length; i++) {
@@ -2002,6 +2004,8 @@ export class LegionPhalanxDrawer {
             const shipSlot = navalState?.ships[i];
             const shipDying = shipSlot?.state === 'DYING';
             const shipDead = shipSlot?.state === 'DEAD';
+            const isShipAlive = !shipDead && !shipDying && state !== 'DEATH';
+            shipPositions.push({ x: dx, y: dy, r: pos.r, isAlive: isShipAlive });
 
             let rawSprite: HTMLImageElement | undefined;
             let currentFrameIndex = 0;
@@ -2072,6 +2076,18 @@ export class LegionPhalanxDrawer {
                 });
             }
         }
+
+        // ─── 船只水上拖尾与浪花（NavalWakeDrawer：DE 16 向 WAKE_BACK / WAKE_FRONT）───
+        NavalWakeDrawer.drawNavalWakes(
+            ctx,
+            shipPositions,
+            direction,
+            scale,
+            tick,
+            state === 'MOVE',
+            trail,
+            shipDepth,
+        );
 
         // 队尾先画、旗舰最后画（旗舰盖在最上层）
         ships.sort((a, b) => a.r - b.r);

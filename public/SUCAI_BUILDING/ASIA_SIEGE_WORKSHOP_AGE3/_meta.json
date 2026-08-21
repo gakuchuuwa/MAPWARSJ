@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_SIEGE_WORKSHOP_AGE3",
+  "frames": 1,
+  "box_w": 380,
+  "box_h": 292,
+  "anchor_x": 192,
+  "anchor_y": 204,
+  "sld_source": "b_asia_siege_workshop_age3"
+}

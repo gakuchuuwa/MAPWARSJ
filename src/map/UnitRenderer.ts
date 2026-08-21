@@ -53,6 +53,10 @@ export class UnitRenderer implements IAnimatedUnit {
     public lastPosition: { lat: number; lng: number };
     /** 阵亡时刻（供 GlobalUnitRenderer 保留尸体） */
     public destroyTime?: number;
+    /** 非战死消失（回城解散、隐匿）的渐隐起点与时长 */
+    public fadeOutStart?: number;
+    public fadeOutDurationMs?: number;
+    private fadeOutTimer?: ReturnType<typeof setTimeout>;
 
     // Optional identifiers
     public id?: string;
@@ -161,12 +165,50 @@ export class UnitRenderer implements IAnimatedUnit {
     public visible: boolean = true;
 
     public setVisible(isVisible: boolean): void {
-        this.visible = isVisible;
+        if (isVisible) {
+            if (this.fadeOutTimer) clearTimeout(this.fadeOutTimer);
+            this.fadeOutTimer = undefined;
+            this.fadeOutStart = undefined;
+            this.fadeOutDurationMs = undefined;
+            this.visible = true;
+            globalRenderer?.invalidateView();
+            return;
+        }
+        if (!this.visible || this.fadeOutStart !== undefined) return;
+        this.beginFadeOut(GameConfig.LEGION.DESPAWN_FADE_OUT_MS, false);
+    }
+
+    public beginDespawnFade(): void {
+        this.isMoving = false;
+        this.stopAttack();
+        this.visible = true;
+        this.beginFadeOut(GameConfig.LEGION.DESPAWN_FADE_OUT_MS, true);
+    }
+
+    private beginFadeOut(durationMs: number, unregisterAfter: boolean): void {
+        if (this.fadeOutTimer) clearTimeout(this.fadeOutTimer);
+        this.fadeOutStart = Date.now();
+        this.fadeOutDurationMs = durationMs;
+        globalRenderer?.invalidateView();
+        this.fadeOutTimer = setTimeout(() => {
+            this.fadeOutTimer = undefined;
+            this.fadeOutStart = undefined;
+            this.fadeOutDurationMs = undefined;
+            if (unregisterAfter) {
+                this.destroy();
+            } else {
+                this.visible = false;
+                globalRenderer?.invalidateView();
+            }
+        }, durationMs);
     }
 
     public destroy(): void {
+        if (this.fadeOutTimer) clearTimeout(this.fadeOutTimer);
+        this.fadeOutTimer = undefined;
         if (globalRenderer) {
             globalRenderer.unregister(this);
+            globalRenderer.invalidateView();
         }
     }
 }

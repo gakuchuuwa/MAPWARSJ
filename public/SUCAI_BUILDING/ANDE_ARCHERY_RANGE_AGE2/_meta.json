@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 276,
+  "anchor_x": 176,
+  "anchor_y": 192,
+  "sld_source": "b_ande_archery_range_age2"
+}

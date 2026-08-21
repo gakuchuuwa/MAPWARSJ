@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_TOWN_CENTER_AGE2",
+  "frames": 1,
+  "box_w": 448,
+  "box_h": 284,
+  "anchor_x": 240,
+  "anchor_y": 224,
+  "sld_source": "b_persian_town_center_age2"
+}

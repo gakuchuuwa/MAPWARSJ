@@ -1,0 +1,9 @@
+{
+  "name": "MESO_BLACKSMITH_AGE3",
+  "frames": 1,
+  "box_w": 356,
+  "box_h": 240,
+  "anchor_x": 196,
+  "anchor_y": 176,
+  "sld_source": "b_meso_blacksmith_age3"
+}

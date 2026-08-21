@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_STABLE_AGE3",
+  "frames": 1,
+  "box_w": 360,
+  "box_h": 248,
+  "anchor_x": 180,
+  "anchor_y": 160,
+  "sld_source": "b_slav_stable_age3"
+}

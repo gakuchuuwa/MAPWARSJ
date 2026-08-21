@@ -71,6 +71,10 @@ function unitHasElite(u: { unitType?: string; getEntity?(): any }): boolean {
     return !!e?.isElite || (u.unitType === 'city' && readSiegeGarrisonElite(e));
 }
 
+function unitIsNaval(u: { getEntity?(): any }): boolean {
+    return u.getEntity?.()?.isOnSea === true;
+}
+
 /**
  * [2026-08-11 13 v2] 启动出兵口互攻演出（Scene13WarLayer）。
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
@@ -137,7 +141,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    只读 entity.isElite 会让 1v1 攻城战永远进不了 13。
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
-        if (bigEnough
+        const isNavalBattle = unitIsNaval(battle.attacker) || unitIsNaval(battle.defender);
+        if (!isNavalBattle && bigEnough
             && battle.attacker.generalId && battle.defender.generalId
             && attHasElite && defHasElite) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
@@ -192,8 +197,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const attBigEnough = attTroops >= minTroops;
         const defBigEnough = defTroops >= minTroops;
         const bigEnough = attBigEnough && defBigEnough;
+        const isNavalBattle = [...attackers, ...defenders].some(unitIsNaval);
         // 🔴 三条件全满足才进 13（主人 2026-08-11 定稿）：武将 + 精锐 + 兵力
-        if (bigEnough && attHasGen && defHasGen && attHasElite && defHasElite) {
+        if (!isNavalBattle && bigEnough && attHasGen && defHasGen && attHasElite && defHasElite) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);

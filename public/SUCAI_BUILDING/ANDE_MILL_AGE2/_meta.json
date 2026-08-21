@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MILL_AGE2",
+  "frames": 1,
+  "box_w": 220,
+  "box_h": 168,
+  "anchor_x": 122,
+  "anchor_y": 122,
+  "sld_source": "b_ande_mill_age2"
+}

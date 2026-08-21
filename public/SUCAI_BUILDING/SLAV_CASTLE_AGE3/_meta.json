@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 500,
+  "box_h": 460,
+  "anchor_x": 292,
+  "anchor_y": 352,
+  "sld_source": "b_slav_castle_age3"
+}

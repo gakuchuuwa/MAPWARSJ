@@ -99,6 +99,9 @@ export interface IAnimatedUnit extends IRenderable {
 
     // [NEW] Corpse Persistence
     destroyTime?: number;
+    /** 非战死消失的渐隐参数 */
+    fadeOutStart?: number;
+    fadeOutDurationMs?: number;
     cultureSlots?: string[] | null; // [NEW] 14-culture formation slots
     cultureScales?: number[] | null; // [NEW] Scales for each slot
     formationMode?: FormationMode | null; // [NEW] 阵型（渲染层据此定布局）
@@ -961,6 +964,13 @@ export class GlobalUnitRenderer {
         // 2. Check Loop - Update States（屏外且非动画中的单位跳过逻辑更新）
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
+            if (unit.fadeOutStart !== undefined) {
+                const duration = unit.fadeOutDurationMs ?? GameConfig.LEGION.DESPAWN_FADE_OUT_MS;
+                if (Date.now() - unit.fadeOutStart <= duration && this.isUnitInContainerView(unit)) {
+                    hasVisibleCorpses = true;
+                }
+                continue;
+            }
             if (unit.isDestroyed) {
                 const t0 = unit.destroyTime ?? Date.now();
                 if (!unit.destroyTime) unit.destroyTime = t0;
@@ -1080,7 +1090,12 @@ export class GlobalUnitRenderer {
             const unit = drawList[i];
 
             let corpseAlpha = 1;
-            if (unit.isDestroyed) {
+            if (unit.fadeOutStart !== undefined) {
+                const duration = unit.fadeOutDurationMs ?? GameConfig.LEGION.DESPAWN_FADE_OUT_MS;
+                const age = Date.now() - unit.fadeOutStart;
+                if (age >= duration) continue;
+                corpseAlpha = Math.max(0, 1 - age / duration);
+            } else if (unit.isDestroyed) {
                 const t0 = unit.destroyTime ?? Date.now();
                 if (!unit.destroyTime) unit.destroyTime = t0;
                 const age = Date.now() - t0;
@@ -1961,7 +1976,7 @@ export class GlobalUnitRenderer {
             // ... (Phalanx Rendering logic)
             // [2026-05-30] 加 DAMAGE/DEATH 状态识别 (供 ArmyEditor 预览动作用)
             let state: PhalanxAnimState = 'IDLE';
-            if (unit.isDestroyed) {
+            if (unit.isDestroyed && unit.fadeOutStart === undefined) {
                 state = 'DEATH';
             } else if (unit.lastDamageTime && Date.now() - unit.lastDamageTime < 800) {
                 state = 'DAMAGE';

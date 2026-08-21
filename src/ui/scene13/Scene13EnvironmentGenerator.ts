@@ -46,8 +46,8 @@ const TILE_H = 32;
 //   - 内陆河流专属古朴深邃自然墨绿水体（主人选定方案 4：sh4 / sh5，古色古香，无杂乱水草浮萍）。
 /** 🔴 海洋专属蔚蓝水体 */
 const OCEAN_TILES = ['wtr', 'wt2', 'wt4'];
-/** 🔴 内陆河流专属古朴墨绿水体（sh4 / sh5） */
-const RIVER_TILES = ['sh4', 'sh5'];
+/** 🔴 内陆河流专属纯净古朴墨绿水体（纯净水波纹，绝无杂质/水草/浮萍斑块，主人 2026-08-22 定） */
+const RIVER_TILES = ['river_clean_green'];
 /** 深水带 */
 const SHALLOW_DEEP = 'sh4';
 /** 中水带（古朴墨绿多变体 sh4 / sh5） */
@@ -512,50 +512,23 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         let isWater: WaterChecker = () => false;
         let isRoad: (x: number, y: number) => boolean = () => false;
 
-        // 优先从 ESRI 真实瓦片获取水体掩膜（多级回退 Zoom 13→10）：首次进入战斗 Zoom 13 瓦片
-        // 尚未缓存时，用内存中已有的 Zoom 10 瓦片兜底画真实水体，不再直接跌回程序化中轴河。
-        // 🔴 Zoom 9 瓦片过大（≈19km，战场只占 ~1%），水体像素几乎全在战场外 → 跳过，避免误判画错。
-        let usedRealZoom13Water = false;
-        if (hasCoord && input.forceWaterKind !== 'none') {
-            for (const z of [13, 10]) {
-                const { tileX, tileY, pixelX, pixelY } = latLngToTilePixel(input.lat!, input.lng!, z);
-                const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(z, tileX, tileY);
-                // 调度后台拉取（供后续战斗复用）
-                LandSeaSystem.getWaterSampler().scheduleFetch(input.lat!, input.lng!, z);
-
-                if (maskObj?.mask) {
-                    let waterCount = 0;
-                    const m = maskObj.mask;
-                    for (let i = 0; i < m.length; i++) {
-                        if (m[i] === 1) waterCount++;
-                    }
-                    if (waterCount > 100) {
-                        isWater = buildWaterFromRealESRIZoom13(
-                            m, pixelX, pixelY, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
-                        );
-                        usedRealZoom13Water = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!usedRealZoom13Water) {
-            // 🔴 [2026-08-22 主人定] 战斗模式彻底删除海滩，确保左侧营地建筑稳固坐落于陆地，只保留河流/湖泊与平坦行军大道
-            if (waterKind === 'lake') {
-                isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
-            } else if (waterKind === 'river') {
+        // 🔴 [2026-08-22 主人定] 带状地貌全量配清澈深绿色河流 (river_clean_green / wt_green) + 浅色沙滩 (Beach) + 动态水波
+        if (topology === 'river_crossing' || topology === 'imperial_highway' || waterKind === 'river') {
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
+        } else if (topology === 'swamp_marsh' || topology === 'steppe_oasis' || waterKind === 'lake') {
+            isWater = buildLake(gw, gh, elev, season, rng, patches, objects, occupied, VW, VH, ox, oy, theme!);
+        } else if (topology === 'canyon_pass') {
+            if (rng.chance(0.5)) {
                 isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
-            } else {
-                // 纯陆地战场：35% 概率生成贯穿东西的平坦帝国行军大道
-                const hasRoad = input.forceHasRoad ?? rng.chance(0.35);
-                if (hasRoad) {
-                    isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, baseTerrain);
-                }
+            }
+        } else {
+            // highland_ridge / dense_forest_clearing 等模式下 25% 概率出现自然清流
+            if (rng.chance(0.25)) {
+                isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
             }
         }
 
-        // 水面与大道路面保持零高程：严禁高程光影或突起切进水面或大道路面（保持 100% 平坦如砥）
+        // 水面保持零高程：严禁高程光影或突起切进水面（保持 100% 平坦如砥）
         for (let gy = 0; gy < gh; gy++) {
             for (let gx = 0; gx < gw; gx++) {
                 const px = isoCellX(gx, gy, ox);
@@ -601,13 +574,14 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
 // ── DE 179 张官方地图提炼出的 7 大核心战场拓扑原型 ──────────────────────
 export type Scene13Topology =
-    | 'highland_ridge'         // 1. 高台山脊坡地 (Acclivity / Arabia / Mongolia)
+    | 'highland_ridge'         // 1. 高台山脊坡地 (Acclivity / Arabia)
     | 'canyon_pass'            // 2. 峡谷关隘走廊 (Pass / Canyon / Mountain Pass)
     | 'dense_forest_clearing'  // 3. 密林环抱与林间空地 (Black Forest / Hideout)
     | 'river_crossing'         // 4. 大江天堑隔水对峙 (Rivers / Cross / Cenotes)
-    | 'steppe_oasis'           // 5. 苍茫草原戈壁绿洲 (Steppe / Oasis / Atacama)
-    | 'swamp_marsh'            // 6. 湿地沼泽浅泥水泊 (Bogland / Swamp / Salt Marsh)
-    | 'imperial_highway';      // 7. 帝国驿道十字大道 (Highway / Crossroads / Valley)
+    | 'rolling_hills'          // 5. 连绵丘陵与战术双高地 (Mongolia / Gold Rush / SeizeTheMountain)
+    | 'steppe_oasis'           // 6. 苍茫草原戈壁绿洲 (Steppe / Oasis / Atacama)
+    | 'swamp_marsh'            // 7. 湿地沼泽浅泥水泊 (Bogland / Swamp / Salt Marsh)
+    | 'imperial_highway';      // 8. 帝国驿道十字大道 (Highway / Crossroads / Valley)
 
 function resolveBattleTopology(
     hasCoord: boolean,
@@ -621,29 +595,30 @@ function resolveBattleTopology(
     if (waterKind === 'river') return 'river_crossing';
     if (waterKind === 'lake') return rng.chance(0.6) ? 'swamp_marsh' : 'steppe_oasis';
     
-    // 真实高山/陡坡优先
-    if (elev !== null && (elev >= 600 || (slope !== null && slope >= 6))) {
-        return rng.chance(0.55) ? 'highland_ridge' : 'canyon_pass';
+    // 真实高山/陡坡优先 (优先高台山脊、峡谷关隘与连绵双高地)
+    if (elev !== null && (elev >= 500 || (slope !== null && slope >= 5))) {
+        return rng.pick(['rolling_hills', 'highland_ridge', 'canyon_pass']);
     }
 
     // 森林环境优先
     if (biome === 'temperate_forest' || biome === 'boreal' || biome === 'tropical_rainforest') {
-        return rng.pick(['dense_forest_clearing', 'imperial_highway', 'highland_ridge']);
+        return rng.pick(['dense_forest_clearing', 'rolling_hills', 'imperial_highway', 'highland_ridge']);
     }
 
     // 草原/荒漠环境优先
     if (biome === 'cold_steppe' || biome === 'savanna' || biome === 'desert') {
-        return rng.pick(['steppe_oasis', 'imperial_highway', 'highland_ridge', 'canyon_pass']);
+        return rng.pick(['rolling_hills', 'steppe_oasis', 'imperial_highway', 'highland_ridge', 'canyon_pass']);
     }
 
-    // 全局 7 种均衡随机抽选
+    // 全局均衡丰富抽选
     return rng.pick([
-        'highland_ridge', 'highland_ridge',
+        'rolling_hills', 'rolling_hills',
+        'highland_ridge',
         'canyon_pass',
         'dense_forest_clearing',
         'steppe_oasis',
         'swamp_marsh',
-        'imperial_highway', 'imperial_highway'
+        'imperial_highway'
     ]);
 }
 
@@ -670,18 +645,47 @@ function generateElevation(
 
     if (topology === 'canyon_pass') {
         // 🪨 拓扑 2：峡谷关隘走廊 (Pass / Canyon) —— 北面与南面隆起两道险峻峡谷岩壁，中轴平坦畅通
-        const topCliffY = VH * 0.15, botCliffY = VH * 0.85;
-        const [tgx, tgy] = screenToGrid(VW * 0.5, topCliffY, ox, oy);
-        const [bgx, bgy] = screenToGrid(VW * 0.5, botCliffY, ox, oy);
+        const topCliffY = VH * 0.18, botCliffY = VH * 0.82;
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
                 const py = isoCellY(x, y, oy);
                 if (py < topCliffY) {
-                    const d = (topCliffY - py) / 60;
+                    const d = (topCliffY - py) / 50;
                     grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
                 } else if (py > botCliffY) {
-                    const d = (py - botCliffY) / 60;
+                    const d = (py - botCliffY) / 50;
                     grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
+                }
+            }
+        }
+        return grid;
+    }
+
+    if (topology === 'rolling_hills') {
+        // ⛰️ 拓扑 5：连绵丘陵与战术双高地 (Rolling Hills & Dual Highlands - Mongolia / Gold Rush)
+        // 北部 Level 3 主高台 + 南部 Level 2 丘陵群 + 右侧 Level 1 缓坡 + 中央马鞍形鞍部
+        const hills = [
+            { sx: VW * 0.56, sy: VH * 0.28, rx: 9.5, ry: 6.5, maxH: 3, angle: -0.2 },
+            { sx: VW * 0.74, sy: VH * 0.75, rx: 10.5, ry: 7.0, maxH: 2, angle: 0.25 },
+            { sx: VW * 0.90, sy: VH * 0.48, rx: 6.5, ry: 5.0, maxH: 1, angle: 0.1 },
+        ];
+        for (const h of hills) {
+            const [cgx, cgy] = screenToGrid(h.sx, h.sy, ox, oy);
+            const cx = Math.max(1, Math.min(gw - 2, cgx));
+            const cy = Math.max(1, Math.min(gh - 2, cgy));
+            for (let y = 0; y < gh; y++) {
+                for (let x = 0; x < gw; x++) {
+                    const dx = x - cx, dy = y - cy;
+                    const rxRot = dx * Math.cos(h.angle) - dy * Math.sin(h.angle);
+                    const ryRot = dx * Math.sin(h.angle) + dy * Math.cos(h.angle);
+                    const normDist = Math.sqrt((rxRot / h.rx) ** 2 + (ryRot / h.ry) ** 2);
+                    const noise = (Math.sin(x * 1.4 + y * 0.8) + Math.cos(x * 0.7 - y * 1.2)) * 0.08;
+                    const dist = normDist + noise;
+                    let curH = 0;
+                    if (dist < 0.40) curH = h.maxH;
+                    else if (dist < 0.75) curH = Math.max(1, h.maxH - 1);
+                    else if (dist < 1.05) curH = 1;
+                    if (curH > grid[y][x]) grid[y][x] = curH;
                 }
             }
         }
@@ -963,25 +967,40 @@ function buildRiver(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
-    // 🔴 [2026-08-22 主人定] 彻底删除横向河流（防止切断/遮挡左侧营地建筑）！
-    // 仅保留纵向隔河对峙（60%）与中右大对角天堑（40%，严格限制 X >= 36%，100% 避开左侧大本营建筑）
-    const orientationChoice = rng.pick(['vertical', 'vertical', 'vertical', 'diagonal', 'diagonal']);
-    const halfWaterW = 50;
-    const halfBeachW = 82;
+    // 🔴 [2026-08-22 主人定] 彻底告别笔直死板：大江大河全量采用【多阶自然谐波大 S 弯曲 + 宽窄有机收放】
+    // 随机抽取流向：纵向隔河大对峙 (50%) 与 中右大对角天堑 (50%)
+    const orientationChoice = rng.pick(['vertical', 'diagonal']);
 
     let isInsideWater: (x: number, y: number) => boolean;
 
     if (orientationChoice === 'diagonal') {
-        // 斜向天堑大江：从右上 (VW*0.85, 0) 斜穿向中央偏左下 (VW*0.40, VH)，100% 避开左侧营地 (X < 20%)
-        const numPts = 60;
-        const pts: Array<{ x: number; y: number; nx: number; ny: number }> = [];
-        const startX = VW * 0.85, endX = VW * 0.40;
+        // 🌊 拓扑 4-A：斜向天堑大江（从右上斜插向中央偏下，大 S 弯曲蜿蜒流淌）
+        const numPts = 80;
+        const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
+        const startX = VW * 0.86, endX = VW * 0.42;
+        
+        // 随机种子控制河湾方向与起伏
+        const phase1 = rng.next() * Math.PI * 2;
+        const phase2 = rng.next() * Math.PI * 2;
+
         for (let i = 0; i <= numPts; i++) {
             const t = i / numPts;
-            const x = startX * (1 - t) + endX * t + Math.sin(t * Math.PI * 2) * 30;
-            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t + Math.cos(t * Math.PI * 3) * 12;
-            pts.push({ x, y, nx: 0, ny: 0 });
+            // 多阶自然谐波大 S 弯曲（摆动幅度 110px ~ 130px，极大丰富自然曲线感）
+            const curveOffset = (
+                Math.sin(t * Math.PI * 2.2 + phase1) * 115 +
+                Math.cos(t * Math.PI * 4.5 + phase2) * 45 +
+                Math.sin(t * Math.PI * 7.2) * 18
+            );
+            const x = startX * (1 - t) + endX * t + curveOffset;
+            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t + Math.cos(t * Math.PI * 3.5) * 25;
+            
+            // 宽窄有机收放（宽处 ~65px，窄处 ~42px）
+            const wW = 50 + Math.sin(t * Math.PI * 3.2) * 14 + Math.cos(t * Math.PI * 6.5) * 8;
+            const bW = wW + 36 + Math.sin(t * Math.PI * 4.0) * 10;
+            pts.push({ x, y, nx: 0, ny: 0, wW, bW });
         }
+
+        // 计算法线切向
         for (let i = 0; i <= numPts; i++) {
             const prev = pts[Math.max(0, i - 1)];
             const next = pts[Math.min(numPts, i + 1)];
@@ -999,63 +1018,64 @@ function buildRiver(
                 const px = isoCellX(gx, gy, ox);
                 const py = isoCellY(gx, gy, oy);
                 let minDist = 999999;
+                let nearestIdx = 0;
                 for (let k = 0; k <= numPts; k += 2) {
                     const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
-                    if (d < minDist) minDist = d;
+                    if (d < minDist) { minDist = d; nearestIdx = k; }
                 }
-                if (minDist < halfWaterW) waterCells.push([gx, gy]);
-                else if (minDist < halfBeachW) beachCells.push([gx, gy]);
+                if (minDist < pts[nearestIdx].wW) waterCells.push([gx, gy]);
+                else if (minDist < pts[nearestIdx].bW) beachCells.push([gx, gy]);
             }
         }
-        const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-        mark(waterCells); mark(beachCells);
+        for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
+        for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
 
-        const bL = pts.map(p => ({ x: p.x + p.nx * halfBeachW, y: p.y + p.ny * halfBeachW * 0.6 }));
-        const bR = pts.map(p => ({ x: p.x - p.nx * halfBeachW, y: p.y - p.ny * halfBeachW * 0.6 })).reverse();
-        const wL = pts.map(p => ({ x: p.x + p.nx * halfWaterW, y: p.y + p.ny * halfWaterW * 0.6 }));
-        const wR = pts.map(p => ({ x: p.x - p.nx * halfWaterW, y: p.y - p.ny * halfWaterW * 0.6 })).reverse();
+        const bL = pts.map(p => ({ x: p.x + p.nx * p.bW, y: p.y + p.ny * p.bW * 0.6 }));
+        const bR = pts.map(p => ({ x: p.x - p.nx * p.bW, y: p.y - p.ny * p.bW * 0.6 })).reverse();
+        const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
+        const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
 
         const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
         patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
-        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, polygon: [...wL, ...wR], alpha: 0.95, category: 'shore' });
+        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
+        
         isInsideWater = (x, y) => {
             for (let k = 0; k <= numPts; k += 4) {
-                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < halfBeachW + 25) return true;
+                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 25) return true;
             }
             return false;
         };
     } else {
-        // 经典纵贯中轴河 (Vertical River)
-        const controls: Array<{ x: number; y: number }> = [];
-        const controlStep = TILE_H * 3;
+        // 🌊 拓扑 4-B：纵贯中轴大江（大 S 弯隔水对峙）
+        const numPts = 80;
+        const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
         const baseCenterX = VW * 0.50;
-        for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
-            const cx = baseCenterX + (rng.next() - 0.5) * TILE_W * 2.2;
-            controls.push({ x: cx, y });
+        const phase1 = rng.next() * Math.PI * 2;
+        const phase2 = rng.next() * Math.PI * 2;
+
+        for (let i = 0; i <= numPts; i++) {
+            const t = i / numPts;
+            const curveOffset = (
+                Math.sin(t * Math.PI * 2.4 + phase1) * 95 +
+                Math.cos(t * Math.PI * 4.8 + phase2) * 35 +
+                Math.sin(t * Math.PI * 8.0) * 15
+            );
+            const x = baseCenterX + curveOffset;
+            const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
+            const wW = 48 + Math.sin(t * Math.PI * 3.5) * 12 + Math.cos(t * Math.PI * 7.0) * 6;
+            const bW = wW + 35 + Math.sin(t * Math.PI * 4.2) * 8;
+            pts.push({ x, y, nx: 0, ny: 0, wW, bW });
         }
-        const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
-            const t2 = t * t, t3 = t2 * t;
-            return 0.5 * ((2 * p1) + (-p0 + p2) * t
-                + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
-                + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
-        };
-        const riverCenter: Array<{ x: number; y: number }> = [];
-        const sampleStep = TILE_H / 4;
-        for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
-            const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
-            const p0 = controls[Math.max(0, segment - 1)];
-            const p1 = controls[segment];
-            const p2 = controls[Math.min(controls.length - 1, segment + 1)];
-            const p3 = controls[Math.min(controls.length - 1, segment + 2)];
-            const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
-            riverCenter.push({ x: catmullRom(p0.x, p1.x, p2.x, p3.x, t), y });
+
+        for (let i = 0; i <= numPts; i++) {
+            const prev = pts[Math.max(0, i - 1)];
+            const next = pts[Math.min(numPts, i + 1)];
+            const dx = next.x - prev.x;
+            const dy = next.y - prev.y;
+            const len = Math.hypot(dx, dy) || 1;
+            pts[i].nx = -dy / len;
+            pts[i].ny = dx / len;
         }
-        const centerAt = (y: number): number => {
-            const f = Math.max(0, Math.min(riverCenter.length - 1, (y + TILE_H * 2) / sampleStep));
-            const i = Math.min(riverCenter.length - 2, Math.floor(f));
-            const t = f - i;
-            return riverCenter[i].x + (riverCenter[i + 1].x - riverCenter[i].x) * t;
-        };
 
         const waterCells: Array<[number, number]> = [];
         const beachCells: Array<[number, number]> = [];
@@ -1063,40 +1083,38 @@ function buildRiver(
             for (let gx = 0; gx < gw; gx++) {
                 const px = isoCellX(gx, gy, ox);
                 const py = isoCellY(gx, gy, oy);
-                if (py < -TILE_H || py > VH + TILE_H) continue;
-                const distFromCenter = Math.abs(px - centerAt(py));
-                if (distFromCenter < halfWaterW) waterCells.push([gx, gy]);
-                else if (distFromCenter < halfBeachW) beachCells.push([gx, gy]);
+                let minDist = 999999;
+                let nearestIdx = 0;
+                for (let k = 0; k <= numPts; k += 2) {
+                    const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
+                    if (d < minDist) { minDist = d; nearestIdx = k; }
+                }
+                if (minDist < pts[nearestIdx].wW) waterCells.push([gx, gy]);
+                else if (minDist < pts[nearestIdx].bW) beachCells.push([gx, gy]);
             }
         }
-        const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-        mark(waterCells); mark(beachCells);
+        for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
+        for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
 
-        const leftBankPolygon = [
-            ...riverCenter.map((p) => ({ x: p.x - halfBeachW, y: p.y })),
-            ...riverCenter.map((p) => ({ x: p.x - halfWaterW, y: p.y })).reverse(),
-        ];
-        const rightBankPolygon = [
-            ...riverCenter.map((p) => ({ x: p.x + halfWaterW, y: p.y })),
-            ...riverCenter.map((p) => ({ x: p.x + halfBeachW, y: p.y })).reverse(),
-        ];
-        const riverPolygon = (w: number): Array<{ x: number; y: number }> => {
-            const left = riverCenter.map((p) => ({ x: p.x - w, y: p.y }));
-            const right = riverCenter.map((p) => ({ x: p.x + w, y: p.y })).reverse();
-            return [...left, ...right];
-        };
+        const bL = pts.map(p => ({ x: p.x + p.nx * p.bW, y: p.y + p.ny * p.bW * 0.6 }));
+        const bR = pts.map(p => ({ x: p.x - p.nx * p.bW, y: p.y - p.ny * p.bW * 0.6 })).reverse();
+        const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
+        const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
 
         const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
-        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
-        isInsideWater = (x, y) => Math.abs(x - centerAt(y)) < halfBeachW + 35;
+        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
+        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
+        
+        isInsideWater = (x, y) => {
+            for (let k = 0; k <= numPts; k += 4) {
+                if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 25) return true;
+            }
+            return false;
+        };
     }
 
     return isInsideWater;
 }
-
-// ── 第 3 层：内陆湖/湿地（clump 生长，连续区域非散点） ─────────
 
 function buildLake(
     gw: number,
@@ -1113,49 +1131,54 @@ function buildLake(
     oy: number,
     theme: DeMapThemePalette,
 ): WaterChecker {
-    const swamp = elev !== null && elev < 200 && rng.chance(0.35);
-    if (season === 2) {
-        // 冬季 → 冰面
-        const iceTile = rng.pick(ICE_TILES);
-        const n = 1 + rng.int(0, 2);
-        for (let i = 0; i < n; i++) {
-            const sx = 2 + rng.int(0, gw - 4), sy = 2 + rng.int(0, gh - 4);
-            patches.push({ tile: iceTile, cells: growClump(sx, sy, 8 + rng.int(0, 6), gw, gh, occupied, rng), alpha: 1, category: 'wetland' });
-        }
-        for (let i = 0; i < 3; i++) objects.push({ asset: 'DECAL_ICE', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        return () => false;
-    }
-    // 内陆湖/湿地水面：主人 08-21 定「水域全线浅滩」，弃 POND_TILES 深水塘改用浅滩
-    const pond = rng.pick(SHALLOW_MEDIUM);
-    const edgeTile = swamp ? rng.pick(SWAMP_EDGE) : rng.pick(POND_EDGE);
-    const nClumps = 2 + rng.int(0, 2);
-    const allPond: Array<[number, number]> = [];
-    for (let i = 0; i < nClumps; i++) {
-        const sx = 2 + rng.int(0, gw - 4), sy = 2 + rng.int(0, gh - 4);
-        allPond.push(...growClump(sx, sy, 6 + rng.int(0, 5), gw, gh, occupied, rng));
-    }
-    // 描边：湖岸相邻格（连续区域）
-    const pondSet = new Set(allPond.map(([x, y]) => `${x},${y}`));
-    const edgeCells: Array<[number, number]> = [];
-    const edgeSet = new Set<string>();
-    for (const [x, y] of allPond) {
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-            const nx = x + dx, ny = y + dy;
-            if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
-            const k = `${nx},${ny}`;
-            if (!pondSet.has(k) && !edgeSet.has(k)) { edgeSet.add(k); edgeCells.push([nx, ny]); }
-        }
-    }
-    patches.push({ tile: edgeTile, cells: edgeCells, alpha: 1, category: 'wetland' });
-    patches.push({ tile: pond, cells: allPond, alpha: 1, category: 'wetland' });
+    // 🔴 [2026-08-22 主人定] 彻底杜绝方块锯齿：内陆湖/绿洲统一采用连续光滑的贝塞尔有机多边形 (polygon)
+    // 位于中央偏右 (VW*0.65, VH*0.35)，避开左侧攻方大本营建筑 (X < 20%)
+    const cx = VW * (0.58 + (rng.next() - 0.5) * 0.14);
+    const cy = VH * (0.35 + (rng.next() - 0.5) * 0.12);
+    const rx = 110 + rng.next() * 50;
+    const ry = 65 + rng.next() * 30;
 
-    // 🔴 [2026-08-21 主人定] 水体及近岸绝不生成任何杂乱石头或芦苇
-    // 水域排斥：湖泊水域及岸线边缘格严禁生成陆地大物件
-    return (x, y) => {
-        const [gx, gy] = screenToGrid(x, y, ox, oy);
-        const k = `${gx},${gy}`;
-        return pondSet.has(k) || edgeSet.has(k);
-    };
+    const numPts = 32;
+    const lakePolygon: Array<{ x: number; y: number }> = [];
+    const beachPolygon: Array<{ x: number; y: number }> = [];
+
+    for (let i = 0; i < numPts; i++) {
+        const ang = (i / numPts) * Math.PI * 2;
+        const noise = 1.0 + Math.sin(ang * 3) * 0.12 + Math.cos(ang * 5) * 0.08;
+        const px = cx + Math.cos(ang) * rx * noise;
+        const py = cy + Math.sin(ang) * ry * noise;
+        lakePolygon.push({ x: px, y: py });
+        beachPolygon.push({ x: cx + Math.cos(ang) * (rx + 35) * noise, y: cy + Math.sin(ang) * (ry + 22) * noise });
+    }
+
+    const waterCells: Array<[number, number]> = [];
+    const beachCells: Array<[number, number]> = [];
+
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            const dNorm = Math.hypot((px - cx) / rx, (py - cy) / ry);
+            if (dNorm < 1.0) {
+                waterCells.push([gx, gy]);
+            } else if (dNorm < 1.35) {
+                beachCells.push([gx, gy]);
+            }
+        }
+    }
+
+    for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
+    for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
+
+    const actualBeachTile = beachTerrainForTheme(theme, season, 35, elev, 'temperate_forest');
+    if (beachCells.length > 0) {
+        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: beachPolygon, alpha: 0.95, category: 'shore' });
+    }
+    if (waterCells.length > 0) {
+        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: lakePolygon, alpha: 1.0, category: 'shore' });
+    }
+
+    return (x, y) => Math.hypot((x - cx) / (rx + 25), (y - cy) / (ry + 18)) < 1.0;
 }
 
 // ── 第 3 层：横向帝国行军大道（东西水平贯通，平坦开阔，0 阻挡） ──
@@ -1369,8 +1392,6 @@ function buildVegetation(
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
 ): void {
     const treeAssets = treesForTheme(theme, season, lat, elev, biome);
-    // 🔴 [2026-08-21 DE 式主导树种] 一图一主树成片（DE Black Forest 全橡树、Baltic 主松次桦）：
-    //    每场从候选池选 1 个主导树种（≈85%）+ 至多 1 个次树点缀（≈15%）。
     const primaryTree = rng.pick(treeAssets);
     const otherTrees = treeAssets.filter((t) => t !== primaryTree);
     const secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
@@ -1383,9 +1404,9 @@ function buildVegetation(
         high_alpine: 0.1,
         snow: 0.05,
     };
-    const treeCount = Math.max(2, Math.round(baseTreeCount * treeFactor[elevationBand]));
-    const clusterCount = Math.max(2, Math.round(treeCount / 6));
-    const perCluster = Math.max(2, Math.round(treeCount / clusterCount));
+    const treeCount = Math.max(4, Math.round(baseTreeCount * treeFactor[elevationBand]));
+    const clusterCount = Math.max(2, Math.round(treeCount / 5));
+    const perCluster = Math.max(3, Math.round(treeCount / clusterCount));
     const treePositions = objects
         .filter((object) => DE_TREE_OBJECTS.has(object.asset))
         .map((object) => ({ x: object.x, y: object.y }));
@@ -1397,9 +1418,8 @@ function buildVegetation(
             || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
     });
 
-    // 🔴 [2026-08-21 铁律·行军与交火主走廊 100% 净空]
     const inArmyCorridor = (x: number, y: number): boolean => {
-        return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
+        return x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
     };
 
     const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
@@ -1414,10 +1434,8 @@ function buildVegetation(
             if (!isWater(cx, cy) && !inArmyCorridor(cx, cy)) break;
         }
 
-        // 🔴 [2026-08-21 DE 核心林地底层绑定 Forest Floor Binding]
-        // 在林心 (cx, cy) 下方直接铺设松针落叶层斑块，彻底告别光秃秃插在草地上！
         const [cgx, cgy] = screenToGrid(cx, cy, ox, oy);
-        const floorClumpCells = growClump(cgx, cgy, 10 + rng.int(0, 8), gw, gh, occupied, rng);
+        const floorClumpCells = growClump(cgx, cgy, 12 + rng.int(0, 10), gw, gh, occupied, rng);
         if (floorClumpCells.length > 0) {
             patches.push({
                 tile: forestFloorTile,
@@ -1427,7 +1445,7 @@ function buildVegetation(
             });
         }
 
-        const radius = 50 + rng.next() * 60;
+        const radius = 55 + rng.next() * 65;
         const n = Math.min(perCluster, treeCount - placed);
         for (let k = 0; k < n; k++) {
             let tx = 0, ty = 0;
@@ -1450,14 +1468,31 @@ function buildVegetation(
             objects.push({ asset, x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             treePositions.push({ x: tx, y: ty });
             placed++;
+
+            // 🔴【树木伴生系统】：树下 40% 概率伴生野生灌木、蕨类或倒木
+            if (rng.chance(0.40)) {
+                const companionAsset = rng.pick(['SHRUB_GREEN', 'BUSH_GREEN', 'FERNPATCH', 'FELLED_GENERIC', 'STUMP_GENERIC']);
+                const compX = tx + (rng.next() - 0.5) * 36;
+                const compY = ty + (rng.next() - 0.5) * 20;
+                if (!isWater(compX, compY) && !inArmyCorridor(compX, compY)) {
+                    objects.push({
+                        asset: companionAsset,
+                        x: compX,
+                        y: compY,
+                        layer: GROUND_COVER_ASSETS.has(companionAsset) ? 'ground' : 'world',
+                        z: 0,
+                        flip: rng.chance(0.5),
+                        frame: rng.int(0, 99999),
+                    });
+                }
+            }
         }
     }
 
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
-    const rockCompanionPool = themeDecor.flat.filter((asset) => ROCK_COMPANION_ASSETS.has(asset));
 
-    // ── 实体装饰：岩石使用当前主题的地面装饰作伴生物 ──
-    const solidDecorCount = 2 + rng.int(0, 2);
+    // 🔴【岩石成套伴生系统】：全图 4~7 处岩石群，主岩石必定紧密伴生碎石、灌木与草花
+    const solidDecorCount = 4 + rng.int(0, 3);
     for (let i = 0; i < solidDecorCount; i++) {
         const asset = rng.pick(themeDecor.solid);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
@@ -1474,24 +1509,79 @@ function buildVegetation(
                 placementGroup,
             });
 
-            if (placementGroup && rockCompanionPool.length > 0) {
-                const companionCount = 1 + rng.int(0, 1);
-                for (let companionIndex = 0; companionIndex < companionCount; companionIndex++) {
-                    const angle = rng.next() * Math.PI * 2;
-                    const distance = 18 + rng.next() * 20;
-                    const x = p.x + Math.cos(angle) * distance;
-                    const y = p.y + Math.sin(angle) * distance * 0.6;
-                    if (x < 0 || x > VW || y < 0 || y > VH || isWater(x, y) || inArmyCorridor(x, y)) continue;
-                    const companionAsset = rng.pick(rockCompanionPool);
+            if (placementGroup) {
+                // 1. 伴生小碎石 1~2 块
+                const smallRockCount = 1 + rng.int(0, 2);
+                for (let si = 0; si < smallRockCount; si++) {
+                    const ang = rng.next() * Math.PI * 2;
+                    const dist = 22 + rng.next() * 24;
+                    const sx = p.x + Math.cos(ang) * dist;
+                    const sy = p.y + Math.sin(ang) * dist * 0.6;
+                    if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !inArmyCorridor(sx, sy)) {
+                        const sAsset = rng.pick(['ROCK1', 'ROCK2', 'ROCK3']);
+                        objects.push({
+                            asset: sAsset,
+                            x: sx,
+                            y: sy,
+                            layer: 'world',
+                            z: 0,
+                            flip: rng.chance(0.5),
+                            frame: rng.int(0, 99999),
+                            placementGroup,
+                        });
+                    }
+                }
+
+                // 2. 伴生野生灌木与矮丛 1~2 株
+                const bushCount = 1 + rng.int(0, 1);
+                for (let bi = 0; bi < bushCount; bi++) {
+                    const ang = rng.next() * Math.PI * 2;
+                    const dist = 18 + rng.next() * 20;
+                    const bx = p.x + Math.cos(ang) * dist;
+                    const by = p.y + Math.sin(ang) * dist * 0.6;
+                    if (bx >= 0 && bx <= VW && by >= 0 && by <= VH && !isWater(bx, by) && !inArmyCorridor(bx, by)) {
+                        const bAsset = rng.pick(['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH']);
+                        objects.push({
+                            asset: bAsset,
+                            x: bx,
+                            y: by,
+                            layer: GROUND_COVER_ASSETS.has(bAsset) ? 'ground' : 'world',
+                            z: 0,
+                            flip: rng.chance(0.5),
+                            frame: rng.int(0, 99999),
+                            placementGroup,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    // 🔴【荒原枯荣伴生】：干旱荒原与沙漠生成枯木、动物骨骸与干草
+    if (biome === 'desert' || biome === 'cold_steppe' || biome === 'savanna') {
+        const wasteCount = 2 + rng.int(0, 2);
+        for (let i = 0; i < wasteCount; i++) {
+            const p = sampleLandPos(VW, VH, rng, isWater, 'DEAD_TREE', objects, inArmyCorridor);
+            if (p) {
+                objects.push({
+                    asset: 'DEAD_TREE',
+                    x: p.x,
+                    y: p.y,
+                    layer: 'world',
+                    z: 0,
+                    flip: rng.chance(0.5),
+                    frame: rng.int(0, 99999),
+                });
+                if (rng.chance(0.6)) {
+                    const skelAsset = rng.pick(['ANIMAL_SKELETON', 'SKELETON', 'STUMP_GENERIC', 'PLANT_DEAD']);
                     objects.push({
-                        asset: companionAsset,
-                        x,
-                        y,
-                        layer: GROUND_COVER_ASSETS.has(companionAsset) ? 'ground' : 'world',
+                        asset: skelAsset,
+                        x: p.x + (rng.next() - 0.5) * 32,
+                        y: p.y + (rng.next() - 0.5) * 18,
+                        layer: GROUND_COVER_ASSETS.has(skelAsset) ? 'ground' : 'world',
                         z: 0,
                         flip: rng.chance(0.5),
                         frame: rng.int(0, 99999),
-                        placementGroup,
                     });
                 }
             }
@@ -1499,7 +1589,7 @@ function buildVegetation(
     }
 
     // ── 开阔平原微点缀（草地微花草/贴花，100% 不挡路，赋予辽阔平原生命力） ──
-    const decorCount = 8 + rng.int(0, 8);
+    const decorCount = 14 + rng.int(0, 10);
     for (let i = 0; i < decorCount; i++) {
         const asset = rng.pick(themeDecor.flat);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
@@ -1516,8 +1606,6 @@ function buildVegetation(
         }
     }
 }
-
-// ── 第 5 层：资源点（低频；已删金矿 + 黄果灌木，主人 2026-08-20 定） ──
 
 function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome): void {
     // 🔴 [2026-08-21 素材全覆盖] 资源按 biome 科学分配：

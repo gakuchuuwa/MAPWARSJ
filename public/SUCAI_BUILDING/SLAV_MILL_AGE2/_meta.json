@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_MILL_AGE2",
+  "frames": 1,
+  "box_w": 296,
+  "box_h": 232,
+  "anchor_x": 180,
+  "anchor_y": 184,
+  "sld_source": "b_slav_mill_age2"
+}

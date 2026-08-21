@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 268,
+  "anchor_x": 160,
+  "anchor_y": 188,
+  "sld_source": "b_medi_archery_range_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_SIEGE_WORKSHOP_AGE3",
+  "frames": 1,
+  "box_w": 440,
+  "box_h": 284,
+  "anchor_x": 236,
+  "anchor_y": 204,
+  "sld_source": "b_puru_siege_workshop_age3"
+}

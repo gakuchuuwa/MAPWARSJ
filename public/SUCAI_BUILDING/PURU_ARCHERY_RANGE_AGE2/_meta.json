@@ -1,0 +1,9 @@
+{
+  "name": "PURU_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 304,
+  "anchor_x": 172,
+  "anchor_y": 224,
+  "sld_source": "b_puru_archery_range_age2"
+}

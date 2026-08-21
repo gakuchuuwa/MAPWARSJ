@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_HOUSE_AGE2",
+  "frames": 1,
+  "box_w": 220,
+  "box_h": 148,
+  "anchor_x": 128,
+  "anchor_y": 100,
+  "sld_source": "b_ceas_house_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "MESO_SIEGE_WORKSHOP_AGE3",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 296,
+  "anchor_x": 224,
+  "anchor_y": 184,
+  "sld_source": "b_meso_siege_workshop_age3"
+}
