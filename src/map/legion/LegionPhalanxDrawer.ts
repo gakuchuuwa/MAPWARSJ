@@ -1955,21 +1955,22 @@ export class LegionPhalanxDrawer {
             const pos = formation[i] ?? formation[0];
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
-            // 旗舰（r=0）钉在逻辑点；后随船沿航迹取点（距旗舰 |r|×shipDepth 弧长），横向偏移沿当前朝向垂直
+            // 旗舰（r=0）钉在逻辑点；后随船沿航迹取点（距旗舰 |r|×shipDepth 弧长），横向偏移沿当前朝向法线
             let dx: number, dy: number;
-            const oy = pos.c * shipSpread * cMult;
+            // 阵内坐标：origX 为左右横向（列），origY 为前后纵深（排：r 为负代表后方，取反为正纵深）
+            const origX = pos.c * shipSpread * cMult;
+            const origY = -pos.r * shipDepth;
             if (pos.r === 0) {
                 dx = center.x;
                 dy = center.y;
             } else if (trail && trail.length >= 2) {
                 const base = this.trailPointAt(trail, Math.abs(pos.r) * shipDepth);
-                dx = base.x - oy * sin;
-                dy = base.y + oy * cos;
+                dx = base.x + origX * cos;
+                dy = base.y + origX * sin;
             } else {
-                // 航迹不足（刚下水/刚转向）：退化沿当前朝向直线排
-                const ox = pos.r * shipDepth;
-                dx = center.x + (ox * cos - oy * sin);
-                dy = center.y + (ox * sin + oy * cos);
+                // 航迹不足（刚下水/刚转向/静态）：标准旋转矩阵排开（并列长蛇成列）
+                dx = center.x + (origX * cos - origY * sin);
+                dy = center.y + (origX * sin + origY * cos);
             }
 
             // 逐舰读取个体状态（2026-07-18）
