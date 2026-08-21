@@ -879,7 +879,7 @@ const DECOR_BLUR = 20;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
 const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：逐格画白/黑菱形会出「小方块」，模糊成平滑光照渐变 */
-const ELEV_BLUR = 16;
+const ELEV_BLUR = 24;
 /** DE 等距高程的屏幕抬升量：每级只抬 8px，形成可通行缓坡，不做悬崖断壁。 */
 const ELEV_STEP_PX = 8;
 /**
@@ -2096,6 +2096,10 @@ interface DecorPatch {
     polygon?: Array<{ x: number; y: number }>;
     alpha: number;
     isWater?: boolean;
+    /** 屏幕包围盒（px，bbox 模式渲染缓存）：水域/贴片只在本区域光栅化，不再全屏操作 */
+    bbox?: { x: number; y: number; w: number; h: number };
+    /** 动态水体纹理 pattern（img 加载后建一次，每帧复用，避免每帧 createPattern） */
+    waterPattern?: CanvasPattern | null;
 }
 
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
@@ -2302,6 +2306,8 @@ export class Scene13WarLayer {
     private elevBlurCtx: CanvasRenderingContext2D | null = null;
     /** 🔴 [2026-08-21 完善·性能] 高地光照缓存就绪标志：elevGrid 静态，全量菱形+blur 只算一次，之后每帧只 drawImage */
     private elevCacheReady = false;
+    /** [2026-08-21 性能] 素材加载风暴合并：onload 高频触发 repaintDecor，rAF 合并到一帧一次 */
+    private decorRepaintQueued = false;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -2990,7 +2996,7 @@ export class Scene13WarLayer {
             this.terrainImg = im;
             this.paintTerrain();
             this.elevCacheReady = false;
-            this.repaintDecor();
+            this.scheduleDecorRepaint();
         };
         im.src = TERRAIN_BASE_URL + this.terrainTile + '.png';
     }
@@ -3026,7 +3032,7 @@ export class Scene13WarLayer {
     private isoOy = 0;
     private isoGw = 0;
     private isoGh = 0;
-    /** 高程网格 [y][x]：0 平地 / 1 缓坡 / 2 丘陵 / 3 高峰（照 RMS create_elevation 的 clump 生长） */
+    /** 连续高程网格 [y][x]：0 平地，正数为平滑缓坡高度。 */
     private elevGrid: number[][] = [];
 
     /** 网格 (gx, gy) → 菱形中心屏幕坐标（2:1 等距投影） */
@@ -3111,11 +3117,11 @@ export class Scene13WarLayer {
         const na: NatureAsset = { img: null, meta: null };
         this.natureCache[asset] = na;
         const im = new Image();
-        im.onload = () => { na.img = im; this.repaintDecor(); };
+        im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
         im.src = NATURE_BASE_URL + asset + '/frames.png';
         fetch(NATURE_BASE_URL + asset + '/_meta.json')
             .then((r) => (r.ok ? r.json() : null))
-            .then((m) => { if (m) { na.meta = m as NatureMeta; this.repaintDecor(); } })
+            .then((m) => { if (m) { na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
             .catch(() => {});
     }
 
@@ -3131,8 +3137,20 @@ export class Scene13WarLayer {
         const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater };
         this.decorPatches.push(p);
         const im = new Image();
-        im.onload = () => { p.img = im; this.repaintDecor(); };
+        im.onload = () => { p.img = im; this.scheduleDecorRepaint(); };
         im.src = TERRAIN_BASE_URL + tile + '.png';
+    }
+
+    /** 素材加载完成 → 合并重绘（rAF 去抖：同一帧内多个素材 onload 只全量重绘一次）。
+     *  🔴 [2026-08-21 性能] 一场战斗几十个素材（贴片/树/石/草各自 onload），
+     *    若每个都立即全量 repaintDecor（全屏 blur × 每 patch），进战斗瞬间会连续卡几十帧。 */
+    private scheduleDecorRepaint(): void {
+        if (this.decorRepaintQueued) return;
+        this.decorRepaintQueued = true;
+        requestAnimationFrame(() => {
+            this.decorRepaintQueued = false;
+            this.repaintDecor();
+        });
     }
 
     /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
@@ -3241,36 +3259,7 @@ export class Scene13WarLayer {
                     if (Math.abs(sunExposure) < 0.08 && h === 0) continue;
 
                     const sx = this.isoCellX(x, y);
-                    const baseSy = this.isoCellY(x, y);
-                    const sy = baseSy - h * ELEV_STEP_PX;
-
-                    // 高程差只画可通行缓坡的短侧面；右下背光更深、左下受环境光更浅。
-                    const hRight = x + 1 < gw ? this.elevGrid[y][x + 1] : h;
-                    if (hRight < h) {
-                        const lowY = baseSy - hRight * ELEV_STEP_PX;
-                        ectx.beginPath();
-                        ectx.moveTo(sx + TILE_W / 2, sy);
-                        ectx.lineTo(sx, sy + TILE_H / 2);
-                        ectx.lineTo(sx, lowY + TILE_H / 2);
-                        ectx.lineTo(sx + TILE_W / 2, lowY);
-                        ectx.closePath();
-                        ectx.globalAlpha = Math.min(0.42, (h - hRight) * 0.16);
-                        ectx.fillStyle = '#182536';
-                        ectx.fill();
-                    }
-                    const hLeft = y + 1 < gh ? this.elevGrid[y + 1][x] : h;
-                    if (hLeft < h) {
-                        const lowY = baseSy - hLeft * ELEV_STEP_PX;
-                        ectx.beginPath();
-                        ectx.moveTo(sx, sy + TILE_H / 2);
-                        ectx.lineTo(sx - TILE_W / 2, sy);
-                        ectx.lineTo(sx - TILE_W / 2, lowY);
-                        ectx.lineTo(sx, lowY + TILE_H / 2);
-                        ectx.closePath();
-                        ectx.globalAlpha = Math.min(0.28, (h - hLeft) * 0.11);
-                        ectx.fillStyle = '#765f38';
-                        ectx.fill();
-                    }
+                    const sy = this.isoCellY(x, y) - h * ELEV_STEP_PX;
 
                     ectx.beginPath();
                     ectx.moveTo(sx, sy - TILE_H / 2);
@@ -3279,19 +3268,19 @@ export class Scene13WarLayer {
                     ectx.lineTo(sx - TILE_W / 2, sy);
                     ectx.closePath();
 
-                    if (sunExposure > 0.08) {
-                        // 迎光坡（西北阳坡）：暖金色阳光漫射
-                        ectx.globalAlpha = Math.min(0.55, sunExposure * 0.35);
+                    if (sunExposure > 0.06) {
+                        // 迎光阳坡（西北阳坡）：温暖阳光高光漫射
+                        ectx.globalAlpha = Math.min(0.62, sunExposure * 0.40);
                         ectx.fillStyle = '#fffdf0';
                         ectx.fill();
-                    } else if (sunExposure < -0.08) {
-                        // 背光坡（东南阴坡）：冷调深谷投影
-                        ectx.globalAlpha = Math.min(0.65, Math.abs(sunExposure) * 0.42);
-                        ectx.fillStyle = '#101e30';
+                    } else if (sunExposure < -0.06) {
+                        // 背光阴坡（东南阴坡）：深邃立体地貌投影
+                        ectx.globalAlpha = Math.min(0.72, Math.abs(sunExposure) * 0.48);
+                        ectx.fillStyle = '#142337';
                         ectx.fill();
                     } else if (h > 0) {
-                        // 高地顶面：微弱顶光环境提亮
-                        ectx.globalAlpha = Math.min(0.18, h * 0.06);
+                        // 高地顶面平台：环境顶光提亮
+                        ectx.globalAlpha = Math.min(0.22, h * 0.08);
                         ectx.fillStyle = '#ffffff';
                         ectx.fill();
                     }
@@ -3316,24 +3305,57 @@ export class Scene13WarLayer {
         const W = this.canvas!.width, H = this.canvas!.height;
         if (!this.waterCv) { this.waterCv = document.createElement('canvas'); this.waterCtx = this.waterCv.getContext('2d')!; }
         const wcv = this.waterCv, wctx = this.waterCtx!;
-        if (wcv.width !== W || wcv.height !== H) { wcv.width = W; wcv.height = H; }
 
         for (const p of waterPatches) {
             const img = p.img!;
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
 
-            // 1. 水域遮罩蒙版
-            wctx.clearRect(0, 0, W, H);
+            // 🔴 [2026-08-21 性能] 水体只在自己屏幕包围盒内光栅化：clearRect/pattern fillRect/drawImage
+            //    全部限定 bbox（海岸是纵向条带、湖是局部块、河是窄带），不再每帧全屏合成 4~5 次。
+            //    bbox 首次计算后缓存（polygon 或 cells 是静态的），之后每帧直接复用。
+            let bbox = p.bbox;
+            if (!bbox) {
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                if (p.polygon && p.polygon.length >= 3) {
+                    for (const pt of p.polygon) {
+                        if (pt.x < minX) minX = pt.x;
+                        if (pt.y < minY) minY = pt.y;
+                        if (pt.x > maxX) maxX = pt.x;
+                        if (pt.y > maxY) maxY = pt.y;
+                    }
+                } else {
+                    for (const [gx, gy] of p.cells) {
+                        const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                        if (sx - TILE_W / 2 < minX) minX = sx - TILE_W / 2;
+                        if (sy - TILE_H / 2 < minY) minY = sy - TILE_H / 2;
+                        if (sx + TILE_W / 2 > maxX) maxX = sx + TILE_W / 2;
+                        if (sy + TILE_H / 2 > maxY) maxY = sy + TILE_H / 2;
+                    }
+                }
+                if (!isFinite(minX)) continue;
+                // 纹理可能漂移出 bbox 边缘（双方向流动），各扩一格纹理尺寸的余量
+                const pad = Math.max(tw, th);
+                minX = Math.max(0, Math.floor(minX - pad));
+                minY = Math.max(0, Math.floor(minY - pad));
+                maxX = Math.min(W, Math.ceil(maxX + pad));
+                maxY = Math.min(H, Math.ceil(maxY + pad));
+                bbox = p.bbox = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+            }
+            if (bbox.w <= 0 || bbox.h <= 0) continue;
+            if (wcv.width !== bbox.w || wcv.height !== bbox.h) { wcv.width = bbox.w; wcv.height = bbox.h; }
+
+            // 1. 水域遮罩蒙版（bbox 局部坐标）
+            wctx.clearRect(0, 0, bbox.w, bbox.h);
             wctx.fillStyle = '#fff';
             if (p.polygon && p.polygon.length >= 3) {
                 wctx.beginPath();
-                wctx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                for (let i = 1; i < p.polygon.length; i++) wctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                wctx.moveTo(p.polygon[0].x - bbox.x, p.polygon[0].y - bbox.y);
+                for (let i = 1; i < p.polygon.length; i++) wctx.lineTo(p.polygon[i].x - bbox.x, p.polygon[i].y - bbox.y);
                 wctx.closePath();
                 wctx.fill();
             } else {
                 for (const [gx, gy] of p.cells) {
-                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                    const sx = this.isoCellX(gx, gy) - bbox.x, sy = this.isoCellY(gx, gy) - bbox.y;
                     wctx.beginPath();
                     wctx.moveTo(sx, sy - TILE_H / 2);
                     wctx.lineTo(sx + TILE_W / 2, sy);
@@ -3344,18 +3366,19 @@ export class Scene13WarLayer {
                 }
             }
 
-            // 2. 双层交叉流动水体合成 (Source-In)
+            // 2. 双层交叉流动水体合成 (Source-In)；pattern 每场建一次缓存复用
             wctx.globalCompositeOperation = 'source-in';
+            if (!p.waterPattern) p.waterPattern = wctx.createPattern(img, 'repeat');
+            const pat = p.waterPattern;
 
             // 主水流：沿等距 45° 方向缓缓漂移（14px/s）
             const dx1 = (t * 14) % tw;
             const dy1 = (t * 7) % th;
             wctx.save();
             wctx.translate(dx1, dy1);
-            const pat1 = wctx.createPattern(img, 'repeat');
-            if (pat1) {
-                wctx.fillStyle = pat1;
-                wctx.fillRect(-tw - dx1, -th - dy1, W + tw * 2, H + th * 2);
+            if (pat) {
+                wctx.fillStyle = pat;
+                wctx.fillRect(-tw - dx1, -th - dy1, bbox.w + tw * 2, bbox.h + th * 2);
             }
             wctx.restore();
 
@@ -3365,19 +3388,18 @@ export class Scene13WarLayer {
             wctx.save();
             wctx.globalAlpha = 0.42;
             wctx.translate(dx2, dy2);
-            const pat2 = wctx.createPattern(img, 'repeat');
-            if (pat2) {
-                wctx.fillStyle = pat2;
-                wctx.fillRect(-tw - dx2, -th - dy2, W + tw * 2, H + th * 2);
+            if (pat) {
+                wctx.fillStyle = pat;
+                wctx.fillRect(-tw - dx2, -th - dy2, bbox.w + tw * 2, bbox.h + th * 2);
             }
             wctx.restore();
 
             wctx.globalCompositeOperation = 'source-over';
             wctx.globalAlpha = 1;
 
-            // 3. 将动态水面绘制到主画面
+            // 3. 将动态水面绘制到主画面（只贴 bbox 区域）
             if (p.alpha < 1) ctx.globalAlpha = p.alpha;
-            ctx.drawImage(wcv, 0, 0);
+            ctx.drawImage(wcv, bbox.x, bbox.y);
             if (p.alpha < 1) ctx.globalAlpha = 1;
 
             // 4. DE 经典浪花拍岸（Shoreline Waves / 泡沫边缘呼吸动画）
@@ -3430,27 +3452,56 @@ export class Scene13WarLayer {
         ctx.restore();
     }
 
-    /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰） */
+    /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰）。
+     *  🔴 [2026-08-21 性能] mask/blur/fill/drawImage 全部限定斑块 bbox（+羽化余量），
+     *    不再全屏操作——素材加载风暴时每个 onload 触发一次全量 repaintDecor，
+     *    每个贴片全屏 blur(20px) 是进战斗卡顿主因之一。 */
     private compositeSoftPatch(g: CanvasRenderingContext2D, p: DecorPatch, W: number, H: number): void {
         const img = p.img;
         if (!img || !img.complete || !img.naturalWidth) return;
+        // 斑块屏幕包围盒（polygon 或 cells 菱形外接盒），加羽化余量（blur 会把边缘外的像素晕进来）
+        const blurR = (p.polygon ? SHORE_BLUR : DECOR_BLUR) + 2;
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        if (p.polygon && p.polygon.length >= 3) {
+            for (const pt of p.polygon) {
+                if (pt.x < minX) minX = pt.x;
+                if (pt.y < minY) minY = pt.y;
+                if (pt.x > maxX) maxX = pt.x;
+                if (pt.y > maxY) maxY = pt.y;
+            }
+        } else {
+            for (const [gx, gy] of p.cells) {
+                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                if (sx - TILE_W / 2 < minX) minX = sx - TILE_W / 2;
+                if (sy - TILE_H / 2 < minY) minY = sy - TILE_H / 2;
+                if (sx + TILE_W / 2 > maxX) maxX = sx + TILE_W / 2;
+                if (sy + TILE_H / 2 > maxY) maxY = sy + TILE_H / 2;
+            }
+        }
+        if (!isFinite(minX)) return;
+        const bx = Math.max(0, Math.floor(minX - blurR));
+        const by = Math.max(0, Math.floor(minY - blurR));
+        const bw = Math.min(W, Math.ceil(maxX + blurR)) - bx;
+        const bh = Math.min(H, Math.ceil(maxY + blurR)) - by;
+        if (bw <= 0 || bh <= 0) return;
+
         if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
         if (!this.blurCv) { this.blurCv = document.createElement('canvas'); this.blurCtx = this.blurCv.getContext('2d')!; }
         const mcv = this.maskCv, mctx = this.maskCtx!;
         const bcv = this.blurCv, bctx = this.blurCtx!;
-        if (mcv.width !== W || mcv.height !== H) { mcv.width = W; mcv.height = H; bcv.width = W; bcv.height = H; }
-        // 1. 白形状（斑块格，等距菱形）
-        mctx.clearRect(0, 0, W, H);
+        if (mcv.width !== bw || mcv.height !== bh) { mcv.width = bw; mcv.height = bh; bcv.width = bw; bcv.height = bh; }
+        // 1. 白形状（斑块格，等距菱形；局部坐标）
+        mctx.clearRect(0, 0, bw, bh);
         mctx.fillStyle = '#fff';
         if (p.polygon && p.polygon.length >= 3) {
             mctx.beginPath();
-            mctx.moveTo(p.polygon[0].x, p.polygon[0].y);
-            for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+            mctx.moveTo(p.polygon[0].x - bx, p.polygon[0].y - by);
+            for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x - bx, p.polygon[i].y - by);
             mctx.closePath();
             mctx.fill();
         } else {
             for (const [gx, gy] of p.cells) {
-                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - by;
                 mctx.beginPath();
                 mctx.moveTo(sx, sy - TILE_H / 2);
                 mctx.lineTo(sx + TILE_W / 2, sy);
@@ -3460,19 +3511,25 @@ export class Scene13WarLayer {
                 mctx.fill();
             }
         }
-        // 2. 高斯模糊（软化格子边缘）
-        bctx.clearRect(0, 0, W, H);
+        // 2. 高斯模糊（软化格子边缘；只在 bbox 内）
+        bctx.clearRect(0, 0, bw, bh);
         bctx.filter = `blur(${p.polygon ? SHORE_BLUR : DECOR_BLUR}px)`;
         bctx.drawImage(mcv, 0, 0);
         bctx.filter = 'none';
-        // 3. source-in 填纹理（纹理只在软边形状内，保持清晰）
+        // 3. source-in 填纹理（纹理只在软边形状内，保持清晰；pattern 平铺原点对齐全局坐标）
         bctx.globalCompositeOperation = 'source-in';
         const pat = bctx.createPattern(img, 'repeat');
-        if (pat) { bctx.fillStyle = pat; bctx.fillRect(0, 0, W, H); }
+        if (pat) {
+            bctx.save();
+            bctx.translate(-bx, -by);
+            bctx.fillStyle = pat;
+            bctx.fillRect(bx, by, bw, bh);
+            bctx.restore();
+        }
         bctx.globalCompositeOperation = 'source-over';
-        // 4. 合成到装饰层
+        // 4. 合成到装饰层（只贴 bbox 区域）
         if (p.alpha < 1) g.globalAlpha = p.alpha;
-        g.drawImage(bcv, 0, 0);
+        g.drawImage(bcv, bx, by);
         if (p.alpha < 1) g.globalAlpha = 1;
     }
 

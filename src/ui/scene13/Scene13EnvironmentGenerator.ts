@@ -465,6 +465,13 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!);
         }
 
+        // 水面保持零高程：丘陵只属于陆地，禁止高程光影或抬升纹理切进河流/湖泊。
+        for (let gy = 0; gy < gh; gy++) {
+            for (let gx = 0; gx < gw; gx++) {
+                if (isWater(isoCellX(gx, gy, ox), isoCellY(gx, gy, oy))) elevation[gy][gx] = 0;
+            }
+        }
+
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
         buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
@@ -504,8 +511,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
 /**
  * 经典帝国时代式 2.5D 隆起丘陵与战术高地生成：
- * 生成连绵起伏的「隆起丘陵高地」（峰顶高台 + 斜坡肩部 + 坡脚基底三级渐进环），
- * 让地面真实隆起形成战略高地，士兵在高处占领制高点俯瞰交战。
+ * 生成连续高度场，让坡脚、坡腰和丘顶自然过渡，不出现台阶分层。
  */
 function generateElevation(
     gw: number,
@@ -550,6 +556,7 @@ function generateElevation(
                 const noise = (Math.sin(x * 1.3 + y * 0.7) + Math.cos(x * 0.8 - y * 1.1)) * 0.07;
                 const dist = normDist + noise;
 
+                // 经典 AoE2 DE 同心阶梯式战术高地模型（制高顶台 Level 3/2 + 缓坡肩部 Level 2/1 + 坡脚基底 Level 1）
                 let h = 0;
                 if (dist < 0.38) {
                     h = hMax; // 峰顶 / 高台制高点（Level 3 或 Level 2）
