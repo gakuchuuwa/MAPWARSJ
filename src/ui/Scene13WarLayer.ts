@@ -2296,6 +2296,7 @@ export class Scene13WarLayer {
      */
     private ground: HTMLCanvasElement | null = null;
     private groundCtx: CanvasRenderingContext2D | null = null;
+    private groundHasContent = false;
     /** 地形铺地离屏画布（DE 贴图分块铺满，start 烙一次，之后每帧 drawImage 一次，开销恒定） */
     private terrain: HTMLCanvasElement | null = null;
     private terrainCtx: CanvasRenderingContext2D | null = null;
@@ -2447,11 +2448,18 @@ export class Scene13WarLayer {
             if (this.ground) {
                 this.ground.width = this.canvas.width;
                 this.ground.height = this.canvas.height;   // 尺寸一变内容即清空（已烙的尸体丢失）
+                this.groundHasContent = false;
             }
             if (this.terrain) {
                 this.terrain.width = this.canvas.width;
                 this.terrain.height = this.canvas.height;
                 this.paintTerrain();   // 尺寸变了 → 按新尺寸重铺（贴图已缓存则立即铺满）
+            }
+            if (this.decor) {
+                this.decor.width = this.canvas.width;
+                this.decor.height = this.canvas.height;
+                this.elevCacheReady = false;
+                this.repaintDecor();
             }
         };
         window.addEventListener('resize', onResize);
@@ -3180,6 +3188,7 @@ export class Scene13WarLayer {
         const cv = this.decor, g = this.decorCtx;
         if (!cv || !g) return;
         g.clearRect(0, 0, cv.width, cv.height);
+        if (this.terrain) g.drawImage(this.terrain, 0, 0);
         for (const p of this.decorPatches) {
             if (p.isWater) continue; // 动态水体走每帧实时渲染，不烙入静态背景
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
@@ -4252,8 +4261,8 @@ export class Scene13WarLayer {
      * 把单位推出 DE 地图对象的占地矩形。碰撞尺寸来自 DAT 的地图格口径，
      * 在 2:1 投影中先还原为地图坐标，沿较浅穿透轴推出，因而会沿树/岩石边缘滑行。
      */
-    private resolveWorldObstructions(m: WarMan, x: number, y: number): [number, number] {
-        let px = x, py = y;
+    private resolveWorldObstructions(m: WarMan): void {
+        let px = m.x, py = m.y;
         const unitTileRadius = this.radiusOf(m.key) / 40;
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
@@ -4287,7 +4296,8 @@ export class Scene13WarLayer {
             }
             if (!changed) break;
         }
-        return [px, py];
+        m.x = px;
+        m.y = py;
     }
 
     private step(dt: number): void {
@@ -4734,10 +4744,20 @@ export class Scene13WarLayer {
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
         for (const object of this.decorSprites) object.obstructionTouched = false;
+        const fieldW = this.canvas?.width ?? 0;
+        const fieldH = this.canvas?.height ?? 0;
+        const fieldMx = UNIT_PX * 0.5;
+        const fieldMy = UNIT_PX * 0.5;
         for (const m of this.men) {
-            [m.x, m.y] = this.fieldBound(m.x, m.y);
-            [m.x, m.y] = this.resolveWorldObstructions(m, m.x, m.y);
-            [m.x, m.y] = this.fieldBound(m.x, m.y);
+            if (fieldW > 0 && fieldH > 0) {
+                m.x = Math.min(Math.max(m.x, fieldMx), fieldW - fieldMx);
+                m.y = Math.min(Math.max(m.y, fieldMy), fieldH - fieldMy);
+            }
+            this.resolveWorldObstructions(m);
+            if (fieldW > 0 && fieldH > 0) {
+                m.x = Math.min(Math.max(m.x, fieldMx), fieldW - fieldMx);
+                m.y = Math.min(Math.max(m.y, fieldMy), fieldH - fieldMy);
+            }
         }
         for (const object of this.decorSprites) {
             const releaseAfter = object.obstructionReleaseAfterSec;
@@ -4834,6 +4854,7 @@ export class Scene13WarLayer {
         if (this.ground && this.groundCtx) {
             this.groundCtx.clearRect(0, 0, this.ground.width, this.ground.height);
         }
+        this.groundHasContent = false;
     }
 
     /** 兵阵亡去向：累加器裁定留尸体（死亡动画→烙地面）还是溃逃（反向移动渐隐）——主人 2026-08-16 */
@@ -4900,6 +4921,7 @@ export class Scene13WarLayer {
             g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, drawY - px * 0.9, px, px);
         }
         g.restore();
+        this.groundHasContent = true;
         return true;
     }
 
@@ -4999,13 +5021,15 @@ export class Scene13WarLayer {
     private render(): void {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-
-        // 地形铺地：DE 贴图分块铺满整屏（最底层，尸体/士兵全在它之上）
-        if (this.terrain) ctx.drawImage(this.terrain, 0, 0);
-
-        // 地表装饰层：地形斑块 + ground 贴花；树木等 world 对象稍后与单位共同排序。
-        if (this.decor) ctx.drawImage(this.decor, 0, 0);
+        // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
+        // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
+        if (this.decor) {
+            ctx.globalCompositeOperation = 'copy';
+            ctx.drawImage(this.decor, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.clearRect(0, 0, cv.width, cv.height);
+        }
 
         // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
         this.renderDynamicWater(ctx, performance.now() * 0.001);
@@ -5021,7 +5045,7 @@ export class Scene13WarLayer {
             }
         }
         // 已烙的尸体：一张图搞定（在所有活人之下）
-        if (this.ground) ctx.drawImage(this.ground, 0, 0);
+        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) vis.push({
             kind: 'unit',

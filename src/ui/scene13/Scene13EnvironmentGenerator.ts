@@ -51,8 +51,6 @@ const SHALLOW_MEDIUM = ['sha', 'sh2', 'sh3'];
 const SHALLOW_NEAR = ['sh2', 'sh3'];
 /** 湿沙（水线） */
 const BEACH_WET = 'beach_wet';
-/** 内陆湖/水塘 */
-const POND_TILES = ['wt_brown', 'wt_green', 'wt_yellow', 'wt_yellow2', 'wt2', 'wt3', 'wt4', 'wt5', 'wt6'];
 /** 湖岸（普通） */
 const POND_EDGE = ['sh2', 'sh3', 'sha'];
 /** 湖岸（湿地/沼泽） */
@@ -457,7 +455,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 优先尝试从 ESRI Zoom 13 获取真实的真实水体瓦片掩膜
         let usedRealZoom13Water = false;
         if (hasCoord && input.forceWaterKind !== 'none') {
-            const { tileX, tileY } = latLngToTilePixel(input.lat!, input.lng!, 13);
+            const { tileX, tileY, pixelX, pixelY } = latLngToTilePixel(input.lat!, input.lng!, 13);
             const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(13, tileX, tileY);
             // 调度后台拉取（供后续战斗复用）
             LandSeaSystem.getWaterSampler().scheduleFetch(input.lat!, input.lng!, 13);
@@ -470,7 +468,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 }
                 if (waterCount > 100) {
                     isWater = buildWaterFromRealESRIZoom13(
-                        m, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
+                        m, pixelX, pixelY, gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome
                     );
                     usedRealZoom13Water = true;
                 }
@@ -616,6 +614,8 @@ function generateElevation(
 
 function buildWaterFromRealESRIZoom13(
     mask: Uint8Array,
+    pixelX: number,
+    pixelY: number,
     gw: number,
     gh: number,
     ox: number,
@@ -634,8 +634,10 @@ function buildWaterFromRealESRIZoom13(
 ): WaterChecker {
     // 平滑采样函数（多阶圆滑滤波，彻底消除 256x256 阶梯锯齿）
     const sampleMaskSmooth = (u: number, v: number): number => {
-        const cx = u * 255;
-        const cy = v * 255;
+        // 战场中心 = 目标城 = mask 的 (pixelX, pixelY)；按此对齐，避免瓦片平铺造成最多 2.4km 水域错位
+        const cx = u * 255 + (pixelX - 127.5);
+        const cy = v * 255 + (pixelY - 127.5);
+        if (cx < 0 || cy < 0 || cx > 255 || cy > 255) return 0;
         const radius = 6;
         let sum = 0;
         let weightSum = 0;
@@ -923,8 +925,8 @@ function buildRiver(
     patches.push({ tile: actualBeachTile, cells: beachCells, polygon: leftBankPolygon, alpha: 0.95, category: 'shore' });
     patches.push({ tile: actualBeachTile, cells: beachCells, polygon: rightBankPolygon, alpha: 0.95, category: 'shore' });
 
-    // 2. 中央清澈流水主河道（wtr 经典清澈蓝水，隔河对峙分界线）
-    patches.push({ tile: 'wtr', cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
+    // 2. 中央浅滩河道（可涉水，隔河对峙分界线；主人 08-21 定「水域全线浅滩」）
+    patches.push({ tile: rng.pick(SHALLOW_MEDIUM), cells: waterCells, polygon: riverPolygon(halfWaterW), alpha: 0.95, category: 'shore' });
 
     // 3. 沿河两岸自然点缀水生植被与河卵石（芦苇、睡莲、水石，严禁在河水正中央阻挡交火）
     const bankFlora = ['REEDS', 'WATER_LILY', 'ROCK1', 'ROCK2'];
@@ -970,7 +972,8 @@ function buildLake(
         for (let i = 0; i < 3; i++) objects.push({ asset: 'DECAL_ICE', x: rng.next() * VW, y: rng.next() * VH, layer: 'ground', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         return () => false;
     }
-    const pond = rng.pick(POND_TILES);
+    // 内陆湖/湿地水面：主人 08-21 定「水域全线浅滩」，弃 POND_TILES 深水塘改用浅滩
+    const pond = rng.pick(SHALLOW_MEDIUM);
     const edgeTile = swamp ? rng.pick(SWAMP_EDGE) : rng.pick(POND_EDGE);
     const nClumps = 2 + rng.int(0, 2);
     const allPond: Array<[number, number]> = [];
