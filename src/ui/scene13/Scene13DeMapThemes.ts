@@ -399,12 +399,17 @@ export function terrainForTheme(
     lat: number = 35,
     elev: number | null = null,
 ): string {
-    // 1. 终年积雪雪峰 / 冰川（>4800m 或达到纬度雪线）
-    if (elevationBand === 'snow') return season === 2 ? 'ice' : 'sno';
+    // 1. 终年积雪雪峰 / 冰川（>4800m 或达到极高纬度真实雪线）
+    if (elevationBand === 'snow') {
+        // 仅在真实极高冰川（>4500m）或冬季才出冰雪
+        if (season === 2) return 'ice';
+        if (elev !== null && elev >= 4500) return 'sno';
+        return 'pm2';
+    }
 
-    // 2. 极高山石原与高寒冻土（3800m - 4800m）：冷调冻土
+    // 2. 极高山石原与高寒冻土（3800m - 4800m）：夏季为高寒冷石质土，冬季为雪
     if (elevationBand === 'high_alpine') {
-        return season === 2 ? 'sno' : 'ds5';
+        return season === 2 ? 'sno' : 'pm2';
     }
 
     // 3. 高山草甸与戈壁砾石原（2500m - 3800m）：高寒石质土

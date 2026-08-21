@@ -949,12 +949,14 @@ function buildHorizontalHighway(
     }
     for (const [cx, cy] of roadCells) occupied.add(`${cx},${cy}`);
 
-    // 选择适配气候的自然路面材质
+    // 选择适配气候与地表生态的自然路面材质（🔴 铁律：草原/荒原道路为压实干土与碎石道，绝不刷反差绿草）
     let roadTile = 'gravel_default';
-    if (season === 2) {
+    if (season === 2 && isSnowArea(lat, elev, biome)) {
+        roadTile = 'snf'; // 冬季雪原：压实残雪车辙路面，完美融入白雪
+    } else if (season === 2) {
         roadTile = 'gravel_wet';
-    } else if (biome === 'desert' || biome === 'cold_steppe') {
-        roadTile = 'ds3';
+    } else if (biome === 'cold_steppe' || biome === 'desert' || theme.id === 'palaearctic_asia_steppe' || theme.baseTerrain === 'pm2' || theme.baseTerrain === 'ds5') {
+        roadTile = 'ds5'; // 塞外干草原/荒漠/秋季草地：压实黄土/泥石古道，与周围枯草融为一体
     } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
         roadTile = 'fo2';
     }
