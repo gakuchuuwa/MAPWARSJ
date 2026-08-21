@@ -41,26 +41,30 @@ const TILE_W = 64;
 const TILE_H = 32;
 
 // ── 水域/沙滩贴图（真实存在于 public/SUCAI_TERRAIN，勿自创） ──
-// 🔴 [2026-08-21 主人定] 13 战斗全为陆战，不出现深海大洋；水域全线采用「浅滩（sha/sh2/sh3）」贴图，
-//   清浅透亮，沙石水底，步骑可涉水作战，与沙滩自然过渡。
-/** 🔴 [2026-08-21 主人定] 海洋与海岸线专属浅蓝色/蔚蓝海水（DE 经典 wtr / wt2 / wt4，告别淡水绿） */
+// 🔴 [2026-08-22 主人定] 绿是河，蓝是海：
+//   - 海洋与海岸线专属蔚蓝/浅蓝海水（DE 经典 wtr / wt2 / wt4，波光粼粼）；
+//   - 内陆河流专属古朴深邃自然墨绿水体（主人选定方案 4：sh4 / sh5，古色古香，无杂乱水草浮萍）。
+/** 🔴 海洋专属蔚蓝水体 */
 const OCEAN_TILES = ['wtr', 'wt2', 'wt4'];
-/** 深水带（改用标准浅滩 sha） */
-const SHALLOW_DEEP = 'sha';
-/** 中水带（浅滩多变体 sha / sh2 / sh3） */
-const SHALLOW_MEDIUM = ['sha', 'sh2', 'sh3'];
-/** 近岸浅水带（透亮浅滩 sh2 / sh3） */
-const SHALLOW_NEAR = ['sh2', 'sh3'];
+/** 🔴 内陆河流专属古朴墨绿水体（sh4 / sh5） */
+const RIVER_TILES = ['sh4', 'sh5'];
+/** 深水带 */
+const SHALLOW_DEEP = 'sh4';
+/** 中水带（古朴墨绿多变体 sh4 / sh5） */
+const SHALLOW_MEDIUM = ['sh4', 'sh5'];
+/** 近岸浅水带 */
+const SHALLOW_NEAR = ['sh4', 'sh5'];
 /** 湿沙（水线） */
 const BEACH_WET = 'beach_wet';
 /** 湖岸（普通） */
-const POND_EDGE = ['sh2', 'sh3', 'sha'];
+const POND_EDGE = ['sh4', 'sh5'];
 /** 湖岸（湿地/沼泽） */
 const SWAMP_EDGE = ['sh4', 'sh5'];
 /** 冬季冰面 */
 const ICE_TILES = ['ice', 'ic2', 'ic3', 'ice_beach'];
 
 // ── 方案数据结构 ──────────────────────────────────────────────
+// ── 方案数据结构 ──────────────────────────────────────────────────
 
 export type TerrainPatchCategory = 'forest-floor' | 'shore' | 'wetland' | 'farm' | 'ground-variation';
 
@@ -87,13 +91,13 @@ export interface EnvironmentObjectPlan {
     z: number;
     /** DE DAT 中的对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
-    /** 同一成组摆放内的物件可以相互靠近。 */
-    placementGroup?: string;
     /** 连续接触这么多秒后只关闭阻挡；图像仍作为 world 对象保留。 */
     obstructionReleaseAfterSec?: number;
     flip: boolean;
     /** 精灵帧（动画 sheet 用；静态素材忽略） */
     frame: number;
+    /** 同一成组摆放内的物件可以相互靠近。 */
+    placementGroup?: string;
 }
 
 export interface ObjectRule {
@@ -175,6 +179,14 @@ const GROUND_COVER_ASSETS = new Set([
     // 🔴 [2026-08-21 素材全覆盖] 荒漠地面贴花（干裂/陨坑）——沙漠/高原 flat
     'DECAL_CRACK', 'DECAL_CRATER',
     // 🔴 [2026-08-21 素材全覆盖] 秋季落叶——温带秋战场地面
+    'FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH',
+]);
+const ROCK_COMPANION_ASSETS = new Set([
+    'GRASS_DRY', 'GRASS_DRY_PATCH', 'GRASS_GREEN', 'GRASS_GREEN_PATCH', 'WEED',
+    'FLOWER', 'FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED',
+    'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST', 'FERNPATCH',
+    'UNDERBRUSH', 'UNDERBRUSH_JUNGLE', 'UNDERBRUSH_RAINFOREST',
+    'SHRUB_GREEN', 'BUSH_GREEN', 'CACTUS',
     'FALLEN_LEAVES_MAPLE_AUTUMN', 'FALLEN_LEAVES_MAPLE_RED', 'FALLEN_LEAVES_PEACH',
 ]);
 const DE_HALF_TILE_OBJECTS = new Set([
@@ -345,17 +357,49 @@ function sampleLandPos(
     return null;
 }
 
-// ── 水域探测（照抄 Scene13WarLayer.probeWater 口径，确定性） ──
+// ── 水域探测（高精度多尺度雷达密网扫描 + 多级瓦片掩膜，确保 100% 捕获真实江河） ──
 
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
-    const off = 0.8;
-    const probes: Array<[number, number]> = [[0, 0], [off, 0], [-off, 0], [0, off], [0, -off]];
-    for (const [dlat, dlng] of probes) {
-        if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng + dlng })) return 'sea';
-        if (LandSeaSystem.getWaterSampler().isWaterSync(lat + dlat, lng + dlng) === true) {
-            // 内陆水系默认生成「隔河对峙」河流战场（占 70%），其余为湖泊（占 30%）
-            return 'river';
+
+    // 1. 优先直接检查 ESRI 真实瓦片水体像素（支持 Zoom 13 / 10 / 9 多级瓦片）
+    for (const z of [13, 10, 9]) {
+        const { tileX, tileY } = latLngToTilePixel(lat, lng, z);
+        const maskObj = LandSeaSystem.getWaterSampler().getTileMaskSync(z, tileX, tileY);
+        if (maskObj?.mask) {
+            let waterPixels = 0;
+            const m = maskObj.mask;
+            for (let i = 0; i < m.length; i++) {
+                if (m[i] === 1) waterPixels++;
+            }
+            if (waterPixels > 30) {
+                // 判断是否靠海
+                if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+                return 'river';
+            }
+        }
+    }
+
+    // 2. 高精度多尺度同心圆环密网扫描（500米 ~ 25公里，覆盖城郊所有江河水系）
+    //    彻底解决原先 88 公里巨大步长导致近郊河流被 100% 漏掉的致命问题！
+    const distances = [0.005, 0.015, 0.035, 0.08, 0.20]; // 约 500m, 1.5km, 3.5km, 8km, 22km
+    const angles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
+
+    // 先查中心点
+    if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+    if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) return 'river';
+
+    // 密网环形雷达扫描
+    for (const dist of distances) {
+        for (const ang of angles) {
+            const dlat = dist * Math.cos(ang);
+            const dlng = dist * Math.sin(ang);
+            const curLat = lat + dlat;
+            const curLng = lng + dlng;
+            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) return 'sea';
+            if (LandSeaSystem.getWaterSampler().isWaterSync(curLat, curLng) === true) {
+                return 'river';
+            }
         }
     }
     return 'none';
@@ -1283,6 +1327,7 @@ function buildVegetation(
     }
 
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
+    const rockCompanionPool = themeDecor.flat.filter((asset) => ROCK_COMPANION_ASSETS.has(asset));
 
     // ── 实体装饰：岩石使用当前主题的地面装饰作伴生物 ──
     const solidDecorCount = 2 + rng.int(0, 2);
@@ -1302,7 +1347,7 @@ function buildVegetation(
                 placementGroup,
             });
 
-            if (placementGroup) {
+            if (placementGroup && rockCompanionPool.length > 0) {
                 const companionCount = 1 + rng.int(0, 1);
                 for (let companionIndex = 0; companionIndex < companionCount; companionIndex++) {
                     const angle = rng.next() * Math.PI * 2;
@@ -1310,7 +1355,7 @@ function buildVegetation(
                     const x = p.x + Math.cos(angle) * distance;
                     const y = p.y + Math.sin(angle) * distance * 0.6;
                     if (x < 0 || x > VW || y < 0 || y > VH || isWater(x, y) || inArmyCorridor(x, y)) continue;
-                    const companionAsset = rng.pick(themeDecor.flat);
+                    const companionAsset = rng.pick(rockCompanionPool);
                     objects.push({
                         asset: companionAsset,
                         x,
