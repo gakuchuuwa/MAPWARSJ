@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MARKET_AGE2",
+  "frames": 1,
+  "box_w": 400,
+  "box_h": 312,
+  "anchor_x": 208,
+  "anchor_y": 216,
+  "sld_source": "b_east_market_age2"
+}

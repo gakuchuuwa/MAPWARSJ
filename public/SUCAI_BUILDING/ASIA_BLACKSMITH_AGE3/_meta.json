@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_BLACKSMITH_AGE3",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 300,
+  "anchor_x": 176,
+  "anchor_y": 200,
+  "sld_source": "b_asia_blacksmith_age3"
+}

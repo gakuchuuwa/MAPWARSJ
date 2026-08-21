@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWN_CENTER_AGE3",
+  "frames": 1,
+  "box_w": 436,
+  "box_h": 328,
+  "anchor_x": 228,
+  "anchor_y": 272,
+  "sld_source": "b_ande_town_center_age3"
+}

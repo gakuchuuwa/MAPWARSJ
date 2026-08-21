@@ -86,6 +86,8 @@ export class GameConfig {
         CORPSE_DISPLAY_MS: 15000,
         /** 尸体消失前最后 N ms 逐渐淡出（0 = 不淡出，直接消失） */
         CORPSE_FADE_OUT_MS: 5000,
+        /** 回城解散、隐匿等非战死消失的渐隐时长 (ms) */
+        DESPAWN_FADE_OUT_MS: 5000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
         FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。2026-08-07 主人定：全部统一 20000。 */

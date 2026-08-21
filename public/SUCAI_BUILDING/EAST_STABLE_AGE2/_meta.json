@@ -1,0 +1,9 @@
+{
+  "name": "EAST_STABLE_AGE2",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 212,
+  "anchor_x": 168,
+  "anchor_y": 140,
+  "sld_source": "b_east_stable_age2"
+}

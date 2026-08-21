@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_BARRACKS_AGE2",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 256,
+  "anchor_x": 176,
+  "anchor_y": 176,
+  "sld_source": "b_medi_barracks_age2"
+}

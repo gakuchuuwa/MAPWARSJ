@@ -803,7 +803,7 @@ export class Army implements IBattleUnit {
         return newArmy;
     }
 
-    /** 解散：兵力已并入出发城，军团立即消失（无尸体、无覆没播报；区别于战死的 destroy） */
+    /** 解散：兵力已并入出发城，军团以非战死方式渐隐（无尸体、无覆没播报） */
     public disband(): void {
         this.wasDisbanded = true;
         this.isDestroyed = true;
@@ -827,7 +827,7 @@ export class Army implements IBattleUnit {
             this.label = null;
         }
         if (this.renderer) {
-            this.renderer.destroy();
+            this.renderer.beginDespawnFade();
             this.renderer = null;
         }
     }
@@ -863,7 +863,7 @@ export class Army implements IBattleUnit {
         if (this.renderer) {
             const rendererRef = this.renderer;
             // 尸体必须可见：战败前 resume/神出鬼没可能已把 visible 关掉
-            rendererRef.visible = true;
+            rendererRef.setVisible(true);
             rendererRef.destroyTime = Date.now();
             getGlobalUnitRenderer()?.invalidateView();
             const corpseMs = GameConfig.LEGION.CORPSE_DISPLAY_MS;

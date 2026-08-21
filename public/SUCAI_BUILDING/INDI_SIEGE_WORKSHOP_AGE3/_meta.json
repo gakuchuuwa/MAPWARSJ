@@ -1,0 +1,9 @@
+{
+  "name": "INDI_SIEGE_WORKSHOP_AGE3",
+  "frames": 1,
+  "box_w": 428,
+  "box_h": 260,
+  "anchor_x": 240,
+  "anchor_y": 168,
+  "sld_source": "b_indi_siege_workshop_age3"
+}

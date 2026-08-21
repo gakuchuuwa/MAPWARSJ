@@ -1,0 +1,9 @@
+{
+  "name": "INDI_STABLE_AGE3",
+  "frames": 1,
+  "box_w": 312,
+  "box_h": 212,
+  "anchor_x": 168,
+  "anchor_y": 144,
+  "sld_source": "b_indi_stable_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "EAST_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 472,
+  "box_h": 452,
+  "anchor_x": 276,
+  "anchor_y": 360,
+  "sld_source": "b_east_castle_age3"
+}

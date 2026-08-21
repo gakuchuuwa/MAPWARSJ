@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_BARRACKS_AGE2",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 268,
+  "anchor_x": 168,
+  "anchor_y": 192,
+  "sld_source": "b_afri_barracks_age2"
+}

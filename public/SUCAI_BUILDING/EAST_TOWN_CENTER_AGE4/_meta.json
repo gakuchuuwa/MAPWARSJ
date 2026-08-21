@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWN_CENTER_AGE4",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 276,
+  "anchor_x": 220,
+  "anchor_y": 216,
+  "sld_source": "b_east_town_center_age4"
+}

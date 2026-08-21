@@ -1,0 +1,9 @@
+{
+  "name": "EAST_ARCHERY_RANGE_AGE3",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 276,
+  "anchor_x": 164,
+  "anchor_y": 196,
+  "sld_source": "b_east_archery_range_age3"
+}

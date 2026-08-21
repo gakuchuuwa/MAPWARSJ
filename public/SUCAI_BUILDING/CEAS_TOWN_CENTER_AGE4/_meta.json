@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_TOWN_CENTER_AGE4",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 324,
+  "anchor_x": 216,
+  "anchor_y": 256,
+  "sld_source": "b_ceas_town_center_age4"
+}

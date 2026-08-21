@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_STABLE_AGE2",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 236,
+  "anchor_x": 180,
+  "anchor_y": 168,
+  "sld_source": "b_asia_stable_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_STABLE_AGE3",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 264,
+  "anchor_x": 184,
+  "anchor_y": 184,
+  "sld_source": "b_afri_stable_age3"
+}

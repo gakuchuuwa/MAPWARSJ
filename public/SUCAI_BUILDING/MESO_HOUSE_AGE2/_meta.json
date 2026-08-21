@@ -1,0 +1,9 @@
+{
+  "name": "MESO_HOUSE_AGE2",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 168,
+  "anchor_x": 82,
+  "anchor_y": 126,
+  "sld_source": "b_meso_house_age2"
+}

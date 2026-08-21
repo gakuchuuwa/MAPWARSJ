@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_UNIVERSITY_AGE3",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 304,
+  "anchor_x": 220,
+  "anchor_y": 216,
+  "sld_source": "b_ande_university_age3"
+}

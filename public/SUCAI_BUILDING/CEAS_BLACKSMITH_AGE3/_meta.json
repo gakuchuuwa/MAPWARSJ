@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_BLACKSMITH_AGE3",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 224,
+  "anchor_x": 172,
+  "anchor_y": 176,
+  "sld_source": "b_ceas_blacksmith_age3"
+}

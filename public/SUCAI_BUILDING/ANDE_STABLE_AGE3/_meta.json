@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_STABLE_AGE3",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 232,
+  "anchor_x": 160,
+  "anchor_y": 160,
+  "sld_source": "b_ande_stable_age3"
+}

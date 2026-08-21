@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_ARCHERY_RANGE_AGE3",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 304,
+  "anchor_x": 164,
+  "anchor_y": 220,
+  "sld_source": "b_orie_archery_range_age3"
+}

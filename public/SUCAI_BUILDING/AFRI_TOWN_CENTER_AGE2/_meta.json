@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWN_CENTER_AGE2",
+  "frames": 1,
+  "box_w": 396,
+  "box_h": 288,
+  "anchor_x": 200,
+  "anchor_y": 224,
+  "sld_source": "b_afri_town_center_age2"
+}

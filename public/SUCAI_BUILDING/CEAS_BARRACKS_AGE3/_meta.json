@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 260,
+  "anchor_x": 180,
+  "anchor_y": 184,
+  "sld_source": "b_ceas_barracks_age3"
+}

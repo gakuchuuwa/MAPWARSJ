@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 532,
+  "box_h": 396,
+  "anchor_x": 320,
+  "anchor_y": 300,
+  "sld_source": "b_orie_castle_age3"
+}

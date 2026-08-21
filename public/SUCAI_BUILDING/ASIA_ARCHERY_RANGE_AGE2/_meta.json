@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 280,
+  "anchor_x": 184,
+  "anchor_y": 204,
+  "sld_source": "b_asia_archery_range_age2"
+}

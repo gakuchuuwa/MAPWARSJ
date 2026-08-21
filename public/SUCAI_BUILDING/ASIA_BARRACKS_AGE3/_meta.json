@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 264,
+  "anchor_x": 168,
+  "anchor_y": 192,
+  "sld_source": "b_asia_barracks_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_MONASTERY_AGE3",
+  "frames": 1,
+  "box_w": 312,
+  "box_h": 340,
+  "anchor_x": 156,
+  "anchor_y": 260,
+  "sld_source": "b_seas_monastery_age3"
+}

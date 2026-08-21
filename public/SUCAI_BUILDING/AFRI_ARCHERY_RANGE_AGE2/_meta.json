@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 304,
+  "anchor_x": 160,
+  "anchor_y": 228,
+  "sld_source": "b_afri_archery_range_age2"
+}
