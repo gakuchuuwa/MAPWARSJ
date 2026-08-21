@@ -230,10 +230,16 @@ export const EAST_ASIA_ONLY_TREES: ReadonlySet<string> = new Set([
     'PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'BAMBOO', 'LUSH_BAMBOO', 'ASIAN_PINE',
 ]);
 
+/** 亚热带（Cwa/Cwb）不该出现的北温带白桦：亚热带常绿阔叶林无白桦（符合历史，主人 2026-08-20 定） */
+export const SUBTROPICAL_EXCLUDED_TREES: ReadonlySet<string> = new Set([
+    'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER',
+]);
+
 /** 从树种池随机选 2~3 种混布（树可混种，与地形不同；非东亚过滤掉樱花/竹/亚洲枫） */
-export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource, isEastAsia = true): string[] {
+export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource, isEastAsia = true, isSubtropical = false): string[] {
     let pool = BIOME_TREES[biome][season];
     if (!isEastAsia) pool = pool.filter((t) => !EAST_ASIA_ONLY_TREES.has(t));
+    if (isSubtropical) pool = pool.filter((t) => !SUBTROPICAL_EXCLUDED_TREES.has(t));
     const n = Math.min(pool.length, 2 + rng.int(0, 1));
     const shuffled = [...pool];
     for (let i = shuffled.length - 1; i > 0; i--) {

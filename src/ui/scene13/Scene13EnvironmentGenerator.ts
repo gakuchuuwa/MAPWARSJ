@@ -370,6 +370,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const reg = hasCoord ? getRegion(input.lat!, input.lng!) : null;
     // 东亚限定树种（樱花/竹/亚洲枫）只许在东亚文化区出现（沃罗涅日=斯拉夫 → 无樱花）
     const isEastAsia = reg === 'CENTRAL' || reg === 'JIANGNAN' || reg === 'LINGNAN' || reg === 'JAPAN' || reg === 'KOREA';
+    // 亚热带（Cwa/Cwb）白桦违和（符合历史）：亚热带常绿阔叶林无北温带白桦
+    const isSubtropical = climateRegion === 'Cwa' || climateRegion === 'Cwb';
 
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -402,7 +404,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, rng, patches, occupied);
 
         // ── 第 5 层 OBJECTS：树（聚丛）/ 地面装饰 / 资源 / 残迹 / 落叶 ──
-        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater, isEastAsia);
+        buildVegetation(VW, VH, biome, elevationBand, season, rng, objects, isWater, isEastAsia, isSubtropical);
         buildResources(VW, VH, rng, objects, isWater);
         buildDebris(VW, VH, rng, objects, isWater);
 
@@ -734,9 +736,10 @@ function buildVegetation(
     rng: RandomSource,
     objects: EnvironmentObjectPlan[],
     isWater: WaterChecker,
-    isEastAsia: boolean
+    isEastAsia: boolean,
+    isSubtropical: boolean
 ): void {
-    const treeAssets = pickTreeSpecies(biome, season, rng, isEastAsia);
+    const treeAssets = pickTreeSpecies(biome, season, rng, isEastAsia, isSubtropical);
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
