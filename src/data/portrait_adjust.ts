@@ -2622,11 +2622,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 3,
             "offsetY": -7
         },
-        "/assets/NORTHEAST/nanai_zhahaluo.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/NORTHEAST/__闲置__NORTHEAST_14.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5957,11 +5952,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_33.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": 4
-        },
         "/assets/NORTHEAST/elunchunzu_gaishan.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6681,6 +6671,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_45.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/NORTHEAST/nanai_zhahaluo.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

@@ -68,9 +68,22 @@ const ELEVATION_THRESHOLDS: Readonly<Record<'A' | 'B' | 'C' | 'D' | 'E', Elevati
     E: { upland: 0, mountain: 300, alpine: 800 },
 };
 
-/** 雪线（按纬度动态）：赤道 4800m → 60° 约 1000m */
+/**
+ * 真实地理雪线（按纬度动态梯级，符合自然地理学与真实历史）：
+ * - 0°~30°（热带/亚热带/青藏高原）：雪线 4800m~5200m（仅珠峰/喜马拉雅/乞力马扎罗终年积雪）
+ * - 30°~45°（温带中纬度/阿尔卑斯/天山/帕米尔）：雪线 4200m~4500m
+ * - 45°~55°（中高纬度/蒙古高原/阿尔泰山/西伯利亚南）：雪线 3500m~3800m（夏季蒙古1700m绝无积雪）
+ * - 55°~65°（亚寒带针叶林）：雪线 2600m
+ * - 65°+（北极圈与极地）：雪线 1200m~1500m
+ */
 export function snowLineFor(lat: number): number {
-    return 4800 - Math.abs(lat) * 63;
+    const absLat = Math.abs(lat);
+    if (absLat < 30) return 5000;
+    if (absLat < 45) return 4400;
+    if (absLat < 55) return 3600;
+    if (absLat < 65) return 2600;
+    if (absLat < 75) return 1800;
+    return 1200;
 }
 
 /**
