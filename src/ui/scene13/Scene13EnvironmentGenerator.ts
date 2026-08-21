@@ -493,7 +493,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 // 纯陆地战场：35% 概率生成贯穿东西的平坦帝国行军大道
                 const hasRoad = input.forceHasRoad ?? rng.chance(0.35);
                 if (hasRoad) {
-                    isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+                    isRoad = buildHorizontalHighway(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, baseTerrain);
                 }
             }
         }
@@ -1024,12 +1024,14 @@ function buildHorizontalHighway(
     VH: number,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
+    objects: EnvironmentObjectPlan[],
     occupied: Set<string>,
     theme: DeMapThemePalette,
     season: 0 | 1 | 2 = 0,
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    baseTerrain: string = 'gr7',
 ): (x: number, y: number) => boolean {
     const centerY = VH * (0.48 + (rng.next() - 0.5) * 0.08); // 正中央附近 (44% ~ 52%)
     const controls: Array<{ x: number; y: number }> = [
@@ -1070,13 +1072,14 @@ function buildHorizontalHighway(
         return roadPts[i].y + (roadPts[i + 1].y - roadPts[i].y) * t;
     };
 
-    const roadHalfW = 100; // 宽达 200px 的平坦大道
+    // 🔴 [2026-08-21 美化] 适度收窄路宽（约 100px），自然起伏波浪，与周围地表完美融合
+    const roadHalfW = 50;
     const roadPolyLeft: Array<{ x: number; y: number }> = [];
     const roadPolyRight: Array<{ x: number; y: number }> = [];
 
     for (let i = 0; i < roadPts.length; i++) {
         const pt = roadPts[i];
-        const noise = Math.sin(i * 0.2) * 8;
+        const noise = Math.sin(i * 0.35) * 10 + Math.cos(i * 0.18) * 6;
         roadPolyLeft.push({ x: pt.x, y: pt.y - (roadHalfW + noise) });
         roadPolyRight.push({ x: pt.x, y: pt.y + (roadHalfW + noise) });
     }
@@ -1094,27 +1097,52 @@ function buildHorizontalHighway(
     }
     for (const [cx, cy] of roadCells) occupied.add(`${cx},${cy}`);
 
-    // 选择适配气候与地表生态的自然路面材质（🔴 铁律：草原/荒原道路为压实干土与碎石道，绝不刷反差绿草）
+    // 🔴 [2026-08-21 材质协同] 道路材质与周围 baseTerrain 严格协调，绝不在非雪地刷出孤立雪道！
+    const isAmbientSnow = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf';
     let roadTile = 'gravel_default';
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
-        roadTile = 'snf'; // 冬季雪原：压实残雪车辙路面，完美融入白雪
-    } else if (season === 2) {
-        roadTile = 'gravel_wet';
-    } else if (biome === 'cold_steppe' || biome === 'desert' || theme.id === 'palaearctic_asia_steppe' || theme.baseTerrain === 'pm2' || theme.baseTerrain === 'ds5') {
-        roadTile = 'ds5'; // 塞外干草原/荒漠/秋季草地：压实黄土/泥石古道，与周围枯草融为一体
+    if (isAmbientSnow) {
+        roadTile = 'sn2'; // 仅当大环境全为深雪时，道路才为踩实的雪原车辙
+    } else if (
+        theme.id === 'palaearctic_asia_steppe' ||
+        biome === 'cold_steppe' ||
+        baseTerrain === 'pm2' ||
+        baseTerrain === 'gr4' ||
+        baseTerrain === 'ds5'
+    ) {
+        roadTile = 'ds5'; // 塞外草原/黄土高原/干旱土：压实黄土古道，与周围枯草融为一体
+    } else if (
+        theme.id === 'palaearctic_middle_east_desert' ||
+        theme.id === 'palaearctic_middle_east_highland' ||
+        biome === 'desert' ||
+        baseTerrain === 'pal'
+    ) {
+        roadTile = 'ds3'; // 荒漠/西亚高原：沙石行军道
+    } else if (theme.id === 'palaearctic_tibetan_plateau') {
+        roadTile = 'pm2'; // 青藏高原：高寒冻土草甸泥道
     } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
-        roadTile = 'fo2';
+        roadTile = biome === 'tropical_rainforest' ? 'fo2' : 'ds4';
+    } else if (season === 2) {
+        roadTile = 'gravel_wet'; // 温带冬季湿润车辙碎石路
     }
 
     patches.push({
         tile: roadTile,
         cells: roadCells,
         polygon: roadPolygon,
-        alpha: 0.92,
-        category: 'shore', // 使用平滑多边形羽化渲染
+        alpha: 0.68, // 柔和半透明混合，透出下方地貌质感，彻底消除生硬贴片感
+        category: 'shore',
     });
 
-    return (x, y) => Math.abs(y - yAt(x)) <= roadHalfW + 20;
+    // 沿路边自然点缀 2~3 个碎石或干草
+    const roadDecors = ['ROCK1', 'ROCK2', 'GRASS_DRY'];
+    for (let i = 0; i < 3; i++) {
+        const rx = VW * (0.15 + rng.next() * 0.7);
+        const ry = yAt(rx) + (rng.chance(0.5) ? -1 : 1) * (roadHalfW + 8 + rng.next() * 15);
+        const asset = rng.pick(roadDecors);
+        objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    }
+
+    return (x, y) => Math.abs(y - yAt(x)) <= roadHalfW + 15;
 }
 
 // ── 第 4 层：地表变体（低频、低透明） ───────────────────────────

@@ -1139,6 +1139,32 @@ const PROJ_TYPE: Record<string, string> = {
     houfnice: 'PROJ_BOMBARD_BALL',
     grenadier: 'PROJ_GRENADE',
 };
+/**
+ * DE accuracy（准确率，%）——远程投射物命中目标概率，不是 100%。
+ * 已查 DE 本体（fandom 兵种面板核对 empires2_x2_p1.dat 数值）：
+ *   火枪 75% / 弓箭 80% / 弩 85% / 掷矛·投石 90% / 骑射 50% / 长弓 70% /
+ *   阿兰拜飞镖 20%（散射极大）。
+ *   飞斧·飞刀·弯刀·投石车·火炮·火箭车 = dmgType 'melee' → DE 恒 100% 命中（本函数直接返回 100）。
+ * 只有 dmgType 'pierce' 的投射物才可能 miss；'melee'（近战/飞斧/投石）DE 无准确率概念。
+ */
+function accuracyOf(key: string, wt: WarType): number {
+    if (wt.dmgType === 'melee') return 100;
+    const proj = PROJ_TYPE[key] ?? 'PROJ_ARROW';
+    // 火器（火枪/苏丹亲兵/征服者/风琴炮/掷弹兵/胡斯战车）
+    if (proj === 'PROJ_GUNPOWDER' || proj === 'PROJ_BOMBARD_BALL' || proj === 'PROJ_GRENADE' || proj === 'PROJ_HUSSITE_WAGON') return 75;
+    // 阿兰拜飞镖（DE 20%，散射极大）
+    if (key === 'arambai' || key === 'elite_arambai') return 20;
+    // 长弓（DE 70%）
+    if (key === 'longbowman' || key === 'longbowman_elite' || key === 'pattiyoda_longbowman') return 70;
+    // 弩（弩兵/劲弩/热那亚弩/连弩/腹弩/弩炮/弩炮战象/高丽战车/攻城塔）
+    if (key.includes('crossbow') || key.includes('arbalest') || key.includes('ballista') || key.includes('scorpion') || key.includes('gastraphetes') || key.includes('chukonu') || key.includes('war_wagon') || key === 'siege_tower' || key === 'helepolis') return 85;
+    // 掷矛/标枪/投石（掷矛手/标枪骑兵/色雷斯标枪/格查勇士/投石兵/套索骑兵/先秦战车）
+    if (key.includes('skirmisher') || key.includes('peltast') || key.includes('genitour') || key.includes('slinger') || key.includes('bolas') || key.includes('guecha') || key === 'war_chariot_ranged') return 90;
+    // 骑射（cls=cav 且默认箭，DE 骑射手 50%，移动中射击）
+    if (wt.cls === 'cav') return 50;
+    // 普通步弓（含火箭/火弓/象弓）
+    return 80;
+}
 /** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
 const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
@@ -1999,6 +2025,8 @@ interface WarMan {
     atkNext: number;
     lock: number;
     atkSt: number;
+    /** DE accuracy（准确率）：本轮攻击是否命中（lock 到期时 roll）；undefined = 近战/未判定，视为命中 */
+    accHit?: boolean;
     /** 远程兵接敌被己方前排挡住的待命剩余秒数：>0 时站住不挤，归零再试 */
 }
 
@@ -4564,6 +4592,9 @@ export class Scene13WarLayer {
                     m.lock = reloadTime; m.ph = 0;
                     m.shot = false;   // 新一轮：等攻击动画播到放箭相位再射
                     m.slashed = false;
+                    // DE accuracy（准确率）：远程每轮出手 roll 命中，miss 则这一轮不扣伤害。
+                    // 近战/飞斧/投石（dmgType melee）恒命中；pierce 投射物按 DE accuracy 判定。
+                    m.accHit = (stats.dmgType === 'melee') || (Math.random() * 100 < accuracyOf(m.key, wt));
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
@@ -4616,8 +4647,11 @@ export class Scene13WarLayer {
                         this.ensureProj(proj);
                         const isFirearm = FIREARM_TYPES.has(m.key);
                         for (let v = 0; v < volley; v++) {
-                            // 火枪兵/火器轻微自然散射（DE 65%~75% 精度模拟）
-                            const spread = isFirearm ? (Math.random() - 0.5) * 0.14 : 0;
+                            // DE accuracy：miss 的这轮箭矢飞偏打空（视觉与伤害一致）；命中则火枪轻微自然散射。
+                            const missed = m.accHit === false;
+                            const spread = missed
+                                ? (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.3)   // miss：明显打空
+                                : isFirearm ? (Math.random() - 0.5) * 0.14 : 0;                    // 命中：火枪轻微散射
                             const c = Math.cos(spread), s = Math.sin(spread);
                             const ndx = (ax / ad) * c - (ay / ad) * s;
                             const ndy = (ax / ad) * s + (ay / ad) * c;
@@ -4650,8 +4684,11 @@ export class Scene13WarLayer {
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
-                    foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
-                    if (foe.hp <= 0) this.pushCorpse(foe);
+                    // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
+                    if (m.accHit !== false) {
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        if (foe.hp <= 0) this.pushCorpse(foe);
+                    }
                 }
                 // ── 近战出手：生成刀光剑影（微弯斩击刀痕 / 突刺枪芒）与碰撞金属火花 ──
                 const keyStr = m.key.toLowerCase();
