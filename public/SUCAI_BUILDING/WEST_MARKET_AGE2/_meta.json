@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MARKET_AGE2",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 316,
+  "anchor_x": 216,
+  "anchor_y": 216,
+  "sld_source": "b_west_market_age2"
+}

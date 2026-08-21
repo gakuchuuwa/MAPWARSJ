@@ -1337,10 +1337,10 @@ const SPRITE_TROOPS = 20;
  *    战线来回摆动，尸体沿途铺开。
  */
 /**
- * 烙进地面的尸体保留比例（主人 2026-08-12 先「减半」→ 同日 30% → 2026-08-20 定为 50%）。
+ * 烙进地面的尸体保留比例（主人 2026-08-22 定为 40% 尸体 / 60% 逃跑）。
  * 嫌尸体推挤堆叠、盖住活人才要减。调这个数即可，`bakeCorpse` 的累加器会自动均匀取样。
  */
-const CORPSE_KEEP = 0.5;
+const CORPSE_KEEP = 0.4;
 /**
  * 溃逃（主人 2026-08-16）：不保留尸体的那 50% 兵不再播死亡动画，改为反向移动 + 渐隐，
  * 模拟兵败溃逃。速度比正常移动快（近战 55 / 骑兵 130）。跑完 FLEE_DUR 秒即消失。
@@ -2019,7 +2019,7 @@ interface WarMan {
      * 🔴 [2026-08-19 修] 原来那道 SPREAD_CAP 闸用的是 atkers，而赶路中的兵不计入 atkers，
      *    于是远处一大群人看到目标「身上没人」全都扑过去。实测同一目标被 >4 人锁定占 53.7%、
      *    12 人以上占 27.9%，而围殴加成 4 人就封顶（×1.45）—— 第 5 个人起纯属白挤，浪费战力。
-     * 与 atkers 同款：每帧重算再结转，不会像「锁定时 +1 / 丢失时 -1」那样计数泄漏。
+     * 每帧开始从零登记；保留旧目标或 search 选中新目标时立即占位，帧末再按实际锁定关系核对。
      */
     claims: number;
     claimsNext: number;
@@ -3146,10 +3146,10 @@ export class Scene13WarLayer {
         this.repaintDecor();
     }
 
-    /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩（核心 3 口随机）+ 行军帐篷（其余 6 口）。
+    /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
      *  野战双方都布、攻城只攻方布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
-     *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。守方镜像（营门朝攻方）。
-     *  「核心」= 该侧 9 口几何质心最近的 3 口；其余 6 口为帐篷。 */
+     *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。
+     *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），帐篷朝向统一（不镜像）。 */
     private applySpawnBuildings(): void {
         const sides: Array<0 | 1> = this.battleType === 'field' ? [0, 1] : [0];
         for (const f of sides) this.applyBuildingsForSide(f);
@@ -3158,12 +3158,10 @@ export class Scene13WarLayer {
     private applyBuildingsForSide(f: 0 | 1): void {
         const side = this.spawns.filter((s) => s.f === f);
         if (side.length !== 9) return;
-        const cx = side.reduce((a, s) => a + s.x, 0) / side.length;
-        const cy = side.reduce((a, s) => a + s.y, 0) / side.length;
-        const dist = (s: { x: number; y: number }) => Math.hypot(s.x - cx, s.y - cy);
-        const sorted = [...side].sort((a, b) => dist(a) - dist(b));
+        // 9 口位置全部随机（shuffle 后前 3 口放营地、后 6 口放帐篷）
+        const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         const camps = ['CAMP_ARCHERY_RANGE', 'CAMP_BARRACKS', 'CAMP_STABLE'];
-        const shuffled = [...camps].sort(() => Math.random() - 0.5);
+        const shuffledCamps = [...camps].sort(() => Math.random() - 0.5);
         const place = (s: { x: number; y: number }, asset: string): DecorSprite => {
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
@@ -3172,7 +3170,7 @@ export class Scene13WarLayer {
                 frame: 0,
                 x: s.x,
                 y: s.y,
-                flip: f === 1,
+                flip: false,
                 layer: 'world',
                 z: 0,
                 obstructionContactSec: 0,
@@ -3180,8 +3178,8 @@ export class Scene13WarLayer {
                 obstructionDisabled: false,
             };
         };
-        for (let i = 0; i < 3; i++) this.decorSprites.push(place(sorted[i], shuffled[i]));
-        for (let i = 3; i < 9; i++) this.decorSprites.push(place(sorted[i], 'GREEK_WAR_TENT'));
+        for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
+        for (let i = 3; i < 9; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
     }
 
     /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
@@ -4120,14 +4118,14 @@ export class Scene13WarLayer {
      *      （实测带 24 上限的最近邻仍偏袒攻方 9:3）。
      */
     /**
-     * 找目标：环形最近邻，但**已经被 SPREAD_CAP 个人打的目标优先跳过**（主人 2026-08-17「不能分散攻击吗」）。
+     * 找目标：环形最近邻；已经被 SPREAD_CAP 个人锁定的目标不再分配追击名额。
      *
      * 为什么是这个数：围殴加成 `1 + 0.15 × min(GANG_CAP, N-1)` 在 N=4 就封顶了，
      * **第 5 个人挤上去一点伤害都不加**，纯粹是白挤 —— 挤出来的就是主人反复报的
      * 「一堆兵冲着同一个点拥挤颤抖」。所以让第 5 个人去找次近的空闲目标，
      * 既散得开，又一分伤害不多不少（挤上去本来也没收益）。
      *
-     * 🔴 找不到空闲目标时**照旧返回最近的那个**，绝不让人没目标可打。
+     * 找不到未满目标时返回 null，士兵继续按阵线目标移动并在下一轮索敌时重试。
      * 🔴 判据对双方完全对称，不引入方向偏袒 —— 那是 SEARCH_MODE「逮到就返回 / 只看前 N 个」
      *    的老毛病（曾让攻方白拿 10~15% 战力，见 2026-08-17 索敌修复）。
      *
@@ -4833,7 +4831,7 @@ export class Scene13WarLayer {
 
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
-        // 锁定计数结转（见 WarMan.claims）：数「谁被谁盯上」，含赶路中的，供 search 分流用
+        // 按本帧最终锁定关系核对计数；下一帧会从零重新登记追击名额。
         for (const m of this.men) { m.claimsNext = 0; }
         for (const m of this.men) { if (m.foe && m.foe.hp > 0) m.foe.claimsNext++; }
         for (const m of this.men) { m.claims = m.claimsNext; }
@@ -4974,7 +4972,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 这具尸体留不留？[2026-08-20 主人定：尸体 50% / 溃逃 50%] 战场只留 CORPSE_KEEP 比例。
+     * 这具尸体留不留？[2026-08-22 主人定：尸体 40% / 溃逃 60%] 战场只留 CORPSE_KEEP 比例。
      * 用**累加器**而不是随机丢弃：每具加 CORPSE_KEEP，攒够 1 才留一具 —— 均匀取样，
      * 随机丢弃会让尸体分布斑驳。
      */

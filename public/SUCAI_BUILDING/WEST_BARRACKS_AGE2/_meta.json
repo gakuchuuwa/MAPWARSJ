@@ -1,0 +1,9 @@
+{
+  "name": "WEST_BARRACKS_AGE2",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 256,
+  "anchor_x": 168,
+  "anchor_y": 180,
+  "sld_source": "b_west_barracks_age2"
+}
