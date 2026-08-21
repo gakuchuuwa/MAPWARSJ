@@ -428,11 +428,13 @@ export function terrainForTheme(
         }
     }
 
-    // 5. 🔴 [2026-08-22 主人定] 冬季合法降雪地带全量覆盖 DE 原版白雪材质 (sn2 / sno)，彻底告别冬天满地绿草
+    // 5. 🔴 [2026-08-22 主人定] 冬季战场拒绝纯白死雪：全量采用「半土半雪」DE 经典雪草地皮 (sn2 / snf)
+    //    底色为雪草交融的浅雪地 (sn2)，雪中露土露草，层次丰富且绝不刺眼；
+    //    配合枯草冻土 (gr4 / pm1) 与残雪砾石 (ds5 / snf) 斑块，呈现真实车马践踏与风蚀雪原。
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        if (biome === 'tundra_snow' || biome === 'boreal') return 'sno';  // 苔原/北方针叶林：纯白深雪
-        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'sn2'; // 塞外草地/温带草原：白雪草地
-        return 'sn2';                                                     // 温带林海/平原雪区：DE 经典雪地 (sn2)
+        if (biome === 'boreal' || biome === 'temperate_forest') return 'sn2'; // 针叶林/温带：半土半雪草皮 (sn2)
+        if (biome === 'cold_steppe' || biome === 'temperate_grass') return 'sn2'; // 塞外草地：半雪枯草
+        return 'sn2'; // 默认雪区：半土半雪
     }
 
     // 6. 基础地表
@@ -459,11 +461,8 @@ export function groundTilesForTheme(
     elev: number | null = null,
 ): readonly string[] {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        // 纯正 DE 冬季雪地变体组合（深雪 sno / 浅雪 sn2 / 林雪 snf / 冻冰/残草）
-        if (biome === 'tundra_snow') return ['sno', 'sn2', 'snf', 'ice'];
-        if (biome === 'boreal') return ['sno', 'sn2', 'snf', 'pm1'];
-        if (biome === 'cold_steppe' || biome === 'temperate_grass') return ['sn2', 'sno', 'snf', 'gr4'];
-        return ['sn2', 'sno', 'snf', 'gr4'];
+        // 半土半雪丰富组合：浅雪 (sn2) + 枯草冻土 (gr4 / pm1) + 林间残雪 (snf) + 冻土砾石 (ds5)
+        return ['sn2', 'gr4', 'snf', 'pm1', 'ds5'];
     }
     return theme.groundTiles;
 }

@@ -926,6 +926,8 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 const SIEGE_MEDIUM_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
 /** 攻城战守方（小城/险要）7 种封建时代建筑（age2；2026-08-22 主人定：封建建筑不够 9 口用瞭望塔+警戒塔补） */
 const SIEGE_FEUDAL_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
+/** 攻城战守方（险要）6 种封建时代军事建筑（age2；2026-08-22 主人定：险要=纯军事要塞，无市场） */
+const SIEGE_PASS_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH'];
 /** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
 const TILE_W = 64;
 const TILE_H = 32;
@@ -3283,9 +3285,50 @@ export class Scene13WarLayer {
             };
         };
 
-        // 攻城战守方：按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
+        // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
+        const placeYurtCamp = (): void => {
+            const yurtStyle = REGION_BUILDING_STYLE.STEPPE;
+            const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
+            const yurts = ['YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J'];
+            const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i]));
+            this.decorSprites.push(place(shuffledSpawns[8], `${yurtStyle}_TOWER_AGE2`));
+        };
+
+        // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
+            // 🔴 [2026-08-22 主人改] 守方城墙：沿「东北-西南」方向（/ 斜线），扼守城建群与交火战场的交界前沿。
+            //   两端箭塔 + 中央城门 + 墙段连接；纯贴图无碰撞（world 层，兵可穿过）。
+            let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
+            for (const s of side) {
+                if (s.x < wMinX) wMinX = s.x;
+                if (s.x > wMaxX) wMaxX = s.x;
+                if (s.y < wMinY) wMinY = s.y;
+                if (s.y > wMaxY) wMaxY = s.y;
+            }
+            const wallMargin = 90;
+            const wallSW = { x: wMinX - wallMargin, y: wMaxY + wallMargin }; // 西南端（左下，攻方侧）
+            const wallNE = { x: wMaxX + wallMargin, y: wMinY - wallMargin }; // 东北端（右上，守方侧）
+            const wallItems: Array<[number, string]> = [
+                [0, `${style}_TOWER_AGE3`],
+                [0.15, `${style}_WALL_STONE`],
+                [0.3, `${style}_WALL_STONE`],
+                [0.42, `${style}_WALL_STONE`],
+                [0.5, `${style}_GATE_STONE_NE`],
+                [0.58, `${style}_WALL_STONE`],
+                [0.7, `${style}_WALL_STONE`],
+                [0.85, `${style}_WALL_STONE`],
+                [1, `${style}_TOWER_AGE3`],
+            ];
+            for (const [t, asset] of wallItems) {
+                this.decorSprites.push(place({ x: wallSW.x + (wallNE.x - wallSW.x) * t, y: wallSW.y + (wallNE.y - wallSW.y) * t }, asset));
+            }
+            // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
+            if (this.sideCulture[f] === 'STEPPE') {
+                placeYurtCamp();
+                return;
+            }
             // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 警戒塔
             if (this.defenderCityType === 'small_city') {
                 const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
@@ -3306,10 +3349,11 @@ export class Scene13WarLayer {
             this.decorSprites.push(place(side[castleIdx], `${style}_CASTLE_AGE3`));
             const rest = side.filter((_, i) => i !== castleIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            // 险要：封建 age2，7 封建 + 警戒塔；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
+            // 险要：封建 age2，无市场（纯军事要塞）：6 封建 + 瞭望塔 + 警戒塔；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
             if (this.defenderCityType === 'pass') {
-                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                const shuffledBuildings = [...SIEGE_PASS_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE2`));
                 this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));
             } else if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
@@ -3322,7 +3366,11 @@ export class Scene13WarLayer {
             return;
         }
 
-        // 野战双方 + 攻城攻方：9 口随机（3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔）
+        // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔
+        if (this.sideCulture[f] === 'STEPPE') {
+            placeYurtCamp();
+            return;
+        }
         const style = REGION_BUILDING_STYLE[this.sideCulture[f] as RegionType] ?? 'WEST';
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
@@ -3526,6 +3574,41 @@ export class Scene13WarLayer {
             if (p.alpha < 1) ctx.globalAlpha = p.alpha;
             ctx.drawImage(wcv, bbox.x, bbox.y);
             if (p.alpha < 1) ctx.globalAlpha = 1;
+
+            // 4. 🔴 [2026-08-22 主人定] 河流两岸拍岸微浪白边（Shoreline Foamy Waves）
+            // 沿水体与沙滩交界的左岸与右岸轮廓，绘制动态呼吸起伏的白色拍岸细浪
+            if (p.polygon && p.polygon.length >= 6) {
+                const half = Math.floor(p.polygon.length / 2);
+                const wavePhase = Math.sin(t * 3.2) * 0.5 + 0.5; // 0 ~ 1 动态呼吸拍岸周期
+                const waveAlpha = 0.32 + wavePhase * 0.28;       // 0.32 ~ 0.60 柔和水花透明度
+                const waveWidth = 3.5 + wavePhase * 2.0;         // 3.5px ~ 5.5px 浪花线宽
+
+                ctx.save();
+                ctx.strokeStyle = `rgba(240, 248, 255, ${waveAlpha})`;
+                ctx.lineWidth = waveWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+                ctx.shadowBlur = 6;
+
+                // 左岸微浪
+                ctx.beginPath();
+                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                for (let i = 1; i < half; i++) {
+                    ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                }
+                ctx.stroke();
+
+                // 右岸微浪
+                ctx.beginPath();
+                ctx.moveTo(p.polygon[half].x, p.polygon[half].y);
+                for (let i = half + 1; i < p.polygon.length; i++) {
+                    ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                }
+                ctx.stroke();
+
+                ctx.restore();
+            }
         }
     }
 

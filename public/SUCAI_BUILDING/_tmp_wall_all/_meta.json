@@ -1,0 +1,9 @@
+{
+  "name": "_tmp_wall_all",
+  "frames": 5,
+  "box_w": 164,
+  "box_h": 180,
+  "anchor_x": 108,
+  "anchor_y": 148,
+  "sld_source": "b_asia_wall_stone"
+}
