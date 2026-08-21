@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_TOWER_AGE3",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 232,
+  "anchor_x": 136,
+  "anchor_y": 204,
+  "sld_source": "b_ceas_tower_age3"
+}

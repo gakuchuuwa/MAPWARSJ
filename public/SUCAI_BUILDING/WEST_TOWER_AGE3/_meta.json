@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWER_AGE3",
+  "frames": 1,
+  "box_w": 192,
+  "box_h": 224,
+  "anchor_x": 136,
+  "anchor_y": 196,
+  "sld_source": "b_west_tower_age3"
+}

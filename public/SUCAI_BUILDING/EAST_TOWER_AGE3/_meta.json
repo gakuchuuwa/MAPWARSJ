@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWER_AGE3",
+  "frames": 1,
+  "box_w": 208,
+  "box_h": 244,
+  "anchor_x": 148,
+  "anchor_y": 216,
+  "sld_source": "b_east_tower_age3"
+}

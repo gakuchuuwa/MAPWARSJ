@@ -1,6 +1,7 @@
 import { gameLog } from '../../utils/GameLogger';
 import type { GameApp } from '../GameApp';
 import type { LegionManager } from '../../legion/LegionManager';
+import type { CityType } from '../../types/core';
 import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
 import { GameConfig } from '../../config/GameConfig';
 import { getFactionCultureRegion } from '../../config/portrait_defaults';
@@ -97,6 +98,10 @@ function startScene13War(
     const terrainRegion = center ? getRegion(center.lat, center.lng) : 'CENTRAL';
     const attRegion = unitRegion(attacker) ?? terrainRegion;
     const defRegion = unitRegion(defender) ?? terrainRegion;
+    // [2026-08-22] 攻城战守方城等级：从守方实体读 type（City 有 type 字段），决定守城建筑池时代
+    const defenderCityType: CityType | null = battleType === 'siege'
+        ? (defender.getEntity?.()?.type as CityType | undefined) ?? null
+        : null;
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
@@ -117,6 +122,8 @@ function startScene13War(
         environmentSeed,
         // [2026-08-21] 战斗类型（野战双方都布出兵口建筑、攻城只攻方布）
         battleType,
+        // [2026-08-22] 攻城战守方城等级（决定守城建筑池时代）
+        defenderCityType,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -214,11 +221,15 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 // 🔴 攻守各取第一个单位（attHasGen/defHasGen 已保证两侧非空）
                 const att = attackers[0];
                 const def = defenders[0];
+                // 攻城战守方城等级：从 defenders 里找 city 单位读 type（读的是守城城的等级，不是守军军团的）
+                const defEntity = battleField.type === 'siege'
+                    ? (defenders.find((u) => u.unitType === 'city') ?? def)
+                    : def;
                 if (att && def) {
                     startScene13War(
                         app,
                         { factionId: att.factionId, troops: attTroops, getEntity: () => att.getEntity?.() },
-                        { factionId: def.factionId, troops: defTroops, getEntity: () => def.getEntity?.() },
+                        { factionId: def.factionId, troops: defTroops, getEntity: () => defEntity?.getEntity?.() },
                         (winner, sv) => {
                             battleField.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
                         },

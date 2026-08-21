@@ -25,6 +25,7 @@ import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { gameLog } from '../utils/GameLogger';
 import { type RegionType } from '../systems/RegionSystem';
 import type { BattleType } from '../combat/CombatSystem';
+import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
@@ -907,8 +908,24 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     INDIA: 'INDI',
     BERBER: 'AFRI',
 };
-/** 攻城战守方（守城）除城堡外 8 口所布的城内正规建筑池（2026-08-22 主人定：全城市建筑随机抽 8，必有城堡；含大学/修道院/市场/磨坊） */
-const SIEGE_DEFENDER_BUILDINGS = ['TOWN_CENTER', 'HOUSE', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET', 'MILL', 'UNIVERSITY', 'MONASTERY', 'SIEGE_WORKSHOP'];
+/** 攻城战守方（大城）帝国时代建筑池（2026-08-22 主人定：大城=帝国时代；大学/市镇中心/市场用帝国 age4，其余用城堡 age3） */
+const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
+    ['TOWN_CENTER', 'AGE4'],
+    ['HOUSE', 'AGE3'],
+    ['BARRACKS', 'AGE3'],
+    ['ARCHERY_RANGE', 'AGE3'],
+    ['STABLE', 'AGE3'],
+    ['BLACKSMITH', 'AGE3'],
+    ['MARKET', 'AGE4'],
+    ['MILL', 'AGE3'],
+    ['UNIVERSITY', 'AGE4'],
+    ['MONASTERY', 'AGE3'],
+    ['SIEGE_WORKSHOP', 'AGE3'],
+];
+/** 攻城战守方（中城）7 种城堡时代基础建筑（age3；2026-08-22 主人定：中城无大学/修道院/攻城厂/市镇中心，不够 8 口用警戒塔补） */
+const SIEGE_MEDIUM_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
+/** 攻城战守方（小城/险要）7 种封建时代建筑（age2；2026-08-22 主人定：封建建筑不够 9 口用瞭望塔+警戒塔补） */
+const SIEGE_FEUDAL_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
 /** 等距菱形瓦片（2:1，DE 同款投影）：菱形宽/高。装饰斑块按菱形网格生长+渲染（主人 2026-08-20 定「等距菱形」） */
 const TILE_W = 64;
 const TILE_H = 32;
@@ -2318,6 +2335,8 @@ export interface Scene13WarInit {
     environmentSeed?: string;
     /** [2026-08-21] 战斗类型：siege=攻城（守方守城，只攻方布出兵口建筑）、field=野战（双方都布）。缺省 'field'。 */
     battleType?: BattleType;
+    /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池的时代。 */
+    defenderCityType?: CityType | null;
 }
 
 export class Scene13WarLayer {
@@ -2332,6 +2351,8 @@ export class Scene13WarLayer {
     private spawns: WarSpawn[] = [];
     /** 战斗类型（siege 攻城 / field 野战）——决定出兵口建筑是否双方都布 */
     private battleType: BattleType = 'field';
+    /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池时代 */
+    private defenderCityType: CityType | null = null;
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
     private fleers: WarFleer[] = [];
@@ -2676,6 +2697,7 @@ export class Scene13WarLayer {
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         this.battleType = init.battleType ?? 'field';
+        this.defenderCityType = init.defenderCityType ?? null;
         // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
         this.famousBuff = [
             getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
@@ -3179,8 +3201,8 @@ export class Scene13WarLayer {
      *  野战双方都布；攻城双方也布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
      *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。
      *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），建筑朝向随机（左右镜像随机）。
-     *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 3 帐篷 + 2 哨站 + 1 瞭望塔。
-     *  🔴 [2026-08-22 主人改] 攻城战守方：城堡放后排上方，其余 8 口从全城市建筑随机抽 8（必有城堡）。 */
+     *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔。
+     *  🔴 [2026-08-22 主人改] 攻城战守方按城等级分时代：大城=帝国 age4（城堡+全建筑）、中城=城堡 age3（城堡+基础+警戒塔）、小城/险要=封建 age2（无城堡，7 封建+瞭望塔+警戒塔）。 */
     private applySpawnBuildings(): void {
         const sides: Array<0 | 1> = [0, 1];
         for (const f of sides) this.applyBuildingsForSide(f);
@@ -3208,28 +3230,45 @@ export class Scene13WarLayer {
             };
         };
 
-        // 攻城战守方：城堡放后排上方（x 最大=最后排 + y 最小=最上方），其余 8 口从全城市建筑随机抽 8 种
+        // 攻城战守方：按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
+            const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
+            // 小城 / 险要：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 警戒塔
+            if (this.defenderCityType === 'small_city' || this.defenderCityType === 'pass') {
+                const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
+                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                this.decorSprites.push(place(shuffledSpawns[7], `${style}_TOWER_AGE2`));
+                this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE3`));
+                return;
+            }
+            // 大城 / 中城：有城堡（后排上方 = x 最大 + y 最小）+ 8 口建筑
             let castleIdx = 0;
             side.forEach((s, i) => {
                 if (s.x > side[castleIdx].x + 1e-9) castleIdx = i;
                 else if (Math.abs(s.x - side[castleIdx].x) < 1e-9 && s.y < side[castleIdx].y) castleIdx = i;
             });
-            const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
             this.decorSprites.push(place(side[castleIdx], `${style}_CASTLE_AGE3`));
             const rest = side.filter((_, i) => i !== castleIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            const shuffledBuildings = [...SIEGE_DEFENDER_BUILDINGS].sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
+            // 中城：7 基础建筑（age3）+ 警戒塔；大城（含缺省）：11 全城市建筑随机抽 8
+            if (this.defenderCityType === 'medium_city') {
+                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
+                this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));
+            } else {
+                const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`));
+            }
             return;
         }
 
-        // 野战双方 + 攻城攻方：9 口随机（3 营地 + 3 帐篷 + 2 哨站 + 1 瞭望塔）
+        // 野战双方 + 攻城攻方：9 口随机（3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔）
         const style = REGION_BUILDING_STYLE[this.sideCulture[f] as RegionType] ?? 'WEST';
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
-        for (let i = 3; i < 6; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
-        for (let i = 6; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], 'OUTPOST'));
+        for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
+        this.decorSprites.push(place(shuffledSpawns[7], 'OUTPOST'));
         this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`));
     }
 
