@@ -31,6 +31,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { audioManager } from '../audio/AudioManager';
+import { getGeneralProfile } from '../data/general-skills/profiles';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -692,16 +693,24 @@ const SIGHT_MAP: Record<string, number> = {
  * 原模块函数 statsOf 直接读 WAR_TYPES 基础档、不含科技——2026-08-18 军事科技接线时删除。
  */
 
-/** 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防) */
-function dmgVs(shooter: WarType, target: WarType): number {
-    const armor = shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor;
+/**
+ * 名将攻防系数（战斗模式独立机制，2026-08-21 主人定「攻×1.2、防×1.2」）。
+ * 🔴 完全独立于八环 sideBonus（getScene13PowerBonus 那条）——这是兵种属性层的攻防加成，
+ *    每个名将侧的兵立即生效，不依赖出兵口/补兵/光环。
+ */
+const FAMOUS_ATK_MULT = 1.2;
+const FAMOUS_DEF_MULT = 1.2;
+
+/** 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)；atkMult/defMult = 名将攻防加成（默认 1 无加成） */
+function dmgVs(shooter: WarType, target: WarType, atkMult = 1, defMult = 1): number {
+    const armor = (shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor) * defMult;
     let bonus = 0;
     if (shooter.bonus && target.armorTags) {
         for (const tag of target.armorTags) {
             if (shooter.bonus[tag]) bonus += shooter.bonus[tag];
         }
     }
-    return Math.max(1, shooter.atk + bonus - armor);
+    return Math.max(1, shooter.atk * atkMult + bonus - armor);
 }
 
 /** 五阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
@@ -2343,6 +2352,8 @@ export class Scene13WarLayer {
      * 三类的相对关系不变，只是整体强弱平移。
      */
     private sideBonus: [number, number] = [1, 1];
+    /** 名将攻防加成标志（攻/守两侧是否名将 tier='famous'）；伤害时名将侧 atk×FAMOUS_ATK_MULT、armor×FAMOUS_DEF_MULT */
+    private famousBuff: [boolean, boolean] = [false, false];
     /** [军事科技] 双方文化区（start 时从 init 存；科技按文化门控，每方按自己的算） */
     private sideCulture: [string, string] = ['CENTRAL', 'STEPPE'];
     /** [军事科技] 当前生效年份（跨年时重建分表 + 播报新解锁） */
@@ -2592,6 +2603,11 @@ export class Scene13WarLayer {
         }
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
+        // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
+        this.famousBuff = [
+            getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
+            getGeneralProfile(init.defenderGeneralId ?? undefined)?.tier === 'famous',
+        ];
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
         //    这层只防 init 缺字段。绝不能像原来那样守方兜 'STEPPE' —— 攻守用两套不同的兜底，
@@ -4098,7 +4114,7 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
                     o.atkNext++;
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
                     if (o.hp <= 0) this.pushCorpse(o);
@@ -4618,7 +4634,7 @@ export class Scene13WarLayer {
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
-                const dps = dmgVs(shooter, target) / shooter.reload;
+                const dps = dmgVs(shooter, target, this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
                 // 放风筝白跑计数清零：这一帧真的在输出 → 说明退位有效，可以继续风筝（见 KITE_RETREAT_CAP）
                 if (m.kiteDist) m.kiteDist = 0;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);

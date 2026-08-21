@@ -430,7 +430,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         slope = sample?.slopeDeg ?? null;
     }
     const climateRegion = hasCoord ? resolveClimateRegion(input.lat!, input.lng!) : null;
-    const elevationBand = hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev) : 'lowland';
+    const elevationBand = hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland';
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
