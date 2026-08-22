@@ -3316,20 +3316,20 @@ export class Scene13WarLayer {
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
             // 🔴 [2026-08-22 主人定] 城墙三段严正走向：前排城墙适度前移，留出更开阔雄伟的城防前沿
-            const wallFrontX = Math.round(wMinX - 235);
+            const wallFrontX = Math.round(wMinX - 150);
 
             // 1. 前排南北走向主防线（垂直南北纵贯）
             const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 80) };
             const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 80) };
             const gatePos = { x: wallFrontX, y: (towerNW.y + towerSW.y) * 0.5 };
 
-            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，严格 2:1 斜率）
-            const northLen = Math.max(260, vw - wallFrontX - 20);
-            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.5) };
+            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，陡峭斜线）
+            const northLen = Math.max(260, Math.round((vw - wallFrontX - 20) * 0.55));
+            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.7) };
 
-            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，严格 2:1 斜率）
-            const southLen = Math.max(260, vw - wallFrontX - 20);
-            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
+            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，陡峭斜线）
+            const southLen = Math.max(260, Math.round((vw - wallFrontX - 20) * 0.55));
+            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.7) };
 
             // 城墙分段生成辅助
             const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, step = 36, wall = 'WALL_STONE'): void => {
