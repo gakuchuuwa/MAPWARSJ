@@ -3316,27 +3316,26 @@ export class Scene13WarLayer {
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
             // 🔴 [2026-08-22 主人定] 城墙三段严正走向：前排城墙适度前移，留出更开阔雄伟的城防前沿
-            const wallFrontX = Math.round(wMinX - 150);
+            const wallFrontX = Math.round(wMinX - 260);
 
             // 1. 前排南北走向主防线（垂直南北纵贯）
             const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 80) };
             const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 80) };
-            const gatePos = { x: wallFrontX, y: (towerNW.y + towerSW.y) * 0.5 };
 
-            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，陡峭斜线）
-            const northLen = Math.max(260, Math.round((vw - wallFrontX - 20) * 0.55));
-            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.7) };
+            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，严格 2:1 斜率）
+            const northLen = Math.max(260, vw - wallFrontX - 20);
+            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.5) };
 
-            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，陡峭斜线）
-            const southLen = Math.max(260, Math.round((vw - wallFrontX - 20) * 0.55));
-            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.7) };
+            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，严格 2:1 斜率）
+            const southLen = Math.max(260, vw - wallFrontX - 20);
+            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
 
             // 城墙分段生成辅助
-            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, step = 36, wall = 'WALL_STONE'): void => {
+            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, segments = 18, wall = 'WALL_STONE'): void => {
                 const dx = p2.x - p1.x;
                 const dy = p2.y - p1.y;
                 const dist = Math.hypot(dx, dy);
-                const count = Math.max(2, Math.ceil(dist / step));
+                const count = Math.max(2, segments + 1);
                 for (let i = 1; i < count; i++) {
                     const t = i / count;
                     this.decorSprites.push(place(
@@ -3347,23 +3346,20 @@ export class Scene13WarLayer {
                 }
             };
 
-            // 1. 前排南北走向：NW 角楼 -> 中央大门楼 -> SW 角楼（南北朝向城垛，密实咬合铺设，step=20）
-            buildWallLine(towerNW, gatePos, false, 20, 'WALL_STONE_N');
-            buildWallLine(gatePos, towerSW, false, 20, 'WALL_STONE_N');
+            // 1. 前排南北走向：NW 角楼 -> SW 角楼（南北朝向城垛连成一整段，以中点为锚，12 城垛）
+            buildWallLine(towerNW, towerSW, false, 12, 'WALL_STONE_N');
 
-            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（flip=false，标准等距瓦片）
-            buildWallLine(towerNW, towerNE, false, 36);
+            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（18 城垛）
+            buildWallLine(towerNW, towerNE, false, 18);
 
-            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（flip=true，标准等距瓦片）
-            buildWallLine(towerSW, towerSE, true, 36);
+            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（18 城垛）
+            buildWallLine(towerSW, towerSE, true, 18);
 
-            // 四座防御角楼与中央门楼
-            const towerAge = this.defenderCityType === 'small_city' ? 'AGE2' : 'AGE3';
-            this.decorSprites.push(place(gatePos, `${style}_GATE_STONE_NE`, { flip: false, z: 2 }));
-            this.decorSprites.push(place(towerNW, `${style}_TOWER_${towerAge}`, { flip: false, z: 2 }));
-            this.decorSprites.push(place(towerSW, `${style}_TOWER_${towerAge}`, { flip: true, z: 2 }));
-            this.decorSprites.push(place(towerNE, `${style}_TOWER_${towerAge}`, { flip: false, z: 2 }));
-            this.decorSprites.push(place(towerSE, `${style}_TOWER_${towerAge}`, { flip: true, z: 2 }));
+            // 四角连接：原警戒塔改为城垛填补墙角，与相邻墙衔接闭合（前排两角=南北城垛；斜线两角=斜向城垛）
+            this.decorSprites.push(place(towerNW, `${style}_WALL_STONE_N`, { flip: false, z: 1 }));
+            this.decorSprites.push(place(towerSW, `${style}_WALL_STONE_N`, { flip: true, z: 1 }));
+            this.decorSprites.push(place(towerNE, `${style}_WALL_STONE`, { flip: false, z: 1 }));
+            this.decorSprites.push(place(towerSE, `${style}_WALL_STONE`, { flip: true, z: 1 }));
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
