@@ -89,13 +89,14 @@ const WALL_AUTO_COLLAPSE_SEC = 40;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
-/** 🔴 [2026-08-22 主人定] 攻城武器配兵表（按守方据点类型；数量在生成逻辑里配：
- *  2 攻城锤 + 1 投石车 + 1 弩炮；科技不允许时降级——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）：
- *   中城 = 2 轻型攻城锤 + 轻型投石车 + 弩炮；
- *   险要 = 2 中型攻城锤 + 中型投石车 + 重型弩炮；
- *   大城 = 2 重型攻城锤 + 重型投石车 + 重型弩炮。小城不配攻城武器（硬木栅栏最好打）。 */
+/** 🔴 [2026-08-23 主人改] 攻城武器配兵表（按守方据点类型；数量在生成逻辑里配：
+ *  4 攻城锤 + 1 投石车 + 1 弩炮；科技不允许时降级——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）：
+ *   小城 = 4 轻型攻城锤（硬木栅栏最好打，只配锤）；
+ *   中城 = 4 轻型攻城锤 + 轻型投石车 + 弩炮；
+ *   险要 = 4 中型攻城锤 + 中型投石车 + 重型弩炮；
+ *   大城 = 4 重型攻城锤 + 重型投石车 + 重型弩炮。 */
 const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; scorpion?: string }> = {
-    small_city: {},
+    small_city: { ram: 'battering_ram' },
     medium_city: { ram: 'battering_ram', mangonel: 'mangonel', scorpion: 'scorpion' },
     pass: { ram: 'capped_ram', mangonel: 'onager', scorpion: 'heavy_scorpion' },
     big_city: { ram: 'siege_ram', mangonel: 'siege_onager', scorpion: 'heavy_scorpion' },
@@ -2997,7 +2998,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-22 主人定] 攻城战攻方前排攻城武器：按守方据点类型配 2 攻城锤 + 1 投石车 + 1 弩炮，
+     * 🔴 [2026-08-23 主人改] 攻城战攻方前排攻城武器：按守方据点类型配 4 攻城锤 + 1 投石车 + 1 弩炮，
      * 按攻方文化区对应 AoE2 文明科技树门控（SIEGE_TECH_BY_CULTURE）——没有的武器降级：
      *   无投石车 → 2 弩炮（无投石车）；无弩炮 → 2 投石车（无弩炮）；两者皆无 → 只配锤；
      *   文明无冲车线（印度斯坦系）→ 锤也不配。
@@ -3009,8 +3010,8 @@ export class Scene13WarLayer {
         if (!setup || !setup.ram || !tech) return;
         const ok = (key: string): boolean => !!tech[key];
         const items: Array<{ key: string; n: number }> = [];
-        // 攻城锤 ×2（文明无冲车线则不配——印度斯坦系用装甲象，MAPWAR 无此兵种）
-        if (ok(setup.ram)) items.push({ key: setup.ram, n: 2 });
+        // 攻城锤 ×4（文明无冲车线则不配——印度斯坦系用装甲象，MAPWAR 无此兵种）
+        if (ok(setup.ram)) items.push({ key: setup.ram, n: 4 });
         // 投石车 / 弩炮：投石车槽位按文化区投石车线取实际 key（中国/女真/高丽 = 火箭车线），
         // 科技门控 + 降级（无投石车 → 2 弩炮；无弩炮 → 2 投石车）
         if (setup.mangonel && setup.scorpion) {
@@ -4646,17 +4647,24 @@ export class Scene13WarLayer {
      *    统一按随机间隔倒塌（不整排全倒），并触发守方解除待命开始反击。随机间隔挑段倒，
      *    任何一排都留缺口，士兵穿行不卡。
      */
-    private collapseFrontWalls(): void {
-        // 破墙联动：所有城墙统一按随机间隔倒塌——不整排全倒。随机起点 off + 固定步长 step 挑段塌，
-        // 形成犬牙缺口，任何一排都留缺口，士兵穿行不卡。
+    private collapseFrontWalls(allClear = false): void {
         const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
         if (walls.length > 0) {
-            const step = 3;                                  // 每 3 段塌 1 段（可调）
-            const off = Math.floor(Math.random() * step);    // 随机起点，间隔随机化
-            for (let i = off; i < walls.length; i += step) {
-                const b = walls[i];
+            // 🔴 [2026-08-23 主人定] 随机坍塌一半（不是每 3 段塌 1 段）。
+            //    40 秒保底（allClear）：全部城墙解除碰撞（防卡兵），再随机塌一半做视觉演出；
+            //    破墙联动（非 allClear）：只随机塌一半，未塌的另一半保持碰撞（士兵还能继续打）。
+            if (allClear) {
+                for (const b of walls) {
+                    b.sprite.obstructionDisabled = true;
+                    if (b.extraSprites) for (const sp of b.extraSprites) sp.obstructionDisabled = true;
+                }
+            }
+            const half = Math.max(1, Math.round(walls.length / 2));
+            const shuffled = [...walls].sort(() => Math.random() - 0.5);
+            for (let n = 0; n < half; n++) {
+                const b = shuffled[n];
                 b.hp = 0;
-                this.breachWall(b, false);   // 联动倒塌：不喷尘土（尘土只给直接打破的那段）
+                this.breachWall(b, false);
             }
         }
         // 破墙 → 守方开始反击（近战出击、远程正常机动）
@@ -4940,7 +4948,7 @@ export class Scene13WarLayer {
         //    随机坍塌一次——即使士兵还没打穿墙，40 秒后也强制随机塌一批，留出足够缺口。
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
-            this.collapseFrontWalls();
+            this.collapseFrontWalls(true);
         }
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) this.deployT -= dt;

@@ -1278,12 +1278,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     gaolu_luoma: {
-        legionName: "罗马军团",
-        formationMode: 'echelon',
+        legionName: "法兰克军团",
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'equites', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'champion', count: 3 },
+            { type: 'elite_throwing_axeman', count: 4 },
+            { type: 'paladin', count: 2 },
         ],
     },
     mozeer: {
@@ -1600,60 +1600,60 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'hand_cannoneer', count: 2 },    // Row 2 要塞火力 = 火枪兵 2人（城垒火绳枪齐射火力压制）
         ],
     },
-    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 紫杉长弓兵精锐军团（三角阵 2+3+4：双手剑士前卫 2 + 长弓兵 3 + 精锐长弓兵主力 4）
+    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 冠军剑士与紫杉长弓精锐军团（偃月阵 3+2+4：冠军剑士前卫 3 + 戟兵中坚 2 + 精锐长弓兵主力 4）
     aquidan: {
         legionName: "英格兰军团",
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         slots: [
-            { type: 'two_handed_swordsman', count: 2 }, // Row 0 尖刀坚壁 = 双手剑士 2人
-            { type: 'longbowman', count: 3 },           // Row 1 齐射中坚 = 不列颠长弓兵 3人
-            { type: 'longbowman_elite', count: 4 },     // Row 2 底边主力齐射 = 不列颠长弓兵精锐 4人
+            { type: 'champion', count: 3 },          // Row 0 前卫重剑 = 冠军剑士 3人
+            { type: 'halberdier', count: 2 },        // Row 1 中坚长戟 = 戟兵 2人
+            { type: 'longbowman_elite', count: 4 },  // Row 2 底边主力齐射 = 不列颠长弓兵精锐 4人
         ],
     },
     anggelu: {
         legionName: "英格兰军团",
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         slots: [
-            { type: 'two_handed_swordsman', count: 2 },
-            { type: 'longbowman', count: 3 },
+            { type: 'champion', count: 3 },
+            { type: 'halberdier', count: 2 },
             { type: 'longbowman_elite', count: 4 },
         ],
     },
-    // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯 掷斧兵与圣骑士精锐军团（鹤翼阵 2+4+3：掷斧兵前哨 2 + 精锐掷斧兵主力 4 + 游侠圣骑 3）
+    // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯 冠军剑士与掷斧圣骑军团（鱼鳞阵 3+4+2：冠军剑士前卫 3 + 法兰克掷斧兵精锐主力 4 + 游侠圣骑后排 2）
     jialuolin: {
         legionName: "法兰克军团",
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'throwing_axeman', count: 2 },       // Row 0 前哨飞斧破盾 = 法兰克掷斧兵 2人
-            { type: 'elite_throwing_axeman', count: 4 }, // Row 1 狂暴突贯主力 = 法兰克掷斧兵精锐 4人
-            { type: 'paladin', count: 3 },               // Row 2 中军后排圣骑驰援 = 游侠圣骑士 3人
+            { type: 'champion', count: 3 },               // Row 0 前卫重剑 = 冠军剑士 3人
+            { type: 'elite_throwing_axeman', count: 4 },  // Row 1 狂暴突贯主力 = 法兰克掷斧兵精锐 4人
+            { type: 'paladin', count: 2 },                // Row 2 中军后排圣骑驰援 = 游侠圣骑士 2人
         ],
     },
     falanji: {
         legionName: "法兰克军团",
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'throwing_axeman', count: 2 },
+            { type: 'champion', count: 3 },
             { type: 'elite_throwing_axeman', count: 4 },
-            { type: 'paladin', count: 3 },
+            { type: 'paladin', count: 2 },
         ],
     },
     gaolu: {
         legionName: "法兰克军团",
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'throwing_axeman', count: 2 },
+            { type: 'champion', count: 3 },
             { type: 'elite_throwing_axeman', count: 4 },
-            { type: 'paladin', count: 3 },
+            { type: 'paladin', count: 2 },
         ],
     },
     aermolika: {
         legionName: "法兰克军团",
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'throwing_axeman', count: 2 },
+            { type: 'champion', count: 3 },
             { type: 'elite_throwing_axeman', count: 4 },
-            { type: 'paladin', count: 3 },
+            { type: 'paladin', count: 2 },
         ],
     },
     // 西班牙·熙德 / 费尔南多三世 / 阿方索十一世等 西班牙大方阵与希内特中世纪圣骑战阵（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 十字军圣骑士 2）
@@ -2598,14 +2598,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },                // Row 2 尾收远射 = 劲弩手 2人（纯步兵·无马，后方重型劲弩压制掩护）
         ],
     },
-    // 中南半岛阿瓦王朝·思机法 掸族战象与密林劲弓大阵（三角阵 2+3+4：皮甲战象尖刀 2 + 缅刀双手剑士中坚 3 + 步弓手主力 4）
+    // 中南半岛阿瓦王朝·思机法 掸族战象与飞镖铁骑大阵（鱼鳞阵 3+4+2：皮甲战象前卫 3 + 精锐飞镖骑兵主力 4 + 步弓手后排 2）
     ava: {
         legionName: "掸族军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'armored_elephant', count: 2 },        // Row 0 尖刀巨象 = 皮甲战象 2头（掸族象卫前沿开路践踏破阵）
-            { type: 'two_handed_swordsman', count: 3 },    // Row 1 刀手近战 = 双手剑士 3人（缅刀近卫中坚贴身接战）
-            { type: 'archer', count: 4 },                  // Row 2 底边主力齐射 = 步弓手 4人（密林步弓后排暴雨抛射）
+            { type: 'armored_elephant', count: 3 },        // Row 0 前卫巨象 = 皮甲战象 3头（掸族象卫前沿开路践踏破阵）
+            { type: 'elite_arambai', count: 4 },           // Row 1 中军主力 = 缅甸飞镖骑兵精锐 4骑（王牌飞镖破甲高爆输出）
+            { type: 'archer', count: 2 },                  // Row 2 尾收压阵 = 步弓手 2人（密林步弓后排抛射）
         ],
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
