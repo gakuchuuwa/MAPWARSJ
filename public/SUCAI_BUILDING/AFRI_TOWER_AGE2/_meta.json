@@ -1,9 +1,1 @@
-{
-  "name": "AFRI_TOWER_AGE2",
-  "frames": 1,
-  "box_w": 204,
-  "box_h": 248,
-  "anchor_x": 140,
-  "anchor_y": 220,
-  "sld_source": "b_afri_tower_age2"
-}
+{"name": "AFRI_TOWER_AGE2", "frames": 1, "box_w": 204, "box_h": 248, "anchor_x": 140, "anchor_y": 220, "sld_source": "b_afri_tower_age2"}

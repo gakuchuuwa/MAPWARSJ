@@ -3383,12 +3383,13 @@ export class Scene13WarLayer {
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
         // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
         const placeYurtCamp = (): void => {
-            const yurtStyle = REGION_BUILDING_STYLE.STEPPE;
             const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
             for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i]));
-            this.decorSprites.push(place(shuffledSpawns[8], `${yurtStyle}_TOWER_AGE2`));
+            // 🔴 [2026-08-22 主人定] 蒙古营地塔 = 木质瞭望塔（DE AFRI_TOWER_AGE2，茅草顶木架哨塔），
+            //    不是石砌警戒塔（CEAS_TOWER_AGE2 = 中亚石圆塔，游牧不筑石，换掉）。
+            this.decorSprites.push(place(shuffledSpawns[8], 'AFRI_TOWER_AGE2'));
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -3464,9 +3465,13 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城石墙 / 险要+大城垛墙。
             //    蒙古（STEPPE）游牧不筑石墙，四类城统一硬木栅栏（2026-08-22 主人定）。
             //    占位一致（碰撞 0.5×0.5），仅换贴图。
+            // 🔴 [2026-08-22 修「下排栅栏没对齐」] PALISADE 素材源从 HARDWOOD_WALL_PALISADE
+            //   （DE 场景道具 b_scen_wall_palisade_fortified，参差尖桩丛，无平切口 → 等距平铺错落叠压）
+            //   换成 ARCHAIC_WALL_PALISADE（DE 可玩建筑 b_archaic_wall_palisade，两端平切口 →
+            //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
             const wallMat = (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : (this.defenderCityType === 'medium_city' ? 'STONE' : 'FORTIFIED');
-            const wBase = wallMat === 'PALISADE' ? 'HARDWOOD_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
+            const wBase = wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
             const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
             const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST` : `${wBase}_POST`;
@@ -4474,20 +4479,28 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-22 主人定] 前排联动倒塌：任意一处正面城墙/城门被打破 →
-     * 全部正面体系（linked）城墙/城门一起倒（HP 归零、不再绘制、不再阻挡、解除城门屏障），
-     * 并触发守方解除待命开始反击。斜墙（非 linked）不参与。
+     * 🔴 [2026-08-22 主人定] 联动倒塌：任意一处城墙被打破 → **所有城墙**（前排+上下排斜墙）
+     *    统一按随机间隔倒塌（不整排全倒），并触发守方解除待命开始反击。随机间隔挑段倒，
+     *    任何一排都留缺口，士兵穿行不卡。
      */
     private collapseFrontWalls(): void {
-        for (const b of this.wallGates) {
-            if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
-            b.hp = 0;
-            b.sprite.destroyed = true;
-            b.sprite.obstructionDisabled = true;
-            if (b.extraSprites) {
-                for (const sp of b.extraSprites) {
-                    sp.destroyed = true;
-                    sp.obstructionDisabled = true;
+        // 🔴 [2026-08-22 主人定] 破墙联动：**所有城墙**（前排 linked + 上排/下排斜墙）统一按
+        //    随机间隔倒塌——不整排全倒。随机起点 off + 固定步长 step 挑段塌，形成犬牙缺口，
+        //    任何一排都留缺口，士兵穿行不卡。保留部分城墙观感，也避免整排全塌。
+        const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
+        if (walls.length > 0) {
+            const step = 3;                                  // 每 3 段塌 1 段（可调）
+            const off = Math.floor(Math.random() * step);    // 随机起点，间隔随机化
+            for (let i = off; i < walls.length; i += step) {
+                const b = walls[i];
+                b.hp = 0;
+                b.sprite.destroyed = true;
+                b.sprite.obstructionDisabled = true;
+                if (b.extraSprites) {
+                    for (const sp of b.extraSprites) {
+                        sp.destroyed = true;
+                        sp.obstructionDisabled = true;
+                    }
                 }
             }
         }
