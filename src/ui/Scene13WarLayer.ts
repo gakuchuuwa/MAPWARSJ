@@ -1979,8 +1979,6 @@ interface WarMan {
     ph: number;
     st: 0 | 1 | 2;
     foe: WarMan | null;
-    /** 受击反击锁定剩余时间（秒）；允许锁住视野外的实际攻击者。 */
-    provokedT?: number;
     next: number;
     fightT: number;
     aimT: number;
@@ -3209,14 +3207,16 @@ export class Scene13WarLayer {
      */
     private applyDefenderCityRoad(): void {
         if (this.battleType !== 'siege') return;
+        // 🔴 [2026-08-22 主人定] 蒙古（草原游牧）建筑为蒙古包，逐水草而居，不铺设任何石头路/地基
+        if (this.sideCulture[1] === 'STEPPE') return;
         const defenderSpawns = this.spawns.filter((s) => s.f === 1);
         if (defenderSpawns.length === 0 || this.isoGw === 0 || this.isoGh === 0) return;
 
         // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图
         const culture = this.sideCulture[1];
         let roadTile = 'rd1'; // 默认：DE 经典石板城路 (rd1)
-        if (culture === 'ISLAMIC' || culture === 'STEPPE') {
-            roadTile = 'gravel_default'; // 中东伊斯兰/游牧：碎石土石城基
+        if (culture === 'ISLAMIC') {
+            roadTile = 'gravel_default'; // 中东伊斯兰：碎石土石城基
         } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
             roadTile = 'rd1'; // 东方：青石砖大道
         } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {
@@ -3317,12 +3317,12 @@ export class Scene13WarLayer {
             }
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
-            // 🔴 [主人明确指示] 严格只放 2 个城墙连在一起：步长 48px 严密咬合，彻底消除断缝
+            // 🔴 [主人明确指示] 严格只放 2 个城墙上下紧挨着连在一起：X 坐标完全一致，Y 坐标步长 48px 严密垂直咬合，绝不左右错开
             const wallFrontX = Math.round(wMinX - 260);
             const midY = (wMinY + wMaxY) * 0.5;
-            const pitch = 48; // 城垛立柱与底座无缝咬合步长（48px），彻底连成一堵实墙
-            this.decorSprites.push(place({ x: wallFrontX, y: midY - pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.6, y: 0.6 } }));
-            this.decorSprites.push(place({ x: wallFrontX, y: midY + pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.6, y: 0.6 } }));
+            const pitch = 48; // DE 垂直城墙咬合标准步长 (48px)
+            this.decorSprites.push(place({ x: wallFrontX, y: midY - pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.7, y: 0.7 } }));
+            this.decorSprites.push(place({ x: wallFrontX, y: midY + pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.7, y: 0.7 } }));
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
@@ -3606,8 +3606,11 @@ export class Scene13WarLayer {
     private compositeSoftPatch(g: CanvasRenderingContext2D, p: DecorPatch, W: number, H: number): void {
         const img = p.img;
         if (!img || !img.complete || !img.naturalWidth) return;
-        // 斑块屏幕包围盒（polygon 或 cells 菱形外接盒），加羽化余量（blur 会把边缘外的像素晕进来）
-        const blurR = (p.polygon ? SHORE_BLUR : DECOR_BLUR) + 2;
+
+        // 🔴 [彻底根除方块矩形切边] 高斯模糊羽化余量必须 ≥ 3 倍模糊半径 (3 × 24 = 72px)，
+        //    确保模糊在到达离屏 canvas 四周边界前 100% 衰减为 0（绝对透明），绝不被 canvas 边框生硬截断！
+        const blurRadius = p.polygon ? 16 : 24;
+        const blurR = blurRadius * 3 + 16;
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         if (p.polygon && p.polygon.length >= 3) {
             for (const pt of p.polygon) {
@@ -3637,7 +3640,7 @@ export class Scene13WarLayer {
         const mcv = this.maskCv, mctx = this.maskCtx!;
         const bcv = this.blurCv, bctx = this.blurCtx!;
         if (mcv.width !== bw || mcv.height !== bh) { mcv.width = bw; mcv.height = bh; bcv.width = bw; bcv.height = bh; }
-        // 1. 白形状（斑块格，等距菱形；局部坐标）
+        // 1. 白形状（斑块格，局部坐标）
         mctx.clearRect(0, 0, bw, bh);
         mctx.fillStyle = '#fff';
         if (p.polygon && p.polygon.length >= 3) {
@@ -3647,21 +3650,20 @@ export class Scene13WarLayer {
             mctx.closePath();
             mctx.fill();
         } else {
-            // 🔴 [2026-08-22 彻底杜绝方块菱形边缘] 地表变体与树下落叶改用有机连续椭圆光晕合成，绝不画任何菱形线！
+            // 🔴 地表变体与落叶使用有机圆形平滑叠加，边缘无棱角
             for (const [gx, gy] of p.cells) {
                 const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - by;
                 mctx.beginPath();
-                mctx.ellipse(sx, sy, TILE_W * 0.65, TILE_H * 0.75, 0, 0, Math.PI * 2);
+                mctx.ellipse(sx, sy, TILE_W * 0.60, TILE_H * 0.65, 0, 0, Math.PI * 2);
                 mctx.fill();
             }
         }
-        // 2. 超柔和高斯模糊（彻底消除任何边缘硬边，地表变体如自然光晕般平滑渐变）
+        // 2. 超柔和高斯模糊（在充足的 72px 裕量内平滑衰减至 0，无任何硬边）
         bctx.clearRect(0, 0, bw, bh);
-        const blurRadius = p.polygon ? SHORE_BLUR : 32;
         bctx.filter = `blur(${blurRadius}px)`;
         bctx.drawImage(mcv, 0, 0);
         bctx.filter = 'none';
-        // 3. source-in 填纹理（纹理只在软边形状内，保持清晰；pattern 平铺原点对齐全局坐标）
+        // 3. source-in 填纹理（纹理只在软边形状内）
         bctx.globalCompositeOperation = 'source-in';
         const pat = bctx.createPattern(img, 'repeat');
         if (pat) {
@@ -4282,18 +4284,6 @@ export class Scene13WarLayer {
         return Math.min(ATTRITION_CAP, 1 + over / ATTRITION_RAMP_SEC);
     }
 
-    private provokeRetaliation(victim: WarMan, attacker: WarMan): void {
-        if (victim.hp <= 0 || attacker.hp <= 0) return;
-        victim.march = false;
-        victim.port = null;
-        if (!victim.foe || victim.foe.hp <= 0) {
-            victim.foe = attacker;
-            victim.fightT = 0;
-            victim.next = 0.2;
-        }
-        if (victim.foe === attacker) victim.provokedT = 0.3;
-    }
-
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
@@ -4308,7 +4298,6 @@ export class Scene13WarLayer {
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
                     o.atkNext++;
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
-                    this.provokeRetaliation(o, m);
                     if (o.hp <= 0) this.pushCorpse(o);
                 }
             }
@@ -4537,25 +4526,28 @@ export class Scene13WarLayer {
             const stats = wt;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
             const REACH = Math.max(stats.rng, 65);   // 出手扣血（近战贴身 65 / 远程 rng）
-            if ((m.provokedT ?? 0) > 0) m.provokedT = Math.max(0, (m.provokedT ?? 0) - dt);
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
             m.next -= dt;
-            const keep = m.foe && m.foe.hp > 0 && (
-                (m.provokedT ?? 0) > 0
-                || (m.foe.claims < SPREAD_CAP
-                    && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44)
-            );
+            const keep = m.foe && m.foe.hp > 0
+                && m.foe.claims < SPREAD_CAP
+                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
                 m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
 
+            // DE Attack Move：没有发现敌人时保持编队推进；个人视野内一旦锁敌，立即脱离编队交战。
+            if (m.march && m.foe) {
+                m.march = false;
+                m.port = null;
+            }
+
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
-            // 索敌（上面那段）照旧执行 —— 远程够得着就在队形里放箭，只是不许脱队去追（见下）。
+            // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
             if (m.march && m.port) {
                 const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
                 [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
@@ -4852,7 +4844,6 @@ export class Scene13WarLayer {
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (m.accHit !== false) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
-                        this.provokeRetaliation(foe, m);
                         if (foe.hp <= 0) this.pushCorpse(foe);
                     }
                 }
@@ -5372,16 +5363,12 @@ export class Scene13WarLayer {
             ctx.restore();
         }
 
-        // 箭矢画在人上面。🔴 2026-08-16 主人定：抛射物统一用 DE 素材（箭/标枪/飞镖/飞斧/火箭），
-        //   水平朝向 rotate（箭朝目标方向）+ 帧序号内置俯仰/自转（箭/标枪/火箭=仰射→俯冲，飞斧=360°自转）。
-        //   抛物线位置照旧（420ms + 弧高 = 距离×0.3 封顶 100px），只换画法不换飞法。
+        // 箭矢与火器弹丸画在人上面。🔴 2026-08-22 对齐 DE 本体：火药兵种（火枪手/苏丹亲兵/征服者/风琴炮）增加 DE 原版白烟弹线 (Unit 1648 Trail Smoke) 与枪口硝烟
         if (this.arrows.length) {
             ctx.save();
             for (const a of this.arrows) {
                 const delay = a.delay ?? 0;
                 if (a.t < delay) continue;          // 连发尚未射出
-                const pa = this.projBank[a.proj];
-                if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
@@ -5391,9 +5378,77 @@ export class Scene13WarLayer {
                 const x = a.x + a.dx * d;
                 const groundY = a.y + a.dy * d;
                 const y = groundY - this.elevationLiftAt(x, groundY) - arc;
+
+                const startLift = this.elevationLiftAt(a.x, a.y);
+                const startX = a.x;
+                const startY = a.y - startLift;
+
+                // ── 💨 1. DE 原版火药白烟弹线 (Unit 1648 Trail Smoke Gunpowder) ──
+                const isGunpowder = a.proj === 'PROJ_GUNPOWDER' || a.proj === 'PROJ_SHOT' || a.proj === 'PROJ_HUSSITE_WAGON';
+                const isCannon = a.proj === 'PROJ_BOMBARD_BALL';
+                const isFireArrow = a.proj === 'PROJ_ARROW_FIRE';
+
+                if (isGunpowder || isCannon || isFireArrow) {
+                    const trailLen = Math.min(d, isCannon ? 120 : (isFireArrow ? 70 : 85));
+                    const tailX = x - a.dx * trailLen;
+                    const tailY = y - a.dy * trailLen;
+
+                    ctx.save();
+                    const grad = ctx.createLinearGradient(tailX, tailY, x, y);
+                    if (isGunpowder) {
+                        // 火枪经典白烟弹线：尾部消散淡化，弹头强光
+                        grad.addColorStop(0, 'rgba(230, 235, 245, 0)');
+                        grad.addColorStop(0.55, 'rgba(240, 245, 255, 0.45)');
+                        grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+                        ctx.lineWidth = 2.4;
+                    } else if (isCannon) {
+                        // 火炮浓重黑灰硝烟轨迹
+                        grad.addColorStop(0, 'rgba(120, 120, 130, 0)');
+                        grad.addColorStop(0.5, 'rgba(160, 165, 175, 0.40)');
+                        grad.addColorStop(1, 'rgba(230, 230, 240, 0.85)');
+                        ctx.lineWidth = 3.6;
+                    } else {
+                        // 火箭烈焰轨迹
+                        grad.addColorStop(0, 'rgba(255, 80, 0, 0)');
+                        grad.addColorStop(0.6, 'rgba(255, 140, 30, 0.55)');
+                        grad.addColorStop(1, 'rgba(255, 230, 120, 0.95)');
+                        ctx.lineWidth = 2.2;
+                    }
+                    ctx.strokeStyle = grad;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(tailX, tailY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // ── 💥 2. 枪口/炮口出膛硝烟与微火花 (Muzzle Flash & Smoke Puff) ──
+                    if (p < 0.32) {
+                        const puffP = p / 0.32;
+                        const smokeR = (isCannon ? 4 : 2) + puffP * (isCannon ? 18 : 9);
+                        const smokeAlpha = Math.max(0, 0.65 - puffP * 0.65);
+                        ctx.save();
+                        ctx.fillStyle = `rgba(235, 238, 245, ${smokeAlpha})`;
+                        ctx.beginPath();
+                        ctx.arc(startX, startY, smokeR, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // 枪口瞬间金白火光 (前 12% 飞行时间内)
+                        if (puffP < 0.40) {
+                            const flashAlpha = (1 - puffP / 0.40) * 0.85;
+                            ctx.fillStyle = `rgba(255, 230, 130, ${flashAlpha})`;
+                            ctx.beginPath();
+                            ctx.arc(startX + a.dx * 3, startY + a.dy * 3, isCannon ? 5 : 2.5, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                    }
+                }
+
+                const pa = this.projBank[a.proj];
+                if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
+
                 // 🔴 [2026-08-16 修复向北及全向弹道切线角]
-                // 用瞬时速度切线角（vx, vy - dArc/dp）驱动全 360° 旋转，
-                // 彻底解决朝北/朝南射击时帧序俯仰变横向摆头、箭头左右晃动或反转倒插的 Bug。
                 const vx = a.dx * a.len;
                 const vy = a.dy * a.len - (PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * (1 - 2 * p));
                 const angle = Math.atan2(vy, vx) + (PROJ_ANGLE_OFFSET[a.proj] ?? 0);
