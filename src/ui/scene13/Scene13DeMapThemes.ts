@@ -577,5 +577,15 @@ export function beachTerrainForTheme(
     if (theme.id === 'palaearctic_asia_steppe' || theme.id === 'palaearctic_middle_east_highland') {
         return 'ds2';
     }
-    return theme.beachTerrain;
+    // 欧洲温带 / 地中海 / 东亚中原 / 热带水乡：采用 DE 官方湿润河岸浅滩 (beach_wet)，自然过渡
+    if (
+        theme.id === 'palaearctic_europe_temperate' ||
+        theme.id === 'palaearctic_europe_mediterranean' ||
+        theme.id === 'palaearctic_asia_temperate' ||
+        theme.id === 'indomalayan_tropical' ||
+        theme.id === 'afrotropical_tropical'
+    ) {
+        return 'beach_wet';
+    }
+    return theme.beachTerrain || 'beach_wet';
 }

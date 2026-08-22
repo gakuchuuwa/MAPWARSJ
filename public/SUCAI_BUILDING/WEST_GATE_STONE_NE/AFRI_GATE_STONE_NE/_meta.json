@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_GATE_STONE_NE",
+  "frames": 1,
+  "box_w": 160,
+  "box_h": 184,
+  "anchor_x": 100,
+  "anchor_y": 152,
+  "sld_source": "b_afri_gate_stone_ne_open"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WALL_STONE_N",
+  "frames": 1,
+  "box_w": 68,
+  "box_h": 120,
+  "anchor_x": 40,
+  "anchor_y": 88,
+  "sld_source": "b_seas_wall_stone"
+}

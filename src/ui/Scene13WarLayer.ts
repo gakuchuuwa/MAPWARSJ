@@ -3274,7 +3274,7 @@ export class Scene13WarLayer {
         const place = (
             s: { x: number; y: number },
             asset: string,
-            options?: { flip?: boolean; frame?: number; z?: number },
+            options?: { flip?: boolean; frame?: number; z?: number; obstruction?: { x: number; y: number } },
         ): DecorSprite => {
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
@@ -3286,6 +3286,7 @@ export class Scene13WarLayer {
                 flip: options?.flip ?? (Math.random() < 0.5),
                 layer: 'world',
                 z: options?.z ?? 0,
+                obstruction: options?.obstruction,
                 obstructionContactSec: 0,
                 obstructionTouched: false,
                 obstructionDisabled: false,
@@ -3293,10 +3294,11 @@ export class Scene13WarLayer {
         };
 
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
+        // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
         const placeYurtCamp = (): void => {
             const yurtStyle = REGION_BUILDING_STYLE.STEPPE;
             const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
-            const yurts = ['YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J'];
+            const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
             for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i]));
             this.decorSprites.push(place(shuffledSpawns[8], `${yurtStyle}_TOWER_AGE2`));
@@ -3315,60 +3317,12 @@ export class Scene13WarLayer {
             }
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
-            // 🔴 [2026-08-22 主人定] 城墙三段严正走向：前排城墙适度前移，留出更开阔雄伟的城防前沿
+            // 🔴 [主人明确指示] 严格只放 2 个城墙连在一起：步长 48px 严密咬合，彻底消除断缝
             const wallFrontX = Math.round(wMinX - 260);
-
-            // 1. 前排南北走向主防线（垂直南北纵贯）
-            const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 80) };
-            const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 80) };
-
-            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，严格 2:1 斜率）
-            const northLen = Math.max(260, vw - wallFrontX - 20);
-            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.5) };
-
-            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，严格 2:1 斜率）
-            const southLen = Math.max(260, vw - wallFrontX - 20);
-            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
-
-            // 城墙分段生成辅助：沿排线铺实心城垛。
-            //   - pitch>0：按「步长自适应」铺——间距 = pitch（≈素材沿走向的实际长度，略小以保证相邻轻微咬合），
-            //     段数随线长自动变。用于前排竖墙，确保城垛一个接一个贴齐、连成无缝一条，不露缝。
-            //   - pitch=0：沿用「固定段数均分」——用于斜线墙（斜向城垛），保持原锚点节奏。
-            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, segments = 18, wall = 'WALL_STONE', pitch = 0): void => {
-                const dx = p2.x - p1.x;
-                const dy = p2.y - p1.y;
-                const dist = Math.hypot(dx, dy);
-                if (pitch > 0) segments = Math.max(2, Math.round(dist / pitch));
-                const count = Math.max(2, segments + 1);
-                for (let i = 1; i < count; i++) {
-                    const t = i / count;
-                    this.decorSprites.push(place(
-                        { x: p1.x + dx * t, y: p1.y + dy * t },
-                        `${style}_${wall}`,
-                        { flip, z: 1 },
-                    ));
-                }
-            };
-
-            // 前排南北走向：NW 角楼 -> SW 角楼（南北朝向城垛按素材实际高度步进，连成无缝一条，不露缝）
-            // 已按 14 风格 WALL_STONE_N 的 box_h（112~136）做风格→高度映射；pitch 略取小(×0.9)保证相邻轻微咬合。
-            const WALL_N_PITCH: Record<string, number> = {
-                AFRI: 116, ANDE: 112, ASIA: 112, CEAS: 116, EAST: 120, INDI: 124, MEDI: 116,
-                MESO: 116, ORIE: 112, PERSIAN: 128, PURU: 120, SEAS: 120, SLAV: 136, WEST: 120,
-            };
-            buildWallLine(towerNW, towerSW, false, 12, 'WALL_STONE_N', (WALL_N_PITCH[style] ?? 116) * 0.9);
-
-            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（实心城垛连成一条，18 城垛）
-            buildWallLine(towerNW, towerNE, false, 18, 'WALL_STONE');
-
-            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（实心城垛连成一条，18 城垛）
-            buildWallLine(towerSW, towerSE, true, 18, 'WALL_STONE');
-
-            // 四角连接：原警戒塔改为城垛填补墙角，与相邻墙衔接闭合（前排两角=南北城垛；斜线两角=斜向城垛）
-            this.decorSprites.push(place(towerNW, `${style}_WALL_STONE_N`, { flip: false, z: 1 }));
-            this.decorSprites.push(place(towerSW, `${style}_WALL_STONE_N`, { flip: true, z: 1 }));
-            this.decorSprites.push(place(towerNE, `${style}_WALL_STONE`, { flip: false, z: 1 }));
-            this.decorSprites.push(place(towerSE, `${style}_WALL_STONE`, { flip: true, z: 1 }));
+            const midY = (wMinY + wMaxY) * 0.5;
+            const pitch = 48; // 城垛立柱与底座无缝咬合步长（48px），彻底连成一堵实墙
+            this.decorSprites.push(place({ x: wallFrontX, y: midY - pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.6, y: 0.6 } }));
+            this.decorSprites.push(place({ x: wallFrontX, y: midY + pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.6, y: 0.6 } }));
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
@@ -3510,7 +3464,6 @@ export class Scene13WarLayer {
         g.clearRect(0, 0, cv.width, cv.height);
         if (this.terrain) g.drawImage(this.terrain, 0, 0);
         for (const p of this.decorPatches) {
-            if (p.isWater) continue; // 动态水体走每帧实时渲染，不烙入静态背景
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
@@ -3525,128 +3478,65 @@ export class Scene13WarLayer {
         // DE 原版高程完全依靠网格脚点物理抬升 (elevationLiftAt)，保持地表贴图原生质感
     }
 
-    /** DE 纯正动态水体渲染：浅滩透水羽化 + 双层等距流速干涉 + 阳光焦散波光 + 拍岸白浪微沫 */
+    /** DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以 DE 官方 30° 2:1 流速平铺流动水波与波光反射 */
     private renderDynamicWater(ctx: CanvasRenderingContext2D, t: number): void {
         const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
         if (waterPatches.length === 0) return;
-
-        const W = this.canvas!.width, H = this.canvas!.height;
-        if (!this.waterCv) { this.waterCv = document.createElement('canvas'); this.waterCtx = this.waterCv.getContext('2d')!; }
-        const wcv = this.waterCv, wctx = this.waterCtx!;
 
         for (const p of waterPatches) {
             const img = p.img!;
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
 
-            let bbox = p.bbox;
-            if (!bbox) {
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                if (p.polygon && p.polygon.length >= 3) {
-                    for (const pt of p.polygon) {
-                        if (pt.x < minX) minX = pt.x;
-                        if (pt.y < minY) minY = pt.y;
-                        if (pt.x > maxX) maxX = pt.x;
-                        if (pt.y > maxY) maxY = pt.y;
-                    }
-                } else {
-                    for (const [gx, gy] of p.cells) {
-                        const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
-                        if (sx - TILE_W / 2 < minX) minX = sx - TILE_W / 2;
-                        if (sy - TILE_H / 2 < minY) minY = sy - TILE_H / 2;
-                        if (sx + TILE_W / 2 > maxX) maxX = sx + TILE_W / 2;
-                        if (sy + TILE_H / 2 > maxY) maxY = sy + TILE_H / 2;
-                    }
-                }
-                if (!isFinite(minX)) continue;
-                const pad = Math.max(tw, th);
-                minX = Math.max(0, Math.floor(minX - pad));
-                minY = Math.max(0, Math.floor(minY - pad));
-                maxX = Math.min(W, Math.ceil(maxX + pad));
-                maxY = Math.min(H, Math.ceil(maxY + pad));
-                bbox = p.bbox = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
-            }
-            if (bbox.w <= 0 || bbox.h <= 0) continue;
-            if (wcv.width !== bbox.w || wcv.height !== bbox.h) { wcv.width = bbox.w; wcv.height = bbox.h; }
-
-            // 1. 水域遮罩蒙版（bbox 局部坐标）：岸边浅滩 6px 羽化，使边缘透出沙滩/泥土地表
-            wctx.clearRect(0, 0, bbox.w, bbox.h);
+            ctx.save();
+            ctx.beginPath();
             if (p.polygon && p.polygon.length >= 3) {
-                if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
-                if (this.maskCv.width !== bbox.w || this.maskCv.height !== bbox.h) { this.maskCv.width = bbox.w; this.maskCv.height = bbox.h; }
-                const mctx = this.maskCtx!;
-                mctx.clearRect(0, 0, bbox.w, bbox.h);
-                mctx.fillStyle = '#fff';
-                mctx.beginPath();
-                mctx.moveTo(p.polygon[0].x - bbox.x, p.polygon[0].y - bbox.y);
-                for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x - bbox.x, p.polygon[i].y - bbox.y);
-                mctx.closePath();
-                mctx.fill();
-
-                // 🔴 DE 级水岸羽化：边缘 6px 柔和过渡，生成岸边半透明浅水 (Shallows)
-                wctx.filter = 'blur(6px)';
-                wctx.drawImage(this.maskCv, 0, 0);
-                wctx.filter = 'none';
+                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                for (let i = 1; i < p.polygon.length; i++) ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                ctx.closePath();
             } else {
                 for (const [gx, gy] of p.cells) {
-                    const sx = this.isoCellX(gx, gy) - bbox.x, sy = this.isoCellY(gx, gy) - bbox.y;
-                    wctx.beginPath();
-                    wctx.moveTo(sx, sy - TILE_H / 2);
-                    wctx.lineTo(sx + TILE_W / 2, sy);
-                    wctx.lineTo(sx, sy + TILE_H / 2);
-                    wctx.lineTo(sx - TILE_W / 2, sy);
-                    wctx.closePath();
-                    wctx.fill();
+                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                    ctx.moveTo(sx, sy - TILE_H / 2);
+                    ctx.lineTo(sx + TILE_W / 2, sy);
+                    ctx.lineTo(sx, sy + TILE_H / 2);
+                    ctx.lineTo(sx - TILE_W / 2, sy);
+                    ctx.closePath();
                 }
-                if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
-                if (this.maskCv.width !== bbox.w || this.maskCv.height !== bbox.h) { this.maskCv.width = bbox.w; this.maskCv.height = bbox.h; }
-                this.maskCtx!.clearRect(0, 0, bbox.w, bbox.h);
-                this.maskCtx!.drawImage(wcv, 0, 0);
-                wctx.clearRect(0, 0, bbox.w, bbox.h);
-                wctx.filter = 'blur(16px)';
-                wctx.drawImage(this.maskCv, 0, 0);
-                wctx.filter = 'none';
             }
+            ctx.clip();
 
-            // 2. 🔴 [严格遵循 DE 官方规范 + 双层等距流速干涉动态水体]
-            // DE 官方定义：azimuth: 30° (2:1 等距朝向), velocity: 0.125 (~28px/s 单向匀速流动)
-            wctx.globalCompositeOperation = 'source-in';
-            const dx = (t * 28) % tw;
-            const dy = (t * 14) % th;
-            wctx.save();
-            wctx.translate(dx, dy);
-            const pat = wctx.createPattern(img, 'repeat');
+            // 1. DE 原版官方流速单向流动（30° 2:1 等距流向：dx = 24t, dy = 12t）
+            const dx = (t * 24) % tw;
+            const dy = (t * 12) % th;
+            ctx.save();
+            ctx.translate(dx, dy);
+            const pat = ctx.createPattern(img, 'repeat');
             if (pat) {
-                wctx.fillStyle = pat;
-                wctx.fillRect(-dx - tw, -dy - th, bbox.w + tw * 2, bbox.h + th * 2);
+                ctx.fillStyle = pat;
+                ctx.fillRect(-dx - tw, -dy - th, ctx.canvas.width + tw * 2, ctx.canvas.height + th * 2);
             }
-            wctx.restore();
+            ctx.restore();
 
-            // 第二层：表层次级干涉微波（以不同速率与微小夹角错位流动，产生大江水波涌动干涉）
+            // 2. 表层次级微波干涉（微小角度反向微扰，产生大江波涌自然感）
             if (pat) {
-                wctx.save();
-                wctx.globalAlpha = 0.35;
-                const dx2 = (-t * 12) % tw;
-                const dy2 = (t * 20) % th;
-                wctx.translate(dx2, dy2);
-                wctx.fillStyle = pat;
-                wctx.fillRect(-dx2 - tw, -dy2 - th, bbox.w + tw * 2, bbox.h + th * 2);
-                wctx.restore();
+                ctx.save();
+                ctx.globalAlpha = 0.28;
+                const dx2 = (-t * 10) % tw;
+                const dy2 = (t * 16) % th;
+                ctx.translate(dx2, dy2);
+                ctx.fillStyle = pat;
+                ctx.fillRect(-dx2 - tw, -dy2 - th, ctx.canvas.width + tw * 2, ctx.canvas.height + th * 2);
+                ctx.restore();
             }
 
-            // 第三层：深水河心水色沉降（Deep Water Tone - 中轴深青蓝，边缘浅滩透底）
-            wctx.save();
-            wctx.globalAlpha = 0.22;
-            wctx.fillStyle = '#103050';
-            wctx.fillRect(0, 0, bbox.w, bbox.h);
-            wctx.restore();
+            // 3. 河心深水沉降与水色增强（微弱青蓝光）
+            ctx.save();
+            ctx.globalAlpha = 0.16;
+            ctx.fillStyle = '#082848';
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.restore();
 
-            wctx.globalCompositeOperation = 'source-over';
-            wctx.globalAlpha = 1;
-
-            // 3. 将动态水面绘制到主画面（只贴 bbox 区域，靠自然沙滩与水体边缘羽化交融）
-            if (p.alpha < 1) ctx.globalAlpha = p.alpha;
-            ctx.drawImage(wcv, bbox.x, bbox.y);
-            if (p.alpha < 1) ctx.globalAlpha = 1;
+            ctx.restore();
         }
     }
 

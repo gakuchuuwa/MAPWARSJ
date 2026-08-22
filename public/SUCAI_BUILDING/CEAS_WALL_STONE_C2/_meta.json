@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_WALL_STONE_C2",
+  "frames": 1,
+  "box_w": 76,
+  "box_h": 96,
+  "anchor_x": 37.5,
+  "anchor_y": 76.0,
+  "sld_source": "b_ceas_wall_stone frame0"
+}

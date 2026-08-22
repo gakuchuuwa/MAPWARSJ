@@ -1,0 +1,9 @@
+{
+  "name": "WEST_WALL_STONE2",
+  "frames": 1,
+  "box_w": 98,
+  "box_h": 77,
+  "anchor_x": 48.5,
+  "anchor_y": 67.0,
+  "sld_source": "b_west_wall_stone frame3"
+}

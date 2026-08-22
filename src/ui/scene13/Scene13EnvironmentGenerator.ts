@@ -891,13 +891,13 @@ function buildRiver(
         const x = baseCenterX + curveOffset;
         const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
 
-        // 宽阔大江尺度：深水区宽 90~120px，随水流与弯曲自然起伏，确保碧波水流占据主要视觉
-        const wW = 92 + Math.sin(t * Math.PI * 2.6 + phase2) * 18 + Math.cos(t * Math.PI * 5.4) * 10;
+        // 宽阔大江尺度：深水区宽 115~145px，随水流与弯曲自然起伏，确保碧波水流占据主要视觉
+        const wW = 120 + Math.sin(t * Math.PI * 2.6 + phase2) * 20 + Math.cos(t * Math.PI * 5.4) * 12;
 
-        // 左右沙滩宽度自然不对称（细腻浅滩过渡 14~24px，绝不喧宾夺主掩盖江面）
+        // 左右河岸细腻浅滩过渡（8~16px 极窄湿岸收口，绝不喧宾夺主掩盖江面）
         const curvature = Math.sin(t * Math.PI * 2.0 + phase1);
-        const bWLeft = wW + 18 + curvature * 8 + Math.sin(t * 8.0 + phase3) * 4;
-        const bWRight = wW + 18 - curvature * 8 + Math.cos(t * 8.0 + phase2) * 4;
+        const bWLeft = wW + 12 + curvature * 4 + Math.sin(t * 8.0 + phase3) * 3;
+        const bWRight = wW + 12 - curvature * 4 + Math.cos(t * 8.0 + phase2) * 3;
 
         pts.push({ x, y, nx: 0, ny: 0, wW, bWLeft, bWRight });
     }

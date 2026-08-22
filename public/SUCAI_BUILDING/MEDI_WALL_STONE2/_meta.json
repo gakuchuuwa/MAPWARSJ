@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_WALL_STONE2",
+  "frames": 1,
+  "box_w": 97,
+  "box_h": 80,
+  "anchor_x": 48.0,
+  "anchor_y": 68.0,
+  "sld_source": "b_medi_wall_stone frame3"
+}
