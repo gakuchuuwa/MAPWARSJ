@@ -1,9 +1,10 @@
 {
   "name": "SLAV_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 120,
-  "box_h": 156,
-  "anchor_x": 84,
-  "anchor_y": 124,
-  "sld_source": "b_slav_wall_fortified"
+  "box_w": 114,
+  "box_h": 151,
+  "anchor_x": 81,
+  "anchor_y": 121,
+  "sld_source": "b_slav_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

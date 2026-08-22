@@ -1,9 +1,10 @@
 {
   "name": "EAST_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 116,
-  "box_h": 132,
-  "anchor_x": 76,
-  "anchor_y": 100,
-  "sld_source": "b_east_wall_fortified"
+  "box_w": 110,
+  "box_h": 127,
+  "anchor_x": 72,
+  "anchor_y": 99,
+  "sld_source": "b_east_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

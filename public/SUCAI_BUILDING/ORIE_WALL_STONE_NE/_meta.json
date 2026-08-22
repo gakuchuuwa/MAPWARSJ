@@ -1,10 +1,10 @@
 {
   "name": "ORIE_WALL_STONE_NE",
   "frames": 1,
-  "box_w": 77,
-  "box_h": 97,
-  "anchor_x": 38.0,
-  "anchor_y": 77.0,
-  "sld_source": "b_mide_wall_stone_x1.sld",
+  "box_w": 100,
+  "box_h": 93,
+  "anchor_x": 61,
+  "anchor_y": 73,
+  "sld_source": "b_orie_wall_stone_x1.sld",
   "frame_idx": 0
 }

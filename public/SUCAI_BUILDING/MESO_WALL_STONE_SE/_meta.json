@@ -1,10 +1,10 @@
 {
   "name": "MESO_WALL_STONE_SE",
   "frames": 1,
-  "box_w": 78,
-  "box_h": 95,
-  "anchor_x": 40.0,
-  "anchor_y": 75.0,
+  "box_w": 107,
+  "box_h": 98,
+  "anchor_x": 64,
+  "anchor_y": 75,
   "sld_source": "b_meso_wall_stone_x1.sld",
   "frame_idx": 1
 }

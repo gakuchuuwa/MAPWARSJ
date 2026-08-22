@@ -1,10 +1,10 @@
 {
   "name": "AFRI_WALL_STONE_NE",
   "frames": 1,
-  "box_w": 82,
-  "box_h": 90,
-  "anchor_x": 42.0,
-  "anchor_y": 70.0,
+  "box_w": 107,
+  "box_h": 94,
+  "anchor_x": 63,
+  "anchor_y": 71,
   "sld_source": "b_afri_wall_stone_x1.sld",
   "frame_idx": 0
 }

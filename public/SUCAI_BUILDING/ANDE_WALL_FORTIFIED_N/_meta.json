@@ -1,9 +1,10 @@
 {
   "name": "ANDE_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 120,
-  "box_h": 132,
-  "anchor_x": 66,
-  "anchor_y": 102,
-  "sld_source": "b_ande_wall_fortified"
+  "box_w": 114,
+  "box_h": 126,
+  "anchor_x": 64,
+  "anchor_y": 98,
+  "sld_source": "b_ande_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

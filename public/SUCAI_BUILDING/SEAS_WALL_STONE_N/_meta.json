@@ -1,10 +1,10 @@
 {
   "name": "SEAS_WALL_STONE_N",
   "frames": 1,
-  "box_w": 42,
-  "box_h": 108,
-  "anchor_x": 21.0,
-  "anchor_y": 83.0,
+  "box_w": 62,
+  "box_h": 112,
+  "anchor_x": 37,
+  "anchor_y": 84,
   "sld_source": "b_seas_wall_stone_x1.sld",
   "frame_idx": 4
 }
