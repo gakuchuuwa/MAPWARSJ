@@ -122,6 +122,18 @@ interface WarBuilding {
      * 斜墙（北/南翼）不联动：被打破只自己消失，不触发联动倒塌、不触发守方反击（2026-08-22 主人定）。
      */
     linked?: boolean;
+    /**
+     * 城墙破损档素材目录名数组 [D25, D50, D75]（2026-08-22 提取自 DE destr_* 档）。
+     * 有值 → 破墙前按 HP 比例渐进切换破损贴图；破墙后切到 D75 残垣常驻（不再阻挡）。
+     * 无值（木栅栏 PALISADE 无破损档）→ 破墙直接消失 + 尘土特效。
+     */
+    destrAssets?: string[];
+    /** 城门倒塌动画素材目录名（DESTR，50 帧），破门时播放；播完切 rubbleAsset 残骸常驻 */
+    collapseAsset?: string;
+    /** 城门倒塌后残骸素材目录名（RUBBLE，1 帧），常驻地面不再阻挡 */
+    rubbleAsset?: string;
+    /** 倒塌动画已播放秒数（破门时置 0 启动，渲染层按帧推进） */
+    collapseT?: number;
 }
 
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
@@ -3383,11 +3395,16 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
             // 城墙/城门 = 可攻击建筑（照 DE）：铺贴图 + 建建筑目标（士兵能打、HP 归零破墙进城）
+            // 🔴 [2026-08-22 主人需求] 破墙要有倒塌动画和残骸：城墙按 HP 渐进切破损档（destr_25/50/75），
+            //    破墙瞬间尘土特效 + 留 D75 残垣；城门破 → 播 50 帧倒塌动画 → 留 rubble 残骸。
             const placeWall = (s: { x: number; y: number }, asset: string, key: 'STONE_WALL' | 'STONE_GATE', linked = false): void => {
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
                 const st = WALL_GATE_STATS[key];
-                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked });
+                // 城墙破损档素材（石墙/垛墙有 destr_*；木栅栏 PALISADE 无破损档 → 不挂，破墙直接消失）
+                const destrAssets = ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
+                for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
+                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets });
             };
             // 铺设城门并为其沿线铺设 7 点密集连续物理屏障（彻底杜绝士兵推挤穿透）
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
@@ -3418,7 +3435,12 @@ export class Scene13WarLayer {
                     this.decorSprites.push(extra);
                     extraSprites.push(extra);
                 }
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true });
+                // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
+                const collapseAsset = `${asset}_DESTR`;
+                const rubbleAsset = `${asset}_RUBBLE`;
+                this.ensureNatureAsset('BUILDINGANIM:' + collapseAsset);
+                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, collapseAsset, rubbleAsset });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -3568,12 +3590,15 @@ export class Scene13WarLayer {
         if (this.natureCache[asset]) return;
         const na: NatureAsset = { img: null, meta: null };
         this.natureCache[asset] = na;
-        const isBuilding = asset.startsWith('BUILDING:');
+        // 🔴 [2026-08-22] BUILDINGANIM: 前缀 = 多帧动画素材（城门倒塌 50 帧 / 城墙破损档）——
+        //    加载 frames.png 整条 strip 而非 preview.png 单帧，drawDecorSprite 按 frame 切片。
+        const isAnim = asset.startsWith('BUILDINGANIM:');
+        const isBuilding = asset.startsWith('BUILDING:') || isAnim;
         const base = isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL;
-        const name = isBuilding ? asset.slice('BUILDING:'.length) : asset;
+        const name = isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : asset);
         const im = new Image();
         im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
-        im.src = base + name + '/' + (isBuilding ? 'preview.png' : 'frames.png');
+        im.src = base + name + '/' + (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
         fetch(base + name + '/_meta.json')
             .then((r) => (r.ok ? r.json() : null))
             .then((m) => { if (m) { na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
