@@ -3330,11 +3330,15 @@ export class Scene13WarLayer {
             const southLen = Math.max(260, vw - wallFrontX - 20);
             const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
 
-            // 城墙分段生成辅助
-            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, segments = 18, wall = 'WALL_STONE'): void => {
+            // 城墙分段生成辅助：沿排线铺实心城垛。
+            //   - pitch>0：按「步长自适应」铺——间距 = pitch（≈素材沿走向的实际长度，略小以保证相邻轻微咬合），
+            //     段数随线长自动变。用于前排竖墙，确保城垛一个接一个贴齐、连成无缝一条，不露缝。
+            //   - pitch=0：沿用「固定段数均分」——用于斜线墙（斜向城垛），保持原锚点节奏。
+            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, segments = 18, wall = 'WALL_STONE', pitch = 0): void => {
                 const dx = p2.x - p1.x;
                 const dy = p2.y - p1.y;
                 const dist = Math.hypot(dx, dy);
+                if (pitch > 0) segments = Math.max(2, Math.round(dist / pitch));
                 const count = Math.max(2, segments + 1);
                 for (let i = 1; i < count; i++) {
                     const t = i / count;
@@ -3346,14 +3350,19 @@ export class Scene13WarLayer {
                 }
             };
 
-            // 1. 前排南北走向：NW 角楼 -> SW 角楼（南北朝向城垛连成一整段，以中点为锚，12 城垛）
-            buildWallLine(towerNW, towerSW, false, 12, 'WALL_STONE_N');
+            // 前排南北走向：NW 角楼 -> SW 角楼（南北朝向城垛按素材实际高度步进，连成无缝一条，不露缝）
+            // 已按 14 风格 WALL_STONE_N 的 box_h（112~136）做风格→高度映射；pitch 略取小(×0.9)保证相邻轻微咬合。
+            const WALL_N_PITCH: Record<string, number> = {
+                AFRI: 116, ANDE: 112, ASIA: 112, CEAS: 116, EAST: 120, INDI: 124, MEDI: 116,
+                MESO: 116, ORIE: 112, PERSIAN: 128, PURU: 120, SEAS: 120, SLAV: 136, WEST: 120,
+            };
+            buildWallLine(towerNW, towerSW, false, 12, 'WALL_STONE_N', (WALL_N_PITCH[style] ?? 116) * 0.9);
 
-            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（18 城垛）
-            buildWallLine(towerNW, towerNE, false, 18);
+            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（实心城垛连成一条，18 城垛）
+            buildWallLine(towerNW, towerNE, false, 18, 'WALL_STONE');
 
-            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（18 城垛）
-            buildWallLine(towerSW, towerSE, true, 18);
+            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（实心城垛连成一条，18 城垛）
+            buildWallLine(towerSW, towerSE, true, 18, 'WALL_STONE');
 
             // 四角连接：原警戒塔改为城垛填补墙角，与相邻墙衔接闭合（前排两角=南北城垛；斜线两角=斜向城垛）
             this.decorSprites.push(place(towerNW, `${style}_WALL_STONE_N`, { flip: false, z: 1 }));
@@ -3516,7 +3525,7 @@ export class Scene13WarLayer {
         // DE 原版高程完全依靠网格脚点物理抬升 (elevationLiftAt)，保持地表贴图原生质感
     }
 
-    /** DE 纯正动态水体渲染：双层等距流速干涉，100% 采用 DE 原版贴图材质 */
+    /** DE 纯正动态水体渲染：浅滩透水羽化 + 双层等距流速干涉 + 阳光焦散波光 + 拍岸白浪微沫 */
     private renderDynamicWater(ctx: CanvasRenderingContext2D, t: number): void {
         const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
         if (waterPatches.length === 0) return;
@@ -3559,15 +3568,24 @@ export class Scene13WarLayer {
             if (bbox.w <= 0 || bbox.h <= 0) continue;
             if (wcv.width !== bbox.w || wcv.height !== bbox.h) { wcv.width = bbox.w; wcv.height = bbox.h; }
 
-            // 1. 水域遮罩蒙版（bbox 局部坐标）
+            // 1. 水域遮罩蒙版（bbox 局部坐标）：岸边浅滩 6px 羽化，使边缘透出沙滩/泥土地表
             wctx.clearRect(0, 0, bbox.w, bbox.h);
-            wctx.fillStyle = '#fff';
             if (p.polygon && p.polygon.length >= 3) {
-                wctx.beginPath();
-                wctx.moveTo(p.polygon[0].x - bbox.x, p.polygon[0].y - bbox.y);
-                for (let i = 1; i < p.polygon.length; i++) wctx.lineTo(p.polygon[i].x - bbox.x, p.polygon[i].y - bbox.y);
-                wctx.closePath();
-                wctx.fill();
+                if (!this.maskCv) { this.maskCv = document.createElement('canvas'); this.maskCtx = this.maskCv.getContext('2d')!; }
+                if (this.maskCv.width !== bbox.w || this.maskCv.height !== bbox.h) { this.maskCv.width = bbox.w; this.maskCv.height = bbox.h; }
+                const mctx = this.maskCtx!;
+                mctx.clearRect(0, 0, bbox.w, bbox.h);
+                mctx.fillStyle = '#fff';
+                mctx.beginPath();
+                mctx.moveTo(p.polygon[0].x - bbox.x, p.polygon[0].y - bbox.y);
+                for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x - bbox.x, p.polygon[i].y - bbox.y);
+                mctx.closePath();
+                mctx.fill();
+
+                // 🔴 DE 级水岸羽化：边缘 6px 柔和过渡，生成岸边半透明浅水 (Shallows)
+                wctx.filter = 'blur(6px)';
+                wctx.drawImage(this.maskCv, 0, 0);
+                wctx.filter = 'none';
             } else {
                 for (const [gx, gy] of p.cells) {
                     const sx = this.isoCellX(gx, gy) - bbox.x, sy = this.isoCellY(gx, gy) - bbox.y;
@@ -3606,7 +3624,7 @@ export class Scene13WarLayer {
             // 第二层：表层次级干涉微波（以不同速率与微小夹角错位流动，产生大江水波涌动干涉）
             if (pat) {
                 wctx.save();
-                wctx.globalAlpha = 0.32;
+                wctx.globalAlpha = 0.35;
                 const dx2 = (-t * 12) % tw;
                 const dy2 = (t * 20) % th;
                 wctx.translate(dx2, dy2);
@@ -3614,6 +3632,13 @@ export class Scene13WarLayer {
                 wctx.fillRect(-dx2 - tw, -dy2 - th, bbox.w + tw * 2, bbox.h + th * 2);
                 wctx.restore();
             }
+
+            // 第三层：深水河心水色沉降（Deep Water Tone - 中轴深青蓝，边缘浅滩透底）
+            wctx.save();
+            wctx.globalAlpha = 0.22;
+            wctx.fillStyle = '#103050';
+            wctx.fillRect(0, 0, bbox.w, bbox.h);
+            wctx.restore();
 
             wctx.globalCompositeOperation = 'source-over';
             wctx.globalAlpha = 1;
@@ -3623,6 +3648,65 @@ export class Scene13WarLayer {
             ctx.drawImage(wcv, bbox.x, bbox.y);
             if (p.alpha < 1) ctx.globalAlpha = 1;
         }
+    }
+
+    /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪 */
+    private renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
+        const waterPatches = this.decorPatches.filter((p) => p.isWater && p.bbox);
+        if (waterPatches.length === 0) return;
+
+        ctx.save();
+        ctx.lineWidth = 1.5;
+
+        // 1. 活人涉水移动涟漪
+        for (let i = 0; i < this.men.length; i++) {
+            const m = this.men[i];
+            let inWater = false;
+            for (const p of waterPatches) {
+                const b = p.bbox!;
+                if (m.x >= b.x && m.x <= b.x + b.w && m.y >= b.y && m.y <= b.y + b.h) {
+                    inWater = true;
+                    break;
+                }
+            }
+            if (!inWater) continue;
+
+            const drawY = m.y - this.elevationLiftAt(m.x, m.y);
+            const cycle = (t * 1.8 + (i % 7) * 0.4) % 1.0;
+            const r = 4 + cycle * 12;
+            const a = (1 - cycle) * 0.36;
+
+            ctx.strokeStyle = `rgba(220, 242, 255, ${a.toFixed(2)})`;
+            ctx.beginPath();
+            ctx.ellipse(m.x, drawY + 2, r, r * 0.5, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // 2. 阵亡落水尸体（微弱静水缓波涟漪）
+        for (let i = 0; i < Math.min(this.corpses.length, 30); i++) {
+            const c = this.corpses[i];
+            let inWater = false;
+            for (const p of waterPatches) {
+                const b = p.bbox!;
+                if (c.x >= b.x && c.x <= b.x + b.w && c.y >= b.y && c.y <= b.y + b.h) {
+                    inWater = true;
+                    break;
+                }
+            }
+            if (!inWater) continue;
+
+            const drawY = c.y - this.elevationLiftAt(c.x, c.y);
+            const cycle = (t * 0.8 + (i % 5) * 0.5) % 1.0;
+            const r = 6 + cycle * 8;
+            const a = (1 - cycle) * 0.22;
+
+            ctx.strokeStyle = `rgba(200, 230, 255, ${a.toFixed(2)})`;
+            ctx.beginPath();
+            ctx.ellipse(c.x, drawY, r, r * 0.5, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        ctx.restore();
     }
 
     /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰）。
@@ -5262,6 +5346,9 @@ export class Scene13WarLayer {
 
         // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
         this.renderDynamicWater(ctx, performance.now() * 0.001);
+
+        // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
+        this.renderWadingRipples(ctx, performance.now() * 0.001);
 
         type UnitVisual = { kind: 'unit'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number };
         type EnvironmentVisual = { kind: 'environment'; y: number; z: number; sprite: DecorSprite };

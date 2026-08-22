@@ -328,9 +328,9 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.palaearctic_tibetan_plateau;
     }
 
-    // 4. 西亚带（安纳托利亚/黎凡特/两河/伊朗高原：lng 26~62、lat 25~43；
-    //    覆盖大不里士/摩苏尔/马什哈德/贝鲁特——它们被 RegionSystem 误归中亚）
-    if (lng > 26 && lng < 62 && lat > 25 && lat < 43) {
+    // 4. 西亚带（安纳托利亚内陆/黎凡特/两河/伊朗高原：lng 30~62、lat 25~43；
+    //    巴尔干/君士坦丁堡/爱琴海西岸 lng<30 属欧洲温带/地中海，不进入西亚带）
+    if (lng >= 30 && lng < 62 && lat > 25 && lat < 43) {
         if (biome === 'desert' || lat < 31) return DE_MAP_THEMES.palaearctic_middle_east_desert; // 两河/波斯湾低地
         // 🔴 [2026-08-21 完善] 地中海东岸（黎凡特海岸 lat 33-36、安纳托利亚西岸）都是地中海气候：
         //    原 lat>36 漏掉贝鲁特（33.9）→ 改成 lng<40（东地中海沿岸带）即可
@@ -552,20 +552,11 @@ export function waterTerrainForTheme(
     ) {
         return 'river_clean_green';
     }
-    // 3. 黄土高原 / 中东沙漠 / 西亚干旱高地 / 塞外草原：黄泥浊流水 (wt_yellow)
-    if (
-        theme.id === 'palaearctic_middle_east_desert' ||
-        theme.id === 'palaearctic_middle_east_highland' ||
-        theme.id === 'palaearctic_asia_steppe' ||
-        biome === 'desert'
-    ) {
-        return 'wt_yellow';
-    }
-    // 4. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
+    // 3. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
     if (theme.id === 'palustrine_swamp') {
         return 'wt6';
     }
-    // 5. 欧洲温带 / 东亚中原温带平原 / 默认：经典清澈浅蓝水 (wtr)
+    // 4. 绝大多数江河水系（温带、地中海、中原、高地、沙漠绿洲等）：DE 经典清澈蔚蓝江水 (wtr)
     return 'wtr';
 }
 

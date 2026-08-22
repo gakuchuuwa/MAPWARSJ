@@ -891,13 +891,13 @@ function buildRiver(
         const x = baseCenterX + curveOffset;
         const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
 
-        // 宽阔大江尺度：深水区宽 80~110px，随水流与弯曲自然起伏
-        const wW = 82 + Math.sin(t * Math.PI * 2.6 + phase2) * 16 + Math.cos(t * Math.PI * 5.4) * 8;
+        // 宽阔大江尺度：深水区宽 90~120px，随水流与弯曲自然起伏，确保碧波水流占据主要视觉
+        const wW = 92 + Math.sin(t * Math.PI * 2.6 + phase2) * 18 + Math.cos(t * Math.PI * 5.4) * 10;
 
-        // 左右沙滩宽度自然不对称：河湾凸岸泥沙堆积（沙滩更宽）、凹岸水流冲刷（沙滩收窄）
+        // 左右沙滩宽度自然不对称（细腻浅滩过渡 14~24px，绝不喧宾夺主掩盖江面）
         const curvature = Math.sin(t * Math.PI * 2.0 + phase1);
-        const bWLeft = wW + 36 + curvature * 20 + Math.sin(t * 8.0 + phase3) * 6;
-        const bWRight = wW + 36 - curvature * 20 + Math.cos(t * 8.0 + phase2) * 6;
+        const bWLeft = wW + 18 + curvature * 8 + Math.sin(t * 8.0 + phase3) * 4;
+        const bWRight = wW + 18 - curvature * 8 + Math.cos(t * 8.0 + phase2) * 4;
 
         pts.push({ x, y, nx: 0, ny: 0, wW, bWLeft, bWRight });
     }
@@ -958,8 +958,11 @@ function buildRiver(
     // 🔴 [2026-08-22 纯净自然河流]：
     // 1. 彻底去除海边大石(ROCK_BEACH等)与河心突兀障碍物，河道水流保持纯净开阔
     // 2. 严禁河边擅自生成第3种树种（全场景树种严格由 buildVegetation 统一管理，上限 ≤2 种）
-    // 3. 仅在沙滩与草地交界外沿点缀 2~3 处与当前主题完全契合的低矮地表物(theme.flatDecor)
-    const flatDecors = theme.flatDecor?.length ? theme.flatDecor : ['GRASS_GREEN_PATCH', 'SHRUB_GREEN'];
+    // 3. 仅在沙滩与草地交界外沿点缀 2~3 处与当前主题契合的低矮地表物(theme.flatDecor/REEDS)
+    const flatDecors = [...(theme.flatDecor?.length ? theme.flatDecor : ['GRASS_GREEN_PATCH', 'SHRUB_GREEN'])];
+    if (theme.id !== 'palaearctic_middle_east_desert' && biome !== 'desert' && season !== 2) {
+        flatDecors.push('REEDS');
+    }
     const decorCount = 2 + rng.int(0, 2);
     for (let i = 0; i < decorCount; i++) {
         const t = 0.10 + rng.next() * 0.80;
