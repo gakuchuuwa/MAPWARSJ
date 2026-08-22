@@ -2063,6 +2063,8 @@ interface WarMan {
     ph: number;
     st: 0 | 1 | 2;
     foe: WarMan | WarBuilding | null;
+    /** 【被攻击反击】最近一次攻击我的人（WarMan）。被攻击的兵下次索敌时优先锁定它，无视围殴封顶 SPREAD_CAP */
+    hurtBy?: WarMan | null;
     next: number;
     fightT: number;
     aimT: number;
@@ -4604,6 +4606,7 @@ export class Scene13WarLayer {
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
                     o.atkNext++;
+                    o.hurtBy = m;   // 【被攻击反击】范围伤也记录攻击者
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
                     if (o.hp <= 0) this.pushCorpse(o);
                 }
@@ -4886,7 +4889,17 @@ export class Scene13WarLayer {
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
-                m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
+                // 【被攻击反击】优先锁定最近攻击我的人（无视围殴封顶 SPREAD_CAP）：
+                // 残兵追着打时，被残兵贴身砍的兵即使 claim 不到残兵（已被 4 人占满），
+                // 也要回头反击，而不是继续走巡逻航路。
+                const hb = m.hurtBy;
+                if (hb && hb.hp > 0 && hb.f !== m.f
+                    && (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 < SIGHT * SIGHT * 1.44) {
+                    m.foe = hb;
+                    hb.claims++;
+                } else {
+                    m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
+                }
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
 
@@ -5208,6 +5221,7 @@ export class Scene13WarLayer {
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
+                    if (!('sprite' in foe)) foe.hurtBy = m;   // 【被攻击反击】记录攻击者（建筑不反击）
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (m.accHit !== false) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
