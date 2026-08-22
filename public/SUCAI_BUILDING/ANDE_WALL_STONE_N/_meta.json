@@ -1,9 +1,10 @@
 {
   "name": "ANDE_WALL_STONE_N",
   "frames": 1,
-  "box_w": 72,
-  "box_h": 112,
-  "anchor_x": 46,
-  "anchor_y": 82,
-  "sld_source": "b_ande_wall_stone"
+  "box_w": 34,
+  "box_h": 104,
+  "anchor_x": 17.0,
+  "anchor_y": 80.0,
+  "sld_source": "b_ande_wall_stone_x1.sld",
+  "frame_idx": 4
 }

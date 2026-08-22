@@ -142,7 +142,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     longbowman_elite: { name: '不列颠长弓兵精锐', cls: 'ranged', sz: 1, hp: 40, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     pikeman: { name: '长枪兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
     cav_archer: { name: '骑射手', cls: 'cav', sz: 1, kite: 70, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
-    light_riders: { name: '中世纪轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
+    light_riders: { name: '中世纪轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 139, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     chukonu: { name: '中国诸葛弩', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     white_feather_guard: { name: '蜀白毦兵', cls: 'melee', sz: 1, hp: 95, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 6 }, armorTags: [1, 19, 31] },
     elite_white_feather_guard: { name: '蜀白毦兵精锐', cls: 'melee', sz: 1, hp: 100, atk: 8, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 7 }, armorTags: [1, 19, 31] },
@@ -201,7 +201,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     porus_elephant: { name: '波鲁斯王战象', cls: 'melee', sz: 1.1, aoe: true, hp: 530, atk: 16, meleeArmor: 1, pierceArmor: 5, rng: 0, reload: 2.5, spd: 40, dmgType: 'melee', bonus: { 21: 4, 13: 4 }, armorTags: [5, 8, 19, 31, 36] },
     rattan_archer_elite: { name: '越南藤弓兵精锐', cls: 'ranged', sz: 1, hp: 45, atk: 7, meleeArmor: 0, pierceArmor: 6, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     legionary: { name: '军团步兵', cls: 'melee', sz: 1, hp: 75, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
-    lancer: { name: '轻骑兵', cls: 'cav', sz: 1.15, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
+    lancer: { name: '轻骑兵', cls: 'cav', sz: 1.15, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 139, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     heavy_cavalry: { name: '重骑兵', cls: 'cav', sz: 1.15, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     general_cavalry: { name: '虎豹骑', cls: 'cav', sz: 1.15, hp: 110, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
     horse_archer: { name: '突骑兵', cls: 'cav', sz: 1.15, kite: 70, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
@@ -409,7 +409,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_antiquity_skirmisher: { name: '古典掷矛手高级', cls: 'ranged', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
     antiquity_cavalry_archer: { name: '古典骑射手', cls: 'cav', sz: 1, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
     antiquity_heavy_cavalry_archer: { name: '古典骑射手重装', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 4 }, armorTags: [28, 15, 8, 31] },
-    antiquity_light_cavalry: { name: '古典轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
+    antiquity_light_cavalry: { name: '古典轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 139, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     antiquity_scout_cavalry: { name: '古典斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
     antiquity_spearman: { name: '古典长矛兵', cls: 'melee', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 15, 8: 15, 16: 9, 21: 1, 29: 1, 30: 12 }, armorTags: [27, 1, 31] },
     antiquity_battering_ram: { name: '古典轻型攻城槌', cls: 'melee', sz: 1, hp: 175, atk: 2, meleeArmor: -3, pierceArmor: 180, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 150, 20: 40 }, armorTags: [17, 20, 31] },
@@ -979,7 +979,7 @@ const ELEV_STEP_PX = 14;
  * 单次伤害公式见 dmgVs()；每秒伤害 = dmgVs / reload。
  */
 /** 围殴加成：被 N 人同时攻击的人受伤 ×(1 + K×min(N-1, CAP))。见 GANG_K 处的长注释 */
-function gangMul(victim: WarMan): number {
+function gangMul(victim: WarMan | WarBuilding): number {
     return 1 + GANG_K * Math.min(GANG_CAP, Math.max(0, victim.atkers - 1));
 }
 /**
@@ -3394,34 +3394,30 @@ export class Scene13WarLayer {
             const topWallY = midY - 8.5 * pitch;
             const botWallY = midY + 8.5 * pitch;
 
-            // 1. 北翼防线 (NE 东北向展开，连续平滑无缝)
-            // (1) 北翼向上完整双塔城门 (左角塔、中门、右角塔三点密实物理阻挡，杜绝穿透)
+            // 1. 北翼防线 (NE 东北向展开，严格对齐 DE 4x1 网格标准)
+            // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 96, topWallY - 48))
             placeWall({ x: wallFrontX + 48, y: topWallY - 24 }, style + '_GATE_STONE_NE', 'STONE_GATE');
-            placeWall({ x: wallFrontX, y: topWallY }, style + '_WALL_POST', 'STONE_WALL'); // 左塔密闭阻挡
-            placeWall({ x: wallFrontX + 96, y: topWallY - 48 }, style + '_WALL_POST', 'STONE_WALL'); // 右塔密闭阻挡
-            // (2) 从城门右角塔(k=0)顺畅接出 7 段 NE 斜城墙 (无缝紧贴，绝不中断)
-            for (let k = 0; k <= 6; k++) {
+            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 96 + k * pitchDx, y: topWallY - 48 - k * pitchDy }, style + '_WALL_STONE_NE', 'STONE_WALL');
             }
             // (3) 北翼末端正统城垛立柱 (Wall Post)
-            placeWall({ x: wallFrontX + 96 + 7 * pitchDx, y: topWallY - 48 - 7 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
+            placeWall({ x: wallFrontX + 96 + 15 * pitchDx, y: topWallY - 48 - 15 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
 
-            // 2. 正面 18 段垂直主城墙 (从北到南)
+            // 2. 正面 18 段垂直主城墙 (精确从北门左角塔垂直连接至南门左角塔)
             for (let i = -8.5; i <= 8.5; i += 1.0) {
                 placeWall({ x: wallFrontX, y: midY + i * pitch }, style + '_WALL_STONE_N', 'STONE_WALL');
             }
 
-            // 3. 南翼防线 (SE 东南向展开，连续平滑无缝)
-            // (1) 南翼向下完整双塔城门 (左角塔、中门、右角塔三点密实物理阻挡，杜绝穿透)
-            placeWall({ x: wallFrontX + 48, y: botWallY + 44 }, style + '_GATE_STONE_SE', 'STONE_GATE');
-            placeWall({ x: wallFrontX, y: botWallY + 20 }, style + '_WALL_POST', 'STONE_WALL'); // 左塔密闭阻挡
-            placeWall({ x: wallFrontX + 96, y: botWallY + 68 }, style + '_WALL_POST', 'STONE_WALL'); // 右塔密闭阻挡
-            // (2) 从城门右角塔(k=0)顺畅接出 7 段 SE 斜城墙 (无缝紧贴，绝不中断)
-            for (let k = 0; k <= 6; k++) {
-                placeWall({ x: wallFrontX + 96 + k * pitchDx, y: botWallY + 20 + 48 + k * pitchDy }, style + '_WALL_STONE_SE', 'STONE_WALL');
+            // 3. 南翼防线 (SE 东南向展开，严格对齐 DE 4x1 网格标准)
+            // (1) 南翼向下完整双塔大城门 (左角塔在 (wallFrontX, botWallY), 右角塔在 (wallFrontX + 96, botWallY + 48))
+            placeWall({ x: wallFrontX + 48, y: botWallY + 24 }, style + '_GATE_STONE_SE', 'STONE_GATE');
+            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 1; k <= 14; k++) {
+                placeWall({ x: wallFrontX + 96 + k * pitchDx, y: botWallY + 48 + k * pitchDy }, style + '_WALL_STONE_SE', 'STONE_WALL');
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)
-            placeWall({ x: wallFrontX + 96 + 7 * pitchDx, y: botWallY + 20 + 48 + 7 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
+            placeWall({ x: wallFrontX + 96 + 15 * pitchDx, y: botWallY + 48 + 15 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
@@ -4875,7 +4871,7 @@ export class Scene13WarLayer {
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
                     // 火矛手充能喷火（DE：进战先喷 3 发短程火枪弹，30 秒充能）
-                    if (FIRE_LANCER_TYPES.has(m.key) && (m.chargeCd ?? 0) <= 0 && foe) {
+                    if (FIRE_LANCER_TYPES.has(m.key) && (m.chargeCd ?? 0) <= 0 && foe && !('sprite' in foe)) {
                         m.chargeCd = FIRE_LANCER_CHARGE;
                         this.fireLanceVolley(m, foe);
                     }
