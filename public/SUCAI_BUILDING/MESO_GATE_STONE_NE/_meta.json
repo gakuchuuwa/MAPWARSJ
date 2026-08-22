@@ -1,9 +1,9 @@
 {
   "name": "MESO_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 180,
-  "anchor_x": 120,
-  "anchor_y": 152,
-  "sld_source": "b_meso_gate_stone_ne_open"
+  "box_w": 115,
+  "box_h": 161,
+  "anchor_x": 62.0,
+  "anchor_y": 149.0,
+  "sld_source": "b_meso_gate_stone_ne_open_x1.sld"
 }

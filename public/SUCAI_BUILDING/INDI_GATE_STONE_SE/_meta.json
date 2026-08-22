@@ -1,0 +1,9 @@
+{
+  "name": "INDI_GATE_STONE_SE",
+  "frames": 1,
+  "box_w": 117,
+  "box_h": 126,
+  "anchor_x": 58.0,
+  "anchor_y": 140.0,
+  "sld_source": "b_indi_gate_stone_se_open_x1.sld"
+}
