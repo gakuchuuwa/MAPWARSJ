@@ -1,0 +1,9 @@
+{
+  "name": "PURU_GATE_FORTIFIED_NE",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 204,
+  "anchor_x": 124,
+  "anchor_y": 176,
+  "sld_source": "b_puru_gate_fortified_ne_open"
+}

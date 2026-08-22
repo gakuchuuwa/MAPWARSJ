@@ -1,11 +1,9 @@
 {
   "name": "SEAS_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 247,
-  "box_h": 340,
-  "anchor_x": 123.0,
-  "anchor_y": 279.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 192,
+  "box_h": 216,
+  "anchor_x": 124,
+  "anchor_y": 180,
+  "sld_source": "b_seas_gate_stone_se_open"
 }

@@ -1,11 +1,9 @@
 {
   "name": "ANDE_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 242,
-  "box_h": 246,
-  "anchor_x": 121.0,
-  "anchor_y": 186.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 164,
+  "box_h": 188,
+  "anchor_x": 108,
+  "anchor_y": 160,
+  "sld_source": "b_ande_gate_stone_se_open"
 }

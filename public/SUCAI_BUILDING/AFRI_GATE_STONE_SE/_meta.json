@@ -1,11 +1,9 @@
 {
   "name": "AFRI_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 255,
-  "box_h": 250,
-  "anchor_x": 125.0,
-  "anchor_y": 186.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 160,
+  "box_h": 184,
+  "anchor_x": 104,
+  "anchor_y": 152,
+  "sld_source": "b_afri_gate_stone_se_open"
 }

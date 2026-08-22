@@ -1,11 +1,9 @@
 {
   "name": "ASIA_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 241,
-  "box_h": 339,
-  "anchor_x": 119.0,
-  "anchor_y": 279.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 184,
+  "box_h": 212,
+  "anchor_x": 124,
+  "anchor_y": 184,
+  "sld_source": "b_asia_gate_stone_ne_open"
 }

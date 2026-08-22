@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_WALL_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 128,
+  "box_h": 128,
+  "anchor_x": 80,
+  "anchor_y": 100,
+  "sld_source": "b_afri_wall_fortified"
+}

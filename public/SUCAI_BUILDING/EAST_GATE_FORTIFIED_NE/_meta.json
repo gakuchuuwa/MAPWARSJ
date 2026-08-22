@@ -1,0 +1,9 @@
+{
+  "name": "EAST_GATE_FORTIFIED_NE",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 188,
+  "anchor_x": 116,
+  "anchor_y": 164,
+  "sld_source": "b_east_gate_fortified_ne_open"
+}

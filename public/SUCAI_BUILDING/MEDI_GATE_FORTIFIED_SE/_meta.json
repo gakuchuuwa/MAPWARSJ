@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 176,
+  "box_h": 200,
+  "anchor_x": 112,
+  "anchor_y": 168,
+  "sld_source": "b_medi_gate_fortified_se_open"
+}

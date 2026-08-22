@@ -1,11 +1,9 @@
 {
   "name": "MESO_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 240,
-  "box_h": 247,
-  "anchor_x": 121.0,
-  "anchor_y": 187.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 180,
+  "box_h": 180,
+  "anchor_x": 120,
+  "anchor_y": 152,
+  "sld_source": "b_meso_gate_stone_se_open"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_WALL_FORTIFIED_NE",
+  "frames": 1,
+  "box_w": 132,
+  "box_h": 120,
+  "anchor_x": 80,
+  "anchor_y": 92,
+  "sld_source": "b_orie_wall_fortified"
+}

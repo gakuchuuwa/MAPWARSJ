@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 208,
+  "anchor_x": 124,
+  "anchor_y": 172,
+  "sld_source": "b_ande_gate_fortified_se_open"
+}
