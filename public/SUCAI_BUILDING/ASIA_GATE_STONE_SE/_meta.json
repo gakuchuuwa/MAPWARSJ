@@ -1,9 +1,11 @@
 {
   "name": "ASIA_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 193,
-  "box_h": 261,
-  "anchor_x": 95.0,
-  "anchor_y": 213.0,
-  "is_complete_twin_tower_gate": true
+  "box_w": 241,
+  "box_h": 339,
+  "anchor_x": 119.0,
+  "anchor_y": 279.0,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36
 }

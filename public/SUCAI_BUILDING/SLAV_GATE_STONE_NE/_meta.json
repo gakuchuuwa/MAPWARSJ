@@ -1,9 +1,11 @@
 {
   "name": "SLAV_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 207,
-  "box_h": 299,
-  "anchor_x": 105.0,
-  "anchor_y": 249.0,
-  "is_complete_twin_tower_gate": true
+  "box_w": 255,
+  "box_h": 280,
+  "anchor_x": 129.0,
+  "anchor_y": 218.0,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36
 }

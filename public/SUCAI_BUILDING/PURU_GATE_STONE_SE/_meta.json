@@ -1,9 +1,11 @@
 {
   "name": "PURU_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 213,
-  "box_h": 277,
-  "anchor_x": 106.0,
-  "anchor_y": 229.0,
-  "is_complete_twin_tower_gate": true
+  "box_w": 261,
+  "box_h": 339,
+  "anchor_x": 130.0,
+  "anchor_y": 279.0,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36
 }
