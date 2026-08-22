@@ -1,9 +1,9 @@
 {
   "name": "SLAV_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 131,
-  "box_h": 182,
-  "anchor_x": 66.0,
-  "anchor_y": 152.0,
-  "sld_source": "b_slav_gate_stone_ne_open_x1.sld"
+  "box_w": 207,
+  "box_h": 299,
+  "anchor_x": 105.0,
+  "anchor_y": 249.0,
+  "is_complete_twin_tower_gate": true
 }

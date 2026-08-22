@@ -1,0 +1,10 @@
+{
+  "name": "AFRI_WALL_POST",
+  "frames": 1,
+  "box_w": 111,
+  "box_h": 178,
+  "anchor_x": 53.0,
+  "anchor_y": 150.0,
+  "sld_source": "b_afri_wall_stone_x1.sld",
+  "frame_idx": 2
+}

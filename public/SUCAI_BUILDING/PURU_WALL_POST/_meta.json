@@ -1,0 +1,10 @@
+{
+  "name": "PURU_WALL_POST",
+  "frames": 1,
+  "box_w": 101,
+  "box_h": 186,
+  "anchor_x": 49.0,
+  "anchor_y": 162.0,
+  "sld_source": "b_puru_wall_stone_x1.sld",
+  "frame_idx": 2
+}

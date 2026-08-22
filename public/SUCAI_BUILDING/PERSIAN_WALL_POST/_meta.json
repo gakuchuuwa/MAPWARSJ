@@ -1,0 +1,10 @@
+{
+  "name": "PERSIAN_WALL_POST",
+  "frames": 1,
+  "box_w": 100,
+  "box_h": 179,
+  "anchor_x": 49.0,
+  "anchor_y": 155.0,
+  "sld_source": "b_mide_wall_stone_x1.sld",
+  "frame_idx": 2
+}

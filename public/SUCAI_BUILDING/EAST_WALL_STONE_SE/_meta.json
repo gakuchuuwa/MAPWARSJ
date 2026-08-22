@@ -1,0 +1,10 @@
+{
+  "name": "EAST_WALL_STONE_SE",
+  "frames": 1,
+  "box_w": 78,
+  "box_h": 97,
+  "anchor_x": 38.0,
+  "anchor_y": 78.0,
+  "sld_source": "b_east_wall_stone_x1.sld",
+  "frame_idx": 1
+}

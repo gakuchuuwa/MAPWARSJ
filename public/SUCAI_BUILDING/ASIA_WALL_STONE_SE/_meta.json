@@ -1,0 +1,10 @@
+{
+  "name": "ASIA_WALL_STONE_SE",
+  "frames": 1,
+  "box_w": 70,
+  "box_h": 89,
+  "anchor_x": 35.0,
+  "anchor_y": 72.0,
+  "sld_source": "b_asia_wall_stone_x1.sld",
+  "frame_idx": 1
+}

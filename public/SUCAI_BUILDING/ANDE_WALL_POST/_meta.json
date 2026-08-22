@@ -1,0 +1,10 @@
+{
+  "name": "ANDE_WALL_POST",
+  "frames": 1,
+  "box_w": 98,
+  "box_h": 174,
+  "anchor_x": 49.0,
+  "anchor_y": 150.0,
+  "sld_source": "b_ande_wall_stone_x1.sld",
+  "frame_idx": 2
+}
