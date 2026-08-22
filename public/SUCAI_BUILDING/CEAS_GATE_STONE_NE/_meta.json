@@ -1,11 +1,9 @@
 {
   "name": "CEAS_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 236,
-  "box_h": 241,
-  "anchor_x": 118.0,
-  "anchor_y": 183.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 204,
+  "box_h": 200,
+  "anchor_x": 132,
+  "anchor_y": 160,
+  "sld_source": "b_ceas_gate_stone_ne_open"
 }

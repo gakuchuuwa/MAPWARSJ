@@ -1,0 +1,9 @@
+{
+  "name": "EAST_WALL_FORTIFIED_POST",
+  "frames": 1,
+  "box_w": 184,
+  "box_h": 204,
+  "anchor_x": 124,
+  "anchor_y": 172,
+  "sld_source": "b_east_wall_fortified"
+}

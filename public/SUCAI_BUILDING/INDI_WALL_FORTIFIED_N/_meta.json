@@ -1,0 +1,9 @@
+{
+  "name": "INDI_WALL_FORTIFIED_N",
+  "frames": 1,
+  "box_w": 100,
+  "box_h": 144,
+  "anchor_x": 64,
+  "anchor_y": 112,
+  "sld_source": "b_indi_wall_fortified"
+}

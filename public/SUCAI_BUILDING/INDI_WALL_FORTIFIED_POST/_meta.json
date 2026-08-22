@@ -1,0 +1,9 @@
+{
+  "name": "INDI_WALL_FORTIFIED_POST",
+  "frames": 1,
+  "box_w": 152,
+  "box_h": 180,
+  "anchor_x": 100,
+  "anchor_y": 152,
+  "sld_source": "b_indi_wall_fortified"
+}

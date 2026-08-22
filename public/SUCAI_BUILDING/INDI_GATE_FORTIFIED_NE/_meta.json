@@ -1,0 +1,9 @@
+{
+  "name": "INDI_GATE_FORTIFIED_NE",
+  "frames": 1,
+  "box_w": 176,
+  "box_h": 176,
+  "anchor_x": 108,
+  "anchor_y": 148,
+  "sld_source": "b_indi_gate_fortified_ne_open"
+}

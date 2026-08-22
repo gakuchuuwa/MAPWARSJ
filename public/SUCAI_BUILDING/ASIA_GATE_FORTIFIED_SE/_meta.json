@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 180,
+  "box_h": 200,
+  "anchor_x": 120,
+  "anchor_y": 172,
+  "sld_source": "b_asia_gate_fortified_se_open"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 204,
+  "box_h": 216,
+  "anchor_x": 132,
+  "anchor_y": 180,
+  "sld_source": "b_seas_gate_fortified_se_open"
+}

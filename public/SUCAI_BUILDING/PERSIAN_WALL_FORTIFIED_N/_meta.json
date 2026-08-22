@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_WALL_FORTIFIED_N",
+  "frames": 1,
+  "box_w": 112,
+  "box_h": 136,
+  "anchor_x": 76,
+  "anchor_y": 108,
+  "sld_source": "b_persian_wall_fortified"
+}

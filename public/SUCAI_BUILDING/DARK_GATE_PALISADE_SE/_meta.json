@@ -1,0 +1,9 @@
+{
+  "name": "DARK_GATE_PALISADE_SE",
+  "frames": 1,
+  "box_w": 168,
+  "box_h": 188,
+  "anchor_x": 108,
+  "anchor_y": 156,
+  "sld_source": "b_dark_gate_palisade_se_open"
+}

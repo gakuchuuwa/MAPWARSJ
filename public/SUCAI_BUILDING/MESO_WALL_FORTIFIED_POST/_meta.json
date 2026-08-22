@@ -1,0 +1,9 @@
+{
+  "name": "MESO_WALL_FORTIFIED_POST",
+  "frames": 1,
+  "box_w": 164,
+  "box_h": 192,
+  "anchor_x": 112,
+  "anchor_y": 164,
+  "sld_source": "b_meso_wall_fortified"
+}

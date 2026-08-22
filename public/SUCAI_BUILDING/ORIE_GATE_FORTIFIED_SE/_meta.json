@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 188,
+  "anchor_x": 116,
+  "anchor_y": 160,
+  "sld_source": "b_orie_gate_fortified_se_open"
+}

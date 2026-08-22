@@ -115,6 +115,8 @@ interface WarBuilding {
     atkers: number;
     /** 关联装饰精灵（破墙时标记 destroyed → 不再绘制、不再阻挡） */
     sprite: DecorSprite;
+    /** 关联的附属物理屏障精灵（破门时一并标记 destroyed / obstructionDisabled 解除阻挡） */
+    extraSprites?: DecorSprite[];
 }
 
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
@@ -3380,7 +3382,7 @@ export class Scene13WarLayer {
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
                 const st = WALL_GATE_STATS.STONE_GATE;
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite });
+                const extraSprites: DecorSprite[] = [];
 
                 // 在城门跨度上沿轴线（[-72, +72]）每隔 24px 铺设连续密实碰撞体
                 const dSign = dir === 'NE' ? -1 : 1;
@@ -3388,7 +3390,7 @@ export class Scene13WarLayer {
                     if (step === 0) continue;
                     const obsX = s.x + step * 24;
                     const obsY = s.y + step * 12 * dSign;
-                    this.decorSprites.push({
+                    const extra: DecorSprite = {
                         asset: '',
                         frame: 0,
                         x: obsX,
@@ -3400,8 +3402,11 @@ export class Scene13WarLayer {
                         obstructionContactSec: 0,
                         obstructionTouched: false,
                         obstructionDisabled: false,
-                    });
+                    };
+                    this.decorSprites.push(extra);
+                    extraSprites.push(extra);
                 }
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -3422,42 +3427,51 @@ export class Scene13WarLayer {
             const topWallY = midY - 8.5 * pitch;
             const botWallY = midY + 8.5 * pitch;
 
+            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城木栅 / 中城石墙 / 险要+大城垛墙。
+            //    三者是同一条升级链（木栅→石墙→垛墙），占位一致（碰撞 0.5×0.5），仅换贴图。
+            const wallMat = this.defenderCityType === 'small_city' ? 'PALISADE'
+                : (this.defenderCityType === 'medium_city' ? 'STONE' : 'FORTIFIED');
+            const wBase = wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
+            const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
+            // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
+            const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST` : `${wBase}_POST`;
+
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
-            placeGate({ x: wallFrontX + 72, y: topWallY - 36 }, style + '_GATE_STONE_NE', 'NE');
-            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
-            for (let k = 1; k <= 14; k++) {
-                placeWall({ x: wallFrontX + 144 + k * pitchDx, y: topWallY - 72 - k * pitchDy }, style + '_WALL_STONE_NE', 'STONE_WALL');
+            placeGate({ x: wallFrontX + 72, y: topWallY - 36 }, gBase + '_NE', 'NE');
+            // (2) 从城门右角塔外侧(k=0)顺畅接出 15 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 0; k <= 14; k++) {
+                placeWall({ x: wallFrontX + 144 + k * pitchDx, y: topWallY - 72 - k * pitchDy }, wBase + '_NE', 'STONE_WALL');
             }
             // (3) 北翼末端正统城垛立柱 (Wall Post)
-            placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: topWallY - 72 - 15 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
+            placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: topWallY - 72 - 15 * pitchDy }, wallPost, 'STONE_WALL');
 
-            // 2. 正面 18 段垂直主城墙 (精确从北门左角塔垂直连接至南门左角塔)
-            for (let i = -8.5; i <= 8.5; i += 1.0) {
-                placeWall({ x: wallFrontX, y: midY + i * pitch }, style + '_WALL_STONE_N', 'STONE_WALL');
+            // 2. 正面 16 段垂直主城墙 (精确从北门左角塔下方垂直连接至南门左角塔上方，避免与双塔基座重叠切断)
+            for (let i = -7.5; i <= 7.5; i += 1.0) {
+                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
             }
 
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 南翼向下完整双塔大城门 (左角塔在 (wallFrontX, botWallY), 右角塔在 (wallFrontX + 144, botWallY + 72))
-            placeGate({ x: wallFrontX + 72, y: botWallY + 36 }, style + '_GATE_STONE_SE', 'SE');
-            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
-            for (let k = 1; k <= 14; k++) {
-                placeWall({ x: wallFrontX + 144 + k * pitchDx, y: botWallY + 72 + k * pitchDy }, style + '_WALL_STONE_SE', 'STONE_WALL');
+            placeGate({ x: wallFrontX + 72, y: botWallY + 36 }, gBase + '_SE', 'SE');
+            // (2) 从城门右角塔外侧(k=0)顺畅接出 15 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 0; k <= 14; k++) {
+                placeWall({ x: wallFrontX + 144 + k * pitchDx, y: botWallY + 72 + k * pitchDy }, wBase + '_SE', 'STONE_WALL');
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)
-            placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
+            placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
                 return;
             }
-            // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 警戒塔
+            // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 房屋（2026-08-22 主人定：不越时代，去掉城堡时代警戒箭塔）
             if (this.defenderCityType === 'small_city') {
                 const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], `${style}_${shuffledBuildings[i]}_AGE2`));
                 this.decorSprites.push(place(shuffledSpawns[7], `${style}_TOWER_AGE2`));
-                this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE3`));
+                this.decorSprites.push(place(shuffledSpawns[8], `${style}_HOUSE_AGE2`));
                 return;
             }
             // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
@@ -4573,7 +4587,7 @@ export class Scene13WarLayer {
             let changed = false;
             for (const object of this.decorSprites) {
                 const obstruction = object.obstruction;
-                if (object.layer !== 'world' || !obstruction || object.obstructionDisabled) continue;
+                if (object.layer !== 'world' || !obstruction || object.obstructionDisabled || object.destroyed) continue;
                 const dx = px - object.x, dy = py - object.y;
                 let mapX = dx / TILE_W + dy / TILE_H;
                 let mapY = dy / TILE_H - dx / TILE_W;
@@ -4990,6 +5004,12 @@ export class Scene13WarLayer {
                                 // 城墙/城门被打破：不再绘制、不再阻挡（士兵进城打守军）
                                 foe.sprite.destroyed = true;
                                 foe.sprite.obstructionDisabled = true;
+                                if (foe.extraSprites) {
+                                    for (const sp of foe.extraSprites) {
+                                        sp.destroyed = true;
+                                        sp.obstructionDisabled = true;
+                                    }
+                                }
                             } else {
                                 this.pushCorpse(foe);
                             }

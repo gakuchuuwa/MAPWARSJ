@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_GATE_FORTIFIED_NE",
+  "frames": 1,
+  "box_w": 180,
+  "box_h": 208,
+  "anchor_x": 108,
+  "anchor_y": 172,
+  "sld_source": "b_afri_gate_fortified_ne_open"
+}

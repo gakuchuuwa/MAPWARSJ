@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_GATE_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 196,
+  "box_h": 220,
+  "anchor_x": 140,
+  "anchor_y": 192,
+  "sld_source": "b_persian_gate_fortified_se_open"
+}

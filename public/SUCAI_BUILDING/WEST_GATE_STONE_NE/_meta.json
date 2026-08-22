@@ -1,11 +1,9 @@
 {
   "name": "WEST_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 245,
-  "box_h": 339,
-  "anchor_x": 122.0,
-  "anchor_y": 279.0,
-  "is_complete_twin_tower_gate": true,
-  "span_dx": 72,
-  "span_dy": 36
+  "box_w": 172,
+  "box_h": 184,
+  "anchor_x": 116,
+  "anchor_y": 156,
+  "sld_source": "b_west_gate_stone_ne_open"
 }
