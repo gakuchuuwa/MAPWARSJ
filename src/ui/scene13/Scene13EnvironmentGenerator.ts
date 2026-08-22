@@ -514,8 +514,10 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         let isWater: WaterChecker = () => false;
         let isRoad: (x: number, y: number) => boolean = () => false;
 
-        // 🔴 [2026-08-22 主人定] 所有有水（海/江河/湖泊/沼泽）的据点，全量统一使用带有中轴大江 (buildRiver) 的对峙战场
-        if (waterKind !== 'none' || topology === 'river_crossing') {
+        // 🔴 [严格遵循 DE 与史实]：
+        // 攻城战为城郭攻防战场，核心为城前平原与城防阵线，绝不擅自横插切断战场的假河；
+        // 仅在真正的野战江河渡口 (river_crossing) 或大江野战时生成自然江河。
+        if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
         }
 
@@ -844,7 +846,7 @@ function buildWaterFromRealESRIZoom13(
     };
 }
 
-// ── 第 3 层：中轴河流（隔河对峙，两军临水夹河交锋，历史经典战役地貌） ──
+// ── 第 3 层：DE 经典江河渡口（仅在野战 river_crossing 中轴生成清澈江河） ──
 
 function buildRiver(
     gw: number,
@@ -855,7 +857,7 @@ function buildRiver(
     VH: number,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
-    objects: EnvironmentObjectPlan[],
+    _objects: EnvironmentObjectPlan[],
     occupied: Set<string>,
     theme: DeMapThemePalette,
     season: 0 | 1 | 2 = 0,
@@ -863,43 +865,21 @@ function buildRiver(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
-    // 🌊 DE 经典 Rivers 地图：两军中轴隔江对峙，自然多频蜿蜒河道与丰富水岸生态景观
-    const numPts = 90;
-    const pts: Array<{
-        x: number;
-        y: number;
-        nx: number;
-        ny: number;
-        wW: number;
-        bWLeft: number;
-        bWRight: number;
-    }> = [];
+    // 🌊 DE 原版 Rivers 规范：大江横贯中轴，清澈江水主导，岸边紧贴草岸
+    const numPts = 32;
+    const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
     const baseCenterX = VW * 0.50;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
-    const phase3 = rng.next() * Math.PI * 2;
 
     for (let i = 0; i <= numPts; i++) {
         const t = i / numPts;
-        // 自然多频大 S 弯曲 + 水流自然侵蚀微扰动（消除单一机械管道感）
-        const curveOffset = (
-            Math.sin(t * Math.PI * 2.0 + phase1) * 95 +
-            Math.cos(t * Math.PI * 3.8 + phase2) * 40 +
-            Math.sin(t * Math.PI * 7.5 + phase3) * 14 +
-            Math.cos(t * Math.PI * 13.0 + phase1 * 1.5) * 6
-        );
+        // 平缓自然江河 S 弯曲
+        const curveOffset = Math.sin(t * Math.PI * 2.0 + phase1) * 80 + Math.cos(t * Math.PI * 4.0 + phase2) * 30;
         const x = baseCenterX + curveOffset;
         const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
-
-        // 宽阔大江尺度：深水区宽 115~145px，随水流与弯曲自然起伏，确保碧波水流占据主要视觉
-        const wW = 120 + Math.sin(t * Math.PI * 2.6 + phase2) * 20 + Math.cos(t * Math.PI * 5.4) * 12;
-
-        // 左右河岸细腻浅滩过渡（8~16px 极窄湿岸收口，绝不喧宾夺主掩盖江面）
-        const curvature = Math.sin(t * Math.PI * 2.0 + phase1);
-        const bWLeft = wW + 12 + curvature * 4 + Math.sin(t * 8.0 + phase3) * 3;
-        const bWRight = wW + 12 - curvature * 4 + Math.cos(t * 8.0 + phase2) * 3;
-
-        pts.push({ x, y, nx: 0, ny: 0, wW, bWLeft, bWRight });
+        const wW = 100 + Math.sin(t * Math.PI * 2.5 + phase1) * 15; // 江面宽 85~115px
+        pts.push({ x, y, nx: 0, ny: 0, wW });
     }
 
     for (let i = 0; i <= numPts; i++) {
@@ -913,84 +893,35 @@ function buildRiver(
     }
 
     const waterCells: Array<[number, number]> = [];
-    const beachCells: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
             let minDist = 999999;
-            let nearestIdx = 0;
-            for (let k = 0; k <= numPts; k += 2) {
+            for (let k = 0; k <= numPts; k++) {
                 const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
-                if (d < minDist) { minDist = d; nearestIdx = k; }
+                if (d < minDist) minDist = d;
             }
-            const pt = pts[nearestIdx];
-            const isLeft = (px - pt.x) * pt.nx + (py - pt.y) * pt.ny > 0;
-            const maxBW = isLeft ? pt.bWLeft : pt.bWRight;
-
-            if (minDist < pt.wW) {
+            if (minDist < 100) {
                 waterCells.push([gx, gy]);
-            } else if (minDist < maxBW) {
-                beachCells.push([gx, gy]);
             }
         }
     }
 
-    for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
-    for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
+    for (const [x, y] of waterCells) occupied.add(x + ',' + y);
 
-    const bL = pts.map(p => ({ x: p.x + p.nx * p.bWLeft, y: p.y + p.ny * p.bWLeft * 0.6 }));
-    const bR = pts.map(p => ({ x: p.x - p.nx * p.bWRight, y: p.y - p.ny * p.bWRight * 0.6 })).reverse();
     const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
     const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
 
-    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
-    if (beachCells.length > 0) {
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: [...bL, ...bR], alpha: 0.95, category: 'shore' });
-    }
-    // 全量连贯一体的大江水体（按地理气候精准匹配 DE 原版水色：温带清澈浅蓝 / 热带碧绿 / 荒原黄泥 / 雪区暗青冰水）
     if (waterCells.length > 0) {
         patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
     }
 
-    // 🔴 [2026-08-22 纯净自然河流]：
-    // 1. 彻底去除海边大石(ROCK_BEACH等)与河心突兀障碍物，河道水流保持纯净开阔
-    // 2. 严禁河边擅自生成第3种树种（全场景树种严格由 buildVegetation 统一管理，上限 ≤2 种）
-    // 3. 仅在沙滩与草地交界外沿点缀 2~3 处与当前主题契合的低矮地表物(theme.flatDecor/REEDS)
-    const flatDecors = [...(theme.flatDecor?.length ? theme.flatDecor : ['GRASS_GREEN_PATCH', 'SHRUB_GREEN'])];
-    if (theme.id !== 'palaearctic_middle_east_desert' && biome !== 'desert' && season !== 2) {
-        flatDecors.push('REEDS');
-    }
-    const decorCount = 2 + rng.int(0, 2);
-    for (let i = 0; i < decorCount; i++) {
-        const t = 0.10 + rng.next() * 0.80;
-        const ptIdx = Math.min(numPts - 1, Math.floor(t * numPts));
-        const pt = pts[ptIdx];
-        const side = rng.chance(0.5) ? 1 : -1;
-        const maxBW = side > 0 ? pt.bWLeft : pt.bWRight;
-        const dist = maxBW + 4 + rng.next() * 16; // 仅在沙滩外沿草地自然交界处
-        const asset = rng.pick(flatDecors);
-        const gx = pt.x + side * pt.nx * dist;
-        const gy = pt.y + side * pt.ny * dist * 0.6;
-        if (gx >= 0 && gx <= VW && gy >= 0 && gy <= VH) {
-            objects.push({
-                asset,
-                x: gx,
-                y: gy,
-                layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world',
-                z: 0,
-                flip: rng.chance(0.5),
-                frame: rng.int(0, 99999),
-            });
-        }
-    }
-
-    return (x, y) => {
-        for (let k = 0; k <= numPts; k += 4) {
-            const maxBW = Math.max(pts[k].bWLeft, pts[k].bWRight);
-            if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < maxBW + 20) return true;
+    return (px: number, py: number): boolean => {
+        for (let k = 0; k <= numPts; k += 2) {
+            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW) return true;
         }
         return false;
     };
