@@ -1,9 +1,12 @@
 {
   "name": "INDI_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 172,
-  "box_h": 172,
-  "anchor_x": 112,
-  "anchor_y": 144,
-  "sld_source": "b_indi_gate_stone_ne_open"
+  "box_w": 296,
+  "box_h": 241,
+  "anchor_x": 175,
+  "anchor_y": 179,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_indi_gate_stone_ne_closed + b_indi_gate_stone_corner"
 }

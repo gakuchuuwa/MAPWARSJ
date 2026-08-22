@@ -1,9 +1,12 @@
 {
   "name": "CEAS_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 200,
-  "box_h": 200,
-  "anchor_x": 128,
-  "anchor_y": 160,
-  "sld_source": "b_ceas_gate_stone_se_open"
+  "box_w": 297,
+  "box_h": 245,
+  "anchor_x": 177,
+  "anchor_y": 184,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_ceas_gate_stone_se_closed + b_ceas_gate_stone_corner"
 }

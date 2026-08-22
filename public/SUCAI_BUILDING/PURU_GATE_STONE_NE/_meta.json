@@ -1,9 +1,12 @@
 {
   "name": "PURU_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 188,
-  "box_h": 216,
-  "anchor_x": 124,
-  "anchor_y": 188,
-  "sld_source": "b_puru_gate_stone_ne_open"
+  "box_w": 321,
+  "box_h": 261,
+  "anchor_x": 186,
+  "anchor_y": 199,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_puru_gate_stone_ne_closed + b_puru_gate_stone_corner"
 }

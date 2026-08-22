@@ -3427,11 +3427,11 @@ export class Scene13WarLayer {
             const topWallY = midY - 8.5 * pitch;
             const botWallY = midY + 8.5 * pitch;
 
-            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城木栅 / 中城石墙 / 险要+大城垛墙。
-            //    三者是同一条升级链（木栅→石墙→垛墙），占位一致（碰撞 0.5×0.5），仅换贴图。
+            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城石墙 / 险要+大城垛墙。
+            //    占位一致（碰撞 0.5×0.5），仅换贴图。
             const wallMat = this.defenderCityType === 'small_city' ? 'PALISADE'
                 : (this.defenderCityType === 'medium_city' ? 'STONE' : 'FORTIFIED');
-            const wBase = wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
+            const wBase = wallMat === 'PALISADE' ? 'HARDWOOD_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
             const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
             const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST` : `${wBase}_POST`;
@@ -3439,23 +3439,23 @@ export class Scene13WarLayer {
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
             placeGate({ x: wallFrontX + 72, y: topWallY - 36 }, gBase + '_NE', 'NE');
-            // (2) 从城门右角塔外侧(k=0)顺畅接出 15 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
-            for (let k = 0; k <= 14; k++) {
+            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: topWallY - 72 - k * pitchDy }, wBase + '_NE', 'STONE_WALL');
             }
             // (3) 北翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: topWallY - 72 - 15 * pitchDy }, wallPost, 'STONE_WALL');
 
-            // 2. 正面 16 段垂直主城墙 (精确从北门左角塔下方垂直连接至南门左角塔上方，避免与双塔基座重叠切断)
-            for (let i = -7.5; i <= 7.5; i += 1.0) {
+            // 2. 正面 18 段垂直主城墙 (精确从北门左角塔垂直连接至南门左角塔)
+            for (let i = -8.5; i <= 8.5; i += 1.0) {
                 placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
             }
 
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 南翼向下完整双塔大城门 (左角塔在 (wallFrontX, botWallY), 右角塔在 (wallFrontX + 144, botWallY + 72))
             placeGate({ x: wallFrontX + 72, y: botWallY + 36 }, gBase + '_SE', 'SE');
-            // (2) 从城门右角塔外侧(k=0)顺畅接出 15 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
-            for (let k = 0; k <= 14; k++) {
+            // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
+            for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: botWallY + 72 + k * pitchDy }, wBase + '_SE', 'STONE_WALL');
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)

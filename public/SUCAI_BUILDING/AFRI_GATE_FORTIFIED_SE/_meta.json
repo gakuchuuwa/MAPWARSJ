@@ -1,9 +1,12 @@
 {
   "name": "AFRI_GATE_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 208,
-  "anchor_x": 104,
-  "anchor_y": 172,
-  "sld_source": "b_afri_gate_fortified_se_open"
+  "box_w": 306,
+  "box_h": 255,
+  "anchor_x": 182,
+  "anchor_y": 193,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_afri_gate_fortified_se_closed + b_afri_gate_fortified_corner"
 }

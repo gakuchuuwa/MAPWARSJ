@@ -1,9 +1,12 @@
 {
   "name": "EAST_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 172,
-  "box_h": 184,
-  "anchor_x": 112,
-  "anchor_y": 156,
-  "sld_source": "b_east_gate_stone_se_open"
+  "box_w": 309,
+  "box_h": 250,
+  "anchor_x": 185,
+  "anchor_y": 189,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_east_gate_stone_se_closed + b_east_gate_stone_corner"
 }
