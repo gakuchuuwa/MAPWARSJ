@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_WALL_STONE2",
+  "frames": 1,
+  "box_w": 96,
+  "box_h": 103,
+  "anchor_x": 47.5,
+  "anchor_y": 88.0,
+  "sld_source": "b_persian_wall_stone frame3"
+}

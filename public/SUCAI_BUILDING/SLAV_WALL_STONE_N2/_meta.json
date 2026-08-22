@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_WALL_STONE_N2",
+  "frames": 1,
+  "box_w": 48,
+  "box_h": 125,
+  "anchor_x": 23.5,
+  "anchor_y": 100.0,
+  "sld_source": "b_slav_wall_stone frame4"
+}

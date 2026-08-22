@@ -1,0 +1,9 @@
+{
+  "name": "PURU_WALL_STONE_N2",
+  "frames": 1,
+  "box_w": 42,
+  "box_h": 111,
+  "anchor_x": 20.5,
+  "anchor_y": 86.0,
+  "sld_source": "b_puru_wall_stone frame4"
+}

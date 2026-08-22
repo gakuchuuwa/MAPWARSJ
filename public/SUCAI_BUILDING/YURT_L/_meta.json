@@ -1,0 +1,9 @@
+{
+  "name": "YURT_L",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 144,
+  "anchor_x": 110,
+  "anchor_y": 82,
+  "sld_source": "b_scen_yurt_l"
+}

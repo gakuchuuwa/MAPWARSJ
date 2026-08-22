@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_WALL_STONE_N2",
+  "frames": 1,
+  "box_w": 37,
+  "box_h": 106,
+  "anchor_x": 18.0,
+  "anchor_y": 82.0,
+  "sld_source": "b_afri_wall_stone frame4"
+}
