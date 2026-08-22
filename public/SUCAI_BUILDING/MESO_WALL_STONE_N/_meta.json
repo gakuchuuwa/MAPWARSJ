@@ -1,0 +1,9 @@
+{
+  "name": "MESO_WALL_STONE_N",
+  "frames": 1,
+  "box_w": 76,
+  "box_h": 116,
+  "anchor_x": 48,
+  "anchor_y": 84,
+  "sld_source": "b_meso_wall_stone"
+}

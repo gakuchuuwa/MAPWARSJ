@@ -1,0 +1,9 @@
+{
+  "name": "EAST_WALL_STONE_N",
+  "frames": 1,
+  "box_w": 84,
+  "box_h": 120,
+  "anchor_x": 56,
+  "anchor_y": 88,
+  "sld_source": "b_east_wall_stone"
+}
