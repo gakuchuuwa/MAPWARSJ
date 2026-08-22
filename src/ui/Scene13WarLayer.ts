@@ -89,14 +89,68 @@ const WALL_AUTO_COLLAPSE_SEC = 40;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
-/** 🔴 [2026-08-22 主人定] 攻城武器摆件配兵表（按守方据点类型，纯视觉，前置到攻方前排）：
- *   小城 = 4 攻城锤；中城 = 4 攻城锤 + 轻型投石车 + 弩炮；
- *   险要 = 4 中型攻城锤 + 中型投石车 + 重型弩炮；大城 = 4 重型攻城锤 + 重型投石车 + 重型弩炮。 */
-const SIEGE_WEAPON_SETUP: Record<CityType, { ram: string; mangonel?: string; scorpion?: string }> = {
-    small_city: { ram: 'battering_ram' },
+/** 🔴 [2026-08-22 主人定] 攻城武器配兵表（按守方据点类型；数量在生成逻辑里配：
+ *  2 攻城锤 + 1 投石车 + 1 弩炮；科技不允许时降级——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）：
+ *   中城 = 2 轻型攻城锤 + 轻型投石车 + 弩炮；
+ *   险要 = 2 中型攻城锤 + 中型投石车 + 重型弩炮；
+ *   大城 = 2 重型攻城锤 + 重型投石车 + 重型弩炮。小城不配攻城武器（硬木栅栏最好打）。 */
+const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; scorpion?: string }> = {
+    small_city: {},
     medium_city: { ram: 'battering_ram', mangonel: 'mangonel', scorpion: 'scorpion' },
     pass: { ram: 'capped_ram', mangonel: 'onager', scorpion: 'heavy_scorpion' },
     big_city: { ram: 'siege_ram', mangonel: 'siege_onager', scorpion: 'heavy_scorpion' },
+};
+
+/**
+ * 🔴 [2026-08-22 主人定] 攻城武器科技树门控：攻方文化区对应 AoE2 文明**有没有**该攻城武器
+ * （aoe2techtree.net 科技树数据，与年份无关——「有的文明没有重型弩炮」）。
+ * 键 = WAR_TYPES 攻城武器 key；缺 key = 该文明没有（降级/跳过）。
+ * 文化区→AoE2 文明映射：中原/北方/江南/岭南/川蜀/河西→中国(Chinese)、草原→蒙古(Mongols)、
+ * 东北→女真(Jurchens)、西域→波斯(Persians)、青藏→蒙古(Mongols 近似)、朝鲜→高丽(Koreans)、
+ * 日本→日本(Japanese)、滇缅→缅甸(Burmese)、中亚→土耳其(Turks)、西亚→拜占庭(Byzantines)、
+ * 斯拉夫→斯拉夫(Slavs)、日耳曼→法兰克(Franks)、拉丁→罗马(Romans)、印度→印度斯坦(Hindustanis)、
+ * 柏柏尔→柏柏尔(Berbers)。
+ * 备注：中国/女真/高丽 DE 新版投石车线 = **火箭车**（rocket_cart/heavy_rocket_cart，项目有此兵种，
+ *       见 SIEGE_MANGONEL_LINE）；印度斯坦系无冲车线（DE 用装甲象代替）；高丽无重冲/重弩。
+ */
+const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
+    CENTRAL:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    NORTH:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    JIANGNAN:     { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    LINGNAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    BASHU:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    HEXI:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    NORTHEAST:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    WESTERN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    TIBET:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    STEPPE:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    KOREA:        { battering_ram: true, capped_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    JAPAN:        { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    DIANQIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
+    WEST_ASIA:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    SLAVIC:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    GERMANIC:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    LATIN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    INDIA:        { scorpion: true, mangonel: true, onager: true },
+    BERBER:       { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+};
+
+/**
+ * 🔴 [2026-08-22 主人定] 投石车线替换：DE 新版中国/女真/高丽的投石车线 = **火箭车**
+ * （项目有 rocket_cart / heavy_rocket_cart 兵种，大明「神机箭重型火箭车」编制在用）。
+ * 键 = 文化区；值 = [轻档, 中档, 重档]（火箭车只有 2 档，中/重用重型火箭车）。
+ * 缺省 = 标准投石车线 ['mangonel', 'onager', 'siege_onager']。
+ */
+const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>> = {
+    CENTRAL: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    NORTH: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    JIANGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    LINGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    BASHU: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    HEXI: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    NORTHEAST: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    KOREA: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
 };
 
 /**
@@ -2144,11 +2198,6 @@ interface WarMan {
      * （主人 2026-08-19 报「忍者出现后不寻敌」）。改为直扑敌军重心。
      */
     flank?: boolean;
-    /**
-     * 【攻城武器摆件】本兵是纯视觉装饰（攻城锤/投石车/弩炮），不索敌、不移动、不攻击，
-     * 只在攻方前排摆着播 idle（2026-08-22 主人定「让城墙崩塌更真实」）。
-     */
-    decor?: boolean;
     /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
     port: WarSpawn | null;
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
@@ -2906,6 +2955,11 @@ export class Scene13WarLayer {
                 Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool * s.pop : 0), 0)),
             ) as [number, number];
 
+            // 🔴 [2026-08-22 主人定] 攻城战：按守方城级给攻方配备攻城武器（正常参战兵种，前置到攻方前排）
+            if (this.battleType === 'siege') {
+                this.spawnSiegeWeapons(VW, VH, mx, depth);
+            }
+
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
@@ -2939,6 +2993,71 @@ export class Scene13WarLayer {
             console.error('[Scene13WarLayer] start 初始化失败（已停演并判负解冻）:', e);
             this.active = false;
             this.forceResultByRatio(1);
+        }
+    }
+
+    /**
+     * 🔴 [2026-08-22 主人定] 攻城战攻方前排攻城武器：按守方据点类型配 2 攻城锤 + 1 投石车 + 1 弩炮，
+     * 按攻方文化区对应 AoE2 文明科技树门控（SIEGE_TECH_BY_CULTURE）——没有的武器降级：
+     *   无投石车 → 2 弩炮（无投石车）；无弩炮 → 2 投石车（无弩炮）；两者皆无 → 只配锤；
+     *   文明无冲车线（印度斯坦系）→ 锤也不配。
+     * 攻城武器是**正常参战兵种**（移动/索敌/打墙），不是静态摆件。
+     */
+    private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
+        const setup = SIEGE_WEAPON_SETUP[this.defenderCityType as CityType];
+        const tech = SIEGE_TECH_BY_CULTURE[this.sideCulture[0] as RegionType];
+        if (!setup || !setup.ram || !tech) return;
+        const ok = (key: string): boolean => !!tech[key];
+        const items: Array<{ key: string; n: number }> = [];
+        // 攻城锤 ×2（文明无冲车线则不配——印度斯坦系用装甲象，MAPWAR 无此兵种）
+        if (ok(setup.ram)) items.push({ key: setup.ram, n: 2 });
+        // 投石车 / 弩炮：投石车槽位按文化区投石车线取实际 key（中国/女真/高丽 = 火箭车线），
+        // 科技门控 + 降级（无投石车 → 2 弩炮；无弩炮 → 2 投石车）
+        if (setup.mangonel && setup.scorpion) {
+            const mnLine = SIEGE_MANGONEL_LINE[this.sideCulture[0] as RegionType] ?? ['mangonel', 'onager', 'siege_onager'];
+            const tierIdx = this.defenderCityType === 'medium_city' ? 0 : this.defenderCityType === 'pass' ? 1 : 2;
+            const mnKey = mnLine[tierIdx];
+            const scKey = setup.scorpion;
+            const hasMn = ok(mnKey), hasSc = ok(scKey);
+            if (hasMn && hasSc) {
+                items.push({ key: mnKey, n: 1 }, { key: scKey, n: 1 });
+            } else if (!hasMn && hasSc) {
+                items.push({ key: scKey, n: 2 });      // 无投石车 → 2 弩炮
+            } else if (hasMn && !hasSc) {
+                items.push({ key: mnKey, n: 2 });      // 无弩炮 → 2 投石车
+            }
+            // 两者都没有 → 只配锤
+        }
+        const total = items.reduce((s, it) => s + it.n, 0);
+        if (!total) return;
+        // 前置到攻方 row 0（最靠守方）前方一排，y 沿垂直均匀排开
+        const frontX = mx + 2 * depth;
+        const sx = frontX + depth * 0.8;
+        const midY = VH / 2, spanY = VH * 0.8;
+        const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
+        let slot = 0;
+        for (const it of items) {
+            for (let i = 0; i < it.n; i++) {
+                this.ensureType(it.key);
+                const y = midY + (total > 1 ? (slot / (total - 1) - 0.5) * spanY : 0);
+                slot++;
+                const hp = this.statsFor(it.key, 0).hp;
+                const tgtX = VW - mx, tgtY = y;
+                this.men.push({
+                    f: 0, key: it.key, jx: 0, jy: 0,
+                    x: sx, y,
+                    tx: tgtX, ty: tgtY,
+                    hp,
+                    dir: this.dir8(tgtX - sx, tgtY - y),
+                    ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
+                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                    prevX: sx, prevY: y, stuckT: 0, sepX: 0, sepY: 0, y0: y,
+                    flag: false, fo: Math.random() * 600,
+                    march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(it.key),
+                    flank: false,
+                    claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
+                });
+            }
         }
     }
 
@@ -4863,16 +4982,6 @@ export class Scene13WarLayer {
                 m.lock = 0;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * 8 / 1.5;   // 待命动画
-                continue;
-            }
-            // 🔴 [2026-08-22 主人定] 攻城武器摆件：纯视觉装饰，不索敌、不移动、不攻击，原地播 idle
-            if (m.decor) {
-                m.st = 0;
-                m.foe = null;
-                m.fightT = 0;
-                m.lock = 0;
-                if (m.fadeT > 0) m.fadeT -= dt;
-                m.ph += dt * 8 / 1.5;   // idle 动画
                 continue;
             }
             const wt = this.statsFor(m.key, m.f);
