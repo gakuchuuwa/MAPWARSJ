@@ -6652,12 +6652,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/DIANQIAN/9a9ba598-ab68-4412-a898-196f32a96e45.png": {
+        "/assets/DIANQIAN/__多余__DIANQIAN_02.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/DIANQIAN/1af8a43a-ff22-45e8-bbdc-0b00319c7207.png": {
+        "/assets/DIANQIAN/__多余__DIANQIAN_01.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -18
