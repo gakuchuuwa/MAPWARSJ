@@ -1,9 +1,11 @@
 {
   "name": "EAST_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 198,
-  "box_h": 267,
-  "anchor_x": 98.0,
-  "anchor_y": 219.0,
-  "is_complete_twin_tower_gate": true
+  "box_w": 246,
+  "box_h": 339,
+  "anchor_x": 122.0,
+  "anchor_y": 279.0,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36
 }

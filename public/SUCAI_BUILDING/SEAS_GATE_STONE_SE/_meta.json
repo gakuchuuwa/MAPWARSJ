@@ -1,9 +1,11 @@
 {
   "name": "SEAS_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 199,
-  "box_h": 280,
-  "anchor_x": 99.0,
-  "anchor_y": 231.0,
-  "is_complete_twin_tower_gate": true
+  "box_w": 247,
+  "box_h": 340,
+  "anchor_x": 123.0,
+  "anchor_y": 279.0,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36
 }
