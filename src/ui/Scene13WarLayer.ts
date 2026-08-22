@@ -85,9 +85,19 @@ interface WarType {
 }
 
 /** 🔴 [2026-08-22 主人定] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
-const WALL_AUTO_COLLAPSE_SEC = 30;
+const WALL_AUTO_COLLAPSE_SEC = 40;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
+
+/** 🔴 [2026-08-22 主人定] 攻城武器摆件配兵表（按守方据点类型，纯视觉，前置到攻方前排）：
+ *   小城 = 4 攻城锤；中城 = 4 攻城锤 + 轻型投石车 + 弩炮；
+ *   险要 = 4 中型攻城锤 + 中型投石车 + 重型弩炮；大城 = 4 重型攻城锤 + 重型投石车 + 重型弩炮。 */
+const SIEGE_WEAPON_SETUP: Record<CityType, { ram: string; mangonel?: string; scorpion?: string }> = {
+    small_city: { ram: 'battering_ram' },
+    medium_city: { ram: 'battering_ram', mangonel: 'mangonel', scorpion: 'scorpion' },
+    pass: { ram: 'capped_ram', mangonel: 'onager', scorpion: 'heavy_scorpion' },
+    big_city: { ram: 'siege_ram', mangonel: 'siege_onager', scorpion: 'heavy_scorpion' },
+};
 
 /** 攻城战守方城墙/城门：**装饰贴图 + 碰撞阻挡**（2026-08-22 主人定：不可攻击，但 30 秒塌墙前挡士兵）。 */
 interface WallSprite {
@@ -2092,6 +2102,11 @@ interface WarMan {
      * （主人 2026-08-19 报「忍者出现后不寻敌」）。改为直扑敌军重心。
      */
     flank?: boolean;
+    /**
+     * 【攻城武器摆件】本兵是纯视觉装饰（攻城锤/投石车/弩炮），不索敌、不移动、不攻击，
+     * 只在攻方前排摆着播 idle（2026-08-22 主人定「让城墙崩塌更真实」）。
+     */
+    decor?: boolean;
     /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
     port: WarSpawn | null;
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
@@ -3450,7 +3465,9 @@ export class Scene13WarLayer {
             const wBase = wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
             const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
-            const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST` : `${wBase}_POST`;
+            // 石墙 = _WALL_POST；垛墙 = _WALL_FORTIFIED_POST；木栅栏 = DARK_WALL_PALISADE_POST（ARCHAIC 墙段无 POST 素材，复用 DARK_GATE 同套立柱）
+            const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST`
+                : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`);
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
@@ -4754,6 +4771,16 @@ export class Scene13WarLayer {
                 m.lock = 0;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * 8 / 1.5;   // 待命动画
+                continue;
+            }
+            // 🔴 [2026-08-22 主人定] 攻城武器摆件：纯视觉装饰，不索敌、不移动、不攻击，原地播 idle
+            if (m.decor) {
+                m.st = 0;
+                m.foe = null;
+                m.fightT = 0;
+                m.lock = 0;
+                if (m.fadeT > 0) m.fadeT -= dt;
+                m.ph += dt * 8 / 1.5;   // idle 动画
                 continue;
             }
             const wt = this.statsFor(m.key, m.f);
