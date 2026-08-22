@@ -170,8 +170,8 @@ export class NavalPhalanxStateManager {
                 }
             }
 
-            // DYING → DEAD：死亡动画播完（约 1200ms = 8帧×150ms）
-            const DEATH_ANIM_MS = 1200;
+            // DYING → DEAD：沉没渐隐播完（2026-08-23 主人定 5 秒；原 1200ms 太短像突然消失）
+            const DEATH_ANIM_MS = 5000;
             state.ships.forEach((ship) => {
                 if (ship.state === 'DYING' && tick - ship.stateStartTime >= DEATH_ANIM_MS) {
                     ship.state = 'DEAD';
