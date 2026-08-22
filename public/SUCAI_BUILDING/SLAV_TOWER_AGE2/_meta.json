@@ -1,9 +1,1 @@
-{
-  "name": "SLAV_TOWER_AGE2",
-  "frames": 1,
-  "box_w": 196,
-  "box_h": 240,
-  "anchor_x": 132,
-  "anchor_y": 212,
-  "sld_source": "b_slav_tower_age2"
-}
+{"name": "SLAV_TOWER_AGE2", "frames": 1, "box_w": 196, "box_h": 240, "anchor_x": 132, "anchor_y": 212, "sld_source": "b_slav_tower_age2"}

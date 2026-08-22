@@ -1,9 +1,1 @@
-{
-  "name": "EAST_TOWER_AGE2",
-  "frames": 1,
-  "box_w": 204,
-  "box_h": 236,
-  "anchor_x": 140,
-  "anchor_y": 204,
-  "sld_source": "b_east_tower_age2"
-}
+{"name": "EAST_TOWER_AGE2", "frames": 1, "box_w": 204, "box_h": 236, "anchor_x": 140, "anchor_y": 204, "sld_source": "b_east_tower_age2"}
