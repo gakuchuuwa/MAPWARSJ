@@ -4683,7 +4683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/LINGNAN/lancang_faang.png": {
-            "scale": 0.88,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 11
         },
