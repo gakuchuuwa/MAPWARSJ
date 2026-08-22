@@ -144,7 +144,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 帝王掷矛手(3) + 精锐藤弓兵主力(4)
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
-    CENTRAL_ASIA: 'triangle',     // 中亚：草原枪骑(2) + 萨瓦尔铁骑(3) + 精锐钦察主力(4)
+    CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
@@ -1202,16 +1202,16 @@ export const TIBET_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 13. 中亚 精锐草原枪兵+萨瓦尔+精锐钦察（三角阵 2+3+4：草原枪兵尖刀 + 萨瓦尔铁骑中坚 + 精锐钦察主力底边） */
+/** 13. 中亚 萨瓦尔+精锐草原枪兵+精锐钦察（衡轭阵 4+2+3：萨瓦尔铁骑宽线主力 + 精锐草原枪兵中排接应 + 精锐钦察后排齐射） */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_steppe_lancer', count: 2 }, // Row 0 尖刀先锋 = 精锐草原枪兵 2人
-            { type: 'savar', count: 3 },               // Row 1 冲击中坚 = 萨瓦尔 3人
-            { type: 'elite_kipchak', count: 4 }        // Row 2 底边主力齐射 = 精锐钦察 4人
+            { type: 'savar', count: 4 },                // Row 0 宽线主力 = 萨瓦尔 4人
+            { type: 'elite_steppe_lancer', count: 2 },  // Row 1 中排接应 = 精锐草原枪兵 2人
+            { type: 'elite_kipchak', count: 3 }         // Row 2 后排齐射 = 精锐钦察 3人
         ]
     }
 ];
