@@ -1979,6 +1979,8 @@ interface WarMan {
     ph: number;
     st: 0 | 1 | 2;
     foe: WarMan | null;
+    /** 受击反击锁定剩余时间（秒）；允许锁住视野外的实际攻击者。 */
+    provokedT?: number;
     next: number;
     fightT: number;
     aimT: number;
@@ -3313,11 +3315,8 @@ export class Scene13WarLayer {
             }
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
-            // 🔴 [2026-08-22 主人定] 城墙三段严正走向：
-            //   1. 前排城墙：南北走向（垂直南北主防线，密实咬合铺设）
-            //   2. 上排城墙：西南-东北走向（SW-NE，严格 2:1 等距斜向右上）
-            //   3. 下排城墙：西北-东南走向（NW-SE，严格 2:1 等距斜向右下）
-            const wallFrontX = Math.round(wMinX - 175);
+            // 🔴 [2026-08-22 主人定] 城墙三段严正走向：前排城墙适度前移，留出更开阔雄伟的城防前沿
+            const wallFrontX = Math.round(wMinX - 235);
 
             // 1. 前排南北走向主防线（垂直南北纵贯）
             const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 80) };
@@ -3333,7 +3332,7 @@ export class Scene13WarLayer {
             const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
 
             // 城墙分段生成辅助
-            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, step = 36): void => {
+            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, step = 36, wall = 'WALL_STONE'): void => {
                 const dx = p2.x - p1.x;
                 const dy = p2.y - p1.y;
                 const dist = Math.hypot(dx, dy);
@@ -3342,15 +3341,15 @@ export class Scene13WarLayer {
                     const t = i / count;
                     this.decorSprites.push(place(
                         { x: p1.x + dx * t, y: p1.y + dy * t },
-                        `${style}_WALL_STONE`,
+                        `${style}_${wall}`,
                         { flip, z: 1 },
                     ));
                 }
             };
 
-            // 1. 前排南北走向：NW 角楼 -> 中央大门楼 -> SW 角楼（密实咬合铺设，step=20）
-            buildWallLine(towerNW, gatePos, false, 20);
-            buildWallLine(gatePos, towerSW, false, 20);
+            // 1. 前排南北走向：NW 角楼 -> 中央大门楼 -> SW 角楼（南北朝向城垛，密实咬合铺设，step=20）
+            buildWallLine(towerNW, gatePos, false, 20, 'WALL_STONE_N');
+            buildWallLine(gatePos, towerSW, false, 20, 'WALL_STONE_N');
 
             // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（flip=false，标准等距瓦片）
             buildWallLine(towerNW, towerNE, false, 36);
@@ -3594,11 +3593,11 @@ export class Scene13WarLayer {
                 wctx.filter = 'none';
             }
 
-            // 2. 🔴 [严格遵循 DE 官方 water_def.json 规范]
-            // DE 官方定义：azimuth: 30° (2:1 等距朝向), velocity: 0.125 (~32px/s 单向匀速流动)
+            // 2. 🔴 [严格遵循 DE 官方规范 + 双层等距流速干涉动态水体]
+            // DE 官方定义：azimuth: 30° (2:1 等距朝向), velocity: 0.125 (~28px/s 单向匀速流动)
             wctx.globalCompositeOperation = 'source-in';
-            const dx = (t * 32) % tw;
-            const dy = (t * 16) % th;
+            const dx = (t * 28) % tw;
+            const dy = (t * 14) % th;
             wctx.save();
             wctx.translate(dx, dy);
             const pat = wctx.createPattern(img, 'repeat');
@@ -3608,50 +3607,25 @@ export class Scene13WarLayer {
             }
             wctx.restore();
 
+            // 第二层：表层次级干涉微波（以不同速率与微小夹角错位流动，产生大江水波涌动干涉）
+            if (pat) {
+                wctx.save();
+                wctx.globalAlpha = 0.32;
+                const dx2 = (-t * 12) % tw;
+                const dy2 = (t * 20) % th;
+                wctx.translate(dx2, dy2);
+                wctx.fillStyle = pat;
+                wctx.fillRect(-dx2 - tw, -dy2 - th, bbox.w + tw * 2, bbox.h + th * 2);
+                wctx.restore();
+            }
+
             wctx.globalCompositeOperation = 'source-over';
             wctx.globalAlpha = 1;
 
-            // 3. 将动态水面绘制到主画面（只贴 bbox 区域）
+            // 3. 将动态水面绘制到主画面（只贴 bbox 区域，靠自然沙滩与水体边缘羽化交融）
             if (p.alpha < 1) ctx.globalAlpha = p.alpha;
             ctx.drawImage(wcv, bbox.x, bbox.y);
             if (p.alpha < 1) ctx.globalAlpha = 1;
-
-            // 4. 🔴 [2026-08-22 主人定] 河流两岸拍岸微浪水花（Shoreline Foamy Wavelets）
-            // 沿水体与沙滩交界轮廓绘制一段一段断续呼吸的拍岸细浪，彻底消除死板实心白线
-            if (p.polygon && p.polygon.length >= 6) {
-                const half = Math.floor(p.polygon.length / 2);
-                const wavePhase = Math.sin(t * 3.2) * 0.5 + 0.5; // 0 ~ 1 动态呼吸拍岸周期
-                const waveAlpha = 0.20 + wavePhase * 0.20;       // 0.20 ~ 0.40 柔和水花透明度
-                const waveWidth = 2.0 + wavePhase * 1.0;         // 2.0px ~ 3.0px 浪花线宽
-
-                ctx.save();
-                ctx.strokeStyle = `rgba(240, 248, 255, ${waveAlpha})`;
-                ctx.lineWidth = waveWidth;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.setLineDash([14, 22, 6, 18]);                // 一段一段有机断续水花
-                ctx.lineDashOffset = -t * 16;                    // 沿水流方向柔和流动
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.35)';
-                ctx.shadowBlur = 3;
-
-                // 左岸微浪
-                ctx.beginPath();
-                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                for (let i = 1; i < half; i++) {
-                    ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
-                }
-                ctx.stroke();
-
-                // 右岸微浪
-                ctx.beginPath();
-                ctx.moveTo(p.polygon[half].x, p.polygon[half].y);
-                for (let i = half + 1; i < p.polygon.length; i++) {
-                    ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
-                }
-                ctx.stroke();
-
-                ctx.restore();
-            }
         }
     }
 
@@ -4338,6 +4312,18 @@ export class Scene13WarLayer {
         return Math.min(ATTRITION_CAP, 1 + over / ATTRITION_RAMP_SEC);
     }
 
+    private provokeRetaliation(victim: WarMan, attacker: WarMan): void {
+        if (victim.hp <= 0 || attacker.hp <= 0) return;
+        victim.march = false;
+        victim.port = null;
+        if (!victim.foe || victim.foe.hp <= 0) {
+            victim.foe = attacker;
+            victim.fightT = 0;
+            victim.next = 0.2;
+        }
+        if (victim.foe === attacker) victim.provokedT = 0.3;
+    }
+
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
@@ -4352,6 +4338,7 @@ export class Scene13WarLayer {
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
                     o.atkNext++;
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
+                    this.provokeRetaliation(o, m);
                     if (o.hp <= 0) this.pushCorpse(o);
                 }
             }
@@ -4580,14 +4567,17 @@ export class Scene13WarLayer {
             const stats = wt;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
             const REACH = Math.max(stats.rng, 65);   // 出手扣血（近战贴身 65 / 远程 rng）
+            if ((m.provokedT ?? 0) > 0) m.provokedT = Math.max(0, (m.provokedT ?? 0) - dt);
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
             m.next -= dt;
-            const keep = m.foe && m.foe.hp > 0
-                && m.foe.claims < SPREAD_CAP
-                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
+            const keep = m.foe && m.foe.hp > 0 && (
+                (m.provokedT ?? 0) > 0
+                || (m.foe.claims < SPREAD_CAP
+                    && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44)
+            );
             if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
                 m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
@@ -4892,6 +4882,7 @@ export class Scene13WarLayer {
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (m.accHit !== false) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        this.provokeRetaliation(foe, m);
                         if (foe.hp <= 0) this.pushCorpse(foe);
                     }
                 }

@@ -224,9 +224,9 @@ const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> 
 function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
         const a = object.asset;
-        // 🔴 [2026-08-21 主人定·方案A] 小 solid 纯贴图（无碰撞）：岩石(ROCK*)/木桶/墓碑/骸骨
+        // 🔴 [2026-08-21 主人定·方案A] 小 solid 纯贴图（无碰撞）：岩石(ROCK*)/木桶/墓碑/骸骨/芦苇/睡莲
         //    成组密集、反复推挤卡兵 → 一律不阻挡。树（DE_TREE_OBJECTS）+ 悬崖（CLIFF*）保留碰撞。
-        if (a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON') {
+        if (a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON' || a === 'REEDS' || a === 'WATER_LILY' || a === 'OYSTERS') {
             object.obstruction = undefined;
             continue;
         }
@@ -243,6 +243,7 @@ function getAssetRepulsionRadius(asset: string): number {
     if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 105;
     if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 85;
     if (DE_TREE_OBJECTS.has(asset)) return 65;
+    if (asset === 'REEDS' || asset === 'WATER_LILY' || asset === 'OYSTERS' || GROUND_COVER_ASSETS.has(asset)) return 15;
     return 40;
 }
 
@@ -862,27 +863,43 @@ function buildRiver(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
-    // 🌊 DE 经典 Rivers 地图：两军中轴隔江对峙 + 中央开阔涉水浅滩渡口 (Shallows) 大决战
-    const numPts = 80;
-    const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number; bW: number }> = [];
+    // 🌊 DE 经典 Rivers 地图：两军中轴隔江对峙，自然多频蜿蜒河道与丰富水岸生态景观
+    const numPts = 90;
+    const pts: Array<{
+        x: number;
+        y: number;
+        nx: number;
+        ny: number;
+        wW: number;
+        bWLeft: number;
+        bWRight: number;
+    }> = [];
     const baseCenterX = VW * 0.50;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
+    const phase3 = rng.next() * Math.PI * 2;
 
     for (let i = 0; i <= numPts; i++) {
         const t = i / numPts;
-        // 自然大 S 弯曲
+        // 自然多频大 S 弯曲 + 水流自然侵蚀微扰动（消除单一机械管道感）
         const curveOffset = (
-            Math.sin(t * Math.PI * 2.2 + phase1) * 105 +
-            Math.cos(t * Math.PI * 4.4 + phase2) * 35
+            Math.sin(t * Math.PI * 2.0 + phase1) * 95 +
+            Math.cos(t * Math.PI * 3.8 + phase2) * 40 +
+            Math.sin(t * Math.PI * 7.5 + phase3) * 14 +
+            Math.cos(t * Math.PI * 13.0 + phase1 * 1.5) * 6
         );
         const x = baseCenterX + curveOffset;
         const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
 
-        // 宽阔大江尺度：深水区宽 85~115px，渡口区开阔自然
-        const wW = 85 + Math.sin(t * Math.PI * 3.0) * 18;
-        const bW = wW + 42 + Math.sin(t * Math.PI * 4.0) * 10;
-        pts.push({ x, y, nx: 0, ny: 0, wW, bW });
+        // 宽阔大江尺度：深水区宽 80~110px，随水流与弯曲自然起伏
+        const wW = 82 + Math.sin(t * Math.PI * 2.6 + phase2) * 16 + Math.cos(t * Math.PI * 5.4) * 8;
+
+        // 左右沙滩宽度自然不对称：河湾凸岸泥沙堆积（沙滩更宽）、凹岸水流冲刷（沙滩收窄）
+        const curvature = Math.sin(t * Math.PI * 2.0 + phase1);
+        const bWLeft = wW + 36 + curvature * 20 + Math.sin(t * 8.0 + phase3) * 6;
+        const bWRight = wW + 36 - curvature * 20 + Math.cos(t * 8.0 + phase2) * 6;
+
+        pts.push({ x, y, nx: 0, ny: 0, wW, bWLeft, bWRight });
     }
 
     for (let i = 0; i <= numPts; i++) {
@@ -896,7 +913,6 @@ function buildRiver(
     }
 
     const waterCells: Array<[number, number]> = [];
-    const fordingCells: Array<[number, number]> = [];
     const beachCells: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
@@ -909,9 +925,13 @@ function buildRiver(
                 const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
                 if (d < minDist) { minDist = d; nearestIdx = k; }
             }
-            if (minDist < pts[nearestIdx].wW) {
+            const pt = pts[nearestIdx];
+            const isLeft = (px - pt.x) * pt.nx + (py - pt.y) * pt.ny > 0;
+            const maxBW = isLeft ? pt.bWLeft : pt.bWRight;
+
+            if (minDist < pt.wW) {
                 waterCells.push([gx, gy]);
-            } else if (minDist < pts[nearestIdx].bW) {
+            } else if (minDist < maxBW) {
                 beachCells.push([gx, gy]);
             }
         }
@@ -920,8 +940,8 @@ function buildRiver(
     for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
     for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
 
-    const bL = pts.map(p => ({ x: p.x + p.nx * p.bW, y: p.y + p.ny * p.bW * 0.6 }));
-    const bR = pts.map(p => ({ x: p.x - p.nx * p.bW, y: p.y - p.ny * p.bW * 0.6 })).reverse();
+    const bL = pts.map(p => ({ x: p.x + p.nx * p.bWLeft, y: p.y + p.ny * p.bWLeft * 0.6 }));
+    const bR = pts.map(p => ({ x: p.x - p.nx * p.bWRight, y: p.y - p.ny * p.bWRight * 0.6 })).reverse();
     const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
     const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
 
@@ -935,9 +955,39 @@ function buildRiver(
         patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
     }
 
+    // 🔴 [2026-08-22 纯净自然河流]：
+    // 1. 彻底去除海边大石(ROCK_BEACH等)与河心突兀障碍物，河道水流保持纯净开阔
+    // 2. 严禁河边擅自生成第3种树种（全场景树种严格由 buildVegetation 统一管理，上限 ≤2 种）
+    // 3. 仅在沙滩与草地交界外沿点缀 2~3 处与当前主题完全契合的低矮地表物(theme.flatDecor)
+    const flatDecors = theme.flatDecor?.length ? theme.flatDecor : ['GRASS_GREEN_PATCH', 'SHRUB_GREEN'];
+    const decorCount = 2 + rng.int(0, 2);
+    for (let i = 0; i < decorCount; i++) {
+        const t = 0.10 + rng.next() * 0.80;
+        const ptIdx = Math.min(numPts - 1, Math.floor(t * numPts));
+        const pt = pts[ptIdx];
+        const side = rng.chance(0.5) ? 1 : -1;
+        const maxBW = side > 0 ? pt.bWLeft : pt.bWRight;
+        const dist = maxBW + 4 + rng.next() * 16; // 仅在沙滩外沿草地自然交界处
+        const asset = rng.pick(flatDecors);
+        const gx = pt.x + side * pt.nx * dist;
+        const gy = pt.y + side * pt.ny * dist * 0.6;
+        if (gx >= 0 && gx <= VW && gy >= 0 && gy <= VH) {
+            objects.push({
+                asset,
+                x: gx,
+                y: gy,
+                layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world',
+                z: 0,
+                flip: rng.chance(0.5),
+                frame: rng.int(0, 99999),
+            });
+        }
+    }
+
     return (x, y) => {
         for (let k = 0; k <= numPts; k += 4) {
-            if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < pts[k].bW + 20) return true;
+            const maxBW = Math.max(pts[k].bWLeft, pts[k].bWRight);
+            if (Math.hypot(x - pts[k].x, (y - pts[k].y) * 1.5) < maxBW + 20) return true;
         }
         return false;
     };
