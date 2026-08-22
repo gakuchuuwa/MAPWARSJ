@@ -1,0 +1,10 @@
+{
+  "name": "SEAS_WALL_POST",
+  "frames": 1,
+  "box_w": 103,
+  "box_h": 189,
+  "anchor_x": 51.0,
+  "anchor_y": 164.0,
+  "sld_source": "b_seas_wall_stone_x1.sld",
+  "frame_idx": 2
+}

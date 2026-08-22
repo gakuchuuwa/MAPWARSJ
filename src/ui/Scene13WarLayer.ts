@@ -84,6 +84,39 @@ interface WarType {
     armorTags?: number[];
 }
 
+/**
+ * 攻城战守方城墙/城门属性 —— 照 DE 本机 empires2_x2_p1.dat 实测（2026-08-22）：
+ *  - 石墙 Stone Wall：hp 1080、近防 8、远防 10
+ *  - 城门 Gate：hp 1650、近防 6、远防 6
+ * 护甲类 armorTags = [11(石质防御 stone defense), 21(建筑 building)]：
+ *   攻城武器（冲车对 11 +150、投石机 +230、火炮 +200）才打得动；普通兵近防 8/远防 10 → 每下 1。
+ */
+const WALL_GATE_STATS: Record<string, WarType> = {
+    STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 1650, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+};
+
+/** 攻城战守方城墙/城门：可攻击建筑目标（士兵能打、HP 归零即破，照 DE）。不进 WarMan 网格，独立维护。 */
+interface WarBuilding {
+    f: 0 | 1;
+    /** 'STONE_WALL' | 'STONE_GATE'（查 WALL_GATE_STATS） */
+    key: string;
+    x: number;
+    y: number;
+    hp: number;
+    maxHp: number;
+    /** 围殴上限（同 SPREAD_CAP，复用 search 的 claims 逻辑） */
+    claims: number;
+    /** 本帧锁定计数结转（同 WarMan.claimsNext，帧末统计多少兵锁定它） */
+    claimsNext: number;
+    /** 围攻计数（同 WarMan.atkNext，被谁打计数） */
+    atkNext: number;
+    /** 围殴加成（gangMul 读这个） */
+    atkers: number;
+    /** 关联装饰精灵（破墙时标记 destroyed → 不再绘制、不再阻挡） */
+    sprite: DecorSprite;
+}
+
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
 // 五维 = 血 hp / 攻 atk / 防（meleeArmor 近防 + pierceArmor 远防）/ 射程 rng / 射速 reload。
 // 数值一律来自本机 empires2_x2_p1.dat（genieutils 实测抽取），非精锐基础档。
@@ -1989,7 +2022,7 @@ interface WarMan {
     dir: number;
     ph: number;
     st: 0 | 1 | 2;
-    foe: WarMan | null;
+    foe: WarMan | WarBuilding | null;
     next: number;
     fightT: number;
     aimT: number;
@@ -2040,16 +2073,16 @@ interface WarMan {
      */
     march: boolean;
     /**
-     * 【放风筝】连续后撤累计跑了多远（px）。**打出一次攻击就清零**（见攻击结算处）。
-     * 见 KITE_RETREAT_CAP：跨多段累计跑满那么远仍一箭没射 = 这个敌人根本甩不掉（同速骑兵追杀），
+     * 【放风筝】连续后撤累计跑了多远（px）。**成功甩开一次（停时 kd ≥ KITE_SAFE）就清零**。
+     * 见 KITE_RETREAT_CAP：跨多段累计跑满那么远仍没甩开 = 这个敌人根本甩不掉（同速骑兵追杀），
      * 再跑就是自废武功，此时永久放弃风筝、转身硬拼。
-     * ⚠️ 段落式后撤：跑够 KITE_RETREAT_DIST 就停（kiting=false），但这里**不清零**——
-     *   只有真的射出一箭才清零，否则同速追兵每段「跑—停—再被贴脸」零输出，累计照样能到 CAP。
+     * ⚠️ 段落式后撤：跑够 KITE_RETREAT_DIST 但没甩开（kd < KITE_SAFE）时**不清零**、本段白跑继续跑，
+     *   同速追兵每段都甩不开 → 累计到 CAP 放弃。
      */
     kiteDist?: number;
     /**
-     * 【放风筝】本段后撤已跑距离（px）：跑够 KITE_RETREAT_DIST 就停下回身站撸，并清零。
-     * 与 kiteDist 的分工：kiteDist 是「射箭才清零」的跨段累计（判「甩不掉」→放弃），
+     * 【放风筝】本段后撤已跑距离（px）：跑够 KITE_RETREAT_DIST 且拉开到 KITE_SAFE 就停下回身站撸，并清零。
+     * 与 kiteDist 的分工：kiteDist 是「甩开才清零」的跨段累计（判「甩不掉」→放弃），
      * 这个是「每段清零」的段内计数（判「跑够一段就停」）。
      */
     kiteLeg?: number;
@@ -2057,7 +2090,7 @@ interface WarMan {
     kiteGaveUp?: boolean;
     /**
      * 【放风筝】当前是否处于「转身跑开」状态（只有带 kite 的弓骑用）。
-     * 进入：被近战贴脸（65px，敌人已挥刀砍过来）；退出：后撤跑够 KITE_RETREAT_DIST 停下回身站撸。
+     * 进入：被近战贴脸（65px，敌人已挥刀砍过来）；退出：后撤跑够 KITE_RETREAT_DIST 且拉开到 KITE_SAFE。
      * 段落式「站撸 → 被攻击 → 撤一段 → 再站撸」，不是「距离阈值上每帧翻面」。
      */
     kiting?: boolean;
@@ -2185,6 +2218,8 @@ interface DecorSprite {
     obstructionContactSec: number;
     obstructionTouched: boolean;
     obstructionDisabled: boolean;
+    /** 攻城战城墙/城门被打破（HP 归零）→ 不再绘制、不再阻挡（士兵进城） */
+    destroyed?: boolean;
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 function isWaterTile(tile: string): boolean {
@@ -2414,6 +2449,8 @@ export class Scene13WarLayer {
     private decorCtx: CanvasRenderingContext2D | null = null;
     private decorSprites: DecorSprite[] = [];
     private decorPatches: DecorPatch[] = [];
+    /** 攻城战守方城墙/城门建筑目标（士兵可攻击，照 DE）；与 decorSprites 里的城墙精灵一一对应 */
+    private wallGates: WarBuilding[] = [];
     private natureCache: Record<string, NatureAsset> = {};
     /** 羽化用离屏画布（白形状 + 模糊 + source-in 填纹理） */
     private maskCv: HTMLCanvasElement | null = null;
@@ -2608,6 +2645,9 @@ export class Scene13WarLayer {
      * 🔴 返回新对象、绝不原地改 WAR_TYPES（就地改会逐场累积爆表）。分表缓存，一年才失效一次。
      */
     private statsFor(key: string, f: number): WarType & { sight?: number } {
+        // 城墙/城门建筑：直接返回 DE 属性（不走科技/文化，建筑不吃兵种科技加成）
+        const wall = WALL_GATE_STATS[key];
+        if (wall) return wall;
         const y = this.techYearGetter?.() ?? this.techYear;
         if (y !== this.techYear) this.onTechYearChanged(y);
         let v = this.techStats[f].get(key);
@@ -3021,6 +3061,7 @@ export class Scene13WarLayer {
         this.fallenFlags = [];
         this.clouds = [];
         this.decorSprites = [];
+        this.wallGates = [];
         this.decorPatches = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -3213,6 +3254,7 @@ export class Scene13WarLayer {
         this.decor.width = this.canvas.width;
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
+        this.wallGates = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
         this.applyDefenderCityRoad();
@@ -3326,6 +3368,13 @@ export class Scene13WarLayer {
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
+            // 城墙/城门 = 可攻击建筑（照 DE）：铺贴图 + 建建筑目标（士兵能打、HP 归零破墙进城）
+            const placeWall = (s: { x: number; y: number }, asset: string, key: 'STONE_WALL' | 'STONE_GATE'): void => {
+                const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
+                this.decorSprites.push(sprite);
+                const st = WALL_GATE_STATS[key];
+                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite });
+            };
                         // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
             for (const s of side) {
@@ -3335,22 +3384,44 @@ export class Scene13WarLayer {
                 if (s.y > wMaxY) wMaxY = s.y;
             }
             const vw = this.canvas?.width ?? 1920;
-            const vh = this.canvas?.height ?? 1080;
-            // 🔴 [主人明确指示] 18 段南北直墙无缝连贯排布 + 上方放向上城门(NE) + 下方放向下城门(SE)
+            // 🔴 [主人明确指示 2026-08-22] 正统 C 型三面包卫宏伟城堡要塞防线：正面垂直主长城 + 北翼 NE 门与斜墙城垛 + 南翼 SE 门与斜墙城垛
             const wallFrontX = Math.round(wMinX - 260);
             const midY = (wMinY + wMaxY) * 0.5;
-            const pitch = 40; // 紧密贴合步长（40px），上下切片完全咬死，中间零缝隙
+            const pitch = 40; // 垂直直墙咬合步长
+            const pitchDx = 48; // 等距斜向 X 步长
+            const pitchDy = 24; // 等距斜向 Y 步长
 
-            // 1. 上端：向上城门 (NE 东北向大开铁栅城门)
-            this.decorSprites.push(place({ x: wallFrontX + 38, y: midY - 8.5 * pitch - 26 }, style + '_GATE_STONE_NE', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
+            const topWallY = midY - 8.5 * pitch;
+            const botWallY = midY + 8.5 * pitch;
 
-            // 2. 正面 18 段垂直主城墙
+            // 1. 北翼防线 (NE 东北向展开，连续平滑无缝)
+            // (1) 北翼向上完整双塔城门 (左角塔、中门、右角塔三点密实物理阻挡，杜绝穿透)
+            placeWall({ x: wallFrontX + 48, y: topWallY - 24 }, style + '_GATE_STONE_NE', 'STONE_GATE');
+            placeWall({ x: wallFrontX, y: topWallY }, style + '_WALL_POST', 'STONE_WALL'); // 左塔密闭阻挡
+            placeWall({ x: wallFrontX + 96, y: topWallY - 48 }, style + '_WALL_POST', 'STONE_WALL'); // 右塔密闭阻挡
+            // (2) 从城门右角塔(k=0)顺畅接出 7 段 NE 斜城墙 (无缝紧贴，绝不中断)
+            for (let k = 0; k <= 6; k++) {
+                placeWall({ x: wallFrontX + 96 + k * pitchDx, y: topWallY - 48 - k * pitchDy }, style + '_WALL_STONE_NE', 'STONE_WALL');
+            }
+            // (3) 北翼末端正统城垛立柱 (Wall Post)
+            placeWall({ x: wallFrontX + 96 + 7 * pitchDx, y: topWallY - 48 - 7 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
+
+            // 2. 正面 18 段垂直主城墙 (从北到南)
             for (let i = -8.5; i <= 8.5; i += 1.0) {
-                this.decorSprites.push(place({ x: wallFrontX, y: midY + i * pitch }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
+                placeWall({ x: wallFrontX, y: midY + i * pitch }, style + '_WALL_STONE_N', 'STONE_WALL');
             }
 
-            // 3. 下端：向下城门 (SE 东南向大开铁栅城门)
-            this.decorSprites.push(place({ x: wallFrontX + 38, y: midY + 8.5 * pitch + 16 }, style + '_GATE_STONE_SE', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
+            // 3. 南翼防线 (SE 东南向展开，连续平滑无缝)
+            // (1) 南翼向下完整双塔城门 (左角塔、中门、右角塔三点密实物理阻挡，杜绝穿透)
+            placeWall({ x: wallFrontX + 48, y: botWallY + 44 }, style + '_GATE_STONE_SE', 'STONE_GATE');
+            placeWall({ x: wallFrontX, y: botWallY + 20 }, style + '_WALL_POST', 'STONE_WALL'); // 左塔密闭阻挡
+            placeWall({ x: wallFrontX + 96, y: botWallY + 68 }, style + '_WALL_POST', 'STONE_WALL'); // 右塔密闭阻挡
+            // (2) 从城门右角塔(k=0)顺畅接出 7 段 SE 斜城墙 (无缝紧贴，绝不中断)
+            for (let k = 0; k <= 6; k++) {
+                placeWall({ x: wallFrontX + 96 + k * pitchDx, y: botWallY + 20 + 48 + k * pitchDy }, style + '_WALL_STONE_SE', 'STONE_WALL');
+            }
+            // (3) 南翼末端正统城垛立柱 (Wall Post)
+            placeWall({ x: wallFrontX + 96 + 7 * pitchDx, y: botWallY + 20 + 48 + 7 * pitchDy }, style + '_WALL_POST', 'STONE_WALL');
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
@@ -4253,14 +4324,14 @@ export class Scene13WarLayer {
      * 实测（war_sim，同兵种对镜）：横向铺开 30→36px（+20%）、攻击/移动状态切换 0.30→0.26 次/人·秒；
      * 克制三边方向不变、幅度差 1~7%；时长在噪声内。
      */
-    private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0): WarMan | null {
+    private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0): WarMan | WarBuilding | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
         const r2 = radius * radius;
-        let best: WarMan | null = null, bd = r2;      // 最近的未满目标（最小射程兜底）
-        let free: WarMan | null = null, fd = r2;      // 最近的未满且满足最小射程目标
+        let best: WarMan | WarBuilding | null = null, bd = r2;      // 最近的未满目标（最小射程兜底）
+        let free: WarMan | WarBuilding | null = null, fd = r2;      // 最近的未满且满足最小射程目标
         // 🔴 [2026-08-17] 投石车/投石机有最小射程：贴太近就抛不出去（DE 同款）。
         //    原来只在**放弹丸**那一步判 tooClose，结果贴脸时「照样扣血、就是不出石弹」——
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
@@ -4292,6 +4363,16 @@ export class Scene13WarLayer {
                     }
                 }
             }
+        }
+        // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）
+        for (const b of this.wallGates) {
+            if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed) continue;
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d >= r2) continue;
+            const tooNear = minR2 > 0 && d < minR2;
+            if (b.claims >= SPREAD_CAP) continue;
+            if (d < bd) { bd = d; best = b; }
+            if (!tooNear && d < fd) { fd = d; free = b; }
         }
         const chosen = free ?? best;
         if (chosen) chosen.claims++;
@@ -4539,6 +4620,7 @@ export class Scene13WarLayer {
         // 本帧从零登记追击名额；search 选中目标时立即占位，避免同一帧的一批士兵
         // 都读到上一帧的旧计数后同时扑向同一个人。
         for (const target of this.men) target.claims = 0;
+        for (const b of this.wallGates) b.claims = 0;
         for (const m of this.men) {
             if (m.hp <= 0) continue;
             // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
@@ -4879,7 +4961,15 @@ export class Scene13WarLayer {
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (m.accHit !== false) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
-                        if (foe.hp <= 0) this.pushCorpse(foe);
+                        if (foe.hp <= 0) {
+                            if ('sprite' in foe) {
+                                // 城墙/城门被打破：不再绘制、不再阻挡（士兵进城打守军）
+                                foe.sprite.destroyed = true;
+                                foe.sprite.obstructionDisabled = true;
+                            } else {
+                                this.pushCorpse(foe);
+                            }
+                        }
                     }
                 }
                 // ── 近战出手：生成刀光剑影（微弯斩击刀痕 / 突刺枪芒）与碰撞金属火花 ──
@@ -4967,8 +5057,10 @@ export class Scene13WarLayer {
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
         // 按本帧最终锁定关系核对计数；下一帧会从零重新登记追击名额。
         for (const m of this.men) { m.claimsNext = 0; }
+        for (const b of this.wallGates) { b.claimsNext = 0; }
         for (const m of this.men) { if (m.foe && m.foe.hp > 0) m.foe.claimsNext++; }
         for (const m of this.men) { m.claims = m.claimsNext; }
+        for (const b of this.wallGates) { b.claims = b.claimsNext; }
 
         this.separate(dt);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
@@ -5271,6 +5363,7 @@ export class Scene13WarLayer {
         const vis: Array<UnitVisual | EnvironmentVisual> = [];
         // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
         for (const sprite of this.decorSprites) {
+            if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
             if (sprite.layer === 'world') {
                 const drawY = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
                 vis.push({ kind: 'environment', y: drawY, z: sprite.z, sprite });
