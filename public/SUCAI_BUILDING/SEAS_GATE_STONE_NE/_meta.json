@@ -1,9 +1,12 @@
 {
   "name": "SEAS_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 192,
-  "box_h": 216,
-  "anchor_x": 124,
-  "anchor_y": 180,
-  "sld_source": "b_seas_gate_stone_ne_open"
+  "box_w": 305,
+  "box_h": 263,
+  "anchor_x": 180,
+  "anchor_y": 201,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_seas_gate_stone_ne_closed + b_seas_gate_stone_corner"
 }

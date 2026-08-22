@@ -1,0 +1,9 @@
+{
+  "name": "HARDWOOD_WALL_PALISADE_N",
+  "frames": 1,
+  "box_w": 88,
+  "box_h": 132,
+  "anchor_x": 48,
+  "anchor_y": 92,
+  "sld_source": "b_scen_wall_palisade_fortified"
+}

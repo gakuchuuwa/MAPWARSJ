@@ -1,9 +1,12 @@
 {
   "name": "DARK_GATE_PALISADE_SE",
   "frames": 1,
-  "box_w": 168,
-  "box_h": 188,
-  "anchor_x": 108,
-  "anchor_y": 156,
-  "sld_source": "b_dark_gate_palisade_se_open"
+  "box_w": 302,
+  "box_h": 253,
+  "anchor_x": 177,
+  "anchor_y": 192,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_dark_gate_palisade_se_closed + b_dark_gate_palisade_corner"
 }

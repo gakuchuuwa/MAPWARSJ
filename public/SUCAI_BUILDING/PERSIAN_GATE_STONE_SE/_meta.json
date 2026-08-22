@@ -1,9 +1,12 @@
 {
   "name": "PERSIAN_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 196,
-  "box_h": 224,
-  "anchor_x": 128,
-  "anchor_y": 196,
-  "sld_source": "b_persian_gate_stone_se_open"
+  "box_w": 309,
+  "box_h": 252,
+  "anchor_x": 182,
+  "anchor_y": 188,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_persian_gate_stone_se_closed + b_persian_gate_stone_corner"
 }

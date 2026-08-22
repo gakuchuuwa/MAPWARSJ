@@ -1,9 +1,12 @@
 {
   "name": "EAST_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 172,
-  "box_h": 188,
-  "anchor_x": 116,
-  "anchor_y": 164,
-  "sld_source": "b_east_gate_fortified_ne_open"
+  "box_w": 325,
+  "box_h": 269,
+  "anchor_x": 195,
+  "anchor_y": 205,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_east_gate_fortified_ne_closed + b_east_gate_fortified_corner"
 }

@@ -1,9 +1,12 @@
 {
   "name": "SEAS_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 200,
-  "box_h": 216,
-  "anchor_x": 128,
-  "anchor_y": 180,
-  "sld_source": "b_seas_gate_fortified_ne_open"
+  "box_w": 318,
+  "box_h": 280,
+  "anchor_x": 190,
+  "anchor_y": 217,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_seas_gate_fortified_ne_closed + b_seas_gate_fortified_corner"
 }

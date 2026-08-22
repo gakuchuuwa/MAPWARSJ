@@ -1,9 +1,12 @@
 {
   "name": "ORIE_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 188,
-  "anchor_x": 116,
-  "anchor_y": 160,
-  "sld_source": "b_orie_gate_fortified_ne_open"
+  "box_w": 296,
+  "box_h": 244,
+  "anchor_x": 178,
+  "anchor_y": 184,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_orie_gate_fortified_ne_closed + b_orie_gate_fortified_corner"
 }

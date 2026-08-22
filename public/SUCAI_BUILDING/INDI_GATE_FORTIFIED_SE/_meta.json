@@ -1,9 +1,12 @@
 {
   "name": "INDI_GATE_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 176,
-  "anchor_x": 116,
-  "anchor_y": 144,
-  "sld_source": "b_indi_gate_fortified_se_open"
+  "box_w": 293,
+  "box_h": 246,
+  "anchor_x": 171,
+  "anchor_y": 185,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_indi_gate_fortified_se_closed + b_indi_gate_fortified_corner"
 }

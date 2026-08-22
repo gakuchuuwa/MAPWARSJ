@@ -1,9 +1,12 @@
 {
   "name": "MEDI_GATE_STONE_SE",
   "frames": 1,
-  "box_w": 184,
-  "box_h": 208,
-  "anchor_x": 116,
-  "anchor_y": 172,
-  "sld_source": "b_medi_gate_stone_se_open"
+  "box_w": 296,
+  "box_h": 244,
+  "anchor_x": 177,
+  "anchor_y": 184,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_medi_gate_stone_se_closed + b_medi_gate_stone_corner"
 }
