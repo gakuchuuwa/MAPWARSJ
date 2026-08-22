@@ -1363,6 +1363,8 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
     FX_MUZZLE_HAND: { path: 'MUZZLE_HANDCANNON', dirs: 8 },
     FX_MUZZLE_CONQ: { path: 'MUZZLE_CONQUISTADOR', dirs: 8 },
     FX_MUZZLE_FIRELANCE: { path: 'MUZZLE_FIRE_LANCER', dirs: 8 },
+    // 破墙尘土（DE IMPACT_DUST，8 向）
+    FX_WALL_DUST: { path: 'IMPACT_DUST', dirs: 8 },
 };
 /**
  * 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度）。
@@ -1381,12 +1383,14 @@ const FX_SCALE: Record<string, number> = {
     FX_MUZZLE_HAND: 0.42,         //  33px ≈ 0.66 倍：火枪枪口焰放大，让开火可见（原 0.30 太小）
     FX_MUZZLE_CONQ: 0.40,         //  40px ≈ 0.80 倍
     FX_MUZZLE_FIRELANCE: 0.40,    //  36px ≈ 0.72 倍：火矛是喷射，比枪口焰长
+    FX_WALL_DUST: 0.8,            // 尘土 136px ≈ 2.2 倍兵高：破墙扬尘，压过墙段高度
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
 const FX_DUR: Record<string, number> = {
     FX_EXPLOSION: 0.45, FX_PETARD: 0.4,
     FX_MUZZLE_BOMBARD: 0.18, FX_MUZZLE_ORGAN: 0.18, FX_MUZZLE_HAND: 0.15,
     FX_MUZZLE_CONQ: 0.15, FX_MUZZLE_FIRELANCE: 0.25,
+    FX_WALL_DUST: 0.5,
 };
 /** 火器兵种 → 炮口焰特效 key（按口径/枪型区分）。 */
 const FIREARM_MUZZLE: Record<string, string> = {
@@ -1606,6 +1610,10 @@ const GANG_CAP = 3;
  * 改 GANG_CAP 时这里跟着走，别让两个数脱节。
  */
 const SPREAD_CAP = GANG_CAP + 1;
+/** 🔴 [2026-08-22 主人定] 攻城战开战多少秒后，所有城墙自动随机坍塌一次（保底，避免被墙挡太久） */
+const WALL_AUTO_COLLAPSE_SEC = 10;
+/** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
+const GATE_COLLAPSE_DUR = 1.4;
 /**
  * 软推挤：两个精灵靠得比这还近就互相推开（px）。
  * 🔴 这**不是**被禁的 fan-out 瞬移（那是一帧之内把人挪走、看着像闪现）——
@@ -2239,6 +2247,13 @@ interface DecorSprite {
     obstructionDisabled: boolean;
     /** 攻城战城墙/城门被打破（HP 归零）→ 不再绘制、不再阻挡（士兵进城） */
     destroyed?: boolean;
+    /**
+     * 倒塌动画状态（城门/城墙破墙时置入）：破墙后本 sprite 不立即 destroyed，
+     * 而是切到倒塌动画素材（asset 已指向 collapseAsset），按 t 推进帧，
+     * 播完（t ≥ dur）→ 切 rubble 残骸常驻 / 城墙留 D75 残垣。
+     * 未设置 = 正常静态装饰。
+     */
+    collapse?: { t: number; dur: number; rubbleAsset: string | null };
 }
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 function isWaterTile(tile: string): boolean {
@@ -2547,6 +2562,8 @@ export class Scene13WarLayer {
     private corpseAcc = 0;
     /** 本场已打了多少秒（真实秒，开场列阵也算）。见 HARD_STOP_SEC / NO_KILL_SEC */
     private battleSec = 0;
+    /** 攻城战「开战 N 秒自动塌墙」是否已触发过（只触发一次，见 WALL_AUTO_COLLAPSE_SEC） */
+    private wallAutoCollapsed = false;
     /** 最近一次有人阵亡的时刻（秒，battleSec 计）。长时间没人死 = 卡住了 */
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
@@ -2785,6 +2802,8 @@ export class Scene13WarLayer {
         this.defenderCityType = init.defenderCityType ?? null;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         this.defenderHolding = this.battleType === 'siege';
+        // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
+        this.wallAutoCollapsed = false;
         // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
         this.famousBuff = [
             getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
@@ -3866,7 +3885,15 @@ export class Scene13WarLayer {
         const na = this.natureCache[s.asset];
         if (!na || !na.img || !na.img.complete || !na.meta) return;
         const m = na.meta;
-        const fr = m.frames > 0 ? (s.frame % m.frames) : 0;
+        // 🔴 城门倒塌动画：collapse 状态存在时按 t/dur 推进帧（播完由 step 切 rubble、清状态）。
+        //    其余（静态装饰 / 城墙 D75 残垣单帧）走 s.frame 取模。
+        let fr: number;
+        if (s.collapse) {
+            const p = Math.min(1, s.collapse.t / s.collapse.dur);
+            fr = Math.min(m.frames - 1, Math.floor(p * m.frames));
+        } else {
+            fr = m.frames > 0 ? (s.frame % m.frames) : 0;
+        }
         const sw = m.box_w, sh = m.box_h;
         const sx = fr * sw;
         if (s.flip) {
@@ -4450,7 +4477,7 @@ export class Scene13WarLayer {
         }
         // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）。
         // 🔴 [2026-08-22 主人定] 攻方优先攻击城墙：正面体系（linked）墙/门优先于任何敌兵——
-        //    远程原地站桩射墙、近战贴墙砍；斜墙不参与优先（破了不触发联动，白打）。
+        //    远程原地站桩射墙、近战贴墙砍。斜墙不参与优先（兜底循环照打，破墙同样触发全墙联动）。
         if (this.battleType === 'siege' && m.f === 0) {
             let bw: WarBuilding | null = null, bwd = r2;
             for (const b of this.wallGates) {
@@ -4494,18 +4521,46 @@ export class Scene13WarLayer {
             for (let i = off; i < walls.length; i += step) {
                 const b = walls[i];
                 b.hp = 0;
-                b.sprite.destroyed = true;
-                b.sprite.obstructionDisabled = true;
-                if (b.extraSprites) {
-                    for (const sp of b.extraSprites) {
-                        sp.destroyed = true;
-                        sp.obstructionDisabled = true;
-                    }
-                }
+                this.breachWall(b, false);   // 联动倒塌：不喷尘土（尘土只给直接打破的那段）
             }
         }
         // 破墙 → 守方开始反击（近战出击、远程正常机动）
         this.defenderHolding = false;
+    }
+
+    /**
+     * 🔴 [2026-08-22 主人定] 单段城墙/城门破墙演出：立即解除阻挡（士兵能进城），
+     *    再按类型播倒塌视觉——
+     *    · 城门（collapseAsset）：播 50 帧倒塌动画 → 切 rubble 残骸常驻；
+     *    · 石墙/垛墙（destrAssets）：切 D75 残垣常驻（不再阻挡）；
+     *    · 木栅栏（两者皆无）：直接消失。
+     *    dust=true 时喷破墙尘土（只给被士兵直接打破的那段，联动倒塌不喷，防尘土海）。
+     */
+    private breachWall(b: WarBuilding, dust: boolean): void {
+        // ① 立即解除阻挡 + 击破关联屏障（士兵马上能进城，不等动画）
+        b.sprite.obstructionDisabled = true;
+        if (b.extraSprites) {
+            for (const sp of b.extraSprites) {
+                sp.destroyed = true;
+                sp.obstructionDisabled = true;
+            }
+        }
+        // ② 破墙尘土（可选）
+        if (dust) this.spawnFx('FX_WALL_DUST', b.x, b.y, (Math.random() * 8) | 0);
+        // ③ 按类型播倒塌视觉
+        if (b.collapseAsset) {
+            // 城门：切 50 帧倒塌动画，播完由 step 里 collapse.t 推进 → 切 rubble 残骸
+            b.sprite.asset = 'BUILDINGANIM:' + b.collapseAsset;
+            b.sprite.frame = 0;
+            b.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: b.rubbleAsset ? 'BUILDINGANIM:' + b.rubbleAsset : null };
+        } else if (b.destrAssets && b.destrAssets.length) {
+            // 石墙/垛墙：切 D75 残垣常驻（单帧静态，不再阻挡）
+            b.sprite.asset = 'BUILDINGANIM:' + b.destrAssets[2];
+            b.sprite.frame = 0;
+        } else {
+            // 木栅栏（无破损档/无倒塌动画）：直接消失
+            b.sprite.destroyed = true;
+        }
     }
 
     /**
@@ -4735,6 +4790,13 @@ export class Scene13WarLayer {
             }
         }
         this.spawnTick(dt);
+        // 🔴 [2026-08-22 主人定] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
+        //    随机坍塌一次——即使士兵还没打穿墙，10 秒后也强制随机塌一批，留出足够缺口，
+        //    既保留攻城破墙的观感，又不被城墙妨碍太久。只触发一次。
+        if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
+            this.wallAutoCollapsed = true;
+            this.collapseFrontWalls();
+        }
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) this.deployT -= dt;
         const deploying = this.deployT > 0;
@@ -5116,21 +5178,11 @@ export class Scene13WarLayer {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
                         if (foe.hp <= 0) {
                             if ('sprite' in foe) {
-                                // 🔴 [2026-08-22 主人定] 联动倒塌：任意一处正面城墙/城门被打破 →
-                                //    前排全部城墙 + 两座城门一起倒（斜墙不参与），并触发守方反击。
-                                if (foe.linked) {
-                                    this.collapseFrontWalls();
-                                } else {
-                                    // 城墙/城门被打破：不再绘制、不再阻挡（士兵进城打守军）
-                                    foe.sprite.destroyed = true;
-                                    foe.sprite.obstructionDisabled = true;
-                                    if (foe.extraSprites) {
-                                        for (const sp of foe.extraSprites) {
-                                            sp.destroyed = true;
-                                            sp.obstructionDisabled = true;
-                                        }
-                                    }
-                                }
+                                // 🔴 单段破墙演出（立即解除阻挡 + 尘土 + 倒塌动画/残垣/消失）
+                                this.breachWall(foe, true);
+                                // 🔴 [2026-08-22 主人定] 任意一处城墙/城门被打破 → 所有城墙
+                                //    （前排 + 上排 + 下排斜墙）统一随机间隔倒塌，并触发守方反击。
+                                this.collapseFrontWalls();
                             } else {
                                 this.pushCorpse(foe);
                             }
@@ -5289,6 +5341,21 @@ export class Scene13WarLayer {
         // DE 攻击特效（爆炸/炮口焰）：独立一次性生命周期，播完移除。
         for (const f of this.fxs) f.t += dt;
         this.fxs = this.fxs.filter(f => f.t < f.dur);
+        // 城门倒塌动画推进：collapse.t 累加，播完把 sprite 切到 rubble 残骸常驻、清掉 collapse 状态。
+        for (const b of this.wallGates) {
+            const c = b.sprite.collapse;
+            if (!c) continue;
+            c.t += dt;
+            if (c.t >= c.dur) {
+                if (c.rubbleAsset) {
+                    b.sprite.asset = c.rubbleAsset;   // 残骸常驻
+                    b.sprite.frame = 0;
+                } else {
+                    b.sprite.destroyed = true;         // 无残骸（木栅栏），播完消失
+                }
+                b.sprite.collapse = undefined;
+            }
+        }
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来
         // （用原图宽当余量，保证是整朵飘出去、整朵飘进来，绝不在画面里半途闪现）
         if (this.clouds.length && this.canvas) {
