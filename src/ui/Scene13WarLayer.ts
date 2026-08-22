@@ -89,16 +89,18 @@ const WALL_AUTO_COLLAPSE_SEC = 30;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
-/** 攻城战守方城墙/城门：**纯装饰贴图**（2026-08-22 主人定：不可攻击、不阻挡，士兵穿墙打兵）。 */
+/** 攻城战守方城墙/城门：**装饰贴图 + 碰撞阻挡**（2026-08-22 主人定：不可攻击，但 30 秒塌墙前挡士兵）。 */
 interface WallSprite {
-    /** 城墙/城门贴图精灵（纯装饰，无碰撞） */
+    /** 城墙/城门贴图精灵（有碰撞阻挡，不可攻击；塌墙后 obstructionDisabled 放行、残骸常驻） */
     sprite: DecorSprite;
     /** 城门倒塌动画素材目录名（DESTR，50 帧）；有值 = 城门，30 秒随机塌时播动画 → 切 rubble 残骸 */
     collapseAsset?: string;
-    /** 城门倒塌后残骸素材目录名（RUBBLE，1 帧），常驻地面 */
+    /** 倒塌后残骸素材目录名（RUBBLE，1 帧），常驻地面（城门=石/木门 rubble；木栅栏墙段复用木门 rubble） */
     rubbleAsset?: string;
-    /** 城墙 D75 残垣素材目录名；有值 = 石墙/垛墙（塌时切残垣），无值 = 木栅栏（塌时消失） */
+    /** 城墙 D75 残垣素材目录名；有值 = 石墙/垛墙（塌时切残垣），无值 = 木栅栏（塌时切木门 rubble） */
     destrAsset?: string;
+    /** 城门沿线铺设的隐形碰撞体（堵城门跨度两侧缝隙）；城门塌时一并解除 */
+    extraSprites?: DecorSprite[];
 }
 
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
@@ -2206,7 +2208,7 @@ interface DecorSprite {
     obstructionContactSec: number;
     obstructionTouched: boolean;
     obstructionDisabled: boolean;
-    /** 攻城战城墙/城门被打破（HP 归零）→ 不再绘制、不再阻挡（士兵进城） */
+    /** 已销毁装饰（城门倒塌动画播完且无残骸兜底）→ 不再绘制、不再阻挡 */
     destroyed?: boolean;
     /**
      * 倒塌动画状态（城门/城墙破墙时置入）：破墙后本 sprite 不立即 destroyed，
@@ -3372,28 +3374,50 @@ export class Scene13WarLayer {
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
-            // 城墙/城门 = 可攻击建筑（照 DE）：铺贴图 + 建建筑目标（士兵能打、HP 归零破墙进城）
-            // 🔴 [2026-08-22 主人需求] 破墙要有倒塌动画和残骸：城墙按 HP 渐进切破损档（destr_25/50/75），
-            //    破墙瞬间尘土特效 + 留 D75 残垣；城门破 → 播 50 帧倒塌动画 → 留 rubble 残骸。
+            // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
+            // 🔴 [2026-08-22 主人需求] 30 秒随机塌一半城墙，塌掉的墙段放行 + 留残骸：
+            //    城门 → 播 50 帧倒塌动画 → 留 rubble 残骸；石墙/垛墙 → 切 D75 残垣；木栅栏 → 切木门 rubble 残骸。
             const placeWall = (s: { x: number; y: number }, asset: string, _key: 'STONE_WALL' | 'STONE_GATE'): void => {
-                // 纯装饰贴图：无碰撞，士兵直接穿墙打兵（2026-08-22 主人定）
-                const sprite = place(s, asset, { flip: false, z: 1 });
+                // 城墙贴图 + 碰撞阻挡：不可攻击，但 30 秒塌墙前挡士兵（2026-08-22 主人定）
+                // 碰撞 0.95×0.95：斜墙 48/24 步长下相邻段碰撞相接无缝隙（0.5 太小会漏缝）
+                const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
-                // 石墙/垛墙有 D75 残垣（塌时切残垣）；木栅栏 PALISADE 无 → destrAsset 留空（塌时直接消失）
-                const destrAsset = asset.includes('PALISADE') ? undefined : `${asset}_D75`;
-                if (destrAsset) this.ensureNatureAsset('BUILDINGANIM:' + destrAsset);
-                this.wallSprites.push({ sprite, destrAsset });
+                if (asset.includes('PALISADE')) {
+                    // 木栅栏墙段：DE 无 D25/D50/D75 残垣，塌时复用木栅栏城门 rubble 残骸（木头碎片常驻）
+                    const dir = asset.endsWith('_SE') ? 'SE' : 'NE';
+                    const rubbleAsset = `DARK_GATE_PALISADE_${dir}_RUBBLE`;
+                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                    this.wallSprites.push({ sprite, rubbleAsset });
+                } else {
+                    // 石墙/垛墙：塌时切 D75 残垣
+                    const destrAsset = `${asset}_D75`;
+                    this.ensureNatureAsset('BUILDINGANIM:' + destrAsset);
+                    this.wallSprites.push({ sprite, destrAsset });
+                }
             };
-            // 城门：纯装饰贴图（无碰撞、无屏障），30 秒随机塌时播倒塌动画 → rubble 残骸
-            const placeGate = (s: { x: number; y: number }, asset: string, _dir: 'NE' | 'SE'): void => {
-                const sprite = place(s, asset, { flip: false, z: 1 });
+            // 城门：装饰贴图 + 碰撞阻挡（不可攻击），30 秒随机塌时播倒塌动画 → rubble 残骸
+            const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
+                const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
+                // 城门双塔跨度大（±72px），单点 obstruction 盖不住，沿轴线铺 6 点密实碰撞体锁死两侧缝隙
+                const extraSprites: DecorSprite[] = [];
+                const dSign = dir === 'NE' ? -1 : 1;
+                for (let step = -3; step <= 3; step++) {
+                    if (step === 0) continue;
+                    const extra: DecorSprite = {
+                        asset: '', frame: 0, x: s.x + step * 24, y: s.y + step * 12 * dSign, flip: false, layer: 'world', z: 1,
+                        obstruction: { x: 0.95, y: 0.95 },
+                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                    };
+                    this.decorSprites.push(extra);
+                    extraSprites.push(extra);
+                }
                 // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
                 const collapseAsset = `${asset}_DESTR`;
                 const rubbleAsset = `${asset}_RUBBLE`;
                 this.ensureNatureAsset('BUILDINGANIM:' + collapseAsset);
                 this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
-                this.wallSprites.push({ sprite, collapseAsset, rubbleAsset });
+                this.wallSprites.push({ sprite, collapseAsset, rubbleAsset, extraSprites });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -4413,12 +4437,13 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-22 主人定] 30 秒随机坍塌一半城墙贴图（纯视觉演出）。
-     *    城墙不再是可攻击/可阻挡对象，这里只做视觉：随机挑一半城墙段，按类型切贴图——
+     * 🔴 [2026-08-22 主人定] 30 秒随机坍塌一半城墙，坍塌后**所有城墙都为贴图**（可穿透）。
+     *    城墙不可攻击，30 秒前有碰撞阻挡；30 秒到点后随机挑一半墙段切残骸贴图（视觉演出），
+     *    并解除**所有**城墙碰撞——没塌的一半保持完整贴图但同样放行士兵。
      *    · 城门（collapseAsset）：播 50 帧倒塌动画 → 切 rubble 残骸；
      *    · 石墙/垛墙（destrAsset）：切 D75 残垣；
-     *    · 木栅栏（两者皆无）：消失 + 尘土。
-     *    塌一半留一半：剩下一半城墙贴图保持完好，观感「城墙被打塌了一部分」。
+     *    · 木栅栏（rubbleAsset）：切木栅栏城门 rubble 残骸（DE 木栅栏墙段无残垣）。
+     *    残骸常驻地面（不 destroyed）；城门沿线 6 点屏障一并解除。
      */
     private collapseHalfWalls(): void {
         const walls = this.wallSprites.filter(w => !w.sprite.destroyed && !w.sprite.collapse);
@@ -4430,6 +4455,7 @@ export class Scene13WarLayer {
             [idx[i], idx[j]] = [idx[j], idx[i]];
         }
         const half = Math.max(1, Math.round(walls.length / 2));
+        // 塌的一半：切残垣/残骸贴图（视觉演出）
         for (let n = 0; n < half; n++) {
             const w = walls[idx[n]];
             // 城门：切倒塌动画 → 残骸
@@ -4441,12 +4467,18 @@ export class Scene13WarLayer {
                 // 石墙/垛墙：切 D75 残垣
                 w.sprite.asset = 'BUILDINGANIM:' + w.destrAsset;
                 w.sprite.frame = 0;
-            } else {
-                // 木栅栏：消失
-                w.sprite.destroyed = true;
+            } else if (w.rubbleAsset) {
+                // 木栅栏墙段：切木栅栏残骸（复用木门 rubble，常驻）
+                w.sprite.asset = 'BUILDINGANIM:' + w.rubbleAsset;
+                w.sprite.frame = 0;
             }
             // 破墙尘土
             this.spawnFx('FX_WALL_DUST', w.sprite.x, w.sprite.y, (Math.random() * 8) | 0);
+        }
+        // 30 秒后所有城墙都为贴图（可穿透）：全部解除碰撞（没塌的一半保持完整贴图但也放行），城门一并解除沿线屏障
+        for (const w of walls) {
+            w.sprite.obstructionDisabled = true;
+            if (w.extraSprites) for (const sp of w.extraSprites) { sp.obstructionDisabled = true; sp.destroyed = true; }
         }
         // 城墙塌 → 守方开始反击（近战出击、远程正常机动）
         this.defenderHolding = false;
@@ -5228,7 +5260,7 @@ export class Scene13WarLayer {
                     w.sprite.asset = c.rubbleAsset;   // 残骸常驻
                     w.sprite.frame = 0;
                 } else {
-                    w.sprite.destroyed = true;         // 无残骸（木栅栏），播完消失
+                    w.sprite.destroyed = true;         // 无残骸兜底（当前城门均配 rubble，此分支为防御）
                 }
                 w.sprite.collapse = undefined;
             }
