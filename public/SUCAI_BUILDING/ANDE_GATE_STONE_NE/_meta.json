@@ -1,9 +1,9 @@
 {
   "name": "ANDE_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 168,
-  "box_h": 188,
-  "anchor_x": 108,
-  "anchor_y": 160,
-  "sld_source": "b_ande_gate_stone_ne_open"
+  "box_w": 112,
+  "box_h": 181,
+  "anchor_x": 55.0,
+  "anchor_y": 158.0,
+  "sld_source": "b_ande_gate_stone_ne_open_x1.sld"
 }

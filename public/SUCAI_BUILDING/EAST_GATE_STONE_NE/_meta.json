@@ -1,9 +1,9 @@
 {
   "name": "EAST_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 184,
-  "anchor_x": 116,
-  "anchor_y": 156,
-  "sld_source": "b_east_gate_stone_ne_open"
+  "box_w": 108,
+  "box_h": 164,
+  "anchor_x": 53.0,
+  "anchor_y": 153.0,
+  "sld_source": "b_east_gate_stone_ne_open_x1.sld"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_GATE_STONE_SE",
+  "frames": 1,
+  "box_w": 112,
+  "box_h": 181,
+  "anchor_x": 57.0,
+  "anchor_y": 159.0,
+  "sld_source": "b_ande_gate_stone_se_open_x1.sld"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_GATE_STONE_SE",
+  "frames": 1,
+  "box_w": 120,
+  "box_h": 153,
+  "anchor_x": 58.0,
+  "anchor_y": 186.0,
+  "sld_source": "b_puru_gate_stone_se_open_x1.sld"
+}

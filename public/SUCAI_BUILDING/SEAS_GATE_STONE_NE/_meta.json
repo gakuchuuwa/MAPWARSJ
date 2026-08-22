@@ -1,9 +1,9 @@
 {
   "name": "SEAS_GATE_STONE_NE",
   "frames": 1,
-  "box_w": 192,
-  "box_h": 216,
-  "anchor_x": 124,
-  "anchor_y": 180,
-  "sld_source": "b_seas_gate_stone_ne_open"
+  "box_w": 131,
+  "box_h": 207,
+  "anchor_x": 66.0,
+  "anchor_y": 177.0,
+  "sld_source": "b_seas_gate_stone_ne_open_x1.sld"
 }

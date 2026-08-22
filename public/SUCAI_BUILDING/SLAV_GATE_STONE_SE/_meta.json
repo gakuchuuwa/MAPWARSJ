@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_GATE_STONE_SE",
+  "frames": 1,
+  "box_w": 129,
+  "box_h": 183,
+  "anchor_x": 64.0,
+  "anchor_y": 153.0,
+  "sld_source": "b_slav_gate_stone_se_open_x1.sld"
+}

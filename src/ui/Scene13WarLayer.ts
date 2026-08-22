@@ -1279,10 +1279,10 @@ const PROJ_DUR: Record<string, number> = {
     PROJ_BALL: 0.65,
     PROJ_GRENADE: 0.55,
 };
-/** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；弹丸 373 的 speed = 6.0 格/秒。 */
+/** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；火枪弹丸适度调快 (750px/s)。 */
 const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_WAR_WAGON: 6 * 40,
-    PROJ_GUNPOWDER: 7.5 * 40,
+    PROJ_GUNPOWDER: 750,
     PROJ_BOMBARD_BALL: 4 * 40,
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
@@ -1916,10 +1916,21 @@ const SLIDE_W = 0.4;
  */
 const KEEP_TARGET_HP = 0.5;
 /**
- * 【放风筝】一轮后撤最多白跑多远（px）—— 主人 2026-08-19 定「撤退多少米、一次攻击都没有就不再撤退」。
- * 期间只要射出过一次就清零重新计。跑满这个距离仍一箭未发 = 追兵与自己同速（骑兵追骑射），
+ * 【放风筝】被近战贴脸（65px）后，一轮后撤跑多远就停下回身站撸（px）—— 主人 2026-08-22 定。
+ * 段落式「站撸 → 被攻击 → 撤一段 → 再站撸」：跑够这段就停，下次再被贴脸才再跑。
+ * 100px ≈ 2 个身位，弓骑(130)对步兵(55)能拉开距离继续射；对同速骑兵拉不开，靠 CAP 兜底。
+ */
+const KITE_RETREAT_DIST = 100;
+/**
+ * 【放风筝】后撤停下的安全距离（px）：跑够 KITE_RETREAT_DIST 时离敌人 ≥ 此值才算甩开、可以停；
+ * < 此值 = 同速追兵根本没甩掉，继续跑直到 KITE_RETREAT_CAP 放弃。70 > 贴脸 65 有缓冲，远小于射程 160。
+ */
+const KITE_SAFE = 70;
+/**
+ * 【放风筝】连续后撤累计多远仍没甩开就放弃风筝（px）—— 主人 2026-08-19 定「撤退多少米、一次攻击都没有就不再撤退」。
+ * 期间只要成功甩开过一次（停时 kd ≥ KITE_SAFE）就清零重新计。累计跑满这个距离仍没甩开 = 追兵与自己同速（骑兵追骑射），
  * 风筝在这种对手面前不成立，继续退只是白挨打，改为转身硬拼。
- * 300px ≈ 6 个身位 ≈ 4 次完整后撤（触发距离 70），够判断「甩不掉」了。
+ * 300px = KITE_RETREAT_DIST(100) × 3 段，够判断「甩不掉」了。
  */
 const KITE_RETREAT_CAP = 300;
 /* ── 【战场白热化】伤害随战斗时长递增（主人 2026-08-19 定）──────────────────────────
@@ -2029,17 +2040,25 @@ interface WarMan {
      */
     march: boolean;
     /**
-     * 【放风筝】本轮后撤累计跑了多远（px）。**打出一次攻击就清零**。
-     * 见 KITE_RETREAT_CAP：跑够那么远却一箭没射 = 这个敌人根本甩不掉（同速骑兵追杀），
+     * 【放风筝】连续后撤累计跑了多远（px）。**打出一次攻击就清零**（见攻击结算处）。
+     * 见 KITE_RETREAT_CAP：跨多段累计跑满那么远仍一箭没射 = 这个敌人根本甩不掉（同速骑兵追杀），
      * 再跑就是自废武功，此时永久放弃风筝、转身硬拼。
+     * ⚠️ 段落式后撤：跑够 KITE_RETREAT_DIST 就停（kiting=false），但这里**不清零**——
+     *   只有真的射出一箭才清零，否则同速追兵每段「跑—停—再被贴脸」零输出，累计照样能到 CAP。
      */
     kiteDist?: number;
+    /**
+     * 【放风筝】本段后撤已跑距离（px）：跑够 KITE_RETREAT_DIST 就停下回身站撸，并清零。
+     * 与 kiteDist 的分工：kiteDist 是「射箭才清零」的跨段累计（判「甩不掉」→放弃），
+     * 这个是「每段清零」的段内计数（判「跑够一段就停」）。
+     */
+    kiteLeg?: number;
     /** 【放风筝】本场已放弃风筝（撤退白跑太远，见 kiteDist）；置位后不再后撤 */
     kiteGaveUp?: boolean;
     /**
      * 【放风筝】当前是否处于「转身跑开」状态（只有带 kite 的弓骑用）。
-     * 带迟滞：敌人逼近到 kite 内进入，拉开到 kite×1.35 才退出 —— 不带迟滞会在阈值上
-     * 每帧翻面（跑半步就回身、敌人再近又跑），动画抖成一团。
+     * 进入：被近战贴脸（65px，敌人已挥刀砍过来）；退出：后撤跑够 KITE_RETREAT_DIST 停下回身站撸。
+     * 段落式「站撸 → 被攻击 → 撤一段 → 再站撸」，不是「距离阈值上每帧翻面」。
      */
     kiting?: boolean;
     /**
@@ -3317,12 +3336,21 @@ export class Scene13WarLayer {
             }
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
-            // 🔴 [主人明确指示] 严格只放 2 个城墙上下紧挨着连在一起：X 坐标完全一致，Y 坐标步长 48px 严密垂直咬合，绝不左右错开
+            // 🔴 [主人明确指示] 18 段南北直墙无缝连贯排布 + 上方放向上城门(NE) + 下方放向下城门(SE)
             const wallFrontX = Math.round(wMinX - 260);
             const midY = (wMinY + wMaxY) * 0.5;
-            const pitch = 48; // DE 垂直城墙咬合标准步长 (48px)
-            this.decorSprites.push(place({ x: wallFrontX, y: midY - pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.7, y: 0.7 } }));
-            this.decorSprites.push(place({ x: wallFrontX, y: midY + pitch * 0.5 }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.7, y: 0.7 } }));
+            const pitch = 40; // 紧密贴合步长（40px），上下切片完全咬死，中间零缝隙
+
+            // 1. 上端：向上城门 (NE 东北向大开铁栅城门)
+            this.decorSprites.push(place({ x: wallFrontX + 38, y: midY - 8.5 * pitch - 26 }, style + '_GATE_STONE_NE', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
+
+            // 2. 正面 18 段垂直主城墙
+            for (let i = -8.5; i <= 8.5; i += 1.0) {
+                this.decorSprites.push(place({ x: wallFrontX, y: midY + i * pitch }, style + '_WALL_STONE_N', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
+            }
+
+            // 3. 下端：向下城门 (SE 东南向大开铁栅城门)
+            this.decorSprites.push(place({ x: wallFrontX + 38, y: midY + 8.5 * pitch + 16 }, style + '_GATE_STONE_SE', { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } }));
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp();
@@ -4564,19 +4592,16 @@ export class Scene13WarLayer {
             const foe = m.foe;
             if (foe) {
                 const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
-                /* ── 【放风筝】主人 2026-08-19 定「不要站撸」──────────────────────────
-                 * 旧实现（在攻击分支末尾）只把坐标往后挪，**不改朝向、不切走路状态**，
-                 * 于是弓骑播着拉弓动作、脸朝敌人、身体向后滑 —— 主人原话「成了向后平移」。
-                 * 现在改成真正的「打了就跑」：
-                 *   · 敌人进 kite → 本帧**不打**，转身朝远离方向跑（dir 按逃跑方向、st=0 走路动画）
-                 *   · 拉开到 kite×1.35 才回身（迟滞，否则在阈值上每帧翻面抖成一团）
-                 * 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替。
+                /* ── 【放风筝】主人 2026-08-22 定「被攻击才撤、撤一段就停」──────────────
+                 * 触发 = 被近战贴脸（kd < 65，敌人已挥刀砍过来），不是 70px 预判跑——
+                 * 弓骑先站着射，敌人真贴到脸上砍了才拨马后撤，符合帕提亚回马射「站定射→被追上→跑」。
+                 * 后撤 = 跑够固定段 KITE_RETREAT_DIST 就停下回身站撸，下次再被贴脸再跑（段落式）。
+                 *   · 跑的那一帧**不打**（dir 按逃跑方向、st=0 走路动画），不是倒着滑
+                 *   · 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替
                  */
                 if (wt.kite && !m.kiteGaveUp) {
-                    const kr = wt.kite;
                     const kd = Math.sqrt(fd2);
-                    if (!m.kiting && kd < kr) m.kiting = true;
-                    else if (m.kiting && kd > kr * 1.35) m.kiting = false;
+                    if (!m.kiting && kd < 65) { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
                         const dx = m.x - foe.x, dy = m.y - foe.y, d = kd || 1;
                         const step = stats.spd * dt;
@@ -4593,9 +4618,21 @@ export class Scene13WarLayer {
                             m.dir = this.dir8(dx, dy);   // 朝向 = 逃跑方向 → 转身跑，不是倒着滑
                             m.st = 0;                    // 走路状态：尾部才会推走路动画
                             m.fightT = 0;
-                            // 白跑计数：射出一箭就清零（见下方攻击处）；跑满上限仍零输出 → 本场放弃风筝
+                            m.kiteLeg = (m.kiteLeg ?? 0) + step;
                             m.kiteDist = (m.kiteDist ?? 0) + step;
-                            if (m.kiteDist > KITE_RETREAT_CAP) { m.kiteGaveUp = true; m.kiting = false; }
+                            // 累计甩不掉 → 优先放弃：同速骑兵每段都拉不开（kd < KITE_SAFE），
+                            // kiteDist 跨段累计到 CAP = 风筝不成立，转身硬拼。
+                            if (m.kiteDist >= KITE_RETREAT_CAP) {
+                                m.kiteGaveUp = true; m.kiting = false;
+                            }
+                            // 跑够一段：拉开到安全距离（kd ≥ KITE_SAFE）才算停，否则本段白跑、继续跑
+                            else if (m.kiteLeg >= KITE_RETREAT_DIST) {
+                                if (kd >= KITE_SAFE) {
+                                    m.kiting = false; m.kiteLeg = 0; m.kiteDist = 0;   // 甩开了，停下回身站撸
+                                } else {
+                                    m.kiteLeg = 0;                                      // 没甩开，重置本段继续跑
+                                }
+                            }
                             if (m.fadeT > 0) m.fadeT -= dt;
                             m.ph += dt * 8;
                             continue;                    // 跑的这一帧不出手、不计围殴
@@ -4836,8 +4873,6 @@ export class Scene13WarLayer {
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
                 const dps = dmgVs(shooter, target, this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
-                // 放风筝白跑计数清零：这一帧真的在输出 → 说明退位有效，可以继续风筝（见 KITE_RETREAT_CAP）
-                if (m.kiteDist) m.kiteDist = 0;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
@@ -5383,37 +5418,20 @@ export class Scene13WarLayer {
                 const startX = a.x;
                 const startY = a.y - startLift;
 
-                // ── 💨 1. DE 原版火药白烟弹线 (Unit 1648 Trail Smoke Gunpowder) ──
-                const isGunpowder = a.proj === 'PROJ_GUNPOWDER' || a.proj === 'PROJ_SHOT' || a.proj === 'PROJ_HUSSITE_WAGON';
-                const isCannon = a.proj === 'PROJ_BOMBARD_BALL';
-                const isFireArrow = a.proj === 'PROJ_ARROW_FIRE';
+                // ── 💨 火枪手白烟弹线 (Unit 1648 Trail Smoke) 与枪口硝烟 ──
+                const isGunpowder = a.proj === 'PROJ_GUNPOWDER';
 
-                if (isGunpowder || isCannon || isFireArrow) {
-                    const trailLen = Math.min(d, isCannon ? 120 : (isFireArrow ? 70 : 85));
+                if (isGunpowder) {
+                    const trailLen = Math.min(d, 85);
                     const tailX = x - a.dx * trailLen;
                     const tailY = y - a.dy * trailLen;
 
                     ctx.save();
                     const grad = ctx.createLinearGradient(tailX, tailY, x, y);
-                    if (isGunpowder) {
-                        // 火枪经典白烟弹线：尾部消散淡化，弹头强光
-                        grad.addColorStop(0, 'rgba(230, 235, 245, 0)');
-                        grad.addColorStop(0.55, 'rgba(240, 245, 255, 0.45)');
-                        grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
-                        ctx.lineWidth = 2.4;
-                    } else if (isCannon) {
-                        // 火炮浓重黑灰硝烟轨迹
-                        grad.addColorStop(0, 'rgba(120, 120, 130, 0)');
-                        grad.addColorStop(0.5, 'rgba(160, 165, 175, 0.40)');
-                        grad.addColorStop(1, 'rgba(230, 230, 240, 0.85)');
-                        ctx.lineWidth = 3.6;
-                    } else {
-                        // 火箭烈焰轨迹
-                        grad.addColorStop(0, 'rgba(255, 80, 0, 0)');
-                        grad.addColorStop(0.6, 'rgba(255, 140, 30, 0.55)');
-                        grad.addColorStop(1, 'rgba(255, 230, 120, 0.95)');
-                        ctx.lineWidth = 2.2;
-                    }
+                    grad.addColorStop(0, 'rgba(230, 235, 245, 0)');
+                    grad.addColorStop(0.55, 'rgba(240, 245, 255, 0.45)');
+                    grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+                    ctx.lineWidth = 2.4;
                     ctx.strokeStyle = grad;
                     ctx.lineCap = 'round';
                     ctx.beginPath();
@@ -5422,10 +5440,11 @@ export class Scene13WarLayer {
                     ctx.stroke();
                     ctx.restore();
 
-                    // ── 💥 2. 枪口/炮口出膛硝烟与微火花 (Muzzle Flash & Smoke Puff) ──
-                    if (p < 0.32) {
-                        const puffP = p / 0.32;
-                        const smokeR = (isCannon ? 4 : 2) + puffP * (isCannon ? 18 : 9);
+                    // 枪口瞬间微硝烟
+                    const elapsed = a.t - delay;
+                    if (elapsed < 0.16) {
+                        const puffP = elapsed / 0.16;
+                        const smokeR = 2 + puffP * 9;
                         const smokeAlpha = Math.max(0, 0.65 - puffP * 0.65);
                         ctx.save();
                         ctx.fillStyle = `rgba(235, 238, 245, ${smokeAlpha})`;
@@ -5433,12 +5452,11 @@ export class Scene13WarLayer {
                         ctx.arc(startX, startY, smokeR, 0, Math.PI * 2);
                         ctx.fill();
 
-                        // 枪口瞬间金白火光 (前 12% 飞行时间内)
-                        if (puffP < 0.40) {
-                            const flashAlpha = (1 - puffP / 0.40) * 0.85;
+                        if (elapsed < 0.05) {
+                            const flashAlpha = (1 - elapsed / 0.05) * 0.90;
                             ctx.fillStyle = `rgba(255, 230, 130, ${flashAlpha})`;
                             ctx.beginPath();
-                            ctx.arc(startX + a.dx * 3, startY + a.dy * 3, isCannon ? 5 : 2.5, 0, Math.PI * 2);
+                            ctx.arc(startX + a.dx * 3, startY + a.dy * 3, 2.5, 0, Math.PI * 2);
                             ctx.fill();
                         }
                         ctx.restore();
