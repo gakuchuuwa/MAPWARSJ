@@ -3,7 +3,8 @@
   "frames": 1,
   "box_w": 41,
   "box_h": 108,
-  "anchor_x": 20.0,
+  "anchor_x": 21.0,
   "anchor_y": 83.0,
-  "sld_source": "b_west_wall_stone frame4"
+  "sld_source": "b_west_wall_stone_x1.sld",
+  "frame_idx": 4
 }

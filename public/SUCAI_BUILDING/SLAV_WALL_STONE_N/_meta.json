@@ -1,9 +1,10 @@
 {
   "name": "SLAV_WALL_STONE_N",
   "frames": 1,
-  "box_w": 88,
-  "box_h": 136,
-  "anchor_x": 60,
-  "anchor_y": 104,
-  "sld_source": "b_slav_wall_stone"
+  "box_w": 48,
+  "box_h": 125,
+  "anchor_x": 23.0,
+  "anchor_y": 100.0,
+  "sld_source": "b_slav_wall_stone_x1.sld",
+  "frame_idx": 4
 }
