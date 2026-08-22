@@ -1,9 +1,10 @@
 {
   "name": "SEAS_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 96,
-  "box_h": 152,
-  "anchor_x": 64,
-  "anchor_y": 120,
-  "sld_source": "b_seas_wall_fortified"
+  "box_w": 93,
+  "box_h": 144,
+  "anchor_x": 62,
+  "anchor_y": 116,
+  "sld_source": "b_seas_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

@@ -1,10 +1,10 @@
 {
   "name": "SLAV_WALL_POST",
   "frames": 1,
-  "box_w": 111,
-  "box_h": 208,
-  "anchor_x": 57.0,
-  "anchor_y": 182.0,
+  "box_w": 169,
+  "box_h": 211,
+  "anchor_x": 114,
+  "anchor_y": 183,
   "sld_source": "b_slav_wall_stone_x1.sld",
   "frame_idx": 2
 }

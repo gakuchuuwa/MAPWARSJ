@@ -1,10 +1,10 @@
 {
   "name": "PURU_WALL_STONE_N",
   "frames": 1,
-  "box_w": 42,
-  "box_h": 111,
-  "anchor_x": 23.0,
-  "anchor_y": 86.0,
+  "box_w": 79,
+  "box_h": 114,
+  "anchor_x": 54,
+  "anchor_y": 86,
   "sld_source": "b_puru_wall_stone_x1.sld",
   "frame_idx": 4
 }

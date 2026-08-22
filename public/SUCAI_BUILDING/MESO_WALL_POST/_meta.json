@@ -1,10 +1,10 @@
 {
   "name": "MESO_WALL_POST",
   "frames": 1,
-  "box_w": 96,
-  "box_h": 175,
-  "anchor_x": 48.0,
-  "anchor_y": 151.0,
+  "box_w": 155,
+  "box_h": 178,
+  "anchor_x": 105,
+  "anchor_y": 151,
   "sld_source": "b_meso_wall_stone_x1.sld",
   "frame_idx": 2
 }

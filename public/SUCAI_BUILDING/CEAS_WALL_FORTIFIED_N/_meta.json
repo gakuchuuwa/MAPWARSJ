@@ -1,9 +1,10 @@
 {
   "name": "CEAS_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 100,
-  "box_h": 136,
-  "anchor_x": 68,
-  "anchor_y": 104,
-  "sld_source": "b_ceas_wall_fortified"
+  "box_w": 96,
+  "box_h": 130,
+  "anchor_x": 67,
+  "anchor_y": 101,
+  "sld_source": "b_ceas_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

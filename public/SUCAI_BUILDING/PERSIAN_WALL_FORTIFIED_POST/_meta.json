@@ -1,9 +1,10 @@
 {
   "name": "PERSIAN_WALL_FORTIFIED_POST",
   "frames": 1,
-  "box_w": 176,
-  "box_h": 196,
-  "anchor_x": 120,
-  "anchor_y": 164,
-  "sld_source": "b_persian_wall_fortified"
+  "box_w": 171,
+  "box_h": 188,
+  "anchor_x": 116,
+  "anchor_y": 160,
+  "sld_source": "b_persian_wall_fortified_x1.sld",
+  "frame_idx": 2
 }

@@ -1,10 +1,10 @@
 {
   "name": "MEDI_WALL_STONE_NE",
   "frames": 1,
-  "box_w": 71,
-  "box_h": 95,
-  "anchor_x": 35.0,
-  "anchor_y": 78.0,
+  "box_w": 103,
+  "box_h": 99,
+  "anchor_x": 64,
+  "anchor_y": 79,
   "sld_source": "b_medi_wall_stone_x1.sld",
   "frame_idx": 0
 }

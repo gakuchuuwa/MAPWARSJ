@@ -1,9 +1,10 @@
 {
   "name": "ASIA_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 104,
-  "box_h": 124,
-  "anchor_x": 64,
-  "anchor_y": 92,
-  "sld_source": "b_asia_wall_fortified"
+  "box_w": 99,
+  "box_h": 117,
+  "anchor_x": 62,
+  "anchor_y": 88,
+  "sld_source": "b_asia_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

@@ -1,9 +1,10 @@
 {
   "name": "ORIE_WALL_FORTIFIED_POST",
   "frames": 1,
-  "box_w": 156,
-  "box_h": 180,
-  "anchor_x": 108,
-  "anchor_y": 152,
-  "sld_source": "b_orie_wall_fortified"
+  "box_w": 151,
+  "box_h": 172,
+  "anchor_x": 105,
+  "anchor_y": 148,
+  "sld_source": "b_orie_wall_fortified_x1.sld",
+  "frame_idx": 2
 }

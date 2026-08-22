@@ -3428,8 +3428,9 @@ export class Scene13WarLayer {
             const botWallY = midY + 8.5 * pitch;
 
             // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城石墙 / 险要+大城垛墙。
+            //    蒙古（STEPPE）游牧不筑石墙，四类城统一硬木栅栏（2026-08-22 主人定）。
             //    占位一致（碰撞 0.5×0.5），仅换贴图。
-            const wallMat = this.defenderCityType === 'small_city' ? 'PALISADE'
+            const wallMat = (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : (this.defenderCityType === 'medium_city' ? 'STONE' : 'FORTIFIED');
             const wBase = wallMat === 'PALISADE' ? 'HARDWOOD_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
             const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
@@ -3446,8 +3447,15 @@ export class Scene13WarLayer {
             // (3) 北翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: topWallY - 72 - 15 * pitchDy }, wallPost, 'STONE_WALL');
 
-            // 2. 正面 18 段垂直主城墙 (精确从北门左角塔垂直连接至南门左角塔)
-            for (let i = -8.5; i <= 8.5; i += 1.0) {
+            // 2. 正面城墙：上半段 + 中央正门 + 下半段
+            // (1) 上半段垂直主城墙（从北门左角塔向下至正门上方）
+            for (let i = -8.5; i <= -1.5; i += 1.0) {
+                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
+            }
+            // (2) 正面中央大城门（SE 朝向，远端角塔在左上方(wallFrontX-72, midY-36)、近端角塔在右下方(wallFrontX+72, midY+36)）
+            placeGate({ x: wallFrontX, y: midY }, gBase + '_SE', 'SE');
+            // (3) 下半段垂直主城墙（从正门下方向下至南门左角塔）
+            for (let i = 1.5; i <= 8.5; i += 1.0) {
                 placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
             }
 

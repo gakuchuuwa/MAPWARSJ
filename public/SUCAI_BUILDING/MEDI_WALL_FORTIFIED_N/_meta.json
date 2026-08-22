@@ -1,9 +1,10 @@
 {
   "name": "MEDI_WALL_FORTIFIED_N",
   "frames": 1,
-  "box_w": 112,
-  "box_h": 124,
-  "anchor_x": 76,
-  "anchor_y": 96,
-  "sld_source": "b_medi_wall_fortified"
+  "box_w": 107,
+  "box_h": 121,
+  "anchor_x": 74,
+  "anchor_y": 95,
+  "sld_source": "b_medi_wall_fortified_x1.sld",
+  "frame_idx": 4
 }

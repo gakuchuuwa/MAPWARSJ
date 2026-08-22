@@ -1,10 +1,10 @@
 {
   "name": "CEAS_WALL_STONE_SE",
   "frames": 1,
-  "box_w": 76,
-  "box_h": 96,
-  "anchor_x": 38.0,
-  "anchor_y": 76.0,
+  "box_w": 104,
+  "box_h": 98,
+  "anchor_x": 62,
+  "anchor_y": 76,
   "sld_source": "b_ceas_wall_stone_x1.sld",
   "frame_idx": 1
 }

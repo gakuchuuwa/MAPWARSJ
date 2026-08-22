@@ -1,9 +1,10 @@
 {
   "name": "DARK_WALL_PALISADE_N",
   "frames": 1,
-  "box_w": 68,
-  "box_h": 104,
-  "anchor_x": 36,
-  "anchor_y": 72,
-  "sld_source": "b_dark_wall_palisade"
+  "box_w": 61,
+  "box_h": 100,
+  "anchor_x": 32,
+  "anchor_y": 69,
+  "sld_source": "b_dark_wall_palisade_x1.sld",
+  "frame_idx": 4
 }

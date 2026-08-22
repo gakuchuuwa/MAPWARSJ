@@ -1,9 +1,10 @@
 {
   "name": "MESO_WALL_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 132,
-  "box_h": 128,
-  "anchor_x": 76,
-  "anchor_y": 100,
-  "sld_source": "b_meso_wall_fortified"
+  "box_w": 124,
+  "box_h": 123,
+  "anchor_x": 72,
+  "anchor_y": 97,
+  "sld_source": "b_meso_wall_fortified_x1.sld",
+  "frame_idx": 1
 }

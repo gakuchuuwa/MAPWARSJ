@@ -1,10 +1,10 @@
 {
   "name": "EAST_WALL_POST",
   "frames": 1,
-  "box_w": 102,
-  "box_h": 176,
-  "anchor_x": 50.0,
-  "anchor_y": 152.0,
+  "box_w": 165,
+  "box_h": 178,
+  "anchor_x": 113,
+  "anchor_y": 153,
   "sld_source": "b_east_wall_stone_x1.sld",
   "frame_idx": 2
 }
