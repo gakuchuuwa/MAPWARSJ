@@ -117,6 +117,11 @@ interface WarBuilding {
     sprite: DecorSprite;
     /** 关联的附属物理屏障精灵（破门时一并标记 destroyed / obstructionDisabled 解除阻挡） */
     extraSprites?: DecorSprite[];
+    /**
+     * 参与「一处破 → 前排全倒」联动的正面体系（正面城墙段 + 城门）。
+     * 斜墙（北/南翼）不联动：被打破只自己消失，不触发联动倒塌、不触发守方反击（2026-08-22 主人定）。
+     */
+    linked?: boolean;
 }
 
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
@@ -2517,6 +2522,11 @@ export class Scene13WarLayer {
     private deployT = 0;
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
+    /**
+     * 攻城战守方「破墙前待命」：近战原地不动、远程原地射击；
+     * 前排城墙/城门被打破（联动倒塌）→ false → 守方开始反击（2026-08-22 主人定）。
+     */
+    private defenderHolding = false;
     /** 两方阵型各自已推进的距离（px），列阵解除后不再使用 */
     private adv: [number, number] = [0, 0];
     /** 开局总兵力（精灵），攻/守各一 —— 补兵触发线按「剩余占比」缩放时当分母 */
@@ -2761,6 +2771,8 @@ export class Scene13WarLayer {
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
+        // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
+        this.defenderHolding = this.battleType === 'siege';
         // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
         this.famousBuff = [
             getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
@@ -3371,11 +3383,11 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && f === 1) {
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
             // 城墙/城门 = 可攻击建筑（照 DE）：铺贴图 + 建建筑目标（士兵能打、HP 归零破墙进城）
-            const placeWall = (s: { x: number; y: number }, asset: string, key: 'STONE_WALL' | 'STONE_GATE'): void => {
+            const placeWall = (s: { x: number; y: number }, asset: string, key: 'STONE_WALL' | 'STONE_GATE', linked = false): void => {
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
                 const st = WALL_GATE_STATS[key];
-                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite });
+                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked });
             };
             // 铺设城门并为其沿线铺设 7 点密集连续物理屏障（彻底杜绝士兵推挤穿透）
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
@@ -3406,7 +3418,7 @@ export class Scene13WarLayer {
                     this.decorSprites.push(extra);
                     extraSprites.push(extra);
                 }
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites });
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -3447,16 +3459,10 @@ export class Scene13WarLayer {
             // (3) 北翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: topWallY - 72 - 15 * pitchDy }, wallPost, 'STONE_WALL');
 
-            // 2. 正面城墙：上半段 + 中央正门 + 下半段
-            // (1) 上半段垂直主城墙（从北门左角塔向下至正门上方）
-            for (let i = -8.5; i <= -1.5; i += 1.0) {
-                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
-            }
-            // (2) 正面中央大城门（SE 朝向，远端角塔在左上方(wallFrontX-72, midY-36)、近端角塔在右下方(wallFrontX+72, midY+36)）
-            placeGate({ x: wallFrontX, y: midY }, gBase + '_SE', 'SE');
-            // (3) 下半段垂直主城墙（从正门下方向下至南门左角塔）
-            for (let i = 1.5; i <= 8.5; i += 1.0) {
-                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL');
+            // 2. 正面城墙：整排连续垂直主城墙（2026-08-22 主人定：正面中央是城墙，城门只留北翼/南翼 2 座）
+            //    正面墙段 linked=true（参与「一处破 → 前排全倒」联动）
+            for (let i = -8.5; i <= 8.5; i += 1.0) {
+                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL', true);
             }
 
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
@@ -4217,7 +4223,9 @@ export class Scene13WarLayer {
                 const bearer = (s.spawned % FLAG_EVERY === 0);
                 // 列阵推进：**所有批次**都按口排方阵（rank=沿 x 纵深、file=沿 y 横列），补兵不再随机散布；
                 // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
-                const inMarch = this.deployT > 0;
+                // 🔴 [2026-08-22 主人定] 攻城战守方不 march：破墙前原地待命（近战站桩/远程原地射击），
+                //    不随列阵推进；攻方 march 照旧推进到墙前打墙。
+                const inMarch = this.deployT > 0 && !(this.battleType === 'siege' && s.f === 1);
                 const slotIdx = s.slotN++;
                 // 奇袭出生点：敌方那一侧的边缘（比敌方出兵口更靠外 = 真的在背后），
                 // 纵向落在敌军重心一线，再按槽位散开，避免一堆人叠在同一点。
@@ -4410,7 +4418,22 @@ export class Scene13WarLayer {
                 }
             }
         }
-        // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）
+        // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）。
+        // 🔴 [2026-08-22 主人定] 攻方优先攻击城墙：正面体系（linked）墙/门优先于任何敌兵——
+        //    远程原地站桩射墙、近战贴墙砍；斜墙不参与优先（破了不触发联动，白打）。
+        if (this.battleType === 'siege' && m.f === 0) {
+            let bw: WarBuilding | null = null, bwd = r2;
+            for (const b of this.wallGates) {
+                if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
+                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                if (d >= r2) continue;
+                const tooNear = minR2 > 0 && d < minR2;
+                if (b.claims >= SPREAD_CAP) continue;
+                if (d < bwd) { bwd = d; bw = b; }
+                if (!tooNear && d < fd) { fd = d; free = b; }
+            }
+            if (bw) { bw.claims++; return bw; }
+        }
         for (const b of this.wallGates) {
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -4423,6 +4446,28 @@ export class Scene13WarLayer {
         const chosen = free ?? best;
         if (chosen) chosen.claims++;
         return chosen;
+    }
+
+    /**
+     * 🔴 [2026-08-22 主人定] 前排联动倒塌：任意一处正面城墙/城门被打破 →
+     * 全部正面体系（linked）城墙/城门一起倒（HP 归零、不再绘制、不再阻挡、解除城门屏障），
+     * 并触发守方解除待命开始反击。斜墙（非 linked）不参与。
+     */
+    private collapseFrontWalls(): void {
+        for (const b of this.wallGates) {
+            if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
+            b.hp = 0;
+            b.sprite.destroyed = true;
+            b.sprite.obstructionDisabled = true;
+            if (b.extraSprites) {
+                for (const sp of b.extraSprites) {
+                    sp.destroyed = true;
+                    sp.obstructionDisabled = true;
+                }
+            }
+        }
+        // 破墙 → 守方开始反击（近战出击、远程正常机动）
+        this.defenderHolding = false;
     }
 
     /**
@@ -4678,6 +4723,20 @@ export class Scene13WarLayer {
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
             }
+            // 🔴 [2026-08-22 主人定] 攻城战守方破墙前待命：近战原地不动、远程原地射击。
+            //    破墙联动倒塌（collapseFrontWalls）→ defenderHolding=false → 守方开始反击，走下方正常逻辑。
+            //    远程待命只禁移动（索敌/攻击走正常流程，箭矢动画齐全），见下方 holdDef 三处拦截。
+            const holdDef = this.defenderHolding && m.f === 1;
+            if (holdDef && !RANGED_TYPES.has(m.key)) {
+                // 近战：完全待命——不索敌、不移动、不攻击
+                m.st = 0;
+                m.foe = null;
+                m.fightT = 0;
+                m.lock = 0;
+                if (m.fadeT > 0) m.fadeT -= dt;
+                m.ph += dt * 8 / 1.5;   // 待命动画
+                continue;
+            }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
@@ -4707,8 +4766,9 @@ export class Scene13WarLayer {
             if (m.march && m.port) {
                 const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
                 [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
-            } else if (!m.foe) {
+            } else if (!m.foe && !holdDef) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
+                // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 m.aimT = (m.aimT ?? 0) - dt;
                 if (m.aimT <= 0) {
                     const aim = this.aimAt(m);
@@ -4727,7 +4787,8 @@ export class Scene13WarLayer {
                  *   · 跑的那一帧**不打**（dir 按逃跑方向、st=0 走路动画），不是倒着滑
                  *   · 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替
                  */
-                if (wt.kite && !m.kiteGaveUp) {
+                // 🔴 [2026-08-22] 守方破墙前待命远程：不风筝（原地站桩射击，不后撤）
+                if (wt.kite && !m.kiteGaveUp && !holdDef) {
                     const kd = Math.sqrt(fd2);
                     if (!m.kiting && kd < 65) { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
@@ -4840,6 +4901,14 @@ export class Scene13WarLayer {
                     // 不改 m.st，所以渲染继续用上一帧那套帧，不会在攻击帧/移动帧之间来回跳。
                     if (m.fadeT > 0) m.fadeT -= dt;
                     m.ph += dt * (m.st ? 8 / 1.5 : 8);
+                    continue;
+                }
+                // 🔴 [2026-08-22] 守方破墙前待命远程：够不着**不追**——原地站桩等目标进射程
+                if (holdDef && !inReach) {
+                    m.st = 0;
+                    m.fightT = 0;
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * 8;
                     continue;
                 }
                 if (!inReach) {
@@ -5009,13 +5078,19 @@ export class Scene13WarLayer {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
                         if (foe.hp <= 0) {
                             if ('sprite' in foe) {
-                                // 城墙/城门被打破：不再绘制、不再阻挡（士兵进城打守军）
-                                foe.sprite.destroyed = true;
-                                foe.sprite.obstructionDisabled = true;
-                                if (foe.extraSprites) {
-                                    for (const sp of foe.extraSprites) {
-                                        sp.destroyed = true;
-                                        sp.obstructionDisabled = true;
+                                // 🔴 [2026-08-22 主人定] 联动倒塌：任意一处正面城墙/城门被打破 →
+                                //    前排全部城墙 + 两座城门一起倒（斜墙不参与），并触发守方反击。
+                                if (foe.linked) {
+                                    this.collapseFrontWalls();
+                                } else {
+                                    // 城墙/城门被打破：不再绘制、不再阻挡（士兵进城打守军）
+                                    foe.sprite.destroyed = true;
+                                    foe.sprite.obstructionDisabled = true;
+                                    if (foe.extraSprites) {
+                                        for (const sp of foe.extraSprites) {
+                                            sp.destroyed = true;
+                                            sp.obstructionDisabled = true;
+                                        }
                                     }
                                 }
                             } else {
