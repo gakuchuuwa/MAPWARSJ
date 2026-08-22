@@ -16,7 +16,7 @@ import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
-import { NavalPhalanxStateManager, shipCountForTroops } from './NavalPhalanxState';
+import { NavalPhalanxStateManager, shipCountForTroops, type NavalUnitState } from './NavalPhalanxState';
 import { NavalWakeDrawer } from './NavalWakeDrawer';
 import { audioManager } from '../../audio/AudioManager';
 
@@ -1855,14 +1855,13 @@ export class LegionPhalanxDrawer {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
         const baseHeight = 72;
-        const shipCount = shipCountForTroops(troops);
         // 海军阵型来自军团编辑器的势力配置；没配过 = 'auto'（旧行为，逐像素不变）
         const navalMode: NavalFormationMode =
             (FACTION_COMPOSITIONS as any)[factionId]?.navalFormation ?? 'auto';
-        const formation = this.navalFormation(shipCount, navalMode);
 
         // 逐舰阵亡状态更新（2026-07-18）：参照 LegionPhalanxStateManager 模式
         const isFighting = state === 'ATTACK' || state === 'DAMAGE';
+        let navalState: NavalUnitState | undefined;
         if (unitId) {
             // 🔴 [2026-08-19] 这里原本每帧调 NavalPhalanxStateManager.reset()，已删除。
             //   reset 会 delete 整个 state（含航迹），而军团航行时 state 恒为 MOVE、
@@ -1870,7 +1869,7 @@ export class LegionPhalanxDrawer {
             //   §4 要的「转弯跟着河道弯」从未真正生效过。
             //   脱战恢复满编现在由 update() 自己负责（非战斗 + 有沉船/档位变 → 重建），
             //   既保住航迹，也不必每帧置空重建。
-            const navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
+            navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
             // 跟拍换了船队 → 三条节流归零，新船队从干净相位起算（否则会继承旧队的冷却/待播落水）
             if (navalSfxUnitId !== unitId) {
                 navalSfxUnitId = unitId;
@@ -1905,6 +1904,13 @@ export class LegionPhalanxDrawer {
                 audioManager.playNavalSfx(unitId, 'naval_cannon_splash');
             }
         }
+
+        // 🔴 [2026-08-23 修·沉没突然消失] 船数取 state 稳定值：战斗中 troops 减员时
+        //   navalState.ships 保持编队满员逐舰沉没（DYING 渐隐→DEAD），若这里仍按当前兵力
+        //   shipCountForTroops(troops) 现算，编队会随 troops 缩短、队尾沉没中的船被直接裁掉
+        //   不渲染 = 突然消失。无 unitId/首次无 state 时才按 troops 兜底。
+        const shipCount = navalState?.shipCount ?? shipCountForTroops(troops);
+        const formation = this.navalFormation(shipCount, navalMode);
 
         // 按三档船型各备一份贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
         interface NavalTypeDraw {
@@ -1976,7 +1982,6 @@ export class LegionPhalanxDrawer {
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
         const ships: { x: number; y: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; isHotspot?: boolean }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean }[] = [];
-        const navalState = unitId ? NavalPhalanxStateManager.getState(unitId) : undefined;
 
         for (let i = 0; i < formation.length; i++) {
             const pos = formation[i] ?? formation[0];
@@ -2022,7 +2027,7 @@ export class LegionPhalanxDrawer {
                 if (currentSet.DEATH.length === 0) {
                     rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
                     currentFrameIndex = 0;
-                    shipAlpha = Math.max(0, 1 - timeDead / 1200);
+                    shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
                     rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
                     currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
@@ -2034,7 +2039,7 @@ export class LegionPhalanxDrawer {
                 if (currentSet.DEATH.length === 0) {
                     rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
                     currentFrameIndex = 0;
-                    shipAlpha = Math.max(0, 1 - timeDead / 1200);
+                    shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
                     rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
                     currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);

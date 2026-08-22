@@ -29,6 +29,7 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { armDeploy } from '../legion/DeployGate';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
@@ -324,6 +325,10 @@ export class RecruitmentSystem {
             if (!spawnTypes.includes(city.type)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
+            // 锚定将战败冷却中：该城暂不出兵。否则 sortSpawnCandidates 仍把冷却中的名将城
+            // 排最前，补兵选中它却因 canGeneral=false 挂不上将，产出一支无名将军团并占住名将城，
+            // 名将复出被拖住、场上名将越来越少（跟随系统才 fallback 到非名将）。
+            if (isGeneralOnCooldown(city.id)) continue;
             // 计算征兵兵力（城市兵力的90%）
             const baseArmySize = Math.floor((city.troops || 0) * 0.9);
             // 调兵遣将：征兵时出征兵力 +10%
