@@ -2515,7 +2515,7 @@ export class Scene13WarLayer {
                 'border:1px solid rgba(212,175,55,0.6)',
                 'border-radius:6px',
                 'color:#f5e6c8',
-                "font-family:\'Noto Serif SC\',\'Cinzel\',serif",
+                "font-family:'Noto Serif SC','Cinzel',serif",
                 'font-size:14px',
                 'font-weight:bold',
                 'cursor:pointer',
@@ -3313,26 +3313,31 @@ export class Scene13WarLayer {
             }
             const vw = this.canvas?.width ?? 1920;
             const vh = this.canvas?.height ?? 1080;
+            // 🔴 [2026-08-22 主人定] 城墙三段严正走向：
+            //   1. 前排城墙：南北走向（垂直南北主防线，密实咬合铺设）
+            //   2. 上排城墙：西南-东北走向（SW-NE，严格 2:1 等距斜向右上）
+            //   3. 下排城墙：西北-东南走向（NW-SE，严格 2:1 等距斜向右下）
+            const wallFrontX = Math.round(wMinX - 175);
 
-            // 🔴 [2026-08-22 主人定] 城墙推至交战第一线：起码在最前排军队的前面（城外攻方 vs 城内守方）
-            const wallFrontX = Math.round(vw * 0.50);
-
-            // 1. 中间竖直平档段：上下充分延伸，完全超越最上与最下建筑及部队的极值
-            const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 100) };
-            const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 100) };
+            // 1. 前排南北走向主防线（垂直南北纵贯）
+            const towerNW = { x: wallFrontX, y: Math.max(60, wMinY - 80) };
+            const towerSW = { x: wallFrontX, y: Math.min(vh - 70, wMaxY + 80) };
             const gatePos = { x: wallFrontX, y: (towerNW.y + towerSW.y) * 0.5 };
 
-            // 2. 上边与下边斜向段：从正面主墙两端斜向展开直达屏幕右侧边缘
-            const wingLen = Math.max(300, vw - wallFrontX - 20);
-            const towerNE = { x: Math.min(vw - 20, wallFrontX + wingLen), y: Math.max(10, towerNW.y - 140) };
-            const towerSE = { x: Math.min(vw - 20, wallFrontX + wingLen), y: Math.min(vh - 20, towerSW.y + 140) };
+            // 2. 上排西南-东北走向（从西北角楼 SW-NE 斜向右上展开，严格 2:1 斜率）
+            const northLen = Math.max(260, vw - wallFrontX - 20);
+            const towerNE = { x: Math.min(vw - 20, wallFrontX + northLen), y: Math.max(10, towerNW.y - northLen * 0.5) };
+
+            // 3. 下排西北-东南走向（从西南角楼 NW-SE 斜向右下展开，严格 2:1 斜率）
+            const southLen = Math.max(260, vw - wallFrontX - 20);
+            const towerSE = { x: Math.min(vw - 20, wallFrontX + southLen), y: Math.min(vh - 20, towerSW.y + southLen * 0.5) };
 
             // 城墙分段生成辅助
-            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false): void => {
+            const buildWallLine = (p1: { x: number; y: number }, p2: { x: number; y: number }, flip = false, step = 36): void => {
                 const dx = p2.x - p1.x;
                 const dy = p2.y - p1.y;
                 const dist = Math.hypot(dx, dy);
-                const count = Math.max(2, Math.ceil(dist / 38));
+                const count = Math.max(2, Math.ceil(dist / step));
                 for (let i = 1; i < count; i++) {
                     const t = i / count;
                     this.decorSprites.push(place(
@@ -3343,15 +3348,15 @@ export class Scene13WarLayer {
                 }
             };
 
-            // 中间垂直竖直平档：NW 角楼 -> 中央大门楼 -> SW 角楼
-            buildWallLine(towerNW, gatePos, false);
-            buildWallLine(gatePos, towerSW, false);
+            // 1. 前排南北走向：NW 角楼 -> 中央大门楼 -> SW 角楼（密实咬合铺设，step=20）
+            buildWallLine(towerNW, gatePos, false, 20);
+            buildWallLine(gatePos, towerSW, false, 20);
 
-            // 上边斜向段：NW 角楼 -> NE 角楼（斜向右上，完全在所有建筑上方）
-            buildWallLine(towerNW, towerNE, true);
+            // 2. 上排西南-东北走向（SW-NE）：NW 角楼 -> NE 角楼（flip=false，标准等距瓦片）
+            buildWallLine(towerNW, towerNE, false, 36);
 
-            // 下边斜向段：SW 角楼 -> SE 角楼（斜向右下，完全在所有建筑下方）
-            buildWallLine(towerSW, towerSE, false);
+            // 3. 下排西北-东南走向（NW-SE）：SW 角楼 -> SE 角楼（flip=true，标准等距瓦片）
+            buildWallLine(towerSW, towerSE, true, 36);
 
             // 四座防御角楼与中央门楼
             const towerAge = this.defenderCityType === 'small_city' ? 'AGE2' : 'AGE3';
@@ -3611,21 +3616,23 @@ export class Scene13WarLayer {
             ctx.drawImage(wcv, bbox.x, bbox.y);
             if (p.alpha < 1) ctx.globalAlpha = 1;
 
-            // 4. 🔴 [2026-08-22 主人定] 河流两岸拍岸微浪白边（Shoreline Foamy Waves）
-            // 沿水体与沙滩交界的左岸与右岸轮廓，绘制动态呼吸起伏的白色拍岸细浪
+            // 4. 🔴 [2026-08-22 主人定] 河流两岸拍岸微浪水花（Shoreline Foamy Wavelets）
+            // 沿水体与沙滩交界轮廓绘制一段一段断续呼吸的拍岸细浪，彻底消除死板实心白线
             if (p.polygon && p.polygon.length >= 6) {
                 const half = Math.floor(p.polygon.length / 2);
                 const wavePhase = Math.sin(t * 3.2) * 0.5 + 0.5; // 0 ~ 1 动态呼吸拍岸周期
-                const waveAlpha = 0.32 + wavePhase * 0.28;       // 0.32 ~ 0.60 柔和水花透明度
-                const waveWidth = 3.5 + wavePhase * 2.0;         // 3.5px ~ 5.5px 浪花线宽
+                const waveAlpha = 0.20 + wavePhase * 0.20;       // 0.20 ~ 0.40 柔和水花透明度
+                const waveWidth = 2.0 + wavePhase * 1.0;         // 2.0px ~ 3.0px 浪花线宽
 
                 ctx.save();
                 ctx.strokeStyle = `rgba(240, 248, 255, ${waveAlpha})`;
                 ctx.lineWidth = waveWidth;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-                ctx.shadowBlur = 6;
+                ctx.setLineDash([14, 22, 6, 18]);                // 一段一段有机断续水花
+                ctx.lineDashOffset = -t * 16;                    // 沿水流方向柔和流动
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.35)';
+                ctx.shadowBlur = 3;
 
                 // 左岸微浪
                 ctx.beginPath();
