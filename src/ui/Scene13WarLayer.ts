@@ -2596,6 +2596,8 @@ export class Scene13WarLayer {
     private gm = new Map<number, WarMan[]>();
     private gr = new Map<number, WarMan[]>();
     private gs = new Map<number, WarMan[]>();
+    /** 空间网格桶复用池：避免每帧为三张网格反复创建数百个短命数组，触发长 GC 停顿。 */
+    private gridBucketPool: WarMan[][] = [];
     private last = performance.now();
     /** [2026-08-11 势力本色] 攻/守双方染色 rgba（start 时按 factionId 解析） */
     private sideFaction: [string, string] = ['', ''];
@@ -4463,12 +4465,25 @@ export class Scene13WarLayer {
     private put(map: Map<number, WarMan[]>, cell: number, m: WarMan): void {
         const k = HKEY((m.x / cell) | 0, (m.y / cell) | 0);
         let a = map.get(k);
-        if (!a) map.set(k, a = []);
+        if (!a) {
+            a = this.gridBucketPool.pop() ?? [];
+            map.set(k, a);
+        }
         a.push(m);
     }
 
+    private recycleGrid(map: Map<number, WarMan[]>): void {
+        for (const bucket of map.values()) {
+            bucket.length = 0;
+            this.gridBucketPool.push(bucket);
+        }
+        map.clear();
+    }
+
     private rebuild(): void {
-        this.gm = new Map(); this.gr = new Map(); this.gs = new Map();
+        this.recycleGrid(this.gm);
+        this.recycleGrid(this.gr);
+        this.recycleGrid(this.gs);
         for (const m of this.men) {
             this.put(this.gm, CELL_M, m);
             this.put(this.gr, CELL_R, m);
@@ -4532,6 +4547,21 @@ export class Scene13WarLayer {
             m.x += m.sepX;
             m.y += m.sepY;
         }
+    }
+
+    /** [2026-08-23 修·攻方撞墙蹭] 攻城战攻方：视野内最近的正面 linked 可打墙/门（不限 claims——打墙不封顶）。
+     *  marching 士兵撞墙脱队与 search 优先打墙共用同一个语义，避免两套口径漂移。 */
+    private nearestLinkedWall(m: { x: number; y: number; f: number }, radius: number): WarBuilding | null {
+        if (this.battleType !== 'siege' || m.f !== 0) return null;
+        const r2 = radius * radius;
+        let bw: WarBuilding | null = null, bwd = Infinity;
+        for (const b of this.wallGates) {
+            if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d >= r2 || d >= bwd) continue;
+            bwd = d; bw = b;
+        }
+        return bw;
     }
 
     /**
@@ -4622,7 +4652,8 @@ export class Scene13WarLayer {
                 const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
                 if (d >= r2) continue;
                 const tooNear = minR2 > 0 && d < minR2;
-                if (b.claims >= SPREAD_CAP) continue;
+                // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方正面墙打墙不封顶（见 keep 的 siegeWallKeep），
+                //    否则 300+ 攻方兵只有 ~85 名额锁到墙，其余穿墙蹭。墙靠 separate 软推挤沿墙铺开，不挤一个点。
                 if (d < bwd) { bwd = d; bw = b; }
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
@@ -5001,8 +5032,13 @@ export class Scene13WarLayer {
 
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
             m.next -= dt;
+            // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方锁定的正面 linked 墙/门：打墙不封顶——
+            //    DE 攻方人挤人攻墙，墙是长条，separate 软推挤会沿墙铺开不会挤一个点；
+            //    否则 300+ 攻方兵只有 ~85 名额锁到墙，其余每帧锁不到墙 → 丢目标 → 穿墙蹭。
+            const siegeWallKeep = m.foe && 'sprite' in m.foe && m.foe.linked
+                && this.battleType === 'siege' && m.f === 0;
             const keep = m.foe && m.foe.hp > 0
-                && m.foe.claims < SPREAD_CAP
+                && (siegeWallKeep || m.foe.claims < SPREAD_CAP)
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
@@ -5029,8 +5065,22 @@ export class Scene13WarLayer {
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
             // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
             if (m.march && m.port) {
-                const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
-                [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
+                // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方 marching 士兵：推进目标是**视野内最近的正面 linked 墙**，
+                //    不是"出兵口+推进增量"（那个方向会穿越城墙，撞墙被弹回原地蹭）。锁到墙即脱队打墙，
+                //    之后由 search/keep 的打墙不封顶逻辑持续锁定。远处（未进视野）仍列阵推进，保留压上观感。
+                if (this.battleType === 'siege' && m.f === 0) {
+                    const fw = this.nearestLinkedWall(m, stats.sight ?? 160);
+                    if (fw) {
+                        m.foe = fw;
+                        fw.claims++;
+                        m.march = false;
+                        m.port = null;
+                    }
+                }
+                if (m.march && m.port) {
+                    const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
+                    [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
+                }
             } else if (!m.foe && !holdDef) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
@@ -5342,6 +5392,23 @@ export class Scene13WarLayer {
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (m.accHit !== false) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
+                        //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
+                        //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
+                        if ('sprite' in foe && foe.destrAssets && foe.hp > 0) {
+                            const ratio = foe.hp / foe.maxHp;
+                            let stage = -1;
+                            if (ratio <= 0.25) stage = 2;       // D75：损 75%
+                            else if (ratio <= 0.5) stage = 1;   // D50：损 50%
+                            else if (ratio <= 0.75) stage = 0;  // D25：损 25%
+                            if (stage >= 0) {
+                                const asset = 'BUILDINGANIM:' + foe.destrAssets[stage];
+                                if (foe.sprite.asset !== asset) {
+                                    foe.sprite.asset = asset;
+                                    foe.sprite.frame = 0;
+                                }
+                            }
+                        }
                         if (foe.hp <= 0) {
                             if ('sprite' in foe) {
                                 // 🔴 单段破墙演出（立即解除阻挡 + 尘土 + 倒塌动画/残垣/消失）

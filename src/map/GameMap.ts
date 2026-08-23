@@ -427,8 +427,6 @@ export class GameMap {
             if (!this.map.hasLayer(this.vectorRiverLayer)) {
                 this.vectorRiverLayer.addTo(this.map);
                 this.vectorRiverLayer.bringToBack();
-                // [FIX] Force refresh to ensure both layers render correctly
-                this.vectorRiverLayer.refresh();
                 // Ensure ESRI stays on top
                 if (this.riverLayer) this.riverLayer.bringToFront();
             }
