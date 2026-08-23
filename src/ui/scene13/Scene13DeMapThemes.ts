@@ -415,7 +415,6 @@ export function resolveDeMapTheme(
     // 🔴 [2026-08-21 补全·Swamp] 内陆水域（lake）+ 低地（<200m）→ 沼泽主题，优先于寒带针叶林：
     //   东北松嫩/三江湿地（boreal）、北欧波罗的海沿岸、中欧低地、洞庭湖边——低洼湿地就是沼泽观感。
     //   只认 lake 不认 sea——海边（东京湾/大连）是海岸战场不是沼泽。
-    //   🔴 阈值与 buildLake 的沼泽判定（elev<200）统一，避免「湖是沼泽、主题却不是」的割裂。
     if (waterKind === 'lake' && elev !== null && elev < 200) {
         return DE_MAP_THEMES.palustrine_swamp;
     }
