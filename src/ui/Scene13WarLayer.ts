@@ -3481,13 +3481,14 @@ export class Scene13WarLayer {
 
         // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图
         const culture = this.sideCulture[1];
-        let roadTile = 'rd1'; // 默认：DE 经典石板城路 (rd1)
+        // 🔴 [2026-08-23 主人定] 古代城池地面是夯土（泥土），非石板/碎石——「古代哪有那么多石头，都是泥土」
+        let roadTile = 'des'; // 默认：夯土泥土1
         if (culture === 'ISLAMIC') {
-            roadTile = 'rd2'; // 中东伊斯兰：DE Road 碎石城基——gravel_default砾石是地形，不当道路
+            roadTile = 'des'; // 中东伊斯兰：沙漠夯土
         } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
-            roadTile = 'rd1'; // 东方：青石砖大道
+            roadTile = 'ds3'; // 东方：黄褐夯土（泥地3）
         } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {
-            roadTile = 'rd5'; // 拜占庭/罗马：规整石板大道
+            roadTile = 'ds4'; // 拜占庭/罗马：橙褐夯土（泥地4）
         }
 
         const roadCells: Array<[number, number]> = [];
