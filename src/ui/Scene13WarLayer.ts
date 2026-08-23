@@ -2335,6 +2335,27 @@ function isWaterTile(tile: string): boolean {
     return tile === 'river_clean_green' || tile === 'wtr' || tile.startsWith('wt');
 }
 
+/** DE terrain/blends 有机咬合遮罩类别（白=目标地形、黑=露底、边缘噪点咬合）。
+ *  [2026-08-23 P3 blends 过渡] 按地形贴图 → 选对应过渡遮罩，替代 compositeSoftPatch 的高斯模糊羽化，
+ *  让斑块边缘呈现 DE 的有机碎咬合（watershore 水岸渐晕 / snowland 雪边 / roadland 路缘碎点 / landland 陆地咬合）。 */
+type BlendKind = 'landland' | 'snowland' | 'watershore' | 'shallowswater' | 'icewater' | 'roadland' | 'farmland';
+
+function blendForTile(tile: string): BlendKind {
+    // 水系：真正大江大海 → watershore；浅滩/岸 → shallowswater
+    if (tile === 'river_clean_green' || tile === 'wtr' || tile.startsWith('wt')) return 'watershore';
+    if (tile === 'sh4' || tile === 'sh5' || tile === 'sha' || tile === 'sh2' || tile === 'sh3' || tile.startsWith('sh')) return 'shallowswater';
+    // 冰面 → icewater
+    if (tile === 'ice' || tile.startsWith('ic')) return 'icewater';
+    // 雪地 → snowland（地基+雪 / 深雪 / 雪灌木 / 纯雪地）
+    if (tile === 'snd' || tile === 'snf' || tile === 'sno' || tile === 'sn2' || tile.startsWith('sn')) return 'snowland';
+    // 道路 → roadland（石板/碎石/砾石路/菌路）
+    if (tile === 'rd1' || tile === 'rd2' || tile === 'rd5' || tile === 'sr2' || tile.includes('road')) return 'roadland';
+    // 农田 → farmland（稻田/农田/果园）
+    if (tile.includes('farm') || tile.includes('field') || tile.includes('rice')) return 'farmland';
+    // 其余陆地（草/泥/沙/牧场/湿地/砾石/岩/林底/树）→ landland 陆地咬合
+    return 'landland';
+}
+
 interface DecorPatch {
     tile: string;       // SUCAI_TERRAIN/<tile>
     img: HTMLImageElement | null;
@@ -2564,6 +2585,10 @@ export class Scene13WarLayer {
     private maskCtx: CanvasRenderingContext2D | null = null;
     private blurCv: HTMLCanvasElement | null = null;
     private blurCtx: CanvasRenderingContext2D | null = null;
+    /** DE terrain/blends 有机咬合遮罩缓存（[2026-08-23 P3] 按 BlendKind 懒加载一次；存「灰度→alpha」canvas） */
+    private blendCache: Record<string, HTMLCanvasElement | null> = {};
+    private blendAlphaCv: HTMLCanvasElement | null = null;
+    private blendAlphaCtx: CanvasRenderingContext2D | null = null;
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
     /** 高地光照离屏画布（白/黑菱形先画这里，再羽化合成，避免硬边方块） */
@@ -3952,6 +3977,32 @@ export class Scene13WarLayer {
         ctx.restore();
     }
 
+    /** 懒加载 DE blends 咬合遮罩（按 BlendKind）；onload 后把灰度图转成「alpha=灰度」canvas 存缓存
+     *  （白=不透明露目标地形、黑=透明露底下层、灰=半透明过渡），拉伸时 alpha 自动插值，免每斑块 getImageData。 */
+    private blendFor(kind: BlendKind): HTMLCanvasElement | null {
+        if (kind in this.blendCache) return this.blendCache[kind];
+        const im = new Image();
+        this.blendCache[kind] = null;
+        im.onload = () => {
+            const c = document.createElement('canvas');
+            c.width = im.naturalWidth;
+            c.height = im.naturalHeight;
+            const cg = c.getContext('2d', { willReadFrequently: true })!;
+            cg.drawImage(im, 0, 0);
+            const id = cg.getImageData(0, 0, c.width, c.height);
+            const da = id.data;
+            for (let i = 0; i < da.length; i += 4) {
+                da[i] = da[i + 1] = da[i + 2] = 255;
+                da[i + 3] = da[i + 1]; // 灰度(G)→alpha：白不透明(目标地形)、黑透明(露底)、灰半透明(过渡)
+            }
+            cg.putImageData(id, 0, 0);
+            this.blendCache[kind] = c;
+            this.scheduleDecorRepaint();
+        };
+        im.src = TERRAIN_BASE_URL + 'blends/' + kind + '.png';
+        return null;
+    }
+
     /** 把一块斑块羽化后合成：白形状 → 高斯模糊 → source-in 填纹理（边界软化、纹理清晰）。
      *  🔴 [2026-08-21 性能] mask/blur/fill/drawImage 全部限定斑块 bbox（+羽化余量），
      *    不再全屏操作——素材加载风暴时每个 onload 触发一次全量 repaintDecor，
@@ -4011,12 +4062,38 @@ export class Scene13WarLayer {
                 mctx.fill();
             }
         }
-        // 2. 超柔和高斯模糊（在充足的 72px 裕量内平滑衰减至 0，无任何硬边）
-        bctx.clearRect(0, 0, bw, bh);
-        bctx.filter = `blur(${blurRadius}px)`;
-        bctx.drawImage(mcv, 0, 0);
-        bctx.filter = 'none';
-        // 3. source-in 填纹理（纹理只在软边形状内）
+        // 2. DE 有机咬合（[2026-08-23 P3] cells 斑块：用对应 blends 遮罩替代高斯模糊）
+        //    blend 灰度做 destination-in：中心白=斑块主体保留、边缘黑=露底咬合 → DE 有机碎边（非平滑糊）
+        let useBlend = false;
+        if (!p.polygon) {
+            const bmask = this.blendFor(blendForTile(p.tile));
+            if (bmask) {
+                if (!this.blendAlphaCv) { this.blendAlphaCv = document.createElement('canvas'); this.blendAlphaCtx = this.blendAlphaCv.getContext('2d')!; }
+                const acv = this.blendAlphaCv, actx = this.blendAlphaCtx!;
+                if (acv.width !== bw || acv.height !== bh) { acv.width = bw; acv.height = bh; }
+                actx.clearRect(0, 0, bw, bh);
+                // 拉伸到「斑块 cells 原始包围盒」（不含 fuzzy 余量），保证 blend 中心白正好对准斑块主体、边缘黑咬合斑块边缘
+                actx.drawImage(bmask, minX - bx, minY - by, maxX - minX, maxY - minY);
+                // 白形状 ∩ blend 咬合（中心保留、边缘露底）
+                mctx.save();
+                mctx.globalCompositeOperation = 'destination-in';
+                mctx.drawImage(acv, 0, 0);
+                mctx.restore();
+                useBlend = true;
+            }
+        }
+        if (!useBlend) {
+            // 原高斯模糊（polygon 斑块 / 无 blend 图时）：平滑软化边界
+            bctx.clearRect(0, 0, bw, bh);
+            bctx.filter = `blur(${blurRadius}px)`;
+            bctx.drawImage(mcv, 0, 0);
+            bctx.filter = 'none';
+        }
+        // 3. source-in 填纹理（纹理只在咬合/软边形状内）；若用 blend 咬合（遮罩在 mcv），先复制 mcv 给 bcv 作 mask
+        if (useBlend) {
+            bctx.clearRect(0, 0, bw, bh);
+            bctx.drawImage(mcv, 0, 0);
+        }
         bctx.globalCompositeOperation = 'source-in';
         const pat = bctx.createPattern(img, 'repeat');
         if (pat) {
