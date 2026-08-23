@@ -893,6 +893,7 @@ function buildRiver(
     }
 
     const waterCells: Array<[number, number]> = [];
+    const shallowCells: Array<[number, number]> = []; // 岸边浅滩（浅滩 sh 搭配水域）
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
@@ -905,16 +906,25 @@ function buildRiver(
             }
             if (minDist < 100) {
                 waterCells.push([gx, gy]);
+            } else if (minDist < 130) {
+                shallowCells.push([gx, gy]); // 江岸浅滩环
             }
         }
     }
 
     for (const [x, y] of waterCells) occupied.add(x + ',' + y);
+    for (const [x, y] of shallowCells) occupied.add(x + ',' + y);
 
     const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
     const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
+    const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + 30), y: p.y + p.ny * (p.wW + 30) * 0.6 }));
+    const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + 30), y: p.y - p.ny * (p.wW + 30) * 0.6 })).reverse();
 
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
+    // 先铺岸边浅滩（黄浅水 sh5 搭配水域），再铺江面水体覆盖浅滩内侧
+    if (shallowCells.length > 0) {
+        patches.push({ tile: 'sh5', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.9, category: 'shore' });
+    }
     if (waterCells.length > 0) {
         patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
     }

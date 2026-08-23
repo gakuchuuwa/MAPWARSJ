@@ -302,7 +302,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-23 清账] gravel_wet(湿砾石滩)→qs2(沼泽泥)
         baseTerrain: 'qs2',
         // 🔴 [2026-08-21 素材全覆盖] qs2 流沙 + rock_wet 湿润岩石入沼泽地面
-        groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet', 'qs2', 'rock_wet'],
+        groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet', 'qs2', 'rock_wet', 'sh4'], // sh4=沼泽浅水搭配湿地
         forestFloorTiles: ['r01', 'underbrush_leaves'],
         trees: ['DEAD_TREE', 'WILLOW'],
         flatDecor: ['GRASS_GREEN_PATCH', 'UNDERBRUSH', 'WEED'],
@@ -480,7 +480,8 @@ export function terrainForTheme(
     //    其余（赤道高山/东非/沙漠）→ rck 石漠；冬季攻防 snd / 野战 sno。
     if (elevationBand === 'high_alpine') {
         if (season === 2) return isSiege ? 'snd' : 'sno';
-        return (biome === 'tundra_snow' || biome === 'cold_steppe') ? 'pm2' : 'rck';
+        // 🔴 [2026-08-23 主人定] rck 岩石是配属图（裸岩斑块点缀），不当底色；高寒石漠底色用砾石 gravel_default
+        return (biome === 'tundra_snow' || biome === 'cold_steppe') ? 'pm2' : 'gravel_default';
     }
 
     // 3. 高山草甸与戈壁砾石原（2500m - 4000m）
@@ -548,9 +549,12 @@ export function terrainForTheme(
     //    - 野战（野战遭遇战）：野外茫茫雪原，全量保留 DE 纯正大自然白雪深雪 (sno / sn2)。
     if (season === 2 && isSnowArea(lat, elev, biome)) {
         if (isSiege) {
-            return 'sn2'; // 攻防战：半土半雪
+            return 'snf'; // 攻城战：雪灌木（高层地基 snd + 低层雪地 snf）
         }
-        return (biome === 'tundra_snow' || biome === 'boreal') ? 'sno' : 'sno'; // 野战：茫茫纯白雪原
+        if (biome === 'tundra_snow') {
+            return 'ic3'; // 极地苔原野战：薄冰/软冰冻原（冰原边缘）
+        }
+        return 'sno'; // 其余野战：茫茫纯雪深雪
     }
 
     // 6. 基础地表
@@ -639,14 +643,18 @@ export function waterTerrainForTheme(
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): string {
-    // 1. 冬季雪区 / 极寒带：深寒暗青蓝冰水 (wt2)
+    // 1. 冬季雪区 / 苔原：结冰
     if (season === 2 && isSnowArea(lat, elev, biome)) {
-        return 'wt2';
+        return biome === 'tundra_snow' ? 'ic2' : 'wt2'; // 极地冻原湖冬季结冰=可航冰 ic2 / 一般冬季寒冰水 wt2
     }
-    if (biome === 'tundra_snow' || biome === 'boreal') {
-        return 'wt2';
+    if (biome === 'tundra_snow') {
+        return 'wt2'; // 极地夏季融水（寒冰水）
     }
-    // 2. 华南 / 东南亚 / 非洲热带雨林水乡：DE 经典清澈碧绿翡翠水 (river_clean_green)
+    // 2. 寒带针叶林（泰加）：深湖深蓝黑水 (wt4，贝加尔湖/北欧深湖)
+    if (biome === 'boreal') {
+        return 'wt4';
+    }
+    // 3. 华南 / 东南亚 / 非洲热带雨林水乡：DE 经典清澈碧绿翡翠水 (river_clean_green)
     if (
         theme.id === 'indomalayan_tropical' ||
         theme.id === 'afrotropical_tropical' ||
@@ -654,11 +662,35 @@ export function waterTerrainForTheme(
     ) {
         return 'river_clean_green';
     }
-    // 3. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
+    // 4. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
     if (theme.id === 'palustrine_swamp') {
         return 'wt6';
     }
-    // 4. 绝大多数江河水系（温带、地中海、中原、高地、沙漠绿洲等）：DE 经典清澈蔚蓝江水 (wtr)
+    // 5. 沙漠：高含沙深黄水（塔里木河/尼罗河/沙漠绿洲河）
+    if (biome === 'desert') {
+        return 'wt_yellow2';
+    }
+    // 6. 地中海：清澈蔚蓝海水色 (wt5)
+    if (biome === 'mediterranean') {
+        return 'wt5';
+    }
+    // 7. 冷草原：含沙浅黄水（草原河流含沙）
+    if (biome === 'cold_steppe') {
+        return 'wt_yellow';
+    }
+    // 8. 稀树草原：浑浊棕水（旱季浊水）
+    if (biome === 'savanna') {
+        return 'wt_brown';
+    }
+    // 9. 温带草原：富营养绿水（藻类繁盛）
+    if (biome === 'temperate_grass') {
+        return 'wt_green';
+    }
+    // 10. 温带森林：中水 (wt3)
+    if (biome === 'temperate_forest') {
+        return 'wt3';
+    }
+    // 11. 默认：清澈浅蓝江水 (wtr)
     return 'wtr';
 }
 
