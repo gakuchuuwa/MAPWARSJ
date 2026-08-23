@@ -2641,6 +2641,8 @@ export class Scene13WarLayer {
     private battleSec = 0;
     /** 攻城战「开战 30 秒随机塌一半城墙」是否已触发过（只触发一次，见 WALL_AUTO_COLLAPSE_SEC） */
     private wallAutoCollapsed = false;
+    /** 🔴 [2026-08-23] 城墙是否已坍塌过（塌一半 + 全解除阻挡只做一次，防止士兵反复打墙导致全塌） */
+    private wallsCollapsed = false;
     /** 最近一次有人阵亡的时刻（秒，battleSec 计）。长时间没人死 = 卡住了 */
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
@@ -4556,7 +4558,8 @@ export class Scene13WarLayer {
         const r2 = radius * radius;
         let bw: WarBuilding | null = null, bwd = Infinity;
         for (const b of this.wallGates) {
-            if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
+            // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（防全塌）
+            if (!b.linked || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d >= r2 || d >= bwd) continue;
             bwd = d; bw = b;
@@ -4648,7 +4651,9 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && m.f === 0) {
             let bw: WarBuilding | null = null, bwd = r2;
             for (const b of this.wallGates) {
-                if (!b.linked || b.hp <= 0 || b.sprite.destroyed) continue;
+                // 🔴 [2026-08-23] 墙已坍塌（obstructionDisabled = 纯贴图不挡路）→ 士兵不再锁定它打，
+                //    防士兵持续打剩余墙 → 反复触发塌一半 → 全塌。改打城内守军。
+                if (!b.linked || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
                 const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
                 if (d >= r2) continue;
                 const tooNear = minR2 > 0 && d < minR2;
@@ -4660,7 +4665,8 @@ export class Scene13WarLayer {
             if (bw) { bw.claims++; return bw; }
         }
         for (const b of this.wallGates) {
-            if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed) continue;
+            // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
+            if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d >= r2) continue;
             const tooNear = minR2 > 0 && d < minR2;
@@ -4679,6 +4685,10 @@ export class Scene13WarLayer {
      *    任何一排都留缺口，士兵穿行不卡。
      */
     private collapseFrontWalls(): void {
+        // 🔴 [2026-08-23] 只塌一半且只塌一次：已塌过（wallsCollapsed）就不再重复塌——
+        //    否则士兵每打破一段残墙又触发一次"塌一半"，反复迭代到全塌。
+        if (this.wallsCollapsed) { this.defenderHolding = false; return; }
+        this.wallsCollapsed = true;
         const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
         if (walls.length > 0) {
             // 🔴 [2026-08-23 主人定] 坍塌后：**所有墙段**解除阻挡（obstructionDisabled=true，士兵能穿，
@@ -5011,8 +5021,10 @@ export class Scene13WarLayer {
             //    30 秒城墙随机塌一半（collapseHalfWalls）→ defenderHolding=false → 守方开始反击，走下方正常逻辑。
             //    远程待命只禁移动（索敌/攻击走正常流程，箭矢动画齐全），见下方 holdDef 三处拦截。
             const holdDef = this.defenderHolding && m.f === 1;
-            if (holdDef && !RANGED_TYPES.has(m.key)) {
-                // 近战：完全待命——不索敌、不移动、不攻击
+            if (holdDef) {
+                // 🔴 [2026-08-23 主人定] 守方开局**完全待命**：近战+远程都不打、不动、不索敌，
+                //    等城墙坍塌（collapseFrontWalls → defenderHolding=false）才开始反击。
+                //    原只拦近战、远程原地射击——用户要"等墙塌再进攻"，远程也待命。
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
@@ -5034,6 +5046,7 @@ export class Scene13WarLayer {
             //    DE 攻方人挤人攻墙，墙是长条，separate 软推挤会沿墙铺开不会挤一个点；
             //    否则 300+ 攻方兵只有 ~85 名额锁到墙，其余每帧锁不到墙 → 丢目标 → 穿墙蹭。
             const siegeWallKeep = m.foe && 'sprite' in m.foe && m.foe.linked
+                && !m.foe.sprite.obstructionDisabled
                 && this.battleType === 'siege' && m.f === 0;
             const keep = m.foe && m.foe.hp > 0
                 && (siegeWallKeep || m.foe.claims < SPREAD_CAP)

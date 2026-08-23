@@ -1141,19 +1141,17 @@ function buildGroundVariation(
     isSiege: boolean = false,
 ): void {
     const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege);
-    // 🔴 [2026-08-23 主人定：大背景=多地貌咬合，学 DE 材质贴图交错] 原版只铺 6 个 alpha 0.25 的淡斑块，
-    //    大背景被"单张平铺 + 几丝若有若无斑块"主导 → 单调 + 露格线。
-    //    改为真正的多地貌咬合：斑块更多/更大/更浓，让草/泥/沙/砾石/雪在背景上交错成型。
-    //    （纯材质贴图层：不改滤镜、不改机制、不动引擎常数——季节/气候后处理以后分批调）
+    // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
+    //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
     const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
-    const patchCount = isWinterSnow ? 20 : 16;
+    const patchCount = isWinterSnow ? 12 : 6;
     for (let i = 0; i < patchCount; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        const clump = isWinterSnow ? 10 + rng.int(0, 14) : 8 + rng.int(0, 9);
+        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 5 + rng.int(0, 6);
         const alpha = isWinterSnow
-            ? (t.startsWith('sn') || t === 'sno' ? 0.85 : 0.55)
-            : 0.5;
+            ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
+            : 0.25;
         patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
     }
 
