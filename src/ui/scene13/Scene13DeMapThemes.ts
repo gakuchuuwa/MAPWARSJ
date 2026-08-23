@@ -125,8 +125,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_middle_east_desert: {
         id: 'palaearctic_middle_east_desert',
         baseTerrain: 'pal',
-        // 🔴 [2026-08-21 素材全覆盖] 石英沙/流沙/细腻棕榈沙/纯金沙入沙漠地面
-        groundTiles: ['ds2', 'des', 'ds4', 'qs', 'qs2', 'pal1', 'snd'],
+        // 🔴 [2026-08-23 清账] 移除 snd（官方 Snow Foundation 雪地基，误入沙漠）——归雪地类（§2.4.1）
+        groundTiles: ['ds2', 'des', 'ds4', 'qs', 'qs2', 'pal1'],
         forestFloorTiles: ['pal', 'pal1', 'for'],
         trees: ['PALM'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地/ DECAL_CRATER 陨坑（荒漠地貌贴花）
@@ -201,7 +201,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         id: 'serengeti',
         baseTerrain: 'ds4',
         // 🔴 [2026-08-21 素材全覆盖] 沙漠纯金沙 snd 入塞伦盖蒂干草与沙化区域
-        groundTiles: ['gr5', 'rd1', 'rd2', 'ds5', 'des', 'snd', 'grs', 'gr2', 'gr3'],
+        // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入塞伦盖蒂）——归雪地类（§2.4.1）
+        groundTiles: ['gr5', 'rd1', 'rd2', 'ds5', 'des', 'grs', 'gr2', 'gr3'],
         forestFloorTiles: ['gr5', 'ds4'],
         trees: ['ACACIA', 'BAOBAB'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'PLANT_DEAD'],
@@ -258,7 +259,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_asia_desert: {
         id: 'palaearctic_asia_desert',
         baseTerrain: 'ds2', // 经典干燥戈壁黄土沙原
-        groundTiles: ['des', 'ds2', 'ds3', 'ds5', 'rck', 'qs', 'snd'],
+        // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入亚洲沙漠）——归雪地类（§2.4.1）
+        groundTiles: ['des', 'ds2', 'ds3', 'ds5', 'rck', 'qs'],
         forestFloorTiles: ['ds2', 'ds3', 'for'],
         trees: ['DEAD_TREE', 'DRAGON_TREE', 'BUSH_TREE_A', 'ASIAN_PINE'],
         autumnTrees: ['DEAD_TREE', 'DRAGON_TREE'],
@@ -414,22 +416,34 @@ export function terrainForTheme(
     isSiege: boolean = false,
 ): string {
     // 1. 终年积雪雪峰 / 冰川（>4800m 或达到极高纬度真实雪线）
+    // 🔴 [2026-08-23 第6层冰雪地带 9 块定稿] 雪线以上地表全是雪（真实世界）：
+    //    极地/苔原（tundra_snow）冬季出冰原 ice，其余 biome 一律深雪 sno
+    //    （沙漠高山雪峰天山/祁连、地中海阿尔卑斯、草原阿尔泰、温带落基山、寒带针叶林雪原）。
     if (elevationBand === 'snow') {
-        // 仅在真实极高冰川（>4500m）或冬季才出冰雪
-        if (season === 2) return 'ice';
-        if (elev !== null && elev >= 4500) return 'sno';
-        return 'pm2';
+        return biome === 'tundra_snow' && season === 2 ? 'ice' : 'sno';
     }
 
-    // 2. 极高山石原与高寒冻土（3800m - 4800m）：夏季为高寒冷石质土，冬季为雪
+    // 2. 极高山石原与高寒冻土（4000m - 5200m）
+    // 🔴 [2026-08-23 第5层高寒地带 9 块定稿] 高寒带真实=石漠（羌塘/帕米尔/青藏北部）：
+    //    主力 rck 岩石；极地/苔原（tundra_snow）pm2 高寒冻土草甸；冬季一律雪。
     if (elevationBand === 'high_alpine') {
-        return season === 2 ? 'sno' : 'pm2';
+        if (season === 2) return 'sno';
+        return biome === 'tundra_snow' ? 'pm2' : 'rck';
     }
 
-    // 3. 高山草甸与戈壁砾石原（2500m - 3800m）：高寒石质土
+    // 3. 高山草甸与戈壁砾石原（2500m - 4000m）
+    // 🔴 [2026-08-23 第4层高山地带 9 块定稿] 树线以上高山草甸：
+    //    湿润带 5 块（雨林/萨凡纳/地中海/温带草原/温带森林）→ pm1 绿草甸；
+    //    干旱/高寒带 4 块（沙漠/冷草原/针叶林树线/苔原）→ pm2 枯草甸。
     if (elevationBand === 'alpine') {
         if (season === 2 && isSnowArea(lat, elev, biome)) return 'sn2';
-        return 'pm2';
+        const wetAlpine =
+            biome === 'tropical_rainforest' ||
+            biome === 'savanna' ||
+            biome === 'mediterranean' ||
+            biome === 'temperate_grass' ||
+            biome === 'temperate_forest';
+        return wetAlpine ? 'pm1' : 'pm2';
     }
 
     // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 高原干旱冻土（如哈马丹、安卡拉、河西、晋北）
@@ -482,8 +496,8 @@ export function groundTilesForTheme(
 ): readonly string[] {
     if (season === 2 && isSnowArea(lat, elev, biome)) {
         if (isSiege) {
-            // 攻防战：半土半雪组合（浅雪 sn2 + 枯草冻土 gr4 / pm1 + 林间残雪 snf + 冻土砾石 ds5）
-            return ['sn2', 'gr4', 'snf', 'pm1', 'ds5'];
+            // 攻防战：半土半雪组合（浅雪 sn2 + 枯草冻土 gr4 / pm1 + 林间残雪 snf + 冻土砾石 ds5 + 城郭踩实雪地基 snd）
+            return ['sn2', 'gr4', 'snf', 'pm1', 'ds5', 'snd'];
         }
         // 野战：纯正大自然雪原组合（深雪 sno + 浅雪 sn2 + 林雪 snf + 冰面 ice）
         return ['sno', 'sn2', 'snf', 'ice'];

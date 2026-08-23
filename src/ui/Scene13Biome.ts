@@ -240,7 +240,7 @@ export const MOUNTAIN_ASSETS: string[] = [
 export const BIOME_GROUND_VARIATION: Record<Biome, string[]> = {
     tropical_rainforest: ['fo2', 'underbrush_leaves'],
     savanna: ['gr7', 'pc3', 'sr2'],
-    desert: ['ds3', 'ds4', 'ds5', 'pal', 'pal1', 'snd'],
+    desert: ['ds3', 'ds4', 'ds5', 'pal', 'pal1'], // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入沙漠变体池）
     mediterranean: ['gr7', 'sr2'],
     cold_steppe: ['pc1', 'pc2', 'pm1', 'r01'],
     temperate_grass: ['gr7', 'sr2'],
