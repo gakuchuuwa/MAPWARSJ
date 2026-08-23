@@ -3483,7 +3483,7 @@ export class Scene13WarLayer {
         const culture = this.sideCulture[1];
         let roadTile = 'rd1'; // 默认：DE 经典石板城路 (rd1)
         if (culture === 'ISLAMIC') {
-            roadTile = 'gravel_default'; // 中东伊斯兰：碎石土石城基
+            roadTile = 'rd2'; // 中东伊斯兰：DE Road 碎石城基——gravel_default砾石是地形，不当道路
         } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
             roadTile = 'rd1'; // 东方：青石砖大道
         } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {

@@ -11,6 +11,7 @@ export type DeMapThemeId =
     | 'palaearctic_asia_desert'
     | 'palaearctic_tibetan_plateau'
     | 'palaearctic_middle_east_desert'
+    | 'palaearctic_salt_desert'
     | 'palaearctic_middle_east_highland'
     | 'palaearctic_europe_taiga'
     | 'palaearctic_europe_temperate'
@@ -130,8 +131,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     palaearctic_middle_east_desert: {
         id: 'palaearctic_middle_east_desert',
         baseTerrain: 'pal',
-        // 🔴 [2026-08-23 清账] 移除 snd（官方 Snow Foundation 雪地基，误入沙漠）——归雪地类（§2.4.1）
-        groundTiles: ['ds2', 'des', 'ds4', 'qs', 'qs2', 'pal1'],
+        // 🔴 [2026-08-23 清账] 移除 snd（官方 Snow Foundation 雪地基，误入沙漠）——归雪地类（§2.4.1）；qs2(沼泽泥)移入盐漠/沼泽
+        groundTiles: ['ds2', 'des', 'ds4', 'qs', 'pal1'],
         forestFloorTiles: ['pal', 'pal1', 'for'],
         trees: ['PALM'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地/ DECAL_CRATER 陨坑（荒漠地貌贴花）
@@ -139,6 +140,19 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材全覆盖] 丝路商栈（木桶/地毯）+ 古战场遗迹（墓碑/骸骨）——荒漠商旅战场
         solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
         waterPlants: ['REEDS', 'PALM', 'WATER_LILY'],
+        beachTerrain: 'bc3',
+    },
+    // 🔴 [2026-08-23 新增] 龟裂盐漠（playa/salt flat）——真实地理：伊朗大盐漠 Dasht-e Kavir（卡维尔）、
+    //    卢特沙漠 Dasht-e Lut、突尼斯杰里德盐沼 Chott el Djerid。地面干涸龟裂盐渍（pal1 干裂沙），无树。
+    palaearctic_salt_desert: {
+        id: 'palaearctic_salt_desert',
+        baseTerrain: 'pal1', // 干裂沙（龟裂盐渍地）
+        groundTiles: ['pal1', 'pal', 'des', 'ds4'],
+        forestFloorTiles: ['pal1', 'pal'],
+        trees: ['DEAD_TREE'], // 盐漠无植被，边缘偶有枯树
+        flatDecor: ['PLANT_DEAD', 'DECAL_CRACK', 'DECAL_CRATER', 'ANIMAL_SKELETON'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2'],
+        waterPlants: ['REEDS'],
         beachTerrain: 'bc3',
     },
     palaearctic_europe_taiga: {
@@ -343,6 +357,11 @@ export function resolveDeMapTheme(
     // 4. 西亚带（安纳托利亚内陆/黎凡特/两河/伊朗高原：lng 30~62、lat 25~43；
     //    巴尔干/君士坦丁堡/爱琴海西岸 lng<30 属欧洲温带/地中海，不进入西亚带）
     if (lng >= 30 && lng < 62 && lat > 25 && lat < 43) {
+        // 🔴 [2026-08-23 新增·真实地理] 伊朗龟裂盐漠：大盐漠 Dasht-e Kavir（卡维尔 lng52~58 lat33~36）
+        //    + 卢特沙漠 Dasht-e Lut（lng57~60 lat29~32）→ pal1 干裂沙（playa 干涸盐渍地）
+        const inKavir = lng >= 52 && lng < 58 && lat >= 33 && lat < 36;
+        const inLut = lng >= 57 && lng < 60 && lat >= 29 && lat < 32;
+        if (biome === 'desert' && (inKavir || inLut)) return DE_MAP_THEMES.palaearctic_salt_desert;
         if (biome === 'desert' || lat < 31) return DE_MAP_THEMES.palaearctic_middle_east_desert; // 两河/波斯湾低地
         // 🔴 [2026-08-21 完善] 地中海东岸（黎凡特海岸 lat 33-36、安纳托利亚西岸）都是地中海气候：
         //    原 lat>36 漏掉贝鲁特（33.9）→ 改成 lng<40（东地中海沿岸带）即可
@@ -386,6 +405,8 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.serengeti;
     }
     // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 温带半干旱草原 / 低洼湿地（DE Swamp biome） / 寒带
+    // 🔴 [2026-08-23 新增·真实地理] 突尼斯杰里德盐沼 Chott el Djerid（lng8~10 lat33~34）→ pal1 干裂沙
+    if (biome === 'desert' && lng >= 8 && lng < 10 && lat >= 33 && lat < 34) return DE_MAP_THEMES.palaearctic_salt_desert;
     if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
     if (biome === 'mediterranean') return DE_MAP_THEMES.palaearctic_europe_mediterranean;
     // 🔴 [2026-08-21 全面检查·补 gap] cold_steppe（温带半干旱草原：BSk/Dsa/Dsb——中亚草原/北美大平原/
