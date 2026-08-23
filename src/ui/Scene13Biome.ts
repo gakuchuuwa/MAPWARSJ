@@ -128,9 +128,9 @@ function fallbackBiomeForLatitude(lat: number): Biome {
  * - 0 - 400m    lowland     平原水乡与河谷低地（对标平原绿 #96B287）
  * - 400 - 1000m upland      丘陵低山与台地（对标橄榄黄绿 #B9B991）
  * - 1000- 2500m mountain    黄土高原与干旱中山（对标黄土金黄 #D4C08A）
- * - 2500- 3800m alpine      高山草甸与戈壁砾石原（对标高山灰绿 #A0A5A0 ~ #B9AF8C）
- * - 3800- 4800m high_alpine 极高山石原与高寒冻土（对标冷灰寒漠 #9196A0 ~ #6E788C）
- * - > 4800m 或雪线 snow     终年积雪雪峰与冰川（对标雪山白 #FFFFFF）
+ * - 2500- 4000m alpine      高山草甸与戈壁砾石原（对标高山灰绿 #A0A5A0 ~ #B9AF8C）
+ * - 4000- 雪线  high_alpine 极高山石原与高寒冻土（下界 4000 对齐战略 4000~5200 高寒段）
+ * - 雪线以上   snow         终年积雪雪峰与冰川（纬度动态雪线，真实世界）
  */
 export function resolveElevationBand(
     lat: number,
@@ -141,7 +141,7 @@ export function resolveElevationBand(
     if (elev === null) return 'lowland';
     const snowLine = snowLineFor(lat, lng);
     if (elev >= snowLine) return 'snow';
-    if (elev >= 4200) return 'high_alpine';
+    if (elev >= 4000) return 'high_alpine';
     if (elev >= 2500) return 'alpine';
     if (elev >= 1000) return 'mountain';
     if (elev >= 400) return 'upland';

@@ -636,6 +636,21 @@ export function decorForTheme(
     };
 }
 
+// 🔴 [2026-08-23 P2 多色系咬合] 副色系表（学 DE create_terrain 多层地貌咬合）
+//    DE：base_terrain 草 + create_terrain 土(18%) + create_terrain 沙(6%) → 不同色系互相咬合
+//    我们：每个 biome 主色 + 1~2 个副色系，weight 按 land_percent 换算（副色系≈18% / 9%）
+export const SECONDARY_TERRAINS: Record<Biome, ReadonlyArray<{ tile: string; weight: number }>> = {
+    tropical_rainforest: [{ tile: 'gr4', weight: 1.0 }, { tile: 'gr6', weight: 0.5 }], // 雨林：腐殖土泥 + 丛林草
+    savanna:            [{ tile: 'ds4', weight: 1.0 }, { tile: 'gr7', weight: 0.5 }], // 稀树草原：泥地 + 枯草
+    desert:             [{ tile: 'ds5', weight: 1.0 }, { tile: 'ds4', weight: 0.5 }], // 沙漠：砾石 + 泥地
+    mediterranean:      [{ tile: 'ds4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 地中海：泥地 + 土
+    cold_steppe:        [{ tile: 'ds3', weight: 1.0 }, { tile: 'ds5', weight: 0.5 }], // 冷草原：土 + 砾石
+    temperate_grass:    [{ tile: 'ds3', weight: 1.0 }, { tile: 'ds2', weight: 0.5 }], // 温带草原：土 + 沙
+    temperate_forest:   [{ tile: 'gr4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 温带森林：腐殖土 + 泥地
+    boreal:             [{ tile: 'gr4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 针叶林：腐殖土 + 泥地
+    tundra_snow:        [{ tile: 'gr4', weight: 1.0 }, { tile: 'gravel_default', weight: 0.5 }], // 苔原：泥地 + 砾石
+};
+
 export function waterTerrainForTheme(
     theme: DeMapThemePalette,
     season: 0 | 1 | 2,

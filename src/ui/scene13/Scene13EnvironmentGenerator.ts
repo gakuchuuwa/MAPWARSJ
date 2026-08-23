@@ -33,6 +33,7 @@ import {
     resolveDeMapTheme,
     terrainForTheme,
     treesForTheme,
+    SECONDARY_TERRAINS,
     type DeMapThemeId,
     type DeMapThemePalette,
 } from './Scene13DeMapThemes';
@@ -1154,9 +1155,26 @@ function buildGroundVariation(
     // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
     const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
-    const patchCount = isWinterSnow ? 12 : 6;
+    // 🔴 [2026-08-23 P2 多色系咬合] 加权斑块池 = 主色系变体 + 副色系（学 DE create_terrain 多层咬合）
+    const secondary = isSiege
+        ? [{ tile: 'ds5', weight: 1.0 }, { tile: 'gravel_default', weight: 0.5 }] // 攻城：泥地+砾石副色
+        : (SECONDARY_TERRAINS[biome] ?? []);
+    const pool = [
+        ...variation.map(t => ({ tile: t, weight: 1.0 })),
+        ...secondary,
+    ];
+    const totalWeight = pool.reduce((s, p) => s + p.weight, 0);
+    const pickWeighted = (): string => {
+        let r = rng.next() * totalWeight;
+        for (const p of pool) {
+            r -= p.weight;
+            if (r <= 0) return p.tile;
+        }
+        return pool[pool.length - 1].tile;
+    };
+    const patchCount = isWinterSnow ? 12 : 8;
     for (let i = 0; i < patchCount; i++) {
-        const t = rng.pick(variation);
+        const t = pickWeighted();
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
         const clump = isWinterSnow ? 10 + rng.int(0, 12) : 5 + rng.int(0, 6);
         const alpha = isWinterSnow
