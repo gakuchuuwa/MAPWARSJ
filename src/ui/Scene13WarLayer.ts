@@ -4678,18 +4678,12 @@ export class Scene13WarLayer {
      *    统一按随机间隔倒塌（不整排全倒），并触发守方解除待命开始反击。随机间隔挑段倒，
      *    任何一排都留缺口，士兵穿行不卡。
      */
-    private collapseFrontWalls(allClear = false): void {
+    private collapseFrontWalls(): void {
         const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
         if (walls.length > 0) {
-            // 🔴 [2026-08-23 主人定] 随机坍塌一半（不是每 3 段塌 1 段）。
-            //    40 秒保底（allClear）：全部城墙解除碰撞（防卡兵），再随机塌一半做视觉演出；
-            //    破墙联动（非 allClear）：只随机塌一半，未塌的另一半保持碰撞（士兵还能继续打）。
-            if (allClear) {
-                for (const b of walls) {
-                    b.sprite.obstructionDisabled = true;
-                    if (b.extraSprites) for (const sp of b.extraSprites) sp.obstructionDisabled = true;
-                }
-            }
+            // 🔴 [2026-08-23 主人定] 只随机塌一半（不是全塌，也不是每 3 段塌 1 段）。
+            //    塌掉的一半由 breachWall 切 D75 残垣贴图 + 解除阻挡（残垣断壁感）；
+            //    未塌的另一半**保留完整贴图 + 保留阻挡**。不再解除全部碰撞——那会让整圈墙"全塌"的观感。
             const half = Math.max(1, Math.round(walls.length / 2));
             const shuffled = [...walls].sort(() => Math.random() - 0.5);
             for (let n = 0; n < half; n++) {
@@ -4979,7 +4973,7 @@ export class Scene13WarLayer {
         //    随机坍塌一次——即使士兵还没打穿墙，40 秒后也强制随机塌一批，留出足够缺口。
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
-            this.collapseFrontWalls(true);
+            this.collapseFrontWalls();
         }
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) this.deployT -= dt;
