@@ -4689,15 +4689,21 @@ export class Scene13WarLayer {
         //    否则士兵每打破一段残墙又触发一次"塌一半"，反复迭代到全塌。
         if (this.wallsCollapsed) { this.defenderHolding = false; return; }
         this.wallsCollapsed = true;
+        // 🔴 [2026-08-23 主人定] 坍塌后**彻底移除碰撞体**：obstruction = undefined（字段语义
+        //    「未设置即不阻挡」，resolveWorldObstructions 第一关 !obstruction 直接跳过）+
+        //    obstructionDisabled = true 双保险。遍历**所有** wallGates（含已 hp=0、城门 extra），
+        //    贴图照常绘制（残垣断壁观感），士兵 100% 不再被挡。
+        for (const b of this.wallGates) {
+            b.sprite.obstruction = undefined;
+            b.sprite.obstructionDisabled = true;
+            if (b.extraSprites) for (const sp of b.extraSprites) {
+                sp.obstruction = undefined;
+                sp.obstructionDisabled = true;
+            }
+        }
+        // 视觉上随机塌一半切 D75 残垣（只影响贴图，不影响碰撞）
         const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
         if (walls.length > 0) {
-            // 🔴 [2026-08-23 主人定] 坍塌后：**所有墙段**解除阻挡（obstructionDisabled=true，士兵能穿，
-            //    墙仍按贴图绘制）——不要咬住士兵移动。视觉上随机塌一半切 D75 残垣（残垣断壁感），
-            //    未塌的一半保留完整贴图（同样不阻挡）。
-            for (const b of walls) {
-                b.sprite.obstructionDisabled = true;
-                if (b.extraSprites) for (const sp of b.extraSprites) sp.obstructionDisabled = true;
-            }
             const half = Math.max(1, Math.round(walls.length / 2));
             const shuffled = [...walls].sort(() => Math.random() - 0.5);
             for (let n = 0; n < half; n++) {
@@ -4720,10 +4726,12 @@ export class Scene13WarLayer {
      */
     private breachWall(b: WarBuilding, dust: boolean): void {
         // ① 立即解除阻挡 + 击破关联屏障（士兵马上能进城，不等动画）
+        b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) {
             for (const sp of b.extraSprites) {
                 sp.destroyed = true;
+                sp.obstruction = undefined;
                 sp.obstructionDisabled = true;
             }
         }
@@ -5406,8 +5414,9 @@ export class Scene13WarLayer {
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
-                        if ('sprite' in foe && foe.destrAssets && foe.hp > 0) {
-                            const ratio = foe.hp / foe.maxHp;
+                        // 🔴 [2026-08-23 主人定] 墙 hp 归零也算损 100% → 切 D75（破损到顶），与 40 秒坍塌残垣视觉一致。
+                        if ('sprite' in foe && foe.destrAssets) {
+                            const ratio = Math.max(0, foe.hp) / foe.maxHp;
                             let stage = -1;
                             if (ratio <= 0.25) stage = 2;       // D75：损 75%
                             else if (ratio <= 0.5) stage = 1;   // D50：损 50%
@@ -5420,16 +5429,11 @@ export class Scene13WarLayer {
                                 }
                             }
                         }
-                        if (foe.hp <= 0) {
-                            if ('sprite' in foe) {
-                                // 🔴 单段破墙演出（立即解除阻挡 + 尘土 + 倒塌动画/残垣/消失）
-                                this.breachWall(foe, true);
-                                // 🔴 [2026-08-22 主人定] 任意一处城墙/城门被打破 → 所有城墙
-                                //    （前排 + 上排 + 下排斜墙）统一随机间隔倒塌，并触发守方反击。
-                                this.collapseFrontWalls();
-                            } else {
-                                this.pushCorpse(foe);
-                            }
+                        // 🔴 [2026-08-23 主人定] 城墙坍塌唯一标准 = 开战 40 秒（WALL_AUTO_COLLAPSE_SEC → collapseFrontWalls）。
+                        //    士兵打墙只降 hp 做视觉破损（上方 damage stage），墙 hp 归零**不在此破墙、不联动坍塌**——
+                        //    墙保持破损贴图 + 阻挡，等 40 秒统一坍塌。只有非建筑（士兵/单位）阵亡才走尸体。
+                        if (foe.hp <= 0 && !('sprite' in foe)) {
+                            this.pushCorpse(foe);
                         }
                     }
                 }

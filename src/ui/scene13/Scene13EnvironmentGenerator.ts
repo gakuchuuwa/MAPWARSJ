@@ -1141,17 +1141,20 @@ function buildGroundVariation(
     isSiege: boolean = false,
 ): void {
     const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege);
-    // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
-    //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
+    // 🔴 [2026-08-23 底图丰富化：学 DE 多地貌咬合] DE 战场地面（如秋色草原）是水面/滩涂/泥土/
+    //    岩石/草地多张贴图互相咬合，明显可见浓度足够；不是"一张绿皮平铺 + 几丝透明斑块"。
+    //    原版非冬季 patchCount=6、alpha=0.25 → 几乎看不见，大背景只剩 base 单张纯绿。
+    //    提高数量与浓度让地貌咬合成型（只用 DE 主题池 groundTilesForTheme 里已有贴图，不引入外部）。
+    //    ※ 只动地面贴图层（terrainPatches），不受 isWater/inArmyCorridor 影响，不影响双方行军/寻路。
     const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
-    const patchCount = isWinterSnow ? 12 : 6;
+    const patchCount = isWinterSnow ? 18 : 20;
     for (let i = 0; i < patchCount; i++) {
         const t = rng.pick(variation);
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 5 + rng.int(0, 6);
+        const clump = isWinterSnow ? 12 + rng.int(0, 16) : 10 + rng.int(0, 12);
         const alpha = isWinterSnow
-            ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
-            : 0.25;
+            ? (t.startsWith('sn') || t === 'sno' ? 0.85 : 0.55)
+            : 0.55;
         patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
     }
 
