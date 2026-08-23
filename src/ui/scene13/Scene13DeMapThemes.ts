@@ -420,30 +420,34 @@ export function terrainForTheme(
     //    极地/苔原（tundra_snow）冬季出冰原 ice，其余 biome 一律深雪 sno
     //    （沙漠高山雪峰天山/祁连、地中海阿尔卑斯、草原阿尔泰、温带落基山、寒带针叶林雪原）。
     if (elevationBand === 'snow') {
+        // 🔴 [2026-08-23 攻防/野战区分] 冬季：攻防战城郭=踩实雪地基 snd；野战=极地冰原 ice / 其余深雪 sno
+        if (season === 2 && isSiege) return 'snd';
         return biome === 'tundra_snow' && season === 2 ? 'ice' : 'sno';
     }
 
     // 2. 极高山石原与高寒冻土（4000m - 5200m）
-    // 🔴 [2026-08-23 第5层高寒地带 9 块定稿] 高寒带真实=石漠（羌塘/帕米尔/青藏北部）：
-    //    主力 rck 岩石；极地/苔原（tundra_snow）pm2 高寒冻土草甸；冬季一律雪。
+    // 🔴 [2026-08-23 第5层高寒地带 9 块定稿·真实地理] 高寒带真实=石漠+冻土草甸：
+    //    高寒草原（冷草原 cold_steppe / 苔原 tundra_snow）→ pm2 冻土草甸（蒙古/中亚/青藏）；
+    //    其余（赤道高山/东非/沙漠）→ rck 石漠；冬季攻防 snd / 野战 sno。
     if (elevationBand === 'high_alpine') {
-        if (season === 2) return 'sno';
-        return biome === 'tundra_snow' ? 'pm2' : 'rck';
+        if (season === 2) return isSiege ? 'snd' : 'sno';
+        return (biome === 'tundra_snow' || biome === 'cold_steppe') ? 'pm2' : 'rck';
     }
 
     // 3. 高山草甸与戈壁砾石原（2500m - 4000m）
-    // 🔴 [2026-08-23 第4层高山地带 9 块定稿] 树线以上高山草甸：
-    //    湿润带 5 块（雨林/萨凡纳/地中海/温带草原/温带森林）→ pm1 绿草甸；
-    //    干旱/高寒带 4 块（沙漠/冷草原/针叶林树线/苔原）→ pm2 枯草甸。
+    // 🔴 [2026-08-23 第4层高山地带 9 块定稿·草地类] 树线以上自然高山草甸（非人工牧场）：
+    //    湿润带 → gr2 纯绿草（赤道 páramo/东非 afro-alpine/湿润温带草原/阿尔卑斯落基山）；
+    //    干旱带 → gr7 纯枯草（帕米尔荒漠/地中海夏旱/蒙古半干旱/针叶林树线/高寒苔原）。
     if (elevationBand === 'alpine') {
-        if (season === 2 && isSnowArea(lat, elev, biome)) return 'sn2';
+        if (season === 2 && isSnowArea(lat, elev, biome)) {
+            return isSiege ? 'snd' : 'sno';
+        }
         const wetAlpine =
             biome === 'tropical_rainforest' ||
             biome === 'savanna' ||
-            biome === 'mediterranean' ||
             biome === 'temperate_grass' ||
             biome === 'temperate_forest';
-        return wetAlpine ? 'pm1' : 'pm2';
+        return wetAlpine ? 'gr2' : 'gr7';
     }
 
     // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 高原干旱冻土（如哈马丹、安卡拉、河西、晋北）
