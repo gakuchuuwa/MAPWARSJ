@@ -427,6 +427,8 @@ export class GameMap {
             if (!this.map.hasLayer(this.vectorRiverLayer)) {
                 this.vectorRiverLayer.addTo(this.map);
                 this.vectorRiverLayer.bringToBack();
+                // 重新挂载后恢复描边在下、水体在上的内部顺序。
+                this.vectorRiverLayer.refresh();
                 // Ensure ESRI stays on top
                 if (this.riverLayer) this.riverLayer.bringToFront();
             }
