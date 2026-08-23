@@ -25,6 +25,7 @@ import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import {
+    DE_MAP_THEMES,
     groundTilesForTheme,
     forestFloorTilesForTheme,
     decorForTheme,
@@ -138,6 +139,12 @@ export interface Scene13EnvironmentInput {
     forceBiome?: Biome;
     /** 测试用：强制水域（覆盖 probeWater 结果），便于验证海岸/湖生成 */
     forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
+    /** 🔧 [2026-08-24 背景图预览工具] 强制 DE 主题，跳过按经纬度解析（工具要定点枚举 18 套主题） */
+    forceTheme?: DeMapThemeId;
+    /** 🔧 [同上] 强制海拔档；缺省仍按 resolveElevationBand 走 */
+    forceElevationBand?: ElevationBand;
+    /** 🔧 [同上] 强制海拔米数（喂给树种/地表/丘陵密度判定），覆盖 ESRI 采样 */
+    forceElevationM?: number;
     /** 测试/控制用：强制是否生成横贯战场的平坦帝国大道 */
     forceHasRoad?: boolean;
     /** 战斗类型：是否为攻防战（攻城战/据点防守战） */
@@ -474,13 +481,17 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         elev = sample?.elevationM ?? null;
         slope = sample?.slopeDeg ?? null;
     }
+    if (input.forceElevationM !== undefined) elev = input.forceElevationM;
     const climateRegion = hasCoord ? resolveClimateRegion(input.lat!, input.lng!) : null;
-    const elevationBand = hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland';
+    const elevationBand = input.forceElevationBand
+        ?? (hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland');
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
     const topology: Scene13Topology = resolveBattleTopology(hasCoord, waterKind, elev, slope, biome, rng);
-    const theme = hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null;
+    const theme = input.forceTheme
+        ? DE_MAP_THEMES[input.forceTheme]
+        : (hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null);
     const baseTerrain: string = theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false)
         : DEFAULT_TERRAIN_TILE;
