@@ -90,21 +90,6 @@ export function snowLineFor(lat: number, lng?: number): number {
     return 1200;
 }
 
-/**
- * biome → 主地形（[夏/春, 秋, 冬]，对齐 sceneSeason 0/1/2）。照抄工单 §3，勿自创。
- */
-export const BIOME_TERRAIN: Record<Biome, [string, string, string]> = {
-    tropical_rainforest: ['gr8', 'gr8', 'gr8'],
-    savanna: ['grs', 'pc1', 'gr5'],
-    desert: ['des', 'ds2', 'qs'],
-    mediterranean: ['gr2', 'gr4', 'gr5'],
-    cold_steppe: ['pm2', 'gr4', 'sn2'],
-    temperate_grass: ['gr6', 'gr4', 'sn2'],
-    temperate_forest: ['gr3', 'for', 'sn2'],
-    boreal: ['gr9', 'pm2', 'sno'],
-    tundra_snow: ['gr2', 'pm2', 'sn2'], // 高寒苔原草甸：夏绿gr2 / 秋黄pm2 / 冬雪sn2
-};
-
 /** 无坐标兜底（13 初始化防御分支）：默认温带森林夏季草皮 */
 export const DEFAULT_TERRAIN_TILE = 'gr3';
 

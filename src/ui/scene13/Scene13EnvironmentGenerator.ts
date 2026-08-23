@@ -27,7 +27,6 @@ import {
     groundTilesForTheme,
     forestFloorTilesForTheme,
     decorForTheme,
-    beachTerrainForTheme,
     waterTerrainForTheme,
     isSnowArea,
     resolveDeMapTheme,
@@ -46,24 +45,6 @@ const TILE_H = 32;
 // 🔴 [2026-08-22 主人定] 绿是河，蓝是海：
 //   - 海洋与海岸线专属蔚蓝/浅蓝海水（DE 经典 wtr / wt2 / wt4，波光粼粼）；
 //   - 内陆河流专属古朴深邃自然墨绿水体（主人选定方案 4：sh4 / sh5，古色古香，无杂乱水草浮萍）。
-/** 🔴 海洋专属蔚蓝水体 */
-const OCEAN_TILES = ['wtr', 'wt2', 'wt4'];
-/** 🔴 内陆河流专属纯净古朴墨绿水体（纯净水波纹，绝无杂质/水草/浮萍斑块，主人 2026-08-22 定） */
-const RIVER_TILES = ['river_clean_green'];
-/** 深水带 */
-const SHALLOW_DEEP = 'sh4';
-/** 中水带（古朴墨绿多变体 sh4 / sh5） */
-const SHALLOW_MEDIUM = ['sh4', 'sh5'];
-/** 近岸浅水带 */
-const SHALLOW_NEAR = ['sh4', 'sh5'];
-/** 湿沙（水线） */
-const BEACH_WET = 'beach_wet';
-/** 湖岸（普通） */
-const POND_EDGE = ['sh4', 'sh5'];
-/** 湖岸（湿地/沼泽） */
-const SWAMP_EDGE = ['sh4', 'sh5'];
-/** 冬季冰面 */
-const ICE_TILES = ['ice', 'ic2', 'ic3', 'ice_beach'];
 
 // ── 方案数据结构 ──────────────────────────────────────────────
 // ── 方案数据结构 ──────────────────────────────────────────────────
@@ -740,113 +721,6 @@ function generateElevation(
     return grid;
 }
 
-// ── 第 3 层：真实 ESRI Zoom 13 水系转 DE 战场（超圆滑 SDF 连续场） ──
-
-function buildWaterFromRealESRIZoom13(
-    mask: Uint8Array,
-    pixelX: number,
-    pixelY: number,
-    gw: number,
-    gh: number,
-    ox: number,
-    oy: number,
-    VW: number,
-    VH: number,
-    rng: RandomSource,
-    patches: TerrainPatchPlan[],
-    objects: EnvironmentObjectPlan[],
-    occupied: Set<string>,
-    theme: DeMapThemePalette,
-    season: 0 | 1 | 2 = 0,
-    lat: number = 35,
-    elev: number | null = null,
-    biome: Biome = 'temperate_forest',
-): WaterChecker {
-    // 平滑采样函数（多阶圆滑滤波，彻底消除 256x256 阶梯锯齿）
-    const sampleMaskSmooth = (u: number, v: number): number => {
-        // 战场中心 = 目标城 = mask 的 (pixelX, pixelY)；按此对齐，避免瓦片平铺造成最多 2.4km 水域错位
-        const cx = u * 255 + (pixelX - 127.5);
-        const cy = v * 255 + (pixelY - 127.5);
-        if (cx < 0 || cy < 0 || cx > 255 || cy > 255) return 0;
-        const radius = 6;
-        let sum = 0;
-        let weightSum = 0;
-        const minX = Math.max(0, Math.floor(cx - radius));
-        const maxX = Math.min(255, Math.ceil(cx + radius));
-        const minY = Math.max(0, Math.floor(cy - radius));
-        const maxY = Math.min(255, Math.ceil(cy + radius));
-
-        for (let y = minY; y <= maxY; y++) {
-            for (let x = minX; x <= maxX; x++) {
-                const dx = x - cx;
-                const dy = y - cy;
-                const d2 = dx * dx + dy * dy;
-                if (d2 <= radius * radius) {
-                    const w = 1.0 - Math.sqrt(d2) / (radius + 0.1);
-                    sum += mask[y * 256 + x] * w;
-                    weightSum += w;
-                }
-            }
-        }
-        return weightSum > 0 ? sum / weightSum : 0;
-    };
-
-    const waterCells: Array<[number, number]> = [];
-    const beachCells: Array<[number, number]> = [];
-    const fordingCells: Array<[number, number]> = [];
-
-    // 遍历等轴网格判定水域与岸线
-    for (let gy = 0; gy < gh; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-            const px = isoCellX(gx, gy, ox);
-            const py = isoCellY(gx, gy, oy);
-            if (py < -TILE_H || py > VH + TILE_H) continue;
-
-            const u = Math.max(0, Math.min(1, px / VW));
-            const v = Math.max(0, Math.min(1, py / VH));
-            const waterVal = sampleMaskSmooth(u, v);
-
-            if (waterVal > 0.42) {
-                waterCells.push([gx, gy]);
-                // 中央对冲交战走廊（Y ∈ [35%, 65%], X ∈ [15%, 85%]）自动设置涉水浅滩通道
-                if (py >= VH * 0.35 && py <= VH * 0.65 && px >= VW * 0.15 && px <= VW * 0.85) {
-                    fordingCells.push([gx, gy]);
-                }
-            } else if (waterVal > 0.18) {
-                beachCells.push([gx, gy]);
-            }
-        }
-    }
-
-    const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-    mark(waterCells);
-    mark(beachCells);
-
-    // 1. 铺设湿泥沙滩层
-    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
-    if (beachCells.length > 0) {
-        patches.push({ tile: actualBeachTile, cells: beachCells, alpha: 0.95, category: 'shore' });
-    }
-
-    // 2. 🔴 [2026-08-22 主人定] 统一铺设古朴深邃自然墨绿水体 (sh4 / sh5)，彻底告别干涸白沙
-    if (waterCells.length > 0) {
-        patches.push({ tile: rng.pick(RIVER_TILES), cells: waterCells, alpha: 1.0, category: 'shore' });
-    }
-
-    // 3. 铺设中央平坦涉水浅滩渡口（sh5：深绿涉水河滩）
-    if (fordingCells.length > 0) {
-        patches.push({ tile: 'sh5', cells: fordingCells, alpha: 0.95, category: 'shore' });
-    }
-
-    // 🔴 [2026-08-21 主人定] 水体内部及浅水岸线绝不生成任何岩石、芦苇或阻挡物
-    // 水域排斥谓词：水体及浅水沙滩区域严格禁止生成陆地大树或石头
-    return (x, y) => {
-        const u = Math.max(0, Math.min(1, x / VW));
-        const v = Math.max(0, Math.min(1, y / VH));
-        return sampleMaskSmooth(u, v) > 0.20;
-    };
-}
-
 // ── 第 3 层：DE 经典江河渡口（仅在野战 river_crossing 中轴生成清澈江河） ──
 
 function buildRiver(
@@ -936,71 +810,6 @@ function buildRiver(
         }
         return false;
     };
-}
-
-function buildLake(
-    gw: number,
-    gh: number,
-    elev: number | null,
-    season: 0 | 1 | 2,
-    rng: RandomSource,
-    patches: TerrainPatchPlan[],
-    objects: EnvironmentObjectPlan[],
-    occupied: Set<string>,
-    VW: number,
-    VH: number,
-    ox: number,
-    oy: number,
-    theme: DeMapThemePalette,
-): WaterChecker {
-    // 🔴 [2026-08-22 主人定] 彻底杜绝方块锯齿：内陆湖/绿洲统一采用连续光滑的贝塞尔有机多边形 (polygon)
-    // 位于中央偏右 (VW*0.65, VH*0.35)，避开左侧攻方大本营建筑 (X < 20%)
-    const cx = VW * (0.58 + (rng.next() - 0.5) * 0.14);
-    const cy = VH * (0.35 + (rng.next() - 0.5) * 0.12);
-    const rx = 110 + rng.next() * 50;
-    const ry = 65 + rng.next() * 30;
-
-    const numPts = 32;
-    const lakePolygon: Array<{ x: number; y: number }> = [];
-    const beachPolygon: Array<{ x: number; y: number }> = [];
-
-    for (let i = 0; i < numPts; i++) {
-        const ang = (i / numPts) * Math.PI * 2;
-        const noise = 1.0 + Math.sin(ang * 3) * 0.12 + Math.cos(ang * 5) * 0.08;
-        const px = cx + Math.cos(ang) * rx * noise;
-        const py = cy + Math.sin(ang) * ry * noise;
-        lakePolygon.push({ x: px, y: py });
-        beachPolygon.push({ x: cx + Math.cos(ang) * (rx + 35) * noise, y: cy + Math.sin(ang) * (ry + 22) * noise });
-    }
-
-    const waterCells: Array<[number, number]> = [];
-    const beachCells: Array<[number, number]> = [];
-
-    for (let gy = 0; gy < gh; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-            const px = isoCellX(gx, gy, ox);
-            const py = isoCellY(gx, gy, oy);
-            const dNorm = Math.hypot((px - cx) / rx, (py - cy) / ry);
-            if (dNorm < 1.0) {
-                waterCells.push([gx, gy]);
-            } else if (dNorm < 1.35) {
-                beachCells.push([gx, gy]);
-            }
-        }
-    }
-
-    for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
-    for (const [x, y] of beachCells) occupied.add(`${x},${y}`);
-
-    const actualBeachTile = beachTerrainForTheme(theme, season, 35, elev, 'temperate_forest');
-    if (beachCells.length > 0) {
-        patches.push({ tile: actualBeachTile, cells: beachCells, polygon: beachPolygon, alpha: 0.95, category: 'shore' });
-    }
-    if (waterCells.length > 0) {
-        patches.push({ tile: 'river_clean_green', cells: waterCells, polygon: lakePolygon, alpha: 1.0, category: 'shore' });
-    }
-
-    return (x, y) => Math.hypot((x - cx) / (rx + 25), (y - cy) / (ry + 18)) < 1.0;
 }
 
 // ── 第 3 层：横向帝国行军大道（东西水平贯通，平坦开阔，0 阻挡） ──
