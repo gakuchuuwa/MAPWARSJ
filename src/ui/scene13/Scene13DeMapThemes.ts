@@ -53,7 +53,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     neotropical_temperate: {
         id: 'neotropical_temperate',
-        baseTerrain: 'grs',
+        // 🔴 [2026-08-23 清账] grs(带13%花)→gr2(纯绿草)
+        baseTerrain: 'gr2',
         groundTiles: ['gr6', 'gr7', 'gr8', 'for', 'gr9'],
         forestFloorTiles: ['for', 'ds3'],
         trees: ['MONKEY_PUZZLE'],
@@ -65,7 +66,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     neotropical_tropical: {
         id: 'neotropical_tropical',
-        baseTerrain: 'gr6',
+        // 🔴 [2026-08-23 清账] gr6(丛林草)→fo2(雨林林底)，与非洲雨林一致
+        baseTerrain: 'fo2',
         groundTiles: ['fo2', 'gr7', 'gr3', 'for'],
         forestFloorTiles: ['for', 'fo2'],
         trees: ['JUNGLE', 'RAINFOREST'],
@@ -78,7 +80,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     nearctic_temperate: {
         id: 'nearctic_temperate',
-        baseTerrain: 'ds3',
+        // 🔴 [2026-08-23 清账] ds3(黄土)→gr2(纯绿草)，北美温带草原/森林
+        baseTerrain: 'gr2',
         groundTiles: ['grs', 'gr3', 'gr2', 'ds3', 'pc1', 'pc2'],
         forestFloorTiles: ['for', 'pc1', 'pc2', 'underbrush_leaves'],
         trees: ['PINE'],
@@ -92,7 +95,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     indomalayan_tropical: {
         id: 'indomalayan_tropical',
         // 🔴 [2026-08-22 主人定] 岭南/华南/东南亚亚热带常绿雨林水乡：纯正深绿湿润黑土与茂密草绿，彻底去除干黄草(grs)
-        baseTerrain: 'gr7',
+        // 🔴 [2026-08-23 清账] gr7(实测99%枯黄)→fo2(雨林林底深绿)
+        baseTerrain: 'fo2',
         groundTiles: ['gr2', 'gr7', 'gr9', 'fo2'],
         forestFloorTiles: ['fo2', 'for', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO', 'RAINFOREST'],
@@ -105,10 +109,11 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_asia_temperate: {
         id: 'palaearctic_asia_temperate',
-        baseTerrain: 'gr7',
         // 🔴 [2026-08-21 修·乌舍城截图] 原 groundTiles 混 ds3（干旱黄褐土）→ 东北/华北战场
         //    显示黄褐干旱（乌舍城实锤）。亚洲温带湿润区（Dwa/Dwb）是黑土/草绿：
         //    换 gr2（深绿黑土）+ gr7 + gr4 + gr9，去掉干旱土。
+        // 🔴 [2026-08-23 清账] gr7(枯黄)→gr2(纯绿草)，华北黑土草绿
+        baseTerrain: 'gr2',
         groundTiles: ['gr2', 'gr7', 'gr4', 'gr9'],
         forestFloorTiles: ['for', 'fo2', 'pc1', 'pc2'],
         // [2026-08-21 分类修正] 亚洲温带主树 = 枫树/松；BUSH_TREE_B 是灌木树（下层植被），当主树 = 张冠李戴
@@ -138,7 +143,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_europe_taiga: {
         id: 'palaearctic_europe_taiga',
-        baseTerrain: 'gr7',
+        // 🔴 [2026-08-23 清账] gr7(枯黄)→underbrush_leaves(针叶落叶层)
+        baseTerrain: 'underbrush_leaves',
         groundTiles: ['gr2', 'gr4', 'for', 'grs', 'pc1', 'pc2', 'rock_wet'],
         forestFloorTiles: ['for', 'pc1', 'pc2', 'snf', 'underbrush_leaves'],
         trees: ['DEAD_TREE', 'PINE'],
@@ -170,7 +176,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_europe_mediterranean: {
         id: 'palaearctic_europe_mediterranean',
-        baseTerrain: 'gr3',
+        // 🔴 [2026-08-23 清账] gr3(花枯混杂)→gr7(纯枯草)，地中海夏旱
+        baseTerrain: 'gr7',
         groundTiles: ['gr7', 'pm1', 'pc3', 'pc1', 'ds3'],
         forestFloorTiles: ['for', 'pc1', 'underbrush_leaves'],
         trees: ['OLIVE', 'ITALIAN_PINE'],
@@ -186,7 +193,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     australasian_temperate: {
         id: 'australasian_temperate',
-        baseTerrain: 'gr7',
+        // 🔴 [2026-08-23 清账] gr7(枯黄)→gr2(纯绿草)，澳洲东南湿润森林
+        baseTerrain: 'gr2',
         // 🔴 [2026-08-21 素材科学审查] 去 ds3/ds5（干旱土）——澳洲东南（悉尼/墨尔本）是湿润温带森林
         groundTiles: ['gr4', 'gr7', 'for', 'gr6', 'gr9'],
         forestFloorTiles: ['for', 'underbrush_leaves'],
@@ -229,7 +237,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_asia_steppe: {
         id: 'palaearctic_asia_steppe',
-        baseTerrain: 'pm2',
+        // 🔴 [2026-08-23 清账] pm2(荒废牧场黄土)→gr7(纯枯草)，蒙古草原
+        baseTerrain: 'gr7',
         // 🔴 [2026-08-21 素材全覆盖] 碎石与冷岩 sr2 入塞外干草原
         groundTiles: ['gr4', 'ds3', 'pm1', 'ds5', 'sr2'],
         forestFloorTiles: ['ds3', 'for'],
@@ -276,7 +285,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     //   REEDS/WATER_LILY/WILLOW/DEAD_TREE（水岸植物）。
     palustrine_swamp: {
         id: 'palustrine_swamp',
-        baseTerrain: 'gravel_wet',
+        // 🔴 [2026-08-23 清账] gravel_wet(湿砾石滩)→qs2(沼泽泥)
+        baseTerrain: 'qs2',
         // 🔴 [2026-08-21 素材全覆盖] qs2 流沙 + rock_wet 湿润岩石入沼泽地面
         groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet', 'qs2', 'rock_wet'],
         forestFloorTiles: ['r01', 'underbrush_leaves'],
@@ -450,17 +460,47 @@ export function terrainForTheme(
         return wetAlpine ? 'gr2' : 'gr7';
     }
 
-    // 4. 黄土高原与干旱中山（1000m - 2500m）：黄土 / 高原干旱冻土（如哈马丹、安卡拉、河西、晋北）
+    // 4. 中山地带（1000m - 2500m）
+    // 🔴 [2026-08-23 第3层中山地带 9 块定稿·真实地貌] 山地森林/黄土高原/稀树草原：
+    //    森林带（成片树木，林下腐殖土）：雨林 fo2 / 温带森林 for / 针叶林 underbrush_leaves；
+    //    草原带：温带草原 gr2 / 稀树草原 gr5 / 冷草原 gr7；
+    //    荒漠带：沙漠 ds5 / 地中海 gr7 / 苔原 gr7。
     if (elevationBand === 'mountain') {
-        if (theme.id === 'palaearctic_middle_east_highland') {
-            return season === 2 ? 'pm1' : 'ds3';
+        if (season === 2 && isSnowArea(lat, elev, biome)) {
+            return isSiege ? 'snd' : 'sno';
         }
-        if (theme.id === 'palaearctic_asia_steppe') {
-            return season === 2 ? 'gr4' : 'pm2';
+        switch (biome) {
+            case 'tropical_rainforest': return 'fo2';      // 雨林林底（深色腐殖土）
+            case 'temperate_forest':    return 'for';      // 落叶林底（褐土）
+            case 'boreal':              return 'underbrush_leaves'; // 针叶落叶层
+            case 'temperate_grass':     return 'gr2';      // 绿草
+            case 'savanna':             return 'gr5';      // 萨凡纳土
+            case 'cold_steppe':         return 'gr7';      // 枯草（蒙古黄土）
+            case 'desert':              return 'ds5';      // 沙漠砾石
+            case 'mediterranean':       return 'gr7';      // 枯草（夏旱）
+            case 'tundra_snow':         return 'gr7';      // 枯草（高寒）
+            default:                    return theme.baseTerrain;
         }
-        if (season === 2 && isSnowArea(lat, elev, biome)) return 'sn2';
-        if (theme.id === 'palaearctic_asia_temperate' || theme.id === 'palaearctic_europe_temperate') {
-            return 'gr4'; // 温带山地草坡
+    }
+
+    // 4.5 丘陵高地（400m - 1000m）
+    // 🔴 [2026-08-23 第2层丘陵高地 9 块定稿·真实地貌] 丘陵/山麓/台地（农牧过渡带）：
+    //    森林带同中山（林底图）；草原带同中山；沙漠 biome 用 pal 干沙（低海拔=沙丘，非砾石戈壁）。
+    if (elevationBand === 'upland') {
+        if (season === 2 && isSnowArea(lat, elev, biome)) {
+            return isSiege ? 'snd' : 'sno';
+        }
+        switch (biome) {
+            case 'tropical_rainforest': return 'fo2';      // 低山雨林林底
+            case 'temperate_forest':    return 'for';      // 丘陵阔叶林底
+            case 'boreal':              return 'underbrush_leaves'; // 丘陵针叶落叶层
+            case 'savanna':             return 'gr5';      // 稀树草原土
+            case 'temperate_grass':     return 'gr2';      // 绿草
+            case 'cold_steppe':         return 'gr7';      // 枯草
+            case 'desert':              return 'pal';      // 干沙（低海拔沙丘）
+            case 'mediterranean':       return 'gr7';      // 枯草（夏旱）
+            case 'tundra_snow':         return 'gr7';      // 枯草（高寒）
+            default:                    return theme.baseTerrain;
         }
     }
 
