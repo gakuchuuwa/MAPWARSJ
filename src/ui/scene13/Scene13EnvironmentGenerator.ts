@@ -14,6 +14,7 @@ import {
     Biome,
     type ElevationBand,
     type KoppenClass,
+    BIOME_GROUND_DECOR,
     detectBiomeAtElevation,
     resolveClimateRegion,
     resolveElevationBand,
@@ -1261,6 +1262,30 @@ function buildVegetation(
                 flip: rng.chance(0.5),
                 frame: rng.int(0, 99999),
             });
+        }
+    }
+
+    // 🔴 [2026-08-23 主人] 地上长草：BIOME_GROUND_DECOR（草/花/灌木/小植物）此前从未接线 → 地面光秃无草。
+    //    补 DE 级植被覆盖：数量≈树的 2~3 倍（原注释「数量约为树的 2~3 倍」的意图），
+    //    只撒 GROUND_COVER_ASSETS 里的地面贴花（草/花/小植物，烘焙入地面、100% 不挡路），
+    //    剔掉岩石/灌木/仙人掌（岩石走 solidDecor、灌木走树伴生，避免世界层精灵堆太密）。
+    const groundDecorAssets = (BIOME_GROUND_DECOR[biome] ?? []).filter((a) => GROUND_COVER_ASSETS.has(a));
+    if (groundDecorAssets.length > 0) {
+        const groundDecorCount = Math.max(40, Math.round(treeCount * 2.5));
+        for (let i = 0; i < groundDecorCount; i++) {
+            const asset = rng.pick(groundDecorAssets);
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
+            if (p) {
+                objects.push({
+                    asset,
+                    x: p.x,
+                    y: p.y,
+                    layer: 'ground',
+                    z: 0,
+                    flip: rng.chance(0.5),
+                    frame: rng.int(0, 99999),
+                });
+            }
         }
     }
 }

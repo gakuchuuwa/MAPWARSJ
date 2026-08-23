@@ -39,8 +39,7 @@ export interface DeMapThemePalette {
 export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = {
     afrotropical_tropical: {
         id: 'afrotropical_tropical',
-        // 🔴 [2026-08-21 素材科学审查] 原 baseTerrain='des'（沙漠沙）+ groundTiles 混 qs/pal/ds2/ds3
-        //    （石英沙/棕榈沙/沙漠土）——非洲热带雨林（刚果盆地）是深色腐殖土密林，不是沙地（张冠李戴）。
+        // 🔴 [2026-08-21 素材科学审查] 非洲热带雨林深色腐殖土密林
         baseTerrain: 'fo2',
         groundTiles: ['fo2', 'gr3', 'gr7', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
@@ -67,7 +66,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     neotropical_tropical: {
         id: 'neotropical_tropical',
-        // 🔴 [2026-08-23 清账] gr6(丛林草)→fo2(雨林林底)，与非洲雨林一致
+        // 🔴 [2026-08-23 清账] gr6(丛林草)→fo2(雨林林底深绿)，与非洲雨林一致
         baseTerrain: 'fo2',
         groundTiles: ['fo2', 'gr7', 'gr3', 'for', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
@@ -96,8 +95,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     indomalayan_tropical: {
         id: 'indomalayan_tropical',
         // 🔴 [2026-08-22 主人定] 岭南/华南/东南亚亚热带常绿雨林水乡：纯正深绿湿润黑土与茂密草绿，彻底去除干黄草(grs)
-        // 🔴 [2026-08-23 清账] gr7(实测99%枯黄)→fo2(雨林林底深绿)
-        baseTerrain: 'fo2',
+        // 🔴 [2026-08-23 DE化] 底色换纯净绿草 gr2；原 fo2（叶+土预混）改当副色斑块
+        baseTerrain: 'gr2',
         groundTiles: ['gr2', 'gr7', 'gr9', 'fo2', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['fo2', 'for', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO', 'RAINFOREST'],
@@ -157,8 +156,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_europe_taiga: {
         id: 'palaearctic_europe_taiga',
-        // 🔴 [2026-08-23 清账] gr7(枯黄)→underbrush_leaves(针叶落叶层)
-        baseTerrain: 'underbrush_leaves',
+        // 🔴 [2026-08-23 DE化] 底色换纯净枯草 gr7；原 underbrush_leaves（枯叶碎片预混）改当副色斑块
+        baseTerrain: 'gr7',
         groundTiles: ['gr2', 'gr4', 'for', 'grs', 'pc1', 'pc2', 'rock_wet'],
         forestFloorTiles: ['for', 'pc1', 'pc2', 'snf', 'underbrush_leaves'],
         trees: ['DEAD_TREE', 'PINE'],
@@ -221,7 +220,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     serengeti: {
         id: 'serengeti',
-        baseTerrain: 'ds4',
+        baseTerrain: 'ds3',
         // 🔴 [2026-08-21 素材全覆盖] 沙漠纯金沙 snd 入塞伦盖蒂干草与沙化区域
         // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入塞伦盖蒂）——归雪地类（§2.4.1）
         groundTiles: ['gr5', 'rd1', 'rd2', 'ds5', 'des', 'grs', 'gr2', 'gr3'],
