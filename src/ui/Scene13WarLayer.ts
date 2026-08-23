@@ -84,8 +84,8 @@ interface WarType {
     armorTags?: number[];
 }
 
-/** 🔴 [2026-08-22 主人定] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
-const WALL_AUTO_COLLAPSE_SEC = 40;
+/** 🔴 [2026-08-23 主人改] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
+const WALL_AUTO_COLLAPSE_SEC = 30;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
@@ -2199,6 +2199,9 @@ interface WarMan {
      * （主人 2026-08-19 报「忍者出现后不寻敌」）。改为直扑敌军重心。
      */
     flank?: boolean;
+    /** 🔴 [2026-08-23 主人定] 攻城战专用攻城武器（spawnSiegeWeapons 生成）：开战即行动，
+     *  不受「双方按兵不动」限制（见 holdSiege）；普通编制里的火箭车/投石车不算（无此标记）。 */
+    siegeW?: boolean;
     /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
     port: WarSpawn | null;
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
@@ -3035,31 +3038,32 @@ export class Scene13WarLayer {
         }
         const total = items.reduce((s, it) => s + it.n, 0);
         if (!total) return;
-        // 前置到攻方 row 0（最靠守方）前方一排，y 沿垂直均匀排开
-        const frontX = mx + 2 * depth;
-        const sx = frontX + depth * 0.8;
+        // 🔴 [2026-08-23 主人定] 攻城武器摆放位置随机 + 前移：x 在城墙前带状区域（比攻方 row0
+        //    再往前 1×depth，更靠近城墙）、y 在垂直 span 内随机——每次战斗布阵不重样。
+        const frontX = mx + 3 * depth;
         const midY = VH / 2, spanY = VH * 0.8;
+        const xMin = frontX, xMax = frontX + depth * 1.6;
+        const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
-        let slot = 0;
         for (const it of items) {
             for (let i = 0; i < it.n; i++) {
                 this.ensureType(it.key);
-                const y = midY + (total > 1 ? (slot / (total - 1) - 0.5) * spanY : 0);
-                slot++;
+                const x = xMin + Math.random() * (xMax - xMin);
+                const y = yMin + Math.random() * (yMax - yMin);
                 const hp = this.statsFor(it.key, 0).hp;
                 const tgtX = VW - mx, tgtY = y;
                 this.men.push({
                     f: 0, key: it.key, jx: 0, jy: 0,
-                    x: sx, y,
+                    x, y,
                     tx: tgtX, ty: tgtY,
                     hp,
-                    dir: this.dir8(tgtX - sx, tgtY - y),
+                    dir: this.dir8(tgtX - x, tgtY - y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: sx, prevY: y, stuckT: 0, sepX: 0, sepY: 0, y0: y,
+                    prevX: x, prevY: y, stuckT: 0, sepX: 0, sepY: 0, y0: y,
                     flag: false, fo: Math.random() * 600,
                     march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(it.key),
-                    flank: false,
+                    flank: false, siegeW: true,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -4421,9 +4425,9 @@ export class Scene13WarLayer {
                 const bearer = (s.spawned % FLAG_EVERY === 0);
                 // 列阵推进：**所有批次**都按口排方阵（rank=沿 x 纵深、file=沿 y 横列），补兵不再随机散布；
                 // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
-                // 🔴 [2026-08-22 主人定] 攻城战守方不 march：破墙前原地待命（近战站桩/远程原地射击），
-                //    不随列阵推进；攻方 march 照旧推进到墙前打墙。
-                const inMarch = this.deployT > 0 && !(this.battleType === 'siege' && s.f === 1);
+                // 🔴 [2026-08-23 主人定] 攻城战不再列阵行军：开局双方按兵不动（见 holdSiege），
+                //    40 秒城墙坍塌后直接各自索敌接战（aimAt/search）；march 列阵只保留给野战。
+                const inMarch = this.deployT > 0 && this.battleType !== 'siege';
                 const slotIdx = s.slotN++;
                 // 奇袭出生点：敌方那一侧的边缘（比敌方出兵口更靠外 = 真的在背后），
                 // 纵向落在敌军重心一线，再按槽位散开，避免一堆人叠在同一点。
@@ -4551,22 +4555,6 @@ export class Scene13WarLayer {
         }
     }
 
-    /** [2026-08-23 修·攻方撞墙蹭] 攻城战攻方：视野内最近的正面 linked 可打墙/门（不限 claims——打墙不封顶）。
-     *  marching 士兵撞墙脱队与 search 优先打墙共用同一个语义，避免两套口径漂移。 */
-    private nearestLinkedWall(m: { x: number; y: number; f: number }, radius: number): WarBuilding | null {
-        if (this.battleType !== 'siege' || m.f !== 0) return null;
-        const r2 = radius * radius;
-        let bw: WarBuilding | null = null, bwd = Infinity;
-        for (const b of this.wallGates) {
-            // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（防全塌）
-            if (!b.linked || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
-            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d >= r2 || d >= bwd) continue;
-            bwd = d; bw = b;
-        }
-        return bw;
-    }
-
     /**
      * 索敌：以自身为中心**环形向外扩展**，返回半径内**最近**的敌人（精确最近邻）。
      *
@@ -4663,6 +4651,9 @@ export class Scene13WarLayer {
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
             if (bw) { bw.claims++; return bw; }
+            // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙
+            //    → 不锁城内守军（守方按兵不动），返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭。
+            if (this.defenderHolding) return null;
         }
         for (const b of this.wallGates) {
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
@@ -4714,6 +4705,12 @@ export class Scene13WarLayer {
         }
         // 破墙 → 守方开始反击（近战出击、远程正常机动）
         this.defenderHolding = false;
+        // 🔴 [2026-08-23 主人定] 城墙坍塌后起接触交战音景（攻城战专用：两军此时才真正开打，
+        //    攻城武器打墙阶段不播；野战无城墙，仍在下方 inReach 处起）。
+        if (!this.contactSfxPlayed) {
+            this.contactSfxPlayed = true;
+            audioManager.startSceneLoop('land_contact');
+        }
     }
 
     /**
@@ -4863,6 +4860,18 @@ export class Scene13WarLayer {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         const near = this.search(m, MARCH_R);
         if (near) return { x: near.x, y: near.y };
+        // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
+        //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
+        if (m.siegeW && this.defenderHolding) {
+            let bw: WarBuilding | null = null, bwd = Infinity;
+            for (const b of this.wallGates) {
+                if (!b.linked || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
+                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                if (d < bwd) { bwd = d; bw = b; }
+            }
+            if (bw) return { x: bw.x, y: bw.y };
+            return null;
+        }
 
         // ── ② 没人可打时走「巡逻航路」（主人 2026-08-17 定）──────────────────────────
         //
@@ -5025,14 +5034,12 @@ export class Scene13WarLayer {
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
             }
-            // 🔴 [2026-08-22 主人定] 攻城战守方待命：近战原地不动、远程原地射击。
-            //    30 秒城墙随机塌一半（collapseHalfWalls）→ defenderHolding=false → 守方开始反击，走下方正常逻辑。
-            //    远程待命只禁移动（索敌/攻击走正常流程，箭矢动画齐全），见下方 holdDef 三处拦截。
-            const holdDef = this.defenderHolding && m.f === 1;
-            if (holdDef) {
-                // 🔴 [2026-08-23 主人定] 守方开局**完全待命**：近战+远程都不打、不动、不索敌，
-                //    等城墙坍塌（collapseFrontWalls → defenderHolding=false）才开始反击。
-                //    原只拦近战、远程原地射击——用户要"等墙塌再进攻"，远程也待命。
+            // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
+            //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
+            //    40 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
+            //    不再列阵行军（inMarch 攻城战已全 false），直接各自索敌接战。
+            const holdSiege = this.defenderHolding && !m.siegeW;
+            if (holdSiege) {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
@@ -5056,7 +5063,10 @@ export class Scene13WarLayer {
             const siegeWallKeep = m.foe && 'sprite' in m.foe && m.foe.linked
                 && !m.foe.sprite.obstructionDisabled
                 && this.battleType === 'siege' && m.f === 0;
-            const keep = m.foe && m.foe.hp > 0
+            // 🔴 [2026-08-23 主人定·重设计] 攻城武器凿墙：锁定的墙 hp 归零（视觉破损到顶 D75）也继续凿到
+            //    40 秒墙塌（obstructionDisabled → siegeWallKeep 失效）才丢目标——防攻城锤打空一段后
+            //    转追墙内守兵、撞墙（墙 40 秒前仍阻挡）来回蹭。
+            const keep = m.foe && (m.foe.hp > 0 || (siegeWallKeep && this.defenderHolding))
                 && (siegeWallKeep || m.foe.claims < SPREAD_CAP)
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (keep && m.foe) m.foe.claims++;
@@ -5084,23 +5094,11 @@ export class Scene13WarLayer {
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
             // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
             if (m.march && m.port) {
-                // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方 marching 士兵：推进目标是**视野内最近的正面 linked 墙**，
-                //    不是"出兵口+推进增量"（那个方向会穿越城墙，撞墙被弹回原地蹭）。锁到墙即脱队打墙，
-                //    之后由 search/keep 的打墙不封顶逻辑持续锁定。远处（未进视野）仍列阵推进，保留压上观感。
-                if (this.battleType === 'siege' && m.f === 0) {
-                    const fw = this.nearestLinkedWall(m, stats.sight ?? 160);
-                    if (fw) {
-                        m.foe = fw;
-                        fw.claims++;
-                        m.march = false;
-                        m.port = null;
-                    }
-                }
-                if (m.march && m.port) {
-                    const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
-                    [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
-                }
-            } else if (!m.foe && !holdDef) {
+                // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
+                //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
+                const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
+                [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
+            } else if (!m.foe && !holdSiege) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 m.aimT = (m.aimT ?? 0) - dt;
@@ -5122,7 +5120,7 @@ export class Scene13WarLayer {
                  *   · 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替
                  */
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不风筝（原地站桩射击，不后撤）
-                if (wt.kite && !m.kiteGaveUp && !holdDef) {
+                if (wt.kite && !m.kiteGaveUp && !holdSiege) {
                     const kd = Math.sqrt(fd2);
                     if (!m.kiting && kd < 65) { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
@@ -5191,7 +5189,9 @@ export class Scene13WarLayer {
                     // 接触交战音景：两军接触起**循环**垫底，直到演出退场（stop 里停）。
                     // 不在列阵期起（deploying 分支已 continue），只在真正接敌那一刻。
                     // contactSfxPlayed 只为省掉每帧重复调用，startSceneLoop 本身是幂等的。
-                    if (!this.contactSfxPlayed) {
+                    // 🔴 [2026-08-23 主人定] 攻城战改在城墙坍塌后起（collapseFrontWalls），
+                    //    攻城武器打墙（inReach 出手）不该提前起；野战照旧在此处起。
+                    if (!this.contactSfxPlayed && this.battleType !== 'siege') {
                         this.contactSfxPlayed = true;
                         audioManager.startSceneLoop('land_contact');
                     }
@@ -5237,8 +5237,8 @@ export class Scene13WarLayer {
                     m.ph += dt * (m.st ? 8 / 1.5 : 8);
                     continue;
                 }
-                // 🔴 [2026-08-22] 守方破墙前待命远程：够不着**不追**——原地站桩等目标进射程
-                if (holdDef && !inReach) {
+                // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
+                if (holdSiege && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
