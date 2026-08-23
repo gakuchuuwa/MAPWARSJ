@@ -4681,9 +4681,13 @@ export class Scene13WarLayer {
     private collapseFrontWalls(): void {
         const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
         if (walls.length > 0) {
-            // 🔴 [2026-08-23 主人定] 只随机塌一半（不是全塌，也不是每 3 段塌 1 段）。
-            //    塌掉的一半由 breachWall 切 D75 残垣贴图 + 解除阻挡（残垣断壁感）；
-            //    未塌的另一半**保留完整贴图 + 保留阻挡**。不再解除全部碰撞——那会让整圈墙"全塌"的观感。
+            // 🔴 [2026-08-23 主人定] 坍塌后：**所有墙段**解除阻挡（obstructionDisabled=true，士兵能穿，
+            //    墙仍按贴图绘制）——不要咬住士兵移动。视觉上随机塌一半切 D75 残垣（残垣断壁感），
+            //    未塌的一半保留完整贴图（同样不阻挡）。
+            for (const b of walls) {
+                b.sprite.obstructionDisabled = true;
+                if (b.extraSprites) for (const sp of b.extraSprites) sp.obstructionDisabled = true;
+            }
             const half = Math.max(1, Math.round(walls.length / 2));
             const shuffled = [...walls].sort(() => Math.random() - 0.5);
             for (let n = 0; n < half; n++) {

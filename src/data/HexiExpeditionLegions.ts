@@ -44,4 +44,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     jiluo_d: { name: '北征突骑', tier: 1 },
     pulei: { name: '蒲类落雕骑', tier: 3 },
     hepan: { name: '葱岭守捉兵', tier: 3 },
+    fushi: { name: '氐秦锐士', tier: 3 },
 };

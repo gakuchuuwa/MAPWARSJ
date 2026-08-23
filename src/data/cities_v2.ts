@@ -752,15 +752,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
     // ── 战略要塞/县级城镇 (移入的小城) ──
-    {
-        id: 'city_lueyang',
-        name: '略阳',
-        factionId: 'fushi',
-        lat: 33.3300, lng: 106.1500,
-        type: 'small_city',
-        region: 'BASHU',
-        troops: 30000,
-        note: '王猛灭前燕统一北方；氐秦锐士T3' },
+    { id: 'city_lueyang', name: '略阳', factionId: 'fushi', lat: 33.33, lng: 106.15, type: 'small_city', troops: 20000, region: 'HEXI' },
+
     { id: 'city_mianchi', name: '渑池', factionId: 'yangshao', lat: 34.76, lng: 111.76, type: 'pass', troops: 30000, region: 'CENTRAL' },
 
 
