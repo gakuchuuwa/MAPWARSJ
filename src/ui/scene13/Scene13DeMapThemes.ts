@@ -212,8 +212,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材科学审查] 去 ds3/ds5（干旱土）——澳洲东南（悉尼/墨尔本）是湿润温带森林
         groundTiles: ['gr4', 'gr7', 'for', 'gr9'], // 移除 gr6(丛林草)——澳洲东南温带森林无丛林草
         forestFloorTiles: ['for', 'underbrush_leaves'],
-        // [2026-08-21 主人定「能套用就套用」] 原 BIRCH（桦树=北半球树，澳洲无）→ WAX_PALM（澳洲热带/亚热带棕榈，DE 无澳洲专属树，取最接近）
-        trees: ['WAX_PALM'],
+        // 🔴 [2026-08-23 按现实修复] 澳洲东南温带（悉尼/墨尔本）= 桉树/金合欢(wattle)林；蜡棕榈(WAX_PALM)=南美安第斯东坡树，勿用。DE 无桉树，取澳洲标志性金合欢 ACACIA
+        trees: ['ACACIA'],
         flatDecor: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'],
         solidDecor: ['ROCK1', 'ROCK2'],
         waterPlants: ['REEDS', 'MANGROVE', 'WATER_LILY'],
@@ -240,8 +240,8 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['ds2', 'pm1', 'gr4', 'rck', 'rc2', 'sr2'],
         forestFloorTiles: ['ds3', 'pal', 'pal1'],
         // [2026-08-21 完善] 伊朗高原无棕榈（棕榈是波斯湾低地绿洲植物）→ PINE（厄尔布尔士/扎格罗斯山松林）替代
-        trees: ['OLIVE', 'DEAD_TREE', 'PINE'],
-        autumnTrees: ['OLIVE', 'DEAD_TREE'],
+        trees: ['DEAD_TREE', 'PINE'], // 🔴 [2026-08-23 按现实修复] 伊朗高原内陆=干燥大陆性，无橄榄(OLIVE=地中海沿岸树)；PINE=厄尔布尔士/扎格罗斯高山松
+        autumnTrees: ['DEAD_TREE'],
         winterTrees: ['SNOW_PINE', 'ASIAN_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地 + 商旅地毯/古墓（高原丝路）
         flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN', 'DECAL_CRACK'],
@@ -256,9 +256,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材全覆盖] 碎石与冷岩 sr2 入塞外干草原
         groundTiles: ['gr4', 'ds3', 'pm1', 'ds5', 'sr2'],
         forestFloorTiles: ['ds3', 'for'],
-        trees: ['PINE', 'DEAD_TREE'],
-        autumnTrees: ['PINE', 'DEAD_TREE'],
-        winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
+        trees: ['DEAD_TREE'], // 🔴 [2026-08-23 按现实修复] 温带草原(steppe)无树，松树勿作主树（蒙古高原草原+戈壁，树极少，仅河谷有树）
+        autumnTrees: ['DEAD_TREE'],
+        winterTrees: ['DEAD_TREE'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'PLANT_DEAD'],
         // 🔴 [2026-08-21 素材全覆盖] 古战场遗迹（草原石墓/骸骨）——游牧战场
         solidDecor: ['ROCK1', 'ROCK2', 'GRAVES', 'SKELETON'],
@@ -285,9 +285,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入亚洲沙漠）——归雪地类（§2.4.1）
         groundTiles: ['des', 'ds2', 'ds3', 'ds5', 'rck', 'qs'],
         forestFloorTiles: ['ds2', 'ds3', 'for'],
-        trees: ['DEAD_TREE', 'DRAGON_TREE', 'BUSH_TREE_A', 'ASIAN_PINE'],
-        autumnTrees: ['DEAD_TREE', 'DRAGON_TREE'],
-        winterTrees: ['DEAD_TREE', 'SNOW_PINE'],
+        trees: ['DEAD_TREE', 'BUSH_TREE_A'], // 戈壁极旱荒漠：枯树+荒漠灌丛。🔴 龙血树(DRAGON_TREE)=也门索科特拉岛特有，松树(ASIAN_PINE)=戈壁无树
+        autumnTrees: ['DEAD_TREE'],
+        winterTrees: ['DEAD_TREE'],
         flatDecor: ['PLANT_DEAD', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'GRASS_DRY_PATCH', 'WEED'],
         solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK1', 'ROCK2', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
         waterPlants: ['REEDS', 'DEAD_TREE', 'WATER_LILY'],
@@ -563,10 +563,14 @@ export function terrainForTheme(
 export function treesForTheme(
     theme: DeMapThemePalette,
     season: 0 | 1 | 2,
+    elevationBand: ElevationBand,
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
 ): readonly string[] {
+    // 🔴 [2026-08-23 按现实修复] 树线以上无乔木：高山/高寒/冰雪带（alpine/high_alpine/snow）→ 只枯树点缀。
+    //    青藏高原 3500m+ 高寒草甸/荒漠、阿尔卑斯/喜马拉雅树线上——真实世界乔木极少/无，绝不给松树/枫树做森林。
+    if (elevationBand === 'snow' || elevationBand === 'high_alpine' || elevationBand === 'alpine') return ['DEAD_TREE'];
     if (season === 2 && isSnowArea(lat, elev, biome) && theme.winterTrees?.length) return theme.winterTrees;
     if (season === 1 && theme.autumnTrees?.length) return theme.autumnTrees;
     return theme.trees;
