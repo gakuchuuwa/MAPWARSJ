@@ -1078,7 +1078,7 @@ function buildHorizontalHighway(
 
     // 🔴 [2026-08-21 材质协同] 道路材质与周围 baseTerrain 严格协调，绝不在非雪地刷出孤立雪道！
     const isAmbientSnow = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf';
-    let roadTile = 'gravel_default';
+    let roadTile = 'rd2'; // DE Road 碎石路（古代驿道/车辙土路）——砾石(gravel_default/ds5)是地形，不当道路
     if (isAmbientSnow) {
         roadTile = 'sn2'; // 仅当大环境全为深雪时，道路才为踩实的雪原车辙
     } else if (
@@ -1088,7 +1088,7 @@ function buildHorizontalHighway(
         baseTerrain === 'gr4' ||
         baseTerrain === 'ds5'
     ) {
-        roadTile = 'ds5'; // 塞外草原/黄土高原/干旱土：压实黄土古道，与周围枯草融为一体
+        roadTile = 'rd5'; // 塞外草原/黄土高原/干旱土：DE Road 砾石路（干旱地路面砾石裸露）——ds5沙漠砾石是地形，不当道路
     } else if (
         theme.id === 'palaearctic_middle_east_desert' ||
         theme.id === 'palaearctic_middle_east_highland' ||
