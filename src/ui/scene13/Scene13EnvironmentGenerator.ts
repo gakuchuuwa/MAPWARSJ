@@ -60,6 +60,8 @@ export interface TerrainPatchPlan {
     polygon?: Array<{ x: number; y: number }>;
     alpha: number;
     category: TerrainPatchCategory;
+    /** 边缘高斯模糊半径（px，可选）。水/滩等窄条带用较小值获得 DE 式清晰河岸；缺省 polygon=16 / cells=24。 */
+    blur?: number;
 }
 
 export interface EnvironmentObjectPlan {
@@ -741,19 +743,25 @@ function buildRiver(
     biome: Biome = 'temperate_forest',
 ): WaterChecker {
     // 🌊 DE 原版 Rivers 规范：大江横贯中轴，清澈江水主导，岸边紧贴草岸
-    const numPts = 32;
+    // 🔴 [2026-08-23 主人改] DE 化大江：更窄 + 更蜿蜒 + 深浅分层
+    //   窄：半宽 40±7（总宽 66~94px）——原 100±15（总宽 170~230px）太宽；
+    //   深浅：深水核心(不透明) + 浅水环(半透明透出地面) → 河岸 草→浅→深 渐变（DE 渡口河经典）。
+    const numPts = 36;
     const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
-    const baseCenterX = VW * 0.50;
+    const baseCenterX = VW * 0.52;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
+    const baseHalfW = 40;    // 河面半宽（px）
+    const halfWVary = 7;     // 半宽起伏
+    const shallowDepth = 20; // 浅水环宽度（深水边缘外，px）
 
     for (let i = 0; i <= numPts; i++) {
         const t = i / numPts;
-        // 平缓自然江河 S 弯曲
-        const curveOffset = Math.sin(t * Math.PI * 2.0 + phase1) * 80 + Math.cos(t * Math.PI * 4.0 + phase2) * 30;
+        // 平缓自然蜿蜒（窄河更显蛇曲）
+        const curveOffset = Math.sin(t * Math.PI * 2.0 + phase1) * 58 + Math.cos(t * Math.PI * 4.0 + phase2) * 24;
         const x = baseCenterX + curveOffset;
         const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
-        const wW = 100 + Math.sin(t * Math.PI * 2.5 + phase1) * 15; // 江面宽 85~115px
+        const wW = baseHalfW + Math.sin(t * Math.PI * 2.5 + phase1) * halfWVary; // 江面半宽 33~47px
         pts.push({ x, y, nx: 0, ny: 0, wW });
     }
 
@@ -768,7 +776,7 @@ function buildRiver(
     }
 
     const waterCells: Array<[number, number]> = [];
-    const shallowCells: Array<[number, number]> = []; // 岸边浅滩（浅滩 sh 搭配水域）
+    const shallowCells: Array<[number, number]> = []; // 岸边浅水环（深水外侧）
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
@@ -779,10 +787,10 @@ function buildRiver(
                 const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
                 if (d < minDist) minDist = d;
             }
-            if (minDist < 100) {
+            if (minDist < baseHalfW) {
                 waterCells.push([gx, gy]);
-            } else if (minDist < 130) {
-                shallowCells.push([gx, gy]); // 江岸浅滩环
+            } else if (minDist < baseHalfW + shallowDepth) {
+                shallowCells.push([gx, gy]); // 江岸浅水环
             }
         }
     }
@@ -790,23 +798,24 @@ function buildRiver(
     for (const [x, y] of waterCells) occupied.add(x + ',' + y);
     for (const [x, y] of shallowCells) occupied.add(x + ',' + y);
 
-    const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.6 }));
-    const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.6 })).reverse();
-    const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + 30), y: p.y + p.ny * (p.wW + 30) * 0.6 }));
-    const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + 30), y: p.y - p.ny * (p.wW + 30) * 0.6 })).reverse();
+    const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.62 }));
+    const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.62 })).reverse();
+    const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth), y: p.y + p.ny * (p.wW + shallowDepth) * 0.62 }));
+    const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth), y: p.y - p.ny * (p.wW + shallowDepth) * 0.62 })).reverse();
 
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
-    // 先铺岸边浅滩（黄浅水 sh5 搭配水域），再铺江面水体覆盖浅滩内侧
+    // 先铺浅水环（同一水贴图·半透明 → 透出地面 = 浅水），再铺深水核心（不透明覆盖内侧）。
+    //    窄条带用较小 blur（深 8 / 浅 12）→ DE 式清晰河岸，不再是整片高斯糊。
     if (shallowCells.length > 0) {
-        patches.push({ tile: 'sh5', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.9, category: 'shore' });
+        patches.push({ tile: actualWaterTile, cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.50, category: 'shore', blur: 12 });
     }
     if (waterCells.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 1.0, category: 'shore' });
+        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 8 });
     }
 
     return (px: number, py: number): boolean => {
         for (let k = 0; k <= numPts; k += 2) {
-            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW) return true;
+            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW + shallowDepth) return true;
         }
         return false;
     };

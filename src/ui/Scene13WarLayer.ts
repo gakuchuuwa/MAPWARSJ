@@ -2365,6 +2365,8 @@ interface DecorPatch {
     polygon?: Array<{ x: number; y: number }>;
     alpha: number;
     isWater?: boolean;
+    /** 边缘高斯模糊半径（px）；缺省 polygon=16 / cells=24。水等窄条带用较小值获得清晰边缘。 */
+    blur?: number;
     /** 屏幕包围盒（px，bbox 模式渲染缓存）：水域/贴片只在本区域光栅化，不再全屏操作 */
     bbox?: { x: number; y: number; w: number; h: number };
     /** 动态水体纹理 pattern（img 加载后建一次，每帧复用，避免每帧 createPattern） */
@@ -3809,7 +3811,7 @@ export class Scene13WarLayer {
         this.elevGrid = plan.elevation;
         this.elevCacheReady = false; // 新地形 → 高地光照缓存作废，下一帧重算
         for (const p of plan.terrainPatches) {
-            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon);
+            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur);
         }
         for (const o of plan.objects) {
             this.ensureNatureAsset(o.asset);
@@ -3858,10 +3860,11 @@ export class Scene13WarLayer {
         cells: Array<[number, number]>,
         alpha = 1,
         polygon?: Array<{ x: number; y: number }>,
+        blur?: number,
     ): void {
         if (cells.length === 0) return;
         const isWater = isWaterTile(tile);
-        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater };
+        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.scheduleDecorRepaint(); };
@@ -3909,6 +3912,8 @@ export class Scene13WarLayer {
         for (const p of waterPatches) {
             const img = p.img!;
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
+            // 🔴 [2026-08-23 美化] 尊重 p.alpha：浅水环(alpha 0.50)半透明透出河床=浅水，深水核心(0.96)近乎不透明 → 河岸 草→浅→深 渐变
+            const a = p.alpha ?? 1;
 
             ctx.save();
             ctx.beginPath();
@@ -3932,6 +3937,7 @@ export class Scene13WarLayer {
             const dx = (t * 24) % tw;
             const dy = (t * 12) % th;
             ctx.save();
+            ctx.globalAlpha = a;
             ctx.translate(dx, dy);
             const pat = ctx.createPattern(img, 'repeat');
             if (pat) {
@@ -3943,7 +3949,7 @@ export class Scene13WarLayer {
             // 2. 表层次级微波干涉（微小角度反向微扰，产生大江波涌自然感）
             if (pat) {
                 ctx.save();
-                ctx.globalAlpha = 0.28;
+                ctx.globalAlpha = a * 0.28;
                 const dx2 = (-t * 10) % tw;
                 const dy2 = (t * 16) % th;
                 ctx.translate(dx2, dy2);
@@ -3954,7 +3960,7 @@ export class Scene13WarLayer {
 
             // 3. 河心深水沉降与水色增强（微弱青蓝光）
             ctx.save();
-            ctx.globalAlpha = 0.16;
+            ctx.globalAlpha = a * 0.16;
             ctx.fillStyle = '#082848';
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             ctx.restore();
@@ -4058,7 +4064,8 @@ export class Scene13WarLayer {
 
         // 🔴 [彻底根除方块矩形切边] 高斯模糊羽化余量必须 ≥ 3 倍模糊半径 (3 × 24 = 72px)，
         //    确保模糊在到达离屏 canvas 四周边界前 100% 衰减为 0（绝对透明），绝不被 canvas 边框生硬截断！
-        const blurRadius = p.polygon ? 16 : 24;
+        // 🔴 [2026-08-23 美化] 窄条带（水/滩）用 patch.blur 精确控制河岸软硬度：深水 8 / 浅水 12，避免变回整片高斯糊
+        const blurRadius = p.blur ?? (p.polygon ? 16 : 24);
         const blurR = blurRadius * 3 + 16;
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         if (p.polygon && p.polygon.length >= 3) {
