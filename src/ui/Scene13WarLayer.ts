@@ -3504,19 +3504,8 @@ export class Scene13WarLayer {
         const defenderSpawns = this.spawns.filter((s) => s.f === 1);
         if (defenderSpawns.length === 0 || this.isoGw === 0 || this.isoGh === 0) return;
 
-        // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图
-        const culture = this.sideCulture[1];
-        // 🔴 [2026-08-23 主人定] 城池地面=道路贴图（城池硬化街道，非光秃黄土）。城墙内街道是硬化路面：
-        //    东方碎石子路 rd2、罗马/拜占庭石板 rd1（罗马大道是史实招牌）、中东商队砾石土路 rd5。
-        //    保持「古代泥土/碎石」质感，除罗马外不用光鲜大石板 rd1（罗马文明道路就是石板大道）。
-        let roadTile = 'rd2'; // 默认：碎石子路（质朴土路）
-        if (culture === 'ISLAMIC') {
-            roadTile = 'rd5'; // 中东：商队砾石土路
-        } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
-            roadTile = 'rd2'; // 东方：碎石子路（中国城池土路/碎石街）
-        } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {
-            roadTile = 'rd1'; // 罗马/拜占庭：石板大道（罗马基建特色，符合史实）
-        }
+        // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图（映射集中在 cityRoadFoundationTile）
+        const roadTile = this.cityRoadFoundationTile();
 
         const roadCells: Array<[number, number]> = [];
         const visited = new Set<string>();
@@ -3527,7 +3516,7 @@ export class Scene13WarLayer {
             const b = (s.y - this.isoOy) * 2 / TILE_H;
             const cgx = Math.round((a + b) / 2);
             const cgy = Math.round((b - a) / 2);
-            const radius = 3; // 建筑周围覆盖 3 格半径
+            const radius = 4; // 🔴 [2026-08-23 主人需求] 石头路面积稍微大一点：建筑周围覆盖半径 3→4 格（曼哈顿≤5 菱形，格数 41→61 ≈1.5倍），roadland 走高斯平滑不受 blend 咬合切碎
 
             for (let dy = -radius; dy <= radius; dy++) {
                 for (let dx = -radius; dx <= radius; dx++) {
@@ -3548,6 +3537,58 @@ export class Scene13WarLayer {
         if (roadCells.length > 0) {
             this.addDecorCells(roadTile, roadCells, 0.90);
         }
+    }
+
+    /**
+     * 城池硬化地面道路贴图（文化自适应）：东方 rd2 碎石子 / 罗马・拜占庭 rd1 石板 / 中东 rd5 砾石土路。
+     * 🔴 applyDefenderCityRoad（城内建筑地基）与 addGateFoundation（城门前地基）共用同一映射，改贴图只此一处。
+     */
+    private cityRoadFoundationTile(): string {
+        const culture = this.sideCulture[1];
+        // 🔴 [2026-08-23 主人定] 城池地面=道路贴图（城池硬化街道，非光秃黄土）：保持「古代泥土/碎石」质感，
+        //    除罗马外不用光鲜大石板 rd1（罗马文明道路就是石板大道）。
+        if (culture === 'ISLAMIC') return 'rd5'; // 中东：商队砾石土路
+        if (culture === 'BYZANTINE' || culture === 'ROMAN') return 'rd1'; // 罗马/拜占庭：石板大道
+        return 'rd2'; // 默认/东方：碎石子路（质朴土路）
+    }
+
+    /**
+     * [2026-08-23 主人需求] 城门前/城门下地基：两座城门也铺城池硬化道面（与 applyDefenderCityRoad 同一套贴图），
+     * 消除城门光秃立在泥地上的违和感。城门下 = 城门贴图格心放射石基；城门前 = 朝攻方（屏幕 -x）延伸的进场通道。
+     * @param gx 城门贴图屏幕 x（与 placeGate 的 s.x 同一坐标系）
+     * @param gy 城门贴图屏幕 y
+     */
+    private addGateFoundation(gx: number, gy: number): void {
+        if (this.battleType !== 'siege') return;
+        // 🔴 [2026-08-22 主人定] 蒙古（草原游牧）逐水草而居，建筑为蒙古包，不铺设任何石头路/地基
+        if (this.sideCulture[1] === 'STEPPE') return;
+        if (this.isoGw === 0 || this.isoGh === 0) return;
+        const roadTile = this.cityRoadFoundationTile();
+
+        const a = (gx - this.isoOx) * 2 / TILE_W;
+        const b = (gy - this.isoOy) * 2 / TILE_H;
+        const cgx = Math.round((a + b) / 2);
+        const cgy = Math.round((b - a) / 2);
+        if (cgx < 0 || cgy < 0 || cgx >= this.isoGw || cgy >= this.isoGh) return;
+
+        const cells: Array<[number, number]> = [];
+        const seen = new Set<string>();
+        const push = (cellx: number, celly: number): void => {
+            if (cellx < 0 || celly < 0 || cellx >= this.isoGw || celly >= this.isoGh) return;
+            const key = `${cellx},${celly}`;
+            if (!seen.has(key)) { seen.add(key); cells.push([cellx, celly]); }
+        };
+
+        // 城门下：城门格心放射半径 2 的菱形基座（覆盖门体 + 两侧），与城内建筑石基同密度
+        for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+                if (Math.abs(dx) + Math.abs(dy) <= 2) push(cgx + dx, cgy + dy);
+            }
+        }
+        // 城门前：从基座向外（朝攻方 = 屏幕 -x 直线，网格 Δgx=-1、Δgy=+1）延伸进场通道
+        for (let k = 1; k <= 4; k++) push(cgx - k, cgy + k);
+
+        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.90);
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
@@ -3678,6 +3719,7 @@ export class Scene13WarLayer {
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
             placeGate({ x: wallFrontX + 72, y: topWallY - 36 }, gBase + '_NE', 'NE');
+            this.addGateFoundation(wallFrontX + 72, topWallY - 36);
             // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
             for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: topWallY - 72 - k * pitchDy }, wBase + '_NE', 'STONE_WALL');
@@ -3694,6 +3736,7 @@ export class Scene13WarLayer {
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 南翼向下完整双塔大城门 (左角塔在 (wallFrontX, botWallY), 右角塔在 (wallFrontX + 144, botWallY + 72))
             placeGate({ x: wallFrontX + 72, y: botWallY + 36 }, gBase + '_SE', 'SE');
+            this.addGateFoundation(wallFrontX + 72, botWallY + 36);
             // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
             for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: botWallY + 72 + k * pitchDy }, wBase + '_SE', 'STONE_WALL');
@@ -5212,7 +5255,9 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不风筝（原地站桩射击，不后撤）
                 if (wt.kite && !m.kiteGaveUp && !holdSiege) {
                     const kd = Math.sqrt(fd2);
-                    if (!m.kiting && kd < 65) { m.kiting = true; m.kiteLeg = 0; }
+                    // 🔴 [2026-08-23 主人定] 只被「近战」贴脸才放风筝：远程对射（dmgType=pierce）不跑、原地站撸；
+                    //    敌人真挥刀砍过来（dmgType=melee）才拨马后撤。
+                    if (!m.kiting && kd < 65 && this.statsFor(foe.key, foe.f).dmgType === 'melee') { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
                         const dx = m.x - foe.x, dy = m.y - foe.y, d = kd || 1;
                         const step = stats.spd * dt;

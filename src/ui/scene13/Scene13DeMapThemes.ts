@@ -240,9 +240,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         groundTiles: ['ds2', 'pm1', 'gr4', 'rck', 'rc2', 'sr2'],
         forestFloorTiles: ['ds3', 'pal', 'pal1'],
         // [2026-08-21 完善] 伊朗高原无棕榈（棕榈是波斯湾低地绿洲植物）→ PINE（厄尔布尔士/扎格罗斯山松林）替代
-        trees: ['DEAD_TREE', 'PINE'], // 🔴 [2026-08-23 按现实修复] 伊朗高原内陆=干燥大陆性，无橄榄(OLIVE=地中海沿岸树)；PINE=厄尔布尔士/扎格罗斯高山松
+        trees: ['PINE'], // 🔴 [2026-08-23 按现实修复] 伊朗高原内陆=干燥大陆性，树少仅1种；PINE=厄尔布尔士/扎格罗斯高山松（无橄榄/无枯树第二树种）
         autumnTrees: ['DEAD_TREE'],
-        winterTrees: ['SNOW_PINE', 'ASIAN_PINE', 'SNOW_AUTUMN_OAK', 'DEAD_TREE'],
+        winterTrees: ['SNOW_PINE'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地 + 商旅地毯/古墓（高原丝路）
         flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN', 'DECAL_CRACK'],
         solidDecor: ['ROCK1', 'ROCK2', 'RUGS', 'GRAVES'],
@@ -285,7 +285,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-23 清账] 移除 snd（雪地基，误入亚洲沙漠）——归雪地类（§2.4.1）
         groundTiles: ['des', 'ds2', 'ds3', 'ds5', 'rck', 'qs'],
         forestFloorTiles: ['ds2', 'ds3', 'for'],
-        trees: ['DEAD_TREE', 'BUSH_TREE_A'], // 戈壁极旱荒漠：枯树+荒漠灌丛。🔴 龙血树(DRAGON_TREE)=也门索科特拉岛特有，松树(ASIAN_PINE)=戈壁无树
+        trees: ['DEAD_TREE'], // 戈壁极旱荒漠：仅枯树1种（树木极少地区，不配第二树种）
         autumnTrees: ['DEAD_TREE'],
         winterTrees: ['DEAD_TREE'],
         flatDecor: ['PLANT_DEAD', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'GRASS_DRY_PATCH', 'WEED'],
