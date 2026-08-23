@@ -4766,8 +4766,10 @@ export class Scene13WarLayer {
                         const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                         if (d >= r2) continue;
                         const tooNear = minR2 > 0 && d < minR2;
-                        if (o.claims >= SPREAD_CAP) continue;
+                        // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
+                        // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
                         if (d < bd) { bd = d; best = o; }
+                        if (o.claims >= SPREAD_CAP) continue;
                         if (!tooNear && d < fd) { fd = d; free = o; }
                     }
                 }
