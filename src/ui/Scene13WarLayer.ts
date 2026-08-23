@@ -89,8 +89,10 @@ const WALL_AUTO_COLLAPSE_SEC = 30;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
-/** 🔴 [2026-08-23 主人改] 攻城武器配兵表（按守方据点类型；数量在生成逻辑里配：
- *  4 攻城锤 + 1 投石车 + 1 弩炮；科技不允许时降级——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）：
+/** 🔴 [2026-08-23 主人定] 攻城武器配兵表（按守方据点类型；数量：小城 4 个 / 中城·险要·大城 6 个）：
+ *  优先冲车 ×4；中城及以上另有投石车 + 弩炮各 1（"有啥上啥"——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）。
+ *  全部武器"没有高级就用低级"降级（冲车 siege_ram→capped_ram→battering_ram，全无换装甲攻城战象；
+ *  投石车 siege_onager→onager→mangonel；弩炮 heavy_scorpion→scorpion）：
  *   小城 = 4 轻型攻城锤（硬木栅栏最好打，只配锤）；
  *   中城 = 4 轻型攻城锤 + 轻型投石车 + 弩炮；
  *   险要 = 4 中型攻城锤 + 中型投石车 + 重型弩炮；
@@ -104,6 +106,13 @@ const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; sc
 
 /** 冲车降级链（重→轻）：配兵表指定档若该文化区没有，逐级降级。 */
 const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'battering_ram'];
+
+/** 有战象的文化区 → 战象 key（攻城时替代弩炮槽位；全用近战战象，印度无冲车线走战象替代冲车，另算）。 */
+const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
+    WESTERN: 'war_elephant',        // 波斯战象（近战）
+    DIANQIAN: 'battle_elephant',    // 缅甸/越南战斗象（近战）
+    LINGNAN: 'battle_elephant',     // 越南战斗象（近战）
+};
 
 /**
  * 🔴 [2026-08-22 主人定] 攻城武器科技树门控：攻方文化区对应 AoE2 文明**有没有**该攻城武器
@@ -121,16 +130,16 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     CENTRAL:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     NORTH:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     JIANGNAN:     { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    LINGNAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    LINGNAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, battle_elephant: true },
     BASHU:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     HEXI:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     NORTHEAST:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    WESTERN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    WESTERN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
     TIBET:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     STEPPE:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     KOREA:        { battering_ram: true, capped_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     JAPAN:        { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    DIANQIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    DIANQIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
     WEST_ASIA:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     SLAVIC:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -1060,6 +1069,18 @@ const TILE_W = 64;
 const TILE_H = 32;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 const DECOR_BLUR = 20;
+/** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
+const MAX_ROAD_STEPS = 80;
+/** 道路边缘羽化（px）：路面是硬化路，边缘要清晰。默认斑块的 24 会把窄路糊成一条白雾 */
+const ROAD_EDGE_BLUR = 10;
+/**
+ * 斑块撕边幅度：blend 噪声在边界等值线上推拉的量。
+ * 实测（等周指标 = 周长 / 2√(π·面积)，1.0 = 完美圆滑）：
+ *   纯高斯软边 0.93 → 撕边后 7.08，且半透明过渡带只有 2188px（碎而清晰，不是糊）。
+ */
+const PATCH_EDGE_RAGGED = 1.25;
+/** 斑块边缘锐度：越大越接近 DE 那种「碎但清晰」的咬合边，越小越糊 */
+const PATCH_EDGE_HARDNESS = 6.5;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
 const SHORE_BLUR = 10;
 /** 高地光照羽化半径（px）：抹掉双线性折痕，又不把坡面糊成一团 */
@@ -2393,6 +2414,15 @@ interface DecorPatch {
     /** 动态水体纹理 pattern（img 加载后建一次，每帧复用，避免每帧 createPattern） */
     waterPattern?: CanvasPattern | null;
     waterPattern2?: CanvasPattern | null;
+    /**
+     * 🔴 [2026-08-24 性能] 本块斑块合成后的最终位图缓存。
+     * 斑块几何是静态的，但每个自然素材的 onload / _meta.json 到货都会调 scheduleDecorRepaint，
+     * 一场开局能触发上百次 repaintDecor。没有这层缓存的话，每次都要为每块斑块重算
+     * 「遮罩 → 距离场 → 撕边逐像素 → source-in 填纹理」，是开场卡顿的主因。
+     */
+    cache?: HTMLCanvasElement;
+    cacheX?: number;
+    cacheY?: number;
 }
 
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
@@ -2610,8 +2640,14 @@ export class Scene13WarLayer {
     private blurCtx: CanvasRenderingContext2D | null = null;
     /** DE terrain/blends 有机咬合遮罩缓存（[2026-08-23 P3] 按 BlendKind 懒加载一次；存「灰度→alpha」canvas） */
     private blendCache: Record<string, HTMLCanvasElement | null> = {};
-    private blendAlphaCv: HTMLCanvasElement | null = null;
-    private blendAlphaCtx: CanvasRenderingContext2D | null = null;
+    /** tile 级撕边用：距离场 / 咬合噪声（都要逐像素读回，带 willReadFrequently） */
+    private edgeCv: HTMLCanvasElement | null = null;
+    private edgeCtx: CanvasRenderingContext2D | null = null;
+    private noiseCv: HTMLCanvasElement | null = null;
+    private noiseCtx: CanvasRenderingContext2D | null = null;
+    /** blend 遮罩缩到 2×2 tile 的平铺单元（撕边噪声源） */
+    private raggedTile: HTMLCanvasElement | null = null;
+    private raggedTileSrc: HTMLCanvasElement | null = null;
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
     /** 高地光照离屏画布（白/黑菱形先画这里，再羽化合成，避免硬边方块） */
@@ -3061,10 +3097,13 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-23 主人改] 攻城战攻方前排攻城武器：按守方据点类型配 4 攻城锤 + 1 投石车 + 1 弩炮，
-     * 按攻方文化区对应 AoE2 文明科技树门控（SIEGE_TECH_BY_CULTURE）——没有的武器降级：
-     *   无投石车 → 2 弩炮（无投石车）；无弩炮 → 2 投石车（无弩炮）；两者皆无 → 只配锤；
-     *   无冲车档 → 重→轻降级（siege_ram→capped_ram→battering_ram）；无冲车线（印度斯坦系）→ 换装甲攻城战象 ×4。
+     * 🔴 [2026-08-23 主人定] 攻城战攻方前排攻城武器：数量小城 4 个 / 中城·险要·大城 6 个，
+     * 优先冲车 ×4，其余按攻方文化区对应 AoE2 文明科技树门控（SIEGE_TECH_BY_CULTURE）"有啥上啥"。
+     * 全部武器"没有高级就用低级"降级：
+     *   冲车 siege_ram→capped_ram→battering_ram，全无冲车线（印度斯坦系）→ 换装甲攻城战象 ×4；
+     *   投石车 siege_onager→onager→mangonel（中国/女真/高丽 = 火箭车线）；
+     *   弩炮 heavy_scorpion→scorpion；有战象的文化区（波斯/高棉/越南）→ 战象替代弩炮槽；
+     *   全无投石车 → 2 弩炮、全无弩炮 → 2 投石车。
      * 攻城武器是**正常参战兵种**（移动/索敌/打墙），不是静态摆件。
      */
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
@@ -3082,19 +3121,27 @@ export class Scene13WarLayer {
         } else if (ok('armored_elephant')) {
             items.push({ key: 'armored_elephant', n: 4 });
         }
-        // 投石车 / 弩炮：投石车槽位按文化区投石车线取实际 key（中国/女真/高丽 = 火箭车线），
-        // 科技门控 + 降级（无投石车 → 2 弩炮；无弩炮 → 2 投石车）
+        // 投石车 / 弩炮（中城/险要/大城各 1 个）："有啥上啥" + "没有高级就用低级"——
+        // 投石车按文化区投石车线（中国/女真/高丽 = 火箭车线）从指定档重→轻降级；
+        // 弩炮 heavy_scorpion→scorpion 降级；全无投石车 → 2 弩炮、全无弩炮 → 2 投石车。
         if (setup.mangonel && setup.scorpion) {
             const mnLine = SIEGE_MANGONEL_LINE[this.sideCulture[0] as RegionType] ?? ['mangonel', 'onager', 'siege_onager'];
             const tierIdx = this.defenderCityType === 'medium_city' ? 0 : this.defenderCityType === 'pass' ? 1 : 2;
-            const mnKey = mnLine[tierIdx];
-            const scKey = setup.scorpion;
-            const hasMn = ok(mnKey), hasSc = ok(scKey);
-            if (hasMn && hasSc) {
+            let mnKey: string | undefined;
+            for (let i = tierIdx; i >= 0; i--) {
+                if (ok(mnLine[i])) { mnKey = mnLine[i]; break; }
+            }
+            // 弩炮槽：有战象的文化区 → 战象替代（波斯/高棉/越南）；否则弩炮降级链
+            const eleKey = SIEGE_ELEPHANT_BY_CULTURE[this.sideCulture[0] as RegionType];
+            const scLine = ['heavy_scorpion', 'scorpion'];
+            const scIdx = scLine.indexOf(setup.scorpion);
+            const scKey = (eleKey && ok(eleKey)) ? eleKey
+                : (scIdx >= 0 ? scLine.slice(scIdx).find(k => ok(k)) : undefined);
+            if (mnKey && scKey) {
                 items.push({ key: mnKey, n: 1 }, { key: scKey, n: 1 });
-            } else if (!hasMn && hasSc) {
+            } else if (!mnKey && scKey) {
                 items.push({ key: scKey, n: 2 });      // 无投石车 → 2 弩炮
-            } else if (hasMn && !hasSc) {
+            } else if (mnKey && !scKey) {
                 items.push({ key: mnKey, n: 2 });      // 无弩炮 → 2 投石车
             }
             // 两者都没有 → 只配锤
@@ -3686,10 +3733,22 @@ export class Scene13WarLayer {
                 if (Math.abs(dx) + Math.abs(dy) <= 2) push(cgx + dx, cgy + dy);
             }
         }
-        // 城门前：从基座向外（朝攻方 = 屏幕 -x 直线，网格 Δgx=-1、Δgy=+1）延伸进场通道
-        for (let k = 1; k <= 4; k++) push(cgx - k, cgy + k);
+        // 城门前进场大道（朝攻方 = 屏幕 -x；网格 Δgx=-1/Δgy=+1 正好是屏幕正左，每步 -64px）。
+        //
+        // 🔴 [2026-08-24 修] 旧写法是 `for k=1..4: push(cgx-k, cgy+k)` —— 宽 1 格、长 4 格、
+        //    笔直水平，再被 blur(24) 一糊，屏幕上就是**一根惨白的横条**（两座城门各一根）。
+        //    这不是路。DE 的路有实在的宽度、一路通到战场边缘、边缘不是尺子画的。
+        //    现在：宽 2~3 格交替 + 正弦微摆 + 一直铺到西缘，羽化收到 10px 让路面清晰。
+        const halfWidths = [1, 1, 1, 0]; // 3 格 / 2 格交替 → 自然宽窄，不是等宽棍子
+        for (let k = 1; k <= MAX_ROAD_STEPS; k++) {
+            const rx = cgx - k, ry = cgy + k;
+            if (this.isoCellX(rx, ry) < -TILE_W) break; // 已铺出屏幕西缘
+            const wobble = Math.round(Math.sin(k * 0.45)); // -1/0/1，路心缓慢左右摆
+            const hw = halfWidths[k % halfWidths.length];
+            for (let w = -hw; w <= hw; w++) push(rx + w + wobble, ry + w + wobble);
+        }
 
-        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.90);
+        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.92, undefined, ROAD_EDGE_BLUR);
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
@@ -4264,6 +4323,14 @@ export class Scene13WarLayer {
         const img = p.img;
         if (!img || !img.complete || !img.naturalWidth) return;
 
+        // 命中缓存：直接贴，跳过整条重算管线
+        if (p.cache) {
+            if (p.alpha < 1) g.globalAlpha = p.alpha;
+            g.drawImage(p.cache, p.cacheX!, p.cacheY!);
+            if (p.alpha < 1) g.globalAlpha = 1;
+            return;
+        }
+
         // 🔴 [彻底根除方块矩形切边] 高斯模糊羽化余量必须 ≥ 3 倍模糊半径 (3 × 24 = 72px)，
         //    确保模糊在到达离屏 canvas 四周边界前 100% 衰减为 0（绝对透明），绝不被 canvas 边框生硬截断！
         // 🔴 [2026-08-23 美化] 窄条带（水/滩）用 patch.blur 精确控制河岸软硬度：深水 8 / 浅水 12，避免变回整片高斯糊
@@ -4308,50 +4375,38 @@ export class Scene13WarLayer {
             mctx.closePath();
             mctx.fill();
         } else {
-            // 🔴 地表变体与落叶使用有机圆形平滑叠加，边缘无棱角
+            // DE 的地形斑块按格铺满（一格就是一格），边缘的参差交给下面 tile 级的咬合噪声，
+            // 不靠把格子画成椭圆来「装有机」——椭圆并集反而会拼出一圈直棱长边。
+            mctx.beginPath();
             for (const [gx, gy] of p.cells) {
                 // 斑块必须跟着地面一起抬升，否则高地上的草/土斑会浮在坡面下方错位
                 const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - by;
-                mctx.beginPath();
-                mctx.ellipse(sx, sy, TILE_W * 0.60, TILE_H * 0.65, 0, 0, Math.PI * 2);
-                mctx.fill();
+                mctx.moveTo(sx, sy - TILE_H / 2);
+                mctx.lineTo(sx + TILE_W / 2, sy);
+                mctx.lineTo(sx, sy + TILE_H / 2);
+                mctx.lineTo(sx - TILE_W / 2, sy);
+                mctx.closePath();
             }
+            mctx.fill();
         }
-        // 2. DE 有机咬合（[2026-08-23 P3] cells 斑块：用对应 blends 遮罩替代高斯模糊）
-        //    blend 灰度做 destination-in：中心白=斑块主体保留、边缘黑=露底咬合 → DE 有机碎边（非平滑糊）
+        // 2. 边缘处理
         const blendKind = blendForTile(p.tile);
-        // 🔴 [2026-08-23 主人定] 道路贴图（rd 系列）边缘走高斯模糊（平滑道路侧缘），不用 blend 有机咬合——
-        //    城池街道/道路是平顺硬化路面，边缘平滑；只有植被/地形斑块（草/土/雪/水）才用 DE 有机碎咬合。
-        let useBlend = false;
+        // 🔴 [2026-08-23 主人定] 道路贴图（rd 系列）边缘走高斯模糊（平顺硬化路面），不做撕边。
+        let ragged = false;
         if (!p.polygon && blendKind !== 'roadland') {
             const bmask = this.blendFor(blendKind);
             if (bmask) {
-                if (!this.blendAlphaCv) { this.blendAlphaCv = document.createElement('canvas'); this.blendAlphaCtx = this.blendAlphaCv.getContext('2d')!; }
-                const acv = this.blendAlphaCv, actx = this.blendAlphaCtx!;
-                if (acv.width !== bw || acv.height !== bh) { acv.width = bw; acv.height = bh; }
-                actx.clearRect(0, 0, bw, bh);
-                // 拉伸到「斑块 cells 原始包围盒」（不含 fuzzy 余量），保证 blend 中心白正好对准斑块主体、边缘黑咬合斑块边缘
-                actx.drawImage(bmask, minX - bx, minY - by, maxX - minX, maxY - minY);
-                // 白形状 ∩ blend 咬合（中心保留、边缘露底）
-                mctx.save();
-                mctx.globalCompositeOperation = 'destination-in';
-                mctx.drawImage(acv, 0, 0);
-                mctx.restore();
-                useBlend = true;
+                ragged = this.raggedEdgeMask(mcv, bw, bh, bmask, blurRadius);
             }
         }
-        if (!useBlend) {
-            // 原高斯模糊（polygon 斑块 / 无 blend 图时）：平滑软化边界
+        if (!ragged) {
+            // 高斯模糊（polygon 斑块 / 道路 / 无 blend 图时）：平滑软化边界
             bctx.clearRect(0, 0, bw, bh);
             bctx.filter = `blur(${blurRadius}px)`;
             bctx.drawImage(mcv, 0, 0);
             bctx.filter = 'none';
         }
-        // 3. source-in 填纹理（纹理只在咬合/软边形状内）；若用 blend 咬合（遮罩在 mcv），先复制 mcv 给 bcv 作 mask
-        if (useBlend) {
-            bctx.clearRect(0, 0, bw, bh);
-            bctx.drawImage(mcv, 0, 0);
-        }
+        // 3. source-in 填纹理（纹理只在最终遮罩形状内）
         bctx.globalCompositeOperation = 'source-in';
         const pat = bctx.createPattern(img, 'repeat');
         if (pat) {
@@ -4362,10 +4417,109 @@ export class Scene13WarLayer {
             bctx.restore();
         }
         bctx.globalCompositeOperation = 'source-over';
-        // 4. 合成到装饰层（只贴 bbox 区域）
+        // 4. 存缓存（bcv 是共享暂存画布，下一块斑块就会覆盖，必须拷出来）
+        const cache = document.createElement('canvas');
+        cache.width = bw; cache.height = bh;
+        cache.getContext('2d')!.drawImage(bcv, 0, 0);
+        p.cache = cache; p.cacheX = bx; p.cacheY = by;
+        // 5. 合成到装饰层（只贴 bbox 区域）
         if (p.alpha < 1) g.globalAlpha = p.alpha;
-        g.drawImage(bcv, bx, by);
+        g.drawImage(cache, bx, by);
         if (p.alpha < 1) g.globalAlpha = 1;
+    }
+
+
+    /**
+     * DE 式 tile 级撕边遮罩。
+     *
+     * 病根（2026-08-23 主人截图实锤）：blends/*.png 是 **单块 tile** 的咬合遮罩
+     * （中心白、四边黑、内部带不规则缺口），DE 是**逐边界格**按 tile 尺寸用它。
+     * 旧代码把这一张 512 遮罩**整张拉伸盖住整个斑块包围盒** —— 于是整块斑块的轮廓
+     * 直接变成了那张遮罩本身的形状：一个带缺口的大圆饼，边缘是几条长直棱边。
+     *
+     * 这里改回 DE 尺度：
+     *   D = 硬菱形并集做高斯 → 到边界的距离场（0..1）；
+     *   N = blend 遮罩按 2×2 tile（128×64）平铺出来的咬合噪声（0..1）；
+     *   alpha = clamp((D - 0.5 + (N - 0.5) × RAG) × HARD + 0.5)
+     * N 在 D 的等值线上做 ±RAG/2 的推拉，把一条平滑边界撕成 tile 尺度的犬牙参差；
+     * 内部 D=1、外部 D=0 不受影响，所以只有边缘变碎，斑块主体依旧实心。
+     *
+     * 返回 false 表示没做（调用方回退高斯模糊）。
+     */
+    private raggedEdgeMask(
+        mcv: HTMLCanvasElement,
+        bw: number,
+        bh: number,
+        bmask: HTMLCanvasElement,
+        blurRadius: number,
+    ): boolean {
+        const bctx = this.blurCtx;
+        if (!bctx) return false;
+        if (!this.edgeCv) {
+            this.edgeCv = document.createElement('canvas');
+            // 逐像素读回：必须带 willReadFrequently，否则每块斑块都触发一次 GPU→CPU 回读
+            this.edgeCtx = this.edgeCv.getContext('2d', { willReadFrequently: true });
+            this.noiseCv = document.createElement('canvas');
+            this.noiseCtx = this.noiseCv.getContext('2d', { willReadFrequently: true });
+        }
+        const ecv = this.edgeCv!, ectx = this.edgeCtx;
+        const ncv = this.noiseCv!, nctx = this.noiseCtx;
+        if (!ectx || !nctx) return false;
+        if (ecv.width !== bw || ecv.height !== bh) {
+            ecv.width = bw; ecv.height = bh;
+            ncv.width = bw; ncv.height = bh;
+        }
+
+        // D：硬菱形并集 → 高斯 → 距离场。羽化半径直接决定撕边能推多远：
+        // 距离场越宽，同样的噪声幅度换算成的像素位移越大（实测 blur 12 只能推 ±6px，看不出来；
+        // blur 26 推 ±13px，正好是半格，撕出 DE 那种格尺度的犬牙边）。
+        const soft = Math.max(12, blurRadius * 1.1);
+        ectx.setTransform(1, 0, 0, 1, 0, 0);
+        ectx.clearRect(0, 0, bw, bh);
+        ectx.filter = `blur(${soft}px)`;
+        ectx.drawImage(mcv, 0, 0);
+        ectx.filter = 'none';
+
+        // N：blend 遮罩按 **一格** 平铺 —— 这就是 DE 用这张图的原始尺度
+        if (!this.raggedTile) {
+            const t = document.createElement('canvas');
+            t.width = TILE_W; t.height = TILE_H;
+            const tg = t.getContext('2d')!;
+            tg.drawImage(bmask, 0, 0, t.width, t.height);
+            this.raggedTile = t;
+            this.raggedTileSrc = bmask;
+        } else if (this.raggedTileSrc !== bmask) {
+            const tg = this.raggedTile.getContext('2d')!;
+            tg.clearRect(0, 0, this.raggedTile.width, this.raggedTile.height);
+            tg.drawImage(bmask, 0, 0, this.raggedTile.width, this.raggedTile.height);
+            this.raggedTileSrc = bmask;
+        }
+        const npat = nctx.createPattern(this.raggedTile, 'repeat');
+        if (!npat) return false;
+        nctx.setTransform(1, 0, 0, 1, 0, 0);
+        nctx.clearRect(0, 0, bw, bh);
+        nctx.fillStyle = npat;
+        nctx.fillRect(0, 0, bw, bh);
+
+        const dImg = ectx.getImageData(0, 0, bw, bh);
+        const nImg = nctx.getImageData(0, 0, bw, bh);
+        const dd = dImg.data, nd = nImg.data;
+        for (let i = 3; i < dd.length; i += 4) {
+            const D = dd[i] / 255;
+            const N = nd[i] / 255;
+            // 只在边界带（D≈0.5）让噪声起作用：内部 D=1 / 外部 D=0 处权重归零，
+            // 否则噪声会把斑块内部一起削成半透明（实测半透明像素从 1130 暴涨到 103521）。
+            const w = 4 * D * (1 - D);
+            let a = (D - 0.5 + (N - 0.5) * PATCH_EDGE_RAGGED * w) * PATCH_EDGE_HARDNESS + 0.5;
+            a = a < 0 ? 0 : a > 1 ? 1 : a;
+            dd[i - 3] = dd[i - 2] = dd[i - 1] = 255;
+            dd[i] = (a * 255) | 0;
+        }
+        bctx.setTransform(1, 0, 0, 1, 0, 0);
+        bctx.globalCompositeOperation = 'source-over';
+        bctx.clearRect(0, 0, bw, bh);
+        bctx.putImageData(dImg, 0, 0);
+        return true;
     }
 
     /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
