@@ -177,7 +177,8 @@ export const FACTIONS: Faction[] = [
 
   { id: 'fuguo', name: '附国' },
   { id: 'fengzhou', name: '凤州' },
-  { id: 'fushi', name: '苻秦' }, // 代表前秦，避免旗号重名
+  { id: 'fushi', name: '苻秦' },
+ // 代表前秦，避免旗号重名
   { id: 'gongtang', name: '贡唐' },
   { id: 'chizhou', name: '池州' },
 

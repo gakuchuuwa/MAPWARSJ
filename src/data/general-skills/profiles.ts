@@ -1564,7 +1564,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    fushi_wangmeng: { generalId: 'fushi_wangmeng', tier: 'famous', tacticalSkillId: 'ts_279', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_350', atkDisadvantageSkillId: 'ts_646', atkAdvantageSkillId: 'ts_031', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_764', defDisadvantageSkillId: 'ts_006', aptitude: 'create' , attackStyle: 'attack'},
+    fushi_wangmeng: { generalId: 'fushi_wangmeng', tier: 'famous', tacticalSkillId: 'ts_031', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_350', atkDisadvantageSkillId: 'ts_646', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_764', defDisadvantageSkillId: 'ts_006', aptitude: 'create', attackStyle: 'attack' },
 
 
 

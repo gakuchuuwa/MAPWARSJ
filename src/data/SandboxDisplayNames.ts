@@ -174,7 +174,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yangzhou': '洋',
   sizhou: '泗',
   fengzhou: '凤',
-  fushi: '苻',
+'fushi': '苻',
   kelie: '札合',
   donghui: '东濊',
 'gonggu': '宫古',

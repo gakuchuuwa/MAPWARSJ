@@ -31,7 +31,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lizhou_d: { name: '剑阁戍卒', tier: 4 },        // 剑门关·廖化（常规番号，降T3）
   fengzhou: { name: '和尚原锐卒', tier: 2 },       // 吴玠和尚原大捷，属于经典的战术/战役防守反击，降为T2战术。
   fu_zhou: { name: '涪陵劲卒', tier: 4 },       // 涪陵·《华阳国志》涪陵劲卒（缺乏极其著名的战术高光，降T3）
-  fushi: { name: '氐秦锐士', tier: 3 },         // 略阳·苻洪氐族劲卒（苻氏）（缺乏极其著名的战术高光，降T3）
     yang_bozhou: { name: '播州土兵', tier: 4 },    // 海龙屯·播州杨氏
   yong: { name: '庸国戍卒', tier: 4 },           // 上庸·古庸国
   cong: { name: '賨族勇士', tier: 3 },           // 古巴人（板楯蛮），以巴渝舞战法协助刘邦平定三秦，极具历史辨识度，升入T3知名

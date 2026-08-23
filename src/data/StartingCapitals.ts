@@ -333,7 +333,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'suzhou_d': 'city_xucheng',
 
 'zhai_han': 'city_fushi',
-    'fushi': 'city_lueyang',
+'fushi': 'city_lueyang',
     'fengzhou': 'city_dasanguan',
     'sizhou': 'city_huaiyin',
     'hantawadi': 'city_bago',

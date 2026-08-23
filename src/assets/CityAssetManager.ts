@@ -62,7 +62,7 @@ export class CityAssetManager {
 'yangzhou': '洋',
         'sizhou': '泗',
         'fengzhou': '凤',
-        'fushi': '苻',
+'fushi': '苻',
 'heishui': '靺鞨',
         'donghui': '东濊',
 'gonggu': '宫古',
