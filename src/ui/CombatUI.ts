@@ -4080,6 +4080,13 @@ export class CombatUI {
         this.updateCollapseState(false);
     }
 
+    /** 🔴 [2026-08-23 主人定] 战斗面板折叠/展开（13 开战自动折叠、战后恢复）：幂等，同状态不动 */
+    public setCollapsed(collapsed: boolean): void {
+        if (this.isCollapsed === collapsed) return;
+        this.isCollapsed = collapsed;
+        this.updateCollapseState(false);
+    }
+
     /** 更新折叠状态渲染 */
     private updateCollapseState(skipAnimation: boolean = false): void {
         if (!this.toggleCollapseBtn) return;

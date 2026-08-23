@@ -2867,6 +2867,8 @@ export class Scene13WarLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onEnterBattleScene13?.();
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
+        // 🔴 [2026-08-23 主人定] 开战自动折叠战斗面板（最小化避开战场视野），战后 stop 里恢复展开
+        game?.combatUI?.setCollapsed?.(true);
 
         // [2026-08-11 势力本色] 攻守双方交给主游戏的 SpriteTinter 按 factionId 染色，
         // 与地图上的军团、旗帜、领土同一套色，不另起炉灶。
@@ -2887,6 +2889,9 @@ export class Scene13WarLayer {
         this.defenderHolding = this.battleType === 'siege';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
+        // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
+        //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
+        this.wallsCollapsed = false;
         // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
         this.famousBuff = [
             getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
@@ -3038,17 +3043,17 @@ export class Scene13WarLayer {
         }
         const total = items.reduce((s, it) => s + it.n, 0);
         if (!total) return;
-        // 🔴 [2026-08-23 主人定] 攻城武器摆放位置随机 + 前移：x 在城墙前带状区域（比攻方 row0
-        //    再往前 1×depth，更靠近城墙）、y 在垂直 span 内随机——每次战斗布阵不重样。
+        // 🔴 [2026-08-23 主人改] 攻城武器一字排开：统一 x（城墙前固定排线，比攻方 row0 再往前
+        //    1.8×depth）、y 在垂直 span 内随机——布阵保持随机性，但视觉上一字排开不再前后错落。
         const frontX = mx + 3 * depth;
         const midY = VH / 2, spanY = VH * 0.8;
-        const xMin = frontX, xMax = frontX + depth * 1.6;
+        const lineX = frontX + depth * 0.8;   // 一字排线（mx + 3.8×depth）
         const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
         for (const it of items) {
             for (let i = 0; i < it.n; i++) {
                 this.ensureType(it.key);
-                const x = xMin + Math.random() * (xMax - xMin);
+                const x = lineX;
                 const y = yMin + Math.random() * (yMax - yMin);
                 const hp = this.statsFor(it.key, 0).hp;
                 const tgtX = VW - mx, tgtY = y;
@@ -3239,6 +3244,8 @@ export class Scene13WarLayer {
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
         this.lingering = false;
+        // 🔴 [2026-08-23 主人定] 战后恢复战斗面板（开战 start 里已折叠最小化）
+        (window as any).game?.combatUI?.setCollapsed?.(false);
         if (this.active) {
             // [2026-08-11 诊断] 谁把演出停掉的。over=false 还被停 = 外部提前收场
             let field = 0, pool = 0;
@@ -5000,8 +5007,8 @@ export class Scene13WarLayer {
             }
         }
         this.spawnTick(dt);
-        // 🔴 [2026-08-22 主人定] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
-        //    随机坍塌一次——即使士兵还没打穿墙，40 秒后也强制随机塌一批，留出足够缺口。
+        // 🔴 [2026-08-23 主人改] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
+        //    随机坍塌一次——即使攻城武器还没打穿墙，30 秒后也强制随机塌一批，留出足够缺口。
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
@@ -5036,7 +5043,7 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
-            //    40 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
+            //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
             //    不再列阵行军（inMarch 攻城战已全 false），直接各自索敌接战。
             const holdSiege = this.defenderHolding && !m.siegeW;
             if (holdSiege) {
@@ -5429,9 +5436,9 @@ export class Scene13WarLayer {
                                 }
                             }
                         }
-                        // 🔴 [2026-08-23 主人定] 城墙坍塌唯一标准 = 开战 40 秒（WALL_AUTO_COLLAPSE_SEC → collapseFrontWalls）。
+                        // 🔴 [2026-08-23 主人定] 城墙坍塌唯一标准 = 开战 30 秒（WALL_AUTO_COLLAPSE_SEC → collapseFrontWalls）。
                         //    士兵打墙只降 hp 做视觉破损（上方 damage stage），墙 hp 归零**不在此破墙、不联动坍塌**——
-                        //    墙保持破损贴图 + 阻挡，等 40 秒统一坍塌。只有非建筑（士兵/单位）阵亡才走尸体。
+                        //    墙保持破损贴图 + 阻挡，等 30 秒统一坍塌。只有非建筑（士兵/单位）阵亡才走尸体。
                         if (foe.hp <= 0 && !('sprite' in foe)) {
                             this.pushCorpse(foe);
                         }
