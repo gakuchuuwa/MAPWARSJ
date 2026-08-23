@@ -3506,14 +3506,16 @@ export class Scene13WarLayer {
 
         // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图
         const culture = this.sideCulture[1];
-        // 🔴 [2026-08-23 主人定] 古代城池地面是夯土（泥土），非石板/碎石——「古代哪有那么多石头，都是泥土」
-        let roadTile = 'des'; // 默认：夯土泥土1
+        // 🔴 [2026-08-23 主人定] 城池地面=道路贴图（城池硬化街道，非光秃黄土）。城墙内街道是硬化路面：
+        //    东方碎石子路 rd2、罗马/拜占庭石板 rd1（罗马大道是史实招牌）、中东商队砾石土路 rd5。
+        //    保持「古代泥土/碎石」质感，除罗马外不用光鲜大石板 rd1（罗马文明道路就是石板大道）。
+        let roadTile = 'rd2'; // 默认：碎石子路（质朴土路）
         if (culture === 'ISLAMIC') {
-            roadTile = 'des'; // 中东伊斯兰：沙漠夯土
+            roadTile = 'rd5'; // 中东：商队砾石土路
         } else if (culture === 'ASIAN' || culture === 'EAST_ASIAN') {
-            roadTile = 'ds3'; // 东方：黄褐夯土（泥地3）
+            roadTile = 'rd2'; // 东方：碎石子路（中国城池土路/碎石街）
         } else if (culture === 'BYZANTINE' || culture === 'ROMAN') {
-            roadTile = 'ds4'; // 拜占庭/罗马：橙褐夯土（泥地4）
+            roadTile = 'rd1'; // 罗马/拜占庭：石板大道（罗马基建特色，符合史实）
         }
 
         const roadCells: Array<[number, number]> = [];
@@ -4064,9 +4066,12 @@ export class Scene13WarLayer {
         }
         // 2. DE 有机咬合（[2026-08-23 P3] cells 斑块：用对应 blends 遮罩替代高斯模糊）
         //    blend 灰度做 destination-in：中心白=斑块主体保留、边缘黑=露底咬合 → DE 有机碎边（非平滑糊）
+        const blendKind = blendForTile(p.tile);
+        // 🔴 [2026-08-23 主人定] 道路贴图（rd 系列）边缘走高斯模糊（平滑道路侧缘），不用 blend 有机咬合——
+        //    城池街道/道路是平顺硬化路面，边缘平滑；只有植被/地形斑块（草/土/雪/水）才用 DE 有机碎咬合。
         let useBlend = false;
-        if (!p.polygon) {
-            const bmask = this.blendFor(blendForTile(p.tile));
+        if (!p.polygon && blendKind !== 'roadland') {
+            const bmask = this.blendFor(blendKind);
             if (bmask) {
                 if (!this.blendAlphaCv) { this.blendAlphaCv = document.createElement('canvas'); this.blendAlphaCtx = this.blendAlphaCv.getContext('2d')!; }
                 const acv = this.blendAlphaCv, actx = this.blendAlphaCtx!;

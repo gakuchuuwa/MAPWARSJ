@@ -1040,7 +1040,7 @@ function buildVegetation(
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
 ): void {
-    const treeAssets = treesForTheme(theme, season, lat, elev, biome);
+    const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome);
     const primaryTree = rng.pick(treeAssets);
     const otherTrees = treeAssets.filter((t) => t !== primaryTree);
     const secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
