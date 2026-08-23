@@ -991,14 +991,18 @@ function buildGroundVariation(
         }
         return pool[pool.length - 1].tile;
     };
-    const patchCount = isWinterSnow ? 12 : 8;
+    // 🔴 [2026-08-23 对齐 DE] DE 的 RMS create_terrain 是「整片副地形铺上去、靠 blends 咬边」，
+    //    不是薄薄一层半透明色。旧参数（8 片 / 5~11 格 / alpha 0.25）实测只覆盖全场 ~5%、
+    //    还只有 1/4 浓度 → 屏幕上等于一整片纯色。改为 DE 口径：片数与尺寸翻倍、浓度拉满，
+    //    边缘的自然过渡交给 compositeSoftPatch 里的 blends 有机咬合（DE 同款）。
+    const patchCount = isWinterSnow ? 12 : 14;
     for (let i = 0; i < patchCount; i++) {
         const t = pickWeighted();
         const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 5 + rng.int(0, 6);
+        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 8 + rng.int(0, 10);
         const alpha = isWinterSnow
             ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
-            : 0.25;
+            : 0.75;
         patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
     }
 

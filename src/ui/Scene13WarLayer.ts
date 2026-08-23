@@ -102,6 +102,9 @@ const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; sc
     big_city: { ram: 'siege_ram', mangonel: 'siege_onager', scorpion: 'heavy_scorpion' },
 };
 
+/** 冲车降级链（重→轻）：配兵表指定档若该文化区没有，逐级降级。 */
+const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'battering_ram'];
+
 /**
  * 🔴 [2026-08-22 主人定] 攻城武器科技树门控：攻方文化区对应 AoE2 文明**有没有**该攻城武器
  * （aoe2techtree.net 科技树数据，与年份无关——「有的文明没有重型弩炮」）。
@@ -133,7 +136,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SLAVIC:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     GERMANIC:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     LATIN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    INDIA:        { scorpion: true, mangonel: true, onager: true },
+    INDIA:        { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     BERBER:       { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
 };
 
@@ -1059,8 +1062,26 @@ const TILE_H = 32;
 const DECOR_BLUR = 20;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
 const SHORE_BLUR = 10;
-/** 高地光照羽化半径（px）：平滑 3D 浮雕过渡且保留清晰山脊高光 */
-const ELEV_BLUR = 12;
+/** 高地光照羽化半径（px）：抹掉双线性折痕，又不把坡面糊成一团 */
+const ELEV_BLUR = 7;
+/**
+ * 高程方向光（照 DE：光源在屏幕左上）。DIR = 背光方向在等距网格空间的分量：
+ * 屏幕右下 (1,1) 反解到网格 ≈ (0.0469, 0.0156)，归一化 (0.95, 0.32)。
+ * ∇h·DIR > 0 → 迎光坡提亮；< 0 → 背光坡压暗。
+ */
+const ELEV_LIGHT_DIR_X = 0.95;
+const ELEV_LIGHT_DIR_Y = 0.32;
+/**
+ * 坡度→明暗强度系数。梯度用 ±2 格的宽基线（见 paintElevation）：
+ * generateElevation 出的是 DE 那种同心阶梯高台，用 ±1 格窄差分只会在台阶接缝上
+ * 描出一条发丝细线（实测仅 ±8%，屏幕上等于没有）；±2 格把响应摊到整个坡面，
+ * 得到 DE 那种成片的受光面/背光面。
+ */
+const ELEV_LIGHT_K = 1.6;
+/** 背光面最大压暗量（multiply）：实测底色 183 → 146，约 −20%，与 DE 坡面对比同量级 */
+const ELEV_SHADE_DARK = 0.40;
+/** 迎光面最大提亮量（screen）：亮面比暗面收敛，符合 DE 的日照观感 */
+const ELEV_SHADE_LIGHT = 0.32;
 /** DE 等距高程的屏幕抬升量：每级抬升 14px，居高临下战术层次鲜明 */
 const ELEV_STEP_PX = 14;
 /**
@@ -2600,6 +2621,9 @@ export class Scene13WarLayer {
     private elevBlurCtx: CanvasRenderingContext2D | null = null;
     /** 🔴 [2026-08-21 完善·性能] 高地光照缓存就绪标志：elevGrid 静态，全量菱形+blur 只算一次，之后每帧只 drawImage */
     private elevCacheReady = false;
+    /** 抬升地面的倾斜四边形路径，按「格高」分组（同组共用一次贴图上移量）；null = 全场平地 */
+    private elevQuads: Map<number, Path2D> | null = null;
+    private elevQuadsReady = false;
     /** [2026-08-21 性能] 素材加载风暴合并：onload 高频触发 repaintDecor，rAF 合并到一帧一次 */
     private decorRepaintQueued = false;
     private over = false;
@@ -3040,7 +3064,7 @@ export class Scene13WarLayer {
      * 🔴 [2026-08-23 主人改] 攻城战攻方前排攻城武器：按守方据点类型配 4 攻城锤 + 1 投石车 + 1 弩炮，
      * 按攻方文化区对应 AoE2 文明科技树门控（SIEGE_TECH_BY_CULTURE）——没有的武器降级：
      *   无投石车 → 2 弩炮（无投石车）；无弩炮 → 2 投石车（无弩炮）；两者皆无 → 只配锤；
-     *   文明无冲车线（印度斯坦系）→ 锤也不配。
+     *   无冲车档 → 重→轻降级（siege_ram→capped_ram→battering_ram）；无冲车线（印度斯坦系）→ 换装甲攻城战象 ×4。
      * 攻城武器是**正常参战兵种**（移动/索敌/打墙），不是静态摆件。
      */
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
@@ -3049,8 +3073,15 @@ export class Scene13WarLayer {
         if (!setup || !setup.ram || !tech) return;
         const ok = (key: string): boolean => !!tech[key];
         const items: Array<{ key: string; n: number }> = [];
-        // 攻城锤 ×4（文明无冲车线则不配——印度斯坦系用装甲象，MAPWAR 无此兵种）
-        if (ok(setup.ram)) items.push({ key: setup.ram, n: 4 });
+        // 攻城锤 ×4：从配兵表指定档按重→轻降级（无 siege_ram → capped_ram → battering_ram）；
+        // 全无冲车线（印度斯坦系）→ 换装甲攻城战象 ×4 代替冲车（DE 用装甲象拆建筑）
+        const ramIdx = SIEGE_RAM_LINE.indexOf(setup.ram);
+        const ramKey = ramIdx >= 0 ? SIEGE_RAM_LINE.slice(ramIdx).find(k => ok(k)) : undefined;
+        if (ramKey) {
+            items.push({ key: ramKey, n: 4 });
+        } else if (ok('armored_elephant')) {
+            items.push({ key: 'armored_elephant', n: 4 });
+        }
         // 投石车 / 弩炮：投石车槽位按文化区投石车线取实际 key（中国/女真/高丽 = 火箭车线），
         // 科技门控 + 降级（无投石车 → 2 弩炮；无弩炮 → 2 投石车）
         if (setup.mangonel && setup.scorpion) {
@@ -3434,8 +3465,23 @@ export class Scene13WarLayer {
         if (!im || !im.complete || !im.naturalWidth) return;
         const pat = g.createPattern(im, 'repeat');
         if (!pat) return;
+        // 1. 平地基底：整屏铺满。网格外区域也有地，任何情况下不留洞。
         g.fillStyle = pat;
         g.fillRect(0, 0, cv.width, cv.height);
+        // 2. 抬升地面（DE 2.5D）：逐「格高」分组裁剪成真实倾斜四边形，贴图随地面整体上移。
+        //    坡面因此是实打实的斜四边形，士兵/树脚下有地，不再悬空。
+        const groups = this.ensureElevQuads();
+        if (!groups) return;
+        for (const h of [...groups.keys()].sort((a, b) => a - b)) {
+            if (h <= 0) continue; // h=0 的裙边格与基底同高，基底已铺
+            const lift = h * ELEV_STEP_PX;
+            g.save();
+            g.clip(groups.get(h)!);
+            g.translate(0, -lift);
+            g.fillStyle = pat;
+            g.fillRect(0, 0, cv.width, cv.height + lift);
+            g.restore();
+        }
     }
 
     // ── 装饰层（P3 植被 + L3 点缀）：画在尸体层之下，永不遮士兵 ──────────────
@@ -3475,6 +3521,59 @@ export class Scene13WarLayer {
 
     private elevationLiftAt(x: number, y: number): number {
         return this.elevationAt(x, y) * ELEV_STEP_PX;
+    }
+
+    /** 格 (gx,gy) 自身的整数高度抬升量（px）；斑块/地面贴花按格对齐用 */
+    private cellLift(gx: number, gy: number): number {
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gw || !gh) return 0;
+        if (gx < 0 || gy < 0 || gx >= gw || gy >= gh) return 0;
+        return this.elevGrid[gy][gx] * ELEV_STEP_PX;
+    }
+
+    /**
+     * 把高度场转成 DE 那样的真实倾斜四边形（一次性，缓存）。
+     *
+     * elevGrid 的高度采样在**格心**（elevationAt 就是按格心做双线性），所以菱形的四个角落在
+     * 对偶网格的顶点上，顶点高度 = 周围四格的均值 —— 相邻两格共用同一顶点、算出同一个高度，
+     * 因此拼出来的是**连续曲面**，格与格之间不会裂缝，同心台阶也被均值抹成真正的斜坡。
+     *
+     * 只收「四角有任一顶点高于 0」的格：纯平地区域走整屏平铺基底，省掉 ~70% 的裁剪面积。
+     * 按格高分组是为了让贴图能整体上移一次就画完一组（Canvas 2D 没有逐四边形纹理映射，
+     * 逐格 setTransform 会把开场时间拖垮）；组内坡面各角高度仍然各算各的，几何是准的。
+     */
+    private ensureElevQuads(): Map<number, Path2D> | null {
+        if (this.elevQuadsReady) return this.elevQuads;
+        this.elevQuadsReady = true;
+        this.elevQuads = null;
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gw || !gh) return null;
+        const cell = (x: number, y: number): number =>
+            this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
+        // 对偶网格顶点 (vx,vy) 位于格坐标 (vx-0.5, vy-0.5)，由四邻格取均值
+        const vert = (vx: number, vy: number): number =>
+            (cell(vx - 1, vy - 1) + cell(vx, vy - 1) + cell(vx - 1, vy) + cell(vx, vy)) * 0.25;
+
+        const map = new Map<number, Path2D>();
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const vT = vert(x, y), vR = vert(x + 1, y), vB = vert(x + 1, y + 1), vL = vert(x, y + 1);
+                if (vT <= 0 && vR <= 0 && vB <= 0 && vL <= 0) continue;
+                const h = this.elevGrid[y][x];
+                let path = map.get(h);
+                if (!path) { path = new Path2D(); map.set(h, path); }
+                const cx = this.isoCellX(x, y), cy = this.isoCellY(x, y);
+                path.moveTo(cx, cy - TILE_H / 2 - vT * ELEV_STEP_PX);          // 上角
+                path.lineTo(cx + TILE_W / 2, cy - vR * ELEV_STEP_PX);          // 右角
+                path.lineTo(cx, cy + TILE_H / 2 - vB * ELEV_STEP_PX);          // 下角
+                path.lineTo(cx - TILE_W / 2, cy - vL * ELEV_STEP_PX);          // 左角
+                path.closePath();
+            }
+        }
+        this.elevQuads = map.size ? map : null;
+        return this.elevQuads;
     }
 
     /** 建装饰层画布 + 按生成器方案铺贴片/物件（start 调一次，素材 onload 时增量重画） */
@@ -3809,7 +3908,8 @@ export class Scene13WarLayer {
         this.isoGw = plan.grid.gw;
         this.isoGh = plan.grid.gh;
         this.elevGrid = plan.elevation;
-        this.elevCacheReady = false; // 新地形 → 高地光照缓存作废，下一帧重算
+        this.elevCacheReady = false; // 新地形 → 高地光照 / 抬升几何缓存作废，下一帧重算
+        this.elevQuadsReady = false;
         for (const p of plan.terrainPatches) {
             this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur);
         }
@@ -3894,14 +3994,115 @@ export class Scene13WarLayer {
             this.compositeSoftPatch(g, p, cv.width, cv.height);
         }
         const sorted = this.decorSprites.filter((s) => s.layer === 'ground').sort((a, b) => (a.z - b.z) || (a.y - b.y));
-        for (const s of sorted) this.drawDecorSprite(g, s);
+        // 地面贴花（草花/落叶/地毯/道路石板）同样踩在抬升后的地面上
+        for (const s of sorted) this.drawDecorSprite(g, s, s.y - this.elevationLiftAt(s.x, s.y));
         // 丘陵光影最后覆盖所有地面纹理与草花贴花；世界对象和士兵仍在其后绘制。
         this.paintElevation(g);
     }
 
-    /** 高地 2.5D 网格高程呈现：遵循 DE 原版纯净材质，高程由世界对象与脚点 2.5D 抬升自然呈现，不加人工黑白脏色块 */
-    private paintElevation(_g: CanvasRenderingContext2D): void {
-        // DE 原版高程完全依靠网格脚点物理抬升 (elevationLiftAt)，保持地表贴图原生质感
+    /**
+     * DE 式高程光照（Hillshade）。
+     *
+     * AoE2 DE 的地形不再是老 SLP 的斜坡切片，而是 512 无缝贴图 + 引擎按高度场法线实时打光：
+     * 平地（不论海拔高低）一律中性，只有**坡面**才出现明暗——朝光的坡亮、背光的坡暗。
+     * 这里照同一原理做：
+     *   1. 由 elevGrid 取中心差分梯度 ∇h（每格一顶点）；
+     *   2. 光源固定在屏幕左上（DE 同向）；背光方向在等距网格里 ≈ (0.95, 0.32)，
+     *      ∇h·D > 0 = 迎光坡（提亮），< 0 = 背光坡（压暗）；
+     *   3. 明暗值写进 gw×gh 的小图，再用等距仿射矩阵放大到全屏 —— 双线性插值天然给出
+     *      Gouraud 平滑过渡，不会出现逐格菱形硬边（旧版「黑白脏色块」的病根）；
+     *   4. 明暗图刷两遍：multiply 压暗背光面、screen 提亮迎光面，各自对另一侧天然中性 —— 
+     *      线性调光，保留地表贴图的原色与颗粒，绝不糊成灰。
+     *
+     * elevGrid 静态，整套只算一次（elevCacheReady），之后每次 repaintDecor 只 drawImage。
+     */
+    private paintElevation(g: CanvasRenderingContext2D): void {
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gw || !gh) return;
+        const cv = this.decor;
+        if (!cv || !cv.width || !cv.height) return;
+
+        if (!this.elevCv) { this.elevCv = document.createElement('canvas'); this.elevCtx = this.elevCv.getContext('2d')!; }
+        if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
+        const lcv = this.elevCv, lctx = this.elevCtx!;
+        const bcv = this.elevBlurCv, bctx = this.elevBlurCtx!;
+        if (lcv.width !== cv.width || lcv.height !== cv.height) {
+            lcv.width = cv.width; lcv.height = cv.height;
+            bcv.width = cv.width; bcv.height = cv.height;
+            this.elevCacheReady = false;
+        }
+
+        if (!this.elevCacheReady) {
+            // 1. 明暗小图（一格一像素）：黑/白 + alpha，平地 alpha=0（中性）
+            const small = document.createElement('canvas');
+            small.width = gw; small.height = gh;
+            const sctx = small.getContext('2d')!;
+            const id = sctx.createImageData(gw, gh);
+            const px = id.data;
+            const at = (x: number, y: number): number =>
+                this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
+            let any = false;
+            for (let y = 0; y < gh; y++) {
+                for (let x = 0; x < gw; x++) {
+                    // ±2 格宽基线中心差分：把台阶响应摊成整片坡面（窄基线只描发丝线）
+                    const dhx = (at(x + 2, y) - at(x - 2, y)) * 0.25;
+                    const dhy = (at(x, y + 2) - at(x, y - 2)) * 0.25;
+                    const s = dhx * ELEV_LIGHT_DIR_X + dhy * ELEV_LIGHT_DIR_Y;
+                    const m = Math.min(1, Math.abs(s) * ELEV_LIGHT_K);
+                    const i = (y * gw + x) * 4;
+                    const lit = s > 0;
+                    // 迎光=白（screen 通道生效、multiply 通道中性）；背光=黑（反之）
+                    px[i] = px[i + 1] = px[i + 2] = lit ? 255 : 0;
+                    px[i + 3] = Math.round(m * (lit ? ELEV_SHADE_LIGHT : ELEV_SHADE_DARK) * 255);
+                    if (m > 0.01) any = true;
+                }
+            }
+            sctx.putImageData(id, 0, 0);
+
+            lctx.clearRect(0, 0, lcv.width, lcv.height);
+            bctx.clearRect(0, 0, bcv.width, bcv.height);
+            if (any) {
+                // 2. 等距仿射放大：像素 (u,v) → 屏幕；u=i+0.5 对准顶点 i，双线性即 Gouraud
+                const shadePass = (liftPx: number) => {
+                    lctx.imageSmoothingEnabled = true;
+                    lctx.imageSmoothingQuality = 'high';
+                    lctx.setTransform(TILE_W / 2, TILE_H / 2, -TILE_W / 2, TILE_H / 2, this.isoOx, this.isoOy - TILE_H / 2 - liftPx);
+                    lctx.drawImage(small, 0, 0);
+                    lctx.setTransform(1, 0, 0, 1, 0, 0);
+                };
+                shadePass(0);
+                // 抬升区域重画一遍（先在裁剪内清干净，避免与平铺那遍叠加成双倍浓度），
+                // 让明暗与抬升后的坡面严丝合缝。
+                const groups = this.ensureElevQuads();
+                if (groups) {
+                    for (const h of [...groups.keys()].sort((a, b) => a - b)) {
+                        if (h <= 0) continue;
+                        lctx.save();
+                        lctx.clip(groups.get(h)!);
+                        lctx.clearRect(0, 0, lcv.width, lcv.height);
+                        shadePass(h * ELEV_STEP_PX);
+                        lctx.restore();
+                    }
+                }
+                // 3. 轻羽化，抹掉双线性在格边留下的折线（C0 折痕）
+                bctx.save();
+                bctx.filter = `blur(${ELEV_BLUR}px)`;
+                bctx.drawImage(lcv, 0, 0);
+                bctx.restore();
+            }
+            this.elevCacheReady = true;
+        }
+
+        // 4. 同一张明暗图刷两遍：multiply 只吃黑（压暗背光面，白处天然中性），
+        //    screen 只吃白（提亮迎光面，黑处天然中性）。等价于线性调光，不会像
+        //    soft-light 那样把两侧都压进中灰，也不会污染贴图色相。
+        g.save();
+        g.globalCompositeOperation = 'multiply';
+        g.drawImage(bcv, 0, 0);
+        g.globalCompositeOperation = 'screen';
+        g.drawImage(bcv, 0, 0);
+        g.restore();
     }
 
     /** DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以 DE 官方 30° 2:1 流速平铺流动水波与波光反射 */
@@ -3923,7 +4124,8 @@ export class Scene13WarLayer {
                 ctx.closePath();
             } else {
                 for (const [gx, gy] of p.cells) {
-                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                    // 水面高程恒为 0（生成器强制），这里带上 cellLift 只为与地面口径单源一致
+                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
                     ctx.moveTo(sx, sy - TILE_H / 2);
                     ctx.lineTo(sx + TILE_W / 2, sy);
                     ctx.lineTo(sx, sy + TILE_H / 2);
@@ -4077,7 +4279,7 @@ export class Scene13WarLayer {
             }
         } else {
             for (const [gx, gy] of p.cells) {
-                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy);
+                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
                 if (sx - TILE_W / 2 < minX) minX = sx - TILE_W / 2;
                 if (sy - TILE_H / 2 < minY) minY = sy - TILE_H / 2;
                 if (sx + TILE_W / 2 > maxX) maxX = sx + TILE_W / 2;
@@ -4108,7 +4310,8 @@ export class Scene13WarLayer {
         } else {
             // 🔴 地表变体与落叶使用有机圆形平滑叠加，边缘无棱角
             for (const [gx, gy] of p.cells) {
-                const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - by;
+                // 斑块必须跟着地面一起抬升，否则高地上的草/土斑会浮在坡面下方错位
+                const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - by;
                 mctx.beginPath();
                 mctx.ellipse(sx, sy, TILE_W * 0.60, TILE_H * 0.65, 0, 0, Math.PI * 2);
                 mctx.fill();
