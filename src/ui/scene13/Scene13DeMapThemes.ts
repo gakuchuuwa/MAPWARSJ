@@ -42,7 +42,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材科学审查] 原 baseTerrain='des'（沙漠沙）+ groundTiles 混 qs/pal/ds2/ds3
         //    （石英沙/棕榈沙/沙漠土）——非洲热带雨林（刚果盆地）是深色腐殖土密林，不是沙地（张冠李戴）。
         baseTerrain: 'fo2',
-        groundTiles: ['fo2', 'gr3', 'gr7'],
+        groundTiles: ['fo2', 'gr3', 'gr7', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
         // [2026-08-21 分类修正] 非洲热带雨林用雨林/丛林树；DRAGON_TREE（龙血树）是也门/索科特拉岩岛树，非非洲雨林
         trees: ['JUNGLE', 'RAINFOREST'],
@@ -56,7 +56,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         id: 'neotropical_temperate',
         // 🔴 [2026-08-23 清账] grs(带13%花)→gr2(纯绿草)
         baseTerrain: 'gr2',
-        groundTiles: ['gr6', 'gr7', 'gr8', 'for', 'gr9'],
+        groundTiles: ['gr7', 'gr8', 'for', 'gr9'], // 移除 gr6(丛林草)——南美温带(巴塔哥尼亚)无丛林草
         forestFloorTiles: ['for', 'ds3'],
         trees: ['MONKEY_PUZZLE'],
         flatDecor: ['WEED', 'FLOWER', 'SHRUB_GREEN'],
@@ -69,7 +69,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         id: 'neotropical_tropical',
         // 🔴 [2026-08-23 清账] gr6(丛林草)→fo2(雨林林底)，与非洲雨林一致
         baseTerrain: 'fo2',
-        groundTiles: ['fo2', 'gr7', 'gr3', 'for'],
+        groundTiles: ['fo2', 'gr7', 'gr3', 'for', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
         trees: ['JUNGLE', 'RAINFOREST'],
         // 🔴 [2026-08-21 素材科学审查] 原 flat=WEED/FLOWER/SHRUB_GREEN（温带通用装饰）——亚马逊雨林
@@ -98,7 +98,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-22 主人定] 岭南/华南/东南亚亚热带常绿雨林水乡：纯正深绿湿润黑土与茂密草绿，彻底去除干黄草(grs)
         // 🔴 [2026-08-23 清账] gr7(实测99%枯黄)→fo2(雨林林底深绿)
         baseTerrain: 'fo2',
-        groundTiles: ['gr2', 'gr7', 'gr9', 'fo2'],
+        groundTiles: ['gr2', 'gr7', 'gr9', 'fo2', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['fo2', 'for', 'underbrush_leaves'],
         trees: ['BAMBOO', 'LUSH_BAMBOO', 'RAINFOREST'],
         // 🔴 [2026-08-21 素材科学审查] 原 flat=SHRUB_GREEN/BUSH_GREEN/WEED（温带通用）——东南亚雨林/竹丛
@@ -210,7 +210,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-23 清账] gr7(枯黄)→gr2(纯绿草)，澳洲东南湿润森林
         baseTerrain: 'gr2',
         // 🔴 [2026-08-21 素材科学审查] 去 ds3/ds5（干旱土）——澳洲东南（悉尼/墨尔本）是湿润温带森林
-        groundTiles: ['gr4', 'gr7', 'for', 'gr6', 'gr9'],
+        groundTiles: ['gr4', 'gr7', 'for', 'gr9'], // 移除 gr6(丛林草)——澳洲东南温带森林无丛林草
         forestFloorTiles: ['for', 'underbrush_leaves'],
         // [2026-08-21 主人定「能套用就套用」] 原 BIRCH（桦树=北半球树，澳洲无）→ WAX_PALM（澳洲热带/亚热带棕榈，DE 无澳洲专属树，取最接近）
         trees: ['WAX_PALM'],
@@ -437,6 +437,24 @@ export function resolveDeMapTheme(
     return DE_MAP_THEMES.palaearctic_europe_temperate;
 }
 
+/**
+ * 🔴 [2026-08-23 主人定] 攻城战草地→泥地/牧场：
+ *   攻城=军队践踏城前草地成裸土；草原(cold_steppe 蒙古游牧)据点=放牧草场。
+ *   按战场地理位置(biome)判定，不按势力文化——草原军团打到北京=北京是温带→泥地（北京又不是草原）。
+ */
+function siegeGround(tile: string, biome: Biome, isSiege: boolean): string {
+    if (!isSiege) return tile;
+    // 🔴 沙漠攻城：城前踩实黄土（泥土1 des）——主人定「沙漠攻城用泥土1」
+    if (biome === 'desert') return 'des';
+    // 草原(cold_steppe)攻城：放牧草场
+    if (biome === 'cold_steppe') return tile === 'gr2' ? 'pm1' : tile === 'gr7' ? 'pc2' : tile;
+    // 其他攻城：草地/湿地践踏成泥地（绿草→泥地3、枯草→泥地4、沼泽泥→泥污gr4）
+    if (tile === 'gr2') return 'ds3';
+    if (tile === 'gr7') return 'ds4';
+    if (tile === 'qs2') return 'gr4'; // 湿地攻城：沼泽泥踩实成泥污
+    return tile;
+}
+
 export function terrainForTheme(
     theme: DeMapThemePalette,
     biome: Biome,
@@ -478,7 +496,7 @@ export function terrainForTheme(
             biome === 'savanna' ||
             biome === 'temperate_grass' ||
             biome === 'temperate_forest';
-        return wetAlpine ? 'gr2' : 'gr7';
+        return siegeGround(wetAlpine ? 'gr2' : 'gr7', biome, isSiege);
     }
 
     // 4. 中山地带（1000m - 2500m）
@@ -494,12 +512,12 @@ export function terrainForTheme(
             case 'tropical_rainforest': return 'fo2';      // 雨林林底（深色腐殖土）
             case 'temperate_forest':    return 'for';      // 落叶林底（褐土）
             case 'boreal':              return 'underbrush_leaves'; // 针叶落叶层
-            case 'temperate_grass':     return 'gr2';      // 绿草
+            case 'temperate_grass':     return siegeGround('gr2', biome, isSiege);      // 绿草
             case 'savanna':             return 'gr5';      // 萨凡纳土
-            case 'cold_steppe':         return 'gr7';      // 枯草（蒙古黄土）
-            case 'desert':              return 'ds5';      // 沙漠砾石
-            case 'mediterranean':       return 'gr7';      // 枯草（夏旱）
-            case 'tundra_snow':         return 'gr7';      // 枯草（高寒）
+            case 'cold_steppe':         return siegeGround('gr7', biome, isSiege);      // 枯草（蒙古黄土）→牧场
+            case 'desert':              return siegeGround('ds5', biome, isSiege);      // 沙漠砾石→攻城泥土1
+            case 'mediterranean':       return siegeGround('gr7', biome, isSiege);      // 枯草（夏旱）
+            case 'tundra_snow':         return siegeGround('gr7', biome, isSiege);      // 枯草（高寒）
             default:                    return theme.baseTerrain;
         }
     }
@@ -516,11 +534,11 @@ export function terrainForTheme(
             case 'temperate_forest':    return 'for';      // 丘陵阔叶林底
             case 'boreal':              return 'underbrush_leaves'; // 丘陵针叶落叶层
             case 'savanna':             return 'gr5';      // 稀树草原土
-            case 'temperate_grass':     return 'gr2';      // 绿草
-            case 'cold_steppe':         return 'gr7';      // 枯草
-            case 'desert':              return 'pal';      // 干沙（低海拔沙丘）
-            case 'mediterranean':       return 'gr7';      // 枯草（夏旱）
-            case 'tundra_snow':         return 'gr7';      // 枯草（高寒）
+            case 'temperate_grass':     return siegeGround('gr2', biome, isSiege);      // 绿草
+            case 'cold_steppe':         return siegeGround('gr7', biome, isSiege);      // 枯草→牧场
+            case 'desert':              return siegeGround('pal', biome, isSiege);      // 干沙（低海拔沙丘）→攻城泥土1
+            case 'mediterranean':       return siegeGround('gr7', biome, isSiege);      // 枯草（夏旱）
+            case 'tundra_snow':         return siegeGround('gr7', biome, isSiege);      // 枯草（高寒）
             default:                    return theme.baseTerrain;
         }
     }
@@ -536,7 +554,7 @@ export function terrainForTheme(
     }
 
     // 6. 基础地表
-    return theme.baseTerrain;
+    return siegeGround(theme.baseTerrain, biome, isSiege);
 }
 
 export function treesForTheme(
@@ -566,6 +584,11 @@ export function groundTilesForTheme(
         }
         // 野战：纯正大自然雪原组合（深雪 sno + 浅雪 sn2 + 林雪 snf + 冰面 ice）
         return ['sno', 'sn2', 'snf', 'ice'];
+    }
+    // 🔴 [2026-08-23 主人定] 攻城战地面变体=泥地/牧场（野战才用草地变体），彻底分清楚
+    if (isSiege) {
+        if (biome === 'cold_steppe') return ['pm1', 'pc1', 'pc2', 'pc3', 'pm2']; // 草原：牧场变体
+        return ['des', 'ds2', 'ds3', 'ds4', 'gr4', 'gr5']; // 沙漠/其他：泥地变体
     }
     return theme.groundTiles;
 }
