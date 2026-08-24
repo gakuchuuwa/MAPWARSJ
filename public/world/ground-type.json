@@ -1,0 +1,189 @@
+{
+ "note": "全球地面类型图。WorldClim v2.1 10arc-min，CC BY 4.0。像素值 = 类型编号，见 types；经纬度 → 像素：x=(lng+180)/360*2160, y=(90-lat)/180*1080",
+ "width": 2160,
+ "height": 1080,
+ "types": [
+  {
+   "code": 0,
+   "key": "ocean",
+   "label": "海洋/无数据",
+   "rgb": [
+    20,
+    60,
+    110
+   ]
+  },
+  {
+   "code": 1,
+   "key": "green_grass",
+   "label": "绿草地",
+   "rgb": [
+    96,
+    150,
+    60
+   ]
+  },
+  {
+   "code": 2,
+   "key": "dry_steppe",
+   "label": "黄草原",
+   "rgb": [
+    190,
+    175,
+    95
+   ]
+  },
+  {
+   "code": 3,
+   "key": "desert",
+   "label": "沙漠",
+   "rgb": [
+    225,
+    195,
+    130
+   ]
+  },
+  {
+   "code": 4,
+   "key": "bare_earth",
+   "label": "黄土裸土",
+   "rgb": [
+    170,
+    130,
+    80
+   ]
+  },
+  {
+   "code": 5,
+   "key": "rainforest",
+   "label": "雨林地面",
+   "rgb": [
+    40,
+    105,
+    45
+   ]
+  },
+  {
+   "code": 6,
+   "key": "taiga",
+   "label": "针叶林地面",
+   "rgb": [
+    80,
+    110,
+    85
+   ]
+  },
+  {
+   "code": 7,
+   "key": "highland",
+   "label": "高原砾石",
+   "rgb": [
+    150,
+    145,
+    135
+   ]
+  },
+  {
+   "code": 8,
+   "key": "snow",
+   "label": "雪原",
+   "rgb": [
+    240,
+    245,
+    250
+   ]
+  },
+  {
+   "code": 9,
+   "key": "ice",
+   "label": "冰原",
+   "rgb": [
+    200,
+    225,
+    240
+   ]
+  },
+  {
+   "code": 10,
+   "key": "marsh",
+   "label": "沼泽",
+   "rgb": [
+    95,
+    120,
+    90
+   ]
+  }
+ ],
+ "stats": [
+  {
+   "code": 1,
+   "key": "green_grass",
+   "label": "绿草地",
+   "cells": 156182,
+   "pct": 19.33
+  },
+  {
+   "code": 2,
+   "key": "dry_steppe",
+   "label": "黄草原",
+   "cells": 140515,
+   "pct": 17.39
+  },
+  {
+   "code": 3,
+   "key": "desert",
+   "label": "沙漠",
+   "cells": 107895,
+   "pct": 13.35
+  },
+  {
+   "code": 4,
+   "key": "bare_earth",
+   "label": "黄土裸土",
+   "cells": 15347,
+   "pct": 1.9
+  },
+  {
+   "code": 5,
+   "key": "rainforest",
+   "label": "雨林地面",
+   "cells": 37542,
+   "pct": 4.65
+  },
+  {
+   "code": 6,
+   "key": "taiga",
+   "label": "针叶林地面",
+   "cells": 63573,
+   "pct": 7.87
+  },
+  {
+   "code": 7,
+   "key": "highland",
+   "label": "高原砾石",
+   "cells": 10209,
+   "pct": 1.26
+  },
+  {
+   "code": 8,
+   "key": "snow",
+   "label": "雪原",
+   "cells": 274782,
+   "pct": 34.01
+  },
+  {
+   "code": 9,
+   "key": "ice",
+   "label": "冰原",
+   "cells": 0,
+   "pct": 0.0
+  },
+  {
+   "code": 10,
+   "key": "marsh",
+   "label": "沼泽",
+   "cells": 2008,
+   "pct": 0.25
+  }
+ ]
+}
