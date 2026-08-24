@@ -553,6 +553,12 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             }
         } else if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
+        } else if (waterKind === 'lake') {
+            // 内陆湖 / 绿洲水塘。攻防战也出——水塘只占战场一角，不像江河那样横切战场。
+            const corridor = (x: number, y: number): boolean =>
+                x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
+            isWater = buildLake(gw, gh, ox, oy, VW, VH, rng, patches, occupied,
+                                theme!, season, input.lat ?? 35, elev, biome, corridor);
         }
 
         // 水面保持零高程：严禁高程光影或突起切进水面（保持 100% 平坦如砥）
@@ -1017,6 +1023,105 @@ function buildRiver(
         }
         return false;
     };
+}
+
+// ── 第 3 层：内陆湖 / 绿洲水塘 ────────────────────────────────
+//
+// 🔴 [2026-08-24 补] 此前 waterKind 有 'lake' 这个值、probeWater 会返回它、
+//    resolveBattleTopology 也按它分支（swamp_marsh / steppe_oasis），
+//    但**没有任何代码生成湖** —— 所有判定为「湖」的战场实际一滴水都没有。
+//
+// 形态照 DE 的绿洲/水塘：不规则卵形水面 + 一圈浅水 + 一圈沙滩，边缘柔和。
+// 位置避开军团走廊（水会挡路，13 的编队不会绕行）。
+function buildLake(
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2,
+    lat: number,
+    elev: number | null,
+    biome: Biome,
+    inCorridor: (x: number, y: number) => boolean,
+): WaterChecker {
+    // 1~2 个水塘。DE 的绿洲通常是一大一小，不是一个正圆
+    const count = rng.chance(0.35) ? 2 : 1;
+    interface Pond { cx: number; cy: number; rx: number; ry: number; rot: number; wob: number[] }
+    const ponds: Pond[] = [];
+
+    for (let i = 0; i < count; i++) {
+        let cx = 0, cy = 0, ok = false;
+        const rx = (i === 0 ? 150 : 95) + rng.next() * 60;
+        const ry = rx * (0.52 + rng.next() * 0.18);        // 等距压扁
+        for (let a = 0; a < 60; a++) {
+            const px = VW * (0.10 + rng.next() * 0.80);
+            const py = VH * (0.12 + rng.next() * 0.76);
+            // 塘心与整圈边缘都要在走廊外，否则水会横在两军之间
+            if (inCorridor(px, py)) continue;
+            if (inCorridor(px - rx, py) || inCorridor(px + rx, py)) continue;
+            if (inCorridor(px, py - ry) || inCorridor(px, py + ry)) continue;
+            cx = px; cy = py; ok = true; break;
+        }
+        if (!ok) continue;
+        // 边缘扰动：8 个方向上的半径倍率，卵形而非正椭圆
+        const wob: number[] = [];
+        for (let k = 0; k < 8; k++) wob.push(0.82 + rng.next() * 0.36);
+        ponds.push({ cx, cy, rx, ry, rot: rng.next() * Math.PI, wob });
+    }
+    if (ponds.length === 0) return () => false;
+
+    /** 归一化距离：<1 在水里，1~SHORE 浅水，SHORE~BEACH 沙滩 */
+    const SHORE = 1.16, BEACH = 1.34;
+    const distOf = (px: number, py: number): number => {
+        let best = 999;
+        for (const p of ponds) {
+            const dx = px - p.cx, dy = py - p.cy;
+            const c = Math.cos(p.rot), sn = Math.sin(p.rot);
+            const ux = (dx * c - dy * sn) / p.rx;
+            const uy = (dx * sn + dy * c) / p.ry;
+            const ang = Math.atan2(uy, ux);
+            const seg = ((ang + Math.PI) / (Math.PI * 2)) * 8;
+            const i0 = Math.floor(seg) % 8, i1 = (i0 + 1) % 8, t = seg - Math.floor(seg);
+            const wob = p.wob[i0] * (1 - t) + p.wob[i1] * t;
+            const d = Math.hypot(ux, uy) / wob;
+            if (d < best) best = d;
+        }
+        return best;
+    };
+
+    const deep: Array<[number, number]> = [];
+    const shallow: Array<[number, number]> = [];
+    const sand: Array<[number, number]> = [];
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const d = distOf(isoCellX(gx, gy, ox), isoCellY(gx, gy, oy));
+            if (d < 1) deep.push([gx, gy]);
+            else if (d < SHORE) shallow.push([gx, gy]);
+            else if (d < BEACH) sand.push([gx, gy]);
+        }
+    }
+    for (const [x, y] of [...deep, ...shallow, ...sand]) occupied.add(x + ',' + y);
+
+    const waterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
+    const beachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    // 由外向内：沙滩 → 浅水 → 深水，与 DE 的 草→滩→浅→深 同序
+    if (sand.length > 0) {
+        patches.push({ tile: beachTile, cells: sand, alpha: 0.85, category: 'shore', blur: 14 });
+    }
+    if (shallow.length > 0) {
+        patches.push({ tile: waterTile, cells: shallow, alpha: 0.52, category: 'shore', blur: 12 });
+    }
+    if (deep.length > 0) {
+        patches.push({ tile: waterTile, cells: deep, alpha: 0.96, category: 'shore', blur: 8 });
+    }
+
+    return (px: number, py: number): boolean => distOf(px, py) < SHORE;
 }
 
 // ── 第 3 层：横向帝国行军大道（东西水平贯通，平坦开阔，0 阻挡） ──
