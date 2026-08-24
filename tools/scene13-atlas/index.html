@@ -55,20 +55,21 @@
 </head>
 <body>
 <header>
-  <h1>ZOOM 13 战术模式 · 背景图总览</h1>
+  <h1>ZOOM 13 战术模式 · 战场底图总览（按真实城池）</h1>
   <div class="bar">
-    <div class="grp"><b>季节</b><select id="season"><option value="all">全部</option><option value="0">春夏</option><option value="1">秋</option><option value="2">冬</option></select></div>
-    <div class="grp"><b>海拔</b><select id="band"><option value="all">全部</option><option value="lowland">低地</option><option value="upland">丘陵</option><option value="mountain">高原</option><option value="alpine">雪线</option></select></div>
-    <div class="grp"><b>水体</b><select id="water"><option value="none">无</option><option value="all">全部</option><option value="sea">海岸</option><option value="lake">湖</option><option value="river">河</option></select></div>
-    <div class="grp"><b>战斗</b><select id="siege"><option value="field">野战</option><option value="siege">攻防战</option><option value="all">两者</option></select></div>
+    <div class="grp"><b>季节</b><select id="season"><option value="0">春夏</option><option value="1">秋</option><option value="2">冬</option></select></div>
+    <div class="grp"><b>战斗</b><select id="siege"><option value="siege" selected>攻防战</option><option value="field">野战</option><option value="all">两者</option></select></div>
+    <div class="grp"><b>文化区</b><select id="region"><option value="all">全部</option></select></div>
+    <div class="grp"><b>层级</b><select id="tier"><option value="all">全部</option><option value="0">大城</option><option value="1">中城</option><option value="2">关隘</option><option value="4">周边</option></select></div>
+    <div class="grp"><b>张数</b><select id="limit"><option value="24" selected>24</option><option value="60">60</option><option value="150">150</option><option value="0">全部</option></select></div>
     <div class="grp"><b>尺寸</b><select id="size"><option value="960">960×518</option><option value="1280" selected>1280×691</option><option value="1600">1600×864</option><option value="2000">2000×1080（实机）</option></select></div>
     <div class="grp"><b>每行</b><select id="cols"><option value="1">1 张（最大）</option><option value="2" selected>2 张</option><option value="3">3 张</option><option value="4">4 张</option><option value="auto">自动铺满</option></select></div>
     <button id="run">重新生成</button>
     <button id="reseed">换随机种子</button>
     <span class="sep"></span>
     <span id="delstat" class="dim"></span>
-    <button id="undel" title="把删掉的组合全部放回来">恢复全部</button>
-    <button id="export" title="导出已删组合清单 JSON">导出清单</button>
+    <button id="undel" title="把标记过的据点全部放回来">恢复全部</button>
+    <button id="export" title="导出已标记据点清单 JSON">导出清单</button>
     <span id="stat"></span>
   </div>
 </header>

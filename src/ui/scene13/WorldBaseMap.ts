@@ -1,10 +1,16 @@
 /**
  * 世界底图查找表：任意经纬度 → 这一战用哪张地面贴图。
  *
- * 数据来自 public/world/world-base.png（2160×1080 RGBA，194 KB），由
+ * 数据来自 public/world/world-base.png（2160×1080 RGB，167 KB），由
  * tools/build-world-base-map.py 按真实气候数据离线烘出来：
- *   R = 攻城战底图（非冬季）   G = 攻城战底图（冬季）
- *   B = 野战底图（非冬季）     A = 野战底图（冬季）
+ *   R = 攻城战底图编号（非冬季）
+ *   G = 野战底图编号（非冬季）
+ *   B = 冬季状态标志：0=冬天不积雪  1=雪地  2=深雪  3=雪林地
+ *
+ * 🔴 数据绝不能放 alpha 通道！canvas 的 getImageData 会做 **alpha 预乘**——
+ *    alpha 值只有 1~24 时 RGB 会被乘以 alpha/255 直接毁掉，查出来全是 0。
+ *    （踩过：atlas 里长安查出 pm1 牧场而不是 ds3，就是这么来的。）
+ *    所以冬季底图由 B 通道的标志**推导**，不单独存一层。
  *
  * 判据与分配的完整说明见 docs/02-design/climate-regions.md。三条要点：
  *   1. 底图只能是纯地表材质——森林是树的组合（第二层），不做底图；
@@ -104,8 +110,6 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
 
     // 城常建在河口/海岸，正中那一格可能落在海面（无数据）。
     // 向外找最近的有效格，最多 4 圈（≈70km），再远就不是采样误差了。
-    const chan = q.isSiege ? (q.isWinter ? 1 : 0) : (q.isWinter ? 3 : 2);
-    const table = q.isSiege ? SIEGE_TILES : FIELD_TILES;
     for (let r = 0; r <= 4; r++) {
         for (let dy = -r; dy <= r; dy++) {
             for (let dx = -r; dx <= r; dx++) {
@@ -113,8 +117,23 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
                 const y = y0 + dy;
                 if (y < 0 || y >= H) continue;
                 const x = ((x0 + dx) % W + W) % W;
-                const code = pixels[(y * W + x) * 4 + chan];
-                if (code !== 0) return table[code] ?? null;
+                const i = (y * W + x) * 4;
+                const siegeCode = pixels[i];
+                const fieldCode = pixels[i + 1];
+                const winterFlag = pixels[i + 2];
+                if (siegeCode === 0 && fieldCode === 0) continue;   // 海面，继续往外找
+
+                if (q.isSiege) {
+                    // 冬季长期积雪 → 城郊是踩实的雪地地基
+                    if (q.isWinter && winterFlag > 0) return SIEGE_TILES[7] ?? null;
+                    return SIEGE_TILES[siegeCode] ?? null;
+                }
+                if (q.isWinter && winterFlag > 0) {
+                    // 3=雪林地（林区）  2=深雪（极寒/终年冰冻）  1=雪地
+                    const code = winterFlag === 3 ? 23 : winterFlag === 2 ? 22 : 21;
+                    return FIELD_TILES[code] ?? null;
+                }
+                return FIELD_TILES[fieldCode] ?? null;
             }
         }
     }
