@@ -39,8 +39,10 @@ export interface DeMapThemePalette {
 export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = {
     afrotropical_tropical: {
         id: 'afrotropical_tropical',
-        // 🔴 [2026-08-21 素材科学审查] 非洲热带雨林深色腐殖土密林
-        baseTerrain: 'fo2',
+        // 🔴 [2026-08-24 主人定·分层原则] 底图只能是纯地表材质。
+        //    森林是**树的组合**（第二层），不是一种地面——原来这里用 fo2(Rainforest)
+        //    当底图，等于把「森林地形」当开阔地铺满全场。
+        baseTerrain: 'gr6',
         groundTiles: ['fo2', 'gr3', 'gr7', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
         // [2026-08-21 分类修正] 非洲热带雨林用雨林/丛林树；DRAGON_TREE（龙血树）是也门/索科特拉岩岛树，非非洲雨林
@@ -66,8 +68,9 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     neotropical_tropical: {
         id: 'neotropical_tropical',
-        // 🔴 [2026-08-23 清账] gr6(丛林草)→fo2(雨林林底深绿)，与非洲雨林一致
-        baseTerrain: 'fo2',
+        // 🔴 [2026-08-24 主人定·分层原则] 改回 gr6(丛林草)。
+        //    fo2 是 DE 的 Rainforest **森林地形**，属第二层（树的组合），不能当底图。
+        baseTerrain: 'gr6',
         groundTiles: ['fo2', 'gr7', 'gr3', 'for', 'gr6'], // gr6=Grass,Jungle 丛林草归位雨林
         forestFloorTiles: ['for', 'fo2'],
         trees: ['JUNGLE', 'RAINFOREST'],
@@ -492,6 +495,17 @@ function siegeGround(tile: string, biome: Biome, theme: DeMapThemePalette, isSie
     return siegeSoil(theme, biome).base;
 }
 
+/**
+ * 🔴 [2026-08-24 主人定·分层原则] **底图只能是纯地表材质**。
+ *
+ *   第一层（底图）= 草 / 土 / 沙 / 砾石 / 牧场 / 农田 / 路 / 雪 / 冰 / 水
+ *   第二层（组合）= 树 / 花草 / 灌木 —— **森林就是树的组合，不是一种地面**
+ *
+ * 禁止把 for(Underbrush 灌木丛)、fo2(Rainforest)、underbrush_leaves(落叶层)、
+ * snf(Snow Forest) 这些**森林地形**贴图当底图返回。
+ * 它们在 DE 里是不可通行的树林，铺满全场等于整张图都是林子。
+ * 曾经 6 个主题的底图就是这么选出来的（见 git history）。
+ */
 export function terrainForTheme(
     theme: DeMapThemePalette,
     biome: Biome,
@@ -547,9 +561,9 @@ export function terrainForTheme(
             return isSiege ? 'snd' : 'sno';
         }
         switch (biome) {
-            case 'tropical_rainforest': return 'fo2';      // 雨林林底（深色腐殖土）
-            case 'temperate_forest':    return 'for';      // 落叶林底（褐土）
-            case 'boreal':              return 'underbrush_leaves'; // 针叶落叶层
+            case 'tropical_rainforest': return 'gr6';      // 丛林草（Jungle Grass）
+            case 'temperate_forest':    return 'gr3';      // 温带草地
+            case 'boreal':              return 'gr7';      // 寒温带干草
             case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege);      // 绿草
             case 'savanna':             return 'gr5';      // 萨凡纳土
             case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草（蒙古黄土）→牧场
@@ -568,9 +582,9 @@ export function terrainForTheme(
             return isSiege ? 'snd' : 'sno';
         }
         switch (biome) {
-            case 'tropical_rainforest': return 'fo2';      // 低山雨林林底
-            case 'temperate_forest':    return 'for';      // 丘陵阔叶林底
-            case 'boreal':              return 'underbrush_leaves'; // 丘陵针叶落叶层
+            case 'tropical_rainforest': return 'gr6';      // 低山丛林草
+            case 'temperate_forest':    return 'gr3';      // 丘陵温带草地
+            case 'boreal':              return 'gr7';      // 丘陵寒温带干草
             case 'savanna':             return 'gr5';      // 稀树草原土
             case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege);      // 绿草
             case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草→牧场

@@ -102,6 +102,10 @@ function startScene13War(
     const defenderCityType: CityType | null = battleType === 'siege'
         ? (defender.getEntity?.()?.type as CityType | undefined) ?? null
         : null;
+    // [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）
+    const defenderCityId: string | null = battleType === 'siege'
+        ? (defender.getEntity?.()?.id as string | undefined) ?? null
+        : null;
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
@@ -124,6 +128,8 @@ function startScene13War(
         battleType,
         // [2026-08-22] 攻城战守方城等级（决定守城建筑池时代）
         defenderCityType,
+        // [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观 → 守方城中央立奇观地标）
+        defenderCityId,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
