@@ -1,4 +1,5 @@
 import type { Biome, ElevationBand } from '../Scene13Biome';
+import { queryWinterSnow } from './WorldBaseMap';
 
 export type DeMapThemeId =
     | 'afrotropical_tropical'
@@ -315,7 +316,27 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
 };
 
 
-export function isSnowArea(lat: number, elev: number | null, biome: Biome): boolean {
+/**
+ * 这里冬天积不积雪。
+ *
+ * 🔴 [2026-08-24] **有经度就查真实气候数据**（world-base 的冬季标志，来自 WorldClim 实测气温），
+ *    和底图同源，一处真相。
+ *
+ *    旧的纯纬度估算对「温带中高纬」一律返回 true，于是**罗得岛、克里特岛(诺索斯)、
+ *    底比斯这些爱琴海城冬天结了冰**——地中海从不结冰，是硬伤。
+ *    那套估算只在拿不到经度（单测/兜底）时才用。
+ */
+export function isSnowArea(
+    lat: number,
+    elev: number | null,
+    biome: Biome,
+    lng?: number,
+): boolean {
+    if (lng !== undefined) {
+        const flag = queryWinterSnow(lat, lng);
+        if (flag !== null) return flag > 0;
+    }
+    // ── 以下是拿不到气候数据时的兜底估算，不要拿它当判据本身 ──
     if (elev !== null && elev >= (4800 - Math.abs(lat) * 63)) return true; // 高海拔终年雪线
     if (biome === 'tundra_snow' || biome === 'boreal') return true;
     // 低纬度热带/亚热带/沙漠：绝不下雪（如越南/岭南/华南低地/东南亚/中东低地）
@@ -514,6 +535,7 @@ export function terrainForTheme(
     lat: number = 35,
     elev: number | null = null,
     isSiege: boolean = false,
+    lng?: number,
 ): string {
     // 1. 终年积雪雪峰 / 冰川（>4800m 或达到极高纬度真实雪线）
     // 🔴 [2026-08-23 第6层冰雪地带 9 块定稿] 雪线以上地表全是雪（真实世界）：
@@ -540,7 +562,7 @@ export function terrainForTheme(
     //    湿润带 → gr2 纯绿草（赤道 páramo/东非 afro-alpine/湿润温带草原/阿尔卑斯落基山）；
     //    干旱带 → gr7 纯枯草（帕米尔荒漠/地中海夏旱/蒙古半干旱/针叶林树线/高寒苔原）。
     if (elevationBand === 'alpine') {
-        if (season === 2 && isSnowArea(lat, elev, biome)) {
+        if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
             return isSiege ? 'snd' : 'sno';
         }
         const wetAlpine =
@@ -557,7 +579,7 @@ export function terrainForTheme(
     //    草原带：温带草原 gr2 / 稀树草原 gr5 / 冷草原 gr7；
     //    荒漠带：沙漠 ds5 / 地中海 gr7 / 苔原 gr7。
     if (elevationBand === 'mountain') {
-        if (season === 2 && isSnowArea(lat, elev, biome)) {
+        if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
             return isSiege ? 'snd' : 'sno';
         }
         switch (biome) {
@@ -578,7 +600,7 @@ export function terrainForTheme(
     // 🔴 [2026-08-23 第2层丘陵高地 9 块定稿·真实地貌] 丘陵/山麓/台地（农牧过渡带）：
     //    森林带同中山（林底图）；草原带同中山；沙漠 biome 用 pal 干沙（低海拔=沙丘，非砾石戈壁）。
     if (elevationBand === 'upland') {
-        if (season === 2 && isSnowArea(lat, elev, biome)) {
+        if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
             return isSiege ? 'snd' : 'sno';
         }
         switch (biome) {
@@ -598,7 +620,7 @@ export function terrainForTheme(
     // 5. 🔴 [2026-08-22 主人定] 冬季降雪地表：
     //    - 攻防战（isSiege）：城郭周围车马践踏，踩实成雪地基 snd（不是雪灌木 snf）；
     //    - 野战（野战遭遇战）：野外茫茫雪原，全量保留 DE 纯正大自然白雪深雪 (sno / sn2)。
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         if (isSiege) {
             return 'snd'; // 🔴 [2026-08-23 主人改] 攻城战=雪地基 snd（Snow Foundation 踩实雪），不是 snf 雪灌木
         }
@@ -619,11 +641,12 @@ export function treesForTheme(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    lng?: number,
 ): readonly string[] {
     // 🔴 [2026-08-23 按现实修复] 树线以上无乔木：高山/高寒/冰雪带（alpine/high_alpine/snow）→ 只枯树点缀。
     //    青藏高原 3500m+ 高寒草甸/荒漠、阿尔卑斯/喜马拉雅树线上——真实世界乔木极少/无，绝不给松树/枫树做森林。
     if (elevationBand === 'snow' || elevationBand === 'high_alpine' || elevationBand === 'alpine') return ['DEAD_TREE'];
-    if (season === 2 && isSnowArea(lat, elev, biome) && theme.winterTrees?.length) return theme.winterTrees;
+    if (season === 2 && isSnowArea(lat, elev, biome, lng) && theme.winterTrees?.length) return theme.winterTrees;
     if (season === 1 && theme.autumnTrees?.length) return theme.autumnTrees;
     return theme.trees;
 }
@@ -635,8 +658,9 @@ export function groundTilesForTheme(
     lat: number = 35,
     elev: number | null = null,
     isSiege: boolean = false,
+    lng?: number,
 ): readonly string[] {
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         if (isSiege) {
             // 🔴 [2026-08-23 主人改] 攻城战=雪地基 snd 为主 + 浅雪 sn2 + 雪灌木 snf（纯雪系；去掉 gr4 污泥/pm1 牧场/ds5 沙漠砾石这些非雪素材）
             return ['snd', 'sn2', 'snf'];
@@ -657,8 +681,9 @@ export function forestFloorTilesForTheme(
     season: 0 | 1 | 2,
     lat: number = 35,
     elev: number | null = null,
+    lng?: number,
 ): readonly string[] {
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         return ['snf', 'sno'];
     }
     return theme.forestFloorTiles;
@@ -670,8 +695,9 @@ export function decorForTheme(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    lng?: number,
 ): { flat: readonly string[]; solid: readonly string[] } {
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         return {
             flat: ['SHRUB_GREEN', 'DECAL_ICE'],
             solid: ['ROCK1', 'ROCK2', 'DECAL_ICE'],
@@ -711,9 +737,10 @@ export function waterTerrainForTheme(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    lng?: number,
 ): string {
     // 1. 冬季雪区 / 苔原：结冰
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         return biome === 'tundra_snow' ? 'ic2' : 'wt2'; // 极地冻原湖冬季结冰=可航冰 ic2 / 一般冬季寒冰水 wt2
     }
     if (biome === 'tundra_snow') {
@@ -769,8 +796,9 @@ export function beachTerrainForTheme(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    lng?: number,
 ): string {
-    if (season === 2 && isSnowArea(lat, elev, biome)) {
+    if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         return 'ice_beach'; // 冬季结冰覆雪海滩
     }
     // 沙漠/黄土带使用干黄细沙

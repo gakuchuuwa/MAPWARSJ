@@ -140,6 +140,38 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
     return null;
 }
 
+/**
+ * 这个坐标冬天积不积雪。0=不积雪 1=雪地 2=深雪 3=雪林地；查不到数据返回 null。
+ *
+ * 🔴 [2026-08-24] 判积雪只认这一份数据，别再自己按纬度估。
+ *    旧的 `isSnowArea` 对「温带中高纬」一律返回 true，于是**罗得岛、克里特岛、
+ *    底比斯这些爱琴海城冬天结了冰**——地中海从不结冰，是硬伤。
+ *    这里的标志来自 WorldClim 实测气温，和底图同源，一处真相。
+ */
+export function queryWinterSnow(lat: number, lng: number): number | null {
+    if (!store) return null;
+    const { width: W, height: H, pixels } = store;
+    const fx = ((lng + 180) / 360) * W;
+    const fy = ((90 - lat) / 180) * H;
+    const x0 = ((Math.floor(fx) % W) + W) % W;
+    const y0 = Math.max(0, Math.min(H - 1, Math.floor(fy)));
+    // 与 queryBaseTile 同一套「向外找最近有效格」，否则海岸城会查空
+    for (let r = 0; r <= 4; r++) {
+        for (let dy = -r; dy <= r; dy++) {
+            for (let dx = -r; dx <= r; dx++) {
+                if (r > 0 && Math.max(Math.abs(dy), Math.abs(dx)) !== r) continue;
+                const y = y0 + dy;
+                if (y < 0 || y >= H) continue;
+                const x = ((x0 + dx) % W + W) % W;
+                const i = (y * W + x) * 4;
+                if (pixels[i] === 0 && pixels[i + 1] === 0) continue;   // 海面
+                return pixels[i + 2];
+            }
+        }
+    }
+    return null;
+}
+
 /** 调试用：把编号表暴露出去，便于工具打印「这一格是什么」 */
 export function baseTileTables(): { siege: Readonly<Record<number, string>>; field: Readonly<Record<number, string>> } {
     return { siege: SIEGE_TILES, field: FIELD_TILES };

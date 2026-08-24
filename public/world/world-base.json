@@ -192,6 +192,6 @@
    "use": "冻结水面（水域层用，不占陆地格）"
   }
  ],
- "winterSnowThresholdC": -8.0,
+ "winterSnowThresholdC": -3.0,
  "deepSnowThresholdC": -38.0
 }

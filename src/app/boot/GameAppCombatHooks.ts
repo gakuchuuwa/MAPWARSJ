@@ -77,6 +77,20 @@ function unitIsNaval(u: { getEntity?(): any }): boolean {
 }
 
 /**
+ * 水军战斗进不进 13。
+ *
+ * 🔴 [2026-08-24 主人定]「如果是水军的攻城战，做用左边是海的图。
+ *    先不做水军野战，水军野战保持战略地图模式」。
+ *
+ * 所以：**水军攻城战进 13**（战场左侧出海，攻方破浪抢滩），
+ *      **水军野战不进**（海战演出没做，留在战略地图上按引擎结算）。
+ */
+function navalBattleAllowedInScene13(isNaval: boolean, battleType?: 'siege' | 'field'): boolean {
+    if (!isNaval) return true;
+    return battleType === 'siege';
+}
+
+/**
  * [2026-08-11 13 v2] 启动出兵口互攻演出（Scene13WarLayer）。
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
  * 演出判负 → onDecision 回调写回引擎。
@@ -90,6 +104,8 @@ function startScene13War(
     center?: { lat: number; lng: number },
     environmentSeed?: string,
     battleType?: 'siege' | 'field',
+    /** 水军攻城战 —— 战场左侧强制出海（主人 2026-08-24 定） */
+    isNaval?: boolean,
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
@@ -126,6 +142,8 @@ function startScene13War(
         environmentSeed,
         // [2026-08-21] 战斗类型（野战双方都布出兵口建筑、攻城只攻方布）
         battleType,
+        // [2026-08-24] 水军攻城战：左侧强制出海（攻方破浪抢滩），不靠地形探测碰运气
+        isNaval,
         // [2026-08-22] 攻城战守方城等级（决定守城建筑池时代）
         defenderCityType,
         // [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观 → 守方城中央立奇观地标）
@@ -155,7 +173,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
         const isNavalBattle = unitIsNaval(battle.attacker) || unitIsNaval(battle.defender);
-        if (!isNavalBattle && bigEnough
+        if (navalBattleAllowedInScene13(isNavalBattle, battle.type) && bigEnough
             && battle.attacker.generalId && battle.defender.generalId
             && attHasElite && defHasElite) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
@@ -169,7 +187,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 battle.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
-                battle.type);
+                battle.type, isNavalBattle);
             app.battleScene?.enter(t.center, t.id);
         }
     };
@@ -212,7 +230,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const bigEnough = attBigEnough && defBigEnough;
         const isNavalBattle = [...attackers, ...defenders].some(unitIsNaval);
         // 🔴 三条件全满足才进 13（主人 2026-08-11 定稿）：武将 + 精锐 + 兵力
-        if (!isNavalBattle && bigEnough && attHasGen && defHasGen && attHasElite && defHasElite) {
+        //    水军：只有攻城战进（左侧出海），野战留在战略地图，见 navalBattleAllowedInScene13
+        if (navalBattleAllowedInScene13(isNavalBattle, battleField?.type) && bigEnough
+            && attHasGen && defHasGen && attHasElite && defHasElite) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);
@@ -242,7 +262,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         battleField.getScene13PowerBonus(),
                         t.center,
                         `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
-                        battleField.type
+                        battleField.type,
+                        isNavalBattle
                     );
                 }
             }
