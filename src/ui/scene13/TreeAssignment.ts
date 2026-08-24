@@ -173,12 +173,109 @@ const REGION_TREES: readonly RegionTree[] = [
       tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树' },
 ];
 
+/**
+ * 树密度：这一战该长多少棵。
+ *
+ * 🔴 [2026-08-24 主人定]「不要太密，毕竟是战场，主要表现的是军团」。
+ *    调之前实测均值 104 棵/图（温带到 160），树把战场糊满了。
+ *
+ * 两个数：
+ *   - `forestCover` 林块占**可用地**（屏幕内、非水、非军团走廊）的比例，是密度主体
+ *   - `stragglers`  林外零星孤树的棵数
+ *
+ * 换算基准（`npx tsx tools/audit-tree-density.mts` 实测）：
+ *   forestCover 每 1 个百分点 ≈ 落地 7 棵树。改完必须重跑那个脚本，别照公式算——
+ *   树先按预算生成，再被间距、走廊、屏幕外三道剔除，账面和落地差得远。
+ *
+ * 梯度比绝对值更重要：真实世界温带林地和沙漠差一个数量级，
+ * 旧表只差 3.8 倍（温带 159 / 沙漠 42），等于没分气候。
+ */
+export interface TreeDensity {
+    /** 林块占可用地的比例 */
+    forestCover: number;
+    /** 林外散株棵数 */
+    stragglers: number;
+}
+
+const DENSITY_BY_BASE: Readonly<Record<string, TreeDensity>> = {
+    // ── 林地：唯一该有成片林子的一档，但也远不到「密林」──
+    for:                { forestCover: 0.050, stragglers: 8 },   // 温带林地
+    underbrush_leaves:  { forestCover: 0.050, stragglers: 8 },   // 针叶林地
+    fo2:                { forestCover: 0.048, stragglers: 7 },   // 热带林地
+    gr6:                { forestCover: 0.040, stragglers: 7 },   // 丛林草地
+    snf:                { forestCover: 0.036, stragglers: 5 },   // 冬季雪林地
+
+    // ── 温带农耕带：城郊有树，但主要是开阔耕地 ──
+    ds3:                { forestCover: 0.022, stragglers: 6 },
+    ds4:                { forestCover: 0.020, stragglers: 6 },
+    gr4:                { forestCover: 0.022, stragglers: 6 },
+    gr2:                { forestCover: 0.020, stragglers: 6 },
+    grs:                { forestCover: 0.022, stragglers: 6 },
+
+    // ── 湿地：水边成排的树，不成林 ──
+    qs2:                { forestCover: 0.016, stragglers: 6 },
+    sh4:                { forestCover: 0.015, stragglers: 6 },
+
+    // ── 半干 / 高地：疏林 ──
+    ds2:                { forestCover: 0.011, stragglers: 5 },
+    gr3:                { forestCover: 0.012, stragglers: 5 },
+    rck:                { forestCover: 0.009, stragglers: 4 },
+    gravel_default:     { forestCover: 0.009, stragglers: 4 },
+
+    // ── 草原：散生孤树，几乎没有成片林 ──
+    gr5:                { forestCover: 0.007, stragglers: 5 },
+    gr7:                { forestCover: 0.007, stragglers: 5 },
+
+    // ── 雪原 ──
+    snd:                { forestCover: 0.004, stragglers: 4 },
+    sno:                { forestCover: 0.004, stragglers: 4 },
+    sn2:                { forestCover: 0.002, stragglers: 3 },
+
+    // ── 极旱：几棵而已 ──
+    des:                { forestCover: 0.002, stragglers: 3 },
+    pal:                { forestCover: 0.002, stragglers: 3 },
+    ds5:                { forestCover: 0.002, stragglers: 3 },
+    qs:                 { forestCover: 0.001, stragglers: 3 },
+    pal1:               { forestCover: 0.001, stragglers: 3 },
+};
+
+/** 兜底密度：查不到底图时按温带农耕算 */
+const FALLBACK_DENSITY: TreeDensity = { forestCover: 0.020, stragglers: 6 };
+
+/**
+ * 攻城战的树比野战少。
+ * 🔴 [2026-08-24 主人定] 这是真实的：城郊的林子早被砍去做梁柱、烧柴、修攻城器械，
+ *    剩下的地被开成耕地牧场。城下从来不是林子，是清出来的开阔地。
+ */
+const SIEGE_TREE_SCALE = 0.6;
+
+/** 查这一战该长多少树。底图查不到就兜底。 */
+export function treeDensityFor(baseTile: string, isSiege = false): TreeDensity {
+    const d = DENSITY_BY_BASE[baseTile] ?? FALLBACK_DENSITY;
+    if (!isSiege) return d;
+    return {
+        forestCover: d.forestCover * SIEGE_TREE_SCALE,
+        stragglers: Math.max(2, Math.round(d.stragglers * SIEGE_TREE_SCALE)),
+    };
+}
+
+/**
+ * 枯树只长在野外。
+ * 🔴 [2026-08-24 主人定] 城郊不会有立着的枯树——早被拾去当柴烧了。
+ *    攻城战里凡是要放 DEAD_TREE 的地方，一律换成活树或干脆不放。
+ */
+export function allowsDeadTree(isSiege: boolean): boolean {
+    return !isSiege;
+}
+
 export interface TreeQuery {
     /** 底图贴图名（WorldBaseMap 查出来的那个） */
     baseTile: string;
     lat: number;
     lng: number;
     season: TreeSeason;
+    /** 攻城战：城郊不出枯树 */
+    isSiege?: boolean;
 }
 
 /** 兜底树：查不到时用，四季通用、地域中性 */
@@ -200,6 +297,9 @@ export function pickTree(q: TreeQuery): string {
     }
     if (!tree) tree = TREE_BY_BASE[q.baseTile];
     if (!tree) tree = FALLBACK_TREE;
+
+    // 攻城战不出枯树：城郊的枯木早被拾去烧了。换成耐旱的活树。
+    if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) tree = 'PALM';
 
     if (q.season === 0) return tree;
     const variant = SEASON_VARIANT[tree];
