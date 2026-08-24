@@ -18,7 +18,8 @@ import {
     generateEnvironment,
     type Scene13EnvironmentPlan,
 } from '../../src/ui/scene13/Scene13EnvironmentGenerator';
-import { setWorldBaseData } from '../../src/ui/scene13/WorldBaseMap';
+import { setWorldBaseData, queryBaseTile } from '../../src/ui/scene13/WorldBaseMap';
+import { pickTree } from '../../src/ui/scene13/TreeAssignment';
 import { CITIES_V2, type CityDataV2 } from '../../src/data/cities_v2';
 import { Scene13GroundPainter, type GroundPatch, isWaterTile } from '../../src/ui/scene13/Scene13GroundPainter';
 import { loadDeMaps } from './de-map';
@@ -198,6 +199,48 @@ const ALL_CITIES: CityDataV2[] = interleaveByRegion(RAW_CITIES);
 
 const TIER_NAME: Record<number, string> = { 0: '大城', 1: '中城', 2: '关隘', 4: '周边' };
 
+// ── 底图 × 树 组合枚举 ────────────────────────────────────────
+//
+// 主人 2026-08-24：「每张底图配了哪些树，都要做出图，相同的素材搭配设计一张图」。
+// 所以这里按 (底图, 树, 攻城/野战) 去重，每种搭配只出一张，取第一座命中的城当代表点。
+//
+// 🔴 树查的是**当地野战底图**，不是脚下这张——和引擎的 vegetationTile 同口径。
+//    攻城战底图是「城郊被踩踏的裸土」，不代表这里能长什么，
+//    照它查树会让 149/942 座城的攻城战树比野战还多（实测过）。
+
+interface Combo {
+    /** 脚下这张底图 */
+    base: string;
+    /** 这张图上长的树 */
+    tree: string;
+    isSiege: boolean;
+    /** 代表城（出图用它的坐标） */
+    city: CityDataV2;
+}
+
+function enumerateCombos(season: Season, sieges: boolean[]): Combo[] {
+    const seen = new Map<string, Combo>();
+    for (const city of ALL_CITIES) {
+        for (const isSiege of sieges) {
+            const base = queryBaseTile({
+                lat: city.lat, lng: city.lng, isSiege, isWinter: season === 2,
+            });
+            if (!base) continue;
+            const veg = queryBaseTile({
+                lat: city.lat, lng: city.lng, isSiege: false, isWinter: season === 2,
+            }) ?? base;
+            const tree = pickTree({ baseTile: veg, lat: city.lat, lng: city.lng, season, isSiege });
+            const key = base + '|' + tree + '|' + (isSiege ? 'S' : 'F');
+            if (!seen.has(key)) seen.set(key, { base, tree, isSiege, city });
+        }
+    }
+    // 同一张底图的搭配排在一起，攻城在前，树名字典序
+    return [...seen.values()].sort((a, b) =>
+        a.base.localeCompare(b.base)
+        || Number(b.isSiege) - Number(a.isSiege)
+        || a.tree.localeCompare(b.tree));
+}
+
 // ── 世界底图查找表：浏览器侧加载并注入 ────────────────────────
 // 不注入的话 generateEnvironment 会回退到旧的主题逻辑，底图就不是按真实地理选的了，
 // 卡片上会标「未走真实地理表」提醒。
@@ -214,6 +257,7 @@ async function loadWorldBase(): Promise<void> {
     setWorldBaseData(id.data, cv.width, cv.height);
     worldBaseReady = true;
     console.log('[atlas] world-base 已载入 ' + cv.width + 'x' + cv.height);
+    fillBases();   // 底图列表要查表才知道，必须等这里载完
 }
 
 // ── 标记（据点黑名单）──────────────────────────────────────
@@ -307,6 +351,8 @@ function buildCard(
     plan: Scene13EnvironmentPlan,
     season: Season,
     siege: boolean,
+    /** 组合模式：这张图代表的「底图 × 树」搭配 */
+    combo?: Combo,
 ): HTMLElement {
     const card = document.createElement('div');
     card.className = 'card';
@@ -342,10 +388,20 @@ function buildCard(
     const warnBase = worldBaseReady ? '' : ' <span class="warn">(未走真实地理表)</span>';
     const meta = document.createElement('div');
     meta.className = 'meta';
+    // 组合模式下标题是「底图 + 树」，城只是代表点；城池模式下标题是城名
+    const head = combo
+        ? '<div class="t"><code style="color:#ffd76a">' + combo.base + '</code>'
+            + ' <span style="color:#9a917f">配</span> '
+            + '<code style="color:#8fe08f">' + combo.tree + '</code>'
+            + '　<span style="color:#7fd18b">' + (siege ? '攻防战' : '野战') + '</span>　'
+            + SEASON_NAME[season] + '</div>'
+            + '<div class="k">代表点 ' + city.name + '（' + (city.region ?? '?') + '） · '
+            + city.lat.toFixed(2) + ', ' + city.lng.toFixed(2) + '</div>'
+        : '<div class="t">' + city.name + '　<span style="color:#8fb4d9">' + (TIER_NAME[city.tier ?? 4] ?? '') + '</span>'
+            + '　<span style="color:#7fd18b">' + (siege ? '攻防战' : '野战') + '</span>　' + SEASON_NAME[season] + '</div>'
+            + '<div class="k">' + (city.region ?? '?') + ' · ' + city.lat.toFixed(2) + ', ' + city.lng.toFixed(2) + '</div>';
     meta.innerHTML =
-        '<div class="t">' + city.name + '　<span style="color:#8fb4d9">' + (TIER_NAME[city.tier ?? 4] ?? '') + '</span>'
-        + '　<span style="color:#7fd18b">' + (siege ? '攻防战' : '野战') + '</span>　' + SEASON_NAME[season] + '</div>'
-        + '<div class="k">' + (city.region ?? '?') + ' · ' + city.lat.toFixed(2) + ', ' + city.lng.toFixed(2) + '</div>'
+        head
         + '<div class="k">底图 <code>' + plan.baseTerrain + '</code>' + warnBase + '</div>'
         + '<div class="k">斑块 <code>' + ([...tiles].join(' ') || '无') + '</code></div>'
         + '<div class="k">物件 ' + plan.objects.length + ' 个 / ' + kinds.size + ' 种</div>'
@@ -372,12 +428,46 @@ async function run(): Promise<void> {
     const siegeSel = sel('siege').value;
     const regionSel = sel('region').value;
     const tierSel = sel('tier').value;
+    const baseSel = sel('base').value;
     const limit = parseInt(sel('limit').value, 10);
 
+    const sieges = siegeSel === 'all' ? [true, false] : [siegeSel === 'siege'];
+
+    // ── 组合模式：按「底图 × 树」去重，每种搭配一张 ──
+    if (sel('mode').value === 'combo') {
+        let combos = enumerateCombos(season, sieges);
+        if (baseSel !== 'all') combos = combos.filter((c) => c.base === baseSel);
+        if (limit > 0) combos = combos.slice(0, limit);
+
+        const baseCount = new Set(combos.map((c) => c.base)).size;
+        stat.textContent = baseCount + ' 张底图 / ' + combos.length + ' 种搭配，生成中…';
+        let n = 0;
+        for (const combo of combos) {
+            const { city, isSiege } = combo;
+            const plan = generateEnvironment({
+                width: W, height: H,
+                lat: city.lat, lng: city.lng,
+                seed: 'atlas:' + city.id + ':' + season + ':' + isSiege + ':' + seedSalt,
+                getCalendarSeason: () => season,
+                isSiege,
+            });
+            const canvas = await renderPlan(plan, W, H);
+            if (token !== runToken) return;
+            grid.appendChild(buildCard(canvas, city, plan, season, isSiege, combo));
+            stat.textContent = baseCount + ' 张底图 / ' + combos.length
+                + ' 种搭配，已完成 ' + (++n);
+            await new Promise((r) => setTimeout(r, 0));
+        }
+        if (token === runToken) {
+            stat.textContent = baseCount + ' 张底图 / ' + combos.length + ' 种搭配，全部完成';
+        }
+        return;
+    }
+
+    // ── 城池模式 ──
     let cities = ALL_CITIES.filter((c) => !blacklist.has(c.id));
     if (regionSel !== 'all') cities = cities.filter((c) => c.region === regionSel);
     if (tierSel !== 'all') cities = cities.filter((c) => String(c.tier ?? 4) === tierSel);
-    const sieges = siegeSel === 'all' ? [true, false] : [siegeSel === 'siege'];
     if (limit > 0) cities = cities.slice(0, limit);
 
     const total = cities.length * sieges.length;
@@ -421,12 +511,46 @@ function fillRegions(): void {
     }
 }
 
+/** 底图下拉：把 26 张底图现枚举出来，不另维护一张表 */
+function fillBases(): void {
+    const s = sel('base');
+    const bases = new Set<string>();
+    for (const c of ALL_CITIES) {
+        for (const isSiege of [true, false]) {
+            for (const w of [false, true]) {
+                const b = queryBaseTile({ lat: c.lat, lng: c.lng, isSiege, isWinter: w });
+                if (b) bases.add(b);
+            }
+        }
+    }
+    for (const b of [...bases].sort()) {
+        const o = document.createElement('option');
+        o.value = b; o.textContent = b;
+        s.appendChild(o);
+    }
+}
+
+/**
+ * 切模式时把过滤条件调到该模式该有的默认值。
+ * 组合模式的意义就是**看全**——主人要的是「每张底图配了哪些树都要出图」，
+ * 被「24 张」和「只攻防战」截掉就白做了。
+ */
+function applyModeDefaults(): void {
+    if (sel('mode').value === 'combo') {
+        sel('siege').value = 'all';
+        sel('limit').value = '0';
+    }
+}
+sel('mode').addEventListener('change', () => { applyModeDefaults(); void run(); });
+applyModeDefaults();
+
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
 document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
 document.getElementById('undel')!.addEventListener('click', restoreAll);
 document.getElementById('export')!.addEventListener('click', exportBlacklist);
 sel('cols').addEventListener('change', applyCols);
 fillRegions();
+// 底图下拉要等 world-base 载入后才有数据，run() 里首次载入完再填
 refreshDeletedUI();
 applyCols();
 initZoom();
