@@ -23,6 +23,17 @@
   #grid.c4{grid-template-columns:repeat(4,1fr)}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden}
   .card canvas{display:block;width:100%;height:auto;background:#000;cursor:zoom-in}
+  /* 删除按钮：压在图左上角，hover 卡片才显形，免得挡住看图 */
+  .shot{position:relative}
+  .shot .del{position:absolute;top:6px;left:6px;width:26px;height:26px;padding:0;line-height:1;
+             font-size:17px;font-weight:700;border-radius:3px;opacity:0;transition:opacity .12s;
+             background:#0009;border:1px solid #0000;color:#e8e0d2;cursor:pointer}
+  .card:hover .shot .del{opacity:1}
+  .shot .del:hover{background:#a33;border-color:#d66;color:#fff}
+  .sep{width:1px;height:18px;background:var(--line)}
+  .dim{color:var(--dim)}
+  button:disabled{opacity:.4;cursor:default}
+  button:disabled:hover{border-color:var(--line)}
   /* 单图放大层：点图进，点任意处/ESC 出，← → 翻页 */
   #box{position:fixed;inset:0;z-index:99;background:#000d;display:none;
        flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;cursor:zoom-out}
@@ -54,6 +65,10 @@
     <div class="grp"><b>每行</b><select id="cols"><option value="1">1 张（最大）</option><option value="2" selected>2 张</option><option value="3">3 张</option><option value="4">4 张</option><option value="auto">自动铺满</option></select></div>
     <button id="run">重新生成</button>
     <button id="reseed">换随机种子</button>
+    <span class="sep"></span>
+    <span id="delstat" class="dim"></span>
+    <button id="undel" title="把删掉的组合全部放回来">恢复全部</button>
+    <button id="export" title="导出已删组合清单 JSON">导出清单</button>
     <span id="stat"></span>
   </div>
 </header>

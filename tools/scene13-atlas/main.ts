@@ -92,11 +92,16 @@ async function loadMeta(asset: string): Promise<NatureMeta | null> {
 }
 
 /** 用实机同一套渲染器把一个方案画成一张图 */
-async function renderPlan(plan: Scene13EnvironmentPlan, W: number, H: number): Promise<HTMLCanvasElement> {
+async function renderPlan(
+    plan: Scene13EnvironmentPlan,
+    W: number,
+    H: number,
+): Promise<HTMLCanvasElement> {
     const out = document.createElement('canvas');
     out.width = W;
     out.height = H;
-    const g = out.getContext('2d')!;
+    // willReadFrequently：末尾的 mood 调色要整幅回读，不带这个标志每张图都触发 GPU→CPU 回传
+    const g = out.getContext('2d', { willReadFrequently: true })!;
 
     const painter = new Scene13GroundPainter();
     painter.setGrid(plan.grid.ox, plan.grid.oy, plan.grid.gw, plan.grid.gh, plan.elevation);
@@ -188,6 +193,96 @@ interface Combo {
     siege: boolean;
 }
 
+// ── 删除（组合黑名单）────────────────────────────────────────
+//
+// 「删除」删的是**组合**，不是图片文件——底图是现场算出来的，磁盘上没有对应文件可删。
+// 删掉一个组合 = 记下它的稳定编号，以后 atlas 不再生成它。
+//
+// 🔴 只写 localStorage，不碰任何素材、不碰引擎。随时可恢复，导出的 JSON 才是产物。
+//    绝不允许改成真去删 public/SUCAI_* 里的素材。
+
+const BLACKLIST_KEY = 'scene13-atlas-blacklist-v1';
+
+interface DeletedEntry {
+    id: number;
+    theme: DeMapThemeId;
+    season: Season;
+    band: ElevationBand;
+    water: WaterKind;
+    siege: boolean;
+    /** 删除时那张图的随机种子——同一组合换种子长相完全不同，记下来才能复现当时看到的画面 */
+    seed: number;
+    at: string;
+}
+
+function loadBlacklist(): Map<number, DeletedEntry> {
+    try {
+        const raw = localStorage.getItem(BLACKLIST_KEY);
+        if (!raw) return new Map();
+        const arr = JSON.parse(raw) as DeletedEntry[];
+        return new Map(arr.map((e) => [e.id, e]));
+    } catch {
+        return new Map();
+    }
+}
+
+const blacklist = loadBlacklist();
+
+function saveBlacklist(): void {
+    try {
+        localStorage.setItem(BLACKLIST_KEY, JSON.stringify([...blacklist.values()]));
+    } catch { /* 存不下就算了，本轮内存里的删除仍然有效 */ }
+}
+
+function refreshDeletedUI(): void {
+    const n = blacklist.size;
+    const el = document.getElementById('delstat');
+    if (el) el.textContent = n === 0 ? '未删除任何组合' : `已删 ${n} 个组合`;
+    const btn = document.getElementById('undel') as HTMLButtonElement | null;
+    if (btn) btn.disabled = n === 0;
+    const exp = document.getElementById('export') as HTMLButtonElement | null;
+    if (exp) exp.disabled = n === 0;
+}
+
+function deleteCombo(c: Combo, card: HTMLElement): void {
+    const id = stableComboId(c);
+    blacklist.set(id, {
+        id, theme: c.theme, season: c.season, band: c.band, water: c.water, siege: c.siege,
+        seed: seedSalt, at: new Date().toISOString(),
+    });
+    saveBlacklist();
+    refreshDeletedUI();
+    // A/B 模式一个组合有两张卡（a/b），一起撤掉，否则会留下半张孤儿
+    for (const el of [...document.querySelectorAll('.card')] as HTMLElement[]) {
+        if (el.dataset.comboId === String(id)) el.remove();
+    }
+    void card;
+}
+
+function restoreAll(): void {
+    if (blacklist.size === 0) return;
+    blacklist.clear();
+    saveBlacklist();
+    refreshDeletedUI();
+    void run();
+}
+
+function exportBlacklist(): void {
+    const entries = [...blacklist.values()].sort((a, b) => a.id - b.id);
+    const payload = {
+        note: 'ZOOM13 atlas 手工剔除的战场组合。id = 完整笛卡尔积（18 主题 × 3 季节 × 4 海拔 × 4 水系 × 2 攻防）中的稳定序号。',
+        exportedAt: new Date().toISOString(),
+        count: entries.length,
+        entries,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `scene13-combo-blacklist-${entries.length}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
 // ── 单图放大层 ────────────────────────────────────────────────
 
 const box = () => document.getElementById('box')!;
@@ -225,21 +320,86 @@ function initZoom(): void {
     });
 }
 
-function buildCard(canvas: HTMLCanvasElement, c: Combo, plan: Scene13EnvironmentPlan): HTMLElement {
+/**
+ * 组合的**稳定编号**：在完整笛卡尔积（18 主题 × 3 季节 × 4 海拔 × 4 水系 × 2 攻防 = 1728）
+ * 里的固定序号，与当前筛选条件、A/B 开关、渲染顺序全都无关。
+ *
+ * 🔴 别改回循环递增。递增号会随筛选条件漂移——今天的 #37 明天指向另一张图，
+ *    主人拿它指认「第 37 张不对」就会定位到错误的组合。编号的唯一用途就是稳定指认。
+ *
+ * 注意：编号只锁定「组合」，不锁定「那一张具体的图」。同一组合换随机种子会长成
+ * 完全不同的样子，所以指认时必须连种子一起报（卡片上的 seed 就是干这个的）。
+ */
+const ALL_SEASONS: Season[] = [0, 1, 2];
+const ALL_BANDS: ElevationBand[] = ['lowland', 'hill', 'plateau', 'alpine'];
+const ALL_WATERS: WaterKind[] = ['none', 'sea', 'lake', 'river'];
+
+function stableComboId(c: Combo): number {
+    const themes = Object.keys(DE_MAP_THEMES) as DeMapThemeId[];
+    const ti = themes.indexOf(c.theme);
+    const si = ALL_SEASONS.indexOf(c.season);
+    const bi = ALL_BANDS.indexOf(c.band);
+    const wi = ALL_WATERS.indexOf(c.water);
+    return ((((ti * 3 + si) * 4 + bi) * 4 + wi) * 2 + (c.siege ? 1 : 0)) + 1;
+}
+
+function stampIndex(canvas: HTMLCanvasElement, label: string): void {
+    const g = canvas.getContext('2d');
+    if (!g) return;
+    const fontSize = Math.max(12, Math.round(canvas.height * 0.06));
+    g.font = `bold ${fontSize}px sans-serif`;
+    const tm = g.measureText(label);
+    const padX = 6, padY = 4;
+    const tw = tm.width + padX * 2;
+    const th = fontSize + padY * 2;
+    const x = canvas.width - tw - 4;
+    const y = canvas.height - th - 4;
+    g.fillStyle = 'rgba(0,0,0,0.55)';
+    g.fillRect(x, y, tw, th);
+    g.fillStyle = '#fff';
+    g.textBaseline = 'top';
+    g.fillText(label, x + padX, y + padY);
+}
+
+function buildCard(
+    canvas: HTMLCanvasElement,
+    c: Combo,
+    plan: Scene13EnvironmentPlan,
+    moodLabel: string,
+    suffix: string = '',
+): HTMLElement {
+    // 右下角打稳定编号水印。suffix 用于 A/B 模式的 a/b 区分，不参与编号本身。
+    const id = stableComboId(c);
+    stampIndex(canvas, `#${id}${suffix}`);
     const el = document.createElement('div');
     el.className = 'card';
+    el.dataset.comboId = String(id);   // 删除时靠它把 A/B 两张卡一起撤掉
     canvas.addEventListener('click', () => {
         const cards = [...document.querySelectorAll('.card')];
         openZoom(cards.indexOf(el));
     });
-    el.appendChild(canvas);
+    const shell = document.createElement('div');
+    shell.className = 'shot';
+    shell.appendChild(canvas);
+    const del = document.createElement('button');
+    del.className = 'del';
+    del.title = `删除组合 #${id}（只是拉黑不再生成，随时可恢复，不删任何文件）`;
+    del.textContent = '×';
+    del.addEventListener('click', (e) => {
+        e.stopPropagation();   // 别让点击穿透到 canvas 触发放大
+        deleteCombo(c, el);
+    });
+    shell.appendChild(del);
+    el.appendChild(shell);
     const kinds = new Set(plan.objects.filter((o) => o.layer === 'world').map((o) => o.asset));
     const tiles = new Set(plan.terrainPatches.map((p) => p.tile));
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.innerHTML =
-        `<div class="t">${c.theme}</div>` +
+        `<div class="t">#${id}${suffix}　${c.theme}　<span style="color:#8fb4d9">${moodLabel}</span></div>` +
         `<div class="k">${SEASON_NAME[c.season]} · ${BAND_NAME[c.band]} · ${WATER_NAME[c.water]} · ${c.siege ? '攻防战' : '野战'}</div>` +
+        // 编号只锁组合，种子决定这一次长成什么样——指认问题时两个都要报
+        `<div class="k">种子 <code>seed ${seedSalt}</code></div>` +
         `<div class="k">拓扑 <code>${plan.topology ?? '-'}</code> · biome <code>${plan.biome}</code></div>` +
         `<div class="k">底图 <code>${plan.baseTerrain}</code> · 斑块 <code>${[...tiles].join(' ') || '无'}</code></div>` +
         `<div class="k">物件 ${plan.objects.length} 个 / ${kinds.size} 种：<code>${[...kinds].slice(0, 8).join(' ')}</code></div>` +
@@ -266,19 +426,24 @@ async function run(): Promise<void> {
     const sieges = sel('siege').value === 'all' ? [false, true] : [sel('siege').value === 'siege'];
 
     const combos: Combo[] = [];
+    let skipped = 0;
     for (const theme of themes) {
         for (const season of seasons) {
             for (const band of bands) {
                 for (const water of waters) {
                     for (const siege of sieges) {
-                        combos.push({ theme, season, band, water, siege });
+                        const c: Combo = { theme, season, band, water, siege };
+                        // 已删组合直接不生成——省掉整张渲染，不是画完再藏
+                        if (blacklist.has(stableComboId(c))) { skipped++; continue; }
+                        combos.push(c);
                     }
                 }
             }
         }
     }
 
-    stat.textContent = `共 ${combos.length} 张，生成中…`;
+    const skipNote = skipped > 0 ? `（跳过已删 ${skipped}）` : '';
+    stat.textContent = `共 ${combos.length} 张${skipNote}，生成中…`;
     let done = 0;
     for (const c of combos) {
         const { m, lat } = BANDS[c.band];
@@ -298,13 +463,13 @@ async function run(): Promise<void> {
         });
         const canvas = await renderPlan(plan, W, H);
         if (token !== runToken) return;   // 已被新的一批接管，立刻收手
-        grid.appendChild(buildCard(canvas, c, plan));
-        stat.textContent = `共 ${combos.length} 张，已完成 ${++done}`;
+        grid.appendChild(buildCard(canvas, c, plan, ''));
+        stat.textContent = `共 ${combos.length} 张${skipNote}，已完成 ${++done}`;
         // 用 setTimeout 让出主线程，不用 rAF —— 标签页在后台时 rAF 会被浏览器冻结，
         // 批量生成会卡在第一张不动。
         await new Promise((r) => setTimeout(r, 0));
     }
-    if (token === runToken) stat.textContent = `共 ${combos.length} 张，全部完成`;
+    if (token === runToken) stat.textContent = `共 ${combos.length} 张${skipNote}，全部完成`;
 }
 
 function applyCols(): void {
@@ -314,6 +479,9 @@ function applyCols(): void {
 }
 
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
+document.getElementById('undel')!.addEventListener('click', restoreAll);
+document.getElementById('export')!.addEventListener('click', exportBlacklist);
+refreshDeletedUI();
 document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
 // 换列数只改 CSS，不必重新生成
 sel('cols').addEventListener('change', applyCols);
