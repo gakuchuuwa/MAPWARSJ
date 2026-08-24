@@ -6671,6 +6671,121 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/AMERICA/6725eb3d-8b36-4e03-819b-bb3aa1a622c0.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/0ae91606-1aff-42dd-bdc2-4e88cb467c39.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -54
+        },
+        "/assets/AMERICA/3c45c57a-7fc1-484b-b8c6-d14cb78c2f30.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/AMERICA/49330ab1-56e0-47d9-b4cd-027256ec7037.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/AMERICA/7451b839-38fd-4383-8dee-53333eeee303.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/7b6e638b-7f8b-4e61-9eb8-40dbf7e74da3.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/AMERICA/e44bbb14-0dba-44ea-926b-cbcb4d5482d0.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/aztec_kuaotemoke.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/inca_pachakuti.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/AMERICA/maya_yasinachang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/mapuche_laotaluo.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/AMERICA/muisca_saguamanqika.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/AMERICA/tupi_alaliboya.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -54
+        },
+        "/assets/AFRICA/2d006689-671d-4746-b328-b9955050a9ee.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/AFRICA/70b56fcc-7446-4b05-b816-48a0f1942fd1.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/AFRICA/bd832d33-8776-4825-b45d-2e7ec1bd98a0.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/AFRICA/f3af6eeb-9a68-4360-96eb-d497d90fc70b.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/AFRICA/manding_songdiyata.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/MALAY/630f978a-e72e-42b8-b161-c44b633a3809.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/MALAY/bfb088de-c9d8-44e4-b4bd-ebe12c9c715d.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/MALAY/malacca_bailimisula.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/INDIA/d25c6c06-10b1-45dd-9ea1-e5454d50e958.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/INDIA/gurjara_miqiluobodu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

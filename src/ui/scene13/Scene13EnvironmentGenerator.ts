@@ -25,7 +25,7 @@ import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
-import { pickTree } from './TreeAssignment';
+import { pickTree, treeDensityFor } from './TreeAssignment';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -544,6 +544,16 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const baseTerrain: string = fromWorld ?? (theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false)
         : DEFAULT_TERRAIN_TILE);
+
+    // 🔴 [2026-08-24] 植被看**自然环境**，不看地面被踩成什么样。
+    //    攻城战底图是「城郊被人踩踏碾压的裸土」，是人为改造的结果；
+    //    同一个地点该长什么树、长多少，由当地的野战底图（真实植被条件）决定。
+    //    不这么做的后果实测过：149/942 座城的攻城战树比野战还多——因为攻城底图
+    //    那 7 张全是宜居地的泥土，天然比当地实际的戈壁/流沙/干草原「湿润」。
+    //    攻城战的「树更少」由 treeDensityFor 的 isSiege 折扣负责，不靠底图差异。
+    const vegetationTile: string = (input.lat !== undefined && input.lng !== undefined
+        ? queryBaseTile({ lat: input.lat, lng: input.lng, isSiege: false, isWinter: season === 2 })
+        : null) ?? baseTerrain;
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
     const occupied = new Set<string>();
@@ -596,7 +606,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, baseTerrain, input.lng);
+        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false);
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
@@ -1423,9 +1433,11 @@ function buildVegetation(
     lat?: number,
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
-    /** 这张图的底图贴图名 —— 树按它定基调 */
+    /** 定植被的底图 —— 当地**野战**底图（自然环境），不是脚下踩的那张，见 vegetationTile */
     baseTile: string = '',
     lng?: number,
+    /** 攻城战：树更少、且不出枯树（城郊被砍伐开垦，枯木被拾作柴火） */
+    isSiege: boolean = false,
 ): void {
     // 🔴 [2026-08-24 主人定] 一个底图一种树：底图定基调，同一张图上不混种。
     //    地区覆盖 + 季节变体都在 TreeAssignment 里，见那个文件的头注释。
@@ -1433,14 +1445,13 @@ function buildVegetation(
     let primaryTree: string;
     let secondaryTree: string | null = null;
     if (lat !== undefined && lng !== undefined) {
-        primaryTree = pickTree({ baseTile, lat, lng, season });
+        primaryTree = pickTree({ baseTile, lat, lng, season, isSiege });
     } else {
         const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome);
         primaryTree = rng.pick(treeAssets);
         const otherTrees = treeAssets.filter((t) => t !== primaryTree);
         secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
     }
-    const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
         upland: 0.9,
@@ -1449,9 +1460,13 @@ function buildVegetation(
         high_alpine: 0.1,
         snow: 0.05,
     };
-    const treeCount = Math.max(4, Math.round(baseTreeCount * treeFactor[elevationBand]));
-    const clusterCount = Math.max(2, Math.round(treeCount / 5));
-    const perCluster = Math.max(3, Math.round(treeCount / clusterCount));
+    // 🔴 [2026-08-24 主人：「不要太密，毕竟是战场，主要表现的是军团」]
+    //    密度按底图（= 气候产物）查表，和树种同源，见 TreeAssignment.DENSITY_BY_BASE。
+    //    拿不到底图才回落到旧的按 biome 那套。
+    const density = baseTile ? treeDensityFor(baseTile, isSiege) : null;
+    const treeCount = density
+        ? Math.max(3, Math.round(density.stragglers * treeFactor[elevationBand]))
+        : Math.max(4, Math.round(treeCountFor(biome, rng) * treeFactor[elevationBand]));
     const treePositions = objects
         .filter((object) => DE_TREE_OBJECTS.has(object.asset))
         .map((object) => ({ x: object.x, y: object.y }));
@@ -1505,8 +1520,8 @@ function buildVegetation(
         }
     }
     const availableSet = new Set(availableCells.map(([x, y]) => `${x},${y}`));
-    const forestBudget = Math.round(
-        availableCells.length * forestCoverOfUsableFor(biome) * treeFactor[elevationBand]);
+    const forestBudget = Math.round(availableCells.length * treeFactor[elevationBand]
+        * (density ? density.forestCover : forestCoverOfUsableFor(biome)));
     const forestClumps = 12 + rng.int(0, 5);          // DE: number_of_clumps 10~14（我们可用区是环形，多切几块才散得开）
     const perClumpTarget = Math.max(4, Math.round(forestBudget / forestClumps));
     const forestCells: Array<[number, number]> = [];
@@ -1581,7 +1596,8 @@ function buildVegetation(
 
     // 林外散株（DE: STRAGGLER_FOREST，number_of_tiles 64 / number_of_clumps 3）：
     // 空地上零星几棵孤树，这才是「孤树」该出现的地方。散株保留最小间距。
-    const stragglers = Math.max(3, Math.round(treeCount * 0.5));
+    // treeCount 现在**就是**散株目标棵数（旧版是「总数的一半」），别再打对折。
+    const stragglers = Math.max(3, density ? treeCount : Math.round(treeCount * 0.5));
     for (let i = 0; i < stragglers; i++) {
         let tx = 0, ty = 0, ok = false;
         for (let a = 0; a < 40; a++) {
@@ -1685,7 +1701,8 @@ function buildVegetation(
     }
 
     // 🔴【荒原枯荣伴生】：干旱荒原与沙漠生成枯木、动物骨骸与干草
-    if (biome === 'desert' || biome === 'cold_steppe' || biome === 'savanna') {
+    // 🔴 [2026-08-24 主人定] 攻城战不出枯树——城郊的枯木早被拾去当柴烧了。
+    if (!isSiege && (biome === 'desert' || biome === 'cold_steppe' || biome === 'savanna')) {
         const wasteCount = 2 + rng.int(0, 2);
         for (let i = 0; i < wasteCount; i++) {
             const p = sampleLandPos(VW, VH, rng, isWater, 'DEAD_TREE', objects, inArmyCorridor);
@@ -1739,7 +1756,11 @@ function buildVegetation(
     //    剔掉岩石/灌木/仙人掌（岩石走 solidDecor、灌木走树伴生，避免世界层精灵堆太密）。
     const groundDecorAssets = (BIOME_GROUND_DECOR[biome] ?? []).filter((a) => GROUND_COVER_ASSETS.has(a));
     if (groundDecorAssets.length > 0) {
-        const groundDecorCount = Math.max(40, Math.round(treeCount * 2.5));
+        // 🔴 不能挂在 treeCount 上：2026-08-24 把树密度砍到 1/5 后，
+        //    花草会被连带砍掉，但主人要稀的是**树**（挡视线、挤战场），不是地上的草。
+        //    改成跟湿润度走——林地草多、沙漠草少，与树的棵数无关。
+        const groundDecorCount = 40 + Math.round(
+            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 400);
         for (let i = 0; i < groundDecorCount; i++) {
             const asset = rng.pick(groundDecorAssets);
             const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
