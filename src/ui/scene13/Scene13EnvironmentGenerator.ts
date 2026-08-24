@@ -144,6 +144,15 @@ export interface Scene13EnvironmentInput {
     forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
     /** 🔧 [2026-08-24 背景图预览工具] 强制 DE 主题，跳过按经纬度解析（工具要定点枚举 18 套主题） */
     forceTheme?: DeMapThemeId;
+    /**
+     * 禁植区：这些圆里不长树。攻城战传守方各出生点 + 城池石基半径。
+     *
+     * 🔴 [2026-08-24] 不传的后果实测过：平均每场攻城战 **3.8 棵树长在守方城池石基上**
+     *    （最多 13 棵），而攻城战总共才 10~19 棵——两三成的树戳在城墙和城门前的
+     *    硬化石路上。军团走廊拦不住它：守方最后排在 x≈93% VW，走廊只到 82%。
+     *    城池位置只有 Scene13WarLayer 知道（它先算 spawns 再调这里），所以由它传进来。
+     */
+    keepClear?: ReadonlyArray<{ x: number; y: number; r: number }>;
     /** 🔧 [同上] 强制海拔档；缺省仍按 resolveElevationBand 走 */
     forceElevationBand?: ElevationBand;
     /** 🔧 [同上] 强制海拔米数（喂给树种/地表/丘陵密度判定），覆盖 ESRI 采样 */
@@ -567,7 +576,6 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 不把巨型山峰精灵放进士兵活动区，避免单位从山体上穿过。
         // 水域排斥谓词：陆地物件（植被/资源/残迹）禁止落在水里。
         let isWater: WaterChecker = () => false;
-        let isRoad: (x: number, y: number) => boolean = () => false;
 
         // 🔴 [严格遵循 DE 与史实]：
         // 攻城战为城郭攻防战场，核心为城前平原与城防阵线，绝不擅自横插切断战场的假河；
@@ -597,7 +605,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             for (let gx = 0; gx < gw; gx++) {
                 const px = isoCellX(gx, gy, ox);
                 const py = isoCellY(gx, gy, oy);
-                if (isWater(px, py) || isRoad(px, py)) elevation[gy][gx] = 0;
+                if (isWater(px, py)) elevation[gy][gx] = 0;
             }
         }
 
@@ -606,7 +614,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false);
+        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
+                        input.keepClear ?? []);
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
@@ -645,7 +654,12 @@ export type Scene13Topology =
     | 'rolling_hills'          // 5. 连绵丘陵与战术双高地 (Mongolia / Gold Rush / SeizeTheMountain)
     | 'steppe_oasis'           // 6. 苍茫草原戈壁绿洲 (Steppe / Oasis / Atacama)
     | 'swamp_marsh'            // 7. 湿地沼泽浅泥水泊 (Bogland / Swamp / Salt Marsh)
-    | 'imperial_highway';      // 8. 帝国驿道十字大道 (Highway / Crossroads / Valley)
+    // 🔴 [2026-08-24] 只是个拓扑标签，不再生成道路：城门前的路由
+    //    Scene13WarLayer.addGateFoundation 负责（主人 2026-08-24 口述已设好）。
+    //    原来那个横穿战场的 buildHorizontalHighway 从未被调用过，已删。
+    //    这个枚举值保留——删了会改变 resolveBattleTopology 的随机池，
+    //    所有已有种子的生成结果都会变。
+    | 'imperial_highway';      // 8. 帝国驿道（现仅作拓扑标签，不铺路）
 
 function resolveBattleTopology(
     hasCoord: boolean,
@@ -1202,138 +1216,6 @@ function buildLake(
     return (px: number, py: number): boolean => distOf(px, py) < SHORE;
 }
 
-// ── 第 3 层：横向帝国行军大道（东西水平贯通，平坦开阔，0 阻挡） ──
-
-function buildHorizontalHighway(
-    gw: number,
-    gh: number,
-    ox: number,
-    oy: number,
-    VW: number,
-    VH: number,
-    rng: RandomSource,
-    patches: TerrainPatchPlan[],
-    objects: EnvironmentObjectPlan[],
-    occupied: Set<string>,
-    theme: DeMapThemePalette,
-    season: 0 | 1 | 2 = 0,
-    lat: number = 35,
-    elev: number | null = null,
-    biome: Biome = 'temperate_forest',
-    baseTerrain: string = 'gr7',
-): (x: number, y: number) => boolean {
-    const centerY = VH * (0.48 + (rng.next() - 0.5) * 0.08); // 正中央附近 (44% ~ 52%)
-    const controls: Array<{ x: number; y: number }> = [
-        { x: -VW * 0.25, y: centerY + (rng.next() - 0.5) * 20 },
-        { x: -VW * 0.05, y: centerY + (rng.next() - 0.5) * 25 },
-        { x: VW * 0.25,  y: centerY + (rng.next() - 0.5) * 30 },
-        { x: VW * 0.50,  y: centerY + (rng.next() - 0.5) * 20 },
-        { x: VW * 0.75,  y: centerY + (rng.next() - 0.5) * 30 },
-        { x: VW * 1.05,  y: centerY + (rng.next() - 0.5) * 25 },
-        { x: VW * 1.25,  y: centerY + (rng.next() - 0.5) * 20 },
-    ];
-
-    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
-        const t2 = t * t, t3 = t2 * t;
-        return 0.5 * ((2 * p1) + (-p0 + p2) * t
-            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
-            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
-    };
-
-    const roadPts: Array<{ x: number; y: number }> = [];
-    const sampleStep = TILE_W / 2;
-    for (let x = -VW * 0.25; x <= VW * 1.25; x += sampleStep) {
-        const segTotal = controls.length - 3;
-        const u = Math.max(0, Math.min(1, (x + VW * 0.25) / (VW * 1.5)));
-        const segIdx = Math.min(segTotal - 1, Math.floor(u * segTotal));
-        const t = (u * segTotal) - segIdx;
-        const p0 = controls[segIdx];
-        const p1 = controls[segIdx + 1];
-        const p2 = controls[segIdx + 2];
-        const p3 = controls[segIdx + 3];
-        roadPts.push({ x, y: catmullRom(p0.y, p1.y, p2.y, p3.y, t) });
-    }
-
-    const yAt = (x: number): number => {
-        const f = Math.max(0, Math.min(roadPts.length - 1, (x + VW * 0.25) / sampleStep));
-        const i = Math.min(roadPts.length - 2, Math.floor(f));
-        const t = f - i;
-        return roadPts[i].y + (roadPts[i + 1].y - roadPts[i].y) * t;
-    };
-
-    // 🔴 [2026-08-21 美化] 适度收窄路宽（约 100px），自然起伏波浪，与周围地表完美融合
-    const roadHalfW = 50;
-    const roadPolyLeft: Array<{ x: number; y: number }> = [];
-    const roadPolyRight: Array<{ x: number; y: number }> = [];
-
-    for (let i = 0; i < roadPts.length; i++) {
-        const pt = roadPts[i];
-        const noise = Math.sin(i * 0.35) * 10 + Math.cos(i * 0.18) * 6;
-        roadPolyLeft.push({ x: pt.x, y: pt.y - (roadHalfW + noise) });
-        roadPolyRight.push({ x: pt.x, y: pt.y + (roadHalfW + noise) });
-    }
-    const roadPolygon = [...roadPolyLeft, ...roadPolyRight.reverse()];
-
-    const roadCells: Array<[number, number]> = [];
-    for (let gy = 0; gy < gh; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-            const px = isoCellX(gx, gy, ox);
-            const py = isoCellY(gx, gy, oy);
-            if (Math.abs(py - yAt(px)) <= roadHalfW) {
-                roadCells.push([gx, gy]);
-            }
-        }
-    }
-    for (const [cx, cy] of roadCells) occupied.add(`${cx},${cy}`);
-
-    // 🔴 [2026-08-21 材质协同] 道路材质与周围 baseTerrain 严格协调，绝不在非雪地刷出孤立雪道！
-    const isAmbientSnow = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf';
-    let roadTile = 'rd2'; // DE Road 碎石路（古代驿道/车辙土路）——砾石(gravel_default/ds5)是地形，不当道路
-    if (isAmbientSnow) {
-        roadTile = 'sn2'; // 仅当大环境全为深雪时，道路才为踩实的雪原车辙
-    } else if (
-        theme.id === 'palaearctic_asia_steppe' ||
-        biome === 'cold_steppe' ||
-        baseTerrain === 'pm2' ||
-        baseTerrain === 'gr4' ||
-        baseTerrain === 'ds5'
-    ) {
-        roadTile = 'rd5'; // 塞外草原/黄土高原/干旱土：DE Road 砾石路（干旱地路面砾石裸露）——ds5沙漠砾石是地形，不当道路
-    } else if (
-        theme.id === 'palaearctic_middle_east_desert' ||
-        theme.id === 'palaearctic_middle_east_highland' ||
-        biome === 'desert' ||
-        baseTerrain === 'pal'
-    ) {
-        roadTile = 'ds3'; // 荒漠/西亚高原：沙石行军道
-    } else if (theme.id === 'palaearctic_tibetan_plateau') {
-        roadTile = 'pm2'; // 青藏高原：高寒冻土草甸泥道
-    } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
-        roadTile = biome === 'tropical_rainforest' ? 'fo2' : 'ds4';
-    } else if (season === 2) {
-        roadTile = 'gravel_wet'; // 温带冬季湿润车辙碎石路
-    }
-
-    patches.push({
-        tile: roadTile,
-        cells: roadCells,
-        polygon: roadPolygon,
-        alpha: 0.68, // 柔和半透明混合，透出下方地貌质感，彻底消除生硬贴片感
-        category: 'shore',
-    });
-
-    // 沿路边自然点缀 2~3 个碎石或干草
-    const roadDecors = ['ROCK1', 'ROCK2', 'GRASS_DRY'];
-    for (let i = 0; i < 3; i++) {
-        const rx = VW * (0.15 + rng.next() * 0.7);
-        const ry = yAt(rx) + (rng.chance(0.5) ? -1 : 1) * (roadHalfW + 8 + rng.next() * 15);
-        const asset = rng.pick(roadDecors);
-        objects.push({ asset, x: rx, y: ry, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-    }
-
-    return (x, y) => Math.abs(y - yAt(x)) <= roadHalfW + 15;
-}
-
 // ── 第 4 层：地表变体（低频、低透明） ───────────────────────────
 
 function buildGroundVariation(
@@ -1438,6 +1320,8 @@ function buildVegetation(
     lng?: number,
     /** 攻城战：树更少、且不出枯树（城郊被砍伐开垦，枯木被拾作柴火） */
     isSiege: boolean = false,
+    /** 禁植区（守方城池石基等），圆内不长树 */
+    keepClear: ReadonlyArray<{ x: number; y: number; r: number }> = [],
 ): void {
     // 🔴 [2026-08-24 主人定] 一个底图一种树：底图定基调，同一张图上不混种。
     //    地区覆盖 + 季节变体都在 TreeAssignment 里，见那个文件的头注释。
@@ -1481,6 +1365,10 @@ function buildVegetation(
     const inArmyCorridor = (x: number, y: number): boolean => {
         return x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
     };
+    // 🔴 守方城池/城门前石路上不长树。走廊拦不住这块：守方最后排在 x≈93% VW，
+    //    走廊只到 82%，实测平均 3.8 棵树戳在城基上。
+    const inKeepClear = (x: number, y: number): boolean =>
+        keepClear.some((k) => (x - k.x) * (x - k.x) + (y - k.y) * (y - k.y) <= k.r * k.r);
 
     const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
     const forestFloorTile = forestFloorTiles.length > 0 ? rng.pick(forestFloorTiles) : 'pc1';
@@ -1515,7 +1403,7 @@ function buildVegetation(
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox), py = isoCellY(gx, gy, oy);
             if (px < 0 || px > VW || py < 0 || py > VH) continue;
-            if (isWater(px, py) || inArmyCorridor(px, py)) continue;
+            if (isWater(px, py) || inArmyCorridor(px, py) || inKeepClear(px, py)) continue;
             availableCells.push([gx, gy]);
         }
     }
@@ -1603,7 +1491,7 @@ function buildVegetation(
         for (let a = 0; a < 40; a++) {
             const px = VW * (0.05 + rng.next() * 0.90);
             const py = VH * (0.05 + rng.next() * 0.90);
-            if (isWater(px, py) || inArmyCorridor(px, py)) continue;
+            if (isWater(px, py) || inArmyCorridor(px, py) || inKeepClear(px, py)) continue;
             if (!hasTreePassage(px, py)) continue;
             if (isObjectOverlapping(px, py, 'PINE', objects)) continue;
             tx = px; ty = py; ok = true; break;

@@ -57,9 +57,14 @@
 <header>
   <h1>ZOOM 13 战术模式 · 战场底图总览（按真实城池）</h1>
   <div class="bar">
+    <div class="grp"><b>模式</b><select id="mode">
+      <option value="combo" selected>底图×树（去重，每种搭配一张）</option>
+      <option value="city">按城池</option>
+    </select></div>
     <div class="grp"><b>季节</b><select id="season"><option value="0">春夏</option><option value="1">秋</option><option value="2">冬</option></select></div>
     <div class="grp"><b>战斗</b><select id="siege"><option value="siege" selected>攻防战</option><option value="field">野战</option><option value="all">两者</option></select></div>
     <div class="grp"><b>文化区</b><select id="region"><option value="all">全部</option></select></div>
+    <div class="grp"><b>底图</b><select id="base"><option value="all">全部</option></select></div>
     <div class="grp"><b>层级</b><select id="tier"><option value="all">全部</option><option value="0">大城</option><option value="1">中城</option><option value="2">关隘</option><option value="4">周边</option></select></div>
     <div class="grp"><b>张数</b><select id="limit"><option value="24" selected>24</option><option value="60">60</option><option value="150">150</option><option value="0">全部</option></select></div>
     <div class="grp"><b>尺寸</b><select id="size"><option value="960">960×518</option><option value="1280" selected>1280×691</option><option value="1600">1600×864</option><option value="2000">2000×1080（实机）</option></select></div>

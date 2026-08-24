@@ -2975,6 +2975,13 @@ export class Scene13WarLayer {
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
                 isSiege: init.battleType === 'siege',
+                // 🔴 [2026-08-24] 守方城池石基 + 城门前石路上不许长树。
+                //    半径与 applyDefenderCityRoad 的辐射同口径（4 格），少一点都会露出树来。
+                //    不传的后果实测过：平均每场攻城战 3.8 棵树戳在城基和门前石路上。
+                keepClear: init.battleType === 'siege'
+                    ? this.spawns.filter((s) => s.f === 1)
+                        .map((s) => ({ x: s.x, y: s.y, r: 4 * TILE_W }))
+                    : [],
                 getCalendarSeason: () => {
                     // TimeSystem.getSeason() 枚举：春0 夏1 秋2 冬3；环境只收 绿0/橙1/白2
                     const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;

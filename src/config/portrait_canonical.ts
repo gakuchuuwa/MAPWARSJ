@@ -1,9 +1,17 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/24 21:23:37（共 43 条）
+ * 生成时间：2026/8/24 21:54:37（共 53 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
+    "/assets/AFRICA/manding_songdiyata.png": "/assets/AFRICA/70b56fcc-7446-4b05-b816-48a0f1942fd1.png",
+    "/assets/AFRICA/ethiopia_aizhana.png": "/assets/AFRICA/bd832d33-8776-4825-b45d-2e7ec1bd98a0.png",
+    "/assets/AMERICA/tupi_alaliboya.png": "/assets/AMERICA/0ae91606-1aff-42dd-bdc2-4e88cb467c39.png",
+    "/assets/AMERICA/inca_pachakuti.png": "/assets/AMERICA/3c45c57a-7fc1-484b-b8c6-d14cb78c2f30.png",
+    "/assets/AMERICA/aztec_kuaotemoke.png": "/assets/AMERICA/6725eb3d-8b36-4e03-819b-bb3aa1a622c0.png",
+    "/assets/AMERICA/mapuche_laotaluo.png": "/assets/AMERICA/7451b839-38fd-4383-8dee-53333eeee303.png",
+    "/assets/AMERICA/muisca_saguamanqika.png": "/assets/AMERICA/7b6e638b-7f8b-4e61-9eb8-40dbf7e74da3.png",
+    "/assets/AMERICA/maya_yasinachang.png": "/assets/AMERICA/e44bbb14-0dba-44ea-926b-cbcb4d5482d0.png",
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
     "/assets/LATIN/__多余__LATIN_05.png": "/assets/BERBER/buni_hanniba.png",
     "/assets/CENTRAL/huo_songlaosheng.png": "/assets/CENTRAL/__多余__CENTRAL_03.png",
@@ -23,6 +31,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/GERMANIC/safuyi_ameidiao.png": "/assets/GERMANIC/__多余__GERMANIC_02.png",
     "/assets/HEXI/helian_helianbobo.png": "/assets/HEXI/__多余__HEXI_02.png",
     "/assets/HEXI/shizhou_liucong.png": "/assets/HEXI/__多余__HEXI_01.png",
+    "/assets/INDIA/gurjara_miqiluobodu.png": "/assets/INDIA/d25c6c06-10b1-45dd-9ea1-e5454d50e958.png",
     "/assets/JAPAN/beihai_shamusheyun.png": "/assets/JAPAN/__多余__JAPAN_02.png",
     "/assets/JAPAN/yamato_nanmuzhengcheng.png": "/assets/JAPAN/__多余__JAPAN_01.png",
     "/assets/LATIN/baizanting_fulajimier.png": "/assets/LATIN/__多余__LATIN_01.png",
@@ -36,6 +45,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",
     "/assets/LINGNAN/__闲置__LINGNAN_22.png": "/assets/LINGNAN/__多余__LINGNAN_21.png",
     "/assets/liuhan/ganzhou_dourong.png": "/assets/liuhan/__多余__liuhan_01.png",
+    "/assets/MALAY/malacca_bailimisula.png": "/assets/MALAY/630f978a-e72e-42b8-b161-c44b633a3809.png",
     "/assets/SLAVIC/dunhe_tatalinuofu.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/TIBET/__多余__TIBET_02.png": "/assets/STEPPE/qidan_shulvping.png",
     "/assets/TIBET/__多余__TIBET_01.png": "/assets/STEPPE/__闲置__STEPPE_84.png",

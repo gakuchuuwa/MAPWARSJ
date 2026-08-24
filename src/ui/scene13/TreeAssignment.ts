@@ -138,9 +138,11 @@ const REGION_TREES: readonly RegionTree[] = [
 
     // ── 非洲 / 阿拉伯：金合欢 + 猴面包树的老家 ──
     // 纯沙漠底图（pal/qs/pal1/des）不覆盖 —— 那里只剩棕榈和枯树。
-    { box: [-35.0, 16.0, -18.0, 52.0], bases: ['gr5', 'gr7', 'ds4', 'ds3', 'ds2', 'gr3'],
+    // gr2/grs/for 必须带上：埃塞俄比亚高原是 gr2，漏了它阿克苏姆会长出亚洲枫
+    { box: [-35.0, 16.0, -18.0, 52.0],
+      bases: ['gr5', 'gr7', 'ds4', 'ds3', 'ds2', 'gr3', 'gr2', 'grs', 'for', 'gr6', 'fo2'],
       tree: 'BAOBAB', why: '撒哈拉以南非洲 —— 猴面包树' },
-    { box: [12.0, 30.0, -18.0, 60.0], bases: ['gr5', 'gr7', 'ds2', 'ds3', 'gr3'],
+    { box: [12.0, 30.0, -18.0, 60.0], bases: ['gr5', 'gr7', 'ds2', 'ds3', 'gr3', 'gr2', 'grs'],
       tree: 'ACACIA', why: '萨赫勒 + 阿拉伯半岛 —— 稀树草原金合欢' },
     { box: [8.0, 30.0, 68.0, 92.0], bases: ['gr5', 'gr7', 'gr3'],
       tree: 'ACACIA', why: '德干/塔尔干旱区 —— 金合欢' },
@@ -149,8 +151,11 @@ const REGION_TREES: readonly RegionTree[] = [
     // 城池表里美洲只有 6 座，全在中南美；北美东部一座都没有，所以那棵大树给中美高原。
     { box: [2.0, 24.0, -106.0, -70.0], bases: ['ds3', 'ds4', 'ds2', 'gr2', 'grs', 'gr5', 'gr7', 'gr3'],
       tree: 'SCENARIO_TREE_J', why: '中美/安第斯北高原 —— 阔叶大树' },
-    { box: [-56.0, -20.0, -76.0, -53.0], bases: ['ds2', 'gravel_default', 'gr3', 'gr7'],
-      tree: 'MONKEY_PUZZLE', why: '南美南部/安第斯 —— 智利南洋杉' },
+    // 北界必须到 2°N 接上中美框：库斯科在 -13.5，卡在 -20 会掉进两框中间的空隙，
+    // 落到底图默认的亚洲松——秘鲁高原长亚洲松是硬伤。
+    { box: [-56.0, 2.0, -82.0, -53.0],
+      bases: ['ds2', 'gravel_default', 'gr3', 'gr7', 'gr5', 'rck', 'ds3', 'gr2', 'grs'],
+      tree: 'MONKEY_PUZZLE', why: '安第斯 —— 智利南洋杉' },
     { box: [-24.0, 12.0, -82.0, -34.0], bases: ['fo2', 'gr6', 'ds4'],
       tree: 'BRAZILWOOD', why: '亚马逊 —— 巴西木' },
 

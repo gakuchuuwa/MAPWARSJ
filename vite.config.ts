@@ -2612,6 +2612,9 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     CENTRAL: { file: 'CentralExpeditionLegions.ts', varName: 'CENTRAL_EXPEDITION_ELITE_LEGIONS' },
     BASHU: { file: 'BashuExpeditionLegions.ts', varName: 'BASHU_EXPEDITION_ELITE_LEGIONS' },
     HEXI: { file: 'HexiExpeditionLegions.ts', varName: 'HEXI_EXPEDITION_ELITE_LEGIONS' },
+    AMERICA: { file: 'AmericaExpeditionLegions.ts', varName: 'AMERICA_EXPEDITION_ELITE_LEGIONS' },
+    AFRICA: { file: 'AfricaExpeditionLegions.ts', varName: 'AFRICA_EXPEDITION_ELITE_LEGIONS' },
+    MALAY: { file: 'MalayExpeditionLegions.ts', varName: 'MALAY_EXPEDITION_ELITE_LEGIONS' },
 };
 
 function serverReadAllEntityData() {
