@@ -1,0 +1,9 @@
+{
+  "name": "BERB_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 524,
+  "box_h": 468,
+  "anchor_x": 316,
+  "anchor_y": 360,
+  "sld_source": "b_berb_castle_age3"
+}

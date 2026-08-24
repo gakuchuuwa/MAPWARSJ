@@ -1,0 +1,9 @@
+{
+  "name": "MAGY_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 484,
+  "box_h": 468,
+  "anchor_x": 280,
+  "anchor_y": 372,
+  "sld_source": "b_magy_castle_age3"
+}

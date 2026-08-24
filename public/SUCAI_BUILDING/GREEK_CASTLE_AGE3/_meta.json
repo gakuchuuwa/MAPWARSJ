@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 480,
+  "box_h": 408,
+  "anchor_x": 280,
+  "anchor_y": 316,
+  "sld_source": "b_greek_castle_age3"
+}

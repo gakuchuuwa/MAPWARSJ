@@ -1,0 +1,9 @@
+{
+  "name": "MAPU_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 392,
+  "anchor_x": 232,
+  "anchor_y": 292,
+  "sld_source": "b_mapu_castle_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SPARTANS_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 504,
+  "box_h": 368,
+  "anchor_x": 300,
+  "anchor_y": 272,
+  "sld_source": "b_spartans_castle_age3"
+}

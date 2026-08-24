@@ -1,0 +1,9 @@
+{
+  "name": "TURK_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 496,
+  "box_h": 436,
+  "anchor_x": 276,
+  "anchor_y": 336,
+  "sld_source": "b_turk_castle_age3"
+}
