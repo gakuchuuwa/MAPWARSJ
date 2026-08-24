@@ -263,6 +263,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_konnik', name: '保加利亚骑兵精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEKONNIK/' },
     { id: 'elite_konnik_foot', name: '锤炼兵高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEFOOTKONNIK/' },
     { id: 'elite_leitis', name: '立陶宛列提斯精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITELEITIS/' },
+    { id: 'elite_magyar_huszar', name: '马扎尔骠骑兵精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEMAGYARHUSZAR/' },
     { id: 'elite_mameluke', name: '萨拉森马穆鲁克精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEMAMELUKE/' },
     { id: 'elite_monaspa', name: '格鲁吉亚莫纳斯帕精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEMONASPA/' },
     { id: 'elite_obuch', name: '波兰奥布奇战锤兵精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEOBUCH/' },
@@ -449,6 +450,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'turtle_ship', name: '龟船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/TURTLE_SHIP/' },
     { id: 'elite_turtle_ship', name: '龟船高级', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_TURTLE_SHIP/' },
     { id: 'dragon_ship', name: '龙头战舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/DRAGON_SHIP/' },
+    { id: 'thirisadai', name: '楼船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/THIRISADAI/' },
     { id: 'catapult_ship', name: '投石舰', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/CATAPULT_SHIP/' },
     { id: 'onager_ship', name: '重型投石舰', category: 'naval', age: 'unknown', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
 
@@ -609,7 +611,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     camel_scout: 'melee_cav', cataphract: 'melee_cav', centurion: 'melee_cav', companion_cavalry: 'melee_cav',
     elite_boyar: 'melee_cav', elite_cataphract: 'melee_cav', elite_centurion: 'melee_cav', elite_coustillier: 'melee_cav',
     elite_iron_pagoda: 'melee_cav', elite_keshik: 'melee_cav', elite_kona: 'melee_cav', elite_konnik: 'melee_cav',
-    elite_leitis: 'melee_cav', elite_mameluke: 'melee_cav', elite_monaspa: 'melee_cav', elite_shrivamsha_rider: 'melee_cav',
+    elite_leitis: 'melee_cav', elite_magyar_huszar: 'melee_cav', elite_mameluke: 'melee_cav', elite_monaspa: 'melee_cav', elite_shrivamsha_rider: 'melee_cav',
     elite_tiger_cavalry: 'melee_cav', greek_noble_cavalry: 'melee_cav', hussar: 'melee_cav',
     imperial_camel_rider: 'melee_cav', imperial_centurion: 'melee_cav', knight: 'melee_cav', kona: 'melee_cav',
     konnik: 'melee_cav', leitis: 'melee_cav', magyar_huszar: 'melee_cav', mameluke: 'melee_cav', monaspa: 'melee_cav',
@@ -657,7 +659,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     cannon_galleon: 'cannon_ship', elite_cannon_galleon: 'cannon_ship', catapult_ship: 'cannon_ship', onager_ship: 'cannon_ship',
     demo_ship: 'demo_ship', heavy_demo_ship: 'demo_ship',
     caravel: 'warship', elite_caravel: 'warship', longboat: 'warship', elite_longboat: 'warship', turtle_ship: 'warship',
-    elite_turtle_ship: 'warship', dragon_ship: 'warship',
+    elite_turtle_ship: 'warship', dragon_ship: 'warship', thirisadai: 'warship',
 
     // ── 英雄（默认骑马；步战/象驾按名显式标）──
     hero_alaric: 'mounted_hero', hero_algirdas: 'mounted_hero', hero_arariboiamelee: 'mounted_hero',

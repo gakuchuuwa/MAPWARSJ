@@ -2008,6 +2008,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITELEITIS/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITELEITIS/death_${dir}.png`),
         },
+        'elite_magyar_huszar': {
+            // 【精锐马扎尔骠骑】AoE2 DE 素材，2026-08-25 补齐
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/death_${dir}.png`),
+        },
         'elite_mameluke': {
             // 【精锐马穆鲁克】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/move_${dir}.png`),
