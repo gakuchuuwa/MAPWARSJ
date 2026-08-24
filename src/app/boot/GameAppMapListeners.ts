@@ -63,6 +63,13 @@ export function setupGameAppMapListeners(app: GameApp): void {
         }
     });
 
+    window.addEventListener('toggle-editor-sea', (e: Event) => {
+        const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
+        if (app.seaRouteEditor) {
+            detail?.enabled ? app.seaRouteEditor.show() : app.seaRouteEditor.hide();
+        }
+    });
+
     window.addEventListener('toggle-script-mode', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
         app.historicalEventManager?.setScriptModeEnabled(!!detail?.enabled);

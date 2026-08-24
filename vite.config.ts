@@ -444,6 +444,32 @@ export default defineConfig({
                     });
                 });
 
+                // 海路编辑器保存（/api/save-sea-routes）：写入 src/data/VectorSeaRouteData.ts
+                server.middlewares.use('/api/save-sea-routes', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    req.on('data', chunk => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const filePath = path.resolve(__dirname, 'src/data/VectorSeaRouteData.ts');
+                            fs.writeFileSync(filePath, body, 'utf-8');
+                            const bytes = Buffer.byteLength(body, 'utf-8');
+                            console.log(`✅ [SaveSeaRoutes] Saved ${bytes} bytes to ${filePath}`);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, bytes }));
+                        } catch (err: any) {
+                            console.error(`❌ [SaveSeaRoutes] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 // Also handle save-events API
                 server.middlewares.use('/api/save-events', (req, res) => {
                     if (req.method !== 'POST') {
