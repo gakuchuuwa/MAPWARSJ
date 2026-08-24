@@ -49,4 +49,16 @@ export const CITY_WONDER: Record<string, string> = {
     'city_wupusala': 'EAST_WONDER_VIKINGS',  // 乌普萨拉（维京）
     'city_yadian': 'GREEK_WONDER_ATHENIANS',  // 雅典
     'city_yikeniwumu': 'ORIE_WONDER_TURKS',  // 伊科尼乌姆（罗姆苏丹，突厥）
+    // [2026-08-24 新增 10 城 + 孟加拉挂已有高达城]
+    'city_tenochtitlan': 'MESO_WONDER_AZTECS',  // 特诺奇提特兰（阿兹特克）
+    'city_cusco': 'MESO_WONDER_INCAS',  // 库斯科（印加）
+    'city_tikal': 'MESO_WONDER_MAYANS',  // 蒂卡尔（玛雅）
+    'city_tucapel': 'ANDE_WONDER_MAPUCHE',  // 图卡佩尔（马普切）
+    'city_bacata': 'ANDE_WONDER_MUISCA',  // 巴卡塔（穆伊斯卡）
+    'city_guanabara': 'ANDE_WONDER_TUPI',  // 瓜纳巴拉（图皮）
+    'city_timbuktu': 'AFRI_WONDER_MALIANS',  // 廷巴克图（马里/曼丁哥）
+    'city_aksum': 'AFRI_WONDER_ETHIOPIANS',  // 阿克苏姆（埃塞俄比亚）
+    'city_malacca': 'SEAS_WONDER_MALAY',  // 马六甲（马来/满剌加）
+    'city_patan': 'INDI_WONDER_GURJARAS',  // 帕坦（瞿折罗/古吉拉特）
+    'city_gaodacheng': 'INDI_WONDER_BENGALIS',  // 高达城（孟加拉，已有据点）
 };

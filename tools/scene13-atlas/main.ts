@@ -1,7 +1,12 @@
 /**
- * ZOOM 13 战术模式「背景图总览」工具（2026-08-24）。
+ * ZOOM 13 战术模式「背景图总览」工具（2026-08-24 重做）。
  *
- * 目的：把生成器能产出的所有战场背景一次性铺开，方便肉眼比对、挑毛病、定优化方向。
+ * 目的：按**真实城池位置**出图，一眼看出洛阳、敦煌、拉萨各自长什么样。
+ *
+ * 🔴 [2026-08-24 主人定稿] 旧版枚举「18 主题 × 3 季节 × 4 海拔 × 4 水系 × 2 攻防 = 1728」
+ *    种组合，那套 DE 主题是抽随机地图用的、**跟真实地理没关系**，
+ *    看一堆不存在的排列没有意义。现在改成遍历 942 座真实城池，
+ *    底图由 public/world/world-base.png 按真实气候数据查表决定。
  *
  * 铁律：渲染必须走 Scene13GroundPainter —— 和游戏实机是同一份代码。工具里看到什么，
  * 游戏里就是什么；在这里调好的参数，改的也是同一处常量。绝不在工具里另写一份渲染。
@@ -13,7 +18,8 @@ import {
     generateEnvironment,
     type Scene13EnvironmentPlan,
 } from '../../src/ui/scene13/Scene13EnvironmentGenerator';
-import { DE_MAP_THEMES, type DeMapThemeId } from '../../src/ui/scene13/Scene13DeMapThemes';
+import { setWorldBaseData } from '../../src/ui/scene13/WorldBaseMap';
+import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY, type CityDataV2 } from '../../src/data/cities_v2';
 import { Scene13GroundPainter, type GroundPatch, isWaterTile } from '../../src/ui/scene13/Scene13GroundPainter';
 import { loadDeMaps } from './de-map';
 import type { Biome, ElevationBand } from '../../src/ui/Scene13Biome';
