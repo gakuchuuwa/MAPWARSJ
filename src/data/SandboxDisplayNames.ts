@@ -1099,6 +1099,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ethiopia': '埃塞',
     'malacca': '满剌',
     'gurjara': '瞿折',
+    'zhuluo': '朱罗',
 };
 
 // @ts-ignore
