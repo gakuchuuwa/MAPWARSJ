@@ -169,15 +169,20 @@ const TREES_PER_FOREST_TILE = 0.87;
  * 照抄 DE 的全图 12.4% 会落得满地零星几棵。改完用 scratch/cmp_forest.mts 量。
  */
 function forestCoverOfUsableFor(biome: Biome): number {
+    // 🔴 [2026-08-24 主人：「你弄那么多树干什么」] 大幅下调。
+    //    此前照 DE 地中海**森林**图量的 472 棵去凑，但那是森林图；
+    //    DE 的干旱/草原图树本来就稀疏（见主人发的干旱截图，全屏只有几十棵散树）。
+    //    而且我们九成是攻城战，主人定「树零星摆几个也行」——
+    //    树多了既挡视线又挤掉战场，还把地形起伏盖住。
     switch (biome) {
-        case 'tundra_snow': return 0.07;
-        case 'desert': return 0.09;
-        case 'cold_steppe': return 0.12;
+        case 'tundra_snow': return 0.03;
+        case 'desert': return 0.04;
+        case 'cold_steppe': return 0.06;
         case 'savanna':
-        case 'mediterranean': return 0.22;
+        case 'mediterranean': return 0.10;
         case 'tropical_rainforest':
-        case 'temperate_forest': return 0.52;
-        default: return 0.36;
+        case 'temperate_forest': return 0.22;
+        default: return 0.15;
     }
 }
 const DE_TREE_OBJECTS = new Set([
@@ -659,19 +664,22 @@ function resolveBattleTopology(
 // ── 第 2 层：高地（clump 生长；低地少丘、高地多丘） ─────────────
 
 /**
- * DE 式满地微起伏。
+ * DE 式大尺度缓坡起伏。
  *
- * 🔴 [2026-08-24 对着 DE 真图实测后加] 病根：原本只有 2~4 片大椭圆高台，台面内部全平，
- * 只有台缘才有高差 —— 整张图看着一马平川。拿 DE 场景编辑器生成的真图一比就露馅了：
+ * 🔴 [2026-08-24 主人：「没有高低和丘陵吗？你看看人家做的」]
  *
- *              有高度的格   相邻格有高差的边
- *     DE 真图      21.6%          14.1%
- *     我们(丘陵)   15.5%           3.4%
+ * 走过的弯路：先是只有 2~4 片大椭圆高台、台面内部全平，一马平川；
+ * 然后改成满地 3~7 格的小碎包——「相邻格有高差的边」这个数字追平了 DE（14.1%），
+ * **但图上还是看不出起伏**。因为那个指标不区分**尺度**：
+ * 小碎包再密也只是噪点，而 DE 的丘陵是**跨几十格的大缓坡**，
+ * 明暗带宽度能占到画面五分之一（见主人发的 DE 干旱图截图）。
  *
- * 高度**总量**其实差不多，差的是**颗粒度**：DE 是满地碎的小土包，我们是几个大台地。
- * 所以这里不动原有的战术高地（那是有战斗意义的地形），只在其上叠一层小缓丘。
+ * 所以这里用**低频噪声**：三层不同周期的正弦叠加（周期 20~50 格），
+ * 归一化后量化成 0~3 级。这样高度是**连续渐变**的——
+ * 相邻格高差边自然达标，而整体呈现大片缓坡，坡面明暗才铺得开。
  *
- * 验收标准就是上表的 14.1%，用 scratch/cmp_elevation.mts 量，不靠肉眼。
+ * 高度分布对齐 DE 真值：平地 ~78%，1 级 ~15%，2 级 ~5.6%，3 级 ~0.8%。
+ * 量具：scratch/cmp_elevation.mts
  */
 function addMicroRelief(
     grid: number[][],
@@ -680,25 +688,63 @@ function addMicroRelief(
     rng: RandomSource,
     density: number = 1
 ): number[][] {
-    // 微丘走 clump 生长而不是画圆：圆的边界太"光滑"，同样面积撑不出 DE 那么多高差边。
-    // clump 的轮廓天然曲折，边界/面积比高——这正是 DE 用 21.6% 的面积做出 14.1% 高差边的原因。
-    // 每块目标 3~7 格，块与块之间不重叠（各自占格），铺出满地碎缓包。
-    const budget = Math.round(gw * gh * 0.115 * density);
-    const taken = new Set<string>();
-    let placed = 0;
-    let guard = 0;
-    while (placed < budget && guard++ < budget * 6) {
-        const sx = rng.int(1, gw - 2);
-        const sy = rng.int(1, gh - 2);
-        if (taken.has(`${sx},${sy}`)) continue;
-        const target = 3 + rng.int(0, 4);
-        const cells = growClump(sx, sy, target, gw, gh, taken, rng);
-        for (const [x, y] of cells) {
-            // 恒抬 1 级：2/3 级留给战术高地。微丘自己叠高会造出断崖，
-            // 而 DE 真图的断崖率是 0.00%，那条必须守住。
-            if (grid[y][x] < 1) grid[y][x] = 1;
+    // 三层低频波。周期取 20~50 格：太短会退化成噪点（就是上一版的毛病），
+    // 太长则整屏只剩一个坡、看不出地形变化。
+    const w1 = (Math.PI * 2) / (26 + rng.next() * 14);
+    const w2 = (Math.PI * 2) / (15 + rng.next() * 8);
+    const w3 = (Math.PI * 2) / (41 + rng.next() * 16);
+    // 第四层中频：低频三层给的是圆润大块，等高线太光滑——「相邻格有高差的边」只有 5%，
+    // 而 DE 是 14.1%。DE 的高度区域周长/面积比很高（等高线曲折交错），
+    // 所以在大坡上再叠一层周期 8~14 格的扰动，专门把等高线搅乱，不改变大尺度形态。
+    const w4 = (Math.PI * 2) / (8 + rng.next() * 6);
+    const p1 = rng.next() * Math.PI * 2, p2 = rng.next() * Math.PI * 2;
+    const p3 = rng.next() * Math.PI * 2, p4 = rng.next() * Math.PI * 2;
+    const p5 = rng.next() * Math.PI * 2, p6 = rng.next() * Math.PI * 2;
+    const p7 = rng.next() * Math.PI * 2, p8 = rng.next() * Math.PI * 2;
+    // 各层走向随机，免得所有战场的坡都朝同一个方向
+    const a1 = rng.next() * Math.PI, a2 = rng.next() * Math.PI, a3 = rng.next() * Math.PI;
+    const a4 = rng.next() * Math.PI;
+    const rot = (x: number, y: number, a: number): [number, number] =>
+        [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
+
+    const field: number[][] = [];
+    let lo = Infinity, hi = -Infinity;
+    for (let y = 0; y < gh; y++) {
+        const row: number[] = [];
+        for (let x = 0; x < gw; x++) {
+            const [x1, y1] = rot(x, y, a1);
+            const [x2, y2] = rot(x, y, a2);
+            const [x3, y3] = rot(x, y, a3);
+            const [x4, y4] = rot(x, y, a4);
+            const n = Math.sin(x1 * w1 + p1) * Math.cos(y1 * w1 * 0.82 + p2)
+                + 0.55 * Math.sin(x2 * w2 + p3) * Math.cos(y2 * w2 * 1.13 + p4)
+                + 0.75 * Math.sin(x3 * w3 + p5) * Math.cos(y3 * w3 * 0.7 + p6)
+                + 0.30 * Math.sin(x4 * w4 + p7) * Math.cos(y4 * w4 * 1.31 + p8);
+            row.push(n);
+            if (n < lo) lo = n;
+            if (n > hi) hi = n;
         }
-        placed += cells.length;
+        field.push(row);
+    }
+
+    // 量化阈值。
+    // 🔴 [2026-08-24] 曾照「DE 真值 78.4% 平地」定阈值，结果图上**看不出起伏**——
+    //    主人连说两次。原因：那 78.4% 是我从**一张地中海图**量的，不代表所有 DE 地图；
+    //    主人发的干旱图/林中空地/尼斯湖，坡面暗带都占到画面三四成，起伏明显大得多。
+    //    整数高度场里同一级内部完全平坦、梯度为 0，平地占比越高，能出明暗的过渡带越窄。
+    //    所以这里**以视觉为准**：让大半地面处在缓坡上，暗带才铺得开。
+    const span = (hi - lo) || 1;
+    const t1 = 0.42 - (0.42 - 0.28) * (density - 1) * 0.5;
+    const T1 = lo + span * Math.max(0.18, Math.min(0.75, t1));
+    const T2 = lo + span * 0.74;
+    const T3 = lo + span * 0.93;
+
+    for (let y = 0; y < gh; y++) {
+        for (let x = 0; x < gw; x++) {
+            const n = field[y][x];
+            const h = n < T1 ? 0 : n < T2 ? 1 : n < T3 ? 2 : 3;
+            if (h > grid[y][x]) grid[y][x] = h;
+        }
     }
     return grid;
 }
