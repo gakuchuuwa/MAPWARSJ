@@ -142,6 +142,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     elite_konnik_foot: 6,
     elite_leitis: 12,
     elite_liao_dao: 6,
+    elite_magyar_huszar: 12,
     elite_mameluke: 12,
     elite_monaspa: 12,
     elite_obuch: 6,
