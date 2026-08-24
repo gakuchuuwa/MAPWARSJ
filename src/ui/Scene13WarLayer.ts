@@ -156,6 +156,9 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     LATIN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     INDIA:        { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     BERBER:       { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    AMERICA:      { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    AFRICA:       { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    MALAY:        { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
 };
 
 /**
@@ -1052,6 +1055,9 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     WEST_ASIA: 'ORIE',
     INDIA: 'INDI',
     BERBER: 'AFRI',
+    AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
+    AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
+    MALAY: 'SEAS',    // [2026-08-24] 马来东南亚
 };
 /** 攻城战守方（大城）帝国时代建筑池（2026-08-22 主人定：大城=帝国时代；大学/市镇中心/市场用帝国 age4，其余用城堡 age3） */
 const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [

@@ -56,6 +56,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
     INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
     BERBER:       'mulabite',    // 柏柏尔-马拉喀什 → 穆拉比特
+    AMERICA:      'aztec',       // 美洲 → 阿兹特克（待建势力对齐）
+    AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
+    MALAY:        'malacca',     // 马来 → 满剌加（待建势力对齐）
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
