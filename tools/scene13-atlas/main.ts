@@ -22,7 +22,6 @@ import { setWorldBaseData } from '../../src/ui/scene13/WorldBaseMap';
 import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY, type CityDataV2 } from '../../src/data/cities_v2';
 import { Scene13GroundPainter, type GroundPatch, isWaterTile } from '../../src/ui/scene13/Scene13GroundPainter';
 import { loadDeMaps } from './de-map';
-import type { Biome, ElevationBand } from '../../src/ui/Scene13Biome';
 
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
@@ -31,48 +30,7 @@ type Season = 0 | 1 | 2;
 type WaterKind = 'sea' | 'lake' | 'river' | 'none';
 interface NatureMeta { box_w: number; box_h: number; anchor_x: number; anchor_y: number; frames: number }
 
-/** 每个海拔档给一个代表性米数 + 纬度（喂雪线/树种判定，和实机同一批判据） */
-const BANDS: Record<ElevationBand, { m: number; lat: number }> = {
-    lowland: { m: 60, lat: 34 },
-    upland: { m: 420, lat: 36 },
-    mountain: { m: 1600, lat: 38 },
-    alpine: { m: 3600, lat: 40 },
-    high_alpine: { m: 4600, lat: 40 },
-    snow: { m: 5400, lat: 42 },
-};
-/**
- * 主题 → 代表性 biome。
- *
- * ⚠ 这张表是**工具侧的假设**，不是引擎权威：实机的 biome 由 detectBiomeAtElevation
- * 按真实经纬度判定，和主题是两条独立的线。工具要定点枚举 18 套主题，就得给每套配一个
- * 说得通的 biome，否则会出现「非洲雨林主题 + 温带森林 biome」这种实机不会有的组合。
- * 如果哪一条你觉得配错了，直接改这里，不影响引擎。
- */
-const THEME_BIOME: Record<DeMapThemeId, Biome> = {
-    afrotropical_tropical: 'tropical_rainforest',
-    neotropical_temperate: 'temperate_forest',
-    neotropical_tropical: 'tropical_rainforest',
-    nearctic_temperate: 'temperate_forest',
-    indomalayan_tropical: 'tropical_rainforest',
-    palaearctic_asia_temperate: 'temperate_forest',
-    palaearctic_asia_steppe: 'cold_steppe',
-    palaearctic_asia_desert: 'desert',
-    palaearctic_tibetan_plateau: 'cold_steppe',
-    palaearctic_middle_east_desert: 'desert',
-    palaearctic_salt_desert: 'desert',
-    palaearctic_middle_east_highland: 'mediterranean',
-    palaearctic_europe_taiga: 'boreal',
-    palaearctic_europe_temperate: 'temperate_forest',
-    palaearctic_europe_mediterranean: 'mediterranean',
-    australasian_temperate: 'temperate_forest',
-    serengeti: 'savanna',
-    palustrine_swamp: 'temperate_forest',
-};
-
 const SEASON_NAME = ['春夏', '秋', '冬'];
-// 🔴 键名必须用引擎的 ElevationBand 合法值。曾误写成 hill/plateau，那两个不在引擎表里，
-//    treeFactor 之类按 band 查表全落 undefined，丘陵/高原两档的林木预算直接算成 0。
-const BAND_NAME: Record<ElevationBand, string> = { lowland: '低地', upland: '丘陵', mountain: '高原', alpine: '雪线', high_alpine: '高山', snow: '雪原' };
 const WATER_NAME: Record<WaterKind, string> = { none: '无水', sea: '海岸', lake: '湖', river: '河' };
 
 /** 素材缓存：整个工具共用，几十张图只加载一次 */
@@ -184,112 +142,125 @@ async function drawSprite(
         g.drawImage(img, sx, 0, sw, sh, o.x - meta.anchor_x, drawY - meta.anchor_y, sw, sh);
     }
 }
-
-// ── 枚举 & 页面 ────────────────────────────────────────────────
+// ── 城池枚举 & 页面 ──────────────────────────────────────────
 
 const sel = (id: string) => document.getElementById(id) as HTMLSelectElement;
 let seedSalt = 0;
 /** 每次 run() 领一个号；上一批看到号变了就自己退出，避免两批交叉写进网格 */
 let runToken = 0;
 
-function pick<T extends string>(s: HTMLSelectElement, all: T[]): T[] {
-    return s.value === 'all' ? all : [s.value as T];
+/** 全部据点，按层级合并。id 天然唯一，直接当稳定编号用——不必再自己编一套。 */
+const RAW_CITIES: CityDataV2[] = [
+    ...T0_CAPITALS, ...T1_MEDIUM_CITIES, ...T2_STRATEGIC, ...PERIPHERY,
+];
+
+/**
+ * 按文化区轮转重排。
+ *
+ * 🔴 数据文件里中原/江南的城排在最前，直接取前 N 张会**全是中国城**，
+ *    看不到全世界长什么样——这正是这个工具存在的意义。
+ *    轮转后第一屏就能铺开尽可能多的地区。
+ */
+function interleaveByRegion(list: CityDataV2[]): CityDataV2[] {
+    const buckets = new Map<string, CityDataV2[]>();
+    for (const c of list) {
+        const k = c.region ?? '?';
+        if (!buckets.has(k)) buckets.set(k, []);
+        buckets.get(k)!.push(c);
+    }
+    // 🔴 区的顺序也要打散：18 个文化区里 14 个在东亚，
+    //    照数据文件顺序轮转，第一屏依然清一色东亚（主人实测点出）。
+    //    按各区的平均经度排序，从东亚一路铺到欧洲，第一屏就横跨欧亚。
+    const queues = [...buckets.entries()]
+        .map(([k, v]) => ({
+            k, v,
+            lng: v.reduce((a, c) => a + c.lng, 0) / v.length,
+        }))
+        .sort((a, b) => b.lng - a.lng)
+        .map((e) => e.v);
+    const out: CityDataV2[] = [];
+    for (let i = 0; out.length < list.length; i++) {
+        let moved = false;
+        for (const q of queues) {
+            if (i < q.length) { out.push(q[i]); moved = true; }
+        }
+        if (!moved) break;
+    }
+    return out;
 }
 
-interface Combo {
-    theme: DeMapThemeId;
-    season: Season;
-    band: ElevationBand;
-    water: WaterKind;
-    siege: boolean;
+const ALL_CITIES: CityDataV2[] = interleaveByRegion(RAW_CITIES);
+
+const TIER_NAME: Record<number, string> = { 0: '大城', 1: '中城', 2: '关隘', 4: '周边' };
+
+// ── 世界底图查找表：浏览器侧加载并注入 ────────────────────────
+// 不注入的话 generateEnvironment 会回退到旧的主题逻辑，底图就不是按真实地理选的了，
+// 卡片上会标「未走真实地理表」提醒。
+let worldBaseReady = false;
+async function loadWorldBase(): Promise<void> {
+    if (worldBaseReady) return;
+    const img = await loadImg('/world/world-base.png');
+    if (!img) { console.warn('[atlas] world-base.png 加载失败，底图回退到旧逻辑'); return; }
+    const cv = document.createElement('canvas');
+    cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+    const g = cv.getContext('2d', { willReadFrequently: true })!;
+    g.drawImage(img, 0, 0);
+    const id = g.getImageData(0, 0, cv.width, cv.height);
+    setWorldBaseData(id.data, cv.width, cv.height);
+    worldBaseReady = true;
+    console.log('[atlas] world-base 已载入 ' + cv.width + 'x' + cv.height);
 }
 
-// ── 删除（组合黑名单）────────────────────────────────────────
-//
-// 「删除」删的是**组合**，不是图片文件——底图是现场算出来的，磁盘上没有对应文件可删。
-// 删掉一个组合 = 记下它的稳定编号，以后 atlas 不再生成它。
-//
-// 🔴 只写 localStorage，不碰任何素材、不碰引擎。随时可恢复，导出的 JSON 才是产物。
-//    绝不允许改成真去删 public/SUCAI_* 里的素材。
+// ── 标记（据点黑名单）──────────────────────────────────────
+// 标记的是「这座城的底图配得不合适」这条意见，不是删城，更不是删素材文件。
+// 只写 localStorage，随时可恢复，导出的 JSON 才是产物。
 
-const BLACKLIST_KEY = 'scene13-atlas-blacklist-v1';
+const BLACKLIST_KEY = 'scene13-atlas-city-blacklist-v2';
 
 interface DeletedEntry {
-    id: number;
-    theme: DeMapThemeId;
-    season: Season;
-    band: ElevationBand;
-    water: WaterKind;
-    siege: boolean;
-    /** 删除时那张图的随机种子——同一组合换种子长相完全不同，记下来才能复现当时看到的画面 */
-    seed: number;
-    at: string;
+    id: string; name: string; region: string;
+    lat: number; lng: number; base: string;
+    season: number; siege: boolean; at: string;
 }
 
-function loadBlacklist(): Map<number, DeletedEntry> {
+function loadBlacklist(): Map<string, DeletedEntry> {
     try {
         const raw = localStorage.getItem(BLACKLIST_KEY);
         if (!raw) return new Map();
-        const arr = JSON.parse(raw) as DeletedEntry[];
-        return new Map(arr.map((e) => [e.id, e]));
-    } catch {
-        return new Map();
-    }
+        return new Map((JSON.parse(raw) as DeletedEntry[]).map((e) => [e.id, e]));
+    } catch { return new Map(); }
 }
-
 const blacklist = loadBlacklist();
 
 function saveBlacklist(): void {
-    try {
-        localStorage.setItem(BLACKLIST_KEY, JSON.stringify([...blacklist.values()]));
-    } catch { /* 存不下就算了，本轮内存里的删除仍然有效 */ }
+    try { localStorage.setItem(BLACKLIST_KEY, JSON.stringify([...blacklist.values()])); }
+    catch { /* 存不下也不影响本轮 */ }
 }
 
 function refreshDeletedUI(): void {
     const n = blacklist.size;
     const el = document.getElementById('delstat');
-    if (el) el.textContent = n === 0 ? '未删除任何组合' : `已删 ${n} 个组合`;
-    const btn = document.getElementById('undel') as HTMLButtonElement | null;
-    if (btn) btn.disabled = n === 0;
-    const exp = document.getElementById('export') as HTMLButtonElement | null;
-    if (exp) exp.disabled = n === 0;
-}
-
-function deleteCombo(c: Combo, card: HTMLElement): void {
-    const id = stableComboId(c);
-    blacklist.set(id, {
-        id, theme: c.theme, season: c.season, band: c.band, water: c.water, siege: c.siege,
-        seed: seedSalt, at: new Date().toISOString(),
-    });
-    saveBlacklist();
-    refreshDeletedUI();
-    // A/B 模式一个组合有两张卡（a/b），一起撤掉，否则会留下半张孤儿
-    for (const el of [...document.querySelectorAll('.card')] as HTMLElement[]) {
-        if (el.dataset.comboId === String(id)) el.remove();
+    if (el) el.textContent = n === 0 ? '未标记任何据点' : '已标记 ' + n + ' 座';
+    for (const id of ['undel', 'export']) {
+        const b = document.getElementById(id) as HTMLButtonElement | null;
+        if (b) b.disabled = n === 0;
     }
-    void card;
 }
 
 function restoreAll(): void {
     if (blacklist.size === 0) return;
-    blacklist.clear();
-    saveBlacklist();
-    refreshDeletedUI();
-    void run();
+    blacklist.clear(); saveBlacklist(); refreshDeletedUI(); void run();
 }
 
 function exportBlacklist(): void {
-    const entries = [...blacklist.values()].sort((a, b) => a.id - b.id);
-    const payload = {
-        note: 'ZOOM13 atlas 手工剔除的战场组合。id = 完整笛卡尔积（18 主题 × 3 季节 × 4 海拔 × 4 水系 × 2 攻防）中的稳定序号。',
-        exportedAt: new Date().toISOString(),
-        count: entries.length,
-        entries,
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const entries = [...blacklist.values()].sort((a, b) => a.id.localeCompare(b.id));
+    const blob = new Blob([JSON.stringify({
+        note: '在 atlas 里被标记「底图不合适」的据点。id 对应 cities_v2.ts。',
+        exportedAt: new Date().toISOString(), count: entries.length, entries,
+    }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `scene13-combo-blacklist-${entries.length}.json`;
+    a.download = 'scene13-city-blacklist-' + entries.length + '.json';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -299,7 +270,6 @@ function exportBlacklist(): void {
 const box = () => document.getElementById('box')!;
 const boxImg = () => document.getElementById('boximg') as HTMLImageElement;
 const boxMeta = () => document.getElementById('boxmeta')!;
-/** 当前放大的是第几张（供 ← → 翻页） */
 let zoomIndex = -1;
 
 function openZoom(i: number): void {
@@ -307,20 +277,13 @@ function openZoom(i: number): void {
     if (i < 0 || i >= cards.length) return;
     zoomIndex = i;
     const canvas = cards[i].querySelector('canvas') as HTMLCanvasElement;
-    // 用 toDataURL 而不是把 canvas 搬进放大层：搬走会让网格里空一格，
-    // 而且关掉时还得原样放回去，容易出错。
     boxImg().src = canvas.toDataURL('image/png');
-    boxMeta().innerHTML =
-        `<span class="k">${i + 1} / ${cards.length}</span>　` +
-        (cards[i].querySelector('.meta') as HTMLElement).innerHTML.replace(/<div/g, '<span').replace(/<\/div>/g, '</span>　');
+    const metaHtml = (cards[i].querySelector('.meta') as HTMLElement).innerHTML
+        .split('<div').join('<span').split('</div>').join('</span>');
+    boxMeta().innerHTML = '<span class="k">' + (i + 1) + ' / ' + cards.length + '</span>　' + metaHtml;
     box().classList.add('on');
 }
-
-function closeZoom(): void {
-    box().classList.remove('on');
-    zoomIndex = -1;
-}
-
+function closeZoom(): void { box().classList.remove('on'); zoomIndex = -1; }
 function initZoom(): void {
     box().addEventListener('click', closeZoom);
     window.addEventListener('keydown', (e) => {
@@ -331,93 +294,62 @@ function initZoom(): void {
     });
 }
 
-/**
- * 组合的**稳定编号**：在完整笛卡尔积（18 主题 × 3 季节 × 4 海拔 × 4 水系 × 2 攻防 = 1728）
- * 里的固定序号，与当前筛选条件、A/B 开关、渲染顺序全都无关。
- *
- * 🔴 别改回循环递增。递增号会随筛选条件漂移——今天的 #37 明天指向另一张图，
- *    主人拿它指认「第 37 张不对」就会定位到错误的组合。编号的唯一用途就是稳定指认。
- *
- * 注意：编号只锁定「组合」，不锁定「那一张具体的图」。同一组合换随机种子会长成
- * 完全不同的样子，所以指认时必须连种子一起报（卡片上的 seed 就是干这个的）。
- */
-const ALL_SEASONS: Season[] = [0, 1, 2];
-const ALL_BANDS: ElevationBand[] = ['lowland', 'upland', 'mountain', 'alpine'];
-const ALL_WATERS: WaterKind[] = ['none', 'sea', 'lake', 'river'];
-
-function stableComboId(c: Combo): number {
-    const themes = Object.keys(DE_MAP_THEMES) as DeMapThemeId[];
-    const ti = themes.indexOf(c.theme);
-    const si = ALL_SEASONS.indexOf(c.season);
-    const bi = ALL_BANDS.indexOf(c.band);
-    const wi = ALL_WATERS.indexOf(c.water);
-    return ((((ti * 3 + si) * 4 + bi) * 4 + wi) * 2 + (c.siege ? 1 : 0)) + 1;
-}
-
-function stampIndex(canvas: HTMLCanvasElement, label: string): void {
-    const g = canvas.getContext('2d');
-    if (!g) return;
-    const fontSize = Math.max(12, Math.round(canvas.height * 0.06));
-    g.font = `bold ${fontSize}px sans-serif`;
-    const tm = g.measureText(label);
-    const padX = 6, padY = 4;
-    const tw = tm.width + padX * 2;
-    const th = fontSize + padY * 2;
-    const x = canvas.width - tw - 4;
-    const y = canvas.height - th - 4;
-    g.fillStyle = 'rgba(0,0,0,0.55)';
-    g.fillRect(x, y, tw, th);
-    g.fillStyle = '#fff';
-    g.textBaseline = 'top';
-    g.fillText(label, x + padX, y + padY);
-}
+// ── 卡片 ──────────────────────────────────────────────────────
 
 function buildCard(
     canvas: HTMLCanvasElement,
-    c: Combo,
+    city: CityDataV2,
     plan: Scene13EnvironmentPlan,
-    moodLabel: string,
-    suffix: string = '',
+    season: Season,
+    siege: boolean,
 ): HTMLElement {
-    // 右下角打稳定编号水印。suffix 用于 A/B 模式的 a/b 区分，不参与编号本身。
-    const id = stableComboId(c);
-    stampIndex(canvas, `#${id}${suffix}`);
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.dataset.comboId = String(id);   // 删除时靠它把 A/B 两张卡一起撤掉
-    canvas.addEventListener('click', () => {
-        const cards = [...document.querySelectorAll('.card')];
-        openZoom(cards.indexOf(el));
-    });
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.cityId = city.id;
+
     const shell = document.createElement('div');
     shell.className = 'shot';
     shell.appendChild(canvas);
+    canvas.addEventListener('click', () => {
+        openZoom([...document.querySelectorAll('.card')].indexOf(card));
+    });
     const del = document.createElement('button');
     del.className = 'del';
-    del.title = `删除组合 #${id}（只是拉黑不再生成，随时可恢复，不删任何文件）`;
+    del.title = '标记「' + city.name + '」底图不合适（只记意见，可恢复，不删任何文件）';
     del.textContent = '×';
     del.addEventListener('click', (e) => {
-        e.stopPropagation();   // 别让点击穿透到 canvas 触发放大
-        deleteCombo(c, el);
+        e.stopPropagation();
+        blacklist.set(city.id, {
+            id: city.id, name: city.name, region: city.region ?? '?',
+            lat: city.lat, lng: city.lng, base: plan.baseTerrain,
+            season, siege, at: new Date().toISOString(),
+        });
+        saveBlacklist(); refreshDeletedUI();
+        for (const el of [...document.querySelectorAll('.card')] as HTMLElement[]) {
+            if (el.dataset.cityId === city.id) el.remove();
+        }
     });
     shell.appendChild(del);
-    el.appendChild(shell);
+    card.appendChild(shell);
+
     const kinds = new Set(plan.objects.filter((o) => o.layer === 'world').map((o) => o.asset));
     const tiles = new Set(plan.terrainPatches.map((p) => p.tile));
+    const warnBase = worldBaseReady ? '' : ' <span class="warn">(未走真实地理表)</span>';
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.innerHTML =
-        `<div class="t">#${id}${suffix}　${c.theme}　<span style="color:#8fb4d9">${moodLabel}</span></div>` +
-        `<div class="k">${SEASON_NAME[c.season]} · ${BAND_NAME[c.band]} · ${WATER_NAME[c.water]} · ${c.siege ? '攻防战' : '野战'}</div>` +
-        // 编号只锁组合，种子决定这一次长成什么样——指认问题时两个都要报
-        `<div class="k">种子 <code>seed ${seedSalt}</code></div>` +
-        `<div class="k">拓扑 <code>${plan.topology ?? '-'}</code> · biome <code>${plan.biome}</code></div>` +
-        `<div class="k">底图 <code>${plan.baseTerrain}</code> · 斑块 <code>${[...tiles].join(' ') || '无'}</code></div>` +
-        `<div class="k">物件 ${plan.objects.length} 个 / ${kinds.size} 种：<code>${[...kinds].slice(0, 8).join(' ')}</code></div>` +
-        (plan.objects.length === 0 ? '<div class="warn">⚠ 这张图一个物件都没有</div>' : '');
-    el.appendChild(meta);
-    return el;
+        '<div class="t">' + city.name + '　<span style="color:#8fb4d9">' + (TIER_NAME[city.tier ?? 4] ?? '') + '</span>'
+        + '　<span style="color:#7fd18b">' + (siege ? '攻防战' : '野战') + '</span>　' + SEASON_NAME[season] + '</div>'
+        + '<div class="k">' + (city.region ?? '?') + ' · ' + city.lat.toFixed(2) + ', ' + city.lng.toFixed(2) + '</div>'
+        + '<div class="k">底图 <code>' + plan.baseTerrain + '</code>' + warnBase + '</div>'
+        + '<div class="k">斑块 <code>' + ([...tiles].join(' ') || '无') + '</code></div>'
+        + '<div class="k">物件 ' + plan.objects.length + ' 个 / ' + kinds.size + ' 种</div>'
+        + (plan.objects.length === 0 ? '<div class="warn">⚠ 一个物件都没有</div>' : '');
+    card.appendChild(meta);
+    return card;
 }
+
+// ── 主流程 ────────────────────────────────────────────────────
 
 async function run(): Promise<void> {
     const token = ++runToken;
@@ -425,103 +357,46 @@ async function run(): Promise<void> {
     const stat = document.getElementById('stat')!;
     grid.innerHTML = '';
     closeZoom();
+    stat.textContent = '载入世界底图表…';
+    await loadWorldBase();
+    if (token !== runToken) return;
 
     const W = parseInt(sel('size').value, 10);
     const H = Math.round(W * 1080 / 2000);
-    const themes = Object.keys(DE_MAP_THEMES) as DeMapThemeId[];
-    const seasons = (sel('season').value === 'all'
-        ? [0, 1, 2]
-        : [parseInt(sel('season').value, 10)]) as Season[];
-    const bands = pick<ElevationBand>(sel('band'), ['lowland', 'upland', 'mountain', 'alpine']);
-    const waters = pick<WaterKind>(sel('water'), ['none', 'sea', 'lake', 'river']);
-    const sieges = sel('siege').value === 'all' ? [false, true] : [sel('siege').value === 'siege'];
+    const season = parseInt(sel('season').value, 10) as Season;
+    const siegeSel = sel('siege').value;
+    const regionSel = sel('region').value;
+    const tierSel = sel('tier').value;
+    const limit = parseInt(sel('limit').value, 10);
 
-    const combos: Combo[] = [];
-    let skipped = 0;
-    for (const theme of themes) {
-        for (const season of seasons) {
-            for (const band of bands) {
-                for (const water of waters) {
-                    for (const siege of sieges) {
-                        const c: Combo = { theme, season, band, water, siege };
-                        // 已删组合直接不生成——省掉整张渲染，不是画完再藏
-                        if (blacklist.has(stableComboId(c))) { skipped++; continue; }
-                        combos.push(c);
-                    }
-                }
-            }
+    let cities = ALL_CITIES.filter((c) => !blacklist.has(c.id));
+    if (regionSel !== 'all') cities = cities.filter((c) => c.region === regionSel);
+    if (tierSel !== 'all') cities = cities.filter((c) => String(c.tier ?? 4) === tierSel);
+    const sieges = siegeSel === 'all' ? [true, false] : [siegeSel === 'siege'];
+    if (limit > 0) cities = cities.slice(0, limit);
+
+    const total = cities.length * sieges.length;
+    stat.textContent = '共 ' + total + ' 张，生成中…';
+    let done = 0;
+
+    for (const city of cities) {
+        for (const siege of sieges) {
+            const plan = generateEnvironment({
+                width: W, height: H,
+                lat: city.lat, lng: city.lng,
+                seed: 'atlas:' + city.id + ':' + season + ':' + siege + ':' + seedSalt,
+                getCalendarSeason: () => season,
+                isSiege: siege,
+            });
+            const canvas = await renderPlan(plan, W, H);
+            if (token !== runToken) return;
+            grid.appendChild(buildCard(canvas, city, plan, season, siege));
+            stat.textContent = '共 ' + total + ' 张，已完成 ' + (++done);
+            // setTimeout 而非 rAF：标签页在后台时 rAF 会被冻结，批量生成会卡住
+            await new Promise((r) => setTimeout(r, 0));
         }
     }
-
-    const skipNote = skipped > 0 ? `（跳过已删 ${skipped}）` : '';
-    stat.textContent = `共 ${combos.length} 张${skipNote}，生成中…`;
-
-    // ── DE 真图排在最前 ──
-    // 这些是 AoE2 DE 自己跑官方 RMS 生成的地图，用实机同一套渲染器画出来。
-    // 放在最前面就是为了让「DE 算的」和「我们算的」一眼能对上。
-    console.log('[DE] loading…');
-    const deMaps = await loadDeMaps(W, H);
-    console.log('[DE] loaded', deMaps.length, deMaps.map(d => ({
-        base: d.plan.baseTerrain, patches: d.plan.terrainPatches.length,
-        cells: d.plan.terrainPatches.reduce((n, p) => n + p.cells.length, 0),
-        objs: d.plan.objects.length, grid: d.plan.grid })));
-    for (const de of deMaps) {
-        console.log('[DE] rendering', de.label);
-        if (token !== runToken) return;
-        const t0 = performance.now();
-        const canvas = await renderPlan(de.plan, W, H);
-        console.log('[DE] rendered in', Math.round(performance.now() - t0), 'ms');
-        const card = document.createElement('div');
-        card.className = 'card';
-        const shell = document.createElement('div');
-        shell.className = 'shot';
-        shell.appendChild(canvas);
-        card.appendChild(shell);
-        canvas.addEventListener('click', () => {
-            const cards = [...document.querySelectorAll('.card')];
-            openZoom(cards.indexOf(card));
-        });
-        const skippedTop = Object.entries(de.stats.skipped)
-            .sort((a, b) => b[1] - a[1]).slice(0, 4)
-            .map(([k, v]) => `${k}×${v}`).join(' ');
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML =
-            `<div class="t" style="color:#7fd18b">★ DE 原图　${de.label}</div>` +
-            `<div class="k">AoE2 DE 场景编辑器跑官方 RMS 生成，原样导出，无任何近似</div>` +
-            `<div class="k">地形 ${de.stats.terrainKinds} 种 · 底图 <code>${de.plan.baseTerrain}</code> · 斑块 ${de.plan.terrainPatches.length} 片</div>` +
-            `<div class="k">物件 ${de.stats.objects} 个，已画 ${de.stats.drawn}</div>` +
-            (skippedTop ? `<div class="k">未画：<code>${skippedTop}</code></div>` : '');
-        card.appendChild(meta);
-        grid.appendChild(card);
-        await new Promise((r) => setTimeout(r, 0));
-    }
-    let done = 0;
-    for (const c of combos) {
-        const { m, lat } = BANDS[c.band];
-        const plan = generateEnvironment({
-            width: W,
-            height: H,
-            lat,
-            lng: 108,
-            seed: `atlas:${c.theme}:${c.season}:${c.band}:${c.water}:${c.siege}:${seedSalt}`,
-            forceTheme: c.theme,
-            forceElevationBand: c.band,
-            forceElevationM: m,
-            forceBiome: THEME_BIOME[c.theme],
-            forceWaterKind: c.water,
-            getCalendarSeason: () => c.season,
-            isSiege: c.siege,
-        });
-        const canvas = await renderPlan(plan, W, H);
-        if (token !== runToken) return;   // 已被新的一批接管，立刻收手
-        grid.appendChild(buildCard(canvas, c, plan, ''));
-        stat.textContent = `共 ${combos.length} 张${skipNote}，已完成 ${++done}`;
-        // 用 setTimeout 让出主线程，不用 rAF —— 标签页在后台时 rAF 会被浏览器冻结，
-        // 批量生成会卡在第一张不动。
-        await new Promise((r) => setTimeout(r, 0));
-    }
-    if (token === runToken) stat.textContent = `共 ${combos.length} 张${skipNote}，全部完成`;
+    if (token === runToken) stat.textContent = '共 ' + total + ' 张，全部完成';
 }
 
 function applyCols(): void {
@@ -530,13 +405,24 @@ function applyCols(): void {
     grid.className = v === 'auto' ? '' : 'c' + v;
 }
 
+/** 文化区下拉：从据点数据里现取，不另维护一张表 */
+function fillRegions(): void {
+    const s = sel('region');
+    const regions = [...new Set(ALL_CITIES.map((c) => c.region).filter(Boolean))].sort() as string[];
+    for (const r of regions) {
+        const o = document.createElement('option');
+        o.value = r; o.textContent = r;
+        s.appendChild(o);
+    }
+}
+
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
+document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
 document.getElementById('undel')!.addEventListener('click', restoreAll);
 document.getElementById('export')!.addEventListener('click', exportBlacklist);
-refreshDeletedUI();
-document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
-// 换列数只改 CSS，不必重新生成
 sel('cols').addEventListener('change', applyCols);
+fillRegions();
+refreshDeletedUI();
 applyCols();
 initZoom();
 void run();

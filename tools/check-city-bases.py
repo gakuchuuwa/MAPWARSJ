@@ -33,10 +33,13 @@ def sample(lat, lng):
 cs, cw, cf, cfw = Counter(), Counter(), Counter(), Counter()
 for name, lat, lng, region in cities:
     px = sample(lat, lng)
-    cs[SIEGE.get(int(px[0]), "?")] += 1
-    cw[SIEGE.get(int(px[1]), "?")] += 1
-    cf[FIELD.get(int(px[2]), "?")] += 1
-    cfw[FIELD.get(int(px[3]), "?")] += 1
+    # 查找图是 RGB 三通道：R=攻城(非冬) G=野战(非冬) B=冬季标志(0无/1雪/2深雪/3雪林)
+    # 冬季底图由标志推导，不单独存——数据放 alpha 会被 canvas 的预乘毁掉。
+    siege, field, wflag = int(px[0]), int(px[1]), int(px[2])
+    cs[SIEGE.get(siege, "?")] += 1
+    cw[SIEGE.get(7 if wflag > 0 else siege, "?")] += 1
+    cf[FIELD.get(field, "?")] += 1
+    cfw[FIELD.get(23 if wflag == 3 else 22 if wflag == 2 else 21 if wflag == 1 else field, "?")] += 1
 
 n = len(cities)
 print(f"{n} 座城实际会看到的底图分布\n")

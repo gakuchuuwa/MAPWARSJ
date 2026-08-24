@@ -4,11 +4,17 @@
 为什么烘：判据要用到年降水、最冷月温、最暖季温、海拔、坡度五份栅格（几十 MB），
 游戏里不可能带着这些跑。离线算完，只留一张百来 KB 的索引图。
 
-产出 public/world/world-base.png（2160×1080，RGBA 四通道各存一层）：
-    R = 攻城战底图（非冬季）
-    G = 攻城战底图（冬季）
-    B = 野战底图（非冬季）
-    A = 野战底图（冬季）
+产出 public/world/world-base.png（2160×1080，RGB 三通道 + 不透明 alpha）：
+    R = 攻城战底图编号（非冬季）
+    G = 野战底图编号（非冬季）
+    B = 冬季状态标志：0=冬天不积雪  1=雪地  2=深雪  3=雪林地
+
+🔴 绝不能把数据存进 alpha 通道！浏览器 canvas 的 getImageData 会做 **alpha 预乘**，
+   alpha 值只有 1~24 时，RGB 会被乘以 alpha/255 直接毁掉，查出来全是 0。
+   （踩过：atlas 里长安查出 pm1 牧场而不是 ds3，就是这么来的。）
+   冬季底图由 B 通道的标志**推导**，不单独存：
+     攻城冬 = 标志>0 ? 雪地地基 : 攻城非冬
+     野战冬 = 标志==0 ? 野战非冬 : 标志==3 ? 雪林地 : 标志==2 ? 深雪 : 雪地
 经纬度 → 像素： x = (lng+180)/360*2160,  y = (90-lat)/180*1080
 
 ── 结构原则 ──────────────────────────────────────────────
@@ -102,6 +108,19 @@ MARSH = [
     (58.0, 63.0, 68.0, 82.0),     # 西西伯利亚瓦休甘沼泽
 ]
 
+# 世界黄土带（风成粉砂堆积）。
+# 🔴 黄土是特定的地质产物，不是气候能判出来的——「海拔>1000m 且降水<700mm」
+#    会把蒙古草原、青藏东缘一起吃掉（实测上都、锡林郭勒都被判成黄土城），
+#    但那些地方是栗钙土/高寒草甸，不是黄土。跟黑土一样只能按真实地理点名。
+LOESS = [
+    # 中国黄土高原本体：陇东—陕北—晋西。东界收到 112°E——
+    # 再往东是伊洛盆地、华北平原（洛阳 112.45°E 曾被误圈成黄土城）。
+    (34.5, 41.0, 102.0, 112.0),
+    (47.0, 51.0, 30.0, 40.0),     # 东欧黄土带（乌克兰—俄罗斯南）
+    (37.0, 42.0, -98.0, -88.0),   # 北美密西西比黄土
+    (-34.0, -30.0, -64.0, -60.0), # 南美潘帕斯黄土
+]
+
 # 内流盆地干涸盐湖（无外流、极旱，地表龟裂盐壳）
 SALT_FLAT = [
     (38.5, 41.5, 88.0, 92.5),     # 罗布泊
@@ -158,6 +177,7 @@ def main():
     relief = np.nan_to_num(np.hypot(gx, gy))
 
     dark = boxes_mask(DARK_SOIL, lat, lng)
+    loess_box = boxes_mask(LOESS, lat, lng)
     marsh_box = boxes_mask(MARSH, lat, lng)
     salt_box = boxes_mask(SALT_FLAT, lat, lng)
 
@@ -191,7 +211,7 @@ def main():
     put((precip < 500) & (np.abs(lat) < 30), 17)
     put(precip < 500, 5)                                           # 干草原
     put((t_cold < -12) & (t_warm < 19), 8)                         # 针叶林地
-    put((elev > 1000) & (precip < 700), 14)                        # 黄土荒原
+    put(loess_box & (precip < 800), 14)                            # 黄土荒原（限黄土带）
     put(precip > 1000, 1)                                          # 湿润草地
     put(precip > 600, 2)                                           # 温带草地
     put(land, 3)                                                   # 其余 → 半干草地
@@ -227,23 +247,31 @@ def main():
     # 明明是两河绿洲，却掉进半干旱档。
     puts(precip < 200, 1)                                          # 极旱绿洲城
     puts(precip < 300, 2)                                          # 半干旱城
-    puts((elev > 3200) | ((elev > 1000) & (precip < 700)), 2)      # 高原河谷 / 黄土城
+    puts(elev > 3200, 2)                                           # 高原河谷（土偏黄少草）
+    puts(loess_box & (precip < 800), 2)                            # 黄土城（黄土高原等黄土带）
     puts(precip < 500, 6)                                          # 草原城
     puts(land, 3)                                                  # 温带城
 
     sw = s.copy()
     sw[land & (t_cold < WINTER_SNOW_TC)] = 7                       # 冬季长期积雪 → 雪地地基
 
-    rgba = np.zeros((H, W, 4), dtype=np.uint8)
-    rgba[:, :, 0] = s
-    rgba[:, :, 1] = sw
-    rgba[:, :, 2] = f
-    rgba[:, :, 3] = fw
+    # 冬季状态标志（B 通道）
+    wflag = np.zeros((H, W), dtype=np.uint8)
+    snowy = land & (t_cold < WINTER_SNOW_TC)
+    wflag[snowy] = 1                                  # 雪地
+    wflag[snowy & np.isin(f, [6, 7, 8])] = 3          # 林区 → 雪林地
+    wflag[land & ((t_cold < DEEP_SNOW_TC) | (t_warm < 5))] = 2   # 极寒 → 深雪
+
+    rgb = np.zeros((H, W, 3), dtype=np.uint8)
+    rgb[:, :, 0] = s        # 攻城战（非冬季）
+    rgb[:, :, 1] = f        # 野战（非冬季）
+    rgb[:, :, 2] = wflag    # 冬季状态标志
     OUT.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(rgba, mode="RGBA").save(OUT / "world-base.png", optimize=True)
+    Image.fromarray(rgb, mode="RGB").save(OUT / "world-base.png", optimize=True)
 
     (OUT / "world-base.json").write_text(json.dumps({
-        "note": "任意经纬度 → 底图查找图。R=攻城战(非冬) G=攻城战(冬) B=野战(非冬) A=野战(冬)。"
+        "note": "任意经纬度 → 底图查找图。R=攻城战(非冬) G=野战(非冬) B=冬季状态(0无雪/1雪地/2深雪/3雪林)。"
+                "⚠ 数据不能放 alpha 通道——canvas getImageData 的 alpha 预乘会毁掉 RGB。"
                 "经纬度→像素：x=(lng+180)/360*2160, y=(90-lat)/180*1080。"
                 "数据源 WorldClim v2.1 (CC BY 4.0)。",
         "width": W, "height": H,
