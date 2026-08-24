@@ -629,6 +629,52 @@ function resolveBattleTopology(
 // ── 第 2 层：高地（clump 生长；低地少丘、高地多丘） ─────────────
 
 /**
+ * DE 式满地微起伏。
+ *
+ * 🔴 [2026-08-24 对着 DE 真图实测后加] 病根：原本只有 2~4 片大椭圆高台，台面内部全平，
+ * 只有台缘才有高差 —— 整张图看着一马平川。拿 DE 场景编辑器生成的真图一比就露馅了：
+ *
+ *              有高度的格   相邻格有高差的边
+ *     DE 真图      21.6%          14.1%
+ *     我们(丘陵)   15.5%           3.4%
+ *
+ * 高度**总量**其实差不多，差的是**颗粒度**：DE 是满地碎的小土包，我们是几个大台地。
+ * 所以这里不动原有的战术高地（那是有战斗意义的地形），只在其上叠一层小缓丘。
+ *
+ * 验收标准就是上表的 14.1%，用 scratch/cmp_elevation.mts 量，不靠肉眼。
+ */
+function addMicroRelief(
+    grid: number[][],
+    gw: number,
+    gh: number,
+    rng: RandomSource,
+    density: number = 1
+): number[][] {
+    // 每 ~90 格一个小包。数量是照着 DE 的 14.1% 反推的，改之前先跑 cmp_elevation 量一遍。
+    const count = Math.round((gw * gh / 90) * density);
+    for (let i = 0; i < count; i++) {
+        const cx = rng.int(0, gw - 1);
+        const cy = rng.int(0, gh - 1);
+        const r = 1.5 + rng.next() * 2.5;          // 半径 1.5~4 格：比战术高地小一个量级
+        const peak = rng.chance(0.18) ? 2 : 1;     // 绝大多数只抬 1 级，偶有 2 级——DE 的 2 级也只占 5.6%
+        const r2 = r * r;
+        const y0 = Math.max(0, Math.floor(cy - r)), y1 = Math.min(gh - 1, Math.ceil(cy + r));
+        const x0 = Math.max(0, Math.floor(cx - r)), x1 = Math.min(gw - 1, Math.ceil(cx + r));
+        for (let y = y0; y <= y1; y++) {
+            for (let x = x0; x <= x1; x++) {
+                const dx = x - cx, dy = y - cy;
+                const d2 = dx * dx + dy * dy;
+                if (d2 > r2) continue;
+                // 内圈到顶、外圈降一级，保证是缓坡不是柱子（DE 的断崖率是 0.00%，必须守住）
+                const h = d2 < r2 * 0.34 ? peak : Math.max(1, peak - 1);
+                if (h > grid[y][x]) grid[y][x] = Math.min(3, h);
+            }
+        }
+    }
+    return grid;
+}
+
+/**
  * 经典帝国时代式 2.5D 隆起丘陵与战术高地生成：
  * 生成连续高度场，让坡脚、坡腰和丘顶自然过渡，不出现台阶分层。
  */
