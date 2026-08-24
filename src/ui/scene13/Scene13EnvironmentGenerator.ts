@@ -1027,7 +1027,9 @@ function buildCoastline(
     //    沙漠 wt_yellow2 含沙黄 / 冬季结冰 ic2）。全球一个色是硬伤。
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
     if (deep.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 1, category: 'shore' });
+        // blur 必须给：不给的话等距菱形格的接缝会在深色水面上露成一片网格花纹
+        //（原来整片用浅色 sh2 看不太出来，换成深蓝一眼就是织物纹）。
+        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 1, category: 'shore', blur: 14 });
     }
     // 2. 近岸浅滩（sh2 = 能看见水下沙底的清透浅水），压在深水与沙滩之间做过渡
     if (shallow.length > 0) {
