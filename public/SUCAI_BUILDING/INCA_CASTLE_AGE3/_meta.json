@@ -1,0 +1,9 @@
+{
+  "name": "INCA_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 400,
+  "anchor_x": 232,
+  "anchor_y": 312,
+  "sld_source": "b_inca_castle_age3"
+}

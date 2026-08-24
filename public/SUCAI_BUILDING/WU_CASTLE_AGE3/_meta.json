@@ -1,0 +1,9 @@
+{
+  "name": "WU_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 448,
+  "box_h": 396,
+  "anchor_x": 264,
+  "anchor_y": 308,
+  "sld_source": "b_wu_castle_age3"
+}

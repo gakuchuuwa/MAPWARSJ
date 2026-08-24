@@ -1,0 +1,9 @@
+{
+  "name": "PORT_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 496,
+  "box_h": 472,
+  "anchor_x": 284,
+  "anchor_y": 368,
+  "sld_source": "b_port_castle_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PERS_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 492,
+  "box_h": 464,
+  "anchor_x": 288,
+  "anchor_y": 364,
+  "sld_source": "b_pers_castle_age3"
+}

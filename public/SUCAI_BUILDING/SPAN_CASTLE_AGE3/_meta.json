@@ -1,0 +1,9 @@
+{
+  "name": "SPAN_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 508,
+  "box_h": 468,
+  "anchor_x": 292,
+  "anchor_y": 372,
+  "sld_source": "b_span_castle_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "THRACIANS_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 500,
+  "box_h": 408,
+  "anchor_x": 304,
+  "anchor_y": 316,
+  "sld_source": "b_thracians_castle_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "BOHE_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 504,
+  "box_h": 524,
+  "anchor_x": 320,
+  "anchor_y": 428,
+  "sld_source": "b_bohe_castle_age3"
+}

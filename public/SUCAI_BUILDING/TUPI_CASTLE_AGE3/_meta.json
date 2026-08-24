@@ -1,0 +1,9 @@
+{
+  "name": "TUPI_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 424,
+  "box_h": 416,
+  "anchor_x": 232,
+  "anchor_y": 320,
+  "sld_source": "b_tupi_castle_age3"
+}

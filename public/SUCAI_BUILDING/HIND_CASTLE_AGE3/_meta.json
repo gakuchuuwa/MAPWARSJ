@@ -1,0 +1,9 @@
+{
+  "name": "HIND_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 444,
+  "box_h": 428,
+  "anchor_x": 240,
+  "anchor_y": 340,
+  "sld_source": "b_hind_castle_age3"
+}

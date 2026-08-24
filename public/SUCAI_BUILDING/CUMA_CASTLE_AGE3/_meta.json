@@ -1,0 +1,9 @@
+{
+  "name": "CUMA_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 508,
+  "box_h": 472,
+  "anchor_x": 288,
+  "anchor_y": 372,
+  "sld_source": "b_cuma_castle_age3"
+}

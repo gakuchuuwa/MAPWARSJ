@@ -1,0 +1,9 @@
+{
+  "name": "MACEDONIAN_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 492,
+  "box_h": 404,
+  "anchor_x": 288,
+  "anchor_y": 300,
+  "sld_source": "b_macedonian_castle_age3"
+}
