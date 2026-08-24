@@ -17,10 +17,10 @@ import { IEditor } from '../editors/UnifiedEditorManager';
 interface SeaNode { id: number; lat: number; lng: number; }
 interface SeaEdge { from: number; to: number; weight: number; coords: [number, number][]; }
 
-// 海路参考层（海上航线网）颜色：浅蓝虚线
-const REF_STYLE = { color: '#29b6f6', weight: 1.5, opacity: 0.7, dashArray: '6 4' };
-// 已保存海路颜色：深蓝实线
-const ROUTE_COLOR = '#0d47a1';
+// 海路参考层（海上航线网）颜色：白色虚线（海洋是蓝色，白线才跳得出）
+const REF_STYLE = { color: '#ffffff', weight: 2, opacity: 0.65, dashArray: '6 4' };
+// 已保存海路颜色：琥珀橙实线（暖色，蓝海与纸色陆地都高对比）
+const ROUTE_COLOR = '#ff9800';
 
 export class SeaRouteEditor implements IEditor {
     public name = '海路编辑器';
