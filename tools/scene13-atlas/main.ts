@@ -19,7 +19,7 @@ import {
     type Scene13EnvironmentPlan,
 } from '../../src/ui/scene13/Scene13EnvironmentGenerator';
 import { setWorldBaseData } from '../../src/ui/scene13/WorldBaseMap';
-import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY, type CityDataV2 } from '../../src/data/cities_v2';
+import { CITIES_V2, type CityDataV2 } from '../../src/data/cities_v2';
 import { Scene13GroundPainter, type GroundPatch, isWaterTile } from '../../src/ui/scene13/Scene13GroundPainter';
 import { loadDeMaps } from './de-map';
 
@@ -149,10 +149,15 @@ let seedSalt = 0;
 /** 每次 run() 领一个号；上一批看到号变了就自己退出，避免两批交叉写进网格 */
 let runToken = 0;
 
-/** 全部据点，按层级合并。id 天然唯一，直接当稳定编号用——不必再自己编一套。 */
-const RAW_CITIES: CityDataV2[] = [
-    ...T0_CAPITALS, ...T1_MEDIUM_CITIES, ...T2_STRATEGIC, ...PERIPHERY,
-];
+/**
+ * 全部据点。id 天然唯一，直接当稳定编号用。
+ *
+ * 🔴 必须用 CITIES_V2（942 座 / 23 个文化区）这个全量导出。
+ *    曾错拼 T0_CAPITALS+T1_MEDIUM_CITIES+T2_STRATEGIC+PERIPHERY，
+ *    那只有 362 座、**全是东亚 14 区**——欧洲、西亚、非洲、美洲一座都没有，
+ *    工具打开一看清一色中国城，等于白做（主人连着点了两次）。
+ */
+const RAW_CITIES: CityDataV2[] = CITIES_V2;
 
 /**
  * 按文化区轮转重排。
