@@ -2504,6 +2504,8 @@ export interface Scene13WarInit {
     environmentSeed?: string;
     /** [2026-08-21] 战斗类型：siege=攻城（守方守城，只攻方布出兵口建筑）、field=野战（双方都布）。缺省 'field'。 */
     battleType?: BattleType;
+    /** 水军攻城战：战场左侧强制出海（主人 2026-08-24 定） */
+    isNaval?: boolean;
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池的时代。 */
     defenderCityType?: CityType | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
@@ -2975,6 +2977,11 @@ export class Scene13WarLayer {
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
                 isSiege: init.battleType === 'siege',
+                // 🔴 [2026-08-24 主人定]「水军的攻城战，做用左边是海的图」。
+                //    强制出海，不靠 probeWater 探测碰运气——水军打的城本来就在海边，
+                //    探测失灵就变成内陆战场，那这仗就白是水军了。
+                //    （水军**野战**不进 13，留在战略地图，见 navalBattleAllowedInScene13。）
+                forceWaterKind: (init.isNaval && init.battleType === 'siege') ? 'sea' : undefined,
                 // 🔴 [2026-08-24] 守方城池石基 + 城门前石路上不许长树。
                 //    半径与 applyDefenderCityRoad 的辐射同口径（4 格），少一点都会露出树来。
                 //    不传的后果实测过：平均每场攻城战 3.8 棵树戳在城基和门前石路上。

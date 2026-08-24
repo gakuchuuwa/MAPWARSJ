@@ -140,7 +140,12 @@ export interface Scene13EnvironmentInput {
     getCalendarSeason?: () => 0 | 1 | 2;
     /** 测试用：强制 biome（覆盖 detectBiome 结果），便于无浏览器环境生成指定环境 */
     forceBiome?: Biome;
-    /** 测试用：强制水域（覆盖 probeWater 结果），便于验证海岸/湖生成 */
+    /**
+     * 强制水域，覆盖 probeWater 的探测结果。
+     * 🔴 不只是测试用：**水军攻城战**靠它保证战场左侧一定出海
+     *    （主人 2026-08-24：「如果是水军的攻城战，做用左边是海的图」）。
+     *    水军打的城本来就在海边，探测失灵就变成内陆战场，那这仗白是水军了。
+     */
     forceWaterKind?: 'sea' | 'lake' | 'river' | 'none';
     /** 🔧 [2026-08-24 背景图预览工具] 强制 DE 主题，跳过按经纬度解析（工具要定点枚举 18 套主题） */
     forceTheme?: DeMapThemeId;
@@ -551,7 +556,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         })
         : null;
     const baseTerrain: string = fromWorld ?? (theme
-        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false)
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false, input.lng)
         : DEFAULT_TERRAIN_TILE);
 
     // 🔴 [2026-08-24] 植被看**自然环境**，不看地面被踩成什么样。
@@ -584,20 +589,20 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             // 🔴 [2026-08-21 主人定，2026-08-24 恢复] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），
             //    呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
             //    野战与攻防战都出海：主人九成战斗是攻防战，只在野战出就等于看不见。
-            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, true, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, true, rng, patches, occupied, theme!, season, input.lat, elev, biome, input.lng);
             for (let i = 0; i < 4; i++) {
                 const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
                 const rockX = VW * 0.12 + rng.next() * VW * 0.08;
                 objects.push({ asset: ra, x: rockX, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
         } else if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
-            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng);
         } else if (waterKind === 'lake') {
             // 内陆湖 / 绿洲水塘。攻防战也出——水塘只占战场一角，不像江河那样横切战场。
             const corridor = (x: number, y: number): boolean =>
                 x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
             isWater = buildLake(gw, gh, ox, oy, VW, VH, rng, patches, occupied,
-                                theme!, season, input.lat ?? 35, elev, biome, corridor);
+                                theme!, season, input.lat ?? 35, elev, biome, corridor, input.lng);
         }
 
         // 水面保持零高程：严禁高程光影或突起切进水面（保持 100% 平坦如砥）
@@ -610,8 +615,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false);
-        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false, input.lng);
+        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, undefined, input.lng);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
@@ -943,6 +948,8 @@ function buildCoastline(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
+    lng?: number,
 ): WaterChecker {
     // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
     const controls: Array<{ x: number; y: number }> = [];
@@ -991,8 +998,14 @@ function buildCoastline(
     };
 
     const beachW = Math.round(TILE_W * 0.75);   // DE 标准自然沙滩边缘（收窄为约 58px，不再多层斑驳）
+    // 🔴 [2026-08-24] 近岸浅滩带的宽度。原先整片海从岸铺到屏幕边缘都用 sh2，
+    //    而 sh2 是**能看见水下沙底的浅滩**贴图——等于全世界的海都只有齐腰深，
+    //    而且地中海、北欧、南洋、北极的海一个颜色。
+    //    改成两带：近岸 sh2 浅滩 + 外侧按气候取色的深水。
+    const shallowW = Math.round(TILE_W * 1.6);
 
-    const water: Array<[number, number]> = [];
+    const deep: Array<[number, number]> = [];
+    const shallow: Array<[number, number]> = [];
     const beach: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
@@ -1001,18 +1014,27 @@ function buildCoastline(
             const py = isoCellY(gx, gy, oy);
             if (py < -TILE_H || py > VH + TILE_H) continue; // 越界格不铺
             const signedDistance = (px - boundaryAt(py)) * inlandSign;
-            if (signedDistance < 0) water.push([gx, gy]);
+            if (signedDistance < -shallowW) deep.push([gx, gy]);
+            else if (signedDistance < 0) shallow.push([gx, gy]);
             else if (signedDistance < beachW) beach.push([gx, gy]);
         }
     }
 
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-    mark(water); mark(beach);
+    mark(deep); mark(shallow); mark(beach);
 
-    // 1. 统一清透浅滩水体（DE 标准纯净浅水，不再多层分段条纹）
-    patches.push({ tile: 'sh2', cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
-    // 2. 柔和沙滩过渡边缘（DE 标准岸线衔接）
-    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    // 1. 外海深水：按气候取色（地中海 wt5 蓝绿 / 北欧 wt2 深蓝 / 热带 river_clean_green /
+    //    沙漠 wt_yellow2 含沙黄 / 冬季结冰 ic2）。全球一个色是硬伤。
+    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
+    if (deep.length > 0) {
+        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 1, category: 'shore' });
+    }
+    // 2. 近岸浅滩（sh2 = 能看见水下沙底的清透浅水），压在深水与沙滩之间做过渡
+    if (shallow.length > 0) {
+        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore', blur: 10 });
+    }
+    // 3. 柔和沙滩过渡边缘（DE 标准岸线衔接）
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
     patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.92, category: 'shore' });
 
     // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
@@ -1037,6 +1059,8 @@ function buildRiver(
     lat: number = 35,
     elev: number | null = null,
     biome: Biome = 'temperate_forest',
+    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
+    lng?: number,
 ): WaterChecker {
     // 🌊 DE 原版 Rivers 规范：大江横贯中轴，清澈江水主导，岸边紧贴草岸
     // 🔴 [2026-08-23 主人改] DE 化大江：更窄 + 更蜿蜒 + 深浅分层
@@ -1099,7 +1123,7 @@ function buildRiver(
     const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth), y: p.y + p.ny * (p.wW + shallowDepth) * 0.62 }));
     const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth), y: p.y - p.ny * (p.wW + shallowDepth) * 0.62 })).reverse();
 
-    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
+    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
     // 先铺浅水环（同一水贴图·半透明 → 透出地面 = 浅水），再铺深水核心（不透明覆盖内侧）。
     //    窄条带用较小 blur（深 8 / 浅 12）→ DE 式清晰河岸，不再是整片高斯糊。
     if (shallowCells.length > 0) {
@@ -1141,6 +1165,8 @@ function buildLake(
     elev: number | null,
     biome: Biome,
     inCorridor: (x: number, y: number) => boolean,
+    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
+    lng?: number,
 ): WaterChecker {
     // 1~2 个水塘。DE 的绿洲通常是一大一小，不是一个正圆
     const count = rng.chance(0.35) ? 2 : 1;
@@ -1200,8 +1226,8 @@ function buildLake(
     }
     for (const [x, y] of [...deep, ...shallow, ...sand]) occupied.add(x + ',' + y);
 
-    const waterTile = waterTerrainForTheme(theme, season, lat, elev, biome);
-    const beachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    const waterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
+    const beachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
     // 由外向内：沙滩 → 浅水 → 深水，与 DE 的 草→滩→浅→深 同序
     if (sand.length > 0) {
         patches.push({ tile: beachTile, cells: sand, alpha: 0.85, category: 'shore', blur: 14 });
@@ -1231,11 +1257,19 @@ function buildGroundVariation(
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
     isSiege: boolean = false,
+    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
+    lng?: number,
 ): void {
-    const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege);
+    // 🔴 [2026-08-24 主人定] 野战不出农田/牧场。
+    //    牧场是人围出来放牲口的地，只在城郊；野外荒原不该有。
+    //    pm1=茂密绿牧草+白花、pm2=荒废牧场黄土，两张都是人工的（看图确认过）。
+    //    pc1~pc3 不在此列：那是土黄底+稀疏草丛的**自然干草地**，三张只是草量梯度。
+    const PASTURE_TILES = new Set(['pm1', 'pm2']);
+    const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege, lng)
+        .filter((t) => isSiege || !PASTURE_TILES.has(t));
     // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
-    const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome);
+    const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome, lng);
     // 🔴 [2026-08-23 P2 多色系咬合] 加权斑块池 = 主色系变体 + 副色系（学 DE create_terrain 多层咬合）
     const secondary = isSiege
         ? [{ tile: 'ds5', weight: 1.0 }, { tile: 'gravel_default', weight: 0.5 }] // 攻城：泥地+砾石副色
@@ -1284,8 +1318,10 @@ function buildForestFloor(
     lat?: number,
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
+    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
+    lng?: number,
 ): void {
-    const tiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
+    const tiles = forestFloorTilesForTheme(theme, biome, season, lat, elev, lng);
     if (tiles.length === 0) return;
     const n = 1 + rng.int(0, 1);
     for (let i = 0; i < n; i++) {
@@ -1331,7 +1367,7 @@ function buildVegetation(
     if (lat !== undefined && lng !== undefined) {
         primaryTree = pickTree({ baseTile, lat, lng, season, isSiege });
     } else {
-        const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome);
+        const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome, lng);
         primaryTree = rng.pick(treeAssets);
         const otherTrees = treeAssets.filter((t) => t !== primaryTree);
         secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
@@ -1370,7 +1406,7 @@ function buildVegetation(
     const inKeepClear = (x: number, y: number): boolean =>
         keepClear.some((k) => (x - k.x) * (x - k.x) + (y - k.y) * (y - k.y) <= k.r * k.r);
 
-    const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
+    const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev, lng);
     const forestFloorTile = forestFloorTiles.length > 0 ? rng.pick(forestFloorTiles) : 'pc1';
 
     // ── DE 式林地：先铺成团林地地块，再在地块上长满树 ───────────────────
@@ -1426,9 +1462,10 @@ function buildVegetation(
         for (let a = 0; a < 80; a++) {
             const cand = availableCells[rng.int(0, availableCells.length - 1)];
             if (forestTaken.has(`${cand[0]},${cand[1]}`)) continue;
-            // 🔴 [2026-08-24 主人定] 攻方从左入场、守方在右，而右侧大多要摆城池——
-            //    林地一律偏左布置，右半只留少量，免得树挡住城。
-            if (isoCellX(cand[0], cand[1], ox) > VW * 0.5 && !rng.chance(0.22)) continue;
+            // 🔴 [2026-08-24 主人定] 攻方从左入场、守方在右，右侧要摆城池——
+            //    树尽量长在左边（攻方那侧），右半只留少量，免得挡住城。
+            //    只在攻城战偏：野战没有城要护，偏左会让右半光秃一片。
+            if (isSiege && isoCellX(cand[0], cand[1], ox) > VW * 0.5 && !rng.chance(0.22)) continue;
             let tooClose = false;
             for (const s of seeds) {
                 if (Math.hypot(cand[0] - s[0], cand[1] - s[1]) < MIN_SEED_DIST) { tooClose = true; break; }
@@ -1491,6 +1528,8 @@ function buildVegetation(
         for (let a = 0; a < 40; a++) {
             const px = VW * (0.05 + rng.next() * 0.90);
             const py = VH * (0.05 + rng.next() * 0.90);
+            // 散株同样偏左。原先只有林块偏、散株照撒右半，攻城战右侧仍是一片树。
+            if (isSiege && px > VW * 0.5 && !rng.chance(0.22)) continue;
             if (isWater(px, py) || inArmyCorridor(px, py) || inKeepClear(px, py)) continue;
             if (!hasTreePassage(px, py)) continue;
             if (isObjectOverlapping(px, py, 'PINE', objects)) continue;
@@ -1520,7 +1559,7 @@ function buildVegetation(
             }
         }
     }
-    const themeDecor = decorForTheme(theme, season, lat, elev, biome);
+    const themeDecor = decorForTheme(theme, season, lat, elev, biome, lng);
 
     // 🔴【岩石成套伴生系统】：全图 4~7 处岩石群，主岩石必定紧密伴生碎石、灌木与草花
     const solidDecorCount = 4 + rng.int(0, 3);
