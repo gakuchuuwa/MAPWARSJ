@@ -309,7 +309,20 @@ export class SeaRouteEditor implements IEditor {
         if (this.referenceLayer) return;
         this.referenceLayer = L.geoJSON(geojson, {
             pane: 'overlayPane',
-            style: () => REF_STYLE
+            // 按航线来源/等级分级着色，便于主人判断取舍：
+            //   航运线 Major 粗白 > Middle 中白 > Minor 淡白；渡轮用淡金区分
+            style: (feature: any) => {
+                const p = feature?.properties || {};
+                if (p.source === 'ferry') {
+                    return { color: '#ffe082', weight: 1.5, opacity: 0.7, dashArray: '4 4' };
+                }
+                switch (p.laneType) {
+                    case 'Major': return { color: '#ffffff', weight: 2.5, opacity: 0.9, dashArray: '8 5' };
+                    case 'Middle': return { color: '#ffffff', weight: 2, opacity: 0.65, dashArray: '6 5' };
+                    case 'Minor': return { color: '#ffffff', weight: 1.2, opacity: 0.4, dashArray: '4 5' };
+                    default: return REF_STYLE;
+                }
+            }
         });
         this.referenceLayer.addTo(this.map);
     }
