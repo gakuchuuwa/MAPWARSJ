@@ -1037,7 +1037,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '' },
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '' },
-    gurjara: { generalId: 'gen_mihirabhoja', generalName: '迷企罗·波阇', portrait: '' },
+    gurjara: { generalId: 'gen_mihirabhoja', generalName: '迷企罗波阇', portrait: '' },
 
 };
 

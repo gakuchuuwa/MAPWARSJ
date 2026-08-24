@@ -24,6 +24,7 @@ import {
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
+import { queryBaseTile } from './WorldBaseMap';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -525,9 +526,23 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     const theme = input.forceTheme
         ? DE_MAP_THEMES[input.forceTheme]
         : (hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null);
-    const baseTerrain: string = theme
+    // ── 底图：优先查真实地理查找表 ──────────────────────────────
+    // 🔴 [2026-08-24 主人定稿] 底图由**真实气候数据**决定，不再靠 DE 主题推。
+    //    DE 的 18 个主题是它抽随机地图用的，跟真实地理没关系（DE 的「地中海」只是
+    //    长得像地中海，不是地中海气候），拿它选底图会让同一个地方年年长不一样。
+    //    查找表见 public/world/world-base.png，判据见 docs/02-design/climate-regions.md。
+    //    查不到（数据没加载 / 落在海面）才回退到旧的主题逻辑，不在这里编默认值。
+    const fromWorld = (input.lat !== undefined && input.lng !== undefined)
+        ? queryBaseTile({
+            lat: input.lat,
+            lng: input.lng,
+            isSiege: input.isSiege ?? false,
+            isWinter: season === 2,
+        })
+        : null;
+    const baseTerrain: string = fromWorld ?? (theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false)
-        : DEFAULT_TERRAIN_TILE;
+        : DEFAULT_TERRAIN_TILE);
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
     const occupied = new Set<string>();
