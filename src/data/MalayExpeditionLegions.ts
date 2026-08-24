@@ -6,5 +6,5 @@
  * - 番号取正史具名，禁止泛称堆砌
  */
 export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    malacca: { name: '马来水师', tier: 4 },   // 马六甲·拜里米苏拉：满剌加苏丹国海上水师
+    malacca: { name: '爪刀勇士', tier: 4 },   // 马六甲·拜里米苏拉：马来 Karambit 爪刀勇士
 };
