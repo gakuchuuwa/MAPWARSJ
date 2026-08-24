@@ -28,6 +28,7 @@ import {
     DE_MAP_THEMES,
     groundTilesForTheme,
     forestFloorTilesForTheme,
+    beachTerrainForTheme,
     decorForTheme,
     waterTerrainForTheme,
     isSnowArea,
@@ -364,7 +365,7 @@ function sampleLandPos(
 
 // ── 水域探测（高精度多尺度雷达密网扫描，判定据点是否临水/有江河海湾） ──
 
-function probeWater(lat: number | undefined, lng: number | undefined): 'lake' | 'river' | 'none' {
+function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
     
     // 1. 优先直接检查 ESRI 真实瓦片水体像素（支持 Zoom 13 / 10 / 9 多级瓦片）
@@ -377,9 +378,10 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'lake' | 
             for (let k = 0; k < m.length; k++) {
                 if (m[k] === 1) waterPixels++;
             }
-            // 🔴 [2026-08-22 主人定] 彻底取消海滩场景；凡临水要塞/海港统一使用带有中轴河流的对峙战场
+            // 🔴 [2026-08-24 主人定·撤销 08-22 的「彻底取消海滩场景」] 真·海 → 左侧海岸线登陆战；
+            //    内陆水系仍走中轴河流对峙战场。判据用 isSeaAt，不拿水像素数猜。
             if (waterPixels > 30) {
-                return 'river';
+                return LandSeaSystem.isSeaAt({ lat, lng }) ? 'sea' : 'river';
             }
         }
     }
@@ -388,7 +390,8 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'lake' | 
     const distances = [0.005, 0.015, 0.035, 0.08, 0.20];
     const angles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
     
-    if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true || LandSeaSystem.isSeaAt({ lat, lng })) {
+    if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+    if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) {
         return 'river';
     }
 
@@ -399,7 +402,8 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'lake' | 
             const dlng = dist * Math.sin(ang);
             const curLat = lat + dlat;
             const curLng = lng + dlng;
-            if (LandSeaSystem.getWaterSampler().isWaterSync(curLat, curLng) === true || LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) {
+            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) return 'sea';
+            if (LandSeaSystem.getWaterSampler().isWaterSync(curLat, curLng) === true) {
                 return 'river';
             }
         }
@@ -513,7 +517,17 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 🔴 [严格遵循 DE 与史实]：
         // 攻城战为城郭攻防战场，核心为城前平原与城防阵线，绝不擅自横插切断战场的假河；
         // 仅在真正的野战江河渡口 (river_crossing) 或大江野战时生成自然江河。
-        if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
+        if (waterKind === 'sea') {
+            // 🔴 [2026-08-21 主人定，2026-08-24 恢复] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），
+            //    呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
+            //    野战与攻防战都出海：主人九成战斗是攻防战，只在野战出就等于看不见。
+            isWater = buildCoastline(gw, gh, ox, oy, VW, VH, true, rng, patches, occupied, theme!, season, input.lat, elev, biome);
+            for (let i = 0; i < 4; i++) {
+                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
+                const rockX = VW * 0.12 + rng.next() * VW * 0.08;
+                objects.push({ asset: ra, x: rockX, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+            }
+        } else if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome);
         }
 
@@ -733,6 +747,109 @@ function generateElevation(
         }
     }
     return grid;
+}
+
+// ── 第 3 层：DE 左侧海岸线（登陆战） ──────────────────────────
+//
+// 🔴 [2026-08-24] 从 9700d7eb1（8/21 16:59 最后一个能出海岸的版本）原样取回。
+//    历史：8/21 主人定「攻方恒在左侧，海岸线恒定在左侧，呈现攻方破浪抢滩突击、
+//    守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中」；8/22 主人改口
+//    「彻底取消海滩场景」，调用点与函数分两刀删净；8/24 主人要求装回。
+//
+// 岸线位置：屏幕 x 在 VW*0.05 ~ VW*0.24 之间随机游走（均值约 14%），
+//    Catmull-Rom 平滑，沙滩带宽约 0.75 格（≈48px）。这个区间与攻方出兵口有重叠，
+//    见 SHORE_* 常量注释。
+
+function buildCoastline(
+    gw: number,
+    gh: number,
+    ox: number,
+    oy: number,
+    VW: number,
+    VH: number,
+    sideLeft: boolean,
+    rng: RandomSource,
+    patches: TerrainPatchPlan[],
+    occupied: Set<string>,
+    theme: DeMapThemePalette,
+    season: 0 | 1 | 2 = 0,
+    lat: number = 35,
+    elev: number | null = null,
+    biome: Biome = 'temperate_forest',
+): WaterChecker {
+    // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
+    const controls: Array<{ x: number; y: number }> = [];
+    let bx = VW * 0.14;
+    const controlStep = TILE_H * 4;
+    for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
+        const x = sideLeft ? bx : VW - bx;
+        controls.push({ x, y });
+        bx += (rng.next() - 0.5) * TILE_W * 1.4;
+        bx = Math.max(VW * 0.06, Math.min(VW * 0.24, bx));
+    }
+
+    // DE watershore 过渡图集的岸缘不是逐格直线：用 Catmull-Rom 穿过稀疏控制点，
+    // 再以 1/4 格密采样，保留自然弯曲但消除一段段小方折线。
+    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+        const t2 = t * t, t3 = t2 * t;
+        return 0.5 * ((2 * p1) + (-p0 + p2) * t
+            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    };
+    const shoreline: Array<{ x: number; y: number }> = [];
+    const sampleStep = TILE_H / 4;
+    for (let y = -TILE_H; y <= VH + TILE_H; y += sampleStep) {
+        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
+        const p0 = controls[Math.max(0, segment - 1)];
+        const p1 = controls[segment];
+        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
+        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
+        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
+        const minX = sideLeft ? VW * 0.05 : VW * 0.76;
+        const maxX = sideLeft ? VW * 0.24 : VW * 0.95;
+        shoreline.push({ x: Math.max(minX, Math.min(maxX, catmullRom(p0.x, p1.x, p2.x, p3.x, t))), y });
+    }
+
+    const boundaryAt = (y: number): number => {
+        const f = Math.max(0, Math.min(shoreline.length - 1, (y + TILE_H) / sampleStep));
+        const i = Math.min(shoreline.length - 2, Math.floor(f));
+        const t = f - i;
+        return shoreline[i].x + (shoreline[i + 1].x - shoreline[i].x) * t;
+    };
+    const inlandSign = sideLeft ? 1 : -1;
+    const bandPolygon = (outerOffset: number, innerOffset: number): Array<{ x: number; y: number }> => {
+        const outer = shoreline.map((p) => ({ x: p.x + inlandSign * outerOffset, y: p.y }));
+        const inner = shoreline.map((p) => ({ x: p.x + inlandSign * innerOffset, y: p.y })).reverse();
+        return [...outer, ...inner];
+    };
+
+    const beachW = Math.round(TILE_W * 0.75);   // DE 标准自然沙滩边缘（收窄为约 58px，不再多层斑驳）
+
+    const water: Array<[number, number]> = [];
+    const beach: Array<[number, number]> = [];
+
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox);
+            const py = isoCellY(gx, gy, oy);
+            if (py < -TILE_H || py > VH + TILE_H) continue; // 越界格不铺
+            const signedDistance = (px - boundaryAt(py)) * inlandSign;
+            if (signedDistance < 0) water.push([gx, gy]);
+            else if (signedDistance < beachW) beach.push([gx, gy]);
+        }
+    }
+
+    const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
+    mark(water); mark(beach);
+
+    // 1. 统一清透浅滩水体（DE 标准纯净浅水，不再多层分段条纹）
+    patches.push({ tile: 'sh2', cells: water, polygon: bandPolygon(-VW, 0), alpha: 1, category: 'shore' });
+    // 2. 柔和沙滩过渡边缘（DE 标准岸线衔接）
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome);
+    patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.92, category: 'shore' });
+
+    // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
+    return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
 }
 
 // ── 第 3 层：DE 经典江河渡口（仅在野战 river_crossing 中轴生成清澈江河） ──

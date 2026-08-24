@@ -173,6 +173,8 @@ async function drawSprite(
 
 const sel = (id: string) => document.getElementById(id) as HTMLSelectElement;
 let seedSalt = 0;
+/** 每次 run() 领一个号；上一批看到号变了就自己退出，避免两批交叉写进网格 */
+let runToken = 0;
 
 function pick<T extends string>(s: HTMLSelectElement, all: T[]): T[] {
     return s.value === 'all' ? all : [s.value as T];
@@ -186,9 +188,50 @@ interface Combo {
     siege: boolean;
 }
 
+// ── 单图放大层 ────────────────────────────────────────────────
+
+const box = () => document.getElementById('box')!;
+const boxImg = () => document.getElementById('boximg') as HTMLImageElement;
+const boxMeta = () => document.getElementById('boxmeta')!;
+/** 当前放大的是第几张（供 ← → 翻页） */
+let zoomIndex = -1;
+
+function openZoom(i: number): void {
+    const cards = [...document.querySelectorAll('.card')] as HTMLElement[];
+    if (i < 0 || i >= cards.length) return;
+    zoomIndex = i;
+    const canvas = cards[i].querySelector('canvas') as HTMLCanvasElement;
+    // 用 toDataURL 而不是把 canvas 搬进放大层：搬走会让网格里空一格，
+    // 而且关掉时还得原样放回去，容易出错。
+    boxImg().src = canvas.toDataURL('image/png');
+    boxMeta().innerHTML =
+        `<span class="k">${i + 1} / ${cards.length}</span>　` +
+        (cards[i].querySelector('.meta') as HTMLElement).innerHTML.replace(/<div/g, '<span').replace(/<\/div>/g, '</span>　');
+    box().classList.add('on');
+}
+
+function closeZoom(): void {
+    box().classList.remove('on');
+    zoomIndex = -1;
+}
+
+function initZoom(): void {
+    box().addEventListener('click', closeZoom);
+    window.addEventListener('keydown', (e) => {
+        if (zoomIndex < 0) return;
+        if (e.key === 'Escape') { closeZoom(); return; }
+        if (e.key === 'ArrowRight') { e.preventDefault(); openZoom(zoomIndex + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); openZoom(zoomIndex - 1); }
+    });
+}
+
 function buildCard(canvas: HTMLCanvasElement, c: Combo, plan: Scene13EnvironmentPlan): HTMLElement {
     const el = document.createElement('div');
     el.className = 'card';
+    canvas.addEventListener('click', () => {
+        const cards = [...document.querySelectorAll('.card')];
+        openZoom(cards.indexOf(el));
+    });
     el.appendChild(canvas);
     const kinds = new Set(plan.objects.filter((o) => o.layer === 'world').map((o) => o.asset));
     const tiles = new Set(plan.terrainPatches.map((p) => p.tile));
@@ -206,9 +249,11 @@ function buildCard(canvas: HTMLCanvasElement, c: Combo, plan: Scene13Environment
 }
 
 async function run(): Promise<void> {
+    const token = ++runToken;
     const grid = document.getElementById('grid')!;
     const stat = document.getElementById('stat')!;
     grid.innerHTML = '';
+    closeZoom();
 
     const W = parseInt(sel('size').value, 10);
     const H = Math.round(W * 1080 / 2000);
@@ -252,15 +297,26 @@ async function run(): Promise<void> {
             isSiege: c.siege,
         });
         const canvas = await renderPlan(plan, W, H);
+        if (token !== runToken) return;   // 已被新的一批接管，立刻收手
         grid.appendChild(buildCard(canvas, c, plan));
         stat.textContent = `共 ${combos.length} 张，已完成 ${++done}`;
         // 用 setTimeout 让出主线程，不用 rAF —— 标签页在后台时 rAF 会被浏览器冻结，
         // 批量生成会卡在第一张不动。
         await new Promise((r) => setTimeout(r, 0));
     }
-    stat.textContent = `共 ${combos.length} 张，全部完成`;
+    if (token === runToken) stat.textContent = `共 ${combos.length} 张，全部完成`;
+}
+
+function applyCols(): void {
+    const grid = document.getElementById('grid')!;
+    const v = sel('cols').value;
+    grid.className = v === 'auto' ? '' : 'c' + v;
 }
 
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
 document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
+// 换列数只改 CSS，不必重新生成
+sel('cols').addEventListener('change', applyCols);
+applyCols();
+initZoom();
 void run();
