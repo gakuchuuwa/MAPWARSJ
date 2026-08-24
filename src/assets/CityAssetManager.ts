@@ -933,6 +933,16 @@ export class CityAssetManager {
         'seleisi': '色雷',
         'maerta_qishi': '马耳',
         'andaluoxiya': '安达',
+        'aztec': '阿兹',
+        'inca': '印加',
+        'maya': '玛雅',
+        'mapuche': '马普',
+        'muisca': '穆伊',
+        'tupi': '图皮',
+        'manding': '曼丁',
+        'ethiopia': '埃塞',
+        'malacca': '满剌',
+        'gurjara': '瞿折',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

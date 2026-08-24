@@ -1024,6 +1024,16 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'salai': 'city_salaichuke',
     'mangshi': 'city_mangshilake',
     'kejila': 'city_kefu',
+    'aztec': 'city_tenochtitlan',
+    'inca': 'city_cusco',
+    'maya': 'city_tikal',
+    'mapuche': 'city_tucapel',
+    'muisca': 'city_bacata',
+    'tupi': 'city_guanabara',
+    'manding': 'city_timbuktu',
+    'ethiopia': 'city_aksum',
+    'malacca': 'city_malacca',
+    'gurjara': 'city_patan',
 };
 
 // @ts-ignore

@@ -1089,6 +1089,16 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'salai': '诺盖',
     'mangshi': '土库',
     'kejila': '科基',
+    'aztec': '阿兹',
+    'inca': '印加',
+    'maya': '玛雅',
+    'mapuche': '马普',
+    'muisca': '穆伊',
+    'tupi': '图皮',
+    'manding': '曼丁',
+    'ethiopia': '埃塞',
+    'malacca': '满剌',
+    'gurjara': '瞿折',
 };
 
 // @ts-ignore

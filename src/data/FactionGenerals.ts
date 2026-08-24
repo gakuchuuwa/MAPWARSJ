@@ -1028,6 +1028,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yidier: { generalId: 'yidier_yidiewang', generalName: '约瑟夫', portrait: '/assets/STEPPE/yidier_yuesefu.png' },
     salai: { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_aidigu.png' },
     mangshi: { generalId: 'mangshi_mangshiwang', generalName: '恰格里', portrait: '/assets/CENTRAL_ASIA/mangshi_mangewang.png' },
+    aztec: { generalId: 'gen_cuauhtemoc', generalName: '库奥特莫克', portrait: '' },
+    inca: { generalId: 'gen_pachacuti', generalName: '帕查库提', portrait: '' },
+    maya: { generalId: 'gen_jasawchan', generalName: '亚斯纳昌', portrait: '' },
+    mapuche: { generalId: 'gen_lautaro', generalName: '劳塔罗', portrait: '' },
+    muisca: { generalId: 'gen_saguamanchica', generalName: '萨瓜曼奇卡', portrait: '' },
+    tupi: { generalId: 'gen_arariboia', generalName: '阿拉里博亚', portrait: '' },
+    manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '' },
+    ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '' },
+    malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '' },
+    gurjara: { generalId: 'gen_mihirabhoja', generalName: '迷企罗·波阇', portrait: '' },
 
 };
 
