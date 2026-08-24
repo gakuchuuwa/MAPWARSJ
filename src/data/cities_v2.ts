@@ -2997,6 +2997,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 30000, region: 'INDIA', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
+    { id: 'city_tanjiawuer', name: '坦贾武尔', factionId: 'zhuluo', lat: 10.79, lng: 79.14, type: 'medium_city', troops: 30000, region: 'INDIA', note: '朱罗王朝都城，布里哈迪希瓦拉神庙（世界遗产）所在' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

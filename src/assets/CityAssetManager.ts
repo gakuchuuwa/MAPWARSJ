@@ -943,6 +943,7 @@ export class CityAssetManager {
 'ethiopia': '埃塞',
         'malacca': '满剌',
         'gurjara': '瞿折',
+        'zhuluo': '朱罗',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

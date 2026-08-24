@@ -1034,6 +1034,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'ethiopia': 'city_aksum',
     'malacca': 'city_malacca',
     'gurjara': 'city_patan',
+    'zhuluo': 'city_tanjiawuer',
 };
 
 // @ts-ignore
