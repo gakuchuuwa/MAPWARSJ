@@ -26,6 +26,7 @@ import {
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { CITY_WONDER } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
@@ -2499,6 +2500,8 @@ export interface Scene13WarInit {
     battleType?: BattleType;
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池的时代。 */
     defenderCityType?: CityType | null;
+    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
+    defenderCityId?: string | null;
 }
 
 export class Scene13WarLayer {
@@ -2515,6 +2518,8 @@ export class Scene13WarLayer {
     private battleType: BattleType = 'field';
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池时代 */
     private defenderCityType: CityType | null = null;
+    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
+    private defenderCityId: string | null = null;
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
     private fleers: WarFleer[] = [];
@@ -2861,6 +2866,7 @@ export class Scene13WarLayer {
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
+        this.defenderCityId = init.defenderCityId ?? null;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         this.defenderHolding = this.battleType === 'siege';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
@@ -3569,6 +3575,18 @@ export class Scene13WarLayer {
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
+            // [2026-08-24] 名城世界奇观地标：守方城挂奇观（CITY_WONDER[defenderCityId]）→ 立奇观。
+            //    纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型）。
+            //    位置：[08-24 主人指示] 放「后排下方」——守方 9 口里 x 最大(后排)且 y 最大(下方)的出兵口，
+            //    远离攻方、视角最高，不被城墙/前排队列遮挡。
+            const wonderAsset = this.defenderCityId ? CITY_WONDER[this.defenderCityId] : undefined;
+            if (wonderAsset) {
+                let ws = side[0];
+                for (const s of side) {
+                    if (s.x > ws.x + 1e-9 || (s.x === ws.x && s.y > ws.y)) ws = s;
+                }
+                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2 }));
+            }
             const style = REGION_BUILDING_STYLE[this.sideCulture[1] as RegionType] ?? 'WEST';
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
             // 🔴 [2026-08-22 主人需求] 30 秒随机塌一半城墙，塌掉的墙段放行 + 留残骸：
