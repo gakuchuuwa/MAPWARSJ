@@ -156,6 +156,30 @@ const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
 // 挡路障碍物被单位连续接触满 N 秒后释放碰撞（防卡死）。主人 2026-08-21 定「5 秒一切换，就树和岩石」。
 const OBSTRUCTION_RELEASE_SEC = 5;
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
+
+/**
+ * 林地格上长树的概率。DE 真图实测 472 棵 / 542 格森林地形 ≈ 0.87，
+ * 也就是基本一格一棵、树冠互相压着——这才长得出林子。
+ */
+const TREES_PER_FOREST_TILE = 0.87;
+
+/**
+ * 森林地形占**可用地**（屏幕内、非水、走廊外）的比例——不是占全图。
+ * 见 buildVegetation 里的说明：我们一屏两军对撞，可用地只有边缘那圈，
+ * 照抄 DE 的全图 12.4% 会落得满地零星几棵。改完用 scratch/cmp_forest.mts 量。
+ */
+function forestCoverOfUsableFor(biome: Biome): number {
+    switch (biome) {
+        case 'tundra_snow': return 0.07;
+        case 'desert': return 0.09;
+        case 'cold_steppe': return 0.12;
+        case 'savanna':
+        case 'mediterranean': return 0.22;
+        case 'tropical_rainforest':
+        case 'temperate_forest': return 0.52;
+        default: return 0.36;
+    }
+}
 const DE_TREE_OBJECTS = new Set([
     'DRAGON_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
     'JUNGLE', 'RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'ACACIA', 'BAOBAB',
@@ -650,26 +674,25 @@ function addMicroRelief(
     rng: RandomSource,
     density: number = 1
 ): number[][] {
-    // 每 ~90 格一个小包。数量是照着 DE 的 14.1% 反推的，改之前先跑 cmp_elevation 量一遍。
-    const count = Math.round((gw * gh / 90) * density);
-    for (let i = 0; i < count; i++) {
-        const cx = rng.int(0, gw - 1);
-        const cy = rng.int(0, gh - 1);
-        const r = 1.5 + rng.next() * 2.5;          // 半径 1.5~4 格：比战术高地小一个量级
-        const peak = rng.chance(0.18) ? 2 : 1;     // 绝大多数只抬 1 级，偶有 2 级——DE 的 2 级也只占 5.6%
-        const r2 = r * r;
-        const y0 = Math.max(0, Math.floor(cy - r)), y1 = Math.min(gh - 1, Math.ceil(cy + r));
-        const x0 = Math.max(0, Math.floor(cx - r)), x1 = Math.min(gw - 1, Math.ceil(cx + r));
-        for (let y = y0; y <= y1; y++) {
-            for (let x = x0; x <= x1; x++) {
-                const dx = x - cx, dy = y - cy;
-                const d2 = dx * dx + dy * dy;
-                if (d2 > r2) continue;
-                // 内圈到顶、外圈降一级，保证是缓坡不是柱子（DE 的断崖率是 0.00%，必须守住）
-                const h = d2 < r2 * 0.34 ? peak : Math.max(1, peak - 1);
-                if (h > grid[y][x]) grid[y][x] = Math.min(3, h);
-            }
+    // 微丘走 clump 生长而不是画圆：圆的边界太"光滑"，同样面积撑不出 DE 那么多高差边。
+    // clump 的轮廓天然曲折，边界/面积比高——这正是 DE 用 21.6% 的面积做出 14.1% 高差边的原因。
+    // 每块目标 3~7 格，块与块之间不重叠（各自占格），铺出满地碎缓包。
+    const budget = Math.round(gw * gh * 0.115 * density);
+    const taken = new Set<string>();
+    let placed = 0;
+    let guard = 0;
+    while (placed < budget && guard++ < budget * 6) {
+        const sx = rng.int(1, gw - 2);
+        const sy = rng.int(1, gh - 2);
+        if (taken.has(`${sx},${sy}`)) continue;
+        const target = 3 + rng.int(0, 4);
+        const cells = growClump(sx, sy, target, gw, gh, taken, rng);
+        for (const [x, y] of cells) {
+            // 恒抬 1 级：2/3 级留给战术高地。微丘自己叠高会造出断崖，
+            // 而 DE 真图的断崖率是 0.00%，那条必须守住。
+            if (grid[y][x] < 1) grid[y][x] = 1;
         }
+        placed += cells.length;
     }
     return grid;
 }
@@ -707,7 +730,7 @@ function generateElevation(
                 }
             }
         }
-        return grid;
+        return addMicroRelief(grid, gw, gh, rng, 0.6);
     }
 
     if (topology === 'rolling_hills') {
@@ -738,12 +761,12 @@ function generateElevation(
                 }
             }
         }
-        return grid;
+        return addMicroRelief(grid, gw, gh, rng, 1.2);
     }
 
     if (topology === 'dense_forest_clearing' || topology === 'swamp_marsh') {
-        // 平坦空地/泥泞平缓沼泽：保持低起伏平坦，偶见微丘
-        return grid;
+        // 平坦空地/泥泞平缓沼泽：不设战术高地，但 DE 的「平地」图也不是纯平板，仍给轻微起伏
+        return addMicroRelief(grid, gw, gh, rng, 0.55);
     }
     
     // 🔴 [2026-08-22 主人定] 彻底告别单调大平原：即使是平原低地，亦随机生成 2~3 处自然起伏战术高地与缓坡丘陵
@@ -792,7 +815,7 @@ function generateElevation(
             }
         }
     }
-    return grid;
+    return addMicroRelief(grid, gw, gh, rng);
 }
 
 // ── 第 3 层：DE 左侧海岸线（登陆战） ──────────────────────────
@@ -1262,70 +1285,152 @@ function buildVegetation(
     const forestFloorTiles = forestFloorTilesForTheme(theme, biome, season, lat, elev);
     const forestFloorTile = forestFloorTiles.length > 0 ? rng.pick(forestFloorTiles) : 'pc1';
 
-    let placed = 0;
-    for (let c = 0; c < clusterCount && placed < treeCount; c++) {
-        let cx = 0, cy = 0;
-        for (let a = 0; a < 50; a++) {
-            cx = VW * (0.05 + rng.next() * 0.90);
-            cy = VH * (0.05 + rng.next() * 0.90);
-            if (!isWater(cx, cy) && !inArmyCorridor(cx, cy)) break;
+    // ── DE 式林地：先铺成团林地地块，再在地块上长满树 ───────────────────
+    //
+    // 🔴 [2026-08-24 对着 DE 场景编辑器生成的真图重写] 原来的做法是「在草地上随机撒 15~24 棵
+    // 孤树」，怎么调参数都长不出 DE 那种林子。拿 DE 真图一比才看清是结构性错误：
+    //
+    //                        森林               同尺寸(66x66)树数
+    //     DE 真图     一种**地形**，占 12.4%          472 棵
+    //     我们(旧)    没有这个概念，纯撒点          15~24 棵
+    //
+    // DE 的做法写在 Arabia.rms 里：先 `create_terrain FOREST_PLACEHOLDER`（`land_percent 6~10`、
+    // `number_of_clumps 10~14`）铺出成团的林地地块，再在这些地块上长树。所以 DE 的树要么
+    // 密密麻麻连成林，要么是刻意的几株 straggler，不存在均匀散布的孤树。
+    //
+    // 铁律：林地必须留在军团走廊之外。树是阻挡物，而 13 的编队不会绕路（这点和 DE 不同，
+    // DE 的单位会寻路），中场被树封死会直接打不起来。
+    // 可用地 = 屏幕内 ∧ 非水 ∧ 走廊外。
+    // 🔴 预算必须按**可用格**算，不能按 gw*gh。原因：66×66 的等距网格投影成菱形，
+    //    真正落在这块矩形屏幕里的只有一部分；再刨掉军团走廊（两军东西对进、纵向铺满
+    //    80% 屏高，中间那块必须空着），剩下的只有上下边缘和四角。
+    //    早先按 gw*gh × 12.4% 下预算，绝大多数格子长在屏幕外或走廊里被筛掉，
+    //    最后只落地 50 棵树——数字对了，位置全废。
+    //
+    //    也因此 DE 的「全图 12.4%」不能照搬：DE 是 144×144 大地图、单位只占一角；
+    //    我们是两军贴满一屏对撞。这里改成在**可用区内**铺到 DE 林块那种密度，
+    //    效果是边缘厚实林带 + 中间开阔战场——既像 DE，又不挡军团。
+    const availableCells: Array<[number, number]> = [];
+    for (let gy = 0; gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+            const px = isoCellX(gx, gy, ox), py = isoCellY(gx, gy, oy);
+            if (px < 0 || px > VW || py < 0 || py > VH) continue;
+            if (isWater(px, py) || inArmyCorridor(px, py)) continue;
+            availableCells.push([gx, gy]);
         }
+    }
+    const availableSet = new Set(availableCells.map(([x, y]) => `${x},${y}`));
+    const forestBudget = Math.round(
+        availableCells.length * forestCoverOfUsableFor(biome) * treeFactor[elevationBand]);
+    const forestClumps = 12 + rng.int(0, 5);          // DE: number_of_clumps 10~14（我们可用区是环形，多切几块才散得开）
+    const perClumpTarget = Math.max(4, Math.round(forestBudget / forestClumps));
+    const forestCells: Array<[number, number]> = [];
+    const forestTaken = new Set<string>();
 
-        const [cgx, cgy] = screenToGrid(cx, cy, ox, oy);
-        const floorClumpCells = growClump(cgx, cgy, 12 + rng.int(0, 10), gw, gh, occupied, rng);
-        if (floorClumpCells.length > 0) {
-            patches.push({
-                tile: forestFloorTile,
-                cells: floorClumpCells,
-                alpha: season === 2 ? 0.40 : 0.65,
-                category: 'forest-floor',
-            });
+    // 🔴 林块必须**彼此分开**，否则会连成一圈环。
+    //    可用区本身就是个环（走廊外那圈），clump 又随便挑种子随便长，长着长着就首尾相接，
+    //    出来是一条围着战场的绿框——DE 的林子是几个各自独立、大小不一的团，中间有断口。
+    //    所以：种子之间强制留距离，块大小随机浮动。
+    const seeds: Array<[number, number]> = [];
+    const MIN_SEED_DIST = 9;                          // 格。小于这个数相邻两块会粘连成片
+    for (let c = 0; c < forestClumps && forestCells.length < forestBudget; c++) {
+        let seed: [number, number] | null = null;
+        for (let a = 0; a < 80; a++) {
+            const cand = availableCells[rng.int(0, availableCells.length - 1)];
+            if (forestTaken.has(`${cand[0]},${cand[1]}`)) continue;
+            // 🔴 [2026-08-24 主人定] 攻方从左入场、守方在右，而右侧大多要摆城池——
+            //    林地一律偏左布置，右半只留少量，免得树挡住城。
+            if (isoCellX(cand[0], cand[1], ox) > VW * 0.5 && !rng.chance(0.22)) continue;
+            let tooClose = false;
+            for (const s of seeds) {
+                if (Math.hypot(cand[0] - s[0], cand[1] - s[1]) < MIN_SEED_DIST) { tooClose = true; break; }
+            }
+            if (tooClose) continue;
+            seed = cand; break;
         }
-
-        const radius = 55 + rng.next() * 65;
-        const n = Math.min(perCluster, treeCount - placed);
-        for (let k = 0; k < n; k++) {
-            let tx = 0, ty = 0;
-            let found = false;
-            for (let attempt = 0; attempt < 80; attempt++) {
-                const u1 = Math.max(rng.next(), 1e-9), u2 = rng.next();
-                const r = radius * Math.sqrt(-2 * Math.log(u1));
-                const ang = u2 * Math.PI * 2;
-                const sx = cx + r * Math.cos(ang);
-                const sy = cy + r * Math.sin(ang);
-                if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && hasTreePassage(sx, sy) && !isWater(sx, sy) && !inArmyCorridor(sx, sy) && !isObjectOverlapping(sx, sy, 'PINE', objects)) {
-                    tx = sx;
-                    ty = sy;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) continue;
-            const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
-            objects.push({ asset, x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-            treePositions.push({ x: tx, y: ty });
-            placed++;
-
-            // 🔴【树木伴生系统】：树下 40% 概率伴生野生灌木、蕨类或倒木
-            if (rng.chance(0.40)) {
-                const companionAsset = rng.pick(['SHRUB_GREEN', 'BUSH_GREEN', 'FERNPATCH', 'FELLED_GENERIC', 'STUMP_GENERIC']);
-                const compX = tx + (rng.next() - 0.5) * 36;
-                const compY = ty + (rng.next() - 0.5) * 20;
-                if (!isWater(compX, compY) && !inArmyCorridor(compX, compY)) {
-                    objects.push({
-                        asset: companionAsset,
-                        x: compX,
-                        y: compY,
-                        layer: GROUND_COVER_ASSETS.has(companionAsset) ? 'ground' : 'world',
-                        z: 0,
-                        flip: rng.chance(0.5),
-                        frame: rng.int(0, 99999),
-                    });
-                }
-            }
+        if (!seed) continue;
+        seeds.push(seed);
+        // 块大小 0.55~1.45 倍浮动：DE 的林块有大有小，一律同尺寸会显得是刷出来的
+        const target = Math.max(4, Math.round(perClumpTarget * (0.55 + rng.next() * 0.9)));
+        for (const cell of growClump(seed[0], seed[1], target, gw, gh, forestTaken, rng)) {
+            // clump 会长出可用区，逐格再筛一次
+            if (!availableSet.has(`${cell[0]},${cell[1]}`)) continue;
+            forestCells.push(cell);
         }
     }
 
+    // 林地地表（DE 的森林是实打实的一种地形，不是半透明叠色）
+    if (forestCells.length > 0) {
+        patches.push({
+            tile: forestFloorTile,
+            cells: forestCells,
+            alpha: season === 2 ? 0.55 : 0.85,
+            category: 'forest-floor',
+        });
+        for (const [gx, gy] of forestCells) occupied.add(`${gx},${gy}`);
+    }
+
+    // 在林地格上长树。DE 实测 472 棵 / 542 格 ≈ 0.87 棵每格，基本一格一棵、树冠互相压着，
+    // 所以这里**不套用 hasTreePassage 的最小间距**——那条约束正是旧版长不出林子的原因。
+    let placed = 0;
+    for (const [gx, gy] of forestCells) {
+        if (!rng.chance(TREES_PER_FOREST_TILE)) continue;
+        const jx = (rng.next() - 0.5) * TILE_W * 0.5;   // 格内轻微抖动，免得排成棋盘
+        const jy = (rng.next() - 0.5) * TILE_H * 0.5;
+        const tx = isoCellX(gx, gy, ox) + jx;
+        const ty = isoCellY(gx, gy, oy) + jy;
+        if (tx < 0 || tx > VW || ty < 0 || ty > VH) continue;
+        const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
+        // 🔴 placementGroup 让同组物件互不排斥。没有它，enforceAllObjectSpacing 会按
+        //    树的斥力半径 65px（两棵树最小间距 130px ≈ 隔两格）把密林剔成稀疏散点——
+        //    这正是「林地铺了 444 格却只长出 58 棵树」的原因。DE 的森林就是一格一棵、
+        //    树冠互相压着，同一片林子内部不该有间距约束。
+        objects.push({
+            asset, x: tx, y: ty, layer: 'world', z: 1,
+            flip: rng.chance(0.5), frame: rng.int(0, 99999),
+            placementGroup: 'forest',
+        });
+        treePositions.push({ x: tx, y: ty });
+        placed++;
+    }
+
+    // 林外散株（DE: STRAGGLER_FOREST，number_of_tiles 64 / number_of_clumps 3）：
+    // 空地上零星几棵孤树，这才是「孤树」该出现的地方。散株保留最小间距。
+    const stragglers = Math.max(3, Math.round(treeCount * 0.5));
+    for (let i = 0; i < stragglers; i++) {
+        let tx = 0, ty = 0, ok = false;
+        for (let a = 0; a < 40; a++) {
+            const px = VW * (0.05 + rng.next() * 0.90);
+            const py = VH * (0.05 + rng.next() * 0.90);
+            if (isWater(px, py) || inArmyCorridor(px, py)) continue;
+            if (!hasTreePassage(px, py)) continue;
+            if (isObjectOverlapping(px, py, 'PINE', objects)) continue;
+            tx = px; ty = py; ok = true; break;
+        }
+        if (!ok) continue;
+        const asset = (secondaryTree && rng.chance(0.3)) ? secondaryTree : primaryTree;
+        objects.push({ asset, x: tx, y: ty, layer: 'world', z: 1, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        treePositions.push({ x: tx, y: ty });
+        placed++;
+
+        // 孤树伴生：树下偶见灌木/蕨类/倒木
+        if (rng.chance(0.40)) {
+            const companionAsset = rng.pick(['SHRUB_GREEN', 'BUSH_GREEN', 'FERNPATCH', 'FELLED_GENERIC', 'STUMP_GENERIC']);
+            const compX = tx + (rng.next() - 0.5) * 36;
+            const compY = ty + (rng.next() - 0.5) * 20;
+            if (!isWater(compX, compY) && !inArmyCorridor(compX, compY)) {
+                objects.push({
+                    asset: companionAsset,
+                    x: compX,
+                    y: compY,
+                    layer: GROUND_COVER_ASSETS.has(companionAsset) ? 'ground' : 'world',
+                    z: 0,
+                    flip: rng.chance(0.5),
+                    frame: rng.int(0, 99999),
+                });
+            }
+        }
+    }
     const themeDecor = decorForTheme(theme, season, lat, elev, biome);
 
     // 🔴【岩石成套伴生系统】：全图 4~7 处岩石群，主岩石必定紧密伴生碎石、灌木与草花
