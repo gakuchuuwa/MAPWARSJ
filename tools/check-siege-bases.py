@@ -23,33 +23,61 @@ from PIL import Image
 
 warnings.filterwarnings("ignore")
 
-# 地面类型 + 降水 → 攻城战底图
+# 攻城战底图分配：按真实土壤地理
 #
-# 🔴 [主人定] 泥地1（纯净黄土、无草）只给**真正的极旱绿洲城**，不能用得太宽泛。
-#    第一版光按地面类型映射，把蒙古草原南部、中亚半干旱区都塞进了泥地1（148 座城），
-#    那些地方是有草的，不该是纯黄土。
-#    泥地2（发黄、草少）正好接手中间这档半干旱。
+# 🔴 [主人纠正] 「泥地，污泥」是**黑土**，不是热带泥。
+#    黑土是温带腐殖质土（东北/乌克兰/北美大平原/潘帕斯），
+#    热带雨林的土是**红壤**（铁铝氧化，砖红色）——正好是「泥地 4」。
+#    第一版把两者用反了：黑土给了岭南和东南亚，红土给了黄土高原。
 #
-#    降水分档：
-#      <150mm  极旱     → 泥地      敦煌、和田、吐鲁番、扜泥城
-#      <300mm  半干旱   → 泥地 2     河西、中亚绿洲、蒙古南缘
-#      <500mm  草原     → 泥地，大草原
-def pick_base(code, precip_mm):
-    if code == 8:                    # 雪原
+# 🔴 [主人定] 「泥地」（纯净黄土无草）只给极旱绿洲城，不能宽泛。
+#
+# 深色土带（黑土 + 水稻土）。靠气候判不出来——
+# 黑土取决于草原腐殖质千年累积，水稻土取决于千年淹水耕作，
+# 同纬度的森林土/旱地就不是深色的。只能按真实地理点名。
+DARK_SOIL = [
+    (42.0, 50.5, 122.0, 135.0),    # 中国东北：松嫩平原 + 三江平原（黑土）
+    (46.0, 55.0, 26.0, 50.0),      # 乌克兰 — 俄罗斯南部黑土带
+    (36.0, 50.0, -104.0, -88.0),   # 北美大平原（黑土）
+    (-38.0, -30.0, -64.0, -57.0),  # 南美潘帕斯（黑土）
+    (28.0, 33.5, 111.0, 122.5),    # 🔴 [主人定] 江南：长江中下游水稻土，长期淹水呈青黑
+    (30.0, 34.0, 118.0, 121.0),    # 江淮水田
+]
+
+
+def in_dark_soil(lat, lng):
+    return any(la0 <= lat <= la1 and lo0 <= lng <= lo1
+               for (la0, la1, lo0, lo1) in DARK_SOIL)
+
+
+def pick_base(code, precip_mm, t_cold, lat, lng, winter=False):
+    """winter=True 时按冬季地表判（长期积雪的地方冬天就是雪地）。"""
+    if code == 8:                                  # 终年雪原
         return "雪地，地基"
-    if code in (5, 10):              # 雨林 / 沼泽
+    # 🔴 [主人定] 长下雪的地方、雪线以上都用雪地基。
+    #    最冷月 <-12°C 即冬季长期稳定积雪（东北、蒙古、西伯利亚、北欧、高原）。
+    if winter and t_cold < -12:
+        return "雪地，地基"
+    if in_dark_soil(lat, lng) and precip_mm >= 300:
+        return "泥地，污泥"                          # 黑土
+    if code == 10:                                 # 沼泽：湿地腐殖质同样发黑
         return "泥地，污泥"
-    if code == 4:                    # 黄土裸土
+    # 红壤：湿热区铁铝氧化。最冷月 >0°C 保证是亚热带以南，降水足才淋溶出红壤
+    if t_cold > 0 and precip_mm > 800 and abs(lat) < 35:
+        return "泥地 4"
+    if code == 5:                                  # 雨林
         return "泥地 4"
     if precip_mm < 150:
-        return "泥地"
+        return "泥地"                               # 极旱绿洲
     if precip_mm < 300:
+        return "泥地 2"                             # 半干旱
+    if code == 7:                                  # 高原河谷（土偏黄少草）
         return "泥地 2"
-    if code == 7:                    # 高原砾石（河谷农耕，土偏黄少草）
+    if code == 4:                                  # 黄土裸土 → 黄土色
         return "泥地 2"
-    if code == 2 or precip_mm < 500: # 黄草原
+    if code == 2 or precip_mm < 500:               # 草原
         return "泥地，大草原"
-    return "泥地 3"
+    return "泥地 3"                                 # 温带褐土/棕壤
 
 
 GROUND_NAME = {
@@ -76,6 +104,7 @@ def main():
     g = np.array(Image.open("public/world/ground-type.png"))
     H, W = g.shape
     precip = tifffile.imread("scratch/climate/wc2.1_10m_bio_12.tif").astype(np.float32)
+    t_cold = tifffile.imread("scratch/climate/wc2.1_10m_bio_6.tif").astype(np.float32)
     elev = tifffile.imread("scratch/climate/wc2.1_10m_elev.tif").astype(np.float32)
 
     cities = load_cities()
@@ -101,6 +130,7 @@ def main():
         return best if best else (y0, x0)
 
     tally = Counter()
+    winter_tally = Counter()
     by_ground = Counter()
     unresolved = []
     per_region = defaultdict(Counter)
@@ -109,7 +139,9 @@ def main():
     for c in cities:
         y, x = sample(c["lat"], c["lng"], g)
         code = int(g[y, x])
-        base = pick_base(code, float(precip[y, x]))
+        base = pick_base(code, float(precip[y, x]), float(t_cold[y, x]), c["lat"], c["lng"])
+        base_w = pick_base(code, float(precip[y, x]), float(t_cold[y, x]), c["lat"], c["lng"], winter=True)
+        winter_tally[base_w] += 1
         by_ground[GROUND_NAME.get(code, str(code))] += 1
         if base is None:
             unresolved.append(c)
@@ -121,6 +153,11 @@ def main():
     print(f"{'攻城战底图':<16}{'城数':>6}{'占比':>8}")
     for base, n in tally.most_common():
         print(f"{base:<16}{n:>6}{100.0*n/len(cities):>7.1f}%")
+
+    print("")
+    print("冬季（最冷月<-12°C 换雪地基）：")
+    for b, n in winter_tally.most_common():
+        print(f"{b:<16}{n:>6}{100.0*n/len(cities):>7.1f}%")
 
     print(f"\n落到的地面类型：")
     for name, n in by_ground.most_common():

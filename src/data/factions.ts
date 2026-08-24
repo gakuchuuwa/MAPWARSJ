@@ -1827,6 +1827,16 @@ export const FACTIONS: Faction[] = [
     { id: 'salai', name: '诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'kejila', name: '科基拉' },
+    { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
+    { id: 'inca', name: '印加' },             // 库斯科·印加帝国
+    { id: 'maya', name: '玛雅' },             // 蒂卡尔·玛雅城邦
+    { id: 'mapuche', name: '马普切' },        // 图卡佩尔·马普切人
+    { id: 'muisca', name: '穆伊斯卡' },       // 巴卡塔·穆伊斯卡联盟
+    { id: 'tupi', name: '图皮' },             // 瓜纳巴拉·图皮人
+    { id: 'manding', name: '曼丁哥' },        // 廷巴克图·曼丁哥人（马里帝国主体民族）
+    { id: 'ethiopia', name: '埃塞俄比亚' },   // 阿克苏姆·埃塞俄比亚
+    { id: 'malacca', name: '满剌加' },        // 马六甲·满剌加苏丹国
+    { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     ];
 
 // @ts-ignore

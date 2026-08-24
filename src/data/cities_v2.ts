@@ -2984,6 +2984,16 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'LATIN', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.95, lng: 26.23, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_bashila', name: '巴士拉', factionId: 'alabo', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '巴士拉；阿拉伯帝国 636 年军事营地' },
+    { id: 'city_tenochtitlan', name: '特诺奇提特兰', factionId: 'aztec', lat: 19.43, lng: -99.13, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '阿兹特克帝国都城，特斯科科湖心岛' },
+    { id: 'city_cusco', name: '库斯科', factionId: 'inca', lat: -13.52, lng: -71.97, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '印加帝国都城，安第斯山城' },
+    { id: 'city_tikal', name: '蒂卡尔', factionId: 'maya', lat: 17.22, lng: -89.62, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '玛雅古典期城邦，佩滕雨林' },
+    { id: 'city_tucapel', name: '图卡佩尔', factionId: 'mapuche', lat: -37.7, lng: -73.4, type: 'pass', troops: 30000, region: 'AMERICA', note: '马普切要塞，1553劳塔罗在此击杀瓦尔迪维亚' },
+    { id: 'city_bacata', name: '巴卡塔', factionId: 'muisca', lat: 4.71, lng: -74.07, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '穆伊斯卡联盟西帕首府，今波哥大' },
+    { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'small_city', troops: 30000, region: 'AMERICA', note: '图皮塔莫约核心湾，阿拉里博亚战场' },
+    { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 30000, region: 'AFRICA', note: '马里帝国商贸重镇，桑克尔清真寺' },
+    { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 30000, region: 'AFRICA', note: '阿克苏姆帝国都城，方尖碑' },
+    { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
+    { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 30000, region: 'INDIA', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本
