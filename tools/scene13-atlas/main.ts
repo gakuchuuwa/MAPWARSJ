@@ -15,6 +15,7 @@ import {
 } from '../../src/ui/scene13/Scene13EnvironmentGenerator';
 import { DE_MAP_THEMES, type DeMapThemeId } from '../../src/ui/scene13/Scene13DeMapThemes';
 import { Scene13GroundPainter, type GroundPatch, isWaterTile } from '../../src/ui/scene13/Scene13GroundPainter';
+import { loadDeMaps } from './de-map';
 import type { Biome, ElevationBand } from '../../src/ui/Scene13Biome';
 
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
@@ -444,6 +445,47 @@ async function run(): Promise<void> {
 
     const skipNote = skipped > 0 ? `（跳过已删 ${skipped}）` : '';
     stat.textContent = `共 ${combos.length} 张${skipNote}，生成中…`;
+
+    // ── DE 真图排在最前 ──
+    // 这些是 AoE2 DE 自己跑官方 RMS 生成的地图，用实机同一套渲染器画出来。
+    // 放在最前面就是为了让「DE 算的」和「我们算的」一眼能对上。
+    console.log('[DE] loading…');
+    const deMaps = await loadDeMaps(W, H);
+    console.log('[DE] loaded', deMaps.length, deMaps.map(d => ({
+        base: d.plan.baseTerrain, patches: d.plan.terrainPatches.length,
+        cells: d.plan.terrainPatches.reduce((n, p) => n + p.cells.length, 0),
+        objs: d.plan.objects.length, grid: d.plan.grid })));
+    for (const de of deMaps) {
+        console.log('[DE] rendering', de.label);
+        if (token !== runToken) return;
+        const t0 = performance.now();
+        const canvas = await renderPlan(de.plan, W, H);
+        console.log('[DE] rendered in', Math.round(performance.now() - t0), 'ms');
+        const card = document.createElement('div');
+        card.className = 'card';
+        const shell = document.createElement('div');
+        shell.className = 'shot';
+        shell.appendChild(canvas);
+        card.appendChild(shell);
+        canvas.addEventListener('click', () => {
+            const cards = [...document.querySelectorAll('.card')];
+            openZoom(cards.indexOf(card));
+        });
+        const skippedTop = Object.entries(de.stats.skipped)
+            .sort((a, b) => b[1] - a[1]).slice(0, 4)
+            .map(([k, v]) => `${k}×${v}`).join(' ');
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML =
+            `<div class="t" style="color:#7fd18b">★ DE 原图　${de.label}</div>` +
+            `<div class="k">AoE2 DE 场景编辑器跑官方 RMS 生成，原样导出，无任何近似</div>` +
+            `<div class="k">地形 ${de.stats.terrainKinds} 种 · 底图 <code>${de.plan.baseTerrain}</code> · 斑块 ${de.plan.terrainPatches.length} 片</div>` +
+            `<div class="k">物件 ${de.stats.objects} 个，已画 ${de.stats.drawn}</div>` +
+            (skippedTop ? `<div class="k">未画：<code>${skippedTop}</code></div>` : '');
+        card.appendChild(meta);
+        grid.appendChild(card);
+        await new Promise((r) => setTimeout(r, 0));
+    }
     let done = 0;
     for (const c of combos) {
         const { m, lat } = BANDS[c.band];
