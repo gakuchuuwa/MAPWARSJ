@@ -25,6 +25,7 @@ import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
+import { pickTree } from './TreeAssignment';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -35,7 +36,7 @@ import {
     isSnowArea,
     resolveDeMapTheme,
     terrainForTheme,
-    treesForTheme,
+    treesForTheme,   // 只在拿不到经纬度时兜底，正常走 TreeAssignment
     SECONDARY_TERRAINS,
     type DeMapThemeId,
     type DeMapThemePalette,
@@ -595,7 +596,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
-        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind);
+        buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, baseTerrain, input.lng);
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
@@ -1422,11 +1423,23 @@ function buildVegetation(
     lat?: number,
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
+    /** 这张图的底图贴图名 —— 树按它定基调 */
+    baseTile: string = '',
+    lng?: number,
 ): void {
-    const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome);
-    const primaryTree = rng.pick(treeAssets);
-    const otherTrees = treeAssets.filter((t) => t !== primaryTree);
-    const secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
+    // 🔴 [2026-08-24 主人定] 一个底图一种树：底图定基调，同一张图上不混种。
+    //    地区覆盖 + 季节变体都在 TreeAssignment 里，见那个文件的头注释。
+    //    只有拿不到经纬度（旧调用/单测）才回落到按主题挑一把树。
+    let primaryTree: string;
+    let secondaryTree: string | null = null;
+    if (lat !== undefined && lng !== undefined) {
+        primaryTree = pickTree({ baseTile, lat, lng, season });
+    } else {
+        const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome);
+        primaryTree = rng.pick(treeAssets);
+        const otherTrees = treeAssets.filter((t) => t !== primaryTree);
+        secondaryTree = otherTrees.length ? rng.pick(otherTrees) : null;
+    }
     const baseTreeCount = treeCountFor(biome, rng);
     const treeFactor: Record<ElevationBand, number> = {
         lowland: 1,
