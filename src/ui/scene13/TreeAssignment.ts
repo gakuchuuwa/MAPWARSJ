@@ -56,7 +56,9 @@ const TREE_BY_BASE: Readonly<Record<string, string>> = {
     ds3: 'OAK',               // 温带城 —— 中原、欧洲、日韩
     ds4: 'OLIVE',             // 红土城 / 地中海
     gr4: 'WILLOW',            // 黑土 / 水稻土城 —— 江南、东北，水边柳
-    gr5: 'ACACIA',            // 草原城 —— 蒙古、中亚、干地中海
+    // 🔴 草原底图的默认树是**橡树**不是金合欢：金合欢只长在非洲/阿拉伯/印度的
+    //    热带稀树草原，欧亚温带草原（布拉格、蒙古）长它是硬伤。ACACIA 走地区覆盖。
+    gr5: 'OAK',               // 草原城 —— 温带草原散生阔叶
     snd: 'SNOW_PINE',         // 雪原城
 
     // ── 野战底图 ──
@@ -64,7 +66,7 @@ const TREE_BY_BASE: Readonly<Record<string, string>> = {
     gr2: 'ASIAN_MAPLE_GREEN', // 温带草地
     gr3: 'BIRCH_GREEN',       // 半干草地
     gr6: 'LUSH_BAMBOO',       // 丛林草地 —— 岭南、东南亚
-    gr7: 'ACACIA',            // 干草原
+    gr7: 'OAK',               // 干草原 —— 同 gr5，热带稀树草原走地区覆盖
     for: 'OAK',               // 温带林地
     fo2: 'BRAZILWOOD',        // 热带林地
     underbrush_leaves: 'ASIAN_PINE',  // 针叶林地
@@ -98,18 +100,27 @@ interface RegionTree {
 
 const REGION_TREES: readonly RegionTree[] = [
     // ── 东亚 ──
-    { box: [30.0, 46.0, 129.0, 146.0], bases: ['ds3', 'gr2', 'grs', 'for'],
+    // ds4 必须带上：江户就是 ds4，漏了它日本会长出橄榄树
+    { box: [30.0, 46.0, 129.0, 146.0], bases: ['ds3', 'ds4', 'gr2', 'grs', 'for'],
       tree: 'PEACH_BLOSSOM', why: '日本 —— 樱花' },
-    { box: [33.0, 43.5, 124.0, 131.0], bases: ['ds3', 'gr2', 'grs', 'for'],
+    { box: [33.0, 43.5, 124.0, 131.0], bases: ['ds3', 'ds4', 'gr2', 'grs', 'for'],
       tree: 'SCENARIO_TREE_B', why: '朝鲜半岛 —— 阔叶大树' },
     { box: [27.0, 34.0, 110.0, 123.0], bases: ['gr4', 'sh4'],
       tree: 'WILLOW', why: '江南水乡 —— 垂柳' },
-    { box: [20.0, 27.0, 104.0, 120.0], bases: ['ds4', 'gr6', 'fo2'],
-      tree: 'BAMBOO', why: '岭南 —— 竹' },
-    { box: [20.0, 30.0, 96.0, 106.0], bases: ['ds4', 'gr6', 'fo2'],
-      tree: 'LUSH_BAMBOO', why: '滇缅 —— 茂竹' },
+    // 东界必须到 129：台南 120.2、首里 127.7、奄美 129.5 都在这条线以东，卡短了会漏成橄榄树
+    { box: [20.0, 30.5, 104.0, 132.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2'],
+      tree: 'BAMBOO', why: '岭南 + 闽浙 + 台湾 + 琉球 —— 竹' },
+    { box: [20.0, 30.0, 92.0, 106.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2'],
+      tree: 'LUSH_BAMBOO', why: '滇缅 + 阿萨姆 —— 茂竹' },
+    // 中南半岛：顺化(16.5N)这一带原先谁都没盖到，落到 ds4 默认的橄榄
+    { box: [8.0, 23.0, 92.0, 110.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2'],
+      tree: 'LUSH_BAMBOO', why: '中南半岛 —— 茂竹' },
     { box: [38.0, 54.0, 118.0, 136.0], bases: ['gr4', 'gr3'],
       tree: 'BIRCH_GREEN', why: '东北 —— 白桦' },
+    { box: [24.0, 34.0, 97.0, 110.0], bases: ['ds4', 'ds3', 'gr2', 'grs', 'for'],
+      tree: 'BAMBOO', why: '巴蜀/云贵 —— 成都平原的红土长竹樟，不是橄榄' },
+    { box: [32.0, 42.0, 110.0, 122.0], bases: ['ds3', 'gr2', 'grs', 'for'],
+      tree: 'SCENARIO_TREE_L', why: '华北中原 —— 榆槐类高大阔叶' },
 
     // ── 南亚 / 东南亚 ──
     { box: [-11.0, 8.0, 95.0, 141.0],
@@ -125,17 +136,37 @@ const REGION_TREES: readonly RegionTree[] = [
     { box: [12.0, 20.0, 42.0, 56.0],
       tree: 'DRAGON_TREE', why: '也门/索科特拉 —— 龙血树原产地' },
 
-    // ── 非洲 ──
-    { box: [-35.0, 18.0, -18.0, 52.0], bases: ['gr5', 'gr7', 'ds4', 'ds3'],
+    // ── 非洲 / 阿拉伯：金合欢 + 猴面包树的老家 ──
+    // 纯沙漠底图（pal/qs/pal1/des）不覆盖 —— 那里只剩棕榈和枯树。
+    { box: [-35.0, 16.0, -18.0, 52.0], bases: ['gr5', 'gr7', 'ds4', 'ds3', 'ds2', 'gr3'],
       tree: 'BAOBAB', why: '撒哈拉以南非洲 —— 猴面包树' },
+    { box: [12.0, 30.0, -18.0, 60.0], bases: ['gr5', 'gr7', 'ds2', 'ds3', 'gr3'],
+      tree: 'ACACIA', why: '萨赫勒 + 阿拉伯半岛 —— 稀树草原金合欢' },
+    { box: [8.0, 30.0, 68.0, 92.0], bases: ['gr5', 'gr7', 'gr3'],
+      tree: 'ACACIA', why: '德干/塔尔干旱区 —— 金合欢' },
 
     // ── 美洲 ──
+    // 城池表里美洲只有 6 座，全在中南美；北美东部一座都没有，所以那棵大树给中美高原。
+    { box: [2.0, 24.0, -106.0, -70.0], bases: ['ds3', 'ds4', 'ds2', 'gr2', 'grs', 'gr5', 'gr7', 'gr3'],
+      tree: 'SCENARIO_TREE_J', why: '中美/安第斯北高原 —— 阔叶大树' },
     { box: [-56.0, -20.0, -76.0, -53.0], bases: ['ds2', 'gravel_default', 'gr3', 'gr7'],
       tree: 'MONKEY_PUZZLE', why: '南美南部/安第斯 —— 智利南洋杉' },
     { box: [-24.0, 12.0, -82.0, -34.0], bases: ['fo2', 'gr6', 'ds4'],
       tree: 'BRAZILWOOD', why: '亚马逊 —— 巴西木' },
 
-    // ── 欧洲 ──
+    // ── 欧洲：温带阔叶带一地一种大树，别让整个欧洲长同一棵 ──
+    // 🔴 顺序敏感：这些小框必须排在「中西欧」大框前面，否则被它先吃掉。
+    { box: [49.0, 61.0, -11.0, 2.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
+      tree: 'SCENARIO_TREE_A', why: '不列颠/爱尔兰 —— 阔叶大树' },
+    { box: [38.0, 48.0, 13.0, 31.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
+      tree: 'SCENARIO_TREE_D', why: '巴尔干 —— 阔叶大树' },
+    // 意大利半岛的温带底图原先漏了：佛罗伦萨落到通用橡树，该是伞松
+    { box: [37.0, 46.5, 6.5, 19.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
+      tree: 'ITALIAN_PINE', why: '意大利半岛 —— 伞松' },
+    { box: [39.0, 45.0, -10.0, 4.0], bases: ['ds3', 'gr2', 'grs', 'for'],
+      tree: 'SCENARIO_TREE_K', why: '伊比利亚北部大西洋岸 —— 阔叶大树' },
+    { box: [35.0, 45.0, 26.0, 52.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
+      tree: 'SCENARIO_TREE_H', why: '安纳托利亚北岸/高加索 —— 阔叶大树' },
     { box: [45.0, 62.0, -12.0, 32.0], bases: ['ds3', 'gr2', 'grs', 'for'],
       tree: 'SCENARIO_TREE_C', why: '中西欧 —— 阔叶大树' },
     { box: [48.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for'],
