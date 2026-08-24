@@ -1,0 +1,9 @@
+{
+ "type": "Default",
+ "frames": 32,
+ "size": 256,
+ "note": "AoE2 DE 水面烘焙帧。横向排列，每帧 size×size，无缝循环平铺。",
+ "wave_animation_speed": 2,
+ "specular_power": 1600,
+ "wave_amplitude": 0.01
+}
