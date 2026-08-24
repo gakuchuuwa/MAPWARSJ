@@ -691,6 +691,11 @@ export class GameMap {
                         <b>🛤️ 道路编辑 (NE)</b>
                     </label>
 
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#00838F;margin-top:4px;">
+                        <input type="checkbox" id="chk-editor-sea">
+                        <b>🚢 海路编辑</b>
+                    </label>
+
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#C62828;margin-top:4px;">
                         <input type="checkbox" id="chk-editor-army">
                         <b>⚔ 军队编辑</b>
@@ -1002,6 +1007,15 @@ export class GameMap {
             if (chkEditorRoad) {
                 chkEditorRoad.addEventListener('change', (e: any) => {
                     window.dispatchEvent(new CustomEvent('toggle-editor-road', {
+                        detail: { enabled: e.target.checked }
+                    }));
+                });
+            }
+
+            const chkEditorSea = document.getElementById('chk-editor-sea') as HTMLInputElement;
+            if (chkEditorSea) {
+                chkEditorSea.addEventListener('change', (e: any) => {
+                    window.dispatchEvent(new CustomEvent('toggle-editor-sea', {
                         detail: { enabled: e.target.checked }
                     }));
                 });

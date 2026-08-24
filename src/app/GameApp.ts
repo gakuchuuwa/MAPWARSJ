@@ -19,6 +19,7 @@ import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { CombatSystem } from '../combat/CombatSystem';
 import { CityEditor } from '../editors/CityEditor';
 import { VectorRoadEditor } from '../roads/VectorRoadEditor';
+import { SeaRouteEditor } from '../sea/SeaRouteEditor';
 import { ArmyEditor } from '../editors/ArmyEditor';
 import { UnifiedEditorManager } from '../editors/UnifiedEditorManager';
 import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
@@ -92,6 +93,7 @@ export class GameApp {
     public combatSystem!: CombatSystem;
     public cityEditor!: CityEditor;
     public roadEditor!: VectorRoadEditor;
+    public seaRouteEditor!: SeaRouteEditor;
     private unifiedEditorManager!: UnifiedEditorManager;
     public timeSystem!: TimeSystem;
     public historicalEventManager!: HistoricalEventManager;
@@ -486,6 +488,7 @@ export class GameApp {
 
             if (import.meta.env.DEV) {
                 this.roadEditor = new VectorRoadEditor(this.map.getLeafletMap(), this.cityManager);
+                this.seaRouteEditor = new SeaRouteEditor(this.map.getLeafletMap(), this.cityManager);
 
                 const armyEditor = new ArmyEditor(this.map.getLeafletMap());
                 window.addEventListener('toggle-editor-army', (e: Event) => {
@@ -496,6 +499,7 @@ export class GameApp {
                 this.unifiedEditorManager = new UnifiedEditorManager();
                 this.unifiedEditorManager.register(this.cityEditor);
                 this.unifiedEditorManager.register(this.roadEditor);
+                this.unifiedEditorManager.register(this.seaRouteEditor);
             }
 
             const legionManager = this.historicalEventManager.getLegionManager();
