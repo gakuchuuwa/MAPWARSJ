@@ -28,9 +28,11 @@ interface NatureMeta { box_w: number; box_h: number; anchor_x: number; anchor_y:
 /** 每个海拔档给一个代表性米数 + 纬度（喂雪线/树种判定，和实机同一批判据） */
 const BANDS: Record<ElevationBand, { m: number; lat: number }> = {
     lowland: { m: 60, lat: 34 },
-    hill: { m: 420, lat: 36 },
-    plateau: { m: 1600, lat: 38 },
+    upland: { m: 420, lat: 36 },
+    mountain: { m: 1600, lat: 38 },
     alpine: { m: 3600, lat: 40 },
+    high_alpine: { m: 4600, lat: 40 },
+    snow: { m: 5400, lat: 42 },
 };
 /**
  * 主题 → 代表性 biome。
@@ -62,7 +64,9 @@ const THEME_BIOME: Record<DeMapThemeId, Biome> = {
 };
 
 const SEASON_NAME = ['春夏', '秋', '冬'];
-const BAND_NAME: Record<ElevationBand, string> = { lowland: '低地', hill: '丘陵', plateau: '高原', alpine: '雪线' };
+// 🔴 键名必须用引擎的 ElevationBand 合法值。曾误写成 hill/plateau，那两个不在引擎表里，
+//    treeFactor 之类按 band 查表全落 undefined，丘陵/高原两档的林木预算直接算成 0。
+const BAND_NAME: Record<ElevationBand, string> = { lowland: '低地', upland: '丘陵', mountain: '高原', alpine: '雪线', high_alpine: '高山', snow: '雪原' };
 const WATER_NAME: Record<WaterKind, string> = { none: '无水', sea: '海岸', lake: '湖', river: '河' };
 
 /** 素材缓存：整个工具共用，几十张图只加载一次 */
@@ -332,7 +336,7 @@ function initZoom(): void {
  * 完全不同的样子，所以指认时必须连种子一起报（卡片上的 seed 就是干这个的）。
  */
 const ALL_SEASONS: Season[] = [0, 1, 2];
-const ALL_BANDS: ElevationBand[] = ['lowland', 'hill', 'plateau', 'alpine'];
+const ALL_BANDS: ElevationBand[] = ['lowland', 'upland', 'mountain', 'alpine'];
 const ALL_WATERS: WaterKind[] = ['none', 'sea', 'lake', 'river'];
 
 function stableComboId(c: Combo): number {
@@ -422,7 +426,7 @@ async function run(): Promise<void> {
     const seasons = (sel('season').value === 'all'
         ? [0, 1, 2]
         : [parseInt(sel('season').value, 10)]) as Season[];
-    const bands = pick<ElevationBand>(sel('band'), ['lowland', 'hill', 'plateau', 'alpine']);
+    const bands = pick<ElevationBand>(sel('band'), ['lowland', 'upland', 'mountain', 'alpine']);
     const waters = pick<WaterKind>(sel('water'), ['none', 'sea', 'lake', 'river']);
     const sieges = sel('siege').value === 'all' ? [false, true] : [sel('siege').value === 'siege'];
 

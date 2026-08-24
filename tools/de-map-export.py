@@ -49,7 +49,10 @@ def load_terrain_table():
             "name": t.name,
             "blendPriority": t.blend_priority,
             "blendType": t.blend_type,
-            "isWater": bool(t.is_water),
+            # 🔴 判水看 blend_type，不是 is_water。
+            #    is_water 是深度/通行档（水 1/2/4、陆地 32、冰 72/96），拿它当布尔用会把整张图判成水。
+            #    blend_type 才是 DE 的地形咬合类别：0=陆地 2=沙滩 3=水 6=冰，与我们 blends/ 下的遮罩一一对应。
+            "isWater": t.blend_type == 3,
         }
     return table
 
@@ -68,69 +71,77 @@ def main():
         print(__doc__)
         sys.exit(1)
     src, out_name = sys.argv[1], sys.argv[2]
+    # 第三个参数可选：切块步长。一张 144x144 的 DE 图能滑窗切出多块 66x66 的战场底图，
+    # 每块都是 DE 算的、互不相同——20 张 DE 地图就能出几百张真底图。
+    stride = int(sys.argv[3]) if len(sys.argv) > 3 else 0
 
     terrain_table = load_terrain_table()
     scenario = AoE2DEScenario.from_file(src)
     mm = scenario.map_manager
     size = mm.map_size
 
-    lo = (size - CROP) // 2
-    hi = lo + CROP
-
-    # ── 地形：截中间 CROP×CROP ──
-    grid, kinds = [], Counter()
-    for y in range(lo, hi):
-        row = []
-        for x in range(lo, hi):
-            t = mm.terrain[y * size + x]
-            row.append({"t": t.terrain_id, "e": t.elevation})
-            kinds[t.terrain_id] += 1
-        grid.append(row)
-
-    # ── 物件：只保留落在截取区内的，坐标转成相对格 ──
-    objects = []
-    obj_kinds = Counter()
-    for player_units in scenario.unit_manager.units:
-        for u in player_units:
-            if lo <= u.x < hi and lo <= u.y < hi:
-                name = object_name(u.unit_const)
-                objects.append({
-                    "const": u.unit_const,
-                    "name": name,
-                    "x": round(u.x - lo, 3),
-                    "y": round(u.y - lo, 3),
-                    "rot": round(getattr(u, "rotation", 0.0), 3),
-                })
-                obj_kinds[name] += 1
-
-    used = {str(tid): terrain_table.get(tid, {"tile": None, "name": f"ID_{tid}"})
-            for tid in kinds}
-
-    payload = {
-        "source": Path(src).name,
-        "note": "AoE2 DE 场景编辑器跑官方 RMS 生成，原样导出，未经任何近似或再加工。",
-        "mapSize": size,
-        "crop": {"size": CROP, "offset": lo},
-        "terrainTable": used,
-        "grid": grid,
-        "objects": objects,
-    }
+    if stride > 0:
+        offsets = list(range(0, size - CROP + 1, stride))
+        tiles = [(ox, oy) for oy in offsets for ox in offsets]
+    else:
+        c = (size - CROP) // 2
+        tiles = [(c, c)]
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out = OUT_DIR / f"{out_name}.json"
-    out.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    written = []
 
-    print(f"== {out_name} ==")
-    print(f"  原图 {size}x{size} → 截取中间 {CROP}x{CROP} (offset {lo})")
-    print(f"  地形种类 {len(kinds)}：")
-    for tid, n in kinds.most_common():
-        info = terrain_table.get(tid, {})
-        pct = 100.0 * n / (CROP * CROP)
-        print(f"    {tid:>4} {info.get('name','?'):<26} tile={str(info.get('tile')):<16} {n:>5} 格 {pct:5.1f}%")
-    print(f"  物件 {len(objects)} 个 / {len(obj_kinds)} 种：")
-    for name, n in obj_kinds.most_common(15):
-        print(f"    {name:<28} {n:>5}")
-    print(f"  → {out}")
+    for (lox, loy) in tiles:
+        hix, hiy = lox + CROP, loy + CROP
+
+        grid, kinds = [], Counter()
+        for y in range(loy, hiy):
+            row = []
+            for x in range(lox, hix):
+                t = mm.terrain[y * size + x]
+                row.append({"t": t.terrain_id, "e": t.elevation})
+                kinds[t.terrain_id] += 1
+            grid.append(row)
+
+        objects, obj_kinds = [], Counter()
+        for player_units in scenario.unit_manager.units:
+            for u in player_units:
+                if lox <= u.x < hix and loy <= u.y < hiy:
+                    name = object_name(u.unit_const)
+                    objects.append({
+                        "const": u.unit_const, "name": name,
+                        "x": round(u.x - lox, 3), "y": round(u.y - loy, 3),
+                        "rot": round(getattr(u, "rotation", 0.0), 3),
+                    })
+                    obj_kinds[name] += 1
+
+        used = {str(tid): terrain_table.get(tid, {"tile": None, "name": f"ID_{tid}"}) for tid in kinds}
+        water = sum(n for tid, n in kinds.items()
+                    if terrain_table.get(tid, {}).get("isWater"))
+        beach = sum(n for tid, n in kinds.items()
+                    if terrain_table.get(tid, {}).get("blendType") == 2)
+        forest = sum(n for tid, n in kinds.items()
+                     if "forest" in terrain_table.get(tid, {}).get("name", "").lower())
+
+        name = out_name if len(tiles) == 1 else f"{out_name}_{lox:03d}_{loy:03d}"
+        payload = {
+            "source": Path(src).name,
+            "note": "AoE2 DE 场景编辑器跑官方 RMS 生成，原样导出，未经任何近似或再加工。",
+            "mapSize": size,
+            "crop": {"size": CROP, "offset": lox, "offsetY": loy},
+            "terrainTable": used,
+            "grid": grid,
+            "objects": objects,
+        }
+        (OUT_DIR / f"{name}.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        written.append({"name": name, "water": water, "beach": beach, "forest": forest,
+                        "objects": len(objects), "kinds": len(kinds)})
+
+    written.sort(key=lambda w: -w["water"])
+    print(f"原图 {size}x{size} → 切出 {len(written)} 块 {CROP}x{CROP}")
+    print(f"{'块名':<28}{'水格':>6}{'沙滩':>6}{'森林格':>8}{'物件':>7}{'地形种类':>9}")
+    for w in written[:20]:
+        print(f"{w['name']:<28}{w['water']:>6}{w['beach']:>6}{w['forest']:>8}{w['objects']:>7}{w['kinds']:>9}")
+    print(f"→ {OUT_DIR}")
 
 
 if __name__ == "__main__":
