@@ -1773,7 +1773,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yilihanguo_d', name: '伊利汗国' },
     { id: 'asaibaijiang', name: '阿塞拜疆' },
-    { id: 'wulaertu', name: '亚美尼亚' },  // 别名：乌拉尔图（Urartu，亚美尼亚前身）
+    { id: 'wulaertu', name: '亚美尼亚' },  // 别名：埃里温所在，亚美尼亚王国；⚠ 乌拉尔图是另一个势力 wulaertu_guo（都城图什帕），别混
     { id: 'wulaertu_guo', name: '乌拉尔图' },
   // 图什帕·乌拉尔图王国（公元前高加索古国）
     { id: 'gelujiya', name: '格鲁吉亚' },
@@ -1838,7 +1838,14 @@ export const FACTIONS: Faction[] = [
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'kejila', name: '科基拉' },
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
-    { id: 'inca', name: '印加' },
+    { id: 'fodejiao', name: '佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
+  { id: 'baiyiya', name: '巴伊亚' },  // 别名：Bahia，葡属巴西都督府，治所萨尔瓦多
+  { id: 'tupinijin', name: '图皮尼金' },  // 别名：Tupiniquim，圣维森特一带原住民，与瓜纳巴拉的图皮(塔莫约)相区分
+  { id: 'tuotuonake', name: '托托纳克' },  // 别名：韦拉克鲁斯中部原住民（Totonac），都城森波阿拉
+  { id: 'taino', name: '泰诺人' },  // 别名：古巴/大安的列斯原住民（Taíno）
+  { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系
+  { id: 'yasuer', name: '亚速尔' },  // 别名：Azores，葡属大西洋群岛，首府安格拉
+  { id: 'inca', name: '印加' },
              // 库斯科·印加帝国
     { id: 'maya', name: '玛雅' },             // 蒂卡尔·玛雅城邦
     { id: 'mapuche', name: '马普切' },        // 图卡佩尔·马普切人

@@ -3268,7 +3268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/LINGNAN/leizhou_limao.png": {
-            "scale": 0.98,
+            "scale": 1.02,
             "offsetX": 30,
             "offsetY": -9
         },
