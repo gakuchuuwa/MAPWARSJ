@@ -2248,6 +2248,8 @@ const UNIT_RADIUS: Record<string, number> = {
 const SEP_SMOOTH = 0.15;
 /** 推开速度（px/秒）：要顶得住 130 的行军速度。实测 55 太小——仍有 17% 完全叠住，120 降到 3% */
 const SEP_SPD = 120;
+/** 交战中（st≠0，正在出手）的推力系数。0.5 是实测安全档，见 separate 里的说明；0.2 会打不完。 */
+const SEP_FIGHT = 0.5;
 /** 推挤哈希格（= 推挤距离，一格只装一两个人，扫 3×3 很便宜） */
 const CELL_S = 20;
 /** 远程兵接敌被己方前排挡住时，站住待命时长（秒）：别再往前挤（往前顶一步 + 推挤推回一步 = 抖） */
@@ -3399,10 +3401,46 @@ export class Scene13WarLayer {
         if (this.exitBtn) this.exitBtn.style.display = 'none';
     }
 
+    /**
+     * 攻击特效的逐帧推进（箭矢/刀光/火花/爆炸炮口焰）——**纯动画，不结算伤害**。
+     *
+     * 🔴 [2026-08-26 主人：「战斗结束后要 5 秒才结束，期间士兵是待命，
+     *    攻击特效应该消失才对，可攻击特效都静止了」]
+     *    原来只有 step() 推这四个数组，`lingerStep()`（残局待命那 5 秒）漏了 ——
+     *    t 不增长 → 既播不完也被 filter 不掉 → **半空的箭和刀光原地冻住 5 秒**。
+     *    抽成一个方法给两处共用：残局里它们继续飞完/淡出，1 秒内自然清空，
+     *    观感就是「攻击特效随战斗结束消失」。
+     *    ⚠️ 不能改成 linger 开始时直接清空数组：飞在半空的箭会凭空蒸发，比冻住还假。
+     */
+    private stepEffects(dt: number): void {
+        for (const a of this.arrows) a.t += dt;
+        // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
+        // 炮弹/手榴弹落地瞬间 → DE 爆炸特效（径向对称）。
+        for (const a of this.arrows) {
+            if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_BOMBARD_BALL' || a.proj === 'PROJ_GRENADE')) {
+                this.explode(a.proj === 'PROJ_GRENADE' ? 'FX_PETARD' : 'FX_EXPLOSION', a.x + a.dx * a.len, a.y + a.dy * a.len);
+            }
+        }
+        this.arrows = this.arrows.filter(a => a.t < (a.delay ?? 0) + a.dur);
+        for (const s of this.slashes) s.t += dt;
+        this.slashes = this.slashes.filter(s => s.t < s.dur);
+        for (const s of this.sparks) {
+            s.t += dt;
+            s.x += s.vx * dt;
+            s.y += s.vy * dt;
+        }
+        this.sparks = this.sparks.filter(s => s.t < s.dur);
+        // DE 攻击特效（爆炸/炮口焰）：独立一次性生命周期，播完移除。
+        for (const f of this.fxs) f.t += dt;
+        this.fxs = this.fxs.filter(f => f.t < f.dur);
+    }
+
     /** 残局待命的每帧推进：只推动画，不推战斗 */
     private lingerStep(dt: number): void {
         // 待命动作（8 帧循环，与战斗时同速）
         for (const m of this.men) m.ph += dt * 8 / 1.5;
+        // 攻击特效继续播完（不推会原地冻住 5 秒，见 stepEffects 的说明）
+        this.stepEffects(dt);
         // 尸体照常推进：死亡动画播完烙地面
         for (const c of this.corpses) {
             c.t += dt;
@@ -4777,6 +4815,21 @@ export class Scene13WarLayer {
         return UNIT_RADIUS[key] ?? SEP_DIST / 2;
     }
 
+    /**
+     * 推挤质量 = 占地面积比（以 8px 半径的步兵为 1）。推力除以它 → **越占地方越推不动**。
+     *
+     * 🔴 [2026-08-26 主人：「主要是人物可以把战车平推开」] 改前 separate 是**双向等力**的：
+     *    不管你是 8px 的步兵还是 20px 的战车，都按同一个 SEP_SPD=120 被推。
+     *    而战车/攻城器械的占地是步兵的 **5~6 倍**（UNIT_RADIUS 实测：步兵 8 / 战车 20 /
+     *    攻城锤 18），被步兵一顶就平移，观感上完全不成立。
+     *    DE 的 collision size 就是占地，拿它当质量最贴。现在：
+     *      步兵 mass 1.0 → 照旧被推 120px/s；战车 mass 6.2 → 只剩 19px/s；攻城锤 5.1 → 24px/s。
+     *    反过来战车推步兵仍是全力 —— 质量差自然产生单向效果，不用特判。
+     */
+    private massOf(key: string): number {
+        return Math.max(1, (this.radiusOf(key) / 8) ** 2);
+    }
+
     private separate(dt: number): void {
         const push = SEP_SPD * dt;
         for (const m of this.men) {
@@ -4817,8 +4870,15 @@ export class Scene13WarLayer {
             //    原来不管挤多深都按全速推，而邻居集合每帧都在变（只看 6 个），
             //    推的方向来回摆 → 人在原地微微发抖。
             const depth = Math.max(0, 1 - Math.sqrt(nearest2) / minGap);
-            // 先算出「这一帧本该推多少」，再让实际推力慢慢向它靠拢（见 SEP_SMOOTH）
-            const vx = ox / l * push * depth, vy = oy / l * push * depth;
+            // 🔴 [2026-08-26 主人「挤来挤去就产生了平移，就不真实」] 交战中的兵推力减半。
+            //    DE 里打架的单位是**站定**的，只有移动中的才绕行；我们原来所有人一律 120px/s
+            //    （行军速度才 130），站着不动的兵每秒能被推走大半个身位 —— 那就是「平移」。
+            //    实测（war_sim，SEED 7/11）：平移 12.4→9.3 px/人·秒、推力方向反转 13.2%→11.4%，
+            //    用时 266→266s **持平**。
+            //    ⚠️ 别再往下调：SEP_FIGHT=0.2 实测 SEED 7 直接打满 900s（推力太小散不开、打不到人）。
+            const fightMul = m.st !== 0 ? SEP_FIGHT : 1;
+            const mul = depth * fightMul / this.massOf(m.key);
+            const vx = ox / l * push * mul, vy = oy / l * push * mul;
             m.sepX += (vx - m.sepX) * SEP_SMOOTH;
             m.sepY += (vy - m.sepY) * SEP_SMOOTH;
             m.x += m.sepX;
@@ -5886,26 +5946,7 @@ export class Scene13WarLayer {
         this.men = this.men.filter(m => m.hp > 0);
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
-        for (const a of this.arrows) a.t += dt;
-        // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
-        // 炮弹/手榴弹落地瞬间 → DE 爆炸特效（径向对称）。
-        for (const a of this.arrows) {
-            if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_BOMBARD_BALL' || a.proj === 'PROJ_GRENADE')) {
-                this.explode(a.proj === 'PROJ_GRENADE' ? 'FX_PETARD' : 'FX_EXPLOSION', a.x + a.dx * a.len, a.y + a.dy * a.len);
-            }
-        }
-        this.arrows = this.arrows.filter(a => a.t < (a.delay ?? 0) + a.dur);
-        for (const s of this.slashes) s.t += dt;
-        this.slashes = this.slashes.filter(s => s.t < s.dur);
-        for (const s of this.sparks) {
-            s.t += dt;
-            s.x += s.vx * dt;
-            s.y += s.vy * dt;
-        }
-        this.sparks = this.sparks.filter(s => s.t < s.dur);
-        // DE 攻击特效（爆炸/炮口焰）：独立一次性生命周期，播完移除。
-        for (const f of this.fxs) f.t += dt;
-        this.fxs = this.fxs.filter(f => f.t < f.dur);
+        this.stepEffects(dt);
         // 城门倒塌动画推进：collapse.t 累加，播完把 sprite 切到 rubble 残骸常驻、清掉 collapse 状态。
         for (const b of this.wallGates) {
             const c = b.sprite.collapse;

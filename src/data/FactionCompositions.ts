@@ -1168,7 +1168,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（雅典公民大盾长枪方阵正面抗线）
             { type: 'strategos', count: 4 },            // Row 1 中军主力 = 雅典将军卫队 4人（地米斯托克利十将军王牌亲军核心）
-            { type: 'cretan_archer', count: 2 },        // Row 2 尾收远程 = 克里特弓箭手 2人（爱琴海神射手后排远距齐射）
+            { type: 'elite_antiquity_skirmisher', count: 2 },  // Row 2 尾收远程 = 古典掷矛手高级 2人（古典散兵反远程压制）
         ],
     },
     // 日本战国·织田信长军团（鱼鳞阵 3+4+2：日本武士 3 + 精锐武士 4 + 手炮手 2）
@@ -1813,13 +1813,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'fire_archer', count: 4 },
         ],
     },
-    // 波希米亚与捷克·扬杰斯卡 波西米亚军团（雁行 4+3+2：冠军剑士 4 + 胡斯派战车 3 + 榴弹炮 2）
+    // 波希米亚与捷克·扬杰斯卡 波西米亚军团（雁行 4+3+2：冠军剑士 4 + 胡斯派战车精锐 3 + 榴弹炮 2）
     boximiya: {
         legionName: "波西米亚军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'champion', count: 4 },         // Row 0 前卫主力 = 冠军剑士 4人（重剑步兵主力抗线破阵）
-            { type: 'hussite_wagon', count: 3 },    // Row 1 核心车阵 = 胡斯派战车 3辆（车堡环列，战车不占 4 档）
+            { type: 'champion', count: 4 },               // Row 0 前卫主力 = 冠军剑士 4人（重剑步兵主力抗线破阵）
+            { type: 'elite_hussite_wagon', count: 3 },    // Row 1 核心车阵 = 胡斯派战车精锐 3辆（车堡环列，战车不占 4 档）
             { type: 'houfnice', count: 2 },         // Row 2 后排炮火 = 榴弹炮 2门（超远轰击压阵）
         ],
     },
@@ -2050,12 +2050,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 2 },
         ],
     },
-    // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：精锐近卫军 4 + 长戟兵 3 + 长弓兵 2）
+    // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：哥特近卫军精锐 4 + 长戟兵 3 + 长弓兵 2）
     donggete: {
         legionName: "哥特军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'elite_guardsman', count: 4 },    // Row 0 前卫主力 = 精锐近卫军 4人（近卫步兵主力盾墙）
+            { type: 'elite_huskarl', count: 4 },      // Row 0 前卫主力 = 哥特近卫军精锐 4人（哥特城堡兵·反弓重盾步兵主力盾墙）
             { type: 'halberdier', count: 3 },         // Row 1 中排 = 长戟兵 3人（长戟反骑接应）
             { type: 'longbowman', count: 2 },         // Row 2 后排 = 长弓兵 2人（远程压制）
         ],
@@ -2167,13 +2167,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'sannahya', count: 2 },                 // Row 2 尾收装甲巨象 = 孔雀王朝战象 2头（披甲巨象压阵发起毁灭性践踏冲锋）
         ],
     },
-    // 波罗帝国·高达城/孟加拉（达磨波罗 · 孟加拉军团 · 锥形阵 2+3+4：象兵 2 + 精锐战车 3 + 步弓手 4）
+    // 波罗帝国·高达城/孟加拉（达磨波罗 · 孟加拉军团 · 锥形阵 2+3+4：象兵 2 + 拉塔战车弓精锐 3 + 步弓手 4）
     boluo: {
         legionName: "孟加拉军团",
         formationMode: 'triangle',
         slots: [
             { type: 'battle_elephant', count: 2 },         // Row 0 尖刀 = 象兵 2头（战斗象践踏开路）
-            { type: 'elite_ratha_melee', count: 3 },       // Row 1 中坚 = 精锐战车 3乘（孟加拉拉塔战车精锐护阵）
+            { type: 'elite_ratha_ranged', count: 3 },      // Row 1 中坚 = 拉塔战车弓精锐 3乘（孟加拉城堡兵·弓战车精锐护阵）
             { type: 'archer', count: 4 },                  // Row 2 底边主力 = 步弓手 4人（远程主力齐射）
         ],
     },
@@ -2186,13 +2186,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
+    // 苏摩国·耽摩栗底港/孟加拉（苏摩 · 苏摩军团 · 雁行阵 4+3+2：步弓手 4 + 战斗象 3 + 拉塔战车近战精锐 2）
     sumo: {
-        legionName: "印度军团",
-        formationMode: 'crane_wing',
+        legionName: "苏摩军团",
+        formationMode: 'echelon',
         slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 3 },
+            { type: 'archer', count: 4 },                  // Row 0 前卫主力 = 步弓手 4人（孟加拉远程主力齐射）
+            { type: 'battle_elephant', count: 3 },         // Row 1 中坚 = 战斗象 3头（孟加拉战象践踏压阵）
+            { type: 'elite_ratha_melee', count: 2 },       // Row 2 尾收 = 拉塔战车近战精锐 2乘（孟加拉城堡兵·近战战车机动）
         ],
     },
     // 德里苏丹国·德里（阿拉乌丁·卡尔吉 · 象背重弓高台与近卫古拉姆铁甲大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 象弓骑兵精锐 3 + 古拉姆 2）
@@ -2200,7 +2201,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "印度斯坦军团",
         formationMode: 'crane_wing',
         slots: [
-            { type: 'armored_elephant', count: 2 },          // Row 0 前卫 = 攻城战象 2头（装甲攻城战象破城开路）
+            { type: 'elite_armored_elephant', count: 2 },    // Row 0 前卫 = 装甲攻城战象精锐 2头（印度斯坦装甲战象精锐破城开路）
             { type: 'elite_ghulam', count: 4 },              // Row 1 中军主力 = 精锐古拉姆 4人（印度斯坦古拉姆精锐主力）
             { type: 'imperial_camel_rider', count: 3 },      // Row 2 后排 = 帝王骆驼兵 3骑（帝王骆驼骑兵护阵）
         ],
