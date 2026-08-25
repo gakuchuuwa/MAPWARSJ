@@ -96,6 +96,48 @@ function main(): void {
     console.log('  🔴 音效又写回了 m.atkSt = m.st 后面（块外每帧调用）'); fail++;
   } else console.log('  ✅ 没有每帧调用（走向城墙的路上不会响）');
 
+  // ④ 中国系攻城投石槽 = 牵引抛石机（主人 2026-08-26 定）
+  //   依据：砲是中国战国到宋元的攻城主力；火箭车是明代的，且 rng 280、对建筑仅 +5，砸不动墙。
+  //   非中国区不得被误改（高丽的火箭车线是史实，别顺手一起换了）。
+  console.log('\n中国系攻城投石槽：');
+  const tableOf = (name: string): string => {
+    const i = SRC.indexOf(`const ${name}`);
+    return SRC.slice(i, SRC.indexOf('\n};', i));
+  };
+  const techSrc = tableOf('SIEGE_TECH_BY_CULTURE');
+  const techMap = new Map<string, Set<string>>();
+  for (const m of techSrc.matchAll(/^\s{4}(\w+):\s*\{(.*)\}/gm)) {
+    techMap.set(m[1], new Set([...m[2].matchAll(/(\w+):\s*true/g)].map((x) => x[1])));
+  }
+  const lineSrc = tableOf('SIEGE_MANGONEL_LINE');
+  const lineMap = new Map<string, string[]>();
+  for (const m of lineSrc.matchAll(/^\s{4}(\w+):\s*\[([^\]]+)\]/gm)) {
+    lineMap.set(m[1], m[2].split(',').map((x) => x.trim().replace(/'/g, '')));
+  }
+  const DEFAULT_LINE = ['mangonel', 'onager', 'siege_onager'];
+  const pickFor = (reg: string, tier: number): string | null => {
+    const ln = lineMap.get(reg) ?? DEFAULT_LINE;
+    const have = techMap.get(reg) ?? new Set<string>();
+    for (let i = tier; i >= 0; i--) if (have.has(ln[i])) return ln[i];
+    return null;
+  };
+  const CN_REGIONS = ['CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'NORTHEAST'];
+  let cnBad = 0;
+  for (const reg of CN_REGIONS) {
+    const picks = [0, 1, 2].map((t) => pickFor(reg, t));
+    if (picks.some((p) => p !== 'traction_trebuchet')) {
+      console.log(`  🔴 ${reg}: ${picks.join(' / ')} —— 应三档全是 traction_trebuchet`);
+      cnBad++; fail++;
+    }
+  }
+  if (cnBad === 0) console.log(`  ✅ 中国系 ${CN_REGIONS.length} 区三档全是牵引抛石机（砲）`);
+  // 高丽的火箭车线是史实（신기전 火车），不许被顺手换掉
+  const korea = pickFor('KOREA', 2);
+  if (korea !== 'heavy_rocket_cart') {
+    console.log(`  🔴 KOREA 大城档变成 ${korea} —— 高丽的火箭车线是史实，别跟着中国一起换`);
+    fail++;
+  } else console.log('  ✅ 高丽仍是火箭车线（신기전 火车，史实）');
+
   if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }
   console.log('\n✅ 全部符合');
 }

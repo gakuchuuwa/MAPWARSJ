@@ -148,13 +148,13 @@ const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
  *       见 SIEGE_MANGONEL_LINE）；印度斯坦系无冲车线（DE 用装甲象代替）；高丽无重冲/重弩。
  */
 const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
-    CENTRAL:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    NORTH:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    JIANGNAN:     { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    LINGNAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, battle_elephant: true },
-    BASHU:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    HEXI:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    NORTHEAST:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    CENTRAL:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
+    NORTH:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
+    JIANGNAN:     { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
+    LINGNAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, battle_elephant: true, traction_trebuchet: true },
+    BASHU:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
+    HEXI:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
+    NORTHEAST:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true, traction_trebuchet: true },
     // 🔴 [2026-08-24 主人两次指出「大象作为攻城武器在西域登场，是不对的」]
     //    这里原来也开着 war_elephant。西域 43 座城全是塔里木+河中的绿洲城邦
     //    （高昌、于阗、精绝、怛罗斯、浩罕…），太干旱、无象源，兵力主体是骑射。
@@ -178,19 +178,29 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
 };
 
 /**
- * 🔴 [2026-08-22 主人定] 投石车线替换：DE 新版中国/女真/高丽的投石车线 = **火箭车**
+ * 🔴 [2026-08-22 主人定] 投石车线替换：DE 新版女真/高丽的投石车线 = **火箭车**
  * （项目有 rocket_cart / heavy_rocket_cart 兵种，大明「神机箭重型火箭车」编制在用）。
  * 键 = 文化区；值 = [轻档, 中档, 重档]（火箭车只有 2 档，中/重用重型火箭车）。
  * 缺省 = 标准投石车线 ['mangonel', 'onager', 'siege_onager']。
+ *
+ * 🔴 [2026-08-26 主人定「中国的文化要加上牵引抛石机」] 中国系七区（中原/北方/江南/岭南/
+ *    巴蜀/河西/东北）的攻城投石槽改用 **traction_trebuchet（牵引抛石机·砲）**，三档同档。
+ *    两条依据：
+ *      · 符合历史：牵引抛石机（砲）是中国从战国到宋元的攻城主力，唐宋尤盛；
+ *        火箭车（神机箭）是明代的东西，拿它当整个中国史的攻城标配不对。
+ *      · 游戏合理：砸墙是攻城战前 30 秒的正事。牵引抛石机 rng 560、对建筑加成 +230；
+ *        火箭车 rng 280、对建筑仅 +5（它是反步兵 AoE），根本砸不动墙。
+ *    火箭车**保留在 SIEGE_TECH_BY_CULTURE 里不删** —— 大明神机箭精锐编制走的是
+ *    FactionCompositions，不经这条攻城槽，删了反而误伤。
  */
 const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>> = {
-    CENTRAL: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    NORTH: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    JIANGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    LINGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    BASHU: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    HEXI: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    NORTHEAST: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    CENTRAL: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    NORTH: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    JIANGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    LINGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    BASHU: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    HEXI: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    NORTHEAST: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     KOREA: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
 };
 
