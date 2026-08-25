@@ -20,6 +20,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
                                                   // 1176 密列奥塞法隆伏歼曼努埃尔一世亲征军，永久终结拜占庭收复安纳托利亚之望。
                                                   // （原注「曼齐克特生擒拜占庭皇帝」系我误记：那是 1071 大塞尔柱阿尔普·阿尔斯兰，非罗姆基利杰）
     ayoubu: { name: '阿尤布近卫', tier: 1 },       // 阿勒颇·萨拉赫丁：亲将 Halqa 近卫团（非仪仗），哈丁全歼十字军野战军
+    mamuluke: { name: '马穆鲁克骑', tier: 1 },      // 阿音贾鲁特·拜巴尔斯：1260 击败蒙古的战略级胜利，马穆鲁克奴隶骑兵建制延续 267 年
     aosiruowen: { name: '伯国骑士', tier: 3 },       // 埃德萨·鲍德温：十字军埃德萨伯国骑军（风土/建制符号；无独立战略大捷故 T3）
     shengdian_qishi: { name: '圣殿骑士', tier: 2 },
 

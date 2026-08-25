@@ -117,6 +117,7 @@ export const FACTIONS: Faction[] = [
   { id: 'luosi', name: '罗斯' },
   { id: 'liulike', name: '留里克' },
   { id: 'mosike_gongguo', name: '莫斯公国' },
+  { id: 'xieerpuhuofu_gongguo', name: '谢尔公国' },
   { id: 'fulajimier_gongguo', name: '克利亚济马' },
   { id: 'daniebo', name: '斯摩公国' },
   { id: 'qiernigeweifu_gongguo', name: '杰斯纳' },
@@ -1806,6 +1807,7 @@ export const FACTIONS: Faction[] = [
     { id: 'safawei_d', name: '萨法维' },
     { id: 'sumeier', name: '苏美尔' },
     { id: 'ayoubu', name: '阿尤布' },
+    { id: 'mamuluke', name: '马穆鲁克' },  // 阿音贾鲁特·马穆鲁克王朝（拜巴尔斯击败蒙古）
     // ── 2026-08-04 新增：奥斯若恩（埃德萨，奥斯若恩国都／十字军伯国）──
     { id: 'aosiruowen', name: '奥斯若恩' },
     { id: 'kesa', name: '可萨' },
