@@ -11,7 +11,7 @@
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 3 },     // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
     xian_d: { name: '高凉犀甲', tier: 3 },
-  dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
+    dayue: { name: '白藤江射手', tier: 0 },
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领统一十二使君的禁卫军
     leloi: { name: '蓝山义军', tier: 1 },
     nguyen_guangnan: { name: '富春禁卫', tier: 3 },

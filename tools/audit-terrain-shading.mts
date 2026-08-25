@@ -25,7 +25,8 @@ import { CITIES_V2 } from '../src/data/cities_v2';
 /** 与 Scene13GroundPainter 同源，改那边必须同步这里 */
 function readConst(name: string): number {
   const src = readFileSync('src/ui/scene13/Scene13GroundPainter.ts', 'utf8');
-  const m = new RegExp('const ' + name + ' = ([0-9.]+)').exec(src);
+  // 允许负数：ELEV_LIGHT_DIR_Y 是 -0.39
+  const m = new RegExp('const ' + name + ' = (-?[0-9.]+)').exec(src);
   if (!m) throw new Error('读不到常量 ' + name);
   return parseFloat(m[1]);
 }
@@ -37,7 +38,16 @@ async function main(): Promise<void> {
   const DARK = readConst('ELEV_SHADE_DARK');
   const LIGHT = readConst('ELEV_SHADE_LIGHT');
   console.log(`光照常量：DIR(${DIR_X}, ${DIR_Y})  K=${K}  DARK=${DARK}  LIGHT=${LIGHT}`);
-  console.log(`  → 背光面最暗压到底色的 ${((1 - DARK) * 100).toFixed(0)}%，迎光面最亮 ${((1 + LIGHT) * 100).toFixed(0)}%\n`);
+  console.log(`  → 背光面最暗压到底色的 ${((1 - DARK) * 100).toFixed(0)}%，迎光面最亮 ${((1 + LIGHT) * 100).toFixed(0)}%`);
+
+  // 🔴 DIR 是**网格空间**的方向，真正决定观感的是它投影到屏幕后的方向。
+  //    等距：网格 x → 屏幕 (+32,+16)，网格 y → 屏幕 (-32,+16)。
+  //    纵向分量越大，屏幕纵向的大缓坡越会被渲染成横贯全屏的明暗带。
+  const sx = DIR_X * 32 + DIR_Y * -32;
+  const sy = DIR_X * 16 + DIR_Y * 16;
+  const ratio = Math.abs(sy / sx);
+  console.log(`  屏幕空间方向 (${sx.toFixed(1)}, ${sy.toFixed(1)})  纵横比 ${ratio.toFixed(2)}`);
+  console.log('    （原值 (0.95,0.32) 的纵横比是 1.01 —— 纵向和横向一样强，正是那两条带的来源）\n');
 
   const raw = await sharp('public/world/world-base.png').ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   setWorldBaseData(new Uint8ClampedArray(raw.data), raw.info.width, raw.info.height);
@@ -68,6 +78,11 @@ async function main(): Promise<void> {
   console.log(`  拉满处压暗 ${maxDrop.toFixed(0)}%：底色 145 → ${Math.round(145 * (1 - DARK))}`);
 
   let fail = 0;
+  if (ratio > 0.45) {
+    console.log(`\n🔴 光照的屏幕纵横比 ${ratio.toFixed(2)} 过大：屏幕纵向的大缓坡会被渲染成横贯全屏的明暗带`);
+    console.log('   （一屏只容得下 2~3 个高程波长，纵向大坡必然存在，只能靠光照方向避开）');
+    fail++;
+  } else console.log(`✅ 光照屏幕纵横比 ${ratio.toFixed(2)}（≤0.45，纵向坡不产生明暗带）`);
   if (DARK > 0.30) {
     console.log(`\n🔴 ELEV_SHADE_DARK=${DARK} 过大：低频坡会整条拉满，屏幕上是一道贯穿的暗带`);
     fail++;

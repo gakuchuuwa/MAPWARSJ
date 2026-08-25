@@ -1739,17 +1739,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_asuka', name: '千早城', factionId: 'yamato', lat: 34.336668, lng: 135.689392, type: 'pass', region: 'JAPAN', troops: 30000,
         note: '千早城；大和关隘',
     },
-    {
-        id: 'city_shenglong',
-        name: '昇龙',
-        factionId: 'dayue',
-        lat: 21.03, lng: 105.85,
-        type: 'medium_city',
-        region: 'LINGNAN',
-        troops: 30000,
-        tier: 1,
-        note: '昇龙；大越治所/重镇',
-    },
+    { id: 'city_shenglong', name: '昇龙', factionId: 'dayue', lat: 21.03, lng: 105.85, type: 'medium_city', troops: 20000, region: 'LINGNAN' },
+
     { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.4265, lng: 124.6591, type: 'small_city', region: 'NORTHEAST', troops: 30000,
         note: '伯都；勿吉小城',
     },
@@ -1969,7 +1960,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_genoa', name: '热那亚', factionId: 'liguliya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 30000, region: 'LATIN' },
         { id: 'city_teernuowo', name: '特尔诺沃', factionId: 'baojialiya', lat: 43.08, lng: 25.65, type: 'small_city', troops: 28000, region: 'SLAVIC', note: '保加利亚第二帝国都城·沙皇之城·查雷维茨要塞' },
-{ id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 30000, region: 'LATIN' },
+{ id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 20000, region: 'LATIN' },
+
     { id: 'city_brest', name: '布列斯特', factionId: 'bolisiya', lat: 52.09, lng: 23.68, type: 'pass', troops: 30000, region: 'SLAVIC' },
     { id: 'city_zhytomyr', name: '日托米尔', factionId: 'zhituo', lat: 50.25, lng: 28.65, type: 'small_city', troops: 30000, region: 'SLAVIC' },
 
@@ -1980,11 +1972,13 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'pass', troops: 30000, region: 'GERMANIC' },
         { id: 'city_dijon', name: '第戎', factionId: 'bogendi', lat: 47.32, lng: 5.04, type: 'small_city', troops: 28000, region: 'GERMANIC', note: '勃艮第公国古都·敕令军团枢纽·中世纪西欧富庶核心' },
     { id: 'city_shangbeili', name: '尚贝里', factionId: 'safuyi', lat: 45.57, lng: 5.92, type: 'small_city', troops: 28000, region: 'LATIN', note: '萨伏伊公国法定第一王都·阿尔卑斯山地锁钥·绿伯爵阿梅迪奥六世都城' },
-{ id: 'city_lyon', name: '里昂', factionId: 'gaolu_luoma', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 30000, region: 'LATIN' },
+{ id: 'city_lyon', name: '里昂', factionId: 'gaolu_luoma', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 20000, region: 'LATIN' },
+
     { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 20000, region: 'LATIN' },
+
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_cordoba', name: '科尔多瓦', factionId: 'andaluoxiya', lat: 37.88, lng: -4.77, type: 'big_city', troops: 30000, region: 'LATIN', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 30000, region: 'LATIN' },
