@@ -123,12 +123,15 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
                 const winterFlag = pixels[i + 2];
                 if (siegeCode === 0 && fieldCode === 0) continue;   // 海面，继续往外找
 
+                // 🔴 标志 4 = 零星残雪（最冷月 -3~+2°C，会下雪但存不住）：
+                //    **底图不换**，仍用非冬季那张；雪由引擎在上面铺少量斑块表现。
+                //    见 climate-regions.md §5.6.17。
                 if (q.isSiege) {
                     // 冬季长期积雪 → 城郊是踩实的雪地地基
-                    if (q.isWinter && winterFlag > 0) return SIEGE_TILES[7] ?? null;
+                    if (q.isWinter && winterFlag > 0 && winterFlag !== 4) return SIEGE_TILES[7] ?? null;
                     return SIEGE_TILES[siegeCode] ?? null;
                 }
-                if (q.isWinter && winterFlag > 0) {
+                if (q.isWinter && winterFlag > 0 && winterFlag !== 4) {
                     // 3=雪林地（林区）  2=深雪（极寒/终年冰冻）  1=雪地
                     const code = winterFlag === 3 ? 23 : winterFlag === 2 ? 22 : 21;
                     return FIELD_TILES[code] ?? null;
@@ -141,7 +144,7 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
 }
 
 /**
- * 这个坐标冬天积不积雪。0=不积雪 1=雪地 2=深雪 3=雪林地；查不到数据返回 null。
+ * 这个坐标冬天积不积雪。0=不积雪 1=雪地 2=深雪 3=雪林地 **4=零星残雪**；查不到返回 null。
  *
  * 🔴 [2026-08-24] 判积雪只认这一份数据，别再自己按纬度估。
  *    旧的 `isSnowArea` 对「温带中高纬」一律返回 true，于是**罗得岛、克里特岛、

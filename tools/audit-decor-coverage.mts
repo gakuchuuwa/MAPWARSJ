@@ -23,6 +23,17 @@ import { assetTiles, SCATTER_COVER, FLAT_COVER } from '../src/ui/scene13/DecorFi
 import { CITIES_V2 } from '../src/data/cities_v2';
 
 const VW = 2000, VH = 1080, TW = 64, TH = 32;
+/** 树不算草花，与 audit-tree-density 同一份清单 */
+const TREES = new Set([
+  'OAK', 'GREEN_OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN',
+  'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER', 'ASIAN_PINE', 'SNOW_PINE', 'ITALIAN_PINE',
+  'MONKEY_PUZZLE', 'CYPRESS', 'CYPRESS_DEC', 'OLIVE', 'PEACH_BLOSSOM', 'PALM', 'WAX_PALM',
+  'DRAGON_TREE', 'BAOBAB', 'ACACIA', 'BAMBOO', 'LUSH_BAMBOO', 'MANGROVE', 'BRAZILWOOD',
+  'WILLOW', 'DEAD_TREE',
+  'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D', 'SCENARIO_TREE_E',
+  'SCENARIO_TREE_F', 'SCENARIO_TREE_G', 'SCENARIO_TREE_H', 'SCENARIO_TREE_I', 'SCENARIO_TREE_J',
+  'SCENARIO_TREE_K', 'SCENARIO_TREE_L',
+]);
 /** 屏内格数，与 audit-decor-density-vs-de 同源 */
 const ON_SCREEN = 2111;
 /** 地面装饰（草花）总覆盖上限：主人两次说草太多，超了就报警 */
@@ -44,6 +55,9 @@ async function main(): Promise<void> {
       let plant = 0, rock = 0;
       for (const o of p.objects) {
         const t = assetTiles(o.asset);
+        // 🔴 树不算「草花」——树的密度由 audit-tree-density 单独管。
+        //    漏了这条会把 LUSH_BAMBOO 24 棵（72 格）算进草花，误报超标。
+        if (TREES.has(o.asset)) continue;
         if (/^(ROCK|MINE_|CLIFF|SHORT_CLIFF)/.test(o.asset)) rock += t;
         else if (o.layer === 'ground' || /GRASS|FLOWER|PLANT|BUSH|SHRUB|WEED|FERN|UNDERBRUSH|JUNGLE|RAINFOREST|CACTUS|REEDS|LILY/.test(o.asset)) plant += t;
       }

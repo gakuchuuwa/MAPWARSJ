@@ -1,5 +1,5 @@
 {
- "note": "任意经纬度 → 底图查找图。R=攻城战(非冬) G=野战(非冬) B=冬季状态(0无雪/1雪地/2深雪/3雪林)。⚠ 数据不能放 alpha 通道——canvas getImageData 的 alpha 预乘会毁掉 RGB。经纬度→像素：x=(lng+180)/360*2160, y=(90-lat)/180*1080。数据源 WorldClim v2.1 (CC BY 4.0)。",
+ "note": "任意经纬度 → 底图查找图。R=攻城战(非冬) G=野战(非冬) B=冬季状态(0无雪/1雪地/2深雪/3雪林/4零星残雪)。⚠ 数据不能放 alpha 通道——canvas getImageData 的 alpha 预乘会毁掉 RGB。经纬度→像素：x=(lng+180)/360*2160, y=(90-lat)/180*1080。数据源 WorldClim v2.1 (CC BY 4.0)。",
  "width": 2160,
  "height": 1080,
  "siege": [
@@ -192,6 +192,6 @@
    "use": "冻结水面（水域层用，不占陆地格）"
   }
  ],
- "winterSnowThresholdC": -3.0,
+ "winterSnowThresholdC": -7.0,
  "deepSnowThresholdC": -38.0
 }

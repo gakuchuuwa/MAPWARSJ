@@ -287,7 +287,9 @@ export const FLAT_COVER = 0.03;
 /** 按目标覆盖率反推该撒几个。素材越大放得越少。 */
 export function countForCover(asset: string, usableTiles: number, cover: number): number {
     const per = assetTiles(asset);
-    return Math.max(2, Math.round(usableTiles * cover / per));
+    // 🔴 下限只能是 1：`FLOWER_1` 一个就占 57 格，强制 2 个 = 5.4% 覆盖，
+    //    gr2 因此卡在 16.1% 超上限。大件素材放一个就够。
+    return Math.max(1, Math.round(usableTiles * cover / per));
 }
 
 /** 验收用 */
