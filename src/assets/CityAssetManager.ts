@@ -888,6 +888,7 @@ export class CityAssetManager {
         'safawei_d': '萨法',
         'sumeier': '苏美',
         'ayoubu': '阿尤',
+        'mamuluke': '马穆',
         // ── 2026-08-04 新增：奥斯若恩 @ 埃德萨 ──
         'aosiruowen': '奥斯',
         'kesa': '可萨',
