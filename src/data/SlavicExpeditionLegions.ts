@@ -22,7 +22,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     saierweiya: { name: '杜尚军团', tier: 2 },          // 贝尔格莱德·斯蒂芬杜尚；避势力「塞尔维亚」叠字
     moerdaweiya: { name: '瓦斯卢伊军', tier: 2 },          // 雅西·斯蒂芬大帝：1475以少胜多
     piyasite: { name: '波兰骑士', tier: 2 },          // 克拉科夫·卡齐米日：格伦瓦尔德主力
-    litaowan: { name: '格迪米骑', tier: 2 },          // 维尔纽斯·格迪米纳斯：格伦瓦尔德
+    litaowan: { name: '列提斯骑兵', tier: 2 },
     baojian_qishi: { name: '里加宝剑', tier: 2 },          // 里加·宝剑骑士团；避势力「宝剑骑士团」叠字
     shaiyue: { name: '马扎尔骠骑', tier: 2 },
     dajiya: { name: '达契亚弯刀', tier: 3 },          // 萨尔米泽·德切巴鲁斯：falx 兵种文化；终为罗马所灭 → T3
@@ -35,6 +35,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     pusikefu_gongheguo: { name: '圣三一军团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名
     bosi_puluosi: { name: '刻赤具装骑', tier: 2 },        // 潘提卡彭·琉孔一世：博斯普鲁斯具装重骑
     kelimiya: { name: '克里米骑', tier: 3 },          // 卡法·哈吉格来：克里米亚鞑靼骑兵
+    kuman: { name: '库曼弓骑兵', tier: 3 },          // 苏达克·可泰安：库曼尼亚西翼弓骑
     lagusa: { name: '拉古萨舰队', tier: 3 },          // 拉古萨·德拉甘：亚得里亚海商船共和国
     liwoniya: { name: '利沃骑士', tier: 3 },          // 塔林·普雷特贝格：波罗的海十字军
     walajiyia: { name: '穿刺堡兵', tier: 3 },          // 特尔城·弗拉德：游击/夜袭/清野，非正面冲击骑兵专名

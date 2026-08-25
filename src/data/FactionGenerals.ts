@@ -159,6 +159,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
     kelimiya: { generalId: 'gen_haci_giray', generalName: '哈吉格来', portrait: '/assets/SLAVIC/kelimiya_hajigelai.png' },
+    kuman: { generalId: 'kuman_ketaian', generalName: '可泰安', portrait: '' },  // 苏达克·库曼汗
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
     dajiya: { generalId: 'gen_decebalus', generalName: '德切巴鲁斯', portrait: '/assets/SLAVIC/dajiya_deqiebalusi.png' },
     mengtainiya: { generalId: 'gen_basarab_i', generalName: '巴萨拉布', portrait: '/assets/LATIN/mengtainiya_basalabu.png' },

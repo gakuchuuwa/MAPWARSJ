@@ -129,6 +129,7 @@ export const FACTIONS: Faction[] = [
   { id: 'taolika', name: '陶里卡' },
   { id: 'bosi_puluosi', name: '博斯普鲁斯' },
   { id: 'kelimiya', name: '克里米亚' },
+  { id: 'kuman', name: '库曼' },  // 库曼尼亚·黑海草原西翼（DE 库曼）
   { id: 'keluodiya', name: '克罗地亚' },
   { id: 'dajiya', name: '达基亚' },
   { id: 'mengtainiya', name: '蒙泰尼亚' },
