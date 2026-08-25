@@ -1,4 +1,6 @@
 /** 名城 -> 世界奇观（DE 奇观素材，只用于战术模式 zoom13 攻城战守方城中央地标）。
+ *  🔴 [2026-08-26] 60 座奇迹素材**全部安置，零闲置**，一奇迹对一据点（无重复、无死链）。
+ *     `npx tsx tools/audit-wonder-coverage.mts` 校验。
  *  2026-08-24 全部 42 条按历史逐条核查后定稿 40 条（撤 6 / 加 4）：
  *    - 撤：长安(天坛应北京)、邯郸(魏都应洛阳)、伊斯法罕(萨法维晚，波斯无泰西封撤)、
  *          萨莱(金帐蒙古系≠库曼)、阿尔及尔(柏柏尔奇观=凯鲁万大清真寺)、米兰(凯尔特核心=爱尔兰都柏林)
@@ -61,4 +63,23 @@ export const CITY_WONDER: Record<string, string> = {
     'city_malacca': 'SEAS_WONDER_MALAY',  // 马六甲（马来/满剌加）
     'city_patan': 'INDI_WONDER_GURJARAS',  // 帕坦（瞿折罗/古吉拉特）
     'city_gaodacheng': 'INDI_WONDER_BENGALIS',  // 高达城（孟加拉，已有据点）
+    // ── [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 补齐最后 7 座 ──
+    'city_salonica': 'GREEK_WONDER_MACEDONIANS',  // 萨洛尼卡（塞萨洛尼基；据点 factionId 正是 maqidun 马其顿）
+    'city_plovdiv': 'THRACIAN_WONDER_THRACIANS',  // 普罗夫迪夫（菲利普波利斯；据点 factionId 正是 seleisi 色雷斯）
+    // 🔴 波斯奇迹 = 泰西封的萨珊拱门 Taq Kasra，项目无泰西封。
+    //    2026-08-24 曾配伊斯法罕又撤掉（萨法维时代太晚），**别再配回伊斯法罕**。
+    //    菲鲁扎巴德是萨珊**开国都城**（阿尔达希尔建），阿尔达希尔宫的圆顶拱券与 Taq Kasra 同源，
+    //    且据点 factionId 就是 sashan —— 这才是本朝本都。
+    'city_feiluzhabade': 'ORIE_WONDER_PERSIANS',  // 菲鲁扎巴德（萨珊开国都）
+    // 🔴 2026-08-24 曾配萨莱又撤掉（金帐汗国是蒙古系，不是库曼），**别再配回萨莱**。
+    //    萨拉托夫的 factionId 就是 qincha（钦察=库曼），伏尔加草原正是库曼本部。
+    'city_salatuofu': 'CEAS_WONDER_CUMANS',  // 萨拉托夫（钦察/库曼本部）
+    // SCEN_ 版与 WEST_/SLAV_ 版是**不同建筑**（preview.png md5 与体积均不同，已核），
+    // 所以同一文明的两版各配一城，不算重复。
+    'city_winchester': 'SCEN_WONDER_BRITONS',  // 温彻斯特（韦塞克斯/盎撒英格兰旧都；伦敦已配 WEST 版）
+    'city_nuofugeerdede': 'SCEN_WONDER_SLAVS',  // 诺夫哥罗德（罗斯北方中心；基辅已配 SLAV 版）
+    // PURU 的**奇迹**是南亚圆顶塔神庙（柱廊+环水，看过 preview.png），与 PURU 城堡那张西欧石堡
+    // 完全两种风格 —— 这个前缀的素材是混杂的，别按前缀想当然。坦贾武尔是朱罗王朝
+    // 布里哈迪希瓦拉神庙所在地，形制与图高度吻合。
+    'city_tanjiawuer': 'PURU_WONDER_PURU',  // 坦贾武尔（朱罗神庙）
 };

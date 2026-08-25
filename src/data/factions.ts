@@ -19,7 +19,7 @@ export const FACTIONS: Faction[] = [
   { id: 'weixi', name: '威悉' },
 
   { id: 'yipilusi', name: '伊庇鲁斯' },
-  { id: 'lagoniya', name: '拉哥尼亚' },
+  { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
   { id: 'lagusa', name: '达尔马提亚' },
 
@@ -57,13 +57,13 @@ export const FACTIONS: Faction[] = [
   { id: 'aermolika', name: '阿尔摩里卡' },
   { id: 'tuosikana', name: '托斯卡纳' },
   { id: 'yadelaiya', name: '亚得里亚' },
-  { id: 'talanduo', name: '大希腊' },
+  { id: 'talanduo', name: '大希腊' },  // 别名：南意大利希腊殖民城邦（Magna Graecia），首邑塔兰托
   { id: 'safuyi', name: '萨伏伊' },
   { id: 'kanpaniya', name: '坎帕尼亚' },
   { id: 'jiatailuoniya', name: '加泰罗尼亚' },
   { id: 'nasier', name: '纳斯尔' },
   { id: 'liguliya', name: '利古里亚' },
-  { id: 'seleisi', name: '色雷斯' },
+  { id: 'seleisi', name: '色雷斯' },  // 别名：Thrace（注意 id 拼音像塞琉西，其实是色雷斯）
   { id: 'bolisiya', name: '波利西亚' },
   { id: 'zhituo', name: '沃伦' },
 
@@ -71,7 +71,7 @@ export const FACTIONS: Faction[] = [
   { id: 'hansa', name: '汉萨' },
   { id: 'batawei', name: '巴塔维' },
   { id: 'weijing_york', name: '约维克' },
-  { id: 'kanbuliya', name: '坎布里亚' },
+  { id: 'kanbuliya', name: '坎布里亚' },  // 别名：威尔士凯尔特系（Cumbria/Cymru）
   { id: 'gaolu_luoma', name: '高卢罗曼' },
   { id: 'aquidan', name: '阿奎丹' },
   { id: 'puluowangsi', name: '普罗旺斯' },
@@ -84,15 +84,15 @@ export const FACTIONS: Faction[] = [
 
   { id: 'nuosi', name: '诺斯' },
   { id: 'feiniqi', name: '腓尼基' },
-  { id: 'xila', name: '阿提卡' },
+  { id: 'xila', name: '阿提卡' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
   { id: 'xilagu', name: '西西里东' },
   { id: 'fulandesi', name: '阿图瓦' },
   { id: 'bogendi', name: '勃艮第' },
-  { id: 'gaolu', name: '法兰西' },
+  { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
   { id: 'anggelu', name: '盎格鲁' },
   { id: 'yinggelan', name: '英格兰' },
-  { id: 'piketai', name: '皮克特' },
-  { id: 'gaer', name: '盖尔' },
+  { id: 'piketai', name: '皮克特' },  // 别名：苏格兰凯尔特系（Picts）
+  { id: 'gaer', name: '盖尔' },  // 别名：爱尔兰凯尔特系（Gaels）
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
 
@@ -1773,7 +1773,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yilihanguo_d', name: '伊利汗国' },
     { id: 'asaibaijiang', name: '阿塞拜疆' },
-    { id: 'wulaertu', name: '亚美尼亚' },
+    { id: 'wulaertu', name: '亚美尼亚' },  // 别名：乌拉尔图（Urartu，亚美尼亚前身）
     { id: 'wulaertu_guo', name: '乌拉尔图' },
   // 图什帕·乌拉尔图王国（公元前高加索古国）
     { id: 'gelujiya', name: '格鲁吉亚' },
@@ -1786,7 +1786,7 @@ export const FACTIONS: Faction[] = [
     { id: 'fulijiya', name: '弗里吉亚' },
     { id: 'ldiya', name: '吕底亚' },
     { id: 'pajiama', name: '帕加马' },
-    { id: 'bitiniya', name: '比提尼亚' },
+    { id: 'bitiniya', name: '比提尼亚' },  // 别名：色雷斯人在小亚建立的王国（Bithynia）
       { id: 'luomu', name: '罗姆' },
     { id: 'sailiugu', name: '塞琉古' },
     { id: 'womaya', name: '倭马亚' },
@@ -1805,7 +1805,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qiliqiya', name: '奇里乞亚' },
     { id: 'aqimeinide', name: '阿契美尼德' },
     { id: 'sashan', name: '萨珊' },  // 菲鲁扎巴德·萨珊波斯（第二帝国）
-    { id: 'ailan', name: '埃兰' },
+    { id: 'ailan', name: '埃兰' },  // 别名：Elam，两河东南、波斯前身
     { id: 'safawei_d', name: '萨法维' },
     { id: 'sumeier', name: '苏美尔' },
     { id: 'ayoubu', name: '阿尤布' },
@@ -1824,8 +1824,8 @@ export const FACTIONS: Faction[] = [
     { id: 'jieri', name: '戒日帝国' },
     { id: 'kongque', name: '孔雀帝国' },
     { id: 'mojietuo', name: '摩揭陀王国' },
-    { id: 'boluo', name: '波罗帝国' },
-    { id: 'sumo', name: '苏摩国' },
+    { id: 'boluo', name: '波罗帝国' },  // 别名：孟加拉王朝（Pala，统治孟加拉-比哈尔，都城高达 Gauda）
+    { id: 'sumo', name: '苏摩国' },  // 别名：恒河三角洲，港口耽摩栗底，属孟加拉地区
     { id: 'beileinisi', name: '红海港' }, // 托勒密二世所建红海舰队基地（原名与据点名相同，违 §266）
     { id: 'dedan', name: '德丹王国' },
     { id: 'maidina', name: '拉希顿' }, // 正统哈里发国建都麦地那，武将哈立德为其统帅（原名与据点名相同，违 §266）
