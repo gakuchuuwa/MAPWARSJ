@@ -381,6 +381,25 @@ function buildCard(
         }
     });
     shell.appendChild(del);
+    const copy = document.createElement('button');
+    copy.className = 'copy';
+    copy.title = '复制图片到剪贴板';
+    copy.textContent = '📋';
+    copy.addEventListener('click', (e) => {
+        e.stopPropagation();
+        canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            try {
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                copy.textContent = '✓';
+                setTimeout(() => { copy.textContent = '📋'; }, 1200);
+            } catch {
+                copy.textContent = '✗';
+                setTimeout(() => { copy.textContent = '📋'; }, 1200);
+            }
+        }, 'image/png');
+    });
+    shell.appendChild(copy);
     card.appendChild(shell);
 
     const kinds = new Set(plan.objects.filter((o) => o.layer === 'world').map((o) => o.asset));
