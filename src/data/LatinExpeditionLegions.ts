@@ -79,7 +79,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力；专名偏弱 → T3（勿挂「教皇军」）
     puluowangsi: { name: '圣吉尔骑', tier: 3 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军；金马刺步兵已挂 didi「佛兰德军」，此处不夺步兵符号
-    bogendi: { name: '勃艮第骑', tier: 3 },             // 勃艮第·大胆查理
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
     mengtainiya: { name: '巴萨拉布团', tier: 2 },          // 布加勒斯特·巴萨拉布；避势力「蒙泰尼亚」叠字,
     baizanting: { name: '铁甲圣骑', tier: 1 },
