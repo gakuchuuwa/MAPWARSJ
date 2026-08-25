@@ -19,7 +19,6 @@ import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { CombatSystem } from '../combat/CombatSystem';
 import { CityEditor } from '../editors/CityEditor';
 import { VectorRoadEditor } from '../roads/VectorRoadEditor';
-import { SeaRouteEditor } from '../sea/SeaRouteEditor';
 import { ArmyEditor } from '../editors/ArmyEditor';
 import { UnifiedEditorManager } from '../editors/UnifiedEditorManager';
 import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
@@ -93,7 +92,8 @@ export class GameApp {
     public combatSystem!: CombatSystem;
     public cityEditor!: CityEditor;
     public roadEditor!: VectorRoadEditor;
-    public seaRouteEditor!: SeaRouteEditor;
+    // 🔴 [2026-08-25] 海路编辑器已并入 roadEditor（面板顶部「🛣️ 陆路 / 🚢 海路」切换）。
+    //    不再单独 new —— 两个实例并存会各自 enableCitySelection 抢城市点击。
     private unifiedEditorManager!: UnifiedEditorManager;
     public timeSystem!: TimeSystem;
     public historicalEventManager!: HistoricalEventManager;
@@ -488,7 +488,6 @@ export class GameApp {
 
             if (import.meta.env.DEV) {
                 this.roadEditor = new VectorRoadEditor(this.map.getLeafletMap(), this.cityManager);
-                this.seaRouteEditor = new SeaRouteEditor(this.map.getLeafletMap(), this.cityManager);
 
                 const armyEditor = new ArmyEditor(this.map.getLeafletMap());
                 window.addEventListener('toggle-editor-army', (e: Event) => {
@@ -498,8 +497,8 @@ export class GameApp {
 
                 this.unifiedEditorManager = new UnifiedEditorManager();
                 this.unifiedEditorManager.register(this.cityEditor);
+                // 海路编辑器已并入 roadEditor，不再单独注册（否则编辑器列表里出现两个入口）
                 this.unifiedEditorManager.register(this.roadEditor);
-                this.unifiedEditorManager.register(this.seaRouteEditor);
             }
 
             const legionManager = this.historicalEventManager.getLegionManager();

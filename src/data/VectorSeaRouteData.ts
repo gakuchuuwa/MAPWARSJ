@@ -192,5 +192,30 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "马六甲-阇槃",
+                type: "sea",
+                id: "sea_city_malacca_city_dupan_1787667437837",
+                startConnection: "city_malacca",
+                endConnection: "city_dupan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [102.25, 2.19],
+                    [103.82060173200006, 1.035667808000028],
+                    [103.88395333800008, 1.037993861000075],
+                    [103.96659167800004, 1.0599812670000688],
+                    [104.04009429000007, 1.1039557360000458],
+                    [104.58892061100005, 1.2716746020000755],
+                    [105.10530355700007, 1.7716594070000724],
+                    [105.43504474100007, 2.9667899550000243],
+                    [109.62977550400007, 9.832558620000043],
+                    [109.11, 13.93],
+                ]
+            }
+        },
     ]
 };
