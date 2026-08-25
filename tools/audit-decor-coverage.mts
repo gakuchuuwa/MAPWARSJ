@@ -63,7 +63,8 @@ async function main(): Promise<void> {
   })).sort((a, b) => b.plant - a.plant);
   let fail = 0;
   for (const r of rows) {
-    const bad = r.plant > MAX_PLANT_COVER;
+    // 平均和**单张最高**都要卡：平均达标但单张糊屏，主人一样看得见
+    const bad = r.plant > MAX_PLANT_COVER || r.worstV > MAX_PLANT_COVER * 1.5;
     if (bad) fail++;
     console.log((bad ? '🔴 ' : '   ') + r.b.padEnd(18)
       + (r.plant * 100).toFixed(1).padStart(6) + '%     '

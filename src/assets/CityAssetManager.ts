@@ -701,6 +701,7 @@ export class CityAssetManager {
 'nandou': '难兜',
 'yanda': '阿洪',
         'qincha': '钦察',
+    'kuman': '库曼',
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',
@@ -947,6 +948,7 @@ export class CityAssetManager {
         'zhuluo': '朱罗',
         'gaolu_luoma': '高罗',
         'donggete': '东哥',
+        'litaowan': '立陶',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

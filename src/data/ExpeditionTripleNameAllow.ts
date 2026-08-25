@@ -54,7 +54,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'wusun', // 乌孙·昆莫亲卫
   'borjigin', // 孛儿·那可儿伴当（孛儿只斤）
   'suolun', // 索伦·索伦营（清代黑龙江索伦营）
-  'qincha', // 钦察·康里精骑
+  'qincha', // 钦察·钦察弓骑兵
   'kazakh', // 哈萨·哈萨克骑
   'gurkha', // 廓喀·廓尔喀弯刀
   'wugu_d', // 乌古斯·乌古斯弓骑

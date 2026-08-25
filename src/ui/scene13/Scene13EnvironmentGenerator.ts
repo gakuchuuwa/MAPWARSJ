@@ -1380,7 +1380,8 @@ function buildGroundVariation(
     //    砾石只在它真是地貌的时候出现（高山砾石 gravel_default、戈壁 ds5 当**底图**），
     //    那种情况不需要再拿它当斑块。
     //    副色系同理：有同色系表就不再另外掺 SECONDARY_TERRAINS（那也是按 biome 的）。
-    const secondary = sameHue.length
+    // 雪地即使没查到同色系表也不许掺 biome 的副色（那是 gr4 黑土/ds3 泥地，鲜橙）
+    const secondary = (sameHue.length || isWinterSnow)
         ? []
         : (isSiege
             ? [{ tile: 'ds2', weight: 1.0 }, { tile: 'ds3', weight: 0.6 }]
@@ -1417,7 +1418,19 @@ function buildGroundVariation(
     // 🔴 land_percent：DE 是 100（分层铺满），实际受 spacing/clumps 限制铺不满。
     //    我们 45 片时实测覆盖 28.6%，提到 75 片 → 约 45~50%，
     //    再高就把底图盖死了（底图才是主色，变体是从中交错透出的那一层）。
-    const patchCount = isWinterSnow ? 50 : 75;
+    // 🔴 [2026-08-24 主人：「这个地图上的圆不行吧？？？」——雪地那张]
+    //    雪地此前被单独排除在同色系/blur 之外，理由是「雪+露土是有意的高对比」。
+    //    那条只对**颜色**成立，**形状**不该是几个大椭圆：
+    //    原来 50 片 × 10~22 格 = 每片投影成一个规整椭圆，加上 blur=undefined 的硬边，
+    //    屏幕上就是雪地里贴了几块黄褐色的饼。
+    //    DE 的冬季地面是 512 clumps 的**细碎交错**，改成块数翻倍、每块减半。
+    //    ⚠️ 片数不能光加：110 片 × 6 格 = 覆盖 33%，露土比雪还多，看着像秋天不像雪原。
+    //       雪原的主体必须是**雪**，露土只是被风吹出来的斑驳 → 目标覆盖 ~15%。
+    //       实测 15% 时橙土仍占半屏（因为 blur 会向外扩散、且色差极大），
+    //       雪原主体必须是雪 → 降到 ~8%。
+    //       ⚠️ 也不能太碎：3~7 格的斑块投影出来就是**一两个孤立的菱形格**，
+    //       边缘是直的，比大圆还难看。片数少一点、每片大一点，总覆盖不变。
+    const patchCount = isWinterSnow ? 20 : 75;
 
     // 🔴 [2026-08-24 照 DE 的 height_limits 实现] DE 的地形层是**按高度带铺满**的：
     //      create_terrain SLOPE_TERRAIN   { land_percent 100 number_of_clumps 512 height_limits 0 2 }
@@ -1497,7 +1510,8 @@ function buildGroundVariation(
     // 越靠后的层（压在上面的）间距给小一点，让它能咬进下层的缝里。
     const SPACING_BY_LAYER = [2, 2, 1, 1];
     /** ③ 负 clumping：把一个 clump 拆成几个碎片散开，正 clumping：一整团 */
-    const CLUMPING_BY_LAYER = [15, 15, -10, -10];
+    //    雪地全部走负值：露土是被风吹出来的斑驳，不是一团一团的
+    const CLUMPING_BY_LAYER = isWinterSnow ? [-10, -14, -14, -18] : [15, 15, -10, -10];
 
     // ① 多层叠加：**按层分批**推入。patches 是按数组序渲染的，
     //    所以必须层 0 的斑块全推完、再推层 1，才能形成 DE 那种「后一层压在前一层上」。
@@ -1542,7 +1556,7 @@ function buildGroundVariation(
         }
         if (sx < 0) continue;                      // 找不到合法落点就跳过这一片（DE 同样会放弃）
 
-        const clumpTarget = isWinterSnow ? 10 + rng.int(0, 12) : 10 + rng.int(0, 12);
+        const clumpTarget = isWinterSnow ? 6 + rng.int(0, 6) : 10 + rng.int(0, 12);
         // ③ clumping_factor：正值一整团；负值拆成 2~3 个碎片散开（DE 的 POWDER 效果）
         const cells: Array<[number, number]> = [];
         if (clumping >= 0) {
@@ -1573,7 +1587,8 @@ function buildGroundVariation(
         patches.push({
             tile: t, cells,
             alpha, category: 'ground-variation',
-            blur: isWinterSnow ? undefined : 18,
+            // 雪地也要 blur：硬边正是「一块饼」的观感来源。颜色对比照旧保留。
+            blur: isWinterSnow ? 12 : 18,
         });
     }
 
