@@ -25,6 +25,7 @@ import L from 'leaflet';
 import { CityManager } from '../world/CityManager';
 import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
+import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { smoothRoad, removeBacktracks } from '../utils/GeometryUtils';
 import { REGION_CENTERS, REGION_LABELS, REGION_ORDER, getCityRegion, RegionType } from '../systems/RegionSystem';
@@ -3615,7 +3616,7 @@ export class VectorRoadEditor implements IEditor {
         }
         if (singleRoadCities.length) {
             console.group(`🛤️ 单路据点 (仅 1 条路) [${singleRoadCities.length}]`);
-            singleRoadCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  → ${c.roadName} ↔ ${c.peerName}`));
+            singleRoadCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  → [${c.kind}] ${c.roadName} ↔ ${c.peerName}`));
             console.groupEnd();
         }
         if (issues.invalidStart.length) {
@@ -3687,7 +3688,7 @@ export class VectorRoadEditor implements IEditor {
         totalRoads: number,
         totalIssues: number,
         orphanCities: Array<{ id: string; name: string; lat: number; lng: number }>,
-        singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string }>
+        singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string; kind: '陆' | '海' }>
     ): void {
         // 已有模态先移除
         document.querySelectorAll('#audit-report-modal').forEach(el => el.remove());
@@ -3894,7 +3895,7 @@ export class VectorRoadEditor implements IEditor {
             }
 
             const singleRoadItems = singleRoadCities.slice(0, 80).map(c => ({
-                html: `<b>${c.name}</b> · 仅连 <span style="color:#ffb74d">${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
+                html: `<b>${c.name}</b> · 仅连 <span style="color:${c.kind === '海' ? '#4fc3f7' : '#ffb74d'}">${c.kind === '海' ? '🚢' : '🛣️'} ${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
                 cityId: c.id,
             }));
             html += citySection('🛤️ 单路据点 (仅 1 条路，正常应 ≥2)', '#ff9800', singleRoadCities.length, singleRoadItems);
@@ -4011,14 +4012,41 @@ export class VectorRoadEditor implements IEditor {
     }
 
     /** 各据点连接的道路条数（start/end 各计 1） */
-    private getCityRoadConnectionCounts(): Map<string, number> {
-        const counts = new Map<string, number>();
+    /**
+     * 每座城的连接数 —— **陆路 + 海路一起算**。
+     *
+     * 🔴 [2026-08-26 主人：「马六甲连接了海路，也连接了陆路，为什么审查还有问题？
+     *    你没有把海路和陆路一起算吗」] 原来只遍历 VECTOR_ROAD_DATA，海路完全没数。
+     *    实测马六甲：陆路 1 条 + 海路 1 条 = 2 条，却因为只数到陆路那 1 条被报「单路据点」。
+     *    港口城本来就靠海路连通（见 SEA_ROUTE_DATA），只数陆路必然误报一片沿海城。
+     *    海路要素与陆路同结构，一样有 startConnection / endConnection，直接并进来即可。
+     */
+    private getCityConnectionBreakdown(): Map<string, { land: number; sea: number }> {
+        const out = new Map<string, { land: number; sea: number }>();
+        const bump = (id: string | undefined, kind: 'land' | 'sea'): void => {
+            if (!id) return;
+            const cur = out.get(id) ?? { land: 0, sea: 0 };
+            cur[kind]++;
+            out.set(id, cur);
+        };
         for (const f of VECTOR_ROAD_DATA.features) {
             if (!f?.properties) continue;
-            const start = f.properties.startConnection;
-            const end = f.properties.endConnection;
-            if (start) counts.set(start, (counts.get(start) ?? 0) + 1);
-            if (end) counts.set(end, (counts.get(end) ?? 0) + 1);
+            bump(f.properties.startConnection, 'land');
+            bump(f.properties.endConnection, 'land');
+        }
+        for (const f of SEA_ROUTE_DATA.features) {
+            if (!f?.properties) continue;
+            bump(f.properties.startConnection, 'sea');
+            bump(f.properties.endConnection, 'sea');
+        }
+        return out;
+    }
+
+    /** 连接总数（陆 + 海）。判「孤儿城 / 单路据点」一律用这个，别再只数陆路。 */
+    private getCityRoadConnectionCounts(): Map<string, number> {
+        const counts = new Map<string, number>();
+        for (const [id, b] of this.getCityConnectionBreakdown()) {
+            counts.set(id, b.land + b.sea);
         }
         return counts;
     }
@@ -4034,13 +4062,13 @@ export class VectorRoadEditor implements IEditor {
     /** 仅连接 1 条道路的据点（正常路网一般 ≥2） */
     private getSingleRoadCities(): Array<{
         id: string; name: string; lat: number; lng: number;
-        roadName: string; peerName: string; roadId: string;
+        roadName: string; peerName: string; roadId: string; kind: '陆' | '海';
     }> {
         const counts = this.getCityRoadConnectionCounts();
         const cityById = new Map(CITIES.map(c => [c.id, c]));
         const result: Array<{
             id: string; name: string; lat: number; lng: number;
-            roadName: string; peerName: string; roadId: string;
+            roadName: string; peerName: string; roadId: string; kind: '陆' | '海';
         }> = [];
 
         for (const city of CITIES) {
@@ -4048,16 +4076,26 @@ export class VectorRoadEditor implements IEditor {
             let roadName = '(未命名)';
             let peerName = '?';
             let roadId = '';
-            for (const f of VECTOR_ROAD_DATA.features) {
-                if (!f?.properties) continue;
-                const start = f.properties.startConnection;
-                const end = f.properties.endConnection;
-                if (start !== city.id && end !== city.id) continue;
-                roadId = f.properties.id || '';
-                roadName = f.properties.name || roadName;
-                const peerId = start === city.id ? end : start;
-                peerName = (peerId ? cityById.get(peerId)?.name : undefined) ?? peerId ?? '?';
-                break;
+            let kind: '陆' | '海' = '陆';
+            // 🔴 [2026-08-26] 陆路找不到就去海路找 —— 只有一条海路的港口城
+            //    （陆路 0 条）原来会显示「(未命名)」，看不出它到底连到哪。
+            const pools: Array<{ feats: readonly any[]; kind: '陆' | '海' }> = [
+                { feats: VECTOR_ROAD_DATA.features, kind: '陆' },
+                { feats: SEA_ROUTE_DATA.features, kind: '海' },
+            ];
+            outer: for (const pool of pools) {
+                for (const f of pool.feats) {
+                    if (!f?.properties) continue;
+                    const start = f.properties.startConnection;
+                    const end = f.properties.endConnection;
+                    if (start !== city.id && end !== city.id) continue;
+                    roadId = f.properties.id || '';
+                    roadName = f.properties.name || roadName;
+                    const peerId = start === city.id ? end : start;
+                    peerName = (peerId ? cityById.get(peerId)?.name : undefined) ?? peerId ?? '?';
+                    kind = pool.kind;
+                    break outer;
+                }
             }
             result.push({
                 id: city.id,
@@ -4067,6 +4105,7 @@ export class VectorRoadEditor implements IEditor {
                 roadName,
                 peerName,
                 roadId,
+                kind,
             });
         }
         return result.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
@@ -4076,7 +4115,7 @@ export class VectorRoadEditor implements IEditor {
     private reportSingleRoadCities(): void {
         const singles = this.getSingleRoadCities();
         console.group(`🛤️ [单路据点] ${singles.length} 座（仅 1 条路，正常应 ≥2）`);
-        singles.forEach(c => console.log(`  ${c.name}  [${c.id}]  → ${c.roadName} ↔ ${c.peerName}`));
+        singles.forEach(c => console.log(`  ${c.name}  [${c.id}]  → [${c.kind}] ${c.roadName} ↔ ${c.peerName}`));
         console.groupEnd();
 
         if (singles.length === 0) {
@@ -4092,7 +4131,7 @@ export class VectorRoadEditor implements IEditor {
             color: '#ff9800',
             items: singles.map(c => ({
                 cityId: c.id,
-                html: `<b>${c.name}</b> · 仅连 <span style="color:#ffb74d">${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
+                html: `<b>${c.name}</b> · 仅连 <span style="color:${c.kind === '海' ? '#4fc3f7' : '#ffb74d'}">${c.kind === '海' ? '🚢' : '🛣️'} ${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
             })),
             hint: '建议补第二条路或检查是否为路网末梢/待删据点。',
         });
