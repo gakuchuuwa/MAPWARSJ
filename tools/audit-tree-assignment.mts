@@ -70,10 +70,21 @@ async function main(): Promise<void> {
         console.log(`  ${tree.padEnd(20)} ${String(n).padStart(5)}  ${pct.padStart(5)}%${flag}  ${(samples.get(tree) ?? []).join(' ')}`);
     }
 
+    // 🔴 [2026-08-24 主人定标准] 判据是「这地方什么植被**最多**」，不是「有没有」。
+    //    原话：「不要用小概率事件解释事实情况」。
+    //    有些树全世界只长在一小块地方，我们没有那里的城，它就**应该**闲置——
+    //    强行塞给别的地形反而违反标准。这类在这里登记原因，不算失败。
+    const OK_UNUSED: Readonly<Record<string, string>> = {
+        DRAGON_TREE: '龙血树只长在也门/索科特拉，实测那一带 0 座城（lat 10~22 / lng 40~58）',
+    };
     const unused = USABLE_TREES.filter((t) => !hits.has(t));
+    const unexpected = unused.filter((t) => !(t in OK_UNUSED));
     console.log(`\n用上 ${hits.size} / ${USABLE_TREES.length} 种`);
-    if (unused.length) console.log(`闲置：${unused.join(', ')}`);
-    else console.log('✅ 全部素材都用上了');
+    for (const t of unused) {
+        if (t in OK_UNUSED) console.log(`  ⚪ ${t} 闲置（合理）：${OK_UNUSED[t]}`);
+    }
+    if (unexpected.length) console.log(`🔴 无故闲置：${unexpected.join(', ')}`);
+    else console.log('✅ 没有无故闲置的素材');
 
     // 底图覆盖：每张底图有没有配到树
     const { byBase } = treeTables();

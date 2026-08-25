@@ -524,6 +524,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   // ── 滇缅区 2026-06-18 ──
     dali: { generalId: 'dali_duansiping', generalName: '段俭魏', portrait: '/assets/DIANQIAN/dali_duansiping.png' },
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
+    meitai: { generalId: 'meitai_hagenba', generalName: '哈根巴', portrait: '' },  // 康格拉·曼尼普尔国王
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
     dianguo: { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/xianqin/dianguo_zhuangqiao.png' },
     konbaung: { generalId: 'konbaung_yongjiya', generalName: '雍笈牙', portrait: '/assets/DIANQIAN/konbaung_yongjiya.png' },

@@ -177,25 +177,65 @@ create_terrain SLOPE_BLEND_TOP {
 
 ---
 
-## 6. 我们的对齐状态
+## 6. 我们的对齐状态（2026-08-24 全量实现后）
 
-| DE 机制 | 我们 | 状态 |
-|---|---|---|
-| 装饰绑地形（`terrain_to_place_on`） | `DecorFit.GROUND_DECOR_BY_BASE` | ✅ 已对齐 |
-| SCATTER 全场同一种 | `scatterAsset` 开场选定 | ✅ |
-| FLAT 成簇（半径 1~3 格） | `flatClusters` + `TILE_W*1.5` | ✅ |
-| 主岩石 + 环绕碎石 + 伴生植被 | 岩石成套伴生系统 | ✅ |
-| 石头密度（换算 3.5~6.9/屏） | 实测 9.9（1.4×） | ✅ 容差内 |
-| 碎块数（换算约 52） | 45 | ✅ |
-| **`land_percent 100` 铺满** | 覆盖 25~45% | ⚠️ 偏低 |
-| **`height_limits` 按高度分层** | **无** | 🔴 未实现 |
-| **多层 `base_terrain` 叠加** | 单层 | 🔴 未实现 |
-| `spacing_to_other_terrain_types` | 无 | 🔴 未实现 |
-| `set_flat_terrain_only` | 无 | 🔴 未实现 |
-| `clumping_factor`（含负值） | 固定随机游走 | 🔴 未实现 |
-| `terrain_mask` | 无 | 语义未确认，暂不实现 |
+> 主人原话：「多层叠加、地形间距、clumping_factor，这些做了吗，这是 DE 的机制吗，
+> 是的话为什么不做，我不是说了全做吗，还有哪些没有做？**全做**。」
 
----
+### 6.1 `<TERRAIN_GENERATION>` —— 已全部实现
+
+| DE 机制 | 我们的实现 |
+|---|---|
+| `create_terrain` | `buildGroundVariation` 的斑块 |
+| `number_of_clumps` 512 | **75 片**（按面积比 9.8:1 换算 ≈ 52，取 75 把覆盖率提上来） |
+| `land_percent` 100 | 实测覆盖 **45.3%**（28.6% → 45.3%）。DE 是分层铺满，最上层盖住下层；我们底图仍是主色，变体交错透出 |
+| **`base_terrain` 多层叠加** | ✅ 斑块**按层排序后分批推入**——`patches` 按数组序渲染，层 0 全推完再推层 1，才形成叠加关系。随机顺序只是混在一起、没有叠加 |
+| **`spacing_to_other_terrain_types`** | ✅ `farEnoughFrom()` 菱形邻域判定，按层 2/2/1/1（DE 中位 2）。同一贴图不互斥（DE 同理） |
+| **`clumping_factor`** | ✅ **正值一整团 / 负值拆成 2~3 个碎片散开**（DE 用 -10 给 `POWDER_LIGHT` 粉末状散布）。按层 15/15/-10/-10 |
+| **`set_flat_terrain_only`** | ✅ `isFlat()` 判四邻高差；攻城战的主色层只铺平地（城郊是碾平的） |
+| **`spacing_to_specific_terrain`** | ✅ 同 `farEnoughFrom`，按贴图名判 |
+| `height_limits` | ✅ 贴图绑高度带，种子只落在自己那一带 |
+| `set_avoid_player_start_areas` | ✅ `inArmyCorridor` + `keepClear` |
+| `beach_terrain` | ✅ `buildCoastline` 三带 |
+| `color_correction` | ✅ mood 调色 |
+| `number_of_tiles` | ✅ 等价于 land_percent，我们用片数×片大小 |
+| `set_scale_by_size/groups` | ➖ 不适用：DE 随地图尺寸缩放，我们固定一屏 |
+| `terrain_mask` | ⚪ **语义未确认**（1821 次 `mask 1` / 474 次 `mask 2`，查不到 1 和 2 分别代表什么）。**不猜**——见 AGENTS.md「别看注释」 |
+
+### 6.2 `<OBJECTS_GENERATION>` —— 已全部实现
+
+| DE 机制 | 我们的实现 |
+|---|---|
+| 六槽位（FLAT/GROUPED/SCATTER/SOLID_OBJECT/SURROUND/UNDERBRUSH） | ✅ `DecorFit.GROUND_DECOR_BY_BASE` + 岩石成套伴生 |
+| `terrain_to_place_on` | ✅ 装饰绑底图 |
+| `number_of_objects` | ✅ 按面积换算（石头 DE 6.9 → 我们 9.8） |
+| `group_placement_radius` 1~3 | ✅ flat 成簇，半径 1.5 格 |
+| `number_of_groups` | ✅ flat 簇数 6~10 |
+| `second_object` | ✅ 主岩石带出伴生植被 |
+| `actor_area_to_place_in` | ✅ 碎石只落在主岩石周围 |
+| `min_distance_group_placement` | ✅ `TREE_MIN_CENTER_SPACING_TILES` + `isObjectOverlapping` |
+| **`avoid_forest_zone`**（1705 次） | ✅ `inForestZone()`——装饰不许长进林子；满地草除外（林下本来有草） |
+| **`avoid_cliff_zone`**（1492 次） | ✅ `nearCliffZone()`——离悬崖 90px |
+| **`min_distance_to_map_edge`**（896 次） | ✅ `edgeMargin` 1.5 格 ≈ 96px，免得精灵被图边切一半 |
+| **`find_closest`**（1570 次） | ✅ `PlacementLimits.findClosest` 螺旋向外找最近合法点 |
+| `avoid_actor_area` | ✅ 走廊 + keepClear + 重叠判定 |
+| `min/max_distance_to_players` | ✅ 走廊约束等价 |
+| `max_distance_to_other_zones` | ➖ 不适用：DE 的多玩家分区概念，我们一屏两军 |
+| `set_gaia_object_only` / `set_place_for_every_player` | ➖ 不适用：我们没有 gaia/多玩家归属 |
+| `set_scaling_to_map_size` | ➖ 不适用：固定一屏 |
+
+### 6.3 其余段
+
+| 段 | 状态 |
+|---|---|
+| `<ELEVATION_GENERATION>` | ✅ `generateElevation` + `addMicroRelief`（低频波叠加） |
+| `<CLIFF_GENERATION>` | ✅ `buildCliffs` |
+| `<LAND_GENERATION>` | ➖ 我们的陆海由真实地理查表决定，不随机生成 |
+| `<CONNECTION_GENERATION>` | ➖ 城门前石路由 `Scene13WarLayer.addGateFoundation` 负责，机制不同 |
+
+**结论：DE 的机制里，凡是适用于「一屏定格战斗演出」的，现已全部实现。
+标 ➖ 的是 DE 的多玩家/随机地图专有概念，我们的形态用不上；
+标 ⚪ 的只有 `terrain_mask` 一项，因为查不到语义、不猜。**
 
 ## 7. 复现统计的脚本
 

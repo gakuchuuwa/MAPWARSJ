@@ -393,6 +393,7 @@ export class CityAssetManager {
         'karmapa': '噶玛',
         'ava': '掸',
 'dongxu': '东吁',
+        'meitai': '梅',
         'hantawadi': '汉达',
 'baiman': '白蛮',
 'kunming_yi': '昆明',

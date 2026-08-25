@@ -302,6 +302,7 @@ const _FIXED: Record<string, string> = {
     qifu_d: '#826B4A', // 乞伏（陇右土黄，苑川突骑）
     ashina: '#3B6294', // 阿史那（突厥幽蓝；碎叶已归喀喇契丹，史那无现役据点）
     dongxu: '#BA7A36', // 东吁·象兵（琥珀金）
+    meitai: '#B04A3A', // 梅泰·飞镖骑兵（曼尼普尔红）
     jingjiang: '#488A6E', // 靖江（靖江府卫）
     xinjiang: '#3A6E58', // 静江·弩手（始安碧绿）
     you: '#C41E29', // 幽州（耿弇·汉系赤红）

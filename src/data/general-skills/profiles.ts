@@ -1213,6 +1213,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     dongxu_mangruiti: { generalId: 'dongxu_mangruiti', tier: 'famous', tacticalSkillId: 'ts_304', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_689', atkAdvantageSkillId: 'ts_308', atkBalanceSkillId: 'ts_433', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},
+    meitai_hagenba: { generalId: 'meitai_hagenba', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_242', atkBalanceSkillId: 'ts_403', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 

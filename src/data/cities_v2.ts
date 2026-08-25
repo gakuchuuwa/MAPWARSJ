@@ -1610,6 +1610,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
 
     { id: 'city_dongxu_old', name: '凯图玛蒂', factionId: 'dongxu', lat: 18.8, lng: 96.4, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
+    { id: 'city_kangla', name: '康格拉', factionId: 'meitai', lat: 24.82, lng: 93.94, type: 'small_city', troops: 30000, region: 'DIANQIAN', note: '曼尼普尔王国古都，梅泰人王城（今因帕尔）' },
 
     // ── 第四类：岭南帝国、安南正统与海岛王国 ──
     // ── 第五类：百越余脉与南岛语系 ──
