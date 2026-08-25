@@ -1939,6 +1939,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'BERBER' },
 
     { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 30000, region: 'LATIN' },
+    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'small_city', troops: 30000, region: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 30000, region: 'BERBER' },
@@ -1997,6 +1998,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 30000, region: 'GERMANIC', note: '1600年前约4–8万，17世纪初约15万；名气从宽升 medium_city（未达大城约40万）' },
+    { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'medium_city', troops: 30000, region: 'LATIN', note: '1600年前约15–22万，中世纪欧洲最大城仍未达50万，降 medium_city' },
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 30000, region: 'LATIN' },
@@ -2006,6 +2008,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'medium_city', troops: 30000, region: 'GERMANIC', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
     { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'pass', troops: 30000, region: 'GERMANIC', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
     { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_yachen', name: '亚琛', factionId: 'jialuolin', lat: 50.77, lng: 6.08, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 30000, region: 'GERMANIC' },
@@ -2036,7 +2039,6 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'pass', troops: 30000, region: 'SLAVIC' },
         { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 28000, region: 'SLAVIC', note: '博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'pass', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_sudake', name: '苏达克', factionId: 'kuman', lat: 44.85, lng: 34.97, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '克里米亚库曼贸易港，库曼尼亚（黑海草原西翼）核心' },
     { id: 'city_saermizerhetusha', name: '萨尔米泽', factionId: 'dajiya', lat: 45.51, lng: 22.96, type: 'pass', troops: 30000, region: 'SLAVIC' },
     { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 30000, region: 'STEPPE' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 20000, region: 'SLAVIC' },

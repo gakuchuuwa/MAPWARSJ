@@ -875,9 +875,11 @@ const _FIXED: Record<string, string> = {
     'luoma_diguo': '#5B2D8E', // 罗马帝国·罗马城（帝王紫，Tyrian purple）
     'xila': '#2E6DA4', // 雅典·雅典城（爱琴海蓝白）
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
+    'talike': '#C08040', // 塔里克·丹吉尔（撒哈拉橙褐）
     'maqidun': '#C9A227', // 马其顿·萨洛尼卡（亚历山大金）
     'yadelaiya': '#901C26', // 威尼斯·威尼斯城（圣马可暗红）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
+    'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）
     'putaoya': '#284B9E', // 葡萄牙·里斯本（王国蓝盾）
     'guadaer': '#C8102E', // 卡斯蒂利亚·塞维利亚（金塔红旗）
     'andaluoxiya': '#1E7A3C', // 安达卢西亚·科尔多瓦（伊斯兰绿）
@@ -981,7 +983,6 @@ const _FIXED: Record<string, string> = {
     'ouka': '#896A2E', // 梁赞·梁赞（梁赞金褐）
     'xideweina': '#3A5E9E', // 波洛茨克·波洛茨克（波洛茨克蓝）
     'kelimiya': '#1D6FA8', // 克里米亚·卡法（黑海蓝）
-    'kuman': '#D0B070', // 库曼·库曼弓骑兵（qub 淡黄）
     'dajiya': '#A02F30', // 达契亚·萨尔米泽（达契亚红）
     'litaowan': '#8E1E28', // 立陶宛·维尔纽斯（大公国暗红）
     'piyasite': '#B01F20', // 克拉科夫·克拉科夫（克拉科夫红）

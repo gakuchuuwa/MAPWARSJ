@@ -3227,6 +3227,9 @@ export class Scene13WarLayer {
      * 记 step（推演）与 render（绘制）分开，才能判断卡在算还是卡在画。
      */
     private perfStep: number[] = [];
+    /** [2026-08-25] 水面渲染单独计时 + 水面 patch 数：验证「有水的局才卡」这条假设 */
+    private perfWater: number[] = [];
+    private perfWaterPatches = 0;
     private perfRender: number[] = [];
     private perfFrames = 0;
     private diagEvents: Array<[number, string, unknown]> = [];
@@ -3269,6 +3272,8 @@ export class Scene13WarLayer {
                 frames: this.perfFrames,
                 onField: field[0] + field[1],
                 step: this.perfStat(this.perfStep),
+                water: this.perfStat(this.perfWater),
+                waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
             },
             events: this.diagEvents,
@@ -3882,7 +3887,56 @@ export class Scene13WarLayer {
     }
 
 
-    /** DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以 DE 官方 30° 2:1 流速平铺流动水波与波光反射 */
+    /**
+     * DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以 DE 官方 30° 2:1 流速平铺流动水波与波光反射
+     *
+     * 🔴 [2026-08-25 性能修·主人报「战斗模式有点卡」] 这个函数是每帧最贵的一块，改前有三处纯浪费：
+     *    ① `createPattern` **每帧每 patch 重建一次** —— img 从头到尾不变，纯白扔。已按 img 缓存。
+     *    ② 三次 `fillRect` 全用**整张画布**尺寸（4K 下 3828×1911）。clip 只挡住"画出来的结果"，
+     *       引擎该走的光栅化/裁剪测试一样得走。已收窄到 patch 自己的 bbox（涉水涟漪那边本来就在用 bbox）。
+     *    ③ 第 3 步水色增强是 `fillRect(0,0,canvas.width,canvas.height)` 纯色铺满全屏，同样收窄。
+     *    视觉不变：pattern 相位跟着 ctx 变换走，只收窄矩形不动 translate；bbox 外本来就被 clip 挡掉。
+     *    定位依据：`renderDynamicWater` 是 2026-08-21 加的，而 13 探针 986 局的 fps 中位数
+     *    正是那天从 51.2 掉到 31.9（场上人数没变、13 的 step/render 只涨 2ms），日期精确吻合。
+     */
+    private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
+    private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
+
+    /**
+     * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
+     *
+     * 🔴 为什么不写进 `p.bbox`：那个字段全项目**没有一处赋值**，恒为 undefined，
+     *    而 `renderWadingRipples` 正好 `filter(p => p.isWater && p.bbox)` —— 也就是说
+     *    2026-08-22 加的「涉水涟漪」一直是**死代码，从没显示过**。给 p.bbox 赋值会把它
+     *    连带复活，等于在「查卡顿」的改动里偷偷加一层每帧 O(men) 的椭圆描边。
+     *    死代码只报告、不顺手复活 —— 要不要复活由主人定。
+     */
+    private waterBBoxOf(p: DecorPatch): { x: number; y: number; w: number; h: number } | null {
+        const hit = this.waterBBoxCache.get(p);
+        if (hit) return hit;
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        if (p.polygon && p.polygon.length >= 3) {
+            for (const pt of p.polygon) {
+                if (pt.x < x0) x0 = pt.x;
+                if (pt.x > x1) x1 = pt.x;
+                if (pt.y < y0) y0 = pt.y;
+                if (pt.y > y1) y1 = pt.y;
+            }
+        } else if (p.cells) {
+            for (const [gx, gy] of p.cells) {
+                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
+                if (sx - TILE_W / 2 < x0) x0 = sx - TILE_W / 2;
+                if (sx + TILE_W / 2 > x1) x1 = sx + TILE_W / 2;
+                if (sy - TILE_H / 2 < y0) y0 = sy - TILE_H / 2;
+                if (sy + TILE_H / 2 > y1) y1 = sy + TILE_H / 2;
+            }
+        }
+        if (!Number.isFinite(x0) || !Number.isFinite(y0)) return null;
+        const bb = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+        this.waterBBoxCache.set(p, bb);
+        return bb;
+    }
+
     private renderDynamicWater(ctx: CanvasRenderingContext2D, t: number): void {
         const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
         if (waterPatches.length === 0) return;
@@ -3915,13 +3969,21 @@ export class Scene13WarLayer {
             // 1. DE 原版官方流速单向流动（30° 2:1 等距流向：dx = 24t, dy = 12t）
             const dx = (t * 24) % tw;
             const dy = (t * 12) % th;
+            // 绘制范围：优先用 patch 自己的包围盒，没有 bbox 才退回整张画布（保持旧行为，不至于漏画）
+            const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: ctx.canvas.width, h: ctx.canvas.height };
+
             ctx.save();
             ctx.globalAlpha = a;
             ctx.translate(dx, dy);
-            const pat = ctx.createPattern(img, 'repeat');
+            // pattern 按 img 缓存：源图整局不变，每帧重建纯属浪费
+            let pat = this.waterPatternCache.get(img) ?? null;
+            if (!pat) {
+                pat = ctx.createPattern(img, 'repeat');
+                if (pat) this.waterPatternCache.set(img, pat);
+            }
             if (pat) {
                 ctx.fillStyle = pat;
-                ctx.fillRect(-dx - tw, -dy - th, ctx.canvas.width + tw * 2, ctx.canvas.height + th * 2);
+                ctx.fillRect(bb.x - dx - tw, bb.y - dy - th, bb.w + tw * 2, bb.h + th * 2);
             }
             ctx.restore();
 
@@ -3933,7 +3995,7 @@ export class Scene13WarLayer {
                 const dy2 = (t * 16) % th;
                 ctx.translate(dx2, dy2);
                 ctx.fillStyle = pat;
-                ctx.fillRect(-dx2 - tw, -dy2 - th, ctx.canvas.width + tw * 2, ctx.canvas.height + th * 2);
+                ctx.fillRect(bb.x - dx2 - tw, bb.y - dy2 - th, bb.w + tw * 2, bb.h + th * 2);
                 ctx.restore();
             }
 
@@ -3941,7 +4003,7 @@ export class Scene13WarLayer {
             ctx.save();
             ctx.globalAlpha = a * 0.16;
             ctx.fillStyle = '#082848';
-            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillRect(bb.x, bb.y, bb.w, bb.h);
             ctx.restore();
 
             ctx.restore();
@@ -5865,10 +5927,16 @@ export class Scene13WarLayer {
         }
 
         // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
+        const _wt0 = import.meta.env.DEV ? performance.now() : 0;
         this.renderDynamicWater(ctx, performance.now() * 0.001);
 
         // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
         this.renderWadingRipples(ctx, performance.now() * 0.001);
+        if (import.meta.env.DEV) {
+            this.perfWater.push(performance.now() - _wt0);
+            if (this.perfWater.length > 1800) this.perfWater.shift();
+            this.perfWaterPatches = this.decorPatches.reduce((n, q) => n + (q.isWater ? 1 : 0), 0);
+        }
 
         type UnitVisual = { kind: 'unit'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number };
         type EnvironmentVisual = { kind: 'environment'; y: number; z: number; sprite: DecorSprite };

@@ -6712,11 +6712,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/STEPPE/kuman_ketaian.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 16
-        },
         "/assets/GERMANIC/mazhaer_xiongyati.png": {
             "scale": 1,
             "offsetX": 0,

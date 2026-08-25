@@ -701,7 +701,6 @@ export class CityAssetManager {
 'nandou': '难兜',
 'yanda': '阿洪',
         'qincha': '钦察',
-    'kuman': '库曼',
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',
@@ -916,6 +915,7 @@ export class CityAssetManager {
         'mangshi': '曼格',
         'kejila': '科基',
         'buni': '布匿',
+        'talike': '塔里',
         'guadaer': '瓜达',
         'baojian_qishi': '宝剑',
         // ── 2026-08-04 新增：大波兰 @ 波兹南 ──
@@ -955,6 +955,7 @@ export class CityAssetManager {
         'donggete': '东哥',
         'litaowan': '立陶',
         'bogendi': '勃艮',
+        'xiongren': '匈人',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

@@ -55,6 +55,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aguelabu: '阿格',
   telibolisi: '的黎',
   jileinaijia: '基雷',
+  talike: '塔里',
 
   maixiya: '麦西',
   nidelan: '尼德',
@@ -92,6 +93,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   gaer: '盖尔',
   piketai: '皮克',
   anggelu: '盎格',
+  yinggelan: '英格',
 'bogendi': '勃艮',
   gaolu: '法兰',
   bulietani: '布列',
@@ -121,7 +123,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'taolika': '陶里',
   bosi_puluosi: '博普',
   kelimiya: '克里',
-  kuman: '库曼',
 'keluodiya': '克罗',
   qincha: '钦察',
 'litaowan': '立陶',
@@ -172,6 +173,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   molaweiya: '奥洛',
   damolaweiya: '摩拉',
   luoma_diguo: '罗马',
+  xiongren: '匈人',
 
   heishui: '黑水',
 'yangzhou': '洋',
