@@ -28,8 +28,12 @@
   .shot .del{position:absolute;top:6px;left:6px;width:26px;height:26px;padding:0;line-height:1;
              font-size:17px;font-weight:700;border-radius:3px;opacity:0;transition:opacity .12s;
              background:#0009;border:1px solid #0000;color:#e8e0d2;cursor:pointer}
-  .card:hover .shot .del{opacity:1}
+  .shot .copy{position:absolute;top:6px;left:36px;width:26px;height:26px;padding:0;line-height:1;
+             font-size:15px;font-weight:400;border-radius:3px;opacity:0;transition:opacity .12s;
+             background:#0009;border:1px solid #0000;color:#e8e0d2;cursor:pointer}
+  .card:hover .shot .del,.card:hover .shot .copy{opacity:1}
   .shot .del:hover{background:#a33;border-color:#d66;color:#fff}
+  .shot .copy:hover{background:#369;border-color:#6af;color:#fff}
   .sep{width:1px;height:18px;background:var(--line)}
   .dim{color:var(--dim)}
   button:disabled{opacity:.4;cursor:default}

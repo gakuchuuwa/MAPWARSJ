@@ -26,7 +26,7 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
-import { filterDecor, groundDecorFor, type DecorFitQuery } from './DecorFit';
+import { filterDecor, groundDecorFor, groundVariationFor, type DecorFitQuery } from './DecorFit';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -616,7 +616,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false, input.lng, baseTerrain);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false, input.lng, baseTerrain, elevation);
         buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, undefined, input.lng, vegetationTile);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
@@ -1264,13 +1264,21 @@ function buildGroundVariation(
     lng?: number,
     /** 脚下这张底图 —— 与它同名的斑块要剔掉，铺了也看不见 */
     baseTerrainTile: string = '',
+    /** 高程场 —— DE 的 `height_limits` 把地形绑到高度带，地面变化跟着起伏走 */
+    elevation?: number[][],
 ): void {
     // 🔴 [2026-08-24 主人定] 野战不出农田/牧场。
     //    牧场是人围出来放牲口的地，只在城郊；野外荒原不该有。
     //    pm1=茂密绿牧草+白花、pm2=荒废牧场黄土，两张都是人工的（看图确认过）。
     //    pc1~pc3 不在此列：那是土黄底+稀疏草丛的**自然干草地**，三张只是草量梯度。
     const PASTURE_TILES = new Set(['pm1', 'pm2']);
-    const variation = groundTilesForTheme(theme, biome, season, lat, elev, isSiege, lng)
+    // 🔴 [2026-08-24 主人拿 DE 真图对比后改] 变体贴图按**底图**取同色系，不再用主题表。
+    //    主题表取的贴图和底图不同源，实测 149 种组合里 63 种 RGB 色差 >45——
+    //    `ds2→gr4` 是在黄土上铺黑土（色差 78、698 格），屏幕上就是几块深褐补丁。
+    //    DE 的地面变化是同色系低对比，边界几乎看不出。见 DecorFit.GROUND_VARIATION_BY_BASE。
+    const sameHue = baseTerrainTile ? groundVariationFor(baseTerrainTile) : [];
+    const variation = (sameHue.length ? sameHue
+        : groundTilesForTheme(theme, biome, season, lat, elev, isSiege, lng))
         .filter((t) => isSiege || !PASTURE_TILES.has(t));
     // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
@@ -1283,9 +1291,12 @@ function buildGroundVariation(
     //    而且城郊是车马踩踏碾压出来的土，本来就该是深浅不同的土色。
     //    砾石只在它真是地貌的时候出现（高山砾石 gravel_default、戈壁 ds5 当**底图**），
     //    那种情况不需要再拿它当斑块。
-    const secondary = isSiege
-        ? [{ tile: 'ds2', weight: 1.0 }, { tile: 'ds3', weight: 0.6 }]   // 攻城：同色系深浅土
-        : (SECONDARY_TERRAINS[biome] ?? []);
+    //    副色系同理：有同色系表就不再另外掺 SECONDARY_TERRAINS（那也是按 biome 的）。
+    const secondary = sameHue.length
+        ? []
+        : (isSiege
+            ? [{ tile: 'ds2', weight: 1.0 }, { tile: 'ds3', weight: 0.6 }]
+            : (SECONDARY_TERRAINS[biome] ?? []));
     // 🔴 [2026-08-24] 剔掉与底图同名的贴图：在 ds2 上再铺 ds2 完全看不见。
     //    实测库斯科（底图 ds2）14 片斑块里 9 片是 ds2，等于白铺一多半。
     const pool = [
@@ -1306,15 +1317,71 @@ function buildGroundVariation(
     //    不是薄薄一层半透明色。旧参数（8 片 / 5~11 格 / alpha 0.25）实测只覆盖全场 ~5%、
     //    还只有 1/4 浓度 → 屏幕上等于一整片纯色。改为 DE 口径：片数与尺寸翻倍、浓度拉满，
     //    边缘的自然过渡交给 compositeSoftPatch 里的 blends 有机咬合（DE 同款）。
-    const patchCount = isWinterSnow ? 12 : 14;
+    // 🔴 [2026-08-24 照 DE 的 LAYER 机制改数量] 主人拿 DE 真图对比后查到的：
+    //    DE 不是「撒几片斑块」，是 `create_terrain LAYER_A { land_percent 100
+    //    number_of_clumps 1000 }`——**上千个小碎块铺满整片**，靠 blends 咬边，
+    //    出来是细密斑驳的地面。我们原来 14 片 8~18 格 = 只盖住 5~12%，
+    //    剩下的是几块孤立补丁。
+    //    按面积比换算：DE 20736 格用 1000 clumps → 我们屏内 2111 格约 100 clumps。
+    //    取 45（每片 10~22 格 ≈ 覆盖 25~45%），底图仍是主色，变体从中交错透出。
+    //    ⚠️ 光加数量不够，必须配合同色系 + alpha 0.45 + blur 18，
+    //       否则就是「更多的补丁」。
+    const patchCount = isWinterSnow ? 30 : 45;
+
+    // 🔴 [2026-08-24 照 DE 的 height_limits 实现] DE 的地形层是**按高度带铺满**的：
+    //      create_terrain SLOPE_TERRAIN   { land_percent 100 number_of_clumps 512 height_limits 0 2 }
+    //      create_terrain SLOPE_BLEND_TOP { land_percent 100 number_of_clumps 512 height_limits 2 3 }
+    //    洼地一种、坡上一种、顶上一种——地面变化跟着**地形起伏**走，不是随机噪点。
+    //    这才是 DE 地面「有地理感」的根本原因，我们此前完全没有（见 de-map-algorithm.md §2.2）。
+    //
+    //    实现：把变体池按高度带分配——池里第一张给低地、最后一张给高处，
+    //    每片斑块只落在自己那一带。拿不到高程就退回随机撒（旧行为）。
+    const heightAt = (gx: number, gy: number): number => elevation?.[gy]?.[gx] ?? 0;
+    let hMin = Infinity, hMax = -Infinity;
+    if (elevation) {
+        for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
+            const h = heightAt(gx, gy);
+            if (h < hMin) hMin = h;
+            if (h > hMax) hMax = h;
+        }
+    }
+    const hasRelief = elevation !== undefined && hMax > hMin;
+    /** 这张贴图属于第几个高度带（0=最低） */
+    const bandOfTile = new Map<string, number>();
+    if (hasRelief) {
+        const tiles = [...new Set(pool.map((p) => p.tile))];
+        tiles.forEach((t, i) => bandOfTile.set(t, i));
+    }
+    const bandCount = Math.max(1, bandOfTile.size);
+    /** 某个高度带的高度区间 [lo, hi) */
+    const bandRange = (band: number): [number, number] => {
+        const span = (hMax - hMin) / bandCount;
+        return [hMin + span * band, band === bandCount - 1 ? hMax + 1 : hMin + span * (band + 1)];
+    };
+
     for (let i = 0; i < patchCount; i++) {
         const t = pickWeighted();
-        const sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 8 + rng.int(0, 10);
+        // 按 height_limits 选种子：只在这张贴图所属高度带里下种
+        let sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
+        if (hasRelief && bandOfTile.has(t)) {
+            const [lo, hi] = bandRange(bandOfTile.get(t)!);
+            for (let a = 0; a < 30; a++) {
+                const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
+                const h = heightAt(cx, cy);
+                if (h >= lo && h < hi) { sx = cx; sy = cy; break; }
+            }
+        }
+        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 10 + rng.int(0, 12);
+        // 🔴 alpha 从 0.75 降到 0.45 + 加 blur：DE 的地面变化**边界看不出**，
+        //    0.75 不透明 + 硬边 = 一块贴上去的补丁。冬季雪原保持高对比（雪+露土是有意的）。
         const alpha = isWinterSnow
             ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
-            : 0.75;
-        patches.push({ tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng), alpha, category: 'ground-variation' });
+            : 0.45;
+        patches.push({
+            tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng),
+            alpha, category: 'ground-variation',
+            blur: isWinterSnow ? undefined : 18,
+        });
     }
 
 }
@@ -1682,7 +1749,11 @@ function buildVegetation(
                     const bx = p.x + Math.cos(ang) * dist;
                     const by = p.y + Math.sin(ang) * dist * 0.6;
                     if (bx >= 0 && bx <= VW && by >= 0 && by <= VH && !isWater(bx, by) && !inArmyCorridor(bx, by)) {
-                        const bAsset = rng.pick(['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH']);
+                        // 🔴 [2026-08-24] 和伴生碎石同一个毛病：写死了喜湿灌木，
+                        //    于是**沙漠里的岩石旁长出蕨类**（播仙、玉门关、贝雷尼斯…）。
+                        //    改从该底图配的 flat 列表里取——沙漠取到的是枯枝/仙人掌。
+                        const bAsset = rng.pick(themeDecor.flat.length ? themeDecor.flat
+                            : ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH']);
                         objects.push({
                             asset: bAsset,
                             x: bx,

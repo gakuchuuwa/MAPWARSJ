@@ -166,3 +166,56 @@ export function groundDecorFor(baseTile: string): GroundDecorSet {
 export function groundDecorTable(): Readonly<Record<string, GroundDecorSet>> {
     return GROUND_DECOR_BY_BASE;
 }
+
+// ── 底图 → 地表变体（同色系深浅）────────────────────────────────
+//
+// 🔴 [2026-08-24 主人拿 DE 真图对比：「图1 是你画的，图2 是 DE 的」]
+//    DE 的地面变化是**同色系、低对比、边界看不出**（浅黄绿铺在绿草上）；
+//    我们是**深褐斑铺在浅黄底上**，一眼就是几块补丁。
+//
+//    实测：149 种「底图×变体」组合里 **63 种 RGB 色差 >45**，最夸张
+//    `pal → sr2` 色差 132、`ds2 → gr4`（黄土上铺黑土）色差 78 共 698 格。
+//    根因是变体贴图取自 DE **主题**表（theme.groundTiles），和底图不同源。
+//
+//    这张表是**按贴图平均色算出来的**：每张底图取色差最小的那几张，
+//    目标色差 ≤30。括号里是实测色差。
+//
+// 🔴 候选池只放外观确认过的贴图。fm2/o_rd3/rm2/gr8 这些没看过的一律不用。
+// 🔴 pm1/pm2（牧场）不进这张表——它们只在攻城战出现，走另一条线。
+// 🔴 雪地（snd/sno/sn2/snf）不在这里：DE 冬季地面就是「雪 + 露土枯草斑块」，
+//    那个高对比是**有意的**，由 buildGroundVariation 的 isWinterSnow 分支单独管。
+
+const GROUND_VARIATION_BY_BASE: Readonly<Record<string, readonly string[]>> = {
+    des:               ['pal1', 'gr5', 'ds2'],          // 13 / 16 / 25
+    ds2:               ['pal1', 'gr5', 'des'],          // 13 / 21 / 25
+    ds3:               ['gr7', 'pc1', 'pc2'],           // 14 / 18 / 21
+    ds4:               ['gr5', 'pc1', 'ds3'],           // 21 / 26 / 28
+    ds5:               ['gravel_default', 'rck'],       // 24 / 27
+    gr2:               ['grs', 'gr3'],                  // 10 / 21
+    gr3:               ['grs', 'pc3', 'gr7'],           // 12 / 18 / 20
+    gr4:               ['pc3', 'pc2'],                  // 20 / 25（for/underbrush 色差更小但那是林地贴图，铺上去像长了林子）
+    gr5:               ['des', 'pal1', 'ds4'],          // 16 / 17 / 21
+    gr6:               ['grs', 'gr2'],                  // 28 / 29
+    gr7:               ['pc2', 'pc1', 'pc3'],           // 7 / 8 / 12
+    grs:               ['gr2', 'gr3'],                  // 10 / 12
+    for:               ['underbrush_leaves', 'pc3', 'pc2'],  // 2 / 12 / 16
+    fo2:               ['gr6'],                         // 31（sh4 色差 15 但那是浅滩湿地，语义不对）
+    underbrush_leaves: ['for', 'pc3', 'pc2'],           // 2 / 13 / 18
+    pal:               ['qs', 'pal1'],                  // 19 / 36
+    pal1:              ['ds2', 'des', 'gr5'],           // 13 / 13 / 17
+    qs:                ['pal', 'pal1', 'ds2'],          // 19 / 23 / 27
+    qs2:               ['gr3', 'grs', 'gr2'],           // 22 / 23 / 24
+    sh4:               ['gr4', 'qs2'],                  // 湿润深色系，语义相符
+    rck:               ['gravel_default', 'ds5'],       // 13 / 27
+    gravel_default:    ['rck', 'ds5'],                  // 13 / 24
+};
+
+/** 这张底图的地表变体（同色系）。查不到返回空数组 = 不铺变体。 */
+export function groundVariationFor(baseTile: string): readonly string[] {
+    return GROUND_VARIATION_BY_BASE[baseTile] ?? [];
+}
+
+/** 验收用 */
+export function groundVariationTable(): Readonly<Record<string, readonly string[]>> {
+    return GROUND_VARIATION_BY_BASE;
+}
