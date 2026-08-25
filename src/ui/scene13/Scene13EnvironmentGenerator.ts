@@ -26,7 +26,7 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
-import { filterDecor, type DecorFitQuery } from './DecorFit';
+import { filterDecor, groundDecorFor, type DecorFitQuery } from './DecorFit';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -621,7 +621,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
-                        input.keepClear ?? []);
+                        input.keepClear ?? [], baseTerrain);
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
 
         enforceAllObjectSpacing(objects);
@@ -1380,6 +1380,14 @@ function buildVegetation(
     isSiege: boolean = false,
     /** 禁植区（守方城池石基等），圆内不长树 */
     keepClear: ReadonlyArray<{ x: number; y: number; r: number }> = [],
+    /**
+     * 脚下这张底图。
+     * 🔴 和 baseTile（植被底图）是两回事：
+     *    **树**看自然环境（当地野战底图）——城郊被踩踏的土不代表这里能长什么树；
+     *    **草石**看脚下的地——草直接长在这块土上，地什么样草就什么样，
+     *    这也是 DE `terrain_to_place_on` 的语义。
+     */
+    groundTile: string = '',
 ): void {
     // 🔴 [2026-08-24 主人定] 一个底图一种树：底图定基调，同一张图上不混种。
     //    地区覆盖 + 季节变体都在 TreeAssignment 里，见那个文件的头注释。
@@ -1468,7 +1476,16 @@ function buildVegetation(
     const availableSet = new Set(availableCells.map(([x, y]) => `${x},${y}`));
     const forestBudget = Math.round(availableCells.length * treeFactor[elevationBand]
         * (density ? density.forestCover : forestCoverOfUsableFor(biome)));
-    const forestClumps = 12 + rng.int(0, 5);          // DE: number_of_clumps 10~14（我们可用区是环形，多切几块才散得开）
+    // 🔴 [2026-08-24] 预算太小就**整个不要林块**，树全走林外散株。
+    //    原来 perClumpTarget 有 `Math.max(4, ...)` 兜底，于是库斯科（安第斯高原，
+    //    forestCover 只有 0.0066、预算不到 3 格）照样铺出一小撮 8 格的林地地表，
+    //    alpha 0.85 几乎不透明，树又稀得没长上去——屏幕上就是一块孤零零的深色菱形斑。
+    //    干旱区/高原本来就没有成片林，只有散树，这才是对的。
+    //    clumps 归零即可：后面铺地表和长树都以 forestCells 为准，空了自然全跳过。
+    const MIN_FOREST_BUDGET = 12;
+    const forestClumps = forestBudget < MIN_FOREST_BUDGET
+        ? 0
+        : 12 + rng.int(0, 5);                        // DE: number_of_clumps 10~14（我们可用区是环形，多切几块才散得开）
     const perClumpTarget = Math.max(4, Math.round(forestBudget / forestClumps));
     const forestCells: Array<[number, number]> = [];
     const forestTaken = new Set<string>();
@@ -1591,17 +1608,30 @@ function buildVegetation(
         winterSnow: season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome, lng),
         isSiege,
     };
+    // 🔴 [2026-08-24 照 DE 的 terrain_to_place_on 改] 草/花/石按**底图**取，不按 biome。
+    //    底图是真实气候查表的产物，biome 是另一套并行体系——两套并行必然对不上。
+    //    与树同源：底图定基调。拿不到底图才回落到主题表。
+    const byBase = groundTile ? groundDecorFor(groundTile) : null;
     const themeDecor = {
-        flat: filterDecor(themeDecor0.flat, fitQ),
-        solid: filterDecor(themeDecor0.solid, fitQ),
+        flat: filterDecor(byBase ? byBase.flat : themeDecor0.flat, fitQ),
+        solid: filterDecor(byBase ? byBase.solid : themeDecor0.solid, fitQ),
     };
 
     // 🔴【岩石成套伴生系统】：主岩石必定紧密伴生碎石、灌木与草花。
-    //    [2026-08-24 对照主人发的 DE 真图] DE 一屏开阔地上有 18~22 处岩石堆，
-    //    我们原来只有 4~7 处，地面空得不像 DE。岩石**不阻挡**（见上面碰撞那段：
-    //    只有树和悬崖保留碰撞），多放不会卡兵；它是地貌细节，不是障碍。
-    //    仍留在军团走廊之外，不改约束面。
-    const solidDecorCount = 10 + rng.int(0, 6);
+    //
+    // 🔴 [2026-08-24 主人质问「为什么石头这么多」后按 DE 实算，勿再拍脑袋往上调]
+    //    权威口径 = AoE2DE/resources/_common/drs/gamedata_x2/Arabia.rms：
+    //      SOLID_OBJECT   number_of_objects 4      （主岩石）
+    //      SOLID_SURROUND number_of_objects 32 ×2  （环绕碎石，actor_area_to_place_in 主岩石区）
+    //      → 全图共 68 个石头 / TINY 图 144×144 = 20736 格 = 0.0033 个/格
+    //    我们一屏：屏内 2111 格、可用（走廊外）1066 格
+    //      → 换算 **3.5 ~ 6.9 个石头**（含伴生碎石在内的总数）
+    //
+    //    我曾按主人发的 DE 截图目测「一屏 18~22 处」把这里从 4~7 提到 10~16，
+    //    实测总石头数飙到 34 个、超 DE 密度 5~10 倍。那张截图是**战役地图（手工摆放）**，
+    //    不是随机地图，不能拿来当密度基准。
+    //    主岩石 2~4 个 × 每个伴生 1~2 碎石 ≈ 总数 4~10，落在 DE 区间。
+    const solidDecorCount = 2 + rng.int(0, 2);
     for (let i = 0; i < solidDecorCount; i++) {
         const asset = rng.pick(themeDecor.solid);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
@@ -1627,7 +1657,10 @@ function buildVegetation(
                     const sx = p.x + Math.cos(ang) * dist;
                     const sy = p.y + Math.sin(ang) * dist * 0.6;
                     if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !inArmyCorridor(sx, sy)) {
-                        const sAsset = rng.pick(['ROCK1', 'ROCK2', 'ROCK3']);
+                        // 🔴 [2026-08-24] 伴生碎石从**该底图配的石头**里取，别硬编码。
+                        //    原来写死 ROCK1/2/3，于是 ROCK3（橙褐色沙漠岩盘）
+                        //    出现在德国温带、俄罗斯雪原——底图明明只配了灰岩。
+                        const sAsset = rng.pick(themeDecor.solid.length ? themeDecor.solid : ['ROCK1', 'ROCK2']);
                         objects.push({
                             asset: sAsset,
                             x: sx,
@@ -1683,7 +1716,11 @@ function buildVegetation(
                     frame: rng.int(0, 99999),
                 });
                 if (rng.chance(0.6)) {
-                    const skelAsset = rng.pick(['ANIMAL_SKELETON', 'SKELETON', 'STUMP_GENERIC', 'PLANT_DEAD']);
+                    // 🔴 [2026-08-24] 去掉 STUMP_GENERIC：这是**荒原**枯荣伴生（沙漠/冷草原/
+                    //    稀树草原），那里根本没有树，哪来的树桩。DE 里 Stump 的角色是
+                    //    `FOREST_AESTHETIC`（森林装饰，伐木留下的），只长在林地。
+                    //    我们的树桩走 1568 行的树伴生，那条是对的。
+                    const skelAsset = rng.pick(['ANIMAL_SKELETON', 'SKELETON', 'PLANT_DEAD']);
                     objects.push({
                         asset: skelAsset,
                         x: p.x + (rng.next() - 0.5) * 32,
@@ -1699,15 +1736,31 @@ function buildVegetation(
     }
 
     // ── 开阔平原微点缀（草地微花草/贴花，100% 不挡路，赋予辽阔平原生命力） ──
-    const decorCount = 14 + rng.int(0, 10);
-    for (let i = 0; i < decorCount; i++) {
-        const asset = rng.pick(themeDecor.flat);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
-        if (p) {
+    //
+    // 🔴 [2026-08-24 照 DE 的 RMS 改] DE 的 `AESTHETIC_FLAT` / `AESTHETIC_GROUPED`
+    //    都带 `group_placement_radius 3`——**草花是成簇长的，不是均匀撒的**。
+    //    我们原来一个个随机撒，出来是均匀的噪点，没有 DE 那种「这一丛那一丛」的层次。
+    //    （查的是 AoE2DE/resources/_common/drs/gamedata_x2/Arabia.rms，
+    //      见 docs/02-design/climate-regions.md §5.6.9 的六槽表。）
+    //    同理 `#const AESTHETIC_FLAT` 也是一个常量：全场同一种，只是分成几簇。
+    const flatAsset = rng.pick(themeDecor.flat);
+    const flatClusters = 6 + rng.int(0, 4);
+    for (let c = 0; c < flatClusters; c++) {
+        const anchor = sampleLandPos(VW, VH, rng, isWater, flatAsset, objects);
+        if (!anchor) continue;
+        const asset = flatAsset;
+        const perCluster = 2 + rng.int(0, 3);
+        for (let k = 0; k < perCluster; k++) {
+            // group_placement_radius 3 格 ≈ 3 个 tile 宽；等距要把 y 压扁一半
+            const ang = rng.next() * Math.PI * 2;
+            const dist = rng.next() * TILE_W * 1.5;
+            const x = anchor.x + Math.cos(ang) * dist;
+            const y = anchor.y + Math.sin(ang) * dist * 0.5;
+            if (x < 0 || x > VW || y < 0 || y > VH) continue;
+            if (isWater(x, y)) continue;
             objects.push({
                 asset,
-                x: p.x,
-                y: p.y,
+                x, y,
                 layer: GROUND_COVER_ASSETS.has(asset) ? 'ground' : 'world',
                 z: 0,
                 flip: rng.chance(0.5),
@@ -1724,17 +1777,25 @@ function buildVegetation(
     //    （DECAL_ICE 是一块白蓝色的冰）。实测非冬季战场撒了 883 块——主人截图里
     //    干草原上那些白色云朵斑块就是它。走 DecorFit 统一把三道闸都过一遍。
     const groundDecorAssets = filterDecor(
-        (BIOME_GROUND_DECOR[biome] ?? []).filter((a) => GROUND_COVER_ASSETS.has(a)), fitQ);
+        (byBase ? byBase.scatter : (BIOME_GROUND_DECOR[biome] ?? []))
+            .filter((a) => GROUND_COVER_ASSETS.has(a)), fitQ);
     if (groundDecorAssets.length > 0) {
         // 🔴 不能挂在 treeCount 上：2026-08-24 把树密度砍到 1/5 后，
         //    花草会被连带砍掉，但主人要稀的是**树**（挡视线、挤战场），不是地上的草。
         //    改成跟湿润度走——林地草多、沙漠草少，与树的棵数无关。
-        //    [2026-08-24 对照 DE 真图] DE 的地面草纹密得多，40~60 个在 2000×1080 上太稀。
-        //    草纹是烘焙进地面的贴花，100% 不挡路也不挡视线，加密只赚不亏。
-        const groundDecorCount = 90 + Math.round(
-            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 600);
+        //    🔴 [2026-08-24 同上，回退] 我曾照那张战役截图把这里从 40~60 提到 90~120，
+        //    主人一眼看出「草也是（太多）」。DE 的 AESTHETIC_SCATTER 虽写 1024，
+        //    但带 `temp_min_distance_group_placement 42`——间距约束才是真正的密度上限，
+        //    number_of_objects 只是「想放这么多」。别拿 1024 当依据。
+        const groundDecorCount = 40 + Math.round(
+            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 400);
+        // 🔴 [2026-08-24 照 DE 的 RMS 改] DE 的 `#const AESTHETIC_SCATTER` 是**一个**常量，
+        //    整个地形主题从头到尾只撒**同一种**散布素材，不是每株换一种。
+        //    我们原来逐株 rng.pick，出来是杂乱的混合噪点。
+        //    这和主人定的「一个底图一种树」是同一条逻辑——底图定基调，图上不混种。
+        const scatterAsset = rng.pick(groundDecorAssets);
         for (let i = 0; i < groundDecorCount; i++) {
-            const asset = rng.pick(groundDecorAssets);
+            const asset = scatterAsset;
             const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
             if (p) {
                 objects.push({

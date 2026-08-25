@@ -80,3 +80,89 @@ export function decorFitTables(): {
 } {
     return { winterOnly: WINTER_ONLY, settlementOnly: SETTLEMENT_ONLY, cultureOnly: CULTURE_ONLY };
 }
+
+// ── 底图 → 草 / 花 / 石 ─────────────────────────────────────────
+//
+// 🔴 [2026-08-24 照 DE 的 RMS 建表] DE 用 `terrain_to_place_on` 把装饰**绑定到地形**
+//    （179 个 .rms 里用了 246 次 BASE_TERRAIN、92 次 MIDDLE_TERRAIN…），
+//    而不是按气候 biome 挑。我们原先按 biome 挑，和「底图按真实气候查表」两套体系并行。
+//    改成按底图，与 TreeAssignment 同构：**底图定基调**。
+//
+// DE 的六个槽位（见 Arabia.rms 的 #const 块），我们用其中三个：
+//   AESTHETIC_SCATTER  → scatter：满地散布的草，全场**同一种**（DE 是一个 #const）
+//   AESTHETIC_FLAT     → flat：成簇的花草，`group_placement_radius 3`
+//   SOLID_OBJECT       → solid：主岩石，自带伴生碎石与灌木（DE 的 second_object + SOLID_SURROUND）
+//
+// 素材外观都是渲染出来逐个看过的，不是照名字猜：
+//   GRASS_DRY=黄枯草丛(细竖)  GRASS_DRY_PATCH=黄枯草片  GRASS_GREEN=绿草丛  GRASS_GREEN_PATCH=绿草片
+//   WEED=绿叶杂草  PLANT_DEAD=褐色枯枝  JUNGLE/RAINFOREST=一小撮热带草(很小)
+//   ROCK1/2=灰岩块堆  ROCK3=橙褐扁平岩盘  ROCK_FORMATION2=层叠柱状风蚀岩
+//   ROCK_LIMESTONE=灰白石灰岩  ROCK_JUNGLE=绿苔岩  ROCK_PILLAR=黑玄武岩柱  REEDS=黄芦苇
+
+export interface GroundDecorSet {
+    /** 满地散布的草（全场一种） */
+    scatter: readonly string[];
+    /** 成簇的花草 */
+    flat: readonly string[];
+    /** 主岩石 */
+    solid: readonly string[];
+}
+
+const GROUND_DECOR_BY_BASE: Readonly<Record<string, GroundDecorSet>> = {
+    // ── 极旱：枯草 + 风蚀橙岩 ──
+    des:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'CACTUS'], solid: ['ROCK3', 'ROCK_FORMATION2', 'ROCK_FORMATION3'] },
+    pal:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'CACTUS'], solid: ['ROCK3', 'ROCK_FORMATION1', 'ROCK_FORMATION2'] },
+    qs:   { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK3', 'ROCK_FORMATION2'] },
+    pal1: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK_LIMESTONE', 'ROCK3'] },   // 盐壳：灰白石灰岩
+    ds5:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'WEED'], solid: ['ROCK3', 'ROCK_FORMATION1', 'ROCK_FORMATION3'] },
+
+    // ── 草原：干草片 + 灰岩 ──
+    gr5: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'GRASS_DRY'], solid: ['ROCK1', 'ROCK2'] },
+    gr7: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'GRASS_DRY'], solid: ['ROCK1', 'ROCK2'] },
+    gr3: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'FLOWER'], solid: ['ROCK1', 'ROCK2'] },
+
+    // ── 温带农耕 / 草地：绿草 + 花 + 灰岩 ──
+    ds3: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
+    ds4: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'FLOWERBED'], solid: ['ROCK1', 'ROCK2'] },
+    ds2: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT'], solid: ['ROCK1', 'ROCK3'] },          // 黄土：偏干
+    gr2: { scatter: ['GRASS_GREEN'], flat: ['FLOWER_1', 'FLOWER_2'], solid: ['ROCK1', 'ROCK2'] },
+    grs: { scatter: ['GRASS_GREEN_PATCH'], flat: ['FLOWER', 'FLOWERBED'], solid: ['ROCK1', 'ROCK2'] },
+    gr4: { scatter: ['GRASS_GREEN_PATCH'], flat: ['FLOWER_3', 'WEED'], solid: ['ROCK1', 'ROCK2'] }, // 黑土/水稻土
+
+    // ── 林地：林下灌丛 ──
+    for:               { scatter: ['UNDERBRUSH'], flat: ['FERNPATCH', 'BUSH_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    underbrush_leaves: { scatter: ['UNDERBRUSH'], flat: ['FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    fo2:               { scatter: ['UNDERBRUSH_RAINFOREST'], flat: ['PLANT_RAINFOREST', 'FERNPATCH'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
+    gr6:               { scatter: ['UNDERBRUSH_JUNGLE'], flat: ['PLANT_JUNGLE', 'JUNGLE'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
+
+    // ── 湿地：满地湿草 + 成簇芦苇睡莲 ──
+    // 🔴 REEDS(芦苇)/WATER_LILY(睡莲) 是 world 层有高度的精灵，**不是地面贴花**，
+    //    放 scatter 会被 GROUND_COVER_ASSETS 滤空、地面变光秃（实测过）。它们走 flat。
+    qs2: { scatter: ['GRASS_GREEN_PATCH'], flat: ['REEDS', 'WATER_LILY'], solid: ['ROCK1', 'ROCK_JUNGLE'] },
+    sh4: { scatter: ['GRASS_GREEN_PATCH'], flat: ['REEDS', 'WATER_LILY'], solid: ['ROCK1', 'ROCK2'] },
+
+    // ── 高地裸岩 / 砾石 ──
+    rck:            { scatter: ['GRASS_DRY'], flat: ['WEED', 'SHRUB_GREEN'], solid: ['ROCK_LIMESTONE', 'ROCK_PILLAR', 'ROCK1'] },
+    gravel_default: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT'], solid: ['ROCK1', 'ROCK2', 'ROCK_LIMESTONE'] },
+
+    // ── 雪 ──
+    snd: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
+    sno: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
+    sn2: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1'] },
+    snf: { scatter: ['UNDERBRUSH'], flat: ['PLANT_DEAD', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+};
+
+/** 兜底：查不到底图时按温带草地算 */
+const FALLBACK_DECOR: GroundDecorSet = {
+    scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'],
+};
+
+/** 这张底图配什么草、什么花、什么石。 */
+export function groundDecorFor(baseTile: string): GroundDecorSet {
+    return GROUND_DECOR_BY_BASE[baseTile] ?? FALLBACK_DECOR;
+}
+
+/** 验收用 */
+export function groundDecorTable(): Readonly<Record<string, GroundDecorSet>> {
+    return GROUND_DECOR_BY_BASE;
+}
