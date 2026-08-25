@@ -24,9 +24,9 @@ import {
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
-import { queryBaseTile } from './WorldBaseMap';
+import { queryBaseTile, queryWinterSnow } from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
-import { filterDecor, groundDecorFor, groundVariationFor, countForCover,
+import { filterDecor, groundDecorFor, groundVariationFor, countForCover, assetTiles,
          SCATTER_COVER, FLAT_COVER, type DecorFitQuery } from './DecorFit';
 import {
     DE_MAP_THEMES,
@@ -1592,6 +1592,42 @@ function buildGroundVariation(
         });
     }
 
+    // ── 零星残雪（主人 2026-08-24 提：「冬天是不是应该给其他背景添加一点雪地地基作为二层？」）──
+    //
+    // 最冷月 -3~+2°C 的地方**会下雪但存不住**：江南北部、华北南部、地中海北岸、
+    // 中欧、日本西南、朝鲜南部。此前只有「有雪／无雪」两态，这一带被判成完全无雪，
+    // 冬天和夏天长得一模一样，不真实。
+    //
+    // 表现方式：**底图不换**（还是当地的土/草），只在上面铺少量雪斑——
+    // 背阴处、洼地、草根间的残雪。用 sn2（浅雪，0% 偏橙）不用 snd（49% 偏橙）。
+    if (season === 2 && !isWinterSnow && lat !== undefined && lng !== undefined
+        && queryWinterSnow(lat, lng) === 4) {
+        // 🔴 参数照主人发的 DE 冬季真图定（枯黄草地 + 大片残雪）：
+        //    覆盖 **25~30%**、斑块是**大片长条**不是小碎块、明显集中在**洼地**。
+        //    我第一版做的是 22 片×6~12 格 = 9%，又少又碎，对不上。
+        const SPARSE_PATCHES = 30;                  // ×12~24 格 ≈ 覆盖 26%
+        for (let i = 0; i < SPARSE_PATCHES; i++) {
+            // 雪先在洼地和背阴处存住：种子优先选低于平均高度的格（试 25 次）
+            let sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
+            if (hasRelief) {
+                const mid = (hMin + hMax) / 2;
+                for (let a = 0; a < 25; a++) {
+                    const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
+                    // 低处必收，高处 30% 概率也收（免得雪线切成一条直边）
+                    if (heightAt(cx, cy) <= mid || rng.chance(0.3)) { sx = cx; sy = cy; break; }
+                }
+            }
+            const cells = growClump(sx, sy, 12 + rng.int(0, 12), gw, gh, occupied, rng);
+            if (!cells.length) continue;
+            patches.push({
+                tile: 'sn2', cells,
+                alpha: 0.78,                // DE 的残雪是实的，只有边缘碎；太透会变成灰雾
+                category: 'ground-variation',
+                blur: 14,
+            });
+        }
+    }
+
 }
 
 // ── 第 4 层：林地落叶层（森林 biome 的 forest-floor 斑块） ─────────
@@ -1980,8 +2016,14 @@ function buildVegetation(
                         // 🔴 [2026-08-24] 和伴生碎石同一个毛病：写死了喜湿灌木，
                         //    于是**沙漠里的岩石旁长出蕨类**（播仙、玉门关、贝雷尼斯…）。
                         //    改从该底图配的 flat 列表里取——沙漠取到的是枯枝/仙人掌。
-                        const bAsset = rng.pick(themeDecor.flat.length ? themeDecor.flat
-                            : ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH']);
+                        //
+                        // 🔴 但必须挑**最小的那个**：DE 的 `SOLID_UNDERBRUSH` 是岩石旁的
+                        //    下层植被，本来就小。直接 rng.pick 会抽到大件——
+                        //    gr2 的 flat 是 FLOWER_1(56.6 格)，4 个主岩石各伴生 1~2 个
+                        //    就是 6 个 × 56.6 = **覆盖 16%**，草花覆盖直接超标（实测德源 21%）。
+                        const bAsset = themeDecor.flat.length
+                            ? themeDecor.flat.reduce((a, b) => (assetTiles(a) <= assetTiles(b) ? a : b))
+                            : 'SHRUB_GREEN';
                         objects.push({
                             asset: bAsset,
                             x: bx,

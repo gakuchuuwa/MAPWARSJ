@@ -334,7 +334,9 @@ export function isSnowArea(
 ): boolean {
     if (lng !== undefined) {
         const flag = queryWinterSnow(lat, lng);
-        if (flag !== null) return flag > 0;
+        // 🔴 flag 4 = 零星残雪（-3~+2°C，会下雪但存不住）**不算雪区**：
+        //    底图不换、树不换雪松、装饰不进冰。雪由 buildGroundVariation 铺少量斑块表现。
+        if (flag !== null) return flag > 0 && flag !== 4;
     }
     // ── 以下是拿不到气候数据时的兜底估算，不要拿它当判据本身 ──
     if (elev !== null && elev >= (4800 - Math.abs(lat) * 63)) return true; // 高海拔终年雪线
