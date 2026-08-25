@@ -3,6 +3,15 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  // ── [2026-08-26] 大西洋航线七势力（1 势力 = 1 据点）──
+  'tuotuonake': 'city_veracruz',
+  'taino': 'city_havana',
+  'guanche': 'city_telde',
+  'yasuer': 'city_angra',
+  'fodejiao': 'city_ribeira',
+  'baiyiya': 'city_salvador',
+  'tupinijin': 'city_saovicente',
+
   'ayinu_ezo': 'city_moyoro',
 
   'boootiya': 'city_thebes',
