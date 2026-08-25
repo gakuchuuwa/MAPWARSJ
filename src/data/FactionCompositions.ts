@@ -839,14 +839,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 匈牙利王国·布达佩斯（匈雅提亚诺什 · 黑军车堡火器军团 · 鹤翼阵 2+4+3：胡斯战车 2 + 马扎尔骠骑兵 4 + 火枪兵 3）
+    // 匈牙利王国·布达佩斯（匈雅提亚诺什 · 马扎尔军团 · 鱼鳞阵 3+4+2：马扎尔骠骑 3 + 精锐马扎尔骠骑 4 + 骑射手 2）
     mazhaer: {
-        legionName: "黑军车堡火器军团",
-        formationMode: 'crane_wing',
+        legionName: "马扎尔军团",
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'hussite_wagon', count: 2 },    // Row 0 前排掩体 = 胡斯战车 2辆（战车环列构筑车堡防线）
-            { type: 'magyar_huszar', count: 4 },   // Row 1 两翼主力 = 马扎尔骠骑兵 4骑（匈牙利核心主力两翼雷霆突贯）
-            { type: 'hand_cannoneer', count: 3 },  // Row 2 车堡火力 = 火枪兵 3人（纯步兵·无马，车堡掩体内排枪齐射压制）
+            { type: 'magyar_huszar', count: 3 },        // Row 0 前排 = 马扎尔骠骑兵 3骑（匈牙利轻骑突进开路）
+            { type: 'elite_magyar_huszar', count: 4 },  // Row 1 中军主力 = 精锐马扎尔骠骑兵 4骑（精锐骠骑主战突贯）
+            { type: 'cav_archer', count: 2 },           // Row 2 后排 = 骑射手 2骑（骑射游走远程袭扰）
         ],
     },
     // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
@@ -863,192 +863,192 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
     menggu_d: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },          // Row 0 前卫突破 = 鞑靼怯薛军 3骑
-            { type: 'elite_keshik', count: 4 },    // Row 1 中军主力 = 鞑靼怯薛军精锐 4骑
-            { type: 'mangudai', count: 2 },        // Row 2 尾收远射 = 蒙古突骑 2骑
+            { type: 'steppe_lancer', count: 2 },   // Row 1 中军 = 草原枪骑兵 2骑（草原枪骑兵接应）
+            { type: 'mangudai_elite', count: 4 },  // Row 2 底边主力 = 精锐蒙古突骑 4骑（蒙古突骑精锐主力游射）
         ],
     },
     jinzhang: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     yuan_d: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     // 帖木儿帝国·撒马尔罕（帖木儿 · 怯薛铁骑军团 · 鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     tiemuer: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },              // Row 0 前卫突骑 = 鞑靼怯薛军 3骑（前沿突击尖刀）
-            { type: 'elite_keshik', count: 4 },        // Row 1 中军主力 = 鞑靼怯薛军精锐 4骑（帖木儿亲军重装具装铁骑核心突破）
-            { type: 'mangudai', count: 2 },            // Row 2 尾收远射 = 蒙古突骑 2骑（高机动轻骑精锐游射压制）
+            { type: 'steppe_lancer', count: 2 },       // Row 1 中军 = 草原枪骑兵 2骑（草原枪骑兵接应）
+            { type: 'mangudai_elite', count: 4 },      // Row 2 底边主力 = 精锐蒙古突骑 4骑（高机动轻骑精锐游射压制）
         ],
     },
     asaibaijiang: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     wuliangha: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     jalair: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     kiyad: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     zhadalan: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     wala: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     oirat_ming: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     an: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     babuer: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     da_yuan: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     chahar: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     zhaowu: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     manghuti: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     khoshut: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     yilihanguo_d: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     yilihanguo: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     salai: {
         legionName: "蒙古军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'keshik', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 4 },
         ],
     },
     // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）
@@ -1267,14 +1267,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'rhodian_slinger', count: 2 },     // Row 2 尾收超远投石 = 罗得岛投石兵 2人（纯步兵·无马，地中海重铅弹超视距压制）
         ],
     },
-    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培 罗马军团步兵与百夫长伴随骑士战阵（雁行阵 4+3+2：军团步兵前锋 4 + 罗马百夫长中坚 3 + 掷矛手压阵 2）
+    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培（罗马军团 · 雁行阵 4+3+2：罗马军 4 + 精锐百夫长 3 + 精锐掷矛手 2）
     luoma_diguo: {
         legionName: "罗马军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军团步兵 4人（纯步兵·无马，矩形大盾短剑正面推进）
-            { type: 'equites', count: 3 },             // Row 1 中军铁骑突击 = 罗马百夫长 3骑（罗马贵族伴随战马重骑中坚突贯）
-            { type: 'skirmisher', count: 2 },          // Row 2 尾收标枪压制 = 掷矛手 2人（纯步兵·无马，青年维利特斯重标枪破盾抛射）
+            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军 4人（纯步兵·无马，矩形大盾短剑正面推进）
+            { type: 'elite_centurion', count: 3 },     // Row 1 中军铁骑突击 = 精锐百夫长 3骑（罗马百夫长精锐伴随重骑中坚突贯）
+            { type: 'elite_skirmisher', count: 2 },    // Row 2 尾收标枪压制 = 精锐掷矛手 2人（重标枪破盾抛射）
         ],
     },
     gaolu_luoma: {
@@ -1291,8 +1291,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'equites', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'elite_centurion', count: 3 },
+            { type: 'elite_skirmisher', count: 2 },
         ],
     },
     aersasi: {
@@ -1300,8 +1300,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'equites', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'elite_centurion', count: 3 },
+            { type: 'elite_skirmisher', count: 2 },
         ],
     },
     qiliqiya: {
@@ -1309,8 +1309,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'equites', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'elite_centurion', count: 3 },
+            { type: 'elite_skirmisher', count: 2 },
         ],
     },
     // 阿契美尼德·波斯帝国军团（大流士 · 鱼鳞阵 3+4+2：精锐战象 3 + 萨瓦尔 4 + 骑射手 2）
@@ -1492,23 +1492,23 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cav_archer', count: 2 },
         ],
     },
-    // 立陶宛大公国·维尔纽斯 / 涅曼·格罗德诺（格迪米纳斯 / 维托夫特 列提斯破甲铁骑与劲弩精锐军团 · 鱼鳞阵 3+4+2：列提斯前卫 3 + 精锐列提斯主力 4 + 劲弩手 2）
+    // 立陶宛大公国·维尔纽斯 / 涅曼·格罗德诺（格迪米纳斯 / 维托夫特 · 立陶宛军团 · 鱼鳞阵 3+4+2：波兰翼骑兵 3 + 精锐烈堤司 4 + 骑射手 2）
     litaowan: {
         legionName: "立陶宛军团",
         formationMode: 'fish_scale',
         slots: [
-            { type: 'leitis', count: 3 },        // Row 0 前卫突击 = 立陶宛列提斯 3骑
-            { type: 'elite_leitis', count: 4 },  // Row 1 中军主力撕裂 = 立陶宛列提斯精锐 4骑（无视护甲之王主力突破）
-            { type: 'arbalest', count: 2 },      // Row 2 尾收远程压阵 = 劲弩手 2人（SLAVIC 文化区标准远程）
+            { type: 'winged_hussar', count: 3 },   // Row 0 前卫 = 波兰翼骑兵 3骑（翼骑兵突击）
+            { type: 'elite_leitis', count: 4 },    // Row 1 中军主力 = 精锐烈堤司 4骑（无视护甲之王主力突破）
+            { type: 'cav_archer', count: 2 },      // Row 2 尾收 = 骑射手 2骑（弓骑游射）
         ],
     },
     nieman: {
         legionName: "立陶宛军团",
         formationMode: 'fish_scale',
         slots: [
-            { type: 'leitis', count: 3 },
+            { type: 'winged_hussar', count: 3 },
             { type: 'elite_leitis', count: 4 },
-            { type: 'arbalest', count: 2 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 条顿骑士团·柯尼斯堡（容金根 · 鱼鳞阵 3+4+2：条顿武士 3 + 精锐条顿武士主力 4 + 十字军骑士 2）
@@ -1889,14 +1889,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },                  // Row 2 尾收强弩 = 劲弩手 2人（后排强弩精准火力掩护）
         ],
     },
-    // 格鲁吉亚·塔玛尔女王 莫纳斯帕王家近卫铁骑精锐军团（鱼鳞阵 3+4+2：莫纳斯帕前卫 3 + 精锐莫纳斯帕主力 4 + 复合弓手 2）
+    // 格鲁吉亚·塔玛尔女王（格鲁吉亚军团 · 鱼鳞阵 3+4+2：莫纳斯帕 3 + 精锐莫纳斯帕 4 + 骑射手 2）
     gelujiya: {
-        legionName: "莫纳斯帕王家近卫铁骑精锐军团",
+        legionName: "格鲁吉亚军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'monaspa', count: 3 },              // Row 0 前卫冲击 = 格鲁吉亚莫纳斯帕 3骑
             { type: 'elite_monaspa', count: 4 },        // Row 1 中军破阵主力 = 格鲁吉亚莫纳斯帕精锐 4骑（王家近卫铁骑主力）
-            { type: 'composite_bowman', count: 2 },     // Row 2 尾收远程掩护 = 复合弓手 2人（WEST_ASIA 文化区标准远程）
+            { type: 'cav_archer', count: 2 },           // Row 2 尾收远程 = 骑射手 2骑（弓骑游射掩护）
         ],
     },
     // 亚美尼亚·埃里温（瓦尔丹 · 战锤修士与复合弓军团 · 3+2+4 阵型：亚美尼亚修士战士 3 + 重装骑士 2 + 精锐复合弓手 4）
@@ -2050,14 +2050,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 2 },
         ],
     },
-    // 哥特·狄奥多里克大帝 哥特近卫军盾墙与弩手精锐军团（鱼鳞阵 3+4+2：哥特近卫军前卫 3 + 精锐哥特近卫军主力 4 + 弩兵 2）
+    // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：精锐近卫军 4 + 长戟兵 3 + 长弓兵 2）
     donggete: {
-        legionName: "哥特近卫军盾墙与弩手精锐军团",
-        formationMode: 'fish_scale',
+        legionName: "哥特军团",
+        formationMode: 'echelon',
         slots: [
-            { type: 'huskarl', count: 3 },            // Row 0 前卫坚壁 = 哥特近卫军 3人（纯步兵·无马，持重盾顶着箭雨推进）
-            { type: 'elite_huskarl', count: 4 },      // Row 1 中军主力破阵 = 哥特近卫军精锐 4人（主力近卫步兵盾墙撕裂）
-            { type: 'crossbowman', count: 2 },        // Row 2 尾收远程压制 = 弩兵 2人（纯步兵·无马，后排强弩射击压制）
+            { type: 'elite_guardsman', count: 4 },    // Row 0 前卫主力 = 精锐近卫军 4人（近卫步兵主力盾墙）
+            { type: 'halberdier', count: 3 },         // Row 1 中排 = 长戟兵 3人（长戟反骑接应）
+            { type: 'longbowman', count: 2 },         // Row 2 后排 = 长弓兵 2人（远程压制）
         ],
     },
     // 色雷斯·普罗夫迪夫（西美昂 · 色雷斯长刃斩手与精锐重骑军团 · 鹤翼阵 2+4+3：色雷斯长刃斩手 2 + 冲击重骑兵 4 + 精锐标枪手 3）
@@ -2354,14 +2354,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'karambit_warrior', count: 2 },          // Row 2 后排接应 = 爪刀勇士 2
         ],
     },
-    // 高棉帝国·吴哥/真腊（阇耶跋摩七世 · 象背机械弩炮与皇家爪刀卫队 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 爪刀勇士精锐 3 + 高棉弩炮战象 2）
+    // 高棉帝国·吴哥/真腊（阇耶跋摩七世 · 高棉军团 · 锥形阵 2+3+4：象兵 2 + 精锐重弩战象 3 + 步弓手 4）
     chenla: {
         legionName: "高棉军团",
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长矛坚壁 = 重装长枪兵 4人（纯步兵·无马，前排筑起长矛拒马线）
-            { type: 'karambit_warrior_elite', count: 3 },    // Row 1 中军精锐突刺 = 爪刀勇士精锐 3人（纯步兵·无马，高棉王牌近战极速绞杀）
-            { type: 'ballista_elephant', count: 2 },         // Row 2 尾收机械重弩 = 高棉弩炮战象 2头（象背双人机械床弩，后排超远距离贯穿重箭）
+            { type: 'battle_elephant', count: 2 },             // Row 0 尖刀 = 象兵 2头（战斗象开路）
+            { type: 'elite_ballista_elephant', count: 3 },    // Row 1 中坚 = 精锐重弩战象 3头（象背机械床弩贯穿）
+            { type: 'archer', count: 4 },                     // Row 2 底边主力 = 步弓手 4人（远程齐射）
         ],
     },
     // 阿拉伯骆驼弓骑军团·麦地那/巴格达/麦加/巴士拉（哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 · 三角阵 2+3+4：东方剑士前锋 2 + 骆驼弓骑 3 + 精锐骆驼弓骑主力 4）
@@ -2823,6 +2823,66 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_keshik', count: 4 },        // Row 0 前线主力 = 精锐怯薛骑兵 4骑（鞑靼怯薛军精锐主力）
             { type: 'steppe_lancer', count: 2 },       // Row 1 中排 = 草原枪兵 2骑（草原枪骑兵突击）
             { type: 'cav_archer_heavy', count: 3 },    // Row 2 后排 = 重装骑射手 3骑（重装弓骑火力）
+        ],
+    },
+    // 钦察·萨拉托夫（巴奇曼 · 库曼军团 · 锥形阵 2+3+4：草原枪兵 2 + 精锐草原枪兵 3 + 精锐钦察 4）
+    qincha: {
+        legionName: "库曼军团",
+        formationMode: 'triangle',
+        slots: [
+            { type: 'steppe_lancer', count: 2 },       // Row 0 尖刀 = 草原枪兵 2骑（草原枪骑兵突击）
+            { type: 'elite_steppe_lancer', count: 3 }, // Row 1 中坚 = 精锐草原枪兵 3骑（草原枪骑兵精锐）
+            { type: 'elite_kipchak', count: 4 },       // Row 2 底边主力 = 精锐钦察 4骑（库曼钦察弓骑齐射）
+        ],
+    },
+    // 马六甲·满剌加苏丹国（拜里米苏拉 · 马来军团 · 鹤翼阵 2+4+3：精锐象兵 2 + 精锐爪刀勇士 4 + 步弓手 3）
+    malacca: {
+        legionName: "马来军团",
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'elite_battle_elephant', count: 2 },    // Row 0 前卫 = 精锐象兵 2头（战斗象高级开路）
+            { type: 'karambit_warrior_elite', count: 4 },   // Row 1 中军主力 = 精锐爪刀勇士 4人（爪刀贴身突刺主力）
+            { type: 'archer', count: 3 },                   // Row 2 后排 = 步弓手 3人（远程齐射）
+        ],
+    },
+    // 廷巴克图·马里帝国（松迪亚塔 · 马里军团 · 鱼鳞阵 3+4+2：飞刀女兵 3 + 精锐飞刀女兵 4 + 步弓手 2）
+    manding: {
+        legionName: "马里军团",
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'gbeto', count: 3 },        // Row 0 前排 = 飞刀女兵 3人（格贝托掷刀开路）
+            { type: 'elite_gbeto', count: 4 },  // Row 1 中军主力 = 精锐飞刀女兵 4人（格贝托精锐掷刀主力）
+            { type: 'archer', count: 2 },       // Row 2 后排 = 步弓手 2人（远程齐射）
+        ],
+    },
+    // 图卡佩尔·马普切人（劳塔罗 · 马普切军团 · 鱼鳞阵 3+4+2：科那 3 + 精锐科那 4 + 锐掷石绳骑兵 2）
+    mapuche: {
+        legionName: "马普切军团",
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'kona', count: 3 },            // Row 0 前排 = 科那 3骑（马普切科纳勇士突进开路）
+            { type: 'elite_kona', count: 4 },      // Row 1 中军主力 = 精锐科那 4骑（科纳勇士高级主战）
+            { type: 'elite_bolas_rider', count: 2 }, // Row 2 后排 = 锐掷石绳骑兵 2骑（精锐流星锤骑手远程投石）
+        ],
+    },
+    // 巴卡塔·穆伊斯卡联盟（萨瓜曼奇卡 · 穆伊斯卡军团 · 锥形阵 2+3+4：精锐蔷琵战士 2 + 精锐神庙护卫 3 + 精锐格查战士 4）
+    muisca: {
+        legionName: "穆伊斯卡军团",
+        formationMode: 'triangle',
+        slots: [
+            { type: 'elite_champi_warrior', count: 2 },  // Row 0 尖刀 = 精锐蔷琵战士 2人（尚皮勇士高级开路）
+            { type: 'elite_temple_guard', count: 3 },    // Row 1 中坚 = 精锐神庙护卫 3人（神庙守卫高级护阵）
+            { type: 'elite_guecha_warrior', count: 4 },  // Row 2 底边主力 = 精锐格查战士 4人（格查标枪兵主力齐射）
+        ],
+    },
+    // 蒂卡尔·玛雅城邦（亚斯纳昌 · 玛雅军团 · 偃月阵 3+2+4：鹰勇士 3 + 羽箭手 2 + 精锐羽箭手 4）
+    maya: {
+        legionName: "玛雅军团",
+        formationMode: 'crescent',
+        slots: [
+            { type: 'eagle_warrior', count: 3 },         // Row 0 前卫 = 鹰勇士 3人（美洲鹰武士近战突进）
+            { type: 'plumed_archer', count: 2 },         // Row 1 中军 = 羽箭手 2人（玛雅羽箭中坚射击）
+            { type: 'elite_plumed_archer', count: 4 },   // Row 2 底边主力 = 精锐羽箭手 4人（玛雅羽箭精锐主力齐射）
         ],
     },
 };
