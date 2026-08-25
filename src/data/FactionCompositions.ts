@@ -455,12 +455,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 明军三大营步骑火协同军团 · 鱼鳞阵 3+4+2：持盾刀剑手 3 + 黑光铠骑兵主力 4 + 神机箭火箭车 2）
     ming_d: {
-        legionName: "明军三大营步骑火协同军团",
-        formationMode: 'fish_scale',
+        legionName: "神机营军团",
+        formationMode: 'echelon',
         slots: [
-            { type: 'jian_swordman_shielded', count: 3 }, // Row 0 前卫抗线 = 持盾刀剑手 3人（大盾刀牌手正面抗线防矢）
-            { type: 'hei_kuang', count: 4 },              // Row 1 中军主力 = 黑光铠骑兵 4骑（三千营精锐重骑主力突破）
-            { type: 'heavy_rocket_cart', count: 2 },      // Row 2 尾收火器 = 神机箭重型火箭车 2车（神机营一窝蜂连发弹幕轰击）
+            { type: 'elite_fire_lancer', count: 4 },   // Row 0 前线主力 = 精锐火矛兵 4人（火矛喷火主力突进）
+            { type: 'heavy_rocket_cart', count: 3 },   // Row 1 中排 = 重型火箭推车 3车（神机箭火箭车连发弹幕）
+            { type: 'bombard_cannon', count: 2 },      // Row 2 后排 = 手推炮 2门（火炮远程轰击）
         ],
     },
     // 大明军团·潼关/郧阳/宁远（孙传庭 / 卢象升 / 袁崇焕 · 三角阵 2+3+4：火矛手 2 + 黑光铠骑兵 3 + 精锐火焰弓 4）
@@ -493,7 +493,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大金帝国·五国城/会宁（完颜宗弼 / 完颜陈和尚 · 女真军团 · 鹤翼阵 2+4+3：铁浮屠 2 + 精锐铁浮屠 4 + 重装骑射手 3）
     jurchen: {
-        legionName: "铁浮屠军团",
+        legionName: "女真军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'iron_pagoda', count: 2 },            // Row 0 前卫铁骑 = 铁浮屠 2骑（女真重甲铁骑前锋，如墙而进正面突贯）
@@ -841,7 +841,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 匈牙利王国·布达佩斯（匈雅提亚诺什 · 马扎尔军团 · 鱼鳞阵 3+4+2：马扎尔骠骑 3 + 精锐马扎尔骠骑 4 + 骑射手 2）
     mazhaer: {
-        legionName: "黑军车堡火器军团",
+        legionName: "马扎尔军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'magyar_huszar', count: 3 },        // Row 0 前排 = 马扎尔骠骑兵 3骑（匈牙利轻骑突进开路）
@@ -851,7 +851,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
     osman: {
-        legionName: "苏丹亲兵军团",
+        legionName: "土耳其军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'steppe_lancer', count: 2 },           // Row 0 前卫 = 草原枪骑兵 2骑（草原枪骑兵突击开路）
@@ -1659,56 +1659,56 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 西班牙·熙德 / 费尔南多三世 / 阿方索十一世等 西班牙大方阵与希内特中世纪圣骑战阵（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 十字军圣骑士 2）
     balunxiya: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },             // Row 0 前卫长枪方阵 = 重装长枪兵 4人（纯步兵·无马，西班牙大方阵坚固长矛之墙）
-            { type: 'elite_genitour', count: 3 },            // Row 1 中军标枪轻骑 = 标枪骑兵精锐 3骑（西班牙希内特 Jinete 穿甲标枪机动穿插）
-            { type: 'crusader_knight', count: 2 },           // Row 2 尾收圣殿铁骑 = 十字军圣骑士 2骑（收复失地十字军重装圣骑突击压阵）
+            { type: 'halberdier', count: 3 },          // Row 0 前卫 = 长戟兵 3人（长戟方阵抗骑开路）
+            { type: 'hand_cannoneer', count: 2 },      // Row 1 中军 = 火枪手 2人（火枪齐射）
+            { type: 'elite_conquistador', count: 4 },  // Row 2 底边主力 = 精锐西班牙征服者 4骑（征服者火枪骑主力骑射）
         ],
     },
     guadaer: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 },
         ],
     },
     kasidiliya: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 },
         ],
     },
     leangongguo: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 },
         ],
     },
     xigete: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 },
         ],
     },
     alagong: {
         legionName: "西班牙军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 },
         ],
     },
     // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 斯拉夫贵族铁骑 2）
@@ -1901,7 +1901,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 亚美尼亚·埃里温（瓦尔丹 · 战锤修士与复合弓军团 · 3+2+4 阵型：亚美尼亚修士战士 3 + 重装骑士 2 + 精锐复合弓手 4）
     wulaertu: {
-        legionName: "战锤修士与复合弓军团",
+        legionName: "亚美尼亚军团",
         formationMode: 'crescent',
         slots: [
             { type: 'warrior_priest', count: 3 },              // Row 0 前排抗线 = 牧师战士 3人（亚美尼亚修士战士圣锤破甲）
@@ -1986,20 +1986,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     moxina: {
         legionName: "西西里军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'serjeant', count: 3 },
+            { type: 'serjeant', count: 2 },
             { type: 'elite_serjeant', count: 4 },
-            { type: 'arbalest', count: 2 },
+            { type: 'arbalest', count: 3 },
         ],
     },
     sading: {
         legionName: "西西里军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crane_wing',
         slots: [
-            { type: 'serjeant', count: 3 },
+            { type: 'serjeant', count: 2 },
             { type: 'elite_serjeant', count: 4 },
-            { type: 'arbalest', count: 2 },
+            { type: 'arbalest', count: 3 },
         ],
     },
     // 弗兰德斯伯国·加莱（罗贝尔二世 · 1302金马刺之战长矛军团 · 鱼鳞阵 4+3+2：佛兰德长矛民兵主力 4 + 重装骑士中军 3 + 劲弩手 2）
@@ -2169,7 +2169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 波罗帝国·高达城/孟加拉（达磨波罗 · 孟加拉军团 · 锥形阵 2+3+4：象兵 2 + 精锐战车 3 + 步弓手 4）
     boluo: {
-        legionName: "波罗海军军团",
+        legionName: "孟加拉军团",
         formationMode: 'triangle',
         slots: [
             { type: 'battle_elephant', count: 2 },         // Row 0 尖刀 = 象兵 2头（战斗象践踏开路）
@@ -2197,7 +2197,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 德里苏丹国·德里（阿拉乌丁·卡尔吉 · 象背重弓高台与近卫古拉姆铁甲大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 象弓骑兵精锐 3 + 古拉姆 2）
     deli: {
-        legionName: "德里苏丹军团",
+        legionName: "印度斯坦军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'armored_elephant', count: 2 },          // Row 0 前卫 = 攻城战象 2头（装甲攻城战象破城开路）
@@ -2366,7 +2366,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 撒拉森军团·麦地那/巴格达/麦加/巴士拉（哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 · 鹤翼阵 2+4+3：重装骆驼兵 2 + 精锐马穆鲁克 4 + 重装骑射手 3）
     maidina: {
-        legionName: "阿拉伯军团",
+        legionName: "撒拉森军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'camel_heavy', count: 2 },            // Row 0 前卫 = 重装骆驼兵 2骑（骆驼兵重装开路）
@@ -2375,7 +2375,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     abasi: {
-        legionName: "阿拉伯军团",
+        legionName: "撒拉森军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'camel_heavy', count: 2 },
@@ -2384,7 +2384,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     gulaishi: {
-        legionName: "阿拉伯军团",
+        legionName: "撒拉森军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'camel_heavy', count: 2 },
@@ -2393,7 +2393,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     alabo: {
-        legionName: "阿拉伯军团",
+        legionName: "撒拉森军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'camel_heavy', count: 2 },
@@ -2610,7 +2610,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
     dayue: {
-        legionName: "岭南军团",
+        legionName: "越南军团",
         formationMode: 'triangle',
         slots: [
             { type: 'elite_battle_elephant', count: 2 },   // Row 0 尖刀巨兽 = 精锐象兵 2头（战斗象高级开路冲撞）
