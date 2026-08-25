@@ -389,6 +389,25 @@ function screenToGrid(x: number, y: number, ox: number, oy: number): [number, nu
 }
 
 /** 在非水域随机取一个屏幕坐标（水域内重采样，最多 60 次；兜底返回最后随机值） */
+/**
+ * DE `create_object` 的放置约束（见 de-map-algorithm.md §3.2）。
+ * 🔴 [2026-08-24 主人：「我不是说了全做吗」] 这几条以前全没有：
+ *   - `avoid_forest_zone`（1705 次）  装饰不许长进林子里
+ *   - `avoid_cliff_zone`（1492 次）   不许贴着悬崖
+ *   - `min_distance_to_map_edge`（896 次） 离图边留距离，免得半个精灵被切掉
+ *   - `find_closest`（1570 次）       找**最近**的合法点，而不是随机撞
+ */
+export interface PlacementLimits {
+    /** 这个点在不在林子里 */
+    inForest?: (x: number, y: number) => boolean;
+    /** 这个点在不在悬崖旁 */
+    nearCliff?: (x: number, y: number) => boolean;
+    /** 离屏幕边缘至少多少像素 */
+    edgeMargin?: number;
+    /** true = 从锚点向外找最近的合法点（DE 的 find_closest） */
+    findClosest?: { ax: number; ay: number };
+}
+
 function sampleLandPos(
     VW: number,
     VH: number,
@@ -397,14 +416,38 @@ function sampleLandPos(
     asset?: string,
     objects?: EnvironmentObjectPlan[],
     inBattleCenter?: (x: number, y: number) => boolean,
+    limits?: PlacementLimits,
 ): { x: number; y: number } | null {
+    const ok = (x: number, y: number): boolean => {
+        if (isWater(x, y)) return false;
+        if (inBattleCenter && inBattleCenter(x, y)) return false;
+        if (limits?.edgeMargin) {
+            const m = limits.edgeMargin;
+            if (x < m || x > VW - m || y < m || y > VH - m) return false;
+        }
+        if (limits?.inForest?.(x, y)) return false;
+        if (limits?.nearCliff?.(x, y)) return false;
+        if (asset && objects && isObjectOverlapping(x, y, asset, objects)) return false;
+        return true;
+    };
+    // find_closest：从锚点螺旋向外扩，取第一个合法点
+    if (limits?.findClosest) {
+        const { ax, ay } = limits.findClosest;
+        if (ok(ax, ay)) return { x: ax, y: ay };
+        for (let r = 24; r <= 480; r += 24) {
+            for (let k = 0; k < 12; k++) {
+                const a = (k / 12) * Math.PI * 2 + rng.next() * 0.3;
+                const x = ax + Math.cos(a) * r, y = ay + Math.sin(a) * r * 0.6;
+                if (x < 0 || x > VW || y < 0 || y > VH) continue;
+                if (ok(x, y)) return { x, y };
+            }
+        }
+        return null;
+    }
     for (let attempt = 0; attempt < 100; attempt++) {
         const x = rng.next() * VW;
         const y = rng.next() * VH;
-        if (isWater(x, y)) continue;
-        if (inBattleCenter && inBattleCenter(x, y)) continue;
-        if (asset && objects && isObjectOverlapping(x, y, asset, objects)) continue;
-        return { x, y };
+        if (ok(x, y)) return { x, y };
     }
     return null;
 }
@@ -622,7 +665,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
                         input.keepClear ?? [], baseTerrain);
-        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome);
+        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain);
 
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -1326,7 +1369,10 @@ function buildGroundVariation(
     //    取 45（每片 10~22 格 ≈ 覆盖 25~45%），底图仍是主色，变体从中交错透出。
     //    ⚠️ 光加数量不够，必须配合同色系 + alpha 0.45 + blur 18，
     //       否则就是「更多的补丁」。
-    const patchCount = isWinterSnow ? 30 : 45;
+    // 🔴 land_percent：DE 是 100（分层铺满），实际受 spacing/clumps 限制铺不满。
+    //    我们 45 片时实测覆盖 28.6%，提到 75 片 → 约 45~50%，
+    //    再高就把底图盖死了（底图才是主色，变体是从中交错透出的那一层）。
+    const patchCount = isWinterSnow ? 50 : 75;
 
     // 🔴 [2026-08-24 照 DE 的 height_limits 实现] DE 的地形层是**按高度带铺满**的：
     //      create_terrain SLOPE_TERRAIN   { land_percent 100 number_of_clumps 512 height_limits 0 2 }
@@ -1359,26 +1405,114 @@ function buildGroundVariation(
         return [hMin + span * band, band === bandCount - 1 ? hMax + 1 : hMin + span * (band + 1)];
     };
 
-    for (let i = 0; i < patchCount; i++) {
-        const t = pickWeighted();
-        // 按 height_limits 选种子：只在这张贴图所属高度带里下种
-        let sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-        if (hasRelief && bandOfTile.has(t)) {
-            const [lo, hi] = bandRange(bandOfTile.get(t)!);
-            for (let a = 0; a < 30; a++) {
-                const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
-                const h = heightAt(cx, cy);
-                if (h >= lo && h < hi) { sx = cx; sy = cy; break; }
+    // ── DE 的其余 create_terrain 参数，逐条实现（见 de-map-algorithm.md §2.1）──
+    //
+    // 🔴 [2026-08-24 主人：「多层叠加、地形间距、clumping_factor，这些做了吗…我不是说了全做吗」]
+    //
+    //  ① base_terrain 多层叠加 —— DE 的每一层 `base_terrain` 指向上一层，层层压。
+    //     我们按 pool 顺序分层：层 0 先铺、层 1 压在层 0 之上…越靠后的层越"上面"。
+    //     实现上就是 patches 的推入顺序（渲染按数组序叠加）。
+    //  ② spacing_to_other_terrain_types —— 新斑块要离**别的贴图**的已占格若干格。
+    //     DE 中位 2。不做的话不同贴图会互相咬穿，出来是糊的。
+    //  ③ clumping_factor —— **正值聚集成团、负值分散**。
+    //     DE 用 -10 给 `POWDER_LIGHT`（粉末状散布），15/100 给成团地形。
+    //  ④ set_flat_terrain_only —— 只在平地铺（坡上不铺）。
+    //  ⑤ spacing_to_specific_terrain —— 与某一张特定贴图保持间距。
+    //
+    /** 每张贴图已占的格，用于 spacing 判定 */
+    const occupiedByTile = new Map<string, Set<string>>();
+    const key = (x: number, y: number): string => x + ',' + y;
+
+    /** ② + ⑤ 间距检查：离别的贴图至少 spacing 格 */
+    const farEnoughFrom = (gx: number, gy: number, tile: string, spacing: number): boolean => {
+        if (spacing <= 0) return true;
+        for (const [other, cells] of occupiedByTile) {
+            if (other === tile) continue;                 // 同一贴图不互相排斥（DE 同理）
+            for (let dy = -spacing; dy <= spacing; dy++) {
+                for (let dx = -spacing; dx <= spacing; dx++) {
+                    if (Math.abs(dx) + Math.abs(dy) > spacing) continue;   // 菱形邻域
+                    if (cells.has(key(gx + dx, gy + dy))) return false;
+                }
             }
         }
-        const clump = isWinterSnow ? 10 + rng.int(0, 12) : 10 + rng.int(0, 12);
+        return true;
+    };
+
+    /** ④ 平地判定：与四邻的高差都很小 */
+    const isFlat = (gx: number, gy: number): boolean => {
+        if (!elevation) return true;
+        const h = heightAt(gx, gy);
+        return Math.abs(heightAt(gx + 1, gy) - h) < 0.5
+            && Math.abs(heightAt(gx - 1, gy) - h) < 0.5
+            && Math.abs(heightAt(gx, gy + 1) - h) < 0.5
+            && Math.abs(heightAt(gx, gy - 1) - h) < 0.5;
+    };
+
+    // DE 口径：中位 spacing 2；粉末状层用负 clumping。
+    // 越靠后的层（压在上面的）间距给小一点，让它能咬进下层的缝里。
+    const SPACING_BY_LAYER = [2, 2, 1, 1];
+    /** ③ 负 clumping：把一个 clump 拆成几个碎片散开，正 clumping：一整团 */
+    const CLUMPING_BY_LAYER = [15, 15, -10, -10];
+
+    // ① 多层叠加：**按层分批**推入。patches 是按数组序渲染的，
+    //    所以必须层 0 的斑块全推完、再推层 1，才能形成 DE 那种「后一层压在前一层上」。
+    //    随机 pickWeighted 会把层顺序打乱，那就只是混在一起、没有叠加关系。
+    const layerOrder: string[] = [];
+    for (let i = 0; i < patchCount; i++) layerOrder.push(pickWeighted());
+    layerOrder.sort((a, b) => (bandOfTile.get(a) ?? 0) - (bandOfTile.get(b) ?? 0));
+
+    for (let i = 0; i < patchCount; i++) {
+        const t = layerOrder[i];
+        const layer = bandOfTile.get(t) ?? 0;
+        const spacing = SPACING_BY_LAYER[Math.min(layer, SPACING_BY_LAYER.length - 1)];
+        const clumping = CLUMPING_BY_LAYER[Math.min(layer, CLUMPING_BY_LAYER.length - 1)];
+        const flatOnly = isSiege && layer === 0;   // 攻城战的主色层只铺平地（城郊是碾平的）
+
+        // 按 ①height_limits + ②spacing + ④flat_only 选种子
+        let sx = -1, sy = -1;
+        const [lo, hi] = hasRelief && bandOfTile.has(t)
+            ? bandRange(bandOfTile.get(t)!)
+            : [-Infinity, Infinity];
+        for (let a = 0; a < 40; a++) {
+            const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
+            const h = heightAt(cx, cy);
+            if (h < lo || h >= hi) continue;
+            if (flatOnly && !isFlat(cx, cy)) continue;
+            if (!farEnoughFrom(cx, cy, t, spacing)) continue;
+            sx = cx; sy = cy; break;
+        }
+        if (sx < 0) continue;                      // 找不到合法落点就跳过这一片（DE 同样会放弃）
+
+        const clumpTarget = isWinterSnow ? 10 + rng.int(0, 12) : 10 + rng.int(0, 12);
+        // ③ clumping_factor：正值一整团；负值拆成 2~3 个碎片散开（DE 的 POWDER 效果）
+        const cells: Array<[number, number]> = [];
+        if (clumping >= 0) {
+            cells.push(...growClump(sx, sy, clumpTarget, gw, gh, occupied, rng));
+        } else {
+            const shards = 2 + rng.int(0, 1);
+            const per = Math.max(2, Math.round(clumpTarget / shards));
+            const spread = Math.round(3 + Math.abs(clumping) / 5);
+            for (let k = 0; k < shards; k++) {
+                const ox2 = sx + rng.int(-spread, spread);
+                const oy2 = sy + rng.int(-spread, spread);
+                if (ox2 < 1 || oy2 < 1 || ox2 >= gw - 1 || oy2 >= gh - 1) continue;
+                cells.push(...growClump(ox2, oy2, per, gw, gh, occupied, rng));
+            }
+        }
+        if (!cells.length) continue;
+
+        // 登记该贴图占的格，供后续斑块做 spacing 判定
+        let mine = occupiedByTile.get(t);
+        if (!mine) { mine = new Set(); occupiedByTile.set(t, mine); }
+        for (const [cx, cy] of cells) mine.add(key(cx, cy));
+
         // 🔴 alpha 从 0.75 降到 0.45 + 加 blur：DE 的地面变化**边界看不出**，
         //    0.75 不透明 + 硬边 = 一块贴上去的补丁。冬季雪原保持高对比（雪+露土是有意的）。
         const alpha = isWinterSnow
             ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
             : 0.45;
         patches.push({
-            tile: t, cells: growClump(sx, sy, clump, gw, gh, occupied, rng),
+            tile: t, cells,
             alpha, category: 'ground-variation',
             blur: isWinterSnow ? undefined : 18,
         });
@@ -1684,6 +1818,26 @@ function buildVegetation(
         solid: filterDecor(byBase ? byBase.solid : themeDecor0.solid, fitQ),
     };
 
+    // 🔴 [2026-08-24] DE 的放置约束，以前全没有（见 de-map-algorithm.md §3.2）：
+    //    avoid_forest_zone 1705 次 / avoid_cliff_zone 1492 次 / min_distance_to_map_edge 896 次。
+    //    林地格在上面已经算好（forestCells），悬崖来自 objects 里的 CLIFF*。
+    const forestSet = new Set(forestCells.map(([x, y]) => x + ',' + y));
+    const inForestZone = (x: number, y: number): boolean => {
+        if (!forestSet.size) return false;
+        const a = (x - ox) * 2 / TILE_W, b = (y - oy) * 2 / TILE_H;
+        const gx = Math.round((a + b) / 2), gy = Math.round((b - a) / 2);
+        return forestSet.has(gx + ',' + gy);
+    };
+    const cliffs = objects.filter((o) => o.asset.startsWith('CLIFF') || o.asset.startsWith('SHORT_CLIFF'));
+    const nearCliffZone = (x: number, y: number): boolean =>
+        cliffs.some((c) => Math.hypot(x - c.x, (y - c.y) * 1.6) < 90);
+    /** DE 的 min_distance_to_map_edge：中位 1~6 格，取 1.5 格 ≈ 96px，免得精灵被图边切一半 */
+    const decorLimits: PlacementLimits = {
+        inForest: inForestZone,
+        nearCliff: nearCliffZone,
+        edgeMargin: TILE_W * 1.5,
+    };
+
     // 🔴【岩石成套伴生系统】：主岩石必定紧密伴生碎石、灌木与草花。
     //
     // 🔴 [2026-08-24 主人质问「为什么石头这么多」后按 DE 实算，勿再拍脑袋往上调]
@@ -1701,7 +1855,7 @@ function buildVegetation(
     const solidDecorCount = 2 + rng.int(0, 2);
     for (let i = 0; i < solidDecorCount; i++) {
         const asset = rng.pick(themeDecor.solid);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor, decorLimits);
         if (p) {
             const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;
             objects.push({
@@ -1817,7 +1971,7 @@ function buildVegetation(
     const flatAsset = rng.pick(themeDecor.flat);
     const flatClusters = 6 + rng.int(0, 4);
     for (let c = 0; c < flatClusters; c++) {
-        const anchor = sampleLandPos(VW, VH, rng, isWater, flatAsset, objects);
+        const anchor = sampleLandPos(VW, VH, rng, isWater, flatAsset, objects, undefined, decorLimits);
         if (!anchor) continue;
         const asset = flatAsset;
         const perCluster = 2 + rng.int(0, 3);
@@ -1867,7 +2021,9 @@ function buildVegetation(
         const scatterAsset = rng.pick(groundDecorAssets);
         for (let i = 0; i < groundDecorCount; i++) {
             const asset = scatterAsset;
-            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
+            // 满地草不避林（林下本来就有草），但要避悬崖和图边
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, undefined,
+                { nearCliff: nearCliffZone, edgeMargin: TILE_W });
             if (p) {
                 objects.push({
                     asset,
@@ -1883,19 +2039,29 @@ function buildVegetation(
     }
 }
 
-function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome): void {
-    // 🔴 [2026-08-21 素材全覆盖] 资源按 biome 科学分配：
-    //    热带（雨林/稀树草原）= 木瓜/菠萝；温带（林/草原/地中海）= 浆果/果灌；
-    //    干旱（沙漠/冷草原）= 果灌少量；寒带 = 无果（仅石矿）；冬季全部仅石矿。
+function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome, baseTile: string = ''): void {
+    // 资源按**脚下底图**分配（不是 biome）。
+    // 🔴 [2026-08-24 主人：「沙漠中种松树吗？？？」顺查到的同类问题]
+    //    原来按 biome 分，于是安定、琅琊这些干裂黄土地(ds2)上长出**浆果丛**。
+    //    可采集的浆果需要水，干旱地面上只该有石矿。与草石树同一条：底图定基调。
+    const ARID_BASES = new Set(['des', 'pal', 'qs', 'pal1', 'ds5']);
+    const TROPICAL_BASES = new Set(['fo2', 'gr6']);
+    const SNOW_BASES = new Set(['snd', 'sno', 'sn2', 'snf']);
     let resAssets: string[];
-    if (season === 2) {
-        resAssets = ['MINE_STONE'];
+    if (season === 2 || SNOW_BASES.has(baseTile)) {
+        resAssets = ['MINE_STONE'];                                   // 冬季/雪原：无果
+    } else if (TROPICAL_BASES.has(baseTile)) {
+        resAssets = ['FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'MINE_STONE'];
+    } else if (ARID_BASES.has(baseTile)) {
+        resAssets = ['MINE_STONE'];                                   // 真沙漠：只有石矿
+    } else if (baseTile === 'ds2' || baseTile === 'gr5' || baseTile === 'gr7' || baseTile === 'gr3') {
+        resAssets = ['FORAGE_FRUIT', 'MINE_STONE'];                   // 半干旱：耐旱果灌
+    } else if (baseTile) {
+        resAssets = ['FORAGE_BUSH', 'FORAGE_FRUIT', 'MINE_STONE'];    // 温带湿润
     } else if (biome === 'tropical_rainforest' || biome === 'savanna') {
         resAssets = ['FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'MINE_STONE'];
     } else if (biome === 'temperate_forest' || biome === 'temperate_grass' || biome === 'mediterranean') {
         resAssets = ['FORAGE_BUSH', 'FORAGE_FRUIT', 'MINE_STONE'];
-    } else if (biome === 'desert' || biome === 'cold_steppe') {
-        resAssets = ['FORAGE_FRUIT', 'MINE_STONE'];
     } else {
         resAssets = ['MINE_STONE'];
     }

@@ -506,6 +506,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'ava': 'city_ava',
 'dongxu': 'city_dongxu_old',
+    'meitai': 'city_kangla',
 'baiman': 'city_weichu',
 'kunming_yi': 'city_huichuan',
     'miao': 'city_hezhang',

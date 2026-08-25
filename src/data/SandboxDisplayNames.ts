@@ -545,6 +545,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力旗号 ──
     'ava': '掸',
 'dongxu': '东吁',
+    'meitai': '梅',
     'hantawadi': '汉达',
 'baiman': '白蛮',
 'kunming_yi': '昆明',

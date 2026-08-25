@@ -951,6 +951,7 @@ export const FACTIONS: Faction[] = [
     // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
     { id: 'ava', name: '掸族' },
     { id: 'dongxu', name: '东吁' },
+    { id: 'meitai', name: '梅泰' },  // 曼尼普尔·梅泰人（飞镖骑兵本族）
 
     { id: 'hantawadi', name: '汉达瓦底' }, // ── 2026-06-19：勃固城·莽应龙象兵 ──
     { id: 'baiman', name: '白蛮' },

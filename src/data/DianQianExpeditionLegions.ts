@@ -11,6 +11,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     dali: { name: '洱海白戟', tier: 3 },
   hantawadi: { name: '东吁象兵', tier: 1 },    // 勃固城·东吁王朝席卷中南半岛的战略主力
     dongxu: { name: '金象陷阵', tier: 2 },
+    meitai: { name: '飞镖骑兵', tier: 3 },  // 康格拉·哈根巴：梅泰人骑马投镖（Arambai）
     konbaung: { name: '莫罕猎兵', tier: 1 },
   siam: { name: '皇家象骑兵', tier: 1 },       // 阿瑜陀耶·暹罗复国与争霸中南半岛的战略主力
   pagan: { name: '缅王战象', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
