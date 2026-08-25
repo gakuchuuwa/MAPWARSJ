@@ -65,7 +65,8 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     yilihanguo: { name: '奇兹尔巴什', tier: 2 },
     yilihanguo_d: { name: '伊利怯薛', tier: 2 },
     asaibaijiang: { name: '蒙古怯薛', tier: 0 },
-    wulaertu: { name: '乌拉尔图卫', tier: 3 },  // 埃里温·瓦尔丹：亚美尼亚高山战锤修士与高山重骑主力
+    wulaertu: { name: '复合弓手', tier: 3 },  // 埃里温·瓦尔丹：亚美尼亚步弓手（DE Composite Bowman 复合弓）
+    wulaertu_guo: { name: '乌拉尔图卫', tier: 3 },
     gelujiya: { name: '莫纳斯帕', tier: 2 },
     keerjisi: { name: '伊梅列季兵', tier: 2 },
     midi: { name: '不死军团', tier: 3 },
