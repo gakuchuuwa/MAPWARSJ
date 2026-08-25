@@ -16,6 +16,17 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
+  //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
+  //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
+  fodejiao: '佛得',  // [2026-08-26] 佛得角
+  baiyiya: '巴伊',  // [2026-08-26] 巴伊亚
+  tupinijin: '尼金',  // [2026-08-26] 图皮尼金：「图皮」已被 tupi(塔莫约图皮) 占用，取后两字
+  tuotuonake: '托托',  // [2026-08-26] 韦拉克鲁斯本地原住民托托纳克
+  taino: '泰诺',  // [2026-08-26] 古巴/大安的列斯原住民泰诺人
+  guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
+  yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
+
   ayinu_ezo: '阿伊',
 
   boootiya: '波奥',
@@ -88,7 +99,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   xigete: '西哥',
   andaluoxiya: '安达',
   alagong: '阿拉',
-'shaiyue': '喀尔',
+shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与喀尔喀(外蒙主体)撞，去共同前缀
 
   gaer: '盖尔',
   piketai: '皮克',
@@ -118,7 +129,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   ouka: '奥卡',
   xideweina: '波洛',
   jinzhang: '金帐',
-  baojiaer: '保加',
+  baojiaer: '不里',  // [2026-08-26 旗号去重] 伏尔加保加尔：「保加」与保加利亚(特尔诺沃)撞；《元史》作「不里阿耳」
 'baizanting': '拜占',
 'taolika': '陶里',
   bosi_puluosi: '博普',
@@ -1073,7 +1084,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sumeier': '苏美',
     'ayoubu': '阿尤',
     'mamuluke': '马穆',
-    'aosiruowen': '奥斯',
+    aosiruowen: '埃德',  // [2026-08-26 旗号去重] 奥斯若恩：「奥斯」与奥斯曼撞；该国即以埃德萨(Edessa)为都
     'kesa': '可萨',
 'aiaoniya': '爱奥',
     'jialatai': '加拉',

@@ -2998,6 +2998,20 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tucapel', name: '图卡佩尔', factionId: 'mapuche', lat: -37.7, lng: -73.4, type: 'pass', troops: 30000, region: 'AMERICA', note: '马普切要塞，1553劳塔罗在此击杀瓦尔迪维亚' },
     { id: 'city_bacata', name: '巴卡塔', factionId: 'muisca', lat: 4.71, lng: -74.07, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '穆伊斯卡联盟西帕首府，今波哥大' },
     { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'small_city', troops: 30000, region: 'AMERICA', note: '图皮塔莫约核心湾，阿拉里博亚战场' },
+    // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──
+    //  1501 韦斯普奇船队：里斯本 → 佛得角 → 借东北信风横渡 → 圣罗克角 → 沿岸南下
+    //  → 1502-01-01 发现瓜纳巴拉湾（误认作河，命名 Rio de Janeiro）。
+    //  1565-67 葡军自圣维森特北上逐走法国「南极法兰西」，正式建里约城。
+    { id: 'city_ribeira', name: '里贝拉', factionId: 'fodejiao', lat: 14.92, lng: -23.60, type: 'small_city', troops: 30000, region: 'LATIN', note: '佛得角首府里贝拉格兰德（今 Cidade Velha），1462 建，横渡大西洋的西非大迂回起点' },
+    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'baiyiya', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
+    { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'small_city', troops: 30000, region: 'AMERICA', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
+    // ── [2026-08-26] 跨大西洋航线据点：让美洲接入旧大陆，并给特诺奇提特兰补出海口 ──
+    //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
+    //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
+    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 30000, region: 'AMERICA', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
+    { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
+    { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 30000, region: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
+    { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 30000, region: 'LATIN', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 30000, region: 'AMERICA', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 20000, region: 'AFRICA' },
 
