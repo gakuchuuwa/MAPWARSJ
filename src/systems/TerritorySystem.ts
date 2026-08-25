@@ -61,6 +61,8 @@ export class TerritorySystem {
     // [PERF 2026-07-26] 缩放视觉更新节流：'zoom' 动画期每帧最多一次，且缓存已生效值跳过重复写
     private lastAppliedCityScale: number | null = null;
     private lastStyledTerritoryFloorZoom: number | null = null;
+    /** 上次真正刷过的**样式档**（strategic/border/hidden）。同档内换 zoom 值不必重设样式。 */
+    private lastTerritoryStyleKey: string | null = null;
     private zoomVisualRafId: number | null = null;
 
     /** 全图 BFS 结果缓存，供占城增量更新 */
@@ -170,13 +172,20 @@ export class TerritorySystem {
     private updateTerritoryStyle(force = false): void {
         const zoom = this.map.getLeafletMap().getZoom();
         const floorZoom = Math.floor(zoom);
-        // 样式只取决于整数档位：动画期小数变化无需遍历全部多边形 setStyle
-        if (!force && this.lastStyledTerritoryFloorZoom === floorZoom) return;
         this.lastStyledTerritoryFloorZoom = floorZoom;
 
         const isStrategic = floorZoom <= 8;
         const isBorderOnly = floorZoom === 9;
         const isHidden = floorZoom >= 10;
+
+        // 🔴 [2026-08-25 性能修·主人报「战略地图也卡」] 缓存按**样式档**判，不能按 floorZoom 判。
+        //    样式只有三档：≤8 strategic / ==9 border / ≥10 hidden。旧写法按整数 zoom 缓存，
+        //    于是 ZoomController 战斗镜头 10↔11 每次切档都判定"变了" → 遍历全部领土多边形
+        //    setStyle，**而 10 和 11 都是 isHidden、样式完全相同**，纯白花。
+        //    （河流层 VectorRiverLayer.updateStyle 是同一个毛病，同日一并修，实测 243ms/次。）
+        const styleKey = isHidden ? 'hidden' : isBorderOnly ? 'border' : 'strategic';
+        if (!force && this.lastTerritoryStyleKey === styleKey) return;
+        this.lastTerritoryStyleKey = styleKey;
 
         this.territoryLayerGroup.eachLayer((layer: any) => {
             // 领土填充多边形

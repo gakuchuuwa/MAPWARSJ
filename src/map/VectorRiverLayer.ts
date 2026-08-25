@@ -25,6 +25,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
     private currentOffsetMode: boolean = false;
     /** 上次设定样式用的 zoom 档位；换组时据此补刷新组 */
     private lastStyledZoom: number | null = null;
+    /** 上次真正刷过样式的**档位**（getScaleMultiplier 的返回值）。同档位内换 zoom 值不必重设。 */
+    private lastStyledMult: number | null = null;
 
     constructor(data: any, options?: L.LayerOptions) {
         super([], options); // Initialize empty FeatureGroup
@@ -112,8 +114,18 @@ export class VectorRiverLayer extends L.FeatureGroup {
      * 确保切换过去时样式也是正确的。
      */
     public updateStyle(zoom: number) {
-        if (this.lastStyledZoom === zoom) return; // 档位没变不必重设样式
+        // 🔴 [2026-08-25 性能修·主人报「战略地图也卡」] 缓存必须按**档位**判，不能按 zoom 值判。
+        //    样式只经 getScaleMultiplier 分 4 档：<=7→0.5 / 8~9→1.0 / 10~11→1.5 / >=12→2.0。
+        //    旧写法 `lastStyledZoom === zoom` 是按具体 zoom 值缓存，于是 ZoomController 的
+        //    行军 8↔9、战斗 10↔11 每次切档都判定"变了" → 全量 setStyle 约 2910 条 path，
+        //    **而这两对 zoom 的 multiplier 完全相同、样式一模一样**，243ms 纯白花。
+        //    实测（scratch/zoom_perf_log.jsonl 最近 3000 次缩放）：这个 handler 累计
+        //    724982ms / 2980 次 = **243ms/次**，是全部监听器里最贵的一个。
+        //    ZoomController 自动切档 ≥15s 一次，等于每十几秒白冻一次画面。
+        const mult = VectorRiverLayer.getScaleMultiplier(zoom);
         this.lastStyledZoom = zoom;
+        if (this.lastStyledMult === mult) return;   // 同档位：样式必然相同，一条都不用重设
+        this.lastStyledMult = mult;
         // [PERF 2026-07-27] 原来对 wgs84/gcj02 两组都重设样式，其中一组根本不在地图上，
         // 白花一半时间（实测两组合计约 465ms）。改为只刷当前显示的那组，
         // 换组时由 setOffsetMode/refresh 补刷，视觉结果完全一致。

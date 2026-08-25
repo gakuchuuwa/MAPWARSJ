@@ -47,6 +47,7 @@ export const FACTIONS: Faction[] = [
   { id: 'aguelabu', name: '阿格拉布' },
   { id: 'telibolisi', name: '的黎波里塔' },
   { id: 'jileinaijia', name: '基雷奈加' },
+  { id: 'talike', name: '塔里克' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）
 
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
@@ -89,12 +90,14 @@ export const FACTIONS: Faction[] = [
   { id: 'bogendi', name: '勃艮第' },
   { id: 'gaolu', name: '法兰西' },
   { id: 'anggelu', name: '盎格鲁' },
+  { id: 'yinggelan', name: '英格兰' },
   { id: 'piketai', name: '皮克特' },
   { id: 'gaer', name: '盖尔' },
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
 
   { id: 'luoma_diguo', name: '罗马帝国' },
+  { id: 'xiongren', name: '匈人' },  // 塞格德·阿提拉（欧洲匈人，蒂萨河营地）
   { id: 'putaoya', name: '葡萄牙' },
 
   { id: 'habusibao', name: '哈布斯堡' },
@@ -131,7 +134,6 @@ export const FACTIONS: Faction[] = [
   { id: 'taolika', name: '陶里卡' },
   { id: 'bosi_puluosi', name: '博斯普鲁斯' },
   { id: 'kelimiya', name: '克里米亚' },
-  { id: 'kuman', name: '库曼' },  // 库曼尼亚·黑海草原西翼（DE 库曼）
   { id: 'keluodiya', name: '克罗地亚' },
   { id: 'dajiya', name: '达基亚' },
   { id: 'mengtainiya', name: '蒙泰尼亚' },

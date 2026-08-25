@@ -76,6 +76,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
     telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/BERBER/jileinaijia_majiasi.png' },
+    talike: { generalId: 'talike_talike', generalName: '塔里克', portrait: '' },
 
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
@@ -118,12 +119,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },
     gaolu: { generalId: 'gen_charles_vii', generalName: '查理七世', portrait: '/assets/LATIN/gaolu_chaliqishi.png' },
     anggelu: { generalId: 'gen_alfred_great', generalName: '阿尔弗雷德', portrait: '/assets/GERMANIC/anggelu_aerfuleide.png' },
+    yinggelan: { generalId: 'gen_henry_v', generalName: '亨利五世', portrait: '/assets/GERMANIC/yinggelan_hengliwushi.png' },
     piketai: { generalId: 'gen_onuist_i', generalName: '奥恩格斯', portrait: '/assets/GERMANIC/piketai_aoengesi.png' },
     gaer: { generalId: 'gen_domhnall', generalName: '多姆纳尔', portrait: '/assets/GERMANIC/gaer_duomunaer.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/LATIN/bulietani_alan.png' },
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/SLAVIC/saierweiya_sidifendushang.png' },
 
     luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/LATIN/luoma_diguo_kaisa.png' },
+    xiongren: { generalId: 'xiongren_atila', generalName: '阿提拉', portrait: '' },
     kejila: { generalId: 'kejila_shulunbao', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png' },
     putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索一世', portrait: '/assets/LATIN/putaoya_afangsuo.png' },
 
@@ -161,7 +164,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
     kelimiya: { generalId: 'gen_haci_giray', generalName: '哈吉格来', portrait: '/assets/SLAVIC/kelimiya_hajigelai.png' },
-    kuman: { generalId: 'kuman_ketaian', generalName: '可泰安', portrait: '/assets/STEPPE/kuman_ketaian.png' },  // 苏达克·库曼汗
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
     dajiya: { generalId: 'gen_decebalus', generalName: '德切巴鲁斯', portrait: '/assets/SLAVIC/dajiya_deqiebalusi.png' },
     mengtainiya: { generalId: 'gen_basarab_i', generalName: '巴萨拉布', portrait: '/assets/LATIN/mengtainiya_basalabu.png' },

@@ -15,6 +15,8 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T1 功勋之兵 ──
     jialuolin: { name: '加洛林亲兵', tier: 1 },          // 亚琛·查理大帝：scara 御林亲兵，征西欧
+    yinggelan: { name: '英格兰长弓兵', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
+    xiongren: { name: '答剌罕骑兵', tier: 1 },          // 塞格德·阿提拉：横扫巴尔干与意大利的战略级胜利，DE匈奴特色单位
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
