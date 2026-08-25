@@ -80,7 +80,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
     boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/GERMANIC/boumeilaniyan_kaximier.png' },
-    pomeilaniya: { generalId: 'pomeilaniya_bogislaw', generalName: '博吉斯拉夫', portrait: '' },  // 什切青·格里芬王朝公爵
+    pomeilaniya: { generalId: 'pomeilaniya_bogislaw', generalName: '博吉斯拉夫', portrait: '/assets/GERMANIC/pomeilaniya_bojisilafu.png' },  // 什切青·格里芬王朝公爵
     langgeduoke: { generalId: 'gen_raymond_v', generalName: '雷蒙五世', portrait: '/assets/LATIN/langgeduoke_leimengwushi.png' },
     aermolika: { generalId: 'gen_gilles_de_rais', generalName: '吉尔德雷斯', portrait: '/assets/LATIN/aermolika_jierdeleisi.png' },
     tuosikana: { generalId: 'gen_lorenzo_medici', generalName: '洛伦佐', portrait: '/assets/LATIN/tuosikana_luolunzuo.png' },
@@ -160,7 +160,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
     kelimiya: { generalId: 'gen_haci_giray', generalName: '哈吉格来', portrait: '/assets/SLAVIC/kelimiya_hajigelai.png' },
-    kuman: { generalId: 'kuman_ketaian', generalName: '可泰安', portrait: '' },  // 苏达克·库曼汗
+    kuman: { generalId: 'kuman_ketaian', generalName: '可泰安', portrait: '/assets/STEPPE/kuman_ketaian.png' },  // 苏达克·库曼汗
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
     dajiya: { generalId: 'gen_decebalus', generalName: '德切巴鲁斯', portrait: '/assets/SLAVIC/dajiya_deqiebalusi.png' },
     mengtainiya: { generalId: 'gen_basarab_i', generalName: '巴萨拉布', portrait: '/assets/LATIN/mengtainiya_basalabu.png' },
@@ -526,7 +526,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   // ── 滇缅区 2026-06-18 ──
     dali: { generalId: 'dali_duansiping', generalName: '段俭魏', portrait: '/assets/DIANQIAN/dali_duansiping.png' },
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
-    meitai: { generalId: 'meitai_hagenba', generalName: '哈根巴', portrait: '' },  // 康格拉·曼尼普尔国王
+    meitai: { generalId: 'meitai_hagenba', generalName: '哈根巴', portrait: '/assets/INDIA/meitai_hagenba.png' },  // 康格拉·曼尼普尔国王
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
     dianguo: { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/xianqin/dianguo_zhuangqiao.png' },
     konbaung: { generalId: 'konbaung_yongjiya', generalName: '雍笈牙', portrait: '/assets/DIANQIAN/konbaung_yongjiya.png' },
@@ -971,6 +971,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yilihanguo_d: { generalId: 'yilihanguo_d_hezan', generalName: '合赞', portrait: '/assets/CENTRAL_ASIA/yilihanguo_d_hezan.png' },
     asaibaijiang: { generalId: 'asaibaijiang_xuliewu', generalName: '旭烈兀', portrait: '/assets/CENTRAL_ASIA/asaibaijiang_xuliewu.png' },
     wulaertu: { generalId: 'wulaertu_ajishenti', generalName: '瓦尔丹', portrait: '/assets/CENTRAL_ASIA/wulaertu_ajishenti.png' },
+    wulaertu_guo: { generalId: 'wulaertu_guo_saerdu', generalName: '萨尔杜里', portrait: '/assets/CENTRAL_ASIA/wulaertu_guo_saerduli.png' },
     gelujiya: { generalId: 'gelujiya_tamaer', generalName: '塔玛尔', portrait: '/assets/CENTRAL_ASIA/gelujiya_tamaer.png' },
     bendou: { generalId: 'bendou_alikesai', generalName: '阿历克塞', portrait: '/assets/WEST_ASIA/bendou_alikesai.png' },
     keerjisi: { generalId: 'keerjisi_bagelate', generalName: '巴格拉特', portrait: '/assets/CENTRAL_ASIA/keerjisi_bagelate.png' },
@@ -1022,7 +1023,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     boluo: { generalId: 'boluo_damoboluo', generalName: '达磨波罗', portrait: '/assets/INDIA/boluo_damoboluo.png' },
     sumo: { generalId: 'sumo_sumowang', generalName: '苏摩', portrait: '/assets/INDIA/sumo_sumowang.png' },
     jiashi_d: { generalId: 'jiashi_jiashiwang_d', generalName: '梵摩达', portrait: '/assets/INDIA/jiashi_d_jiashiwang.png' },
-    zhuluo: { generalId: 'zhuluo_lajindela', generalName: '拉金德拉', portrait: '' },
+    zhuluo: { generalId: 'zhuluo_lajindela', generalName: '拉金德拉', portrait: '/assets/INDIA/zhuluo_lajindela.png' },
     beileinisi: { generalId: 'beileinisi_tuolemiershi', generalName: '托勒密二世', portrait: '/assets/WEST_ASIA/beileinisi_tuolemiershi.png' },
     dedan: { generalId: 'dedan_dedanwang', generalName: '卡比里尔', portrait: '/assets/WEST_ASIA/dedan_dedanwang.png' },
     maidina: { generalId: 'maidina_halide', generalName: '哈立德', portrait: '/assets/WEST_ASIA/maidina_halide.png' },
@@ -1038,7 +1039,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mapuche: { generalId: 'gen_lautaro', generalName: '劳塔罗', portrait: '/assets/AMERICA/mapuche_laotaluo.png' },
     muisca: { generalId: 'gen_saguamanchica', generalName: '萨瓜曼奇卡', portrait: '/assets/AMERICA/muisca_saguamanqika.png' },
     tupi: { generalId: 'gen_arariboia', generalName: '阿拉里博亚', portrait: '/assets/AMERICA/tupi_alaliboya.png' },
-    xibanya: { generalId: 'xibanya_pisaluo', generalName: '皮萨罗', portrait: '' },  // 利马·征服印加的西班牙征服者
+    xibanya: { generalId: 'xibanya_pisaluo', generalName: '皮萨罗', portrait: '/assets/LATIN/xibanya_pisaluo.png' },  // 利马·征服印加的西班牙征服者
     manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '/assets/AFRICA/ethiopia_aizhana.png' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '/assets/MALAY/malacca_bailimisula.png' },

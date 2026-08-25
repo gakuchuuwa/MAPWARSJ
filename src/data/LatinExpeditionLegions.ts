@@ -54,7 +54,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     kanpaniya: { name: '安茹骑士', tier: 3 },
     // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4
     tuosikana: { name: '黑带军团', tier: 4 },          // 佛罗伦萨·洛伦佐侧：乔凡尼·德·美第奇 Bande Nere
-    xixiliwangguo: { name: '西西里重骑', tier: 3 },          // 巴勒莫·腓特烈二世
+    xixiliwangguo: { name: '萨金特卫兵', tier: 3 },          // 巴勒莫·腓特烈二世：诺曼军士步兵（DE Serjeant）
     gaolu_luoma: { name: '法兰克斧兵', tier: 3 },
     // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑士/骑从为收复失地核心；
     // 文化知名；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）

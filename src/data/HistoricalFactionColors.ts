@@ -799,6 +799,7 @@ const _FIXED: Record<string, string> = {
     'asaibaijiang': '#7B2E48',
     'yilihanguo_d': '#80283A',
     'wulaertu': '#8C5A28',
+    'wulaertu_guo': '#5E4A3A', // 乌拉尔图·图什帕（青铜褐）
     'gelujiya': '#A52028',
     'bendou': '#1E4E6B',
     'keerjisi': '#386850',

@@ -1036,6 +1036,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yilihanguo_d': '伊利',
     'asaibaijiang': '阿塞',
     'wulaertu': '亚美',
+'wulaertu_guo': '乌图',
     'gelujiya': '格鲁',
 'bendou': '科穆',
     'keerjisi': '金羊',

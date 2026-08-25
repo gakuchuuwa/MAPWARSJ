@@ -1771,6 +1771,8 @@ export const FACTIONS: Faction[] = [
     { id: 'yilihanguo_d', name: '伊利汗国' },
     { id: 'asaibaijiang', name: '阿塞拜疆' },
     { id: 'wulaertu', name: '亚美尼亚' },
+    { id: 'wulaertu_guo', name: '乌拉尔图' },
+  // 图什帕·乌拉尔图王国（公元前高加索古国）
     { id: 'gelujiya', name: '格鲁吉亚' },
     { id: 'bendou', name: '科穆宁' },
 
