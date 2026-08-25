@@ -22,7 +22,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     mazhaer: { name: '黑军侍卫', tier: 2 },          // 布达佩斯·匈雅提亚诺什：黑军车堡火器大阵
     anggelu: { name: '盾墙民兵', tier: 2 },          // 伦敦·阿尔弗雷德：埃丁顿盾墙
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
-    piketai: { name: '皮克特矛手', tier: 2 },          // 爱丁堡·奥恩格斯
+    piketai: { name: '靛蓝皮克特', tier: 2 },          // 爱丁堡·奥恩格斯（涂菘蓝战士，DE 靛蓝突袭者）
     aersasi: { name: '莱茵重步兵', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
     ruishi: { name: '瑞士长枪', tier: 2 },          // 巴塞尔·阿诺德：森帕赫长枪方阵
     tiaodun_qishi: { name: '条顿骑士团', tier: 2 },          // 柯尼斯堡·乌尔里希
