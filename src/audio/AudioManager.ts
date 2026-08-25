@@ -21,6 +21,8 @@ export type SoundKey =
     | 'explosion'
     // 陆战接触音景（2026-08-19 主人提供：两军接触起循环垫底、13 退场停，66.9s）
     | 'land_contact'
+    | 'siege_impact'
+    | 'siege_launch'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -102,7 +104,16 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：**循环播放**，
     // 两军接触起循环垫底、13 退场停。13 期间不播旧的 battle_loop（见 syncFollowedLegionAudio），
     // 这条就是那块空缺的底噪；具体的刀剑/枪炮事件音效叠在它上面。
-    land_contact: sound('battle', 'land_contact', 0.42, 0),   // 0.70→0.42（约 -4.4dB，主人 2026-08-19「有点吵」）：它从接触响到退场，是底噪不是主角
+    land_contact: sound('battle', 'land_contact', 0.42, 0),
+    // 攻城武器（2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」）。
+    // ⚠️ 素材是**借用**同一批 DE 战斗音效，不是攻城武器的原声——
+    //    DE 的攻城音效封在 Wwise `.pck` 里（resources/wwise/Base.pck），
+    //    要 wwiser + vgmstream 解包才能拿到，见 scratch/wwiser。素材到位后只改这两行。
+    //   siege_impact = 冲车撞门 / 投石命中：低频重击闷响，借 explosion（DE 原声，音色同源）
+    //   siege_launch = 投石车配重砸下 / 弩炮弹射：借 naval_cannon_fire 的发射闷响
+    // 音量比火器低：攻城武器 4~6 个同时凿墙，冷却也拉长防止糊成一片。
+    siege_impact: sounds('battle', ['explosion_1', 'explosion_3', 'explosion_5', 'explosion_6'], 0.38, 420),
+    siege_launch: sounds('battle', ['naval_cannon_fire_2', 'naval_cannon_fire_4', 'naval_cannon_fire_6'], 0.30, 600),   // 0.70→0.42（约 -4.4dB，主人 2026-08-19「有点吵」）：它从接触响到退场，是底噪不是主角
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 

@@ -116,9 +116,21 @@ const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; sc
 /** 冲车降级链（重→轻）：配兵表指定档若该文化区没有，逐级降级。 */
 const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'battering_ram'];
 
-/** 有战象的文化区 → 战象 key（攻城时替代弩炮槽位；全用近战战象，印度无冲车线走战象替代冲车，另算）。 */
+/**
+ * 有战象的文化区 → 战象 key（攻城时替代弩炮槽位；全用近战战象，印度无冲车线走战象替代冲车，另算）。
+ *
+ * 🔴 [2026-08-24 主人：「西域的攻城战中竟然出现了大象？这不对吧？」]
+ *    原来挂了 `WESTERN: 'war_elephant'`，注释写「波斯战象」——**挂错区了**。
+ *    实测 `WESTERN` 的 43 座城全是**塔里木盆地 + 河中的绿洲城邦**：
+ *    高昌、于阗、龟兹、精绝、怛罗斯、浩罕、柘折城…… 太干旱、无象源，
+ *    这些绿洲城邦的兵力主体是骑射，历史上完全不用战象。
+ *    波斯（波斯波利斯、苏萨、伊斯法罕）在 `CENTRAL_ASIA` 区，根本不在这里。
+ *
+ * 🔴 也没有把战象补给 `CENTRAL_ASIA`：那区 52 座城里波斯本土只有几座，
+ *    主体是中亚（木鹿、布哈拉、撒马尔罕——粟特人不用象）。
+ *    判据是「这地方**什么最多**」，不是「有没有用过」，见 §5.6.13 那条标准。
+ */
 const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
-    WESTERN: 'war_elephant',        // 波斯战象（近战）
     DIANQIAN: 'battle_elephant',    // 缅甸/越南战斗象（近战）
     LINGNAN: 'battle_elephant',     // 越南战斗象（近战）
 };
@@ -143,7 +155,11 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     BASHU:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     HEXI:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     NORTHEAST:    { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    WESTERN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
+    // 🔴 [2026-08-24 主人两次指出「大象作为攻城武器在西域登场，是不对的」]
+    //    这里原来也开着 war_elephant。西域 43 座城全是塔里木+河中的绿洲城邦
+    //    （高昌、于阗、精绝、怛罗斯、浩罕…），太干旱、无象源，兵力主体是骑射。
+    //    删了它，弩炮槽正常走 scorpion/heavy_scorpion 降级链。
+    WESTERN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     TIBET:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     STEPPE:       { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     KOREA:        { battering_ram: true, capped_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
@@ -3049,7 +3065,7 @@ export class Scene13WarLayer {
             for (let i = tierIdx; i >= 0; i--) {
                 if (ok(mnLine[i])) { mnKey = mnLine[i]; break; }
             }
-            // 弩炮槽：有战象的文化区 → 战象替代（波斯/高棉/越南）；否则弩炮降级链
+            // 弩炮槽：有战象的文化区 → 战象替代（滇缅/越南）；否则弩炮降级链
             const eleKey = SIEGE_ELEPHANT_BY_CULTURE[this.sideCulture[0] as RegionType];
             const scLine = ['heavy_scorpion', 'scorpion'];
             const scIdx = scLine.indexOf(setup.scorpion);
@@ -5372,6 +5388,14 @@ export class Scene13WarLayer {
                     }
                 }
                 m.atkSt = m.st;
+                // 🔴 [2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」]
+                //    攻城武器出手就响：凿墙那 30~40 秒此前是**完全静音**的，只有画面在动。
+                //    近战攻城器械（冲车/攻城锤/装甲象）= 撞击闷响；
+                //    远程攻城器械（投石车/弩炮/火箭车）= 发射声，弹丸命中另有 explosion。
+                //    音量和冷却在 AudioManager 里压过：4~6 台同时凿墙，不压会糊成一片。
+                if (m.siegeW) {
+                    audioManager.play(wt.rng > 65 ? 'siege_launch' : 'siege_impact');
+                }
                 // 总加成：把战略层强弱（将领/精锐/武将技/文化/运气）带进每一刀
                 // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
