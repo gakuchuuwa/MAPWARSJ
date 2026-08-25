@@ -29,6 +29,7 @@ import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { smoothRoad, removeBacktracks } from '../utils/GeometryUtils';
 import { REGION_CENTERS, REGION_LABELS, REGION_ORDER, getCityRegion, RegionType } from '../systems/RegionSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
+import { SeaRouteEditor } from '../sea/SeaRouteEditor';
 
 // ===== IEditor 接口 =====
 interface IEditor {
@@ -186,9 +187,54 @@ export class VectorRoadEditor implements IEditor {
     // === 城市点击处理 ===
     private cityClickHandler: ((city: any, e?: any) => void) | null = null;
 
+    /**
+     * 🔴 [2026-08-25 主人定「把海图编辑器合并到道路编辑器中」]
+     *    海路编辑器不再是独立入口，改由这里托管：面板顶部一个「🛣️ 陆路 / 🚢 海路」切换，
+     *    面板嵌进本面板，同一时刻只有一边接管城市点击（两边都调 enableCitySelection，
+     *    同时开会互相抢点击）。海路的实现仍留在 src/sea/SeaRouteEditor.ts，不往这个
+     *    五千行的文件里再塞 685 行。
+     */
+    private seaEditor: SeaRouteEditor;
+    private mode: 'land' | 'sea' = 'land';
+    private seaHost: HTMLElement | null = null;
+    private modeBtns: { land: HTMLButtonElement; sea: HTMLButtonElement } | null = null;
+
     constructor(map: L.Map, cityManager: CityManager) {
         this.map = map;
         this.cityManager = cityManager;
+        this.seaEditor = new SeaRouteEditor(map, cityManager);
+        this.seaEditor.setHost(() => this.seaHost);
+    }
+
+    /** 外部（面板/事件）切换陆路/海路模式。两者互斥：城市点击只能归一边。 */
+    public setMode(mode: 'land' | 'sea'): void {
+        if (this.mode === mode) return;
+        this.mode = mode;
+        const landRows = [this.panelRows?.row1, this.panelRows?.row2, this.reportArea];
+        if (mode === 'sea') {
+            // 陆路让出城市点击，否则两边的 cityClickHandler 互相覆盖
+            this.clearCitySelection();
+            this.disableCitySelection();
+            for (const r of landRows) if (r) (r as HTMLElement).style.display = 'none';
+            if (this.seaHost) this.seaHost.style.display = '';
+            this.seaEditor.show();
+        } else {
+            this.seaEditor.hide();
+            if (this.seaHost) this.seaHost.style.display = 'none';
+            for (const r of landRows) if (r) (r as HTMLElement).style.display = '';
+            this.enableCitySelection();
+        }
+        this.setStatus(mode === 'sea' ? '🚢 海路模式' : '🛣️ 陆路模式');
+        this.syncModeButtons();
+    }
+
+    public getMode(): 'land' | 'sea' { return this.mode; }
+
+    private syncModeButtons(): void {
+        if (!this.modeBtns) return;
+        const on = '#4caf50', off = '#455a64';
+        this.modeBtns.land.style.background = this.mode === 'land' ? on : off;
+        this.modeBtns.sea.style.background = this.mode === 'sea' ? '#0288d1' : off;
     }
 
     // ===== IEditor 接口 =====
@@ -285,6 +331,11 @@ export class VectorRoadEditor implements IEditor {
             this.map.removeLayer(this.radialNetworkLayer);
             this.radialNetworkLayer = null;
         }
+        // 合并后的海路：关道路编辑器时一并收掉，并把模式复位到陆路
+        this.seaEditor.hide();
+        this.mode = 'land';
+        this.seaHost = null;
+        this.modeBtns = null;
         this.clearCitySelection();
         this.disableCitySelection();
         if (this.panel) {
@@ -464,6 +515,18 @@ export class VectorRoadEditor implements IEditor {
         minBtn.addEventListener('mouseenter', () => minBtn.style.filter = 'brightness(1.3)');
         minBtn.addEventListener('mouseleave', () => minBtn.style.filter = 'brightness(1)');
         minBtn.addEventListener('click', () => this.togglePanelMinimized());
+        // ===== 模式切换：陆路 / 海路（合并后海路不再有独立入口）=====
+        const modeWrap = document.createElement('div');
+        modeWrap.style.cssText = 'display:flex; gap:6px; align-items:center; margin-left:auto; padding-right:10px;';
+        const landBtn = this.createButton('\u{1F6E3}️ 陆路', '#4caf50', () => this.setMode('land'));
+        const seaBtn = this.createButton('\u{1F6A2} 海路', '#455a64', () => this.setMode('sea'));
+        landBtn.title = '编辑陆上道路（NE 路网）';
+        seaBtn.title = '编辑海上航线（原「海路编辑」入口，已并入这里）';
+        modeWrap.appendChild(landBtn);
+        modeWrap.appendChild(seaBtn);
+        row0.appendChild(modeWrap);
+        this.modeBtns = { land: landBtn, sea: seaBtn };
+
         row0.appendChild(minBtn);
 
         // ===== Row 1: 单条道路编辑 (按钮固定不挪) =====
@@ -531,6 +594,11 @@ export class VectorRoadEditor implements IEditor {
         row2.appendChild(nextProblemBtn);
 
         this.panel.appendChild(row0);
+        // 海路面板的宿主：SeaRouteEditor.createPanel 会把自己挂进来（见它的 setHost）
+        this.seaHost = document.createElement('div');
+        this.seaHost.id = 'sea-route-editor-host';
+        this.seaHost.style.display = 'none';
+        this.panel.appendChild(this.seaHost);
         this.panel.appendChild(row1);
         this.panel.appendChild(row2);
         // 保存引用以便 togglePanelMinimized 切换

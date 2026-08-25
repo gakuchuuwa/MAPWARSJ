@@ -57,9 +57,21 @@ export class SeaRouteEditor implements IEditor {
 
     private cityClickHandler: ((city: any, e?: any) => void) | null = null;
 
+    /**
+     * 嵌入宿主：设了就把面板挂进这个容器（非 fixed），没设就照旧自己浮在屏幕底部。
+     * 🔴 [2026-08-25 主人定「把海图编辑器合并到道路编辑器中」] 合并后由 VectorRoadEditor
+     *    托管，面板作为它的一行；这里保留独立浮窗兜底，便于单独调试海路。
+     */
+    private hostProvider: (() => HTMLElement | null) | null = null;
+
     constructor(map: L.Map, cityManager: CityManager) {
         this.map = map;
         this.cityManager = cityManager;
+    }
+
+    /** 由宿主（道路编辑器）调用：面板改挂到它的容器里 */
+    public setHost(provider: (() => HTMLElement | null) | null): void {
+        this.hostProvider = provider;
     }
 
     // ===== IEditor 接口 =====
@@ -98,9 +110,25 @@ export class SeaRouteEditor implements IEditor {
     private createPanel(): void {
         if (this.panel) return;
 
+        const host = this.hostProvider?.() ?? null;
+
         this.panel = document.createElement('div');
         this.panel.id = 'sea-route-editor-panel';
-        this.panel.style.cssText = `
+        // 嵌入宿主时：不脱离文档流，铺满宿主宽度（样式与道路面板的行保持一致）
+        this.panel.style.cssText = host ? `
+            background: rgba(10, 25, 45, 0.96);
+            color: #d0e4f7;
+            padding: 14px 20px;
+            border-radius: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 14px;
+            border: 2px solid rgba(41,182,246,0.5);
+            box-sizing: border-box;
+            flex-wrap: wrap;
+        ` : `
             position: fixed;
             bottom: 90px;
             left: 50%;
@@ -162,7 +190,7 @@ export class SeaRouteEditor implements IEditor {
         this.panel.appendChild(this.createButton('💾 保存', '#4caf50', () => this.saveToFile()));
         this.panel.appendChild(this.createButton('🗑️ 删除', '#f44336', () => this.deleteSelectedRoute()));
 
-        document.body.appendChild(this.panel);
+        (host ?? document.body).appendChild(this.panel);
     }
 
     private createButton(text: string, bg: string, onClick: () => void): HTMLButtonElement {

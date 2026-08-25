@@ -63,10 +63,16 @@ export function setupGameAppMapListeners(app: GameApp): void {
         }
     });
 
+    // 🔴 [2026-08-25] 海路编辑已并入道路编辑器：这个事件保留做兼容入口 ——
+    //    收到就打开道路编辑器并切到海路模式，关掉则切回陆路（不整个关掉道路编辑器）。
     window.addEventListener('toggle-editor-sea', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
-        if (app.seaRouteEditor) {
-            detail?.enabled ? app.seaRouteEditor.show() : app.seaRouteEditor.hide();
+        if (!app.roadEditor) return;
+        if (detail?.enabled) {
+            if (!app.roadEditor.isVisible()) app.roadEditor.show();
+            app.roadEditor.setMode('sea');
+        } else {
+            app.roadEditor.setMode('land');
         }
     });
 
