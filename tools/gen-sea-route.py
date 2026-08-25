@@ -24,12 +24,12 @@ OPEN_SEA_PENALTY = 1.5   # 与 SeaRouteEditor.OPEN_SEA_PENALTY 保持一致
 
 # (起点 cityId, 终点 cityId, 航线名) —— 名字用「起城-终城」，与既有数据一致
 PAIRS = [
-    ('city_veracruz', 'city_havana', '韦拉克鲁斯-哈瓦那'),
-    ('city_havana', 'city_telde', '哈瓦那-特尔德'),
-    ('city_havana', 'city_angra', '哈瓦那-安格拉'),
-    ('city_telde', 'city_jiadisi', '特尔德-加的斯'),
-    ('city_angra', 'city_lisiben', '安格拉-里斯本'),
-    ('city_tucapel', 'city_lima', '图卡佩尔-利马'),
+    # 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线（1501 韦斯普奇船队）
+    ('city_ribeira', 'city_lisiben', '里贝拉-里斯本'),          # 西非大迂回起点
+    ('city_salvador', 'city_ribeira', '萨尔瓦多-里贝拉'),        # 借东北信风横渡，圣罗克角登陆
+    ('city_guanabara', 'city_salvador', '瓜纳巴拉-萨尔瓦多'),     # 沿岸北上，葡属巴西首府
+    ('city_guanabara', 'city_saovicente', '瓜纳巴拉-圣维森特'),   # 1565 葡军自圣维森特北上反击
+    ('city_tucapel', 'city_saovicente', '图卡佩尔-圣维森特'),     # 绕合恩角，给图卡佩尔第二个方向
 ]
 
 

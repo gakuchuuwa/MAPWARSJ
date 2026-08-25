@@ -84,4 +84,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     baizanting: { name: '铁甲圣骑', tier: 1 },
     mozeer: { name: '特里尔步兵', tier: 3 },
     seleisi: { name: '保加利亚骑', tier: 3 },
+    // ── [2026-08-26] 大西洋航线：亚速尔 / 佛得角 ──
+    yasuer: { name: '特塞拉牛阵', tier: 2 },     // 安格拉·西普里亚诺：1581 萨尔加之战驱牛群冲散西班牙登陆部队
+    fodejiao: { name: '克里奥民兵', tier: 4 },   // 里贝拉·诺利：佛得角首府守备民兵（1585 德雷克、1712 卡萨尔两度洗劫）
 };

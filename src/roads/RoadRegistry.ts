@@ -16,6 +16,7 @@ import {
     unwrapLongitudePath,
 } from '../utils/GeoLongitude';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
+import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { smoothRoad } from '../utils/GeometryUtils';
 import { GridSystem } from '../systems/GridSystem';
 import { getEuclideanDistance, joinStartToRoadPolyline, nearestPointOnPolyline } from '../core/DistanceUtils';
@@ -143,6 +144,7 @@ export class RoadRegistry {
 
         // 2. 加载矢量道路为图边
         this.loadVectorRoads();
+        this.loadSeaRoutes();
 
         // 3. 构建旧版兼容缓存
         this.buildCityAreaCache(cities);
@@ -187,6 +189,53 @@ export class RoadRegistry {
     }
 
     // ===== 加载矢量道路 =====
+
+    /**
+     * 把海路一并建进寻路图。
+     *
+     * 🔴 [2026-08-26 主人「你添加的航海线，和陆地的道路一样吗，能走军团吗」]
+     *    改前：**不能**。`SEA_ROUTE_DATA` 只被两个编辑器读，寻路图只建 `VECTOR_ROAD_DATA`；
+     *    而 `LegionRoadMarch` 找不到路径时直接 `return false`（军团根本不出发，不会走直线）。
+     *    所以美洲与旧大陆之间军团永远过不去，画的航线对行军零作用。
+     *
+     *    海路 feature 与陆路**结构完全相同**（id / startConnection / endConnection / coordinates），
+     *    直接 addEdge 即可。军团踩到海面后由 `Army.updateTerrainSpeed` 自动登船
+     *    （换三船阵贴图 + SEA_SPEED_MULTIPLIER 统一海速），这套本来就有，不用另写。
+     *
+     *    ⚠️ 海路**不做 smoothRoad**：陆路平滑是为了消折角，而海路的每个顶点都取自
+     *    sea_routes_combined 网格（航运实测航线），平滑会把顶点推离航道、甚至推上岸。
+     */
+    private loadSeaRoutes(): void {
+        let added = 0;
+        for (const feature of SEA_ROUTE_DATA.features) {
+            if (!feature?.properties || !feature.geometry) continue;
+            const props = feature.properties;
+            const coords = feature.geometry.coordinates as [number, number][];
+            if (!props.id || !props.startConnection || !props.endConnection || coords.length < 2) continue;
+
+            // 端点吸附到城池坐标，与陆路同规矩
+            const fromNode = this.nodes.get(props.startConnection);
+            const toNode = this.nodes.get(props.endConnection);
+            if (!fromNode || !toNode) {
+                console.warn(`⚠️ [RoadRegistry] 海路 "${props.name}" 端点不是已知据点，跳过`);
+                continue;
+            }
+            const path = unwrapLongitudePath(coords.map((c) => [c[0], c[1]] as [number, number]));
+            path[0] = [fromNode.lng, fromNode.lat];
+            path[path.length - 1] = [toNode.lng, toNode.lat];
+
+            this.addEdge({
+                id: props.id,
+                from: props.startConnection,
+                to: props.endConnection,
+                weight: this.calculatePathLength(path),
+                coordinates: path,
+                roadFeature: feature as unknown as VectorRoadFeature,
+            });
+            added++;
+        }
+        gameLog('startup', `[RoadRegistry] 海路入图 ${added} 条（军团可跨海行军，踩海面自动登船）`);
+    }
 
     private loadVectorRoads(): void {
         // [FIX] 启动时自动清理冗余重复路线（保留同起终点中最新的一条）
@@ -830,6 +879,7 @@ export class RoadRegistry {
         }
 
         this.loadVectorRoads();
+        this.loadSeaRoutes();
     }
 
     // ===== 工具方法 =====
