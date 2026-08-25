@@ -1027,65 +1027,43 @@ function checkDuplicatePortraits(): void {
 }
 
 /**
- * 悬空调校自动清理（2026-08-03 主人定，取代同日早些时候的弹窗自检）：
- * 调校 key 指向的图片文件不存在 = 死记录。如今改名场景全都自动迁移 key
- * （F2/tuner 绑图改名、dev 启动三层分类改名），剩下的悬空基本都是主人删图后的残留，
- * 弹窗警告只剩骚扰——改成启动时静默清掉，控制台留痕即可。
+ * 悬空调校**只报告，绝不删除**。
  *
- * 追回保险（万一清错）：清掉的 key 和值都打进控制台；portrait_adjust.ts 每日有
- * git 自动备份，node tools/lib/portrait_adjust_recover.mjs 也还在（三层追回）。
+ * 🔴 [2026-08-26 主人拍板，覆盖 2026-08-03 的「静默清死键」方案]
+ *    原话：「立绘调整好缩放大小和位置以后，如果取消立绘的话，就会复原，导致下次再用还要重调，
+ *    我调一次不容易，而且都是手动调整的，请改为调整好后，**除非删除了这张图，再也没有了，
+ *    不然不要乱改**。」「以前就说过这个问题，记住了，不要总让我跳来跳去的。」
+ *
+ *    旧实现每次打开 tuner 就把「不在 catalog 里」的键删掉并**写盘**。判据是
+ *    「图片当前在不在目录快照里」，而不是「这张图是不是真的没了」——
+ *    改名迁移只要有一次没跟上、catalog 只要有一丝不全，手调就被永久抹掉。
+ *    而改名场景有一堆（F2 换图、tuner 绑图、dev 启动三层分类、旧立绘转闲置），
+ *    靠「每条路径都不出错」来保住手调，是拿主人的心血赌。
+ *
+ *    现在反过来：**孤儿键一律留着**。图哪天改名回来、或从备份恢复，调校自动重新生效；
+ *    图真被永久删了，也不过是表里多一条几十字节的死键——1350 条里多几十条无害。
+ *    宁可留垃圾，绝不丢手调。
+ *
+ *    ⚠️ 不许再加回任何形式的自动清除（写盘删键 / 弹窗让主人确认 / 「顺手清一下」）。
+ *    要清理只能是主人明确要求时，用独立工具手动跑。
  */
-async function cleanOrphanAdjustKeys(): Promise<void> {
+async function reportOrphanAdjustKeys(): Promise<void> {
     if (!adjustData?.images) return;
     const diskPaths = new Set<string>();
     for (const cat of portraitCatalog) {
         for (const img of cat.images) diskPaths.add(img.path);
     }
-    // 目录快照空着 = 目录接口没加载成功，此时全表都会误判失联，绝不能清
+    // 目录快照空着 = 目录接口没加载成功，此时全表都会误判失联
     if (diskPaths.size === 0) return;
     const orphans = Object.keys(adjustData.images).filter((k) => !diskPaths.has(k));
     if (orphans.length === 0) return;
 
-    console.warn(`[PortraitTuner] ${orphans.length} 条调校记录的图片已不在磁盘（删图残留），自动清理。清掉的值如下（git 历史可找回）：`);
+    // 只在控制台留痕，**不写盘、不 delete**。图回来了这些键会自动重新生效。
+    console.warn(
+        `[PortraitTuner] ${orphans.length} 条调校记录当前找不到对应图片（改名/删图/目录未收录）。`
+        + `按主人 2026-08-26 定的规矩：原样保留，不清理——图回来就自动生效。`,
+    );
     for (const k of orphans) console.warn('   ', k, JSON.stringify(adjustData.images[k]));
-
-    // 与 saveAdjustToServer 同款乐观锁写盘：拉最新盘上数据 → 只删死键 → 带 mtime 写回，
-    // 409（读写间隙他处写盘）自动重拉重试，不会覆盖 F2 / 其它标签页刚存的调校。
-    for (let attempt = 0; ; attempt++) {
-        const fresh = await fetch('/api/portrait-adjust');
-        if (!fresh.ok) {
-            console.warn(`[PortraitTuner] 读盘失败（HTTP ${fresh.status}），本次不清理，下次打开再试`);
-            return;
-        }
-        const baseMtime = fresh.headers.get('X-Adjust-Mtime') ?? '';
-        const payload: PortraitAdjustData = await fresh.json();
-        payload.images = payload.images ?? {};
-        let removed = 0;
-        for (const k of orphans) {
-            if (k in payload.images) {
-                delete payload.images[k];
-                removed++;
-            }
-        }
-        if (removed === 0) break; // 盘上已经没有这些键（他处已清），本地同步一下即可
-        if (!payload.folderGuides) payload.folderGuides = {};
-        const res = await fetch('/api/save-portrait-adjust', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Adjust-Base-Mtime': baseMtime },
-            body: JSON.stringify(payload),
-        });
-        if (res.status === 409 && attempt < 2) {
-            console.warn(`[PortraitTuner] 清理死记录时写盘冲突，自动重拉重试 ${attempt + 1}/2`);
-            continue;
-        }
-        if (!res.ok) {
-            console.warn(`[PortraitTuner] 清理死记录写盘失败（HTTP ${res.status}），下次打开再试`);
-            return;
-        }
-        break;
-    }
-    for (const k of orphans) delete adjustData.images[k];
-    console.log(`[PortraitTuner] ✅ 已清理 ${orphans.length} 条死记录`);
 }
 
 async function boot(): Promise<void> {
@@ -1104,7 +1082,7 @@ async function boot(): Promise<void> {
         adjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
     }
 
-    await cleanOrphanAdjustKeys();
+    await reportOrphanAdjustKeys();
 
     loadDraftForSelected();
     renderGrid();
