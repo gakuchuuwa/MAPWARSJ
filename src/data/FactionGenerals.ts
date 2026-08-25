@@ -1001,6 +1001,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     midi: { generalId: 'midi_daiaokaisi', generalName: '戴奥凯斯', portrait: '/assets/CENTRAL_ASIA/midi_daiaokaisi.png' },
     qiliqiya: { generalId: 'qiliqiya_pangpei', generalName: '庞培', portrait: '/assets/WEST_ASIA/qiliqiya_pangpei.png' },
     aqimeinide: { generalId: 'aqimeinide_daliushi', generalName: '大流士', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
+    sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
     sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },

@@ -17,7 +17,7 @@
  *
  * 跑法：npx tsx tools/audit-siege-weapons.mts
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 const SRC = readFileSync('src/ui/Scene13WarLayer.ts', 'utf8');
 
@@ -58,14 +58,43 @@ function main(): void {
   if (!any) console.log('  （无）');
 
   // ③ 音效接线
+  //   🔴 [2026-08-24] 两条硬标准：
+  //     a) 撞击声必须挂在**命中相位**（ph>=3 + 本轮一次），不得每帧调用——
+  //        写在 `if (m.lock <= 0)` 块外会让攻城武器**走向城墙的路上**就一直响（第一版就是这么错的）。
+  //     b) siege_impact 必须是 DE 原声文件（主人 2026-08-24「必须和 DE 一样」）。
   console.log('\n攻城武器音效：');
-  const hasKeys = /siege_impact/.test(readFileSync('src/audio/AudioManager.ts', 'utf8'))
-    && /siege_launch/.test(readFileSync('src/audio/AudioManager.ts', 'utf8'));
-  const wired = /m\.siegeW\)\s*\{[\s\S]{0,200}?audioManager\.play\(/.test(SRC);
-  if (!hasKeys) { console.log('  🔴 AudioManager 里没有 siege_impact / siege_launch'); fail++; }
-  else console.log('  ✅ AudioManager 已定义 siege_impact / siege_launch');
-  if (!wired) { console.log('  🔴 攻城武器出手时没有播放音效'); fail++; }
-  else console.log('  ✅ 攻城武器出手已接线（凿墙那 30~40 秒不再静音）');
+  const AM = readFileSync('src/audio/AudioManager.ts', 'utf8');
+  if (!/siege_impact/.test(AM) || !/siege_launch/.test(AM)) {
+    console.log('  🔴 AudioManager 里没有 siege_impact / siege_launch'); fail++;
+  } else console.log('  ✅ AudioManager 已定义 siege_impact / siege_launch');
+
+  const deSrc = /siege_impact:\s*sound\('battle',\s*'(\w+)'/.exec(AM)?.[1] ?? null;
+  if (deSrc !== 'siege_impact_de') {
+    console.log(`  🔴 siege_impact 不是 DE 原声（当前 ${deSrc ?? '多源/借用'}）`); fail++;
+  } else {
+    const f = 'public/sfx/siege_impact_de.aud';
+    if (!existsSync(f)) { console.log(`  🔴 ${f} 不存在`); fail++; }
+    else {
+      const head = readFileSync(f).subarray(0, 4).toString('latin1');
+      if (head !== 'OggS') { console.log(`  🔴 ${f} 不是 ogg（头部 ${head}）`); fail++; }
+      else console.log(`  ✅ siege_impact = DE 原声 ${f}（ogg, ${readFileSync(f).length} 字节）`);
+    }
+  }
+
+  // 撞击：重械（冲车/攻城锤/装甲象）在命中相位出声
+  if (!/m\.siegeW && isHeavyNonBlade && !m\.slashed && m\.ph >= 3[\s\S]{0,160}?audioManager\.play\('siege_impact'\)/.test(SRC)) {
+    console.log('  🔴 撞击声没挂在命中相位（应为 m.siegeW && isHeavyNonBlade && !m.slashed && m.ph >= 3）'); fail++;
+  } else console.log('  ✅ 冲车/攻城锤/装甲象：撞击声在命中相位（与刀光同相 ph>=3，本轮一次）');
+
+  // 发射：远程攻城器械与弹丸同相位
+  if (!/m\.shot = true;[\s\S]{0,400}?if \(m\.siegeW\) audioManager\.play\('siege_launch'\)/.test(SRC)) {
+    console.log('  🔴 发射声没挂在弹丸相位（应紧跟 m.shot = true）'); fail++;
+  } else console.log('  ✅ 投石车/弩炮/火箭车：发射声与弹丸同相位射出');
+
+  // 防回归：不得回到每帧调用
+  if (/m\.atkSt = m\.st;[^;]*?if \(m\.siegeW\)/.test(SRC)) {
+    console.log('  🔴 音效又写回了 m.atkSt = m.st 后面（块外每帧调用）'); fail++;
+  } else console.log('  ✅ 没有每帧调用（走向城墙的路上不会响）');
 
   if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }
   console.log('\n✅ 全部符合');

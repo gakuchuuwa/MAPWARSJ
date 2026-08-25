@@ -847,6 +847,7 @@ const _FIXED: Record<string, string> = {
     'xierwan': '#B45A18', // 希尔万·巴库（火之国·拜火教火橙）
     'midi': '#7A2A54', // 米底·哈马丹（米底服色赭紫）
     'aqimeinide': '#5A2B86', // 阿契美尼德·波斯波利斯（波斯帝王紫）
+    'sashan': '#4A3A8C', // 萨珊·菲鲁扎巴德（萨珊紫）
     'safawei_d': '#B02436', // 萨法维·伊斯法罕（红头军 Qizilbash 朱红帽）
     'ailan': '#2A7268', // 埃兰·苏萨（苏萨釉陶青绿）
     'ansxi': '#8C3A44', // 安息·尼萨（帕提亚深绛）

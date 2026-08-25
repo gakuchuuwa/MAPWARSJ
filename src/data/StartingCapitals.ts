@@ -999,6 +999,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'midi': 'city_hamadan',
     'qiliqiya': 'city_adana',
 'aqimeinide': 'city_bosibolisi',
+'sashan': 'city_feiluzhabade',
     'ailan': 'city_susa',
     'safawei_d': 'city_yisifahan',
     'sumeier': 'city_wuluke',
