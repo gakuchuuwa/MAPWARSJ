@@ -30,7 +30,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     weijing_york: { name: '丹法盾墙', tier: 3 },          // 约克·血斧埃里克：丹法区约维克戍军；避势力「约维克」叠字
-    nuosi: { name: '乌普萨拉团', tier: 3 },          // 乌普萨拉·奥拉夫；避势力「诺斯」叠字
+    nuosi: { name: '维京狂战士', tier: 3 },          // 乌普萨拉·奥拉夫：诺斯狂暴战士（DE 狂战士 Berserk）
     danmai: { name: '丹斧兵', tier: 3 },          // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
     ruidian_si: { name: '斯韦阿卫队', tier: 2 },
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字

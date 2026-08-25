@@ -219,3 +219,59 @@ export function groundVariationFor(baseTile: string): readonly string[] {
 export function groundVariationTable(): Readonly<Record<string, readonly string[]>> {
     return GROUND_VARIATION_BY_BASE;
 }
+
+// ── 素材占地（格）与目标覆盖率 ─────────────────────────────────
+//
+// 🔴 [2026-08-24 主人：「这个有必要这么多草吗？素材的配比现在完全是按 DE 的比例
+//    进行的分配吗？全面检查」]
+//
+//    此前只核对**数量**（石头 DE 6.9 → 我们 9.8），没核对**单体尺寸**。
+//    实测才发现差得离谱（一格 = 64×32 px）：
+//      GRASS_GREEN_PATCH 320×192 = **30 格** ×59 个 → 铺满 85%
+//      UNDERBRUSH_JUNGLE 156×96  = 7.3 格 ×59 个 → 21%（主人看到的丛林满屏就是它）
+//      FLOWER_1          580×200 = **57 格**
+//      GRASS_GREEN       108×60  = 3.2 格
+//
+//    **覆盖面积 = 单体尺寸 × 数量。** 写死数量必然翻车：
+//    换个素材覆盖率就差十倍。改成按**目标覆盖率反推数量**。
+//
+// 数字是 `_meta.json` 的 box_w × box_h ÷ (64×32) 实测的，不是估的。
+
+const ASSET_TILES: Readonly<Record<string, number>> = {
+    // 大件（当满地散布会糊屏）
+    FLOWER_1: 56.6, JUNGLE: 38.3, FLOWER_2: 30.6, GRASS_DRY_PATCH: 30.0,
+    GRASS_GREEN_PATCH: 30.0, FLOWER_3: 28.4, FERNPATCH: 20.5, FLOWERBED: 11.1,
+    // 中件
+    REEDS: 7.6, UNDERBRUSH_JUNGLE: 7.3, UNDERBRUSH_RAINFOREST: 6.7, UNDERBRUSH: 6.4,
+    PLANT_RAINFOREST: 4.7, PLANT_JUNGLE: 4.5, WEED: 4.0,
+    // 小件
+    FLOWER: 3.3, GRASS_DRY: 3.2, GRASS_GREEN: 3.2, BUSH_GREEN: 3.0,
+    SHRUB_GREEN: 2.9, CACTUS: 2.2, WATER_LILY: 1.3, PLANT_DEAD: 1.0, PLANT: 0.9,
+    // 岩石（solid 走自己的数量控制，这里只为验收统计）
+    ROCK_PILLAR: 70.5, ROCK_FORMATION3: 38.2, ROCK_JUNGLE: 14.6, ROCK_FORMATION2: 12.4,
+    ROCK1: 11.3, ROCK2: 7.6, ROCK_FORMATION1: 7.5, ROCK_LIMESTONE: 5.4, ROCK3: 4.9,
+};
+
+/** 这个素材占几格。没登记的按 3 格算（小件的量级）。 */
+export function assetTiles(asset: string): number {
+    return ASSET_TILES[asset] ?? 3;
+}
+
+/**
+ * 目标覆盖率（占屏内可见格）。
+ * 🔴 主人两次说草太多（先是 90~120 个，再是丛林满屏），所以取得保守。
+ *    满地散布 6% + 成簇点缀 3% ≈ 地面能看出植被但不糊屏。
+ */
+export const SCATTER_COVER = 0.06;
+export const FLAT_COVER = 0.03;
+
+/** 按目标覆盖率反推该撒几个。素材越大放得越少。 */
+export function countForCover(asset: string, usableTiles: number, cover: number): number {
+    const per = assetTiles(asset);
+    return Math.max(2, Math.round(usableTiles * cover / per));
+}
+
+/** 验收用 */
+export function assetTilesTable(): Readonly<Record<string, number>> {
+    return ASSET_TILES;
+}

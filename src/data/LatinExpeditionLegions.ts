@@ -43,7 +43,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前433西波塔海战；避势力「科基拉」叠字
     // 拉文纳·狄奥多里克：493 年攻陷拉文纳、杀奥多亚塞，建东哥特王国，亲卫为其征服主力；
     // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
-    donggete: { name: '狄奥多军团', tier: 3 },
+    donggete: { name: '哥特近卫军', tier: 3 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
     balunxiya: { name: '图里亚勇士', tier: 3 },          // 巴伦西亚·熙德：图里亚河畔都城骑兵（避将名熙德）
 
@@ -55,7 +55,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4
     tuosikana: { name: '黑带军团', tier: 4 },          // 佛罗伦萨·洛伦佐侧：乔凡尼·德·美第奇 Bande Nere
     xixiliwangguo: { name: '西西里重骑', tier: 3 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '克洛维军团', tier: 3 },          // 里昂·克洛维：墨洛温王庭军；避空泛「墨洛温卫」
+    gaolu_luoma: { name: '法兰克斧兵', tier: 3 },
     // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑士/骑从为收复失地核心；
     // 文化知名；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）
     xigete: { name: '卡斯蒂骑士', tier: 3 },
@@ -84,5 +84,5 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     mengtainiya: { name: '巴萨拉布团', tier: 2 },          // 布加勒斯特·巴萨拉布；避势力「蒙泰尼亚」叠字,
     baizanting: { name: '铁甲圣骑', tier: 1 },
     mozeer: { name: '特里尔步兵', tier: 3 },
-    seleisi: { name: '西美昂军团', tier: 3 },
+    seleisi: { name: '保加利亚骑', tier: 3 },
 };

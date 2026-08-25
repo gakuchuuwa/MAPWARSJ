@@ -26,7 +26,8 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
-import { filterDecor, groundDecorFor, groundVariationFor, type DecorFitQuery } from './DecorFit';
+import { filterDecor, groundDecorFor, groundVariationFor, countForCover,
+         SCATTER_COVER, FLAT_COVER, type DecorFitQuery } from './DecorFit';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -796,6 +797,16 @@ function addMicroRelief(
     const rot = (x: number, y: number, a: number): [number, number] =>
         [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
 
+    // 🔴 [2026-08-24 主人：「上面一条黑，下面一条白，怎么还有啊」]
+    //    根因不是贴图、不是 blends、不是光照常量，是**低频波在一屏上只有 2~3 个波长**：
+    //    投影后就是大尺度的上下起伏，方向光把它渲染成横贯全屏的明暗带。
+    //    实测：51% 的图「屏幕上/下带与中段的平均高程差 >0.35」，
+    //    典型 `ds4 配 LUSH_BAMBOO` 顶部亮度 102、中段 125、底部 145（横贯全宽）。
+    //
+    //    修法：按**屏幕 y 方向**（等距投影下 ∝ gx+gy）做去趋势——
+    //    减掉沿屏幕纵向的大尺度分量，只保留局部起伏。
+    //    这样「看得出起伏」还在（主人为此改过三次，不能退回平地），
+    //    但整片的上下明暗差没了。
     const field: number[][] = [];
     let lo = Infinity, hi = -Infinity;
     for (let y = 0; y < gh; y++) {
@@ -810,10 +821,44 @@ function addMicroRelief(
                 + 0.75 * Math.sin(x3 * w3 + p5) * Math.cos(y3 * w3 * 0.7 + p6)
                 + 0.30 * Math.sin(x4 * w4 + p7) * Math.cos(y4 * w4 * 1.31 + p8);
             row.push(n);
-            if (n < lo) lo = n;
-            if (n > hi) hi = n;
         }
         field.push(row);
+    }
+
+    // ── 按屏幕纵向去趋势（见上面那段注释）──
+    // 等距投影：屏幕 y ∝ (gx + gy)。按 (gx+gy) 分组求均值，逐格减掉，
+    // 只保留局部起伏。不这么做，一屏就是一道大坡，方向光把它渲染成横贯的明暗带。
+    {
+        const diagSum = new Map<number, number>();
+        const diagCnt = new Map<number, number>();
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const d = x + y;
+                diagSum.set(d, (diagSum.get(d) ?? 0) + field[y][x]);
+                diagCnt.set(d, (diagCnt.get(d) ?? 0) + 1);
+            }
+        }
+        // 对角线均值再做一次窗口平滑，避免减出高频锯齿
+        const raw = new Map<number, number>();
+        for (const [d, sum] of diagSum) raw.set(d, sum / (diagCnt.get(d) ?? 1));
+        const trend = new Map<number, number>();
+        const R = 6;
+        for (const d of raw.keys()) {
+            let s = 0, n2 = 0;
+            for (let k = -R; k <= R; k++) {
+                const v = raw.get(d + k);
+                if (v !== undefined) { s += v; n2++; }
+            }
+            trend.set(d, n2 ? s / n2 : 0);
+        }
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                field[y][x] -= trend.get(x + y) ?? 0;
+                const v = field[y][x];
+                if (v < lo) lo = v;
+                if (v > hi) hi = v;
+            }
+        }
     }
 
     // 量化阈值。
@@ -1469,14 +1514,28 @@ function buildGroundVariation(
         const flatOnly = isSiege && layer === 0;   // 攻城战的主色层只铺平地（城郊是碾平的）
 
         // 按 ①height_limits + ②spacing + ④flat_only 选种子
+        //
+        // 🔴 [2026-08-24 主人：「上面一条黑，下面一条白，怎么还有啊」]
+        //    height_limits 原来是**硬约束**（种子只许落在该贴图的高度带里）。
+        //    后果：高程是 20~50 格的低频波，一屏上高度带就是**横向分层**，
+        //    于是每张贴图排成一条横带——实测 `ds4 配 LUSH_BAMBOO`：
+        //      行 0~5 亮度 102~107（顶部暗带，占图高 20%）
+        //      行 25   亮度 145，横贯全宽（底部亮带）
+        //      中段    121~130
+        //    DE 的图是 144×144、玩家只看一角，硬绑看不出来；我们一屏定格就露馅。
+        //
+        //    改成**软约束**：高度只影响落点的**接受概率**，不排他。
+        //    地面变化仍跟着起伏走（本带内更容易长），但不会切成硬边横条。
         let sx = -1, sy = -1;
-        const [lo, hi] = hasRelief && bandOfTile.has(t)
-            ? bandRange(bandOfTile.get(t)!)
+        const band = bandOfTile.get(t);
+        const [lo, hi] = hasRelief && band !== undefined
+            ? bandRange(band)
             : [-Infinity, Infinity];
         for (let a = 0; a < 40; a++) {
             const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
             const h = heightAt(cx, cy);
-            if (h < lo || h >= hi) continue;
+            // 本带内必收；带外按 45% 概率也收 —— 边界因此被打散成犬牙状，不是一条直线
+            if ((h < lo || h >= hi) && !rng.chance(0.45)) continue;
             if (flatOnly && !isFlat(cx, cy)) continue;
             if (!farEnoughFrom(cx, cy, t, spacing)) continue;
             sx = cx; sy = cy; break;
@@ -1969,12 +2028,15 @@ function buildVegetation(
     //      见 docs/02-design/climate-regions.md §5.6.9 的六槽表。）
     //    同理 `#const AESTHETIC_FLAT` 也是一个常量：全场同一种，只是分成几簇。
     const flatAsset = rng.pick(themeDecor.flat);
-    const flatClusters = 6 + rng.int(0, 4);
+    // 同样按覆盖率反推：FLOWER_1 一个占 57 格，BUSH_GREEN 只占 3 格，
+    // 写死簇数会让前者铺满、后者看不见。
+    const flatTotal = countForCover(flatAsset, availableCells.length, FLAT_COVER);
+    const flatClusters = Math.max(2, Math.min(10, Math.round(flatTotal / 3)));
     for (let c = 0; c < flatClusters; c++) {
         const anchor = sampleLandPos(VW, VH, rng, isWater, flatAsset, objects, undefined, decorLimits);
         if (!anchor) continue;
         const asset = flatAsset;
-        const perCluster = 2 + rng.int(0, 3);
+        const perCluster = Math.max(1, Math.round(flatTotal / flatClusters));
         for (let k = 0; k < perCluster; k++) {
             // group_placement_radius 3 格 ≈ 3 个 tile 宽；等距要把 y 压扁一半
             const ang = rng.next() * Math.PI * 2;
@@ -2012,13 +2074,17 @@ function buildVegetation(
         //    主人一眼看出「草也是（太多）」。DE 的 AESTHETIC_SCATTER 虽写 1024，
         //    但带 `temp_min_distance_group_placement 42`——间距约束才是真正的密度上限，
         //    number_of_objects 只是「想放这么多」。别拿 1024 当依据。
-        const groundDecorCount = 40 + Math.round(
-            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 400);
+        // 🔴 [2026-08-24 主人：「这个有必要这么多草吗」] 数量按**目标覆盖率**反推，
+        //    不再写死。写死数量的后果：换个素材覆盖率差十倍——
+        //    GRASS_GREEN_PATCH 一个就占 30 格，撒 59 个 = 铺满 85%；
+        //    UNDERBRUSH_JUNGLE 7.3 格 × 59 = 21%（丛林图满屏就是它）。
+        //    见 DecorFit.ASSET_TILES 的实测尺寸表。
         // 🔴 [2026-08-24 照 DE 的 RMS 改] DE 的 `#const AESTHETIC_SCATTER` 是**一个**常量，
         //    整个地形主题从头到尾只撒**同一种**散布素材，不是每株换一种。
         //    我们原来逐株 rng.pick，出来是杂乱的混合噪点。
         //    这和主人定的「一个底图一种树」是同一条逻辑——底图定基调，图上不混种。
         const scatterAsset = rng.pick(groundDecorAssets);
+        const groundDecorCount = countForCover(scatterAsset, availableCells.length, SCATTER_COVER);
         for (let i = 0; i < groundDecorCount; i++) {
             const asset = scatterAsset;
             // 满地草不避林（林下本来就有草），但要避悬崖和图边
