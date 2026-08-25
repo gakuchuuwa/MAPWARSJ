@@ -5044,6 +5044,20 @@ export class Scene13WarLayer {
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
             // 目标每 0.2s 重找（错开相位）；目标死/跑远保持不换
+            // 🔴 [2026-08-25 已实测否决「去掉这 0.2s 空窗」] 别再动它，两次改法都试过了：
+            //    ① 丢目标当帧立即重找（NOGAP=1）：真·索敌失败 3.1%→2.9%，几乎无收益；
+            //       且连带多消耗一次 aimT，SEED 23 用时 275s→**900s 打满**。
+            //    ② 只补一次 search、不碰 aim/next 节奏（NOGAP=2，隔离变量）：3.1%→3.0%，
+            //       仍无收益，SEED 11 打满 900s。
+            //    根因：那 3.1%「视野内有敌人却无目标」的兵，实测 **100% 都卡在这个节流窗内**
+            //    （m.next>0，下次到点就锁上），没有一个是真找不到目标 —— search 的
+            //    `free ?? best` 兜底保证了视野内有敌人就一定有目标。而且窗内的兵**照常朝
+            //    aimAt 落点走**，不是站着发呆（那是已删的 claims 闸造成的，见下面 keep）。
+            //    → 这 3.1% 就是 0.2s 节流的占空比本身，不是缺陷。
+            //    ⚠️ DE 本体**没有**「索敌间隔/目标重获延迟」这种字段（已查 empires2_x2_p1.dat：
+            //      只有 bird.search_radius 索敌半径、type_50.frame_delay 出手帧延迟、line_of_sight），
+            //      所以别拿「DE 也有反应延迟」当理由——那是编的。留着的理由只有一条：实测去掉没收益还有害。
+            //    复现：PROBE=1 [NOGAP=1|2] SEED=<n> node scratch/war_sim.mjs
             m.next -= dt;
             // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方锁定的正面 linked 墙/门：打墙不封顶——
             //    DE 攻方人挤人攻墙，墙是长条，separate 软推挤会沿墙铺开不会挤一个点；
@@ -5054,8 +5068,21 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-23 主人定·重设计] 攻城武器凿墙：锁定的墙 hp 归零（视觉破损到顶 D75）也继续凿到
             //    40 秒墙塌（obstructionDisabled → siegeWallKeep 失效）才丢目标——防攻城锤打空一段后
             //    转追墙内守兵、撞墙（墙 40 秒前仍阻挡）来回蹭。
+            // 🔴 [2026-08-25 修·「看得见敌人却站着不打」] keep 里**绝不能**再加
+            //    `m.foe.claims < SPREAD_CAP`（原来有，已删）。两条理由：
+            //    ① 与 search 的兜底自相矛盾：search 是 `free ?? best` —— 找不到空闲目标时
+            //       **照旧返回最近的那个**。keep 说「你的目标满员了，走开」，search 下一句
+            //       又把同一个人还给它 → 挤掉→重找→再挤掉，无限循环。
+            //    ② 挤掉的那一帧若 m.next 还没归零（刚 search 过），走的是下面
+            //       `else if (!keep) m.foe = null` —— 目标直接清空，**最多原地发呆 0.2 秒**。
+            //    实测（war_sim，500 对镜，SEED 7/11/23 方向一致，口径已对齐游戏层的实时 claims）：
+            //         带这道闸 → 真·索敌失败（视野内有敌人却无目标）8.4~12.2%，打/走切换 0.83~1.24 次/人·秒
+            //         去掉      → 3.1~3.2%，0.24~0.25 次/人·秒；换目标次数几乎不变（0.26→0.24）
+            //       —— 说明代价全在「丢目标后的空窗」，不在「换目标」。铺开 317→388px，用时持平。
+            //    SPREAD_CAP 的设计本意是**分配新目标时**分流（search 里的 free 分支：
+            //    「让第 5 个人去找次近的空闲目标」），不是把已经在交战的人赶走。DE 同理：
+            //    单位锁定目标后打到目标死，不会因为「这人已经被 4 个人打了」自己走开。
             const keep = m.foe && (m.foe.hp > 0 || (siegeWallKeep && this.defenderHolding))
-                && (siegeWallKeep || m.foe.claims < SPREAD_CAP)
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
             if (keep && m.foe) m.foe.claims++;
             if (!keep && m.next <= 0) {
