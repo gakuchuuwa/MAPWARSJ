@@ -6761,6 +6761,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/GERMANIC/watermarked_img_13116941455104916639.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/GERMANIC/yinggelan_hengliwushi.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/BERBER/watermarked_img_5744597125494328050.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/BERBER/talike_talike.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

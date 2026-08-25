@@ -76,7 +76,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
     telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/BERBER/jileinaijia_majiasi.png' },
-    talike: { generalId: 'talike_talike', generalName: '塔里克', portrait: '' },
+    talike: { generalId: 'talike_talike', generalName: '塔里克', portrait: '/assets/BERBER/talike_talike.png' },
 
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },

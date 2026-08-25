@@ -1279,11 +1279,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     gaolu_luoma: {
         legionName: "法兰克军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'champion', count: 3 },
-            { type: 'elite_throwing_axeman', count: 4 },
             { type: 'paladin', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
     mozeer: {
@@ -1313,24 +1313,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'skirmisher', count: 2 },
         ],
     },
-    // 阿契美尼德·波斯帝国军团（大流士 · 三角阵 2+3+4：萨珊铁骑 2 + 不死战士 3 + 波斯弓手主力 4）
+    // 阿契美尼德·波斯帝国军团（大流士 · 鱼鳞阵 3+4+2：精锐战象 3 + 萨瓦尔 4 + 骑射手 2）
     aqimeinide: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },           // Row 0 尖刀突击 = 萨珊萨瓦尔铁骑 2骑
-            { type: 'immortal', count: 3 },        // Row 1 冲击中坚 = 不死战士 3人
-            { type: 'immortal_ranged', count: 4 }, // Row 2 底边主力齐射 = 波斯长生军弓手 4人
+            { type: 'elite_war_elephant', count: 3 },   // Row 0 前卫 = 波斯战象精锐 3头（象兵碾压前阵）
+            { type: 'savar', count: 4 },                // Row 1 中军主力 = 萨瓦尔重骑 4骑（萨珊铁骑重锤冲击）
+            { type: 'cav_archer', count: 2 },           // Row 2 尾收 = 骑射手 2骑（弓骑游射掩护）
         ],
     },
     // 波斯帝国军团（沙普尔大帝 · 尼沙布尔）
     aba: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
@@ -1355,101 +1355,101 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 安息波斯帝国（阿尔沙克 · 尼萨）
     ansxi: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 苏伦家族（苏伦 · 法拉）
     delan: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 卡伦家族（苏赫拉 · 图斯）
     kalan: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 米底王国（戴奥凯斯 · 哈马丹）
     midi: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 萨法尔王朝（雅库布 · 博斯特）
     xisi: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 埃兰古波斯（舒特鲁克 · 苏萨）
     ailan: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 萨尔巴达尔（拉扎克 · 白哈格）
     saerbadaer: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 库米斯（阿尔普 · 达姆甘）
     kumisi: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 哈利（戈达尔兹 · 萨拉赫斯）
     hali: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 巴哈尔兹（盖瓦姆 · 泰巴德）
     baha: {
         legionName: "波斯军团",
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 粟特王国·瓦拉赫沙（德瓦什提奇 · 鹤翼阵 2+4+3：持盾步兵 2 + 粟特甲胄铁骑主力 4 + 古典重装骑射 3）
@@ -1462,34 +1462,34 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'antiquity_heavy_cavalry_archer', count: 3 }, // Row 2 中军后排支援 = 古典重装骑射手 3骑（重装弓骑兵漫天箭雨压制）
         ],
     },
-    // 波兰王国·华沙（雅盖沃 · 鹤翼阵 2+4+3：战锤破甲勇士 2 + 精锐翼骑兵主力 4 + 劲弩手 3）
+    // 波兰王国·华沙（雅盖沃 · 波兰军团 · 雁行阵 4+3+2：精锐奥布奇战锤兵 4 + 波兰翼骑兵 3 + 骑射手 2）
     bolan: {
         legionName: "波兰军团",
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'obuch', count: 2 },         // Row 0 步兵前锋 = 战锤破甲勇士 2人
-            { type: 'winged_hussar', count: 4 }, // Row 1 骑兵主力两翼合围 = 精锐翼骑兵 4人
-            { type: 'arbalest', count: 3 },      // Row 2 中军后排支援 = 劲弩手 3人
+            { type: 'elite_obuch', count: 4 },    // Row 0 前排主力 = 精锐奥布奇战锤兵 4人（步兵破甲重锤前锋）
+            { type: 'winged_hussar', count: 3 },  // Row 1 中排冲锋 = 波兰翼骑兵 3骑（翼骑兵冲击中坚）
+            { type: 'cav_archer', count: 2 },     // Row 2 后排游射 = 骑射手 2骑（弓骑火力掩护）
         ],
     },
     // 皮雅斯特王朝·克拉科夫（卡齐米日大帝）
     piyasite: {
         legionName: "波兰军团",
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'obuch', count: 2 },
-            { type: 'winged_hussar', count: 4 },
-            { type: 'arbalest', count: 3 },
+            { type: 'elite_obuch', count: 4 },
+            { type: 'winged_hussar', count: 3 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 大波兰·波兹南（普热梅斯二世）
     dabolan: {
         legionName: "波兰军团",
-        formationMode: 'crane_wing',
+        formationMode: 'echelon',
         slots: [
-            { type: 'obuch', count: 2 },
-            { type: 'winged_hussar', count: 4 },
-            { type: 'arbalest', count: 3 },
+            { type: 'elite_obuch', count: 4 },
+            { type: 'winged_hussar', count: 3 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // 立陶宛大公国·维尔纽斯 / 涅曼·格罗德诺（格迪米纳斯 / 维托夫特 列提斯破甲铁骑与劲弩精锐军团 · 鱼鳞阵 3+4+2：列提斯前卫 3 + 精锐列提斯主力 4 + 劲弩手 2）
@@ -1600,60 +1600,60 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'hand_cannoneer', count: 2 },    // Row 2 要塞火力 = 火枪兵 2人（城垒火绳枪齐射火力压制）
         ],
     },
-    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝 冠军剑士与紫杉长弓精锐军团（偃月阵 3+2+4：冠军剑士前卫 3 + 戟兵中坚 2 + 精锐长弓兵主力 4）
+    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝（不列颠军团 · 锥形阵 2+3+4：冠军剑士 2 + 长弓兵 3 + 精锐长弓兵 4）
     aquidan: {
-        legionName: "英格兰军团",
-        formationMode: 'crescent',
+        legionName: "不列颠军团",
+        formationMode: 'triangle',
         slots: [
-            { type: 'champion', count: 3 },          // Row 0 前卫重剑 = 冠军剑士 3人
-            { type: 'halberdier', count: 2 },        // Row 1 中坚长戟 = 戟兵 2人
-            { type: 'longbowman_elite', count: 4 },  // Row 2 底边主力齐射 = 不列颠长弓兵精锐 4人
+            { type: 'champion', count: 2 },          // Row 0 尖刀 = 冠军剑士 2人（重剑前锋）
+            { type: 'longbowman', count: 3 },        // Row 1 中坚 = 长弓兵 3人（紫杉长弓齐射）
+            { type: 'longbowman_elite', count: 4 },  // Row 2 底边主力 = 精锐长弓兵 4人（长弓火力核心）
         ],
     },
     anggelu: {
-        legionName: "英格兰军团",
-        formationMode: 'crescent',
+        legionName: "不列颠军团",
+        formationMode: 'triangle',
         slots: [
-            { type: 'champion', count: 3 },
-            { type: 'halberdier', count: 2 },
+            { type: 'champion', count: 2 },
+            { type: 'longbowman', count: 3 },
             { type: 'longbowman_elite', count: 4 },
         ],
     },
-    // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯 冠军剑士与掷斧圣骑军团（鱼鳞阵 3+4+2：冠军剑士前卫 3 + 法兰克掷斧兵精锐主力 4 + 游侠圣骑后排 2）
+    // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯（法兰克军团 · 偃月阵 3+2+4：冠军剑士 3 + 游侠 2 + 精锐掷斧兵 4）
     jialuolin: {
         legionName: "法兰克军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'champion', count: 3 },               // Row 0 前卫重剑 = 冠军剑士 3人
-            { type: 'elite_throwing_axeman', count: 4 },  // Row 1 狂暴突贯主力 = 法兰克掷斧兵精锐 4人
-            { type: 'paladin', count: 2 },                // Row 2 中军后排圣骑驰援 = 游侠圣骑士 2人
+            { type: 'paladin', count: 2 },                // Row 1 中排驰援 = 游侠圣骑士 2人
+            { type: 'elite_throwing_axeman', count: 4 },  // Row 2 底边主力 = 法兰克掷斧兵精锐 4人
         ],
     },
     falanji: {
         legionName: "法兰克军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'champion', count: 3 },
-            { type: 'elite_throwing_axeman', count: 4 },
             { type: 'paladin', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
     gaolu: {
         legionName: "法兰克军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'champion', count: 3 },
-            { type: 'elite_throwing_axeman', count: 4 },
             { type: 'paladin', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
     aermolika: {
         legionName: "法兰克军团",
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         slots: [
             { type: 'champion', count: 3 },
-            { type: 'elite_throwing_axeman', count: 4 },
             { type: 'paladin', count: 2 },
+            { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
     // 西班牙·熙德 / 费尔南多三世 / 阿方索十一世等 西班牙大方阵与希内特中世纪圣骑战阵（鱼鳞阵 4+3+2：重装长枪兵 4 + 精锐标枪骑兵 3 + 十字军圣骑士 2）
@@ -1767,60 +1767,60 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'skirmisher', count: 2 },
         ],
     },
-    // 高丽王朝·王建 / 姜邯赞 / 崔茂宣 / 尹瓘 / 金就砺 高丽战车车垒军团（雁行阵 4+3+2：火焰弓箭手 4 + 精锐高丽战车 3 + 刀剑手 2）
+    // 高丽王朝·王建 / 姜邯赞 / 崔茂宣 / 尹瓘 / 金就砺（高丽军团 · 锥形阵 2+3+4：火矛兵 2 + 精锐高丽战车 3 + 火焰弓手 4）
     goryeo: {
         legionName: "高丽军团",
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4（高丽以弓术著称）
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3（主力 3 档，战车不占 4 档）
-            { type: 'jian_swordsman', count: 2 },            // Row 2 后排接应 = 刀剑手 2
+            { type: 'fire_lancer', count: 2 },               // Row 0 尖刀 = 火矛兵 2人（火药火矛突击）
+            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3辆（战车不占 4 档）
+            { type: 'fire_archer', count: 4 },               // Row 2 底边主力 = 火焰弓手 4人（高丽弓术火箭齐射）
         ],
     },
     chungju_d: {
         legionName: "高丽军团",
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3
-            { type: 'jian_swordsman', count: 2 },            // Row 2 后排接应 = 刀剑手 2
+            { type: 'fire_lancer', count: 2 },
+            { type: 'elite_war_wagon', count: 3 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
     sabeol: {
         legionName: "高丽军团",
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3
-            { type: 'jian_swordsman', count: 2 },            // Row 2 后排接应 = 刀剑手 2
+            { type: 'fire_lancer', count: 2 },
+            { type: 'elite_war_wagon', count: 3 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
     hai2: {
         legionName: "高丽军团",
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3
-            { type: 'jian_swordsman', count: 2 },            // Row 2 后排接应 = 刀剑手 2
+            { type: 'fire_lancer', count: 2 },
+            { type: 'elite_war_wagon', count: 3 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
     woju: {
         legionName: "高丽军团",
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'fire_archer', count: 4 },               // Row 0 前排齐射 = 火焰弓箭手 4
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3
-            { type: 'jian_swordsman', count: 2 },            // Row 2 后排接应 = 刀剑手 2
+            { type: 'fire_lancer', count: 2 },
+            { type: 'elite_war_wagon', count: 3 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
-    // 波希米亚与捷克·扬杰斯卡 胡斯战车军团（雁行 4+3+2：锤炼兵 4 + 精锐胡斯战车 3 + 火枪兵 2）
+    // 波希米亚与捷克·扬杰斯卡 波西米亚军团（雁行 4+3+2：冠军剑士 4 + 胡斯派战车 3 + 榴弹炮 2）
     boximiya: {
-        legionName: "胡斯战车军团",
+        legionName: "波西米亚军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'konnik_foot', count: 4 },         // Row 0 前卫筑墙 = 锤炼兵 4（重甲前卫抗线破阵）
-            { type: 'elite_hussite_wagon', count: 3 }, // Row 1 核心车阵 = 精锐胡斯战车 3（主力 3 档，战车不占 4 档）
-            { type: 'hand_cannoneer', count: 2 },      // Row 2 后排齐射 = 手炮手/火枪兵 2
+            { type: 'champion', count: 4 },         // Row 0 前卫主力 = 冠军剑士 4人（重剑步兵主力抗线破阵）
+            { type: 'hussite_wagon', count: 3 },    // Row 1 核心车阵 = 胡斯派战车 3辆（车堡环列，战车不占 4 档）
+            { type: 'houfnice', count: 2 },         // Row 2 后排炮火 = 榴弹炮 2门（超远轰击压阵）
         ],
     },
     // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 全甲佣兵与大盾热那亚重弩军团（鱼鳞阵 3+4+2：意大利佣兵 3 + 精锐热那亚弩手主力 4 + 热那亚弩手 2）
@@ -2012,14 +2012,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },           // Row 2 尾收远程压制 = 劲弩手 2人（纯步兵·无马，城市行会强弩持续压制）
         ],
     },
-    // 勃艮第公国·第戎（大胆查理 · 敕令军团马上轻骑爆发冲锋大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 马上轻骑精锐 3 + 劲弩手 2）
+    // 勃艮第公国·第戎（大胆查理 · 勃艮第军团 · 锥形阵 2+3+4：火枪手 2 + 弗拉芒民兵 3 + 精锐马上轻装兵 4）
     bogendi: {
-        legionName: "敕令军团",
-        formationMode: 'fish_scale',
+        legionName: "勃艮第军团",
+        formationMode: 'triangle',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，前排长矛筑起坚固拒马线）
-            { type: 'elite_coustillier', count: 3 },    // Row 1 中军铁骑冲击 = 马上轻骑精锐 3骑（勃艮第敕令军团王牌，骑枪爆发充能冲锋）
-            { type: 'arbalest', count: 2 },             // Row 2 尾收城市劲弩 = 劲弩手 2人（纯步兵·无马，后排高穿透强弩射击）
+            { type: 'hand_cannoneer', count: 2 },      // Row 0 尖刀 = 火枪手 2人（前排火枪齐射）
+            { type: 'flemish_pikeman', count: 3 },     // Row 1 中坚 = 弗拉芒民兵 3人（佛兰德长矛民兵抗线）
+            { type: 'elite_coustillier', count: 4 },   // Row 2 底边主力 = 精锐马上轻装兵 4骑（敕令军团骑枪爆发冲锋）
         ],
     },
     // 萨拉森、后倭马亚与安达卢西亚·萨拉赫丁 / 穆阿维叶 / 阿卜杜拉 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
@@ -2090,14 +2090,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'composite_bowman', count: 2 },    // Row 2 尾收神弓 = 复合弓手 2人（纯步兵·无马，黑海斯基泰-希腊复合重弓射击掩护）
         ],
     },
-    // 保加利亚帝国·特尔诺沃（阿森一世 · 具装近卫铁骑与重盾勇士大阵 · 鹤翼阵 2+4+3：下马保加利亚勇士 2 + 保加利亚骑兵精锐 4 + 复合弓手 3）
+    // 保加利亚帝国·特尔诺沃（阿森一世 · 保加利亚军团 · 鱼鳞阵 3+4+2：保加利亚骑兵 3 + 精锐保加利亚骑兵 4 + 骑射手 2）
     baojialiya: {
-        legionName: "阿森王朝军团",
-        formationMode: 'crane_wing',
+        legionName: "保加利亚军团",
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'konnik_foot', count: 2 },          // Row 0 前锋坚壁 = 下马保加利亚勇士 2人（纯步兵·无马，重盾前卫引敌接战）
-            { type: 'elite_konnik', count: 4 },         // Row 1 中军主力 = 保加利亚骑兵精锐 4骑（王牌具装近卫重骑，重锤破甲核心冲击）
-            { type: 'composite_bowman', count: 3 },     // Row 2 尾收远射 = 复合弓手 3人（纯步兵·无马，巴尔干角木重弓精准两翼掩护）
+            { type: 'konnik', count: 3 },               // Row 0 前卫 = 保加利亚骑兵 3骑（具装骑兵前锋）
+            { type: 'elite_konnik', count: 4 },         // Row 1 中军主力 = 精锐保加利亚骑兵 4骑（王牌具装近卫重骑破甲冲击）
+            { type: 'cav_archer', count: 2 },           // Row 2 尾收 = 骑射手 2骑（弓骑两翼火力掩护）
         ],
     },
     // 保加利亚帝国·克鲁姆大汗 下马保加利亚勇士死斗军团（鱼鳞阵 3+4+2：下马保加利亚骑兵前卫 3 + 下马保加利亚骑兵精锐主力 4 + 复合弓手 2）
@@ -2775,9 +2775,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_fire_archer", count: 4 },
         ],
     },
-    // 阿兹特克·特诺奇提特兰（库奥特莫克 · 豹勇士军团 · 偃月阵 3+2+4：精锐鹰勇士 3 + 豹勇士 2 + 精锐豹勇士 4）
+    // 阿兹特克·特诺奇提特兰（库奥特莫克 · 阿兹特克军团 · 偃月阵 3+2+4：精锐鹰勇士 3 + 豹勇士 2 + 精锐豹勇士 4）
     aztec: {
-        legionName: "豹勇士军团",
+        legionName: "阿兹特克军团",
         formationMode: 'crescent',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },   // Row 0 前排抗线 = 精锐鹰勇士 3人（反骑兵反僧侣快速近战）
@@ -2785,14 +2785,44 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_jaguar_warrior', count: 4 },  // Row 2 后排主力 = 精锐豹勇士 4人（反步兵后发制人）
         ],
     },
-    // 埃塞俄比亚·阿克苏姆（埃扎纳 · 弯刀勇士军团 · 雁行阵 4+3+2：弯刀勇士精锐 4 + 重装骆驼兵 3 + 步弓手 2）
+    // 埃塞俄比亚·阿克苏姆（埃扎纳 · 埃塞俄比亚军团 · 雁行阵 4+3+2：弯刀勇士精锐 4 + 重装骆驼兵 3 + 步弓手 2）
     ethiopia: {
-        legionName: "弯刀勇士军团",
+        legionName: "埃塞俄比亚军团",
         formationMode: 'echelon',
         slots: [
             { type: 'elite_shotel_warrior', count: 4 },   // Row 0 前排主力 = 弯刀勇士精锐 4人（反步兵半月弯刀破阵）
             { type: 'camel_heavy', count: 3 },            // Row 1 中排冲锋 = 重装骆驼兵 3骑（反骑兵重装突击）
             { type: 'archer', count: 2 },                 // Row 2 后排远射 = 步弓手 2人（远程掩护）
+        ],
+    },
+    // 塔里克·丹吉尔（塔里克 · 柏柏尔军团 · 锥形阵 2+3+4：重装骆驼兵 2 + 标枪骑兵精锐 3 + 骆驼射手精锐 4）
+    talike: {
+        legionName: "柏柏尔军团",
+        formationMode: 'triangle',
+        slots: [
+            { type: 'camel_heavy', count: 2 },        // Row 0 尖刀先锋 = 重装骆驼兵 2骑（反骑兵破阵尖刀）
+            { type: 'elite_genitour', count: 3 },     // Row 1 冲击中坚 = 标枪骑兵精锐 3骑（远程标枪压制）
+            { type: 'elite_camel_archer', count: 4 }, // Row 2 底边主力 = 骆驼射手精锐 4骑（柏柏尔王牌骆驼弓骑齐射）
+        ],
+    },
+    // 朱罗王朝·坦贾武尔（拉金德拉 · 达罗毗荼军团 · 偃月阵 3+2+4：攻城战象 3 + 精锐骑象弓兵 2 + 精锐乌鲁米剑士 4）
+    zhuluo: {
+        legionName: "达罗毗荼军团",
+        formationMode: 'crescent',
+        slots: [
+            { type: 'ballista_elephant', count: 3 },      // Row 0 前卫巨兽 = 攻城战象 3头（弩炮战象破阵）
+            { type: 'elite_elephant_archer', count: 2 },  // Row 1 中排 = 精锐骑象弓兵 2头（象背弓骑游射）
+            { type: 'elite_urumi_swordsman', count: 4 },  // Row 2 底边主力 = 精锐乌鲁米剑士 4人（软剑主力旋斩）
+        ],
+    },
+    // 鞑靼部·河套（巴图蒙克 · 鞑靼军团 · 衡轭阵 4+2+3：精锐怯薛骑兵 4 + 草原枪兵 2 + 重装骑射手 3）
+    dada_ming: {
+        legionName: "鞑靼军团",
+        formationMode: 'balance_yoke',
+        slots: [
+            { type: 'elite_keshik', count: 4 },        // Row 0 前线主力 = 精锐怯薛骑兵 4骑（鞑靼怯薛军精锐主力）
+            { type: 'steppe_lancer', count: 2 },       // Row 1 中排 = 草原枪兵 2骑（草原枪骑兵突击）
+            { type: 'cav_archer_heavy', count: 3 },    // Row 2 后排 = 重装骑射手 3骑（重装弓骑火力）
         ],
     },
 };
