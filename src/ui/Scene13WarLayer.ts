@@ -56,6 +56,24 @@ const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 
  */
 const DECROMA_CACHE = new Map<string, string>();
 
+/**
+ * 🔴 [2026-08-26 主人「战略进入战斗的时候会卡一下」] 抠绿后**已解码的 Image 对象**缓存。
+ *
+ *    DECROMA_CACHE 只存 data URL（字符串），所以每场战斗仍要：
+ *      ① `new Image(); src = 源 png` 走一次 HTTP + 解码
+ *      ② 命中 DECROMA_CACHE 拿到 dataUrl 后，`new Image(); src = dataUrl` **再解码一次**
+ *    一场 18 个兵种 × 8 向 × 6 组 = 几百张，两次解码全在主线程 —— 而 `pending > 0` 时
+ *    tick() 整个 return（不推进不渲染），画面就是**冻住**。探针实测 assetsReady
+ *    中位 **7.3s**、p90 **20s**，还有 34 次 30s 超时强判。
+ *
+ *    存 Image 对象后，第二次遇到同一张图：HTTP、抠绿、两次解码**全跳过**，
+ *    直接进 SpriteTinter（它自己也有 static 缓存，key 含势力色）。
+ *    上限 CLEAN_CACHE_MAX 条，超了按插入序淘汰最旧的（Map 天然有序）。
+ */
+const CLEAN_CACHE = new Map<string, HTMLImageElement>();
+/** 缓存上限（张）。一张解码位图约 w×h×4 字节，DE 单位 strip 普遍 200×80 → 约 64KB/张。 */
+const CLEAN_CACHE_MAX = 1200;
+
 // ── 兵种属性 ──
 //   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
 //   数值来自本机 empires2_x2_p1.dat（genieutils 实测抽取，非精锐基础档）。
@@ -926,8 +944,20 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
     ],
 };
 
-/** 单兵绘制尺寸（px，可调；2026-08-11 主人「单兵尺寸放大些」30 → 50） */
-const UNIT_PX = 50;
+/**
+ * 单兵绘制尺寸（px）。
+ *
+ * 🔴 [2026-08-26 按主人标准「游戏合理 + 符合历史」定为 64] 这个数就是**单位素材的渲染缩放分母**：
+ *    实际缩放 = UNIT_PX / 64。素材本身是从 DE 提取的原始像素（民兵 48px 高、西欧城堡 456×400），
+ *    而建筑是 **1:1 原尺寸**绘制的。
+ *    50 时单位只画到 78%，城堡/民兵高度比 **DE 8.3:1 → 我们 10.7:1**，人相对建筑凭空小了 22%。
+ *    改成 64 → 缩放 1.00，单位与建筑同为原生尺寸，比例与 DE 一致，且**零重采样**（最清晰）。
+ *    另一条路「把建筑乘 0.78」被否：456px 的城堡重采样成 356px 会糊，而奇观/城堡是地标。
+ *    派生量（PROJ_SCALE、特效缩放）都是 UNIT_PX/64 算的，自动跟随；
+ *    UNIT_RADIUS（推挤占地）是 dat 实测真值，不随它变，也不该变。
+ *    历史：2026-08-11 主人「单兵尺寸放大些」30 → 50，这次继续到 64 收口。
+ */
+const UNIT_PX = 64;
 
 /**
  * 落点散开半径（px）——每个兵出生时分到一个**固定**偏移，终身不变。
@@ -4440,7 +4470,36 @@ export class Scene13WarLayer {
                 for (let d = 0; d < 8; d++) {
                     const url = urls[d % urls.length];
                     if (!url) continue;
-                    this.pending++;
+                    // 🔴 已解码的抠绿图直接复用：HTTP/抠绿/两次解码全跳过，也不占 pending
+                    //    （pending>0 期间 tick 整个 return，画面冻住 —— 见 CLEAN_CACHE 说明）
+                    const hit = CLEAN_CACHE.get(url);
+                    if (hit && hit.complete && hit.naturalWidth > 0) {
+                        try {
+                            if (!isDE) {
+                                b.fh = hit.naturalHeight;
+                                b.frames[slot] = hit.naturalWidth / hit.naturalHeight;
+                            }
+                            b.sets[slot][0][d] = SpriteTinter.getTintedSprite(hit, this.sideFaction[0]);
+                            b.sets[slot][1][d] = SpriteTinter.getTintedSprite(hit, this.sideFaction[1]);
+                            continue;
+                        } catch (e) {
+                            console.warn('[Scene13WarLayer] 缓存复用失败，回退重新加载:', key, slot, d, e);
+                        }
+                    }
+                    /**
+                     * 🔴 [2026-08-26 按标准「游戏合理」修·进场冻 7 秒] 只有**开场立刻要用**的
+                     *    动作组才计入 pending。`pending > 0` 期间 tick() 整个 return（不推进不渲染），
+                     *    探针实测 assetsReady 中位 7.3s / p90 20s —— 那就是进战斗「卡一下」。
+                     *    开场画面只需要 move（列阵行军）和 atk（接敌出手）：
+                     *      · die   第一个人倒下要几秒后
+                     *      · melee 远程被贴身才用、charge 冲锋接敌才用
+                     *      · idle  残局待命，30 秒后才可能出现
+                     *    这四组照常异步加载，只是不再冻住画面（等它们到位的时间远短于用到它们的时间）。
+                     *    ⚠️ 别把 move/atk 也移出去 —— 那才会出现「兵没图不显示」。
+                     */
+                    const blocking = slot === 'move' || slot === 'atk';
+                    const inc = blocking ? 1 : 0;
+                    this.pending += inc;
                     const im = new Image();
                     im.onload = () => {
                         // 🔴 全程 try-catch：onload 是异步回调，外层 catch（547 行）抓不到这里抛的异常。
@@ -4475,19 +4534,27 @@ export class Scene13WarLayer {
                                     }
                                     b.sets[slot][0][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[0]);
                                     b.sets[slot][1][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[1]);
+                                    // 存进缓存供下一场直接复用；超上限按插入序淘汰最旧的
+                                    if (!CLEAN_CACHE.has(url)) {
+                                        if (CLEAN_CACHE.size >= CLEAN_CACHE_MAX) {
+                                            const oldest = CLEAN_CACHE.keys().next().value;
+                                            if (oldest !== undefined) CLEAN_CACHE.delete(oldest);
+                                        }
+                                        CLEAN_CACHE.set(url, clean);
+                                    }
                                 } catch (e) {
                                     console.warn('[Scene13WarLayer] 染色失败（回退空帧）:', key, slot, d, e);
                                 }
-                                this.pending--;
+                                this.pending -= inc;
                             };
-                            clean.onerror = () => { this.pending--; };
+                            clean.onerror = () => { this.pending -= inc; };
                             clean.src = dataUrl;
                         } catch (e) {
                             console.warn('[Scene13WarLayer] 抠绿失败（回退空帧）:', key, e);
-                            this.pending--;
+                            this.pending -= inc;
                         }
                     };
-                    im.onerror = () => { this.pending--; };
+                    im.onerror = () => { this.pending -= inc; };
                     im.src = url;
                 }
             }
