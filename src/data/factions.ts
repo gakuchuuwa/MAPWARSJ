@@ -1801,6 +1801,7 @@ export const FACTIONS: Faction[] = [
     { id: 'midi', name: '米底' },
     { id: 'qiliqiya', name: '奇里乞亚' },
     { id: 'aqimeinide', name: '阿契美尼德' },
+    { id: 'sashan', name: '萨珊' },  // 菲鲁扎巴德·萨珊波斯（第二帝国）
     { id: 'ailan', name: '埃兰' },
     { id: 'safawei_d', name: '萨法维' },
     { id: 'sumeier', name: '苏美尔' },

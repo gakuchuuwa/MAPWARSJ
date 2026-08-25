@@ -13,7 +13,7 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     jiashi_d: { name: '迦尸象兵', tier: 4 },     // 瓦拉纳西·梵摩达：迦尸国十六雄国象兵
     kongque: { name: '孔雀战象', tier: 2 },      // 华氏城·旃陀罗笈多：孔雀帝国统一印度的战象军团
     mojietuo: { name: '摩揭陀象军', tier: 3 },   // 王舍城·频毗娑罗：摩揭陀王国象军
-    boluo: { name: '波罗象军', tier: 3 },        // 高达城·达磨波罗：波罗帝国佛教帝国象军
+    boluo: { name: '拉塔战车', tier: 3 },        // 高达城·达磨波罗：孟加拉战车（DE Ratha 双栖）
     sumo: { name: '耽摩水师', tier: 4 },         // 耽摩栗底·苏摩：孟加拉湾海上丝路港口水师
     gurjara: { name: '施里瓦姆骑', tier: 4 },    // 帕坦·迷企罗·波阇：瞿折罗骑兵，骑施里瓦姆沙马
     zhuluo: { name: '软剑士', tier: 3 },           // 坦贾武尔·拉金德拉：达罗毗荼软剑士（乌卢米软鞭剑）

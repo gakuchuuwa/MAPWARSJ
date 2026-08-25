@@ -112,7 +112,14 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     //   siege_impact = 冲车撞门 / 投石命中：低频重击闷响，借 explosion（DE 原声，音色同源）
     //   siege_launch = 投石车配重砸下 / 弩炮弹射：借 naval_cannon_fire 的发射闷响
     // 音量比火器低：攻城武器 4~6 个同时凿墙，冷却也拉长防止糊成一片。
-    siege_impact: sounds('battle', ['explosion_1', 'explosion_3', 'explosion_5', 'explosion_6'], 0.38, 420),
+    // 🔴 siege_impact = **DE 原声**（主人 2026-08-24 从 52 个候选里听出来的：wem 453205371，
+    //    Custom Vorbis / 48kHz / 单声道 / 1.10s）。提取链路：
+    //      wwise/Base.pck (AKPK) → bnk 内嵌 wem (BKHD+DIDX) → vgmstream 解 Wwise Vorbis → ogg
+    //    DE **没有公开音效名字表**（dat 的 sound_id 全 -1、sounds.json 只有 49 条 UI 音、
+    //    社区 wwnames 没收录 AoE2 DE、按命名规律猜的 4428 个候选零匹配），
+    //    所以只能提取全部 6732 个再靠人耳指认。原始素材留在 scratch/de_audio/。
+    siege_impact: sound('battle', 'siege_impact_de', 0.62, 260),
+    // ⚠️ siege_launch 仍是**借用**（DE 同批的火炮发射声），主人还没指认到投石车/弩炮的原声。
     siege_launch: sounds('battle', ['naval_cannon_fire_2', 'naval_cannon_fire_4', 'naval_cannon_fire_6'], 0.30, 600),   // 0.70→0.42（约 -4.4dB，主人 2026-08-19「有点吵」）：它从接触响到退场，是底噪不是主角
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };

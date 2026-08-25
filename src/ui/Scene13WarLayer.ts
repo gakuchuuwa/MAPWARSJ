@@ -5353,6 +5353,9 @@ export class Scene13WarLayer {
                     const shootPhase = SHOOT_PHASE_BY_TYPE[m.key] ?? DEFAULT_SHOOT_PHASE;
                     if (!m.shot && m.ph >= shootPhase && stats.rng > 65 && m.st === 1 && !tooClose) {
                         m.shot = true;
+                        // 🔴 [2026-08-24] 远程攻城器械（投石车/弩炮/火箭车）发射声与弹丸同相位射出。
+                        //    弹丸命中另有 explosion，这里只管「配重砸下 / 弩炮弹射」那一下。
+                        if (m.siegeW) audioManager.play('siege_launch');
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
                         const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
@@ -5388,14 +5391,6 @@ export class Scene13WarLayer {
                     }
                 }
                 m.atkSt = m.st;
-                // 🔴 [2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」]
-                //    攻城武器出手就响：凿墙那 30~40 秒此前是**完全静音**的，只有画面在动。
-                //    近战攻城器械（冲车/攻城锤/装甲象）= 撞击闷响；
-                //    远程攻城器械（投石车/弩炮/火箭车）= 发射声，弹丸命中另有 explosion。
-                //    音量和冷却在 AudioManager 里压过：4~6 台同时凿墙，不压会糊成一片。
-                if (m.siegeW) {
-                    audioManager.play(wt.rng > 65 ? 'siege_launch' : 'siege_impact');
-                }
                 // 总加成：把战略层强弱（将领/精锐/武将技/文化/运气）带进每一刀
                 // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
@@ -5439,6 +5434,17 @@ export class Scene13WarLayer {
                 const keyStr = m.key.toLowerCase();
                 const isHeavyNonBlade = keyStr.includes('elephant') || keyStr.includes('ram') || keyStr.includes('wagon');
                 const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
+                // 🔴 [2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」]
+                //    凿墙那 30~40 秒此前**完全静音**，只有画面在动。撞击声必须挂在**命中相位**上：
+                //    冲车/攻城锤/装甲象被 isHeavyNonBlade 排除在刀光之外（重械不该有刀光），
+                //    于是它们没有任何「这一下砸中了」的标记 —— 这里补一个，与刀光同相（ph>=3），
+                //    复用 m.slashed 当「本轮已出手」（isMeleeAttacking 为假时它永不置位，不会打架）。
+                //    ⚠️ 绝不能写在 `if (m.lock <= 0)` 块外每帧调用：那样攻城武器**走向城墙的路上**
+                //    就一直响，真正砸中的那一下反而没对齐（第一版就是这么错的）。
+                if (m.siegeW && isHeavyNonBlade && !m.slashed && m.ph >= 3) {
+                    m.slashed = true;
+                    audioManager.play('siege_impact');
+                }
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
