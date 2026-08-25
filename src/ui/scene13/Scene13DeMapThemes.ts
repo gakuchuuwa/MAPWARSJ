@@ -141,7 +141,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地/ DECAL_CRATER 陨坑（荒漠地貌贴花）
         flatDecor: ['PLANT_DEAD', 'CACTUS', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'DECAL_CRATER'],
         // 🔴 [2026-08-21 素材全覆盖] 丝路商栈（木桶/地毯）+ 古战场遗迹（墓碑/骸骨）——荒漠商旅战场
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'BARRELS', 'RUGS', 'SKELETON'],
         waterPlants: ['REEDS', 'PALM', 'WATER_LILY'],
         beachTerrain: 'bc3',
     },
@@ -170,7 +170,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材科学审查] flat 的 STUMP_GENERIC（实体树桩）挪到 solid——平面装饰层放
         //    枯植/干草更符合寒带针叶林（苔藓地衣/枯枝落叶，DE taiga 下层）
         flatDecor: ['SHRUB_GREEN', 'PLANT_DEAD', 'GRASS_DRY_PATCH'],
-        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC', 'GRAVES'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -187,7 +187,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         flatDecor: ['FLOWER', 'BUSH_GREEN', 'WEED'],
         // 🔴 [2026-08-21 素材全覆盖] 秋季橡树落叶（DE FALLEN_LEAVES_MAPLE 泛化为欧洲秋叶）
         autumnFlatDecor: ['FALLEN_LEAVES_MAPLE_AUTUMN', 'FLOWER', 'BUSH_GREEN'],
-        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC', 'GRAVES'],
         waterPlants: ['REEDS', 'WILLOW', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -204,7 +204,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         // 🔴 [2026-08-21 素材全覆盖] 秋季桃叶落叶（DE FALLEN_LEAVES_PEACH——地中海桃树）
         autumnFlatDecor: ['FALLEN_LEAVES_PEACH', 'FLOWER', 'SHRUB_GREEN'],
         // 🔴 [2026-08-21 素材全覆盖] 地中海商港木桶/地毯（腓尼基/威尼斯商栈）+ 海滩 bc4
-        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC', 'BARRELS', 'RUGS'],
+        solidDecor: ['ROCK1', 'ROCK2', 'STUMP_GENERIC', 'BARRELS', 'RUGS', 'GRAVES'],
         waterPlants: ['REEDS', 'OLIVE', 'WATER_LILY'],
         beachTerrain: 'bc4',
     },
@@ -232,7 +232,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         trees: ['ACACIA', 'BAOBAB'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'PLANT_DEAD'],
         // 🔴 [2026-08-21 素材全覆盖] 古战场遗骸（骸骨/墓碑）——非洲草原战场
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE', 'SKELETON', 'GRAVES'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_LIMESTONE', 'SKELETON', 'ANIMAL_SKELETON'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -248,7 +248,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['SNOW_PINE'],
         // 🔴 [2026-08-21 素材全覆盖] DECAL_CRACK 干裂地 + 商旅地毯/古墓（高原丝路）
         flatDecor: ['GRASS_DRY', 'PLANT_DEAD', 'WEED', 'SHRUB_GREEN', 'DECAL_CRACK'],
-        solidDecor: ['ROCK1', 'ROCK2', 'RUGS', 'GRAVES'],
+        solidDecor: ['ROCK1', 'ROCK2', 'RUGS', 'ROCK3'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -264,7 +264,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['DEAD_TREE'],
         flatDecor: ['GRASS_DRY', 'GRASS_DRY_PATCH', 'WEED', 'PLANT_DEAD'],
         // 🔴 [2026-08-21 素材全覆盖] 古战场遗迹（草原石墓/骸骨）——游牧战场
-        solidDecor: ['ROCK1', 'ROCK2', 'GRAVES', 'SKELETON'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ANIMAL_SKELETON', 'SKELETON'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -278,7 +278,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED', 'FERNPATCH', 'GRASS_GREEN_PATCH'],
         // 高原古墓（石墓）与高原岩石——吐蕃/古格战场
-        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'GRAVES'],
+        solidDecor: ['ROCK1', 'ROCK2', 'ROCK3', 'ANIMAL_SKELETON'],
         waterPlants: ['REEDS', 'WATER_LILY'],
         beachTerrain: 'bch',
     },
@@ -292,7 +292,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         autumnTrees: ['DEAD_TREE'],
         winterTrees: ['DEAD_TREE'],
         flatDecor: ['PLANT_DEAD', 'ANIMAL_SKELETON', 'DECAL_CRACK', 'GRASS_DRY_PATCH', 'WEED'],
-        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK1', 'ROCK2', 'BARRELS', 'RUGS', 'GRAVES', 'SKELETON'],
+        solidDecor: ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK1', 'ROCK2', 'BARRELS', 'RUGS', 'SKELETON'],
         waterPlants: ['REEDS', 'DEAD_TREE', 'WATER_LILY'],
         beachTerrain: 'bc3',
     },
@@ -724,7 +724,9 @@ export const SECONDARY_TERRAINS: Record<Biome, ReadonlyArray<{ tile: string; wei
     savanna:            [{ tile: 'ds4', weight: 1.0 }, { tile: 'gr7', weight: 0.5 }], // 稀树草原：泥地 + 枯草
     desert:             [{ tile: 'ds5', weight: 1.0 }, { tile: 'ds4', weight: 0.5 }], // 沙漠：砾石 + 泥地
     mediterranean:      [{ tile: 'ds4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 地中海：泥地 + 土
-    cold_steppe:        [{ tile: 'ds3', weight: 1.0 }, { tile: 'ds5', weight: 0.5 }], // 冷草原：土 + 砾石
+    // 🔴 [2026-08-24] 冷草原副色去掉 ds5 戈壁砾石：蒙古/中亚草原的地面变化主要是
+    //    草的疏密（绿→黄），不是凭空一块石头地。沙漠(ds5)和苔原(gravel)保留——那里砾石是真地貌。
+    cold_steppe:        [{ tile: 'ds3', weight: 1.0 }, { tile: 'gr7', weight: 0.5 }], // 冷草原：土 + 枯草
     temperate_grass:    [{ tile: 'ds3', weight: 1.0 }, { tile: 'ds2', weight: 0.5 }], // 温带草原：土 + 沙
     temperate_forest:   [{ tile: 'gr4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 温带森林：腐殖土 + 泥地
     boreal:             [{ tile: 'gr4', weight: 1.0 }, { tile: 'ds3', weight: 0.5 }], // 针叶林：腐殖土 + 泥地

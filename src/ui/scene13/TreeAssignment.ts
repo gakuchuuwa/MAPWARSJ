@@ -125,7 +125,9 @@ const REGION_TREES: readonly RegionTree[] = [
     // ── 南亚 / 东南亚 ──
     { box: [-11.0, 8.0, 95.0, 141.0],
       tree: 'WAX_PALM', why: '南洋群岛 —— 蜡棕' },
-    { box: [6.0, 35.0, 68.0, 92.0], bases: ['ds4', 'ds3', 'gr5', 'gr7'],
+    // fo2/gr6 必须带上：泰米尔纳德(坦贾武尔 10.8°N)是热带林地底图，
+    // 漏了它会落到 fo2 默认的巴西木——南印度长巴西木是硬伤。
+    { box: [6.0, 35.0, 68.0, 92.0], bases: ['ds4', 'ds3', 'gr5', 'gr7', 'fo2', 'gr6', 'grs', 'gr2'],
       tree: 'WAX_PALM', why: '印度次大陆 —— 蜡棕' },
 
     // ── 西亚 / 地中海 ──
@@ -172,7 +174,9 @@ const REGION_TREES: readonly RegionTree[] = [
       tree: 'SCENARIO_TREE_K', why: '伊比利亚北部大西洋岸 —— 阔叶大树' },
     { box: [35.0, 45.0, 26.0, 52.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
       tree: 'SCENARIO_TREE_H', why: '安纳托利亚北岸/高加索 —— 阔叶大树' },
-    { box: [45.0, 62.0, -12.0, 32.0], bases: ['ds3', 'gr2', 'grs', 'for'],
+    // 让出 grs：实测中欧的 grs 城是尚贝里(阿尔卑斯)、维雷茨基(喀尔巴阡)这类
+    // 湿润山地草甸，交给底图默认的 GREEN_OAK（绿橡）——否则这棵树全局零使用。
+    { box: [45.0, 62.0, -12.0, 32.0], bases: ['ds3', 'gr2', 'for'],
       tree: 'SCENARIO_TREE_C', why: '中西欧 —— 阔叶大树' },
     { box: [48.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for'],
       tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树' },

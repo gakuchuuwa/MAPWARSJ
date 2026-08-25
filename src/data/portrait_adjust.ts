@@ -6672,41 +6672,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/AMERICA/__多余__AMERICA_03.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -7
-        },
-        "/assets/AMERICA/__多余__AMERICA_01.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -54
-        },
-        "/assets/AMERICA/__多余__AMERICA_02.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": 1
-        },
-        "/assets/AMERICA/__闲置__AMERICA_01.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -23
-        },
-        "/assets/AMERICA/__多余__AMERICA_04.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": -7
-        },
-        "/assets/AMERICA/__多余__AMERICA_05.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 2
-        },
-        "/assets/AMERICA/__多余__AMERICA_06.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/AMERICA/aztec_kuaotemoke.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -6737,50 +6702,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -54
         },
-        "/assets/AFRICA/__闲置__AFRICA_01.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 4
-        },
-        "/assets/AFRICA/__多余__AFRICA_01.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 9
-        },
-        "/assets/AFRICA/__多余__AFRICA_02.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": 5
-        },
-        "/assets/AFRICA/__闲置__AFRICA_02.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/AFRICA/manding_songdiyata.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/MALAY/__多余__MALAY_01.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 0
-        },
-        "/assets/MALAY/__闲置__MALAY_02.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/MALAY/malacca_bailimisula.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
-        },
-        "/assets/INDIA/__多余__INDIA_08.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/INDIA/gurjara_miqiluobodu.png": {
             "scale": 0.98,

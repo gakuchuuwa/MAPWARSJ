@@ -26,6 +26,7 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { RandomSource, createRandom, hashString } from './Random';
 import { queryBaseTile } from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
+import { filterDecor, type DecorFitQuery } from './DecorFit';
 import {
     DE_MAP_THEMES,
     groundTilesForTheme,
@@ -615,8 +616,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         }
 
         // ── 第 4 层 TERRAIN：同一套 DE 主题内的地表变体 + 林地底层 ──
-        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false, input.lng);
-        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, undefined, input.lng);
+        buildGroundVariation(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, waterKind, input.isSiege ?? false, input.lng, baseTerrain);
+        buildForestFloor(gw, gh, biome, season, theme!, rng, patches, occupied, input.lat, elev, undefined, input.lng, vegetationTile);
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
@@ -1261,6 +1262,8 @@ function buildGroundVariation(
     isSiege: boolean = false,
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
+    /** 脚下这张底图 —— 与它同名的斑块要剔掉，铺了也看不见 */
+    baseTerrainTile: string = '',
 ): void {
     // 🔴 [2026-08-24 主人定] 野战不出农田/牧场。
     //    牧场是人围出来放牲口的地，只在城郊；野外荒原不该有。
@@ -1273,13 +1276,23 @@ function buildGroundVariation(
     //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
     const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome, lng);
     // 🔴 [2026-08-23 P2 多色系咬合] 加权斑块池 = 主色系变体 + 副色系（学 DE create_terrain 多层咬合）
+    // 🔴 [2026-08-24 主人截图：「地上的这个圆和 DE 的效果不一样」]
+    //    原来攻城战的副色系是 ds5 + gravel_default（**砾石**），在橙土地面上就是
+    //    一块突兀的灰色碎石圆斑。对照 DE 真图：碎石是用**岩石精灵堆**（一簇簇 ROCK）
+    //    表现的，地面本身的变化是**同色系深浅**，不会凭空冒出一块异色石地。
+    //    而且城郊是车马踩踏碾压出来的土，本来就该是深浅不同的土色。
+    //    砾石只在它真是地貌的时候出现（高山砾石 gravel_default、戈壁 ds5 当**底图**），
+    //    那种情况不需要再拿它当斑块。
     const secondary = isSiege
-        ? [{ tile: 'ds5', weight: 1.0 }, { tile: 'gravel_default', weight: 0.5 }] // 攻城：泥地+砾石副色
+        ? [{ tile: 'ds2', weight: 1.0 }, { tile: 'ds3', weight: 0.6 }]   // 攻城：同色系深浅土
         : (SECONDARY_TERRAINS[biome] ?? []);
+    // 🔴 [2026-08-24] 剔掉与底图同名的贴图：在 ds2 上再铺 ds2 完全看不见。
+    //    实测库斯科（底图 ds2）14 片斑块里 9 片是 ds2，等于白铺一多半。
     const pool = [
         ...variation.map(t => ({ tile: t, weight: 1.0 })),
         ...secondary,
-    ];
+    ].filter((p) => p.tile !== baseTerrainTile);
+    if (pool.length === 0) return;
     const totalWeight = pool.reduce((s, p) => s + p.weight, 0);
     const pickWeighted = (): string => {
         let r = rng.next() * totalWeight;
@@ -1322,7 +1335,14 @@ function buildForestFloor(
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
+    /** 脚下这张底图 —— 只有林地底图才铺落叶层 */
+    baseTerrainTile: string = '',
 ): void {
+    // 🔴 [2026-08-24 主人截图] 林下落叶层只能铺在**真有林子**的地方。
+    //    库斯科（安第斯高原草地，底图 ds2）曾被铺了一片 `for` 森林地面、alpha 0.85 几乎不透明，
+    //    在浅黄土上就是一块突兀的深褐斑。没有树的地方哪来的落叶层。
+    const FOREST_FLOOR_BASES = new Set(['for', 'fo2', 'underbrush_leaves', 'gr6', 'snf']);
+    if (baseTerrainTile && !FOREST_FLOOR_BASES.has(baseTerrainTile)) return;
     const tiles = forestFloorTilesForTheme(theme, biome, season, lat, elev, lng);
     if (tiles.length === 0) return;
     const n = 1 + rng.int(0, 1);
@@ -1561,10 +1581,27 @@ function buildVegetation(
             }
         }
     }
-    const themeDecor = decorForTheme(theme, season, lat, elev, biome, lng);
+    const themeDecor0 = decorForTheme(theme, season, lat, elev, biome, lng);
+    // 🔴 [2026-08-24] 季节 / 文化 / 人烟三道闸，判据集中在 DecorFit。
+    //    文化专属素材**不能靠 DE 气候主题分**：把十字架墓碑挂到
+    //    palaearctic_europe_mediterranean 上之后，智利的图卡佩尔照样长出十字架
+    //    ——那个主题实际是「地中海气候」，加州、南非、澳洲西南、智利中部全在内。
+    const fitQ: DecorFitQuery = {
+        lat: lat ?? 35, lng: lng ?? 0, season,
+        winterSnow: season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome, lng),
+        isSiege,
+    };
+    const themeDecor = {
+        flat: filterDecor(themeDecor0.flat, fitQ),
+        solid: filterDecor(themeDecor0.solid, fitQ),
+    };
 
-    // 🔴【岩石成套伴生系统】：全图 4~7 处岩石群，主岩石必定紧密伴生碎石、灌木与草花
-    const solidDecorCount = 4 + rng.int(0, 3);
+    // 🔴【岩石成套伴生系统】：主岩石必定紧密伴生碎石、灌木与草花。
+    //    [2026-08-24 对照主人发的 DE 真图] DE 一屏开阔地上有 18~22 处岩石堆，
+    //    我们原来只有 4~7 处，地面空得不像 DE。岩石**不阻挡**（见上面碰撞那段：
+    //    只有树和悬崖保留碰撞），多放不会卡兵；它是地貌细节，不是障碍。
+    //    仍留在军团走廊之外，不改约束面。
+    const solidDecorCount = 10 + rng.int(0, 6);
     for (let i = 0; i < solidDecorCount; i++) {
         const asset = rng.pick(themeDecor.solid);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
@@ -1683,13 +1720,19 @@ function buildVegetation(
     //    补 DE 级植被覆盖：数量≈树的 2~3 倍（原注释「数量约为树的 2~3 倍」的意图），
     //    只撒 GROUND_COVER_ASSETS 里的地面贴花（草/花/小植物，烘焙入地面、100% 不挡路），
     //    剔掉岩石/灌木/仙人掌（岩石走 solidDecor、灌木走树伴生，避免世界层精灵堆太密）。
-    const groundDecorAssets = (BIOME_GROUND_DECOR[biome] ?? []).filter((a) => GROUND_COVER_ASSETS.has(a));
+    // 🔴 [2026-08-24] BIOME_GROUND_DECOR **不看季节**，所以寒带/苔原的夏天地上也撒冰
+    //    （DECAL_ICE 是一块白蓝色的冰）。实测非冬季战场撒了 883 块——主人截图里
+    //    干草原上那些白色云朵斑块就是它。走 DecorFit 统一把三道闸都过一遍。
+    const groundDecorAssets = filterDecor(
+        (BIOME_GROUND_DECOR[biome] ?? []).filter((a) => GROUND_COVER_ASSETS.has(a)), fitQ);
     if (groundDecorAssets.length > 0) {
         // 🔴 不能挂在 treeCount 上：2026-08-24 把树密度砍到 1/5 后，
         //    花草会被连带砍掉，但主人要稀的是**树**（挡视线、挤战场），不是地上的草。
         //    改成跟湿润度走——林地草多、沙漠草少，与树的棵数无关。
-        const groundDecorCount = 40 + Math.round(
-            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 400);
+        //    [2026-08-24 对照 DE 真图] DE 的地面草纹密得多，40~60 个在 2000×1080 上太稀。
+        //    草纹是烘焙进地面的贴花，100% 不挡路也不挡视线，加密只赚不亏。
+        const groundDecorCount = 90 + Math.round(
+            (density ? density.forestCover : forestCoverOfUsableFor(biome)) * 600);
         for (let i = 0; i < groundDecorCount; i++) {
             const asset = rng.pick(groundDecorAssets);
             const p = sampleLandPos(VW, VH, rng, isWater, asset, objects);
