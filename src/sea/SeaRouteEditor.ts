@@ -15,10 +15,33 @@ import { SEA_ROUTE_DATA, SeaRouteFeature } from '../data/VectorSeaRouteData';
 import { IEditor } from '../editors/UnifiedEditorManager';
 
 interface SeaNode { id: number; lat: number; lng: number; }
-interface SeaEdge { from: number; to: number; weight: number; coords: [number, number][]; }
+/** weight = 选路代价（含远洋惩罚）；dist = 真实公里数（显示用，绝不带惩罚） */
+interface SeaEdge { from: number; to: number; weight: number; dist: number; coords: [number, number][]; }
+
+/**
+ * 🔴 [2026-08-25 主人「你来定」] 远洋航段的选路惩罚系数。
+ *
+ * 为什么要有：古代航海（罗盘之前）以**沿岸航行**为主 —— 白天看着陆地走、夜里靠岸抛锚，
+ * 横渡只在地中海、爱琴海这种视野可及的短程发生。纯按距离算 Dijkstra 会让每条海路都挑
+ * 远洋直线，不符合「符合历史」这条标准。给 marnet（远洋主干）的边乘一个 >1 的系数，
+ * 沿岸(coastal)/接驳(stitch)不乘，距离接近时沿岸就会胜出。
+ *
+ * 为什么是 1.5（实测标定，不是拍脑袋。跑五条有史实参照的航线扫系数）：
+ *   系数    广州→马六甲            亚历山大→印度        雅典→迦太基
+ *   ×1.0   2990km 岸 0%          21407km 岸 0%       1299km 岸 0%
+ *   ×1.5   3199km 岸44%          25840km 岸88%       1299km 岸 0%   ← 取这档
+ *   ×2.0   4062km 岸79%          26527km 岸91%       1613km 岸39%
+ * 依据三条：
+ *   · 广州→马六甲 3199km —— 海上丝路沿中南半岛（经占城、真腊）走，史实航程约 3500km，对上了
+ *   · 亚历山大→印度 25840km —— 与葡萄牙绕好望角航线量级相符；×2.0 的 26527km 偏长
+ *   · 雅典→迦太基保持 1299km 直航 —— 这条史实上就是跳西西里岛链的相对直接航线，
+ *     不该强行掰弯；×2.0 把它拉到 1613km 就绕过分了
+ * ⚠️ 惩罚**只进 weight**，`totalDistance` 累加的是 dist（真实公里），
+ *    否则面板上显示的航程会是个带系数的假数。
+ */
+const OPEN_SEA_PENALTY = 1.5;
 
 // 海路参考层（海上航线网）颜色：白色虚线（海洋是蓝色，白线才跳得出）
-const REF_STYLE = { color: '#ffffff', weight: 2, opacity: 0.65, dashArray: '6 4' };
 // 已保存海路颜色：琥珀橙实线（暖色，蓝海与纸色陆地都高对比）
 const ROUTE_COLOR = '#ff9800';
 
@@ -275,7 +298,16 @@ export class SeaRouteEditor implements IEditor {
         this.setStatus('⏳ 加载海上航线网...');
         try {
             const basePath = import.meta.env.BASE_URL || '/';
-            const res = await fetch(`${basePath}assets/sea_routes.geojson`);
+            // ⚓ [2026-08-25] 换成 MARNET 烘出来的年代正确版（tools/build-sea-routes-marnet.py）。
+            //    旧的 sea_routes.geojson 是 314 条现代渡轮 + 239 条商业航线，而且**图是碎的**：
+            //    152 个连通分量、主网只占 34.8% —— 两个港口落在不同分量就直接找不到路。
+            //    新数据是 C 方案的合并成品（tools/build-sea-routes-combined.py）：
+            //      · marnet  远洋主干，100% 连通，已剔苏伊士/巴拿马/西北航道（游戏年代都不存在）
+            //      · coastal 沿岸航路，离岸 36km 绕每块陆地一圈，古代贴岸航海的主力
+            //      · stitch  571 条接驳边（沿岸点到最近主干点，≤120km），没有它两张图不通
+            //    实测 328 座沿海城**全部**落在主网上；剩下的碎片是南北极和无城的太平洋孤岛。
+            //    旧文件保留在 public/assets/ 未删，要对照随时能切回来。
+            const res = await fetch(`${basePath}assets/sea_routes_combined.geojson`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const geojson = await res.json();
             this.cachedGeoJSON = geojson;
@@ -308,24 +340,27 @@ export class SeaRouteEditor implements IEditor {
             return id;
         };
 
-        const addEdge = (a: number, b: number, coords: [number, number][]): void => {
+        const addEdge = (a: number, b: number, coords: [number, number][], source: string): void => {
             if (a === b) return;
-            const w = this.calculatePathLength(coords);
-            if (!isFinite(w) || w < 0.01) return;
-            this.seaAdj.get(a)!.push({ from: a, to: b, weight: w, coords });
-            this.seaAdj.get(b)!.push({ from: b, to: a, weight: w, coords: [...coords].reverse() as [number, number][] });
+            const d = this.calculatePathLength(coords);
+            if (!isFinite(d) || d < 0.01) return;
+            // 远洋主干加惩罚，沿岸/接驳按真实距离 —— 见 OPEN_SEA_PENALTY
+            const w = source === 'marnet' ? d * OPEN_SEA_PENALTY : d;
+            this.seaAdj.get(a)!.push({ from: a, to: b, weight: w, dist: d, coords });
+            this.seaAdj.get(b)!.push({ from: b, to: a, weight: w, dist: d, coords: [...coords].reverse() as [number, number][] });
         };
 
         for (const f of geojson.features || []) {
             const g = f?.geometry;
             if (!g || !g.coordinates) continue;
+            const source: string = f?.properties?.source ?? 'marnet';
             const lines = g.type === 'MultiLineString' ? g.coordinates : [g.coordinates];
             for (const line of lines) {
                 if (!line || line.length < 2) continue;
                 for (let i = 0; i < line.length - 1; i++) {
                     const [lng1, lat1] = line[i];
                     const [lng2, lat2] = line[i + 1];
-                    addEdge(getNode(lat1, lng1), getNode(lat2, lng2), [line[i], line[i + 1]]);
+                    addEdge(getNode(lat1, lng1), getNode(lat2, lng2), [line[i], line[i + 1]], source);
                 }
             }
         }
@@ -337,19 +372,23 @@ export class SeaRouteEditor implements IEditor {
         if (this.referenceLayer) return;
         this.referenceLayer = L.geoJSON(geojson, {
             pane: 'overlayPane',
-            // 按航线来源/等级分级着色，便于主人判断取舍：
-            //   航运线 Major 粗白 > Middle 中白 > Minor 淡白；渡轮用淡金区分
+            // 着色：普通航段淡白；**海峡（passage）高亮青色加粗** —— 直布罗陀/博斯普鲁斯/
+            // 达达尼尔/曼德/霍尔木兹/马六甲/巽他/好望角/合恩角/白令这些咽喉是画海路时的关键节点，
+            // 一眼能认出来才好判断走向。（旧数据的 laneType/ferry 分级已随数据源一起废弃。）
             style: (feature: any) => {
                 const p = feature?.properties || {};
-                if (p.source === 'ferry') {
-                    return { color: '#ffe082', weight: 1.5, opacity: 0.7, dashArray: '4 4' };
-                }
-                switch (p.laneType) {
-                    case 'Major': return { color: '#ffffff', weight: 2.5, opacity: 0.9, dashArray: '8 5' };
-                    case 'Middle': return { color: '#ffffff', weight: 2, opacity: 0.65, dashArray: '6 5' };
-                    case 'Minor': return { color: '#ffffff', weight: 1.2, opacity: 0.4, dashArray: '4 5' };
-                    default: return REF_STYLE;
-                }
+                // 海峡咽喉最显眼（画海路时的关键节点）
+                if (p.passage) return { color: '#26c6da', weight: 4, opacity: 0.95 };
+                // 沿岸航路：古代主力，给暖色实线，和远洋虚线一眼分得开
+                if (p.source === 'coastal') return { color: '#ffb74d', weight: 1.8, opacity: 0.75 };
+                // 接驳边：只是把沿岸接上主干，画淡一点别喧宾夺主
+                if (p.source === 'stitch') return { color: '#9575cd', weight: 1, opacity: 0.35 };
+                // 远洋主干
+                return { color: '#ffffff', weight: 1.4, opacity: 0.45, dashArray: '5 5' };
+            },
+            onEachFeature: (feature: any, layer: L.Layer) => {
+                const pass = feature?.properties?.passage;
+                if (pass) layer.bindTooltip(`\u{1F30A} ${pass}`, { sticky: true });
             }
         });
         this.referenceLayer.addTo(this.map);
@@ -448,7 +487,11 @@ export class SeaRouteEditor implements IEditor {
             const startIdx = i === 0 ? 0 : 1;
             for (let j = startIdx; j < ec.length; j++) coordinates.push(ec[j]);
         }
-        return { coordinates, totalDistance: dist.get(endId) || 0 };
+        // 🔴 显示的航程必须是**真实公里**：dist map 里存的是带 OPEN_SEA_PENALTY 的选路代价，
+        //    直接拿它当航程会让远洋航线凭空多报 50%。沿路径累加 edge.dist 才是真数。
+        let realKm = 0;
+        for (const e of edges) realKm += e.dist;
+        return { coordinates, totalDistance: realKm };
     }
 
     private generateSeaPath(): void {

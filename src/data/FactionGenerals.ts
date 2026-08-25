@@ -126,7 +126,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/SLAVIC/saierweiya_sidifendushang.png' },
 
     luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/LATIN/luoma_diguo_kaisa.png' },
-    xiongren: { generalId: 'xiongren_atila', generalName: '阿提拉', portrait: '' },
+    xiongren: { generalId: 'xiongren_atila', generalName: '阿提拉', portrait: '/assets/STEPPE/xiongren_atila.png' },
     kejila: { generalId: 'kejila_shulunbao', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png' },
     putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索一世', portrait: '/assets/LATIN/putaoya_afangsuo.png' },
 
@@ -1001,11 +1001,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xikesuosi: { generalId: 'xikesuosi_salidi', generalName: '萨利蒂', portrait: '/assets/WEST_ASIA/xikesuosi_salidi.png' },
     yashu: { generalId: 'yashu_saergong', generalName: '萨尔贡', portrait: '/assets/WEST_ASIA/yashu_saergong.png' },
     youfaladi: { generalId: 'youfaladi_yehaiya', generalName: '叶海亚', portrait: '/assets/WEST_ASIA/youfaladi_yehaiya.png' },
-    mamuluke: { generalId: 'mamuluke_baibaisi', generalName: '拜巴尔斯', portrait: '' },
+    mamuluke: { generalId: 'mamuluke_baibaisi', generalName: '拜巴尔斯', portrait: '/assets/WEST_ASIA/mamuluke_baibaersi.png' },
     midi: { generalId: 'midi_daiaokaisi', generalName: '戴奥凯斯', portrait: '/assets/CENTRAL_ASIA/midi_daiaokaisi.png' },
     qiliqiya: { generalId: 'qiliqiya_pangpei', generalName: '庞培', portrait: '/assets/WEST_ASIA/qiliqiya_pangpei.png' },
     aqimeinide: { generalId: 'aqimeinide_daliushi', generalName: '大流士', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
-    sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '' },  // 菲鲁扎巴德·萨珊建立者
+    sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
     sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
