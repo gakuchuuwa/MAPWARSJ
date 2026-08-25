@@ -43,7 +43,8 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
-    boumeilaniyan: { name: '格里芬军团', tier: 4 },
+    boumeilaniyan: { name: '奥布奇战锤兵', tier: 3 },  // 格但斯克·卡西米尔四世：波兰步兵战锤（DE Obuch 破甲）
+    pomeilaniya: { name: '格里芬军团', tier: 4 },  // 什切青·博吉斯拉夫：波美拉尼亚格里芬王朝
     bafaliya: { name: '塔西洛军团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
     huohengsuolun: { name: '黑鹰军团', tier: 3 },
@@ -57,5 +58,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     meikelunbao: { name: '梅克伦军团', tier: 4 },
     kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
-    rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字
+    rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
+    bogendi: { name: '勃艮第轻骑', tier: 3 },
 };

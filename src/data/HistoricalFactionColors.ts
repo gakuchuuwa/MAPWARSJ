@@ -944,6 +944,7 @@ const _FIXED: Record<string, string> = {
     'didi': '#8A7A3A', // 佛兰德·布鲁日（佛兰德斯金黑）
     'nidelan': '#D4621A', // 荷兰·海牙（奥兰治橙）
     'boumeilaniyan': '#2E4E8C', // 波美拉尼亚·格但斯克（波美拉尼亚蓝）
+    'pomeilaniya': '#B3122E', // 波美拉尼亚·什切青（格里芬王朝纹章红）
     'pufaerci': '#3A5FA8', // 普法尔茨·海德堡（普法尔茨蓝）
     'batawei': '#C85A1E', // 乌特勒支·乌特勒支（荷兰橙）
     'shiwaben': '#4A4A52', // 施瓦本·奥格斯堡（施瓦本黑白）

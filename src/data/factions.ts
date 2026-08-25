@@ -51,6 +51,7 @@ export const FACTIONS: Faction[] = [
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
   { id: 'boumeilaniyan', name: '卡舒比' },
+  { id: 'pomeilaniya', name: '波美拉尼亚' },  // 什切青·格里芬王朝（西波美拉尼亚公国）
   { id: 'langgeduoke', name: '朗格多克' },
   { id: 'aermolika', name: '阿尔摩里卡' },
   { id: 'tuosikana', name: '托斯卡纳' },
@@ -1836,6 +1837,7 @@ export const FACTIONS: Faction[] = [
     { id: 'mapuche', name: '马普切' },        // 图卡佩尔·马普切人
     { id: 'muisca', name: '穆伊斯卡' },       // 巴卡塔·穆伊斯卡联盟
     { id: 'tupi', name: '图皮' },             // 瓜纳巴拉·图皮人
+    { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）
     { id: 'ethiopia', name: '埃塞俄比亚' },

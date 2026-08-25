@@ -80,6 +80,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
     boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/GERMANIC/boumeilaniyan_kaximier.png' },
+    pomeilaniya: { generalId: 'pomeilaniya_bogislaw', generalName: '博吉斯拉夫', portrait: '' },  // 什切青·格里芬王朝公爵
     langgeduoke: { generalId: 'gen_raymond_v', generalName: '雷蒙五世', portrait: '/assets/LATIN/langgeduoke_leimengwushi.png' },
     aermolika: { generalId: 'gen_gilles_de_rais', generalName: '吉尔德雷斯', portrait: '/assets/LATIN/aermolika_jierdeleisi.png' },
     tuosikana: { generalId: 'gen_lorenzo_medici', generalName: '洛伦佐', portrait: '/assets/LATIN/tuosikana_luolunzuo.png' },
@@ -1037,6 +1038,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mapuche: { generalId: 'gen_lautaro', generalName: '劳塔罗', portrait: '/assets/AMERICA/mapuche_laotaluo.png' },
     muisca: { generalId: 'gen_saguamanchica', generalName: '萨瓜曼奇卡', portrait: '/assets/AMERICA/muisca_saguamanqika.png' },
     tupi: { generalId: 'gen_arariboia', generalName: '阿拉里博亚', portrait: '/assets/AMERICA/tupi_alaliboya.png' },
+    xibanya: { generalId: 'xibanya_pisaluo', generalName: '皮萨罗', portrait: '' },  // 利马·征服印加的西班牙征服者
     manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '/assets/AFRICA/ethiopia_aizhana.png' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '/assets/MALAY/malacca_bailimisula.png' },
