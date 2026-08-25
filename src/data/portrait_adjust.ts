@@ -388,7 +388,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/CENTRAL_ASIA/tiemuer_tiemuer.png": {
-            "scale": 0.97,
+            "scale": 0.98,
             "offsetX": 4,
             "offsetY": -7
         },
@@ -4143,7 +4143,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_37.png": {
-            "scale": 0.94,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": 21
         },
@@ -4153,9 +4153,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_38.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 36
+            "offsetY": 38
         },
         "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_40.png": {
             "scale": 1.01,
@@ -6710,7 +6710,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/STEPPE/watermarked_img_15465217961537202916.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 15
         },
         "/assets/GERMANIC/mazhaer_xiongyati.png": {
             "scale": 1,
@@ -6726,6 +6726,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": 12,
             "offsetY": 29
+        },
+        "/assets/CENTRAL_ASIA/watermarked_img_442347503350117762.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/CENTRAL_ASIA/sashan_aerdaxier.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/SLAVIC/watermarked_img_12926825834556341400.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/SLAVIC/xieerpuhuofu_gongguo_yongzhefulaji.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/STEPPE/kuman_ketaian.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/STEPPE/watermarked_img_15039761481069653734.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/STEPPE/xiongren_atila.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

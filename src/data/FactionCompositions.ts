@@ -2775,4 +2775,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_fire_archer", count: 4 },
         ],
     },
+    // 阿兹特克·特诺奇提特兰（库奥特莫克 · 豹勇士军团 · 偃月阵 3+2+4：精锐鹰勇士 3 + 豹勇士 2 + 精锐豹勇士 4）
+    aztec: {
+        legionName: "豹勇士军团",
+        formationMode: 'crescent',
+        slots: [
+            { type: 'elite_eagle_warrior', count: 3 },   // Row 0 前排抗线 = 精锐鹰勇士 3人（反骑兵反僧侣快速近战）
+            { type: 'jaguar_warrior', count: 2 },        // Row 1 中排过渡 = 豹勇士 2人（反步兵中坚）
+            { type: 'elite_jaguar_warrior', count: 4 },  // Row 2 后排主力 = 精锐豹勇士 4人（反步兵后发制人）
+        ],
+    },
+    // 埃塞俄比亚·阿克苏姆（埃扎纳 · 弯刀勇士军团 · 雁行阵 4+3+2：弯刀勇士精锐 4 + 重装骆驼兵 3 + 步弓手 2）
+    ethiopia: {
+        legionName: "弯刀勇士军团",
+        formationMode: 'echelon',
+        slots: [
+            { type: 'elite_shotel_warrior', count: 4 },   // Row 0 前排主力 = 弯刀勇士精锐 4人（反步兵半月弯刀破阵）
+            { type: 'camel_heavy', count: 3 },            // Row 1 中排冲锋 = 重装骆驼兵 3骑（反骑兵重装突击）
+            { type: 'archer', count: 2 },                 // Row 2 后排远射 = 步弓手 2人（远程掩护）
+        ],
+    },
 };
