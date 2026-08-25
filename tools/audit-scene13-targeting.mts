@@ -68,5 +68,25 @@ const kc = /const KEEP_CLAIMS = !!\+\(process\.env\.KEEP_CLAIMS \?\? (\d+)\)/.ex
 if (kc !== '0') bad(`war_sim KEEP_CLAIMS 默认 ${kc ?? '?'} —— 游戏层已去掉这道闸，默认应为 0`);
 else ok('war_sim KEEP_CLAIMS 默认 0（= 游戏层已去闸）');
 
+// ── 残局待命的特效推进 ──
+// 🔴 [2026-08-26 主人：「攻击特效应该消失才对，可攻击特效都静止了」]
+//    lingerStep 原来漏推 arrows/slashes/sparks/fxs，t 不增长 → 既播不完也 filter 不掉
+//    → 半空的箭和刀光在残局那 5 秒里原地冻住。已抽 stepEffects 给 step/lingerStep 共用。
+console.log('\n残局待命（战斗结束后那 5 秒）：');
+{
+    const S13 = readFileSync('src/ui/Scene13WarLayer.ts', 'utf8');
+    if (!/private stepEffects\(/.test(S13)) bad('缺 stepEffects —— 特效推进又被复制粘贴，容易再漏一处');
+    else ok('特效推进抽成 stepEffects');
+
+    const linger = /private lingerStep\([\s\S]*?\n    \}/.exec(S13)?.[0] ?? '';
+    if (!linger) bad('找不到 lingerStep');
+    else if (!/this\.stepEffects\(dt\)/.test(linger)) bad('lingerStep 没推特效 —— 箭矢/刀光会在残局原地冻住');
+    else ok('lingerStep 推进特效（箭矢刀光会自然播完消失）');
+
+    const calls = (S13.match(/this\.stepEffects\(dt\)/g) ?? []).length;
+    if (calls < 2) bad(`stepEffects 只被调用 ${calls} 次（step 与 lingerStep 都该调）`);
+    else ok(`step 与 lingerStep 都调用了（共 ${calls} 处）`);
+}
+
 if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }
 console.log('\n✅ 全部符合');
