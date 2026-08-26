@@ -29,7 +29,7 @@
  *   13 攻城器械
  *   23 **骑乘远程／火器骑兵**（CONQI 征服者、ARAMBAI 飞镖骑兵、HGPIZ…）
  *      ⚠️ 我一度把 23 标成「散兵／掷矛」，错的；散兵是 class 0 一族。
- *   36 弓骑（探针：安息战术 = DE 弓骑专属科技，只作用于 36）
+ *   36 弓骑（探针：帕提亚战术 = DE 弓骑专属科技，只作用于 36）
  *   44 火枪／火药步兵（HCANR 火枪兵、JANNI 苏丹亲兵、GRNADR 掷弹兵）
  *   47 **斥候 SCOUT**，全表仅 1 个单位 —— 🔴 **不是战象**，别拿 47 认象
  *   52 **塔楼建筑**（WCTW 望楼一族）→ 远程线里那个 52 对我们是空转，我们没有塔类兵种
@@ -41,7 +41,7 @@
  * 时间线 -334（亚历山大东征）→ 1912，故上古就有的科技标 `OPENING`（开局自带）。
  */
 
-import type { RegionType } from '../systems/RegionSystem';
+import { REGION_ORDER, type RegionType } from '../systems/RegionSystem';
 
 /** 效果作用的属性 */
 export type TechAttr =
@@ -76,8 +76,8 @@ export interface MilitaryTech {
      * 史实依据 = **给 `year` 找的断代锚点**（这条技术什么时候算成立），
      * 🔴 **不是 `cultures` 的适用范围依据** —— 两者不对应是常态，别拿 basis 去"纠正" cultures：
      *   · 锁子甲 basis 写凯尔特／罗马，cultures 却含 NORTH/HEXI（发明者 ≠ 普及范围）
-     *   · 鳞马铠 basis 写帕提亚成型，cultures 是全文化
-     *   · 安息战术 basis 写卡莱战役（帕提亚），cultures 反而**不含** WEST_ASIA
+     *   · 骑兵鳞甲 basis 写帕提亚成型，cultures 却是 MOUNTED_CULTURES（除美洲外全区）
+     *   · 帕提亚战术 basis 写卡莱战役（帕提亚），cultures 反而**不含** WEST_ASIA
      *     —— 给的是骑射传统文化，不是给帕提亚的地理继承者
      *   · 血统 basis 写汉武帝得大宛马，cultures 给 HEXI 不给 CENTRAL —— 汉代马政基地在
      *     河西陇右官牧，且中原自汉以降长期缺马（唐靠陇右牧监、宋保马法失败）。这是**对的**，
@@ -100,6 +100,19 @@ const CHAINMAIL_BELT: readonly RegionType[] = [
     'LATIN', 'GERMANIC', 'SLAVIC', 'WEST_ASIA', 'CENTRAL_ASIA', 'NORTH', 'HEXI',
     'INDIA', 'BERBER',
 ];
+/**
+ * 有马文化 = 除美洲外的全部区。
+ *
+ * 🔴 依据 DE 本体科技树（`resources/_common/dat/CivTechTrees/`）：
+ *    AZTECS / INCAS / MAYANS 三个美洲文明**没有马厩**，
+ *    Scale/Chain/Plate Barding Armor、Husbandry、Bloodlines 全部 NotAvailable。
+ *    前哥伦布美洲无马（马是西班牙人带去的），DE 与史实在这点上一致。
+ *    凡「作用于骑兵(class 12/23/36/47)」的科技都要用本表而不是 null，
+ *    否则美洲会拿到马铠与畜牧 —— 那里根本没有马。
+ * 其余马铠科技（锁子/板甲马铠）走 CHAINMAIL_BELT 与显式列表，本就不含 AMERICA。
+ */
+const MOUNTED_CULTURES: readonly RegionType[] = REGION_ORDER.filter((r) => r !== 'AMERICA');
+
 /** 骑射文化（草原／伊朗系）+ 中原扳指传统 */
 const HORSE_ARCHER_CULTURES: readonly RegionType[] = [
     // [2026-08-19] 原含 'NUERGAN'，已并入 NORTHEAST（本表已有 NORTHEAST，覆盖不变）
@@ -129,7 +142,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
     {
-        id: 'scale_mail', name: '鳞甲', de: 'Scale Mail Armor', year: null,
+        id: 'scale_mail', name: '步兵鳞甲', de: 'Scale Mail Armor', year: null,
         basis: '鳞甲远早于时间线起点',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
@@ -138,7 +151,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: null,
     },
     {
-        id: 'chain_mail', name: '锁子甲', de: 'Chain Mail Armor', year: -100,
+        id: 'chain_mail', name: '步兵锁甲', de: 'Chain Mail Armor', year: -100,
         basis: '凯尔特人前 3 世纪发明，罗马前 1 世纪普遍装备',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
@@ -147,7 +160,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: CHAINMAIL_BELT,
     },
     {
-        id: 'plate_mail', name: '板甲', de: 'Plate Mail Armor', year: 1400,
+        id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
         basis: '欧洲全身板甲成熟期；板甲是西欧独有工艺',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
@@ -158,16 +171,16 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
     {
-        id: 'scale_barding', name: '鳞马铠', de: 'Scale Barding Armor', year: -50,
+        id: 'scale_barding', name: '骑兵鳞甲', de: 'Scale Barding Armor', year: -50,
         basis: '帕提亚／萨珊具装甲骑（cataphract）成型',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: null,
+        cultures: MOUNTED_CULTURES,
     },
     {
-        id: 'chain_barding', name: '锁子马铠', de: 'Chain Barding Armor', year: 1100,
+        id: 'chain_barding', name: '骑兵锁甲', de: 'Chain Barding Armor', year: 1100,
         basis: '中世纪盛期骑士马铠',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
@@ -176,7 +189,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: CHAINMAIL_BELT,
     },
     {
-        id: 'plate_barding', name: '板甲马铠', de: 'Plate Barding Armor', year: 1450,
+        id: 'plate_barding', name: '骑兵钢甲', de: 'Plate Barding Armor', year: 1450,
         basis: '全身板甲马铠，西欧独有',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
@@ -187,7 +200,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
     {
-        id: 'fletching', name: '羽箭', de: 'Fletching', year: null,
+        id: 'fletching', name: '箭羽', de: 'Fletching', year: null,
         basis: '基础箭羽工艺',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
@@ -197,7 +210,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: null,
     },
     {
-        id: 'bodkin', name: '锥头箭', de: 'Bodkin Arrow', year: 1200,
+        id: 'bodkin', name: '锥子箭', de: 'Bodkin Arrow', year: 1200,
         basis: '破甲锥头箭（bodkin point）应对锁甲普及',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
@@ -219,7 +232,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
     {
-        id: 'padded_archer', name: '软垫甲', de: 'Padded Archer Armor', year: null,
+        id: 'padded_archer', name: '射手软甲', de: 'Padded Archer Armor', year: null,
         basis: '织物／皮质轻甲',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
@@ -228,7 +241,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: null,
     },
     {
-        id: 'leather_archer', name: '皮甲', de: 'Leather Archer Armor', year: 800,
+        id: 'leather_archer', name: '射手皮甲', de: 'Leather Archer Armor', year: 800,
         basis: '硬化皮甲工艺',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
@@ -237,7 +250,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: null,
     },
     {
-        id: 'ring_archer', name: '环甲', de: 'Ring Archer Armor', year: 1300,
+        id: 'ring_archer', name: '射手锁甲', de: 'Ring Archer Armor', year: 1300,
         basis: '环片复合甲',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
@@ -251,7 +264,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'husbandry', name: '畜牧', de: 'Husbandry', year: 477,
         basis: '马镫在南北朝定型并西传，骑兵机动力质变',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
-        cultures: null,
+        cultures: MOUNTED_CULTURES,
     },
     {
         id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
@@ -260,14 +273,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'TIBET', 'HEXI', 'INDIA', 'BERBER'],
     },
     {
-        id: 'thumb_ring', name: '拇指环', de: 'Thumb Ring', year: 1206,
+        id: 'thumb_ring', name: '扳指', de: 'Thumb Ring', year: 1206,
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
         cultures: [...HORSE_ARCHER_CULTURES, 'CENTRAL', 'INDIA', 'BERBER'],
     },
     {
-        id: 'parthian_tactics', name: '安息战术', de: 'Parthian Tactics', year: -53,
+        id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
         basis: '卡莱战役，帕提亚回马射战术定名',
         // DE 还含「对长枪类(27) 攻击 +2」，属加成伤害表，本期不落
         effects: [
@@ -333,7 +346,7 @@ export interface TechDisplayGroup {
 export const TECH_DISPLAY_GROUPS: readonly TechDisplayGroup[] = [
     { label: '冶', hint: '冶金·近战攻击', ids: ['forging', 'iron_casting', 'blast_furnace'] },
     {
-        label: '甲', hint: '护甲：步甲｜马铠｜射手甲', split: 3,
+        label: '甲', hint: '护甲：步兵甲｜骑兵甲｜射手甲', split: 3,
         ids: [
             'scale_mail', 'chain_mail', 'plate_mail',
             'scale_barding', 'chain_barding', 'plate_barding',
@@ -342,6 +355,6 @@ export const TECH_DISPLAY_GROUPS: readonly TechDisplayGroup[] = [
         ],
     },
     { label: '射', hint: '箭术·远程攻击与射程', ids: ['fletching', 'bodkin', 'bracer', 'chemistry'] },
-    { label: '术', hint: '畜牧·血统·拇指环·安息战术·护卫·攻城技师', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics', 'squires', 'siege_engineers'] },
+    { label: '术', hint: '畜牧·血统·扳指·帕提亚战术·护卫·攻城技师', ids: ['husbandry', 'bloodlines', 'thumb_ring', 'parthian_tactics', 'squires', 'siege_engineers'] },
 ];
 

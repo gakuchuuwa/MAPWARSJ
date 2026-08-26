@@ -416,7 +416,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_konnik: { name: '保加利亚骑兵精锐', cls: 'cav', sz: 1, hp: 120, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_konnik_foot: { name: '锤炼兵高级', cls: 'melee', sz: 1, hp: 50, atk: 13, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     elite_leitis: { name: '立陶宛列提斯精锐', cls: 'cav', sz: 1, hp: 130, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
-    elite_magyar_huszar: { name: '马扎尔骠骑兵精锐', cls: 'cav', sz: 1, hp: 110, atk: 13, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
+    elite_magyar_huszar: { name: '马扎尔骠骑兵精锐', cls: 'cav', sz: 1, hp: 90, atk: 11, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
     elite_mameluke: { name: '萨拉森马穆鲁克精锐', cls: 'cav', sz: 1, hp: 80, atk: 10, meleeArmor: 1, pierceArmor: 0, rng: 120, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 12 }, armorTags: [35, 30, 19, 31, 39] },
     elite_monaspa: { name: '格鲁吉亚莫纳斯帕精锐', cls: 'cav', sz: 1, hp: 80, atk: 14, meleeArmor: 5, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_obuch: { name: '波兰奥布奇战锤兵精锐', cls: 'melee', sz: 1, hp: 95, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 6, 29: 3 }, armorTags: [1, 19, 31] },
@@ -474,10 +474,10 @@ export const WAR_TYPES: Record<string, WarType> = {
     konnik_foot: { name: '锤炼兵', cls: 'melee', sz: 1, hp: 45, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     leitis: { name: '立陶宛列提斯', cls: 'cav', sz: 1, hp: 100, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     longbowman: { name: '不列颠长弓兵', cls: 'ranged', sz: 1, hp: 35, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    magyar_huszar: { name: '马扎尔骠骑兵', cls: 'cav', sz: 1, hp: 90, atk: 11, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
+    magyar_huszar: { name: '马扎尔骠骑兵', cls: 'cav', sz: 1, hp: 80, atk: 10, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
     mameluke: { name: '萨拉森马穆鲁克', cls: 'cav', sz: 1, hp: 80, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 120, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 9 }, armorTags: [35, 30, 19, 31, 39] },
     mangonel: { name: '轻型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 50, atk: 40, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 35, 20: 12, 37: 40 }, armorTags: [20, 31] },
-    mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 55, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     militia: { name: '民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     monaspa: { name: '格鲁吉亚莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     mounted_trebuchet: { name: '骆驼投石机', cls: 'cav', sz: 1, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
@@ -2598,6 +2598,8 @@ interface DecorSprite {
     layer: 'ground' | 'world';
     /** 同一脚点的稳定次序 */
     z: number;
+    /** 绘制缩放（1 = 原尺寸）。未设置走原尺寸路径，锚点随之等比缩放。 */
+    scale?: number;
     /** DE DAT 对象碰撞半径（地图格）；未设置即不阻挡 */
     obstruction?: { x: number; y: number };
     /** 树连续阻挡若干秒后仅关闭碰撞；精灵图仍参与绘制。 */
@@ -3898,7 +3900,7 @@ export class Scene13WarLayer {
         const place = (
             s: { x: number; y: number },
             asset: string,
-            options?: { flip?: boolean; frame?: number; z?: number; obstruction?: { x: number; y: number } },
+            options?: { flip?: boolean; frame?: number; z?: number; scale?: number; obstruction?: { x: number; y: number } },
         ): DecorSprite => {
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
@@ -3910,6 +3912,7 @@ export class Scene13WarLayer {
                 flip: options?.flip ?? (Math.random() < 0.5),
                 layer: 'world',
                 z: options?.z ?? 0,
+                scale: options?.scale,
                 obstruction: options?.obstruction,
                 obstructionContactSec: 0,
                 obstructionTouched: false,
@@ -4062,7 +4065,10 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 小城中心放木堡。
                 //    小城与草原城的城墙走 PALISADE（木栅栏，见 wallMat），原木尖桩的 WOODEN_FORT
                 //    与之同源；小城又没有城堡，正缺一个中心地标 —— 事实与观感都成立。
-                this.decorSprites.push(place(shuffledSmall[7], 'WOODEN_FORT'));
+                //    [2026-08-26] 缩到 0.8：原素材 452x392 几乎等同城堡（468x404），而小城
+                //    其余建筑最高仅 280（兵营/靶场）、民屋 172 —— 小城本就是「无城堡」档，
+                //    原尺寸摆上去等于越级。0.8 后 362x314，仍是场上最大的中心地标，但不再压过城堡档。
+                this.decorSprites.push(place(shuffledSmall[7], 'WOODEN_FORT', { scale: 0.8 }));
                 return;
             }
             // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
@@ -4417,10 +4423,12 @@ export class Scene13WarLayer {
         }
         const sw = m.box_w, sh = m.box_h;
         const sx = fr * sw;
-        if (s.flip) {
+        // scale 未设置 = 原尺寸原路径（其余装饰逐像素不变）；设置时尺寸与锚点等比缩放，脚点仍落在 (s.x, drawY)
+        const k = s.scale ?? 1;
+        if (s.flip || k !== 1) {
             g.save();
             g.translate(s.x, drawY);
-            g.scale(-1, 1);
+            g.scale(s.flip ? -k : k, k);
             g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
             g.restore();
         } else {

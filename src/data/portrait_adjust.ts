@@ -878,7 +878,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL_ASIA/kazakh_hasimu.png": {
-            "scale": 1.1,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 9
         },
