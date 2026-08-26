@@ -87,6 +87,9 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     INDIA: 'INDI', WEST_ASIA: 'PERSIAN', CENTRAL_ASIA: 'CEAS',
     AFRICA: 'AFRI', BERBER: 'AFRI', MALAY: 'SEAS',
     AMERICA: 'MESO',
+    ANDE: 'ANDE',
+    PURU: 'PURU',
+    ORIE: 'ORIE',
 };
 
 /** 判断某城是否用小城 DE 建筑组合渲染；是则返回 DE 风格前缀，否则 null。 */
