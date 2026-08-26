@@ -83,24 +83,26 @@ const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY
 
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘/中城按文化套用）──
 // 主人定：中国8区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
-// 其余按 DE 奇观锚定真实文明（2026-08-27 奇观修正，杜绝"同名前缀"文明错配）：
-//   WEST_ASIA(拜占庭)→MEDI(MEDI_WONDER_BYZANTINES)；BERBER(柏柏尔)→ORIE(ORIE_WONDER_BERBERS)；
-//   ANDE(印加)→MESO(MESO_WONDER_INCAS，ANDE套装=马普切/图皮南美原住民，非印加)；
-//   EAST(基辅罗斯)→SLAV(东斯拉夫，EAST套装=哥特/维京日耳曼蛮族)；
-//   CENTRAL_ASIA(塞尔柱)→ORIE(ORIE_WONDER_TURKS/PERSIANS 波斯-突厥，CEAS套装=库曼/鞑靼草原游牧)。
+// 其余按 cities_v2.ts 实际城市构成 + CityWonders 奇观锚定真实文明（2026-08-27 修正）：
+//   WEST_ASIA(安纳托利亚/两河流域=苏美尔/亚述/赫梯/巴比伦/罗姆/奥斯曼)→ORIE(近东)；
+//   CENTRAL_ASIA(波斯/塞尔柱/花拉子模/帖木儿)→ORIE(波斯/土耳其)；BERBER(柏柏尔)→ORIE(北非)；
+//   EAST(哥特/维京/匈人/条顿)→EAST 套装；ANDE(马普切/穆伊斯卡/图皮)→ANDE 套装；
+//   (拜占庭已迁 LATIN，君士坦丁堡奇观=MEDI_WONDER_BYZANTINES，与 WEST_ASIA 无关)
 const REGION_TO_DE_STYLE: Record<string, string> = {
     CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', LINGNAN: 'ASIA', BASHU: 'ASIA',
     DIANQIAN: 'ASIA', HEXI: 'ASIA', WESTERN: 'ASIA', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
     TIBET: 'INDI',
     STEPPE: 'YURT',
     SLAVIC: 'SLAV', GERMANIC: 'WEST', LATIN: 'MEDI',
-    INDIA: 'INDI', WEST_ASIA: 'MEDI', CENTRAL_ASIA: 'ORIE',
+    INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'ORIE',
     AFRICA: 'AFRI', BERBER: 'ORIE', MALAY: 'SEAS',
     AMERICA: 'MESO',
-    ANDE: 'MESO',
+    ANDE: 'ANDE',
     PURU: 'PURU',
     ORIE: 'ORIE',
-    EAST: 'SLAV',
+    EAST: 'EAST',
+    PERSIAN: 'PERSIAN', // DE 波斯 = PERSIAN 套装（PERSIAN_WONDER_ACHAEMENIDS 阿契美尼德奇观在此）
+    CUMAN: 'CEAS', // DE 库曼/鞑靼 = CEAS 套装（CEAS_WONDER_CUMANS/TATARS 在此）
     GREEK: 'MEDI', // DE 希腊/拜占庭 = 地中海套装（MEDI_WONDER_BYZANTINES 拜占庭奇观在此，greek 战役前缀无 AGE3 建筑池）
     THRACIAN: 'SLAV', // DE 色雷斯/保加利亚 = 东欧套装（SLAV_WONDER_BULGARIANS 保加利亚奇观在此，thracian 战役前缀无 AGE3 建筑池）
 };

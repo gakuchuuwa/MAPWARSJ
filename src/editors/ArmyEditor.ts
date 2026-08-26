@@ -65,6 +65,8 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     EAST:         'luosi',       // 东欧 → 罗斯（基辅罗斯）
     GREEK:        'xila',        // 希腊 → 希腊（雅典）
     THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚
+    PERSIAN:      'aqimeinide',  // 波斯 → 阿契美尼德（波斯波利斯）
+    CUMAN:        'qincha',      // 库曼 → 钦察（萨拉托夫）
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

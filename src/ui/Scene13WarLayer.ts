@@ -215,6 +215,8 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     EAST:         { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GREEK:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     THRACIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    PERSIAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    CUMAN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
 };
 
 /**
@@ -1164,6 +1166,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
     GREEK: 'GREEK',   // [2026-08-27] 希腊（古希腊城邦/大希腊）
     THRACIAN: 'THRACIAN', // [2026-08-27] 色雷斯（保加利亚/色雷斯）
+    PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
+    CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
 };
 /**
  * 🔴 [2026-08-26 主人：「DE 中的城堡，分别安置在战斗模式中，现在没有把所有的城堡都用上」]

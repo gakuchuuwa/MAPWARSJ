@@ -48,7 +48,9 @@ export type RegionType =
     | 'ORIE'       // 阿拉伯 (埃及/阿拉伯半岛/黎凡特)[2026-08-27 拆西亚新增]
     | 'EAST'       // 东欧 (哥特/匈人/条顿/维京/罗斯)[2026-08-27 拆日耳曼/拉丁/斯拉夫/草原新增]
     | 'GREEK'      // 希腊 (古希腊城邦/大希腊)[2026-08-27 撤销并入拉丁，恢复独立]
-    | 'THRACIAN';  // 色雷斯 (保加利亚/色雷斯)[2026-08-27 拆拉丁/斯拉夫新增]
+    | 'THRACIAN'   // 色雷斯 (保加利亚/色雷斯)[2026-08-27 拆拉丁/斯拉夫新增]
+    | 'PERSIAN'    // 波斯 (伊朗高原/呼罗珊/阿富汗)[2026-08-27 拆中亚新增]
+    | 'CUMAN';     // 库曼 (伏尔加-乌拉尔草原突厥系)[2026-08-27 拆草原新增]
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -56,8 +58,8 @@ export type RegionType =
 export const REGION_ORDER: RegionType[] = [
     'SLAVIC', 'EAST', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
-    'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
-    'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
+    'HEXI', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
+    'CENTRAL_ASIA', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
     'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ORIE',
     'AMERICA', 'ANDE', 'AFRICA', 'MALAY'
 ];
@@ -94,6 +96,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     EAST: '东欧',
     GREEK: '希腊',
     THRACIAN: '色雷斯',
+    PERSIAN: '波斯',
+    CUMAN: '库曼',
 };
 
 /**
@@ -134,6 +138,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     EAST: '东欧',
     GREEK: '希腊',
     THRACIAN: '色雷斯',
+    PERSIAN: '波斯',
+    CUMAN: '库曼',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -265,6 +271,7 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang', 'city_wendeng'] },
     { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu', 'city_liaoyang'] },
     { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu', 'city_liaoyang'] },
+    { region: 'CUMAN', cityIds: ['city_daerban', 'city_chalijin', 'city_kashan', 'city_wufa', 'city_salaichuke', 'city_mangshilake', 'city_daerban'] },
     { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_urgench', 'city_daerban', 'city_xianuofugeerdede', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu', 'city_liaoyang'] },
     { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_loulan', 'city_hamiwei', 'city_guihua', 'city_fushi', 'city_lanzhou'] },
     { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong', 'city_xiangyang'] },
@@ -273,6 +280,7 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_piyetuo', 'city_shimenguan'] },
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_geergang', 'city_mizhina', 'city_shwebo', 'city_pagan', 'city_srikshetra', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_piyetuo', 'city_shimenguan', 'city_dajianlu'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
+    { region: 'PERSIAN', cityIds: ['city_dabulishi', 'city_susa', 'city_feiluzhabade', 'city_kandaha', 'city_gaofu', 'city_merv', 'city_nisa', 'city_dabulishi'] },
     { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_duershelujin', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
     { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_beileinisi', 'city_wasaite', 'city_yalishanda', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_duershelujin', 'city_susa'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
@@ -311,6 +319,8 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     EAST: '#37474f',  // 深蓝灰（东欧蛮族钢铁）[2026-08-27]
     GREEK: '#1e88e5',  // 蓝（希腊爱琴海）[2026-08-27]
     THRACIAN: '#ad1457',  // 深品红（色雷斯巴尔干）[2026-08-27]
+    PERSIAN: '#4527a0',  // 深紫（阿契美尼德波斯王紫）[2026-08-27]
+    CUMAN: '#a1887f',  // 灰褐（库曼钦察草原）[2026-08-27]
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -558,6 +568,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/slavic_big.png'),
         pass: resolvePath('/cities/slavic_pass.png')
     },
+    PERSIAN: { // ⚠️ [2026-08-27 新增] 暂借西亚图标（波斯中东，待专属素材）
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    CUMAN: { // ⚠️ [2026-08-27 新增] 暂借草原图标（库曼游牧，待专属素材）
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -668,6 +690,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
     GREEK:        ['city_yadian'],                    // 雅典 (希腊城邦核心; 2026-08-27 撤销并入拉丁)
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
+    PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
+    CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
