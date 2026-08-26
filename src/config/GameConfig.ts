@@ -264,6 +264,9 @@ export class GameConfig {
             ANDE: [0.90, 1.15],
             PURU: [0.95, 1.05],
             ORIE: [1.05, 0.90],
+            EAST: [1.10, 0.85],
+            GREEK: [1.00, 1.05],
+            THRACIAN: [0.90, 0.90],
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
@@ -278,6 +281,9 @@ export class GameConfig {
             ANDE: 0.80,
             PURU: 0.95,
             ORIE: 1.05,
+            EAST: 1.05,
+            GREEK: 0.95,
+            THRACIAN: 1.05,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
@@ -292,6 +298,9 @@ export class GameConfig {
             ANDE: 1.05,
             PURU: 1.10,
             ORIE: 1.05,
+            EAST: 0.90,
+            GREEK: 1.00,
+            THRACIAN: 0.95,
         } as Record<string, number>,
         /** region → 军团兵上限 */
         LEGION_TROOP_CAP_TABLE: {
@@ -306,6 +315,9 @@ export class GameConfig {
             ANDE: 0.90,
             PURU: 0.90,
             ORIE: 0.95,
+            EAST: 1.05,
+            GREEK: 0.90,
+            THRACIAN: 0.90,
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
@@ -320,6 +332,9 @@ export class GameConfig {
             ANDE: 1.05,
             PURU: 0.95,
             ORIE: 0.90,
+            EAST: 0.85,
+            GREEK: 0.95,
+            THRACIAN: 0.90,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,

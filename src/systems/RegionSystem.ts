@@ -45,13 +45,16 @@ export type RegionType =
     | 'MALAY'      // 马来 (马六甲/满剌加)[2026-08-24 新增]
     | 'ANDE'       // 安第斯 (印加/马普切/穆伊斯卡/图皮)[2026-08-27 拆美洲新增]
     | 'PURU'       // 南印度 (达罗毗荼/朱罗/潘地亚)[2026-08-27 拆印度新增]
-    | 'ORIE';      // 阿拉伯 (埃及/阿拉伯半岛/黎凡特)[2026-08-27 拆西亚新增]
-// [2026-08-19 主人定·收敛 18 大文化] GREEK → LATIN、NUERGAN → NORTHEAST 已并入，
-//   两者的城池 region 已改写、旧值由 LEGACY_REGION_MAP 兜底。勿再新增这两个枚举。
+    | 'ORIE'       // 阿拉伯 (埃及/阿拉伯半岛/黎凡特)[2026-08-27 拆西亚新增]
+    | 'EAST'       // 东欧 (哥特/匈人/条顿/维京/罗斯)[2026-08-27 拆日耳曼/拉丁/斯拉夫/草原新增]
+    | 'GREEK'      // 希腊 (古希腊城邦/大希腊)[2026-08-27 撤销并入拉丁，恢复独立]
+    | 'THRACIAN';  // 色雷斯 (保加利亚/色雷斯)[2026-08-27 拆拉丁/斯拉夫新增]
+// [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
+//   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
-    'SLAVIC', 'GERMANIC', 'LATIN', 'BERBER',
+    'SLAVIC', 'EAST', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
@@ -88,6 +91,9 @@ export const REGION_LABELS: Record<RegionType, string> = {
     ANDE: '安第斯',
     PURU: '南印度',
     ORIE: '阿拉伯',
+    EAST: '东欧',
+    GREEK: '希腊',
+    THRACIAN: '色雷斯',
 };
 
 /**
@@ -125,6 +131,9 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     ANDE: '安第斯',
     PURU: '达罗毗荼',
     ORIE: '阿拉伯',
+    EAST: '东欧',
+    GREEK: '希腊',
+    THRACIAN: '色雷斯',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -151,7 +160,6 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'TROPICS': 'LINGNAN',           // 合并 (老 TROPICS 范围已被 getRegion 自动归岭南)
     'SIBERIA': 'STEPPE',            // 合并 (老 SIBERIA 已被 getRegion 自动归塞外)
     'MIN': 'LINGNAN',               // [2026-05-28] 合并: 14 区方案, 福建归岭南
-    'GREEK': 'LATIN',               // [2026-08-19] 合并: 18 大文化收敛, 希腊归拉丁
     'NUERGAN': 'NORTHEAST',         // [2026-08-19] 合并: 18 大文化收敛, 奴儿干归东北
     'SOUTH_HEMISPHERE': 'CENTRAL',  // fallback (不该出现)
     'NEW_WORLD': 'CENTRAL',         // fallback (不该出现)
@@ -300,6 +308,9 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ANDE: '#ff8f00',  // 琥珀（安第斯金）[2026-08-27]
     PURU: '#c62828',  // 深红（达罗毗荼）[2026-08-27]
     ORIE: '#00695c',  // 深绿（伊斯兰绿）[2026-08-27]
+    EAST: '#37474f',  // 深蓝灰（东欧蛮族钢铁）[2026-08-27]
+    GREEK: '#1e88e5',  // 蓝（希腊爱琴海）[2026-08-27]
+    THRACIAN: '#ad1457',  // 深品红（色雷斯巴尔干）[2026-08-27]
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -529,6 +540,24 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/west_asia_big.png'),
         pass: resolvePath('/cities/west_asia_pass.png')
     },
+    EAST: { // ⚠️ [2026-08-27 新增] 暂借日耳曼图标（东欧蛮族，待专属素材）
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    GREEK: { // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    THRACIAN: { // ⚠️ [2026-08-27 新增] 暂借斯拉夫图标（色雷斯巴尔干，待专属素材）
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -625,7 +654,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
     WEST_ASIA:    ['city_bageda'],                     // 巴格达 (阿拔斯王朝都城; 2026-08-18 改: 原君士坦丁堡的 region 字段与坐标判定均落在 LATIN,
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
-    SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
+    SLAVIC:       ['city_mosike'],                       // 莫斯科 (莫斯科公国/东斯拉夫核心; 2026-08-27 原基辅迁东欧改)
+    EAST:         ['city_jifu'],                         // 基辅 (基辅罗斯都城; 2026-08-27 新增东欧区)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
     INDIA:        ['city_deli'],                      // 德里 (德里苏丹国/莫卧儿政治中心, 持续千年印度核心)
@@ -636,6 +666,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
     PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)
     ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
+    GREEK:        ['city_yadian'],                    // 雅典 (希腊城邦核心; 2026-08-27 撤销并入拉丁)
+    THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

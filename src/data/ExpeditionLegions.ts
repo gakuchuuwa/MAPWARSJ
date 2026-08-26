@@ -52,6 +52,9 @@ import { AMERICA_EXPEDITION_ELITE_LEGIONS } from './AmericaExpeditionLegions';
 import { ANDE_EXPEDITION_ELITE_LEGIONS } from './AndeExpeditionLegions';
 import { AFRICA_EXPEDITION_ELITE_LEGIONS } from './AfricaExpeditionLegions';
 import { MALAY_EXPEDITION_ELITE_LEGIONS } from './MalayExpeditionLegions';
+import { EAST_EXPEDITION_ELITE_LEGIONS } from './EastExpeditionLegions';
+import { GREEK_EXPEDITION_ELITE_LEGIONS } from './GreekExpeditionLegions';
+import { THRACIAN_EXPEDITION_ELITE_LEGIONS } from './ThracianExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
@@ -89,6 +92,9 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...ANDE_EXPEDITION_ELITE_LEGIONS,
   ...AFRICA_EXPEDITION_ELITE_LEGIONS,
   ...MALAY_EXPEDITION_ELITE_LEGIONS,
+  ...EAST_EXPEDITION_ELITE_LEGIONS,
+  ...GREEK_EXPEDITION_ELITE_LEGIONS,
+  ...THRACIAN_EXPEDITION_ELITE_LEGIONS,
 };
 
 function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {

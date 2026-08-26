@@ -90,6 +90,9 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     ANDE: 'ANDE',
     PURU: 'PURU',
     ORIE: 'ORIE',
+    EAST: 'EAST',
+    GREEK: 'GREEK',
+    THRACIAN: 'THRACIAN',
 };
 
 /** 判断某城是否用小城 DE 建筑组合渲染；是则返回 DE 风格前缀，否则 null。 */

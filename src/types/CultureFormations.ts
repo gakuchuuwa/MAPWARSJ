@@ -95,6 +95,9 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     ANDE:         'MIXED',    // 安第斯步+鹰武士
     PURU:         'ELEPHANT', // 南印度战象（步象）
     ORIE:         'CAVALRY',  // 阿拉伯骆驼骑（纯骑）
+    EAST:         'MIXED',    // 东欧蛮族步骑（波雅尔铁骑+弓，套斯拉夫编成）
+    GREEK:        'INFANTRY', // 希腊重装步兵/方阵
+    THRACIAN:     'INFANTRY', // 色雷斯轻盾兵
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -166,6 +169,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
     PURU:         'fish_scale',  // 南印度象兵主力（朱罗/潘地亚）
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
+    EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
+    GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
+    THRACIAN:     'fish_scale',  // 色雷斯轻盾兵主力
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1327,8 +1333,7 @@ export const BERBER_TIERS: CompositionTier[] = [
 ];
 
 /** 19. 希腊 希腊重装步兵+底比斯圣队+色雷斯轻装兵（鱼鳞阵 3+4+2：希腊重装步兵前卫 + 底比斯圣队突破主力 + 色雷斯标枪后排） */
-// [2026-08-19 收敛 18 大文化] 希腊已并入 LATIN，本表不再被 CULTURE_TIERS_MAP 引用。
-//   数据保留不删：将来做「拉丁下辖希腊支文化」时直接复用（主人 2026-08-19「其他都是支文化」）。
+// [2026-08-27 撤销并入] 希腊恢复独立区，本表重新被 CULTURE_TIERS_MAP 引用。
 export const GREEK_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1402,6 +1407,9 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ANDE:         LATIN_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     PURU:         INDIA_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
     ORIE:         BERBER_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
+    EAST:         SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
+    GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
+    THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -1434,6 +1442,9 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ANDE:         '安第斯军团',
     PURU:         '达罗毗荼军团',
     ORIE:         '阿拉伯军团',
+    EAST:         '东欧军团',
+    GREEK:        '希腊军团',
+    THRACIAN:     '色雷斯军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

@@ -17,8 +17,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     liulike: { name: '诺城民兵', tier: 2 },          // 诺夫哥罗德·亚历山大：冰湖之战主力
     mosike_gongguo: { name: '顿河军', tier: 2 },          // 莫斯科·德米特里：顿河王/库利科沃；避据点「莫斯科」叠字
     gesake: { name: '哥萨克骑兵', tier: 2 },          // 塞契·赫梅利：扎波罗热哥萨克
-    baojialiya: { name: '查雷维茨卫', tier: 2 },          // 特尔诺沃·阿森一世：查雷维茨要塞沙皇禁卫
-    saierdika: { name: '普利斯卡军', tier: 2 },          // 索非亚·克鲁姆：811普利斯卡歼灭拜占庭军
     saierweiya: { name: '杜尚兵团', tier: 2 },          // 贝尔格莱德·斯蒂芬杜尚；避势力「塞尔维亚」叠字
     moerdaweiya: { name: '瓦斯卢伊军', tier: 2 },          // 雅西·斯蒂芬大帝：1475以少胜多
     piyasite: { name: '波兰骑士', tier: 2 },          // 克拉科夫·卡齐米日：格伦瓦尔德主力
@@ -30,7 +28,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // ── T1 功勋之兵 ──
     dunhe: { name: '亚速哥萨克', tier: 1 },          // 阿速城·塔塔里诺夫：1637攻占亚速 / 1641亚速围城战以少胜多
     keluodiya: { name: '边境禁卫', tier: 3 },
-    luosi: { name: '瓦兰吉卫队', tier: 1 },
     xieerpuhuofu_gongguo: { name: '波雅尔骑兵', tier: 1 },          // 谢尔普霍夫·弗拉基米尔：库利科沃伏击军团；莫斯科公国贵族重骑兵
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
     pusikefu_gongheguo: { name: '圣三一兵团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名

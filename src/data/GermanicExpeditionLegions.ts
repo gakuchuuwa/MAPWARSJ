@@ -16,7 +16,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     // ── T1 功勋之兵 ──
     jialuolin: { name: '加洛林亲兵', tier: 1 },          // 亚琛·查理大帝：scara 御林亲兵，征西欧
     yinggelan: { name: '英格兰长弓', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
-    xiongren: { name: '答剌罕骑兵', tier: 1 },          // 塞格德·阿提拉：横扫巴尔干与意大利的战略级胜利，DE匈奴特色单位
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
@@ -27,21 +26,14 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     piketai: { name: '靛蓝皮克特', tier: 2 },          // 爱丁堡·奥恩格斯（涂菘蓝战士，DE 靛蓝突袭者）
     aersasi: { name: '莱茵重步兵', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
     ruishi: { name: '瑞士长枪', tier: 2 },          // 巴塞尔·阿诺德：森帕赫长枪方阵
-    tiaodun_qishi: { name: '条顿骑士团', tier: 2 },          // 柯尼斯堡·乌尔里希
 
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
-    weijing_york: { name: '丹法盾墙', tier: 3 },          // 约克·血斧埃里克：丹法区约维克戍军；避势力「约维克」叠字
-    nuosi: { name: '维京狂战士', tier: 3 },          // 乌普萨拉·奥拉夫：诺斯狂暴战士（DE 狂战士 Berserk）
-    danmai: { name: '丹斧兵', tier: 3 },          // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
-    ruidian_si: { name: '斯韦阿卫队', tier: 2 },
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米
-    // 哥德堡·卡尔九世：方阵革新多属古斯塔夫；卡尔马战争可考 → T4
-    ruidian_yota: { name: '卡尔马盟', tier: 4 },
     weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
