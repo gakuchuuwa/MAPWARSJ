@@ -76,18 +76,8 @@ function unitIsNaval(u: { getEntity?(): any }): boolean {
     return u.getEntity?.()?.isOnSea === true;
 }
 
-/**
- * 水军战斗进不进 13。
- *
- * 🔴 [2026-08-24 主人定]「如果是水军的攻城战，做用左边是海的图。
- *    先不做水军野战，水军野战保持战略地图模式」。
- *
- * 所以：**水军攻城战进 13**（战场左侧出海，攻方破浪抢滩），
- *      **水军野战不进**（海战演出没做，留在战略地图上按引擎结算）。
- */
-function navalBattleAllowedInScene13(isNaval: boolean, battleType?: 'siege' | 'field'): boolean {
-    if (!isNaval) return true;
-    return battleType === 'siege';
+function unitIsFortress(u: { unitType?: string }): boolean {
+    return u.unitType === 'city';
 }
 
 /**
@@ -173,9 +163,12 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
         const isNavalBattle = unitIsNaval(battle.attacker) || unitIsNaval(battle.defender);
-        if (navalBattleAllowedInScene13(isNavalBattle, battle.type) && bigEnough
-            && battle.attacker.generalId && battle.defender.generalId
-            && attHasElite && defHasElite) {
+        const isNavalVsFortress = isNavalBattle
+            && (unitIsFortress(battle.attacker) || unitIsFortress(battle.defender));
+        const standardScene13Eligible = !isNavalBattle && bigEnough
+            && !!battle.attacker.generalId && !!battle.defender.generalId
+            && attHasElite && defHasElite;
+        if (isNavalVsFortress || standardScene13Eligible) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
             const t = battleSceneTarget(centerUnit);
             // [2026-08-10] 进 13 = 战术层：时长钉死 1 分钟（真实秒），覆盖引擎的动态时长
@@ -187,7 +180,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 battle.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
-                battle.type, isNavalBattle);
+                isNavalVsFortress ? 'siege' : battle.type, isNavalBattle);
             app.battleScene?.enter(t.id);
         }
     };
@@ -229,10 +222,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defBigEnough = defTroops >= minTroops;
         const bigEnough = attBigEnough && defBigEnough;
         const isNavalBattle = [...attackers, ...defenders].some(unitIsNaval);
-        // 🔴 三条件全满足才进 13（主人 2026-08-11 定稿）：武将 + 精锐 + 兵力
-        //    水军：只有攻城战进（左侧出海），野战留在战略地图，见 navalBattleAllowedInScene13
-        if (navalBattleAllowedInScene13(isNavalBattle, battleField?.type) && bigEnough
-            && attHasGen && defHasGen && attHasElite && defHasElite) {
+        const isNavalVsFortress = isNavalBattle
+            && [...attackers, ...defenders].some(unitIsFortress);
+        const standardScene13Eligible = !isNavalBattle && bigEnough
+            && attHasGen && defHasGen && attHasElite && defHasElite;
+        if (isNavalVsFortress || standardScene13Eligible) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);
@@ -248,7 +242,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 const att = attackers[0];
                 const def = defenders[0];
                 // 攻城战守方城等级：从 defenders 里找 city 单位读 type（读的是守城城的等级，不是守军军团的）
-                const defEntity = battleField.type === 'siege'
+                const defEntity = (battleField.type === 'siege' || isNavalVsFortress)
                     ? (defenders.find((u) => u.unitType === 'city') ?? def)
                     : def;
                 if (att && def) {
@@ -262,7 +256,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         battleField.getScene13PowerBonus(),
                         t.center,
                         `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
-                        battleField.type,
+                        isNavalVsFortress ? 'siege' : battleField.type,
                         isNavalBattle
                     );
                 }

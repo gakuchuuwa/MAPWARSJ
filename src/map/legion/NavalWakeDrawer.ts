@@ -82,6 +82,8 @@ export class NavalWakeDrawer {
 
     /**
      * 绘制舰队水上拖尾（在船体之前调用，位于水面层）
+     * 1. 舰队每艘存活船只各自独立激起船首破浪（WAKE_FRONT）与船尾翻波（WAKE_BACK）
+     * 2. 队尾船只沿龙骨逆航向正后方拉出 3 段平滑消散的白色直线尾浪带
      */
     public static drawNavalWakes(
         ctx: CanvasRenderingContext2D,
@@ -90,7 +92,7 @@ export class NavalWakeDrawer {
         scale: number,
         tick: number,
         isMoving: boolean,
-        trail?: { x: number; y: number }[],
+        _trail?: { x: number; y: number }[],
         shipLength: number = 60,
     ): void {
         this.ensureLoaded();
@@ -100,17 +102,19 @@ export class NavalWakeDrawer {
         const backAsset = this.wakeBackDirs[d16];
         const frontAsset = this.wakeFrontDirs[d16];
 
-        // 统一水花尺寸缩放（匹配船只缩放）
+        if (!backAsset?.loaded || !backAsset.img || !frontAsset?.loaded || !frontAsset.img) return;
+
+        // 统一水花尺寸缩放
         const wakeScale = scale * 0.85;
 
-        // 旋转角与前进/倒退单位矢量
+        // 旋转角与前进/倒退单位矢量（正航向：headingX/Y）
         const angle = (d16 + 2) * Math.PI / 8;
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
         const headingX = sin;
         const headingY = -cos;
 
-        // 找到队首旗舰（r 最大/最前）与队尾船（r 最小/最后）
+        // 找到队首旗舰（r 最大）与队尾船（r 最小）
         let frontShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
         let rearShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
         for (const s of shipPositions) {
@@ -119,27 +123,25 @@ export class NavalWakeDrawer {
             if (!rearShip || s.r < rearShip.r) rearShip = s;
         }
 
-        // ─── 1. 沿历史航迹绘制消散长拖尾（Trailing Wake Trail）────────────────
-        if (trail && trail.length >= 2 && backAsset && backAsset.loaded && backAsset.img && rearShip) {
-            const tailDist = Math.abs(rearShip.r) * shipLength;
-
-            // 拖尾段数（沿航迹往后拉出 3 段自然渐隐消散水纹）
+        // ─── 1. 队尾船只沿船体龙骨正后方拉出 3 段消散尾流（Keel-Aligned Wake Trail）───
+        if (rearShip) {
             const trailSteps = [
-                { dist: tailDist + shipLength * 0.6, alpha: 0.32, scaleMul: 1.05, frameOffset: 0 },
-                { dist: tailDist + shipLength * 1.3, alpha: 0.18, scaleMul: 1.18, frameOffset: 10 },
-                { dist: tailDist + shipLength * 2.2, alpha: 0.08, scaleMul: 1.30, frameOffset: 20 },
+                { dist: shipLength * 0.70, alpha: 0.35, scaleMul: 1.05, frameOffset: 0 },
+                { dist: shipLength * 1.45, alpha: 0.20, scaleMul: 1.20, frameOffset: 10 },
+                { dist: shipLength * 2.30, alpha: 0.08, scaleMul: 1.35, frameOffset: 20 },
             ];
 
             for (const step of trailSteps) {
-                const pt = this.getTrailPoint(trail, step.dist);
-                if (!pt) continue;
+                // 沿龙骨逆航向直线取点，保证尾流绝对顺直无歪斜漂移
+                const tx = rearShip.x - headingX * step.dist;
+                const ty = rearShip.y - headingY * step.dist;
 
                 const frameIndex = (Math.floor(tick / 45) + step.frameOffset) % backAsset.meta.frames;
                 const s = wakeScale * step.scaleMul;
                 const w = backAsset.meta.box_w * s;
                 const h = backAsset.meta.box_h * s;
-                const left = pt.x - backAsset.meta.anchor_x * s;
-                const top = pt.y - backAsset.meta.anchor_y * s;
+                const left = tx - backAsset.meta.anchor_x * s;
+                const top = ty - backAsset.meta.anchor_y * s;
                 const sx = frameIndex * backAsset.meta.box_w;
 
                 ctx.globalAlpha = step.alpha;
@@ -149,80 +151,56 @@ export class NavalWakeDrawer {
                     left, top, w, h
                 );
             }
-            ctx.globalAlpha = 1.0;
         }
 
-        // ─── 2. 船队即时浪花：旗舰船首破浪（Bow Wave）+ 队尾翻波（Stern Wake）─────
-        const frameIndex = Math.floor(tick / 40) % 30;
+        // ─── 2. 舰队全员逐舰即时浪花（每艘船均有船头破浪 + 船尾翻波）────────────
+        for (let i = 0; i < shipPositions.length; i++) {
+            const ship = shipPositions[i];
+            if (!ship || !ship.isAlive) continue;
 
-        // 2.1 旗舰船首破浪（WAKE_FRONT）：领头前锋劈波斩浪
-        if (frontShip && frontAsset && frontAsset.loaded && frontAsset.img) {
+            const isFlagship = (ship === frontShip);
+            const animOffset = i * 75; // 各舰水花产生微小相位差，更加生动自然
+            const frameIndex = Math.floor((tick + animOffset) / 40) % 30;
+
+            // (1) 船首破浪（WAKE_FRONT）：旗舰浪大、僚舰浪适中
             const frontOffset = shipLength * 0.35;
-            const fx = frontShip.x + headingX * frontOffset;
-            const fy = frontShip.y + headingY * frontOffset;
+            const fx = ship.x + headingX * frontOffset;
+            const fy = ship.y + headingY * frontOffset;
 
-            const s = wakeScale * 0.95;
-            const w = frontAsset.meta.box_w * s;
-            const h = frontAsset.meta.box_h * s;
-            const left = fx - frontAsset.meta.anchor_x * s;
-            const top = fy - frontAsset.meta.anchor_y * s;
-            const sx = (frameIndex % frontAsset.meta.frames) * frontAsset.meta.box_w;
+            const sFront = wakeScale * (isFlagship ? 0.95 : 0.75);
+            const wFront = frontAsset.meta.box_w * sFront;
+            const hFront = frontAsset.meta.box_h * sFront;
+            const leftFront = fx - frontAsset.meta.anchor_x * sFront;
+            const topFront = fy - frontAsset.meta.anchor_y * sFront;
+            const sxFront = (frameIndex % frontAsset.meta.frames) * frontAsset.meta.box_w;
 
-            ctx.globalAlpha = 0.50;
+            ctx.globalAlpha = isFlagship ? 0.55 : 0.40;
             ctx.drawImage(
                 frontAsset.img,
-                sx, 0, frontAsset.meta.box_w, frontAsset.meta.box_h,
-                left, top, w, h
+                sxFront, 0, frontAsset.meta.box_w, frontAsset.meta.box_h,
+                leftFront, topFront, wFront, hFront
             );
-        }
 
-        // 2.2 队尾船只翻波（WAKE_BACK）：贴在舰队末尾后方推水
-        if (rearShip && backAsset && backAsset.loaded && backAsset.img) {
-            const backOffset = shipLength * 0.30;
-            const bx = rearShip.x - headingX * backOffset;
-            const by = rearShip.y - headingY * backOffset;
+            // (2) 船尾翻波（WAKE_BACK）：贴在每艘船船尾后方自然推水
+            const backOffset = shipLength * 0.38; // 稍微向后移，彻底避开船底阴影与船身切边
+            const bx = ship.x - headingX * backOffset;
+            const by = ship.y - headingY * backOffset;
 
-            const s = wakeScale;
-            const w = backAsset.meta.box_w * s;
-            const h = backAsset.meta.box_h * s;
-            const left = bx - backAsset.meta.anchor_x * s;
-            const top = by - backAsset.meta.anchor_y * s;
-            const sx = (frameIndex % backAsset.meta.frames) * backAsset.meta.box_w;
+            const sBack = wakeScale * (isFlagship ? 0.90 : 0.75);
+            const wBack = backAsset.meta.box_w * sBack;
+            const hBack = backAsset.meta.box_h * sBack;
+            const leftBack = bx - backAsset.meta.anchor_x * sBack;
+            const topBack = by - backAsset.meta.anchor_y * sBack;
+            const sxBack = (frameIndex % backAsset.meta.frames) * backAsset.meta.box_w;
 
-            ctx.globalAlpha = 0.40;
+            ctx.globalAlpha = isFlagship ? 0.45 : 0.35;
             ctx.drawImage(
                 backAsset.img,
-                sx, 0, backAsset.meta.box_w, backAsset.meta.box_h,
-                left, top, w, h
+                sxBack, 0, backAsset.meta.box_w, backAsset.meta.box_h,
+                leftBack, topBack, wBack, hBack
             );
         }
 
         ctx.globalAlpha = 1.0;
-    }
-
-    /** 沿航迹按弧长取点 */
-    private static getTrailPoint(trail: { x: number; y: number }[], distAlong: number): { x: number; y: number } | null {
-        if (!trail || trail.length < 2) return null;
-        let acc = 0;
-        for (let j = trail.length - 1; j > 0; j--) {
-            const a = trail[j];
-            const b = trail[j - 1];
-            if (!a || !b) continue;
-            const seg = Math.hypot(a.x - b.x, a.y - b.y);
-            if (acc + seg >= distAlong) {
-                const t = (distAlong - acc) / (seg || 1);
-                return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-            }
-            acc += seg;
-        }
-        const oldest = trail[0];
-        const next = trail[1] ?? oldest;
-        if (!oldest || !next) return null;
-        const ex = oldest.x - next.x;
-        const ey = oldest.y - next.y;
-        const elen = Math.hypot(ex, ey);
-        if (elen < 0.001) return oldest;
-        const rest = distAlong - acc;
-        return { x: oldest.x + (ex / elen) * rest, y: oldest.y + (ey / elen) * rest };
     }
 }

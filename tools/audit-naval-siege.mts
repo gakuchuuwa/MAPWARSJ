@@ -4,7 +4,7 @@
  *
  * 两条硬检查：
  *   1. 水军攻城战**一定出海**，且海在**左侧**（攻方破浪抢滩，守方陆地坚守）
- *   2. 水军**野战**不进 13（由 navalBattleAllowedInScene13 拦在 Hook 层）
+ *   2. 只有“船＋城池”组合强制进 13；船对船、船对野外军团留在战略模式
  *
  * 跑法：npx tsx tools/audit-naval-siege.mts
  */

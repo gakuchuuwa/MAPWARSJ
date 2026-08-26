@@ -174,7 +174,6 @@ export interface Scene13EnvironmentInput {
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
 // 挡路障碍物被单位连续接触满 N 秒后释放碰撞（防卡死）。主人 2026-08-21 定「5 秒一切换，就树和岩石」。
-const OBSTRUCTION_RELEASE_SEC = 5;
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
 
 /**
@@ -266,17 +265,15 @@ const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> 
 function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
         const a = object.asset;
-        // 🔴 [2026-08-21 主人定·方案A] 小 solid 纯贴图（无碰撞）：岩石(ROCK*)/木桶/墓碑/骸骨/芦苇/睡莲
-        //    成组密集、反复推挤卡兵 → 一律不阻挡。树（DE_TREE_OBJECTS）+ 悬崖（CLIFF*）保留碰撞。
-        if (a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON' || a === 'REEDS' || a === 'WATER_LILY' || a === 'OYSTERS') {
+        // 纯贴图（无碰撞）：树木、岩石、木桶、墓碑、骸骨、芦苇、睡莲。
+        // 树仍按 world 层深度排序绘制，只是不再推挤、阻挡士兵。
+        if (DE_TREE_OBJECTS.has(a) || a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON' || a === 'REEDS' || a === 'WATER_LILY' || a === 'OYSTERS') {
             object.obstruction = undefined;
+            object.obstructionReleaseAfterSec = undefined;
             continue;
         }
         object.obstruction = DE_OBJECT_OBSTRUCTION[a]
             ?? (DE_HALF_TILE_OBJECTS.has(a) ? HALF_TILE_OBSTRUCTION : undefined);
-        if (DE_TREE_OBJECTS.has(a)) {
-            object.obstructionReleaseAfterSec = OBSTRUCTION_RELEASE_SEC;
-        }
     }
 }
 
