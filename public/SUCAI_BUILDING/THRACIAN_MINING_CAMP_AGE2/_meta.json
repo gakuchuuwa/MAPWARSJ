@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_MINING_CAMP_AGE2",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 108,
+  "anchor_x": 94,
+  "anchor_y": 62,
+  "sld_source": "b_thracian_mining_camp_age2"
+}

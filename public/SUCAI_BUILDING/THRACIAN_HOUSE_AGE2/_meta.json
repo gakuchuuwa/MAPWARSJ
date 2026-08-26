@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_HOUSE_AGE2",
+  "frames": 3,
+  "box_w": 228,
+  "box_h": 176,
+  "anchor_x": 122,
+  "anchor_y": 122,
+  "sld_source": "b_thracian_house_age2"
+}

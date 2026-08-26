@@ -1351,8 +1351,8 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 ];
 /** 攻城战守方（中城）7 种城堡时代基础建筑（age3；2026-08-22 主人定：中城无大学/修道院/攻城厂/市镇中心，不够 8 口用警戒塔补） */
 const SIEGE_MEDIUM_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
-/** 攻城战守方（小城）8 种封建时代建筑（age2；2026-08-26 主人定「和战略地图一致」：8 选 7，含瞭望箭塔/城镇中心，去市集） */
-const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE'];
+/** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
+const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** 攻城战守方（险要）6 种封建时代军事建筑（age2；2026-08-22 主人定：险要=纯军事要塞，无市场） */
 const SIEGE_PASS_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH'];
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
@@ -4132,25 +4132,11 @@ export class Scene13WarLayer {
                 placeYurtCamp();
                 return;
             }
-            // 小城：封建时代（age2），无城堡，9 口 = 民屋 + 8选7建筑 + 木堡（2026-08-26 主人定「和战略地图一致」）
+            // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
             if (this.defenderCityType === 'small_city') {
-                // 前排最下钉死民屋（同上：随机抽到大建筑会压出城墙）
-                const smallHouseIdx = frontBottomIdx(side);
-                this.decorSprites.push(place(side[smallHouseIdx], `${style}_HOUSE_AGE2`));
-                const smallRest = side.filter((_, i) => i !== smallHouseIdx);
-                const shuffledSmall = [...smallRest].sort(() => Math.random() - 0.5);
-                // 8 选 7（与战略地图一致）：8 种封建建筑随机剔 1 → 7 建筑随机分配
-                const smallPool = [...SIEGE_FEUDAL_BUILDINGS];
-                smallPool.splice(Math.floor(Math.random() * smallPool.length), 1);
-                const shuffledBuildings = smallPool.sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
-                // 🔴 [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 小城中心放木堡。
-                //    小城与草原城的城墙走 PALISADE（木栅栏，见 wallMat），原木尖桩的 WOODEN_FORT
-                //    与之同源；小城又没有城堡，正缺一个中心地标 —— 事实与观感都成立。
-                //    [2026-08-26] 缩到 0.8：原素材 452x392 几乎等同城堡（468x404），而小城
-                //    其余建筑最高仅 280（兵营/靶场）、民屋 172 —— 小城本就是「无城堡」档，
-                //    原尺寸摆上去等于越级。0.8 后 362x314，仍是场上最大的中心地标，但不再压过城堡档。
-                this.decorSprites.push(place(shuffledSmall[7], 'WOODEN_FORT', { scale: 0.8 }));
+                const shuffledSmall = [...side].sort(() => Math.random() - 0.5);
+                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
                 return;
             }
             // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑

@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_SHIPYARD_AGE2",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 228,
+  "anchor_x": 168,
+  "anchor_y": 152,
+  "sld_source": "b_thracian_shipyard_age2"
+}

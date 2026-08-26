@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_TOWER_AGE2",
+  "frames": 1,
+  "box_w": 208,
+  "box_h": 228,
+  "anchor_x": 144,
+  "anchor_y": 196,
+  "sld_source": "b_greek_tower_age2"
+}

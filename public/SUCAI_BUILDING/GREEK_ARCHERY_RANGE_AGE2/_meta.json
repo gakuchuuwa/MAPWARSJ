@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_ARCHERY_RANGE_AGE2",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 300,
+  "anchor_x": 172,
+  "anchor_y": 212,
+  "sld_source": "b_greek_archery_range_age2"
+}
