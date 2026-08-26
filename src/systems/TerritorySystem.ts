@@ -5,6 +5,7 @@ import { FactionManager } from '../world/FactionManager';
 import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
+import { getCityRegion } from './RegionSystem';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 // [PERF] Import Territory Worker
@@ -70,6 +71,64 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 
 // 小城建筑环绕组成：3 民居 + 兵营 + 铁匠铺 + 靶场（中间磨坊为中核）
 const DE_SMALL_CITY_RING = ['HOUSE', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE'];
+
+// ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘按文化套用）──
+// 主人定：中国6区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
+// 其余按文化精确对应 DE 风格（14 个区域风格 AGE2 素材齐全）。
+const REGION_TO_DE_STYLE: Record<string, string> = {
+    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', LINGNAN: 'ASIA', BASHU: 'ASIA',
+    DIANQIAN: 'ASIA', HEXI: 'ASIA', WESTERN: 'ASIA', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
+    TIBET: 'INDI',
+    STEPPE: 'YURT',
+    SLAVIC: 'SLAV', GERMANIC: 'WEST', LATIN: 'MEDI',
+    INDIA: 'INDI', WEST_ASIA: 'PERSIAN', CENTRAL_ASIA: 'CEAS',
+    AFRICA: 'AFRI', BERBER: 'AFRI', MALAY: 'SEAS',
+    AMERICA: 'MESO',
+};
+
+/** 判断某城是否用小城 DE 建筑组合渲染；是则返回 DE 风格前缀，否则 null。 */
+function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion: string | undefined, lat: number, lng: number): string | null {
+    if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
+    if (cityType !== 'small_city' && cityType !== 'pass') return null; // 只做小城/关隘
+    const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
+    return REGION_TO_DE_STYLE[region] ?? null;
+}
+
+/** 草原营地（YURT 特例）：8 真蒙古包 YURT_E~L + 中央大帐，逐水草而居——无地基/无石路/无栅栏，参照战斗模式。 */
+function buildYurtCampHtml(baseSize: number, cityId: string): string {
+    const rnd = deMulberry32(deHashString(cityId));
+    const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+    for (let i = yurts.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [yurts[i], yurts[j]] = [yurts[j], yurts[i]];
+    }
+    const rotation = rnd() * 360;
+    const W = baseSize * 2.0, H = baseSize * 1.7;
+    const parts: string[] = [];
+
+    // 中央大帐（最大的 YURT_L）
+    const centerW = baseSize * 0.52;
+    parts.push(`<img src="/SUCAI_BUILDING/YURT_L/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+
+    // 周围 8 蒙古包（每个 45° 扇区，扇区内角度扰动）
+    yurts.forEach((y, i) => {
+        const baseAngle = rotation + i * (360 / yurts.length);
+        const angleJitter = rnd() * 30 - 15;
+        const angle = (baseAngle + angleJitter) * Math.PI / 180;
+        const r = (0.32 + rnd() * 0.10) * baseSize;
+        const x = Math.cos(angle) * r;
+        const yy = Math.sin(angle) * r * 0.58;
+        const yw = baseSize * 0.30;
+        const zIndex = Math.round(100 + yy);
+        parts.push(`<img src="/SUCAI_BUILDING/${y}/preview.png" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
+    });
+
+    // 瞭望塔（草原用中亚 CEAS_TOWER_AGE2，靠近游牧）
+    const watchW = baseSize * 0.26;
+    parts.push(`<img src="/SUCAI_BUILDING/CEAS_TOWER_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${watchW.toFixed(1)}px;transform:translate(calc(-50% - ${(baseSize * 0.55).toFixed(1)}px),calc(-50% - ${(baseSize * 0.4).toFixed(1)}px - 15%));z-index:80;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
+
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
 
 // 各类栅栏/城门部件的精准锚点百分比与尺寸权重（提取自 DE _meta.json anchor_x / anchor_y）
 // 栅栏比例进一步调至 0.165x（高度约 15px），角楼与栅栏比例平衡，彻底展现村落全景通透感
@@ -149,6 +208,7 @@ function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
 }
 
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_RING];
     for (let i = ring.length - 1; i > 0; i--) {
@@ -1205,6 +1265,9 @@ export class TerritorySystem {
                 baseSize = 100;
         }
 
+        // [2026-08-26 第三步] 小城/关隘按文化区套用 DE 建筑组合（非小城返回 null → 用整图）
+        const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng);
+
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
         
@@ -1276,14 +1339,14 @@ export class TerritorySystem {
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
                      ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
-                         ${DE_CITY_EXPERIMENT.has(city.id)
-                             ? buildDeSmallCityStackHtml(baseSize, city.id, 'MESO')
+                         ${(deStyle
+                             ? buildDeSmallCityStackHtml(baseSize, city.id, deStyle)
                              : (city.image
                                  ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                      width: ${baseSize}px; height: auto;
                                      transform: ${transform};
                                  ">`
-                                 : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`)}
+                                 : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`))}
                      </div>` : ''}
                      ${flagBodyHtml}
                  </div>`,
