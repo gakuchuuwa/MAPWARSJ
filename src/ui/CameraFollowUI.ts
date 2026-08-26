@@ -648,11 +648,13 @@ export class CameraFollowUI {
         for (const button of [this.listButton, this.yuefeiButton, this.huoqubingButton, this.zhugeliangButton]) {
             if (button) button.style.display = 'none';
         }
+        // 🔴 幂等修复（2026-08-26）：onEnter 会被 Scene13WarLayer.start 与 BattleSceneLayer.enter
+        //    各调一次。第二次进来时 banner 已被第一次隐藏（display='none'），原 else 分支把
+        //    preScene13FollowBannerVisible 覆盖回 false，导致退出时 onExit 永不恢复跟随面板。
+        //    现改为：只在 banner 仍可见时记录 true，已隐藏则保持第一次的值不变。
         if (this.followBanner && this.followBanner.style.display !== 'none') {
             this.preScene13FollowBannerVisible = true;
             this.followBanner.style.display = 'none';
-        } else {
-            this.preScene13FollowBannerVisible = false;
         }
     }
 
