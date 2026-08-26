@@ -97,26 +97,30 @@ function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion
     return REGION_TO_DE_STYLE[region] ?? null;
 }
 
-/** 草原营地（YURT 特例）：8 真蒙古包 YURT_E~L + 中央大帐，逐水草而居——无地基/无石路/无栅栏，参照战斗模式。 */
+/** 草原营地（YURT 特例）：逐水草而居——无地基/无石路/无栅栏，参照战斗模式。
+ *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。 */
 function buildYurtCampHtml(baseSize: number, cityId: string): string {
     const rnd = deMulberry32(deHashString(cityId));
-    const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
-    yurts.splice(Math.floor(rnd() * yurts.length), 1); // 8 选 7：随机剔 1 个帐篷
-    for (let i = yurts.length - 1; i > 0; i--) {
+    const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L']; // 8 蒙古包全用满（不剔，与战术一致）
+    const TOWER = 'TOWER';
+    const items: string[] = [...yurts, TOWER]; // 8 帐篷 + 1 亚洲塔 = 9 物件
+    for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
-        [yurts[i], yurts[j]] = [yurts[j], yurts[i]];
+        [items[i], items[j]] = [items[j], items[i]];
     }
     const rotation = rnd() * 360;
     const W = baseSize * 2.0, H = baseSize * 1.7;
     const parts: string[] = [];
+    const srcOf = (k: string) => k === TOWER ? '/SUCAI_BUILDING/ASIA_TOWER_AGE2/preview.png' : `/SUCAI_BUILDING/${k}/preview.png`;
+    const sizeOf = (k: string, center: boolean) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
 
-    // 中间 1 个帐篷（随机选，居中）
-    const centerY = yurts[0];
-    const centerW = baseSize * 0.46;
-    parts.push(`<img src="/SUCAI_BUILDING/${centerY}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+    // 中间 1 个（随机，可能是帐篷或瞭望塔）
+    const centerY = items[0];
+    const centerW = sizeOf(centerY, true);
+    parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
 
-    // 周围 6 个帐篷扇区散布（60° 扇区，随机取样）
-    const surround = yurts.slice(1);
+    // 周围 8 个扇区散布（45° 扇区，随机取样）
+    const surround = items.slice(1);
     surround.forEach((y, i) => {
         const baseAngle = rotation + i * (360 / surround.length);
         const angleJitter = rnd() * 30 - 15;
@@ -124,14 +128,10 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
         const r = (0.32 + rnd() * 0.10) * baseSize;
         const x = Math.cos(angle) * r;
         const yy = Math.sin(angle) * r * 0.58;
-        const yw = baseSize * 0.30;
+        const yw = sizeOf(y, false);
         const zIndex = Math.round(100 + yy);
-        parts.push(`<img src="/SUCAI_BUILDING/${y}/preview.png" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
+        parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
-
-    // 瞭望箭塔（草原用中亚 CEAS_TOWER_AGE2，靠近游牧）
-    const watchW = baseSize * 0.26;
-    parts.push(`<img src="/SUCAI_BUILDING/CEAS_TOWER_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${watchW.toFixed(1)}px;transform:translate(calc(-50% - ${(baseSize * 0.55).toFixed(1)}px),calc(-50% - ${(baseSize * 0.4).toFixed(1)}px - 15%));z-index:80;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
 
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
@@ -269,6 +269,11 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 3. 严密咬合的硬木栅栏围墙与正南木城门（基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合）
     const wallPieces = computePalisadeWallAndGate(baseSize);
+    // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
+    // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
+    if (rnd() < 0.5) {
+        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+    }
     wallPieces.forEach((w) => {
         const anchor = DE_PALISADE_ANCHORS[w.type];
         const zIndex = Math.round(100 + w.y);

@@ -1351,8 +1351,8 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 ];
 /** 攻城战守方（中城）7 种城堡时代基础建筑（age3；2026-08-22 主人定：中城无大学/修道院/攻城厂/市镇中心，不够 8 口用警戒塔补） */
 const SIEGE_MEDIUM_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
-/** 攻城战守方（小城/险要）7 种封建时代建筑（age2；2026-08-22 主人定：封建建筑不够 9 口用瞭望塔+警戒塔补） */
-const SIEGE_FEUDAL_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH', 'MARKET'];
+/** 攻城战守方（小城）8 种封建时代建筑（age2；2026-08-26 主人定「和战略地图一致」：8 选 7，含瞭望箭塔/城镇中心，去市集） */
+const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE'];
 /** 攻城战守方（险要）6 种封建时代军事建筑（age2；2026-08-22 主人定：险要=纯军事要塞，无市场） */
 const SIEGE_PASS_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH'];
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
@@ -1731,7 +1731,9 @@ const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 6 * 40,
     PROJ_SHOT: 7.5 * 40,
-    PROJ_GUNPOWDER: 7.5 * 40,
+    // 火枪弹必须近乎瞬达：旧值 300px/s，满射程 280px 要飞约 0.93s，视觉像弹丸飘行。
+    // 提至 1200px/s 后满射程约 0.23s，与上方 PROJ_DUR 的 0.22s 演出尺度一致。
+    PROJ_GUNPOWDER: 30 * 40,
     PROJ_FIRE_LANCER: 7.5 * 40,
     PROJ_HUSSITE_WAGON: 7 * 40,
     PROJ_BOMBARD_BALL: 4 * 40,
@@ -4006,9 +4008,9 @@ export class Scene13WarLayer {
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
             for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i]));
-            // 🔴 [2026-08-22 主人定] 蒙古营地塔 = 木质瞭望塔（DE AFRI_TOWER_AGE2，茅草顶木架哨塔），
-            //    不是石砌警戒塔（CEAS_TOWER_AGE2 = 中亚石圆塔，游牧不筑石，换掉）。
-            this.decorSprites.push(place(shuffledSpawns[8], 'AFRI_TOWER_AGE2'));
+            // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
+            //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
+            this.decorSprites.push(place(shuffledSpawns[8], 'ASIA_TOWER_AGE2'));
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -4130,17 +4132,18 @@ export class Scene13WarLayer {
                 placeYurtCamp();
                 return;
             }
-            // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 房屋（2026-08-22 主人定：不越时代，去掉城堡时代警戒箭塔）
+            // 小城：封建时代（age2），无城堡，9 口 = 民屋 + 8选7建筑 + 木堡（2026-08-26 主人定「和战略地图一致」）
             if (this.defenderCityType === 'small_city') {
-                const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
                 // 前排最下钉死民屋（同上：随机抽到大建筑会压出城墙）
                 const smallHouseIdx = frontBottomIdx(side);
                 this.decorSprites.push(place(side[smallHouseIdx], `${style}_HOUSE_AGE2`));
                 const smallRest = side.filter((_, i) => i !== smallHouseIdx);
                 const shuffledSmall = [...smallRest].sort(() => Math.random() - 0.5);
-                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
-                this.decorSprites.push(place(shuffledSmall[6], `${style}_TOWER_AGE2`));
+                // 8 选 7（与战略地图一致）：8 种封建建筑随机剔 1 → 7 建筑随机分配
+                const smallPool = [...SIEGE_FEUDAL_BUILDINGS];
+                smallPool.splice(Math.floor(Math.random() * smallPool.length), 1);
+                const shuffledBuildings = smallPool.sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
                 // 🔴 [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 小城中心放木堡。
                 //    小城与草原城的城墙走 PALISADE（木栅栏，见 wallMat），原木尖桩的 WOODEN_FORT
                 //    与之同源；小城又没有城堡，正缺一个中心地标 —— 事实与观感都成立。
