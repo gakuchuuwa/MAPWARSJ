@@ -761,10 +761,9 @@ function generateElevation(
     const grid: number[][] = Array.from({ length: gh }, () => new Array(gw).fill(0));
 
     if (topology === 'canyon_pass') {
-        // 峡谷关隘走廊：北面与南面隆起两道险峻峡谷岩壁，中轴平坦畅通
         const topCliffY = VH * 0.18, botCliffY = VH * 0.82;
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
+        for (let y = 3; y < gh - 3; y++) {
+            for (let x = 3; x < gw - 3; x++) {
                 const py = isoCellY(x, y, oy);
                 if (py < topCliffY) {
                     const d = (topCliffY - py) / 50;
@@ -778,47 +777,50 @@ function generateElevation(
         return grid;
     }
 
-    // 计算当前战场的高地丘陵数量（高山 5~6 处，丘陵 4~5 处，平原 3~4 处）
     const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
-        ? 5 + rng.int(0, 2)
+        ? 4 + rng.int(0, 2)
         : (elev !== null && elev >= 300)
-            ? 4 + rng.int(0, 2)
-            : 3 + rng.int(0, 2);
+            ? 3 + rng.int(0, 2)
+            : 2 + rng.int(0, 2);
 
     for (let i = 0; i < hillCount; i++) {
-        const regionX = (i % 3) * 0.32 + 0.16 + (rng.next() - 0.5) * 0.15;
-        const regionY = Math.floor(i / 3) * 0.38 + 0.22 + (rng.next() - 0.5) * 0.16;
-        const hillScreenX = VW * Math.max(0.12, Math.min(0.88, regionX));
-        const hillScreenY = VH * Math.max(0.15, Math.min(0.85, regionY));
+        // 严格限制在屏幕中央安全区，绝不延伸到屏幕/网格边界
+        const regionX = (i % 2) * 0.36 + 0.32 + (rng.next() - 0.5) * 0.12;
+        const regionY = Math.floor(i / 2) * 0.36 + 0.32 + (rng.next() - 0.5) * 0.12;
+        const hillScreenX = VW * Math.max(0.20, Math.min(0.80, regionX));
+        const hillScreenY = VH * Math.max(0.22, Math.min(0.78, regionY));
 
         const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
-        const cx = Math.max(2, Math.min(gw - 3, hillGx));
-        const cy = Math.max(2, Math.min(gh - 3, hillGy));
+        const cx = Math.max(5, Math.min(gw - 6, hillGx));
+        const cy = Math.max(5, Math.min(gh - 6, hillGy));
 
-        // i === 0 为主制高台，其余为连绵小山包
-        const isMajor = i === 0 || (i === 1 && hillCount >= 5);
-        const rx = isMajor ? (10 + rng.next() * 6) : (5 + rng.next() * 4);
-        const ry = isMajor ? (7 + rng.next() * 4) : (3.5 + rng.next() * 3);
+        const isMajor = i === 0;
+        const rx = isMajor ? (9 + rng.next() * 5) : (4.5 + rng.next() * 3.5);
+        const ry = isMajor ? (6.5 + rng.next() * 3.5) : (3.2 + rng.next() * 2.5);
         const hMax = isMajor ? ((elev !== null && elev >= 800) ? 3 : 2) : 1;
         const angle = (rng.next() - 0.5) * 1.5;
 
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
+        // 仅在局部山丘半径内扫描
+        const maxR = Math.ceil(Math.max(rx, ry) * 1.25);
+        const minX = Math.max(4, cx - maxR), maxX = Math.min(gw - 5, cx + maxR);
+        const minY = Math.max(4, cy - maxR), maxY = Math.min(gh - 5, cy + maxR);
+
+        for (let y = minY; y <= maxY; y++) {
+            for (let x = minX; x <= maxX; x++) {
                 const dx = x - cx;
                 const dy = y - cy;
                 const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
                 const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
                 const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
-                const noise = (Math.sin(x * 0.8 + y * 0.6) * 0.08) + (Math.cos(x * 1.2 - y * 0.9) * 0.05);
-                const dist = normDist + noise;
+                if (normDist >= 1.0) continue; // 局部严格闭合，超出半径严格归 0
 
                 let h = 0;
-                if (dist < 0.38) {
-                    h = hMax; // 丘顶高台
-                } else if (dist < 0.78) {
-                    h = Math.max(1, hMax - 1); // 宽阔缓坡坡腰
-                } else if (dist < 1.15) {
-                    h = 1; // 坡脚过渡基底
+                if (normDist < 0.38) {
+                    h = hMax; // 丘顶平坦高台
+                } else if (normDist < 0.75) {
+                    h = Math.max(1, hMax - 1); // 宽阔缓坡
+                } else {
+                    h = 1; // 坡脚过渡
                 }
 
                 if (h > grid[y][x]) {
@@ -1252,314 +1254,12 @@ function buildGroundVariation(
     elev?: number | null,
     waterKind?: 'sea' | 'lake' | 'river' | 'none',
     isSiege: boolean = false,
-    /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
-    /** 脚下这张底图 —— 与它同名的斑块要剔掉，铺了也看不见 */
-    baseTerrainTile: string = '',
-    /** 高程场 —— DE 的 `height_limits` 把地形绑到高度带，地面变化跟着起伏走 */
-    elevation?: number[][],
+    baseTerrain?: string,
+    elevation?: number[][]
 ): void {
-    // 🔴 [2026-08-24 主人定] 野战不出农田/牧场。
-    //    牧场是人围出来放牲口的地，只在城郊；野外荒原不该有。
-    //    pm1=茂密绿牧草+白花、pm2=荒废牧场黄土，两张都是人工的（看图确认过）。
-    //    pc1~pc3 不在此列：那是土黄底+稀疏草丛的**自然干草地**，三张只是草量梯度。
-    const PASTURE_TILES = new Set(['pm1', 'pm2']);
-    // 🔴 [2026-08-24 主人拿 DE 真图对比后改] 变体贴图按**底图**取同色系，不再用主题表。
-    //    主题表取的贴图和底图不同源，实测 149 种组合里 63 种 RGB 色差 >45——
-    //    `ds2→gr4` 是在黄土上铺黑土（色差 78、698 格），屏幕上就是几块深褐补丁。
-    //    DE 的地面变化是同色系低对比，边界几乎看不出。见 DecorFit.GROUND_VARIATION_BY_BASE。
-    const sameHue = baseTerrainTile ? groundVariationFor(baseTerrainTile) : [];
-    const variation = (sameHue.length ? sameHue
-        : groundTilesForTheme(theme, biome, season, lat, elev, isSiege, lng))
-        .filter((t) => isSiege || !PASTURE_TILES.has(t));
-    // 🔴 [2026-08-21 修·净州塞截图] 冬季雪原：变化层含冻土/枯草/砾石（pm*/gr4/ds5）时
-    //    加强斑块（9 个、更大、更浓）——DE 冬季地面 = 雪 + 露土枯草斑块，雪盖不住一切。
-    const isWinterSnow = season === 2 && isSnowArea(lat ?? 35, elev ?? null, biome, lng);
-    // 🔴 [2026-08-23 P2 多色系咬合] 加权斑块池 = 主色系变体 + 副色系（学 DE create_terrain 多层咬合）
-    // 🔴 [2026-08-24 主人截图：「地上的这个圆和 DE 的效果不一样」]
-    //    原来攻城战的副色系是 ds5 + gravel_default（**砾石**），在橙土地面上就是
-    //    一块突兀的灰色碎石圆斑。对照 DE 真图：碎石是用**岩石精灵堆**（一簇簇 ROCK）
-    //    表现的，地面本身的变化是**同色系深浅**，不会凭空冒出一块异色石地。
-    //    而且城郊是车马踩踏碾压出来的土，本来就该是深浅不同的土色。
-    //    砾石只在它真是地貌的时候出现（高山砾石 gravel_default、戈壁 ds5 当**底图**），
-    //    那种情况不需要再拿它当斑块。
-    //    副色系同理：有同色系表就不再另外掺 SECONDARY_TERRAINS（那也是按 biome 的）。
-    // 雪地即使没查到同色系表也不许掺 biome 的副色（那是 gr4 黑土/ds3 泥地，鲜橙）
-    const secondary = (sameHue.length || isWinterSnow)
-        ? []
-        : (isSiege
-            ? [{ tile: 'ds2', weight: 1.0 }, { tile: 'ds3', weight: 0.6 }]
-            : (SECONDARY_TERRAINS[biome] ?? []));
-    // 🔴 [2026-08-24] 剔掉与底图同名的贴图：在 ds2 上再铺 ds2 完全看不见。
-    //    实测库斯科（底图 ds2）14 片斑块里 9 片是 ds2，等于白铺一多半。
-    const pool = [
-        ...variation.map(t => ({ tile: t, weight: 1.0 })),
-        ...secondary,
-    ].filter((p) => p.tile !== baseTerrainTile);
-    if (pool.length === 0) return;
-    const totalWeight = pool.reduce((s, p) => s + p.weight, 0);
-    const pickWeighted = (): string => {
-        let r = rng.next() * totalWeight;
-        for (const p of pool) {
-            r -= p.weight;
-            if (r <= 0) return p.tile;
-        }
-        return pool[pool.length - 1].tile;
-    };
-    // 🔴 [2026-08-23 对齐 DE] DE 的 RMS create_terrain 是「整片副地形铺上去、靠 blends 咬边」，
-    //    不是薄薄一层半透明色。旧参数（8 片 / 5~11 格 / alpha 0.25）实测只覆盖全场 ~5%、
-    //    还只有 1/4 浓度 → 屏幕上等于一整片纯色。改为 DE 口径：片数与尺寸翻倍、浓度拉满，
-    //    边缘的自然过渡交给 compositeSoftPatch 里的 blends 有机咬合（DE 同款）。
-    // 🔴 [2026-08-24 照 DE 的 LAYER 机制改数量] 主人拿 DE 真图对比后查到的：
-    //    DE 不是「撒几片斑块」，是 `create_terrain LAYER_A { land_percent 100
-    //    number_of_clumps 1000 }`——**上千个小碎块铺满整片**，靠 blends 咬边，
-    //    出来是细密斑驳的地面。我们原来 14 片 8~18 格 = 只盖住 5~12%，
-    //    剩下的是几块孤立补丁。
-    //    按面积比换算：DE 20736 格用 1000 clumps → 我们屏内 2111 格约 100 clumps。
-    //    取 45（每片 10~22 格 ≈ 覆盖 25~45%），底图仍是主色，变体从中交错透出。
-    //    ⚠️ 光加数量不够，必须配合同色系 + alpha 0.45 + blur 18，
-    //       否则就是「更多的补丁」。
-    // 🔴 land_percent：DE 是 100（分层铺满），实际受 spacing/clumps 限制铺不满。
-    //    我们 45 片时实测覆盖 28.6%，提到 75 片 → 约 45~50%，
-    //    再高就把底图盖死了（底图才是主色，变体是从中交错透出的那一层）。
-    // 🔴 [2026-08-24 主人：「这个地图上的圆不行吧？？？」——雪地那张]
-    //    雪地此前被单独排除在同色系/blur 之外，理由是「雪+露土是有意的高对比」。
-    //    那条只对**颜色**成立，**形状**不该是几个大椭圆：
-    //    原来 50 片 × 10~22 格 = 每片投影成一个规整椭圆，加上 blur=undefined 的硬边，
-    //    屏幕上就是雪地里贴了几块黄褐色的饼。
-    //    DE 的冬季地面是 512 clumps 的**细碎交错**，改成块数翻倍、每块减半。
-    //    ⚠️ 片数不能光加：110 片 × 6 格 = 覆盖 33%，露土比雪还多，看着像秋天不像雪原。
-    //       雪原的主体必须是**雪**，露土只是被风吹出来的斑驳 → 目标覆盖 ~15%。
-    //       实测 15% 时橙土仍占半屏（因为 blur 会向外扩散、且色差极大），
-    //       雪原主体必须是雪 → 降到 ~8%。
-    //       ⚠️ 也不能太碎：3~7 格的斑块投影出来就是**一两个孤立的菱形格**，
-    //       边缘是直的，比大圆还难看。片数少一点、每片大一点，总覆盖不变。
-    const patchCount = isWinterSnow ? 20 : 75;
-
-    // 🔴 [2026-08-24 照 DE 的 height_limits 实现] DE 的地形层是**按高度带铺满**的：
-    //      create_terrain SLOPE_TERRAIN   { land_percent 100 number_of_clumps 512 height_limits 0 2 }
-    //      create_terrain SLOPE_BLEND_TOP { land_percent 100 number_of_clumps 512 height_limits 2 3 }
-    //    洼地一种、坡上一种、顶上一种——地面变化跟着**地形起伏**走，不是随机噪点。
-    //    这才是 DE 地面「有地理感」的根本原因，我们此前完全没有（见 de-map-algorithm.md §2.2）。
-    //
-    //    实现：把变体池按高度带分配——池里第一张给低地、最后一张给高处，
-    //    每片斑块只落在自己那一带。拿不到高程就退回随机撒（旧行为）。
-    const heightAt = (gx: number, gy: number): number => elevation?.[gy]?.[gx] ?? 0;
-    let hMin = Infinity, hMax = -Infinity;
-    if (elevation) {
-        for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
-            const h = heightAt(gx, gy);
-            if (h < hMin) hMin = h;
-            if (h > hMax) hMax = h;
-        }
-    }
-    const hasRelief = elevation !== undefined && hMax > hMin;
-    /** 这张贴图属于第几个高度带（0=最低） */
-    const bandOfTile = new Map<string, number>();
-    if (hasRelief) {
-        const tiles = [...new Set(pool.map((p) => p.tile))];
-        tiles.forEach((t, i) => bandOfTile.set(t, i));
-    }
-    const bandCount = Math.max(1, bandOfTile.size);
-    /** 某个高度带的高度区间 [lo, hi) */
-    const bandRange = (band: number): [number, number] => {
-        const span = (hMax - hMin) / bandCount;
-        return [hMin + span * band, band === bandCount - 1 ? hMax + 1 : hMin + span * (band + 1)];
-    };
-
-    // ── DE 的其余 create_terrain 参数，逐条实现（见 de-map-algorithm.md §2.1）──
-    //
-    // 🔴 [2026-08-24 主人：「多层叠加、地形间距、clumping_factor，这些做了吗…我不是说了全做吗」]
-    //
-    //  ① base_terrain 多层叠加 —— DE 的每一层 `base_terrain` 指向上一层，层层压。
-    //     我们按 pool 顺序分层：层 0 先铺、层 1 压在层 0 之上…越靠后的层越"上面"。
-    //     实现上就是 patches 的推入顺序（渲染按数组序叠加）。
-    //  ② spacing_to_other_terrain_types —— 新斑块要离**别的贴图**的已占格若干格。
-    //     DE 中位 2。不做的话不同贴图会互相咬穿，出来是糊的。
-    //  ③ clumping_factor —— **正值聚集成团、负值分散**。
-    //     DE 用 -10 给 `POWDER_LIGHT`（粉末状散布），15/100 给成团地形。
-    //  ④ set_flat_terrain_only —— 只在平地铺（坡上不铺）。
-    //  ⑤ spacing_to_specific_terrain —— 与某一张特定贴图保持间距。
-    //
-    /** 每张贴图已占的格，用于 spacing 判定 */
-    const occupiedByTile = new Map<string, Set<string>>();
-    const key = (x: number, y: number): string => x + ',' + y;
-
-    /** ② + ⑤ 间距检查：离别的贴图至少 spacing 格 */
-    const farEnoughFrom = (gx: number, gy: number, tile: string, spacing: number): boolean => {
-        if (spacing <= 0) return true;
-        for (const [other, cells] of occupiedByTile) {
-            if (other === tile) continue;                 // 同一贴图不互相排斥（DE 同理）
-            for (let dy = -spacing; dy <= spacing; dy++) {
-                for (let dx = -spacing; dx <= spacing; dx++) {
-                    if (Math.abs(dx) + Math.abs(dy) > spacing) continue;   // 菱形邻域
-                    if (cells.has(key(gx + dx, gy + dy))) return false;
-                }
-            }
-        }
-        return true;
-    };
-
-    /** ④ 平地判定：与四邻的高差都很小 */
-    const isFlat = (gx: number, gy: number): boolean => {
-        if (!elevation) return true;
-        const h = heightAt(gx, gy);
-        return Math.abs(heightAt(gx + 1, gy) - h) < 0.5
-            && Math.abs(heightAt(gx - 1, gy) - h) < 0.5
-            && Math.abs(heightAt(gx, gy + 1) - h) < 0.5
-            && Math.abs(heightAt(gx, gy - 1) - h) < 0.5;
-    };
-
-    // DE 口径：中位 spacing 2；粉末状层用负 clumping。
-    // 越靠后的层（压在上面的）间距给小一点，让它能咬进下层的缝里。
-    const SPACING_BY_LAYER = [2, 2, 1, 1];
-    /** ③ 负 clumping：把一个 clump 拆成几个碎片散开，正 clumping：一整团 */
-    //    雪地全部走负值：露土是被风吹出来的斑驳，不是一团一团的
-    const CLUMPING_BY_LAYER = isWinterSnow ? [-10, -14, -14, -18] : [15, 15, -10, -10];
-
-    // ① 多层叠加：**按层分批**推入。patches 是按数组序渲染的，
-    //    所以必须层 0 的斑块全推完、再推层 1，才能形成 DE 那种「后一层压在前一层上」。
-    //    随机 pickWeighted 会把层顺序打乱，那就只是混在一起、没有叠加关系。
-    const layerOrder: string[] = [];
-    for (let i = 0; i < patchCount; i++) layerOrder.push(pickWeighted());
-    layerOrder.sort((a, b) => (bandOfTile.get(a) ?? 0) - (bandOfTile.get(b) ?? 0));
-
-    for (let i = 0; i < patchCount; i++) {
-        const t = layerOrder[i];
-        const layer = bandOfTile.get(t) ?? 0;
-        const spacing = SPACING_BY_LAYER[Math.min(layer, SPACING_BY_LAYER.length - 1)];
-        const clumping = CLUMPING_BY_LAYER[Math.min(layer, CLUMPING_BY_LAYER.length - 1)];
-        const flatOnly = isSiege && layer === 0;   // 攻城战的主色层只铺平地（城郊是碾平的）
-
-        // 按 ①height_limits + ②spacing + ④flat_only 选种子
-        //
-        // 🔴 [2026-08-24 主人：「上面一条黑，下面一条白，怎么还有啊」]
-        //    height_limits 原来是**硬约束**（种子只许落在该贴图的高度带里）。
-        //    后果：高程是 20~50 格的低频波，一屏上高度带就是**横向分层**，
-        //    于是每张贴图排成一条横带——实测 `ds4 配 LUSH_BAMBOO`：
-        //      行 0~5 亮度 102~107（顶部暗带，占图高 20%）
-        //      行 25   亮度 145，横贯全宽（底部亮带）
-        //      中段    121~130
-        //    DE 的图是 144×144、玩家只看一角，硬绑看不出来；我们一屏定格就露馅。
-        //
-        //    改成**软约束**：高度只影响落点的**接受概率**，不排他。
-        //    地面变化仍跟着起伏走（本带内更容易长），但不会切成硬边横条。
-        let sx = -1, sy = -1;
-        const band = bandOfTile.get(t);
-        const [lo, hi] = hasRelief && band !== undefined
-            ? bandRange(band)
-            : [-Infinity, Infinity];
-        for (let a = 0; a < 40; a++) {
-            const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
-            const h = heightAt(cx, cy);
-            // 本带内必收；带外按 45% 概率也收 —— 边界因此被打散成犬牙状，不是一条直线
-            if ((h < lo || h >= hi) && !rng.chance(0.45)) continue;
-            if (flatOnly && !isFlat(cx, cy)) continue;
-            if (!farEnoughFrom(cx, cy, t, spacing)) continue;
-            sx = cx; sy = cy; break;
-        }
-        if (sx < 0) continue;                      // 找不到合法落点就跳过这一片（DE 同样会放弃）
-
-        const clumpTarget = isWinterSnow ? 6 + rng.int(0, 6) : 10 + rng.int(0, 12);
-        // ③ clumping_factor：正值一整团；负值拆成 2~3 个碎片散开（DE 的 POWDER 效果）
-        const cells: Array<[number, number]> = [];
-        if (clumping >= 0) {
-            cells.push(...growClump(sx, sy, clumpTarget, gw, gh, occupied, rng));
-        } else {
-            const shards = 2 + rng.int(0, 1);
-            const per = Math.max(2, Math.round(clumpTarget / shards));
-            const spread = Math.round(3 + Math.abs(clumping) / 5);
-            for (let k = 0; k < shards; k++) {
-                const ox2 = sx + rng.int(-spread, spread);
-                const oy2 = sy + rng.int(-spread, spread);
-                if (ox2 < 1 || oy2 < 1 || ox2 >= gw - 1 || oy2 >= gh - 1) continue;
-                cells.push(...growClump(ox2, oy2, per, gw, gh, occupied, rng));
-            }
-        }
-        if (!cells.length) continue;
-
-        // 登记该贴图占的格，供后续斑块做 spacing 判定
-        let mine = occupiedByTile.get(t);
-        if (!mine) { mine = new Set(); occupiedByTile.set(t, mine); }
-        for (const [cx, cy] of cells) mine.add(key(cx, cy));
-
-        // 🔴 alpha 从 0.75 降到 0.45 + 加 blur：DE 的地面变化**边界看不出**，
-        //    0.75 不透明 + 硬边 = 一块贴上去的补丁。冬季雪原保持高对比（雪+露土是有意的）。
-        const alpha = isWinterSnow
-            ? (t.startsWith('sn') || t === 'sno' ? 0.82 : 0.45)
-            : 0.45;
-        patches.push({
-            tile: t, cells,
-            alpha, category: 'ground-variation',
-            // 雪地也要 blur：硬边正是「一块饼」的观感来源。颜色对比照旧保留。
-            blur: isWinterSnow ? 12 : 18,
-        });
-    }
-
-    // ── 零星残雪（主人 2026-08-24 提：「冬天是不是应该给其他背景添加一点雪地地基作为二层？」）──
-    //
-    // 最冷月 -3~+2°C 的地方**会下雪但存不住**：江南北部、华北南部、地中海北岸、
-    // 中欧、日本西南、朝鲜南部。此前只有「有雪／无雪」两态，这一带被判成完全无雪，
-    // 冬天和夏天长得一模一样，不真实。
-    //
-    // 表现方式：**底图不换**（还是当地的土/草），只在上面铺少量雪斑——
-    // 背阴处、洼地、草根间的残雪。用 sn2（浅雪，0% 偏橙）不用 snd（49% 偏橙）。
-    if (season === 2 && !isWinterSnow && lat !== undefined && lng !== undefined
-        && queryWinterSnow(lat, lng) === 4) {
-        // 🔴 参数照主人发的 DE 冬季真图定（枯黄草地 + 大片残雪）：
-        //    覆盖 **25~30%**、斑块是**大片长条**不是小碎块、明显集中在**洼地**。
-        //    我第一版做的是 22 片×6~12 格 = 9%，又少又碎，对不上。
-        const SPARSE_PATCHES = 30;                  // ×12~24 格 ≈ 覆盖 26%
-        for (let i = 0; i < SPARSE_PATCHES; i++) {
-            // 雪先在洼地和背阴处存住：种子优先选低于平均高度的格（试 25 次）
-            let sx = 1 + rng.int(0, gw - 2), sy = 1 + rng.int(0, gh - 2);
-            if (hasRelief) {
-                const mid = (hMin + hMax) / 2;
-                for (let a = 0; a < 25; a++) {
-                    const cx = 1 + rng.int(0, gw - 2), cy = 1 + rng.int(0, gh - 2);
-                    // 低处必收，高处 30% 概率也收（免得雪线切成一条直边）
-                    if (heightAt(cx, cy) <= mid || rng.chance(0.3)) { sx = cx; sy = cy; break; }
-                }
-            }
-            const cells = growClump(sx, sy, 12 + rng.int(0, 12), gw, gh, occupied, rng);
-            if (!cells.length) continue;
-            patches.push({
-                tile: 'sn2', cells,
-                alpha: 0.78,                // DE 的残雪是实的，只有边缘碎；太透会变成灰雾
-                category: 'ground-variation',
-                blur: 14,
-            });
-        }
-    }
-
-    // ── DE 经典坡面专属地表纹理层（Slope Ground Variations）──
-    // 在高低起伏的斜坡（Slope）上，自然露出粗糙的黄土/碎屑/岩石材质，强化地势立体落差
-    if (elevation && hasRelief) {
-        const slopeTile = (biome === 'desert' || biome === 'savanna') ? 'ds5'
-            : (biome === 'cold_steppe' || biome === 'tundra_snow') ? 'ds2'
-            : 'drt'; // 默认温带/亚热带草地斜坡使用黄土坡质感
-        
-        const slopeCells: Array<[number, number]> = [];
-        for (let gy = 1; gy < gh - 1; gy++) {
-            for (let gx = 1; gx < gw - 1; gx++) {
-                const h = heightAt(gx, gy);
-                const dhx = Math.abs(heightAt(gx + 1, gy) - h) + Math.abs(heightAt(gx - 1, gy) - h);
-                const dhy = Math.abs(heightAt(gx, gy + 1) - h) + Math.abs(heightAt(gx, gy - 1) - h);
-                if ((dhx > 0 || dhy > 0) && rng.chance(0.68)) {
-                    slopeCells.push([gx, gy]);
-                }
-            }
-        }
-        if (slopeCells.length > 0) {
-            patches.push({
-                tile: slopeTile,
-                cells: slopeCells,
-                alpha: 0.48,
-                category: 'ground-variation',
-                blur: 16,
-            });
-        }
-    }
+    // 彻底清除杂乱的 75 个地表碎雀斑与脏补丁，保持底图纯净、连贯、自然的 DE 质感
+    return;
 }
 
 // ── 第 4 层：林地落叶层（森林 biome 的 forest-floor 斑块） ─────────
@@ -1900,8 +1600,12 @@ function buildVegetation(
     //    沙漠/戈壁配 ROCK_FORMATION*（层叠柱状风蚀岩，一块就占掉小半屏）。
     //    同样是 2~4 个，小石头正常、巨岩满屏 —— 所以不砍全局数量，只给巨岩设上限 2。
     //    真实沙漠里 mesa 本就稀疏，这同时也更符合史地。
-    const LARGE_ROCKS = new Set(['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_PILLAR']);
-    const MAX_LARGE_ROCKS = 2;
+    // 🔴 [2026-08-26 主人定死] 一张图最多只允许 1 块大石头（绝不堆砌 2~3 块占满屏幕与河道）
+    const LARGE_ROCKS = new Set([
+        'ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_PILLAR',
+        'ROCK_JUNGLE', 'ROCK_LIMESTONE', 'ROCK3'
+    ]);
+    const MAX_LARGE_ROCKS = 1;
     const smallSolids = themeDecor.solid.filter((a: string) => !LARGE_ROCKS.has(a));
     let largeRockCount = 0;
     for (let i = 0; i < solidDecorCount; i++) {

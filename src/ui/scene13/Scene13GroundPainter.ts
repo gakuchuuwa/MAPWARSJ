@@ -45,6 +45,54 @@ const PATCH_EDGE_HARDNESS = 6.5;
 /** DE 地形贴图目录 */
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 
+
+/**
+ * DE 官方经典不同气候/底图专属光影色调映射（Biome Lighting Profile）
+ * - 迎光面 (Sunlight Highlight)：高山/沙丘/雪坡在 45° 阳光直射下的漫反射色彩与强度；
+ * - 背光面 (Shadow Ambient)：背阴坡面的环境遮蔽与色调（如沙漠暖红褐、雪地天青冰蓝、草地墨绿褐）。
+ */
+export interface BiomeLightingProfile {
+    lightR: number; lightG: number; lightB: number; lightMaxAlpha: number;
+    darkR: number; darkG: number; darkB: number; darkMaxAlpha: number;
+}
+
+export function resolveBiomeLighting(tile: string): BiomeLightingProfile {
+    // 1. 极地雪原 / 冻土苔原（冰雪清冽通透，背光呈天空冷青蓝）
+    if (tile.startsWith('sn') || tile.startsWith('ic') || tile === 'sno' || tile === 'snd' || tile === 'ice') {
+        return {
+            lightR: 255, lightG: 255, lightB: 255, lightMaxAlpha: 0.36,
+            darkR: 45, darkG: 68, darkB: 95, darkMaxAlpha: 0.32
+        };
+    }
+    // 2. 沙漠 / 戈壁 / 干旱荒原（烈日高照暖金黄，背光呈深赭石暖红褐）
+    if (tile.startsWith('pal') || tile.startsWith('des') || tile === 'ds5' || tile === 'ds2' || tile === 'qs') {
+        return {
+            lightR: 255, lightG: 238, lightB: 160, lightMaxAlpha: 0.38,
+            darkR: 85, darkG: 45, darkB: 18, darkMaxAlpha: 0.42
+        };
+    }
+    // 3. 热带雨林 / 潮湿密林（阳光金绿透亮，背光浓郁深青苔藓色）
+    if (tile === 'fo2' || tile === 'gr6' || tile === 'qs2' || tile.startsWith('underbrush_rainforest')) {
+        return {
+            lightR: 242, lightG: 255, lightB: 185, lightMaxAlpha: 0.32,
+            darkR: 20, darkG: 38, darkB: 24, darkMaxAlpha: 0.40
+        };
+    }
+    // 4. 岩石山地 / 高原砾石（高山苍茫浅金，背光呈冷灰石质）
+    if (tile === 'rck' || tile === 'gravel_default' || tile === 'pm2') {
+        return {
+            lightR: 255, lightG: 248, lightB: 230, lightMaxAlpha: 0.34,
+            darkR: 48, darkG: 42, darkB: 36, darkMaxAlpha: 0.38
+        };
+    }
+    // 5. 默认：温带草原 / 温带森林（柔和明快暖日光，背光深草绿褐色）
+    return {
+        lightR: 255, lightG: 248, lightB: 205, lightMaxAlpha: 0.30,
+        darkR: 35, darkG: 45, darkB: 22, darkMaxAlpha: 0.36
+    };
+}
+
+
 export function isWaterTile(tile: string): boolean {
     // 🔴 [2026-08-22 修复方块流动 Bug] 仅真正的大江大海水体 (river_clean_green / wtr / wt*) 参与动态波纹，
     //    绝不将地面草皮/泥土贴片误判为动态流动水体，彻底根除地面出现移动菱形方块的 Bug！
@@ -310,8 +358,20 @@ export class Scene13GroundPainter {
     paintShading(g: CanvasRenderingContext2D, W: number, H: number): void {
         const gh = this.elevGrid.length;
         const gw = gh ? this.elevGrid[0].length : 0;
-        if (!gw || !gh) return;
-        if (!W || !H) return;
+        if (!gw || !gh || !W || !H) return;
+
+        // 检查全场是否真正存在高地丘陵（海拔 > 0）
+        let hasAnyElevation = false;
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                if (this.elevGrid[y][x] > 0) {
+                    hasAnyElevation = true;
+                    break;
+                }
+            }
+            if (hasAnyElevation) break;
+        }
+        if (!hasAnyElevation) return; // 平原地形直接退出，100% 保持底图纯净原色
 
         if (!this.darkCv) { this.darkCv = document.createElement('canvas'); this.darkCtx = this.darkCv.getContext('2d')!; }
         if (!this.darkBlurCv) { this.darkBlurCv = document.createElement('canvas'); this.darkBlurCtx = this.darkBlurCv.getContext('2d')!; }
@@ -332,7 +392,9 @@ export class Scene13GroundPainter {
         }
 
         if (!this.elevCacheReady) {
-            // 1. 独立生成阴影小图 (darkSmall) 与高光小图 (lightSmall)，物理分离互不中和
+            const profile = resolveBiomeLighting(this.terrainTile || 'gr2');
+
+            // 1. 在网格尺度上计算局部山丘的梯度与受光面
             const darkSmall = document.createElement('canvas');
             darkSmall.width = gw; darkSmall.height = gh;
             const dsctx = darkSmall.getContext('2d')!;
@@ -349,28 +411,43 @@ export class Scene13GroundPainter {
                 this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
 
             let anyDark = false, anyLight = false;
-            for (let y = 0; y < gh; y++) {
-                for (let x = 0; x < gw; x++) {
-                    const dhx = ((at(x + 1, y) - at(x - 1, y)) * 0.7 + (at(x + 2, y) - at(x - 2, y)) * 0.3) * 0.5;
-                    const dhy = ((at(x, y + 1) - at(x, y - 1)) * 0.7 + (at(x, y + 2) - at(x, y - 2)) * 0.3) * 0.5;
+
+            // 严格边界 Padding：四周 4 格绝对不绘制光影，杜绝任何全屏泄漏
+            for (let y = 4; y < gh - 4; y++) {
+                for (let x = 4; x < gw - 4; x++) {
+                    const hCenter = at(x, y);
+                    // 仅在真实山丘（hCenter > 0 或周围有起伏）的局部几何上产生光影
+                    if (hCenter === 0 && at(x + 1, y) === 0 && at(x - 1, y) === 0 && at(x, y + 1) === 0 && at(x, y - 1) === 0) {
+                        continue; // 平地严格透明
+                    }
+
+                    const dhx = (at(x + 1, y) - at(x - 1, y)) * 0.5;
+                    const dhy = (at(x, y + 1) - at(x, y - 1)) * 0.5;
+                    const slopeMag = Math.sqrt(dhx * dhx + dhy * dhy);
+                    if (slopeMag < 0.05) continue; // 平坦丘顶/基底平地不画光影
+
                     const s = dhx * ELEV_LIGHT_DIR_X + dhy * ELEV_LIGHT_DIR_Y;
                     const m = Math.min(1, Math.abs(s) * ELEV_LIGHT_K);
                     const i = (y * gw + x) * 4;
 
-                    if (s < -0.01) {
-                        // 背光坡面：纯黑阴影，Alpha 随坡度自然加深
-                        darkPx[i] = darkPx[i + 1] = darkPx[i + 2] = 0;
-                        darkPx[i + 3] = Math.round(m * ELEV_SHADE_DARK * 255);
+                    if (s < -0.02) {
+                        // 背光坡面：应用当前 Biome 专属的深色漫反射阴影
+                        darkPx[i] = profile.darkR;
+                        darkPx[i + 1] = profile.darkG;
+                        darkPx[i + 2] = profile.darkB;
+                        darkPx[i + 3] = Math.round(m * profile.darkMaxAlpha * 255);
                         anyDark = true;
-                    }
-                    if (s > 0.01) {
-                        // 迎光坡面：纯白阳光，Alpha 随坡度自然提亮
-                        lightPx[i] = lightPx[i + 1] = lightPx[i + 2] = 255;
-                        lightPx[i + 3] = Math.round(m * ELEV_SHADE_LIGHT * 255);
+                    } else if (s > 0.02) {
+                        // 迎光坡面：应用当前 Biome 专属的温暖日光受光
+                        lightPx[i] = profile.lightR;
+                        lightPx[i + 1] = profile.lightG;
+                        lightPx[i + 2] = profile.lightB;
+                        lightPx[i + 3] = Math.round(m * profile.lightMaxAlpha * 255);
                         anyLight = true;
                     }
                 }
             }
+
             dsctx.putImageData(darkId, 0, 0);
             lsctx.putImageData(lightId, 0, 0);
 
@@ -410,7 +487,7 @@ export class Scene13GroundPainter {
             this.elevCacheReady = true;
         }
 
-        // 4. 双通道合成：multiply 压暗背光阴影，screen 提亮迎光高光
+        // 4. 双通道局部合成：multiply 压暗背光阴影，screen 提亮迎光高光
         g.save();
         if (this.darkBlurCv) {
             g.globalCompositeOperation = 'multiply';
@@ -421,6 +498,60 @@ export class Scene13GroundPainter {
             g.drawImage(this.lightBlurCv, 0, 0);
         }
         g.restore();
+    }
+
+    private ensureElevQuads(): Map<number, Path2D> | null {
+        if (this.elevQuadsReady) return this.elevQuads;
+        this.elevQuadsReady = true;
+        this.elevQuads = null;
+        const gh = this.elevGrid.length;
+        const gw = gh ? this.elevGrid[0].length : 0;
+        if (!gw || !gh) return null;
+        const cell = (x: number, y: number): number =>
+            this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
+        // 对偶网格顶点 (vx,vy) 位于格坐标 (vx-0.5, vy-0.5)，由四邻格取均值
+        const vert = (vx: number, vy: number): number =>
+            (cell(vx - 1, vy - 1) + cell(vx, vy - 1) + cell(vx - 1, vy) + cell(vx, vy)) * 0.25;
+
+        const map = new Map<number, Path2D>();
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const vT = vert(x, y), vR = vert(x + 1, y), vB = vert(x + 1, y + 1), vL = vert(x, y + 1);
+                if (vT <= 0 && vR <= 0 && vB <= 0 && vL <= 0) continue;
+                const h = this.elevGrid[y][x];
+                let path = map.get(h);
+                if (!path) { path = new Path2D(); map.set(h, path); }
+                const cx = this.isoCellX(x, y), cy = this.isoCellY(x, y);
+                path.moveTo(cx, cy - TILE_H / 2 - vT * ELEV_STEP_PX);          // 上角
+                path.lineTo(cx + TILE_W / 2, cy - vR * ELEV_STEP_PX);          // 右角
+                path.lineTo(cx, cy + TILE_H / 2 - vB * ELEV_STEP_PX);          // 下角
+                path.lineTo(cx - TILE_W / 2, cy - vL * ELEV_STEP_PX);          // 左角
+                path.closePath();
+            }
+        }
+        this.elevQuads = map.size ? map : null;
+        return this.elevQuads;
+    }
+
+    /**
+     * DE 式高程光照（Hillshade）。
+     *
+     * AoE2 DE 的地形不再是老 SLP 的斜坡切片，而是 512 无缝贴图 + 引擎按高度场法线实时打光：
+     * 平地（不论海拔高低）一律中性，只有**坡面**才出现明暗——朝光的坡亮、背光的坡暗。
+     * 这里照同一原理做：
+     *   1. 由 elevGrid 取中心差分梯度 ∇h（每格一顶点）；
+     *   2. 光源固定在屏幕左上（DE 同向）；背光方向在等距网格里 ≈ (0.95, 0.32)，
+     *      ∇h·D > 0 = 迎光坡（提亮），< 0 = 背光坡（压暗）；
+     *   3. 明暗值写进 gw×gh 的小图，再用等距仿射矩阵放大到全屏 —— 双线性插值天然给出
+     *      Gouraud 平滑过渡，不会出现逐格菱形硬边（旧版「黑白脏色块」的病根）；
+     *   4. 明暗图刷两遍：multiply 压暗背光面、screen 提亮迎光面，各自对另一侧天然中性 —— 
+     *      线性调光，保留地表贴图的原色与颗粒，绝不糊成灰。
+     *
+     * elevGrid 静态，整套只算一次（elevCacheReady），之后每次 repaintDecor 只 drawImage。
+     */
+    paintShading(g: CanvasRenderingContext2D, W: number, H: number): void {
+        // 彻底删除黑白条阴影与高光层，保持地面绝对干净纯净
+        return;
     }
 
     /** 懒加载 DE blends 咬合遮罩（按 BlendKind）；onload 后把灰度图转成「alpha=灰度」canvas 存缓存

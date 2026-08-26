@@ -1094,33 +1094,7 @@ export class CombatUI {
      *    所以这里不改任何元素的原始样式定义，只在进入 13 时**快照内联样式再覆盖**，
      *    退出时逐字还原 —— 非 13 逐像素不变。
      */
-    /**
-     * [自愈] 把跑到 body 上的面板子元素接回容器。
-     *
-     * 🔴 13 布局会把 centerBackdrop / centerPanel / 左右立绘临时 appendChild 到 body
-     *    （躲开面板容器的 transform，否则子元素的 position:fixed 会以容器为包含块）。
-     *    退出时的还原已有三重保险（逆序 + 校验 next + try/catch），但只要还有任何
-     *    未知原因让某个元素没回去，它就会**永久留在 body** —— 而它的 absolute 是按
-     *    面板容器算的（left/right/top/bottom），挂 body 上必然错位，表现就是
-     *    「战略地图的战斗面板不见了」。2026-08-26 主人已被这个坑两次。
-     *
-     *    所以再加一道无条件自愈：每帧 4 次 parentElement 比较，发现跑偏就按
-     *    createContainer 的原始次序接回去。正常情况比较完立即返回，无开销。
-     */
-    private healPanelDomIfDetached(): void {
-        const inOrder = [this.centerBackdrop, this.centerPanel,
-            this.leftPortraitFrame, this.rightPortraitFrame];
-        let broken = false;
-        for (const el of inOrder) {
-            if (el && el.parentElement !== this.container) { broken = true; break; }
-        }
-        if (!broken) return;
-        for (const el of inOrder) if (el) this.container.appendChild(el);
-        if (this.toggleCollapseBtn) this.container.appendChild(this.toggleCollapseBtn);
-    }
-
     public applyScene13Layout(on: boolean): void {
-        this.healPanelDomIfDetached();
         if (on === this.scene13LayoutOn) return;
         this.scene13LayoutOn = on;
 
