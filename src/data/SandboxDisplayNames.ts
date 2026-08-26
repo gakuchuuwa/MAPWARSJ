@@ -1121,6 +1121,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'malacca': '满剌',
     'gurjara': '瞿折',
     'zhuluo': '朱罗',
+    'pandiya': '潘地',
 };
 
 // @ts-ignore

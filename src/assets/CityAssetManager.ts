@@ -951,6 +951,7 @@ export class CityAssetManager {
         'malacca': '满剌',
         'gurjara': '瞿折',
         'zhuluo': '朱罗',
+        'pandiya': '潘地',
         'gaolu_luoma': '高罗',
         'donggete': '东哥',
         'litaowan': '立陶',

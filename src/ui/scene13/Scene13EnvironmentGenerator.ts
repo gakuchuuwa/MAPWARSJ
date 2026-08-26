@@ -2028,8 +2028,26 @@ function buildVegetation(
     //    不是随机地图，不能拿来当密度基准。
     //    主岩石 2~4 个 × 每个伴生 1~2 碎石 ≈ 总数 4~10，落在 DE 区间。
     const solidDecorCount = 2 + rng.int(0, 2);
+    // 🔴 [2026-08-26 主人「这种大石头没必要放这么多吧，1-2 块即可」] 巨岩单独限量。
+    //    solid 池按底图分两类体量：草地配 ROCK1/2（小岩块堆，2~4 个不显多），
+    //    沙漠/戈壁配 ROCK_FORMATION*（层叠柱状风蚀岩，一块就占掉小半屏）。
+    //    同样是 2~4 个，小石头正常、巨岩满屏 —— 所以不砍全局数量，只给巨岩设上限 2。
+    //    真实沙漠里 mesa 本就稀疏，这同时也更符合史地。
+    const LARGE_ROCKS = new Set(['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK_PILLAR']);
+    const MAX_LARGE_ROCKS = 2;
+    const smallSolids = themeDecor.solid.filter((a: string) => !LARGE_ROCKS.has(a));
+    let largeRockCount = 0;
     for (let i = 0; i < solidDecorCount; i++) {
-        const asset = rng.pick(themeDecor.solid);
+        let asset = rng.pick(themeDecor.solid);
+        if (LARGE_ROCKS.has(asset)) {
+            if (largeRockCount >= MAX_LARGE_ROCKS) {
+                // 超额的巨岩降级成同底图的小石头；该底图没有小石头就整块跳过（宁可少也不堆）
+                if (!smallSolids.length) continue;
+                asset = rng.pick(smallSolids);
+            } else {
+                largeRockCount++;
+            }
+        }
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor, decorLimits);
         if (p) {
             const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;

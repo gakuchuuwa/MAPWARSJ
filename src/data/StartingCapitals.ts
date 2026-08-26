@@ -1054,6 +1054,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'malacca': 'city_malacca',
     'gurjara': 'city_patan',
     'zhuluo': 'city_tanjiawuer',
+    'pandiya': 'city_madula',
 };
 
 // @ts-ignore

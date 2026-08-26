@@ -51,7 +51,15 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     if (army.timeSinceSupply <= cfg.FREE_SUPPLY_SEC) return 0;
 
     // 刚跨过免费期首帧：种子化为满 chunk，立刻触发第一次扣减（断粮即损，不等下一轮攒满）
-    if (army.attritionChunkSec === 0) {
+    //
+    // 🔴 [2026-08-26 修·15 秒跳变成 15+1 秒连跳] 原判据是 `attritionChunkSec === 0`，
+    //    而每次扣减后 `-= ATTRITION_CHUNK_SEC` 恰好把它归零 —— 下一帧又被判成「首帧」
+    //    重新种子化成满值，当场再扣一次。实测（scratch/_attr_probe.mts，dt=1s）：
+    //      第 30s 扣 3825 → 第 31s 又扣 3251；第 45s / 第 46s 同样连跳……
+    //    节奏成了 15s、1s、14s、1s…… 实际损耗几乎翻倍，与「15 秒整跳、飘字不刷屏」的定稿不符。
+    //    改判「本帧是否**刚**跨过免费窗」：只有跨过那一刻才种子化，此后一律正常累计。
+    const justRanOut = army.timeSinceSupply - deltaTime <= cfg.FREE_SUPPLY_SEC;
+    if (justRanOut) {
         army.attritionChunkSec = cfg.ATTRITION_CHUNK_SEC + deltaTime;
     } else {
         army.attritionChunkSec += deltaTime;
