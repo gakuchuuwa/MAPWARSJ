@@ -6781,6 +6781,81 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/AMERICA/__闲置__AMERICA_01.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/AMERICA/watermarked_img_11855586355424334764.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/AMERICA/watermarked_img_1203259366423984356.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/AMERICA/watermarked_img_13484019949620651200.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/AMERICA/watermarked_img_17191205611227874763.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/AMERICA/watermarked_img_3162584981382689829.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/AMERICA/watermarked_img_4819403634903759355.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/AMERICA/watermarked_img_6146316486413642682.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -31
+        },
+        "/assets/AMERICA/tupinijin_dibalisa.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/AMERICA/tuotuonake_qikemakate.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -31
+        },
+        "/assets/AMERICA/taino_hatuyi.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/AMERICA/guanche_bentehuyi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/AMERICA/fodejiao_nuoli.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/AMERICA/baiyiya_tuomei.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/AMERICA/yasuer_xipuliyanuo.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

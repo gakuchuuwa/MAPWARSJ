@@ -1018,6 +1018,14 @@ const _FIXED: Record<string, string> = {
     'duluo': '#2850A4', // 杜罗·波尔图（王国蓝系）
     'teluoyi': '#8E6A3C', // 特洛伊·特洛伊（青铜）
     'alabo': '#207A3C', // 阿拉伯·巴士拉（伊斯兰绿）
+
+    // ── 2026-08-26 补远征精锐持有势力缺失固定色（§12.1 红线：有精锐必须有固定色）──
+    'yinggelan': '#B4283C', // 英格兰·温彻斯特（圣乔治红十字 / 王室红地三狮）
+    'xieerpuhuofu_gongguo': '#2F6E4A', // 谢尔公国·谢尔普霍夫（市徽绿地孔雀）
+    'yasuer': '#1D5FA8', // 亚速尔·安格拉（亚速尔蓝白，苍鹰 açor）
+    'fodejiao': '#123E8C', // 佛得角·里贝拉（葡属海外王国深蓝）
+    'gurjara': '#C25516', // 瞿折罗·帕坦（拉其普特藏红赭）
+    'guanche': '#8A6B4A', // 关切·特尔德（加那利羊皮褐；关切人属柏柏尔系）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
