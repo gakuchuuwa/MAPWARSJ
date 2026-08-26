@@ -71,30 +71,61 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 // 小城建筑环绕组成：3 民居 + 兵营 + 铁匠铺 + 靶场（中间磨坊为中核）
 const DE_SMALL_CITY_RING = ['HOUSE', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE'];
 
-// 硬木栅栏等轴围墙节点分布（大幅扩大至 1.10x 围绕小城外圈，包含 4 边 21 个节点，留出正门入口）
-const DE_PALISADE_WALL_NODES: ReadonlyArray<{ xr: number; yr: number; type: string }> = [
-    { xr: 0.0, yr: -1.0, type: 'POST' },       // 北角立柱
-    { xr: 0.20, yr: -0.80, type: 'SE' },       // 东北段 (右上)
-    { xr: 0.40, yr: -0.60, type: 'SE' },
-    { xr: 0.60, yr: -0.40, type: 'SE' },
-    { xr: 0.80, yr: -0.20, type: 'SE' },
-    { xr: 1.0, yr: 0.0, type: 'POST' },        // 东角立柱
-    { xr: 0.80, yr: 0.20, type: 'NE' },        // 东南段 (右下)
-    { xr: 0.60, yr: 0.40, type: 'NE' },
-    { xr: 0.40, yr: 0.60, type: 'NE' },
-    { xr: 0.20, yr: 0.80, type: 'NE' },
-    { xr: 0.10, yr: 0.90, type: 'POST' },      // 南门右立柱
-    { xr: -0.10, yr: 0.90, type: 'POST' },     // 南门左立柱 (正前方留出城门通道)
-    { xr: -0.20, yr: 0.80, type: 'SE' },       // 西南段 (左下)
-    { xr: -0.40, yr: 0.60, type: 'SE' },
-    { xr: -0.60, yr: 0.40, type: 'SE' },
-    { xr: -0.80, yr: 0.20, type: 'SE' },
-    { xr: -1.0, yr: 0.0, type: 'POST' },       // 西角立柱
-    { xr: -0.80, yr: -0.20, type: 'NE' },      // 西北段 (左上)
-    { xr: -0.60, yr: -0.40, type: 'NE' },
-    { xr: -0.40, yr: -0.60, type: 'NE' },
-    { xr: -0.20, yr: -0.80, type: 'NE' },
-];
+// 各类栅栏/城门部件的精准锚点百分比与尺寸权重（提取自 DE _meta.json anchor_x / anchor_y）
+// 栅栏比例进一步调至 0.165x（高度约 15px），角楼与栅栏比例平衡，彻底展现村落全景通透感
+const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
+    NE: {
+        pctX: 53.8,
+        pctY: 74.1,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png',
+    },
+    SE: {
+        pctX: 56.0,
+        pctY: 77.8,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_SE/preview.png',
+    },
+    POST: {
+        pctX: 60.0,
+        pctY: 75.0,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png',
+    },
+    GATE: {
+        pctX: 58.6,
+        pctY: 75.9,
+        widthFactor: 0.34,
+        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_SE/preview.png',
+    },
+};
+
+interface PalisadeGridPiece {
+    x: number;
+    y: number;
+    type: 'NE' | 'SE' | 'POST' | 'GATE';
+}
+
+/** 仅放置 3 个木碉楼，以及西北墙 1 段栅栏、东北墙 1 段栅栏供校准单段咬合与位置 */
+function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
+    const stepX = baseSize * 0.12;
+    const stepY = stepX * 0.58;
+    const S = 3;
+    const pieces: PalisadeGridPiece[] = [];
+
+    // 1. 北、东、西 3 个木碉楼（角楼立柱）
+    pieces.push({ x: 0, y: -2 * S * stepY, type: 'POST' });          // 北角木碉楼
+    pieces.push({ x: 2 * S * stepX, y: 0, type: 'POST' });           // 东角木碉楼
+    pieces.push({ x: -2 * S * stepX, y: 0, type: 'POST' });          // 西角木碉楼
+
+    // 2. 西北墙：仅添加 1 个栅栏段（NE）
+    pieces.push({ x: -1 * stepX, y: (-2 * S + 1) * stepY, type: 'NE' });
+
+    // 3. 东北墙：仅添加 1 个栅栏段（SE）
+    pieces.push({ x: 1 * stepX, y: (-2 * S + 1) * stepY, type: 'SE' });
+
+    return pieces;
+}
 
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
     const rnd = deMulberry32(deHashString(cityId));
@@ -105,7 +136,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     }
     const rotation = rnd() * 360;
 
-    // 容器尺寸（紧凑包裹 0.92x 围墙外圈）
+    // 容器尺寸（紧凑包裹闭合围墙与木大门）
     const W = baseSize * 2.3;
     const H = baseSize * 2.0;
 
@@ -147,20 +178,15 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         );
     });
 
-    // 3. 硬木栅栏围墙（适度收缩至 0.92x 半径，加宽墙段至 0.28x 使相邻栅栏首尾紧密相连无空隙）
-    const wallRadiusX = baseSize * 0.92;
-    const wallRadiusY = wallRadiusX * 0.58;
-    const wallW = baseSize * 0.28;
-    const postW = baseSize * 0.25;
-
-    DE_PALISADE_WALL_NODES.forEach((w) => {
-        const x = w.xr * wallRadiusX;
-        const y = w.yr * wallRadiusY;
-        const zIndex = Math.round(100 + y);
-        const curW = w.type === 'POST' ? postW : wallW;
+    // 3. 严密咬合的硬木栅栏围墙与正南木城门（基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合）
+    const wallPieces = computePalisadeWallAndGate(baseSize);
+    wallPieces.forEach((w) => {
+        const anchor = DE_PALISADE_ANCHORS[w.type];
+        const zIndex = Math.round(100 + w.y);
+        const pieceW = baseSize * anchor.widthFactor;
 
         parts.push(
-            `<img src="/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_${w.type}/preview.png" style="position:absolute;left:50%;top:50%;width:${curW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
+            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${anchor.pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
         );
     });
 
