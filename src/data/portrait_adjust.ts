@@ -6787,37 +6787,37 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -23
         },
-        "/assets/AMERICA/watermarked_img_11855586355424334764.png": {
+        "/assets/AMERICA/__多余__AMERICA_01.png": {
             "scale": 0.84,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/AMERICA/watermarked_img_1203259366423984356.png": {
+        "/assets/AMERICA/__多余__AMERICA_02.png": {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/AMERICA/watermarked_img_13484019949620651200.png": {
+        "/assets/AMERICA/__多余__AMERICA_03.png": {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/AMERICA/watermarked_img_17191205611227874763.png": {
+        "/assets/AMERICA/__多余__AMERICA_04.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/AMERICA/watermarked_img_3162584981382689829.png": {
+        "/assets/AMERICA/__多余__AMERICA_05.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/AMERICA/watermarked_img_4819403634903759355.png": {
+        "/assets/AMERICA/__多余__AMERICA_06.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/AMERICA/watermarked_img_6146316486413642682.png": {
+        "/assets/AMERICA/__多余__AMERICA_07.png": {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": -31
