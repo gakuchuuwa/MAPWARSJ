@@ -761,16 +761,55 @@ function generateElevation(
     const grid: number[][] = Array.from({ length: gh }, () => new Array(gw).fill(0));
 
     if (topology === 'canyon_pass') {
-        const topCliffY = VH * 0.18, botCliffY = VH * 0.82;
-        for (let y = 3; y < gh - 3; y++) {
-            for (let x = 3; x < gw - 3; x++) {
-                const py = isoCellY(x, y, oy);
-                if (py < topCliffY) {
-                    const d = (topCliffY - py) / 50;
-                    grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
-                } else if (py > botCliffY) {
-                    const d = (py - botCliffY) / 50;
-                    grid[y][x] = Math.min(3, Math.max(1, Math.round(d * 2.2)));
+        // 峡谷关隘：在南北两侧生成自然起伏、错落相连的有机山脊群，中间保留开阔行军通道，绝不使用全屏水平直线硬切
+        const canyonHills = [
+            // 北侧山脊群（顶部边缘，左右错落）
+            { rxFrac: 0.22, ryFrac: 0.12, rX: 8, rY: 4.5 },
+            { rxFrac: 0.50, ryFrac: 0.09, rX: 10, rY: 5.0 },
+            { rxFrac: 0.78, ryFrac: 0.13, rX: 8.5, rY: 4.2 },
+            // 南侧山脊群（底部边缘，左右错落）
+            { rxFrac: 0.24, ryFrac: 0.88, rX: 8.5, rY: 4.5 },
+            { rxFrac: 0.52, ryFrac: 0.91, rX: 9.5, rY: 5.2 },
+            { rxFrac: 0.80, ryFrac: 0.87, rX: 8, rY: 4.0 },
+        ];
+
+        for (const ch of canyonHills) {
+            const hScreenX = VW * (ch.rxFrac + (rng.next() - 0.5) * 0.08);
+            const hScreenY = VH * (ch.ryFrac + (rng.next() - 0.5) * 0.04);
+            const [hillGx, hillGy] = screenToGrid(hScreenX, hScreenY, ox, oy);
+            const cx = Math.max(4, Math.min(gw - 5, hillGx));
+            const cy = Math.max(4, Math.min(gh - 5, hillGy));
+
+            const rx = ch.rX + (rng.next() - 0.5) * 2;
+            const ry = ch.rY + (rng.next() - 0.5) * 1.5;
+            const angle = (rng.next() - 0.5) * 0.8;
+            const hMax = (elev !== null && elev >= 800) ? 3 : 2;
+
+            const maxR = Math.ceil(Math.max(rx, ry) * 1.25);
+            const minX = Math.max(3, cx - maxR), maxX = Math.min(gw - 4, cx + maxR);
+            const minY = Math.max(3, cy - maxR), maxY = Math.min(gh - 4, cy + maxR);
+
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
+                    const dx = x - cx;
+                    const dy = y - cy;
+                    const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
+                    const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
+                    const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
+                    if (normDist >= 1.0) continue;
+
+                    let h = 0;
+                    if (normDist < 0.38) {
+                        h = hMax;
+                    } else if (normDist < 0.75) {
+                        h = Math.max(1, hMax - 1);
+                    } else {
+                        h = 1;
+                    }
+
+                    if (h > grid[y][x]) {
+                        grid[y][x] = h;
+                    }
                 }
             }
         }
