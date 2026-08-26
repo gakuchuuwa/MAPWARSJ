@@ -1720,8 +1720,15 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //      高丽战车 WAGON→373 speed 6.0 arc 0.05 ／ 攻城塔 SIEGTWR→2445 speed **7.0** arc 0.01
     //    🔴 攻城塔是 7.0 不是 6.0 —— 它和弩炮共用 p_bolt 素材，但弹速不同，
     //    所以单列 PROJ_HELEPOLIS，否则给 PROJ_BOLT 一加速度就把攻城塔拖慢了。
-    PROJ_BOLT: 6 * 40,
-    PROJ_HELEPOLIS: 7 * 40,
+    //    ⚠️ 但**不能直接套 DE 的格/秒**：项目的箭矢整体比 DE 快 —— 普通箭 ARROW_DUR 0.42s
+    //    飞 160px = 381px/s，而 DE 普通箭只有 7.0 格/秒 = 280px/s（快约 36%，是既定的
+    //    快节奏演出尺度）。照搬 DE 的 6.0 会让弩箭比普通箭还慢 37%，射满 5 格要 0.83s，
+    //    实机看就是拖沓（主人 2026-08-26：「弩箭的速度太慢了」）。
+    //    所以按项目尺度整体提速，只保留 DE 的**相对快慢**（攻城塔 7.0 > 弩矢 6.0）：
+    //      弩矢   14 格/秒 = 560px/s → 弩炮战象(200px) 0.36s、蝎弩/床弩(280px) 0.50s
+    //      攻城塔 16 格/秒 = 640px/s → 塔上弩机(240px) 0.375s，仍比弩矢快 1/6，与 DE 同序
+    PROJ_BOLT: 14 * 40,
+    PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 6 * 40,
     PROJ_SHOT: 7.5 * 40,
     PROJ_GUNPOWDER: 7.5 * 40,

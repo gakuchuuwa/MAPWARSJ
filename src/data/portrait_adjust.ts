@@ -493,7 +493,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/manqing/manzhou_nuerhachi.png": {
-            "scale": 1.06,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": -48
         },
