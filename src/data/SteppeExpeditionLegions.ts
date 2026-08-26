@@ -16,7 +16,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫
   ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
     yuan_d: { name: '秃鲁花军', tier: 3 },
-  xiongnu: { name: '鸣镝精骑', tier: 1 },      // 头曼城·冒顿单于称霸大漠的鸣镝主力
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
     huige: { name: '回纥精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回纥汗国绝对主力，升入T1战略

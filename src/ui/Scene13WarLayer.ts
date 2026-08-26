@@ -212,6 +212,9 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ANDE:         { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     PURU:         { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     ORIE:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    EAST:         { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    GREEK:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    THRACIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
 };
 
 /**
@@ -1158,6 +1161,9 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     ANDE: 'ANDE',     // [2026-08-27] 安第斯石构（印加/马普切/穆伊斯卡）
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
+    EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
+    GREEK: 'GREEK',   // [2026-08-27] 希腊（古希腊城邦/大希腊）
+    THRACIAN: 'THRACIAN', // [2026-08-27] 色雷斯（保加利亚/色雷斯）
 };
 /**
  * 🔴 [2026-08-26 主人：「DE 中的城堡，分别安置在战斗模式中，现在没有把所有的城堡都用上」]

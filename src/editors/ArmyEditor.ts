@@ -51,7 +51,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
     WEST_ASIA:    'baizanting', // 西亚-君士坦丁堡 → 拜占庭
-    SLAVIC:       'luosi',       // 斯拉夫-基辅 → 罗斯
+    SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
     INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
@@ -62,6 +62,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ANDE:         'inca',        // 安第斯 → 印加（待建势力对齐）
     PURU:         'zhuluo',      // 南印度 → 朱罗（待建势力对齐）
     ORIE:         'womaya',      // 阿拉伯 → 倭马亚（待建势力对齐）
+    EAST:         'luosi',       // 东欧 → 罗斯（基辅罗斯）
+    GREEK:        'xila',        // 希腊 → 希腊（雅典）
+    THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
