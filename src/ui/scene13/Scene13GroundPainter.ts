@@ -500,60 +500,6 @@ export class Scene13GroundPainter {
         g.restore();
     }
 
-    private ensureElevQuads(): Map<number, Path2D> | null {
-        if (this.elevQuadsReady) return this.elevQuads;
-        this.elevQuadsReady = true;
-        this.elevQuads = null;
-        const gh = this.elevGrid.length;
-        const gw = gh ? this.elevGrid[0].length : 0;
-        if (!gw || !gh) return null;
-        const cell = (x: number, y: number): number =>
-            this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
-        // 对偶网格顶点 (vx,vy) 位于格坐标 (vx-0.5, vy-0.5)，由四邻格取均值
-        const vert = (vx: number, vy: number): number =>
-            (cell(vx - 1, vy - 1) + cell(vx, vy - 1) + cell(vx - 1, vy) + cell(vx, vy)) * 0.25;
-
-        const map = new Map<number, Path2D>();
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
-                const vT = vert(x, y), vR = vert(x + 1, y), vB = vert(x + 1, y + 1), vL = vert(x, y + 1);
-                if (vT <= 0 && vR <= 0 && vB <= 0 && vL <= 0) continue;
-                const h = this.elevGrid[y][x];
-                let path = map.get(h);
-                if (!path) { path = new Path2D(); map.set(h, path); }
-                const cx = this.isoCellX(x, y), cy = this.isoCellY(x, y);
-                path.moveTo(cx, cy - TILE_H / 2 - vT * ELEV_STEP_PX);          // 上角
-                path.lineTo(cx + TILE_W / 2, cy - vR * ELEV_STEP_PX);          // 右角
-                path.lineTo(cx, cy + TILE_H / 2 - vB * ELEV_STEP_PX);          // 下角
-                path.lineTo(cx - TILE_W / 2, cy - vL * ELEV_STEP_PX);          // 左角
-                path.closePath();
-            }
-        }
-        this.elevQuads = map.size ? map : null;
-        return this.elevQuads;
-    }
-
-    /**
-     * DE 式高程光照（Hillshade）。
-     *
-     * AoE2 DE 的地形不再是老 SLP 的斜坡切片，而是 512 无缝贴图 + 引擎按高度场法线实时打光：
-     * 平地（不论海拔高低）一律中性，只有**坡面**才出现明暗——朝光的坡亮、背光的坡暗。
-     * 这里照同一原理做：
-     *   1. 由 elevGrid 取中心差分梯度 ∇h（每格一顶点）；
-     *   2. 光源固定在屏幕左上（DE 同向）；背光方向在等距网格里 ≈ (0.95, 0.32)，
-     *      ∇h·D > 0 = 迎光坡（提亮），< 0 = 背光坡（压暗）；
-     *   3. 明暗值写进 gw×gh 的小图，再用等距仿射矩阵放大到全屏 —— 双线性插值天然给出
-     *      Gouraud 平滑过渡，不会出现逐格菱形硬边（旧版「黑白脏色块」的病根）；
-     *   4. 明暗图刷两遍：multiply 压暗背光面、screen 提亮迎光面，各自对另一侧天然中性 —— 
-     *      线性调光，保留地表贴图的原色与颗粒，绝不糊成灰。
-     *
-     * elevGrid 静态，整套只算一次（elevCacheReady），之后每次 repaintDecor 只 drawImage。
-     */
-    paintShading(g: CanvasRenderingContext2D, W: number, H: number): void {
-        // 彻底删除黑白条阴影与高光层，保持地面绝对干净纯净
-        return;
-    }
-
     /** 懒加载 DE blends 咬合遮罩（按 BlendKind）；onload 后把灰度图转成「alpha=灰度」canvas 存缓存
      *  （白=不透明露目标地形、黑=透明露底下层、灰=半透明过渡），拉伸时 alpha 自动插值，免每斑块 getImageData。 */
     private blendFor(kind: BlendKind): HTMLCanvasElement | null {
