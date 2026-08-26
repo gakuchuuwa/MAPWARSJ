@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_DOCK_AGE2",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 244,
+  "anchor_x": 172,
+  "anchor_y": 164,
+  "sld_source": "b_ceas_dock_age2"
+}

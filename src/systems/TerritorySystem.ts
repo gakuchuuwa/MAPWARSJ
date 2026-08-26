@@ -67,10 +67,13 @@ const DE_BUILDING_SCALES: Record<string, number> = {
     ARCHERY_RANGE: 0.38,
     BLACKSMITH: 0.35,
     MARKET: 0.38,
+    TOWER: 0.26,
+    TOWN_CENTER: 0.50,
+    STABLE: 0.42,
 };
 
-// 小城建筑环绕组成：3 民居 + 兵营 + 铁匠铺 + 靶场（中间磨坊为中核）
-const DE_SMALL_CITY_RING = ['HOUSE', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE'];
+// 8 种建筑类型，每城随机剔 1 → 7 个全部扇区随机散布（主人 2026-08-26 定「8 中随机 7」）
+const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE'];
 
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘按文化套用）──
 // 主人定：中国6区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
@@ -98,6 +101,7 @@ function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion
 function buildYurtCampHtml(baseSize: number, cityId: string): string {
     const rnd = deMulberry32(deHashString(cityId));
     const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+    yurts.splice(Math.floor(rnd() * yurts.length), 1); // 8 选 7：随机剔 1 个帐篷
     for (let i = yurts.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [yurts[i], yurts[j]] = [yurts[j], yurts[i]];
@@ -106,13 +110,15 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
     const W = baseSize * 2.0, H = baseSize * 1.7;
     const parts: string[] = [];
 
-    // 中央大帐（最大的 YURT_L）
-    const centerW = baseSize * 0.52;
-    parts.push(`<img src="/SUCAI_BUILDING/YURT_L/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+    // 中间 1 个帐篷（随机选，居中）
+    const centerY = yurts[0];
+    const centerW = baseSize * 0.46;
+    parts.push(`<img src="/SUCAI_BUILDING/${centerY}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
 
-    // 周围 8 蒙古包（每个 45° 扇区，扇区内角度扰动）
-    yurts.forEach((y, i) => {
-        const baseAngle = rotation + i * (360 / yurts.length);
+    // 周围 6 个帐篷扇区散布（60° 扇区，随机取样）
+    const surround = yurts.slice(1);
+    surround.forEach((y, i) => {
+        const baseAngle = rotation + i * (360 / surround.length);
         const angleJitter = rnd() * 30 - 15;
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
         const r = (0.32 + rnd() * 0.10) * baseSize;
@@ -123,7 +129,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
         parts.push(`<img src="/SUCAI_BUILDING/${y}/preview.png" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
 
-    // 瞭望塔（草原用中亚 CEAS_TOWER_AGE2，靠近游牧）
+    // 瞭望箭塔（草原用中亚 CEAS_TOWER_AGE2，靠近游牧）
     const watchW = baseSize * 0.26;
     parts.push(`<img src="/SUCAI_BUILDING/CEAS_TOWER_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${watchW.toFixed(1)}px;transform:translate(calc(-50% - ${(baseSize * 0.55).toFixed(1)}px),calc(-50% - ${(baseSize * 0.4).toFixed(1)}px - 15%));z-index:80;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
 
@@ -210,7 +216,8 @@ function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
-    const ring = [...DE_SMALL_CITY_RING];
+    const ring = [...DE_SMALL_CITY_POOL];
+    ring.splice(Math.floor(rnd() * ring.length), 1); // 8 选 7：随机剔除 1 种
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
@@ -223,28 +230,29 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     const parts: string[] = [];
 
-    // 1. 中间磨坊（中核，基准 z-index 设为 100）
-    const millW = baseSize * (DE_BUILDING_SCALES['MILL'] || 0.46);
-    const millGroundW = millW * 2.3;
-    const millGroundH = millGroundW * 0.58;
+    // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
+    const centerB = ring[0];
+    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4);
+    const centerGroundW = centerW * 2.3;
+    const centerGroundH = centerGroundW * 0.58;
     parts.push(
-        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${millGroundW.toFixed(1)}px;height:${millGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_MILL_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${millW.toFixed(1)}px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
-    // 2. 扇区分区随机散布（6 个建筑各落一个 60° 扇区，扇区内做角度与半径双重扰动）
-    //    既保证绝对不穿模、全向均衡，又具备高度自然的手绘村落感
-    ring.forEach((b, i) => {
-        const baseAngle = rotation + i * (360 / ring.length); // 60° 扇区基准角
-        const angleJitter = (rnd() * 30 - 15);                // 扇区内部安全扰动 (±15°)
+    // 周围 6 个扇区随机散布（每建筑一个 60° 扇区，角度+半径双重扰动）
+    const surround = ring.slice(1);
+    surround.forEach((b, i) => {
+        const baseAngle = rotation + i * (360 / surround.length); // 6 建筑 = 60° 扇区
+        const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.32 + rnd() * 0.10) * baseSize;           // 半径在 0.32~0.42 之间自然错落
+        const r = (0.32 + rnd() * 0.10) * baseSize;               // 半径在 0.32~0.42 之间自然错落
         const x = Math.cos(angle) * r;
-        const y = Math.sin(angle) * r * 0.58;                 // 等轴压缩（0.58 = 2.5D 地面纵横比）
+        const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
         const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32);
-        const zIndex = Math.round(100 + y);                   // 动态深度
+        const zIndex = Math.round(100 + y);                       // 动态深度
 
         const bGroundW = bW * 2.3;
         const bGroundH = bGroundW * 0.58;
