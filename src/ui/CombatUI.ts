@@ -790,7 +790,7 @@ export class CombatUI {
         this.leftTotalMultBadge = document.createElement('span');
         this.leftTotalMultBadge.style.cssText = `
             position: absolute;
-            right: ${uiPx(64)};
+            right: ${uiPx(36)};
             top: 50%;
             transform: translateY(-50%);
             z-index: 5;
@@ -1153,11 +1153,7 @@ export class CombatUI {
             this.leftPortraitFrame, this.rightPortraitFrame,
             this.leftTechBox, this.rightTechBox]) detach(el);
 
-        // 将左兵力胶囊移到 healthBarContainer，脱离 attackerBar 的跟随剪裁
-        if (this.leftTotalMultBadge && this.healthBarContainer && this.leftTotalMultBadge.parentElement !== this.healthBarContainer) {
-            this.scene13Reparented.set(this.leftTotalMultBadge, { parent: this.leftTotalMultBadge.parentElement!, next: this.leftTotalMultBadge.nextSibling });
-            this.healthBarContainer.appendChild(this.leftTotalMultBadge);
-        }
+
 
         // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
         for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
@@ -1202,27 +1198,7 @@ export class CombatUI {
             this.healthBarContainer.style.clipPath = 'none';
             this.healthBarContainer.style.position = 'relative';
         }
-        // 双方兵力胶囊固定在血槽最左和最右两端，彻底消除与中间标题的重叠
-        if (this.leftTotalMultBadge) {
-            this.leftTotalMultBadge.style.position = 'absolute';
-            this.leftTotalMultBadge.style.left = '24px';
-            this.leftTotalMultBadge.style.right = 'auto';
-            this.leftTotalMultBadge.style.top = '50%';
-            this.leftTotalMultBadge.style.transform = 'translateY(-50%)';
-            this.leftTotalMultBadge.style.zIndex = '20';
-            this.leftTotalMultBadge.style.display = 'inline-flex';
-            this.leftTotalMultBadge.style.alignItems = 'center';
-        }
-        if (this.rightTotalMultBadge) {
-            this.rightTotalMultBadge.style.position = 'absolute';
-            this.rightTotalMultBadge.style.right = '24px';
-            this.rightTotalMultBadge.style.left = 'auto';
-            this.rightTotalMultBadge.style.top = '50%';
-            this.rightTotalMultBadge.style.transform = 'translateY(-50%)';
-            this.rightTotalMultBadge.style.zIndex = '20';
-            this.rightTotalMultBadge.style.display = 'inline-flex';
-            this.rightTotalMultBadge.style.alignItems = 'center';
-        }
+
         // 战役标题居中浮现在血槽正中央，舒展大气
         if (this.battleTitle) {
             this.battleTitle.style.position = 'absolute';
@@ -2968,9 +2944,7 @@ export class CombatUI {
             this.rightTotalMultBadge.style.transition = 'none';
             this.attackerBar.style.width = '50%';
             this.clashEffect.style.left = 'calc(50% - 8px)';
-            if (!this.scene13LayoutOn) {
-                this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
-            }
+            this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
             void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
         // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
@@ -3002,9 +2976,7 @@ export class CombatUI {
         this.rightTotalMultBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
-        if (!this.scene13LayoutOn) {
-            this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
-        }
+        this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -4796,9 +4768,7 @@ export class CombatUI {
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
             this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
-            if (!this.scene13LayoutOn) {
-                this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
-            }
+            this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
