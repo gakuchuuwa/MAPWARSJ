@@ -1094,24 +1094,60 @@ export class CombatUI {
      *    所以这里不改任何元素的原始样式定义，只在进入 13 时**快照内联样式再覆盖**，
      *    退出时逐字还原 —— 非 13 逐像素不变。
      */
-        public applyScene13Layout(on: boolean): void {
-        if (this.scene13LayoutOn === on) return;
+    /**
+     * [自愈] 把跑到 body 上的面板子元素接回容器。
+     *
+     * 🔴 13 布局会把 centerBackdrop / centerPanel / 左右立绘临时 appendChild 到 body
+     *    （躲开面板容器的 transform，否则子元素的 position:fixed 会以容器为包含块）。
+     *    退出时的还原已有三重保险（逆序 + 校验 next + try/catch），但只要还有任何
+     *    未知原因让某个元素没回去，它就会**永久留在 body** —— 而它的 absolute 是按
+     *    面板容器算的（left/right/top/bottom），挂 body 上必然错位，表现就是
+     *    「战略地图的战斗面板不见了」。2026-08-26 主人已被这个坑两次。
+     *
+     *    所以再加一道无条件自愈：每帧 4 次 parentElement 比较，发现跑偏就按
+     *    createContainer 的原始次序接回去。正常情况比较完立即返回，无开销。
+     */
+    private healPanelDomIfDetached(): void {
+        const inOrder = [this.centerBackdrop, this.centerPanel,
+            this.leftPortraitFrame, this.rightPortraitFrame];
+        let broken = false;
+        for (const el of inOrder) {
+            if (el && el.parentElement !== this.container) { broken = true; break; }
+        }
+        if (!broken) return;
+        for (const el of inOrder) if (el) this.container.appendChild(el);
+        if (this.toggleCollapseBtn) this.container.appendChild(this.toggleCollapseBtn);
+    }
+
+    public applyScene13Layout(on: boolean): void {
+        this.healPanelDomIfDetached();
+        if (on === this.scene13LayoutOn) return;
         this.scene13LayoutOn = on;
 
         if (!on) {
-            // 退出 13 模式：100% 恢复所有元素的初始 CSS 样式
+            // 分隔徽记挂在 body、不在样式快照里，退出时手动收起
             if (this.techDivider) {
                 this.techDivider.style.opacity = '0';
                 this.techDivider.style.display = 'none';
             }
             for (const [el, css] of this.scene13SavedCss) el.style.cssText = css;
             this.scene13SavedCss.clear();
+            // 🔴 [2026-08-26 修·退出 13 后战略地图面板坏掉] 原来是
+            //      `for (const [el, at] of this.scene13Reparented) at.parent.insertBefore(el, at.next);`
+            //    centerBackdrop 与 centerPanel 是**相邻兄弟**，detach 时记下
+            //    centerBackdrop.next = centerPanel；还原时先处理 centerBackdrop，
+            //    而 centerPanel 此刻还挂在 body 上 —— insertBefore 抛 NotFoundError，
+            //    **整个还原循环当场中断**，其余元素（立绘框/科技盒）永远留在 body、
+            //    样式也没还原完，于是 8/9/10 的战斗面板就废了。
+            //    三重保险：① 逆序还原（后 detach 的先归位，锚点兄弟已就位）
+            //             ② 校验 next 仍是 parent 的子节点，否则退化为 appendChild
+            //             ③ try/catch 兜底，任何一个失败都不许拖垮后面的
             for (const [el, at] of [...this.scene13Reparented.entries()].reverse()) {
                 try {
                     if (at.next && at.next.parentNode === at.parent) at.parent.insertBefore(el, at.next);
                     else at.parent.appendChild(el);
                 } catch {
-                    try { at.parent.appendChild(el); } catch { /* ignore */ }
+                    try { at.parent.appendChild(el); } catch { /* 原父节点已销毁，只能放弃该元素 */ }
                 }
             }
             this.scene13Reparented.clear();
@@ -1122,22 +1158,29 @@ export class CombatUI {
         const save = (el?: HTMLElement | null) => {
             if (el && !this.scene13SavedCss.has(el)) this.scene13SavedCss.set(el, el.style.cssText);
         };
-        for (const el of [this.container, this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
+        for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
             this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
             this.rightTotalMultBadge, topHud]) save(el);
 
+        // 移出 #combat-ui-panel 挂到 body，避免受任何容器 transform 影响
         const detach = (el?: HTMLElement | null) => {
             if (!el || !el.parentElement || el.parentElement === document.body) return;
             this.scene13Reparented.set(el, { parent: el.parentElement, next: el.nextSibling });
             document.body.appendChild(el);
         };
+        for (const el of [this.centerBackdrop, this.centerPanel,
+            this.leftPortraitFrame, this.rightPortraitFrame,
+            this.leftTechBox, this.rightTechBox]) detach(el);
 
-        // 科技盒挂在 top-center-hud 里，13 期间 top-center-hud 隐藏，需搬到 body
-        for (const el of [this.leftTechBox, this.rightTechBox]) detach(el);
+        // 将左兵力胶囊移到 healthBarContainer，脱离 attackerBar 的跟随剪裁
+        if (this.leftTotalMultBadge && this.healthBarContainer && this.leftTotalMultBadge.parentElement !== this.healthBarContainer) {
+            this.scene13Reparented.set(this.leftTotalMultBadge, { parent: this.leftTotalMultBadge.parentElement!, next: this.leftTotalMultBadge.nextSibling });
+            this.healthBarContainer.appendChild(this.leftTotalMultBadge);
+        }
 
-        // ① 立绘 → 屏幕左下 / 右下角
+        // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
         for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
             if (!frame) continue;
             frame.style.position = 'fixed';
@@ -1151,11 +1194,86 @@ export class CombatUI {
             frame.style.display = 'block';
         }
 
-        // ② 顶部战术面板极简呈现
+        // ② 上方条：血槽两端加长直达屏幕边缘，地点战役标题居中，兵力胶囊分列左右两侧（零重叠极简美观）
+        if (this.centerPanel) {
+            this.centerPanel.style.position = 'fixed';
+            this.centerPanel.style.top = '0';
+            this.centerPanel.style.bottom = 'auto';
+            this.centerPanel.style.left = '0';
+            this.centerPanel.style.right = '0';
+            this.centerPanel.style.width = '100vw';
+            this.centerPanel.style.maxWidth = '100vw';
+            this.centerPanel.style.height = '38px';
+            this.centerPanel.style.transform = 'none';
+            this.centerPanel.style.padding = '0';
+            this.centerPanel.style.margin = '0';
+            this.centerPanel.style.alignItems = 'center';
+            this.centerPanel.style.justifyContent = 'center';
+            this.centerPanel.style.zIndex = String(T.zIndex.panel);
+            this.centerPanel.style.opacity = '1';
+            this.centerPanel.style.visibility = 'visible';
+            this.centerPanel.style.display = 'flex';
+        }
+        if (this.healthBarContainer) {
+            this.healthBarContainer.style.width = '100vw';
+            this.healthBarContainer.style.maxWidth = '100vw';
+            this.healthBarContainer.style.height = '38px';
+            this.healthBarContainer.style.margin = '0';
+            this.healthBarContainer.style.borderRadius = '0';
+            this.healthBarContainer.style.clipPath = 'none';
+            this.healthBarContainer.style.position = 'relative';
+        }
+        // 双方兵力胶囊固定在血槽最左和最右两端，彻底消除与中间标题的重叠
+        if (this.leftTotalMultBadge) {
+            this.leftTotalMultBadge.style.position = 'absolute';
+            this.leftTotalMultBadge.style.left = '24px';
+            this.leftTotalMultBadge.style.right = 'auto';
+            this.leftTotalMultBadge.style.top = '50%';
+            this.leftTotalMultBadge.style.transform = 'translateY(-50%)';
+            this.leftTotalMultBadge.style.zIndex = '20';
+            this.leftTotalMultBadge.style.display = 'inline-flex';
+            this.leftTotalMultBadge.style.alignItems = 'center';
+        }
+        if (this.rightTotalMultBadge) {
+            this.rightTotalMultBadge.style.position = 'absolute';
+            this.rightTotalMultBadge.style.right = '24px';
+            this.rightTotalMultBadge.style.left = 'auto';
+            this.rightTotalMultBadge.style.top = '50%';
+            this.rightTotalMultBadge.style.transform = 'translateY(-50%)';
+            this.rightTotalMultBadge.style.zIndex = '20';
+            this.rightTotalMultBadge.style.display = 'inline-flex';
+            this.rightTotalMultBadge.style.alignItems = 'center';
+        }
+        // 战役标题居中浮现在血槽正中央，舒展大气
+        if (this.battleTitle) {
+            this.battleTitle.style.position = 'absolute';
+            this.battleTitle.style.top = '50%';
+            this.battleTitle.style.left = '50%';
+            this.battleTitle.style.transform = 'translate(-50%, -50%)';
+            this.battleTitle.style.margin = '0';
+            this.battleTitle.style.padding = '0';
+            this.battleTitle.style.fontSize = '15px';
+            this.battleTitle.style.fontWeight = '900';
+            this.battleTitle.style.letterSpacing = '5px';
+            this.battleTitle.style.zIndex = '15';
+            this.battleTitle.style.pointerEvents = 'none';
+            this.battleTitle.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.95)) drop-shadow(0 2px 8px rgba(0,0,0,0.85))';
+        }
+        // 隐藏多余的独立 64px 黑色大底板，释放全部纵向视野
+        if (this.centerBackdrop) {
+            this.centerBackdrop.style.display = 'none';
+        }
+        // 🔴 删除血槽面板中的标签（skillsRow）与大地图多余信息
+        if (this.skillsRow) this.skillsRow.style.display = 'none';
+        if (this.indicatorJun) this.indicatorJun.style.display = 'none';
+        if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
+        for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
+            if (el) el.style.display = 'none';
+        }
+        // 🔴 战术模式中不用显示跟随面板（彻底隐藏避免遮挡）
         if (topHud) {
             topHud.style.display = 'none';
         }
-
         // ③ 科技 → 屏幕下方居中左右分列
         if (this.leftTechBox) {
             this.leftTechBox.style.position = 'fixed';
@@ -1175,38 +1293,3356 @@ export class CombatUI {
             this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
             this.rightTechBox.style.color = '#e8dcc0';
         }
-
-        // ④ 科技框之间的金色双刃斧小徽记
-        if (!this.techDivider) {
-            this.techDivider = document.createElement('div');
-            this.techDivider.id = 'scene13-tech-divider';
-            this.techDivider.style.cssText = `
-                position: fixed;
-                bottom: 1.8vh;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: ${T.zIndex.panel + 2};
-                font-family: 'Noto Serif SC', serif;
-                font-size: 13px;
-                font-weight: 900;
-                color: rgba(255, 215, 0, 0.9);
-                text-shadow: 0 0 6px rgba(255, 180, 40, 0.7);
-                pointer-events: none;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                background: rgba(15, 10, 5, 0.75);
-                padding: 2px 8px;
-                border: 1px solid rgba(212, 175, 55, 0.6);
-                border-radius: 4px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-            `;
-            this.techDivider.innerHTML = '<span style="color:#d4af37">⚔</span>';
-            document.body.appendChild(this.techDivider);
+        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（左盒 right:50.5vw / 右盒 left:50.5vw，
+        // 中缝正好是屏幕中线），底边与两盒对齐，一眼看出左金右青是两方各自的科技。
+        if (this.techDivider) {
+            const size = uiPx(T.sideBar.centerVsIconSize);
+            this.techDivider.style.width = size;
+            this.techDivider.style.height = size;
+            this.techDivider.style.left = '50%';
+            this.techDivider.style.right = 'auto';
+            this.techDivider.style.top = 'auto';
+            this.techDivider.style.bottom = '1.8vh';
+            this.techDivider.style.transform = 'translateX(-50%)';
+            this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
         }
-        this.techDivider.style.display = 'flex';
-        this.techDivider.style.opacity = '1';
     }
+
+    /**
+     * [2026-08-26] 战术模式开战时同步填充战斗数据（立绘、武将名牌、标题、双方势力），
+     * 确保无论从任何路径进入 13 战斗，左下/右下立绘与上方血槽均能完整展示。
+     */
+    public syncScene13WarStart(init: Scene13WarInit): void {
+        this.isVisible = true;
+        this.isCollapsed = false;
+        this.attackerFactionId = init.attackerFactionId ?? null;
+        this.defenderFactionId = init.defenderFactionId ?? null;
+
+        // 立绘与武将数据填充
+        if (!this.leftPortrait.src || this.leftPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+            this.setPortrait(
+                this.leftPortrait,
+                undefined,
+                init.attackerGeneralId || undefined,
+                init.attackerFactionId || undefined,
+                undefined,
+                'attacker',
+            );
+        }
+        if (!this.rightPortrait.src || this.rightPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+            this.setPortrait(
+                this.rightPortrait,
+                undefined,
+                init.defenderGeneralId || undefined,
+                init.defenderFactionId || undefined,
+                undefined,
+                'defender',
+                this.leftPortrait.src || undefined,
+            );
+        }
+
+        // 武将名牌
+        if (init.attackerGeneralId) {
+            const attGen = getGeneralRecordByGeneralId(init.attackerGeneralId);
+            if (attGen) {
+                this.leftGeneralNameTag.textContent = attGen.generalName;
+                this.leftGeneralNameTag.dataset.generalId = init.attackerGeneralId;
+                this.leftGeneralNameTag.style.display = 'block';
+            }
+        }
+        if (init.defenderGeneralId) {
+            const defGen = getGeneralRecordByGeneralId(init.defenderGeneralId);
+            if (defGen) {
+                this.rightGeneralNameTag.textContent = defGen.generalName;
+                this.rightGeneralNameTag.dataset.generalId = init.defenderGeneralId;
+                this.rightGeneralNameTag.style.display = 'block';
+            }
+        }
+
+        // 标题设置（地点 + 战斗类型）
+        let locName = '';
+        if (init.defenderCityId) {
+            const c = (window as any).game?.cityManager?.getCity?.(init.defenderCityId);
+            locName = c?.name || init.defenderCityId;
+        }
+        const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
+        this.battleTitle.textContent = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
+
+        // 势力名显示
+        const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
+        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(init.defenderFactionId) ?? '守方';
+        this.attackerDisplayName = attFactionName;
+        this.defenderDisplayName = defFactionName;
+
+        // 启用 13 专属布局并刷新
+        this.applyScene13Layout(true);
+        this.updateStats();
+    }
+
+    private buildTechRow(): HTMLDivElement {
+        const mkBox = (isAtt: boolean) => {
+            const box = document.createElement('div');
+            box.id = isAtt ? 'combat-tech-left' : 'combat-tech-right';
+            box.style.cssText = `
+                display: none;
+                flex-direction: row;
+                gap: 6px;
+                padding: 2px 8px;
+                font-size: 12px;
+                color: #1a1612;
+                background: transparent;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: none;
+                border-radius: 12px;
+                box-shadow: none;
+                font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
+                letter-spacing: 0.5px;
+                pointer-events: auto;
+                white-space: nowrap;
+                min-width: 0;
+                flex: 0 1 auto;
+                align-items: center;
+                text-align: ${isAtt ? 'left' : 'right'};
+                order: ${isAtt ? -1 : 1};
+                opacity: 0;
+                transform: scale(0.96);
+                transition: opacity 0.25s ease, transform 0.25s ease;
+            `;
+            return box;
+        };
+
+        this.leftTechBox = mkBox(true);
+        this.rightTechBox = mkBox(false);
+
+        // 攻守分界徽记：复用中央对峙条同款 battlefield_icon，与血条／名牌同一套视觉语言。
+        // 挂 body 而非 #top-center-hud —— 13 布局要把它 fixed 到屏幕底部正中，
+        // 留在 HUD 里会被那条 flex 的 order 规则拉走位置。
+        const divider = document.createElement('div');
+        divider.id = 'combat-tech-divider';
+        divider.style.cssText = `
+            position: fixed;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        `;
+        const dImg = document.createElement('img');
+        dImg.src = '/ui-assets/battlefield_icon.png';
+        dImg.alt = '';
+        dImg.draggable = false;
+        dImg.style.cssText = 'width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.9));';
+        divider.appendChild(dImg);
+        document.body.appendChild(divider);
+        this.techDivider = divider;
+
+        const container = document.getElementById('top-center-hud');
+        if (container) {
+            container.appendChild(this.leftTechBox);
+            container.appendChild(this.rightTechBox);
+        } else {
+            document.body.appendChild(this.leftTechBox);
+            document.body.appendChild(this.rightTechBox);
+        }
+        return this.leftTechBox;
+    }
+
+    /**
+     * 重绘一侧的科技显示（中央跟随胶囊两翼风格）。
+     * 每一个科技的名称与具体效果一一垂直绑定（上名下效，垂直严格对齐）。
+     * @param own 本方已解锁科技  @param foe 对方已解锁科技
+     * @param isAtt 是否攻方（左翼）
+     */
+    private renderTechSide(
+        box: HTMLDivElement,
+        own: MilitaryTech[],
+        foe: MilitaryTech[],
+        isAtt: boolean,
+    ): void {
+        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',');
+        if (box.dataset.sig === sig) return;   // 每帧调用，内容没变就不重绘 DOM
+        box.dataset.sig = sig;
+        box.textContent = '';
+
+        if (!own.length) {
+            box.style.opacity = '0';
+            box.style.display = 'none';
+            return;
+        }
+
+        box.style.display = 'flex';
+        box.style.flexDirection = 'row';
+        box.style.alignItems = 'center';
+        box.style.gap = '6px';
+        requestAnimationFrame(() => {
+            box.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        // 科技分类色彩与主题辅助
+        const getTechCardTheme = (techId: string) => {
+            if (techId === 'forging' || techId === 'iron_casting' || techId === 'blast_furnace') {
+                return {
+                    border: 'rgba(185, 80, 20, 0.35)',
+                    bg: 'rgba(255, 245, 235, 0.75)',
+                    nameColor: '#8b3500',
+                    effColor: '#b33c00',
+                };
+            }
+            if (techId === 'scale_mail' || techId === 'chain_mail' || techId === 'plate_mail') {
+                return {
+                    border: 'rgba(40, 95, 160, 0.35)',
+                    bg: 'rgba(240, 246, 255, 0.75)',
+                    nameColor: '#1a4c7e',
+                    effColor: '#0f3862',
+                };
+            }
+            if (techId === 'scale_barding' || techId === 'chain_barding' || techId === 'plate_barding') {
+                return {
+                    border: 'rgba(130, 50, 150, 0.35)',
+                    bg: 'rgba(252, 242, 255, 0.75)',
+                    nameColor: '#6d227f',
+                    effColor: '#521262',
+                };
+            }
+            if (techId === 'fletching' || techId === 'bodkin' || techId === 'bracer'
+                || techId.includes('archer') || techId === 'thumb_ring' || techId === 'parthian_tactics') {
+                return {
+                    border: 'rgba(35, 125, 75, 0.35)',
+                    bg: 'rgba(240, 255, 245, 0.75)',
+                    nameColor: '#175c36',
+                    effColor: '#0f4526',
+                };
+            }
+            return {
+                border: 'rgba(100, 90, 80, 0.35)',
+                bg: 'rgba(250, 248, 245, 0.75)',
+                nameColor: '#4a423a',
+                effColor: '#322a22',
+            };
+        };
+
+        // 攻/守两翼标签的 title 悬停 = **主人自查工具，不是给观众的信息层**。
+        //   本作无玩家操作、以直播观赏为准：直播画面前的观众没有鼠标，悬停内容他们永远看不到。
+        //   它的用途是调平衡时快速核对某方吃到的全维度累计加成，别再往它上面挂「观众要看的东西」。
+        //   观众侧的强弱表达只能靠常驻可见元素（分色卡片本身）与 13 的战况演出。
+        // 攻方左标
+        if (isAtt) {
+            const tag = document.createElement('span');
+            tag.textContent = '⚔️ 攻方科技';
+            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help;';
+            const totalSummary = summarizeTechEffects(own).join(' · ');
+            tag.title = `⚔️ 攻方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
+            box.appendChild(tag);
+        }
+
+        // 科技列表（每个科技一个垂直对齐的独立卡片/小列）
+        const chipsWrap = document.createElement('div');
+        // 🔴 [2026-08-19 实测] 必须 wrap，不能 nowrap：科技全开后拉丁 16 条 / 日耳曼 15 条，
+        //   单行需 937px，而 1920 屏每侧只分得 806px —— nowrap 会压住中央跟随胶囊 200px 并顶出屏幕
+        //   （1600 压 360px、1366 压 477px，只有 2560 超宽屏放得下）。折行后每侧最多两行，
+        //   卡片有边框分色，两行仍然一眼分得清，不会回到「一片数字」的老问题。
+        chipsWrap.style.cssText = `
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            max-width: 100%;
+            align-items: center;
+            justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
+        `;
+
+        for (const t of own) {
+            const effText = summarizeSingleTechEffect(t);
+            const theme = getTechCardTheme(t.id);
+            const chip = document.createElement('div');
+            chip.title = `${t.name} (${t.de}): ${effText}${t.basis ? ' · ' + t.basis : ''}`;
+            chip.style.cssText = `
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5px 5px;
+                border-radius: 4px;
+                border: 1px solid ${theme.border};
+                background: ${theme.bg};
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+                box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+                gap: 0px;
+                min-width: 32px;
+            `;
+
+            // 科技名（行 1）
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = t.name;
+            nameSpan.style.cssText = `
+                font-size: 10.5px;
+                font-weight: bold;
+                line-height: 1.1;
+                color: ${theme.nameColor};
+                letter-spacing: 0.2px;
+                white-space: nowrap;
+            `;
+            chip.appendChild(nameSpan);
+
+            // 对应效果（行 2）
+            const effSpan = document.createElement('span');
+            effSpan.textContent = effText;
+            effSpan.style.cssText = `
+                font-size: 9.5px;
+                line-height: 1.1;
+                font-weight: 700;
+                color: ${theme.effColor};
+                white-space: nowrap;
+            `;
+
+            chip.appendChild(effSpan);
+            chipsWrap.appendChild(chip);
+        }
+
+        box.appendChild(chipsWrap);
+
+        // 守方右标
+        if (!isAtt) {
+            const tag = document.createElement('span');
+            tag.textContent = '守方科技 🛡️';
+            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help;';
+            const totalSummary = summarizeTechEffects(own).join(' · ');
+            tag.title = `🛡️ 守方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
+            box.appendChild(tag);
+        }
+
+        void foe;
+    }
+
+    /** 中央面板底部：左半攻 / 右半守，「军团名: 兵力」+ 小血条 */
+    private createSideHud(side: 'attacker' | 'defender'): HTMLDivElement {
+        const isAtt = side === 'attacker';
+        const strip = document.createElement('div');
+        strip.style.cssText = `
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            display: grid;
+            grid-template-rows: subgrid;
+            grid-row: 1 / -1;
+            justify-items: ${isAtt ? 'start' : 'end'};
+            padding: 0;
+            text-align: ${isAtt ? 'left' : 'right'};
+            pointer-events: none;
+            overflow: visible;
+        `;
+        return strip;
+    }
+
+    /** 两势力之间的交叉剑装饰（居中列） */
+    private createSideVsIcon(): HTMLDivElement {
+        const size = uiPx(T.sideBar.centerVsIconSize);
+        const wrap = document.createElement('div');
+        wrap.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: ${size};
+            height: ${size};
+            pointer-events: none;
+            flex-shrink: 0;
+            grid-row: 1 / -1;
+            align-self: center;
+            position: relative;
+            z-index: 10;
+            margin: 0 ${uiPx(4)};
+        `;
+
+        const img = document.createElement('img');
+        img.src = '/ui-assets/battlefield_icon.png';
+        img.alt = '';
+        img.draggable = false;
+        img.style.cssText = `
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.85));
+        `;
+        wrap.appendChild(img);
+        return wrap;
+    }
+
+    /** 第一层：势力名（左/右顶头）+ 文化标签（对侧顶头） */
+    private createFactionRow(side: 'attacker' | 'defender'): HTMLDivElement {
+        const isAtt = side === 'attacker';
+        const row = document.createElement('div');
+        row.style.cssText = `
+            width: 100%;
+            margin-bottom: ${uiPx(4)};
+            display: flex;
+            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
+            align-items: center;
+            justify-content: space-between;
+            pointer-events: none;
+        `;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = `
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(T.sideBar.factionNameSize)};
+            font-weight: 900;
+            letter-spacing: ${uiPx(2)};
+            text-shadow: 0 2px 6px rgba(0,0,0,0.85);
+            white-space: nowrap;
+            color: #FFF;
+        `;
+        row.appendChild(nameSpan);
+
+        // 标签组：总加成 + 文化 + 技能，紧挨排列
+        const badgeGroup = document.createElement('div');
+        badgeGroup.style.cssText = `
+            display: flex;
+            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
+            align-items: center;
+            gap: ${uiPx(2)};
+            flex-shrink: 0;
+        `;
+
+        const multBadge = document.createElement('span');
+        multBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(multBadge);
+
+        const cultureBadge = document.createElement('span');
+        cultureBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(cultureBadge);
+
+        const skillBadge = document.createElement('span');
+        skillBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(skillBadge);
+
+        row.appendChild(badgeGroup);
+
+        if (isAtt) {
+            this.leftFactionNameSpan = nameSpan;
+            this.leftMultBadge = multBadge;
+            this.leftCultureBadge = cultureBadge;
+            this.leftSkillBadge = skillBadge;
+        } else {
+            this.rightFactionNameSpan = nameSpan;
+            this.rightMultBadge = multBadge;
+            this.rightCultureBadge = cultureBadge;
+            this.rightSkillBadge = skillBadge;
+        }
+        return row;
+    }
+
+    /** 第二层：军队名 + 兵力（左/右顶头），精锐(军)+适性+运气标签（对侧顶头，攻方靠右，守方靠左） */
+    private buildSideLabel(side: 'attacker' | 'defender'): HTMLDivElement {
+        const isAtt = side === 'attacker';
+        const label = document.createElement('div');
+        this.applySideLabelStyle(label, side);
+        label.style.display = 'flex';
+        label.style.flexDirection = isAtt ? 'row' : 'row-reverse';
+        label.style.alignItems = 'center';
+        label.style.justifyContent = 'space-between';
+        label.style.flexWrap = 'nowrap';
+        label.style.width = '100%';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = `
+            white-space: nowrap;
+            line-height: 1.15;
+            color: ${isAtt ? T.colors.attackerName : T.colors.defenderName};
+            text-align: ${isAtt ? 'left' : 'right'};
+        `;
+
+        // 标签组：精锐(军) + 三势 + 运气，紧挨排列
+        const badgeGroup = document.createElement('div');
+        badgeGroup.style.cssText = `
+            display: flex;
+            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
+            align-items: center;
+            gap: ${uiPx(2)};
+            flex-shrink: 0;
+        `;
+
+        const legionBadge = document.createElement('span');
+        legionBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(legionBadge);
+
+        const aptitudeBadge = document.createElement('span');
+        aptitudeBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(aptitudeBadge);
+
+        const luckBadge = document.createElement('span');
+        luckBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(luckBadge);
+
+        const reinfJoinBadge = document.createElement('span');
+        reinfJoinBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(reinfJoinBadge);
+
+        label.appendChild(nameSpan);
+        label.appendChild(badgeGroup);
+
+        if (isAtt) {
+            this.leftSideNameSpan = nameSpan;
+            this.leftSideTroopsSpan = document.createElement('span');
+            this.leftLegionBadge = legionBadge;
+            this.leftLuckBadge = luckBadge;
+            this.leftAptitudeBadge = aptitudeBadge;
+            this.leftReinfJoinBadge = reinfJoinBadge;
+        } else {
+            this.rightSideNameSpan = nameSpan;
+            this.rightSideTroopsSpan = document.createElement('span');
+            this.rightLegionBadge = legionBadge;
+            this.rightLuckBadge = luckBadge;
+            this.rightAptitudeBadge = aptitudeBadge;
+            this.rightReinfJoinBadge = reinfJoinBadge;
+        }
+
+        return label;
+    }
+
+    /** 第四行：独立援军专行（左/右顶头），援军标签（得×N.N / 掣×N.N，对侧顶头；无援军时隐藏） */
+    private buildReinforcementRow(side: 'attacker' | 'defender'): HTMLDivElement {
+        const isAtt = side === 'attacker';
+        const row = document.createElement('div');
+        this.applySideLabelStyle(row, side);
+        row.style.display = 'none';
+        row.style.flexDirection = isAtt ? 'row' : 'row-reverse';
+        row.style.alignItems = 'center';
+        row.style.justifyContent = 'space-between';
+        row.style.flexWrap = 'nowrap';
+        row.style.width = '100%';
+        row.style.marginTop = uiPx(6);
+        row.style.paddingTop = uiPx(4);
+        row.style.borderTop = '1px dashed rgba(255, 255, 255, 0.18)';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = `
+            white-space: nowrap;
+            line-height: 1.15;
+            color: rgba(255, 230, 180, 0.95);
+            text-align: ${isAtt ? 'left' : 'right'};
+        `;
+
+        const badgeGroup = document.createElement('div');
+        badgeGroup.style.cssText = `
+            display: flex;
+            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
+            align-items: center;
+            gap: ${uiPx(4)};
+            flex-shrink: 0;
+        `;
+
+        const reinfMultBadge = document.createElement('span');
+        reinfMultBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(reinfMultBadge);
+
+        row.appendChild(nameSpan);
+        row.appendChild(badgeGroup);
+
+        if (isAtt) {
+            this.leftReinfNameSpan = nameSpan;
+            this.leftReinfTroopsSpan = document.createElement('span');
+            this.leftReinfMultBadge = reinfMultBadge;
+        } else {
+            this.rightReinfNameSpan = nameSpan;
+            this.rightReinfTroopsSpan = document.createElement('span');
+            this.rightReinfMultBadge = reinfMultBadge;
+        }
+
+        return row;
+    }
+
+    /** 战力八环：总×徽章（factionRow 第一行），明细走 title 悬停；其余各环各有独立 badge 元素 */
+    private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        const applySideBadges = (
+            multBadge: HTMLSpanElement | null,
+            totalBadge: HTMLSpanElement | null,
+            unit: IBattleUnit | null,
+            opponent: IBattleUnit | null,
+            side: 'attacker' | 'defender',
+        ) => {
+            if (!unit) {
+                if (multBadge) multBadge.style.display = 'none';
+                if (totalBadge) totalBadge.style.display = 'none';
+                return;
+            }
+            const { totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
+
+            if (multBadge) {
+                const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
+                multBadge.innerHTML = `总×${fmtTotalStr}`;
+                multBadge.title = totalTitle;
+                const isBuff = totalMult > 1.001;
+                const isAtt = side === 'attacker';
+                const borderColor = isBuff ? (isAtt ? 'rgba(253, 185, 49, 0.85)' : 'rgba(90, 170, 190, 0.85)') : 'rgba(235, 85, 75, 0.85)';
+                const color = isBuff ? (isAtt ? '#FFD700' : '#70E0FF') : '#FFAA99';
+                const bg = isBuff ? (isAtt ? 'rgba(50, 20, 5, 0.9)' : 'rgba(10, 30, 45, 0.9)') : 'rgba(50, 10, 10, 0.9)';
+                multBadge.style.cssText = `display:inline-block;padding:1px 4px;margin:0 1px;font-size:11.5px;font-weight:800;line-height:1.15;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.4);cursor:help;`;
+            }
+            // totalBadge 现在专门由 renderSideLabel 写入兵力数值，此处不再覆盖
+        };
+
+        const updateReinforcements = (side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const nameEl = isAtt ? this.leftReinfNameSpan : this.rightReinfNameSpan;
+            const troopsEl = isAtt ? this.leftReinfTroopsSpan : this.rightReinfTroopsSpan;
+            const badgeEl = isAtt ? this.leftReinfMultBadge : this.rightReinfMultBadge;
+            const joinBadgeEl = isAtt ? this.leftReinfJoinBadge : this.rightReinfJoinBadge;
+            const rowEl = isAtt ? this.leftReinfRow : this.rightReinfRow;
+            if (!nameEl || !badgeEl || !rowEl || !joinBadgeEl) return;
+
+            const bf = this.boundRegionalBattleField;
+            if (!bf || bf.isOver) {
+                rowEl.style.display = 'none';
+                joinBadgeEl.style.display = 'none';
+                return;
+            }
+
+            const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+            const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
+
+            // 主力乘区行绝不展示援军合兵标签，统一强制隐藏
+            joinBadgeEl.style.display = 'none';
+
+            // 第三行只剔除「第二行文字主位」（pickSideNameUnit），不剔立绘主位——
+            // 援军将可占立绘/标签，名字与兵力仍留在援军行（2026-08-06）。
+            const namePrimary = this.pickSideNameUnit(units, side) ?? units[0];
+
+            const reinfUnits = units.filter(u => {
+                if (u.isDestroyed || u.troops <= 0) return false;
+                if (namePrimary && u.id === namePrimary.id) return false;
+                return true;
+            });
+
+            // 逐行显示每个单位的独立名字与兵力——一行只显示一支部队（GAME_DIRECTION L570「列出主力 + 各路援军名」，
+            // 过多时显示前几个 + 「余 X 部」，2026-08-04 主人重申；勿改回 • 横排挤一行）
+            const MAX_REINF_LINES = 3;
+            const lines: string[] = [];
+            const shown = reinfUnits.slice(0, MAX_REINF_LINES);
+            for (const u of shown) {
+                const dName = this.resolveBattleUnitListName(u) || (u.unitType === 'city' ? '据点驻军' : '援军');
+                const t = Math.floor(u.troops);
+                const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+                const ns = `<span style="white-space: nowrap; color: rgba(255, 235, 200, 0.95);">${dName}</span>`;
+                const ts = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${tStr}</span>`;
+                const line = isAtt
+                    ? `${ns}<span style="margin-left: 6px;">${ts}</span>`
+                    : `<span style="margin-right: 6px;">${ts}</span>${ns}`;
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35;">${line}</div>`);
+            }
+            const extra = reinfUnits.length - shown.length;
+            if (extra > 0) {
+                const more = `<span style="opacity: 0.65; color: rgba(255, 235, 200, 0.9);">余 ${extra} 部</span>`;
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35; margin-top: 1px;">${more}</div>`);
+            }
+            nameEl.innerHTML = lines.join('');
+
+            // 全局查找该侧任意有合兵记录的存活单位（无论是主力还是援军），统一在援军行对齐展示标签
+            const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
+            const luckUnit = activeUnits.find(u => {
+                const l = bf.getReinforcementJoinLuck(u.id);
+                return l !== null && l !== undefined;
+            });
+
+            if (luckUnit) {
+                const joinLuck = bf.getReinforcementJoinLuck(luckUnit.id)!;
+                const fmtVal = joinLuck.toFixed(1);
+                const isBuff = joinLuck > 1.001;
+                const isNerf = joinLuck < 0.999;
+                let borderColor: string, color: string, bg: string;
+                let label = '增';
+                if (isBuff) {
+                    label = '得';
+                    borderColor = 'rgba(253, 185, 49, 0.65)';
+                    color = 'rgba(255, 230, 160, 1)';
+                    bg = 'rgba(50, 20, 5, 0.85)';
+                } else if (isNerf) {
+                    label = '掣';
+                    borderColor = 'rgba(235, 85, 75, 0.75)';
+                    color = 'rgba(255, 170, 160, 1)';
+                    bg = 'rgba(50, 10, 10, 0.85)';
+                } else {
+                    label = '增';
+                    borderColor = 'rgba(160, 160, 160, 0.5)';
+                    color = 'rgba(200, 200, 200, 0.9)';
+                    bg = 'rgba(30, 30, 30, 0.85)';
+                }
+                applyBadgeStyleToElement(badgeEl, label, fmtVal, borderColor, color, bg, `援军合兵：×${fmtVal}`);
+            } else {
+                badgeEl.style.display = 'none';
+            }
+
+            if (reinfUnits.length > 0 || luckUnit) {
+                rowEl.style.display = 'flex';
+            } else {
+                rowEl.style.display = 'none';
+            }
+        };
+
+        const applyBadgeStyleToElement = (badge: HTMLSpanElement, shortName: string, fmtVal: string, borderColor: string, color: string, bg: string, title: string) => {
+            badge.textContent = `${shortName}×${fmtVal}`;
+            badge.title = title;
+            badge.style.cssText = `
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                height: 18px !important;
+                padding: 0 4px !important;
+                font-family: 'Noto Sans SC', sans-serif !important;
+                font-size: 11px !important;
+                font-weight: 800 !important;
+                line-height: 1 !important;
+                letter-spacing: 0 !important;
+                text-shadow: none !important;
+                border: 1px solid ${borderColor} !important;
+                color: ${color} !important;
+                background: ${bg} !important;
+                border-radius: 3px !important;
+                white-space: nowrap !important;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.4) !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+                vertical-align: middle !important;
+            `;
+        };
+
+        const updateCultureBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const badge = isAtt ? this.leftCultureBadge : this.rightCultureBadge;
+            if (!badge) return;
+            if (!unit) { badge.style.display = 'none'; return; }
+
+            const resolved = this.resolvePowerBadgeUnit(unit, side);
+            const cultureMult = getUnitCultureCombatMultiplier(resolved);
+            const fmtVal = cultureMult.toFixed(1);
+
+            const isBuff = cultureMult > 1.001;
+            const isNerf = cultureMult < 0.999;
+            let borderColor: string, color: string, bg: string;
+            if (isBuff) {
+                borderColor = isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)';
+                color = isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)';
+                bg = isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)';
+            } else if (isNerf) {
+                borderColor = 'rgba(235, 85, 75, 0.75)';
+                color = 'rgba(255, 170, 160, 1)';
+                bg = 'rgba(50, 10, 10, 0.85)';
+            } else {
+                borderColor = 'rgba(160, 160, 160, 0.5)';
+                color = 'rgba(200, 200, 200, 0.9)';
+                bg = 'rgba(30, 30, 30, 0.85)';
+            }
+
+            applyBadgeStyleToElement(badge, '文', fmtVal, borderColor, color, bg, `文化加成：×${fmtVal}`);
+        };
+
+        const updateStyleBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const badge = isAtt ? this.leftSkillBadge : this.rightSkillBadge;
+            if (!badge) return;
+            if (!unit) { badge.style.display = 'none'; return; }
+
+            const resolved = this.resolvePowerBadgeUnit(unit, side);
+            const styleChar = isAtt ? '攻' : '防';
+            const styleMult = getAttackStylePowerMult(resolved, isAtt);
+            const fmtVal = styleMult.toFixed(1);
+
+            const isBuff = styleMult > 1.001;
+            const isNerf = styleMult < 0.999;
+            let borderColor: string, color: string, bg: string;
+            if (isBuff) {
+                borderColor = isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)';
+                color = isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)';
+                bg = isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)';
+            } else if (isNerf) {
+                borderColor = 'rgba(235, 85, 75, 0.75)';
+                color = 'rgba(255, 170, 160, 1)';
+                bg = 'rgba(50, 10, 10, 0.85)';
+            } else {
+                borderColor = 'rgba(160, 160, 160, 0.5)';
+                color = 'rgba(200, 200, 200, 0.9)';
+                bg = 'rgba(30, 30, 30, 0.85)';
+            }
+
+            applyBadgeStyleToElement(badge, styleChar, fmtVal, borderColor, color, bg, `攻防风格：×${fmtVal}`);
+        };
+
+        const updateLegionBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const badge = isAtt ? this.leftLegionBadge : this.rightLegionBadge;
+            if (!badge) return;
+            if (!unit) { badge.style.display = 'none'; return; }
+
+            const resolved = this.resolvePowerBadgeUnit(unit, side);
+            const legionMult = getEliteCombatMultiplier(resolved);
+            const fmtVal = legionMult.toFixed(1);
+
+            const isBuff = legionMult > 1.001;
+            const isNerf = legionMult < 0.999;
+            let borderColor: string, color: string, bg: string;
+            if (isBuff) {
+                borderColor = isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)';
+                color = isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)';
+                bg = isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)';
+            } else if (isNerf) {
+                borderColor = 'rgba(235, 85, 75, 0.75)';
+                color = 'rgba(255, 170, 160, 1)';
+                bg = 'rgba(50, 10, 10, 0.85)';
+            } else {
+                borderColor = 'rgba(160, 160, 160, 0.5)';
+                color = 'rgba(200, 200, 200, 0.9)';
+                bg = 'rgba(30, 30, 30, 0.85)';
+            }
+
+            applyBadgeStyleToElement(badge, '军', fmtVal, borderColor, color, bg, `精锐部队：×${fmtVal}`);
+        };
+
+        const updateLuckBadge = (side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const badge = isAtt ? this.leftLuckBadge : this.rightLuckBadge;
+            if (!badge) return;
+
+            const fateLuck = isAtt
+                ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+                : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
+            const fmtVal = fateLuck.toFixed(1);
+
+            const isBuff = fateLuck > 1.001;
+            const isNerf = fateLuck < 0.999;
+            let borderColor: string, color: string, bg: string;
+            if (isBuff) {
+                borderColor = isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)';
+                color = isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)';
+                bg = isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)';
+            } else if (isNerf) {
+                borderColor = 'rgba(235, 85, 75, 0.75)';
+                color = 'rgba(255, 170, 160, 1)';
+                bg = 'rgba(50, 10, 10, 0.85)';
+            } else {
+                borderColor = 'rgba(160, 160, 160, 0.5)';
+                color = 'rgba(200, 200, 200, 0.9)';
+                bg = 'rgba(30, 30, 30, 0.85)';
+            }
+
+            applyBadgeStyleToElement(badge, '运', fmtVal, borderColor, color, bg, `命运运气：×${fmtVal}`);
+        };
+
+        const updateAptitudeBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+            const isAtt = side === 'attacker';
+            const badge = isAtt ? this.leftAptitudeBadge : this.rightAptitudeBadge;
+            if (!badge) return;
+            if (!unit) { badge.style.display = 'none'; return; }
+
+            const resolved = this.resolvePowerBadgeUnit(unit, side);
+            const myUnits = this.getUnitsForSide(side);
+            const oppUnits = this.getOpponentUnitsFor(side);
+            const bf = this.boundRegionalBattleField;
+            const cachedMyTroops = isAtt ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+            const cachedOppTroops = isAtt ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
+
+            let aptChar = '势';
+            if (resolved.generalId) {
+                const profile = getGeneralProfile(resolved.generalId);
+                if (profile?.aptitude) {
+                    const APT_MAP: Record<string, string> = { create: '造', leverage: '借', reverse: '逆' };
+                    if (APT_MAP[profile.aptitude]) aptChar = APT_MAP[profile.aptitude];
+                }
+            }
+            const aptMult = getAptitudePowerMult(myUnits, oppUnits, resolved, cachedMyTroops, cachedOppTroops);
+            const fmtVal = aptMult.toFixed(1);
+
+            const isBuff = aptMult > 1.001;
+            const isNerf = aptMult < 0.999;
+            let borderColor: string, color: string, bg: string;
+            if (isBuff) {
+                borderColor = isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)';
+                color = isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)';
+                bg = isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)';
+            } else if (isNerf) {
+                borderColor = 'rgba(235, 85, 75, 0.75)';
+                color = 'rgba(255, 170, 160, 1)';
+                bg = 'rgba(50, 10, 10, 0.85)';
+            } else {
+                borderColor = 'rgba(160, 160, 160, 0.5)';
+                color = 'rgba(200, 200, 200, 0.9)';
+                bg = 'rgba(30, 30, 30, 0.85)';
+            }
+
+            applyBadgeStyleToElement(badge, aptChar, fmtVal, borderColor, color, bg, `三势适性：×${fmtVal}`);
+        };
+
+        const updateCenterSixSetBadges = (attUnit: IBattleUnit | null, defUnit: IBattleUnit | null) => {
+            const getSixChar = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+                if (!unit) return null;
+                const resolved = this.resolvePowerBadgeUnit(unit, side);
+                if (resolved.generalId) {
+                    // [2026-07-31 修] 局技未分配（assignSituationalSkills 里 pool 为空会 continue，援军入场走懒分配）
+                    //   时 battleOverriddenSkillId 是 undefined，引擎照常拿招牌技结算，唯独这枚角标空着 → 需兜底。
+                    // [2026-08-06 修] 但**不认夺来技**：夺取系（混战计）会把敌技挂到自己身上，
+                    //   角标若跟着夺来技走，攻守双方必显示同一个字，看上去像违反「攻守六计硬分开」。
+                    //   角标只表「本方出的哪一计」，故走 getOwnSixSetSkillId（跳过 stolenSkillId，内含 negated/招牌技兜底）。
+                    const skillId = getOwnSixSetSkillId(resolved);
+                    const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
+                    if (entry) {
+                        const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
+                        const TAC_MAP: Record<TacticalSixSet, string> = {
+                            gongzhan: '攻', shengzhan: '胜', dizhan: '敌',
+                            hunzhan: '混', bingzhan: '并', baizhan: '败',
+                        };
+                        if (cls && TAC_MAP[cls]) return TAC_MAP[cls];
+                    }
+                }
+                return null;
+            };
+
+            const applyCenterBadge = (el: HTMLSpanElement, char: string | null, isAtt: boolean) => {
+                if (!char) {
+                    el.style.display = 'none';
+                    return;
+                }
+                const SIX_STYLES: Record<string, { color: string; bg: string; border: string; glow: string }> = {
+                    攻: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(140, 60, 10, 0.95), rgba(50, 15, 5, 0.95))', border: 'rgba(249, 115, 22, 0.85)', glow: 'rgba(249, 115, 22, 0.5)' },
+                    胜: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(20, 100, 45, 0.95), rgba(5, 40, 15, 0.95))', border: 'rgba(34, 197, 94, 0.85)', glow: 'rgba(34, 197, 94, 0.5)' },
+                    敌: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(10, 90, 110, 0.95), rgba(5, 30, 45, 0.95))', border: 'rgba(6, 182, 212, 0.85)', glow: 'rgba(6, 182, 212, 0.5)' },
+                    混: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(90, 30, 120, 0.95), rgba(30, 5, 45, 0.95))', border: 'rgba(168, 85, 247, 0.85)', glow: 'rgba(168, 85, 247, 0.5)' },
+                    并: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(20, 60, 120, 0.95), rgba(5, 20, 45, 0.95))', border: 'rgba(59, 130, 246, 0.85)', glow: 'rgba(59, 130, 246, 0.5)' },
+                    败: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(120, 20, 20, 0.95), rgba(45, 5, 5, 0.95))', border: 'rgba(239, 68, 68, 0.85)', glow: 'rgba(239, 68, 68, 0.5)' },
+                };
+                const st = SIX_STYLES[char] ?? {
+                    color: '#ffffff',
+                    bg: isAtt ? 'linear-gradient(135deg, rgba(100, 20, 10, 0.95), rgba(40, 5, 5, 0.95))' : 'linear-gradient(135deg, rgba(10, 50, 90, 0.95), rgba(5, 20, 40, 0.95))',
+                    border: isAtt ? 'rgba(230, 57, 0, 0.85)' : 'rgba(0, 102, 204, 0.85)',
+                    glow: isAtt ? 'rgba(230, 57, 0, 0.5)' : 'rgba(0, 102, 204, 0.5)',
+                };
+                el.textContent = char;
+                el.title = `${isAtt ? '攻方' : '守方'}战术六计：【${char}】`;
+                el.style.cssText = `
+                    display: inline-block !important;
+                    width: ${uiPx(22)} !important;
+                    height: ${uiPx(22)} !important;
+                    line-height: ${uiPx(20)} !important;
+                    text-align: center !important;
+                    font-family: 'Noto Serif SC', serif !important;
+                    font-size: ${uiPx(15)} !important;
+                    font-weight: 900 !important;
+                    color: ${st.color} !important;
+                    background: ${st.bg} !important;
+                    border: 1px solid ${st.border} !important;
+                    border-radius: 2px !important;
+                    box-shadow: 0 0 10px ${st.glow}, inset 0 0 6px ${st.glow} !important;
+                    text-shadow: 0 0 5px ${st.glow} !important;
+                    box-sizing: border-box !important;
+                `;
+            };
+
+            const attChar = getSixChar(attUnit, 'attacker');
+            const defChar = getSixChar(defUnit, 'defender');
+
+            applyCenterBadge(this.leftCenterSixBadge, attChar, true);
+            applyCenterBadge(this.rightCenterSixBadge, defChar, false);
+        };
+
+        applySideBadges(this.leftMultBadge, this.leftTotalMultBadge, attacker, defender, 'attacker');
+        applySideBadges(this.rightMultBadge, this.rightTotalMultBadge, defender, attacker, 'defender');
+        updateCultureBadge(attacker, 'attacker');
+        updateCultureBadge(defender, 'defender');
+        updateStyleBadge(attacker, 'attacker');
+        updateStyleBadge(defender, 'defender');
+        updateLegionBadge(attacker, 'attacker');
+        updateLegionBadge(defender, 'defender');
+        updateAptitudeBadge(attacker, 'attacker');
+        updateAptitudeBadge(defender, 'defender');
+        updateLuckBadge('attacker');
+        updateLuckBadge('defender');
+        updateCenterSixSetBadges(attacker, defender);
+        updateReinforcements('attacker');
+        updateReinforcements('defender');
+    }
+
+    private getPrimaryBattler(side: 'attacker' | 'defender'): IBattleUnit | null {
+        if (this.currentBattle) {
+            return side === 'attacker' ? this.currentBattle.attacker : this.currentBattle.defender;
+        }
+        const bf = this.boundRegionalBattleField;
+        let units: IBattleUnit[] | undefined;
+        if (bf && !bf.isOver) {
+            units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        } else if (this.currentRegionalUnits) {
+            units = side === 'attacker'
+                ? this.currentRegionalUnits.attackers
+                : this.currentRegionalUnits.defenders;
+        }
+        if (!units || units.length === 0) return null;
+
+        const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
+            .game?.cameraFollowUI?.getFollowedArmyId();
+        if (followedId) {
+            const followed = units.find((u) => u.id === followedId);
+            if (followed) return followed;
+        }
+        return this.pickPrimaryDisplayUnit(units);
+    }
+
+    /** 侧栏立绘/名牌/技能：与放技将领一致（城防将优先于无将军团） */
+    private pickGeneralDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
+        return pickSideSkillGeneralUnit(units) ?? this.pickPrimaryDisplayUnit(units);
+    }
+
+    /** 跟拍军团在本场该侧参战时，立绘/名牌以它为主角（切跟拍立即换脸） */
+    private getFollowedUnitInBattle(units: IBattleUnit[]): IBattleUnit | null {
+        const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
+            .game?.cameraFollowUI?.getFollowedArmyId();
+        if (!followedId) return null;
+        return units.find((u) => u.id === followedId && !u.isDestroyed && u.troops > 0) ?? null;
+    }
+
+    /** 显示等级：带在册武将 2 > 精锐番号 1 > 其余 0 */
+    private displayClassOf(u: IBattleUnit): number {
+        if (u.generalId && getGeneralRecordByGeneralId(u.generalId)) return 2;
+        const army = u.getEntity?.() as Army | undefined;
+        if (army?.isElite) return 1;
+        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) return 1;
+        return 0;
+    }
+
+    /**
+     * 血槽下第二行文字主位（2026-08-06，与立绘解耦）：
+     * 守方钉据点城防；攻方钉开战波次 0。不因武将/精锐把援军提到第二行。
+     * 文案（精锐番号 vs 据点+驻军）由 resolveBattleUnitListName 决定。
+     */
+    private pickSideNameUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        const alive = units.filter((u) => !u.isDestroyed && u.troops > 0);
+        if (alive.length === 0) return null;
+        const bf = this.boundRegionalBattleField;
+        const waveOf = (u: IBattleUnit): number => bf?.getUnitWaveIndex?.(u.id) ?? 0;
+
+        if (side === 'defender') {
+            const city = alive.find((u) => u.unitType === 'city');
+            if (city) return city;
+        }
+        const wave0 = alive.filter((u) => waveOf(u) === 0);
+        if (wave0.length > 0) {
+            const city = wave0.find((u) => u.unitType === 'city');
+            return city ?? wave0[0];
+        }
+        return alive[0];
+    }
+
+    /**
+     * 立绘 / 武将名牌 / 状态链标签选角（2026-08-03；2026-08-06 与第二行文字解耦）：
+     * 带武将 > 精锐 > 其余；同级先来后到（本城/开局有将则不被后来援军顶掉）。
+     * 本城无将而援军有将 → 立绘与标签可借用援军将；第二行队名仍走 pickSideNameUnit。
+     */
+    private pickArrivalDisplayUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        const alive = units.filter((u) => !u.isDestroyed && u.troops > 0);
+        if (alive.length === 0) return null;
+        const bf = this.boundRegionalBattleField;
+        const waveOf = (u: IBattleUnit): number => bf?.getUnitWaveIndex?.(u.id) ?? 0;
+
+        let best = alive[0];
+        for (const u of alive.slice(1)) {
+            const clsDiff = this.displayClassOf(u) - this.displayClassOf(best);
+            if (clsDiff > 0) { best = u; continue; }
+            if (clsDiff < 0) continue;
+            const waveDiff = waveOf(u) - waveOf(best);
+            if (waveDiff < 0) { best = u; continue; }
+            if (waveDiff > 0) continue;
+            if (this.scoreBattleDisplayUnit(u) > this.scoreBattleDisplayUnit(best)) best = u;
+        }
+
+        if (this.displayClassOf(best) === 2 && bf) {
+            const cmd = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
+            if (
+                cmd && !cmd.isDestroyed && cmd.troops > 0 && alive.includes(cmd)
+                && this.displayClassOf(cmd) === 2 && waveOf(cmd) === waveOf(best)
+            ) {
+                return cmd;
+            }
+        }
+        return best;
+    }
+
+    /** 侧栏立绘/技能/系数：优先带将+精锐的军团，避免攻城时城防「驻军」盖住守城军团 */
+    private pickPrimaryDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
+        if (units.length === 0) return null;
+        let best = units[0];
+        let bestScore = Number.NEGATIVE_INFINITY;
+        for (const u of units) {
+            const score = this.scoreBattleDisplayUnit(u);
+            if (score > bestScore) {
+                bestScore = score;
+                best = u;
+            }
+        }
+        return best;
+    }
+
+    private scoreBattleDisplayUnit(u: IBattleUnit): number {
+        let score = 0;
+        // 据点城防一律高于野战军团；有精锐再小幅加（同级 tie-break，不决定第二行文字）
+        if (u.unitType === 'city') {
+            score += 20_000;
+            if (readSiegeGarrisonEliteName(u.getEntity?.())) score += 2_000;
+        } else if (u.unitType === 'legion' || u.unitType === 'army') {
+            score += 10_000;
+        }
+        if (u.generalId && getGeneralProfile(u.generalId)) score += 1_000;
+        const army = u.getEntity?.() as Army | undefined;
+        if (army?.isElite) score += 500;
+        score += Math.min(Math.max(0, u.troops) / 1000, 99);
+        return score;
+    }
+
+    /** 立绘/标签主角：跟拍优先，否则 pickArrivalDisplayUnit */
+    private pickPortraitTagUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        if (units.length === 0) return null;
+        return this.getFollowedUnitInBattle(units)
+            ?? this.pickArrivalDisplayUnit(units, side)
+            ?? this.pickPrimaryDisplayUnit(units)
+            ?? units[0];
+    }
+
+    private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        // 技能条与系数链/六计角标同源：一律落到开战锁定的指挥官（见 resolvePowerBadgeUnit）。
+        // 此前各调用点传进来的单位各挑各的，才会出现「技能条有技、中央角标空」。
+        if (attacker) attacker = this.resolvePowerBadgeUnit(attacker, 'attacker');
+        if (defender) defender = this.resolvePowerBadgeUnit(defender, 'defender');
+        this.leftSkillsBox.innerHTML = '';
+        this.rightSkillsBox.innerHTML = '';
+
+        const createSkillTag = (
+            name: string,
+            effect: string,
+            isFamous: boolean,
+            isAttacker: boolean,
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other',
+            sixSetChar?: string,
+        ) => {
+            const tag = document.createElement('div');
+            const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
+            
+            // 战术 / 地形 / 精锐 / 文化颜色区分
+            let bgColor = '';
+            let bgHighlight = '';
+            let sideColor = isAttacker ? '#e63900' : '#0066cc'; // 默认战术/其他：攻血红 守深蓝
+
+            if (skillType === 'pass') {
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
+                    bgHighlight = 'rgba(196, 164, 90, 0.15)';
+                    sideColor = '#c4a45a';
+                } else {
+                    bgColor = isFamous ? 'rgba(40, 50, 30, 0.85)' : 'rgba(30, 40, 25, 0.8)';
+                    bgHighlight = 'rgba(148, 173, 110, 0.15)';
+                    sideColor = '#94ad6e';
+                }
+            } else if (skillType === 'elite') {
+                // 精锐部队：极具质感的黑金 / 暗夜冰银
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(45, 25, 0, 0.9)' : 'rgba(30, 15, 0, 0.85)';
+                    bgHighlight = 'rgba(255, 200, 50, 0.15)';
+                    sideColor = '#ffc800'; // 纯粹的正金
+                } else {
+                    bgColor = isFamous ? 'rgba(5, 20, 35, 0.9)' : 'rgba(0, 15, 25, 0.85)';
+                    bgHighlight = 'rgba(160, 210, 255, 0.15)';
+                    sideColor = '#aaddff'; // 冰霜银蓝
+                }
+            } else if (skillType === 'culture') {
+                // 文化区标签：沉稳的大地暖色 / 青岩色
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(55, 30, 15, 0.85)' : 'rgba(40, 20, 10, 0.8)';
+                    bgHighlight = 'rgba(212, 136, 60, 0.15)';
+                    sideColor = '#c86b28'; // 偏暗的赤铜
+                } else {
+                    bgColor = isFamous ? 'rgba(10, 35, 25, 0.85)' : 'rgba(5, 25, 15, 0.8)';
+                    bgHighlight = 'rgba(90, 158, 143, 0.15)';
+                    sideColor = '#4a8f7c'; // 沉稳的青石
+                }
+            } else {
+                // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(70, 10, 0, 0.85)' : 'rgba(45, 5, 0, 0.8)';
+                    bgHighlight = 'rgba(255, 60, 20, 0.12)';
+                    sideColor = '#e63900'; // 血红偏橙
+                } else {
+                    bgColor = isFamous ? 'rgba(0, 25, 60, 0.85)' : 'rgba(0, 15, 40, 0.8)';
+                    bgHighlight = 'rgba(40, 120, 255, 0.12)';
+                    sideColor = '#0066cc'; // 纯粹的深湛蓝
+                }
+            }
+
+            tag.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex: 0 0 ${uiPx(108)};
+                width: ${uiPx(108)};
+                box-sizing: border-box;
+                background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(0, 0, 0, 0.6);
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
+                border-bottom: 2px solid ${sideColor};
+                border-radius: 4px;
+                padding: ${uiPx(4)} ${uiPx(3)};
+                box-shadow: 
+                    inset 0 1px 1px rgba(255,255,255,0.25), 
+                    inset 0 -10px 20px ${sideColor}35, 
+                    0 3px 8px rgba(0,0,0,0.9);
+                overflow: visible;
+                position: relative;
+            `;
+            
+            const nameEl = document.createElement('div');
+            nameEl.style.cssText = `
+                font-family: 'Noto Serif SC', serif;
+                font-size: ${uiPx(18)};
+                font-weight: 900;
+                color: #fff8e0;
+                letter-spacing: 1px;
+                margin-bottom: ${uiPx(2)};
+                position: relative;
+                top: ${uiPx(7)};
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                text-align: center;
+            `;
+            nameEl.textContent = name;
+
+            const effectEl = document.createElement('div');
+            effectEl.style.cssText = `
+                font-family: 'Noto Sans SC', sans-serif;
+                font-size: ${uiPx(10)};
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.7);
+                letter-spacing: 1px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                text-align: center;
+            `;
+            effectEl.textContent = effect || '\u00A0';
+
+            tag.appendChild(nameEl);
+            tag.appendChild(effectEl);
+            return tag;
+        };
+
+        const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
+            if (!unit) return;
+            const pending: HTMLDivElement[] = [];
+            const sideKey = isAttacker ? 'attacker' : 'defender';
+            const add = (
+                name: string,
+                effect: string,
+                famous: boolean,
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
+            ) => {
+                if (pending.length >= 4) return;
+                const el = createSkillTag(name, effect, famous, isAttacker, skillType);
+                // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
+                // 标签每帧重建，必须按 skillSpentAt 在创建时补挂
+                const spentAt = this.skillSpentAt.get(`${sideKey}-${name}`);
+                if (spentAt !== undefined && Date.now() - spentAt >= 600) {
+                    el.classList.add('skill-tag-spent');
+                }
+                pending.push(el);
+            };
+
+            // 关隘/名城不再显示为顶部四字卡（2026-07-17 主人定口径：顶部卡=恒有信息（文化/技能/精锐），
+            // 时有时无的条件信息走下方乘区链条二字词——关隘「险要」、区中心「名城」，避免双份显示）
+            // const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
+            // if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
+            // const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
+            // if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
+
+            const addElite = () => {
+                const legionMult = getEliteCombatMultiplier(unit);
+                if (Math.abs(legionMult - 1) > 0.001) {
+                    add(getLegionEliteBadgeName(unit), '', true, 'elite');
+                }
+            };
+
+            const addCulture = () => {
+                const cultureMult = getCultureOnlyCombatMultiplier(unit);
+                const round = Math.round(cultureMult * 100) / 100;
+                const isGarrison = unit.unitType === 'city';
+                const label = resolveCultureTagLabel(round, isGarrison);
+                if (label) add(label, '', false, 'culture');
+            };
+
+            const addSkills = () => {
+                if (unit.generalId) {
+                    for (const tag of getGeneralSkillDisplayTags(unit)) {
+                        add(tag.name, '', tag.isFamous, tag.skillType);
+                    }
+                }
+            };
+
+            if (isAttacker) {
+                // 攻击方：精锐 -> 文化 -> 技能
+                addElite();
+                addCulture();
+                addSkills();
+            } else {
+                // 防守方：技能 -> 文化 -> 精锐
+                addSkills();
+                addCulture();
+                addElite();
+            }
+
+            for (const tag of pending) box.appendChild(tag);
+        };
+        renderSide(this.leftSkillsBox, attacker, true);
+        renderSide(this.rightSkillsBox, defender, false);
+    }
+
+    /** 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
+     * buildWaveGroupedSideName 中按单位粒度显示「得助/掣肘」标签（紧跟援军名后）。
+     */
+    private getSideReinforcementJoinLuck(side: 'attacker' | 'defender'): number | null {
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return null;
+        const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        let weighted = 0;
+        let weight = 0;
+        for (const u of units) {
+            if (u.isDestroyed || u.troops <= 0) continue;
+            const luck = bf.getReinforcementJoinLuck(u.id);
+            if (luck === null) continue;
+            const w = Math.max(1, u.troops);
+            weighted += luck * w;
+            weight += w;
+        }
+        if (weight <= 0) return null;
+        return weighted / weight;
+    }
+
+    private getBattleTerrainForUi(): LandTerrainKind | null {
+        if (!this.boundRegionalBattleField) return null;
+        const units = [
+            ...this.boundRegionalBattleField.getAttackerUnits(),
+            ...this.boundRegionalBattleField.getDefenderUnits(),
+        ];
+        return getBattleTerrainKind(units, this.boundRegionalBattleField.type);
+    }
+
+    /**
+     * 面板主将唯一入口（2026-07-31 主人定：援军是后来的，只显示初始的）。
+     *
+     * 读引擎开战时锁定的指挥官——引擎结算也只认这个单位
+     * （`getOpeningTacticalPowerMultiplier` → `findEligibleGeneralUnit(units, commander)`），
+     * 所以立绘 / 名牌 / 技能条 / 系数链 / 六计角标必须全走这里，否则面板会
+     * 「用甲的脸配乙的数字」：观众看到的将和实际决定胜负的将不是同一个人。
+     *
+     * 曾经的三套口径（已废）：
+     *   ① `pickGeneralDisplayUnit` —— 立绘/名牌，实时挑，援军编入时被 syncRegionalParticipants 换掉；
+     *   ② `getPrimaryBattler` —— 技能条，另一套评分 + 摄像机跟随覆盖，同一批单位都可能挑出不同的将；
+     *   ③ 本函数 —— 系数链。
+     * 无战场 / 指挥官未锁定时才退回实时挑选。
+     */
+
+    private resolvePowerBadgeUnit(fallback: IBattleUnit, side: 'attacker' | 'defender'): IBattleUnit {
+        const bf = this.boundRegionalBattleField;
+        if (bf) {
+            const cmd = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
+            // [2026-08-06] 必须校验：city 的 generalId 是动态 getter，城防将被 reconcile 剥离后
+            // 锁着的指挥官会当场变无将。空壳指挥官照单全收 → 整侧技能卡/角标/三势适性全空
+            // （实机：阿尔及尔攻防战守方只剩文化卡）。BattleField 侧已有 replaceCommanderIfInvalidated
+            // 兜底，这里是第二道闸，两处都留着。
+            if (cmd && canUnitUseGeneralSkills(cmd)) return cmd;
+        }
+        // 无战场 / 指挥官未锁定或已失效 → 退回到当前最优将
+        return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
+    }
+
+    private renderEightRingBadges(
+        unit: IBattleUnit,
+        opponent: IBattleUnit | null,
+        side: 'attacker' | 'defender',
+    ): { totalMult: number; totalTitle: string } {
+        unit = this.resolvePowerBadgeUnit(unit, side);
+        const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
+        const terrain = this.getBattleTerrainForUi();
+        const myUnits = this.getUnitsForSide(side);
+        const oppUnits = this.getOpponentUnitsFor(side);
+        const bf = this.boundRegionalBattleField;
+        const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+        const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
+
+        // ========== 只算各环数值（总×徽章 + title 悬停明细）；不再拼名/城/技 徽章（08-06 用户否决挂载，规则无此三枚） ==========
+        const famousMult = getFamousGeneralMult(unit);
+
+        const passMult = getPassGarrisonCombatMultiplier(unit);
+        const regionMult = getRegionCenterCombatMultiplier(unit);
+
+        // [2026-08-06 修] cultureMult 用**纯文化环**（getCultureOnlyCombatMultiplier），据点环由下方
+        // passMult×regionMult 独立乘——此前用 getUnitCultureCombatMultiplier（文化×据点）导致据点环乘两遍，
+        // 守关隘/文化中心时面板总× 虚高 20%（引擎 getUnitBattlePowerMultiplier 只乘一次）。
+        const cultureMult = getCultureOnlyCombatMultiplier(unit);
+
+        let tacChar = '技';
+        if (unit.generalId) {
+            // 与中央六计角标同源：只表「本方出的哪一计」，不认夺来技（见 updateCenterSixSetBadges 内同款注释）
+            const skillId = getOwnSixSetSkillId(unit);
+            const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
+            if (entry) {
+                const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
+                const TAC_MAP: Record<TacticalSixSet, string> = {
+                    gongzhan: '攻', shengzhan: '胜', dizhan: '敌',
+                    hunzhan: '混', bingzhan: '并', baizhan: '败',
+                };
+                if (cls && TAC_MAP[cls]) tacChar = TAC_MAP[cls];
+            }
+        }
+        const tacMult = getOpeningTacticalPowerMultiplier(
+            myUnits, oppUnits, side === 'attacker', { battleType, terrain }, unit,
+            side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
+            cachedMyTroops, cachedOppTroops,
+        );
+        const legionMult = getEliteCombatMultiplier(unit);
+
+        // ========== 其余五环：只算数值，不在此拼徽章 ==========
+        let aptChar = '势';
+        if (unit.generalId) {
+            const profile = getGeneralProfile(unit.generalId);
+            if (profile?.aptitude) {
+                const APT_MAP: Record<string, string> = { create: '造', leverage: '借', reverse: '逆' };
+                if (APT_MAP[profile.aptitude]) aptChar = APT_MAP[profile.aptitude];
+            }
+        }
+        const aptMult = getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
+        const styleChar = side === 'attacker' ? '攻' : '防';
+        const styleMult = getAttackStylePowerMult(unit, side === 'attacker');
+        const fateLuck = side === 'attacker'
+            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
+
+        // [2026-08-06 修] 总× 为固定乘区连乘，**不含合兵 luck**（引擎胜负判定 per-unit 加权，
+        // 合兵信息由第三行「得/掣×」徽章承载；此前把指挥官单位的 joinLuck 乘进整侧总×，与引擎口径不一致）。
+
+        // [2026-08-06 撤回] multSpan 挂载已被用户否决（名×/城×/技× 不在规则设计内）——
+        // topChain 生成逻辑整段删除；各环只算数值供 totalMult / title 悬停明细使用。
+        const allDetail = [
+            { label: '名将光环', shortName: '名', val: famousMult },
+            { label: '据点城池', shortName: '城', val: Math.max(passMult, regionMult) },
+            { label: '文化加成', shortName: '文', val: cultureMult },
+            { label: '战术技能', shortName: tacChar, val: tacMult },
+            { label: '精锐部队', shortName: '军', val: legionMult },
+            { label: '三势适性', shortName: aptChar, val: aptMult },
+            { label: '攻防风格', shortName: styleChar, val: styleMult },
+            { label: '命运运气', shortName: '运', val: fateLuck },
+        ].filter(f => Math.abs(f.val - 1) > 0.001);
+
+        // [2026-08-06 修] 据点环与引擎同行为：Math.max（关隘/文化中心取大不叠加，焊死上限 1.2）——
+        // 此前用 × 相乘，与引擎 getUnitCultureCombatMultiplier 的 max 不同；数值上现无差（149 关隘/15 中心零重叠），
+        // 但将来若某文化中心 type 改 pass，引擎仍 1.2、面板会静默 1.44（同坑第二次）。
+        const siteMult = Math.max(passMult, regionMult);
+        const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck;
+        const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
+
+        const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
+            ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
+            : '• 无额外增减益（均势 1.00）');
+
+        return { totalMult, totalTitle };
+    }
+
+    /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */
+    private getUnitsForSide(side: 'attacker' | 'defender'): IBattleUnit[] {
+        return this.getOpponentUnitsFor(side === 'attacker' ? 'defender' : 'attacker');
+    }
+
+    /** 返回当前战场中指定 side 的对手单位数组（用于压制减益读取） */
+    private getOpponentUnitsFor(side: 'attacker' | 'defender'): IBattleUnit[] {
+        const opponentSide = side === 'attacker' ? 'defender' : 'attacker';
+        if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+            return opponentSide === 'attacker'
+                ? this.boundRegionalBattleField.getAttackerUnits()
+                : this.boundRegionalBattleField.getDefenderUnits();
+        }
+        if (this.currentRegionalUnits) {
+            return opponentSide === 'attacker'
+                ? this.currentRegionalUnits.attackers
+                : this.currentRegionalUnits.defenders;
+        }
+        return [];
+    }
+
+    /** 援军信息容器（替代原侧栏小血条） */
+    private applySideLabelStyle(el: HTMLDivElement, side: 'attacker' | 'defender'): void {
+        const isAtt = side === 'attacker';
+        el.style.cssText = `
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(T.sideBar.labelSize)};
+            font-weight: 900;
+            letter-spacing: ${uiPx(1)};
+            line-height: 1.25;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+            white-space: nowrap;
+        `;
+        el.dataset.side = side;
+        el.style.color = isAtt ? T.colors.attackerName : T.colors.defenderName;
+    }
+
+    /**
+     * 渲染「范阳军团: 1.78万」式侧栏标签（仅更新文本，不改 DOM 结构）。
+     * [2026-06-12 美化] 数字与地图标签统一为「万」制：≥1 万显示两位小数（战斗中百位变动可见），
+     * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
+     */
+    private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
+        const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
+        const totalBadge = side === 'attacker' ? this.leftTotalMultBadge : this.rightTotalMultBadge;
+        nameEl.innerHTML = name;
+        if (totalBadge) {
+            const t = Math.max(0, Math.floor(troops));
+            const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+            totalBadge.innerHTML = troopStr;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人（含各路援军）`;
+            totalBadge.style.display = 'inline-block';
+        }
+    }
+
+    private resolveFactionLabel(factionId: string | null): string {
+        if (!factionId || factionId === 'panjun') return '叛军';
+        const fm = (window as any).game?.factionManager;
+        return fm?.getFactionName(factionId) ?? factionId;
+    }
+
+    private updateFactionDisplay(): void {
+        this.applyFactionName(this.attackerFactionId, this.leftFactionNameSpan);
+        this.applyFactionName(this.defenderFactionId, this.rightFactionNameSpan);
+    }
+
+    /** 战斗 HUD 叠在深色地图上：势力名一律浅色字，不用旗面色（浅旗会变黑字看不见） */
+    private applyFactionName(factionId: string | null, nameSpan: HTMLSpanElement): void {
+        nameSpan.textContent = this.resolveFactionLabel(factionId);
+        nameSpan.style.color = '#f0f0e8';
+        nameSpan.style.textShadow = '0 0 3px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)';
+    }
+
+    // --- INTERACTION ---
+
+    private setupPortraitInteraction(img: HTMLImageElement, _isLeft: boolean) {
+        img.style.cursor = 'default';
+        img.style.pointerEvents = 'none';
+
+        img.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (!this.correctorOpen || !this.currentBattleKey) return;
+            const side = img === this.leftPortrait ? 'attacker' : 'defender';
+            this.toggleMirror(side);
+        });
+    }
+
+    private createPortraitFrame(): HTMLDivElement {
+        const frame = document.createElement('div');
+        frame.style.cssText = `
+            width: ${uiPx(T.portraitSlotWidth)};
+            height: ${uiPx(620)};
+            position: absolute;
+            bottom: ${uiPx(T.portraitBottom)};
+            overflow: visible;
+            pointer-events: auto;
+            z-index: ${T.zIndex.portrait};
+            transition: opacity 0.3s ease;
+        `;
+        return frame;
+    }
+
+    private createPortraitFacingWrap(side: 'left' | 'right'): HTMLDivElement {
+        const wrap = document.createElement('div');
+        const edge = side === 'left' ? 'left' : 'right';
+
+        wrap.style.cssText = `
+            position: absolute;
+            bottom: 0;
+            ${edge}: ${uiPx(-T.portraitImageOffset)};
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            ${side === 'left' ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
+            transform-origin: center bottom;
+            pointer-events: none;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+        `;
+        return wrap;
+    }
+
+    private createPortraitImage(): HTMLImageElement {
+        // 给立绘本体叠一层更轻的边缘渐隐（弱于外层框架裁剪渐隐），
+        // 让人物与框架融合更自然，但不抢 UI 框架主效果。
+        const innerFade = Math.max(1.5, Math.min(4.5, T.portraitEdgeFade * 0.35));
+        const innerHorizontal =
+            `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${innerFade}%, rgba(0,0,0,1) calc(100% - ${innerFade}%), rgba(0,0,0,0) 100%)`;
+        const innerVertical =
+            `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${innerFade}%, rgba(0,0,0,1) calc(100% - ${innerFade}%), rgba(0,0,0,0) 100%)`;
+        const innerMask = `${innerHorizontal}, ${innerVertical}`;
+        const img = document.createElement('img');
+        img.style.cssText = `
+            width: auto;
+            height: 100%;
+            display: block;
+            pointer-events: auto;
+            -webkit-mask-image: ${innerMask};
+            mask-image: ${innerMask};
+            -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        `;
+        return img;
+    }
+
+    /** 立绘裁剪框：固定尺寸 + 四缘渐隐 + overflow 裁切。
+     *  渐隐做在此框上（不随 F2 缩放），img 在框内缩放/平移，超框部分被柔化裁掉。 */
+    private createPortraitClip(): HTMLDivElement {
+        const f = T.portraitEdgeFade;
+        const horizontal = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+        const vertical = `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+        const mask = `${horizontal}, ${vertical}`;
+        const clip = document.createElement('div');
+        clip.style.cssText = `
+            height: ${uiPx(550)};
+            display: inline-block;
+            overflow: hidden;
+            -webkit-mask-image: ${mask};
+            mask-image: ${mask};
+            -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        `;
+        return clip;
+    }
+
+    /** 椭圆径向渐变：中心深、四边 rgba(...,0) 透出地图 */
+    private buildCenterBackdropBackground(): string {
+        const ex = T.centerFadeEllipseX;
+        const ey = T.centerFadeEllipseY;
+        const s0 = T.centerFadeStopInner;
+        const sm = T.centerFadeStopMid;
+        const so = T.centerFadeStopOuter;
+        return `radial-gradient(
+            ellipse ${ex}% ${ey}% at 50% 50%,
+            rgba(12, 11, 10, 0.97) ${s0}%,
+            rgba(10, 10, 14, 0.9) ${sm * 0.55}%,
+            rgba(10, 10, 14, 0.72) ${sm}%,
+            rgba(10, 10, 14, 0.32) ${so}%,
+            rgba(8, 8, 12, 0) 100%)`;
+    }
+
+    private playPortraitEntrance(): void {
+        // 面板落位后立绘再滑入，分层有节奏
+        // 缩放只动外框 transform，绝不碰 img 的调校 transform（F2 位置/缩放数据）。
+        this.leftPortraitFrame.style.animation =
+            'portrait-frame-enter-left 0.5s ease-out 0.50s both';
+        this.rightPortraitFrame.style.animation =
+            'portrait-frame-enter-right 0.5s ease-out 0.55s both';
+        // 蓄力收缩状态复位（换场重新蓄力；清上一场残留的内联缩放与 --pre-scale）
+        for (const side of ['attacker', 'defender'] as const) {
+            this.portraitWind[side] = { driving: false, pulsed: false, scale: 1 };
+        }
+        for (const frame of [this.leftPortraitFrame, this.rightPortraitFrame]) {
+            frame.style.transform = '';
+            frame.style.removeProperty('--pre-scale');
+        }
+    }
+
+    /**
+     * 蓄力收缩逐帧驱动（updateStats 每帧调）：
+     * 仅当该侧存在可放技将领（pickSideSkillGeneralUnit，与保底亮相同判据）才收缩，
+     * 从滑入结束(0.7s)即刻开始，随游戏内 elapsed 缓缩至 0.90，相持阈值处缩到底。
+     * 无将侧保持 1.0（对称铁律）；脉冲放完（pulsed）不再二次收缩。
+     */
+    /**
+     * 蓄力收缩逐帧驱动：
+     * [2026-08-19 主人指令] 关闭立绘缩小效果，战斗中立绘全程稳固保持常态 scale(1.0)。
+     */
+    private updatePortraitWinddown(): void {
+        return;
+    }
+
+    /** 复位上一场的败方褪灰与技能脉冲状态（仅真正换场时清，同场 UI 刷新保留去重） */
+    private resetBattleOverlays(battleField?: BattleField | null): void {
+        for (const img of [this.leftPortrait, this.rightPortrait]) {
+            img.style.transition = '';
+            img.style.filter = '';
+        }
+        // 同场刷新（援军编入等）不清技能去重集/已燃表，防止脉冲重复、已燃态丢失
+        if (!battleField || this.boundRegionalBattleField !== battleField) {
+            this.skillPulseShownKeys.clear();
+            this.skillSpentAt.clear();
+            // [2026-07-18] 第三幕锚点仅换场清：镜头切进一场已过 80% 的战斗时，
+            // 若沿用上一场锚点，崩溃/断崖方向可能画反（进度<80% 的自愈清零覆盖不到这条路径）
+            this.collapseStartAttPct = null;
+            this.smoothedStalematePct = 50;
+            // 「开局标尺在中间」：无缓动地归位到 50%，下一帧写入兵力比时才靠 0.45s 缓动滑进去。
+            // 不归位的话新场会从上一场的收尾位置（可能是 100%）起步。
+            this.attackerBar.style.transition = 'none';
+            this.clashEffect.style.transition = 'none';
+            this.rightTotalMultBadge.style.transition = 'none';
+            this.attackerBar.style.width = '50%';
+            this.clashEffect.style.left = 'calc(50% - 8px)';
+            if (!this.scene13LayoutOn) {
+                this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            }
+            void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
+        }
+        // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
+        this.outcomeLocked = false;
+        this.attackerBar.style.transition = 'width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.clashEffect.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.rightTotalMultBadge.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
+        this.battleTitle.style.animation = '';
+        this.skillPulseLastAt = 0;
+        this.skillBurstSfxPlayed = false;
+        for (const t of this.skillPulseTimers) window.clearTimeout(t);
+        this.skillPulseTimers.length = 0;
+    }
+
+    /** 胜负揭晓·定格一拍（2026-07-18 主人定 P0）：
+     *  ① 拉锯条 0.2s 快速撞底（不等 updateStats 的 0.55s 缓滑与 98% 钳制）
+     *  ② 交界爆闪 → 交还呼吸
+     *  ③ 标题改写「XX 勝」并从 1.35 倍弹出；败方立绘缓缓褪灰 */
+    private showBattleOutcome(winnerFactionId: string | null): void {
+        if (!winnerFactionId) return;
+        this.outcomeLocked = true;
+        // ① 拉锯条撞底
+        const attackerWon = winnerFactionId === this.attackerFactionId;
+        const finalPct = attackerWon ? 100 : 0;
+        const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
+        this.attackerBar.style.transition = `width ${slam}`;
+        this.clashEffect.style.transition = `left ${slam}`;
+        this.rightTotalMultBadge.style.transition = `left ${slam}`;
+        this.attackerBar.style.width = `${finalPct}%`;
+        this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
+        if (!this.scene13LayoutOn) {
+            this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
+        }
+        // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
+        this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
+        window.setTimeout(() => {
+            this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
+        }, 600);
+        // ③ 「XX 勝」弹出
+        const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
+        if (name && name !== '未知势力') {
+            this.battleTitle.textContent = `${name} 勝`;
+            this.battleTitle.style.animation = 'none';
+            void this.battleTitle.offsetWidth;
+            this.battleTitle.style.animation = 'outcome-title-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both';
+        }
+        // 败方立绘缓缓褪灰（只动 filter，不碰调校 transform；下场开战时复位）
+        let loserImg: HTMLImageElement | null = null;
+        if (winnerFactionId === this.attackerFactionId) loserImg = this.rightPortrait;
+        else if (winnerFactionId === this.defenderFactionId) loserImg = this.leftPortrait;
+        if (loserImg) {
+            loserImg.style.transition = 'filter 1.6s ease';
+            loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
+        }
+        // 不在此清空 skillPulseTimers：相持段错开中的后手脉冲须播完；run() 内 isOver 挡逆局/致死技即可
+    }
+
+    // --- LOGIC ---
+
+    public show(battle: Battle) {
+        this.currentBattle = battle;
+        this.currentRegionalUnits = null;
+        this.boundRegionalBattleField = null;
+        this.currentBattleType = battle.type;
+        this.isVisible = true;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
+        this.refreshCorrectorDataOnBattleOpen();
+        this.resetBattleOverlays();
+        this.attackerFactionId = battle.attacker.factionId;
+        this.defenderFactionId = battle.defender.factionId;
+        this.updateMultiplierBadges(battle.attacker, battle.defender);
+        this.updateSkillBadges(battle.attacker, battle.defender);
+        this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
+        this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        this.playPortraitEntrance();
+    }
+
+    public showRegional(
+        attackers: IBattleUnit[],
+        defenders: IBattleUnit[],
+        attackerPortrait?: string,
+        defenderPortrait?: string,
+        title?: string,
+        description?: string,
+        isNarrative?: boolean,
+        battleDurationGameSec: number = 17,
+        timeScale: number = 1,
+        battleField?: BattleField
+    ) {
+        if (attackers.length === 0 || defenders.length === 0) return;
+
+        this.clearRegionalTimers();
+        this.resetBattleOverlays(battleField);
+
+        this.currentBattle = null;
+        this.currentRegionalUnits = { attackers, defenders };
+        this.boundRegionalBattleField = battleField ?? null;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
+        this.currentBattleType = battleField?.type;
+        this.lastTimeScale = Math.max(0.1, timeScale);
+        this.isVisible = true;
+        this.refreshCorrectorDataOnBattleOpen();
+
+        if (this.boundRegionalBattleField) {
+            this.refreshRegionalSafetyDeadline();
+            this.boundRegionalBattleField.tryReleaseStalemateSkillUi();
+        } else {
+            const wallMs = Math.max(3500, (battleDurationGameSec / this.lastTimeScale) * 1000);
+            this.regionalSafetyDeadline = performance.now() + wallMs + CombatUI.REGIONAL_TAIL_MS;
+        }
+
+        let displayTitle = title || '区域冲突';
+        let displayYear = '';
+
+        // [MODIFIED] Year Parsing Logic
+        // Expect format: "公元前236年，始皇帝十一年，秦赵邺城之战"
+        if (title) {
+            const parts = title.split(/[，,]/).map(s => s.trim()); // Split and trim
+            if (parts.length >= 3) {
+                // Format: Year, Era, Title
+                if (parts[0].includes('年')) {
+                    // Combine Year and Era: "公元前236年 · 始皇帝十一年"
+                    displayYear = `${parts[0]} · ${parts[1]}`;
+                }
+                displayTitle = parts[parts.length - 1];
+            } else if (parts.length >= 2) {
+                // Fallback: "前260年，秦赵长平之战"
+                if (parts[0].includes('年')) {
+                    displayYear = parts[0];
+                }
+                displayTitle = parts[parts.length - 1];
+            } else {
+                displayTitle = title;
+            }
+        }
+
+        const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        // 立绘/标签：跟拍优先，否则带武将 > 精锐 > 其余（本城有将不换）；第二行队名另走 pickSideNameUnit。
+        const attacker = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const defender = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+
+        const attName = this.buildWaveGroupedSideName(attackers, 'attacker');
+        const defName = this.buildWaveGroupedSideName(defenders, 'defender');
+
+        this.attackerFactionId = attacker.factionId;
+        this.defenderFactionId = defender.factionId;
+        this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
+
+        this.updateMultiplierBadges(attacker, defender);
+        this.updateSkillBadges(attacker, defender);
+        this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defenders);
+
+        this.setPortrait(
+            this.leftPortrait,
+            attacker,
+            attacker.generalId,
+            attacker.factionId,
+            attacker.generalId ? attackerPortrait : (attackerPortrait ?? attacker.portraitPath),
+            'attacker',
+        );
+        this.setPortrait(
+            this.rightPortrait,
+            defender,
+            defender.generalId,
+            defender.factionId,
+            defender.generalId ? defenderPortrait : (defenderPortrait ?? defender.portraitPath),
+            'defender',
+            this.leftPortrait.src || undefined,
+        );
+
+        const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit, side: 'attacker' | 'defender') => {
+            this.fillGeneralNameTag(tag, unit, side);
+        };
+        setGeneralName(this.leftGeneralNameTag, attacker, 'attacker');
+        setGeneralName(this.rightGeneralNameTag, defender, 'defender');
+
+        this.updateStats();
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
+        this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        this.playPortraitEntrance();
+    }
+
+    public isRegionalVisible(): boolean {
+        return this.isVisible && this.currentRegionalUnits !== null;
+    }
+
+    /** 以战场单位列表判定 generalId 属攻/守（优先于名牌 dataset，防攻城城防将错位） */
+    private resolveGeneralBattleSide(
+        bf: BattleField,
+        generalId: string,
+    ): 'attacker' | 'defender' | null {
+        if (bf.getDefenderUnits().some((u) => u.generalId === generalId)) return 'defender';
+        if (bf.getAttackerUnits().some((u) => u.generalId === generalId)) return 'attacker';
+        return null;
+    }
+
+    private resolveGeneralSpeechName(
+        generalId: string,
+        side: 'attacker' | 'defender',
+    ): string | null {
+        const tag = side === 'attacker' ? this.leftGeneralNameTag : this.rightGeneralNameTag;
+        if (tag.dataset.generalId === generalId && tag.textContent?.trim()) {
+            return tag.textContent.trim();
+        }
+        return getGeneralRecordByGeneralId(generalId)?.generalName ?? null;
+    }
+
+    /** 技能事件是否属于当前绑定战场（异场事件禁止上面板/进语音，防同名技能冒名顶替） */
+    public isTacticalEventForBoundBattle(info: { unitId?: string; generalId?: string }): boolean {
+        const bf = this.boundRegionalBattleField;
+        if (!bf) return true; // 未绑战场（旧调用路径）：维持原有启发式
+        if (info.unitId) return bf.hasUnit(info.unitId);
+        if (info.generalId) return this.resolveGeneralBattleSide(bf, info.generalId) !== null;
+        return true;
+    }
+
+    /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
+    public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
+        if (!displayName) return;
+        // 战略技（str_*）只在大地图展示，禁止战斗 Cut-in
+        if (skillId?.startsWith('str_')) return;
+        // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
+        if (this.boundRegionalBattleField?.isOver) return;
+        const bf = this.boundRegionalBattleField;
+        // 【2026-08-16 用户指令】单方有将不放技能、不脉冲、不立绘缩放：仅双将战才触发技能脉冲与 Cut-in
+        if (bf && !bf.bothSidesHaveGeneral()) return;
+        const addFlash = (badge: HTMLSpanElement | null) => {
+            if (!badge || !badge.textContent?.includes(displayName)) return;
+            badge.style.animation = 'none';
+            void badge.offsetWidth;
+            badge.style.animation = 'tactical-skill-pop 1.5s ease-out forwards';
+        };
+        addFlash(this.leftMultBadge);
+        addFlash(this.rightMultBadge);
+
+        // —— 立绘/标签脉冲 ——
+        // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
+        // 侧别：① 战场单位列表 ② generalId 对名牌 ③ 技能标签兜底（仅限无将事件——
+        //    带将事件若两级都找不到，多半是异场事件漏进来，用标签文字猜侧会冒名顶替，直接丢弃）。
+        let side: 'attacker' | 'defender' | null = null;
+        if (generalId && bf) {
+            side = this.resolveGeneralBattleSide(bf, generalId);
+        }
+        if (!side && generalId) {
+            if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
+            else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
+        }
+        if (!side && !generalId) {
+            const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
+            const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
+            if (inLeft !== inRight) {
+                side = inLeft ? 'attacker' : 'defender';
+            }
+        }
+        if (!side) return;
+        const pulseSide = side;
+        // 一将一技按 skillId 分键去重（战略技 str_* 已在本函数入口拦截，不会到这里；
+        // 分键是为同将不同战术技——如开局技与逆局技——互不误吞）
+        if (generalId) {
+            const genKey = `${pulseSide}|${generalId}|${skillId ?? ''}`;
+            if (this.skillPulseShownKeys.has(genKey)) return;
+            this.skillPulseShownKeys.add(genKey);
+        }
+        const key = `${pulseSide}-${displayName}`;
+        if (this.skillPulseShownKeys.has(key)) return;
+        this.skillPulseShownKeys.add(key);
+
+        const units = pulseSide === 'attacker' ? bf?.getAttackerUnits() : bf?.getDefenderUnits();
+        const pulseUnit = generalId ? units?.find((u) => u.generalId === generalId) : undefined;
+        const audioUnitId = pulseUnit?.id ?? null;
+
+        const runUi = () => {
+            if (this.boundRegionalBattleField?.isOver) return;
+            // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
+            this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
+            // 已燃时刻（P1）：0.6s 后标签定格为降亮度+金框+✓——updateSkillBadges 每帧重建时按此补挂；
+            // 「标明放了哪个技」由已燃态承担（旧标签 surge 附着于每帧被重建的元素，从未真正可见，已清理）
+            this.skillSpentAt.set(`${pulseSide}-${displayName}`, Date.now());
+            this.pulsePortraitForSkill(pulseSide);
+            
+            // 联动：在立绘正中央弹出巨大化技能文字 Cut-in
+            const frame = pulseSide === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+            const cutIn = document.createElement('div');
+            cutIn.textContent = displayName;
+            const isAtt = pulseSide === 'attacker';
+            const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
+            const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';
+            cutIn.style.cssText = `
+                position: absolute;
+                top: 70%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.5);
+                color: #ffffff;
+                font-size: ${uiPx(46)};
+                font-weight: 900;
+                font-family: 'Noto Serif SC', serif;
+                font-style: italic;
+                letter-spacing: ${uiPx(4)};
+                pointer-events: none;
+                z-index: 100;
+                text-shadow: 
+                    0 2px 2px rgba(0,0,0,0.9),
+                    0 0 10px ${coreGlow},
+                    0 0 20px ${coreGlow},
+                    0 0 40px ${wideGlow},
+                    0 10px 20px rgba(0,0,0,0.9);
+                animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                white-space: nowrap;
+            `;
+            frame.appendChild(cutIn);
+            window.setTimeout(() => cutIn.remove(), 3000);
+        };
+
+        /** 无语音兜底：音效与 Cut-in 同刻；双方紧挨时仅首句插音效 */
+        const runWithSfx = () => {
+            if (!this.skillBurstSfxPlayed && audioUnitId) {
+                this.skillBurstSfxPlayed = true;
+                audioManager.playGeneralSkillSfx(audioUnitId);
+            }
+            runUi();
+        };
+
+        // [语音播报] 技能释放：语音入队成功则由「开口那一刻」驱动 Cut-in（念谁弹谁，声画同刻；
+        // 入队顺序由 BattleField 排：劣先；均势随机。不播 → 走下方错开计时兜底。
+        const voiceWillPlaySfx = speechAnnouncer.isSkillVoiceIdle();
+        if (this.announceSkillReleaseVoice(pulseSide, displayName, runUi, generalId, skillId, audioUnitId)) {
+            if (voiceWillPlaySfx) this.skillBurstSfxPlayed = true;
+            return;
+        }
+        // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但双方都必须 Cut-in（顺序跟入队）
+        const now = Date.now();
+        const staggerMs = bf && !bf.isOver && bf.targetDuration > 0
+            ? resolveSkillPulseStaggerSec(bf.targetDuration, bf.elapsed) * 1000
+            : CombatUI.SKILL_PULSE_STAGGER_MS;
+        const startAt = staggerMs <= 0
+            ? now
+            : Math.max(now, this.skillPulseLastAt + staggerMs);
+        this.skillPulseLastAt = startAt;
+        if (startAt <= now) {
+            runWithSfx();
+        } else {
+            this.skillPulseTimers.push(window.setTimeout(runWithSfx, startAt - now));
+        }
+    }
+
+    private findSkillTag(box: HTMLDivElement, displayName: string): HTMLElement | null {
+        return (Array.from(box.children).find(
+            (el) => el.textContent?.includes(displayName),
+        ) as HTMLElement | undefined) ?? null;
+    }
+
+    /**
+     * 技能释放语音：武将，势技名，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
+     * 入队成功返回 true，onStart 在该句开口时触发（驱动脉冲 Cut-in，念谁弹谁）；false = 不播，调用方自排脉冲。
+     */
+    private announceSkillReleaseVoice(
+        side: 'attacker' | 'defender',
+        displayName: string,
+        onStart: () => void,
+        generalId?: string,
+        skillId?: string,
+        audioUnitId?: string | null,
+    ): boolean {
+        if (!generalId || !skillId || !displayName) return false;
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return false;
+        const rec = getGeneralRecordByGeneralId(generalId);
+        if (!rec) return false;
+
+        const battleSide = this.resolveGeneralBattleSide(bf, generalId) ?? side;
+        const units = battleSide === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        const gUnit = units.find((u) => u.generalId === generalId) ?? null;
+        const generalName = this.resolveGeneralSpeechName(generalId, battleSide) ?? rec.generalName;
+        const eliteName = gUnit ? getLegionEliteBadgeName(gUnit) : null;
+        const opponentHasGeneral = battleSide === 'attacker'
+            ? !!this.rightGeneralNameTag.dataset.generalId
+            : !!this.leftGeneralNameTag.dataset.generalId;
+        // 2026-08-04 GAKU 拍板：非双将战（对手无将）战斗仅 9 秒，完整技能句
+        // （武将+技名+精锐+八字诀 ≈5s）念不完——只保留视觉（Cut-in/标签/音效），不念语音。
+        // 双将战（30s 起）照常播报。false = 不播，调用方自排视觉脉冲。
+        if (!opponentHasGeneral) return false;
+        // 技能八字诀按兵力比势选，与该侧视角一致
+        const bfRatio = bf.getInitialAttDefRatio();
+        const sideR = battleSide === 'attacker' ? bfRatio : (1 / Math.max(bfRatio, 0.001));
+        const skillJu: CaptureJu = sideR > 1.5 ? 'advantage' : sideR < 0.67 ? 'disadvantage' : 'balance';
+        return speechAnnouncer.announceSkillRelease({
+            side: battleSide,
+            ju: skillJu,
+            generalId,
+            generalName,
+            skillDisplayName: displayName,
+            skillId,
+            eliteName,
+            opponentHasGeneral,
+            audioUnitId: audioUnitId ?? gUnit?.id ?? null,
+            onStart,
+        });
+    }
+
+    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.08 → 缓缓落回），只动外框 transform。
+     *  起点接蓄力收缩值（--pre-scale）：缩到 0.94 后弹到 1.08，一收一放；无蓄力时同旧版从 1 弹起。 */
+    private pulsePortraitForSkill(side: 'attacker' | 'defender'): void {
+        const bf = this.boundRegionalBattleField;
+        // 【2026-08-16 用户指令】单方有将立绘不缩放
+        if (bf && !bf.bothSidesHaveGeneral()) return;
+        const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+        const st = this.portraitWind[side];
+        frame.style.setProperty('--pre-scale', st.scale.toFixed(4));
+        frame.style.transform = ''; // 交还给 surge 动画（both 填充结束时停在 scale(1)）
+        st.pulsed = true; // 放完不再二次收缩；同侧后续脉冲 --pre-scale 已是 1 附近，行为同旧版
+        st.scale = 1;
+        frame.style.animation = 'none';
+        void frame.offsetWidth;
+        frame.style.animation = 'portrait-skill-surge 1.6s cubic-bezier(0.22, 1, 0.36, 1) both';
+    }
+
+    public isBoundToBattleField(battleField: BattleField): boolean {
+        return this.isRegionalVisible() && this.boundRegionalBattleField === battleField;
+    }
+
+    /** 援军编入后刷新参战列表与侧栏（不重复播入场动画） */
+    public syncRegionalParticipantsFromBattleField(battleField: BattleField): void {
+        if (!this.isBoundToBattleField(battleField) || battleField.isOver) return;
+
+        const attackers = battleField.getAttackerUnits();
+        const defenders = battleField.getDefenderUnits();
+        if (attackers.length === 0 || defenders.length === 0) return;
+
+        this.currentRegionalUnits = { attackers, defenders };
+
+        this.attackerDisplayName = this.buildWaveGroupedSideName(attackers, 'attacker');
+        this.defenderDisplayName = this.buildWaveGroupedSideName(defenders, 'defender');
+
+        const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        // 立绘/标签与第二行队名解耦：脸可借援军将，队名仍钉本城/开局波次。
+        const attGeneral = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const defGeneral = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+
+        this.updateMultiplierBadges(attGeneral, defGeneral);
+        this.updateSkillBadges(attGeneral, defGeneral);
+        this.setPortrait(this.leftPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
+        this.setPortrait(
+            this.rightPortrait,
+            defGeneral,
+            defGeneral.generalId,
+            defGeneral.factionId,
+            defGeneral.portraitPath,
+            'defender',
+            this.leftPortrait.src || undefined,
+        );
+        this.updateGeneralNameTags(attGeneral, defGeneral);
+        this.refreshRegionalSafetyDeadline();
+        this.updateStats();
+    }
+
+    /**
+     * 侧栏参战名单用名：读实体实时名（军团改名/精锐番号），勿用 adapter 创建快照。
+     */
+    private resolveBattleUnitListName(u: IBattleUnit): string {
+        if (u.unitType === 'city') {
+            const garrisonElite = readSiegeGarrisonEliteName(u.getEntity?.());
+            if (garrisonElite) return garrisonElite;
+            const city = u.getEntity?.() as { name?: string } | undefined;
+            const cityName = (city?.name ?? '').trim();
+            if (cityName) return `${cityName}驻军`;
+            return (u.name || '驻军').trim();
+        }
+        const army = u.getEntity?.() as Army | undefined;
+        if (army) {
+            const live = (army.name ?? '').trim();
+            if (live) return live;
+            const elite = getLegionEliteLegionName(army);
+            if (elite) return elite;
+        }
+        return (u.name || '军团').trim();
+    }
+
+    private buildWaveGroupedSideName(units: IBattleUnit[], side: 'attacker' | 'defender'): string {
+        const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
+        if (activeUnits.length === 0) return '';
+
+        // 第二行 = 文字主位（本城 / 开局波次），与立绘选角解耦（2026-08-06）
+        const primary = this.pickSideNameUnit(activeUnits, side) ?? activeUnits[0];
+
+        const displayName = this.resolveBattleUnitListName(primary);
+        if (!displayName) return '';
+
+        const isAtt = side === 'attacker';
+        const nameSpan = `<span style="white-space: nowrap;">${displayName}</span>`;
+
+        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'};">${nameSpan}</div>`;
+    }
+
+    // ============================================================
+    // 游戏内立绘校正：F2 暂停 → 微调/绑图 → Enter 内存暂存 → Ctrl+S 写盘
+    // ============================================================
+
+    private correctorBusy = false;
+
+    /** 串行化 F2 内的 async 操作（居中/重置/切换/写盘/绑图），避免手速过快时并发交错 */
+    private runCorrectorExclusive(fn: () => Promise<unknown>): void {
+        if (this.correctorBusy) return;
+        this.correctorBusy = true;
+        void Promise.resolve(fn()).finally(() => { this.correctorBusy = false; });
+    }
+
+    private setupCorrectorHotkeys(): void {
+        // 捕获阶段拦截 +/-：避免与小键盘缩放立绘时触发 Leaflet 地图 zoom
+        document.addEventListener('keydown', (e) => {
+            if (!this.correctorOpen || this.portraitPickerOpen) return;
+            if (!this.isPortraitScaleKey(e)) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (this.isPortraitScaleOutKey(e)) {
+                this.nudgeCorrector(-0.02, 0, 0);
+            } else {
+                this.nudgeCorrector(0.02, 0, 0);
+            }
+        }, true);
+
+        document.addEventListener('keydown', (e) => {
+            // F2 在战斗界面可见时开关校正面板
+            if (e.key === 'F2') {
+                if (!this.isVisible) return;
+                e.preventDefault();
+                if (this.correctorOpen) this.closeCorrector();
+                else this.openCorrector();
+                return;
+            }
+            if (!this.correctorOpen) return;
+
+            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false));
+                return;
+            }
+
+            if (this.portraitPickerOpen && e.key === 'Escape') {
+                e.preventDefault();
+                this.closePortraitPicker();
+                return;
+            }
+
+            const tag = (document.activeElement?.tagName ?? '').toUpperCase();
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+            const fine = e.shiftKey ? 5 : 1;
+            switch (e.key) {
+                case 'Escape':
+                    e.preventDefault();
+                    if (e.shiftKey) this.closeCorrector(true);
+                    else this.closeCorrector();
+                    break;
+                case 'Tab': e.preventDefault(); this.switchCorrectorSide(); break;
+                case 'Enter': e.preventDefault(); this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false)); break;
+                case 'ArrowLeft': e.preventDefault(); this.nudgeCorrector(0, -fine, 0); break;
+                case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
+                case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
+                case 'ArrowDown': e.preventDefault(); this.nudgeCorrector(0, 0, fine); break;
+                default:
+                    if (this.isPortraitScaleOutKey(e)) {
+                        e.preventDefault();
+                        this.nudgeCorrector(-0.02, 0, 0);
+                    } else if (this.isPortraitScaleInKey(e)) {
+                        e.preventDefault();
+                        this.nudgeCorrector(0.02, 0, 0);
+                    }
+                    break;
+            }
+        });
+    }
+
+    private correctorImg(): HTMLImageElement {
+        return this.correctorSide === 'attacker' ? this.leftPortrait : this.rightPortrait;
+    }
+
+    /** 从 img.src 取出 "/assets/.../x.png" 形式路径（解码空格等）。
+     *  统一经 normalizePortraitWebPath 去掉可能混入的 /public 前缀——保证调校的
+     *  「存 key」与「读 key」永远一致，杜绝 /public 前缀导致的「调了又丢」。 */
+    private srcToPath(img: HTMLImageElement): string {
+        const src = img.currentSrc || img.src;
+        if (!src) return '';
+        try {
+            return normalizePortraitWebPath(decodeURIComponent(new URL(src, location.href).pathname));
+        } catch {
+            return '';
+        }
+    }
+
+    /** 当前显示路径（用于像素读取、文件夹标尺、状态栏显示） */
+    private correctorPath(): string {
+        return this.correctorPathForSide(this.correctorSide);
+    }
+
+    /** 调校/保存用的立绘自身路径（待绑定时用目标 {generalId}.png，而非源图路径） */
+    private correctorPathForSide(side: 'attacker' | 'defender'): string {
+        const staged = this.portraitBindStaging.find((b) => b.side === side);
+        if (staged) return staged.destPath;
+        const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        return this.srcToPath(img);
+    }
+
+    /**
+     * 存盘 key：立绘自身路径（每张图独立存一格）。与读取侧 resolvePortraitAdjust 的
+     * 「自身路径优先」一致 → 换图 / 绑图后调校永远落在该将领自己的槽位，绝不串到别人格子里；
+     * canonical 仅作读取兜底。待绑定图用 destPath（{generalId}.png，即该将领自身槽位）。
+     */
+    private correctorSaveKey(): string {
+        return this.correctorPath();
+    }
+
+    private correctorSaveKeyForSide(side: 'attacker' | 'defender'): string {
+        return this.correctorPathForSide(side);
+    }
+
+    /** 读像素/居中时用实际显示的 URL（待绑定图仍在源路径） */
+    private correctorPixelUrl(): string {
+        const staged = this.portraitBindStaging.find((b) => b.side === this.correctorSide);
+        if (staged) return staged.sourcePath;
+        return this.correctorPath();
+    }
+
+    private openCorrector(): void {
+        this.correctorOpen = true;
+        this.setCorrectorMapKeyboardSuppressed(true);
+        this.correctorPrevPaused = this.pauseHook?.isGamePaused() ?? false;
+        // F2 校正标志：ReloadGate 据此在暂停期间也关闸（防整页刷新打断校正）
+        (window as any).__portraitCorrectorOpen = true;
+        this.pauseHook?.setPaused(true);
+        if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
+        this.correctorPanel.style.display = 'flex';
+        this.refreshGeneralNameTagInteract();
+        void this.bootstrapCorrector();
+    }
+
+    /** 打开 F2：拉磁盘最新 portrait_adjust → 左右立绘均套用已存调校 */
+    private async bootstrapCorrector(): Promise<void> {
+        this.correctorDirtyPaths.clear();
+        this.correctorData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+        try {
+            const res = await fetch('/api/portrait-adjust');
+            if (res.ok) {
+                this.mergePortraitAdjustInto(this.correctorData, await res.json());
+            }
+        } catch {
+            // 无 dev API 时沿用打包进 DEFAULT 的数据
+        }
+        this.loadCorrectorDraft();
+        this.applyBothCorrectorPortraits();
+        this.highlightCorrectorSide();
+        this.scheduleCorrectorCrosshairRefresh();
+    }
+
+    private mergePortraitAdjustInto(target: PortraitAdjustData, source: PortraitAdjustData): void {
+        if (source.folders) {
+            target.folders = { ...target.folders, ...source.folders };
+        }
+        if (source.images) {
+            target.images = { ...target.images, ...source.images };
+        }
+        if (source.folderGuides) {
+            target.folderGuides = { ...target.folderGuides, ...source.folderGuides };
+        }
+    }
+
+    /**
+     * 开战时后台拉一次磁盘最新调校。portrait-tuner 等其它页面写盘后，本页的整页刷新
+     * 被 suppress-portrait-dev-hmr 拦截（防打断对局），内存数据会变旧——以前只有打开 F2
+     * 才会重新同步（bootstrapCorrector），表现为「换完立绘开战显示不对，重开 F2 才恢复」。
+     * 这里让战斗打开时就同步，立绘直接按最新调校显示。
+     */
+    private refreshCorrectorDataOnBattleOpen(): void {
+        if (!import.meta.env.DEV) return;
+        // F2 使用中 / 有未写盘的改动或待绑图时不碰内存数据，避免覆盖手上的调整
+        if (this.correctorOpen || this.correctorDirtyPaths.size > 0 || this.portraitBindStaging.length > 0) return;
+        const now = Date.now();
+        if (now - this.correctorLastDiskFetchMs < 5000) return;
+        this.correctorLastDiskFetchMs = now;
+        void fetch('/api/portrait-adjust')
+            .then((res) => (res.ok ? (res.json() as Promise<PortraitAdjustData>) : null))
+            .then((disk) => {
+                if (!disk) return;
+                this.mergePortraitAdjustInto(this.correctorData, disk);
+                this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
+                this.applyBothCorrectorPortraits();
+            })
+            .catch(() => { /* 无 dev API / 请求失败时静默，沿用内存数据 */ });
+    }
+
+    private canPersistPortraitPath(path: string): boolean {
+        return path.startsWith('/assets/') && path.toLowerCase().endsWith('.png');
+    }
+
+    /** 主键盘 -/=、小键盘 +/-、[ ] 均用于立绘缩放 */
+    private isPortraitScaleOutKey(e: KeyboardEvent): boolean {
+        return e.key === '['
+            || e.key === '-'
+            || e.key === '_'
+            || e.code === 'Minus'
+            || e.code === 'NumpadSubtract'
+            || e.code === 'BracketLeft';
+    }
+
+    private isPortraitScaleInKey(e: KeyboardEvent): boolean {
+        return e.key === ']'
+            || e.key === '+'
+            || e.key === '='
+            || e.code === 'Equal'
+            || e.code === 'NumpadAdd'
+            || e.code === 'BracketRight';
+    }
+
+    private isPortraitScaleKey(e: KeyboardEvent): boolean {
+        return this.isPortraitScaleOutKey(e) || this.isPortraitScaleInKey(e);
+    }
+
+    /** F2 期间关闭 Leaflet 键盘 +/- 缩放，避免与立绘调校冲突 */
+    private setCorrectorMapKeyboardSuppressed(suppress: boolean): void {
+        const map = (window as any).game?.map?.getLeafletMap?.() as { keyboard?: { enabled(): boolean; disable(): void; enable(): void } } | undefined;
+        const kb = map?.keyboard;
+        if (!kb) return;
+        if (suppress) {
+            this.correctorMapKeyboardWasEnabled = kb.enabled();
+            kb.disable();
+            return;
+        }
+        if (this.correctorMapKeyboardWasEnabled) {
+            kb.enable();
+        } else {
+            kb.disable();
+        }
+    }
+
+    private applyPortraitAdjustToImg(img: HTMLImageElement, data: PortraitAdjustData = this.correctorData): void {
+        const side: 'attacker' | 'defender' = img === this.leftPortrait ? 'attacker' : 'defender';
+        const path = this.correctorPathForSide(side);
+        if (!this.canPersistPortraitPath(path)) return;
+        applyPortraitAdjustToElement(img, path, data);
+    }
+
+    /** 左右立绘都套用 correctorData（换边 / 打开 F2 时保证「以前保存好的状态」） */
+    private applyBothCorrectorPortraits(): void {
+        this.applyPortraitAdjustToImg(this.leftPortrait);
+        this.applyPortraitAdjustToImg(this.rightPortrait);
+    }
+
+    /** 立绘 img 布局盒就绪后再铺准星（避免 offset 为 0） */
+    private scheduleCorrectorCrosshairRefresh(): void {
+        const refresh = () => this.updateCorrectorCrosshair();
+        refresh();
+        requestAnimationFrame(refresh);
+        for (const img of [this.leftPortrait, this.rightPortrait]) {
+            if (!img.complete) {
+                img.addEventListener('load', refresh, { once: true });
+            }
+        }
+    }
+
+    private closeCorrector(forceDiscardDisk = false): void {
+        this.runCorrectorExclusive(() => this.closeCorrectorAsync(forceDiscardDisk));
+    }
+
+    private async closeCorrectorAsync(forceDiscardDisk = false): Promise<void> {
+        this.flushCorrectorSessionMemory();
+        if (!forceDiscardDisk) {
+            if (this.correctorHasPendingDiskWork()) this.setCorrectorStatus('写盘中…');
+            if (!(await this.flushCorrectorPendingToDisk(true))) {
+                return;
+            }
+        }
+        this.correctorOpen = false;
+        this.setCorrectorMapKeyboardSuppressed(false);
+        this.closePortraitPicker();
+        if (this.correctorPanel) this.correctorPanel.style.display = 'none';
+        this.leftPortraitFrame.style.outline = '';
+        this.leftPortraitFrame.style.boxShadow = 'none';
+        this.rightPortraitFrame.style.outline = '';
+        this.rightPortraitFrame.style.boxShadow = 'none';
+        this.refreshGeneralNameTagInteract();
+        this.updateCorrectorCrosshair(); // correctorOpen=false → 隐藏准星
+        // 自动保存模式下改动即所见即所得（已写入 correctorData/DEFAULT），无需回退重绘
+        // 仅当进入校正前游戏在运行时才恢复运行（尊重用户原本的暂停）
+        if (!this.correctorPrevPaused) this.pauseHook?.setPaused(false);
+        // 清 F2 校正标志并补报一次闸门状态（恢复后暂停状态与打开前相同时 setPaused 不触发回调）
+        (window as any).__portraitCorrectorOpen = false;
+        window.dispatchEvent(new CustomEvent('reload-gate-ping'));
+    }
+
+    private loadCorrectorDraft(): void {
+        const path = this.correctorPath();
+        const r = resolvePortraitAdjust(path, this.correctorData);
+        this.correctorDraft = { scale: r.scale, offsetX: r.offsetX, offsetY: r.offsetY };
+        this.renderCorrectorReadout();
+        this.applyPortraitAdjustToImg(this.correctorImg());
+    }
+
+    private applyCorrectorPreview(): void {
+        const saveKey = this.correctorSaveKey();
+        if (!saveKey) return;
+        this.correctorData.images = this.correctorData.images ?? {};
+        this.correctorData.images[saveKey] = { ...this.correctorDraft };
+
+        if (this.canPersistPortraitPath(saveKey)) {
+            const prevSize = this.correctorDirtyPaths.size;
+            this.correctorDirtyPaths.add(saveKey);
+            const n = this.correctorDirtyPaths.size;
+            // 每新增第 AUTO_SAVE_EVERY 张不同立绘时自动写盘（防崩溃丢失）
+            if (n > prevSize && n % CombatUI.AUTO_SAVE_EVERY === 0) {
+                this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false, true));
+            } else {
+                this.setCorrectorStatus(`已改 ${n} 张 · Enter/F2/Esc 写盘`);
+            }
+        }
+        applyPortraitAdjustToElement(this.correctorImg(), this.correctorPath(), this.correctorData);
+        this.renderCorrectorReadout();
+        this.updateCorrectorCrosshair();
+    }
+
+    /** Tab 换边前：把当前边草稿写入内存，不落盘 */
+    private syncCurrentCorrectorDraftToData(): void {
+        const saveKey = this.correctorSaveKey();
+        if (!this.canPersistPortraitPath(saveKey)) return;
+        this.correctorData.images = this.correctorData.images ?? {};
+        this.correctorData.images[saveKey] = { ...this.correctorDraft };
+
+        if (this.correctorDirtyPaths.size > 0) {
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/F2/Esc 写盘`);
+        }
+    }
+
+    private nudgeCorrector(dScale: number, dx: number, dy: number): void {
+        const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+        this.correctorDraft.scale = Math.round(clamp(this.correctorDraft.scale + dScale, 0.4, 2.2) * 100) / 100;
+        this.correctorDraft.offsetX = clamp(this.correctorDraft.offsetX + dx, -240, 240);
+        this.correctorDraft.offsetY = clamp(this.correctorDraft.offsetY + dy, -240, 240);
+        this.applyCorrectorPreview();
+    }
+
+    private async centerAlignCorrectorCurrent(): Promise<void> {
+        const path = this.correctorPath();
+        if (!path) return;
+        this.setCorrectorStatus('居中中…');
+        const folder = extractPortraitFolder(path) ?? '';
+        const guide = this.correctorData.folderGuides?.[folder];
+        const eyeY = guide?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y;
+        const chestX = guide?.chestLineX ?? PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X;
+        const fit = await alignPortraitCenterFromUrl(this.correctorPixelUrl(), {
+            keepScale: this.correctorDraft.scale,
+            eyeLineY: eyeY,
+            chestLineX: chestX,
+        });
+        if (!fit) { this.setCorrectorStatus('⚠ 读取像素失败，请手动微调'); return; }
+        this.correctorDraft = { scale: fit.scale, offsetX: fit.offsetX, offsetY: fit.offsetY };
+        this.applyCorrectorPreview();
+        this.setCorrectorStatus('✓ 已居中（Enter 写盘）');
+    }
+
+    private async resetCorrectorCurrent(): Promise<void> {
+        const saveKey = this.correctorSaveKey();
+        if (!saveKey) return;
+        this.setCorrectorStatus('恢复默认…');
+        if (this.correctorData.images?.[saveKey]) {
+            delete this.correctorData.images[saveKey];
+            if (Object.keys(this.correctorData.images).length === 0) delete this.correctorData.images;
+        }
+        if (DEFAULT_PORTRAIT_ADJUST.images?.[saveKey]) {
+            delete DEFAULT_PORTRAIT_ADJUST.images[saveKey];
+            if (Object.keys(DEFAULT_PORTRAIT_ADJUST.images).length === 0) {
+                delete DEFAULT_PORTRAIT_ADJUST.images;
+            }
+        }
+        this.correctorDirtyPaths.add(saveKey);
+        this.loadCorrectorDraft();
+        applyPortraitAdjustToElement(this.correctorImg(), this.correctorPath(), this.correctorData);
+        this.renderCorrectorReadout();
+        const name = (this.correctorPath().split('/').pop() ?? saveKey);
+        this.setCorrectorStatus(`✓ 已恢复默认：${name}（Enter 写盘）`);
+    }
+
+    private switchCorrectorSide(): void {
+        this.runCorrectorExclusive(() => this.switchCorrectorSideAsync());
+    }
+
+    private async switchCorrectorSideAsync(): Promise<void> {
+        this.syncCurrentCorrectorDraftToData();
+        this.correctorSide = this.correctorSide === 'attacker' ? 'defender' : 'attacker';
+        this.loadCorrectorDraft();
+        this.highlightCorrectorSide();
+        this.updateCorrectorCrosshair();
+    }
+
+    private highlightCorrectorSide(): void {
+        const outlineStyle = '6px dashed #ff3333';
+        const shadowStyle = '0 0 30px #ff3333';
+
+        if (this.correctorSide === 'attacker') {
+            this.leftPortraitFrame.style.outline = outlineStyle;
+            this.leftPortraitFrame.style.boxShadow = shadowStyle;
+            this.rightPortraitFrame.style.outline = '';
+            this.rightPortraitFrame.style.boxShadow = 'none';
+        } else {
+            this.rightPortraitFrame.style.outline = outlineStyle;
+            this.rightPortraitFrame.style.boxShadow = shadowStyle;
+            this.leftPortraitFrame.style.outline = '';
+            this.leftPortraitFrame.style.boxShadow = 'none';
+        }
+    }
+
+    private buildCrosshair(): HTMLDivElement {
+        const ch = document.createElement('div');
+        ch.className = 'pt-crosshair';
+        ch.innerHTML = '<div class="ch-face"></div><div class="ch-top"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-waist"></div><div class="ch-mid"></div>';
+        return ch;
+    }
+
+    /** 在两张立绘上铺准星：脸椭圆 + 眼线 + 胸线（手动对齐「大小差不多」） */
+    private updateCorrectorCrosshair(): void {
+        const pairs: Array<{ wrap: HTMLDivElement; img: HTMLImageElement; side: 'left' | 'right' }> = [
+            { wrap: this.leftPortraitWrap, img: this.leftPortrait, side: 'left' },
+            { wrap: this.rightPortraitWrap, img: this.rightPortrait, side: 'right' },
+        ];
+        for (const { wrap, img, side } of pairs) {
+            let ch = side === 'left' ? this.leftCrosshair : this.rightCrosshair;
+            if (!ch) {
+                ch = this.buildCrosshair();
+                wrap.appendChild(ch);
+                if (side === 'left') this.leftCrosshair = ch; else this.rightCrosshair = ch;
+            }
+            const show = this.correctorOpen && this.correctorCrosshairOn && img.offsetWidth > 0;
+            ch.style.display = show ? 'block' : 'none';
+            if (!show) continue;
+            if (!ch.querySelector('.ch-top')) {
+                const top = document.createElement('div');
+                top.className = 'ch-top';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(top, mid);
+                else ch.appendChild(top);
+            }
+            if (!ch.querySelector('.ch-chin')) {
+                const chin = document.createElement('div');
+                chin.className = 'ch-chin';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(chin, mid);
+                else ch.appendChild(chin);
+            }
+            if (!ch.querySelector('.ch-waist')) {
+                const waist = document.createElement('div');
+                waist.className = 'ch-waist';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(waist, mid);
+                else ch.appendChild(waist);
+            }
+            const g = getPortraitCorrectorCrosshairGuide();
+            const topPct = (g.topLineY * 100).toFixed(1);
+            const eyePct = (g.eyeLineY * 100).toFixed(1);
+            const chinPct = (g.chinLineY * 100).toFixed(1);
+            const waistPct = (g.waistLineY * 100).toFixed(1);
+            const chestPct = (g.chestLineX * 100).toFixed(1);
+            const ovalW = g.ovalW * 100;
+            const ovalH = g.ovalH * 100;
+            const ovalCx = g.ovalCx * 100;
+            const ovalCy = g.ovalCy * 100;
+            const chFace = ch.querySelector('.ch-face') as HTMLElement | null;
+            const chTop = ch.querySelector('.ch-top') as HTMLElement | null;
+            const chEye = ch.querySelector('.ch-eye') as HTMLElement | null;
+            const chChin = ch.querySelector('.ch-chin') as HTMLElement | null;
+            const chWaist = ch.querySelector('.ch-waist') as HTMLElement | null;
+            const chMid = ch.querySelector('.ch-mid') as HTMLElement | null;
+            if (chFace) {
+                chFace.style.left = `${ovalCx - ovalW / 2}%`;
+                chFace.style.top = `${ovalCy - ovalH / 2}%`;
+                chFace.style.width = `${ovalW}%`;
+                chFace.style.height = `${ovalH}%`;
+            }
+            if (chTop) chTop.style.top = `${topPct}%`;
+            if (chEye) chEye.style.top = `${eyePct}%`;
+            if (chChin) chChin.style.top = `${chinPct}%`;
+            if (chWaist) chWaist.style.top = `${waistPct}%`;
+            if (chMid) chMid.style.left = `${chestPct}%`;
+            // 贴合 img 的未变换布局盒（缩放只动 transform，不动 offset*，故准星保持固定参照）
+            ch.style.left = `${img.offsetLeft}px`;
+            ch.style.top = `${img.offsetTop}px`;
+            ch.style.width = `${img.offsetWidth}px`;
+            ch.style.height = `${img.offsetHeight}px`;
+        }
+    }
+
+    private toggleCorrectorCrosshair(): void {
+        this.correctorCrosshairOn = !this.correctorCrosshairOn;
+        if (this.crosshairBtn) this.crosshairBtn.textContent = this.correctorCrosshairOn ? '准星：开' : '准星：关';
+        this.updateCorrectorCrosshair();
+    }
+
+    private correctorHasPendingDiskWork(): boolean {
+        return this.portraitBindStaging.length > 0 || this.correctorDirtyPaths.size > 0;
+    }
+
+    /** Enter / Esc 退出：仅合并到内存，本场战斗立即生效，不触发 Vite 写盘刷新 */
+    private flushCorrectorSessionMemory(): void {
+        this.syncCurrentCorrectorDraftToData();
+        DEFAULT_PORTRAIT_ADJUST.images = DEFAULT_PORTRAIT_ADJUST.images ?? {};
+        for (const path of this.correctorDirtyPaths) {
+            const adj = this.correctorData.images?.[path];
+            if (adj) {
+                DEFAULT_PORTRAIT_ADJUST.images[path] = { ...adj };
+            } else if (DEFAULT_PORTRAIT_ADJUST.images[path]) {
+                delete DEFAULT_PORTRAIT_ADJUST.images[path];
+            }
+        }
+        if (DEFAULT_PORTRAIT_ADJUST.images && Object.keys(DEFAULT_PORTRAIT_ADJUST.images).length === 0) {
+            delete DEFAULT_PORTRAIT_ADJUST.images;
+        }
+        // 写盘前：仅用 sourcePath（源图）做本场视觉预览，不污染将领档案路径
+        // 写盘成功后，commitAllPendingPortraitBinds 会用服务端返回的最终路径覆盖
+        for (const bind of this.portraitBindStaging) {
+            if (!bind.destPath || bind.destPath === bind.sourcePath) {
+                setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
+            }
+            // 已有最终路径（写盘完成）则 override 已在 commit 里设好，无需重设
+        }
+        this.applyBothCorrectorPortraits();
+        const nAdj = this.correctorDirtyPaths.size;
+        const nBind = this.portraitBindStaging.length;
+        if (nAdj === 0 && nBind === 0) return;
+        const parts: string[] = ['✓ 本场已生效（内存）'];
+        if (nAdj > 0) parts.push(`${nAdj} 张位置`);
+        if (nBind > 0) parts.push(`${nBind} 张待绑`);
+        parts.push('Enter/F2/Esc 写盘');
+        this.setCorrectorStatus(parts.join(' · '));
+    }
+
+    /** Enter / Esc / Ctrl+S：写盘；Enter·Ctrl+S 不关 F2，Esc 写盘后关闭
+     *  @param autoTrigger  true = 由 AUTO_SAVE_EVERY 触发的自动写盘 */
+    private async flushCorrectorPendingToDisk(onExit: boolean, autoTrigger = false): Promise<boolean> {
+        this.syncCurrentCorrectorDraftToData();
+        const boundCount = this.portraitBindStaging.length;
+        if (boundCount > 0) {
+            if (!(await this.commitAllPendingPortraitBinds())) {
+                return false;
+            }
+        }
+        const hadAdjust = this.correctorDirtyPaths.size > 0;
+        await this.saveCorrectorSession(onExit, autoTrigger);
+        try {
+            await this.refreshPortraitPickerAfterDiskWrite();
+        } catch { /* 刷新选图器失败不阻断写盘结果 */ }
+        if (!onExit && boundCount > 0 && !hadAdjust) {
+            this.setCorrectorStatus(`✓ 已绑定 ${boundCount} 张立绘到磁盘`);
+        }
+        return true;
+    }
+
+    /** 写盘/绑图后 bump 缩略图 cache-bust 版本 */
+    private bumpPortraitPickerCatalogRev(): void {
+        this.portraitPickerCatalogRev = Date.now();
+    }
+
+    /** 预加载立绘 URL（绑图 rename 后 Windows 上偶发首帧 404，短重试） */
+    private preloadPortraitWebPath(webPath: string, retries = 4): Promise<void> {
+        const tryLoad = (attempt: number): Promise<void> =>
+            new Promise((resolve, reject) => {
+                const probe = new Image();
+                probe.onload = () => resolve();
+                probe.onerror = () => {
+                    if (attempt >= retries) {
+                        reject(new Error(`立绘加载失败：${webPath}`));
+                        return;
+                    }
+                    window.setTimeout(() => {
+                        tryLoad(attempt + 1).then(resolve, reject);
+                    }, 80 * attempt);
+                };
+                probe.src = `${webPath}?v=${this.portraitPickerCatalogRev}&r=${attempt}`;
+            });
+        return tryLoad(0);
+    }
+
+    private createPortraitPickerThumbImg(webPath: string, alt: string): HTMLImageElement {
+        const img = document.createElement('img');
+        img.alt = alt;
+        let attempt = 0;
+        const load = () => {
+            img.src = `${webPath}?v=${this.portraitPickerCatalogRev}&r=${attempt}`;
+        };
+        img.addEventListener('error', () => {
+            if (attempt >= 3) return;
+            attempt += 1;
+            window.setTimeout(load, 60 * attempt);
+        });
+        load();
+        return img;
+    }
+
+    /** 写盘/绑图后刷新选图器（源 PNG 可能已被 rename 走） */
+    private async refreshPortraitPickerAfterDiskWrite(): Promise<void> {
+        this.bumpPortraitPickerCatalogRev();
+        if (!this.portraitPickerOpen) return;
+        this.portraitPickerSelectedPath = null;
+        const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
+        if (bindBtn) bindBtn.disabled = true;
+        await this.loadPortraitPickerCatalog();
+        this.populatePortraitPickerFolderSelect();
+        await this.renderPortraitPickerGrid();
+    }
+
+    private async applyBoundPortraitToCombatImg(
+        bind: { destPath: string; sourcePath: string; side: 'attacker' | 'defender'; generalId: string },
+    ): Promise<void> {
+        // 先用 sourcePath 做临时 override（源图保证可访问），避免 destPath 尚未就绪时显示空白
+        setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
+        try {
+            await this.preloadPortraitWebPath(bind.destPath);
+        } catch {
+            // Windows 文件系统延迟，destPath 暂 404；源图已在战斗 UI 显示，不额外操作
+            // 刷新页面后 FactionGenerals.ts 的 destPath 生效
+            return;
+        }
+        // destPath 确认可访问，升级 override 并更新 img.src
+        setGeneralPortraitOverride(bind.generalId, bind.destPath);
+        const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;
+        await new Promise<void>((resolve) => {
+            const done = () => {
+                this.loadCorrectorDraft();
+                applyPortraitAdjustToElement(img, bind.destPath, this.correctorData);
+                this.scheduleCorrectorCrosshairRefresh();
+                resolve();
+            };
+            img.addEventListener('load', done, { once: true });
+            img.addEventListener('error', () => resolve(), { once: true });
+            img.src = bust;
+            if (img.complete && img.naturalWidth > 0) done();
+        });
+    }
+
+    private async commitAllPendingPortraitBinds(): Promise<boolean> {
+        const pending = [...this.portraitBindStaging];
+        if (pending.length === 0) return true;
+        const committed: typeof pending = [];
+        let failedBind: typeof pending[number] | null = null;
+        try {
+            for (const bind of pending) {
+                failedBind = bind; // 本张未成功前先记为失败张，成功后清空
+                const res = await fetch('/api/bind-general-portrait', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        generalId: bind.generalId,
+                        sourcePath: bind.sourcePath,
+                        targetFolder: bind.targetFolder,
+                    }),
+                });
+                const result = await res.json() as { ok: boolean; error?: string; portraitPath?: string };
+                if (!res.ok || !result.ok) {
+                    throw new Error(result.error || `HTTP ${res.status}`);
+                }
+                // 绑定成功：用服务端返回的最终路径（而非源图路径）更新内存
+                const finalPath = result.portraitPath ?? bind.destPath;
+                registerPortraitPathRuntime(finalPath);           // 注入 KNOWN_PORTRAIT_PATHS
+                setGeneralPortraitOverride(bind.generalId, finalPath); // 更新将领立绘缓存
+                bind.destPath = finalPath;                        // 同步 staging 的 destPath
+                committed.push(bind);
+                failedBind = null;
+                await this.applyBoundPortraitToCombatImg(bind);
+            }
+            this.portraitBindStaging = this.portraitBindStaging.filter(
+                (b) => !committed.some((c) => c.generalId === b.generalId && c.side === b.side),
+            );
+            return true;
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            // 丢弃已成功的 + 当前失败的这一张：失败张若留在 staging，每次关闭 F2 都会重试并失败，
+            // 导致只能 Shift+Esc 才能退出的死循环。未尝试的其余张保留，下次关闭再试。
+            const drop = failedBind ? [...committed, failedBind] : committed;
+            this.portraitBindStaging = this.portraitBindStaging.filter(
+                (b) => !drop.some((c) => c.generalId === b.generalId && c.side === b.side),
+            );
+            this.setCorrectorStatus(`⚠ 绑图写盘失败：${msg} · 已跳过该图，可重新选择`);
+            return false;
+        }
+    }
+
+    /** Esc 退出（或 Enter）时写盘：本场 F2 改过的所有立绘路径一次性合并保存
+     *  @param onExit  true = 退出时后台写盘（不改状态栏）
+     *  @param autoTrigger  true = 自动触发（每 AUTO_SAVE_EVERY 张），状态栏显示"自动写盘" */
+    private async saveCorrectorSession(onExit = false, autoTrigger = false): Promise<void> {
+        this.syncCurrentCorrectorDraftToData();
+        if (this.correctorDirtyPaths.size === 0) {
+            if (!onExit) this.setCorrectorStatus('无改动，无需保存');
+            return;
+        }
+        if (!onExit) this.setCorrectorStatus(autoTrigger ? '自动写盘中…' : '保存中…');
+        try {
+            // [2026-08-03 乐观锁] 与 tuner 同款：GET 带回 X-Adjust-Mtime，POST 原样交回；
+            // 读写间隙有别的页面写盘 → 服务端 409 → 自动重拉重合并（最多 3 次），谁也不覆盖谁。
+            let disk!: PortraitAdjustData;
+            let result!: { ok: boolean; error?: string; backupFile?: string };
+            for (let attempt = 0; ; attempt++) {
+                const res = await fetch('/api/portrait-adjust');
+                const baseMtime = res.ok ? (res.headers.get('X-Adjust-Mtime') ?? '') : '';
+                disk = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
+                disk.images = disk.images ?? {};
+                for (const path of this.correctorDirtyPaths) {
+                    const adj = this.correctorData.images?.[path];
+                    if (adj) disk.images[path] = { ...adj };
+                }
+                const save = await fetch('/api/save-portrait-adjust', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Adjust-Base-Mtime': baseMtime },
+                    // autoTrigger 时附带 backup:true，让服务端额外存一份带时间戳的备份
+                    body: JSON.stringify(autoTrigger ? { ...disk, backup: true } : disk),
+                });
+                if (save.status === 409 && attempt < 2) {
+                    console.warn(`[F2] 保存冲突（他处刚写盘），自动重拉合并重试 ${attempt + 1}/2`);
+                    continue;
+                }
+                if (!save.ok) throw new Error(`HTTP ${save.status}`);
+                result = await save.json() as { ok: boolean; error?: string; backupFile?: string };
+                if (!result.ok) throw new Error(result.error || '保存失败');
+                break;
+            }
+            this.mergePortraitAdjustInto(this.correctorData, disk);
+            this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
+            this.applyBothCorrectorPortraits();
+            const n = this.correctorDirtyPaths.size;
+            this.correctorDirtyPaths.clear();
+            if (!onExit) {
+                let label: string;
+                if (autoTrigger) {
+                    const bname = result.backupFile ? result.backupFile.replace(/.*[\\/]/, '') : '';
+                    label = bname
+                        ? `✓ 自动写盘 ${n} 张 · 备份→${bname}`
+                        : `✓ 自动写盘 ${n} 张 · 继续调整`;
+                } else {
+                    label = `✓ 已保存 ${n} 张（已永久生效）`;
+                }
+                this.setCorrectorStatus(label);
+            }
+        } catch (err) {
+            this.setCorrectorStatus(`⚠ 保存失败：${err}`);
+        }
+    }
+
+    private renderCorrectorReadout(): void {
+        if (!this.correctorPanel) return;
+        const readout = this.correctorPanel.querySelector('.cc-readout');
+        if (readout) {
+            const sideLabel = this.correctorSide === 'attacker' ? '左·攻' : '右·守';
+            const name = (this.correctorPath().split('/').pop() ?? '—');
+            readout.textContent =
+                `${sideLabel}　${name}　缩放 ${this.correctorDraft.scale.toFixed(2)}　X ${this.correctorDraft.offsetX}　Y ${this.correctorDraft.offsetY}`;
+        }
+    }
+
+    private setCorrectorStatus(msg: string): void {
+        const el = this.correctorPanel?.querySelector('.cc-status');
+        if (el) el.textContent = msg;
+    }
+
+    private buildCorrectorPanel(): HTMLDivElement {
+        const panel = document.createElement('div');
+        panel.id = 'portrait-corrector-panel';
+        panel.style.cssText = `
+            position: fixed; left: 50%; top: 16px; transform: translateX(-50%);
+            display: none; flex-direction: column; gap: 8px;
+            background: rgba(20,18,16,0.96); border: 1px solid #6a5a30; border-radius: 10px;
+            padding: 12px 16px; z-index: 2147483000;
+            font-family: "Noto Serif SC","Microsoft YaHei",serif; color: #e8e0d0;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.6); min-width: 460px; pointer-events: auto;
+        `;
+        const btn = (label: string, primary = false) =>
+            `<button type="button" class="cc-btn${primary ? ' cc-btn-primary' : ''}">${label}</button>`;
+        panel.innerHTML = `
+            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（Enter/Esc 写盘 · 不刷新）</div>
+            <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
+            <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${btn('🗑️ 清除缓存')}
+                ${btn('↔ 居中本张')}
+                ${btn('↩ 恢复默认')}
+                ${btn('准星：开')}
+                ${btn('切换左右 (Tab)')}
+                ${btn('💾 写盘 (Enter)', true)}
+                ${btn('关闭 (Esc)')}
+            </div>
+            <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
+                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ] / ± / 小键盘±</b> 缩放<br>
+                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc / F2 写盘并关闭</b>（均不刷新）；Ctrl+S 同 Enter；F2 期间地图键盘缩放已关闭<br>
+                Shift+Esc 关闭不写盘
+            </div>
+            <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
+        `;
+        const style = document.createElement('style');
+        style.textContent = `
+            #portrait-corrector-panel .cc-btn {
+                background:#2a2620;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;
+                padding:7px 12px;cursor:pointer;font-size:13px;
+            }
+            #portrait-corrector-panel .cc-btn:hover { background:#3a342c; }
+            #portrait-corrector-panel .cc-btn-primary { background:#5a4a28;border-color:#8a7038;color:#fff8e8; }
+            .pt-crosshair { position:absolute; pointer-events:none; z-index:6; }
+            .pt-crosshair .ch-face {
+                position:absolute; box-sizing:border-box;
+                border:2px dashed #e8c878; border-radius:50%;
+                background:rgba(232,200,120,0.07);
+                box-shadow:0 0 10px rgba(232,200,120,0.45);
+            }
+            .pt-crosshair .ch-top {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #ffa8ec; box-shadow:0 0 6px rgba(255,168,236,0.85);
+            }
+            .pt-crosshair .ch-eye {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #6ec8ff; box-shadow:0 0 6px rgba(96,196,255,0.85);
+            }
+            .pt-crosshair .ch-chin {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #88e0d0; box-shadow:0 0 6px rgba(120,220,200,0.8);
+            }
+            .pt-crosshair .ch-waist {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #c8a8e8; box-shadow:0 0 6px rgba(200,168,232,0.75);
+            }
+            .pt-crosshair .ch-mid {
+                position:absolute; top:0; bottom:0; width:0;
+                border-left:2px dashed #ff9a7a; box-shadow:0 0 6px rgba(255,120,80,0.85);
+            }
+        `;
+        document.head.appendChild(style);
+        const [clearCacheBtn, centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, closeBtn] =
+            Array.from(panel.querySelectorAll('.cc-btn')) as HTMLButtonElement[];
+        this.crosshairBtn = crossBtn;
+        // 按钮不抢焦点，避免点完按钮后按 Enter 既触发按钮又触发热键
+        for (const b of [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, clearCacheBtn, closeBtn]) {
+            b.addEventListener('mousedown', (e) => e.preventDefault());
+        }
+        centerBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.centerAlignCorrectorCurrent()));
+        resetBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.resetCorrectorCurrent()));
+        crossBtn.addEventListener('click', () => this.toggleCorrectorCrosshair());
+        switchBtn.addEventListener('click', () => this.switchCorrectorSide());
+        saveBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false)));
+        clearCacheBtn.addEventListener('click', () => {
+            localStorage.removeItem('PORTRAIT_CONFIG_DATA');
+            window.location.reload();
+        });
+        closeBtn.addEventListener('click', () => this.closeCorrector());
+        document.body.appendChild(panel);
+        return panel;
+    }
+
+    public hide() {
+        // [13 布局] 先还原战术布局再走隐藏流程：restore 会整条覆盖内联样式，
+        // 放在后面会把 hide 自己设的 animation/transform 冲掉。
+        this.applyScene13Layout(false);
+        if (this.correctorOpen) this.closeCorrector();
+        else this.closePortraitPicker();
+        this.clearRegionalTimers();
+        this.isVisible = false;
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
+        this.currentBattle = null;
+        this.currentRegionalUnits = null;
+        this.boundRegionalBattleField = null;
+        this.currentBattleType = undefined;
+        this.regionalSafetyDeadline = 0;
+        this.attackerFactionId = null;
+        this.defenderFactionId = null;
+        this.resetBattleOverlays();
+        this.isCollapsed = false;
+        this.updateCollapseState(true);
+        this.container.style.animation = 'none';
+        this.container.style.transform = 'translate(-50%, 250%)';
+        this.leftPortraitFrame.style.animation = 'none';
+        this.rightPortraitFrame.style.animation = 'none';
+        this.leftPortraitFrame.style.transform = '';
+        this.rightPortraitFrame.style.transform = '';
+        if (this.leftTechBox) {
+            this.leftTechBox.style.opacity = '0';
+            this.leftTechBox.style.display = 'none';
+            this.leftTechBox.dataset.sig = '';
+            this.leftTechBox.textContent = '';
+        }
+        if (this.rightTechBox) {
+            this.rightTechBox.style.opacity = '0';
+            this.rightTechBox.style.display = 'none';
+            this.rightTechBox.dataset.sig = '';
+            this.rightTechBox.textContent = '';
+        }
+    }
+
+    /**
+     * [2026-08-19 主人指令] 点击退出战斗：
+     * 1. 立即隐藏按钮（防连点）；
+     * 2. 若处于 13 战斗模式中，调用 Scene13WarLayer.requestExitWithResult() 自动结算；
+     * 3. 若处于大地图区域战斗/攻城战中，调用 boundRegionalBattleField.forceResolve() 自动结算；
+     * 4. 自动按当前战况与有效战力比秒速结算战果并退出。
+     */
+    public exitCurrentBattle(): void {
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
+
+        const game = (window as any).game;
+        if (game?.scene13War?.isActive?.()) {
+            game.scene13War.requestExitWithResult();
+            return;
+        }
+
+        if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+            this.boundRegionalBattleField.forceResolve();
+            this.hide();
+        } else if (this.currentBattle) {
+            this.hide();
+        }
+    }
+
+    /** 切换战斗面板的折叠/展开状态（点击面板顶部箭头避开遮挡战场） */
+    public toggleCollapse(): void {
+        this.isCollapsed = !this.isCollapsed;
+        this.updateCollapseState(false);
+    }
+
+    /** 🔴 [2026-08-23 主人定] 战斗面板折叠/展开（13 开战自动折叠、战后恢复）：幂等，同状态不动 */
+    public setCollapsed(collapsed: boolean): void {
+        if (this.isCollapsed === collapsed) return;
+        this.isCollapsed = collapsed;
+        this.updateCollapseState(false);
+    }
+
+    /** 更新折叠状态渲染 */
+    private updateCollapseState(skipAnimation: boolean = false): void {
+        if (!this.toggleCollapseBtn) return;
+        if (skipAnimation) {
+            this.container.style.transition = 'none';
+        } else {
+            this.container.style.animation = 'none';
+            this.container.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
+        }
+
+        if (this.isCollapsed) {
+            this.container.classList.add('is-collapsed');
+            this.container.style.transform = 'translate(-50%, 100%)';
+            this.toggleCollapseBtn.innerHTML = `<span>▲</span>`;
+            this.toggleCollapseBtn.title = '展开战斗面板 (点击显示)';
+        } else {
+            this.container.classList.remove('is-collapsed');
+            if (!skipAnimation) {
+                this.container.style.transform = 'translate(-50%, 0)';
+            }
+            this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
+            this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
+        }
+    }
+
+    /** 区域战结束回调：仅当绑定的战场确实结束时才收尾 */
+    public notifyRegionalBattlesEnded(endedFields: BattleField[]): void {
+        const bound = this.boundRegionalBattleField;
+        if (!bound || !this.isRegionalVisible()) return;
+        if (!endedFields.includes(bound)) return;
+        this.boundRegionalBattleField = null;
+        this.showBattleOutcome(bound.winnerFactionId);
+        this.finishRegionalBattle();
+    }
+
+    /** 区域战结束：保留短尾展示后关闭 */
+    public finishRegionalBattle(): void {
+        if (!this.isRegionalVisible() || this.regionalHideTimer) return;
+        this.regionalHideTimer = setTimeout(() => {
+            this.regionalHideTimer = null;
+            if (this.currentRegionalUnits) this.hide();
+        }, CombatUI.REGIONAL_TAIL_MS);
+    }
+
+    private clearRegionalTimers(): void {
+        if (this.regionalHideTimer) {
+            clearTimeout(this.regionalHideTimer);
+            this.regionalHideTimer = null;
+        }
+    }
+
+    private refreshRegionalSafetyDeadline(): void {
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return;
+        const remainingGameSec = Math.max(8, bf.targetDuration - bf.elapsed + 4);
+        const wallMs = (remainingGameSec / this.lastTimeScale) * 1000 + CombatUI.REGIONAL_TAIL_MS;
+        this.regionalSafetyDeadline = performance.now() + wallMs;
+    }
+
+    public update(timeScale: number = 1) {
+        if (!this.isVisible) return;
+        this.lastTimeScale = Math.max(0.1, timeScale);
+
+        if (this.boundRegionalBattleField) {
+            if (this.boundRegionalBattleField.isOver) {
+                if (!this.regionalHideTimer) {
+                    const ended = this.boundRegionalBattleField;
+                    this.boundRegionalBattleField = null;
+                    if (this.isRegionalVisible()) {
+                        this.showBattleOutcome(ended.winnerFactionId);
+                        this.finishRegionalBattle();
+                    }
+                }
+            } else {
+                this.refreshRegionalSafetyDeadline();
+                if (this.regionalSafetyDeadline > 0 && performance.now() > this.regionalSafetyDeadline) {
+                    console.warn('[CombatUI] 区域战 UI 兜底超时，强制关闭');
+                    this.hide();
+                    return;
+                }
+            }
+        } else if (
+            this.currentRegionalUnits &&
+            this.regionalSafetyDeadline > 0 &&
+            performance.now() > this.regionalSafetyDeadline
+        ) {
+            this.hide();
+            return;
+        }
+
+        try {
+            this.updateStats();
+        } catch (e) {
+            console.warn('[CombatUI] updateStats failed, forcing hide', e);
+            this.hide();
+        }
+    }
+
+    private updateInfo(att: IBattleUnit, def: IBattleUnit, title: string, year: string) {
+        const mapName = (u: IBattleUnit) => {
+            if (u.unitType === 'city') {
+                const eliteName = readSiegeGarrisonEliteName(u.getEntity?.());
+                if (eliteName) {
+                    return `<div style="text-align: inherit;"><span style="white-space: nowrap;">${eliteName}</span></div>`;
+                }
+            }
+            const match = u.name.match(/(军团|驻军|守军)$/);
+            const base = match ? u.name.substring(0, match.index) : u.name;
+            const suffix = match ? match[0] : '';
+            if (!suffix) {
+                return `<div style="text-align: inherit;"><span style="white-space: nowrap;">${base}</span></div>`;
+            }
+            return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; text-align: inherit;"><span style="white-space: nowrap;">${base}</span><span style="opacity: 0.85; font-size: 0.95em; margin-left: 2px; white-space: nowrap;">${suffix}</span></div>`;
+        };
+        this.attackerFactionId = att.factionId;
+        this.defenderFactionId = def.factionId;
+        
+        this.updateInfoDirect(mapName(att), mapName(def), title, year, undefined, def);
+        
+        this.currentBattleKey = title || `battle_${Date.now()}`;
+        this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
+        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
+        this.updateStats();
+    }
+
+    private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string, defUnits?: IBattleUnit | IBattleUnit[]) {
+        this.attackerDisplayName = attName;
+        this.defenderDisplayName = defName;
+        
+        let suffix = '';
+        const defs = defUnits ? (Array.isArray(defUnits) ? defUnits : [defUnits]) : [];
+        const cityUnit = defs.find(u => u.unitType === 'city');
+        if (cityUnit) {
+            if (Math.abs(getPassGarrisonCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '险要';
+            else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
+        }
+        
+        if (suffix) {
+            this.battleTitle.innerHTML = `${title}<span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:bottom;transform:translateY(-6px);letter-spacing:normal;">${suffix}</span>`;
+        } else {
+            this.battleTitle.textContent = title;
+        }
+        
+        this.battleYear.textContent = year;
+        this.battleYear.style.display = year ? 'block' : 'none';
+
+        if (description) {
+            this.eventDescription.textContent = description;
+            this.eventDescription.style.display = 'block';
+        } else {
+            this.eventDescription.style.display = 'none';
+        }
+    }
+
+    private updateStats() {
+        let attCurrent = 0, attMax = 0;
+        let defCurrent = 0, defMax = 0;
+
+        if (this.currentBattle) {
+            attCurrent = this.currentBattle.attacker.troops;
+            attMax = this.currentBattle.attacker.maxTroops;
+            defCurrent = this.currentBattle.defender.troops;
+            defMax = this.currentBattle.defender.maxTroops;
+        } else if (this.currentRegionalUnits) {
+            if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+                const info = this.boundRegionalBattleField.getInfo();
+                attCurrent = info.attackerTroops;
+                defCurrent = info.defenderTroops;
+                attMax = Math.max(info.attackerInitial, attCurrent);
+                defMax = Math.max(info.defenderInitial, defCurrent);
+
+                const atts = this.boundRegionalBattleField.getAttackerUnits();
+                const defs = this.boundRegionalBattleField.getDefenderUnits();
+                if (atts.length > 0) this.attackerDisplayName = this.buildWaveGroupedSideName(atts, 'attacker');
+                if (defs.length > 0) this.defenderDisplayName = this.buildWaveGroupedSideName(defs, 'defender');
+            } else {
+                for (const u of this.currentRegionalUnits.attackers) {
+                    if (u.isDestroyed) continue;
+                    attCurrent += u.troops;
+                    attMax += u.maxTroops;
+                }
+                for (const u of this.currentRegionalUnits.defenders) {
+                    if (u.isDestroyed) continue;
+                    defCurrent += u.troops;
+                    defMax += u.maxTroops;
+                }
+                if (this.currentRegionalUnits.attackers.length > 0) {
+                    this.attackerDisplayName = this.buildWaveGroupedSideName(this.currentRegionalUnits.attackers, 'attacker');
+                }
+                if (this.currentRegionalUnits.defenders.length > 0) {
+                    this.defenderDisplayName = this.buildWaveGroupedSideName(this.currentRegionalUnits.defenders, 'defender');
+                }
+            }
+        }
+
+        // [2026-08-11 13 v2] 13 出兵口互攻期间引擎被冻结（unit.troops 不动），
+        // 血槽数字必须改接演出的实时兵力，否则「屏幕上人一直在死、数字纹丝不动」。
+        // 只覆盖 current，不动 max —— 血条的三阶段标尺算法（开局居中是铁律）不受影响。
+        const liveWar = (window as any).game?.scene13War?.getLiveTroops?.();
+        if (liveWar) {
+            attCurrent = liveWar.attacker;
+            defCurrent = liveWar.defender;
+            attMax = Math.max(attMax, attCurrent);
+            defMax = Math.max(defMax, defCurrent);
+        }
+
+        // [13 布局] 跟随战术模式开关（幂等，进出各执行一次）
+        this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true);
+
+        // [军事科技] 只在 13 战斗模式下显示双方科技（2026-08-18 主人定：非 13 战斗模式隐藏）
+        if (this.leftTechBox && this.rightTechBox) {
+            const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
+            if (sideTechs) {
+                this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
+                this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
+                // 分隔徽记只跟着「确实有科技可显示」走：没有科技时不留一个孤零零的图标
+                if (this.techDivider && this.scene13LayoutOn) {
+                    this.techDivider.style.display = 'flex';
+                    this.techDivider.style.opacity = '1';
+                }
             } else if (this.leftTechBox.dataset.sig !== '') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
@@ -1370,7 +4806,9 @@ export class CombatUI {
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
             this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
-            this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
+            if (!this.scene13LayoutOn) {
+                this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
+            }
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
