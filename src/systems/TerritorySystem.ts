@@ -184,25 +184,25 @@ const DE_STONE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor
     NE: {
         pctX: 60.6,
         pctY: 78.0,
-        widthFactor: 0.20,
+        widthFactor: 0.16, // [2026-08-27 城墙缩小] 0.20→0.16
         path: '/SUCAI_BUILDING/ASIA_WALL_STONE_NE/preview.png',
     },
     SE: {
         pctX: 61.0,
         pctY: 78.5,
-        widthFactor: 0.20,
+        widthFactor: 0.16, // 0.20→0.16
         path: '/SUCAI_BUILDING/ASIA_WALL_STONE_SE/preview.png',
     },
     POST: {
         pctX: 66.9,
         pctY: 84.4,
-        widthFactor: 0.33,
-        path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png', // 转角城垛/塔楼（战术石墙端部用 _WALL_POST，非 C2）
+        widthFactor: 0.26, // 0.33→0.26
+        path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png', // 转角城垛/塔楼（战术石墙端部用 _WALL_POST）
     },
     GATE: {
         pctX: 58.8,
-        pctY: 79.8, // 74.3→79.8：门楼略高于石墙段落地（参照木门 门=墙+1.8%，石墙 pctY 78.0+1.8）
-        widthFactor: 0.42, // 0.52→0.42：门楼尺寸匹配石墙段（门/墙≈2.06 同木门比例），不再压左右墙段
+        pctY: 74.3,
+        widthFactor: 0.34, // 0.42→0.34
         path: '/SUCAI_BUILDING/ASIA_GATE_STONE_NE/preview.png',
     },
 };
@@ -217,11 +217,10 @@ interface PalisadeGridPiece {
 
 /** 木栅栏绕城一圈：四角碉楼 + 四条边(每边 9 段紧密咬合) + 正南木城门，
  *  基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合；锚点参数与步长沿用既有设定。 */
-function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
+function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGridPiece[] {
     const stepX = baseSize * 0.075; // 紧凑步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
     const stepY = stepX * 0.58;
-    const S = 5;
-    const AX = 2 * S; // 半轴步数：角到中心 10 步
+    const AX = 2 * S;
     const pieces: PalisadeGridPiece[] = [];
 
     const westX = -AX * stepX;
@@ -235,20 +234,20 @@ function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
     pieces.push({ x: eastX, y: 0, type: 'POST' });            // 东角木碉楼
     pieces.push({ x: 0, y: southY, type: 'POST' });           // 南角木碉楼（闭合南端）
 
-    // 西北边：西角→北角（右上 = NE 段），k=4..6 让给城门（嵌墙中部）
+    // 西北边：西角→北角（右上 = NE 段），k=S-1..S+1 让给城门（嵌墙中部）
     for (let k = 1; k < AX; k++) {
-        if (k >= 4 && k <= 6) continue;
+        if (k >= S - 1 && k <= S + 1) continue;
         pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
     }
-    pieces.push({ x: westX + 5 * stepX, y: -5 * stepY, type: 'GATE' });   // 西北墙中部城门
+    pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部城门
     // 东北边：北角→东角（右下 = SE 段）
     for (let k = 1; k < AX; k++) pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
-    // 东南边：东角→南门（左下 = SE 镜像），k=4..6 让给城门
+    // 东南边：东角→南门（左下 = SE 镜像），k=S-1..S+1 让给城门
     for (let k = 1; k < AX; k++) {
-        if (k >= 4 && k <= 6) continue;
+        if (k >= S - 1 && k <= S + 1) continue;
         pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
     }
-    pieces.push({ x: eastX - 5 * stepX, y: 5 * stepY, type: 'GATE' });    // 东南墙中部城门（与西北门朝向一致，共用 NE 款）
+    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部城门（与西北门朝向一致，共用 NE 款）
     // 西南边：南门→西角（左上 = NE 镜像）
     for (let k = 1; k < AX; k++) pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
 
@@ -391,8 +390,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         );
     });
 
-    // 石墙绕城一圈（复用木栅栏拓扑，但用 DE_STONE_ANCHORS 石墙/石门）
-    const wallPieces = computePalisadeWallAndGate(baseSize);
+    // 石墙绕城一圈（复用木栅栏拓扑，但用 DE_STONE_ANCHORS 石墙/石门；[2026-08-27 城墙外扩] S=6）
+    const wallPieces = computePalisadeWallAndGate(baseSize, 6);
     // 城墙整体镜像（与小城同款，城门朝向多样化）
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
