@@ -4417,24 +4417,7 @@ export class Scene13WarLayer {
             ctx.drawImage(offCv, 0, 0);
             ctx.restore();
 
-            // 4. DE 沿岸潮汐柔和浪花泡沫（Shoreline Wavelet Foam）：带有呼吸起伏的拍岸白浪
-            if (p.polygon && p.polygon.length >= 3 && p.isWater) {
-                ctx.save();
-                const waveBreath = 0.35 + Math.sin(t * 2.4) * 0.15;
-                ctx.globalAlpha = (p.alpha ?? 1) * waveBreath;
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 3.0;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
-                ctx.shadowBlur = 6;
-                ctx.beginPath();
-                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                for (let i = 1; i < p.polygon.length; i++) ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
-                ctx.closePath();
-                ctx.stroke();
-                ctx.restore();
-            }
+
         }
     }
 
