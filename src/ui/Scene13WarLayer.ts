@@ -1518,6 +1518,7 @@ const PROJ_SCALE_OVERRIDE: Record<string, number> = {
 /** 多种 DE 弹丸单位可以共用同一张 SLD，但保留独立 key 以使用各自的飞行参数。 */
 const PROJ_ASSET_KEY: Record<string, string> = {
     PROJ_WAR_WAGON: 'PROJ_BOLT',
+    PROJ_HELEPOLIS: 'PROJ_BOLT',
     PROJ_GUNPOWDER: 'PROJ_SHOT',
     PROJ_FIRE_LANCER: 'PROJ_SHOT',
     PROJ_BOMBARD_BALL: 'PROJ_BALL',
@@ -1535,9 +1536,9 @@ const PROJ_TYPE: Record<string, string> = {
     antiquity_siege_onager: 'PROJ_BALL',
     antiquity_scorpion: 'PROJ_BOLT',
     antiquity_heavy_scorpion: 'PROJ_BOLT',
-    antiquity_siege_tower: 'PROJ_BOLT',   // DE: SIEGTWR → Projectile Helepolis → p_bolt（塔上弩机）
+    antiquity_siege_tower: 'PROJ_HELEPOLIS',   // DE: SIEGTWR → Projectile Helepolis → p_bolt（塔上弩机）
     flamethrower: 'PROJ_FIRE',         // 猛火油柜喷火：用火焰抛射物（30 帧火舌，非弹丸）
-    helepolis: 'PROJ_BOLT',           // 攻城塔射弩箭
+    helepolis: 'PROJ_HELEPOLIS',           // 攻城塔射弩箭
     // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
     //    DE 里它有专属弹丸 `Projectile Hussite Wagon`(id 1733)，我们没登记 → 落回默认 PROJ_ARROW。
     //    改用火器弹丸 PROJ_SHOT。
@@ -1561,7 +1562,7 @@ const PROJ_TYPE: Record<string, string> = {
     //   = **小标枪**，不是箭。此前没映射、落回 PROJ_ARROW。
     war_chariot_ranged: 'PROJ_SPEAR_SMALL',
     // 攻城塔：DE `SIEGTWR` → `Projectile Helepolis` → p_bolt（塔上弩机，非弓手羽箭）
-    siege_tower: 'PROJ_BOLT',
+    siege_tower: 'PROJ_HELEPOLIS',
     fire_archer: 'PROJ_ARROW_FIRE',
     elite_fire_archer: 'PROJ_ARROW_FIRE',
     rocket_cart: 'PROJ_ARROW_FIRE',
@@ -1647,6 +1648,7 @@ const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
 const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_WAR_WAGON: 0.05,
+    PROJ_HELEPOLIS: 0.01,
     PROJ_GUNPOWDER: 0.05,
     PROJ_FIRE_LANCER: 0.05,
     PROJ_HUSSITE_WAGON: 0.05,
@@ -1711,6 +1713,15 @@ const PROJ_DUR: Record<string, number> = {
 };
 /** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；火枪弹丸适度调快 (750px/s)。 */
 const PROJ_SPEED_PX: Record<string, number> = {
+    // 🔴 [2026-08-26 按 DE dat 实测补齐] 弩矢原本没进本表 → 走 PROJ_DUR 的**固定 0.49s**，
+    //    等于「不论远近都飞同样久」，而 DE 弹丸是**恒定速度**、飞行时间随距离变。
+    //    dat 实测（empires2_x2_p1.dat → type_50.projectile_unit_id → 弹丸单位 speed）：
+    //      蝎弩 SCBAL→367 speed 6.0 arc 0.0 ／ 弩炮战象 ELEBALI→1167 speed 6.0 arc 0.0
+    //      高丽战车 WAGON→373 speed 6.0 arc 0.05 ／ 攻城塔 SIEGTWR→2445 speed **7.0** arc 0.01
+    //    🔴 攻城塔是 7.0 不是 6.0 —— 它和弩炮共用 p_bolt 素材，但弹速不同，
+    //    所以单列 PROJ_HELEPOLIS，否则给 PROJ_BOLT 一加速度就把攻城塔拖慢了。
+    PROJ_BOLT: 6 * 40,
+    PROJ_HELEPOLIS: 7 * 40,
     PROJ_WAR_WAGON: 6 * 40,
     PROJ_SHOT: 7.5 * 40,
     PROJ_GUNPOWDER: 7.5 * 40,
@@ -2347,6 +2358,8 @@ const CELL_S = 20;
  * 长于它就说明是真被前面的人堵住了，站住别迈腿。
  */
 const STUCK_IDLE_SEC = 0.3;
+/** 净位移结算窗口（秒）：每过这么久看一次「这段时间到底往前挪了多少」，用来识别原地震荡。 */
+const NET_STUCK_WINDOW = 0.25;
 /**
  * 绕行时的速度比例（相对本兵移速）。被己方兵挡住时沿垂直方向侧滑绕过去，
  * 比直冲慢一点：既像人挤过人群，也让后面的人有机会先补上空位、自然铺成弧形阵面。
@@ -2462,6 +2475,15 @@ interface WarMan {
     /** 上一帧位置（算真实位移用，见 stuckT） */
     prevX: number;
     prevY: number;
+    /**
+     * 净位移锚点 + 计时（见 NET_STUCK_WINDOW）。
+     * 单帧位移只能识别「被堵得完全不动」；被推挤来回震荡时**每帧位移并不小**（推开又被推回），
+     * 净位移却≈0 —— 那种情况下旧判定一直清零 stuckT，于是一直播移动帧配来回跳的坐标，
+     * 看着就是原地抽搐（主人 2026-08-26 实锤：战车、大象最明显，它们占地半径最大、推力最强）。
+     */
+    anchorX: number;
+    anchorY: number;
+    netT: number;
     /**
      * 「想走但走不动」已持续多久（秒）。
      * 走路动画只在**真的位移**时播：被前面的人堵住时位移≈0，再播移动帧就是原地迈腿（主人 2026-08-17 提）。
@@ -3416,7 +3438,7 @@ export class Scene13WarLayer {
                     dir: this.dir8(tgtX - x, tgtY - y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: x, prevY: y, stuckT: 0, sepX: 0, sepY: 0, y0: y,
+                    prevX: x, prevY: y, anchorX: x, anchorY: y, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: y,
                     flag: false, fo: Math.random() * 600,
                     march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(it.key),
                     flank: false, siegeW: true,
@@ -4955,6 +4977,7 @@ export class Scene13WarLayer {
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: isFlank ? flankX : s.x, prevY: (isFlank ? flankY : s.y),
+                    anchorX: isFlank ? flankX : s.x, anchorY: (isFlank ? flankY : s.y), netT: 0,
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
@@ -6126,9 +6149,24 @@ export class Scene13WarLayer {
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
         for (const m of this.men) {
             const dx = m.x - m.prevX, dy = m.y - m.prevY;
-            const want = (this.statsFor(m.key, m.f).spd || 0) * dt;
-            // 实际位移不到「想走的距离」的四分之一 = 基本没挪动
-            if (m.st === 0 && want > 0 && (dx * dx + dy * dy) < (want * 0.25) ** 2) m.stuckT += dt;
+            const spd = this.statsFor(m.key, m.f).spd || 0;
+            const want = spd * dt;
+            // ① 单帧判定：被前面的人堵死、位移≈0（响应快，原逻辑不动）
+            const frameStuck = m.st === 0 && want > 0 && (dx * dx + dy * dy) < (want * 0.25) ** 2;
+            // ② 净位移判定（2026-08-26 主人「战车、大象疯狂颤抖，像卡在一个地方」）：
+            //    被推挤来回震荡时**单帧位移并不小**（推开又被推回），①永远判不出来，
+            //    stuckT 被一路清零 → 一直播移动帧配来回跳的坐标 = 原地抽搐。
+            //    改看「一个窗口内净往前挪了多少」：净位移同样不到应走距离的 1/4，就按卡住处理。
+            let netStuck = false;
+            m.netT += dt;
+            if (m.netT >= NET_STUCK_WINDOW) {
+                const ndx = m.x - m.anchorX, ndy = m.y - m.anchorY;
+                const wantNet = spd * m.netT;
+                netStuck = m.st === 0 && wantNet > 0 && (ndx * ndx + ndy * ndy) < (wantNet * 0.25) ** 2;
+                m.anchorX = m.x; m.anchorY = m.y; m.netT = 0;
+            }
+            if (netStuck) m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + dt);  // 立刻切待命，别等再攒
+            else if (frameStuck) m.stuckT += dt;
             else m.stuckT = 0;
             m.prevX = m.x; m.prevY = m.y;
         }
