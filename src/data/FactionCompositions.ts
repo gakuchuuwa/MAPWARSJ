@@ -318,13 +318,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_chariot_ranged', count: 2 },
         ],
     },
-    mi_chu: {
+    "mi_chu": {
         legionName: "先秦军团",
-        formationMode: 'fish_scale',
+        formationMode: "echelon",
         slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "crossbowman", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     yue: {

@@ -703,15 +703,10 @@ export type Scene13Topology =
     | 'canyon_pass'            // 2. 峡谷关隘走廊 (Pass / Canyon / Mountain Pass)
     | 'dense_forest_clearing'  // 3. 密林环抱与林间空地 (Black Forest / Hideout)
     | 'river_crossing'         // 4. 大江天堑隔水对峙 (Rivers / Cross / Cenotes)
-    | 'rolling_hills'          // 5. 连绵丘陵与战术双高地 (Mongolia / Gold Rush / SeizeTheMountain)
-    | 'steppe_oasis'           // 6. 苍茫草原戈壁绿洲 (Steppe / Oasis / Atacama)
-    | 'swamp_marsh'            // 7. 湿地沼泽浅泥水泊 (Bogland / Swamp / Salt Marsh)
-    // 🔴 [2026-08-24] 只是个拓扑标签，不再生成道路：城门前的路由
-    //    Scene13WarLayer.addGateFoundation 负责（主人 2026-08-24 口述已设好）。
-    //    原来那个横穿战场的 buildHorizontalHighway 从未被调用过，已删。
-    //    这个枚举值保留——删了会改变 resolveBattleTopology 的随机池，
-    //    所有已有种子的生成结果都会变。
-    | 'imperial_highway';      // 8. 帝国驿道（现仅作拓扑标签，不铺路）
+    | 'rolling_hills'          // 5. 连绵丘陵与战术双高地 (Mongolia / Gold Rush)
+    | 'steppe_oasis'           // 6. 苍茫草原戈壁绿洲 (Steppe / Oasis)
+    | 'swamp_marsh'            // 7. 湿地沼泽浅泥水泊 (Bogland / Swamp)
+    | 'imperial_highway';      // 8. 帝国驿道
 
 function resolveBattleTopology(
     hasCoord: boolean,
@@ -721,26 +716,17 @@ function resolveBattleTopology(
     biome: Biome,
     rng: RandomSource
 ): Scene13Topology {
-    // 真实水系优先
     if (waterKind === 'river') return 'river_crossing';
     if (waterKind === 'lake') return rng.chance(0.6) ? 'swamp_marsh' : 'steppe_oasis';
-    
-    // 真实高山/陡坡优先 (优先高台山脊、峡谷关隘与连绵双高地)
     if (elev !== null && (elev >= 500 || (slope !== null && slope >= 5))) {
         return rng.pick(['rolling_hills', 'highland_ridge', 'canyon_pass']);
     }
-
-    // 森林环境优先
     if (biome === 'temperate_forest' || biome === 'boreal' || biome === 'tropical_rainforest') {
         return rng.pick(['dense_forest_clearing', 'rolling_hills', 'imperial_highway', 'highland_ridge']);
     }
-
-    // 草原/荒漠环境优先
     if (biome === 'cold_steppe' || biome === 'savanna' || biome === 'desert') {
         return rng.pick(['rolling_hills', 'steppe_oasis', 'imperial_highway', 'highland_ridge', 'canyon_pass']);
     }
-
-    // 全局均衡丰富抽选
     return rng.pick([
         'rolling_hills', 'rolling_hills',
         'highland_ridge',
@@ -752,138 +738,13 @@ function resolveBattleTopology(
     ]);
 }
 
-
-// ── 第 2 层：高地（clump 生长；低地少丘、高地多丘） ─────────────
-
-/**
- * DE 式大尺度缓坡起伏。
- *
- * 🔴 [2026-08-24 主人：「没有高低和丘陵吗？你看看人家做的」]
- *
- * 走过的弯路：先是只有 2~4 片大椭圆高台、台面内部全平，一马平川；
- * 然后改成满地 3~7 格的小碎包——「相邻格有高差的边」这个数字追平了 DE（14.1%），
- * **但图上还是看不出起伏**。因为那个指标不区分**尺度**：
- * 小碎包再密也只是噪点，而 DE 的丘陵是**跨几十格的大缓坡**，
- * 明暗带宽度能占到画面五分之一（见主人发的 DE 干旱图截图）。
- *
- * 所以这里用**低频噪声**：三层不同周期的正弦叠加（周期 20~50 格），
- * 归一化后量化成 0~3 级。这样高度是**连续渐变**的——
- * 相邻格高差边自然达标，而整体呈现大片缓坡，坡面明暗才铺得开。
- *
- * 高度分布对齐 DE 真值：平地 ~78%，1 级 ~15%，2 级 ~5.6%，3 级 ~0.8%。
- * 量具：scratch/cmp_elevation.mts
- */
-function addMicroRelief(
-    grid: number[][],
-    gw: number,
-    gh: number,
-    rng: RandomSource,
-    density: number = 1
-): number[][] {
-    // 三层低频波。周期取 20~50 格：太短会退化成噪点（就是上一版的毛病），
-    // 太长则整屏只剩一个坡、看不出地形变化。
-    const w1 = (Math.PI * 2) / (26 + rng.next() * 14);
-    const w2 = (Math.PI * 2) / (15 + rng.next() * 8);
-    const w3 = (Math.PI * 2) / (41 + rng.next() * 16);
-    // 第四层中频：低频三层给的是圆润大块，等高线太光滑——「相邻格有高差的边」只有 5%，
-    // 而 DE 是 14.1%。DE 的高度区域周长/面积比很高（等高线曲折交错），
-    // 所以在大坡上再叠一层周期 8~14 格的扰动，专门把等高线搅乱，不改变大尺度形态。
-    const w4 = (Math.PI * 2) / (8 + rng.next() * 6);
-    const p1 = rng.next() * Math.PI * 2, p2 = rng.next() * Math.PI * 2;
-    const p3 = rng.next() * Math.PI * 2, p4 = rng.next() * Math.PI * 2;
-    const p5 = rng.next() * Math.PI * 2, p6 = rng.next() * Math.PI * 2;
-    const p7 = rng.next() * Math.PI * 2, p8 = rng.next() * Math.PI * 2;
-    // 各层走向随机，免得所有战场的坡都朝同一个方向
-    const a1 = rng.next() * Math.PI, a2 = rng.next() * Math.PI, a3 = rng.next() * Math.PI;
-    const a4 = rng.next() * Math.PI;
-    const rot = (x: number, y: number, a: number): [number, number] =>
-        [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
-
-    // 🔴 [2026-08-24 主人：「上面一条黑，下面一条白，怎么还有啊」]
-    //    根因不是贴图、不是 blends、不是光照常量，是**低频波在一屏上只有 2~3 个波长**：
-    //    投影后就是大尺度的上下起伏，方向光把它渲染成横贯全屏的明暗带。
-    //    实测：51% 的图「屏幕上/下带与中段的平均高程差 >0.35」，
-    //    典型 `ds4 配 LUSH_BAMBOO` 顶部亮度 102、中段 125、底部 145（横贯全宽）。
-    //
-    //    修法：按**屏幕 y 方向**（等距投影下 ∝ gx+gy）做去趋势——
-    //    减掉沿屏幕纵向的大尺度分量，只保留局部起伏。
-    //    这样「看得出起伏」还在（主人为此改过三次，不能退回平地），
-    //    但整片的上下明暗差没了。
-    const field: number[][] = [];
-    for (let y = 0; y < gh; y++) {
-        const row: number[] = [];
-        for (let x = 0; x < gw; x++) {
-            const [x1, y1] = rot(x, y, a1);
-            const [x2, y2] = rot(x, y, a2);
-            const [x3, y3] = rot(x, y, a3);
-            const [x4, y4] = rot(x, y, a4);
-            const n = Math.sin(x1 * w1 + p1) * Math.cos(y1 * w1 * 0.82 + p2)
-                + 0.55 * Math.sin(x2 * w2 + p3) * Math.cos(y2 * w2 * 1.13 + p4)
-                + 0.75 * Math.sin(x3 * w3 + p5) * Math.cos(y3 * w3 * 0.7 + p6)
-                + 0.30 * Math.sin(x4 * w4 + p7) * Math.cos(y4 * w4 * 1.31 + p8);
-            row.push(n);
-        }
-        field.push(row);
-    }
-
-    // ── 按屏幕纵向去趋势（见上面那段注释）──
-    // 等距投影：屏幕 y ∝ (gx + gy)。按 (gx+gy) 分组求均值，逐格减掉，
-    // 只保留局部起伏。不这么做，一屏就是一道大坡，方向光把它渲染成横贯的明暗带。
-    {
-        const diagSum = new Map<number, number>();
-        const diagCnt = new Map<number, number>();
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
-                const d = x + y;
-                diagSum.set(d, (diagSum.get(d) ?? 0) + field[y][x]);
-                diagCnt.set(d, (diagCnt.get(d) ?? 0) + 1);
-            }
-        }
-        // 对角线均值再做一次窗口平滑，避免减出高频锯齿
-        const raw = new Map<number, number>();
-        for (const [d, sum] of diagSum) raw.set(d, sum / (diagCnt.get(d) ?? 1));
-        const trend = new Map<number, number>();
-        const R = 6;
-        for (const d of raw.keys()) {
-            let s = 0, n2 = 0;
-            for (let k = -R; k <= R; k++) {
-                const v = raw.get(d + k);
-                if (v !== undefined) { s += v; n2++; }
-            }
-            trend.set(d, n2 ? s / n2 : 0);
-        }
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
-                field[y][x] -= trend.get(x + y) ?? 0;
-            }
-        }
-    }
-
-    // 按面积分位量化，而不是按 min/max 的固定比例切。固定比例会被单个极值拉偏，
-    // 同一密度在不同 seed 下可能从少量丘包变成满屏坡面。DE 实测基准为：
-    // 平地 78.4% / 1级 15.2% / 2级 5.6% / 3级 0.8%。
-    // density 只调整「有起伏的总面积」；各高度在起伏区内部仍保持 DE 的 70.4/25.9/3.7 比例。
-    const values = field.flat().sort((a, b) => a - b);
-    const raisedShare = Math.max(0.10, Math.min(0.34, 0.216 * density));
-    const flatShare = 1 - raisedShare;
-    const q = (share: number): number => values[Math.min(values.length - 1, Math.max(0, Math.floor(share * values.length)))];
-    const T1 = q(flatShare);
-    const T2 = q(flatShare + raisedShare * 0.704);
-    const T3 = q(flatShare + raisedShare * 0.963);
-
-    for (let y = 0; y < gh; y++) {
-        for (let x = 0; x < gw; x++) {
-            const n = field[y][x];
-            const h = n < T1 ? 0 : n < T2 ? 1 : n < T3 ? 2 : 3;
-            if (h > grid[y][x]) grid[y][x] = h;
-        }
-    }
-    return grid;
-}
+// ── 第 2 层：经典帝国时代式 2.5D 高台丘陵与起伏高度场生成 ──────────────────
 
 /**
- * 经典帝国时代式 2.5D 隆起丘陵与战术高地生成：
- * 生成连续高度场，让坡脚、坡腰和丘顶自然过渡，不出现台阶分层。
+ * DE 原版正统多尺度自然高台与丘陵群高度场生成器：
+ * 1. 错落分布 3~6 处立体战术高地与连绵小山包；
+ * 2. 具备清晰完整的海拔层次：Level 2/3 制高平顶 + Level 1/2 宽阔缓坡 + Level 1 坡脚基底；
+ * 3. 几何形态有机自然（椭圆旋转走向 + 微量地质扰动），坡度连续，绝无断层。
  */
 function generateElevation(
     gw: number,
@@ -900,7 +761,7 @@ function generateElevation(
     const grid: number[][] = Array.from({ length: gh }, () => new Array(gw).fill(0));
 
     if (topology === 'canyon_pass') {
-        // 🪨 拓扑 2：峡谷关隘走廊 (Pass / Canyon) —— 北面与南面隆起两道险峻峡谷岩壁，中轴平坦畅通
+        // 峡谷关隘走廊：北面与南面隆起两道险峻峡谷岩壁，中轴平坦畅通
         const topCliffY = VH * 0.18, botCliffY = VH * 0.82;
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
@@ -914,53 +775,60 @@ function generateElevation(
                 }
             }
         }
-        return addMicroRelief(grid, gw, gh, rng, 0.6);
+        return grid;
     }
 
-    if (topology === 'rolling_hills') {
-        // ⛰️ 拓扑 5：连绵丘陵与战术双高地 (Rolling Hills & Dual Highlands - Mongolia / Gold Rush)
-        // 北部 Level 3 主高台 + 南部 Level 2 丘陵群 + 右侧 Level 1 缓坡 + 中央马鞍形鞍部
-        const hills = [
-            { sx: VW * 0.56, sy: VH * 0.28, rx: 9.5, ry: 6.5, maxH: 3, angle: -0.2 },
-            { sx: VW * 0.74, sy: VH * 0.75, rx: 10.5, ry: 7.0, maxH: 2, angle: 0.25 },
-            { sx: VW * 0.90, sy: VH * 0.48, rx: 6.5, ry: 5.0, maxH: 1, angle: 0.1 },
-        ];
-        for (const h of hills) {
-            const [cgx, cgy] = screenToGrid(h.sx, h.sy, ox, oy);
-            const cx = Math.max(1, Math.min(gw - 2, cgx));
-            const cy = Math.max(1, Math.min(gh - 2, cgy));
-            for (let y = 0; y < gh; y++) {
-                for (let x = 0; x < gw; x++) {
-                    const dx = x - cx, dy = y - cy;
-                    const rxRot = dx * Math.cos(h.angle) - dy * Math.sin(h.angle);
-                    const ryRot = dx * Math.sin(h.angle) + dy * Math.cos(h.angle);
-                    const normDist = Math.sqrt((rxRot / h.rx) ** 2 + (ryRot / h.ry) ** 2);
-                    const noise = (Math.sin(x * 1.4 + y * 0.8) + Math.cos(x * 0.7 - y * 1.2)) * 0.08;
-                    const dist = normDist + noise;
-                    let curH = 0;
-                    if (dist < 0.40) curH = h.maxH;
-                    else if (dist < 0.75) curH = Math.max(1, h.maxH - 1);
-                    else if (dist < 1.05) curH = 1;
-                    if (curH > grid[y][x]) grid[y][x] = curH;
+    // 计算当前战场的高地丘陵数量（高山 5~6 处，丘陵 4~5 处，平原 3~4 处）
+    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
+        ? 5 + rng.int(0, 2)
+        : (elev !== null && elev >= 300)
+            ? 4 + rng.int(0, 2)
+            : 3 + rng.int(0, 2);
+
+    for (let i = 0; i < hillCount; i++) {
+        const regionX = (i % 3) * 0.32 + 0.16 + (rng.next() - 0.5) * 0.15;
+        const regionY = Math.floor(i / 3) * 0.38 + 0.22 + (rng.next() - 0.5) * 0.16;
+        const hillScreenX = VW * Math.max(0.12, Math.min(0.88, regionX));
+        const hillScreenY = VH * Math.max(0.15, Math.min(0.85, regionY));
+
+        const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
+        const cx = Math.max(2, Math.min(gw - 3, hillGx));
+        const cy = Math.max(2, Math.min(gh - 3, hillGy));
+
+        // i === 0 为主制高台，其余为连绵小山包
+        const isMajor = i === 0 || (i === 1 && hillCount >= 5);
+        const rx = isMajor ? (10 + rng.next() * 6) : (5 + rng.next() * 4);
+        const ry = isMajor ? (7 + rng.next() * 4) : (3.5 + rng.next() * 3);
+        const hMax = isMajor ? ((elev !== null && elev >= 800) ? 3 : 2) : 1;
+        const angle = (rng.next() - 0.5) * 1.5;
+
+        for (let y = 0; y < gh; y++) {
+            for (let x = 0; x < gw; x++) {
+                const dx = x - cx;
+                const dy = y - cy;
+                const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
+                const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
+                const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
+                const noise = (Math.sin(x * 0.8 + y * 0.6) * 0.08) + (Math.cos(x * 1.2 - y * 0.9) * 0.05);
+                const dist = normDist + noise;
+
+                let h = 0;
+                if (dist < 0.38) {
+                    h = hMax; // 丘顶高台
+                } else if (dist < 0.78) {
+                    h = Math.max(1, hMax - 1); // 宽阔缓坡坡腰
+                } else if (dist < 1.15) {
+                    h = 1; // 坡脚过渡基底
+                }
+
+                if (h > grid[y][x]) {
+                    grid[y][x] = h;
                 }
             }
         }
-        return addMicroRelief(grid, gw, gh, rng, 1.2);
     }
 
-    if (topology === 'dense_forest_clearing' || topology === 'swamp_marsh') {
-        // 平坦空地/泥泞平缓沼泽：不设战术高地，但 DE 的「平地」图也不是纯平板，仍给轻微起伏
-        return addMicroRelief(grid, gw, gh, rng, 0.55);
-    }
-    
-    // 普通战场只保留 DE 式局部缓坡；明确的丘陵、峡谷高地由上面的拓扑分支生成。
-    // 海拔只小幅调整起伏覆盖面，避免平原也被无条件铺满大型山丘群。
-    const reliefDensity = elev !== null && (elev >= 800 || (slope !== null && slope >= 10))
-        ? 1.35
-        : elev !== null && elev >= 300
-            ? 1.15
-            : 1;
-    return addMicroRelief(grid, gw, gh, rng, reliefDensity);
+    return grid;
 }
 
 // ── 第 3 层：DE 左侧海岸线（登陆战） ──────────────────────────
@@ -1664,6 +1532,34 @@ function buildGroundVariation(
         }
     }
 
+    // ── DE 经典坡面专属地表纹理层（Slope Ground Variations）──
+    // 在高低起伏的斜坡（Slope）上，自然露出粗糙的黄土/碎屑/岩石材质，强化地势立体落差
+    if (elevation && hasRelief) {
+        const slopeTile = (biome === 'desert' || biome === 'savanna') ? 'ds5'
+            : (biome === 'cold_steppe' || biome === 'tundra_snow') ? 'ds2'
+            : 'drt'; // 默认温带/亚热带草地斜坡使用黄土坡质感
+        
+        const slopeCells: Array<[number, number]> = [];
+        for (let gy = 1; gy < gh - 1; gy++) {
+            for (let gx = 1; gx < gw - 1; gx++) {
+                const h = heightAt(gx, gy);
+                const dhx = Math.abs(heightAt(gx + 1, gy) - h) + Math.abs(heightAt(gx - 1, gy) - h);
+                const dhy = Math.abs(heightAt(gx, gy + 1) - h) + Math.abs(heightAt(gx, gy - 1) - h);
+                if ((dhx > 0 || dhy > 0) && rng.chance(0.68)) {
+                    slopeCells.push([gx, gy]);
+                }
+            }
+        }
+        if (slopeCells.length > 0) {
+            patches.push({
+                tile: slopeTile,
+                cells: slopeCells,
+                alpha: 0.48,
+                category: 'ground-variation',
+                blur: 16,
+            });
+        }
+    }
 }
 
 // ── 第 4 层：林地落叶层（森林 biome 的 forest-floor 斑块） ─────────

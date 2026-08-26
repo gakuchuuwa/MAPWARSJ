@@ -1665,6 +1665,8 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     // 三步向导状态：当前层 / 三层选项 / 当前层可选军团
     const curLayer = resolveCurrentLayer(row);
+    const currentLegionName = currentEditingLegion.legionName?.trim()
+        || (curLayer === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
     const optCulture = getLayerLegionOptions('culture', row.factionId);
     const optBranch = getLayerLegionOptions('branch', row.factionId);
     const optSub = getLayerLegionOptions('sub', row.factionId);
@@ -1903,7 +1905,7 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-step-no">第三步 · 保存</div>
       <div class="le-step-title">确认并落盘</div>
       <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
-        <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="flex:1;font-size:14px;padding:10px;">💾 保存为【${row.factionName}】专属军团</button>
+        <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="flex:1;font-size:14px;padding:10px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
         ${row.isCustom ? `<button type="button" id="le-btn-reset-single" class="le-btn le-btn-warn">🗑️ 恢复文化默认</button>` : ''}
       </div>
       <div style="display:flex;gap:8px;margin-top:8px;">
@@ -1978,6 +1980,8 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 保存单条专属
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
+        const savedLegionName = currentEditingLegion.legionName?.trim()
+            || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
             formationMode: currentEditingLegion.formationMode,
@@ -1990,7 +1994,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
         await saveAllCompositions();
-        showToast(`✅【${row.factionName}】专属军团已保存并写入文件`);
+        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`);
     });
 
     // 重置恢复默认
@@ -2117,6 +2121,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 
     let currentTab: UnitCategory = 'infantry';
     let unitSearch = '';
+    let isSearchComposing = false;
     const rowTitle = ['前排', '中坚', '后排'][rowIdx];
 
     const closeModal = () => {
@@ -2125,16 +2130,17 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     };
 
     const handleKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') closeModal();
+        if (!e.isComposing && e.key === 'Escape') closeModal();
     };
     window.addEventListener('keydown', handleKey);
 
     const renderModalContent = () => {
         const q = unitSearch.trim().toLowerCase();
         // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤
-        const units = q
+        const units = (q
             ? DE_UNITS_CATALOG.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
-            : DE_UNITS_CATALOG.filter(u => u.category === currentTab);
+            : DE_UNITS_CATALOG.filter(u => u.category === currentTab))
+            .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -2186,9 +2192,18 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 inp.setSelectionRange(unitSearch.length, unitSearch.length);
             }
         });
-        overlay.querySelector('#le-unit-search')?.addEventListener('input', (e) => {
+        const searchInput = overlay.querySelector('#le-unit-search') as HTMLInputElement | null;
+        searchInput?.addEventListener('compositionstart', () => {
+            isSearchComposing = true;
+        });
+        searchInput?.addEventListener('compositionend', (e) => {
+            isSearchComposing = false;
             unitSearch = (e.target as HTMLInputElement).value;
             rerenderSearch();
+        });
+        searchInput?.addEventListener('input', (e) => {
+            unitSearch = (e.target as HTMLInputElement).value;
+            if (!isSearchComposing && !(e as InputEvent).isComposing) rerenderSearch();
         });
 
         overlay.querySelectorAll('.le-unit-card').forEach(card => {
