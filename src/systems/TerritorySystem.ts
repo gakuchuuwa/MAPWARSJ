@@ -96,7 +96,7 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
         pctX: 58.6,
         pctY: 75.9,
         widthFactor: 0.34,
-        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_SE/preview.png',
+        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png', // 另一朝向双塔木城门（主人 2026-08-26 指定，弃正南 SE 款）
     },
 };
 
@@ -104,25 +104,46 @@ interface PalisadeGridPiece {
     x: number;
     y: number;
     type: 'NE' | 'SE' | 'POST' | 'GATE';
+    /** 等轴镜像：素材只有右上(NE)/右下(SE)两种斜段，东南边/西南边须 scaleX(-1) 翻转成左下/左上段 */
+    flipX?: boolean;
 }
 
-/** 仅放置 3 个木碉楼，以及西北墙 1 段栅栏、东北墙 1 段栅栏供校准单段咬合与位置 */
+/** 木栅栏绕城一圈：四角碉楼 + 四条边(每边 9 段紧密咬合) + 正南木城门，
+ *  基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合；锚点参数与步长沿用既有设定。 */
 function computePalisadeWallAndGate(baseSize: number): PalisadeGridPiece[] {
-    const stepX = baseSize * 0.12;
+    const stepX = baseSize * 0.075; // 紧凑步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
     const stepY = stepX * 0.58;
-    const S = 3;
+    const S = 5;
+    const AX = 2 * S; // 半轴步数：角到中心 10 步
     const pieces: PalisadeGridPiece[] = [];
 
-    // 1. 北、东、西 3 个木碉楼（角楼立柱）
-    pieces.push({ x: 0, y: -2 * S * stepY, type: 'POST' });          // 北角木碉楼
-    pieces.push({ x: 2 * S * stepX, y: 0, type: 'POST' });           // 东角木碉楼
-    pieces.push({ x: -2 * S * stepX, y: 0, type: 'POST' });          // 西角木碉楼
+    const westX = -AX * stepX;
+    const eastX = AX * stepX;
+    const northY = -AX * stepY;
+    const southY = AX * stepY;
 
-    // 2. 西北墙：仅添加 1 个栅栏段（NE）
-    pieces.push({ x: -1 * stepX, y: (-2 * S + 1) * stepY, type: 'NE' });
+    // 四角木碉楼（正南木门取消：门改为两扇，分别嵌在西北边与东南边的墙段中部）
+    pieces.push({ x: westX, y: 0, type: 'POST' });            // 西角木碉楼
+    pieces.push({ x: 0, y: northY, type: 'POST' });           // 北角木碉楼
+    pieces.push({ x: eastX, y: 0, type: 'POST' });            // 东角木碉楼
+    pieces.push({ x: 0, y: southY, type: 'POST' });           // 南角木碉楼（闭合南端）
 
-    // 3. 东北墙：仅添加 1 个栅栏段（SE）
-    pieces.push({ x: 1 * stepX, y: (-2 * S + 1) * stepY, type: 'SE' });
+    // 西北边：西角→北角（右上 = NE 段），k=4..6 让给城门（嵌墙中部）
+    for (let k = 1; k < AX; k++) {
+        if (k >= 4 && k <= 6) continue;
+        pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
+    }
+    pieces.push({ x: westX + 5 * stepX, y: -5 * stepY, type: 'GATE' });   // 西北墙中部城门
+    // 东北边：北角→东角（右下 = SE 段）
+    for (let k = 1; k < AX; k++) pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+    // 东南边：东角→南门（左下 = SE 镜像），k=4..6 让给城门
+    for (let k = 1; k < AX; k++) {
+        if (k >= 4 && k <= 6) continue;
+        pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
+    }
+    pieces.push({ x: eastX - 5 * stepX, y: 5 * stepY, type: 'GATE' });    // 东南墙中部城门（与西北门朝向一致，共用 NE 款）
+    // 西南边：南门→西角（左上 = NE 镜像）
+    for (let k = 1; k < AX; k++) pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
 
     return pieces;
 }
@@ -184,9 +205,12 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const anchor = DE_PALISADE_ANCHORS[w.type];
         const zIndex = Math.round(100 + w.y);
         const pieceW = baseSize * anchor.widthFactor;
+        // 镜像段：素材 anchor 翻转后落在 (100-pctX)%，故 translate 用 (100-pctX) 对齐，再 scaleX(-1)
+        const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
+        const flip = w.flipX ? ' scaleX(-1)' : '';
 
         parts.push(
-            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${anchor.pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
+            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
         );
     });
 
