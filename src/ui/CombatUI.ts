@@ -400,7 +400,7 @@ export class CombatUI {
     }[] = [];
 
     constructor() {
-        document.querySelectorAll('#combat-ui-panel').forEach((el) => el.remove());
+        document.querySelectorAll('#combat-ui-panel, [data-combat-ui-detached="true"]').forEach((el) => el.remove());
         this.portraitConfig = new PortraitConfigManager();
         this.injectGlobalStyles();
         this.container = this.createContainer();
@@ -1120,8 +1120,12 @@ export class CombatUI {
                 try {
                     if (at.next && at.next.parentNode === at.parent) at.parent.insertBefore(el, at.next);
                     else at.parent.appendChild(el);
+                    delete el.dataset.combatUiDetached;
                 } catch {
-                    try { at.parent.appendChild(el); } catch { /* 原父节点已销毁，只能放弃该元素 */ }
+                    try {
+                        at.parent.appendChild(el);
+                        delete el.dataset.combatUiDetached;
+                    } catch { /* 原父节点已销毁，只能放弃该元素 */ }
                 }
             }
             this.scene13Reparented.clear();
@@ -1142,6 +1146,7 @@ export class CombatUI {
         const detach = (el?: HTMLElement | null) => {
             if (!el || !el.parentElement || el.parentElement === document.body) return;
             this.scene13Reparented.set(el, { parent: el.parentElement, next: el.nextSibling });
+            el.dataset.combatUiDetached = 'true';
             document.body.appendChild(el);
         };
         for (const el of [this.centerBackdrop, this.centerPanel,
@@ -3008,6 +3013,9 @@ export class CombatUI {
         // ③ 「XX 勝」弹出
         const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
         if (name && name !== '未知势力') {
+            this.battleTitle.style.background = 'linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%)';
+            this.battleTitle.style.webkitBackgroundClip = 'text';
+            this.battleTitle.style.backgroundClip = 'text';
             this.battleTitle.textContent = `${name} 勝`;
             this.battleTitle.style.animation = 'none';
             void this.battleTitle.offsetWidth;
@@ -4535,8 +4543,16 @@ export class CombatUI {
         }
         
         if (suffix) {
-            this.battleTitle.innerHTML = `${title}<span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:bottom;transform:translateY(-6px);letter-spacing:normal;">${suffix}</span>`;
+            // 徽标不能直接放进 background-clip:text 的标题背景中：其位移会让 Chromium
+            // 在原位置额外裁出一份文字，表现为地名上方重复的“险要/名城”。
+            this.battleTitle.style.background = 'none';
+            this.battleTitle.style.webkitBackgroundClip = 'border-box';
+            this.battleTitle.style.backgroundClip = 'border-box';
+            this.battleTitle.innerHTML = `<span style="color:transparent;background:linear-gradient(180deg,#fffcd5 0%,#ffdf73 35%,#d4951a 60%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;">${title}</span><span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:bottom;transform:translateY(-6px);letter-spacing:normal;">${suffix}</span>`;
         } else {
+            this.battleTitle.style.background = 'linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%)';
+            this.battleTitle.style.webkitBackgroundClip = 'text';
+            this.battleTitle.style.backgroundClip = 'text';
             this.battleTitle.textContent = title;
         }
         
@@ -5475,6 +5491,6 @@ export class CombatUI {
 
 if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-        document.querySelectorAll('#combat-ui-panel').forEach((el) => el.remove());
+        document.querySelectorAll('#combat-ui-panel, [data-combat-ui-detached="true"]').forEach((el) => el.remove());
     });
 }

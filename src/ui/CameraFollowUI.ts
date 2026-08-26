@@ -46,6 +46,9 @@ export class CameraFollowUI {
 
     // DOM Elements
     private listButton: HTMLButtonElement | null = null;
+    private yuefeiButton: HTMLButtonElement | null = null;
+    private huoqubingButton: HTMLButtonElement | null = null;
+    private zhugeliangButton: HTMLButtonElement | null = null;
     private listPanel: HTMLDivElement | null = null;
     private followBanner: HTMLDivElement | null = null;
     public isListOpen: boolean = false;
@@ -257,6 +260,7 @@ export class CameraFollowUI {
         btn.addEventListener('click', () => this.onYuefeiExpedition?.());
 
         document.body.appendChild(btn);
+        this.yuefeiButton = btn;
     }
 
     // ─── 1c. 霍去病封狼居胥（固定于岳飞按钮下） ────────
@@ -303,6 +307,7 @@ export class CameraFollowUI {
         btn.addEventListener('click', () => this.onHuoQubingExpedition?.());
 
         document.body.appendChild(btn);
+        this.huoqubingButton = btn;
     }
 
     // ─── 1d. 诸葛亮北伐中原（固定于霍去病按钮下） ────────
@@ -349,6 +354,7 @@ export class CameraFollowUI {
         btn.addEventListener('click', () => this.onZhugeLiangExpedition?.());
 
         document.body.appendChild(btn);
+        this.zhugeliangButton = btn;
     }
 
     // ─── 2. 军团列表面板（z-index 高于岳飞/霍去病/诸葛亮按钮，展开时盖住下层按钮） ────────
@@ -639,6 +645,9 @@ export class CameraFollowUI {
             this.preScene13ListOpen = true;
         }
         this.closeList();
+        for (const button of [this.listButton, this.yuefeiButton, this.huoqubingButton, this.zhugeliangButton]) {
+            if (button) button.style.display = 'none';
+        }
         if (this.followBanner && this.followBanner.style.display !== 'none') {
             this.preScene13FollowBannerVisible = true;
             this.followBanner.style.display = 'none';
@@ -649,6 +658,9 @@ export class CameraFollowUI {
 
     /** 退 13 战斗场景时恢复展开状态 */
     public onExitBattleScene13(): void {
+        for (const button of [this.listButton, this.yuefeiButton, this.huoqubingButton, this.zhugeliangButton]) {
+            if (button) button.style.display = '';
+        }
         if (this.preScene13ListOpen) {
             this.preScene13ListOpen = false;
             this.openList();
