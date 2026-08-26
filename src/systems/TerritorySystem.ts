@@ -39,6 +39,64 @@ import {
     MACRO_HIDDEN_INFRA_PANES,
 } from '../config/StrategicView';
 
+// ── [2026-08-26 实验] 小城 DE 建筑组合（中间磨坊 + 周围一圈 6 个）──
+// 确定性随机（以 cityId 为种子，重渲染不闪烁）
+function deHashString(s: string): number {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return h >>> 0;
+}
+function deMulberry32(seed: number): () => number {
+    let a = seed >>> 0;
+    return () => {
+        a |= 0; a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+// 实验白名单：先只对特诺奇提特兰（阿兹特克 MESO）做小城组合渲染
+const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
+// 小城建筑组成：房屋×3 + 兵营 + 铁匠铺 + 靶场（中间磨坊另算）
+const DE_SMALL_CITY_RING = ['HOUSE', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE'];
+
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
+    const rnd = deMulberry32(deHashString(cityId));
+    const ring = [...DE_SMALL_CITY_RING];
+    for (let i = ring.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [ring[i], ring[j]] = [ring[j], ring[i]];
+    }
+    const rotation = rnd() * 360;
+    // zoom 8/9/10 常用 → 建筑整体放大；建筑之间更近（radius 收小，相邻轻微重叠）
+    const W = baseSize * 1.7;
+    const H = baseSize * 1.7;
+    const millW = baseSize * 0.50;
+    const ringW = baseSize * 0.36;
+    const radius = baseSize * 0.34;
+    const plazaD = baseSize * 0.95;
+    const roadW = baseSize * 0.13;
+    const roadL = baseSize * 1.3;
+
+    const parts: string[] = [];
+    // 道路底图：圆形泥土广场 + 4 条放射道路（米字）
+    parts.push(`<div style="position:absolute;left:50%;top:50%;width:${plazaD.toFixed(1)}px;height:${plazaD.toFixed(1)}px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 50% 50%, rgba(150,115,72,0.62) 0%, rgba(128,96,58,0.45) 55%, rgba(108,80,48,0.30) 76%, rgba(108,80,48,0) 100%);z-index:0;"></div>`);
+    for (let i = 0; i < 4; i++) {
+        const a = (rotation + i * 45) % 180;
+        parts.push(`<div style="position:absolute;left:50%;top:50%;width:${roadW.toFixed(1)}px;height:${roadL.toFixed(1)}px;transform:translate(-50%,-50%) rotate(${a.toFixed(1)}deg);background:linear-gradient(90deg, rgba(150,115,72,0) 0%, rgba(150,115,72,0.55) 12%, rgba(150,115,72,0.55) 88%, rgba(150,115,72,0) 100%);border-radius:${(roadW / 2).toFixed(1)}px;z-index:1;"></div>`);
+    }
+    // 中间磨坊（核心）
+    parts.push(`<img src="/SUCAI_BUILDING/${style}_MILL_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${millW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:3;" />`);
+    // 周围一圈 6 个
+    ring.forEach((b, i) => {
+        const angle = (rotation + i * 60 + (rnd() * 12 - 6)) * Math.PI / 180;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        parts.push(`<img src="/SUCAI_BUILDING/${style}_${b}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${ringW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${b === 'HOUSE' ? 2 : 4};" />`);
+    });
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
+
 export class TerritorySystem {
     private map: GameMap;
     private factionManager: FactionManager;
@@ -1098,12 +1156,14 @@ export class TerritorySystem {
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
                      ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
-                         ${city.image
-                             ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
-                                 width: ${baseSize}px; height: auto;
-                                 transform: ${transform};
-                             ">`
-                             : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`}
+                         ${DE_CITY_EXPERIMENT.has(city.id)
+                             ? buildDeSmallCityStackHtml(baseSize, city.id, 'MESO')
+                             : (city.image
+                                 ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
+                                     width: ${baseSize}px; height: auto;
+                                     transform: ${transform};
+                                 ">`
+                                 : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`)}
                      </div>` : ''}
                      ${flagBodyHtml}
                  </div>`,
