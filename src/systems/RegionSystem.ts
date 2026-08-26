@@ -42,7 +42,10 @@ export type RegionType =
     | 'BERBER'      // 柏柏尔 (马格里布、北非)
     | 'AMERICA'     // 美洲 (阿兹特克/玛雅/印加/马普切/穆伊斯卡/图皮)[2026-08-24 新增]
     | 'AFRICA'      // 非洲 (马里/埃塞俄比亚)[2026-08-24 新增]
-    | 'MALAY';      // 马来 (马六甲/满剌加)[2026-08-24 新增]
+    | 'MALAY'      // 马来 (马六甲/满剌加)[2026-08-24 新增]
+    | 'ANDE'       // 安第斯 (印加/马普切/穆伊斯卡/图皮)[2026-08-27 拆美洲新增]
+    | 'PURU'       // 南印度 (达罗毗荼/朱罗/潘地亚)[2026-08-27 拆印度新增]
+    | 'ORIE';      // 阿拉伯 (埃及/阿拉伯半岛/黎凡特)[2026-08-27 拆西亚新增]
 // [2026-08-19 主人定·收敛 18 大文化] GREEK → LATIN、NUERGAN → NORTHEAST 已并入，
 //   两者的城池 region 已改写、旧值由 LEGACY_REGION_MAP 兜底。勿再新增这两个枚举。
 
@@ -52,8 +55,8 @@ export const REGION_ORDER: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'INDIA', 'WEST_ASIA',
-    'AMERICA', 'AFRICA', 'MALAY'
+    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ORIE',
+    'AMERICA', 'ANDE', 'AFRICA', 'MALAY'
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -82,6 +85,9 @@ export const REGION_LABELS: Record<RegionType, string> = {
     AMERICA: '美洲',
     AFRICA: '非洲',
     MALAY: '马来',
+    ANDE: '安第斯',
+    PURU: '南印度',
+    ORIE: '阿拉伯',
 };
 
 /**
@@ -116,6 +122,9 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     AMERICA: '美洲',
     AFRICA: '非洲',
     MALAY: '马来',
+    ANDE: '安第斯',
+    PURU: '达罗毗荼',
+    ORIE: '阿拉伯',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -288,6 +297,9 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     AMERICA: '#6d4c41', // 棕（美洲）[2026-08-24]
     AFRICA: '#9e9d24',  // 橄榄（非洲）[2026-08-24]
     MALAY: '#00838f',   // 青（马来）[2026-08-24]
+    ANDE: '#ff8f00',  // 琥珀（安第斯金）[2026-08-27]
+    PURU: '#c62828',  // 深红（达罗毗荼）[2026-08-27]
+    ORIE: '#00695c',  // 深绿（伊斯兰绿）[2026-08-27]
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -499,6 +511,24 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/dianqian_big.png'),
         pass: resolvePath('/cities/dianqian_pass.png')
     },
+    ANDE: { // ⚠️ [2026-08-27 新增] 暂借拉丁图标（安第斯石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    PURU: { // ⚠️ [2026-08-27 新增] 暂借印度图标（南印度，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    ORIE: { // ⚠️ [2026-08-27 新增] 暂借西亚图标（中东阿拉伯，待专属素材）
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -603,6 +633,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     AFRICA:       ['city_aksum'],                     // 阿克苏姆 (阿克苏姆帝国都; 2026-08-24 新增非洲区)
     MALAY:        ['city_malacca'],                   // 马六甲 (满剌加苏丹国都; 2026-08-24 新增马来区)
+    ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
+    PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)
+    ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

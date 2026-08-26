@@ -59,6 +59,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     AMERICA:      'aztec',       // 美洲 → 阿兹特克（待建势力对齐）
     AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
     MALAY:        'malacca',     // 马来 → 满剌加（待建势力对齐）
+    ANDE:         'inca',        // 安第斯 → 印加（待建势力对齐）
+    PURU:         'zhuluo',      // 南印度 → 朱罗（待建势力对齐）
+    ORIE:         'womaya',      // 阿拉伯 → 倭马亚（待建势力对齐）
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

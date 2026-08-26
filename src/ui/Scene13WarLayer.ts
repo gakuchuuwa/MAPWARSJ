@@ -209,6 +209,9 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     AMERICA:      { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     AFRICA:       { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     MALAY:        { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    ANDE:         { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    PURU:         { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
+    ORIE:         { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
 };
 
 /**
@@ -1152,6 +1155,9 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
     AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
     MALAY: 'SEAS',    // [2026-08-24] 马来东南亚
+    ANDE: 'ANDE',     // [2026-08-27] 安第斯石构（印加/马普切/穆伊斯卡）
+    PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
+    ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
 };
 /**
  * 🔴 [2026-08-26 主人：「DE 中的城堡，分别安置在战斗模式中，现在没有把所有的城堡都用上」]

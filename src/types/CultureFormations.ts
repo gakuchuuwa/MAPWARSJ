@@ -92,6 +92,9 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     AMERICA:      'MIXED',    // 美洲步+鹰武士
     AFRICA:       'MIXED',    // 非洲步+骆驼
     MALAY:        'INFANTRY', // 马来近战/海军
+    ANDE:         'MIXED',    // 安第斯步+鹰武士
+    PURU:         'ELEPHANT', // 南印度战象（步象）
+    ORIE:         'CAVALRY',  // 阿拉伯骆驼骑（纯骑）
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -160,6 +163,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     AMERICA:      'fish_scale',  // 美洲步兵主力（阿兹特克/玛雅/印加）
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
     MALAY:        'fish_scale',  // 马来近战主力
+    ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
+    PURU:         'fish_scale',  // 南印度象兵主力（朱罗/潘地亚）
+    ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1393,6 +1399,9 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     AMERICA:      LATIN_TIERS,      // ⚠️ [2026-08-24] 暂复用拉丁编成（美洲步兵），待定制
     AFRICA:       BERBER_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
     MALAY:        DIANQIAN_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
+    ANDE:         LATIN_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
+    PURU:         INDIA_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
+    ORIE:         BERBER_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -1422,6 +1431,9 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     AMERICA:      '美洲军团',
     AFRICA:       '非洲军团',
     MALAY:        '马来军团',
+    ANDE:         '安第斯军团',
+    PURU:         '达罗毗荼军团',
+    ORIE:         '阿拉伯军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

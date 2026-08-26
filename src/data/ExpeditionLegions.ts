@@ -33,6 +33,7 @@ import { STEPPE_EXPEDITION_ELITE_LEGIONS } from './SteppeExpeditionLegions';
 import { WESTERN_EXPEDITION_ELITE_LEGIONS } from './WesternExpeditionLegions';
 import { CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS } from './CentralAsiaExpeditionLegions';
 import { WEST_ASIA_EXPEDITION_ELITE_LEGIONS } from './WestAsiaExpeditionLegions';
+import { ORIE_EXPEDITION_ELITE_LEGIONS } from './OrieExpeditionLegions';
 import { TIBET_EXPEDITION_ELITE_LEGIONS } from './TibetExpeditionLegions';
 import { DIANQIAN_EXPEDITION_ELITE_LEGIONS } from './DianQianExpeditionLegions';
 import { LINGNAN_EXPEDITION_ELITE_LEGIONS } from './LingnanExpeditionLegions';
@@ -45,8 +46,10 @@ import { SLAVIC_EXPEDITION_ELITE_LEGIONS } from './SlavicExpeditionLegions';
 import { GERMANIC_EXPEDITION_ELITE_LEGIONS } from './GermanicExpeditionLegions';
 import { LATIN_EXPEDITION_ELITE_LEGIONS } from './LatinExpeditionLegions';
 import { INDIA_EXPEDITION_ELITE_LEGIONS } from './IndiaExpeditionLegions';
+import { PURU_EXPEDITION_ELITE_LEGIONS } from './PuruExpeditionLegions';
 import { BERBER_EXPEDITION_ELITE_LEGIONS } from './BerberExpeditionLegions';
 import { AMERICA_EXPEDITION_ELITE_LEGIONS } from './AmericaExpeditionLegions';
+import { ANDE_EXPEDITION_ELITE_LEGIONS } from './AndeExpeditionLegions';
 import { AFRICA_EXPEDITION_ELITE_LEGIONS } from './AfricaExpeditionLegions';
 import { MALAY_EXPEDITION_ELITE_LEGIONS } from './MalayExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
@@ -67,6 +70,7 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...WESTERN_EXPEDITION_ELITE_LEGIONS,
   ...CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS,
   ...WEST_ASIA_EXPEDITION_ELITE_LEGIONS,
+  ...ORIE_EXPEDITION_ELITE_LEGIONS,
   ...TIBET_EXPEDITION_ELITE_LEGIONS,
   ...DIANQIAN_EXPEDITION_ELITE_LEGIONS,
   ...LINGNAN_EXPEDITION_ELITE_LEGIONS,
@@ -79,8 +83,10 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...GERMANIC_EXPEDITION_ELITE_LEGIONS,
   ...LATIN_EXPEDITION_ELITE_LEGIONS,
   ...INDIA_EXPEDITION_ELITE_LEGIONS,
+  ...PURU_EXPEDITION_ELITE_LEGIONS,
   ...BERBER_EXPEDITION_ELITE_LEGIONS,
   ...AMERICA_EXPEDITION_ELITE_LEGIONS,
+  ...ANDE_EXPEDITION_ELITE_LEGIONS,
   ...AFRICA_EXPEDITION_ELITE_LEGIONS,
   ...MALAY_EXPEDITION_ELITE_LEGIONS,
 };
