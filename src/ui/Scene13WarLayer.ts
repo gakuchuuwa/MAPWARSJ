@@ -3121,8 +3121,8 @@ export class Scene13WarLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onEnterBattleScene13?.();
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
-        // 🔴 [2026-08-23 主人定] 开战自动折叠战斗面板（最小化避开战场视野），战后 stop 里恢复展开
-        game?.combatUI?.setCollapsed?.(true);
+        // 🔴 [2026-08-26 主人定] 战术模式专用 UI 布局：立绘分置左下/右下，血槽在上，科技在下
+        game?.combatUI?.syncScene13WarStart?.(init);
 
         // [2026-08-11 势力本色] 攻守双方交给主游戏的 SpriteTinter 按 factionId 染色，
         // 与地图上的军团、旗帜、领土同一套色，不另起炉灶。
@@ -3602,8 +3602,8 @@ export class Scene13WarLayer {
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
         this.lingering = false;
-        // 🔴 [2026-08-23 主人定] 战后恢复战斗面板（开战 start 里已折叠最小化）
-        (window as any).game?.combatUI?.setCollapsed?.(false);
+        // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局
+        (window as any).game?.combatUI?.applyScene13Layout?.(false);
         if (this.active) {
             // [2026-08-11 诊断] 谁把演出停掉的。over=false 还被停 = 外部提前收场
             let field = 0, pool = 0;
@@ -4321,10 +4321,10 @@ export class Scene13WarLayer {
             }
             ctx.restore();
 
-            // 2. 表层次级微波干涉（微小角度反向微扰，产生大江波涌自然感）
+            // 2. 表层次级微波干涉（微小角度反向微扰，产生大江/海面波光粼粼自然感）
             if (pat) {
                 ctx.save();
-                ctx.globalAlpha = a * 0.28;
+                ctx.globalAlpha = a * 0.22;
                 const dx2 = (-t * 10) % tw;
                 const dy2 = (t * 16) % th;
                 ctx.translate(dx2, dy2);
@@ -4333,10 +4333,10 @@ export class Scene13WarLayer {
                 ctx.restore();
             }
 
-            // 3. 河心深水沉降与水色增强（微弱青蓝光）
+            // 3. 清澈水色微光增益（轻柔碧蓝浅水微光，绝不用深黑压暗）
             ctx.save();
-            ctx.globalAlpha = a * 0.16;
-            ctx.fillStyle = '#082848';
+            ctx.globalAlpha = a * 0.08;
+            ctx.fillStyle = '#60c8e8';
             ctx.fillRect(bb.x, bb.y, bb.w, bb.h);
             ctx.restore();
 

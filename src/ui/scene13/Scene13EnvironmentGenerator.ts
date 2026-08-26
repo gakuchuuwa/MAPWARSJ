@@ -1112,21 +1112,18 @@ function buildCoastline(
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
     mark(deep); mark(shallow); mark(beach);
 
-    // 1. 外海深水：按气候取色（地中海 wt5 蓝绿 / 北欧 wt2 深蓝 / 热带 river_clean_green /
-    //    沙漠 wt_yellow2 含沙黄 / 冬季结冰 ic2）。全球一个色是硬伤。
+    // 1. 外海/近海水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green，绝无深海暗黑）
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
     if (deep.length > 0) {
-        // blur 必须给：不给的话等距菱形格的接缝会在深色水面上露成一片网格花纹
-        //（原来整片用浅色 sh2 看不太出来，换成深蓝一眼就是织物纹）。
-        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 1, category: 'shore', blur: 14 });
+        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 0.96, category: 'shore', blur: 12 });
     }
-    // 2. 近岸浅滩（sh2 = 能看见水下沙底的清透浅水），压在深水与沙滩之间做过渡
+    // 2. 近岸浅滩（sh2 = 能看见水下沙底的清透浅水），压在海水与沙滩之间做过渡
     if (shallow.length > 0) {
-        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 1, category: 'shore', blur: 10 });
+        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 0.78, category: 'shore', blur: 12 });
     }
     // 3. 柔和沙滩过渡边缘（DE 标准岸线衔接）
     const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
-    patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.92, category: 'shore' });
+    patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.88, category: 'shore', blur: 10 });
 
     // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
@@ -1143,7 +1140,7 @@ function buildRiver(
     VH: number,
     rng: RandomSource,
     patches: TerrainPatchPlan[],
-    _objects: EnvironmentObjectPlan[],
+    objects: EnvironmentObjectPlan[],
     occupied: Set<string>,
     theme: DeMapThemePalette,
     season: 0 | 1 | 2 = 0,
@@ -1153,32 +1150,61 @@ function buildRiver(
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
 ): WaterChecker {
-    // 🌊 DE 原版 Rivers 规范：大江横贯中轴，清澈江水主导，岸边紧贴草岸
-    // 🔴 [2026-08-23 主人改] DE 化大江：更窄 + 更蜿蜒 + 深浅分层
-    //   窄：半宽 40±7（总宽 66~94px）——原 100±15（总宽 170~230px）太宽；
-    //   深浅：深水核心(不透明) + 浅水环(半透明透出地面) → 河岸 草→浅→深 渐变（DE 渡口河经典）。
-    const numPts = 36;
-    const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
-    const baseCenterX = VW * 0.52;
+    // 🌊 DE 原版 Rivers / Crossing 规范（2026-08-26 美化重构）：
+    //   1. Catmull-Rom 样条平滑蜿蜒河道，消除僵硬折线与塑料感；
+    //   2. 四层自然河岸分层：湿泥沙岸 (beach_wet) → 清透浅水 (sh2) → 碧绿/蔚蓝江水核心 (river_clean_green/wtr)；
+    //   3. 丰富水岸生态：沿岸点缀水草芦苇 (REEDS/WATER_LILY)、河滩鹅卵石与湿石 (ROCK_BEACH/ROCK1/ROCK2)。
+    
+    // 1. 生成 7 个稀疏控制点并用 Catmull-Rom 密集插值
+    const numControls = 7;
+    const controls: Array<{ x: number; y: number }> = [];
+    const baseCenterX = VW * 0.50;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
-    const baseHalfW = 40;    // 河面半宽（px）
-    const halfWVary = 7;     // 半宽起伏
-    const shallowDepth = 20; // 浅水环宽度（深水边缘外，px）
 
-    for (let i = 0; i <= numPts; i++) {
-        const t = i / numPts;
-        // 平缓自然蜿蜒（窄河更显蛇曲）
-        const curveOffset = Math.sin(t * Math.PI * 2.0 + phase1) * 58 + Math.cos(t * Math.PI * 4.0 + phase2) * 24;
-        const x = baseCenterX + curveOffset;
-        const y = -TILE_H * 2 + (VH + TILE_H * 4) * t;
-        const wW = baseHalfW + Math.sin(t * Math.PI * 2.5 + phase1) * halfWVary; // 江面半宽 33~47px
+    const yMin = -TILE_H * 2;
+    const yMax = VH + TILE_H * 2;
+    const controlStep = (yMax - yMin) / (numControls - 1);
+
+    for (let i = 0; i < numControls; i++) {
+        const y = yMin + i * controlStep;
+        const t = i / (numControls - 1);
+        // 自然大 S 蛇曲弯折
+        const offset = Math.sin(t * Math.PI * 2.0 + phase1) * 65 + Math.cos(t * Math.PI * 3.5 + phase2) * 28;
+        const x = Math.max(VW * 0.32, Math.min(VW * 0.68, baseCenterX + offset));
+        controls.push({ x, y });
+    }
+
+    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
+        const t2 = t * t, t3 = t2 * t;
+        return 0.5 * ((2 * p1) + (-p0 + p2) * t
+            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
+            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    };
+
+    const numSamplePts = 64;
+    const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
+    const baseHalfW = 38;    // 河面半宽（px）
+    const halfWVary = 8;     // 弯道半宽起伏
+    const shallowDepth = 22; // 浅水环宽度（px）
+    const bankDepth = 20;    // 湿泥沙岸宽度（px）
+
+    for (let i = 0; i <= numSamplePts; i++) {
+        const y = yMin + (yMax - yMin) * (i / numSamplePts);
+        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y - yMin) / controlStep)));
+        const p0 = controls[Math.max(0, segment - 1)];
+        const p1 = controls[segment];
+        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
+        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
+        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
+        const x = catmullRom(p0.x, p1.x, p2.x, p3.x, t);
+        const wW = baseHalfW + Math.sin(i / numSamplePts * Math.PI * 3.0 + phase1) * halfWVary;
         pts.push({ x, y, nx: 0, ny: 0, wW });
     }
 
-    for (let i = 0; i <= numPts; i++) {
+    for (let i = 0; i <= numSamplePts; i++) {
         const prev = pts[Math.max(0, i - 1)];
-        const next = pts[Math.min(numPts, i + 1)];
+        const next = pts[Math.min(numSamplePts, i + 1)];
         const dx = next.x - prev.x;
         const dy = next.y - prev.y;
         const len = Math.hypot(dx, dy) || 1;
@@ -1187,46 +1213,85 @@ function buildRiver(
     }
 
     const waterCells: Array<[number, number]> = [];
-    const shallowCells: Array<[number, number]> = []; // 岸边浅水环（深水外侧）
+    const shallowCells: Array<[number, number]> = [];
+    const bankCells: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
             let minDist = 999999;
-            for (let k = 0; k <= numPts; k++) {
+            for (let k = 0; k <= numSamplePts; k++) {
                 const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
                 if (d < minDist) minDist = d;
             }
             if (minDist < baseHalfW) {
                 waterCells.push([gx, gy]);
             } else if (minDist < baseHalfW + shallowDepth) {
-                shallowCells.push([gx, gy]); // 江岸浅水环
+                shallowCells.push([gx, gy]);
+            } else if (minDist < baseHalfW + shallowDepth + bankDepth) {
+                bankCells.push([gx, gy]);
             }
         }
     }
 
-    for (const [x, y] of waterCells) occupied.add(x + ',' + y);
-    for (const [x, y] of shallowCells) occupied.add(x + ',' + y);
+    for (const [x, y] of waterCells) occupied.add(`${x},${y}`);
+    for (const [x, y] of shallowCells) occupied.add(`${x},${y}`);
+    for (const [x, y] of bankCells) occupied.add(`${x},${y}`);
 
-    const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.62 }));
-    const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.62 })).reverse();
-    const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth), y: p.y + p.ny * (p.wW + shallowDepth) * 0.62 }));
-    const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth), y: p.y - p.ny * (p.wW + shallowDepth) * 0.62 })).reverse();
+    // 等距投影比例多边形边界
+    const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
+    const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
+    const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth), y: p.y + p.ny * (p.wW + shallowDepth) * 0.55 }));
+    const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth), y: p.y - p.ny * (p.wW + shallowDepth) * 0.55 })).reverse();
+    const bL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth + bankDepth), y: p.y + p.ny * (p.wW + shallowDepth + bankDepth) * 0.55 }));
+    const bR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth + bankDepth), y: p.y - p.ny * (p.wW + shallowDepth + bankDepth) * 0.55 })).reverse();
 
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
-    // 先铺浅水环（同一水贴图·半透明 → 透出地面 = 浅水），再铺深水核心（不透明覆盖内侧）。
-    //    窄条带用较小 blur（深 8 / 浅 12）→ DE 式清晰河岸，不再是整片高斯糊。
-    if (shallowCells.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.50, category: 'shore', blur: 12 });
+    const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
+    const wetBankTile = actualBeachTile === 'des' ? 'des' : 'beach_wet';
+
+    // 由外向内四层渲染：
+    // 1. 湿泥沙岸过渡（消除河岸与陆地草皮的生硬交界）
+    if (bankCells.length > 0) {
+        patches.push({ tile: wetBankTile, cells: bankCells, polygon: [...bL, ...bR], alpha: 0.80, category: 'shore', blur: 14 });
     }
+    // 2. 清透见底近岸浅水（sh2 浅水材质，透出水下泥沙河床）
+    if (shallowCells.length > 0) {
+        patches.push({ tile: 'sh2', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.72, category: 'shore', blur: 12 });
+    }
+    // 3. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）
     if (waterCells.length > 0) {
         patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 8 });
     }
 
+    // 4. 水岸自然生态点缀：芦苇、睡莲、河滩湿石
+    const decorCount = 8;
+    for (let i = 0; i < decorCount; i++) {
+        const tIdx = Math.floor((i + rng.next() * 0.8) / decorCount * (numSamplePts - 1));
+        const pt = pts[tIdx];
+        if (!pt || pt.y < 30 || pt.y > VH - 30) continue;
+        const side = rng.chance(0.5) ? 1 : -1;
+        const dist = pt.wW + shallowDepth * (0.3 + rng.next() * 0.9);
+        const oxX = pt.x + side * pt.nx * dist;
+        const oyY = pt.y + side * pt.ny * dist * 0.55;
+
+        // 水生植物（芦苇/睡莲）或湿石卵石
+        const asset = rng.pick(['REEDS', 'REEDS', 'WATER_LILY', 'ROCK_BEACH', 'ROCK1', 'ROCK2', 'ROCK_SEA1']);
+        objects.push({
+            asset,
+            x: oxX,
+            y: oyY,
+            layer: 'world',
+            z: 0,
+            flip: rng.chance(0.5),
+            frame: rng.int(0, 99999),
+        });
+    }
+
     return (px: number, py: number): boolean => {
-        for (let k = 0; k <= numPts; k += 2) {
-            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW + shallowDepth) return true;
+        for (let k = 0; k <= numSamplePts; k += 2) {
+            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW + 4) return true;
         }
         return false;
     };
@@ -1324,7 +1389,7 @@ function buildLake(
         patches.push({ tile: beachTile, cells: sand, alpha: 0.85, category: 'shore', blur: 14 });
     }
     if (shallow.length > 0) {
-        patches.push({ tile: waterTile, cells: shallow, alpha: 0.52, category: 'shore', blur: 12 });
+        patches.push({ tile: 'sh2', cells: shallow, alpha: 0.72, category: 'shore', blur: 12 });
     }
     if (deep.length > 0) {
         patches.push({ tile: waterTile, cells: deep, alpha: 0.96, category: 'shore', blur: 8 });

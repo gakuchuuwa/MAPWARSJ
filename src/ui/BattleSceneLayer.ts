@@ -85,10 +85,24 @@ export class BattleSceneLayer {
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
         const lMap = this.map?.getLeafletMap();
         if (!lMap) return;
-        // 记住进入前 zoom，退出时带回（ZoomController.currentZoom 不感知 flyTo）
+        // 记住进入前 zoom：本方法不再改缩放，但别处若改了，exit 仍据此带回（幂等，没变就空过）
         this.preZoom = lMap.getZoom();
-        // 演出档 13：1.6s 平滑飞入（8/9/10 镜头体系不动，13 是独立演出视角）
-        lMap.flyTo([center.lat, center.lng], 13, { duration: 1.6 });
+        // 🔴 [2026-08-26 主人定「直接动手」] 原来这里是 `lMap.flyTo([center], 13, {duration:1.6})`，已删。
+        //
+        // 依据：**Scene13WarLayer 全文不读地图缩放**（grep zoom/getZoom 零命中）。
+        // 它是 `position:fixed; inset:0` 的全屏 canvas，宽高取 window.innerWidth/innerHeight，
+        // 战场用自己的等距网格（isoCellX/isoCellY）算坐标，与经纬度和 Leaflet zoom 完全无关。
+        // 也就是说战斗画面长什么样跟底图是 zoom 9 还是 13 毫无关系 —— 而底图被这块
+        // 不透明的全屏战场整个盖住，观众一个像素也看不到。
+        //
+        // 代价却是观众看得见的：flyTo 那 1.6s 里 13 画布还没铺上，露出来的正是
+        // 「正在放大的战略地图」；飞到位后还要等素材解码（292 局实测中位 7.2s、p90 18.6s），
+        // 这期间露的还是那张图。一半的战斗要让观众盯着它看 8 秒以上，然后它被完全盖掉。
+        // 这是 13 早期按「缩放档位」设计留下的包袱，现在只剩副作用，故去掉。
+        //
+        // 8/9/10 不受影响：本方法此后不再触碰地图缩放，退出时 zoom 与进入前一致。
+        // center 参数保留：调用方（GameAppCombatHooks）仍按战场中心传入，
+        // 且 tick() 的每帧跟拍仍需要战场位置，签名不动。
     }
 
     /**
