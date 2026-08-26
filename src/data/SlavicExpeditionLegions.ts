@@ -19,7 +19,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     gesake: { name: '哥萨克骑兵', tier: 2 },          // 塞契·赫梅利：扎波罗热哥萨克
     baojialiya: { name: '查雷维茨卫', tier: 2 },          // 特尔诺沃·阿森一世：查雷维茨要塞沙皇禁卫
     saierdika: { name: '普利斯卡军', tier: 2 },          // 索非亚·克鲁姆：811普利斯卡歼灭拜占庭军
-    saierweiya: { name: '杜尚军团', tier: 2 },          // 贝尔格莱德·斯蒂芬杜尚；避势力「塞尔维亚」叠字
+    saierweiya: { name: '杜尚兵团', tier: 2 },          // 贝尔格莱德·斯蒂芬杜尚；避势力「塞尔维亚」叠字
     moerdaweiya: { name: '瓦斯卢伊军', tier: 2 },          // 雅西·斯蒂芬大帝：1475以少胜多
     piyasite: { name: '波兰骑士', tier: 2 },          // 克拉科夫·卡齐米日：格伦瓦尔德主力
     litaowan: { name: '列提斯骑兵', tier: 2 },
@@ -33,7 +33,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     luosi: { name: '瓦兰吉卫队', tier: 1 },
     xieerpuhuofu_gongguo: { name: '波雅尔骑兵', tier: 1 },          // 谢尔普霍夫·弗拉基米尔：库利科沃伏击军团；莫斯科公国贵族重骑兵
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
-    pusikefu_gongheguo: { name: '圣三一军团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名
+    pusikefu_gongheguo: { name: '圣三一兵团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名
     bosi_puluosi: { name: '刻赤具装骑', tier: 2 },        // 潘提卡彭·琉孔一世：博斯普鲁斯具装重骑
     kelimiya: { name: '克里米骑', tier: 3 },          // 卡法·哈吉格来：克里米亚鞑靼骑兵
     lagusa: { name: '拉古萨舰队', tier: 3 },          // 拉古萨·德拉甘：亚得里亚海商船共和国
@@ -54,7 +54,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     deniesite: { name: '白堡守军', tier: 3 },          // 阿克曼·迈赫迈德
     // 格罗德诺·维托夫特：安置利普卡鞑靼骑从可考；禁造「立陶宛重骑」T1 → T3
     nieman: { name: '利普卡骑', tier: 3 },
-    beisilafu: { name: '谢尔盖军团', tier: 4 },          // 别尔哥罗德·谢尔盖；避势力「塞维里亚」叠字
+    beisilafu: { name: '谢尔盖兵团', tier: 4 },          // 别尔哥罗德·谢尔盖；避势力「塞维里亚」叠字
     siluoboda: { name: '洛潘河巡骑', tier: 3 },          // 哈尔科夫·多涅茨：洛潘河畔斯洛博达驻军（非史载「洛潘骑」专名）
     yedi: { name: '穆拉夫骑', tier: 3 },          // 沃罗涅日·萨布罗夫：守穆拉夫小道南疆骑戍
     weijiebusike_gongguo: { name: '奥尔格尔团', tier: 3 },          // 维捷布斯克·奥尔格尔德；避「维捷」叠字

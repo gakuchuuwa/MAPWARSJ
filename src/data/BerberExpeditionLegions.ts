@@ -8,7 +8,7 @@
 export const BERBER_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     buni: { name: '努米底亚骑', tier: 2 },       // 迦太基·汉尼拔：努米底亚柏柏尔轻骑，汉尼拔军骑兵核心
     mulabite: { name: '穆拉比特军', tier: 2 },   // 马拉喀什·塔什芬：穆拉比特柏柏尔王朝征服伊比利亚
-    aguelabu: { name: '易弗里军团', tier: 2 },   // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；避势力「阿格拉布」叠字
+    aguelabu: { name: '易弗里兵团', tier: 2 },   // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；避势力「阿格拉布」叠字
     babali: { name: '巴巴里舰队', tier: 3 },     // 阿尔及尔·巴巴罗萨：北非巴巴里海盗舰队
     telibolisi: { name: '巴巴里海盗', tier: 3 }, // 的黎波里·德拉古特：北非海盗身份可考 → T3
     talike: { name: '骆驼弓骑兵', tier: 3 },   // 丹吉尔·塔里克：柏柏尔骆驼弓骑兵（DE Camel Archer），711征服伊比利亚
