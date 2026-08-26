@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_HOUSE_AGE2",
+  "frames": 3,
+  "box_w": 260,
+  "box_h": 196,
+  "anchor_x": 142,
+  "anchor_y": 142,
+  "sld_source": "b_greek_house_age2"
+}

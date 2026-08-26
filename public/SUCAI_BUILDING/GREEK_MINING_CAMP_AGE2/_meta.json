@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MINING_CAMP_AGE2",
+  "frames": 1,
+  "box_w": 204,
+  "box_h": 144,
+  "anchor_x": 96,
+  "anchor_y": 92,
+  "sld_source": "b_greek_mining_camp_age2"
+}

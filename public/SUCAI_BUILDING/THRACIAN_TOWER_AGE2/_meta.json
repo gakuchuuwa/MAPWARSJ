@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_TOWER_AGE2",
+  "frames": 1,
+  "box_w": 184,
+  "box_h": 204,
+  "anchor_x": 128,
+  "anchor_y": 176,
+  "sld_source": "b_thracian_tower_age2"
+}

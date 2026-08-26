@@ -59,21 +59,21 @@ function deMulberry32(seed: number): () => number {
 // 实验白名单：先只对特诺奇提特兰（阿兹特克 MESO）做小城组合渲染
 const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
 
-// 各类建筑在据点内的相对占地尺寸比例（贴合 AoE2 格数比例）
+// 各类建筑在据点内的相对占地尺寸比例（2026-08-26 主人定「建筑大小尽量一致」：统一 0.40，塔细高略小 0.36，城镇中心稍大 0.42）
 const DE_BUILDING_SCALES: Record<string, number> = {
-    MILL: 0.46,
-    HOUSE: 0.28,
-    BARRACKS: 0.38,
-    ARCHERY_RANGE: 0.38,
-    BLACKSMITH: 0.35,
-    MARKET: 0.38,
-    TOWER: 0.26,
-    TOWN_CENTER: 0.50,
-    STABLE: 0.42,
+    MILL: 0.40,
+    HOUSE: 0.40,
+    BARRACKS: 0.40,
+    ARCHERY_RANGE: 0.40,
+    BLACKSMITH: 0.40,
+    MARKET: 0.40,
+    TOWER: 0.36,
+    TOWN_CENTER: 0.42,
+    STABLE: 0.40,
 };
 
-// 8 种建筑类型，每城随机剔 1 → 7 个全部扇区随机散布（主人 2026-08-26 定「8 中随机 7」）
-const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE'];
+// 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
+const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘按文化套用）──
 // 主人定：中国6区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
@@ -217,7 +217,6 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_POOL];
-    ring.splice(Math.floor(rnd() * ring.length), 1); // 8 选 7：随机剔除 1 种
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
@@ -242,10 +241,10 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
-    // 周围 6 个扇区随机散布（每建筑一个 60° 扇区，角度+半径双重扰动）
+    // 周围 8 个扇区随机散布（每建筑一个 45° 扇区，角度+半径双重扰动）
     const surround = ring.slice(1);
     surround.forEach((b, i) => {
-        const baseAngle = rotation + i * (360 / surround.length); // 6 建筑 = 60° 扇区
+        const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
         const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
         const r = (0.32 + rnd() * 0.10) * baseSize;               // 半径在 0.32~0.42 之间自然错落

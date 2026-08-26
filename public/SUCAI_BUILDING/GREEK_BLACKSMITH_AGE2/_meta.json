@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_BLACKSMITH_AGE2",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 216,
+  "anchor_x": 164,
+  "anchor_y": 172,
+  "sld_source": "b_greek_blacksmith_age2"
+}
