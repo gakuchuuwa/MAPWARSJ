@@ -6627,7 +6627,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/LATIN/watermarked_img_14994566293904846485.png": {
+        "/assets/LATIN/__多余__LATIN_01.png": {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": 25
@@ -6642,12 +6642,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 34
         },
-        "/assets/INDIA/watermarked_img_10829313076282358859.png": {
+        "/assets/INDIA/__多余__INDIA_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/INDIA/watermarked_img_1816844525663176723.png": {
+        "/assets/INDIA/__多余__INDIA_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 17
@@ -6687,7 +6687,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/CENTRAL_ASIA/watermarked_img_3097794264048603058.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -6
@@ -6707,7 +6707,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/STEPPE/watermarked_img_15465217961537202916.png": {
+        "/assets/STEPPE/__多余__STEPPE_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
@@ -6717,7 +6717,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/GERMANIC/watermarked_img_6652558146088166447.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_02.png": {
             "scale": 1.19,
             "offsetX": 12,
             "offsetY": 29
@@ -6727,7 +6727,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 12,
             "offsetY": 29
         },
-        "/assets/CENTRAL_ASIA/watermarked_img_442347503350117762.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_02.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -2
@@ -6737,7 +6737,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/SLAVIC/watermarked_img_12926825834556341400.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_01.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 4
@@ -6747,12 +6747,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/STEPPE/kuman_ketaian.png": {
+        "/assets/STEPPE/__闲置__STEPPE_85.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/STEPPE/watermarked_img_15039761481069653734.png": {
+        "/assets/STEPPE/__多余__STEPPE_01.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 4
@@ -6762,7 +6762,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/GERMANIC/watermarked_img_13116941455104916639.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_01.png": {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 15
@@ -6772,7 +6772,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/BERBER/watermarked_img_5744597125494328050.png": {
+        "/assets/BERBER/__多余__BERBER_01.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 4

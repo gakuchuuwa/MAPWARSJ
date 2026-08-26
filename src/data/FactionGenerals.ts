@@ -1052,7 +1052,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tupinijin: { generalId: 'gen_tibirica', generalName: '蒂巴里萨', portrait: '' },
     tuotuonake: { generalId: 'gen_chicomacatl', generalName: '奇科马卡特', portrait: '' },
     taino: { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '' },
-    guanche: { generalId: 'gen_doramas', generalName: '多拉曼特', portrait: '' },
+    guanche: { generalId: 'gen_bentejui', generalName: '本特胡伊', portrait: '' },
     fodejiao: { generalId: 'gen_noli', generalName: '诺利', portrait: '' },
     baiyiya: { generalId: 'gen_tome_sousa', generalName: '托梅', portrait: '' },
     yasuer: { generalId: 'gen_cipriano_figueiredo', generalName: '西普里亚诺', portrait: '' },
