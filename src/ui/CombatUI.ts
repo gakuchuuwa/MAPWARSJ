@@ -1120,7 +1120,8 @@ export class CombatUI {
             document.body.appendChild(el);
         };
         for (const el of [this.centerBackdrop, this.centerPanel,
-            this.leftPortraitFrame, this.rightPortraitFrame]) detach(el);
+            this.leftPortraitFrame, this.rightPortraitFrame,
+            this.leftTechBox, this.rightTechBox]) detach(el);
 
         // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
         for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
@@ -1136,7 +1137,7 @@ export class CombatUI {
             frame.style.display = 'block';
         }
 
-        // ② 上方条：血槽两端加长直达屏幕边缘，置于跟随军团信息上方
+        // ② 上方条：血槽两端加长直达屏幕边缘，地点战役标题与血槽无缝合二为一（极简一体化 38px 顶栏）
         if (this.centerPanel) {
             this.centerPanel.style.position = 'fixed';
             this.centerPanel.style.top = '0';
@@ -1145,10 +1146,12 @@ export class CombatUI {
             this.centerPanel.style.right = '0';
             this.centerPanel.style.width = '100vw';
             this.centerPanel.style.maxWidth = '100vw';
+            this.centerPanel.style.height = '38px';
             this.centerPanel.style.transform = 'none';
-            this.centerPanel.style.padding = '4px 0 0 0';
+            this.centerPanel.style.padding = '0';
+            this.centerPanel.style.margin = '0';
             this.centerPanel.style.alignItems = 'center';
-            this.centerPanel.style.justifyContent = 'flex-start';
+            this.centerPanel.style.justifyContent = 'center';
             this.centerPanel.style.zIndex = String(T.zIndex.panel);
             this.centerPanel.style.opacity = '1';
             this.centerPanel.style.visibility = 'visible';
@@ -1157,32 +1160,30 @@ export class CombatUI {
         if (this.healthBarContainer) {
             this.healthBarContainer.style.width = '100vw';
             this.healthBarContainer.style.maxWidth = '100vw';
+            this.healthBarContainer.style.height = '38px';
             this.healthBarContainer.style.margin = '0';
             this.healthBarContainer.style.borderRadius = '0';
             this.healthBarContainer.style.clipPath = 'none';
+            this.healthBarContainer.style.position = 'relative';
         }
+        // 战役标题居中浮现在血槽之上，与血槽浑然一体
         if (this.battleTitle) {
-            this.battleTitle.style.marginTop = '4px';
-            this.battleTitle.style.marginBottom = '4px';
-            this.battleTitle.style.fontSize = uiPx(T.typography.titleSize + 2);
+            this.battleTitle.style.position = 'absolute';
+            this.battleTitle.style.top = '50%';
+            this.battleTitle.style.left = '50%';
+            this.battleTitle.style.transform = 'translate(-50%, -50%)';
+            this.battleTitle.style.margin = '0';
+            this.battleTitle.style.padding = '0';
+            this.battleTitle.style.fontSize = '16px';
+            this.battleTitle.style.fontWeight = '900';
+            this.battleTitle.style.letterSpacing = '6px';
+            this.battleTitle.style.zIndex = '15';
+            this.battleTitle.style.pointerEvents = 'none';
+            this.battleTitle.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.95)) drop-shadow(0 2px 8px rgba(0,0,0,0.85))';
         }
-        // 中栏黑底跟随到顶部，直通全屏
+        // 隐藏多余的独立 64px 黑色大底板，释放全部纵向视野
         if (this.centerBackdrop) {
-            this.centerBackdrop.style.position = 'fixed';
-            this.centerBackdrop.style.top = '0';
-            this.centerBackdrop.style.bottom = 'auto';
-            this.centerBackdrop.style.left = '0';
-            this.centerBackdrop.style.right = '0';
-            this.centerBackdrop.style.width = '100vw';
-            this.centerBackdrop.style.maxWidth = '100vw';
-            this.centerBackdrop.style.height = '64px';
-            this.centerBackdrop.style.transform = 'none';
-            this.centerBackdrop.style.webkitMaskImage = 'none';
-            this.centerBackdrop.style.maskImage = 'none';
-            this.centerBackdrop.style.zIndex = String(T.zIndex.panel - 1);
-            this.centerBackdrop.style.opacity = '1';
-            this.centerBackdrop.style.visibility = 'visible';
-            this.centerBackdrop.style.display = 'block';
+            this.centerBackdrop.style.display = 'none';
         }
         // 🔴 删除血槽面板中的标签（skillsRow）与大地图多余信息
         if (this.skillsRow) this.skillsRow.style.display = 'none';
@@ -1195,17 +1196,24 @@ export class CombatUI {
         if (topHud) {
             topHud.style.display = 'none';
         }
-        // ③ 科技 → 屏幕下方左右分列
-        for (const [box, edge] of [[this.leftTechBox, 'left'], [this.rightTechBox, 'right']] as const) {
-            if (!box) continue;
-            box.style.position = 'fixed';
-            box.style.bottom = '1.8vh';
-            box.style.top = 'auto';
-            box.style[edge] = '50%';
-            box.style[edge === 'left' ? 'right' : 'left'] = 'auto';
-            box.style.transform = edge === 'left' ? 'translateX(-102%)' : 'translateX(102%)';
-            box.style.zIndex = String(T.zIndex.panel + 1);
-            box.style.color = '#e8dcc0';
+        // ③ 科技 → 屏幕下方居中左右分列
+        if (this.leftTechBox) {
+            this.leftTechBox.style.position = 'fixed';
+            this.leftTechBox.style.bottom = '1.8vh';
+            this.leftTechBox.style.top = 'auto';
+            this.leftTechBox.style.right = '50.5vw';
+            this.leftTechBox.style.left = 'auto';
+            this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
+            this.leftTechBox.style.color = '#e8dcc0';
+        }
+        if (this.rightTechBox) {
+            this.rightTechBox.style.position = 'fixed';
+            this.rightTechBox.style.bottom = '1.8vh';
+            this.rightTechBox.style.top = 'auto';
+            this.rightTechBox.style.left = '50.5vw';
+            this.rightTechBox.style.right = 'auto';
+            this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
+            this.rightTechBox.style.color = '#e8dcc0';
         }
     }
 

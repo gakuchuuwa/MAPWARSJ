@@ -1987,23 +1987,12 @@ export class LegionPhalanxDrawer {
             const pos = formation[i] ?? formation[0];
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
-            // 旗舰（r=0）钉在逻辑点；后随船沿航迹取点（距旗舰 |r|×shipDepth 弧长），横向偏移沿当前朝向法线
-            let dx: number, dy: number;
             // 阵内坐标：origX 为左右横向（列），origY 为前后纵深（排：r 为负代表后方，取反为正纵深）
             const origX = pos.c * shipSpread * cMult;
             const origY = -pos.r * shipDepth;
-            if (pos.r === 0) {
-                dx = center.x;
-                dy = center.y;
-            } else if (trail && trail.length >= 2 && LegionPhalanxDrawer.trailAlignedWithHeading(trail, sin, -cos)) {
-                const base = this.trailPointAt(trail, Math.abs(pos.r) * shipDepth);
-                dx = base.x + origX * cos;
-                dy = base.y + origX * sin;
-            } else {
-                // 航迹不足 / 航迹方向与当前朝向不一致（静止、待命、攻城转向）：标准旋转矩阵排开（并列长蛇成列）
-                dx = center.x + (origX * cos - origY * sin);
-                dy = center.y + (origX * sin + origY * cos);
-            }
+            // 旗舰与僚舰统一采用战术编队刚体旋转矩阵，步调、航速、朝向与旗舰完全同步
+            const dx = center.x + (origX * cos - origY * sin);
+            const dy = center.y + (origX * sin + origY * cos);
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];

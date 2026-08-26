@@ -1859,6 +1859,7 @@ export const FACTIONS: Faction[] = [
     { id: 'malacca', name: '满剌加' },        // 马六甲·满剌加苏丹国
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）
+    { id: 'pandiya', name: '潘地亚' },     // 马杜赖·潘地亚王朝（南印度泰米尔，朱罗宿敌）
     ];
 
 // @ts-ignore

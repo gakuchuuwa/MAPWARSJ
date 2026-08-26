@@ -110,21 +110,24 @@ export class NavalWakeDrawer {
         const headingX = sin;
         const headingY = -cos;
 
-        // ─── 1. 沿历史航迹绘制消散长拖尾（Water Wake Trail）────────────────
-        if (trail && trail.length >= 2 && backAsset && backAsset.loaded && backAsset.img) {
-            // 找到队尾船（r 最小）
-            let minR = 0;
-            for (const s of shipPositions) {
-                if (s.isAlive && s.r < minR) minR = s.r;
-            }
-            const tailDist = Math.abs(minR) * shipLength;
+        // 找到队首旗舰（r 最大/最前）与队尾船（r 最小/最后）
+        let frontShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
+        let rearShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
+        for (const s of shipPositions) {
+            if (!s.isAlive) continue;
+            if (!frontShip || s.r > frontShip.r) frontShip = s;
+            if (!rearShip || s.r < rearShip.r) rearShip = s;
+        }
 
-            // 拖尾段数（沿航迹往后拉出 4 段渐隐波纹）
+        // ─── 1. 沿历史航迹绘制消散长拖尾（Trailing Wake Trail）────────────────
+        if (trail && trail.length >= 2 && backAsset && backAsset.loaded && backAsset.img && rearShip) {
+            const tailDist = Math.abs(rearShip.r) * shipLength;
+
+            // 拖尾段数（沿航迹往后拉出 3 段自然渐隐消散水纹）
             const trailSteps = [
-                { dist: tailDist + shipLength * 0.5, alpha: 0.55, scaleMul: 1.05, frameOffset: 0 },
-                { dist: tailDist + shipLength * 1.1, alpha: 0.40, scaleMul: 1.15, frameOffset: 8 },
-                { dist: tailDist + shipLength * 1.8, alpha: 0.25, scaleMul: 1.25, frameOffset: 16 },
-                { dist: tailDist + shipLength * 2.6, alpha: 0.12, scaleMul: 1.35, frameOffset: 24 },
+                { dist: tailDist + shipLength * 0.6, alpha: 0.32, scaleMul: 1.05, frameOffset: 0 },
+                { dist: tailDist + shipLength * 1.3, alpha: 0.18, scaleMul: 1.18, frameOffset: 10 },
+                { dist: tailDist + shipLength * 2.2, alpha: 0.08, scaleMul: 1.30, frameOffset: 20 },
             ];
 
             for (const step of trailSteps) {
@@ -149,56 +152,51 @@ export class NavalWakeDrawer {
             ctx.globalAlpha = 1.0;
         }
 
-        // ─── 2. 每艘船的即时船尾尾波（Stern Wake）与船头破浪（Bow Wave）─────
-        for (let i = 0; i < shipPositions.length; i++) {
-            const ship = shipPositions[i];
-            if (!ship || !ship.isAlive) continue;
+        // ─── 2. 船队即时浪花：旗舰船首破浪（Bow Wave）+ 队尾翻波（Stern Wake）─────
+        const frameIndex = Math.floor(tick / 40) % 30;
 
-            const shipFrameOffset = i * 6;
-            const frameIndex = (Math.floor(tick / 40) + shipFrameOffset) % 30;
+        // 2.1 旗舰船首破浪（WAKE_FRONT）：领头前锋劈波斩浪
+        if (frontShip && frontAsset && frontAsset.loaded && frontAsset.img) {
+            const frontOffset = shipLength * 0.35;
+            const fx = frontShip.x + headingX * frontOffset;
+            const fy = frontShip.y + headingY * frontOffset;
 
-            // 2.1 船尾翻波（WAKE_BACK）：贴在船身偏后方
-            if (backAsset && backAsset.loaded && backAsset.img) {
-                const backOffset = shipLength * 0.30;
-                const bx = ship.x - headingX * backOffset;
-                const by = ship.y - headingY * backOffset;
+            const s = wakeScale * 0.95;
+            const w = frontAsset.meta.box_w * s;
+            const h = frontAsset.meta.box_h * s;
+            const left = fx - frontAsset.meta.anchor_x * s;
+            const top = fy - frontAsset.meta.anchor_y * s;
+            const sx = (frameIndex % frontAsset.meta.frames) * frontAsset.meta.box_w;
 
-                const s = wakeScale;
-                const w = backAsset.meta.box_w * s;
-                const h = backAsset.meta.box_h * s;
-                const left = bx - backAsset.meta.anchor_x * s;
-                const top = by - backAsset.meta.anchor_y * s;
-                const sx = (frameIndex % backAsset.meta.frames) * backAsset.meta.box_w;
-
-                ctx.globalAlpha = 0.75;
-                ctx.drawImage(
-                    backAsset.img,
-                    sx, 0, backAsset.meta.box_w, backAsset.meta.box_h,
-                    left, top, w, h
-                );
-            }
-
-            // 2.2 船头破浪（WAKE_FRONT）：贴在船身前方
-            if (frontAsset && frontAsset.loaded && frontAsset.img) {
-                const frontOffset = shipLength * 0.35;
-                const fx = ship.x + headingX * frontOffset;
-                const fy = ship.y + headingY * frontOffset;
-
-                const s = wakeScale * 0.95;
-                const w = frontAsset.meta.box_w * s;
-                const h = frontAsset.meta.box_h * s;
-                const left = fx - frontAsset.meta.anchor_x * s;
-                const top = fy - frontAsset.meta.anchor_y * s;
-                const sx = (frameIndex % frontAsset.meta.frames) * frontAsset.meta.box_w;
-
-                ctx.globalAlpha = 0.70;
-                ctx.drawImage(
-                    frontAsset.img,
-                    sx, 0, frontAsset.meta.box_w, frontAsset.meta.box_h,
-                    left, top, w, h
-                );
-            }
+            ctx.globalAlpha = 0.50;
+            ctx.drawImage(
+                frontAsset.img,
+                sx, 0, frontAsset.meta.box_w, frontAsset.meta.box_h,
+                left, top, w, h
+            );
         }
+
+        // 2.2 队尾船只翻波（WAKE_BACK）：贴在舰队末尾后方推水
+        if (rearShip && backAsset && backAsset.loaded && backAsset.img) {
+            const backOffset = shipLength * 0.30;
+            const bx = rearShip.x - headingX * backOffset;
+            const by = rearShip.y - headingY * backOffset;
+
+            const s = wakeScale;
+            const w = backAsset.meta.box_w * s;
+            const h = backAsset.meta.box_h * s;
+            const left = bx - backAsset.meta.anchor_x * s;
+            const top = by - backAsset.meta.anchor_y * s;
+            const sx = (frameIndex % backAsset.meta.frames) * backAsset.meta.box_w;
+
+            ctx.globalAlpha = 0.40;
+            ctx.drawImage(
+                backAsset.img,
+                sx, 0, backAsset.meta.box_w, backAsset.meta.box_h,
+                left, top, w, h
+            );
+        }
+
         ctx.globalAlpha = 1.0;
     }
 
