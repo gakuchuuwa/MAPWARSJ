@@ -3923,11 +3923,20 @@ export class Scene13WarLayer {
         ): DecorSprite => {
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
+            let px = s.x, py = s.y;
+            // 🔴 安全占地修正（2026-08-26）：若出兵口建筑落在水域/浅滩，向干燥陆地推进，避免营帐直接泡在水里
+            if (this.environmentPlan?.isWater) {
+                let safetyWalk = 0;
+                while (this.environmentPlan.isWater(px, py) && safetyWalk < 15) {
+                    px += (f === 0 ? 25 : -25);
+                    safetyWalk++;
+                }
+            }
             return {
                 asset: full,
                 frame: options?.frame ?? 0,
-                x: s.x,
-                y: s.y,
+                x: px,
+                y: py,
                 flip: options?.flip ?? (Math.random() < 0.5),
                 layer: 'world',
                 z: options?.z ?? 0,
