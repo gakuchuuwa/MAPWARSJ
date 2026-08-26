@@ -121,6 +121,8 @@ export interface Scene13EnvironmentPlan {
     elevation: number[][];
     terrainPatches: TerrainPatchPlan[];
     objects: EnvironmentObjectPlan[];
+    /** 水域碰撞/排斥检查器（输入屏幕 px, py，返回是否在水域中） */
+    isWater?: WaterChecker;
 }
 
 export interface Scene13EnvironmentInput {
@@ -672,7 +674,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         attachDeObjectObstruction(objects);
         return {
             seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
-            biome, deMapTheme: theme!.id, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects,
+            biome, deMapTheme: theme!.id, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects, isWater,
         };
     }
 
@@ -961,24 +963,35 @@ function generateElevation(
         return addMicroRelief(grid, gw, gh, rng, 0.55);
     }
     
-    // 🔴 [2026-08-22 主人定] 彻底告别单调大平原：即使是平原低地，亦随机生成 2~3 处自然起伏战术高地与缓坡丘陵
-    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
-        ? 3 + rng.int(0, 2)   // 山地/高原：3~4 片大型连绵高地丘陵群
-        : (elev !== null && elev >= 300)
-            ? 2 + rng.int(0, 2) // 丘陵台地：2~3 片错落战术高地
-            : 2 + rng.int(0, 2); // 平原低地：2~3 片自然缓坡起伏高台，打破一马平川
+    // ⛰️ DE 原版多尺度自然起伏高地与丘陵群生成系统（2026-08-26 主人指令升级）：
+    // 1. 彻底打破平原死板单调：生成错落有致的多尺度山丘（大高台 + 连绵山脊 + 缓坡小丘 + 鞍部山谷）；
+    // 2. 丰富的高程层次：Level 3 制高顶台 + Level 2 宽阔坡腰 + Level 1 坡脚基底 + 连绵微起伏；
+    // 3. 自然山峦形态：椭圆旋转山脊走向，叠加多频谐波扰动，让山峦自然蜿蜒延伸。
 
+    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
+        ? 5 + rng.int(0, 3)   // 山地/高原：5~7 处大型连绵山峦丘陵群
+        : (elev !== null && elev >= 300)
+            ? 4 + rng.int(0, 3) // 丘陵台地：4~6 处错落战术高地与起伏山包
+            : 3 + rng.int(0, 3); // 平原低地：3~5 处自然缓坡起伏高地，完美还原 DE 丰富起伏
+
+    // 预设高地丘陵生成参数列表（包含主高台与副丘陵）
     for (let i = 0; i < hillCount; i++) {
-        // 先在可见战场取丘心（中北/中南/中央错开分布），再反算到等距网格
-        const hillScreenX = VW * (0.18 + rng.next() * 0.64);
-        const hillScreenY = VH * (0.16 + rng.next() * 0.68);
+        // 全图各区域错开分布（避免全部挤在中间或单侧）
+        const regionX = (i % 3) * 0.30 + 0.15 + (rng.next() - 0.5) * 0.16;
+        const regionY = Math.floor(i / 3) * 0.35 + 0.20 + (rng.next() - 0.5) * 0.18;
+        const hillScreenX = VW * Math.max(0.10, Math.min(0.90, regionX));
+        const hillScreenY = VH * Math.max(0.12, Math.min(0.88, regionY));
+
         const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
         const cx = Math.max(1, Math.min(gw - 2, hillGx));
         const cy = Math.max(1, Math.min(gh - 2, hillGy));
-        const rx = 8 + rng.next() * 6;  // 椭圆长轴 8~14 格
-        const ry = 6 + rng.next() * 5;  // 椭圆短轴 6~11 格
-        const hMax = (elev !== null && elev >= 800) ? 3 : 2;
-        const angle = (rng.next() - 0.5) * 1.0; // 随机山脊走向倾角
+
+        // 主高地 vs 次级丘陵
+        const isMajor = i === 0 || (i === 1 && hillCount >= 4);
+        const rx = isMajor ? (12 + rng.next() * 8) : (6 + rng.next() * 6);  // 椭圆长轴
+        const ry = isMajor ? (8 + rng.next() * 6) : (4 + rng.next() * 5);   // 椭圆短轴
+        const hMax = isMajor ? ((elev !== null && elev >= 800) ? 3 : 2) : 1;
+        const angle = (rng.next() - 0.5) * 1.6; // 随机山脊走向倾角
 
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
@@ -987,18 +1000,19 @@ function generateElevation(
                 const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
                 const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
                 const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
-                // 自然有机地形扰动噪声
-                const noise = (Math.sin(x * 1.2 + y * 0.8) + Math.cos(x * 0.7 - y * 1.1)) * 0.08;
+                // 自然有机地形微扰噪声（打破几何椭圆，形成自然山脊曲折）
+                const noise = (Math.sin(x * 0.9 + y * 0.7) * 0.08)
+                    + (Math.cos(x * 1.4 - y * 1.1) * 0.06);
                 const dist = normDist + noise;
 
-                // 经典 AoE2 DE 同心阶梯式战术高地模型（制高顶台 Level 3/2 + 缓坡肩部 Level 2/1 + 坡脚基底 Level 1）
+                // 连续高程分层与平缓坡面
                 let h = 0;
-                if (dist < 0.36) {
-                    h = hMax; // 峰顶 / 高台制高点（Level 3 或 Level 2）
-                } else if (dist < 0.70) {
-                    h = Math.max(1, hMax - 1); // 斜坡肩部（Level 2 或 Level 1）
-                } else if (dist < 1.08) {
-                    h = 1; // 坡脚基底环（Level 1）
+                if (dist < 0.38) {
+                    h = hMax; // 丘顶高台
+                } else if (dist < 0.76) {
+                    h = Math.max(1, hMax - 1); // 宽阔缓坡肩部
+                } else if (dist < 1.15) {
+                    h = 1; // 坡脚过渡环
                 }
 
                 if (h > grid[y][x]) {
@@ -1007,7 +1021,7 @@ function generateElevation(
             }
         }
     }
-    return addMicroRelief(grid, gw, gh, rng);
+    return addMicroRelief(grid, gw, gh, rng, 1.1);
 }
 
 // ── 第 3 层：DE 左侧海岸线（登陆战） ──────────────────────────
@@ -1040,92 +1054,89 @@ function buildCoastline(
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
 ): WaterChecker {
-    // 海岸线按屏幕 y 连续采样随机游走。格子仅供占地判定；最终绘制使用连续多边形。
-    const controls: Array<{ x: number; y: number }> = [];
-    let bx = VW * 0.14;
-    const controlStep = TILE_H * 4;
-    for (let y = -controlStep; y <= VH + controlStep; y += controlStep) {
-        const x = sideLeft ? bx : VW - bx;
-        controls.push({ x, y });
-        bx += (rng.next() - 0.5) * TILE_W * 1.4;
-        bx = Math.max(VW * 0.06, Math.min(VW * 0.24, bx));
-    }
+    // 🌊 DE 原版自然有机海岸线（2026-08-26 美化重构）：
+    // 1. 弃用单调平滑的大圆弧：引入多频分形谐波噪声（低频宏观大曲率 + 中频海湾岬角 + 高频自然微起伏）；
+    // 2. 真实三层水色生态：外海清澈蔚蓝海水 -> 近岸通透浅水(透出水下金沙) -> 水陆交界湿润沙滩过渡 -> 干燥沙滩；
+    // 3. 严格安全占地：水域与浅水/湿沙带全部标记为 occupied，确保营帐和哨塔必定稳固坐落在干燥陆地草地上。
 
-    // DE watershore 过渡图集的岸缘不是逐格直线：用 Catmull-Rom 穿过稀疏控制点，
-    // 再以 1/4 格密采样，保留自然弯曲但消除一段段小方折线。
-    const catmullRom = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
-        const t2 = t * t, t3 = t2 * t;
-        return 0.5 * ((2 * p1) + (-p0 + p2) * t
-            + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2
-            + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    // 多频有机岸线边界计算函数（输入 y，输出沿屏幕 x 的岸线位置）
+    const baseMargin = VW * 0.14;
+    const waveSeed1 = rng.next() * 100;
+    const waveSeed2 = rng.next() * 100;
+    const waveSeed3 = rng.next() * 100;
+
+    const naturalShoreX = (y: number): number => {
+        // 低频宏观大曲率（蜿蜒大走向）
+        const macro = Math.sin(y * 0.002 + waveSeed1) * (VW * 0.045);
+        // 中频海湾与突出沙嘴（Inlets & Spits）
+        const meso = Math.cos(y * 0.006 + waveSeed2) * (TILE_W * 0.45)
+            + Math.sin(y * 0.012 + waveSeed3) * (TILE_W * 0.25);
+        // 高频岸边微起伏（消除机械感）
+        const micro = (Math.sin(y * 0.025 + waveSeed1 * 1.7) + Math.cos(y * 0.04 + waveSeed2 * 2.3)) * (TILE_W * 0.08);
+
+        let bx = baseMargin + macro + meso + micro;
+        bx = Math.max(VW * 0.06, Math.min(VW * 0.25, bx));
+        return sideLeft ? bx : VW - bx;
     };
+
     const shoreline: Array<{ x: number; y: number }> = [];
     const sampleStep = TILE_H / 4;
-    for (let y = -TILE_H; y <= VH + TILE_H; y += sampleStep) {
-        const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y + controlStep) / controlStep)));
-        const p0 = controls[Math.max(0, segment - 1)];
-        const p1 = controls[segment];
-        const p2 = controls[Math.min(controls.length - 1, segment + 1)];
-        const p3 = controls[Math.min(controls.length - 1, segment + 2)];
-        const t = Math.max(0, Math.min(1, (y - p1.y) / Math.max(1, p2.y - p1.y)));
-        const minX = sideLeft ? VW * 0.05 : VW * 0.76;
-        const maxX = sideLeft ? VW * 0.24 : VW * 0.95;
-        shoreline.push({ x: Math.max(minX, Math.min(maxX, catmullRom(p0.x, p1.x, p2.x, p3.x, t))), y });
+    for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
+        shoreline.push({ x: naturalShoreX(y), y });
     }
 
-    const boundaryAt = (y: number): number => {
-        const f = Math.max(0, Math.min(shoreline.length - 1, (y + TILE_H) / sampleStep));
-        const i = Math.min(shoreline.length - 2, Math.floor(f));
-        const t = f - i;
-        return shoreline[i].x + (shoreline[i + 1].x - shoreline[i].x) * t;
-    };
+    const boundaryAt = (y: number): number => naturalShoreX(y);
     const inlandSign = sideLeft ? 1 : -1;
+
     const bandPolygon = (outerOffset: number, innerOffset: number): Array<{ x: number; y: number }> => {
         const outer = shoreline.map((p) => ({ x: p.x + inlandSign * outerOffset, y: p.y }));
         const inner = shoreline.map((p) => ({ x: p.x + inlandSign * innerOffset, y: p.y })).reverse();
         return [...outer, ...inner];
     };
 
-    const beachW = Math.round(TILE_W * 0.75);   // DE 标准自然沙滩边缘（收窄为约 58px，不再多层斑驳）
-    // 🔴 [2026-08-24] 近岸浅滩带的宽度。原先整片海从岸铺到屏幕边缘都用 sh2，
-    //    而 sh2 是**能看见水下沙底的浅滩**贴图——等于全世界的海都只有齐腰深，
-    //    而且地中海、北欧、南洋、北极的海一个颜色。
-    //    改成两带：近岸 sh2 浅滩 + 外侧按气候取色的深水。
-    const shallowW = Math.round(TILE_W * 1.6);
+    const shallowW = Math.round(TILE_W * 1.8);   // 近岸透底浅水带宽（约 115px，开阔清透）
+    const wetBeachW = Math.round(TILE_W * 0.60);  // 湿润沙滩潮汐过渡带宽（约 38px）
+    const dryBeachW = Math.round(TILE_W * 1.20);  // 陆上干燥金沙带宽（约 76px）
 
     const deep: Array<[number, number]> = [];
     const shallow: Array<[number, number]> = [];
-    const beach: Array<[number, number]> = [];
+    const wetBeach: Array<[number, number]> = [];
+    const dryBeach: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
-            if (py < -TILE_H || py > VH + TILE_H) continue; // 越界格不铺
+            if (py < -TILE_H * 2 || py > VH + TILE_H * 2) continue;
             const signedDistance = (px - boundaryAt(py)) * inlandSign;
             if (signedDistance < -shallowW) deep.push([gx, gy]);
             else if (signedDistance < 0) shallow.push([gx, gy]);
-            else if (signedDistance < beachW) beach.push([gx, gy]);
+            else if (signedDistance < wetBeachW) wetBeach.push([gx, gy]);
+            else if (signedDistance < dryBeachW) dryBeach.push([gx, gy]);
         }
     }
 
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
-    mark(deep); mark(shallow); mark(beach);
+    mark(deep); mark(shallow); mark(wetBeach); mark(dryBeach);
 
     // 1. 外海/近海水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green，绝无深海暗黑）
     const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
     if (deep.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 0.96, category: 'shore', blur: 12 });
+        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 0.96, category: 'shore', blur: 14 });
     }
-    // 2. 近岸浅滩（sh2 = 能看见水下沙底的清透浅水），压在海水与沙滩之间做过渡
+    // 2. 近岸浅水带（sh2 = 透视水下金沙底床的清透浅水），与外海深水柔和叠加
     if (shallow.length > 0) {
-        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 0.78, category: 'shore', blur: 12 });
+        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 0.72, category: 'shore', blur: 14 });
     }
-    // 3. 柔和沙滩过渡边缘（DE 标准岸线衔接）
+    // 3. 水陆交界湿沙潮汐带（drt / beach 湿泥沙色）
+    if (wetBeach.length > 0) {
+        patches.push({ tile: 'drt', cells: wetBeach, polygon: bandPolygon(0, wetBeachW), alpha: 0.85, category: 'shore', blur: 10 });
+    }
+    // 4. 陆地干燥金沙过渡边缘（DE 标准岸线草沙渐变）
     const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
-    patches.push({ tile: actualBeachTile, cells: beach, polygon: bandPolygon(0, beachW), alpha: 0.88, category: 'shore', blur: 10 });
+    patches.push({ tile: actualBeachTile, cells: dryBeach, polygon: bandPolygon(wetBeachW, dryBeachW), alpha: 0.90, category: 'shore', blur: 12 });
 
-    // 水域排斥：signedDistance < 0 即浅水（滩/陆均不算水）
+    // 水域排斥：signedDistance < 0 视为水域（船只可航行，陆军与建筑不可建）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
 }
 
@@ -2074,7 +2085,13 @@ function buildVegetation(
                         // 🔴 [2026-08-24] 伴生碎石从**该底图配的石头**里取，别硬编码。
                         //    原来写死 ROCK1/2/3，于是 ROCK3（橙褐色沙漠岩盘）
                         //    出现在德国温带、俄罗斯雪原——底图明明只配了灰岩。
-                        const sAsset = rng.pick(themeDecor.solid.length ? themeDecor.solid : ['ROCK1', 'ROCK2']);
+                        // 🔴 [2026-08-26 修·限量漏了伴生这条路] 伴生碎石必须从**小石头**里抽。
+                        //    原来直接 pick(themeDecor.solid)，而沙漠池是
+                        //    ['ROCK3','ROCK_FORMATION2','ROCK_FORMATION3'] —— 一块「碎石」能抽出
+                        //    一座层叠岩柱。于是主岩石卡在 2 块、伴生又冒出第 3 第 4 块，
+                        //    主人实测截图仍是满屏大石头。碎石就该是碎石，巨岩一律排除。
+                        const sPool = smallSolids.length ? smallSolids : ['ROCK1', 'ROCK2'];
+                        const sAsset = rng.pick(sPool);
                         objects.push({
                             asset: sAsset,
                             x: sx,

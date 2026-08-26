@@ -229,6 +229,8 @@ export class CombatUI {
     private scene13SavedCss = new Map<HTMLElement, string>();
     /** [13 布局] 被临时移到 body 的元素 → 原父节点与原位置，退出时插回原处 */
     private scene13Reparented = new Map<HTMLElement, { parent: HTMLElement; next: Node | null }>();
+    /** [13 布局] 攻守科技之间的分隔徽记（主人 2026-08-26：两侧科技中间放个 UI 作区分） */
+    private techDivider: HTMLDivElement | null = null;
     private leftTechBox!: HTMLDivElement;
     private rightTechBox!: HTMLDivElement;
     private toggleCollapseBtn!: HTMLButtonElement;
@@ -1097,6 +1099,11 @@ export class CombatUI {
         this.scene13LayoutOn = on;
 
         if (!on) {
+            // 分隔徽记挂在 body、不在样式快照里，退出时手动收起
+            if (this.techDivider) {
+                this.techDivider.style.opacity = '0';
+                this.techDivider.style.display = 'none';
+            }
             for (const [el, css] of this.scene13SavedCss) el.style.cssText = css;
             this.scene13SavedCss.clear();
             for (const [el, at] of this.scene13Reparented) at.parent.insertBefore(el, at.next);
@@ -1111,7 +1118,8 @@ export class CombatUI {
         for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
             this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.toggleCollapseBtn,
-            this.skillsRow, this.healthBarContainer, this.battleTitle, topHud]) save(el);
+            this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
+            this.rightTotalMultBadge, topHud]) save(el);
 
         // 移出 #combat-ui-panel 挂到 body，避免受任何容器 transform 影响
         const detach = (el?: HTMLElement | null) => {
@@ -1122,6 +1130,12 @@ export class CombatUI {
         for (const el of [this.centerBackdrop, this.centerPanel,
             this.leftPortraitFrame, this.rightPortraitFrame,
             this.leftTechBox, this.rightTechBox]) detach(el);
+
+        // 将左兵力胶囊移到 healthBarContainer，脱离 attackerBar 的跟随剪裁
+        if (this.leftTotalMultBadge && this.healthBarContainer && this.leftTotalMultBadge.parentElement !== this.healthBarContainer) {
+            this.scene13Reparented.set(this.leftTotalMultBadge, { parent: this.leftTotalMultBadge.parentElement!, next: this.leftTotalMultBadge.nextSibling });
+            this.healthBarContainer.appendChild(this.leftTotalMultBadge);
+        }
 
         // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
         for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
@@ -1137,7 +1151,7 @@ export class CombatUI {
             frame.style.display = 'block';
         }
 
-        // ② 上方条：血槽两端加长直达屏幕边缘，地点战役标题与血槽无缝合二为一（极简一体化 38px 顶栏）
+        // ② 上方条：血槽两端加长直达屏幕边缘，地点战役标题居中，兵力胶囊分列左右两侧（零重叠极简美观）
         if (this.centerPanel) {
             this.centerPanel.style.position = 'fixed';
             this.centerPanel.style.top = '0';
@@ -1166,7 +1180,28 @@ export class CombatUI {
             this.healthBarContainer.style.clipPath = 'none';
             this.healthBarContainer.style.position = 'relative';
         }
-        // 战役标题居中浮现在血槽之上，与血槽浑然一体
+        // 双方兵力胶囊固定在血槽最左和最右两端，彻底消除与中间标题的重叠
+        if (this.leftTotalMultBadge) {
+            this.leftTotalMultBadge.style.position = 'absolute';
+            this.leftTotalMultBadge.style.left = '24px';
+            this.leftTotalMultBadge.style.right = 'auto';
+            this.leftTotalMultBadge.style.top = '50%';
+            this.leftTotalMultBadge.style.transform = 'translateY(-50%)';
+            this.leftTotalMultBadge.style.zIndex = '20';
+            this.leftTotalMultBadge.style.display = 'inline-flex';
+            this.leftTotalMultBadge.style.alignItems = 'center';
+        }
+        if (this.rightTotalMultBadge) {
+            this.rightTotalMultBadge.style.position = 'absolute';
+            this.rightTotalMultBadge.style.right = '24px';
+            this.rightTotalMultBadge.style.left = 'auto';
+            this.rightTotalMultBadge.style.top = '50%';
+            this.rightTotalMultBadge.style.transform = 'translateY(-50%)';
+            this.rightTotalMultBadge.style.zIndex = '20';
+            this.rightTotalMultBadge.style.display = 'inline-flex';
+            this.rightTotalMultBadge.style.alignItems = 'center';
+        }
+        // 战役标题居中浮现在血槽正中央，舒展大气
         if (this.battleTitle) {
             this.battleTitle.style.position = 'absolute';
             this.battleTitle.style.top = '50%';
@@ -1174,9 +1209,9 @@ export class CombatUI {
             this.battleTitle.style.transform = 'translate(-50%, -50%)';
             this.battleTitle.style.margin = '0';
             this.battleTitle.style.padding = '0';
-            this.battleTitle.style.fontSize = '16px';
+            this.battleTitle.style.fontSize = '15px';
             this.battleTitle.style.fontWeight = '900';
-            this.battleTitle.style.letterSpacing = '6px';
+            this.battleTitle.style.letterSpacing = '5px';
             this.battleTitle.style.zIndex = '15';
             this.battleTitle.style.pointerEvents = 'none';
             this.battleTitle.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.95)) drop-shadow(0 2px 8px rgba(0,0,0,0.85))';
@@ -1214,6 +1249,19 @@ export class CombatUI {
             this.rightTechBox.style.right = 'auto';
             this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
             this.rightTechBox.style.color = '#e8dcc0';
+        }
+        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（左盒 right:50.5vw / 右盒 left:50.5vw，
+        // 中缝正好是屏幕中线），底边与两盒对齐，一眼看出左金右青是两方各自的科技。
+        if (this.techDivider) {
+            const size = uiPx(T.sideBar.centerVsIconSize);
+            this.techDivider.style.width = size;
+            this.techDivider.style.height = size;
+            this.techDivider.style.left = '50%';
+            this.techDivider.style.right = 'auto';
+            this.techDivider.style.top = 'auto';
+            this.techDivider.style.bottom = '1.8vh';
+            this.techDivider.style.transform = 'translateX(-50%)';
+            this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
         }
     }
 
@@ -1323,6 +1371,29 @@ export class CombatUI {
 
         this.leftTechBox = mkBox(true);
         this.rightTechBox = mkBox(false);
+
+        // 攻守分界徽记：复用中央对峙条同款 battlefield_icon，与血条／名牌同一套视觉语言。
+        // 挂 body 而非 #top-center-hud —— 13 布局要把它 fixed 到屏幕底部正中，
+        // 留在 HUD 里会被那条 flex 的 order 规则拉走位置。
+        const divider = document.createElement('div');
+        divider.id = 'combat-tech-divider';
+        divider.style.cssText = `
+            position: fixed;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        `;
+        const dImg = document.createElement('img');
+        dImg.src = '/ui-assets/battlefield_icon.png';
+        dImg.alt = '';
+        dImg.draggable = false;
+        dImg.style.cssText = 'width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.9));';
+        divider.appendChild(dImg);
+        document.body.appendChild(divider);
+        this.techDivider = divider;
 
         const container = document.getElementById('top-center-hud');
         if (container) {
@@ -2875,7 +2946,9 @@ export class CombatUI {
             this.rightTotalMultBadge.style.transition = 'none';
             this.attackerBar.style.width = '50%';
             this.clashEffect.style.left = 'calc(50% - 8px)';
-            this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            if (!this.scene13LayoutOn) {
+                this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            }
             void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
         // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
@@ -2907,7 +2980,9 @@ export class CombatUI {
         this.rightTotalMultBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
-        this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
+        if (!this.scene13LayoutOn) {
+            this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
+        }
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -4520,6 +4595,11 @@ export class CombatUI {
             if (sideTechs) {
                 this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
                 this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
+                // 分隔徽记只跟着「确实有科技可显示」走：没有科技时不留一个孤零零的图标
+                if (this.techDivider && this.scene13LayoutOn) {
+                    this.techDivider.style.display = 'flex';
+                    this.techDivider.style.opacity = '1';
+                }
             } else if (this.leftTechBox.dataset.sig !== '') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
@@ -4529,6 +4609,10 @@ export class CombatUI {
                 this.leftTechBox.style.display = 'none';
                 this.rightTechBox.style.opacity = '0';
                 this.rightTechBox.style.display = 'none';
+                if (this.techDivider) {
+                    this.techDivider.style.opacity = '0';
+                    this.techDivider.style.display = 'none';
+                }
             }
         }
 
@@ -4679,7 +4763,9 @@ export class CombatUI {
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
             this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
-            this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
+            if (!this.scene13LayoutOn) {
+                this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
+            }
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
