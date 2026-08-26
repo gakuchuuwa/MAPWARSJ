@@ -172,15 +172,14 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.startTimer('camera');
             const legionManager = app.historicalEventManager?.getLegionManager();
             const followedId = app.cameraFollowUI.getFollowedArmyId();
-            // [2026-08-09 独立战斗场景空壳] 场景激活 → 冻结自动切 zoom + 跟拍 panTo
-            // （下层地图当静止背景；音频/BGM/banner 照常跑）
+            // 独立战斗画布激活时冻结战略地图的自动缩放与普通跟拍。
             const sceneActive = !!app.battleScene?.isActive();
             if (followedId && legionManager) {
                 const lMap = app.map.getLeafletMap();
                 const followedArmy = legionManager.getLegionById(followedId);
 
                 if (!sceneActive) {
-                    // ── 自动缩放（ZoomController）：行军 8↔9，战斗 10↔11，≥15s ──
+                    // ── 自动缩放（ZoomController）：换将 8 / 行军 9 / 战斗 10，切换间隔 ≥15s ──
                     app.zoomController.tick();
 
                     app.cameraFollowUI.tickFollowCamera(
@@ -205,8 +204,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                         }
                     );
                 } else {
-                    // [2026-08-09 镜头跟随] 场景激活 → 不跑普通跟拍/自动缩放，
-                    // 镜头改追将领编队实际渲染中心（battleScene.tick 内部指数平滑）。
+                    // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
                     app.battleScene?.tick();
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
                     // 放行普通跟拍逻辑：tickFollowCamera 看到军团阵亡会启动 FOLLOW_SWITCH_DELAY_MS

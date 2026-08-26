@@ -4368,7 +4368,26 @@ export class Scene13WarLayer {
             ctx.fillRect(bb.x, bb.y, bb.w, bb.h);
             ctx.restore();
 
-            ctx.restore();
+            ctx.restore(); // 退出 clip
+
+            // 4. DE 沿岸潮汐柔和浪花泡沫（Shoreline Wavelet Foam）：消除水陆硬切边界，呈现自然拍岸微浪
+            if (p.polygon && p.polygon.length >= 3 && p.isWater) {
+                ctx.save();
+                const waveBreath = 0.32 + Math.sin(t * 2.4) * 0.14;
+                ctx.globalAlpha = (p.alpha ?? 1) * waveBreath;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                ctx.shadowBlur = 4;
+                ctx.beginPath();
+                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                for (let i = 1; i < p.polygon.length; i++) ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+            }
         }
     }
 

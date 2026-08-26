@@ -1057,31 +1057,38 @@ function buildCoastline(
     // 🌊 DE 原版自然有机海岸线（2026-08-26 美化重构）：
     // 1. 弃用单调平滑的大圆弧：引入多频分形谐波噪声（低频宏观大曲率 + 中频海湾岬角 + 高频自然微起伏）；
     // 2. 真实三层水色生态：外海清澈蔚蓝海水 -> 近岸通透浅水(透出水下金沙) -> 水陆交界湿润沙滩过渡 -> 干燥沙滩；
+    // 🌊 DE 原版自然有机海岸线（2026-08-26 美化重构）：
+    // 1. 彻底消除平滑圆弧与单调大波浪：引入 5 级分形谐波侵蚀（宏观大走势 + 中频半月小海湾与突岬 + 高频凹凸沙嘴 + 细碎潮汐侵蚀锯齿）；
+    // 2. 真实 DE 通透水色生态：金黄水下沙床垫底 -> 近岸清澈通透浅水(透出水下金沙) -> 湿润潮汐沙滩 -> 宽阔干燥金沙过渡带；
     // 3. 严格安全占地：水域与浅水/湿沙带全部标记为 occupied，确保营帐和哨塔必定稳固坐落在干燥陆地草地上。
 
     // 多频有机岸线边界计算函数（输入 y，输出沿屏幕 x 的岸线位置）
-    const baseMargin = VW * 0.14;
+    const baseMargin = VW * 0.13;
     const waveSeed1 = rng.next() * 100;
     const waveSeed2 = rng.next() * 100;
     const waveSeed3 = rng.next() * 100;
+    const waveSeed4 = rng.next() * 100;
 
     const naturalShoreX = (y: number): number => {
-        // 低频宏观大曲率（蜿蜒大走向）
-        const macro = Math.sin(y * 0.002 + waveSeed1) * (VW * 0.045);
-        // 中频海湾与突出沙嘴（Inlets & Spits）
-        const meso = Math.cos(y * 0.006 + waveSeed2) * (TILE_W * 0.45)
-            + Math.sin(y * 0.012 + waveSeed3) * (TILE_W * 0.25);
-        // 高频岸边微起伏（消除机械感）
-        const micro = (Math.sin(y * 0.025 + waveSeed1 * 1.7) + Math.cos(y * 0.04 + waveSeed2 * 2.3)) * (TILE_W * 0.08);
+        // 1. 低频宏观蜿蜒走向（40~70px）
+        const macro = Math.sin(y * 0.0018 + waveSeed1) * (VW * 0.045);
+        // 2. 中频半月形海湾与突出岬角（Inlets & Promontories，幅度 25~45px，打破光滑圆弧）
+        const meso = Math.sin(y * 0.0075 + waveSeed2) * (TILE_W * 0.55)
+            + Math.cos(y * 0.015 + waveSeed3) * (TILE_W * 0.35);
+        // 3. 高频潮汐侵蚀小凹凸与细小沙嘴（10~18px）
+        const micro = Math.sin(y * 0.035 + waveSeed1 * 1.5) * (TILE_W * 0.18)
+            + Math.cos(y * 0.07 + waveSeed2 * 2.1) * (TILE_W * 0.09);
+        // 4. 细碎自然沙岸锯齿（3~6px）
+        const nano = (Math.sin(y * 0.14 + waveSeed4) + Math.cos(y * 0.22 + waveSeed3)) * (TILE_W * 0.04);
 
-        let bx = baseMargin + macro + meso + micro;
-        bx = Math.max(VW * 0.06, Math.min(VW * 0.25, bx));
+        let bx = baseMargin + macro + meso + micro + nano;
+        bx = Math.max(VW * 0.07, Math.min(VW * 0.26, bx));
         return sideLeft ? bx : VW - bx;
     };
 
     const shoreline: Array<{ x: number; y: number }> = [];
-    const sampleStep = TILE_H / 4;
-    for (let y = -TILE_H * 2; y <= VH + TILE_H * 2; y += sampleStep) {
+    const sampleStep = Math.max(4, TILE_H / 8); // 密集采样步长（4px），精确捕捉自然凹凸海湾
+    for (let y = -TILE_H * 3; y <= VH + TILE_H * 3; y += sampleStep) {
         shoreline.push({ x: naturalShoreX(y), y });
     }
 
@@ -1094,47 +1101,61 @@ function buildCoastline(
         return [...outer, ...inner];
     };
 
-    const shallowW = Math.round(TILE_W * 1.8);   // 近岸透底浅水带宽（约 115px，开阔清透）
-    const wetBeachW = Math.round(TILE_W * 0.60);  // 湿润沙滩潮汐过渡带宽（约 38px）
-    const dryBeachW = Math.round(TILE_W * 1.20);  // 陆上干燥金沙带宽（约 76px）
+    const shallowW = Math.round(TILE_W * 2.0);   // 近岸透底浅水带宽（约 128px，清澈通透）
+    const wetBeachW = Math.round(TILE_W * 0.75);  // 湿润沙滩潮汐过渡带宽（约 48px）
+    const dryBeachW = Math.round(TILE_W * 1.50);  // 陆上干燥金沙过渡带宽（约 96px）
 
     const deep: Array<[number, number]> = [];
     const shallow: Array<[number, number]> = [];
     const wetBeach: Array<[number, number]> = [];
     const dryBeach: Array<[number, number]> = [];
+    const subSandbed: Array<[number, number]> = [];
 
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
-            if (py < -TILE_H * 2 || py > VH + TILE_H * 2) continue;
+            if (py < -TILE_H * 3 || py > VH + TILE_H * 3) continue;
             const signedDistance = (px - boundaryAt(py)) * inlandSign;
-            if (signedDistance < -shallowW) deep.push([gx, gy]);
-            else if (signedDistance < 0) shallow.push([gx, gy]);
-            else if (signedDistance < wetBeachW) wetBeach.push([gx, gy]);
-            else if (signedDistance < dryBeachW) dryBeach.push([gx, gy]);
+            if (signedDistance < -shallowW) {
+                deep.push([gx, gy]);
+            } else if (signedDistance < 0) {
+                shallow.push([gx, gy]);
+                subSandbed.push([gx, gy]);
+            } else if (signedDistance < wetBeachW) {
+                wetBeach.push([gx, gy]);
+            } else if (signedDistance < dryBeachW) {
+                dryBeach.push([gx, gy]);
+            }
         }
     }
 
     const mark = (cells: Array<[number, number]>) => { for (const [x, y] of cells) occupied.add(`${x},${y}`); };
     mark(deep); mark(shallow); mark(wetBeach); mark(dryBeach);
 
-    // 1. 外海/近海水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green，绝无深海暗黑）
-    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
-    if (deep.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW), alpha: 0.96, category: 'shore', blur: 14 });
-    }
-    // 2. 近岸浅水带（sh2 = 透视水下金沙底床的清透浅水），与外海深水柔和叠加
-    if (shallow.length > 0) {
-        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW, 0), alpha: 0.72, category: 'shore', blur: 14 });
-    }
-    // 3. 水陆交界湿沙潮汐带（drt / beach 湿泥沙色）
-    if (wetBeach.length > 0) {
-        patches.push({ tile: 'drt', cells: wetBeach, polygon: bandPolygon(0, wetBeachW), alpha: 0.85, category: 'shore', blur: 10 });
-    }
-    // 4. 陆地干燥金沙过渡边缘（DE 标准岸线草沙渐变）
     const actualBeachTile = beachTerrainForTheme(theme, season, lat, elev, biome, lng);
-    patches.push({ tile: actualBeachTile, cells: dryBeach, polygon: bandPolygon(wetBeachW, dryBeachW), alpha: 0.90, category: 'shore', blur: 12 });
+    const actualWaterTile = waterTerrainForTheme(theme, season, lat, elev, biome, lng);
+
+    // 1. 水下金色沙床垫底（铺在浅水下，确保水体半透明透视时呈现明亮金黄的浅水河床底质）
+    if (subSandbed.length > 0) {
+        patches.push({ tile: actualBeachTile, cells: subSandbed, polygon: bandPolygon(-shallowW * 1.2, 0), alpha: 0.95, category: 'shore', blur: 16 });
+    }
+    // 2. 水陆交界湿沙潮汐带（drt / beach 湿润沙泥色）
+    if (wetBeach.length > 0) {
+        patches.push({ tile: 'drt', cells: wetBeach, polygon: bandPolygon(-shallowW * 0.2, wetBeachW), alpha: 0.85, category: 'shore', blur: 14 });
+    }
+    // 3. 陆地干燥金沙过渡边缘（宽阔柔和的岸线沙滩，与内陆草地自然交错咬合）
+    if (dryBeach.length > 0) {
+        patches.push({ tile: actualBeachTile, cells: dryBeach, polygon: bandPolygon(wetBeachW * 0.5, dryBeachW), alpha: 0.88, category: 'shore', blur: 18 });
+    }
+    // 4. 外海深水水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green）
+    if (deep.length > 0) {
+        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW * 0.6), alpha: 0.90, category: 'shore', blur: 18 });
+    }
+    // 5. 近岸浅水带（sh2 = 极度通透的浅水层，水下金沙一览无余，与深水和沙滩柔和交融）
+    if (shallow.length > 0) {
+        patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW * 1.3, 0), alpha: 0.55, category: 'shore', blur: 20 });
+    }
 
     // 水域排斥：signedDistance < 0 视为水域（船只可航行，陆军与建筑不可建）
     return (x, y) => (x - boundaryAt(y)) * inlandSign < 0;
@@ -2075,7 +2096,19 @@ function buildVegetation(
 
             if (placementGroup) {
                 // 1. 伴生小碎石 1~2 块
-                const smallRockCount = 1 + rng.int(0, 2);
+                // 🔴 [2026-08-26 按 DE 本体定量] 标准来自 DE 随机地图脚本，不是估的：
+                //    resources/_common/drs/gamedata_x2/Arabia.rms（沙漠图）
+                //      create_object SOLID_OBJECT   { number_of_objects  4; second_object SOLID_UNDERBRUSH }
+                //      create_object SOLID_SURROUND { number_of_objects 32; actor_area_to_place_in 560 }
+                //    → 整图 4 主岩 + 32 环绕 = 36 块，按格数换算到 13 一屏（2025 格）：
+                //      2 人图 5.1 块 / 4 人图 3.5 块。原来 1~3 档实测 9.0 块、1~2 档 7.5 块，均超标。
+                //
+                //    🔴 还有一处结构性差异（暂未改，只记账）：DE 主岩石的 second_object 是
+                //    **SOLID_UNDERBRUSH（Dead Plant 枯草 / Flower Bed 花丛）—— 是植被不是碎石**；
+                //    碎石走独立的 SOLID_SURROUND。我们把伴生做成了碎石，等于把 DE 的
+                //    「岩石＋枯草」变成「岩石＋更多岩石」，石头数天然翻倍。
+                //    降到 0~1 后一屏平均 4.5 块，落在 DE 的 3.5~5.1 区间内。
+                const smallRockCount = rng.int(0, 1);
                 for (let si = 0; si < smallRockCount; si++) {
                     const ang = rng.next() * Math.PI * 2;
                     const dist = 22 + rng.next() * 24;
