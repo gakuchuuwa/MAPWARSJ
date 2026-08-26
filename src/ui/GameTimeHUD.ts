@@ -40,6 +40,33 @@ export class GameTimeHUD {
 
         this.root.style.display = 'flex';
 
+        // 折叠/展开控制按钮
+        const toggleBtn = document.getElementById('toggle-time-hud-btn');
+        const toggleIcon = document.getElementById('toggle-time-hud-icon');
+        const toggleLabel = document.getElementById('toggle-time-hud-label');
+        const applyCollapseState = (collapsed: boolean) => {
+            if (!this.root) return;
+            this.root.classList.toggle('is-collapsed', collapsed);
+            if (toggleIcon) toggleIcon.textContent = collapsed ? '▲' : '▼';
+            if (toggleLabel) toggleLabel.textContent = collapsed ? '控制' : '收起';
+            try {
+                localStorage.setItem('mapwar_time_hud_collapsed', collapsed ? '1' : '0');
+            } catch {}
+        };
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isCollapsed = this.root?.classList.contains('is-collapsed') ?? false;
+                applyCollapseState(!isCollapsed);
+            });
+            // 恢复之前保存的折叠偏好
+            try {
+                if (localStorage.getItem('mapwar_time_hud_collapsed') === '1') {
+                    applyCollapseState(true);
+                }
+            } catch {}
+        }
+
         if (this.runBtn) {
             this.runBtn.setAttribute('aria-label', '播放');
             this.runBtn.addEventListener('click', () => {

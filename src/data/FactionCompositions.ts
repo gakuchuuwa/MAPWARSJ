@@ -453,7 +453,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_chariot_ranged', count: 2 },
         ],
     },
-    // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 明军三大营步骑火协同军团 · 鱼鳞阵 3+4+2：持盾刀剑手 3 + 黑光铠骑兵主力 4 + 神机箭火箭车 2）
+    // ⚠ 例外（用户特批 2026-08-26）：神机营三排全火器，突破「三排最多一排特殊」规则——大明神机营本就是全火器营，历史特色保留
+    // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 神机营军团 · 雁行阵 4+3+2：精锐火矛兵 4 + 重型火箭推车 3 + 手推炮 2）
     ming_d: {
         legionName: "神机营军团",
         formationMode: 'echelon',
@@ -1773,7 +1774,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'triangle',
         slots: [
             { type: 'fire_lancer', count: 2 },               // Row 0 尖刀 = 火矛兵 2人（火药火矛突击）
-            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3辆（战车不占 4 档）
+            { type: 'elite_war_wagon', count: 3 },           // Row 1 核心战车 = 精锐高丽战车 3辆
             { type: 'fire_archer', count: 4 },               // Row 2 底边主力 = 火焰弓手 4人（高丽弓术火箭齐射）
         ],
     },
@@ -1813,14 +1814,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'fire_archer', count: 4 },
         ],
     },
-    // 波希米亚与捷克·扬杰斯卡 波西米亚军团（雁行 4+3+2：冠军剑士 4 + 胡斯派战车精锐 3 + 榴弹炮 2）
+    // 波希米亚与捷克·扬杰斯卡 胡斯战车军团（雁行 4+3+2：长戟兵 4 + 胡斯战车精锐 3 + 劲弩手 2；步兵前置，战车唯一特殊）
     boximiya: {
-        legionName: "波西米亚军团",
+        legionName: "胡斯战车军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'champion', count: 4 },               // Row 0 前卫主力 = 冠军剑士 4人（重剑步兵主力抗线破阵）
-            { type: 'elite_hussite_wagon', count: 3 },    // Row 1 核心车阵 = 胡斯派战车精锐 3辆（车堡环列，战车不占 4 档）
-            { type: 'houfnice', count: 2 },         // Row 2 后排炮火 = 榴弹炮 2门（超远轰击压阵）
+            { type: 'halberdier', count: 4 },             // Row 0 前卫主力 = 长戟兵 4人（近战步兵前置抗线）
+            { type: 'elite_hussite_wagon', count: 3 },    // Row 1 中军精锐 = 胡斯战车精锐 3辆（精锐3档·唯一特殊=战车）
+            { type: 'arbalest', count: 2 },               // Row 2 底边 = 劲弩手 2人（远程后排掩护）
         ],
     },
     // 意大利与热那亚·安德烈亚·多利亚 / 丹多洛 / 洛伦佐 全甲佣兵与大盾热那亚重弩军团（鱼鳞阵 3+4+2：意大利佣兵 3 + 精锐热那亚弩手主力 4 + 热那亚弩手 2）
@@ -2167,14 +2168,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'sannahya', count: 2 },                 // Row 2 尾收装甲巨象 = 孔雀王朝战象 2头（披甲巨象压阵发起毁灭性践踏冲锋）
         ],
     },
-    // 波罗帝国·高达城/孟加拉（达磨波罗 · 孟加拉军团 · 锥形阵 2+3+4：象兵 2 + 拉塔战车弓精锐 3 + 步弓手 4）
+    // 波罗帝国·高达城/孟加拉（达磨波罗 · 孟加拉军团 · 雁行阵 4+3+2：剑士 4 + 拉塔战车弓精锐 3 + 步弓手 2；步兵前置，战车唯一特殊）
     boluo: {
         legionName: "孟加拉军团",
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         slots: [
-            { type: 'battle_elephant', count: 2 },         // Row 0 尖刀 = 象兵 2头（战斗象践踏开路）
-            { type: 'elite_ratha_ranged', count: 3 },      // Row 1 中坚 = 拉塔战车弓精锐 3乘（孟加拉城堡兵·弓战车精锐护阵）
-            { type: 'archer', count: 4 },                  // Row 2 底边主力 = 步弓手 4人（远程主力齐射）
+            { type: 'swordsman', count: 4 },               // Row 0 前卫主力 = 剑士 4人（近战步兵前置抗线）
+            { type: 'elite_ratha_ranged', count: 3 },      // Row 1 中军精锐 = 拉塔战车弓精锐 3乘（精锐3档·唯一特殊=战车）
+            { type: 'archer', count: 2 },                  // Row 2 底边 = 步弓手 2人（远程后排掩护）
         ],
     },
     jiashi_d: {
@@ -2186,14 +2187,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'pattiyoda_longbowman', count: 3 },
         ],
     },
-    // 苏摩国·耽摩栗底港/孟加拉（苏摩 · 苏摩军团 · 雁行阵 4+3+2：步弓手 4 + 战斗象 3 + 拉塔战车近战精锐 2）
+    // 苏摩国·耽摩栗底港/孟加拉（苏摩 · 苏摩军团 · 雁行阵 4+3+2：剑士 4 + 战斗象 3 + 步弓手 2；步兵前置，象唯一特殊）
     sumo: {
         legionName: "苏摩军团",
         formationMode: 'echelon',
         slots: [
-            { type: 'archer', count: 4 },                  // Row 0 前卫主力 = 步弓手 4人（孟加拉远程主力齐射）
-            { type: 'battle_elephant', count: 3 },         // Row 1 中坚 = 战斗象 3头（孟加拉战象践踏压阵）
-            { type: 'elite_ratha_melee', count: 2 },       // Row 2 尾收 = 拉塔战车近战精锐 2乘（孟加拉城堡兵·近战战车机动）
+            { type: 'swordsman', count: 4 },               // Row 0 前卫主力 = 剑士 4人（近战步兵前置抗线）
+            { type: 'battle_elephant', count: 3 },         // Row 1 中军 = 战斗象 3头（唯一特殊=象，践踏压阵）
+            { type: 'archer', count: 2 },                  // Row 2 底边 = 步弓手 2人（远程后排掩护）
         ],
     },
     // 德里苏丹国·德里（阿拉乌丁·卡尔吉 · 象背重弓高台与近卫古拉姆铁甲大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 象弓骑兵精锐 3 + 古拉姆 2）
@@ -2269,7 +2270,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'echelon',
         slots: [
             { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3（主力 3 档，战车不占 4 档）
+            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
             { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
         ],
     },

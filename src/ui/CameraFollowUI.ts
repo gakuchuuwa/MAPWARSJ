@@ -50,6 +50,7 @@ export class CameraFollowUI {
     private followBanner: HTMLDivElement | null = null;
     public isListOpen: boolean = false;
     private preScene13ListOpen: boolean = false;
+    private preScene13FollowBannerVisible: boolean = false;
 
     // State
     private followedArmyId: string | null = null;
@@ -632,12 +633,18 @@ export class CameraFollowUI {
 
 
 
-    /** 进 13 战斗场景时保存状态并收起面板 */
+    /** 进 13 战斗场景时保存状态并收起军团列表与跟随面板 */
     public onEnterBattleScene13(): void {
         if (this.isListOpen) {
             this.preScene13ListOpen = true;
         }
         this.closeList();
+        if (this.followBanner && this.followBanner.style.display !== 'none') {
+            this.preScene13FollowBannerVisible = true;
+            this.followBanner.style.display = 'none';
+        } else {
+            this.preScene13FollowBannerVisible = false;
+        }
     }
 
     /** 退 13 战斗场景时恢复展开状态 */
@@ -645,6 +652,10 @@ export class CameraFollowUI {
         if (this.preScene13ListOpen) {
             this.preScene13ListOpen = false;
             this.openList();
+        }
+        if (this.preScene13FollowBannerVisible && this.followedArmyId) {
+            this.preScene13FollowBannerVisible = false;
+            if (this.followBanner) this.followBanner.style.display = 'flex';
         }
     }
 
@@ -1167,7 +1178,10 @@ export class CameraFollowUI {
 
         const text = document.getElementById('follow-banner-text');
         if (text) text.innerHTML = label;
-        if (this.followBanner) this.followBanner.style.display = 'flex';
+        if (this.followBanner) {
+            const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
+            this.followBanner.style.display = inScene13 ? 'none' : 'flex';
+        }
         this.syncFollowedHighlight();
 
         if (this.isListOpen) {
@@ -1221,7 +1235,10 @@ export class CameraFollowUI {
             this.waitingForRespawn = true;
             const text = document.getElementById('follow-banner-text');
             if (text) text.textContent = '🎥 军团全部阵亡，等待新军团…';
-            if (this.followBanner) this.followBanner.style.display = 'flex';
+            if (this.followBanner) {
+                const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
+                this.followBanner.style.display = inScene13 ? 'none' : 'flex';
+            }
             return;
         }
 

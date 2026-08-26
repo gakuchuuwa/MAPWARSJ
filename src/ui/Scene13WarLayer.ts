@@ -71,8 +71,24 @@ const DECROMA_CACHE = new Map<string, string>();
  *    上限 CLEAN_CACHE_MAX 条，超了按插入序淘汰最旧的（Map 天然有序）。
  */
 const CLEAN_CACHE = new Map<string, HTMLImageElement>();
-/** 缓存上限（张）。一张解码位图约 w×h×4 字节，DE 单位 strip 普遍 200×80 → 约 64KB/张。 */
-const CLEAN_CACHE_MAX = 1200;
+/**
+ * 缓存上限（张）。一张解码位图约 w×h×4 字节，DE 单位 strip 普遍 200×80 → 约 64KB/张。
+ *
+ * 🔴 [2026-08-26] 1200 → 4000。原值太小，缓存一直在**颠簸**：
+ *    实测已接线兵种 285 个，每个 32 张唯一图（8 方向 × 4 动作，DAMAGE 复用 ATTACK 路径），
+ *    一场战斗双方编成 + 攻城器械约 8~10 个兵种 = **256~320 张**
+ *    —— 1200 张连 4 场都装不下，第 4 场起就开始 LRU 顶掉最旧的，
+ *    而每场势力/文化不同、兵种组合也不同，命中率被进一步稀释。
+ *
+ *    探针 294 局实测正是这个形状：**前期中位 4.0s（缓存尚有空位）→ 之后稳定 7.8~8.7s**，
+ *    最近几局 16~19s。素材等待不随局数下降反而变差 = 反复在加载同一批图，
+ *    不是「第一次加载慢」。
+ *
+ *    4000 张 ≈ 250MB，可装 12~15 场，常见兵种不再被顶掉。
+ *    （全部 285 兵种 9112 张全缓存约 570MB，没必要。）
+ *    调整后请看 scratch/scene13_probe_log.jsonl 的 assetsReady：中位应明显低于 7.2s。
+ */
+const CLEAN_CACHE_MAX = 4000;
 
 // ── 兵种属性 ──
 //   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
@@ -3602,8 +3618,11 @@ export class Scene13WarLayer {
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
         this.lingering = false;
-        // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局
-        (window as any).game?.combatUI?.applyScene13Layout?.(false);
+        // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局与大地图面板
+        const game = (window as any).game;
+        game?.combatUI?.applyScene13Layout?.(false);
+        game?.cameraFollowUI?.onExitBattleScene13?.();
+        game?.brawlFeedPanel?.onExitBattleScene13?.();
         if (this.active) {
             // [2026-08-11 诊断] 谁把演出停掉的。over=false 还被停 = 外部提前收场
             let field = 0, pool = 0;
