@@ -632,6 +632,16 @@ export class LegionManager {
 
     /** 当前位置是否已进入敌方/叛军据点攻城圈 */
     private findHostileCityInZOC(army: Army): City | null {
+        // 🔴 [2026-08-26 主人「军团走海路无法上岸，一会卡着」] 海上军团免疫 ZOC 拦截。
+        //    findHostileCityNear 只按经纬距离找敌城，**完全不分海陆**。军团走海路时
+        //    只要漂进沿岸任一敌方港口的 COMBAT_RADIUS，就会被强制停船、
+        //    clampArmyToSiegeRing 收到环上（人还在海里）、triggerSiege 开打 ——
+        //    舰队就此卡死在海面，永远走不到对岸。海路两端本就是港口城，
+        //    途经敌港被拦是必然事件，所以跨海行军几乎注定卡住。
+        //    按常理与史实：舰队路过敌方港口不会被强拉上岸攻城，到目标港才登陆。
+        //    上岸后 isOnSea 转 false，ZOC 立即恢复正常；抵达目标城的攻城由
+        //    下方 isIdle() 的 arrival 分支照常触发，不走 ZOC 这条路。
+        if (army.isOnSea) return null;
         return this.findHostileCityNear(army.getPosition(), army.getFactionId(), army);
     }
 

@@ -1585,11 +1585,13 @@ const PROJ_TYPE: Record<string, string> = {
     rhodian_slinger: 'PROJ_SLING',
     bolas_rider: 'PROJ_SLING',
     elite_bolas_rider: 'PROJ_SLING',
-    // 飞刀/飞轮/弯刀（独立飞刃素材）
+    // 飞刀/弯刀
     gbeto: 'PROJ_DART',
     elite_gbeto: 'PROJ_DART',
-    chakram_thrower: 'PROJ_THROWING_AXE',
-    elite_chakram_thrower: 'PROJ_THROWING_AXE',
+    // DE dat 实测：CHAKRAM → 1756 Projectile Chakram → p_chakram_x1；
+    // ECHAKRAM → 1783 Projectile EliteChakram → p_chakram_elite_x1。两者均为直线弹道、速度 6。
+    chakram_thrower: 'PROJ_CHAKRAM',
+    elite_chakram_thrower: 'PROJ_CHAKRAM_ELITE',
     mameluke: 'PROJ_DART',
     elite_mameluke: 'PROJ_DART',
     // 投石机/重炮（抛石弹/大炮弹，高抛弧线 + 落地冲击）
@@ -1637,8 +1639,8 @@ function accuracyOf(key: string, wt: WarType): number {
     // 普通步弓（含火箭/火弓/象弓）
     return 80;
 }
-/** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
-const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE']);
+/** 平直弹道抛射物（弩炮箭/火枪弹/飞轮）：不抛弧、直线飞行。 */
+const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
@@ -4263,6 +4265,10 @@ export class Scene13WarLayer {
      */
     private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
     private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
+    private waterOffscreen: HTMLCanvasElement | null = null;
+    private waterOffscreenCtx: CanvasRenderingContext2D | null = null;
+    private waterMaskCv: HTMLCanvasElement | null = null;
+    private waterMaskCtx: CanvasRenderingContext2D | null = null;
 
     /**
      * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
@@ -4303,84 +4309,105 @@ export class Scene13WarLayer {
         const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
         if (waterPatches.length === 0) return;
 
+        const W = ctx.canvas.width, H = ctx.canvas.height;
+        if (!this.waterOffscreen) {
+            this.waterOffscreen = document.createElement('canvas');
+            this.waterOffscreenCtx = this.waterOffscreen.getContext('2d')!;
+        }
+        if (!this.waterMaskCv) {
+            this.waterMaskCv = document.createElement('canvas');
+            this.waterMaskCtx = this.waterMaskCv.getContext('2d')!;
+        }
+        const offCv = this.waterOffscreen, offCtx = this.waterOffscreenCtx!;
+        const maskCv = this.waterMaskCv, maskCtx = this.waterMaskCtx!;
+        if (offCv.width !== W || offCv.height !== H) {
+            offCv.width = W; offCv.height = H;
+            maskCv.width = W; maskCv.height = H;
+        }
+
         for (const p of waterPatches) {
             const img = p.img!;
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
-            // 🔴 [2026-08-23 美化] 尊重 p.alpha：浅水环(alpha 0.50)半透明透出河床=浅水，深水核心(0.96)近乎不透明 → 河岸 草→浅→深 渐变
             const a = p.alpha ?? 1;
+            const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
 
-            ctx.save();
-            ctx.beginPath();
+            // 1. 在 maskCv 上绘制羽化水域遮罩（多边形 / 单元格）
+            maskCtx.clearRect(0, 0, W, H);
+            maskCtx.beginPath();
             if (p.polygon && p.polygon.length >= 3) {
-                ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                for (let i = 1; i < p.polygon.length; i++) ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
-                ctx.closePath();
+                maskCtx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                maskCtx.closePath();
             } else {
                 for (const [gx, gy] of p.cells) {
-                    // 水面高程恒为 0（生成器强制），这里带上 cellLift 只为与地面口径单源一致
                     const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
-                    ctx.moveTo(sx, sy - TILE_H / 2);
-                    ctx.lineTo(sx + TILE_W / 2, sy);
-                    ctx.lineTo(sx, sy + TILE_H / 2);
-                    ctx.lineTo(sx - TILE_W / 2, sy);
-                    ctx.closePath();
+                    maskCtx.moveTo(sx, sy - TILE_H / 2);
+                    maskCtx.lineTo(sx + TILE_W / 2, sy);
+                    maskCtx.lineTo(sx, sy + TILE_H / 2);
+                    maskCtx.lineTo(sx - TILE_W / 2, sy);
+                    maskCtx.closePath();
                 }
             }
-            ctx.clip();
+            maskCtx.fillStyle = 'rgba(255, 255, 255, 1.0)';
+            maskCtx.fill();
 
-            // 1. DE 原版官方流速单向流动（30° 2:1 等距流向：dx = 24t, dy = 12t）
+            // 2. 在 offCv 上以羽化软边合成流动波纹
+            offCtx.clearRect(0, 0, W, H);
+            offCtx.save();
+            // 边缘羽化（14px 柔和软边，让水面自然漫过沙滩）
+            offCtx.filter = 'blur(14px)';
+            offCtx.drawImage(maskCv, 0, 0);
+            offCtx.restore();
+
+            // 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
+            offCtx.save();
+            offCtx.globalCompositeOperation = 'source-in';
             const dx = (t * 24) % tw;
             const dy = (t * 12) % th;
-            // 绘制范围：优先用 patch 自己的包围盒，没有 bbox 才退回整张画布（保持旧行为，不至于漏画）
-            const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: ctx.canvas.width, h: ctx.canvas.height };
-
-            ctx.save();
-            ctx.globalAlpha = a;
-            ctx.translate(dx, dy);
-            // pattern 按 img 缓存：源图整局不变，每帧重建纯属浪费
             let pat = this.waterPatternCache.get(img) ?? null;
             if (!pat) {
-                pat = ctx.createPattern(img, 'repeat');
+                pat = offCtx.createPattern(img, 'repeat');
                 if (pat) this.waterPatternCache.set(img, pat);
             }
             if (pat) {
-                ctx.fillStyle = pat;
-                ctx.fillRect(bb.x - dx - tw, bb.y - dy - th, bb.w + tw * 2, bb.h + th * 2);
-            }
-            ctx.restore();
+                offCtx.translate(dx, dy);
+                offCtx.fillStyle = pat;
+                offCtx.fillRect(bb.x - dx - tw - 20, bb.y - dy - th - 20, bb.w + tw * 2 + 40, bb.h + th * 2 + 40);
+                offCtx.setTransform(1, 0, 0, 1, 0, 0);
 
-            // 2. 表层次级微波干涉（微小角度反向微扰，产生大江/海面波光粼粼自然感）
-            if (pat) {
-                ctx.save();
-                ctx.globalAlpha = a * 0.22;
+                // 次级微波干涉
+                offCtx.globalAlpha = 0.25;
                 const dx2 = (-t * 10) % tw;
                 const dy2 = (t * 16) % th;
-                ctx.translate(dx2, dy2);
-                ctx.fillStyle = pat;
-                ctx.fillRect(bb.x - dx2 - tw, bb.y - dy2 - th, bb.w + tw * 2, bb.h + th * 2);
-                ctx.restore();
+                offCtx.translate(dx2, dy2);
+                offCtx.fillStyle = pat;
+                offCtx.fillRect(bb.x - dx2 - tw - 20, bb.y - dy2 - th - 20, bb.w + tw * 2 + 40, bb.h + th * 2 + 40);
+                offCtx.setTransform(1, 0, 0, 1, 0, 0);
             }
 
-            // 3. 清澈水色微光增益（轻柔碧蓝浅水微光，绝不用深黑压暗）
+            // 清澈碧蓝浅水微光
+            offCtx.globalAlpha = 0.12;
+            offCtx.fillStyle = '#60c8e8';
+            offCtx.fillRect(bb.x - 20, bb.y - 20, bb.w + 40, bb.h + 40);
+            offCtx.restore();
+
+            // 3. 将羽化流动水体合成到主画布
             ctx.save();
-            ctx.globalAlpha = a * 0.08;
-            ctx.fillStyle = '#60c8e8';
-            ctx.fillRect(bb.x, bb.y, bb.w, bb.h);
+            ctx.globalAlpha = a;
+            ctx.drawImage(offCv, 0, 0);
             ctx.restore();
 
-            ctx.restore(); // 退出 clip
-
-            // 4. DE 沿岸潮汐柔和浪花泡沫（Shoreline Wavelet Foam）：消除水陆硬切边界，呈现自然拍岸微浪
+            // 4. DE 沿岸潮汐柔和浪花泡沫（Shoreline Wavelet Foam）：带有呼吸起伏的拍岸白浪
             if (p.polygon && p.polygon.length >= 3 && p.isWater) {
                 ctx.save();
-                const waveBreath = 0.32 + Math.sin(t * 2.4) * 0.14;
+                const waveBreath = 0.35 + Math.sin(t * 2.4) * 0.15;
                 ctx.globalAlpha = (p.alpha ?? 1) * waveBreath;
                 ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2.5;
+                ctx.lineWidth = 3.0;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
-                ctx.shadowBlur = 4;
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
+                ctx.shadowBlur = 6;
                 ctx.beginPath();
                 ctx.moveTo(p.polygon[0].x, p.polygon[0].y);
                 for (let i = 1; i < p.polygon.length; i++) ctx.lineTo(p.polygon[i].x, p.polygon[i].y);
@@ -6569,7 +6596,13 @@ export class Scene13WarLayer {
 
                 const S = PROJ_SCALE * (PROJ_SCALE_OVERRIDE[a.proj] ?? 1);
                 let fr = 0;
-                if (a.proj === 'PROJ_THROWING_AXE') {
+                const isChakram = a.proj === 'PROJ_CHAKRAM' || a.proj === 'PROJ_CHAKRAM_ELITE';
+                if (isChakram) {
+                    // DE 原素材：16 个飞行方向 × 每方向 10 帧旋转动画，方向组连续排列。
+                    const normalizedAngle = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                    const direction = Math.round(normalizedAngle / (Math.PI * 2) * 16) % 16;
+                    fr = direction * 10 + Math.floor(p * 20) % 10;
+                } else if (a.proj === 'PROJ_THROWING_AXE') {
                     // 飞斧空中 360° 旋转
                     fr = Math.floor(p * 24) % pa.n;
                 } else if (a.proj === 'PROJ_FIRE') {
@@ -6583,9 +6616,10 @@ export class Scene13WarLayer {
                 }
 
                 ctx.translate(x, y);
-                ctx.rotate(angle);
+                // 飞轮的 16 向角度已经画在 DE 原帧里；其他弹丸仍旋转水平基准帧。
+                if (!isChakram) ctx.rotate(angle);
                 ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
-                ctx.rotate(-angle);
+                if (!isChakram) ctx.rotate(-angle);
                 ctx.translate(-x, -y);
             }
             ctx.restore();
