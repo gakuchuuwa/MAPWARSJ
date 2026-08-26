@@ -23,17 +23,17 @@ const ELEV_BLUR = 5;
  * DE 原版 2.5D 经典左上方光源（2:1 等距视角俯冲光）：
  * 迎光坡面明亮立体，背光坡面呈现清晰温暖的 2.5D 山坡阴影。
  */
-const ELEV_LIGHT_DIR_X = 0.88;
-const ELEV_LIGHT_DIR_Y = 0.12;
+const ELEV_LIGHT_DIR_X = 0.92;
+const ELEV_LIGHT_DIR_Y = -0.39;
 
 /** 坡度响应敏感系数：让局部缓坡与高台肩部清晰呈现出受光面/背光面 */
 const ELEV_LIGHT_K = 2.4;
 
 /** 背光坡面立体压暗深度（multiply） */
-const ELEV_SHADE_DARK = 0.46;
+const ELEV_SHADE_DARK = 0.24;
 
 /** 迎光坡面自然受光提亮（screen） */
-const ELEV_SHADE_LIGHT = 0.36;
+const ELEV_SHADE_LIGHT = 0.18;
 /**
  * 斑块撕边幅度：blend 噪声在边界等值线上推拉的量。
  * 实测（等周指标 = 周长 / 2√(π·面积)，1.0 = 完美圆滑）：

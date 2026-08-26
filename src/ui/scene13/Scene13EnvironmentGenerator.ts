@@ -810,7 +810,6 @@ function addMicroRelief(
     //    这样「看得出起伏」还在（主人为此改过三次，不能退回平地），
     //    但整片的上下明暗差没了。
     const field: number[][] = [];
-    let lo = Infinity, hi = -Infinity;
     for (let y = 0; y < gh; y++) {
         const row: number[] = [];
         for (let x = 0; x < gw; x++) {
@@ -856,30 +855,21 @@ function addMicroRelief(
         for (let y = 0; y < gh; y++) {
             for (let x = 0; x < gw; x++) {
                 field[y][x] -= trend.get(x + y) ?? 0;
-                const v = field[y][x];
-                if (v < lo) lo = v;
-                if (v > hi) hi = v;
             }
         }
     }
 
-    // 量化阈值。
-    // 🔴 [2026-08-24] 曾照「DE 真值 78.4% 平地」定阈值，结果图上**看不出起伏**——
-    //    主人连说两次。原因：那 78.4% 是我从**一张地中海图**量的，不代表所有 DE 地图；
-    //    主人发的干旱图/林中空地/尼斯湖，坡面暗带都占到画面三四成，起伏明显大得多。
-    //    整数高度场里同一级内部完全平坦、梯度为 0，平地占比越高，能出明暗的过渡带越窄。
-    //    所以这里**以视觉为准**：让大半地面处在缓坡上，暗带才铺得开。
-    const span = (hi - lo) || 1;
-    // 🔴 [2026-08-24 二次回调] 曾把平地压到 18%（因为主人说「看不出起伏」），
-    //    结果 87% 的地面都在坡上，等距投影一拉，斑块连成横贯画面的明暗带，
-    //    看着像人为画了一道黑一道白（主人截图实锤）。
-    //    正确的是「大部分平地 + 少数起伏」——坡是点缀，不是主体。
-    //    DE 真值 78% 平地，我们取 60% 左右：比 DE 起伏多一点（战场需要地形），
-    //    但远没到满屏是坡。
-    const t1 = 0.60 - (0.60 - 0.42) * (density - 1) * 0.5;
-    const T1 = lo + span * Math.max(0.35, Math.min(0.85, t1));
-    const T2 = lo + span * 0.86;
-    const T3 = lo + span * 0.965;
+    // 按面积分位量化，而不是按 min/max 的固定比例切。固定比例会被单个极值拉偏，
+    // 同一密度在不同 seed 下可能从少量丘包变成满屏坡面。DE 实测基准为：
+    // 平地 78.4% / 1级 15.2% / 2级 5.6% / 3级 0.8%。
+    // density 只调整「有起伏的总面积」；各高度在起伏区内部仍保持 DE 的 70.4/25.9/3.7 比例。
+    const values = field.flat().sort((a, b) => a - b);
+    const raisedShare = Math.max(0.10, Math.min(0.34, 0.216 * density));
+    const flatShare = 1 - raisedShare;
+    const q = (share: number): number => values[Math.min(values.length - 1, Math.max(0, Math.floor(share * values.length)))];
+    const T1 = q(flatShare);
+    const T2 = q(flatShare + raisedShare * 0.704);
+    const T3 = q(flatShare + raisedShare * 0.963);
 
     for (let y = 0; y < gh; y++) {
         for (let x = 0; x < gw; x++) {
@@ -963,65 +953,14 @@ function generateElevation(
         return addMicroRelief(grid, gw, gh, rng, 0.55);
     }
     
-    // ⛰️ DE 原版多尺度自然起伏高地与丘陵群生成系统（2026-08-26 主人指令升级）：
-    // 1. 彻底打破平原死板单调：生成错落有致的多尺度山丘（大高台 + 连绵山脊 + 缓坡小丘 + 鞍部山谷）；
-    // 2. 丰富的高程层次：Level 3 制高顶台 + Level 2 宽阔坡腰 + Level 1 坡脚基底 + 连绵微起伏；
-    // 3. 自然山峦形态：椭圆旋转山脊走向，叠加多频谐波扰动，让山峦自然蜿蜒延伸。
-
-    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
-        ? 5 + rng.int(0, 3)   // 山地/高原：5~7 处大型连绵山峦丘陵群
-        : (elev !== null && elev >= 300)
-            ? 4 + rng.int(0, 3) // 丘陵台地：4~6 处错落战术高地与起伏山包
-            : 3 + rng.int(0, 3); // 平原低地：3~5 处自然缓坡起伏高地，完美还原 DE 丰富起伏
-
-    // 预设高地丘陵生成参数列表（包含主高台与副丘陵）
-    for (let i = 0; i < hillCount; i++) {
-        // 全图各区域错开分布（避免全部挤在中间或单侧）
-        const regionX = (i % 3) * 0.30 + 0.15 + (rng.next() - 0.5) * 0.16;
-        const regionY = Math.floor(i / 3) * 0.35 + 0.20 + (rng.next() - 0.5) * 0.18;
-        const hillScreenX = VW * Math.max(0.10, Math.min(0.90, regionX));
-        const hillScreenY = VH * Math.max(0.12, Math.min(0.88, regionY));
-
-        const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
-        const cx = Math.max(1, Math.min(gw - 2, hillGx));
-        const cy = Math.max(1, Math.min(gh - 2, hillGy));
-
-        // 主高地 vs 次级丘陵
-        const isMajor = i === 0 || (i === 1 && hillCount >= 4);
-        const rx = isMajor ? (12 + rng.next() * 8) : (6 + rng.next() * 6);  // 椭圆长轴
-        const ry = isMajor ? (8 + rng.next() * 6) : (4 + rng.next() * 5);   // 椭圆短轴
-        const hMax = isMajor ? ((elev !== null && elev >= 800) ? 3 : 2) : 1;
-        const angle = (rng.next() - 0.5) * 1.6; // 随机山脊走向倾角
-
-        for (let y = 0; y < gh; y++) {
-            for (let x = 0; x < gw; x++) {
-                const dx = x - cx;
-                const dy = y - cy;
-                const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
-                const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
-                const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
-                // 自然有机地形微扰噪声（打破几何椭圆，形成自然山脊曲折）
-                const noise = (Math.sin(x * 0.9 + y * 0.7) * 0.08)
-                    + (Math.cos(x * 1.4 - y * 1.1) * 0.06);
-                const dist = normDist + noise;
-
-                // 连续高程分层与平缓坡面
-                let h = 0;
-                if (dist < 0.38) {
-                    h = hMax; // 丘顶高台
-                } else if (dist < 0.76) {
-                    h = Math.max(1, hMax - 1); // 宽阔缓坡肩部
-                } else if (dist < 1.15) {
-                    h = 1; // 坡脚过渡环
-                }
-
-                if (h > grid[y][x]) {
-                    grid[y][x] = h;
-                }
-            }
-        }
-    }
-    return addMicroRelief(grid, gw, gh, rng, 1.1);
+    // 普通战场只保留 DE 式局部缓坡；明确的丘陵、峡谷高地由上面的拓扑分支生成。
+    // 海拔只小幅调整起伏覆盖面，避免平原也被无条件铺满大型山丘群。
+    const reliefDensity = elev !== null && (elev >= 800 || (slope !== null && slope >= 10))
+        ? 1.35
+        : elev !== null && elev >= 300
+            ? 1.15
+            : 1;
+    return addMicroRelief(grid, gw, gh, rng, reliefDensity);
 }
 
 // ── 第 3 层：DE 左侧海岸线（登陆战） ──────────────────────────
