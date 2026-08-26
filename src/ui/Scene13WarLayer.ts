@@ -3584,6 +3584,10 @@ export class Scene13WarLayer {
                 waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
             },
+            // [2026-08-26] 宿主帧预算快照：13 自身 step+render 中位仅 3.8ms（理论 263fps），
+            // 而探针反算实测 fps 中位 47、p10 仅 17.7 —— 说明卡顿几乎全在 13 之外。
+            // PerformanceMonitor 已逐帧记着主循环分项，这里一并落盘才能定位到具体子系统。
+            host: (window as any).perfMonitor?.getSnapshot?.() ?? null,
             events: this.diagEvents,
         });
         try {
