@@ -1,0 +1,9 @@
+{
+  "name": "MESO_DOCK_AGE2",
+  "frames": 1,
+  "box_w": 284,
+  "box_h": 196,
+  "anchor_x": 128,
+  "anchor_y": 132,
+  "sld_source": "b_meso_dock_age2"
+}
