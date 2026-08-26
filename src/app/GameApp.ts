@@ -321,11 +321,9 @@ export class GameApp {
             // 游戏内立绘校正（战斗中 F2）需要暂停推演
             this.combatUI.pauseHook = this.timeSystem;
 
-            // [2026-08-09] 独立战斗场景（第一步：切 13 + 背景固定）：战斗触发时镜头飞 13、地图冻结。
-            // 挂点在 GameAppCombatHooks（跟拍军团参与的 1v1/区域战 开始/结束）。
+            // 独立全屏战斗场景；挂点在 GameAppCombatHooks（跟拍军团参与的 1v1/区域战开始/结束）。
             this.battleScene = new BattleSceneLayer();
-            this.battleScene.bindMap(this.map);
-            // 进 13 先暂停游戏、军队待命（主人 2026-08-09 定），退出恢复原状态
+            // 进战术层先暂停大战略，退出时恢复原状态。
             this.battleScene.pauseHook = this.timeSystem;
 
             // [2026-08-11 13 v2] 出兵口互攻演出层：全屏 canvas 叠在地图上（透明背景，冻结地图透出）

@@ -24,7 +24,7 @@ export function isStrategicMapZoom(zoom: number): boolean {
     return isFactionOnlyZoom(zoom);
 }
 
-/** zoom ≤ 8 时隐藏：军队、河流、植被、战斗特效等 */
+/** zoom ≤ 7 时隐藏：军队、河流、植被、战斗特效等 */
 export const MACRO_HIDDEN_INFRA_PANES = [
     'npcPane',
     'siege-battle-pane',

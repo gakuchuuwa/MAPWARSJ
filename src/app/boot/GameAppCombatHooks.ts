@@ -188,7 +188,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                 battle.type, isNavalBattle);
-            app.battleScene?.enter(t.center, t.id);
+            app.battleScene?.enter(t.id);
         }
     };
 
@@ -267,7 +267,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                     );
                 }
             }
-            app.battleScene?.enter(t.center, t.id);
+            app.battleScene?.enter(t.id);
         }
         // 🔴 dur 必须在钉死时长**之后**取：战斗 UI 的进度条/倒计时按它铺，
         //    先取就会拿到引擎原来的动态时长（30s），UI 走完了战斗还在打。

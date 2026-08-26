@@ -1106,7 +1106,24 @@ export class CombatUI {
             }
             for (const [el, css] of this.scene13SavedCss) el.style.cssText = css;
             this.scene13SavedCss.clear();
-            for (const [el, at] of this.scene13Reparented) at.parent.insertBefore(el, at.next);
+            // 🔴 [2026-08-26 修·退出 13 后战略地图面板坏掉] 原来是
+            //      `for (const [el, at] of this.scene13Reparented) at.parent.insertBefore(el, at.next);`
+            //    centerBackdrop 与 centerPanel 是**相邻兄弟**，detach 时记下
+            //    centerBackdrop.next = centerPanel；还原时先处理 centerBackdrop，
+            //    而 centerPanel 此刻还挂在 body 上 —— insertBefore 抛 NotFoundError，
+            //    **整个还原循环当场中断**，其余元素（立绘框/科技盒）永远留在 body、
+            //    样式也没还原完，于是 8/9/10 的战斗面板就废了。
+            //    三重保险：① 逆序还原（后 detach 的先归位，锚点兄弟已就位）
+            //             ② 校验 next 仍是 parent 的子节点，否则退化为 appendChild
+            //             ③ try/catch 兜底，任何一个失败都不许拖垮后面的
+            for (const [el, at] of [...this.scene13Reparented.entries()].reverse()) {
+                try {
+                    if (at.next && at.next.parentNode === at.parent) at.parent.insertBefore(el, at.next);
+                    else at.parent.appendChild(el);
+                } catch {
+                    try { at.parent.appendChild(el); } catch { /* 原父节点已销毁，只能放弃该元素 */ }
+                }
+            }
             this.scene13Reparented.clear();
             return;
         }

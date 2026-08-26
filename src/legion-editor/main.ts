@@ -1657,6 +1657,9 @@ function renderNavalPanel(row: FactionLegionRow): void {
 function renderEditPanel(row: FactionLegionRow): void {
     if (!currentEditingLegion) return;
 
+    // 记住「高级微调」折叠面板的展开状态（重渲染时恢复，避免自动收缩）
+    const tuneDetailsOpen = (document.getElementById('le-tune-details') as HTMLDetailsElement | null)?.open ?? true;
+
     const mode = currentEditingLegion.formationMode;
     const slots = currentEditingLegion.slots;
 
@@ -1912,6 +1915,8 @@ function renderEditPanel(row: FactionLegionRow): void {
     `;
 
     els.panelContent.innerHTML = html;
+    const tuneDetails = document.getElementById('le-tune-details') as HTMLDetailsElement | null;
+    if (tuneDetails) tuneDetails.open = tuneDetailsOpen;
     bindPanelEvents(row);
     startCanvasPreview();
 }

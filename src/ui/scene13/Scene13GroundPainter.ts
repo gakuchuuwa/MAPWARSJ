@@ -15,63 +15,25 @@
 /** 等距菱形瓦片（2:1，DE 同款投影） */
 export const TILE_W = 64;
 export const TILE_H = 32;
-/** DE 等距高程的屏幕抬升量：每级抬升 14px，居高临下战术层次鲜明 */
-export const ELEV_STEP_PX = 14;
-/** 高地光照羽化半径（px）：抹掉双线性折痕，又不把坡面糊成一团 */
-const ELEV_BLUR = 7;
+export const ELEV_STEP_PX = 18;
+/** 高地光照羽化半径（px） */
+const ELEV_BLUR = 5;
+
 /**
- * 高程方向光（照 DE：光源在屏幕左上）。DIR = 背光方向在等距网格空间的分量：
- * 屏幕右下 (1,1) 反解到网格 ≈ (0.0469, 0.0156)，归一化 (0.95, 0.32)。
- * ∇h·DIR > 0 → 迎光坡提亮；< 0 → 背光坡压暗。
+ * DE 原版 2.5D 经典左上方光源（2:1 等距视角俯冲光）：
+ * 迎光坡面明亮立体，背光坡面呈现清晰温暖的 2.5D 山坡阴影。
  */
-/**
- * 🔴 [2026-08-24 主人：「上面一条黑，下面一条白，怎么还有啊」——查了四轮才找到]
- *
- * 这两个值是**网格空间**的光照方向，不是屏幕空间的。等距投影下：
- *     网格 x → 屏幕 (+TILE_W/2, +TILE_H/2) = (+32, +16)
- *     网格 y → 屏幕 (-TILE_W/2, +TILE_H/2) = (-32, +16)
- *
- * 原值 (0.95, 0.32) 换算到屏幕：
- *     0.95×(32,16) + 0.32×(-32,16) = (20.2, 20.3)
- * —— **屏幕上是 45° 斜向，纵向分量和横向一样大**。
- * 于是屏幕纵向的大缓坡（一屏只容得下 2~3 个波长，必然有）被渲染成
- * 横贯全屏的明暗带：实测 `ds4 配 LUSH_BAMBOO` 顶 102 / 中 125 / 底 145。
- *
- * 排除过但不是根因的：地形贴图渐变（84 张实测顶底落差 <14）、
- * blends 遮罩、`ELEV_SHADE_DARK` 大小、`height_limits` 硬绑高度带、canvas alpha。
- *
- * 新值让屏幕方向接近**水平**：解 a×(32,16)+b×(-32,16) = (1, 0.2)
- * 得 (a, b) ∝ (0.92, -0.39)。纵向坡不再产生明暗差，横向坡照旧有立体感。
- * ⚠️ 改这两个值必须重跑 `npx tsx tools/audit-terrain-shading.mts` 复测屏幕方向。
- */
-const ELEV_LIGHT_DIR_X = 0.92;
-const ELEV_LIGHT_DIR_Y = -0.39;
-/**
- * 坡度→明暗强度系数。梯度用 ±2 格的宽基线（见 paintShading）：
- * generateElevation 出的是 DE 那种同心阶梯高台，用 ±1 格窄差分只会在台阶接缝上
- * 描出一条发丝细线（实测仅 ±8%，屏幕上等于没有）；±2 格把响应摊到整个坡面，
- * 得到 DE 那种成片的受光面/背光面。
- */
-const ELEV_LIGHT_K = 1.6;
-/**
- * 背光面最大压暗量（multiply）。
- *
- * 🔴 [2026-08-24 主人：「上方一道暗色渐变带，下方一道亮色渐变带」]
- *    原值 0.40 = 压暗 40%。注释却写「约 −20%，与 DE 坡面对比同量级」——
- *    **注释描述的是某次没拉满的实测，不是这个常量的含义**，两者差一倍。
- *
- *    拉满时的后果实测（atlas 34 张里 17 张中招）：
- *      `ds2 配 OAK`  中段 146 → 顶部暗带 **88**（146×0.60=87.6，正好是 0.40 拉满）
- *      `ds2 配 PALM` 中段 147 → 顶部 92、底部亮带 **180**
- *    因为 addMicroRelief 是 20~50 格的**低频波**，一个波峰就横跨整屏，
- *    于是整条坡同时拉满 → 屏幕上就是一道贯穿的暗带 + 一道亮带。
- *
- *    改成 0.24（−24%），回到注释说的量级；坡面立体感还在，但不会糊成一条带。
- *    ⚠️ 调这两个值必须重跑 `npx tsx tools/audit-terrain-shading.mts` 复测。
- */
-const ELEV_SHADE_DARK = 0.24;
-/** 迎光面最大提亮量（screen）：亮面比暗面收敛，符合 DE 的日照观感。同上从 0.32 降到 0.18 */
-const ELEV_SHADE_LIGHT = 0.18;
+const ELEV_LIGHT_DIR_X = 0.88;
+const ELEV_LIGHT_DIR_Y = 0.12;
+
+/** 坡度响应敏感系数：让局部缓坡与高台肩部清晰呈现出受光面/背光面 */
+const ELEV_LIGHT_K = 2.4;
+
+/** 背光坡面立体压暗深度（multiply） */
+const ELEV_SHADE_DARK = 0.46;
+
+/** 迎光坡面自然受光提亮（screen） */
+const ELEV_SHADE_LIGHT = 0.36;
 /**
  * 斑块撕边幅度：blend 噪声在边界等值线上推拉的量。
  * 实测（等周指标 = 周长 / 2√(π·面积)，1.0 = 完美圆滑）：
@@ -145,10 +107,15 @@ export class Scene13GroundPainter {
 
     private elevQuads: Map<number, Path2D> | null = null;
     private elevQuadsReady = false;
-    private elevCv: HTMLCanvasElement | null = null;
-    private elevCtx: CanvasRenderingContext2D | null = null;
-    private elevBlurCv: HTMLCanvasElement | null = null;
-    private elevBlurCtx: CanvasRenderingContext2D | null = null;
+    private darkCv: HTMLCanvasElement | null = null;
+    private darkCtx: CanvasRenderingContext2D | null = null;
+    private darkBlurCv: HTMLCanvasElement | null = null;
+    private darkBlurCtx: CanvasRenderingContext2D | null = null;
+
+    private lightCv: HTMLCanvasElement | null = null;
+    private lightCtx: CanvasRenderingContext2D | null = null;
+    private lightBlurCv: HTMLCanvasElement | null = null;
+    private lightBlurCtx: CanvasRenderingContext2D | null = null;
     private elevCacheReady = false;
 
     private maskCv: HTMLCanvasElement | null = null;
@@ -346,85 +313,113 @@ export class Scene13GroundPainter {
         if (!gw || !gh) return;
         if (!W || !H) return;
 
-        if (!this.elevCv) { this.elevCv = document.createElement('canvas'); this.elevCtx = this.elevCv.getContext('2d')!; }
-        if (!this.elevBlurCv) { this.elevBlurCv = document.createElement('canvas'); this.elevBlurCtx = this.elevBlurCv.getContext('2d')!; }
-        const lcv = this.elevCv, lctx = this.elevCtx!;
-        const bcv = this.elevBlurCv, bctx = this.elevBlurCtx!;
-        if (lcv.width !== W || lcv.height !== H) {
+        if (!this.darkCv) { this.darkCv = document.createElement('canvas'); this.darkCtx = this.darkCv.getContext('2d')!; }
+        if (!this.darkBlurCv) { this.darkBlurCv = document.createElement('canvas'); this.darkBlurCtx = this.darkBlurCv.getContext('2d')!; }
+        if (!this.lightCv) { this.lightCv = document.createElement('canvas'); this.lightCtx = this.lightCv.getContext('2d')!; }
+        if (!this.lightBlurCv) { this.lightBlurCv = document.createElement('canvas'); this.lightBlurCtx = this.lightBlurCv.getContext('2d')!; }
+
+        const dcv = this.darkCv, dctx = this.darkCtx!;
+        const dbcv = this.darkBlurCv, dbctx = this.darkBlurCtx!;
+        const lcv = this.lightCv, lctx = this.lightCtx!;
+        const lbcv = this.lightBlurCv, lbctx = this.lightBlurCtx!;
+
+        if (dcv.width !== W || dcv.height !== H) {
+            dcv.width = W; dcv.height = H;
+            dbcv.width = W; dbcv.height = H;
             lcv.width = W; lcv.height = H;
-            bcv.width = W; bcv.height = H;
+            lbcv.width = W; lbcv.height = H;
             this.elevCacheReady = false;
         }
 
         if (!this.elevCacheReady) {
-            // 1. 明暗小图（一格一像素）：黑/白 + alpha，平地 alpha=0（中性）
-            const small = document.createElement('canvas');
-            small.width = gw; small.height = gh;
-            const sctx = small.getContext('2d')!;
-            const id = sctx.createImageData(gw, gh);
-            const px = id.data;
+            // 1. 独立生成阴影小图 (darkSmall) 与高光小图 (lightSmall)，物理分离互不中和
+            const darkSmall = document.createElement('canvas');
+            darkSmall.width = gw; darkSmall.height = gh;
+            const dsctx = darkSmall.getContext('2d')!;
+            const darkId = dsctx.createImageData(gw, gh);
+            const darkPx = darkId.data;
+
+            const lightSmall = document.createElement('canvas');
+            lightSmall.width = gw; lightSmall.height = gh;
+            const lsctx = lightSmall.getContext('2d')!;
+            const lightId = lsctx.createImageData(gw, gh);
+            const lightPx = lightId.data;
+
             const at = (x: number, y: number): number =>
                 this.elevGrid[Math.max(0, Math.min(gh - 1, y))][Math.max(0, Math.min(gw - 1, x))];
-            let any = false;
+
+            let anyDark = false, anyLight = false;
             for (let y = 0; y < gh; y++) {
                 for (let x = 0; x < gw; x++) {
-                    // ±2 格宽基线中心差分：把台阶响应摊成整片坡面（窄基线只描发丝线）
-                    const dhx = (at(x + 2, y) - at(x - 2, y)) * 0.25;
-                    const dhy = (at(x, y + 2) - at(x, y - 2)) * 0.25;
+                    const dhx = ((at(x + 1, y) - at(x - 1, y)) * 0.7 + (at(x + 2, y) - at(x - 2, y)) * 0.3) * 0.5;
+                    const dhy = ((at(x, y + 1) - at(x, y - 1)) * 0.7 + (at(x, y + 2) - at(x, y - 2)) * 0.3) * 0.5;
                     const s = dhx * ELEV_LIGHT_DIR_X + dhy * ELEV_LIGHT_DIR_Y;
                     const m = Math.min(1, Math.abs(s) * ELEV_LIGHT_K);
                     const i = (y * gw + x) * 4;
-                    const lit = s > 0;
-                    // 迎光=白（screen 通道生效、multiply 通道中性）；背光=黑（反之）
-                    px[i] = px[i + 1] = px[i + 2] = lit ? 255 : 0;
-                    px[i + 3] = Math.round(m * (lit ? ELEV_SHADE_LIGHT : ELEV_SHADE_DARK) * 255);
-                    if (m > 0.01) any = true;
-                }
-            }
-            sctx.putImageData(id, 0, 0);
 
-            lctx.clearRect(0, 0, lcv.width, lcv.height);
-            bctx.clearRect(0, 0, bcv.width, bcv.height);
-            if (any) {
-                // 2. 等距仿射放大：像素 (u,v) → 屏幕；u=i+0.5 对准顶点 i，双线性即 Gouraud
-                const shadePass = (liftPx: number) => {
-                    lctx.imageSmoothingEnabled = true;
-                    lctx.imageSmoothingQuality = 'high';
-                    lctx.setTransform(TILE_W / 2, TILE_H / 2, -TILE_W / 2, TILE_H / 2, this.isoOx, this.isoOy - TILE_H / 2 - liftPx);
-                    lctx.drawImage(small, 0, 0);
-                    lctx.setTransform(1, 0, 0, 1, 0, 0);
-                };
-                shadePass(0);
-                // 抬升区域重画一遍（先在裁剪内清干净，避免与平铺那遍叠加成双倍浓度），
-                // 让明暗与抬升后的坡面严丝合缝。
-                const groups = this.ensureElevQuads();
-                if (groups) {
-                    for (const h of [...groups.keys()].sort((a, b) => a - b)) {
-                        if (h <= 0) continue;
-                        lctx.save();
-                        lctx.clip(groups.get(h)!);
-                        lctx.clearRect(0, 0, lcv.width, lcv.height);
-                        shadePass(h * ELEV_STEP_PX);
-                        lctx.restore();
+                    if (s < -0.01) {
+                        // 背光坡面：纯黑阴影，Alpha 随坡度自然加深
+                        darkPx[i] = darkPx[i + 1] = darkPx[i + 2] = 0;
+                        darkPx[i + 3] = Math.round(m * ELEV_SHADE_DARK * 255);
+                        anyDark = true;
+                    }
+                    if (s > 0.01) {
+                        // 迎光坡面：纯白阳光，Alpha 随坡度自然提亮
+                        lightPx[i] = lightPx[i + 1] = lightPx[i + 2] = 255;
+                        lightPx[i + 3] = Math.round(m * ELEV_SHADE_LIGHT * 255);
+                        anyLight = true;
                     }
                 }
-                // 3. 轻羽化，抹掉双线性在格边留下的折线（C0 折痕）
-                bctx.save();
-                bctx.filter = `blur(${ELEV_BLUR}px)`;
-                bctx.drawImage(lcv, 0, 0);
-                bctx.restore();
             }
+            dsctx.putImageData(darkId, 0, 0);
+            lsctx.putImageData(lightId, 0, 0);
+
+            dctx.clearRect(0, 0, dcv.width, dcv.height);
+            dbctx.clearRect(0, 0, dbcv.width, dbcv.height);
+            lctx.clearRect(0, 0, lcv.width, lcv.height);
+            lbctx.clearRect(0, 0, lbcv.width, lbcv.height);
+
+            // 2. 阴影通道等距仿射放大与平滑羽化
+            if (anyDark) {
+                dctx.imageSmoothingEnabled = true;
+                dctx.imageSmoothingQuality = 'high';
+                dctx.setTransform(TILE_W / 2, TILE_H / 2, -TILE_W / 2, TILE_H / 2, this.isoOx, this.isoOy - TILE_H / 2);
+                dctx.drawImage(darkSmall, 0, 0);
+                dctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                dbctx.save();
+                dbctx.filter = `blur(${ELEV_BLUR}px)`;
+                dbctx.drawImage(dcv, 0, 0);
+                dbctx.restore();
+            }
+
+            // 3. 高光通道等距仿射放大与平滑羽化
+            if (anyLight) {
+                lctx.imageSmoothingEnabled = true;
+                lctx.imageSmoothingQuality = 'high';
+                lctx.setTransform(TILE_W / 2, TILE_H / 2, -TILE_W / 2, TILE_H / 2, this.isoOx, this.isoOy - TILE_H / 2);
+                lctx.drawImage(lightSmall, 0, 0);
+                lctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                lbctx.save();
+                lbctx.filter = `blur(${ELEV_BLUR}px)`;
+                lbctx.drawImage(lcv, 0, 0);
+                lbctx.restore();
+            }
+
             this.elevCacheReady = true;
         }
 
-        // 4. 同一张明暗图刷两遍：multiply 只吃黑（压暗背光面，白处天然中性），
-        //    screen 只吃白（提亮迎光面，黑处天然中性）。等价于线性调光，不会像
-        //    soft-light 那样把两侧都压进中灰，也不会污染贴图色相。
+        // 4. 双通道合成：multiply 压暗背光阴影，screen 提亮迎光高光
         g.save();
-        g.globalCompositeOperation = 'multiply';
-        g.drawImage(bcv, 0, 0);
-        g.globalCompositeOperation = 'screen';
-        g.drawImage(bcv, 0, 0);
+        if (this.darkBlurCv) {
+            g.globalCompositeOperation = 'multiply';
+            g.drawImage(this.darkBlurCv, 0, 0);
+        }
+        if (this.lightBlurCv) {
+            g.globalCompositeOperation = 'screen';
+            g.drawImage(this.lightBlurCv, 0, 0);
+        }
         g.restore();
     }
 

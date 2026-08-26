@@ -1,43 +1,24 @@
 /**
- * BattleSceneLayer — 独立战斗场景（13 演出档：编队展开 + 镜头跟随将领编队）
+ * BattleSceneLayer — 独立全屏战斗场景的生命周期控制
  *
  * 2026-08-09 主人定稿：战斗不进 ZOOM13 的旧方案作废，改独立战斗场景。
- *   上层 = 战斗画布（独立 canvas，屏幕坐标，双方自由摆位）—— 后续步骤
- *   下层 = 地图（冻结自动缩放 + 普通跟拍，镜头由本类 tick 接管）
- *
- * ⚠️ 实际行为（2026-08-09 核对修正，勿再按旧注释理解为「静止背景」）：
- *   tick() 每帧 setView 追攻方将领编队的渲染位置（含攻城外推 + 编队推进偏移）——
- *   地图是全程跟拍的，不是静止的。GameAppLoop 冻结的只是 zoomController.tick()
- *   与 cameraFollowUI.tickFollowCamera()（普通跟拍），镜头改由 battleScene.tick 控制。
+ *   上层 = Scene13WarLayer 全屏 canvas（独立屏幕坐标与等距网格）
+ *   下层 = 战略地图（保持进入前的中心和 zoom，不参与战斗演出）
  *
  * 主要职责：
- *   1. 战斗开始（跟拍军团参与）→ 镜头 flyTo 战场中心 zoom 13
- *   2. 场景激活期间：每帧追攻方将领编队渲染中心（SCENE_FOLLOW_LERP 指数平滑 + 大距离吸附）
- *   3. 自愈：跟拍军团无活跃战斗即自动退出，防 active 残留污染非 13 渲染
- * 退出时由本类 setView 带回进入前 zoom（ZoomController.currentZoom 不感知 flyTo，勿依赖它）。
+ *   1. 进场时暂停大战略、收起战略面板
+ *   2. 场景激活期间维护战斗结束与残局停留生命周期
+ *   3. 退场时解冻战斗、恢复大战略和面板
  */
 
-import L from 'leaflet';
-import { GameMap } from '../map/GameMap';
-import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import { GameConfig } from '../config/GameConfig'; // [2026-08-11 战败停留] FOLLOW_SWITCH_DELAY_MS 兜底
 
-/** 镜头跟随将领编队：每帧追近比例（指数平滑，与 GameAppLoop 跟拍同款） */
-const SCENE_FOLLOW_LERP = 0.22;
-/** 已对准判定（米）：小于此距离不再 setView，避免静止时微抖 */
-const SCENE_FOLLOW_DEADZONE_M = 120;
-/** 距离过大（攻方被 13 视觉拉近到城图旁，镜头需直接吸附而非平滑追 25km） */
-const SCENE_FOLLOW_SNAP_M = 12000;
-
 export class BattleSceneLayer {
-    private map: GameMap | null = null;
     /** 场景是否处于「激活」状态（演出中） */
     private active = false;
-    /** 进入 13 前的 zoom，退出时带回（ZoomController 不知情，必须自己记） */
-    private preZoom = 9;
     /** 暂停钩子（GameApp 注入 timeSystem）：GlobalUnitRenderer 编队推进的暂停守卫用（用户手动暂停时编队停） */
     public pauseHook?: { setPaused(p: boolean): void; isGamePaused(): boolean };
-    /** 镜头跟随的将领编队单位 id（跟拍军团；战斗推进时每帧追它） */
+    /** 战术层独立时钟只放行此军团所在的战斗。 */
     private followUnitId: string | null = null;
     /** [2026-08-10 13 独立时钟] 本次进场是否由**场景**把大战略暂停的（用户手动暂停不算）。
      *  true = 大地图停住、只有这场 13 战斗在跑（三国群英传/全面战争式的战术层）；
@@ -52,18 +33,14 @@ export class BattleSceneLayer {
         return this.lingerUntil > 0;
     }
 
-    public bindMap(map: GameMap): void {
-        this.map = map;
-    }
-
-    /** 战斗开始 → 镜头飞战场中心 zoom 13，并激活冻结。
+    /** 战斗开始 → 激活独立战斗画布并冻结大战略。
      *
      *  [2026-08-10 13 独立时钟·主人定稿] 进 13 **暂停大战略**：大地图（年历/AI/募兵/历史事件）
      *  停住，只有这场战斗按自己的时钟跑 —— 三国群英传 / 全面战争式的战略层 ⇄ 战术层分离。
      *  推翻 2026-08-09 的「进 13 不暂停」，理由：引擎给的 10~30 游戏秒装不下编队级演出
      *  （冲锋→接触→逐队阵亡），且大地图要快、战斗要慢的矛盾绑在一个时钟上无解。
      *  ⚠️ 用户自己按了暂停键的情况不接管（strategyPausedByScene=false），那是真暂停。 */
-    public enter(center: { lat: number; lng: number }, followUnitId?: string | null): void {
+    public enter(followUnitId?: string | null): void {
         this.active = true;
         this.followUnitId = followUnitId ?? null;
         // [2026-08-11 战败停留] 新战斗进场 → 取消残留的停留（上一场战败的 linger 不带到下一场）
@@ -83,26 +60,6 @@ export class BattleSceneLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onEnterBattleScene13?.();
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
-        const lMap = this.map?.getLeafletMap();
-        if (!lMap) return;
-        // 记住进入前 zoom：本方法不再改缩放，但别处若改了，exit 仍据此带回（幂等，没变就空过）
-        this.preZoom = lMap.getZoom();
-        // 🔴 [2026-08-26 主人定「直接动手」] 原来这里是 `lMap.flyTo([center], 13, {duration:1.6})`，已删。
-        //
-        // 依据：**Scene13WarLayer 全文不读地图缩放**（grep zoom/getZoom 零命中）。
-        // 它是 `position:fixed; inset:0` 的全屏 canvas，宽高取 window.innerWidth/innerHeight，
-        // 战场用自己的等距网格（isoCellX/isoCellY）算坐标，与经纬度和 Leaflet zoom 完全无关。
-        // 也就是说战斗画面长什么样跟底图是 zoom 9 还是 13 毫无关系 —— 而底图被这块
-        // 不透明的全屏战场整个盖住，观众一个像素也看不到。
-        //
-        // 代价却是观众看得见的：flyTo 那 1.6s 里 13 画布还没铺上，露出来的正是
-        // 「正在放大的战略地图」；飞到位后还要等素材解码（292 局实测中位 7.2s、p90 18.6s），
-        // 这期间露的还是那张图。一半的战斗要让观众盯着它看 8 秒以上，然后它被完全盖掉。
-        // 这是 13 早期按「缩放档位」设计留下的包袱，现在只剩副作用，故去掉。
-        //
-        // 8/9/10 不受影响：本方法此后不再触碰地图缩放，退出时 zoom 与进入前一致。
-        // center 参数保留：调用方（GameAppCombatHooks）仍按战场中心传入，
-        // 且 tick() 的每帧跟拍仍需要战场位置，签名不动。
     }
 
     /**
@@ -178,42 +135,9 @@ export class BattleSceneLayer {
             }
         }
 
-        // 13 锁死：flyTo(13) 动画途中（zoom<13）不跟随不推进，非 13 绝无 13 专属行为
-        const lMap = this.map?.getLeafletMap();
-        if (!lMap) return;
-        if (lMap.getZoom() < 13) return;
-
-        // [2026-08-11 13 v2] 出兵口互攻演出：镜头固定（冻结地图当背景），不再追军团。
-        // 出场位置 = enter 时 flyTo 的战场中心（zoom 13），演出层全屏 canvas 画精灵。
-        const warActive = (window as any).game?.scene13War?.isActive?.() === true;
-        if (warActive) return;
-
-        if (!this.followUnitId) return;
-        const renderer = getGlobalUnitRenderer();
-        // 🔴 [2026-08-10 主人铁律] 镜头**永远跟随军团**（跟拍军团将领编队）——
-        // 野战/攻城一律 getGeneralSquadCenter，禁止改成跟战场中点/中心点
-        // （曾擅改攻城镜头跟攻守中点被主人怒斥「凭什么给你改」）。
-        const rendered = renderer?.getGeneralSquadCenter(this.followUnitId);
-        if (!rendered) return;
-        const target = L.latLng(rendered.lat, rendered.lng);
-        const currentZoom = lMap.getZoom();
-        const center = lMap.getCenter();
-        const dist = center.distanceTo(target);
-        if (dist <= SCENE_FOLLOW_DEADZONE_M) return;
-        // 距离过大（13 视觉拉近把攻方挪到城图旁，镜头须直接吸附，不平滑追几十公里）
-        if (dist >= SCENE_FOLLOW_SNAP_M) {
-            lMap.setView(target, currentZoom, { animate: false });
-            return;
-        }
-        // 每帧向目标插值一小段（指数平滑追踪），与普通跟拍同手感
-        const next = L.latLng(
-            center.lat + (target.lat - center.lat) * SCENE_FOLLOW_LERP,
-            center.lng + (target.lng - center.lng) * SCENE_FOLLOW_LERP,
-        );
-        lMap.setView(next, currentZoom, { animate: false });
     }
 
-    /** 战斗结束 → 解除冻结，镜头带回进入前的 zoom（勿依赖 ZoomController 自己发现 13） */
+    /** 战斗结束 → 解除冻结并恢复大战略；战略地图镜头始终未被本场景改动。 */
     public exit(): void {
         if (!this.active) return;
         this.active = false;
@@ -239,11 +163,6 @@ export class BattleSceneLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onExitBattleScene13?.();
         game?.brawlFeedPanel?.onExitBattleScene13?.();
-        const lMap = this.map?.getLeafletMap();
-        if (!lMap) return;
-        if (Math.abs(lMap.getZoom() - this.preZoom) > 0.01) {
-            lMap.setView(lMap.getCenter(), this.preZoom, { animate: false });
-        }
     }
 
     /**
