@@ -12,7 +12,8 @@
     --cinnabar-bot: #681b1d;  /* 朱砂红底 */
     
     position: fixed;
-    left: 20px;
+    right: 20px;
+    left: auto;
     bottom: 20px;
     z-index: 5000;
     display: none;

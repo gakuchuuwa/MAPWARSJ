@@ -2,6 +2,7 @@ import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverr
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
+import type { Scene13WarInit } from './Scene13WarLayer';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
 import {
     BATTLE_PORTRAIT_FALLBACK,
@@ -1079,6 +1080,7 @@ export class CombatUI {
      *   中央 (order:  0): 跟随/改名胶囊 [ 太平 石达开 率 石敢当  ✎改名  ✕取消 ]
      *   右翼 (order:  1): 守方科技胶囊 [ 科技名列表 | 步甲+2/3 远攻+2 ...  守方科技 🛡️ ]
      */
+
     /**
      * [13 布局] 战术模式（ZOOM 13）专属面板布局。主人 2026-08-26 定：
      *   · 人物立绘分置屏幕**左下角 / 右下角**
@@ -1090,7 +1092,7 @@ export class CombatUI {
      *    所以这里不改任何元素的原始样式定义，只在进入 13 时**快照内联样式再覆盖**，
      *    退出时逐字还原 —— 非 13 逐像素不变。
      */
-    private applyScene13Layout(on: boolean): void {
+    public applyScene13Layout(on: boolean): void {
         if (on === this.scene13LayoutOn) return;
         this.scene13LayoutOn = on;
 
@@ -1102,27 +1104,25 @@ export class CombatUI {
             return;
         }
 
+        const topHud = document.getElementById('top-center-hud');
         const save = (el?: HTMLElement | null) => {
             if (el && !this.scene13SavedCss.has(el)) this.scene13SavedCss.set(el, el.style.cssText);
         };
         for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
             this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
-            this.leftTechBox, this.rightTechBox, this.indicatorJun]) save(el);
+            this.leftTechBox, this.rightTechBox, this.indicatorJun, this.toggleCollapseBtn,
+            this.skillsRow, this.healthBarContainer, this.battleTitle, topHud]) save(el);
 
-        // 🔴 必须移出 #combat-ui-panel：13 开战时 Scene13WarLayer 会 setCollapsed(true)，
-        //    容器被 translate(-50%,100%) 推出屏幕。而**带 transform 的祖先会成为
-        //    position:fixed 子元素的包含块** —— 留在容器里的话，下面设的 fixed 定位
-        //    会跟着容器一起被推走，整套布局白改。挂到 body 才真正相对视口，
-        //    也才不受折叠状态影响。退出时按记录插回原位。
+        // 移出 #combat-ui-panel 挂到 body，避免受任何容器 transform 影响
         const detach = (el?: HTMLElement | null) => {
             if (!el || !el.parentElement || el.parentElement === document.body) return;
             this.scene13Reparented.set(el, { parent: el.parentElement, next: el.nextSibling });
             document.body.appendChild(el);
         };
         for (const el of [this.centerBackdrop, this.centerPanel,
-            this.leftPortraitFrame, this.rightPortraitFrame, this.indicatorJun]) detach(el);
+            this.leftPortraitFrame, this.rightPortraitFrame]) detach(el);
 
-        // ① 立绘 → 屏幕左下 / 右下角（原本是 absolute 贴在中央面板两侧，改 fixed 脱出面板宽度）
+        // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
         for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
             if (!frame) continue;
             frame.style.position = 'fixed';
@@ -1130,52 +1130,76 @@ export class CombatUI {
             frame.style.top = 'auto';
             frame.style[edge === 'left' ? 'right' : 'left'] = 'auto';
             frame.style[edge] = '0';
-            frame.style.zIndex = String(T.zIndex.portrait);
+            frame.style.zIndex = String(T.zIndex.panel);
+            frame.style.opacity = '1';
+            frame.style.visibility = 'visible';
+            frame.style.display = 'block';
         }
 
-        // ② 上方条：只留标题（地点+类型）与血槽
+        // ② 上方条：血槽两端加长直达屏幕边缘，置于跟随军团信息上方
         if (this.centerPanel) {
             this.centerPanel.style.position = 'fixed';
-            this.centerPanel.style.top = '2.2vh';
+            this.centerPanel.style.top = '0';
             this.centerPanel.style.bottom = 'auto';
-            this.centerPanel.style.left = '50%';
-            this.centerPanel.style.right = 'auto';
-            this.centerPanel.style.transform = 'translateX(-50%)';
-            this.centerPanel.style.width = 'min(52vw, 900px)';
-            this.centerPanel.style.padding = '0';
+            this.centerPanel.style.left = '0';
+            this.centerPanel.style.right = '0';
+            this.centerPanel.style.width = '100vw';
+            this.centerPanel.style.maxWidth = '100vw';
+            this.centerPanel.style.transform = 'none';
+            this.centerPanel.style.padding = '4px 0 0 0';
+            this.centerPanel.style.alignItems = 'center';
             this.centerPanel.style.justifyContent = 'flex-start';
+            this.centerPanel.style.zIndex = String(T.zIndex.panel);
+            this.centerPanel.style.opacity = '1';
+            this.centerPanel.style.visibility = 'visible';
+            this.centerPanel.style.display = 'flex';
         }
-        // 中栏黑底跟随到顶部，作为标题/血槽的衬底
+        if (this.healthBarContainer) {
+            this.healthBarContainer.style.width = '100vw';
+            this.healthBarContainer.style.maxWidth = '100vw';
+            this.healthBarContainer.style.margin = '0';
+            this.healthBarContainer.style.borderRadius = '0';
+            this.healthBarContainer.style.clipPath = 'none';
+        }
+        if (this.battleTitle) {
+            this.battleTitle.style.marginTop = '4px';
+            this.battleTitle.style.marginBottom = '4px';
+            this.battleTitle.style.fontSize = uiPx(T.typography.titleSize + 2);
+        }
+        // 中栏黑底跟随到顶部，直通全屏
         if (this.centerBackdrop) {
             this.centerBackdrop.style.position = 'fixed';
             this.centerBackdrop.style.top = '0';
             this.centerBackdrop.style.bottom = 'auto';
-            this.centerBackdrop.style.left = '50%';
-            this.centerBackdrop.style.right = 'auto';
-            this.centerBackdrop.style.transform = 'translateX(-50%)';
-            this.centerBackdrop.style.width = 'min(64vw, 1120px)';
-            this.centerBackdrop.style.height = '15vh';
+            this.centerBackdrop.style.left = '0';
+            this.centerBackdrop.style.right = '0';
+            this.centerBackdrop.style.width = '100vw';
+            this.centerBackdrop.style.maxWidth = '100vw';
+            this.centerBackdrop.style.height = '64px';
+            this.centerBackdrop.style.transform = 'none';
+            this.centerBackdrop.style.webkitMaskImage = 'none';
+            this.centerBackdrop.style.maskImage = 'none';
+            this.centerBackdrop.style.zIndex = String(T.zIndex.panel - 1);
+            this.centerBackdrop.style.opacity = '1';
+            this.centerBackdrop.style.visibility = 'visible';
+            this.centerBackdrop.style.display = 'block';
         }
-        // 中央「均」势指示：左右「优/劣」挂在立绘框内会随立绘去角落，
-        // 这枚挂在面板容器上，不一起移走就会孤零零留在屏幕中间。跟到上方条下沿。
-        if (this.indicatorJun) {
-            this.indicatorJun.style.position = 'fixed';
-            this.indicatorJun.style.top = 'calc(2.2vh + 132px)';
-            this.indicatorJun.style.bottom = 'auto';
-            this.indicatorJun.style.left = '50%';
-            this.indicatorJun.style.transform = 'translateX(-50%)';
-            this.indicatorJun.style.zIndex = String(T.zIndex.panel + 1);
-        }
-
-        // ③ 大地图信息：13 期间不显示
+        // 🔴 删除血槽面板中的标签（skillsRow）与大地图多余信息
+        if (this.skillsRow) this.skillsRow.style.display = 'none';
+        if (this.indicatorJun) this.indicatorJun.style.display = 'none';
+        if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
         for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
             if (el) el.style.display = 'none';
         }
-        // ④ 科技 → 屏幕下方（原挂在顶部 #top-center-hud 的左右两翼）
+        // 🔴 跟随军团面板下移至血槽下方（避让血槽和战役大标题）
+        if (topHud) {
+            topHud.style.top = '68px';
+        }
+        // ③ 科技 → 屏幕下方左右分列
         for (const [box, edge] of [[this.leftTechBox, 'left'], [this.rightTechBox, 'right']] as const) {
             if (!box) continue;
             box.style.position = 'fixed';
-            box.style.bottom = '1.6vh';
+            box.style.bottom = '1.8vh';
             box.style.top = 'auto';
             box.style[edge] = '50%';
             box.style[edge === 'left' ? 'right' : 'left'] = 'auto';
@@ -1183,6 +1207,77 @@ export class CombatUI {
             box.style.zIndex = String(T.zIndex.panel + 1);
             box.style.color = '#e8dcc0';
         }
+    }
+
+    /**
+     * [2026-08-26] 战术模式开战时同步填充战斗数据（立绘、武将名牌、标题、双方势力），
+     * 确保无论从任何路径进入 13 战斗，左下/右下立绘与上方血槽均能完整展示。
+     */
+    public syncScene13WarStart(init: Scene13WarInit): void {
+        this.isVisible = true;
+        this.isCollapsed = false;
+        this.attackerFactionId = init.attackerFactionId ?? null;
+        this.defenderFactionId = init.defenderFactionId ?? null;
+
+        // 立绘与武将数据填充
+        if (!this.leftPortrait.src || this.leftPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+            this.setPortrait(
+                this.leftPortrait,
+                undefined,
+                init.attackerGeneralId || undefined,
+                init.attackerFactionId || undefined,
+                undefined,
+                'attacker',
+            );
+        }
+        if (!this.rightPortrait.src || this.rightPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+            this.setPortrait(
+                this.rightPortrait,
+                undefined,
+                init.defenderGeneralId || undefined,
+                init.defenderFactionId || undefined,
+                undefined,
+                'defender',
+                this.leftPortrait.src || undefined,
+            );
+        }
+
+        // 武将名牌
+        if (init.attackerGeneralId) {
+            const attGen = getGeneralRecordByGeneralId(init.attackerGeneralId);
+            if (attGen) {
+                this.leftGeneralNameTag.textContent = attGen.generalName;
+                this.leftGeneralNameTag.dataset.generalId = init.attackerGeneralId;
+                this.leftGeneralNameTag.style.display = 'block';
+            }
+        }
+        if (init.defenderGeneralId) {
+            const defGen = getGeneralRecordByGeneralId(init.defenderGeneralId);
+            if (defGen) {
+                this.rightGeneralNameTag.textContent = defGen.generalName;
+                this.rightGeneralNameTag.dataset.generalId = init.defenderGeneralId;
+                this.rightGeneralNameTag.style.display = 'block';
+            }
+        }
+
+        // 标题设置（地点 + 战斗类型）
+        let locName = '';
+        if (init.defenderCityId) {
+            const c = (window as any).game?.cityManager?.getCity?.(init.defenderCityId);
+            locName = c?.name || init.defenderCityId;
+        }
+        const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
+        this.battleTitle.textContent = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
+
+        // 势力名显示
+        const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
+        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(init.defenderFactionId) ?? '守方';
+        this.attackerDisplayName = attFactionName;
+        this.defenderDisplayName = defFactionName;
+
+        // 启用 13 专属布局并刷新
+        this.applyScene13Layout(true);
+        this.updateStats();
     }
 
     private buildTechRow(): HTMLDivElement {

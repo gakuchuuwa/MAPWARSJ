@@ -743,18 +743,14 @@ export function waterTerrainForTheme(
     biome: Biome = 'temperate_forest',
     lng?: number,
 ): string {
-    // 1. 冬季雪区 / 苔原：结冰
+    // 1. 冬季雪区 / 苔原：结冰 (ic2 为可航冰，非结冰期为清澈冷水 wtr)
     if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
-        return biome === 'tundra_snow' ? 'ic2' : 'wt2'; // 极地冻原湖冬季结冰=可航冰 ic2 / 一般冬季寒冰水 wt2
+        return 'ic2';
     }
     if (biome === 'tundra_snow') {
-        return 'wt2'; // 极地夏季融水（寒冰水）
+        return 'wtr'; // 极地融水清澈冷水
     }
-    // 2. 寒带针叶林（泰加）：深湖深蓝黑水 (wt4，贝加尔湖/北欧深湖)
-    if (biome === 'boreal') {
-        return 'wt4';
-    }
-    // 3. 华南 / 东南亚 / 非洲热带雨林水乡：DE 经典清澈碧绿翡翠水 (river_clean_green)
+    // 2. 华南 / 东南亚 / 非洲热带雨林水乡 / 湿润地区：DE 经典清澈碧绿翡翠水 (river_clean_green)
     if (
         theme.id === 'indomalayan_tropical' ||
         theme.id === 'afrotropical_tropical' ||
@@ -762,35 +758,16 @@ export function waterTerrainForTheme(
     ) {
         return 'river_clean_green';
     }
+    // 3. 地中海 / 蔚蓝沿海：清澈蔚蓝海水色 (wt5)
+    if (biome === 'mediterranean') {
+        return 'wt5';
+    }
     // 4. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
     if (theme.id === 'palustrine_swamp') {
         return 'wt6';
     }
-    // 5. 沙漠：高含沙深黄水（塔里木河/尼罗河/沙漠绿洲河）
-    if (biome === 'desert') {
-        return 'wt_yellow2';
-    }
-    // 6. 地中海：清澈蔚蓝海水色 (wt5)
-    if (biome === 'mediterranean') {
-        return 'wt5';
-    }
-    // 7. 冷草原：含沙浅黄水（草原河流含沙）
-    if (biome === 'cold_steppe') {
-        return 'wt_yellow';
-    }
-    // 8. 稀树草原：浑浊棕水（旱季浊水）
-    if (biome === 'savanna') {
-        return 'wt_brown';
-    }
-    // 9. 温带草原：富营养绿水（藻类繁盛）
-    if (biome === 'temperate_grass') {
-        return 'wt_green';
-    }
-    // 10. 温带森林：中水 (wt3)
-    if (biome === 'temperate_forest') {
-        return 'wt3';
-    }
-    // 11. 默认：清澈浅蓝江水 (wtr)
+    // 5. 寒带针叶林 / 温带森林 / 草原 / 沿海近海：清澈明亮蔚蓝水 (wtr)
+    // 🔴 [2026-08-26 主人定] 海边不要用深海颜色，河流不要用暗浊泥水，统一为清澈明亮近岸江海水色
     return 'wtr';
 }
 
