@@ -98,6 +98,8 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     EAST:         'MIXED',    // 东欧蛮族步骑（波雅尔铁骑+弓，套斯拉夫编成）
     GREEK:        'INFANTRY', // 希腊重装步兵/方阵
     THRACIAN:     'INFANTRY', // 色雷斯轻盾兵
+    PERSIAN:      'MIXED',    // 波斯铁甲圣骑+步弓
+    CUMAN:        'CAVALRY',  // 库曼钦察草原游牧（纯骑）
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -172,6 +174,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
     THRACIAN:     'fish_scale',  // 色雷斯轻盾兵主力
+    PERSIAN:      'crane_wing',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
+    CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1410,6 +1414,8 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     EAST:         SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
     THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
+    PERSIAN:      WEST_ASIA_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
+    CUMAN:        STEPPE_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -1445,6 +1451,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     EAST:         '东欧军团',
     GREEK:        '希腊军团',
     THRACIAN:     '色雷斯军团',
+    PERSIAN:      '波斯军团',
+    CUMAN:        '库曼军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */
