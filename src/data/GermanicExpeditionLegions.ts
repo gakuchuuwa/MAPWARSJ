@@ -15,12 +15,12 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T1 功勋之兵 ──
     jialuolin: { name: '加洛林亲兵', tier: 1 },          // 亚琛·查理大帝：scara 御林亲兵，征西欧
-    yinggelan: { name: '英格兰长弓兵', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
+    yinggelan: { name: '英格兰长弓', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
     xiongren: { name: '答剌罕骑兵', tier: 1 },          // 塞格德·阿提拉：横扫巴尔干与意大利的战略级胜利，DE匈奴特色单位
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
-    boximiya: { name: '胡斯战车军团', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
+    boximiya: { name: '胡斯战车阵', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
     mazhaer: { name: '黑军侍卫', tier: 2 },          // 布达佩斯·匈雅提亚诺什：黑军车堡火器大阵
     anggelu: { name: '盾墙民兵', tier: 2 },          // 伦敦·阿尔弗雷德：埃丁顿盾墙
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
@@ -45,7 +45,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
-    boumeilaniyan: { name: '奥布奇战锤兵', tier: 3 },  // 格但斯克·卡西米尔四世：波兰步兵战锤（DE Obuch 破甲）
+    boumeilaniyan: { name: '奥布奇战锤', tier: 3 },  // 格但斯克·卡西米尔四世：波兰步兵战锤（DE Obuch 破甲）
     pomeilaniya: { name: '格里芬军团', tier: 4 },  // 什切青·博吉斯拉夫：波美拉尼亚格里芬王朝
     bafaliya: { name: '塔西洛军团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）

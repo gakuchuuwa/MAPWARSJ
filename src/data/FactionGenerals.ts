@@ -1049,13 +1049,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '/assets/AFRICA/ethiopia_aizhana.png' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '/assets/MALAY/malacca_bailimisula.png' },
     gurjara: { generalId: 'gen_mihirabhoja', generalName: '迷企罗波阇', portrait: '/assets/INDIA/gurjara_miqiluobodu.png' },
-    tupinijin: { generalId: 'gen_tibirica', generalName: '蒂巴里萨', portrait: '' },
-    tuotuonake: { generalId: 'gen_chicomacatl', generalName: '奇科马卡特', portrait: '' },
-    taino: { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '' },
-    guanche: { generalId: 'gen_bentejui', generalName: '本特胡伊', portrait: '' },
-    fodejiao: { generalId: 'gen_noli', generalName: '诺利', portrait: '' },
-    baiyiya: { generalId: 'gen_tome_sousa', generalName: '托梅', portrait: '' },
-    yasuer: { generalId: 'gen_cipriano_figueiredo', generalName: '西普里亚诺', portrait: '' },
+    tupinijin: { generalId: 'gen_tibirica', generalName: '蒂巴里萨', portrait: '/assets/AMERICA/tupinijin_dibalisa.png' },
+    tuotuonake: { generalId: 'gen_chicomacatl', generalName: '奇科马卡特', portrait: '/assets/AMERICA/tuotuonake_qikemakate.png' },
+    taino: { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '/assets/AMERICA/taino_hatuyi.png' },
+    guanche: { generalId: 'gen_bentejui', generalName: '本特胡伊', portrait: '/assets/AMERICA/guanche_bentehuyi.png' },
+    fodejiao: { generalId: 'gen_noli', generalName: '诺利', portrait: '/assets/AMERICA/fodejiao_nuoli.png' },
+    baiyiya: { generalId: 'gen_tome_sousa', generalName: '托梅', portrait: '/assets/AMERICA/baiyiya_tuomei.png' },
+    yasuer: { generalId: 'gen_cipriano_figueiredo', generalName: '西普里亚诺', portrait: '/assets/AMERICA/yasuer_xipuliyanuo.png' },
 
 };
 
