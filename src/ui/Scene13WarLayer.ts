@@ -1519,6 +1519,7 @@ const PROJ_SCALE_OVERRIDE: Record<string, number> = {
 const PROJ_ASSET_KEY: Record<string, string> = {
     PROJ_WAR_WAGON: 'PROJ_BOLT',
     PROJ_GUNPOWDER: 'PROJ_SHOT',
+    PROJ_FIRE_LANCER: 'PROJ_SHOT',
     PROJ_BOMBARD_BALL: 'PROJ_BALL',
 };
 /**
@@ -1647,7 +1648,10 @@ const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
 const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_WAR_WAGON: 0.05,
     PROJ_GUNPOWDER: 0.05,
+    PROJ_FIRE_LANCER: 0.05,
+    PROJ_HUSSITE_WAGON: 0.05,
     PROJ_BOMBARD_BALL: -0.05,
+    PROJ_GRENADE: 0.4,
 };
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
 /**
@@ -1692,7 +1696,7 @@ const PROJ_VOLLEY: Record<string, number> = {
     chukonu: 3,
     elite_chukonu: 5,
     organ_gun: 5,        // 风琴炮一次齐射 5 弹（AoE2 DE）
-    elite_organ_gun: 5,
+    elite_organ_gun: 6,
     rocket_cart: 5,      // 火箭车/一窝蜂一次齐射 5 支火箭
     heavy_rocket_cart: 5,
 };
@@ -1708,8 +1712,19 @@ const PROJ_DUR: Record<string, number> = {
 /** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；火枪弹丸适度调快 (750px/s)。 */
 const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_WAR_WAGON: 6 * 40,
-    PROJ_GUNPOWDER: 750,
+    PROJ_SHOT: 7.5 * 40,
+    PROJ_GUNPOWDER: 7.5 * 40,
+    PROJ_FIRE_LANCER: 7.5 * 40,
+    PROJ_HUSSITE_WAGON: 7 * 40,
     PROJ_BOMBARD_BALL: 4 * 40,
+    PROJ_GRENADE: 4.5 * 40,
+};
+/** DE 弹丸素材逐帧时长（秒）；未列出的单帧/定向素材不播放序列。 */
+const PROJ_FRAME_DUR: Record<string, number> = {
+    PROJ_BALL: 0.0155,
+    PROJ_BOMBARD_BALL: 0.0155,
+    PROJ_GRENADE: 0.0155,
+    PROJ_HUSSITE_WAGON: 1 / 60,
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
 const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
@@ -1720,6 +1735,11 @@ const MIN_RANGE_TYPES: Record<string, number> = {
     siege_onager: 120,
     traction_trebuchet: 160,
     mounted_trebuchet: 160,
+    bombard_cannon: 200,
+    houfnice: 200,
+    organ_gun: 40,
+    elite_organ_gun: 40,
+    grenadier: 40,
 };
 /** 火矛手（DE 充能喷火兵）：进战先喷 3 发低精度短程火枪弹，30 秒充能（AoE2 DE update 141935）。 */
 const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
@@ -4796,7 +4816,7 @@ export class Scene13WarLayer {
         const ax = foe.x - m.x, ay = foe.y - m.y;
         const ad = Math.hypot(ax, ay) || 1;
         const ang = Math.atan2(ay, ax);
-        this.ensureProj('PROJ_SHOT');
+        this.ensureProj('PROJ_FIRE_LANCER');
         for (let v = 0; v < FIRE_LANCER_VOLLEY; v++) {
             const spread = (Math.random() - 0.5) * 0.55;   // 低精度散射
             const c = Math.cos(spread), s = Math.sin(spread);
@@ -4805,8 +4825,8 @@ export class Scene13WarLayer {
                 dx: ax / ad * c - ay / ad * s,
                 dy: ax / ad * s + ay / ad * c,
                 len: Math.min(ad, 170),            // 短程火枪弹（DE range 4 ≈ 160px）
-                t: 0, dur: ARROW_DUR + Math.random() * 0.05, f: m.f,
-                proj: 'PROJ_SHOT',
+                t: 0, dur: Math.min(ad, 170) / PROJ_SPEED_PX.PROJ_FIRE_LANCER, f: m.f,
+                proj: 'PROJ_FIRE_LANCER',
             });
         }
         // 矛头喷火：DE 火矛炮口焰特效（沿朝向）
@@ -5917,12 +5937,16 @@ export class Scene13WarLayer {
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
                         const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
-                        const volley = PROJ_VOLLEY[m.key] ?? 1;
-                        const exactSpeed = PROJ_SPEED_PX[proj];
-                        const baseDur = exactSpeed ? ad / exactSpeed : (PROJ_DUR[proj] ?? ARROW_DUR);
+                        const isHussiteVolley = m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon';
+                        const volley = isHussiteVolley ? 6 : (PROJ_VOLLEY[m.key] ?? 1);
                         this.ensureProj(proj);
+                        if (isHussiteVolley) this.ensureProj('PROJ_GUNPOWDER');
                         const isFirearm = FIREARM_TYPES.has(m.key);
                         for (let v = 0; v < volley; v++) {
+                            // DE 胡斯战车每轮 = 1 发专属主弹 + 5 发 p_shot 次级弹。
+                            const volleyProj = isHussiteVolley && v > 0 ? 'PROJ_GUNPOWDER' : proj;
+                            const exactSpeed = PROJ_SPEED_PX[volleyProj];
+                            const baseDur = exactSpeed ? ad / exactSpeed : (PROJ_DUR[volleyProj] ?? ARROW_DUR);
                             // DE accuracy：miss 的这轮箭矢飞偏打空（视觉与伤害一致）；命中则火枪轻微自然散射。
                             const missed = m.accHit === false;
                             const spread = missed
@@ -5935,7 +5959,7 @@ export class Scene13WarLayer {
                                 x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
                                 dx: ndx, dy: ndy, len: ad,
                                 t: 0, dur: exactSpeed ? baseDur : baseDur + Math.random() * 0.05, f: m.f,
-                                proj,
+                                proj: volleyProj,
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
                             });
                         }
@@ -6608,8 +6632,8 @@ export class Scene13WarLayer {
                 } else if (a.proj === 'PROJ_FIRE') {
                     // 猛火油柜喷火：30 帧火焰动画循环播放
                     fr = Math.floor(p * pa.n) % pa.n;
-                } else if (a.proj === 'PROJ_BOMBARD_BALL') {
-                    fr = Math.floor((a.t - delay) / 0.0155) % pa.n;
+                } else if (PROJ_FRAME_DUR[a.proj]) {
+                    fr = Math.floor((a.t - delay) / PROJ_FRAME_DUR[a.proj]) % pa.n;
                 } else if (pa.n > 1) {
                     // 箭矢/标枪/飞镖取正水平基准帧，由 rotate(angle) 切线角精确控制全 360° 俯仰与起伏
                     fr = Math.floor(pa.n / 2);
