@@ -222,6 +222,12 @@ export class CombatUI {
     /** [军事科技] 科技行：双方各自已解锁科技名（只在 13 出兵口互攻时显示） */
     private techRow!: HTMLDivElement;
     /** [军事科技] 双方科技徽记区（内容由 renderTechSide 重绘） */
+    /** [13 布局] 当前是否处于战术模式专属布局；进入/退出各执行一次，不逐帧重排 */
+    private scene13LayoutOn = false;
+    /** [13 布局] 进入 13 前的内联样式快照，退出时逐字还原（保证 8/9/10 逐像素不变） */
+    private scene13SavedCss = new Map<HTMLElement, string>();
+    /** [13 布局] 被临时移到 body 的元素 → 原父节点与原位置，退出时插回原处 */
+    private scene13Reparented = new Map<HTMLElement, { parent: HTMLElement; next: Node | null }>();
     private leftTechBox!: HTMLDivElement;
     private rightTechBox!: HTMLDivElement;
     private toggleCollapseBtn!: HTMLButtonElement;
@@ -1073,6 +1079,112 @@ export class CombatUI {
      *   中央 (order:  0): 跟随/改名胶囊 [ 太平 石达开 率 石敢当  ✎改名  ✕取消 ]
      *   右翼 (order:  1): 守方科技胶囊 [ 科技名列表 | 步甲+2/3 远攻+2 ...  守方科技 🛡️ ]
      */
+    /**
+     * [13 布局] 战术模式（ZOOM 13）专属面板布局。主人 2026-08-26 定：
+     *   · 人物立绘分置屏幕**左下角 / 右下角**
+     *   · 上方只保留「战争地点 + 战争类型」标题与血槽
+     *   · 纪年、事件描述、双方兵力 HUD 都是大地图的信息 → 13 期间隐藏
+     *   · 科技从顶部 HUD（#top-center-hud）移到屏幕**下方**
+     *
+     * 🔴 CombatUI 是 ZOOM 8/9/10 共用的成品（AGENTS.md 红线：8/9/10 严禁改动）。
+     *    所以这里不改任何元素的原始样式定义，只在进入 13 时**快照内联样式再覆盖**，
+     *    退出时逐字还原 —— 非 13 逐像素不变。
+     */
+    private applyScene13Layout(on: boolean): void {
+        if (on === this.scene13LayoutOn) return;
+        this.scene13LayoutOn = on;
+
+        if (!on) {
+            for (const [el, css] of this.scene13SavedCss) el.style.cssText = css;
+            this.scene13SavedCss.clear();
+            for (const [el, at] of this.scene13Reparented) at.parent.insertBefore(el, at.next);
+            this.scene13Reparented.clear();
+            return;
+        }
+
+        const save = (el?: HTMLElement | null) => {
+            if (el && !this.scene13SavedCss.has(el)) this.scene13SavedCss.set(el, el.style.cssText);
+        };
+        for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
+            this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
+            this.leftTechBox, this.rightTechBox, this.indicatorJun]) save(el);
+
+        // 🔴 必须移出 #combat-ui-panel：13 开战时 Scene13WarLayer 会 setCollapsed(true)，
+        //    容器被 translate(-50%,100%) 推出屏幕。而**带 transform 的祖先会成为
+        //    position:fixed 子元素的包含块** —— 留在容器里的话，下面设的 fixed 定位
+        //    会跟着容器一起被推走，整套布局白改。挂到 body 才真正相对视口，
+        //    也才不受折叠状态影响。退出时按记录插回原位。
+        const detach = (el?: HTMLElement | null) => {
+            if (!el || !el.parentElement || el.parentElement === document.body) return;
+            this.scene13Reparented.set(el, { parent: el.parentElement, next: el.nextSibling });
+            document.body.appendChild(el);
+        };
+        for (const el of [this.centerBackdrop, this.centerPanel,
+            this.leftPortraitFrame, this.rightPortraitFrame, this.indicatorJun]) detach(el);
+
+        // ① 立绘 → 屏幕左下 / 右下角（原本是 absolute 贴在中央面板两侧，改 fixed 脱出面板宽度）
+        for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
+            if (!frame) continue;
+            frame.style.position = 'fixed';
+            frame.style.bottom = '0';
+            frame.style.top = 'auto';
+            frame.style[edge === 'left' ? 'right' : 'left'] = 'auto';
+            frame.style[edge] = '0';
+            frame.style.zIndex = String(T.zIndex.portrait);
+        }
+
+        // ② 上方条：只留标题（地点+类型）与血槽
+        if (this.centerPanel) {
+            this.centerPanel.style.position = 'fixed';
+            this.centerPanel.style.top = '2.2vh';
+            this.centerPanel.style.bottom = 'auto';
+            this.centerPanel.style.left = '50%';
+            this.centerPanel.style.right = 'auto';
+            this.centerPanel.style.transform = 'translateX(-50%)';
+            this.centerPanel.style.width = 'min(52vw, 900px)';
+            this.centerPanel.style.padding = '0';
+            this.centerPanel.style.justifyContent = 'flex-start';
+        }
+        // 中栏黑底跟随到顶部，作为标题/血槽的衬底
+        if (this.centerBackdrop) {
+            this.centerBackdrop.style.position = 'fixed';
+            this.centerBackdrop.style.top = '0';
+            this.centerBackdrop.style.bottom = 'auto';
+            this.centerBackdrop.style.left = '50%';
+            this.centerBackdrop.style.right = 'auto';
+            this.centerBackdrop.style.transform = 'translateX(-50%)';
+            this.centerBackdrop.style.width = 'min(64vw, 1120px)';
+            this.centerBackdrop.style.height = '15vh';
+        }
+        // 中央「均」势指示：左右「优/劣」挂在立绘框内会随立绘去角落，
+        // 这枚挂在面板容器上，不一起移走就会孤零零留在屏幕中间。跟到上方条下沿。
+        if (this.indicatorJun) {
+            this.indicatorJun.style.position = 'fixed';
+            this.indicatorJun.style.top = 'calc(2.2vh + 132px)';
+            this.indicatorJun.style.bottom = 'auto';
+            this.indicatorJun.style.left = '50%';
+            this.indicatorJun.style.transform = 'translateX(-50%)';
+            this.indicatorJun.style.zIndex = String(T.zIndex.panel + 1);
+        }
+
+        // ③ 大地图信息：13 期间不显示
+        for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
+            if (el) el.style.display = 'none';
+        }
+        // ④ 科技 → 屏幕下方（原挂在顶部 #top-center-hud 的左右两翼）
+        for (const [box, edge] of [[this.leftTechBox, 'left'], [this.rightTechBox, 'right']] as const) {
+            if (!box) continue;
+            box.style.position = 'fixed';
+            box.style.bottom = '1.6vh';
+            box.style.top = 'auto';
+            box.style[edge] = '50%';
+            box.style[edge === 'left' ? 'right' : 'left'] = 'auto';
+            box.style.transform = edge === 'left' ? 'translateX(-102%)' : 'translateX(102%)';
+            box.style.zIndex = String(T.zIndex.panel + 1);
+            box.style.color = '#e8dcc0';
+        }
+    }
+
     private buildTechRow(): HTMLDivElement {
         const mkBox = (isAtt: boolean) => {
             const box = document.createElement('div');
@@ -4015,6 +4127,9 @@ export class CombatUI {
     }
 
     public hide() {
+        // [13 布局] 先还原战术布局再走隐藏流程：restore 会整条覆盖内联样式，
+        // 放在后面会把 hide 自己设的 animation/transform 冲掉。
+        this.applyScene13Layout(false);
         if (this.correctorOpen) this.closeCorrector();
         else this.closePortraitPicker();
         this.clearRegionalTimers();
@@ -4292,6 +4407,9 @@ export class CombatUI {
             attMax = Math.max(attMax, attCurrent);
             defMax = Math.max(defMax, defCurrent);
         }
+
+        // [13 布局] 跟随战术模式开关（幂等，进出各执行一次）
+        this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true);
 
         // [军事科技] 只在 13 战斗模式下显示双方科技（2026-08-18 主人定：非 13 战斗模式隐藏）
         if (this.leftTechBox && this.rightTechBox) {
