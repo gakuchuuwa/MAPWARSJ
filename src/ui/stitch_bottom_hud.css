@@ -371,3 +371,41 @@
 #game-time-hud .game-time-btn.playing::before {
     opacity: 0.15;
 }
+
+/* ── 折叠/展开隐藏箭头 ── */
+#game-time-hud .hud-toggle-collapse-btn {
+    align-self: flex-end;
+    margin-bottom: -4px;
+    height: 22px;
+    padding: 0 10px;
+    background: var(--panel-bg);
+    border: 1px solid var(--stone-border);
+    border-radius: 4px 4px 0 0;
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 5001;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.18);
+    user-select: none;
+    transition: all 0.2s ease;
+}
+#game-time-hud .hud-toggle-collapse-btn:hover {
+    filter: brightness(1.05);
+    color: var(--gold-glow);
+    border-color: var(--gold-glow);
+}
+#game-time-hud.is-collapsed .hud-stack {
+    display: none !important;
+}
+#game-time-hud.is-collapsed .hud-toggle-collapse-btn {
+    border-radius: 4px;
+    border-bottom: 1px solid var(--stone-border);
+    margin-bottom: 0;
+}

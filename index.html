@@ -35,8 +35,12 @@
          现在容器铺满 100vw 由 flex 居中，视觉位置不变，两翼可用宽度翻倍。 -->
     <div id="top-center-hud" style="position:fixed; top:16px; left:0; right:0; z-index:10002; display:flex; gap:10px; align-items:center; justify-content:center; pointer-events:none; transition:all 0.3s ease;"></div>
 
-    <!-- 左下 HUD：Stitch 833dbd17 -->
+    <!-- 时间与地图控制 HUD：Stitch 833dbd17 -->
     <div id="game-time-hud" style="display: none;">
+        <button id="toggle-time-hud-btn" type="button" class="hud-toggle-collapse-btn" title="折叠/展开时间面板">
+            <span id="toggle-time-hud-icon">▼</span>
+            <span id="toggle-time-hud-label">收起</span>
+        </button>
         <div class="hud-stack">
         <div class="hud-map-panel">
             <span class="hud-corner hud-corner-tl" aria-hidden="true"></span>

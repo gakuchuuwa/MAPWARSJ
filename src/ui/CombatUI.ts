@@ -1191,9 +1191,9 @@ export class CombatUI {
         for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
             if (el) el.style.display = 'none';
         }
-        // 🔴 跟随军团面板下移至血槽下方（避让血槽和战役大标题）
+        // 🔴 战术模式中不用显示跟随面板（彻底隐藏避免遮挡）
         if (topHud) {
-            topHud.style.top = '68px';
+            topHud.style.display = 'none';
         }
         // ③ 科技 → 屏幕下方左右分列
         for (const [box, edge] of [[this.leftTechBox, 'left'], [this.rightTechBox, 'right']] as const) {
