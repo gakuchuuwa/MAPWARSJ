@@ -39,7 +39,7 @@ import {
     MACRO_HIDDEN_INFRA_PANES,
 } from '../config/StrategicView';
 
-// ── [2026-08-26 实验] 小城 DE 建筑组合（中间磨坊 + 周围一圈 6 个）──
+// ── [2026-08-26 实验] 小城 DE 建筑组合（中间磨坊 + 等轴椭圆 Y-Sorting 环绕）──
 // 确定性随机（以 cityId 为种子，重渲染不闪烁）
 function deHashString(s: string): number {
     let h = 0;
@@ -57,8 +57,36 @@ function deMulberry32(seed: number): () => number {
 }
 // 实验白名单：先只对特诺奇提特兰（阿兹特克 MESO）做小城组合渲染
 const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
-// 小城建筑组成：房屋×3 + 兵营 + 铁匠铺 + 靶场（中间磨坊另算）
+
+// 各类建筑在据点内的相对占地尺寸比例（贴合 AoE2 格数比例）
+const DE_BUILDING_SCALES: Record<string, number> = {
+    MILL: 0.46,
+    HOUSE: 0.28,
+    BARRACKS: 0.38,
+    ARCHERY_RANGE: 0.38,
+    BLACKSMITH: 0.35,
+    MARKET: 0.38,
+};
+
+// 小城建筑环绕组成：3 民居 + 兵营 + 铁匠铺 + 靶场（中间磨坊为中核）
 const DE_SMALL_CITY_RING = ['HOUSE', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE'];
+
+// 硬木栅栏等轴围墙节点分布（围绕小城外围的菱形防线，留出正门入口）
+const DE_PALISADE_WALL_NODES: ReadonlyArray<{ xr: number; yr: number; type: string }> = [
+    { xr: 0.0, yr: -1.0, type: 'POST' },      // 北角立柱
+    { xr: 0.33, yr: -0.67, type: 'SE' },      // 东北段 (右上)
+    { xr: 0.67, yr: -0.33, type: 'SE' },
+    { xr: 1.0, yr: 0.0, type: 'POST' },       // 东角立柱
+    { xr: 0.67, yr: 0.33, type: 'NE' },       // 东南段 (右下)
+    { xr: 0.33, yr: 0.67, type: 'NE' },
+    { xr: 0.14, yr: 0.86, type: 'POST' },     // 南门右门柱
+    { xr: -0.14, yr: 0.86, type: 'POST' },    // 南门左门柱 (留出正前方城门入口)
+    { xr: -0.33, yr: 0.67, type: 'SE' },      // 西南段 (左下)
+    { xr: -0.67, yr: 0.33, type: 'SE' },
+    { xr: -1.0, yr: 0.0, type: 'POST' },      // 西角立柱
+    { xr: -0.67, yr: -0.33, type: 'NE' },     // 西北段 (左上)
+    { xr: -0.33, yr: -0.67, type: 'NE' },
+];
 
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
     const rnd = deMulberry32(deHashString(cityId));
@@ -67,33 +95,61 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
     }
-    const rotation = rnd() * 360;
-    // zoom 8/9/10 常用 → 建筑整体放大；建筑之间更近（radius 收小，相邻轻微重叠）
+    // 容器尺寸
     const W = baseSize * 1.7;
     const H = baseSize * 1.7;
-    const millW = baseSize * 0.50;
-    const ringW = baseSize * 0.36;
-    const radius = baseSize * 0.34;
-    const plazaD = baseSize * 0.95;
-    const roadW = baseSize * 0.13;
-    const roadL = baseSize * 1.3;
 
     const parts: string[] = [];
-    // 道路底图：圆形泥土广场 + 4 条放射道路（米字）
-    parts.push(`<div style="position:absolute;left:50%;top:50%;width:${plazaD.toFixed(1)}px;height:${plazaD.toFixed(1)}px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 50% 50%, rgba(150,115,72,0.62) 0%, rgba(128,96,58,0.45) 55%, rgba(108,80,48,0.30) 76%, rgba(108,80,48,0) 100%);z-index:0;"></div>`);
-    for (let i = 0; i < 4; i++) {
-        const a = (rotation + i * 45) % 180;
-        parts.push(`<div style="position:absolute;left:50%;top:50%;width:${roadW.toFixed(1)}px;height:${roadL.toFixed(1)}px;transform:translate(-50%,-50%) rotate(${a.toFixed(1)}deg);background:linear-gradient(90deg, rgba(150,115,72,0) 0%, rgba(150,115,72,0.55) 12%, rgba(150,115,72,0.55) 88%, rgba(150,115,72,0) 100%);border-radius:${(roadW / 2).toFixed(1)}px;z-index:1;"></div>`);
-    }
-    // 中间磨坊（核心）
-    parts.push(`<img src="/SUCAI_BUILDING/${style}_MILL_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${millW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:3;" />`);
-    // 周围一圈 6 个
-    ring.forEach((b, i) => {
-        const angle = (rotation + i * 60 + (rnd() * 12 - 6)) * Math.PI / 180;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        parts.push(`<img src="/SUCAI_BUILDING/${style}_${b}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${ringW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${b === 'HOUSE' ? 2 : 4};" />`);
+
+    // 1. 中间磨坊（中核）：磨坊下方配置独立 DE sr2 地基底图（扩大至 2.3 倍以覆盖建筑缝隙，z-index: 49）
+    const millW = baseSize * (DE_BUILDING_SCALES['MILL'] || 0.46);
+    const millGroundW = millW * 2.3;
+    const millGroundH = millGroundW * 0.58;
+    parts.push(
+        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${millGroundW.toFixed(1)}px;height:${millGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:49;opacity:0.92;pointer-events:none;" />`
+    );
+    parts.push(
+        `<img src="/SUCAI_BUILDING/${style}_MILL_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${millW.toFixed(1)}px;transform:translate(-50%,-65%);z-index:50;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+    );
+
+    // 2. 周围随机散布建筑：随机角度 + 随机半径（环带 0.24~0.48 × baseSize，磨坊外、围墙内），
+    //    每个建筑下方单独配置 2.3 倍专属尺寸的 sr2 地基底图，相互重叠填满巷道
+    ring.forEach((b) => {
+        const angle = rnd() * Math.PI * 2;
+        const r = (0.24 + rnd() * 0.24) * baseSize;
+        const x = Math.cos(angle) * r;
+        const y = Math.sin(angle) * r * 0.58; // 等轴压缩（0.58 = 2.5D 地面纵横比）
+        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32);
+        const zIndex = Math.round(50 + y); // 动态深度（-20 到 +20 映射为 30 到 70）
+
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+
+        // 该建筑下方的地基底图（z-index 刚好位于本建筑下方，与邻近地基相互无缝咬合）
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
+        // 该建筑本体
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
     });
+
+    // 3. 硬木栅栏围墙（等轴外圈闭合防线，与建筑共享 Y-Sorting 深度排序）
+    const wallRadiusX = baseSize * 0.58;
+    const wallRadiusY = wallRadiusX * 0.58;
+    const wallW = baseSize * 0.22;
+
+    DE_PALISADE_WALL_NODES.forEach((w) => {
+        const x = w.xr * wallRadiusX;
+        const y = w.yr * wallRadiusY;
+        const zIndex = Math.round(50 + y);
+
+        parts.push(
+            `<img src="/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_${w.type}/preview.png" style="position:absolute;left:50%;top:50%;width:${wallW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
+        );
+    });
+
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
