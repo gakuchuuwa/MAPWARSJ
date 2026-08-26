@@ -1088,6 +1088,26 @@ const CLOUD_ALPHA_MAX = 0.55;
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 /** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
+/**
+ * 出兵口里「前排最下」那个位置的下标。
+ *
+ * 🔴 [2026-08-26 主人「前排最下面这里的建筑总是出墙」] 这个位置最贴城墙，
+ *    随机抽到市镇中心/大学这类大体量建筑就会压出墙线，所以要单独钉死成民屋。
+ *    判据用**坐标**不用 LAYOUT 下标 —— 三种阵型（鱼鳞/三角/雁行）的槽位序不一样，
+ *    按下标写死会在换阵型时指错人。
+ *    前排 = x 最靠攻方那一列（守方在右，故取 x 最小）；最下 = 该列里 y 最大。
+ */
+function frontBottomIdx(side: Array<{ x: number; y: number }>): number {
+    let frontX = Infinity;
+    for (const s of side) if (s.x < frontX) frontX = s.x;
+    let best = 0, bestY = -Infinity;
+    for (let i = 0; i < side.length; i++) {
+        if (side[i].x > frontX + 1e-9) continue;
+        if (side[i].y > bestY) { bestY = side[i].y; best = i; }
+    }
+    return best;
+}
+
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 /** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定；TIBET 暂用印度，待查藏式 MOD）。
@@ -4027,13 +4047,18 @@ export class Scene13WarLayer {
             // 小城：封建时代（age2），无城堡，9 口 = 7 封建建筑 + 瞭望塔 + 房屋（2026-08-22 主人定：不越时代，去掉城堡时代警戒箭塔）
             if (this.defenderCityType === 'small_city') {
                 const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
+                // 前排最下钉死民屋（同上：随机抽到大建筑会压出城墙）
+                const smallHouseIdx = frontBottomIdx(side);
+                this.decorSprites.push(place(side[smallHouseIdx], `${style}_HOUSE_AGE2`));
+                const smallRest = side.filter((_, i) => i !== smallHouseIdx);
+                const shuffledSmall = [...smallRest].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], `${style}_${shuffledBuildings[i]}_AGE2`));
-                this.decorSprites.push(place(shuffledSpawns[7], `${style}_TOWER_AGE2`));
+                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                this.decorSprites.push(place(shuffledSmall[6], `${style}_TOWER_AGE2`));
                 // 🔴 [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 小城中心放木堡。
                 //    小城与草原城的城墙走 PALISADE（木栅栏，见 wallMat），原木尖桩的 WOODEN_FORT
                 //    与之同源；小城又没有城堡，正缺一个中心地标 —— 事实与观感都成立。
-                this.decorSprites.push(place(shuffledSpawns[8], 'WOODEN_FORT'));
+                this.decorSprites.push(place(shuffledSmall[7], 'WOODEN_FORT'));
                 return;
             }
             // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
@@ -4045,21 +4070,29 @@ export class Scene13WarLayer {
                 .sort((a, b) => a.s.y - b.s.y);
             const castleIdx = backRow[backRow.length === 2 ? 0 : 1].i;
             this.decorSprites.push(place(side[castleIdx], this.castleAssetFor(style)));
-            const rest = side.filter((_, i) => i !== castleIdx);
+            // 🔴 [2026-08-26 主人「前排最下面这里的建筑总是出墙，请改为固定使用民屋」]
+            //    9 个出兵口的建筑原本是**整体洗牌**随机分配的，所以这个位置抽到市镇中心/大学
+            //    这类大体量建筑时就会压出城墙。这里把它从随机池里摘出来钉死成民屋 ——
+            //    HOUSE 是建筑池里占地最小的一档，不会越过墙线。
+            // 民屋档位跟随该档城池的建筑时代：险要=封建 age2，中城/大城=城堡 age3
+            const ageTag = this.defenderCityType === 'pass' ? 'AGE2' : 'AGE3';
+            const houseIdx = frontBottomIdx(side);
+            this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`));
+            const rest = side.filter((_, i) => i !== castleIdx && i !== houseIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
             // 险要：封建 age2，无市场（纯军事要塞）：6 封建 + 瞭望塔 + 警戒塔；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
             if (this.defenderCityType === 'pass') {
                 const shuffledBuildings = [...SIEGE_PASS_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
-                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE2`));
-                this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));
+                for (let i = 0; i < 5; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                this.decorSprites.push(place(shuffledRest[5], `${style}_TOWER_AGE2`));
+                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`));
             } else if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
-                this.decorSprites.push(place(shuffledRest[7], `${style}_TOWER_AGE3`));
+                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
+                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`));
             } else {
                 const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`));
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`));
             }
             return;
         }

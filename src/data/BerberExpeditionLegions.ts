@@ -17,5 +17,5 @@ export const BERBER_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     hamade: { name: '贝尼哈马团', tier: 4 },     // 布佳亚·哈马德：卡拉阿·贝尼·哈马德；避势力「哈马德」叠字
     jileinaijia: { name: '昔兰尼轻骑', tier: 4 }, // 班加西·马加斯：昔兰尼加柏柏尔轻骑
     // ── [2026-08-26] 大西洋航线：加那利关切人 ──
-    guanche: { name: '关切投石兵', tier: 3 },   // 特尔德·多拉曼特：无金属武器，以投石与火硬木矛抗西班牙火器，兵种特色独树一帜
+    guanche: { name: '关切投石兵', tier: 3 },   // 特尔德·本特胡伊：无金属武器，以投石与火硬木矛抗西班牙火器，兵种特色独树一帜
 };
