@@ -201,8 +201,8 @@ const DE_STONE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor
     },
     GATE: {
         pctX: 58.8,
-        pctY: 74.3,
-        widthFactor: 0.52,
+        pctY: 79.8, // 74.3→79.8：门楼略高于石墙段落地（参照木门 门=墙+1.8%，石墙 pctY 78.0+1.8）
+        widthFactor: 0.42, // 0.52→0.42：门楼尺寸匹配石墙段（门/墙≈2.06 同木门比例），不再压左右墙段
         path: '/SUCAI_BUILDING/ASIA_GATE_STONE_NE/preview.png',
     },
 };
