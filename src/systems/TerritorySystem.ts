@@ -84,7 +84,7 @@ const DE_CASTLE_FALLBACK: Record<string, string> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
+// 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
 const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 
 // 大城帝国时代建筑池（11 种；[2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学 3 种 AGE4 必有，
@@ -509,8 +509,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
-// 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，无城墙）。
-// 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；城堡的建筑采用城堡时代」
+// 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
+// 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
@@ -556,6 +556,22 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string): 
         );
         parts.push(
             `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
+    });
+
+    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑）
+    const wallPieces = computePalisadeWallAndGate(baseSize, 5);
+    if (rnd() < 0.5) {
+        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+    }
+    wallPieces.forEach((w) => {
+        const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
+        const zIndex = Math.round(100 + w.y);
+        const pieceW = baseSize * anchor.widthFactor;
+        const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
+        const flip = w.flipX ? ' scaleX(-1)' : '';
+        parts.push(
+            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
         );
     });
 

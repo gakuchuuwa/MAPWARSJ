@@ -1365,7 +1365,7 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
     ['MONASTERY', 'AGE3'],
     ['SIEGE_WORKSHOP', 'AGE3'],
 ];
-/** 攻城战守方（中城）12 种城堡时代建筑（age3；2026-08-27 主人定「战术战略一致」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，与战略中城 DE_MEDIUM_CITY_POOL 对齐） */
+/** 攻城战守方（中城）12 种城堡时代建筑（age3；2026-08-27 主人定「战术战略一致」：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，与战略中城 DE_MEDIUM_CITY_POOL 对齐） */
 const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
@@ -3910,9 +3910,11 @@ export class Scene13WarLayer {
      * 🔴 applyDefenderCityRoad（城内建筑地基）与 addGateFoundation（城门前地基）共用同一映射，改贴图只此一处。
      */
     private cityRoadFoundationTile(): string {
+        // 🔴 [2026-08-27 主人定] 按城市等级选底图：大城 rd1 石板 / 中城 rd2 碎石（不再按文化）
+        if (this.defenderCityType === 'big_city') return 'rd1';   // 大城（帝国）：石板大道
+        if (this.defenderCityType === 'medium_city') return 'rd2'; // 中城（城堡）：碎石子路
+        // 小城/险要 保持文化自适应：中东 rd5 砾石土路 / 罗马·拜占庭 rd1 石板 / 默认 rd2 碎石
         const culture = this.sideCulture[1];
-        // 🔴 [2026-08-23 主人定] 城池地面=道路贴图（城池硬化街道，非光秃黄土）：保持「古代泥土/碎石」质感，
-        //    除罗马外不用光鲜大石板 rd1（罗马文明道路就是石板大道）。
         if (culture === 'ISLAMIC') return 'rd5'; // 中东：商队砾石土路
         if (culture === 'BYZANTINE' || culture === 'ROMAN') return 'rd1'; // 罗马/拜占庭：石板大道
         return 'rd2'; // 默认/东方：碎石子路（质朴土路）
