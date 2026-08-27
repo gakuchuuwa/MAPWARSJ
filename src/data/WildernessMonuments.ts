@@ -1,5 +1,5 @@
 /**
- * 欧亚非大地图·野外独立历史名胜与战略圣地（21座）
+ * 欧亚非大地图·野外独立历史名胜与战略圣地（24座）
  * 真实世界地理经纬度精准定位，直接渲染在大地图的山川、旷野与海滨之上。
  *
  * [2026-08-27 历史审计] 逐座对照 DE 素材 SLD 源与设计文档，纠正素材张冠李戴：
@@ -211,16 +211,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '波罗的海立陶宛原初信仰罗姆瓦的神圣橡树与永恒圣火祭祀圣所。'
     },
     {
-        id: 'monument_aachen',
-        name: '查理曼亚琛皇家大教堂',
-        category: 'HOLY_SITE',
-        lat: 50.774,
-        lng: 6.083,
-        asset: '/SUCAI_BUILDING/SCEN_AACHEN_CATHEDRAL/preview.png',
-        scale: 1.1,
-        description: '查理曼大帝的八角形皇家宫廷礼拜堂，神圣罗马帝国皇帝加冕圣殿。'
-    },
-    {
         id: 'monument_quimper',
         name: '坎佩尔圣科朗坦大教堂',
         category: 'HOLY_SITE',
@@ -239,5 +229,35 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         asset: '/SUCAI_BUILDING/SCEN_CASTLE_RUINS/preview.png',
         scale: 1.1,
         description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。'
+    },
+    {
+        id: 'monument_djenne_mosque',
+        name: '杰内大清真寺',
+        category: 'HOLY_SITE',
+        lat: 13.905,
+        lng: -4.555,
+        asset: '/SUCAI_BUILDING/AFRI_WONDER_MALIANS/preview.png',
+        scale: 1.0,
+        description: '马里帝国杰内城的土坯泥砖大清真寺，西非萨赫勒地区最大的泥造建筑。'
+    },
+    {
+        id: 'monument_borgund_stave',
+        name: '博尔贡木板教堂',
+        category: 'HOLY_SITE',
+        lat: 61.047,
+        lng: 7.812,
+        asset: '/SUCAI_BUILDING/EAST_WONDER_VIKINGS/preview.png',
+        scale: 1.0,
+        description: '挪威松恩峡湾博尔贡的十二世纪全木构维京木板教堂，龙首脊饰。'
+    },
+    {
+        id: 'monument_jagannath_puri',
+        name: '普里贾格纳特神庙',
+        category: 'HOLY_SITE',
+        lat: 19.810,
+        lng: 85.831,
+        asset: '/SUCAI_BUILDING/SCEN_REKHADEUL_TEMPLE/preview.png',
+        scale: 1.0,
+        description: '印度奥里萨普里供奉克里希纳化身贾格纳特的直线塔身神庙，rekha deul 风格代表。'
     },
 ];
