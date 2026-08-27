@@ -69,4 +69,5 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     yasuer: { name: '特塞拉牛阵', tier: 2 },     // 安格拉·西普里亚诺：1581 萨尔加之战驱牛群冲散西班牙登陆部队
     fodejiao: { name: '克里奥民兵', tier: 4 },   // 里贝拉·诺利：佛得角首府守备民兵（1585 德雷克、1712 卡萨尔两度洗劫）
     keernuwaye: { name: '布列塔尼重骑', tier: 4 },
+    kaernute: { name: '卡尔努特战士', tier: 4 },   // 沙特尔·科图阿图斯：高卢卡尔努特部族战团，前52年塞纳布姆起义
 };

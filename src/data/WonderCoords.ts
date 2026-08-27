@@ -17,7 +17,7 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'SEAS_WONDER_MALAY': { lat: -7.756, lng: 110.445, place: '日惹' },             // 卡拉桑神庙
     'SLAV_WONDER_SLAVS': { lat: 62.067, lng: 35.210, place: '基日岛' },            // 波戈斯特木教堂
     'ANDE_WONDER_TUPI': { lat: -25.695, lng: -54.437, place: '伊瓜苏' },           // 伊瓜苏瀑布长屋
-    'ASIA_WONDER_JURCHENS': { lat: 40.217, lng: 116.229, place: '昌平' },          // 银山塔林
+    'ASIA_WONDER_JURCHENS': { lat: 40.322, lng: 116.321, place: '昌平银山' },       // 银山塔林（法华禅寺金代墓塔群，延寿镇银山山谷）
     'EAST_WONDER_TEUTONS': { lat: 50.402, lng: 7.253, place: '莱茵兰' },           // 玛丽亚拉赫修道院
     'ORIE_WONDER_PERSIANS': { lat: 33.094, lng: 44.581, place: '泰西封' },         // 泰西封巨拱
     'ASIA_WONDER_KHITANS': { lat: 39.565, lng: 113.190, place: '应县' },           // 佛宫寺释迦塔
@@ -37,10 +37,9 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'WEST_WONDER_CELTS': { lat: 52.518, lng: -7.889, place: '卡舍尔' },            // 卡舍尔之石
     // ── 近距（30–120km，同区但不同地） ──
     'INDI_WONDER_BENGALIS': { lat: 25.031, lng: 88.977, place: '巴哈尔布尔' },     // 索马普拉大寺
-    'WEST_WONDER_BRITONS': { lat: 50.836, lng: -0.781, place: '奇切斯特' },        // 奇切斯特大教堂
     'WEST_WONDER_FRANKS': { lat: 48.448, lng: 1.488, place: '沙特尔' },            // 沙特尔圣母主教座堂
     'MESO_WONDER_INCAS': { lat: -13.163, lng: -72.545, place: '马丘比丘' },        // 拴日石
     'GREEK_WONDER_MACEDONIANS': { lat: 40.486, lng: 22.318, place: '韦尔吉纳' },   // 韦尔吉纳王陵
-    'ASIA_WONDER_WEI': { lat: 34.506, lng: 112.943, place: '登封' },               // 嵩岳寺塔
+    'ASIA_WONDER_WEI': { lat: 34.5016, lng: 113.0159, place: '登封' },             // 嵩岳寺塔（北魏密檐砖塔，太室山南麓嵩岳寺）
     'ASIA_WONDER_JAPANESE': { lat: 34.689, lng: 135.840, place: '奈良' },          // 东大寺大佛殿
 };
