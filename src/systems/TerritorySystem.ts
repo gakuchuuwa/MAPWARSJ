@@ -407,10 +407,9 @@ interface PalisadeGridPiece {
 
 /** 木栅栏绕城一圈：四角碉楼 + 四条边(每边 9 段紧密咬合) + 正南木城门，
  *  基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合；锚点参数与步长沿用既有设定。 */
-function computePalisadeWallAndGate(baseSize: number, S: number = 5, rectXRatio: number = 1): PalisadeGridPiece[] {
-    const stepXBase = baseSize * 0.075; // 基准步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
-    const stepX = stepXBase * rectXRatio; // X 步长（rectXRatio>1 拉长成横向矩形，险要用）
-    const stepY = stepXBase * 0.58;
+function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGridPiece[] {
+    const stepX = baseSize * 0.075; // 紧凑步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
+    const stepY = stepX * 0.58;
     const AX = 2 * S;
     const pieces: PalisadeGridPiece[] = [];
 
@@ -529,11 +528,9 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
     const rotation = rnd() * 360;
-    // 险要轮廓：横向矩形（东西长）——中国关隘沿山谷/古道伸展，非四方城（2026-08 主人定）
-    const rectXRatio = 1.6;
 
-    // 容器尺寸（中1+周8 紧凑，东西随 rectXRatio 拉长）
-    const W = baseSize * 2.2 * rectXRatio;
+    // 容器尺寸（中1+周8 紧凑）
+    const W = baseSize * 2.2;
     const H = baseSize * 1.9;
 
     const parts: string[] = [];
@@ -561,7 +558,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         const angleJitter = (rnd() * 30 - 15);
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
         const r = (0.34 + rnd() * 0.08) * baseSize;
-        const x = Math.cos(angle) * r * rectXRatio; // 周围建筑沿东西拉长，贴合长方形关城
+        const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;
         const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.4);
         const zIndex = Math.round(100 + y);
@@ -578,8 +575,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         );
     });
 
-    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑；rectXRatio 拉长成横向矩形）
-    const wallPieces = computePalisadeWallAndGate(baseSize, 5, rectXRatio);
+    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑）
+    const wallPieces = computePalisadeWallAndGate(baseSize, 5);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }

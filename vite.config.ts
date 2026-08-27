@@ -2630,6 +2630,7 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     WESTERN: { file: 'WesternExpeditionLegions.ts', varName: 'WESTERN_EXPEDITION_ELITE_LEGIONS' },
     CENTRAL_ASIA: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },
     WEST_ASIA: { file: 'WestAsiaExpeditionLegions.ts', varName: 'WEST_ASIA_EXPEDITION_ELITE_LEGIONS' },
+    ORIE: { file: 'OrieExpeditionLegions.ts', varName: 'ORIE_EXPEDITION_ELITE_LEGIONS' },
     TIBET: { file: 'TibetExpeditionLegions.ts', varName: 'TIBET_EXPEDITION_ELITE_LEGIONS' },
     DIANQIAN: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },
     LINGNAN: { file: 'LingnanExpeditionLegions.ts', varName: 'LINGNAN_EXPEDITION_ELITE_LEGIONS' },
@@ -2638,9 +2639,16 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     CENTRAL: { file: 'CentralExpeditionLegions.ts', varName: 'CENTRAL_EXPEDITION_ELITE_LEGIONS' },
     BASHU: { file: 'BashuExpeditionLegions.ts', varName: 'BASHU_EXPEDITION_ELITE_LEGIONS' },
     HEXI: { file: 'HexiExpeditionLegions.ts', varName: 'HEXI_EXPEDITION_ELITE_LEGIONS' },
+    PURU: { file: 'PuruExpeditionLegions.ts', varName: 'PURU_EXPEDITION_ELITE_LEGIONS' },
     AMERICA: { file: 'AmericaExpeditionLegions.ts', varName: 'AMERICA_EXPEDITION_ELITE_LEGIONS' },
+    ANDE: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },
     AFRICA: { file: 'AfricaExpeditionLegions.ts', varName: 'AFRICA_EXPEDITION_ELITE_LEGIONS' },
     MALAY: { file: 'MalayExpeditionLegions.ts', varName: 'MALAY_EXPEDITION_ELITE_LEGIONS' },
+    EAST: { file: 'EastExpeditionLegions.ts', varName: 'EAST_EXPEDITION_ELITE_LEGIONS' },
+    GREEK: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },
+    THRACIAN: { file: 'ThracianExpeditionLegions.ts', varName: 'THRACIAN_EXPEDITION_ELITE_LEGIONS' },
+    PERSIAN: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },
+    CUMAN: { file: 'CumanExpeditionLegions.ts', varName: 'CUMAN_EXPEDITION_ELITE_LEGIONS' },
 };
 
 function serverReadAllEntityData() {

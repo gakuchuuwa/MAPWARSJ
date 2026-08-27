@@ -2957,4 +2957,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'slinger', count: 2 },          // Row 2 后排 = 投石手 2人（投石兵远程投石）
         ],
     },
+    "xideweina": {
+        formationMode: "fish_scale",
+        slots: [
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+        ],
+    },
 };

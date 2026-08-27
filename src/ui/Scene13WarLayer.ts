@@ -1215,8 +1215,6 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
-/** 攻城战守方（险要）6 种封建时代军事建筑（age2；2026-08-22 主人定：险要=纯军事要塞，无市场） */
-const SIEGE_PASS_BUILDINGS = ['HOUSE', 'MILL', 'BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'BLACKSMITH'];
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 const DECOR_BLUR = 20;
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
@@ -3942,7 +3940,8 @@ export class Scene13WarLayer {
             const topWallY = midY - 8.5 * pitch;
             const botWallY = midY + 8.5 * pitch;
 
-            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城石墙 / 险要+大城垛墙。
+            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城+险要石墙 / 大城垛墙。
+            //    （2026-08-27 主人改「险要城墙与战略一致，用石墙」）
             //    蒙古（STEPPE）游牧不筑石墙，四类城统一硬木栅栏（2026-08-22 主人定）。
             //    占位一致（碰撞 0.5×0.5），仅换贴图。
             // 🔴 [2026-08-22 修「下排栅栏没对齐」] PALISADE 素材源从 HARDWOOD_WALL_PALISADE
@@ -3950,7 +3949,7 @@ export class Scene13WarLayer {
             //   换成 ARCHAIC_WALL_PALISADE（DE 可玩建筑 b_archaic_wall_palisade，两端平切口 →
             //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
             const wallMat = (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
-                : (this.defenderCityType === 'medium_city' ? 'STONE' : 'FORTIFIED');
+                : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
             const wBase = wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
             const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
@@ -4010,18 +4009,18 @@ export class Scene13WarLayer {
             //    9 个出兵口的建筑原本是**整体洗牌**随机分配的，所以这个位置抽到市镇中心/大学
             //    这类大体量建筑时就会压出城墙。这里把它从随机池里摘出来钉死成民屋 ——
             //    HOUSE 是建筑池里占地最小的一档，不会越过墙线。
-            // 民屋档位跟随该档城池的建筑时代：险要=封建 age2，中城/大城=城堡 age3
-            const ageTag = this.defenderCityType === 'pass' ? 'AGE2' : 'AGE3';
+            // 民屋档位跟随该档城池的建筑时代：险要/中城/大城=城堡 age3（2026-08-27 主人改「险要建筑与战略一致」）
+            const ageTag = 'AGE3';
             const houseIdx = frontBottomIdx(side);
             this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`));
             const rest = side.filter((_, i) => i !== castleIdx && i !== houseIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            // 险要：封建 age2，无市场（纯军事要塞）：6 封建 + 瞭望塔 + 警戒塔；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
+            // 险要：城堡 age3，与战略一致（兵营/靶场/民居/马厩 + 4 警戒箭塔）；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
             if (this.defenderCityType === 'pass') {
-                const shuffledBuildings = [...SIEGE_PASS_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 5; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE2`));
-                this.decorSprites.push(place(shuffledRest[5], `${style}_TOWER_AGE2`));
-                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`));
+                // [2026-08-27 主人「险要建筑与战略一致」] 城堡 + 兵营/靶场/民居/马厩(AGE3) + 4 警戒箭塔(AGE3)
+                // houseIdx 已固定民屋；rest 7 个 = 兵营/靶场/马厩 + 4 警戒箭塔
+                const passRest = ['BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'TOWER', 'TOWER', 'TOWER', 'TOWER'];
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${passRest[i]}_AGE3`));
             } else if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
