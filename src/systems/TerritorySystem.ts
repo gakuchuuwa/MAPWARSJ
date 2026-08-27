@@ -73,6 +73,12 @@ const DE_BUILDING_SCALES: Record<string, number> = {
     SIEGE_WORKSHOP: 0.40,
     UNIVERSITY: 0.40,
     MONASTERY: 0.40,
+    CASTLE: 0.50,  // 城堡（险要核心地标，比普通建筑大）
+};
+
+// 城堡素材缺失的 fallback（ANDE 安第斯无 CASTLE_AGE3，险要用城镇中心代替）
+const DE_CASTLE_FALLBACK: Record<string, string> = {
+    ANDE: 'TOWN_CENTER',
 };
 
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
@@ -81,7 +87,8 @@ const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_
 // 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
 const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 
-// 大城帝国时代建筑池（11 种，随机取 9：城镇中心/市场/大学用帝国 age4，其余用城堡 age3 —— 对齐战术 SIEGE_IMPERIAL_BUILDINGS）
+// 大城帝国时代建筑池（11 种；[2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学 3 种 AGE4 必有，
+//   城镇中心固定居中、市场/大学分布周围，其余 8 种 AGE3 随机取 6 补足周8 —— 对齐战术 SIEGE_IMPERIAL_BUILDINGS）
 const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
     ['TOWN_CENTER', 'AGE4'],
     ['MARKET', 'AGE4'],
@@ -288,6 +295,95 @@ const DE_STONE_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; p
     },
 };
 
+// 大城帝国时代加固墙（垛墙）锚点：2026-08-27 主人定「大城城墙用垛墙」，素材 WALL_FORTIFIED_* / GATE_FORTIFIED_NE
+// 锚点从 _meta.json 提取（与石墙 pct 接近但贴图不同；加固墙更厚、垛口更多）
+const DE_FORTIFIED_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }>> = {
+    AFRI: {
+        NE: { pctX: 62.4, pctY: 79.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 62.1, pctY: 79.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 67.9, pctY: 85.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.5, pctY: 75.7, widthFactor: 0.34, path: '/SUCAI_BUILDING/AFRI_GATE_FORTIFIED_NE/preview.png' },
+    },
+    ANDE: {
+        NE: { pctX: 59.4, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 59.0, pctY: 78.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 67.3, pctY: 85.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.1, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/ANDE_GATE_FORTIFIED_NE/preview.png' },
+    },
+    ASIA: {
+        NE: { pctX: 60.0, pctY: 77.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 59.5, pctY: 77.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 68.1, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.1, pctY: 75.7, widthFactor: 0.34, path: '/SUCAI_BUILDING/ASIA_GATE_FORTIFIED_NE/preview.png' },
+    },
+    CEAS: {
+        NE: { pctX: 63.4, pctY: 81.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 62.8, pctY: 81.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 69.4, pctY: 86.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.1, pctY: 76.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/CEAS_GATE_FORTIFIED_NE/preview.png' },
+    },
+    EAST: {
+        NE: { pctX: 60.9, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 61.7, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 68.0, pctY: 85.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.0, pctY: 76.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/EAST_GATE_FORTIFIED_NE/preview.png' },
+    },
+    INDI: {
+        NE: { pctX: 60.0, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 60.7, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 66.4, pctY: 85.6, widthFactor: 0.26, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 58.4, pctY: 75.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/INDI_GATE_FORTIFIED_NE/preview.png' },
+    },
+    MEDI: {
+        NE: { pctX: 61.8, pctY: 76.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 61.5, pctY: 78.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 70.1, pctY: 86.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.8, pctY: 76.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/MEDI_GATE_FORTIFIED_NE/preview.png' },
+    },
+    MESO: {
+        NE: { pctX: 58.9, pctY: 78.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 58.1, pctY: 78.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 67.9, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.4, pctY: 76.0, widthFactor: 0.34, path: '/SUCAI_BUILDING/MESO_GATE_FORTIFIED_NE/preview.png' },
+    },
+    ORIE: {
+        NE: { pctX: 61.9, pctY: 78.4, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 61.5, pctY: 78.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 69.5, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.1, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/ORIE_GATE_FORTIFIED_NE/preview.png' },
+    },
+    PERSIAN: {
+        NE: { pctX: 63.6, pctY: 80.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 64.1, pctY: 81.1, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 67.8, pctY: 85.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.4, pctY: 74.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/PERSIAN_GATE_FORTIFIED_NE/preview.png' },
+    },
+    PURU: {
+        NE: { pctX: 59.2, pctY: 78.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 60.3, pctY: 79.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 66.2, pctY: 85.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 58.0, pctY: 75.5, widthFactor: 0.34, path: '/SUCAI_BUILDING/PURU_GATE_FORTIFIED_NE/preview.png' },
+    },
+    SEAS: {
+        NE: { pctX: 60.0, pctY: 81.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 59.7, pctY: 80.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 68.2, pctY: 87.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.7, pctY: 77.5, widthFactor: 0.34, path: '/SUCAI_BUILDING/SEAS_GATE_FORTIFIED_NE/preview.png' },
+    },
+    SLAV: {
+        NE: { pctX: 65.0, pctY: 81.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 64.2, pctY: 81.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 66.7, pctY: 87.9, widthFactor: 0.26, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 59.3, pctY: 79.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/SLAV_GATE_FORTIFIED_NE/preview.png' },
+    },
+    WEST: {
+        NE: { pctX: 62.7, pctY: 79.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 62.6, pctY: 80.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 69.6, pctY: 85.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.4, pctY: 75.9, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_FORTIFIED_NE/preview.png' },
+    },
+};
+
 interface PalisadeGridPiece {
     x: number;
     y: number;
@@ -413,6 +509,59 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
+// 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，无城墙）。
+// 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；城堡的建筑采用城堡时代」
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string): string {
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
+    const rnd = deMulberry32(deHashString(cityId));
+    const rotation = rnd() * 360;
+
+    // 容器尺寸（中1+周8 紧凑）
+    const W = baseSize * 2.2;
+    const H = baseSize * 1.9;
+
+    const parts: string[] = [];
+
+    // 中间城堡（ANDE 无城堡素材，fallback 城镇中心）
+    const castleName = DE_CASTLE_FALLBACK[style] || 'CASTLE';
+    const centerW = baseSize * (DE_BUILDING_SCALES[castleName] || 0.5);
+    const centerGroundW = centerW * 2.3;
+    const centerGroundH = centerGroundW * 0.58;
+    const centerFlip = (deHashString(cityId + '|castle|' + castleName) & 1) === 1;
+    parts.push(
+        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+    );
+    parts.push(
+        `<img src="/SUCAI_BUILDING/${style}_${castleName}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+    );
+
+    // 周围 8 个：兵营/靶场/民居/马厩 + 4 警戒箭塔（45° 扇区 + 扰动）
+    const surround = ['BARRACKS', 'ARCHERY_RANGE', 'HOUSE', 'STABLE', 'TOWER', 'TOWER', 'TOWER', 'TOWER'];
+    surround.forEach((b, i) => {
+        const baseAngle = rotation + i * (360 / surround.length); // 8 = 45° 扇区
+        const angleJitter = (rnd() * 30 - 15);
+        const angle = (baseAngle + angleJitter) * Math.PI / 180;
+        const r = (0.34 + rnd() * 0.08) * baseSize;
+        const x = Math.cos(angle) * r;
+        const y = Math.sin(angle) * r * 0.58;
+        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.4);
+        const zIndex = Math.round(100 + y);
+        const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
+
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
+    });
+
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
+
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string): string {
@@ -499,13 +648,22 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
-    // 11 种帝国时代建筑随机洗牌，取前 9（中1+周8）
-    const ring = [...DE_IMPERIAL_CITY_POOL];
+    // [2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有：
+    //   城镇中心固定居中（帝王城市地标）+ 市场/大学 + 6 种 AGE3 随机分布周围 8（共 9 = 中1+周8）
+    const center: [string, string] = ['TOWN_CENTER', 'AGE4'];
+    const age3Pool = DE_IMPERIAL_CITY_POOL.filter(([, a]) => a === 'AGE3');        // 8 种 AGE3
+    const noble = DE_IMPERIAL_CITY_POOL.filter(([b]) => b === 'MARKET' || b === 'UNIVERSITY'); // 市场/大学必有
+    const age3 = [...age3Pool];
+    for (let i = age3.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [age3[i], age3[j]] = [age3[j], age3[i]];
+    }
+    const ring = [...noble, ...age3.slice(0, 6)];   // 市场+大学+6 种 AGE3 = 8 周围
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
     }
-    const nine = ring.slice(0, 9);
+    const nine = [center, ...ring];                  // 中1(城镇中心) + 周8
     const [centerB, centerAge] = nine[0];
     const rotation = rnd() * 360;
 
@@ -554,13 +712,13 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         );
     });
 
-    // 石墙绕城一圈（S=7，比中城 6 更外扩）
+    // 石墙绕城一圈（S=7，比中城 6 更外扩；大城用加固墙/垛墙 WALL_FORTIFIED）
     const wallPieces = computePalisadeWallAndGate(baseSize, 7);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
     wallPieces.forEach((w) => {
-        const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
+        const anchor = DE_FORTIFIED_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(100 + w.y);
         const pieceW = baseSize * anchor.widthFactor * AUTO;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
@@ -1640,7 +1798,9 @@ export class TerritorySystem {
                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle)
                                  : city.type === 'medium_city'
                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
-                                     : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
+                                     : city.type === 'pass'
+                                         ? buildDePassStackHtml(baseSize, city.id, deStyle)
+                                         : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
                              : (city.image
                                  ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                      width: ${baseSize}px; height: auto;
