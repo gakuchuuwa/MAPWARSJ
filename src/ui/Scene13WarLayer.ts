@@ -1467,6 +1467,9 @@ const PROJ_TYPE: Record<string, string> = {
  */
 function accuracyOf(key: string, wt: WarType): number {
     if (wt.dmgType === 'melee') return 100;
+    // DE 风琴炮本体 accuracy=0：含义是弹丸按 dispersion 散射并沿途碰撞，不是“整轮必定落空”。
+    // 本引擎的 accuracy 是整轮伤害开关，故这里必须保持伤害开启，散布在发射段单独按 DE 0.6 格处理。
+    if (key === 'organ_gun' || key === 'elite_organ_gun') return 100;
     const proj = PROJ_TYPE[key] ?? 'PROJ_ARROW';
     // 火器（火枪/苏丹亲兵/征服者/风琴炮/掷弹兵/胡斯战车）
     if (proj === 'PROJ_GUNPOWDER' || proj === 'PROJ_BOMBARD_BALL' || proj === 'PROJ_GRENADE' || proj === 'PROJ_HUSSITE_WAGON') return 75;
@@ -1544,6 +1547,9 @@ const PROJ_VOLLEY: Record<string, number> = {
     rocket_cart: 5,      // 火箭车/一窝蜂一次齐射 5 支火箭
     heavy_rocket_cart: 5,
 };
+const ORGAN_GUN_TYPES = new Set(['organ_gun', 'elite_organ_gun']);
+/** DE 当前数据：风琴炮 accuracy_dispersion = 0.6 格；项目 1 格 = 40px。 */
+const ORGAN_GUN_DISPERSION_PX = 0.6 * 40;
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
 /** 抛射物飞行基准时长（秒）：火枪弹丸极速穿梭（0.22s），重弩矢沉重平射（0.49s，DE 速度 6.0 vs 普通箭 7.0/0.42s），重炮/石弹沉重高抛（0.65s），手榴弹（0.55s），其余标准羽箭（0.42s）。 */
@@ -5811,9 +5817,11 @@ export class Scene13WarLayer {
                             const baseDur = exactSpeed ? ad / exactSpeed : (PROJ_DUR[volleyProj] ?? ARROW_DUR);
                             // DE accuracy：miss 的这轮箭矢飞偏打空（视觉与伤害一致）；命中则火枪轻微自然散射。
                             const missed = m.accHit === false;
-                            const spread = missed
-                                ? (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.3)   // miss：明显打空
-                                : isFirearm ? (Math.random() - 0.5) * 0.14 : 0;                    // 命中：火枪轻微散射
+                            const spread = ORGAN_GUN_TYPES.has(m.key)
+                                ? Math.atan2((Math.random() * 2 - 1) * ORGAN_GUN_DISPERSION_PX, ad)
+                                : missed
+                                    ? (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.3)   // miss：明显打空
+                                    : isFirearm ? (Math.random() - 0.5) * 0.14 : 0;                    // 命中：火枪轻微散射
                             const c = Math.cos(spread), s = Math.sin(spread);
                             const ndx = (ax / ad) * c - (ay / ad) * s;
                             const ndy = (ax / ad) * s + (ay / ad) * c;
@@ -5840,7 +5848,9 @@ export class Scene13WarLayer {
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
-                const dps = dmgVs(shooter, target, this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
+                // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
+                const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
+                const dps = dmgVs(shooter, target, this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1) * projectileDamageCount / shooter.reload;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;

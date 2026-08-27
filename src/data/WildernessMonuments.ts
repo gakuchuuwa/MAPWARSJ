@@ -36,16 +36,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '古埃及第四王朝胡夫金字塔群，古代世界七大奇迹之首，矗立于尼罗河西岸荒漠。'
     },
     {
-        id: 'monument_sphinx',
-        name: '狮身人面像',
-        category: 'ANCIENT_WONDER',
-        lat: 29.975,
-        lng: 31.137,
-        asset: '/SUCAI_BUILDING/SCEN_SPHINX/preview.png',
-        scale: 1.0,
-        description: '卡夫拉金字塔前守护法老陵寝的整石雕凿巨型斯芬克斯像。'
-    },
-    {
         id: 'monument_cushite_pyramids',
         name: '麦罗埃黑金字塔',
         category: 'ANCIENT_WONDER',
@@ -224,16 +214,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         asset: '/SUCAI_BUILDING/SCEN_HERO_SHRINE/preview.png',
         scale: 1.1,
         description: '大高加索山脉斯瓦涅梯千百年抵御外敌的家族防御高石塔群。'
-    },
-    {
-        id: 'monument_pharos',
-        name: '亚历山大古灯塔',
-        category: 'ANCIENT_WONDER',
-        lat: 31.214,
-        lng: 29.885,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_A/preview.png',
-        scale: 1.2,
-        description: '埃及托勒密王朝在法罗斯岛建造的120米古代世界七大奇迹灯塔。'
     },
     {
         id: 'monument_aachen',

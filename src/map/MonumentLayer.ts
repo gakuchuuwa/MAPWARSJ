@@ -1,5 +1,7 @@
 import L from 'leaflet';
 import { WILDERNESS_MONUMENTS, WildernessMonument } from '../data/WildernessMonuments';
+import { CITY_WONDER } from '../data/CityWonders';
+import { CITIES_V2 } from '../data/cities_v2';
 
 export class MonumentLayer {
     private map: L.Map;
@@ -29,7 +31,26 @@ export class MonumentLayer {
         // [2026-08-27 纠正尺寸]：野外单体名胜与城池单体建筑/城堡尺寸精确对齐（基准 60px）
         const baseSize = 68;
 
-        for (const mon of WILDERNESS_MONUMENTS) {
+        // [2026-08-27 主人定「把所有奇观按坐标独立摆放到战略地图，不动据点」]：名城奇观也按城市坐标独立摆放
+        const cityById = new Map(CITIES_V2.map((c) => [c.id, c]));
+        const wonderMonuments: WildernessMonument[] = Object.entries(CITY_WONDER)
+            .map(([cityId, asset]): WildernessMonument | null => {
+                const city = cityById.get(cityId);
+                if (!city) return null;
+                return {
+                    id: `wonder_${cityId}`,
+                    name: city.name,
+                    category: 'ANCIENT_WONDER' as const,
+                    lat: city.lat,
+                    lng: city.lng,
+                    asset: `/SUCAI_BUILDING/${asset}/preview.png`,
+                    description: `${city.name}的文明奇观`,
+                };
+            })
+            .filter((x): x is WildernessMonument => x !== null);
+        const allMonuments = [...WILDERNESS_MONUMENTS, ...wonderMonuments];
+
+        for (const mon of allMonuments) {
             const scale = mon.scale || 1.0;
             const w = 68;
             const h = w;

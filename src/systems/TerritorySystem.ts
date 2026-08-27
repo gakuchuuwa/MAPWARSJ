@@ -140,23 +140,6 @@ function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion
     return REGION_TO_DE_STYLE[region] ?? null;
 }
 
-/**
- * 奇观据点单例渲染（2026-08-27 主人需求「把所有的奇观据点单例出来，不要据点建筑掺和，按坐标，挨个重新摆放到战略地图上」）：
- * 奇观据点作为该名城的唯一主体单例呈现，不与普通据点的 9 栋建筑群掺和混杂。
- */
-/** 奇观独立地标（2026-08-27 主人定「把所有奇观放到战略地图上，不动据点，奇观和据点没关系」）：
- *  作为据点外侧的独立地标显示，不替换、不占用据点内部建筑群。 */
-function buildStandaloneCityWonderHtml(baseSize: number, cityId: string, wonderDir: string, cityType: string): string {
-    const clusterHalfFactor = cityType === 'big_city' ? 1.40
-        : (cityType === 'medium_city' || cityType === 'pass') ? 1.30
-            : cityType === 'small_city' ? 1.15 : 1.00;
-    // 奇观独立地标统一缩放（不跟随据点城市等级 AUTO）
-    const landmarkW = baseSize * 0.60;
-    const offsetX = baseSize * (clusterHalfFactor + 0.28);
-    const flip = (deHashString(cityId + '|standalone-wonder|' + wonderDir) & 1) === 1;
-    return `<img class="city-wonder-landmark" src="/SUCAI_BUILDING/${wonderDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${landmarkW.toFixed(1)}px;transform:translate(calc(-50% + ${offsetX.toFixed(1)}px),-65%)${flip ? ' scaleX(-1)' : ''};z-index:160;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));pointer-events:none;" />`;
-}
-
 /** 草原营地（YURT 特例）：逐水草而居——无地基/无石路/无栅栏，参照战斗模式。
  *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。 */
 function buildYurtCampHtml(baseSize: number, cityId: string): string {
@@ -1875,9 +1858,6 @@ export class TerritorySystem {
                                   ">`
                                   : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`))}
                       </div>` : ''}
-                     ${(this.showCityTextures && CITY_WONDER[city.id])
-                         ? buildStandaloneCityWonderHtml(baseSize, city.id, CITY_WONDER[city.id], city.type)
-                         : ''}
                      ${flagBodyHtml}
                  </div>`,
             iconSize: [baseSize, baseSize + 80],
