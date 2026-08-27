@@ -31,6 +31,7 @@ export class MonumentLayer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
+    private browseMonuments: PlacedMonument[] = [];
 
     constructor(map: L.Map) {
         this.map = map;
@@ -116,8 +117,11 @@ export class MonumentLayer {
             ...extraMonuments,
         ];
         const placed = this.deoverlap(allMonuments);
+        this.browseMonuments = placed;
 
         for (const mon of placed) {
+            // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
+            const mirror = Math.random() < 0.5;
             const w = BASE_SIZE;
             const h = w;
             const groundW = w * 1.6;
@@ -159,11 +163,11 @@ export class MonumentLayer {
                         left: 50%;
                         top: 50%;
                         width: ${w.toFixed(1)}px;
-                        transform: translate(-50%, -60%);
+                        transform: translate(-50%, -60%)${mirror ? ' scaleX(-1)' : ''};
                         z-index: 2;
                         filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
                         transition: transform 0.2s ease;
-                    " onmouseover="this.style.transform='translate(-50%, -65%) scale(1.08)'" onmouseout="this.style.transform='translate(-50%, -60%) scale(1.0)'" />
+                    " onmouseover="this.style.transform='translate(-50%, -65%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translate(-50%, -60%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
                     <!-- 金色名胜标牌 -->
                     <div style="
                         position: absolute;
@@ -248,5 +252,14 @@ export class MonumentLayer {
                 this.map.removeLayer(this.layerGroup);
             }
         }
+    }
+
+    public focusMonument(index: number, zoom = 10): { index: number; total: number; name: string } | null {
+        const total = this.browseMonuments.length;
+        if (total === 0) return null;
+        const normalizedIndex = ((index % total) + total) % total;
+        const monument = this.browseMonuments[normalizedIndex];
+        this.map.setView([monument.renderLat, monument.renderLng], zoom, { animate: false });
+        return { index: normalizedIndex, total, name: monument.name };
     }
 }
