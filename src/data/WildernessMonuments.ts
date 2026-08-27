@@ -81,14 +81,14 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '古希腊底比斯城外峭壁蹲踞的带翼斯芬克斯雕像，俄狄浦斯解谜之地。'
     },
     {
-        id: 'monument_leshan_buddha',
-        name: '乐山摩崖大佛',
+        id: 'monument_bodhgaya_buddha',
+        name: '菩提伽耶大觉寺成道像',
         category: 'HOLY_SITE',
-        lat: 29.544,
-        lng: 103.771,
+        lat: 24.696,
+        lng: 84.991,
         asset: '/SUCAI_BUILDING/SCEN_BUDDHA_STATUE/preview.png',
-        scale: 1.3,
-        description: '唐开元海通禅师在岷江、大渡河、青衣江三江汇流峭壁开凿的71米弥勒坐佛。'
+        scale: 1.0,
+        description: '印度菩提伽耶大觉寺供奉的释迦牟尼触地印成道像，佛陀成道圣地。'
     },
     {
         id: 'monument_sanchi_stupa',

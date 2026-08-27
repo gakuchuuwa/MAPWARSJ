@@ -4911,6 +4911,11 @@ export class Scene13WarLayer {
         const push = SEP_SPD * dt;
         for (const m of this.men) {
             if (m.hp <= 0) continue;
+            if (this.defenderHolding && !m.siegeW) {
+                m.sepX = 0;
+                m.sepY = 0;
+                continue;
+            }
             const cx = (m.x / CELL_S) | 0, cy = (m.y / CELL_S) | 0;
             // 两个兵的最小间距 = 各自占地半径之和（DE 同款）。象兵/攻城器械因此真的占地方，
             // 挤不进去的兵沿接触面铺开 —— 弧形阵面就是这么长出来的。
@@ -6337,7 +6342,7 @@ export class Scene13WarLayer {
             const hasChg = !!this.bank[m.key]?.sets.charge?.[0]?.length;
             let set: string;
             // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）
-            if (this.lingering || this.deployT > 0) {
+            if (this.lingering || this.deployT > 0 || (this.defenderHolding && !m.siegeW)) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。

@@ -217,13 +217,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 诸葛弩 3人
         ],
     },
-    lu: {
+    "lu": {
         legionName: "曹魏军团",
-        formationMode: 'crane_wing',
+        formationMode: "crane_wing",
         slots: [
-            { type: 'tiger_rider', count: 2 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 3 },
+            { type: "jian_swordman_unshielded", count: 2 },
+            { type: "elite_tiger_cavalry", count: 4 },
+            { type: "chukonu", count: 3 },
         ],
     },
     wudu: {

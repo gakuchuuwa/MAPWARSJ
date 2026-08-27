@@ -18,7 +18,7 @@ export const WONDER_NAME: Record<string, string> = {
     'ASIA_WONDER_VIETNAMESE': '笔塔寺',
     // ── 地中海 ──
     'MEDI_WONDER_BYZANTINES': '圣索菲亚大教堂',
-    'MEDI_WONDER_ITALIANS': '热那亚大教堂',
+    'MEDI_WONDER_ITALIANS': '热那亚圣洛伦佐大教堂',
     'MEDI_WONDER_PORTUGUESE': '贝伦塔',
     'MEDI_WONDER_SICILIANS': '蒙雷阿莱主教座堂',
     'MEDI_WONDER_SPANISH': '塞维利亚黄金塔',

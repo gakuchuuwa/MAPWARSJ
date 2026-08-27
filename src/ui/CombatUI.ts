@@ -65,6 +65,7 @@ import { getCityEliteConfig, getLegionEliteLegionName } from '../data/Expedition
 import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 const T = COMBAT_UI_TOKENS;
 
 /**
@@ -210,6 +211,8 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
+    private leftLegionTag!: HTMLDivElement;
+    private rightLegionTag!: HTMLDivElement;
     private leftFamousBadge!: HTMLDivElement;
     private rightFamousBadge!: HTMLDivElement;
     private indicatorLeftYou!: HTMLDivElement;
@@ -601,6 +604,8 @@ export class CombatUI {
         leftFrame.appendChild(this.leftPortraitWrap);
         this.leftGeneralNameTag = this.createGeneralNameTag('left');
         leftFrame.appendChild(this.leftGeneralNameTag);
+        this.leftLegionTag = this.createLegionNameTag('left');
+        leftFrame.appendChild(this.leftLegionTag);
         this.leftFamousBadge = this.createFamousBadge('left');
         leftFrame.appendChild(this.leftFamousBadge);
 
@@ -617,6 +622,8 @@ export class CombatUI {
         rightFrame.appendChild(this.rightPortraitWrap);
         this.rightGeneralNameTag = this.createGeneralNameTag('right');
         rightFrame.appendChild(this.rightGeneralNameTag);
+        this.rightLegionTag = this.createLegionNameTag('right');
+        rightFrame.appendChild(this.rightLegionTag);
         this.rightFamousBadge = this.createFamousBadge('right');
         rightFrame.appendChild(this.rightFamousBadge);
 
@@ -1323,11 +1330,31 @@ export class CombatUI {
         const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
         this.battleTitle.textContent = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
 
-        // 势力名显示
+        // 势力名与军团名显示
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
         const defFactionName = (window as any).game?.cityManager?.getFactionName?.(init.defenderFactionId) ?? '守方';
         this.attackerDisplayName = attFactionName;
         this.defenderDisplayName = defFactionName;
+
+        const attLegionName = (init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
+            ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
+            : (attFactionName !== '攻方' ? `${attFactionName}军团` : '');
+        const defLegionName = (init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
+            ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
+            : (defFactionName !== '守方' ? `${defFactionName}军团` : '');
+
+        if (attLegionName) {
+            this.leftLegionTag.textContent = attLegionName;
+            this.leftLegionTag.style.display = 'block';
+        } else {
+            this.leftLegionTag.style.display = 'none';
+        }
+        if (defLegionName) {
+            this.rightLegionTag.textContent = defLegionName;
+            this.rightLegionTag.style.display = 'block';
+        } else {
+            this.rightLegionTag.style.display = 'none';
+        }
 
         // 启用 13 专属布局并刷新
         this.applyScene13Layout(true);
@@ -4326,6 +4353,8 @@ export class CombatUI {
         this.rightPortraitFrame.style.animation = 'none';
         this.leftPortraitFrame.style.transform = '';
         this.rightPortraitFrame.style.transform = '';
+        if (this.leftLegionTag) this.leftLegionTag.style.display = 'none';
+        if (this.rightLegionTag) this.rightLegionTag.style.display = 'none';
         if (this.leftTechBox) {
             this.leftTechBox.style.opacity = '0';
             this.leftTechBox.style.display = 'none';
@@ -4880,6 +4909,7 @@ export class CombatUI {
             }
         }
         const famousBadge = side === 'attacker' ? this.leftFamousBadge : this.rightFamousBadge;
+        const legionTag = side === 'attacker' ? this.leftLegionTag : this.rightLegionTag;
         if (rec) {
             tag.textContent = rec.generalName;
             tag.style.display = 'block';
@@ -4894,6 +4924,15 @@ export class CombatUI {
             tag.style.display = 'none';
             delete tag.dataset.generalId;
             famousBadge.style.display = 'none';
+        }
+
+        const legionName = this.resolveUnitLegionName(unit, side);
+        if (legionName && (rec || unit.factionId)) {
+            legionTag.textContent = legionName;
+            legionTag.style.display = 'block';
+        } else {
+            legionTag.textContent = '';
+            legionTag.style.display = 'none';
         }
         tag.dataset.side = side;
         this.refreshGeneralNameTagInteract();
@@ -5240,6 +5279,54 @@ export class CombatUI {
             letter-spacing: 4px;
         `;
         return tag;
+    }
+
+    private createLegionNameTag(side: 'left' | 'right'): HTMLDivElement {
+        const isAtt = side === 'left';
+        const tag = document.createElement('div');
+        tag.className = 'combat-legion-name-tag';
+        tag.dataset.side = isAtt ? 'attacker' : 'defender';
+        tag.style.cssText = `
+            position: absolute;
+            bottom: calc(52% - ${uiPx(24)});
+            ${isAtt ? 'right' : 'left'}: -${uiPx(25)};
+            transform: ${isAtt ? 'translateX(35%)' : 'translateX(-35%)'};
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(11)};
+            font-weight: 700;
+            color: rgba(230, 215, 175, 0.88);
+            background: linear-gradient(135deg, rgba(32, 16, 8, 0.92) 0%, rgba(12, 5, 0, 0.92) 100%);
+            border: 1px solid rgba(180, 135, 55, 0.45);
+            border-radius: 2px;
+            padding: 1px 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            z-index: ${T.zIndex.portrait + 6};
+            display: none;
+            pointer-events: none;
+        `;
+        return tag;
+    }
+
+    private resolveUnitLegionName(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
+        const entity = unit.getEntity?.();
+        if (entity?.name && entity.name !== '军队' && entity.name !== '军团' && !entity.name.includes('守军')) {
+            return entity.name.endsWith('军团') ? entity.name : `${entity.name}军团`;
+        }
+        if (unit.name && unit.name !== '军队' && unit.name !== '军团' && !unit.name.includes('守军')) {
+            if (unit.name.endsWith('军团')) return unit.name;
+        }
+        const factionId = unit.factionId;
+        if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
+            return FACTION_COMPOSITIONS[factionId].legionName!;
+        }
+        const factionName = factionId ? (window as any).game?.cityManager?.getFactionName?.(factionId) : null;
+        if (factionName) {
+            return `${factionName}军团`;
+        }
+        return side === 'attacker' ? '攻方军团' : '守方军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {
