@@ -6,6 +6,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion } from './RegionSystem';
+import { resolveCastleAsset } from '../config/deCastleAssets';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 // [PERF] Import Territory Worker
@@ -158,6 +159,11 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
     // 中间 1 个（随机，可能是帐篷或瞭望塔）
     const centerY = items[0];
     const centerW = sizeOf(centerY, true);
+    const centerGroundW = centerW * 2.3;
+    const centerGroundH = centerGroundW * 0.58;
+    parts.push(
+        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+    );
     parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
 
     // 周围 8 个扇区散布（45° 扇区，随机取样）
@@ -171,6 +177,13 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
         const yy = Math.sin(angle) * r * 0.58;
         const yw = sizeOf(y, false);
         const zIndex = Math.round(100 + yy);
+
+        const bGroundW = yw * 2.3;
+        const bGroundH = bGroundW * 0.58;
+
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
         parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
 
@@ -394,9 +407,10 @@ interface PalisadeGridPiece {
 
 /** 木栅栏绕城一圈：四角碉楼 + 四条边(每边 9 段紧密咬合) + 正南木城门，
  *  基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合；锚点参数与步长沿用既有设定。 */
-function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGridPiece[] {
-    const stepX = baseSize * 0.075; // 紧凑步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
-    const stepY = stepX * 0.58;
+function computePalisadeWallAndGate(baseSize: number, S: number = 5, rectXRatio: number = 1): PalisadeGridPiece[] {
+    const stepXBase = baseSize * 0.075; // 基准步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
+    const stepX = stepXBase * rectXRatio; // X 步长（rectXRatio>1 拉长成横向矩形，险要用）
+    const stepY = stepXBase * 0.58;
     const AX = 2 * S;
     const pieces: PalisadeGridPiece[] = [];
 
@@ -511,28 +525,33 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
     const rotation = rnd() * 360;
+    // 险要轮廓：横向矩形（东西长）——中国关隘沿山谷/古道伸展，非四方城（2026-08 主人定）
+    const rectXRatio = 1.6;
 
-    // 容器尺寸（中1+周8 紧凑）
-    const W = baseSize * 2.2;
+    // 容器尺寸（中1+周8 紧凑，东西随 rectXRatio 拉长）
+    const W = baseSize * 2.2 * rectXRatio;
     const H = baseSize * 1.9;
 
     const parts: string[] = [];
 
-    // 中间城堡（ANDE 无城堡素材，fallback 城镇中心）
-    const castleName = DE_CASTLE_FALLBACK[style] || 'CASTLE';
-    const centerW = baseSize * (DE_BUILDING_SCALES[castleName] || 0.5);
+    // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认；ANDE 无风格集城堡 fallback 城镇中心）
+    const castleAsset = resolveCastleAsset(style, factionId, region);
+    const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
+        ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
+        : castleAsset;
+    const centerW = baseSize * 0.5;
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
-    const centerFlip = (deHashString(cityId + '|castle|' + castleName) & 1) === 1;
+    const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     parts.push(
-        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${castleName}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 周围 8 个：兵营/靶场/民居/马厩 + 4 警戒箭塔（45° 扇区 + 扰动）
@@ -542,7 +561,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string): 
         const angleJitter = (rnd() * 30 - 15);
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
         const r = (0.34 + rnd() * 0.08) * baseSize;
-        const x = Math.cos(angle) * r;
+        const x = Math.cos(angle) * r * rectXRatio; // 周围建筑沿东西拉长，贴合长方形关城
         const y = Math.sin(angle) * r * 0.58;
         const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.4);
         const zIndex = Math.round(100 + y);
@@ -552,15 +571,15 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string): 
         const bGroundH = bGroundW * 0.58;
 
         parts.push(
-            `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
         );
         parts.push(
             `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
         );
     });
 
-    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑）
-    const wallPieces = computePalisadeWallAndGate(baseSize, 5);
+    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑；rectXRatio 拉长成横向矩形）
+    const wallPieces = computePalisadeWallAndGate(baseSize, 5, rectXRatio);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -608,7 +627,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     parts.push(
-        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
         `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
@@ -632,7 +651,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
         // 该建筑下方的地基底图
         parts.push(
-            `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
         );
         // 该建筑本体
         parts.push(
@@ -698,7 +717,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
     parts.push(
-        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
         `<img src="/SUCAI_BUILDING/${style}_${centerB}_${centerAge}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
@@ -721,7 +740,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         const bGroundH = bGroundW * 0.58;
 
         parts.push(
-            `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
         );
         parts.push(
             `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
@@ -1815,7 +1834,7 @@ export class TerritorySystem {
                                  : city.type === 'medium_city'
                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
                                      : city.type === 'pass'
-                                         ? buildDePassStackHtml(baseSize, city.id, deStyle)
+                                         ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region)
                                          : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
                              : (city.image
                                  ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
