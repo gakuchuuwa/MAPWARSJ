@@ -45,7 +45,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_sparta': 'GREEK_WONDER_SPARTANS',  // 斯巴达
     'city_sofia': 'SLAV_WONDER_BULGARIANS',  // 索非亚（塞尔迪卡，保加尔）
     'city_toledo': 'MEDI_WONDER_SPANISH',  // 托莱多（西班牙/卡斯蒂利亚）
-    'city_toumancheng': 'EAST_WONDER_HUNS',  // 头曼城（匈奴）
+    'city_saigede': 'EAST_WONDER_HUNS',  // 塞格德（匈人帝国大本营·阿提拉王庭）
     'city_venice': 'MEDI_WONDER_ITALIANS',  // 威尼斯（意大利）
     'city_weierniwusi': 'SLAV_WONDER_LITHUANIANS',  // 维尔纽斯（立陶宛）
     'city_wupusala': 'EAST_WONDER_VIKINGS',  // 乌普萨拉（维京）

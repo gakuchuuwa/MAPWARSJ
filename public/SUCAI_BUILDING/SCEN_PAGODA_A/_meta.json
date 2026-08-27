@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_PAGODA_A",
+  "frames": 1,
+  "box_w": 288,
+  "box_h": 364,
+  "anchor_x": 180,
+  "anchor_y": 312,
+  "sld_source": "s_pagoda_a"
+}

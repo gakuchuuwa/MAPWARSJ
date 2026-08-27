@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_REKHADEUL_TEMPLE",
+  "frames": 1,
+  "box_w": 252,
+  "box_h": 304,
+  "anchor_x": 160,
+  "anchor_y": 260,
+  "sld_source": "s_rekhadeul_temple"
+}

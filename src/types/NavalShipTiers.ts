@@ -25,9 +25,9 @@ export type NavalShipAssetId = 'ship_small' | 'ship_medium' | 'ship_large';
  *   要整体调大调小改这一个数即可，三档比例由素材保证不会失衡。
  */
 const NAVAL_SHIP_DRAW_SCALE: Readonly<Record<NavalShipAssetId, number>> = {
-    ship_small: 0.6,
-    ship_medium: 0.6,
-    ship_large: 0.6,
+    ship_small: 0.38,
+    ship_medium: 0.38,
+    ship_large: 0.38,
 };
 
 export function getNavalShipDrawScale(shipId: NavalShipAssetId): number {

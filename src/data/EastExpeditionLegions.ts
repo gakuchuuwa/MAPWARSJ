@@ -14,7 +14,6 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const EAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T1 功勋之兵 ──
-    xiongnu: { name: '鸣镝精骑', tier: 1 },          // 头曼城·冒顿单于：鸣镝主力称霸大漠
     xiongren: { name: '答剌罕骑兵', tier: 1 },        // 塞格德·阿提拉：横扫巴尔干与意大利的战略级胜利，DE 匈奴特色单位
     luosi: { name: '瓦兰吉卫队', tier: 1 },           // 基辅·瓦良格：989 巴西尔二世借基辅瓦良格兵组建的拜占庭皇帝斧兵卫队
 

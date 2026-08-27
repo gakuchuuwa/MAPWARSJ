@@ -473,9 +473,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', troops: 30000, region: 'BASHU' },
 
 
-    { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.506470, type: 'pass', region: 'EAST', troops: 30000,
-        note: '头曼城；匈奴小城',
-    },
+    { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.50647, type: 'pass', troops: 20000, region: 'STEPPE' },
+
 
     { id: 'city_guangnan', name: '广南', factionId: 'gouding', lat: 23.755260, lng: 105.386353, type: 'small_city', region: 'LINGNAN', troops: 30000,
         note: '广南；句町小城',

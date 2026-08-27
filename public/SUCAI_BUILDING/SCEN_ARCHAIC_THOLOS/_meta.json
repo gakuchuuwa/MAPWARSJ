@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_ARCHAIC_THOLOS",
+  "frames": 1,
+  "box_w": 132,
+  "box_h": 128,
+  "anchor_x": 74,
+  "anchor_y": 98,
+  "sld_source": "s_tholos_shrine"
+}

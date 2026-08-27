@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_ANDEAN_RUINS",
+  "frames": 1,
+  "box_w": 140,
+  "box_h": 140,
+  "anchor_x": 74,
+  "anchor_y": 102,
+  "sld_source": "s_andean_ruins"
+}

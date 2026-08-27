@@ -227,7 +227,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'tufa_d': 'city_qingtang',
 'qiuchi': 'city_qiuchi',
 'helian': 'city_tongwancheng',
-    'xiongnu': 'city_toumancheng',
+'xiongnu': 'city_toumancheng',
 'xianbei': 'city_gaxian',
     'jie': 'city_jieshuangna',
 'beidi': 'city_xiaoguan',

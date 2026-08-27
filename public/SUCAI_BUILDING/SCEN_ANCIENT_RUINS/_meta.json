@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_ANCIENT_RUINS",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 200,
+  "anchor_x": 164,
+  "anchor_y": 120,
+  "sld_source": "s_ruins"
+}

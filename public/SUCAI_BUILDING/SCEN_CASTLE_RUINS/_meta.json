@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_CASTLE_RUINS",
+  "frames": 1,
+  "box_w": 448,
+  "box_h": 484,
+  "anchor_x": 244,
+  "anchor_y": 384,
+  "sld_source": "s_castle_ruins"
+}

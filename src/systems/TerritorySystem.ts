@@ -9,6 +9,7 @@ import { getCityRegion } from './RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
+import { CITY_WONDER } from '../data/CityWonders';
 // [PERF] Import Territory Worker
 import TerritoryWorker from '../workers/TerritoryWorker?worker';
 import { TerritoryRequest, TerritoryResponse } from '../workers/TerritoryWorker';
@@ -158,13 +159,15 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
 
     // 中间 1 个（随机，可能是帐篷或瞭望塔）
     const centerY = items[0];
-    const centerW = sizeOf(centerY, true);
+    const wonderDir = CITY_WONDER[cityId];
+    const centerW = wonderDir ? (baseSize * 0.92) : sizeOf(centerY, true);
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     parts.push(
         `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
-    parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+    const centerSrc = wonderDir ? `/SUCAI_BUILDING/${wonderDir}/preview.png` : srcOf(centerY);
+    parts.push(`<img src="${centerSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:${wonderDir ? 160 : 100};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
 
     // 周围 8 个扇区散布（45° 扇区，随机取样）
     const surround = items.slice(1);
@@ -488,7 +491,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = ring[0];
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4);
+    const wonderDir = CITY_WONDER[cityId];
+    const centerW = baseSize * (wonderDir ? 0.76 : (DE_BUILDING_SCALES[centerB] || 0.4));
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
@@ -566,8 +570,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
         ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
         : castleAsset;
-    const centerW = baseSize * 0.55;
-    const centerGroundW = centerW * 1.5;
+    const centerW = baseSize * 0.88;
+    const centerGroundW = centerW * 1.8;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     parts.push(
@@ -636,15 +640,17 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     const parts: string[] = [];
 
     // 中间 1 个建筑（随机）+ 地基
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4) * AUTO;
+    const wonderDir = CITY_WONDER[cityId];
+    const centerW = baseSize * (wonderDir ? 0.76 : (DE_BUILDING_SCALES[centerB] || 0.4)) * AUTO;
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     parts.push(
         `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
+    const centerSrc = wonderDir ? `/SUCAI_BUILDING/${wonderDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_AGE3/preview.png`;
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="${centerSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 周围 8 个扇区（每种建筑一次，45° 扇区 + 角度/半径扰动，半径比小城略大）
@@ -726,15 +732,18 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     const parts: string[] = [];
 
     // 中间 1 个建筑（随机）+ 地基
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4) * AUTO;
-    const centerGroundW = centerW * 2.3;
+    const wonderDir = CITY_WONDER[cityId];
+    const centerW = baseSize * (wonderDir ? 0.88 : (DE_BUILDING_SCALES[centerB] || 0.4)) * AUTO;
+    const centerGroundW = centerW * 2.1;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
+    const centerZIndex = wonderDir ? 160 : 100;
     parts.push(
         `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
+    const centerSrc = wonderDir ? `/SUCAI_BUILDING/${wonderDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_${centerAge}/preview.png`;
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_${centerAge}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="${centerSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${centerZIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 周围 8 个扇区（每种建筑一次，45° 扇区 + 角度/半径扰动，半径比中城略大）

@@ -248,7 +248,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'tufa_d': '秃发',
 'qiuchi': '仇池',
 'helian': '赫连',
-    'xiongnu': '匈奴',
+'xiongnu': '匈奴',
 'xianbei': '鲜卑',
     'jie': '羯',
 'beidi': '羌',
