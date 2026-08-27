@@ -977,7 +977,7 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
  *    而建筑是 **1:1 原尺寸**绘制的。
  *    50 时单位只画到 78%，城堡/民兵高度比 **DE 8.3:1 → 我们 10.7:1**，人相对建筑凭空小了 22%。
  *    改成 64 → 缩放 1.00，单位与建筑同为原生尺寸，比例与 DE 一致，且**零重采样**（最清晰）。
- *    另一条路「把建筑乘 0.78」被否：456px 的城堡重采样成 356px 会糊，而奇观/城堡是地标。
+ *    城内建筑另有独立比例，仅用于控制城郭内建筑群的整体占屏，不改变单位尺寸。
  *    派生量（PROJ_SCALE、特效缩放）都是 UNIT_PX/64 算的，自动跟随；
  *    UNIT_RADIUS（推挤占地）是 dat 实测真值，不随它变，也不该变。
  *    历史：2026-08-11 主人「单兵尺寸放大些」30 → 50，这次继续到 64 收口。
@@ -1215,6 +1215,8 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
+/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
+const SIEGE_CITY_BUILDING_SCALE = 0.8;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 const DECOR_BLUR = 20;
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
@@ -3859,14 +3861,14 @@ export class Scene13WarLayer {
 
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
         // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
-        const placeYurtCamp = (): void => {
+        const placeYurtCamp = (scale?: number): void => {
             const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i]));
+            for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i], { scale }));
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
-            this.decorSprites.push(place(shuffledSpawns[8], 'ASIA_TOWER_AGE2'));
+            this.decorSprites.push(place(shuffledSpawns[8], 'ASIA_TOWER_AGE2', { scale }));
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -3881,7 +3883,7 @@ export class Scene13WarLayer {
                 for (const s of side) {
                     if (s.x > ws.x + 1e-9 || (s.x === ws.x && s.y > ws.y)) ws = s;
                 }
-                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2 }));
+                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2, scale: SIEGE_CITY_BUILDING_SCALE }));
             }
             const style = this.buildingStyleFor(1);
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
@@ -3986,14 +3988,14 @@ export class Scene13WarLayer {
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
-                placeYurtCamp();
+                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE);
                 return;
             }
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
             if (this.defenderCityType === 'small_city') {
                 const shuffledSmall = [...side].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`));
+                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
                 return;
             }
             // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
@@ -4004,7 +4006,7 @@ export class Scene13WarLayer {
                 .filter(({ s }) => s.x >= backX - 1e-9)
                 .sort((a, b) => a.s.y - b.s.y);
             const castleIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            this.decorSprites.push(place(side[castleIdx], this.castleAssetFor(style)));
+            this.decorSprites.push(place(side[castleIdx], this.castleAssetFor(style), { scale: SIEGE_CITY_BUILDING_SCALE }));
             // 🔴 [2026-08-26 主人「前排最下面这里的建筑总是出墙，请改为固定使用民屋」]
             //    9 个出兵口的建筑原本是**整体洗牌**随机分配的，所以这个位置抽到市镇中心/大学
             //    这类大体量建筑时就会压出城墙。这里把它从随机池里摘出来钉死成民屋 ——
@@ -4012,7 +4014,7 @@ export class Scene13WarLayer {
             // 民屋档位跟随该档城池的建筑时代：险要/中城/大城=城堡 age3（2026-08-27 主人改「险要建筑与战略一致」）
             const ageTag = 'AGE3';
             const houseIdx = frontBottomIdx(side);
-            this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`));
+            this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             const rest = side.filter((_, i) => i !== castleIdx && i !== houseIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
             // 险要：城堡 age3，与战略一致（兵营/靶场/民居/马厩 + 4 警戒箭塔）；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
@@ -4020,14 +4022,14 @@ export class Scene13WarLayer {
                 // [2026-08-27 主人「险要建筑与战略一致」] 城堡 + 兵营/靶场/民居/马厩(AGE3) + 4 警戒箭塔(AGE3)
                 // houseIdx 已固定民屋；rest 7 个 = 兵营/靶场/马厩 + 4 警戒箭塔
                 const passRest = ['BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'TOWER', 'TOWER', 'TOWER', 'TOWER'];
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${passRest[i]}_AGE3`));
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${passRest[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             } else if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`));
-                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`));
+                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             } else {
                 const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`));
+                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             }
             return;
         }

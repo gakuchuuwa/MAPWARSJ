@@ -6856,6 +6856,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.84,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/INDIA/4e400b15-4ab8-459d-86cd-dba94bdb809d.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

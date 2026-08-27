@@ -870,7 +870,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'jibin', name: '罽宾' },
-    { id: 'babuer', name: '阿富汗' },
+    { id: 'babuer', name: '喀布尔斯坦' },
 
 
           // 罽宾/迦毕试(丘就却/贵霜), Kapisa/Kushan
@@ -1642,7 +1642,7 @@ export const FACTIONS: Faction[] = [
     { id: 'huluo', name: '古尔' },
 
 
-    { id: 'aba', name: '阿巴尔' },
+    { id: 'aba', name: '阿巴尔沙赫' },
 
     // ── 2026-06-20 新增：那竭国（顶骨城）──
     { id: 'najie', name: '那竭' },
