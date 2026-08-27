@@ -71,6 +71,16 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '希腊帕纳塞斯山麓阿波罗神谕圣所多柱式圆形大殿（Tholos）。'
     },
     {
+        id: 'monument_sphinx',
+        name: '斯芬克斯雕像',
+        category: 'ANCIENT_WONDER',
+        lat: 38.323,
+        lng: 23.318,
+        asset: '/SUCAI_BUILDING/SCEN_SPHINX/preview.png',
+        scale: 1.0,
+        description: '古希腊底比斯城外峭壁蹲踞的带翼斯芬克斯雕像，俄狄浦斯解谜之地。'
+    },
+    {
         id: 'monument_leshan_buddha',
         name: '乐山摩崖大佛',
         category: 'HOLY_SITE',

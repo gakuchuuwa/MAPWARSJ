@@ -49,7 +49,6 @@ export const CITY_WONDER: Record<string, string> = {
     'city_luoma': 'SCEN_COLOSSEUM',  // 罗马城（罗马斗兽场·弗拉维圆形剧场）
     'city_venice': 'MEDI_WONDER_ITALIANS',  // 威尼斯（意大利·热那亚/圣马可大教堂）
     'city_weierniwusi': 'SLAV_WONDER_LITHUANIANS',  // 维尔纽斯（立陶宛）
-    'city_wupusala': 'SCEN_HALL_OF_HEROES',  // 乌普萨拉（古乌普萨拉王陵神殿场景建筑）
     'city_yadian': 'GREEK_WONDER_ATHENIANS',  // 雅典
     'city_yachen': 'SCEN_AACHEN_CATHEDRAL',  // 亚琛（亚琛大教堂）
     'city_yelusaleng': 'SCEN_DOME_OF_THE_ROCK',  // 耶路撒冷（圆顶清真寺）
