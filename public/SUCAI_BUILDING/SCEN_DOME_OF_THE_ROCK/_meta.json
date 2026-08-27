@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_DOME_OF_THE_ROCK",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 408,
+  "anchor_x": 232,
+  "anchor_y": 308,
+  "sld_source": "b_scen_dome_of_the_rock"
+}

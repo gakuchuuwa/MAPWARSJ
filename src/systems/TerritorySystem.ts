@@ -492,15 +492,16 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = ring[0];
     const wonderDir = CITY_WONDER[cityId];
-    const centerW = baseSize * (wonderDir ? 0.76 : (DE_BUILDING_SCALES[centerB] || 0.4));
+    const centerW = wonderDir ? 68 : baseSize * (DE_BUILDING_SCALES[centerB] || 0.4);
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     parts.push(
         `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
+    const centerSrc = wonderDir ? `/SUCAI_BUILDING/${wonderDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png`;
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="${centerSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${wonderDir ? 160 : 100};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 周围 8 个扇区随机散布（每建筑一个 45° 扇区，角度+半径双重扰动）
@@ -570,8 +571,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
         ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
         : castleAsset;
-    const centerW = baseSize * 0.88;
-    const centerGroundW = centerW * 1.8;
+    const centerW = baseSize * 0.68;
+    const centerGroundW = centerW * 1.55;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     parts.push(
@@ -580,6 +581,18 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     parts.push(
         `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
+
+    // 险要仍以城堡为中心；若该据点有专属地标，则作为附属建筑显示，不替换城堡。
+    const wonderDir = CITY_WONDER[cityId];
+    if (wonderDir) {
+        const wonderW = baseSize * 0.48;
+        const wx = baseSize * 0.27;
+        const wy = -baseSize * 0.16;
+        const wonderFlip = (deHashString(cityId + '|wonder|' + wonderDir) & 1) === 1;
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${wonderDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${wonderW.toFixed(1)}px;transform:translate(calc(-50% + ${wx.toFixed(1)}px),calc(-65% + ${wy.toFixed(1)}px))${wonderFlip ? ' scaleX(-1)' : ''};z-index:101;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
+    }
 
     // 城堡西北方一座警戒箭塔（左上，地基 1.5 贴建筑）
     const towerW = baseSize * 0.36;
@@ -733,7 +746,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
 
     // 中间 1 个建筑（随机）+ 地基
     const wonderDir = CITY_WONDER[cityId];
-    const centerW = baseSize * (wonderDir ? 0.88 : (DE_BUILDING_SCALES[centerB] || 0.4)) * AUTO;
+    const centerW = wonderDir ? 68 : baseSize * (DE_BUILDING_SCALES[centerB] || 0.4) * AUTO;
     const centerGroundW = centerW * 2.1;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;

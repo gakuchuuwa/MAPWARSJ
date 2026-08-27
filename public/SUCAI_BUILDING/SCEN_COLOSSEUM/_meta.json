@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_COLOSSEUM",
+  "frames": 1,
+  "box_w": 796,
+  "box_h": 480,
+  "anchor_x": 400,
+  "anchor_y": 280,
+  "sld_source": "b_scen_colosseum"
+}

@@ -1,5 +1,5 @@
-/** 名城 -> 世界奇观（DE 奇观素材，只用于战术模式 zoom13 攻城战守方城中央地标）。
- *  🔴 [2026-08-26] 60 座奇迹素材**全部安置，零闲置**，一奇迹对一据点（无重复、无死链）。
+/** 名城 -> DE 奇观/特殊建筑（用于战略城市与战术模式 zoom13 的城市地标）。
+ *  映射以建筑和据点的实际关联为先，不为追求素材零闲置而强行错配。
  *     `npx tsx tools/audit-wonder-coverage.mts` 校验。
  *  2026-08-24 全部 42 条按历史逐条核查后定稿 40 条（撤 6 / 加 4）：
  *    - 撤：长安(天坛应北京)、邯郸(魏都应洛阳)、伊斯法罕(萨法维晚，波斯无泰西封撤)、
@@ -46,10 +46,13 @@ export const CITY_WONDER: Record<string, string> = {
     'city_sofia': 'SLAV_WONDER_BULGARIANS',  // 索非亚（塞尔迪卡，保加尔）
     'city_toledo': 'MEDI_WONDER_SPANISH',  // 托莱多（西班牙/卡斯蒂利亚）
     'city_saigede': 'EAST_WONDER_HUNS',  // 塞格德（匈人帝国大本营·阿提拉王庭）
-    'city_venice': 'MEDI_WONDER_ITALIANS',  // 威尼斯（意大利）
+    'city_luoma': 'SCEN_COLOSSEUM',  // 罗马城（罗马斗兽场·弗拉维圆形剧场）
+    'city_venice': 'MEDI_WONDER_ITALIANS',  // 威尼斯（意大利·热那亚/圣马可大教堂）
     'city_weierniwusi': 'SLAV_WONDER_LITHUANIANS',  // 维尔纽斯（立陶宛）
-    'city_wupusala': 'EAST_WONDER_VIKINGS',  // 乌普萨拉（维京）
+    'city_wupusala': 'SCEN_HALL_OF_HEROES',  // 乌普萨拉（古乌普萨拉王陵神殿场景建筑）
     'city_yadian': 'GREEK_WONDER_ATHENIANS',  // 雅典
+    'city_yachen': 'SCEN_AACHEN_CATHEDRAL',  // 亚琛（亚琛大教堂）
+    'city_yelusaleng': 'SCEN_DOME_OF_THE_ROCK',  // 耶路撒冷（圆顶清真寺）
     'city_yikeniwumu': 'ORIE_WONDER_TURKS',  // 伊科尼乌姆（罗姆苏丹，突厥）
     // [2026-08-24 新增 10 城 + 孟加拉挂已有高达城]
     'city_tenochtitlan': 'MESO_WONDER_AZTECS',  // 特诺奇提特兰（阿兹特克）
@@ -58,7 +61,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_tucapel': 'ANDE_WONDER_MAPUCHE',  // 图卡佩尔（马普切）
     'city_bacata': 'ANDE_WONDER_MUISCA',  // 巴卡塔（穆伊斯卡）
     'city_guanabara': 'ANDE_WONDER_TUPI',  // 瓜纳巴拉（图皮）
-    'city_timbuktu': 'AFRI_WONDER_MALIANS',  // 廷巴克图（马里/曼丁哥）
+    'city_timbuktu': 'SCEN_SANKORE_MADRASAH',  // 廷巴克图（桑科雷经学院）
     'city_aksum': 'AFRI_WONDER_ETHIOPIANS',  // 阿克苏姆（埃塞俄比亚）
     'city_malacca': 'SEAS_WONDER_MALAY',  // 马六甲（马来/满剌加）
     'city_patan': 'INDI_WONDER_GURJARAS',  // 帕坦（瞿折罗/古吉拉特）

@@ -151,7 +151,7 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         category: 'ANCIENT_WONDER',
         lat: 35.296,
         lng: 10.706,
-        asset: '/SUCAI_BUILDING/SCEN_ROMAN_RUINS/preview.png',
+        asset: '/SUCAI_BUILDING/SCEN_COLOSSEUM/preview.png',
         scale: 1.2,
         description: '北非突尼斯保存最完好的三层拱廊大型古罗马露天斗兽场。'
     },
