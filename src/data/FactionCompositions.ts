@@ -2732,13 +2732,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'xianbei_raider', count: 4 },
         ],
     },
-    ayinu: {
+    "ayinu": {
         legionName: "奴儿干军团",
-        formationMode: 'triangle',
+        formationMode: "crane_wing",
         slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
+            { type: "tarkan", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "cretan_archer", count: 3 },
         ],
     },
     "yehe": {
