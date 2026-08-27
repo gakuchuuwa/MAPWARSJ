@@ -2966,4 +2966,6016 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "composite_bowman", count: 3 },
         ],
     },
+    "bohepingyuan": {
+        legionName: "威尼托军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "weixi": {
+        legionName: "威悉军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "lagusa": {
+        legionName: "达尔马提亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "meikelunbao": {
+        legionName: "文德军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "didi": {
+        legionName: "佛兰德军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "bosiniya": {
+        legionName: "波斯尼亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "maixiya": {
+        legionName: "麦西亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "nidelan": {
+        legionName: "尼德兰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "pomeilaniya": {
+        legionName: "波美拉尼亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "langgeduoke": {
+        legionName: "朗格多克军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "kanpaniya": {
+        legionName: "坎帕尼亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "jiatailuoniya": {
+        legionName: "加泰罗尼亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "nasier": {
+        legionName: "纳斯尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "bolisiya": {
+        legionName: "波利西亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "zhituo": {
+        legionName: "沃伦军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "pufaerci": {
+        legionName: "普法尔茨军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "hansa": {
+        legionName: "汉萨军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "batawei": {
+        legionName: "巴塔维军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "weijing_york": {
+        legionName: "约维克军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "puluowangsi": {
+        legionName: "普罗旺斯军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "shaiyue": {
+        legionName: "喀尔巴阡军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "yinggelan": {
+        legionName: "英格兰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "bulietani": {
+        legionName: "布列塔尼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "saierweiya": {
+        legionName: "塞尔维亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "habusibao": {
+        legionName: "哈布斯堡军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "rierman": {
+        legionName: "莱茵兰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "shiwaben": {
+        legionName: "施瓦本军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "asikanani": {
+        legionName: "阿斯坎尼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "wende": {
+        legionName: "萨克森军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "bafaliya": {
+        legionName: "巴伐利亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "huohengsuolun": {
+        legionName: "霍亨索伦军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "ruishi": {
+        legionName: "瑞士军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "molaweiya": {
+        legionName: "摩拉维亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "damolaweiya": {
+        legionName: "大摩拉维亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 },
+        ],
+    },
+    "liulike": {
+        legionName: "留里克军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "mosike_gongguo": {
+        legionName: "莫斯公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "xieerpuhuofu_gongguo": {
+        legionName: "谢尔公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "fulajimier_gongguo": {
+        legionName: "克利亚济马军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "daniebo": {
+        legionName: "斯摩公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "jialixiya": {
+        legionName: "哈尔公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "pusikefu_gongheguo": {
+        legionName: "伟利卡亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "ouka": {
+        legionName: "奥卡军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "baojiaer": {
+        legionName: "保加尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kelimiya": {
+        legionName: "克里米亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "keluodiya": {
+        legionName: "克罗地亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "dajiya": {
+        legionName: "达基亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "mengtainiya": {
+        legionName: "蒙泰尼亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "teweier_gongguo": {
+        legionName: "特维公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "suzidaer": {
+        legionName: "苏兹达尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "siluoboda": {
+        legionName: "斯洛博达军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "yedi": {
+        legionName: "野地军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "moerdaweiya": {
+        legionName: "摩尔达维亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "walajiyia": {
+        legionName: "瓦拉几亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "chude": {
+        legionName: "楚德军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "deniesite": {
+        legionName: "德涅斯特军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "fuerjia": {
+        legionName: "伏尔加军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "nuogai": {
+        legionName: "萨马拉河军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "bashekeer": {
+        legionName: "巴什基尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "beisilafu": {
+        legionName: "塞维里亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "peilieya_gongguo": {
+        legionName: "佩列公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "weijiebusike_gongguo": {
+        legionName: "维捷公国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "heishui": {
+        legionName: "靺鞨军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "kelie": {
+        legionName: "杭爱军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "donghui": {
+        legionName: "东濊军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "gonggu": {
+        legionName: "宫古军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "fuguo": {
+        legionName: "附国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "fushi": {
+        legionName: "苻秦军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "gongtang": {
+        legionName: "贡唐军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "chizhou": {
+        legionName: "池州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "yada": {
+        legionName: "嚈哒军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "quli": {
+        legionName: "渠犁军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "guazhou": {
+        legionName: "瓜州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "guishuang": {
+        legionName: "贵霜军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "juandu": {
+        legionName: "捐毒军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "sai": {
+        legionName: "塞种军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "yangtong": {
+        legionName: "羊同军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "monong": {
+        legionName: "墨侬军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "shuizhen": {
+        legionName: "水真军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "dingling": {
+        legionName: "丁零军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "nifuhe": {
+        legionName: "尼夫军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "muer": {
+        legionName: "呼罗珊军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "xiajiasi": {
+        legionName: "坚昆军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "zhen": {
+        legionName: "武珍军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "dongshengwei": {
+        legionName: "东胜军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "dizhou": {
+        legionName: "棣州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "bailian": {
+        legionName: "白莲军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "chimei": {
+        legionName: "赤眉军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "yunzhong": {
+        legionName: "索头军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "qian": {
+        legionName: "黔中军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "wan": {
+        legionName: "安庆军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "qingyuan_bd": {
+        legionName: "清苑军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zhong": {
+        legionName: "寿州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "xichu": {
+        legionName: "西楚军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "weihaiwei": {
+        legionName: "威海军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "guangzhou": {
+        legionName: "广州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "guangping": {
+        legionName: "广平军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "duanzhou_d": {
+        legionName: "端州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "dingxiang_d": {
+        legionName: "定襄军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "xiayang_d": {
+        legionName: "夏阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "dian": {
+        legionName: "白爨军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "liangzhou": {
+        legionName: "凉州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "juqu_d": {
+        legionName: "沮渠军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "tufa_d": {
+        legionName: "秃发军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "qiuchi": {
+        legionName: "仇池军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "helian": {
+        legionName: "赫连军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xiongnu": {
+        legionName: "匈奴军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xianbei": {
+        legionName: "鲜卑军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "jie": {
+        legionName: "羯族军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "beidi": {
+        legionName: "北地军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "tuoba": {
+        legionName: "拓跋军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yuwen": {
+        legionName: "宇文军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "liang_d": {
+        legionName: "梁国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "chen": {
+        legionName: "陈国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "sui": {
+        legionName: "隋国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "tang": {
+        legionName: "唐国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "min": {
+        legionName: "闽国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "quanzhou": {
+        legionName: "泉州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "shazhou": {
+        legionName: "沙州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shatuo": {
+        legionName: "沙陀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "bing": {
+        legionName: "并州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "bohai": {
+        legionName: "渤海军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "dangxiang": {
+        legionName: "大夏军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "liao_d": {
+        legionName: "大辽军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "dangzhou": {
+        legionName: "氐族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "dai_d": {
+        legionName: "代国军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zhongshan": {
+        legionName: "恒州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "wang_d": {
+        legionName: "沂州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "xiao_d": {
+        legionName: "兰陵军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "yuan_cj_d": {
+        legionName: "汝南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "xie_cj_d": {
+        legionName: "信州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "yue_d": {
+        legionName: "岳州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "qian_d": {
+        legionName: "秀州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "jiujiang": {
+        legionName: "江州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "jingzhou_gs": {
+        legionName: "泾州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "guo": {
+        legionName: "果州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zi": {
+        legionName: "资州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "long2": {
+        legionName: "陇州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "song2": {
+        legionName: "松州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jibei": {
+        legionName: "泰山军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "wusun": {
+        legionName: "乌孙军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "dayuan": {
+        legionName: "大宛军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "gouding": {
+        legionName: "句町军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "wuhuan": {
+        legionName: "乌桓军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xianlingqiang": {
+        legionName: "先零军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "yelang": {
+        legionName: "夜郎军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "ailao": {
+        legionName: "哀牢军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "fuyu": {
+        legionName: "夫余军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "shule": {
+        legionName: "疏勒军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "loulan": {
+        legionName: "楼兰军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "shache": {
+        legionName: "莎车军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "qiuci": {
+        legionName: "龟兹军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "yanqi": {
+        legionName: "焉耆军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "gaogouli": {
+        legionName: "高句丽军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "xinluo": {
+        legionName: "新罗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "ashikaga": {
+        legionName: "室町军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "quanrong": {
+        legionName: "犬戎军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "sushen": {
+        legionName: "肃慎军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "chile": {
+        legionName: "敕勒军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "rouran": {
+        legionName: "柔然军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "baishui": {
+        legionName: "景谷军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "baiji": {
+        legionName: "百济军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "tubo": {
+        legionName: "吐蕃军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "tujue": {
+        legionName: "突厥军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "tiele": {
+        legionName: "铁勒军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "huige": {
+        legionName: "回纥军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yamato": {
+        legionName: "大和军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "edo": {
+        legionName: "武藏军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "izumo": {
+        legionName: "出云军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "satsuma": {
+        legionName: "萨摩军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "ryukyu": {
+        legionName: "琉球军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "so": {
+        legionName: "对马军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "kakizaki": {
+        legionName: "松前军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "fujiwara": {
+        legionName: "奥州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "gaya": {
+        legionName: "伽倻军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "aki": {
+        legionName: "安艺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "chosokabe": {
+        legionName: "土佐军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "shimotsuke": {
+        legionName: "下野军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "aizu": {
+        legionName: "会津军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "xingliao": {
+        legionName: "兴辽军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "gongsun_d": {
+        legionName: "辽东军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "donghu": {
+        legionName: "东胡军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "luoyue": {
+        legionName: "骆越军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "qifu_d": {
+        legionName: "乞伏军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "tuyu_d": {
+        legionName: "廓州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "linyi": {
+        legionName: "林邑军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "pingyuan": {
+        legionName: "高唐军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yao": {
+        legionName: "平阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "murong": {
+        legionName: "慕容军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yingzhou_ying_d": {
+        legionName: "营州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "erzhu": {
+        legionName: "尔朱军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "chanzhou": {
+        legionName: "澶州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "pizhou": {
+        legionName: "邳州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "tongma": {
+        legionName: "胶西军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "tongzhou": {
+        legionName: "同州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "baibo": {
+        legionName: "黄巾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "cheshihou": {
+        legionName: "乌垒军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "qu_d": {
+        legionName: "界津军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "liu": {
+        legionName: "九江军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "ouyue": {
+        legionName: "瓯越军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "suzhou_d": {
+        legionName: "宿州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "lanzhou": {
+        legionName: "兰州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "gaoqi_d": {
+        legionName: "北齐军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "wuzhou_d": {
+        legionName: "武周军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "zhuozhou": {
+        legionName: "涿州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "tujia_d": {
+        legionName: "土家军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zhuang_d": {
+        legionName: "壮族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "buyi_d": {
+        legionName: "布依军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "hani_d": {
+        legionName: "哈尼军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "xibo_d": {
+        legionName: "锡伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "jinling": {
+        legionName: "南国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "wuwu_d": {
+        legionName: "无为军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "shizhao_d": {
+        legionName: "邢国军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "ranwei_d": {
+        legionName: "冉魏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "taizhou": {
+        legionName: "泰州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "sunwu_d": {
+        legionName: "孙吴军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "liangshidu": {
+        legionName: "绥州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "linshihong": {
+        legionName: "干越军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "kumo": {
+        legionName: "奚族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xijue": {
+        legionName: "十箭军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xian_d": {
+        legionName: "高州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "xueyantuo": {
+        legionName: "薛延陀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "tujishi": {
+        legionName: "突骑施军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "nanzhao": {
+        legionName: "南诏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "nanzhong": {
+        legionName: "南中军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "xiaobolu": {
+        legionName: "勃律军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "qiufu": {
+        legionName: "裘甫军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "dongdan": {
+        legionName: "东丹军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "dali": {
+        legionName: "大理军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "luodian": {
+        legionName: "罗甸军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "nongzhigao": {
+        legionName: "大南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "fangla": {
+        legionName: "圣公军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "zhongxiang": {
+        legionName: "鼎州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yang_aner": {
+        legionName: "天顺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "jinan": {
+        legionName: "济南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "liwang": {
+        legionName: "河间军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "huarazim": {
+        legionName: "花剌子模军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "dongxia": {
+        legionName: "东夏军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "chagatai": {
+        legionName: "车师军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "ogodei": {
+        legionName: "窝阔台军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kereyid": {
+        legionName: "克烈军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "naiman": {
+        legionName: "乃蛮军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "tatar": {
+        legionName: "塔塔尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "merkit": {
+        legionName: "蔑儿乞军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "ongut": {
+        legionName: "汪古军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xushouhui": {
+        legionName: "天完军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "zhangshicheng": {
+        legionName: "大周军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "wenzhou": {
+        legionName: "温州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "chendiaoyan": {
+        legionName: "陈吊军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "fang_guozhen": {
+        legionName: "庆元军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "dixiang": {
+        legionName: "新国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "dengmaoqi": {
+        legionName: "铲平军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "yezongliu": {
+        legionName: "处州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "jianzhou_nvzhen": {
+        legionName: "建州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "yeren_nvzhen": {
+        legionName: "萨哈连军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "hezhe": {
+        legionName: "赫哲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "luchuan": {
+        legionName: "麓川军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "chijin": {
+        legionName: "赤斤军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "xihai_d": {
+        legionName: "吐谷浑军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "heyuan_d": {
+        legionName: "河源军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "guiyi": {
+        legionName: "归义军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "dafeichuan": {
+        legionName: "退浑军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "joseon": {
+        legionName: "朝鲜军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "dashun": {
+        legionName: "大顺军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "daxi_ming": {
+        legionName: "大西军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "chenghan": {
+        legionName: "成汉军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shuixi": {
+        legionName: "水西军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yang_zhou": {
+        legionName: "扬州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "longwu": {
+        legionName: "隆武军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "lujian": {
+        legionName: "鲁监军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "dzungar": {
+        legionName: "绰罗斯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yarkand": {
+        legionName: "叶尔羌军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "khoja": {
+        legionName: "和卓军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "gaxa": {
+        legionName: "噶厦军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jinchuan_g": {
+        legionName: "金川军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "geng": {
+        legionName: "靖南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "shuntian": {
+        legionName: "天地会军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "miaomin": {
+        legionName: "苗民军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "xiadun": {
+        legionName: "夏顿军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "kazakh": {
+        legionName: "哈萨军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kokand": {
+        legionName: "霍罕军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "badakhshan": {
+        legionName: "达克军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "taiping": {
+        legionName: "太平军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "dacheng": {
+        legionName: "大成军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "pingnan": {
+        legionName: "平南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "pinghai": {
+        legionName: "平海军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "qianhui": {
+        legionName: "回军军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "miao_qing": {
+        legionName: "苗军军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "tuoming": {
+        legionName: "清真军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "dajin": {
+        legionName: "大金军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "yizhou": {
+        legionName: "懿州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "yilou": {
+        legionName: "挹娄军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "wuji": {
+        legionName: "勿吉军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "mohe": {
+        legionName: "完颜军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "shiwei": {
+        legionName: "室韦军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "huimo": {
+        legionName: "濊貊军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "mao_wenlong": {
+        legionName: "毛文龙军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "kala": {
+        legionName: "喀喇军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "xiliao": {
+        legionName: "西辽军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "jiazini": {
+        legionName: "伽色尼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "jibin": {
+        legionName: "罽宾军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "kangju": {
+        legionName: "康居军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "geluolu": {
+        legionName: "葛逻禄军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yuchi": {
+        legionName: "尉迟军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "shi_clan": {
+        legionName: "石氏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "gaoche": {
+        legionName: "高车军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "huyan": {
+        legionName: "呼衍军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yujiulu": {
+        legionName: "郁久闾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "ashina": {
+        legionName: "阿史那军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "ashide": {
+        legionName: "阿史德军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "borjigin": {
+        legionName: "孛儿只斤军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "hongirad": {
+        legionName: "弘吉剌军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "choros": {
+        legionName: "萨吾尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "weiming": {
+        legionName: "嵬名军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yeli": {
+        legionName: "野利军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "guge": {
+        legionName: "古格军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ladakh": {
+        legionName: "玛域军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "tsangpa": {
+        legionName: "藏巴汗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ganden": {
+        legionName: "甘丹军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "bailan": {
+        legionName: "白兰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "supi": {
+        legionName: "苏毗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "monpa": {
+        legionName: "门巴军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "lopi": {
+        legionName: "珞巴军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "spurgyal": {
+        legionName: "悉补野军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "khon": {
+        legionName: "萨迦昆军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "lang_clan": {
+        legionName: "帕竹朗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "karmapa": {
+        legionName: "噶玛军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "meitai": {
+        legionName: "梅泰军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "baiman": {
+        legionName: "白蛮军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "kunming_yi": {
+        legionName: "昆明军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "miao": {
+        legionName: "苗族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "yang_bozhou": {
+        legionName: "播州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "tian_sizhou": {
+        legionName: "㵲阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "mu_lijiang": {
+        legionName: "丽江军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "ming_zheng": {
+        legionName: "明郑军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "xiou": {
+        legionName: "西瓯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "jing": {
+        legionName: "京族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "muong": {
+        legionName: "芒族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "paiwan": {
+        legionName: "排湾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "leloi": {
+        legionName: "清化军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "nguyen_guangnan": {
+        legionName: "顺化军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "cong": {
+        legionName: "賨族军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zhe_d": {
+        legionName: "府州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shanyue": {
+        legionName: "丹阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "she_ethnic": {
+        legionName: "畲族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "wuling": {
+        legionName: "五溪军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "weili": {
+        legionName: "尉犁军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "pishan": {
+        legionName: "皮山军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "tuerhute": {
+        legionName: "土尔扈特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "bandun": {
+        legionName: "板楯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "seljuq": {
+        legionName: "塞尔柱军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "cen_d": {
+        legionName: "岑氏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "wang_s": {
+        legionName: "黟川军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "xiang_d": {
+        legionName: "来凤军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "tan_d": {
+        legionName: "澧州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "ran_d": {
+        legionName: "酉阳军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "chu_d": {
+        legionName: "舒州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "hu_d": {
+        legionName: "三门湾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "qingyi": {
+        legionName: "青衣军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "wuxi": {
+        legionName: "武陵军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "gumie": {
+        legionName: "衢州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "shengmiao": {
+        legionName: "生苗军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "kuai": {
+        legionName: "房州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shen": {
+        legionName: "申国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "sou": {
+        legionName: "叟族军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shaodang": {
+        legionName: "烧当军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jingjiang": {
+        legionName: "靖江军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "xinjiang": {
+        legionName: "静江军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "panyao": {
+        legionName: "盘瑶军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "jiang_s": {
+        legionName: "零陵军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "li_s": {
+        legionName: "静海军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "leizhou": {
+        legionName: "雷州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "golog": {
+        legionName: "果洛军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "tushetu": {
+        legionName: "土谢图军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "tumed": {
+        legionName: "土默特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "she": {
+        legionName: "永宁军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "liao": {
+        legionName: "僚族军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "nong2": {
+        legionName: "侬族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "yaoluoge": {
+        legionName: "药罗葛军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "nanbu": {
+        legionName: "陆奥军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "saman": {
+        legionName: "萨曼军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "hepan": {
+        legionName: "朅盘陀军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "humi": {
+        legionName: "瓦罕军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "mamon": {
+        legionName: "马蒙军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "guzgan": {
+        legionName: "古兹根军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "dai": {
+        legionName: "傣族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "taiyuan": {
+        legionName: "泰沅军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "luohu": {
+        legionName: "罗斛军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "nanai": {
+        legionName: "那乃军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "anushidgin": {
+        legionName: "伊勒巴斯军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "nanjie": {
+        legionName: "南杰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "gandenpozhang": {
+        legionName: "冈底斯军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "dawoer": {
+        legionName: "嫩江军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "tumengken": {
+        legionName: "图蒙肯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "liren": {
+        legionName: "俚族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "gling": {
+        legionName: "玉树军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "khyungpo": {
+        legionName: "琼波军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "suolun": {
+        legionName: "达斡尔军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "tuva": {
+        legionName: "图瓦军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "osumi": {
+        legionName: "大隅军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "anmei": {
+        legionName: "奄美军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "dalung": {
+        legionName: "达隆军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "gar_kham": {
+        legionName: "德司军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "kongsa": {
+        legionName: "孔萨军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "mingzheng": {
+        legionName: "明正军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "daca": {
+        legionName: "达擦军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jingdong": {
+        legionName: "景东军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "hor": {
+        legionName: "霍尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "dong": {
+        legionName: "隆庆军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "bailang": {
+        legionName: "白狼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "duolu": {
+        legionName: "咄陆军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "zhuxie": {
+        legionName: "朱邪军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "hunxie": {
+        legionName: "浑邪军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "kawusi": {
+        legionName: "卡乌斯军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "keerkezi": {
+        legionName: "柯尔克孜军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "yiduhu": {
+        legionName: "亦都护军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "yangshao": {
+        legionName: "三川军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "yel": {
+        legionName: "耶律军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yizhi": {
+        legionName: "一支军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "zhuqian": {
+        legionName: "筑前军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "jibei2": {
+        legionName: "备中军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "jinchuan": {
+        legionName: "骏河军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "totomi": {
+        legionName: "远江军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "xuan": {
+        legionName: "宣府军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "liguo": {
+        legionName: "潞州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "kang": {
+        legionName: "宥州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "woye": {
+        legionName: "沃野军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "lushui": {
+        legionName: "卢水军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yingli": {
+        legionName: "应理军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "guangwu": {
+        legionName: "广武军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "huizhou": {
+        legionName: "会州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yiwu": {
+        legionName: "伊吾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "duerbote": {
+        legionName: "杜尔伯特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "zhasaketu": {
+        legionName: "扎萨克图军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kaerka": {
+        legionName: "喀尔喀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "huihu": {
+        legionName: "回鹘军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "wuzhumuqin": {
+        legionName: "乌珠穆沁军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "zhuerqi": {
+        legionName: "主儿乞军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "chechen": {
+        legionName: "车臣军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "linyu": {
+        legionName: "临榆军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "loufan": {
+        legionName: "楼烦军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yi": {
+        legionName: "易州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "pisha": {
+        legionName: "毗沙军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "yumi": {
+        legionName: "扜弥军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "keliya": {
+        legionName: "克里雅军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "xiye": {
+        legionName: "西夜军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "faqiang": {
+        legionName: "发羌军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jiantang": {
+        legionName: "建塘军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "gongbu": {
+        legionName: "工布军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "niang": {
+        legionName: "琼结军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ganzhou": {
+        legionName: "甘州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "galangdiba": {
+        legionName: "波密军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ali": {
+        legionName: "阿里军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "pazhu": {
+        legionName: "年楚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "qiong": {
+        legionName: "邛人军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "zhuoshi": {
+        legionName: "卓氏军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "chenzhou_d": {
+        legionName: "辰州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "qianzhong": {
+        legionName: "沅州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "cuanshi": {
+        legionName: "爨族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "dianguo": {
+        legionName: "滇国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "xinggu": {
+        legionName: "兴古军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "zangke": {
+        legionName: "牂牁军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "guangxin": {
+        legionName: "广信军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "kejia": {
+        legionName: "宁化军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "tingzhou_d": {
+        legionName: "汀州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "chaozhou_d": {
+        legionName: "潮州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "ouyang": {
+        legionName: "欧阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "ningkou": {
+        legionName: "居延军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "hongzhou": {
+        legionName: "洪州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "danyang": {
+        legionName: "当涂军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "huai": {
+        legionName: "淮州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "huaiyang": {
+        legionName: "淮阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "cai": {
+        legionName: "蔡州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "ying": {
+        legionName: "郢州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "heng": {
+        legionName: "衡州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "chen2": {
+        legionName: "郴州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "shixing": {
+        legionName: "石兴岭军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "shaozhou": {
+        legionName: "韶州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "yidou": {
+        legionName: "宜都军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "boren": {
+        legionName: "僰族军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "wanzhou": {
+        legionName: "万州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "kui": {
+        legionName: "夔州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "danluo": {
+        legionName: "耽罗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "chen3": {
+        legionName: "欢州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "jingcheng_d": {
+        legionName: "镜城军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "naju_d": {
+        legionName: "罗州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "hui": {
+        legionName: "濊族军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "luzhou": {
+        legionName: "渌州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "xuantu": {
+        legionName: "玄菟军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "sambyeol": {
+        legionName: "沃州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "sheng_d": {
+        legionName: "升州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "jinzhou": {
+        legionName: "锦州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "wure": {
+        legionName: "兀惹军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "houliao": {
+        legionName: "东辽军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "dazhen": {
+        legionName: "大真军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "jilin": {
+        legionName: "吉林军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "sunite": {
+        legionName: "苏尼特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "dayuzi": {
+        legionName: "玉兹军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "weiwuer": {
+        legionName: "维吾尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "wensu": {
+        legionName: "温宿军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "keerqin": {
+        legionName: "科尔沁军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "xiangxiong": {
+        legionName: "象雄军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "gaoliang": {
+        legionName: "潘州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ruoqiang": {
+        legionName: "婼羌军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "qiemo": {
+        legionName: "且末军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "weitou": {
+        legionName: "尉头军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "dangchang": {
+        legionName: "叠州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "mi": {
+        legionName: "朐山军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "fu2": {
+        legionName: "抚州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "xinping": {
+        legionName: "邠州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "wei2": {
+        legionName: "韦州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "lingzhou": {
+        legionName: "灵州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "qiepantuo": {
+        legionName: "护密军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "ewenki": {
+        legionName: "鄂温克军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "dongping": {
+        legionName: "东平军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "maomingan": {
+        legionName: "额尔古纳军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "aola": {
+        legionName: "敖拉军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "bulat": {
+        legionName: "布拉特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "buriat": {
+        legionName: "布里亚特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xianhai": {
+        legionName: "咸海军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "nandou": {
+        legionName: "难兜军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "kaga_d": {
+        legionName: "一向宗军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "higo_d": {
+        legionName: "肥后军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "iyo_d": {
+        legionName: "伊予军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "otomo_d": {
+        legionName: "大友军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "suwa_d": {
+        legionName: "诹访军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "yanda": {
+        legionName: "阿尔洪军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "anxi": {
+        legionName: "安西军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "qi_d": {
+        legionName: "横水军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "wangyan": {
+        legionName: "太行军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "tianxiong": {
+        legionName: "魏博军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "huang_d": {
+        legionName: "黄国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "yuzhou": {
+        legionName: "豫州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "yiyang_d": {
+        legionName: "义阳军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "mengcheng_d": {
+        legionName: "山桑军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "guide_d": {
+        legionName: "芒砀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "lulin": {
+        legionName: "绿林军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "dang_d": {
+        legionName: "虞国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "hao_d": {
+        legionName: "濠州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "hongnong_jun": {
+        legionName: "弘农军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "gar": {
+        legionName: "噶尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "ruzhou": {
+        legionName: "汝州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "yun": {
+        legionName: "允戎军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "xiongding": {
+        legionName: "雄定军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yaozhou": {
+        legionName: "耀州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "huo": {
+        legionName: "霍州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "mushi": {
+        legionName: "穆陵军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "lai": {
+        legionName: "莱州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "zuo_d": {
+        legionName: "笮人军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "huangwang": {
+        legionName: "黄王军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "chuzhou_d": {
+        legionName: "滁州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "guizhou": {
+        legionName: "桂州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "paiyao": {
+        legionName: "排瑶军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "daozhou": {
+        legionName: "道州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "dayu": {
+        legionName: "大庾军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "yingzhou": {
+        legionName: "英州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "taira": {
+        legionName: "长门军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "wuman": {
+        legionName: "乌蛮军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "xiutu": {
+        legionName: "休屠军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "dongzu": {
+        legionName: "侗族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "mengwu": {
+        legionName: "蒙兀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "pugu": {
+        legionName: "仆骨军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "bayegu": {
+        legionName: "拔野古军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "ketagalan": {
+        legionName: "凯达格兰军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "shanrong": {
+        legionName: "蓟州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "suke": {
+        legionName: "素可泰军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "gaochang": {
+        legionName: "麴氏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "chuyue": {
+        legionName: "处月军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "baidi": {
+        legionName: "白狄军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "dulan": {
+        legionName: "都兰军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "duomi": {
+        legionName: "多弥军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "wumeng": {
+        legionName: "溪州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "lelang": {
+        legionName: "乐浪军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "swordsman", count: 2 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 3 },
+        ],
+    },
+    "huite": {
+        legionName: "辉特军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "zubu": {
+        legionName: "阻卜军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kangba": {
+        legionName: "康巴军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "nvguo": {
+        legionName: "女国军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "jiashi": {
+        legionName: "迦湿弥罗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "wuhu": {
+        legionName: "乌护军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "huluo": {
+        legionName: "古尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "maer_d": {
+        legionName: "马尔吉亚纳军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "wugu_d": {
+        legionName: "乌古斯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "xierhe": {
+        legionName: "锡尔河军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "adao_d": {
+        legionName: "阿克苏道军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "wuyuan_d": {
+        legionName: "五原军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "chenli_d": {
+        legionName: "姑衍军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "nuoyan_d": {
+        legionName: "诺颜军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "wuli_d": {
+        legionName: "乌里军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "heisha_d": {
+        legionName: "黑沙军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "wuzhou": {
+        legionName: "武州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "bailong": {
+        legionName: "白龙军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "jilizhou": {
+        legionName: "积利军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "xingxingxia": {
+        legionName: "伊州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yangguan": {
+        legionName: "西凉军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "wulianghai": {
+        legionName: "乌梁海军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "kepantuo": {
+        legionName: "渴盘陀军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "xining": {
+        legionName: "西宁军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "kalun": {
+        legionName: "柴达木军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "sagami": {
+        legionName: "相模军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "mino": {
+        legionName: "美浓军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "samurai", count: 3 },
+            { type: "samurai_elite", count: 4 },
+            { type: "rattan_archer", count: 2 },
+        ],
+    },
+    "ssangseong": {
+        legionName: "和州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "kumoxi": {
+        legionName: "库莫奚军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "haikou": {
+        legionName: "海寇军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shanshan": {
+        legionName: "鄯善军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "qianzhou": {
+        legionName: "乾州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "wuyue": {
+        legionName: "吴越军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "xiyuduhu": {
+        legionName: "西域都护军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shaozhou_d": {
+        legionName: "邵陵军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "zizhou": {
+        legionName: "昌城军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
+        ],
+    },
+    "cangzhou": {
+        legionName: "沧州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yuezhi": {
+        legionName: "月氏军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "minyue": {
+        legionName: "闽越军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "lancang": {
+        legionName: "澜沧军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "elunchunzu": {
+        legionName: "鄂伦春军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
+        ],
+    },
+    "wazu": {
+        legionName: "佤族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "tajikezu": {
+        legionName: "塔吉克军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "elite_scythian_horse_archer", count: 4 },
+        ],
+    },
+    "jingpozu": {
+        legionName: "景颇军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "shuizu": {
+        legionName: "水族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "liuzhou": {
+        legionName: "柳州军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "dingzhou": {
+        legionName: "定州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shanzhou": {
+        legionName: "鄯州军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "hei_kuang", count: 2 },
+            { type: "elite_tarkan", count: 4 },
+            { type: "mangudai", count: 3 },
+        ],
+    },
+    "weizhou": {
+        legionName: "维州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yingzhou_d2": {
+        legionName: "应州军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "yansui": {
+        legionName: "延绥军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+        ],
+    },
+    "xiazhou": {
+        legionName: "夏州军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "hei_kuang", count: 3 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "shizhou": {
+        legionName: "西河军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 },
+        ],
+    },
+    "xingwei": {
+        legionName: "兴威军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "karambit_warrior", count: 4 },
+        ],
+    },
+    "ribale": {
+        legionName: "日巴勒军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "wulaertu_guo": {
+        legionName: "乌拉尔图军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "keerjisi": {
+        legionName: "科尔基斯军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "luomu": {
+        legionName: "罗姆军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "xibolai": {
+        legionName: "希伯来军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "paermila": {
+        legionName: "帕尔米拉军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "youfaladi": {
+        legionName: "幼发拉底军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "sashan": {
+        legionName: "萨珊军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "mamuluke": {
+        legionName: "马穆鲁克军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "kesa": {
+        legionName: "可萨军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "jialatai": {
+        legionName: "加拉太军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "dedan": {
+        legionName: "德丹王国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "xierwan": {
+        legionName: "希尔万王国军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "savar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_kipchak", count: 3 },
+        ],
+    },
+    "xiemian": {
+        legionName: "萨维尔军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "yidier": {
+        legionName: "伊蒂尔汗国军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "mangshi": {
+        legionName: "土库曼军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "fodejiao": {
+        legionName: "佛得角军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "baiyiya": {
+        legionName: "巴伊亚军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "tupinijin": {
+        legionName: "图皮尼金军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "tuotuonake": {
+        legionName: "托托纳克军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "taino": {
+        legionName: "泰诺人军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "guanche": {
+        legionName: "关切人军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "yasuer": {
+        legionName: "亚速尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "liaozu": {
+        legionName: "寮族军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 },
+        ],
+    },
+    "kushi": {
+        legionName: "库施军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "aimala": {
+        legionName: "艾马拉军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "aolisha": {
+        legionName: "奥里萨军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "kanata": {
+        legionName: "卡纳塔军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "adile": {
+        legionName: "阿迪勒军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "foluolida": {
+        legionName: "佛罗里达军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "fujisi": {
+        legionName: "福基斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "hoplite", count: 3 },
+            { type: "sacred_band", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+        ],
+    },
+    "yilisi": {
+        legionName: "埃利斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "hoplite", count: 3 },
+            { type: "sacred_band", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+        ],
+    },
+    "nuowei": {
+        legionName: "挪威军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "keernuwaye": {
+        legionName: "康沃尔军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "aodesuosi": {
+        legionName: "奥德索斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "disidelusi": {
+        legionName: "蒂斯德鲁斯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "yisatisi": {
+        legionName: "伊萨提斯军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "wuer": {
+        legionName: "乌尔军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
+        ],
+    },
+    "pidisha": {
+        legionName: "毗底沙军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "jiaye": {
+        legionName: "伽耶军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "jienei": {
+        legionName: "杰内军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "kuertaiya": {
+        legionName: "库尔泰亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
 };

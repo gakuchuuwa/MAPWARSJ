@@ -8,6 +8,6 @@
 export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     zhuluo: { name: '软剑士', tier: 3 },           // 坦贾武尔·拉金德拉：达罗毗荼软剑士（乌卢米软鞭剑）
     pandiya: { name: '骑象弓', tier: 3 },         // 马杜赖·贾塔瓦尔曼：潘地亚象背弓骑（南印度泰米尔战象游射）
-    kanata: { name: '毗奢耶那伽罗战象', tier: 1 },
+    kanata: { name: '毗奢耶那伽罗战象', tier: 3 },  // 亨比·拉玛拉亚：毗奢耶那伽罗战象军团（印度战象兵种特色，非独立野战主力 → T3）
     adile: { name: '比贾布尔炮队', tier: 3 },
 };
