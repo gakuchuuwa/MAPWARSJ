@@ -19,7 +19,6 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'ASIA_WONDER_JURCHENS': { lat: 40.217, lng: 116.229, place: '昌平' },          // 银山塔林
     'EAST_WONDER_TEUTONS': { lat: 50.402, lng: 7.253, place: '莱茵兰' },           // 玛丽亚拉赫修道院
     'ORIE_WONDER_PERSIANS': { lat: 33.094, lng: 44.581, place: '泰西封' },         // 泰西封巨拱
-    'EAST_WONDER_HUNS': { lat: 41.890, lng: 12.492, place: '罗马' },               // 君士坦丁凯旋门
     'ASIA_WONDER_KHITANS': { lat: 39.565, lng: 113.190, place: '应县' },           // 佛宫寺释迦塔
     'ORIE_WONDER_SARACENS': { lat: 34.199, lng: 43.873, place: '萨迈拉' },         // 萨迈拉螺旋塔
     'ORIE_WONDER_TURKS': { lat: 41.677, lng: 26.555, place: '埃迪尔内' },          // 塞利米耶清真寺
