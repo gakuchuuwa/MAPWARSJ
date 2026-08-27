@@ -13,6 +13,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_angkor': 'SEAS_WONDER_KHMER',  // 吴哥（高棉吴哥窟）
     'city_bali': 'WEST_WONDER_FRANKS',  // 巴黎（法兰克）
     'city_beijing': 'ASIA_WONDER_CHINESE',  // 北京（明清，天坛）
+    'city_changan': 'SCEN_HALL_OF_HEROES',  // 长安（唐，凌烟阁二十四功臣画像阁）
     'city_bosibolisi': 'PERSIAN_WONDER_ACHAEMENIDS',  // 波斯波利斯（阿契美尼德）
     'city_budapeisi': 'SLAV_WONDER_MAGYARS',  // 布达佩斯（马扎尔）
     'city_bulage': 'SLAV_WONDER_BOHEMIANS',  // 布拉格（波西米亚）

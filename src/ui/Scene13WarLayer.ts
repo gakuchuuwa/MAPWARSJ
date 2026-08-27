@@ -1197,6 +1197,9 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
+/** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
+ *  用更小比例让奇观与周围建筑体量相当，不再鹤立鸡群。 */
+const SIEGE_WONDER_SCALE = 0.5;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 const DECOR_BLUR = 20;
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
@@ -3874,7 +3877,7 @@ export class Scene13WarLayer {
                 for (const s of side) {
                     if (s.x > ws.x + 1e-9 || (s.x === ws.x && s.y > ws.y)) ws = s;
                 }
-                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2, scale: SIEGE_CITY_BUILDING_SCALE }));
+                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2, scale: SIEGE_WONDER_SCALE }));
             }
             const style = this.buildingStyleFor(1);
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
