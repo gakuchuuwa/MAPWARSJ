@@ -963,7 +963,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'sanada_d': '信浓',
   jiazini: '伽色',
 'jibin': '罽宾',
-'babuer': '阿富',
+'babuer': '喀布',
   fanyanna: '梵衍',
 'wuzhou': '武',
     'bailong': '白龙',

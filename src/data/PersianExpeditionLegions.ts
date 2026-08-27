@@ -33,15 +33,15 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     saerbadaer: { name: '萨尔巴达尔', tier: 3 },    // 白哈格·萨尔巴达尔：波斯起义民兵
 
     // ── T4 存在之兵 ──
-    ailan: { name: '埃兰战车', tier: 4 },           // 苏萨·埃兰：古国战车
-    aba: { name: '阿巴尔军', tier: 4 },             // 尼沙布尔·阿巴尔
+    ailan: { name: '埃兰战车', tier: 3 },           // 苏萨·埃兰：古国战车
+    aba: { name: '萨珊重装骑', tier: 1 },           // 尼沙布尔·阿巴尔
     kalan: { name: '卡伦军', tier: 4 },             // 图斯·卡伦
     kumisi: { name: '库米斯军', tier: 4 },          // 达姆甘·库米斯
-    dulan_d: { name: '杜兰尼军', tier: 4 },         // 坎大哈·杜兰尼
-    babuer: { name: '阿富汗轻骑', tier: 4 },        // 喀布尔·阿富汗
+    dulan_d: { name: '普什图骑兵', tier: 1 },       // 坎大哈·杜兰尼
+    babuer: { name: '阿富汗游骑', tier: 3 },        // 喀布尔·阿富汗
     fanyanna: { name: '梵衍那军', tier: 4 },        // 巴米扬·梵衍那
-    xisi: { name: '锡斯坦军', tier: 4 },            // 博斯特·锡斯坦
-    delan: { name: '德兰吉亚军', tier: 4 },         // 法拉·德兰吉亚
+    xisi: { name: '萨法尔圣兵', tier: 2 },          // 博斯特·锡斯坦
+    delan: { name: '苏伦具装骑', tier: 1 },         // 法拉·德兰吉亚
     guzgan: { name: '古兹根军', tier: 4 },          // 法里亚布·古兹根
     baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹
     hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔

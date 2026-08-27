@@ -1029,7 +1029,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     sumo: { generalId: 'sumo_sumowang', generalName: '苏摩', portrait: '/assets/INDIA/sumo_sumowang.png' },
     jiashi_d: { generalId: 'jiashi_jiashiwang_d', generalName: '梵摩达', portrait: '/assets/INDIA/jiashi_d_jiashiwang.png' },
     zhuluo: { generalId: 'zhuluo_lajindela', generalName: '拉金德拉', portrait: '/assets/INDIA/zhuluo_lajindela.png' },
-    pandiya: { generalId: 'pandiya_jiatawaerman', generalName: '贾塔瓦尔曼', portrait: '' },
+    pandiya: { generalId: 'pandiya_jiatawaerman', generalName: '贾塔瓦尔曼', portrait: '/assets/INDIA/pandiya_jiatawaerman.png' },
     beileinisi: { generalId: 'beileinisi_tuolemiershi', generalName: '托勒密二世', portrait: '/assets/WEST_ASIA/beileinisi_tuolemiershi.png' },
     dedan: { generalId: 'dedan_dedanwang', generalName: '卡比里尔', portrait: '/assets/WEST_ASIA/dedan_dedanwang.png' },
     maidina: { generalId: 'maidina_halide', generalName: '哈立德', portrait: '/assets/WEST_ASIA/maidina_halide.png' },
