@@ -16,6 +16,11 @@ const MIN_RENDER_INTERVAL_MS = 200;
 /** 单块林区斑块在 SAMPLE_ZOOM 投影空间的半径（投影 px）。屏幕半径 = 此值 × 2^(当前zoom−SAMPLE_ZOOM)，
  *  保证斑块的地理范围恒定、缩放不跳位。 */
 const PATCH_RADIUS_PROJ = 26;
+/** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
+ *  stride 越大簇越稀、越"成带"。 */
+const CLUSTER_STRIDE = SAMPLE_STEP * 3;
+/** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping */
+const CLUSTER_RADIUS = SAMPLE_STEP * 1.3;
 
 function hash(x: number, y: number, salt = 0): number {
     const n = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
@@ -152,10 +157,10 @@ export class VegetationLayer {
         const bounds = this.map.getBounds();
         const nw = this.map.project(bounds.getNorthWest(), SAMPLE_ZOOM);
         const se = this.map.project(bounds.getSouthEast(), SAMPLE_ZOOM);
-        const xMin = Math.floor(nw.x / SAMPLE_STEP) * SAMPLE_STEP;
-        const xMax = Math.ceil(se.x / SAMPLE_STEP) * SAMPLE_STEP;
-        const yMin = Math.floor(nw.y / SAMPLE_STEP) * SAMPLE_STEP;
-        const yMax = Math.ceil(se.y / SAMPLE_STEP) * SAMPLE_STEP;
+        const xMin = Math.floor(nw.x / CLUSTER_STRIDE) * CLUSTER_STRIDE;
+        const xMax = Math.ceil(se.x / CLUSTER_STRIDE) * CLUSTER_STRIDE;
+        const yMin = Math.floor(nw.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
+        const yMax = Math.ceil(se.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
 
         // 采样窗口没跨格 → 这一屏的林区与上次逐格相同（canvas 按 position 跟随平移），直接返回省掉整屏重采样
         const season = currentTreeSeason();
@@ -173,36 +178,56 @@ export class VegetationLayer {
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
             .map((city) => this.map.latLngToContainerPoint([city.lat, city.lng]));
 
-        for (let wy = yMin; wy <= yMax; wy += SAMPLE_STEP) {
-            for (let wx = xMin; wx <= xMax; wx += SAMPLE_STEP) {
-                const chance = hash(wx, wy);
-                const latLng = this.map.unproject([wx + SAMPLE_STEP * 0.5, wy + SAMPLE_STEP * 0.5], SAMPLE_ZOOM);
-                if (latLng.lat < -58 || latLng.lat > 75) continue;
+        // DE 式成簇采样：按簇网格撒"林区簇核"，簇核地表密度决定成不成林，簇内斑块数随密度分档。
+        // 对应 DE 的 number_of_groups(几簇) + group_placement_radius(簇半径) + set_loose_grouping(松散成簇)。
+        for (let cy = yMin; cy <= yMax; cy += CLUSTER_STRIDE) {
+            for (let cx = xMin; cx <= xMax; cx += CLUSTER_STRIDE) {
+                // 簇核：落在簇格中央并随机抖动，避免机械网格感
+                const cxJ = cx + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 41) - 0.5) * CLUSTER_STRIDE * 0.5;
+                const cyJ = cy + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 42) - 0.5) * CLUSTER_STRIDE * 0.5;
+                const clusterLatLng = this.map.unproject([cxJ, cyJ], SAMPLE_ZOOM);
+                if (clusterLatLng.lat < -58 || clusterLatLng.lat > 75) continue;
 
                 const elev = LandSeaSystem.getElevationAtMapPixel(
-                    wx + SAMPLE_STEP * 0.5,
-                    wy + SAMPLE_STEP * 0.5,
-                    SAMPLE_ZOOM,
-                    latLng.lat,
-                    latLng.lng,
+                    cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
                 );
                 if (elev === null || elev < 0 || elev > 3600) continue;
 
-                const tile = resolveTerrainTile(latLng.lat, latLng.lng, season);
+                // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
+                const tile = resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
                 const density = densityFor(tile);
-                if (density < MIN_PATCH_DENSITY) continue; // 沙漠/荒漠/岩/雪：战略尺度无林
-                if (chance >= density) continue;
+                if (density < MIN_PATCH_DENSITY) continue;
 
-                const center = this.map.latLngToContainerPoint(latLng);
-                if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
+                // 成簇：不是每格都长树，按"簇密度 × 随机扰动"决定这一簇成不成立（DE 密度分档 + percent_chance）
+                const clusterChance = density * (0.55 + hash(cx, cy, 43) * 0.9);
+                if (hash(cx, cy, 44) >= clusterChance) continue;
 
-                const asset = pickTree({ baseTile: tile, lat: latLng.lat, lng: latLng.lng, season, isSiege: false });
-                const [r, g, b] = colorFor(asset, season);
-                // 密度越高块越大、越实；越稀越淡、越小。加轻微随机扰动避免呆板。
-                const densityBoost = density >= 0.4 ? 1.25 : density >= 0.25 ? 1.0 : 0.7;
-                const jitter = 0.8 + hash(wx, wy, 31) * 0.45;
-                const radius = PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter;
-                this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.4 : 0.28);
+                // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）
+                const baseCount = density >= 0.4 ? 6 : density >= 0.25 ? 4 : 3;
+                const count = Math.max(1, Math.round(baseCount * (0.7 + hash(cx, cy, 45) * 0.7)));
+
+                for (let i = 0; i < count; i++) {
+                    const ang = hash(cx, cy, i + 50) * Math.PI * 2;
+                    // 盘面均匀分布：sqrt 偏置让斑块铺满簇圆而非挤中心
+                    const rad = Math.sqrt(hash(cx, cy, i + 60)) * CLUSTER_RADIUS;
+                    const px = cxJ + Math.cos(ang) * rad;
+                    const py = cyJ + Math.sin(ang) * rad;
+                    const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
+
+                    // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
+                    const ptTile = resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
+                    if (densityFor(ptTile) < MIN_PATCH_DENSITY * 0.6) continue;
+
+                    const center = this.map.latLngToContainerPoint(ptLatLng);
+                    if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
+
+                    const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
+                    const [r, g, b] = colorFor(asset, season);
+                    const densityBoost = density >= 0.4 ? 1.25 : density >= 0.25 ? 1.0 : 0.7;
+                    const jitter = 0.8 + hash(cx, cy, i + 70) * 0.45;
+                    const radius = PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter;
+                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.4 : 0.28);
+                }
             }
         }
     }
