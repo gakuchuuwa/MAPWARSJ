@@ -4909,26 +4909,14 @@ export class Scene13WarLayer {
             let batch = SIDE_CAP;                  // 一次补 324（固定批量）
             for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
-            /* ── 【忍者奇袭】主人 2026-08-19 定 ────────────────────────────────────
-             * 开局那批照常列阵正面推进；**第二波起**的补兵，若本方编制里有忍者，
-             * 抽调**一口**忍者绕到敌军背后出生，其余忍者口维持正面。
+            /* ── 【忍者奇袭】──────────────────────────────────────────────────────
+             * 开局那批照常从己方出兵口列阵；**第二波起**的补兵，所有忍者
+             * 都绕到敌军背后出生。
              *   · 为什么只改出生点：13 的「编队自主寻敌」试过五次全败（见文件头），
              *     出路是剧本法。奇袭在这里就是一条剧本 —— 换个地方出生，之后照常索敌，
              *     不新增任何自主决策，也不碰判负。
-             *   · 为什么取最靠后那一口：前排忍者留着维持阵线，抽后备去绕后才合直觉。
-             *     WarSpawn 没存 row，用 x 判断：f=0 的口 x 越小越靠后，f=1 反之
-             *     （init 里 back = mx + (2-row)*depth，row 越大 back 越小）。
-             *   · 伊贺 9 口全忍者 → 绕后 1/9；战国默认编制 2 口忍者 → 绕后一半。
              */
             const isSupplyWave = this.deployT <= 0;   // 开局列阵期 deployT>0，补兵波次才奇袭
-            let flankPort: WarSpawn | null = null;
-            if (isSupplyWave) {
-                const ninjas = ports.filter(s => s.key === 'ninja');
-                if (ninjas.length) {
-                    flankPort = ninjas.reduce((a, b) =>
-                        (f === 0 ? (b.x < a.x ? b : a) : (b.x > a.x ? b : a)));
-                }
-            }
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
@@ -4941,7 +4929,7 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                const isFlank = s === flankPort;
+                const isFlank = isSupplyWave && s.key === 'ninja';
                 // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
                 // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
                 const tgt = isFlank
