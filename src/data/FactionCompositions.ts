@@ -54,7 +54,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "秦国军团",
         formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 4 },
+            { type: "kamayuk", count: 4 },
             { type: "war_chariot_ranged", count: 3 },
             { type: "chukonu", count: 2 },
         ],
@@ -1523,13 +1523,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 圣殿骑士团·阿卡（莫莱 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
-    shengdian_qishi: {
+    "shengdian_qishi": {
         legionName: "圣殿骑士团军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'paragon', count: 4 },              // Row 0 前卫主力破坚 = 圣殿楷模武士 4人（纯步兵·无马，全钢重铠双手大剑正面破坚）
-            { type: 'crusader_knight', count: 3 },      // Row 1 中军铁骑冲击 = 十字军骑士 3骑（圣殿骑士团重装战马铁骑中坚突贯）
-            { type: 'arbalest', count: 2 },             // Row 2 尾收远程压制 = 劲弩手 2人（纯步兵·无马，十字军重装城市强弩高穿透射击）
+            { type: "halberdier", count: 3 },
+            { type: "crusader_knight", count: 3 },
+            { type: "arbalest", count: 2 },
         ],
     },
     // 宝剑骑士团·里加（阿尔伯特）
@@ -2734,11 +2734,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "ayinu": {
         legionName: "奴儿干军团",
-        formationMode: "crane_wing",
+        formationMode: "triangle",
         slots: [
             { type: "tarkan", count: 2 },
+            { type: "recurve_bowman", count: 3 },
             { type: "xianbei_raider", count: 4 },
-            { type: "cretan_archer", count: 3 },
         ],
     },
     "yehe": {
@@ -2955,14 +2955,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'kamayuk', count: 3 },          // Row 0 前卫 = 印加枪兵长 3人（枪兵长结阵抗线）
             { type: 'elite_kamayuk', count: 4 },    // Row 1 中军主力 = 印加枪兵长精锐 4人（枪兵长精锐主力突刺）
             { type: 'slinger', count: 2 },          // Row 2 后排 = 投石手 2人（投石兵远程投石）
-        ],
-    },
-    "xideweina": {
-        formationMode: "fish_scale",
-        slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
 };
