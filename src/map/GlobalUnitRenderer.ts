@@ -499,6 +499,17 @@ export class GlobalUnitRenderer {
     private navalTrailLast = new Map<string, { x: number; y: number }>();
     /** 航迹采样最小屏幕间距（px）：约 0.4 旗舰船身，太密会 40 点覆盖不足 8 艘总长 */
     private static readonly NAVAL_TRAIL_SAMPLE_PX = 16;
+    /** [2026-08-27 §C 转向限速] 船的朝向平滑上一帧时刻：unitId → performance.now()（只船用，陆军不进这条路径） */
+    private navalTurnTickMs = new Map<string, number>();
+    /**
+     * 船的最大转向角速度（度/秒）。旧实现是每帧 `diff * 0.2`：既与帧率耦合
+     * （60fps 与 30fps 转得一样快），又允许 ~5 帧内掰头 90°——真船做不到，看着就是纸片打转。
+     * 55°/s ≈ 90° 拐弯要 1.6 秒，配 16 向 + 残差微旋，转弯过程是连续扫过去的。
+     * 只改渲染朝向，不动 Army 的位置与航速（行军时间、到达判定一点不受影响）。
+     */
+    private static readonly NAVAL_TURN_RATE_DEG_S = 55;
+    /** 船朝向指数平滑时间常数（秒）：大角度由上面的角速度封顶主导，小角度靠它缓入，收尾不生硬 */
+    private static readonly NAVAL_TURN_TAU_S = 0.30;
     /**
      * [2026-08-04] 攻城外推量平滑缓存：unitId → { push px, 背离城单位方向 }。
      * 开战/停火/城缩回时目标外推量突变，直接套用 = 渲染瞬移（主人红线）。
@@ -1907,7 +1918,21 @@ export class GlobalUnitRenderer {
 
                 // Formatting note: dt is variable, but here we run per frame. 
                 // Using fixed factor 0.2 gives better responsiveness (~5 frames to settle)
-                currentAngle += diff * 0.2;
+                // 🔴 [2026-08-27 §C] 陆军保持原样（0.2/帧，逐像素不变）；只有船改成
+                //    dt 驱动的指数平滑 + 最大转向角速度封顶 —— 船有转向惯性，不能原地掰头。
+                const isNavalTurn = !this.isBattleScene13() && !!(unit.isOnSea || unit.forceNavalVisual);
+                if (isNavalTurn) {
+                    const nowMs = performance.now();
+                    const prevMs = this.navalTurnTickMs.get(unitId);
+                    // 首帧 / 长时间没画（离屏被裁）→ 按一帧算，避免 dt 巨大导致瞬间转到位
+                    const dt = prevMs === undefined ? 1 / 60 : Math.min(0.1, Math.max(0, (nowMs - prevMs) / 1000));
+                    this.navalTurnTickMs.set(unitId, nowMs);
+                    const eased = diff * (1 - Math.exp(-dt / GlobalUnitRenderer.NAVAL_TURN_TAU_S));
+                    const maxStep = GlobalUnitRenderer.NAVAL_TURN_RATE_DEG_S * Math.PI / 180 * dt;
+                    currentAngle += Math.abs(eased) > maxStep ? Math.sign(diff) * maxStep : eased;
+                } else {
+                    currentAngle += diff * 0.2;
+                }
 
                 // Normalize
                 while (currentAngle <= -Math.PI) currentAngle += Math.PI * 2;
@@ -1995,6 +2020,7 @@ export class GlobalUnitRenderer {
             //    directionIndex 是 8 向（get8DirectionIndex）；船方向从平滑移动角 / 目标角直接算 16 向帧：
             //    DE 帧 d 的朝向（北=0° 顺时针） = 45 + 22.5·d → d = round((deg-45)/22.5) mod 16。
             let navalDir16 = directionIndex * 2; // 兜底：8 向 ×2 = 偶数向 16 帧（与旧 8 向行为一致）
+            let navalHeadingDeg: number | undefined;   // 精确航向（度，北=0 顺时针）；undefined = 退回旧的纯 16 向行为
             if (useNavalVisual) {
                 let navalAngleRad: number;
                 if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
@@ -2007,6 +2033,9 @@ export class GlobalUnitRenderer {
                 }
                 const navalDeg = navalAngleRad * 180 / Math.PI;
                 navalDir16 = ((Math.round((navalDeg - 45) / 22.5) % 16) + 16) % 16;
+                // 🔴 [2026-08-27 §B] 量化前的精确航向留着传给 drawNaval：那边按它补回
+                //    22.5° 台阶丢掉的残差角（微旋），并作为整队航迹跟随的基准方向。
+                navalHeadingDeg = ((navalDeg % 360) + 360) % 360;
             }
 
             // 攻城外推已在裁剪前 applySiegeVisualPush 做过（含离战收推）
@@ -2087,6 +2116,7 @@ export class GlobalUnitRenderer {
                     unit.navalShipTierLock ?? null,
                     unit.id ?? '',
                     navalTrail,
+                    navalHeadingDeg,
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer

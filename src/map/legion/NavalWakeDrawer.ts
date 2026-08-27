@@ -87,7 +87,7 @@ export class NavalWakeDrawer {
      */
     public static drawNavalWakes(
         ctx: CanvasRenderingContext2D,
-        shipPositions: { x: number; y: number; r: number; isAlive: boolean }[],
+        shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir?: number }[],
         direction: number,
         scale: number,
         tick: number,
@@ -107,12 +107,26 @@ export class NavalWakeDrawer {
         // 统一水花尺寸缩放
         const wakeScale = scale * 0.85;
 
-        // 旋转角与前进/倒退单位矢量（正航向：headingX/Y）
-        const angle = (d16 + 2) * Math.PI / 8;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const headingX = sin;
-        const headingY = -cos;
+        // 🔴 [2026-08-27 航迹跟随] 后随船现在沿旗舰航迹排开（见 drawNaval），转弯时每艘船朝向都不同。
+        //   尾迹若仍共用旗舰航向，队尾的破浪/翻波会横着糊出去（船头朝东、浪花朝北）。
+        //   这里改为逐船取自己的 dir：素材按该向取（缺则回落旗舰向），航向矢量各算各的。
+        const backFallback = { img: backAsset.img, meta: backAsset.meta };
+        const frontFallback = { img: frontAsset.img, meta: frontAsset.meta };
+        const dirOf = (sh: { dir?: number; x: number; y: number }): number =>
+            sh.dir === undefined ? d16 : ((Math.round(sh.dir) % 16) + 16) % 16;
+        const backOf = (d: number): { img: HTMLImageElement; meta: WakeDirMeta } => {
+            const a = this.wakeBackDirs[d];
+            return a?.loaded && a.img ? { img: a.img, meta: a.meta } : backFallback;
+        };
+        const frontOf = (d: number): { img: HTMLImageElement; meta: WakeDirMeta } => {
+            const a = this.wakeFrontDirs[d];
+            return a?.loaded && a.img ? { img: a.img, meta: a.meta } : frontFallback;
+        };
+        /** 16 向 → 屏幕前进单位矢量（与 drawNaval 的 angle=(d+2)π/8 同源） */
+        const headingOf = (d: number): { hx: number; hy: number } => {
+            const a = (d + 2) * Math.PI / 8;
+            return { hx: Math.sin(a), hy: -Math.cos(a) };
+        };
 
         // 找到队首旗舰（r 最大）与队尾船（r 最小）
         let frontShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
@@ -125,6 +139,9 @@ export class NavalWakeDrawer {
 
         // ─── 1. 队尾船只沿船体龙骨正后方拉出 3 段消散尾流（Keel-Aligned Wake Trail）───
         if (rearShip) {
+            const rDir = dirOf(rearShip);
+            const rAsset = backOf(rDir);
+            const rHead = headingOf(rDir);
             const trailSteps = [
                 { dist: shipLength * 0.70, alpha: 0.35, scaleMul: 1.05, frameOffset: 0 },
                 { dist: shipLength * 1.45, alpha: 0.20, scaleMul: 1.20, frameOffset: 10 },
@@ -133,21 +150,21 @@ export class NavalWakeDrawer {
 
             for (const step of trailSteps) {
                 // 沿龙骨逆航向直线取点，保证尾流绝对顺直无歪斜漂移
-                const tx = rearShip.x - headingX * step.dist;
-                const ty = rearShip.y - headingY * step.dist;
+                const tx = rearShip.x - rHead.hx * step.dist;
+                const ty = rearShip.y - rHead.hy * step.dist;
 
-                const frameIndex = (Math.floor(tick / 45) + step.frameOffset) % backAsset.meta.frames;
+                const frameIndex = (Math.floor(tick / 45) + step.frameOffset) % rAsset.meta.frames;
                 const s = wakeScale * step.scaleMul;
-                const w = backAsset.meta.box_w * s;
-                const h = backAsset.meta.box_h * s;
-                const left = tx - backAsset.meta.anchor_x * s;
-                const top = ty - backAsset.meta.anchor_y * s;
-                const sx = frameIndex * backAsset.meta.box_w;
+                const w = rAsset.meta.box_w * s;
+                const h = rAsset.meta.box_h * s;
+                const left = tx - rAsset.meta.anchor_x * s;
+                const top = ty - rAsset.meta.anchor_y * s;
+                const sx = frameIndex * rAsset.meta.box_w;
 
                 ctx.globalAlpha = step.alpha;
                 ctx.drawImage(
-                    backAsset.img,
-                    sx, 0, backAsset.meta.box_w, backAsset.meta.box_h,
+                    rAsset.img,
+                    sx, 0, rAsset.meta.box_w, rAsset.meta.box_h,
                     left, top, w, h
                 );
             }
@@ -162,41 +179,46 @@ export class NavalWakeDrawer {
             const animOffset = i * 75; // 各舰水花产生微小相位差，更加生动自然
             const frameIndex = Math.floor((tick + animOffset) / 40) % 30;
 
+            const sDir = dirOf(ship);
+            const sHead = headingOf(sDir);
+            const fAsset = frontOf(sDir);
+            const bAsset = backOf(sDir);
+
             // (1) 船首破浪（WAKE_FRONT）：旗舰浪大、僚舰浪适中
             const frontOffset = shipLength * 0.35;
-            const fx = ship.x + headingX * frontOffset;
-            const fy = ship.y + headingY * frontOffset;
+            const fx = ship.x + sHead.hx * frontOffset;
+            const fy = ship.y + sHead.hy * frontOffset;
 
             const sFront = wakeScale * (isFlagship ? 0.95 : 0.75);
-            const wFront = frontAsset.meta.box_w * sFront;
-            const hFront = frontAsset.meta.box_h * sFront;
-            const leftFront = fx - frontAsset.meta.anchor_x * sFront;
-            const topFront = fy - frontAsset.meta.anchor_y * sFront;
-            const sxFront = (frameIndex % frontAsset.meta.frames) * frontAsset.meta.box_w;
+            const wFront = fAsset.meta.box_w * sFront;
+            const hFront = fAsset.meta.box_h * sFront;
+            const leftFront = fx - fAsset.meta.anchor_x * sFront;
+            const topFront = fy - fAsset.meta.anchor_y * sFront;
+            const sxFront = (frameIndex % fAsset.meta.frames) * fAsset.meta.box_w;
 
             ctx.globalAlpha = isFlagship ? 0.55 : 0.40;
             ctx.drawImage(
-                frontAsset.img,
-                sxFront, 0, frontAsset.meta.box_w, frontAsset.meta.box_h,
+                fAsset.img,
+                sxFront, 0, fAsset.meta.box_w, fAsset.meta.box_h,
                 leftFront, topFront, wFront, hFront
             );
 
             // (2) 船尾翻波（WAKE_BACK）：贴在每艘船船尾后方自然推水
             const backOffset = shipLength * 0.38; // 稍微向后移，彻底避开船底阴影与船身切边
-            const bx = ship.x - headingX * backOffset;
-            const by = ship.y - headingY * backOffset;
+            const bx = ship.x - sHead.hx * backOffset;
+            const by = ship.y - sHead.hy * backOffset;
 
             const sBack = wakeScale * (isFlagship ? 0.90 : 0.75);
-            const wBack = backAsset.meta.box_w * sBack;
-            const hBack = backAsset.meta.box_h * sBack;
-            const leftBack = bx - backAsset.meta.anchor_x * sBack;
-            const topBack = by - backAsset.meta.anchor_y * sBack;
-            const sxBack = (frameIndex % backAsset.meta.frames) * backAsset.meta.box_w;
+            const wBack = bAsset.meta.box_w * sBack;
+            const hBack = bAsset.meta.box_h * sBack;
+            const leftBack = bx - bAsset.meta.anchor_x * sBack;
+            const topBack = by - bAsset.meta.anchor_y * sBack;
+            const sxBack = (frameIndex % bAsset.meta.frames) * bAsset.meta.box_w;
 
             ctx.globalAlpha = isFlagship ? 0.45 : 0.35;
             ctx.drawImage(
-                backAsset.img,
-                sxBack, 0, backAsset.meta.box_w, backAsset.meta.box_h,
+                bAsset.img,
+                sxBack, 0, bAsset.meta.box_w, bAsset.meta.box_h,
                 leftBack, topBack, wBack, hBack
             );
         }
