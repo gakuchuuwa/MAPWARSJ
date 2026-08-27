@@ -1492,9 +1492,9 @@ export class LegionPhalanxDrawer {
             // Apply dynamic scale (spawn animation etc.) into the single scaling factor
             scalingFactor *= dynamicScale;
 
-            // [2026-08-20 主人：战略地图的兵有点大] 非 13 单兵绘制基准 60 → 54（−10%）；
+            // 战略地图军团兵模稍微缩小：非 13 单兵绘制基准 54 → 50；
             // 13（denseFront）保持 60 不动，13 的对位/前缘半径按 60 算（见 §measure 的 SPRITE_BASE_H）。
-            const baseHeight = denseFront ? 60 : 54;
+            const baseHeight = denseFront ? 60 : 50;
             if (dynDir) {
                 // 🔴 DE：统一缩放 s（站立高度 64 参考），hotspot(canvas中心) 对齐单位位置，脚底随动作浮动。
                 const s = baseHeight * scale * scalingFactor / 64;
