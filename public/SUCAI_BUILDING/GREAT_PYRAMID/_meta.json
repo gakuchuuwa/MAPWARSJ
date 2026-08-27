@@ -1,0 +1,9 @@
+{
+  "name": "GREAT_PYRAMID",
+  "frames": 1,
+  "box_w": 608,
+  "box_h": 424,
+  "anchor_x": 308,
+  "anchor_y": 268,
+  "sld_source": "b_scen_pyramid_great"
+}

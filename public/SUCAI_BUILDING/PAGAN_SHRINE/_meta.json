@@ -1,0 +1,9 @@
+{
+  "name": "PAGAN_SHRINE",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 336,
+  "anchor_x": 176,
+  "anchor_y": 260,
+  "sld_source": "b_scen_pagan_shrine"
+}
