@@ -880,6 +880,7 @@ const _FIXED: Record<string, string> = {
     'maqidun': '#C9A227', // 马其顿·萨洛尼卡（亚历山大金）
     'yadelaiya': '#901C26', // 威尼斯·威尼斯城（圣马可暗红）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
+    'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）
     'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）
     'putaoya': '#284B9E', // 葡萄牙·里斯本（王国蓝盾）
     'guadaer': '#C8102E', // 卡斯蒂利亚·塞维利亚（金塔红旗）

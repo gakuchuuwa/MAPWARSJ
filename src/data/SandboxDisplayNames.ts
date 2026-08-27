@@ -107,6 +107,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
   yinggelan: '英格',
 'bogendi': '勃艮',
   gaolu: '法兰',
+  kaernute: '卡尔',
   bulietani: '布列',
   fulandesi: '阿图',
   xilagu: '西东',

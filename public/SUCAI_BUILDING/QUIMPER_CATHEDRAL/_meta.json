@@ -1,9 +1,9 @@
 {
   "name": "QUIMPER_CATHEDRAL",
   "frames": 1,
-  "box_w": 1600,
-  "box_h": 1280,
-  "anchor_x": 800,
+  "box_w": 498,
+  "box_h": 600,
+  "anchor_x": 259,
   "anchor_y": 480,
   "sld_source": "b_scen_quimper_cathedral"
 }

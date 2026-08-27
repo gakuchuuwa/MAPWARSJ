@@ -38,7 +38,6 @@ export const CITY_WONDER: Record<string, string> = {
     'city_linhuang': 'ASIA_WONDER_KHITANS',  // 临潢府（辽上京，契丹）
     'city_lisiben': 'MEDI_WONDER_PORTUGUESE',  // 里斯本（葡萄牙）
     'city_luoyang': 'ASIA_WONDER_WEI',  // 洛阳（曹魏）
-    'city_lundun': 'WEST_WONDER_BRITONS',  // 伦敦（不列颠）
     'city_nanjing': 'ASIA_WONDER_WU',  // 金陵（孙吴）
     'city_pagan': 'SEAS_WONDER_BURMESE',  // 蒲甘（缅甸）
     'city_palermo': 'MEDI_WONDER_SICILIANS',  // 巴勒莫（西西里）
@@ -169,5 +168,6 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     ],
     'city_winchester': [
         { asset: 'SCEN_STONEHENGE', name: '巨石阵', category: 'ANCIENT_WONDER', lat: 51.178, lng: -1.826, description: '公元前3000年索尔兹伯里平原环形巨石阵，不列颠古代德鲁伊与天文观测圣地。' },
+        { asset: 'WEST_WONDER_BRITONS', name: '奇切斯特大教堂', category: 'ANCIENT_WONDER', lat: 50.836, lng: -0.781, description: '西萨塞克斯郡奇切斯特的哥特式主教座堂，建于1075年，英格兰南部千年教堂。' },
     ],
 };
