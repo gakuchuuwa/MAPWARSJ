@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_AACHEN_CATHEDRAL",
+  "frames": 1,
+  "box_w": 608,
+  "box_h": 724,
+  "anchor_x": 336,
+  "anchor_y": 596,
+  "sld_source": "b_scen_aachen_cathedral"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_SANKORE_MADRASAH",
+  "frames": 1,
+  "box_w": 512,
+  "box_h": 568,
+  "anchor_x": 312,
+  "anchor_y": 480,
+  "sld_source": "b_scen_sankore_madrasah"
+}

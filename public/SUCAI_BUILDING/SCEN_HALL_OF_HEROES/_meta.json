@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_HALL_OF_HEROES",
+  "frames": 1,
+  "box_w": 304,
+  "box_h": 324,
+  "anchor_x": 192,
+  "anchor_y": 264,
+  "sld_source": "b_scen_hall_of_heroes"
+}

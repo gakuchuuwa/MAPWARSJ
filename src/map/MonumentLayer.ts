@@ -26,14 +26,14 @@ export class MonumentLayer {
         this.layerGroup.clearLayers();
         this.markers.clear();
 
-        // [2026-08-27 主人定「城外奇观大小与城内奇观完全一致」]：基准尺寸与大城奇观对齐（148px）
-        const baseSize = 148;
+        // [2026-08-27 纠正尺寸]：野外单体名胜与城池单体建筑/城堡尺寸精确对齐（基准 60px）
+        const baseSize = 68;
 
         for (const mon of WILDERNESS_MONUMENTS) {
             const scale = mon.scale || 1.0;
-            const w = baseSize * scale;
+            const w = 68;
             const h = w;
-            const groundW = w * 2.1;
+            const groundW = w * 1.6;
             const groundH = groundW * 0.58;
 
             // 自然野外地基：根据名胜类型选择岩石/泥地/石板底座
@@ -45,7 +45,7 @@ export class MonumentLayer {
                 <div class="wilderness-monument-container" style="
                     position: relative;
                     width: ${w.toFixed(0)}px;
-                    height: ${(h + 50).toFixed(0)}px;
+                    height: ${(h + 30).toFixed(0)}px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -56,7 +56,7 @@ export class MonumentLayer {
                     <img src="${plazaSrc}" style="
                         position: absolute;
                         left: 50%;
-                        top: 60%;
+                        top: 58%;
                         width: ${groundW.toFixed(1)}px;
                         height: ${groundH.toFixed(1)}px;
                         transform: translate(-50%, -50%);
@@ -72,25 +72,25 @@ export class MonumentLayer {
                         width: ${w.toFixed(1)}px;
                         transform: translate(-50%, -60%);
                         z-index: 2;
-                        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.65));
+                        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
                         transition: transform 0.2s ease;
-                    " onmouseover="this.style.transform='translate(-50%, -65%) scale(1.06)'" onmouseout="this.style.transform='translate(-50%, -60%) scale(1.0)'" />
+                    " onmouseover="this.style.transform='translate(-50%, -65%) scale(1.08)'" onmouseout="this.style.transform='translate(-50%, -60%) scale(1.0)'" />
                     <!-- 金色名胜标牌 -->
                     <div style="
                         position: absolute;
-                        bottom: 0px;
+                        bottom: -4px;
                         left: 50%;
                         transform: translateX(-50%);
                         white-space: nowrap;
                         background: linear-gradient(180deg, rgba(20, 24, 30, 0.95) 0%, rgba(10, 12, 16, 0.98) 100%);
                         border: 1px solid rgba(212, 175, 55, 0.85);
-                        border-radius: 4px;
-                        padding: 2px 8px;
+                        border-radius: 3px;
+                        padding: 1px 5px;
                         color: #f7e6a1;
-                        font-size: 12px;
+                        font-size: 11px;
                         font-weight: bold;
                         text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.6);
                         z-index: 3;
                         pointer-events: none;
                     ">
@@ -102,8 +102,8 @@ export class MonumentLayer {
             const icon = L.divIcon({
                 className: 'monument-icon',
                 html: html,
-                iconSize: [w, h + 50],
-                iconAnchor: [w / 2, (h + 50) / 2]
+                iconSize: [w, h + 30],
+                iconAnchor: [w / 2, (h + 30) / 2]
             });
 
             const marker = L.marker([mon.lat, mon.lng], {
@@ -114,14 +114,14 @@ export class MonumentLayer {
 
             // 绑定悬停与点击详情弹窗
             const popupContent = `
-                <div style="padding: 6px 10px; font-family: sans-serif; color: #eee; background: #1a1e24; border-radius: 6px; border: 1px solid #d4af37; max-width: 260px;">
-                    <div style="font-size: 14px; font-weight: bold; color: #ffd700; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 4px; margin-bottom: 6px;">
+                <div style="padding: 6px 10px; font-family: sans-serif; color: #eee; background: #1a1e24; border-radius: 6px; border: 1px solid #d4af37; max-width: 240px;">
+                    <div style="font-size: 13px; font-weight: bold; color: #ffd700; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 3px; margin-bottom: 5px;">
                         ${mon.name}
                     </div>
-                    <div style="font-size: 11px; color: #ccc; line-height: 1.5;">
+                    <div style="font-size: 11px; color: #ccc; line-height: 1.4;">
                         ${mon.description}
                     </div>
-                    <div style="margin-top: 6px; font-size: 10px; color: #888;">
+                    <div style="margin-top: 5px; font-size: 10px; color: #888;">
                         坐标：${mon.lat.toFixed(3)}°N, ${mon.lng.toFixed(3)}°E
                     </div>
                 </div>
@@ -129,7 +129,7 @@ export class MonumentLayer {
             marker.bindPopup(popupContent, {
                 className: 'monument-popup',
                 closeButton: false,
-                offset: L.point(0, -25)
+                offset: L.point(0, -20)
             });
 
             this.markers.set(mon.id, marker);
