@@ -1048,6 +1048,7 @@ export const FACTIONS: Faction[] = [
                        // 青衣羌(青衣江流域/雅州/川西古羌)
     { id: 'wuxi', name: '武陵' },
 
+
                          // 五溪蛮(武陵五溪/八面山/湘西)
     { id: 'gumie', name: '衢州' },
                         // 姑蔑(古越方国/衢州/浙西)

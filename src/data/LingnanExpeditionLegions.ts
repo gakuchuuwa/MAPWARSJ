@@ -73,4 +73,5 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
     liuzhou: { name: '柳州狼兵', tier: 3 },           // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名,
     chen: { name: '百越甲兵', tier: 3 },
     shuizu: { name: '水族藤甲', tier: 3 },
+    wuxi: { name: '武陵弓蛮', tier: 3 },
 };
