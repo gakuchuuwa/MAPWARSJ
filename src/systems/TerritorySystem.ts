@@ -140,17 +140,41 @@ function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion
     return REGION_TO_DE_STYLE[region] ?? null;
 }
 
-/** 奇观统一作为据点外侧的独立地标显示，不占用、不替换据点内部任何建筑。 */
-function buildStandaloneCityWonderHtml(baseSize: number, cityId: string, cityType: string): string {
-    const wonderDir = CITY_WONDER[cityId];
-    if (!wonderDir) return '';
-    const clusterHalfFactor = cityType === 'big_city' ? 1.40
-        : (cityType === 'medium_city' || cityType === 'pass') ? 1.30
-            : cityType === 'small_city' ? 1.15 : 1.00;
-    const landmarkW = baseSize * 0.40;
-    const offsetX = baseSize * (clusterHalfFactor + 0.28);
-    const flip = (deHashString(cityId + '|standalone-wonder|' + wonderDir) & 1) === 1;
-    return `<img class="city-wonder-landmark" src="/SUCAI_BUILDING/${wonderDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${landmarkW.toFixed(1)}px;transform:translate(calc(-50% + ${offsetX.toFixed(1)}px),-65%)${flip ? ' scaleX(-1)' : ''};z-index:160;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));pointer-events:none;" />`;
+/**
+ * 奇观据点单例渲染（2026-08-27 主人需求「把所有的奇观据点单例出来，不要据点建筑掺和，按坐标，挨个重新摆放到战略地图上」）：
+ * 奇观据点作为该名城的唯一主体单例呈现，不与普通据点的 9 栋建筑群掺和混杂。
+ */
+function buildDeWonderCityHtml(baseSize: number, cityId: string, wonderDir: string, cityType: string, region?: string): string {
+    const W = baseSize * 2.4;
+    const H = baseSize * 2.2;
+    // 奇观单体建筑比例：奇观作为唯一主体，按城市等级自适应放大（big_city 1.25x / medium_city 1.15x / other 1.05x）
+    const AUTO = cityType === 'big_city' ? 1.25 : (cityType === 'medium_city' ? 1.15 : 1.05);
+    const wonderW = baseSize * 0.68 * AUTO;
+
+    // 自然 2.5D 羽化底座：大城用石板 rd1，关隘用岩石 rck，草原/美洲用泥地 pm1，其余中城/小城用碎石 rd2
+    const plazaSrc = (cityType === 'big_city')
+        ? '/SUCAI_TERRAIN/rd1_plaza.png'
+        : (cityType === 'pass'
+            ? '/SUCAI_TERRAIN/rck_plaza.png'
+            : (region === 'STEPPE' || region === 'MESO' || region === 'ANDE'
+                ? '/SUCAI_TERRAIN/pm1_plaza.png'
+                : '/SUCAI_TERRAIN/rd2_plaza.png'));
+
+    const groundW = wonderW * 1.85;
+    const groundH = groundW * 0.58;
+    const flip = (deHashString(cityId + '|wonder-standalone|' + wonderDir) & 1) === 1;
+
+    const parts: string[] = [];
+    // 1. 2.5D 羽化地基底座（居中）
+    parts.push(
+        `<img src="${plazaSrc}" style="position:absolute;left:50%;top:50%;width:${groundW.toFixed(1)}px;height:${groundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+    );
+    // 2. 奇观单体建筑立绘（居中）
+    parts.push(
+        `<img class="${CITY_MARKER_BUILDING_CLASS}" src="/SUCAI_BUILDING/${wonderDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${wonderW.toFixed(1)}px;transform:translate(-50%,-62%)${flip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));" />`
+    );
+
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
 /** 草原营地（YURT 特例）：逐水草而居——无地基/无石路/无栅栏，参照战斗模式。
@@ -1856,22 +1880,23 @@ export class TerritorySystem {
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
                      ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
-                         ${(deStyle
-                             ? (city.type === 'big_city'
-                                 ? buildDeBigCityStackHtml(baseSize, city.id, deStyle)
-                                 : city.type === 'medium_city'
-                                     ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
-                                     : city.type === 'pass'
-                                         ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region)
-                                         : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
-                             : (city.image
-                                 ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
-                                     width: ${baseSize}px; height: auto;
-                                     transform: ${transform};
-                                 ">`
-                                 : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`))}
-                     </div>` : ''}
-                     ${this.showCityTextures ? buildStandaloneCityWonderHtml(baseSize, city.id, city.type) : ''}
+                          ${(CITY_WONDER[city.id]
+                              ? buildDeWonderCityHtml(baseSize, city.id, CITY_WONDER[city.id], city.type, city.region)
+                              : (deStyle
+                                  ? (city.type === 'big_city'
+                                      ? buildDeBigCityStackHtml(baseSize, city.id, deStyle)
+                                      : city.type === 'medium_city'
+                                          ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
+                                          : city.type === 'pass'
+                                              ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region)
+                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
+                                  : (city.image
+                                      ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
+                                          width: ${baseSize}px; height: auto;
+                                          transform: ${transform};
+                                      ">`
+                                      : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`)))}
+                      </div>` : ''}
                      ${flagBodyHtml}
                  </div>`,
             iconSize: [baseSize, baseSize + 80],

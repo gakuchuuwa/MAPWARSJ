@@ -6,47 +6,6 @@ export class MonumentLayer {
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
 
-    /** 真实坐标不动；仅给相距 10km 内的名胜分配屏幕像素错位，避免素材互相覆盖。 */
-    private buildVisualOffsets(): Map<string, { x: number; y: number }> {
-        const monuments = WILDERNESS_MONUMENTS;
-        const parent = monuments.map((_, i) => i);
-        const root = (i: number): number => parent[i] === i ? i : (parent[i] = root(parent[i]));
-        const join = (a: number, b: number): void => {
-            const ra = root(a), rb = root(b);
-            if (ra !== rb) parent[rb] = ra;
-        };
-        const distanceKm = (a: WildernessMonument, b: WildernessMonument): number => {
-            const rad = Math.PI / 180;
-            const p1 = a.lat * rad, p2 = b.lat * rad;
-            const dp = (b.lat - a.lat) * rad, dl = (b.lng - a.lng) * rad;
-            const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-            return 12742 * Math.asin(Math.sqrt(h));
-        };
-        for (let i = 0; i < monuments.length; i++) {
-            for (let j = i + 1; j < monuments.length; j++) {
-                if (distanceKm(monuments[i], monuments[j]) < 10) join(i, j);
-            }
-        }
-        const groups = new Map<number, number[]>();
-        for (let i = 0; i < monuments.length; i++) {
-            const r = root(i);
-            groups.set(r, [...(groups.get(r) ?? []), i]);
-        }
-        const offsets = new Map<string, { x: number; y: number }>();
-        for (const indices of groups.values()) {
-            if (indices.length < 2) continue;
-            const radius = 38;
-            indices.forEach((idx, order) => {
-                const angle = order * Math.PI * 2 / indices.length;
-                offsets.set(monuments[idx].id, {
-                    x: Math.cos(angle) * radius,
-                    y: Math.sin(angle) * radius * 0.35,
-                });
-            });
-        }
-        return offsets;
-    }
-
     constructor(map: L.Map) {
         this.map = map;
         
@@ -66,13 +25,11 @@ export class MonumentLayer {
     private renderMonuments(): void {
         this.layerGroup.clearLayers();
         this.markers.clear();
-        const visualOffsets = this.buildVisualOffsets();
 
         // [2026-08-27 纠正尺寸]：野外单体名胜与城池单体建筑/城堡尺寸精确对齐（基准 60px）
         const baseSize = 68;
 
         for (const mon of WILDERNESS_MONUMENTS) {
-            const offset = visualOffsets.get(mon.id) ?? { x: 0, y: 0 };
             const scale = mon.scale || 1.0;
             const w = 68;
             const h = w;
@@ -94,7 +51,6 @@ export class MonumentLayer {
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    transform: translate(${offset.x.toFixed(1)}px, ${offset.y.toFixed(1)}px);
                 ">
                     <!-- 2.5D 自然羽化底座 -->
                     <img src="${plazaSrc}" style="
