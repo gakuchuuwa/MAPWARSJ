@@ -1,0 +1,9 @@
+{
+  "name": "SANCHI_STUPA",
+  "frames": 1,
+  "box_w": 484,
+  "box_h": 340,
+  "anchor_x": 260,
+  "anchor_y": 212,
+  "sld_source": "b_scen_sanchi_stupa"
+}

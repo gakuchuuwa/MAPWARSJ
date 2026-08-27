@@ -1,0 +1,9 @@
+{
+  "name": "GOL_GUMBAZ",
+  "frames": 1,
+  "box_w": 640,
+  "box_h": 588,
+  "anchor_x": 404,
+  "anchor_y": 472,
+  "sld_source": "b_scen_gol_gumbaz"
+}

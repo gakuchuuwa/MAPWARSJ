@@ -1,6 +1,11 @@
 /**
- * 欧亚非大地图·野外独立历史名胜与战略圣地（29座）
+ * 欧亚非大地图·野外独立历史名胜与战略圣地（21座）
  * 真实世界地理经纬度精准定位，直接渲染在大地图的山川、旷野与海滨之上。
+ *
+ * [2026-08-27 历史审计] 逐座对照 DE 素材 SLD 源与设计文档，纠正素材张冠李戴：
+ *   从 DE 场景编辑器补提取 9 个缺失素材（大金字塔/桑奇佛塔/杰姆宣礼塔/异教圣坛/
+ *   坎佩尔大教堂/波耶纳里城堡/戈尔贡巴兹/圆形剧场/君士坦丁凯旋门），
+ *   按真实历史位置重新安置；狮身人面像（埃及，DE 无此素材）与虚构/无素材项已移除。
  */
 
 export interface WildernessMonument {
@@ -26,16 +31,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '公元前3000年索尔兹伯里平原环形巨石阵，不列颠古代德鲁伊与天文观测圣地。'
     },
     {
-        id: 'monument_giza_pyramids',
-        name: '吉萨大金字塔',
-        category: 'ANCIENT_WONDER',
-        lat: 29.979,
-        lng: 31.134,
-        asset: '/SUCAI_BUILDING/SCEN_CUSHITE_PYRAMIDS/preview.png',
-        scale: 1.3,
-        description: '古埃及第四王朝胡夫金字塔群，古代世界七大奇迹之首，矗立于尼罗河西岸荒漠。'
-    },
-    {
         id: 'monument_cushite_pyramids',
         name: '麦罗埃黑金字塔',
         category: 'ANCIENT_WONDER',
@@ -44,6 +39,16 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         asset: '/SUCAI_BUILDING/SCEN_CUSHITE_PYRAMIDS/preview.png',
         scale: 1.1,
         description: '苏丹努比亚麦罗埃古王国修建的陡峭高耸黑金字塔群。'
+    },
+    {
+        id: 'monument_giza_pyramid',
+        name: '吉萨大金字塔',
+        category: 'ANCIENT_WONDER',
+        lat: 29.979,
+        lng: 31.134,
+        asset: '/SUCAI_BUILDING/GREAT_PYRAMID/preview.png',
+        scale: 1.0,
+        description: '古埃及第四王朝胡夫法老修建的吉萨大金字塔，古代世界七大奇迹之首。'
     },
     {
         id: 'monument_torii_gate',
@@ -66,46 +71,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '希腊帕纳塞斯山麓阿波罗神谕圣所多柱式圆形大殿（Tholos）。'
     },
     {
-        id: 'monument_pagoda_shaolin',
-        name: '嵩山塔林与琉璃宝塔',
-        category: 'SACRED_PAGODA',
-        lat: 34.508,
-        lng: 112.935,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_A/preview.png',
-        scale: 1.2,
-        description: '中原嵩山少林古刹高耸密檐式五重琉璃佛塔。'
-    },
-    {
-        id: 'monument_pagoda_dayan',
-        name: '长安大雁塔',
-        category: 'SACRED_PAGODA',
-        lat: 34.218,
-        lng: 108.964,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_B/preview.png',
-        scale: 1.2,
-        description: '唐永徽年间玄奘法师为保存天竺经像修建的七层四方楼阁式砖塔。'
-    },
-    {
-        id: 'monument_pagoda_dali',
-        name: '大理崇圣寺三塔',
-        category: 'SACRED_PAGODA',
-        lat: 25.708,
-        lng: 100.147,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_E/preview.png',
-        scale: 1.2,
-        description: '云南南诏与大理国千寻塔，苍山洱海间的佛教密宗圣殿。'
-    },
-    {
-        id: 'monument_pagoda_fogong',
-        name: '应县释迦木塔',
-        category: 'SACRED_PAGODA',
-        lat: 39.565,
-        lng: 113.183,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_D/preview.png',
-        scale: 1.2,
-        description: '辽清宁年间建造的世界现存最高全木结构无钉纯榫卯巨塔。'
-    },
-    {
         id: 'monument_leshan_buddha',
         name: '乐山摩崖大佛',
         category: 'HOLY_SITE',
@@ -121,9 +86,9 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         category: 'HOLY_SITE',
         lat: 23.480,
         lng: 77.739,
-        asset: '/SUCAI_BUILDING/SCEN_REKHADEUL_TEMPLE/preview.png',
-        scale: 1.2,
-        description: '孔雀王朝阿育王始建的印度现存最古老半球形覆钵式舍利佛塔与四方托拉那石门。'
+        asset: '/SUCAI_BUILDING/SANCHI_STUPA/preview.png',
+        scale: 1.0,
+        description: '印度孔雀王朝阿育王始建的桑奇大佛塔，现存最古老的半球形覆钵式窣堵坡。'
     },
     {
         id: 'monument_zoroaster_fire',
@@ -136,23 +101,43 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '伊朗古代琐罗亚斯德教（拜火教）燃烧千百年不灭的神圣阿塔什巴赫拉姆圣火坛。'
     },
     {
+        id: 'monument_jam_minaret',
+        name: '杰姆宣礼塔',
+        category: 'HOLY_SITE',
+        lat: 34.396,
+        lng: 64.516,
+        asset: '/SUCAI_BUILDING/MINARET_OF_JAM/preview.png',
+        scale: 0.85,
+        description: '阿富汗古尔省哈里河深山峡谷中耸立的65米绿松石烧砖宣礼塔。'
+    },
+    {
         id: 'monument_roman_amphitheater',
-        name: '杰姆古罗马斗兽场',
+        name: '杰姆古罗马圆形剧场',
         category: 'ANCIENT_WONDER',
         lat: 35.296,
         lng: 10.706,
-        asset: '/SUCAI_BUILDING/SCEN_COLOSSEUM/preview.png',
-        scale: 1.2,
-        description: '北非突尼斯保存最完好的三层拱廊大型古罗马露天斗兽场。'
+        asset: '/SUCAI_BUILDING/AMPHITHEATRE/preview.png',
+        scale: 1.0,
+        description: '北非突尼斯埃尔杰姆保存最完好的三层拱廊大型古罗马露天圆形剧场。'
+    },
+    {
+        id: 'monument_arch_constantine',
+        name: '君士坦丁凯旋门',
+        category: 'ANCIENT_WONDER',
+        lat: 41.890,
+        lng: 12.492,
+        asset: '/SUCAI_BUILDING/ARCH_OF_CONSTANTINE/preview.png',
+        scale: 1.0,
+        description: '罗马城斗兽场旁为纪念君士坦丁一世战胜马克森提乌斯而建的凯旋门。'
     },
     {
         id: 'monument_poenari_castle',
-        name: '德古拉波耶纳里血之城堡',
+        name: '德古拉波耶纳里城堡',
         category: 'HERITAGE_FORT',
         lat: 45.353,
         lng: 24.635,
-        asset: '/SUCAI_BUILDING/SCEN_CASTLE_RUINS/preview.png',
-        scale: 1.2,
+        asset: '/SUCAI_BUILDING/POENARI_CASTLE/preview.png',
+        scale: 0.9,
         description: '瓦拉几亚大公弗拉德三世（穿刺公德古拉）在喀尔巴阡山峭壁顶修筑的绝险要塞。'
     },
     {
@@ -196,24 +181,24 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         description: '德干高原毗奢耶那伽罗帝国古都花岗岩巨石神庙与石雕战车。'
     },
     {
-        id: 'monument_jam_minaret',
-        name: '杰姆古尔宣礼塔',
-        category: 'HOLY_SITE',
-        lat: 34.396,
-        lng: 64.516,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_C/preview.png',
-        scale: 1.1,
-        description: '阿富汗古尔省深山峡谷哈里河流域耸立的65米绿松石烧砖古塔。'
+        id: 'monument_gol_gumbaz',
+        name: '戈尔贡巴兹圆顶陵',
+        category: 'ANCIENT_WONDER',
+        lat: 16.830,
+        lng: 75.736,
+        asset: '/SUCAI_BUILDING/GOL_GUMBAZ/preview.png',
+        scale: 0.9,
+        description: '印度比贾布尔苏丹国修建的巨型无柱回音圆顶陵墓（Gol Gumbaz）。'
     },
     {
-        id: 'monument_svan_towers',
-        name: '斯万高山防御石碉楼',
-        category: 'HERITAGE_FORT',
-        lat: 43.044,
-        lng: 42.730,
-        asset: '/SUCAI_BUILDING/SCEN_HERO_SHRINE/preview.png',
-        scale: 1.1,
-        description: '大高加索山脉斯瓦涅梯千百年抵御外敌的家族防御高石塔群。'
+        id: 'monument_pagan_romuva',
+        name: '罗姆瓦异教圣坛',
+        category: 'HOLY_SITE',
+        lat: 54.687,
+        lng: 25.290,
+        asset: '/SUCAI_BUILDING/PAGAN_SHRINE/preview.png',
+        scale: 1.0,
+        description: '波罗的海立陶宛原初信仰罗姆瓦的神圣橡树与永恒圣火祭祀圣所。'
     },
     {
         id: 'monument_aachen',
@@ -221,9 +206,19 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         category: 'HOLY_SITE',
         lat: 50.774,
         lng: 6.083,
-        asset: '/SUCAI_BUILDING/SCEN_ARCHAIC_THOLOS/preview.png',
+        asset: '/SUCAI_BUILDING/SCEN_AACHEN_CATHEDRAL/preview.png',
         scale: 1.1,
         description: '查理曼大帝的八角形皇家宫廷礼拜堂，神圣罗马帝国皇帝加冕圣殿。'
+    },
+    {
+        id: 'monument_quimper',
+        name: '坎佩尔圣科朗坦大教堂',
+        category: 'HOLY_SITE',
+        lat: 47.995,
+        lng: -4.103,
+        asset: '/SUCAI_BUILDING/QUIMPER_CATHEDRAL/preview.png',
+        scale: 0.4,
+        description: '法国布列塔尼坎佩尔的双尖塔高耸哥特式主教座堂。'
     },
     {
         id: 'monument_templar_colossi',
@@ -235,54 +230,4 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         scale: 1.1,
         description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。'
     },
-    {
-        id: 'monument_pagan_romuva',
-        name: '罗姆瓦神圣橡树圣坛',
-        category: 'HOLY_SITE',
-        lat: 54.687,
-        lng: 25.290,
-        asset: '/SUCAI_BUILDING/SCEN_FIRE_SHRINE/preview.png',
-        scale: 1.0,
-        description: '波罗的海立陶宛原初信仰永恒圣火与神圣橡树祭祀圣所。'
-    },
-    {
-        id: 'monument_valhalla_shrine',
-        name: '乌普萨拉英灵神殿',
-        category: 'HOLY_SITE',
-        lat: 59.898,
-        lng: 17.633,
-        asset: '/SUCAI_BUILDING/SCEN_HERO_SHRINE/preview.png',
-        scale: 1.1,
-        description: '北欧斯堪的纳维亚古乌普萨拉奥丁与托尔异教大神殿长屋。'
-    },
-    {
-        id: 'monument_trowulan',
-        name: '满者伯夷善恶城门',
-        category: 'ANCIENT_WONDER',
-        lat: -7.558,
-        lng: 112.381,
-        asset: '/SUCAI_BUILDING/SCEN_TORII_GATE/preview.png',
-        scale: 1.1,
-        description: '印尼东爪哇满者伯夷帝国古都特罗武兰红砖开敞式善恶护法门。'
-    },
-    {
-        id: 'monument_quimper',
-        name: '坎佩尔圣科朗坦大教堂',
-        category: 'HOLY_SITE',
-        lat: 47.995,
-        lng: -4.103,
-        asset: '/SUCAI_BUILDING/SCEN_ARCHAIC_THOLOS/preview.png',
-        scale: 1.1,
-        description: '布列塔尼公国双尖塔高耸哥特式主教座堂。'
-    },
-    {
-        id: 'monument_eurasia_center',
-        name: '欧亚大陆极点胜利纪念碑',
-        category: 'ANCIENT_WONDER',
-        lat: 40.000,
-        lng: 60.000,
-        asset: '/SUCAI_BUILDING/SCEN_PAGODA_C/preview.png',
-        scale: 1.2,
-        description: '欧亚内陆大陆地理中心，象征最高战略统治力的方尖胜利坛。'
-    }
 ];

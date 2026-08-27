@@ -1,0 +1,9 @@
+{
+  "name": "POENARI_CASTLE",
+  "frames": 1,
+  "box_w": 528,
+  "box_h": 504,
+  "anchor_x": 324,
+  "anchor_y": 408,
+  "sld_source": "b_scen_poenari_castle"
+}
