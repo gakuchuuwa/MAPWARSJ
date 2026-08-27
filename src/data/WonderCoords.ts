@@ -11,6 +11,7 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     // ── 明显错位（>120km） ──
     'CEAS_WONDER_TATARS': { lat: 39.675, lng: 66.994, place: '撒马尔罕' },        // 乌鲁格别克天文台
     'INDI_WONDER_INDIANS': { lat: 10.782, lng: 79.132, place: '坦贾武尔' },        // 布里哈迪斯瓦拉神庙
+    'PURU_WONDER_PURU': { lat: 23.583, lng: 72.133, place: '莫德拉' },             // 莫德拉太阳神庙（环水圣池水殿）
     'EAST_WONDER_GOTHS': { lat: 44.425, lng: 12.209, place: '拉文纳' },            // 狄奥多里克陵墓
     'ORIE_WONDER_BERBERS': { lat: 34.024, lng: -6.822, place: '拉巴特' },          // 哈桑塔
     'SEAS_WONDER_MALAY': { lat: -7.756, lng: 110.445, place: '日惹' },             // 卡拉桑神庙

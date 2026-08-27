@@ -640,6 +640,13 @@ export class GameMap {
                         <b>🏯 开启城市贴图</b>
                     </label>
 
+                    <div style="display:grid;grid-template-columns:30px 1fr 30px;gap:4px;align-items:center;">
+                        <button id="btn-wonder-prev" title="上一个奇观" style="padding:6px 2px;cursor:pointer;background:transparent;color:#6a1b9a;border:1px solid rgba(106,27,154,0.45);border-radius:4px;font-weight:bold;font-family:inherit;">◀</button>
+                        <button id="btn-wonder-viewer" style="padding:6px 2px;cursor:pointer;background:transparent;color:#6a1b9a;border:1px solid rgba(106,27,154,0.45);border-radius:4px;font-weight:bold;font-family:inherit;">🏛️ 查看奇观</button>
+                        <button id="btn-wonder-next" title="下一个奇观" style="padding:6px 2px;cursor:pointer;background:transparent;color:#6a1b9a;border:1px solid rgba(106,27,154,0.45);border-radius:4px;font-weight:bold;font-family:inherit;">▶</button>
+                    </div>
+                    <div id="wonder-viewer-label" style="display:none;text-align:center;font-size:11px;color:#6a1b9a;line-height:1.3;"></div>
+
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#e65100;margin-top:4px;">
                         <input type="checkbox" id="chk-auto-zoom" checked> 
                         <b>🔍 自动缩放</b>
@@ -908,6 +915,25 @@ export class GameMap {
                         detail: { visible: e.target.checked }
                     }));
                 });
+            }
+
+            const btnWonderViewer = document.getElementById('btn-wonder-viewer');
+            if (btnWonderViewer) {
+                let wonderIndex = 0;
+                const label = document.getElementById('wonder-viewer-label');
+                const focusWonder = (delta: number) => {
+                    wonderIndex += delta;
+                    const focused = this.monumentLayer?.focusMonument(wonderIndex, 10);
+                    if (!focused) return;
+                    wonderIndex = focused.index;
+                    if (label) {
+                        label.style.display = 'block';
+                        label.innerText = `${focused.index + 1} / ${focused.total} · ${focused.name}`;
+                    }
+                };
+                btnWonderViewer.addEventListener('click', () => focusWonder(0));
+                document.getElementById('btn-wonder-prev')?.addEventListener('click', () => focusWonder(-1));
+                document.getElementById('btn-wonder-next')?.addEventListener('click', () => focusWonder(1));
             }
 
             const chkAutoZoom = document.getElementById('chk-auto-zoom') as HTMLInputElement;
