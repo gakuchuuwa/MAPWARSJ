@@ -3720,7 +3720,7 @@ export class Scene13WarLayer {
         }
 
         if (roadCells.length > 0) {
-            this.addDecorCells(roadTile, roadCells, 0.90);
+            this.addDecorCells(roadTile, roadCells, 0.90, undefined, undefined, true);
         }
     }
 
@@ -3788,7 +3788,7 @@ export class Scene13WarLayer {
             for (let w = -hw; w <= hw; w++) push(rx + w + wobble, ry + w + wobble);
         }
 
-        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.92, undefined, ROAD_EDGE_BLUR);
+        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.92, undefined, ROAD_EDGE_BLUR, true);
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
@@ -4104,10 +4104,11 @@ export class Scene13WarLayer {
         alpha = 1,
         polygon?: Array<{ x: number; y: number }>,
         blur?: number,
+        isRoad?: boolean,
     ): void {
         if (cells.length === 0) return;
         const isWater = isWaterTile(tile);
-        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur };
+        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur, isRoad };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.scheduleDecorRepaint(); };
@@ -4466,21 +4467,29 @@ export class Scene13WarLayer {
                 for (let d = 0; d < 8; d++) {
                     const url = urls[d % urls.length];
                     if (!url) continue;
-                    // 🔴 已解码的抠绿图直接复用：HTTP/抠绿/两次解码全跳过，也不占 pending
-                    //    （pending>0 期间 tick 整个 return，画面冻住 —— 见 CLEAN_CACHE 说明）
+                    const blocking = slot === 'move' || slot === 'atk';
+                    const inc = blocking ? 1 : 0;
+                    // 🔴 已解码的抠绿图直接复用：跳过主图 HTTP/抠绿/两次解码；
+                    //    move/atk 仍等待玩家色遮罩就绪，避免把未染色占位帧存进整场素材库。
                     const hit = CLEAN_CACHE.get(url);
                     if (hit && hit.complete && hit.naturalWidth > 0) {
-                        try {
-                            if (!isDE) {
-                                b.fh = hit.naturalHeight;
-                                b.frames[slot] = hit.naturalWidth / hit.naturalHeight;
-                            }
-                            b.sets[slot][0][d] = SpriteTinter.getTintedSprite(hit, this.sideFaction[0]);
-                            b.sets[slot][1][d] = SpriteTinter.getTintedSprite(hit, this.sideFaction[1]);
-                            continue;
-                        } catch (e) {
-                            console.warn('[Scene13WarLayer] 缓存复用失败，回退重新加载:', key, slot, d, e);
+                        if (!isDE) {
+                            b.fh = hit.naturalHeight;
+                            b.frames[slot] = hit.naturalWidth / hit.naturalHeight;
                         }
+                        this.pending += inc;
+                        void Promise.all([
+                            SpriteTinter.getTintedSpriteReady(hit, this.sideFaction[0]),
+                            SpriteTinter.getTintedSpriteReady(hit, this.sideFaction[1]),
+                        ]).then(([attacker, defender]) => {
+                            b.sets[slot][0][d] = attacker;
+                            b.sets[slot][1][d] = defender;
+                        }).catch((e) => {
+                            b.sets[slot][0][d] = hit;
+                            b.sets[slot][1][d] = hit;
+                            console.warn('[Scene13WarLayer] 缓存复用染色失败（回退原图）:', key, slot, d, e);
+                        }).finally(() => { this.pending -= inc; });
+                        continue;
                     }
                     /**
                      * 🔴 [2026-08-26 按标准「游戏合理」修·进场冻 7 秒] 只有**开场立刻要用**的
@@ -4493,8 +4502,6 @@ export class Scene13WarLayer {
                      *    这四组照常异步加载，只是不再冻住画面（等它们到位的时间远短于用到它们的时间）。
                      *    ⚠️ 别把 move/atk 也移出去 —— 那才会出现「兵没图不显示」。
                      */
-                    const blocking = slot === 'move' || slot === 'atk';
-                    const inc = blocking ? 1 : 0;
                     this.pending += inc;
                     const im = new Image();
                     im.onload = () => {
@@ -4528,8 +4535,6 @@ export class Scene13WarLayer {
                                         //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
                                         b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
                                     }
-                                    b.sets[slot][0][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[0]);
-                                    b.sets[slot][1][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[1]);
                                     // 存进缓存供下一场直接复用；超上限按插入序淘汰最旧的
                                     if (!CLEAN_CACHE.has(url)) {
                                         if (CLEAN_CACHE.size >= CLEAN_CACHE_MAX) {
@@ -4538,10 +4543,21 @@ export class Scene13WarLayer {
                                         }
                                         CLEAN_CACHE.set(url, clean);
                                     }
+                                    void Promise.all([
+                                        SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
+                                        SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
+                                    ]).then(([attacker, defender]) => {
+                                        b.sets[slot][0][d] = attacker;
+                                        b.sets[slot][1][d] = defender;
+                                    }).catch((e) => {
+                                        b.sets[slot][0][d] = clean;
+                                        b.sets[slot][1][d] = clean;
+                                        console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
+                                    }).finally(() => { this.pending -= inc; });
                                 } catch (e) {
                                     console.warn('[Scene13WarLayer] 染色失败（回退空帧）:', key, slot, d, e);
+                                    this.pending -= inc;
                                 }
-                                this.pending -= inc;
                             };
                             clean.onerror = () => { this.pending -= inc; };
                             clean.src = dataUrl;
