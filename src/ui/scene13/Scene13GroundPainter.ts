@@ -123,6 +123,7 @@ export interface GroundPatch {
     polygon?: Array<{ x: number; y: number }>;
     alpha: number;
     isWater?: boolean;
+    isRoad?: boolean;
     /** 边缘高斯模糊半径（px）；缺省 polygon=16 / cells=24。 */
     blur?: number;
     bbox?: { x: number; y: number; w: number; h: number };
@@ -602,16 +603,16 @@ export class Scene13GroundPainter {
         }
         // 2. 边缘处理
         const blendKind = blendForTile(p.tile);
-        // 🔴 [2026-08-23 主人定] 道路贴图（rd 系列）边缘走高斯模糊（平顺硬化路面），不做撕边。
+        // 🔴 [2026-08-23 主人定] 道路与地基（isRoad 或 roadland 系列）边缘走高斯模糊（平顺硬化路面/地基），不做撕边与硬化切边。
         let ragged = false;
-        if (!p.polygon && blendKind !== 'roadland') {
+        if (!p.polygon && blendKind !== 'roadland' && !p.isRoad) {
             const bmask = this.blendFor(blendKind);
             if (bmask) {
                 ragged = this.raggedEdgeMask(mcv, bw, bh, bmask, blurRadius);
             }
         }
         if (!ragged) {
-            // 高斯模糊（polygon 斑块 / 道路 / 无 blend 图时）：平滑软化边界
+            // 高斯模糊（polygon 斑块 / 道路 / 地基 / 无 blend 图时）：平滑软化边界，形成自然柔和的渐变羽化
             bctx.clearRect(0, 0, bw, bh);
             bctx.filter = `blur(${blurRadius}px)`;
             bctx.drawImage(mcv, 0, 0);

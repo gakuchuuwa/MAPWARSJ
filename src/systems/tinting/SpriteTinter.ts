@@ -83,6 +83,45 @@ export class SpriteTinter {
     }
 
     /**
+     * 等待玩家色遮罩完成探测后再返回最终染色图。
+     * 战术模式会把返回帧长期存入本场素材库，不能接受 getTintedSprite 首次探测时的原图占位。
+     */
+    public static async getTintedSpriteReady(
+        originalSprite: HTMLImageElement,
+        factionId: string
+    ): Promise<HTMLImageElement> {
+        let tinted = this.getTintedSprite(originalSprite, factionId);
+        if (!FactionTintSystem.shouldTint(factionId)) return tinted;
+
+        const sourceUrl: string = (originalSprite as any).sourceUrl || originalSprite.src;
+        const dir = sourceUrl.slice(0, sourceUrl.lastIndexOf('/') + 1);
+        if (this.dirHasMask.get(dir) !== false) {
+            const maskSrc = sourceUrl.replace(/\.png$/, '.pc.png');
+            const maskState = this.maskCache.get(maskSrc);
+            if (maskState && maskState !== 'none' && !maskState.complete) {
+                await new Promise<void>((resolve) => {
+                    const done = () => resolve();
+                    maskState.addEventListener('load', done, { once: true });
+                    maskState.addEventListener('error', done, { once: true });
+                    if (maskState.complete) resolve();
+                });
+            }
+            // 遮罩成功则生成精确玩家色；确认不存在则在这里稳定回退亮度染色。
+            tinted = this.getTintedSprite(originalSprite, factionId);
+        }
+
+        if (!tinted.complete) {
+            await new Promise<void>((resolve) => {
+                const done = () => resolve();
+                tinted.addEventListener('load', done, { once: true });
+                tinted.addEventListener('error', done, { once: true });
+                if (tinted.complete) resolve();
+            });
+        }
+        return tinted;
+    }
+
+    /**
      * mask 染色入口（帝国决定 DE 素材，有玩家色遮罩）。
      * 遮罩惰性加载：首帧返回原图（玩家色区域暂灰），遮罩就绪后精确染色并缓存。
      */
