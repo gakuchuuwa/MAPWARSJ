@@ -136,6 +136,9 @@ export class GlobalUnitRenderer {
     private lastMapCenter: L.LatLng | null = null;
     private unitVisualAngles: Map<string, number> = new Map();
 
+    /** [2026-08-27 §② 划桨随速] 每舰队的世界速度跟踪（世界坐标+时间戳），算真实船速（不受地图平移干扰）。 */
+    private navalSpeedTrack: Map<string, { lat: number; lng: number; t: number; speed: number }> = new Map();
+
     private lastTime: number = 0;
     private isRunning: boolean = false;
     private showLabels: boolean = true; // [NEW] Toggle for text labels
@@ -712,6 +715,7 @@ export class GlobalUnitRenderer {
             LegionPhalanxDrawer.disposeUnit(id); // 注销：方阵 + 攻城器械状态全清
             this.siegeGearAnchors.delete(id);
             this.siegePushCache.delete(id); // 外推量平滑缓存随单位注销清理
+            this.navalSpeedTrack.delete(id); // 船速跟踪随舰队注销清理
         }
         this.units.delete(unit);
         this.needsSort = true;
@@ -2104,6 +2108,20 @@ export class GlobalUnitRenderer {
                         return { x: c.x, y: c.y };
                     });
                 }
+                // [2026-08-27 §② 划桨随速] 用世界坐标位移/真实时间估计船速（地图平移不改变世界坐标 → 不误判为"飞快"）。
+                //   归一化：海速底 ≈ 0.24 度/游戏秒 → speedFactor≈1；>1 快桨、<1 慢桨、≈0 收桨锚泊。
+                let navalSpeedFactor = 1;
+                if (unit.id) {
+                    const now = performance.now();
+                    const trk = this.navalSpeedTrack.get(unit.id);
+                    if (trk && trk.t > 0) {
+                        const dt = Math.max(0.001, (now - trk.t) / 1000);
+                        const inst = Math.hypot(unitPos.lat - trk.lat, unitPos.lng - trk.lng) / dt;
+                        trk.speed += (inst - trk.speed) * 0.25; // 指数平滑：跟得上但不因单帧抖动/离屏跳变乱跳
+                        navalSpeedFactor = Math.max(0.05, Math.min(2.5, trk.speed / 0.24));
+                    }
+                    this.navalSpeedTrack.set(unit.id, { lat: unitPos.lat, lng: unitPos.lng, t: now, speed: trk?.speed ?? 0 });
+                }
                 LegionPhalanxDrawer.drawNaval(
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
@@ -2117,6 +2135,7 @@ export class GlobalUnitRenderer {
                     unit.id ?? '',
                     navalTrail,
                     navalHeadingDeg,
+                    navalSpeedFactor,
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer
