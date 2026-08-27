@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { WILDERNESS_MONUMENTS, WildernessMonument } from '../data/WildernessMonuments';
 import { CITY_WONDER } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
+import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
 
 /** 野外/城市奇观 marker 基准宽度（px），与据点建筑尺寸基准对齐 */
@@ -59,14 +60,19 @@ export class MonumentLayer {
                 const city = cityById.get(cityId);
                 if (!city) return null;
                 const wonderName = WONDER_NAME[asset] || city.name;
+                // [2026-08-27] 奇观按史实真实坐标独立摆放：错位的用 WONDER_COORD，其余回退城市坐标
+                const coord = WONDER_COORD[asset];
+                const lat = coord?.lat ?? city.lat;
+                const lng = coord?.lng ?? city.lng;
+                const place = coord?.place ?? city.name;
                 return {
                     id: `wonder_${cityId}`,
                     name: wonderName,
                     category: 'ANCIENT_WONDER' as const,
-                    lat: city.lat,
-                    lng: city.lng,
+                    lat,
+                    lng,
                     asset: `/SUCAI_BUILDING/${asset}/preview.png`,
-                    description: `${city.name}的文明奇观·${wonderName}`,
+                    description: `${place}的文明奇观·${wonderName}`,
                 };
             })
             .filter((x): x is WildernessMonument => x !== null);
