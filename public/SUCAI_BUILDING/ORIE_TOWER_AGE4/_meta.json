@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_TOWER_AGE4",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 288,
+  "anchor_x": 144,
+  "anchor_y": 260,
+  "sld_source": "b_orie_tower_age4"
+}

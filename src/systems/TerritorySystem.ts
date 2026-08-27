@@ -444,6 +444,32 @@ function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGr
     return pieces;
 }
 
+/** 险要矩形城墙：长 = LSeg 个 SE 段+门，宽 = WSeg 个 NE 段，两门朝外一致、城垛朝外（2026-08 主人定矩形城样式） */
+function computeRectWall(baseSize: number, LSeg: number, WSeg: number): PalisadeGridPiece[] {
+    const sx = baseSize * 0.075, sy = sx * 0.58;
+    const P0 = { x: 0, y: 0 };
+    const P1 = { x: LSeg * sx, y: LSeg * sy };
+    const P2 = { x: (LSeg + WSeg) * sx, y: (LSeg - WSeg) * sy };
+    const P3 = { x: WSeg * sx, y: -WSeg * sy };
+    const cx = (P0.x + P1.x + P2.x + P3.x) / 4, cy = (P0.y + P1.y + P2.y + P3.y) / 4;
+    const pieces: PalisadeGridPiece[] = [];
+    const put = (x: number, y: number, type: 'NE' | 'SE' | 'POST' | 'GATE', flipX?: boolean) =>
+        pieces.push({ x: x - cx, y: y - cy, type, flipX: !!flipX });
+    put(P0.x, P0.y, 'POST'); put(P1.x, P1.y, 'POST'); put(P2.x, P2.y, 'POST'); put(P3.x, P3.y, 'POST');
+    const halfL = Math.floor(LSeg / 2);
+    // 底边 P0→P1（右下=SE）长边+门
+    for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P0.x + k * sx, P0.y + k * sy, 'SE'); }
+    put(P0.x + halfL * sx, P0.y + halfL * sy, 'GATE', true);
+    // 右边 P1→P2（右上=NE）短边纯墙
+    for (let k = 1; k < WSeg; k++) put(P1.x + k * sx, P1.y - k * sy, 'NE');
+    // 顶边 P2→P3（左上=NE镜像）长边+门（与底门同翻转=朝外一致）
+    for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P2.x - k * sx, P2.y - k * sy, 'NE', true); }
+    put(P2.x - halfL * sx, P2.y - halfL * sy, 'GATE', true);
+    // 左边 P3→P0（左下=SE镜像）短边纯墙
+    for (let k = 1; k < WSeg; k++) put(P3.x - k * sx, P3.y + k * sy, 'SE', true);
+    return pieces;
+}
+
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
@@ -529,8 +555,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const rnd = deMulberry32(deHashString(cityId));
     const rotation = rnd() * 360;
 
-    // 容器尺寸（中1+周8 紧凑）
-    const W = baseSize * 2.2;
+    // 险要矩形城容器（长8段+门 × 宽4段）
+    const W = baseSize * 2.6;
     const H = baseSize * 1.9;
 
     const parts: string[] = [];
@@ -540,8 +566,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
         ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
         : castleAsset;
-    const centerW = baseSize * 0.5;
-    const centerGroundW = centerW * 2.3;
+    const centerW = baseSize * 0.55;
+    const centerGroundW = centerW * 1.5;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     parts.push(
@@ -551,32 +577,23 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
-    // 周围 8 个：兵营/靶场/民居/马厩 + 4 警戒箭塔（45° 扇区 + 扰动）
-    const surround = ['BARRACKS', 'ARCHERY_RANGE', 'HOUSE', 'STABLE', 'TOWER', 'TOWER', 'TOWER', 'TOWER'];
-    surround.forEach((b, i) => {
-        const baseAngle = rotation + i * (360 / surround.length); // 8 = 45° 扇区
-        const angleJitter = (rnd() * 30 - 15);
-        const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.34 + rnd() * 0.08) * baseSize;
-        const x = Math.cos(angle) * r;
-        const y = Math.sin(angle) * r * 0.58;
-        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.4);
-        const zIndex = Math.round(100 + y);
-        const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
+    // 城堡西北方一座警戒箭塔（左上，地基 1.5 贴建筑）
+    const towerW = baseSize * 0.36;
+    const towerGroundW = towerW * 1.5;
+    const towerGroundH = towerGroundW * 0.58;
+    const diag = baseSize * 0.28;
+    const tx = -diag, ty = -diag * 0.58;
+    const tFlip = (deHashString(cityId + '|passTower') & 1) === 1;
+    parts.push(
+        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${towerGroundW.toFixed(1)}px;height:${towerGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px));z-index:97;opacity:0.92;pointer-events:none;" />`
+    );
+    parts.push(
+        `<img src="/SUCAI_BUILDING/${style}_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${towerW.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px - 15%))${tFlip ? ' scaleX(-1)' : ''};z-index:98;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+    );
 
-        const bGroundW = bW * 2.3;
-        const bGroundH = bGroundW * 0.58;
-
-        parts.push(
-            `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
-        );
-        parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
-        );
-    });
-
-    // 石墙绕城（险要：城堡时代石墙，S=5 比中城 6 紧凑）
-    const wallPieces = computePalisadeWallAndGate(baseSize, 5);
+    // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、城垛朝外
+    const wallPieces = computeRectWall(baseSize, 8, 4);
+    // 城墙整体随机镜像（与小城/中城同款，门朝多样化）：随机沿垂直轴翻转，两门仍同向朝外
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }

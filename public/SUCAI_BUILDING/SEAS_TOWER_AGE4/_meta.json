@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWER_AGE4",
+  "frames": 1,
+  "box_w": 212,
+  "box_h": 284,
+  "anchor_x": 148,
+  "anchor_y": 252,
+  "sld_source": "b_seas_tower_age4"
+}

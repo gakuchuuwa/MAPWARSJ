@@ -1211,7 +1211,7 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
     ['MONASTERY', 'AGE3'],
     ['SIEGE_WORKSHOP', 'AGE3'],
 ];
-/** 攻城战守方（中城）12 种城堡时代建筑（age3；2026-08-27 主人定「战术战略一致」：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，与战略中城 DE_MEDIUM_CITY_POOL 对齐） */
+/** 攻城战守方（中城）12 种城堡时代建筑，和战略中城一致：随机取 9 种且不重复。 */
 const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
@@ -3998,7 +3998,32 @@ export class Scene13WarLayer {
                 for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
                 return;
             }
-            // 险要 / 中城 / 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
+            // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；九个落点保持不变。
+            if (this.defenderCityType === 'medium_city') {
+                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, 9);
+                for (let i = 0; i < 9; i++) {
+                    this.decorSprites.push(place(side[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+                }
+                return;
+            }
+            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔；九个落点全部随机。
+            if (this.defenderCityType === 'pass') {
+                const passBuildings = [
+                    this.castleAssetFor(style),
+                    `${style}_BARRACKS_AGE3`,
+                    `${style}_ARCHERY_RANGE_AGE3`,
+                    `${style}_STABLE_AGE3`,
+                    `${style}_HOUSE_AGE3`,
+                    `${style}_TOWER_AGE3`, `${style}_TOWER_AGE3`,
+                    `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
+                ].sort(() => Math.random() - 0.5);
+                const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < 9; i++) {
+                    this.decorSprites.push(place(shuffledPassSpawns[i], passBuildings[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
+                }
+                return;
+            }
+            // 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
             let backX = -Infinity;
             for (const s of side) if (s.x > backX) backX = s.x;
             const backRow = side
@@ -4017,20 +4042,8 @@ export class Scene13WarLayer {
             this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             const rest = side.filter((_, i) => i !== castleIdx && i !== houseIdx);
             const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            // 险要：城堡 age3，与战略一致（兵营/靶场/民居/马厩 + 4 警戒箭塔）；中城：城堡 age3，7 基础 + 警戒塔；大城（含缺省）：帝国 age4，11 全建筑抽 8
-            if (this.defenderCityType === 'pass') {
-                // [2026-08-27 主人「险要建筑与战略一致」] 城堡 + 兵营/靶场/民居/马厩(AGE3) + 4 警戒箭塔(AGE3)
-                // houseIdx 已固定民屋；rest 7 个 = 兵营/靶场/马厩 + 4 警戒箭塔
-                const passRest = ['BARRACKS', 'ARCHERY_RANGE', 'STABLE', 'TOWER', 'TOWER', 'TOWER', 'TOWER'];
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${passRest[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
-            } else if (this.defenderCityType === 'medium_city') {
-                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 6; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
-                this.decorSprites.push(place(shuffledRest[6], `${style}_TOWER_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
-            } else {
-                const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
-            }
+            const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
             return;
         }
 
