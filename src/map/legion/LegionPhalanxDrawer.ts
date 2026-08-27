@@ -31,6 +31,10 @@ let pendingNavalSplashAt = 0;
 /** 上述三个计时器归属的军团 id —— 跟拍换船队立即清零，否则新船队会继承旧船队的节流相位 */
 let navalSfxUnitId = '';
 
+/** [2026-08-27 §② 划桨随速] 逐舰队连续划桨相位（帧单位）与上帧 tick：变速只影响后续推进，不跳帧 */
+const navalOarPhase = new Map<string, number>();
+const navalOarTick = new Map<string, number>();
+
 /** 炮响 → 炮弹落水的间隔（ms），按 DE 里炮弹的飞行观感取值 */
 const NAVAL_SPLASH_DELAY_MS = 700;
 /** 每发炮打空（播落水声）的概率：全中显得没有落点、全空显得没打中，取一半 */
@@ -943,6 +947,8 @@ export class LegionPhalanxDrawer {
         this.clearSiegeGearState(unitId);
         this.resetNavalDeath(unitId);
         NavalPhalanxStateManager.dispose(unitId);
+        navalOarPhase.delete(unitId);
+        navalOarTick.delete(unitId);
     }
 
     // [NEW] Helper: Get Frame Count based on Aspect Ratio
@@ -967,6 +973,15 @@ export class LegionPhalanxDrawer {
         BOB_CAV_SPEED: 0.0078,  // 骑兵步频：快而碎（小跑）
         BOB_ELE_AMP: 2.0,       // 象兵起伏振幅：更沉
         BOB_ELE_SPEED: 0.0039,  // 象兵步频：更稳
+    } as const;
+
+    /** [2026-08-27 §D 浮沉横摇] 船贴「活着」的微动：浮沉(bob)竖向 1~2px + 横摇(roll)小角度，逐船错相。
+     *  速度单位 rad/ms（同 MICRO_MOTION）；振幅按 scale 缩放，远观自动收敛为微光感。 */
+    private static readonly NAVAL_MICRO = {
+        BOB_AMP: 1.2,
+        BOB_SPEED: 0.0026,   // ≈2.4s 一次升沉，比步兵(1.2s)更沉
+        ROLL_AMP: 0.024,     // 弧度，≈1.4°
+        ROLL_SPEED: 0.0021,  // 稍慢于升沉，避免机械同频
     } as const;
 
     /**
@@ -1919,6 +1934,11 @@ export class LegionPhalanxDrawer {
          * 消除 16 向 22.5° 的台阶跳；不给则按 direction 反推（残差 0 = 改动前行为）。
          */
         headingDeg?: number,
+        /**
+         * [2026-08-27 §② 划桨随速] 舰队当前世界速度相对海速底的归一值（≈1 常态，>1 快，0=停）。
+         * 驱动划桨帧率：快船快桨、慢船慢桨、停船收桨。缺省 1 = 改动前 150ms 固定步。
+         */
+        speedFactor?: number,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -2046,7 +2066,7 @@ export class LegionPhalanxDrawer {
         const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
-        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number }[] = [];
+        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number }[] = [];
 
         for (let i = 0; i < formation.length; i++) {
@@ -2081,6 +2101,19 @@ export class LegionPhalanxDrawer {
             while (resDeg > 180) resDeg -= 360;
             while (resDeg < -180) resDeg += 360;
             const shipRot = resDeg * Math.PI / 180;
+
+            // [2026-08-27 §D 浮沉横摇] 逐船错相微动：浮沉竖移 + 横摇小角度。只叠在贴图绘制上，
+            //   不动舰队逻辑位/尾迹（wake 仍踩逻辑位，1~2px 浮沉不会脱节）。
+            //   相位 = 舰队 id 哈希(0..2π) + 船位序 i×1.7：同舰队不错频，跨舰队也不同步。
+            let unitPhase = 0;
+            if (unitId) {
+                let h = 0;
+                for (let k = 0; k < unitId.length; k++) h = (h * 31 + unitId.charCodeAt(k)) | 0;
+                unitPhase = (h % 628) / 100;
+            }
+            const microPhase = unitPhase + i * 1.7;
+            const bobY = Math.sin(tick * LegionPhalanxDrawer.NAVAL_MICRO.BOB_SPEED + microPhase) * -LegionPhalanxDrawer.NAVAL_MICRO.BOB_AMP * scale;
+            const roll = Math.sin(tick * LegionPhalanxDrawer.NAVAL_MICRO.ROLL_SPEED + microPhase * 1.3) * LegionPhalanxDrawer.NAVAL_MICRO.ROLL_AMP;
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];
@@ -2129,7 +2162,16 @@ export class LegionPhalanxDrawer {
                 currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else if (state === 'MOVE') {
                 rawSprite = currentSet.MOVE[shipDir] || currentSet.MOVE[0];
-                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
+                // [2026-08-27 §② 划桨随速] 浆速贴真实船速：speedFactor>1 快浆、<1 慢浆、≈0 收浆锚泊。
+                //   连续相位累加（本帧推进 dt/oarMs 帧）：变速只影响后续推进，不会让帧跳到任意处。
+                const oarMs = Math.max(55, Math.min(600, 150 / Math.max(0.05, speedFactor ?? 1)));
+                const prevTick = navalOarTick.get(unitId) ?? tick;
+                navalOarTick.set(unitId, tick);
+                // dt 钳到 120ms：舰队闲置/战斗后回归 MOVE 时不猛跳，日常 60fps(≈17ms) 不受影响。
+                const dtMs = Math.min(120, Math.max(0, tick - prevTick));
+                const phase = (navalOarPhase.get(unitId) ?? 0) + dtMs / oarMs;
+                navalOarPhase.set(unitId, phase);
+                currentFrameIndex = Math.floor(phase + i * 0.18) % td.totalFrames;
             } else {
                 rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
             }
@@ -2146,7 +2188,7 @@ export class LegionPhalanxDrawer {
                     img: tintedSprite,
                     sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
                     w: dd.fw * td.s!, h: dd.fh * td.s!,
-                    alpha: shipAlpha, rot: shipRot,
+                    alpha: shipAlpha, rot: shipRot, bobY, roll,
                 });
             } else {
                 const tfw = tintedSprite.width / td.totalFrames;
@@ -2155,7 +2197,7 @@ export class LegionPhalanxDrawer {
                     img: tintedSprite,
                     sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
                     w: td.w, h: td.h,
-                    alpha: shipAlpha, rot: shipRot,
+                    alpha: shipAlpha, rot: shipRot, bobY, roll,
                 });
             }
         }
@@ -2176,17 +2218,18 @@ export class LegionPhalanxDrawer {
         ships.sort((a, b) => a.r - b.r);
         for (const s of ships) {
             if (s.alpha !== undefined && s.alpha < 1) ctx.globalAlpha = s.alpha;
-            // 🔴 [2026-08-27 §B] rot = 16 向量化丢掉的残差角（|rot| ≤ 11.25°）。
-            //    绕船的逻辑点（ax/ay）旋转，等距贴图在这个角度内不会看出形变，
-            //    换来的是转弯时朝向连续，不再一档一档蹦。rot≈0 时走老路径，逐像素不变。
-            if (Math.abs(s.rot) > 0.001) {
+            // 🔴 [2026-08-27 §B] rot = 16 向量化丢掉的残差角（|rot| ≤ 11.25°），绕逻辑点（ax/ay）旋转消除台阶。
+            //    [2026-08-27 §D] 再叠 roll（横摇小角度）与 bobY（浮沉竖移）；浮沉只移绘制 y，不动逻辑位/尾迹。
+            const tRot = s.rot + (s.roll ?? 0);
+            const tY = s.ay + (s.bobY ?? 0);
+            if (Math.abs(tRot) > 0.001) {
                 ctx.save();
-                ctx.translate(s.ax, s.ay);
-                ctx.rotate(s.rot);
+                ctx.translate(s.ax, tY);
+                ctx.rotate(tRot);
                 ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ox, s.oy, s.w, s.h);
                 ctx.restore();
             } else {
-                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ax + s.ox, s.ay + s.oy, s.w, s.h);
+                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ax + s.ox, tY + s.oy, s.w, s.h);
             }
             if (s.alpha !== undefined && s.alpha < 1) ctx.globalAlpha = 1;
         }

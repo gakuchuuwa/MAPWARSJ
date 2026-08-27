@@ -8,7 +8,6 @@ import { StrategicGridLayer } from './StrategicGridLayer';
 import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { GridSystem } from '../systems/GridSystem';
-import { TreeLayer } from './TreeLayer';
 import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
@@ -26,7 +25,6 @@ export class GameMap {
     private hillshadeLayer: HillshadeLayer | null = null;
     private riverLayer: RiverOverlayLayer | null = null;
     private vectorRiverLayer: VectorRiverLayer | null = null;
-    private treeLayer: TreeLayer | null = null;
     private monumentLayer: MonumentLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
@@ -162,6 +160,8 @@ export class GameMap {
 
 
 
+        this.vegetationLayer = new VegetationLayer(this.map);
+
         if (import.meta.env.DEV) {
             this.addStyleControl();
         } else {
@@ -177,9 +177,6 @@ export class GameMap {
         this.cityCaptureRenderer = new CityCaptureRenderer(this);
         // [NEW] Initialize Wilderness Monument Layer (29 Historical Sites)
         this.monumentLayer = new MonumentLayer(this.map);
-        // [NEW] Initialize Strategic Vegetation Layer (Pilot: Japan Archipelago)
-        this.vegetationLayer = new VegetationLayer(this.map);
-
         // 文化区界城环线（仅 zoom=6 显示）
         new RegionBoundaryLayer(this.map);
 
@@ -200,7 +197,7 @@ export class GameMap {
 
         this.toggleRiver(true);
         this.toggleHillshade(true);
-        this.toggleTree(false);
+        this.toggleTree(true);
 
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
@@ -226,7 +223,7 @@ export class GameMap {
         const chkElevColor = document.getElementById('chk-elev-color') as HTMLInputElement;
         if (chkElevColor) chkElevColor.checked = true;
         const chkTree = document.getElementById('chk-tree') as HTMLInputElement;
-        if (chkTree) chkTree.checked = false;
+        if (chkTree) chkTree.checked = true;
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
             const rngZ = document.getElementById('rng-z') as HTMLInputElement;
@@ -406,18 +403,7 @@ export class GameMap {
     }
 
     public toggleTree(enable: boolean) {
-        if (enable) {
-            if (!this.treeLayer) {
-                this.treeLayer = new TreeLayer(this.map);
-            }
-            if (!this.map.hasLayer(this.treeLayer)) {
-                this.treeLayer.addTo(this.map);
-            }
-        } else {
-            if (this.treeLayer && this.map.hasLayer(this.treeLayer)) {
-                this.map.removeLayer(this.treeLayer);
-            }
-        }
+        this.vegetationLayer?.setVisible(enable);
     }
 
     /**
