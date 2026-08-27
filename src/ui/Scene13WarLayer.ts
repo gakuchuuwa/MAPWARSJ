@@ -1145,18 +1145,18 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     JIANGNAN: 'ASIA',
     LINGNAN: 'ASIA',
     BASHU: 'ASIA',
-    DIANQIAN: 'SEAS',
+    DIANQIAN: 'ASIA',  // [2026-08-27] SEAS→ASIA（主人定滇缅归中国区，与战略一致）
     HEXI: 'ASIA',
-    WESTERN: 'CEAS',
+    WESTERN: 'ASIA',   // [2026-08-27] CEAS→ASIA（主人定西域归中国区，与战略一致）
     TIBET: 'INDI',
-    STEPPE: 'CEAS',
+    STEPPE: 'CEAS',    // 草原特例：战术无蒙古包，用库曼建筑近似（保持不动）
     NORTHEAST: 'ASIA',
     KOREA: 'ASIA',
     JAPAN: 'ASIA',
-    CENTRAL_ASIA: 'CEAS',
+    CENTRAL_ASIA: 'ORIE', // [2026-08-27] CEAS→ORIE（塞尔柱波斯-突厥，与战略一致）
     WEST_ASIA: 'ORIE',
     INDIA: 'INDI',
-    BERBER: 'AFRI',
+    BERBER: 'ORIE',    // [2026-08-27] AFRI→ORIE（柏柏尔在北非近东，与战略一致）
     AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
     AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
     MALAY: 'SEAS',    // [2026-08-24] 马来东南亚
@@ -1164,8 +1164,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
     EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
-    GREEK: 'GREEK',   // [2026-08-27] 希腊（古希腊城邦/大希腊）
-    THRACIAN: 'THRACIAN', // [2026-08-27] 色雷斯（保加利亚/色雷斯）
+    GREEK: 'MEDI',    // [2026-08-27] GREEK→MEDI（greek 战役前缀无 AGE3 池会 404，与战略一致）
+    THRACIAN: 'SLAV', // [2026-08-27] THRACIAN→SLAV（thracian 战役前缀无 AGE3 池会 404，与战略一致）
     PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
 };
