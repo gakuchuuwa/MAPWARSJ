@@ -50,13 +50,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    nanyue: {
+    "nanyue": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "echelon",
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "war_chariot_ranged", count: 3 },
+            { type: "chukonu", count: 2 },
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
