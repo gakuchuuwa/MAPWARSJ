@@ -30,4 +30,5 @@ export const EAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
 
     // ── T4 存在之兵 ──
     ruidian_yota: { name: '卡尔马盟', tier: 4 },      // 哥德堡·卡尔九世：卡尔马战争可考
+    nuowei: { name: '维京海盗', tier: 3 },
 };

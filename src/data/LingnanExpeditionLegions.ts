@@ -74,4 +74,5 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
     chen: { name: '百越甲兵', tier: 3 },
     shuizu: { name: '水族藤甲', tier: 3 },
     wuxi: { name: '武陵弓蛮', tier: 3 },
+    liaozu: { name: '寮族兵', tier: 3 },
 };

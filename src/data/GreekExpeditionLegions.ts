@@ -29,4 +29,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T4 存在之兵 ──
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
+    fujisi: { name: '福基斯重步', tier: 4 },
+    yilisi: { name: '埃利斯战车', tier: 4 },
 };

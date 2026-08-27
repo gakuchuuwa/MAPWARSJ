@@ -40,4 +40,5 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     bitiniya: { name: '比提尼卫', tier: 4 },       // 尼凯亚·狄奥多尔：尼凯亚位于比提尼亚故地，常规卫队
     fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队
     ribale: { name: '代尔木重步', tier: 2 },
+    wuer: { name: '乌尔重步', tier: 3 },
 };

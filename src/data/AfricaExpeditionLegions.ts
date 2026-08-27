@@ -8,4 +8,6 @@
 export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     manding: { name: '飞刀女兵', tier: 3 },
     ethiopia: { name: '弯刀勇士', tier: 3 },
+    kushi: { name: '努比亚弓手', tier: 3 },
+    jienei: { name: '杰内水军', tier: 4 },
 };
