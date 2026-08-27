@@ -5,10 +5,10 @@ import { WONDER_NAME } from '../data/WonderNames';
 import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
 
-/** 野外/城市奇观 marker 基准宽度（px），与据点建筑尺寸基准对齐 */
-const BASE_SIZE = 68;
-/** 重叠判定最小间距（度）：zoom 9 下 ≈ 68px（marker 宽），中心距小于此值判为重叠并外推 */
-const OVERLAP_MIN_DEG = 0.19;
+/** 奇观 marker 基准宽度（px）：与城堡地标（baseSize×0.68）一般大小，比普通据点建筑（×0.40）略大更显眼 */
+const BASE_SIZE = 90;
+/** 重叠判定最小间距（度）：zoom 9 下 ≈ 90px（奇观 marker 宽），中心距小于此值判为重叠并外推 */
+const OVERLAP_MIN_DEG = 0.25;
 
 interface PlacedMonument extends WildernessMonument {
     /** marker 实际摆放坐标（重叠时可能相对真实坐标外推） */
@@ -55,8 +55,9 @@ export class MonumentLayer {
 
         // [2026-08-27 主人定「把所有奇观按坐标独立摆放到战略地图，不动据点」]：名城奇观也按城市坐标独立摆放
         const cityById = new Map(CITIES_V2.map((c) => [c.id, c]));
-        const wonderMonuments: WildernessMonument[] = Object.entries(CITY_WONDER)
-            .map(([cityId, asset]): WildernessMonument | null => {
+        interface WonderMonument extends WildernessMonument { assetKey: string; }
+        const wonderMonuments: WonderMonument[] = Object.entries(CITY_WONDER)
+            .map(([cityId, asset]): WonderMonument | null => {
                 const city = cityById.get(cityId);
                 if (!city) return null;
                 const wonderName = WONDER_NAME[asset] || city.name;
@@ -67,6 +68,7 @@ export class MonumentLayer {
                 const place = coord?.place ?? city.name;
                 return {
                     id: `wonder_${cityId}`,
+                    assetKey: asset,
                     name: wonderName,
                     category: 'ANCIENT_WONDER' as const,
                     lat,
@@ -75,12 +77,16 @@ export class MonumentLayer {
                     description: `${place}的文明奇观·${wonderName}`,
                 };
             })
-            .filter((x): x is WildernessMonument => x !== null);
-        const allMonuments = [...WILDERNESS_MONUMENTS, ...wonderMonuments];
+            .filter((x): x is WonderMonument => x !== null);
 
-        // [2026-08-27 主人要求「重叠的奇观以重叠点为中心排列，不要重叠」]：
-        // 挂城市奇观固定在城市坐标（城市地标不动）；野外名胜若与固定点/已放名胜重叠则沿远离方向外推。
-        const placed = this.deoverlap(allMonuments, new Set(wonderMonuments.map((m) => m.id)));
+        // [2026-08-27] 去重叠排序：正确挂靠（真实就在城市）优先落位固定；错位修正（WONDER_COORD）其次；
+        // 野外名胜最后。deoverlap 统一沿远离最近锚点外推，保证「城市地标留原位、重复/错位的往外散」。
+        const allMonuments: WildernessMonument[] = [
+            ...wonderMonuments.filter((m) => !WONDER_COORD[m.assetKey]),
+            ...wonderMonuments.filter((m) => WONDER_COORD[m.assetKey]),
+            ...WILDERNESS_MONUMENTS,
+        ];
+        const placed = this.deoverlap(allMonuments);
 
         for (const mon of placed) {
             const w = BASE_SIZE;
@@ -191,25 +197,16 @@ export class MonumentLayer {
     }
 
     /**
-     * 去重叠：挂城市奇观是城市地标，固定在城市坐标不动；
-     * 野外名胜若与任一固定点（或已放置的野外名胜）中心距 < OVERLAP_MIN_DEG，
-     * 则沿「远离最近锚点」的方向外推到 OVERLAP_MIN_DEG，使 marker 互不遮挡。
+     * 去重叠：所有 monument（挂城市奇观 + 野外名胜）按 all 数组顺序落位，
+     * 若与任一已放置锚点中心距 < OVERLAP_MIN_DEG，则沿「远离最近锚点」的方向外推到 OVERLAP_MIN_DEG。
+     * all 已按「正确挂靠 → 错位修正 → 野外」排序，故正确城市地标留原位，重复/错位的往外散。
      * 真实坐标保留在 mon.lat/lng（弹窗用），仅 renderLat/renderLng 参与摆放。
      */
-    private deoverlap(all: WildernessMonument[], fixedIds: Set<string>): PlacedMonument[] {
+    private deoverlap(all: WildernessMonument[]): PlacedMonument[] {
         const placed: PlacedMonument[] = [];
         const anchors: { lat: number; lng: number }[] = [];
 
-        // 第一遍：固定点（挂城市奇观）先落位，作为锚
         for (const mon of all) {
-            if (fixedIds.has(mon.id)) {
-                placed.push({ ...mon, renderLat: mon.lat, renderLng: mon.lng });
-                anchors.push({ lat: mon.lat, lng: mon.lng });
-            }
-        }
-        // 第二遍：野外名胜按序落位，重叠则外推
-        for (const mon of all) {
-            if (fixedIds.has(mon.id)) continue;
             let rLat = mon.lat;
             let rLng = mon.lng;
             let nearest: { lat: number; lng: number } | null = null;

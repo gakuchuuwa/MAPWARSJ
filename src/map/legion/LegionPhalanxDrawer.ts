@@ -1839,6 +1839,69 @@ export class LegionPhalanxDrawer {
         return { x: oldest.x + (ex / elen) * rest, y: oldest.y + (ey / elen) * rest };
     }
 
+    /**
+     * 航迹折线（2026-08-27 §A 蛇形跟随）：pts[0] = 旗舰当前点，往后越来越老；cum = 自旗舰起的累积弧长。
+     * 一次构建、多次二分采样，避免每艘船各扫一遍 64 点航迹。
+     */
+    private static buildNavalPath(
+        center: { x: number; y: number },
+        trail: { x: number; y: number }[] | undefined,
+    ): { pts: { x: number; y: number }[]; cum: number[] } {
+        const pts: { x: number; y: number }[] = [{ x: center.x, y: center.y }];
+        const cum: number[] = [0];
+        if (trail) {
+            for (let i = trail.length - 1; i >= 0; i--) {
+                const q = trail[i];
+                const last = pts[pts.length - 1];
+                const d = Math.hypot(last.x - q.x, last.y - q.y);
+                if (d < 0.5) continue;   // 与上一点几乎重合（地图缩放后航迹会挤在一起）
+                pts.push({ x: q.x, y: q.y });
+                cum.push(cum[cum.length - 1] + d);
+            }
+        }
+        return { pts, cum };
+    }
+
+    /**
+     * 沿航迹从旗舰向后回溯 dist 像素取点，返回坐标 + 当地切线角（屏幕数学角，指向前进方向）。
+     * 航迹短于 dist（刚下水 / 直线航行采样稀疏）→ 沿最后一段直线外推，
+     * 航迹为空 → 完全退化成 fallbackAng 直线，即改动前的刚体阵型，逐像素一致。
+     */
+    private static sampleNavalPath(
+        path: { pts: { x: number; y: number }[]; cum: number[] },
+        dist: number,
+        fallbackAng: number,
+    ): { x: number; y: number; ang: number } {
+        const { pts, cum } = path;
+        const d = Math.max(0, dist);
+        const head = pts[0];
+        if (pts.length < 2) {
+            return { x: head.x - Math.cos(fallbackAng) * d, y: head.y - Math.sin(fallbackAng) * d, ang: fallbackAng };
+        }
+        const total = cum[cum.length - 1];
+        if (d >= total) {
+            // 航迹用尽：沿最老一段的方向继续外推
+            const a = pts[pts.length - 2], b = pts[pts.length - 1];
+            const ang = Math.atan2(a.y - b.y, a.x - b.x);
+            const over = d - total;
+            return { x: b.x - Math.cos(ang) * over, y: b.y - Math.sin(ang) * over, ang };
+        }
+        // 二分定位所在段 [i, i+1]
+        let lo = 0, hi = cum.length - 1;
+        while (lo + 1 < hi) {
+            const mid = (lo + hi) >> 1;
+            if (cum[mid] <= d) lo = mid; else hi = mid;
+        }
+        const a = pts[lo], b = pts[lo + 1];
+        const segLen = cum[lo + 1] - cum[lo];
+        const t = segLen > 0.0001 ? (d - cum[lo]) / segLen : 0;
+        return {
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t,
+            ang: Math.atan2(a.y - b.y, a.x - b.x),   // 老 → 新 = 前进方向
+        };
+    }
+
     public static drawNaval(
         ctx: CanvasRenderingContext2D,
         center: { x: number; y: number },
@@ -1851,6 +1914,11 @@ export class LegionPhalanxDrawer {
         lockedShipId: NavalShipAssetId | null = null,
         unitId: string = '',
         trail?: { x: number; y: number }[],
+        /**
+         * 旗舰精确航向（度，北=0 顺时针）。给了就用它算「量化残差角」做微旋（§B），
+         * 消除 16 向 22.5° 的台阶跳；不给则按 direction 反推（残差 0 = 改动前行为）。
+         */
+        headingDeg?: number,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -1918,13 +1986,12 @@ export class LegionPhalanxDrawer {
             totalFrames: number;
             w: number;
             h: number;
-            /** DE 动态帧框（hotspot 对齐）：统一缩放 s = baseHeight×scale/64 */
+            /** DE 动态帧框（hotspot 对齐）：统一缩放 s = baseHeight×scale/64。
+             *  🔴 [2026-08-27] 帧框不再在这里定死一个方向——蛇形跟随后每艘船朝向都不同，
+             *     改为存 dynEntry，在船循环里按**该船自己的** shipDir 查框。 */
             s?: number;
             dyn?: boolean;
-            fw?: number;
-            fh?: number;
-            hx?: number;
-            hy?: number;
+            dynEntry?: { dirs16?: boolean; frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> };
         }
         const typeDraws = new Map<NavalShipAssetId, NavalTypeDraw>();
         for (const typeId of ['ship_small', 'ship_medium', 'ship_large'] as const) {
@@ -1936,13 +2003,12 @@ export class LegionPhalanxDrawer {
             }
             // 🔴 DE 动态帧框（hotspot 对齐）：每向 box 尺寸不同，用 _meta.json 的 fw/fh/hx/hy + 统一缩放 s。
             //    S10DB 走正方形帧（旧逻辑）：frameH 每向一致，按高算 h。
-            // 🔴 [2026-08-20 修复战船裁切] 战船是 16 向素材、按偶数向采样成 8 向 → 元数据键 = direction*2，
-            //    统一走 metaDirFor；旧代码直接查 dirs[direction] 取到一半宽的框，船被竖直切掉半条（主人实锤）。
+            // 🔴 [2026-08-20 修复战船裁切] 战船是 16 向素材 → 元数据键统一走 metaDirFor(…, true)；
+            //    旧代码直接查 dirs[direction] 取到一半宽的框，船被竖直切掉半条（主人实锤）。
             const dynEntry = (set as any).dyn?.IDLE;
-            const dynDir = this.metaDirFor(dynEntry, direction, true);
-            if (dynDir) {
+            if (dynEntry && this.metaDirFor(dynEntry, direction, true)) {
                 const s = baseHeight * scale * getNavalShipDrawScale(typeId) / 64;
-                typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, fw: dynDir.fw, fh: dynDir.fh, hx: dynDir.hx, hy: dynDir.hy });
+                typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, dynEntry });
             } else {
                 const totalFrames = this.getFrameCount(sample);
                 const frameW = sample.width / totalFrames;
@@ -1953,53 +2019,75 @@ export class LegionPhalanxDrawer {
         }
 
         // 编队间距以旗舰（大船）尺寸为基准。
-        // 🔴 [2026-08-19 修·叠船] 纵向间距原先取「绘制高 × 0.75」：DE 大船 dir0 帧 156 宽 × 132 高，
-        //   船长是**宽**（fw=船首到船尾），高是桅杆+船体——用高当间距再 ×0.75，再被 formation 的
-        //   r 步进 0.8 一乘，实际船距只有 ~0.6 船长 → 后船船首插进前船船尾（叠船）。
-        //   现在 r 步进改为 1.0（r = 多少条船长），间距基准改为「船长（fw）× 1.15」→ 船距 = 1.15 船长，留 15% 间距。
-        // 🔴 [2026-08-19 实测修] 横向基准原为 0.45×船宽，配 formation 的 c=±0.45 → 两列中心只隔
-        //    0.4 个船宽（zoom10 下 50px，而船宽 116px）—— **两列完全重叠，8 艘看着只有 4 团**。
-        //    现在基准 = 整个船宽，c=±0.5 → 两列中心正好隔一个船宽，刚好不叠。
-        //    舰队总宽 1.0 船宽，仍比旧菱形阵（±1.5×0.40 = 1.2 船宽）窄。
+        // 🔴 [2026-08-19 修·叠船] 纵向间距基准 = 船长（fw）× 1.15，配 formation 的 r 步进 1.0 → 船距 1.15 船长。
+        // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心正好隔一个船宽，刚好不叠。
         const flagship = typeDraws.get('ship_large')!;
-        const flagshipW = flagship.dyn ? flagship.fw! * flagship.s! : flagship.w;
+        const flagDyn = flagship.dyn ? this.metaDirFor(flagship.dynEntry, direction, true) : undefined;
+        const flagshipW = flagDyn ? flagDyn.fw * flagship.s! : flagship.w;
         const shipDepth = flagshipW * 1.15;
         const shipSpread = flagshipW;
 
         // 对角朝向 c 轴加 0.15 补偿视觉压缩；正朝向不变。
-        // 🔴 [2026-08-21 16 向] d16%4==0 = 视觉 45° 对角（原 8 向奇数向）→1.15；%4==2 = 正方向 →1.0；
-        //    奇数 = 22.5° 中间向 → 1.075（新旧之间）。与 8 向兼容：d16=2·d8 时结果不变。
+        // 🔴 [2026-08-21 16 向] d16%4==0 = 视觉 45° 对角 →1.15；%4==2 = 正方向 →1.0；奇数 = 22.5° 中间向 →1.075。
         const dMod4 = direction % 4;
         const cMult = dMod4 === 2 ? 1.0 : (dMod4 === 0 ? 1.15 : 1.075);
 
-        // 旋转角（与陆军一致）：
-        // 🔴 [2026-08-21 全 16 向船] direction 现为 16 向（0-15，22.5°/档）→ (direction+2)*π/8。
-        //    8 向时代 (direction+1)*π/4，代入 d16=2·d8 → (2d8+2)π/8 = (d8+1)π/4，逐像素一致。
-        const angle = (direction + 2) * Math.PI / 8;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
+        // 🔴 [2026-08-27 §A 蛇形跟随 + §B 残差微旋] —— 「航行丝滑」的两处核心改动。
+        //   旧实现：整队走一个刚体旋转矩阵（origX·cos−origY·sin），旗舰一转，后面 7 条船同一帧
+        //   横移到新位置，像一块钢板在拐弯；且朝向量化到 16 向后残差直接丢掉，转弯 22.5° 一跳。
+        //   新实现：
+        //     ① 后随船沿旗舰**走过的航迹**回溯定位（航迹早就在采样了，一路传下来却被丢掉），
+        //        每船朝向 = 自己所在那段航迹的切线 → 转弯自动排成蛇形，也不会切弯插上岸。
+        //     ② 每船各自量化出 16 向帧，量化丢掉的 ±11.25° 用 ctx.rotate 补回去，台阶消失。
+        //   无航迹（军团编辑器预览、刚下水第一帧）→ sampleNavalPath 退化为直线，逐像素回到旧行为。
+        const headDeg = headingDeg ?? (45 + 22.5 * direction);
+        const flagAng = headDeg * Math.PI / 180 - Math.PI / 2;   // 屏幕数学角（前进方向）
+        const path = this.buildNavalPath(center, trail);
+        const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
-        const ships: { x: number; y: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; isHotspot?: boolean }[] = [];
-        const shipPositions: { x: number; y: number; r: number; isAlive: boolean }[] = [];
+        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number }[] = [];
+        const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number }[] = [];
 
         for (let i = 0; i < formation.length; i++) {
             const pos = formation[i] ?? formation[0];
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
-            // 阵内坐标：origX 为左右横向（列），origY 为前后纵深（排：r 为负代表后方，取反为正纵深）
+
+            // ① 沿航迹定位：backDist = 该船落后旗舰多少像素（r 为负代表后方）
+            const backDist = -pos.r * shipDepth;
+            let node: { x: number; y: number };
+            let localAng: number;
+            if (backDist <= 0.0001) {
+                // 旗舰（及横列阵同排船）：位置就是逻辑点，朝向永远用精确航向，不受航迹采样抖动影响
+                node = { x: center.x, y: center.y };
+                localAng = flagAng;
+            } else {
+                node = this.sampleNavalPath(path, backDist, flagAng);
+                const a0 = this.sampleNavalPath(path, backDist - smoothSpan, flagAng);
+                const a1 = this.sampleNavalPath(path, backDist + smoothSpan, flagAng);
+                localAng = Math.atan2(a0.y - a1.y, a0.x - a1.x);
+            }
+            // ② 横向偏移沿当地法线（与旧刚体式 (cos angle, sin angle) 同向：angle = localAng + π/2）
             const origX = pos.c * shipSpread * cMult;
-            const origY = -pos.r * shipDepth;
-            // 旗舰与僚舰统一采用战术编队刚体旋转矩阵，步调、航速、朝向与旗舰完全同步
-            const dx = center.x + (origX * cos - origY * sin);
-            const dy = center.y + (origX * sin + origY * cos);
+            const dx = node.x + origX * -Math.sin(localAng);
+            const dy = node.y + origX * Math.cos(localAng);
+
+            // ③ 该船自己的 16 向帧 + 量化残差角
+            let shipDeg = (localAng + Math.PI / 2) * 180 / Math.PI;
+            shipDeg = ((shipDeg % 360) + 360) % 360;
+            const shipDir = ((Math.round((shipDeg - 45) / 22.5) % 16) + 16) % 16;
+            let resDeg = shipDeg - (45 + 22.5 * shipDir);
+            while (resDeg > 180) resDeg -= 360;
+            while (resDeg < -180) resDeg += 360;
+            const shipRot = resDeg * Math.PI / 180;
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];
             const shipDying = shipSlot?.state === 'DYING';
             const shipDead = shipSlot?.state === 'DEAD';
             const isShipAlive = !shipDead && !shipDying && state !== 'DEATH';
-            shipPositions.push({ x: dx, y: dy, r: pos.r, isAlive: isShipAlive });
+            shipPositions.push({ x: dx, y: dy, r: pos.r, isAlive: isShipAlive, dir: shipDir });
 
             let rawSprite: HTMLImageElement | undefined;
             let currentFrameIndex = 0;
@@ -2014,7 +2102,7 @@ export class LegionPhalanxDrawer {
                 // 逐舰阵亡动画：用该舰的 stateStartTime 驱动；无 death 帧 → idle 兜底 + 渐隐淡出
                 const timeDead = Math.max(0, tick - shipSlot.stateStartTime);
                 if (currentSet.DEATH.length === 0) {
-                    rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+                    rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
@@ -2026,24 +2114,24 @@ export class LegionPhalanxDrawer {
                 const starts = this.ensureNavalDeathStarts(unitId, formation.length, tick);
                 const timeDead = Math.max(0, tick - (starts[i] ?? tick));
                 if (currentSet.DEATH.length === 0) {
-                    rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+                    rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
-                    rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
+                    rawSprite = currentSet.DEATH[shipDir] || currentSet.DEATH[0];
                     currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
                 }
             } else if (state === 'DAMAGE') {
-                rawSprite = currentSet.DAMAGE[direction] || currentSet.DAMAGE[0];
+                rawSprite = currentSet.DAMAGE[shipDir] || currentSet.DAMAGE[0];
                 currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else if (state === 'ATTACK') {
-                rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
+                rawSprite = currentSet.ATTACK[shipDir] || currentSet.ATTACK[0];
                 currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else if (state === 'MOVE') {
-                rawSprite = currentSet.MOVE[direction] || currentSet.MOVE[0];
+                rawSprite = currentSet.MOVE[shipDir] || currentSet.MOVE[0];
                 currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else {
-                rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+                rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
             }
             if (!rawSprite?.complete || rawSprite.naturalWidth === 0) continue;
 
@@ -2051,22 +2139,23 @@ export class LegionPhalanxDrawer {
             if (!tintedSprite) continue;
 
             if (td.dyn) {
-                // DE：hotspot 对齐，x/y = 绘制左上角（hotspot 钉在逻辑点 dx/dy）
+                // DE：hotspot 对齐。帧框按该船自己的朝向查；缺该向元数据 → 回落旗舰向（typeDraws 已确认存在）
+                const dd = this.metaDirFor(td.dynEntry, shipDir, true) ?? this.metaDirFor(td.dynEntry, direction, true)!;
                 ships.push({
-                    x: dx - td.hx! * td.s!, y: dy - td.hy! * td.s!, r: pos.r,
+                    ax: dx, ay: dy, ox: -dd.hx * td.s!, oy: -dd.hy * td.s!, r: pos.r,
                     img: tintedSprite,
-                    sx: currentFrameIndex * td.fw!, sy: 0, sw: td.fw!, sh: td.fh!,
-                    w: td.fw! * td.s!, h: td.fh! * td.s!,
-                    alpha: shipAlpha, isHotspot: true,
+                    sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
+                    w: dd.fw * td.s!, h: dd.fh * td.s!,
+                    alpha: shipAlpha, rot: shipRot,
                 });
             } else {
                 const tfw = tintedSprite.width / td.totalFrames;
                 ships.push({
-                    x: dx, y: dy, r: pos.r,
+                    ax: dx, ay: dy, ox: -td.w / 2, oy: -td.h / 2, r: pos.r,
                     img: tintedSprite,
                     sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
                     w: td.w, h: td.h,
-                    alpha: shipAlpha,
+                    alpha: shipAlpha, rot: shipRot,
                 });
             }
         }
@@ -2087,13 +2176,17 @@ export class LegionPhalanxDrawer {
         ships.sort((a, b) => a.r - b.r);
         for (const s of ships) {
             if (s.alpha !== undefined && s.alpha < 1) ctx.globalAlpha = s.alpha;
-            if (s.isHotspot) {
-                // DE：x/y 已是左上角（hotspot 对齐逻辑点）
-                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.x, s.y, s.w, s.h);
+            // 🔴 [2026-08-27 §B] rot = 16 向量化丢掉的残差角（|rot| ≤ 11.25°）。
+            //    绕船的逻辑点（ax/ay）旋转，等距贴图在这个角度内不会看出形变，
+            //    换来的是转弯时朝向连续，不再一档一档蹦。rot≈0 时走老路径，逐像素不变。
+            if (Math.abs(s.rot) > 0.001) {
+                ctx.save();
+                ctx.translate(s.ax, s.ay);
+                ctx.rotate(s.rot);
+                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ox, s.oy, s.w, s.h);
+                ctx.restore();
             } else {
-                // S10DB：中心对齐
-                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh,
-                    s.x - s.w / 2, s.y - s.h / 2, s.w, s.h);
+                ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ax + s.ox, s.ay + s.oy, s.w, s.h);
             }
             if (s.alpha !== undefined && s.alpha < 1) ctx.globalAlpha = 1;
         }

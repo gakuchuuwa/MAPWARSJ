@@ -2649,13 +2649,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 奥斯若恩·埃德萨（鲍德温 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军圣殿骑士 3 + 劲弩手 2）
-    aosiruowen: {
+    "aosiruowen": {
         legionName: "圣殿骑士团军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'paragon', count: 4 },              // Row 0 前卫主力破坚 = 圣殿楷模武士 4人（双手大剑正面破坚）
-            { type: 'crusader_knight', count: 3 },      // Row 1 中军铁骑冲击 = 十字军圣殿骑士 3骑（白袍红十字重装铁骑核心突击）
-            { type: 'arbalest', count: 2 },             // Row 2 尾收远程压制 = 劲弩手 2人（十字军重型劲弩高穿透射击）
+            { type: "halberdier", count: 3 },
+            { type: "crusader_knight", count: 3 },
+            { type: "arbalest", count: 2 },
         ],
     },
     // 纳巴泰王国·佩特拉（阿雷塔斯 · 纳巴驼骑军团 · 鹤翼阵 2+4+3：火焰骆驼 2 + 骆驼骑兵 4 + 骆驼弓骑 3）

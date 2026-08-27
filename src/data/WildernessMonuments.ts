@@ -1,5 +1,5 @@
 /**
- * 欧亚非大地图·野外独立历史名胜与战略圣地（34座）
+ * 欧亚非大地图·野外奇观（33座）
  * 真实世界地理经纬度精准定位，直接渲染在大地图的山川、旷野与海滨之上。
  *
  * [2026-08-27 历史审计] 逐座对照 DE 素材 SLD 源与设计文档，纠正素材张冠李戴：
@@ -129,16 +129,6 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         asset: '/SUCAI_BUILDING/AMPHITHEATRE/preview.png',
         scale: 1.0,
         description: '北非突尼斯埃尔杰姆保存最完好的三层拱廊大型古罗马露天圆形剧场。'
-    },
-    {
-        id: 'monument_arch_constantine',
-        name: '君士坦丁凯旋门',
-        category: 'ANCIENT_WONDER',
-        lat: 41.890,
-        lng: 12.492,
-        asset: '/SUCAI_BUILDING/ARCH_OF_CONSTANTINE/preview.png',
-        scale: 1.0,
-        description: '罗马城斗兽场旁为纪念君士坦丁一世战胜马克森提乌斯而建的凯旋门。'
     },
     {
         id: 'monument_poenari_castle',
