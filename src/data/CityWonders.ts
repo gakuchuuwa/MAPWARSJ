@@ -85,4 +85,86 @@ export const CITY_WONDER: Record<string, string> = {
     // 完全两种风格 —— 这个前缀的素材是混杂的，别按前缀想当然。坦贾武尔是朱罗王朝
     // 布里哈迪希瓦拉神庙所在地，形制与图高度吻合。
     'city_tanjiawuer': 'PURU_WONDER_PURU',  // 坦贾武尔（朱罗神庙）
+    // ── [2026-08-28] 奇观周边补据点挂靠（21座，原野外奇观全部转城内奇观）──
+    'city_shuanghe': 'SCEN_PAGODA_D',  // 素可泰（玛哈泰寺）
+    'city_helate': 'MINARET_OF_JAM',  // 菲鲁兹库赫（杰姆宣礼塔）
+    'city_wanxiang': 'SCEN_PAGODA_C',  // 万象（塔銮）
+    'city_mailuoe': 'SCEN_CUSHITE_PYRAMIDS',  // 麦罗埃（黑金字塔）
+    'city_diyawanake': 'SCEN_ANDEAN_RUINS',  // 蒂亚瓦纳科（太阳门）
+    'city_puli': 'SCEN_REKHADEUL_TEMPLE',  // 普里（贾格纳特神庙）
+    'city_hengbi': 'SCEN_INDIAN_RUINS',  // 亨比（神庙群）
+    'city_bijiabuer': 'GOL_GUMBAZ',  // 比贾布尔（戈尔贡巴兹）
+    'city_shengaogusiding': 'WOODEN_FORT',  // 圣奥古斯丁（木堡）
+    'city_deerfei': 'SCEN_ARCHAIC_THOLOS',  // 德尔斐（神谕万神殿）
+    'city_aolinpiya': 'SCEN_HERO_SHRINE',  // 奥林匹亚（佩洛普斯圣坛）
+    'city_boergong': 'EAST_WONDER_VIKINGS',  // 博尔贡（木板教堂）
+    'city_kanpeier': 'QUIMPER_CATHEDRAL',  // 坎佩尔（大教堂）
+    'city_waerna': 'THRACIAN_SHIPYARD_AGE2',  // 瓦尔纳（古港）
+    'city_jiemu': 'AMPHITHEATRE',  // 杰姆（圆形剧场）
+    'city_yazide': 'SCEN_FIRE_SHRINE',  // 亚兹德（拜火坛）
+    'city_wuer': 'SCEN_ANCIENT_RUINS',  // 乌尔城（塔庙）
+    'city_sangqi': 'SANCHI_STUPA',  // 桑奇（大佛塔）
+    'city_putijiaye': 'SCEN_BUDDHA_STATUE',  // 菩提伽耶（成道像）
+    'city_jienei': 'AFRI_WONDER_MALIANS',  // 杰内城（大清真寺）
+    'city_agesi': 'POENARI_CASTLE',  // 阿格斯（波耶纳里城堡）
+};
+
+/**
+ * 附加城内奇观：据点 → 多座附加地标（CITY_WONDER 主奇观之外的第二、第三座奇观）。
+ * [2026-08-28 主人定「所有奇观统称城内奇观，不再有野外奇观」]
+ *   把原 33 座「野外奇观」就近挂靠到据点：10 座有据点的直接挂、2 座（严岛/巨石阵）就近归入，
+ *   其余 21 座新建据点后挂靠。全部有据点归属，不再独立漂浮。
+ */
+export interface ExtraWonder {
+    /** SUCAI_BUILDING 素材目录名 */
+    asset: string;
+    /** 显示名 */
+    name: string;
+    /** 描述（真实所在地） */
+    description: string;
+    /** 类型（决定底座样式）：ANCIENT_WONDER/HOLY_SITE/HERITAGE_FORT/SACRED_PAGODA */
+    category?: 'HOLY_SITE' | 'ANCIENT_WONDER' | 'HERITAGE_FORT' | 'SACRED_PAGODA';
+    /** 真实坐标（缺省回退据点坐标） */
+    lat?: number;
+    lng?: number;
+}
+
+export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
+    // ── [2026-08-28] 原野外奇观就近挂靠据点（10 座有据点的 + 严岛/巨石阵就近归入）──
+    'city_mengfeisi': [
+        { asset: 'GREAT_PYRAMID', name: '吉萨大金字塔', category: 'ANCIENT_WONDER', lat: 29.979, lng: 31.134, description: '古埃及第四王朝胡夫法老修建的吉萨大金字塔，古代世界七大奇迹之首。' },
+    ],
+    'city_thebes': [
+        { asset: 'SCEN_SPHINX', name: '斯芬克斯雕像', category: 'ANCIENT_WONDER', lat: 38.323, lng: 23.318, description: '古希腊底比斯城外峭壁蹲踞的带翼斯芬克斯雕像，俄狄浦斯解谜之地。' },
+    ],
+    'city_chongan': [
+        { asset: 'SCEN_CHINESE_RUINS', name: '竹林古刹遗迹', category: 'ANCIENT_WONDER', lat: 27.750, lng: 118.000, description: 'DE 官方「中国废墟」（Chinese Ruins），深山修竹掩映间残破坍塌的青瓦木构古殿残垣。' },
+    ],
+    'city_weierniwusi': [
+        { asset: 'PAGAN_SHRINE', name: '罗姆瓦异教圣坛', category: 'HOLY_SITE', lat: 54.687, lng: 25.290, description: '波罗的海立陶宛原初信仰罗姆瓦的神圣橡树与永恒圣火祭祀圣所。' },
+    ],
+    'city_nikexiya': [
+        { asset: 'SCEN_CASTLE_RUINS', name: '科洛西要塞', category: 'HERITAGE_FORT', lat: 34.664, lng: 32.934, description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。' },
+    ],
+    'city_yadian': [
+        { asset: 'GREEK_SHIPYARD_AGE2', name: '比雷埃夫斯军港', category: 'HERITAGE_FORT', lat: 37.943, lng: 23.647, description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。' },
+    ],
+    'city_pagan': [
+        { asset: 'SCEN_PAGODA_A', name: '蒲甘阿难陀寺', category: 'SACRED_PAGODA', lat: 21.171, lng: 94.867, description: '缅甸蒲甘王朝江喜陀王兴建的阿难陀寺，万塔之城最精美的佛塔。' },
+    ],
+    'city_bago': [
+        { asset: 'SCEN_PAGODA_B', name: '勃固瑞摩都佛塔', category: 'SACRED_PAGODA', lat: 17.337, lng: 96.481, description: '缅甸孟族勃固古都的瑞摩都金塔，传说藏有佛陀发丝的圣塔。' },
+    ],
+    'city_ayutthaya': [
+        { asset: 'SCEN_PAGODA_E', name: '大城柴瓦塔纳兰寺', category: 'SACRED_PAGODA', lat: 14.353, lng: 100.558, description: '泰国阿瑜陀耶王朝巴萨通王兴建的柴瓦塔纳兰寺，高棉风格塔群。' },
+    ],
+    'city_naples': [
+        { asset: 'SCEN_ROMAN_RUINS', name: '庞贝古城遗迹', category: 'ANCIENT_WONDER', lat: 40.750, lng: 14.490, description: '公元79年维苏威火山喷发掩埋的罗马滨海城市，完整保存的古罗马遗迹。' },
+    ],
+    'city_yoshida': [
+        { asset: 'SCEN_TORII_GATE', name: '严岛水上鸟居', category: 'HOLY_SITE', lat: 34.297, lng: 132.319, description: '日本安艺国严岛神社建在潮间带海中的朱红色大鸟居，人神相通的海上圣境。' },
+    ],
+    'city_winchester': [
+        { asset: 'SCEN_STONEHENGE', name: '巨石阵', category: 'ANCIENT_WONDER', lat: 51.178, lng: -1.826, description: '公元前3000年索尔兹伯里平原环形巨石阵，不列颠古代德鲁伊与天文观测圣地。' },
+    ],
 };

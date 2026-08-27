@@ -598,7 +598,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'hepan': 'city_hepancheng',
 'humi': 'city_hunduduo',
 
-    // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(双河城)、罗斛(呵叻城) ──
+    // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
 'mamon': 'city_dargan',
     'guzgan': 'city_fariyab',
     'dai': 'city_mengle',
@@ -1055,6 +1055,25 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gurjara': 'city_patan',
     'zhuluo': 'city_tanjiawuer',
     'pandiya': 'city_madula',
+    'liaozu': 'city_wanxiang',
+    'kushi': 'city_mailuoe',
+    'aimala': 'city_diyawanake',
+    'aolisha': 'city_puli',
+    'kanata': 'city_hengbi',
+    'adile': 'city_bijiabuer',
+    'foluolida': 'city_shengaogusiding',
+    'fujisi': 'city_deerfei',
+    'yilisi': 'city_aolinpiya',
+    'nuowei': 'city_boergong',
+    'keernuwaye': 'city_kanpeier',
+    'aodesuosi': 'city_waerna',
+    'disidelusi': 'city_jiemu',
+    'yisatisi': 'city_yazide',
+    'wuer': 'city_wuer',
+    'pidisha': 'city_sangqi',
+    'jiaye': 'city_putijiaye',
+    'jienei': 'city_jienei',
+    'kuertaiya': 'city_agesi',
 };
 
 // @ts-ignore

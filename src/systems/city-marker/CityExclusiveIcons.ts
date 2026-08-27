@@ -212,7 +212,7 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_hamadan: '/cities/CENTRAL_ASIA/0hamadan.png',
     city_tademoer: '/cities/WEST_ASIA/0tademoer.png',
     city_anate: '/cities/WEST_ASIA/0anate.png',
-    // ── 中亚专属：达姆甘 / 希瓦 / 玉龙杰赤 / 赫拉特 / 亚西 ──
+    // ── 中亚专属：达姆甘 / 希瓦 / 玉龙杰赤 / 菲鲁兹库赫 / 亚西 ──
     city_damugan: '/cities/CENTRAL_ASIA/0gandamu.png',
     damugan: '/cities/CENTRAL_ASIA/0gandamu.png',
     city_khiva: '/cities/CENTRAL_ASIA/0xiwa.png',

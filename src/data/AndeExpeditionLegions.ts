@@ -13,4 +13,5 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     baiyiya: { name: '索萨远征队', tier: 3 },    // 萨尔瓦多·托梅：托梅·德·索萨 1549 率王室远征队建萨尔瓦多
     tupinijin: { name: '图皮尼金弓', tier: 2 },  // 圣维森特·蒂巴里萨：1562 皮拉蒂宁加之战击退塔莫约联军
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
+    aimala: { name: '艾马拉战士', tier: 4 },
 };

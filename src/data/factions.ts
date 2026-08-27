@@ -1124,7 +1124,7 @@ export const FACTIONS: Faction[] = [
                           // 护密(西域/护密城), Wakhan
     // 特勤(西域/活国城), Tegin
 
-    // ── 2026-05-28 新增：马蒙(达尔甘城/中亚)、古兹根(法里亚布城/中亚)、傣(勐泐城/云南)、泰沅(清坎城/泰国)、帕銮(双河城/泰国)、罗斛(呵叻城/泰国) ──
+    // ── 2026-05-28 新增：马蒙(达尔甘城/中亚)、古兹根(法里亚布城/中亚)、傣(勐泐城/云南)、泰沅(清坎城/泰国)、帕銮(素可泰/泰国)、罗斛(呵叻城/泰国) ──
     { id: 'mamon', name: '马蒙' },
 
                          // 马蒙(中亚/达尔甘城), Ma'munid
@@ -1638,7 +1638,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'kalan', name: '卡伦' },
 
-    // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──
+    // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（菲鲁兹库赫）/ 阿巴尔（尼沙布尔）──
     { id: 'dulan_d', name: '杜兰尼' },
 
     { id: 'huluo', name: '古尔' },
@@ -1862,6 +1862,25 @@ export const FACTIONS: Faction[] = [
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）
     { id: 'pandiya', name: '潘地亚' },     // 马杜赖·潘地亚王朝（南印度泰米尔，朱罗宿敌）
+    { id: 'liaozu', name: '寮族' },
+    { id: 'kushi', name: '库施' },
+    { id: 'aimala', name: '艾马拉' },
+    { id: 'aolisha', name: '奥里萨' },
+    { id: 'kanata', name: '卡纳塔' },
+    { id: 'adile', name: '阿迪勒' },
+    { id: 'foluolida', name: '佛罗里达' },
+    { id: 'fujisi', name: '福基斯' },
+    { id: 'yilisi', name: '埃利斯' },
+    { id: 'nuowei', name: '挪威' },
+    { id: 'keernuwaye', name: '康沃尔' },
+    { id: 'aodesuosi', name: '奥德索斯' },
+    { id: 'disidelusi', name: '蒂斯德鲁斯' },
+    { id: 'yisatisi', name: '伊萨提斯' },
+    { id: 'wuer', name: '乌尔' },
+    { id: 'pidisha', name: '毗底沙' },
+    { id: 'jiaye', name: '伽耶' },
+    { id: 'jienei', name: '杰内' },
+    { id: 'kuertaiya', name: '库尔泰亚' },
     ];
 
 // @ts-ignore

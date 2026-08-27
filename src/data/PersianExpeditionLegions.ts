@@ -24,7 +24,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     // ── T3 风土之兵 ──
     midi: { name: '米底骑射', tier: 3 },            // 哈马丹·米底：米底骑兵
     muer: { name: '呼罗珊重骑', tier: 3 },          // 马尔夫鲁德·呼罗珊：大呼罗珊重骑
-    huluo: { name: '古尔重骑', tier: 3 },           // 赫拉特·古尔：古尔王朝重骑
+    huluo: { name: '古尔重骑', tier: 3 },           // 菲鲁兹库赫·古尔：古尔王朝重骑
     jiazini: { name: '伽色尼亲兵', tier: 3 },       // 哥疾宁·伽色尼：突厥奴隶兵（马穆鲁克）
     safawei: { name: '吉兰义军', tier: 3 },         // 加兹温·吉兰：里海南岸萨法维起源地
     yilihanguo: { name: '阿杰姆卫队', tier: 3 },    // 赞詹·阿杰姆
@@ -45,4 +45,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     guzgan: { name: '古兹根军', tier: 4 },          // 法里亚布·古兹根
     baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹
     hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔
+    yisatisi: { name: '亚兹德圣火卫', tier: 4 },
 };

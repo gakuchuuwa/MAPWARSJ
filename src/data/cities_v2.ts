@@ -2099,7 +2099,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
 
 
-    // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(双河城)、罗斛(呵叻城) ──
+    // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
     { id: 'city_dargan', name: '达尔甘', factionId: 'mamon', lat: 40.5333, lng: 62.2667, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
 
 
@@ -2109,7 +2109,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mengle', name: '勐泐城', factionId: 'dai', lat: 22.0000, lng: 100.8000, type: 'small_city', region: 'DIANQIAN', troops: 30000, note: '刀应勐率傣兵助明御缅' },
     { id: 'city_chingkham', name: '清坎城', factionId: 'taiyuan', lat: 19.52, lng: 100.3, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
 
-    { id: 'city_shuanghe', name: '双河城', factionId: 'suke', lat: 16.830829, lng: 100.395813, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
+    { id: 'city_shuanghe', name: '素可泰', factionId: 'suke', lat: 17.017, lng: 99.704, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
 
     { id: 'city_khorat', name: '呵叻城', factionId: 'luohu', lat: 14.9700, lng: 102.1000, type: 'small_city', region: 'DIANQIAN', troops: 30000, tier: 4,
         note: '呵叻城；罗斛小城',
@@ -2777,8 +2777,8 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
     { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', troops: 30000, region: 'PERSIAN' },
 
-    // ── 2026-06-20 新增：呼罗珊·赫拉特 ──
-    { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
+    // ── 2026-06-20 新增：呼罗珊·菲鲁兹库赫 ──
+    { id: 'city_helate', name: '菲鲁兹库赫', factionId: 'huluo', lat: 34.396, lng: 64.516, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
 
 
     // ── 2026-06-20 新增：阿巴尔·尼沙布尔 ──
@@ -3021,6 +3021,26 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 30000, region: 'INDIA', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
     { id: 'city_tanjiawuer', name: '坦贾武尔', factionId: 'zhuluo', lat: 10.79, lng: 79.14, type: 'medium_city', troops: 30000, region: 'PURU', note: '朱罗王朝都城，布里哈迪希瓦拉神庙（世界遗产）所在' },
     { id: 'city_madula', name: '马杜赖', factionId: 'pandiya', lat: 9.93, lng: 78.12, type: 'medium_city', troops: 30000, region: 'PURU', note: '潘地亚王朝都城，米纳克希神庙所在' },
+    // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
+    { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 30000, region: 'LINGNAN', note: '澜沧王国后期首都，塔銮所在地' },
+    { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 30000, region: 'AFRICA', note: '库施王国都城，黑金字塔群' },
+    { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'aimala', lat: -16.554, lng: -68.673, type: 'small_city', troops: 30000, region: 'ANDE', note: '前印加蒂亚瓦纳科文明中心' },
+    { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'small_city', troops: 30000, region: 'INDIA', note: '印度教圣城，贾格纳特神庙' },
+    { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 30000, region: 'PURU', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一' },
+    { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 30000, region: 'PURU', note: '比贾布尔苏丹国都，戈尔贡巴兹' },
+    { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'small_city', troops: 30000, region: 'AMERICA', note: '西班牙1565年建的美洲最古欧洲殖民城' },
+    { id: 'city_deerfei', name: '德尔斐', factionId: 'fujisi', lat: 38.482, lng: 22.501, type: 'small_city', troops: 30000, region: 'GREEK', note: '阿波罗神谕圣地' },
+    { id: 'city_aolinpiya', name: '奥林匹亚', factionId: 'yilisi', lat: 37.639, lng: 21.631, type: 'small_city', troops: 30000, region: 'GREEK', note: '古代奥运圣地' },
+    { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'small_city', troops: 30000, region: 'EAST', note: '挪威松恩峡湾木板教堂' },
+    { id: 'city_kanpeier', name: '坎佩尔', factionId: 'keernuwaye', lat: 47.995, lng: -4.103, type: 'small_city', troops: 30000, region: 'LATIN', note: '布列塔尼首府，圣科朗坦大教堂' },
+    { id: 'city_waerna', name: '瓦尔纳', factionId: 'aodesuosi', lat: 43.214, lng: 27.915, type: 'small_city', troops: 30000, region: 'THRACIAN', note: '古奥德索斯城，黑海港' },
+    { id: 'city_jiemu', name: '杰姆', factionId: 'disidelusi', lat: 35.296, lng: 10.706, type: 'small_city', troops: 30000, region: 'BERBER', note: '罗马蒂斯德鲁斯城，圆形剧场' },
+    { id: 'city_yazide', name: '亚兹德', factionId: 'yisatisi', lat: 31.897, lng: 54.356, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '琐罗亚斯德教圣城' },
+    { id: 'city_wuer', name: '乌尔城', factionId: 'wuer', lat: 30.962, lng: 46.103, type: 'small_city', troops: 30000, region: 'WEST_ASIA', note: '苏美尔月神城，乌尔第三王朝首都' },
+    { id: 'city_sangqi', name: '桑奇', factionId: 'pidisha', lat: 23.480, lng: 77.739, type: 'small_city', troops: 30000, region: 'INDIA', note: '阿育王始建桑奇大佛塔' },
+    { id: 'city_putijiaye', name: '菩提伽耶', factionId: 'jiaye', lat: 24.696, lng: 84.991, type: 'small_city', troops: 30000, region: 'INDIA', note: '佛陀成道圣地' },
+    { id: 'city_jienei', name: '杰内城', factionId: 'jienei', lat: 13.905, lng: -4.555, type: 'small_city', troops: 30000, region: 'AFRICA', note: '马里帝国名城，杰内大清真寺' },
+    { id: 'city_agesi', name: '阿格斯', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '瓦拉几亚早期都城库尔泰亚' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

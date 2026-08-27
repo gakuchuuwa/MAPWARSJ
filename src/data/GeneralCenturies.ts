@@ -425,7 +425,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'guzgan_abuhalisi': 10,                              // 阿布哈里斯 · guzgan · 法里亚布
     'hali_gedaerzi': 1,                                 // 戈达尔兹 · hali · 萨拉赫斯
     'huarazim_mohemo': 13,                               // 摩诃末 · huarazim · 玉龙杰赤
-    'huluo_jiyasiding': 12,                              // 吉亚斯丁 · huluo · 赫拉特
+    'huluo_jiyasiding': 12,                              // 吉亚斯丁 · huluo · 菲鲁兹库赫
     'jiazini_mahamaode': 11,                             // 马哈茂德 · jiazini · 哥疾宁
     'jibin_jianisejia': 2,                              // 迦腻色迦 · jibin · 白沙瓦
     'jie_sijinti': 7,                                   // 斯谨提 · jie · 羯霜那
@@ -644,7 +644,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'pagan_anulvtuo': 11,                                // 阿奴律陀 · pagan · 蒲甘
     'pyu_moluo': 8,                                     // 摩罗 · pyu · 室利差罗
     'siam_nalixuan': 16,                                 // 纳黎萱 · siam · 阿瑜陀耶
-    'suke_langanheng': 13,                               // 兰甘亨 · suke · 双河城
+    'suke_langanheng': 13,                               // 兰甘亨 · suke · 素可泰
     'sumo_sumowang': -6,                                 // 苏摩 · sumo · 耽摩栗底
     'taiyuan_menglai': 13,                               // 孟莱 · taiyuan · 清坎城
     'wazu_banhongwang': 20,                              // 胡玉山 · wazu · 沧源

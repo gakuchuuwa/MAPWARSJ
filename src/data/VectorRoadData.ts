@@ -9391,7 +9391,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "直通城-双河城",
+                name: "直通城-素可泰",
                 type: "road",
                 id: "road_city_thaton_city_shuanghe_1780153413029",
                 startConnection: "city_thaton",
@@ -9459,14 +9459,14 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [100.098823, 16.966279],
                     [100.197809, 16.933283],
                     [100.243178, 16.842546],
-                    [100.395813, 16.830829],
+                    [99.704, 17.017],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "双河城-阿瑜陀耶",
+                name: "素可泰-阿瑜陀耶",
                 type: "road",
                 id: "road_city_shuanghe_city_ayutthaya_1780153503828",
                 startConnection: "city_shuanghe",
@@ -9475,7 +9475,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [100.395813, 16.830829],
+                    [99.704, 17.017],
                     [100.424653, 16.661071],
                     [100.461772, 16.574459],
                     [100.474146, 16.520841],
@@ -9529,7 +9529,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "清坎城-双河城",
+                name: "清坎城-素可泰",
                 type: "road",
                 id: "road_city_chingkham_city_shuanghe_1780153528670",
                 startConnection: "city_chingkham",
@@ -9614,7 +9614,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [100.217703, 16.922431],
                     [100.237641, 16.902615],
                     [100.248464, 16.874579],
-                    [100.395813, 16.830829],
+                    [99.704, 17.017],
                 ]
             }
         },
@@ -27586,7 +27586,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "梵衍那-赫拉特",
+                name: "梵衍那-菲鲁兹库赫",
                 type: "road",
                 id: "road_city_fanyanna_city_helate_1781951201065",
                 startConnection: "city_fanyanna",
@@ -27678,14 +27678,14 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [62.626964, 34.299384],
                     [62.417247, 34.291287],
                     [62.35963, 34.273057],
-                    [62.2031, 34.3419],
+                    [64.516, 34.396],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "赫拉特-马鲁鲁德",
+                name: "菲鲁兹库赫-马鲁鲁德",
                 type: "road",
                 id: "road_city_helate_city_malulude_1781951297109",
                 startConnection: "city_helate",
@@ -27694,7 +27694,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [62.2031, 34.3419],
+                    [64.516, 34.396],
                     [62.393355, 34.396087],
                     [62.451097, 34.433207],
                     [62.508839, 34.457953],
@@ -27822,7 +27822,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "法拉-赫拉特",
+                name: "法拉-菲鲁兹库赫",
                 type: "road",
                 id: "road_city_fala_city_helate_1781952600292",
                 startConnection: "city_fala",
@@ -27868,7 +27868,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [62.195383052825825, 34.08263086017689],
                     [62.20775631947622, 34.13212392677845],
                     [62.216005163909806, 34.1939902600304],
-                    [62.2031, 34.3419],
+                    [64.516, 34.396],
                 ]
             }
         },
@@ -27930,7 +27930,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "赫拉特-泰巴德",
+                name: "菲鲁兹库赫-泰巴德",
                 type: "road",
                 id: "road_city_helate_city_taibade_1781954231346",
                 startConnection: "city_helate",
@@ -27939,7 +27939,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [62.2031, 34.3419],
+                    [64.516, 34.396],
                     [62.03769, 34.302843],
                     [62.003429, 34.314073],
                     [61.983816, 34.326768],
