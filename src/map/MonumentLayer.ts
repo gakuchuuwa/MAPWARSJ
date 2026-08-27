@@ -201,26 +201,7 @@ export class MonumentLayer {
                 pane: 'monumentPane'
             }).addTo(this.layerGroup);
 
-            // 绑定悬停与点击详情弹窗（坐标显示真实经纬度，非外推后的渲染坐标）
-            const popupContent = `
-                <div style="padding: 6px 10px; font-family: sans-serif; color: #eee; background: #1a1e24; border-radius: 6px; border: 1px solid #d4af37; max-width: 240px;">
-                    <div style="font-size: 13px; font-weight: bold; color: #ffd700; border-bottom: 1px solid rgba(212,175,55,0.4); padding-bottom: 3px; margin-bottom: 5px;">
-                        ${mon.name}
-                    </div>
-                    <div style="font-size: 11px; color: #ccc; line-height: 1.4;">
-                        ${mon.description}
-                    </div>
-                    <div style="margin-top: 5px; font-size: 10px; color: #888;">
-                        坐标：${mon.lat.toFixed(3)}°N, ${mon.lng.toFixed(3)}°E
-                    </div>
-                </div>
-            `;
-            marker.bindPopup(popupContent, {
-                className: 'monument-popup',
-                closeButton: false,
-                offset: L.point(0, -20)
-            });
-
+            // [2026-08-28 主人要求「奇观介绍写进文档，战略地图不显示」]：不再绑定详情弹窗
             this.markers.set(mon.id, marker);
         }
     }

@@ -33,7 +33,7 @@ export const WONDER_NAME: Record<string, string> = {
     // ── 东欧/日耳曼 ──
     'EAST_WONDER_TEUTONS': '玛丽亚拉赫修道院',
     'EAST_WONDER_GOTHS': '狄奥多里克陵墓',
-    'EAST_WONDER_HUNS': '君士坦丁凯旋门',
+    'EAST_WONDER_HUNS': '君士坦丁凯旋门废墟',
     'EAST_WONDER_VIKINGS': '博尔贡木板教堂',
     // ── 希腊（编年史 DLC） ──
     'GREEK_WONDER_ATHENIANS': '帕特农神庙',
@@ -62,7 +62,7 @@ export const WONDER_NAME: Record<string, string> = {
     'INDI_WONDER_HINDUSTANIS': '胡马雍陵',
     'INDI_WONDER_BENGALIS': '索马普拉大寺',
     'INDI_WONDER_GURJARAS': '索姆纳特神庙',
-    'PURU_WONDER_PURU': '布里哈迪斯瓦拉神庙',
+    'PURU_WONDER_PURU': '莫德拉太阳神庙',
     // ── 东南亚 ──
     'SEAS_WONDER_KHMER': '吴哥窟中央大殿',
     'SEAS_WONDER_BURMESE': '瑞西贡佛塔',

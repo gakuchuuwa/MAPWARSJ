@@ -161,6 +161,9 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_naples': [
         { asset: 'SCEN_ROMAN_RUINS', name: '庞贝古城遗迹', category: 'ANCIENT_WONDER', lat: 40.750, lng: 14.490, description: '公元79年维苏威火山喷发掩埋的罗马滨海城市，完整保存的古罗马遗迹。' },
     ],
+    'city_luoma': [
+        { asset: 'ARCH_OF_CONSTANTINE', name: '君士坦丁凯旋门', category: 'ANCIENT_WONDER', lat: 41.890, lng: 12.492, description: '公元315年罗马元老院为纪念君士坦丁大帝米尔维安桥战役胜利而建的凯旋门，紧邻罗马斗兽场。' },
+    ],
     'city_yoshida': [
         { asset: 'SCEN_TORII_GATE', name: '严岛水上鸟居', category: 'HOLY_SITE', lat: 34.297, lng: 132.319, description: '日本安艺国严岛神社建在潮间带海中的朱红色大鸟居，人神相通的海上圣境。' },
     ],
