@@ -108,7 +108,7 @@ export function blendForTile(tile: string): BlendKind {
     if (tile === 'sh4' || tile === 'sh5' || tile === 'sha' || tile === 'sh2' || tile === 'sh3' || tile.startsWith('sh')) return 'shallowswater';
     if (tile === 'ice' || tile.startsWith('ic')) return 'icewater';
     if (tile === 'snd' || tile === 'snf' || tile === 'sno' || tile === 'sn2' || tile.startsWith('sn')) return 'snowland';
-    if (tile === 'rd1' || tile === 'rd2' || tile === 'rd5' || tile === 'sr2' || tile.includes('road')) return 'roadland';
+    if (tile === 'rd1' || tile === 'rd2' || tile === 'rd5' || tile === 'sr2' || tile === 'pm1' || tile.includes('road')) return 'roadland';
     if (tile.includes('farm') || tile.includes('field') || tile.includes('rice')) return 'farmland';
     return 'landland';
 }
