@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { WILDERNESS_MONUMENTS, WildernessMonument } from '../data/WildernessMonuments';
 import { CITY_WONDER } from '../data/CityWonders';
+import { WONDER_NAME } from '../data/WonderNames';
 import { CITIES_V2 } from '../data/cities_v2';
 
 export class MonumentLayer {
@@ -37,14 +38,15 @@ export class MonumentLayer {
             .map(([cityId, asset]): WildernessMonument | null => {
                 const city = cityById.get(cityId);
                 if (!city) return null;
+                const wonderName = WONDER_NAME[asset] || city.name;
                 return {
                     id: `wonder_${cityId}`,
-                    name: city.name,
+                    name: wonderName,
                     category: 'ANCIENT_WONDER' as const,
                     lat: city.lat,
                     lng: city.lng,
                     asset: `/SUCAI_BUILDING/${asset}/preview.png`,
-                    description: `${city.name}的文明奇观`,
+                    description: `${city.name}的文明奇观·${wonderName}`,
                 };
             })
             .filter((x): x is WildernessMonument => x !== null);
