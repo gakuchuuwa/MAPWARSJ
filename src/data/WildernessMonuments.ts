@@ -1,5 +1,5 @@
 /**
- * 欧亚非大地图·野外独立历史名胜与战略圣地（24座）
+ * 欧亚非大地图·野外独立历史名胜与战略圣地（34座）
  * 真实世界地理经纬度精准定位，直接渲染在大地图的山川、旷野与海滨之上。
  *
  * [2026-08-27 历史审计] 逐座对照 DE 素材 SLD 源与设计文档，纠正素材张冠李戴：
@@ -162,13 +162,13 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
     },
     {
         id: 'monument_chinese_ancient_ruins',
-        name: '玉门关汉长城烽燧遗址',
+        name: '竹林古刹遗迹',
         category: 'ANCIENT_WONDER',
-        lat: 40.354,
-        lng: 93.861,
+        lat: 27.750,
+        lng: 118.000,
         asset: '/SUCAI_BUILDING/SCEN_CHINESE_RUINS/preview.png',
         scale: 1.1,
-        description: '丝绸之路西出阳关与玉门关的汉代版筑夯土烽燧长城遗址。'
+        description: 'DE 官方「中国废墟」（Chinese Ruins），深山修竹掩映间残破坍塌的青瓦木构古殿残垣。'
     },
     {
         id: 'monument_andean_tiahuanaco',
@@ -259,5 +259,105 @@ export const WILDERNESS_MONUMENTS: WildernessMonument[] = [
         asset: '/SUCAI_BUILDING/SCEN_REKHADEUL_TEMPLE/preview.png',
         scale: 1.0,
         description: '印度奥里萨普里供奉克里希纳化身贾格纳特的直线塔身神庙，rekha deul 风格代表。'
+    },
+    {
+        id: 'monument_st_augustine_fort',
+        name: '圣奥古斯丁木制堡垒',
+        category: 'HERITAGE_FORT',
+        lat: 29.897,
+        lng: -81.313,
+        asset: '/SUCAI_BUILDING/WOODEN_FORT/preview.png',
+        scale: 1.0,
+        description: '西班牙1565年在佛罗里达建立的美洲最古老欧洲殖民木堡，佩德罗·梅嫩德斯所筑。'
+    },
+    {
+        id: 'monument_piraeus_harbor',
+        name: '比雷埃夫斯军港',
+        category: 'HERITAGE_FORT',
+        lat: 37.943,
+        lng: 23.647,
+        asset: '/SUCAI_BUILDING/GREEK_SHIPYARD_AGE2/preview.png',
+        scale: 1.0,
+        description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。'
+    },
+    {
+        id: 'monument_varna_harbor',
+        name: '瓦尔纳古港',
+        category: 'HERITAGE_FORT',
+        lat: 43.214,
+        lng: 27.915,
+        asset: '/SUCAI_BUILDING/THRACIAN_SHIPYARD_AGE2/preview.png',
+        scale: 1.0,
+        description: '古色雷斯奥德索斯城黑海港口，米利都希腊殖民地的造船与贸易港。'
+    },
+    {
+        id: 'monument_pelopion_olympia',
+        name: '奥林匹亚佩洛普斯圣坛',
+        category: 'HOLY_SITE',
+        lat: 37.639,
+        lng: 21.631,
+        asset: '/SUCAI_BUILDING/SCEN_HERO_SHRINE/preview.png',
+        scale: 1.0,
+        description: '奥林匹亚竞技会英雄始祖佩洛普斯的崇拜圣坛，古代希腊英雄祭祀圣地。'
+    },
+    {
+        id: 'monument_ananda_temple',
+        name: '蒲甘阿难陀寺',
+        category: 'SACRED_PAGODA',
+        lat: 21.171,
+        lng: 94.867,
+        asset: '/SUCAI_BUILDING/SCEN_PAGODA_A/preview.png',
+        scale: 1.0,
+        description: '缅甸蒲甘王朝江喜陀王兴建的阿难陀寺，万塔之城最精美的佛塔。'
+    },
+    {
+        id: 'monument_shwemawdaw_pagoda',
+        name: '勃固瑞摩都佛塔',
+        category: 'SACRED_PAGODA',
+        lat: 17.337,
+        lng: 96.481,
+        asset: '/SUCAI_BUILDING/SCEN_PAGODA_B/preview.png',
+        scale: 1.0,
+        description: '缅甸孟族勃固古都的瑞摩都金塔，传说藏有佛陀发丝的圣塔。'
+    },
+    {
+        id: 'monument_that_luang',
+        name: '万象塔銮',
+        category: 'SACRED_PAGODA',
+        lat: 17.976,
+        lng: 102.636,
+        asset: '/SUCAI_BUILDING/SCEN_PAGODA_C/preview.png',
+        scale: 1.0,
+        description: '老挝澜沧王国国宝塔銮，赛塔提腊王迁都万象后敕建的金塔。'
+    },
+    {
+        id: 'monument_wat_mahathat',
+        name: '素可泰玛哈泰寺',
+        category: 'SACRED_PAGODA',
+        lat: 17.017,
+        lng: 99.704,
+        asset: '/SUCAI_BUILDING/SCEN_PAGODA_D/preview.png',
+        scale: 1.0,
+        description: '泰国素可泰王朝皇家寺庙玛哈泰寺，暹罗第一王国的核心圣塔。'
+    },
+    {
+        id: 'monument_chaiwatthanaram',
+        name: '大城柴瓦塔纳兰寺',
+        category: 'SACRED_PAGODA',
+        lat: 14.353,
+        lng: 100.558,
+        asset: '/SUCAI_BUILDING/SCEN_PAGODA_E/preview.png',
+        scale: 1.0,
+        description: '泰国阿瑜陀耶王朝巴萨通王兴建的柴瓦塔纳兰寺，高棉风格塔群。'
+    },
+    {
+        id: 'monument_pompeii_ruins',
+        name: '庞贝古城遗迹',
+        category: 'ANCIENT_WONDER',
+        lat: 40.750,
+        lng: 14.490,
+        asset: '/SUCAI_BUILDING/SCEN_ROMAN_RUINS/preview.png',
+        scale: 1.0,
+        description: '公元79年维苏威火山喷发掩埋的罗马滨海城市，完整保存的古罗马遗迹。'
     },
 ];

@@ -82,5 +82,5 @@ export const WONDER_NAME: Record<string, string> = {
     'SCEN_DOME_OF_THE_ROCK': '圆顶清真寺',
     'SCEN_AACHEN_CATHEDRAL': '亚琛大教堂',
     'SCEN_SANKORE_MADRASAH': '桑科雷清真学堂',
-    'SCEN_HALL_OF_HEROES': '英雄大厅',
+    'SCEN_HALL_OF_HEROES': '凌烟阁',
 };
