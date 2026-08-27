@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_ROMAN_RUINS",
+  "frames": 1,
+  "box_w": 208,
+  "box_h": 144,
+  "anchor_x": 106,
+  "anchor_y": 98,
+  "sld_source": "s_roman_ruins"
+}

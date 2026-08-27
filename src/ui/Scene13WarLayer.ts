@@ -1113,26 +1113,6 @@ const CLOUD_ALPHA_MAX = 0.55;
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 /** DE 自然装饰（树/灌木/岩石/山体/贴花）素材目录 */
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
-/**
- * 出兵口里「前排最下」那个位置的下标。
- *
- * 🔴 [2026-08-26 主人「前排最下面这里的建筑总是出墙」] 这个位置最贴城墙，
- *    随机抽到市镇中心/大学这类大体量建筑就会压出墙线，所以要单独钉死成民屋。
- *    判据用**坐标**不用 LAYOUT 下标 —— 三种阵型（鱼鳞/三角/雁行）的槽位序不一样，
- *    按下标写死会在换阵型时指错人。
- *    前排 = x 最靠攻方那一列（守方在右，故取 x 最小）；最下 = 该列里 y 最大。
- */
-function frontBottomIdx(side: Array<{ x: number; y: number }>): number {
-    let frontX = Infinity;
-    for (const s of side) if (s.x < frontX) frontX = s.x;
-    let best = 0, bestY = -Infinity;
-    for (let i = 0; i < side.length; i++) {
-        if (side[i].x > frontX + 1e-9) continue;
-        if (side[i].y > bestY) { bestY = side[i].y; best = i; }
-    }
-    return best;
-}
-
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 /** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定；TIBET 暂用印度，待查藏式 MOD）。
@@ -1197,7 +1177,7 @@ const FACTION_BUILDING_STYLE: Readonly<Record<string, string>> = {
     zhuluo: 'PURU', pangzha: 'PURU', kongque: 'PURU', mojietuo: 'PURU',
 };
 
-/** 攻城战守方（大城）帝国时代建筑池（2026-08-22 主人定：大城=帝国时代；大学/市镇中心/市场用帝国 age4，其余用城堡 age3） */
+/** 攻城战守方（大城）建筑池，与战略大城一致：城镇中心/市场/大学必有，其余 AGE3 随机取 6。 */
 const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
     ['TOWN_CENTER', 'AGE4'],
     ['HOUSE', 'AGE3'],
@@ -3832,7 +3812,12 @@ export class Scene13WarLayer {
             asset: string,
             options?: { flip?: boolean; frame?: number; z?: number; scale?: number; obstruction?: { x: number; y: number } },
         ): DecorSprite => {
-            const full = 'BUILDING:' + asset;
+            // 战略大城不含城堡：无论从哪个建筑入口传入，战术大城都禁止落入 CASTLE 素材。
+            const resolvedAsset = this.battleType === 'siege' && f === 1
+                && this.defenderCityType === 'big_city' && asset.includes('CASTLE')
+                ? `${this.buildingStyleFor(1)}_TOWN_CENTER_AGE4`
+                : asset;
+            const full = 'BUILDING:' + resolvedAsset;
             this.ensureNatureAsset(full);
             let px = s.x, py = s.y;
             // 🔴 安全占地修正（2026-08-26）：若出兵口建筑落在水域/浅滩，向干燥陆地推进，避免营帐直接泡在水里
@@ -4023,27 +4008,26 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 大城：有城堡（后排中间 = x 最大一排 + 列向居中；2 档放上、3 档正中、4 档第 2 个）+ 8 口建筑
+            // 大城：与战略模式套用相同建筑。原有九个落点不变，仅同步建筑选择。
             let backX = -Infinity;
             for (const s of side) if (s.x > backX) backX = s.x;
             const backRow = side
                 .map((s, i) => ({ s, i }))
                 .filter(({ s }) => s.x >= backX - 1e-9)
                 .sort((a, b) => a.s.y - b.s.y);
-            const castleIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            this.decorSprites.push(place(side[castleIdx], this.castleAssetFor(style), { scale: SIEGE_CITY_BUILDING_SCALE }));
-            // 🔴 [2026-08-26 主人「前排最下面这里的建筑总是出墙，请改为固定使用民屋」]
-            //    9 个出兵口的建筑原本是**整体洗牌**随机分配的，所以这个位置抽到市镇中心/大学
-            //    这类大体量建筑时就会压出城墙。这里把它从随机池里摘出来钉死成民屋 ——
-            //    HOUSE 是建筑池里占地最小的一档，不会越过墙线。
-            // 民屋档位跟随该档城池的建筑时代：险要/中城/大城=城堡 age3（2026-08-27 主人改「险要建筑与战略一致」）
-            const ageTag = 'AGE3';
-            const houseIdx = frontBottomIdx(side);
-            this.decorSprites.push(place(side[houseIdx], `${style}_HOUSE_${ageTag}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
-            const rest = side.filter((_, i) => i !== castleIdx && i !== houseIdx);
-            const shuffledRest = [...rest].sort(() => Math.random() - 0.5);
-            const shuffledBuildings = [...SIEGE_IMPERIAL_BUILDINGS].sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 7; i++) this.decorSprites.push(place(shuffledRest[i], `${style}_${shuffledBuildings[i][0]}_${shuffledBuildings[i][1]}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+            const centerIdx = backRow[backRow.length === 2 ? 0 : 1].i;
+            this.decorSprites.push(place(side[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+            const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
+            const ringBuildings: Array<[string, string]> = [
+                ['MARKET', 'AGE4'],
+                ['UNIVERSITY', 'AGE4'],
+                ...age3Pool.slice(0, 6),
+            ].sort(() => Math.random() - 0.5) as Array<[string, string]>;
+            const ringSpawns = side.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 8; i++) {
+                const [building, age] = ringBuildings[i];
+                this.decorSprites.push(place(ringSpawns[i], `${style}_${building}_${age}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+            }
             return;
         }
 

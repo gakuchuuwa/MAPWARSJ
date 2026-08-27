@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_CHINESE_RUINS",
+  "frames": 1,
+  "box_w": 180,
+  "box_h": 144,
+  "anchor_x": 98,
+  "anchor_y": 106,
+  "sld_source": "s_chinese_ruins"
+}

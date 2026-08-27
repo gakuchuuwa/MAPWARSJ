@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_HERO_SHRINE",
+  "frames": 1,
+  "box_w": 116,
+  "box_h": 104,
+  "anchor_x": 62,
+  "anchor_y": 78,
+  "sld_source": "s_hero_shrine_1"
+}

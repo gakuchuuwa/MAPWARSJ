@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_SPHINX",
+  "frames": 1,
+  "box_w": 88,
+  "box_h": 92,
+  "anchor_x": 50,
+  "anchor_y": 70,
+  "sld_source": "s_statue_sphinx"
+}

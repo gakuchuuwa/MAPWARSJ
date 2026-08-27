@@ -106,7 +106,7 @@ export class CityAssetManager {
 'tufa_d': '秃发',
 'qiuchi': '仇池',
 'helian': '赫连',
-        'xiongnu': '匈奴',
+'xiongnu': '匈奴',
 'xianbei': '鲜卑',
         'jie': '羯',
 'beidi': '羌',

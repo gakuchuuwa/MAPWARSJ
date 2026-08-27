@@ -9,6 +9,7 @@ import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { GridSystem } from '../systems/GridSystem';
 import { TreeLayer } from './TreeLayer';
+import { MonumentLayer } from './MonumentLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
@@ -25,6 +26,7 @@ export class GameMap {
     private riverLayer: RiverOverlayLayer | null = null;
     private vectorRiverLayer: VectorRiverLayer | null = null;
     private treeLayer: TreeLayer | null = null;
+    private monumentLayer: MonumentLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
     private useGCJ02: boolean = true; // [NEW] Default to true for offset logic
@@ -171,6 +173,8 @@ export class GameMap {
 
         // [NEW] Initialize City Capture Renderer
         this.cityCaptureRenderer = new CityCaptureRenderer(this);
+        // [NEW] Initialize Wilderness Monument Layer (29 Historical Sites)
+        this.monumentLayer = new MonumentLayer(this.map);
 
         // 文化区界城环线（仅 zoom=6 显示）
         new RegionBoundaryLayer(this.map);

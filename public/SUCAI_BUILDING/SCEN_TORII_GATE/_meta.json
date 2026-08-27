@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_TORII_GATE",
+  "frames": 1,
+  "box_w": 140,
+  "box_h": 132,
+  "anchor_x": 90,
+  "anchor_y": 110,
+  "sld_source": "s_torii_gate"
+}
