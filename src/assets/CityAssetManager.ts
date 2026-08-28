@@ -956,6 +956,7 @@ export class CityAssetManager {
         'donggete': '东哥',
         'litaowan': '立陶',
         'bogendi': '勃艮',
+        'kaernute': '卡尔',
         'xiongren': '匈人',
     'liaozu': '寮',
     'kushi': '库施',

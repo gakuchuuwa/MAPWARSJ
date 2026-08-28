@@ -118,6 +118,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/LATIN/fulandesi_luobeierershi.png' },
     bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },
     gaolu: { generalId: 'gen_charles_vii', generalName: '查理七世', portrait: '/assets/LATIN/gaolu_chaliqishi.png' },
+    kaernute: { generalId: 'gen_kaernute_kotuatousi', generalName: '科图阿图斯', portrait: '' },
     anggelu: { generalId: 'gen_alfred_great', generalName: '阿尔弗雷德', portrait: '/assets/GERMANIC/anggelu_aerfuleide.png' },
     yinggelan: { generalId: 'gen_henry_v', generalName: '亨利五世', portrait: '/assets/GERMANIC/yinggelan_hengliwushi.png' },
     piketai: { generalId: 'gen_onuist_i', generalName: '奥恩格斯', portrait: '/assets/GERMANIC/piketai_aoengesi.png' },
