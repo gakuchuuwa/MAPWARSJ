@@ -32,7 +32,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_karakorum': 'ASIA_WONDER_MONGOLS',  // 哈拉和林（蒙古）
     'city_kashan': 'CEAS_WONDER_TATARS',  // 喀山（鞑靼/喀山汗国，势力标保加尔为前身）
     'city_kelakefu': 'SLAV_WONDER_POLES',  // 克拉科夫（波兰）
-    'city_kenisibao': 'EAST_WONDER_TEUTONS',  // 柯尼斯堡（条顿骑士团）
+    'city_lahexiuyuan': 'EAST_WONDER_TEUTONS',
     'city_kyoto': 'ASIA_WONDER_JAPANESE',  // 京都（日本）
     'city_linhuang': 'ASIA_WONDER_KHITANS',  // 临潢府（辽上京，契丹）
     'city_lisiben': 'MEDI_WONDER_PORTUGUESE',  // 里斯本（葡萄牙）
@@ -140,8 +140,8 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_thebes': [
         { asset: 'SCEN_SPHINX', name: '斯芬克斯雕像', category: 'ANCIENT_WONDER', lat: 38.323, lng: 23.318, description: '古希腊底比斯城外峭壁蹲踞的带翼斯芬克斯雕像，俄狄浦斯解谜之地。' },
     ],
-    'city_chongan': [
-        { asset: 'SCEN_CHINESE_RUINS', name: '竹林古刹遗迹', category: 'ANCIENT_WONDER', lat: 27.750, lng: 118.000, description: 'DE 官方「中国废墟」（Chinese Ruins），深山修竹掩映间残破坍塌的青瓦木构古殿残垣。' },
+    'city_taizhou_zj': [
+        { asset: 'SCEN_CHINESE_RUINS', name: '天台山国清寺', category: 'ANCIENT_WONDER', lat: 29.1734, lng: 121.0430, description: '浙江台州天台山麓佛教天台宗祖庭国清寺及隋代古塔，隋开皇十八年智顗大师开创，山腰密林与古道连通老寺遗迹。' },
     ],
     'city_kenisibao': [
         { asset: 'PAGAN_SHRINE', name: '罗姆瓦圣殿', category: 'HOLY_SITE', lat: 54.60, lng: 21.85, description: '波罗的海（立陶宛、普鲁士、拉脱维亚）诸部共同的最高异教圣所：中心是一株神圣永恒橡树（Rikojoto），树下供奉雷神佩尔库纳斯（Perkūnas），由最高祭司（Krivis）日夜守护那不灭圣火。' },

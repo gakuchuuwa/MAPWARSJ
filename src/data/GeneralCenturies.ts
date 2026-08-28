@@ -933,6 +933,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_olaf_skotkonung': 10,                           // 奥拉夫 · nuosi · 乌普萨拉
     'gen_onuist_i': 8,                                  // 奥恩格斯 · piketai · 爱丁堡
     'gen_otto_great': 10,                                // 奥托一世 · rierman · 美因茨
+    'pelianci_hengli2': 11,
     'gen_stortebeker': 14,                               // 克劳斯 · hansa · 汉堡
     'gen_swatopluk': 9,                                 // 斯瓦托 · molaweiya · 奥尔穆茨
     'gen_tassilo_iii': 8,                               // 塔西洛三世 · bafaliya · 雷根斯堡

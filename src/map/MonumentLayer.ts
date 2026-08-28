@@ -20,7 +20,7 @@ interface MonumentData {
 const BASE_SIZE = 90;
 /** [2026-08-28 主人要求「杰姆宣礼塔图改大」、「斯芬克斯雕像缩小」、「德尔斐神谕缩小」]：单独调整相对基准宽的倍数 */
 const WONDER_SCALE_OVERRIDE: Record<string, number> = {
-    'MINARET_OF_JAM': 1.5,          // 杰姆宣礼塔（贾姆宣礼塔）：塔身细长，放大 1.5 倍
+    'MINARET_OF_JAM': 1.15,         // 杰姆宣礼塔（贾姆宣礼塔）：缩小至 1.15 倍，保持修长协调
     'SCEN_INDIAN_RUINS': 0.9,       // 亨比巨石神庙群遗迹：缩小至 0.9 倍
     'SCEN_SPHINX': 0.65,            // 斯芬克斯雕像：雕像体量较小，缩小至 0.65 倍
     'SCEN_ARCHAIC_THOLOS': 0.75,    // 德尔斐神谕（古圆庙）：缩小至 0.75 倍

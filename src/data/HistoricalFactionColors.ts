@@ -935,6 +935,7 @@ const _FIXED: Record<string, string> = {
     'falanji': '#1E4E79', // 法兰克·科隆（法兰克深蓝）
     'jialuolin': '#7A4EA8', // 查理曼·亚琛（加洛林紫金）
     'rierman': '#8C6A1A', // 神圣罗马·美因茨（神罗金黑）
+    'pelianci': '#8B6F47',
     'tiaodun_qishi': '#2E2E32', // 条顿骑士·柯尼斯堡（白底黑十字）
     'hansa': '#C31E2E', // 汉萨·汉堡（汉萨红白）
     'weijing_york': '#8B2E4E', // 维京约克·约克（维京紫红）

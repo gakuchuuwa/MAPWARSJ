@@ -48,6 +48,7 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+'pelianci': '佩伦',
 'zhen': '武珍',
 'dongshengwei': '胜',
 'dizhou': '棣',
@@ -316,7 +317,7 @@ export class CityAssetManager {
 'chenghan': '成汉',
         'shuixi': '水西',
         'yang_zhou': '扬',
-        'longwu': '隆武',
+'longwu': '隆武',
         'lujian': '婺',
 'chahar': '察哈',
 'dzungar': '绰罗',
@@ -938,7 +939,8 @@ export class CityAssetManager {
 'kaleiliya': '卡累',
         'bosiniya': '波斯',
         'taolika': '陶里',
-        'shengdian_qishi': '圣殿',
+'shengdian_qishi': '圣殿',
+        'yelusalengwg': '耶路',
         'mozeer': '摩泽',
 'seleisi': '色雷',
         'maerta_qishi': '马耳',

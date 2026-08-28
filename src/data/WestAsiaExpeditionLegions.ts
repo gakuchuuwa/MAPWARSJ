@@ -42,4 +42,5 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队
     ribale: { name: '代尔木重步', tier: 2 },
     wuer: { name: '乌尔重步', tier: 3 },
+    shengdian_qishi: { name: '圣殿骑士', tier: 2 },
 };
