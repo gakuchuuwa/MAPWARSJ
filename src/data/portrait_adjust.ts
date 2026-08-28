@@ -5263,7 +5263,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 25
         },
         "/assets/SLAVIC/seleisi_ximeiang.png": {
-            "scale": 1.03,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 19
         },
@@ -7008,7 +7008,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png": {
-            "scale": 0.96,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": 7
         },

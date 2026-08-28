@@ -489,7 +489,7 @@ const _FIXED: Record<string, string> = {
     'xiadun': '#7A6042', // 夏敦（土金，夏仲阿旺朗杰）
     'kokand': '#5AA120', // 自动分配 (邻域相斥)
     'badakhshan': '#B75797', // 自动分配 (邻域相斥)
-    'taiping': '#CE3DBB', // 自动分配 (邻域相斥)
+    'taiping': '#E2AC30', // 太平天国（天王黄旗·明黄，石达开）
     'dacheng': '#392898', // 自动分配 (邻域相斥)
     'pingnan': '#7A1423', // 平南（沐英·明系深绛）
     'qianhui': '#A9B527', // 自动分配 (邻域相斥)
