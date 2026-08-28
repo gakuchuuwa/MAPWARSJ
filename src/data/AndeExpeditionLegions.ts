@@ -14,4 +14,5 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     tupinijin: { name: '图皮尼金弓', tier: 2 },  // 圣维森特·蒂巴里萨：1562 皮拉蒂宁加之战击退塔莫约联军
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
     aimala: { name: '艾马拉战士', tier: 4 },
+    yilaka: { name: '圭查武士', tier: 3 },
 };

@@ -572,6 +572,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'talanduo_aqita': -4,                                // 阿契塔 · talanduo · 塔兰托
     'gen_charles_i_naples': 13,                          // 卡洛 · kanpaniya · 那不勒斯
     'bogendi_chali': 15,                                 // 大胆查理 · bogendi · 第戎
+    'bulabante_yuehanyishi': 13,                         // 约翰一世 · bulabante · 布鲁塞尔
     'gen_charles_vii': 15,                               // 查理七世 · gaolu · 巴黎
     'gen_clovis_i': 5,                                  // 克洛维 · gaolu_luoma · 里昂
     'gen_constantine_great': 4,                         // 君士坦丁 · mozeer · 特里尔
@@ -695,6 +696,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_vlad_impaler': 15,                              // 弗拉德三世 · walajiyia · 特尔城
     'gen_vladimir_monomakh': 12,                         // 莫诺马赫 · peilieya_gongguo · 佩列斯拉夫
     'gen_vyacheslav_tartu': 13,                          // 维切斯拉夫 · chude · 尤里耶夫
+    'kaleiliya_kelimu': 18,                              // 克利姆索博列夫 · kaleiliya · 基日岛
     'gen_vyshnevetsky': 16,                              // 拜达 · qiekase · 切尔卡瑟
     'gen_vytautas_great': 15,                            // 维托夫特 · nieman · 格罗德诺
     'gen_yaroslav': 11,                                  // 雅罗斯拉夫 · luosi · 基辅
@@ -836,6 +838,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aosiruowen_baodewen': 11,                           // 鲍德温 · aosiruowen · 埃德萨
     'ayoubu_salaheding': 12,                             // 萨拉赫丁 · ayoubu · 阿勒颇
     'beileinisi_tuolemiershi': -3,                       // 托勒密二世 · beileinisi · 贝雷尼斯
+    'zhagewei_gebulei': 12,                              // 格布雷梅斯凯尔 · zhagewei · 拉利贝拉
+    'suomunate_kumalapala': 12,                          // 库马拉帕拉 · suomunate · 索姆纳特
     'bendou_alikesai': 13,                               // 阿历克塞 · bendou · 特拉布宗
     'saipulusi_juyi': 12,                                 // 居伊 · saipulusi · 尼科西亚
     'bendou_d_mitelidati': -1,                           // 密特里达梯 · bendou_d · 阿马西亚
@@ -988,6 +992,13 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_nikephoros_phokas': 10,                         // 福卡斯 · kelite · 诺索斯
     'gen_themistocles': -5,                              // 地米斯托 · xila · 雅典
     'gen_villaret': 14,                                  // 维拉雷 · luodesi · 罗得城
+    'muwaxide_yakubu': 12,
+    'varendra_devapala': 9,
+    'duonaobaojia_tzimiskes': 10,
+    'lumiliya_lalashahin': 14,
+    'yilaka_tundama': 16,
+    'gualani_nicolas': 17,
+    'xiadunhe_sviatoslav': 10,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

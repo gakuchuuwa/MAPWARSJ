@@ -11,4 +11,5 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     tuotuonake: { name: '森波阿拉兵', tier: 3 },  // 韦拉克鲁斯·托托纳克：都城森波阿拉之兵，1519 与科尔特斯结盟共攻阿兹特克
     taino: { name: '泰诺弓手', tier: 3 },        // 哈瓦那·哈土依：泰诺人木棒与弓，抗西班牙首义（哈土依为古巴第一民族英雄）
     foluolida: { name: '西班牙方阵', tier: 3 },
+    gualani: { name: '传教区军', tier: 2 },
 };

@@ -88,6 +88,7 @@ export const FACTIONS: Faction[] = [
   { id: 'xilagu', name: '西西里东' },
   { id: 'fulandesi', name: '阿图瓦' },
   { id: 'bogendi', name: '勃艮第' },
+  { id: 'bulabante', name: '布拉班特' },
   { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
   { id: 'kaernute', name: '卡尔努特' },
   { id: 'anggelu', name: '盎格鲁' },
@@ -165,6 +166,7 @@ export const FACTIONS: Faction[] = [
   { id: 'alabo', name: '阿拉伯' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },
+  { id: 'kaleiliya', name: '卡累利阿' },
   { id: 'deniesite', name: '德涅斯特' },
   { id: 'nieman', name: '涅曼' },
   { id: 'fuerjia', name: '伏尔加' },
@@ -1861,8 +1863,11 @@ export const FACTIONS: Faction[] = [
         // 廷巴克图·曼丁哥人（马里帝国主体民族）
     { id: 'ethiopia', name: '埃塞俄比亚' },
    // 阿克苏姆·埃塞俄比亚
+    { id: 'zhagewei', name: '扎格维' },       // 拉利贝拉·扎格维王朝（阿高人，埃塞俄比亚正教）
     { id: 'malacca', name: '满剌加' },        // 马六甲·满剌加苏丹国
+    { id: 'medang', name: '马打蓝' },        // 卡拉桑·马打蓝王国（古爪哇 Medang，赛伦德拉王朝建卡拉桑）
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
+    { id: 'suomunate', name: '索姆纳特' },     // 索姆纳特·印度教十二光辉林伽之首
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）
     { id: 'pandiya', name: '潘地亚' },     // 马杜赖·潘地亚王朝（南印度泰米尔，朱罗宿敌）
     { id: 'liaozu', name: '寮族' },
@@ -1884,6 +1889,13 @@ export const FACTIONS: Faction[] = [
     { id: 'jiaye', name: '伽耶' },
     { id: 'jienei', name: '杰内' },
     { id: 'kuertaiya', name: '库尔泰亚' },
+    { id: 'muwaxide', name: '穆瓦希德' },
+    { id: 'varendra', name: '伐连陀' },
+    { id: 'duonaobaojia', name: '多瑙保加' },
+    { id: 'lumiliya', name: '鲁米利亚' },
+    { id: 'yilaka', name: '伊拉卡' },
+    { id: 'gualani', name: '瓜拉尼' },
+    { id: 'xiadunhe', name: '下顿河' },
     ];
 
 // @ts-ignore

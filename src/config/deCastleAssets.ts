@@ -122,6 +122,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     pagan: 'BURM_CASTLE_AGE3',             // 缅国（蒲甘）
     hantawadi: 'BURM_CASTLE_AGE3',         // 汉达瓦底
     malacca: 'MALA_CASTLE_AGE3',           // 满剌加
+    medang: 'MALA_CASTLE_AGE3',           // 马打蓝
     deli: 'HIND_CASTLE_AGE3',              // 德里苏丹国
     gurjara: 'GURJ_CASTLE_AGE3',           // 瞿折罗
     huluo: 'GURJ_CASTLE_AGE3',             // 古尔
