@@ -175,7 +175,7 @@ export function resolveTerrainTileAtElevation(
     const biome = detectBiomeCore(lat, lng, elev);
     const theme = resolveDeMapTheme(lat, lng, biome, elev);
     void rng;
-    return terrainForTheme(theme, biome, season, band);
+    return terrainForTheme(theme, biome, season, band, lat, elev, false, lng);
 }
 
 // ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────

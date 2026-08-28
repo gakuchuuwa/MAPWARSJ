@@ -3028,10 +3028,12 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
     { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'small_city', troops: 20000, region: 'MALAY', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）' },
+    { id: 'city_deernate', name: '德尔纳特', factionId: 'ternate', lat: 0.7852, lng: 127.3832, type: 'small_city', troops: 30000, region: 'MALAY', note: '特尔纳特苏丹国都城(维基作德那第)，世界香料之源丁香群岛核心，加马拉火山岛；巴布拉苏丹1570-1583在此亲统水军攻陷葡属卡斯特拉要塞，驱逐殖民者称霸东部印尼群岛' },
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 30000, region: 'INDIA', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
     { id: 'city_suomunate', name: '索姆纳特', factionId: 'suomunate', lat: 20.8878, lng: 70.4014, type: 'small_city', troops: 30000, region: 'INDIA', note: '帕布哈斯帕坦，印度教湿婆神庙（十二光辉林伽之首），1026年遭马哈茂德·伽色尼洗劫，索兰基王朝重建' },
     { id: 'city_tanjiawuer', name: '坦贾武尔', factionId: 'zhuluo', lat: 10.79, lng: 79.14, type: 'medium_city', troops: 30000, region: 'PURU', note: '朱罗王朝都城，布里哈迪希瓦拉神庙（世界遗产）所在' },
     { id: 'city_madula', name: '马杜赖', factionId: 'pandiya', lat: 9.93, lng: 78.12, type: 'medium_city', troops: 30000, region: 'PURU', note: '潘地亚王朝都城，米纳克希神庙所在' },
+    { id: 'city_anulade', name: '阿努拉德', factionId: 'sengjialuo', lat: 8.3533, lng: 80.3956, type: 'medium_city', troops: 30000, region: 'INDIA', note: '阿努拉德普勒(Anuradhapura)，斯里兰卡僧伽罗王朝千年佛教圣都与灌溉枢纽（圣菩提树/鲁梵维利萨亚塔）；杜图伽摩尼击溃南印度泰米尔埃拉兰统一全岛光复圣都' },
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 30000, region: 'LINGNAN', note: '澜沧王国后期首都，塔銮所在地' },
     { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 30000, region: 'AFRICA', note: '库施王国都城，黑金字塔群' },
@@ -3058,6 +3060,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'small_city', troops: 30000, region: 'AMERICA', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位' },
     { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 30000, region: 'AMERICA', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'small_city', troops: 30000, region: 'AFRICA', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地' },
+    { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 30000, region: 'AFRICA', note: '泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

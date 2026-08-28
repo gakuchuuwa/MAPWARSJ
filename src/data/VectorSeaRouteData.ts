@@ -868,5 +868,108 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "波尔多-坎佩尔",
+                type: "sea",
+                id: "sea_city_bordeaux_city_kanpeier_1787911327972",
+                startConnection: "city_bordeaux",
+                endConnection: "city_kanpeier"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-0.57, 44.83],
+                    [-0.65, 45.1],
+                    [-0.769043, 45.391199],
+                    [-1.051941, 45.583846],
+                    [-1.25, 45.6],
+                    [-1.7, 46.1],
+                    [-2.8, 46.6],
+                    [-3.113991, 46.799812],
+                    [-3.9, 47.3],
+                    [-4.4285, 47.6392],
+                    [-4.103, 47.995],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "坎佩尔-卡舍尔",
+                type: "sea",
+                id: "sea_city_kanpeier_city_kasheer_1787911336534",
+                startConnection: "city_kanpeier",
+                endConnection: "city_kasheer"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-4.103, 47.995],
+                    [-4.509444, 48.325761],
+                    [-4.54189, 48.34733],
+                    [-4.780599, 48.299559],
+                    [-4.899391, 48.509285],
+                    [-5.003463, 48.693021],
+                    [-5.06401, 48.799916],
+                    [-5.079929, 48.828019],
+                    [-5.15354, 48.957978],
+                    [-5.236329, 49.104141],
+                    [-5.630965, 49.800862],
+                    [-5.672084, 49.873457],
+                    [-5.783648, 49.997799],
+                    [-5.8714, 50.4096],
+                    [-6.11285, 50.782747],
+                    [-6.132679, 50.813392],
+                    [-6.843006, 51.911162],
+                    [-6.979327, 52.121838],
+                    [-7.8907, 52.5202],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "普里-吉大港",
+                type: "sea",
+                id: "sea_city_puli_city_jidagang_1787912052749",
+                startConnection: "city_puli",
+                endConnection: "city_jidagang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [85.831, 19.81],
+                    [87.41667, 20.5],
+                    [87.5, 21.25],
+                    [89.5, 21.25],
+                    [89.66667, 21.41667],
+                    [90.83333, 21.41667],
+                    [91.33333, 21.75],
+                    [91.8325, 22.335],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "耽摩栗底-吉大港",
+                type: "sea",
+                id: "sea_city_danmoledi_city_jidagang_1787912080523",
+                startConnection: "city_danmoledi",
+                endConnection: "city_jidagang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [87.92, 22.28],
+                    [88, 21],
+                    [90, 21.674],
+                    [91, 22],
+                    [91.8325, 22.335],
+                ]
+            }
+        },
     ]
 };

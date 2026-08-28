@@ -8,4 +8,5 @@
 export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     malacca: { name: '爪刀勇士', tier: 4 },   // 马六甲·拜里米苏拉：马来 Karambit 爪刀勇士
     medang: { name: '爪哇象兵', tier: 3 },   // 卡拉桑·帕南卡兰：马打蓝/古爪哇战象兵
+    ternate: { name: '摩鹿加水兵', tier: 2 },   // 德尔纳特·巴布拉：卡拉科阿桨帆战船香料群岛突击水军，1575攻陷卡斯特拉要塞
 };

@@ -840,7 +840,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ayoubu_salaheding': 12,                             // 萨拉赫丁 · ayoubu · 阿勒颇
     'beileinisi_tuolemiershi': -3,                       // 托勒密二世 · beileinisi · 贝雷尼斯
     'zhagewei_gebulei': 12,                              // 格布雷梅斯凯尔 · zhagewei · 拉利贝拉
+    'adal_ghazi': 16,                                   // 格拉尼 · adal · 塞拉
     'suomunate_kumalapala': 12,                          // 库马拉帕拉 · suomunate · 索姆纳特
+    'sengjialuo_dutugamo': -2,                            // 杜图伽摩尼 · sengjialuo · 阿努拉德
     'bendou_alikesai': 13,                               // 阿历克塞 · bendou · 特拉布宗
     'saipulusi_juyi': 12,                                 // 居伊 · saipulusi · 尼科西亚
     'bendou_d_mitelidati': -1,                           // 密特里达梯 · bendou_d · 阿马西亚
@@ -1003,6 +1005,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xingelana_dawila': 16,
     'gualani_nicolas': 17,
     'xiadunhe_sviatoslav': 10,
+    'ternate_babula': 16,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
