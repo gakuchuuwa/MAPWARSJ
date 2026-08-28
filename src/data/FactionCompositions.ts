@@ -840,7 +840,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 2 },
         ],
     },
-    // 匈牙利王国·布达佩斯（匈雅提亚诺什 · 马扎尔军团 · 鱼鳞阵 3+4+2：马扎尔骠骑 3 + 精锐马扎尔骠骑 4 + 骑射手 2）
+    // 匈牙利王国·布达佩斯（马加什一世 · 马扎尔军团 · 鱼鳞阵 3+4+2：马扎尔骠骑 3 + 精锐马扎尔骠骑 4 + 骑射手 2）
     mazhaer: {
         legionName: "马扎尔军团",
         formationMode: 'fish_scale',
@@ -3364,15 +3364,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "keluodiya": {
         legionName: "克罗地亚军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
-            { type: "composite_bowman", count: 3 },
-        ],
-    },
-    "dajiya": {
-        legionName: "达基亚军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },

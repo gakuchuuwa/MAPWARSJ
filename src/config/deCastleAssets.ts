@@ -69,6 +69,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     gelujiya: 'GEOR_CASTLE_AGE3',          // 格鲁吉亚
     baojialiya: 'BULG_CASTLE_AGE3',        // 保加利亚
     mazhaer: 'MAGY_CASTLE_AGE3',           // 匈牙利（马扎尔）
+    xiongyati: 'MAGY_CASTLE_AGE3',          // 匈雅提（马扎尔·科文城堡）
     litaowan: 'LITH_CASTLE_AGE3',          // 立陶宛
     bolan: 'POLE_CASTLE_AGE3',             // 波兰
     boximiya: 'BOHE_CASTLE_AGE3',          // 波西米亚

@@ -26,7 +26,6 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'CEAS_WONDER_CUMANS': { lat: 47.615, lng: 40.618, place: '顿河下游' },         // 萨尔克尔要塞
     'WEST_WONDER_BURGUNDIANS': { lat: 50.847, lng: 4.352, place: '布鲁塞尔' },     // 布鲁塞尔市政厅
     'INDI_WONDER_GURJARAS': { lat: 20.888, lng: 70.401, place: '索姆纳特' },       // 索姆纳特神庙
-    'SLAV_WONDER_MAGYARS': { lat: 45.750, lng: 22.888, place: '胡内多阿拉' },      // 科文城堡
     'ASIA_WONDER_KOREANS': { lat: 35.838, lng: 129.212, place: '庆州' },           // 皇龙寺九层木塔
     'MEDI_WONDER_SPANISH': { lat: 37.382, lng: -5.996, place: '塞维利亚' },        // 黄金塔
     'SLAV_WONDER_BULGARIANS': { lat: 43.161, lng: 26.813, place: '普雷斯拉夫' },   // 普雷斯拉夫圆顶金教堂

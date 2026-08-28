@@ -5587,11 +5587,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 6,
             "offsetY": 14
         },
-        "/assets/SLAVIC/dajiya_deqiebalusi.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/SLAVIC/kelimiya_hajigelai.png": {
             "scale": 1.31,
             "offsetX": 7,
