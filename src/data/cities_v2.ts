@@ -1303,10 +1303,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 26.670, lng: 118.210, type: 'small_city', troops: 30000, tier: 4,
         
         note: '延平；靖南小城', region: 'LINGNAN' },
-    {
-        id: 'city_jianning', name: '建宁', factionId: 'longwu',
-        lat: 27.12, lng: 118.26, type: 'medium_city', troops: 30000, tier: 4,
-        region: 'LINGNAN', note: '建宁府治建瓯（今福建建瓯）；非闽西宁化一带' },
+    { id: 'city_jianning', name: '建宁', factionId: 'longwu', lat: 27.12, lng: 118.26, type: 'medium_city', troops: 20000, region: 'JIANGNAN' },
     { id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu', lat: 28.46, lng: 119.91, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
 
     {
@@ -2015,6 +2012,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'xiongyati', lat: 45.749, lng: 22.888, type: 'pass', troops: 20000, region: 'GERMANIC' },
     { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'pass', troops: 30000, region: 'EAST', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
     { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'pelianci', lat: 50.402359, lng: 7.252187, type: 'small_city', troops: 30000, region: 'GERMANIC', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫' },
     { id: 'city_yachen', name: '亚琛', factionId: 'jialuolin', lat: 50.77, lng: 6.08, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'small_city', troops: 30000, region: 'GERMANIC' },
@@ -2940,8 +2938,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.51, lng: 36.29, type: 'big_city', troops: 30000, region: 'ORIE', note: '倭马亚都，西亚千年都会' },
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'medium_city', troops: 30000, region: 'ORIE' },
-    { id: 'city_ake', name: '阿卡', factionId: 'panjun', lat: 32.93, lng: 35.08, type: 'pass', troops: 30000, region: 'ORIE', mirror: true, note: '1291 阿卡陷落后圣殿骑士团退守塞浦路斯；此城归马穆鲁克（暂 panjun）' },
-    { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'small_city', troops: 30000, region: 'WEST_ASIA', note: '圣殿骑士团塞浦路斯基地（1210建堡，1291阿卡陷落后退守，末代大团长莫莱驻地），科洛西要塞所在' },
+    { id: 'city_ake', name: '阿卡', factionId: 'yelusalengwg', lat: 32.93, lng: 35.08, type: 'pass', troops: 30000, region: 'ORIE', mirror: true, note: '耶路撒冷王国（十字军）最後都城（1191–1291），1291 陷于马穆鲁克' },
+    { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'pass', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 30000, region: 'ORIE' },
     { id: 'city_wasaite', name: '瓦塞特', factionId: 'dibisi', lat: 25.7, lng: 32.64, type: 'small_city', troops: 30000, region: 'ORIE' },
     { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.2, lng: 29.91, type: 'big_city', troops: 30000, region: 'ORIE', mirror: true },

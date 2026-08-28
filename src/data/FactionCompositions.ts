@@ -2658,6 +2658,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "arbalest", count: 2 },
         ],
     },
+    // 耶路撒冷王国·阿卡（鲍德温四世 · 耶路撒冷王国军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
+    yelusalengwg: {
+        legionName: "耶路撒冷王国军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "halberdier", count: 3 },
+            { type: "crusader_knight", count: 3 },
+            { type: "arbalest", count: 2 },
+        ],
+    },
     // 纳巴泰王国·佩特拉（阿雷塔斯 · 纳巴驼骑军团 · 鹤翼阵 2+4+3：火焰骆驼 2 + 骆驼骑兵 4 + 骆驼弓骑 3）
     nabatai: {
         legionName: "纳巴驼骑军团",

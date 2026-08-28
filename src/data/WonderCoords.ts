@@ -15,7 +15,6 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'EAST_WONDER_GOTHS': { lat: 44.425, lng: 12.209, place: '拉文纳' },            // 狄奥多里克陵墓
     'SEAS_WONDER_MALAY': { lat: -7.756, lng: 110.445, place: '日惹' },             // 卡拉桑神庙
     'ASIA_WONDER_JURCHENS': { lat: 40.322, lng: 116.321, place: '昌平银山' },       // 银山塔林（法华禅寺金代墓塔群，延寿镇银山山谷）
-    'EAST_WONDER_TEUTONS': { lat: 50.402, lng: 7.253, place: '莱茵兰' },           // 玛丽亚拉赫修道院
     'ORIE_WONDER_PERSIANS': { lat: 33.094, lng: 44.581, place: '泰西封' },         // 泰西封巨拱
     'ASIA_WONDER_KHITANS': { lat: 39.565, lng: 113.190, place: '应县' },           // 佛宫寺释迦塔
     'ASIA_WONDER_KOREANS': { lat: 35.838, lng: 129.212, place: '庆州' },           // 皇龙寺九层木塔

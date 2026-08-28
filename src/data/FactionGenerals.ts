@@ -140,6 +140,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     falanji: { generalId: 'gen_charles_martel', generalName: '查理马特', portrait: '/assets/GERMANIC/falanji_chalimate.png' },
     jialuolin: { generalId: 'gen_charlemagne', generalName: '查理曼', portrait: '/assets/GERMANIC/jialuolin_chalidadi.png' },
     rierman: { generalId: 'gen_otto_great', generalName: '奥托一世', portrait: '/assets/GERMANIC/rierman_aotuoyishi.png' },
+    pelianci: { generalId: 'pelianci_hengli2', generalName: '亨利二世', portrait: '' },
     shiwaben: { generalId: 'gen_ulrich_augsburg', generalName: '乌尔里希', portrait: '/assets/GERMANIC/shiwaben_shengwuerlixi.png' },
     asikanani: { generalId: 'gen_albrecht_bear', generalName: '阿尔布雷', portrait: '/assets/GERMANIC/asikanani_aerbulei.png' },
     wende: { generalId: 'gen_gero_margrave', generalName: '杰罗', portrait: '/assets/GERMANIC/wende_jieluobojue.png' },
@@ -994,6 +995,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     sailiugu: { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
     womaya: { generalId: 'womaya_muaweiye', generalName: '穆阿维叶', portrait: '/assets/WEST_ASIA/womaya_muaweiye.png' },
     xibolai: { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
+    yelusalengwg: { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewen4.png' },
     shengdian_qishi: { generalId: 'shengdian_qishi_demolai', generalName: '莫莱', portrait: '/assets/GERMANIC/shengdian_qishi_demolai.png' },
     maerta_qishi: { generalId: 'maerta_qishi_walaite', generalName: '瓦莱特', portrait: '/assets/GERMANIC/maerta_qishi_lawalaite.png' },
     dibisi: { generalId: 'dibisi_tutemosi', generalName: '图特摩斯', portrait: '/assets/WEST_ASIA/dibisi_tutemosi.png' },
@@ -1090,7 +1092,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     lumiliya: { generalId: 'lumiliya_lalashahin', generalName: '拉拉沙欣', portrait: '' },
     yilaka: { generalId: 'yilaka_tundama', generalName: '通达马', portrait: '' },
     gualani: { generalId: 'gualani_nicolas', generalName: '尼古拉斯', portrait: '' },
-    xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托', portrait: '' },
+    xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '' },
 
 };
 

@@ -110,6 +110,7 @@ export const FACTIONS: Faction[] = [
   { id: 'falanji', name: '法兰克' },
   { id: 'jialuolin', name: '加洛林' },
   { id: 'rierman', name: '莱茵兰' },
+  { id: 'pelianci', name: '佩伦茨' },
   { id: 'shiwaben', name: '施瓦本' },
   { id: 'asikanani', name: '阿斯坎尼' },
   { id: 'wende', name: '萨克森' },
@@ -156,6 +157,7 @@ export const FACTIONS: Faction[] = [
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
+  { id: 'yelusalengwg', name: '耶路撒冷王国' },        // 阿卡·十字军耶路撒冷王国（1191–1291 都城）
   { id: 'shengdian_qishi', name: '圣殿骑士团' },
   { id: 'maerta_qishi', name: '圣约翰' },
   { id: 'danmai', name: '丹麦' },

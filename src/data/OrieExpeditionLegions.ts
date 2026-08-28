@@ -13,13 +13,13 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     mamuluke: { name: '马穆鲁克骑', tier: 1 },      // 阿音贾鲁特·拜巴尔斯：1260 击败蒙古的战略级胜利，马穆鲁克奴隶骑兵建制延续 267 年
 
     // ── T2 特色之兵 ──
-    shengdian_qishi: { name: '圣殿骑士', tier: 2 },
     tuolemi: { name: '希腊方阵', tier: 2 },        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
     xibolai: { name: '基伯利姆', tier: 2 },        // 耶路撒冷·大卫：希伯来语 gibborim「勇士」，撒下载勇士团；避将名
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
     dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团
     aosiruowen: { name: '伯国骑士', tier: 3 },       // 埃德萨·鲍德温：十字军埃德萨伯国骑军（风土/建制符号；无独立战略大捷故 T3）
+    yelusalengwg: { name: '圣墓骑士', tier: 3 },     // 阿卡·鲍德温四世：耶路撒冷王国圣墓骑士团（风土/建制符号）
 
     // ── T3 风土之兵 ──
     nabatai: { name: '纳巴驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明

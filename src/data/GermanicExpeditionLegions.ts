@@ -55,6 +55,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
     rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
+    pelianci: { name: '拉赫骑士', tier: 4 },
     bogendi: { name: '勃艮第轻骑', tier: 3 },
     bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士
 };
