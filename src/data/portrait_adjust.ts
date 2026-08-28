@@ -3843,7 +3843,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_21.png": {
-            "scale": 0.89,
+            "scale": 0.83,
             "offsetX": 0,
             "offsetY": 2
         },
@@ -4103,7 +4103,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 26
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_24.png": {
-            "scale": 1,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 25
         },
@@ -6790,7 +6790,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/AMERICA/__多余__AMERICA_02.png": {
             "scale": 0.85,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": 0
         },
         "/assets/AMERICA/__多余__AMERICA_03.png": {
             "scale": 1.07,
@@ -6976,6 +6976,81 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": -21,
             "offsetY": 32
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_28.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/WEST_ASIA/64bae547-4e18-4c97-a160-efe8bc350829.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/WEST_ASIA/yelusalengwg_baodewensishi.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/SLAVIC/46677432-2a9b-4694-bca0-681173705730.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/SLAVIC/__闲置__SLAVIC_04.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/AMERICA/aimala_katali.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/AMERICA/54a7b0d4-53b4-436a-82e5-f691606c836d.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/AMERICA/gualani_nigulasi.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/AMERICA/284a4093-ed85-4ceb-958c-76574fb2fb62.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/AMERICA/yilaka_tongdama.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_53.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_112.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/CENTRAL_ASIA/29521ffe-adc4-4717-a786-ba7fabb6b793.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/CENTRAL_ASIA/4b47bc99-52b6-4ac9-89d8-400f1ca78e95.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {
