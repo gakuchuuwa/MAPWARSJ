@@ -2107,7 +2107,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "都尉溷���-窝鲁朵城",
+                name: "都尉溷河-窝鲁朵城",
                 type: "road",
                 id: "road_city_douweihunhe_city_woluduocheng_1780144046454",
                 startConnection: "city_douweihunhe",
@@ -5015,7 +5015,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞兰-���������������������������������������������罗斯",
+                name: "塞兰-怛罗斯",
                 type: "road",
                 id: "road_city_sailan_city_talas_1780148257112",
                 startConnection: "city_sailan",
@@ -6059,7 +6059,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "吉扎克-���毡",
+                name: "吉扎克-忽毡",
                 type: "road",
                 id: "road_city_jizhake_city_huzhan_1780150523620",
                 startConnection: "city_jizhake",
@@ -6778,7 +6778,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "穹窿银城-���旁雍错",
+                name: "穹窿银城-玛旁雍错",
                 type: "road",
                 id: "road_city_qionglong_city_mapangyongcuo_1780151926918",
                 startConnection: "city_qionglong",
@@ -8360,7 +8360,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "��布让-穹窿银城",
+                name: "札布让-穹窿银城",
                 type: "road",
                 id: "road_city_zhaburang2_city_qionglong_1780152779003",
                 startConnection: "city_zhaburang2",
@@ -13514,7 +13514,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "������-曲阜",
+                name: "奉高-曲阜",
                 type: "road",
                 id: "road_city_boyang_city_qufu_1780156758569",
                 startConnection: "city_boyang",
@@ -13681,7 +13681,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "历��-博阳",
+                name: "历下-博阳",
                 type: "road",
                 id: "road_city_licheng_city_boyang_1780156759086",
                 startConnection: "city_licheng",
@@ -13979,7 +13979,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阏与-��郸",
+                name: "阏与-邯郸",
                 type: "road",
                 id: "road_city_eyu_city_handan_1780157017714",
                 startConnection: "city_eyu",
@@ -15249,7 +15249,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "偏头关-宁武��",
+                name: "偏头关-宁武关",
                 type: "road",
                 id: "road_city_piantouguan_city_ningwuguan_1780158230136",
                 startConnection: "city_piantouguan",
@@ -15697,7 +15697,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "文安-���成",
+                name: "文安-乐成",
                 type: "road",
                 id: "road_city_wenan_city_hejian_1780158424024",
                 startConnection: "city_wenan",
@@ -18805,7 +18805,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "国内城-���城",
+                name: "国内城-息城",
                 type: "road",
                 id: "road_city_guoneicheng_city_xicheng_1780868251550",
                 startConnection: "city_guoneicheng",
@@ -20132,7 +20132,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "���满-凤林城",
+                name: "尼满-凤林城",
                 type: "road",
                 id: "road_city_niman_city_fenglin_1781113544602",
                 startConnection: "city_niman",
@@ -21424,7 +21424,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "巨���-邢台",
+                name: "巨鹿-邢台",
                 type: "road",
                 id: "road_city_liyang_city_xingtai_1781182123459",
                 startConnection: "city_liyang",
@@ -25541,7 +25541,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "鹤之��-仙台",
+                name: "鹤之城-仙台",
                 type: "road",
                 id: "road_city_tsuruga_city_xiantai_1781711782379",
                 startConnection: "city_tsuruga",
@@ -27956,7 +27956,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "澎湖-���溪",
+                name: "澎湖-龙溪",
                 type: "road",
                 id: "road_city_penghu_city_zhangzhou_1781961342533",
                 startConnection: "city_penghu",
@@ -29549,7 +29549,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "���非川-伏俟城",
+                name: "大非川-伏俟城",
                 type: "road",
                 id: "road_city_dafeichuan_city_fusicheng_1782676615346",
                 startConnection: "city_dafeichuan",
@@ -30973,7 +30973,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "瑷珲-�����玛",
+                name: "瑷珲-呼玛",
                 type: "road",
                 id: "road_city_yeren_base_city_huma_1782750258583",
                 startConnection: "city_yeren_base",
@@ -33115,7 +33115,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "���箭炉-严道",
+                name: "打箭炉-严道",
                 type: "road",
                 id: "road_city_dajianlu_city_yandao_1783411981903",
                 startConnection: "city_dajianlu",
@@ -40124,7 +40124,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "华沙-布列斯��",
+                name: "华沙-布列斯特",
                 type: "road",
                 id: "road_city_huasha_city_brest_1785569286607",
                 startConnection: "city_huasha",
@@ -47716,7 +47716,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "别尔哥罗德-���尔科夫",
+                name: "别尔哥罗德-哈尔科夫",
                 type: "road",
                 id: "road_city_bieergeleide_city_haerkefu_1785811159476",
                 startConnection: "city_bieergeleide",
