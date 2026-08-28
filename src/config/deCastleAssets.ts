@@ -37,6 +37,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     // ── 不列颠凯尔特系：皮克特(苏格兰) / 盖尔(爱尔兰) / 坎布里亚(威尔士) ──
     piketai: 'CELT_CASTLE_AGE3',
     gaer: 'CELT_CASTLE_AGE3',
+    mangsite: 'CELT_CASTLE_AGE3',
     kanbuliya: 'CELT_CASTLE_AGE3',
     // ── 北欧维京系 ──
     nuosi: 'VIKI_CASTLE_AGE3',             // 诺斯

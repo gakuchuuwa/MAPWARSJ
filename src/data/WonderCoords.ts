@@ -13,27 +13,20 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'INDI_WONDER_INDIANS': { lat: 10.782, lng: 79.132, place: '坦贾武尔' },        // 布里哈迪斯瓦拉神庙
     'PURU_WONDER_PURU': { lat: 23.583, lng: 72.133, place: '莫德拉' },             // 莫德拉太阳神庙（环水圣池水殿）
     'EAST_WONDER_GOTHS': { lat: 44.425, lng: 12.209, place: '拉文纳' },            // 狄奥多里克陵墓
-    'ORIE_WONDER_BERBERS': { lat: 34.024, lng: -6.822, place: '拉巴特' },          // 哈桑塔
     'SEAS_WONDER_MALAY': { lat: -7.756, lng: 110.445, place: '日惹' },             // 卡拉桑神庙
     'SLAV_WONDER_SLAVS': { lat: 62.067, lng: 35.210, place: '基日岛' },            // 波戈斯特木教堂
-    'ANDE_WONDER_TUPI': { lat: -25.695, lng: -54.437, place: '伊瓜苏' },           // 伊瓜苏瀑布长屋
     'ASIA_WONDER_JURCHENS': { lat: 40.322, lng: 116.321, place: '昌平银山' },       // 银山塔林（法华禅寺金代墓塔群，延寿镇银山山谷）
     'EAST_WONDER_TEUTONS': { lat: 50.402, lng: 7.253, place: '莱茵兰' },           // 玛丽亚拉赫修道院
     'ORIE_WONDER_PERSIANS': { lat: 33.094, lng: 44.581, place: '泰西封' },         // 泰西封巨拱
     'ASIA_WONDER_KHITANS': { lat: 39.565, lng: 113.190, place: '应县' },           // 佛宫寺释迦塔
-    'ORIE_WONDER_SARACENS': { lat: 34.199, lng: 43.873, place: '萨迈拉' },         // 萨迈拉螺旋塔
-    'ORIE_WONDER_TURKS': { lat: 41.677, lng: 26.555, place: '埃迪尔内' },          // 塞利米耶清真寺
     'CEAS_WONDER_CUMANS': { lat: 47.615, lng: 40.618, place: '顿河下游' },         // 萨尔克尔要塞
     'WEST_WONDER_BURGUNDIANS': { lat: 50.847, lng: 4.352, place: '布鲁塞尔' },     // 布鲁塞尔市政厅
     'INDI_WONDER_GURJARAS': { lat: 20.888, lng: 70.401, place: '索姆纳特' },       // 索姆纳特神庙
     'ASIA_WONDER_KOREANS': { lat: 35.838, lng: 129.212, place: '庆州' },           // 皇龙寺九层木塔
     'MEDI_WONDER_SPANISH': { lat: 37.382, lng: -5.996, place: '塞维利亚' },        // 黄金塔
-    'SLAV_WONDER_BULGARIANS': { lat: 43.161, lng: 26.813, place: '普雷斯拉夫' },   // 普雷斯拉夫圆顶金教堂
     'ASIA_WONDER_WU': { lat: 31.229, lng: 121.473, place: '上海' },                // 静安寺
     'THRACIAN_WONDER_THRACIANS': { lat: 43.745, lng: 26.766, place: '伊斯佩里赫' }, // 斯韦什塔里色雷斯古墓
     'AFRI_WONDER_ETHIOPIANS': { lat: 12.032, lng: 39.045, place: '拉利贝拉' },     // 阿曼努尔岩石教堂
-    'ANDE_WONDER_MUISCA': { lat: 5.715, lng: -72.933, place: '苏加穆西' },         // 苏加穆西太阳神殿
-    'WEST_WONDER_CELTS': { lat: 52.518, lng: -7.889, place: '卡舍尔' },            // 卡舍尔之石
     // ── 近距（30–120km，同区但不同地） ──
     'INDI_WONDER_BENGALIS': { lat: 25.031, lng: 88.977, place: '巴哈尔布尔' },     // 索马普拉大寺
     'MESO_WONDER_INCAS': { lat: -13.163, lng: -72.545, place: '马丘比丘' },        // 拴日石

@@ -94,6 +94,7 @@ export const FACTIONS: Faction[] = [
   { id: 'yinggelan', name: '英格兰' },
   { id: 'piketai', name: '皮克特' },  // 别名：苏格兰凯尔特系（Picts）
   { id: 'gaer', name: '盖尔' },  // 别名：爱尔兰凯尔特系（Gaels）
+  { id: 'mangsite', name: '芒斯特' },  // 爱尔兰南部王国，卡舍尔为其传统首都
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
 
@@ -1800,6 +1801,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jialedi', name: '迦勒底' },
     { id: 'paermila', name: '帕尔米拉' },
     { id: 'abasi', name: '阿拔斯' },
+  { id: 'samaila', name: '萨迈拉' },
     { id: 'xikesuosi', name: '喜克索斯' },
     { id: 'yashu', name: '亚述' },
 

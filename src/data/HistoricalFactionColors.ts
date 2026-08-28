@@ -818,6 +818,7 @@ const _FIXED: Record<string, string> = {
     // 该区原有 9 家已固定色（bendou/bendou_d/heti/fulijiya/ldiya/pajiama/bitiniya/baizhanting/luomu），
     // 其余 19 家此前走 FactionManager 随机池；按史地特征补齐，红/黄/蓝/紫/褐/青分散不扎堆。
     'abasi': '#1E2A3C', // 阿拔斯（黑旗革命，史料尚黑；避 wazhai 玄黑撞色取蓝黑）
+    'samaila': '#3D2B1E', // 萨迈拉（阿拔斯第二都，螺旋塔砖石棕黑）
     'youfaladi': '#D4A017', // 幼发拉底·马穆鲁克（苏丹旗黄底狮徽）
     'jialedi': '#2B5FA8', // 迦勒底·新巴比伦（伊什塔尔门釉蓝）
     'sumeier': '#2D3A8C', // 苏美尔（乌鲁克·青金石深蓝）
@@ -942,6 +943,7 @@ const _FIXED: Record<string, string> = {
     'kanbuliya': '#2F7E33', // 坎布里亚·卡莱尔（凯尔特绿）
     'piketai': '#2E4E8F', // 苏格兰·爱丁堡（苏格兰蓝）
     'gaer': '#1C4E8C', // 盖尔·都柏林（圣帕特里克蓝）
+    'mangsite': '#A67B1E', // 芒斯特·卡舍尔（蓝底三金冠，取金冠铜金，避盖尔蓝）
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）

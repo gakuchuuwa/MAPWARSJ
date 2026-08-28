@@ -99,6 +99,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'yinggelan': 'city_winchester',
   'piketai': 'city_aidingbao',
   'gaer': 'city_dublin',
+  'mangsite': 'city_kasheer',
   'bulietani': 'city_rennes',
   'saierweiya': 'city_belgrade',
 
@@ -1007,6 +1008,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jialedi': 'city_babilun',
     'paermila': 'city_tademoer',
 'abasi': 'city_bageda',
+'samaila': 'city_samaila',
     'xikesuosi': 'city_awalisi',
 'yashu': 'city_duershelujin',
     'youfaladi': 'city_anate',

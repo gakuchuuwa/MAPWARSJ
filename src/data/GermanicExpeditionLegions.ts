@@ -38,6 +38,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
+    mangsite: { name: '达尔卡伊斯', tier: 1 },      // 卡舍尔·布赖恩博鲁：本源部族，克朗塔夫主力
     boumeilaniyan: { name: '奥布奇战锤', tier: 3 },  // 格但斯克·卡西米尔四世：波兰步兵战锤（DE Obuch 破甲）
     pomeilaniya: { name: '格里芬兵团', tier: 4 },  // 什切青·博吉斯拉夫：波美拉尼亚格里芬王朝
     bafaliya: { name: '塔西洛兵团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字

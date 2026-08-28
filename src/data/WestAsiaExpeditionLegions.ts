@@ -22,6 +22,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     alabo: { name: '海湾游骑', tier: 3 },          // 巴士拉·齐亚德：波斯湾阿拉伯骑兵
     jialedi: { name: '迦勒底战车', tier: 2 },      // 巴比伦·尼布甲尼撒：卡尔基米什之战（前 605）大破埃及军
     abasi: { name: '黑衣卫', tier: 2 },          // 巴格达·曼苏尔：黑衣大食近卫，避「阿拔斯」撞将名
+    samaila: { name: '突厥卫队', tier: 3 },        // 萨迈拉·穆阿台绥姆：古拉姆突厥奴隶兵（阿莫里乌姆战役）
     bendou: { name: '阿克里泰', tier: 2 },         // 特拉布宗·阿历克塞：科穆宁边防军史载专名，长期抗突厥袭扰有实绩
     saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军

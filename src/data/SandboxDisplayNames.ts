@@ -102,6 +102,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与喀尔喀(外蒙主体)撞，去共同前缀
 
   gaer: '盖尔',
+  mangsite: '芒斯',
   piketai: '皮克',
   anggelu: '盎格',
   yinggelan: '英格',
@@ -1073,6 +1074,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'jialedi': '迦勒',
     'paermila': '帕尔',
 'abasi': '阿拔',
+'samaila': '萨迈',
     'xikesuosi': '喜克',
 'yashu': '亚述',
     'youfaladi': '幼发',
