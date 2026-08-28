@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/28 19:24:41（共 26 条）
+ * 生成时间：2026/8/28 19:30:00（共 26 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/AFRICA/zhagewei_lalibeila.png": "/assets/AFRICA/0164115a-90ff-4f59-9f2b-173bb28f6ce9.png",

@@ -22,6 +22,19 @@ function serverToPinyinId(chinese: string): string {
  * 实测症状：同一次绑定请求，隔几分钟重试就成功（读始终正常，只有写会中招）。
  * 这类锁只持续几十到几百毫秒，退避重试即可，无需搞清具体是哪个进程占的。
  */
+/**
+ * 请求体按 Buffer 拼完再解码。
+ *
+ * 🔴 [2026-08-28 主人「路线编辑器总是保存失败」查出的第二个坑]
+ *    原来是 `let body = ''; req.on('data', c => body += c)` —— 每个 chunk 各自 toString()。
+ *    2.5MB 的 VectorRoadData.ts 会被拆成几十个 chunk，只要某个中文字的 3 个字节被切在
+ *    chunk 边界上，两半就各自解码成 U+FFFD，落盘变成「���加勒斯特-特尔城」。
+ *    实测存盘前的文件里已经有 28 处这种烂字。必须先 Buffer.concat 再整体解 utf-8。
+ */
+function collectBodyChunk(chunks: Buffer[], chunk: unknown): void {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), 'utf-8'));
+}
+
 function serverSafeWriteFileSync(file: string, content: string): void {
     const TRANSIENT = new Set(['EBUSY', 'EPERM', 'EACCES', 'UNKNOWN', 'EMFILE']);
     let lastErr: any;
@@ -271,8 +284,10 @@ export default defineConfig({
                 // 这些情况都不会再把该刷的刷新弄丢，也不会把过期刷新补给刚加载的新页面。
                 server.middlewares.use('/__dev/reload-gate', (req, res) => {
                     let body = '';
-                    req.on('data', (chunk) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         let block = false;
                         let loadedAt = 0;
                         try {
@@ -356,8 +371,10 @@ export default defineConfig({
                 server.middlewares.use('/api/boot-timing', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             fs.writeFileSync(path.resolve(__dirname, 'scratch/boot_timing_latest.json'), body, 'utf-8');
                             // [2026-07-17] 同时追加一行到 jsonl：多标签页各自的账单都留痕，便于分清真实 Chrome vs 预览
@@ -378,8 +395,10 @@ export default defineConfig({
                 server.middlewares.use('/api/zoom-perf', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             fs.writeFileSync(path.resolve(__dirname, 'scratch/zoom_perf_latest.json'), body, 'utf-8');
                             fs.appendFileSync(path.resolve(__dirname, 'scratch/zoom_perf_log.jsonl'), body + '\n', 'utf-8');
@@ -398,8 +417,10 @@ export default defineConfig({
                 server.middlewares.use('/api/scene13-probe', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             fs.writeFileSync(path.resolve(__dirname, 'scratch/scene13_probe_latest.json'), body, 'utf-8');
                             fs.appendFileSync(
@@ -424,11 +445,19 @@ export default defineConfig({
                     }
 
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const filePath = path.resolve(__dirname, 'src/data/VectorRoadData.ts');
-                            fs.writeFileSync(filePath, body, 'utf-8');
+                            // 🔴 [2026-08-28 主人「路线编辑器总是保存失败」] 必须走带退避重试的安全写。
+                            //    实测报错：EPERM「The requested operation cannot be performed on a file
+                            //    with a user-mapped section open」—— dev server 刚 transform 过这个 2.5MB
+                            //    模块，esbuild 的内存映射还没释放，此刻 writeFileSync 直接抛，
+                            //    前端 fetch 拿到 500 就弹「直接保存失败，已复制到剪贴板」。
+                            //    映射几十到几百毫秒就放，退避重试一次就过。
+                            serverSafeWriteFileSync(filePath, body);
                             // 2026-08-04：道路保存只拦不补——编辑道路时不整页刷新（刷新会丢编辑器状态）
                             markRoadSaveWrite();
                             const bytes = Buffer.byteLength(body, 'utf-8');
@@ -452,11 +481,13 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const filePath = path.resolve(__dirname, 'src/data/VectorSeaRouteData.ts');
-                            fs.writeFileSync(filePath, body, 'utf-8');
+                            serverSafeWriteFileSync(filePath, body);   // 同 save-roads：躲开 dev server 的内存映射锁
                             const bytes = Buffer.byteLength(body, 'utf-8');
                             console.log(`✅ [SaveSeaRoutes] Saved ${bytes} bytes to ${filePath}`);
                             res.setHeader('Content-Type', 'application/json');
@@ -479,8 +510,10 @@ export default defineConfig({
                     }
 
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const filePath = path.resolve(__dirname, 'src/data/events.ts');
                             fs.writeFileSync(filePath, body, 'utf-8');
@@ -511,8 +544,10 @@ export default defineConfig({
                     }
 
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const results = batchImportFiles(data.entries);
@@ -541,8 +576,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const results = batchDeleteFiles(data.targets || []);
@@ -572,8 +609,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const fId = data.factionId;
@@ -630,8 +669,10 @@ export default defineConfig({
                 server.middlewares.use('/api/save-general', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const results = serverSaveGeneral(data);
@@ -652,8 +693,10 @@ export default defineConfig({
                 server.middlewares.use('/api/save-elite', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const result = serverSaveEliteLegion(data);
@@ -718,8 +761,10 @@ export default defineConfig({
                 server.middlewares.use('/api/skill-editor/save', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const result = serverSkillEditorSave(JSON.parse(body));
                             res.setHeader('Content-Type', 'application/json');
@@ -749,8 +794,10 @@ export default defineConfig({
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             let step = 0;
                             let parsed: any = null;
@@ -801,8 +848,10 @@ export default defineConfig({
                 server.middlewares.use('/api/skill-editor/create', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const result = serverSkillEditorCreate(JSON.parse(body));
                             res.setHeader('Content-Type', 'application/json');
@@ -822,8 +871,10 @@ export default defineConfig({
                 server.middlewares.use('/api/check-proximity', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
-                    req.on('data', (chunk: string) => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const { lat, lng, excludeCityId } = JSON.parse(body);
                             const citiesPath = path.resolve(__dirname, 'src/data/cities_v2.ts');
@@ -851,8 +902,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
                             const filePath = path.resolve(__dirname, 'src/types/CultureFormations.ts');
@@ -886,8 +939,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body || '{}');
                             const prevText = fs.existsSync(factionCompositionsPath)
@@ -957,8 +1012,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         // [2026-08-03] 保存计时：主人反馈"保存后要等会"，实测正常仅 ~9ms；
                         // 若控制台看到这里的毫秒数飙高（如杀毒/git 占用触发 SafeWrite 重试），即为卡顿元凶。
                         const saveT0 = Date.now();
@@ -1127,8 +1184,10 @@ export default defineConfig({
                         return;
                     }
                     let body = '';
-                    req.on('data', chunk => { body += chunk; });
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
                     req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const payload = JSON.parse(body) as {
                                 generalId?: string;
