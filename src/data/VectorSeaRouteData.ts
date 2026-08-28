@@ -1533,5 +1533,35 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "加的斯-安格拉",
+                type: "sea",
+                id: "sea_city_jiadisi_city_angra_1787918287879",
+                startConnection: "city_jiadisi",
+                endConnection: "city_angra"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-6.28, 36.52],
+                    [-6.6, 36.6],
+                    [-7.094858, 36.63734800000001],
+                    [-8.227005, 36.72279300000001],
+                    [-9.25, 36.8],
+                    [-9.352406, 36.81118],
+                    [-11.644459, 37.061422],
+                    [-12.262448, 37.128892],
+                    [-14.370384, 37.359032],
+                    [-17.2095, 37.669],
+                    [-20.000931, 37.783204],
+                    [-22.326899, 37.852623],
+                    [-26.432853, 38.166954],
+                    [-26.921997, 38.621162],
+                    [-27.22, 38.66],
+                ]
+            }
+        },
     ]
 };
