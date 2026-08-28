@@ -1662,11 +1662,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/TIBET/tsangpa_pengcuonanjie.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/STEPPE/gaoche_afuzhiluo.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -5947,11 +5942,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/TIBET/__闲置__TIBET_03.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/TIBET/gurkha_badouersaye.png": {
             "scale": 1.16,
             "offsetX": 0,
@@ -7136,6 +7126,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 12,
             "offsetY": -19
+        },
+        "/assets/TIBET/__闲置__TIBET_04.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/TIBET/tsangpa_pengcuonanjie.png": {
+            "scale": 1.07,
+            "offsetX": 11,
+            "offsetY": -1
         }
     },
     "folderGuides": {
