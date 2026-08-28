@@ -5763,7 +5763,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/INDIA/boluo_damoboluo.png": {
-            "scale": 1.17,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -6861,6 +6861,156 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/INDIA/0883d907-f629-4ef2-9d1e-0c2768b5dc81.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/INDIA/c4913b45-d8c4-4465-af4e-3f2d129cf303.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/INDIA/cde59c8b-fa57-4eab-a77a-3570c9c96726.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/INDIA/f49403a5-6a08-4a11-94fa-52eed920a965.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/LATIN/14d13fbd-08a5-4b71-aee8-4dfde7549daf.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 49
+        },
+        "/assets/LATIN/76978d14-3e3f-4687-8b34-f524a8732d88.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/LATIN/9f67de1a-f461-4d1f-8f27-638f7946579a.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/AFRICA/4f72ab2c-6246-4d79-8ec9-ea104f4da5d0.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/INDIA/jiaye_jiaye.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/INDIA/pidisha_pidisha.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/CENTRAL_ASIA/531d655c-e88d-40d6-91c2-74e7138402c6.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/CENTRAL_ASIA/wuer_wuernamu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/CENTRAL_ASIA/d22f6caa-b77f-4a60-90fb-90f5c34272cc.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/LATIN/disidelusi_disidelusi.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/AFRICA/jienei_jienei.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/LATIN/11d47cf9-e02f-4927-b38a-335f62e809ad.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/61a4950c-3c42-428d-8dad-37fe79778f4d.png": {
+            "scale": 1.14,
+            "offsetX": -19,
+            "offsetY": 25
+        },
+        "/assets/SLAVIC/92158a35-1f9f-42ef-963e-eeb22de8b6f5.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/LATIN/66ab20d6-36a2-4253-9ac4-54e87aa98f42.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/LATIN/fujisi_fujiweng.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 49
+        },
+        "/assets/AMERICA/083abeab-f249-42aa-9327-1c0dd3997c5a.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/83effe08-a740-4435-b735-6923081f9885.png": {
+            "scale": 1.01,
+            "offsetX": -7,
+            "offsetY": 12
+        },
+        "/assets/CENTRAL_ASIA/adile_adilesha.png": {
+            "scale": 1.01,
+            "offsetX": -7,
+            "offsetY": 12
+        },
+        "/assets/INDIA/kanata_lamalaya.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/INDIA/aolisha_anatabamo.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/AFRICA/0efebf3f-8042-4c3d-94be-e053c0f35b0d.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/AFRICA/kushi_amanilunnasi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/DIANQIAN/0b372407-a249-4f25-a393-f28497d05ee1.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/DIANQIAN/liaozu_saitatila.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/GERMANIC/bfaf34c4-61b3-48a0-955f-b8cf9daefde7.png": {
+            "scale": 1.19,
+            "offsetX": -21,
+            "offsetY": 32
         }
     },
     "folderGuides": {
