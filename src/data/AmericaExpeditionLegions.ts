@@ -12,4 +12,5 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     taino: { name: '泰诺弓手', tier: 3 },        // 哈瓦那·哈土依：泰诺人木棒与弓，抗西班牙首义（哈土依为古巴第一民族英雄）
     foluolida: { name: '西班牙方阵', tier: 3 },
     gualani: { name: '传教区军', tier: 2 },
+    xingelana: { name: '地峡征服者', tier: 3 },
 };

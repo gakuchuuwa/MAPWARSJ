@@ -122,6 +122,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'luosi': '罗斯',
   liulike: '留里',
   mosike_gongguo: '莫斯',
+  eluosi_diguo: '俄罗',
   xieerpuhuofu_gongguo: '谢尔',
   fulajimier_gongguo: '弗拉',
   daniebo: '斯摩',
@@ -1157,6 +1158,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'duonaobaojia': '多瑙',
     'lumiliya': '鲁米',
     'yilaka': '伊拉',
+    'xingelana': '新格',
     'gualani': '瓜拉',
     'xiadunhe': '下顿',
 };

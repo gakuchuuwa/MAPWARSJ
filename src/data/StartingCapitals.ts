@@ -129,6 +129,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'luosi': 'city_jifu',
   'liulike': 'city_nuofugeerdede',
   'mosike_gongguo': 'city_mosike',
+  'eluosi_diguo': 'city_shengpidebao',
   'xieerpuhuofu_gongguo': 'city_xieerpuhuofu',
   'fulajimier_gongguo': 'city_fulajimier',
   'daniebo': 'city_simolengsike',
@@ -1090,6 +1091,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'duonaobaojia': 'city_puleisilafu',
     'lumiliya': 'city_aidiernei',
     'yilaka': 'city_suojiamosuo',
+    'xingelana': 'city_banama',
     'gualani': 'city_yiguasu',
     'xiadunhe': 'city_saerkeer',
 };

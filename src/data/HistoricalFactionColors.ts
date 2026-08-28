@@ -973,6 +973,7 @@ const _FIXED: Record<string, string> = {
     'luosi': '#896A1E', // 基辅罗斯·基辅（罗斯金）
     'bolan': '#C7102E', // 波兰·华沙（白鹰红底）
     'mosike_gongguo': '#8A1A1A', // 莫斯科公国·莫斯科（莫斯科红）
+    'eluosi_diguo': '#16324F', // 俄罗斯帝国·圣彼得堡（彼得大帝海军蓝·波罗的海舰队）
     'liulike': '#3A6DA8', // 诺夫哥罗德·诺夫哥罗德（诺夫哥罗德蓝）
     'bolisiya': '#B73030', // 布列斯特·布列斯特（罗斯红白）
     'bosi_puluosi': '#2B4C7E', // 博斯普鲁斯·黑海青蓝
@@ -1040,6 +1041,7 @@ const _FIXED: Record<string, string> = {
     'duonaobaojia': '#355C9A',
     'lumiliya': '#8B2438',
     'yilaka': '#D2A72C',
+    'xingelana': '#E0A32E',
     'gualani': '#287A4B',
     'xiadunhe': '#D9D4C6',
     'guanche': '#8A6B4A', // 关切·特尔德（加那利羊皮褐；关切人属柏柏尔系）
