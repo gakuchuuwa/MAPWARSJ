@@ -16,9 +16,12 @@ const MIN_RENDER_INTERVAL_MS = 200;
 /** 单块林区斑块在 SAMPLE_ZOOM 投影空间的半径（投影 px）。屏幕半径 = 此值 × 2^(当前zoom−SAMPLE_ZOOM)，
  *  保证斑块的地理范围恒定、缩放不跳位。 */
 const PATCH_RADIUS_PROJ = 26;
+/** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
+ *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
+const PATCH_MIN_SCREEN_RADIUS = 18;
 /** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
  *  stride 越大簇越稀、越"成带"。 */
-const CLUSTER_STRIDE = SAMPLE_STEP * 3;
+const CLUSTER_STRIDE = SAMPLE_STEP * 2;
 /** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping */
 const CLUSTER_RADIUS = SAMPLE_STEP * 1.3;
 
@@ -90,6 +93,9 @@ export class VegetationLayer {
     /** 上次重画时的采样格窗口指纹：没跨格 = 林区斑块集合一模一样，canvas 跟随平移即可，不必重画 */
     private lastRenderKey = '';
     private lastRenderAt = 0;
+    /** 瓦片没到时的补画计数（按视口指纹计），封顶防止离线时无限空转 */
+    private retryKey = '';
+    private retryCount = 0;
 
     private readonly onViewportChanged = () => this.scheduleRender();
     private readonly onResize = () => { this.resize(); this.scheduleRender(); };
@@ -151,6 +157,11 @@ export class VegetationLayer {
         this.canvas.style.display = inRange ? 'block' : 'none';
         if (!inRange) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.lastRenderKey = ''; return; }
 
+        // 尺寸兜底：构造时地图容器还没布局出来（0×0）的话 canvas 会一直是 0×0，
+        // 之后没人再触发 resize 就永远画不出东西。每次画之前对一下尺寸。
+        const size = this.map.getSize();
+        if (size.x > 0 && (this.canvas.width !== size.x || this.canvas.height !== size.y)) this.resize();
+
         // canvas 跟随图层平移（含缩放动画期间的对齐）
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
 
@@ -172,6 +183,8 @@ export class VegetationLayer {
 
         // 屏幕半径 = 投影半径 × 2^(当前zoom−SAMPLE_ZOOM)：斑块地理范围恒定，缩放不跳
         const screenRadiusScale = Math.pow(2, zoom - SAMPLE_ZOOM);
+        // DEM 瓦片是异步到的：这一轮有格子因为瓦片没到被跳过，就不能把这次当成「画完了」
+        let missingTiles = 0;
 
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
@@ -191,15 +204,19 @@ export class VegetationLayer {
                 const elev = LandSeaSystem.getElevationAtMapPixel(
                     cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
                 );
-                if (elev === null || elev < 0 || elev > 3600) continue;
+                if (elev === null) { missingTiles++; continue; }
+                if (elev < 0 || elev > 3600) continue;
 
                 // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
                 const tile = resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
                 const density = densityFor(tile);
                 if (density < MIN_PATCH_DENSITY) continue;
 
-                // 成簇：不是每格都长树，按"簇密度 × 随机扰动"决定这一簇成不成立（DE 密度分档 + percent_chance）
-                const clusterChance = density * (0.55 + hash(cx, cy, 43) * 0.9);
+                // 成簇：不是每格都长树，按"簇密度 × 随机扰动"决定这一簇成不成立（DE 密度分档 + percent_chance）。
+                // 原来是 density×(0.55~1.45)，草地(0.28)只有 0.15~0.41、林地(0.42)也才 0.23~0.61，
+                // 七成格子直接不长 —— 叠上 zoom 8 的半径缩水就成了「植被不显示」。
+                // 现在放大到 ×2.2：林地 0.65~1.0、草地 0.43~0.75，稀树/半干旱仍然明显稀疏。
+                const clusterChance = Math.min(1, density * 2.2 * (0.7 + hash(cx, cy, 43) * 0.6));
                 if (hash(cx, cy, 44) >= clusterChance) continue;
 
                 // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）
@@ -225,9 +242,27 @@ export class VegetationLayer {
                     const [r, g, b] = colorFor(asset, season);
                     const densityBoost = density >= 0.4 ? 1.25 : density >= 0.25 ? 1.0 : 0.7;
                     const jitter = 0.8 + hash(cx, cy, i + 70) * 0.45;
-                    const radius = PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter;
-                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.4 : 0.28);
+                    const radius = Math.max(
+                        PATCH_MIN_SCREEN_RADIUS * densityBoost * jitter,
+                        PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter,
+                    );
+                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.5 : 0.36);
                 }
+            }
+        }
+
+        // DEM 瓦片异步到达：这轮被跳过的格子必须补画。
+        // 只靠 land-sea-tiles-updated 不够 —— 瓦片可能在两次 render 的间隙就位，
+        // 而 lastRenderKey 已经把这屏标成「画过了」，结果一屏空白一直留到下次跨格。
+        if (missingTiles > 0) {
+            if (this.retryKey !== key) { this.retryKey = key; this.retryCount = 0; }
+            // 高程瓦片是 S3 上的 Mapzen Terrarium，冷启动一屏几十片、十几秒才齐。
+            // 实测印度那一屏：等 5 秒画出来 0%，等到瓦片齐了是 8.1%。所以补画要等得够久，
+            // 用退避拉长间隔（0.6s 起、每次 +0.3s，共 15 次≈40 秒），拉不到就收手不空转。
+            if (this.retryCount < 15) {
+                this.retryCount++;
+                this.lastRenderKey = '';
+                this.scheduleRender(600 + this.retryCount * 300);
             }
         }
     }

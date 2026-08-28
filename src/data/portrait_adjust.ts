@@ -3133,7 +3133,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/daming/zu_d_yuanchonghuan.png": {
-            "scale": 1.07,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 19
         },
