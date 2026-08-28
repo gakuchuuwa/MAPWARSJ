@@ -2067,11 +2067,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/zhaosong/__闲置__zhaosong_03.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": -17
-        },
         "/assets/zhaosong/__闲置__zhaosong_17.png": {
             "scale": 1,
             "offsetX": 10,
@@ -2081,11 +2076,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 3,
             "offsetY": -39
-        },
-        "/assets/zhaosong/changshan_yangyanzhao.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": -19
         },
         "/assets/zhaosong/chaozhou_d_zhangshijie.png": {
             "scale": 1.19,
@@ -5138,7 +5128,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/BERBER/mulabite_tashenfen.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -6608,7 +6598,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -54
         },
         "/assets/AFRICA/manding_songdiyata.png": {
-            "scale": 1.07,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 9
         },
@@ -7131,6 +7121,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": 6
+        },
+        "/assets/INDIA/suomunate_kumalapala.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/zhaosong/__闲置__zhaosong_28.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/zhaosong/changshan_yangyanzhao.png": {
+            "scale": 1.06,
+            "offsetX": 12,
+            "offsetY": -19
         }
     },
     "folderGuides": {

@@ -812,6 +812,7 @@ app.innerHTML = `
     <a href="/portrait-tuner.html" class="le-link">立绘调校</a>
     <a href="/skill-editor.html" class="le-link">技能管理</a>
     <button type="button" id="le-reload" class="le-btn">刷新数据</button>
+    <button type="button" id="le-check-legions" class="le-btn">🧹 检查军团命名</button>
     <button type="button" id="le-save-all" class="le-btn">💾 全部写盘</button>
   </div>
 </header>
@@ -1451,6 +1452,8 @@ function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
 
 let selectedLayerTab: 'culture' | 'branch' | 'sub' = 'branch';
 let selectedLayerKey: string = '';
+/** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
+let legionSearchQuery = '';
 
 interface LayerLegionOption {
     key: string;
@@ -1744,13 +1747,16 @@ function renderEditPanel(row: FactionLegionRow): void {
     <div class="le-wizard-step">
       <div class="le-step-no">第二步 · 选择军团</div>
       <div class="le-step-title">从【${LAYER_FULL_LABEL[selectedLayerTab]}】中挑选：</div>
+      <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" value="${legionSearchQuery}" style="width:100%;box-sizing:border-box;margin-bottom:8px;" />
       <div class="le-legion-grid">
-        ${activeLayerOpts.map(opt => `
+        ${filterLegionOptionsByQuery(activeLayerOpts).map(opt => `
           <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
             <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}</div>
             <div class="lc-meta">${opt.description}</div>
           </div>
-        `).join('') || '<div class="le-empty-hint" style="padding:14px;">该层暂无军团可选</div>'}
+        `).join('') || (activeLayerOpts.length
+            ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
+            : '<div class="le-empty-hint" style="padding:14px;">该层暂无军团可选</div>')}
       </div>
       <div style="font-size:11px;color:#8a8070;margin-top:6px;">💡 点击军团卡片立即套用（阵型/兵种/名称联动）；可展开下方「高级微调」细调，最后点底部保存。</div>
     </div>
@@ -1982,6 +1988,21 @@ function bindPanelEvents(row: FactionLegionRow): void {
         if (!currentEditingLegion) return;
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
+
+        // 军团改名：若改了名且旧名被其他势力共享，则同步改名，保证「同名 = 同一军团」
+        const newLegionName = currentEditingLegion.legionName?.trim();
+        const oldLegionName = localCustomCompositions[row.factionId]?.legionName?.trim();
+        let syncCount = 0;
+        if (newLegionName && oldLegionName && oldLegionName !== newLegionName) {
+            for (const fid of Object.keys(localCustomCompositions)) {
+                const comp = localCustomCompositions[fid];
+                if (fid !== row.factionId && comp?.legionName === oldLegionName) {
+                    localCustomCompositions[fid] = { ...comp, legionName: newLegionName };
+                    syncCount++;
+                }
+            }
+        }
+
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
             formationMode: currentEditingLegion.formationMode,
@@ -1994,7 +2015,8 @@ function bindPanelEvents(row: FactionLegionRow): void {
         // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
         await saveAllCompositions();
-        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`);
+        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
+            + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : ''));
     });
 
     // 重置恢复默认
@@ -2019,24 +2041,13 @@ function bindPanelEvents(row: FactionLegionRow): void {
     });
 
     // ── 三步向导 · 第二步：选军团（选中即套用） ──
-    els.panelContent.querySelectorAll('.le-legion-card[data-key]').forEach(card => {
-        card.addEventListener('click', () => {
-            const key = (card as HTMLElement).dataset.key!;
-            if (selectedLayerKey === key) return;
-            const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
-            const target = options.find(o => o.key === key);
-            if (!target) { showToast('找不到该军团配置', true); return; }
+    els.panelContent.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
 
-            currentEditingLegion = {
-                legionName: target.legionName,
-                formationMode: target.formationMode,
-                navalFormation: currentEditingLegion?.navalFormation ?? 'auto',
-                slots: target.slots.map(s => ({ ...s })),
-            };
-            selectedLayerKey = key;
-            renderEditPanel(row);
-            showToast(`⬇ 已为【${row.generalName || row.factionName}】套用【${target.legionName}】(${LAYER_FULL_LABEL[selectedLayerTab]})，点底部保存落盘`);
-        });
+    // 第二步军团搜索：只重绘卡片网格，保持搜索框焦点
+    const legionSearchInput = document.getElementById('le-legion-search') as HTMLInputElement | null;
+    legionSearchInput?.addEventListener('input', () => {
+        legionSearchQuery = legionSearchInput.value;
+        renderLegionCardGrid(row);
     });
 
     document.getElementById('le-legion-name-input')?.addEventListener('input', (e) => {
@@ -2087,6 +2098,140 @@ function bindPanelEvents(row: FactionLegionRow): void {
         selectFaction(row.factionId);
         await saveAllCompositions();
         showToast(`🌐 已为【${row.regionLabel}】区 ${count} 个势力统一设置方阵并写入文件`);
+    });
+}
+
+/** 按当前搜索词过滤「第二步」军团卡片（仅匹配军团名） */
+function filterLegionOptionsByQuery(options: LayerLegionOption[]): LayerLegionOption[] {
+    const q = legionSearchQuery.trim().toLowerCase();
+    return q ? options.filter(o => o.legionName.toLowerCase().includes(q)) : options;
+}
+
+/** 绑定单个「选军团」卡片点击（选中即套用） */
+function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
+    card.addEventListener('click', () => {
+        const key = card.dataset.key!;
+        if (selectedLayerKey === key) return;
+        const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
+        const target = options.find(o => o.key === key);
+        if (!target) { showToast('找不到该军团配置', true); return; }
+
+        currentEditingLegion = {
+            legionName: target.legionName,
+            formationMode: target.formationMode,
+            navalFormation: currentEditingLegion?.navalFormation ?? 'auto',
+            slots: target.slots.map(s => ({ ...s })),
+        };
+        selectedLayerKey = key;
+        renderEditPanel(row);
+        showToast(`⬇ 已为【${row.generalName || row.factionName}】套用【${target.legionName}】(${LAYER_FULL_LABEL[selectedLayerTab]})，点底部保存落盘`);
+    });
+}
+
+/** 仅重绘「第二步」军团卡片网格（保持搜索框焦点，不整屏重渲染） */
+function renderLegionCardGrid(row: FactionLegionRow): void {
+    const gridEl = els.panelContent.querySelector('.le-legion-grid');
+    if (!gridEl) return;
+    const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
+    const visible = filterLegionOptionsByQuery(options);
+    gridEl.innerHTML = visible.map(opt => `
+      <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
+        <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}</div>
+        <div class="lc-meta">${opt.description}</div>
+      </div>
+    `).join('') || (options.length
+        ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
+        : '<div class="le-empty-hint" style="padding:14px;">该层暂无军团可选</div>');
+    gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
+}
+
+/** 某势力的实际军团名（自定义优先；否则文化区默认军团名） */
+function effectiveLegionName(row: FactionLegionRow): string {
+    const custom = localCustomCompositions[row.factionId];
+    const n = custom?.legionName?.trim();
+    if (n) return n;
+    return getCultureLegionName(row.region) ?? `${row.factionName}军团`;
+}
+
+/**
+ * 军团命名铁律自动校验：
+ *   ① 相同编制（阵型 + 兵种 type:count 序列 = legionSig）的军团必须同名；
+ *   ② 军团不能重名（同名军团必须同编制）。
+ * 返回违规信息列表；无违规则空数组。
+ */
+function computeLegionNameViolations(): string[] {
+    const violations: string[] = [];
+
+    // 每势力 → { 军团名, 编制签名 }（覆盖自定义与文化区默认）
+    const eff = allRows.map(r => ({
+        factionName: r.factionName,
+        name: effectiveLegionName(r),
+        sig: legionSig(r),
+    }));
+
+    // ① 相同编制必须同名
+    const sigMap = new Map<string, string[]>();
+    const sigFactions = new Map<string, string[]>();
+    for (const e of eff) {
+        if (!sigMap.has(e.sig)) { sigMap.set(e.sig, []); sigFactions.set(e.sig, []); }
+        if (!sigMap.get(e.sig)!.includes(e.name)) sigMap.get(e.sig)!.push(e.name);
+        sigFactions.get(e.sig)!.push(e.factionName);
+    }
+    for (const [sig, names] of sigMap.entries()) {
+        if (names.length > 1) {
+            violations.push(`相同编制（${sig}）但军团名不同：${sigFactions.get(sig)!.join('、')} → 名字 ${names.join(' / ')}（相同编制军团必须同名）`);
+        }
+    }
+
+    // ② 军团不能重名（同名不同编）
+    const nameSigs = new Map<string, Set<string>>();
+    const nameFactions = new Map<string, string[]>();
+    for (const e of eff) {
+        if (!nameSigs.has(e.name)) { nameSigs.set(e.name, new Set()); nameFactions.set(e.name, []); }
+        nameSigs.get(e.name)!.add(e.sig);
+        nameFactions.get(e.name)!.push(e.factionName);
+    }
+    for (const [name, sigs] of nameSigs.entries()) {
+        if (sigs.size > 1) {
+            violations.push(`军团名【${name}】被用于不同编制（重名）：${nameFactions.get(name)!.join('、')}（同名军团必须同编制）`);
+        }
+    }
+
+    return violations;
+}
+
+/** 校验并自动报错：无违规提示通过；有违规弹窗列出全部 */
+function reportLegionNameViolations(): void {
+    const violations = computeLegionNameViolations();
+    if (violations.length === 0) {
+        showToast('✅ 军团命名检查通过：无同名/相同编制不同名违规');
+        return;
+    }
+    openLegionViolationsModal(violations);
+}
+
+/** 违规列表弹窗 */
+function openLegionViolationsModal(violations: string[]): void {
+    const overlay = document.createElement('div');
+    overlay.className = 'le-modal-overlay';
+    overlay.innerHTML = `
+    <div class="le-modal" style="width:720px;">
+      <div class="le-modal-header">
+        <span style="color:#ffb4a8;">⚠️ 军团命名铁律违规 (${violations.length})</span>
+        <button type="button" class="le-btn le-btn-sm" id="le-viol-close">✕</button>
+      </div>
+      <div class="le-modal-body" style="grid-template-columns:1fr;gap:8px;max-height:70vh;">
+        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">相同编制必须同名 / 同名必须同编制。请先修复以下违规再落盘：</div>
+        ${violations.map(v => `<div style="background:#2a1616;border:1px solid #5a2a2a;border-radius:4px;padding:8px 10px;font-size:12px;color:#ffd0c0;">${v}</div>`).join('')}
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.querySelector('#le-viol-close')?.addEventListener('click', (e) => { e.stopPropagation(); close(); });
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    window.addEventListener('keydown', function onKey(e: KeyboardEvent) {
+        if ((e as any).isComposing) return;
+        if (e.key === 'Escape') { window.removeEventListener('keydown', onKey); close(); }
     });
 }
 
@@ -3058,6 +3203,8 @@ async function saveAllCompositions(): Promise<void> {
         if (!res.ok) throw new Error(await res.text());
 
         showToast('🎉 已写入 FactionCompositions.ts');
+        // 🔴 自动报错：写盘后自动校验军团命名铁律，有违规弹窗列出
+        reportLegionNameViolations();
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
     } finally {
@@ -3128,6 +3275,14 @@ els.btnReload.addEventListener('click', () => {
 
 els.btnSaveAll.addEventListener('click', () => {
     saveAllCompositions();
+});
+
+// 「检查军团命名」：手动触发命名铁律校验（自动报错）
+document.getElementById('le-check-legions')?.addEventListener('click', () => {
+    buildRows();
+    applyFilter();
+    renderTable();
+    reportLegionNameViolations();
 });
 
 // 快捷键 Ctrl+S 保存
