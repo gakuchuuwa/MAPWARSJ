@@ -22,4 +22,5 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     jiaye: { name: '伽耶护卫', tier: 4 },
     varendra: { name: '波罗象军', tier: 3 },
     chatigangren: { name: '纳瓦拉舰队', tier: 1 },
+    sengjialuo: { name: '僧伽罗象军', tier: 1 },   // 阿努拉德·杜图伽摩尼：重装战象主力，前161年击败埃拉兰统一全岛
 };

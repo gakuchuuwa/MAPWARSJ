@@ -1867,11 +1867,14 @@ export const FACTIONS: Faction[] = [
     { id: 'ethiopia', name: '埃塞俄比亚' },
    // 阿克苏姆·埃塞俄比亚
     { id: 'zhagewei', name: '扎格维' },       // 拉利贝拉·扎格维王朝（阿高人，埃塞俄比亚正教）
+    { id: 'adal', name: '阿达尔' },        // 塞拉·阿达尔苏丹国（索马里/非洲之角，格拉尼圣战）
     { id: 'malacca', name: '满剌加' },        // 马六甲·满剌加苏丹国
     { id: 'medang', name: '马打蓝' },        // 卡拉桑·马打蓝王国（古爪哇 Medang，赛伦德拉王朝建卡拉桑）
+    { id: 'ternate', name: '特尔纳特' },        // 德尔纳特·特尔纳特苏丹国（丁香群岛/马鲁古，巴布拉1570-1583）
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'suomunate', name: '索姆纳特' },     // 索姆纳特·印度教十二光辉林伽之首
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）
+    { id: 'sengjialuo', name: '僧伽罗' },     // 阿努拉德·僧伽罗王朝（斯里兰卡佛教圣都）
     { id: 'pandiya', name: '潘地亚' },     // 马杜赖·潘地亚王朝（南印度泰米尔，朱罗宿敌）
     { id: 'liaozu', name: '寮族' },
     { id: 'kushi', name: '库施' },

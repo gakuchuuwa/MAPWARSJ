@@ -864,6 +864,7 @@ const _FIXED: Record<string, string> = {
     'kongque': '#22378C', // 孔雀帝国·华氏城（阿育王法轮深蓝）
     'zhuluo': '#C08A2E', // 朱罗王朝·坦贾武尔（印度教神庙金）
     'pandiya': '#C09A2E', // 潘地亚·马杜赖（泰米尔金）
+    'sengjialuo': '#A8442E', // 僧伽罗·阿努拉德（僧伽罗狮棕红，Sinhala=狮子民族）
     // ── 2026-08-02 补无精锐番号势力固定色（历史尚色）──
     'ayinu_ezo': '#2E3A5C', // 阿伊努·莫约罗（鄂霍次克极北靛）
     'jinzhang': '#B8860B', // 金帐汗国·萨莱（汗庭金驼）
@@ -974,6 +975,7 @@ const _FIXED: Record<string, string> = {
     'bolan': '#C7102E', // 波兰·华沙（白鹰红底）
     'mosike_gongguo': '#8A1A1A', // 莫斯科公国·莫斯科（莫斯科红）
     'eluosi_diguo': '#16324F', // 俄罗斯帝国·圣彼得堡（彼得大帝海军蓝·波罗的海舰队）
+    'ternate': '#A0522D', // 特尔纳特·德尔纳特（丁香群岛·香料棕红）
     'liulike': '#3A6DA8', // 诺夫哥罗德·诺夫哥罗德（诺夫哥罗德蓝）
     'bolisiya': '#B73030', // 布列斯特·布列斯特（罗斯红白）
     'bosi_puluosi': '#2B4C7E', // 博斯普鲁斯·黑海青蓝
@@ -1035,6 +1037,7 @@ const _FIXED: Record<string, string> = {
     'gurjara': '#C25516', // 瞿折罗·帕坦（拉其普特藏红赭）
     'suomunate': '#E08020', // 索姆纳特·索姆纳特（印度教藏红花橙）
     'zhagewei': '#147A3D', // 扎格维·拉利贝拉（埃塞俄比亚正教圣绿）
+    'adal': '#2E6E4E', // 阿达尔·塞拉（阿达尔伊斯兰青绿·红海/亚丁湾海港）
     'muwaxide': '#7A1F32',
     'varendra': '#B26A1B',
     'chatigangren': '#197C89',
