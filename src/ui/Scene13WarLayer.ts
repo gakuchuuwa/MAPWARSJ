@@ -313,6 +313,8 @@ interface ArrowTower {
     collapseAsset: string | null;
     /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE）；无则播完即销毁 */
     rubbleAsset: string | null;
+    /** 🔴 箭塔专用残骸未提取时的兜底残骸（城门残骸）；塔专用残骸就绪后自动弃用 */
+    fallbackRubbleAsset: string | null;
     /** 🔴 已随墙倒塌（collapseFrontWalls 置位）：塌后不再开火，残骸贴图仍保留 */
     down: boolean;
 }
@@ -3913,6 +3915,7 @@ export class Scene13WarLayer {
             //    纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型）。
             //    位置：放「后排」（守方 9 口里 x 最大的一排），按 y 从大到小依次落位，远离攻方、视角最高，不被城墙/前排队列遮挡。
             const wonderAssets: string[] = [];
+            const wonderSpots: Array<{ x: number; y: number }> = [];
             if (this.defenderCityId) {
                 const mainWonder = CITY_WONDER[this.defenderCityId];
                 if (mainWonder) wonderAssets.push(mainWonder);
@@ -3925,9 +3928,14 @@ export class Scene13WarLayer {
                 const backRow = side.filter((s) => s.x >= backX - 1e-9).sort((a, b) => b.y - a.y);
                 for (let i = 0; i < wonderAssets.length; i++) {
                     const spot = backRow[Math.min(i, backRow.length - 1)];
+                    wonderSpots.push(spot);
                     this.decorSprites.push(place({ x: spot.x, y: spot.y }, wonderAssets[i], { z: 2, scale: SIEGE_WONDER_SCALE }));
                 }
             }
+            // 🔴 [2026-08-29 主人定「有奇观的优先显示奇观」] 建筑池避开奇观占用的口，奇观独占后排不与其他建筑重叠。
+            const buildingSide = wonderSpots.length > 0
+                ? side.filter((s) => !wonderSpots.some((w) => w.x === s.x && w.y === s.y))
+                : side;
             const style = this.buildingStyleFor(1);
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
             // 🔴 [2026-08-22 主人需求] 30 秒随机塌一半城墙，塌掉的墙段放行 + 留残骸：
@@ -4038,11 +4046,13 @@ export class Scene13WarLayer {
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
                 : `${style}_TOWER_AGE4`;
             const towerCollapse = 'BUILDINGANIM:' + arrowTowerAsset + '_DESTR';
-            // 🔴 [2026-08-29 主人：塔塌后要有残骸] 塔专用 `_RUBBLE` DE 未提取 → 复用城门残骸
-            //    `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）当塔塌后的残骸常驻。
-            const towerRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
+            // 🔴 [2026-08-29 主人：塔塌后要箭塔自己的残骸] 首选箭塔专用残骸 `{towerAsset}_RUBBLE`；
+            //    该素材 DE 尚未提取时退回城门残骸 `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）兜底，绝不消失。
+            const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
+            const gateRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
             this.ensureNatureAsset(towerCollapse);
             this.ensureNatureAsset(towerRubble);
+            this.ensureNatureAsset(gateRubble);
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
             this.ensureProj('PROJ_ARROW');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
@@ -4050,7 +4060,7 @@ export class Scene13WarLayer {
             const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8 }
                 : arrowTowerAsset.includes('_TOWER_AGE3') ? { range: 360, reload: 2.0 }
                 : { range: 320, reload: 2.2 };   // 瞭望箭塔
-            const towerX = wallFrontX + 110;                 // 城内一侧，紧贴正面主城墙
+            const towerX = wallFrontX + 60;                  // 城内一侧，贴近正面主城墙
             const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
             for (const frac of towerYFrac) {
                 const ty = topWallY + (botWallY - topWallY) * frac;
@@ -4060,7 +4070,7 @@ export class Scene13WarLayer {
                     sprite, x: towerX, y: ty,
                     cd: Math.random() * 1.5,
                     range: towerProfile.range, reload: towerProfile.reload,
-                    collapseAsset: towerCollapse, rubbleAsset: towerRubble,
+                    collapseAsset: towerCollapse, rubbleAsset: towerRubble, fallbackRubbleAsset: gateRubble,
                     down: false,
                 });
             }
@@ -4072,16 +4082,16 @@ export class Scene13WarLayer {
             }
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
             if (this.defenderCityType === 'small_city') {
-                const shuffledSmall = [...side].sort(() => Math.random() - 0.5);
+                const shuffledSmall = [...buildingSide].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
+                for (let i = 0; i < shuffledSmall.length; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
                 return;
             }
             // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；落点随机（2026-08-29 主人定「除箭塔外其余在 9 出兵口随机摆放」）。
             if (this.defenderCityType === 'medium_city') {
-                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, 9);
-                const shuffledSide = [...side].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 9; i++) {
+                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
+                const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < shuffledSide.length; i++) {
                     this.decorSprites.push(place(shuffledSide[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
                 }
                 return;
@@ -4107,21 +4117,21 @@ export class Scene13WarLayer {
             }
             // 大城：与战略模式套用相同建筑。原有九个落点不变，仅同步建筑选择。
             let backX = -Infinity;
-            for (const s of side) if (s.x > backX) backX = s.x;
-            const backRow = side
+            for (const s of buildingSide) if (s.x > backX) backX = s.x;
+            const backRow = buildingSide
                 .map((s, i) => ({ s, i }))
                 .filter(({ s }) => s.x >= backX - 1e-9)
                 .sort((a, b) => a.s.y - b.s.y);
             const centerIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            this.decorSprites.push(place(side[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE }));
+            this.decorSprites.push(place(buildingSide[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE }));
             const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
             const ringBuildings: Array<[string, string]> = [
                 ['MARKET', 'AGE4'],
                 ['UNIVERSITY', 'AGE4'],
                 ...age3Pool.slice(0, 6),
             ].sort(() => Math.random() - 0.5) as Array<[string, string]>;
-            const ringSpawns = side.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) {
+            const ringSpawns = buildingSide.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
+            for (let i = 0; i < ringSpawns.length; i++) {
                 const [building, age] = ringBuildings[i];
                 this.decorSprites.push(place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) }));
             }
@@ -5255,17 +5265,20 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-08-29 主人需求] 30 秒城墙倒塌 → 四座箭塔**一起**倒塌：尘土特效 + 倒塌动画。
         //    有 `${towerAsset}_DESTR` 多帧动画素材 → 播同城门 DESTR 动画 → 切 rubble 残骸；
-        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后切城门残骸常驻（见 step 里 collapse.t 推进）。
+        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后切残骸常驻（见 step 里 collapse.t 推进）。
+        //    残骸优先用箭塔自己的 `_RUBBLE`，未提取时才退回城门残骸兜底，绝不消失。
         for (const t of this.arrowTowers) {
             t.down = true;   // 塌后不再开火（残骸贴图保留）
             this.spawnFx('FX_WALL_DUST', t.x, t.y, (Math.random() * 8) | 0);
+            const rubble = (t.rubbleAsset && this.natureCache[t.rubbleAsset]?.img?.complete)
+                ? t.rubbleAsset : t.fallbackRubbleAsset;
             if (t.collapseAsset && this.natureCache[t.collapseAsset]?.img?.complete) {
                 t.sprite.asset = t.collapseAsset;
                 t.sprite.frame = 0;
-                t.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: t.rubbleAsset };
+                t.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: rubble };
             } else {
-                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 切到城门残骸常驻
-                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: t.rubbleAsset };
+                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 切到残骸常驻
+                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: rubble };
             }
         }
     }
