@@ -54,7 +54,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     hali: { name: '萨洛尔弓骑', tier: 4 },
   kalan: { name: '萨珊边骑', tier: 4 },    // 图斯·卡伦家族世袭东北边防元帅（常规番号，降T3）
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
-  xisi: { name: '萨法尔圣兵', tier: 2 },  // 雅各布建立萨法尔王朝的核心主力（加齐圣战者），以少胜多狂飙突进，升入T2战术
   delan: { name: '苏伦具装骑', tier: 1 },   // 法拉·卡莱战役大破罗马军团的战略主力
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
