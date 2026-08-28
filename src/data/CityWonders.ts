@@ -11,7 +11,7 @@
 export const CITY_WONDER: Record<string, string> = {
     'city_ailiwen': 'MEDI_WONDER_ARMENIANS',  // 埃里温（亚美尼亚；古都阿尼项目无，保留）
     'city_angkor': 'SEAS_WONDER_KHMER',  // 吴哥（高棉吴哥窟）
-    'city_bali': 'WEST_WONDER_FRANKS',  // 巴黎（法兰克）
+    'city_shatteer': 'WEST_WONDER_FRANKS',  // 沙特尔（卡尔努特，沙特尔圣母主教座堂）
     'city_beijing': 'ASIA_WONDER_CHINESE',  // 北京（明清，天坛）
     'city_changan': 'SCEN_HALL_OF_HEROES',  // 长安（唐，凌烟阁二十四功臣画像阁）
     'city_bosibolisi': 'PERSIAN_WONDER_ACHAEMENIDS',  // 波斯波利斯（阿契美尼德）
@@ -148,8 +148,8 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_yadian': [
         { asset: 'GREEK_SHIPYARD_AGE2', name: '比雷埃夫斯军港', category: 'HERITAGE_FORT', lat: 37.943, lng: 23.647, description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。' },
     ],
-    'city_pagan': [
-        { asset: 'SCEN_PAGODA_A', name: '蒲甘阿难陀寺', category: 'SACRED_PAGODA', lat: 21.171, lng: 94.867, description: '缅甸蒲甘王朝江喜陀王兴建的阿难陀寺，万塔之城最精美的佛塔。' },
+    'city_hangzhou': [
+        { asset: 'SCEN_PAGODA_A', name: '六和塔', category: 'SACRED_PAGODA', lat: 30.25, lng: 120.16, description: '五代吴越国王钱俶为镇江潮而建于钱塘江畔月轮山麓（约970年），现存十三层楼阁式砖木塔，杭州钱塘江地标。' },
     ],
     'city_bago': [
         { asset: 'SCEN_PAGODA_B', name: '勃固瑞摩都佛塔', category: 'SACRED_PAGODA', lat: 17.337, lng: 96.481, description: '缅甸孟族勃固古都的瑞摩都金塔，传说藏有佛陀发丝的圣塔。' },

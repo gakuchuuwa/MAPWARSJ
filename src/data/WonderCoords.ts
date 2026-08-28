@@ -37,7 +37,6 @@ export const WONDER_COORD: Record<string, { lat: number; lng: number; place: str
     'WEST_WONDER_CELTS': { lat: 52.518, lng: -7.889, place: '卡舍尔' },            // 卡舍尔之石
     // ── 近距（30–120km，同区但不同地） ──
     'INDI_WONDER_BENGALIS': { lat: 25.031, lng: 88.977, place: '巴哈尔布尔' },     // 索马普拉大寺
-    'WEST_WONDER_FRANKS': { lat: 48.448, lng: 1.488, place: '沙特尔' },            // 沙特尔圣母主教座堂
     'MESO_WONDER_INCAS': { lat: -13.163, lng: -72.545, place: '马丘比丘' },        // 拴日石
     'GREEK_WONDER_MACEDONIANS': { lat: 40.486, lng: 22.318, place: '韦尔吉纳' },   // 韦尔吉纳王陵
     'ASIA_WONDER_WEI': { lat: 34.5016, lng: 113.0159, place: '登封' },             // 嵩岳寺塔（北魏密檐砖塔，太室山南麓嵩岳寺）
