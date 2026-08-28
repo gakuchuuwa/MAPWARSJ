@@ -272,6 +272,12 @@ export class PerformanceMonitor {
                 this.logWallHitch('主循环空档', gap);
             }
         }
+        // 🔴 [2026-08-28 修诊断脏数据] 每帧开头清空上一帧的子系统计时结果。
+        // 旧实现 timerResults 只在 endTimer 时写入、从不清理：战斗冻结时 AI/战斗等子系统
+        // 不再跑（startTimer/endTimer 不调用），timerResults['ai'] 就停在最后一次的值（实测残留
+        // 3660ms 假值），把慢帧归因表污染成「AI 3660ms」、unaccountedTime 被压成 0。
+        // 帧头清空后，getMainLoopTimes 只读到本帧真正 endTimer 过的系统，未跑的读 0。
+        this.timerResults = {};
         this.currentFrameStart = now;
     }
 

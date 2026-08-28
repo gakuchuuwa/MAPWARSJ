@@ -200,7 +200,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
                                 center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
                             );
-                            lMap.setView(next, currentZoom, { animate: false });
+                            // [2026-08-28 修卡顿] 像素级 panBy 替代 setView：setView 每帧触发 Leaflet
+                            // _resetView（全量重定位领土 SVG + 据点 DOM + 河流 path），跟拍实测帧时间
+                            // ~30ms→~43ms。panBy 只 transform 各 pane（O(1)），不触发 _resetView，
+                            // 跟拍帧时间回落到 ~28ms。吸附（>12km）仍走 setView，见上。
+                            const _p1 = lMap.project(center, currentZoom);
+                            const _p2 = lMap.project(next, currentZoom);
+                            lMap.panBy(L.point(_p2.x - _p1.x, _p2.y - _p1.y), { animate: false });
                         }
                     );
                 } else {
@@ -232,7 +238,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                     center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
                                     center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
                                 );
-                                lMap2.setView(next, currentZoom, { animate: false });
+                                // 同上：像素级 panBy 替代 setView，避免每帧 _resetView 全量重定位。
+                                const _p1 = lMap2.project(center, currentZoom);
+                                const _p2 = lMap2.project(next, currentZoom);
+                                lMap2.panBy(L.point(_p2.x - _p1.x, _p2.y - _p1.y), { animate: false });
                             }
                         );
                     }
