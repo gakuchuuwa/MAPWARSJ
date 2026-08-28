@@ -839,5 +839,34 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "博尔贡-爱丁堡",
+                type: "sea",
+                id: "sea_city_boergong_city_aidingbao_1787901926201",
+                startConnection: "city_boergong",
+                endConnection: "city_aidingbao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [7.812, 61.047],
+                    [5.528513, 60.109761],
+                    [5.282851, 60.137468],
+                    [5.211006, 60.181289],
+                    [4.944486, 60.14093],
+                    [4.2, 60.2],
+                    [2.888221, 59.520686],
+                    [1.416213, 58.758396],
+                    [0.800855, 58.439728],
+                    [0.482902, 58.275074],
+                    [-1.4, 57.3],
+                    [-2.3, 56.3],
+                    [-2.809638, 56.459614],
+                    [-3.18, 55.95],
+                ]
+            }
+        },
     ]
 };
