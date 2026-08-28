@@ -2562,13 +2562,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
-    zhibuluotuo: {
+    "zhibuluotuo": {
         legionName: "十字军军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'heavy_pikeman', count: 4 },        // Row 0 前卫长枪坚壁 = 重装长枪兵 4人（纯步兵·无马，休达要塞长矛死守抗线）
-            { type: 'cavalier', count: 3 },             // Row 1 中军铁骑突贯 = 重装骑士 3骑（葡萄牙阿维斯王朝皇家重骑中坚冲击）
-            { type: 'arbalest', count: 2 },             // Row 2 尾收要塞劲弩 = 劲弩手 2人（纯步兵·无马，海防要塞高穿透强弩射击）
+            { type: "teutonic_knight", count: 3 },
+            { type: "crusader_knight", count: 4 },
+            { type: "arbalest", count: 2 },
         ],
     },
     // 占婆爪刀藤弓军团·毗阇耶/因陀罗补罗（制蓬峨 / 制旻 · 鱼鳞阵 3+4+2：爪刀勇士前卫 3 + 爪刀勇士精锐主力 4 + 藤弓兵 2）

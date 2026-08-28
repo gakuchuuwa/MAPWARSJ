@@ -26,7 +26,7 @@ import {
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { CITY_WONDER } from '../data/CityWonders';
+import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
@@ -3867,17 +3867,24 @@ export class Scene13WarLayer {
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
-            // [2026-08-24] 名城世界奇观地标：守方城挂奇观（CITY_WONDER[defenderCityId]）→ 立奇观。
+            // [2026-08-29 主人定] 城内奇观优先显示：主奇观 + 全部附加奇观都立（有 2 个就显示 2 个），朝向随机（place 默认左右镜像随机）。
             //    纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型）。
-            //    位置：[08-24 主人指示] 放「后排下方」——守方 9 口里 x 最大(后排)且 y 最大(下方)的出兵口，
-            //    远离攻方、视角最高，不被城墙/前排队列遮挡。
-            const wonderAsset = this.defenderCityId ? CITY_WONDER[this.defenderCityId] : undefined;
-            if (wonderAsset) {
-                let ws = side[0];
-                for (const s of side) {
-                    if (s.x > ws.x + 1e-9 || (s.x === ws.x && s.y > ws.y)) ws = s;
+            //    位置：放「后排」（守方 9 口里 x 最大的一排），按 y 从大到小依次落位，远离攻方、视角最高，不被城墙/前排队列遮挡。
+            const wonderAssets: string[] = [];
+            if (this.defenderCityId) {
+                const mainWonder = CITY_WONDER[this.defenderCityId];
+                if (mainWonder) wonderAssets.push(mainWonder);
+                const extraWonders = CITY_WONDER_EXTRA[this.defenderCityId];
+                if (extraWonders) for (const ex of extraWonders) wonderAssets.push(ex.asset);
+            }
+            if (wonderAssets.length > 0) {
+                let backX = -Infinity;
+                for (const s of side) if (s.x > backX) backX = s.x;
+                const backRow = side.filter((s) => s.x >= backX - 1e-9).sort((a, b) => b.y - a.y);
+                for (let i = 0; i < wonderAssets.length; i++) {
+                    const spot = backRow[Math.min(i, backRow.length - 1)];
+                    this.decorSprites.push(place({ x: spot.x, y: spot.y }, wonderAssets[i], { z: 2, scale: SIEGE_WONDER_SCALE }));
                 }
-                this.decorSprites.push(place({ x: ws.x, y: ws.y }, wonderAsset, { z: 2, scale: SIEGE_WONDER_SCALE }));
             }
             const style = this.buildingStyleFor(1);
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
