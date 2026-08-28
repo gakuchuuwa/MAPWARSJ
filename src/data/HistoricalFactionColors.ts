@@ -1036,6 +1036,7 @@ const _FIXED: Record<string, string> = {
     'zhagewei': '#147A3D', // 扎格维·拉利贝拉（埃塞俄比亚正教圣绿）
     'muwaxide': '#7A1F32',
     'varendra': '#B26A1B',
+    'chatigangren': '#197C89',
     'duonaobaojia': '#355C9A',
     'lumiliya': '#8B2438',
     'yilaka': '#D2A72C',

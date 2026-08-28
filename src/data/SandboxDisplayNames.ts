@@ -1153,6 +1153,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'kuertaiya': '库尔',
     'muwaxide': '穆瓦',
     'varendra': '伐连',
+    'chatigangren': '查蒂',
     'duonaobaojia': '多瑙',
     'lumiliya': '鲁米',
     'yilaka': '伊拉',

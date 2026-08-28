@@ -2979,6 +2979,7 @@ export const CITIES_V2: CityDataV2[] = [
         { id: 'city_wangshecheng', name: '王舍城', factionId: 'mojietuo', lat: 25.03, lng: 85.42, type: 'medium_city', troops: 30000, region: 'INDIA', note: '摩揭陀王国古都（频毗娑罗/阿阇世王），佛陀弘法地' },
     { id: 'city_gaodacheng', name: '高达城', factionId: 'boluo', lat: 24.88, lng: 88.13, type: 'big_city', troops: 30000, region: 'INDIA', note: '波罗帝国首都（达磨波罗），印度最后一个佛教大帝国' },
     { id: 'city_suomapuli', name: '索玛普利', factionId: 'varendra', lat: 25.031111, lng: 88.976944, type: 'small_city', troops: 30000, region: 'INDIA', note: '索玛普利大寺（Somapura Mahavihara）；伐连陀历史文化区内的波罗王朝寺院城与佛教中心，今巴哈尔布尔遗址' },
+    { id: 'city_jidagang', name: '吉大港', factionId: 'chatigangren', lat: 22.335, lng: 91.8325, type: 'small_city', troops: 30000, region: 'INDIA', note: '古称查蒂格拉姆、查蒂冈；孟加拉湾古港，1666年乌梅德汗统军攻取后改称伊斯兰堡并任首任守将' },
         { id: 'city_danmoledi', name: '耽摩栗底', factionId: 'sumo', lat: 22.28, lng: 87.92, type: 'small_city', troops: 30000, region: 'INDIA', note: '古代孟加拉湾第一大港，海上丝路起点，法显回国出发港' },
     { id: 'city_beileinisi', name: '贝雷尼斯', factionId: 'beileinisi', lat: 23.91, lng: 35.48, type: 'small_city', troops: 30000, region: 'ORIE', note: '托勒密/罗马时期埃及红海第一大港，通往印度商路起点' },
     { id: 'city_taima', name: '泰马', factionId: 'dedan', lat: 27.6, lng: 38.5, type: 'small_city', troops: 30000, region: 'ORIE', note: '德丹王国古商路大绿洲，纳巴泰/阿拉伯贸易枢纽' },

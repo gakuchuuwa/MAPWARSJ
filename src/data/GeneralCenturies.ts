@@ -995,6 +995,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_villaret': 14,                                  // 维拉雷 · luodesi · 罗得城
     'muwaxide_yakubu': 12,
     'varendra_devapala': 9,
+    'chatigangren_wumeide': 17,
     'duonaobaojia_tzimiskes': 10,
     'lumiliya_lalashahin': 14,
     'yilaka_tundama': 16,

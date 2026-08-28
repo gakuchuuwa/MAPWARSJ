@@ -748,5 +748,29 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "科洛西-罗得城",
+                type: "sea",
+                id: "sea_city_kolossi_city_rhodes_1787899643873",
+                startConnection: "city_kolossi",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.934, 34.664],
+                    [32.424259, 34.62214],
+                    [31.963969, 34.826398],
+                    [31.57014, 35.001163],
+                    [30.828994, 35.330053],
+                    [30.192667, 35.612428],
+                    [29.635565, 35.859647],
+                    [28.240572, 36.478687],
+                    [28.22, 36.44],
+                ]
+            }
+        },
     ]
 };

@@ -1088,6 +1088,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     kuertaiya: { generalId: 'kuertaiya_kuertaiya', generalName: '库尔泰亚', portrait: '/assets/LATIN/kuertaiya_kuertaiya.png' },
     muwaxide: { generalId: 'muwaxide_yakubu', generalName: '雅库布', portrait: '' },
     varendra: { generalId: 'varendra_devapala', generalName: '提婆波罗', portrait: '' },
+    chatigangren: { generalId: 'chatigangren_wumeide', generalName: '乌梅德汗', portrait: '' },
     duonaobaojia: { generalId: 'duonaobaojia_tzimiskes', generalName: '齐米斯基', portrait: '' },
     lumiliya: { generalId: 'lumiliya_lalashahin', generalName: '拉拉沙欣', portrait: '' },
     yilaka: { generalId: 'yilaka_tundama', generalName: '通达马', portrait: '' },

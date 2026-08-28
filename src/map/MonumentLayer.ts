@@ -24,7 +24,13 @@ const WONDER_SCALE_OVERRIDE: Record<string, number> = {
     'SCEN_INDIAN_RUINS': 0.9,       // 亨比巨石神庙群遗迹：缩小至 0.9 倍
     'SCEN_SPHINX': 0.65,            // 斯芬克斯雕像：雕像体量较小，缩小至 0.65 倍
     'SCEN_ARCHAIC_THOLOS': 0.75,    // 德尔斐神谕（古圆庙）：缩小至 0.75 倍
-    'ARCH_OF_CONSTANTINE': 0.72,    // 君士坦丁凯旋门：比例适度，与斗兽场并立协调
+    'ARCH_OF_CONSTANTINE': 0.55,    // 君士坦丁凯旋门：缩小至 0.55 倍，体量更小巧精致，紧邻斗兽场呈现良好纵深感
+};
+/** [2026-08-29] 个别奇观素材底部带大段地面阴影（实心底边远高于精灵底边），常规「底边锚定」会把建筑抬高悬空。
+ *  按该奇观实心底边改用 top 锚定到底座前角（参考其它奇观「实心底边≈精灵底边」的成熟做法）。
+ *  键 = SUCAI_BUILDING 素材目录名；值 = top 像素（基准宽 90 下）。 */
+const WONDER_GROUND_TOP: Record<string, number> = {
+    'ORIE_WONDER_PERSIANS': 10,     // 泰西封巨拱：实心底边仅 65.5%（下方 34.5% 为地面阴影）→ 下移让其踏到底座前角
 };
 /** 重叠判定最小间距（度）：zoom 9 下 ≈ 90px（奇观 marker 宽），中心距小于此值判为重叠并外推 */
 const OVERLAP_MIN_DEG = 0.25;
@@ -149,6 +155,11 @@ export class MonumentLayer {
             const plazaFrontY = plazaCenterY + 0.238 * groundH;
             const bottomOffset = Math.max(16, Math.round(containerH - plazaFrontY));
 
+            // [2026-08-29] 素材名 + 实心底边锚定：个别底部带地面阴影的奇观（泰西封巨拱）用 top 锚定实心底边，其余走原底边锚定
+            const assetName = mon.asset.split('/').filter(Boolean).slice(-2)[0] ?? '';
+            const groundTop = WONDER_GROUND_TOP[assetName];
+            const anchorStyle = groundTop != null ? `top: ${groundTop}px;` : `bottom: ${bottomOffset}px;`;
+
             const html = `
                 <div class="wilderness-monument-container" style="
                     position: relative;
@@ -174,11 +185,11 @@ export class MonumentLayer {
                         opacity: 0.88;
                         pointer-events: none;
                     " />
-                    <!-- 名胜建筑立绘：底基锚定在 bottomOffset，transform-origin 设在底部，hover 原地放大不浮空 -->
+                    <!-- 名胜建筑立绘：默认按精灵底边锚定到底座前角；底部带大段地面阴影的奇观改用 top 锚定实心底边，避免抬高悬空 -->
                     <img src="${mon.asset}" style="
                         position: absolute;
                         left: 50%;
-                        bottom: ${bottomOffset}px;
+                        ${anchorStyle}
                         width: ${w.toFixed(1)}px;
                         transform: translateX(-50%)${mirror ? ' scaleX(-1)' : ''};
                         transform-origin: 50% 100%;
