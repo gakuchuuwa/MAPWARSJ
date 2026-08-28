@@ -15,10 +15,10 @@ const CITY_CLEAR_PX = 42;
 const MIN_RENDER_INTERVAL_MS = 200;
 /** 单块林区斑块在 SAMPLE_ZOOM 投影空间的半径（投影 px）。屏幕半径 = 此值 × 2^(当前zoom−SAMPLE_ZOOM)，
  *  保证斑块的地理范围恒定、缩放不跳位。 */
-const PATCH_RADIUS_PROJ = 26;
+const PATCH_RADIUS_PROJ = 32;
 /** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
  *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
-const PATCH_MIN_SCREEN_RADIUS = 18;
+const PATCH_MIN_SCREEN_RADIUS = 24;
 /** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
  *  stride 越大簇越稀、越"成带"。 */
 const CLUSTER_STRIDE = SAMPLE_STEP * 2;
@@ -246,7 +246,7 @@ export class VegetationLayer {
                         PATCH_MIN_SCREEN_RADIUS * densityBoost * jitter,
                         PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter,
                     );
-                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.5 : 0.36);
+                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.72 : 0.55);
                 }
             }
         }
@@ -272,7 +272,7 @@ export class VegetationLayer {
         const ctx = this.ctx;
         const grad = ctx.createRadialGradient(x, y, radius * 0.15, x, y, radius);
         grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
-        grad.addColorStop(0.7, `rgba(${r},${g},${b},${alpha * 0.55})`);
+        grad.addColorStop(0.7, `rgba(${r},${g},${b},${alpha * 0.7})`);
         grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
