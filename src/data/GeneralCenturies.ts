@@ -829,6 +829,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
 
     // ══════ WEST_ASIA（36 人，已标 0）══════
     'abasi_mansuer': 8,                                 // 曼苏尔 · abasi · 巴格达
+    'samaila_muataisuimu': 9,                           // 穆阿台绥姆 · samaila · 萨迈拉
     'aiaoniya_alisita': -5,                              // 阿里斯塔 · aiaoniya · 以弗所
     'aiji_lameisisi': -13,                                // 拉美西斯 · aiji · 孟菲斯
     'alabo_qiyade': 7,                                  // 齐亚德 · alabo · 巴士拉
@@ -939,6 +940,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_zwingli': 16,                                   // 茨温利 · ruishi · 巴塞尔
     'xiongyati_yannuoshi': 15,                          // 匈雅提亚诺什 · xiongyati · 胡内多阿拉
     'mazhaer_majiashi': 15,                             // 马加什一世 · mazhaer · 布达佩斯
+    'mangsite_bulaienbolu': 10,                         // 布赖恩博鲁 · mangsite · 卡舍尔
     'ruidian_si_biergeyaer': 13,                         // 比尔格雅尔 · ruidian_si · 斯德哥尔摩
 
     // ══════ KOREA（23 人，已标 0）══════

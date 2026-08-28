@@ -11,7 +11,7 @@ alwaysApply: true
 |------|------|----------|------|
 | **势力** | **这一片**的身份全名（军情/叙事里说的「谁」） | `FactionManager.getFactionName()` → `factions.ts` 的 `name` | 占城**国**、大**辽**、难兜 |
 | **旗号** | 旗面上渲染的 1–2 汉字 | `SANDBOX_DISPLAY_NAMES` / `CityAssetManager.getProcessedFlagText` | 占城、辽 |
-| **据点** | **一个点**的城名（**冷兵器 · 约 17 世纪 / 至迟 18 世纪前**；禁止 1900 口径） | `cities_v2.name` | 阇槃、建业 |
+| **据点** | **一个点**的真实地点专名；不要求必须是城市 | `cities_v2.name` | 阇槃、潼关、伊瓜苏 |
 
 > 据点 ≠ 势力。详见 `.cursor/rules/city-point-vs-faction-area.mdc`。
 

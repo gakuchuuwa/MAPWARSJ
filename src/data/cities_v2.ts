@@ -13,7 +13,7 @@
  *
  * 距离约束 (来自 cities.ts / AGENTS §2.1 / §2.1.1):
  * - 全图任意两据点距离 >= 50km
- * - 新建/改坐标前 --probe：与最近已有城须 <= 500km（禁止孤悬远点）
+ * - 新建/改坐标前 --probe：与全图任意已有城均须 >= 50km
  * - 已校验所有 T0 之间满足
  *
  * 14 区文化中心 (14 城, 见 RegionSystem.REGION_CENTERS):
@@ -1948,6 +1948,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 30000, region: 'BERBER' },
+    { id: 'city_labate', name: '拉巴特', factionId: 'panjun', lat: 34.024, lng: -6.822, type: 'small_city', troops: 30000, region: 'BERBER', note: '穆瓦希德哈里发雅库布·曼苏尔营建的胜利堡（Ribat al-Fath），哈桑塔及未完工哈桑清真寺所在地' },
 
     { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC' },
@@ -1989,6 +1990,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'pass', troops: 30000, region: 'SLAVIC' },
 
     { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 30000, region: 'LATIN' },
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 30000, region: 'GREEK' },
@@ -2943,6 +2945,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_babilun', name: '巴比伦', factionId: 'jialedi', lat: 32.53, lng: 44.42, type: 'big_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_tademoer', name: '塔德莫尔', factionId: 'paermila', lat: 34.55, lng: 38.27, type: 'small_city', troops: 30000, region: 'ORIE' },
     { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 30000, region: 'WEST_ASIA' },
+    { id: 'city_samaila', name: '萨迈拉', factionId: 'samaila', lat: 34.206, lng: 43.880, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_awalisi', name: '阿瓦里斯', factionId: 'xikesuosi', lat: 30.79, lng: 31.83, type: 'small_city', troops: 30000, region: 'ORIE' },
     { id: 'city_duershelujin', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
 
@@ -3042,6 +3045,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_putijiaye', name: '菩提伽耶', factionId: 'jiaye', lat: 24.696, lng: 84.991, type: 'small_city', troops: 30000, region: 'INDIA', note: '佛陀成道圣地' },
     { id: 'city_jienei', name: '杰内城', factionId: 'jienei', lat: 13.905, lng: -4.555, type: 'small_city', troops: 30000, region: 'AFRICA', note: '马里帝国名城，杰内大清真寺' },
     { id: 'city_agesi', name: '阿格斯', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '瓦拉几亚早期都城库尔泰亚' },
+    { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'panjun', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 30000, region: 'THRACIAN', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
+    { id: 'city_aidiernei', name: '埃迪尔内', factionId: 'panjun', lat: 41.6781, lng: 26.5591, type: 'small_city', troops: 30000, region: 'THRACIAN', note: '古称阿德里安堡，奥斯曼帝国迁都君士坦丁堡前的都城；塞利姆二世命米马尔·希南于1568—1575年营建塞利米耶清真寺' },
+    { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'panjun', lat: 5.715, lng: -72.933, type: 'small_city', troops: 30000, region: 'ANDE', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁' },
+    { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'panjun', lat: -25.695, lng: -54.437, type: 'small_city', troops: 30000, region: 'AMERICA', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

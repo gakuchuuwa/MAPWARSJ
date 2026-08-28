@@ -18,18 +18,17 @@ export const CITY_WONDER: Record<string, string> = {
     'city_huneiduolala': 'SLAV_WONDER_MAGYARS',  // 胡内多阿拉（马扎尔，科文城堡）
     'city_bulage': 'SLAV_WONDER_BOHEMIANS',  // 布拉格（波西米亚）
     'city_chengdu': 'ASIA_WONDER_SHU',  // 成都（蜀汉）
-    'city_damasikusi': 'ORIE_WONDER_SARACENS',  // 大马士革（倭马亚）
+    'city_samaila': 'ORIE_WONDER_SARACENS',  // 萨迈拉（阿拔斯第二都，螺旋塔）
     'city_deli': 'INDI_WONDER_HINDUSTANIS',  // 德里（德里苏丹国）
     'city_dibilisi': 'MEDI_WONDER_GEORGIANS',  // 第比利斯（格鲁吉亚）
     'city_dijon': 'WEST_WONDER_BURGUNDIANS',  // 第戎（勃艮第）
-    'city_dublin': 'WEST_WONDER_CELTS',  // 都柏林（盖尔/凯尔特核心）
+    'city_kasheer': 'WEST_WONDER_CELTS',  // 卡舍尔（芒斯特王国传统首都，卡舍尔之石）
     'city_heersongniesi': 'EAST_WONDER_GOTHS',  // 赫尔松涅斯（克里米亚哥特/陶里卡）
     'city_huashicheng': 'INDI_WONDER_INDIANS',  // 华氏城（孔雀帝国）
-    'city_huining': 'ASIA_WONDER_JURCHENS',  // 会宁府（金上京，女真）
     'city_jifu': 'SLAV_WONDER_SLAVS',  // 基辅（罗斯）
     'city_junshitandingbao': 'MEDI_WONDER_BYZANTINES',  // 君士坦丁堡（拜占庭）
     'city_kaesong': 'ASIA_WONDER_KOREANS',  // 开城（高丽）
-    'city_kailuwan': 'ORIE_WONDER_BERBERS',  // 凯鲁万（柏柏尔·卡劳亚大清真寺）
+    'city_labate': 'ORIE_WONDER_BERBERS',  // 拉巴特（穆瓦希德·哈桑塔）
     'city_karakorum': 'ASIA_WONDER_MONGOLS',  // 哈拉和林（蒙古）
     'city_kashan': 'CEAS_WONDER_TATARS',  // 喀山（鞑靼/喀山汗国，势力标保加尔为前身）
     'city_kelakefu': 'SLAV_WONDER_POLES',  // 克拉科夫（波兰）
@@ -43,7 +42,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_palermo': 'MEDI_WONDER_SICILIANS',  // 巴勒莫（西西里）
     'city_shenglong': 'ASIA_WONDER_VIETNAMESE',  // 昇龙（大越治所；越南）
     'city_sparta': 'GREEK_WONDER_SPARTANS',  // 斯巴达
-    'city_sofia': 'SLAV_WONDER_BULGARIANS',  // 索非亚（塞尔迪卡，保加尔）
+    'city_puleisilafu': 'SLAV_WONDER_BULGARIANS',  // 普雷斯拉夫（第一保加利亚帝国·圆形金教堂）
     'city_toledo': 'MEDI_WONDER_SPANISH',  // 托莱多（西班牙/卡斯蒂利亚）
     'city_saigede': 'EAST_WONDER_HUNS',  // 塞格德（匈人帝国大本营·阿提拉王庭）
     'city_luoma': 'SCEN_COLOSSEUM',  // 罗马城（罗马斗兽场·弗拉维圆形剧场）
@@ -52,14 +51,14 @@ export const CITY_WONDER: Record<string, string> = {
     'city_yadian': 'GREEK_WONDER_ATHENIANS',  // 雅典
     'city_yachen': 'SCEN_AACHEN_CATHEDRAL',  // 亚琛（亚琛大教堂）
     'city_yelusaleng': 'SCEN_DOME_OF_THE_ROCK',  // 耶路撒冷（圆顶清真寺）
-    'city_yikeniwumu': 'ORIE_WONDER_TURKS',  // 伊科尼乌姆（罗姆苏丹，突厥）
+    'city_aidiernei': 'ORIE_WONDER_TURKS',  // 埃迪尔内（奥斯曼·塞利米耶清真寺）
     // [2026-08-24 新增 10 城 + 孟加拉挂已有高达城]
     'city_tenochtitlan': 'MESO_WONDER_AZTECS',  // 特诺奇提特兰（阿兹特克）
     'city_cusco': 'MESO_WONDER_INCAS',  // 库斯科（印加）
     'city_tikal': 'MESO_WONDER_MAYANS',  // 蒂卡尔（玛雅）
     'city_tucapel': 'ANDE_WONDER_MAPUCHE',  // 图卡佩尔（马普切）
-    'city_bacata': 'ANDE_WONDER_MUISCA',  // 巴卡塔（穆伊斯卡）
-    'city_guanabara': 'ANDE_WONDER_TUPI',  // 瓜纳巴拉（图皮）
+    'city_suojiamosuo': 'ANDE_WONDER_MUISCA',  // 索加莫索（穆伊斯卡·太阳神庙）
+    'city_yiguasu': 'ANDE_WONDER_TUPI',  // 伊瓜苏（图皮—瓜拉尼·伊瓜苏瀑布）
     'city_timbuktu': 'SCEN_SANKORE_MADRASAH',  // 廷巴克图（桑科雷经学院）
     'city_aksum': 'AFRI_WONDER_ETHIOPIANS',  // 阿克苏姆（埃塞俄比亚）
     'city_malacca': 'SEAS_WONDER_MALAY',  // 马六甲（马来/满剌加）
@@ -129,6 +128,11 @@ export interface ExtraWonder {
 }
 
 export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
+    // ── [2026-08-29] 银山塔林：实为北京昌平（延寿镇银山）辽金墓塔群，原被错挂会宁府(金上京)，
+    //    就近归入北京（主奇观天坛之外的第二座城内奇观）──
+    'city_beijing': [
+        { asset: 'ASIA_WONDER_JURCHENS', name: '银山塔林', category: 'ANCIENT_WONDER', lat: 40.322, lng: 116.321, description: '北京昌平延寿镇银山山谷的辽金佛寺墓塔群、原法华禅寺遗址，现存金代密檐砖塔七座。' },
+    ],
     // ── [2026-08-28] 原野外奇观就近挂靠据点（10 座有据点的 + 严岛/巨石阵就近归入）──
     'city_mengfeisi': [
         { asset: 'GREAT_PYRAMID', name: '吉萨大金字塔', category: 'ANCIENT_WONDER', lat: 29.979, lng: 31.134, description: '古埃及第四王朝胡夫法老修建的吉萨大金字塔，古代世界七大奇迹之首。' },

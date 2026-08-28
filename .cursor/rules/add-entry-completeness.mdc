@@ -17,7 +17,7 @@ AI 新增或改绑 **据点、势力、武将、精锐** 时，**必须**按 **A
 npx tsx scratch/audit_city_spacing.mjs --probe <lat> <lng> <据点名>
 ```
 
-须 **exit 0**：与**每一座**已有城 **≥50 km**，与**最近**已有城 **≤500 km**（见 AGENTS §2.1.1）。  
+须 **exit 0**：与**每一座**已有城 **≥50 km**；不设最近邻距离上限（见 AGENTS §2.1.1）。  
 ❌ 或 ⚠️ 卡线 → **不写** `cities_v2`。
 
 ## 1. 势力 + 据点 + 旗号 + 首都（五文件）
@@ -51,7 +51,7 @@ npm run add:check -- 龙门          # 单点：硬缺口必须为 0
 npm run faction:sync-audit
 npm run expedition:triple-check    # 有精锐时
 npm run city:spacing               # 写入后：全图 ≥50 km
-# 写入前已跑 --probe（50–500 km 窗口）
+# 写入前已跑 --probe（全图最小间距 ≥50 km）
 npm run city:dossier               # 刷新全档 JSON
 ```
 
