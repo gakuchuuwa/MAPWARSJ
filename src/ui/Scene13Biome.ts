@@ -171,7 +171,7 @@ export function resolveTerrainTileAtElevation(
     rng: RandomSource = mathRandomSource,
 ): string {
     const climate = resolveClimateRegion(lat, lng);
-    const band = resolveElevationBand(lat, climate, elev);
+    const band = resolveElevationBand(lat, climate, elev, lng);
     const biome = detectBiomeCore(lat, lng, elev);
     const theme = resolveDeMapTheme(lat, lng, biome, elev);
     void rng;
