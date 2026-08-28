@@ -303,7 +303,10 @@ export class RoadRegistry {
                 coords[coords.length - 1] = [toNode.lng, toNode.lat];
             }
 
-            const smoothedCoords = smoothRoad(unwrapLongitudePath(coords), 3);
+            // 含海路段的路（编辑器「水陆联运」出来的）不平滑：理由同 loadSeaRoutes —
+            // 海上顶点取自航线网，平滑会把它推离航道甚至推上岸。
+            const unwrapped = unwrapLongitudePath(coords);
+            const smoothedCoords = (props as { hasSeaLeg?: boolean }).hasSeaLeg ? unwrapped : smoothRoad(unwrapped, 3);
             const weight = this.calculatePathLength(smoothedCoords);
 
             this.addEdge({
