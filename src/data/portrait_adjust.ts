@@ -6657,11 +6657,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/AFRICA/__闲置__AFRICA_01.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 4
-        },
         "/assets/INDIA/meitai_hagenba.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6783,9 +6778,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/AMERICA/__多余__AMERICA_01.png": {
-            "scale": 0.94,
+            "scale": 0.89,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -2
         },
         "/assets/AMERICA/__多余__AMERICA_02.png": {
             "scale": 0.85,
@@ -7003,9 +6998,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/AMERICA/aimala_katali.png": {
-            "scale": 0.85,
-            "offsetX": 0,
-            "offsetY": 0
+            "scale": 0.94,
+            "offsetX": -4,
+            "offsetY": -1
         },
         "/assets/AMERICA/54a7b0d4-53b4-436a-82e5-f691606c836d.png": {
             "scale": 1.13,
@@ -7081,6 +7076,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": -6,
             "offsetY": 11
+        },
+        "/assets/AMERICA/jialebi_bulasilaisuo.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/AMERICA/eluosi_diguo_bidedadi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/AFRICA/zhagewei_lalibeila.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/AFRICA/adal_gelani.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/DIANQIAN/ternate_babula.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/AFRICA/sulu_baduka.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/AMERICA/xishudongyin_laijiasipi.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/INDIA/sengjialuo_dutujiamoni.png": {
+            "scale": 1.02,
+            "offsetX": 7,
+            "offsetY": -28
+        },
+        "/assets/AMERICA/puxiangyindu_aerbukeerke.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/AMERICA/xingelana_daweila.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/AMERICA/xiyindu_batuoluomei.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 6
         }
     },
     "folderGuides": {

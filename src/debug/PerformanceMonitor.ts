@@ -418,7 +418,12 @@ export class PerformanceMonitor {
 
     /** 获取当前快照（供外部读取、console.log） */
     public getSnapshot(): PerfSnapshot {
-        return this.lastSnapshot;
+        // 🔴 [2026-08-28 修诊断盲区] 原来直接返回 this.lastSnapshot，而 lastSnapshot 只在
+        //   renderOverlay() 里被 buildSnapshot() 更新；renderOverlay 开头 `if (!visible) return`，
+        //   性能面板默认隐藏 → buildSnapshot 从不执行 → lastSnapshot 恒为空（全 0）。
+        //   后果：Scene13WarLayer.diagPost 落盘的 host 快照全是 0，战斗卡顿永远无法归因到
+        //   combat/combatUI/camera/未计入 哪个子系统。改为每次调用实时构建（只读，无副作用）。
+        return this.buildSnapshot();
     }
 
     /** 开关：主循环 ≥20ms 时自动在 F12 打印分解（默认开） */
