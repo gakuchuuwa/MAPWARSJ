@@ -993,6 +993,8 @@ export class CityAssetManager {
     'duonaobaojia': '多瑙',
     'lumiliya': '鲁米',
     'yilaka': '伊拉',
+    'xingelana': '新格',
+    'eluosi_diguo': '俄罗',
     'gualani': '瓜拉',
     'xiadunhe': '下顿',
 };

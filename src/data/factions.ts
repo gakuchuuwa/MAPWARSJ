@@ -125,6 +125,7 @@ export const FACTIONS: Faction[] = [
   { id: 'luosi', name: '罗斯' },
   { id: 'liulike', name: '留里克' },
   { id: 'mosike_gongguo', name: '莫斯公国' },
+  { id: 'eluosi_diguo', name: '俄罗斯帝国' },
   { id: 'xieerpuhuofu_gongguo', name: '谢尔公国' },
   { id: 'fulajimier_gongguo', name: '克利亚济马' },
   { id: 'daniebo', name: '斯摩公国' },
@@ -1897,6 +1898,7 @@ export const FACTIONS: Faction[] = [
     { id: 'duonaobaojia', name: '多瑙保加' },
     { id: 'lumiliya', name: '鲁米利亚' },
     { id: 'yilaka', name: '伊拉卡' },
+    { id: 'xingelana', name: '新格拉纳达' },
     { id: 'gualani', name: '瓜拉尼' },
     { id: 'xiadunhe', name: '下顿河' },
     ];

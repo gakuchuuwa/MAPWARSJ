@@ -669,6 +669,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_daniel_galitsky': 13,                           // 丹尼尔 · jialixiya · 加利奇
     'gen_daumantas': 13,                                 // 道曼塔斯 · pusikefu_gongheguo · 普斯科夫
     'gen_dmitry_donskoy': 14,                            // 顿斯科伊 · mosike_gongguo · 莫斯科
+    'eluosi_diguo_peter': 18,                            // 彼得大帝 · eluosi_diguo · 圣彼得堡
     'gen_dmitry_suzdal': 14,                             // 康斯坦丁诺 · suzidaer · 下诺城
     'gen_dragan': 14,                                    // 德拉甘 · lagusa · 拉古萨
     'gen_gastold': 15,                                   // 加斯托尔德 · bolisiya · 布列斯特
@@ -999,6 +1000,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'duonaobaojia_tzimiskes': 10,
     'lumiliya_lalashahin': 14,
     'yilaka_tundama': 16,
+    'xingelana_dawila': 16,
     'gualani_nicolas': 17,
     'xiadunhe_sviatoslav': 10,
 };

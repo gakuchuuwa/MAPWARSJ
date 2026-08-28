@@ -155,6 +155,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     luosi: { generalId: 'gen_yaroslav', generalName: '雅罗斯拉夫', portrait: '/assets/SLAVIC/luosi_yaluosilafu.png' },
     liulike: { generalId: 'gen_alexander_nef', generalName: '涅夫斯基', portrait: '/assets/SLAVIC/liulike_niefusiji.png' },
     mosike_gongguo: { generalId: 'gen_dmitry_donskoy', generalName: '顿斯科伊', portrait: '/assets/SLAVIC/mosike_gongguo_dunsikeyi.png' },
+    eluosi_diguo: { generalId: 'eluosi_diguo_peter', generalName: '彼得大帝', portrait: '' },
     xieerpuhuofu_gongguo: { generalId: 'gen_vladimir_andreyevich', generalName: '勇者弗拉基', portrait: '/assets/SLAVIC/xieerpuhuofu_gongguo_yongzhefulaji.png' },
     fulajimier_gongguo: { generalId: 'gen_andrey_bogolyub', generalName: '安德烈', portrait: '/assets/SLAVIC/fulajimier_gongguo_andelie.png' },
     daniebo: { generalId: 'gen_romshlav', generalName: '罗姆什拉夫', portrait: '/assets/SLAVIC/daniebo_luomushenlafu.png' },
@@ -1092,6 +1093,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     duonaobaojia: { generalId: 'duonaobaojia_tzimiskes', generalName: '齐米斯基', portrait: '/assets/WEST_ASIA/duonaobaojia_qimisiji.png' },
     lumiliya: { generalId: 'lumiliya_lalashahin', generalName: '拉拉沙欣', portrait: '/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png' },
     yilaka: { generalId: 'yilaka_tundama', generalName: '通达马', portrait: '/assets/AMERICA/yilaka_tongdama.png' },
+    xingelana: { generalId: 'xingelana_dawila', generalName: '达维拉', portrait: '' },
     gualani: { generalId: 'gualani_nicolas', generalName: '尼古拉斯', portrait: '/assets/AMERICA/gualani_nigulasi.png' },
     xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png' },
 

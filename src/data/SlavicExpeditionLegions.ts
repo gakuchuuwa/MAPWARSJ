@@ -26,6 +26,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
 
     // ── T1 功勋之兵 ──
     dunhe: { name: '亚速哥萨克', tier: 1 },          // 阿速城·塔塔里诺夫：1637攻占亚速 / 1641亚速围城战以少胜多
+    eluosi_diguo: { name: '彼得近卫军', tier: 1 },          // 圣彼得堡·彼得大帝：普列奥布拉任斯基近卫团，波尔塔瓦大捷，俄国近卫建制贯穿罗曼诺夫
     keluodiya: { name: '边境禁卫', tier: 3 },
     xieerpuhuofu_gongguo: { name: '波雅尔骑兵', tier: 1 },          // 谢尔普霍夫·弗拉基米尔：库利科沃伏击军团；莫斯科公国贵族重骑兵
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
