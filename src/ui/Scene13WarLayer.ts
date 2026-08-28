@@ -1197,6 +1197,8 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
+/** [2026-08-29 主人「战术模式下城堡有点大，请缩小」] 守城城堡单独缩放：城堡素材本就大，在 0.8 下显得过大，单独调小。 */
+const SIEGE_CASTLE_SCALE = 0.65;
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
  *  用更小比例让奇观与周围建筑体量相当，不再鹤立鸡群。 */
 const SIEGE_WONDER_SCALE = 0.5;
@@ -4009,9 +4011,10 @@ export class Scene13WarLayer {
                 return;
             }
             // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔；九个落点全部随机。
+            // [2026-08-29 主人「城堡有点大，请缩小」] 城堡单独用小缩放 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
             if (this.defenderCityType === 'pass') {
-                const passBuildings = [
-                    this.castleAssetFor(style),
+                const castleAsset = this.castleAssetFor(style);
+                const passOthers = [
                     `${style}_BARRACKS_AGE3`,
                     `${style}_ARCHERY_RANGE_AGE3`,
                     `${style}_STABLE_AGE3`,
@@ -4020,8 +4023,9 @@ export class Scene13WarLayer {
                     `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
                 ].sort(() => Math.random() - 0.5);
                 const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 9; i++) {
-                    this.decorSprites.push(place(shuffledPassSpawns[i], passBuildings[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
+                this.decorSprites.push(place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE }));
+                for (let i = 0; i < 8; i++) {
+                    this.decorSprites.push(place(shuffledPassSpawns[i + 1], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
                 }
                 return;
             }
@@ -4242,7 +4246,7 @@ export class Scene13WarLayer {
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
             const a = p.alpha ?? 1;
             const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
-            // 🔴 [2026-08-28 修卡顿] blur(14px) 原来对整张 4K 画布做高斯模糊（drawImage(maskCv,0,0)），
+            // 🔴 [2026-08-28 修卡顿] blur(14px) 原来对整张 4K 画布做高斯模糊（把 mask 全画布贴进 offCv），
             //   即使水面只占一小块，每帧也是 O(全画布)——有水的战斗 render 从 7ms 涨到 60ms+ 就是它。
             //   收窄到水面 bbox + blur 扩散余量（3×14px），blur 只作用于水块区域。
             const pad = 14 * 3;
@@ -4311,10 +4315,10 @@ export class Scene13WarLayer {
             offCtx.fillRect(bb.x - 20, bb.y - 20, bb.w + 40, bb.h + 40);
             offCtx.restore();
 
-            // 3. 将羽化流动水体合成到主画布
+            // 3. 将羽化流动水体合成到主画布（只画水面 bbox 区域）
             ctx.save();
             ctx.globalAlpha = a;
-            ctx.drawImage(offCv, 0, 0);
+            ctx.drawImage(offCv, bx, by, bw, bh, bx, by, bw, bh);
             ctx.restore();
 
 
