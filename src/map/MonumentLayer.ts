@@ -18,10 +18,13 @@ interface MonumentData {
 
 /** 奇观 marker 基准宽度（px）：与城堡地标（baseSize×0.68）一般大小，比普通据点建筑（×0.40）略大更显眼 */
 const BASE_SIZE = 90;
-/** [2026-08-28 主人要求「杰姆宣礼塔图改大」]：竖长奇观统一 90px 宽显得过细，单独放大（相对基准宽的倍数） */
+/** [2026-08-28 主人要求「杰姆宣礼塔图改大」、「斯芬克斯雕像缩小」、「德尔斐神谕缩小」]：单独调整相对基准宽的倍数 */
 const WONDER_SCALE_OVERRIDE: Record<string, number> = {
-    'MINARET_OF_JAM': 1.5,  // 杰姆宣礼塔（贾姆宣礼塔）：塔身细长，放大 1.5 倍
-    'SCEN_INDIAN_RUINS': 1.6,  // 亨比巨石神庙群遗迹：素材低分辨率(148×108)、横宽偏矮，放大 1.6 倍
+    'MINARET_OF_JAM': 1.5,          // 杰姆宣礼塔（贾姆宣礼塔）：塔身细长，放大 1.5 倍
+    'SCEN_INDIAN_RUINS': 0.9,       // 亨比巨石神庙群遗迹：缩小至 0.9 倍
+    'SCEN_SPHINX': 0.65,            // 斯芬克斯雕像：雕像体量较小，缩小至 0.65 倍
+    'SCEN_ARCHAIC_THOLOS': 0.75,    // 德尔斐神谕（古圆庙）：缩小至 0.75 倍
+    'ARCH_OF_CONSTANTINE': 0.72,    // 君士坦丁凯旋门：比例适度，与斗兽场并立协调
 };
 /** 重叠判定最小间距（度）：zoom 9 下 ≈ 90px（奇观 marker 宽），中心距小于此值判为重叠并外推 */
 const OVERLAP_MIN_DEG = 0.25;
@@ -110,6 +113,7 @@ export class MonumentLayer {
                     lat: ex.lat ?? city.lat,
                     lng: ex.lng ?? city.lng,
                     asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
+                    scale: WONDER_SCALE_OVERRIDE[ex.asset],
                     description: ex.description,
                 }));
             });
@@ -138,11 +142,18 @@ export class MonumentLayer {
                 ? '/SUCAI_TERRAIN/rck_plaza.png'
                 : (mon.category === 'ANCIENT_WONDER' ? '/SUCAI_TERRAIN/rd2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png');
 
+            const containerH = h + 30;
+            // 底座菱形中心设在 62%，底边前角在 ~74%（加 0.238*groundH）
+            // 建筑以底部地基为基准锚定（bottom: bottomOffset），使建筑地基完美踏在底座菱形中心，彻底解决悬空错位
+            const plazaCenterY = containerH * 0.62;
+            const plazaFrontY = plazaCenterY + 0.238 * groundH;
+            const bottomOffset = Math.max(16, Math.round(containerH - plazaFrontY));
+
             const html = `
                 <div class="wilderness-monument-container" style="
                     position: relative;
                     width: ${w.toFixed(0)}px;
-                    height: ${(h + 30).toFixed(0)}px;
+                    height: ${containerH.toFixed(0)}px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -155,7 +166,7 @@ export class MonumentLayer {
                     <img src="${plazaSrc}" style="
                         position: absolute;
                         left: 50%;
-                        top: 58%;
+                        top: 62%;
                         width: ${groundW.toFixed(1)}px;
                         height: ${groundH.toFixed(1)}px;
                         transform: translate(-50%, -50%);
@@ -163,17 +174,18 @@ export class MonumentLayer {
                         opacity: 0.88;
                         pointer-events: none;
                     " />
-                    <!-- 名胜建筑立绘 -->
+                    <!-- 名胜建筑立绘：底基锚定在 bottomOffset，transform-origin 设在底部，hover 原地放大不浮空 -->
                     <img src="${mon.asset}" style="
                         position: absolute;
                         left: 50%;
-                        top: 50%;
+                        bottom: ${bottomOffset}px;
                         width: ${w.toFixed(1)}px;
-                        transform: translate(-50%, -60%)${mirror ? ' scaleX(-1)' : ''};
+                        transform: translateX(-50%)${mirror ? ' scaleX(-1)' : ''};
+                        transform-origin: 50% 100%;
                         z-index: 2;
                         filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
                         transition: transform 0.2s ease;
-                    " onmouseover="this.style.transform='translate(-50%, -65%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translate(-50%, -60%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
+                    " onmouseover="this.style.transform='translateX(-50%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translateX(-50%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
                     <!-- 金色名胜标牌 -->
                     <div style="
                         position: absolute;
@@ -231,16 +243,18 @@ export class MonumentLayer {
             let rLng = mon.lng;
             let nearest: { lat: number; lng: number } | null = null;
             let minD = Infinity;
+            // [2026-08-28 主人要求「君士坦丁凯旋门和罗马斗兽场两个奇观要挨着」]：紧邻搭档允许紧凑间距(0.06度)
+            const minReqDeg = mon.id.includes('ARCH_OF_CONSTANTINE') ? 0.06 : OVERLAP_MIN_DEG;
             for (const a of anchors) {
                 const d = Math.hypot(rLat - a.lat, rLng - a.lng);
                 if (d < minD) { minD = d; nearest = a; }
             }
-            if (nearest && minD < OVERLAP_MIN_DEG) {
+            if (nearest && minD < minReqDeg) {
                 const dLat = rLat - nearest.lat;
                 const dLng = rLng - nearest.lng;
                 const d = Math.hypot(dLat, dLng) || 1e-9;
-                rLat = nearest.lat + (dLat / d) * OVERLAP_MIN_DEG;
-                rLng = nearest.lng + (dLng / d) * OVERLAP_MIN_DEG;
+                rLat = nearest.lat + (dLat / d) * minReqDeg;
+                rLng = nearest.lng + (dLng / d) * minReqDeg;
             }
             placed.push({ ...mon, renderLat: rLat, renderLng: rLng });
             anchors.push({ lat: rLat, lng: rLng });

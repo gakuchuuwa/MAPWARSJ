@@ -923,6 +923,7 @@ const _FIXED: Record<string, string> = {
     'feiniqi': '#8A3A7E', // 腓尼基·加的斯（腓尼基紫红）
     'xilagu': '#B7860B', // 叙拉古·锡拉库萨（叙拉古金）
     'bogendi': '#800020', // 勃艮第·经典酒红
+    'bulabante': '#2A2A2E', // 布拉班特·布鲁塞尔（黑底金狮纹章，取黑底）
     'fulandesi': '#B8912E', // 佛兰德斯·加莱（佛兰德斯金）
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
     'mengtainiya': '#A03030', // 蒙泰尼亚·布加勒斯特（瓦拉几亚红）
@@ -1000,6 +1001,7 @@ const _FIXED: Record<string, string> = {
     'walajiyia': '#3A6EA7', // 瓦拉几亚·特尔城（瓦拉几亚蓝）
     'liwoniya': '#3E7A4A', // 利沃尼亚·塔林（利沃尼亚绿）
     'chude': '#395E9E', // 楚德·尤里耶夫（楚德蓝）
+    'kaleiliya': '#D52B1E', // 卡累利阿·基日岛（卡累利阿旗红）
     'deniesite': '#2D5FA8', // 第聂伯·阿克曼（第聂伯蓝）
     'nieman': '#4A7A3A', // 涅曼·格罗德诺（涅曼绿）
     'beisilafu': '#6A6A6A', // 别尔哥罗德·别尔哥罗德（白罗斯灰）
@@ -1029,6 +1031,15 @@ const _FIXED: Record<string, string> = {
     'yasuer': '#1D5FA8', // 亚速尔·安格拉（亚速尔蓝白，苍鹰 açor）
     'fodejiao': '#123E8C', // 佛得角·里贝拉（葡属海外王国深蓝）
     'gurjara': '#C25516', // 瞿折罗·帕坦（拉其普特藏红赭）
+    'suomunate': '#E08020', // 索姆纳特·索姆纳特（印度教藏红花橙）
+    'zhagewei': '#147A3D', // 扎格维·拉利贝拉（埃塞俄比亚正教圣绿）
+    'muwaxide': '#7A1F32',
+    'varendra': '#B26A1B',
+    'duonaobaojia': '#355C9A',
+    'lumiliya': '#8B2438',
+    'yilaka': '#D2A72C',
+    'gualani': '#287A4B',
+    'xiadunhe': '#D9D4C6',
     'guanche': '#8A6B4A', // 关切·特尔德（加那利羊皮褐；关切人属柏柏尔系）
 };
 

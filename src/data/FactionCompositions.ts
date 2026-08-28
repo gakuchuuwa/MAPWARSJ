@@ -2857,6 +2857,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'archer', count: 3 },                   // Row 2 后排 = 步弓手 3人（远程齐射）
         ],
     },
+    // 卡拉桑·马打蓝王国（帕南卡兰 · 马打蓝军团 · 鹤翼阵 2+4+3：精锐象兵 2 + 精锐爪刀勇士 4 + 步弓手 3）
+    medang: {
+        legionName: "马打蓝军团",
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'elite_battle_elephant', count: 2 },    // Row 0 前卫 = 精锐象兵 2头（战斗象高级开路）
+            { type: 'karambit_warrior_elite', count: 4 },   // Row 1 中军主力 = 精锐爪刀勇士 4人（爪刀贴身突刺主力）
+            { type: 'archer', count: 3 },                   // Row 2 后排 = 步弓手 3人（远程齐射）
+        ],
+    },
     // 廷巴克图·马里帝国（松迪亚塔 · 马里军团 · 鱼鳞阵 3+4+2：飞刀女兵 3 + 精锐飞刀女兵 4 + 步弓手 2）
     manding: {
         legionName: "马里军团",

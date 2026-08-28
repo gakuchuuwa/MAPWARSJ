@@ -21,11 +21,11 @@ export const CITY_WONDER: Record<string, string> = {
     'city_samaila': 'ORIE_WONDER_SARACENS',  // 萨迈拉（阿拔斯第二都，螺旋塔）
     'city_deli': 'INDI_WONDER_HINDUSTANIS',  // 德里（德里苏丹国）
     'city_dibilisi': 'MEDI_WONDER_GEORGIANS',  // 第比利斯（格鲁吉亚）
-    'city_dijon': 'WEST_WONDER_BURGUNDIANS',  // 第戎（勃艮第）
+    'city_bulusaier': 'WEST_WONDER_BURGUNDIANS',  // 布鲁塞尔（布拉班特公国，市政厅）
     'city_kasheer': 'WEST_WONDER_CELTS',  // 卡舍尔（芒斯特王国传统首都，卡舍尔之石）
     'city_heersongniesi': 'EAST_WONDER_GOTHS',  // 赫尔松涅斯（克里米亚哥特/陶里卡）
     'city_huashicheng': 'INDI_WONDER_INDIANS',  // 华氏城（孔雀帝国）
-    'city_jifu': 'SLAV_WONDER_SLAVS',  // 基辅（罗斯）
+    'city_jiridao': 'SLAV_WONDER_SLAVS',  // 基日岛（卡累利阿，波戈斯特木教堂）
     'city_junshitandingbao': 'MEDI_WONDER_BYZANTINES',  // 君士坦丁堡（拜占庭）
     'city_kaesong': 'ASIA_WONDER_KOREANS',  // 开城（高丽）
     'city_labate': 'ORIE_WONDER_BERBERS',  // 拉巴特（穆瓦希德·哈桑塔）
@@ -60,10 +60,10 @@ export const CITY_WONDER: Record<string, string> = {
     'city_suojiamosuo': 'ANDE_WONDER_MUISCA',  // 索加莫索（穆伊斯卡·太阳神庙）
     'city_yiguasu': 'ANDE_WONDER_TUPI',  // 伊瓜苏（图皮—瓜拉尼·伊瓜苏瀑布）
     'city_timbuktu': 'SCEN_SANKORE_MADRASAH',  // 廷巴克图（桑科雷经学院）
-    'city_aksum': 'AFRI_WONDER_ETHIOPIANS',  // 阿克苏姆（埃塞俄比亚）
-    'city_malacca': 'SEAS_WONDER_MALAY',  // 马六甲（马来/满剌加）
-    'city_patan': 'INDI_WONDER_GURJARAS',  // 帕坦（瞿折罗/古吉拉特）
-    'city_gaodacheng': 'INDI_WONDER_BENGALIS',  // 高达城（孟加拉，已有据点）
+    'city_lalibeila': 'AFRI_WONDER_ETHIOPIANS',  // 拉利贝拉（贝特·阿曼努埃尔岩石教堂）
+    'city_kalasan': 'SEAS_WONDER_MALAY',  // 卡拉桑（爪哇日惹·马打蓝/赛伦德拉）
+    'city_suomunate': 'INDI_WONDER_GURJARAS',  // 索姆纳特（印度教十二光辉林伽之首）
+    'city_suomapuli': 'INDI_WONDER_BENGALIS',  // 索玛普利（孟加拉·索马普拉大寺）
     // ── [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 补齐最后 7 座 ──
     'city_salonica': 'GREEK_WONDER_MACEDONIANS',  // 萨洛尼卡（塞萨洛尼基；据点 factionId 正是 maqidun 马其顿）
     'city_plovdiv': 'THRACIAN_WONDER_THRACIANS',  // 普罗夫迪夫（菲利普波利斯；据点 factionId 正是 seleisi 色雷斯）
@@ -74,7 +74,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_feiluzhabade': 'ORIE_WONDER_PERSIANS',  // 菲鲁扎巴德（萨珊开国都）
     // 🔴 2026-08-24 曾配萨莱又撤掉（金帐汗国是蒙古系，不是库曼），**别再配回萨莱**。
     //    萨拉托夫的 factionId 就是 qincha（钦察=库曼），伏尔加草原正是库曼本部。
-    'city_salatuofu': 'CEAS_WONDER_CUMANS',  // 萨拉托夫（钦察/库曼本部）
+    'city_saerkeer': 'CEAS_WONDER_CUMANS',  // 萨尔克尔（可萨·顿河白色堡垒）
     // SCEN_ 版与 WEST_/SLAV_ 版是**不同建筑**（preview.png md5 与体积均不同，已核），
     // 所以同一文明的两版各配一城，不算重复。
     'city_winchester': 'SCEN_WONDER_BRITONS',  // 温彻斯特（韦塞克斯/盎撒英格兰旧都；伦敦已配 WEST 版）
@@ -146,7 +146,7 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_kenisibao': [
         { asset: 'PAGAN_SHRINE', name: '罗姆瓦圣殿', category: 'HOLY_SITE', lat: 54.60, lng: 21.85, description: '波罗的海（立陶宛、普鲁士、拉脱维亚）诸部共同的最高异教圣所：中心是一株神圣永恒橡树（Rikojoto），树下供奉雷神佩尔库纳斯（Perkūnas），由最高祭司（Krivis）日夜守护那不灭圣火。' },
     ],
-    'city_nikexiya': [
+    'city_kolossi': [
         { asset: 'SCEN_CASTLE_RUINS', name: '科洛西要塞', category: 'HERITAGE_FORT', lat: 34.664, lng: 32.934, description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。' },
     ],
     'city_yadian': [
@@ -165,7 +165,7 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
         { asset: 'SCEN_ROMAN_RUINS', name: '庞贝古城遗迹', category: 'ANCIENT_WONDER', lat: 40.750, lng: 14.490, description: '公元79年维苏威火山喷发掩埋的罗马滨海城市，完整保存的古罗马遗迹。' },
     ],
     'city_luoma': [
-        { asset: 'ARCH_OF_CONSTANTINE', name: '君士坦丁凯旋门', category: 'ANCIENT_WONDER', lat: 41.890, lng: 12.492, description: '公元315年罗马元老院为纪念君士坦丁大帝米尔维安桥战役胜利而建的凯旋门，紧邻罗马斗兽场。' },
+        { asset: 'ARCH_OF_CONSTANTINE', name: '君士坦丁凯旋门', category: 'ANCIENT_WONDER', lat: 41.86, lng: 12.42, description: '公元315年罗马元老院为纪念君士坦丁大帝米尔维安桥战役胜利而建的凯旋门，紧邻罗马斗兽场。' },
     ],
     'city_yoshida': [
         { asset: 'SCEN_TORII_GATE', name: '严岛水上鸟居', category: 'HOLY_SITE', lat: 34.297, lng: 132.319, description: '日本安艺国严岛神社建在潮间带海中的朱红色大鸟居，人神相通的海上圣境。' },

@@ -117,6 +117,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/LATIN/fulandesi_luobeierershi.png' },
     bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },
+    bulabante: { generalId: 'bulabante_yuehanyishi', generalName: '约翰一世', portrait: '' },
     gaolu: { generalId: 'gen_charles_vii', generalName: '查理七世', portrait: '/assets/LATIN/gaolu_chaliqishi.png' },
     kaernute: { generalId: 'gen_kaernute_kotuatousi', generalName: '科图阿图斯', portrait: '/assets/GERMANIC/kaernute_ketuatusi.png' },
     anggelu: { generalId: 'gen_alfred_great', generalName: '阿尔弗雷德', portrait: '/assets/GERMANIC/anggelu_aerfuleide.png' },
@@ -184,6 +185,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tiaodun_qishi: { generalId: 'gen_ulrich_jungingen', generalName: '容金根', portrait: '/assets/GERMANIC/tiaodun_qishi_wuerlixi.png' },
     liwoniya: { generalId: 'gen_prettenberg', generalName: '普雷特贝格', portrait: '/assets/SLAVIC/liwoniya_puleitebeige.png' },
     chude: { generalId: 'gen_vyacheslav_tartu', generalName: '维切斯拉夫', portrait: '/assets/SLAVIC/chude_weiqiesilafu.png' },
+    kaleiliya: { generalId: 'kaleiliya_kelimu', generalName: '克利姆索博列夫', portrait: '' },
     deniesite: { generalId: 'gen_mehmed_giray', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/SLAVIC/nieman_weituofute.png' },
     fuerjia: { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
@@ -1051,8 +1053,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xibanya: { generalId: 'xibanya_pisaluo', generalName: '皮萨罗', portrait: '/assets/LATIN/xibanya_pisaluo.png' },  // 利马·征服印加的西班牙征服者
     manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '/assets/AFRICA/ethiopia_aizhana.png' },
+    zhagewei: { generalId: 'zhagewei_gebulei', generalName: '拉利贝拉', portrait: '' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '/assets/MALAY/malacca_bailimisula.png' },
+    medang: { generalId: 'gen_panangkaran', generalName: '帕南卡兰', portrait: '/assets/MALAY/medang_panangkaran.png' },
     gurjara: { generalId: 'gen_mihirabhoja', generalName: '迷企罗波阇', portrait: '/assets/INDIA/gurjara_miqiluobodu.png' },
+    suomunate: { generalId: 'suomunate_kumalapala', generalName: '库马拉帕拉', portrait: '' },
     tupinijin: { generalId: 'gen_tibirica', generalName: '蒂巴里萨', portrait: '/assets/AMERICA/tupinijin_dibalisa.png' },
     tuotuonake: { generalId: 'gen_chicomacatl', generalName: '奇科马卡特', portrait: '/assets/AMERICA/tuotuonake_qikemakate.png' },
     taino: { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '/assets/AMERICA/taino_hatuyi.png' },
@@ -1079,6 +1084,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jiaye: { generalId: 'jiaye_jiaye', generalName: '伽耶', portrait: '/assets/INDIA/jiaye_jiaye.png' },
     jienei: { generalId: 'jienei_jienei', generalName: '杰内', portrait: '/assets/AFRICA/jienei_jienei.png' },
     kuertaiya: { generalId: 'kuertaiya_kuertaiya', generalName: '库尔泰亚', portrait: '/assets/LATIN/kuertaiya_kuertaiya.png' },
+    muwaxide: { generalId: 'muwaxide_yakubu', generalName: '雅库布', portrait: '' },
+    varendra: { generalId: 'varendra_devapala', generalName: '提婆波罗', portrait: '' },
+    duonaobaojia: { generalId: 'duonaobaojia_tzimiskes', generalName: '齐米斯基', portrait: '' },
+    lumiliya: { generalId: 'lumiliya_lalashahin', generalName: '拉拉沙欣', portrait: '' },
+    yilaka: { generalId: 'yilaka_tundama', generalName: '通达马', portrait: '' },
+    gualani: { generalId: 'gualani_nicolas', generalName: '尼古拉斯', portrait: '' },
+    xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托', portrait: '' },
 
 };
 
@@ -1131,4 +1143,3 @@ if (import.meta.hot) {
         console.log(`[HMR] FactionGenerals → ${Object.keys(newModule.FACTION_GENERALS).length} 条武将已热更新`);
     });
 }
-

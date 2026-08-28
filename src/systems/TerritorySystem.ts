@@ -828,14 +828,14 @@ export class TerritorySystem {
 
         const leafletMap = map.getLeafletMap();
 
-        // Create dedicated panes for city markers (z-index 610) and labels (z-index 640)
+        // Create dedicated panes for city markers (z-index 610) and labels (z-index 660)
         if (!leafletMap.getPane('cityPane')) {
             leafletMap.createPane('cityPane');
             leafletMap.getPane('cityPane')!.style.zIndex = '610';
         }
         if (!leafletMap.getPane('labelsPane')) {
             leafletMap.createPane('labelsPane');
-            leafletMap.getPane('labelsPane')!.style.zIndex = '640';
+            leafletMap.getPane('labelsPane')!.style.zIndex = '660';
         }
         // Dedicated pane for territory polygons (below cities)
         if (!leafletMap.getPane('territoryPane')) {
