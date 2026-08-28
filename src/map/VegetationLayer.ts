@@ -21,9 +21,10 @@ const PATCH_RADIUS_PROJ = 32;
 const PATCH_MIN_SCREEN_RADIUS = 24;
 /** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
  *  stride 越大簇越稀、越"成带"。 */
-const CLUSTER_STRIDE = SAMPLE_STEP * 2;
-/** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping */
-const CLUSTER_RADIUS = SAMPLE_STEP * 1.3;
+const CLUSTER_STRIDE = SAMPLE_STEP * 1.6;
+/** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping。
+ *  改小（×0.55）：让同簇斑块聚拢重叠成"一片"而非离散雀斑点；配合 count 增大填实簇内。 */
+const CLUSTER_RADIUS = SAMPLE_STEP * 0.55;
 
 function hash(x: number, y: number, salt = 0): number {
     const n = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
@@ -88,7 +89,7 @@ export class VegetationLayer {
     private readonly map: L.Map;
     private readonly canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;
-    private visible = true;
+    private visible = false;
     private renderTimer: number | null = null;
     /** 上次重画时的采样格窗口指纹：没跨格 = 林区斑块集合一模一样，canvas 跟随平移即可，不必重画 */
     private lastRenderKey = '';
@@ -219,8 +220,9 @@ export class VegetationLayer {
                 const clusterChance = Math.min(1, density * 2.2 * (0.7 + hash(cx, cy, 43) * 0.6));
                 if (hash(cx, cy, 44) >= clusterChance) continue;
 
-                // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）
-                const baseCount = density >= 0.4 ? 6 : density >= 0.25 ? 4 : 3;
+                // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）。
+                // ×2 提高：斑块散布半径改小后靠叠数量把簇填实，连成一片而非稀疏点缀。
+                const baseCount = density >= 0.4 ? 14 : density >= 0.25 ? 10 : 6;
                 const count = Math.max(1, Math.round(baseCount * (0.7 + hash(cx, cy, 45) * 0.7)));
 
                 for (let i = 0; i < count; i++) {

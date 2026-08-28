@@ -197,7 +197,7 @@ export class GameMap {
 
         this.toggleRiver(true);
         this.toggleHillshade(true);
-        this.toggleTree(true);
+        this.toggleTree(false);
 
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
@@ -223,7 +223,7 @@ export class GameMap {
         const chkElevColor = document.getElementById('chk-elev-color') as HTMLInputElement;
         if (chkElevColor) chkElevColor.checked = true;
         const chkTree = document.getElementById('chk-tree') as HTMLInputElement;
-        if (chkTree) chkTree.checked = true;
+        if (chkTree) chkTree.checked = false;
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
             const rngZ = document.getElementById('rng-z') as HTMLInputElement;
