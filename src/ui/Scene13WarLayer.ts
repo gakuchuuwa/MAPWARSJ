@@ -1224,6 +1224,16 @@ const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
 /** [2026-08-29 主人「战术模式下城堡有点大，请缩小」] 守城城堡单独缩放：城堡素材本就大，在 0.8 下显得过大，单独调小。 */
 const SIEGE_CASTLE_SCALE = 0.65;
+/** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。 */
+const SIEGE_MARKET_SCALE = 0.65;
+/** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
+const SIEGE_TOWN_CENTER_SCALE = 0.6;
+/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余统一 SIEGE_CITY_BUILDING_SCALE。 */
+function siegeBuildingScale(building: string): number {
+    if (building === 'MARKET') return SIEGE_MARKET_SCALE;
+    if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
+    return SIEGE_CITY_BUILDING_SCALE;
+}
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
  *  用更小比例让奇观与周围建筑体量相当，不再鹤立鸡群。 */
 const SIEGE_WONDER_SCALE = 0.5;
@@ -4028,7 +4038,9 @@ export class Scene13WarLayer {
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
                 : `${style}_TOWER_AGE4`;
             const towerCollapse = 'BUILDINGANIM:' + arrowTowerAsset + '_DESTR';
-            const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
+            // 🔴 [2026-08-29 主人：塔塌后要有残骸] 塔专用 `_RUBBLE` DE 未提取 → 复用城门残骸
+            //    `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）当塔塌后的残骸常驻。
+            const towerRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
             this.ensureNatureAsset(towerCollapse);
             this.ensureNatureAsset(towerRubble);
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
@@ -4042,7 +4054,7 @@ export class Scene13WarLayer {
             const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
             for (const frac of towerYFrac) {
                 const ty = topWallY + (botWallY - topWallY) * frac;
-                const sprite = place({ x: towerX, y: ty }, arrowTowerAsset, { flip: false, z: 1, scale: SIEGE_CITY_BUILDING_SCALE });
+                const sprite = place({ x: towerX, y: ty }, arrowTowerAsset, { z: 1, scale: SIEGE_CITY_BUILDING_SCALE });
                 this.decorSprites.push(sprite);
                 this.arrowTowers.push({
                     sprite, x: towerX, y: ty,
@@ -4062,14 +4074,15 @@ export class Scene13WarLayer {
             if (this.defenderCityType === 'small_city') {
                 const shuffledSmall = [...side].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+                for (let i = 0; i < 9; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
                 return;
             }
-            // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；九个落点保持不变。
+            // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；落点随机（2026-08-29 主人定「除箭塔外其余在 9 出兵口随机摆放」）。
             if (this.defenderCityType === 'medium_city') {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, 9);
+                const shuffledSide = [...side].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 9; i++) {
-                    this.decorSprites.push(place(side[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+                    this.decorSprites.push(place(shuffledSide[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
                 }
                 return;
             }
@@ -4100,7 +4113,7 @@ export class Scene13WarLayer {
                 .filter(({ s }) => s.x >= backX - 1e-9)
                 .sort((a, b) => a.s.y - b.s.y);
             const centerIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            this.decorSprites.push(place(side[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+            this.decorSprites.push(place(side[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE }));
             const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
             const ringBuildings: Array<[string, string]> = [
                 ['MARKET', 'AGE4'],
@@ -4110,7 +4123,7 @@ export class Scene13WarLayer {
             const ringSpawns = side.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
             for (let i = 0; i < 8; i++) {
                 const [building, age] = ringBuildings[i];
-                this.decorSprites.push(place(ringSpawns[i], `${style}_${building}_${age}`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+                this.decorSprites.push(place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) }));
             }
             return;
         }
@@ -5242,7 +5255,7 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-08-29 主人需求] 30 秒城墙倒塌 → 四座箭塔**一起**倒塌：尘土特效 + 倒塌动画。
         //    有 `${towerAsset}_DESTR` 多帧动画素材 → 播同城门 DESTR 动画 → 切 rubble 残骸；
-        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后销毁（见 step 里 collapse.t 推进）。
+        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后切城门残骸常驻（见 step 里 collapse.t 推进）。
         for (const t of this.arrowTowers) {
             t.down = true;   // 塌后不再开火（残骸贴图保留）
             this.spawnFx('FX_WALL_DUST', t.x, t.y, (Math.random() * 8) | 0);
@@ -5251,8 +5264,8 @@ export class Scene13WarLayer {
                 t.sprite.frame = 0;
                 t.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: t.rubbleAsset };
             } else {
-                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 销毁
-                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: null };
+                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 切到城门残骸常驻
+                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: t.rubbleAsset };
             }
         }
     }
@@ -5286,11 +5299,16 @@ export class Scene13WarLayer {
                 if (bd > t.range * t.range) { t.cd = 0.25; continue; }   // 射程外，稍后再看
                 const ax = foe.x - fireX, ay = foe.y - fireY;
                 const ad = Math.hypot(ax, ay) || 1;
-                this.arrows.push({
-                    x: fireX, y: fireY,
-                    dx: ax / ad, dy: ay / ad, len: ad,
-                    t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW',
-                });
+                // 🔴 [2026-08-29 主人需求] 攻击特效 = 诸葛连弩：一次连发 3 支（复用 WarArrow.delay 连发机制，
+                //    每支延迟 v × PROJ_VOLLEY_DELAY 依次射出，视觉上就是连弩的三连发）。
+                for (let v = 0; v < 3; v++) {
+                    this.arrows.push({
+                        x: fireX, y: fireY,
+                        dx: ax / ad, dy: ay / ad, len: ad,
+                        t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW',
+                        delay: v * PROJ_VOLLEY_DELAY,
+                    });
+                }
                 // 攻击特效：塔顶开火闪光（火花）
                 const ang = Math.atan2(ay, ax);
                 for (let i = 0; i < 5; i++) {

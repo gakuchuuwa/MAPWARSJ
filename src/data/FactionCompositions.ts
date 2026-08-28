@@ -8886,20 +8886,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fujisi": {
-        legionName: "福基斯军团",
+        legionName: "福基斯重步军团",
         formationMode: "fish_scale",
         slots: [
             { type: "hoplite", count: 3 },
-            { type: "sacred_band", count: 4 },
+            { type: "mercenary_hoplite", count: 4 },
             { type: "thracian_peltast", count: 2 },
         ],
     },
     "yilisi": {
-        legionName: "埃利斯军团",
+        legionName: "埃利斯战车军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "hoplite", count: 3 },
-            { type: "sacred_band", count: 4 },
+            { type: "war_chariot", count: 3 },
+            { type: "hoplite", count: 4 },
             { type: "thracian_peltast", count: 2 },
         ],
     },
@@ -9001,6 +9001,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "kamayuk", count: 4 },
             { type: "hand_cannoneer", count: 2 },
             { type: "crossbowman", count: 3 },
+        ],
+    },
+    "lumiliya": {
+        legionName: "阿肯骑兵军团",
+        legionType: "solo",
+        formationMode: "crescent",
+        slots: [
+            { type: "pikeman", count: 3 },
+            { type: "laminated_bowman", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
 };
