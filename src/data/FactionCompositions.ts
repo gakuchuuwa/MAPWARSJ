@@ -8989,4 +8989,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "composite_bowman", count: 3 },
         ],
     },
+    "puxiangyindu": {
+        legionName: "斯拉夫军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+        ],
+    },
 };
