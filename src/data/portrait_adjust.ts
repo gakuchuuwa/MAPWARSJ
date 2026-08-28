@@ -2668,7 +2668,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -30
         },
         "/assets/litang/song2_houjunji.png": {
-            "scale": 1.04,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -3263,7 +3263,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/BASHU/qingqiang_jiangwei.png": {
-            "scale": 1.04,
+            "scale": 1,
             "offsetX": -13,
             "offsetY": -16
         },
@@ -5126,11 +5126,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/LATIN/zhibuluotuo_enlike.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -6
         },
         "/assets/BERBER/zhayan_yalimoluo.png": {
             "scale": 1.05,
@@ -7136,6 +7131,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 11,
             "offsetY": -1
+        },
+        "/assets/AMERICA/e4bd6ad1-0eef-447c-82d5-8cdfa8698b31.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/LATIN/__闲置__LATIN_17.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/AMERICA/zhibuluotuo_enlike.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
         }
     },
     "folderGuides": {

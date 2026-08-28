@@ -44,6 +44,7 @@ import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { audioManager } from '../audio/AudioManager';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import DechromaWorker from '../workers/DechromaWorker?worker';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -290,6 +291,30 @@ interface WarBuilding {
     rubbleAsset?: string;
     /** 倒塌动画已播放秒数（破门时置 0 启动，渲染层按帧推进） */
     collapseT?: number;
+}
+
+/**
+ * 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔：可射箭（复用 WarArrow 纯视觉弹丸 + 开火火花），
+ * 30 秒随城墙一起倒塌（collapseFrontWalls 联动：有 `_DESTR` 动画素材→播动画→rubble；无→尘土 + 销毁）。
+ * 与 wallGates 分开维护：不受「随机塌一半墙」影响，四塔统一同时塌。
+ */
+interface ArrowTower {
+    /** 城墙内侧的塔贴图（BUILDING: 单帧，撞色兵；world 层、不阻挡） */
+    sprite: DecorSprite;
+    x: number;
+    y: number;
+    /** 开火冷却（秒），<=0 才射箭 */
+    cd: number;
+    /** 射程（px），按塔档：瞭望 320 / 警戒 360 / 高级 400 */
+    range: number;
+    /** 开火间隔（秒），按塔档 */
+    reload: number;
+    /** 倒塌动画素材目录名（BUILDINGANIM:..._DESTR）；无该素材则直接销毁 */
+    collapseAsset: string | null;
+    /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE）；无则播完即销毁 */
+    rubbleAsset: string | null;
+    /** 🔴 已随墙倒塌（collapseFrontWalls 置位）：塌后不再开火，残骸贴图仍保留 */
+    down: boolean;
 }
 
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
@@ -2751,6 +2776,8 @@ export class Scene13WarLayer {
     private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
+    /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 随墙一同倒塌） */
+    private arrowTowers: ArrowTower[] = [];
     private natureCache: Record<string, NatureAsset> = {};
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
@@ -3547,6 +3574,7 @@ export class Scene13WarLayer {
         this.clouds = [];
         this.decorSprites = [];
         this.wallGates = [];
+        this.arrowTowers = [];
         this.decorPatches = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -3685,6 +3713,7 @@ export class Scene13WarLayer {
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
         this.wallGates = [];
+        this.arrowTowers = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
         this.applyDefenderCityRoad();
@@ -3990,6 +4019,40 @@ export class Scene13WarLayer {
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
+
+            // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
+            //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
+            //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随墙一同倒塌（collapseFrontWalls 联动）。
+            const arrowTowerAsset =
+                this.defenderCityType === 'small_city' ? `${style}_TOWER_AGE2`
+                : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
+                : `${style}_TOWER_AGE4`;
+            const towerCollapse = 'BUILDINGANIM:' + arrowTowerAsset + '_DESTR';
+            const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
+            this.ensureNatureAsset(towerCollapse);
+            this.ensureNatureAsset(towerRubble);
+            // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
+            this.ensureProj('PROJ_ARROW');
+            // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
+            this.ensureFx('FX_WALL_DUST');
+            const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8 }
+                : arrowTowerAsset.includes('_TOWER_AGE3') ? { range: 360, reload: 2.0 }
+                : { range: 320, reload: 2.2 };   // 瞭望箭塔
+            const towerX = wallFrontX + 110;                 // 城内一侧，紧贴正面主城墙
+            const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
+            for (const frac of towerYFrac) {
+                const ty = topWallY + (botWallY - topWallY) * frac;
+                const sprite = place({ x: towerX, y: ty }, arrowTowerAsset, { flip: false, z: 1, scale: SIEGE_CITY_BUILDING_SCALE });
+                this.decorSprites.push(sprite);
+                this.arrowTowers.push({
+                    sprite, x: towerX, y: ty,
+                    cd: Math.random() * 1.5,
+                    range: towerProfile.range, reload: towerProfile.reload,
+                    collapseAsset: towerCollapse, rubbleAsset: towerRubble,
+                    down: false,
+                });
+            }
+
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
                 placeYurtCamp(SIEGE_CITY_BUILDING_SCALE);
@@ -4419,17 +4482,39 @@ export class Scene13WarLayer {
 
 
     // ── 素材：按需加载 + 去绿幕 + 染色（同 __war.html / 主游戏启动管线）──
-    private dechroma(img: HTMLImageElement): HTMLCanvasElement {
-        const c = document.createElement('canvas');
-        c.width = img.naturalWidth; c.height = img.naturalHeight;
-        const g = c.getContext('2d', { willReadFrequently: true })!;
-        g.drawImage(img, 0, 0);
-        const d = g.getImageData(0, 0, c.width, c.height), p = d.data;
-        for (let i = 0; i < p.length; i += 4) {
-            if (p[i + 1] > 150 && p[i] < 110 && p[i + 2] < 110) p[i + 3] = 0;
-        }
-        g.putImageData(d, 0, 0);
-        return c;
+    // ── 抠绿 Worker（主线程零阻塞，见 DechromaWorker）──
+    private dechromaWorker: Worker | null = null;
+    private dechromaMsgId = 0;
+    private dechromaCallbacks: Map<number, (dataUrl: string) => void> = new Map();
+
+    /** 懒建抠绿 Worker。 */
+    private ensureDechromaWorker(): Worker {
+        if (this.dechromaWorker) return this.dechromaWorker;
+        const w = new DechromaWorker();
+        w.onmessage = (e: MessageEvent<{ id: number; dataUrl: string }>) => {
+            const { id, dataUrl } = e.data;
+            const cb = this.dechromaCallbacks.get(id);
+            if (cb) {
+                this.dechromaCallbacks.delete(id);
+                cb(dataUrl);
+            }
+        };
+        this.dechromaWorker = w;
+        return w;
+    }
+
+    /** 抠绿 → dataUrl，全程在 Worker 里做（getImageData 回读 + 逐像素 + PNG 编码），主线程不阻塞。失败返回空串。 */
+    private dechromaToDataUrl(img: HTMLImageElement): Promise<string> {
+        return createImageBitmap(img)
+            .then((bitmap) => {
+                const worker = this.ensureDechromaWorker();
+                const id = this.dechromaMsgId++;
+                return new Promise<string>((resolve) => {
+                    this.dechromaCallbacks.set(id, resolve);
+                    worker.postMessage({ id, bitmap }, [bitmap]);
+                });
+            })
+            .catch(() => '');
     }
 
 
@@ -4546,50 +4631,59 @@ export class Scene13WarLayer {
                             //    它保护高光（金属不发假）、保护黑色轮廓（兵不隐身）、用灰度混合去掉素材底色。
                             // 🔴 上策：抠绿 + Base64 跨战斗缓存（DECROMA_CACHE）。第二次同素材直接复用，
                             //    跳过最耗时的 getImageData 逐像素抠绿 + PNG 编码；染色仍走现链路（势力色每局变）。
-                            let dataUrl = DECROMA_CACHE.get(url);
-                            if (!dataUrl) {
-                                const base = this.dechroma(im);
-                                dataUrl = base.toDataURL();
-                                DECROMA_CACHE.set(url, dataUrl);
-                            }
-                            const clean = new Image();
-                            // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
-                            (clean as any).sourceUrl = url;
-                            clean.onload = () => {
-                                try {
-                                    // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
-                                    if (!isDE) {
-                                        b.fh = clean.naturalHeight;
-                                        // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
-                                        //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
-                                        b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
-                                    }
-                                    // 存进缓存供下一场直接复用；超上限按插入序淘汰最旧的
-                                    if (!CLEAN_CACHE.has(url)) {
-                                        if (CLEAN_CACHE.size >= CLEAN_CACHE_MAX) {
-                                            const oldest = CLEAN_CACHE.keys().next().value;
-                                            if (oldest !== undefined) CLEAN_CACHE.delete(oldest);
+                            // 🔴 [2026-08-29 修卡顿] 抠绿移进 Worker（dechromaToDataUrl 异步）：命中缓存同步续，
+                            //    miss 走 Worker 异步续。原同步 dechroma（getImageData 回读 + 逐像素 + toDataURL）
+                            //    在 onload 回调里排队，是「偶发几百 ms 尖峰」的根源。
+                            const useDataUrl = (dataUrl: string) => {
+                                const clean = new Image();
+                                // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
+                                (clean as any).sourceUrl = url;
+                                clean.onload = () => {
+                                    try {
+                                        // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
+                                        if (!isDE) {
+                                            b.fh = clean.naturalHeight;
+                                            // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
+                                            //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
+                                            b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
                                         }
-                                        CLEAN_CACHE.set(url, clean);
+                                        // 存进缓存供下一场直接复用；超上限按插入序淘汰最旧的
+                                        if (!CLEAN_CACHE.has(url)) {
+                                            if (CLEAN_CACHE.size >= CLEAN_CACHE_MAX) {
+                                                const oldest = CLEAN_CACHE.keys().next().value;
+                                                if (oldest !== undefined) CLEAN_CACHE.delete(oldest);
+                                            }
+                                            CLEAN_CACHE.set(url, clean);
+                                        }
+                                        void Promise.all([
+                                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
+                                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
+                                        ]).then(([attacker, defender]) => {
+                                            b.sets[slot][0][d] = attacker;
+                                            b.sets[slot][1][d] = defender;
+                                        }).catch((e) => {
+                                            b.sets[slot][0][d] = clean;
+                                            b.sets[slot][1][d] = clean;
+                                            console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
+                                        }).finally(() => { this.pending -= inc; });
+                                    } catch (e) {
+                                        console.warn('[Scene13WarLayer] 染色失败（回退空帧）:', key, slot, d, e);
+                                        this.pending -= inc;
                                     }
-                                    void Promise.all([
-                                        SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
-                                        SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
-                                    ]).then(([attacker, defender]) => {
-                                        b.sets[slot][0][d] = attacker;
-                                        b.sets[slot][1][d] = defender;
-                                    }).catch((e) => {
-                                        b.sets[slot][0][d] = clean;
-                                        b.sets[slot][1][d] = clean;
-                                        console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
-                                    }).finally(() => { this.pending -= inc; });
-                                } catch (e) {
-                                    console.warn('[Scene13WarLayer] 染色失败（回退空帧）:', key, slot, d, e);
-                                    this.pending -= inc;
-                                }
+                                };
+                                clean.onerror = () => { this.pending -= inc; };
+                                clean.src = dataUrl;
                             };
-                            clean.onerror = () => { this.pending -= inc; };
-                            clean.src = dataUrl;
+                            const cached = DECROMA_CACHE.get(url);
+                            if (cached) {
+                                useDataUrl(cached);
+                            } else {
+                                void this.dechromaToDataUrl(im).then((dataUrl) => {
+                                    if (!dataUrl) { this.pending -= inc; return; }
+                                    DECROMA_CACHE.set(url, dataUrl);
+                                    useDataUrl(dataUrl);
+                                }).catch(() => { this.pending -= inc; });
+                            }
                         } catch (e) {
                             console.warn('[Scene13WarLayer] 抠绿失败（回退空帧）:', key, e);
                             this.pending -= inc;
@@ -5146,6 +5240,74 @@ export class Scene13WarLayer {
             this.contactSfxPlayed = true;
             audioManager.startSceneLoop('land_contact');
         }
+        // 🔴 [2026-08-29 主人需求] 30 秒城墙倒塌 → 四座箭塔**一起**倒塌：尘土特效 + 倒塌动画。
+        //    有 `${towerAsset}_DESTR` 多帧动画素材 → 播同城门 DESTR 动画 → 切 rubble 残骸；
+        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后销毁（见 step 里 collapse.t 推进）。
+        for (const t of this.arrowTowers) {
+            t.down = true;   // 塌后不再开火（残骸贴图保留）
+            this.spawnFx('FX_WALL_DUST', t.x, t.y, (Math.random() * 8) | 0);
+            if (t.collapseAsset && this.natureCache[t.collapseAsset]?.img?.complete) {
+                t.sprite.asset = t.collapseAsset;
+                t.sprite.frame = 0;
+                t.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: t.rubbleAsset };
+            } else {
+                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 销毁
+                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: null };
+            }
+        }
+    }
+
+    /**
+     * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
+     *    找射程内最近的攻方士兵（f=0），冷却到点射一支箭（复用 WarArrow 纯视觉弹丸，不改平衡）+
+     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔随 30 秒墙塌（collapseFrontWalls）后才停止射击。
+     */
+    private stepArrowTowers(dt: number): void {
+        if (this.battleType !== 'siege' || this.arrowTowers.length === 0) return;
+        for (const t of this.arrowTowers) {
+            if (t.down || t.sprite.destroyed || t.sprite.collapse) continue;   // 已塌不再射
+            // 🔴 塔贴图未加载（素材不存在/未就绪）→ 不画也不射（看不见的塔开火更假）
+            const towerNa = this.natureCache[t.sprite.asset];
+            if (!towerNa?.img?.complete) continue;
+            t.cd -= dt;
+            if (t.cd > 0) continue;
+            // 塔顶开火点：贴图锚点在塔基，抬到塔身上部
+            const fireX = t.x;
+            const fireY = t.y - UNIT_PX * 0.8;
+            // 射程内最近的攻方士兵
+            let foe: WarMan | null = null, bd = Infinity;
+            for (const m of this.men) {
+                if (m.f === 0 && m.hp > 0) {
+                    const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
+                    if (d < bd) { bd = d; foe = m; }
+                }
+            }
+            if (foe) {
+                if (bd > t.range * t.range) { t.cd = 0.25; continue; }   // 射程外，稍后再看
+                const ax = foe.x - fireX, ay = foe.y - fireY;
+                const ad = Math.hypot(ax, ay) || 1;
+                this.arrows.push({
+                    x: fireX, y: fireY,
+                    dx: ax / ad, dy: ay / ad, len: ad,
+                    t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW',
+                });
+                // 攻击特效：塔顶开火闪光（火花）
+                const ang = Math.atan2(ay, ax);
+                for (let i = 0; i < 5; i++) {
+                    const spd = 18 + Math.random() * 30;
+                    const spread = (Math.random() - 0.5) * 0.7;
+                    this.sparks.push({
+                        x: fireX, y: fireY,
+                        vx: Math.cos(ang + spread) * spd,
+                        vy: Math.sin(ang + spread) * spd - 8,
+                        t: 0, dur: 0.10 + Math.random() * 0.12,
+                        color: ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'][(Math.random() * 4) | 0],
+                        size: 1.3 + Math.random() * 1.5,
+                    });
+                }
+            }
+            t.cd = foe ? t.reload : 0.25;   // 无攻方 → 快速重扫（0.25s 后再看），敌一进射程立刻反应
+        }
     }
 
     /**
@@ -5441,6 +5603,8 @@ export class Scene13WarLayer {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
         }
+        // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
+        this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) this.deployT -= dt;
         const deploying = this.deployT > 0;
@@ -6085,6 +6249,21 @@ export class Scene13WarLayer {
                     b.sprite.destroyed = true;         // 无残骸兜底（当前城门均配 rubble，此分支为防御）
                 }
                 b.sprite.collapse = undefined;
+            }
+        }
+        // 🔴 [2026-08-29 主人需求] 箭塔倒塌动画推进（同城门：DESTR 播完 → 切 rubble 残骸，无 rubble 则销毁）
+        for (const t of this.arrowTowers) {
+            const c = t.sprite.collapse;
+            if (!c) continue;
+            c.t += dt;
+            if (c.t >= c.dur) {
+                if (c.rubbleAsset) {
+                    t.sprite.asset = c.rubbleAsset;
+                    t.sprite.frame = 0;
+                } else {
+                    t.sprite.destroyed = true;
+                }
+                t.sprite.collapse = undefined;
             }
         }
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来
