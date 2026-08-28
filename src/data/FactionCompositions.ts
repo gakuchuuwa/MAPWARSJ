@@ -8993,6 +8993,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "puxiangyindu": {
         legionName: "葡萄牙军团",
+        legionType: "region",
         formationMode: "balance_yoke",
         slots: [
             { type: "kamayuk", count: 4 },

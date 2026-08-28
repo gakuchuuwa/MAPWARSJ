@@ -17,6 +17,7 @@ import {
     NAVAL_FORMATION_LABEL,
     CULTURE_TIERS_MAP,
     CULTURE_FORMATION_MODE,
+    CULTURE_LEGION_NAMES,
     FormationMode,
     getDefaultSlotsForMode,
     convertSlotsToMode,
@@ -813,7 +814,6 @@ app.innerHTML = `
     <a href="/skill-editor.html" class="le-link">技能管理</a>
     <button type="button" id="le-reload" class="le-btn">刷新数据</button>
     <button type="button" id="le-check-legions" class="le-btn">🧹 检查军团命名</button>
-    <button type="button" id="le-save-all" class="le-btn">💾 全部写盘</button>
   </div>
 </header>
 <div class="le-viewtabs">
@@ -887,7 +887,6 @@ const els = {
     panelContent: document.getElementById('le-panel-content')!,
     toast: document.getElementById('le-toast')!,
     btnReload: document.getElementById('le-reload') as HTMLButtonElement,
-    btnSaveAll: document.getElementById('le-save-all') as HTMLButtonElement,
     toolbarFactions: document.getElementById('le-toolbar-factions')!,
     toolbarUnits: document.getElementById('le-toolbar-units')!,
     catSearch: document.getElementById('le-cat-search') as HTMLInputElement,
@@ -1567,7 +1566,7 @@ function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFacti
 const LAYER_FULL_LABEL: Record<'culture' | 'branch' | 'sub', string> = {
     culture: '地区军团',
     branch: '时代军团',
-    sub: '独立军团',
+    sub: '个人军团',
 };
 
 /** 编成签名：阵型 + slots 的 type:count 序列（同名铁律判据） */
@@ -1653,6 +1652,7 @@ function renderNavalPanel(row: FactionLegionRow): void {
         if (!currentEditingLegion) return;
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
+            legionType: currentEditingLegion.legionType,
             formationMode: currentEditingLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: currentEditingLegion.slots.map(sl => ({ ...sl })),
@@ -1879,15 +1879,7 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 保存 -->
     <div class="le-form-section">
       <div class="le-section-title"><span>保存配置</span></div>
-      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
-        <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="flex:1;font-size:14px;padding:10px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
-        ${row.isCustom ? `<button type="button" id="le-btn-reset-single" class="le-btn le-btn-warn">🗑️ 恢复文化默认</button>` : ''}
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button type="button" id="le-btn-copy" class="le-btn" style="flex:1;">📋 复制配置</button>
-        <button type="button" id="le-btn-paste" class="le-btn" style="flex:1;" ${clipboardLegion ? '' : 'disabled'}>📋 粘贴配置</button>
-        <button type="button" id="le-btn-apply-region" class="le-btn" style="flex:1.4;">🌐 一键套用全【${row.regionLabel}】</button>
-      </div>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
     </div>
     `;
 
@@ -1974,6 +1966,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
 
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
+            legionType: currentEditingLegion.legionType,
             formationMode: currentEditingLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
@@ -1986,16 +1979,6 @@ function bindPanelEvents(row: FactionLegionRow): void {
         await saveAllCompositions();
         showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
             + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : ''));
-    });
-
-    // 重置恢复默认
-    document.getElementById('le-btn-reset-single')?.addEventListener('click', async () => {
-        delete localCustomCompositions[row.factionId];
-        buildRows();
-        applyFilter();
-        selectFaction(row.factionId);
-        await saveAllCompositions();
-        showToast(`🗑️ 已恢复【${row.factionName}】为文化默认并写入文件`);
     });
 
     // 军团种类选择（第三步）
@@ -2013,50 +1996,6 @@ function bindPanelEvents(row: FactionLegionRow): void {
         if (currentEditingLegion) {
             currentEditingLegion.legionName = (e.target as HTMLInputElement).value;
         }
-    });
-
-    document.getElementById('le-btn-copy')?.addEventListener('click', () => {
-        if (!currentEditingLegion) return;
-        clipboardLegion = {
-            formationMode: currentEditingLegion.formationMode,
-            slots: currentEditingLegion.slots.map(s => ({ ...s })),
-        };
-        showToast(`📋 已复制【${row.factionName}】的军团方阵配置！`);
-        renderEditPanel(row);
-    });
-
-    // 粘贴
-    document.getElementById('le-btn-paste')?.addEventListener('click', () => {
-        if (!clipboardLegion) return;
-        currentEditingLegion = {
-            formationMode: clipboardLegion.formationMode,
-            slots: clipboardLegion.slots.map(s => ({ ...s })),
-        };
-        renderEditPanel(row);
-        showToast(`📋 已粘贴配置！`);
-    });
-
-    // 一键套用全区
-    document.getElementById('le-btn-apply-region')?.addEventListener('click', async () => {
-        if (!currentEditingLegion) return;
-        const confirmMsg = `确定要将当前军团方阵配置批量应用到所有【${row.regionLabel}】区(${row.region})的势力吗？`;
-        if (!confirm(confirmMsg)) return;
-
-        let count = 0;
-        allRows.forEach(r => {
-            if (r.region === row.region) {
-                localCustomCompositions[r.factionId] = {
-                    formationMode: currentEditingLegion!.formationMode,
-                    slots: currentEditingLegion!.slots.map(s => ({ ...s })),
-                };
-                count++;
-            }
-        });
-        buildRows();
-        applyFilter();
-        selectFaction(row.factionId);
-        await saveAllCompositions();
-        showToast(`🌐 已为【${row.regionLabel}】区 ${count} 个势力统一设置方阵并写入文件`);
     });
 }
 
@@ -2169,6 +2108,23 @@ function computeLegionNameViolations(): string[] {
     for (const [name, sigs] of nameSigs.entries()) {
         if (sigs.size > 1) {
             violations.push(`军团名【${name}】被用于不同编制（重名）：${nameFactions.get(name)!.join('、')}（同名军团必须同编制）`);
+        }
+    }
+
+    // ③ 个人军团只能一个套用
+    const soloUsers = new Map<string, string[]>();
+    for (const row of allRows) {
+        const custom = localCustomCompositions[row.factionId];
+        if (custom?.legionType === 'solo') {
+            const n = custom.legionName?.trim();
+            if (!n) continue;
+            if (!soloUsers.has(n)) soloUsers.set(n, []);
+            soloUsers.get(n)!.push(row.factionName);
+        }
+    }
+    for (const [name, users] of soloUsers.entries()) {
+        if (users.length > 1) {
+            violations.push(`个人军团【${name}】被多个势力使用（只能一个套用）：${users.join('、')}`);
         }
     }
 
@@ -3166,9 +3122,6 @@ function startCanvasPreview(): void {
 
 async function saveAllCompositions(): Promise<void> {
     try {
-        els.btnSaveAll.disabled = true;
-        els.btnSaveAll.textContent = '💾 保存中…';
-
         const res = await fetch('/api/save-faction-compositions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -3182,9 +3135,6 @@ async function saveAllCompositions(): Promise<void> {
         reportLegionNameViolations();
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
-    } finally {
-        els.btnSaveAll.disabled = false;
-        els.btnSaveAll.textContent = '💾 全部写盘';
     }
 }
 
@@ -3246,10 +3196,6 @@ els.btnReload.addEventListener('click', () => {
     renderTable();
     if (selectedFactionId) selectFaction(selectedFactionId);
     showToast('🔄 已重新载入势力军团数据');
-});
-
-els.btnSaveAll.addEventListener('click', () => {
-    saveAllCompositions();
 });
 
 // 「检查军团命名」：手动触发命名铁律校验（自动报错）
