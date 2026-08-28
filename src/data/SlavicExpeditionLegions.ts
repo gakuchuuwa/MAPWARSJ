@@ -23,7 +23,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     litaowan: { name: '列提斯骑兵', tier: 2 },
     baojian_qishi: { name: '里加宝剑', tier: 2 },          // 里加·宝剑骑士团；避势力「宝剑骑士团」叠字
     shaiyue: { name: '马扎尔骠骑', tier: 2 },
-    dajiya: { name: '达契亚弯刀', tier: 3 },          // 萨尔米泽·德切巴鲁斯：falx 兵种文化；终为罗马所灭 → T3
 
     // ── T1 功勋之兵 ──
     dunhe: { name: '亚速哥萨克', tier: 1 },          // 阿速城·塔塔里诺夫：1637攻占亚速 / 1641亚速围城战以少胜多

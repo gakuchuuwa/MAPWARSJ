@@ -945,6 +945,7 @@ const _FIXED: Record<string, string> = {
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
+    'xiongyati': '#3D2E3D', // 匈雅提·胡内多阿拉（科文城堡乌鸦纹章黑紫）
     'weixi': '#C03030', // 不来梅·不来梅（汉萨红白）
     'ruidian_yota': '#1E5FA8', // 瑞典·哥德堡（瑞典蓝金）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
@@ -985,7 +986,6 @@ const _FIXED: Record<string, string> = {
     'ouka': '#896A2E', // 梁赞·梁赞（梁赞金褐）
     'xideweina': '#3A5E9E', // 波洛茨克·波洛茨克（波洛茨克蓝）
     'kelimiya': '#1D6FA8', // 克里米亚·卡法（黑海蓝）
-    'dajiya': '#A02F30', // 达契亚·萨尔米泽（达契亚红）
     'litaowan': '#8E1E28', // 立陶宛·维尔纽斯（大公国暗红）
     'piyasite': '#B01F20', // 克拉科夫·克拉科夫（克拉科夫红）
     'baojian_qishi': '#6A6A72', // 宝剑骑士·里加（骑士团银灰）

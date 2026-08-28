@@ -932,6 +932,7 @@ export class CityAssetManager {
         'boumeilaniyan': '卡舒',
         'pomeilaniya': '波美',
 'mazhaer': '匈牙',
+'xiongyati': '匈雅',
         'bosiniya': '波斯',
         'taolika': '陶里',
         'shengdian_qishi': '圣殿',

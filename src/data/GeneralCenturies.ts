@@ -667,7 +667,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_casimir_great': 14,                             // 卡齐米日 · piyasite · 克拉科夫
     'gen_daniel_galitsky': 13,                           // 丹尼尔 · jialixiya · 加利奇
     'gen_daumantas': 13,                                 // 道曼塔斯 · pusikefu_gongheguo · 普斯科夫
-    'gen_decebalus': 1,                                 // 德切巴鲁斯 · dajiya · 萨尔米泽
     'gen_dmitry_donskoy': 14,                            // 顿斯科伊 · mosike_gongguo · 莫斯科
     'gen_dmitry_suzdal': 14,                             // 康斯坦丁诺 · suzidaer · 下诺城
     'gen_dragan': 14,                                    // 德拉甘 · lagusa · 拉古萨
@@ -938,7 +937,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_william_silent': 16,                            // 威廉奥兰治 · nidelan · 海牙
     'gen_william_wallace': 13,                           // 华莱士 · kanbuliya · 卡莱尔
     'gen_zwingli': 16,                                   // 茨温利 · ruishi · 巴塞尔
-    'mazhaer_xiongyati': 15,                             // 匈雅提亚诺什 · mazhaer · 布达佩斯
+    'xiongyati_yannuoshi': 15,                          // 匈雅提亚诺什 · xiongyati · 胡内多阿拉
+    'mazhaer_majiashi': 15,                             // 马加什一世 · mazhaer · 布达佩斯
     'ruidian_si_biergeyaer': 13,                         // 比尔格雅尔 · ruidian_si · 斯德哥尔摩
 
     // ══════ KOREA（23 人，已标 0）══════

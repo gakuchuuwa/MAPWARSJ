@@ -15,7 +15,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_beijing': 'ASIA_WONDER_CHINESE',  // 北京（明清，天坛）
     'city_changan': 'SCEN_HALL_OF_HEROES',  // 长安（唐，凌烟阁二十四功臣画像阁）
     'city_bosibolisi': 'PERSIAN_WONDER_ACHAEMENIDS',  // 波斯波利斯（阿契美尼德）
-    'city_budapeisi': 'SLAV_WONDER_MAGYARS',  // 布达佩斯（马扎尔）
+    'city_huneiduolala': 'SLAV_WONDER_MAGYARS',  // 胡内多阿拉（马扎尔，科文城堡）
     'city_bulage': 'SLAV_WONDER_BOHEMIANS',  // 布拉格（波西米亚）
     'city_chengdu': 'ASIA_WONDER_SHU',  // 成都（蜀汉）
     'city_damasikusi': 'ORIE_WONDER_SARACENS',  // 大马士革（倭马亚）
@@ -139,8 +139,8 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_chongan': [
         { asset: 'SCEN_CHINESE_RUINS', name: '竹林古刹遗迹', category: 'ANCIENT_WONDER', lat: 27.750, lng: 118.000, description: 'DE 官方「中国废墟」（Chinese Ruins），深山修竹掩映间残破坍塌的青瓦木构古殿残垣。' },
     ],
-    'city_weierniwusi': [
-        { asset: 'PAGAN_SHRINE', name: '罗姆瓦异教圣坛', category: 'HOLY_SITE', lat: 54.687, lng: 25.290, description: '波罗的海立陶宛原初信仰罗姆瓦的神圣橡树与永恒圣火祭祀圣所。' },
+    'city_kenisibao': [
+        { asset: 'PAGAN_SHRINE', name: '罗姆瓦圣殿', category: 'HOLY_SITE', lat: 54.60, lng: 21.85, description: '波罗的海（立陶宛、普鲁士、拉脱维亚）诸部共同的最高异教圣所：中心是一株神圣永恒橡树（Rikojoto），树下供奉雷神佩尔库纳斯（Perkūnas），由最高祭司（Krivis）日夜守护那不灭圣火。' },
     ],
     'city_nikexiya': [
         { asset: 'SCEN_CASTLE_RUINS', name: '科洛西要塞', category: 'HERITAGE_FORT', lat: 34.664, lng: 32.934, description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。' },

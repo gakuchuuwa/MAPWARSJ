@@ -18,6 +18,11 @@ interface MonumentData {
 
 /** 奇观 marker 基准宽度（px）：与城堡地标（baseSize×0.68）一般大小，比普通据点建筑（×0.40）略大更显眼 */
 const BASE_SIZE = 90;
+/** [2026-08-28 主人要求「杰姆宣礼塔图改大」]：竖长奇观统一 90px 宽显得过细，单独放大（相对基准宽的倍数） */
+const WONDER_SCALE_OVERRIDE: Record<string, number> = {
+    'MINARET_OF_JAM': 1.5,  // 杰姆宣礼塔（贾姆宣礼塔）：塔身细长，放大 1.5 倍
+    'SCEN_INDIAN_RUINS': 1.6,  // 亨比巨石神庙群遗迹：素材低分辨率(148×108)、横宽偏矮，放大 1.6 倍
+};
 /** 重叠判定最小间距（度）：zoom 9 下 ≈ 90px（奇观 marker 宽），中心距小于此值判为重叠并外推 */
 const OVERLAP_MIN_DEG = 0.25;
 
@@ -86,6 +91,7 @@ export class MonumentLayer {
                     lat,
                     lng,
                     asset: `/SUCAI_BUILDING/${asset}/preview.png`,
+                    scale: WONDER_SCALE_OVERRIDE[asset],
                     description: `${place}的文明奇观·${wonderName}`,
                 };
             })
@@ -122,7 +128,7 @@ export class MonumentLayer {
         for (const mon of placed) {
             // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
             const mirror = Math.random() < 0.5;
-            const w = BASE_SIZE;
+            const w = BASE_SIZE * (mon.scale ?? 1);
             const h = w;
             const groundW = w * 1.6;
             const groundH = groundW * 0.58;
