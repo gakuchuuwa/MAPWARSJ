@@ -40,7 +40,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     dulan_d: { name: '普什图骑兵', tier: 1 },       // 坎大哈·杜兰尼
     babuer: { name: '阿富汗游骑', tier: 3 },        // 喀布尔·阿富汗
     fanyanna: { name: '梵衍那军', tier: 4 },        // 巴米扬·梵衍那
-    xisi: { name: '萨法尔圣兵', tier: 2 },          // 博斯特·锡斯坦
+    xisi: { name: '萨法尔圣兵', tier: 2 },
     delan: { name: '苏伦具装骑', tier: 1 },         // 法拉·德兰吉亚
     guzgan: { name: '古兹根军', tier: 4 },          // 法里亚布·古兹根
     baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹

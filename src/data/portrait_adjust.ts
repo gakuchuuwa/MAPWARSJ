@@ -5358,7 +5358,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/GERMANIC/boximiya_yangjiesika.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -7051,6 +7051,86 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/WEST_ASIA/f6b4e1a8-c6d2-4a83-893c-06778ad9e37f.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/INDIA/21735600-8ae2-4b52-8087-dbbcc66d048e.png": {
+            "scale": 1.03,
+            "offsetX": -7,
+            "offsetY": -14
+        },
+        "/assets/INDIA/varendra_tipoboluo.png": {
+            "scale": 1.03,
+            "offsetX": -7,
+            "offsetY": -14
+        },
+        "/assets/CENTRAL_ASIA/52f54234-ff6f-4dfe-ae82-bceb2f818e97.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/INDIA/28e9f38f-0ebf-4eee-8fe5-2aa0af1e7312.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/DIANQIAN/812d523f-97a3-42e2-9364-bdfff3081caa.png": {
+            "scale": 1.05,
+            "offsetX": -3,
+            "offsetY": 4
+        },
+        "/assets/DIANQIAN/medang_panankalan.png": {
+            "scale": 1.05,
+            "offsetX": -3,
+            "offsetY": 4
+        },
+        "/assets/AFRICA/0164115a-90ff-4f59-9f2b-173bb28f6ce9.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/CENTRAL_ASIA/samaila_muataisuimu.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/GERMANIC/99b9f130-513e-4bed-ad60-bd85a2030178.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/GERMANIC/pelianci_hengliershi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/GERMANIC/0b180ba1-fc0c-44f4-97d1-4b20be2b8ded.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/GERMANIC/9a9891f8-a611-4aab-92ef-ba5007564eee.png": {
+            "scale": 1.15,
+            "offsetX": -6,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/e495be57-1dfd-4896-bbc6-013cf0bc2303.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/mangsite_bulaienbolu.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/bulabante_yuehanyishi.png": {
+            "scale": 1.15,
+            "offsetX": -6,
+            "offsetY": 11
         }
     },
     "folderGuides": {

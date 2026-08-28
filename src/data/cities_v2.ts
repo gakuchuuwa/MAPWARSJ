@@ -1946,7 +1946,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 30000, region: 'BERBER' },
-    { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'small_city', troops: 30000, region: 'BERBER', note: '穆瓦希德哈里发雅库布·曼苏尔营建的胜利堡（Ribat al-Fath），哈桑塔及未完工哈桑清真寺所在地' },
+    { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'small_city', troops: 20000, region: 'BERBER' },
 
     { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC' },
@@ -2774,7 +2774,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-20 新增：卡伦·图斯 ──
     { id: 'city_tusi', name: '图斯', factionId: 'kalan', lat: 36.45, lng: 59.57, type: 'small_city', region: 'PERSIAN', troops: 30000, note: '古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸' },
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
-    { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.3600, type: 'small_city', region: 'PERSIAN', troops: 30000, note: '赫尔曼德河畔博斯特/拉什卡尔加；萨法尔王朝雅库布铜匠起兵之地，锡斯坦核心重镇' },
+    { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.36, type: 'small_city', troops: 20000, region: 'PERSIAN' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
     { id: 'city_fala', name: '法拉', factionId: 'delan', lat: 32.3700, lng: 62.1100, type: 'small_city', region: 'PERSIAN', troops: 30000, note: '古德兰吉亚省法拉河畔要塞；苏伦家族世袭领地，帕提亚东境战略枢纽' },
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
@@ -2945,7 +2945,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.2, lng: 29.91, type: 'big_city', troops: 30000, region: 'ORIE', mirror: true },
     { id: 'city_babilun', name: '巴比伦', factionId: 'jialedi', lat: 32.53, lng: 44.42, type: 'big_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_tademoer', name: '塔德莫尔', factionId: 'paermila', lat: 34.55, lng: 38.27, type: 'small_city', troops: 30000, region: 'ORIE' },
-    { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 30000, region: 'WEST_ASIA' },
+    { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_samaila', name: '萨迈拉', factionId: 'samaila', lat: 34.206, lng: 43.880, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_awalisi', name: '阿瓦里斯', factionId: 'xikesuosi', lat: 30.79, lng: 31.83, type: 'small_city', troops: 30000, region: 'ORIE' },
     { id: 'city_duershelujin', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
