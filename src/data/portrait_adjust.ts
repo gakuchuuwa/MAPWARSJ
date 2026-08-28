@@ -6623,9 +6623,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/__多余__LATIN_01.png": {
-            "scale": 1.22,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 25
+            "offsetY": 13
         },
         "/assets/LATIN/xibanya_pisaluo.png": {
             "scale": 1.22,
@@ -6643,9 +6643,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/INDIA/__多余__INDIA_02.png": {
-            "scale": 1,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": 17
+            "offsetY": 5
         },
         "/assets/INDIA/zhuluo_lajindela.png": {
             "scale": 1,
@@ -6683,9 +6683,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png": {
-            "scale": 1.01,
+            "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": 23
         },
         "/assets/CENTRAL_ASIA/wulaertu_guo_saerduli.png": {
             "scale": 1.01,
@@ -6724,8 +6724,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_02.png": {
             "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -2
+            "offsetX": -7,
+            "offsetY": 12
         },
         "/assets/CENTRAL_ASIA/sashan_aerdaxier.png": {
             "scale": 1.01,
@@ -6733,9 +6733,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/SLAVIC/__多余__SLAVIC_01.png": {
-            "scale": 0.94,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 4
+            "offsetY": 23
         },
         "/assets/SLAVIC/xieerpuhuofu_gongguo_yongzhefulaji.png": {
             "scale": 0.94,
@@ -6783,9 +6783,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/AMERICA/__多余__AMERICA_01.png": {
-            "scale": 0.84,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": 15
+            "offsetY": 0
         },
         "/assets/AMERICA/__多余__AMERICA_02.png": {
             "scale": 0.85,
@@ -6857,42 +6857,37 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/INDIA/0883d907-f629-4ef2-9d1e-0c2768b5dc81.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 5
-        },
-        "/assets/INDIA/c4913b45-d8c4-4465-af4e-3f2d129cf303.png": {
+        "/assets/INDIA/__多余__INDIA_03.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/INDIA/cde59c8b-fa57-4eab-a77a-3570c9c96726.png": {
+        "/assets/INDIA/__多余__INDIA_04.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/INDIA/f49403a5-6a08-4a11-94fa-52eed920a965.png": {
+        "/assets/INDIA/__多余__INDIA_05.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 28
         },
-        "/assets/LATIN/14d13fbd-08a5-4b71-aee8-4dfde7549daf.png": {
+        "/assets/LATIN/__多余__LATIN_02.png": {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 49
         },
-        "/assets/LATIN/76978d14-3e3f-4687-8b34-f524a8732d88.png": {
+        "/assets/LATIN/__多余__LATIN_04.png": {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/LATIN/9f67de1a-f461-4d1f-8f27-638f7946579a.png": {
+        "/assets/LATIN/__多余__LATIN_05.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/AFRICA/4f72ab2c-6246-4d79-8ec9-ea104f4da5d0.png": {
+        "/assets/AFRICA/__多余__AFRICA_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 27
@@ -6907,17 +6902,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/CENTRAL_ASIA/531d655c-e88d-40d6-91c2-74e7138402c6.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 23
-        },
         "/assets/CENTRAL_ASIA/wuer_wuernamu.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/CENTRAL_ASIA/d22f6caa-b77f-4a60-90fb-90f5c34272cc.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_03.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 3
@@ -6932,22 +6922,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 27
         },
-        "/assets/LATIN/11d47cf9-e02f-4927-b38a-335f62e809ad.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 13
-        },
-        "/assets/GERMANIC/61a4950c-3c42-428d-8dad-37fe79778f4d.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_03.png": {
             "scale": 1.14,
             "offsetX": -19,
             "offsetY": 25
         },
-        "/assets/SLAVIC/92158a35-1f9f-42ef-963e-eeb22de8b6f5.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 23
-        },
-        "/assets/LATIN/66ab20d6-36a2-4253-9ac4-54e87aa98f42.png": {
+        "/assets/LATIN/__多余__LATIN_03.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
@@ -6956,16 +6936,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 49
-        },
-        "/assets/AMERICA/083abeab-f249-42aa-9327-1c0dd3997c5a.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 0
-        },
-        "/assets/CENTRAL_ASIA/83effe08-a740-4435-b735-6923081f9885.png": {
-            "scale": 1.01,
-            "offsetX": -7,
-            "offsetY": 12
         },
         "/assets/CENTRAL_ASIA/adile_adilesha.png": {
             "scale": 1.01,
@@ -6982,7 +6952,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/AFRICA/0efebf3f-8042-4c3d-94be-e053c0f35b0d.png": {
+        "/assets/AFRICA/__多余__AFRICA_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 17
@@ -6992,7 +6962,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/DIANQIAN/0b372407-a249-4f25-a393-f28497d05ee1.png": {
+        "/assets/DIANQIAN/__多余__DIANQIAN_01.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -20
@@ -7002,7 +6972,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/GERMANIC/bfaf34c4-61b3-48a0-955f-b8cf9daefde7.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_04.png": {
             "scale": 1.19,
             "offsetX": -21,
             "offsetY": 32

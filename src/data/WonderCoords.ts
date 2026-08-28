@@ -6,6 +6,12 @@
  *   本表把错位奇观按史实真实位置独立摆放；未列出的奇观（本来就在正确城 / 同城近郊 <22km）仍挂城市坐标。
  *   渲染处：MonumentLayer 取 WONDER_COORD[asset] 的坐标，否则回退城市坐标。
  *   注意：cityId 仍保留（用于 zoom13 守方地标 + 势力归属），仅战略地图摆放坐标独立。
+ *
+ * 🔴 禁止为以下对象添加“考据式”独立坐标：
+ *   - EAST_WONDER_HUNS：虚构凯旋门废墟，留在塞格德；不是罗马君士坦丁凯旋门。
+ *   - ASIA_WONDER_MONGOLS：移动的成吉思汗大帐，随成吉思汗据点哈拉和林；不是固定的阿瓦尔嘎遗址。
+ *   - SCEN_SPHINX 不在本表：它是希腊底比斯神话斯芬克斯，不是吉萨狮身人面像。
+ *   身份或地点不确定时保留现状，禁止根据外形、名称相似或个人推测擅自改址。
  */
 export const WONDER_COORD: Record<string, { lat: number; lng: number; place: string }> = {
     // ── 明显错位（>120km） ──

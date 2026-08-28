@@ -29,6 +29,7 @@ const CITIES = readFileSync('src/data/cities_v2.ts', 'utf8');
 const DIR = 'public/SUCAI_BUILDING';
 
 const pairs = [...SRC.matchAll(/'(city_[a-z0-9_]+)':\s*'([A-Z_0-9]+)'/g)].map((m) => [m[1], m[2]] as const);
+const extraPairs = [...SRC.matchAll(/asset:\s*'([A-Z_0-9]+)'/g)].map((m) => m[1]);
 const assets = new Set(readdirSync(DIR).filter((d) => statSync(`${DIR}/${d}`).isDirectory()));
 const wonderAssets = new Set([...assets].filter((d) => d.includes('_WONDER')));
 const cityIds = new Set([...CITIES.matchAll(/id:\s*'(city_[a-z0-9_]+)'/g)].map((m) => m[1]));
@@ -59,7 +60,7 @@ if (dupC.length) bad(`同一城配了多奇观：${dupC.map(([c, v]) => `${c}→
 else ok('没有城被配了多座奇观');
 
 console.log('\n奇观覆盖率（仅报告，不强制错配）：');
-const used = new Set(pairs.map(([, w]) => w));
+const used = new Set([...pairs.map(([, w]) => w), ...extraPairs]);
 const idle = [...wonderAssets].filter((a) => !used.has(a)).sort();
 console.log(`  ${wonderAssets.size} 座 → 安置 ${wonderAssets.size - idle.length} 座`);
 if (idle.length) console.log(`  ⚪ 未安置（不得强塞）：${idle.join(', ')}`);

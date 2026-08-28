@@ -7,7 +7,13 @@
  *    - 加：北京(天坛)、洛阳(曹魏都)、凯鲁万(柏柏尔)、都柏林(凯尔特/盖尔)
  *  来源: DE resources/_common/drs/graphics b_*_wonder_*_x1.sld，提取到 public/SUCAI_BUILDING/。
  *  🔴 key = 守方据点 cityId（Scene13War init.defenderCityId），value = SUCAI_BUILDING 素材目录名，
- *     经 BUILDING: 前缀加载 preview.png 单帧（纯视觉地标，无碰撞）。 */
+ *     经 BUILDING: 前缀加载 preview.png 单帧（纯视觉地标，无碰撞）。
+ *
+ *  🔴 2026-08-28 三条防误改血训（主人定）：
+ *    1. 匈人「凯旋门废墟」是独立虚构奇观表现，不等于罗马的君士坦丁凯旋门；必须留在塞格德，不得移到罗马。
+ *    2. 希腊底比斯「斯芬克斯雕像」是俄狄浦斯神话对象，不等于埃及吉萨狮身人面像；不得改名、改挂孟菲斯或搬到吉萨。
+ *    3. 蒙古「成吉思汗巨型金帐」是移动大帐，必须跟随成吉思汗所属据点哈拉和林；不得擅自钉在阿瓦尔嘎等推测地点。
+ *    总则：不确定的奇观身份、坐标或挂靠不得猜测、不得按外形强认现实建筑；先保留现状并查证，证据不足不改。 */
 export const CITY_WONDER: Record<string, string> = {
     'city_ailiwen': 'MEDI_WONDER_ARMENIANS',  // 埃里温（亚美尼亚；古都阿尼项目无，保留）
     'city_angkor': 'SEAS_WONDER_KHMER',  // 吴哥（高棉吴哥窟）
@@ -23,28 +29,28 @@ export const CITY_WONDER: Record<string, string> = {
     'city_dibilisi': 'MEDI_WONDER_GEORGIANS',  // 第比利斯（格鲁吉亚）
     'city_bulusaier': 'WEST_WONDER_BURGUNDIANS',  // 布鲁塞尔（布拉班特公国，市政厅）
     'city_kasheer': 'WEST_WONDER_CELTS',  // 卡舍尔（芒斯特王国传统首都，卡舍尔之石）
-    'city_heersongniesi': 'EAST_WONDER_GOTHS',  // 赫尔松涅斯（克里米亚哥特/陶里卡）
-    'city_huashicheng': 'INDI_WONDER_INDIANS',  // 华氏城（孔雀帝国）
+    'city_ravenna': 'EAST_WONDER_GOTHS',  // 拉文纳（东哥特都城，狄奥多里克陵墓所在地）
+    'city_tanjiawuer': 'INDI_WONDER_INDIANS',  // 坦贾武尔（布里哈迪斯瓦拉神庙所在地）
     'city_jiridao': 'SLAV_WONDER_SLAVS',  // 基日岛（卡累利阿，波戈斯特木教堂）
     'city_junshitandingbao': 'MEDI_WONDER_BYZANTINES',  // 君士坦丁堡（拜占庭）
-    'city_kaesong': 'ASIA_WONDER_KOREANS',  // 开城（高丽）
+    'city_jincheng_silla': 'ASIA_WONDER_KOREANS',  // 金城（庆州，皇龙寺九层木塔所在地）
     'city_labate': 'ORIE_WONDER_BERBERS',  // 拉巴特（穆瓦希德·哈桑塔）
-    'city_karakorum': 'ASIA_WONDER_MONGOLS',  // 哈拉和林（蒙古）
-    'city_kashan': 'CEAS_WONDER_TATARS',  // 喀山（鞑靼/喀山汗国，势力标保加尔为前身）
+    'city_karakorum': 'ASIA_WONDER_MONGOLS',  // 🔴移动大帐随成吉思汗据点；禁止另设阿瓦尔嘎固定坐标
+    'city_samaerhan': 'CEAS_WONDER_TATARS',  // 撒马尔罕（乌鲁格别克天文台所在地）
     'city_kelakefu': 'SLAV_WONDER_POLES',  // 克拉科夫（波兰）
     'city_lahexiuyuan': 'EAST_WONDER_TEUTONS',
     'city_kyoto': 'ASIA_WONDER_JAPANESE',  // 京都（日本）
-    'city_linhuang': 'ASIA_WONDER_KHITANS',  // 临潢府（辽上京，契丹）
+    'city_zhangguojuncheng': 'ASIA_WONDER_KHITANS',  // 彰国军城（应州，佛宫寺释迦塔所在地）
     'city_lisiben': 'MEDI_WONDER_PORTUGUESE',  // 里斯本（葡萄牙）
     'city_luoyang': 'ASIA_WONDER_WEI',  // 洛阳（曹魏）
-    'city_nanjing': 'ASIA_WONDER_WU',  // 金陵（孙吴）
+    'city_shanghai': 'ASIA_WONDER_WU',  // 上海（静安寺所在地）
     'city_pagan': 'SEAS_WONDER_BURMESE',  // 蒲甘（缅甸）
     'city_palermo': 'MEDI_WONDER_SICILIANS',  // 巴勒莫（西西里）
     'city_shenglong': 'ASIA_WONDER_VIETNAMESE',  // 昇龙（大越治所；越南）
     'city_sparta': 'GREEK_WONDER_SPARTANS',  // 斯巴达
     'city_puleisilafu': 'SLAV_WONDER_BULGARIANS',  // 普雷斯拉夫（第一保加利亚帝国·圆形金教堂）
-    'city_toledo': 'MEDI_WONDER_SPANISH',  // 托莱多（西班牙/卡斯蒂利亚）
-    'city_saigede': 'EAST_WONDER_HUNS',  // 塞格德（匈人帝国大本营·阿提拉王庭）
+    'city_seville': 'MEDI_WONDER_SPANISH',  // 塞维利亚（黄金塔所在地）
+    'city_saigede': 'EAST_WONDER_HUNS',  // 🔴虚构凯旋门废墟≠罗马君士坦丁凯旋门；位置禁止改动
     'city_luoma': 'SCEN_COLOSSEUM',  // 罗马城（罗马斗兽场·弗拉维圆形剧场）
     'city_genoa': 'MEDI_WONDER_ITALIANS',  // 热那亚（意大利·圣洛伦佐大教堂）
     'city_weierniwusi': 'SLAV_WONDER_LITHUANIANS',  // 维尔纽斯（立陶宛）
@@ -71,7 +77,7 @@ export const CITY_WONDER: Record<string, string> = {
     //    2026-08-24 曾配伊斯法罕又撤掉（萨法维时代太晚），**别再配回伊斯法罕**。
     //    菲鲁扎巴德是萨珊**开国都城**（阿尔达希尔建），阿尔达希尔宫的圆顶拱券与 Taq Kasra 同源，
     //    且据点 factionId 就是 sashan —— 这才是本朝本都。
-    'city_feiluzhabade': 'ORIE_WONDER_PERSIANS',  // 菲鲁扎巴德（萨珊开国都）
+    'city_bageda': 'ORIE_WONDER_PERSIANS',  // 巴格达（现有据点中距泰西封最近，且同属两河核心区）
     // 🔴 2026-08-24 曾配萨莱又撤掉（金帐汗国是蒙古系，不是库曼），**别再配回萨莱**。
     //    萨拉托夫的 factionId 就是 qincha（钦察=库曼），伏尔加草原正是库曼本部。
     'city_saerkeer': 'CEAS_WONDER_CUMANS',  // 萨尔克尔（可萨·顿河白色堡垒）
@@ -82,7 +88,7 @@ export const CITY_WONDER: Record<string, string> = {
     // PURU 的**奇迹**是南亚圆顶塔神庙（柱廊+环水，看过 preview.png），与 PURU 城堡那张西欧石堡
     // 完全两种风格 —— 这个前缀的素材是混杂的，别按前缀想当然。坦贾武尔是朱罗王朝
     // 布里哈迪希瓦拉神庙所在地，形制与图高度吻合。
-    'city_tanjiawuer': 'PURU_WONDER_PURU',  // 坦贾武尔（朱罗神庙）
+    'city_patan': 'PURU_WONDER_PURU',  // 帕坦（现有据点中距莫德拉最近，同属古吉拉特）
     // ── [2026-08-28] 奇观周边补据点挂靠（21座，原野外奇观全部转城内奇观）──
     'city_shuanghe': 'SCEN_PAGODA_D',  // 素可泰（玛哈泰寺）
     'city_helate': 'MINARET_OF_JAM',  // 菲鲁兹库赫（杰姆宣礼塔）
@@ -138,6 +144,7 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
         { asset: 'GREAT_PYRAMID', name: '吉萨大金字塔', category: 'ANCIENT_WONDER', lat: 29.979, lng: 31.134, description: '古埃及第四王朝胡夫法老修建的吉萨大金字塔，古代世界七大奇迹之首。' },
     ],
     'city_thebes': [
+        // 🔴希腊底比斯神话对象≠埃及吉萨狮身人面像；禁止改名、改坐标或改挂孟菲斯。
         { asset: 'SCEN_SPHINX', name: '斯芬克斯雕像', category: 'ANCIENT_WONDER', lat: 38.323, lng: 23.318, description: '古希腊底比斯城外峭壁蹲踞的带翼斯芬克斯雕像，俄狄浦斯解谜之地。' },
     ],
     'city_taizhou_zj': [
@@ -165,7 +172,7 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
         { asset: 'SCEN_ROMAN_RUINS', name: '庞贝古城遗迹', category: 'ANCIENT_WONDER', lat: 40.750, lng: 14.490, description: '公元79年维苏威火山喷发掩埋的罗马滨海城市，完整保存的古罗马遗迹。' },
     ],
     'city_luoma': [
-        { asset: 'ARCH_OF_CONSTANTINE', name: '君士坦丁凯旋门', category: 'ANCIENT_WONDER', lat: 41.86, lng: 12.42, description: '公元315年罗马元老院为纪念君士坦丁大帝米尔维安桥战役胜利而建的凯旋门，紧邻罗马斗兽场。' },
+        { asset: 'ARCH_OF_CONSTANTINE', name: '君士坦丁凯旋门', category: 'ANCIENT_WONDER', lat: 41.889760, lng: 12.490598, description: '公元315年罗马元老院为纪念君士坦丁大帝米尔维安桥战役胜利而建的凯旋门，紧邻罗马斗兽场。' },
     ],
     'city_yoshida': [
         { asset: 'SCEN_TORII_GATE', name: '严岛水上鸟居', category: 'HOLY_SITE', lat: 34.297, lng: 132.319, description: '日本安艺国严岛神社建在潮间带海中的朱红色大鸟居，人神相通的海上圣境。' },

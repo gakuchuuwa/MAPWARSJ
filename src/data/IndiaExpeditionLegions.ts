@@ -21,4 +21,5 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     pidisha: { name: '毗底沙戍卒', tier: 4 },
     jiaye: { name: '伽耶护卫', tier: 4 },
     varendra: { name: '波罗象军', tier: 3 },
+    chatigangren: { name: '纳瓦拉舰队', tier: 1 },
 };

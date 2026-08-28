@@ -169,8 +169,6 @@ export class VectorRoadEditor implements IEditor {
     private editMarkers: Map<string, L.CircleMarker[]> = new Map();
     private midMarkers: Map<string, L.CircleMarker[]> = new Map();
     private selectedRoadId: string | null = null;
-    private cutModeEnabled: boolean = false;
-    private cutBtn: HTMLButtonElement | null = null;
     private pendingConnectRoadId: string | null = null;
     private connectBtn: HTMLButtonElement | null = null;
 
@@ -243,6 +241,7 @@ export class VectorRoadEditor implements IEditor {
     public show(): void {
         this.visible = true;
         this.createPanel();
+        this.setMonumentClickThrough(true);   // 奇观图片挡住据点 → 编辑期间让点击穿透
         this.initLayerPanes();  // [Phase B v2] 4 层独立 pane (z-index 380/390/400/410)
         this.renderAllRoads();
         // === 关键: 等图构建完再允许城市选择 ===
@@ -253,6 +252,43 @@ export class VectorRoadEditor implements IEditor {
         // [2026-05-30 用户公理] 不自动加载 Layer 4 黄色辐射网 (挡 NE 看不清)
         // 旧: this.autoShowRadialNetwork();
         // 现在: 完全不加载, 永久干掉
+    }
+
+    /**
+     * 奇观 marker 在 monumentPane(z650) 上、图片有 90px 宽，压在据点(cityPane z610)上方，
+     * 选起点/终点时点到的往往是奇观而不是据点。编辑器开着时直接让整层点击穿透。
+     */
+    private setMonumentClickThrough(on: boolean): void {
+        // ⚠ 只给 pane 设 pointer-events:none 没用 —— leaflet.css 里
+        //   `.leaflet-marker-icon.leaflet-interactive { pointer-events: auto }`
+        //   是子元素规则，会把父层的 none 顶掉。必须直接压 marker 自身。
+        const ID = 'road-editor-monument-clickthrough';
+        const pane = this.map.getPane('monumentPane');
+        if (pane) pane.style.pointerEvents = on ? 'none' : '';
+        const existing = document.getElementById(ID);
+        if (!on) { existing?.remove(); return; }
+        if (existing) return;
+        const style = document.createElement('style');
+        style.id = ID;
+        style.textContent = `
+            .leaflet-marker-icon.monument-icon,
+            .leaflet-marker-icon.monument-icon * { pointer-events: none !important; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    /**
+     * 控制点专用 pane：z 高于据点(610)与奇观(650)，保证节点永远点得中。
+     * 中点(黄)用扩大的透明命中圈，必须比红点低一层，否则会盖住红点的拖拽/右键删。
+     */
+    private ensureEditPointPanes(): { mid: string; vertex: string } {
+        const MID = 'road-edit-mid-pane', VERTEX = 'road-edit-vertex-pane';
+        for (const [name, z] of [[MID, '688'], [VERTEX, '690']] as const) {
+            if (!this.map.getPane(name)) this.map.createPane(name);
+            const pane = this.map.getPane(name);
+            if (pane) pane.style.zIndex = z;
+        }
+        return { mid: MID, vertex: VERTEX };
     }
 
     /**
@@ -339,6 +375,7 @@ export class VectorRoadEditor implements IEditor {
         this.modeBtns = null;
         this.clearCitySelection();
         this.disableCitySelection();
+        this.setMonumentClickThrough(false);  // 退出编辑器 → 奇观恢复可点
         if (this.panel) {
             this.panel.remove();
             this.panel = null;
@@ -444,12 +481,7 @@ export class VectorRoadEditor implements IEditor {
 
         // 删除当前选中的道路
         const deleteBtn = this.createButton('🗑️ 删除', '#f44336', () => this.deleteSelectedRoad());
-        this.cutBtn = this.createButton('✂ 切断', '#ff7043', () => this.toggleCutMode());
         this.connectBtn = this.createButton('🔗 连接', '#00897b', () => this.handleConnectRoads());
-
-        // 改起点/终点
-        const changeStartBtn = this.createButton('📍 改起点', '#9c27b0', () => this.enterChangeEndpointMode('start'));
-        const changeEndBtn = this.createButton('📍 改终点', '#673ab7', () => this.enterChangeEndpointMode('end'));
 
         // 切换路径（只在有多候选时显示）
         this.switchRouteBtn = this.createButton('🔀 切换路径', '#009688', () => this.cycleCandidates());
@@ -551,10 +583,7 @@ export class VectorRoadEditor implements IEditor {
         row1.appendChild(nextRoadBtn);
         row1.appendChild(row1Label);
         row1.appendChild(resetBtn);
-        row1.appendChild(changeStartBtn);
-        row1.appendChild(changeEndBtn);
         row1.appendChild(this.switchRouteBtn);
-        row1.appendChild(this.cutBtn);
         row1.appendChild(this.connectBtn);
         row1.appendChild(stashBtn);
         row1.appendChild(saveBtn);
@@ -731,125 +760,6 @@ export class VectorRoadEditor implements IEditor {
         minBtn.parentElement.insertBefore(btn, minBtn);
     }
 
-    private pendingEndpointChange: 'start' | 'end' | null = null;
-
-    /**
-     * 进入"改端点"模式：下一次点击城市就会设为新起点/终点
-     */
-    private enterChangeEndpointMode(which: 'start' | 'end'): void {
-        if (!this.selectedRoadId) {
-            this.setStatus('⚠️ 请先选择一条道路');
-            return;
-        }
-        this.pendingEndpointChange = which;
-        this.setStatus(`🏙️ 请点击地图上的城市作为新${which === 'start' ? '起点' : '终点'}`);
-    }
-
-    /**
-     * 修改道路的起点或终点（遵守第一原则：必须走路网寻路）
-     * 选择新城市后，通过 Dijkstra 在路网上重新计算从起点到新终点的路径
-     */
-    private async changeEndpoint(roadId: string, which: 'start' | 'end', newCityId: string): Promise<void> {
-        const feature = VECTOR_ROAD_DATA.features.find(f => f.properties.id === roadId);
-        if (!feature) return;
-
-        const city = CITIES.find(c => c.id === newCityId);
-        if (!city) return;
-
-        // 更新连接属性
-        if (which === 'end') {
-            feature.properties.endConnection = newCityId;
-        } else {
-            feature.properties.startConnection = newCityId;
-        }
-
-        // 获取更新后的起终点
-        const startCityId = feature.properties.startConnection;
-        const endCityId = feature.properties.endConnection;
-        const startCity = CITIES.find(c => c.id === startCityId);
-        const endCity = CITIES.find(c => c.id === endCityId);
-        if (!startCity || !endCity) return;
-
-        // 更新名称
-        feature.properties.name = `${startCity.name}-${endCity.name}`;
-
-        this.setStatus(`⏳ 正在路网上重新寻路: ${startCity.name} → ${endCity.name}...`);
-
-        // ★ 第一原则：必须通过路网寻路生成坐标 ★
-        // 确保路网图已加载
-        if (!this.geoGraphBuilt) {
-            await this.loadGeoJSONGraph();
-        }
-
-        // [FIX] 不再注入项目已有道路，纯粹在 Natural Earth 路网上寻路
-
-        // 在路网上寻路 (尝试多个候选节点)
-        const startCandidates = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 5);
-        const endCandidates = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 5);
-
-        let bestPath: { coordinates: [number, number][]; totalDistance: number } | null = null;
-        let bestDist = Infinity;
-
-        for (const sc of startCandidates) {
-            for (const ec of endCandidates) {
-                const path = this.dijkstraGeo(sc.id, ec.id);
-                if (path && path.totalDistance < bestDist) {
-                    bestPath = path;
-                    bestDist = path.totalDistance;
-                }
-            }
-        }
-
-        if (bestPath) {
-            // 拼接: 城市坐标 + 路网路径 + 城市坐标
-            let rawCoords: [number, number][] = [
-                [startCity.lng, startCity.lat],
-                ...bestPath.coordinates,
-                [endCity.lng, endCity.lat]
-            ];
-
-            // 后处理: 去折角 + 抽稀 + 清理周边 + 吸附
-            const cleaned = removeBacktracks(rawCoords, 80);
-            let simplified = this.simplifyCoords(cleaned, 0.002);
-            simplified = this.simplifyCityVicinity(simplified, startCity, endCity, 15);
-            const finalCoords = this.snapToExistingRoads(simplified, roadId);
-
-            feature.geometry.coordinates = finalCoords;
-            this.setStatus(`✅ ${which === 'start' ? '起点' : '终点'}已改为: ${city.name} (${bestDist.toFixed(0)}km 路网)`);
-        } else {
-            // 路网寻路失败，尝试桥接
-            const bridged = this.findSmartBridgedPath(startCandidates[0].id, endCandidates[0].id);
-            if (bridged) {
-                let rawCoords: [number, number][] = [
-                    [startCity.lng, startCity.lat],
-                    ...bridged.coordinates,
-                    [endCity.lng, endCity.lat]
-                ];
-                const cleaned = removeBacktracks(rawCoords, 80);
-                let simplified = this.simplifyCoords(cleaned, 0.002);
-                simplified = this.simplifyCityVicinity(simplified, startCity, endCity, 15);
-                const finalCoords = this.snapToExistingRoads(simplified, roadId);
-                feature.geometry.coordinates = finalCoords;
-                this.setStatus(`✅ ${city.name} (含桥接 ${bridged.bridgeDist.toFixed(0)}km)`);
-            } else {
-                this.setStatus(`❌ 路网寻路失败，无法修改端点`);
-                // 回滚连接属性
-                if (which === 'end') {
-                    feature.properties.endConnection = endCityId; // rollback
-                } else {
-                    feature.properties.startConnection = startCityId; // rollback
-                }
-                return;
-            }
-        }
-
-        // 刷新显示
-        this.renderRoad(roadId);
-        this.showControlPoints(roadId);
-        this.updateRoadSelect();
-        console.log(`✏️ [Editor] Changed ${which} of "${roadId}" to ${newCityId} via road network`);
-    }
-
     private createButton(text: string, bg: string, onClick: () => void): HTMLButtonElement {
         const btn = document.createElement('button');
         btn.textContent = text;
@@ -932,13 +842,6 @@ export class VectorRoadEditor implements IEditor {
             const cityData = CITIES.find(c => c.id === cityId);
             if (!cityData) return;
 
-            // 改端点模式：点击城市即设为新起点/终点
-            if (this.pendingEndpointChange && this.selectedRoadId) {
-                this.changeEndpoint(this.selectedRoadId, this.pendingEndpointChange, cityId);
-                this.pendingEndpointChange = null;
-                return;
-            }
-
             if (!this.startCityId) {
                 // 选择起点
                 this.startCityId = cityId;
@@ -1002,21 +905,11 @@ export class VectorRoadEditor implements IEditor {
         // 2. 清城市起终点 (含 marker)
         this.clearCitySelection();
 
-        // 3. 清改端点模式
-        this.pendingEndpointChange = null;
         this.pendingConnectRoadId = null;
         if (this.connectBtn) {
             this.connectBtn.style.background = '#00897b';
             this.connectBtn.textContent = '🔗 连接';
         }
-        if (this.cutModeEnabled) {
-            this.cutModeEnabled = false;
-            if (this.cutBtn) {
-                this.cutBtn.style.background = '#ff7043';
-                this.cutBtn.textContent = '✂ 切断';
-            }
-        }
-
         // 4. 重新注册城市点击 (确保 handler 活的)
         this.enableCitySelection();
 
@@ -2715,6 +2608,7 @@ export class VectorRoadEditor implements IEditor {
         const coords = feature.geometry.coordinates;
         const markers: L.CircleMarker[] = [];
         const mids: L.CircleMarker[] = [];
+        const pointPanes = this.ensureEditPointPanes();
 
         // [2026-05-30 性能] 道路超过 60 点时只显示采样控制点 (太多卡顿)
         // 始终保留首尾, 中间按比例稀疏化
@@ -2730,7 +2624,8 @@ export class VectorRoadEditor implements IEditor {
             const [lng, lat] = coords[i];
             const marker = L.circleMarker([lat, lng], {
                 radius: 6, color: '#ff1744', fillColor: '#ff5252',
-                fillOpacity: 1, weight: 2, interactive: true
+                fillOpacity: 1, weight: 2, interactive: true,
+                pane: pointPanes.vertex, bubblingMouseEvents: false
             }).addTo(this.map);
 
             this.makeDraggable(marker, roadId, i);
@@ -2766,13 +2661,20 @@ export class VectorRoadEditor implements IEditor {
             const midLat = (lat1 + lat2) / 2;
             const midLng = (lng1 + lng2) / 2;
 
+            // [命中优化] 视觉还是小黄点(radius 5)，但用一圈半透明粗描边把可点面积撑到 ~14px 半径，
+            // 再放进 z688 的专用 pane，不会被据点/奇观/道路线抢走点击（红点 z690 仍压在上面）。
             const mid = L.circleMarker([midLat, midLng], {
-                radius: 4, color: '#ffc107', fillColor: '#ffeb3b',
-                fillOpacity: 0.8, weight: 1, interactive: true
+                radius: 5, color: '#ffc107', fillColor: '#ffeb3b',
+                fillOpacity: 0.9, weight: 16, opacity: 0.12, interactive: true,
+                pane: pointPanes.mid, bubblingMouseEvents: false
             }).addTo(this.map);
+            mid.on('mouseover', () => mid.setStyle({ opacity: 0.3, fillColor: '#fff59d' }));
+            mid.on('mouseout', () => mid.setStyle({ opacity: 0.12, fillColor: '#ffeb3b' }));
 
             const insertIdx = i + 1;
-            mid.on('click', (e: L.LeafletMouseEvent) => {
+            // mousedown 而不是 click：click 需要 down+up 落在同一元素上，鼠标稍抖就丢
+            mid.on('mousedown', (e: L.LeafletMouseEvent) => {
+                if ((e.originalEvent as MouseEvent)?.button !== 0) return;  // 只认左键
                 L.DomEvent.stopPropagation(e);
                 coords.splice(insertIdx, 0, [midLng, midLat]);
                 roadRegistry.updateVectorRoadCoordinates(roadId, coords);
@@ -2782,7 +2684,7 @@ export class VectorRoadEditor implements IEditor {
                 this.setStatus(`➕ 已加节点 · ${roadName} (${coords.length}点) · 🟡点击加 · 🔴右键删`);
             });
 
-            mid.bindTooltip('点击添加节点', { permanent: false, direction: 'top' });
+            mid.bindTooltip('点击添加节点', { permanent: false, direction: 'top', offset: [0, -8] });
             mids.push(mid);
         }
 
@@ -2798,16 +2700,6 @@ export class VectorRoadEditor implements IEditor {
         let isDragging = false;
 
         marker.on('mousedown', (e: L.LeafletMouseEvent) => {
-            // [FIX 2026-06-02] 切断模式优先于拖拽，避免 click 被拖拽流程吞掉导致“切断不生效”
-            if (this.cutModeEnabled) {
-                L.DomEvent.stopPropagation(e);
-                if (this.selectedRoadId !== roadId) {
-                    this.setStatus('⚠ 请先选中要切断的道路');
-                    return;
-                }
-                this.splitRoadAtPoint(roadId, pointIndex);
-                return;
-            }
             isDragging = true;
             this.map.dragging.disable();
             L.DomEvent.stopPropagation(e);
@@ -2871,74 +2763,6 @@ export class VectorRoadEditor implements IEditor {
         this.map.on('mousemove', onMove);
         this.map.on('mouseup', onUp);
     } // Close makeDraggable
-
-    private toggleCutMode(): void {
-        this.cutModeEnabled = !this.cutModeEnabled;
-        if (this.cutBtn) {
-            this.cutBtn.style.background = this.cutModeEnabled ? '#d84315' : '#ff7043';
-            this.cutBtn.textContent = this.cutModeEnabled ? '✂ 切断中' : '✂ 切断';
-        }
-        if (this.cutModeEnabled) {
-            this.setStatus('✂ 切断模式：点击红色控制点即可一刀分两段');
-        } else {
-            this.setStatus('✅ 已退出切断模式');
-        }
-    }
-
-    private splitRoadAtPoint(roadId: string, pointIndex: number): void {
-        const feature = VECTOR_ROAD_DATA.features.find(f => f.properties.id === roadId);
-        if (!feature) return;
-        const coords = feature.geometry.coordinates as [number, number][];
-        if (coords.length < 3) {
-            this.setStatus('⚠ 点太少，无法切断');
-            return;
-        }
-        if (pointIndex <= 0 || pointIndex >= coords.length - 1) {
-            this.setStatus('⚠ 只能在中间红点切断（首尾点不能切）');
-            return;
-        }
-
-        const coordsA = coords.slice(0, pointIndex + 1);
-        const coordsB = coords.slice(pointIndex);
-        const baseName = feature.properties.name || roadId;
-        const idA = `road_${Date.now()}_a`;
-        const idB = `road_${Date.now()}_b`;
-
-        const partA: VectorRoadFeature = {
-            type: 'Feature',
-            properties: {
-                name: `${baseName}(上段)`,
-                type: 'road',
-                id: idA,
-                startConnection: feature.properties.startConnection,
-                endConnection: undefined
-            },
-            geometry: { type: 'LineString', coordinates: coordsA }
-        };
-        const partB: VectorRoadFeature = {
-            type: 'Feature',
-            properties: {
-                name: `${baseName}(下段)`,
-                type: 'road',
-                id: idB,
-                startConnection: undefined,
-                endConnection: feature.properties.endConnection
-            },
-            geometry: { type: 'LineString', coordinates: coordsB }
-        };
-
-        roadRegistry.removeVectorRoad(roadId);
-        roadRegistry.addVectorRoad(partA);
-        roadRegistry.addVectorRoad(partB);
-
-        this.removeRoadLayers(roadId);
-        this.renderRoad(idA);
-        this.renderRoad(idB);
-        this.updateRoadSelect();
-        this.selectRoad(idA);
-
-        this.setStatus(`✂ 已切断：${baseName} → 2 段（记得点保存）`);
-    }
 
     private handleConnectRoads(): void {
         if (!this.selectedRoadId) {
