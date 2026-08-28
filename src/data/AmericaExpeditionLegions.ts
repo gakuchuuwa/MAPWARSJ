@@ -13,4 +13,6 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     foluolida: { name: '西班牙方阵', tier: 3 },
     gualani: { name: '传教区军', tier: 2 },
     xingelana: { name: '地峡征服者', tier: 3 },
+    xiyindu: { name: '奥萨马守军', tier: 3 },   // 圣多明各·巴托洛梅：美洲第一堡奥萨马城堡(Fortaleza Ozama)驻军，西印度总督府加勒比守备
+    jialebi: { name: '要塞守备', tier: 2 },   // 卡塔赫纳·布拉斯莱索：南美最坚固防线卡塔赫纳要塞守军，1741以寡击众击退英军弗农舰队
 };

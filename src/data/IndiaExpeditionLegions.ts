@@ -23,4 +23,5 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     varendra: { name: '波罗象军', tier: 3 },
     chatigangren: { name: '纳瓦拉舰队', tier: 1 },
     sengjialuo: { name: '僧伽罗象军', tier: 1 },   // 阿努拉德·杜图伽摩尼：重装战象主力，前161年击败埃拉兰统一全岛
+    puxiangyindu: { name: '果阿火枪兵', tier: 1 },   // 果阿·阿尔布克尔克：葡属印度大航海正规远征主力，火绳枪+重甲横跨印度洋护卫商船要塞（1510-1961）
 };

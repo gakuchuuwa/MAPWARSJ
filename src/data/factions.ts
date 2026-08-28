@@ -102,6 +102,9 @@ export const FACTIONS: Faction[] = [
   { id: 'luoma_diguo', name: '罗马帝国' },
   { id: 'xiongren', name: '匈人' },  // 塞格德·阿提拉（欧洲匈人，蒂萨河营地）
   { id: 'putaoya', name: '葡萄牙' },
+  { id: 'puxiangyindu', name: '葡属印度' },
+  { id: 'xiyindu', name: '西印度' },
+  { id: 'jialebi', name: '加勒比' },
 
   { id: 'habusibao', name: '哈布斯堡' },
   { id: 'boximiya', name: '波西米亚' },
@@ -1871,6 +1874,8 @@ export const FACTIONS: Faction[] = [
     { id: 'malacca', name: '满剌加' },        // 马六甲·满剌加苏丹国
     { id: 'medang', name: '马打蓝' },        // 卡拉桑·马打蓝王国（古爪哇 Medang，赛伦德拉王朝建卡拉桑）
     { id: 'ternate', name: '特尔纳特' },        // 德尔纳特·特尔纳特苏丹国（丁香群岛/马鲁古，巴布拉1570-1583）
+    { id: 'sulu', name: '苏禄' },        // 霍洛·苏禄苏丹国（苏禄群岛，东王朝贡大明）
+    { id: 'xishudongyin', name: '西属东印' },        // 马尼拉·西属东印度（西班牙菲律宾，莱加斯皮1571）
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'suomunate', name: '索姆纳特' },     // 索姆纳特·印度教十二光辉林伽之首
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）

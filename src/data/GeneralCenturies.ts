@@ -1006,6 +1006,11 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gualani_nicolas': 17,
     'xiadunhe_sviatoslav': 10,
     'ternate_babula': 16,
+    'sulu_paduka': 15,
+    'xishudongyin_lijiasipi': 16,
+    'puxiangyindu_albukeerke': 16,
+    'xiyindu_batuoluome': 15,
+    'jialebi_brasilesuo': 18,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
