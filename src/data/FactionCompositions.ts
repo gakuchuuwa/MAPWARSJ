@@ -15,6 +15,8 @@ export interface CustomFactionLegion {
     /** 军团名称（前中后三排组成的这支部队的名字，如「瓦兰吉卫队军团」）。
      *  🔴 与「精锐番号」（ExpeditionLegions 的福建水师/北府兵等）不是一回事，别混。 */
     legionName?: string;
+    /** 军团种类（编辑器判型）：region 地区军团 / era 时代军团 / solo 个人军团；缺省按名字语义推断 */
+    legionType?: 'region' | 'era' | 'solo';
     formationMode: FormationMode;
     slots: CompositionSlot[];
     /** 水战/航行时的舰队队形；缺省 = 'auto'（按船数自动，旧行为） */
@@ -2978,7 +2980,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xideweina": {
-        legionName: "斯拉夫军团",
+        legionName: "葡萄牙军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_steppe_lancer", count: 2 },
@@ -8990,12 +8992,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "puxiangyindu": {
-        legionName: "斯拉夫军团",
-        formationMode: "fish_scale",
+        legionName: "葡萄牙军团",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
+            { type: "kamayuk", count: 4 },
+            { type: "hand_cannoneer", count: 2 },
+            { type: "crossbowman", count: 3 },
         ],
     },
 };
