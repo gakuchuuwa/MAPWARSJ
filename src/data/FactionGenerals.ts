@@ -68,7 +68,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
     mulabite: { generalId: 'gen_tashfin', generalName: '塔什芬', portrait: '/assets/BERBER/mulabite_tashenfen.png' },
 
-    zhibuluotuo: { generalId: 'gen_henry_navigator', generalName: '恩里克', portrait: '/assets/LATIN/zhibuluotuo_enlike.png' },
+    zhibuluotuo: { generalId: 'gen_henry_navigator', generalName: '恩里克', portrait: '/assets/AMERICA/zhibuluotuo_enlike.png' },
     zhayan: { generalId: 'gen_yaghmurasen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png' },
     babali: { generalId: 'gen_barbarossa', generalName: '巴巴罗萨', portrait: '/assets/BERBER/babali_babaluosa.png' },
     hamade: { generalId: 'gen_hammad', generalName: '哈马德', portrait: '/assets/BERBER/hamade_hamade.png' },

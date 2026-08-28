@@ -776,9 +776,11 @@ let searchQuery = '';
 let selectedRegionFilter: string = 'all';
 let selectedStatusFilter: 'all' | 'custom' | 'default' = 'all';
 let animState: 'idle' | 'move' | 'attack' = 'idle';
-let animDirection: number = 3; // 默认朝南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
+let animDirection: number = 2; // 默认朝东南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
 let animTimer: number | null = null;
-let previewViewMode: 'single' | 'three' | 'phalanx' = 'single';
+let previewViewMode: 'single' | 'three' | 'phalanx' = 'three';
+/** 兵种缩略图全体朝向（选择兵种弹窗可改，默认东南=2） */
+let unitThumbDir: number = 2;
 let singlePreviewRow: number = 0; // 0=前排, 1=中坚, 2=后排
 let sortCol: string = 'region';
 let sortAsc: boolean = true;
@@ -1841,6 +1843,7 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span style="font-size:11px;color:#a89f8f;font-weight:normal;">必须以「军团」二字结尾</span>
       </div>
       <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || row.factionName + '军团'}" placeholder="例如：秦国军团、大秦长城军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
+      ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''} · 选「个人军团」自动命名为【${row.eliteName}军团】</div>` : ''}
     </div>
 
     <!-- 实时预览（折叠） -->
@@ -1987,6 +1990,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
             const lt = (btn as HTMLElement).dataset.legiontype as 'region' | 'era' | 'solo';
             if (currentEditingLegion) {
                 currentEditingLegion.legionType = lt;
+                // 个人军团 → 军团名自动命名「精锐番号 + 军团」（如 蕃落骑 → 蕃落骑军团）
+                if (lt === 'solo' && row.eliteName) {
+                    currentEditingLegion.legionName = row.eliteName + '军团';
+                }
                 renderEditPanel(row);
             }
         });
@@ -2231,6 +2238,19 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>u.category==='hero').length})</div>
           </div>
           <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
+          <div style="display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:8px;">
+            <span style="font-size:11px;color:#a89f8f;">全体朝向:</span>
+            <select id="le-thumb-dir" class="le-select" style="padding:2px 6px;font-size:12px;">
+              <option value="2" ${unitThumbDir === 2 ? 'selected' : ''}>东南 (2)</option>
+              <option value="3" ${unitThumbDir === 3 ? 'selected' : ''}>南 (3)</option>
+              <option value="1" ${unitThumbDir === 1 ? 'selected' : ''}>东 (1)</option>
+              <option value="0" ${unitThumbDir === 0 ? 'selected' : ''}>东北 (0)</option>
+              <option value="7" ${unitThumbDir === 7 ? 'selected' : ''}>北 (7)</option>
+              <option value="6" ${unitThumbDir === 6 ? 'selected' : ''}>西北 (6)</option>
+              <option value="5" ${unitThumbDir === 5 ? 'selected' : ''}>西 (5)</option>
+              <option value="4" ${unitThumbDir === 4 ? 'selected' : ''}>西南 (4)</option>
+            </select>
+          </div>
           <div class="le-modal-body">
             ${units.map(u => `
               <div class="le-unit-card" data-uid="${u.id}">
@@ -2280,6 +2300,13 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         searchInput?.addEventListener('input', (e) => {
             unitSearch = (e.target as HTMLInputElement).value;
             if (!isSearchComposing && !(e as InputEvent).isComposing) rerenderSearch();
+        });
+
+        // 全体朝向：切换后重置并重画全部缩略图
+        const thumbDirSel = overlay.querySelector('#le-thumb-dir') as HTMLSelectElement | null;
+        thumbDirSel?.addEventListener('change', () => {
+            unitThumbDir = parseInt(thumbDirSel.value, 10) || 2;
+            redrawUnitThumbsIn(overlay);
         });
 
         overlay.querySelectorAll('.le-unit-card').forEach(card => {
@@ -2750,7 +2777,7 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
 /** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
 async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
     const prefix = getUnitPathPrefix(unitId);
-    const imgUrl = `${prefix}idle_3.png`;
+    const imgUrl = `${prefix}idle_${unitThumbDir}.png`;
     try {
         const img = await loadSprite(imgUrl);
         let meta = metaCache.get(prefix);
@@ -2758,7 +2785,7 @@ async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         const actMeta = meta?.idle;
-        const dirMeta = actMeta?.dirs?.['3'];
+        const dirMeta = actMeta?.dirs?.[String(unitThumbDir)];
         let fw: number, fh: number;
         if (actMeta && dirMeta) { fw = dirMeta.fw; fh = dirMeta.fh; }
         else { fw = img.naturalHeight; fh = img.naturalHeight; }   // 兜底：假设正方形帧
@@ -2790,6 +2817,14 @@ function observeThumbs(root: ParentNode): void {
         }, { rootMargin: '160px' });
     }
     root.querySelectorAll<HTMLCanvasElement>('canvas[data-uid]').forEach(c => thumbObserver!.observe(c));
+}
+
+/** 重置并立即重画全部兵种缩略图（切换全体朝向后用） */
+function redrawUnitThumbsIn(root: ParentNode): void {
+    root.querySelectorAll<HTMLCanvasElement>('canvas[data-uid]').forEach(c => {
+        c.dataset.drawn = '';
+        drawUnitThumb(c, c.dataset.uid!);
+    });
 }
 
 function startCanvasPreview(): void {

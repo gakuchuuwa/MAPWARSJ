@@ -661,85 +661,86 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 赵宋军团·开封及宋将（赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 / 宗泽 / 韩世忠 / 文天祥 · 鱼鳞阵 3+4+2：火矛兵 3 + 火矛兵精锐主力 4 + 火焰弓手 2）
-    song: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "song": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },               // Row 0 前卫突进 = 火矛兵 3人
-            { type: 'elite_fire_lancer', count: 4 },         // Row 1 中军主力 = 精锐火矛兵 4人（赵宋突火枪精锐主力）
-            { type: 'fire_archer', count: 2 },               // Row 2 尾收火矢 = 吴火焰弓箭手 2人（后排烈焰火矢齐射）
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    heng1: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "heng1": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    changshan: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "changshan": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    zhai_han: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "zhai_han": {
+        legionName: "蕃落骑军团",
+        legionType: "solo",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "elite_fire_lancer", count: 3 },
+            { type: "hei_kuang", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    yanzhou: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "yanzhou": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    huan: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "huan": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    didao: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "didao": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    qing: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "qing": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
-    xiangzhou: {
-        legionName: "北宋军团",
-        formationMode: 'fish_scale',
+    "xiangzhou": {
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'fire_lancer', count: 3 },
-            { type: 'elite_fire_lancer', count: 4 },
-            { type: 'fire_archer', count: 2 },
+            { type: "fire_lancer", count: 3 },
+            { type: "elite_fire_lancer", count: 4 },
+            { type: "fire_archer", count: 2 },
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
@@ -2566,6 +2567,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     "zhibuluotuo": {
         legionName: "十字军军团",
+        legionType: "era",
         formationMode: "fish_scale",
         slots: [
             { type: "teutonic_knight", count: 3 },
