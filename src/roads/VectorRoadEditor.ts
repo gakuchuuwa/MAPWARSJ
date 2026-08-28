@@ -53,11 +53,14 @@ interface GeoEdge {
     to: number;
     weight: number; // km
     coords: [number, number][]; // [lng, lat][]
+    /** 内河（NE 河流中心线） */
     isWater?: boolean;
+    /** 海路（sea_routes_combined 航线网 / 港口接驳边）—— 默认不参与寻路，只有 sea_land 模式放行 */
+    isSea?: boolean;
 }
 
-/** 编辑器候选路线模式（固定三档，按此顺序循环切换） */
-type RouteMode = 'prefer_water' | 'prefer_land' | 'straight';
+/** 编辑器候选路线模式 */
+type RouteMode = 'prefer_water' | 'prefer_land' | 'sea_land' | 'straight';
 
 interface RouteCandidate {
     mode: RouteMode;
@@ -74,8 +77,9 @@ interface RouteCandidate {
 }
 
 const ROUTE_MODE_LABELS: Record<RouteMode, string> = {
-    prefer_water: '优先水路·陆路为辅',
-    prefer_land: '优先陆路·水路为辅',
+    prefer_water: '🌊 水路为主',   // 内河/湖：NE 河流中心线，断口已就近接通
+    prefer_land: '🛣️ 陆路为主',
+    sea_land: '⚓ 海路为主',       // 沿岸+远洋航线，只在港口城上下船
     straight: '直线',
 };
 
@@ -132,11 +136,23 @@ export class VectorRoadEditor implements IEditor {
     private static readonly REGION_CENTER_WEIGHT = 0.9;
     private static readonly MAX_CONNECTION_DIST_KM = 500;
     /** 智能候选池上限 */
-    private static readonly MAX_ROUTE_CANDIDATES = 7;  // 6+1 保底直线
+    private static readonly MAX_ROUTE_CANDIDATES = 8;  // 7+1 保底直线（含水陆联运）
     private static readonly WATER_VARIANTS_PER_MODE = 3;
     private static readonly LAND_VARIANTS_PER_MODE = 3;
     private static readonly WATER_TRUNK_MIN_RATIO = 0.35;
     private static readonly VARIANT_PENALTY_FACTOR = 5.5;
+    private static readonly SEA_VARIANTS_PER_MODE = 2;
+    /** 海路里程相对陆路的选路惩罚（默认档：海路要短出 ~20% 才值得上船） */
+    private static readonly SEA_LEG_FACTOR = 1.2;
+    /** 「海路为主」候选专用：海路打八折，尽量走水 —— 这条候选就是给用户挑「走海」用的 */
+    private static readonly SEA_PRIMARY_FACTOR = 0.8;
+    /** 远洋主干额外惩罚，与 SeaRouteEditor 的 OPEN_SEA_PENALTY 同值（古代贴岸航海优先） */
+    private static readonly OPEN_SEA_PENALTY = 1.5;
+    /** 港口接驳：城市到最近**陆路**节点的上限（实测 998 城里 983 座 ≤45km） */
+    private static readonly PORT_LAND_LINK_MAX_KM = 45;
+    /** 港口接驳：城市到最近**航线**节点的上限。沿岸航路本身离岸 36km，卡 45km 只认得出 145 座港；
+     *  放到 80km 是 209 座（实测：≤45km 153 / ≤80km 220 / ≤120km 266）。再放宽内陆城也会被当成港。 */
+    private static readonly PORT_SEA_LINK_MAX_KM = 80;
 
     private map: L.Map;
     private cityManager: CityManager;
@@ -146,6 +162,10 @@ export class VectorRoadEditor implements IEditor {
     private geoNodes: GeoNode[] = [];
 
     private geoAdj: Map<number, GeoEdge[]> = new Map();
+    /** 航线网节点 id 集合：城市锚点只许落在陆路节点上，绝不能锚到海里 */
+    private seaNodeIds: Set<number> = new Set();
+    /** 已接驳的港口城数（状态栏/日志用） */
+    private portLinkCount = 0;
     private geoGraphBuilt: boolean = false;
     private _dijkstraDebugLogged: boolean = false;
 
@@ -945,6 +965,19 @@ export class VectorRoadEditor implements IEditor {
                 throw new Error(`解析道路 GeoJSON 失败(${roadsUrl})：${e.message}`);
             }
 
+            // ⚓ [2026-08-28] 海路一并进图：陆路绕海湾/海峡绕远时，改走「陆路→港口→海路→港口→陆路」。
+            //    用的就是海路编辑器那份 sea_routes_combined（marnet 远洋主干 + 沿岸航路 + 接驳边，
+            //    已剔苏伊士/巴拿马/西北航道）。取不到不算致命 —— 退回纯陆路寻路。
+            const seaUrl = `${basePath}assets/sea_routes_combined.geojson`;
+            let geojsonSea: any = null;
+            try {
+                const resSea = await fetch(seaUrl);
+                if (resSea.ok) geojsonSea = JSON.parse(await resSea.text());
+                else console.warn(`[VectorRoadEditor] 海上航线网 HTTP ${resSea.status}，本次只用陆路`);
+            } catch (e) {
+                console.warn('[VectorRoadEditor] 海上航线网加载失败，本次只用陆路:', e);
+            }
+
             const resWater = await fetch(waterUrl);
             if (!resWater.ok) throw new Error(`取 ${waterUrl} 失败：HTTP ${resWater.status}`);
             const textWater = await resWater.text();
@@ -960,12 +993,16 @@ export class VectorRoadEditor implements IEditor {
             this.setStatus('⏳ 构建水陆混合图...');
 
             // 构建图
-            this.buildGraphFromGeoJSON(geojsonRoads, geojsonWater);
+            this.buildGraphFromGeoJSON(geojsonRoads, geojsonWater, geojsonSea);
             // [GAP-BRIDGE] 桥接 NE 数据中端点 ≤ 80km 的断段
             // [2026-05-30] 40 → 80km: 用户反馈 光禄城-头曼城 71km 也算直线
             //              NE 内蒙古/西伯利亚段 真实路网有 50-70km 断口
             //              桥接边权 ×2.5 高惩罚, Dijkstra 优先走真路, 不会乱连
             this.bridgeEndpointGaps(80);
+            // 水系断口就近连通，「水路为主」才走得通
+            this.bridgeWaterGaps(40);
+            // 港口接驳必须在 bridgeEndpointGaps 之后：那之前陆路节点还没补全
+            if (geojsonSea) this.linkPortCities();
             this.geoGraphBuilt = true;
 
             // 显示参考层
@@ -974,7 +1011,8 @@ export class VectorRoadEditor implements IEditor {
             this.setStatus('🏙️ 请点击第一个城市（起点）');
             let edgeCount = 0;
             for (const edges of this.geoAdj.values()) edgeCount += edges.length;
-            console.log(`🛤️ [VectorRoadEditor] Graph built: ${this.geoNodes.length} nodes, ${edgeCount} edges`);
+            console.log(`🛤️ [VectorRoadEditor] Graph built: ${this.geoNodes.length} nodes, ${edgeCount} edges`
+                + `, 海路节点 ${this.seaNodeIds.size}, 港口接驳 ${this.portLinkCount} 座`);
 
         } catch (err) {
             // 别把原因吞掉：面板上直接显示真实报错，否则只能看到一句笼统的 ❌，
@@ -985,7 +1023,7 @@ export class VectorRoadEditor implements IEditor {
         }
     }
 
-    private buildGraphFromGeoJSON(geojsonRoads: any, geojsonWater?: any): void {
+    private buildGraphFromGeoJSON(geojsonRoads: any, geojsonWater?: any, geojsonSea?: any): void {
         const SNAP_TOLERANCE = 0.05; // ~5km 容差 (增大以确保连接)
         const MAGNETIC_SNAP = 0.08;  // ~8km 强力磁吸容差 (确保并行路合并)
         const nodeMap: Map<string, number> = new Map();
@@ -996,8 +1034,10 @@ export class VectorRoadEditor implements IEditor {
             return `${rLat.toFixed(3)}_${rLng.toFixed(3)}`;
         };
 
-        const getOrCreateNode = (lat: number, lng: number): number => {
-            const key = snapKey(lat, lng);
+        // ns: 'L' 陆路/内河 · 'S' 海路。两套节点**绝不共用** —— 否则近岸的航线顶点会和公路顶点
+        // 撞进同一个 key，等于凭空多出一堆「随便哪段海岸都能上下船」的暗门。上下船只走港口城。
+        const getOrCreateNode = (lat: number, lng: number, ns: 'L' | 'S' = 'L'): number => {
+            const key = ns + snapKey(lat, lng);
             if (nodeMap.has(key)) return nodeMap.get(key)!;
 
             const id = this.geoNodes.length;
@@ -1007,18 +1047,18 @@ export class VectorRoadEditor implements IEditor {
             return id;
         };
 
-        const addEdge = (fromId: number, toId: number, coords: [number, number][], weightDiscount: number = 1.0, isWater: boolean = false) => {
+        const addEdge = (fromId: number, toId: number, coords: [number, number][], weightDiscount: number = 1.0, isWater: boolean = false, isSea: boolean = false) => {
             if (fromId === toId) return;
             const weight = this.calculatePathLength(coords) * weightDiscount;
             if (!isFinite(weight) || weight < 0.01) return; // NaN/Infinity/零距离保护
 
-            const edge: GeoEdge = { from: fromId, to: toId, weight, coords, isWater };
+            const edge: GeoEdge = { from: fromId, to: toId, weight, coords, isWater, isSea };
             this.geoAdj.get(fromId)!.push(edge);
 
             const rev: GeoEdge = {
                 from: toId, to: fromId, weight,
                 coords: [...coords].reverse() as [number, number][],
-                isWater
+                isWater, isSea
             };
             this.geoAdj.get(toId)!.push(rev);
         };
@@ -1052,6 +1092,31 @@ export class VectorRoadEditor implements IEditor {
         processFeatures(geojsonRoads.features || [], false);
         if (geojsonWater) {
             processFeatures(geojsonWater.features || [], true);
+        }
+
+        // === 注入海上航线网（独立节点空间，只经港口城与陆路相接）===
+        if (geojsonSea) {
+            const addSeaLine = (line: [number, number][], source: string) => {
+                if (!line || line.length < 2) return;
+                // 远洋主干加惩罚，沿岸/接驳按真实里程 —— 与 SeaRouteEditor 同规矩
+                const discount = source === 'marnet' ? VectorRoadEditor.OPEN_SEA_PENALTY : 1.0;
+                for (let i = 0; i < line.length - 1; i++) {
+                    const [lng1, lat1] = line[i];
+                    const [lng2, lat2] = line[i + 1];
+                    const a = getOrCreateNode(lat1, lng1, 'S');
+                    const b = getOrCreateNode(lat2, lng2, 'S');
+                    this.seaNodeIds.add(a);
+                    this.seaNodeIds.add(b);
+                    addEdge(a, b, [line[i], line[i + 1]], discount, false, true);
+                }
+            };
+            for (const f of geojsonSea.features || []) {
+                const g = f?.geometry;
+                if (!g?.coordinates) continue;
+                const source: string = f?.properties?.source ?? 'marnet';
+                const lines = g.type === 'MultiLineString' ? g.coordinates : [g.coordinates];
+                for (const line of lines) addSeaLine(line, source);
+            }
         }
 
         // 桥接断裂的路段
@@ -1245,6 +1310,7 @@ export class VectorRoadEditor implements IEditor {
         let bridgeCount = 0;
 
         for (const node of this.geoNodes) {
+            if (this.seaNodeIds.has(node.id)) continue;   // 海路节点不参与陆路补洞（否则等于随处可登陆）
             const adj = this.geoAdj.get(node.id);
             const connectedTo = new Set(adj?.map(e => e.to) || []);
 
@@ -1258,6 +1324,7 @@ export class VectorRoadEditor implements IEditor {
 
                     for (const otherId of neighbors) {
                         if (otherId === node.id || connectedTo.has(otherId)) continue;
+                        if (this.seaNodeIds.has(otherId)) continue;
 
                         const other = this.geoNodes[otherId];
                         const dLat = node.lat - other.lat;
@@ -1294,6 +1361,139 @@ export class VectorRoadEditor implements IEditor {
     }
 
     /**
+     * 水系断口就近连通（「水路为主」候选的基础）。
+     *
+     * 矢量水系只有 NE 河流中心线这一份（ESRI 那层是栅格瓦片 + WaterMask 掩膜，没有可寻路的线），
+     * 它天然是断的：入湖、入海口、三角洲、跨图幅都会断。断着的话「水路为主」一走就掉回陆路。
+     * 这里把**只连水的端点**接到最近的另一个水节点上（≤maxKm），边仍标 isWater，权重 ×1.5
+     * —— 有真河就走真河，接驳段只在没得选时用。
+     */
+    private bridgeWaterGaps(maxKm: number): void {
+        const isWaterNode = (id: number): boolean => {
+            const adj = this.geoAdj.get(id);
+            return !!adj && adj.length > 0 && adj.some(e => e.isWater) && !this.seaNodeIds.has(id);
+        };
+        const waterNodes: number[] = [];
+        const endpoints: number[] = [];
+        for (const node of this.geoNodes) {
+            if (!isWaterNode(node.id)) continue;
+            waterNodes.push(node.id);
+            const adj = this.geoAdj.get(node.id)!;
+            if (adj.filter(e => e.isWater).length === 1) endpoints.push(node.id);
+        }
+
+        const CELL = 0.5;
+        const grid = new Map<string, number[]>();
+        for (const id of waterNodes) {
+            const n = this.geoNodes[id];
+            const k = `${Math.floor(n.lng / CELL)}_${Math.floor(n.lat / CELL)}`;
+            let b = grid.get(k);
+            if (!b) { b = []; grid.set(k, b); }
+            b.push(id);
+        }
+
+        const rings = Math.ceil(maxKm / 55) + 1;
+        const linked = new Set<string>();
+        let bridged = 0;
+        for (const id of endpoints) {
+            const node = this.geoNodes[id];
+            const connected = new Set((this.geoAdj.get(id) || []).map(e => e.to));
+            const cx = Math.floor(node.lng / CELL), cy = Math.floor(node.lat / CELL);
+            let bestId = -1, bestKm = Infinity;
+            for (let dx = -rings; dx <= rings; dx++) {
+                for (let dy = -rings; dy <= rings; dy++) {
+                    const bucket = grid.get(`${cx + dx}_${cy + dy}`);
+                    if (!bucket) continue;
+                    for (const other of bucket) {
+                        if (other === id || connected.has(other)) continue;
+                        const o = this.geoNodes[other];
+                        const km = this.haversine(node.lat, node.lng, o.lat, o.lng);
+                        if (km < bestKm) { bestKm = km; bestId = other; }
+                    }
+                }
+            }
+            if (bestId < 0 || bestKm > maxKm) continue;
+            const key = id < bestId ? `${id}_${bestId}` : `${bestId}_${id}`;
+            if (linked.has(key)) continue;
+            const other = this.geoNodes[bestId];
+            const coords: [number, number][] = [[node.lng, node.lat], [other.lng, other.lat]];
+            const weight = bestKm * 1.5;
+            if (!isFinite(weight) || weight < 0.01) continue;
+            this.geoAdj.get(id)!.push({ from: id, to: bestId, weight, coords, isWater: true });
+            this.geoAdj.get(bestId)!.push({ from: bestId, to: id, weight, coords: [coords[1], coords[0]], isWater: true });
+            linked.add(key);
+            bridged++;
+        }
+        console.log(`🌊 [WaterBridge] 水系端点 ${endpoints.length} 个，就近接通 ${bridged} 处断口（≤${maxKm}km）`);
+    }
+
+    /**
+     * 港口接驳：把「陆路图」和「航线图」只在**城市**这一个点上焊起来。
+     *
+     * 每座城找一次最近陆路节点 + 最近航线节点，两边都在 PORT_LINK_MAX_KM 内才算港口城，
+     * 加一条 陆节点—城—海节点 的双向边（isSea，默认寻路不放行，只有 sea_land 模式打开）。
+     * 这样「上下船只能在港口城」是图结构本身保证的，不靠后续判断。
+     */
+    private linkPortCities(): void {
+        const CELL = 0.5;
+        const key = (lng: number, lat: number) => `${Math.floor(lng / CELL)}_${Math.floor(lat / CELL)}`;
+        const landGrid = new Map<string, number[]>();
+        const seaGrid = new Map<string, number[]>();
+        for (const node of this.geoNodes) {
+            const g = this.seaNodeIds.has(node.id) ? seaGrid : landGrid;
+            const k = key(node.lng, node.lat);
+            let bucket = g.get(k);
+            if (!bucket) { bucket = []; g.set(k, bucket); }
+            bucket.push(node.id);
+        }
+
+        const rings = Math.ceil(VectorRoadEditor.PORT_SEA_LINK_MAX_KM / 55) + 1;   // 0.5° ≈ 55km
+        const nearest = (grid: Map<string, number[]>, lat: number, lng: number, maxKm: number): { id: number; km: number } | null => {
+            const cx = Math.floor(lng / CELL), cy = Math.floor(lat / CELL);
+            let bestId = -1, bestKm = Infinity;
+            for (let dx = -rings; dx <= rings; dx++) {
+                for (let dy = -rings; dy <= rings; dy++) {
+                    const bucket = grid.get(`${cx + dx}_${cy + dy}`);
+                    if (!bucket) continue;
+                    for (const id of bucket) {
+                        const n = this.geoNodes[id];
+                        const km = this.haversine(lat, lng, n.lat, n.lng);
+                        if (km < bestKm) { bestKm = km; bestId = id; }
+                    }
+                }
+            }
+            return bestId >= 0 && bestKm <= maxKm ? { id: bestId, km: bestKm } : null;
+        };
+
+        let linked = 0;
+        for (const city of CITIES) {
+            const land = nearest(landGrid, city.lat, city.lng, VectorRoadEditor.PORT_LAND_LINK_MAX_KM);
+            if (!land) continue;
+            const sea = nearest(seaGrid, city.lat, city.lng, VectorRoadEditor.PORT_SEA_LINK_MAX_KM);
+            if (!sea) continue;
+
+            const landNode = this.geoNodes[land.id];
+            const seaNode = this.geoNodes[sea.id];
+            const coords: [number, number][] = [
+                [landNode.lng, landNode.lat],
+                [city.lng, city.lat],
+                [seaNode.lng, seaNode.lat],
+            ];
+            const weight = land.km + sea.km;
+            if (!isFinite(weight) || weight < 0.01) continue;
+            this.geoAdj.get(land.id)!.push({ from: land.id, to: sea.id, weight, coords, isSea: true });
+            this.geoAdj.get(sea.id)!.push({
+                from: sea.id, to: land.id, weight,
+                coords: [...coords].reverse() as [number, number][], isSea: true,
+            });
+            linked++;
+        }
+        this.portLinkCount = linked;
+        console.log(`⚓ [PortLink] ${linked} 座港口城已把陆路网与航线网焊通`
+            + `（陆 ≤${VectorRoadEditor.PORT_LAND_LINK_MAX_KM}km / 海 ≤${VectorRoadEditor.PORT_SEA_LINK_MAX_KM}km）`);
+    }
+
+    /**
      * [GAP-BRIDGE] 桥接附近未直接相连的节点对 - 解决 NE 稀疏区(如黄土高原)断段
      * 桥接 degree ≤ 4 的节点(地理上是"端点或近端点"的位置), 跳过高密度十字路口
      * 高权重(×2.5)惩罚, Dijkstra 优先走真路
@@ -1302,6 +1502,7 @@ export class VectorRoadEditor implements IEditor {
         // 桥接候选: degree === 1 的真实端点 (死胡同/断头路)
         const endpoints: number[] = [];
         for (const node of this.geoNodes) {
+            if (this.seaNodeIds.has(node.id)) continue;   // 海路端点不许被 80km 桥接拽上岸
             const adj = this.geoAdj.get(node.id);
             if (adj && adj.length === 1) endpoints.push(node.id);
         }
@@ -1400,21 +1601,24 @@ export class VectorRoadEditor implements IEditor {
 
         const candidatesList = this.buildRouteCandidates(startCity, endCity);
         const directDist = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
-        const detourLimit = directDist < 150 ? 6.0 : directDist < 500 ? 3.0 : 2.0;
 
+        // 🔴 [2026-08-28 主人「道路经常绕远」] 选路改成**按实际里程取最短**。
+        //    改前是「按评分排序后取第一条绕行比合格的」，而评分给水路 +22~+40 的偏好、
+        //    合格线又松到 6.0x（<150km），于是一条 2.5x 的沿河路能盖过 1.2x 的陆路直连 —— 这就是绕远的来源。
+        //    现在：非直线候选里取最短的那条；只有一条候选都没有时才落到直线兜底。
+        //    其余候选仍留在 🔀 切换路径里，想要沿河/沿海走法随时切。
         let bestPath: RouteCandidate | null = null;
         let bestIdx = 0;
+        let bestLen = Infinity;
         for (let i = 0; i < candidatesList.length; i++) {
             const candidate = candidatesList[i];
             if (candidate.isManualStraightLine) continue;
-            const detourRatio = candidate.detourRatio
-                ?? this.calculatePathLength(candidate.coordinates) / Math.max(1, directDist);
-            if (detourRatio <= detourLimit) {
+            const len = candidate.totalDistance || this.calculatePathLength(candidate.coordinates);
+            if (len < bestLen) {
+                bestLen = len;
                 bestPath = candidate;
                 bestIdx = i;
-                break;
             }
-            console.warn(`⚠️ [PathGen] ${candidate.label} 绕行 ${detourRatio.toFixed(1)}x > ${detourLimit}x, 尝试下一候选`);
         }
         if (!bestPath) {
             const straightIdx = candidatesList.findIndex(c => c.mode === 'straight');
@@ -1508,6 +1712,8 @@ export class VectorRoadEditor implements IEditor {
         const roadName = `${startCity.name}-${endCity.name}`;
         const roadId = `road_${this.startCityId}_${this.endCityId}_${Date.now()}`;
 
+        // 含海路段的路要标记：RoadRegistry 靠这个跳过 smoothRoad（平滑会把海上顶点推上岸）
+        const hasSeaLeg = bestPath?.mode === 'sea_land';
         const newFeature: VectorRoadFeature = {
             type: 'Feature',
             properties: {
@@ -1515,7 +1721,8 @@ export class VectorRoadEditor implements IEditor {
                 type: 'road',
                 id: roadId,
                 startConnection: this.startCityId!,
-                endConnection: this.endCityId!
+                endConnection: this.endCityId!,
+                ...(hasSeaLeg ? { hasSeaLeg: true } as { hasSeaLeg?: boolean } : {})
             },
             geometry: {
                 type: 'LineString',
@@ -1528,7 +1735,8 @@ export class VectorRoadEditor implements IEditor {
         this.renderRoad(roadId);
         this.selectRoad(roadId);
 
-        this.setStatus(`✅ ${roadName} (${distStr}, ${finalCoords.length}点) | 🔴拖拽微调 · 🟡点击加节点 · 右键删节点`);
+        const seaTag = hasSeaLeg ? '⚓水陆联运 · ' : '';
+        this.setStatus(`✅ ${roadName} (${seaTag}${distStr}, ${finalCoords.length}点) | 🔴拖拽微调 · 🟡点击加节点 · 右键删节点`);
         this.clearCitySelection();
         // 保持 candidatesList 缓存，因为 clearCitySelection 刚刚清空了 this.pathCandidates
         this.pathCandidates = finalCoords.length > 2 ? candidatesList : [];
@@ -1586,6 +1794,12 @@ export class VectorRoadEditor implements IEditor {
 
         this.currentCandidateIdx = nextIdx;
         feature.geometry.coordinates = simplified;
+        // 切到/切走「水陆联运」时同步标记，否则含海段的路会被 RoadRegistry 平滑推上岸
+        // ⚠ VectorRoadData.ts 是编辑器机器生成的，旧版编辑器一保存就会把新字段从接口里抹掉，
+        //   所以这里一律用结构类型断言读写，别让它把整个工程的编译带崩。
+        const props = feature.properties as { hasSeaLeg?: boolean };
+        if (candidate.mode === 'sea_land') props.hasSeaLeg = true;
+        else delete props.hasSeaLeg;
 
         this.renderRoad(this.selectedRoadId);
         this.showControlPoints(this.selectedRoadId);
@@ -1883,7 +2097,7 @@ export class VectorRoadEditor implements IEditor {
     private static readonly LAND_PREFERRED_WATER_FACTOR = 1.18;
     private static readonly LAND_PREFERRED_LAND_FACTOR = 0.82;
 
-    private dijkstraGeo(startId: number, endId: number, options?: { penaltyEdges?: Set<string>, penaltyFactor?: number, forbidWater?: boolean, routePreference?: 'water_first' | 'land_first' }): {
+    private dijkstraGeo(startId: number, endId: number, options?: { penaltyEdges?: Set<string>, penaltyFactor?: number, forbidWater?: boolean, allowSea?: boolean, seaFactor?: number, routePreference?: 'water_first' | 'land_first' }): {
         coordinates: [number, number][];
         totalDistance: number;
         edgeKeys: Set<string>;
@@ -1940,8 +2154,11 @@ export class VectorRoadEditor implements IEditor {
             for (const edge of edges) {
                 if (visited.has(edge.to)) continue;
                 if (options?.forbidWater && edge.isWater) continue;
-                
+                // 海路默认关闭：只有 sea_land 模式显式放行，其余候选全是纯陆路/内河，行为与改前一致
+                if (edge.isSea && !options?.allowSea) continue;
+
                 let weight = edge.weight;
+                if (edge.isSea) weight *= options?.seaFactor ?? VectorRoadEditor.SEA_LEG_FACTOR;
                 if (!options?.forbidWater && options?.routePreference) {
                     if (options.routePreference === 'water_first') {
                         weight *= edge.isWater
@@ -2063,10 +2280,12 @@ export class VectorRoadEditor implements IEditor {
         return nearestId;
     }
 
+    /** 找城市最近的**陆路**节点（海路节点永远不作城市锚点：城在岸上，上船只走港口接驳边） */
     private findKNearestGeoNodes(lat: number, lng: number, k: number): { id: number; dist: number }[] {
         const candidates: { id: number; dist: number }[] = [];
 
         for (const node of this.geoNodes) {
+            if (this.seaNodeIds.has(node.id)) continue;
             const dLat = node.lat - lat;
             const dLng = (node.lng - lng) * Math.cos(lat * Math.PI / 180);
             const dist = Math.sqrt(dLat * dLat + dLng * dLng);
@@ -2223,7 +2442,7 @@ export class VectorRoadEditor implements IEditor {
             const edge = edges.find(e => e.to === toId);
             if (!edge) continue;
             totalKm += edge.weight;
-            if (edge.isWater) waterKm += edge.weight;
+            if (edge.isWater || edge.isSea) waterKm += edge.weight;
         }
         return totalKm > 0 ? waterKm / totalKm : 0;
     }
@@ -2265,14 +2484,17 @@ export class VectorRoadEditor implements IEditor {
 
     /** 按模式与水路占比生成用户可读标签 */
     private buildVariantLabel(mode: RouteMode, waterRatio: number, variantIndex: number): string {
+        const suffix = variantIndex === 0 ? '' : String(variantIndex + 1);
         if (mode === 'prefer_water') {
-            if (waterRatio >= VectorRoadEditor.WATER_TRUNK_MIN_RATIO) {
-                return variantIndex === 0 ? '水路主干' : `水路近岸${variantIndex + 1}`;
-            }
-            return variantIndex === 0 ? '水陆混合' : `水陆备选${variantIndex + 1}`;
+            const pct = Math.round(waterRatio * 100);
+            return `🌊 水路为主${suffix}(水${pct}%)`;
         }
         if (mode === 'prefer_land') {
-            return variantIndex === 0 ? '陆路捷径' : `陆路备选${variantIndex + 1}`;
+            return `🛣️ 陆路为主${suffix}`;
+        }
+        if (mode === 'sea_land') {
+            const pct = Math.round(waterRatio * 100);
+            return `⚓ 海路为主${suffix}(海${pct}%)`;
         }
         return ROUTE_MODE_LABELS.straight;
     }
@@ -2294,6 +2516,8 @@ export class VectorRoadEditor implements IEditor {
             score += waterRatio * 18;
         } else if (candidate.mode === 'prefer_land') {
             score += (1 - waterRatio) * 14;
+        } else if (candidate.mode === 'sea_land') {
+            score += 12;   // 只给一点点，真正决定用不用的是它省下来的里程
         } else if (candidate.mode === 'straight') {
             score -= 35;
         }
@@ -2313,6 +2537,8 @@ export class VectorRoadEditor implements IEditor {
         endNodes: { id: number }[],
         options: {
             forbidWater?: boolean;
+            allowSea?: boolean;
+            seaFactor?: number;
             routePreference?: 'water_first' | 'land_first';
             penaltyEdges?: Set<string>;
         }
@@ -2322,6 +2548,8 @@ export class VectorRoadEditor implements IEditor {
             for (const e of endNodes) {
                 const path = this.dijkstraGeo(s.id, e.id, {
                     forbidWater: options.forbidWater,
+                    allowSea: options.allowSea,
+                    seaFactor: options.seaFactor,
                     routePreference: options.routePreference,
                     penaltyEdges: options.penaltyEdges,
                     penaltyFactor: VectorRoadEditor.VARIANT_PENALTY_FACTOR,
@@ -2384,6 +2612,9 @@ export class VectorRoadEditor implements IEditor {
 
             const best = this.dijkstraBestAmongNodes(sc, ec, {
                 forbidWater: usePureLand,
+                allowSea: mode === 'sea_land',
+                // 「海路为主」给海路打折(0.8)，让它尽量走水；其余模式海路根本不放行
+                seaFactor: mode === 'sea_land' ? VectorRoadEditor.SEA_PRIMARY_FACTOR : undefined,
                 routePreference: usePureLand ? undefined : routePreference,
                 penaltyEdges,
             });
@@ -2511,6 +2742,10 @@ export class VectorRoadEditor implements IEditor {
         const landRaw = this.findRouteVariantsForMode(
             startCity, endCity, 'prefer_land', VectorRoadEditor.LAND_VARIANTS_PER_MODE
         );
+        // ⚓ 水陆联运：只有港口接驳建起来了才有意义（linkPortCities 没跑就是纯陆路图）
+        const seaRaw = this.portLinkCount > 0
+            ? this.findRouteVariantsForMode(startCity, endCity, 'sea_land', VectorRoadEditor.SEA_VARIANTS_PER_MODE)
+            : [];
         const straightRaw = this.findRouteVariantsForMode(startCity, endCity, 'straight', 1);
 
         const scoreAndSort = (list: RouteCandidate[]): RouteCandidate[] => {
@@ -2527,11 +2762,16 @@ export class VectorRoadEditor implements IEditor {
         const waterRanked = scoreAndSort(waterRaw).slice(0, VectorRoadEditor.WATER_VARIANTS_PER_MODE);
         const landRanked = scoreAndSort(landRaw).slice(0, VectorRoadEditor.LAND_VARIANTS_PER_MODE);
 
+        const seaRanked = scoreAndSort(seaRaw).slice(0, VectorRoadEditor.SEA_VARIANTS_PER_MODE);
+
+        // 🔴 [2026-08-28 主人定「水路为主 / 陆路为主 / 海路为主 各来一条」]
+        //    三种走法各自的头名先占位，保证 🔀 切换路径里三档一定都在（谁都不会被别人的备选挤掉），
+        //    之后才轮到各模式的备选、侧向走廊、直线兜底。
         const merged: RouteCandidate[] = [];
-        for (const c of waterRanked) {
-            if (!this.isCandidateDuplicate(c, merged)) merged.push(c);
+        for (const head of [waterRanked[0], landRanked[0], seaRanked[0]]) {
+            if (head && !this.isCandidateDuplicate(head, merged)) merged.push(head);
         }
-        for (const c of landRanked) {
+        for (const c of [...waterRanked.slice(1), ...landRanked.slice(1), ...seaRanked.slice(1)]) {
             if (!this.isCandidateDuplicate(c, merged)) merged.push(c);
         }
         // 侧向途经：中点偏西/偏东各试一条，挖北陆道等第二条陆路走廊
@@ -5022,6 +5262,7 @@ export class VectorRoadEditor implements IEditor {
         ts += `        endYear?: number;\n`;
         ts += `        startConnection?: string;\n`;
         ts += `        endConnection?: string;\n`;
+        ts += `        hasSeaLeg?: boolean;\n`;
         ts += `    };\n`;
         ts += `    geometry: {\n`;
         ts += `        type: 'LineString';\n`;
@@ -5045,6 +5286,7 @@ export class VectorRoadEditor implements IEditor {
             if (p.endConnection) ts += `,\n                endConnection: "${p.endConnection}"`;
             if (p.startYear !== undefined) ts += `,\n                startYear: ${p.startYear}`;
             if (p.endYear !== undefined) ts += `,\n                endYear: ${p.endYear}`;
+            if ((p as { hasSeaLeg?: boolean }).hasSeaLeg) ts += `,\n                hasSeaLeg: true`;
             ts += `\n            },\n`;
             ts += `            geometry: {\n`;
             ts += `                type: "LineString",\n`;
