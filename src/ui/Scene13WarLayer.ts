@@ -2999,6 +2999,7 @@ export class Scene13WarLayer {
             att: init.attackerTroops, def: init.defenderTroops,
             attR: init.attackerRegion, defR: init.defenderRegion,
             attB: init.attackerBonus, defB: init.defenderBonus,
+            type: init.battleType ?? 'field',
         });
         this.attach();
         this.active = true;
@@ -4241,9 +4242,17 @@ export class Scene13WarLayer {
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
             const a = p.alpha ?? 1;
             const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
+            // 🔴 [2026-08-28 修卡顿] blur(14px) 原来对整张 4K 画布做高斯模糊（drawImage(maskCv,0,0)），
+            //   即使水面只占一小块，每帧也是 O(全画布)——有水的战斗 render 从 7ms 涨到 60ms+ 就是它。
+            //   收窄到水面 bbox + blur 扩散余量（3×14px），blur 只作用于水块区域。
+            const pad = 14 * 3;
+            const bx = Math.max(0, Math.floor(bb.x - pad));
+            const by = Math.max(0, Math.floor(bb.y - pad));
+            const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
+            const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
 
             // 1. 在 maskCv 上绘制羽化水域遮罩（多边形 / 单元格）
-            maskCtx.clearRect(0, 0, W, H);
+            maskCtx.clearRect(bx, by, bw, bh);
             maskCtx.beginPath();
             if (p.polygon && p.polygon.length >= 3) {
                 maskCtx.moveTo(p.polygon[0].x, p.polygon[0].y);
@@ -4263,11 +4272,11 @@ export class Scene13WarLayer {
             maskCtx.fill();
 
             // 2. 在 offCv 上以羽化软边合成流动波纹
-            offCtx.clearRect(0, 0, W, H);
+            offCtx.clearRect(bx, by, bw, bh);
             offCtx.save();
-            // 边缘羽化（14px 柔和软边，让水面自然漫过沙滩）
+            // 边缘羽化（14px 柔和软边，让水面自然漫过沙滩）——只对水面 bbox 区域做
             offCtx.filter = 'blur(14px)';
-            offCtx.drawImage(maskCv, 0, 0);
+            offCtx.drawImage(maskCv, bx, by, bw, bh, bx, by, bw, bh);
             offCtx.restore();
 
             // 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
