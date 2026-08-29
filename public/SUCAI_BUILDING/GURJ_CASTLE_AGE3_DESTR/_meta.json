@@ -1,8 +1,8 @@
 {
   "name": "GURJ_CASTLE_AGE3_DESTR",
-  "frames": 150,
+  "frames": 60,
   "box_w": 428,
-  "box_h": 428,
+  "box_h": 420,
   "anchor_x": 208,
   "anchor_y": 316,
   "sld_source": "b_gurj_castle_age3_destruction"

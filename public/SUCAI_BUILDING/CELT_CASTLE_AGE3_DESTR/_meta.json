@@ -1,7 +1,7 @@
 {
   "name": "CELT_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 380,
+  "frames": 60,
+  "box_w": 376,
   "box_h": 504,
   "anchor_x": 180,
   "anchor_y": 408,

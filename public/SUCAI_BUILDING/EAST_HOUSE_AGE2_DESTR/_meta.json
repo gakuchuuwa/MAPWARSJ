@@ -1,9 +1,9 @@
 {
   "name": "EAST_HOUSE_AGE2_DESTR",
-  "frames": 300,
-  "box_w": 260,
+  "frames": 60,
+  "box_w": 256,
   "box_h": 240,
-  "anchor_x": 122,
+  "anchor_x": 118,
   "anchor_y": 138,
   "sld_source": "b_east_house_age2_destruction"
 }

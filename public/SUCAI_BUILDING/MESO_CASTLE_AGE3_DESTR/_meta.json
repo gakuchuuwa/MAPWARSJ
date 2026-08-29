@@ -1,7 +1,7 @@
 {
   "name": "MESO_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 584,
+  "frames": 60,
+  "box_w": 580,
   "box_h": 456,
   "anchor_x": 252,
   "anchor_y": 324,

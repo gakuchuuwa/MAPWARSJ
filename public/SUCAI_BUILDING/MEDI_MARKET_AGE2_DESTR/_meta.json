@@ -1,7 +1,7 @@
 {
   "name": "MEDI_MARKET_AGE2_DESTR",
-  "frames": 100,
-  "box_w": 432,
+  "frames": 60,
+  "box_w": 428,
   "box_h": 360,
   "anchor_x": 216,
   "anchor_y": 248,

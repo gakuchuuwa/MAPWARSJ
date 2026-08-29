@@ -1,8 +1,8 @@
 {
   "name": "BOHE_CASTLE_AGE3_DESTR",
-  "frames": 150,
+  "frames": 60,
   "box_w": 448,
-  "box_h": 532,
+  "box_h": 528,
   "anchor_x": 220,
   "anchor_y": 428,
   "sld_source": "b_bohe_castle_age3_destruction"

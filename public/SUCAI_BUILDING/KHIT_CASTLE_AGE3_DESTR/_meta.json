@@ -1,7 +1,7 @@
 {
   "name": "KHIT_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 512,
+  "frames": 60,
+  "box_w": 508,
   "box_h": 432,
   "anchor_x": 252,
   "anchor_y": 320,

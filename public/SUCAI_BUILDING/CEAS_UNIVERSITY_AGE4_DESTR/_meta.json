@@ -1,9 +1,9 @@
 {
   "name": "CEAS_UNIVERSITY_AGE4_DESTR",
-  "frames": 100,
-  "box_w": 464,
+  "frames": 60,
+  "box_w": 460,
   "box_h": 396,
-  "anchor_x": 232,
+  "anchor_x": 228,
   "anchor_y": 268,
   "sld_source": "b_ceas_university_age4_destruction"
 }

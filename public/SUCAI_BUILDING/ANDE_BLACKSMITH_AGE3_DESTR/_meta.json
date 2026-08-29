@@ -1,9 +1,9 @@
 {
   "name": "ANDE_BLACKSMITH_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 344,
+  "frames": 60,
+  "box_w": 340,
   "box_h": 236,
-  "anchor_x": 172,
+  "anchor_x": 168,
   "anchor_y": 160,
   "sld_source": "b_ande_blacksmith_age3_destruction"
 }

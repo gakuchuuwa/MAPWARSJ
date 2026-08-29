@@ -1,9 +1,9 @@
 {
   "name": "MALA_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 616,
-  "box_h": 516,
-  "anchor_x": 316,
+  "frames": 60,
+  "box_w": 608,
+  "box_h": 512,
+  "anchor_x": 312,
   "anchor_y": 400,
   "sld_source": "b_mala_castle_age3_destruction"
 }

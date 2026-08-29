@@ -1,8 +1,8 @@
 {
   "name": "GEOR_CASTLE_AGE3_DESTR",
-  "frames": 150,
+  "frames": 60,
   "box_w": 464,
-  "box_h": 492,
+  "box_h": 488,
   "anchor_x": 228,
   "anchor_y": 384,
   "sld_source": "b_geor_castle_age3_destruction"

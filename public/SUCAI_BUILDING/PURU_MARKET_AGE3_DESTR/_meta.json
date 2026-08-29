@@ -1,8 +1,8 @@
 {
   "name": "PURU_MARKET_AGE3_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 452,
-  "box_h": 356,
+  "box_h": 344,
   "anchor_x": 216,
   "anchor_y": 228,
   "sld_source": "b_puru_market_age3_destruction"

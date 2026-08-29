@@ -1,7 +1,7 @@
 {
   "name": "SLAV_HOUSE_AGE3_DESTR",
-  "frames": 300,
-  "box_w": 312,
+  "frames": 60,
+  "box_w": 304,
   "box_h": 248,
   "anchor_x": 176,
   "anchor_y": 184,
