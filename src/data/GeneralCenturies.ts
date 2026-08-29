@@ -988,7 +988,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'nuergan_kangwang': 15,                              // 康旺 · nuergan · 特林
 
     // ══════ GREEK（7 人，已标 0）—— 2026-08-19 起属 LATIN 拉丁支文化 ══════
-    'gen_cassander': -4,                                 // 卡山德 · maqidun · 萨洛尼卡
+    'gen_alexander_great': -4,                           // 亚历山大 · maqidun · 佩拉
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
     'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚

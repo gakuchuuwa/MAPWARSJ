@@ -49,7 +49,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
     yipilusi: { generalId: 'yipilusi_piluoshi', generalName: '皮洛士', portrait: '/assets/LATIN/yipilusi_piluoshi.png' },
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/LATIN/lagoniya_lieaonida.png' },
-    maqidun: { generalId: 'gen_cassander', generalName: '卡山德', portrait: '/assets/LATIN/maqidun_kashande.png' },
+    maqidun: { generalId: 'gen_alexander_great', generalName: '亚历山大', portrait: '/assets/LATIN/maqidun_yalishanda.png' },
     lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/SLAVIC/lagusa_delagan.png' },
 
     ruidian_yota: { generalId: 'gen_charles_ix', generalName: '卡尔九世', portrait: '/assets/GERMANIC/ruidian_yota_kaerjiushi.png' },

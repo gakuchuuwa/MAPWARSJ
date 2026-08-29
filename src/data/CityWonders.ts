@@ -71,7 +71,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_suomunate': 'INDI_WONDER_GURJARAS',  // 索姆纳特（印度教十二光辉林伽之首）
     'city_suomapuli': 'INDI_WONDER_BENGALIS',  // 索玛普利（孟加拉·索马普拉大寺）
     // ── [2026-08-26 主人「不要闲置，能安置的都按事实安置上」] 补齐最后 7 座 ──
-    'city_salonica': 'GREEK_WONDER_MACEDONIANS',  // 萨洛尼卡（塞萨洛尼基；据点 factionId 正是 maqidun 马其顿）
+    'city_salonica': 'GREEK_WONDER_MACEDONIANS',  // 佩拉（据点 factionId 为 maqidun 马其顿）
     'city_plovdiv': 'THRACIAN_WONDER_THRACIANS',  // 普罗夫迪夫（菲利普波利斯；据点 factionId 正是 seleisi 色雷斯）
     // 🔴 波斯奇迹 = 泰西封的萨珊拱门 Taq Kasra，项目无泰西封。
     //    2026-08-24 曾配伊斯法罕又撤掉（萨法维时代太晚），**别再配回伊斯法罕**。
