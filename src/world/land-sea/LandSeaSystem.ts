@@ -119,6 +119,28 @@ export class LandSeaSystem {
     }
 
     /**
+     * 区域多数投票：采样中心 + 周围一圈（九宫格 9 点），水域占多数才判海。
+     * 用于军团海陆形态判定（Army.updateTerrainSpeed）：单点 isSeaAt 太细，军团中心
+     * 沿海岸线走会在「海像素/陆像素」间反复抖，9 点多数投票让「中心周围大部分是水」
+     * 才算海。判据本身（掩膜 AND 海拔<0）不变，只改判定粒度。
+     * 采样半径默认 0.05°（约 5.5km）：远大于海岸线锯齿、远小于小岛/窄海峡，不误判。
+     */
+    static isSeaAtMajority(lat: number, lng: number, radiusDeg = 0.05): boolean {
+        const cosLat = Math.cos(lat * Math.PI / 180) || 1;
+        const dlng = radiusDeg / cosLat;   // 经度方向按纬度缩放，保持与纬度方向同实际距离
+        const offsets: Array<[number, number]> = [
+            [0, 0],
+            [radiusDeg, 0], [-radiusDeg, 0], [0, dlng], [0, -dlng],
+            [radiusDeg, dlng], [radiusDeg, -dlng], [-radiusDeg, dlng], [-radiusDeg, -dlng],
+        ];
+        let sea = 0;
+        for (const [dlat, dln] of offsets) {
+            if (this.isSeaAt({ lat: lat + dlat, lng: lng + dln })) sea++;
+        }
+        return sea > offsets.length / 2;
+    }
+
+    /**
      * 调试可视化专用：**不读写 resultCache、不触发拉瓦片**的海陆探测。
      *
      * 为什么不能直接用 isSeaAt：分界线图层一屏要采上万点，每点都是不同的缓存键，

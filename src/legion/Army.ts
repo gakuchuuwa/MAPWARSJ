@@ -644,16 +644,17 @@ export class Army implements IBattleUnit {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
 
-        // 海陆贴图去抖（主人 2026-08-04 定：宁可迟钝也不要频繁切换）：
-        // 军团沿海岸线行军时 isSeaAt 会在海/陆边界反复变化，直接赋值会让贴图在陆军方阵↔三船阵
-        // 之间来回横跳。改为「反向判定必须累计走出 SEA_FLIP_CONFIRM_DEG 的路程」才翻转，
-        // 外加一个纯时间兜底给原地不动的军团。判据本身（哪里是海）一点没动，只改多久才认账。
+        // 海陆贴图去抖（主人 2026-08-04 定「宁可迟钝也不要频繁切换」→ 08-29 再「B+A 区域投票+迟滞」）：
+        // 军团沿海岸线行军时单点 isSeaAt 会在海/陆边界反复抖（海岸线锯齿），直接赋值会让贴图
+        // 在陆军方阵↔三船阵之间来回横跳。两层保险：
+        //   ① 区域多数投票（isSeaAtMajority 九宫格 9 点，水域多数才算海）—— 从根上平滑锯齿；
+        //   ② 迟滞（反向判定累计走出 SEA_FLIP_CONFIRM_DEG 或过 SEA_FLIP_CONFIRM_SEC 才翻转）—— 兜底。
         const step = this.prevSeaCheckPos
             ? Math.hypot(pos.lat - this.prevSeaCheckPos.lat, pos.lng - this.prevSeaCheckPos.lng)
             : 0;
         this.prevSeaCheckPos = { lat: pos.lat, lng: pos.lng };
 
-        const rawSea = LandSeaSystem.isSeaAt(pos);
+        const rawSea = LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng);
         if (rawSea === this.isOnSea) {
             // 判定与当前状态一致 → 清零（稳定态不累积，真正下海/上岸时无额外延迟）
             this.seaFlipDist = 0;

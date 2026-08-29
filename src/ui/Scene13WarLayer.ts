@@ -4091,7 +4091,7 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && f === 1) {
             // [2026-08-29 主人定] 城内奇观优先显示：主奇观 + 全部附加奇观都立（有 2 个就显示 2 个），朝向随机（place 默认左右镜像随机）。
             //    纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型）。
-            //    位置：放「后排」（守方 9 口里 x 最大的一排），按 y 从大到小依次落位，远离攻方、视角最高，不被城墙/前排队列遮挡。
+            //    位置：从 9 口 shuffle 随机取（不再固定后排右下角），建筑池避开奇观占用的口。
             const wonderAssets: string[] = [];
             const wonderSpots: Array<{ x: number; y: number }> = [];
             if (this.defenderCityId) {
@@ -4101,11 +4101,9 @@ export class Scene13WarLayer {
                 if (extraWonders) for (const ex of extraWonders) wonderAssets.push(ex.asset);
             }
             if (wonderAssets.length > 0) {
-                let backX = -Infinity;
-                for (const s of side) if (s.x > backX) backX = s.x;
-                const backRow = side.filter((s) => s.x >= backX - 1e-9).sort((a, b) => b.y - a.y);
+                const shuffledSide = [...side].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < wonderAssets.length; i++) {
-                    const spot = backRow[Math.min(i, backRow.length - 1)];
+                    const spot = shuffledSide[Math.min(i, shuffledSide.length - 1)];
                     wonderSpots.push(spot);
                     this.decorSprites.push(place({ x: spot.x, y: spot.y }, wonderAssets[i], { z: 2, scale: SIEGE_WONDER_SCALE }));
                 }
@@ -5491,12 +5489,12 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 50% / 损毁 50%，
+     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 40% / 损毁 60%，
      *    损毁里「破损」占主体（残垣断壁感），「残骸」少一些（不全是废墟）（纯视觉、不碰撞）：
-     *    石墙/垛墙段：完整 50% / 破损 D50 30% / 残骸 D75 20%；栅栏：完整 50% / 直接消失 50%（无残垣档）；
-     *    城门：无破损档，完整 50% / 残骸(DESTR→RUBBLE) 50%；
+     *    石墙/垛墙段：完整 40% / 破损 D50 40% / 残骸 D75 20%；栅栏：完整 40% / 直接消失 60%（无残垣档）；
+     *    城门：无破损档，完整 40% / 残骸(DESTR→RUBBLE) 60%；
      *    箭塔：破损(DAMAGED) / 残骸(直接切 RUBBLE) 各 1/2（无完整形态，均停火）；
-     *    建筑：完整 50% / 破损(DAMAGED) 30% / 残骸(DESTR→RUBBLE) 20%。
+     *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
      */
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
