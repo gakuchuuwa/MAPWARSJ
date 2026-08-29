@@ -1,0 +1,9 @@
+{
+  "name": "INDI_TOWER_AGE4_DESTR",
+  "frames": 101,
+  "box_w": 312,
+  "box_h": 288,
+  "anchor_x": 160,
+  "anchor_y": 228,
+  "sld_source": "b_indi_tower_age4_destruction"
+}

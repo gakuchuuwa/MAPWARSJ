@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_TOWER_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 236,
+  "box_h": 308,
+  "anchor_x": 132,
+  "anchor_y": 256,
+  "sld_source": "b_slav_tower_age4_destruction"
+}

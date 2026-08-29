@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_TOWER_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 204,
+  "box_h": 264,
+  "anchor_x": 96,
+  "anchor_y": 216,
+  "sld_source": "b_orie_tower_age3_destruction"
+}

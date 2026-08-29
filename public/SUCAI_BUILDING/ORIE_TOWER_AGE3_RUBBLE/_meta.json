@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_TOWER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 80,
+  "box_h": 48,
+  "anchor_x": 32,
+  "anchor_y": 24,
+  "sld_source": "b_orie_tower_age3_rubble"
+}

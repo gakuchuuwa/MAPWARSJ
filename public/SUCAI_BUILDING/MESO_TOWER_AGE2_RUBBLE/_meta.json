@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 116,
+  "anchor_x": 108,
+  "anchor_y": 68,
+  "sld_source": "b_meso_tower_age2_rubble"
+}

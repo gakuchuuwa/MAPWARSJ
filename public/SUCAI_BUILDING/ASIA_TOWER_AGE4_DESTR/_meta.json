@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_TOWER_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 260,
+  "box_h": 280,
+  "anchor_x": 132,
+  "anchor_y": 216,
+  "sld_source": "b_asia_tower_age4_destruction"
+}

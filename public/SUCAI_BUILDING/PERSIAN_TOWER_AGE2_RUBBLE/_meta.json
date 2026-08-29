@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 108,
+  "anchor_x": 112,
+  "anchor_y": 60,
+  "sld_source": "b_persian_tower_age2_rubble"
+}
