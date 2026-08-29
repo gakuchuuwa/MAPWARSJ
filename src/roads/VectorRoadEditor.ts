@@ -264,6 +264,9 @@ export class VectorRoadEditor implements IEditor {
         this.setMonumentClickThrough(true);   // 奇观图片挡住据点 → 编辑期间让点击穿透
         this.initLayerPanes();  // [Phase B v2] 4 层独立 pane (z-index 380/390/400/410)
         this.renderAllRoads();
+        // 道路线宽随地图缩放（Leaflet weight 固定像素，需手动按 zoom 等比缩放）
+        this.map.on('zoomend', this.onZoomEnd);
+        this.applyZoomWeight();
         // === 关键: 等图构建完再允许城市选择 ===
         this.loadGeoJSONGraph().then(() => {
             this.enableCitySelection();
@@ -336,6 +339,25 @@ export class VectorRoadEditor implements IEditor {
         if (pane) pane.style.display = visible ? '' : 'none';
     }
 
+    // === 道路线宽随地图缩放 ===
+    /** 基准 zoom：线宽在此 zoom 取原始值；地图缩放时线宽等比缩放，跟着地图一起变大变小。 */
+    private static readonly WEIGHT_REF_ZOOM = 8;
+
+    private onZoomEnd = (): void => { this.applyZoomWeight(); };
+
+    /** 地图缩放后重算道路线宽：Leaflet 的 weight 是固定屏幕像素、不随 zoom 变，手动按 2^(z−ref) 等比缩放。 */
+    private applyZoomWeight(): void {
+        const k = Math.pow(2, this.map.getZoom() - VectorRoadEditor.WEIGHT_REF_ZOOM);
+        if (this.referenceLayer) this.referenceLayer.setStyle({ weight: 2.0 * k });
+        if (this.radialNetworkLayer) {
+            this.radialNetworkLayer.eachLayer((l) => {
+                const p = l as L.Polyline;
+                if (p.setStyle) p.setStyle({ weight: 2.5 * k });
+            });
+        }
+        for (const p of this.editPolylines.values()) p.setStyle({ weight: 4 * k });
+    }
+
     private async autoShowRadialNetwork(): Promise<void> {
         if (this.radialNetworkLayer) return;
         try {
@@ -381,6 +403,7 @@ export class VectorRoadEditor implements IEditor {
 
     public hide(): void {
         this.visible = false;
+        this.map.off('zoomend', this.onZoomEnd);
         this.clearEditLayers();
         this.removeReferenceLayer();
         // [Phase B] 清理 Layer 4 (BFS 辐射)

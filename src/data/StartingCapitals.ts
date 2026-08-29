@@ -1103,6 +1103,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gualani': 'city_yiguasu',
     'xiadunhe': 'city_saerkeer',
     'bulu': 'city_atuoke',
+    'xiaofulijiya': 'city_dasijiliweng',
 };
 
 // @ts-ignore

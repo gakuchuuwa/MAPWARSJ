@@ -154,6 +154,7 @@ export const REGION_CASTLE: Partial<Record<RegionType, string>> = {
     NORTHEAST: 'JURC_CASTLE_AGE3',   // 女真=东北
     KOREA: 'KORE_CASTLE_AGE3',
     STEPPE: 'MONG_CASTLE_AGE3',      // 草原：蒙古式
+    WESTERN: 'CEAS_CASTLE_AGE3',     // 西域：鞑靼/中亚（赫拉特城堡）
     WEST_ASIA: 'PERS_CASTLE_AGE3',   // 西亚：波斯式（比 ORIE 通用更贴）
     PERSIAN: 'PERS_CASTLE_AGE3',     // 波斯：巴姆古城（2026-08-30 主人定：波斯城堡=巴姆古城）
     INDIA: 'HIND_CASTLE_AGE3',       // 印度=印度斯坦（德里七大要塞）
