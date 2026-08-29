@@ -131,8 +131,8 @@ interface WarType {
 
 /** 🔴 [2026-08-23 主人改] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
 const WALL_AUTO_COLLAPSE_SEC = 30;
-/** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
-const GATE_COLLAPSE_DUR = 1.4;
+/** 🔴 [2026-08-29] 建筑/塔/城门「残骸」倒塌动画总时长（秒）：DESTR 帧铺满，播完切 rubble。 */
+const COLLAPSE_ANIM_DUR = 1.4;
 
 /** 🔴 [2026-08-23 主人定] 攻城武器配兵表（按守方据点类型；数量：小城 4 个 / 中城·险要·大城 6 个）：
  *  优先冲车 ×4；中城及以上另有投石车 + 弩炮各 1（"有啥上啥"——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）。
@@ -336,11 +336,9 @@ interface ArrowTower {
     range: number;
     /** 开火间隔（秒），按塔档 */
     reload: number;
-    /** 倒塌动画素材目录名（BUILDINGANIM:..._DESTR）；无该素材则直接销毁 */
-    collapseAsset: string | null;
-    /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE）；无则播完即销毁 */
+    /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE） */
     rubbleAsset: string | null;
-    /** 🔴 已随墙倒塌（collapseFrontWalls 置位）：塌后不再开火，残骸贴图仍保留 */
+    /** 🔴 30 秒随机切成破损/残骸后置位：不再开火 */
     down: boolean;
 }
 
@@ -2850,8 +2848,6 @@ export class Scene13WarLayer {
     private arrowTowers: ArrowTower[] = [];
     /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；30 秒随机三形态 */
     private cityBuildings: Array<{ sprite: DecorSprite; name: string }> = [];
-    /** 城门残骸兜底（`{gBase}_NE_RUBBLE`，石/垛/木三材质都有）：塔/建筑塌后无专用残骸时用 */
-    private gateRubble: string | null = null;
     private natureCache: Record<string, NatureAsset> = {};
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
@@ -4032,11 +4028,10 @@ export class Scene13WarLayer {
                     extraSprites.push(extra);
                 }
                 // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
-                const collapseAsset = `${asset}_DESTR`;
                 const rubbleAsset = `${asset}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + collapseAsset);
+                this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
                 this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, collapseAsset, rubbleAsset });
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -4109,16 +4104,10 @@ export class Scene13WarLayer {
                 this.defenderCityType === 'small_city' ? `${style}_TOWER_AGE2`
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
                 : `${style}_TOWER_AGE4`;
-            const towerCollapse = 'BUILDINGANIM:' + arrowTowerAsset + '_DESTR';
-            // 🔴 [2026-08-29 主人：塔塌后要箭塔自己的残骸] 首选箭塔专用残骸 `{towerAsset}_RUBBLE`；
-            //    该素材 DE 尚未提取时退回城门残骸 `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）兜底，绝不消失。
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
-            const gateRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
-            this.gateRubble = gateRubble;   // 城门残骸兜底（供 30 秒塔/建筑破损/残骸无专用素材时用）
-            this.ensureNatureAsset(towerCollapse);
             this.ensureNatureAsset(towerRubble);
-            this.ensureNatureAsset(gateRubble);
             this.ensureNatureAsset('BUILDING:' + arrowTowerAsset + '_DAMAGED');   // 30 秒「破损」形态
+            this.ensureNatureAsset('BUILDINGANIM:' + arrowTowerAsset + '_DESTR'); // 30 秒「残骸」倒塌动画
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
             this.ensureProj('PROJ_ARROW');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
@@ -4136,7 +4125,7 @@ export class Scene13WarLayer {
                     sprite, x: towerX, y: ty,
                     cd: Math.random() * 1.5,
                     range: towerProfile.range, reload: towerProfile.reload,
-                    collapseAsset: towerCollapse, rubbleAsset: towerRubble,
+                    rubbleAsset: towerRubble,
                     down: false,
                 });
             }
@@ -5342,10 +5331,34 @@ export class Scene13WarLayer {
         return r < 1 / 3 ? 0 : r < 2 / 3 ? 1 : 2;
     }
 
+    /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
+    private collapsibleSprites(): DecorSprite[] {
+        const out: DecorSprite[] = [];
+        for (const b of this.wallGates) out.push(b.sprite);
+        for (const t of this.arrowTowers) out.push(t.sprite);
+        for (const b of this.cityBuildings) out.push(b.sprite);
+        return out;
+    }
+
+    /** 让装饰精灵播倒塌动画 → 切残骸：有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 直接切 rubble。 */
+    private collapseToRubble(sprite: DecorSprite, name: string): void {
+        const destr = 'BUILDINGANIM:' + name + '_DESTR';
+        const rubble = 'BUILDINGANIM:' + name + '_RUBBLE';
+        if (this.natureCache[destr]?.img?.complete) {
+            sprite.asset = destr;
+            sprite.frame = 0;
+            sprite.collapse = { t: 0, dur: COLLAPSE_ANIM_DUR, rubbleAsset: rubble };
+        } else if (this.natureCache[rubble]?.img?.complete) {
+            sprite.asset = rubble;
+            sprite.frame = 0;
+        }
+    }
+
     /**
      * 🔴 [2026-08-29 主人定] 30 秒随机三形态（纯视觉，全为贴图、不碰撞）：
-     *    城墙：完整 / 破损(D50) / 残骸(D75)；城门：完整 / 残骸(RUBBLE，无独立破损档退回残骸)；
-     *    箭塔：完整(继续射箭) / 破损(DAMAGED，停火) / 残骸(RUBBLE，停火)；建筑：完整 / 破损(DAMAGED) / 残骸(RUBBLE)。
+     *    城墙：完整 / 破损(D50) / 残骸(D75)；城门：完整 / 残骸(DESTR→RUBBLE)；
+     *    箭塔：破损(DAMAGED) / 残骸(DESTR→RUBBLE)（无完整形态，各 1/2，均停火）；
+     *    建筑：完整 / 破损(DAMAGED) / 残骸(DESTR→RUBBLE)。
      */
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
@@ -5356,27 +5369,24 @@ export class Scene13WarLayer {
                 if (asset) {
                     b.sprite.asset = 'BUILDINGANIM:' + asset;
                     b.sprite.frame = 0;
-                    b.sprite.collapse = undefined;
                     if (form === 2) b.hp = 0;
                 }
-            } else if (b.rubbleAsset) {
-                b.sprite.asset = 'BUILDINGANIM:' + b.rubbleAsset;
-                b.sprite.frame = 0;
-                b.sprite.collapse = undefined;
-                if (form === 2) b.hp = 0;
+            } else if (form === 2 && b.rubbleAsset) {
+                // 城门：无独立破损档，破损档保持本体；残骸播 DESTR → RUBBLE
+                this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
+                b.hp = 0;
             }
         }
         for (const t of this.arrowTowers) {
-            const form = this.randomCollapseForm();
-            if (form === 0) continue;   // 完整：继续射箭
+            // 🔴 [2026-08-29 主人定] 箭塔无「完整」形态：随机 破损(1/2) / 残骸(1/2)
+            const form: 1 | 2 = Math.random() < 0.5 ? 1 : 2;
             t.down = true;              // 破损/残骸：停火
             const towerName = t.sprite.asset.slice('BUILDING:'.length);
             if (form === 1) {
                 const damaged = 'BUILDING:' + towerName + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
-            } else if (t.rubbleAsset && this.natureCache[t.rubbleAsset]?.img?.complete) {
-                t.sprite.asset = t.rubbleAsset;
-                t.sprite.frame = 0;
+            } else {
+                this.collapseToRubble(t.sprite, towerName);
             }
         }
         for (const b of this.cityBuildings) {
@@ -5386,8 +5396,7 @@ export class Scene13WarLayer {
                 const damaged = 'BUILDING:' + b.name + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { b.sprite.asset = damaged; b.sprite.frame = 0; }
             } else {
-                const rubble = 'BUILDINGANIM:' + b.name + '_RUBBLE';
-                if (this.natureCache[rubble]?.img?.complete) { b.sprite.asset = rubble; b.sprite.frame = 0; }
+                this.collapseToRubble(b.sprite, b.name);
             }
         }
     }
@@ -5396,15 +5405,16 @@ export class Scene13WarLayer {
     private trackCityBuilding(sp: DecorSprite): void {
         const name = sp.asset.slice('BUILDING:'.length);
         this.cityBuildings.push({ sprite: sp, name });
-        // 🔴 开战前预载破损/残骸素材（否则 30 秒切形态时 pending>0 整场冻结）
+        // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
         this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
         this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_DESTR');
     }
 
     /**
      * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
      *    找射程内最近的攻方士兵（f=0），冷却到点射一支箭（复用 WarArrow 纯视觉弹丸，不改平衡）+
-     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔在 45 秒被随机塌掉一半后才停止射击。
+     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔在 30 秒被随机切成破损/残骸后才停止射击。
      */
     private stepArrowTowers(dt: number): void {
         if (this.battleType !== 'siege' || this.arrowTowers.length === 0) return;
@@ -5456,43 +5466,6 @@ export class Scene13WarLayer {
                 }
             }
             t.cd = foe ? t.reload : 0.25;   // 无攻方 → 快速重扫（0.25s 后再看），敌一进射程立刻反应
-        }
-    }
-
-    /**
-     * 🔴 [2026-08-22 主人定] 单段城墙/城门破墙演出：立即解除阻挡（士兵能进城），
-     *    再按类型播倒塌视觉——
-     *    · 城门（collapseAsset）：播 50 帧倒塌动画 → 切 rubble 残骸常驻；
-     *    · 石墙/垛墙（destrAssets）：切 D75 残垣常驻（不再阻挡）；
-     *    · 木栅栏（两者皆无）：直接消失。
-     *    dust=true 时喷破墙尘土（只给被士兵直接打破的那段，联动倒塌不喷，防尘土海）。
-     */
-    private breachWall(b: WarBuilding, dust: boolean): void {
-        // ① 立即解除阻挡 + 击破关联屏障（士兵马上能进城，不等动画）
-        b.sprite.obstruction = undefined;
-        b.sprite.obstructionDisabled = true;
-        if (b.extraSprites) {
-            for (const sp of b.extraSprites) {
-                sp.destroyed = true;
-                sp.obstruction = undefined;
-                sp.obstructionDisabled = true;
-            }
-        }
-        // ② 破墙尘土（可选）
-        if (dust) this.spawnFx('FX_WALL_DUST', b.x, b.y, (Math.random() * 8) | 0);
-        // ③ 按类型播倒塌视觉
-        if (b.collapseAsset) {
-            // 城门：切 50 帧倒塌动画，播完由 step 里 collapse.t 推进 → 切 rubble 残骸
-            b.sprite.asset = 'BUILDINGANIM:' + b.collapseAsset;
-            b.sprite.frame = 0;
-            b.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: b.rubbleAsset ? 'BUILDINGANIM:' + b.rubbleAsset : null };
-        } else if (b.destrAssets && b.destrAssets.length) {
-            // 石墙/垛墙：切 D75 残垣常驻（单帧静态，不再阻挡）
-            b.sprite.asset = 'BUILDINGANIM:' + b.destrAssets[2];
-            b.sprite.frame = 0;
-        } else {
-            // 木栅栏（无破损档/无倒塌动画）：直接消失
-            b.sprite.destroyed = true;
         }
     }
 
@@ -6385,49 +6358,19 @@ export class Scene13WarLayer {
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         this.stepEffects(dt);
-        // 城门倒塌动画推进：collapse.t 累加，播完把 sprite 切到 rubble 残骸常驻、清掉 collapse 状态。
-        for (const b of this.wallGates) {
-            const c = b.sprite.collapse;
+        // 🔴 [2026-08-29] 倒塌动画推进：collapse.t 累加，播完切 rubble 残骸常驻、清掉 collapse 状态
+        for (const s of this.collapsibleSprites()) {
+            const c = s.collapse;
             if (!c) continue;
             c.t += dt;
             if (c.t >= c.dur) {
                 if (c.rubbleAsset) {
-                    b.sprite.asset = c.rubbleAsset;   // 残骸常驻
-                    b.sprite.frame = 0;
+                    s.asset = c.rubbleAsset;
+                    s.frame = 0;
                 } else {
-                    b.sprite.destroyed = true;         // 无残骸兜底（当前城门均配 rubble，此分支为防御）
+                    s.destroyed = true;
                 }
-                b.sprite.collapse = undefined;
-            }
-        }
-        // 🔴 [2026-08-29 主人需求] 箭塔倒塌动画推进（同城门：DESTR 播完 → 切 rubble 残骸，无 rubble 则销毁）
-        for (const t of this.arrowTowers) {
-            const c = t.sprite.collapse;
-            if (!c) continue;
-            c.t += dt;
-            if (c.t >= c.dur) {
-                if (c.rubbleAsset) {
-                    t.sprite.asset = c.rubbleAsset;
-                    t.sprite.frame = 0;
-                } else {
-                    t.sprite.destroyed = true;
-                }
-                t.sprite.collapse = undefined;
-            }
-        }
-        // 🔴 [2026-08-29 主人需求] 守城建筑倒塌动画推进（45 秒随机塌一半；同箭塔：DESTR → rubble）
-        for (const b of this.cityBuildings) {
-            const c = b.sprite.collapse;
-            if (!c) continue;
-            c.t += dt;
-            if (c.t >= c.dur) {
-                if (c.rubbleAsset) {
-                    b.sprite.asset = c.rubbleAsset;
-                    b.sprite.frame = 0;
-                } else {
-                    b.sprite.destroyed = true;
-                }
-                b.sprite.collapse = undefined;
+                s.collapse = undefined;
             }
         }
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来
