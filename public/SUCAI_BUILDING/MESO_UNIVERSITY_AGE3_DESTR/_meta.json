@@ -1,0 +1,9 @@
+{
+  "name": "MESO_UNIVERSITY_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 520,
+  "box_h": 340,
+  "anchor_x": 276,
+  "anchor_y": 208,
+  "sld_source": "b_meso_university_age3_destruction"
+}

@@ -131,6 +131,8 @@ interface WarType {
 
 /** 🔴 [2026-08-23 主人改] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
 const WALL_AUTO_COLLAPSE_SEC = 30;
+/** 🔴 [2026-08-29 主人定] 攻城战开战多少秒后，4 箭塔 + 9 建筑随机坍塌一半（纯视觉演出） */
+const CITY_AUTO_COLLAPSE_SEC = 45;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
@@ -218,7 +220,39 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     GREEK:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     THRACIAN:     { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     PERSIAN:      { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
-    CUMAN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    CUMAN:        { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },    BRITONS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    GOTHS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    HUNS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true },
+    TEUTONS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    VIKINGS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    CELTS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    ITALIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
+    SICILIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    BULGARIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    MAGYAR: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    LITHUANIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
+    POLES: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    BOHEMIANS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    BURGUNDIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
+    SPANISH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    PORTUGUESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
+    ETHIOPIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    BENGALIS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true, armored_elephant: true },
+    GURJARAS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, armored_elephant: true },
+    PORUS: { scorpion: true, heavy_scorpion: true, mangonel: true, armored_elephant: true },
+    VIETNAMESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    KHMER: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    MAYANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    MAPUCHE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    MUISCA: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    TUPI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    ARMENIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    GEORGIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    ATHENIANS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    SPARTANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    MACEDONIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    ACHAEMENIDS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+
 };
 
 /**
@@ -295,8 +329,7 @@ interface WarBuilding {
 
 /**
  * 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔：可射箭（复用 WarArrow 纯视觉弹丸 + 开火火花），
- * 30 秒随城墙一起倒塌（collapseFrontWalls 联动：有 `_DESTR` 动画素材→播动画→rubble；无→尘土 + 销毁）。
- * 与 wallGates 分开维护：不受「随机塌一半墙」影响，四塔统一同时塌。
+ * 45 秒随建筑一起随机塌一半（collapseCityAt45s：有 `_DESTR` 动画素材→播动画→rubble；无→尘土 + 销毁）。
  */
 interface ArrowTower {
     /** 城墙内侧的塔贴图（BUILDING: 单帧，撞色兵；world 层、不阻挡） */
@@ -313,8 +346,6 @@ interface ArrowTower {
     collapseAsset: string | null;
     /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE）；无则播完即销毁 */
     rubbleAsset: string | null;
-    /** 🔴 箭塔专用残骸未提取时的兜底残骸（城门残骸）；塔专用残骸就绪后自动弃用 */
-    fallbackRubbleAsset: string | null;
     /** 🔴 已随墙倒塌（collapseFrontWalls 置位）：塌后不再开火，残骸贴图仍保留 */
     down: boolean;
 }
@@ -1176,6 +1207,39 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     THRACIAN: 'SLAV', // [2026-08-27] THRACIAN→SLAV（thracian 战役前缀无 AGE3 池会 404，与战略一致）
     PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
+    BRITONS: 'WEST',  // 不列颠[2026-08-28]
+    GOTHS: 'EAST',  // 哥特[2026-08-28]
+    HUNS: 'CEAS',  // 匈人[2026-08-28]
+    TEUTONS: 'EAST',  // 条顿[2026-08-28]
+    VIKINGS: 'EAST',  // 维京[2026-08-28]
+    CELTS: 'WEST',  // 凯尔特[2026-08-28]
+    ITALIANS: 'MEDI',  // 意大利[2026-08-28]
+    SICILIANS: 'MEDI',  // 西西里[2026-08-28]
+    BULGARIANS: 'SLAV',  // 保加利亚[2026-08-28]
+    MAGYAR: 'CEAS',  // 马扎尔[2026-08-28]
+    LITHUANIANS: 'SLAV',  // 立陶宛[2026-08-28]
+    POLES: 'SLAV',  // 波兰[2026-08-28]
+    BOHEMIANS: 'SLAV',  // 波希米亚[2026-08-28]
+    BURGUNDIANS: 'MEDI',  // 勃艮第[2026-08-28]
+    SPANISH: 'MEDI',  // 西班牙[2026-08-28]
+    PORTUGUESE: 'MEDI',  // 葡萄牙[2026-08-28]
+    ETHIOPIANS: 'AFRI',  // 埃塞俄比亚[2026-08-28]
+    BENGALIS: 'INDI',  // 孟加拉[2026-08-28]
+    GURJARAS: 'INDI',  // 瞿折罗[2026-08-28]
+    PORUS: 'PURU',  // 补噜[2026-08-28]
+    VIETNAMESE: 'SEAS',  // 越南[2026-08-28]
+    KHMER: 'SEAS',  // 高棉[2026-08-28]
+    MAYANS: 'MESO',  // 玛雅[2026-08-28]
+    MAPUCHE: 'ANDE',  // 马普切[2026-08-28]
+    MUISCA: 'ANDE',  // 穆伊斯卡[2026-08-28]
+    TUPI: 'ANDE',  // 图皮[2026-08-28]
+    ARMENIANS: 'ORIE',  // 亚美尼亚[2026-08-28]
+    GEORGIANS: 'ORIE',  // 格鲁吉亚[2026-08-28]
+    ATHENIANS: 'MEDI',  // 雅典[2026-08-28]
+    SPARTANS: 'MEDI',  // 斯巴达[2026-08-28]
+    MACEDONIANS: 'MEDI',  // 马其顿[2026-08-28]
+    ACHAEMENIDS: 'PERSIAN',  // 阿契美尼德[2026-08-28]
+
 };
 
 
@@ -1619,7 +1683,7 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //      攻城塔 16 格/秒 = 640px/s → 塔上弩机(240px) 0.375s，仍比弩矢快 1/6，与 DE 同序
     PROJ_BOLT: 14 * 40,
     PROJ_HELEPOLIS: 16 * 40,
-    PROJ_WAR_WAGON: 6 * 40,
+    PROJ_WAR_WAGON: 14 * 40,
     PROJ_SHOT: 7.5 * 40,
     // 火枪弹必须近乎瞬达：旧值 300px/s，满射程 280px 要飞约 0.93s，视觉像弹丸飘行。
     // 提至 1200px/s 后满射程约 0.23s，与上方 PROJ_DUR 的 0.22s 演出尺度一致。
@@ -2788,8 +2852,14 @@ export class Scene13WarLayer {
     private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
-    /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 随墙一同倒塌） */
+    /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 45 秒随机塌一半） */
     private arrowTowers: ArrowTower[] = [];
+    /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；45 秒随机塌一半 */
+    private cityBuildings: Array<{ sprite: DecorSprite; name: string }> = [];
+    /** 🔴 [2026-08-29 主人定] 45 秒「箭塔 + 建筑」随机塌一半是否已触发（只触发一次） */
+    private cityAutoCollapsed = false;
+    /** 城门残骸兜底（`{gBase}_NE_RUBBLE`，石/垛/木三材质都有）：塔/建筑塌后无专用残骸时用 */
+    private gateRubble: string | null = null;
     private natureCache: Record<string, NatureAsset> = {};
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
@@ -3106,6 +3176,8 @@ export class Scene13WarLayer {
         this.defenderHolding = this.battleType === 'siege';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
+        // 45 秒「箭塔 + 建筑」随机塌一半标志归位（每场重新计，见 CITY_AUTO_COLLAPSE_SEC）
+        this.cityAutoCollapsed = false;
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
         //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
         this.wallsCollapsed = false;
@@ -3587,6 +3659,7 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
+        this.cityBuildings = [];
         this.decorPatches = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -3726,6 +3799,7 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
+        this.cityBuildings = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
         this.applyDefenderCityRoad();
@@ -4040,7 +4114,7 @@ export class Scene13WarLayer {
 
             // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
-            //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随墙一同倒塌（collapseFrontWalls 联动）。
+            //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；45 秒随机塌一半（collapseCityAt45s）。
             const arrowTowerAsset =
                 this.defenderCityType === 'small_city' ? `${style}_TOWER_AGE2`
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
@@ -4050,6 +4124,7 @@ export class Scene13WarLayer {
             //    该素材 DE 尚未提取时退回城门残骸 `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）兜底，绝不消失。
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
             const gateRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
+            this.gateRubble = gateRubble;   // 城门残骸兜底（供 45 秒塔/建筑倒塌无专用残骸时用）
             this.ensureNatureAsset(towerCollapse);
             this.ensureNatureAsset(towerRubble);
             this.ensureNatureAsset(gateRubble);
@@ -4070,7 +4145,7 @@ export class Scene13WarLayer {
                     sprite, x: towerX, y: ty,
                     cd: Math.random() * 1.5,
                     range: towerProfile.range, reload: towerProfile.reload,
-                    collapseAsset: towerCollapse, rubbleAsset: towerRubble, fallbackRubbleAsset: gateRubble,
+                    collapseAsset: towerCollapse, rubbleAsset: towerRubble,
                     down: false,
                 });
             }
@@ -4084,7 +4159,11 @@ export class Scene13WarLayer {
             if (this.defenderCityType === 'small_city') {
                 const shuffledSmall = [...buildingSide].sort(() => Math.random() - 0.5);
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
-                for (let i = 0; i < shuffledSmall.length; i++) this.decorSprites.push(place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
+                for (let i = 0; i < shuffledSmall.length; i++) {
+                    const sp = place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) });
+                    this.decorSprites.push(sp);
+                    this.trackCityBuilding(sp);
+                }
                 return;
             }
             // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；落点随机（2026-08-29 主人定「除箭塔外其余在 9 出兵口随机摆放」）。
@@ -4092,7 +4171,9 @@ export class Scene13WarLayer {
                 const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
                 const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSide.length; i++) {
-                    this.decorSprites.push(place(shuffledSide[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: siegeBuildingScale(shuffledBuildings[i]) }));
+                    const sp = place(shuffledSide[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: siegeBuildingScale(shuffledBuildings[i]) });
+                    this.decorSprites.push(sp);
+                    this.trackCityBuilding(sp);
                 }
                 return;
             }
@@ -4109,9 +4190,13 @@ export class Scene13WarLayer {
                     `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
                 ].sort(() => Math.random() - 0.5);
                 const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
-                this.decorSprites.push(place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE }));
+                const castleSp = place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE });
+                this.decorSprites.push(castleSp);
+                this.trackCityBuilding(castleSp);
                 for (let i = 0; i < 8; i++) {
-                    this.decorSprites.push(place(shuffledPassSpawns[i + 1], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
+                    const sp = place(shuffledPassSpawns[i + 1], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE });
+                    this.decorSprites.push(sp);
+                    this.trackCityBuilding(sp);
                 }
                 return;
             }
@@ -4123,7 +4208,9 @@ export class Scene13WarLayer {
                 .filter(({ s }) => s.x >= backX - 1e-9)
                 .sort((a, b) => a.s.y - b.s.y);
             const centerIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            this.decorSprites.push(place(buildingSide[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE }));
+            const tcSp = place(buildingSide[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE });
+            this.decorSprites.push(tcSp);
+            this.trackCityBuilding(tcSp);
             const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
             const ringBuildings: Array<[string, string]> = [
                 ['MARKET', 'AGE4'],
@@ -4133,7 +4220,9 @@ export class Scene13WarLayer {
             const ringSpawns = buildingSide.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
             for (let i = 0; i < ringSpawns.length; i++) {
                 const [building, age] = ringBuildings[i];
-                this.decorSprites.push(place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) }));
+                const sp = place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) });
+                this.decorSprites.push(sp);
+                this.trackCityBuilding(sp);
             }
             return;
         }
@@ -5263,30 +5352,54 @@ export class Scene13WarLayer {
             this.contactSfxPlayed = true;
             audioManager.startSceneLoop('land_contact');
         }
-        // 🔴 [2026-08-29 主人需求] 30 秒城墙倒塌 → 四座箭塔**一起**倒塌：尘土特效 + 倒塌动画。
-        //    有 `${towerAsset}_DESTR` 多帧动画素材 → 播同城门 DESTR 动画 → 切 rubble 残骸；
-        //    无（当前塔素材均为单帧，未提取塔破坏动画）→ 尘土 + 短暂保留后切残骸常驻（见 step 里 collapse.t 推进）。
-        //    残骸优先用箭塔自己的 `_RUBBLE`，未提取时才退回城门残骸兜底，绝不消失。
-        for (const t of this.arrowTowers) {
+    }
+
+    /** 记录一座守城建筑（供 45 秒随机塌一半用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
+    private trackCityBuilding(sp: DecorSprite): void {
+        const name = sp.asset.slice('BUILDING:'.length);
+        this.cityBuildings.push({ sprite: sp, name });
+        // 🔴 开战前预载倒塌/残骸素材（否则 45 秒塌时 pending>0 整场冻结，见 ensureNatureAsset 懒加载血训）
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_DESTR');
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
+    }
+
+    /** 单个装饰精灵开始倒塌：有 DESTR 动画就播 → 切 rubble；否则尘土 + 短暂保留后切 rubble（兜底城门残骸）。 */
+    private collapseDecorSprite(sprite: DecorSprite, collapseAsset: string | null, rubbleAsset: string | null): void {
+        this.spawnFx('FX_WALL_DUST', sprite.x, sprite.y, (Math.random() * 8) | 0);
+        const rubble = (rubbleAsset && this.natureCache[rubbleAsset]?.img?.complete) ? rubbleAsset : this.gateRubble;
+        if (collapseAsset && this.natureCache[collapseAsset]?.img?.complete) {
+            sprite.asset = collapseAsset;
+            sprite.frame = 0;
+            sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: rubble };
+        } else {
+            sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: rubble };
+        }
+    }
+
+    /**
+     * 🔴 [2026-08-29 主人定] 45 秒：4 箭塔 + 9 建筑**随机塌一半**（纯视觉演出，只触发一次）。
+     *    箭塔塌掉一半（不再开火、播 DESTR → rubble）；建筑塌掉一半（播 DESTR → rubble）。
+     */
+    private collapseCityAt45s(): void {
+        if (this.cityAutoCollapsed) return;
+        this.cityAutoCollapsed = true;
+        // 箭塔随机塌一半
+        const towerHalf = Math.max(1, Math.round(this.arrowTowers.length / 2));
+        for (const t of [...this.arrowTowers].sort(() => Math.random() - 0.5).slice(0, towerHalf)) {
             t.down = true;   // 塌后不再开火（残骸贴图保留）
-            this.spawnFx('FX_WALL_DUST', t.x, t.y, (Math.random() * 8) | 0);
-            const rubble = (t.rubbleAsset && this.natureCache[t.rubbleAsset]?.img?.complete)
-                ? t.rubbleAsset : t.fallbackRubbleAsset;
-            if (t.collapseAsset && this.natureCache[t.collapseAsset]?.img?.complete) {
-                t.sprite.asset = t.collapseAsset;
-                t.sprite.frame = 0;
-                t.sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: rubble };
-            } else {
-                // 无 DESTR 动画素材：用当前贴图播 collapse 计时（单帧 → 保持可见），播完由 step 切到残骸常驻
-                t.sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: rubble };
-            }
+            this.collapseDecorSprite(t.sprite, t.collapseAsset, t.rubbleAsset);
+        }
+        // 建筑随机塌一半
+        const bldHalf = Math.max(1, Math.round(this.cityBuildings.length / 2));
+        for (const b of [...this.cityBuildings].sort(() => Math.random() - 0.5).slice(0, bldHalf)) {
+            this.collapseDecorSprite(b.sprite, 'BUILDINGANIM:' + b.name + '_DESTR', 'BUILDINGANIM:' + b.name + '_RUBBLE');
         }
     }
 
     /**
      * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
      *    找射程内最近的攻方士兵（f=0），冷却到点射一支箭（复用 WarArrow 纯视觉弹丸，不改平衡）+
-     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔随 30 秒墙塌（collapseFrontWalls）后才停止射击。
+     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔在 45 秒被随机塌掉一半后才停止射击。
      */
     private stepArrowTowers(dt: number): void {
         if (this.battleType !== 'siege' || this.arrowTowers.length === 0) return;
@@ -5633,6 +5746,10 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
+        }
+        // 🔴 [2026-08-29 主人定] 45 秒：4 箭塔 + 9 建筑随机塌一半（只触发一次）
+        if (this.battleType === 'siege' && !this.cityAutoCollapsed && this.battleSec >= CITY_AUTO_COLLAPSE_SEC) {
+            this.collapseCityAt45s();
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
         this.stepArrowTowers(dt);
@@ -6295,6 +6412,21 @@ export class Scene13WarLayer {
                     t.sprite.destroyed = true;
                 }
                 t.sprite.collapse = undefined;
+            }
+        }
+        // 🔴 [2026-08-29 主人需求] 守城建筑倒塌动画推进（45 秒随机塌一半；同箭塔：DESTR → rubble）
+        for (const b of this.cityBuildings) {
+            const c = b.sprite.collapse;
+            if (!c) continue;
+            c.t += dt;
+            if (c.t >= c.dur) {
+                if (c.rubbleAsset) {
+                    b.sprite.asset = c.rubbleAsset;
+                    b.sprite.frame = 0;
+                } else {
+                    b.sprite.destroyed = true;
+                }
+                b.sprite.collapse = undefined;
             }
         }
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来

@@ -1,0 +1,9 @@
+{
+  "name": "WEST_BLACKSMITH_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 368,
+  "box_h": 208,
+  "anchor_x": 184,
+  "anchor_y": 156,
+  "sld_source": "b_west_blacksmith_age3_destruction"
+}

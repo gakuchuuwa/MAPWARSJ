@@ -1,0 +1,9 @@
+{
+  "name": "INDI_BLACKSMITH_AGE2_DESTR",
+  "frames": 101,
+  "box_w": 356,
+  "box_h": 204,
+  "anchor_x": 164,
+  "anchor_y": 148,
+  "sld_source": "b_indi_blacksmith_age2_destruction"
+}

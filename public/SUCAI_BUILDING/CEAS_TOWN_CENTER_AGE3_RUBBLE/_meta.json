@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_TOWN_CENTER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 388,
+  "box_h": 168,
+  "anchor_x": 188,
+  "anchor_y": 104,
+  "sld_source": "b_ceas_town_center_age3_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_HOUSE_AGE2_DESTR",
+  "frames": 300,
+  "box_w": 396,
+  "box_h": 332,
+  "anchor_x": 280,
+  "anchor_y": 276,
+  "sld_source": "b_ceas_house_age2_destruction"
+}

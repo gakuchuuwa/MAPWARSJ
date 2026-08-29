@@ -1,0 +1,9 @@
+{
+  "name": "INDI_TOWN_CENTER_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 456,
+  "box_h": 272,
+  "anchor_x": 232,
+  "anchor_y": 188,
+  "sld_source": "b_indi_town_center_age2_destruction"
+}

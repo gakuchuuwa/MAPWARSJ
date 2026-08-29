@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_STABLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 156,
+  "anchor_x": 176,
+  "anchor_y": 96,
+  "sld_source": "b_ceas_stable_age3_rubble"
+}

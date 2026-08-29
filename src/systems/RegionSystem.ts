@@ -50,7 +50,39 @@ export type RegionType =
     | 'GREEK'      // 希腊 (古希腊城邦/大希腊)[2026-08-27 撤销并入拉丁，恢复独立]
     | 'THRACIAN'   // 色雷斯 (保加利亚/色雷斯)[2026-08-27 拆拉丁/斯拉夫新增]
     | 'PERSIAN'    // 波斯 (伊朗高原/呼罗珊/阿富汗)[2026-08-27 拆中亚新增]
-    | 'CUMAN';     // 库曼 (伏尔加-乌拉尔草原突厥系)[2026-08-27 拆草原新增]
+    | 'CUMAN'  // 库曼[2026-08-27]
+    | 'BRITONS'  // 不列颠[2026-08-28 补 DE 文明]
+    | 'GOTHS'  // 哥特[2026-08-28 补 DE 文明]
+    | 'HUNS'  // 匈人[2026-08-28 补 DE 文明]
+    | 'TEUTONS'  // 条顿[2026-08-28 补 DE 文明]
+    | 'VIKINGS'  // 维京[2026-08-28 补 DE 文明]
+    | 'CELTS'  // 凯尔特[2026-08-28 补 DE 文明]
+    | 'ITALIANS'  // 意大利[2026-08-28 补 DE 文明]
+    | 'SICILIANS'  // 西西里[2026-08-28 补 DE 文明]
+    | 'BULGARIANS'  // 保加利亚[2026-08-28 补 DE 文明]
+    | 'MAGYAR'  // 马扎尔[2026-08-28 补 DE 文明]
+    | 'LITHUANIANS'  // 立陶宛[2026-08-28 补 DE 文明]
+    | 'POLES'  // 波兰[2026-08-28 补 DE 文明]
+    | 'BOHEMIANS'  // 波希米亚[2026-08-28 补 DE 文明]
+    | 'BURGUNDIANS'  // 勃艮第[2026-08-28 补 DE 文明]
+    | 'SPANISH'  // 西班牙[2026-08-28 补 DE 文明]
+    | 'PORTUGUESE'  // 葡萄牙[2026-08-28 补 DE 文明]
+    | 'ETHIOPIANS'  // 埃塞俄比亚[2026-08-28 补 DE 文明]
+    | 'BENGALIS'  // 孟加拉[2026-08-28 补 DE 文明]
+    | 'GURJARAS'  // 瞿折罗[2026-08-28 补 DE 文明]
+    | 'PORUS'  // 补噜[2026-08-28 补 DE 文明]
+    | 'VIETNAMESE'  // 越南[2026-08-28 补 DE 文明]
+    | 'KHMER'  // 高棉[2026-08-28 补 DE 文明]
+    | 'MAYANS'  // 玛雅[2026-08-28 补 DE 文明]
+    | 'MAPUCHE'  // 马普切[2026-08-28 补 DE 文明]
+    | 'MUISCA'  // 穆伊斯卡[2026-08-28 补 DE 文明]
+    | 'TUPI'  // 图皮[2026-08-28 补 DE 文明]
+    | 'ARMENIANS'  // 亚美尼亚[2026-08-28 补 DE 文明]
+    | 'GEORGIANS'  // 格鲁吉亚[2026-08-28 补 DE 文明]
+    | 'ATHENIANS'  // 雅典[2026-08-28 补 DE 文明]
+    | 'SPARTANS'  // 斯巴达[2026-08-28 补 DE 文明]
+    | 'MACEDONIANS'  // 马其顿[2026-08-28 补 DE 文明]
+    | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明];
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -61,7 +93,40 @@ export const REGION_ORDER: RegionType[] = [
     'HEXI', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
     'CENTRAL_ASIA', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
     'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ORIE',
-    'AMERICA', 'ANDE', 'AFRICA', 'MALAY'
+    'AMERICA', 'ANDE', 'AFRICA', 'MALAY',
+    'BRITONS',
+    'GOTHS',
+    'HUNS',
+    'TEUTONS',
+    'VIKINGS',
+    'CELTS',
+    'ITALIANS',
+    'SICILIANS',
+    'BULGARIANS',
+    'MAGYAR',
+    'LITHUANIANS',
+    'POLES',
+    'BOHEMIANS',
+    'BURGUNDIANS',
+    'SPANISH',
+    'PORTUGUESE',
+    'ETHIOPIANS',
+    'BENGALIS',
+    'GURJARAS',
+    'PORUS',
+    'VIETNAMESE',
+    'KHMER',
+    'MAYANS',
+    'MAPUCHE',
+    'MUISCA',
+    'TUPI',
+    'ARMENIANS',
+    'GEORGIANS',
+    'ATHENIANS',
+    'SPARTANS',
+    'MACEDONIANS',
+    'ACHAEMENIDS',
+
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -97,7 +162,39 @@ export const REGION_LABELS: Record<RegionType, string> = {
     GREEK: '希腊',
     THRACIAN: '色雷斯',
     PERSIAN: '波斯',
-    CUMAN: '库曼',
+    CUMAN: '库曼',    BRITONS: '不列颠',
+    GOTHS: '哥特',
+    HUNS: '匈人',
+    TEUTONS: '条顿',
+    VIKINGS: '维京',
+    CELTS: '凯尔特',
+    ITALIANS: '意大利',
+    SICILIANS: '西西里',
+    BULGARIANS: '保加利亚',
+    MAGYAR: '马扎尔',
+    LITHUANIANS: '立陶宛',
+    POLES: '波兰',
+    BOHEMIANS: '波希米亚',
+    BURGUNDIANS: '勃艮第',
+    SPANISH: '西班牙',
+    PORTUGUESE: '葡萄牙',
+    ETHIOPIANS: '埃塞俄比亚',
+    BENGALIS: '孟加拉',
+    GURJARAS: '瞿折罗',
+    PORUS: '补噜',
+    VIETNAMESE: '越南',
+    KHMER: '高棉',
+    MAYANS: '玛雅',
+    MAPUCHE: '马普切',
+    MUISCA: '穆伊斯卡',
+    TUPI: '图皮',
+    ARMENIANS: '亚美尼亚',
+    GEORGIANS: '格鲁吉亚',
+    ATHENIANS: '雅典',
+    SPARTANS: '斯巴达',
+    MACEDONIANS: '马其顿',
+    ACHAEMENIDS: '阿契美尼德',
+
 };
 
 /**
@@ -139,7 +236,39 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GREEK: '希腊',
     THRACIAN: '色雷斯',
     PERSIAN: '波斯',
-    CUMAN: '库曼',
+    CUMAN: '库曼',    BRITONS: '不列颠',
+    GOTHS: '哥特',
+    HUNS: '匈人',
+    TEUTONS: '条顿',
+    VIKINGS: '维京',
+    CELTS: '凯尔特',
+    ITALIANS: '意大利',
+    SICILIANS: '西西里',
+    BULGARIANS: '保加利亚',
+    MAGYAR: '马扎尔',
+    LITHUANIANS: '立陶宛',
+    POLES: '波兰',
+    BOHEMIANS: '波希米亚',
+    BURGUNDIANS: '勃艮第',
+    SPANISH: '西班牙',
+    PORTUGUESE: '葡萄牙',
+    ETHIOPIANS: '埃塞俄比亚',
+    BENGALIS: '孟加拉',
+    GURJARAS: '瞿折罗',
+    PORUS: '补噜',
+    VIETNAMESE: '越南',
+    KHMER: '高棉',
+    MAYANS: '玛雅',
+    MAPUCHE: '马普切',
+    MUISCA: '穆伊斯卡',
+    TUPI: '图皮',
+    ARMENIANS: '亚美尼亚',
+    GEORGIANS: '格鲁吉亚',
+    ATHENIANS: '雅典',
+    SPARTANS: '斯巴达',
+    MACEDONIANS: '马其顿',
+    ACHAEMENIDS: '阿契美尼德',
+
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -321,6 +450,39 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     THRACIAN: '#ad1457',  // 深品红（色雷斯巴尔干）[2026-08-27]
     PERSIAN: '#4527a0',  // 深紫（阿契美尼德波斯王紫）[2026-08-27]
     CUMAN: '#a1887f',  // 灰褐（库曼钦察草原）[2026-08-27]
+    BRITONS: '#37474f',  // 不列颠[2026-08-28]
+    GOTHS: '#546e7a',  // 哥特[2026-08-28]
+    HUNS: '#6d4c41',  // 匈人[2026-08-28]
+    TEUTONS: '#4e342e',  // 条顿[2026-08-28]
+    VIKINGS: '#006064',  // 维京[2026-08-28]
+    CELTS: '#2e7d32',  // 凯尔特[2026-08-28]
+    ITALIANS: '#1a237e',  // 意大利[2026-08-28]
+    SICILIANS: '#4527a0',  // 西西里[2026-08-28]
+    BULGARIANS: '#7b1fa2',  // 保加利亚[2026-08-28]
+    MAGYAR: '#bf360c',  // 马扎尔[2026-08-28]
+    LITHUANIANS: '#00695c',  // 立陶宛[2026-08-28]
+    POLES: '#8e24aa',  // 波兰[2026-08-28]
+    BOHEMIANS: '#283593',  // 波希米亚[2026-08-28]
+    BURGUNDIANS: '#c2185b',  // 勃艮第[2026-08-28]
+    SPANISH: '#f9a825',  // 西班牙[2026-08-28]
+    PORTUGUESE: '#00838f',  // 葡萄牙[2026-08-28]
+    ETHIOPIANS: '#9e9d24',  // 埃塞俄比亚[2026-08-28]
+    BENGALIS: '#d84315',  // 孟加拉[2026-08-28]
+    GURJARAS: '#ff8f00',  // 瞿折罗[2026-08-28]
+    PORUS: '#c62828',  // 补噜[2026-08-28]
+    VIETNAMESE: '#2e7d32',  // 越南[2026-08-28]
+    KHMER: '#00695c',  // 高棉[2026-08-28]
+    MAYANS: '#6d4c41',  // 玛雅[2026-08-28]
+    MAPUCHE: '#ad1457',  // 马普切[2026-08-28]
+    MUISCA: '#1e88e5',  // 穆伊斯卡[2026-08-28]
+    TUPI: '#00897b',  // 图皮[2026-08-28]
+    ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
+    GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]
+    ATHENIANS: '#1565c0',  // 雅典[2026-08-28]
+    SPARTANS: '#5d4037',  // 斯巴达[2026-08-28]
+    MACEDONIANS: '#455a64',  // 马其顿[2026-08-28]
+    ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
+
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -580,6 +742,198 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/nomadic_big.png'),
         pass: resolvePath('/cities/nomadic_pass.png')
     },
+    BRITONS: { // 继承 GERMANIC 城市素材 // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    GOTHS: { // 继承 GERMANIC 城市素材 // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    HUNS: { // 继承 STEPPE 城市素材 // ✅ 继承原 NOMADIC 全部 PNG (nomadic_*.png)，吞掉原 SIBERIA
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
+    TEUTONS: { // 继承 GERMANIC 城市素材 // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    VIKINGS: { // 继承 SLAVIC 城市素材 // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    CELTS: { // 继承 GERMANIC 城市素材 // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    ITALIANS: { // 继承 LATIN 城市素材 // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    SICILIANS: { // 继承 LATIN 城市素材 // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    BULGARIANS: { // 继承 SLAVIC 城市素材 // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    MAGYAR: { // 继承 STEPPE 城市素材 // ✅ 继承原 NOMADIC 全部 PNG (nomadic_*.png)，吞掉原 SIBERIA
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
+    LITHUANIANS: { // 继承 SLAVIC 城市素材 // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    POLES: { // 继承 SLAVIC 城市素材 // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    BOHEMIANS: { // 继承 SLAVIC 城市素材 // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    BURGUNDIANS: { // 继承 LATIN 城市素材 // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    SPANISH: { // 继承 LATIN 城市素材 // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    PORTUGUESE: { // 继承 LATIN 城市素材 // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    ETHIOPIANS: { // 继承 AFRICA 城市素材 // ⚠️ [2026-08-24 新增] 暂借拉丁图标（非洲，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    BENGALIS: { // 继承 INDIA 城市素材 // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    GURJARAS: { // 继承 INDIA 城市素材 // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    PORUS: { // 继承 PURU 城市素材 // ⚠️ [2026-08-27 新增] 暂借印度图标（南印度，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    VIETNAMESE: { // 继承 DIANQIAN 城市素材 // ✅ 已有
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    KHMER: { // 继承 DIANQIAN 城市素材 // ✅ 已有
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    MAYANS: { // 继承 AMERICA 城市素材 // ⚠️ [2026-08-24 新增] 暂借拉丁图标（美洲石造建筑，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    MAPUCHE: { // 继承 ANDE 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（安第斯石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    MUISCA: { // 继承 ANDE 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（安第斯石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    TUPI: { // 继承 ANDE 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（安第斯石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    ARMENIANS: { // 继承 CENTRAL_ASIA 城市素材
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    GEORGIANS: { // 继承 CENTRAL_ASIA 城市素材
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    ATHENIANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    SPARTANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    MACEDONIANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    ACHAEMENIDS: { // 继承 PERSIAN 城市素材 // ⚠️ [2026-08-27 新增] 暂借西亚图标（波斯中东，待专属素材）
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -692,6 +1046,39 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
     PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
+    BRITONS: [],  // 不列颠（无中心据点，2026-08-28 主人定）
+    GOTHS: [],  // 哥特（无中心据点，2026-08-28 主人定）
+    HUNS: [],  // 匈人（无中心据点，2026-08-28 主人定）
+    TEUTONS: [],  // 条顿（无中心据点，2026-08-28 主人定）
+    VIKINGS: [],  // 维京（无中心据点，2026-08-28 主人定）
+    CELTS: [],  // 凯尔特（无中心据点，2026-08-28 主人定）
+    ITALIANS: [],  // 意大利（无中心据点，2026-08-28 主人定）
+    SICILIANS: [],  // 西西里（无中心据点，2026-08-28 主人定）
+    BULGARIANS: [],  // 保加利亚（无中心据点，2026-08-28 主人定）
+    MAGYAR: [],  // 马扎尔（无中心据点，2026-08-28 主人定）
+    LITHUANIANS: [],  // 立陶宛（无中心据点，2026-08-28 主人定）
+    POLES: [],  // 波兰（无中心据点，2026-08-28 主人定）
+    BOHEMIANS: [],  // 波希米亚（无中心据点，2026-08-28 主人定）
+    BURGUNDIANS: [],  // 勃艮第（无中心据点，2026-08-28 主人定）
+    SPANISH: [],  // 西班牙（无中心据点，2026-08-28 主人定）
+    PORTUGUESE: [],  // 葡萄牙（无中心据点，2026-08-28 主人定）
+    ETHIOPIANS: [],  // 埃塞俄比亚（无中心据点，2026-08-28 主人定）
+    BENGALIS: [],  // 孟加拉（无中心据点，2026-08-28 主人定）
+    GURJARAS: [],  // 瞿折罗（无中心据点，2026-08-28 主人定）
+    PORUS: [],  // 补噜（无中心据点，2026-08-28 主人定）
+    VIETNAMESE: [],  // 越南（无中心据点，2026-08-28 主人定）
+    KHMER: [],  // 高棉（无中心据点，2026-08-28 主人定）
+    MAYANS: [],  // 玛雅（无中心据点，2026-08-28 主人定）
+    MAPUCHE: [],  // 马普切（无中心据点，2026-08-28 主人定）
+    MUISCA: [],  // 穆伊斯卡（无中心据点，2026-08-28 主人定）
+    TUPI: [],  // 图皮（无中心据点，2026-08-28 主人定）
+    ARMENIANS: [],  // 亚美尼亚（无中心据点，2026-08-28 主人定）
+    GEORGIANS: [],  // 格鲁吉亚（无中心据点，2026-08-28 主人定）
+    ATHENIANS: [],  // 雅典（无中心据点，2026-08-28 主人定）
+    SPARTANS: [],  // 斯巴达（无中心据点，2026-08-28 主人定）
+    MACEDONIANS: [],  // 马其顿（无中心据点，2026-08-28 主人定）
+    ACHAEMENIDS: [],  // 阿契美尼德（无中心据点，2026-08-28 主人定）
+
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

@@ -1,0 +1,9 @@
+{
+  "name": "INDI_SIEGE_WORKSHOP_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 460,
+  "box_h": 176,
+  "anchor_x": 220,
+  "anchor_y": 100,
+  "sld_source": "b_indi_siege_workshop_age3_rubble"
+}

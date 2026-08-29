@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_UNIVERSITY_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 224,
+  "anchor_x": 208,
+  "anchor_y": 120,
+  "sld_source": "b_medi_university_age4_rubble"
+}

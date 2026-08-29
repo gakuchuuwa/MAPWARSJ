@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_ARCHERY_RANGE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 392,
+  "box_h": 320,
+  "anchor_x": 196,
+  "anchor_y": 228,
+  "sld_source": "b_asia_archery_range_age3_destruction"
+}

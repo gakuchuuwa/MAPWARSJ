@@ -1,0 +1,9 @@
+{
+  "name": "MESO_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 264,
+  "box_h": 156,
+  "anchor_x": 136,
+  "anchor_y": 88,
+  "sld_source": "b_meso_mill_age2_rubble"
+}

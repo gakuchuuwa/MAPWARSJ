@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 240,
+  "box_h": 128,
+  "anchor_x": 116,
+  "anchor_y": 64,
+  "sld_source": "b_afri_mill_age2_rubble"
+}

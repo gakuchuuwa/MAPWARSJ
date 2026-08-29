@@ -1,0 +1,9 @@
+{
+  "name": "MESO_SIEGE_WORKSHOP_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 464,
+  "box_h": 288,
+  "anchor_x": 256,
+  "anchor_y": 180,
+  "sld_source": "b_meso_siege_workshop_age3_destruction"
+}

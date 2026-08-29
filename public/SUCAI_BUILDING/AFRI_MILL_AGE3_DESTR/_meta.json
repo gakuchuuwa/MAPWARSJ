@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MILL_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 272,
+  "box_h": 196,
+  "anchor_x": 146,
+  "anchor_y": 130,
+  "sld_source": "b_afri_mill_age3_destruction"
+}

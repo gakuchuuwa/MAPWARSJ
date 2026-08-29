@@ -1,0 +1,9 @@
+{
+  "name": "INDI_BARRACKS_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 404,
+  "box_h": 208,
+  "anchor_x": 196,
+  "anchor_y": 104,
+  "sld_source": "b_indi_barracks_age2_rubble"
+}

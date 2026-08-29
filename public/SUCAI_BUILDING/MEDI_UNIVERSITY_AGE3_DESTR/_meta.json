@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_UNIVERSITY_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 452,
+  "box_h": 296,
+  "anchor_x": 232,
+  "anchor_y": 180,
+  "sld_source": "b_medi_university_age3_destruction"
+}

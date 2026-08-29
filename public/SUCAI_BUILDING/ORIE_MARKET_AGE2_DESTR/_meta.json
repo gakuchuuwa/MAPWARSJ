@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_MARKET_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 444,
+  "box_h": 340,
+  "anchor_x": 244,
+  "anchor_y": 240,
+  "sld_source": "b_orie_market_age2_destruction"
+}

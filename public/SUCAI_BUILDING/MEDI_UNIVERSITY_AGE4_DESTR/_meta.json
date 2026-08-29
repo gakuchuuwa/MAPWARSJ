@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_UNIVERSITY_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 464,
+  "box_h": 328,
+  "anchor_x": 232,
+  "anchor_y": 208,
+  "sld_source": "b_medi_university_age4_destruction"
+}

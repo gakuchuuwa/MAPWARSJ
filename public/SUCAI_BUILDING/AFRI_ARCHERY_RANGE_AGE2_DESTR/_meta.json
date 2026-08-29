@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_ARCHERY_RANGE_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 388,
+  "box_h": 312,
+  "anchor_x": 192,
+  "anchor_y": 228,
+  "sld_source": "b_afri_archery_range_age2_destruction"
+}

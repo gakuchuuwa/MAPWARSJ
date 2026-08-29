@@ -1,0 +1,9 @@
+{
+  "name": "WEST_BARRACKS_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 352,
+  "box_h": 172,
+  "anchor_x": 164,
+  "anchor_y": 96,
+  "sld_source": "b_west_barracks_age2_rubble"
+}

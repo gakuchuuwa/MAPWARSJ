@@ -1,0 +1,9 @@
+{
+  "name": "MESO_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 260,
+  "box_h": 192,
+  "anchor_x": 82,
+  "anchor_y": 78,
+  "sld_source": "b_meso_house_age2_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_HOUSE_AGE2_RUBBLE",
+  "frames": 5,
+  "box_w": 320,
+  "box_h": 172,
+  "anchor_x": 130,
+  "anchor_y": 58,
+  "sld_source": "b_medi_house_age2_rubble"
+}

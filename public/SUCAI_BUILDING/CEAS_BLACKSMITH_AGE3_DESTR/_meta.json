@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_BLACKSMITH_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 340,
+  "box_h": 228,
+  "anchor_x": 164,
+  "anchor_y": 176,
+  "sld_source": "b_ceas_blacksmith_age3_destruction"
+}

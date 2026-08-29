@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MARKET_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 392,
+  "box_h": 228,
+  "anchor_x": 204,
+  "anchor_y": 132,
+  "sld_source": "b_west_market_age2_rubble"
+}

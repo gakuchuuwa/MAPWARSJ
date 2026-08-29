@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_TOWN_CENTER_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 440,
+  "box_h": 268,
+  "anchor_x": 208,
+  "anchor_y": 188,
+  "sld_source": "b_ceas_town_center_age2_destruction"
+}

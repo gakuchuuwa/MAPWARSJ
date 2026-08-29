@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 184,
+  "anchor_x": 208,
+  "anchor_y": 120,
+  "sld_source": "b_meso_town_center_age2_rubble"
+}

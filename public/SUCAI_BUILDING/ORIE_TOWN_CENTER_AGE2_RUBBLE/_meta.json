@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 444,
+  "box_h": 176,
+  "anchor_x": 208,
+  "anchor_y": 116,
+  "sld_source": "b_orie_town_center_age2_rubble"
+}

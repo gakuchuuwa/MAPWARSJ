@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_HOUSE_AGE3_DESTR",
+  "frames": 300,
+  "box_w": 328,
+  "box_h": 236,
+  "anchor_x": 188,
+  "anchor_y": 176,
+  "sld_source": "b_medi_house_age3_destruction"
+}

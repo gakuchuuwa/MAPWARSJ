@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_ARCHERY_RANGE_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 380,
+  "box_h": 308,
+  "anchor_x": 172,
+  "anchor_y": 220,
+  "sld_source": "b_orie_archery_range_age2_destruction"
+}

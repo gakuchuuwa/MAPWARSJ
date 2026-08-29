@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 368,
+  "box_h": 188,
+  "anchor_x": 164,
+  "anchor_y": 112,
+  "sld_source": "b_orie_archery_range_age2_rubble"
+}

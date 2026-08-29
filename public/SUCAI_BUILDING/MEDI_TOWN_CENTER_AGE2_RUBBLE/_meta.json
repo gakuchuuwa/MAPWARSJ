@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 368,
+  "box_h": 172,
+  "anchor_x": 184,
+  "anchor_y": 108,
+  "sld_source": "b_medi_town_center_age2_rubble"
+}

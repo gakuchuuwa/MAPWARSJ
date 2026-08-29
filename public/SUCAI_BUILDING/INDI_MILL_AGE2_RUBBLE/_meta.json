@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 268,
+  "box_h": 140,
+  "anchor_x": 132,
+  "anchor_y": 68,
+  "sld_source": "b_indi_mill_age2_rubble"
+}

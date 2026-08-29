@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MILL_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 236,
+  "box_h": 136,
+  "anchor_x": 120,
+  "anchor_y": 60,
+  "sld_source": "b_medi_mill_age3_rubble"
+}

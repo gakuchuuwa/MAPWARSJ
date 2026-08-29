@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MARKET_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 404,
+  "box_h": 224,
+  "anchor_x": 196,
+  "anchor_y": 128,
+  "sld_source": "b_medi_market_age3_rubble"
+}

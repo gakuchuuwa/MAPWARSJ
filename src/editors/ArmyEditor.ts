@@ -67,6 +67,39 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚
     PERSIAN:      'aqimeinide',  // 波斯 → 阿契美尼德（波斯波利斯）
     CUMAN:        'qincha',      // 库曼 → 钦察（萨拉托夫）
+    BRITONS: 'falanji',  // 不列颠 → 待建势力对齐（暂用父文化势力占位）
+    GOTHS: 'falanji',  // 哥特 → 待建势力对齐（暂用父文化势力占位）
+    HUNS: 'menggu_d',  // 匈人 → 待建势力对齐（暂用父文化势力占位）
+    TEUTONS: 'falanji',  // 条顿 → 待建势力对齐（暂用父文化势力占位）
+    VIKINGS: 'mosike_gongguo',  // 维京 → 待建势力对齐（暂用父文化势力占位）
+    CELTS: 'falanji',  // 凯尔特 → 待建势力对齐（暂用父文化势力占位）
+    ITALIANS: 'luoma_diguo',  // 意大利 → 待建势力对齐（暂用父文化势力占位）
+    SICILIANS: 'luoma_diguo',  // 西西里 → 待建势力对齐（暂用父文化势力占位）
+    BULGARIANS: 'mosike_gongguo',  // 保加利亚 → 待建势力对齐（暂用父文化势力占位）
+    MAGYAR: 'menggu_d',  // 马扎尔 → 待建势力对齐（暂用父文化势力占位）
+    LITHUANIANS: 'mosike_gongguo',  // 立陶宛 → 待建势力对齐（暂用父文化势力占位）
+    POLES: 'mosike_gongguo',  // 波兰 → 待建势力对齐（暂用父文化势力占位）
+    BOHEMIANS: 'mosike_gongguo',  // 波希米亚 → 待建势力对齐（暂用父文化势力占位）
+    BURGUNDIANS: 'luoma_diguo',  // 勃艮第 → 待建势力对齐（暂用父文化势力占位）
+    SPANISH: 'luoma_diguo',  // 西班牙 → 待建势力对齐（暂用父文化势力占位）
+    PORTUGUESE: 'luoma_diguo',  // 葡萄牙 → 待建势力对齐（暂用父文化势力占位）
+    ETHIOPIANS: 'mali',  // 埃塞俄比亚 → 待建势力对齐（暂用父文化势力占位）
+    BENGALIS: 'kongque',  // 孟加拉 → 待建势力对齐（暂用父文化势力占位）
+    GURJARAS: 'kongque',  // 瞿折罗 → 待建势力对齐（暂用父文化势力占位）
+    PORUS: 'zhuluo',  // 补噜 → 待建势力对齐（暂用父文化势力占位）
+    VIETNAMESE: 'dali',  // 越南 → 待建势力对齐（暂用父文化势力占位）
+    KHMER: 'dali',  // 高棉 → 待建势力对齐（暂用父文化势力占位）
+    MAYANS: 'aztec',  // 玛雅 → 待建势力对齐（暂用父文化势力占位）
+    MAPUCHE: 'inca',  // 马普切 → 待建势力对齐（暂用父文化势力占位）
+    MUISCA: 'inca',  // 穆伊斯卡 → 待建势力对齐（暂用父文化势力占位）
+    TUPI: 'inca',  // 图皮 → 待建势力对齐（暂用父文化势力占位）
+    ARMENIANS: 'seljuq',  // 亚美尼亚 → 待建势力对齐（暂用父文化势力占位）
+    GEORGIANS: 'seljuq',  // 格鲁吉亚 → 待建势力对齐（暂用父文化势力占位）
+    ATHENIANS: 'xila',  // 雅典 → 待建势力对齐（暂用父文化势力占位）
+    SPARTANS: 'xila',  // 斯巴达 → 待建势力对齐（暂用父文化势力占位）
+    MACEDONIANS: 'xila',  // 马其顿 → 待建势力对齐（暂用父文化势力占位）
+    ACHAEMENIDS: 'aqimeinide',  // 阿契美尼德 → 待建势力对齐（暂用父文化势力占位）
+
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

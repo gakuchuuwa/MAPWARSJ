@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWN_CENTER_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 428,
+  "box_h": 276,
+  "anchor_x": 208,
+  "anchor_y": 208,
+  "sld_source": "b_west_town_center_age4_destruction"
+}

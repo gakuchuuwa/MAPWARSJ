@@ -1,0 +1,9 @@
+{
+  "name": "MESO_STABLE_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 408,
+  "box_h": 260,
+  "anchor_x": 200,
+  "anchor_y": 184,
+  "sld_source": "b_meso_stable_age3_destruction"
+}
