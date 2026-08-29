@@ -109,7 +109,7 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
 // 主人定：中国8区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
 // 其余按 cities_v2.ts 实际城市构成 + CityWonders 奇观锚定真实文明（2026-08-27 修正）：
 //   WEST_ASIA(安纳托利亚/两河流域=苏美尔/亚述/赫梯/巴比伦/罗姆/奥斯曼)→ORIE(近东)；
-//   CENTRAL_ASIA(波斯/塞尔柱/花拉子模/帖木儿)→ORIE(波斯/土耳其)；BERBER(柏柏尔)→ORIE(北非)；
+//   CENTRAL_ASIA(波斯/塞尔柱/花拉子模/帖木儿)→CEAS(鞑靼/中亚草原，2026-08-30 主人改：西域套鞑靼·赫拉特城堡风格)；BERBER(柏柏尔)→ORIE(北非)；
 //   EAST(哥特/维京/匈人/条顿)→EAST 套装；ANDE(马普切/穆伊斯卡/图皮)→ANDE 套装；
 //   (拜占庭已迁 LATIN，君士坦丁堡奇观=MEDI_WONDER_BYZANTINES，与 WEST_ASIA 无关)
 const REGION_TO_DE_STYLE: Record<string, string> = {
@@ -118,7 +118,7 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     TIBET: 'INDI',
     STEPPE: 'YURT',
     SLAVIC: 'SLAV', GERMANIC: 'WEST', LATIN: 'MEDI',
-    INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'ORIE',
+    INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'CEAS',
     AFRICA: 'AFRI', BERBER: 'ORIE', MALAY: 'SEAS',
     AMERICA: 'MESO',
     ANDE: 'ANDE',

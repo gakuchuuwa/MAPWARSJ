@@ -1076,7 +1076,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）
     ATHENIANS: ['city_yadian'],  // 雅典（中心据点已挂）
     SPARTANS: ['city_sparta'],  // 斯巴达（中心据点已挂）
-    MACEDONIANS: ['city_salonica'],  // 马其顿（中心据点已挂）
+    MACEDONIANS: ['city_salonica'],  // 马其顿·佩拉（中心据点已挂）
     ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（中心据点已挂）
 
 };
