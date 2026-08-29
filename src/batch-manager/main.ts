@@ -974,7 +974,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               <option value="pass" ${row!.cityType === 'pass' ? 'selected' : ''}>关隘 (pass)</option>
             </select>
           </label>
-          <label class="bm-checkbox-label">
+          <label class="bm-checkbox-label" id="bm-mirror-label">
             <input type="checkbox" name="mirror" ${row!.mirror ? 'checked' : ''} />
             <span>镜像立绘 (mirror)</span>
           </label>
@@ -1122,6 +1122,15 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     if (!isNew && row) {
         document.getElementById('bm-panel-delete')?.addEventListener('click', () => void handleDeleteFaction(row!));
     }
+
+    // 镜像立绘只适用险要（城市 DE 模型已自动镜像朝向）：cityType 改成 pass 时才显示镜像复选框
+    const cityTypeSel = document.querySelector('select[name="cityType"]') as HTMLSelectElement | null;
+    const mirrorLabel = document.getElementById('bm-mirror-label');
+    const syncMirrorVisible = () => {
+        if (mirrorLabel) mirrorLabel.style.display = cityTypeSel?.value === 'pass' ? '' : 'none';
+    };
+    cityTypeSel?.addEventListener('change', syncMirrorVisible);
+    syncMirrorVisible();
 
     // 立绘路径改动 → 实时刷新预览图
     const portraitInput = document.getElementById('bm-edit-portrait') as HTMLInputElement | null;

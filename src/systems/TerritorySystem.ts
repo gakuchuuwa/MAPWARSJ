@@ -130,19 +130,21 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     CUMAN: 'CEAS', // DE 库曼/鞑靼 = CEAS 套装（CEAS_WONDER_CUMANS/TATARS 在此）
     GREEK: 'MEDI', // DE 希腊/拜占庭 = 地中海套装（MEDI_WONDER_BYZANTINES 拜占庭奇观在此，greek 战役前缀无 AGE3 建筑池）
     THRACIAN: 'SLAV', // DE 色雷斯/保加利亚 = 东欧套装（SLAV_WONDER_BULGARIANS 保加利亚奇观在此，thracian 战役前缀无 AGE3 建筑池）
-    // ── [2026-08-29 补全] 支文化/细分势力：DE 具体文明无 AGE2 素材（见 de-style-availability.md），
-    //    归到所属主文化的 DE 大风格，消除旧单图。每个区 1 个据点。
-    BRITONS: 'WEST', GOTHS: 'WEST', TEUTONS: 'WEST', VIKINGS: 'WEST', CELTS: 'WEST', BURGUNDIANS: 'WEST',
+    // ── [2026-08-29 补全→08-29 修正] 支文化/细分势力：DE 具体文明无 AGE2 素材，归到 DE 权威建筑风格
+    //   （fandom Architecture set）。每个区 1 个据点。权威归属：
+    //   中欧(EAST)=哥特/匈奴/条顿/维京；东欧(SLAV)=马扎尔/波西米亚/保加利亚/立陶宛/波兰；
+    //   地中海(MEDI)=意大利/西西里/西班牙/葡萄牙/亚美尼亚/格鲁吉亚/雅典/斯巴达/马其顿；
+    //   东亚(ASIA)=越南；东南亚(SEAS)=高棉；南美(ANDE)=马普切/穆伊斯卡/图皮；中美洲(MESO)=玛雅。
+    BRITONS: 'WEST', CELTS: 'WEST', BURGUNDIANS: 'WEST',
+    GOTHS: 'EAST', TEUTONS: 'EAST', VIKINGS: 'EAST', HUNS: 'EAST',
     ITALIANS: 'MEDI', SICILIANS: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI',
-    ATHENIANS: 'MEDI', SPARTANS: 'MEDI', MACEDONIANS: 'MEDI',
-    LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV',
-    HUNS: 'CEAS', MAGYAR: 'CEAS',
-    ARMENIANS: 'ORIE', GEORGIANS: 'ORIE',
+    ATHENIANS: 'MEDI', SPARTANS: 'MEDI', MACEDONIANS: 'MEDI', ARMENIANS: 'MEDI', GEORGIANS: 'MEDI',
+    LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV', MAGYAR: 'SLAV',
     ACHAEMENIDS: 'PERSIAN',
     BENGALIS: 'INDI', GURJARAS: 'INDI', PORUS: 'INDI',
-    VIETNAMESE: 'SEAS', KHMER: 'SEAS',
-    MAYANS: 'MESO', MUISCA: 'MESO',
-    MAPUCHE: 'ANDE', TUPI: 'ANDE',
+    VIETNAMESE: 'ASIA', KHMER: 'SEAS',
+    MAYANS: 'MESO',
+    MAPUCHE: 'ANDE', TUPI: 'ANDE', MUISCA: 'ANDE',
     ETHIOPIANS: 'AFRI',
 };
 
@@ -592,7 +594,7 @@ function computePassRotationDeg(lat: number, lng: number): number | null {
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, lat?: number, lng?: number): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, lat?: number, lng?: number, mirror?: boolean): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     // [2026-08-29 主人定] 关隘长边沿山脉走向：用 DEM 高程梯度算朝向，删随机镜像。
     //   高程瓦片未加载时返回 null → 保持默认朝向（不旋转）。
@@ -649,8 +651,11 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         );
     });
 
-    const rotateStyle = passRotation !== null ? `transform:rotate(${passRotation.toFixed(1)}deg);` : '';
-    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;${rotateStyle}">${parts.join('')}</div>`;
+    const transforms: string[] = [];
+    if (passRotation !== null) transforms.push(`rotate(${passRotation.toFixed(1)}deg)`);
+    if (mirror) transforms.push('scaleX(-1)');   // 镜像立绘：沿垂直轴翻转（城门朝向反过来）
+    const transformStyle = transforms.length > 0 ? `transform:${transforms.join(' ')};` : '';
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;${transformStyle}">${parts.join('')}</div>`;
 }
 
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
@@ -1890,7 +1895,7 @@ export class TerritorySystem {
                                   : city.type === 'medium_city'
                                       ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
                                       : city.type === 'pass'
-                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, displayLat, displayLng)
+                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, displayLat, displayLng, city.mirror)
                                           : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
