@@ -4273,7 +4273,8 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔；九个落点全部随机。
+            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔。
+            // 🔴 [2026-08-29 主人「城堡不在最上就在最下」] 城堡固定中间落点（y 最接近全军中线），其余 8 建筑随机放剩余落点。
             // [2026-08-29 主人「城堡有点大，请缩小」→ 再「显示比例加大」] 城堡单独用 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
             if (this.defenderCityType === 'pass') {
                 const castleAsset = this.castleAssetFor(style);
@@ -4285,12 +4286,15 @@ export class Scene13WarLayer {
                     `${style}_TOWER_AGE3`, `${style}_TOWER_AGE3`,
                     `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
                 ].sort(() => Math.random() - 0.5);
-                const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
-                const castleSp = place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE });
+                const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
+                const centerSpawn = side.reduce((best, s) =>
+                    Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, side[0]);
+                const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
                 this.decorSprites.push(castleSp);
                 this.trackCityBuilding(castleSp);
+                const shuffledOthers = side.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 8; i++) {
-                    const sp = place(shuffledPassSpawns[i + 1], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE });
+                    const sp = place(shuffledOthers[i], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE });
                     this.decorSprites.push(sp);
                     this.trackCityBuilding(sp);
                 }
