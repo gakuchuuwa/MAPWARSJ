@@ -760,6 +760,17 @@ const REGION_LABELS: Record<string, string> = {
     BASHU: '川蜀', DIANQIAN: '滇缅', HEXI: '河西', WESTERN: '西域',
     TIBET: '青藏', STEPPE: '草原', NORTHEAST: '东北', KOREA: '朝鲜',
     JAPAN: '日本', CENTRAL_ASIA: '中亚', WEST_ASIA: '西亚',
+    INDIA: '印度', BERBER: '柏柏尔', AMERICA: '美洲', AFRICA: '非洲',
+    MALAY: '马来', ANDE: '安第斯', PURU: '南印度', ORIE: '阿拉伯',
+    EAST: '东欧', GREEK: '希腊', THRACIAN: '色雷斯', PERSIAN: '波斯', CUMAN: '库曼',
+    BRITONS: '不列颠', GOTHS: '哥特', HUNS: '匈人', TEUTONS: '条顿',
+    VIKINGS: '维京', CELTS: '凯尔特', ITALIANS: '意大利', SICILIANS: '西西里',
+    BULGARIANS: '保加利亚', MAGYAR: '马扎尔', LITHUANIANS: '立陶宛', POLES: '波兰',
+    BOHEMIANS: '波希米亚', BURGUNDIANS: '勃艮第', SPANISH: '西班牙', PORTUGUESE: '葡萄牙',
+    ETHIOPIANS: '埃塞俄比亚', BENGALIS: '孟加拉', GURJARAS: '瞿折罗', PORUS: '补噜',
+    VIETNAMESE: '越南', KHMER: '高棉', MAYANS: '玛雅', MAPUCHE: '马普切',
+    MUISCA: '穆伊斯卡', TUPI: '图皮', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
+    ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIANS: '马其顿', ACHAEMENIDS: '阿契美尼德',
 };
 
 async function openEditPanel(factionId: string | null): Promise<void> {
@@ -805,7 +816,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     };
     const currentRegion = row?.cityRegion ?? row?.eliteRegion ?? '';
     const regionOptions = (entityData?.regions ?? []).map(r =>
-        `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r}</option>`
+        `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r} (${r})</option>`
     ).join('');
 
     if (isNew) {
