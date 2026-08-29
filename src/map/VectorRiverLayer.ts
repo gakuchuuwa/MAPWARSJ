@@ -62,17 +62,22 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const group = new L.FeatureGroup();
 
         // 1. 底层描边（Border/Casing Layer）：深墨蓝，切断山谷杂乱阴影，提升山间河流辨识度
+        // [PERF 缩放卡顿] SVG renderer 在 zoomend 会逐条 _project 2910 条 path（实测 ~204ms）。
+        // 换 Canvas renderer：缩放动画走 CSS transform（O(1)），zoomend 才一次性重绘整块位图，
+        // 不做 2910 次 DOM `d` 属性写。border/water 各一个独立实例，保 casing 层级。删 renderer 即回 SVG。
         const border = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getBorderStyle(feature, 9),
-            pane: pane
-        });
+            pane: pane,
+            renderer: L.canvas({ padding: 0.5 })
+        } as L.GeoJSONOptions);
         (border as any).riverType = 'border';
 
         // 2. 顶层水体线（Water Layer）：纯正浅蓝，亮丽不透明
         const water = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getWaterStyle(feature, 9),
-            pane: pane
-        });
+            pane: pane,
+            renderer: L.canvas({ padding: 0.5 })
+        } as L.GeoJSONOptions);
         (water as any).riverType = 'water';
 
         group.addLayer(border);
