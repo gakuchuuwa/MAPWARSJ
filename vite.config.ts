@@ -2713,6 +2713,38 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     THRACIAN: { file: 'ThracianExpeditionLegions.ts', varName: 'THRACIAN_EXPEDITION_ELITE_LEGIONS' },
     PERSIAN: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },
     CUMAN: { file: 'CumanExpeditionLegions.ts', varName: 'CUMAN_EXPEDITION_ELITE_LEGIONS' },
+    BRITONS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
+    GOTHS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
+    HUNS: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },  // 继承 STEPPE 精锐文件
+    TEUTONS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
+    VIKINGS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
+    CELTS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
+    ITALIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
+    SICILIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
+    BULGARIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
+    MAGYAR: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },  // 继承 STEPPE 精锐文件
+    LITHUANIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
+    POLES: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
+    BOHEMIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
+    BURGUNDIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
+    SPANISH: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
+    PORTUGUESE: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
+    ETHIOPIANS: { file: 'AfricaExpeditionLegions.ts', varName: 'AFRICA_EXPEDITION_ELITE_LEGIONS' },  // 继承 AFRICA 精锐文件
+    BENGALIS: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 INDIA 精锐文件
+    GURJARAS: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 INDIA 精锐文件
+    PORUS: { file: 'PuruExpeditionLegions.ts', varName: 'PURU_EXPEDITION_ELITE_LEGIONS' },  // 继承 PURU 精锐文件
+    VIETNAMESE: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 DIANQIAN 精锐文件
+    KHMER: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 DIANQIAN 精锐文件
+    MAYANS: { file: 'AmericaExpeditionLegions.ts', varName: 'AMERICA_EXPEDITION_ELITE_LEGIONS' },  // 继承 AMERICA 精锐文件
+    MAPUCHE: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
+    MUISCA: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
+    TUPI: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
+    ARMENIANS: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 CENTRAL_ASIA 精锐文件
+    GEORGIANS: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 CENTRAL_ASIA 精锐文件
+    ATHENIANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
+    SPARTANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
+    MACEDONIANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
+    ACHAEMENIDS: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 PERSIAN 精锐文件
 };
 
 function serverReadAllEntityData() {
