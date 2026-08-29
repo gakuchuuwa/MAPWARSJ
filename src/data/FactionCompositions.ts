@@ -1058,43 +1058,43 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）
-    maqidun: {
+    "maqidun": {
         legionName: "马其顿军团",
-        formationMode: 'echelon',
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     // 托勒密（亚历山大旧部，套用亚历山大帝国军团配置）
-    tuolemi: {
+    "tuolemi": {
         legionName: "马其顿军团",
-        formationMode: 'echelon',
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     // 塞琉古帝国（安提俄基亚 · 塞琉古一世/安条克，银盾方阵体系）
-    sailiugu: {
+    "sailiugu": {
         legionName: "马其顿军团",
-        formationMode: 'echelon',
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     // 佩尔加蒙（欧迈尼斯 · 亚历山大王家秘书长与近卫方阵统帅）
-    pajiama: {
+    "pajiama": {
         legionName: "马其顿军团",
-        formationMode: 'echelon',
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
@@ -1108,13 +1108,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
-    jileinaijia: {
+    "jileinaijia": {
         legionName: "马其顿军团",
-        formationMode: 'echelon',
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'phalangite', count: 4 },         // Row 0 步兵前锋抗线 = 马其顿方阵兵 4人
-            { type: 'companion_cavalry', count: 3 },  // Row 1 骑兵冲击中坚 = 伙伴骑兵 3骑
-            { type: 'cretan_archer', count: 2 },      // Row 2 中军后排支援 = 克里特弓手 2人
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）

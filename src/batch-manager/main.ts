@@ -962,7 +962,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </div>
           <label><span>文化区</span>
             <select name="region">
-              <option value="">不设</option>
+              ${currentRegion ? '' : '<option value="" selected>保持</option>'}
               ${regionOptions}
             </select>
           </label>
@@ -1000,7 +1000,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>品阶</span>
               <select name="tier">
-                <option value="">不设</option>
+                ${row!.tier ? '' : '<option value="" selected>保持</option>'}
                 <option value="famous" ${row!.tier === 'famous' ? 'selected' : ''}>名将 (famous)</option>
                 <option value="ordinary" ${row!.tier === 'ordinary' ? 'selected' : ''}>普将 (ordinary)</option>
               </select>
@@ -1009,7 +1009,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <h4 style="margin:10px 0 6px;font-size:13px;color:#8ab4c4">攻守风格 · 人物标签（影子字段，不参与战斗结算）</h4>
           <label><span>攻守风格（独立于三势，不是技能）</span>
             <select name="attackStyle">
-              <option value="">不设</option>
+              ${row!.attackStyle ? '' : '<option value="" selected>保持</option>'}
               <option value="attack" ${row!.attackStyle === 'attack' ? 'selected' : ''}>善攻 attack</option>
               <option value="defense" ${row!.attackStyle === 'defense' ? 'selected' : ''}>善防 defense</option>
               <option value="balanced" ${row!.attackStyle === 'balanced' ? 'selected' : ''}>双行 balanced</option>
@@ -1022,13 +1022,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>攻·优势（攻战/胜战）</span>
               <select name="atkAdvantageSkillId">
-                <option value="">不设</option>
+                ${row!.atkAdvantageSkillId ?? row!.advantageSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('atkAdvantage', row!.atkAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>攻·均势（敌战/混战）</span>
               <select name="atkBalanceSkillId">
-                <option value="">不设</option>
+                ${row!.atkBalanceSkillId ?? row!.balanceSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('atkBalance', row!.atkBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
               </select>
             </label>
@@ -1036,13 +1036,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>攻·劣势（并战/败战）</span>
               <select name="atkDisadvantageSkillId">
-                <option value="">不设</option>
+                ${row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('atkDisadvantage', row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>三势 aptitude</span>
               <select name="aptitude">
-                <option value="">不设</option>
+                ${row!.aptitude ? '' : '<option value="" selected>保持</option>'}
                 <option value="create" ${row!.aptitude === 'create' ? 'selected' : ''}>造势 create</option>
                 <option value="leverage" ${row!.aptitude === 'leverage' ? 'selected' : ''}>借势 leverage</option>
                 <option value="reverse" ${row!.aptitude === 'reverse' ? 'selected' : ''}>逆势 reverse</option>
@@ -1053,13 +1053,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>守·优势（胜战/攻战）</span>
               <select name="defAdvantageSkillId">
-                <option value="">不设</option>
+                ${row!.defAdvantageSkillId ?? row!.advantageSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('defAdvantage', row!.defAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>守·均势（混战/敌战）</span>
               <select name="defBalanceSkillId">
-                <option value="">不设</option>
+                ${row!.defBalanceSkillId ?? row!.balanceSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('defBalance', row!.defBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
               </select>
             </label>
@@ -1067,7 +1067,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>守·劣势（败战/并战）</span>
               <select name="defDisadvantageSkillId">
-                <option value="">不设</option>
+                ${row!.defDisadvantageSkillId ?? row!.disadvantageSkillId ? '' : '<option value="" selected>保持</option>'}
                 ${slotOptions('defDisadvantage', row!.defDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
@@ -1078,7 +1078,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>番号名</span><input name="eliteName" value="${row!.eliteName ?? ''}" /></label>
             <label><span>级别</span>
               <select name="eliteTier">
-                <option value="">不设</option>
+                ${row!.eliteTier == null ? '<option value="" selected>保持</option>' : ''}
                 <option value="0" ${row!.eliteTier === 0 ? 'selected' : ''}>T0</option>
                 <option value="1" ${row!.eliteTier === 1 ? 'selected' : ''}>T1</option>
                 <option value="2" ${row!.eliteTier === 2 ? 'selected' : ''}>T2</option>

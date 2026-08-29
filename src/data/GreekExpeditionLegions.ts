@@ -14,7 +14,6 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T2 特色之兵 ──
-    maqidun: { name: '伙伴骑兵', tier: 2 },          // 佩拉·亚历山大：Hetairoi 伙伴骑兵；避势力「马其顿」叠字
     xila: { name: '萨拉米斯舰', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯海战；避据点「雅典」叠字
     yipilusi: { name: '摩罗西亚骑', tier: 2 },          // 安布拉基亚·皮洛士：伊庇鲁斯摩罗西亚战象铁骑
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
@@ -31,4 +30,5 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
     fujisi: { name: '福基斯重步', tier: 4 },
     yilisi: { name: '埃利斯战车', tier: 4 },
+    maqidun: { name: '伙伴骑兵', tier: 0 },
 };

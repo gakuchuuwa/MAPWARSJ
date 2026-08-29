@@ -48,7 +48,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
      * 那其实是印度式石砌堡垒（拉贾斯坦那类粗石圆塔）。**判风格要看整套，别只看一张。**
      * 三个 _UP 是同一座堡的防御工事强化态；本作无城堡升级机制，分给南亚诸势力。
      */
-    zhuluo: 'PURU_CASTLE_AGE3',                       // 朱罗（南印度）
+    zhuluo: 'INDI_CASTLE_AGE3',                       // 朱罗（南印度·泰米尔，达罗毗荼；DE 继承印度人 castle）
     pangzha: 'PURU_CASTLE_AGE3_ATTACKUP',             // 旁遮普
     kongque: 'PURU_CASTLE_AGE3_BOTHUP',               // 孔雀帝国
     mojietuo: 'PURU_CASTLE_AGE3_DEFENSEUP',           // 摩揭陀王国
@@ -80,6 +80,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     // ── 西欧 ──
     donggete: 'GOTH_CASTLE_AGE3',          // 东哥特
     xigete: 'GOTH_CASTLE_AGE3',            // 西哥特
+    pelianci: 'EAST_CASTLE_AGE3',          // 条顿（拉赫修院；DE 条顿无专属城堡，用中欧风格集=罗切斯特城堡）
     danmai: 'VIKI_CASTLE_AGE3',            // 丹麦
     ruidian_si: 'VIKI_CASTLE_AGE3',        // 瑞典
     ruidian_yota: 'VIKI_CASTLE_AGE3',      // 约塔（瑞典哥特兰）
@@ -93,6 +94,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     putaoya: 'PORT_CASTLE_AGE3',           // 葡萄牙
     // ── 非洲 ──
     ethiopia: 'ETHI_CASTLE_AGE3',          // 埃塞俄比亚
+    jienei: 'AFRI_CASTLE_AGE3',            // 杰内/马里帝国（非洲城堡=阿伊特本哈杜）
     mulabite: 'BERB_CASTLE_AGE3',          // 穆拉比特（柏柏尔）
     // ── 三国：DE 罗马复兴带了蜀/吴/魏三张 ──
     shu: 'SHU_CASTLE_AGE3',
@@ -140,18 +142,24 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
  * 其余留空走风格集默认（`{style}_CASTLE_AGE3`）。
  */
 export const REGION_CASTLE: Partial<Record<RegionType, string>> = {
-    // 中原王朝一律用中国城堡，而不是东亚通用的 ASIA_CASTLE
-    CENTRAL: 'CHIN_CASTLE_AGE3',
-    NORTH: 'CHIN_CASTLE_AGE3',
-    JIANGNAN: 'CHIN_CASTLE_AGE3',
-    LINGNAN: 'CHIN_CASTLE_AGE3',
-    BASHU: 'CHIN_CASTLE_AGE3',
-    HEXI: 'CHIN_CASTLE_AGE3',
-    NORTHEAST: 'JURC_CASTLE_AGE3',   // 东北：女真式
+    // 中国内部文化区 → 代表城堡（2026-08-30 主人定）：
+    //   曹魏=中原(WEI)、孙吴=江南(WU)、蜀汉=巴蜀(SHU)、契丹=河西(KHIT·黑水城)、
+    //   女真=东北(JURC·居庸关)、越南=岭南(VIET)、北方=中国(CHIN)。
+    CENTRAL: 'WEI_CASTLE_AGE3',      // 曹魏=中原
+    NORTH: 'CHIN_CASTLE_AGE3',       // 北方=中国
+    JIANGNAN: 'WU_CASTLE_AGE3',      // 孙吴=江南
+    LINGNAN: 'VIET_CASTLE_AGE3',     // 岭南=越南
+    BASHU: 'SHU_CASTLE_AGE3',        // 蜀汉=巴蜀
+    HEXI: 'KHIT_CASTLE_AGE3',        // 契丹=河西（黑水城，DE 误名契丹实为西夏）
+    NORTHEAST: 'JURC_CASTLE_AGE3',   // 女真=东北
     KOREA: 'KORE_CASTLE_AGE3',
     STEPPE: 'MONG_CASTLE_AGE3',      // 草原：蒙古式
     WEST_ASIA: 'PERS_CASTLE_AGE3',   // 西亚：波斯式（比 ORIE 通用更贴）
-    INDIA: 'HIND_CASTLE_AGE3',
+    PERSIAN: 'PERS_CASTLE_AGE3',     // 波斯：巴姆古城（2026-08-30 主人定：波斯城堡=巴姆古城）
+    INDIA: 'HIND_CASTLE_AGE3',       // 印度=印度斯坦（德里七大要塞）
+    GURJARAS: 'GURJ_CASTLE_AGE3',    // 瞿折罗=瓜廖尔堡
+    BENGALIS: 'BENG_CASTLE_AGE3',    // 孟加拉=比什努布尔古堡大门
+    PURU: 'INDI_CASTLE_AGE3',        // 达罗毗荼=昆巴哈尔堡垒（DE 继承印度人 INDI castle）
     MALAY: 'MALA_CASTLE_AGE3',
     DIANQIAN: 'VIET_CASTLE_AGE3',    // 滇黔：中南半岛式
     AMERICA: 'MAYA_CASTLE_AGE3',

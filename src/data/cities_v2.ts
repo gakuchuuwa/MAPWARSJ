@@ -1916,7 +1916,12 @@ export const CITIES_V2: CityDataV2[] = [
 
         { id: 'city_anbulajiya', name: '安布拉基亚', factionId: 'yipilusi', lat: 39.16, lng: 20.98, type: 'small_city', troops: 28000, region: 'GREEK', note: '伊庇鲁斯王国古都·皮洛士大帝王都·希腊西方锁钥' },
 { id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 30000, region: 'SPARTANS' },
-    { id: 'city_salonica', name: '佩拉', factionId: 'maqidun', lat: 40.76, lng: 22.5192, type: 'medium_city', troops: 30000, region: 'MACEDONIANS' },
+    { id: 'city_salonica', name: '佩拉', factionId: 'maqidun', lat: 40.76, lng: 22.5192, type: 'small_city', troops: 20000, region: 'MACEDONIANS' },
+
+
+
+
+
     { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'small_city', troops: 30000, region: 'SLAVIC' },
 
     { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'small_city', troops: 30000, region: 'EAST' },

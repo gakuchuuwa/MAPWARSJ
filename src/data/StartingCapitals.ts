@@ -24,7 +24,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'yipilusi': 'city_anbulajiya',
   'lagoniya': 'city_sparta',
-  'maqidun': 'city_salonica',
+'maqidun': 'city_salonica',
   'lagusa': 'city_ragusa',
 
   'ruidian_yota': 'city_gothenburg',

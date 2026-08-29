@@ -21,6 +21,12 @@ export const FACTIONS: Faction[] = [
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
+
+
+
+
+
+
   { id: 'lagusa', name: '达尔马提亚' },
 
   { id: 'ruidian_yota', name: '约塔' },
@@ -1799,6 +1805,7 @@ export const FACTIONS: Faction[] = [
   { id: 'bendou_d', name: '本都' },
     { id: 'heti', name: '赫梯' },
     { id: 'fulijiya', name: '弗里吉亚' },
+
     { id: 'ldiya', name: '吕底亚' },
     { id: 'pajiama', name: '帕加马' },
     { id: 'bitiniya', name: '比提尼亚' },  // 别名：色雷斯人在小亚建立的王国（Bithynia）
