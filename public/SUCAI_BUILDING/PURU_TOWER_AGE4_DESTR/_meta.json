@@ -1,9 +1,9 @@
 {
   "name": "PURU_TOWER_AGE4_DESTR",
-  "frames": 100,
-  "box_w": 192,
+  "frames": 60,
+  "box_w": 188,
   "box_h": 284,
-  "anchor_x": 100,
+  "anchor_x": 96,
   "anchor_y": 236,
   "sld_source": "b_puru_tower_age4_destruction"
 }

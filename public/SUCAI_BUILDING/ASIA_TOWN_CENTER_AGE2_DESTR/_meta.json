@@ -1,8 +1,8 @@
 {
   "name": "ASIA_TOWN_CENTER_AGE2_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 452,
-  "box_h": 324,
+  "box_h": 316,
   "anchor_x": 232,
   "anchor_y": 244,
   "sld_source": "b_asia_town_center_age2_destruction"

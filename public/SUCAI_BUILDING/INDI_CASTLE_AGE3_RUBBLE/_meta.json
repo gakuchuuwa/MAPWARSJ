@@ -1,0 +1,9 @@
+{
+  "name": "INDI_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 528,
+  "box_h": 320,
+  "anchor_x": 280,
+  "anchor_y": 192,
+  "sld_source": "b_indi_castle_age3_rubble"
+}

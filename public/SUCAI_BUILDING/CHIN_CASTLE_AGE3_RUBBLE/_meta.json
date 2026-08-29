@@ -1,0 +1,9 @@
+{
+  "name": "CHIN_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 448,
+  "box_h": 260,
+  "anchor_x": 228,
+  "anchor_y": 156,
+  "sld_source": "b_chin_castle_age3_rubble"
+}

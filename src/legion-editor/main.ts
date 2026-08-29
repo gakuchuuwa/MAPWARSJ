@@ -1974,6 +1974,25 @@ function bindPanelEvents(row: FactionLegionRow): void {
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
         };
+
+        // 🔴 一个军团一个编制：同名军团共享阵型 + 三排兵种。
+        // 改任一势力的编制，其余同名势力自动同步（formationMode + slots），
+        // 避免「同名不同编制」。海军阵型与 legionType 各自保留，不随陆战编制覆盖。
+        let compSyncCount = 0;
+        if (newLegionName) {
+            for (const fid of Object.keys(localCustomCompositions)) {
+                const comp = localCustomCompositions[fid];
+                if (fid !== row.factionId && comp?.legionName === newLegionName) {
+                    localCustomCompositions[fid] = {
+                        ...comp,
+                        formationMode: currentEditingLegion.formationMode,
+                        slots: currentEditingLegion.slots.map(s => ({ ...s })),
+                    };
+                    compSyncCount++;
+                }
+            }
+        }
+
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
@@ -1981,7 +2000,8 @@ function bindPanelEvents(row: FactionLegionRow): void {
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
         await saveAllCompositions();
         showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
-            + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : ''));
+            + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : '')
+            + (compSyncCount > 0 ? `；编制同步更新了 ${compSyncCount} 个共享同名势力` : ''));
     });
 
     // 军团种类选择（第三步）

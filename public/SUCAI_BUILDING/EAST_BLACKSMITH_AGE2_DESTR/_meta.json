@@ -1,0 +1,9 @@
+{
+  "name": "EAST_BLACKSMITH_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 316,
+  "box_h": 184,
+  "anchor_x": 144,
+  "anchor_y": 132,
+  "sld_source": "b_east_blacksmith_age2_destruction"
+}

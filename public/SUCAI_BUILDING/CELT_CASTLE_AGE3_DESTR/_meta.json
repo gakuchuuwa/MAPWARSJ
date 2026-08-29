@@ -1,0 +1,9 @@
+{
+  "name": "CELT_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 380,
+  "box_h": 504,
+  "anchor_x": 180,
+  "anchor_y": 408,
+  "sld_source": "b_celt_castle_age3_destruction"
+}

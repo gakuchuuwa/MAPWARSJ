@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_SIEGE_WORKSHOP_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 120,
+  "anchor_x": 164,
+  "anchor_y": 88,
+  "sld_source": "b_slav_siege_workshop_age3_rubble"
+}

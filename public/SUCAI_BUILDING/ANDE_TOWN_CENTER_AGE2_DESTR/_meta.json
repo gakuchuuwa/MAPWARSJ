@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWN_CENTER_AGE2_DESTR",
+  "frames": 150,
+  "box_w": 412,
+  "box_h": 304,
+  "anchor_x": 204,
+  "anchor_y": 228,
+  "sld_source": "b_ande_town_center_age2_destruction"
+}

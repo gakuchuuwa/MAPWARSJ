@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MARKET_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 468,
+  "box_h": 332,
+  "anchor_x": 248,
+  "anchor_y": 220,
+  "sld_source": "b_east_market_age4_destruction"
+}

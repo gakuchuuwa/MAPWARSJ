@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 596,
+  "box_h": 548,
+  "anchor_x": 316,
+  "anchor_y": 392,
+  "sld_source": "b_seas_castle_age3_destruction"
+}

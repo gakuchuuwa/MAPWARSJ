@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_BARRACKS_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 400,
+  "box_h": 300,
+  "anchor_x": 192,
+  "anchor_y": 208,
+  "sld_source": "b_seas_barracks_age3_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_SIEGE_WORKSHOP_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 404,
+  "box_h": 156,
+  "anchor_x": 200,
+  "anchor_y": 104,
+  "sld_source": "b_puru_siege_workshop_age3_rubble"
+}

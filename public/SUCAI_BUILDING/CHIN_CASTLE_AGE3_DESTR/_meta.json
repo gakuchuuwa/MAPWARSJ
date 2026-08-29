@@ -1,0 +1,9 @@
+{
+  "name": "CHIN_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 508,
+  "box_h": 480,
+  "anchor_x": 260,
+  "anchor_y": 368,
+  "sld_source": "b_chin_castle_age3_destruction"
+}

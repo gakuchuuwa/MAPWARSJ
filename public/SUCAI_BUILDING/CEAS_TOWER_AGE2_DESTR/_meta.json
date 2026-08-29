@@ -1,9 +1,9 @@
 {
   "name": "CEAS_TOWER_AGE2_DESTR",
-  "frames": 100,
-  "box_w": 220,
+  "frames": 60,
+  "box_w": 216,
   "box_h": 264,
-  "anchor_x": 104,
+  "anchor_x": 100,
   "anchor_y": 196,
   "sld_source": "b_ceas_tower_age2_destruction"
 }

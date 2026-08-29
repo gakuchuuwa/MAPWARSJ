@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWN_CENTER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 472,
+  "box_h": 216,
+  "anchor_x": 244,
+  "anchor_y": 120,
+  "sld_source": "b_seas_town_center_age3_rubble"
+}

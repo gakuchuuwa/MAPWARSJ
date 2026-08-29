@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWN_CENTER_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 412,
+  "box_h": 264,
+  "anchor_x": 204,
+  "anchor_y": 196,
+  "sld_source": "b_east_town_center_age2_destruction"
+}

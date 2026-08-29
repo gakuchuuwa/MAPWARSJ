@@ -1,0 +1,9 @@
+{
+  "name": "BENG_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 404,
+  "box_h": 444,
+  "anchor_x": 196,
+  "anchor_y": 344,
+  "sld_source": "b_beng_castle_age3_destruction"
+}

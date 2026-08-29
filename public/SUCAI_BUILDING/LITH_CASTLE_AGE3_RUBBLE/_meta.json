@@ -1,0 +1,9 @@
+{
+  "name": "LITH_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 172,
+  "anchor_x": 156,
+  "anchor_y": 96,
+  "sld_source": "b_lith_castle_age3_rubble"
+}

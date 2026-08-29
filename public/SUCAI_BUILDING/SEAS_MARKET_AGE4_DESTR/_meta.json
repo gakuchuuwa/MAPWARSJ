@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_MARKET_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 428,
+  "box_h": 380,
+  "anchor_x": 220,
+  "anchor_y": 260,
+  "sld_source": "b_seas_market_age4_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "EAST_BARRACKS_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 364,
+  "box_h": 284,
+  "anchor_x": 168,
+  "anchor_y": 188,
+  "sld_source": "b_east_barracks_age3_destruction"
+}

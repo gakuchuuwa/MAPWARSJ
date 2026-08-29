@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_UNIVERSITY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 400,
+  "box_h": 224,
+  "anchor_x": 192,
+  "anchor_y": 120,
+  "sld_source": "b_seas_university_age3_rubble"
+}

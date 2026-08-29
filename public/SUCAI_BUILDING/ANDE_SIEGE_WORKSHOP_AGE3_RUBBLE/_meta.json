@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_SIEGE_WORKSHOP_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 316,
+  "box_h": 144,
+  "anchor_x": 152,
+  "anchor_y": 104,
+  "sld_source": "b_ande_siege_workshop_age3_rubble"
+}

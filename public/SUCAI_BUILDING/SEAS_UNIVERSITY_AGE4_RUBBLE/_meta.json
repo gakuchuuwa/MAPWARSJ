@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_UNIVERSITY_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 456,
+  "box_h": 240,
+  "anchor_x": 228,
+  "anchor_y": 128,
+  "sld_source": "b_seas_university_age4_rubble"
+}

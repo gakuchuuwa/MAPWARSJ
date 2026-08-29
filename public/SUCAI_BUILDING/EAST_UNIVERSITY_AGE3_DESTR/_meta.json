@@ -1,0 +1,9 @@
+{
+  "name": "EAST_UNIVERSITY_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 456,
+  "box_h": 256,
+  "anchor_x": 208,
+  "anchor_y": 164,
+  "sld_source": "b_east_university_age3_destruction"
+}

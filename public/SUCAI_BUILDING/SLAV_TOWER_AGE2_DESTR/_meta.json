@@ -1,8 +1,8 @@
 {
   "name": "SLAV_TOWER_AGE2_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 192,
-  "box_h": 272,
+  "box_h": 268,
   "anchor_x": 96,
   "anchor_y": 212,
   "sld_source": "b_slav_tower_age2_destruction"

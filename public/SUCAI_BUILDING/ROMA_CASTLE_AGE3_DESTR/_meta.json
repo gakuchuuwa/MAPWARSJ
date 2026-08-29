@@ -1,0 +1,9 @@
+{
+  "name": "ROMA_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 460,
+  "box_h": 420,
+  "anchor_x": 228,
+  "anchor_y": 300,
+  "sld_source": "b_roma_castle_age3_destruction"
+}

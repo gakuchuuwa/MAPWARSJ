@@ -1,0 +1,9 @@
+{
+  "name": "MONG_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 428,
+  "box_h": 488,
+  "anchor_x": 220,
+  "anchor_y": 368,
+  "sld_source": "b_mong_castle_age3_destruction"
+}

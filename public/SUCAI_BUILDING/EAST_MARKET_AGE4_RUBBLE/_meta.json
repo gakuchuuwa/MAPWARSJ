@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MARKET_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 380,
+  "box_h": 196,
+  "anchor_x": 204,
+  "anchor_y": 108,
+  "sld_source": "b_east_market_age4_rubble"
+}

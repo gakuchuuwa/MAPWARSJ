@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_ARCHERY_RANGE_AGE2_DESTR",
+  "frames": 101,
+  "box_w": 380,
+  "box_h": 308,
+  "anchor_x": 176,
+  "anchor_y": 212,
+  "sld_source": "b_persian_archery_range_age2_destruction"
+}

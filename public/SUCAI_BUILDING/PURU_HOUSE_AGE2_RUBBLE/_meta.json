@@ -1,0 +1,9 @@
+{
+  "name": "PURU_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 184,
+  "box_h": 84,
+  "anchor_x": 98,
+  "anchor_y": 54,
+  "sld_source": "b_puru_house_age2_rubble"
+}

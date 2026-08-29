@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 304,
+  "box_h": 136,
+  "anchor_x": 140,
+  "anchor_y": 84,
+  "sld_source": "b_east_monastery_age3_rubble"
+}

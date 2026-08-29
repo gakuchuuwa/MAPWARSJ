@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 244,
+  "box_h": 112,
+  "anchor_x": 136,
+  "anchor_y": 64,
+  "sld_source": "b_slav_mill_age2_rubble"
+}

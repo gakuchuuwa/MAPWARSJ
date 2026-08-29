@@ -1,9 +1,9 @@
 {
   "name": "ASIA_MILL_AGE3_DESTR",
-  "frames": 100,
-  "box_w": 272,
+  "frames": 60,
+  "box_w": 268,
   "box_h": 208,
-  "anchor_x": 132,
+  "anchor_x": 128,
   "anchor_y": 148,
   "sld_source": "b_asia_mill_age3_destruction"
 }

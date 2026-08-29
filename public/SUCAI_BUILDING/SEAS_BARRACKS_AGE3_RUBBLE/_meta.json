@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_BARRACKS_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 384,
+  "box_h": 220,
+  "anchor_x": 188,
+  "anchor_y": 128,
+  "sld_source": "b_seas_barracks_age3_rubble"
+}

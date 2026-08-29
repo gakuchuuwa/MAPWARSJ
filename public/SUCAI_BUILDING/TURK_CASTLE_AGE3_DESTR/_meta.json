@@ -1,0 +1,9 @@
+{
+  "name": "TURK_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 452,
+  "box_h": 452,
+  "anchor_x": 204,
+  "anchor_y": 336,
+  "sld_source": "b_turk_castle_age3_destruction"
+}

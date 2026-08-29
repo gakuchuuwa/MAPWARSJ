@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_BLACKSMITH_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 308,
+  "box_h": 152,
+  "anchor_x": 144,
+  "anchor_y": 100,
+  "sld_source": "b_slav_blacksmith_age2_rubble"
+}
