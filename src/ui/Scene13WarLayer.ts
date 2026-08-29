@@ -92,6 +92,31 @@ const CLEAN_CACHE = new Map<string, HTMLImageElement>();
  */
 const CLEAN_CACHE_MAX = 4000;
 
+// ── 火枪弹白烟弹线预渲染 sprite（颜色固定、跨战斗复用）──
+// [PERF 2026-08-29] 原来每支火枪弹每帧 createLinearGradient + stroke（3 个 colorStop + 路径光栅化），
+// 箭一多 render 就 30~105ms。预渲染成 90px 水平渐变线，绘制时只 setTransform + drawImage 一次。
+let GUNPOWDER_TRAIL_SPRITE: HTMLCanvasElement | null = null;
+function gunpowderTrailSprite(): HTMLCanvasElement {
+    if (!GUNPOWDER_TRAIL_SPRITE) {
+        const c = document.createElement('canvas');
+        c.width = 90; c.height = 4;
+        const g = c.getContext('2d')!;
+        const grad = g.createLinearGradient(0, 0, 90, 0);
+        grad.addColorStop(0, 'rgba(230, 235, 245, 0)');
+        grad.addColorStop(0.55, 'rgba(240, 245, 255, 0.45)');
+        grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+        g.lineWidth = 2.4;
+        g.strokeStyle = grad;
+        g.lineCap = 'round';
+        g.beginPath();
+        g.moveTo(0, 2);
+        g.lineTo(90, 2);
+        g.stroke();
+        GUNPOWDER_TRAIL_SPRITE = c;
+    }
+    return GUNPOWDER_TRAIL_SPRITE;
+}
+
 // ── 兵种属性 ──
 //   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
 //   数值来自本机 empires2_x2_p1.dat（genieutils 实测抽取，非精锐基础档）。
@@ -5333,12 +5358,6 @@ export class Scene13WarLayer {
         this.applyRandomCollapseForms();
     }
 
-    /** 随机三选一：0 完整 / 1 破损 / 2 残骸（各 1/3，均匀分布）。 */
-    private randomCollapseForm(): 0 | 1 | 2 {
-        const r = Math.random();
-        return r < 1 / 3 ? 0 : r < 2 / 3 ? 1 : 2;
-    }
-
     /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
     private collapsibleSprites(): DecorSprite[] {
         const out: DecorSprite[] = [];
@@ -5363,24 +5382,30 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-29 主人定] 30 秒随机三形态（纯视觉，全为贴图、不碰撞）：
-     *    城墙：完整 / 破损(D50) / 残骸(D75)；城门：完整 / 残骸(DESTR→RUBBLE)；
-     *    箭塔：破损(DAMAGED) / 残骸(DESTR→RUBBLE)（无完整形态，各 1/2，均停火）；
-     *    建筑：完整 / 破损(DAMAGED) / 残骸(DESTR→RUBBLE)。
+     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 40% / 损毁 60%，
+     *    损毁里「破损」占主体（残垣断壁感），「残骸」少一些（不全是废墟）（纯视觉、不碰撞）：
+     *    石墙/垛墙段：完整 40% / 破损 D50 40% / 残骸 D75 20%；栅栏：完整 40% / 直接消失 60%（无残垣档）；
+     *    城门：无破损档，完整 40% / 残骸(DESTR→RUBBLE) 60%；
+     *    箭塔：保持「破损(DAMAGED) / 残骸(DESTR→RUBBLE)」各 1/2（无完整形态，均停火）；
+     *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
      */
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
-            const form = this.randomCollapseForm();
-            if (form === 0) continue;   // 完整：不动
+            const r = Math.random();
+            if (r < 0.4) continue;   // 40% 保持完整
             if (b.key === 'STONE_WALL') {
-                const asset = b.destrAssets?.[form === 1 ? 1 : 2];   // D50 / D75
-                if (asset) {
-                    b.sprite.asset = 'BUILDINGANIM:' + asset;
+                const destr = b.destrAssets;   // [D25, D50, D75]
+                if (destr) {
+                    // 石墙/垛墙：破损(D50) 占 40% / 残骸(D75) 占 20%，参差残垣断壁
+                    const d = r < 0.8 ? destr[1] : destr[2];
+                    b.sprite.asset = 'BUILDINGANIM:' + d;
                     b.sprite.frame = 0;
-                    if (form === 2) b.hp = 0;
+                } else {
+                    b.sprite.destroyed = true;   // 木栅栏无残垣 → 直接消失
                 }
-            } else if (form === 2 && b.rubbleAsset) {
-                // 城门：无独立破损档，破损档保持本体；残骸播 DESTR → RUBBLE
+                b.hp = 0;
+            } else if (b.rubbleAsset) {
+                // 城门：无破损档（破则塌），残骸占 60%
                 this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
                 b.hp = 0;
             }
@@ -5398,12 +5423,15 @@ export class Scene13WarLayer {
             }
         }
         for (const b of this.cityBuildings) {
-            const form = this.randomCollapseForm();
-            if (form === 0) continue;   // 完整：不动
-            if (form === 1) {
+            const r = Math.random();
+            if (r < 0.4) continue;   // 40% 保持完整
+            if (r < 0.8) {
+                // 破损（DAMAGED）：焦黑残缺、还立着 → 残垣断壁主视觉；无破损档则塌残骸
                 const damaged = 'BUILDING:' + b.name + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { b.sprite.asset = damaged; b.sprite.frame = 0; }
+                else this.collapseToRubble(b.sprite, b.name);
             } else {
+                // 残骸（DESTR → RUBBLE）
                 this.collapseToRubble(b.sprite, b.name);
             }
         }
@@ -6799,18 +6827,12 @@ export class Scene13WarLayer {
                     const tailX = x - a.dx * trailLen;
                     const tailY = y - a.dy * trailLen;
 
+                    // [PERF 2026-08-29] 白烟弹线改预渲染 sprite：save/restore 隔离变换，视觉与渐变线一致
+                    const trailAngle = Math.atan2(a.dy, a.dx);
                     ctx.save();
-                    const grad = ctx.createLinearGradient(tailX, tailY, x, y);
-                    grad.addColorStop(0, 'rgba(230, 235, 245, 0)');
-                    grad.addColorStop(0.55, 'rgba(240, 245, 255, 0.45)');
-                    grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
-                    ctx.lineWidth = 2.4;
-                    ctx.strokeStyle = grad;
-                    ctx.lineCap = 'round';
-                    ctx.beginPath();
-                    ctx.moveTo(tailX, tailY);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
+                    ctx.translate(tailX, tailY);
+                    ctx.rotate(trailAngle);
+                    ctx.drawImage(gunpowderTrailSprite(), 0, 0, 90, 4, 0, -2, trailLen, 4);
                     ctx.restore();
 
                     // 枪口瞬间微硝烟
