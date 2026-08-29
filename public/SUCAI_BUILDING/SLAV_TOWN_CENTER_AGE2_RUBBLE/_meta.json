@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 372,
+  "box_h": 172,
+  "anchor_x": 196,
+  "anchor_y": 108,
+  "sld_source": "b_slav_town_center_age2_rubble"
+}

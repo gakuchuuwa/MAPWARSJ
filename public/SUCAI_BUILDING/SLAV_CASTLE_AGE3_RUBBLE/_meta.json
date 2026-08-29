@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 436,
+  "box_h": 236,
+  "anchor_x": 212,
+  "anchor_y": 116,
+  "sld_source": "b_slav_castle_age3_rubble"
+}

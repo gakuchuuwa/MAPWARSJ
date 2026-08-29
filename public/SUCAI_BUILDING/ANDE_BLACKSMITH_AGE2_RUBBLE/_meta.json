@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_BLACKSMITH_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 244,
+  "box_h": 104,
+  "anchor_x": 128,
+  "anchor_y": 72,
+  "sld_source": "b_ande_blacksmith_age2_rubble"
+}

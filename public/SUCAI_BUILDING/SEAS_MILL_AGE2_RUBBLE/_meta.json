@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 204,
+  "box_h": 104,
+  "anchor_x": 108,
+  "anchor_y": 60,
+  "sld_source": "b_seas_mill_age2_rubble"
+}

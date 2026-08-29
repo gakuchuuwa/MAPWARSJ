@@ -1,0 +1,9 @@
+{
+  "name": "FRAN_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 500,
+  "box_h": 516,
+  "anchor_x": 232,
+  "anchor_y": 396,
+  "sld_source": "b_fran_castle_age3_destruction"
+}

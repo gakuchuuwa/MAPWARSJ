@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_ARCHERY_RANGE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 304,
+  "box_h": 280,
+  "anchor_x": 148,
+  "anchor_y": 208,
+  "sld_source": "b_ande_archery_range_age3_destruction"
+}

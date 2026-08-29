@@ -1,0 +1,9 @@
+{
+  "name": "KORE_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 364,
+  "box_h": 176,
+  "anchor_x": 180,
+  "anchor_y": 88,
+  "sld_source": "b_kore_castle_age3_rubble"
+}

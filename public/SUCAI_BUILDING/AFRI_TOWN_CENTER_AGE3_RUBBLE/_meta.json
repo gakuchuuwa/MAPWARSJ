@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWN_CENTER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 176,
+  "anchor_x": 204,
+  "anchor_y": 120,
+  "sld_source": "b_afri_town_center_age3_rubble"
+}

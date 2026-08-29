@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MARKET_AGE2_DESTR",
+  "frames": 150,
+  "box_w": 396,
+  "box_h": 316,
+  "anchor_x": 208,
+  "anchor_y": 224,
+  "sld_source": "b_ande_market_age2_destruction"
+}

@@ -1,7 +1,7 @@
 {
   "name": "PURU_TOWER_AGE3_DESTR",
-  "frames": 100,
-  "box_w": 256,
+  "frames": 60,
+  "box_w": 252,
   "box_h": 288,
   "anchor_x": 128,
   "anchor_y": 236,

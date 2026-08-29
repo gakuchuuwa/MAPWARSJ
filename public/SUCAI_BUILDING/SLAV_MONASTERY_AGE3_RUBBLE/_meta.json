@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 268,
+  "box_h": 144,
+  "anchor_x": 116,
+  "anchor_y": 84,
+  "sld_source": "b_slav_monastery_age3_rubble"
+}

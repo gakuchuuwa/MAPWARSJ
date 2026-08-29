@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MILL_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 196,
+  "box_h": 108,
+  "anchor_x": 90,
+  "anchor_y": 58,
+  "sld_source": "b_ande_mill_age3_rubble"
+}

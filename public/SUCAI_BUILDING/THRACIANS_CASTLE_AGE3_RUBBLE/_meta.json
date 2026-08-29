@@ -1,0 +1,9 @@
+{
+  "name": "THRACIANS_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 568,
+  "box_h": 296,
+  "anchor_x": 304,
+  "anchor_y": 160,
+  "sld_source": "b_thracians_castle_age3_rubble"
+}

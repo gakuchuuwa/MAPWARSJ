@@ -1042,42 +1042,42 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
     PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)
     ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
-    GREEK:        ['city_yadian'],                    // 雅典 (希腊城邦核心; 2026-08-27 撤销并入拉丁)
+    GREEK:        ['city_thebes'],                    // 雅典 (希腊城邦核心; 2026-08-27 撤销并入拉丁)
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
     PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
-    BRITONS: [],  // 不列颠（无中心据点，2026-08-28 主人定）
-    GOTHS: [],  // 哥特（无中心据点，2026-08-28 主人定）
-    HUNS: [],  // 匈人（无中心据点，2026-08-28 主人定）
-    TEUTONS: [],  // 条顿（无中心据点，2026-08-28 主人定）
-    VIKINGS: [],  // 维京（无中心据点，2026-08-28 主人定）
-    CELTS: [],  // 凯尔特（无中心据点，2026-08-28 主人定）
-    ITALIANS: [],  // 意大利（无中心据点，2026-08-28 主人定）
-    SICILIANS: [],  // 西西里（无中心据点，2026-08-28 主人定）
-    BULGARIANS: [],  // 保加利亚（无中心据点，2026-08-28 主人定）
-    MAGYAR: [],  // 马扎尔（无中心据点，2026-08-28 主人定）
-    LITHUANIANS: [],  // 立陶宛（无中心据点，2026-08-28 主人定）
-    POLES: [],  // 波兰（无中心据点，2026-08-28 主人定）
-    BOHEMIANS: [],  // 波希米亚（无中心据点，2026-08-28 主人定）
-    BURGUNDIANS: [],  // 勃艮第（无中心据点，2026-08-28 主人定）
-    SPANISH: [],  // 西班牙（无中心据点，2026-08-28 主人定）
-    PORTUGUESE: [],  // 葡萄牙（无中心据点，2026-08-28 主人定）
-    ETHIOPIANS: [],  // 埃塞俄比亚（无中心据点，2026-08-28 主人定）
-    BENGALIS: [],  // 孟加拉（无中心据点，2026-08-28 主人定）
-    GURJARAS: [],  // 瞿折罗（无中心据点，2026-08-28 主人定）
-    PORUS: [],  // 补噜（无中心据点，2026-08-28 主人定）
-    VIETNAMESE: [],  // 越南（无中心据点，2026-08-28 主人定）
-    KHMER: [],  // 高棉（无中心据点，2026-08-28 主人定）
-    MAYANS: [],  // 玛雅（无中心据点，2026-08-28 主人定）
-    MAPUCHE: [],  // 马普切（无中心据点，2026-08-28 主人定）
-    MUISCA: [],  // 穆伊斯卡（无中心据点，2026-08-28 主人定）
-    TUPI: [],  // 图皮（无中心据点，2026-08-28 主人定）
-    ARMENIANS: [],  // 亚美尼亚（无中心据点，2026-08-28 主人定）
-    GEORGIANS: [],  // 格鲁吉亚（无中心据点，2026-08-28 主人定）
-    ATHENIANS: [],  // 雅典（无中心据点，2026-08-28 主人定）
-    SPARTANS: [],  // 斯巴达（无中心据点，2026-08-28 主人定）
-    MACEDONIANS: [],  // 马其顿（无中心据点，2026-08-28 主人定）
-    ACHAEMENIDS: [],  // 阿契美尼德（无中心据点，2026-08-28 主人定）
+    BRITONS: ['city_lundun'],  // 不列颠（无中心据点，2026-08-28 主人定）
+    GOTHS: ['city_toulouse'],  // 哥特（无中心据点，2026-08-28 主人定）
+    HUNS: ['city_saigede'],  // 匈人（无中心据点，2026-08-28 主人定）
+    TEUTONS: ['city_kenisibao'],  // 条顿（无中心据点，2026-08-28 主人定）
+    VIKINGS: ['city_gebenhagen'],  // 维京（无中心据点，2026-08-28 主人定）
+    CELTS: ['city_aidingbao'],  // 凯尔特（无中心据点，2026-08-28 主人定）
+    ITALIANS: ['city_genoa'],  // 意大利（无中心据点，2026-08-28 主人定）
+    SICILIANS: ['city_palermo'],  // 西西里（无中心据点，2026-08-28 主人定）
+    BULGARIANS: ['city_puleisilafu'],  // 保加利亚（无中心据点，2026-08-28 主人定）
+    MAGYAR: ['city_budapeisi'],  // 马扎尔（无中心据点，2026-08-28 主人定）
+    LITHUANIANS: ['city_weierniwusi'],  // 立陶宛（无中心据点，2026-08-28 主人定）
+    POLES: ['city_kelakefu'],  // 波兰（无中心据点，2026-08-28 主人定）
+    BOHEMIANS: ['city_bulage'],  // 波希米亚（无中心据点，2026-08-28 主人定）
+    BURGUNDIANS: ['city_dijon'],  // 勃艮第（无中心据点，2026-08-28 主人定）
+    SPANISH: ['city_toledo'],  // 西班牙（无中心据点，2026-08-28 主人定）
+    PORTUGUESE: ['city_lisiben'],  // 葡萄牙（无中心据点，2026-08-28 主人定）
+    ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（无中心据点，2026-08-28 主人定）
+    BENGALIS: ['city_gaodacheng'],  // 孟加拉（无中心据点，2026-08-28 主人定）
+    GURJARAS: ['city_patan'],  // 瞿折罗（无中心据点，2026-08-28 主人定）
+    PORUS: ['city_atuoke'],  // 补噜（无中心据点，2026-08-28 主人定）
+    VIETNAMESE: ['city_shenglong'],  // 越南（无中心据点，2026-08-28 主人定）
+    KHMER: ['city_angkor'],  // 高棉（无中心据点，2026-08-28 主人定）
+    MAYANS: ['city_tikal'],  // 玛雅（无中心据点，2026-08-28 主人定）
+    MAPUCHE: ['city_tucapel'],  // 马普切（无中心据点，2026-08-28 主人定）
+    MUISCA: ['city_bacata'],  // 穆伊斯卡（无中心据点，2026-08-28 主人定）
+    TUPI: ['city_guanabara'],  // 图皮（无中心据点，2026-08-28 主人定）
+    ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（无中心据点，2026-08-28 主人定）
+    GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（无中心据点，2026-08-28 主人定）
+    ATHENIANS: ['city_yadian'],  // 雅典（无中心据点，2026-08-28 主人定）
+    SPARTANS: ['city_sparta'],  // 斯巴达（无中心据点，2026-08-28 主人定）
+    MACEDONIANS: ['city_salonica'],  // 马其顿（无中心据点，2026-08-28 主人定）
+    ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（无中心据点，2026-08-28 主人定）
 
 };
 

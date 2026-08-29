@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_HOUSE_AGE2_DESTR",
+  "frames": 300,
+  "box_w": 252,
+  "box_h": 192,
+  "anchor_x": 126,
+  "anchor_y": 134,
+  "sld_source": "b_slav_house_age2_destruction"
+}

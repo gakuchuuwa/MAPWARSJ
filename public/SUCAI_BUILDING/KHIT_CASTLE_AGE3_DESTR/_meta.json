@@ -1,0 +1,9 @@
+{
+  "name": "KHIT_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 512,
+  "box_h": 432,
+  "anchor_x": 252,
+  "anchor_y": 320,
+  "sld_source": "b_khit_castle_age3_destruction"
+}

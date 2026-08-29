@@ -220,7 +220,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lu": {
-        legionName: "曹魏军团",
+        legionName: "庐州军团",
         formationMode: "crane_wing",
         slots: [
             { type: "jian_swordman_unshielded", count: 2 },
@@ -321,7 +321,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mi_chu": {
-        legionName: "先秦军团",
+        legionName: "安陆军团",
         formationMode: "echelon",
         slots: [
             { type: "white_feather_guard", count: 4 },
@@ -515,40 +515,40 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 满清军团·抚顺/赫图阿拉/盛京/吉林乌拉/呼伦贝尔/威远营/西宁（努尔哈赤 / 皇太极 / 多尔衮 / 阿桂 / 海兰察 / 年羹尧 / 岳钟琪 · 鱼鳞阵 3+4+2：女真铁浮屠 3 + 草原枪骑兵精锐 4 + 重装骑射手 2）
-    manzhou: {
+    "manzhou": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },          // Row 0 前卫重骑 = 女真铁浮屠 3骑（八旗重装铁甲前锋突破）
-            { type: 'elite_steppe_lancer', count: 4 },  // Row 1 中军主力 = 草原枪骑兵精锐 4骑（八旗长枪铁骑中坚突击）
-            { type: 'cav_archer_heavy', count: 2 },     // Row 2 尾收远程 = 重装骑射手 2骑（八旗重装弓骑兵两翼齐射火力支援）
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
-    aisin_d: {
+    "aisin_d": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
-    manzhou_d: {
+    "manzhou_d": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
-    agui: {
+    "agui": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     "xingan": {
@@ -561,22 +561,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
-    weiyuan: {
+    "weiyuan": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
-    qinghai: {
+    "qinghai": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
@@ -690,7 +690,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhai_han": {
-        legionName: "蕃落骑军团",
+        legionName: "翟国军团",
         legionType: "solo",
         formationMode: "fish_scale",
         slots: [
@@ -2760,27 +2760,27 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "满清军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "iron_pagoda", count: 3 },
-            { type: "elite_steppe_lancer", count: 4 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     "wula": {
         legionName: "满清军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "iron_pagoda", count: 3 },
-            { type: "elite_steppe_lancer", count: 4 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     "haixi_nvzhen": {
         legionName: "满清军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "iron_pagoda", count: 3 },
-            { type: "elite_steppe_lancer", count: 4 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     "wenling": {
@@ -2983,7 +2983,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xideweina": {
-        legionName: "葡萄牙军团",
+        legionName: "波洛公国军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_steppe_lancer", count: 2 },
@@ -3703,7 +3703,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "muer": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -5665,7 +5665,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiazini": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -6124,7 +6124,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "seljuq": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -6430,7 +6430,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guzgan": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8185,7 +8185,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huluo": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8617,7 +8617,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ribale": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8680,7 +8680,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sashan": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8851,7 +8851,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aolisha": {
-        legionName: "印度军团",
+        legionName: "天竺军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8860,7 +8860,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kanata": {
-        legionName: "印度军团",
+        legionName: "天竺军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8869,7 +8869,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "adile": {
-        legionName: "印度军团",
+        legionName: "天竺军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8923,7 +8923,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aodesuosi": {
-        legionName: "奥德索斯军团",
+        legionName: "色雷斯军团",
         formationMode: "fish_scale",
         slots: [
             { type: "boyar", count: 2 },
@@ -8941,7 +8941,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yisatisi": {
-        legionName: "波斯军团",
+        legionName: "伊朗军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8959,7 +8959,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pidisha": {
-        legionName: "印度军团",
+        legionName: "天竺军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8968,7 +8968,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiaye": {
-        legionName: "印度军团",
+        legionName: "天竺军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8995,7 +8995,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "puxiangyindu": {
-        legionName: "葡萄牙军团",
+        legionName: "葡属印度军团",
         legionType: "region",
         formationMode: "balance_yoke",
         slots: [
@@ -9012,6 +9012,114 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "pikeman", count: 3 },
             { type: "laminated_bowman", count: 2 },
             { type: "cav_archer_heavy", count: 4 },
+        ],
+    },
+    "muwaxide": {
+        legionName: "马格里布军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "yilaka": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
+        ],
+    },
+    "xiadunhe": {
+        legionName: "草原军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
+        ],
+    },
+    "zhagewei": {
+        legionName: "非洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "suomunate": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "sengjialuo": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "varendra": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "chatigangren": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "duonaobaojia": {
+        legionName: "色雷斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "boyar", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "composite_bowman", count: 3 },
+        ],
+    },
+    "ternate": {
+        legionName: "马来军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "karambit_warrior_elite", count: 4 },
+            { type: "archer", count: 3 },
+        ],
+    },
+    "sulu": {
+        legionName: "马来军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "karambit_warrior_elite", count: 4 },
+            { type: "archer", count: 3 },
+        ],
+    },
+    "xishudongyin": {
+        legionName: "马来军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "karambit_warrior_elite", count: 4 },
+            { type: "archer", count: 3 },
         ],
     },
 };

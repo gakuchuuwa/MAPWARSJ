@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_STABLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 376,
+  "box_h": 176,
+  "anchor_x": 212,
+  "anchor_y": 100,
+  "sld_source": "b_seas_stable_age3_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_STABLE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 396,
+  "box_h": 256,
+  "anchor_x": 212,
+  "anchor_y": 176,
+  "sld_source": "b_seas_stable_age3_destruction"
+}

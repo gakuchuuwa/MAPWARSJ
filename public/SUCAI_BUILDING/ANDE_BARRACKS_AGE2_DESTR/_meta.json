@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_BARRACKS_AGE2_DESTR",
+  "frames": 150,
+  "box_w": 344,
+  "box_h": 260,
+  "anchor_x": 152,
+  "anchor_y": 180,
+  "sld_source": "b_ande_barracks_age2_destruction"
+}

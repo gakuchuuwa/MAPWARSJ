@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 252,
+  "box_h": 128,
+  "anchor_x": 130,
+  "anchor_y": 74,
+  "sld_source": "b_persian_house_age2_rubble"
+}

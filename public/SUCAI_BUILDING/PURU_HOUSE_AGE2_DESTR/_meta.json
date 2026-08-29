@@ -1,0 +1,9 @@
+{
+  "name": "PURU_HOUSE_AGE2_DESTR",
+  "frames": 300,
+  "box_w": 236,
+  "box_h": 160,
+  "anchor_x": 122,
+  "anchor_y": 110,
+  "sld_source": "b_puru_house_age2_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 96,
+  "anchor_x": 74,
+  "anchor_y": 62,
+  "sld_source": "b_puru_mill_age2_rubble"
+}

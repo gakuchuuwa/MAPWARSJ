@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 192,
+  "anchor_x": 144,
+  "anchor_y": 116,
+  "sld_source": "b_slav_archery_range_age2_rubble"
+}

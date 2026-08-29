@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MILL_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 212,
+  "box_h": 104,
+  "anchor_x": 120,
+  "anchor_y": 24,
+  "sld_source": "b_east_mill_age3_rubble"
+}

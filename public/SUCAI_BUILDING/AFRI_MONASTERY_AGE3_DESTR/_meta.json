@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MONASTERY_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 464,
+  "box_h": 364,
+  "anchor_x": 212,
+  "anchor_y": 268,
+  "sld_source": "b_afri_monastery_age3_destruction"
+}

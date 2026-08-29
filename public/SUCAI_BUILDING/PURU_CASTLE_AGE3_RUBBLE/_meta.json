@@ -1,0 +1,9 @@
+{
+  "name": "PURU_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 452,
+  "box_h": 272,
+  "anchor_x": 248,
+  "anchor_y": 140,
+  "sld_source": "b_puru_castle_age3_rubble"
+}

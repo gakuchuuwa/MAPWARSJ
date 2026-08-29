@@ -1,0 +1,9 @@
+{
+  "name": "EAST_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 220,
+  "box_h": 152,
+  "anchor_x": 110,
+  "anchor_y": 62,
+  "sld_source": "b_east_house_age2_rubble"
+}

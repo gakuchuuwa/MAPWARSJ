@@ -1,8 +1,8 @@
 {
   "name": "SEAS_TOWER_AGE3_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 272,
-  "box_h": 284,
+  "box_h": 280,
   "anchor_x": 132,
   "anchor_y": 220,
   "sld_source": "b_seas_tower_age3_destruction"

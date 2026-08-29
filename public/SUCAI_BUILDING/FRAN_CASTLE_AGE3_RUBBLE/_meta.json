@@ -1,0 +1,9 @@
+{
+  "name": "FRAN_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 444,
+  "box_h": 276,
+  "anchor_x": 212,
+  "anchor_y": 168,
+  "sld_source": "b_fran_castle_age3_rubble"
+}

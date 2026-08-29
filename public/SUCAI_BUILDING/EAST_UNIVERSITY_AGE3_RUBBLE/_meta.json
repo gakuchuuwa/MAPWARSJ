@@ -1,0 +1,9 @@
+{
+  "name": "EAST_UNIVERSITY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 392,
+  "box_h": 192,
+  "anchor_x": 180,
+  "anchor_y": 104,
+  "sld_source": "b_east_university_age3_rubble"
+}

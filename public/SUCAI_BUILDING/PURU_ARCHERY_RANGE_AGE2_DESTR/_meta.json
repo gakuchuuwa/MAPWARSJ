@@ -1,0 +1,9 @@
+{
+  "name": "PURU_ARCHERY_RANGE_AGE2_DESTR",
+  "frames": 99,
+  "box_w": 372,
+  "box_h": 320,
+  "anchor_x": 188,
+  "anchor_y": 224,
+  "sld_source": "b_puru_archery_range_age2_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_STABLE_AGE2_DESTR",
+  "frames": 150,
+  "box_w": 324,
+  "box_h": 204,
+  "anchor_x": 160,
+  "anchor_y": 136,
+  "sld_source": "b_ande_stable_age2_destruction"
+}

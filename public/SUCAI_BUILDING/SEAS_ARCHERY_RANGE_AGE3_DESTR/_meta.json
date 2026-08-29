@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_ARCHERY_RANGE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 440,
+  "box_h": 412,
+  "anchor_x": 228,
+  "anchor_y": 292,
+  "sld_source": "b_seas_archery_range_age3_destruction"
+}

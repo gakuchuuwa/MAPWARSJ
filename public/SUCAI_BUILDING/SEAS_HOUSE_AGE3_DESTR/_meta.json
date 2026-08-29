@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_HOUSE_AGE3_DESTR",
+  "frames": 300,
+  "box_w": 320,
+  "box_h": 224,
+  "anchor_x": 168,
+  "anchor_y": 148,
+  "sld_source": "b_seas_house_age3_destruction"
+}

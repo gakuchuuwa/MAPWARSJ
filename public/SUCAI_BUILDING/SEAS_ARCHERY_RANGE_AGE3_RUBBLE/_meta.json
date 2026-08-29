@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_ARCHERY_RANGE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 424,
+  "box_h": 232,
+  "anchor_x": 228,
+  "anchor_y": 136,
+  "sld_source": "b_seas_archery_range_age3_rubble"
+}

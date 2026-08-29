@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_BARRACKS_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 280,
+  "box_h": 156,
+  "anchor_x": 136,
+  "anchor_y": 84,
+  "sld_source": "b_ande_barracks_age2_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_BLACKSMITH_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 396,
+  "box_h": 244,
+  "anchor_x": 184,
+  "anchor_y": 184,
+  "sld_source": "b_seas_blacksmith_age2_destruction"
+}

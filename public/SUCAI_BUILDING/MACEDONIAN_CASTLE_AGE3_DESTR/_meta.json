@@ -1,0 +1,9 @@
+{
+  "name": "MACEDONIAN_CASTLE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 560,
+  "box_h": 432,
+  "anchor_x": 276,
+  "anchor_y": 300,
+  "sld_source": "b_macedonian_castle_age3_destruction"
+}

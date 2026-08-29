@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWN_CENTER_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 440,
+  "box_h": 284,
+  "anchor_x": 212,
+  "anchor_y": 220,
+  "sld_source": "b_afri_town_center_age3_destruction"
+}

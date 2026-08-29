@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 280,
+  "box_h": 168,
+  "anchor_x": 144,
+  "anchor_y": 116,
+  "sld_source": "b_seas_house_age2_rubble"
+}

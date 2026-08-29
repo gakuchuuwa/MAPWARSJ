@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 376,
+  "box_h": 168,
+  "anchor_x": 176,
+  "anchor_y": 112,
+  "sld_source": "b_east_town_center_age2_rubble"
+}

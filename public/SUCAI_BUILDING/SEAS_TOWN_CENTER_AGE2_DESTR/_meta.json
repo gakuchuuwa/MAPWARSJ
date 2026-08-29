@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWN_CENTER_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 440,
+  "box_h": 300,
+  "anchor_x": 220,
+  "anchor_y": 224,
+  "sld_source": "b_seas_town_center_age2_destruction"
+}

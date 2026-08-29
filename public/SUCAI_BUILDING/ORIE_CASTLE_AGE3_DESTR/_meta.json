@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 572,
+  "box_h": 436,
+  "anchor_x": 284,
+  "anchor_y": 300,
+  "sld_source": "b_orie_castle_age3_destruction"
+}

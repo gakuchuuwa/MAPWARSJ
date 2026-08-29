@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 172,
+  "anchor_x": 164,
+  "anchor_y": 100,
+  "sld_source": "b_seas_monastery_age3_rubble"
+}

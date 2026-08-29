@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_HOUSE_AGE3_DESTR",
+  "frames": 300,
+  "box_w": 244,
+  "box_h": 184,
+  "anchor_x": 122,
+  "anchor_y": 130,
+  "sld_source": "b_ande_house_age3_destruction"
+}

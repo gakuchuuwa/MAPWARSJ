@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWN_CENTER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 368,
+  "box_h": 188,
+  "anchor_x": 176,
+  "anchor_y": 128,
+  "sld_source": "b_ande_town_center_age3_rubble"
+}

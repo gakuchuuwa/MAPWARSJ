@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 604,
+  "box_h": 476,
+  "anchor_x": 320,
+  "anchor_y": 348,
+  "sld_source": "b_afri_castle_age3_destruction"
+}

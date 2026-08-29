@@ -1,0 +1,9 @@
+{
+  "name": "EAST_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 160,
+  "anchor_x": 152,
+  "anchor_y": 92,
+  "sld_source": "b_east_archery_range_age2_rubble"
+}

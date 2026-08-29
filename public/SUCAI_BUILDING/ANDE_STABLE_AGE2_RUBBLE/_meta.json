@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_STABLE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 280,
+  "box_h": 144,
+  "anchor_x": 132,
+  "anchor_y": 80,
+  "sld_source": "b_ande_stable_age2_rubble"
+}

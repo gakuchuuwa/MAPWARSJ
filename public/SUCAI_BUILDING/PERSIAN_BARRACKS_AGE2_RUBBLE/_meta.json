@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_BARRACKS_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 192,
+  "anchor_x": 148,
+  "anchor_y": 108,
+  "sld_source": "b_persian_barracks_age2_rubble"
+}

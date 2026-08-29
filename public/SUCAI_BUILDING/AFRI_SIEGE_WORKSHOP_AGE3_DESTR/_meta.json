@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_SIEGE_WORKSHOP_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 452,
+  "box_h": 260,
+  "anchor_x": 248,
+  "anchor_y": 164,
+  "sld_source": "b_afri_siege_workshop_age3_destruction"
+}

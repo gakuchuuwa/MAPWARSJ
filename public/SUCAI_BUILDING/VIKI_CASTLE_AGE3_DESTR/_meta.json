@@ -1,0 +1,9 @@
+{
+  "name": "VIKI_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 508,
+  "box_h": 516,
+  "anchor_x": 248,
+  "anchor_y": 392,
+  "sld_source": "b_viki_castle_age3_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_HOUSE_AGE3_RUBBLE",
+  "frames": 3,
+  "box_w": 224,
+  "box_h": 112,
+  "anchor_x": 114,
+  "anchor_y": 66,
+  "sld_source": "b_ande_house_age3_rubble"
+}

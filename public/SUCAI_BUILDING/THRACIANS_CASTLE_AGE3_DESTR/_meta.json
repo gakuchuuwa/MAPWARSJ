@@ -1,0 +1,9 @@
+{
+  "name": "THRACIANS_CASTLE_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 568,
+  "box_h": 452,
+  "anchor_x": 304,
+  "anchor_y": 316,
+  "sld_source": "b_thracians_castle_age3_destruction"
+}

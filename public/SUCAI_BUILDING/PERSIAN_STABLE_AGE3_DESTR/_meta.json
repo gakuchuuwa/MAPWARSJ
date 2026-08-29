@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_STABLE_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 380,
+  "box_h": 244,
+  "anchor_x": 196,
+  "anchor_y": 168,
+  "sld_source": "b_persian_stable_age3_destruction"
+}

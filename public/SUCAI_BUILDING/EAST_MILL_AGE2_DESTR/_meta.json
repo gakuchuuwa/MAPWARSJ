@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MILL_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 272,
+  "box_h": 284,
+  "anchor_x": 144,
+  "anchor_y": 172,
+  "sld_source": "b_east_mill_age2_destruction"
+}

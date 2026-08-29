@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_BARRACKS_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 364,
+  "box_h": 292,
+  "anchor_x": 168,
+  "anchor_y": 208,
+  "sld_source": "b_slav_barracks_age3_destruction"
+}

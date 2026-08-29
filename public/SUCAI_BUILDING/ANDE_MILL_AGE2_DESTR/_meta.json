@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MILL_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 232,
+  "box_h": 176,
+  "anchor_x": 110,
+  "anchor_y": 122,
+  "sld_source": "b_ande_mill_age2_destruction"
+}

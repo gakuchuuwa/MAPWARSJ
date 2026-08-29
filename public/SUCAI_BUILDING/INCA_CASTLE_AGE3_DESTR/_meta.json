@@ -1,0 +1,9 @@
+{
+  "name": "INCA_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 364,
+  "box_h": 404,
+  "anchor_x": 184,
+  "anchor_y": 312,
+  "sld_source": "b_inca_castle_age3_destruction"
+}

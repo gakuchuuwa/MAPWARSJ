@@ -1,0 +1,9 @@
+{
+  "name": "VIET_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 476,
+  "box_h": 472,
+  "anchor_x": 252,
+  "anchor_y": 368,
+  "sld_source": "b_viet_castle_age3_destruction"
+}

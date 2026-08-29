@@ -137,7 +137,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 45, 46, 47, 50] }],
-        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'BASHU', 'JIANGNAN', 'LATIN', 'GERMANIC', 'INDIA', 'BERBER'],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'PORUS', 'KHMER', 'MAYANS', 'MAPUCHE', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
@@ -157,7 +157,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: CHAINMAIL_BELT,
+        cultures: null,
     },
     {
         id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
@@ -166,7 +166,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'BERBER'],
+        cultures: ['SLAVIC', 'GERMANIC', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'GURJARAS', 'VIETNAMESE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS'],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
@@ -177,7 +177,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: MOUNTED_CULTURES,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
     {
         id: 'chain_barding', name: '骑兵锁甲', de: 'Chain Barding Armor', year: 1100,
@@ -186,7 +186,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: CHAINMAIL_BELT,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
     {
         id: 'plate_barding', name: '骑兵钢甲', de: 'Plate Barding Armor', year: 1450,
@@ -195,7 +195,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [12, 47] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'INDIA', 'BERBER'],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'HUNS', 'TEUTONS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'GEORGIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
@@ -217,7 +217,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'SLAVIC', 'CENTRAL', 'BASHU', 'INDIA', 'BERBER'],
+        cultures: null,
     },
     {
         id: 'bracer', name: '护腕', de: 'Bracer', year: 1400,
@@ -227,7 +227,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['LATIN', 'GERMANIC', 'CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA', 'INDIA', 'BERBER'],
+        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'THRACIAN', 'BRITONS', 'GOTHS', 'HUNS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
@@ -247,7 +247,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
         ],
-        cultures: null,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
     {
         id: 'ring_archer', name: '射手锁甲', de: 'Ring Archer Armor', year: 1300,
@@ -256,7 +256,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['CENTRAL', 'BASHU', 'JIANGNAN', 'WEST_ASIA', 'LATIN', 'INDIA', 'BERBER'],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'MAGYAR', 'LITHUANIANS', 'BOHEMIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'PORUS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'TUPI', 'ARMENIANS', 'ATHENIANS'],
     },
 
     // ── 附加四条 ──────────────────────────────────────────────────────────
@@ -264,20 +264,20 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'husbandry', name: '畜牧', de: 'Husbandry', year: 477,
         basis: '马镫在南北朝定型并西传，骑兵机动力质变',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
-        cultures: MOUNTED_CULTURES,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'BRITONS', 'GOTHS', 'HUNS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'PORUS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
     {
         id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
         basis: '汉武帝得大宛汗血马，良种马育种',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 23, 36, 47] }],
-        cultures: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN', 'TIBET', 'HEXI', 'INDIA', 'BERBER'],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'THRACIAN', 'PERSIAN', 'CUMAN', 'GOTHS', 'HUNS', 'TEUTONS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
     {
         id: 'thumb_ring', name: '扳指', de: 'Thumb Ring', year: 1206,
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
-        cultures: [...HORSE_ARCHER_CULTURES, 'CENTRAL', 'INDIA', 'BERBER'],
+        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', 'CUMAN', 'HUNS', 'ITALIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'GURJARAS', 'VIETNAMESE', 'MAYANS', 'MUISCA', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
     {
         id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
@@ -287,7 +287,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [36] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [36] },
         ],
-        cultures: HORSE_ARCHER_CULTURES,
+        cultures: ['DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'THRACIAN', 'PERSIAN', 'CUMAN', 'HUNS', 'BULGARIANS', 'MAGYAR', 'PORUS', 'KHMER', 'GEORGIANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
 
     // ── 步兵软甲／行军（兵营）─────────────────────────────────────────
@@ -296,17 +296,13 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '步兵软垫护甲（gambeson）工艺成熟',
         // DE 效果 = 步兵线 +1 穿刺护甲；🔴 印度/柏柏尔（DE 印度斯坦/柏柏尔）禁用
         effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
-        cultures: [
-            'SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
-            'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'NORTHEAST', 'TIBET',
-            'WESTERN', 'KOREA', 'DIANQIAN', 'WEST_ASIA',
-        ],
+        cultures: ['SLAVIC', 'GERMANIC', 'DIANQIAN', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'BRITONS', 'TEUTONS', 'VIKINGS', 'CELTS', 'SICILIANS', 'BULGARIANS', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'ARMENIANS', 'GEORGIANS'],
     },
     {
         id: 'squires', name: '护卫', de: 'Squires', year: 1000,
         basis: '步兵行军与耐力训练',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],
-        cultures: null,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'MAYANS', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
 
     // ── 化学（大学）：远程/火器 +1 穿刺攻击 ────────────────────────────
@@ -315,7 +311,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '火药兵器（硝石提纯）成熟，远程投射物威力跃升',
         // DE 效果 = 弓箭手/弓骑/火枪 +1 穿刺攻击
         effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 44] }],
-        cultures: null,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS'],
     },
 
     // ── 攻城技师（大学）：攻城器械/弩炮 +1 射程 ────────────────────────
@@ -324,7 +320,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '中世纪攻城技术（配重投石机/攻城器械改良）',
         // DE 还含「对建筑攻击 +20%」，属加成伤害表，本期只落射程
         effects: [{ attr: 'range', op: 'add', value: 1, classes: [13, 55] }],
-        cultures: null,
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'DIANQIAN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', 'BRITONS', 'TEUTONS', 'VIKINGS', 'CELTS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'POLES', 'BOHEMIANS', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'KHMER', 'MAPUCHE', 'MUISCA', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
 ];
 
