@@ -129,6 +129,20 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     CUMAN: 'CEAS', // DE 库曼/鞑靼 = CEAS 套装（CEAS_WONDER_CUMANS/TATARS 在此）
     GREEK: 'MEDI', // DE 希腊/拜占庭 = 地中海套装（MEDI_WONDER_BYZANTINES 拜占庭奇观在此，greek 战役前缀无 AGE3 建筑池）
     THRACIAN: 'SLAV', // DE 色雷斯/保加利亚 = 东欧套装（SLAV_WONDER_BULGARIANS 保加利亚奇观在此，thracian 战役前缀无 AGE3 建筑池）
+    // ── [2026-08-29 补全] 支文化/细分势力：DE 具体文明无 AGE2 素材（见 de-style-availability.md），
+    //    归到所属主文化的 DE 大风格，消除旧单图。每个区 1 个据点。
+    BRITONS: 'WEST', GOTHS: 'WEST', TEUTONS: 'WEST', VIKINGS: 'WEST', CELTS: 'WEST', BURGUNDIANS: 'WEST',
+    ITALIANS: 'MEDI', SICILIANS: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI',
+    ATHENIANS: 'MEDI', SPARTANS: 'MEDI', MACEDONIANS: 'MEDI',
+    LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV',
+    HUNS: 'CEAS', MAGYAR: 'CEAS',
+    ARMENIANS: 'ORIE', GEORGIANS: 'ORIE',
+    ACHAEMENIDS: 'PERSIAN',
+    BENGALIS: 'INDI', GURJARAS: 'INDI', PORUS: 'INDI',
+    VIETNAMESE: 'SEAS', KHMER: 'SEAS',
+    MAYANS: 'MESO', MUISCA: 'MESO',
+    MAPUCHE: 'ANDE', TUPI: 'ANDE',
+    ETHIOPIANS: 'AFRI',
 };
 
 /** 判断某城是否用小城 DE 建筑组合渲染；是则返回 DE 风格前缀，否则 null。 */
