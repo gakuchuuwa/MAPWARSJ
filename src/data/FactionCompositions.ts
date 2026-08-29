@@ -3531,6 +3531,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_steppe_lancer", count: 2 },
         ],
     },
+    "eluosi_diguo": {
+        legionName: "斯拉夫军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+        ],
+    },
+    "kaleiliya": {
+        legionName: "斯拉夫军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+        ],
+    },
     "heishui": {
         legionName: "东北军团",
         formationMode: "fish_scale",
@@ -8926,9 +8944,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "色雷斯军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
-            { type: "composite_bowman", count: 3 },
+            { type: "rhomphaia_warrior", count: 3 },
+            { type: "elite_peltast", count: 4 },
+            { type: "thracian_peltast", count: 2 },
         ],
     },
     "disidelusi": {
@@ -9086,13 +9104,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "sannahya", count: 2 },
         ],
     },
+    "bulu": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
     "duonaobaojia": {
         legionName: "色雷斯军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
-            { type: "composite_bowman", count: 3 },
+            { type: "rhomphaia_warrior", count: 3 },
+            { type: "elite_peltast", count: 4 },
+            { type: "thracian_peltast", count: 2 },
         ],
     },
     "ternate": {

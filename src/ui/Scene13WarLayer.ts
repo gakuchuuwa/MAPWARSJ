@@ -5382,21 +5382,21 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 40% / 损毁 60%，
+     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 50% / 损毁 50%，
      *    损毁里「破损」占主体（残垣断壁感），「残骸」少一些（不全是废墟）（纯视觉、不碰撞）：
-     *    石墙/垛墙段：完整 40% / 破损 D50 40% / 残骸 D75 20%；栅栏：完整 40% / 直接消失 60%（无残垣档）；
-     *    城门：无破损档，完整 40% / 残骸(DESTR→RUBBLE) 60%；
-     *    箭塔：保持「破损(DAMAGED) / 残骸(DESTR→RUBBLE)」各 1/2（无完整形态，均停火）；
-     *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
+     *    石墙/垛墙段：完整 50% / 破损 D50 30% / 残骸 D75 20%；栅栏：完整 50% / 直接消失 50%（无残垣档）；
+     *    城门：无破损档，完整 50% / 残骸(DESTR→RUBBLE) 50%；
+     *    箭塔：破损(DAMAGED) / 残骸(直接切 RUBBLE) 各 1/2（无完整形态，均停火）；
+     *    建筑：完整 50% / 破损(DAMAGED) 30% / 残骸(DESTR→RUBBLE) 20%。
      */
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
             const r = Math.random();
-            if (r < 0.4) continue;   // 40% 保持完整
+            if (r < 0.5) continue;   // 50% 保持完整
             if (b.key === 'STONE_WALL') {
                 const destr = b.destrAssets;   // [D25, D50, D75]
                 if (destr) {
-                    // 石墙/垛墙：破损(D50) 占 40% / 残骸(D75) 占 20%，参差残垣断壁
+                    // 石墙/垛墙：破损(D50) 占 30% / 残骸(D75) 占 20%，参差残垣断壁
                     const d = r < 0.8 ? destr[1] : destr[2];
                     b.sprite.asset = 'BUILDINGANIM:' + d;
                     b.sprite.frame = 0;
@@ -5419,12 +5419,15 @@ export class Scene13WarLayer {
                 const damaged = 'BUILDING:' + towerName + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
             } else {
-                this.collapseToRubble(t.sprite, towerName);
+                // 残骸：直接切 RUBBLE（不播 DESTR 动画，30 秒一到立即塌成废墟，避免动画起步时看着像没塌）
+                const rubble = 'BUILDINGANIM:' + towerName + '_RUBBLE';
+                if (this.natureCache[rubble]?.img?.complete) { t.sprite.asset = rubble; t.sprite.frame = 0; }
+                else this.collapseToRubble(t.sprite, towerName);
             }
         }
         for (const b of this.cityBuildings) {
             const r = Math.random();
-            if (r < 0.4) continue;   // 40% 保持完整
+            if (r < 0.5) continue;   // 50% 保持完整
             if (r < 0.8) {
                 // 破损（DAMAGED）：焦黑残缺、还立着 → 残垣断壁主视觉；无破损档则塌残骸
                 const damaged = 'BUILDING:' + b.name + '_DAMAGED';
