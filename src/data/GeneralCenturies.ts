@@ -989,6 +989,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
 
     // ══════ GREEK（7 人，已标 0）—— 2026-08-19 起属 LATIN 拉丁支文化 ══════
     'gen_alexander_great': -4,                           // 亚历山大 · maqidun · 佩拉
+    'xiaofulijiya_aerxitis': -4,                        // 阿尔西提斯 · 小弗里吉亚 · 达斯基利翁
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
     'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚
