@@ -3562,6 +3562,11 @@ export class Scene13WarLayer {
     private perfWaterPatches = 0;
     private perfRender: number[] = [];
     private perfFrames = 0;
+    /** [诊断 2026-08-29] 尖峰帧快照：step/render 超阈值的帧记下战场状态，定位「无水也卡」来源 */
+    private spikeLog: Array<Record<string, number>> = [];
+    private lastRepaintDecorAt = 0;
+    private lastCollapseAt = 0;
+    private lastBakeCorpseAt = 0;
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -3606,6 +3611,8 @@ export class Scene13WarLayer {
                 waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
             },
+            // [诊断 2026-08-29] 尖峰帧快照（>20ms 帧的战场状态），定位「无水也卡」来源
+            spikes: this.spikeLog,
             // [2026-08-26] 宿主帧预算快照：13 自身 step+render 中位仅 3.8ms（理论 263fps），
             // 而探针反算实测 fps 中位 47、p10 仅 17.7 —— 说明卡顿几乎全在 13 之外。
             // PerformanceMonitor 已逐帧记着主循环分项，这里一并落盘才能定位到具体子系统。
@@ -4304,6 +4311,7 @@ export class Scene13WarLayer {
 
     /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
     private repaintDecor(): void {
+        this.lastRepaintDecorAt = performance.now();
         const cv = this.decor, g = this.decorCtx;
         if (!cv || !g) return;
         g.clearRect(0, 0, cv.width, cv.height);
@@ -5296,6 +5304,7 @@ export class Scene13WarLayer {
      *    任何一排都留缺口，士兵穿行不卡。
      */
     private collapseFrontWalls(): void {
+        this.lastCollapseAt = performance.now();
         // 🔴 [2026-08-23] 只塌一半且只塌一次：已塌过（wallsCollapsed）就不再重复塌——
         //    否则士兵每打破一段残墙又触发一次"塌一半"，反复迭代到全塌。
         if (this.wallsCollapsed) { this.defenderHolding = false; return; }
@@ -6459,6 +6468,7 @@ export class Scene13WarLayer {
 
     /** 把一具尸体的死亡末帧永久烙进地面图（留不留已由 takeCorpseSlot 裁定） */
     private bakeCorpse(c: WarCorpse): boolean {
+        this.lastBakeCorpseAt = performance.now();
         const g = this.groundCtx;
         if (!g) return false;
         const b = this.bank[c.key];
@@ -6545,10 +6555,26 @@ export class Scene13WarLayer {
             const t1 = performance.now();
             this.render();
             const t2 = performance.now();
-            this.perfStep.push(t1 - t0);
-            this.perfRender.push(t2 - t1);
+            const stepMs = t1 - t0, renderMs = t2 - t1;
+            this.perfStep.push(stepMs);
+            this.perfRender.push(renderMs);
             this.perfFrames++;
             if (this.perfStep.length > 1800) { this.perfStep.shift(); this.perfRender.shift(); }
+            // [诊断 2026-08-29] 尖峰帧快照：>20ms 记下战场状态与最近重绘/坍塌/烙地时刻，定位「无水也卡」。
+            if (stepMs > 20 || renderMs > 20) {
+                this.spikeLog.push({
+                    t: +this.battleSec.toFixed(2),
+                    stepMs: +stepMs.toFixed(1), renderMs: +renderMs.toFixed(1),
+                    men: this.men.length, corpses: this.corpses.length,
+                    arrows: this.arrows.length, slashes: this.slashes.length,
+                    wallGates: this.wallGates.length, decorPatches: this.decorPatches.length,
+                    decorSprites: this.decorSprites.length,
+                    sinceRepaint: this.lastRepaintDecorAt ? Math.round(t2 - this.lastRepaintDecorAt) : -1,
+                    sinceCollapse: this.lastCollapseAt ? Math.round(t2 - this.lastCollapseAt) : -1,
+                    sinceBake: this.lastBakeCorpseAt ? Math.round(t2 - this.lastBakeCorpseAt) : -1,
+                });
+                if (this.spikeLog.length > 30) this.spikeLog.shift();
+            }
         } else {
             this.step(dt);
             this.render();
