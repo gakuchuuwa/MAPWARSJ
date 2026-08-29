@@ -32,7 +32,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
     pusikefu_gongheguo: { name: '圣三一兵团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名
     bosi_puluosi: { name: '刻赤具装骑', tier: 2 },        // 潘提卡彭·琉孔一世：博斯普鲁斯具装重骑
-    kelimiya: { name: '克里米骑', tier: 3 },          // 卡法·哈吉格来：克里米亚鞑靼骑兵
     lagusa: { name: '拉古萨舰队', tier: 3 },          // 拉古萨·德拉甘：亚得里亚海商船共和国
     liwoniya: { name: '利沃骑士', tier: 3 },          // 塔林·普雷特贝格：波罗的海十字军
     walajiyia: { name: '穿刺堡兵', tier: 3 },          // 特尔城·弗拉德：游击/夜袭/清野，非正面冲击骑兵专名
@@ -67,4 +66,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     kaleiliya: { name: '奥涅加猎手', tier: 4 },     // 基日岛·克利姆：卡累利阿森林猎手（编）；避势力「卡累利阿」叠字
     qiekase: { name: '切尔卡瑟骑', tier: 4 },          // 切尔卡瑟·拜达；避势力「第聂伯」叠字
     kuertaiya: { name: '瓦拉几亚骑兵', tier: 3 },
+    kelimiya: { name: '克里米骑', tier: 3 },
 };

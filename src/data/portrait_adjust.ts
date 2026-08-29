@@ -4932,11 +4932,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 54
         },
-        "/assets/LATIN/feiniqi_hamierka.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/LATIN/__闲置__LATIN_09.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -7107,11 +7102,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 11,
             "offsetY": -1
         },
-        "/assets/LATIN/__闲置__LATIN_17.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/AMERICA/zhibuluotuo_enlike.png": {
             "scale": 1,
             "offsetX": 0,
@@ -7141,6 +7131,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/LATIN/__闲置__LATIN_18.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/LATIN/feiniqi_hamierka.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/LATIN/gen_hamilcar.png": {
+            "scale": 1.09,
+            "offsetX": -1,
+            "offsetY": -2
         }
     },
     "folderGuides": {

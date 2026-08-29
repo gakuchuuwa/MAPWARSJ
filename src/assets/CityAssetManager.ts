@@ -1005,6 +1005,7 @@ export class CityAssetManager {
     'eluosi_diguo': '俄罗',
     'gualani': '瓜拉',
     'xiadunhe': '下顿',
+        'kelimiya': '克里',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

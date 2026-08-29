@@ -163,21 +163,6 @@ const WALL_AUTO_COLLAPSE_SEC = 30;
 /** 🔴 [2026-08-29] 建筑/塔/城门「残骸」倒塌动画总时长（秒）：DESTR 帧铺满，播完切 rubble。 */
 const COLLAPSE_ANIM_DUR = 1.4;
 
-/** 🔴 [2026-08-23 主人定] 攻城武器配兵表（按守方据点类型；数量：小城 4 个 / 中城·险要·大城 6 个）：
- *  优先冲车 ×4；中城及以上另有投石车 + 弩炮各 1（"有啥上啥"——无投石车 → 2 弩炮 / 无弩炮 → 2 投石车）。
- *  全部武器"没有高级就用低级"降级（冲车 siege_ram→capped_ram→battering_ram，全无换装甲攻城战象；
- *  投石车 siege_onager→onager→mangonel；弩炮 heavy_scorpion→scorpion）：
- *   小城 = 4 轻型攻城锤（硬木栅栏最好打，只配锤）；
- *   中城 = 4 轻型攻城锤 + 轻型投石车 + 弩炮；
- *   险要 = 4 中型攻城锤 + 中型投石车 + 重型弩炮；
- *   大城 = 4 重型攻城锤 + 重型投石车 + 重型弩炮。 */
-const SIEGE_WEAPON_SETUP: Record<CityType, { ram?: string; mangonel?: string; scorpion?: string }> = {
-    small_city: { ram: 'battering_ram' },
-    medium_city: { ram: 'battering_ram', mangonel: 'mangonel', scorpion: 'scorpion' },
-    pass: { ram: 'capped_ram', mangonel: 'onager', scorpion: 'heavy_scorpion' },
-    big_city: { ram: 'siege_ram', mangonel: 'siege_onager', scorpion: 'heavy_scorpion' },
-};
-
 /** 冲车降级链（重→轻）：配兵表指定档若该文化区没有，逐级降级。 */
 const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'battering_ram'];
 
@@ -1320,8 +1305,8 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
-/** [2026-08-29 主人「战术模式下城堡有点大，请缩小」→ 08-29 再「显示比例加大」] 守城城堡单独缩放：城堡素材本就大，0.8 下过大，但 0.65 又过小，取中间档。 */
-const SIEGE_CASTLE_SCALE = 0.72;
+/** 险要九建筑中的守城城堡专用缩放。 */
+const SIEGE_CASTLE_SCALE = 0.76;
 /** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。 */
 const SIEGE_MARKET_SCALE = 0.65;
 /** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
