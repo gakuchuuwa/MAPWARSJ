@@ -57,6 +57,8 @@ const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 
  *  只重做染色（势力色每局随机，走 SpriteTinter 现链路）。key = 源图 URL，value = 抠绿后 data URL。
  */
 const DECROMA_CACHE = new Map<string, string>();
+/** [PERF 2026-08-29] 抠绿 data URL 缓存上限：原来无上限，字符串堆涨到几百 MB，加剧 GC 停顿。 */
+const DECROMA_CACHE_MAX = 2000;
 
 /**
  * 🔴 [2026-08-26 主人「战略进入战斗的时候会卡一下」] 抠绿后**已解码的 Image 对象**缓存。
@@ -90,7 +92,9 @@ const CLEAN_CACHE = new Map<string, HTMLImageElement>();
  *    （全部 285 兵种 9112 张全缓存约 570MB，没必要。）
  *    调整后请看 scratch/scene13_probe_log.jsonl 的 assetsReady：中位应明显低于 7.2s。
  */
-const CLEAN_CACHE_MAX = 4000;
+// [PERF 2026-08-29 修 GC 卡顿] 4000 → 2000：解码位图堆从 ~250MB 降到 ~125MB，缩小 GC 标记范围、
+// 缩短回收停顿（实测堆 1.5GB 时 major GC 一停 20~160ms）。2000 张仍够装 6~7 场，命中不回退到 1200 的颠簸。
+const CLEAN_CACHE_MAX = 2000;
 
 // ── 火枪弹白烟弹线预渲染 sprite（颜色固定、跨战斗复用）──
 // [PERF 2026-08-29] 原来每支火枪弹每帧 createLinearGradient + stroke（3 个 colorStop + 路径光栅化），
@@ -3592,6 +3596,8 @@ export class Scene13WarLayer {
     private lastRepaintDecorAt = 0;
     private lastCollapseAt = 0;
     private lastBakeCorpseAt = 0;
+    /** [PERF 2026-08-29] 渲染排序列表对象池：render 每帧原 new 700+ 个临时对象加剧 GC，改为复用。 */
+    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -4804,6 +4810,10 @@ export class Scene13WarLayer {
                             } else {
                                 void this.dechromaToDataUrl(im).then((dataUrl) => {
                                     if (!dataUrl) { this.pending -= inc; return; }
+                                    if (DECROMA_CACHE.size >= DECROMA_CACHE_MAX) {
+                                        const oldest = DECROMA_CACHE.keys().next().value;
+                                        if (oldest !== undefined) DECROMA_CACHE.delete(oldest);
+                                    }
                                     DECROMA_CACHE.set(url, dataUrl);
                                     useDataUrl(dataUrl);
                                 }).catch(() => { this.pending -= inc; });
@@ -6603,6 +6613,7 @@ export class Scene13WarLayer {
                     sinceRepaint: this.lastRepaintDecorAt ? Math.round(t2 - this.lastRepaintDecorAt) : -1,
                     sinceCollapse: this.lastCollapseAt ? Math.round(t2 - this.lastCollapseAt) : -1,
                     sinceBake: this.lastBakeCorpseAt ? Math.round(t2 - this.lastBakeCorpseAt) : -1,
+                    heapMB: +(((performance as any).memory?.usedJSHeapSize ?? 0) / 1048576).toFixed(1),
                 });
                 if (this.spikeLog.length > 30) this.spikeLog.shift();
             }
@@ -6669,33 +6680,46 @@ export class Scene13WarLayer {
             this.perfWaterPatches = this.decorPatches.reduce((n, q) => n + (q.isWater ? 1 : 0), 0);
         }
 
-        type UnitVisual = { kind: 'unit'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number };
-        type EnvironmentVisual = { kind: 'environment'; y: number; z: number; sprite: DecorSprite };
-        const vis: Array<UnitVisual | EnvironmentVisual> = [];
+        // [PERF 2026-08-29] 对象池复用：原来每帧 new 700+ 个临时对象（vis 数组 + 每个元素），加剧 GC。
+        const vis = this.visPool;
+        let vi = 0;
+        const take = () => {
+            let it = vis[vi];
+            if (!it) { it = { kind: 'unit', y: 0, x: 0, f: 0, key: '', dir: 0, set: '', fr: 0, a: 1, z: 0, sprite: null }; vis[vi] = it; }
+            vi++;
+            return it;
+        };
         // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
         for (const sprite of this.decorSprites) {
             if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
             if (sprite.layer === 'world') {
-                const drawY = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
-                vis.push({ kind: 'environment', y: drawY, z: sprite.z, sprite });
+                const it = take();
+                it.kind = 'environment';
+                it.y = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
+                it.z = sprite.z;
+                it.sprite = sprite;
             }
         }
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
-        for (const c of this.corpses) vis.push({
-            kind: 'unit',
-            y: c.y - this.elevationLiftAt(c.x, c.y), x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
-            fr: c.t,
-            a: 1,
-        });
+        for (const c of this.corpses) {
+            const it = take();
+            it.kind = 'unit';
+            it.y = c.y - this.elevationLiftAt(c.x, c.y); it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
+            it.fr = c.t;
+            it.a = 1;
+            it.st = undefined; it.z = 0; it.sprite = null;
+        }
         // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
-        for (const f of this.fleers) vis.push({
-            kind: 'unit',
-            y: f.y - this.elevationLiftAt(f.x, f.y), x: f.x, f: f.f, key: f.key, dir: f.dir, set: 'move',
-            fr: f.ph,
-            a: Math.max(0, 1 - f.t / FLEE_DUR),
-        });
+        for (const f of this.fleers) {
+            const it = take();
+            it.kind = 'unit';
+            it.y = f.y - this.elevationLiftAt(f.x, f.y); it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
+            it.fr = f.ph;
+            it.a = Math.max(0, 1 - f.t / FLEE_DUR);
+            it.st = undefined; it.z = 0; it.sprite = null;
+        }
         for (const m of this.men) {
             // 有冲锋组的兵种（象兵/弓骑）两处用冲锋帧（主人 2026-08-12 拍板「两者都要」）：
             //   ① 移动时**逐轮交替**：一轮移动、一轮冲锋（见 CHARGE_CYCLE）；
@@ -6730,8 +6754,12 @@ export class Scene13WarLayer {
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
-            vis.push({ kind: 'unit', y: m.y - this.elevationLiftAt(m.x, m.y), x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade, st: m.st });
+            const it = take();
+            it.kind = 'unit';
+            it.y = m.y - this.elevationLiftAt(m.x, m.y); it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
+            it.z = 0; it.sprite = null;
         }
+        vis.length = vi;
         vis.sort((a, b) => (a.y - b.y)
             || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0)));
 
@@ -6746,7 +6774,7 @@ export class Scene13WarLayer {
 
         for (const v of vis) {
             if (v.kind === 'environment') {
-                this.drawDecorSprite(ctx, v.sprite, v.y);
+                this.drawDecorSprite(ctx, v.sprite!, v.y);
                 continue;
             }
             const b = this.bank[v.key];
