@@ -543,7 +543,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_war_elephant: { name: '波斯战象精锐', cls: 'melee', sz: 1, aoe: true, hp: 600, atk: 20, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
     elite_war_wagon: { name: '高丽战车精锐', cls: 'cav', sz: 1, hp: 200, atk: 9, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     elite_woad_raider: { name: '凯尔特靛蓝突袭者精锐', cls: 'melee', sz: 1, hp: 85, atk: 15, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
-    flaming_camel: { name: '鞑靼火焰骆驼', cls: 'melee', sz: 1, hp: 55, atk: 20, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 130, 8: 50, 11: 200, 20: 25, 30: 50 }, armorTags: [19, 30, 31, 39] },
+    flaming_camel: { name: '鞑靼火焰骆驼', cls: 'melee', sz: 1, hp: 55, atk: 20, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 0, spd: 55, dmgType: 'melee', bonus: { 5: 130, 8: 50, 11: 200, 20: 25, 30: 50 }, armorTags: [19, 30, 31, 39] },
     flemish_pikeman: { name: '勃艮第佛兰德民兵', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 6, 8: 6, 16: 4, 29: 2, 30: 4 }, armorTags: [1, 19, 31] },
     flemish_pikeman_f: { name: '勃艮第佛兰德民兵F', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 6, 8: 6, 16: 4, 29: 2, 30: 4 }, armorTags: [1, 19, 31] },
     gbeto: { name: '马里格贝托女兵', cls: 'ranged', sz: 1, hp: 40, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 1 }, armorTags: [1, 19, 31] },
@@ -578,17 +578,17 @@ export const WAR_TYPES: Record<string, WarType> = {
     konnik_foot: { name: '锤炼兵', cls: 'melee', sz: 1, hp: 45, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     leitis: { name: '立陶宛列提斯', cls: 'cav', sz: 1, hp: 100, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     longbowman: { name: '不列颠长弓兵', cls: 'ranged', sz: 1, hp: 35, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    magyar_huszar: { name: '马扎尔骠骑兵', cls: 'cav', sz: 1, hp: 80, atk: 10, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
+    magyar_huszar: { name: '马扎尔骠骑兵', cls: 'cav', sz: 1, hp: 80, atk: 10, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 1, 20: 5 }, armorTags: [8, 19, 31] },
     mameluke: { name: '萨拉森马穆鲁克', cls: 'cav', sz: 1, hp: 80, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 120, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 9 }, armorTags: [35, 30, 19, 31, 39] },
     mangonel: { name: '轻型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 50, atk: 40, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 35, 20: 12, 37: 40 }, armorTags: [20, 31] },
-    mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 55, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    mercenary_hoplite: { name: '希腊雇佣重步兵', cls: 'melee', sz: 1, hp: 55, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
     militia: { name: '民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
     monaspa: { name: '格鲁吉亚莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     mounted_trebuchet: { name: '骆驼投石机', cls: 'cav', sz: 1, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
     obuch: { name: '波兰奥布奇战锤兵', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 2 }, armorTags: [1, 19, 31] },
     onager: { name: '中型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 60, atk: 50, meleeArmor: 0, pierceArmor: 7, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 45, 20: 12, 37: 50 }, armorTags: [20, 31] },
     organ_gun: { name: '葡萄牙风琴炮', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 2, pierceArmor: 4, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
-    petard: { name: '爆破工兵', cls: 'melee', sz: 1, hp: 50, atk: 25, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 11: 500, 20: 60, 22: 900, 26: 100 }, armorTags: [31] },
+    petard: { name: '爆破工兵', cls: 'melee', sz: 1, hp: 50, atk: 25, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 0, spd: 55, dmgType: 'melee', bonus: { 11: 500, 20: 60, 22: 900, 26: 100 }, armorTags: [31] },
     phalangite: { name: '马其顿方阵步兵', cls: 'melee', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 72, reload: 2.5, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 6, 30: 4 }, armorTags: [1, 19, 31] },
     plumed_archer: { name: '玛雅羽箭手', cls: 'ranged', sz: 1, hp: 50, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 1.9, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 27: 2 }, armorTags: [15, 19, 31] },
     qizilbash_warrior: { name: '红头骑士(奇兹尔巴什)', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
@@ -642,7 +642,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     siege_tower: { name: '攻城塔', cls: 'ranged', sz: 1.4, hp: 220, atk: 6, meleeArmor: -2, pierceArmor: 100, rng: 240, reload: 4.0, spd: 40, dmgType: 'pierce', bonus: { 11: 6 }, armorTags: [20, 17, 31] },
     halberdier: { name: '戟兵', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     norse_warrior: { name: '诺斯狂暴战士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
-    sosso_guard: { name: '西非索索禁卫军', cls: 'melee', sz: 1, hp: 95, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
+    sosso_guard: { name: '西非索索禁卫军', cls: 'melee', sz: 1, hp: 95, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
     elite_greek_cavalry: { name: '希腊贵族骑兵高级', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     jian_swordman_shielded: { name: '持盾刀剑手', cls: 'melee', sz: 1, hp: 70, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 4, 21: 2 }, armorTags: [1, 29, 19, 31] },
     levy: { name: '征召民兵', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
@@ -1310,10 +1310,10 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
     ['MONASTERY', 'AGE3'],
     ['SIEGE_WORKSHOP', 'AGE3'],
 ];
-/** 攻城战守方（中城）12 种城堡时代建筑，和战略中城一致：随机取 9 种且不重复。 */
-const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
-/** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场） */
-const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
+/** 攻城战守方（中城）11 种城堡时代建筑，和战略中城一致（去掉箭塔，城墙内侧已有 4 座并列箭塔）：随机取 9 种且不重复。 */
+const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
+/** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」，08-29 去箭塔补民居：磨坊/民居×2/兵营/铁匠铺/靶场/城镇中心/马厩/市场） */
+const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
 /** [2026-08-29 主人「战术模式下城堡有点大，请缩小」→ 08-29 再「显示比例加大」] 守城城堡单独缩放：城堡素材本就大，0.8 下过大，但 0.65 又过小，取中间档。 */
@@ -1596,6 +1596,53 @@ const PROJ_TYPE: Record<string, string> = {
     houfnice: 'PROJ_BOMBARD_BALL',
     grenadier: 'PROJ_GRENADE',
 };
+/** DE 本体逐单位命中率；0% 散射武器在本引擎中单独按散射结算，不放进整轮 miss 判定。 */
+const ACCURACY_BY_TYPE: Record<string, number> = {
+    tarantine_cavalry: 90,
+    kipchak: 90,
+    elite_kipchak: 90,
+    elite_fire_archer: 85,
+    xianbei_raider: 80,
+    imperial_skirmisher: 95,
+    mangudai: 95,
+    mangudai_elite: 95,
+    composite_bowman: 100,
+    elite_composite_bowman: 100,
+    ballista_elephant: 100,
+    elite_ballista_elephant: 100,
+    elephant_archer: 70,
+    elite_elephant_archer: 85,
+    bactrian_archer: 90,
+    camel_archer: 95,
+    elite_camel_archer: 95,
+    conquistador: 65,
+    elite_conquistador: 70,
+    cretan_archer: 90,
+    elite_arambai: 30,
+    elite_blackwood_archer: 90,
+    elite_bolas_rider: 95,
+    genoese_crossbowman: 90,
+    elite_genoese_crossbowman: 100,
+    janissary: 50,
+    elite_janissary: 65,
+    royal_janissary: 65,
+    elite_plumed_archer: 90,
+    ratha_ranged: 80,
+    elite_ratha_ranged: 90,
+    elite_scythian_horse_archer: 80,
+    war_wagon: 100,
+    elite_war_wagon: 100,
+    scorpion: 100,
+    heavy_scorpion: 100,
+    thracian_peltast: 95,
+    traction_trebuchet: 30,
+    flamethrower: 75,
+    helepolis: 100,
+    siege_tower: 90,
+    immortal_ranged: 70,
+    grenadier: 100,
+};
+
 /**
  * DE accuracy（准确率，%）——远程投射物命中目标概率，不是 100%。
  * 已查 DE 本体（fandom 兵种面板核对 empires2_x2_p1.dat 数值）：
@@ -1605,6 +1652,8 @@ const PROJ_TYPE: Record<string, string> = {
  * 只有 dmgType 'pierce' 的投射物才可能 miss；'melee'（近战/飞斧/投石）DE 无准确率概念。
  */
 function accuracyOf(key: string, wt: WarType): number {
+    const exact = ACCURACY_BY_TYPE[key];
+    if (exact !== undefined) return exact;
     if (wt.dmgType === 'melee') return 100;
     // DE 风琴炮本体 accuracy=0：含义是弹丸按 dispersion 散射并沿途碰撞，不是“整轮必定落空”。
     // 本引擎的 accuracy 是整轮伤害开关，故这里必须保持伤害开启，散布在发射段单独按 DE 0.6 格处理。
@@ -4211,8 +4260,8 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔；九个落点全部随机。
-            // [2026-08-29 主人「城堡有点大，请缩小」] 城堡单独用小缩放 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
+            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 磨坊 + 铁匠铺 + 市场 + 修道院；九个落点全部随机（去箭塔，城墙内侧已有 4 座并列箭塔）。
+            // [2026-08-29 主人「城堡有点大，请缩小」→ 再「显示比例加大」] 城堡单独用 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
             if (this.defenderCityType === 'pass') {
                 const castleAsset = this.castleAssetFor(style);
                 const passOthers = [
@@ -4220,8 +4269,10 @@ export class Scene13WarLayer {
                     `${style}_ARCHERY_RANGE_AGE3`,
                     `${style}_STABLE_AGE3`,
                     `${style}_HOUSE_AGE3`,
-                    `${style}_TOWER_AGE3`, `${style}_TOWER_AGE3`,
-                    `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
+                    `${style}_MILL_AGE3`,
+                    `${style}_BLACKSMITH_AGE3`,
+                    `${style}_MARKET_AGE3`,
+                    `${style}_MONASTERY_AGE3`,
                 ].sort(() => Math.random() - 0.5);
                 const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
                 const castleSp = place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE });
@@ -4389,6 +4440,12 @@ export class Scene13WarLayer {
     private waterOffscreenCtx: CanvasRenderingContext2D | null = null;
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
+    /** [PERF 2026-08-29] 羽化软边缓存：blur 后的水面遮罩是静态的，缓存后每帧不再重做 blur（水面卡顿主因）。 */
+    private waterSoftMask: HTMLCanvasElement | null = null;
+    private waterSoftMaskCtx: CanvasRenderingContext2D | null = null;
+    private waterSoftMaskPatchCount = -1;
+    private waterSoftMaskW = 0;
+    private waterSoftMaskH = 0;
 
     /**
      * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
@@ -4445,47 +4502,64 @@ export class Scene13WarLayer {
             maskCv.width = W; maskCv.height = H;
         }
 
+        // ── 羽化软边（静态）：水面遮罩形状整局不变，blur 一次缓存，每帧直接贴 ──
+        // [PERF 2026-08-29] 原来每帧对每个 patch 做 filter='blur(14px)'，是水面 render 55ms 的主因。
+        if (this.waterSoftMaskPatchCount !== waterPatches.length || this.waterSoftMaskW !== W || this.waterSoftMaskH !== H) {
+            if (!this.waterSoftMask) {
+                this.waterSoftMask = document.createElement('canvas');
+                this.waterSoftMaskCtx = this.waterSoftMask.getContext('2d')!;
+            }
+            const softCv = this.waterSoftMask, softCtx = this.waterSoftMaskCtx!;
+            if (softCv.width !== W || softCv.height !== H) { softCv.width = W; softCv.height = H; }
+            softCtx.clearRect(0, 0, W, H);
+            for (const p of waterPatches) {
+                const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
+                const pad = 14 * 3;
+                const bx = Math.max(0, Math.floor(bb.x - pad));
+                const by = Math.max(0, Math.floor(bb.y - pad));
+                const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
+                const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
+                maskCtx.clearRect(0, 0, W, H);
+                maskCtx.beginPath();
+                if (p.polygon && p.polygon.length >= 3) {
+                    maskCtx.moveTo(p.polygon[0].x, p.polygon[0].y);
+                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                    maskCtx.closePath();
+                } else {
+                    for (const [gx, gy] of p.cells) {
+                        const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
+                        maskCtx.moveTo(sx, sy - TILE_H / 2);
+                        maskCtx.lineTo(sx + TILE_W / 2, sy);
+                        maskCtx.lineTo(sx, sy + TILE_H / 2);
+                        maskCtx.lineTo(sx - TILE_W / 2, sy);
+                        maskCtx.closePath();
+                    }
+                }
+                maskCtx.fillStyle = 'rgba(255, 255, 255, 1.0)';
+                maskCtx.fill();
+                softCtx.save();
+                softCtx.filter = 'blur(14px)';
+                softCtx.drawImage(maskCv, bx, by, bw, bh, bx, by, bw, bh);
+                softCtx.restore();
+            }
+            this.waterSoftMaskPatchCount = waterPatches.length;
+            this.waterSoftMaskW = W; this.waterSoftMaskH = H;
+        }
+
         for (const p of waterPatches) {
             const img = p.img!;
             const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
             const a = p.alpha ?? 1;
             const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
-            // 🔴 [2026-08-28 修卡顿] blur(14px) 原来对整张 4K 画布做高斯模糊（把 mask 全画布贴进 offCv），
-            //   即使水面只占一小块，每帧也是 O(全画布)——有水的战斗 render 从 7ms 涨到 60ms+ 就是它。
-            //   收窄到水面 bbox + blur 扩散余量（3×14px），blur 只作用于水块区域。
             const pad = 14 * 3;
             const bx = Math.max(0, Math.floor(bb.x - pad));
             const by = Math.max(0, Math.floor(bb.y - pad));
             const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
             const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
 
-            // 1. 在 maskCv 上绘制羽化水域遮罩（多边形 / 单元格）
-            maskCtx.clearRect(bx, by, bw, bh);
-            maskCtx.beginPath();
-            if (p.polygon && p.polygon.length >= 3) {
-                maskCtx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x, p.polygon[i].y);
-                maskCtx.closePath();
-            } else {
-                for (const [gx, gy] of p.cells) {
-                    const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
-                    maskCtx.moveTo(sx, sy - TILE_H / 2);
-                    maskCtx.lineTo(sx + TILE_W / 2, sy);
-                    maskCtx.lineTo(sx, sy + TILE_H / 2);
-                    maskCtx.lineTo(sx - TILE_W / 2, sy);
-                    maskCtx.closePath();
-                }
-            }
-            maskCtx.fillStyle = 'rgba(255, 255, 255, 1.0)';
-            maskCtx.fill();
-
-            // 2. 在 offCv 上以羽化软边合成流动波纹
+            // 2'. 贴羽化软边（替代每帧 blur）
             offCtx.clearRect(bx, by, bw, bh);
-            offCtx.save();
-            // 边缘羽化（14px 柔和软边，让水面自然漫过沙滩）——只对水面 bbox 区域做
-            offCtx.filter = 'blur(14px)';
-            offCtx.drawImage(maskCv, bx, by, bw, bh, bx, by, bw, bh);
-            offCtx.restore();
+            offCtx.drawImage(this.waterSoftMask!, bx, by, bw, bh, bx, by, bw, bh);
 
             // 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
             offCtx.save();

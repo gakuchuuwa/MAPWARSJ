@@ -922,11 +922,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/CENTRAL_ASIA/anushidgin_yile.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": 34
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_05.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -6997,11 +6992,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_112.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 2
-        },
         "/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -7141,6 +7131,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_113.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 34
+        },
+        "/assets/CENTRAL_ASIA/anushidgin_yile.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 2
         }
     },
     "folderGuides": {
