@@ -1004,6 +1004,13 @@ function dmgVs(shooter: WarType, target: WarType, atkMult = 1, defMult = 1): num
     return Math.max(1, shooter.atk * atkMult + bonus - armor);
 }
 
+/** DE 胡斯战车的 5 发次级弹：每发独立以 3 攻击、建筑 +3、冲车 +3 结算。 */
+const HUSSITE_SECONDARY_SHOT: WarType = {
+    name: '胡斯战车次级弹', cls: 'ranged', sz: 1, hp: 1, atk: 3,
+    meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1, spd: 0,
+    dmgType: 'pierce', bonus: { 11: 3, 17: 3 }, armorTags: [],
+};
+
 /** 五阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
  *  triangle 三角 2+3+4 = 尖刀2 / 中坚3 / 后4（近战尖刀前、弓骑后）
  *  echelon 雁行 4+3+2 = 前4 / 中3 / 后2（近战顶前、远程后）
@@ -1309,8 +1316,8 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
-/** [2026-08-29 主人「战术模式下城堡有点大，请缩小」] 守城城堡单独缩放：城堡素材本就大，在 0.8 下显得过大，单独调小。 */
-const SIEGE_CASTLE_SCALE = 0.65;
+/** [2026-08-29 主人「战术模式下城堡有点大，请缩小」→ 08-29 再「显示比例加大」] 守城城堡单独缩放：城堡素材本就大，0.8 下过大，但 0.65 又过小，取中间档。 */
+const SIEGE_CASTLE_SCALE = 0.72;
 /** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。 */
 const SIEGE_MARKET_SCALE = 0.65;
 /** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
@@ -1602,6 +1609,8 @@ function accuracyOf(key: string, wt: WarType): number {
     // DE 风琴炮本体 accuracy=0：含义是弹丸按 dispersion 散射并沿途碰撞，不是“整轮必定落空”。
     // 本引擎的 accuracy 是整轮伤害开关，故这里必须保持伤害开启，散布在发射段单独按 DE 0.6 格处理。
     if (key === 'organ_gun' || key === 'elite_organ_gun') return 100;
+    if (key === 'hussite_wagon') return 85;
+    if (key === 'elite_hussite_wagon') return 90;
     const proj = PROJ_TYPE[key] ?? 'PROJ_ARROW';
     // 火器（火枪/苏丹亲兵/征服者/风琴炮/掷弹兵/胡斯战车）
     if (proj === 'PROJ_GUNPOWDER' || proj === 'PROJ_BOMBARD_BALL' || proj === 'PROJ_GRENADE' || proj === 'PROJ_HUSSITE_WAGON') return 75;
@@ -2563,6 +2572,8 @@ interface WarMan {
     atkSt: number;
     /** DE accuracy（准确率）：本轮攻击是否命中（lock 到期时 roll）；undefined = 近战/未判定，视为命中 */
     accHit?: boolean;
+    /** 胡斯战车 5 发次级弹各自的 DE 75% 命中判定。 */
+    hussiteSecondaryHits?: boolean[];
     /** 远程兵接敌被己方前排挡住的待命剩余秒数：>0 时站住不挤，归零再试 */
 }
 
@@ -5436,6 +5447,7 @@ export class Scene13WarLayer {
             }
         }
         for (const b of this.cityBuildings) {
+            if (b.name.includes('CASTLE')) continue;   // 城堡不坍塌（主人 08-29 定）
             const r = Math.random();
             if (r < 0.5) continue;   // 50% 保持完整
             if (r < 0.8) {
@@ -6119,6 +6131,9 @@ export class Scene13WarLayer {
                     // DE accuracy（准确率）：远程每轮出手 roll 命中，miss 则这一轮不扣伤害。
                     // 近战/飞斧/投石（dmgType melee）恒命中；pierce 投射物按 DE accuracy 判定。
                     m.accHit = (stats.dmgType === 'melee') || (Math.random() * 100 < accuracyOf(m.key, wt));
+                    m.hussiteSecondaryHits = (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon')
+                        ? Array.from({ length: 5 }, () => Math.random() * 100 < 75)
+                        : undefined;
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
@@ -6179,7 +6194,9 @@ export class Scene13WarLayer {
                             const exactSpeed = PROJ_SPEED_PX[volleyProj];
                             const baseDur = exactSpeed ? ad / exactSpeed : (PROJ_DUR[volleyProj] ?? ARROW_DUR);
                             // DE accuracy：miss 的这轮箭矢飞偏打空（视觉与伤害一致）；命中则火枪轻微自然散射。
-                            const missed = m.accHit === false;
+                            const missed = isHussiteVolley && v > 0
+                                ? m.hussiteSecondaryHits?.[v - 1] === false
+                                : m.accHit === false;
                             const spread = ORGAN_GUN_TYPES.has(m.key)
                                 ? Math.atan2((Math.random() * 2 - 1) * ORGAN_GUN_DISPERSION_PX, ad)
                                 : missed
@@ -6213,13 +6230,20 @@ export class Scene13WarLayer {
                 const target = this.statsFor(foe.key, foe.f);
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
-                const dps = dmgVs(shooter, target, this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1) * projectileDamageCount / shooter.reload;
+                const atkMult = this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1;
+                const defMult = this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1;
+                const primaryDamage = m.accHit !== false ? dmgVs(shooter, target, atkMult, defMult) * projectileDamageCount : 0;
+                const secondaryHitCount = (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon')
+                    ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
+                    : 0;
+                const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target, atkMult, defMult);
+                const dps = (primaryDamage + secondaryDamage) / shooter.reload;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
                     foe.atkNext++;
                     if (!('sprite' in foe)) foe.hurtBy = m;   // 【被攻击反击】记录攻击者（建筑不反击）
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
-                    if (m.accHit !== false) {
+                    if (dps > 0) {
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。

@@ -32,6 +32,8 @@ export class SpriteTinter {
 
     // 玩家色遮罩缓存：maskSrc -> Image（加载中/完成）或 'none'（确认无遮罩）
     private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
+    /** [PERF 2026-08-29] 遮罩图缓存上限：原无上限，累积到几百 MB。FIFO 淘汰，旧的重新加载即可。 */
+    private static readonly MASK_CACHE_MAX = 4000;
     /**
      * **目录级**「这个素材目录有没有玩家色遮罩」的判定缓存（key = 目录前缀，如 `/SUCAI/S10DB/`）。
      *
@@ -136,6 +138,15 @@ export class SpriteTinter {
         this.tintedSpriteCache.set(key, img);
     }
 
+    /** [PERF 2026-08-29] 遮罩图缓存 FIFO 淘汰写入，防止无上限累积撑大堆。 */
+    private static maskCachePut(key: string, val: HTMLImageElement | 'none'): void {
+        if (this.maskCache.size >= this.MASK_CACHE_MAX) {
+            const oldest = this.maskCache.keys().next().value;
+            if (oldest !== undefined) this.maskCache.delete(oldest);
+        }
+        this.maskCache.set(key, val);
+    }
+
     private static getMaskTinted(
         sprite: HTMLImageElement,
         maskSrc: string,
@@ -171,9 +182,9 @@ export class SpriteTinter {
         // 首次：发起遮罩加载，本帧返回原图（不染全身，避免脸/皮肤被亮度染色误伤）
         if (!maskState) {
             const m = new Image();
-            m.onload = () => { this.maskCache.set(maskSrc, m); if (dir) this.dirHasMask.set(dir, true); };
+            m.onload = () => { this.maskCachePut(maskSrc, m); if (dir) this.dirHasMask.set(dir, true); };
             m.onerror = () => {
-                this.maskCache.set(maskSrc, 'none');
+                this.maskCachePut(maskSrc, 'none');
                 // 🔴 [2026-08-20 修「象兵颜色时好时坏」] 单张遮罩 404 **不许**把整个目录判成「无遮罩」。
                 //   dirHasMask 原本假设「一个目录要么全有遮罩、要么全没有」，但磁盘实测有 3 个目录是混的：
                 //   WAR_ELEPHANT / COMPANION_CAVALRY / CRETAN_ARCHER 各缺 damage_0~7 这 8 张 .pc.png，
@@ -186,7 +197,7 @@ export class SpriteTinter {
                 if (dir && this.dirHasMask.get(dir) !== true) this.dirHasMask.set(dir, false);
             };
             m.src = maskSrc;
-            this.maskCache.set(maskSrc, m);
+            this.maskCachePut(maskSrc, m);
         }
         return sprite;
     }
