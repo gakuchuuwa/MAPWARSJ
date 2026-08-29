@@ -27,6 +27,8 @@ export class SpriteTinter {
     // 缓存染色后的精灵图，避免每帧重复处理
     // Key: `${originalSrc}_${factionId}`；mask 染色的 key 前缀 `mask:` 区分
     private static tintedSpriteCache: Map<string, HTMLImageElement> = new Map();
+    /** [PERF 2026-08-29] 染色图缓存上限：原无上限，跨局累积到几百 MB（GC 停顿主因之一）。FIFO 淘汰，旧的重新染色即可。 */
+    private static readonly TINTED_CACHE_MAX = 4000;
 
     // 玩家色遮罩缓存：maskSrc -> Image（加载中/完成）或 'none'（确认无遮罩）
     private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
@@ -125,6 +127,15 @@ export class SpriteTinter {
      * mask 染色入口（帝国决定 DE 素材，有玩家色遮罩）。
      * 遮罩惰性加载：首帧返回原图（玩家色区域暂灰），遮罩就绪后精确染色并缓存。
      */
+    /** [PERF 2026-08-29] 带 FIFO 淘汰的缓存写入，防止染色图缓存无上限累积撑大堆。 */
+    private static tintedCachePut(key: string, img: HTMLImageElement): void {
+        if (this.tintedSpriteCache.size >= this.TINTED_CACHE_MAX) {
+            const oldest = this.tintedSpriteCache.keys().next().value;
+            if (oldest !== undefined) this.tintedSpriteCache.delete(oldest);
+        }
+        this.tintedSpriteCache.set(key, img);
+    }
+
     private static getMaskTinted(
         sprite: HTMLImageElement,
         maskSrc: string,
@@ -154,7 +165,7 @@ export class SpriteTinter {
             // 遮罩就绪 → mask 精确染色
             if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
             const tinted = this.applyMaskTint(sprite, maskState, tint, maskSrc);
-            this.tintedSpriteCache.set(cacheKey, tinted);
+            this.tintedCachePut(cacheKey, tinted);
             return tinted;
         }
         // 首次：发起遮罩加载，本帧返回原图（不染全身，避免脸/皮肤被亮度染色误伤）
@@ -197,7 +208,7 @@ export class SpriteTinter {
         if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
 
         const tintedSprite = this.applyTint(sprite, tint);
-        this.tintedSpriteCache.set(cacheKey, tintedSprite);
+        this.tintedCachePut(cacheKey, tintedSprite);
         return tintedSprite;
     }
 
