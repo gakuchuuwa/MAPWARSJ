@@ -14,6 +14,41 @@ import { isMacroMapZoom } from '../config/StrategicView';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
 
+/**
+ * [PERF 2026-08-29 主人授权] viewBox 式缩放优化：Leaflet 在 zoomend 对渲染器里每条 path 做
+ * 同步 _project（河流 2910 条，实测 ~200ms 阻塞，是缩放"一顿"的主因）。
+ * 改为分片到多帧（每帧 200 条），避免一次性冻结主线程。
+ * 视觉：缩放停稳后一瞬河流仍处 transform 缩放（略糊），逐批重投影完即清晰，整体更顺。
+ * 少量 path（≤150）仍走原同步路径，不改变小图层行为。
+ */
+let _zoomSliceInstalled = false;
+let _zoomSliceJob = 0;
+function installZoomProjectSlicing(): void {
+    if (_zoomSliceInstalled) return;
+    _zoomSliceInstalled = true;
+    const RendererProto = (L as any).Renderer.prototype;
+    const origOnZoomEnd = RendererProto._onZoomEnd;
+    RendererProto._onZoomEnd = function (this: any) {
+        const ids = Object.keys(this._layers || {});
+        if (ids.length <= 150) {
+            return origOnZoomEnd.call(this);
+        }
+        const jobId = ++_zoomSliceJob;
+        let i = 0;
+        const BATCH = 200;
+        const step = () => {
+            if (jobId !== _zoomSliceJob) return;
+            const end = Math.min(i + BATCH, ids.length);
+            for (; i < end; i++) {
+                const layer = this._layers[ids[i]];
+                if (layer && layer._project) layer._project();
+            }
+            if (i < ids.length) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    };
+}
+
 export class GameMap {
     private map: L.Map;
     private containerId: string;
@@ -74,6 +109,8 @@ export class GameMap {
             attributionControl: false,
             doubleClickZoom: false // [FIX] 禁用双击放大
         });
+
+        installZoomProjectSlicing();
 
         const applyHillshadeForZoom = () => {
             if (!this.hillshadeLayer) return;

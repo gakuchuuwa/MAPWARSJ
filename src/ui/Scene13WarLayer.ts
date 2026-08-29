@@ -375,6 +375,10 @@ interface ArrowTower {
 // 五维 = 血 hp / 攻 atk / 防（meleeArmor 近防 + pierceArmor 远防）/ 射程 rng / 射速 reload。
 // 数值一律来自本机 empires2_x2_p1.dat（genieutils 实测抽取），非精锐基础档。
 // 相克不再用全局 C=1.8：改用 DE 加成伤害（bonus：护甲类 → 额外攻击）+ 近/远防减法。
+// bonus / armorTags 的键 = DE 护甲类（armor class）编号。常用：1=步兵 3=基础穿刺 4=基础近战
+//   5=战象 8=骑兵 11=建筑 13=石质防御 15=射手 16=船 17=冲车 19=独特单位 20=攻城武器
+//   21=标准建筑 22=城墙 26=城堡 27=长枪 28=弓骑 29=鹰勇士 30=骆驼 31=有机。
+//   ⚠️ 21 是「标准建筑」不是步兵（步兵是 1）——希腊雇佣重步兵 bonus{21:2} 是对建筑加成，非反步兵。
 // 移速 spd 保留原值（「五维」不含移速，主人未要求动，后续按需调）。
 // rng = DE max_range × 40（px）；0 = 贴身白刃。
 export const WAR_TYPES: Record<string, WarType> = {
@@ -4260,7 +4264,7 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 磨坊 + 铁匠铺 + 市场 + 修道院；九个落点全部随机（去箭塔，城墙内侧已有 4 座并列箭塔）。
+            // 险要：城堡 + 兵营 + 靶场 + 马厩 + 民居 + 2 警戒箭塔 + 2 高级箭塔；九个落点全部随机。
             // [2026-08-29 主人「城堡有点大，请缩小」→ 再「显示比例加大」] 城堡单独用 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
             if (this.defenderCityType === 'pass') {
                 const castleAsset = this.castleAssetFor(style);
@@ -4269,10 +4273,8 @@ export class Scene13WarLayer {
                     `${style}_ARCHERY_RANGE_AGE3`,
                     `${style}_STABLE_AGE3`,
                     `${style}_HOUSE_AGE3`,
-                    `${style}_MILL_AGE3`,
-                    `${style}_BLACKSMITH_AGE3`,
-                    `${style}_MARKET_AGE3`,
-                    `${style}_MONASTERY_AGE3`,
+                    `${style}_TOWER_AGE3`, `${style}_TOWER_AGE3`,
+                    `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
                 ].sort(() => Math.random() - 0.5);
                 const shuffledPassSpawns = [...side].sort(() => Math.random() - 0.5);
                 const castleSp = place(shuffledPassSpawns[0], castleAsset, { scale: SIEGE_CASTLE_SCALE });

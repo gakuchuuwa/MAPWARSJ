@@ -53,7 +53,8 @@ export type TechAttr =
     | 'speed'
     | 'reload'
     | 'range'          // DE 以「格」计，落到 WAR_TYPES.rng 要 ×40 像素
-    | 'los';           // 视野，落到 SIGHT_MAP 要 ×40 像素
+    | 'los'            // 视野，落到 SIGHT_MAP 要 ×40 像素
+    | 'bonus';         // 加成伤害（DE attacks 非 3/4 类）→ WAR_TYPES.bonus；bonusClass 指定目标护甲类
 
 export interface TechEffect {
     attr: TechAttr;
@@ -62,6 +63,8 @@ export interface TechEffect {
     value: number;
     /** 作用的 DE unit class 列表 */
     classes: readonly number[];
+    /** attr='bonus' 时：加成的目标护甲类（armor class，如 27=长枪 11=建筑 26=城堡） */
+    bonusClass?: number;
 }
 
 export interface MilitaryTech {
@@ -282,10 +285,10 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
         basis: '卡莱战役，帕提亚回马射战术定名',
-        // DE 还含「对长枪类(27) 攻击 +2」，属加成伤害表，本期不落
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [36] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [36] },
+            { attr: 'bonus', op: 'add', value: 2, classes: [36], bonusClass: 27 },
         ],
         cultures: ['CENTRAL', 'NORTH', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'THRACIAN', 'PERSIAN', 'CUMAN', 'HUNS', 'BULGARIANS', 'MAGYAR', 'PORUS', 'KHMER', 'GEORGIANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
@@ -318,8 +321,10 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'siege_engineers', name: '攻城技师', de: 'Siege Engineers', year: 1300,
         basis: '中世纪攻城技术（配重投石机/攻城器械改良）',
-        // DE 还含「对建筑攻击 +20%」，属加成伤害表，本期只落射程
-        effects: [{ attr: 'range', op: 'add', value: 1, classes: [13, 55] }],
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [13, 55] },
+            { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
+        ],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'BASHU', 'DIANQIAN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', 'BRITONS', 'TEUTONS', 'VIKINGS', 'CELTS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'POLES', 'BOHEMIANS', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'KHMER', 'MAPUCHE', 'MUISCA', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'ACHAEMENIDS'],
     },
 ];
