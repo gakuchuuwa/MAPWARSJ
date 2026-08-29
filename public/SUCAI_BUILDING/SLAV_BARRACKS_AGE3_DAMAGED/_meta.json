@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_BARRACKS_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 292,
+  "anchor_x": 168,
+  "anchor_y": 212,
+  "sld_source": "b_slav_barracks_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_UNIVERSITY_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 456,
+  "box_h": 380,
+  "anchor_x": 248,
+  "anchor_y": 276,
+  "sld_source": "b_afri_university_age4"
+}

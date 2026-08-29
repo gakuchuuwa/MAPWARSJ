@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_UNIVERSITY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 328,
+  "anchor_x": 224,
+  "anchor_y": 240,
+  "sld_source": "b_slav_university_age3"
+}

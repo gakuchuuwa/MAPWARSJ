@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_SIEGE_WORKSHOP_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 368,
+  "box_h": 272,
+  "anchor_x": 184,
+  "anchor_y": 196,
+  "sld_source": "b_ande_siege_workshop_age3"
+}

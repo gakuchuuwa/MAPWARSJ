@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 184,
+  "box_h": 228,
+  "anchor_x": 128,
+  "anchor_y": 200,
+  "sld_source": "b_west_tower_age4"
+}

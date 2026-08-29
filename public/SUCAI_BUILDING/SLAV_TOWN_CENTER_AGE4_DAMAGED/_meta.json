@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_TOWN_CENTER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 348,
+  "anchor_x": 228,
+  "anchor_y": 288,
+  "sld_source": "b_slav_town_center_age4"
+}

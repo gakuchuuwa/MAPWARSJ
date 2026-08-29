@@ -1,0 +1,9 @@
+{
+  "name": "MESO_MARKET_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 324,
+  "anchor_x": 232,
+  "anchor_y": 216,
+  "sld_source": "b_meso_market_age3"
+}

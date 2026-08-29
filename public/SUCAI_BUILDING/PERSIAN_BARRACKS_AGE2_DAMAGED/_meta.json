@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_BARRACKS_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 348,
+  "box_h": 276,
+  "anchor_x": 184,
+  "anchor_y": 196,
+  "sld_source": "b_persian_barracks_age2"
+}

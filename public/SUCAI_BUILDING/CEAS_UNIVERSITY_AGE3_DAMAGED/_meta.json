@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_UNIVERSITY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 348,
+  "anchor_x": 212,
+  "anchor_y": 248,
+  "sld_source": "b_ceas_university_age3"
+}

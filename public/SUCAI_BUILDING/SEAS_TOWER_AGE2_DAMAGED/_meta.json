@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWER_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 196,
+  "box_h": 240,
+  "anchor_x": 136,
+  "anchor_y": 208,
+  "sld_source": "b_seas_tower_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "WEST_STABLE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 288,
+  "box_h": 236,
+  "anchor_x": 156,
+  "anchor_y": 164,
+  "sld_source": "b_west_stable_age3"
+}

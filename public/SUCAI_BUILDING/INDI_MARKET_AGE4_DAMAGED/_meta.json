@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MARKET_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 364,
+  "anchor_x": 208,
+  "anchor_y": 268,
+  "sld_source": "b_indi_market_age4"
+}

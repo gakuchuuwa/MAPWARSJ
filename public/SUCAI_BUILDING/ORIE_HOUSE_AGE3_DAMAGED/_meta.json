@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_HOUSE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 220,
+  "box_h": 152,
+  "anchor_x": 114,
+  "anchor_y": 110,
+  "sld_source": "b_orie_house_age3"
+}

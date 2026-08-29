@@ -1,0 +1,9 @@
+{
+  "name": "PURU_TOWN_CENTER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 452,
+  "box_h": 304,
+  "anchor_x": 244,
+  "anchor_y": 248,
+  "sld_source": "b_puru_town_center_age3"
+}

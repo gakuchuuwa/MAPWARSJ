@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_MILL_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 228,
+  "box_h": 188,
+  "anchor_x": 124,
+  "anchor_y": 140,
+  "sld_source": "b_seas_mill_age3"
+}

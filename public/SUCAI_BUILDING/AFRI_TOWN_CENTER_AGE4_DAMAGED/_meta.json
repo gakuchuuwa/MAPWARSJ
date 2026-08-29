@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWN_CENTER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 420,
+  "box_h": 280,
+  "anchor_x": 220,
+  "anchor_y": 228,
+  "sld_source": "b_afri_town_center_age4"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_MILL_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 236,
+  "box_h": 204,
+  "anchor_x": 128,
+  "anchor_y": 152,
+  "sld_source": "b_puru_mill_age2"
+}

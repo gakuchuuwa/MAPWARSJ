@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_TOWER_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 208,
+  "box_h": 228,
+  "anchor_x": 148,
+  "anchor_y": 204,
+  "sld_source": "b_orie_tower_age2"
+}

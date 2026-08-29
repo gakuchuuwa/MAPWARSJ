@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 312,
+  "anchor_x": 176,
+  "anchor_y": 228,
+  "sld_source": "b_asia_archery_range_age3"
+}

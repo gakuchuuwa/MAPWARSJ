@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWN_CENTER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 392,
+  "box_h": 256,
+  "anchor_x": 204,
+  "anchor_y": 200,
+  "sld_source": "b_meso_town_center_age4"
+}

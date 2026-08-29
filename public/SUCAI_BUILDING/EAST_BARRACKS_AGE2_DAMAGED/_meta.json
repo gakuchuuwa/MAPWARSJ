@@ -1,0 +1,9 @@
+{
+  "name": "EAST_BARRACKS_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 268,
+  "anchor_x": 168,
+  "anchor_y": 188,
+  "sld_source": "b_east_barracks_age2"
+}

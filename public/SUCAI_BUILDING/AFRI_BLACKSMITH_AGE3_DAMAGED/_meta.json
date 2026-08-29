@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_BLACKSMITH_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 224,
+  "anchor_x": 176,
+  "anchor_y": 188,
+  "sld_source": "b_afri_blacksmith_age3"
+}

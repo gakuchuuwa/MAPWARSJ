@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_STABLE_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 256,
+  "anchor_x": 164,
+  "anchor_y": 176,
+  "sld_source": "b_seas_stable_age2"
+}

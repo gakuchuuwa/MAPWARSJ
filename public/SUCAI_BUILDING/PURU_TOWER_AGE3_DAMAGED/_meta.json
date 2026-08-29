@@ -1,0 +1,9 @@
+{
+  "name": "PURU_TOWER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 224,
+  "box_h": 276,
+  "anchor_x": 156,
+  "anchor_y": 236,
+  "sld_source": "b_puru_tower_age3"
+}

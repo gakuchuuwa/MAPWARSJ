@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_MARKET_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 420,
+  "box_h": 356,
+  "anchor_x": 204,
+  "anchor_y": 248,
+  "sld_source": "b_ceas_market_age2"
+}

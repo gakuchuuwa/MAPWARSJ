@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_BLACKSMITH_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 308,
+  "box_h": 208,
+  "anchor_x": 156,
+  "anchor_y": 152,
+  "sld_source": "b_slav_blacksmith_age2"
+}

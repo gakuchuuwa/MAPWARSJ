@@ -1,0 +1,9 @@
+{
+  "name": "MESO_UNIVERSITY_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 444,
+  "box_h": 368,
+  "anchor_x": 232,
+  "anchor_y": 256,
+  "sld_source": "b_meso_university_age4"
+}

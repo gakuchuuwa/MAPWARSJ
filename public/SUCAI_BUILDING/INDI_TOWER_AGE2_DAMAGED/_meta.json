@@ -1,0 +1,9 @@
+{
+  "name": "INDI_TOWER_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 192,
+  "box_h": 212,
+  "anchor_x": 136,
+  "anchor_y": 184,
+  "sld_source": "b_indi_tower_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "WEST_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 268,
+  "anchor_x": 160,
+  "anchor_y": 188,
+  "sld_source": "b_west_archery_range_age3"
+}

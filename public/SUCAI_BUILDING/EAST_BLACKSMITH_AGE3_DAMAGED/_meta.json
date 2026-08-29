@@ -1,0 +1,9 @@
+{
+  "name": "EAST_BLACKSMITH_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 208,
+  "anchor_x": 172,
+  "anchor_y": 152,
+  "sld_source": "b_east_blacksmith_age3"
+}

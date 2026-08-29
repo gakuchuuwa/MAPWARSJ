@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_MARKET_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 408,
+  "box_h": 328,
+  "anchor_x": 212,
+  "anchor_y": 224,
+  "sld_source": "b_slav_market_age2"
+}
