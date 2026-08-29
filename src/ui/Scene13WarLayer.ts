@@ -2074,6 +2074,12 @@ const SPREAD_CAP = GANG_CAP + 1;
  */
 const SEP_DIST = 17;
 /**
+ * 渲染 z-order 排序的稳定带（px）：拥挤时士兵 y 每帧抖 1~2px（软推挤），
+ * 若严格按 y 排会让重叠兵「谁在上谁在下」来回切 = 狂闪。y 差小于此值的两个兵
+ * 改用出生序号 zid 定序（终身不变），排序不再随抖动翻转。取半个身位以内，遮挡差异可忽略。
+ */
+const ZORDER_EPS = 4;
+/**
  * 每个兵的**占地半径**（px）——DE 真值 `collision_size_x/y × 40`（与射程同尺），
  * 由 `scratch/extract_de_radius.py` 从 `empires2_x2_p1.dat` 抽出，226 个兵种。
  *
@@ -2498,6 +2504,8 @@ interface WarSpawn {
 interface WarMan {
     f: 0 | 1;
     key: string;
+    /** 出生递增序号（终身不变）：渲染 z-order 排序的稳定 tiebreaker，防拥挤时 y 抖动导致重叠兵谁在上谁在下狂闪 */
+    zid: number;
     x: number;
     y: number;
     tx: number;
@@ -3485,6 +3493,7 @@ export class Scene13WarLayer {
                 const tgtX = VW - mx, tgtY = y;
                 this.men.push({
                     f: 0, key: it.key, jx: 0, jy: 0,
+                    zid: this.manSeq++,
                     x, y,
                     tx: tgtX, ty: tgtY,
                     hp,
@@ -3660,8 +3669,10 @@ export class Scene13WarLayer {
     private lastRepaintDecorAt = 0;
     private lastCollapseAt = 0;
     private lastBakeCorpseAt = 0;
+    /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
+    private manSeq = 0;
     /** [PERF 2026-08-29] 渲染排序列表对象池：render 每帧原 new 700+ 个临时对象加剧 GC，改为复用。 */
-    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; sprite: DecorSprite | null }> = [];
+    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -5169,6 +5180,7 @@ export class Scene13WarLayer {
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
+                    zid: this.manSeq++,
                     x: isFlank ? flankX : s.x + (s.f === 0 ? -dep : dep),
                     y: (isFlank ? flankY : s.y) + slotY,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp,
@@ -5489,11 +5501,11 @@ export class Scene13WarLayer {
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
             const r = Math.random();
-            if (r < 0.5) continue;   // 50% 保持完整
+            if (r < 0.4) continue;   // 40% 保持完整
             if (b.key === 'STONE_WALL') {
                 const destr = b.destrAssets;   // [D25, D50, D75]
                 if (destr) {
-                    // 石墙/垛墙：破损(D50) 占 30% / 残骸(D75) 占 20%，参差残垣断壁
+                    // 石墙/垛墙：破损(D50) 占 40% / 残骸(D75) 占 20%，参差残垣断壁
                     const d = r < 0.8 ? destr[1] : destr[2];
                     b.sprite.asset = 'BUILDINGANIM:' + d;
                     b.sprite.frame = 0;
@@ -5525,7 +5537,7 @@ export class Scene13WarLayer {
         for (const b of this.cityBuildings) {
             if (b.name.includes('CASTLE')) continue;   // 城堡不坍塌（主人 08-29 定）
             const r = Math.random();
-            if (r < 0.5) continue;   // 50% 保持完整
+            if (r < 0.4) continue;   // 40% 保持完整
             if (r < 0.8) {
                 // 破损（DAMAGED）：焦黑残缺、还立着 → 残垣断壁主视觉；无破损档则塌残骸
                 const damaged = 'BUILDING:' + b.name + '_DAMAGED';
@@ -6785,7 +6797,7 @@ export class Scene13WarLayer {
         let vi = 0;
         const take = () => {
             let it = vis[vi];
-            if (!it) { it = { kind: 'unit', y: 0, x: 0, f: 0, key: '', dir: 0, set: '', fr: 0, a: 1, z: 0, sprite: null }; vis[vi] = it; }
+            if (!it) { it = { kind: 'unit', y: 0, x: 0, f: 0, key: '', dir: 0, set: '', fr: 0, a: 1, z: 0, zid: 0, sprite: null }; vis[vi] = it; }
             vi++;
             return it;
         };
@@ -6797,6 +6809,7 @@ export class Scene13WarLayer {
                 it.kind = 'environment';
                 it.y = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
                 it.z = sprite.z;
+                it.zid = 0;
                 it.sprite = sprite;
             }
         }
@@ -6809,7 +6822,7 @@ export class Scene13WarLayer {
             it.y = c.y - this.elevationLiftAt(c.x, c.y); it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
             it.fr = c.t;
             it.a = 1;
-            it.st = undefined; it.z = 0; it.sprite = null;
+            it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
         }
         // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
         for (const f of this.fleers) {
@@ -6818,7 +6831,7 @@ export class Scene13WarLayer {
             it.y = f.y - this.elevationLiftAt(f.x, f.y); it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
             it.fr = f.ph;
             it.a = Math.max(0, 1 - f.t / FLEE_DUR);
-            it.st = undefined; it.z = 0; it.sprite = null;
+            it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
         }
         for (const m of this.men) {
             // 有冲锋组的兵种（象兵/弓骑）两处用冲锋帧（主人 2026-08-12 拍板「两者都要」）：
@@ -6857,11 +6870,15 @@ export class Scene13WarLayer {
             const it = take();
             it.kind = 'unit';
             it.y = m.y - this.elevationLiftAt(m.x, m.y); it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
-            it.z = 0; it.sprite = null;
+            it.z = 0; it.zid = m.zid; it.sprite = null;
         }
         vis.length = vi;
-        vis.sort((a, b) => (a.y - b.y)
-            || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0)));
+        vis.sort((a, b) => {
+            const dy = a.y - b.y;
+            // 拥挤时 y 每帧抖 1~2px，严格按 y 排会让重叠兵「谁上谁下」狂闪 → 接近时用出生序号 zid 定序（终身不变）
+            if (Math.abs(dy) < ZORDER_EPS) return a.zid - b.zid;
+            return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
+        });
 
         // ── 旗杆：画在士兵层**之下**（主人 2026-08-12「只改旗杆，放到士兵层下面」）──
         // 与大地图同序：GlobalUnitRenderer 先 drawPole（Behind Soldiers）、后 drawFlag（On Top）。
