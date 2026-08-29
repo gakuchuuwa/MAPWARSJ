@@ -10,6 +10,7 @@ import { resolveCastleAsset } from '../config/deCastleAssets';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { CITY_WONDER } from '../data/CityWonders';
+import { LandSeaSystem } from '../world/land-sea';
 // [PERF] Import Territory Worker
 import TerritoryWorker from '../workers/TerritoryWorker?worker';
 import { TerritoryRequest, TerritoryResponse } from '../workers/TerritoryWorker';
@@ -563,12 +564,39 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
+/**
+ * 关隘长边朝向（屏幕旋转角，CSS rotate 度，顺时针）：沿山脉走向（等高线方向），用 DEM 高程梯度算。
+ * 采样关隘周围 4 点（东西南北）高程 → 上坡方向 → 长边 = 上坡方向垂直（沿等高线 = 山脉走向）。
+ * 高程瓦片未加载时返回 null（调用方保持默认朝向、不旋转）。
+ */
+function computePassRotationDeg(lat: number, lng: number): number | null {
+    const sampler = LandSeaSystem.getSampler();
+    const d = 0.03;   // 采样步长（度纬度，约 3.3km）
+    const dlng = d / Math.max(0.1, Math.cos(lat * Math.PI / 180));   // 经度步长按纬度缩放
+    const east = sampler.getElevationSync(lat, lng + dlng);
+    const west = sampler.getElevationSync(lat, lng - dlng);
+    const north = sampler.getElevationSync(lat + d, lng);
+    const south = sampler.getElevationSync(lat - d, lng);
+    if (east === null || west === null || north === null || south === null) return null;
+    const gx = east - west;    // 东向坡度
+    const gy = north - south;  // 北向坡度
+    // 长边 = 上坡方向垂直（沿等高线 = 山脉走向）。屏幕向量：
+    //   x = 长边东向分量 = -gy；y = 长边北向分量转屏幕（北 = 屏幕 -y，等轴测压缩 0.58）= -gx * 0.58。
+    const edgeX = -gy;
+    const edgeY = -gx * 0.58;
+    const targetDeg = Math.atan2(edgeY, edgeX) * 180 / Math.PI;
+    // 矩形长边原始屏幕角 = atan2(0.58, 1) ≈ 30°
+    const BASE = Math.atan2(0.58, 1) * 180 / Math.PI;
+    return targetDeg - BASE;
+}
+
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, lat?: number, lng?: number): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
-    const rnd = deMulberry32(deHashString(cityId));
-    const rotation = rnd() * 360;
+    // [2026-08-29 主人定] 关隘长边沿山脉走向：用 DEM 高程梯度算朝向，删随机镜像。
+    //   高程瓦片未加载时返回 null → 保持默认朝向（不旋转）。
+    const passRotation = (lat !== undefined && lng !== undefined) ? computePassRotationDeg(lat, lng) : null;
 
     // 险要矩形城容器（长8段+门 × 宽4段）
     const W = baseSize * 2.6;
@@ -608,10 +636,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 
     // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、城垛朝外
     const wallPieces = computeRectWall(baseSize, 8, 4);
-    // 城墙整体随机镜像（与小城/中城同款，门朝多样化）：随机沿垂直轴翻转，两门仍同向朝外
-    if (rnd() < 0.5) {
-        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
-    }
+    // [2026-08-29 主人定] 删除随机镜像：原「50% 沿垂直轴翻转」会让关隘朝向随机（东北-西南 vs 西北-东南），
+    //   与实际山脉走向对不上。朝向改由 computePassRotationDeg 按 DEM 高程梯度统一算。
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(100 + w.y);
@@ -623,7 +649,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         );
     });
 
-    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+    const rotateStyle = passRotation !== null ? `transform:rotate(${passRotation.toFixed(1)}deg);` : '';
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;${rotateStyle}">${parts.join('')}</div>`;
 }
 
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
@@ -1863,7 +1890,7 @@ export class TerritorySystem {
                                   : city.type === 'medium_city'
                                       ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
                                       : city.type === 'pass'
-                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region)
+                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, displayLat, displayLng)
                                           : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
