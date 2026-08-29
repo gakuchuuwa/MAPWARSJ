@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MARKET_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 432,
+  "box_h": 348,
+  "anchor_x": 200,
+  "anchor_y": 244,
+  "sld_source": "b_afri_market_age2_destruction"
+}

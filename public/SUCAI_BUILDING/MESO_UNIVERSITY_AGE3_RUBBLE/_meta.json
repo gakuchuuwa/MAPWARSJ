@@ -1,0 +1,9 @@
+{
+  "name": "MESO_UNIVERSITY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 500,
+  "box_h": 268,
+  "anchor_x": 264,
+  "anchor_y": 148,
+  "sld_source": "b_meso_university_age3_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "WEST_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 252,
+  "box_h": 120,
+  "anchor_x": 120,
+  "anchor_y": 68,
+  "sld_source": "b_west_house_age2_rubble"
+}

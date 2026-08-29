@@ -1,0 +1,9 @@
+{
+  "name": "INDI_TOWN_CENTER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 180,
+  "anchor_x": 212,
+  "anchor_y": 108,
+  "sld_source": "b_indi_town_center_age3_rubble"
+}

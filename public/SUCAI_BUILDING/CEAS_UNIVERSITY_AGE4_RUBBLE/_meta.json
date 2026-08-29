@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_UNIVERSITY_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 420,
+  "box_h": 224,
+  "anchor_x": 216,
+  "anchor_y": 108,
+  "sld_source": "b_ceas_university_age4_rubble"
+}

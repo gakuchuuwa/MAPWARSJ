@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MARKET_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 484,
+  "box_h": 380,
+  "anchor_x": 244,
+  "anchor_y": 268,
+  "sld_source": "b_indi_market_age4_destruction"
+}

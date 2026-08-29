@@ -1,0 +1,9 @@
+{
+  "name": "INDI_BLACKSMITH_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 316,
+  "box_h": 136,
+  "anchor_x": 160,
+  "anchor_y": 92,
+  "sld_source": "b_indi_blacksmith_age2_rubble"
+}

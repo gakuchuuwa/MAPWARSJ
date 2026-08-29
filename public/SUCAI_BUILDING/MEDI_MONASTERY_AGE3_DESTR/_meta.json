@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MONASTERY_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 356,
+  "box_h": 392,
+  "anchor_x": 188,
+  "anchor_y": 292,
+  "sld_source": "b_medi_monastery_age3_destruction"
+}

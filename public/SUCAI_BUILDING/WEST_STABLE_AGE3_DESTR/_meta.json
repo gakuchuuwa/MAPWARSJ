@@ -1,0 +1,9 @@
+{
+  "name": "WEST_STABLE_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 304,
+  "box_h": 240,
+  "anchor_x": 152,
+  "anchor_y": 164,
+  "sld_source": "b_west_stable_age3_destruction"
+}

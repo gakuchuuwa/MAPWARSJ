@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 360,
+  "box_h": 256,
+  "anchor_x": 264,
+  "anchor_y": 220,
+  "sld_source": "b_ceas_house_age2_rubble"
+}

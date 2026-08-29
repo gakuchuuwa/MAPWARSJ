@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_BARRACKS_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 228,
+  "anchor_x": 196,
+  "anchor_y": 124,
+  "sld_source": "b_afri_barracks_age3_rubble"
+}

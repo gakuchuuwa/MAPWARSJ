@@ -1,0 +1,9 @@
+{
+  "name": "WEST_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 180,
+  "anchor_x": 144,
+  "anchor_y": 100,
+  "sld_source": "b_west_archery_range_age2_rubble"
+}

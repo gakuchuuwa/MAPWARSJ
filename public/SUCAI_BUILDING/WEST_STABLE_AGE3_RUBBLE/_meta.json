@@ -1,0 +1,9 @@
+{
+  "name": "WEST_STABLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 256,
+  "box_h": 156,
+  "anchor_x": 128,
+  "anchor_y": 84,
+  "sld_source": "b_west_stable_age3_rubble"
+}

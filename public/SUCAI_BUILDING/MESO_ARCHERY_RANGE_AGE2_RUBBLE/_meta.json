@@ -1,0 +1,9 @@
+{
+  "name": "MESO_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 384,
+  "box_h": 220,
+  "anchor_x": 168,
+  "anchor_y": 128,
+  "sld_source": "b_meso_archery_range_age2_rubble"
+}

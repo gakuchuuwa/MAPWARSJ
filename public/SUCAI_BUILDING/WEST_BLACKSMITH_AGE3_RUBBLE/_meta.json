@@ -1,0 +1,9 @@
+{
+  "name": "WEST_BLACKSMITH_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 136,
+  "anchor_x": 148,
+  "anchor_y": 92,
+  "sld_source": "b_west_blacksmith_age3_rubble"
+}

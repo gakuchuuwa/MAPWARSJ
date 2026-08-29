@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 204,
+  "box_h": 108,
+  "anchor_x": 106,
+  "anchor_y": 66,
+  "sld_source": "b_afri_house_age2_rubble"
+}

@@ -100,6 +100,39 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     THRACIAN:     'INFANTRY', // 色雷斯轻盾兵
     PERSIAN:      'MIXED',    // 波斯铁甲圣骑+步弓
     CUMAN:        'CAVALRY',  // 库曼钦察草原游牧（纯骑）
+    BRITONS: 'MIXED',  // 不列颠[2026-08-28]
+    GOTHS: 'INFANTRY',  // 哥特[2026-08-28]
+    HUNS: 'CAVALRY',  // 匈人[2026-08-28]
+    TEUTONS: 'MIXED',  // 条顿[2026-08-28]
+    VIKINGS: 'INFANTRY',  // 维京[2026-08-28]
+    CELTS: 'INFANTRY',  // 凯尔特[2026-08-28]
+    ITALIANS: 'INFANTRY',  // 意大利[2026-08-28]
+    SICILIANS: 'MIXED',  // 西西里[2026-08-28]
+    BULGARIANS: 'MIXED',  // 保加利亚[2026-08-28]
+    MAGYAR: 'CAVALRY',  // 马扎尔[2026-08-28]
+    LITHUANIANS: 'CAVALRY',  // 立陶宛[2026-08-28]
+    POLES: 'MIXED',  // 波兰[2026-08-28]
+    BOHEMIANS: 'INFANTRY',  // 波希米亚[2026-08-28]
+    BURGUNDIANS: 'MIXED',  // 勃艮第[2026-08-28]
+    SPANISH: 'MIXED',  // 西班牙[2026-08-28]
+    PORTUGUESE: 'INFANTRY',  // 葡萄牙[2026-08-28]
+    ETHIOPIANS: 'MIXED',  // 埃塞俄比亚[2026-08-28]
+    BENGALIS: 'ELEPHANT',  // 孟加拉[2026-08-28]
+    GURJARAS: 'CAVALRY',  // 瞿折罗[2026-08-28]
+    PORUS: 'ELEPHANT',  // 补噜[2026-08-28]
+    VIETNAMESE: 'ELEPHANT',  // 越南[2026-08-28]
+    KHMER: 'ELEPHANT',  // 高棉[2026-08-28]
+    MAYANS: 'MIXED',  // 玛雅[2026-08-28]
+    MAPUCHE: 'MIXED',  // 马普切[2026-08-28]
+    MUISCA: 'MIXED',  // 穆伊斯卡[2026-08-28]
+    TUPI: 'INFANTRY',  // 图皮[2026-08-28]
+    ARMENIANS: 'MIXED',  // 亚美尼亚[2026-08-28]
+    GEORGIANS: 'MIXED',  // 格鲁吉亚[2026-08-28]
+    ATHENIANS: 'INFANTRY',  // 雅典[2026-08-28]
+    SPARTANS: 'INFANTRY',  // 斯巴达[2026-08-28]
+    MACEDONIANS: 'MIXED',  // 马其顿[2026-08-28]
+    ACHAEMENIDS: 'MIXED',  // 阿契美尼德[2026-08-28]
+
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -176,6 +209,39 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     THRACIAN:     'fish_scale',  // 色雷斯轻盾兵主力
     PERSIAN:      'crane_wing',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
+    BRITONS: 'crane_wing',  // 不列颠[2026-08-28 暂复用父文化]
+    GOTHS: 'fish_scale',  // 哥特[2026-08-28 暂复用父文化]
+    HUNS: 'triangle',  // 匈人[2026-08-28 暂复用父文化]
+    TEUTONS: 'crane_wing',  // 条顿[2026-08-28 暂复用父文化]
+    VIKINGS: 'fish_scale',  // 维京[2026-08-28 暂复用父文化]
+    CELTS: 'fish_scale',  // 凯尔特[2026-08-28 暂复用父文化]
+    ITALIANS: 'fish_scale',  // 意大利[2026-08-28 暂复用父文化]
+    SICILIANS: 'crane_wing',  // 西西里[2026-08-28 暂复用父文化]
+    BULGARIANS: 'crane_wing',  // 保加利亚[2026-08-28 暂复用父文化]
+    MAGYAR: 'triangle',  // 马扎尔[2026-08-28 暂复用父文化]
+    LITHUANIANS: 'crane_wing',  // 立陶宛[2026-08-28 暂复用父文化]
+    POLES: 'crane_wing',  // 波兰[2026-08-28 暂复用父文化]
+    BOHEMIANS: 'fish_scale',  // 波希米亚[2026-08-28 暂复用父文化]
+    BURGUNDIANS: 'crane_wing',  // 勃艮第[2026-08-28 暂复用父文化]
+    SPANISH: 'crane_wing',  // 西班牙[2026-08-28 暂复用父文化]
+    PORTUGUESE: 'fish_scale',  // 葡萄牙[2026-08-28 暂复用父文化]
+    ETHIOPIANS: 'fish_scale',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
+    BENGALIS: 'crane_wing',  // 孟加拉[2026-08-28 暂复用父文化]
+    GURJARAS: 'crane_wing',  // 瞿折罗[2026-08-28 暂复用父文化]
+    PORUS: 'fish_scale',  // 补噜[2026-08-28 暂复用父文化]
+    VIETNAMESE: 'fish_scale',  // 越南[2026-08-28 暂复用父文化]
+    KHMER: 'crane_wing',  // 高棉[2026-08-28 暂复用父文化]
+    MAYANS: 'fish_scale',  // 玛雅[2026-08-28 暂复用父文化]
+    MAPUCHE: 'fish_scale',  // 马普切[2026-08-28 暂复用父文化]
+    MUISCA: 'fish_scale',  // 穆伊斯卡[2026-08-28 暂复用父文化]
+    TUPI: 'fish_scale',  // 图皮[2026-08-28 暂复用父文化]
+    ARMENIANS: 'crane_wing',  // 亚美尼亚[2026-08-28 暂复用父文化]
+    GEORGIANS: 'crane_wing',  // 格鲁吉亚[2026-08-28 暂复用父文化]
+    ATHENIANS: 'fish_scale',  // 雅典[2026-08-28 暂复用父文化]
+    SPARTANS: 'fish_scale',  // 斯巴达[2026-08-28 暂复用父文化]
+    MACEDONIANS: 'crane_wing',  // 马其顿[2026-08-28 暂复用父文化]
+    ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
+
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1416,6 +1482,39 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
     PERSIAN:      WEST_ASIA_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
     CUMAN:        STEPPE_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
+    BRITONS: GERMANIC_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
+    GOTHS: GERMANIC_TIERS,  // 哥特[2026-08-28 暂复用父文化]
+    HUNS: STEPPE_TIERS,  // 匈人[2026-08-28 暂复用父文化]
+    TEUTONS: GERMANIC_TIERS,  // 条顿[2026-08-28 暂复用父文化]
+    VIKINGS: SLAVIC_TIERS,  // 维京[2026-08-28 暂复用父文化]
+    CELTS: GERMANIC_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
+    ITALIANS: LATIN_TIERS,  // 意大利[2026-08-28 暂复用父文化]
+    SICILIANS: LATIN_TIERS,  // 西西里[2026-08-28 暂复用父文化]
+    BULGARIANS: SLAVIC_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
+    MAGYAR: STEPPE_TIERS,  // 马扎尔[2026-08-28 暂复用父文化]
+    LITHUANIANS: SLAVIC_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
+    POLES: SLAVIC_TIERS,  // 波兰[2026-08-28 暂复用父文化]
+    BOHEMIANS: SLAVIC_TIERS,  // 波希米亚[2026-08-28 暂复用父文化]
+    BURGUNDIANS: LATIN_TIERS,  // 勃艮第[2026-08-28 暂复用父文化]
+    SPANISH: LATIN_TIERS,  // 西班牙[2026-08-28 暂复用父文化]
+    PORTUGUESE: LATIN_TIERS,  // 葡萄牙[2026-08-28 暂复用父文化]
+    ETHIOPIANS: BERBER_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
+    BENGALIS: INDIA_TIERS,  // 孟加拉[2026-08-28 暂复用父文化]
+    GURJARAS: INDIA_TIERS,  // 瞿折罗[2026-08-28 暂复用父文化]
+    PORUS: INDIA_TIERS,  // 补噜[2026-08-28 暂复用父文化]
+    VIETNAMESE: DIANQIAN_TIERS,  // 越南[2026-08-28 暂复用父文化]
+    KHMER: DIANQIAN_TIERS,  // 高棉[2026-08-28 暂复用父文化]
+    MAYANS: LATIN_TIERS,  // 玛雅[2026-08-28 暂复用父文化]
+    MAPUCHE: LATIN_TIERS,  // 马普切[2026-08-28 暂复用父文化]
+    MUISCA: LATIN_TIERS,  // 穆伊斯卡[2026-08-28 暂复用父文化]
+    TUPI: LATIN_TIERS,  // 图皮[2026-08-28 暂复用父文化]
+    ARMENIANS: CENTRAL_ASIA_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
+    GEORGIANS: CENTRAL_ASIA_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
+    ATHENIANS: GREEK_TIERS,  // 雅典[2026-08-28 暂复用父文化]
+    SPARTANS: GREEK_TIERS,  // 斯巴达[2026-08-28 暂复用父文化]
+    MACEDONIANS: GREEK_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
+    ACHAEMENIDS: WEST_ASIA_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
+
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -1452,7 +1551,39 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     GREEK:        '希腊军团',
     THRACIAN:     '色雷斯军团',
     PERSIAN:      '波斯军团',
-    CUMAN:        '库曼军团',
+    CUMAN:        '库曼军团',    BRITONS: '不列颠军团',
+    GOTHS: '哥特军团',
+    HUNS: '匈人军团',
+    TEUTONS: '条顿军团',
+    VIKINGS: '维京军团',
+    CELTS: '凯尔特军团',
+    ITALIANS: '意大利军团',
+    SICILIANS: '西西里军团',
+    BULGARIANS: '保加利亚军团',
+    MAGYAR: '马扎尔军团',
+    LITHUANIANS: '立陶宛军团',
+    POLES: '波兰军团',
+    BOHEMIANS: '波希米亚军团',
+    BURGUNDIANS: '勃艮第军团',
+    SPANISH: '西班牙军团',
+    PORTUGUESE: '葡萄牙军团',
+    ETHIOPIANS: '埃塞俄比亚军团',
+    BENGALIS: '孟加拉军团',
+    GURJARAS: '瞿折罗军团',
+    PORUS: '补噜军团',
+    VIETNAMESE: '越南军团',
+    KHMER: '高棉军团',
+    MAYANS: '玛雅军团',
+    MAPUCHE: '马普切军团',
+    MUISCA: '穆伊斯卡军团',
+    TUPI: '图皮军团',
+    ARMENIANS: '亚美尼亚军团',
+    GEORGIANS: '格鲁吉亚军团',
+    ATHENIANS: '雅典军团',
+    SPARTANS: '斯巴达军团',
+    MACEDONIANS: '马其顿军团',
+    ACHAEMENIDS: '阿契美尼德军团',
+
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

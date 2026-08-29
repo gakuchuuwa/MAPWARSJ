@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWN_CENTER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 180,
+  "anchor_x": 208,
+  "anchor_y": 104,
+  "sld_source": "b_west_town_center_age2_rubble"
+}

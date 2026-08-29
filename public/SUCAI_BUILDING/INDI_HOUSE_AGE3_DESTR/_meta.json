@@ -1,0 +1,9 @@
+{
+  "name": "INDI_HOUSE_AGE3_DESTR",
+  "frames": 300,
+  "box_w": 296,
+  "box_h": 212,
+  "anchor_x": 176,
+  "anchor_y": 148,
+  "sld_source": "b_indi_house_age3_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_MONASTERY_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 380,
+  "box_h": 316,
+  "anchor_x": 204,
+  "anchor_y": 208,
+  "sld_source": "b_orie_monastery_age3_destruction"
+}

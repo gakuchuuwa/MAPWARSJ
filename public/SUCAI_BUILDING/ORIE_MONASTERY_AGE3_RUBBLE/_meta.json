@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 360,
+  "box_h": 208,
+  "anchor_x": 196,
+  "anchor_y": 100,
+  "sld_source": "b_orie_monastery_age3_rubble"
+}

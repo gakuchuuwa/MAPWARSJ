@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_BARRACKS_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 348,
+  "box_h": 172,
+  "anchor_x": 156,
+  "anchor_y": 100,
+  "sld_source": "b_asia_barracks_age3_rubble"
+}

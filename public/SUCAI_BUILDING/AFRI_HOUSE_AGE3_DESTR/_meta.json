@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_HOUSE_AGE3_DESTR",
+  "frames": 300,
+  "box_w": 260,
+  "box_h": 176,
+  "anchor_x": 134,
+  "anchor_y": 126,
+  "sld_source": "b_afri_house_age3_destruction"
+}

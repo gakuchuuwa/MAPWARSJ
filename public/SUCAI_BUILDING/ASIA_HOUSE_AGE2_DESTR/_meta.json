@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_HOUSE_AGE2_DESTR",
+  "frames": 300,
+  "box_w": 304,
+  "box_h": 224,
+  "anchor_x": 172,
+  "anchor_y": 176,
+  "sld_source": "b_asia_house_age2_destruction"
+}

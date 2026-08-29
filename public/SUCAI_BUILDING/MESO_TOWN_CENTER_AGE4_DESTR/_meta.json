@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWN_CENTER_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 428,
+  "box_h": 264,
+  "anchor_x": 224,
+  "anchor_y": 200,
+  "sld_source": "b_meso_town_center_age4_destruction"
+}

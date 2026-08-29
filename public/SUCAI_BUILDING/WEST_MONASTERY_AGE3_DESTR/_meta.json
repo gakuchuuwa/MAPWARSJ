@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MONASTERY_AGE3_DESTR",
+  "frames": 101,
+  "box_w": 372,
+  "box_h": 344,
+  "anchor_x": 192,
+  "anchor_y": 244,
+  "sld_source": "b_west_monastery_age3_destruction"
+}

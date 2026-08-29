@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MILL_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 312,
+  "box_h": 284,
+  "anchor_x": 180,
+  "anchor_y": 176,
+  "sld_source": "b_west_mill_age3_destruction"
+}

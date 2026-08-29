@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_STABLE_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 360,
+  "box_h": 236,
+  "anchor_x": 176,
+  "anchor_y": 160,
+  "sld_source": "b_ceas_stable_age2_destruction"
+}

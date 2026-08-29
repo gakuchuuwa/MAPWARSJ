@@ -1,0 +1,9 @@
+{
+  "name": "INDI_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 208,
+  "anchor_x": 152,
+  "anchor_y": 124,
+  "sld_source": "b_indi_archery_range_age2_rubble"
+}

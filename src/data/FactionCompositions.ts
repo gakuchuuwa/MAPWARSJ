@@ -551,13 +551,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cav_archer_heavy', count: 2 },
         ],
     },
-    xingan: {
+    "xingan": {
         legionName: "满清军团",
-        formationMode: 'fish_scale',
+        legionType: "region",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'iron_pagoda', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "antiquity_cavalry_archer", count: 2 },
         ],
     },
     weiyuan: {
@@ -2664,7 +2665,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 耶路撒冷王国·阿卡（鲍德温四世 · 耶路撒冷王国军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
     yelusalengwg: {
-        legionName: "耶路撒冷王国军团",
+        legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
             { type: "halberdier", count: 3 },
@@ -2873,7 +2874,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 卡拉桑·马打蓝王国（帕南卡兰 · 马打蓝军团 · 鹤翼阵 2+4+3：精锐象兵 2 + 精锐爪刀勇士 4 + 步弓手 3）
     medang: {
-        legionName: "马打蓝军团",
+        legionName: "马来军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'elite_battle_elephant', count: 2 },    // Row 0 前卫 = 精锐象兵 2头（战斗象高级开路）
@@ -2991,7 +2992,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bohepingyuan": {
-        legionName: "威尼托军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3000,7 +3001,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weixi": {
-        legionName: "威悉军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3009,7 +3010,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lagusa": {
-        legionName: "达尔马提亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3018,7 +3019,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "meikelunbao": {
-        legionName: "文德军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3027,7 +3028,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "didi": {
-        legionName: "佛兰德军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3036,7 +3037,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bosiniya": {
-        legionName: "波斯尼亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3045,7 +3046,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "maixiya": {
-        legionName: "麦西亚军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3054,7 +3055,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nidelan": {
-        legionName: "尼德兰军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3063,7 +3064,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pomeilaniya": {
-        legionName: "波美拉尼亚军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3072,7 +3073,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "langgeduoke": {
-        legionName: "朗格多克军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3081,7 +3082,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kanpaniya": {
-        legionName: "坎帕尼亚军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3090,7 +3091,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiatailuoniya": {
-        legionName: "加泰罗尼亚军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3099,7 +3100,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nasier": {
-        legionName: "纳斯尔军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3108,7 +3109,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bolisiya": {
-        legionName: "波利西亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3117,7 +3118,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhituo": {
-        legionName: "沃伦军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3126,7 +3127,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pufaerci": {
-        legionName: "普法尔茨军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3135,7 +3136,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hansa": {
-        legionName: "汉萨军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3144,7 +3145,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "batawei": {
-        legionName: "巴塔维军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3153,7 +3154,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weijing_york": {
-        legionName: "约维克军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3162,7 +3163,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "puluowangsi": {
-        legionName: "普罗旺斯军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3171,7 +3172,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shaiyue": {
-        legionName: "喀尔巴阡军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3180,7 +3181,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yinggelan": {
-        legionName: "英格兰军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3189,7 +3190,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bulietani": {
-        legionName: "布列塔尼军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3198,7 +3199,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "saierweiya": {
-        legionName: "塞尔维亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3207,7 +3208,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "habusibao": {
-        legionName: "哈布斯堡军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3216,7 +3217,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "rierman": {
-        legionName: "莱茵兰军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3225,7 +3226,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shiwaben": {
-        legionName: "施瓦本军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3234,7 +3235,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "asikanani": {
-        legionName: "阿斯坎尼军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3243,7 +3244,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wende": {
-        legionName: "萨克森军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3252,7 +3253,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bafaliya": {
-        legionName: "巴伐利亚军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3261,7 +3262,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huohengsuolun": {
-        legionName: "霍亨索伦军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3270,7 +3271,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ruishi": {
-        legionName: "瑞士军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3279,7 +3280,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "molaweiya": {
-        legionName: "摩拉维亚军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3288,7 +3289,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "damolaweiya": {
-        legionName: "大摩拉维亚军团",
+        legionName: "日耳曼军团",
         formationMode: "crane_wing",
         slots: [
             { type: "champion", count: 2 },
@@ -3297,7 +3298,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liulike": {
-        legionName: "留里克军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3306,7 +3307,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mosike_gongguo": {
-        legionName: "莫斯公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3315,7 +3316,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xieerpuhuofu_gongguo": {
-        legionName: "谢尔公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3324,7 +3325,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fulajimier_gongguo": {
-        legionName: "克利亚济马军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3333,7 +3334,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "daniebo": {
-        legionName: "斯摩公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3342,7 +3343,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jialixiya": {
-        legionName: "哈尔公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3351,7 +3352,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pusikefu_gongheguo": {
-        legionName: "伟利卡亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3360,7 +3361,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ouka": {
-        legionName: "奥卡军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3369,7 +3370,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baojiaer": {
-        legionName: "保加尔军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3378,7 +3379,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kelimiya": {
-        legionName: "克里米亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3387,7 +3388,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keluodiya": {
-        legionName: "克罗地亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3396,7 +3397,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mengtainiya": {
-        legionName: "蒙泰尼亚军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -3405,7 +3406,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "teweier_gongguo": {
-        legionName: "特维公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3414,7 +3415,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suzidaer": {
-        legionName: "苏兹达尔军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3423,7 +3424,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "siluoboda": {
-        legionName: "斯洛博达军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3432,7 +3433,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yedi": {
-        legionName: "野地军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3441,7 +3442,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "moerdaweiya": {
-        legionName: "摩尔达维亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3450,7 +3451,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "walajiyia": {
-        legionName: "瓦拉几亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3459,7 +3460,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chude": {
-        legionName: "楚德军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3468,7 +3469,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "deniesite": {
-        legionName: "德涅斯特军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3477,7 +3478,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fuerjia": {
-        legionName: "伏尔加军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3486,7 +3487,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nuogai": {
-        legionName: "萨马拉河军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3495,7 +3496,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bashekeer": {
-        legionName: "巴什基尔军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3504,7 +3505,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "beisilafu": {
-        legionName: "塞维里亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3513,7 +3514,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "peilieya_gongguo": {
-        legionName: "佩列公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3522,7 +3523,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weijiebusike_gongguo": {
-        legionName: "维捷公国军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -3531,7 +3532,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "heishui": {
-        legionName: "靺鞨军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -3540,7 +3541,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kelie": {
-        legionName: "杭爱军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3549,7 +3550,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "donghui": {
-        legionName: "东濊军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -3558,7 +3559,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gonggu": {
-        legionName: "宫古军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -3567,7 +3568,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fuguo": {
-        legionName: "附国军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -3576,7 +3577,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fushi": {
-        legionName: "苻秦军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -3585,7 +3586,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gongtang": {
-        legionName: "贡唐军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -3594,7 +3595,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chizhou": {
-        legionName: "池州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3603,7 +3604,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yada": {
-        legionName: "嚈哒军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -3612,7 +3613,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "quli": {
-        legionName: "渠犁军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -3621,7 +3622,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guazhou": {
-        legionName: "瓜州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -3630,7 +3631,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guishuang": {
-        legionName: "贵霜军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -3639,7 +3640,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "juandu": {
-        legionName: "捐毒军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -3648,7 +3649,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sai": {
-        legionName: "塞种军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -3657,7 +3658,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yangtong": {
-        legionName: "羊同军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -3666,7 +3667,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "monong": {
-        legionName: "墨侬军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3675,7 +3676,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shuizhen": {
-        legionName: "水真军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3684,7 +3685,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dingling": {
-        legionName: "丁零军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3693,7 +3694,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nifuhe": {
-        legionName: "尼夫军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -3702,7 +3703,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "muer": {
-        legionName: "呼罗珊军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -3711,7 +3712,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiajiasi": {
-        legionName: "坚昆军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3720,7 +3721,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhen": {
-        legionName: "武珍军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -3729,7 +3730,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dongshengwei": {
-        legionName: "东胜军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3738,7 +3739,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dizhou": {
-        legionName: "棣州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3747,7 +3748,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bailian": {
-        legionName: "白莲军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3756,7 +3757,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chimei": {
-        legionName: "赤眉军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3765,7 +3766,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yunzhong": {
-        legionName: "索头军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3774,7 +3775,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qian": {
-        legionName: "黔中军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3783,7 +3784,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wan": {
-        legionName: "安庆军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3792,7 +3793,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qingyuan_bd": {
-        legionName: "清苑军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3801,7 +3802,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhong": {
-        legionName: "寿州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3810,7 +3811,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xichu": {
-        legionName: "西楚军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3819,7 +3820,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weihaiwei": {
-        legionName: "威海军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3828,7 +3829,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guangzhou": {
-        legionName: "广州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3837,7 +3838,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guangping": {
-        legionName: "广平军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3846,7 +3847,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "duanzhou_d": {
-        legionName: "端州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3855,7 +3856,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dingxiang_d": {
-        legionName: "定襄军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3864,7 +3865,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiayang_d": {
-        legionName: "夏阳军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3873,7 +3874,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dian": {
-        legionName: "白爨军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -3882,7 +3883,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liangzhou": {
-        legionName: "凉州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -3891,7 +3892,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "juqu_d": {
-        legionName: "沮渠军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3900,7 +3901,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tufa_d": {
-        legionName: "秃发军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -3909,7 +3910,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiuchi": {
-        legionName: "仇池军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -3918,7 +3919,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "helian": {
-        legionName: "赫连军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3927,7 +3928,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiongnu": {
-        legionName: "匈奴军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -3936,7 +3937,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xianbei": {
-        legionName: "鲜卑军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -3945,7 +3946,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jie": {
-        legionName: "羯族军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -3954,7 +3955,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "beidi": {
-        legionName: "北地军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3963,7 +3964,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuoba": {
-        legionName: "拓跋军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3972,7 +3973,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yuwen": {
-        legionName: "宇文军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -3981,7 +3982,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liang_d": {
-        legionName: "梁国军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -3990,7 +3991,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chen": {
-        legionName: "陈国军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -3999,7 +4000,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sui": {
-        legionName: "隋国军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4008,7 +4009,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tang": {
-        legionName: "唐国军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4017,7 +4018,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "min": {
-        legionName: "闽国军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4026,7 +4027,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "quanzhou": {
-        legionName: "泉州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4035,7 +4036,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shazhou": {
-        legionName: "沙州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -4044,7 +4045,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shatuo": {
-        legionName: "沙陀军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4053,7 +4054,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bing": {
-        legionName: "并州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4062,7 +4063,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bohai": {
-        legionName: "渤海军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -4071,7 +4072,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dangxiang": {
-        legionName: "大夏军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -4080,7 +4081,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liao_d": {
-        legionName: "大辽军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4089,7 +4090,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dangzhou": {
-        legionName: "氐族军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -4098,7 +4099,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dai_d": {
-        legionName: "代国军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4107,7 +4108,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhongshan": {
-        legionName: "恒州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4116,7 +4117,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wang_d": {
-        legionName: "沂州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4125,7 +4126,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiao_d": {
-        legionName: "兰陵军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4134,7 +4135,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yuan_cj_d": {
-        legionName: "汝南军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4143,7 +4144,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xie_cj_d": {
-        legionName: "信州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4152,7 +4153,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yue_d": {
-        legionName: "岳州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4161,7 +4162,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qian_d": {
-        legionName: "秀州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4170,7 +4171,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiujiang": {
-        legionName: "江州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4179,7 +4180,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingzhou_gs": {
-        legionName: "泾州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4188,7 +4189,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guo": {
-        legionName: "果州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -4197,7 +4198,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zi": {
-        legionName: "资州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -4206,7 +4207,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "long2": {
-        legionName: "陇州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4215,7 +4216,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "song2": {
-        legionName: "松州军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -4224,7 +4225,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jibei": {
-        legionName: "泰山军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4233,7 +4234,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wusun": {
-        legionName: "乌孙军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4242,7 +4243,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dayuan": {
-        legionName: "大宛军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4251,7 +4252,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gouding": {
-        legionName: "句町军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4260,7 +4261,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuhuan": {
-        legionName: "乌桓军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4269,7 +4270,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xianlingqiang": {
-        legionName: "先零军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -4278,7 +4279,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yelang": {
-        legionName: "夜郎军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4287,7 +4288,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ailao": {
-        legionName: "哀牢军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -4296,7 +4297,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fuyu": {
-        legionName: "夫余军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -4305,7 +4306,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shule": {
-        legionName: "疏勒军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4314,7 +4315,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "loulan": {
-        legionName: "楼兰军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4323,7 +4324,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shache": {
-        legionName: "莎车军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4332,7 +4333,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiuci": {
-        legionName: "龟兹军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4341,7 +4342,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yanqi": {
-        legionName: "焉耆军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4350,7 +4351,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaogouli": {
-        legionName: "高句丽军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -4359,7 +4360,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xinluo": {
-        legionName: "新罗军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -4368,7 +4369,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ashikaga": {
-        legionName: "室町军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4377,7 +4378,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "quanrong": {
-        legionName: "犬戎军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4386,7 +4387,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sushen": {
-        legionName: "肃慎军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -4395,7 +4396,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chile": {
-        legionName: "敕勒军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -4404,7 +4405,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "rouran": {
-        legionName: "柔然军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4413,7 +4414,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baishui": {
-        legionName: "景谷军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -4422,7 +4423,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baiji": {
-        legionName: "百济军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -4431,7 +4432,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tubo": {
-        legionName: "吐蕃军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -4440,7 +4441,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tujue": {
-        legionName: "突厥军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4449,7 +4450,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tiele": {
-        legionName: "铁勒军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4458,7 +4459,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huige": {
-        legionName: "回纥军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4467,7 +4468,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yamato": {
-        legionName: "大和军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4476,7 +4477,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "edo": {
-        legionName: "武藏军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4485,7 +4486,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "izumo": {
-        legionName: "出云军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4494,7 +4495,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "satsuma": {
-        legionName: "萨摩军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4503,7 +4504,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ryukyu": {
-        legionName: "琉球军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4512,7 +4513,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "so": {
-        legionName: "对马军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4521,7 +4522,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kakizaki": {
-        legionName: "松前军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -4530,7 +4531,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fujiwara": {
-        legionName: "奥州军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4539,7 +4540,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaya": {
-        legionName: "伽倻军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -4548,7 +4549,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aki": {
-        legionName: "安艺军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4557,7 +4558,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chosokabe": {
-        legionName: "土佐军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4566,7 +4567,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shimotsuke": {
-        legionName: "下野军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4575,7 +4576,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aizu": {
-        legionName: "会津军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -4584,7 +4585,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xingliao": {
-        legionName: "兴辽军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -4593,7 +4594,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gongsun_d": {
-        legionName: "辽东军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4602,7 +4603,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "donghu": {
-        legionName: "东胡军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4611,7 +4612,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luoyue": {
-        legionName: "骆越军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4620,7 +4621,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qifu_d": {
-        legionName: "乞伏军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -4629,7 +4630,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuyu_d": {
-        legionName: "廓州军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -4638,7 +4639,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "linyi": {
-        legionName: "林邑军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4647,7 +4648,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pingyuan": {
-        legionName: "高唐军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4656,7 +4657,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yao": {
-        legionName: "平阳军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4665,7 +4666,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "murong": {
-        legionName: "慕容军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4674,7 +4675,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yingzhou_ying_d": {
-        legionName: "营州军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -4683,7 +4684,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "erzhu": {
-        legionName: "尔朱军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4692,7 +4693,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chanzhou": {
-        legionName: "澶州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4701,7 +4702,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pizhou": {
-        legionName: "邳州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4710,7 +4711,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tongma": {
-        legionName: "胶西军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4719,7 +4720,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tongzhou": {
-        legionName: "同州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4728,7 +4729,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baibo": {
-        legionName: "黄巾军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4737,7 +4738,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cheshihou": {
-        legionName: "乌垒军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4746,7 +4747,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qu_d": {
-        legionName: "界津军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4755,7 +4756,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liu": {
-        legionName: "九江军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4764,7 +4765,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ouyue": {
-        legionName: "瓯越军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4773,7 +4774,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suzhou_d": {
-        legionName: "宿州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4782,7 +4783,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lanzhou": {
-        legionName: "兰州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -4791,7 +4792,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaoqi_d": {
-        legionName: "北齐军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4800,7 +4801,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuzhou_d": {
-        legionName: "武周军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4809,7 +4810,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuozhou": {
-        legionName: "涿州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4818,7 +4819,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tujia_d": {
-        legionName: "土家军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -4827,7 +4828,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuang_d": {
-        legionName: "壮族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4836,7 +4837,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "buyi_d": {
-        legionName: "布依军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4845,7 +4846,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hani_d": {
-        legionName: "哈尼军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -4854,7 +4855,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xibo_d": {
-        legionName: "锡伯军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4863,7 +4864,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jinling": {
-        legionName: "南国军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4872,7 +4873,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuwu_d": {
-        legionName: "无为军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4881,7 +4882,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shizhao_d": {
-        legionName: "邢国军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4890,7 +4891,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ranwei_d": {
-        legionName: "冉魏军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4899,7 +4900,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "taizhou": {
-        legionName: "泰州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4908,7 +4909,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sunwu_d": {
-        legionName: "孙吴军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4917,7 +4918,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liangshidu": {
-        legionName: "绥州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4926,7 +4927,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "linshihong": {
-        legionName: "干越军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -4935,7 +4936,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kumo": {
-        legionName: "奚族军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4944,7 +4945,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xijue": {
-        legionName: "十箭军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4953,7 +4954,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xian_d": {
-        legionName: "高州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -4962,7 +4963,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xueyantuo": {
-        legionName: "薛延陀军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -4971,7 +4972,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tujishi": {
-        legionName: "突骑施军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -4980,7 +4981,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanzhao": {
-        legionName: "南诏军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -4989,7 +4990,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanzhong": {
-        legionName: "南中军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -4998,7 +4999,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiaobolu": {
-        legionName: "勃律军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5007,7 +5008,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiufu": {
-        legionName: "裘甫军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5016,7 +5017,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dongdan": {
-        legionName: "东丹军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5025,7 +5026,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dali": {
-        legionName: "大理军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5034,7 +5035,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luodian": {
-        legionName: "罗甸军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5043,7 +5044,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nongzhigao": {
-        legionName: "大南军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5052,7 +5053,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fangla": {
-        legionName: "圣公军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5061,7 +5062,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhongxiang": {
-        legionName: "鼎州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5070,7 +5071,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yang_aner": {
-        legionName: "天顺军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5079,7 +5080,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jinan": {
-        legionName: "济南军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5088,7 +5089,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liwang": {
-        legionName: "河间军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5097,7 +5098,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huarazim": {
-        legionName: "花剌子模军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -5106,7 +5107,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dongxia": {
-        legionName: "东夏军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5115,7 +5116,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chagatai": {
-        legionName: "车师军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5124,7 +5125,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ogodei": {
-        legionName: "窝阔台军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5133,7 +5134,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kereyid": {
-        legionName: "克烈军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5142,7 +5143,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "naiman": {
-        legionName: "乃蛮军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5151,7 +5152,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tatar": {
-        legionName: "塔塔尔军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5160,7 +5161,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "merkit": {
-        legionName: "蔑儿乞军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5169,7 +5170,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ongut": {
-        legionName: "汪古军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5178,7 +5179,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xushouhui": {
-        legionName: "天完军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5187,7 +5188,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhangshicheng": {
-        legionName: "大周军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5196,7 +5197,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wenzhou": {
-        legionName: "温州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5205,7 +5206,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chendiaoyan": {
-        legionName: "陈吊军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5214,7 +5215,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fang_guozhen": {
-        legionName: "庆元军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5223,7 +5224,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dixiang": {
-        legionName: "新国军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5232,7 +5233,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dengmaoqi": {
-        legionName: "铲平军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5241,7 +5242,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yezongliu": {
-        legionName: "处州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5250,7 +5251,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jianzhou_nvzhen": {
-        legionName: "建州军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5259,7 +5260,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yeren_nvzhen": {
-        legionName: "萨哈连军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5268,7 +5269,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hezhe": {
-        legionName: "赫哲军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5277,7 +5278,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luchuan": {
-        legionName: "麓川军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5286,7 +5287,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chijin": {
-        legionName: "赤斤军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -5295,7 +5296,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xihai_d": {
-        legionName: "吐谷浑军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5304,7 +5305,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "heyuan_d": {
-        legionName: "河源军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5313,7 +5314,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guiyi": {
-        legionName: "归义军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -5322,7 +5323,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dafeichuan": {
-        legionName: "退浑军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5340,7 +5341,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dashun": {
-        legionName: "大顺军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5349,7 +5350,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "daxi_ming": {
-        legionName: "大西军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5358,7 +5359,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chenghan": {
-        legionName: "成汉军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5367,7 +5368,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shuixi": {
-        legionName: "水西军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5376,7 +5377,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yang_zhou": {
-        legionName: "扬州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5385,7 +5386,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "longwu": {
-        legionName: "隆武军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5394,7 +5395,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lujian": {
-        legionName: "鲁监军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5403,7 +5404,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dzungar": {
-        legionName: "绰罗斯军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5412,7 +5413,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yarkand": {
-        legionName: "叶尔羌军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5421,7 +5422,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "khoja": {
-        legionName: "和卓军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5430,7 +5431,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaxa": {
-        legionName: "噶厦军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5439,7 +5440,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jinchuan_g": {
-        legionName: "金川军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5448,7 +5449,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "geng": {
-        legionName: "靖南军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5457,7 +5458,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shuntian": {
-        legionName: "天地会军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5466,7 +5467,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "miaomin": {
-        legionName: "苗民军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5475,7 +5476,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiadun": {
-        legionName: "夏顿军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5484,7 +5485,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kazakh": {
-        legionName: "哈萨军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5493,7 +5494,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kokand": {
-        legionName: "霍罕军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5502,7 +5503,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "badakhshan": {
-        legionName: "达克军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -5511,7 +5512,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "taiping": {
-        legionName: "太平军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5520,7 +5521,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dacheng": {
-        legionName: "大成军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5529,7 +5530,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pingnan": {
-        legionName: "平南军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5538,7 +5539,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pinghai": {
-        legionName: "平海军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5547,7 +5548,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qianhui": {
-        legionName: "回军军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5556,7 +5557,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "miao_qing": {
-        legionName: "苗军军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5565,7 +5566,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuoming": {
-        legionName: "清真军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5574,7 +5575,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dajin": {
-        legionName: "大金军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5583,7 +5584,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yizhou": {
-        legionName: "懿州军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5592,7 +5593,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yilou": {
-        legionName: "挹娄军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5601,7 +5602,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuji": {
-        legionName: "勿吉军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5610,7 +5611,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mohe": {
-        legionName: "完颜军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5619,7 +5620,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shiwei": {
-        legionName: "室韦军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5628,7 +5629,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huimo": {
-        legionName: "濊貊军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5637,7 +5638,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mao_wenlong": {
-        legionName: "毛文龙军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -5646,7 +5647,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kala": {
-        legionName: "喀喇军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5655,7 +5656,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiliao": {
-        legionName: "西辽军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5664,7 +5665,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiazini": {
-        legionName: "伽色尼军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -5673,7 +5674,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jibin": {
-        legionName: "罽宾军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -5682,7 +5683,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kangju": {
-        legionName: "康居军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5691,7 +5692,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "geluolu": {
-        legionName: "葛逻禄军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5700,7 +5701,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yuchi": {
-        legionName: "尉迟军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5709,7 +5710,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shi_clan": {
-        legionName: "石氏军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -5718,7 +5719,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaoche": {
-        legionName: "高车军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5727,7 +5728,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huyan": {
-        legionName: "呼衍军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5736,7 +5737,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yujiulu": {
-        legionName: "郁久闾军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5745,7 +5746,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ashina": {
-        legionName: "阿史那军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5754,7 +5755,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ashide": {
-        legionName: "阿史德军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5763,7 +5764,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "borjigin": {
-        legionName: "孛儿只斤军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5772,7 +5773,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hongirad": {
-        legionName: "弘吉剌军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5781,7 +5782,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "choros": {
-        legionName: "萨吾尔军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -5790,7 +5791,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weiming": {
-        legionName: "嵬名军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -5799,7 +5800,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yeli": {
-        legionName: "野利军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5808,7 +5809,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guge": {
-        legionName: "古格军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5817,7 +5818,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ladakh": {
-        legionName: "玛域军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5826,7 +5827,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tsangpa": {
-        legionName: "藏巴汗军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5835,7 +5836,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ganden": {
-        legionName: "甘丹军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5844,7 +5845,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bailan": {
-        legionName: "白兰军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5853,7 +5854,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "supi": {
-        legionName: "苏毗军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5862,7 +5863,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "monpa": {
-        legionName: "门巴军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5871,7 +5872,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lopi": {
-        legionName: "珞巴军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5880,7 +5881,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "spurgyal": {
-        legionName: "悉补野军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5889,7 +5890,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "khon": {
-        legionName: "萨迦昆军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5898,7 +5899,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lang_clan": {
-        legionName: "帕竹朗军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5907,7 +5908,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "karmapa": {
-        legionName: "噶玛军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -5916,7 +5917,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "meitai": {
-        legionName: "梅泰军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5925,7 +5926,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baiman": {
-        legionName: "白蛮军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5934,7 +5935,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kunming_yi": {
-        legionName: "昆明军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5943,7 +5944,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "miao": {
-        legionName: "苗族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5952,7 +5953,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yang_bozhou": {
-        legionName: "播州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -5961,7 +5962,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tian_sizhou": {
-        legionName: "㵲阳军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5970,7 +5971,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mu_lijiang": {
-        legionName: "丽江军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -5979,7 +5980,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ming_zheng": {
-        legionName: "明郑军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -5988,7 +5989,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiou": {
-        legionName: "西瓯军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -5997,7 +5998,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jing": {
-        legionName: "京族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6006,7 +6007,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "muong": {
-        legionName: "芒族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6015,7 +6016,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "paiwan": {
-        legionName: "排湾军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6024,7 +6025,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "leloi": {
-        legionName: "清化军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6033,7 +6034,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nguyen_guangnan": {
-        legionName: "顺化军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6042,7 +6043,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cong": {
-        legionName: "賨族军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6051,7 +6052,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhe_d": {
-        legionName: "府州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6060,7 +6061,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shanyue": {
-        legionName: "丹阳军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6069,7 +6070,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "she_ethnic": {
-        legionName: "畲族军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6078,7 +6079,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuling": {
-        legionName: "五溪军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6087,7 +6088,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weili": {
-        legionName: "尉犁军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6096,7 +6097,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pishan": {
-        legionName: "皮山军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6105,7 +6106,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuerhute": {
-        legionName: "土尔扈特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6114,7 +6115,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bandun": {
-        legionName: "板楯军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6123,7 +6124,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "seljuq": {
-        legionName: "塞尔柱军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -6132,7 +6133,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cen_d": {
-        legionName: "岑氏军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6141,7 +6142,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wang_s": {
-        legionName: "黟川军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6150,7 +6151,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiang_d": {
-        legionName: "来凤军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6159,7 +6160,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tan_d": {
-        legionName: "澧州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6168,7 +6169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ran_d": {
-        legionName: "酉阳军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6177,7 +6178,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chu_d": {
-        legionName: "舒州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6186,7 +6187,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hu_d": {
-        legionName: "三门湾军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6195,7 +6196,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qingyi": {
-        legionName: "青衣军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6204,7 +6205,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuxi": {
-        legionName: "武陵军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6213,7 +6214,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gumie": {
-        legionName: "衢州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6222,7 +6223,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shengmiao": {
-        legionName: "生苗军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6231,7 +6232,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kuai": {
-        legionName: "房州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6240,7 +6241,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shen": {
-        legionName: "申国军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6249,7 +6250,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sou": {
-        legionName: "叟族军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6258,7 +6259,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shaodang": {
-        legionName: "烧当军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6267,7 +6268,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingjiang": {
-        legionName: "靖江军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6276,7 +6277,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xinjiang": {
-        legionName: "静江军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6285,7 +6286,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "panyao": {
-        legionName: "盘瑶军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6294,7 +6295,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiang_s": {
-        legionName: "零陵军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6303,7 +6304,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "li_s": {
-        legionName: "静海军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6312,7 +6313,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "leizhou": {
-        legionName: "雷州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6321,7 +6322,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "golog": {
-        legionName: "果洛军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6330,7 +6331,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tushetu": {
-        legionName: "土谢图军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6339,7 +6340,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tumed": {
-        legionName: "土默特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6348,7 +6349,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "she": {
-        legionName: "永宁军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6357,7 +6358,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liao": {
-        legionName: "僚族军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -6366,7 +6367,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nong2": {
-        legionName: "侬族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6375,7 +6376,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yaoluoge": {
-        legionName: "药罗葛军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6384,7 +6385,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanbu": {
-        legionName: "陆奥军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6393,7 +6394,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "saman": {
-        legionName: "萨曼军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -6402,7 +6403,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hepan": {
-        legionName: "朅盘陀军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6411,7 +6412,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "humi": {
-        legionName: "瓦罕军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6420,7 +6421,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mamon": {
-        legionName: "马蒙军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -6429,7 +6430,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guzgan": {
-        legionName: "古兹根军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -6438,7 +6439,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dai": {
-        legionName: "傣族军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -6447,7 +6448,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "taiyuan": {
-        legionName: "泰沅军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -6456,7 +6457,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luohu": {
-        legionName: "罗斛军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -6465,7 +6466,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanai": {
-        legionName: "那乃军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -6474,7 +6475,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "anushidgin": {
-        legionName: "伊勒巴斯军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -6483,7 +6484,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanjie": {
-        legionName: "南杰军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6492,7 +6493,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gandenpozhang": {
-        legionName: "冈底斯军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6501,7 +6502,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dawoer": {
-        legionName: "嫩江军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -6510,7 +6511,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tumengken": {
-        legionName: "图蒙肯军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6519,7 +6520,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liren": {
-        legionName: "俚族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -6528,7 +6529,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gling": {
-        legionName: "玉树军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6537,7 +6538,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "khyungpo": {
-        legionName: "琼波军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6546,7 +6547,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suolun": {
-        legionName: "达斡尔军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -6555,7 +6556,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuva": {
-        legionName: "图瓦军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6564,7 +6565,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "osumi": {
-        legionName: "大隅军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6573,7 +6574,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "anmei": {
-        legionName: "奄美军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6582,7 +6583,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dalung": {
-        legionName: "达隆军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6591,7 +6592,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gar_kham": {
-        legionName: "德司军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6600,7 +6601,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kongsa": {
-        legionName: "孔萨军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6609,7 +6610,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mingzheng": {
-        legionName: "明正军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -6618,7 +6619,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "daca": {
-        legionName: "达擦军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6627,7 +6628,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingdong": {
-        legionName: "景东军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -6636,7 +6637,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hor": {
-        legionName: "霍尔军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6645,7 +6646,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dong": {
-        legionName: "隆庆军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6654,7 +6655,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bailang": {
-        legionName: "白狼军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6663,7 +6664,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "duolu": {
-        legionName: "咄陆军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6672,7 +6673,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuxie": {
-        legionName: "朱邪军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6681,7 +6682,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hunxie": {
-        legionName: "浑邪军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6690,7 +6691,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kawusi": {
-        legionName: "卡乌斯军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -6699,7 +6700,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keerkezi": {
-        legionName: "柯尔克孜军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -6708,7 +6709,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yiduhu": {
-        legionName: "亦都护军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6717,7 +6718,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yangshao": {
-        legionName: "三川军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6726,7 +6727,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yel": {
-        legionName: "耶律军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6735,7 +6736,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yizhi": {
-        legionName: "一支军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6744,7 +6745,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuqian": {
-        legionName: "筑前军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6753,7 +6754,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jibei2": {
-        legionName: "备中军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6762,7 +6763,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jinchuan": {
-        legionName: "骏河军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6771,7 +6772,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "totomi": {
-        legionName: "远江军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -6780,7 +6781,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xuan": {
-        legionName: "宣府军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6789,7 +6790,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liguo": {
-        legionName: "潞州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -6798,7 +6799,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kang": {
-        legionName: "宥州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6807,7 +6808,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "woye": {
-        legionName: "沃野军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6816,7 +6817,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lushui": {
-        legionName: "卢水军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6825,7 +6826,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yingli": {
-        legionName: "应理军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6834,7 +6835,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guangwu": {
-        legionName: "广武军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6843,7 +6844,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huizhou": {
-        legionName: "会州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -6852,7 +6853,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yiwu": {
-        legionName: "伊吾军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6861,7 +6862,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "duerbote": {
-        legionName: "杜尔伯特军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6870,7 +6871,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhasaketu": {
-        legionName: "扎萨克图军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6879,7 +6880,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kaerka": {
-        legionName: "喀尔喀军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6888,7 +6889,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huihu": {
-        legionName: "回鹘军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6897,7 +6898,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuzhumuqin": {
-        legionName: "乌珠穆沁军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6906,7 +6907,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuerqi": {
-        legionName: "主儿乞军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6915,7 +6916,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chechen": {
-        legionName: "车臣军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -6924,7 +6925,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "linyu": {
-        legionName: "临榆军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6933,7 +6934,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "loufan": {
-        legionName: "楼烦军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6942,7 +6943,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yi": {
-        legionName: "易州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6951,7 +6952,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pisha": {
-        legionName: "毗沙军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6960,7 +6961,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yumi": {
-        legionName: "扜弥军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6969,7 +6970,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keliya": {
-        legionName: "克里雅军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6978,7 +6979,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiye": {
-        legionName: "西夜军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -6987,7 +6988,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "faqiang": {
-        legionName: "发羌军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -6996,7 +6997,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiantang": {
-        legionName: "建塘军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7005,7 +7006,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gongbu": {
-        legionName: "工布军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7014,7 +7015,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "niang": {
-        legionName: "琼结军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7023,7 +7024,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ganzhou": {
-        legionName: "甘州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -7032,7 +7033,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "galangdiba": {
-        legionName: "波密军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7041,7 +7042,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ali": {
-        legionName: "阿里军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7050,7 +7051,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pazhu": {
-        legionName: "年楚军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7059,7 +7060,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiong": {
-        legionName: "邛人军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7068,7 +7069,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuoshi": {
-        legionName: "卓氏军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7077,7 +7078,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chenzhou_d": {
-        legionName: "辰州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7086,7 +7087,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qianzhong": {
-        legionName: "沅州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7095,7 +7096,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cuanshi": {
-        legionName: "爨族军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -7104,7 +7105,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dianguo": {
-        legionName: "滇国军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -7113,7 +7114,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xinggu": {
-        legionName: "兴古军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7122,7 +7123,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zangke": {
-        legionName: "牂牁军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7131,7 +7132,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guangxin": {
-        legionName: "广信军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7140,7 +7141,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kejia": {
-        legionName: "宁化军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7149,7 +7150,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tingzhou_d": {
-        legionName: "汀州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7158,7 +7159,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chaozhou_d": {
-        legionName: "潮州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7167,7 +7168,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ouyang": {
-        legionName: "欧阳军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7176,7 +7177,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ningkou": {
-        legionName: "居延军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -7185,7 +7186,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hongzhou": {
-        legionName: "洪州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7194,7 +7195,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "danyang": {
-        legionName: "当涂军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7203,7 +7204,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huai": {
-        legionName: "淮州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7212,7 +7213,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huaiyang": {
-        legionName: "淮阳军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7221,7 +7222,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cai": {
-        legionName: "蔡州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7230,7 +7231,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ying": {
-        legionName: "郢州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7239,7 +7240,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "heng": {
-        legionName: "衡州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7248,7 +7249,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chen2": {
-        legionName: "郴州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7257,7 +7258,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shixing": {
-        legionName: "石兴岭军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7266,7 +7267,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shaozhou": {
-        legionName: "韶州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7275,7 +7276,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yidou": {
-        legionName: "宜都军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7284,7 +7285,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "boren": {
-        legionName: "僰族军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7293,7 +7294,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wanzhou": {
-        legionName: "万州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7302,7 +7303,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kui": {
-        legionName: "夔州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7311,7 +7312,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "danluo": {
-        legionName: "耽罗军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7320,7 +7321,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chen3": {
-        legionName: "欢州军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7329,7 +7330,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingcheng_d": {
-        legionName: "镜城军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7338,7 +7339,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "naju_d": {
-        legionName: "罗州军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7347,7 +7348,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hui": {
-        legionName: "濊族军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7356,7 +7357,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luzhou": {
-        legionName: "渌州军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7365,7 +7366,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xuantu": {
-        legionName: "玄菟军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7374,7 +7375,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sambyeol": {
-        legionName: "沃州军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7383,7 +7384,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sheng_d": {
-        legionName: "升州军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -7392,7 +7393,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jinzhou": {
-        legionName: "锦州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7401,7 +7402,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wure": {
-        legionName: "兀惹军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7410,7 +7411,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "houliao": {
-        legionName: "东辽军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7419,7 +7420,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dazhen": {
-        legionName: "大真军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7428,7 +7429,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jilin": {
-        legionName: "吉林军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7437,7 +7438,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sunite": {
-        legionName: "苏尼特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -7446,7 +7447,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dayuzi": {
-        legionName: "玉兹军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7455,7 +7456,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weiwuer": {
-        legionName: "维吾尔军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7464,7 +7465,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wensu": {
-        legionName: "温宿军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7473,7 +7474,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keerqin": {
-        legionName: "科尔沁军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7482,7 +7483,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiangxiong": {
-        legionName: "象雄军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7491,7 +7492,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaoliang": {
-        legionName: "潘州军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7500,7 +7501,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ruoqiang": {
-        legionName: "婼羌军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7509,7 +7510,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiemo": {
-        legionName: "且末军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7518,7 +7519,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weitou": {
-        legionName: "尉头军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -7527,7 +7528,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dangchang": {
-        legionName: "叠州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -7536,7 +7537,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mi": {
-        legionName: "朐山军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7545,7 +7546,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fu2": {
-        legionName: "抚州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7554,7 +7555,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xinping": {
-        legionName: "邠州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7563,7 +7564,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wei2": {
-        legionName: "韦州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -7572,7 +7573,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lingzhou": {
-        legionName: "灵州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -7581,7 +7582,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiepantuo": {
-        legionName: "护密军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -7590,7 +7591,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ewenki": {
-        legionName: "鄂温克军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7599,7 +7600,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dongping": {
-        legionName: "东平军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7608,7 +7609,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "maomingan": {
-        legionName: "额尔古纳军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7617,7 +7618,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aola": {
-        legionName: "敖拉军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7626,7 +7627,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bulat": {
-        legionName: "布拉特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -7635,7 +7636,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "buriat": {
-        legionName: "布里亚特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -7644,7 +7645,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xianhai": {
-        legionName: "咸海军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -7653,7 +7654,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nandou": {
-        legionName: "难兜军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7662,7 +7663,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kaga_d": {
-        legionName: "一向宗军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7671,7 +7672,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "higo_d": {
-        legionName: "肥后军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7680,7 +7681,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "iyo_d": {
-        legionName: "伊予军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7689,7 +7690,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "otomo_d": {
-        legionName: "大友军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7698,7 +7699,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suwa_d": {
-        legionName: "诹访军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7707,7 +7708,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yanda": {
-        legionName: "阿尔洪军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -7716,7 +7717,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "anxi": {
-        legionName: "安西军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -7725,7 +7726,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qi_d": {
-        legionName: "横水军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7734,7 +7735,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wangyan": {
-        legionName: "太行军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -7743,7 +7744,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tianxiong": {
-        legionName: "魏博军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7752,7 +7753,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huang_d": {
-        legionName: "黄国军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7761,7 +7762,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yuzhou": {
-        legionName: "豫州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7770,7 +7771,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yiyang_d": {
-        legionName: "义阳军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7779,7 +7780,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mengcheng_d": {
-        legionName: "山桑军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7788,7 +7789,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guide_d": {
-        legionName: "芒砀军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7797,7 +7798,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lulin": {
-        legionName: "绿林军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7806,7 +7807,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dang_d": {
-        legionName: "虞国军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7815,7 +7816,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hao_d": {
-        legionName: "濠州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7824,7 +7825,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "hongnong_jun": {
-        legionName: "弘农军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7833,7 +7834,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gar": {
-        legionName: "噶尔军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -7842,7 +7843,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ruzhou": {
-        legionName: "汝州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7851,7 +7852,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yun": {
-        legionName: "允戎军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7860,7 +7861,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiongding": {
-        legionName: "雄定军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7869,7 +7870,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yaozhou": {
-        legionName: "耀州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7878,7 +7879,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huo": {
-        legionName: "霍州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7887,7 +7888,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mushi": {
-        legionName: "穆陵军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7896,7 +7897,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lai": {
-        legionName: "莱州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7905,7 +7906,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zuo_d": {
-        legionName: "笮人军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -7914,7 +7915,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huangwang": {
-        legionName: "黄王军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7923,7 +7924,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chuzhou_d": {
-        legionName: "滁州军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7932,7 +7933,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guizhou": {
-        legionName: "桂州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7941,7 +7942,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "paiyao": {
-        legionName: "排瑶军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7950,7 +7951,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "daozhou": {
-        legionName: "道州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7959,7 +7960,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dayu": {
-        legionName: "大庾军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -7968,7 +7969,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yingzhou": {
-        legionName: "英州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -7977,7 +7978,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "taira": {
-        legionName: "长门军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -7986,7 +7987,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuman": {
-        legionName: "乌蛮军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -7995,7 +7996,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiutu": {
-        legionName: "休屠军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8004,7 +8005,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dongzu": {
-        legionName: "侗族军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -8013,7 +8014,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mengwu": {
-        legionName: "蒙兀军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8022,7 +8023,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pugu": {
-        legionName: "仆骨军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8031,7 +8032,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bayegu": {
-        legionName: "拔野古军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8040,7 +8041,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ketagalan": {
-        legionName: "凯达格兰军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8049,7 +8050,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shanrong": {
-        legionName: "蓟州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8058,7 +8059,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suke": {
-        legionName: "素可泰军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -8067,7 +8068,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "gaochang": {
-        legionName: "麴氏军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8076,7 +8077,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chuyue": {
-        legionName: "处月军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8085,7 +8086,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baidi": {
-        legionName: "白狄军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8094,7 +8095,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dulan": {
-        legionName: "都兰军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8103,7 +8104,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "duomi": {
-        legionName: "多弥军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8112,7 +8113,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wumeng": {
-        legionName: "溪州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -8121,7 +8122,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lelang": {
-        legionName: "乐浪军团",
+        legionName: "朝鲜军团",
         formationMode: "crane_wing",
         slots: [
             { type: "swordsman", count: 2 },
@@ -8130,7 +8131,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huite": {
-        legionName: "辉特军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8139,7 +8140,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zubu": {
-        legionName: "阻卜军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8148,7 +8149,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kangba": {
-        legionName: "康巴军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8157,7 +8158,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nvguo": {
-        legionName: "女国军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8166,7 +8167,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiashi": {
-        legionName: "迦湿弥罗军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8175,7 +8176,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuhu": {
-        legionName: "乌护军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8184,7 +8185,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huluo": {
-        legionName: "古尔军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8193,7 +8194,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "maer_d": {
-        legionName: "马尔吉亚纳军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -8202,7 +8203,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wugu_d": {
-        legionName: "乌古斯军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8211,7 +8212,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xierhe": {
-        legionName: "锡尔河军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8220,7 +8221,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "adao_d": {
-        legionName: "阿克苏道军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8229,7 +8230,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuyuan_d": {
-        legionName: "五原军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8238,7 +8239,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chenli_d": {
-        legionName: "姑衍军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8247,7 +8248,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nuoyan_d": {
-        legionName: "诺颜军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8256,7 +8257,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuli_d": {
-        legionName: "乌里军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8265,7 +8266,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "heisha_d": {
-        legionName: "黑沙军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8274,7 +8275,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuzhou": {
-        legionName: "武州军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8283,7 +8284,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bailong": {
-        legionName: "白龙军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8292,7 +8293,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jilizhou": {
-        legionName: "积利军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -8301,7 +8302,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xingxingxia": {
-        legionName: "伊州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -8310,7 +8311,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yangguan": {
-        legionName: "西凉军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8319,7 +8320,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wulianghai": {
-        legionName: "乌梁海军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8328,7 +8329,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kepantuo": {
-        legionName: "渴盘陀军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8337,7 +8338,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xining": {
-        legionName: "西宁军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8346,7 +8347,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kalun": {
-        legionName: "柴达木军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8355,7 +8356,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sagami": {
-        legionName: "相模军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -8364,7 +8365,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mino": {
-        legionName: "美浓军团",
+        legionName: "日本军团",
         formationMode: "fish_scale",
         slots: [
             { type: "samurai", count: 3 },
@@ -8373,7 +8374,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ssangseong": {
-        legionName: "和州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8382,7 +8383,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kumoxi": {
-        legionName: "库莫奚军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8391,7 +8392,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "haikou": {
-        legionName: "海寇军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -8400,7 +8401,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shanshan": {
-        legionName: "鄯善军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8409,7 +8410,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qianzhou": {
-        legionName: "乾州军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8418,7 +8419,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuyue": {
-        legionName: "吴越军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8427,7 +8428,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiyuduhu": {
-        legionName: "西域都护军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -8436,7 +8437,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shaozhou_d": {
-        legionName: "邵陵军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8445,7 +8446,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zizhou": {
-        legionName: "昌城军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8454,7 +8455,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cangzhou": {
-        legionName: "沧州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8463,7 +8464,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yuezhi": {
-        legionName: "月氏军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8472,7 +8473,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "minyue": {
-        legionName: "闽越军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8481,7 +8482,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lancang": {
-        legionName: "澜沧军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8490,7 +8491,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "elunchunzu": {
-        legionName: "鄂伦春军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
             { type: "iron_pagoda", count: 3 },
@@ -8499,7 +8500,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wazu": {
-        legionName: "佤族军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -8508,7 +8509,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tajikezu": {
-        legionName: "塔吉克军团",
+        legionName: "西域军团",
         formationMode: "triangle",
         slots: [
             { type: "scythian_axe_cavalry", count: 2 },
@@ -8517,7 +8518,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingpozu": {
-        legionName: "景颇军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -8526,7 +8527,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shuizu": {
-        legionName: "水族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8535,7 +8536,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liuzhou": {
-        legionName: "柳州军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8544,7 +8545,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dingzhou": {
-        legionName: "定州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8553,7 +8554,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shanzhou": {
-        legionName: "鄯州军团",
+        legionName: "青藏军团",
         formationMode: "crane_wing",
         slots: [
             { type: "hei_kuang", count: 2 },
@@ -8562,7 +8563,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weizhou": {
-        legionName: "维州军团",
+        legionName: "川蜀军团",
         formationMode: "fish_scale",
         slots: [
             { type: "white_feather_guard", count: 3 },
@@ -8571,7 +8572,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yingzhou_d2": {
-        legionName: "应州军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8580,7 +8581,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yansui": {
-        legionName: "延绥军团",
+        legionName: "中原军团",
         formationMode: "triangle",
         slots: [
             { type: "jian_swordsman", count: 2 },
@@ -8589,7 +8590,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiazhou": {
-        legionName: "夏州军团",
+        legionName: "河西军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
@@ -8598,7 +8599,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shizhou": {
-        legionName: "西河军团",
+        legionName: "河朔军团",
         formationMode: "fish_scale",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8607,7 +8608,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xingwei": {
-        legionName: "兴威军团",
+        legionName: "滇缅军团",
         formationMode: "triangle",
         slots: [
             { type: "battle_elephant", count: 2 },
@@ -8616,7 +8617,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ribale": {
-        legionName: "日巴勒军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8625,7 +8626,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wulaertu_guo": {
-        legionName: "乌拉尔图军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -8634,7 +8635,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keerjisi": {
-        legionName: "科尔基斯军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -8643,7 +8644,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "luomu": {
-        legionName: "罗姆军团",
+        legionName: "西亚军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8652,7 +8653,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xibolai": {
-        legionName: "希伯来军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8661,7 +8662,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "paermila": {
-        legionName: "帕尔米拉军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8670,7 +8671,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "youfaladi": {
-        legionName: "幼发拉底军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8679,7 +8680,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sashan": {
-        legionName: "萨珊军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8688,7 +8689,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mamuluke": {
-        legionName: "马穆鲁克军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8697,7 +8698,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kesa": {
-        legionName: "可萨军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8706,7 +8707,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jialatai": {
-        legionName: "加拉太军团",
+        legionName: "西亚军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8715,7 +8716,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dedan": {
-        legionName: "德丹王国军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8724,7 +8725,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xierwan": {
-        legionName: "希尔万王国军团",
+        legionName: "中亚军团",
         formationMode: "balance_yoke",
         slots: [
             { type: "savar", count: 4 },
@@ -8733,7 +8734,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiemian": {
-        legionName: "萨维尔军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8742,7 +8743,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yidier": {
-        legionName: "伊蒂尔汗国军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8751,7 +8752,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mangshi": {
-        legionName: "土库曼军团",
+        legionName: "草原军团",
         formationMode: "triangle",
         slots: [
             { type: "keshik", count: 2 },
@@ -8760,7 +8761,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fodejiao": {
-        legionName: "佛得角军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8769,7 +8770,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baiyiya": {
-        legionName: "巴伊亚军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8778,7 +8779,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tupinijin": {
-        legionName: "图皮尼金军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8787,7 +8788,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tuotuonake": {
-        legionName: "托托纳克军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8796,7 +8797,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "taino": {
-        legionName: "泰诺人军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8805,7 +8806,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guanche": {
-        legionName: "关切人军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8814,7 +8815,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yasuer": {
-        legionName: "亚速尔军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8823,7 +8824,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liaozu": {
-        legionName: "寮族军团",
+        legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
             { type: "armored_elephant", count: 2 },
@@ -8832,7 +8833,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kushi": {
-        legionName: "库施军团",
+        legionName: "非洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8841,7 +8842,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aimala": {
-        legionName: "艾马拉军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8850,7 +8851,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aolisha": {
-        legionName: "奥里萨军团",
+        legionName: "印度军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8859,7 +8860,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kanata": {
-        legionName: "卡纳塔军团",
+        legionName: "印度军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8868,7 +8869,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "adile": {
-        legionName: "阿迪勒军团",
+        legionName: "印度军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8877,7 +8878,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "foluolida": {
-        legionName: "佛罗里达军团",
+        legionName: "美洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8904,7 +8905,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nuowei": {
-        legionName: "挪威军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },
@@ -8913,7 +8914,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "keernuwaye": {
-        legionName: "康沃尔军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
             { type: "heavy_pikeman", count: 2 },
@@ -8931,7 +8932,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "disidelusi": {
-        legionName: "蒂斯德鲁斯军团",
+        legionName: "马格里布军团",
         formationMode: "triangle",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8940,7 +8941,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yisatisi": {
-        legionName: "伊萨提斯军团",
+        legionName: "波斯军团",
         formationMode: "crane_wing",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8949,7 +8950,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuer": {
-        legionName: "乌尔军团",
+        legionName: "西亚军团",
         formationMode: "echelon",
         slots: [
             { type: "elite_composite_bowman", count: 4 },
@@ -8958,7 +8959,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pidisha": {
-        legionName: "毗底沙军团",
+        legionName: "印度军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8967,7 +8968,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiaye": {
-        legionName: "伽耶军团",
+        legionName: "印度军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8976,7 +8977,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jienei": {
-        legionName: "杰内军团",
+        legionName: "非洲军团",
         formationMode: "fish_scale",
         slots: [
             { type: "mameluke", count: 2 },
@@ -8985,7 +8986,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kuertaiya": {
-        legionName: "库尔泰亚军团",
+        legionName: "斯拉夫军团",
         formationMode: "crane_wing",
         slots: [
             { type: "boyar", count: 2 },

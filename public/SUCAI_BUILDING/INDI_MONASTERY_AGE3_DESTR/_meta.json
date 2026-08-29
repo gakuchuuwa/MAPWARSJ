@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MONASTERY_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 464,
+  "box_h": 340,
+  "anchor_x": 232,
+  "anchor_y": 236,
+  "sld_source": "b_indi_monastery_age3_destruction"
+}

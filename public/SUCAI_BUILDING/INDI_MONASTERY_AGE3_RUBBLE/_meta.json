@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 464,
+  "box_h": 228,
+  "anchor_x": 232,
+  "anchor_y": 124,
+  "sld_source": "b_indi_monastery_age3_rubble"
+}

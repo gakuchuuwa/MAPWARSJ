@@ -1,0 +1,9 @@
+{
+  "name": "WEST_SIEGE_WORKSHOP_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 160,
+  "anchor_x": 152,
+  "anchor_y": 80,
+  "sld_source": "b_west_siege_workshop_age3_rubble"
+}

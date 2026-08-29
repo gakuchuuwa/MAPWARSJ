@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MARKET_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 432,
+  "box_h": 360,
+  "anchor_x": 216,
+  "anchor_y": 248,
+  "sld_source": "b_medi_market_age2_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "INDI_HOUSE_AGE2_RUBBLE",
+  "frames": 3,
+  "box_w": 232,
+  "box_h": 128,
+  "anchor_x": 124,
+  "anchor_y": 68,
+  "sld_source": "b_indi_house_age2_rubble"
+}

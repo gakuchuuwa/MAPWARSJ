@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_BARRACKS_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 360,
+  "box_h": 192,
+  "anchor_x": 168,
+  "anchor_y": 96,
+  "sld_source": "b_orie_barracks_age2_rubble"
+}

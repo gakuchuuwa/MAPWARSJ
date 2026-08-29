@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_BARRACKS_AGE2_DESTR",
+  "frames": 100,
+  "box_w": 432,
+  "box_h": 284,
+  "anchor_x": 188,
+  "anchor_y": 188,
+  "sld_source": "b_afri_barracks_age2_destruction"
+}
