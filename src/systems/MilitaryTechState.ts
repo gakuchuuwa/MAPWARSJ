@@ -32,6 +32,8 @@ export interface TechModifiableStats {
     reload: number;
     spd: number;
     dmgType: 'melee' | 'pierce';
+    /** 加成伤害（护甲类 → 额外攻击）；科技可叠（帕提亚对长枪+2 / 攻城技师对建筑×1.2） */
+    bonus?: Record<number, number>;
 }
 
 /** 取某年、某文化区已解锁的科技 */
@@ -56,6 +58,8 @@ export function applyTechsToStats<T extends TechModifiableStats>(
 ): T & { sight?: number } {
     const cls = getUnitClass(key);
     const out: T & { sight?: number } = { ...base };
+    // 🔴 深拷贝 bonus：科技会往 bonus 上叠（帕提亚/攻城技师），浅拷贝会改到 WAR_TYPES 基础档。
+    if (base.bonus) out.bonus = { ...base.bonus };
     if (sightPx !== undefined) out.sight = sightPx;
 
     for (const tech of techs) {
@@ -94,6 +98,15 @@ export function applyTechsToStats<T extends TechModifiableStats>(
                         out.sight = e.op === 'mul' ? out.sight * e.value : out.sight + e.value * TILE_PX;
                     }
                     break;
+                case 'bonus': {
+                    // 加成伤害叠加：add 直接加，mul 放大已有加成（攻城技师对建筑×1.2）
+                    const bc = e.bonusClass;
+                    if (bc === undefined) break;
+                    if (!out.bonus) out.bonus = {};
+                    const cur = out.bonus[bc] ?? 0;
+                    out.bonus[bc] = e.op === 'mul' ? cur * e.value : cur + e.value;
+                    break;
+                }
             }
         }
     }
