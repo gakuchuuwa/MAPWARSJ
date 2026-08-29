@@ -55,7 +55,7 @@ export class CityAssetManager {
 'dizhou': '棣',
 'gaogouli': '高句',
         'xinluo': '新罗',
-'manzhou': '满洲',
+'manzhou': '爱新',
         'weihaiwei': '威海',
         'tingzhou_d': '汀',
 'shaozhou_d': '邵',
@@ -238,7 +238,7 @@ export class CityAssetManager {
 'ranwei_d': '冉魏',
 'zu_d': '严',
 
-        'aisin_d': '爱新',
+'aisin_d': '满洲',
 'sunwu_d': '孙吴',
 
 'wazhai': '济阴',

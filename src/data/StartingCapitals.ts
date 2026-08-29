@@ -440,7 +440,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'haixi_nvzhen': 'city_huifa',
 'yeren_nvzhen': 'city_yeren_base',
 'manzhou': 'city_salhu',
-    'aisin_d': 'city_hetuala',
+'aisin_d': 'city_hetuala',
 'hezhe': 'city_wuyun',
     'jilimi': 'city_nanghar',
 'luchuan': 'city_mengmao',

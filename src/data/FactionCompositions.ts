@@ -517,66 +517,67 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 满清军团·抚顺/赫图阿拉/盛京/吉林乌拉/呼伦贝尔/威远营/西宁（努尔哈赤 / 皇太极 / 多尔衮 / 阿桂 / 海兰察 / 年羹尧 / 岳钟琪 · 鱼鳞阵 3+4+2：女真铁浮屠 3 + 草原枪骑兵精锐 4 + 重装骑射手 2）
     "manzhou": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "aisin_d": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "manzhou_d": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "agui": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        legionType: "region",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "xingan": {
         legionName: "满清军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "weiyuan": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "qinghai": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
@@ -2758,29 +2759,29 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yehe": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "wula": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "haixi_nvzhen": {
         legionName: "满清军团",
-        formationMode: "fish_scale",
+        formationMode: "crescent",
         slots: [
             { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "antiquity_cavalry_archer", count: 2 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "cav_archer_heavy", count: 4 },
         ],
     },
     "wenling": {

@@ -359,7 +359,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'menggu_d', name: '蒙古' },
 
-    { id: 'manzhou', name: '满洲' },
+    { id: 'manzhou', name: '爱新觉罗' },
+
 
     { id: 'manzhou_d', name: '大清' },
 
@@ -603,7 +604,8 @@ export const FACTIONS: Faction[] = [
     { id: 'zu_d', name: '严州' },
 
 
-    { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)
+    { id: 'aisin_d', name: '满洲' },
+        // 旗号爱新；≠大清(manzhou_d)
     { id: 'sunwu_d', name: '孙吴' },
 
     // ── 2026-05-26 新增：隋朝核对追加势力 ──

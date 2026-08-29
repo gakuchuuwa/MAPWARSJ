@@ -394,7 +394,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        manzhou_nuerhachi: { generalId: 'manzhou_nuerhachi', tier: 'famous', tacticalSkillId: 'ts_570', advantageSkillId: 'ts_570', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_572', atkDisadvantageSkillId: 'ts_058', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_393', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_486', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    manzhou_nuerhachi: { generalId: 'manzhou_nuerhachi', tier: 'famous', tacticalSkillId: 'ts_355', advantageSkillId: 'ts_570', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_572', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_058', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_486', defDisadvantageSkillId: 'ts_417', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -414,7 +414,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_465', advantageSkillId: 'ts_465', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_466', atkAdvantageSkillId: 'ts_330', atkBalanceSkillId: 'ts_465', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_197', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage' , attackStyle: 'balanced'}, // 松锦等攻 + 长围大凌河等 → 双行
+    aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_330', advantageSkillId: 'ts_465', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_466', atkAdvantageSkillId: 'ts_330', atkBalanceSkillId: 'ts_465', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_197', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage', attackStyle: 'balanced' }, // 松锦等攻 + 长围大凌河等 → 双行
 
 
 
