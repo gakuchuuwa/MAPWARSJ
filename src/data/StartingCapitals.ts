@@ -142,7 +142,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'baojiaer': 'city_kashan',
 'baizanting': 'city_junshitandingbao',
   'bosi_puluosi': 'city_pantika',
-  'kelimiya': 'city_kafa',
+'kelimiya': 'city_kafa',
 'keluodiya': 'city_gradeci',
 'litaowan': 'city_weierniwusi',
   'bolan': 'city_huasha',

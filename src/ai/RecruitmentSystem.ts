@@ -10,7 +10,7 @@
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
- *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；REGION_ORDER（18 个文化区）
+ *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；REGION_ORDER（63 个文化区）
  *      轮流出兵，从上一季停下的区开始逐个尝试，在该区**随机**一座合格据点出兵
  *      （候选表已被 sortSpawnCandidates 洗牌，不是按驻军高低排序）。
  *      注意：这一步会被 trySpawnLegions 的「同屏保底」抢先——同屏军团 < 2 支时先在镜头内刷。
@@ -49,7 +49,7 @@ export class RecruitmentSystem {
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
-    /** 18 文化区（REGION_ORDER）轮流出兵：记录下一季从哪个区开始找 */
+    /** 63 文化区（REGION_ORDER）轮流出兵：记录下一季从哪个区开始找 */
     private nextSpawnRegionIndex = 0;
 
     constructor(
@@ -92,8 +92,7 @@ export class RecruitmentSystem {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         // [2026-08-14 主人定] 开局每文化区 1 支（名将优先），不填满 MAX_ACTIVE_LEGIONS(99)、
         // 也不是旧 30 支——上限留给季末 trySpawnLegions 逐季增长。
-        // 支数 = REGION_ORDER.length = **18 大文化**（2026-08-19 主人定：希腊并入拉丁、
-        // 奴儿干并入东北，其余支文化/子文化并入所属主干，开局一文化一军团）。
+        // 支数 = REGION_ORDER.length = 63，开局一文化一军团。
         const candidates = this.buildInitialSpawnPlan(cities);
 
         // [2026-08-19 主人定] 开局集结：起闸，期间全军在都城列阵待命不移动，
@@ -355,7 +354,7 @@ export class RecruitmentSystem {
     }
 
     /**
-     * 开局首发出兵计划（2026-08-14 主人定）：18 文化区各 1 支，共 18 支。
+     * 开局首发出兵计划：63 文化区各 1 支，共 63 支。
      * 不再按 MAX_ACTIVE_LEGIONS（99）填满，也不再是旧 30 支——上限留给季末 trySpawnLegions 逐季增长。
      * 「优先出名将」= 每区取 sortSpawnCandidates 排序后第一个（名将·擅攻双行·造势优先），
      * 与 buildSpawnPlan 的 find 语义一致；同档内已有 Fisher-Yates 洗牌保证随机。
@@ -364,7 +363,7 @@ export class RecruitmentSystem {
         const candidates = this.collectSpawnCandidates(cities);
         if (candidates.length === 0) return [];
 
-        // 每区取排序后第一个（名将优先），共 18 支
+        // 每区取排序后第一个（名将优先），共 63 支
         const selected: SpawnCandidate[] = [];
         const used = new Set<string>();
         for (const region of REGION_ORDER) {
@@ -388,12 +387,12 @@ export class RecruitmentSystem {
 
         // 各区已有活跃军团数
         const regionLegionCounts = this.getActiveLegionRegions();
-        // 18 区是否全有至少 1 支（全有则允许第二轮）
+        // 63 区是否全有至少 1 支（全有则允许第二轮）
         const allRegionsHaveLegion = REGION_ORDER.every(
             (r) => (regionLegionCounts.get(r) ?? 0) >= 1
         );
 
-        // 18 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
+        // 63 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
         const selected: SpawnCandidate[] = [];
         const selectedCityIds = new Set<string>();
         const nRegions = REGION_ORDER.length;
@@ -500,7 +499,7 @@ export class RecruitmentSystem {
      * 优先级：
      *   1. 同屏保底：跟随镜头内活跃军团 < 2 支时，优先在同屏城池刷兵
      *      （保持跟随军团 + 至少 1 支其他军团的观赏性）
-     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 18 区轮转扶贫（buildSpawnPlan）
+     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 63 区轮转扶贫（buildSpawnPlan）
      *   3. 同组内**随机**取（sortSpawnCandidates 是 Fisher-Yates 洗牌，不按驻军排序）
      */
     private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
@@ -540,7 +539,7 @@ export class RecruitmentSystem {
                 ? viewportCandidates
                 : this.buildSpawnPlan(cities);
         } else {
-            // 同屏已 ≥ 2 支 → 18 区文化轮转（区内随机取一座合格城）
+            // 同屏已 ≥ 2 支 → 63 区文化轮转（区内随机取一座合格城）
             candidates = this.buildSpawnPlan(cities);
         }
 

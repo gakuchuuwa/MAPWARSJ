@@ -136,7 +136,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'baizanting': '拜占',
 'taolika': '陶里',
   bosi_puluosi: '博普',
-  kelimiya: '克里',
+'kelimiya': '克里',
 'keluodiya': '克罗',
   qincha: '钦察',
 'litaowan': '立陶',

@@ -47,6 +47,7 @@ phase: production
 - 2025-11-06 — [ZOOM_LEVELS_GUIDE.md](02-design/world/ZOOM_LEVELS_GUIDE.md)：缩放级别配置与展示策略。
 
 **systems/**
+- 2026-08-30 — [历史进程框架.md](02-design/systems/历史进程框架.md)：**启动前“大乱斗/历史进程”双模式、剧本主角跟拍、数据隔离，以及前334年亚历山大东征第一章框架。**
 - 2025-11-01 — [PLAYER_SYSTEM.md](02-design/systems/PLAYER_SYSTEM.md)：玩家成长与功勋机制（早期设计，部分过时）。
 - 2025-11-01 — [OPTIMIZATION_ANALYSIS.md](02-design/systems/OPTIMIZATION_ANALYSIS.md)：性能瓶颈分析与建议。
 - 2026-05-24 — [势力配置说明.md](02-design/systems/势力配置说明.md)：**历史大乱斗版**——势力数据说明，含"一势力一城"模型。
