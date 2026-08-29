@@ -1046,38 +1046,38 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
     PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
-    BRITONS: ['city_lundun'],  // 不列颠（无中心据点，2026-08-28 主人定）
-    GOTHS: ['city_toulouse'],  // 哥特（无中心据点，2026-08-28 主人定）
-    HUNS: ['city_saigede'],  // 匈人（无中心据点，2026-08-28 主人定）
-    TEUTONS: ['city_kenisibao'],  // 条顿（无中心据点，2026-08-28 主人定）
-    VIKINGS: ['city_gebenhagen'],  // 维京（无中心据点，2026-08-28 主人定）
-    CELTS: ['city_aidingbao'],  // 凯尔特（无中心据点，2026-08-28 主人定）
-    ITALIANS: ['city_genoa'],  // 意大利（无中心据点，2026-08-28 主人定）
-    SICILIANS: ['city_palermo'],  // 西西里（无中心据点，2026-08-28 主人定）
-    BULGARIANS: ['city_puleisilafu'],  // 保加利亚（无中心据点，2026-08-28 主人定）
-    MAGYAR: ['city_budapeisi'],  // 马扎尔（无中心据点，2026-08-28 主人定）
-    LITHUANIANS: ['city_weierniwusi'],  // 立陶宛（无中心据点，2026-08-28 主人定）
-    POLES: ['city_kelakefu'],  // 波兰（无中心据点，2026-08-28 主人定）
-    BOHEMIANS: ['city_bulage'],  // 波希米亚（无中心据点，2026-08-28 主人定）
-    BURGUNDIANS: ['city_dijon'],  // 勃艮第（无中心据点，2026-08-28 主人定）
-    SPANISH: ['city_toledo'],  // 西班牙（无中心据点，2026-08-28 主人定）
-    PORTUGUESE: ['city_lisiben'],  // 葡萄牙（无中心据点，2026-08-28 主人定）
-    ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（无中心据点，2026-08-28 主人定）
-    BENGALIS: ['city_gaodacheng'],  // 孟加拉（无中心据点，2026-08-28 主人定）
-    GURJARAS: ['city_patan'],  // 瞿折罗（无中心据点，2026-08-28 主人定）
-    PORUS: ['city_atuoke'],  // 补噜（无中心据点，2026-08-28 主人定）
-    VIETNAMESE: ['city_shenglong'],  // 越南（无中心据点，2026-08-28 主人定）
-    KHMER: ['city_angkor'],  // 高棉（无中心据点，2026-08-28 主人定）
-    MAYANS: ['city_tikal'],  // 玛雅（无中心据点，2026-08-28 主人定）
-    MAPUCHE: ['city_tucapel'],  // 马普切（无中心据点，2026-08-28 主人定）
-    MUISCA: ['city_bacata'],  // 穆伊斯卡（无中心据点，2026-08-28 主人定）
-    TUPI: ['city_guanabara'],  // 图皮（无中心据点，2026-08-28 主人定）
-    ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（无中心据点，2026-08-28 主人定）
-    GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（无中心据点，2026-08-28 主人定）
-    ATHENIANS: ['city_yadian'],  // 雅典（无中心据点，2026-08-28 主人定）
-    SPARTANS: ['city_sparta'],  // 斯巴达（无中心据点，2026-08-28 主人定）
-    MACEDONIANS: ['city_salonica'],  // 马其顿（无中心据点，2026-08-28 主人定）
-    ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（无中心据点，2026-08-28 主人定）
+    BRITONS: ['city_lundun'],  // 不列颠（中心据点已挂）
+    GOTHS: ['city_toulouse'],  // 哥特（中心据点已挂）
+    HUNS: ['city_saigede'],  // 匈人（中心据点已挂）
+    TEUTONS: ['city_kenisibao'],  // 条顿（中心据点已挂）
+    VIKINGS: ['city_gebenhagen'],  // 维京（中心据点已挂）
+    CELTS: ['city_aidingbao'],  // 凯尔特（中心据点已挂）
+    ITALIANS: ['city_genoa'],  // 意大利（中心据点已挂）
+    SICILIANS: ['city_palermo'],  // 西西里（中心据点已挂）
+    BULGARIANS: ['city_puleisilafu'],  // 保加利亚（中心据点已挂）
+    MAGYAR: ['city_budapeisi'],  // 马扎尔（中心据点已挂）
+    LITHUANIANS: ['city_weierniwusi'],  // 立陶宛（中心据点已挂）
+    POLES: ['city_kelakefu'],  // 波兰（中心据点已挂）
+    BOHEMIANS: ['city_bulage'],  // 波希米亚（中心据点已挂）
+    BURGUNDIANS: ['city_dijon'],  // 勃艮第（中心据点已挂）
+    SPANISH: ['city_toledo'],  // 西班牙（中心据点已挂）
+    PORTUGUESE: ['city_lisiben'],  // 葡萄牙（中心据点已挂）
+    ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（中心据点已挂）
+    BENGALIS: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
+    GURJARAS: ['city_patan'],  // 瞿折罗（中心据点已挂）
+    PORUS: ['city_atuoke'],  // 补噜（中心据点已挂）
+    VIETNAMESE: ['city_shenglong'],  // 越南（中心据点已挂）
+    KHMER: ['city_angkor'],  // 高棉（中心据点已挂）
+    MAYANS: ['city_tikal'],  // 玛雅（中心据点已挂）
+    MAPUCHE: ['city_tucapel'],  // 马普切（中心据点已挂）
+    MUISCA: ['city_bacata'],  // 穆伊斯卡（中心据点已挂）
+    TUPI: ['city_guanabara'],  // 图皮（中心据点已挂）
+    ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（中心据点已挂）
+    GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）
+    ATHENIANS: ['city_yadian'],  // 雅典（中心据点已挂）
+    SPARTANS: ['city_sparta'],  // 斯巴达（中心据点已挂）
+    MACEDONIANS: ['city_salonica'],  // 马其顿（中心据点已挂）
+    ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（中心据点已挂）
 
 };
 

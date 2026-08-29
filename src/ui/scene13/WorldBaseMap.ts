@@ -86,6 +86,60 @@ export function hasWorldBaseData(): boolean {
     return store !== null;
 }
 
+/**
+ * 🔴 [2026-08-29 修复·地中海冬天结冰] 从 URL 加载 world-base.png 并注入查找表。
+ *
+ *    此前 `setWorldBaseData` 定义了但**全项目零调用点**——`store` 恒为 null，
+ *    `queryWinterSnow` 恒返回 null，`isSnowArea` 落回「纯纬度估算」兜底，
+ *    把地中海（巴勒莫/罗得岛/克里特，最冷月 8~12°C 从不结冰）判成雪区，
+ *    战术背景图冬天出了 ic2 结冰水面 + ice_beach 结冰海滩。此函数在启动时调用一次补上。
+ *
+ *    返回 true 表示数据已就绪；加载失败返回 false，调用方回退到纬度估算（配合
+ *    isSnowArea 里的 mediterranean 兜底，地中海永不出冰）。
+ */
+export async function loadWorldBaseData(url: string): Promise<boolean> {
+    if (store) return true;
+    try {
+        const resp = await fetch(url);
+        if (!resp.ok) return false;
+        const blob = await resp.blob();
+        // createImageBitmap 优先（走 GPU 解码），老环境回退 <img>
+        let bmp: ImageBitmap | null = null;
+        try {
+            bmp = await createImageBitmap(blob);
+        } catch {
+            bmp = null;
+        }
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return false;
+        let W: number, H: number;
+        if (bmp) {
+            W = bmp.width; H = bmp.height;
+            canvas.width = W; canvas.height = H;
+            ctx.drawImage(bmp, 0, 0);
+        } else {
+            const img = await new Promise<HTMLImageElement>((res, rej) => {
+                const i = new Image();
+                i.onload = () => res(i);
+                i.onerror = () => rej(new Error('image decode failed'));
+                i.src = url;
+            });
+            W = img.naturalWidth; H = img.naturalHeight;
+            canvas.width = W; canvas.height = H;
+            ctx.drawImage(img, 0, 0);
+        }
+        // 🔴 数据在 RGB 三通道，alpha 全 255，getImageData 的 alpha 预乘不改变 RGB。
+        const imgData = ctx.getImageData(0, 0, W, H);
+        setWorldBaseData(imgData.data, W, H);
+        bmp?.close();
+        return true;
+    } catch (e) {
+        console.warn('[WorldBaseMap] world-base.png 加载失败，冬季积雪回退纬度估算', e);
+        return false;
+    }
+}
+
 export interface WorldBaseQuery {
     lat: number;
     lng: number;

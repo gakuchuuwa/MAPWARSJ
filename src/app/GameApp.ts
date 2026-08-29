@@ -207,6 +207,12 @@ export class GameApp {
             LandTerrainSystem.initialize();
             LandSeaSystem.bindLeafletMap(this.map.getLeafletMap());
 
+            // [2026-08-29] 世界底图气候查找表（冬季积雪/结冰判据，WorldClim 实测气温）：
+            //   不阻塞启动，后台加载完成后注入 WorldBaseMap。此前从未加载 → 地中海冬天误判结冰。
+            void import('../ui/scene13/WorldBaseMap').then((m) =>
+                m.loadWorldBaseData('/world/world-base.png').catch(() => false)
+            );
+
             await yieldToBrowser();
             // 加载动画保持显示，直到据点/UI 全部就绪后再隐藏
 
