@@ -6758,9 +6758,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/AMERICA/__多余__AMERICA_02.png": {
-            "scale": 0.85,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": 14
         },
         "/assets/AMERICA/__多余__AMERICA_03.png": {
             "scale": 1.07,
@@ -7131,11 +7131,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 11,
             "offsetY": -1
-        },
-        "/assets/AMERICA/e4bd6ad1-0eef-447c-82d5-8cdfa8698b31.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 14
         },
         "/assets/LATIN/__闲置__LATIN_17.png": {
             "scale": 1.05,
