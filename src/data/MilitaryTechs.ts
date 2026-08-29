@@ -145,7 +145,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'scale_mail', name: '步兵鳞甲', de: 'Scale Mail Armor', year: null,
         basis: '鳞甲远早于时间线起点',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: null,
@@ -154,7 +154,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'chain_mail', name: '步兵锁甲', de: 'Chain Mail Armor', year: -100,
         basis: '凯尔特人前 3 世纪发明，罗马前 1 世纪普遍装备',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: null,
@@ -163,7 +163,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
         basis: '欧洲全身板甲成熟期；板甲是西欧独有工艺',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
         cultures: ['SLAVIC', 'GERMANIC', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'TEUTONS', 'VIKINGS', 'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'GURJARAS', 'VIETNAMESE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS'],
@@ -301,7 +301,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'squires', name: '护卫', de: 'Squires', year: 1000,
         basis: '步兵行军与耐力训练',
-        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],
+        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6, 46] }],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'HEXI', 'DIANQIAN', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'MAYANS', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', 'ATHENIANS', 'SPARTANS', 'ACHAEMENIDS'],
     },
 

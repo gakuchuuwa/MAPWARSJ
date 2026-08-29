@@ -1,7 +1,7 @@
 {
   "name": "AFRI_HOUSE_AGE3_DESTR",
-  "frames": 300,
-  "box_w": 260,
+  "frames": 60,
+  "box_w": 256,
   "box_h": 176,
   "anchor_x": 134,
   "anchor_y": 126,

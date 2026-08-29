@@ -1,9 +1,9 @@
 {
   "name": "ANDE_MILL_AGE3_DESTR",
-  "frames": 100,
-  "box_w": 236,
+  "frames": 60,
+  "box_w": 232,
   "box_h": 180,
-  "anchor_x": 106,
+  "anchor_x": 102,
   "anchor_y": 118,
   "sld_source": "b_ande_mill_age3_destruction"
 }

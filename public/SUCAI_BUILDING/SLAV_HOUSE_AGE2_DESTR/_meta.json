@@ -1,7 +1,7 @@
 {
   "name": "SLAV_HOUSE_AGE2_DESTR",
-  "frames": 300,
-  "box_w": 252,
+  "frames": 60,
+  "box_w": 248,
   "box_h": 192,
   "anchor_x": 126,
   "anchor_y": 134,

@@ -1,8 +1,8 @@
 {
   "name": "INDI_HOUSE_AGE2_DESTR",
-  "frames": 300,
+  "frames": 60,
   "box_w": 276,
-  "box_h": 212,
+  "box_h": 184,
   "anchor_x": 136,
   "anchor_y": 112,
   "sld_source": "b_indi_house_age2_destruction"

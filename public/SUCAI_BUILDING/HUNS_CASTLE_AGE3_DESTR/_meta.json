@@ -1,8 +1,8 @@
 {
   "name": "HUNS_CASTLE_AGE3_DESTR",
-  "frames": 150,
+  "frames": 60,
   "box_w": 476,
-  "box_h": 460,
+  "box_h": 456,
   "anchor_x": 216,
   "anchor_y": 344,
   "sld_source": "b_huns_castle_age3_destruction"

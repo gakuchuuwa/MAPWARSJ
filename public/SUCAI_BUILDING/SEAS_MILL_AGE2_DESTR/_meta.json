@@ -1,8 +1,8 @@
 {
   "name": "SEAS_MILL_AGE2_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 244,
-  "box_h": 192,
+  "box_h": 188,
   "anchor_x": 116,
   "anchor_y": 136,
   "sld_source": "b_seas_mill_age2_destruction"

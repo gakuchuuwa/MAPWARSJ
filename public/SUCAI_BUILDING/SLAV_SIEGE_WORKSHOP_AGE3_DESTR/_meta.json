@@ -1,9 +1,9 @@
 {
   "name": "SLAV_SIEGE_WORKSHOP_AGE3_DESTR",
-  "frames": 100,
-  "box_w": 380,
+  "frames": 60,
+  "box_w": 376,
   "box_h": 284,
-  "anchor_x": 188,
+  "anchor_x": 184,
   "anchor_y": 192,
   "sld_source": "b_slav_siege_workshop_age3_destruction"
 }

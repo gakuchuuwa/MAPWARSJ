@@ -10,4 +10,5 @@ export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     pandiya: { name: '骑象弓', tier: 3 },         // 马杜赖·贾塔瓦尔曼：潘地亚象背弓骑（南印度泰米尔战象游射）
     kanata: { name: '毗奢耶那伽罗战象', tier: 3 },  // 亨比·拉玛拉亚：毗奢耶那伽罗战象军团（印度战象兵种特色，非独立野战主力 → T3）
     adile: { name: '比贾布尔炮队', tier: 3 },
+    bulu: { name: '保拉瓦战象', tier: 3 },  // 补噜·波鲁斯：希达斯皮斯之战抗亚历山大的印度战象军
 };

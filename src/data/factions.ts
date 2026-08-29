@@ -1909,7 +1909,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xingelana', name: '新格拉纳达' },
     { id: 'gualani', name: '瓜拉尼' },
     { id: 'xiadunhe', name: '下顿河' },
-    ];
+        { id: 'bulu', name: '补噜' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）
+];
 
 // @ts-ignore
 if (import.meta.hot) {

@@ -1,9 +1,9 @@
 {
   "name": "MEDI_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 512,
-  "box_h": 524,
-  "anchor_x": 256,
+  "frames": 60,
+  "box_w": 504,
+  "box_h": 508,
+  "anchor_x": 248,
   "anchor_y": 356,
   "sld_source": "b_medi_castle_age3_destruction"
 }

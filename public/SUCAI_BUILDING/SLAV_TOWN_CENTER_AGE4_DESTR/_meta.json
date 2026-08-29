@@ -1,8 +1,8 @@
 {
   "name": "SLAV_TOWN_CENTER_AGE4_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 460,
-  "box_h": 368,
+  "box_h": 364,
   "anchor_x": 224,
   "anchor_y": 288,
   "sld_source": "b_slav_town_center_age4_destruction"

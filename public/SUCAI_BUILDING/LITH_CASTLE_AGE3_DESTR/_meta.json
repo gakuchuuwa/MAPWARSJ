@@ -1,9 +1,9 @@
 {
   "name": "LITH_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 452,
-  "box_h": 468,
-  "anchor_x": 244,
+  "frames": 60,
+  "box_w": 420,
+  "box_h": 460,
+  "anchor_x": 212,
   "anchor_y": 360,
   "sld_source": "b_lith_castle_age3_destruction"
 }

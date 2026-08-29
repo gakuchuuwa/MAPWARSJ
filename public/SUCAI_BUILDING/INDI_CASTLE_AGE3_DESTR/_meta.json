@@ -1,8 +1,8 @@
 {
   "name": "INDI_CASTLE_AGE3_DESTR",
-  "frames": 150,
+  "frames": 60,
   "box_w": 568,
-  "box_h": 444,
+  "box_h": 440,
   "anchor_x": 292,
   "anchor_y": 304,
   "sld_source": "b_indi_castle_age3_destruction"
