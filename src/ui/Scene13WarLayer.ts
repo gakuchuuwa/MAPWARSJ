@@ -2529,6 +2529,8 @@ interface WarMan {
     /** 推挤力的平滑量（见 SEP_SMOOTH，逐帧向当前推力靠拢，防方向突变导致原地哆嗦） */
     sepX: number;
     sepY: number;
+    /** 前方刚检测到己方阻挡后的绕行迟滞；防止直走/侧滑逐帧切换。 */
+    avoidT?: number;
     /** 出生时所在的 y（巡逻航路要用：航点①是敌方底边的**本路** y，航点③是己方底边的对角 y） */
     y0: number;
     /** 上一帧位置（算真实位移用，见 stuckT） */
@@ -3436,77 +3438,63 @@ export class Scene13WarLayer {
     }
 
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
-        const setup = SIEGE_WEAPON_SETUP[this.defenderCityType as CityType];
-        const tech = SIEGE_TECH_BY_CULTURE[this.sideCulture[0] as RegionType];
-        if (!setup || !setup.ram || !tech) return;
+        const culture = this.sideCulture[0] as RegionType;
+        const tech = SIEGE_TECH_BY_CULTURE[culture];
+        if (!tech) return;
         const ok = (key: string): boolean => !!tech[key];
-        const items: Array<{ key: string; n: number }> = [];
-        // 攻城锤 ×4：从配兵表指定档按重→轻降级（无 siege_ram → capped_ram → battering_ram）；
-        // 全无冲车线（印度斯坦系）→ 换装甲攻城战象 ×4 代替冲车（DE 用装甲象拆建筑）
-        const ramIdx = SIEGE_RAM_LINE.indexOf(setup.ram);
-        const ramKey = ramIdx >= 0 ? SIEGE_RAM_LINE.slice(ramIdx).find(k => ok(k)) : undefined;
-        if (ramKey) {
-            items.push({ key: ramKey, n: 4 });
-        } else if (ok('armored_elephant')) {
-            items.push({ key: 'armored_elephant', n: 4 });
-        }
-        // 投石车 / 弩炮（中城/险要/大城各 1 个）："有啥上啥" + "没有高级就用低级"——
-        // 投石车按文化区投石车线（中国/女真/高丽 = 火箭车线）从指定档重→轻降级；
-        // 弩炮 heavy_scorpion→scorpion 降级；全无投石车 → 2 弩炮、全无弩炮 → 2 投石车。
-        if (setup.mangonel && setup.scorpion) {
-            const mnLine = SIEGE_MANGONEL_LINE[this.sideCulture[0] as RegionType] ?? ['mangonel', 'onager', 'siege_onager'];
-            const tierIdx = this.defenderCityType === 'medium_city' ? 0 : this.defenderCityType === 'pass' ? 1 : 2;
-            let mnKey: string | undefined;
-            for (let i = tierIdx; i >= 0; i--) {
-                if (ok(mnLine[i])) { mnKey = mnLine[i]; break; }
-            }
-            // 弩炮槽：有战象的文化区 → 战象替代（滇缅/越南）；否则弩炮降级链
-            const eleKey = SIEGE_ELEPHANT_BY_CULTURE[this.sideCulture[0] as RegionType];
-            const scLine = ['heavy_scorpion', 'scorpion'];
-            const scIdx = scLine.indexOf(setup.scorpion);
-            const scKey = (eleKey && ok(eleKey)) ? eleKey
-                : (scIdx >= 0 ? scLine.slice(scIdx).find(k => ok(k)) : undefined);
-            if (mnKey && scKey) {
-                items.push({ key: mnKey, n: 1 }, { key: scKey, n: 1 });
-            } else if (!mnKey && scKey) {
-                items.push({ key: scKey, n: 2 });      // 无投石车 → 2 弩炮
-            } else if (mnKey && !scKey) {
-                items.push({ key: mnKey, n: 2 });      // 无弩炮 → 2 投石车
-            }
-            // 两者都没有 → 只配锤
-        }
-        const total = items.reduce((s, it) => s + it.n, 0);
-        if (!total) return;
-        // 🔴 [2026-08-23 主人改] 攻城武器一字排开：统一 x（城墙前固定排线，比攻方 row0 再往前
-        //    1.8×depth）、y 在垂直 span 内随机——布阵保持随机性，但视觉上一字排开不再前后错落。
-        const frontX = mx + 3 * depth;
+        // 🔴 [2026-08-29 主人改] 一律 9 个攻城武器，种类符合文化科技树、多样性、随机：
+        //   冲车 3（攻城主力，无冲车线→装甲战象）+ 投石车/火箭车/牵引抛石机 3（随机档）
+        //   + 弩炮 2（有战象文化→战象混入）+ 特色 1（战象优先，否则补投石车/弩炮/冲车）。
+        const ramKey = SIEGE_RAM_LINE.find(k => ok(k)) ?? (ok('armored_elephant') ? 'armored_elephant' : undefined);
+        const mnLine = SIEGE_MANGONEL_LINE[culture] ?? ['mangonel', 'onager', 'siege_onager'];
+        const mnAvail = mnLine.filter(k => ok(k));
+        const scAvail = ['heavy_scorpion', 'scorpion'].filter(k => ok(k));
+        const eleByCulture = SIEGE_ELEPHANT_BY_CULTURE[culture];
+        const eleAvail = [
+            ...(eleByCulture ? [eleByCulture] : []),
+            ...['war_elephant', 'armored_elephant', 'battle_elephant'].filter(k => ok(k) && k !== ramKey),
+        ].filter((k, i, a) => a.indexOf(k) === i);   // 去重
+        const pick = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+        const items: string[] = [];
+        for (let i = 0; i < 3; i++) if (ramKey) items.push(ramKey);                 // 冲车 ×3
+        for (let i = 0; i < 3; i++) if (mnAvail.length) items.push(pick(mnAvail));   // 投石车/火箭车 ×3（随机档）
+        const scElePool = eleAvail.length ? [...eleAvail, ...scAvail] : scAvail;
+        for (let i = 0; i < 2; i++) if (scElePool.length) items.push(pick(scElePool));  // 弩炮/战象 ×2
+        if (eleAvail.length) items.push(pick(eleAvail));                             // 特色 ×1（战象优先）
+        else if (mnAvail.length) items.push(pick(mnAvail));
+        else if (scAvail.length) items.push(pick(scAvail));
+        else if (ramKey) items.push(ramKey);
+        while (items.length < 9 && ramKey) items.push(ramKey);                       // 不足 9 补冲车
+        const nine = items.slice(0, 9);
+        if (!nine.length) return;
+        // 🔴 [2026-08-29 主人改] 位置：攻方出兵口（row0）与城墙之间的中间。
+        //   攻方 row0 x = mx+2×depth；城墙 x = VW−mx−2×depth−380（wallFrontX，比守方 row0 再前 380）。
+        //   中点 = (VW−380)/2 ≈ 战场中央。
+        const lineX = (VW - 380) / 2;
         const midY = VH / 2, spanY = VH * 0.8;
-        const lineX = frontX + depth * 0.8;   // 一字排线（mx + 3.8×depth）
         const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
-        for (const it of items) {
-            for (let i = 0; i < it.n; i++) {
-                this.ensureType(it.key);
-                const x = lineX;
-                const y = yMin + Math.random() * (yMax - yMin);
-                const hp = this.statsFor(it.key, 0).hp;
-                const tgtX = VW - mx, tgtY = y;
-                this.men.push({
-                    f: 0, key: it.key, jx: 0, jy: 0,
-                    zid: this.manSeq++,
-                    x, y,
-                    tx: tgtX, ty: tgtY,
-                    hp,
-                    dir: this.dir8(tgtX - x, tgtY - y),
-                    ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
-                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: x, prevY: y, anchorX: x, anchorY: y, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: y,
-                    flag: false, fo: Math.random() * 600,
-                    march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(it.key),
-                    flank: false, siegeW: true,
-                    claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
-                });
-            }
+        for (const key of nine) {
+            this.ensureType(key);
+            const x = lineX;
+            const y = yMin + Math.random() * (yMax - yMin);
+            const hp = this.statsFor(key, 0).hp;
+            const tgtX = VW - mx, tgtY = y;
+            this.men.push({
+                f: 0, key, jx: 0, jy: 0,
+                zid: this.manSeq++,
+                x, y,
+                tx: tgtX, ty: tgtY,
+                hp,
+                dir: this.dir8(tgtX - x, tgtY - y),
+                ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
+                fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                prevX: x, prevY: y, anchorX: x, anchorY: y, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: y,
+                flag: false, fo: Math.random() * 600,
+                march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(key),
+                flank: false, siegeW: true,
+                claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
+            });
         }
     }
 
@@ -5258,6 +5246,23 @@ export class Scene13WarLayer {
 
     private separate(dt: number): void {
         const push = SEP_SPD * dt;
+        const applySeparation = (m: WarMan): void => {
+            if (m.st === 0) {
+                const moveX = m.x - m.prevX, moveY = m.y - m.prevY;
+                const moveLen = Math.hypot(moveX, moveY);
+                if (moveLen > 1e-4) {
+                    const ux = moveX / moveLen, uy = moveY / moveLen;
+                    const along = m.sepX * ux + m.sepY * uy;
+                    if (along < -moveLen) {
+                        const correction = -moveLen - along;
+                        m.sepX += ux * correction;
+                        m.sepY += uy * correction;
+                    }
+                }
+            }
+            m.x += m.sepX;
+            m.y += m.sepY;
+        };
         for (const m of this.men) {
             if (m.hp <= 0) continue;
             if (this.defenderHolding && !m.siegeW) {
@@ -5293,7 +5298,7 @@ export class Scene13WarLayer {
             if (!seen) {
                 m.sepX += (0 - m.sepX) * SEP_SMOOTH;
                 m.sepY += (0 - m.sepY) * SEP_SMOOTH;
-                m.x += m.sepX; m.y += m.sepY;
+                applySeparation(m);
                 continue;
             }
             const l = Math.hypot(ox, oy) || 1;
@@ -5312,8 +5317,7 @@ export class Scene13WarLayer {
             const vx = ox / l * push * mul, vy = oy / l * push * mul;
             m.sepX += (vx - m.sepX) * SEP_SMOOTH;
             m.sepY += (vy - m.sepY) * SEP_SMOOTH;
-            m.x += m.sepX;
-            m.y += m.sepY;
+            applySeparation(m);
         }
     }
 
@@ -6178,8 +6182,11 @@ export class Scene13WarLayer {
                             }
                         }
                     }
+                    if (blocked) m.avoidT = 0.12;
+                    else m.avoidT = Math.max(0, (m.avoidT ?? 0) - dt);
+                    const avoiding = blocked || (m.avoidT ?? 0) > 0;
                     let mvx = ux, mvy = uy;
-                    if (blocked) {
+                    if (avoiding) {
                         // 🔴 **绕行必须保留前进分量**：纯侧滑=全军绕圈不接敌，实测步兵对镜 184s→467s、
                         //    骑兵 159s→260s（war_sim 扫 SLIDE_W=0/0.35/0.6/1）。取 0.4 一档实测与不绕行持平甚至略快。
                         const side = m.jy >= 0 ? 1 : -1;      // 本兵固定绕行侧，避免左右摇摆
@@ -6188,8 +6195,8 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    m.x += mvx * stats.spd * (blocked ? SLIDE_RATE : 1) * dt;
-                    m.y += mvy * stats.spd * (blocked ? SLIDE_RATE : 1) * dt;
+                    m.x += mvx * stats.spd * (avoiding ? SLIDE_RATE : 1) * dt;
+                    m.y += mvy * stats.spd * (avoiding ? SLIDE_RATE : 1) * dt;
                     m.dir = this.dir8Hyst(m.dir, mvx, mvy);   // 朝向跟着实际走向（绕行时朝侧面）
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
@@ -6508,9 +6515,9 @@ export class Scene13WarLayer {
                 netStuck = m.st === 0 && wantNet > 0 && (ndx * ndx + ndy * ndy) < (wantNet * 0.25) ** 2;
                 m.anchorX = m.x; m.anchorY = m.y; m.netT = 0;
             }
-            if (netStuck) m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + dt);  // 立刻切待命，别等再攒
+            if (netStuck) m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + NET_STUCK_WINDOW);
             else if (frameStuck) m.stuckT += dt;
-            else m.stuckT = 0;
+            else m.stuckT = Math.max(0, m.stuckT - dt);
             m.prevX = m.x; m.prevY = m.y;
         }
         // 旗手战死 → 原地留下一面倒下的军旗。men 数组只在这一处出人，死亡侦测放这里最稳。

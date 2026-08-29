@@ -457,13 +457,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // ⚠ 例外（用户特批 2026-08-26）：神机营三排全火器，突破「三排最多一排特殊」规则——大明神机营本就是全火器营，历史特色保留
     // 大明帝国·北京（朱棣 / 徐达 / 于谦 / 戚继光 神机营军团 · 雁行阵 4+3+2：精锐火矛兵 4 + 重型火箭推车 3 + 手推炮 2）
-    ming_d: {
-        legionName: "神机营军团",
-        formationMode: 'echelon',
+    "ming_d": {
+        legionName: "明军三大营军团",
+        formationMode: "echelon",
         slots: [
-            { type: 'elite_fire_lancer', count: 4 },   // Row 0 前线主力 = 精锐火矛兵 4人（火矛喷火主力突进）
-            { type: 'heavy_rocket_cart', count: 3 },   // Row 1 中排 = 重型火箭推车 3车（神机箭火箭车连发弹幕）
-            { type: 'bombard_cannon', count: 2 },      // Row 2 后排 = 手推炮 2门（火炮远程轰击）
+            { type: "jian_swordman_unshielded", count: 4 },
+            { type: "heavy_rocket_cart", count: 3 },
+            { type: "iron_pagoda", count: 2 },
         ],
     },
     // 大明军团·潼关/郧阳/宁远（孙传庭 / 卢象升 / 袁崇焕 · 三角阵 2+3+4：火矛手 2 + 黑光铠骑兵 3 + 精锐火焰弓 4）
