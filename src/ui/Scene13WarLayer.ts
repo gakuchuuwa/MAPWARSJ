@@ -1513,6 +1513,11 @@ const PROJ_TYPE: Record<string, string> = {
     genitour: 'PROJ_SPEAR',
     elite_genitour: 'PROJ_SPEAR',
     thracian_peltast: 'PROJ_SPEAR',
+    elite_peltast: 'PROJ_SPEAR',
+    antiquity_skirmisher: 'PROJ_SPEAR',
+    elite_antiquity_skirmisher: 'PROJ_SPEAR',
+    guecha_warrior: 'PROJ_SPEAR',
+    elite_guecha_warrior: 'PROJ_SPEAR',
     arambai: 'PROJ_DART',
     elite_arambai: 'PROJ_DART',
     throwing_axeman: 'PROJ_THROWING_AXE',
@@ -4180,15 +4185,9 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 大城：与战略模式套用相同建筑。原有九个落点不变，仅同步建筑选择。
-            let backX = -Infinity;
-            for (const s of buildingSide) if (s.x > backX) backX = s.x;
-            const backRow = buildingSide
-                .map((s, i) => ({ s, i }))
-                .filter(({ s }) => s.x >= backX - 1e-9)
-                .sort((a, b) => a.s.y - b.s.y);
-            const centerIdx = backRow[backRow.length === 2 ? 0 : 1].i;
-            const tcSp = place(buildingSide[centerIdx], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE });
+            // 大城：与战略模式套用相同建筑。九建筑落点全部随机（2026-08-29 主人定「9 建筑摆放位置随机」）。
+            const shuffledBig = [...buildingSide].sort(() => Math.random() - 0.5);
+            const tcSp = place(shuffledBig[0], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE });
             this.decorSprites.push(tcSp);
             this.trackCityBuilding(tcSp);
             const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
@@ -4197,7 +4196,7 @@ export class Scene13WarLayer {
                 ['UNIVERSITY', 'AGE4'],
                 ...age3Pool.slice(0, 6),
             ].sort(() => Math.random() - 0.5) as Array<[string, string]>;
-            const ringSpawns = buildingSide.filter((_, i) => i !== centerIdx).sort(() => Math.random() - 0.5);
+            const ringSpawns = shuffledBig.slice(1);
             for (let i = 0; i < ringSpawns.length; i++) {
                 const [building, age] = ringBuildings[i];
                 const sp = place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) });

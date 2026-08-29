@@ -66,7 +66,17 @@ export function normalizePortraitWebPath(url: string): string {
 // [2026-08-19 收敛 18 大文化] 原有 GREEK→LATIN / NUERGAN→NORTHEAST 两条别名已删：
 //   这两个区已并入拉丁/东北，城池的 region 字段本身就是 LATIN/NORTHEAST，不再需要转发。
 //   表保留为空，是为了将来再出「没有独立立绘目录的支文化」时有地方挂。
-const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {};
+// 🔴 [2026-08-29] 8-28 拆出的 DE 文明区（玛雅/马普切/穆伊斯卡/图皮/安第斯）尚无独立物理夹，
+//    立绘仍集中在 AMERICA 夹（public/assets/AMERICA/，含 maya/mapuche/muisca/tupi/inca/aztec 图）。
+//    无别名时这些区的立绘池为空 → 无武将单位 fallback 到中原（帝卡尔出中原武将，血训）。
+//    别名让新区复用美洲夹，等主人为各区建立绘夹并搬图后再清空对应条目即可。
+const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
+    MAYANS: 'AMERICA',
+    MAPUCHE: 'AMERICA',
+    MUISCA: 'AMERICA',
+    TUPI: 'AMERICA',
+    ANDE: 'AMERICA',
+};
 
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定

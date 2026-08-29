@@ -341,6 +341,9 @@ export function isSnowArea(
     // ── 以下是拿不到气候数据时的兜底估算，不要拿它当判据本身 ──
     if (elev !== null && elev >= (4800 - Math.abs(lat) * 63)) return true; // 高海拔终年雪线
     if (biome === 'tundra_snow' || biome === 'boreal') return true;
+    // 🔴 [2026-08-29] 地中海气候（Csa/Csb/Csc）最冷月 8~12°C，**从不结冰**：
+    //    巴勒莫/罗得岛/克里特/底比斯/罗马/雅典全在这一带，兜底时绝不允许判雪。
+    if (biome === 'mediterranean') return false;
     // 低纬度热带/亚热带/沙漠：绝不下雪（如越南/岭南/华南低地/东南亚/中东低地）
     if (Math.abs(lat) < 25 && (elev === null || elev < 2000)) return false;
     if (biome === 'tropical_rainforest' || biome === 'savanna' || biome === 'desert') return false;

@@ -4192,11 +4192,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/INDIA/__闲置__CENTRAL_ASIA_26.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/INDIA/__闲置__CENTRAL_ASIA_27.png": {
             "scale": 1.44,
             "offsetX": 0,
@@ -7141,6 +7136,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 14
+        },
+        "/assets/INDIA/bulu_bolusi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {

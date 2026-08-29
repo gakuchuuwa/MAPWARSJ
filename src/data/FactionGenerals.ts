@@ -1104,7 +1104,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jialebi: { generalId: 'jialebi_brasilesuo', generalName: '布拉斯莱索', portrait: '/assets/AMERICA/jialebi_bulasilaisuo.png' },
     gualani: { generalId: 'gualani_nicolas', generalName: '尼古拉斯', portrait: '/assets/AMERICA/gualani_nigulasi.png' },
     xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png' },
-    bulu: { generalId: 'gen_bolusi', generalName: '波鲁斯', portrait: '/assets/PORUS/gen_bolusi.png' },
+    bulu: { generalId: 'gen_bolusi', generalName: '波鲁斯', portrait: '/assets/INDIA/bulu_bolusi.png' },
 
 };
 
