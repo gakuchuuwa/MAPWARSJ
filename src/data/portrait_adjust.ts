@@ -3857,11 +3857,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_40.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/WEST_ASIA/sailiugu_antiaoke.png": {
             "scale": 1.21,
             "offsetX": 0,
@@ -4341,11 +4336,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 2
-        },
-        "/assets/CENTRAL_ASIA/dulan_d_aihamaide.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 3
         },
         "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
             "scale": 1.12,
@@ -7141,6 +7131,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 2
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_114.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/CENTRAL_ASIA/dulan_d_aihamaide.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

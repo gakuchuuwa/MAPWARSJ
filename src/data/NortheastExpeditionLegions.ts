@@ -17,7 +17,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   qidan: { name: '属珊锐骑', tier: 3 },     // 辽国述律平太后亲卫，名号独特，但非战略野战军，降为T3知名。
     manzhou: { name: '白甲兵', tier: 1 },
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
-  aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
+    aisin_d: { name: '巴牙喇军', tier: 1 },
     manzhou_d: { name: '满洲八旗', tier: 0 },
     hezhe: { name: '松花伏涛', tier: 2 },
   aola: { name: '敖拉部骑', tier: 4 },       // 雅克萨·孟烈伦敖拉氏

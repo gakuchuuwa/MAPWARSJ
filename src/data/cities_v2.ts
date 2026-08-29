@@ -1002,7 +1002,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // 额尔古纳已删：室韦都城为俱轮泊 city_julunbo
-    { id: 'city_hetuala', name: '赫图阿拉', factionId: 'aisin_d', lat: 41.715981, lng: 125.032654, type: 'pass', region: 'NORTHEAST', troops: 30000, tier: 1, note: '爱新觉罗氏兴起地；≠大清皇朝旗号' },
+    { id: 'city_hetuala', name: '赫图阿拉', factionId: 'aisin_d', lat: 41.715981, lng: 125.032654, type: 'pass', troops: 20000, region: 'NORTHEAST' },
+
     { id: 'city_wuguo', name: '五国城', factionId: 'jurchen', lat: 46.32, lng: 129.56, type: 'pass', region: 'NORTHEAST', troops: 30000,
         note: '五国城；女真小城',
     },
@@ -2372,7 +2373,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_ningyuan', name: '宁远城', factionId: 'zu_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 30000, region: 'NORTH' },
 
 
-    { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841, lng: 124.046, type: 'pass', troops: 30000, region: 'NORTHEAST' },
+    { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841, lng: 124.046, type: 'pass', troops: 20000, region: 'NORTHEAST' },
+
 
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.53, lng: 114.32, type: 'medium_city', troops: 30000, region: 'JIANGNAN', mirror: true },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 30000, note: '晋国曲沃，太原让位柴周' },
