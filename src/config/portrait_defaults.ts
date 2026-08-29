@@ -66,16 +66,62 @@ export function normalizePortraitWebPath(url: string): string {
 // [2026-08-19 收敛 18 大文化] 原有 GREEK→LATIN / NUERGAN→NORTHEAST 两条别名已删：
 //   这两个区已并入拉丁/东北，城池的 region 字段本身就是 LATIN/NORTHEAST，不再需要转发。
 //   表保留为空，是为了将来再出「没有独立立绘目录的支文化」时有地方挂。
-// 🔴 [2026-08-29] 8-28 拆出的 DE 文明区（玛雅/马普切/穆伊斯卡/图皮/安第斯）尚无独立物理夹，
-//    立绘仍集中在 AMERICA 夹（public/assets/AMERICA/，含 maya/mapuche/muisca/tupi/inca/aztec 图）。
-//    无别名时这些区的立绘池为空 → 无武将单位 fallback 到中原（帝卡尔出中原武将，血训）。
-//    别名让新区复用美洲夹，等主人为各区建立绘夹并搬图后再清空对应条目即可。
+// 🔴 [2026-08-29] 8-28 拆出的 DE 文明区尚无独立物理立绘夹，立绘仍在各自归属的大区夹
+//    （武将专图早已正确归位到这些大区夹）。无别名时这些区的立绘池为空 →
+//    无武将单位 fallback 到中原（帝卡尔出中原武将，血训）。别名让新区复用大区夹，
+//    穿着与武将专图同源、合理；等主人为各区建立绘夹并搬图后再清空对应条目即可。
 const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
+    // 美洲系 → AMERICA（玛雅/马普切/穆伊斯卡/图皮/安第斯，含 aztec/inca）
     MAYANS: 'AMERICA',
     MAPUCHE: 'AMERICA',
     MUISCA: 'AMERICA',
     TUPI: 'AMERICA',
     ANDE: 'AMERICA',
+    // 日耳曼系 → GERMANIC（条顿/维京/凯尔特/马扎尔/波希米亚/勃艮第/不列颠）
+    TEUTONS: 'GERMANIC',
+    VIKINGS: 'GERMANIC',
+    CELTS: 'GERMANIC',
+    MAGYAR: 'GERMANIC',
+    BOHEMIANS: 'GERMANIC',
+    BURGUNDIANS: 'GERMANIC',
+    BRITONS: 'GERMANIC',
+    // 拉丁系 → LATIN（意大利/西西里/西班牙/葡萄牙/雅典/斯巴达/马其顿/哥特）
+    ITALIANS: 'LATIN',
+    SICILIANS: 'LATIN',
+    SPANISH: 'LATIN',
+    PORTUGUESE: 'LATIN',
+    ATHENIANS: 'LATIN',
+    SPARTANS: 'LATIN',
+    MACEDONIANS: 'LATIN',
+    GOTHS: 'LATIN',
+    // 东欧斯拉夫 → SLAVIC（立陶宛/波兰）
+    LITHUANIANS: 'SLAVIC',
+    POLES: 'SLAVIC',
+    // 草原 → STEPPE（匈人）
+    HUNS: 'STEPPE',
+    // 东非 → AFRICA（埃塞俄比亚）
+    ETHIOPIANS: 'AFRICA',
+    // 南亚 → INDIA（孟加拉/瞿折罗/补噜）
+    BENGALIS: 'INDIA',
+    GURJARAS: 'INDIA',
+    PORUS: 'INDIA',
+    // 东南亚（越南→岭南、高棉→滇缅）
+    VIETNAMESE: 'LINGNAN',
+    KHMER: 'DIANQIAN',
+    // 高加索 → 中亚（亚美尼亚/格鲁吉亚）
+    ARMENIANS: 'CENTRAL_ASIA',
+    GEORGIANS: 'CENTRAL_ASIA',
+    // 保加利亚武将专图在西亚夹（齐米斯基=拜占庭皇帝）
+    BULGARIANS: 'WEST_ASIA',
+    // 8-27 拆的大区（武将专图散在原大区夹，按多数派+史实归位）
+    EAST: 'GERMANIC',        // 东欧 → 北欧/日耳曼（瑞典/约克/诺夫哥罗德多数）
+    GREEK: 'LATIN',          // 希腊 → 地中海/南欧
+    THRACIAN: 'SLAVIC',      // 色雷斯/保加利亚 → 南斯拉夫
+    CUMAN: 'STEPPE',         // 库曼/钦察 → 草原游牧
+    PERSIAN: 'CENTRAL_ASIA', // 波斯 → 中亚（伊朗高原/呼罗珊）
+    PURU: 'INDIA',           // 南印度 → 印度
+    ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
+    ACHAEMENIDS: 'CENTRAL_ASIA', // 阿契美尼德（古波斯）→ 中亚
 };
 
 function collectRegionPortraitPool(region: RegionType): string[] {
