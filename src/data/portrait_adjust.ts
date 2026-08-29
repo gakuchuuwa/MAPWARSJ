@@ -4997,11 +4997,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/LATIN/__闲置__LATIN_10.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/SLAVIC/lagusa_delagan.png": {
             "scale": 0.98,
             "offsetX": 0,
@@ -7146,6 +7141,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": -1,
             "offsetY": -2
+        },
+        "/assets/LATIN/maqidun_yalishanda.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {

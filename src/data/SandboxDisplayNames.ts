@@ -39,7 +39,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   yipilusi: '伊庇',
   lagoniya: '拉哥',
-  maqidun: '马其',
+'maqidun': '马其',
   lagusa: '拉古',
 
   ruidian_yota: '约塔',
