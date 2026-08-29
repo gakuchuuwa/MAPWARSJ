@@ -3011,11 +3011,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "lagusa": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "meikelunbao": {
@@ -3038,11 +3038,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "bosiniya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "maixiya": {
@@ -3110,20 +3110,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "bolisiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "zhituo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "pufaerci": {
@@ -3155,11 +3155,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "weijing_york": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "puluowangsi": {
@@ -3173,11 +3173,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "shaiyue": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "yinggelan": {
@@ -3200,11 +3200,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "saierweiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "habusibao": {
@@ -3299,74 +3299,74 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "liulike": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "mosike_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "xieerpuhuofu_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "fulajimier_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "daniebo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "jialixiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "pusikefu_gongheguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "ouka": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "baojiaer": {
@@ -3380,20 +3380,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kelimiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "keluodiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "mengtainiya": {
@@ -3407,74 +3407,74 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "teweier_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "suzidaer": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "siluoboda": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "yedi": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "moerdaweiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "walajiyia": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "chude": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "deniesite": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "fuerjia": {
@@ -3506,29 +3506,29 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "beisilafu": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "peilieya_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "weijiebusike_gongguo": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "heishui": {
@@ -8906,11 +8906,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "nuowei": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "keernuwaye": {
@@ -8987,11 +8987,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kuertaiya": {
         legionName: "斯拉夫军团",
-        formationMode: "crane_wing",
+        formationMode: "fish_scale",
         slots: [
-            { type: "boyar", count: 2 },
-            { type: "elite_boyar", count: 4 },
             { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "puxiangyindu": {
