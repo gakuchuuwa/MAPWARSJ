@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_HOUSE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 228,
+  "box_h": 152,
+  "anchor_x": 124,
+  "anchor_y": 108,
+  "sld_source": "b_medi_house_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 196,
+  "box_h": 248,
+  "anchor_x": 128,
+  "anchor_y": 212,
+  "sld_source": "b_ande_tower_age3"
+}

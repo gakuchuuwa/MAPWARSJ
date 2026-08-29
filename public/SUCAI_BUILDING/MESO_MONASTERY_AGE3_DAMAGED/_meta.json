@@ -1,0 +1,9 @@
+{
+  "name": "MESO_MONASTERY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 304,
+  "anchor_x": 188,
+  "anchor_y": 224,
+  "sld_source": "b_meso_monastery_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MARKET_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 416,
+  "box_h": 312,
+  "anchor_x": 236,
+  "anchor_y": 220,
+  "sld_source": "b_east_market_age4"
+}

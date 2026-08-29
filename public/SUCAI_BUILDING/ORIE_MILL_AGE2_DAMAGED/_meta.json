@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_MILL_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 280,
+  "box_h": 268,
+  "anchor_x": 172,
+  "anchor_y": 216,
+  "sld_source": "b_orie_mill_age2"
+}

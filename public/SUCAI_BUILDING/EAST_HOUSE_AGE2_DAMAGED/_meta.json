@@ -1,0 +1,9 @@
+{
+  "name": "EAST_HOUSE_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 232,
+  "box_h": 180,
+  "anchor_x": 106,
+  "anchor_y": 138,
+  "sld_source": "b_east_house_age2"
+}

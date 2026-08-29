@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWN_CENTER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 432,
+  "box_h": 352,
+  "anchor_x": 232,
+  "anchor_y": 292,
+  "sld_source": "b_seas_town_center_age4"
+}

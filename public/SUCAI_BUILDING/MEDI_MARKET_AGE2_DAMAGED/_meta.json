@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MARKET_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 420,
+  "box_h": 340,
+  "anchor_x": 216,
+  "anchor_y": 248,
+  "sld_source": "b_medi_market_age2"
+}

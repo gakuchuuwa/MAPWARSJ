@@ -1,0 +1,9 @@
+{
+  "name": "INDI_MONASTERY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 312,
+  "anchor_x": 192,
+  "anchor_y": 236,
+  "sld_source": "b_indi_monastery_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_STABLE_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 288,
+  "box_h": 200,
+  "anchor_x": 144,
+  "anchor_y": 128,
+  "sld_source": "b_orie_stable_age2"
+}

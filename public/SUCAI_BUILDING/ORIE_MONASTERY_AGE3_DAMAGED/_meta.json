@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_MONASTERY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 384,
+  "box_h": 308,
+  "anchor_x": 228,
+  "anchor_y": 232,
+  "sld_source": "b_orie_monastery_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MILL_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 200,
+  "box_h": 168,
+  "anchor_x": 110,
+  "anchor_y": 118,
+  "sld_source": "b_ande_mill_age3"
+}

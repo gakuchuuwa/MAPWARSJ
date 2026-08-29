@@ -1,0 +1,9 @@
+{
+  "name": "EAST_MONASTERY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 304,
+  "box_h": 344,
+  "anchor_x": 160,
+  "anchor_y": 268,
+  "sld_source": "b_east_monastery_age3"
+}

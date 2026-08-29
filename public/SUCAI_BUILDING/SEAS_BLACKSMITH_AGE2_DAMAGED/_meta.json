@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_BLACKSMITH_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 224,
+  "anchor_x": 168,
+  "anchor_y": 188,
+  "sld_source": "b_seas_blacksmith_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_HOUSE_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 204,
+  "box_h": 168,
+  "anchor_x": 114,
+  "anchor_y": 130,
+  "sld_source": "b_slav_house_age2"
+}

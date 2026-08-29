@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 300,
+  "anchor_x": 168,
+  "anchor_y": 220,
+  "sld_source": "b_slav_archery_range_age3"
+}

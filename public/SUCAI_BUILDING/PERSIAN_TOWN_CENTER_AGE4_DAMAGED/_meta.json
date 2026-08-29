@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_TOWN_CENTER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 436,
+  "box_h": 320,
+  "anchor_x": 220,
+  "anchor_y": 244,
+  "sld_source": "b_persian_town_center_age4"
+}

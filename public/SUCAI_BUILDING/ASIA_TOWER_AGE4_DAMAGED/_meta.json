@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_TOWER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 236,
+  "box_h": 248,
+  "anchor_x": 156,
+  "anchor_y": 216,
+  "sld_source": "b_asia_tower_age4"
+}

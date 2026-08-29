@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_TOWER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 188,
+  "box_h": 216,
+  "anchor_x": 132,
+  "anchor_y": 188,
+  "sld_source": "b_medi_tower_age3"
+}

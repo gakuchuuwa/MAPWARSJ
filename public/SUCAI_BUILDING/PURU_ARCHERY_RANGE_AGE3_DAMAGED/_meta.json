@@ -1,0 +1,9 @@
+{
+  "name": "PURU_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 312,
+  "anchor_x": 180,
+  "anchor_y": 232,
+  "sld_source": "b_puru_archery_range_age3"
+}

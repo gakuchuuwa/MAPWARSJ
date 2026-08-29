@@ -1,0 +1,9 @@
+{
+  "name": "WEST_BARRACKS_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 256,
+  "anchor_x": 168,
+  "anchor_y": 176,
+  "sld_source": "b_west_barracks_age3"
+}

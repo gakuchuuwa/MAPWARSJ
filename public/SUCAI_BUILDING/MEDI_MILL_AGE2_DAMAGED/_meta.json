@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_MILL_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 284,
+  "box_h": 228,
+  "anchor_x": 184,
+  "anchor_y": 172,
+  "sld_source": "b_medi_mill_age2"
+}

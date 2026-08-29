@@ -1,0 +1,9 @@
+{
+  "name": "MESO_HOUSE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 192,
+  "anchor_x": 106,
+  "anchor_y": 134,
+  "sld_source": "b_meso_house_age3"
+}

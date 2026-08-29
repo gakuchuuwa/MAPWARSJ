@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_MARKET_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 320,
+  "anchor_x": 216,
+  "anchor_y": 220,
+  "sld_source": "b_ande_market_age3"
+}

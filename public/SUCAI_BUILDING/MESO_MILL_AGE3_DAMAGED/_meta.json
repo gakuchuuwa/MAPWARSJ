@@ -1,0 +1,9 @@
+{
+  "name": "MESO_MILL_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 284,
+  "box_h": 288,
+  "anchor_x": 144,
+  "anchor_y": 216,
+  "sld_source": "b_meso_mill_age3"
+}

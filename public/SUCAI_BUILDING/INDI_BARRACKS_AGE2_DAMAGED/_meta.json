@@ -1,0 +1,9 @@
+{
+  "name": "INDI_BARRACKS_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 272,
+  "anchor_x": 180,
+  "anchor_y": 188,
+  "sld_source": "b_indi_barracks_age2"
+}

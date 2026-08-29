@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_BARRACKS_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 328,
+  "box_h": 276,
+  "anchor_x": 176,
+  "anchor_y": 196,
+  "sld_source": "b_seas_barracks_age2"
+}

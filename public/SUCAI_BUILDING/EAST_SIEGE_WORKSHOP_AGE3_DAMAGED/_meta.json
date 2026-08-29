@@ -1,0 +1,9 @@
+{
+  "name": "EAST_SIEGE_WORKSHOP_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 364,
+  "box_h": 248,
+  "anchor_x": 192,
+  "anchor_y": 152,
+  "sld_source": "b_east_siege_workshop_age3"
+}

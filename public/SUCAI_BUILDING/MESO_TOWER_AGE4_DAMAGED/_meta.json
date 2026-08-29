@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWER_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 216,
+  "box_h": 276,
+  "anchor_x": 144,
+  "anchor_y": 232,
+  "sld_source": "b_meso_tower_age4"
+}

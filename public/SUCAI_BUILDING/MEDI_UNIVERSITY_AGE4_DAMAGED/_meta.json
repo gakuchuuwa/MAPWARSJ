@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_UNIVERSITY_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 428,
+  "box_h": 316,
+  "anchor_x": 224,
+  "anchor_y": 208,
+  "sld_source": "b_medi_university_age4"
+}

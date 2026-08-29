@@ -131,8 +131,6 @@ interface WarType {
 
 /** 🔴 [2026-08-23 主人改] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
 const WALL_AUTO_COLLAPSE_SEC = 30;
-/** 🔴 [2026-08-29 主人定] 攻城战开战多少秒后，4 箭塔 + 9 建筑随机坍塌一半（纯视觉演出） */
-const CITY_AUTO_COLLAPSE_SEC = 45;
 /** 城门倒塌动画总时长（秒）：50 帧铺满，播完切 rubble 残骸。 */
 const GATE_COLLAPSE_DUR = 1.4;
 
@@ -193,13 +191,13 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     GREEK: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     THRACIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
     BERBER: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    CENTRAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    NORTH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    JIANGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    BASHU: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    CENTRAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
+    NORTH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    JIANGNAN: { battering_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
+    BASHU: { battering_ram: true, capped_ram: true, siege_ram: true, mangonel: true, onager: true, traction_trebuchet: true },
     HEXI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
     LINGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    STEPPE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    STEPPE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CUMAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     JAPAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
@@ -268,11 +266,11 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
  *    FactionCompositions，不经这条攻城槽，删了反而误伤。
  */
 const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>> = {
-    CENTRAL: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    CENTRAL: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     NORTH: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    JIANGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    JIANGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     LINGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    BASHU: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    BASHU: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     HEXI: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
     NORTHEAST: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
     KOREA: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
@@ -325,7 +323,7 @@ interface WarBuilding {
 
 /**
  * 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔：可射箭（复用 WarArrow 纯视觉弹丸 + 开火火花），
- * 45 秒随建筑一起随机塌一半（collapseCityAt45s：有 `_DESTR` 动画素材→播动画→rubble；无→尘土 + 销毁）。
+ * 30 秒随建筑一起随机三形态（完整继续射箭 / 破损停火 / 残骸停火，见 applyRandomCollapseForms）。
  */
 interface ArrowTower {
     /** 城墙内侧的塔贴图（BUILDING: 单帧，撞色兵；world 层、不阻挡） */
@@ -2848,12 +2846,10 @@ export class Scene13WarLayer {
     private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
-    /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 45 秒随机塌一半） */
+    /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
-    /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；45 秒随机塌一半 */
+    /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；30 秒随机三形态 */
     private cityBuildings: Array<{ sprite: DecorSprite; name: string }> = [];
-    /** 🔴 [2026-08-29 主人定] 45 秒「箭塔 + 建筑」随机塌一半是否已触发（只触发一次） */
-    private cityAutoCollapsed = false;
     /** 城门残骸兜底（`{gBase}_NE_RUBBLE`，石/垛/木三材质都有）：塔/建筑塌后无专用残骸时用 */
     private gateRubble: string | null = null;
     private natureCache: Record<string, NatureAsset> = {};
@@ -3172,8 +3168,6 @@ export class Scene13WarLayer {
         this.defenderHolding = this.battleType === 'siege';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
-        // 45 秒「箭塔 + 建筑」随机塌一半标志归位（每场重新计，见 CITY_AUTO_COLLAPSE_SEC）
-        this.cityAutoCollapsed = false;
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
         //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
         this.wallsCollapsed = false;
@@ -4110,7 +4104,7 @@ export class Scene13WarLayer {
 
             // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
-            //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；45 秒随机塌一半（collapseCityAt45s）。
+            //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随机三形态（applyRandomCollapseForms）。
             const arrowTowerAsset =
                 this.defenderCityType === 'small_city' ? `${style}_TOWER_AGE2`
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
@@ -4120,10 +4114,11 @@ export class Scene13WarLayer {
             //    该素材 DE 尚未提取时退回城门残骸 `{gBase}_NE_RUBBLE`（石/垛/木三材质都有）兜底，绝不消失。
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
             const gateRubble = 'BUILDINGANIM:' + gBase + '_NE_RUBBLE';
-            this.gateRubble = gateRubble;   // 城门残骸兜底（供 45 秒塔/建筑倒塌无专用残骸时用）
+            this.gateRubble = gateRubble;   // 城门残骸兜底（供 30 秒塔/建筑破损/残骸无专用素材时用）
             this.ensureNatureAsset(towerCollapse);
             this.ensureNatureAsset(towerRubble);
             this.ensureNatureAsset(gateRubble);
+            this.ensureNatureAsset('BUILDING:' + arrowTowerAsset + '_DAMAGED');   // 30 秒「破损」形态
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
             this.ensureProj('PROJ_ARROW');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
@@ -5329,17 +5324,6 @@ export class Scene13WarLayer {
                 sp.obstructionDisabled = true;
             }
         }
-        // 视觉上随机塌一半切 D75 残垣（只影响贴图，不影响碰撞）
-        const walls = this.wallGates.filter(b => b.hp > 0 && !b.sprite.destroyed);
-        if (walls.length > 0) {
-            const half = Math.max(1, Math.round(walls.length / 2));
-            const shuffled = [...walls].sort(() => Math.random() - 0.5);
-            for (let n = 0; n < half; n++) {
-                const b = shuffled[n];
-                b.hp = 0;
-                this.breachWall(b, false);
-            }
-        }
         // 破墙 → 守方开始反击（近战出击、远程正常机动）
         this.defenderHolding = false;
         // 🔴 [2026-08-23 主人定] 城墙坍塌后起接触交战音景（攻城战专用：两军此时才真正开打，
@@ -5348,48 +5332,73 @@ export class Scene13WarLayer {
             this.contactSfxPlayed = true;
             audioManager.startSceneLoop('land_contact');
         }
+        // 🔴 [2026-08-29 主人定] 30 秒：城门/城墙/箭塔/建筑随机均分三形态（完整/破损/残骸），全为贴图
+        this.applyRandomCollapseForms();
     }
 
-    /** 记录一座守城建筑（供 45 秒随机塌一半用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
-    private trackCityBuilding(sp: DecorSprite): void {
-        const name = sp.asset.slice('BUILDING:'.length);
-        this.cityBuildings.push({ sprite: sp, name });
-        // 🔴 开战前预载倒塌/残骸素材（否则 45 秒塌时 pending>0 整场冻结，见 ensureNatureAsset 懒加载血训）
-        this.ensureNatureAsset('BUILDINGANIM:' + name + '_DESTR');
-        this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
-    }
-
-    /** 单个装饰精灵开始倒塌：有 DESTR 动画就播 → 切 rubble；否则尘土 + 短暂保留后切 rubble（兜底城门残骸）。 */
-    private collapseDecorSprite(sprite: DecorSprite, collapseAsset: string | null, rubbleAsset: string | null): void {
-        this.spawnFx('FX_WALL_DUST', sprite.x, sprite.y, (Math.random() * 8) | 0);
-        const rubble = (rubbleAsset && this.natureCache[rubbleAsset]?.img?.complete) ? rubbleAsset : this.gateRubble;
-        if (collapseAsset && this.natureCache[collapseAsset]?.img?.complete) {
-            sprite.asset = collapseAsset;
-            sprite.frame = 0;
-            sprite.collapse = { t: 0, dur: GATE_COLLAPSE_DUR, rubbleAsset: rubble };
-        } else {
-            sprite.collapse = { t: 0, dur: 0.5, rubbleAsset: rubble };
-        }
+    /** 随机三选一：0 完整 / 1 破损 / 2 残骸（各 1/3，均匀分布）。 */
+    private randomCollapseForm(): 0 | 1 | 2 {
+        const r = Math.random();
+        return r < 1 / 3 ? 0 : r < 2 / 3 ? 1 : 2;
     }
 
     /**
-     * 🔴 [2026-08-29 主人定] 45 秒：4 箭塔 + 9 建筑**随机塌一半**（纯视觉演出，只触发一次）。
-     *    箭塔塌掉一半（不再开火、播 DESTR → rubble）；建筑塌掉一半（播 DESTR → rubble）。
+     * 🔴 [2026-08-29 主人定] 30 秒随机三形态（纯视觉，全为贴图、不碰撞）：
+     *    城墙：完整 / 破损(D50) / 残骸(D75)；城门：完整 / 残骸(RUBBLE，无独立破损档退回残骸)；
+     *    箭塔：完整(继续射箭) / 破损(DAMAGED，停火) / 残骸(RUBBLE，停火)；建筑：完整 / 破损(DAMAGED) / 残骸(RUBBLE)。
      */
-    private collapseCityAt45s(): void {
-        if (this.cityAutoCollapsed) return;
-        this.cityAutoCollapsed = true;
-        // 箭塔随机塌一半
-        const towerHalf = Math.max(1, Math.round(this.arrowTowers.length / 2));
-        for (const t of [...this.arrowTowers].sort(() => Math.random() - 0.5).slice(0, towerHalf)) {
-            t.down = true;   // 塌后不再开火（残骸贴图保留）
-            this.collapseDecorSprite(t.sprite, t.collapseAsset, t.rubbleAsset);
+    private applyRandomCollapseForms(): void {
+        for (const b of this.wallGates) {
+            const form = this.randomCollapseForm();
+            if (form === 0) continue;   // 完整：不动
+            if (b.key === 'STONE_WALL') {
+                const asset = b.destrAssets?.[form === 1 ? 1 : 2];   // D50 / D75
+                if (asset) {
+                    b.sprite.asset = 'BUILDINGANIM:' + asset;
+                    b.sprite.frame = 0;
+                    b.sprite.collapse = undefined;
+                    if (form === 2) b.hp = 0;
+                }
+            } else if (b.rubbleAsset) {
+                b.sprite.asset = 'BUILDINGANIM:' + b.rubbleAsset;
+                b.sprite.frame = 0;
+                b.sprite.collapse = undefined;
+                if (form === 2) b.hp = 0;
+            }
         }
-        // 建筑随机塌一半
-        const bldHalf = Math.max(1, Math.round(this.cityBuildings.length / 2));
-        for (const b of [...this.cityBuildings].sort(() => Math.random() - 0.5).slice(0, bldHalf)) {
-            this.collapseDecorSprite(b.sprite, 'BUILDINGANIM:' + b.name + '_DESTR', 'BUILDINGANIM:' + b.name + '_RUBBLE');
+        for (const t of this.arrowTowers) {
+            const form = this.randomCollapseForm();
+            if (form === 0) continue;   // 完整：继续射箭
+            t.down = true;              // 破损/残骸：停火
+            const towerName = t.sprite.asset.slice('BUILDING:'.length);
+            if (form === 1) {
+                const damaged = 'BUILDING:' + towerName + '_DAMAGED';
+                if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
+            } else if (t.rubbleAsset && this.natureCache[t.rubbleAsset]?.img?.complete) {
+                t.sprite.asset = t.rubbleAsset;
+                t.sprite.frame = 0;
+            }
         }
+        for (const b of this.cityBuildings) {
+            const form = this.randomCollapseForm();
+            if (form === 0) continue;   // 完整：不动
+            if (form === 1) {
+                const damaged = 'BUILDING:' + b.name + '_DAMAGED';
+                if (this.natureCache[damaged]?.img?.complete) { b.sprite.asset = damaged; b.sprite.frame = 0; }
+            } else {
+                const rubble = 'BUILDINGANIM:' + b.name + '_RUBBLE';
+                if (this.natureCache[rubble]?.img?.complete) { b.sprite.asset = rubble; b.sprite.frame = 0; }
+            }
+        }
+    }
+
+    /** 记录一座守城建筑（供 30 秒随机三形态用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
+    private trackCityBuilding(sp: DecorSprite): void {
+        const name = sp.asset.slice('BUILDING:'.length);
+        this.cityBuildings.push({ sprite: sp, name });
+        // 🔴 开战前预载破损/残骸素材（否则 30 秒切形态时 pending>0 整场冻结）
+        this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
     }
 
     /**
@@ -5742,10 +5751,6 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
-        }
-        // 🔴 [2026-08-29 主人定] 45 秒：4 箭塔 + 9 建筑随机塌一半（只触发一次）
-        if (this.battleType === 'siege' && !this.cityAutoCollapsed && this.battleSec >= CITY_AUTO_COLLAPSE_SEC) {
-            this.collapseCityAt45s();
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
         this.stepArrowTowers(dt);

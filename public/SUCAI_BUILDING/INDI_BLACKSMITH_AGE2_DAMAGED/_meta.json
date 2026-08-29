@@ -1,0 +1,9 @@
+{
+  "name": "INDI_BLACKSMITH_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 304,
+  "box_h": 184,
+  "anchor_x": 148,
+  "anchor_y": 148,
+  "sld_source": "b_indi_blacksmith_age2"
+}

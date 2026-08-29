@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_MILL_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 244,
+  "box_h": 188,
+  "anchor_x": 138,
+  "anchor_y": 130,
+  "sld_source": "b_afri_mill_age3"
+}

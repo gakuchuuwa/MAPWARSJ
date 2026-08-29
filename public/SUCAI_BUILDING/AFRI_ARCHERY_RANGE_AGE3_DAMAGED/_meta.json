@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 316,
+  "anchor_x": 164,
+  "anchor_y": 232,
+  "sld_source": "b_afri_archery_range_age3"
+}

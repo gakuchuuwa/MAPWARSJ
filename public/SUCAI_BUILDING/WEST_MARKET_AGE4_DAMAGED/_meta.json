@@ -1,0 +1,9 @@
+{
+  "name": "WEST_MARKET_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 420,
+  "box_h": 312,
+  "anchor_x": 240,
+  "anchor_y": 220,
+  "sld_source": "b_west_market_age4"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_BARRACKS_AGE2_DAMAGED",
+  "frames": 1,
+  "box_w": 320,
+  "box_h": 280,
+  "anchor_x": 168,
+  "anchor_y": 200,
+  "sld_source": "b_asia_barracks_age2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_UNIVERSITY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 408,
+  "box_h": 328,
+  "anchor_x": 208,
+  "anchor_y": 232,
+  "sld_source": "b_seas_university_age3"
+}

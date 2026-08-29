@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_BARRACKS_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 272,
+  "anchor_x": 180,
+  "anchor_y": 204,
+  "sld_source": "b_afri_barracks_age3"
+}

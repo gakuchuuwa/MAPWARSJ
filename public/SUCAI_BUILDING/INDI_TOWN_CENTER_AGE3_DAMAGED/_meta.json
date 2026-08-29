@@ -1,0 +1,9 @@
+{
+  "name": "INDI_TOWN_CENTER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 256,
+  "anchor_x": 220,
+  "anchor_y": 200,
+  "sld_source": "b_indi_town_center_age3"
+}

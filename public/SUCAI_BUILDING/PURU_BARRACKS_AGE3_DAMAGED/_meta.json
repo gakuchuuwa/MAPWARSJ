@@ -1,0 +1,9 @@
+{
+  "name": "PURU_BARRACKS_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 352,
+  "box_h": 292,
+  "anchor_x": 196,
+  "anchor_y": 212,
+  "sld_source": "b_puru_barracks_age3"
+}

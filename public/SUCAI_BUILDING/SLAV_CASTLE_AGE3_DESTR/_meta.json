@@ -1,9 +1,9 @@
 {
   "name": "SLAV_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 544,
+  "frames": 60,
+  "box_w": 536,
   "box_h": 480,
-  "anchor_x": 280,
+  "anchor_x": 276,
   "anchor_y": 352,
   "sld_source": "b_slav_castle_age3_destruction"
 }

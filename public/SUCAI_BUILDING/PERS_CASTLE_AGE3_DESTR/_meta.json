@@ -1,8 +1,8 @@
 {
   "name": "PERS_CASTLE_AGE3_DESTR",
-  "frames": 150,
-  "box_w": 508,
-  "box_h": 488,
+  "frames": 60,
+  "box_w": 504,
+  "box_h": 484,
   "anchor_x": 244,
   "anchor_y": 364,
   "sld_source": "b_pers_castle_age3_destruction"

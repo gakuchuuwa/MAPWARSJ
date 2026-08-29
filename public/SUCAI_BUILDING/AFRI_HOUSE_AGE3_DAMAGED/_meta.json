@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_HOUSE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 204,
+  "box_h": 168,
+  "anchor_x": 126,
+  "anchor_y": 118,
+  "sld_source": "b_afri_house_age3"
+}

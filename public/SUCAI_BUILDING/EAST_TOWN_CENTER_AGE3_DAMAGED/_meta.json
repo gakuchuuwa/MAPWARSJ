@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWN_CENTER_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 412,
+  "box_h": 252,
+  "anchor_x": 216,
+  "anchor_y": 192,
+  "sld_source": "b_east_town_center_age3"
+}

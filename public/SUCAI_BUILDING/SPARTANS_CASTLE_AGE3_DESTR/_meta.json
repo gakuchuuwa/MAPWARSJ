@@ -1,8 +1,8 @@
 {
   "name": "SPARTANS_CASTLE_AGE3_DESTR",
-  "frames": 100,
+  "frames": 60,
   "box_w": 556,
-  "box_h": 396,
+  "box_h": 392,
   "anchor_x": 296,
   "anchor_y": 268,
   "sld_source": "b_spartans_castle_age3_destruction"

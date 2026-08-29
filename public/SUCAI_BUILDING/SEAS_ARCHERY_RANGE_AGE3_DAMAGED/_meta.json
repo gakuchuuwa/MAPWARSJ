@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_ARCHERY_RANGE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 384,
+  "box_h": 376,
+  "anchor_x": 196,
+  "anchor_y": 292,
+  "sld_source": "b_seas_archery_range_age3"
+}
