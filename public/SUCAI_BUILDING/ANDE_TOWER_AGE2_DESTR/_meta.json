@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWER_AGE2_DESTR",
+  "frames": 150,
+  "box_w": 196,
+  "box_h": 256,
+  "anchor_x": 100,
+  "anchor_y": 204,
+  "sld_source": "b_ande_tower_age2_destruction"
+}

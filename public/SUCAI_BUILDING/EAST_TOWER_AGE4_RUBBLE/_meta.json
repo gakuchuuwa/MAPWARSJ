@@ -1,0 +1,9 @@
+{
+  "name": "EAST_TOWER_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 176,
+  "box_h": 104,
+  "anchor_x": 84,
+  "anchor_y": 56,
+  "sld_source": "b_east_tower_age4_rubble"
+}

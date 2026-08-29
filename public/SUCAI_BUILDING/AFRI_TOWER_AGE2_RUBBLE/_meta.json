@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 180,
+  "box_h": 104,
+  "anchor_x": 88,
+  "anchor_y": 52,
+  "sld_source": "b_afri_tower_age2_rubble"
+}

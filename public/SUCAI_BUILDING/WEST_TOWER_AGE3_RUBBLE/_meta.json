@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 224,
+  "box_h": 116,
+  "anchor_x": 116,
+  "anchor_y": 60,
+  "sld_source": "b_west_tower_age3_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "MESO_TOWER_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 228,
+  "box_h": 288,
+  "anchor_x": 112,
+  "anchor_y": 228,
+  "sld_source": "b_meso_tower_age3_destruction"
+}

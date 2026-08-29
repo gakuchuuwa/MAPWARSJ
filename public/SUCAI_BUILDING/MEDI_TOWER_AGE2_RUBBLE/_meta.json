@@ -1,0 +1,9 @@
+{
+  "name": "MEDI_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 80,
+  "anchor_x": 88,
+  "anchor_y": 36,
+  "sld_source": "b_medi_tower_age2_rubble"
+}

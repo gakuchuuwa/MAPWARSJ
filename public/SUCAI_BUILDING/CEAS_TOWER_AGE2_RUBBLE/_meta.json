@@ -1,0 +1,9 @@
+{
+  "name": "CEAS_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 132,
+  "box_h": 72,
+  "anchor_x": 56,
+  "anchor_y": 40,
+  "sld_source": "b_ceas_tower_age2_rubble"
+}

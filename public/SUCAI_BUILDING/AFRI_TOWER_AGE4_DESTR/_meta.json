@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_TOWER_AGE4_DESTR",
+  "frames": 100,
+  "box_w": 396,
+  "box_h": 300,
+  "anchor_x": 204,
+  "anchor_y": 236,
+  "sld_source": "b_afri_tower_age4_destruction"
+}

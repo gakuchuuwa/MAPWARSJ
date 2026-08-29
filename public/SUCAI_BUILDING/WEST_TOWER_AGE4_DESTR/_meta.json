@@ -1,0 +1,9 @@
+{
+  "name": "WEST_TOWER_AGE4_DESTR",
+  "frames": 101,
+  "box_w": 300,
+  "box_h": 248,
+  "anchor_x": 160,
+  "anchor_y": 200,
+  "sld_source": "b_west_tower_age4_destruction"
+}

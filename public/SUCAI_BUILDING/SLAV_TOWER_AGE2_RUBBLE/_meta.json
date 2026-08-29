@@ -1,0 +1,9 @@
+{
+  "name": "SLAV_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 112,
+  "box_h": 60,
+  "anchor_x": 52,
+  "anchor_y": 32,
+  "sld_source": "b_slav_tower_age2_rubble"
+}

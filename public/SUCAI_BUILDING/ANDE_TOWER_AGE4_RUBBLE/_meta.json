@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_TOWER_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 140,
+  "box_h": 100,
+  "anchor_x": 56,
+  "anchor_y": 60,
+  "sld_source": "b_ande_tower_age4_rubble"
+}

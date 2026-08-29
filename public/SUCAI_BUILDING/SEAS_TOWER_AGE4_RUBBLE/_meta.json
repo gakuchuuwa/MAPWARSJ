@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_TOWER_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 152,
+  "box_h": 92,
+  "anchor_x": 80,
+  "anchor_y": 40,
+  "sld_source": "b_seas_tower_age4_rubble"
+}

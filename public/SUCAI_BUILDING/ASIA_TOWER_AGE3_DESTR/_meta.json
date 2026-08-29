@@ -1,0 +1,9 @@
+{
+  "name": "ASIA_TOWER_AGE3_DESTR",
+  "frames": 100,
+  "box_w": 264,
+  "box_h": 260,
+  "anchor_x": 128,
+  "anchor_y": 208,
+  "sld_source": "b_asia_tower_age3_destruction"
+}
