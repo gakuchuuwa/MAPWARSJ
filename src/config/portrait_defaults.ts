@@ -90,9 +90,9 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     SICILIANS: 'LATIN',
     SPANISH: 'LATIN',
     PORTUGUESE: 'LATIN',
-    ATHENIANS: 'LATIN',
-    SPARTANS: 'LATIN',
-    MACEDONIANS: 'LATIN',
+    ATHENIANS: 'GREEK',
+    SPARTANS: 'GREEK',
+    MACEDONIANS: 'GREEK',
     GOTHS: 'LATIN',
     // 东欧斯拉夫 → SLAVIC（立陶宛/波兰）
     LITHUANIANS: 'SLAVIC',
@@ -115,7 +115,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     BULGARIANS: 'WEST_ASIA',
     // 8-27 拆的大区（武将专图散在原大区夹，按多数派+史实归位）
     EAST: 'GERMANIC',        // 东欧 → 北欧/日耳曼（瑞典/约克/诺夫哥罗德多数）
-    GREEK: 'LATIN',          // 希腊 → 地中海/南欧
     THRACIAN: 'SLAVIC',      // 色雷斯/保加利亚 → 南斯拉夫
     CUMAN: 'STEPPE',         // 库曼/钦察 → 草原游牧
     PERSIAN: 'CENTRAL_ASIA', // 波斯 → 中亚（伊朗高原/呼罗珊）
@@ -125,6 +124,14 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     BURMESE: 'DIANQIAN',         // 缅甸 → 沿用现有滇缅立绘池
     WALLACHIA: 'SLAVIC',         // 瓦拉几亚 → 沿用现有斯拉夫立绘池
 };
+
+/** 希腊专用池：四类希腊据点统一读取 public/assets/GREEK，禁止串用其他文化立绘。 */
+const GREEK_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set([
+    'GREEK',
+    'ATHENIANS',
+    'SPARTANS',
+    'MACEDONIANS',
+]);
 
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
@@ -894,6 +901,9 @@ function pickFactionThenCulturePath(
     const regionPool = REGION_PORTRAIT_POOLS[cultureRegion];
     const fromRegion = regionPool ? pickRandomExisting(regionPool, exclude) : undefined;
     if (fromRegion) return normalizePortraitWebPath(fromRegion);
+
+    // 主人亲自维护希腊立绘：希腊专用夹为空时只显示统一保底图，不得跨到中原/拉丁池乱抽。
+    if (GREEK_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
 
     const fromCentral = pickRandomExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude);
     if (fromCentral) return normalizePortraitWebPath(fromCentral);

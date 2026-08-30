@@ -138,6 +138,9 @@ export class GlobalUnitRenderer {
 
     /** [2026-08-27 §② 划桨随速] 每舰队的世界速度跟踪（世界坐标+时间戳），算真实船速（不受地图平移干扰）。 */
     private navalSpeedTrack: Map<string, { lat: number; lng: number; t: number; speed: number }> = new Map();
+    /** [2026-08-30 海战演出] 海战开火节流：箭雨 / 重炮 各自独立（对齐 naval_arrow_fire / naval_cannon_fire 音效）。 */
+    private navalArrowAt: Map<string, number> = new Map();
+    private navalCannonAt: Map<string, number> = new Map();
 
     private lastTime: number = 0;
     private isRunning: boolean = false;
@@ -854,7 +857,7 @@ export class GlobalUnitRenderer {
             spreadFactor?: number;
             staggerMs?: number;
             durationMs?: number;
-            type?: 'arrow' | 'stone' | 'fire';
+            type?: 'arrow' | 'stone' | 'fire' | 'cannon';
         }
     ): void {
         this.projectileSystem.spawnVolley(L.latLng(from), L.latLng(to), options);
@@ -1207,7 +1210,10 @@ export class GlobalUnitRenderer {
         // If attacking AND is ranged/mixed AND has target
         // [2026-08-10 主人纠正] 13 场景不禁箭矢——远程编队攻击照常发射（旧的
         // sceneActiveNoArrows 禁用门是 AI 擅自加的，主人从未要求，已删）。
-        if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
+        // [2026-08-30 海战演出] 海军走独立对射（炮弹+箭矢打敌舰），不走下方陆战箭矢（射中心点会糊成对空）。
+        if (unit.isAttacking && unit.isOnSea) {
+            this.fireNavalProjectile(unit, currentPos);
+        } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const lType = unit.legionType || 'infantry';
             const hasRangedSlots = ((unit as any).cultureSlots as string[] | undefined)?.some(
                 (s) => s === 'archer' || s === 'crossbow' || s === 'ballista' || s.includes('archer')
@@ -1291,6 +1297,76 @@ export class GlobalUnitRenderer {
                 }
             }
         }
+    }
+
+    /**
+     * [2026-08-30 海战演出·档1] 海军野战对射。
+     * 海军野战双方舰队停靠后（isAttacking + targetPos 有效），向**敌舰真实位置**发射
+     * 炮弹（cannon，2.6s 节流对齐 naval_cannon_fire）+ 箭矢（arrow，1.2s 节流对齐
+     * naval_arrow_fire）。纯视觉，不参与任何结算。
+     */
+    private fireNavalProjectile(unit: IAnimatedUnit, currentPos: { lat: number; lng: number }): void {
+        const enemy = this.findNavalEnemy(unit, currentPos);
+        if (!enemy) return;
+        const id = unit.id || 'unknown';
+        const now = Date.now();
+
+        const start = L.latLng(currentPos.lat, currentPos.lng);
+        const end = L.latLng(enemy.lat, enemy.lng);
+
+        // 重炮：2.6s 节流（与 drawNaval 内 naval_cannon_fire 同频，音画同步）
+        if (now - (this.navalCannonAt.get(id) ?? 0) >= 2600) {
+            this.navalCannonAt.set(id, now);
+            this.projectileSystem.spawnVolley(start, end, {
+                count: 2,
+                spreadFactor: 0.03,
+                staggerMs: 150,
+                durationMs: 700,
+                type: 'cannon',
+            });
+        }
+        // 箭雨：1.2s 节流（与 naval_arrow_fire 同频）
+        if (now - (this.navalArrowAt.get(id) ?? 0) >= 1200) {
+            this.navalArrowAt.set(id, now);
+            this.projectileSystem.spawnVolley(start, end, {
+                count: 3,
+                spreadFactor: 0.04,
+                staggerMs: 60,
+                durationMs: 520,
+                type: 'arrow',
+            });
+        }
+    }
+
+    /**
+     * [2026-08-30 海战演出·档1] 查本海军单位所在野战的**敌舰位置**（取敌方存活单位平均坐标）。
+     * 兜底：targetPos（相遇点中点）关于己方的对称点 ≈ 敌舰大致方向。
+     */
+    private findNavalEnemy(unit: IAnimatedUnit, currentPos: { lat: number; lng: number }): { lat: number; lng: number } | null {
+        const game = (window as any).game;
+        const fields: any[] = game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        for (const f of fields) {
+            if (f?.isOver) continue;
+            const att: any[] = f?.getAttackerUnits?.() ?? [];
+            const def: any[] = f?.getDefenderUnits?.() ?? [];
+            const hasMe = [...att, ...def].some((u) => u?.id === unit.id);
+            if (!hasMe) continue;
+            const isAtt = att.some((u) => u?.id === unit.id);
+            const enemies = isAtt ? def : att;
+            let lat = 0, lng = 0, n = 0;
+            for (const e of enemies) {
+                const p = e?.getPosition?.();
+                if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) { lat += p.lat; lng += p.lng; n++; }
+            }
+            if (n > 0) return { lat: lat / n, lng: lng / n };
+        }
+        if (unit.targetPos && isValidMapCoord(unit.targetPos)) {
+            return {
+                lat: 2 * unit.targetPos.lat - currentPos.lat,
+                lng: 2 * unit.targetPos.lng - currentPos.lng,
+            };
+        }
+        return null;
     }
 
     /**
