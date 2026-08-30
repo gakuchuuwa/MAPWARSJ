@@ -4238,9 +4238,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_64.png": {
-            "scale": 1.12,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 9
+            "offsetY": 10
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_65.png": {
             "scale": 1.05,
@@ -4358,9 +4358,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_106.png": {
-            "scale": 1.15,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": -4
+            "offsetY": -6
         },
         "/assets/CENTRAL_ASIA/ribale_faheerdaolai.png": {
             "scale": 1.07,
@@ -4943,9 +4943,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 36
         },
         "/assets/LATIN/xila_dimisituokeli.png": {
-            "scale": 0.96,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 15
+            "offsetY": 18
         },
         "/assets/LATIN/leangongguo_afangsuojiushi.png": {
             "scale": 1.28,
@@ -4983,9 +4983,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 33
         },
         "/assets/LATIN/lagoniya_lieaonida.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": -4
+            "scale": 1.11,
+            "offsetX": 5,
+            "offsetY": -2
         },
         "/assets/SLAVIC/lagusa_delagan.png": {
             "scale": 0.98,
@@ -5183,9 +5183,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/LATIN/xilagu_ajiasuokeli.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": 17
+            "offsetY": 16
         },
         "/assets/LATIN/tuosikana_luolunzuo.png": {
             "scale": 1.08,
@@ -6320,7 +6320,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/LATIN/yipilusi_piluoshi.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 22
+            "offsetY": 24
         },
         "/assets/LATIN/baojialiya_asenyishi.png": {
             "scale": 1,
@@ -6768,12 +6768,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/AMERICA/baiyiya_tuomei.png": {
-            "scale": 0.85,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": 12
         },
         "/assets/AMERICA/yasuer_xipuliyanuo.png": {
-            "scale": 0.84,
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -7003,12 +7003,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/AMERICA/jialebi_bulasilaisuo.png": {
-            "scale": 0.89,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": -2
+            "offsetY": 0
         },
         "/assets/AMERICA/eluosi_diguo_bidedadi.png": {
-            "scale": 0.95,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -3
         },
@@ -7033,7 +7033,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/AMERICA/xishudongyin_laijiasipi.png": {
-            "scale": 0.9,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -17
         },
@@ -7043,12 +7043,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/AMERICA/puxiangyindu_aerbukeerke.png": {
-            "scale": 0.96,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
         },
         "/assets/AMERICA/xingelana_daweila.png": {
-            "scale": 0.95,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -26
         },
@@ -7083,9 +7083,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/AMERICA/zhibuluotuo_enlike.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 11
         },
         "/assets/INDIA/bulu_bolusi.png": {
             "scale": 0.95,
@@ -7130,7 +7130,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/LATIN/maqidun_yalishanda.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": -8
         },
         "/assets/WEST_ASIA/xiaofulijiya_aerxitisi.png": {
             "scale": 0.9,
@@ -7221,6 +7221,166 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": -17,
             "offsetY": 53
+        },
+        "/assets/LATIN/kuertaiya_kuertaiya.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/GREEK/kuertaiya_kuertaiya.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/GREEK/lagoniya_lieaonida.png": {
+            "scale": 1.11,
+            "offsetX": 5,
+            "offsetY": -2
+        },
+        "/assets/GREEK/maqidun_yalishanda.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/GREEK/teluoyi_heketuoer.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/GREEK/xila_dimisituokeli.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GREEK/xilagu_ajiasuokeli.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/LATIN/yilisi_yifeituosi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GREEK/yilisi_yifeituosi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GREEK/yipilusi_piluoshi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/GREEK/naxos_ancient_kabuliyasi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/LATIN/db61d3bf-5329-40d5-9dc6-7825032c27b7.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/LATIN/rhodope_momuqier.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GREEK/odrysian_late_saiwutesi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/SPANISH/baiyiya_tuomei.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/SPANISH/eluosi_diguo_bidedadi.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/SPANISH/fa2affae-4792-4446-9cda-4025b983cfe4.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/SPANISH/fodejiao_nuoli.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/AMERICA/foluolida_meinendesi.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SPANISH/foluolida_meinendesi.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SPANISH/jialebi_bulasilaisuo.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SPANISH/xingelana_daweila.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SPANISH/puxiangyindu_aerbukeerke.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SPANISH/xishudongyin_laijiasipi.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/SPANISH/xiyindu_batuoluomei.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/SPANISH/yasuer_xipuliyanuo.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/SPANISH/zhibuluotuo_enlike.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/SPANISH/trastamara_feidinanershi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/LATIN/42df92b8-d160-4033-895a-cb698ac5c309.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/braganza_house_ruoangyishi.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/PERSIAN/__闲置__CENTRAL_ASIA_106.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/PERSIAN/__闲置__CENTRAL_ASIA_64.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {

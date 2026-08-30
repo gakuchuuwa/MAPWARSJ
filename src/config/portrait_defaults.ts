@@ -88,7 +88,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     // 拉丁系 → LATIN（意大利/西西里/西班牙/葡萄牙/雅典/斯巴达/马其顿/哥特）
     ITALIANS: 'LATIN',
     SICILIANS: 'LATIN',
-    SPANISH: 'LATIN',
     PORTUGUESE: 'LATIN',
     ATHENIANS: 'GREEK',
     SPARTANS: 'GREEK',
@@ -117,7 +116,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     EAST: 'GERMANIC',        // 东欧 → 北欧/日耳曼（瑞典/约克/诺夫哥罗德多数）
     THRACIAN: 'SLAVIC',      // 色雷斯/保加利亚 → 南斯拉夫
     CUMAN: 'STEPPE',         // 库曼/钦察 → 草原游牧
-    PERSIAN: 'CENTRAL_ASIA', // 波斯 → 中亚（伊朗高原/呼罗珊）
     PURU: 'INDIA',           // 南印度 → 印度
     ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
     ACHAEMENIDS: 'CENTRAL_ASIA', // 阿契美尼德（古波斯）→ 中亚
@@ -132,6 +130,12 @@ const GREEK_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set([
     'SPARTANS',
     'MACEDONIANS',
 ]);
+
+/** 西班牙专用池：西班牙据点统一读取 public/assets/SPANISH，禁止串用其他文化立绘。 */
+const SPANISH_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set(['SPANISH']);
+
+/** 波斯专用池：波斯据点统一读取 public/assets/PERSIAN，禁止串用其他文化立绘。 */
+const PERSIAN_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set(['PERSIAN']);
 
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
@@ -904,6 +908,8 @@ function pickFactionThenCulturePath(
 
     // 主人亲自维护希腊立绘：希腊专用夹为空时只显示统一保底图，不得跨到中原/拉丁池乱抽。
     if (GREEK_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
+    if (SPANISH_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
+    if (PERSIAN_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
 
     const fromCentral = pickRandomExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude);
     if (fromCentral) return normalizePortraitWebPath(fromCentral);

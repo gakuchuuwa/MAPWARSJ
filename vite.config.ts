@@ -38,19 +38,62 @@ function collectBodyChunk(chunks: Buffer[], chunk: unknown): void {
 function serverSafeWriteFileSync(file: string, content: string): void {
     const TRANSIENT = new Set(['EBUSY', 'EPERM', 'EACCES', 'UNKNOWN', 'EMFILE']);
     let lastErr: any;
-    for (let i = 0; i < 12; i++) {
+
+    // [2026-08-30 重写·原子写] 原实现直接 writeFileSync 目标文件：打开文件需要
+    // FILE_SHARE_WRITE 共享，杀软扫描/编辑器/ esbuild 一旦持有句柄就撞共享冲突
+    // （UNKNOWN: unknown error, open）。而且 12 次 × ~1.5s 退避太短，杀软深度扫描
+    // 200KB 文件往往超过 1.5s，连续失败。
+    // 新方案：
+    //   ① 先写同目录临时文件（新建文件，绝不会被任何进程占用，写内容这步稳如泰山）；
+    //   ② 再 rename 原子替换目标——rename 只要求目标允许 FILE_SHARE_DELETE，
+    //      绝大多数句柄（杀软扫描/编辑器预览/git）都允许，比 writeFileSync 容易成功得多；
+    //   ③ rename 失败则指数退避重试，总窗口约 6s，覆盖杀软深度扫描时长。
+    //   附带收益：原子替换杜绝了「写一半崩溃 → 文件损坏」。
+    const tmp = `${file}.tmp-${process.pid}-${Date.now()}`;
+
+    // ① 写临时文件（新建文件几乎不会失败，退避几次兜底）
+    for (let i = 0; i < 6; i++) {
         try {
-            fs.writeFileSync(file, content, 'utf-8');
-            if (i > 0) console.log(`  ↻ [SafeWrite] ${path.basename(file)} 第 ${i + 1} 次尝试成功`);
-            return;
+            fs.writeFileSync(tmp, content, 'utf-8');
+            lastErr = undefined;
+            break;
         } catch (e: any) {
             lastErr = e;
-            if (!TRANSIENT.has(e?.code)) throw e;
-            // 20/40/60… ms 递增退避，总计约 1.5s
-            const until = Date.now() + 20 * (i + 1);
+            if (!TRANSIENT.has(e?.code)) {
+                try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
+                throw e;
+            }
+            const until = Date.now() + 50 * (i + 1);
             while (Date.now() < until) { /* 同步阻塞：这些 API 本身就是同步流程 */ }
         }
     }
+    if (lastErr) {
+        try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
+        throw new Error(
+            `写入 ${path.basename(file)} 连续失败（${lastErr?.code}）：文件被其它程序占用。` +
+            `常见原因是杀毒软件实时扫描或编辑器占用，稍后重试即可。原始错误：${lastErr?.message}`,
+        );
+    }
+
+    // ② rename 原子替换，指数退避：50/100/200/400/800… 封顶 800ms，总窗口约 6s
+    for (let i = 0; i < 20; i++) {
+        try {
+            fs.renameSync(tmp, file);
+            if (i > 0) console.log(`  ↻ [SafeWrite] ${path.basename(file)} 第 ${i + 1} 次 rename 成功`);
+            return;
+        } catch (e: any) {
+            lastErr = e;
+            if (!TRANSIENT.has(e?.code)) {
+                try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
+                throw e;
+            }
+            const delay = Math.min(50 * Math.pow(2, i), 800);
+            const until = Date.now() + delay;
+            while (Date.now() < until) { /* 同步阻塞 */ }
+        }
+    }
+
+    try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
     throw new Error(
         `写入 ${path.basename(file)} 连续失败（${lastErr?.code}）：文件被其它程序占用。` +
         `常见原因是杀毒软件实时扫描或编辑器占用，稍后重试即可。原始错误：${lastErr?.message}`,
