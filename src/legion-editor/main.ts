@@ -1883,6 +1883,8 @@ function renderEditPanel(row: FactionLegionRow): void {
     <div class="le-form-section">
       <div class="le-section-title"><span>保存配置</span></div>
       <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
+      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为新军团（独立命名，不同步同名势力）</button>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-top:6px;line-height:1.5;">⚠️ 同名军团共享同一编制：点「保存」会联动所有同名势力；想要独立军团请点「另存为」换个新名字。</div>
     </div>
     `;
 
@@ -2002,6 +2004,27 @@ function bindPanelEvents(row: FactionLegionRow): void {
         showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
             + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : '')
             + (compSyncCount > 0 ? `；编制同步更新了 ${compSyncCount} 个共享同名势力` : ''));
+    });
+
+    // 另存为新军团：独立命名，不联动同名势力
+    document.getElementById('le-btn-save-as')?.addEventListener('click', async () => {
+        if (!currentEditingLegion) return;
+        const curName = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
+        const newName = (window.prompt('输入新军团名（另存为独立军团，不会同步到其他同名势力）：', curName))?.trim();
+        if (!newName) return;
+        currentEditingLegion.legionName = newName;
+        localCustomCompositions[row.factionId] = {
+            legionName: newName,
+            legionType: currentEditingLegion.legionType,
+            formationMode: currentEditingLegion.formationMode,
+            navalFormation: currentEditingLegion.navalFormation ?? 'auto',
+            slots: currentEditingLegion.slots.map(s => ({ ...s })),
+        };
+        buildRows();
+        applyFilter();
+        selectFaction(row.factionId);
+        await saveAllCompositions();
+        showToast(`✅ 已另存为【${newName}】独立军团并写入文件（未联动其他势力）`);
     });
 
     // 军团种类选择（第三步）

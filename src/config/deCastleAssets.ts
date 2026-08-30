@@ -151,6 +151,23 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     shache: 'WESTERN_CASTLE_AGE3',         // 莎车
     yiwu: 'WESTERN_CASTLE_AGE3',           // 伊吾
     yiduhu: 'WESTERN_CASTLE_AGE3',         // 亦都护（高昌回鹘）
+    // ── 滇黔 ──
+    nanzhao: 'DIANQIAN_CASTLE_AGE3',       // 南诏
+    dali: 'DIANQIAN_CASTLE_AGE3',          // 大理
+    baiman: 'DIANQIAN_CASTLE_AGE3',        // 白蛮（大中国/高升泰）
+    dian: 'DIANQIAN_CASTLE_AGE3',          // 滇国
+    ailao: 'DIANQIAN_CASTLE_AGE3',         // 哀牢
+    mu_lijiang: 'DIANQIAN_CASTLE_AGE3',    // 丽江木氏土司
+    luchuan: 'DIANQIAN_CASTLE_AGE3',       // 麓川平缅
+    kunming_yi: 'DIANQIAN_CASTLE_AGE3',    // 昆明夷
+    // ── 岭南 ──
+    nanyue: 'LINGNAN_CASTLE_AGE3',         // 南越国
+    minyue: 'LINGNAN_CASTLE_AGE3',         // 闽越国
+    nanhan: 'LINGNAN_CASTLE_AGE3',         // 南汉
+    min_wang: 'LINGNAN_CASTLE_AGE3',       // 闽国
+    li_clan: 'LINGNAN_CASTLE_AGE3',        // 俚人/洗夫人
+    ming_zheng: 'LINGNAN_CASTLE_AGE3',     // 明郑（台湾/金门）
+    quanzhou: 'LINGNAN_CASTLE_AGE3',       // 泉州水师
     // ── 美洲 ──
     inca: 'INCA_CASTLE_AGE3',
     maya: 'MAYA_CASTLE_AGE3',
@@ -160,38 +177,86 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
 };
 
 /**
- * 文化区级城堡（势力没配专属时用）。只在「该区有比风格集更贴切的城堡」时才列，
- * 其余留空走风格集默认（`{style}_CASTLE_AGE3`）。
+ * 文化区级城堡（势力没配专属时用）。
+ * 🔴 [2026-08-30 主人定] 确保一个文化一种城堡（63 个文化区 100% 独立专属，0 重复，0 缺漏）。
  */
-export const REGION_CASTLE: Partial<Record<RegionType, string>> = {
-    // 中国内部文化区 → 代表城堡（2026-08-30 主人定）：
-    //   曹魏=中原(WEI)、孙吴=江南(WU)、蜀汉=巴蜀(SHU)、契丹=河西(KHIT·黑水城)、
-    //   女真=东北(JURC·居庸关)、越南=岭南(VIET)、北方=中国(CHIN)。
-    CENTRAL: 'WEI_CASTLE_AGE3',      // 曹魏=中原
-    NORTH: 'CHIN_CASTLE_AGE3',       // 北方=中国
-    JIANGNAN: 'WU_CASTLE_AGE3',      // 孙吴=江南
-    LINGNAN: 'VIET_CASTLE_AGE3',     // 岭南=越南
-    BASHU: 'SHU_CASTLE_AGE3',        // 蜀汉=巴蜀
-    HEXI: 'KHIT_CASTLE_AGE3',        // 契丹=河西（黑水城，DE 误名契丹实为西夏）
-    NORTHEAST: 'JURC_CASTLE_AGE3',   // 女真=东北
-    KOREA: 'KORE_CASTLE_AGE3',
-    STEPPE: 'MONG_CASTLE_AGE3',      // 草原：蒙古式
-    TIBET: 'TIBET_CASTLE_AGE3',      // 青藏：藏式宗堡（红白宫金顶防御堡）
-    WESTERN: 'WESTERN_CASTLE_AGE3',  // 西域：汉伊融合高台绿洲城堡（高昌/龟兹/于阗丝路要塞）
-    WEST_ASIA: 'PERS_CASTLE_AGE3',   // 西亚：波斯式（比 ORIE 通用更贴）
-    PERSIAN: 'PERS_CASTLE_AGE3',     // 波斯：巴姆古城（2026-08-30 主人定：波斯城堡=巴姆古城）
-    INDIA: 'HIND_CASTLE_AGE3',       // 印度=印度斯坦（德里七大要塞）
-    GURJARAS: 'GURJ_CASTLE_AGE3',    // 瞿折罗=瓜廖尔堡
-    BENGALIS: 'BENG_CASTLE_AGE3',    // 孟加拉=比什努布尔古堡大门
-    PURU: 'INDI_CASTLE_AGE3',        // 达罗毗荼=昆巴哈尔堡垒（DE 继承印度人 INDI castle）
-    MALAY: 'MALA_CASTLE_AGE3',
-    DIANQIAN: 'VIET_CASTLE_AGE3',    // 滇黔：中南半岛式
-    AMERICA: 'MAYA_CASTLE_AGE3',
-    AFRICA: 'ETHI_CASTLE_AGE3',
-    BERBER: 'BERB_CASTLE_AGE3',
-    SLAVIC: 'SLAV_CASTLE_AGE3',
-    LATIN: 'MEDI_CASTLE_AGE3',
-    GERMANIC: 'WEST_CASTLE_AGE3',
+export const REGION_CASTLE: Record<RegionType, string> = {
+    // ── 1. 东亚 / 中华文化区 (13 个) ──
+    CENTRAL: 'WEI_CASTLE_AGE3',              // 中原：曹魏高台
+    NORTH: 'CHIN_CASTLE_AGE3',               // 北方：中国城楼
+    JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：孙吴水榭坞堡
+    BASHU: 'SHU_CASTLE_AGE3',                // 巴蜀：蜀汉高台阙楼
+    HEXI: 'KHIT_CASTLE_AGE3',                // 河西：西夏/黑水城
+    NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
+    KOREA: 'KORE_CASTLE_AGE3',               // 朝鲜：高丽山城
+    JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
+    STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
+    TIBET: 'TIBET_CASTLE_AGE3',              // 青藏：藏式金顶宗堡
+    WESTERN: 'WESTERN_CASTLE_AGE3',          // 西域：汉伊高台绿洲要塞
+    DIANQIAN: 'DIANQIAN_CASTLE_AGE3',        // 滇黔：大理白塔飞瀑云关
+    LINGNAN: 'LINGNAN_CASTLE_AGE3',          // 岭南：南越宫阙·广府镬耳围楼
+
+    // ── 2. 东南亚与南亚 (8 个) ──
+    VIETNAMESE: 'VIET_CASTLE_AGE3',          // 越南：升龙城式重檐
+    KHMER: 'SEAS_CASTLE_AGE3',               // 高棉：吴哥窟式砂岩塔
+    MALAY: 'MALA_CASTLE_AGE3',               // 马来：满剌加木石水寨
+    INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
+    GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
+    BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
+    PURU: 'INDI_CASTLE_AGE3',                // 达罗毗荼：昆巴哈尔石圆塔
+    PORUS: 'PURU_CASTLE_AGE3',               // 波鲁斯：古印度石台
+
+    // ── 3. 中亚、西亚与北非 (7 个) ──
+    CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',        // 中亚：鞑靼·赫拉特要塞
+    CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
+    PERSIAN: 'PERS_CASTLE_AGE3',             // 波斯：巴姆古城
+    ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 阿契美尼德：波斯波利斯高台
+    ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
+    WEST_ASIA: 'TURK_CASTLE_AGE3',           // 西亚：突厥奥斯曼要塞
+    BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
+
+    // ── 4. 高加索与东欧 / 斯拉夫 (10 个) ──
+    ARMENIANS: 'ARME_CASTLE_AGE3',           // 亚美尼亚：高山石堡
+    GEORGIANS: 'GEOR_CASTLE_AGE3',           // 格鲁吉亚：高加索石碉
+    SLAVIC: 'SLAV_CASTLE_AGE3',              // 斯拉夫：洋葱顶木石堡
+    BULGARIANS: 'BULG_CASTLE_AGE3',          // 保加利亚：沙皇城堡
+    MAGYAR: 'MAGY_CASTLE_AGE3',              // 马扎尔：匈牙利科文堡
+    BOHEMIANS: 'BOHE_CASTLE_AGE3',           // 波希米亚：捷克卡尔施泰因堡
+    POLES: 'POLE_CASTLE_AGE3',               // 波兰：马尔堡红砖城堡
+    LITHUANIANS: 'LITH_CASTLE_AGE3',         // 立陶宛：特拉凯湖中堡
+    THRACIAN: 'THRACIAN_CASTLE_AGE3',        // 色雷斯：巴尔干古典要塞
+    EAST: 'EAST_CASTLE_AGE3',                // 东欧：东欧石堡
+
+    // ── 5. 地中海 / 南欧古典 (9 个) ──
+    LATIN: 'ROMA_CASTLE_AGE3',               // 拉丁：罗马军团石堡
+    ITALIANS: 'MEDI_CASTLE_AGE3',            // 意大利：地中海石堡
+    SICILIANS: 'SICI_CASTLE_AGE3',           // 西西里：诺曼阿拉伯石堡
+    GREEK: 'GREEK_CASTLE_AGE3',              // 古希腊：希腊卫城
+    ATHENIANS: 'ATHENIANS_CASTLE_AGE3',      // 雅典：雅典卫城城堡
+    SPARTANS: 'SPARTANS_CASTLE_AGE3',        // 斯巴达：斯巴达军垒
+    MACEDONIANS: 'MACEDONIAN_CASTLE_AGE3',   // 马其顿：马其顿要塞
+    SPANISH: 'SPAN_CASTLE_AGE3',             // 西班牙：塞哥维亚石堡
+    PORTUGUESE: 'PORT_CASTLE_AGE3',          // 葡萄牙：贝伦塔航海石堡
+
+    // ── 6. 西欧与北欧 (8 个) ──
+    GERMANIC: 'WEST_CASTLE_AGE3',            // 日耳曼：西欧重装石堡
+    BRITONS: 'FRAN_CASTLE_AGE3',             // 不列颠：英法百年战争石堡
+    BURGUNDIANS: 'BURG_CASTLE_AGE3',         // 勃艮第：法式重装城堡
+    CELTS: 'CELT_CASTLE_AGE3',               // 凯尔特：苏格兰圆形塔堡
+    VIKINGS: 'VIKI_CASTLE_AGE3',             // 维京：诺斯长屋环形要塞
+    GOTHS: 'GOTH_CASTLE_AGE3',               // 哥特：哥特蛮族石堡
+    HUNS: 'HUNS_CASTLE_AGE3',                // 匈人：匈人要塞
+    TEUTONS: 'BYZA_CASTLE_AGE3',             // 条顿：条顿/拜占庭重石要塞
+
+    // ── 7. 非洲与美洲 (8 个) ──
+    AFRICA: 'AFRI_CASTLE_AGE3',              // 非洲：马里生土要塞
+    ETHIOPIANS: 'ETHI_CASTLE_AGE3',          // 埃塞俄比亚：法西尔盖比石堡
+    MAYANS: 'MAYA_CASTLE_AGE3',              // 玛雅：阶梯金字塔石堡
+    AMERICA: 'MESO_CASTLE_AGE3',             // 中美洲：阿兹特克金字塔
+    ANDE: 'INCA_CASTLE_AGE3',                // 安第斯：印加萨克赛瓦曼
+    MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
+    MUISCA: 'MUIS_CASTLE_AGE3',              // 穆伊斯卡：黄金国要塞
+    TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
