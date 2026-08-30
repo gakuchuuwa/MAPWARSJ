@@ -110,6 +110,7 @@ export const FACTIONS: Faction[] = [
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
 
+
   { id: 'luoma_diguo', name: '罗马帝国' },
   { id: 'xiongren', name: '匈人' },  // 塞格德·阿提拉（欧洲匈人，蒂萨河营地）
   { id: 'putaoya', name: '葡萄牙' },
