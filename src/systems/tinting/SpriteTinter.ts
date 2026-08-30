@@ -121,11 +121,36 @@ export class SpriteTinter {
         return this.getMaskTinted(originalSprite, maskSrc, factionId, tintColor, tintHex, dir);
     }
 
+    /** 同一「图 × 势力」的**在途染色**去重表（见 getTintedSpriteReady 的说明）。 */
+    private static readyInflight: Map<string, Promise<HTMLImageElement>> = new Map();
+
     /**
      * 等待玩家色遮罩完成探测后再返回最终染色图。
      * 战术模式会把返回帧长期存入本场素材库，不能接受 getTintedSprite 首次探测时的原图占位。
+     *
+     * 🔴 [2026-08-30 修 13 卡顿] 必须按「图 × 势力」做**在途去重**，光有结果缓存不够：
+     *    13 一次会为同一张图并发发起 8 次（8 个方向共用同一文件时），8 个调用同时卡在
+     *    「等 .pc.png 遮罩」这一步；遮罩一到，8 个一起醒来、一起发现缓存还是空的，
+     *    于是各自跑一遍 applyMaskTint（两次 getImageData 逐像素 + 一次 PNG 编码），
+     *    产出 8 份**内容完全相同**的位图，最后只有一份进缓存、其余 7 份被 bank 长期强引用。
+     *    实测这条占单场素材内存的 **26%**。加了在途表后，8 个调用共享同一个 Promise、同一个结果对象。
      */
     public static async getTintedSpriteReady(
+        originalSprite: HTMLImageElement,
+        factionId: string
+    ): Promise<HTMLImageElement> {
+        if (!FactionTintSystem.shouldTint(factionId)) return originalSprite;
+        const flightKey = `${tintKeyOf(originalSprite)}_${factionId}`;
+        const flying = this.readyInflight.get(flightKey);
+        if (flying) return flying;
+        const job = this.tintReadyUncached(originalSprite, factionId)
+            .finally(() => { this.readyInflight.delete(flightKey); });
+        this.readyInflight.set(flightKey, job);
+        return job;
+    }
+
+    /** getTintedSpriteReady 的实体（去重壳见上）。 */
+    private static async tintReadyUncached(
         originalSprite: HTMLImageElement,
         factionId: string
     ): Promise<HTMLImageElement> {

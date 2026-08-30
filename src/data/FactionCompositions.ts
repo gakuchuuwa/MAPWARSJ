@@ -3012,12 +3012,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lagusa": {
-        legionName: "白堡守军团",
+        legionName: "斯拉夫军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
-            { type: "halberdier", count: 4 },
-            { type: "composite_bowman", count: 2 },
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "meikelunbao": {
@@ -3039,12 +3039,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bosiniya": {
-        legionName: "白堡守军团",
+        legionName: "斯拉夫军团",
+        legionType: "region",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
-            { type: "halberdier", count: 4 },
-            { type: "composite_bowman", count: 2 },
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "maixiya": {
