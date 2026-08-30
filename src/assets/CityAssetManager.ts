@@ -998,7 +998,7 @@ export class CityAssetManager {
     'pidisha': '毗底',
     'jiaye': '伽耶',
     'jienei': '杰内',
-    'kuertaiya': '巴萨',
+'kuertaiya': '巴萨',
 'muwaxide': '穆瓦',
     'varendra': '伐连',
     'duonaobaojia': '多瑙',

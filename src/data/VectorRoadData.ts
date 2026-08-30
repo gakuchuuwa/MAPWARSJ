@@ -246,41 +246,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "金石城-原之辻",
-                type: "road",
-                id: "road_city_tsushima_city_yuanzhishi_1780126865340",
-                startConnection: "city_tsushima",
-                endConnection: "city_yuanzhishi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [129.2892, 34.2031],
-                    [129.703, 33.791],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "金海-金石城",
-                type: "road",
-                id: "road_city_gimhae_city_tsushima_1780126878182",
-                startConnection: "city_gimhae",
-                endConnection: "city_tsushima"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [128.88, 35.23],
-                    [128.730562, 34.866271],
-                    [129.2892, 34.2031],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "鬼之城-姬路城",
                 type: "road",
                 id: "road_city_guizhicheng_city_himeji_1780127767226",
@@ -19103,70 +19068,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "首里-赤木名城",
-                type: "road",
-                id: "road_city_shuri_city_akakinagusuku_1780900061214",
-                startConnection: "city_shuri",
-                endConnection: "city_akakinagusuku"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [127.72, 26.22],
-                    [128.10333251953128, 26.33100630839498],
-                    [128.32855224609378, 26.714278785112914],
-                    [128.43841552734378, 27.03758236361618],
-                    [128.66088867187503, 27.33312861970249],
-                    [129.21569824218753, 27.836907213285357],
-                    [129.674, 28.454],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "赤木名城-赤尾木城",
-                type: "road",
-                id: "road_city_akakinagusuku_city_akaogicheng_1780900166233",
-                startConnection: "city_akakinagusuku",
-                endConnection: "city_akaogicheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [129.674, 28.454],
-                    [130.337, 29.592],
-                    [130.62194824218753, 30.19048326120731],
-                    [131, 30.73],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "赤尾木城-内城",
-                type: "road",
-                id: "road_city_akaogicheng_city_satsuma_1780900205517",
-                startConnection: "city_akaogicheng",
-                endConnection: "city_satsuma"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [131, 30.73],
-                    [130.889575, 30.947575],
-                    [130.63842773437503, 30.923889158464643],
-                    [130.52856445312503, 31.034535396303166],
-                    [130.62881469726565, 31.081560302626112],
-                    [130.70159912109378, 31.14270311582519],
-                    [130.668725, 31.382725],
-                    [130.5583, 31.6003],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "饶乐水-降圣",
                 type: "road",
                 id: "road_city_raoleshui_city_jiangsheng_1780902111670",
@@ -21186,120 +21087,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "长乐府-艋舺",
-                type: "road",
-                id: "road_city_fuzhou_city_mengjia_1781121440794",
-                startConnection: "city_fuzhou",
-                endConnection: "city_mengjia"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [119.3, 26.07],
-                    [119.50653076171876, 25.35193786739879],
-                    [121.5, 25.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "艋舺-钓鱼岛",
-                type: "road",
-                id: "road_city_mengjia_city_diaoyudao_1781121458379",
-                startConnection: "city_mengjia",
-                endConnection: "city_diaoyudao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.5, 25.03],
-                    [121.661303, 25.087266],
-                    [121.710796, 25.107888],
-                    [121.735542, 25.132635],
-                    [121.780911, 25.116137],
-                    [121.94824218750001, 25.222741394268386],
-                    [123.5, 25.75],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "钓鱼岛-首里",
-                type: "road",
-                id: "road_city_diaoyudao_city_shuri_1781121462672",
-                startConnection: "city_diaoyudao",
-                endConnection: "city_shuri"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [123.5, 25.75],
-                    [124.35974121093751, 25.847080289201834],
-                    [126.40594482421876, 26.310963090274864],
-                    [127.72, 26.22],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "艋舺-宫古岛",
-                type: "road",
-                id: "road_city_mengjia_city_gugudao_1781121491589",
-                startConnection: "city_mengjia",
-                endConnection: "city_gugudao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.5, 25.03],
-                    [121.72027587890626, 24.90927576439712],
-                    [121.97296142578126, 24.747291769251436],
-                    [122.38769531250001, 24.789677267054312],
-                    [122.73925781250001, 24.777212446096208],
-                    [123.02490234375001, 24.794662844823662],
-                    [123.31878662109376, 24.79964822219769],
-                    [123.62640380859376, 24.80463339914672],
-                    [123.85162353515626, 24.84201583472221],
-                    [124.11761538461539, 24.87423076923077],
-                    [124.40846153846154, 24.856923076923078],
-                    [124.6993076923077, 24.839615384615385],
-                    [124.99015384615385, 24.822307692307692],
-                    [125.281, 24.805],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "宫古岛-首里",
-                type: "road",
-                id: "road_city_gugudao_city_shuri_1781121505555",
-                startConnection: "city_gugudao",
-                endConnection: "city_shuri"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [125.281, 24.805],
-                    [125.5249, 24.9465],
-                    [125.7688, 25.088],
-                    [126.01270000000001, 25.229499999999998],
-                    [126.2566, 25.371],
-                    [126.5005, 25.5125],
-                    [126.7444, 25.654],
-                    [126.9883, 25.7955],
-                    [127.2322, 25.936999999999998],
-                    [127.4761, 26.0785],
-                    [127.72, 26.22],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "呵叻城-阿瑜陀耶",
                 type: "road",
                 id: "road_city_khorat_city_ayutthaya_1781122072003",
@@ -21961,23 +21748,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "珍岛-星主厅",
-                type: "road",
-                id: "road_city_jindo_city_xingzhuting_1781188233985",
-                startConnection: "city_jindo",
-                endConnection: "city_xingzhuting"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [126.263, 34.487],
-                    [126.5215, 33.5131],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "顺天-完山",
                 type: "road",
                 id: "road_city_suncheon_k_city_jeonju_1781202793903",
@@ -22562,30 +22332,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "卑沙城-皮岛",
-                type: "road",
-                id: "road_city_beishacheng_city_pidao_1781251602460",
-                startConnection: "city_beishacheng",
-                endConnection: "city_pidao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.959229, 39.444692],
-                    [122.3272705078125, 39.37715836136518],
-                    [122.63469674999999, 39.471994],
-                    [122.972430625, 39.485645000000005],
-                    [123.3101645, 39.499296],
-                    [123.647898375, 39.512947],
-                    [123.98563225000001, 39.526598],
-                    [124.323366125, 39.540249],
-                    [124.6611, 39.5539],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "宕渠-汉昌",
                 type: "road",
                 id: "road_city_dangqu_city_hanchang_1781251745771",
@@ -22934,40 +22680,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "牡丹社-宫古岛",
-                type: "road",
-                id: "road_city_mudan_city_gugudao_1781253230339",
-                startConnection: "city_mudan",
-                endConnection: "city_gugudao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [120.8333, 22.2],
-                    [121.08039444444444, 22.34472222222222],
-                    [121.32748888888888, 22.489444444444445],
-                    [121.57458333333332, 22.634166666666665],
-                    [121.82167777777778, 22.77888888888889],
-                    [122.06877222222222, 22.92361111111111],
-                    [122.31586666666666, 23.06833333333333],
-                    [122.56296111111111, 23.213055555555556],
-                    [122.81005555555555, 23.357777777777777],
-                    [123.05715000000001, 23.502499999999998],
-                    [123.30424444444445, 23.647222222222222],
-                    [123.55133888888889, 23.791944444444443],
-                    [123.79843333333334, 23.936666666666667],
-                    [124.04552777777778, 24.08138888888889],
-                    [124.29262222222222, 24.22611111111111],
-                    [124.53971666666666, 24.370833333333334],
-                    [124.78681111111112, 24.515555555555554],
-                    [125.03390555555556, 24.66027777777778],
-                    [125.281, 24.805],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "清溪-信安",
                 type: "road",
                 id: "road_city_qingxi_city_quzhou_1781253322396",
@@ -23171,26 +22883,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [110.822321, 21.709364],
                     [110.826445, 21.734111],
                     [110.8, 21.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "星主厅-顺天",
-                type: "road",
-                id: "road_city_xingzhuting_city_suncheon_k_1781253803924",
-                startConnection: "city_xingzhuting",
-                endConnection: "city_suncheon_k"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [126.5215, 33.5131],
-                    [127.03491210937501, 34.2121863163423],
-                    [127.37960815429689, 34.6062517603149],
-                    [127.31918334960939, 34.82856784285086],
-                    [127.4991, 34.9652],
                 ]
             }
         },
@@ -25249,27 +24941,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [130.74328, 33.76505],
                     [130.875262, 33.806295],
                     [130.93, 33.95],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "府内-松山",
-                type: "road",
-                id: "road_city_funei_city_songshan_1781686085826",
-                startConnection: "city_funei",
-                endConnection: "city_songshan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [131.61, 33.24],
-                    [131.842, 33.36],
-                    [132.074, 33.480000000000004],
-                    [132.306, 33.6],
-                    [132.538, 33.720000000000006],
-                    [132.77, 33.84],
                 ]
             }
         },
@@ -27936,44 +27607,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "承天-澎湖",
-                type: "road",
-                id: "road_city_tainan_city_penghu_1781961338720",
-                startConnection: "city_tainan",
-                endConnection: "city_penghu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [120.2, 22.99],
-                    [120.1311419321692, 23.12816545236483],
-                    [120.1393907766028, 23.185907363399984],
-                    [120.1270175099524, 23.247773696651933],
-                    [119.5, 23.5],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "澎湖-龙溪",
-                type: "road",
-                id: "road_city_penghu_city_zhangzhou_1781961342533",
-                startConnection: "city_penghu",
-                endConnection: "city_zhangzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [119.5, 23.5],
-                    [118.76220703125001, 24.214766557954107],
-                    [117.65, 24.51],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "陇西-宕昌",
                 type: "road",
                 id: "road_city_longxi_city_dangchang_1781961363773",
@@ -28237,55 +27870,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "文登-泗沘",
-                type: "road",
-                id: "road_city_wendeng_city_sabi_1781966079813",
-                startConnection: "city_wendeng",
-                endConnection: "city_sabi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [122.05, 37.2],
-                    [122.54699707031251, 36.80303455644134],
-                    [123.27494200000001, 36.9638385],
-                    [124.49988400000001, 36.727677],
-                    [125.72482600000001, 36.4915155],
-                    [126.337297, 36.37343475],
-                    [126.47599102929689, 36.177123473588296],
-                    [126.55769766308595, 36.04673584062965],
-                    [126.69185171997073, 35.94486764579495],
-                    [126.83742056762698, 36.05815932585866],
-                    [126.949768, 36.255354],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "文登-汉城",
-                type: "road",
-                id: "road_city_wendeng_city_hanseong_1781966631308",
-                startConnection: "city_wendeng",
-                endConnection: "city_hanseong"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [122.05, 37.2],
-                    [122.66510009765626, 37.127901652673586],
-                    [123.2825, 37.28],
-                    [124.515, 37.36],
-                    [125.7475, 37.44],
-                    [126.36375000000001, 37.480000000000004],
-                    [126.65039062500001, 37.3486925028666],
-                    [126.98, 37.52],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "文登-即墨",
                 type: "road",
                 id: "road_city_wendeng_city_jimo_1781967307922",
@@ -28324,29 +27908,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [120.60132606488402, 36.5779063013389],
                     [120.57245510936644, 36.553159768038114],
                     [120.445862, 36.403591],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "蓬莱-卑沙城",
-                type: "road",
-                id: "road_city_dengzhou_city_beishacheng_1781967506170",
-                startConnection: "city_dengzhou",
-                endConnection: "city_beishacheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [120.72, 37.82],
-                    [121.22314453125, 38.82939620976899],
-                    [121.49451812499998, 38.835432499999996],
-                    [121.57196993749999, 38.93697575],
-                    [121.64942174999999, 39.038519],
-                    [121.74499511718751, 39.13249580825884],
-                    [121.80432537499999, 39.241605500000006],
-                    [121.959229, 39.444692],
                 ]
             }
         },
@@ -29166,35 +28727,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [103.84379859803899, 30.69648022018679],
                     [103.88916724242375, 30.655235998018824],
                     [104.07, 30.57],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "漂渝津-卑沙城",
-                type: "road",
-                id: "road_city_piaoyujin_city_beishacheng_1782314874620",
-                startConnection: "city_piaoyujin",
-                endConnection: "city_beishacheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.6, 39.02],
-                    [117.9353253076923, 39.05266861538462],
-                    [118.27331542968751, 38.97905036916805],
-                    [118.60597592307691, 39.11800584615385],
-                    [118.95996093750001, 39.08782958350278],
-                    [119.27662653846153, 39.18334307692308],
-                    [119.61195184615384, 39.216011692307696],
-                    [119.94727715384614, 39.24868030769231],
-                    [120.28260246153846, 39.281348923076926],
-                    [120.61792776923076, 39.31401753846154],
-                    [120.95325307692308, 39.34668615384616],
-                    [121.28768920898438, 39.35250208665232],
-                    [121.67495727539064, 39.31852160889081],
-                    [121.959229, 39.444692],
                 ]
             }
         },
@@ -32739,132 +32271,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [64.32358491669292, 44.014239558223366],
                     [64.30708722782573, 44.03073724709055],
                     [64.3332, 44.2219],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "文登-鸣梁",
-                type: "road",
-                id: "road_city_wendeng_city_jindo_1783335508624",
-                startConnection: "city_wendeng",
-                endConnection: "city_jindo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [122.05, 37.2],
-                    [122.15972900390626, 36.71687068791304],
-                    [123.10325, 36.521750000000004],
-                    [124.1565, 35.843500000000006],
-                    [125.20975, 35.16525],
-                    [125.73637500000001, 34.826125000000005],
-                    [125.95001220703126, 34.54954921593403],
-                    [126.263, 34.487],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "宁波-太宰府",
-                type: "road",
-                id: "road_city_qingyuan_zj_city_taizaifu_1783335750967",
-                startConnection: "city_qingyuan_zj",
-                endConnection: "city_taizaifu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.54, 29.87],
-                    [122.09655761718751, 30.581179257386985],
-                    [123.785, 30.78],
-                    [126.03, 31.689999999999998],
-                    [128.275, 32.599999999999994],
-                    [128.97949218750003, 32.52828936482526],
-                    [129.3975, 33.05499999999999],
-                    [130.00396728515628, 33.20652045176062],
-                    [130.37475585937503, 33.27084277265288],
-                    [130.52, 33.51],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "刺桐-澎湖",
-                type: "road",
-                id: "road_city_qingjingsi_city_penghu_1783335863479",
-                startConnection: "city_qingjingsi",
-                endConnection: "city_penghu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [118.5833, 24.9],
-                    [119.49005126953126, 24.352101162808903],
-                    [119.5, 23.5],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "横屿-钓鱼岛",
-                type: "road",
-                id: "road_city_hengyu_city_diaoyudao_1783335929695",
-                startConnection: "city_hengyu",
-                endConnection: "city_diaoyudao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [119.7, 26.77],
-                    [119.88006591796876, 26.384488478587272],
-                    [120.65, 26.515],
-                    [121.6, 26.259999999999998],
-                    [123.5, 25.75],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "临海-钓鱼岛",
-                type: "road",
-                id: "road_city_taizhou_zj_city_diaoyudao_1783336024959",
-                startConnection: "city_taizhou_zj",
-                endConnection: "city_diaoyudao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.42, 28.66],
-                    [121.92077636718751, 28.437298668550063],
-                    [121.94, 27.932499999999997],
-                    [122.46000000000001, 27.205],
-                    [123.5, 25.75],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "澎湖-海阳",
-                type: "road",
-                id: "road_city_penghu_city_haiyang_1783336134673",
-                startConnection: "city_penghu",
-                endConnection: "city_haiyang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [119.5, 23.5],
-                    [118.0697, 23.58485],
-                    [117.30926513671876, 23.29937854799373],
-                    [116.82037353515626, 23.22620304830155],
-                    [116.6394, 23.6697],
                 ]
             }
         },
