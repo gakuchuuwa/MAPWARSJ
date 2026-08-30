@@ -45,10 +45,12 @@ interface AnimalEntry {
 // ── 可调参数 ──────────────────────────────────────────────────────────────
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
 const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
-const BIRD_DENSITY = 0.02;          // 格出现飞鸟的概率
+const BIRD_DENSITY = 0.07;          // 格出现飞鸟的概率（与陆生动物一致）
 const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 const PANE_ZINDEX = 585;            // 低于商队层(595)/城市(600)，高于道路(450)
 const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹入
+const BIRD_DRIFT_RADIUS_PX = 18;    // 飞鸟盘旋半径（屏幕像素）
+const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
 // ── 生态分区（真实世界分布）───────────────────────────────────────────────
@@ -362,17 +364,32 @@ export class AnimalAmbientLayer {
             const asset = this.assetFor(e.dir);
             if (!asset) continue;
             const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
-            if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
-            const box = asset.dirs[String(e.facing)];
+            // 飞鸟缓速盘旋：以锚点为中心做圆周漂移 + 朝向随切向转（不再"钉在空中"）
+            let drawX = pt.x;
+            let drawY = pt.y;
+            let facing = e.facing;
+            if (e.isBird) {
+                const theta = BIRD_DRIFT_SPEED * (this.nowMs / 1000) + e.phase * 0.01;
+                drawX = pt.x + BIRD_DRIFT_RADIUS_PX * Math.cos(theta);
+                drawY = pt.y + BIRD_DRIFT_RADIUS_PX * Math.sin(theta);
+                // 切向 (vx,vy)=(-sinθ,cosθ)；世界方向 dLng=vx、dLat=-vy（屏幕 y 朝下）
+                const rad = Math.atan2(-Math.sin(theta), -Math.cos(theta));
+                const deg = rad * 180 / Math.PI;
+                facing = ((Math.round((deg - 45) / 22.5) % 16) + 16) % 16;
+            }
+
+            if (drawX < -m || drawX > this.canvas.width + m || drawY < -m || drawY > this.canvas.height + m) continue;
+
+            const box = asset.dirs[String(facing)];
             if (!box) continue;
-            const sheet = asset.sheets[e.facing];
+            const sheet = asset.sheets[facing];
             if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
             const frame = Math.floor(this.nowMs / 1000 * 14 + e.phase) % asset.frames;
             const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
-            const dx = pt.x - hx * scale;
-            const dy = pt.y - hy * scale;
+            const dx = drawX - hx * scale;
+            const dy = drawY - hy * scale;
             ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
         }
     }
@@ -384,6 +401,18 @@ let visible = true;
 export function initializeAnimalAmbientLayer(gameMap: GameMap): AnimalAmbientLayer {
     if (singleton) return singleton;
     singleton = new AnimalAmbientLayer(gameMap.getLeafletMap());
+    // [2026-08-31] 按 PerfDoctor 铁律登记：任何图片缓存都必须能报**字节数**。
+    //   实测 65 种动物全部解码 635MB，是必须盯住的一块。
+    if (import.meta.env.DEV) {
+        perfDoctor.registerCache({
+            name: 'AnimalAmbientLayer:assets(动物素材)',
+            where: 'src/map/AnimalAmbientLayer.ts:ASSET_BUDGET_BYTES',
+            entries: () => singleton!.debugAssetCount(),
+            bytes: () => singleton!.debugAssetBytes(),
+            limitKind: 'bytes',
+            limitValue: 120 * 1024 * 1024,
+        });
+    }
     singleton.setVisible(visible);
     return singleton;
 }
