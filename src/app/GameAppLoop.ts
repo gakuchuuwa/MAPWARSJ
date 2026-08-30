@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { GameTime } from './GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { GameConfig } from '../config/GameConfig';
 import type { GameApp } from './GameApp';
@@ -102,7 +103,15 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
             perfMonitor.startTimer('ai');
             if (app.aiController) {
-                app.aiController.update();
+                // [2026-08-31] PerfDoctor 采样：AI 一帧的总成本。
+                //   2026-08-31 实测修前 p90 89ms / p99 339ms（五帧一爆预算），根因在
+                //   RoadRegistry.findNearestRoadEntry；修后 p90 1.0ms。两条曲线要一起看。
+                if (import.meta.env.DEV) {
+                    perfDoctor.measure('AIController.update', () => app.aiController!.update(),
+                        'src/ai/AIController.ts:update');
+                } else {
+                    app.aiController.update();
+                }
             }
             perfMonitor.endTimer('ai');
 

@@ -749,7 +749,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
     "shu": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -758,7 +758,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "huizhou_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -767,7 +767,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chu": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -776,7 +776,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "langzhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -785,7 +785,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingmen": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -794,7 +794,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cangsong": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -803,7 +803,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qingqiang": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -812,7 +812,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yangzhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -821,7 +821,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yueyi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -830,7 +830,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "lizhou_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -839,7 +839,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "fu_zhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -1730,13 +1730,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 北欧与维京·奥拉夫 / 阿布萨隆 / 比尔格雅尔 诺斯狂战士军团（鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 精锐狂战士主力 4 + 掷矛手 2）
-    nuosi: {
-        legionName: "北欧军团",
-        formationMode: 'fish_scale',
+    "nuosi": {
+        legionName: "维京军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'norse_warrior', count: 3 }, // Row 0 前卫冲锋 = 诺斯狂暴战士 3人（双手持战斧狂暴死斗冲锋）
-            { type: 'elite_berserk', count: 4 }, // Row 1 中军主力 = 维京狂战士精锐 4人（王牌重甲近卫狂战主力）
-            { type: 'skirmisher', count: 2 },    // Row 2 尾收远程投掷 = 掷矛手 2人（北欧重型飞掷标枪破盾）
+            { type: "norse_warrior", count: 3 },
+            { type: "elite_berserk", count: 4 },
+            { type: "skirmisher", count: 2 },
         ],
     },
     danmai: {
@@ -1748,22 +1748,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'skirmisher', count: 2 },
         ],
     },
-    ruidian_yota: {
-        legionName: "北欧军团",
-        formationMode: 'fish_scale',
+    "ruidian_yota": {
+        legionName: "维京军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'norse_warrior', count: 3 },
-            { type: 'elite_berserk', count: 4 },
-            { type: 'skirmisher', count: 2 },
+            { type: "norse_warrior", count: 3 },
+            { type: "elite_berserk", count: 4 },
+            { type: "skirmisher", count: 2 },
         ],
     },
-    ruidian_si: {
-        legionName: "北欧军团",
-        formationMode: 'fish_scale',
+    "ruidian_si": {
+        legionName: "维京军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'norse_warrior', count: 3 },
-            { type: 'elite_berserk', count: 4 },
-            { type: 'skirmisher', count: 2 },
+            { type: "norse_warrior", count: 3 },
+            { type: "elite_berserk", count: 4 },
+            { type: "skirmisher", count: 2 },
         ],
     },
     // 高丽王朝·王建 / 姜邯赞 / 崔茂宣 / 尹瓘 / 金就砺（高丽军团 · 锥形阵 2+3+4：火矛兵 2 + 精锐高丽战车 3 + 火焰弓手 4）
@@ -3422,7 +3422,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "walajiyia": {
-        legionName: "瓦拉几亚军团",
+        legionName: "东欧军团",
         legionType: "region",
         formationMode: "crane_wing",
         slots: [
@@ -3907,7 +3907,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiuchi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4186,7 +4186,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "guo": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4195,7 +4195,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4411,7 +4411,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "baishui": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4816,7 +4816,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tujia_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -4987,7 +4987,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "nanzhong": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5059,7 +5059,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhongxiang": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5365,7 +5365,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "shuixi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5464,7 +5464,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "miaomin": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5545,7 +5545,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qianhui": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -5950,7 +5950,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yang_bozhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6040,7 +6040,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "cong": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6076,7 +6076,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wuling": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6112,7 +6112,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bandun": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6148,7 +6148,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiang_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6157,7 +6157,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "tan_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6166,7 +6166,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ran_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6193,7 +6193,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qingyi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6229,7 +6229,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kuai": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6247,7 +6247,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6346,7 +6346,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "she": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -6355,7 +6355,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "liao": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7057,7 +7057,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qiong": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7066,7 +7066,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "zhuoshi": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         legionType: "era",
         formationMode: "crescent",
         slots: [
@@ -7076,7 +7076,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chenzhou_d": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7085,7 +7085,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "qianzhong": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7274,7 +7274,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yidou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7283,7 +7283,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "boren": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7292,7 +7292,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wanzhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7301,7 +7301,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kui": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -7526,7 +7526,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "dangchang": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8111,7 +8111,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "wumeng": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8390,7 +8390,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "haikou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8561,7 +8561,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "weizhou": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -8759,7 +8759,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aolisha": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8768,7 +8768,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kanata": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8777,7 +8777,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "adile": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8859,7 +8859,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "pidisha": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8868,7 +8868,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiaye": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8877,7 +8877,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kuertaiya": {
-        legionName: "瓦拉几亚军团",
+        legionName: "东欧军团",
         legionType: "region",
         formationMode: "crane_wing",
         slots: [
@@ -8925,7 +8925,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "suomunate": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8934,7 +8934,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "sengjialuo": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8943,7 +8943,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "varendra": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -8952,7 +8952,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chatigangren": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -9141,7 +9141,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 塔万廷苏尤（印加帝国）·马丘比丘 → 印加军团
     "tawantinsuyu": {
-        legionName: "印加军团",
+        legionName: "安第斯军团",
         formationMode: "fish_scale",
         slots: [
             { type: "kamayuk", count: 3 },
@@ -9151,7 +9151,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 库特布朝·戈尔康达（德干）→ 天竺军团
     "qutb_shahi": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
@@ -9177,6 +9177,25 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "rhomphaia_warrior", count: 3 },
             { type: "elite_peltast", count: 4 },
             { type: "thracian_peltast", count: 2 },
+        ],
+    },
+    "aqimeinide": {
+        legionName: "不死军团",
+        formationMode: "square",
+        slots: [
+            { type: "elite_war_elephant", count: 3 },
+            { type: "immortal", count: 3 },
+            { type: "immortal_ranged", count: 3 },
+        ],
+    },
+    "zhagewei": {
+        legionName: "扎格维军团",
+        legionType: "solo",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "genitour", count: 3 },
+            { type: "camel_archer", count: 4 },
         ],
     },
 };

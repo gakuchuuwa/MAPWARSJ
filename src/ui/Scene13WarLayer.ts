@@ -44,6 +44,7 @@ import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
+import { perfDoctor } from '../debug/PerfDoctor';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -198,6 +199,31 @@ function cleanCachePut(url: string, img: HTMLImageElement): void {
         CLEAN_CACHE.delete(oldest);
         if (victim) cleanCacheBytes -= bytesOf(victim);
     }
+}
+
+// [2026-08-31] 把这两个缓存登记进 PerfDoctor 体检（见 src/debug/PerfDoctor.ts）。
+//   2026-08-30 堆撞 4096MB 的根因就是它们曾按「条数」限容，而单条实测 0.9~1.7MB。
+//   ⚠️ 以后新增任何图片缓存都要在这里登记，并提供**真实字节数**而不是条数。
+if (import.meta.env.DEV) {
+    const bytesOfImg = (im: HTMLImageElement) =>
+        (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4
+        + (im.src?.startsWith('data:') ? im.src.length * 2 : 0);
+    perfDoctor.registerCache({
+        name: 'Scene13WarLayer:CLEAN_CACHE(抠绿图)',
+        where: 'src/ui/Scene13WarLayer.ts:CLEAN_CACHE',
+        entries: () => CLEAN_CACHE.size,
+        bytes: () => { let b = 0; for (const im of CLEAN_CACHE.values()) b += bytesOfImg(im); return b; },
+        limitKind: 'bytes',
+        limitValue: CLEAN_CACHE_MAX_BYTES,
+    });
+    perfDoctor.registerCache({
+        name: 'Scene13WarLayer:DECROMA_CACHE(抠绿dataURL)',
+        where: 'src/ui/Scene13WarLayer.ts:DECROMA_CACHE',
+        entries: () => DECROMA_CACHE.size,
+        bytes: () => { let b = 0; for (const v of DECROMA_CACHE.values()) b += v.length * 2; return b; },
+        limitKind: 'bytes',
+        limitValue: DECROMA_CACHE_MAX_BYTES,
+    });
 }
 
 // ── 火枪弹白烟弹线预渲染 sprite（颜色固定、跨战斗复用）──

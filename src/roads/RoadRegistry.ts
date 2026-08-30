@@ -9,6 +9,7 @@
  * - 权重: 道路长度 (km)
  */
 import { GameConfig } from '../config/GameConfig';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import {
     normalizeLongitude,
@@ -694,6 +695,10 @@ export class RoadRegistry {
             distance: number;
         } | null = null;
 
+        // [2026-08-31] PerfDoctor 采样：记录本次真正逐点扫描了多少坐标。
+        //   这个数字就是 2026-08-31 抓到根因的关键 —— 修之前是 323801（全量），修之后剪枝到几千。
+        const __t0 = performance.now();
+        let __scanned = 0;
         for (const edge of this.edges.values()) {
             const geom = this.edgeGeom(edge);
             if (!geom) continue;
@@ -703,6 +708,7 @@ export class RoadRegistry {
             if (lower > maxDistDeg) continue;
             if (best !== null && lower >= best.distance) continue;
             const coords = geom.coords;
+            __scanned += coords.length;
             const np = nearestPointOnPolyline(pos, coords);
             if (!np) continue;
             if (best === null || np.distance < best.distance) {
@@ -717,6 +723,10 @@ export class RoadRegistry {
             }
         }
 
+        if (import.meta.env.DEV) {
+            perfDoctor.note('RoadRegistry.findNearestRoadEntry', performance.now() - __t0,
+                'src/roads/RoadRegistry.ts:findNearestRoadEntry', __scanned);
+        }
         if (!best || best.distance > maxDistDeg) return null;
         return best;
     }

@@ -458,6 +458,29 @@ export default defineConfig({
                 // [2026-08-10 临时诊断] 13 编队状态探针落盘：GlobalUnitRenderer 每 2 秒 POST 一条，
                 // 写 scratch/scene13_probe_latest.json + 追加 scene13_probe_log.jsonl。
                 // 查「防守方整体不动 / 后排远程只有左右两格不动」用；结论出来后连同客户端探针一起删。
+                // [2026-08-31] PerfDoctor 卡顿诊断报告落盘（给 AI 读，见 src/debug/PerfDoctor.ts）
+                server.middlewares.use('/api/perf-doctor', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        const body = Buffer.concat(chunks).toString('utf-8');
+                        try {
+                            fs.writeFileSync(path.resolve(__dirname, 'scratch/perf_doctor_latest.json'), body, 'utf-8');
+                            fs.appendFileSync(
+                                path.resolve(__dirname, 'scratch/perf_doctor_log.jsonl'),
+                                JSON.stringify(JSON.parse(body)) + String.fromCharCode(10),
+                                'utf-8',
+                            );
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 server.middlewares.use('/api/scene13-probe', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
