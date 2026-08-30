@@ -1327,6 +1327,7 @@ const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
+const BATTLEFIELD_BASE_URL = '/SUCAI_BATTLEFIELD/';
 /** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定；TIBET 暂用印度，待查藏式 MOD）。
  *  风格前缀 + 建筑名 + AGE3 = 素材目录名（如 `WEST_CASTLE_AGE3`、`ASIA_BARRACKS_AGE3`）。 */
 const REGION_BUILDING_STYLE: Record<RegionType, string> = {
@@ -4527,14 +4528,16 @@ export class Scene13WarLayer {
         //    加载 frames.png 整条 strip 而非 preview.png 单帧，drawDecorSprite 按 frame 切片。
         const isAnim = asset.startsWith('BUILDINGANIM:');
         const isBuilding = asset.startsWith('BUILDING:') || isAnim;
-        const base = isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL;
-        const name = isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : asset);
+        const isBattlefield = asset.startsWith('BATTLEFIELD:');
+        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL);
+        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : asset));
         const im = new Image();
         im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
-        im.src = base + name + '/' + (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
+        // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）
+        im.src = base + name + '/' + (isBattlefield ? 'preview.png' : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png')));
         fetch(base + name + '/_meta.json')
             .then((r) => (r.ok ? r.json() : null))
-            .then((m) => { if (m) { na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
+            .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
             .catch(() => {});
     }
 

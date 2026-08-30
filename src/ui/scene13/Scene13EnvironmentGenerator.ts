@@ -279,6 +279,9 @@ function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
 
 function getAssetRepulsionRadius(asset: string): number {
     if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF') || asset.startsWith('MOUNTAIN_')) return 150;
+    if (asset.startsWith('BATTLEFIELD:DECAY_')) return 130; // 攻城器械残骸（288×160 大型）
+    if (asset.startsWith('BATTLEFIELD:BARRICADE') || asset.startsWith('BATTLEFIELD:STAKE')) return 100; // 拒马鹿角
+    if (asset.startsWith('BATTLEFIELD:')) return 55; // 其他战场遗存（骷髅/烽火）
     if (asset.startsWith('ROCK_FORMATION') || asset === 'ROCK_PILLAR') return 105;
     if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('STUMP_')) return 85;
     if (DE_TREE_OBJECTS.has(asset)) return 65;
@@ -314,7 +317,7 @@ function isObjectOverlapping(
 function enforceAllObjectSpacing(objects: EnvironmentObjectPlan[]): void {
     const priority = (asset: string): number => {
         if (asset.startsWith('CLIFF') || asset.startsWith('SHORT_CLIFF')) return 4;
-        if (asset.startsWith('ROCK') || asset.startsWith('MINE_')) return 3;
+        if (asset.startsWith('ROCK') || asset.startsWith('MINE_') || asset.startsWith('BATTLEFIELD:DECAY_') || asset.startsWith('BATTLEFIELD:BARRICADE')) return 3;
         if (DE_TREE_OBJECTS.has(asset)) return 2;
         return 1;
     };
@@ -665,7 +668,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
                         input.keepClear ?? [], baseTerrain);
-        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain);
+        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain, input.isSiege ?? false);
 
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -1870,7 +1873,7 @@ function buildVegetation(
     }
 }
 
-function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome, baseTile: string = ''): void {
+function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome, baseTile: string = '', isSiege: boolean = false): void {
     // 资源按**脚下底图**分配（不是 biome）。
     // 🔴 [2026-08-24 主人：「沙漠中种松树吗？？？」顺查到的同类问题]
     //    原来按 biome 分，于是安定、琅琊这些干裂黄土地(ds2)上长出**浆果丛**。
@@ -1905,6 +1908,44 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
         const asset = rng.pick(resAssets);
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
         if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+    }
+
+    // ── [2026-08-31] 战场遗存氛围（BATTLEFIELD: 前缀 = SUCAI_BATTLEFIELD 素材，preview.png 单帧）──
+    //   攻城战：倒毁攻城器械残骸 + 拒马鹿角 + 插地烽火；野战：古战场骷髅冢/穿刺遗骸。
+    if (isSiege) {
+        const DECAY_POOL = ['BATTLEFIELD:DECAY_TREBUCHET', 'BATTLEFIELD:DECAY_MANGONEL', 'BATTLEFIELD:DECAY_ONAGER', 'BATTLEFIELD:DECAY_BATTERING_RAM', 'BATTLEFIELD:DECAY_SCORPION'];
+        const BARRICADE_POOL = ['BATTLEFIELD:BARRICADE_A', 'BATTLEFIELD:BARRICADE_B', 'BATTLEFIELD:BARRICADE_C', 'BATTLEFIELD:BARRICADE_D', 'BATTLEFIELD:STAKE_BARRICADE'];
+        const TORCH_POOL = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
+        // 攻城器械残骸 1~2 个（大型，限量）
+        const decayCount = 1 + rng.int(0, 1);
+        for (let i = 0; i < decayCount; i++) {
+            const asset = rng.pick(DECAY_POOL);
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+            if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        }
+        // 拒马鹿角 2~3 个
+        const barricadeCount = 2 + rng.int(0, 1);
+        for (let i = 0; i < barricadeCount; i++) {
+            const asset = rng.pick(BARRICADE_POOL);
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+            if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        }
+        // 插地烽火 1~2 个
+        const torchCount = 1 + rng.int(0, 1);
+        for (let i = 0; i < torchCount; i++) {
+            const asset = rng.pick(TORCH_POOL);
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+            if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: false, frame: rng.int(0, 99999) });
+        }
+    } else {
+        // 野战古战场遗骸 1~2 个（骷髅冢/穿刺遗骸，扩展现有骷髅氛围）
+        const RELIC_POOL = ['BATTLEFIELD:SKELETON_BATTLEFIELD', 'BATTLEFIELD:SKELETON_SOLDIER', 'BATTLEFIELD:IMPALED_CORPSE'];
+        const relicCount = 1 + rng.int(0, 1);
+        for (let i = 0; i < relicCount; i++) {
+            const asset = rng.pick(RELIC_POOL);
+            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+            if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 import L from 'leaflet';
-import { GameMap } from './GameMap';
+import { perfDoctor } from '../debug/PerfDoctor';
+import type { GameMap } from './GameMap';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { LandSeaSystem } from '../world/land-sea';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -58,6 +59,7 @@ const CART_ANIM_FPS = 18;           // 车 move 动画帧率
 const PANE_ZINDEX = 595;            // 低于城市 marker(600)/军团(620)，高于道路(450)
 const SCALE_BASE = 0.35;            // 渲染缩放（× 2^(zoom-9)，比军团小）
 const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视口宽；须大于车队展开长度）
+const MAX_ENTRY_WAIT_SEC = 30;      // 生成后最迟 30 秒进入当前视口
 const MULE_CART_CHANCE = 0.15;      // 陆路：骡车概率（其余 = 区域贸易车满/空）
 const TRANSPORT_SHIP_CHANCE = 0.20; // 海上：运输船概率
 const CANOE_CHANCE = 0.20;          // 海上：独木舟概率
@@ -121,6 +123,18 @@ export class TradeTrafficLayer {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private assets: Map<string, TradeAsset> = new Map();
+
+    /** PerfDoctor 体检口子 */
+    public debugAssetCount(): number { return this.assets.size; }
+    public debugAssetBytes(): number {
+        let b = 0;
+        for (const a of this.assets.values()) {
+            for (const im of (a as unknown as { sheets?: (HTMLImageElement | null)[] }).sheets ?? []) {
+                if (im) b += (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4;
+            }
+        }
+        return b;
+    }
     private caravans: Caravan[] = [];
     private lastFollowedId: string | null = null;
     private running = false;
@@ -174,6 +188,10 @@ export class TradeTrafficLayer {
 
     public stop(): void {
         this.running = false;
+    }
+
+    public setVisible(visible: boolean): void {
+        this.canvas.style.display = visible ? 'block' : 'none';
     }
 
     // ── 素材加载 ────────────────────────────────────────────────────────
@@ -324,6 +342,25 @@ export class TradeTrafficLayer {
         return [{ lat: a, lng: anchor.lng }, { lat: b, lng: anchor.lng }];
     }
 
+    private initialDistForEntry(path: Pt[], cum: number[]): number {
+        const viewport = L.bounds(L.point(0, 0), this.map.getSize());
+        for (let i = 1; i < path.length; i++) {
+            const from = this.map.latLngToContainerPoint([path[i - 1].lat, path[i - 1].lng]);
+            const to = this.map.latLngToContainerPoint([path[i].lat, path[i].lng]);
+            const clipped = L.LineUtil.clipSegment(from, to, viewport, false);
+            if (!clipped) continue;
+
+            const pixelLength = from.distanceTo(to);
+            const entryFraction = pixelLength > 0
+                ? Math.min(1, from.distanceTo(clipped[0]) / pixelLength)
+                : 0;
+            const segmentLength = cum[i] - cum[i - 1];
+            const entryDist = cum[i - 1] + segmentLength * entryFraction;
+            return Math.max(0, entryDist - SPEED_DEG_PER_SEC * MAX_ENTRY_WAIT_SEC);
+        }
+        return 0;
+    }
+
     private spawnTraffic(anchor: Pt): void {
         if (this.caravans.length >= CARAVAN_MAX) return;
         const path = this.buildCrossRoute(anchor) ?? this.buildStraightRoute(anchor);
@@ -337,16 +374,24 @@ export class TradeTrafficLayer {
         this.loadAsset(shipDirName);
 
         const count = UNITS_MIN + Math.floor(Math.random() * (UNITS_MAX - UNITS_MIN + 1));
+        const initialDist = this.initialDistForEntry(path, cum);
         this.caravans.push({
             id: `trade_${this.idSeq++}`,
             path, cumLen: cum, totalLen: total,
-            dist: 0, count, cartDir, shipDir: shipDirName,
+            dist: initialDist, count, cartDir, shipDir: shipDirName,
             phase: Math.floor(Math.random() * 30), ageMs: 0,
         });
     }
 
     // ── 每帧 ────────────────────────────────────────────────────────────
     private tick(now: number): void {
+        // 🔴 [2026-08-31] 战术模式（scene13）下战略地图被整屏盖住，这层每帧重画是白烧。
+        //    原实现 rAF 无条件永久运行。视口 0×0（面板隐藏）时同样跳过。
+        if ((window as any).game?.scene13War?.isActive?.() === true
+            || this.map.getSize().x === 0) {
+            requestAnimationFrame(this.tick.bind(this));
+            return;
+        }
         if (!this.running) return;
         const dt = Math.min(0.1, Math.max(0, (now - this.lastTime) / 1000));
         this.lastTime = now;
@@ -442,13 +487,20 @@ export class TradeTrafficLayer {
 }
 
 let singleton: TradeTrafficLayer | null = null;
+let visible = true;
 
 export function initializeTradeTrafficLayer(gameMap: GameMap): TradeTrafficLayer {
     if (singleton) return singleton;
     singleton = new TradeTrafficLayer(gameMap.getLeafletMap());
+    singleton.setVisible(visible);
     return singleton;
 }
 
 export function getTradeTrafficLayer(): TradeTrafficLayer | null {
     return singleton;
+}
+
+export function setTradeTrafficLayerVisible(nextVisible: boolean): void {
+    visible = nextVisible;
+    singleton?.setVisible(visible);
 }
