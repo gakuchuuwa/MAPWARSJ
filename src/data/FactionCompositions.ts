@@ -9161,4 +9161,179 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "gastraphetes", count: 2 },
         ],
     },
+    // ============================================================
+    // 同编制同名 / 同名同编制 修复（2026-08-30 主人定：相同编制军团必须同名）
+    // 以下势力此前为 custom=0，落在 DE 文明区「暂复用父文化」默认编成上，
+    // 与其他文化区默认/既有军团撞名撞编；此处按各自史实姊妹军团补齐同名同编。
+    // ============================================================
+    // 特拉斯塔马拉王朝·拉莫塔堡（西班牙）→ 西班牙军团
+    "trastamara": {
+        legionName: "西班牙军团",
+        formationMode: "crescent",
+        slots: [
+            { type: "halberdier", count: 3 },
+            { type: "hand_cannoneer", count: 2 },
+            { type: "elite_conquistador", count: 4 },
+        ],
+    },
+    // 纳克索斯（马其顿编年史素材）→ 马其顿军团
+    "naxos_ancient": {
+        legionName: "马其顿军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
+        ],
+    },
+    // 维丁国·巴巴维达（保加利亚）→ 保加利亚军团
+    "vidin_tsardom": {
+        legionName: "保加利亚军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "konnik", count: 3 },
+            { type: "elite_konnik", count: 4 },
+            { type: "cav_archer", count: 2 },
+        ],
+    },
+    // 布拉干萨家族·布拉干萨（葡萄牙）→ 葡萄牙军团
+    "braganza_house": {
+        legionName: "葡萄牙军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "halberdier", count: 4 },
+            { type: "arbalest", count: 2 },
+            { type: "elite_organ_gun", count: 3 },
+        ],
+    },
+    // 小波兰·本津堡（波兰）→ 波兰军团
+    "lesser_poland": {
+        legionName: "波兰军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_obuch", count: 4 },
+            { type: "winged_hussar", count: 3 },
+            { type: "cav_archer", count: 2 },
+        ],
+    },
+    // 萨姆茨赫·阿哈尔齐赫（格鲁吉亚）→ 格鲁吉亚军团
+    "samtskhe": {
+        legionName: "格鲁吉亚军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "monaspa", count: 3 },
+            { type: "elite_monaspa", count: 4 },
+            { type: "cav_archer", count: 2 },
+        ],
+    },
+    // 末罗王国·比什努普尔（孟加拉）→ 孟加拉军团
+    "mallabhum": {
+        legionName: "孟加拉军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "swordsman", count: 4 },
+            { type: "elite_ratha_ranged", count: 3 },
+            { type: "archer", count: 2 },
+        ],
+    },
+    // 休族·乌斯马尔（玛雅）→ 玛雅军团
+    "tutul_xiu": {
+        legionName: "玛雅军团",
+        formationMode: "crescent",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "plumed_archer", count: 2 },
+            { type: "elite_plumed_archer", count: 4 },
+        ],
+    },
+    // 贡德尔朝·法西尔堡（埃塞俄比亚）→ 埃塞俄比亚军团
+    "gondarine": {
+        legionName: "埃塞俄比亚军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_shotel_warrior", count: 4 },
+            { type: "camel_heavy", count: 3 },
+            { type: "archer", count: 2 },
+        ],
+    },
+    // 米南加保（马来）→ 马来军团
+    "minangkabau": {
+        legionName: "马来军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "karambit_warrior_elite", count: 4 },
+            { type: "archer", count: 3 },
+        ],
+    },
+    // 托摩罗·瓜廖尔堡（瞿折罗）→ 瞿折罗军团
+    "tomara_gwalior": {
+        legionName: "瞿折罗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_elephant_archer", count: 2 },
+            { type: "elite_chakram_thrower", count: 4 },
+            { type: "elite_shrivamsha_rider", count: 3 },
+        ],
+    },
+    // 罗多彼（色雷斯）→ 色雷斯军团
+    "rhodope": {
+        legionName: "色雷斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "rhomphaia_warrior", count: 3 },
+            { type: "elite_peltast", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+        ],
+    },
+    // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团
+    "valois_angouleme": {
+        legionName: "法兰克军团",
+        formationMode: "crescent",
+        slots: [
+            { type: "champion", count: 3 },
+            { type: "paladin", count: 2 },
+            { type: "elite_throwing_axeman", count: 4 },
+        ],
+    },
+    // 塔万廷苏尤（印加帝国）·马丘比丘 → 印加军团
+    "tawantinsuyu": {
+        legionName: "印加军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "kamayuk", count: 3 },
+            { type: "elite_kamayuk", count: 4 },
+            { type: "slinger", count: 2 },
+        ],
+    },
+    // 库特布朝·戈尔康达（德干）→ 天竺军团
+    "qutb_shahi": {
+        legionName: "天竺军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    // 克尔曼·巴姆古城（波斯）→ 波斯军团
+    "kerman_bam": {
+        legionName: "波斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "elite_war_elephant", count: 3 },
+            { type: "savar", count: 4 },
+            { type: "cav_archer", count: 2 },
+        ],
+    },
+    // 奥德里西亚王国·塞乌托波利（色雷斯）→ 色雷斯军团
+    "odrysian_late": {
+        legionName: "色雷斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "rhomphaia_warrior", count: 3 },
+            { type: "elite_peltast", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+        ],
+    },
 };

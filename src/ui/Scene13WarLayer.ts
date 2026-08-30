@@ -1971,24 +1971,21 @@ const ARRIVE_EPS = 8;
  */
 /** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
 const MARCH_REL = 160;
-/** 车类兵种（与人口表口径联动：popCost 2.25 ⇔ 4×4 = 16 辆） */
-const WAGON_KEYS = new Set([
-    'war_wagon', 'elite_war_wagon',
-    'hussite_wagon', 'elite_hussite_wagon',
-    'war_chariot', 'elite_war_chariot', 'war_chariot_ranged',
-]);
 /**
- * 每个出兵口方阵的**边长**（既是横向列数，也决定该口出多少精灵 = 边长²）。
+ * 每个出兵口方阵的**横向列数**（files）。
  *
- * 主人 2026-08-18 定：**人 6×6 = 36，车 4×4 = 16**（战车体型大，36 辆排出来就是一堵墙）。
- * 🔴 边长与人口**联动**，改一个必须改另一个：该口出兵数 = 36 / popCost，
- *    所以车要出 16 辆，popCost 必须 = 36/16 = 2.25。只改排布不改人口 = 还是 36 辆、只是排得更宽。
- *    这样兵力仍守恒：16 辆 × 2.25 兵额 = 36 = 步兵那一口的兵额。
+ * 主人 2026-08-18 定：**人 6 列、大体型 4 列**（战车体型大，36 辆横排就是一堵墙）。
+ * 2026-08-30 主人：象/炮踩的是同一个坑（象 sz1.6、炮 radius20，横排 6 个太宽），一并降为 4 列。
+ *   口径从「手写车类名单」改为「按人口 ≥2」：象 2、炮 3、车 3.75/5、拉塔战车 2 全部自动命中，
+ *   与人口表（数据生成，不漏）天然联动。
+ *
+ * 🔴 files 只决定「每排几个」，**不决定出兵数**：出兵数 = poolPer / popCost（见 spawns 那处）。
+ *   只改 files 不改 popCost = 排得更窄更长，总兵额不变 → 兵力仍守恒。
  */
 const MARCH_FILES_DEFAULT = 6;
 const MARCH_FILES_WAGON = 4;
 function marchFilesOf(key: string): number {
-    return WAGON_KEYS.has(key) ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
+    return popCostOf(key) >= 2 ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
 /**
  * 槽位间距基准（px）：步兵半径 8、骑兵 10，两两之和 16~20，24 够用。

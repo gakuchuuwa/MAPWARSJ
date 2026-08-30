@@ -1027,7 +1027,7 @@ export class CityAssetManager {
 'odrysian_late': '奥德里',
 'rhodope': '罗多',
 'naxos_ancient': '纳克',
-        'zhibuluotuo': '直布',
+'zhibuluotuo': '直布',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
