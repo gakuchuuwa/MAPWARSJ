@@ -22,7 +22,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     boximiya: { name: '胡斯战车阵', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
     mazhaer: { name: '黑军侍卫', tier: 2 },          // 布达佩斯·马加什一世：黑军车堡火器大阵
     xiongyati: { name: '匈雅提卫队', tier: 3 },
-    anggelu: { name: '盾墙民兵', tier: 2 },          // 伦敦·阿尔弗雷德：埃丁顿盾墙
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
     piketai: { name: '靛蓝皮克特', tier: 2 },          // 爱丁堡·奥恩格斯（涂菘蓝战士，DE 靛蓝突袭者）
     aersasi: { name: '莱茵重步兵', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
@@ -57,5 +56,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
     pelianci: { name: '拉赫骑士', tier: 4 },
     bogendi: { name: '勃艮第轻骑', tier: 3 },
-    bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士
+    bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士,
+    anggelu: { name: '撒克逊盾墙兵', tier: 2 },
 };

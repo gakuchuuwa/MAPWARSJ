@@ -103,6 +103,7 @@ export const FACTIONS: Faction[] = [
   { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
   { id: 'kaernute', name: '卡尔努特' },
   { id: 'anggelu', name: '盎格鲁' },
+
   { id: 'yinggelan', name: '英格兰' },
   { id: 'piketai', name: '皮克特' },  // 别名：苏格兰凯尔特系（Picts）
   { id: 'gaer', name: '盖尔' },  // 别名：爱尔兰凯尔特系（Gaels）

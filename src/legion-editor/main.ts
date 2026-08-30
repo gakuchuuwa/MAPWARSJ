@@ -2290,6 +2290,50 @@ function reportLegionNameViolations(): void {
 }
 
 /** 违规列表弹窗 */
+async function autoFixLegions(): Promise<string> {
+    // [2026-08-30 主人] 一键修复：合并「编制相同但名字不同」的军团。
+    //   文化军团（65 个）是基准、手动固定、不自动改；特定军团编制与文化军团一致 → 归文化军团；
+    //   两个特定军团编制一致 → 归更早的（文件顺序更靠前的名字）。
+    const nameToSig = new Map<string, string>();
+    const nameToOrder = new Map<string, number>();
+    let order = 0;
+    for (const row of allRows) {
+        const name = effectiveLegionName(row);
+        if (!nameToSig.has(name)) {
+            nameToSig.set(name, legionSig(row));
+            nameToOrder.set(name, order++);
+        }
+    }
+    const sigToNames = new Map<string, string[]>();
+    for (const [name, sig] of nameToSig) {
+        if (!sigToNames.has(sig)) sigToNames.set(sig, []);
+        sigToNames.get(sig)!.push(name);
+    }
+    let renamed = 0;
+    const merged: string[] = [];
+    for (const [sig, names] of sigToNames) {
+        if (names.length <= 1) continue;
+        const culture = names.find(n => isRegionLegionName(n));
+        const keep = culture || names.slice().sort((a, b) => nameToOrder.get(a)! - nameToOrder.get(b)!)[0];
+        for (const n of names) {
+            if (n === keep) continue;
+            for (const row of allRows) {
+                const custom = localCustomCompositions[row.factionId];
+                if (custom?.legionName?.trim() === n) {
+                    localCustomCompositions[row.factionId] = { ...custom, legionName: keep };
+                    renamed++;
+                }
+            }
+            merged.push(`${n} → ${keep}`);
+        }
+    }
+    if (renamed === 0) return '✅ 没有需要合并的军团（相同编制已同名）';
+    buildRows();
+    applyFilter();
+    await saveAllCompositions();
+    return `✅ 一键修复完成：${renamed} 个势力归并（${merged.join('、')}）`;
+}
+
 function openLegionViolationsModal(violations: string[]): void {
     const overlay = document.createElement('div');
     overlay.className = 'le-modal-overlay';
@@ -2302,11 +2346,20 @@ function openLegionViolationsModal(violations: string[]): void {
       <div class="le-modal-body" style="grid-template-columns:1fr;gap:8px;max-height:70vh;">
         <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">相同编制必须同名 / 同名必须同编制。请先修复以下违规再落盘：</div>
         ${violations.map(v => `<div style="background:#2a1616;border:1px solid #5a2a2a;border-radius:4px;padding:8px 10px;font-size:12px;color:#ffd0c0;">${v}</div>`).join('')}
+        <button type="button" class="le-btn le-btn-primary" id="le-auto-fix" style="width:100%;font-size:13px;padding:9px;margin-top:4px;">🛠 一键修复（相同编制自动合并：特定军团归文化军团 / 归更早的）</button>
       </div>
     </div>`;
     document.body.appendChild(overlay);
     const close = () => overlay.remove();
     overlay.querySelector('#le-viol-close')?.addEventListener('click', (e) => { e.stopPropagation(); close(); });
+    overlay.querySelector('#le-auto-fix')?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const msg = await autoFixLegions();
+        showToast(msg);
+        close();
+        const remain = computeLegionNameViolations();
+        if (remain.length > 0) openLegionViolationsModal(remain);
+    });
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
     window.addEventListener('keydown', function onKey(e: KeyboardEvent) {
         if ((e as any).isComposing) return;

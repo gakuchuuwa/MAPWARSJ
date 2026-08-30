@@ -1617,13 +1617,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman_elite', count: 4 },  // Row 2 底边主力 = 精锐长弓兵 4人（长弓火力核心）
         ],
     },
-    anggelu: {
-        legionName: "不列颠军团",
-        formationMode: 'triangle',
+    "anggelu": {
+        legionName: "撒克逊盾墙军团",
+        legionType: "solo",
+        formationMode: "crescent",
         slots: [
-            { type: 'champion', count: 2 },
-            { type: 'longbowman', count: 3 },
-            { type: 'longbowman_elite', count: 4 },
+            { type: "legionary", count: 3 },
+            { type: "halberdier", count: 2 },
+            { type: "longbowman_elite", count: 4 },
         ],
     },
     // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯（法兰克军团 · 偃月阵 3+2+4：冠军剑士 3 + 游侠 2 + 精锐掷斧兵 4）
