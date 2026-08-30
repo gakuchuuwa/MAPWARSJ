@@ -492,6 +492,16 @@ let visible = true;
 export function initializeTradeTrafficLayer(gameMap: GameMap): TradeTrafficLayer {
     if (singleton) return singleton;
     singleton = new TradeTrafficLayer(gameMap.getLeafletMap());
+    // [2026-08-31] 同动物层登记。本层 CARAVAN_MAX=1、素材少，暂不设预算，先看得见。
+    if (import.meta.env.DEV) {
+        perfDoctor.registerCache({
+            name: 'TradeTrafficLayer:assets(商队/商船素材)',
+            where: 'src/map/TradeTrafficLayer.ts:assets',
+            entries: () => singleton!.debugAssetCount(),
+            bytes: () => singleton!.debugAssetBytes(),
+            limitKind: 'none',
+        });
+    }
     singleton.setVisible(visible);
     return singleton;
 }

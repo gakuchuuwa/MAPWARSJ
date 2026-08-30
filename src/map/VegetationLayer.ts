@@ -120,7 +120,7 @@ function currentTreeSeason(): TreeSeason {
  * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
  * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
  */
-const SEASON_BLEND_WINDOW = 0.35;
+const SEASON_BLEND_WINDOW = 0.75;
 
 function nextTreeSeason(s: TreeSeason): TreeSeason {
     // 游戏季推进 春→夏→秋→冬→春；映射到树态就是 0→0→1→2→0
@@ -237,7 +237,7 @@ export class VegetationLayer {
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
             this.scheduleRender();
-        }, 600);
+        }, 300);
     }
     private seasonTimer: number | null = null;
 
@@ -299,11 +299,11 @@ export class VegetationLayer {
 
         // 采样窗口没跨格 → 这一屏的林区与上次逐格相同（canvas 按 position 跟随平移），直接返回省掉整屏重采样
         const season = currentTreeSeason();
-        // 混合权重量化成 8 档进 key：过渡期每跨一档才重画一次（配合 200ms 节流，
-        // 一次过渡最多重画 8 次），既看得出渐变又不会每帧重采样。
+        // 混合权重量化成 20 档进 key：过渡期每跨一档才重画一次（每档 5% 细腻过渡），
+        // 配合 200ms 节流，一次过渡平滑均匀演进，绝无突然跳变感。
         const blend = seasonBlend();
         const nextSeason = nextTreeSeason(season);
-        const blendStep = blend > 0 && nextSeason !== season ? Math.round(blend * 8) : 0;
+        const blendStep = blend > 0 && nextSeason !== season ? Math.round(blend * 20) : 0;
         const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}|${blendStep}`;
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
