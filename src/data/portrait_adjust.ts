@@ -4923,12 +4923,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/boootiya_yibaminongda.png": {
-            "scale": 1.42,
+            "scale": 1.44,
             "offsetX": 0,
-            "offsetY": 54
+            "offsetY": 58
         },
         "/assets/LATIN/__闲置__LATIN_09.png": {
-            "scale": 1.06,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -4938,9 +4938,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 31
         },
         "/assets/LATIN/__闲置__LATIN_08.png": {
-            "scale": 1.07,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 35
+            "offsetY": 36
         },
         "/assets/LATIN/xila_dimisituokeli.png": {
             "scale": 0.96,
@@ -5038,9 +5038,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/__闲置__LATIN_04.png": {
-            "scale": 1.07,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": -8
         },
         "/assets/LATIN/moxina_luojie.png": {
             "scale": 0.98,
@@ -6338,7 +6338,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/LATIN/bosi_puluosi_liukongyishi.png": {
-            "scale": 0.95,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -6858,9 +6858,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/LATIN/fujisi_fujiweng.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 49
+            "scale": 1.21,
+            "offsetX": -17,
+            "offsetY": 53
         },
         "/assets/CENTRAL_ASIA/adile_adilesha.png": {
             "scale": 1.01,
@@ -7166,6 +7166,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 26
+        },
+        "/assets/INDIA/image.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/GREEK/__闲置__LATIN_04.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/GREEK/__闲置__LATIN_08.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 36
+        },
+        "/assets/GREEK/__闲置__LATIN_09.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GREEK/7406c7e3-81fd-45ec-abba-e11c30d504d3.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/GREEK/8455e86f-525c-46a1-9919-991c6469b63e.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/LATIN/aodesuosi_aodesuosi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GREEK/aodesuosi_aodesuosi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GREEK/boootiya_yibaminongda.png": {
+            "scale": 1.44,
+            "offsetX": 0,
+            "offsetY": 58
+        },
+        "/assets/GREEK/bosi_puluosi_liukongyishi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GREEK/fujisi_fujiweng.png": {
+            "scale": 1.21,
+            "offsetX": -17,
+            "offsetY": 53
         }
     },
     "folderGuides": {

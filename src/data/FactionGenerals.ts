@@ -1106,7 +1106,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png' },
     bulu: { generalId: 'gen_bolusi', generalName: '波鲁斯', portrait: '/assets/INDIA/bulu_bolusi.png' },
     xiaofulijiya: { generalId: 'xiaofulijiya_aerxitis', generalName: '阿尔西提斯', portrait: '/assets/WEST_ASIA/xiaofulijiya_aerxitisi.png' },
-    mallabhum: { generalId: 'gen_bir_hambir', generalName: '比尔汉比尔', portrait: '/assets/INDIA/mallabhum_birhambir.png' },
+    mallabhum: { generalId: 'gen_bir_hambir', generalName: '比尔汉比尔', portrait: '/assets/INDIA/mallabhum_bierhanbier.png' },
     vidin_tsardom: { generalId: 'gen_ivan_sratsimir', generalName: '伊凡斯拉齐', portrait: '/assets/SLAVIC/vidin_ivan.png' },
     gondarine: { generalId: 'gen_fasilides', generalName: '法西里德', portrait: '/assets/AFRICA/gondar_fasilides.png' },
     valois_angouleme: { generalId: 'gen_francis_i', generalName: '弗朗索瓦', portrait: '/assets/LATIN/valois_francis.png' },

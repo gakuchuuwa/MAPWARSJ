@@ -11,7 +11,7 @@ interface Projectile {
     progress: number; // 0.0 -> 1.0
     speed: number; // 速度 (progress per second)
     maxHeight: number; // 抛物线最高点 (Visual scale)
-    type: 'arrow' | 'stone' | 'fire';
+    type: 'arrow' | 'stone' | 'fire' | 'cannon';
 }
 
 /**
@@ -207,6 +207,26 @@ export class ProjectileRenderer {
                 ctx.fillStyle = '#ffd54a';
                 ctx.beginPath();
                 ctx.arc(6.2 * s, 0, 1.6 * s * flicker, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (p.type === 'cannon') {
+                // 炮弹（2026-08-30 海战演出）：黑色实心弹丸 + 尾烟拖影，命中即落水溅花
+                const s = currentScale;
+                // 尾烟：沿飞行反方向排 3 团渐淡灰烟
+                for (let i = 1; i <= 3; i++) {
+                    const fade = (1 - i / 4) * 0.5;
+                    ctx.fillStyle = `rgba(120, 120, 125, ${fade})`;
+                    ctx.beginPath();
+                    ctx.arc(-i * 5 * s, 0, (4.5 - i * 0.8) * s, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                // 弹丸：深铁黑 + 顶部高光
+                ctx.fillStyle = '#1c1c1e';
+                ctx.beginPath();
+                ctx.arc(0, 0, 3.2 * s, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                ctx.beginPath();
+                ctx.arc(-0.8 * s, -0.8 * s, 1.1 * s, 0, Math.PI * 2);
                 ctx.fill();
             } else {
                 // Arrow: shaft + head + fletching
