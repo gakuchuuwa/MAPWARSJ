@@ -83,6 +83,8 @@ export type RegionType =
     | 'SPARTANS'  // 斯巴达[2026-08-28 补 DE 文明]
     | 'MACEDONIANS'  // 马其顿[2026-08-28 补 DE 文明]
     | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明];
+    | 'BURMESE'      // 缅甸
+    | 'WALLACHIA'    // 瓦拉几亚
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -126,6 +128,8 @@ export const REGION_ORDER: RegionType[] = [
     'SPARTANS',
     'MACEDONIANS',
     'ACHAEMENIDS',
+    'BURMESE',
+    'WALLACHIA',
 
 ];
 
@@ -194,6 +198,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SPARTANS: '斯巴达',
     MACEDONIANS: '马其顿',
     ACHAEMENIDS: '阿契美尼德',
+    BURMESE: '缅甸',
+    WALLACHIA: '瓦拉几亚',
 
 };
 
@@ -268,6 +274,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SPARTANS: '斯巴达',
     MACEDONIANS: '马其顿',
     ACHAEMENIDS: '阿契美尼德',
+    BURMESE: '缅甸',
+    WALLACHIA: '瓦拉几亚',
 
 };
 
@@ -482,6 +490,8 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SPARTANS: '#5d4037',  // 斯巴达[2026-08-28]
     MACEDONIANS: '#455a64',  // 马其顿[2026-08-28]
     ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
+    BURMESE: '#b8860b',
+    WALLACHIA: '#7f1d1d',
 
 };
 
@@ -934,6 +944,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/west_asia_big.png'),
         pass: resolvePath('/cities/west_asia_pass.png')
     },
+    BURMESE: {
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    WALLACHIA: {
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1019,7 +1041,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
     BASHU:        ['city_chengdu'],                  // 成都
-    DIANQIAN:     ['city_pagan'],                  // 蒲甘 (主人 2026-06-14 改: 原阿瑜陀耶)
+    DIANQIAN:     ['city_dali_city'],              // 羊苴咩（缅甸拆为独立文化区后，滇缅余区中心回归大理）
     HEXI:         ['city_wuwei'],                    // 姑臧 (古名, 即凉州/武威)
     WESTERN:      ['city_yiluolucheng'],             // 伊逻卢城 (龟兹国都; 延城)
     TIBET:        ['city_luoxie'],                   // 逻些 (古名, 即拉萨)
@@ -1078,6 +1100,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SPARTANS: ['city_sparta'],  // 斯巴达（中心据点已挂）
     MACEDONIANS: ['city_salonica'],  // 马其顿·佩拉（中心据点已挂）
     ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（中心据点已挂）
+    BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
+    WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）
 
 };
 

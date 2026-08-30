@@ -122,6 +122,8 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     PURU: 'INDIA',           // 南印度 → 印度
     ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
     ACHAEMENIDS: 'CENTRAL_ASIA', // 阿契美尼德（古波斯）→ 中亚
+    BURMESE: 'DIANQIAN',         // 缅甸 → 沿用现有滇缅立绘池
+    WALLACHIA: 'SLAVIC',         // 瓦拉几亚 → 沿用现有斯拉夫立绘池
 };
 
 function collectRegionPortraitPool(region: RegionType): string[] {

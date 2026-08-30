@@ -257,6 +257,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
     MUISCA: 'MUIS_CASTLE_AGE3',              // 穆伊斯卡：黄金国要塞
     TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞
+    BURMESE: 'BURM_CASTLE_AGE3',             // 缅甸：蒲甘佛塔城堡
+    WALLACHIA: 'POENARI_CASTLE',             // 瓦拉几亚：波耶纳里山堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

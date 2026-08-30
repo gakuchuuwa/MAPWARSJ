@@ -132,6 +132,8 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SPARTANS: 'INFANTRY',  // 斯巴达[2026-08-28]
     MACEDONIANS: 'MIXED',  // 马其顿[2026-08-28]
     ACHAEMENIDS: 'MIXED',  // 阿契美尼德[2026-08-28]
+    BURMESE: 'ELEPHANT',
+    WALLACHIA: 'MIXED',
 
 };
 
@@ -241,6 +243,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SPARTANS: 'fish_scale',  // 斯巴达[2026-08-28 暂复用父文化]
     MACEDONIANS: 'crane_wing',  // 马其顿[2026-08-28 暂复用父文化]
     ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
+    BURMESE: 'triangle',
+    WALLACHIA: 'crane_wing',
 
 };
 
@@ -1514,6 +1518,8 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SPARTANS: GREEK_TIERS,  // 斯巴达[2026-08-28 暂复用父文化]
     MACEDONIANS: GREEK_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
     ACHAEMENIDS: WEST_ASIA_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
+    BURMESE: DIANQIAN_TIERS,
+    WALLACHIA: SLAVIC_TIERS,
 
 };
 
@@ -1583,6 +1589,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SPARTANS: '斯巴达军团',
     MACEDONIANS: '马其顿军团',
     ACHAEMENIDS: '阿契美尼德军团',
+    BURMESE: '缅甸军团',
+    WALLACHIA: '瓦拉几亚军团',
 
 };
 

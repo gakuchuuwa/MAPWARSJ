@@ -269,6 +269,8 @@ export class GameConfig {
             THRACIAN: [0.90, 0.90],
             PERSIAN: [1.10, 0.95],
             CUMAN: [1.15, 0.85],
+            BURMESE: [1.00, 1.10],
+            WALLACHIA: [1.00, 1.10],
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
@@ -288,6 +290,8 @@ export class GameConfig {
             THRACIAN: 1.05,
             PERSIAN: 1.05,
             CUMAN: 1.05,
+            BURMESE: 0.92,
+            WALLACHIA: 0.95,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
@@ -307,6 +311,8 @@ export class GameConfig {
             THRACIAN: 0.95,
             PERSIAN: 0.90,
             CUMAN: 0.90,
+            BURMESE: 1.00,
+            WALLACHIA: 0.95,
         } as Record<string, number>,
         /** region → 军团兵上限 */
         LEGION_TROOP_CAP_TABLE: {
@@ -326,6 +332,8 @@ export class GameConfig {
             THRACIAN: 0.90,
             PERSIAN: 1.10,
             CUMAN: 1.15,
+            BURMESE: 0.85,
+            WALLACHIA: 1.00,
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
@@ -345,6 +353,8 @@ export class GameConfig {
             THRACIAN: 0.90,
             PERSIAN: 0.90,
             CUMAN: 0.80,
+            BURMESE: 0.95,
+            WALLACHIA: 0.95,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,

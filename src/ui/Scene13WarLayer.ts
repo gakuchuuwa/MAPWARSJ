@@ -262,6 +262,8 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SPARTANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     MACEDONIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ACHAEMENIDS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
+    BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    WALLACHIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
 };
 
 /**
@@ -1257,6 +1259,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SPARTANS: 'MEDI',  // 斯巴达[2026-08-28]
     MACEDONIANS: 'MEDI',  // 马其顿[2026-08-28]
     ACHAEMENIDS: 'PERSIAN',  // 阿契美尼德[2026-08-28]
+    BURMESE: 'SEAS',
+    WALLACHIA: 'SLAV',
 
 };
 
