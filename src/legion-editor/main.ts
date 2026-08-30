@@ -1535,7 +1535,7 @@ function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFacti
         let description: string;
 
         if (tab === 'culture') {
-            const regionLabel = entry.region ? (REGION_LABELS[entry.region] ?? entry.region) : '地区';
+            const regionLabel = entry.region ? (REGION_LABELS[entry.region] ?? entry.region) : '文化';
             label = `🏛️ ${entry.name} (${regionLabel})`;
             description = `${regionLabel}${entry.fids.length ? ` · ${entry.fids.length} 势力使用` : '文化默认'} · ${legionSummary(entry.formationMode, entry.slots)}`;
         } else if (tab === 'branch') {
@@ -1566,7 +1566,7 @@ function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFacti
 
 /** 层全名（信息卡 / 步骤标题用） */
 const LAYER_FULL_LABEL: Record<'culture' | 'branch' | 'sub', string> = {
-    culture: '地区军团',
+    culture: '文化军团',
     branch: '时代军团',
     sub: '个人军团',
 };
@@ -1741,7 +1741,7 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-step-title">从现有军团套用（点击卡片即套用，再点底部「保存」落盘）</div>
       <div class="le-layer-grid" style="margin-bottom:8px;">
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
-          <div class="le-layer-title">🏛️ 地区军团</div>
+          <div class="le-layer-title">🏛️ 文化军团</div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'branch' ? 'active' : ''}" data-legiontab="branch">
           <div class="le-layer-title">🚩 时代军团</div>
@@ -1838,11 +1838,11 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 第三步 · 军团种类 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第三步</div>
-      <div class="le-step-title">军团种类（地区 / 时代 / 个人）</div>
+      <div class="le-step-title">军团种类（文化 / 时代 / 个人）</div>
       <div class="le-layer-grid">
         <button type="button" class="le-layer-btn ${curLegionType === 'region' ? 'active' : ''}" data-legiontype="region">
-          <div class="le-layer-title">🏛️ 地区军团</div>
-          <div class="le-layer-desc">地区+军团<br/>可多人选择</div>
+          <div class="le-layer-title">🏛️ 文化军团</div>
+          <div class="le-layer-desc">文化+军团<br/>可多人选择</div>
         </button>
         <button type="button" class="le-layer-btn ${curLegionType === 'era' ? 'active' : ''}" data-legiontype="era">
           <div class="le-layer-title">🚩 时代军团</div>
@@ -1981,11 +1981,13 @@ function bindPanelEvents(row: FactionLegionRow): void {
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
-        // 军团改名：若改了名且旧名被其他势力共享，则同步改名，保证「同名 = 同一军团」
+        // 军团改名：若改了名且旧名被其他势力共享，则同步改名，保证「同名 = 同一军团」。
+        // 🔴 文化区默认军团名（文化军团）是基础，不参与改名联动——改一个势力名，
+        //    不得把整个文化区默认名（如「青藏军团」64 个）一并改掉（2026-08-30 主人：文化军团为基础不可覆盖）。
         const newLegionName = currentEditingLegion.legionName?.trim();
         const oldLegionName = localCustomCompositions[row.factionId]?.legionName?.trim();
         let syncCount = 0;
-        if (newLegionName && oldLegionName && oldLegionName !== newLegionName) {
+        if (newLegionName && oldLegionName && oldLegionName !== newLegionName && !isRegionLegionName(oldLegionName)) {
             for (const fid of Object.keys(localCustomCompositions)) {
                 const comp = localCustomCompositions[fid];
                 if (fid !== row.factionId && comp?.legionName === oldLegionName) {
@@ -2006,8 +2008,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
         // 🔴 一个军团一个编制：同名军团共享阵型 + 三排兵种。
         // 改任一势力的编制，其余同名势力自动同步（formationMode + slots），
         // 避免「同名不同编制」。海军阵型与 legionType 各自保留，不随陆战编制覆盖。
+        // 🔴 文化区默认军团名（文化军团）不参与编制联动——其编制由文化区基础数据定义，
+        //    单个势力改编制不得覆盖同文化区其他势力（2026-08-30 主人）。
         let compSyncCount = 0;
-        if (newLegionName) {
+        if (newLegionName && !isRegionLegionName(newLegionName)) {
             for (const fid of Object.keys(localCustomCompositions)) {
                 const comp = localCustomCompositions[fid];
                 if (fid !== row.factionId && comp?.legionName === newLegionName) {
