@@ -2238,6 +2238,9 @@ function computeLegionNameViolations(): string[] {
     }
     for (const [sig, names] of sigMap.entries()) {
         if (names.length > 1) {
+            // 🔴 文化区默认军团豁免「相同编制必须同名」：不同文化区复用父文化编制（暂复用）是正常的，
+            //    名字不同（东欧军团 / 瓦拉几亚军团）不该报重名（2026-08-30 主人：恢复默认文化军团后不应报错）。
+            if (names.some(n => isRegionLegionName(n))) continue;
             violations.push(`相同编制（${sig}）但军团名不同：${sigFactions.get(sig)!.join('、')} → 名字 ${names.join(' / ')}（相同编制军团必须同名）`);
         }
     }
