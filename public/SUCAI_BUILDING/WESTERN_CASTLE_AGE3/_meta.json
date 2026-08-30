@@ -1,0 +1,9 @@
+{
+  "name": "WESTERN_CASTLE_AGE3",
+  "frames": 1,
+  "box_w": 492,
+  "box_h": 448,
+  "anchor_x": 280,
+  "anchor_y": 367,
+  "sld_source": "user_western_castle"
+}

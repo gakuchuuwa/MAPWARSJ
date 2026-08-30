@@ -306,7 +306,7 @@ export class CityAssetManager {
         'jilimi': '吉里',
 'hezhe': '赫哲',
 'luchuan': '麓川',
-        'chijin': '赤',
+'chijin': '赤斤',
 'xihai_d': '吐谷浑',
         'heyuan_d': '河源',
 'guiyi': '归义',
@@ -1008,6 +1008,7 @@ export class CityAssetManager {
     'xiadunhe': '下顿',
         'kelimiya': '克里',
         'xiaofulijiya': '小弗',
+        'zhibuluotuo': '直布',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

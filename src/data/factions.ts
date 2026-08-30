@@ -46,6 +46,10 @@ export const FACTIONS: Faction[] = [
   { id: 'mulabite', name: '穆拉比特' },
 
   { id: 'zhibuluotuo', name: '直布罗陀' },
+
+
+
+
   { id: 'zhayan', name: '扎扬' },
   { id: 'babali', name: '巴巴里' },
   { id: 'hamade', name: '哈马德' },
@@ -741,7 +745,8 @@ export const FACTIONS: Faction[] = [
 
                    // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
-    { id: 'chijin', name: '赤斤' },                          // 赤金堡·旗号赤（赤斤蒙古卫）
+    { id: 'chijin', name: '赤斤' },
+                          // 赤金堡·旗号赤（赤斤蒙古卫）
     // 巴音布拉格·汉张掖郡居延县；旗号延
     { id: 'xihai_d', name: '吐谷浑' },
                           // 伏俟城·隋西海郡治；旗号西海

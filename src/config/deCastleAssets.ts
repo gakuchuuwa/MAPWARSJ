@@ -140,6 +140,17 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     gandenpozhang: 'TIBET_CASTLE_AGE3',    // 甘丹颇章
     lang_clan: 'TIBET_CASTLE_AGE3',        // 帕木竹巴/朗氏
     karmapa: 'TIBET_CASTLE_AGE3',          // 噶玛巴
+    // ── 西域 ──
+    gaochang: 'WESTERN_CASTLE_AGE3',       // 高昌
+    qiuci: 'WESTERN_CASTLE_AGE3',          // 龟兹
+    yutian: 'WESTERN_CASTLE_AGE3',         // 于阗
+    shule: 'WESTERN_CASTLE_AGE3',          // 疏勒
+    yanqi: 'WESTERN_CASTLE_AGE3',          // 焉耆
+    shanshan: 'WESTERN_CASTLE_AGE3',       // 鄯善
+    loulan: 'WESTERN_CASTLE_AGE3',         // 楼兰
+    shache: 'WESTERN_CASTLE_AGE3',         // 莎车
+    yiwu: 'WESTERN_CASTLE_AGE3',           // 伊吾
+    yiduhu: 'WESTERN_CASTLE_AGE3',         // 亦都护（高昌回鹘）
     // ── 美洲 ──
     inca: 'INCA_CASTLE_AGE3',
     maya: 'MAYA_CASTLE_AGE3',
@@ -166,7 +177,7 @@ export const REGION_CASTLE: Partial<Record<RegionType, string>> = {
     KOREA: 'KORE_CASTLE_AGE3',
     STEPPE: 'MONG_CASTLE_AGE3',      // 草原：蒙古式
     TIBET: 'TIBET_CASTLE_AGE3',      // 青藏：藏式宗堡（红白宫金顶防御堡）
-    WESTERN: 'CEAS_CASTLE_AGE3',     // 西域：鞑靼/中亚（赫拉特城堡）
+    WESTERN: 'WESTERN_CASTLE_AGE3',  // 西域：汉伊融合高台绿洲城堡（高昌/龟兹/于阗丝路要塞）
     WEST_ASIA: 'PERS_CASTLE_AGE3',   // 西亚：波斯式（比 ORIE 通用更贴）
     PERSIAN: 'PERS_CASTLE_AGE3',     // 波斯：巴姆古城（2026-08-30 主人定：波斯城堡=巴姆古城）
     INDIA: 'HIND_CASTLE_AGE3',       // 印度=印度斯坦（德里七大要塞）
