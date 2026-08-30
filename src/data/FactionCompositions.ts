@@ -766,15 +766,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "hei_kuang_heavy", count: 4 },
         ],
     },
-    "chu": {
-        legionName: "川蜀军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
-        ],
-    },
     "langzhou": {
         legionName: "川蜀军团",
         formationMode: "crescent",
@@ -785,15 +776,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jingmen": {
-        legionName: "川蜀军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
-        ],
-    },
-    "cangsong": {
         legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
@@ -1109,16 +1091,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "dagnajan_elephant", count: 2 },
         ],
     },
-    // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
-    "jileinaijia": {
-        legionName: "马其顿军团",
-        formationMode: "balance_yoke",
-        slots: [
-            { type: "phalangite", count: 4 },
-            { type: "cretan_archer", count: 2 },
-            { type: "companion_cavalry", count: 3 },
-        ],
-    },
     // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）
     lagoniya: {
         legionName: "斯巴达军团",
@@ -1400,16 +1372,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'cav_archer', count: 2 },
         ],
     },
-    // 埃兰古波斯（舒特鲁克 · 苏萨）
-    ailan: {
-        legionName: "波斯军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'elite_war_elephant', count: 3 },
-            { type: 'savar', count: 4 },
-            { type: 'cav_archer', count: 2 },
-        ],
-    },
     // 萨尔巴达尔（拉扎克 · 白哈格）
     saerbadaer: {
         legionName: "波斯军团",
@@ -1596,16 +1558,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'heavy_pikeman', count: 3 },     // Row 0 前卫坚壁 = 重装长枪兵 3人（大盾长矛要塞拒马抗线）
             { type: 'crusader_knight', count: 4 },   // Row 1 中军主力 = 十字军圣骑士 4人（医院骑士团白十字重铠主力突破）
             { type: 'hand_cannoneer', count: 2 },    // Row 2 要塞火力 = 火枪兵 2人（城垒火绳枪齐射火力压制）
-        ],
-    },
-    // 不列颠·黑太子爱德华 / 阿尔弗雷德大帝（不列颠军团 · 锥形阵 2+3+4：冠军剑士 2 + 长弓兵 3 + 精锐长弓兵 4）
-    aquidan: {
-        legionName: "不列颠军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'champion', count: 2 },          // Row 0 尖刀 = 冠军剑士 2人（重剑前锋）
-            { type: 'longbowman', count: 3 },        // Row 1 中坚 = 长弓兵 3人（紫杉长弓齐射）
-            { type: 'longbowman_elite', count: 4 },  // Row 2 底边主力 = 精锐长弓兵 4人（长弓火力核心）
         ],
     },
     "anggelu": {
@@ -2034,7 +1986,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：哥特近卫军精锐 4 + 长戟兵 3 + 长弓兵 2）
     donggete: {
-        legionName: "哥特军团",
+        // [2026-08-31] 同上：占用文化军团【哥特军团】却是另一套编制。
+        //   东哥特王国（拉文纳）与泛哥特文化区分开，给自己的番号。
+        legionName: "东哥特军团",
         formationMode: 'echelon',
         slots: [
             { type: 'elite_huskarl', count: 4 },      // Row 0 前卫主力 = 哥特近卫军精锐 4人（哥特城堡兵·反弓重盾步兵主力盾墙）
@@ -2733,15 +2687,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "cav_archer_heavy", count: 4 },
         ],
     },
-    "wenling": {
-        legionName: "江南军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "jian_swordsman", count: 2 },
-            { type: "chukonu", count: 3 },
-            { type: "elite_fire_archer", count: 4 },
-        ],
-    },
     // 阿兹特克·特诺奇提特兰（库奥特莫克 · 阿兹特克军团 · 偃月阵 3+2+4：精锐鹰勇士 3 + 豹勇士 2 + 精锐豹勇士 4）
     aztec: {
         legionName: "阿兹特克军团",
@@ -2774,7 +2719,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 朱罗王朝·坦贾武尔（拉金德拉 · 达罗毗荼军团 · 偃月阵 3+2+4：剑士 3 + 攻城战象 2 + 精锐乌鲁米剑士 4；象拆剩攻城象一排，骑象弓迁潘地亚）
     "zhuluo": {
-        legionName: "达罗毗荼军团",
+        // [2026-08-31] 原名占用了文化军团【达罗毗荼军团】却是另一套编制（同名不同编）。
+        //   朱罗是南印度海权帝国，本就该有自己的番号；改成特定军团，编制原样保留。
+        legionName: "朱罗军团",
         formationMode: "crescent",
         slots: [
             { type: "sickle_warrior", count: 3 },
@@ -3021,15 +2968,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
-        ],
-    },
-    "langgeduoke": {
-        legionName: "拉丁军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
         ],
     },
     "kanpaniya": {
@@ -3362,15 +3300,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_steppe_lancer", count: 2 },
         ],
     },
-    "mengtainiya": {
-        legionName: "拉丁军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
     "teweier_gongguo": {
         legionName: "斯拉夫军团",
         legionType: "region",
@@ -3415,16 +3344,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "斯拉夫军团",
         legionType: "region",
         formationMode: "fish_scale",
-        slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
-        ],
-    },
-    "walajiyia": {
-        legionName: "东欧军团",
-        legionType: "region",
-        formationMode: "crane_wing",
         slots: [
             { type: "composite_bowman", count: 3 },
             { type: "elite_boyar", count: 4 },
@@ -5533,15 +5452,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "jian_swordsman", count: 2 },
             { type: "fire_archer", count: 3 },
             { type: "elite_chukonu", count: 4 },
-        ],
-    },
-    "pinghai": {
-        legionName: "东北军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "iron_pagoda", count: 3 },
-            { type: "elite_iron_pagoda", count: 4 },
-            { type: "kipchak", count: 2 },
         ],
     },
     "qianhui": {
@@ -8758,33 +8668,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "rattan_archer_elite", count: 4 },
         ],
     },
-    "aolisha": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "kanata": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "adile": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
     "fujisi": {
         legionName: "福基斯重步军团",
         formationMode: "fish_scale",
@@ -8858,34 +8741,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "cav_archer_heavy", count: 2 },
         ],
     },
-    "pidisha": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "jiaye": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "kuertaiya": {
-        legionName: "东欧军团",
-        legionType: "region",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
-        ],
-    },
     "puxiangyindu": {
         legionName: "葡属印度军团",
         legionType: "region",
@@ -8924,42 +8779,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "mangudai_elite", count: 4 },
         ],
     },
-    "suomunate": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "sengjialuo": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "varendra": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "chatigangren": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
     "bulu": {
         legionName: "补噜军团",
         formationMode: "fish_scale",
@@ -8967,15 +8786,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
             { type: "sannahya", count: 2 },
-        ],
-    },
-    "duonaobaojia": {
-        legionName: "色雷斯军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "rhomphaia_warrior", count: 3 },
-            { type: "elite_peltast", count: 4 },
-            { type: "thracian_peltast", count: 2 },
         ],
     },
     "ternate": {
@@ -9147,16 +8957,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "kamayuk", count: 3 },
             { type: "elite_kamayuk", count: 4 },
             { type: "slinger", count: 2 },
-        ],
-    },
-    // 库特布朝·戈尔康达（德干）→ 天竺军团
-    "qutb_shahi": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
         ],
     },
     // 克尔曼·巴姆古城（波斯）→ 波斯军团

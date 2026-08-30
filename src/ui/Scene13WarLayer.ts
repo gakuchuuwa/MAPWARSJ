@@ -4577,6 +4577,8 @@ export class Scene13WarLayer {
         const terrain = this.groundPainter.terrain;
         if (terrain) g.drawImage(terrain, 0, 0);
         for (const p of this.decorPatches) {
+            // 🔴 动态水体由 renderDynamicWater 逐帧动态渲染，不烙进静态底图 decor，根除底层静态水纹导致的重影与凝滞
+            if (p.isWater) continue;
             if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
             this.groundPainter.paintPatch(g, p, cv.width, cv.height);
         }
@@ -4589,38 +4591,18 @@ export class Scene13WarLayer {
 
 
     /**
-     * DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以 DE 官方 30° 2:1 流速平铺流动水波与波光反射
-     *
-     * 🔴 [2026-08-25 性能修·主人报「战斗模式有点卡」] 这个函数是每帧最贵的一块，改前有三处纯浪费：
-     *    ① `createPattern` **每帧每 patch 重建一次** —— img 从头到尾不变，纯白扔。已按 img 缓存。
-     *    ② 三次 `fillRect` 全用**整张画布**尺寸（4K 下 3828×1911）。clip 只挡住"画出来的结果"，
-     *       引擎该走的光栅化/裁剪测试一样得走。已收窄到 patch 自己的 bbox（涉水涟漪那边本来就在用 bbox）。
-     *    ③ 第 3 步水色增强是 `fillRect(0,0,canvas.width,canvas.height)` 纯色铺满全屏，同样收窄。
-     *    视觉不变：pattern 相位跟着 ctx 变换走，只收窄矩形不动 translate；bbox 外本来就被 clip 挡掉。
-     *    定位依据：`renderDynamicWater` 是 2026-08-21 加的，而 13 探针 986 局的 fps 中位数
-     *    正是那天从 51.2 掉到 31.9（场上人数没变、13 的 step/render 只涨 2ms），日期精确吻合。
+     * DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以舒缓自然的 2:1 流速平铺流动水波与波光反射
      */
     private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
     private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
+    private waterSoftMaskCache = new WeakMap<object, HTMLCanvasElement>();
     private waterOffscreen: HTMLCanvasElement | null = null;
     private waterOffscreenCtx: CanvasRenderingContext2D | null = null;
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
-    /** [PERF 2026-08-29] 羽化软边缓存：blur 后的水面遮罩是静态的，缓存后每帧不再重做 blur（水面卡顿主因）。 */
-    private waterSoftMask: HTMLCanvasElement | null = null;
-    private waterSoftMaskCtx: CanvasRenderingContext2D | null = null;
-    private waterSoftMaskPatchCount = -1;
-    private waterSoftMaskW = 0;
-    private waterSoftMaskH = 0;
 
     /**
      * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
-     *
-     * 🔴 为什么不写进 `p.bbox`：那个字段全项目**没有一处赋值**，恒为 undefined，
-     *    而 `renderWadingRipples` 正好 `filter(p => p.isWater && p.bbox)` —— 也就是说
-     *    2026-08-22 加的「涉水涟漪」一直是**死代码，从没显示过**。给 p.bbox 赋值会把它
-     *    连带复活，等于在「查卡顿」的改动里偷偷加一层每帧 O(men) 的椭圆描边。
-     *    死代码只报告、不顺手复活 —— 要不要复活由主人定。
      */
     private waterBBoxOf(p: DecorPatch): { x: number; y: number; w: number; h: number } | null {
         const hit = this.waterBBoxCache.get(p);
@@ -4663,109 +4645,114 @@ export class Scene13WarLayer {
         }
         const offCv = this.waterOffscreen, offCtx = this.waterOffscreenCtx!;
         const maskCv = this.waterMaskCv, maskCtx = this.waterMaskCtx!;
-        if (offCv.width !== W || offCv.height !== H) {
-            offCv.width = W; offCv.height = H;
-            maskCv.width = W; maskCv.height = H;
-        }
 
-        // ── 羽化软边（静态）：水面遮罩形状整局不变，blur 一次缓存，每帧直接贴 ──
-        // [PERF 2026-08-29] 原来每帧对每个 patch 做 filter='blur(14px)'，是水面 render 55ms 的主因。
-        if (this.waterSoftMaskPatchCount !== waterPatches.length || this.waterSoftMaskW !== W || this.waterSoftMaskH !== H) {
-            if (!this.waterSoftMask) {
-                this.waterSoftMask = document.createElement('canvas');
-                this.waterSoftMaskCtx = this.waterSoftMask.getContext('2d')!;
-            }
-            const softCv = this.waterSoftMask, softCtx = this.waterSoftMaskCtx!;
-            if (softCv.width !== W || softCv.height !== H) { softCv.width = W; softCv.height = H; }
-            softCtx.clearRect(0, 0, W, H);
-            for (const p of waterPatches) {
-                const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
-                const pad = 14 * 3;
-                const bx = Math.max(0, Math.floor(bb.x - pad));
-                const by = Math.max(0, Math.floor(bb.y - pad));
-                const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
-                const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
-                maskCtx.clearRect(0, 0, W, H);
-                maskCtx.beginPath();
+        for (const p of waterPatches) {
+            const img = p.img!;
+            const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
+            const a = p.alpha ?? 1;
+            const bb = this.waterBBoxOf(p);
+            if (!bb) continue;
+            const blurRadius = p.blur ?? (p.polygon ? 14 : 16);
+            const pad = blurRadius * 3;
+            const bx = Math.max(0, Math.floor(bb.x - pad));
+            const by = Math.max(0, Math.floor(bb.y - pad));
+            const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
+            const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
+            if (bw <= 0 || bh <= 0) continue;
+
+            let softMask = this.waterSoftMaskCache.get(p);
+            if (!softMask || softMask.width !== bw || softMask.height !== bh) {
+                softMask = document.createElement('canvas');
+                softMask.width = bw;
+                softMask.height = bh;
+                const softCtx = softMask.getContext('2d')!;
+
+                if (maskCv.width !== bw || maskCv.height !== bh) {
+                    maskCv.width = bw;
+                    maskCv.height = bh;
+                }
+                maskCtx.clearRect(0, 0, bw, bh);
+                maskCtx.fillStyle = '#ffffff';
                 if (p.polygon && p.polygon.length >= 3) {
-                    maskCtx.moveTo(p.polygon[0].x, p.polygon[0].y);
-                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x, p.polygon[i].y);
+                    maskCtx.beginPath();
+                    maskCtx.moveTo(p.polygon[0].x - bx, p.polygon[0].y - by);
+                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x - bx, p.polygon[i].y - by);
                     maskCtx.closePath();
+                    maskCtx.fill();
                 } else {
+                    maskCtx.beginPath();
                     for (const [gx, gy] of p.cells) {
-                        const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
+                        const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - by;
                         maskCtx.moveTo(sx, sy - TILE_H / 2);
                         maskCtx.lineTo(sx + TILE_W / 2, sy);
                         maskCtx.lineTo(sx, sy + TILE_H / 2);
                         maskCtx.lineTo(sx - TILE_W / 2, sy);
                         maskCtx.closePath();
                     }
+                    maskCtx.fill();
                 }
-                maskCtx.fillStyle = 'rgba(255, 255, 255, 1.0)';
-                maskCtx.fill();
+
                 softCtx.save();
-                softCtx.filter = 'blur(14px)';
-                softCtx.drawImage(maskCv, bx, by, bw, bh, bx, by, bw, bh);
+                softCtx.filter = `blur(${blurRadius}px)`;
+                softCtx.drawImage(maskCv, 0, 0);
                 softCtx.restore();
+                this.waterSoftMaskCache.set(p, softMask);
             }
-            this.waterSoftMaskPatchCount = waterPatches.length;
-            this.waterSoftMaskW = W; this.waterSoftMaskH = H;
-        }
 
-        for (const p of waterPatches) {
-            const img = p.img!;
-            const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
-            const a = p.alpha ?? 1;
-            const bb = this.waterBBoxOf(p) ?? { x: 0, y: 0, w: W, h: H };
-            const pad = 14 * 3;
-            const bx = Math.max(0, Math.floor(bb.x - pad));
-            const by = Math.max(0, Math.floor(bb.y - pad));
-            const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
-            const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
+            if (offCv.width !== bw || offCv.height !== bh) {
+                offCv.width = bw;
+                offCv.height = bh;
+            }
+            offCtx.clearRect(0, 0, bw, bh);
 
-            // 2'. 贴羽化软边（替代每帧 blur）
-            offCtx.clearRect(bx, by, bw, bh);
-            offCtx.drawImage(this.waterSoftMask!, bx, by, bw, bh, bx, by, bw, bh);
+            // 1. 贴上当前水体专属的局部羽化软边
+            offCtx.drawImage(softMask, 0, 0);
 
-            // 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
+            // 2. 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
             offCtx.save();
             offCtx.globalCompositeOperation = 'source-in';
-            const dx = (t * 24) % tw;
-            const dy = (t * 12) % th;
+
+            // 🔴 舒缓水流速度（动起来但不过快，沿 2:1 等距视角微风拂水）：
+            // 主波流速：8 px/s（X方向 8，Y方向 4）
+            const dx = (t * 8) % tw;
+            const dy = (t * 4) % th;
             let pat = this.waterPatternCache.get(img) ?? null;
             if (!pat) {
                 pat = offCtx.createPattern(img, 'repeat');
                 if (pat) this.waterPatternCache.set(img, pat);
             }
             if (pat) {
-                offCtx.translate(dx, dy);
+                // 主流动波
+                const ox = ((dx - bx) % tw + tw) % tw - tw;
+                const oy = ((dy - by) % th + th) % th - th;
+                offCtx.translate(ox, oy);
                 offCtx.fillStyle = pat;
-                offCtx.fillRect(bb.x - dx - tw - 20, bb.y - dy - th - 20, bb.w + tw * 2 + 40, bb.h + th * 2 + 40);
+                offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
 
-                // 次级微波干涉
-                offCtx.globalAlpha = 0.25;
-                const dx2 = (-t * 10) % tw;
-                const dy2 = (t * 16) % th;
-                offCtx.translate(dx2, dy2);
+                // 次级微波干涉（轻微反向慢速干涉，产生自然波光层次）
+                offCtx.globalAlpha = 0.22;
+                const dx2 = (-t * 3.5) % tw;
+                const dy2 = (t * 5) % th;
+                const ox2 = ((dx2 - bx) % tw + tw) % tw - tw;
+                const oy2 = ((dy2 - by) % th + th) % th - th;
+                offCtx.translate(ox2, oy2);
                 offCtx.fillStyle = pat;
-                offCtx.fillRect(bb.x - dx2 - tw - 20, bb.y - dy2 - th - 20, bb.w + tw * 2 + 40, bb.h + th * 2 + 40);
+                offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
             }
 
             // 清澈碧蓝浅水微光
-            offCtx.globalAlpha = 0.12;
+            offCtx.globalAlpha = 0.10;
             offCtx.fillStyle = '#60c8e8';
-            offCtx.fillRect(bb.x - 20, bb.y - 20, bb.w + 40, bb.h + 40);
+            offCtx.fillRect(0, 0, bw, bh);
             offCtx.restore();
 
-            // 3. 将羽化流动水体合成到主画布（只画水面 bbox 区域）
+            // 3. 将羽化流动水体合成到主画布
             ctx.save();
             ctx.globalAlpha = a;
-            ctx.drawImage(offCv, bx, by, bw, bh, bx, by, bw, bh);
+            ctx.drawImage(offCv, bx, by);
             ctx.restore();
-
-
         }
     }
 

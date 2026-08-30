@@ -1236,8 +1236,14 @@ function buildRows(): void {
     allRows = FACTIONS.map(f => {
         const capCityId = capitalMap.get(f.id);
         const capCity = capCityId ? cityMap.get(capCityId) : undefined;
+        // 🔴 [2026-08-31 修] 绝不能直接用 `capCity.region` 原始值。
+        //    getCityRegion 内部做了三件事：旧名翻译(LEGACY_REGION_MAP) → 校验在不在 REGION_ORDER
+        //    → 不合法才回落坐标判定。原来写成 `capCity.region || getCityRegion(...)`，
+        //    等于**把校验整个绕过去**：cities_v2 里混进来的 AoE2 文明名（FRANKS/INCAS/INDIANS/
+        //    PERSIANS/THRACIANS）被当成合法文化区直接采用，界面上文化列显示原始 ID，
+        //    保底军团被静默算成【中原军团】。统一走 getCityRegion，一处校验管到底。
         const region: RegionType = capCity
-            ? (capCity.region as RegionType || getCityRegion({ latitude: capCity.lat, longitude: capCity.lng, region: capCity.region }))
+            ? getCityRegion({ latitude: capCity.lat, longitude: capCity.lng, region: capCity.region })
             : 'CENTRAL';
         const regionLabel = REGION_LABELS[region] ?? region;
         const flagColor = HISTORICAL_FACTION_COLORS[f.id] || '#8a2020';

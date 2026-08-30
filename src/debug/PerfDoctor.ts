@@ -97,6 +97,16 @@ export class PerfDoctor {
         try { return fn(); } finally { this.note(name, performance.now() - t, where, scanned); }
     }
 
+    /**
+     * 清零采样（保留缓存登记）。
+     * AI 标准工作流：`perfDoctor.reset()` → 复现卡顿 → `perfDoctor.dump()`，
+     * 这样 hotspots 里只有本次复现的数据，不掺历史噪声。
+     */
+    public reset(): void {
+        this.hots.clear();
+        this.heapSamples.length = 0;
+    }
+
     /** 开始堆采样（DEV 自动调用一次即可） */
     public startHeapWatch(intervalMs = 2000): void {
         if (this.heapTimer) return;
@@ -116,6 +126,8 @@ export class PerfDoctor {
     private static readonly HOT_CALL_WARN_MS = 8;
     /** 平均每次调用扫描元素数超过此值 = 热路径上的全量扫描 */
     private static readonly SCAN_WARN = 5000;
+    /** 少于这么多次采样不判 critical（防把冷启动建缓存当成稳态热点） */
+    private static readonly MIN_SAMPLES_FOR_CRITICAL = 20;
 
     private q(a: number[], p: number): number {
         if (!a.length) return 0;
@@ -187,16 +199,21 @@ export class PerfDoctor {
         for (const [name, s] of this.hots) {
             const avg = s.total / Math.max(1, s.n);
             const avgScan = s.scanned / Math.max(1, s.n);
+            // 🔴 样本太少不判 critical：很多函数**第一次调用要建缓存**（如 findNearestRoadEntry
+            //    首调要为 1491 条边建几何缓存，实测 29~88ms，之后每次 0.2ms）。
+            //    只有 1~2 次采样时把冷启动当成稳态，会把接手 AI 引去优化一个根本不热的地方。
+            const enoughSamples = s.n >= PerfDoctor.MIN_SAMPLES_FOR_CRITICAL;
             if (avg >= PerfDoctor.HOT_CALL_WARN_MS || avgScan >= PerfDoctor.SCAN_WARN) {
                 out.push({
                     rule: avgScan >= PerfDoctor.SCAN_WARN ? 'hot-path-full-scan' : 'hot-call-over-budget',
-                    severity: avg >= 16.7 ? 'critical' : 'warn',
+                    severity: (avg >= 16.7 && enoughSamples) ? 'critical' : 'warn',
                     symptom: `【${name}】单次 ${avg.toFixed(1)}ms（峰值 ${s.max.toFixed(1)}ms）`
                         + (avgScan >= 1 ? `，平均每次扫描 ${Math.round(avgScan)} 个元素` : '')
                         + '。若注释自称「冷路径」请勿轻信——2026-08-31 的 findNearestRoadEntry 就自称冷路径，'
                         + '实际每次行军重算都走（攻城结束军团停在攻城圈边=离路，而战斗 90% 是攻城）。',
                     evidence: {
                         calls: s.n,
+                        coldStartSuspected: enoughSamples ? 'no' : `是（仅 ${s.n} 次采样，首调常含建缓存成本，请多跑一会儿再 dump）`,
                         avgMs: +avg.toFixed(2),
                         maxMs: +s.max.toFixed(1),
                         totalMs: +s.total.toFixed(0),
@@ -249,6 +266,12 @@ export class PerfDoctor {
             findings,
             /** 给接手 AI 的方法论：这些是**已经踩过的坑**，别重走 */
             aiGuide: {
+                workflow: [
+                    '1) perfDoctor.reset()  2) 复现卡顿（进战斗/跑战略）  3) perfDoctor.dump()',
+                    '报告落在 scratch/perf_doctor_latest.json，历史追加在 scratch/perf_doctor_log.jsonl。',
+                    '游戏里 Shift+F3 等价于 dump()（F3 是给人看的实时面板，两者不同）。',
+                    '⚠️ 战术演出（scene13）激活时战略层整体冻结，AI/军团相关 hotspots 采不到样 —— 那是设计，不是探针坏了。',
+                ],
                 readFirst: [
                     '先看 findings；它已按规则给出定位与修法。hotspots/caches 是原始证据。',
                     'findings 为空不等于不卡：可能是探针没登记。检查 caches 是否覆盖了所有图片/位图缓存。',

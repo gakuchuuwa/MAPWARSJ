@@ -94,9 +94,9 @@ export function resolveBiomeLighting(tile: string): BiomeLightingProfile {
 
 
 export function isWaterTile(tile: string): boolean {
-    // 🔴 [2026-08-22 修复方块流动 Bug] 仅真正的大江大海水体 (river_clean_green / wtr / wt*) 参与动态波纹，
+    // 🔴 仅真正的大江大海水体 (river_clean_green / wtr / wt*) 与浅滩浅水 (sh*) 参与动态波纹，
     //    绝不将地面草皮/泥土贴片误判为动态流动水体，彻底根除地面出现移动菱形方块的 Bug！
-    return tile === 'river_clean_green' || tile === 'wtr' || tile.startsWith('wt');
+    return tile === 'river_clean_green' || tile === 'wtr' || tile.startsWith('wt') || tile.startsWith('sh');
 }
 
 /** DE terrain/blends 有机咬合遮罩类别（白=目标地形、黑=露底、边缘噪点咬合）。 */
