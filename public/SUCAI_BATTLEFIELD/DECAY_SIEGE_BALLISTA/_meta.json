@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_SIEGE_BALLISTA",
+  "source": "u_sie_siege_ballista_decayA",
+  "frames": 481,
+  "box_w": 168,
+  "box_h": 88,
+  "anchor_x": 84,
+  "anchor_y": 44
+}

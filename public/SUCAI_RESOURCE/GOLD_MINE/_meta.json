@@ -1,0 +1,9 @@
+{
+  "code": "GOLD_MINE",
+  "source": "n_mine_gold",
+  "frames": 7,
+  "box_w": 96,
+  "box_h": 56,
+  "anchor_x": 48,
+  "anchor_y": 28
+}

@@ -1,0 +1,9 @@
+{
+  "code": "PERCH_FISH",
+  "source": "a_fish_perch",
+  "frames": 91,
+  "box_w": 48,
+  "box_h": 44,
+  "anchor_x": 20,
+  "anchor_y": 20
+}

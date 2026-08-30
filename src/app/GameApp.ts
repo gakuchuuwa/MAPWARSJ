@@ -31,6 +31,7 @@ import { AIController, RecruitmentSystem } from '../ai';
 import { FollowResupplySystem } from '../legion/FollowResupplySystem';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { RebellionSystem } from '../systems/RebellionSystem';
+import { initializeTradeTrafficLayer } from '../map/TradeTrafficLayer'; // [2026-08-31] 战略地图商贸交通层
 
 // [NEW] Visual Renderers
 import { GameUIManager } from './GameUIManager';
@@ -273,6 +274,9 @@ export class GameApp {
             (window as any).roadRegistry = roadRegistry; // [FIX] Expose for Army.ts
             roadRegistry.initialize(CITIES);
             this.perfMonitor.markBootPhase('矢量路网');
+
+            // [2026-08-31] 战略地图商贸交通层（商队/商船，跟随军团同屏渐显；独立层，不碰现有渲染）
+            initializeTradeTrafficLayer(this.map).start();
 
             setLoadingProgress(50);
             // [PERF] yield before heavy city load

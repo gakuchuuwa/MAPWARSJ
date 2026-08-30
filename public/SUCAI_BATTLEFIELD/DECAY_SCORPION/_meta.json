@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_SCORPION",
+  "source": "u_sie_scorpion_decayA",
+  "frames": 480,
+  "box_w": 88,
+  "box_h": 52,
+  "anchor_x": 44,
+  "anchor_y": 28
+}

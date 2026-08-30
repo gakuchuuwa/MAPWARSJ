@@ -1,0 +1,9 @@
+{
+  "code": "ROCK_FORMATION1",
+  "source": "n_rock_formation1",
+  "frames": 4,
+  "box_w": 96,
+  "box_h": 116,
+  "anchor_x": 48,
+  "anchor_y": 88
+}

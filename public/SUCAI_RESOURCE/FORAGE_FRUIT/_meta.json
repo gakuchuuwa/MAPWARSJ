@@ -1,0 +1,9 @@
+{
+  "code": "FORAGE_FRUIT",
+  "source": "n_forage_fruit",
+  "frames": 4,
+  "box_w": 108,
+  "box_h": 92,
+  "anchor_x": 52,
+  "anchor_y": 64
+}

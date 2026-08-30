@@ -1,0 +1,9 @@
+{
+  "code": "STAKE_BARRICADE",
+  "source": "s_stake_barricade",
+  "frames": 10,
+  "box_w": 96,
+  "box_h": 76,
+  "anchor_x": 46,
+  "anchor_y": 50
+}

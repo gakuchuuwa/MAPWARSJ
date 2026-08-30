@@ -1,0 +1,9 @@
+{
+  "code": "CATAPULT_SHIP_WRECK",
+  "source": "s_catapult_ship_wreck",
+  "frames": 8,
+  "box_w": 248,
+  "box_h": 180,
+  "anchor_x": 124,
+  "anchor_y": 116
+}

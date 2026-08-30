@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_FLAMETHROWER",
+  "source": "u_sie_flamethrower_decayA",
+  "frames": 480,
+  "box_w": 128,
+  "box_h": 64,
+  "anchor_x": 64,
+  "anchor_y": 32
+}

@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_SIEGE_TOWER",
+  "source": "u_sie_siege_tower_decayA",
+  "frames": 480,
+  "box_w": 164,
+  "box_h": 96,
+  "anchor_x": 82,
+  "anchor_y": 54
+}

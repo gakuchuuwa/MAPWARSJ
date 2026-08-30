@@ -1,0 +1,9 @@
+{
+  "code": "TORCH_A",
+  "source": "s_torch_a",
+  "frames": 1,
+  "box_w": 16,
+  "box_h": 68,
+  "anchor_x": 8,
+  "anchor_y": 64
+}

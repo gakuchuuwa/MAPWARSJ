@@ -1,0 +1,9 @@
+{
+  "code": "BOX_TURTLES",
+  "source": "a_fish_boxturtles",
+  "frames": 180,
+  "box_w": 68,
+  "box_h": 28,
+  "anchor_x": 32,
+  "anchor_y": 16
+}

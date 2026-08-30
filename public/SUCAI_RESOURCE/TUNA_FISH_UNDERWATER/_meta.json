@@ -1,0 +1,9 @@
+{
+  "code": "TUNA_FISH_UNDERWATER",
+  "source": "a_fish_tuna_underwater",
+  "frames": 91,
+  "box_w": 128,
+  "box_h": 80,
+  "anchor_x": 68,
+  "anchor_y": 32
+}

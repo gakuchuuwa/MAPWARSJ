@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_MANGONEL",
+  "source": "u_sie_mangonel_decayA",
+  "frames": 480,
+  "box_w": 120,
+  "box_h": 68,
+  "anchor_x": 60,
+  "anchor_y": 36
+}

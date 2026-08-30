@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_SIEGE_ONAGER",
+  "source": "u_sie_siege_onager_decayA",
+  "frames": 480,
+  "box_w": 176,
+  "box_h": 96,
+  "anchor_x": 88,
+  "anchor_y": 48
+}

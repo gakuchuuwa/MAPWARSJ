@@ -1,0 +1,9 @@
+{
+  "code": "IMPALED_CORPSE_ANT",
+  "source": "s_antiquity_impaled_corpse",
+  "frames": 5,
+  "box_w": 24,
+  "box_h": 116,
+  "anchor_x": 14,
+  "anchor_y": 110
+}

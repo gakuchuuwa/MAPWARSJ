@@ -1,0 +1,9 @@
+{
+  "code": "CHINESE_RUINS",
+  "source": "s_chinese_ruins",
+  "frames": 4,
+  "box_w": 160,
+  "box_h": 152,
+  "anchor_x": 78,
+  "anchor_y": 114
+}

@@ -1,0 +1,9 @@
+{
+  "code": "SKELETON_SOLDIER",
+  "source": "s_skeleton_soldier",
+  "frames": 8,
+  "box_w": 84,
+  "box_h": 68,
+  "anchor_x": 40,
+  "anchor_y": 44
+}

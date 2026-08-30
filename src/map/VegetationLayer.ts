@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { CITIES_V2 } from '../data/cities_v2';
 import { resolveTerrainTile } from '../ui/Scene13Biome';
+import { queryBaseTile } from '../ui/scene13/WorldBaseMap';
 import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 
@@ -209,7 +210,7 @@ export class VegetationLayer {
                 if (elev < 0 || elev > 3600) continue;
 
                 // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
-                const tile = resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
+                const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
                 const density = densityFor(tile);
                 if (density < MIN_PATCH_DENSITY) continue;
 
@@ -234,7 +235,7 @@ export class VegetationLayer {
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
 
                     // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
-                    const ptTile = resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
+                    const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
                     if (densityFor(ptTile) < MIN_PATCH_DENSITY * 0.6) continue;
 
                     const center = this.map.latLngToContainerPoint(ptLatLng);

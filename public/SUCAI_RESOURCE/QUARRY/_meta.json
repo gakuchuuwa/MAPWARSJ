@@ -1,0 +1,9 @@
+{
+  "code": "QUARRY",
+  "source": "s_quarry",
+  "frames": 1,
+  "box_w": 140,
+  "box_h": 96,
+  "anchor_x": 64,
+  "anchor_y": 60
+}

@@ -1,0 +1,9 @@
+{
+  "code": "BARRICADE_RUBBLE_D",
+  "source": "b_scen_barricade_d_rubble",
+  "frames": 1,
+  "box_w": 176,
+  "box_h": 88,
+  "anchor_x": 90,
+  "anchor_y": 54
+}

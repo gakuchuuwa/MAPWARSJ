@@ -1,0 +1,9 @@
+{
+  "code": "BEACHED_WHALE",
+  "source": "s_beached_whale",
+  "frames": 8,
+  "box_w": 272,
+  "box_h": 144,
+  "anchor_x": 148,
+  "anchor_y": 80
+}

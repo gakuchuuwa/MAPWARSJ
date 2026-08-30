@@ -1,0 +1,9 @@
+{
+  "code": "SHORE_FISH",
+  "source": "a_fish_shore",
+  "frames": 90,
+  "box_w": 36,
+  "box_h": 52,
+  "anchor_x": 32,
+  "anchor_y": 40
+}

@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_HEAVY_SCORPION",
+  "source": "u_sie_heavy_scorpion_decayA",
+  "frames": 480,
+  "box_w": 96,
+  "box_h": 60,
+  "anchor_x": 48,
+  "anchor_y": 32
+}

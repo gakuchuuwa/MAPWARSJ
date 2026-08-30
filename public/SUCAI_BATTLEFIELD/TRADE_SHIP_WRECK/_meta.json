@@ -1,0 +1,9 @@
+{
+  "code": "TRADE_SHIP_WRECK",
+  "source": "s_trade_ship_wreck",
+  "frames": 8,
+  "box_w": 156,
+  "box_h": 120,
+  "anchor_x": 68,
+  "anchor_y": 84
+}
