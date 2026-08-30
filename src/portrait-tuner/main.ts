@@ -290,7 +290,7 @@ function renderGrid(): void {
             <div class="pt-grid-canvas-wrap">
               <div class="pt-grid-img-slot">
                 <div class="img-wrapper">
-                  <img src="${path}" data-img-path="${path}" loading="lazy" />
+                  <img src="/api/portrait-thumb?path=${encodeURIComponent(path)}" data-img-path="${path}" loading="lazy" decoding="async" />
                   <div class="pt-crosshair">
                     <div class="ch-face" style="left: ${ovalCx - ovalW / 2}%; top: ${ovalCy - ovalH / 2}%; width: ${ovalW}%; height: ${ovalH}%;"></div>
                     <div class="ch-top" style="top: ${topPct}%;"></div>

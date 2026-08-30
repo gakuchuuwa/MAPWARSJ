@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { execFile, execSync } from 'child_process';
 import { pinyin } from 'pinyin-pro';
+import sharp from 'sharp';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -1046,6 +1047,54 @@ export default defineConfig({
                         res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify({ ok: false, error: err.message }));
                     }
+                });
+
+                server.middlewares.use('/api/portrait-thumb', (req, res) => {
+                    if (req.method !== 'GET') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    // [2026-08-30 卡顿修复] 网格用原图(1.1MB)当缩略图 → 一个文件夹 75 张 = 82MB 全量解码。
+                    // 这里按需生成 765px 原宽 WebP（约 70KB，缩 16 倍），磁盘缓存，原图更新后自动失效。
+                    const q = new URL(req.url ?? '', 'http://x').searchParams.get('path') ?? '';
+                    if (!/^\/assets\/[^/]+\/[^/]+\.png$/i.test(q)) {
+                        res.statusCode = 400;
+                        res.end(JSON.stringify({ ok: false, error: '非法图片路径' }));
+                        return;
+                    }
+                    const abs = path.resolve(__dirname, 'public', q.replace(/^\//, ''));
+                    if (!abs.startsWith(path.resolve(__dirname, 'public', 'assets')) || !fs.existsSync(abs)) {
+                        res.statusCode = 404;
+                        res.end(JSON.stringify({ ok: false, error: '文件不存在' }));
+                        return;
+                    }
+                    const mtimeMs = fs.statSync(abs).mtimeMs;
+                    const cacheDir = path.resolve(__dirname, '.cache', 'portrait-thumbs');
+                    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+                    const cacheFile = path.join(cacheDir, crypto.createHash('md5').update(q).digest('hex') + '.webp');
+                    if (fs.existsSync(cacheFile) && fs.statSync(cacheFile).mtimeMs >= mtimeMs) {
+                        res.setHeader('Content-Type', 'image/webp');
+                        res.setHeader('Cache-Control', 'public, max-age=3600');
+                        fs.createReadStream(cacheFile).pipe(res);
+                        return;
+                    }
+                    sharp(abs)
+                        .resize({ width: 765, withoutEnlargement: true })
+                        .webp({ quality: 80 })
+                        .toFile(cacheFile + '.tmp')
+                        .then(() => {
+                            fs.renameSync(cacheFile + '.tmp', cacheFile);
+                            res.setHeader('Content-Type', 'image/webp');
+                            res.setHeader('Cache-Control', 'public, max-age=3600');
+                            fs.createReadStream(cacheFile).pipe(res);
+                        })
+                        .catch((err: any) => {
+                            // 生成失败（如被杀软占用）→ 回退原图，绝不 500 让网格白屏
+                            console.warn(`⚠ [PortraitThumb] ${q} 生成失败，回退原图: ${err.message}`);
+                            res.setHeader('Content-Type', 'image/png');
+                            fs.createReadStream(abs).pipe(res);
+                        });
                 });
 
                 server.middlewares.use('/api/save-portrait-adjust', (req, res) => {
