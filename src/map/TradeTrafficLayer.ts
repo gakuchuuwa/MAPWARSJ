@@ -49,8 +49,16 @@ interface Caravan {
 }
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
+// 🔴 [2026-08-31] 1 → 3。全图同时只有一支车队、还只生成在跟拍军团附近，
+//    再叠上「进场要等一段」和「切跟拍就清空」，实际观感就是几乎看不到。
+//    3 支 × 每支 3~6 个单位 = 9~18 个精灵，对渲染仍是噪音级（实测本层 0.51ms/秒）。
+// [2026-08-31 主人定] 保持 1 支：3 支同屏太吵。
+// 真正让商队"看不见"的是另外两条（取跟拍军团的路径写错、切跟拍一刀清空），已分别修掉，
+// 所以 1 支也能稳定看到，不必靠堆数量。
 const CARAVAN_MIN = 1;
 const CARAVAN_MAX = 1;
+/** 切跟拍时保留车队的半径（度）：超出这个距离的旧车队才丢弃 */
+const KEEP_RADIUS_DEG = 8;
 const UNITS_MIN = 3;
 const UNITS_MAX = 6;
 const SPEED_DEG_PER_SEC = 0.18;     // 行进速度（度/秒；zoom9 ≈ 66px/s）
@@ -59,7 +67,9 @@ const CART_ANIM_FPS = 18;           // 车 move 动画帧率
 const PANE_ZINDEX = 595;            // 低于城市 marker(600)/军团(620)，高于道路(450)
 const SCALE_BASE = 0.35;            // 渲染缩放（× 2^(zoom-9)，比军团小）
 const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视口宽；须大于车队展开长度）
-const MAX_ENTRY_WAIT_SEC = 30;      // 生成后最迟 30 秒进入当前视口
+// 🔴 [2026-08-31] 30 → 8 秒。这个数是「车队生成在视口外多远」——原值意味着
+//    最长要等 30 秒它才走进画面，而镜头常常撑不到 30 秒就切走了。
+const MAX_ENTRY_WAIT_SEC = 8;       // 生成后最迟 8 秒进入当前视口
 const MULE_CART_CHANCE = 0.15;      // 陆路：骡车概率（其余 = 区域贸易车满/空）
 const TRANSPORT_SHIP_CHANCE = 0.20; // 海上：运输船概率
 const CANOE_CHANCE = 0.20;          // 海上：独木舟概率
@@ -397,18 +407,40 @@ export class TradeTrafficLayer {
         this.lastTime = now;
         this.nowMs = now;
 
-        const followed = (window as any).game?.legionManager?.getFollowedLegion?.();
+        // 🔴 [2026-08-31 修「商队总是看不到」] 原来写的是 `game.legionManager`，
+        //    但 **GameApp 上根本没有 legionManager 这个属性** —— LegionManager 挂在
+        //    `historicalEventManager.getLegionManager()` 下面（GameAppLoop 一直是这么取的）。
+        //    结果 `followed` 恒为 undefined → followedId 恒为 null → spawnTraffic **一次都没被调用**，
+        //    商队从上线起就没生成过。不是概率低看不到，是根本没有。
+        const legionMgr = (window as any).game?.historicalEventManager?.getLegionManager?.();
+        const followed = legionMgr?.getFollowedLegion?.();
         const followedId: string | null = followed?.id ?? null;
         const followedPos: Pt | null = followed ? followed.getPosition() : null;
 
         if (followedId !== this.lastFollowedId) {
             this.lastFollowedId = followedId;
-            this.caravans.length = 0; // 切跟拍 → 清掉旧车队
+            // 🔴 [2026-08-31 修「商队总是看不到」之二] 原来切跟拍**一刀清空所有车队**。
+            //    而车队是生成在视口外、要走一段才进画面的（见 initialDistForEntry），
+            //    镜头只要在这段时间内切走，车队就被删掉 —— 于是一辈子也看不到它进画面。
+            //    改成只丢「离新镜头太远、这辈子也走不过来」的，近处的继续走完它的路。
+            if (followedPos) {
+                this.caravans = this.caravans.filter((c) => {
+                    const at = TradeTrafficLayer.pointAt(c.path, c.cumLen, c.dist);
+                    const dLat = at.lat - followedPos.lat, dLng = at.lng - followedPos.lng;
+                    return Math.sqrt(dLat * dLat + dLng * dLng) <= KEEP_RADIUS_DEG;
+                });
+            } else {
+                this.caravans.length = 0;   // 完全没有跟拍目标时才清空
+            }
         }
 
         if (followedId && followedPos) {
-            if (this.caravans.length < CARAVAN_MIN) {
+            // 一帧内补满到 CARAVAN_MIN（原来一帧只补一支，配合 MAX=1 时没差别，
+            // 现在 MIN=3 就必须循环，否则要三帧才铺满）
+            while (this.caravans.length < CARAVAN_MIN) {
+                const before = this.caravans.length;
                 this.spawnTraffic(followedPos);
+                if (this.caravans.length === before) break;   // 生成失败就别死循环
             }
         }
 
