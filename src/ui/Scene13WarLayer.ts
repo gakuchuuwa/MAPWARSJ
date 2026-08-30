@@ -5868,7 +5868,15 @@ export class Scene13WarLayer {
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
         this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
-        if (this.deployT > 0) this.deployT -= dt;
+        if (this.deployT > 0) {
+            this.deployT -= dt;
+            if (this.deployT <= 0) {
+                // 🔴 [2026-08-30 修·滑步] 部署期全军静止，stuckT 累计到几秒高位；
+                //    部署结束开始移动时 stuckT 仍 > STUCK_IDLE_SEC，渲染层误播待命帧 = 人平移脚不迈（滑步）。
+                //    部署结束这一帧清空 stuckT，移动立刻切回走路帧。
+                for (const m of this.men) m.stuckT = 0;
+            }
+        }
         const deploying = this.deployT > 0;
         // 敌军重心（每帧 O(n)，供 aimAt 兜底）
         const cx = [0, 0], cy = [0, 0], cn = [0, 0];

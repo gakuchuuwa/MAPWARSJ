@@ -4977,11 +4977,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/GERMANIC/piketai_aoengesi.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 20
-        },
         "/assets/GERMANIC/weixi_ansijiaer.png": {
             "scale": 1.42,
             "offsetX": -1,
@@ -5016,11 +5011,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 26
-        },
-        "/assets/GERMANIC/__闲置__GERMANIC_04.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 21
         },
         "/assets/GERMANIC/gaer_duomunaer.png": {
             "scale": 1,
@@ -7146,6 +7136,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -18
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_19.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GERMANIC/piketai_aoengesi.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GERMANIC/gen_onuist_i.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_18.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/GERMANIC/kaernute_ketuatusi.png": {
+            "scale": 1.13,
+            "offsetX": -10,
+            "offsetY": 31
+        },
+        "/assets/GERMANIC/keernuwaye_geladelong.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 26
         }
     },
     "folderGuides": {
