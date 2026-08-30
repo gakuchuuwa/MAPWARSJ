@@ -7508,7 +7508,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/GERMANIC/valois_angouleme_fulangsuowa.png": {
-            "scale": 0.98,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -12
         },
