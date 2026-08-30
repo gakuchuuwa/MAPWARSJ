@@ -123,20 +123,23 @@ const REGION_TREES: readonly RegionTree[] = [
     { box: [20.0, 30.0, 92.0, 106.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2'],
       tree: 'LUSH_BAMBOO', why: '滇缅 + 阿萨姆 —— 茂竹' },
     // 中南半岛：顺化(16.5N)这一带原先谁都没盖到，落到 ds4 默认的橄榄
-    { box: [8.0, 23.0, 92.0, 110.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2'],
-      tree: 'LUSH_BAMBOO', why: '中南半岛 —— 茂竹' },
-    { box: [38.0, 54.0, 118.0, 136.0], bases: ['gr4', 'gr3'],
-      tree: 'BIRCH_GREEN', why: '东北 —— 白桦' },
+    { box: [8.0, 23.0, 92.0, 110.0], bases: ['ds4', 'ds3', 'gr6', 'fo2', 'grs', 'gr2', 'gr5'],
+      tree: 'LUSH_BAMBOO', why: '中南半岛 —— 茂竹（gr5 也覆盖，缅甸蒲甘/因瓦别长橡树）' },
+    { box: [38.0, 54.0, 118.0, 136.0], bases: ['gr4', 'gr3', 'gr2'],
+      tree: 'BIRCH_GREEN', why: '东北 —— 白桦（gr2 也覆盖，沈阳/文登/勃利别长亚洲枫）' },
     { box: [24.0, 34.0, 97.0, 110.0], bases: ['ds4', 'ds3', 'gr2', 'grs', 'for'],
       tree: 'BAMBOO', why: '巴蜀/云贵 —— 成都平原的红土长竹樟，不是橄榄' },
-    { box: [32.0, 42.0, 110.0, 122.0], bases: ['ds3', 'gr2', 'grs', 'for'],
-      tree: 'SCENARIO_TREE_L', why: '华北中原 —— 榆槐类高大阔叶' },
+    { box: [32.0, 42.0, 108.0, 122.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
+      tree: 'SCENARIO_TREE_L', why: '华北中原 —— 榆槐类高大阔叶（西界108E盖住长安，加gr3盖住华北半干草地）' },
     // 🔴 [2026-08-24 主人：「沙漠中种松树吗？？？」] 藏西/昆仑/帕米尔是**高山荒漠**，
     //    走 gravel_default 默认的 ASIAN_PINE 就成了沙漠种松（列城 3500m、萨毗城昆仑北麓）。
     //    那条默认在阿尔卑斯/天山这类湿润高山对，干旱高原不对。
     //    西藏有古柏（雅鲁藏布巨柏、藏东南柏木），柏比松耐旱得多。
-    { box: [28.0, 40.0, 72.0, 96.0], bases: ['gravel_default', 'des', 'snd', 'rck', 'ds5', 'pal'],
-      tree: 'CYPRESS', why: '藏西/昆仑/帕米尔高山荒漠 —— 藏柏' },
+    // 中亚/西亚戈壁：梭梭/红柳灌木（有 BUSH_TREE 素材了，别再枯树）
+    { box: [25.0, 50.0, 45.0, 100.0], bases: ['ds5', 'qs', 'pal1'],
+      tree: 'BUSH_TREE_A', why: '中亚/西亚戈壁 —— 梭梭/红柳灌木' },
+    { box: [27.5, 40.0, 72.0, 104.0], bases: ['gravel_default', 'des', 'snd', 'rck', 'ds5', 'pal'],
+      tree: 'CYPRESS', why: '藏西/昆仑/帕米尔 + 青藏东部 —— 藏柏（东界104E盖川西，南界27.5N盖香格里拉/独克宗）' },
 
     // ── 南亚 / 东南亚 ──
     { box: [-11.0, 8.0, 95.0, 141.0],
@@ -172,8 +175,11 @@ const REGION_TREES: readonly RegionTree[] = [
 
     // ── 美洲 ──
     // 城池表里美洲只有 6 座，全在中南美；北美东部一座都没有，所以那棵大树给中美高原。
-    { box: [2.0, 24.0, -106.0, -70.0], bases: ['ds3', 'ds4', 'ds2', 'gr2', 'grs', 'gr5', 'gr7', 'gr3'],
-      tree: 'SCENARIO_TREE_J', why: '中美/安第斯北高原 —— 阔叶大树' },
+    // 墨西哥高原：半干旱仙人掌/龙舌兰（阿兹特克），不是温带橡树
+    { box: [17.0, 24.0, -107.0, -96.0], bases: ['for', 'ds3', 'ds4', 'gr2', 'grs', 'gr5', 'gr7', 'gr3'],
+      tree: 'CACTUS', why: '墨西哥高原 —— 半干旱仙人掌/龙舌兰' },
+    { box: [2.0, 24.0, -106.0, -70.0], bases: ['ds3', 'ds4', 'ds2', 'gr2', 'grs', 'gr5', 'gr7', 'gr3', 'for'],
+      tree: 'SCENARIO_TREE_J', why: '中美/安第斯北高原 —— 阔叶大树（for 也覆盖，哥伦比亚热带山地别长温带橡树）' },
     // 北界必须到 2°N 接上中美框：库斯科在 -13.5，卡在 -20 会掉进两框中间的空隙，
     // 落到底图默认的亚洲松——秘鲁高原长亚洲松是硬伤。
     { box: [-56.0, 2.0, -82.0, -53.0],
@@ -186,8 +192,11 @@ const REGION_TREES: readonly RegionTree[] = [
     // 🔴 顺序敏感：这些小框必须排在「中西欧」大框前面，否则被它先吃掉。
     { box: [49.0, 61.0, -11.0, 2.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
       tree: 'SCENARIO_TREE_A', why: '不列颠/爱尔兰 —— 阔叶大树' },
-    { box: [38.0, 48.0, 13.0, 31.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
-      tree: 'SCENARIO_TREE_D', why: '巴尔干 —— 阔叶大树' },
+    // 黑海北岸：欧亚草原西端，散生阔叶不是森林
+    { box: [45.0, 49.0, 27.0, 45.0], bases: ['gr4', 'gr5', 'gr7'],
+      tree: 'OAK', why: '黑海北岸 —— 欧亚草原散生阔叶' },
+    { box: [38.0, 48.0, 13.0, 31.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3', 'gr4'],
+      tree: 'SCENARIO_TREE_D', why: '巴尔干 —— 阔叶大树（gr4 黑土也覆盖，雅西/阿克曼别长柳树）' },
     // 意大利半岛的温带底图原先漏了：佛罗伦萨落到通用橡树，该是伞松
     { box: [37.0, 46.5, 6.5, 19.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
       tree: 'ITALIAN_PINE', why: '意大利半岛 —— 伞松' },
@@ -199,8 +208,8 @@ const REGION_TREES: readonly RegionTree[] = [
     // 湿润山地草甸，交给底图默认的 GREEN_OAK（绿橡）——否则这棵树全局零使用。
     { box: [45.0, 62.0, -12.0, 32.0], bases: ['ds3', 'gr2', 'for'],
       tree: 'SCENARIO_TREE_C', why: '中西欧 —— 阔叶大树' },
-    { box: [48.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for', 'gr4'],
-      tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树（gr4 黑土也覆盖，乌克兰/日托米尔别长柳树）' },
+    { box: [46.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for', 'gr4'],
+      tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树（gr4 黑土也覆盖，南界46N盖住黑海北岸草原）' },
 ];
 
 /**

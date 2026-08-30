@@ -306,6 +306,19 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'NUERGAN': 'NORTHEAST',         // [2026-08-19] 合并: 18 大文化收敛, 奴儿干归东北
     'SOUTH_HEMISPHERE': 'CENTRAL',  // fallback (不该出现)
     'NEW_WORLD': 'CENTRAL',         // fallback (不该出现)
+
+    // ── [2026-08-31] 五个混进来的 AoE2 文明名 → 正式文化区 ──────────────
+    // 🔴 这不只是编辑器的事：这些值不在 REGION_ORDER 里，`getCityRegion` 会**静默回落到坐标判定**，
+    //    而坐标判定不覆盖美洲/南亚/伊朗 —— 实测马丘比丘、戈尔康达、巴姆古城**全被判成「中原」**，
+    //    也就是印加帝国在游戏里按中原文化出兵。加进别名表后游戏与编辑器一起修好。
+    //    归属按史实定，且与这些势力**已经在用的军团**互相印证：
+    'PERSIANS': 'PERSIAN',          // 克尔曼(巴姆古城, 伊朗) —— 单复数写错而已，本来就在用【波斯军团】
+    'THRACIANS': 'THRACIAN',        // 奥德里西亚(塞乌托波利) —— 同上，本来就在用【色雷斯军团】
+    'INCAS': 'ANDE',                // 塔万廷苏尤(马丘比丘) = 印加帝国，本来就在用【安第斯军团】
+    'INDIANS': 'PURU',              // 库特布朝(戈尔康达, 17.4°N 德干) —— 泰卢固语区，属达罗毗荼南印度。
+                                    //   注意别写成 PORUS(补噜)：那是旁遮普的波鲁斯王，在印度西北，方位相反。
+    'FRANKS': 'LATIN',              // 瓦卢瓦(香波堡, 卢瓦尔河谷) —— 法兰西王室；本表无 FRANCE，
+                                    //   拉丁基督教世界是最贴的现有归属（坐标自动判定也给 LATIN，互相印证）。
 };
 
 export type CityScale = 'big' | 'medium' | 'small' | 'pass';
