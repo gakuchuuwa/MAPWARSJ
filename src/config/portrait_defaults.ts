@@ -104,9 +104,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     BENGALIS: 'INDIA',
     GURJARAS: 'INDIA',
     PORUS: 'INDIA',
-    // 东南亚（越南→岭南、高棉→滇缅）
-    VIETNAMESE: 'LINGNAN',
-    KHMER: 'DIANQIAN',
     // 高加索 → 中亚（亚美尼亚/格鲁吉亚）
     ARMENIANS: 'CENTRAL_ASIA',
     GEORGIANS: 'CENTRAL_ASIA',
@@ -119,7 +116,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     PURU: 'INDIA',           // 南印度 → 印度
     ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
     ACHAEMENIDS: 'CENTRAL_ASIA', // 阿契美尼德（古波斯）→ 中亚
-    BURMESE: 'DIANQIAN',         // 缅甸 → 沿用现有滇缅立绘池
     WALLACHIA: 'SLAVIC',         // 瓦拉几亚 → 沿用现有斯拉夫立绘池
 };
 
@@ -136,6 +132,14 @@ const SPANISH_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set(['SPANISH']);
 
 /** 波斯专用池：波斯据点统一读取 public/assets/PERSIAN，禁止串用其他文化立绘。 */
 const PERSIAN_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set(['PERSIAN']);
+
+/** 东南亚共享专用池：越南、高棉、马来、缅甸统一读取 public/assets/SOUTHEAST_ASIA。 */
+const SOUTHEAST_ASIA_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set([
+    'VIETNAMESE',
+    'KHMER',
+    'MALAY',
+    'BURMESE',
+]);
 
 function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
@@ -156,6 +160,7 @@ function collectRegionPortraitPool(region: RegionType): string[] {
 
 /** 14 文化区 ↔ 唯一物理夹（与 RegionType 同名，禁止多夹并池） */
 export function cultureCircleFolderPrefix(region: RegionType): string {
+    if (SOUTHEAST_ASIA_PORTRAIT_REGIONS.has(region)) return '/assets/SOUTHEAST_ASIA/';
     return `/assets/${region}/`;
 }
 
@@ -910,6 +915,7 @@ function pickFactionThenCulturePath(
     if (GREEK_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
     if (SPANISH_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
     if (PERSIAN_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
+    if (SOUTHEAST_ASIA_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
 
     const fromCentral = pickRandomExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude);
     if (fromCentral) return normalizePortraitWebPath(fromCentral);
