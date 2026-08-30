@@ -201,7 +201,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     han_d: {
-        legionName: "赤帝军军团",
+        legionName: "赤帝军团",
         formationMode: 'crane_wing',
         slots: [
             { type: 'jian_swordsman', count: 2 },      // Row 0 步兵前锋 = 刀剑手 2人
@@ -506,7 +506,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 金末忠孝军·真宁（完颜陈和尚 · 忠孝军飞火震天雷大阵 · 鱼鳞阵 4+3+2：铁浮图 4 + 火矛兵 3 + 掷弹兵 2）
     xiqin: {
-        legionName: "忠孝军军团",
+        legionName: "忠孝军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'iron_pagoda', count: 4 },            // Row 0 前卫铁骑 = 女真铁浮屠 4骑（忠孝军精锐重铠铁骑，前锋雷霆冲击）
@@ -582,7 +582,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     "yanchuan_d": {
-        legionName: "背嵬军军团",
+        legionName: "背嵬军团",
         legionType: "solo",
         formationMode: "crane_wing",
         slots: [
@@ -1100,7 +1100,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
     "beileinisi": {
-        legionName: "托勒密海军军团",
+        legionName: "托勒密海军团",
         formationMode: "fish_scale",
         slots: [
             { type: "elite_shotel_warrior", count: 3 },
@@ -1170,7 +1170,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 雅典·雅典城（地米斯托克利 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 雅典将军卫队 4 + 克里特弓箭手 2）
     xila: {
-        legionName: "雅典海军军团",
+        legionName: "雅典海军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（雅典公民大盾长枪方阵正面抗线）
@@ -1321,13 +1321,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 阿契美尼德·波斯帝国军团（大流士 · 鱼鳞阵 3+4+2：精锐战象 3 + 萨瓦尔 4 + 骑射手 2）
-    aqimeinide: {
-        legionName: "波斯军团",
-        formationMode: 'fish_scale',
+    "aqimeinide": {
+        legionName: "不死军团",
+        formationMode: "square",
         slots: [
-            { type: 'elite_war_elephant', count: 3 },   // Row 0 前卫 = 波斯战象精锐 3头（象兵碾压前阵）
-            { type: 'savar', count: 4 },                // Row 1 中军主力 = 萨瓦尔重骑 4骑（萨珊铁骑重锤冲击）
-            { type: 'cav_archer', count: 2 },           // Row 2 尾收 = 骑射手 2骑（弓骑游射掩护）
+            { type: "elite_war_elephant", count: 3 },
+            { type: "immortal", count: 3 },
+            { type: "immortal_ranged", count: 3 },
         ],
     },
     // 波斯帝国军团（沙普尔大帝 · 尼沙布尔）
@@ -2569,7 +2569,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     "zhibuluotuo": {
-        legionName: "十字军军团",
+        legionName: "十字军团",
         legionType: "era",
         formationMode: "fish_scale",
         slots: [
@@ -2825,13 +2825,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 朱罗王朝·坦贾武尔（拉金德拉 · 达罗毗荼军团 · 偃月阵 3+2+4：剑士 3 + 攻城战象 2 + 精锐乌鲁米剑士 4；象拆剩攻城象一排，骑象弓迁潘地亚）
-    zhuluo: {
+    "zhuluo": {
         legionName: "达罗毗荼军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'swordsman', count: 3 },              // Row 0 前卫 = 剑士 3人（近战步兵前置抗线）
-            { type: 'ballista_elephant', count: 2 },      // Row 1 中军 = 攻城战象 2头（唯一特殊=象，弩炮战象破阵）
-            { type: 'elite_urumi_swordsman', count: 4 },  // Row 2 底边主力 = 精锐乌鲁米剑士 4人（软剑主力旋斩）
+            { type: "sickle_warrior", count: 3 },
+            { type: "ballista_elephant", count: 2 },
+            { type: "elite_urumi_swordsman", count: 4 },
         ],
     },
     // 潘地亚王朝·马杜赖（贾塔瓦尔曼 · 潘地亚军团 · 雁行阵 4+3+2：剑士 4 + 精锐骑象弓 3 + 步弓手 2；骑象弓自朱罗迁入，象一排）
@@ -3006,7 +3006,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3024,7 +3024,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3033,7 +3033,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3051,7 +3051,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3060,7 +3060,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3069,7 +3069,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3132,7 +3132,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3141,7 +3141,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3150,7 +3150,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3186,7 +3186,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3213,7 +3213,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3222,7 +3222,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3231,7 +3231,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3240,7 +3240,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3249,7 +3249,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3258,7 +3258,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3267,7 +3267,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3276,7 +3276,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3285,7 +3285,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],
@@ -3294,7 +3294,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "英格兰长弓军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "swordsman", count: 3 },
+            { type: "champion", count: 3 },
             { type: "longbowman_elite", count: 4 },
             { type: "shock_cavalry", count: 2 },
         ],

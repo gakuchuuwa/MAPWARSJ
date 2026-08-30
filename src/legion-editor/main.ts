@@ -1952,6 +1952,12 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 保存单条专属
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
+        // 🔴 军团名不得含「军军团」（军 + 军团重复），违者报错禁止建立
+        const inputLegionName = currentEditingLegion.legionName?.trim();
+        if (inputLegionName && inputLegionName.includes('军军团')) {
+            showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
+            return;
+        }
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
@@ -2012,6 +2018,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
         const curName = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
         const newName = (window.prompt('输入新军团名（另存为独立军团，不会同步到其他同名势力）：', curName))?.trim();
         if (!newName) return;
+        if (newName.includes('军军团')) {
+            showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
+            return;
+        }
         currentEditingLegion.legionName = newName;
         localCustomCompositions[row.factionId] = {
             legionName: newName,
@@ -2035,7 +2045,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
                 currentEditingLegion.legionType = lt;
                 // 个人军团 → 军团名自动命名「精锐番号 + 军团」（如 蕃落骑 → 蕃落骑军团）
                 if (lt === 'solo' && row.eliteName) {
-                    currentEditingLegion.legionName = row.eliteName + '军团';
+                    currentEditingLegion.legionName = row.eliteName.replace(/军+$/, '') + '军团';
                 }
                 renderEditPanel(row);
             }
