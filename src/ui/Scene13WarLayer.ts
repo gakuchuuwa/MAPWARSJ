@@ -6835,9 +6835,11 @@ export class Scene13WarLayer {
             const hasChg = !!this.bank[m.key]?.sets.charge?.[0]?.length;
             let set: string;
             // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）。
-            // 🔴 [2026-08-30 修] 部署期不能一刀切 idle——攻城武器要凿墙、野战列阵兵要压上，
-            //    都在真实位移，播 idle 就是贴地滑行。只让「站定待命」的（非列阵、非攻城武器）播 idle。
-            if (this.lingering || (this.deployT > 0 && !m.march && !m.siegeW) || (this.defenderHolding && !m.siegeW)) {
+            // 🔴 [2026-08-30 修·滑步] 部署期（deployT>0）step 的 deploying 分支对**所有**兵 continue（静止）、
+            //    marchTick 也 return，所以部署期全军（含列阵兵、攻城武器）都静止，应统一播 idle。
+            //    之前误加 !m.march && !m.siegeW，让静止的列阵兵播走路帧 = 原地踏步/滑步。
+            //    攻城武器真正开动是 deployT 归零后的 defenderHolding 打墙阶段，由下面 !m.siegeW 单独管。
+            if (this.lingering || this.deployT > 0 || (this.defenderHolding && !m.siegeW)) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。

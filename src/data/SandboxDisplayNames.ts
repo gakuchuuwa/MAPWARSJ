@@ -973,7 +973,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'babuer': '喀布',
   fanyanna: '梵衍',
 'wuzhou': '武',
-    'bailong': '白龙',
+'bailong': '白龙',
 'jilizhou': '积',
     'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
     'kepantuo': '渴盘',
