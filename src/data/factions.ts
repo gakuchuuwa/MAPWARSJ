@@ -1920,6 +1920,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jiaye', name: '伽耶' },
     { id: 'jienei', name: '杰内' },
     { id: 'kuertaiya', name: '巴萨拉布' },
+
     { id: 'muwaxide', name: '穆瓦希德' },
   { id: 'varendra', name: '伐连陀' },
   { id: 'chatigangren', name: '查蒂冈人' },

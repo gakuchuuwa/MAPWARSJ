@@ -1159,7 +1159,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'pidisha': '毗底',
     'jiaye': '伽耶',
     'jienei': '杰内',
-    'kuertaiya': '巴萨',
+'kuertaiya': '巴萨',
 'muwaxide': '穆瓦',
     'varendra': '伐连',
     'chatigangren': '查蒂',

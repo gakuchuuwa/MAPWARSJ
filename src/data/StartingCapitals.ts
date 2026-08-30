@@ -1092,7 +1092,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'pidisha': 'city_sangqi',
     'jiaye': 'city_putijiaye',
     'jienei': 'city_jienei',
-    'kuertaiya': 'city_agesi',
+'kuertaiya': 'city_agesi',
 'muwaxide': 'city_labate',
     'varendra': 'city_suomapuli',
     'chatigangren': 'city_jidagang',

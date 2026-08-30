@@ -64,9 +64,9 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     chude: { name: '楚德湖兵', tier: 3 },          // 尤里耶夫(塔尔图)·维切斯拉夫：守城抗条顿；冰湖主力已挂诺城民兵 → 事件文化 T3
     kaleiliya: { name: '奥涅加猎手', tier: 4 },     // 基日岛·克利姆：卡累利阿森林猎手（编）；避势力「卡累利阿」叠字
     qiekase: { name: '切尔卡瑟骑', tier: 4 },          // 切尔卡瑟·拜达；避势力「第聂伯」叠字
-    kuertaiya: { name: '瓦拉骑兵', tier: 3 },
     kelimiya: { name: '克里米骑', tier: 3 },
     vidin_tsardom: { name: '多瑙戍军', tier: 4 },
     lesser_poland: { name: '本津炮卒', tier: 4 },
     saierweiya: { name: '杜尚兵团', tier: 2 },
+    kuertaiya: { name: '瓦拉骑兵', tier: 3 },
 };
