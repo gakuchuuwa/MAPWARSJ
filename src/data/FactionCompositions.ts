@@ -581,85 +581,86 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
-    yanchuan_d: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "yanchuan_d": {
+        legionName: "背嵬军军团",
+        legionType: "solo",
+        formationMode: "crane_wing",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "elite_chukonu", count: 4 },
+            { type: "elite_keshik", count: 3 },
         ],
     },
-    sizhou: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "sizhou": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    yingzhou_d: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "yingzhou_d": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    zaoyang_d: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "zaoyang_d": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    fengzhou: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "fengzhou": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    hezhou: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "hezhou": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    changshaguo: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "changshaguo": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    shenshi: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "shenshi": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
-    luoping: {
-        legionName: "南宋军团",
-        formationMode: 'fish_scale',
+    "luoping": {
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },         // 前卫突击 = 精锐火矛手 3
-            { type: 'jian_swordsman', count: 4 },            // 中军主力 = 刀剑手 4
-            { type: 'chukonu', count: 2 },                   // 后排压阵 = 诸葛弩 2
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     // 赵宋军团·开封及宋将（赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 / 宗泽 / 韩世忠 / 文天祥 · 鱼鳞阵 3+4+2：火矛兵 3 + 火矛兵精锐主力 4 + 火焰弓手 2）
