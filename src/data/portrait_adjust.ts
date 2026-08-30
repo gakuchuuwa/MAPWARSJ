@@ -5473,7 +5473,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/peilieya_gongguo_monuomahe.png": {
-            "scale": 1.14,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 15
         },

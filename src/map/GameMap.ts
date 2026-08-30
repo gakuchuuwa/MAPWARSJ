@@ -12,6 +12,8 @@ import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
 import { ResourceSpotLayer } from './ResourceSpotLayer';
 import { MarineLifeLayer } from './MarineLifeLayer';
+import { setAnimalAmbientLayerVisible } from './AnimalAmbientLayer';
+import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
@@ -673,6 +675,14 @@ export class GameMap {
                         <input type="checkbox" id="chk-tree"> 
                         <b>🌲 开启植被图层</b>
                     </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#6d4c41;margin-top:4px;">
+                        <input type="checkbox" id="chk-animal" checked>
+                        <b>🦌 显示动物</b>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#8d6e63;margin-top:4px;">
+                        <input type="checkbox" id="chk-trade-traffic" checked>
+                        <b>🐪 显示商队</b>
+                    </label>
                     <!-- 逐像素海陆分界（默认关）：与军团变船用的判定同源，任何缩放级别都能看。
                          [2026-08-04] 原「🌊 陆海视图」已删：它走 SpeedOverlayRenderer 六边形网格，
                          硬限制 zoom≥9 且视野内 hex<1000，默认 zoom 8 下什么都不画；且判的是 hex 中心点，
@@ -771,6 +781,41 @@ export class GameMap {
             const panelHeader = document.getElementById('control-panel-header');
             const panelContent = document.getElementById('control-panel-content');
             const toggleIcon = document.getElementById('control-panel-toggle-icon');
+            const debugPanelStorageKey = 'mapwar.debugPanel.options';
+            let savedDebugPanelState: {
+                sourceKey?: string;
+                collapsed?: boolean;
+                inputs?: Record<string, string | boolean>;
+            } | null = null;
+
+            try {
+                const raw = localStorage.getItem(debugPanelStorageKey);
+                if (raw) savedDebugPanelState = JSON.parse(raw);
+            } catch {
+                savedDebugPanelState = null;
+            }
+
+            const persistDebugPanelState = () => {
+                if (!panelContent) return;
+                const inputs: Record<string, string | boolean> = {};
+                panelContent.querySelectorAll<HTMLInputElement>('input[id]').forEach((input) => {
+                    inputs[input.id] = input.type === 'checkbox' ? input.checked : input.value;
+                });
+                try {
+                    localStorage.setItem(debugPanelStorageKey, JSON.stringify({
+                        sourceKey: this.currentSourceKey,
+                        collapsed: panelContent.style.display === 'none',
+                        inputs,
+                    }));
+                } catch {
+                    // 隐私模式或存储不可用时继续使用本次会话状态。
+                }
+            };
+
+            if (panelContent && toggleIcon && savedDebugPanelState?.collapsed) {
+                panelContent.style.display = 'none';
+                toggleIcon.innerText = '◀';
+            }
             if (panelHeader && panelContent && toggleIcon) {
                 panelHeader.addEventListener('click', () => {
                     if (panelContent.style.display === 'none') {
@@ -780,6 +825,7 @@ export class GameMap {
                         panelContent.style.display = 'none';
                         toggleIcon.innerText = '◀';
                     }
+                    persistDebugPanelState();
                 });
             }
 
@@ -928,6 +974,20 @@ export class GameMap {
             
             const chkTree = document.getElementById('chk-tree') as HTMLInputElement;
             if (chkTree) chkTree.addEventListener('change', (e: any) => this.toggleTree(e.target.checked));
+
+            const chkAnimal = document.getElementById('chk-animal') as HTMLInputElement;
+            if (chkAnimal) {
+                chkAnimal.addEventListener('change', (e: any) => {
+                    setAnimalAmbientLayerVisible(!!e.target.checked);
+                });
+            }
+
+            const chkTradeTraffic = document.getElementById('chk-trade-traffic') as HTMLInputElement;
+            if (chkTradeTraffic) {
+                chkTradeTraffic.addEventListener('change', (e: any) => {
+                    setTradeTrafficLayerVisible(!!e.target.checked);
+                });
+            }
 
             const chkGrid = document.getElementById('chk-grid') as HTMLInputElement;
             if (chkGrid) chkGrid.addEventListener('change', (e: any) => this.toggleGrid(e.target.checked));
@@ -1129,6 +1189,35 @@ export class GameMap {
                     }));
                 });
             }
+
+            const savedSourceKey = savedDebugPanelState?.sourceKey;
+            if (savedSourceKey === 'LOCAL' || savedSourceKey === 'ESRI_SHADED') {
+                this.setMapSource(savedSourceKey);
+            }
+
+            const savedInputs = savedDebugPanelState?.inputs;
+            if (savedInputs && panelContent) {
+                for (const [id, value] of Object.entries(savedInputs)) {
+                    const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
+                    if (!input) continue;
+                    if (input.type === 'checkbox' && typeof value === 'boolean') {
+                        input.checked = value;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    } else if (input.type !== 'checkbox' && typeof value === 'string') {
+                        input.value = value;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            }
+
+            panelContent?.addEventListener('change', persistDebugPanelState);
+            panelContent?.addEventListener('input', (event) => {
+                if ((event.target as HTMLInputElement | null)?.type === 'range') {
+                    persistDebugPanelState();
+                }
+            });
+            btnEsri?.addEventListener('click', persistDebugPanelState);
+            btnLocal?.addEventListener('click', persistDebugPanelState);
         }, 500);
     }
 
