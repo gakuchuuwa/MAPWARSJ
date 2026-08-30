@@ -1139,8 +1139,14 @@ function injectStyles(): void {
       }
       .le-legion-card {
         background:#1c1916; border:1px solid #3a342c; border-radius:6px;
-        padding:8px 10px; cursor:pointer; transition:all 0.15s;
+        padding:8px 10px; cursor:pointer; transition:all 0.15s; position:relative;
       }
+      .le-legion-delete {
+        position:absolute; top:4px; right:4px; padding:2px 6px; font-size:11px;
+        background:transparent; border:1px solid #5a4038; border-radius:4px;
+        color:#c88a7a; cursor:pointer; line-height:1.4;
+      }
+      .le-legion-delete:hover { background:#3a2018; border-color:#c0503a; color:#f0a090; }
       .le-legion-card:hover { background:#24211c; border-color:#6a5e4c; }
       .le-legion-card.active {
         background:#2a2416; border-color:#c8a84b; box-shadow:0 0 0 1px #c8a84b inset;
@@ -1488,7 +1494,7 @@ function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
     return `${names}（${getFormationModeLabel(mode)}）`;
 }
 
-let selectedLayerTab: 'culture' | 'branch' | 'sub' = 'branch';
+let selectedLayerTab: 'culture' | 'branch' | 'sub' = 'culture';
 let selectedLayerKey: string = '';
 /** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
 let legionSearchQuery = '';
@@ -1540,18 +1546,20 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
         }
     }
-    // 2. 自定义军团（有 legionName 的自定义势力）
+    // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。
+    //    隐式势力（无显式 legionName）的军团 = 文化区默认名，必须算进文化军团的 fids，
+    //    否则「文化军团」页签会误显示 0 势力（2026-08-30 主人：65 个文化军团每个都该有势力）。
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
-        const name = custom?.legionName?.trim();
+        const name = effectiveLegionName(row);
         if (!name) continue;
         let entry = map.get(name);
         if (!entry) {
-            entry = { name, formationMode: custom.formationMode, slots: custom.slots.map(s => ({ ...s })), fids: [] };
+            entry = { name, formationMode: custom?.formationMode ?? 'square', slots: (custom?.slots ?? []).map(s => ({ ...s })), fids: [] };
             map.set(name, entry);
         }
         entry.fids.push(row.factionId);
-        if (entry.fids.length === 1) {
+        if (entry.fids.length === 1 && custom) {
             entry.formationMode = custom.formationMode;
             entry.slots = custom.slots.map(s => ({ ...s }));
         }
@@ -1780,11 +1788,8 @@ function renderEditPanel(row: FactionLegionRow): void {
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
           <div class="le-layer-title">🏛️ 文化军团</div>
         </button>
-        <button type="button" class="le-layer-btn ${selectedLayerTab === 'branch' ? 'active' : ''}" data-legiontab="branch">
-          <div class="le-layer-title">🚩 时代军团</div>
-        </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
-          <div class="le-layer-title">⭐ 个人军团</div>
+          <div class="le-layer-title">⭐ 特定军团</div>
         </button>
       </div>
       <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
@@ -1875,19 +1880,15 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 第三步 · 军团种类 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第三步</div>
-      <div class="le-step-title">军团种类（文化 / 时代 / 个人）</div>
+      <div class="le-step-title">军团种类（文化军团 / 特定军团）</div>
       <div class="le-layer-grid">
         <button type="button" class="le-layer-btn ${curLegionType === 'region' ? 'active' : ''}" data-legiontype="region">
           <div class="le-layer-title">🏛️ 文化军团</div>
-          <div class="le-layer-desc">文化+军团<br/>可多人选择</div>
-        </button>
-        <button type="button" class="le-layer-btn ${curLegionType === 'era' ? 'active' : ''}" data-legiontype="era">
-          <div class="le-layer-title">🚩 时代军团</div>
-          <div class="le-layer-desc">朝代+军团（如秦朝军团）<br/>可多人选择</div>
+          <div class="le-layer-desc">文化区默认<br/>一键可恢复</div>
         </button>
         <button type="button" class="le-layer-btn ${curLegionType === 'solo' ? 'active' : ''}" data-legiontype="solo">
-          <div class="le-layer-title">⭐ 个人军团</div>
-          <div class="le-layer-desc">个人专属（如白袍骑兵军团）<br/>只能一个套用</div>
+          <div class="le-layer-title">⭐ 特定军团</div>
+          <div class="le-layer-desc">自己创建<br/>独立不联动</div>
         </button>
       </div>
     </div>
@@ -2030,10 +2031,9 @@ function bindPanelEvents(row: FactionLegionRow): void {
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
-        // 🔴 [2026-08-30 主人] 保存只改当前势力，取消「同名联动」（改名同步 + 编制同步）。
-        //    原「同名军团共享编制」的联动机制，改一个势力会把几十个同名势力全改掉
-        //    （青藏军团→唐朝军团→川蜀军团），文化军团与个人军团全部被覆盖。
-        //    现在：文化军团（文化区默认名）是基础、个人军团独立，改一个只改一个。
+        // 🔴 [2026-08-30 主人] 改名不连锁（改一个势力名只改它自己——之前青藏→唐朝→川蜀的灾难根因），
+        //    但同名军团共享编制（编制同步）：同名 = 同一军团 = 同编制（铁律要求）。
+        const newLegionName = currentEditingLegion.legionName?.trim();
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
             legionType: currentEditingLegion.legionType,
@@ -2042,13 +2042,30 @@ function bindPanelEvents(row: FactionLegionRow): void {
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
         };
 
+        // 编制同步：同名军团共享阵型 + 三排兵种（名字/legionType/海军阵型各自保留）
+        let compSyncCount = 0;
+        if (newLegionName) {
+            for (const fid of Object.keys(localCustomCompositions)) {
+                const comp = localCustomCompositions[fid];
+                if (fid !== row.factionId && comp?.legionName?.trim() === newLegionName) {
+                    localCustomCompositions[fid] = {
+                        ...comp,
+                        formationMode: currentEditingLegion.formationMode,
+                        slots: currentEditingLegion.slots.map(s => ({ ...s })),
+                    };
+                    compSyncCount++;
+                }
+            }
+        }
+
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
         // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
         await saveAllCompositions();
-        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`);
+        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
+            + (compSyncCount > 0 ? `；同名军团编制同步了 ${compSyncCount} 个势力` : ''));
     });
 
     // 另存为新军团：独立命名，不联动同名势力
@@ -2154,15 +2171,27 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
     if (!gridEl) return;
     const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
     const visible = filterLegionOptionsByQuery(options);
+    const isSubLayer = selectedLayerTab === 'sub';
     gridEl.innerHTML = visible.map(opt => `
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
         <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}</div>
         <div class="lc-meta">${opt.description}</div>
+        ${isSubLayer ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此军团，用它的势力恢复为所在文化军团">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
         : '<div class="le-empty-hint" style="padding:14px;">该类型暂无军团可选</div>');
     gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
+    // 删除军团（仅个人军团层渲染删除按钮；文化军团不渲染，天然不可删）
+    gridEl.querySelectorAll('.le-legion-delete[data-delete-name]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const name = (btn as HTMLElement).dataset.deleteName!;
+            if (!window.confirm(`删除军团【${name}】？用它的所有势力将恢复为所在文化的文化军团。`)) return;
+            await deleteSpecificLegion(name);
+            renderEditPanel(row);
+        });
+    });
 }
 
 /** 某势力的实际军团名（自定义优先；否则文化区默认军团名） */

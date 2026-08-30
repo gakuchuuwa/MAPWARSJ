@@ -3058,6 +3058,16 @@ export class Scene13WarLayer {
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
     private projBank: Record<string, ProjAsset> = {};
     private pending = 0;
+    /**
+     * 素材加载的**场次代号**：每次 start() 自增，`pending` 归零的同时作废上一场的在途回调。
+     *
+     * 🔴 [2026-08-30 修 pending 记错数] `start()` 把 `pending` 清 0，但上一场发出去的图还在路上；
+     *    它们回来时照样执行 `this.pending -= inc`，于是新一场的计数被**倒扣**（实测跑到 **-64**）。
+     *    后果两头都坏：倒扣后 `pending > 0` 提前变假 → 素材没齐就开演（兵没图）；
+     *    反过来若某场倒扣不足，又会虚高卡住画面。
+     *    回调只在自己那一场的代号还有效时才加减，跨场的一律忽略。
+     */
+    private assetGen = 0;
     /** [2026-08-11 防死锁] 素材加载开始时间戳（pending 卡死 10s 强制判负用） */
     private pendingStartedAt = 0;
     private enemyCen: ({ x: number; y: number } | null)[] = [null, null];
@@ -3319,6 +3329,7 @@ export class Scene13WarLayer {
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.bank = {};
         this.pending = 0;
+        this.assetGen++;             // 上一场在途素材的回调从此不再加减本场 pending（见 assetGen）
         this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 30s）
         this.battleSec = 0;          // 本场计时归零（HARD_STOP_SEC / NO_KILL_SEC 都按它算）
         this.lastKillSec = 0;
@@ -3354,6 +3365,7 @@ export class Scene13WarLayer {
         if (nextFaction[0] !== this.sideFaction[0] || nextFaction[1] !== this.sideFaction[1]) {
             this.bank = {};
             this.pending = 0;
+            this.assetGen++;
         }
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
@@ -4904,6 +4916,7 @@ export class Scene13WarLayer {
                      *    这四组照常异步加载，只是不再冻住画面（等它们到位的时间远短于用到它们的时间）。
                      *    ⚠️ 别把 move/atk 也移出去 —— 那才会出现「兵没图不显示」。
                      */
+                    const gen = this.assetGen;
                     this.pending += inc;
                     // 🔴 [2026-08-30] 取图统一走 ensureCleanImage：缓存命中 / 正在加载 / 全新加载
                     //    三条路合一，**同一个 url 全场只加载+抠绿+解码一次**（见该函数注释）。
@@ -4935,7 +4948,8 @@ export class Scene13WarLayer {
                     }).finally(() => {
                         // 🔴 pending 只减一次、且**任何**失败路径都要减：漏减 → tick 永久卡在
                         //    `pending > 0` → 演出冻结、战斗面板数字不动（2026-08-11 实锤过）。
-                        this.pending -= inc;
+                        //    但跨场的回调不许减（见 assetGen）：那一场的 pending 早已整体清零。
+                        if (gen === this.assetGen) this.pending -= inc;
                     });
                 }
             }
