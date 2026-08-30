@@ -4922,11 +4922,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/LATIN/boootiya_yibaminongda.png": {
-            "scale": 1.44,
-            "offsetX": 0,
-            "offsetY": 58
-        },
         "/assets/LATIN/__多余__LATIN_03.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4941,11 +4936,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 36
-        },
-        "/assets/LATIN/xila_dimisituokeli.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 18
         },
         "/assets/LATIN/leangongguo_afangsuojiushi.png": {
             "scale": 1.28,
@@ -7142,11 +7132,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 36
         },
-        "/assets/GREEK/__闲置__LATIN_09.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 17
-        },
         "/assets/GREEK/__多余__GREEK_01.png": {
             "scale": 1,
             "offsetX": 0,
@@ -7551,6 +7536,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/LATIN/__闲置__LATIN_21.png": {
+            "scale": 1.44,
+            "offsetX": 0,
+            "offsetY": 58
+        },
+        "/assets/GREEK/boootiya_yibaminongda.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GREEK/gen_epaminondas.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GREEK/image.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/LATIN/__闲置__LATIN_22.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GREEK/xila_dimisituo.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {

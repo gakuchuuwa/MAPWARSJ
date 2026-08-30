@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/31 00:19:02（共 74 条）
+ * 生成时间：2026/8/31 01:23:50（共 67 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__多余__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -47,10 +47,8 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_02.png": "/assets/DIANQIAN/__闲置__DIANQIAN_34.png",
     "/assets/GERMANIC/valois_angouleme_fulangsuowa.png": "/assets/GERMANIC/__多余__GERMANIC_02.png",
     "/assets/GERMANIC/vidin_tsardom_yifansilaqi.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
-    "/assets/GREEK/naxos_ancient_kabuliyasi.png": "/assets/GREEK/__多余__GREEK_02.png",
-    "/assets/GREEK/odrysian_late_saiwutesi.png": "/assets/GREEK/__多余__GREEK_01.png",
     "/assets/LATIN/aodesuosi_aodesuosi.png": "/assets/GREEK/__多余__GREEK_03.png",
-    "/assets/LATIN/boootiya_yibaminongda.png": "/assets/GREEK/__多余__GREEK_04.png",
+    "/assets/LATIN/__闲置__LATIN_21.png": "/assets/GREEK/__多余__GREEK_04.png",
     "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/GREEK/__多余__GREEK_05.png",
     "/assets/LATIN/fujisi_fujiweng.png": "/assets/GREEK/__多余__GREEK_06.png",
     "/assets/LATIN/kuertaiya_kuertaiya.png": "/assets/GREEK/__多余__GREEK_07.png",
@@ -61,13 +59,8 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__多余__GREEK_12.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__多余__GREEK_13.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__多余__GREEK_14.png",
-    "/assets/LATIN/__多余__LATIN_01.png": "/assets/GREEK/__闲置__LATIN_04.png",
-    "/assets/LATIN/__多余__LATIN_02.png": "/assets/GREEK/__闲置__LATIN_08.png",
-    "/assets/LATIN/__多余__LATIN_03.png": "/assets/GREEK/__闲置__LATIN_09.png",
     "/assets/INDIA/mallabhum_bierhanbier.png": "/assets/INDIA/__多余__INDIA_02.png",
     "/assets/INDIA/tomara_gwalior_manxinge.png": "/assets/INDIA/__多余__INDIA_01.png",
-    "/assets/LATIN/braganza_house_ruoangyishi.png": "/assets/LATIN/__多余__LATIN_04.png",
-    "/assets/LATIN/rhodope_momuqier.png": "/assets/LATIN/__多余__LATIN_05.png",
     "/assets/PERSIAN/kerman_bam_yagebu.png": "/assets/PERSIAN/__多余__PERSIAN_06.png",
     "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": "/assets/SLAVIC/__多余__SLAVIC_03.png",
     "/assets/SLAVIC/nuowei_halaer.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",

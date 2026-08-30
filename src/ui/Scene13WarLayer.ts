@@ -1082,23 +1082,48 @@ const SIGHT_MAP: Record<string, number> = {
  */
 
 /**
- * 名将攻防系数（战斗模式独立机制，2026-08-21 主人定「攻×1.2、防×1.2」）。
- * 🔴 完全独立于八环 sideBonus（getScene13PowerBonus 那条）——这是兵种属性层的攻防加成，
+ * 名将加成（战斗模式独立机制，2026-08-21 主人定「攻×1.2」）。
+ * 🔴 完全独立于八环 sideBonus（getScene13PowerBonus 那条）——这是兵种属性层的加成，
  *    每个名将侧的兵立即生效，不依赖出兵口/补兵/光环。
+ *
+ * 🔴 [2026-08-31 主人定「简单点、别太夸张、被克了照样打不过」] 三个数放一起，要调只调这里。
+ *    分寸的判据：**绝不能盖过兵种相克**。DE 的克制是**加法**的 bonus 伤害（骆驼克骑兵 +18、
+ *    戟兵克象 +26 之类），量级远大于下面这几个乘数，所以名将带兵仍然会被克死——这是主人要的。
  */
 const FAMOUS_ATK_MULT = 1.2;
-const FAMOUS_DEF_MULT = 1.2;
+/**
+ * 名将侧承伤系数（0.9 = 减伤 10%）。
+ *
+ * 🔴 原来这里是 `FAMOUS_DEF_MULT = 1.2` 且**乘在 armor 上**，等于空转：
+ *    实测 295 个兵种里 **145 个（49%）meleeArmor = 0**，近防中位数就是 0，
+ *    0 × 1.2 还是 0 —— 近一半兵种拿到的减伤是 **0.0%**；按远防中位 2 算也只有 5.7%。
+ *    「防×1.2」这个设定从来没真正生效过。改成直接乘承伤，才是它本来想要的效果。
+ */
+const FAMOUS_DMG_TAKEN_MULT = 0.9;
+/**
+ * 名将侧兵员血量系数。
+ *
+ * 🔴 加这一条的理由：八环的质量差传进 13 只乘在**伤害**上（`sideBonus`，见 step 里 `o.hp -= dps * …`），
+ *    双方血池完全一样。而主人实测定论是**血才是主导变量**（见记忆 scene13-balance-system），
+ *    所以名将侧原来只有输出优势、没有生存优势，观感上「不显灵」。
+ *    1.15 是保守值：活得久 → 输出累积更多，会自然滚一点雪球，但远不到碾压。
+ */
+const FAMOUS_HP_MULT = 1.15;
 
-/** 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)；atkMult/defMult = 名将攻防加成（默认 1 无加成） */
-function dmgVs(shooter: WarType, target: WarType, atkMult = 1, defMult = 1): number {
-    const armor = (shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor) * defMult;
+/**
+ * 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)。
+ * @param atkMult      射手侧名将攻击加成（默认 1 无加成）
+ * @param dmgTakenMult 目标侧名将承伤系数（默认 1 无加成）；乘在 max 里面，保住 DE「最低 1 点」的地板
+ */
+function dmgVs(shooter: WarType, target: WarType, atkMult = 1, dmgTakenMult = 1): number {
+    const armor = shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor;
     let bonus = 0;
     if (shooter.bonus && target.armorTags) {
         for (const tag of target.armorTags) {
             if (shooter.bonus[tag]) bonus += shooter.bonus[tag];
         }
     }
-    return Math.max(1, shooter.atk * atkMult + bonus - armor);
+    return Math.max(1, (shooter.atk * atkMult + bonus - armor) * dmgTakenMult);
 }
 
 /** DE 胡斯战车的 5 发次级弹：每发独立以 3 攻击、建筑 +3、冲车 +3 结算。 */
@@ -3098,7 +3123,7 @@ export class Scene13WarLayer {
      * 三类的相对关系不变，只是整体强弱平移。
      */
     private sideBonus: [number, number] = [1, 1];
-    /** 名将攻防加成标志（攻/守两侧是否名将 tier='famous'）；伤害时名将侧 atk×FAMOUS_ATK_MULT、armor×FAMOUS_DEF_MULT */
+    /** 名将加成标志（攻/守两侧是否名将 tier='famous'）：atk×FAMOUS_ATK_MULT、承伤×FAMOUS_DMG_TAKEN_MULT、血×FAMOUS_HP_MULT */
     private famousBuff: [boolean, boolean] = [false, false];
     /** [军事科技] 双方文化区（start 时从 init 存；科技按文化门控，每方按自己的算） */
     private sideCulture: [string, string] = ['CENTRAL', 'STEPPE'];
@@ -3174,7 +3199,7 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-19 修「找不到退出按钮」] 原为 top:14px / z-index:450，被顶部科技行整个盖住：
                 //   #top-center-hud 是 z-index 10002 且横跨全屏宽，守方科技胶囊（1920 屏约 730px 宽）
                 //   的右端正好压在 right:14px 这个位置上。改为下移到科技行之下 + 层级抬到 HUD 之上。
-                'top:76px',
+                'top:14px',
                 'right:14px',
                 'z-index:10050',
                 'padding:6px 16px',
@@ -3261,6 +3286,12 @@ export class Scene13WarLayer {
             const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
             const techs = unlockedTechs(y, this.sideCulture[f] as RegionType);
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
+            // 🔴 [2026-08-31] 名将侧全员提血（见 FAMOUS_HP_MULT）。挂在这里而不是 spawn 处，
+            //    是为了让**所有**读血的地方自动一致 —— 出兵时的初始血（`hp: statsFor(...).hp`）
+            //    和索敌里「目标快死了就不换人」用的 `foeMax`（statsFor(foe).hp）必须是同一个基准，
+            //    只改 spawn 会让 foeMax 偏小、半血判定提前触发。
+            //    famousBuff 在 start() 里先于 techStats 重建赋值，所以这里读到的一定是本场的值。
+            if (this.famousBuff[f]) v = { ...v, hp: Math.round(v.hp * FAMOUS_HP_MULT) };
             this.techStats[f].set(key, v);
         }
         return v;
@@ -5698,7 +5729,7 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DEF_MULT : 1) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DMG_TAKEN_MULT : 1) / shooter.reload;
                     o.atkNext++;
                     o.hurtBy = m;   // 【被攻击反击】范围伤也记录攻击者
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
@@ -6385,7 +6416,7 @@ export class Scene13WarLayer {
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
                 const atkMult = this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1;
-                const defMult = this.famousBuff[foe.f] ? FAMOUS_DEF_MULT : 1;
+                const defMult = this.famousBuff[foe.f] ? FAMOUS_DMG_TAKEN_MULT : 1;
                 const primaryDamage = m.accHit !== false ? dmgVs(shooter, target, atkMult, defMult) * projectileDamageCount : 0;
                 const secondaryHitCount = (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon')
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)

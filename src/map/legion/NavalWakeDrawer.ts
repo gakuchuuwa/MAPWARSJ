@@ -137,15 +137,50 @@ export class NavalWakeDrawer {
             if (!rearShip || s.r < rearShip.r) rearShip = s;
         }
 
-        // ─── 1. 队尾船只沿船体龙骨正后方拉出 3 段消散尾流（Keel-Aligned Wake Trail）───
+        // ─── 1. 队尾船只沿船体龙骨正后方拉出连续消散尾流（Keel-Aligned Continuous Wake Trail）───
         if (rearShip) {
             const rDir = dirOf(rearShip);
             const rAsset = backOf(rDir);
             const rHead = headingOf(rDir);
+
+            // (1) 底层平滑消散 V 型水痕带（消除贴图断裂与离散斑块感）
+            const startDist = shipLength * 0.18;
+            const endDist = shipLength * 2.20;
+            const sx0 = rearShip.x - rHead.hx * startDist;
+            const sy0 = rearShip.y - rHead.hy * startDist;
+            const ex0 = rearShip.x - rHead.hx * endDist;
+            const ey0 = rearShip.y - rHead.hy * endDist;
+
+            // 法线矢量（与航向垂直）
+            const nx = -rHead.hy;
+            const ny = rHead.hx;
+            const startHalfW = shipLength * 0.18 * scale;
+            const endHalfW = shipLength * 0.42 * scale;
+
+            ctx.save();
+            const grad = ctx.createLinearGradient(sx0, sy0, ex0, ey0);
+            grad.addColorStop(0, 'rgba(235, 245, 255, 0.22)');
+            grad.addColorStop(0.35, 'rgba(220, 238, 255, 0.14)');
+            grad.addColorStop(0.70, 'rgba(210, 232, 255, 0.06)');
+            grad.addColorStop(1.0, 'rgba(200, 225, 255, 0)');
+
+            ctx.beginPath();
+            ctx.moveTo(sx0 + nx * startHalfW, sy0 + ny * startHalfW);
+            ctx.lineTo(ex0 + nx * endHalfW, ey0 + ny * endHalfW);
+            ctx.lineTo(ex0 - nx * endHalfW, ey0 - ny * endHalfW);
+            ctx.lineTo(sx0 - nx * startHalfW, sy0 - ny * startHalfW);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.restore();
+
+            // (2) 紧密平滑衔接的 5 段动态翻波贴图（连续扩散衰减）
             const trailSteps = [
-                { dist: shipLength * 0.70, alpha: 0.35, scaleMul: 1.05, frameOffset: 0 },
-                { dist: shipLength * 1.45, alpha: 0.20, scaleMul: 1.20, frameOffset: 10 },
-                { dist: shipLength * 2.30, alpha: 0.08, scaleMul: 1.35, frameOffset: 20 },
+                { dist: shipLength * 0.28, alpha: 0.26, scaleMul: 0.72, frameOffset: 0 },
+                { dist: shipLength * 0.65, alpha: 0.18, scaleMul: 0.85, frameOffset: 6 },
+                { dist: shipLength * 1.08, alpha: 0.12, scaleMul: 0.98, frameOffset: 12 },
+                { dist: shipLength * 1.55, alpha: 0.07, scaleMul: 1.12, frameOffset: 18 },
+                { dist: shipLength * 2.05, alpha: 0.03, scaleMul: 1.25, frameOffset: 24 },
             ];
 
             for (const step of trailSteps) {
@@ -170,7 +205,7 @@ export class NavalWakeDrawer {
             }
         }
 
-        // ─── 2. 舰队全员逐舰即时浪花（每艘船均有船头破浪 + 船尾翻波）────────────
+        // ─── 2. 舰队全员逐舰即时浪花（旗舰明显，僚舰轻微不抢镜）────────────
         for (let i = 0; i < shipPositions.length; i++) {
             const ship = shipPositions[i];
             if (!ship || !ship.isAlive) continue;
@@ -184,38 +219,38 @@ export class NavalWakeDrawer {
             const fAsset = frontOf(sDir);
             const bAsset = backOf(sDir);
 
-            // (1) 船首破浪（WAKE_FRONT）：旗舰浪大、僚舰浪适中
-            const frontOffset = shipLength * 0.35;
+            // (1) 船首破浪（WAKE_FRONT）：紧贴船首尖端（0.20 船长），旗舰浪花适中锐利、僚舰微弱破水
+            const frontOffset = shipLength * 0.20;
             const fx = ship.x + sHead.hx * frontOffset;
             const fy = ship.y + sHead.hy * frontOffset;
 
-            const sFront = wakeScale * (isFlagship ? 0.95 : 0.75);
+            const sFront = wakeScale * (isFlagship ? 0.65 : 0.38);
             const wFront = fAsset.meta.box_w * sFront;
             const hFront = fAsset.meta.box_h * sFront;
             const leftFront = fx - fAsset.meta.anchor_x * sFront;
             const topFront = fy - fAsset.meta.anchor_y * sFront;
             const sxFront = (frameIndex % fAsset.meta.frames) * fAsset.meta.box_w;
 
-            ctx.globalAlpha = isFlagship ? 0.55 : 0.40;
+            ctx.globalAlpha = isFlagship ? 0.38 : 0.18;
             ctx.drawImage(
                 fAsset.img,
                 sxFront, 0, fAsset.meta.box_w, fAsset.meta.box_h,
                 leftFront, topFront, wFront, hFront
             );
 
-            // (2) 船尾翻波（WAKE_BACK）：贴在每艘船船尾后方自然推水
-            const backOffset = shipLength * 0.38; // 稍微向后移，彻底避开船底阴影与船身切边
+            // (2) 船尾翻波（WAKE_BACK）：紧贴船尾后方（0.22 船长），避免侵入后随船船头
+            const backOffset = shipLength * 0.22;
             const bx = ship.x - sHead.hx * backOffset;
             const by = ship.y - sHead.hy * backOffset;
 
-            const sBack = wakeScale * (isFlagship ? 0.90 : 0.75);
+            const sBack = wakeScale * (isFlagship ? 0.62 : 0.40);
             const wBack = bAsset.meta.box_w * sBack;
             const hBack = bAsset.meta.box_h * sBack;
             const leftBack = bx - bAsset.meta.anchor_x * sBack;
             const topBack = by - bAsset.meta.anchor_y * sBack;
             const sxBack = (frameIndex % bAsset.meta.frames) * bAsset.meta.box_w;
 
-            ctx.globalAlpha = isFlagship ? 0.45 : 0.35;
+            ctx.globalAlpha = isFlagship ? 0.32 : 0.18;
             ctx.drawImage(
                 bAsset.img,
                 sxBack, 0, bAsset.meta.box_w, bAsset.meta.box_h,

@@ -200,13 +200,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
-    han_d: {
-        legionName: "赤帝军团",
-        formationMode: 'crane_wing',
+    "han_d": {
+        legionName: "中原军团",
+        legionType: "region",
+        formationMode: "triangle",
         slots: [
-            { type: 'jian_swordsman', count: 2 },      // Row 0 步兵前锋 = 刀剑手 2人
-            { type: 'tiger_rider', count: 4 },         // Row 1 骑兵主力两翼合围 = 虎豹骑 4人
-            { type: 'chukonu', count: 3 },             // Row 2 中军后排支援 = 诸葛弩 3人
+            { type: "jian_swordsman", count: 2 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     // 曹魏·曹操 / 张辽 / 邓艾 / 司马懿 / 于禁 / 田豫 虎豹铁骑军团（鹤翼阵 2+4+3：魏武虎豹骑 2 + 魏武虎豹骑精锐 4 + 诸葛弩 3）
@@ -1120,7 +1121,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 拉哥尼亚·斯巴达（列奥尼达 · 方形阵 3+3+3：全斯巴达希皮乌斯 300 勇士近卫阵）
     lagoniya: {
-        legionName: "斯巴达重装军团",
+        legionName: "斯巴达军团",
         formationMode: 'square',
         slots: [
             { type: 'hippeus', count: 3 },             // Row 0 前排 = 斯巴达希皮乌斯 3人（纯步兵·无马，斯巴达国王300近卫死士）
@@ -1170,7 +1171,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 雅典·雅典城（地米斯托克利 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 雅典将军卫队 4 + 克里特弓箭手 2）
     xila: {
-        legionName: "雅典海军团",
+        legionName: "雅典军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（雅典公民大盾长枪方阵正面抗线）
@@ -1749,7 +1750,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     danmai: {
-        legionName: "北欧军团",
+        legionName: "维京军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'norse_warrior', count: 3 },
@@ -1823,7 +1824,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 波希米亚与捷克·扬杰斯卡 胡斯战车军团（雁行 4+3+2：长戟兵 4 + 胡斯战车精锐 3 + 劲弩手 2；步兵前置，战车唯一特殊）
     boximiya: {
-        legionName: "胡斯战车军团",
+        legionName: "波希米亚军团",
         formationMode: 'echelon',
         slots: [
             { type: 'halberdier', count: 4 },             // Row 0 前卫主力 = 长戟兵 4人（近战步兵前置抗线）
@@ -2011,13 +2012,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 弗兰德斯伯国·加莱（罗贝尔二世 · 1302金马刺之战长矛军团 · 鱼鳞阵 4+3+2：佛兰德长矛民兵主力 4 + 重装骑士中军 3 + 劲弩手 2）
-    fulandesi: {
-        legionName: "1302金马刺之战长矛军团",
-        formationMode: 'fish_scale',
+    "fulandesi": {
+        legionName: "拉丁军团",
+        legionType: "region",
+        formationMode: "crane_wing",
         slots: [
-            { type: 'flemish_pikeman', count: 4 },    // Row 0 前卫坚壁抗线 = 佛兰德长矛民兵 4人（纯步兵·无马，金马刺之战以密集成林长矛全歼重骑）
-            { type: 'cavalier', count: 3 },           // Row 1 中军铁骑接应 = 重装骑士 3骑（低地重装骑士中坚防线接应）
-            { type: 'arbalest', count: 2 },           // Row 2 尾收远程压制 = 劲弩手 2人（纯步兵·无马，城市行会强弩持续压制）
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
         ],
     },
     // 勃艮第公国·第戎（大胆查理 · 勃艮第军团 · 锥形阵 2+3+4：火枪手 2 + 弗拉芒民兵 3 + 精锐马上轻装兵 4）
@@ -2977,7 +2979,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 库斯科·印加帝国（帕查库提 · 印加军团 · 鱼鳞阵 3+4+2：印加枪兵长 3 + 印加枪兵长精锐 4 + 投石手 2）
     inca: {
-        legionName: "印加军团",
+        legionName: "安第斯军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'kamayuk', count: 3 },          // Row 0 前卫 = 印加枪兵长 3人（枪兵长结阵抗线）
@@ -5409,7 +5411,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "chenghan": {
-        legionName: "唐朝军团",
+        legionName: "川蜀军团",
         formationMode: "crescent",
         slots: [
             { type: "liao_dao", count: 3 },
@@ -9140,7 +9142,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "bulu": {
-        legionName: "天竺军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
