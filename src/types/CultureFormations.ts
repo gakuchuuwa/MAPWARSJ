@@ -198,20 +198,20 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 
     // 印度（鱼鳞 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
-    INDIA:        'fish_scale',
+    INDIA:        'crane_wing',
     BERBER:       'triangle',
     AMERICA:      'fish_scale',  // 美洲步兵主力（阿兹特克/玛雅/印加）
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
-    MALAY:        'fish_scale',  // 马来近战主力
+    MALAY:        'crane_wing',  // 马来近战主力
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
     PURU:         'fish_scale',  // 南印度象兵主力（朱罗/潘地亚）
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
     THRACIAN:     'fish_scale',  // 色雷斯轻盾兵主力
-    PERSIAN:      'crane_wing',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
+    PERSIAN:      'fish_scale',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
-    BRITONS: 'crane_wing',  // 不列颠[2026-08-28 暂复用父文化]
+    BRITONS: 'triangle',  // 不列颠[2026-08-28 暂复用父文化]
     GOTHS: 'fish_scale',  // 哥特[2026-08-28 暂复用父文化]
     HUNS: 'triangle',  // 匈人[2026-08-28 暂复用父文化]
     TEUTONS: 'crane_wing',  // 条顿[2026-08-28 暂复用父文化]
@@ -219,26 +219,26 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CELTS: 'fish_scale',  // 凯尔特[2026-08-28 暂复用父文化]
     ITALIANS: 'fish_scale',  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: 'crane_wing',  // 西西里[2026-08-28 暂复用父文化]
-    BULGARIANS: 'crane_wing',  // 保加利亚[2026-08-28 暂复用父文化]
+    BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: 'triangle',  // 马扎尔[2026-08-28 暂复用父文化]
     LITHUANIANS: 'crane_wing',  // 立陶宛[2026-08-28 暂复用父文化]
-    POLES: 'crane_wing',  // 波兰[2026-08-28 暂复用父文化]
+    POLES: 'echelon',  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: 'fish_scale',  // 波希米亚[2026-08-28 暂复用父文化]
     BURGUNDIANS: 'crane_wing',  // 勃艮第[2026-08-28 暂复用父文化]
-    SPANISH: 'crane_wing',  // 西班牙[2026-08-28 暂复用父文化]
-    PORTUGUESE: 'fish_scale',  // 葡萄牙[2026-08-28 暂复用父文化]
-    ETHIOPIANS: 'fish_scale',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
-    BENGALIS: 'crane_wing',  // 孟加拉[2026-08-28 暂复用父文化]
+    SPANISH: 'crescent',  // 西班牙[2026-08-28 暂复用父文化]
+    PORTUGUESE: 'balance_yoke',  // 葡萄牙[2026-08-28 暂复用父文化]
+    ETHIOPIANS: 'echelon',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
+    BENGALIS: 'echelon',  // 孟加拉[2026-08-28 暂复用父文化]
     GURJARAS: 'crane_wing',  // 瞿折罗[2026-08-28 暂复用父文化]
     PORUS: 'fish_scale',  // 补噜[2026-08-28 暂复用父文化]
     VIETNAMESE: 'fish_scale',  // 越南[2026-08-28 暂复用父文化]
     KHMER: 'crane_wing',  // 高棉[2026-08-28 暂复用父文化]
-    MAYANS: 'fish_scale',  // 玛雅[2026-08-28 暂复用父文化]
+    MAYANS: 'crescent',  // 玛雅[2026-08-28 暂复用父文化]
     MAPUCHE: 'fish_scale',  // 马普切[2026-08-28 暂复用父文化]
     MUISCA: 'fish_scale',  // 穆伊斯卡[2026-08-28 暂复用父文化]
     TUPI: 'fish_scale',  // 图皮[2026-08-28 暂复用父文化]
     ARMENIANS: 'crane_wing',  // 亚美尼亚[2026-08-28 暂复用父文化]
-    GEORGIANS: 'crane_wing',  // 格鲁吉亚[2026-08-28 暂复用父文化]
+    GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
     ATHENIANS: 'fish_scale',  // 雅典[2026-08-28 暂复用父文化]
     SPARTANS: 'fish_scale',  // 斯巴达[2026-08-28 暂复用父文化]
     MACEDONIANS: 'crane_wing',  // 马其顿[2026-08-28 暂复用父文化]
@@ -1385,9 +1385,9 @@ export const INDIA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'urumi_swordsman', count: 3 },       // Row 0 前卫抗线 = 软剑士 3人
-            { type: 'elite_urumi_swordsman', count: 4 }, // Row 1 中军主力 = 精锐软剑士 4人
-            { type: 'sannahya', count: 2 },              // Row 2 尾收压阵 = 桑纳亚战象 2头（象兵只许 2 档）
+            { type: 'sannahya', count: 2 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'pattiyoda_longbowman', count: 3 }
         ]
     }
 ];
@@ -1399,9 +1399,9 @@ export const BERBER_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'mameluke', count: 2 },      // Row 0 尖刀先锋 = 萨拉森马穆鲁克 2人
-            { type: 'genitour', count: 3 },      // Row 1 冲击中坚 = 柏柏尔标枪骑兵 3人
-            { type: 'camel_archer', count: 4 },  // Row 2 底边主力齐射 = 柏柏尔骆驼弓骑 4人
+            { type: 'camel_heavy', count: 2 },
+            { type: 'elite_genitour', count: 3 },
+            { type: 'elite_camel_archer', count: 4 }
         ]
     }
 ];
@@ -1414,9 +1414,9 @@ export const GREEK_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 3 },          // Row 0 前卫 = 希腊重装步兵 3人
-            { type: 'sacred_band', count: 4 },      // Row 1 中军突破主力 = 底比斯圣队 4人
-            { type: 'thracian_peltast', count: 2 }  // Row 2 尾收支援 = 色雷斯轻装兵 2人
+            { type: 'greek_noble_cavalry', count: 3 },
+            { type: 'elite_greek_cavalry', count: 4 },
+            { type: 'cretan_archer', count: 2 }
         ]
     }
 ];
@@ -1450,6 +1450,202 @@ export const NUERGAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
+/** 波斯军团（鱼鳞阵 342）[2026-08-30 主人设计] */
+export const PERSIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_war_elephant', count: 3 },
+            { type: 'savar', count: 4 },
+            { type: 'cav_archer', count: 2 }
+        ]
+    }
+];
+
+/** 西班牙军团（新月阵 324）[2026-08-30 主人设计] */
+export const SPANISH_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'halberdier', count: 3 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_conquistador', count: 4 }
+        ]
+    }
+];
+
+/** 保加利亚军团（鱼鳞阵 342）[2026-08-30 主人设计] */
+export const BULGARIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'konnik', count: 3 },
+            { type: 'elite_konnik', count: 4 },
+            { type: 'cav_archer', count: 2 }
+        ]
+    }
+];
+
+/** 不列颠军团（三角阵 234）[2026-08-30 主人设计] */
+export const BRITONS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 2 },
+            { type: 'longbowman', count: 3 },
+            { type: 'longbowman_elite', count: 4 }
+        ]
+    }
+];
+
+/** 葡萄牙军团（平衡轭阵 423）[2026-08-30 主人设计] */
+export const PORTUGUESE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'halberdier', count: 4 },
+            { type: 'arbalest', count: 2 },
+            { type: 'elite_organ_gun', count: 3 }
+        ]
+    }
+];
+
+/** 库曼军团（三角阵 234）[2026-08-30 主人设计] */
+export const CUMAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'elite_kipchak', count: 4 }
+        ]
+    }
+];
+
+/** 波兰军团（雁行阵 432）[2026-08-30 主人设计] */
+export const POLES_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_obuch', count: 4 },
+            { type: 'winged_hussar', count: 3 },
+            { type: 'cav_archer', count: 2 }
+        ]
+    }
+];
+
+/** 格鲁吉亚军团（鱼鳞阵 342）[2026-08-30 主人设计] */
+export const GEORGIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'monaspa', count: 3 },
+            { type: 'elite_monaspa', count: 4 },
+            { type: 'cav_archer', count: 2 }
+        ]
+    }
+];
+
+/** 孟加拉军团（雁行阵 432）[2026-08-30 主人设计] */
+export const BENGALIS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'swordsman', count: 4 },
+            { type: 'elite_ratha_ranged', count: 3 },
+            { type: 'archer', count: 2 }
+        ]
+    }
+];
+
+/** 玛雅军团（新月阵 324）[2026-08-30 主人设计] */
+export const MAYANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'eagle_warrior', count: 3 },
+            { type: 'plumed_archer', count: 2 },
+            { type: 'elite_plumed_archer', count: 4 }
+        ]
+    }
+];
+
+/** 埃塞俄比亚军团（雁行阵 432）[2026-08-30 主人设计] */
+export const ETHIOPIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_shotel_warrior', count: 4 },
+            { type: 'camel_heavy', count: 3 },
+            { type: 'archer', count: 2 }
+        ]
+    }
+];
+
+/** 马来军团（鹤翼阵 243）[2026-08-30 主人设计] */
+export const MALAY_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_battle_elephant', count: 2 },
+            { type: 'karambit_warrior_elite', count: 4 },
+            { type: 'archer', count: 3 }
+        ]
+    }
+];
+
+/** 瞿折罗军团（鹤翼阵 243）[2026-08-30 主人设计] */
+export const GURJARAS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_elephant_archer', count: 2 },
+            { type: 'elite_chakram_thrower', count: 4 },
+            { type: 'elite_shrivamsha_rider', count: 3 }
+        ]
+    }
+];
+
+/** 非洲军团（鱼鳞阵 3+4+2：马穆鲁克前卫 + 标枪骑兵中坚 + 骆驼弓骑主力）[2026-08-30 完成待定制] */
+export const AFRICA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'mameluke', count: 2 },
+            { type: 'genitour', count: 3 },
+            { type: 'camel_archer', count: 4 }
+        ]
+    }
+];
+
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
 // ============================================================
@@ -1476,17 +1672,17 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     INDIA:        INDIA_TIERS,
     BERBER:       BERBER_TIERS,
     AMERICA:      LATIN_TIERS,      // ⚠️ [2026-08-24] 暂复用拉丁编成（美洲步兵），待定制
-    AFRICA:       BERBER_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
-    MALAY:        DIANQIAN_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
+    AFRICA:       AFRICA_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
+    MALAY:        MALAY_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
     ANDE:         LATIN_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     PURU:         INDIA_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
     ORIE:         BERBER_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
     EAST:         SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
     THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
-    PERSIAN:      WEST_ASIA_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
-    CUMAN:        STEPPE_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
-    BRITONS: GERMANIC_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
+    PERSIAN:      PERSIAN_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
+    CUMAN:        CUMAN_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
+    BRITONS: BRITONS_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
     GOTHS: GERMANIC_TIERS,  // 哥特[2026-08-28 暂复用父文化]
     HUNS: STEPPE_TIERS,  // 匈人[2026-08-28 暂复用父文化]
     TEUTONS: GERMANIC_TIERS,  // 条顿[2026-08-28 暂复用父文化]
@@ -1494,26 +1690,26 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CELTS: GERMANIC_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
     ITALIANS: LATIN_TIERS,  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: LATIN_TIERS,  // 西西里[2026-08-28 暂复用父文化]
-    BULGARIANS: SLAVIC_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
+    BULGARIANS: BULGARIANS_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: STEPPE_TIERS,  // 马扎尔[2026-08-28 暂复用父文化]
     LITHUANIANS: SLAVIC_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
-    POLES: SLAVIC_TIERS,  // 波兰[2026-08-28 暂复用父文化]
+    POLES: POLES_TIERS,  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: SLAVIC_TIERS,  // 波希米亚[2026-08-28 暂复用父文化]
     BURGUNDIANS: LATIN_TIERS,  // 勃艮第[2026-08-28 暂复用父文化]
-    SPANISH: LATIN_TIERS,  // 西班牙[2026-08-28 暂复用父文化]
-    PORTUGUESE: LATIN_TIERS,  // 葡萄牙[2026-08-28 暂复用父文化]
-    ETHIOPIANS: BERBER_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
-    BENGALIS: INDIA_TIERS,  // 孟加拉[2026-08-28 暂复用父文化]
-    GURJARAS: INDIA_TIERS,  // 瞿折罗[2026-08-28 暂复用父文化]
+    SPANISH: SPANISH_TIERS,  // 西班牙[2026-08-28 暂复用父文化]
+    PORTUGUESE: PORTUGUESE_TIERS,  // 葡萄牙[2026-08-28 暂复用父文化]
+    ETHIOPIANS: ETHIOPIANS_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
+    BENGALIS: BENGALIS_TIERS,  // 孟加拉[2026-08-28 暂复用父文化]
+    GURJARAS: GURJARAS_TIERS,  // 瞿折罗[2026-08-28 暂复用父文化]
     PORUS: INDIA_TIERS,  // 补噜[2026-08-28 暂复用父文化]
     VIETNAMESE: DIANQIAN_TIERS,  // 越南[2026-08-28 暂复用父文化]
     KHMER: DIANQIAN_TIERS,  // 高棉[2026-08-28 暂复用父文化]
-    MAYANS: LATIN_TIERS,  // 玛雅[2026-08-28 暂复用父文化]
+    MAYANS: MAYANS_TIERS,  // 玛雅[2026-08-28 暂复用父文化]
     MAPUCHE: LATIN_TIERS,  // 马普切[2026-08-28 暂复用父文化]
     MUISCA: LATIN_TIERS,  // 穆伊斯卡[2026-08-28 暂复用父文化]
     TUPI: LATIN_TIERS,  // 图皮[2026-08-28 暂复用父文化]
     ARMENIANS: CENTRAL_ASIA_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
-    GEORGIANS: CENTRAL_ASIA_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
+    GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
     ATHENIANS: GREEK_TIERS,  // 雅典[2026-08-28 暂复用父文化]
     SPARTANS: GREEK_TIERS,  // 斯巴达[2026-08-28 暂复用父文化]
     MACEDONIANS: GREEK_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
