@@ -58,7 +58,9 @@ export class MarineLifeLayer extends L.Layer {
         this.map = map;
         if (!map.getPane(PANE)) map.createPane(PANE);
         const pane = map.getPane(PANE)!;
-        pane.style.zIndex = '630'; // 压资源点(620)之上，海面生物最高
+        // 🔴 [2026-08-31] 原为 630，在 UNITS(620) 之上，会盖住海上的舰队。
+        //    海面生物同属装饰层，下调到 UNITS_LOW(580) 之下；它只画在海面，与陆上装饰不冲突。
+        pane.style.zIndex = '578'; // 装饰层最高，仍低于 UNITS_LOW(580)
         pane.style.pointerEvents = 'none';
         pane.appendChild(this.canvas);
         this.resize();

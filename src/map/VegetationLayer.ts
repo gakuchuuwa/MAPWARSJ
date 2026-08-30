@@ -36,13 +36,20 @@ const STRAGGLER_SHARE = 0.15;
 const STRAGGLER_RADIUS_MIN = CLUSTER_RADIUS * 1.8;
 const STRAGGLER_RADIUS_MAX = CLUSTER_RADIUS * 3;
 
+/**
+ * 一棵树的采样结果。
+ * 🔴 只存**经纬度**，不存屏幕坐标、不存 Image 引用：
+ *    屏幕坐标一旦固化，地图平移时树就相对地形滑动（「军团一动树也动」）；
+ *    Image 引用固化则会绕过按字节预算的贴图缓存淘汰。两者都在 paint() 里现取。
+ */
 interface TreeDrawCommand {
-    x: number;
-    y: number;
-    h: number;
-    w: number;
-    img: HTMLImageElement;
-    imgNext: HTMLImageElement | null;
+    lat: number;
+    lng: number;
+    /** 每棵树固定的高度抖动系数（保证平移/缩放时同一棵树大小稳定） */
+    jitter: number;
+    asset: string;
+    /** 下一季的树种（季末交叉淡出用；与 asset 相同表示这棵不换装） */
+    assetNext: string;
 }
 
 /**
@@ -150,7 +157,11 @@ function seasonBlend(): number {
     const p = (window as any).game?.timeSystem?.getSeasonProgress?.();
     if (typeof p !== 'number') return 0;
     if (p <= 1 - SEASON_BLEND_WINDOW) return 0;
-    return (p - (1 - SEASON_BLEND_WINDOW)) / SEASON_BLEND_WINDOW;
+    const t = (p - (1 - SEASON_BLEND_WINDOW)) / SEASON_BLEND_WINDOW;   // 0→1 线性
+    // 🔴 [2026-08-31 主人「慢慢渐变」] smoothstep：头尾斜率为 0，起手和收尾都柔、中段才快。
+    //    线性混合在窗口起点会「啪」地开始变色，这条曲线让它是**渐渐地开始、渐渐地收住**。
+    //    到 p=1（换季那一刻）恰好等于 1，与换季后 blend 归零、直接显示新一季无缝衔接。
+    return t * t * (3 - 2 * t);
 }
 
 /** 树种 → 林区色相类别（用于色调随植被类型变化） */
@@ -206,6 +217,7 @@ export class VegetationLayer {
     /** 只挪画布位置，不重绘（连续平移每帧调用） */
     private readonly onCanvasFollow = () => {
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
+        this.paint();   // 画布被重新钉到屏幕上了，内容必须按新镜头重画，否则树会相对地形滑动
     };
     private readonly onTerrainReady = () => { this.lastRenderKey = ''; this.scheduleRender(200); };
 
@@ -213,7 +225,9 @@ export class VegetationLayer {
         this.map = map;
         if (!map.getPane(PANE)) map.createPane(PANE);
         const pane = map.getPane(PANE)!;
-        pane.style.zIndex = '590';
+        // 🔴 [2026-08-31] 见 AnimalAmbientLayer 顶部说明：必须低于 UNITS_LOW(580)，
+        //    否则会盖掉攻城战里画在城池背后的士兵。
+        pane.style.zIndex = '565';
         pane.style.pointerEvents = 'none';
 
         this.canvas = document.createElement('canvas');
@@ -259,15 +273,78 @@ export class VegetationLayer {
         if (this.seasonTimer !== null) return;
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
-            this.scheduleRender();
-        }, 300);
+            // 🔴 [2026-08-31] 直接 paint()，不要走 scheduleRender()。
+            //    渲染键已经不含混合档位（见 render 里的说明），走 scheduleRender 会因
+            //    「key 没变」直接 return，渐变就冻在原地不动。
+            //    paint 只是一趟 drawImage（实测 ~200 次 < 1ms），250ms 一次足够顺滑。
+            if (seasonBlend() > 0) this.paint();
+        }, 250);
     }
     private seasonTimer: number | null = null;
 
+    /** 采样出来的树（只存经纬度，屏幕坐标在 paint 时按当前镜头现算） */
+    private trees: TreeDrawCommand[] = [];
+
+    /**
+     * 只绘制，不采样。每次地图平移/缩放都调，成本 ≈ 一趟 drawImage。
+     * 树的季节混合权重在这里现取，所以渐变期间平移也能跟着变。
+     */
+    private paint(): void {
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (!this.visible || this.trees.length === 0) return;
+        const zoom = Math.floor(this.map.getZoom());
+        if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) return;
+
+        const blendAlpha = Math.min(1, Math.max(0, seasonBlend()));
+        const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
+        const W = this.canvas.width, H = this.canvas.height;
+
+        // 先算屏幕坐标并剔除屏外，再按 y 排序（北侧先画，南侧树冠盖住北侧树干）
+        const items: { x: number; y: number; h: number; c: TreeDrawCommand }[] = [];
+        for (const c of this.trees) {
+            const pt = this.map.latLngToContainerPoint([c.lat, c.lng]);
+            const h = hScale * c.jitter;
+            if (pt.x < -h * 2 || pt.x > W + h * 2 || pt.y < -h * 2 || pt.y > H + h * 2) continue;
+            items.push({ x: pt.x, y: pt.y, h, c });
+        }
+        items.sort((a, b) => a.y - b.y || a.x - b.x);
+
+        const drawOne = (im: HTMLImageElement, it: { x: number; y: number; h: number }, alpha: number) => {
+            if (alpha <= 0.002) return;
+            const w = it.h * (im.naturalWidth / im.naturalHeight);
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+        };
+
+        for (const it of items) {
+            const cur = treeImage(it.c.asset, this.onTreeImageReady);
+            // 下一季的图**整季都在预取**，这里无条件取（不再等 blendAlpha>0 才去拿）
+            const nxt = it.c.assetNext !== it.c.asset
+                ? treeImage(it.c.assetNext, this.onTreeImageReady) : cur;
+
+            // 🔴 [2026-08-31 修「消失再出现」] 只要**两张里有一张在**就必须画出来。
+            //    原来是 `if (!img) continue` —— 当前季的图没下载完就整棵跳过，
+            //    换季那一瞬间新贴图还在路上，整片林子先消失、图到了再冒出来。
+            //    现在：两张都在 → 正常交叉淡出；只有一张在 → 那张按满不透明顶上。
+            //    宁可这一瞬间不渐变，也绝不让树凭空消失。
+            if (cur && nxt && cur !== nxt) {
+                drawOne(cur, it, 1 - blendAlpha);
+                drawOne(nxt, it, blendAlpha);
+            } else if (cur) {
+                drawOne(cur, it, 1);
+            } else if (nxt) {
+                drawOne(nxt, it, 1);
+            }
+            ctx.globalAlpha = 1;
+        }
+    }
+
     /** 树贴图到货 → 重画本屏（贴图是异步的，首帧必然缺一批） */
     private onTreeImageReady = (): void => {
-        this.lastRenderKey = '';
-        this.scheduleRender(60);
+        // 贴图到货只需**重绘**，不必重新采样：树的位置早就采好了。
+        // 原来清 lastRenderKey + scheduleRender，等于每到一张图就全屏重采一遍，白花钱。
+        this.paint();
     };
 
     private scheduleRender(delay = 0): void {
@@ -324,10 +401,12 @@ export class VegetationLayer {
         const season = currentTreeSeason();
         // 混合权重量化成 20 档进 key：过渡期每跨一档才重画一次（每档 5% 细腻过渡），
         // 配合 200ms 节流，一次过渡平滑均匀演进，绝无突然跳变感。
-        const blend = seasonBlend();
         const nextSeason = nextTreeSeason(season);
-        const blendStep = blend > 0 && nextSeason !== season ? Math.round(blend * 20) : 0;
-        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}|${blendStep}`;
+        // 🔴 [2026-08-31 修「渐变不连续」] 渲染键**不带**混合档位。
+        //    混合只影响「怎么画」，不影响「撒在哪」—— 带上它等于每跨一档就整屏重新撒点，
+        //    而重新撒点时若新一季的贴图还没下载完，那批树就先消失、等图到了再冒出来
+        //    （主人看到的「消失再出现」）。现在混合完全交给 paint()，采样一次管一整季。
+        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}`;
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
@@ -449,39 +528,36 @@ export class VegetationLayer {
                     if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
 
                     const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
-                    const img = treeImage(asset, this.onTreeImageReady);
-                    if (!img) { pendingImages++; continue; }
                     // 季末交叉淡出：下一季的同位置树种（换装了才混，没换装就当没这回事）
-                    const assetNext = blendStep > 0
-                        ? pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season: nextSeason, isSiege: false })
-                        : asset;
-                    const imgNext = assetNext !== asset ? treeImage(assetNext, this.onTreeImageReady) : null;
-                    // 树高按 zoom 缩放：zoom 8 的一屏是整个东欧，树画太大就糊成一片。
-                    // 高度基准 TREE_BASE_PX @zoom9，每级 ×1.35（比 2 倍温和，避免 zoom10 撑爆）。
+                    // 🔴 **无条件**算下一季树种（不再等混合开始才算）：
+                    //    这样下一季的贴图在整季一开始就发起加载，等真的渐变时早已就绪，
+                    //    不会出现「渐变刚开始那几秒没图 → 树先消失」。
+                    const assetNext = pickTree({
+                        baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng,
+                        season: nextSeason, isSiege: false,
+                    });
+                    // 🔴 这里**只发起贴图加载、不因为图没到就丢掉这棵树**：
+                    //    树的位置属于采样结果，不该被贴图加载进度左右。图没到时 paint() 自然跳过，
+                    //    到货后 onTreeImageReady 会触发重绘补上。
+                    //    （原来写的是 `if (!img) { pendingImages++; continue; }`，
+                    //      等于首屏把还没下载完的树种整片丢掉，要等下一次跨格采样才补回来。）
+                    if (!treeImage(asset, this.onTreeImageReady)) pendingImages++;
+                    if (assetNext !== asset) treeImage(assetNext, this.onTreeImageReady);
+                    // 每棵树固定的高度抖动（存进采样结果，保证平移/缩放时这棵树大小稳定）
                     const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
-                    const h = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM) * jitter;
-                    const w = h * (img.naturalWidth / img.naturalHeight);
-                    drawCommands.push({ x: center.x, y: center.y, h, w, img, imgNext });
+                    drawCommands.push({ lat: ptLatLng.lat, lng: ptLatLng.lng, jitter, asset, assetNext });
                 }
             }
         }
 
-        // 北侧先画、南侧后画：南侧树冠自然覆盖北侧树干。
-        drawCommands.sort((a, b) => a.y - b.y || a.x - b.x);
-        const blendAlpha = Math.min(1, Math.max(0, blend));
-        for (const command of drawCommands) {
-            const { x, y, h, w, img, imgNext } = command;
-            if (imgNext) {
-                this.ctx.globalAlpha = 1 - blendAlpha;
-                this.ctx.drawImage(img, x - w / 2, y - h, w, h);
-                const wNext = h * (imgNext.naturalWidth / imgNext.naturalHeight);
-                this.ctx.globalAlpha = blendAlpha;
-                this.ctx.drawImage(imgNext, x - wNext / 2, y - h, wNext, h);
-                this.ctx.globalAlpha = 1;
-            } else {
-                this.ctx.drawImage(img, x - w / 2, y - h, w, h);
-            }
-        }
+        // 🔴 [2026-08-31 修「军团一动树也动」·真正的修法]
+        //    采样结果只存**经纬度**，不存屏幕坐标 —— 屏幕坐标一旦存下来，
+        //    地图平移时内容就固定在屏幕上、地形在底下滑，看着就是树跟着镜头跑。
+        //    （我上一版把画布每帧重新钉到屏幕上，方向正好修反了，反而更明显。）
+        //    绘制改为每次平移都按当前镜头重算容器坐标 —— 与动物层同一套架构，
+        //    实测这一趟只有 ~200 次 drawImage、不到 1ms，重的采样仍然按 key 节流。
+        this.trees = drawCommands;
+        this.paint();
         drawnTrees = drawCommands.length;
 
         // DEM 瓦片异步到达：这轮被跳过的格子必须补画。

@@ -21,7 +21,13 @@ import { perfDoctor } from '../../debug/PerfDoctor';
  *    指向原始 png 路径；大地图那批素材没抠绿，`src` 本身就是短路径，退回即可。
  */
 function tintKeyOf(img: HTMLImageElement): string {
-    return (img as any).sourceUrl || img.src;
+    // 🔴 [2026-08-31 修键碰撞] 带 `sourceUrl` 的是**战术模式抠绿后**的图，
+    //    不带的是战略地图直接加载的**原始 PNG**。两者的 sourceUrl / src 可能是**同一个路径**
+    //    （同一份素材两处都在用），只取路径当 key 会让它们互相顶掉：
+    //    战略地图可能拿到抠过绿的版本、战术模式可能拿到带绿幕的版本。
+    //    加前缀区分来源，两条链路各存各的。
+    const src = (img as any).sourceUrl;
+    return src ? `de:${src}` : `raw:${img.src}`;
 }
 
 /** 估算一张图占的堆字节：解码位图 w×h×4，加上 src 字符串（data URL 时非常大，UTF-16 2 字节/字符）。 */
@@ -197,6 +203,20 @@ export class SpriteTinter {
      *    src 字符串那部分。所以尺寸就绪后要把差额补记上（`load` 一次性回调），
      *    否则预算会被严重低估、等于没有上限。
      */
+    /**
+     * LRU「用过就移到队尾」。
+     *
+     * 🔴 [2026-08-31] 原来的淘汰是**纯 FIFO**（按插入先后），与「谁正在被用」无关。
+     *    后果：打完一场 13，染色缓存被战场素材塞到 600MB 预算上限（实测 587.9MB/115 条），
+     *    回到战略地图后每插入一张士兵贴图就淘汰最旧的 —— 而最旧的往往正是**上一帧刚用过的
+     *    那批士兵贴图**，于是每帧都在重新染色、每帧拿到的都是还没解码的新图，
+     *    军团士兵就一直画不出来。改成 LRU：正在用的那批永远排在队尾，不会被顶掉。
+     */
+    private static touchTinted(key: string, img: HTMLImageElement): void {
+        this.tintedSpriteCache.delete(key);
+        this.tintedSpriteCache.set(key, img);
+    }
+
     private static tintedCachePut(key: string, img: HTMLImageElement): void {
         if (this.tintedSpriteCache.has(key)) return;
         let counted = imgBytes(img);
@@ -271,7 +291,12 @@ export class SpriteTinter {
         //    （8 方向共用同一文件时必然发生）合并成同一条缓存，少染 7 次、少存 7 份位图。
         const cacheKey = `mask:${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete) return cached;
+        if (cached && cached.complete) { this.touchTinted(cacheKey, cached); return cached; }
+        // 🔴 [2026-08-31 修「军团士兵不显示」] 已在缓存但**还没解码完**：直接返回**原图**，
+        //    绝不再新建一张。调用方（LegionPhalanxDrawer:1425）拿到结果**不检查 .complete**
+        //    就去算帧、drawImage —— 未解码图 naturalWidth = 0，帧数算成 0，整格什么都画不出来。
+        //    返回原图最多是「这一瞬间没染上势力色」，比整支军团消失好得多。
+        if (cached) return sprite;
 
         const maskState = this.maskCache.get(maskSrc);
         if (maskState === 'none') {
@@ -328,7 +353,8 @@ export class SpriteTinter {
         // key 用源路径而非 data URL，理由同 getMaskTinted（见那里的长注释）。
         const cacheKey = `${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete) return cached;
+        if (cached && cached.complete) { this.touchTinted(cacheKey, cached); return cached; }
+        if (cached) return sprite;   // 同上：未解码时回退原图，别让调用方拿到 naturalWidth=0 的图
 
         // 如果原图未加载完成，返回原图
         if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
