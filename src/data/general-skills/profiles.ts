@@ -230,7 +230,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    iga_d_baididanbo: { generalId: 'iga_d_baididanbo', tier: 'ordinary', tacticalSkillId: 'ts_040', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_778', atkAdvantageSkillId: 'ts_778', atkBalanceSkillId: 'ts_736', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_672', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage', attackStyle: 'attack' },
+    iga_d_baididanbo: { generalId: 'iga_d_baididanbo', tier: 'ordinary', tacticalSkillId: 'ts_778', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_778', atkAdvantageSkillId: 'ts_778', atkBalanceSkillId: 'ts_736', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_672', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -2379,7 +2379,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    mino_dagujiji: { generalId: 'mino_dagujiji', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_282', atkBalanceSkillId: 'ts_205', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'defense'},
+    mino_dagujiji: { generalId: 'mino_dagujiji', tier: 'ordinary', tacticalSkillId: 'ts_282', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_282', atkBalanceSkillId: 'ts_205', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 

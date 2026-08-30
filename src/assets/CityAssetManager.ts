@@ -689,7 +689,7 @@ export class CityAssetManager {
         'ayinu': '虾夷',
         'ruochu': '若敖',
 'mi_chu': '安陆',
-        'mino': '美浓',
+'mino': '美浓',
 'nanyue': '南越',
         'guangzhou': '广',
     'guangping': '广平',

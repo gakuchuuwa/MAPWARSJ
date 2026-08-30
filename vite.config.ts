@@ -3840,23 +3840,8 @@ function serverValidateEntities(): {
         }
     }
 
-    // 11.9. [NEW] 六技配齐：一人六个武将技 = 攻击(攻三格)/通用/防御(守三格)/优势/均势/劣势
-    //   普将 = 六技全配；名将 = 六技 + 1 战略技（战略技缺失已由规则 11.5 报，此处只查战术六技）。
-    {
-        for (const [fId, g] of Object.entries(data.generals)) {
-            const prof = data.profiles[g.generalId];
-            if (!prof) continue;
-            const missing: string[] = [];
-            if (!prof.tacticalSkillId) missing.push('通用');
-            // [2026-07-14] 旧三槽 advantage/balance/disadvantageSkillId 已弃用（引擎只读攻防六槽），不再校验；
-            //   否则清掉旧三槽的武将（如张巡/项羽）会被误报"缺优势/均势/劣势"。
-            if (!prof.atkAdvantageSkillId || !prof.atkBalanceSkillId || !prof.atkDisadvantageSkillId) missing.push('攻击');
-            if (!prof.defAdvantageSkillId || !prof.defBalanceSkillId || !prof.defDisadvantageSkillId) missing.push('防御');
-            if (missing.length > 0) {
-                issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 六技不全，缺：${missing.join('/')}（${prof.tier === 'famous' ? '名将=六技+1战略技' : '普将=六技'}）`, factionId: fId });
-            }
-        }
-    }
+    // 11.9.（已废弃 2026-08-30）攻防六槽不再驱动战斗选技，不校验是否配齐。
+    // 当前选技由 getSituationalSkillPool 按三势从通用池与本人专属技中随机抽取。
 
     // 11.10. [NEW 2026-07-13] 档案键 ≠ generalId 字段（批量修复脚本截断事故的检出）
     //   GENERAL_PROFILES 的键与条目内 generalId 必须一致；不一致时读 profile.generalId 的逻辑全部错乱。

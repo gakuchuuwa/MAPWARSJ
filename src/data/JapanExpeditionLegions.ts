@@ -47,7 +47,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jibei2: { name: '备中众', tier: 4 },         // 鬼之城·宇喜多氏
     taira: { name: '平家水军', tier: 3 },
   sagami: { name: '风魔党', tier: 3 },         // 箱根关·北条氏专属特种风魔忍者
-  mino: { name: '大谷部众', tier: 4 },         // 不破关·大谷吉继（缺乏极其著名的战术高光，降T3）
+    mino: { name: '大谷部众', tier: 4 },
   yizhi: { name: '原之辻戍卒', tier: 4 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
     gonggu: { name: '宫古岛卒', tier: 4 },
     kai: { name: '武田赤备', tier: 2 },

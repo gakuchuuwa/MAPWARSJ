@@ -984,7 +984,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'xining': '西宁',
 'kalun': '柴达',
     'sagami': '相模',
-    'mino': '美浓',
+'mino': '美浓',
 'ssangseong': '和',
 'wenzhou': '温',
     'fu_zhou': '涪',

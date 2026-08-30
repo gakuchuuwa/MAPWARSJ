@@ -361,7 +361,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'wuhu': 'city_zhenzhuhe',
 'ewenki': 'city_nibuchu',
     'gar': 'city_sapi',
-    'mino': 'city_fuwa',
+'mino': 'city_fuwa',
 'ssangseong': 'city_cheollyeong',
     'yin': 'city_zhaoge',
 'liu': 'city_liuxian',
