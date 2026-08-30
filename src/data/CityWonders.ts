@@ -110,7 +110,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_sangqi': 'SANCHI_STUPA',  // 桑奇（大佛塔）
     'city_putijiaye': 'SCEN_BUDDHA_STATUE',  // 菩提伽耶（成道像）
     'city_jienei': 'AFRI_WONDER_MALIANS',  // 杰内城（大清真寺）
-    'city_agesi': 'POENARI_CASTLE',  // 阿格斯（波耶纳里城堡）
+    'city_agesi': 'POENARI_CASTLE',  // 库尔泰亚（波耶纳里城堡）
 };
 
 /**

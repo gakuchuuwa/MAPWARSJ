@@ -153,22 +153,20 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (!isInvolved) return;
         gameLog('startup', '⚔️ [GameApp] Battle Started (followed army involved) - showing Combat UI');
         app.combatUI.show(battle);
-        // [2026-08-09 独立战斗场景] 进 13 条件（主人 2026-08-11 定稿，勿改）：
-        //   ① 双方都有武将  ② 双方都有精锐  ③ 双方兵力都 ≥ 1 万
-        // [2026-08-10 兵力门槛] 再加一条：任一方不足 SCENE13_MIN_TROOPS 的小仗不进战术层
+        // [2026-08-30 主人改] 进 13 条件：开关开 + 双方兵力都 ≥1万 + 双方不能都是海军 + 双方都有武将+精锐。
+        //   （海军 vs 要塞仍按 siege 类型进 13）
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const bigEnough = battle.attacker.troops >= minTroops && battle.defender.troops >= minTroops;
-        // 🔴 用共用判据：1v1 也可能是「军团打城池」（CombatSystem 的 isDefenderImmobile 分支），
-        //    只读 entity.isElite 会让 1v1 攻城战永远进不了 13。
+        const bothNaval = unitIsNaval(battle.attacker) && unitIsNaval(battle.defender);
+        const isNavalBattle = unitIsNaval(battle.attacker) || unitIsNaval(battle.defender);
+        const isNavalVsFortress = (unitIsNaval(battle.attacker) || unitIsNaval(battle.defender))
+            && (unitIsFortress(battle.attacker) || unitIsFortress(battle.defender));
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
-        const isNavalBattle = unitIsNaval(battle.attacker) || unitIsNaval(battle.defender);
-        const isNavalVsFortress = isNavalBattle
-            && (unitIsFortress(battle.attacker) || unitIsFortress(battle.defender));
-        const standardScene13Eligible = !isNavalBattle && bigEnough
+        const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
             && !!battle.attacker.generalId && !!battle.defender.generalId
             && attHasElite && defHasElite;
-        if (isNavalVsFortress || standardScene13Eligible) {
+        if (eligible) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
             const t = battleSceneTarget(centerUnit);
             // [2026-08-10] 进 13 = 战术层：时长钉死 1 分钟（真实秒），覆盖引擎的动态时长
@@ -205,28 +203,25 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             `⚔️ [GameApp] Regional Battle (followed army involved) - ${attackers.length} vs ${defenders.length}`
         );
         const scale = app.timeSystem.getSpeed();
-        // [2026-08-09 独立战斗场景] 进 13 演出条件（主人 2026-08-11 定稿，勿改）：
-        //   ① 双方都有武将  ② 双方都有精锐  ③ 双方兵力都 ≥ SCENE13_MIN_TROOPS（1 万）
-        //   （攻城战守方 city 的 generalId = 守将 readSiegeGarrisonGeneralId，同样按此三条判定）
-        const attHasGen = attackers.some((u) => !!u.generalId);
-        const defHasGen = defenders.some((u) => !!u.generalId);
-        const attHasElite = attackers.some(unitHasElite);
-        const defHasElite = defenders.some(unitHasElite);
+        // [2026-08-30 主人改] 进 13 条件：开关开 + 双方兵力都 ≥1万（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
         // [2026-08-16 主人改·含援军] 兵力门槛看每方**合计**（含所有已编入的援军），
         //   不再是「每个单位单独 ≥1万」。因为 13 冻结引擎暂停游戏，开战时编入的援军
         //   就是全部、不会有中途加入的援军——开战时看双方总兵力即可。
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
         const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0); // 守方合计（含援军）
-        const attBigEnough = attTroops >= minTroops;
-        const defBigEnough = defTroops >= minTroops;
-        const bigEnough = attBigEnough && defBigEnough;
+        const bigEnough = attTroops >= minTroops && defTroops >= minTroops;
         const isNavalBattle = [...attackers, ...defenders].some(unitIsNaval);
+        const bothNaval = attackers.every(unitIsNaval) && defenders.every(unitIsNaval);
         const isNavalVsFortress = isNavalBattle
             && [...attackers, ...defenders].some(unitIsFortress);
-        const standardScene13Eligible = !isNavalBattle && bigEnough
+        const attHasGen = attackers.some((u) => !!u.generalId);
+        const defHasGen = defenders.some((u) => !!u.generalId);
+        const attHasElite = attackers.some(unitHasElite);
+        const defHasElite = defenders.some(unitHasElite);
+        const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
             && attHasGen && defHasGen && attHasElite && defHasElite;
-        if (isNavalVsFortress || standardScene13Eligible) {
+        if (eligible) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);

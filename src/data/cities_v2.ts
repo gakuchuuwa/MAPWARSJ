@@ -1571,14 +1571,14 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力 ──
     // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
     {
-        id: 'city_ava', name: '阿瓦', factionId: 'ava',
-        lat: 21.85, lng: 96.0667, type: 'medium_city', region: 'BURMESE', troops: 30000, tier: 4,
-        note: '阿瓦；掸族小城',
+        id: 'city_ava', name: '因瓦', factionId: 'ava',
+        lat: 21.85, lng: 96.0667, type: 'small_city', region: 'BURMESE', troops: 30000, tier: 4,
+        note: '因瓦（阿瓦）；1365年建成的阿瓦王国都城',
     },
     {
-        id: 'city_bago', name: '勃固城', factionId: 'hantawadi',
+        id: 'city_bago', name: '勃固', factionId: 'hantawadi',
         lat: 17.3333, lng: 96.4667, type: 'medium_city', region: 'BURMESE', troops: 30000, tier: 1,
-        note: '勃固城；汉达瓦底治所/重镇',
+        note: '勃固；汉达瓦底王国都城',
     },
     { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'pass', region: 'DIANQIAN', troops: 30000,
         note: '乌蒙山；乌蛮关隘',
@@ -1592,9 +1592,9 @@ export const PERIPHERY: CityDataV2[] = [
         note: '室利差罗；骠族小城',
     },
     {
-        id: 'city_thaton', name: '直通城', factionId: 'mon',
+        id: 'city_thaton', name: '直通', factionId: 'mon',
         lat: 16.5333, lng: 97.6333, type: 'small_city', region: 'BURMESE', troops: 30000, tier: 4,
-        note: '直通城；孟族小城',
+        note: '直通；孟族古城与直通王国都城',
     },
     // ── 第三类：世袭土司与门阀 ──
     { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
@@ -2004,7 +2004,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 30000, region: 'LATIN' },
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 30000, region: 'GREEK' },
-    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 30000, region: 'WALLACHIA' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '15世纪成为瓦拉几亚王侯驻地' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'pass', troops: 30000, region: 'SLAVIC' },
 
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 30000, region: 'CELTS' },
@@ -2068,7 +2068,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_xianuofugeerdede', name: '下诺城', factionId: 'suzidaer', lat: 56.32, lng: 44, type: 'small_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_zhapoluore', name: '塞契', factionId: 'gesake', lat: 47.83, lng: 35.16, type: 'pass', troops: 30000, region: 'SLAVIC', note: '扎波罗热哥萨克军事营地（Sich=设防要塞）' },
     { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_teergewishite', name: '特尔城', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 30000, region: 'WALLACHIA' },
+    { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '特尔戈维什泰；瓦拉几亚长期王都' },
     { id: 'city_kenisibao', name: '柯尼斯堡', factionId: 'tiaodun_qishi', lat: 54.71, lng: 20.51, type: 'pass', troops: 30000, region: 'TEUTONS' },
     { id: 'city_talin', name: '塔林', factionId: 'liwoniya', lat: 59.43, lng: 24.75, type: 'small_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'chude', lat: 58.37, lng: 26.72, type: 'small_city', troops: 30000, region: 'SLAVIC' },
@@ -2807,7 +2807,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // —— 2026-06-20 新增：旁遮普·阿托克 ——
     { id: 'city_atuoke', name: '阿托克', factionId: 'bulu', lat: 33.7666, lng: 72.3608, type: 'pass', region: 'PORUS', troops: 30000, note: '印度河阿托克要塞；兰季特·辛格旁遮普帝国西北锁钥，哈里·辛格扼开伯尔隘口' },
-    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'pass', troops: 30000, region: 'BURMESE' },
+    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'small_city', troops: 30000, region: 'BURMESE', note: '旧称莫索波；雍笈牙起兵并建立贡榜王朝之地' },
 
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'pass', troops: 30000, region: 'JIANGNAN' },
 
@@ -3072,7 +3072,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_sangqi', name: '桑奇', factionId: 'pidisha', lat: 23.480, lng: 77.739, type: 'small_city', troops: 30000, region: 'INDIA', note: '阿育王始建桑奇大佛塔' },
     { id: 'city_putijiaye', name: '菩提伽耶', factionId: 'jiaye', lat: 24.696, lng: 84.991, type: 'small_city', troops: 30000, region: 'INDIA', note: '佛陀成道圣地' },
     { id: 'city_jienei', name: '杰内城', factionId: 'jienei', lat: 13.905, lng: -4.555, type: 'small_city', troops: 30000, region: 'AFRICA', note: '马里帝国名城，杰内大清真寺' },
-    { id: 'city_agesi', name: '阿格斯', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '瓦拉几亚早期都城库尔泰亚' },
+    { id: 'city_agesi', name: '库尔泰亚', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '库尔泰亚·德·阿尔杰什；瓦拉几亚早期王都' },
     { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'duonaobaojia', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 30000, region: 'BULGARIANS', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
     { id: 'city_aidiernei', name: '埃迪尔内', factionId: 'lumiliya', lat: 41.6781, lng: 26.5591, type: 'small_city', troops: 30000, region: 'THRACIAN', note: '古称阿德里安堡，奥斯曼帝国迁都君士坦丁堡前的都城；塞利姆二世命米马尔·希南于1568—1575年营建塞利米耶清真寺' },
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'small_city', troops: 30000, region: 'ANDE', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁' },

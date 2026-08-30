@@ -693,6 +693,10 @@ export class GameMap {
                         <input type="checkbox" id="chk-auto-zoom" checked> 
                         <b>🔍 自动缩放</b>
                     </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#e65100;margin-top:4px;">
+                        <input type="checkbox" id="chk-tactical-mode" checked> 
+                        <b>⚔️ 进入战术模式</b>
+                    </label>
 
 
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
@@ -1012,6 +1016,16 @@ export class GameMap {
                     const game = (window as any).game;
                     if (game?.zoomController) {
                         game.zoomController.enabled = !!e.target.checked;
+                    }
+                });
+            }
+
+            const chkTacticalMode = document.getElementById('chk-tactical-mode') as HTMLInputElement;
+            if (chkTacticalMode) {
+                chkTacticalMode.addEventListener('change', (e: any) => {
+                    const game = (window as any).game;
+                    if (game) {
+                        game.tacticalModeEnabled = !!e.target.checked;
                     }
                 });
             }

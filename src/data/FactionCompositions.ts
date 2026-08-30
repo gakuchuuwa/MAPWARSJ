@@ -1917,49 +1917,49 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 缅甸东吁王朝·莽应龙 / 莽瑞体 / 雍笈牙（缅甸军团 · 鹤翼阵 2+4+3：精锐象兵 2 + 精锐飞镖骑兵 4 + 精锐掷矛手 3）
-    hantawadi: {
+    "hantawadi": {
         legionName: "缅甸军团",
-        formationMode: 'crane_wing',
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },   // Row 0 前卫冲击 = 精锐象兵 2头（战斗象高级践踏破阵）
-            { type: 'elite_arambai', count: 4 },           // Row 1 中军主力 = 精锐飞镖骑兵 4骑（王牌飞镖破甲高爆输出）
-            { type: 'elite_skirmisher', count: 3 },        // Row 2 尾收压阵 = 精锐掷矛手 3人（掷矛高级后方抛射掩护）
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
-    dongxu: {
+    "dongxu": {
         legionName: "缅甸军团",
-        formationMode: 'crane_wing',
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'elite_arambai', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
-    konbaung: {
+    "konbaung": {
         legionName: "缅甸军团",
-        formationMode: 'crane_wing',
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'elite_arambai', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
-    pyu: {
+    "pyu": {
         legionName: "缅甸军团",
-        formationMode: 'crane_wing',
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'elite_arambai', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
-    mon: {
+    "mon": {
         legionName: "缅甸军团",
-        formationMode: 'crane_wing',
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'elite_arambai', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
     // 扶南与高棉·范蔓 / 刀更孟 战象与爪刀精锐军团（鱼鳞阵 3+4+2：精锐战象前卫 3 + 精锐爪刀勇士主力 4 + 步弓手 2；象拆入战象一排）
@@ -2353,13 +2353,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'karambit_warrior', count: 2 },          // Row 2 后排接应 = 爪刀勇士 2
         ],
     },
-    pagan: {
-        legionName: "暹罗军团",
-        formationMode: 'echelon',
+    "pagan": {
+        legionName: "缅甸军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'archer', count: 4 },                    // Row 0 前排齐射 = 步弓手 4
-            { type: 'elite_battle_elephant', count: 3 },     // Row 1 核心战象 = 精锐战斗象 3
-            { type: 'karambit_warrior', count: 2 },          // Row 2 后排接应 = 爪刀勇士 2
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
     // 高棉帝国·吴哥/真腊（阇耶跋摩七世 · 高棉军团 · 锥形阵 2+3+4：长矛兵 2 + 精锐重弩战象 3 + 步弓手 4；象拆剩弩炮象一排）
@@ -2608,13 +2608,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 中南半岛阿瓦王朝·思机法 掸族战象与飞镖铁骑大阵（鱼鳞阵 3+4+2：皮甲战象前卫 3 + 精锐飞镖骑兵主力 4 + 步弓手后排 2）
-    ava: {
-        legionName: "掸族军团",
-        formationMode: 'fish_scale',
+    "ava": {
+        legionName: "缅甸军团",
+        formationMode: "triangle",
         slots: [
-            { type: 'armored_elephant', count: 3 },        // Row 0 前卫巨象 = 皮甲战象 3头（掸族象卫前沿开路践踏破阵）
-            { type: 'elite_arambai', count: 4 },           // Row 1 中军主力 = 缅甸飞镖骑兵精锐 4骑（王牌飞镖破甲高爆输出）
-            { type: 'archer', count: 2 },                  // Row 2 尾收压阵 = 步弓手 2人（密林步弓后排抛射）
+            { type: "elite_battle_elephant", count: 2 },
+            { type: "archer", count: 3 },
+            { type: "elite_arambai", count: 4 },
         ],
     },
     // 大越帝国·升龙（陈国峻/陈兴道 · 岭南三角阵 2+3+4：皮甲战象尖刀 2 + 帝王掷矛手中坚 3 + 精锐藤弓兵主力 4）
