@@ -72,6 +72,22 @@ if (import.meta.env.DEV) {
     });
 }
 
+/**
+ * 水陆判定的**纠偏层**：海拔说「低于海平面」时，再问一次 WaterMask 是不是其实是陆地。
+ *
+ * 🔴 为什么是这个组合（2026-08-31 走了两条弯路才定下来）：
+ *   · 主判据必须用 `getElevationAtMapPixel` —— 它会**按需发起瓦片请求**，
+ *     而 `createBlockProber` / `probeLandSea` 只读同步缓存、从不请求。
+ *     我一度把整套判定换成探针，结果瓦片没人去拉、探针恒返回 'pending'，
+ *     实测德意志 187 棵→5 棵、俄北 224→0（render 只剩 0.3ms，全卡在第一道闸）。
+ *   · 但**只看海拔是错的**：里海(-27m)、吐鲁番(-51m) 是低于海平面的陆地，
+ *     单看海拔那一带永远不长树。所以海拔说「水」时，用掩膜纠偏一次；
+ *     掩膜没到（返回 null）就维持海拔的判断，宁可少画几棵也不要把树画进海。
+ */
+function maskSaysLand(lat: number, lng: number): boolean {
+    return LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === false;
+}
+
 function hash(x: number, y: number, salt = 0): number {
     const n = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
     return n - Math.floor(n);
@@ -302,6 +318,7 @@ export class VegetationLayer {
         let pendingImages = 0;
         let drawnTrees = 0;
 
+
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
@@ -320,15 +337,18 @@ export class VegetationLayer {
                 // 🔴 [2026-08-31 修「树长到海里」] 水陆判定必须走 probeLandSea（掩膜 AND 海拔），
                 //    **不能用 `elev < 0`** —— 里海(-27m)、吐鲁番(-51m) 是低于海平面的**陆地**，
                 //    单看海拔会把它们判成海、那一带永远不长树。判据只认 WaterMask 这一套。
-                const landState = LandSeaSystem.probeLandSea(clusterLatLng.lat, clusterLatLng.lng);
-                if (landState === 'pending') { missingTiles++; continue; }
-                if (landState === 'sea') continue;
-
+                // 🔴 顺序不能反：`getElevationAtMapPixel` 会**按需发起瓦片请求**，
+                //    而 `createBlockProber` 只读同步缓存、从不请求。
+                //    我一度把水陆判定放在它前面，结果瓦片永远没人去拉 → 探针恒返回 'pending'
+                //    → 整屏 continue，实测德意志 187 棵掉到 5 棵、俄北 224→0（render 只剩 0.4ms，
+                //    全在第一道闸被拦掉）。先取高程把瓦片拉起来，再问水陆。
                 const elev = LandSeaSystem.getElevationAtMapPixel(
                     cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
                 );
                 if (elev === null) { missingTiles++; continue; }
                 if (elev > 3600) continue;   // 雪线以上无乔木
+
+                if (elev < 0 && !maskSaysLand(clusterLatLng.lat, clusterLatLng.lng)) continue;
 
                 // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
                 const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
@@ -367,9 +387,19 @@ export class VegetationLayer {
                     //    （主人 2026-08-31 截图：满爱琴海都是树）。
                     //    queryBaseTile 查的是**气候底图**不是水陆掩膜，海上采样照样返回陆地贴图，
                     //    所以它挡不住这件事，必须显式问 probeLandSea。
-                    const ptLand = LandSeaSystem.probeLandSea(ptLatLng.lat, ptLatLng.lng);
-                    if (ptLand === 'pending') { missingTiles++; continue; }
-                    if (ptLand === 'sea') continue;
+                    // 🔴 [2026-08-31 修「树长到海里」] **每棵树都要单独判水陆**：
+                    //    原来只有簇核判了，而簇内的树是从簇核往外撒 CLUSTER_RADIUS 的，
+                    //    簇核在岸上、树照样被甩进海（主人截图：满爱琴海是树）。
+                    //    queryBaseTile 查的是**气候底图**不是水陆掩膜，海上照样返回陆地贴图，挡不住。
+                    // 🔴 每棵树单独挡海（主人截图：满爱琴海是树）。簇核在岸上，
+                    //    但树是从簇核往外撒 CLUSTER_RADIUS 的，照样会被甩进海。
+                    //    这里**只问掩膜、绝不查高程**：
+                    //    树点散布在簇核之外，常落到还没加载的相邻高程瓦片，逐点查会大量返回 null
+                    //    → 被当成「瓦片没到」跳过，实测德意志 187 棵→9 棵、俄北 224→0。
+                    //    （这正是记忆里「批量采样别逐点查、会踩 LRU」那条的现场版。）
+                    //    掩膜是同步只读的：明确说是水才丢弃；没加载(null)就照画，
+                    //    宁可偶尔漏一棵在海边，也不要整片森林消失。
+                    if (LandSeaSystem.getWaterSampler().isWaterSync(ptLatLng.lat, ptLatLng.lng) === true) continue;
 
                     // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
                     const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);

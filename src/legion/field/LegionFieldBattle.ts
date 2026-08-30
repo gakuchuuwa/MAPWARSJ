@@ -188,28 +188,36 @@ function startFieldBattleBetween(
         return;
     }
 
-    // 野战遵循自然攻守：army（主动撞方）= 攻击方（左），otherArmy（被撞方）= 防守方（右）。
-    // [2026-08-30 主人改] 取消「跟拍军团永远攻击方」的攻守交换——回城救援/被拦截时跟拍军团实为守方，
-    // 应显示在右（守方）。攻守身份不影响胜负（胜负由兵力比 + 八环决定），只改演出方向。
+    // 野战默认自然攻守；双方均无援军时，跟随军团固定为攻击方（左）。
 
     const posA = army.getPosition();
     const posB = otherArmy.getPosition();
     const center = { lat: (posA.lat + posB.lat) / 2, lng: (posA.lng + posB.lng) / 2 };
 
-    const attFaction = army.getFactionId();
-    const defFaction = otherArmy.getFactionId();
+    let attFaction = army.getFactionId();
+    let defFaction = otherArmy.getFactionId();
     if (!attFaction || !defFaction || attFaction === defFaction) return;
 
     const exclude = new Set<string>([army.id, otherArmy.id]);
-    const attLegions = [
+    let attLegions = [
         army,
         ...collectLegionsNearBattleCenter(deps, center, attFaction, exclude),
     ];
     attLegions.forEach((l) => exclude.add(l.id));
-    const defLegions = [
+    let defLegions = [
         otherArmy,
         ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude),
     ];
+    let attackerPrimary = army;
+    let defenderPrimary = otherArmy;
+
+    const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+    const hasNoReinforcements = attLegions.length === 1 && defLegions.length === 1;
+    if (hasNoReinforcements && followedFieldId === defenderPrimary.id) {
+        [attFaction, defFaction] = [defFaction, attFaction];
+        [attLegions, defLegions] = [defLegions, attLegions];
+        [attackerPrimary, defenderPrimary] = [defenderPrimary, attackerPrimary];
+    }
 
     const combatSystem = deps.getCombatSystem();
     if (!combatSystem) {
@@ -260,7 +268,6 @@ function startFieldBattleBetween(
     );
 
     // [语音播报] 野战开战（仅跟随军团那场）。势=攻守初始兵力比（与攻城/攻占同源）。
-    const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
     if (followedFieldId) {
         const onAtt = attLegions.some((l) => l.id === followedFieldId);
         const onDef = defLegions.some((l) => l.id === followedFieldId);
@@ -268,7 +275,7 @@ function startFieldBattleBetween(
             const fLegions = onAtt ? attLegions : defLegions;
             const fUnits = onAtt ? attUnits : defUnits;
             const idx = fLegions.findIndex((l) => l.id === followedFieldId);
-            const enemyPrimary = onAtt ? otherArmy : army;
+            const enemyPrimary = onAtt ? defenderPrimary : attackerPrimary;
             const flR = fieldBattleField.getInitialAttDefRatio();
             const followerR = onAtt ? flR : (1 / Math.max(flR, 0.001));
             const fieldJu: CaptureJu = followerR > 1.5 ? 'advantage' : followerR < 0.67 ? 'disadvantage' : 'balance';
@@ -295,7 +302,7 @@ function startFieldBattleBetween(
         const endUnits = endOnAtt ? attUnits : defUnits;
         const endIdx = endLegions.findIndex((l) => l.id === endFollowedId);
         const follower = endLegions[endIdx];
-        const endEnemyPrimary = endOnAtt ? otherArmy : army;
+        const endEnemyPrimary = endOnAtt ? defenderPrimary : attackerPrimary;
         const endFollowerFaction = endOnAtt ? attFaction : defFaction;
         const endFlR = fieldBattleField.getInitialAttDefRatio();
         const endFollowerR = endOnAtt ? endFlR : (1 / Math.max(endFlR, 0.001));
