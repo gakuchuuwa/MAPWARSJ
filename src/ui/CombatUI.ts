@@ -5311,17 +5311,19 @@ export class CombatUI {
     }
 
     private resolveUnitLegionName(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
-        const entity = unit.getEntity?.();
-        if (entity?.name && entity.name !== '军队' && entity.name !== '军团' && !entity.name.includes('守军')) {
-            return entity.name.endsWith('军团') ? entity.name : `${entity.name}军团`;
-        }
-        if (unit.name && unit.name !== '军队' && unit.name !== '军团' && !unit.name.includes('守军')) {
-            if (unit.name.endsWith('军团')) return unit.name;
-        }
         const factionId = unit.factionId;
+        // ① 军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名，如「秦国军团」）。
+        //    番号（army.name，如「范阳军团」「北府兵」）另走精锐标签 getLegionEliteBadgeName，此处不混。
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;
         }
+        // ② 番号兜底（未登记军团名的势力：显示实时番号；番号≠军团名，不再加「军团」后缀）
+        const entity = unit.getEntity?.();
+        const raw = ((entity?.name ?? unit.name) || '').trim();
+        if (raw && raw !== '军队' && raw !== '军团' && !raw.includes('守军')) {
+            return raw;
+        }
+        // ③ 势力名 + 军团
         const factionName = factionId ? (window as any).game?.cityManager?.getFactionName?.(factionId) : null;
         if (factionName) {
             return `${factionName}军团`;
