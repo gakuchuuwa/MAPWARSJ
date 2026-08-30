@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_ORGAN_GUN",
+  "source": "u_sie_organ_decayA",
+  "frames": 480,
+  "box_w": 72,
+  "box_h": 48,
+  "anchor_x": 36,
+  "anchor_y": 28
+}

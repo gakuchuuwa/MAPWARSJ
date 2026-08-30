@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_TREBUCHET",
+  "source": "u_sie_unpacked_trebuchet_decayA",
+  "frames": 960,
+  "box_w": 288,
+  "box_h": 160,
+  "anchor_x": 144,
+  "anchor_y": 84
+}

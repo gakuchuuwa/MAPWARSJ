@@ -1,0 +1,9 @@
+{
+  "code": "GRAVES",
+  "source": "s_graves",
+  "frames": 6,
+  "box_w": 24,
+  "box_h": 40,
+  "anchor_x": 12,
+  "anchor_y": 36
+}

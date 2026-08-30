@@ -1,0 +1,9 @@
+{
+  "code": "STONE_MINE",
+  "source": "n_mine_stone",
+  "frames": 7,
+  "box_w": 92,
+  "box_h": 56,
+  "anchor_x": 48,
+  "anchor_y": 32
+}

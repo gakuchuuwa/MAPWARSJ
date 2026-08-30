@@ -1,0 +1,9 @@
+{
+  "code": "PERCH_FISH_UNDERWATER",
+  "source": "a_fish_perch_underwater",
+  "frames": 91,
+  "box_w": 140,
+  "box_h": 88,
+  "anchor_x": 56,
+  "anchor_y": 12
+}

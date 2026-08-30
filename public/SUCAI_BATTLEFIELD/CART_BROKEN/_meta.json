@@ -1,0 +1,9 @@
+{
+  "code": "CART_BROKEN",
+  "source": "s_cart_broken",
+  "frames": 5,
+  "box_w": 128,
+  "box_h": 96,
+  "anchor_x": 64,
+  "anchor_y": 52
+}

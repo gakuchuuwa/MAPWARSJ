@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_CAPPED_RAM",
+  "source": "u_sie_capped_ram_decayA",
+  "frames": 480,
+  "box_w": 152,
+  "box_h": 88,
+  "anchor_x": 76,
+  "anchor_y": 48
+}

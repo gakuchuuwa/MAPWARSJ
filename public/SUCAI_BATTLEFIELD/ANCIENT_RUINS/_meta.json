@@ -1,0 +1,9 @@
+{
+  "code": "ANCIENT_RUINS",
+  "source": "s_ruins",
+  "frames": 1,
+  "box_w": 312,
+  "box_h": 200,
+  "anchor_x": 160,
+  "anchor_y": 120
+}

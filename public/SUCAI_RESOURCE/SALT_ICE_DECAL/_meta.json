@@ -1,0 +1,9 @@
+{
+  "code": "SALT_ICE_DECAL",
+  "source": "n_decal_ice",
+  "frames": 7,
+  "box_w": 72,
+  "box_h": 48,
+  "anchor_x": 34,
+  "anchor_y": 26
+}

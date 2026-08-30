@@ -1,0 +1,9 @@
+{
+  "code": "FENCE_RUBBLE",
+  "source": "b_scen_fence_rubble",
+  "frames": 5,
+  "box_w": 100,
+  "box_h": 60,
+  "anchor_x": 50,
+  "anchor_y": 30
+}

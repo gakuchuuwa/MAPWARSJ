@@ -1,0 +1,9 @@
+{
+  "code": "DECAY_BOMBARD_CANNON",
+  "source": "u_sie_bombard_cannon_decayA",
+  "frames": 320,
+  "box_w": 116,
+  "box_h": 68,
+  "anchor_x": 59,
+  "anchor_y": 35
+}

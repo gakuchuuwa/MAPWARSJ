@@ -1,0 +1,9 @@
+{
+  "code": "ROCK_JUNGLE",
+  "source": "n_rock_jungle",
+  "frames": 6,
+  "box_w": 200,
+  "box_h": 132,
+  "anchor_x": 102,
+  "anchor_y": 82
+}

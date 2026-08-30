@@ -1,0 +1,9 @@
+{
+  "code": "SKELETON_BATTLEFIELD",
+  "source": "s_skeleton",
+  "frames": 15,
+  "box_w": 76,
+  "box_h": 44,
+  "anchor_x": 36,
+  "anchor_y": 20
+}

@@ -1,0 +1,9 @@
+{
+  "code": "GALLEY_WRECK",
+  "source": "s_galley_ship_wreck",
+  "frames": 8,
+  "box_w": 196,
+  "box_h": 132,
+  "anchor_x": 98,
+  "anchor_y": 82
+}

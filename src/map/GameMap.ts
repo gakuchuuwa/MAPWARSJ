@@ -10,6 +10,8 @@ import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { GridSystem } from '../systems/GridSystem';
 import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
+import { ResourceSpotLayer } from './ResourceSpotLayer';
+import { MarineLifeLayer } from './MarineLifeLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
@@ -62,6 +64,8 @@ export class GameMap {
     private vectorRiverLayer: VectorRiverLayer | null = null;
     private monumentLayer: MonumentLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
+    private resourceSpotLayer: ResourceSpotLayer | null = null;
+    private marineLifeLayer: MarineLifeLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
     private useGCJ02: boolean = true; // [NEW] Default to true for offset logic
@@ -198,6 +202,8 @@ export class GameMap {
 
 
         this.vegetationLayer = new VegetationLayer(this.map);
+        this.resourceSpotLayer = new ResourceSpotLayer().addTo(this.map);
+        this.marineLifeLayer = new MarineLifeLayer().addTo(this.map);
 
         if (import.meta.env.DEV) {
             this.addStyleControl();
@@ -234,7 +240,11 @@ export class GameMap {
 
         this.toggleRiver(true);
         this.toggleHillshade(true);
-        this.toggleTree(false);
+        // 🔴 [2026-08-31 修「战略地图植被一直不显示」] 原来这里写死 false，
+        //    VegetationLayer 的 `visible` 初值也是 false —— 也就是说植被层**从来没被打开过**，
+        //    只有 DEV 侧栏手动勾 chk-tree 才看得见，线上更是永远看不到。
+        //    植被本身是好的（战略/战术已统一走 world-base 真实气候），缺的只是这一下开关。
+        this.toggleTree(true);
 
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
@@ -260,7 +270,7 @@ export class GameMap {
         const chkElevColor = document.getElementById('chk-elev-color') as HTMLInputElement;
         if (chkElevColor) chkElevColor.checked = true;
         const chkTree = document.getElementById('chk-tree') as HTMLInputElement;
-        if (chkTree) chkTree.checked = false;
+        if (chkTree) chkTree.checked = true;   // 与 applyDefaultMapVisuals 的默认开启保持一致
         if (this.hillshadeLayer) {
             const initialZ = this.getZFactor(this.map.getZoom());
             const rngZ = document.getElementById('rng-z') as HTMLInputElement;

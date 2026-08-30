@@ -1,0 +1,9 @@
+{
+  "code": "SHORE_FISH_UNDERWATER",
+  "source": "a_fish_shore_underwater",
+  "frames": 90,
+  "box_w": 84,
+  "box_h": 48,
+  "anchor_x": 56,
+  "anchor_y": 20
+}

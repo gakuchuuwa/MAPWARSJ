@@ -1,0 +1,9 @@
+{
+  "code": "FORAGE_BUSH",
+  "source": "n_forage_bush",
+  "frames": 4,
+  "box_w": 108,
+  "box_h": 72,
+  "anchor_x": 52,
+  "anchor_y": 44
+}

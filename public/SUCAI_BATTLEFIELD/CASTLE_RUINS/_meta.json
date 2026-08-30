@@ -1,0 +1,9 @@
+{
+  "code": "CASTLE_RUINS",
+  "source": "s_castle_ruins",
+  "frames": 2,
+  "box_w": 424,
+  "box_h": 492,
+  "anchor_x": 216,
+  "anchor_y": 384
+}

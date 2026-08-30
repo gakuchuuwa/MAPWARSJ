@@ -1,0 +1,9 @@
+{
+  "code": "DOLPHIN",
+  "source": "a_fish_dolphin",
+  "frames": 104,
+  "box_w": 40,
+  "box_h": 60,
+  "anchor_x": 52,
+  "anchor_y": 56
+}

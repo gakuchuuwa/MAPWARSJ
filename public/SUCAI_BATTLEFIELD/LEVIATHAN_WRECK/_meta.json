@@ -1,0 +1,9 @@
+{
+  "code": "LEVIATHAN_WRECK",
+  "source": "s_leviathan_ship_wreck",
+  "frames": 8,
+  "box_w": 312,
+  "box_h": 240,
+  "anchor_x": 156,
+  "anchor_y": 164
+}

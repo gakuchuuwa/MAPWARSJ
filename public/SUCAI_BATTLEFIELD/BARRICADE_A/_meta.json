@@ -1,0 +1,9 @@
+{
+  "code": "BARRICADE_A",
+  "source": "b_scen_barricade_a",
+  "frames": 1,
+  "box_w": 236,
+  "box_h": 104,
+  "anchor_x": 118,
+  "anchor_y": 66
+}
