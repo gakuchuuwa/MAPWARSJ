@@ -338,8 +338,58 @@ export class RoadRegistry {
         prev: Map<string, { nodeId: string; edge: GraphEdge }>;
     }> = new Map();
 
+    /**
+     * 每条边的「LatLng 坐标数组 + 包围盒」缓存（key = edge.id）。
+     *
+     * 🔴 [2026-08-31 修战略卡顿·实测根因] `findNearestRoadEntry` 原来对**每条边**都现算
+     *    `edge.coordinates.map(([lng, lat]) => ({ lat, lng }))`。实测本图 **1491 条边 /
+     *    323801 个坐标**，也就是**每调用一次就 new 出 32.3 万个对象**，单次 **31.7ms**，
+     *    而且全是马上就扔的垃圾（顺带把 GC 压力也喂大了）。
+     *    边的几何只有 rebuildGraph 时才变，完全可以缓存。
+     */
+    private edgeGeomCache: Map<string, {
+        coords: { lat: number; lng: number }[];
+        minLat: number; maxLat: number; minLng: number; maxLng: number;
+    }> = new Map();
+
     private clearDistanceCache(): void {
         this.dijkstraCache.clear();
+        // 边几何随图一起作废（rebuildGraph 会调到这里）
+        this.edgeGeomCache.clear();
+    }
+
+    /** 取某条边的坐标数组 + 包围盒（惰性构建，图不变期间只算一次）。 */
+    private edgeGeom(edge: GraphEdge): {
+        coords: { lat: number; lng: number }[];
+        minLat: number; maxLat: number; minLng: number; maxLng: number;
+    } | null {
+        const hit = this.edgeGeomCache.get(edge.id);
+        if (hit) return hit;
+        if (edge.coordinates.length === 0) return null;
+        const coords = edge.coordinates.map(([lng, lat]) => ({ lat, lng }));
+        let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+        for (const c of coords) {
+            if (c.lat < minLat) minLat = c.lat;
+            if (c.lat > maxLat) maxLat = c.lat;
+            if (c.lng < minLng) minLng = c.lng;
+            if (c.lng > maxLng) maxLng = c.lng;
+        }
+        const entry = { coords, minLat, maxLat, minLng, maxLng };
+        this.edgeGeomCache.set(edge.id, entry);
+        return entry;
+    }
+
+    /**
+     * 点到包围盒的最短距离（度）。盒内为 0。
+     * 用作 findNearestRoadEntry 的剪枝下界：盒距已经比当前最优还远，这条边不可能更近。
+     */
+    private static bboxDist(
+        pos: { lat: number; lng: number },
+        b: { minLat: number; maxLat: number; minLng: number; maxLng: number },
+    ): number {
+        const dLat = pos.lat < b.minLat ? b.minLat - pos.lat : (pos.lat > b.maxLat ? pos.lat - b.maxLat : 0);
+        const dLng = pos.lng < b.minLng ? b.minLng - pos.lng : (pos.lng > b.maxLng ? pos.lng - b.maxLng : 0);
+        return Math.sqrt(dLat * dLat + dLng * dLng);
     }
 
     /** 取单源 Dijkstra 结果：命中 LRU 缓存则复用，否则计算并入缓存（路网不变期间结果确定） */
@@ -645,8 +695,14 @@ export class RoadRegistry {
         } | null = null;
 
         for (const edge of this.edges.values()) {
-            if (edge.coordinates.length === 0) continue;
-            const coords = edge.coordinates.map(([lng, lat]) => ({ lat, lng }));
+            const geom = this.edgeGeom(edge);
+            if (!geom) continue;
+            // 🔴 包围盒剪枝：盒距已经不小于当前最优（或超出 maxDistDeg）→ 这条边不可能更近，
+            //    连 nearestPointOnPolyline 都不用跑。实测把逐点扫描从 32.3 万个坐标降到几千。
+            const lower = RoadRegistry.bboxDist(pos, geom);
+            if (lower > maxDistDeg) continue;
+            if (best !== null && lower >= best.distance) continue;
+            const coords = geom.coords;
             const np = nearestPointOnPolyline(pos, coords);
             if (!np) continue;
             if (best === null || np.distance < best.distance) {

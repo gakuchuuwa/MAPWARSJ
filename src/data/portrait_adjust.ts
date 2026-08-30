@@ -6782,7 +6782,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LATIN/__多余__LATIN_05.png": {
+        "/assets/LATIN/__闲置__LATIN_20.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
