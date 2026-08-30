@@ -1326,7 +1326,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
 
-    { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', region: 'HEXI', troops: 30000, note: '明赤斤蒙古卫驻牧；岳钟琪平准噶尔赤金营（旗号赤避「赤金」全称）' },
+    { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', troops: 20000, region: 'HEXI', mirror: true },
+
     { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'pass', troops: 30000, region: 'TIBET' },
 
 
@@ -1943,7 +1944,11 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'BERBER' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 30000, region: 'LATIN' },
+    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 20000, region: 'LATIN', mirror: true },
+
+
+
+
     { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'small_city', troops: 30000, region: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 30000, region: 'BERBER' },

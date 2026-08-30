@@ -505,13 +505,6 @@ function deriveTacticalSkillIdFromSix(slots: SixSlotIds, fallback?: string): str
         || fallback || '';
 }
 
-function sixSlotsComplete(slots: SixSlotIds): boolean {
-    return !!(
-        slots.atkAdvantageSkillId && slots.atkBalanceSkillId && slots.atkDisadvantageSkillId
-        && slots.defAdvantageSkillId && slots.defBalanceSkillId && slots.defDisadvantageSkillId
-    );
-}
-
 function readSixSlotsFromForm(form: HTMLFormElement): SixSlotIds {
     const get = (n: string) => (form.querySelector(`[name="${n}"]`) as HTMLSelectElement | null)?.value ?? '';
     return {
@@ -1016,7 +1009,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </select>
           </label>
           <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
-            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>（2026-08-03 起全随机，不在此配置）。攻守风格不属于三势或技能；保存时 tacticalSkillId 自动取自六槽（优先攻·优势）。
+            下方攻防六槽仅保留作旧数据兼容，可不配齐；当前战斗选技由技能池随机抽取。攻守风格不属于三势或技能。
           </p>
           <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">攻方三槽 · 攻城</h4>
           <div class="form-row">
@@ -1685,8 +1678,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         }
     }
 
-    // 武将/立绘字段先行校验：填了武将名但缺品阶/战术技时，旧逻辑会静默跳过武将保存
-    // 却仍提示"保存成功"。放在所有 API 调用之前，避免据点存了武将没存的半保存状态。
+    // 武将/立绘字段先行校验：填了武将名但缺品阶时不落盘，避免半保存状态。
     const generalName = get('generalName');
     const portrait = normalizePortraitPath(get('portrait'));
     if (portrait && !portrait.toLowerCase().endsWith('.png')) {
@@ -1696,13 +1688,10 @@ async function handleFormSubmit(e: Event): Promise<void> {
     const tier = get('tier');
     const strategicSkillId = ''; // 2026-08-03 起名将战略技全随机，不写入档案
     const sixSlots = readSixSlotsFromForm(form);
-    const tacticalSkillId = deriveTacticalSkillIdFromSix(sixSlots);
+    const existingRow = rows.find(r => r.id === factionId);
+    const tacticalSkillId = deriveTacticalSkillIdFromSix(sixSlots, existingRow?.tacticalSkillId);
     if (generalName && !tier) {
         showToast(`武将「${generalName}」缺少品阶，请选择后再保存`, true);
-        return;
-    }
-    if (generalName && !sixSlotsComplete(sixSlots)) {
-        showToast(`武将「${generalName}」攻防六槽须全部配齐（6 个战术技）`, true);
         return;
     }
     const attackStyle = get('attackStyle');
@@ -1730,7 +1719,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         }
 
         // Step 2: save general (if provided)
-        if (generalName && tier && sixSlotsComplete(sixSlots)) {
+        if (generalName && tier) {
             if (!generalId) {
                 const ids = computeIds(factionName, cityName, generalName);
                 generalId = ids.generalId;
@@ -1743,13 +1732,13 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     portrait,
                     tier, tacticalSkillId,
                     strategicSkillId,
-                    atkAdvantageSkillId: get('atkAdvantageSkillId'),
-                    atkBalanceSkillId: get('atkBalanceSkillId'),
-                    atkDisadvantageSkillId: get('atkDisadvantageSkillId'),
-                    defAdvantageSkillId: get('defAdvantageSkillId'),
-                    defBalanceSkillId: get('defBalanceSkillId'),
-                    defDisadvantageSkillId: get('defDisadvantageSkillId'),
-                    aptitude: get('aptitude'),
+                    atkAdvantageSkillId: get('atkAdvantageSkillId') || undefined,
+                    atkBalanceSkillId: get('atkBalanceSkillId') || undefined,
+                    atkDisadvantageSkillId: get('atkDisadvantageSkillId') || undefined,
+                    defAdvantageSkillId: get('defAdvantageSkillId') || undefined,
+                    defBalanceSkillId: get('defBalanceSkillId') || undefined,
+                    defDisadvantageSkillId: get('defDisadvantageSkillId') || undefined,
+                    aptitude: get('aptitude') || undefined,
                     attackStyle,
                     oldGeneralId: oldGeneralId || undefined,
                 }),

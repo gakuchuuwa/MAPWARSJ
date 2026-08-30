@@ -194,8 +194,9 @@ const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
  * 日本→日本(Japanese)、滇缅→缅甸(Burmese)、中亚→土耳其(Turks)、西亚→拜占庭(Byzantines)、
  * 斯拉夫→斯拉夫(Slavs)、日耳曼→法兰克(Franks)、拉丁→罗马(Romans)、印度→印度斯坦(Hindustanis)、
  * 柏柏尔→柏柏尔(Berbers)。
- * 备注：中国/女真/高丽 DE 新版投石车线 = **火箭车**（rocket_cart/heavy_rocket_cart，项目有此兵种，
- *       见 SIEGE_MANGONEL_LINE）；印度斯坦系无冲车线（DE 用装甲象代替）；高丽无重冲/重弩。
+ * 备注：中国系（中原/北方/江南/巴蜀/河西/岭南/东北/高丽）攻城投石槽一律用**牵引抛石机（traction_trebuchet）**。
+ *       2026-08-30 主人定：攻城武器禁热兵器，火箭车(rocket_cart/heavy_rocket_cart)改为牵引抛石机（见 SIEGE_MANGONEL_LINE）；
+ *       印度斯坦系无冲车线（DE 用装甲象代替）；高丽无重冲/重弩。
  */
 const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SLAVIC: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -206,20 +207,20 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     THRACIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
     BERBER: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CENTRAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
-    NORTH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    NORTH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, traction_trebuchet: true },
     JIANGNAN: { battering_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
     BASHU: { battering_ram: true, capped_ram: true, siege_ram: true, mangonel: true, onager: true, traction_trebuchet: true },
-    HEXI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
-    LINGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    HEXI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
+    LINGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     STEPPE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CUMAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     JAPAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
     PERSIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
-    NORTHEAST: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    NORTHEAST: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     TIBET: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
-    WESTERN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
-    KOREA: { battering_ram: true, capped_ram: true, scorpion: true, rocket_cart: true, heavy_rocket_cart: true },
+    WESTERN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    KOREA: { battering_ram: true, capped_ram: true, scorpion: true, traction_trebuchet: true },
     DIANQIAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     INDIA: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     PURU: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true, battle_elephant: true, armored_elephant: true },
@@ -281,13 +282,13 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
  */
 const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>> = {
     CENTRAL: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    NORTH: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    NORTH: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     JIANGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    LINGNAN: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    LINGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     BASHU: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    HEXI: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    NORTHEAST: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
-    KOREA: ['rocket_cart', 'heavy_rocket_cart', 'heavy_rocket_cart'],
+    HEXI: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    NORTHEAST: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
+    KOREA: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
 };
 
 /**
@@ -5448,6 +5449,17 @@ export class Scene13WarLayer {
         }
         // 破墙 → 守方开始反击（近战出击、远程正常机动）
         this.defenderHolding = false;
+        // 待命期间普通士兵会被静止检测累计为 stuck；解除待命时同步清零，
+        // 否则首批士兵虽已开始位移，渲染仍会继续选 idle，形成无移动动作的滑步。
+        for (const m of this.men) {
+            if (m.siegeW) continue;
+            m.stuckT = 0;
+            m.netT = 0;
+            m.anchorX = m.x;
+            m.anchorY = m.y;
+            m.prevX = m.x;
+            m.prevY = m.y;
+        }
         // 🔴 [2026-08-23 主人定] 城墙坍塌后起接触交战音景（攻城战专用：两军此时才真正开打，
         //    攻城武器打墙阶段不播；野战无城墙，仍在下方 inReach 处起）。
         if (!this.contactSfxPlayed) {

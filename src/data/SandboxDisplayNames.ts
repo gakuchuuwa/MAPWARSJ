@@ -58,7 +58,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   mulabite: '穆',
 
-  zhibuluotuo: '直布',
+'zhibuluotuo': '直布',
   zhayan: '扎扬',
   babali: '巴巴',
   hamade: '哈马',
@@ -467,7 +467,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「」字；势力全名仍奥）──
     'fujiwara': '藤原',
 'luchuan': '麓川',
-    'chijin': '赤斤',
+'chijin': '赤斤',
 'xihai_d': '吐谷',
     'heyuan_d': '河源',
 'dafeichuan': '退浑',

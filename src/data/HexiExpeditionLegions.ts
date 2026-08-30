@@ -17,7 +17,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   hunxie: { name: '肩水胡骑', tier: 4 },          // 肩水金关·匈奴浑邪部（原甘州铁骑，归甘）（缺乏极其著名的战术高光，降T3）
 
   yingli: { name: '泼喜军', tier: 2 },            // 西夏骆驼旋风炮特种部队，古代军事史上罕见的战术创新，升入T2战术
-  chijin: { name: '赤金营', tier: 4 },        // 赤金堡·岳钟琪平准噶尔西路劲旅（缺乏极其著名的战术高光，降T3）
+    chijin: { name: '赤金营', tier: 4 },
     zhai_han: { name: '蕃落骑', tier: 1 },
   huizhou: { name: '会州边兵', tier: 4 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang

@@ -43,7 +43,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'mulabite': 'city_malajiashen',
 
-  'zhibuluotuo': 'city_xiuta',
+'zhibuluotuo': 'city_xiuta',
   'zhayan': 'city_teleimusen',
   'babali': 'city_aerjier',
   'hamade': 'city_bujiaya',
@@ -917,7 +917,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
 'qinghai': 'city_gasikou',
-    'chijin': 'city_chijin',
+'chijin': 'city_chijin',
 'xihai_d': 'city_fusicheng',
     'heyuan_d': 'city_huashixia',
 'maer_d': 'city_pengdi',
