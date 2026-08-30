@@ -688,10 +688,16 @@ export class GameApp {
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
-            // 自动缩放：行军 9 / 战斗 10，每次至少 15 秒；换跟随目标时先拉远到 8 转场
+            // 自动缩放：首次跟随 → 8；战斗结束（战术/战略）→ 陆军 9 / 海军 10；战斗过后永不再用 8。
             this.zoomController = new ZoomController(this.map, () => {
                 const id = this.cameraFollowUI.getFollowedArmyId();
                 return id ? legionManager.getLegionById(id) ?? null : null;
+            }, () => {
+                // 是否在战斗中：战术模式（zoom13 微观战斗）+ 战略地图区域战（跟随军团参战）
+                if (this.battleScene?.isActive?.()) return true;
+                const followedId = this.cameraFollowUI.getFollowedArmyId();
+                if (!followedId) return false;
+                return this.combatSystem.getActiveBattleFields().some((bf) => !bf.isOver && bf.hasParticipant(followedId));
             });
 
             // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，
