@@ -36,13 +36,19 @@ export interface TechModifiableStats {
     bonus?: Record<number, number>;
 }
 
+const TECH_CULTURE_PARENT: Partial<Record<RegionType, RegionType>> = {
+    BURMESE: 'DIANQIAN',
+    WALLACHIA: 'SLAVIC',
+};
+
 /** 取某年、某文化区已解锁的科技 */
 export function unlockedTechs(year: number, culture: RegionType): MilitaryTech[] {
     // 乱斗模式（历史脚本关闭）→ 科技全开，不做年份门控；历史脚本开启后按年份逐步开放。
     const timeGated = GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS;
+    const techCulture = TECH_CULTURE_PARENT[culture] ?? culture;
     return MILITARY_TECHS.filter(
         (t) => (!timeGated || t.year === null || year >= t.year)
-            && (t.cultures === null || t.cultures.includes(culture)),
+            && (t.cultures === null || t.cultures.includes(techCulture)),
     );
 }
 

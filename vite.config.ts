@@ -2745,6 +2745,8 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     SPARTANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
     MACEDONIANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
     ACHAEMENIDS: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 PERSIAN 精锐文件
+    BURMESE: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承滇缅精锐文件
+    WALLACHIA: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承斯拉夫精锐文件
 };
 
 function serverReadAllEntityData() {

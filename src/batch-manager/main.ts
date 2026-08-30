@@ -6,6 +6,7 @@
  */
 
 import { pinyin } from 'pinyin-pro';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 
 interface FactionRow {
     id: string;
@@ -38,6 +39,7 @@ interface FactionRow {
     eliteTier?: number;
     eliteRegion?: string;
     cityRegion?: string;
+    legionName?: string;
     completeness: number;
 }
 
@@ -480,6 +482,7 @@ function buildRows(): void {
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
             cityRegion: city?.region,
+            legionName: FACTION_COMPOSITIONS[f.id]?.legionName,
             completeness,
         };
     });
@@ -581,6 +584,7 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: 'strategicSkillId', label: '战略技', width: '120px' },
     { key: 'eliteName', label: '精锐' },
     { key: 'eliteTier', label: 'T', width: '30px' },
+    { key: 'legionName', label: '军团', width: '130px' },
     { key: 'completeness', label: '完整度', width: '80px' },
 ];
 
@@ -608,6 +612,7 @@ function renderTable(): void {
             <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : '—'}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
+            <td>${r.legionName ? `<span class="cell-ok">${r.legionName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${renderBar(r.completeness)}</td>
         </tr>`;
     }).join('');
@@ -764,6 +769,7 @@ const REGION_LABELS: Record<string, string> = {
     VIETNAMESE: '越南', KHMER: '高棉', MAYANS: '玛雅', MAPUCHE: '马普切',
     MUISCA: '穆伊斯卡', TUPI: '图皮', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
     ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIANS: '马其顿', ACHAEMENIDS: '阿契美尼德',
+    BURMESE: '缅甸', WALLACHIA: '瓦拉几亚',
 };
 
 async function openEditPanel(factionId: string | null): Promise<void> {
@@ -1210,6 +1216,8 @@ const REGION_ALIAS: Record<string, string> = {
     '西亚': 'WEST_ASIA',
     '吐蕃': 'TIBET', '青藏': 'TIBET', '羌藏': 'TIBET',
     '滇黔': 'DIANQIAN', '滇缅': 'DIANQIAN',
+    '缅甸': 'BURMESE',
+    '瓦拉几亚': 'WALLACHIA',
     '岭南': 'LINGNAN',
     '巴蜀': 'BASHU', '川蜀': 'BASHU',
     '河西': 'HEXI',

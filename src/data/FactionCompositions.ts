@@ -1099,13 +1099,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
-    beileinisi: {
+    "beileinisi": {
         legionName: "托勒密海军军团",
-        formationMode: 'fish_scale',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'shotel_warrior', count: 4 },        // Row 0 前卫主力破盾 = 埃塞俄比亚弯刀勇士 4人（纯步兵·无马，手持半月双曲弯刀极速钩杀破甲）
-            { type: 'elite_shotel_warrior', count: 3 },  // Row 1 中军精锐绞杀 = 埃塞俄比亚弯刀勇士精锐 3人（纯步兵·无马，王牌重装肖特尔弯刀死士）
-            { type: 'dagnajan_elephant', count: 2 },     // Row 2 尾收御驾巨象 = 达格纳詹御驾战象 2头（全游最高 HP 930 御驾巨象，压阵毁灭性践踏冲锋）
+            { type: "elite_shotel_warrior", count: 3 },
+            { type: "pattiyoda_longbowman", count: 4 },
+            { type: "dagnajan_elephant", count: 2 },
         ],
     },
     // 昔兰尼加（班加西 · 托勒密一世养子马加斯）
@@ -1719,22 +1719,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 斯拉夫贵族铁骑 2）
-    luosi: {
-        legionName: "罗斯军团",
-        formationMode: 'fish_scale',
+    "luosi": {
+        legionName: "瓦兰吉军团",
+        formationMode: "echelon",
         slots: [
-            { type: 'norse_warrior', count: 3 },          // Row 0 前卫抗线 = 诺斯狂暴战士 3人（单手持斧配大圆盾，前排结盾墙筑壁抗线）
-            { type: 'elite_berserk', count: 4 },          // Row 1 中军主力 = 维京狂战士精锐 4人（瓦兰吉双手大斧重铠近卫死士，中军主力突破）
-            { type: 'boyar', count: 2 },                  // Row 2 两翼铁骑 = 斯拉夫贵族铁骑 2骑（罗斯波雅尔亲军战马两翼突击合围）
+            { type: "elite_berserk", count: 4 },
+            { type: "elite_throwing_axeman", count: 3 },
+            { type: "boyar", count: 2 },
         ],
     },
-    qiernigeweifu_gongguo: {
-        legionName: "罗斯军团",
-        formationMode: 'fish_scale',
+    "qiernigeweifu_gongguo": {
+        legionName: "瓦兰吉军团",
+        formationMode: "echelon",
         slots: [
-            { type: 'norse_warrior', count: 3 },
-            { type: 'elite_berserk', count: 4 },
-            { type: 'boyar', count: 2 },
+            { type: "elite_berserk", count: 4 },
+            { type: "elite_throwing_axeman", count: 3 },
+            { type: "boyar", count: 2 },
         ],
     },
     // 北欧与维京·奥拉夫 / 阿布萨隆 / 比尔格雅尔 诺斯狂战士军团（鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 精锐狂战士主力 4 + 掷矛手 2）
