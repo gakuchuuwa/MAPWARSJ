@@ -9,6 +9,7 @@ import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { Army } from '../Army';
 import { LatLng } from '../../types/core';
 import { SpatialRegistry } from '../../world/SpatialRegistry';
+import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import type { LegionManager } from '../LegionManager';
 import { markLegionAnnihilationFeed } from '../LegionAnnihilationFeed';
 import { speechAnnouncer, type CaptureJu } from '../../audio/SpeechAnnouncer';
@@ -69,6 +70,28 @@ export function isEligibleReinforcement(
     return true;
 }
 
+/** 海军舰队成为攻城援军：先靠岸登陆（船→陆），再编入陆战攻城。 */
+function landNavalLegionForSiege(legion: Army, center: LatLng): void {
+    if (!legion.isOnSea) return;
+    const pos = legion.getPosition();
+    let dx = center.lat - pos.lat;
+    let dy = center.lng - pos.lng;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 1e-9) return;
+    dx /= len;
+    dy /= len;
+    // 从舰队位置沿「舰队→城」方向找最近陆地（岸线在舰队与城之间）
+    for (const step of [0.02, 0.04, 0.06, 0.09, 0.12, 0.16, 0.22]) {
+        const lat = pos.lat + dx * step;
+        const lng = pos.lng + dy * step;
+        if (LandSeaSystem.isLandAt({ lat, lng } as any)) {
+            legion.setPosition(lat, lng);
+            legion.isOnSea = false; // 强制上岸（绕过迟滞，下一帧 updateTerrainSpeed 清零累积）
+            return;
+        }
+    }
+}
+
 function createLegionAdapter(
     legion: Army,
     deps: ReinforcementJoinDeps,
@@ -113,6 +136,11 @@ export function tryJoinLegionToBattle(
     }
 
     deps.beforeJoinLegion?.(legion, center);
+
+    // 海军舰队成为攻城援军：先靠岸登陆（船→陆），否则船停在海上无法攻城
+    if (legion.isOnSea && battleField.type === 'siege') {
+        landNavalLegionForSiege(legion, center);
+    }
 
     legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);

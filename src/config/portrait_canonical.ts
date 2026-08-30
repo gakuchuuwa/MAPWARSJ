@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/31 03:41:57（共 68 条）
+ * 生成时间：2026/8/31 04:13:08（共 64 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__多余__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -45,8 +45,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_13.png": "/assets/DIANQIAN/ternate_babula.png",
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png": "/assets/DIANQIAN/__闲置__DIANQIAN_33.png",
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_02.png": "/assets/DIANQIAN/__闲置__DIANQIAN_34.png",
-    "/assets/GERMANIC/valois_angouleme_fulangsuowa.png": "/assets/GERMANIC/__多余__GERMANIC_02.png",
-    "/assets/GERMANIC/vidin_tsardom_yifansilaqi.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
     "/assets/GREEK/xila_dimisituo.png": "/assets/GREEK/image.png",
     "/assets/LATIN/aodesuosi_aodesuosi.png": "/assets/GREEK/__多余__GREEK_03.png",
     "/assets/LATIN/__闲置__LATIN_21.png": "/assets/GREEK/__多余__GREEK_04.png",
@@ -69,7 +67,5 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/minangkabau_adidiya.png": "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_03.png",
     "/assets/SPANISH/trastamara_feidinanershi.png": "/assets/SPANISH/__多余__SPANISH_03.png",
     "/assets/STEPPE/xiongren_atila.png": "/assets/STEPPE/__多余__STEPPE_01.png",
-    "/assets/STEPPE/__闲置__STEPPE_85.png": "/assets/STEPPE/__多余__STEPPE_02.png",
-    "/assets/WEST_ASIA/samtskhe_saerjisi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_02.png",
-    "/assets/WEST_ASIA/yelusalengwg_baodewensishi.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png"
+    "/assets/STEPPE/__闲置__STEPPE_85.png": "/assets/STEPPE/__多余__STEPPE_02.png"
 };

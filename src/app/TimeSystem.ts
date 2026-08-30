@@ -116,6 +116,16 @@ export class TimeSystem {
         return this.year;
     }
 
+    /**
+     * 当前季节已过去的比例 0~1（用于植被四季**渐变**过渡，见 VegetationLayer）。
+     * 单纯读 accumulatedTime / SEASON_DURATION，不改变任何推进逻辑。
+     */
+    public getSeasonProgress(): number {
+        const dur = GameTime.SEASON_DURATION;
+        if (!(dur > 0)) return 0;
+        return Math.min(1, Math.max(0, this.accumulatedTime / dur));
+    }
+
     public getSeason(): Season {
         return this.season;
     }
