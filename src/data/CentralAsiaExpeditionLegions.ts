@@ -69,7 +69,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     gelujiya: { name: '莫纳斯帕', tier: 2 },
     keerjisi: { name: '伊梅列季兵', tier: 2 },
     midi: { name: '不死军团', tier: 3 },
-    aqimeinide: { name: '长生军', tier: 1 },
     sashan: { name: '波斯战象', tier: 3 },  // 菲鲁扎巴德·阿尔达希尔：萨珊波斯战象（DE War Elephant）
     safawei_d: { name: '红头军', tier: 2 },
     // 2026-07-27 补中东四城+苏萨

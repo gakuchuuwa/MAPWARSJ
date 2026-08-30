@@ -1321,16 +1321,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_skirmisher', count: 2 },
         ],
     },
-    // 阿契美尼德·波斯帝国军团（大流士 · 鱼鳞阵 3+4+2：精锐战象 3 + 萨瓦尔 4 + 骑射手 2）
-    "aqimeinide": {
-        legionName: "不死军团",
-        formationMode: "square",
-        slots: [
-            { type: "elite_war_elephant", count: 3 },
-            { type: "immortal", count: 3 },
-            { type: "immortal_ranged", count: 3 },
-        ],
-    },
     // 波斯帝国军团（沙普尔大帝 · 尼沙布尔）
     aba: {
         legionName: "波斯军团",
@@ -2033,24 +2023,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 萨拉森、后倭马亚与安达卢西亚·萨拉赫丁 / 穆阿维叶 / 阿卜杜拉 马穆鲁克弯刀重骑与骆驼弓精锐军团（鱼鳞阵 3+4+2：马穆鲁克前卫 3 + 精锐马穆鲁克主力 4 + 骆驼弓骑 2）
-    ayoubu: {
-        legionName: "马穆鲁克军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'mameluke', count: 3 },            // Row 0 前卫突击 = 萨拉森马穆鲁克 3骑（弯刀重骑前锋撕裂）
-            { type: 'elite_mameluke', count: 4 },      // Row 1 中军主力劈杀 = 萨拉森马穆鲁克精锐 4骑（近卫重骑主力突破）
-            { type: 'camel_archer', count: 2 },        // Row 2 尾收远程掩护 = 柏柏尔骆驼弓骑 2骑（高机动骆驼骑射压制）
-        ],
-    },
-    womaya: {
-        legionName: "马穆鲁克军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'mameluke', count: 3 },
-            { type: 'elite_mameluke', count: 4 },
-            { type: 'camel_archer', count: 2 },
-        ],
-    },
     andaluoxiya: {
         legionName: "马穆鲁克军团",
         formationMode: 'fish_scale',
@@ -2376,25 +2348,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 撒拉森军团·麦地那/巴格达/麦加/巴士拉（哈立德 / 曼苏尔 / 艾布苏富扬 / 齐亚德 · 鹤翼阵 2+4+3：重装骆驼兵 2 + 精锐马穆鲁克 4 + 重装骑射手 3）
-    maidina: {
-        legionName: "撒拉森军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'camel_heavy', count: 2 },            // Row 0 前卫 = 重装骆驼兵 2骑（骆驼兵重装开路）
-            { type: 'elite_mameluke', count: 4 },         // Row 1 中军主力 = 精锐马穆鲁克 4骑（萨拉森马穆鲁克精锐主力）
-            { type: 'cav_archer_heavy', count: 3 },       // Row 2 后排 = 重装骑射手 3骑（骑射手重装远程游射）
-        ],
-    },
     abasi: {
-        legionName: "撒拉森军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'camel_heavy', count: 2 },
-            { type: 'elite_mameluke', count: 4 },
-            { type: 'cav_archer_heavy', count: 3 },
-        ],
-    },
-    gulaishi: {
         legionName: "撒拉森军团",
         formationMode: 'crane_wing',
         slots: [
@@ -2679,15 +2633,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 纳巴泰王国·佩特拉（阿雷塔斯 · 纳巴驼骑军团 · 鹤翼阵 2+4+3：火焰骆驼 2 + 骆驼骑兵 4 + 骆驼弓骑 3）
-    nabatai: {
-        legionName: "纳巴驼骑军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'flaming_camel', count: 2 },        // Row 0 前锋奇兵 = 鞑靼火焰骆驼 2头（沙漠火攻突袭）
-            { type: 'camel_rider', count: 4 },          // Row 1 中军主力 = 骆驼骑兵 4骑（纳巴泰沙漠重驼骑核心合围）
-            { type: 'camel_archer', count: 3 },         // Row 2 尾收远射 = 柏柏尔骆驼弓骑 3骑（沙漠驼背复合弓游射压制）
-        ],
-    },
     // 奴儿干都司与极北海岛军团·特林/囊哈儿/普禄/诺托罗/白主/宗谷/莫约罗/白老（康旺/吉里迷/费雅喀/鄂罗克/苦夷/阿伊努 · 三角阵 2+3+4：答剌罕骑兵 2 + 反曲长弓手 3 + 鲜卑掠骑兵 4）
     nuergan: {
         legionName: "奴儿干军团",
@@ -8714,24 +8659,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
-    "paermila": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "youfaladi": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
     "sashan": {
         legionName: "伊朗军团",
         formationMode: "crane_wing",
@@ -8739,15 +8666,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_composite_bowman", count: 4 },
             { type: "eastern_swordsman", count: 3 },
             { type: "cav_archer_heavy", count: 2 },
-        ],
-    },
-    "mamuluke": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
         ],
     },
     "kesa": {
@@ -8766,15 +8684,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_composite_bowman", count: 4 },
             { type: "eastern_swordsman", count: 3 },
             { type: "cav_archer_heavy", count: 2 },
-        ],
-    },
-    "dedan": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
         ],
     },
     "xierwan": {
@@ -8822,42 +8731,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "arbalest", count: 3 },
         ],
     },
-    "baiyiya": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
-    "tupinijin": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
-    "tuotuonake": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
-    "taino": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
     "guanche": {
         legionName: "马格里布军团",
         formationMode: "triangle",
@@ -8885,24 +8758,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "rattan_archer_elite", count: 4 },
         ],
     },
-    "kushi": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "aimala": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
     "aolisha": {
         legionName: "天竺军团",
         formationMode: "fish_scale",
@@ -8928,15 +8783,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
             { type: "sannahya", count: 2 },
-        ],
-    },
-    "foluolida": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
         ],
     },
     "fujisi": {
@@ -9030,15 +8876,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "sannahya", count: 2 },
         ],
     },
-    "jienei": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
     "kuertaiya": {
         legionName: "瓦拉几亚军团",
         legionType: "region",
@@ -9078,15 +8915,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
-    "yilaka": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
     "xiadunhe": {
         legionName: "草原军团",
         formationMode: "triangle",
@@ -9094,15 +8922,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "keshik", count: 2 },
             { type: "steppe_lancer", count: 3 },
             { type: "mangudai_elite", count: 4 },
-        ],
-    },
-    "zhagewei": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
         ],
     },
     "suomunate": {
