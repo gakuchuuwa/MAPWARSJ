@@ -2276,6 +2276,18 @@ function computeLegionNameViolations(): string[] {
         }
     }
 
+    // ④ 文化军团没有任何势力套用（每个文化军团至少一个势力使用默认名）
+    const usedNames = new Set<string>();
+    for (const row of allRows) {
+        usedNames.add(effectiveLegionName(row));
+    }
+    for (const region of REGION_ORDER) {
+        const name = getCultureLegionName(region);
+        if (name && !usedNames.has(name)) {
+            violations.push(`文化军团【${name}】没有任何势力套用（请至少一个势力使用，或迁移非本文化势力归位）`);
+        }
+    }
+
     return violations;
 }
 

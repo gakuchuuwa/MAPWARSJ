@@ -1884,6 +1884,20 @@ export const WALLACHIA_TIERS: CompositionTier[] = [
     }
 ];
 
+/** 阿拉伯军团（三角阵 2+3+4：马穆鲁克先锋 + 骆驼骑兵中坚 + 骆驼弓骑主力）[2026-08-30 完成待定制] */
+export const ORIE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'mameluke', count: 2 },
+            { type: 'camel_rider', count: 3 },
+            { type: 'camel_archer', count: 4 }
+        ]
+    }
+];
+
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
 // ============================================================
@@ -1914,7 +1928,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     MALAY:        MALAY_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
     ANDE:         ANDE_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
-    ORIE:         BERBER_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
+    ORIE:         ORIE_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
     EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
     THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制

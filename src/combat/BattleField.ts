@@ -45,6 +45,7 @@ import {
     tryEmitOpeningTacticalOnReinforcementJoin,
     resolveSideOpeningFateLuck,
     sideBasePower,
+    getFamousGeneralMult,
     getBattleTerrainKind,
     resolveSideMidBattleCasualtyReduction,
     resolvePostBattleCasualtyOutcome,
@@ -144,6 +145,10 @@ export class BattleField implements IOpeningPulseSink {
      */
     public forceScene13Result(winner: 'attacker' | 'defender', winnerTroops?: number): void {
         this.scene13Frozen = false;
+        // 🔴 [2026-08-31 主人定「战术的战后兵力恢复要和战略一致」] 只有**本来没有预设结果**的仗
+        //    才算「13 判的」。剧本写死的事件战斗（构造函数传入 presetResult）照旧跳过战损技，
+        //    否则会把脚本战斗的结果也一起改掉。
+        this.scene13Decided = this.presetResult === undefined;
         this.presetResult = winner === 'attacker' ? 'attacker_win' : 'defender_win';
         this.scene13WinnerTroops = winnerTroops ?? null;
         this.forceResolve();
@@ -197,9 +202,51 @@ export class BattleField implements IOpeningPulseSink {
         const attT = Math.max(1, this.attackerGroup.initialTotalTroops);
         const defT = Math.max(1, this.defenderGroup.initialTotalTroops);
         const nonTroop = this.effectivePowerRatio / (attT / defT);
-        const k = Math.min(1.35, Math.max(0.85, Math.sqrt(Math.max(0.01, nonTroop))));
+        // 🔴 [2026-08-31 主人定「只给名将放大」] 名将那一环在 13 里**再算一遍**（普通仗一点不动）。
+        //    famRatio = 攻方名将环 / 守方名将环，取值只有 1.30 / 1 / 1/1.30 三种：
+        //    双方都有名将或都没有 → 1，**完全不触发**，这正是它能绕开
+        //    「超发让悬念变少」那条否决的原因 —— 绝大多数仗根本不受影响，
+        //    只有「一方有名将、一方没有」时才放大，而那本来就该是名将的高光时刻。
+        const famRatio = getFamousGeneralMult(this.attackerCommander) / getFamousGeneralMult(this.defenderCommander);
+        const ratio = Math.max(0.01, nonTroop) * Math.pow(famRatio, BattleField.SCENE13_FAMOUS_EXTRA);
+        const k = Math.min(
+            BattleField.SCENE13_QUALITY_CAP,
+            Math.max(1 / BattleField.SCENE13_QUALITY_CAP,
+                Math.pow(ratio, 0.5 * BattleField.SCENE13_QUALITY_EXP)),
+        );
         return { attacker: k, defender: 1 / k };
     }
+
+    /**
+     * 13 兑现八环质量优势的「超发倍率」。
+     *
+     * 实际战力比 = nonTroop ^ SCENE13_QUALITY_EXP。
+     *   **1.0 = 精确还原**（k² = nonTroop，八环给多少兑现多少）—— 默认值，别随手改。
+     *   1.5   = 上面病史里试过的 ^0.75 超发（1.95 兑现成 2.72）。
+     *
+     * 🔴 [2026-08-31] 主人问「放大八环行不行」时，我把方案拆成了两层：
+     *    ① **保真那层**（已做，在 Scene13WarLayer.start）：把同一份 k 拆成「伤害一半 + 血量一半」，
+     *       总量不变 → 不触碰上面记的那条否决理由（「八环不诚实、悬念变少」）。
+     *    ② **超发那层**（就是这个常量）：默认 1.0 关着。
+     *       ⚠️ 调它之前先读上面 2026-08-13 那段病史：^0.75 试过并被主人否过。
+     *       如果拆分之后手感还是不够，再往 1.2 / 1.35 拧，别一步跳到 1.5。
+     */
+    private static readonly SCENE13_QUALITY_EXP = 1.0;
+    /**
+     * 名将环在 13 里**额外**再乘几次（0 = 关，1 = 再算一遍 → 名将侧 1.30 变 1.30² = 1.69）。
+     *
+     * 🔴 这是「只给名将放大」的旋钮（2026-08-31 主人提）。与 SCENE13_QUALITY_EXP 的区别：
+     *    后者放大**所有**质量差（含运气/文化/兵种），会让每一仗的强弱差都变大 —— 那正是
+     *    2026-08-13 被否的东西；本常量**只在一方有名将、另一方没有时**生效，
+     *    双方都有或都没有名将时 famRatio = 1，普通仗的悬念一点不受影响。
+     */
+    private static readonly SCENE13_FAMOUS_EXTRA = 1;
+    /**
+     * k 的钳制上限（下限自动取倒数）。战力比上限 = CAP²。
+     * 🔴 1.35 → 1.82 太窄，会把「名将 + T0 精锐」这种组合直接削平
+     *    （1.95 × 1.30 = 2.535，sqrt = 1.59 会被 1.35 砍掉）。放到 1.6 → 上限 2.56。
+     */
+    private static readonly SCENE13_QUALITY_CAP = 1.6;
 
     private attackerGroup: FactionGroup;
     private defenderGroup: FactionGroup;
@@ -207,6 +254,16 @@ export class BattleField implements IOpeningPulseSink {
     private predictedStrongerGroup!: FactionGroup;
     private predictedWeakerGroup!: FactionGroup;
     private presetResult?: 'attacker_win' | 'defender_win';
+    /**
+     * 本场胜负是否由 **13 演出**判的（区别于剧本写死的事件战斗）。
+     *
+     * 🔴 13 每场都会走 `forceScene13Result` → 设 `presetResult`，于是它一并撞上了
+     *    「presetResult 就跳过整套战损技」那道为**事件战斗**设的闸：
+     *    战术模式打完只有默认 30% 恢复，名将的休养生息(0.5)/爱兵如子(0.7)、
+     *    对手的斩草除根/咬人**一个都不生效**，和战略模式的同一场仗结果不一样。
+     *    有了这个标志，13 判的仗恢复走与战略完全相同的链路。
+     */
+    private scene13Decided = false;
     private customDuration?: number; // [NEW] Director-controlled duration override
     private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
     /** 援军编入时掷定的有效战力系数（waveIndex≥1），不重掷 */
@@ -1185,13 +1242,14 @@ export class BattleField implements IOpeningPulseSink {
 
         // ── 战损系（Step2）：清零败方【之前】捕获战损结算（败方 destroy 后残兵归零，判据用开战兵）──
         //   契约顺序：①斩根(恢复归零) → ②恢复 → ③咬人 → ④胜方保底 10% 初始兵。
-        //   事件战斗（presetResult）与开局/逆局/威慑一致：整套战损技跳过，走默认恢复率。
+        //   事件战斗（构造函数传入的 presetResult）与开局/逆局/威慑一致：整套战损技跳过，走默认恢复率。
+        //   🔴 但 **13 判的仗不算事件战斗**（scene13Decided），必须和战略模式同一条链路，见该字段说明。
         let casualtyOutcome: ReturnType<typeof resolvePostBattleCasualtyOutcome> = {
             recoveryRate: GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE,
             biteWinnerLossMult: 1,
             recoveryBlocked: false,
         };
-        if (!this.presetResult) {
+        if (!this.presetResult || this.scene13Decided) {
             const casualtyTerrain = getBattleTerrainKind(
                 [...winnerGroup.units, ...loserGroup.units].map(bu => bu.unit),
                 this.type,
@@ -1272,7 +1330,9 @@ export class BattleField implements IOpeningPulseSink {
 
         // 整编归伍（全员通用，静默）：收编败军，以少胜多×2；全侧分摊 + 统一封顶军团上限
         // （封顶同时兜底上面招降纳叛等逐将加兵的溢出）。以少胜多按开战兵力口径判定。
-        if (!this.presetResult) {
+        // 🔴 13 判的仗同样要整编（scene13Decided）：它也是「战后兵力」的一部分，
+        //    只修恢复不修整编，战术和战略的结果依然对不上。
+        if (!this.presetResult || this.scene13Decided) {
             const isUnderdogWin =
                 winnerGroup.initialTotalTroops < loserGroup.initialTotalTroops;
             const conscripted = applyPostBattleConscription(

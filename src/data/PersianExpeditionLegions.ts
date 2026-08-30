@@ -14,7 +14,6 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T2 特色之兵 ──
-    aqimeinide: { name: '不死军', tier: 2 },        // 波斯波利斯·阿契美尼德：居鲁士/大流士万人卫队（DE 长生军）
     sashan: { name: '萨瓦兰铁骑', tier: 2 },        // 菲鲁扎巴德·萨珊：铁甲重骑兵（波斯铁甲圣骑）
     safawei_d: { name: '红头军', tier: 2 },         // 伊斯法罕·萨法维：土库曼精锐骑兵（奇兹尔巴什）
     ansxi: { name: '帕提亚铁骑', tier: 2 },         // 尼萨·安息：铁甲重骑兵
@@ -47,4 +46,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔
     yisatisi: { name: '亚兹德圣火卫', tier: 4 },
     kerman_bam: { name: '萨法尔骑', tier: 2 },
+    aqimeinide: { name: '不死军', tier: 2 },
 };

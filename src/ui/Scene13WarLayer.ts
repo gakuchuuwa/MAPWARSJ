@@ -43,7 +43,6 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { audioManager } from '../audio/AudioManager';
-import { getGeneralProfile } from '../data/general-skills/profiles';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
@@ -1082,40 +1081,19 @@ const SIGHT_MAP: Record<string, number> = {
  */
 
 /**
- * 名将加成（战斗模式独立机制，2026-08-21 主人定「攻×1.2」）。
- * 🔴 完全独立于八环 sideBonus（getScene13PowerBonus 那条）——这是兵种属性层的加成，
- *    每个名将侧的兵立即生效，不依赖出兵口/补兵/光环。
+ * 单次出手伤害（纯 DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)。
  *
- * 🔴 [2026-08-31 主人定「简单点、别太夸张、被克了照样打不过」] 三个数放一起，要调只调这里。
- *    分寸的判据：**绝不能盖过兵种相克**。DE 的克制是**加法**的 bonus 伤害（骆驼克骑兵 +18、
- *    戟兵克象 +26 之类），量级远大于下面这几个乘数，所以名将带兵仍然会被克死——这是主人要的。
+ * 🔴 [2026-08-31 主人定·删掉 13 本地名将加成] 这里**不再有任何名将/精锐系数**。
+ *    原因：名将和精锐**本来就已经在八环里**了 ——
+ *      第6环·名将光环 FAMOUS_GENERAL_MULT = 1.30（TacticalConstants.ts）
+ *      第7环·精锐光环 ELITE_TIER_MULT = [1.5,1.4,1.3,1.2,1.1]（GameConfig，T0→T4）
+ *    两环都乘进 `effectivePowerRatio`，再经 `BattleField.getScene13PowerBonus()`
+ *    变成本层的 `sideBonus` / `sideHpMult`。
+ *    以前在这里另做一套 `FAMOUS_ATK_MULT/FAMOUS_DEF_MULT`（2026-08-21）等于**名将被算两遍**，
+ *    而精锐在本层一份都没有 —— 口径不一致，正是主人 2026-08-31 指出的重复。
+ *    ⚠️ 别再往这个函数加将领/番号系数。要调强弱，去动八环那条唯一通道。
  */
-const FAMOUS_ATK_MULT = 1.2;
-/**
- * 名将侧承伤系数（0.9 = 减伤 10%）。
- *
- * 🔴 原来这里是 `FAMOUS_DEF_MULT = 1.2` 且**乘在 armor 上**，等于空转：
- *    实测 295 个兵种里 **145 个（49%）meleeArmor = 0**，近防中位数就是 0，
- *    0 × 1.2 还是 0 —— 近一半兵种拿到的减伤是 **0.0%**；按远防中位 2 算也只有 5.7%。
- *    「防×1.2」这个设定从来没真正生效过。改成直接乘承伤，才是它本来想要的效果。
- */
-const FAMOUS_DMG_TAKEN_MULT = 0.9;
-/**
- * 名将侧兵员血量系数。
- *
- * 🔴 加这一条的理由：八环的质量差传进 13 只乘在**伤害**上（`sideBonus`，见 step 里 `o.hp -= dps * …`），
- *    双方血池完全一样。而主人实测定论是**血才是主导变量**（见记忆 scene13-balance-system），
- *    所以名将侧原来只有输出优势、没有生存优势，观感上「不显灵」。
- *    1.15 是保守值：活得久 → 输出累积更多，会自然滚一点雪球，但远不到碾压。
- */
-const FAMOUS_HP_MULT = 1.15;
-
-/**
- * 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)。
- * @param atkMult      射手侧名将攻击加成（默认 1 无加成）
- * @param dmgTakenMult 目标侧名将承伤系数（默认 1 无加成）；乘在 max 里面，保住 DE「最低 1 点」的地板
- */
-function dmgVs(shooter: WarType, target: WarType, atkMult = 1, dmgTakenMult = 1): number {
+function dmgVs(shooter: WarType, target: WarType): number {
     const armor = shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor;
     let bonus = 0;
     if (shooter.bonus && target.armorTags) {
@@ -1123,7 +1101,7 @@ function dmgVs(shooter: WarType, target: WarType, atkMult = 1, dmgTakenMult = 1)
             if (shooter.bonus[tag]) bonus += shooter.bonus[tag];
         }
     }
-    return Math.max(1, (shooter.atk * atkMult + bonus - armor) * dmgTakenMult);
+    return Math.max(1, shooter.atk + bonus - armor);
 }
 
 /** DE 胡斯战车的 5 发次级弹：每发独立以 3 攻击、建筑 +3、冲车 +3 结算。 */
@@ -3123,8 +3101,11 @@ export class Scene13WarLayer {
      * 三类的相对关系不变，只是整体强弱平移。
      */
     private sideBonus: [number, number] = [1, 1];
-    /** 名将加成标志（攻/守两侧是否名将 tier='famous'）：atk×FAMOUS_ATK_MULT、承伤×FAMOUS_DMG_TAKEN_MULT、血×FAMOUS_HP_MULT */
-    private famousBuff: [boolean, boolean] = [false, false];
+    /**
+     * 八环质量优势里**分给血量**的那一半（攻/守各一个乘数），与 `sideBonus`（分给伤害的那一半）同源。
+     * 见 start() 里的拆分说明。1 = 无优势。
+     */
+    private sideHpMult: [number, number] = [1, 1];
     /** [军事科技] 双方文化区（start 时从 init 存；科技按文化门控，每方按自己的算） */
     private sideCulture: [string, string] = ['CENTRAL', 'STEPPE'];
     /** [军事科技] 当前生效年份（跨年时重建分表 + 播报新解锁） */
@@ -3286,12 +3267,13 @@ export class Scene13WarLayer {
             const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
             const techs = unlockedTechs(y, this.sideCulture[f] as RegionType);
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
-            // 🔴 [2026-08-31] 名将侧全员提血（见 FAMOUS_HP_MULT）。挂在这里而不是 spawn 处，
-            //    是为了让**所有**读血的地方自动一致 —— 出兵时的初始血（`hp: statsFor(...).hp`）
-            //    和索敌里「目标快死了就不换人」用的 `foeMax`（statsFor(foe).hp）必须是同一个基准，
-            //    只改 spawn 会让 foeMax 偏小、半血判定提前触发。
-            //    famousBuff 在 start() 里先于 techStats 重建赋值，所以这里读到的一定是本场的值。
-            if (this.famousBuff[f]) v = { ...v, hp: Math.round(v.hp * FAMOUS_HP_MULT) };
+            // 🔴 [2026-08-31] 八环质量优势分给血量的那一半（见 start() 的拆分说明）。
+            //    挂在这里而不是 spawn 处，是为了让**所有**读血的地方自动一致 ——
+            //    出兵初始血（`hp: statsFor(...).hp`）和索敌里「目标快死了就不换人」用的
+            //    `foeMax`（statsFor(foe).hp）必须同基准，只改 spawn 会让半血判定提前触发。
+            //    sideHpMult 在 start() 里先于 techStats 重建赋值，所以这里读到的一定是本场的值。
+            //    ⚠️ 城墙/城门走上面 WALL_GATE_STATS 提前 return，**不吃**这个加成（建筑不属于谁带的兵）。
+            if (this.sideHpMult[f] !== 1) v = { ...v, hp: Math.max(1, Math.round(v.hp * this.sideHpMult[f])) };
             this.techStats[f].set(key, v);
         }
         return v;
@@ -3399,7 +3381,31 @@ export class Scene13WarLayer {
             this.assetGen++;
         }
         this.sideFaction = nextFaction;
-        this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
+        /**
+         * 🔴 [2026-08-31 主人定] 八环质量优势**拆两半**：一半走伤害、一半走血量。
+         *
+         * 背景：`getScene13PowerBonus()` 给的 k 原来**全部**乘在伤害上
+         *      （`o.hp -= dps * sideBonus[...]`），双方血池完全一样 ——
+         *      于是名将侧只是「杀得更快」，并不「更耐打」，观感上就是不显灵。
+         *      而主人实测定论是**血才是主导变量**。
+         *
+         * 拆法：伤害 ×k^(1−share)、血量 ×k^share，两者相乘仍是 **k**。
+         *      也就是说**总战力一分没多、没少**，只是把同一份优势换了一半的兑现方式，
+         *      所以八环依然「诚实」（这点很重要：注释里记着 2026-08-13 试过 ^0.75 超发被主人否，
+         *      理由正是「八环不诚实、悬念变少」——本次拆分不碰总量，不属于超发）。
+         * share = 0.5 即对半分。要全走伤害（回到旧行为）把它设 0。
+         */
+        const SCENE13_HP_SHARE = 0.5;
+        const kAtt = Math.max(0.01, init.attackerBonus ?? 1);
+        const kDef = Math.max(0.01, init.defenderBonus ?? 1);
+        this.sideBonus = [
+            Math.pow(kAtt, 1 - SCENE13_HP_SHARE),
+            Math.pow(kDef, 1 - SCENE13_HP_SHARE),
+        ];
+        this.sideHpMult = [
+            Math.pow(kAtt, SCENE13_HP_SHARE),
+            Math.pow(kDef, SCENE13_HP_SHARE),
+        ];
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
@@ -3410,11 +3416,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
         //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
         this.wallsCollapsed = false;
-        // 名将攻防加成（战斗模式独立机制，2026-08-21 主人定，不碰八环 sideBonus）
-        this.famousBuff = [
-            getGeneralProfile(init.attackerGeneralId ?? undefined)?.tier === 'famous',
-            getGeneralProfile(init.defenderGeneralId ?? undefined)?.tier === 'famous',
-        ];
+        // [2026-08-31] 本地名将加成已删（名将/精锐都走八环唯一通道，见 dmgVs 上方说明）。
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
         //    这层只防 init 缺字段。绝不能像原来那样守方兜 'STEPPE' —— 攻守用两套不同的兜底，
@@ -5729,7 +5731,7 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f), this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1, this.famousBuff[o.f] ? FAMOUS_DMG_TAKEN_MULT : 1) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) / shooter.reload;
                     o.atkNext++;
                     o.hurtBy = m;   // 【被攻击反击】范围伤也记录攻击者
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
@@ -6415,13 +6417,11 @@ export class Scene13WarLayer {
                 const target = this.statsFor(foe.key, foe.f);
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
-                const atkMult = this.famousBuff[m.f] ? FAMOUS_ATK_MULT : 1;
-                const defMult = this.famousBuff[foe.f] ? FAMOUS_DMG_TAKEN_MULT : 1;
-                const primaryDamage = m.accHit !== false ? dmgVs(shooter, target, atkMult, defMult) * projectileDamageCount : 0;
+                const primaryDamage = m.accHit !== false ? dmgVs(shooter, target) * projectileDamageCount : 0;
                 const secondaryHitCount = (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon')
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
                     : 0;
-                const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target, atkMult, defMult);
+                const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
                 const dps = (primaryDamage + secondaryDamage) / shooter.reload;
                 if (wt.aoe) this.splash(m, REACH, shooter, dt);
                 else {
