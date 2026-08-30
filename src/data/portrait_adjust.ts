@@ -7522,7 +7522,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/GREEK/image.png": {
+        "/assets/GREEK/__多余__GREEK_15.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -7
