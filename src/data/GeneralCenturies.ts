@@ -1028,7 +1028,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_joao_i': 14,
     'gen_ferdinand_ii': 15,
     'gen_seuthes_iii': -4,
-    'gen_momchil': 14,
     'gen_chabrias': -4,
 };
 

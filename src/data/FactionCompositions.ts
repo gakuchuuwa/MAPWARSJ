@@ -9276,16 +9276,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_shrivamsha_rider", count: 3 },
         ],
     },
-    // 罗多彼（色雷斯）→ 色雷斯军团
-    "rhodope": {
-        legionName: "色雷斯军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "rhomphaia_warrior", count: 3 },
-            { type: "elite_peltast", count: 4 },
-            { type: "thracian_peltast", count: 2 },
-        ],
-    },
     // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团
     "valois_angouleme": {
         legionName: "法兰克军团",

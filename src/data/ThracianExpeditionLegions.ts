@@ -23,5 +23,4 @@ export const THRACIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     duonaobaojia: { name: '不朽军', tier: 1 },
     lumiliya: { name: '阿肯骑兵', tier: 3 },
     odrysian_late: { name: '色雷斯骑', tier: 3 },
-    rhodope: { name: '山地枪兵', tier: 4 },
 };

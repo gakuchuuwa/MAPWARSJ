@@ -1618,5 +1618,541 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "韦拉克鲁斯-乌斯马尔",
+                type: "sea",
+                id: "sea_city_veracruz_city_uxmal_1788081819646",
+                startConnection: "city_veracruz",
+                endConnection: "city_uxmal"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-96.14, 19.19],
+                    [-95.5, 19.25],
+                    [-94.83333, 19.25],
+                    [-94.5, 19.08333],
+                    [-94.33333, 18.75],
+                    [-94.16667, 18.91667],
+                    [-93.33333, 18.91667],
+                    [-92.66667, 19.25],
+                    [-92, 19.25],
+                    [-91.66667, 19.41667],
+                    [-91.25, 19.83333],
+                    [-89.771, 20.359],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "乌斯马尔-哈瓦那",
+                type: "sea",
+                id: "sea_city_uxmal_city_havana_1788081829974",
+                startConnection: "city_uxmal",
+                endConnection: "city_havana"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-89.771, 20.359],
+                    [-90.472412, 20.96144],
+                    [-89.8, 22.1],
+                    [-90.16667, 21.91667],
+                    [-89.16667, 21.91667],
+                    [-89, 22.08333],
+                    [-86.5, 22.08333],
+                    [-86.11065, 21.856981],
+                    [-85.980253, 21.869641],
+                    [-85.861818, 21.844],
+                    [-85.350037, 21.792657],
+                    [-83.9, 21.6],
+                    [-82.7, 22.3],
+                    [-82.38, 23.13],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "底比斯-特洛伊",
+                type: "sea",
+                id: "sea_city_thebes_city_teluoyi_1788082700422",
+                startConnection: "city_thebes",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.31, 38.32],
+                    [23.655281, 38.383248],
+                    [23.823371, 38.35044400000001],
+                    [23.978701, 38.289511],
+                    [24.095199, 38.194201],
+                    [24.13836, 38.092597],
+                    [24.154683, 38.032558],
+                    [24.237839, 37.953719],
+                    [24.520041, 37.90673000000001],
+                    [24.657285, 38.115863],
+                    [25.337942, 39.153055],
+                    [25.5, 39.4],
+                    [25.700208, 39.600208],
+                    [25.766724, 39.666724],
+                    [26.23, 39.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-君士坦丁堡",
+                type: "sea",
+                id: "sea_city_teluoyi_city_junshitandingbao_1788082722656",
+                startConnection: "city_teluoyi",
+                endConnection: "city_junshitandingbao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [26.2, 40.1],
+                    [26.768188, 40.44067600000001],
+                    [27.277634, 40.60495],
+                    [28.449481, 40.805825],
+                    [28.477509, 40.803422],
+                    [28.977708, 40.971568],
+                    [28.97, 41.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雅典-以弗所",
+                type: "sea",
+                id: "sea_city_yadian_city_yifusuo_1788082731952",
+                startConnection: "city_yadian",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.72, 37.98],
+                    [23.6425, 37.8192],
+                    [23.885914, 37.616154],
+                    [24.063647, 37.62149800000001],
+                    [24.083063, 37.715634],
+                    [24.114615, 37.769372],
+                    [24.372282, 37.856919],
+                    [24.520041, 37.90673000000001],
+                    [24.537948, 37.902017],
+                    [24.612093, 37.988022],
+                    [24.849245, 38.014229],
+                    [25.538027, 38.090345],
+                    [25.764817, 38.115406],
+                    [25.916846, 38.132207],
+                    [25.989139, 38.080913],
+                    [26.126767, 38.210142],
+                    [26.172739, 38.253308],
+                    [26.951817, 37.765535],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯巴达-诺索斯",
+                type: "sea",
+                id: "sea_city_sparta_city_knossos_1788082738725",
+                startConnection: "city_sparta",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.42, 37.07],
+                    [22.39158, 36.37279800000001],
+                    [22.838148, 36.097336],
+                    [23.449324, 36.076321],
+                    [23.9, 35.95000000000001],
+                    [24.134472, 35.868837],
+                    [24.980878, 35.57585000000001],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雅典-诺索斯",
+                type: "sea",
+                id: "sea_city_yadian_city_knossos_1788082742241",
+                startConnection: "city_yadian",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.72, 37.98],
+                    [23.6425, 37.8192],
+                    [23.689073, 37.634567],
+                    [23.96792, 37.062701],
+                    [23.999544, 36.989186],
+                    [24.022388, 36.936081],
+                    [24.102526, 36.822355],
+                    [24.342178, 36.482254],
+                    [24.375194, 36.435401],
+                    [24.603968, 36.110738],
+                    [24.980878, 35.57585000000001],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "诺索斯-罗得城",
+                type: "sea",
+                id: "sea_city_knossos_city_rhodes_1788082752159",
+                startConnection: "city_knossos",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.13, 35.33],
+                    [25.2, 35.5],
+                    [25.826731, 35.719356],
+                    [26.804254, 36.061489],
+                    [26.918874, 36.101606],
+                    [27.2, 36.20000000000001],
+                    [28.008502, 36.494001],
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚历山大-阿卡",
+                type: "sea",
+                id: "sea_city_yalishanda_city_ake_1788082835853",
+                startConnection: "city_yalishanda",
+                endConnection: "city_ake"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.91, 31.2],
+                    [30.072508, 31.744076],
+                    [32.1, 31.7],
+                    [32.886029, 32.337658],
+                    [33.13818100000001, 32.542215],
+                    [33.899796, 33.16006800000001],
+                    [34.343674, 33.496173],
+                    [35.08, 32.93],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科洛西-阿卡",
+                type: "sea",
+                id: "sea_city_kolossi_city_ake_1788082845695",
+                startConnection: "city_kolossi",
+                endConnection: "city_ake"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.934, 34.664],
+                    [33.457247, 34.507581],
+                    [33.729569, 34.415948],
+                    [33.960724, 34.33816800000001],
+                    [33.982556, 34.290165],
+                    [34.343674, 33.496173],
+                    [35.08, 32.93],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科洛西-亚历山大",
+                type: "sea",
+                id: "sea_city_kolossi_city_yalishanda_1788082849543",
+                startConnection: "city_kolossi",
+                endConnection: "city_yalishanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.934, 34.664],
+                    [32.424259, 34.62214],
+                    [31.90861, 34.741914],
+                    [31.76258, 34.519058],
+                    [31.722285, 34.457564],
+                    [31.5407, 34.18044600000001],
+                    [31.324362, 33.850293],
+                    [31.178959, 33.62839300000001],
+                    [30.786707, 32.960377],
+                    [30.765996, 32.925106],
+                    [30.609751, 32.659015],
+                    [30.408377, 32.316071],
+                    [30.32611, 32.175967],
+                    [30.072508, 31.744076],
+                    [29.91, 31.2],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚历山大-诺索斯",
+                type: "sea",
+                id: "sea_city_yalishanda_city_knossos_1788082853199",
+                startConnection: "city_yalishanda",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.91, 31.2],
+                    [29.455051, 31.788328],
+                    [29.265354, 31.809405],
+                    [28.595708, 32.640266],
+                    [28.212434, 33.115811],
+                    [28.073668, 33.287984],
+                    [27.568268, 33.915057],
+                    [26.481951, 34.237289],
+                    [25.77685, 34.445233],
+                    [25.11418, 34.748238],
+                    [24.859714, 34.864004],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "罗得城-尼科西亚",
+                type: "sea",
+                id: "sea_city_rhodes_city_nikexiya_1788082873356",
+                startConnection: "city_rhodes",
+                endConnection: "city_nikexiya"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.22, 36.44],
+                    [28.3, 36.6],
+                    [29.547729, 36.107924],
+                    [30, 36],
+                    [30.905089, 35.939661],
+                    [31.539347, 35.897377],
+                    [33, 35.8],
+                    [33.617867, 35.822884],
+                    [33.350692, 35.348469],
+                    [33.38, 35.18],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿卡-安提俄基亚",
+                type: "sea",
+                id: "sea_city_ake_city_antiejiya_1788082895192",
+                startConnection: "city_ake",
+                endConnection: "city_antiejiya"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.08, 32.93],
+                    [34.343674, 33.496173],
+                    [34.959295, 34.002161],
+                    [35.090178, 34.109736],
+                    [35.20000000000001, 34.20000000000001],
+                    [35.291514, 34.51114900000001],
+                    [35.36502, 34.761066],
+                    [35.39963800000001, 34.878768],
+                    [35.592151, 35.533314],
+                    [35.70000000000001, 35.9],
+                    [36.16, 36.2],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "罗得城-亚历山大",
+                type: "sea",
+                id: "sea_city_rhodes_city_yalishanda_1788082922088",
+                startConnection: "city_rhodes",
+                endConnection: "city_yalishanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.22, 36.44],
+                    [28.008502, 36.494001],
+                    [27.2, 36.20000000000001],
+                    [27.337183, 35.931621],
+                    [27.745959, 35.131912],
+                    [27.853162, 34.922185],
+                    [27.977915, 34.678125],
+                    [28.225817, 34.193141],
+                    [28.259059, 34.128109],
+                    [28.510884, 33.63545],
+                    [28.569762, 33.520264],
+                    [28.905525, 32.863395],
+                    [29.086953, 32.508456],
+                    [29.455051, 31.788328],
+                    [29.91, 31.2],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "班加西-亚历山大",
+                type: "sea",
+                id: "sea_city_banjiaxi_city_yalishanda_1788082934548",
+                startConnection: "city_banjiaxi",
+                endConnection: "city_yalishanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [20.06, 32.11],
+                    [19.83333, 32.91667],
+                    [20.5, 33.25],
+                    [21, 33.25],
+                    [21.16667, 33.41667],
+                    [22.66667, 33.41667],
+                    [22.83333, 33.25],
+                    [23.16667, 33.25],
+                    [23.5, 32.75],
+                    [24, 32.75],
+                    [24.16667, 32.58333],
+                    [25, 32.58333],
+                    [25.33333, 32.41667],
+                    [25.5, 32.08333],
+                    [26.83333, 32.08333],
+                    [27, 31.91667],
+                    [27.66667, 31.91667],
+                    [28.33333, 31.58333],
+                    [28.83333, 31.58333],
+                    [29, 31.41667],
+                    [29.91, 31.2],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雅典-希马鲁塔",
+                type: "sea",
+                id: "sea_city_yadian_city_chimarros_1788082977011",
+                startConnection: "city_yadian",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.72, 37.98],
+                    [23.6425, 37.8192],
+                    [23.885914, 37.616154],
+                    [23.9657, 37.5496],
+                    [24.159791, 37.356151],
+                    [24.236675, 37.27952],
+                    [24.457626, 37.276785],
+                    [24.636616, 37.152415],
+                    [24.917963, 36.941755],
+                    [25.090282, 36.883539],
+                    [25.257671, 36.849342],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希马鲁塔-罗得城",
+                type: "sea",
+                id: "sea_city_chimarros_city_rhodes_1788082979512",
+                startConnection: "city_chimarros",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.53, 36.965],
+                    [25.507264, 36.798352],
+                    [25.794122, 36.73974900000001],
+                    [26.478546, 36.667753],
+                    [26.649029, 36.62852],
+                    [27.002784, 36.547109],
+                    [27.401862, 36.520229],
+                    [27.871663, 36.48859],
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希马鲁塔-以弗所",
+                type: "sea",
+                id: "sea_city_chimarros_city_yifusuo_1788082985978",
+                startConnection: "city_chimarros",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.53, 36.965],
+                    [25.31357, 37.123878],
+                    [25.525085, 37.251137],
+                    [25.538442, 37.285018],
+                    [25.706749, 37.71193800000001],
+                    [25.76963, 37.905616],
+                    [25.93489, 38.029975],
+                    [25.989139, 38.080913],
+                    [26.126767, 38.210142],
+                    [26.172739, 38.253308],
+                    [26.951817, 37.765535],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希马鲁塔-诺索斯",
+                type: "sea",
+                id: "sea_city_chimarros_city_knossos_1788082989814",
+                startConnection: "city_chimarros",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.53, 36.965],
+                    [25.422786, 36.720297],
+                    [25.328394, 36.52198400000001],
+                    [25.371818, 36.441599],
+                    [25.342578, 36.331809],
+                    [25.315313, 36.13193900000001],
+                    [25.2, 35.5],
+                    [25.13, 35.33],
+                ]
+            }
+        },
     ]
 };
