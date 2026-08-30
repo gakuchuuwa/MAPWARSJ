@@ -96,6 +96,33 @@ function currentTreeSeason(): TreeSeason {
     return 0;
 }
 
+/**
+ * 季节**渐变**（2026-08-31 主人要求）：季末的一段时间里，同一棵树同时画「本季」和「下季」两张，
+ * 用透明度交叉淡出，而不是到点整片瞬间换装。
+ *
+ * 只在季末 `SEASON_BLEND_WINDOW` 这段窗口里混合，其余时间照旧只画一张 —— 平时零额外开销。
+ * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
+ * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
+ */
+const SEASON_BLEND_WINDOW = 0.35;
+
+function nextTreeSeason(s: TreeSeason): TreeSeason {
+    // 游戏季推进 春→夏→秋→冬→春；映射到树态就是 0→0→1→2→0
+    const gs = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
+    if (gs === 1) return 1;   // 夏 → 下一季是秋
+    if (gs === 2) return 2;   // 秋 → 冬
+    if (gs === 3) return 0;   // 冬 → 春
+    return s;                 // 春 → 夏，树态不变
+}
+
+/** 0 = 不混合；>0 = 下一季占的权重 */
+function seasonBlend(): number {
+    const p = (window as any).game?.timeSystem?.getSeasonProgress?.();
+    if (typeof p !== 'number') return 0;
+    if (p <= 1 - SEASON_BLEND_WINDOW) return 0;
+    return (p - (1 - SEASON_BLEND_WINDOW)) / SEASON_BLEND_WINDOW;
+}
+
 /** 树种 → 林区色相类别（用于色调随植被类型变化） */
 function hueClass(asset: string): 'conifer' | 'broadleaf' | 'arid' | 'dead' {
     if (/PINE|CYPRESS|SNOW_|BAMBOO|CEDAR/i.test(asset)) return 'conifer';
@@ -166,6 +193,7 @@ export class VegetationLayer {
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
         this.resize();
         this.render();
+        this.startSeasonBlendWatch();
     }
 
     public setVisible(visible: boolean): void {
@@ -182,6 +210,20 @@ export class VegetationLayer {
         this.canvas.height = size.y;
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
     }
+
+    /**
+     * 季节渐变心跳：过渡窗口里镜头可能完全不动，没人触发重画，渐变就会卡在某一档。
+     * 每 600ms 敲一次 scheduleRender —— render() 开头会比对 key，档位没变就立刻返回，
+     * 所以非过渡期这个心跳的实际开销约等于零（实测 render 平均 2.3ms，且大部分是 key 命中直接 return）。
+     */
+    private startSeasonBlendWatch(): void {
+        if (this.seasonTimer !== null) return;
+        this.seasonTimer = window.setInterval(() => {
+            if (!this.visible) return;
+            this.scheduleRender();
+        }, 600);
+    }
+    private seasonTimer: number | null = null;
 
     /** 树贴图到货 → 重画本屏（贴图是异步的，首帧必然缺一批） */
     private onTreeImageReady = (): void => {
@@ -203,6 +245,19 @@ export class VegetationLayer {
     }
 
     private render(): void {
+        if (!import.meta.env.DEV) { this.renderInner(); return; }
+        // [2026-08-31] 接 PerfDoctor：树多了到底卡不卡，靠这条数说话，别靠感觉。
+        // scanned 记本次画了多少棵树，便于把「棵数」和「耗时」对起来看。
+        const t0 = performance.now();
+        this.renderInner();
+        perfDoctor.note('VegetationLayer.render', performance.now() - t0,
+            'src/map/VegetationLayer.ts:render', this.lastTreeCount);
+    }
+
+    /** 本次 render 实际画了多少棵树（PerfDoctor 采样用） */
+    private lastTreeCount = 0;
+
+    private renderInner(): void {
         if (!this.visible) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); return; }
 
         const zoom = Math.floor(this.map.getZoom());
@@ -228,7 +283,12 @@ export class VegetationLayer {
 
         // 采样窗口没跨格 → 这一屏的林区与上次逐格相同（canvas 按 position 跟随平移），直接返回省掉整屏重采样
         const season = currentTreeSeason();
-        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}`;
+        // 混合权重量化成 8 档进 key：过渡期每跨一档才重画一次（配合 200ms 节流，
+        // 一次过渡最多重画 8 次），既看得出渐变又不会每帧重采样。
+        const blend = seasonBlend();
+        const nextSeason = nextTreeSeason(season);
+        const blendStep = blend > 0 && nextSeason !== season ? Math.round(blend * 8) : 0;
+        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}|${blendStep}`;
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
@@ -240,6 +300,7 @@ export class VegetationLayer {
         let missingTiles = 0;
         // 树贴图也是异步的：首帧一定有一批没到，同样不能算「画完了」
         let pendingImages = 0;
+        let drawnTrees = 0;
 
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
@@ -256,11 +317,18 @@ export class VegetationLayer {
                 const clusterLatLng = this.map.unproject([cxJ, cyJ], SAMPLE_ZOOM);
                 if (clusterLatLng.lat < -58 || clusterLatLng.lat > 75) continue;
 
+                // 🔴 [2026-08-31 修「树长到海里」] 水陆判定必须走 probeLandSea（掩膜 AND 海拔），
+                //    **不能用 `elev < 0`** —— 里海(-27m)、吐鲁番(-51m) 是低于海平面的**陆地**，
+                //    单看海拔会把它们判成海、那一带永远不长树。判据只认 WaterMask 这一套。
+                const landState = LandSeaSystem.probeLandSea(clusterLatLng.lat, clusterLatLng.lng);
+                if (landState === 'pending') { missingTiles++; continue; }
+                if (landState === 'sea') continue;
+
                 const elev = LandSeaSystem.getElevationAtMapPixel(
                     cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
                 );
                 if (elev === null) { missingTiles++; continue; }
-                if (elev < 0 || elev > 3600) continue;
+                if (elev > 3600) continue;   // 雪线以上无乔木
 
                 // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
                 const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
@@ -293,6 +361,16 @@ export class VegetationLayer {
                     const py = cyJ + Math.sin(ang) * rad;
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
 
+                    // 🔴 [2026-08-31 修「树长到海里」·真正的根因] **每一棵树都要单独判水陆**。
+                    //    原来只有簇核判了，簇内的树是从簇核往外撒 CLUSTER_RADIUS 的，
+                    //    簇核在岸上、树照样能被甩进海里 —— 希腊/爱琴海那种破碎海岸线一眼就露馅
+                    //    （主人 2026-08-31 截图：满爱琴海都是树）。
+                    //    queryBaseTile 查的是**气候底图**不是水陆掩膜，海上采样照样返回陆地贴图，
+                    //    所以它挡不住这件事，必须显式问 probeLandSea。
+                    const ptLand = LandSeaSystem.probeLandSea(ptLatLng.lat, ptLatLng.lng);
+                    if (ptLand === 'pending') { missingTiles++; continue; }
+                    if (ptLand === 'sea') continue;
+
                     // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
                     const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
                     if (densityFor(ptTile) < MIN_PATCH_DENSITY * 0.6) continue;
@@ -303,13 +381,31 @@ export class VegetationLayer {
                     const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
                     const img = treeImage(asset, this.onTreeImageReady);
                     if (!img) { pendingImages++; continue; }
+                    // 季末交叉淡出：下一季的同位置树种（换装了才混，没换装就当没这回事）
+                    const assetNext = blendStep > 0
+                        ? pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season: nextSeason, isSiege: false })
+                        : asset;
+                    const imgNext = assetNext !== asset ? treeImage(assetNext, this.onTreeImageReady) : null;
                     // 树高按 zoom 缩放：zoom 8 的一屏是整个东欧，树画太大就糊成一片。
                     // 高度基准 TREE_BASE_PX @zoom9，每级 ×1.35（比 2 倍温和，避免 zoom10 撑爆）。
                     const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
                     const h = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM) * jitter;
                     const w = h * (img.naturalWidth / img.naturalHeight);
                     // 锚在底部中心：树"站"在采样点上，而不是圆心糊在上面
-                    this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
+                    if (imgNext) {
+                        // 两张叠画：本季淡出、下季淡入。用 globalAlpha 而不是逐像素合成，
+                        // 实测画树本身只占渲染耗时的小头（瓶颈是地形采样），翻倍无感。
+                        const a = Math.min(1, Math.max(0, blend));
+                        this.ctx.globalAlpha = 1 - a;
+                        this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
+                        const wN = h * (imgNext.naturalWidth / imgNext.naturalHeight);
+                        this.ctx.globalAlpha = a;
+                        this.ctx.drawImage(imgNext, center.x - wN / 2, center.y - h, wN, h);
+                        this.ctx.globalAlpha = 1;
+                    } else {
+                        this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
+                    }
+                    drawnTrees++;
                 }
             }
         }
@@ -317,6 +413,7 @@ export class VegetationLayer {
         // DEM 瓦片异步到达：这轮被跳过的格子必须补画。
         // 只靠 land-sea-tiles-updated 不够 —— 瓦片可能在两次 render 的间隙就位，
         // 而 lastRenderKey 已经把这屏标成「画过了」，结果一屏空白一直留到下次跨格。
+        this.lastTreeCount = drawnTrees;
         // 树贴图这一轮有没到的 → 把本屏标记为未画完，等 onTreeImageReady 触发重画
         if (pendingImages > 0) this.lastRenderKey = '';
 

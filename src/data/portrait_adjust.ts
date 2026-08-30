@@ -3762,11 +3762,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/WEST_ASIA/ailan_shuteluke.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": 20
-        },
         "/assets/WEST_ASIA/aiji_lameixisi.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -4077,11 +4072,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_29.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 22
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_30.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -4201,11 +4191,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -30
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_47.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": -15
         },
         "/assets/WEST_ASIA/__闲置__CENTRAL_ASIA_50.png": {
             "scale": 1.03,
@@ -4331,11 +4316,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 2
-        },
-        "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/CENTRAL_ASIA/najie_minande.png": {
             "scale": 1.02,
@@ -6287,11 +6267,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 33
         },
-        "/assets/WEST_ASIA/sumeier_zhajixi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/LINGNAN/panyao_pandaxiao.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -6911,11 +6886,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -14
-        },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_53.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png": {
             "scale": 0.94,
@@ -7566,6 +7536,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_58.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/WEST_ASIA/sumeier_zhajixi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_59.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/WEST_ASIA/ailan_shuteluke.png": {
+            "scale": 1.04,
+            "offsetX": 1,
+            "offsetY": 17
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_115.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
