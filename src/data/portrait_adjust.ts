@@ -5592,7 +5592,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/LATIN/maqidun_kashande.png": {
+        "/assets/LATIN/__闲置__LATIN_19.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": 5
