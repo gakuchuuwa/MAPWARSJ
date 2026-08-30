@@ -4,12 +4,13 @@ import { resolveTerrainTile } from '../ui/Scene13Biome';
 import { queryBaseTile } from '../ui/scene13/WorldBaseMap';
 import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
+import { lngToDemGlobalX, latToDemGlobalY } from '../world/land-sea/ElevationSampler';
 import { perfDoctor } from '../debug/PerfDoctor';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
 const SAMPLE_STEP = 112;
-const MIN_ZOOM = 8;
+const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const CITY_CLEAR_PX = 42;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
@@ -30,6 +31,19 @@ const CLUSTER_STRIDE = SAMPLE_STEP * 1.6;
 /** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping。
  *  改小（×0.55）：让同簇斑块聚拢重叠成"一片"而非离散雀斑点；配合 count 增大填实簇内。 */
 const CLUSTER_RADIUS = SAMPLE_STEP * 0.55;
+/** 从现有林簇预算中抽出的孤树比例；只移动位置，不增加树木总数。 */
+const STRAGGLER_SHARE = 0.15;
+const STRAGGLER_RADIUS_MIN = CLUSTER_RADIUS * 1.8;
+const STRAGGLER_RADIUS_MAX = CLUSTER_RADIUS * 3;
+
+interface TreeDrawCommand {
+    x: number;
+    y: number;
+    h: number;
+    w: number;
+    img: HTMLImageElement;
+    imgNext: HTMLImageElement | null;
+}
 
 /**
  * 战略地图树贴图缓存：树名 → `public/SUCAI_NATURE/<树名>/preview.png`（DE 单棵成品图）。
@@ -189,6 +203,10 @@ export class VegetationLayer {
 
     private readonly onViewportChanged = () => this.scheduleRender();
     private readonly onResize = () => { this.resize(); this.scheduleRender(); };
+    /** 只挪画布位置，不重绘（连续平移每帧调用） */
+    private readonly onCanvasFollow = () => {
+        L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
+    };
     private readonly onTerrainReady = () => { this.lastRenderKey = ''; this.scheduleRender(200); };
 
     constructor(map: L.Map) {
@@ -205,6 +223,11 @@ export class VegetationLayer {
         pane.appendChild(this.canvas);
 
         map.on('moveend zoomend', this.onViewportChanged);
+        // 🔴 [2026-08-31 修「军团一动树也动」] 必须绑 `move`（连续平移中每帧都发），
+        //    不能只绑 `moveend`。跟拍时 GameAppLoop 每帧 panBy 平移地图，而画布位置原来只在
+        //    **停下来**才更新一次，于是树相对地形一路滑动 —— 看着就像树跟着军团跑。
+        //    这里只做 setPosition（一次 transform，不重绘不重采样），开销可忽略。
+        map.on('move zoom', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
         this.resize();
@@ -317,6 +340,9 @@ export class VegetationLayer {
         // 树贴图也是异步的：首帧一定有一批没到，同样不能算「画完了」
         let pendingImages = 0;
         let drawnTrees = 0;
+        const drawCommands: TreeDrawCommand[] = [];
+        // 与海陆分界线图层同款：整屏共用一个按瓦片缓存的探针（逐点查会踩 LRU 抖动）
+        const probeLand = LandSeaSystem.createBlockProber();
 
 
         const paddedBounds = bounds.pad(0.08);
@@ -372,11 +398,16 @@ export class VegetationLayer {
                 // 但也不能太少（6/4/2 实测太空）。10/7/4 一簇能看出是片林子。
                 const baseCount = density >= 0.4 ? 10 : density >= 0.25 ? 7 : 4;
                 const count = Math.max(1, Math.round(baseCount * (0.7 + hash(cx, cy, 45) * 0.7)));
+                const stragglerCount = Math.floor(count * STRAGGLER_SHARE);
+                const clusteredCount = count - stragglerCount;
 
                 for (let i = 0; i < count; i++) {
                     const ang = hash(cx, cy, i + 50) * Math.PI * 2;
-                    // 盘面均匀分布：sqrt 偏置让斑块铺满簇圆而非挤中心
-                    const rad = Math.sqrt(hash(cx, cy, i + 60)) * CLUSTER_RADIUS;
+                    const radiusHash = hash(cx, cy, i + 60);
+                    // 约 15% 的现有林簇树移到簇外成为孤树；其余仍按原规则填充林簇。
+                    const rad = i >= clusteredCount
+                        ? STRAGGLER_RADIUS_MIN + radiusHash * (STRAGGLER_RADIUS_MAX - STRAGGLER_RADIUS_MIN)
+                        : Math.sqrt(radiusHash) * CLUSTER_RADIUS;
                     const px = cxJ + Math.cos(ang) * rad;
                     const py = cyJ + Math.sin(ang) * rad;
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
@@ -399,7 +430,16 @@ export class VegetationLayer {
                     //    （这正是记忆里「批量采样别逐点查、会踩 LRU」那条的现场版。）
                     //    掩膜是同步只读的：明确说是水才丢弃；没加载(null)就照画，
                     //    宁可偶尔漏一棵在海边，也不要整片森林消失。
-                    if (LandSeaSystem.getWaterSampler().isWaterSync(ptLatLng.lat, ptLatLng.lng) === true) continue;
+                    // 🔴 [2026-08-31] 用与「海陆分界线」调试图层**同一套探针**（主人提示的正解）：
+                    //    createBlockProber 按瓦片缓存，整屏顺序采样命中同一块，比逐点查快得多。
+                    //    这里**严格要求 'land'**：'sea' 丢弃，'pending' 也丢弃并计入 missingTiles，
+                    //    等瓦片到了自动重画补上 —— 宁可晚几秒出树，也不要树浮在海面上。
+                    //    （我一度改成宽松版「只有明确说是水才丢」，是因为被 0×0 视口测出的假数据
+                    //      吓退；那批数字是垃圾，见记忆 never-ask-user-to-read-logs。）
+                    const ptKind = probeLand(
+                        lngToDemGlobalX(ptLatLng.lng), latToDemGlobalY(ptLatLng.lat),
+                    );
+                    if (ptKind !== 'land') { if (ptKind === 'pending') missingTiles++; continue; }
 
                     // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
                     const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
@@ -421,24 +461,28 @@ export class VegetationLayer {
                     const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
                     const h = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM) * jitter;
                     const w = h * (img.naturalWidth / img.naturalHeight);
-                    // 锚在底部中心：树"站"在采样点上，而不是圆心糊在上面
-                    if (imgNext) {
-                        // 两张叠画：本季淡出、下季淡入。用 globalAlpha 而不是逐像素合成，
-                        // 实测画树本身只占渲染耗时的小头（瓶颈是地形采样），翻倍无感。
-                        const a = Math.min(1, Math.max(0, blend));
-                        this.ctx.globalAlpha = 1 - a;
-                        this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
-                        const wN = h * (imgNext.naturalWidth / imgNext.naturalHeight);
-                        this.ctx.globalAlpha = a;
-                        this.ctx.drawImage(imgNext, center.x - wN / 2, center.y - h, wN, h);
-                        this.ctx.globalAlpha = 1;
-                    } else {
-                        this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
-                    }
-                    drawnTrees++;
+                    drawCommands.push({ x: center.x, y: center.y, h, w, img, imgNext });
                 }
             }
         }
+
+        // 北侧先画、南侧后画：南侧树冠自然覆盖北侧树干。
+        drawCommands.sort((a, b) => a.y - b.y || a.x - b.x);
+        const blendAlpha = Math.min(1, Math.max(0, blend));
+        for (const command of drawCommands) {
+            const { x, y, h, w, img, imgNext } = command;
+            if (imgNext) {
+                this.ctx.globalAlpha = 1 - blendAlpha;
+                this.ctx.drawImage(img, x - w / 2, y - h, w, h);
+                const wNext = h * (imgNext.naturalWidth / imgNext.naturalHeight);
+                this.ctx.globalAlpha = blendAlpha;
+                this.ctx.drawImage(imgNext, x - wNext / 2, y - h, wNext, h);
+                this.ctx.globalAlpha = 1;
+            } else {
+                this.ctx.drawImage(img, x - w / 2, y - h, w, h);
+            }
+        }
+        drawnTrees = drawCommands.length;
 
         // DEM 瓦片异步到达：这轮被跳过的格子必须补画。
         // 只靠 land-sea-tiles-updated 不够 —— 瓦片可能在两次 render 的间隙就位，

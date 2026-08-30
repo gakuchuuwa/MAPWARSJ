@@ -109,6 +109,8 @@ export interface IAnimatedUnit extends IRenderable {
     isOnSea?: boolean;
     /** 登船时锁定的船型（小/中/大）；null/缺省=按实时兵力算 */
     navalShipTierLock?: NavalShipAssetId | null;
+    /** 海军实际船首航向（弧度；lat=cos、lng=sin），由 Army 航行计算提供。 */
+    navalHeadingRad?: number | null;
     /** ArmyEditor：强制模拟海上 */
     forceNavalVisual?: boolean;
     /** 预览缩放倍率（仅编辑器用，默认 1） */
@@ -1988,7 +1990,12 @@ export class GlobalUnitRenderer {
             if (Math.abs(dx) > 0.0000001 || Math.abs(dy) > 0.0000001) {
                 const targetAngle = Math.atan2(dy, dx);
                 const unitId = unit.id || 'unknown';
-                let currentAngle = this.unitVisualAngles.get(unitId) ?? targetAngle;
+                const actualNavalHeading = Number.isFinite(unit.navalHeadingRad)
+                    ? unit.navalHeadingRad as number
+                    : null;
+                let currentAngle = actualNavalHeading
+                    ?? this.unitVisualAngles.get(unitId)
+                    ?? targetAngle;
 
                 // 2. Lerp angle (handle wrap-around -PI to PI)
                 // Shortest path interpolation
@@ -2001,7 +2008,9 @@ export class GlobalUnitRenderer {
                 // 🔴 [2026-08-27 §C] 陆军保持原样（0.2/帧，逐像素不变）；只有船改成
                 //    dt 驱动的指数平滑 + 最大转向角速度封顶 —— 船有转向惯性，不能原地掰头。
                 const isNavalTurn = !this.isBattleScene13() && !!(unit.isOnSea || unit.forceNavalVisual);
-                if (isNavalTurn) {
+                if (actualNavalHeading !== null) {
+                    currentAngle = actualNavalHeading;
+                } else if (isNavalTurn) {
                     const nowMs = performance.now();
                     const prevMs = this.navalTurnTickMs.get(unitId);
                     // 首帧 / 长时间没画（离屏被裁）→ 按一帧算，避免 dt 巨大导致瞬间转到位
@@ -2106,7 +2115,8 @@ export class GlobalUnitRenderer {
                 if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
                     navalAngleRad = Math.atan2(unit.targetPos.lng - unitPos.lng, unit.targetPos.lat - unitPos.lat);
                 } else if (unit.isMoving) {
-                    navalAngleRad = this.unitVisualAngles.get(unit.id || 'unknown')
+                    navalAngleRad = (Number.isFinite(unit.navalHeadingRad) ? unit.navalHeadingRad as number : null)
+                        ?? this.unitVisualAngles.get(unit.id || 'unknown')
                         ?? (45 + 22.5 * navalDir16) * Math.PI / 180;
                 } else {
                     navalAngleRad = (45 + 22.5 * navalDir16) * Math.PI / 180;

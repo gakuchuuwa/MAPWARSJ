@@ -120,6 +120,12 @@ export class Army implements IBattleUnit {
     public lastPosition: { lat: number; lng: number } = { lat: 0, lng: 0 };
     public lastDirection: number = 0; // Cache direction
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
+    /** 海上实际船首航向（弧度；lat=cos、lng=sin）。null 表示尚未开始一次海上航行。 */
+    private navalHeadingRad: number | null = null;
+    /** 船舶最大转向角速度：与战略地图原有海军视觉转速保持一致。 */
+    private static readonly NAVAL_TURN_RATE_RAD_S = 55 * Math.PI / 180;
+    /** 大角度操舵时仍保留少量前进量，形成调头弧线而不是原地旋转。 */
+    private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
 
     /**
      * 锚点滞回状态：上一次决策用的是「老家锚点」吗（见 LegionBehaviors 的 ANCHOR_HYSTERESIS_*）。
@@ -564,6 +570,14 @@ export class Army implements IBattleUnit {
         // [FIX] Track position BEFORE moving for renderer interpolation / direction
         this.lastPosition = { lat: this.position.lat, lng: this.position.lng };
 
+        if (this.isOnSea) {
+            this.advanceNaval(moveDist, finalSpeed, deltaTime);
+            this.syncSpatialRegistry();
+            this.updateMarkerPosition();
+            LandSeaSystem.getWaterSampler().scheduleFetch(this.position.lat, this.position.lng, 13);
+            return;
+        }
+
         let remainingDist = moveDist;
 
         // [VECTOR MOVEMENT] Consume path points until distance exhausted
@@ -613,6 +627,74 @@ export class Army implements IBattleUnit {
         // 回退 zoom 9 判不出线性窄河 → 河畔战场无河，如马格德堡易北河）。
         // scheduleFetch 幂等（cache/pending 去重），只在跨瓦片时才真正发起拉取。
         LandSeaSystem.getWaterSampler().scheduleFetch(this.position.lat, this.position.lng, 13);
+    }
+
+    /**
+     * 海军实际航行：先把船首以受限角速度转向路点，再沿船首方向位移。
+     * 这保证位置与船头使用同一航向；换向时舰船走弧线，不会逻辑位置先倒退、贴图随后调头。
+     */
+    private advanceNaval(moveDist: number, finalSpeed: number, deltaTime: number): void {
+        if (moveDist <= 0 || deltaTime <= 0 || this.hasArrived) return;
+
+        const dx = this.destination.lat - this.position.lat;
+        const dy = this.destination.lng - this.position.lng;
+        const distToNext = Math.hypot(dx, dy);
+        if (distToNext <= 0.000001) {
+            this.reachCurrentWaypoint();
+            return;
+        }
+
+        const targetHeading = Math.atan2(dy, dx);
+        if (this.navalHeadingRad === null || !Number.isFinite(this.navalHeadingRad)) {
+            this.navalHeadingRad = targetHeading;
+        }
+
+        let diff = targetHeading - this.navalHeadingRad;
+        while (diff <= -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+
+        const maxTurn = Army.NAVAL_TURN_RATE_RAD_S * deltaTime;
+        const turn = Math.max(-maxTurn, Math.min(maxTurn, diff));
+        this.navalHeadingRad += turn;
+        while (this.navalHeadingRad <= -Math.PI) this.navalHeadingRad += Math.PI * 2;
+        while (this.navalHeadingRad > Math.PI) this.navalHeadingRad -= Math.PI * 2;
+
+        const remainingAngle = Math.abs(diff - turn);
+        const forwardFactor = Army.NAVAL_MIN_FORWARD_FACTOR
+            + (1 - Army.NAVAL_MIN_FORWARD_FACTOR) * Math.max(0, Math.cos(remainingAngle));
+        const advance = moveDist * forwardFactor;
+        const minTurnRadius = finalSpeed * Army.NAVAL_MIN_FORWARD_FACTOR / Army.NAVAL_TURN_RATE_RAD_S;
+        const captureRadius = Math.max(0.000001, moveDist, minTurnRadius);
+
+        if (distToNext <= captureRadius) {
+            this.position.lat = this.destination.lat;
+            this.position.lng = this.destination.lng;
+            this.reachCurrentWaypoint();
+            return;
+        }
+
+        this.position.lat += Math.cos(this.navalHeadingRad) * advance;
+        this.position.lng += Math.sin(this.navalHeadingRad) * advance;
+        this.lastDirection = this.navalHeadingRad;
+    }
+
+    /** 到达当前路点并切换下一点；最终点沿用原有到达回调语义。 */
+    private reachCurrentWaypoint(): void {
+        if (this.pathQueue.length > 0) {
+            this.destination = this.pathQueue.shift()!;
+            return;
+        }
+
+        this.hasArrived = true;
+        this.updateMarkerPosition();
+        const callback = this.onArrive;
+        this.onArrive = () => { };
+        if (typeof callback === 'function') callback(this);
+    }
+
+    /** 渲染层读取同一实际航向，避免再对已经受限的船首角做第二次滞后。 */
+    public getNavalHeadingRad(): number | null {
+        return this.navalHeadingRad;
     }
 
     /** 行军每帧同步空间索引，否则 LegionManager 野战碰撞永远用旧坐标 */
@@ -688,6 +770,7 @@ export class Army implements IBattleUnit {
             this.confirmedLandKind = null;
             this.landFlipFrames = 0;
         } else {
+            this.navalHeadingRad = null;
             // 陆地：四系 × 平原/山地；如履平地 → 山地按平原格查表
             const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
             const desiredKind: 'plain' | 'mountain' =

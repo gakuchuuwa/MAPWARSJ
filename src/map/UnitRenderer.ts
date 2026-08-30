@@ -145,6 +145,12 @@ export class UnitRenderer implements IAnimatedUnit {
         return this.unit.getTroops();
     }
 
+    /** Army 海上实际航向；位置与船头共用，未启用时为 null。 */
+    public get navalHeadingRad(): number | null {
+        const getter = (this.unit as any).getNavalHeadingRad;
+        return typeof getter === 'function' ? getter.call(this.unit) : null;
+    }
+
     public get isDestroyed(): boolean {
         return this.unit.isDestroyed;
     }
