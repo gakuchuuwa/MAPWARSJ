@@ -565,7 +565,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_alfonso_vi': 11,                                // 阿方索六世 · xigete · 托莱多
     'gen_andrea_doria': 16,                              // 安德烈亚 · liguliya · 热那亚
     'gen_barbarossa': 16,                                // 巴巴罗萨 · babali · 阿尔及尔
-    'gen_basarab_i': 14,                                 // 巴萨拉布 · mengtainiya · 布加勒斯特
+    'gen_basarab_i': 14,                                 // 巴萨拉布 · kuertaiya · 库尔泰亚
+    'mengtainiya_radu_iii': 15,                          // 拉杜三世 · mengtainiya · 布加勒斯特
     'gen_black_prince': 14,                              // 黑太子 · aquidan · 波尔多
     'gen_cangrande': 14,                                 // 坎格兰德 · bohepingyuan · 维罗纳
     'safuyi_ameidi': 14,                                  // 阿梅迪奥 · safuyi · 尚贝里
@@ -612,7 +613,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     // ══════ DIANQIAN（46 人，已标 0）══════
     'ahaomu_laqite': 17,                                 // 拉其特 · ahaomu · 戈尔冈
     'ailao_leilao': 1,                                  // 类牢 · ailao · 永昌
-    'ava_sijifa': 15,                                    // 思机法 · ava · 阿瓦
+    'ava_minye_kyawswa': 15,                             // 明耶觉苏瓦 · ava · 因瓦
     'baiman_gaoshengtai': 11,                            // 高升泰 · baiman · 威楚
     'boluo_damoboluo': 8,                               // 达磨波罗 · boluo · 高达城
     'chenla_duyebamo': 12,                               // 阇耶跋摩 · chenla · 吴哥
@@ -643,7 +644,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'mu_lijiang_muzeng': 17,                             // 木增 · mu_lijiang · 大研
     'nanzhao_geluofeng': 8,                             // 阁罗凤 · nanzhao · 蒙舍城
     'pagan_anulvtuo': 11,                                // 阿奴律陀 · pagan · 蒲甘
-    'pyu_moluo': 8,                                     // 摩罗 · pyu · 室利差罗
+    'pyu_moluo': 8,                                     // 摩罗惹 · pyu · 室利差罗
     'siam_nalixuan': 16,                                 // 纳黎萱 · siam · 阿瑜陀耶
     'suke_langanheng': 13,                               // 兰甘亨 · suke · 素可泰
     'sumo_sumowang': -6,                                 // 苏摩 · sumo · 耽摩栗底
@@ -694,7 +695,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_stefan_dusan': 14,                              // 斯蒂芬杜尚 · saierweiya · 贝尔格莱德
     'gen_stephen_great': 15,                             // 斯蒂芬 · moerdaweiya · 雅西
     'gen_tvrtko': 14,                                    // 特夫尔特科 · bosiniya · 萨拉热窝
-    'gen_vlad_impaler': 15,                              // 弗拉德三世 · walajiyia · 特尔城
+    'gen_vlad_impaler': 15,                              // 弗拉德三世 · walajiyia · 特尔戈维
     'gen_vladimir_monomakh': 12,                         // 莫诺马赫 · peilieya_gongguo · 佩列斯拉夫
     'gen_vyacheslav_tartu': 13,                          // 维切斯拉夫 · chude · 尤里耶夫
     'kaleiliya_kelimu': 18,                              // 克利姆索博列夫 · kaleiliya · 基日岛

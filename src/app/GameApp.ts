@@ -124,6 +124,7 @@ export class GameApp {
     public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
     public zhugeliangExpedition!: ZhugeLiangExpedition; // 诸葛亮北伐中原 圆梦脚本
     public zoomController!: ZoomController; // 自动缩放控制（行军 9 / 战斗 10）
+    public tacticalModeEnabled: boolean = true; // 是否进入战术模式（zoom13 微观战斗），调试面板开关
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
 

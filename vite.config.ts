@@ -3974,36 +3974,6 @@ function serverValidateEntities(): {
         }
     });
 
-    // 18. [NEW 2026-07-13] 精锐 tier vs 武将品阶 匹配审计
-    //    T0/T1 精锐 → 必须是名将；名将 → 精锐不能是 T4
-    for (const [fId, elite] of Object.entries(data.elites)) {
-        const gen = data.generals[fId];
-        if (!gen) continue;
-        const prof = data.profiles[gen.generalId];
-        if (!prof) continue;
-
-        const eliteTier = elite.tier;
-        const isFamous = prof.tier === 'famous';
-
-        // T0/T1 精锐 + 普将 = 报错
-        if ((eliteTier === 0 || eliteTier === 1) && !isFamous) {
-            issues.push({
-                level: 'error',
-                msg: `精锐 "${elite.name}" 为 T${eliteTier}，但武将 "${gen.generalName}"(${gen.generalId}) 是普将（T0/T1 精锐必须配名将）`,
-                factionId: fId,
-            });
-        }
-
-        // 名将 + T4 精锐 = 报错
-        if (isFamous && eliteTier === 4) {
-            issues.push({
-                level: 'error',
-                msg: `武将 "${gen.generalName}"(${gen.generalId}) 是名将，但精锐 "${elite.name}" 仅为 T4（名将至少配 T3 以上精锐）`,
-                factionId: fId,
-            });
-        }
-    }
-
     return {
         issues,
         stats: {

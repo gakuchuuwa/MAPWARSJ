@@ -979,7 +979,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力 ──
     // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
-    { id: 'ava', name: '掸族' },
+    { id: 'ava', name: '阿瓦王国' },
     { id: 'dongxu', name: '东吁' },
     { id: 'meitai', name: '梅泰' },  // 曼尼普尔·梅泰人（飞镖骑兵本族）
 
@@ -1917,7 +1917,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pidisha', name: '毗底沙' },
     { id: 'jiaye', name: '伽耶' },
     { id: 'jienei', name: '杰内' },
-    { id: 'kuertaiya', name: '库尔泰亚' },
+    { id: 'kuertaiya', name: '巴萨拉布' },
     { id: 'muwaxide', name: '穆瓦希德' },
   { id: 'varendra', name: '伐连陀' },
   { id: 'chatigangren', name: '查蒂冈人' },
