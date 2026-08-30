@@ -909,7 +909,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jiazini': 'city_jiaseni',
 'qu_d': 'city_jieqiao',
 'wuzhou': 'city_wuzhousai',
-    'bailong': 'city_sanlongsha',
+'bailong': 'city_sanlongsha',
 'jilizhou': 'city_beishacheng',
     'nuergan': 'city_nuergan',
     'kepantuo': 'city_gongzhubao',

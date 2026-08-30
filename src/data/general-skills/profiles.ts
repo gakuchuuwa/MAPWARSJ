@@ -2659,7 +2659,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    bailong_suomai: { generalId: 'bailong_suomai', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_033', atkBalanceSkillId: 'ts_719', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_407', defDisadvantageSkillId: 'ts_822', aptitude: 'create', attackStyle: 'attack' },
+    bailong_suomai: { generalId: 'bailong_suomai', tier: 'ordinary', tacticalSkillId: 'ts_033', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_033', atkBalanceSkillId: 'ts_719', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_407', defDisadvantageSkillId: 'ts_822', aptitude: 'create', attackStyle: 'attack' },
 
 
 

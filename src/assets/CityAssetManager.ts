@@ -793,7 +793,7 @@ export class CityAssetManager {
         'aba': '阿巴',
         'fanyanna': '梵衍',
 'wuzhou': '武',
-        'bailong': '白龙',
+'bailong': '白龙',
 'jilizhou': '积',
         'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城
         'kepantuo': '渴盘陀',

@@ -1700,6 +1700,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuzhou', name: '武州' },
 
     { id: 'bailong', name: '白龙' },
+
     { id: 'jilizhou', name: '积利' },
 
 

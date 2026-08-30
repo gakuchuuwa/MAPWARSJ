@@ -2149,7 +2149,8 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
     { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'pass', troops: 30000, region: 'TIBET' },
 
-    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4000, lng: 92.5000, type: 'pass', region: 'WESTERN', troops: 30000, note: '班勇西域长史出三陇沙平车师' },
+    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'small_city', troops: 20000, region: 'WESTERN' },
+
     { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'HEXI', troops: 30000, mirror: true,
         note: '肩水金关；浑邪关隘',
     },//镜像
