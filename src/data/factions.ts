@@ -1486,6 +1486,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-11 新增：日本精锐据点（间距实测合格）──
     { id: 'iga_d', name: '伊贺' },
+
     // 名张·伊贺国东境；远征精锐「伊贺众」,
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城·间距≥50km）──
     { id: 'kaga_d', name: '一向宗' },   // 金泽·加贺一向一揆；一向宗门徒
@@ -1719,6 +1720,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'sagami', name: '相模' },
     { id: 'mino', name: '美浓' },
+
     { id: 'ssangseong', name: '和州' },
     { id: 'fu_zhou', name: '涪州' },
     // ── Phase 1 Missing Factions ──

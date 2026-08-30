@@ -1076,7 +1076,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '鹤之城；会津小城',
     },
     // ── 2026-06-11 日本精锐：北条@小田原、伊贺@名张（恶党/千早城距飞鸟宫旧址3km）──
-    { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'pass', troops: 30000, region: 'JAPAN' },
+    { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'small_city', troops: 20000, region: 'JAPAN' },
+
 
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城）──
     { id: 'city_jianghu', name: '金泽', factionId: 'kaga_d', lat: 36.56, lng: 136.65, type: 'medium_city', region: 'JAPAN', troops: 30000, note: '加贺一向一揆尾山御坊故地（金泽古名）；下间赖廉守备' },
@@ -2857,7 +2858,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'small_city', troops: 30000, region: 'STEPPE' },
 
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 30000, note: '天下第一关，关东的物理大门' },
-    { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 30000, note: '关原所在地，畿内防御东国大军的终极险地' },
+    { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', troops: 20000, region: 'JAPAN', mirror: true },
+
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', troops: 30000, region: 'NORTH' },
 
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'pass', troops: 30000, region: 'DIANQIAN' },

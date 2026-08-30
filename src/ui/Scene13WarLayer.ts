@@ -6834,8 +6834,10 @@ export class Scene13WarLayer {
             // 其余兵种不受影响：赶路一律移动帧、攻击固定攻击帧。白刃（st=2）用近战帧。
             const hasChg = !!this.bank[m.key]?.sets.charge?.[0]?.length;
             let set: string;
-            // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）
-            if (this.lingering || this.deployT > 0 || (this.defenderHolding && !m.siegeW)) {
+            // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）。
+            // 🔴 [2026-08-30 修] 部署期不能一刀切 idle——攻城武器要凿墙、野战列阵兵要压上，
+            //    都在真实位移，播 idle 就是贴地滑行。只让「站定待命」的（非列阵、非攻城武器）播 idle。
+            if (this.lingering || (this.deployT > 0 && !m.march && !m.siegeW) || (this.defenderHolding && !m.siegeW)) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。

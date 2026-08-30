@@ -129,6 +129,17 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     deli: 'HIND_CASTLE_AGE3',              // 德里苏丹国
     gurjara: 'GURJ_CASTLE_AGE3',           // 瞿折罗
     huluo: 'GURJ_CASTLE_AGE3',             // 古尔
+    // ── 青藏 ──
+    tubo: 'TIBET_CASTLE_AGE3',             // 吐蕃
+    guge: 'TIBET_CASTLE_AGE3',             // 古格
+    xiangxiong: 'TIBET_CASTLE_AGE3',       // 象雄
+    ladakh: 'TIBET_CASTLE_AGE3',           // 拉达克
+    supi: 'TIBET_CASTLE_AGE3',             // 苏毗
+    spurgyal: 'TIBET_CASTLE_AGE3',         // 悉补野
+    tsangpa: 'TIBET_CASTLE_AGE3',          // 藏巴汗
+    gandenpozhang: 'TIBET_CASTLE_AGE3',    // 甘丹颇章
+    lang_clan: 'TIBET_CASTLE_AGE3',        // 帕木竹巴/朗氏
+    karmapa: 'TIBET_CASTLE_AGE3',          // 噶玛巴
     // ── 美洲 ──
     inca: 'INCA_CASTLE_AGE3',
     maya: 'MAYA_CASTLE_AGE3',
@@ -154,6 +165,7 @@ export const REGION_CASTLE: Partial<Record<RegionType, string>> = {
     NORTHEAST: 'JURC_CASTLE_AGE3',   // 女真=东北
     KOREA: 'KORE_CASTLE_AGE3',
     STEPPE: 'MONG_CASTLE_AGE3',      // 草原：蒙古式
+    TIBET: 'TIBET_CASTLE_AGE3',      // 青藏：藏式宗堡（红白宫金顶防御堡）
     WESTERN: 'CEAS_CASTLE_AGE3',     // 西域：鞑靼/中亚（赫拉特城堡）
     WEST_ASIA: 'PERS_CASTLE_AGE3',   // 西亚：波斯式（比 ORIE 通用更贴）
     PERSIAN: 'PERS_CASTLE_AGE3',     // 波斯：巴姆古城（2026-08-30 主人定：波斯城堡=巴姆古城）

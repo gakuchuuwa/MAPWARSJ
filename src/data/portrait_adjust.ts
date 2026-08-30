@@ -4017,11 +4017,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_08.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -21
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_09.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -7146,6 +7141,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/WEST_ASIA/xiaofulijiya_aerxitisi.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -18
         }
     },
     "folderGuides": {
