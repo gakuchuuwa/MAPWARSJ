@@ -7237,11 +7237,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/LATIN/rhodope_momuqier.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 10
-        },
         "/assets/GREEK/odrysian_late_saiwutesi.png": {
             "scale": 1,
             "offsetX": 0,

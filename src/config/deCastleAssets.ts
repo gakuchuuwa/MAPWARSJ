@@ -189,7 +189,6 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     braganza_house: 'PORT_CASTLE_AGE3',
     trastamara: 'SPAN_CASTLE_AGE3',
     odrysian_late: 'THRACIANS_CASTLE_AGE3',
-    rhodope: 'THRACIAN_CASTLE_AGE3',
     naxos_ancient: 'MACEDONIAN_CASTLE_AGE3',
 };
 

@@ -67,7 +67,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/INDIA/mallabhum_bierhanbier.png": "/assets/INDIA/__多余__INDIA_02.png",
     "/assets/INDIA/tomara_gwalior_manxinge.png": "/assets/INDIA/__多余__INDIA_01.png",
     "/assets/LATIN/braganza_house_ruoangyishi.png": "/assets/LATIN/__多余__LATIN_04.png",
-    "/assets/LATIN/rhodope_momuqier.png": "/assets/LATIN/__多余__LATIN_05.png",
     "/assets/PERSIAN/kerman_bam_yagebu.png": "/assets/PERSIAN/__多余__PERSIAN_06.png",
     "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": "/assets/SLAVIC/__多余__SLAVIC_03.png",
     "/assets/SLAVIC/nuowei_halaer.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",

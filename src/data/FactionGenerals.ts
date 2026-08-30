@@ -1121,7 +1121,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     braganza_house: { generalId: 'gen_joao_i', generalName: '若昂一世', portrait: '/assets/LATIN/braganza_house_ruoangyishi.png' },
     trastamara: { generalId: 'gen_ferdinand_ii', generalName: '斐迪南二世', portrait: '/assets/SPANISH/trastamara_feidinanershi.png' },
     odrysian_late: { generalId: 'gen_seuthes_iii', generalName: '塞乌特斯', portrait: '/assets/GREEK/odrysian_late_saiwutesi.png' },
-    rhodope: { generalId: 'gen_momchil', generalName: '莫姆奇尔', portrait: '/assets/LATIN/rhodope_momuqier.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
 
 };

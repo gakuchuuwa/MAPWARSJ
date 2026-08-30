@@ -1946,7 +1946,6 @@ export const FACTIONS: Faction[] = [
     { id: 'braganza_house', name: '布拉干萨家' },
     { id: 'trastamara', name: '特拉斯塔' },
     { id: 'odrysian_late', name: '奥德里西亚' },
-    { id: 'rhodope', name: '罗多彼' },
     { id: 'naxos_ancient', name: '纳克索斯' },
 ];
 

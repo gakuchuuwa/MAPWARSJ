@@ -126,7 +126,6 @@ export const CITY_WONDER: Record<string, string> = {
     'city_braganca': 'PORT_CASTLE_AGE3',
     'city_la_mota': 'SPAN_CASTLE_AGE3',
     'city_seuthopolis': 'THRACIANS_CASTLE_AGE3',
-    'city_perperikon': 'THRACIAN_CASTLE_AGE3',
     'city_chimarros': 'MACEDONIAN_CASTLE_AGE3',
     'city_atuoke': 'PURU_CASTLE_AGE3_ATTACKUP',
     'city_huashicheng': 'PURU_CASTLE_AGE3_BOTHUP',

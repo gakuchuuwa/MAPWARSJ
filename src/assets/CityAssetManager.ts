@@ -1025,7 +1025,6 @@ export class CityAssetManager {
 'braganza_house': '布拉',
 'trastamara': '特拉',
 'odrysian_late': '奥德里',
-'rhodope': '罗多',
 'naxos_ancient': '纳克',
 'zhibuluotuo': '直布',
         'saierweiya': '拉什',

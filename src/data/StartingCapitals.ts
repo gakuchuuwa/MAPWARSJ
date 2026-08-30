@@ -1119,7 +1119,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'braganza_house': 'city_braganca',
     'trastamara': 'city_la_mota',
     'odrysian_late': 'city_seuthopolis',
-    'rhodope': 'city_perperikon',
     'naxos_ancient': 'city_chimarros',
 };
 

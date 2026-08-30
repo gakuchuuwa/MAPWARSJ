@@ -40883,75 +40883,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "以弗所-罗得城",
-                type: "road",
-                id: "road_city_yifusuo_city_rhodes_1785579956808",
-                startConnection: "city_yifusuo",
-                endConnection: "city_rhodes"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [27.34, 37.94],
-                    [27.39990234375, 37.81846319511331],
-                    [27.42526068580121, 37.77092443601822],
-                    [27.402626798409177, 37.74904890052334],
-                    [27.38688807980512, 37.72097237990018],
-                    [27.36700759314738, 37.66812108614455],
-                    [27.34449037527798, 37.569605341227884],
-                    [27.342839501532634, 37.50953220402087],
-                    [27.359161567749883, 37.47453134722907],
-                    [27.376072815056457, 37.466195309836486],
-                    [27.489755597916247, 37.46256105420627],
-                    [27.537590102198383, 37.456202565222426],
-                    [27.58377373273517, 37.443596423301244],
-                    [27.626556446687022, 37.42247923970352],
-                    [27.760743898150675, 37.31556328915681],
-                    [27.776599286277364, 37.3063638972967],
-                    [27.831451462346262, 37.289423482609465],
-                    [27.975905831802176, 37.31448992954853],
-                    [28.044892520538827, 37.312004868716315],
-                    [28.07672579979098, 37.31616997067454],
-                    [28.13507222806292, 37.34580402942493],
-                    [28.16486379066888, 37.30928646883882],
-                    [28.337009671323248, 37.21092822777771],
-                    [28.367565419302498, 37.17000055923582],
-                    [28.377038984540814, 37.12126769962936],
-                    [28.288020138766985, 36.99094200936507],
-                    [28.27061887946532, 36.971073189659585],
-                    [28.25850274953923, 36.85482951077786],
-                    [28.050994336572867, 36.78549864694943],
-                    [27.892743796064845, 36.76578149762338],
-                    [27.86942739196537, 36.76771821169919],
-                    [27.814190206471768, 36.78833371634956],
-                    [27.767761569937438, 36.78523030704736],
-                    [27.693804759536345, 36.768552398786056],
-                    [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "罗得城-诺索斯",
-                type: "road",
-                id: "road_city_rhodes_city_knossos_1785580018704",
-                startConnection: "city_rhodes",
-                endConnection: "city_knossos"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.22, 36.44],
-                    [27.339477539062504, 36.295204533693536],
-                    [26.674999999999997, 35.885],
-                    [25.13, 35.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "亚历山大-班加西",
                 type: "road",
                 id: "road_city_yalishanda_city_banjiaxi_1785580063690",
@@ -46443,58 +46374,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "斯巴达-诺索斯",
-                type: "road",
-                id: "road_city_sparta_city_knossos_1785583005339",
-                startConnection: "city_sparta",
-                endConnection: "city_knossos"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [22.42, 37.07],
-                    [23.466796875000004, 35.951329861522666],
-                    [25.13, 35.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "诺索斯-亚历山大",
-                type: "road",
-                id: "road_city_knossos_city_yalishanda_1785583024786",
-                startConnection: "city_knossos",
-                endConnection: "city_yalishanda"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.13, 35.33],
-                    [29.91, 31.2],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "罗得城-亚历山大",
-                type: "road",
-                id: "road_city_rhodes_city_yalishanda_1785583036302",
-                startConnection: "city_rhodes",
-                endConnection: "city_yalishanda"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.22, 36.44],
-                    [29.91, 31.2],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "迦太基-巴勒莫",
                 type: "road",
                 id: "road_city_jiataji_city_palermo_1785583175534",
@@ -46833,57 +46712,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "雅典-以弗所",
-                type: "road",
-                id: "road_city_yadian_city_yifusuo_1785583948907",
-                startConnection: "city_yadian",
-                endConnection: "city_yifusuo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.72, 37.98],
-                    [27.34, 37.94],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "雅典-诺索斯",
-                type: "road",
-                id: "road_city_yadian_city_knossos_1785583981652",
-                startConnection: "city_yadian",
-                endConnection: "city_knossos"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.72, 37.98],
-                    [25.13, 35.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "雅典-罗得城",
-                type: "road",
-                id: "road_city_yadian_city_rhodes_1785583996223",
-                startConnection: "city_yadian",
-                endConnection: "city_rhodes"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.72, 37.98],
-                    [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "拉古萨-科孚",
                 type: "road",
                 id: "road_city_ragusa_city_kefu_1785674143906",
@@ -46979,40 +46807,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [36.12078579823703, 33.38560350553824],
                     [36.129034642670625, 33.40210119440543],
                     [36.29, 33.51],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "亚历山大-阿卡",
-                type: "road",
-                id: "road_city_yalishanda_city_ake_1785732740597",
-                startConnection: "city_yalishanda",
-                endConnection: "city_ake"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [29.91, 31.2],
-                    [30.108032226562504, 31.501287521196705],
-                    [30.434875488281254, 31.57385555523813],
-                    [30.753479003906254, 31.634675549541356],
-                    [31.052856445312504, 31.67442098161997],
-                    [31.34611111111111, 31.680555555555554],
-                    [31.633333333333333, 31.776666666666667],
-                    [31.920555555555556, 31.872777777777777],
-                    [32.20777777777778, 31.968888888888888],
-                    [32.495, 32.065],
-                    [32.782222222222224, 32.16111111111111],
-                    [33.06944444444444, 32.257222222222225],
-                    [33.35666666666667, 32.35333333333333],
-                    [33.64388888888889, 32.449444444444445],
-                    [33.93111111111111, 32.54555555555555],
-                    [34.218333333333334, 32.641666666666666],
-                    [34.50555555555555, 32.73777777777778],
-                    [34.79277777777778, 32.833888888888886],
-                    [35.08, 32.93],
                 ]
             }
         },
@@ -49200,41 +48994,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [-8.529338827832715, 40.97829794984903],
                     [-8.52581249151094, 41.027678325306134],
                     [-8.62, 41.15],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "底比斯-特洛伊",
-                type: "road",
-                id: "road_city_thebes_city_teluoyi_1785910968078",
-                startConnection: "city_thebes",
-                endConnection: "city_teluoyi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.31, 38.32],
-                    [23.587646484375, 38.47079371120379],
-                    [23.630218505859375, 38.47670674035554],
-                    [23.64944458007813, 38.47294404791815],
-                    [23.709869384765625, 38.47939467327645],
-                    [23.689956665039066, 38.49900008831302],
-                    [23.65219116210938, 38.52613128904886],
-                    [23.631591796875004, 38.56964280859044],
-                    [23.54782104492188, 38.70200095754973],
-                    [23.505935668945316, 38.76818003202938],
-                    [23.43967437744141, 38.81089594130467],
-                    [23.373413085937504, 38.853611850579966],
-                    [23.45787048339844, 38.84371803912421],
-                    [23.50009918212891, 38.838771133396335],
-                    [23.54232788085938, 38.83382422766846],
-                    [23.620605468750004, 38.83328934882789],
-                    [23.777160644531254, 38.832219591146746],
-                    [24.683532714843754, 39.20459056764485],
-                    [25.463562011718754, 39.705073625554476],
-                    [26.23, 39.95],
                 ]
             }
         },
@@ -58326,64 +58085,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "科洛西-亚历山大",
-                type: "road",
-                id: "road_city_kolossi_city_yalishanda_1787911436387",
-                startConnection: "city_kolossi",
-                endConnection: "city_yalishanda"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [32.934, 34.664],
-                    [32.745, 34.4475],
-                    [32.556, 34.231],
-                    [32.367, 34.0145],
-                    [32.178, 33.798],
-                    [31.988999999999997, 33.5815],
-                    [31.799999999999997, 33.365],
-                    [31.610999999999997, 33.1485],
-                    [31.421999999999997, 32.932],
-                    [31.233, 32.7155],
-                    [31.044, 32.499],
-                    [30.855, 32.2825],
-                    [30.666, 32.066],
-                    [30.477, 31.8495],
-                    [30.288, 31.633],
-                    [30.099, 31.4165],
-                    [29.91, 31.2],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "科洛西-阿卡",
-                type: "road",
-                id: "road_city_kolossi_city_ake_1787911455706",
-                startConnection: "city_kolossi",
-                endConnection: "city_ake"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [32.934, 34.664],
-                    [33.148599999999995, 34.4906],
-                    [33.3632, 34.3172],
-                    [33.577799999999996, 34.1438],
-                    [33.7924, 33.9704],
-                    [34.007, 33.797],
-                    [34.221599999999995, 33.6236],
-                    [34.4362, 33.4502],
-                    [34.6508, 33.2768],
-                    [34.8654, 33.1034],
-                    [35.08, 32.93],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "图卡佩尔-伊瓜苏",
                 type: "road",
                 id: "road_city_tucapel_city_yiguasu_1787912238907",
@@ -61866,43 +61567,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [25.330319, 42.222683],
                     [25.204684, 42.203427],
                     [24.74, 42.14],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "普罗夫迪夫-佩尔佩里孔",
-                type: "road",
-                id: "road_city_plovdiv_city_perperikon_1788081600278",
-                startConnection: "city_plovdiv",
-                endConnection: "city_perperikon"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [24.74, 42.14],
-                    [24.871633, 42.00877],
-                    [24.865636, 41.96034],
-                    [24.70801, 41.88692],
-                    [24.694937, 41.873713],
-                    [24.693665, 41.822303],
-                    [24.708459, 41.770472],
-                    [24.692038, 41.715002],
-                    [24.737522, 41.68507],
-                    [24.790998, 41.584955],
-                    [24.859628, 41.57431],
-                    [24.879433, 41.557387],
-                    [24.934664, 41.542636],
-                    [24.977618, 41.5365],
-                    [25.059142, 41.554908],
-                    [25.098589, 41.551402],
-                    [25.131024, 41.576824],
-                    [25.194139, 41.5777],
-                    [25.22745, 41.592603],
-                    [25.280923, 41.601369],
-                    [25.32563, 41.613641],
-                    [25.465, 41.715],
                 ]
             }
         },

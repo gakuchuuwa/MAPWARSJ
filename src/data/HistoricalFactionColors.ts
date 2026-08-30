@@ -1106,7 +1106,6 @@ const _FIXED: Record<string, string> = {
     'braganza_house': '#356A8C',
     'trastamara': '#8B2436',
     'odrysian_late': '#6B4A8E',
-    'rhodope': '#4B6B3A',
     'naxos_ancient': '#2F5A78',
 };
 

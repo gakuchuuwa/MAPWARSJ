@@ -3195,7 +3195,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_joao_i: { generalId: 'gen_joao_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     gen_ferdinand_ii: { generalId: 'gen_ferdinand_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     gen_seuthes_iii: { generalId: 'gen_seuthes_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
-    gen_momchil: { generalId: 'gen_momchil', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     gen_chabrias: { generalId: 'gen_chabrias', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
 };
 
