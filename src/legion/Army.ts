@@ -122,10 +122,16 @@ export class Army implements IBattleUnit {
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
     /** 海上实际船首航向（弧度；lat=cos、lng=sin）。null 表示尚未开始一次海上航行。 */
     private navalHeadingRad: number | null = null;
+    /** 连续「没有靠近下一个路点」的秒数（绕圈兜底用，见 advanceNaval） */
+    private navalOrbitSec = 0;
+    /** 上一帧到下一个路点的距离，用来判断是否在靠近 */
+    private navalPrevDistToNext: number | null = null;
     /** 船舶最大转向角速度：与战略地图原有海军视觉转速保持一致。 */
     private static readonly NAVAL_TURN_RATE_RAD_S = 55 * Math.PI / 180;
     /** 大角度操舵时仍保留少量前进量，形成调头弧线而不是原地旋转。 */
     private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
+    /** 连续这么多秒没靠近下一个路点 = 判定绕圈，强制到点脱出 */
+    private static readonly NAVAL_ORBIT_BAILOUT_SEC = 3;
 
     /**
      * 锚点滞回状态：上一次决策用的是「老家锚点」吗（见 LegionBehaviors 的 ANCHOR_HYSTERESIS_*）。
@@ -663,15 +669,41 @@ export class Army implements IBattleUnit {
         const forwardFactor = Army.NAVAL_MIN_FORWARD_FACTOR
             + (1 - Army.NAVAL_MIN_FORWARD_FACTOR) * Math.max(0, Math.cos(remainingAngle));
         const advance = moveDist * forwardFactor;
-        const minTurnRadius = finalSpeed * Army.NAVAL_MIN_FORWARD_FACTOR / Army.NAVAL_TURN_RATE_RAD_S;
+        // 🔴 [2026-08-31 修「出海就转圈圈」] 最小转弯半径 = 速度 ÷ 角速度，**不能再乘
+        //    NAVAL_MIN_FORWARD_FACTOR(0.12)**。原公式把半径算小了 8 倍：
+        //      · 船真正绕路点转的圈，半径是 v/ω（快对准时 forwardFactor→1，走的是全速）
+        //      · 而「算到达」的判定半径只有 v/ω × 0.12
+        //    船永远进不了那个小圈 → 绕着路点无限转 → 到不了目标 → 也就永远进不了战斗状态。
+        //    ×1.25 余量：forwardFactor 在 0.12~1 之间浮动，取全速半径再放一点，宁可早一帧到点。
+        const minTurnRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S * 1.25;
         const captureRadius = Math.max(0.000001, moveDist, minTurnRadius);
 
         if (distToNext <= captureRadius) {
             this.position.lat = this.destination.lat;
             this.position.lng = this.destination.lng;
+            this.navalOrbitSec = 0;
             this.reachCurrentWaypoint();
             return;
         }
+
+        // 🔴 [2026-08-31] 兜底：只要「离路点没变近」就累计计时，超过 NAVAL_ORBIT_BAILOUT_SEC
+        //    直接判到达。转弯半径公式再准也只是模型，真实里还有速度倍率、路点贴着岸线、
+        //    连续急转等情况能让船绕住；绕圈是**死循环**（到不了点 → 不换点 → 继续绕），
+        //    必须有一条无条件能脱出的路，不能只靠公式吃住所有情况。
+        if (this.navalPrevDistToNext !== null && distToNext >= this.navalPrevDistToNext - 1e-9) {
+            this.navalOrbitSec += deltaTime;
+            if (this.navalOrbitSec >= Army.NAVAL_ORBIT_BAILOUT_SEC) {
+                this.navalOrbitSec = 0;
+                this.navalPrevDistToNext = null;
+                this.position.lat = this.destination.lat;
+                this.position.lng = this.destination.lng;
+                this.reachCurrentWaypoint();
+                return;
+            }
+        } else {
+            this.navalOrbitSec = 0;   // 在靠近 → 正常航行，清零
+        }
+        this.navalPrevDistToNext = distToNext;
 
         this.position.lat += Math.cos(this.navalHeadingRad) * advance;
         this.position.lng += Math.sin(this.navalHeadingRad) * advance;
@@ -680,6 +712,10 @@ export class Army implements IBattleUnit {
 
     /** 到达当前路点并切换下一点；最终点沿用原有到达回调语义。 */
     private reachCurrentWaypoint(): void {
+        // 换到下一个路点：绕圈兜底的「有没有靠近」是对**当前路点**而言的，必须清零，
+        // 否则上一段的距离会被当成新路点的基准，第一帧就误判成「没靠近」。
+        this.navalOrbitSec = 0;
+        this.navalPrevDistToNext = null;
         if (this.pathQueue.length > 0) {
             this.destination = this.pathQueue.shift()!;
             return;
@@ -770,7 +806,10 @@ export class Army implements IBattleUnit {
             this.confirmedLandKind = null;
             this.landFlipFrames = 0;
         } else {
+            // 上岸：清掉海军航向与绕圈兜底计数，免得下次出海带着上一段航程的旧账
             this.navalHeadingRad = null;
+            this.navalOrbitSec = 0;
+            this.navalPrevDistToNext = null;
             // 陆地：四系 × 平原/山地；如履平地 → 山地按平原格查表
             const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
             const desiredKind: 'plain' | 'mountain' =

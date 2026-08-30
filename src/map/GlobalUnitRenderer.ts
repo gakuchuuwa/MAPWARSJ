@@ -117,6 +117,15 @@ export interface IAnimatedUnit extends IRenderable {
     previewScale?: number;
 }
 
+interface NavalFieldBattlePose {
+    point: L.Point;
+    latLng: { lat: number; lng: number };
+    enemyLatLng: { lat: number; lng: number };
+    headingRad: number;
+    trail: { x: number; y: number }[];
+    broadsideReady: boolean;
+}
+
 /**
  * Global Unit Renderer - Manages all unit rendering using Phalanx Visuals
  */
@@ -518,6 +527,11 @@ export class GlobalUnitRenderer {
     private static readonly NAVAL_TURN_RATE_DEG_S = 55;
     /** 船朝向指数平滑时间常数（秒）：大角度由上面的角速度封顶主导，小角度靠它缓入，收尾不生硬 */
     private static readonly NAVAL_TURN_TAU_S = 0.30;
+    /** 双舰队野战：一圈约 8 秒，双方在同一椭圆的相对两端构成“双鱼”追逐。 */
+    private static readonly NAVAL_FIELD_ORBIT_PERIOD_SEC = 8;
+    private static readonly NAVAL_FIELD_ORBIT_RX_PX = 110;
+    private static readonly NAVAL_FIELD_ORBIT_RY_PX = 65;
+    private static readonly NAVAL_FIELD_SLOT_PHASE_RAD = 0.34;
     /**
      * [2026-08-04] 攻城外推量平滑缓存：unitId → { push px, 背离城单位方向 }。
      * 开战/停火/城缩回时目标外推量突变，直接套用 = 渲染瞬移（主人红线）。
@@ -786,7 +800,7 @@ export class GlobalUnitRenderer {
         // [2026-08-16 修·残局待命闪军团] 战斗结束后的 5 秒残局（battleScene.isLingering）同样保持纯背景，
         // 否则大地图军团以 zoom10 样式叠在 13 待命画面上（主人实锤）。
         const lingering = (window as any).game?.battleScene?.isLingering?.() === true;
-        if (warActive || lingering) return [];
+        if (this.map.getZoom() >= 13 && (warActive || lingering)) return [];
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
@@ -1303,21 +1317,24 @@ export class GlobalUnitRenderer {
 
     /**
      * [2026-08-30 海战演出·档1] 海军野战对射。
-     * 海军野战双方舰队停靠后（isAttacking + targetPos 有效），向**敌舰真实位置**发射
+     * 普通海战向敌舰位置射击；纯舰队野战则从双鱼机动的实时屏幕位置互射。
      * 炮弹（cannon，2.6s 节流对齐 naval_cannon_fire）+ 箭矢（arrow，1.2s 节流对齐
      * naval_arrow_fire）。纯视觉，不参与任何结算。
      */
     private fireNavalProjectile(unit: IAnimatedUnit, currentPos: { lat: number; lng: number }): void {
-        const enemy = this.findNavalEnemy(unit, currentPos);
+        const maneuver = this.getNavalFieldBattlePose(unit);
+        const enemy = maneuver?.enemyLatLng ?? this.findNavalEnemy(unit, currentPos);
         if (!enemy) return;
         const id = unit.id || 'unknown';
         const now = Date.now();
 
-        const start = L.latLng(currentPos.lat, currentPos.lng);
+        const startPos = maneuver?.latLng ?? currentPos;
+        const start = L.latLng(startPos.lat, startPos.lng);
         const end = L.latLng(enemy.lat, enemy.lng);
 
         // 重炮：2.6s 节流（与 drawNaval 内 naval_cannon_fire 同频，音画同步）
-        if (now - (this.navalCannonAt.get(id) ?? 0) >= 2600) {
+        if ((!maneuver || maneuver.broadsideReady)
+            && now - (this.navalCannonAt.get(id) ?? 0) >= 2600) {
             this.navalCannonAt.set(id, now);
             this.projectileSystem.spawnVolley(start, end, {
                 count: 2,
@@ -1338,6 +1355,136 @@ export class GlobalUnitRenderer {
                 type: 'arrow',
             });
         }
+    }
+
+    /**
+     * 仅“field 野战 + 攻守双方当前存活单位全部为海军”启用的双鱼机动。
+     * 只返回渲染坐标与切线航向，不写 Army 真实坐标，不参与胜负、战损或碰撞。
+     */
+    private getNavalFieldBattlePose(unit: IAnimatedUnit): NavalFieldBattlePose | null {
+        if (this.isBattleScene13()
+            || !unit.isAttacking
+            || unit.currentBattleType !== 'field'
+            || !unit.isOnSea
+            || !unit.id) {
+            return null;
+        }
+
+        const fields: any[] = (window as any).game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        for (const field of fields) {
+            if (!field || field.isOver || field.type !== 'field') continue;
+            const attackers: any[] = field.getAttackerUnits?.() ?? [];
+            const defenders: any[] = field.getDefenderUnits?.() ?? [];
+            if (attackers.length === 0 || defenders.length === 0) continue;
+
+            const entityOf = (battleUnit: any): any => battleUnit?.getEntity?.() ?? battleUnit;
+            const isFleet = (battleUnit: any): boolean => {
+                const entity = entityOf(battleUnit);
+                return entity?.isOnSea === true && entity?.isDestroyed !== true;
+            };
+            if (!attackers.every(isFleet) || !defenders.every(isFleet)) continue;
+
+            const attackerIndex = attackers.findIndex((u) => u?.id === unit.id);
+            const defenderIndex = defenders.findIndex((u) => u?.id === unit.id);
+            if (attackerIndex < 0 && defenderIndex < 0) continue;
+
+            const averagePosition = (side: any[]): { lat: number; lng: number } | null => {
+                let lat = 0, lng = 0, n = 0;
+                for (const battleUnit of side) {
+                    const pos = battleUnit?.getPosition?.();
+                    if (!pos || !Number.isFinite(pos.lat) || !Number.isFinite(pos.lng)) continue;
+                    lat += pos.lat;
+                    lng += pos.lng;
+                    n++;
+                }
+                return n > 0 ? { lat: lat / n, lng: lng / n } : null;
+            };
+            const attackerCenterLL = averagePosition(attackers);
+            const defenderCenterLL = averagePosition(defenders);
+            if (!attackerCenterLL || !defenderCenterLL) return null;
+            const center = this.map.latLngToContainerPoint([
+                (attackerCenterLL.lat + defenderCenterLL.lat) / 2,
+                (attackerCenterLL.lng + defenderCenterLL.lng) / 2,
+            ]);
+            const attackerCenter = this.map.latLngToContainerPoint([
+                attackerCenterLL.lat,
+                attackerCenterLL.lng,
+            ]);
+            const defenderCenter = this.map.latLngToContainerPoint([
+                defenderCenterLL.lat,
+                defenderCenterLL.lng,
+            ]);
+            const zoomScale = Math.max(0.55, Math.pow(2, Math.min(10, this.map.getZoom()) - 10));
+            const elapsed = Number.isFinite(field.elapsed) ? Math.max(0, field.elapsed) : 0;
+            const deployBlend = Math.min(1, elapsed / 1.2);
+            const initialHalfSeparation = Math.max(1, Math.hypot(
+                attackerCenter.x - defenderCenter.x,
+                attackerCenter.y - defenderCenter.y,
+            ) / 2);
+            const targetRx = GlobalUnitRenderer.NAVAL_FIELD_ORBIT_RX_PX * zoomScale;
+            const targetRy = GlobalUnitRenderer.NAVAL_FIELD_ORBIT_RY_PX * zoomScale;
+            const baseRx = initialHalfSeparation + (targetRx - initialHalfSeparation) * deployBlend;
+            const baseRy = initialHalfSeparation + (targetRy - initialHalfSeparation) * deployBlend;
+            const baseAngle = Math.atan2(
+                attackerCenter.y - center.y,
+                attackerCenter.x - center.x,
+            );
+            const phase = elapsed / GlobalUnitRenderer.NAVAL_FIELD_ORBIT_PERIOD_SEC * Math.PI * 2;
+            const isAttacker = attackerIndex >= 0;
+            const ownIndex = isAttacker ? attackerIndex : defenderIndex;
+            const ownSide = isAttacker ? attackers : defenders;
+            const enemySide = isAttacker ? defenders : attackers;
+            const slot = ownIndex - (ownSide.length - 1) / 2;
+            const enemyIndex = Math.min(ownIndex, enemySide.length - 1);
+            const enemySlot = enemyIndex - (enemySide.length - 1) / 2;
+
+            const pointAt = (attackerSide: boolean, sideSlot: number, angleBack = 0): L.Point => {
+                const angle = baseAngle + phase + (attackerSide ? 0 : Math.PI)
+                    + sideSlot * GlobalUnitRenderer.NAVAL_FIELD_SLOT_PHASE_RAD - angleBack;
+                const rx = baseRx + Math.abs(sideSlot) * 18 * zoomScale;
+                const ry = baseRy + Math.abs(sideSlot) * 10 * zoomScale;
+                return L.point(center.x + Math.cos(angle) * rx, center.y + Math.sin(angle) * ry);
+            };
+
+            const point = pointAt(isAttacker, slot);
+            const enemyPoint = pointAt(!isAttacker, enemySlot);
+            const angle = baseAngle + phase + (isAttacker ? 0 : Math.PI)
+                + slot * GlobalUnitRenderer.NAVAL_FIELD_SLOT_PHASE_RAD;
+            const rx = baseRx + Math.abs(slot) * 18 * zoomScale;
+            const ry = baseRy + Math.abs(slot) * 10 * zoomScale;
+            const tangentX = -Math.sin(angle) * rx;
+            const tangentY = Math.cos(angle) * ry;
+            const tangentLen = Math.max(0.001, Math.hypot(tangentX, tangentY));
+            const ahead = L.point(
+                point.x + tangentX / tangentLen * 10,
+                point.y + tangentY / tangentLen * 10,
+            );
+            const ll = this.map.containerPointToLatLng(point);
+            const llAhead = this.map.containerPointToLatLng(ahead);
+            const enemyLL = this.map.containerPointToLatLng(enemyPoint);
+            const headingRad = Math.atan2(llAhead.lng - ll.lng, llAhead.lat - ll.lat);
+
+            const enemyX = enemyPoint.x - point.x;
+            const enemyY = enemyPoint.y - point.y;
+            const enemyLen = Math.max(0.001, Math.hypot(enemyX, enemyY));
+            const forwardDot = (tangentX * enemyX + tangentY * enemyY) / (tangentLen * enemyLen);
+
+            const trail: { x: number; y: number }[] = [];
+            for (let k = 18; k >= 1; k--) {
+                const p = pointAt(isAttacker, slot, k * 0.10);
+                trail.push({ x: p.x, y: p.y });
+            }
+
+            return {
+                point,
+                latLng: { lat: ll.lat, lng: ll.lng },
+                enemyLatLng: { lat: enemyLL.lat, lng: enemyLL.lng },
+                headingRad,
+                trail,
+                broadsideReady: Math.abs(forwardDot) <= 0.55,
+            };
+        }
+        return null;
     }
 
     /**
@@ -1918,12 +2065,14 @@ export class GlobalUnitRenderer {
         // Base center point
         let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
 
-        // 军团一律画在自身真实坐标，绝不做任何屏幕错开/位移——重叠就重叠，也不允许瞬移（不真实）。
+        // 常态军团画在真实坐标；攻城外推与纯舰队野战双鱼导演仅改变渲染点，不改逻辑坐标。
         // 下面 scale 仅供贴图/方阵尺寸计算使用（不参与定位）。
         // 例外：攻城视觉外推只改渲染点（逻辑坐标不动），见 applySiegeVisualPush。
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
+        const navalFieldPose = this.getNavalFieldBattlePose(unit);
+        if (navalFieldPose) centerPoint = navalFieldPose.point;
 
         // 非匪军：先做攻城外推再裁剪（含水军，与陆军同一套贴边）
         if (!isBandit) {
@@ -1966,7 +2115,17 @@ export class GlobalUnitRenderer {
             unit.lastDirection = Math.floor(Math.random() * 8);
         }
         let directionIndex = unit.lastDirection;
-        if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
+        if (navalFieldPose) {
+            const angle = navalFieldPose.headingRad;
+            this.unitVisualAngles.set(unit.id || 'unknown', angle);
+            const virtualLat = unitPos.lat + Math.cos(angle) * 0.001;
+            const virtualLng = unitPos.lng + Math.sin(angle) * 0.001;
+            directionIndex = OrientationSystem.get8DirectionIndex(
+                unitPos,
+                { lat: virtualLat, lng: virtualLng },
+            );
+            unit.lastDirection = directionIndex;
+        } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const dLat = Math.abs(unitPos.lat - unit.targetPos.lat);
             const dLng = Math.abs(unitPos.lng - unit.targetPos.lng);
             if (dLat > 0.00001 || dLng > 0.00001) {
@@ -2112,7 +2271,9 @@ export class GlobalUnitRenderer {
             let navalHeadingDeg: number | undefined;   // 精确航向（度，北=0 顺时针）；undefined = 退回旧的纯 16 向行为
             if (useNavalVisual) {
                 let navalAngleRad: number;
-                if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
+                if (navalFieldPose) {
+                    navalAngleRad = navalFieldPose.headingRad;
+                } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
                     navalAngleRad = Math.atan2(unit.targetPos.lng - unitPos.lng, unit.targetPos.lat - unitPos.lat);
                 } else if (unit.isMoving) {
                     navalAngleRad = (Number.isFinite(unit.navalHeadingRad) ? unit.navalHeadingRad as number : null)
@@ -2182,8 +2343,8 @@ export class GlobalUnitRenderer {
 
             if (useNavalVisual) {
                 // 航迹采样（屏幕距离判断）+ 投影（lat/lng → 屏幕坐标），后随船沿航迹排开、转弯不穿岸
-                let navalTrail: { x: number; y: number }[] = [];
-                if (unit.id) {
+                let navalTrail: { x: number; y: number }[] = navalFieldPose?.trail ?? [];
+                if (!navalFieldPose && unit.id) {
                     const prev = this.navalTrailLast.get(unit.id);
                     if (!prev || Math.hypot(centerPoint.x - prev.x, centerPoint.y - prev.y) >= GlobalUnitRenderer.NAVAL_TRAIL_SAMPLE_PX) {
                         NavalPhalanxStateManager.pushTrail(unit.id, unitPos.lat, unitPos.lng);
@@ -2197,7 +2358,7 @@ export class GlobalUnitRenderer {
                 // [2026-08-27 §② 划桨随速] 用世界坐标位移/真实时间估计船速（地图平移不改变世界坐标 → 不误判为"飞快"）。
                 //   归一化：海速底 ≈ 0.24 度/游戏秒 → speedFactor≈1；>1 快桨、<1 慢桨、≈0 收桨锚泊。
                 let navalSpeedFactor = 1;
-                if (unit.id) {
+                if (!navalFieldPose && unit.id) {
                     const now = performance.now();
                     const trk = this.navalSpeedTrack.get(unit.id);
                     if (trk && trk.t > 0) {

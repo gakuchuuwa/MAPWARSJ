@@ -10,7 +10,6 @@ import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { GridSystem } from '../systems/GridSystem';
 import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
-import { ResourceSpotLayer } from './ResourceSpotLayer';
 import { MarineLifeLayer } from './MarineLifeLayer';
 import { setAnimalAmbientLayerVisible } from './AnimalAmbientLayer';
 import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
@@ -66,7 +65,6 @@ export class GameMap {
     private vectorRiverLayer: VectorRiverLayer | null = null;
     private monumentLayer: MonumentLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
-    private resourceSpotLayer: ResourceSpotLayer | null = null;
     private marineLifeLayer: MarineLifeLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
@@ -204,7 +202,6 @@ export class GameMap {
 
 
         this.vegetationLayer = new VegetationLayer(this.map);
-        this.resourceSpotLayer = new ResourceSpotLayer().addTo(this.map);
         this.marineLifeLayer = new MarineLifeLayer().addTo(this.map);
 
         if (import.meta.env.DEV) {

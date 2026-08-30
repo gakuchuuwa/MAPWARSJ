@@ -64,7 +64,11 @@ const UNITS_MAX = 6;
 const SPEED_DEG_PER_SEC = 0.18;     // 行进速度（度/秒；zoom9 ≈ 66px/s）
 const UNIT_SPACING_DEG = 0.22;      // 队内相邻单位间距（度）
 const CART_ANIM_FPS = 18;           // 车 move 动画帧率
-const PANE_ZINDEX = 595;            // 低于城市 marker(600)/军团(620)，高于道路(450)
+// 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
+//    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
+//    等于把攻城方的士兵整个涂掉，只剩画在主层(UNITS=620)的攻城器械还看得见。
+//    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
+const PANE_ZINDEX = 570;            // 商队：地面氛围层最高，仍低于 UNITS_LOW(580)
 const SCALE_BASE = 0.35;            // 渲染缩放（× 2^(zoom-9)，比军团小）
 const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视口宽；须大于车队展开长度）
 // 🔴 [2026-08-31] 30 → 8 秒。这个数是「车队生成在视口外多远」——原值意味着

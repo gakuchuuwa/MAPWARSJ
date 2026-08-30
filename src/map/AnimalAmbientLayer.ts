@@ -47,7 +47,11 @@ const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
 const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
 const BIRD_DENSITY = 0.07;          // 格出现飞鸟的概率（与陆生动物一致）
 const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
-const PANE_ZINDEX = 585;            // 低于商队层(595)/城市(600)，高于道路(450)
+// 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
+//    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
+//    等于把攻城方的士兵整个涂掉，只剩画在主层(UNITS=620)的攻城器械还看得见。
+//    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
+const PANE_ZINDEX = 560;            // 动物：最底（低于植被565/商队570/UNITS_LOW580）
 const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹入
 const BIRD_DRIFT_RADIUS_PX = 18;    // 飞鸟盘旋半径（屏幕像素）
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
