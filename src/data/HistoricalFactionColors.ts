@@ -1091,6 +1091,23 @@ const _FIXED: Record<string, string> = {
     'jienei': '#8A5B36', // 杰内·杰内城（班科土坯建筑土褐）
     'kuertaiya': '#465E91', // 库尔泰亚·阿格斯（瓦拉几亚王权蓝）
     'bulu': '#D18A26', // 补噜·阿托克（旁遮普锡克藏红）
+    'mallabhum': '#9B4A2D',
+    'vidin_tsardom': '#7B2D38',
+    'gondarine': '#B57A32',
+    'valois_angouleme': '#254E8A',
+    'samtskhe': '#6A3E75',
+    'tomara_gwalior': '#C47A2A',
+    'tawantinsuyu': '#7A3B58',
+    'qutb_shahi': '#2D6A63',
+    'minangkabau': '#8C5A2B',
+    'tutul_xiu': '#3F6E45',
+    'kerman_bam': '#A35B2A',
+    'lesser_poland': '#C11F32',
+    'braganza_house': '#356A8C',
+    'trastamara': '#8B2436',
+    'odrysian_late': '#6B4A8E',
+    'rhodope': '#4B6B3A',
+    'naxos_ancient': '#2F5A78',
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

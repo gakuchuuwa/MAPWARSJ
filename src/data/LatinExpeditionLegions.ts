@@ -70,4 +70,8 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     keernuwaye: { name: '布列塔尼重骑', tier: 4 },
     kaernute: { name: '卡尔努特兵', tier: 4 },   // 沙特尔·科图阿图斯：高卢卡尔努特部族战团，前52年塞纳布姆起义,
     zhibuluotuo: { name: '基督骑士', tier: 2 },
+    valois_angouleme: { name: '王家宪兵', tier: 1 },
+    braganza_house: { name: '阿维斯骑', tier: 2 },
+    trastamara: { name: '圣会骑兵', tier: 3 },
+    naxos_ancient: { name: '爱琴舰队', tier: 2 },
 };

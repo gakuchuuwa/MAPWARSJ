@@ -12,4 +12,5 @@ export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     kushi: { name: '努比亚弓手', tier: 3 },
     jienei: { name: '杰内水军', tier: 4 },
     adal: { name: '阿达尔火枪兵', tier: 2 },   // 塞拉·格拉尼：奥斯曼援助重装火绳枪+精钢弯刀圣战突击主力
+    gondarine: { name: '皇城卫队', tier: 4 },
 };

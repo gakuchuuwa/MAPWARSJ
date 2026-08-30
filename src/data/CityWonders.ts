@@ -111,6 +111,26 @@ export const CITY_WONDER: Record<string, string> = {
     'city_putijiaye': 'SCEN_BUDDHA_STATUE',  // 菩提伽耶（成道像）
     'city_jienei': 'AFRI_WONDER_MALIANS',  // 杰内城（大清真寺）
     'city_agesi': 'POENARI_CASTLE',  // 库尔泰亚（波耶纳里城堡）
+    'city_bishnupur': 'BENG_CASTLE_AGE3',
+    'city_baba_vida': 'BULG_CASTLE_AGE3',
+    'city_fasil_fort': 'ETHI_CASTLE_AGE3',
+    'city_chambord': 'FRAN_CASTLE_AGE3',
+    'city_akhaltsikhe': 'GEOR_CASTLE_AGE3',
+    'city_gwalior_fort': 'GURJ_CASTLE_AGE3',
+    'city_machu_picchu': 'INCA_CASTLE_AGE3',
+    'city_golconda': 'INDI_CASTLE_AGE3',
+    'city_pagaruyung': 'MALA_CASTLE_AGE3',
+    'city_uxmal': 'MAYA_CASTLE_AGE3',
+    'city_bam_citadel': 'PERS_CASTLE_AGE3',
+    'city_bedzin': 'POLE_CASTLE_AGE3',
+    'city_braganca': 'PORT_CASTLE_AGE3',
+    'city_la_mota': 'SPAN_CASTLE_AGE3',
+    'city_seuthopolis': 'THRACIANS_CASTLE_AGE3',
+    'city_perperikon': 'THRACIAN_CASTLE_AGE3',
+    'city_chimarros': 'MACEDONIAN_CASTLE_AGE3',
+    'city_atuoke': 'PURU_CASTLE_AGE3_ATTACKUP',
+    'city_huashicheng': 'PURU_CASTLE_AGE3_BOTHUP',
+    'city_wangshecheng': 'PURU_CASTLE_AGE3_DEFENSEUP',
 };
 
 /**
@@ -156,9 +176,6 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_kolossi': [
         { asset: 'SCEN_CASTLE_RUINS', name: '科洛西要塞', category: 'HERITAGE_FORT', lat: 34.664, lng: 32.934, description: '十字军东征时期圣殿骑士团与医院骑士团在塞浦路斯的海防重堡基地。' },
     ],
-    'city_yadian': [
-        { asset: 'GREEK_SHIPYARD_AGE2', name: '比雷埃夫斯军港', category: 'HERITAGE_FORT', lat: 37.943, lng: 23.647, description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。' },
-    ],
     'city_hangzhou': [
         { asset: 'SCEN_PAGODA_A', name: '六和塔', category: 'SACRED_PAGODA', lat: 30.25, lng: 120.16, description: '五代吴越国王钱俶为镇江潮而建于钱塘江畔月轮山麓（约970年），现存十三层楼阁式砖木塔，杭州钱塘江地标。' },
     ],
@@ -180,5 +197,67 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_winchester': [
         { asset: 'SCEN_STONEHENGE', name: '巨石阵', category: 'ANCIENT_WONDER', lat: 51.178, lng: -1.826, description: '公元前3000年索尔兹伯里平原环形巨石阵，不列颠古代德鲁伊与天文观测圣地。' },
         { asset: 'WEST_WONDER_BRITONS', name: '奇切斯特大教堂', category: 'ANCIENT_WONDER', lat: 50.836, lng: -0.781, description: '西萨塞克斯郡奇切斯特的哥特式主教座堂，建于1075年，英格兰南部千年教堂。' },
+    ],
+    'city_adana': [
+        { asset: 'ARME_CASTLE_AGE3', name: '蛇堡', category: 'HERITAGE_FORT', lat: 37.012, lng: 35.747, description: '奇里乞亚亚美尼亚王国控制阿达纳平原的蛇堡，亦称莱翁克拉。' },
+    ],
+    'city_yadian': [
+        { asset: 'GREEK_SHIPYARD_AGE2', name: '比雷埃夫斯军港', category: 'HERITAGE_FORT', lat: 37.943, lng: 23.647, description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。' },
+        { asset: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城', category: 'HERITAGE_FORT', lat: 37.972, lng: 23.726, description: '雅典卫城设防高地；该素材为雅典编年史堡垒表现。' },
+    ],
+    'city_malajiashen': [
+        { asset: 'BERB_CASTLE_AGE3', name: '马拉喀什城堡', category: 'HERITAGE_FORT', lat: 31.616, lng: -7.987, description: '马拉喀什旧城卡斯巴与城墙体系。' },
+        { asset: 'AFRI_CASTLE_AGE3', name: '穆拉比特堡', category: 'HERITAGE_FORT', lat: 31.632, lng: -7.986, description: 'DE 西非城堡为穆拉比特建筑、泥堡与清真寺元素的复合设计，归其王都马拉喀什。' },
+    ],
+    'city_bulage': [
+        { asset: 'BOHE_CASTLE_AGE3', name: '卡尔施泰因堡', category: 'HERITAGE_FORT', lat: 49.939, lng: 14.188, description: '查理四世营建的波希米亚王家城堡。' },
+    ],
+    'city_bulusaier': [
+        { asset: 'BURG_CASTLE_AGE3', name: '贝尔瑟尔堡', category: 'HERITAGE_FORT', lat: 50.765, lng: 4.300, description: '布拉班特境内保存完整的中世纪环形城堡。' },
+    ],
+    'city_ava': [
+        { asset: 'BURM_CASTLE_AGE3', name: '因瓦王城', category: 'HERITAGE_FORT', lat: 21.858, lng: 95.985, description: '缅甸因瓦城墙、宫门与佛塔群的复合城堡表现。' },
+    ],
+    'city_huneiduolala': [
+        { asset: 'EAST_CASTLE_AGE3', name: '科文城堡', category: 'HERITAGE_FORT', lat: 45.749, lng: 22.888, description: '胡内多阿拉的科文城堡，DE 东欧旧式城堡原型。' },
+    ],
+    'city_heersongniesi': [
+        { asset: 'GOTH_CASTLE_AGE3', name: '曼古普堡', category: 'HERITAGE_FORT', lat: 44.592, lng: 33.807, description: '克里米亚哥特人的山城曼古普及其城门。' },
+    ],
+    'city_deli': [
+        { asset: 'HIND_CASTLE_AGE3', name: '德里古堡', category: 'HERITAGE_FORT', lat: 28.609, lng: 77.244, description: '德里诸王朝堡垒建筑的复合表现，以德里古堡为据点。' },
+    ],
+    'city_weierniwusi': [
+        { asset: 'LITH_CASTLE_AGE3', name: '维尔纽斯城堡', category: 'HERITAGE_FORT', lat: 54.686, lng: 25.291, description: '维尔纽斯上城堡与格迪米纳斯塔所在设防高地。' },
+    ],
+    'city_tenochtitlan': [
+        { asset: 'MESO_CASTLE_AGE3', name: '大神庙堡区', category: 'HERITAGE_FORT', lat: 19.435, lng: -99.132, description: '特诺奇提特兰大神庙祭祀区；DE 中美洲城堡为多种中部美洲建筑元素的复合表现。' },
+    ],
+    'city_bosibolisi': [
+        { asset: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', name: '波斯波利斯宫堡', category: 'HERITAGE_FORT', lat: 29.935, lng: 52.890, description: '阿契美尼德王都波斯波利斯宫殿台地与万国门。' },
+    ],
+    'city_susa': [
+        { asset: 'PERSIAN_CASTLE_AGE3', name: '苏萨王城', category: 'HERITAGE_FORT', lat: 32.191, lng: 48.258, description: '阿契美尼德苏萨王城；编年史波斯堡垒采用波斯宫殿复合形制。' },
+    ],
+    'city_angkor': [
+        { asset: 'SEAS_CASTLE_AGE3', name: '吴哥城堡', category: 'HERITAGE_FORT', lat: 13.413, lng: 103.867, description: '吴哥王城与吴哥窟建筑群的城堡表现。' },
+    ],
+    'city_sparta': [
+        { asset: 'SPARTANS_CASTLE_AGE3', name: '斯巴达堡垒', category: 'HERITAGE_FORT', lat: 37.067, lng: 22.383, description: '斯巴达与米斯特拉斯一带的拉科尼亚设防据点；素材为编年史斯巴达堡垒。' },
+    ],
+    'city_fuchun': [
+        { asset: 'VIET_CASTLE_AGE3', name: '顺化皇城', category: 'HERITAGE_FORT', lat: 16.469, lng: 107.578, description: '富春顺化皇城及午门建筑群。' },
+    ],
+    'city_gothenburg': [
+        { asset: 'VIKI_CASTLE_AGE3', name: '博胡斯堡', category: 'HERITAGE_FORT', lat: 57.862, lng: 11.998, description: '哥德堡以北约二十公里的博胡斯要塞。' },
+    ],
+    'city_lundun': [
+        { asset: 'WEST_CASTLE_AGE3', name: '罗切斯特堡', category: 'HERITAGE_FORT', lat: 51.389, lng: 0.502, description: '英格兰肯特郡罗切斯特城堡，DE 西欧旧式城堡原型。' },
+    ],
+    'city_bacata': [
+        { asset: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡寨', category: 'HERITAGE_FORT', lat: 4.711, lng: -74.072, description: '穆伊斯卡首领居所与博希奥圆屋围寨；该素材并非一座可考石堡。' },
+    ],
+    'city_syracuse': [
+        { asset: 'SICI_CASTLE_AGE3', name: '乌尔西诺堡', category: 'HERITAGE_FORT', lat: 37.499, lng: 15.085, description: '腓特烈二世在卡塔尼亚营建的乌尔西诺城堡；因距锡拉库萨仅约51公里，不另增过密据点。' },
     ],
 };

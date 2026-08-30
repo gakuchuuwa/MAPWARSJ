@@ -1171,6 +1171,23 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xiadunhe': '下顿',
     'bulu': '补',
     'xiaofulijiya': '小弗',
+'mallabhum': '末罗',
+    'vidin_tsardom': '维丁',
+    'gondarine': '贡德',
+    'valois_angouleme': '瓦卢',
+    'samtskhe': '萨姆',
+    'tomara_gwalior': '托摩',
+    'tawantinsuyu': '塔万',
+    'qutb_shahi': '库特',
+    'minangkabau': '米南',
+    'tutul_xiu': '休',
+    'kerman_bam': '克尔',
+    'lesser_poland': '小波',
+    'braganza_house': '布拉',
+    'trastamara': '特拉',
+    'odrysian_late': '奥德里',
+    'rhodope': '罗多',
+    'naxos_ancient': '纳克',
 };
 
 // @ts-ignore

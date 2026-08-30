@@ -67,4 +67,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     qiekase: { name: '切尔卡瑟骑', tier: 4 },          // 切尔卡瑟·拜达；避势力「第聂伯」叠字
     kuertaiya: { name: '瓦拉骑兵', tier: 3 },
     kelimiya: { name: '克里米骑', tier: 3 },
+    vidin_tsardom: { name: '多瑙戍军', tier: 4 },
+    lesser_poland: { name: '本津炮卒', tier: 4 },
 };

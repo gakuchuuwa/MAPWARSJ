@@ -1013,6 +1013,23 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'puxiangyindu_albukeerke': 16,
     'xiyindu_batuoluome': 15,
     'jialebi_brasilesuo': 18,
+    'gen_boleslaw_brave': 11,
+    'gen_topa_inca': 15,
+    'gen_bir_hambir': 16,
+    'gen_ivan_sratsimir': 14,
+    'gen_fasilides': 17,
+    'gen_francis_i': 16,
+    'gen_sargis_jaqeli': 13,
+    'gen_man_singh_tomar': 15,
+    'gen_ibrahim_qutb': 16,
+    'gen_adityawarman': 14,
+    'gen_chan_chak': 10,
+    'gen_yaqub_saffar': 9,
+    'gen_joao_i': 14,
+    'gen_ferdinand_ii': 15,
+    'gen_seuthes_iii': -4,
+    'gen_momchil': 14,
+    'gen_chabrias': -4,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

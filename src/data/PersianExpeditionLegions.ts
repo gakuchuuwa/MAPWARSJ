@@ -46,4 +46,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹
     hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔
     yisatisi: { name: '亚兹德圣火卫', tier: 4 },
+    kerman_bam: { name: '萨法尔骑', tier: 2 },
 };

@@ -1929,6 +1929,23 @@ export const FACTIONS: Faction[] = [
     { id: 'xiadunhe', name: '下顿河' },
         { id: 'bulu', name: '补噜' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）,
     { id: 'xiaofulijiya', name: '小弗里吉亚' },
+    { id: 'mallabhum', name: '末罗王国' },
+    { id: 'vidin_tsardom', name: '维丁国' },
+    { id: 'gondarine', name: '贡德尔朝' },
+    { id: 'valois_angouleme', name: '瓦卢瓦' },
+    { id: 'samtskhe', name: '萨姆茨赫' },
+    { id: 'tomara_gwalior', name: '托摩罗' },
+    { id: 'tawantinsuyu', name: '塔万廷苏尤' },
+    { id: 'qutb_shahi', name: '库特布朝' },
+    { id: 'minangkabau', name: '米南加保' },
+    { id: 'tutul_xiu', name: '休族' },
+    { id: 'kerman_bam', name: '克尔曼' },
+    { id: 'lesser_poland', name: '小波兰' },
+    { id: 'braganza_house', name: '布拉干萨家' },
+    { id: 'trastamara', name: '特拉斯塔' },
+    { id: 'odrysian_late', name: '奥德里西亚' },
+    { id: 'rhodope', name: '罗多彼' },
+    { id: 'naxos_ancient', name: '纳克索斯' },
 ];
 
 // @ts-ignore
