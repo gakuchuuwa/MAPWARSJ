@@ -57,8 +57,28 @@ const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 
  *  只重做染色（势力色每局随机，走 SpriteTinter 现链路）。key = 源图 URL，value = 抠绿后 data URL。
  */
 const DECROMA_CACHE = new Map<string, string>();
-/** [PERF 2026-08-29] 抠绿 data URL 缓存上限：原来无上限，字符串堆涨到几百 MB，加剧 GC 停顿。 */
-const DECROMA_CACHE_MAX = 2000;
+/**
+ * 抠绿 data URL 缓存**字节**预算。
+ *
+ * 🔴 [2026-08-30] 原来是「2000 条」。实测一条 data URL 平均 **0.81MB**（UTF-16 约 1.6MB 堆），
+ *    2000 条 = 名义 3.2GB，而浏览器 jsHeapSizeLimit 只有 4096MB。条数上限在这里等于没有上限。
+ */
+const DECROMA_CACHE_MAX_BYTES = 200 * 1024 * 1024;
+let decromaCacheBytes = 0;
+
+/** 按字节预算写入抠绿缓存（FIFO，Map 天然有序）。 */
+function decromaCachePut(url: string, dataUrl: string): void {
+    if (DECROMA_CACHE.has(url)) return;
+    DECROMA_CACHE.set(url, dataUrl);
+    decromaCacheBytes += dataUrl.length * 2;
+    while (decromaCacheBytes > DECROMA_CACHE_MAX_BYTES && DECROMA_CACHE.size > 1) {
+        const oldest = DECROMA_CACHE.keys().next().value;
+        if (oldest === undefined) break;
+        const victim = DECROMA_CACHE.get(oldest);
+        DECROMA_CACHE.delete(oldest);
+        if (victim) decromaCacheBytes -= victim.length * 2;
+    }
+}
 
 /**
  * 🔴 [2026-08-26 主人「战略进入战斗的时候会卡一下」] 抠绿后**已解码的 Image 对象**缓存。
@@ -92,9 +112,94 @@ const CLEAN_CACHE = new Map<string, HTMLImageElement>();
  *    （全部 285 兵种 9112 张全缓存约 570MB，没必要。）
  *    调整后请看 scratch/scene13_probe_log.jsonl 的 assetsReady：中位应明显低于 7.2s。
  */
-// [PERF 2026-08-29 修 GC 卡顿] 4000 → 2000：解码位图堆从 ~250MB 降到 ~125MB，缩小 GC 标记范围、
-// 缩短回收停顿（实测堆 1.5GB 时 major GC 一停 20~160ms）。2000 张仍够装 6~7 场，命中不回退到 1200 的颠簸。
-const CLEAN_CACHE_MAX = 2000;
+/**
+ * 🔴 [2026-08-30 修 13 卡顿·条数上限改字节预算] 上面那段「一张约 64KB」的估算是**错的**，
+ *    据此推出的「4000 张 ≈ 250MB / 2000 张 ≈ 125MB」也全部作废。
+ *
+ *    实测（扫 public/SUCAI 抽样 600 张 PNG 头）：解码位图**平均 0.90MB、p50 0.25MB、p90 1.85MB**，
+ *    最大一张 40020×667 = 101MB。抠绿后的 Image 还额外背着自己的 data URL 字符串（实测 0.81MB/张）。
+ *    也就是一条 CLEAN_CACHE 平均约 **1.7MB**，不是 64KB —— 差 26 倍。
+ *    2000 条的名义上限因此是 ~3.4GB，而浏览器 `jsHeapSizeLimit` 只有 **4096MB**：
+ *    探针实测堆峰值 3822MB，major GC 连轴转，这就是「战术模式卡」的根因
+ *    （13 自己的 step+render 中位仅 2.4+2.3ms，从来不是瓶颈）。
+ *
+ *    改成按**实际字节**淘汰。300MB 够装 2~3 场的常见兵种，且与染色缓存、抠绿缓存加总后
+ *    仍给单场工作集（~760MB，bank 强引用）留出充足余量。
+ */
+const CLEAN_CACHE_MAX_BYTES = 300 * 1024 * 1024;
+let cleanCacheBytes = 0;
+
+/**
+ * 同一源图的**在途加载**去重表（url → 抠绿图 Promise）。
+ *
+ * 🔴 [2026-08-30 修 13 卡顿] 方向循环是 `urls[d % urls.length]`：某个动作组的方向图不足 8 张时
+ *    （攻城器械很常见，如 traction_trebuchet 的 atk 只有 2 张），同一个 url 会在同一轮里被取 4~8 次。
+ *    原实现每次都 `new Image()` 独立走一遍 HTTP + 抠绿 + 两次解码，而 CLEAN_CACHE 要等第一张
+ *    onload 才写入，8 个并发全部落空 —— 于是同一张图被解码 8 份、染色 8 份、各自再背一份 data URL。
+ *    实测单场 bank 里 80 组重复、白占 **114.8MB**（占该场位图的 13%），CPU 浪费同比例。
+ *    改成在途去重后，一个 url 全场只做一次，后来者直接复用同一个 Image 对象
+ *    （SpriteTinter 的染色缓存 key 也因此天然命中，见 tintKeyOf）。
+ */
+const CLEAN_INFLIGHT = new Map<string, Promise<HTMLImageElement | null>>();
+
+/**
+ * 取「抠绿后的干净图」：缓存命中直接返回，在途则搭同一班车，否则发起唯一一次加载。
+ * 失败一律 resolve(null)（绝不 reject 到调用方漏减 pending），由调用方回退空帧。
+ */
+function ensureCleanImage(
+    url: string,
+    dechroma: (img: HTMLImageElement) => Promise<string>,
+): Promise<HTMLImageElement | null> {
+    const hit = CLEAN_CACHE.get(url);
+    if (hit && hit.complete && hit.naturalWidth > 0) return Promise.resolve(hit);
+    const flying = CLEAN_INFLIGHT.get(url);
+    if (flying) return flying;
+    const job = new Promise<HTMLImageElement | null>((resolve) => {
+        const toClean = (dataUrl: string) => {
+            const clean = new Image();
+            // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
+            (clean as any).sourceUrl = url;
+            clean.onload = () => { cleanCachePut(url, clean); resolve(clean); };
+            clean.onerror = () => resolve(null);
+            clean.src = dataUrl;
+        };
+        const im = new Image();
+        im.onload = () => {
+            try {
+                // 🔴 抠绿在 Worker 里做（dechromaToDataUrl 异步）：原来的同步版本
+                //    （getImageData 回读 + 逐像素 + toDataURL）挤在 onload 回调里排队，
+                //    是「偶发几百 ms 尖峰」的根源。命中 DECROMA_CACHE 则连 Worker 都不走。
+                const cached = DECROMA_CACHE.get(url);
+                if (cached) { toClean(cached); return; }
+                void dechroma(im).then((dataUrl) => {
+                    if (!dataUrl) { resolve(null); return; }
+                    decromaCachePut(url, dataUrl);
+                    toClean(dataUrl);
+                }).catch(() => resolve(null));
+            } catch { resolve(null); }
+        };
+        im.onerror = () => resolve(null);
+        im.src = url;
+    }).finally(() => { CLEAN_INFLIGHT.delete(url); });
+    CLEAN_INFLIGHT.set(url, job);
+    return job;
+}
+
+/** 按字节预算写入抠绿图缓存（FIFO）。图已 onload，尺寸可靠，无需补记。 */
+function cleanCachePut(url: string, img: HTMLImageElement): void {
+    if (CLEAN_CACHE.has(url)) return;
+    const bytesOf = (im: HTMLImageElement) =>
+        (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4 + (im.src?.startsWith('data:') ? im.src.length * 2 : 0);
+    CLEAN_CACHE.set(url, img);
+    cleanCacheBytes += bytesOf(img);
+    while (cleanCacheBytes > CLEAN_CACHE_MAX_BYTES && CLEAN_CACHE.size > 1) {
+        const oldest = CLEAN_CACHE.keys().next().value;
+        if (oldest === undefined) break;
+        const victim = CLEAN_CACHE.get(oldest);
+        CLEAN_CACHE.delete(oldest);
+        if (victim) cleanCacheBytes -= bytesOf(victim);
+    }
+}
 
 // ── 火枪弹白烟弹线预渲染 sprite（颜色固定、跨战斗复用）──
 // [PERF 2026-08-29] 原来每支火枪弹每帧 createLinearGradient + stroke（3 个 colorStop + 路径光栅化），
@@ -4788,28 +4893,6 @@ export class Scene13WarLayer {
                     if (!url) continue;
                     const blocking = slot === 'move' || slot === 'atk';
                     const inc = blocking ? 1 : 0;
-                    // 🔴 已解码的抠绿图直接复用：跳过主图 HTTP/抠绿/两次解码；
-                    //    move/atk 仍等待玩家色遮罩就绪，避免把未染色占位帧存进整场素材库。
-                    const hit = CLEAN_CACHE.get(url);
-                    if (hit && hit.complete && hit.naturalWidth > 0) {
-                        if (!isDE) {
-                            b.fh = hit.naturalHeight;
-                            b.frames[slot] = hit.naturalWidth / hit.naturalHeight;
-                        }
-                        this.pending += inc;
-                        void Promise.all([
-                            SpriteTinter.getTintedSpriteReady(hit, this.sideFaction[0]),
-                            SpriteTinter.getTintedSpriteReady(hit, this.sideFaction[1]),
-                        ]).then(([attacker, defender]) => {
-                            b.sets[slot][0][d] = attacker;
-                            b.sets[slot][1][d] = defender;
-                        }).catch((e) => {
-                            b.sets[slot][0][d] = hit;
-                            b.sets[slot][1][d] = hit;
-                            console.warn('[Scene13WarLayer] 缓存复用染色失败（回退原图）:', key, slot, d, e);
-                        }).finally(() => { this.pending -= inc; });
-                        continue;
-                    }
                     /**
                      * 🔴 [2026-08-26 按标准「游戏合理」修·进场冻 7 秒] 只有**开场立刻要用**的
                      *    动作组才计入 pending。`pending > 0` 期间 tick() 整个 return（不推进不渲染），
@@ -4822,84 +4905,38 @@ export class Scene13WarLayer {
                      *    ⚠️ 别把 move/atk 也移出去 —— 那才会出现「兵没图不显示」。
                      */
                     this.pending += inc;
-                    const im = new Image();
-                    im.onload = () => {
-                        // 🔴 全程 try-catch：onload 是异步回调，外层 catch（547 行）抓不到这里抛的异常。
-                        //    若 dechroma/getTintedSprite 异常导致 pending 不减，tick 会永久卡在
-                        //    `pending > 0` → 演出冻结、战斗面板数字不动（主人 2026-08-11 截图实锤
-                        //    「松山攻防战进了 13 但界面不动」的根因候选）。
-                        try {
-                            // 抠绿 → 转回 Image → 交给主游戏的 SpriteTinter 染色。
-                            // 🔴 不能自己「盖一层半透明势力色」：那会把贴图洗白、并和素材底色混成脏色
-                            //    （主人 2026-08-11 截图实锤「色不正」，一军发紫一军发黄）。
-                            //    SpriteTinter 才是正牌链路（主战场军团同款，LegionPhalanxDrawer:1259）：
-                            //    它保护高光（金属不发假）、保护黑色轮廓（兵不隐身）、用灰度混合去掉素材底色。
-                            // 🔴 上策：抠绿 + Base64 跨战斗缓存（DECROMA_CACHE）。第二次同素材直接复用，
-                            //    跳过最耗时的 getImageData 逐像素抠绿 + PNG 编码；染色仍走现链路（势力色每局变）。
-                            // 🔴 [2026-08-29 修卡顿] 抠绿移进 Worker（dechromaToDataUrl 异步）：命中缓存同步续，
-                            //    miss 走 Worker 异步续。原同步 dechroma（getImageData 回读 + 逐像素 + toDataURL）
-                            //    在 onload 回调里排队，是「偶发几百 ms 尖峰」的根源。
-                            const useDataUrl = (dataUrl: string) => {
-                                const clean = new Image();
-                                // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
-                                (clean as any).sourceUrl = url;
-                                clean.onload = () => {
-                                    try {
-                                        // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
-                                        if (!isDE) {
-                                            b.fh = clean.naturalHeight;
-                                            // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
-                                            //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
-                                            b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
-                                        }
-                                        // 存进缓存供下一场直接复用；超上限按插入序淘汰最旧的
-                                        if (!CLEAN_CACHE.has(url)) {
-                                            if (CLEAN_CACHE.size >= CLEAN_CACHE_MAX) {
-                                                const oldest = CLEAN_CACHE.keys().next().value;
-                                                if (oldest !== undefined) CLEAN_CACHE.delete(oldest);
-                                            }
-                                            CLEAN_CACHE.set(url, clean);
-                                        }
-                                        void Promise.all([
-                                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
-                                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
-                                        ]).then(([attacker, defender]) => {
-                                            b.sets[slot][0][d] = attacker;
-                                            b.sets[slot][1][d] = defender;
-                                        }).catch((e) => {
-                                            b.sets[slot][0][d] = clean;
-                                            b.sets[slot][1][d] = clean;
-                                            console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
-                                        }).finally(() => { this.pending -= inc; });
-                                    } catch (e) {
-                                        console.warn('[Scene13WarLayer] 染色失败（回退空帧）:', key, slot, d, e);
-                                        this.pending -= inc;
-                                    }
-                                };
-                                clean.onerror = () => { this.pending -= inc; };
-                                clean.src = dataUrl;
-                            };
-                            const cached = DECROMA_CACHE.get(url);
-                            if (cached) {
-                                useDataUrl(cached);
-                            } else {
-                                void this.dechromaToDataUrl(im).then((dataUrl) => {
-                                    if (!dataUrl) { this.pending -= inc; return; }
-                                    if (DECROMA_CACHE.size >= DECROMA_CACHE_MAX) {
-                                        const oldest = DECROMA_CACHE.keys().next().value;
-                                        if (oldest !== undefined) DECROMA_CACHE.delete(oldest);
-                                    }
-                                    DECROMA_CACHE.set(url, dataUrl);
-                                    useDataUrl(dataUrl);
-                                }).catch(() => { this.pending -= inc; });
-                            }
-                        } catch (e) {
-                            console.warn('[Scene13WarLayer] 抠绿失败（回退空帧）:', key, e);
-                            this.pending -= inc;
+                    // 🔴 [2026-08-30] 取图统一走 ensureCleanImage：缓存命中 / 正在加载 / 全新加载
+                    //    三条路合一，**同一个 url 全场只加载+抠绿+解码一次**（见该函数注释）。
+                    void ensureCleanImage(url, (img) => this.dechromaToDataUrl(img)).then((clean) => {
+                        if (!clean) return;
+                        // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
+                        if (!isDE) {
+                            b.fh = clean.naturalHeight;
+                            // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
+                            //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
+                            b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
                         }
-                    };
-                    im.onerror = () => { this.pending -= inc; };
-                    im.src = url;
+                        // 染色仍走主游戏正牌链路 SpriteTinter（势力色每局变，不进 Worker）：
+                        // 🔴 不能自己「盖一层半透明势力色」——那会把贴图洗白、和素材底色混成脏色
+                        //    （主人 2026-08-11 截图实锤「色不正」，一军发紫一军发黄）。
+                        return Promise.all([
+                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
+                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
+                        ]).then(([attacker, defender]) => {
+                            b.sets[slot][0][d] = attacker;
+                            b.sets[slot][1][d] = defender;
+                        }).catch((e) => {
+                            b.sets[slot][0][d] = clean;
+                            b.sets[slot][1][d] = clean;
+                            console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
+                        });
+                    }).catch((e) => {
+                        console.warn('[Scene13WarLayer] 素材准备失败（回退空帧）:', key, slot, d, e);
+                    }).finally(() => {
+                        // 🔴 pending 只减一次、且**任何**失败路径都要减：漏减 → tick 永久卡在
+                        //    `pending > 0` → 演出冻结、战斗面板数字不动（2026-08-11 实锤过）。
+                        this.pending -= inc;
+                    });
                 }
             }
             this.bank[key] = b;

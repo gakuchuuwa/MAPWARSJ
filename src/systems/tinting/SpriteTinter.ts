@@ -12,6 +12,24 @@
 
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
 
+/**
+ * 缓存键用的稳定标识：优先源文件路径（`sourceUrl`），退回 `src`。
+ *
+ * 🔴 13 的素材抠绿后 `src` 是 data URL（实测单张 0.81MB），直接当 Map key 会让每条缓存
+ *    额外背一份与位图同量级的字符串。`sourceUrl` 由 Scene13WarLayer 在抠绿时挂上，
+ *    指向原始 png 路径；大地图那批素材没抠绿，`src` 本身就是短路径，退回即可。
+ */
+function tintKeyOf(img: HTMLImageElement): string {
+    return (img as any).sourceUrl || img.src;
+}
+
+/** 估算一张图占的堆字节：解码位图 w×h×4，加上 src 字符串（data URL 时非常大，UTF-16 2 字节/字符）。 */
+function imgBytes(img: HTMLImageElement): number {
+    const px = (img.naturalWidth || 0) * (img.naturalHeight || 0) * 4;
+    const src = img.src && img.src.startsWith('data:') ? img.src.length * 2 : 0;
+    return px + src;
+}
+
 
 /**
  * 精灵染色器
@@ -27,13 +45,30 @@ export class SpriteTinter {
     // 缓存染色后的精灵图，避免每帧重复处理
     // Key: `${originalSrc}_${factionId}`；mask 染色的 key 前缀 `mask:` 区分
     private static tintedSpriteCache: Map<string, HTMLImageElement> = new Map();
-    /** [PERF 2026-08-29] 染色图缓存上限：原无上限，跨局累积到几百 MB（GC 停顿主因之一）。FIFO 淘汰，旧的重新染色即可。 */
-    private static readonly TINTED_CACHE_MAX = 4000;
+    /**
+     * 染色图缓存**字节**预算。
+     *
+     * 🔴 [2026-08-30 修 13 卡顿] 原来是「4000 条」的条数上限，注释里按一张 64KB 估的。
+     *    实测完全不是这个量级：DE strip 解码后**平均 0.90MB、p90 1.85MB**，
+     *    单场 13 的 576 张染色图就占 **876MB 位图 + 468MB data URL**。
+     *    按条数记 4000 条 = 名义 6GB，而浏览器 `jsHeapSizeLimit` 只有 **4096MB**
+     *    （探针实测堆峰值 3822MB，已经贴着天花板 → major GC 连轴转，
+     *    帧率从 8-18 的中位 56fps 掉到 8-30 的 23fps，而 13 自己的 step+render 只占 5ms）。
+     *    改成按**实际字节**淘汰，预算才有意义。
+     *
+     *    600MB 的取法：单场工作集（bank 强引用，缓存管不着）约 760MB，
+     *    缓存再留 600MB 可覆盖上一场的常见兵种，两者相加 ~1.4GB，离 4GB 有充足余量。
+     */
+    private static readonly TINTED_CACHE_MAX_BYTES = 600 * 1024 * 1024;
+    /** 当前染色缓存已占字节（随写入/淘汰增减，避免每次淘汰都重新遍历统计）。 */
+    private static tintedCacheBytes = 0;
 
     // 玩家色遮罩缓存：maskSrc -> Image（加载中/完成）或 'none'（确认无遮罩）
     private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
-    /** [PERF 2026-08-29] 遮罩图缓存上限：原无上限，累积到几百 MB。FIFO 淘汰，旧的重新加载即可。 */
-    private static readonly MASK_CACHE_MAX = 4000;
+    /** 遮罩图缓存**字节**预算（理由同 TINTED_CACHE_MAX_BYTES：遮罩与主图同尺寸，条数上限一样失真）。 */
+    private static readonly MASK_CACHE_MAX_BYTES = 300 * 1024 * 1024;
+    /** 当前遮罩缓存已占字节。 */
+    private static maskCacheBytes = 0;
     /**
      * **目录级**「这个素材目录有没有玩家色遮罩」的判定缓存（key = 目录前缀，如 `/SUCAI/S10DB/`）。
      *
@@ -129,22 +164,69 @@ export class SpriteTinter {
      * mask 染色入口（帝国决定 DE 素材，有玩家色遮罩）。
      * 遮罩惰性加载：首帧返回原图（玩家色区域暂灰），遮罩就绪后精确染色并缓存。
      */
-    /** [PERF 2026-08-29] 带 FIFO 淘汰的缓存写入，防止染色图缓存无上限累积撑大堆。 */
+    /**
+     * 按**字节预算**的 FIFO 淘汰写入（Map 天然保持插入序）。
+     *
+     * 🔴 图是异步解码的：写入这一刻 `naturalWidth` 往往还是 0，此时 `imgBytes` 只能算出
+     *    src 字符串那部分。所以尺寸就绪后要把差额补记上（`load` 一次性回调），
+     *    否则预算会被严重低估、等于没有上限。
+     */
     private static tintedCachePut(key: string, img: HTMLImageElement): void {
-        if (this.tintedSpriteCache.size >= this.TINTED_CACHE_MAX) {
-            const oldest = this.tintedSpriteCache.keys().next().value;
-            if (oldest !== undefined) this.tintedSpriteCache.delete(oldest);
-        }
+        if (this.tintedSpriteCache.has(key)) return;
+        let counted = imgBytes(img);
         this.tintedSpriteCache.set(key, img);
+        this.tintedCacheBytes += counted;
+        if (!img.complete || img.naturalWidth === 0) {
+            img.addEventListener('load', () => {
+                // 仍在缓存里才补记，已被淘汰的不再计入（否则字节数会漂）
+                if (this.tintedSpriteCache.get(key) !== img) return;
+                const real = imgBytes(img);
+                this.tintedCacheBytes += real - counted;
+                counted = real;
+                this.evictTinted();
+            }, { once: true });
+        }
+        this.evictTinted();
     }
 
-    /** [PERF 2026-08-29] 遮罩图缓存 FIFO 淘汰写入，防止无上限累积撑大堆。 */
-    private static maskCachePut(key: string, val: HTMLImageElement | 'none'): void {
-        if (this.maskCache.size >= this.MASK_CACHE_MAX) {
-            const oldest = this.maskCache.keys().next().value;
-            if (oldest !== undefined) this.maskCache.delete(oldest);
+    private static evictTinted(): void {
+        while (this.tintedCacheBytes > this.TINTED_CACHE_MAX_BYTES && this.tintedSpriteCache.size > 1) {
+            const oldest = this.tintedSpriteCache.keys().next().value;
+            if (oldest === undefined) break;
+            const victim = this.tintedSpriteCache.get(oldest);
+            this.tintedSpriteCache.delete(oldest);
+            if (victim) this.tintedCacheBytes -= imgBytes(victim);
         }
+        if (this.tintedSpriteCache.size === 0) this.tintedCacheBytes = 0;
+    }
+
+    /** 遮罩缓存按字节预算 FIFO 淘汰（`'none'` 这种哨兵值不占字节）。 */
+    private static maskCachePut(key: string, val: HTMLImageElement | 'none'): void {
+        if (this.maskCache.has(key)) { this.maskCache.set(key, val); return; }
         this.maskCache.set(key, val);
+        if (val === 'none') return;
+        let counted = imgBytes(val);
+        this.maskCacheBytes += counted;
+        if (!val.complete || val.naturalWidth === 0) {
+            val.addEventListener('load', () => {
+                if (this.maskCache.get(key) !== val) return;
+                const real = imgBytes(val);
+                this.maskCacheBytes += real - counted;
+                counted = real;
+                this.evictMask();
+            }, { once: true });
+        }
+        this.evictMask();
+    }
+
+    private static evictMask(): void {
+        while (this.maskCacheBytes > this.MASK_CACHE_MAX_BYTES && this.maskCache.size > 1) {
+            const oldest = this.maskCache.keys().next().value;
+            if (oldest === undefined) break;
+            const victim = this.maskCache.get(oldest);
+            this.maskCache.delete(oldest);
+            if (victim && victim !== 'none') this.maskCacheBytes -= imgBytes(victim);
+        }
     }
 
     private static getMaskTinted(
@@ -155,7 +237,13 @@ export class SpriteTinter {
         tintHex: string | null,
         dir = ''
     ): HTMLImageElement {
-        const cacheKey = `mask:${sprite.src}_${factionId}_${tintHex ?? 'raw'}`;
+        // 🔴 [2026-08-30 修 13 卡顿·堆撞 4GB 天花板] key 必须用**源路径**，不能用 sprite.src。
+        //    13 的素材经抠绿后 src 是 data URL，实测单张 **0.81MB**（576 张共 468MB）。
+        //    拿它当 Map 的 key，等于每条缓存额外背一个 0.81MB 的字符串；
+        //    上限 4000 条 → 光 key 就 3.2GB，和位图本身一样大，直接把堆推到 jsHeapSizeLimit(4096MB)。
+        //    换成 sourceUrl（几十字节）后 key 开销归零；顺带把「同一源图被并发加载出多个 clean 副本」
+        //    （8 方向共用同一文件时必然发生）合并成同一条缓存，少染 7 次、少存 7 份位图。
+        const cacheKey = `mask:${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
         if (cached && cached.complete) return cached;
 
@@ -211,7 +299,8 @@ export class SpriteTinter {
         tint: TintColor,
         tintHex: string | null
     ): HTMLImageElement {
-        const cacheKey = `${sprite.src}_${factionId}_${tintHex ?? 'raw'}`;
+        // key 用源路径而非 data URL，理由同 getMaskTinted（见那里的长注释）。
+        const cacheKey = `${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
         if (cached && cached.complete) return cached;
 
@@ -463,7 +552,9 @@ export class SpriteTinter {
      */
     public static clearCache(): void {
         this.tintedSpriteCache.clear();
+        this.tintedCacheBytes = 0;
         this.maskCache.clear();
+        this.maskCacheBytes = 0;
         console.log('🎨 [SpriteTinter] Cache cleared');
     }
 

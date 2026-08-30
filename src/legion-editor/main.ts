@@ -1443,6 +1443,42 @@ function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
     return { formationMode, slots: slots.map(s => ({ ...s })) };
 }
 
+/** 构建文化军团配置（文化区默认名 + 默认阵型/兵种 + legionType='region'） */
+function buildCultureLegion(region: RegionType): CustomFactionLegion {
+    const def = getRegionDefaultLegion(region);
+    return {
+        legionName: getCultureLegionName(region),
+        legionType: 'region',
+        formationMode: def.formationMode,
+        navalFormation: 'auto',
+        slots: def.slots.map(s => ({ ...s })),
+    };
+}
+
+/** 删除特定军团：用它的势力全部恢复为所在文化的文化军团（文化军团不可删） */
+async function deleteSpecificLegion(legionName: string): Promise<void> {
+    if (isRegionLegionName(legionName)) {
+        showToast('❌ 文化军团不可删除', true);
+        return;
+    }
+    const affected: string[] = [];
+    for (const row of allRows) {
+        const custom = localCustomCompositions[row.factionId];
+        if (custom?.legionName?.trim() === legionName) {
+            localCustomCompositions[row.factionId] = buildCultureLegion(row.region);
+            affected.push(row.factionName);
+        }
+    }
+    if (affected.length === 0) {
+        showToast('该军团当前无势力使用');
+        return;
+    }
+    buildRows();
+    applyFilter();
+    await saveAllCompositions();
+    showToast(`🗑 已删除军团【${legionName}】，${affected.length} 个势力恢复为所在文化军团`);
+}
+
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
 function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
     const r1 = slots[0]?.type || '';
@@ -1480,9 +1516,10 @@ function isRegionLegionName(name: string): boolean {
 }
 
 /** 某军团归哪个页签：地区名→地区；否则按共用人数（≥2→时代，=1→独立） */
-function classifyLegionTab(name: string, sharedCount: number): 'culture' | 'branch' | 'sub' {
+function classifyLegionTab(name: string, _sharedCount: number): 'culture' | 'branch' | 'sub' {
     if (isRegionLegionName(name)) return 'culture';
-    return sharedCount >= 2 ? 'branch' : 'sub';
+    // [2026-08-30 主人] 其他（自定义军团）一律归「个人军团」，「时代军团」branch 层取消。
+    return 'sub';
 }
 
 /** 全部独立军团（=地区默认 + 所有自定义军团），按军团名聚合 */
@@ -1901,9 +1938,10 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 保存 -->
     <div class="le-form-section">
       <div class="le-section-title"><span>保存配置</span></div>
-      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
+      <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;">↺ 一键恢复为文化军团【${getCultureLegionName(row.region)}】</button>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;margin-top:8px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
       <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为新军团（独立命名，不同步同名势力）</button>
-      <div style="font-size:11px;color:var(--muted-foreground);margin-top:6px;line-height:1.5;">⚠️ 同名军团共享同一编制：点「保存」会联动所有同名势力；想要独立军团请点「另存为」换个新名字。</div>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-top:6px;line-height:1.5;">⚠️ 保存只改当前势力一个；「恢复文化军团」会让该势力回到所在文化区的默认军团。</div>
     </div>
     `;
 
@@ -1969,6 +2007,17 @@ function bindPanelEvents(row: FactionLegionRow): void {
     document.getElementById('le-single-r1')?.addEventListener('click', () => { singlePreviewRow = 1; renderEditPanel(row); });
     document.getElementById('le-single-r2')?.addEventListener('click', () => { singlePreviewRow = 2; renderEditPanel(row); });
 
+    // 一键恢复文化军团
+    document.getElementById('le-btn-revert-culture')?.addEventListener('click', async () => {
+        if (!currentEditingLegion) return;
+        localCustomCompositions[row.factionId] = buildCultureLegion(row.region);
+        buildRows();
+        applyFilter();
+        selectFaction(row.factionId);
+        await saveAllCompositions();
+        showToast(`↺ 已恢复【${row.factionName}】为文化军团【${getCultureLegionName(row.region)}】`);
+    });
+
     // 保存单条专属
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
@@ -1981,22 +2030,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
-        // 军团改名：若改了名且旧名被其他势力共享，则同步改名，保证「同名 = 同一军团」。
-        // 🔴 文化区默认军团名（文化军团）是基础，不参与改名联动——改一个势力名，
-        //    不得把整个文化区默认名（如「青藏军团」64 个）一并改掉（2026-08-30 主人：文化军团为基础不可覆盖）。
-        const newLegionName = currentEditingLegion.legionName?.trim();
-        const oldLegionName = localCustomCompositions[row.factionId]?.legionName?.trim();
-        let syncCount = 0;
-        if (newLegionName && oldLegionName && oldLegionName !== newLegionName && !isRegionLegionName(oldLegionName)) {
-            for (const fid of Object.keys(localCustomCompositions)) {
-                const comp = localCustomCompositions[fid];
-                if (fid !== row.factionId && comp?.legionName === oldLegionName) {
-                    localCustomCompositions[fid] = { ...comp, legionName: newLegionName };
-                    syncCount++;
-                }
-            }
-        }
-
+        // 🔴 [2026-08-30 主人] 保存只改当前势力，取消「同名联动」（改名同步 + 编制同步）。
+        //    原「同名军团共享编制」的联动机制，改一个势力会把几十个同名势力全改掉
+        //    （青藏军团→唐朝军团→川蜀军团），文化军团与个人军团全部被覆盖。
+        //    现在：文化军团（文化区默认名）是基础、个人军团独立，改一个只改一个。
         localCustomCompositions[row.factionId] = {
             legionName: currentEditingLegion.legionName,
             legionType: currentEditingLegion.legionType,
@@ -2005,35 +2042,13 @@ function bindPanelEvents(row: FactionLegionRow): void {
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
         };
 
-        // 🔴 一个军团一个编制：同名军团共享阵型 + 三排兵种。
-        // 改任一势力的编制，其余同名势力自动同步（formationMode + slots），
-        // 避免「同名不同编制」。海军阵型与 legionType 各自保留，不随陆战编制覆盖。
-        // 🔴 文化区默认军团名（文化军团）不参与编制联动——其编制由文化区基础数据定义，
-        //    单个势力改编制不得覆盖同文化区其他势力（2026-08-30 主人）。
-        let compSyncCount = 0;
-        if (newLegionName && !isRegionLegionName(newLegionName)) {
-            for (const fid of Object.keys(localCustomCompositions)) {
-                const comp = localCustomCompositions[fid];
-                if (fid !== row.factionId && comp?.legionName === newLegionName) {
-                    localCustomCompositions[fid] = {
-                        ...comp,
-                        formationMode: currentEditingLegion.formationMode,
-                        slots: currentEditingLegion.slots.map(s => ({ ...s })),
-                    };
-                    compSyncCount++;
-                }
-            }
-        }
-
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
         // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
         await saveAllCompositions();
-        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
-            + (syncCount > 0 ? `；军团改名同步更新了 ${syncCount} 个共享同名势力` : '')
-            + (compSyncCount > 0 ? `；编制同步更新了 ${compSyncCount} 个共享同名势力` : ''));
+        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`);
     });
 
     // 另存为新军团：独立命名，不联动同名势力
