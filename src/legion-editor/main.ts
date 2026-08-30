@@ -824,7 +824,7 @@ app.innerHTML = `
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
-  <input id="le-search" class="le-input" type="search" placeholder="搜索 势力 ID / 名称 / 旗号 / 首都 / 武将 / 军团番号…" />
+  <input id="le-search" class="le-input" type="search" placeholder="搜索 军团 / 据点 / 势力 / 武将 / 精锐 / 旗号 / ID…" />
   <select id="le-region-filter" class="le-select">
     <option value="all">全部文化区 (18)</option>
     ${REGION_ORDER.map(r => `<option value="${r}">${REGION_LABELS[r]} (${r})</option>`).join('')}
@@ -1307,7 +1307,7 @@ function applyFilter(): void {
                 || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q))
                 || (r.generalName && r.generalName.toLowerCase().includes(q))
                 || (r.eliteName && r.eliteName.toLowerCase().includes(q))
-                || (r.legionName && r.legionName.toLowerCase().includes(q));
+                || effectiveLegionName(r).toLowerCase().includes(q);
             if (!match) return false;
         }
         return true;
@@ -1735,6 +1735,25 @@ function renderEditPanel(row: FactionLegionRow): void {
       <span style="font-size:11px;color:#8ab4c4;">${LAYER_FULL_LABEL[curLayer]} · ${legionSummary(mode, slots)}</span>
     </div>
 
+    <!-- 选军团：从现有军团套用（同名同编制） -->
+    <div class="le-wizard-step">
+      <div class="le-step-no">选军团</div>
+      <div class="le-step-title">从现有军团套用（点击卡片即套用，再点底部「保存」落盘）</div>
+      <div class="le-layer-grid" style="margin-bottom:8px;">
+        <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
+          <div class="le-layer-title">🏛️ 地区军团</div>
+        </button>
+        <button type="button" class="le-layer-btn ${selectedLayerTab === 'branch' ? 'active' : ''}" data-legiontab="branch">
+          <div class="le-layer-title">🚩 时代军团</div>
+        </button>
+        <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
+          <div class="le-layer-title">⭐ 个人军团</div>
+        </button>
+      </div>
+      <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
+      <div class="le-legion-grid"></div>
+    </div>
+
     <!-- 第一步 · 三排兵 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第一步</div>
@@ -1892,6 +1911,7 @@ function renderEditPanel(row: FactionLegionRow): void {
     const tuneDetails = document.getElementById('le-tune-details') as HTMLDetailsElement | null;
     if (tuneDetails) tuneDetails.open = tuneDetailsOpen;
     bindPanelEvents(row);
+    renderLegionCardGrid(row);
     startCanvasPreview();
 }
 
@@ -2050,6 +2070,23 @@ function bindPanelEvents(row: FactionLegionRow): void {
                 renderEditPanel(row);
             }
         });
+    });
+
+    // 选军团 · 三层切换（仅更新标签高亮 + 重绘卡片，不整屏重渲染，保住搜索框焦点）
+    els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            selectedLayerTab = (btn as HTMLElement).dataset.legiontab as 'culture' | 'branch' | 'sub';
+            els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(b => {
+                b.classList.toggle('active', (b as HTMLElement).dataset.legiontab === selectedLayerTab);
+            });
+            renderLegionCardGrid(row);
+        });
+    });
+
+    // 选军团 · 搜索过滤（仅重绘卡片网格，保持输入焦点）
+    document.getElementById('le-legion-search')?.addEventListener('input', (e) => {
+        legionSearchQuery = (e.target as HTMLInputElement).value;
+        renderLegionCardGrid(row);
     });
 
     document.getElementById('le-legion-name-input')?.addEventListener('input', (e) => {

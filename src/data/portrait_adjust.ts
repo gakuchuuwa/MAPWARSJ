@@ -6508,7 +6508,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/AMERICA/mapuche_laotaluo.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -6898,7 +6898,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/AMERICA/aimala_katali.png": {
-            "scale": 0.94,
+            "scale": 1,
             "offsetX": -4,
             "offsetY": -1
         },
