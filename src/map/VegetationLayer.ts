@@ -4,6 +4,7 @@ import { resolveTerrainTile } from '../ui/Scene13Biome';
 import { queryBaseTile } from '../ui/scene13/WorldBaseMap';
 import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
+import { perfDoctor } from '../debug/PerfDoctor';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -20,12 +21,56 @@ const PATCH_RADIUS_PROJ = 32;
 /** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
  *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
 const PATCH_MIN_SCREEN_RADIUS = 24;
+/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。
+ *  ⚠️ 22 太小，实测在 zoom 9 一屏里几乎看不见；30 才读得出是树。 */
+const TREE_BASE_PX = 30;
 /** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
  *  stride 越大簇越稀、越"成带"。 */
 const CLUSTER_STRIDE = SAMPLE_STEP * 1.6;
 /** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping。
  *  改小（×0.55）：让同簇斑块聚拢重叠成"一片"而非离散雀斑点；配合 count 增大填实簇内。 */
 const CLUSTER_RADIUS = SAMPLE_STEP * 0.55;
+
+/**
+ * 战略地图树贴图缓存：树名 → `public/SUCAI_NATURE/<树名>/preview.png`（DE 单棵成品图）。
+ *
+ * 🔴 [2026-08-31 主人：「植被只显示这种雀斑」] 本层原来画的是**径向渐变柔边色圆**，
+ *    在地图上就是一团团模糊绿斑，既不像树也看不出植被类型 —— 而 DE 的树素材早就摆进
+ *    `public/SUCAI_NATURE/` 了（133 个，每个都有 preview.png 单棵图，8~23KB）。
+ *    改成直接画树。
+ */
+const TREE_IMG = new Map<string, HTMLImageElement>();
+/** 已确认加载失败的树名（不再重试，免得每帧刷 404） */
+const TREE_IMG_FAILED = new Set<string>();
+
+function treeImage(asset: string, onReady: () => void): HTMLImageElement | null {
+    if (TREE_IMG_FAILED.has(asset)) return null;
+    const hit = TREE_IMG.get(asset);
+    if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
+    const img = new Image();
+    img.onload = () => onReady();
+    img.onerror = () => { TREE_IMG.delete(asset); TREE_IMG_FAILED.add(asset); };
+    img.src = `/SUCAI_NATURE/${asset}/preview.png`;
+    TREE_IMG.set(asset, img);
+    return null;
+}
+
+// [2026-08-31] 按 PerfDoctor 的铁律登记：任何图片缓存都必须能报**字节数**。
+//   这个缓存条数不多（≤133 个树种）且每张 preview 只有 8~23KB，但登记了才有据可查。
+if (import.meta.env.DEV) {
+    perfDoctor.registerCache({
+        name: 'VegetationLayer:TREE_IMG(战略树贴图)',
+        where: 'src/map/VegetationLayer.ts:TREE_IMG',
+        entries: () => TREE_IMG.size,
+        bytes: () => {
+            let b = 0;
+            for (const im of TREE_IMG.values()) b += (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4;
+            return b;
+        },
+        limitKind: 'count',
+        limitValue: 133,
+    });
+}
 
 function hash(x: number, y: number, salt = 0): number {
     const n = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
@@ -138,6 +183,12 @@ export class VegetationLayer {
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
     }
 
+    /** 树贴图到货 → 重画本屏（贴图是异步的，首帧必然缺一批） */
+    private onTreeImageReady = (): void => {
+        this.lastRenderKey = '';
+        this.scheduleRender(60);
+    };
+
     private scheduleRender(delay = 0): void {
         if (!this.visible) return;
         if (this.renderTimer !== null) window.clearTimeout(this.renderTimer);
@@ -187,6 +238,8 @@ export class VegetationLayer {
         const screenRadiusScale = Math.pow(2, zoom - SAMPLE_ZOOM);
         // DEM 瓦片是异步到的：这一轮有格子因为瓦片没到被跳过，就不能把这次当成「画完了」
         let missingTiles = 0;
+        // 树贴图也是异步的：首帧一定有一批没到，同样不能算「画完了」
+        let pendingImages = 0;
 
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
@@ -218,12 +271,18 @@ export class VegetationLayer {
                 // 原来是 density×(0.55~1.45)，草地(0.28)只有 0.15~0.41、林地(0.42)也才 0.23~0.61，
                 // 七成格子直接不长 —— 叠上 zoom 8 的半径缩水就成了「植被不显示」。
                 // 现在放大到 ×2.2：林地 0.65~1.0、草地 0.43~0.75，稀树/半干旱仍然明显稀疏。
-                const clusterChance = Math.min(1, density * 2.2 * (0.7 + hash(cx, cy, 43) * 0.6));
+                // 🔴 [2026-08-31 主人「分布太多了」] 系数 2.2 → 1.0。
+                //    2.2 是当初为了对抗「色斑太淡看不见」硬调上去的；现在画的是实体树，
+                //    不需要靠铺满来刷存在感。⚠️ 一度砍到 1.0，实测一屏只剩 ~25 棵、地图基本是光的，
+                //    过犹不及；1.6 是「成林看得出、又不糊屏」的档：林地 0.47~0.87、草地 0.31~0.58。
+                const clusterChance = Math.min(1, density * 1.6 * (0.7 + hash(cx, cy, 43) * 0.6));
                 if (hash(cx, cy, 44) >= clusterChance) continue;
 
                 // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）。
                 // ×2 提高：斑块散布半径改小后靠叠数量把簇填实，连成一片而非稀疏点缀。
-                const baseCount = density >= 0.4 ? 14 : density >= 0.25 ? 10 : 6;
+                // 同上：14/10/6 是「色斑要连成片」时代的数。画实体树用不了那么多，
+                // 但也不能太少（6/4/2 实测太空）。10/7/4 一簇能看出是片林子。
+                const baseCount = density >= 0.4 ? 10 : density >= 0.25 ? 7 : 4;
                 const count = Math.max(1, Math.round(baseCount * (0.7 + hash(cx, cy, 45) * 0.7)));
 
                 for (let i = 0; i < count; i++) {
@@ -242,14 +301,15 @@ export class VegetationLayer {
                     if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
 
                     const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
-                    const [r, g, b] = colorFor(asset, season);
-                    const densityBoost = density >= 0.4 ? 1.25 : density >= 0.25 ? 1.0 : 0.7;
-                    const jitter = 0.8 + hash(cx, cy, i + 70) * 0.45;
-                    const radius = Math.max(
-                        PATCH_MIN_SCREEN_RADIUS * densityBoost * jitter,
-                        PATCH_RADIUS_PROJ * screenRadiusScale * densityBoost * jitter,
-                    );
-                    this.drawPatch(center.x, center.y, radius, r, g, b, density >= 0.25 ? 0.72 : 0.55);
+                    const img = treeImage(asset, this.onTreeImageReady);
+                    if (!img) { pendingImages++; continue; }
+                    // 树高按 zoom 缩放：zoom 8 的一屏是整个东欧，树画太大就糊成一片。
+                    // 高度基准 TREE_BASE_PX @zoom9，每级 ×1.35（比 2 倍温和，避免 zoom10 撑爆）。
+                    const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
+                    const h = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM) * jitter;
+                    const w = h * (img.naturalWidth / img.naturalHeight);
+                    // 锚在底部中心：树"站"在采样点上，而不是圆心糊在上面
+                    this.ctx.drawImage(img, center.x - w / 2, center.y - h, w, h);
                 }
             }
         }
@@ -257,6 +317,9 @@ export class VegetationLayer {
         // DEM 瓦片异步到达：这轮被跳过的格子必须补画。
         // 只靠 land-sea-tiles-updated 不够 —— 瓦片可能在两次 render 的间隙就位，
         // 而 lastRenderKey 已经把这屏标成「画过了」，结果一屏空白一直留到下次跨格。
+        // 树贴图这一轮有没到的 → 把本屏标记为未画完，等 onTreeImageReady 触发重画
+        if (pendingImages > 0) this.lastRenderKey = '';
+
         if (missingTiles > 0) {
             if (this.retryKey !== key) { this.retryKey = key; this.retryCount = 0; }
             // 高程瓦片是 S3 上的 Mapzen Terrarium，冷启动一屏几十片、十几秒才齐。

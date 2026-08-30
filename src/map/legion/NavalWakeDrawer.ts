@@ -143,35 +143,64 @@ export class NavalWakeDrawer {
             const rAsset = backOf(rDir);
             const rHead = headingOf(rDir);
 
-            // (1) 底层平滑消散 V 型水痕带（消除贴图断裂与离散斑块感）
-            const startDist = shipLength * 0.18;
-            const endDist = shipLength * 2.20;
-            const sx0 = rearShip.x - rHead.hx * startDist;
-            const sy0 = rearShip.y - rHead.hy * startDist;
-            const ex0 = rearShip.x - rHead.hx * endDist;
-            const ey0 = rearShip.y - rHead.hy * endDist;
-
-            // 法线矢量（与航向垂直）
-            const nx = -rHead.hy;
-            const ny = rHead.hx;
-            const startHalfW = shipLength * 0.18 * scale;
-            const endHalfW = shipLength * 0.42 * scale;
-
+            // (1) 底层柔和羽化开尔文尾流与气泡水痕（彻底消除硬边手电筒感）
             ctx.save();
-            const grad = ctx.createLinearGradient(sx0, sy0, ex0, ey0);
-            grad.addColorStop(0, 'rgba(235, 245, 255, 0.22)');
-            grad.addColorStop(0.35, 'rgba(220, 238, 255, 0.14)');
-            grad.addColorStop(0.70, 'rgba(210, 232, 255, 0.06)');
-            grad.addColorStop(1.0, 'rgba(200, 225, 255, 0)');
+            const rot = Math.atan2(rHead.hy, rHead.hx);
 
-            ctx.beginPath();
-            ctx.moveTo(sx0 + nx * startHalfW, sy0 + ny * startHalfW);
-            ctx.lineTo(ex0 + nx * endHalfW, ey0 + ny * endHalfW);
-            ctx.lineTo(ex0 - nx * endHalfW, ey0 - ny * endHalfW);
-            ctx.lineTo(sx0 - nx * startHalfW, sy0 - ny * startHalfW);
-            ctx.closePath();
-            ctx.fillStyle = grad;
-            ctx.fill();
+            // ① 沿龙骨向后多层柔和径向羽化水痕（四周 100% 平滑消散至透明，绝无任何硬边缘）
+            const numPuffs = 4;
+            for (let k = 0; k < numPuffs; k++) {
+                const tNorm = k / (numPuffs - 1); // 0 -> 1
+                const dist = shipLength * (0.22 + tNorm * 1.55);
+                const px = rearShip.x - rHead.hx * dist;
+                const py = rearShip.y - rHead.hy * dist;
+                const rad = (shipLength * (0.20 + tNorm * 0.35)) * scale;
+                const alpha = 0.16 * (1.0 - tNorm * 0.85);
+
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(rot);
+                ctx.scale(1.4, 0.75); // 沿航向略微拉长呈椭圆
+
+                const radGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, rad);
+                radGrad.addColorStop(0, `rgba(235, 245, 255, ${alpha.toFixed(3)})`);
+                radGrad.addColorStop(0.35, `rgba(220, 238, 255, ${(alpha * 0.65).toFixed(3)})`);
+                radGrad.addColorStop(0.70, `rgba(210, 232, 255, ${(alpha * 0.20).toFixed(3)})`);
+                radGrad.addColorStop(1.0, 'rgba(200, 225, 255, 0)');
+
+                ctx.beginPath();
+                ctx.arc(0, 0, rad, 0, Math.PI * 2);
+                ctx.fillStyle = radGrad;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ② 两侧开尔文 V 型羽化微波浪线（向后外侧扩散的自然水纹）
+            const vLength = shipLength * 1.85 * scale;
+            const vSpread = shipLength * 0.40 * scale;
+            const sx = rearShip.x - rHead.hx * (shipLength * 0.12 * scale);
+            const sy = rearShip.y - rHead.hy * (shipLength * 0.12 * scale);
+
+            for (const sign of [-1, 1]) {
+                const ex = rearShip.x - rHead.hx * vLength + nx * (sign * vSpread);
+                const ey = rearShip.y - rHead.hy * vLength + ny * (sign * vSpread);
+                const cx = rearShip.x - rHead.hx * (vLength * 0.45) + nx * (sign * vSpread * 0.25);
+                const cy = rearShip.y - rHead.hy * (vLength * 0.45) + ny * (sign * vSpread * 0.25);
+
+                const lineGrad = ctx.createLinearGradient(sx, sy, ex, ey);
+                lineGrad.addColorStop(0, 'rgba(240, 248, 255, 0.18)');
+                lineGrad.addColorStop(0.35, 'rgba(230, 242, 255, 0.10)');
+                lineGrad.addColorStop(0.70, 'rgba(215, 235, 255, 0.03)');
+                lineGrad.addColorStop(1.0, 'rgba(200, 225, 255, 0)');
+
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.quadraticCurveTo(cx, cy, ex, ey);
+                ctx.strokeStyle = lineGrad;
+                ctx.lineWidth = Math.max(1.2, 3.0 * scale);
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
             ctx.restore();
 
             // (2) 紧密平滑衔接的 5 段动态翻波贴图（连续扩散衰减）
