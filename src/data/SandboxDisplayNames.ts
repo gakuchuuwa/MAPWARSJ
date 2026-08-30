@@ -117,7 +117,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
   putaoya: '葡萄',
   feiniqi: '腓尼',
   mengtainiya: '蒙泰',
-  saierweiya: '拉什',
+'saierweiya': '拉什',
   nuosi: '诺斯',
 'luosi': '罗斯',
   liulike: '留里',

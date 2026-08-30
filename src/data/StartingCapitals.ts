@@ -102,7 +102,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'gaer': 'city_dublin',
   'mangsite': 'city_kasheer',
   'bulietani': 'city_rennes',
-  'saierweiya': 'city_belgrade',
+'saierweiya': 'city_belgrade',
 
   'luoma_diguo': 'city_luoma',
   'putaoya': 'city_lisiben',

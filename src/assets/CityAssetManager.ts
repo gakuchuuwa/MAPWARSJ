@@ -1028,6 +1028,7 @@ export class CityAssetManager {
 'rhodope': '罗多',
 'naxos_ancient': '纳克',
 'zhibuluotuo': '直布',
+        'saierweiya': '拉什',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

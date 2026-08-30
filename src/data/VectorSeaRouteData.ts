@@ -1563,5 +1563,60 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕加鲁荣-阿努拉德",
+                type: "sea",
+                id: "sea_city_pagaruyung_city_anulade_1788081163537",
+                startConnection: "city_pagaruyung",
+                endConnection: "city_anulade"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [100.621, -0.471],
+                    [99.9646, -1.054628],
+                    [98.085938, -0.703107],
+                    [90, -0.00001],
+                    [88.040723, 1.4295],
+                    [81.9, 5.9],
+                    [81.9556, 6.1175],
+                    [82.08333, 6.5],
+                    [82.25, 6.66667],
+                    [82.25, 7.83333],
+                    [81.75, 8.5],
+                    [80.3956, 8.3533],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕加鲁荣-卡拉桑",
+                type: "sea",
+                id: "sea_city_pagaruyung_city_kalasan_1788081172999",
+                startConnection: "city_pagaruyung",
+                endConnection: "city_kalasan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [100.621, -0.471],
+                    [99.9646, -1.054628],
+                    [101.920166, -4.116327],
+                    [104, -7],
+                    [104.82827, -6.592568],
+                    [105.424805, -6.298919],
+                    [105.754542, -5.979226],
+                    [105.864207, -5.893542],
+                    [106.459579, -5.312501],
+                    [106.8, -5.2],
+                    [110.1639, -6.371103],
+                    [110.407104, -6.833716],
+                    [110.445, -7.756],
+                ]
+            }
+        },
     ]
 };
