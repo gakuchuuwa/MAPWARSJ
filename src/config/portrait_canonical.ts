@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/31 06:20:02（共 64 条）
+ * 生成时间：2026/8/31 07:36:28（共 64 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__多余__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -45,7 +45,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_13.png": "/assets/DIANQIAN/ternate_babula.png",
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png": "/assets/DIANQIAN/__闲置__DIANQIAN_33.png",
     "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_02.png": "/assets/DIANQIAN/__闲置__DIANQIAN_34.png",
-    "/assets/GREEK/xila_dimisituo.png": "/assets/GREEK/image.png",
+    "/assets/GREEK/xila_dimisituo.png": "/assets/GREEK/__多余__GREEK_15.png",
     "/assets/LATIN/aodesuosi_aodesuosi.png": "/assets/GREEK/__多余__GREEK_03.png",
     "/assets/LATIN/__闲置__LATIN_21.png": "/assets/GREEK/__多余__GREEK_04.png",
     "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/GREEK/__多余__GREEK_05.png",
