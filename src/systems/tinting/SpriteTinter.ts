@@ -11,6 +11,7 @@
  */
 
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
+import { perfDoctor } from '../../debug/PerfDoctor';
 
 /**
  * 缓存键用的稳定标识：优先源文件路径（`sourceUrl`），退回 `src`。
@@ -572,6 +573,14 @@ export class SpriteTinter {
         return tintedImage;
     }
 
+    // ── PerfDoctor 体检访问器（私有 static 在类外读不到，这里开只读口子）──
+    public static debugTintedCacheSize(): number { return this.tintedSpriteCache.size; }
+    public static debugTintedCacheBytes(): number { return this.tintedCacheBytes; }
+    public static debugTintedCacheLimit(): number { return this.TINTED_CACHE_MAX_BYTES; }
+    public static debugMaskCacheSize(): number { return this.maskCache.size; }
+    public static debugMaskCacheBytes(): number { return this.maskCacheBytes; }
+    public static debugMaskCacheLimit(): number { return this.MASK_CACHE_MAX_BYTES; }
+
     /**
      * 清除缓存（当势力颜色改变时调用）
      */
@@ -610,4 +619,25 @@ export class SpriteTinter {
         await Promise.all(promises);
         console.log('🎨 [SpriteTinter] Preloaded tinted sprites for', factionIds.length, 'factions');
     }
+}
+
+// [2026-08-31] 染色/遮罩两个缓存登记进 PerfDoctor 体检。
+//   这两个是单场 13 里最大的两块（实测单场染色图 876MB 位图 + 468MB data URL 字符串）。
+if (import.meta.env.DEV) {
+    perfDoctor.registerCache({
+        name: 'SpriteTinter:tintedSpriteCache(染色图)',
+        where: 'src/systems/tinting/SpriteTinter.ts:TINTED_CACHE_MAX_BYTES',
+        entries: () => SpriteTinter.debugTintedCacheSize(),
+        bytes: () => SpriteTinter.debugTintedCacheBytes(),
+        limitKind: 'bytes',
+        limitValue: SpriteTinter.debugTintedCacheLimit(),
+    });
+    perfDoctor.registerCache({
+        name: 'SpriteTinter:maskCache(玩家色遮罩)',
+        where: 'src/systems/tinting/SpriteTinter.ts:MASK_CACHE_MAX_BYTES',
+        entries: () => SpriteTinter.debugMaskCacheSize(),
+        bytes: () => SpriteTinter.debugMaskCacheBytes(),
+        limitKind: 'bytes',
+        limitValue: SpriteTinter.debugMaskCacheLimit(),
+    });
 }

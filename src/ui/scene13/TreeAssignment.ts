@@ -199,8 +199,8 @@ const REGION_TREES: readonly RegionTree[] = [
     // 湿润山地草甸，交给底图默认的 GREEN_OAK（绿橡）——否则这棵树全局零使用。
     { box: [45.0, 62.0, -12.0, 32.0], bases: ['ds3', 'gr2', 'for'],
       tree: 'SCENARIO_TREE_C', why: '中西欧 —— 阔叶大树' },
-    { box: [48.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for'],
-      tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树' },
+    { box: [48.0, 68.0, 20.0, 60.0], bases: ['ds3', 'gr2', 'gr3', 'for', 'gr4'],
+      tree: 'SCENARIO_TREE_E', why: '东欧/俄罗斯 —— 阔叶大树（gr4 黑土也覆盖，乌克兰/日托米尔别长柳树）' },
 ];
 
 /**

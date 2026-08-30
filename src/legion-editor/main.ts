@@ -2238,9 +2238,12 @@ function computeLegionNameViolations(): string[] {
     }
     for (const [sig, names] of sigMap.entries()) {
         if (names.length > 1) {
-            // 🔴 文化区默认军团豁免「相同编制必须同名」：不同文化区复用父文化编制（暂复用）是正常的，
-            //    名字不同（东欧军团 / 瓦拉几亚军团）不该报重名（2026-08-30 主人：恢复默认文化军团后不应报错）。
-            if (names.some(n => isRegionLegionName(n))) continue;
+            // 🔴 [2026-08-31 修·豁免过宽] 只有**整组都是文化军团**才豁免 ——
+            //    不同文化区复用父文化编制（东欧军团 / 瓦拉几亚军团）是正常的，不该报错。
+            //    但原来写的是 `names.some(...)`：只要组里**有一个**文化军团就整组放行，
+            //    于是「特定军团编制 == 文化军团编制」这种**最该被合并**的情况永远检不出来，
+            //    一键修复也就永远不会把它归成文化军团（主人 2026-08-31 要的正是这条）。
+            if (names.every(n => isRegionLegionName(n))) continue;
             violations.push(`相同编制（${sig}）但军团名不同：${sigFactions.get(sig)!.join('、')} → 名字 ${names.join(' / ')}（相同编制军团必须同名）`);
         }
     }
@@ -2282,10 +2285,54 @@ function computeLegionNameViolations(): string[] {
         usedNames.add(effectiveLegionName(row));
     }
     for (const region of REGION_ORDER) {
-        const name = getCultureLegionName(region);
-        if (name && !usedNames.has(name)) {
-            violations.push(`文化军团【${name}】没有任何势力套用（请至少一个势力使用，或迁移非本文化势力归位）`);
+        // 🔴 [2026-08-31] 先查「这个文化到底有没有保底军团」。
+        //    getCultureLegionName 查不到时会**静默回落到 CENTRAL 的名字**，
+        //    于是缺条目的文化会伪装成「有军团」，检查白跑（主人要求①：每个文化都要有保底军团）。
+        if (!CULTURE_LEGION_NAMES[region]) {
+            violations.push(`文化【${REGION_LABELS[region] ?? region}】没有保底军团（CULTURE_LEGION_NAMES 缺条目，当前静默回落到 CENTRAL）`);
         }
+    }
+    // 🔴 [2026-08-31 主人要求①「对应着据点文化」] 原判据是「文化军团没人套用就报错」，
+    //    那条会**误伤合理设计**：阿契美尼德只有一个势力、用的是特定军团【不死军团】（史实正确），
+    //    于是「阿契美尼德军团无人套用」被报成违规，但它并没有错 —— 保底军团存在即可，不必有人用。
+    //    真正该抓的是**用了别的文化的军团**：瓦拉几亚的势力在用【拉丁军团】【东欧军团】，
+    //    据点文化和军团文化对不上，这才违反「对应着据点文化」。
+    // 🔴 [2026-08-31 实测发现] 有势力的 region 压根**不在 65 个文化里**
+    //    （塔万廷苏尤=INCAS、库特布朝=INDIANS、克尔曼=PERSIANS、奥德里西亚=THRACIANS，
+    //     看着像 AoE2 文明名混进了 RegionType）。这些势力 getCultureLegionName 查不到，
+    //    **静默回落成【中原军团】** —— 界面上文化列还显示原始 ID 而非中文标签。
+    //    这类据点等于没有对应文化的保底军团，正是主人要求①要抓的。
+    const knownRegions = new Set<string>(REGION_ORDER as readonly string[]);
+    const unknownRegionFactions = new Map<string, string[]>();
+    for (const row of allRows) {
+        if (knownRegions.has(row.region)) continue;
+        if (!unknownRegionFactions.has(row.region)) unknownRegionFactions.set(row.region, []);
+        unknownRegionFactions.get(row.region)!.push(row.factionName);
+    }
+    for (const [rg, fs] of unknownRegionFactions) {
+        violations.push(`据点文化【${rg}】不在 65 个文化区内（REGION_ORDER 无此项），保底军团被静默算成【${getCultureLegionName(rg as RegionType)}】：${fs.join('、')}（请把这些据点的文化改成正式文化区）`);
+    }
+
+    const cultureNameToRegion = new Map<string, RegionType>();
+    for (const rg of REGION_ORDER) {
+        const n = CULTURE_LEGION_NAMES[rg];
+        if (n) cultureNameToRegion.set(n, rg);
+    }
+    //    ⚠️ 这类实测有 66 个且多为子文化有意复用，逐条列会刷屏 —— 按「文化 × 借用军团」聚合成一行。
+    //    只报告，**一键修复不会自动改**（见 autoFixLegions 里的说明）。
+    const borrowed = new Map<string, { region: RegionType; name: string; factions: string[] }>();
+    for (const row of allRows) {
+        const name = effectiveLegionName(row);
+        const owner = cultureNameToRegion.get(name);
+        if (!owner || owner === row.region) continue;
+        const key = `${row.region}|${name}`;
+        if (!borrowed.has(key)) borrowed.set(key, { region: row.region as RegionType, name, factions: [] });
+        borrowed.get(key)!.factions.push(row.factionName);
+    }
+    for (const b of [...borrowed.values()].sort((x, y) => y.factions.length - x.factions.length)) {
+        const label = REGION_LABELS[b.region] ?? b.region;
+        const head = b.factions.slice(0, 4).join('、') + (b.factions.length > 4 ? `…共 ${b.factions.length} 个` : '');
+        violations.push(`〔提示·不自动修〕「${label}」文化的 ${b.factions.length} 个势力在用其他文化的军团【${b.name}】：${head}（本文化军团为【${getCultureLegionName(b.region)}】；若为子文化有意复用可忽略）`);
     }
 
     return violations;
@@ -2301,49 +2348,147 @@ function reportLegionNameViolations(): void {
     openLegionViolationsModal(violations);
 }
 
-/** 违规列表弹窗 */
+/**
+ * 一键修复（2026-08-31 主人重定规则）。
+ *
+ * 规则（按优先级）：
+ *   ① **相同编制必须同名**。组里若有文化军团 → 全组归**文化军团**（文化军团是保底，永不被改名）；
+ *      优先归**势力自己所在文化**的那个（避免据点挂着别的文化的军团名），否则取 REGION_ORDER 最靠前的。
+ *   ② 全是特定军团 → 归**更早的**那个（文件顺序靠前）。
+ *   ③ **同名不同编** → 最早的那个保留原名，后来的按「原名·文化标签」改名（必要时加序号）。
+ *      不采用「直接回落文化军团」，因为那会**丢掉人工调好的编制**；改名只动名字，数据不丢。
+ *
+ * 🔴 归并到文化军团时必须**连 legionType 一起改**（'region'），只改 legionName 会留下
+ *    legionType='solo' 的势力，反而触发「个人军团只能一个套用」的新违规 —— 修一个造一个。
+ *    若归位的正好是该势力**自己文化**的军团，直接删掉 override 让它跟随默认，最干净。
+ */
 async function autoFixLegions(): Promise<string> {
-    // [2026-08-30 主人] 一键修复：合并「编制相同但名字不同」的军团。
-    //   文化军团（65 个）是基准、手动固定、不自动改；特定军团编制与文化军团一致 → 归文化军团；
-    //   两个特定军团编制一致 → 归更早的（文件顺序更靠前的名字）。
-    const nameToSig = new Map<string, string>();
-    const nameToOrder = new Map<string, number>();
-    let order = 0;
+    const actions: string[] = [];
+    let changed = 0;
+
+    // 文化军团编制签名表：sig → region[]（用默认编制，不受势力 override 影响）
+    const cultureSigToRegions = new Map<string, RegionType[]>();
+    const cultureNameByRegion = new Map<RegionType, string>();
+    for (const rg of REGION_ORDER) {
+        const def = getRegionDefaultLegion(rg);
+        const sig = legionSig({ formationMode: def.formationMode, slots: def.slots });
+        if (!cultureSigToRegions.has(sig)) cultureSigToRegions.set(sig, []);
+        cultureSigToRegions.get(sig)!.push(rg);
+        cultureNameByRegion.set(rg, getCultureLegionName(rg));
+    }
+
+    // ── ① + ② 相同编制归并 ──────────────────────────────────────
+    // 名字 → 首次出现顺序（"更早" 的判据）
+    const nameOrder = new Map<string, number>();
+    let ord = 0;
     for (const row of allRows) {
-        const name = effectiveLegionName(row);
-        if (!nameToSig.has(name)) {
-            nameToSig.set(name, legionSig(row));
-            nameToOrder.set(name, order++);
-        }
+        const n = effectiveLegionName(row);
+        if (!nameOrder.has(n)) nameOrder.set(n, ord++);
     }
-    const sigToNames = new Map<string, string[]>();
-    for (const [name, sig] of nameToSig) {
-        if (!sigToNames.has(sig)) sigToNames.set(sig, []);
-        sigToNames.get(sig)!.push(name);
+    // 按编制分组（只看非文化军团的势力：文化军团是基准，不动）
+    const sigGroups = new Map<string, FactionLegionRow[]>();
+    for (const row of allRows) {
+        const sig = legionSig(row);
+        if (!sigGroups.has(sig)) sigGroups.set(sig, []);
+        sigGroups.get(sig)!.push(row);
     }
-    let renamed = 0;
-    const merged: string[] = [];
-    for (const [sig, names] of sigToNames) {
+    for (const [sig, rows] of sigGroups) {
+        const names = [...new Set(rows.map(r => effectiveLegionName(r)))];
         if (names.length <= 1) continue;
-        const culture = names.find(n => isRegionLegionName(n));
-        const keep = culture || names.slice().sort((a, b) => nameToOrder.get(a)! - nameToOrder.get(b)!)[0];
-        for (const n of names) {
-            if (n === keep) continue;
-            for (const row of allRows) {
-                const custom = localCustomCompositions[row.factionId];
-                if (custom?.legionName?.trim() === n) {
-                    localCustomCompositions[row.factionId] = { ...custom, legionName: keep };
-                    renamed++;
-                }
+        const cultureRegions = cultureSigToRegions.get(sig) ?? [];
+        for (const row of rows) {
+            const cur = effectiveLegionName(row);
+            if (isRegionLegionName(cur)) continue;   // 文化军团不改名
+            let target: RegionType | null = null;
+            if (cultureRegions.includes(row.region as RegionType)) {
+                target = row.region as RegionType;            // 优先自己文化
+            } else if (cultureRegions.length > 0) {
+                target = cultureRegions[0];                    // 否则最靠前的文化
             }
-            merged.push(`${n} → ${keep}`);
+            if (target) {
+                // ① 归文化军团
+                const targetName = cultureNameByRegion.get(target)!;
+                if (cur === targetName) continue;
+                if (target === row.region) {
+                    delete localCustomCompositions[row.factionId];   // 跟随本文化默认，最干净
+                } else {
+                    localCustomCompositions[row.factionId] = {
+                        ...buildCultureLegion(target),
+                    };
+                }
+                actions.push(`${row.factionName}：${cur} → ${targetName}（编制同文化军团）`);
+                changed++;
+            } else {
+                // ② 全是特定军团 → 归更早的
+                const keep = names.slice().sort((a, b) => (nameOrder.get(a) ?? 0) - (nameOrder.get(b) ?? 0))[0];
+                if (cur === keep) continue;
+                const custom = localCustomCompositions[row.factionId];
+                if (!custom) continue;
+                localCustomCompositions[row.factionId] = { ...custom, legionName: keep };
+                actions.push(`${row.factionName}：${cur} → ${keep}（同编制归更早军团）`);
+                changed++;
+            }
         }
     }
-    if (renamed === 0) return '✅ 没有需要合并的军团（相同编制已同名）';
+
+    // ── ④ 「用了别的文化的军团」**只报告、不自动改** ─────────────
+    //    🔴 [2026-08-31] 实测这类势力有 **66 个**，而且形态明显是**子文化有意复用**：
+    //       库曼×9 用草原军团、印度×7 用补噜军团、拉丁×5 用西班牙军团 / ×4 用意大利军团……
+    //       这些是设计，不是错误。自动归位会把 66 份编制一起改掉，属于不可逆的数据破坏。
+    //    所以校验里照常列出来给主人看（computeLegionNameViolations 末段），
+    //    但**一键修复绝不碰它**。要归位请在编辑器里逐个确认。
+
+    // ── ③ 同名不同编 → 后来者改名（保编制，不丢数据）────────────
+    const nameToSigs = new Map<string, Map<string, FactionLegionRow[]>>();
+    for (const row of allRows) {
+        const n = effectiveLegionName(row);
+        const sig = legionSig(row);
+        if (!nameToSigs.has(n)) nameToSigs.set(n, new Map());
+        const m = nameToSigs.get(n)!;
+        if (!m.has(sig)) m.set(sig, []);
+        m.get(sig)!.push(row);
+    }
+    const takenNames = new Set(allRows.map(r => effectiveLegionName(r)));
+    for (const [name, sigMap2] of nameToSigs) {
+        if (sigMap2.size <= 1) continue;
+        // 文化军团名冲突：文化军团保名，冲突的另一编制改名
+        const entries = [...sigMap2.entries()];
+        entries.sort((a, b) => {
+            const ra = a[1].some(r => isRegionLegionName(effectiveLegionName(r)) && cultureNameByRegion.get(r.region as RegionType) === name) ? -1 : 0;
+            const rb = b[1].some(r => isRegionLegionName(effectiveLegionName(r)) && cultureNameByRegion.get(r.region as RegionType) === name) ? -1 : 0;
+            return ra - rb;
+        });
+        for (let i = 1; i < entries.length; i++) {
+            const rows = entries[i][1];
+            // 新名字优先用「势力名 + 军团」（effectiveLegionName 的兜底同款，最自然）；
+            // 撞名了再退到「原名·文化标签军团」，还撞就加序号。
+            let candidate = `${rows[0].factionName}军团`;
+            if (takenNames.has(candidate)) {
+                const label = REGION_LABELS[rows[0].region as RegionType] ?? rows[0].region;
+                candidate = `${name.replace(/军团$/, '')}·${label}军团`;
+                let n2 = 2;
+                while (takenNames.has(candidate)) candidate = `${name.replace(/军团$/, '')}·${label}${n2++}军团`;
+            }
+            takenNames.add(candidate);
+            for (const row of rows) {
+                const custom = localCustomCompositions[row.factionId];
+                if (!custom) continue;   // 跟随文化默认的不动（文化军团保名）
+                localCustomCompositions[row.factionId] = { ...custom, legionName: candidate, legionType: 'solo' };
+                actions.push(`${row.factionName}：${name} → ${candidate}（同名不同编，保留编制改名）`);
+                changed++;
+            }
+        }
+    }
+
+    if (changed === 0) return '✅ 没有需要修复的军团（相同编制已同名、无重名）';
     buildRows();
     applyFilter();
     await saveAllCompositions();
-    return `✅ 一键修复完成：${renamed} 个势力归并（${merged.join('、')}）`;
+    const NL = String.fromCharCode(10);
+    const head = `✅ 一键修复完成：${changed} 处`;
+    const shown = actions.length <= 12 ? actions : actions.slice(0, 12);
+    const suffix = actions.length > 12 ? `${NL}…共 ${actions.length} 条` : '';
+    return [head, ...shown].join(NL) + suffix;
 }
 
 function openLegionViolationsModal(violations: string[]): void {

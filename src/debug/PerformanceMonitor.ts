@@ -1,4 +1,5 @@
 import { GameConfig } from '../config/GameConfig';
+import { perfDoctor } from './PerfDoctor';
 
 /**
  * PerformanceMonitor — 运行时性能监控面板
@@ -561,6 +562,16 @@ export class PerformanceMonitor {
 
     private setupKeybind(): void {
         document.addEventListener('keydown', (e: KeyboardEvent) => {
+            // [2026-08-31] Shift+F3 = 卡顿诊断落盘（面向 AI 的结构化报告，见 src/debug/PerfDoctor.ts）。
+            //   与 F3 分开：F3 是给人看的实时面板，Shift+F3 产出的是给 AI 读的 findings。
+            if (e.key === 'F3' && e.shiftKey) {
+                void perfDoctor.dump({
+                    scene: (window as any).game?.scene13War?.isActive?.() ? 'tactical(scene13)' : 'strategic',
+                    snapshot: this.getSnapshot(),
+                });
+                e.preventDefault();
+                return;
+            }
             const isPerfToggle =
                 e.key === 'F3' ||
                 (e.ctrlKey && e.shiftKey && (e.key === 'M' || e.key === 'm')) ||
