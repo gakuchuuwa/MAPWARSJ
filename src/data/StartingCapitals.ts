@@ -1104,6 +1104,23 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xiadunhe': 'city_saerkeer',
     'bulu': 'city_atuoke',
     'xiaofulijiya': 'city_dasijiliweng',
+'mallabhum': 'city_bishnupur',
+    'vidin_tsardom': 'city_baba_vida',
+    'gondarine': 'city_fasil_fort',
+    'valois_angouleme': 'city_chambord',
+    'samtskhe': 'city_akhaltsikhe',
+    'tomara_gwalior': 'city_gwalior_fort',
+    'tawantinsuyu': 'city_machu_picchu',
+    'qutb_shahi': 'city_golconda',
+    'minangkabau': 'city_pagaruyung',
+    'tutul_xiu': 'city_uxmal',
+    'kerman_bam': 'city_bam_citadel',
+    'lesser_poland': 'city_bedzin',
+    'braganza_house': 'city_braganca',
+    'trastamara': 'city_la_mota',
+    'odrysian_late': 'city_seuthopolis',
+    'rhodope': 'city_perperikon',
+    'naxos_ancient': 'city_chimarros',
 };
 
 // @ts-ignore

@@ -11,4 +11,5 @@ export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     ternate: { name: '摩鹿加水兵', tier: 2 },   // 德尔纳特·巴布拉：卡拉科阿桨帆战船香料群岛突击水军，1575攻陷卡斯特拉要塞
     sulu: { name: '苏禄珠海勇', tier: 3 },   // 霍洛·巴杜卡：苏禄苏丹近卫，潜水夺船/马来短剑吹箭，兵种特色鲜明
     xishudongyin: { name: '王城守备队', tier: 1 },   // 马尼拉·莱加斯皮：西属东印度正规军，驻守马尼拉王城(Intramuros)，重炮火枪，建制延续1571-1898
+    minangkabau: { name: '胡卢巴朗', tier: 3 },
 };

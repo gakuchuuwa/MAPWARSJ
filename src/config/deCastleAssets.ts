@@ -174,6 +174,23 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     muisca: 'MUIS_CASTLE_AGE3',
     mapuche: 'MAPU_CASTLE_AGE3',
     tupi: 'TUPI_CASTLE_AGE3',
+    mallabhum: 'BENG_CASTLE_AGE3',
+    vidin_tsardom: 'BULG_CASTLE_AGE3',
+    gondarine: 'ETHI_CASTLE_AGE3',
+    valois_angouleme: 'FRAN_CASTLE_AGE3',
+    samtskhe: 'GEOR_CASTLE_AGE3',
+    tomara_gwalior: 'GURJ_CASTLE_AGE3',
+    tawantinsuyu: 'INCA_CASTLE_AGE3',
+    qutb_shahi: 'INDI_CASTLE_AGE3',
+    minangkabau: 'MALA_CASTLE_AGE3',
+    tutul_xiu: 'MAYA_CASTLE_AGE3',
+    kerman_bam: 'PERS_CASTLE_AGE3',
+    lesser_poland: 'POLE_CASTLE_AGE3',
+    braganza_house: 'PORT_CASTLE_AGE3',
+    trastamara: 'SPAN_CASTLE_AGE3',
+    odrysian_late: 'THRACIANS_CASTLE_AGE3',
+    rhodope: 'THRACIAN_CASTLE_AGE3',
+    naxos_ancient: 'MACEDONIAN_CASTLE_AGE3',
 };
 
 /**

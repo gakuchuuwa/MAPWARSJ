@@ -15,4 +15,5 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
     aimala: { name: '艾马拉战士', tier: 4 },
     yilaka: { name: '圭查武士', tier: 3 },
+    tawantinsuyu: { name: '印加禁卫', tier: 3 },
 };

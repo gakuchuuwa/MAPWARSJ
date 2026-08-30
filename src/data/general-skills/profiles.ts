@@ -3180,6 +3180,23 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xisi_safaer: { generalId: 'xisi_safaer', tier: 'famous', tacticalSkillId: 'ts_654', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_537', atkDisadvantageSkillId: 'ts_711', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_179', aptitude: 'create', attackStyle: 'attack' },
     gen_bolusi: { generalId: 'gen_bolusi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_766', atkBalanceSkillId: 'ts_018', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_003', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_098', aptitude: 'reverse', attackStyle: 'defense' }, // 补噜·波鲁斯：希达斯皮斯河以象军抗击亚历山大，劣势坚守,
     xiaofulijiya_aerxitis: { generalId: 'xiaofulijiya_aerxitis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
+    gen_boleslaw_brave: { generalId: 'gen_boleslaw_brave', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    gen_topa_inca: { generalId: 'gen_topa_inca', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    gen_bir_hambir: { generalId: 'gen_bir_hambir', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_ivan_sratsimir: { generalId: 'gen_ivan_sratsimir', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    gen_fasilides: { generalId: 'gen_fasilides', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_francis_i: { generalId: 'gen_francis_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    gen_sargis_jaqeli: { generalId: 'gen_sargis_jaqeli', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    gen_man_singh_tomar: { generalId: 'gen_man_singh_tomar', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_ibrahim_qutb: { generalId: 'gen_ibrahim_qutb', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_adityawarman: { generalId: 'gen_adityawarman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' },
+    gen_chan_chak: { generalId: 'gen_chan_chak', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_yaqub_saffar: { generalId: 'gen_yaqub_saffar', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    gen_joao_i: { generalId: 'gen_joao_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    gen_ferdinand_ii: { generalId: 'gen_ferdinand_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    gen_seuthes_iii: { generalId: 'gen_seuthes_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    gen_momchil: { generalId: 'gen_momchil', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    gen_chabrias: { generalId: 'gen_chabrias', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
 };
 
 
