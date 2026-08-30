@@ -39,7 +39,7 @@ export interface FactionGeneral {
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/NORTHEAST/ayinu_ezo_keshamayin.png' },
 
-    boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/LATIN/boootiya_yibaminongda.png' },
+    boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
     kelite: { generalId: 'gen_nikephoros_phokas', generalName: '福卡斯', portrait: '/assets/LATIN/kelite_fukasi.png' },
     leangongguo: { generalId: 'gen_alfonso_ix', generalName: '阿方索九世', portrait: '/assets/LATIN/leangongguo_afangsuojiushi.png' },
@@ -113,7 +113,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
     nuosi: { generalId: 'gen_olaf_skotkonung', generalName: '奥拉夫', portrait: '/assets/GERMANIC/nuosi_aolafu.png' },
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
-    xila: { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/LATIN/xila_dimisituokeli.png' },
+    xila: { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/GREEK/xila_dimisituo.png' },
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/LATIN/fulandesi_luobeierershi.png' },
     bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },

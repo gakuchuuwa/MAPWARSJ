@@ -1632,16 +1632,254 @@ export const GURJARAS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 非洲军团（鱼鳞阵 3+4+2：马穆鲁克前卫 + 标枪骑兵中坚 + 骆驼弓骑主力）[2026-08-30 完成待定制] */
+/** 非洲军团（鱼鳞阵 3+4+2：格贝托女兵前卫 + 精锐格贝托中坚 + 骆驼弓骑后排）[2026-08-30 完成待定制] */
 export const AFRICA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 }
+            { type: 'gbeto', count: 3 },
+            { type: 'elite_gbeto', count: 4 },
+            { type: 'camel_archer', count: 2 }
+        ]
+    }
+];
+
+/** 东欧军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const EAST_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 2 },
+            { type: 'elite_boyar', count: 4 },
+            { type: 'composite_bowman', count: 3 }
+        ]
+    }
+];
+
+/** 达罗毗荼军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const PURU_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'war_elephant', count: 2 }
+        ]
+    }
+];
+
+/** 美洲军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const AMERICA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'eagle_warrior', count: 3 },
+            { type: 'elite_eagle_warrior', count: 4 },
+            { type: 'plumed_archer', count: 2 }
+        ]
+    }
+];
+
+/** 安第斯军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const ANDE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'kamayuk', count: 3 },
+            { type: 'elite_kamayuk', count: 4 },
+            { type: 'slinger', count: 2 }
+        ]
+    }
+];
+
+/** 哥特军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const GOTHS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'huskarl', count: 3 },
+            { type: 'elite_huskarl', count: 4 },
+            { type: 'throwing_axeman', count: 2 }
+        ]
+    }
+];
+
+/** 凯尔特军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const CELTS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'woad_raider', count: 3 },
+            { type: 'elite_woad_raider', count: 4 },
+            { type: 'archer', count: 2 }
+        ]
+    }
+];
+
+/** 意大利军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const ITALIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'condottiero', count: 3 },
+            { type: 'elite_genoese_crossbowman', count: 4 },
+            { type: 'arbalest', count: 2 }
+        ]
+    }
+];
+
+/** 立陶宛军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const LITHUANIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 2 },
+            { type: 'elite_leitis', count: 4 },
+            { type: 'cav_archer', count: 3 }
+        ]
+    }
+];
+
+/** 补噜军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const PORUS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'urumi_swordsman', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'porus_elephant', count: 2 }
+        ]
+    }
+];
+
+/** 越南军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const VIETNAMESE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'rattan_archer', count: 3 },
+            { type: 'elite_rattan_archer', count: 4 },
+            { type: 'battle_elephant', count: 2 }
+        ]
+    }
+];
+
+/** 高棉军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const KHMER_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'battle_elephant', count: 2 },
+            { type: 'champion', count: 4 },
+            { type: 'elite_ballista_elephant', count: 3 }
+        ]
+    }
+];
+
+/** 马普切军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const MAPUCHE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'swordsman', count: 3 },
+            { type: 'elite_bolas_rider', count: 4 },
+            { type: 'archer', count: 2 }
+        ]
+    }
+];
+
+/** 穆伊斯卡军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const MUISCA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'temple_guard', count: 3 },
+            { type: 'elite_temple_guard', count: 4 },
+            { type: 'guecha_warrior', count: 2 }
+        ]
+    }
+];
+
+/** 图皮军团（鱼鳞阵）[2026-08-30 完成待定制] */
+export const TUPI_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'ibirapema_warrior', count: 3 },
+            { type: 'elite_ibirapema_warrior', count: 4 },
+            { type: 'blackwood_archer', count: 2 }
+        ]
+    }
+];
+
+/** 亚美尼亚军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const ARMENIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 2 },
+            { type: 'elite_boyar', count: 4 },
+            { type: 'elite_composite_bowman', count: 3 }
+        ]
+    }
+];
+
+/** 阿契美尼德军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const ACHAEMENIDS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'immortal', count: 2 },
+            { type: 'savar', count: 4 },
+            { type: 'war_elephant', count: 3 }
+        ]
+    }
+];
+
+/** 瓦拉几亚军团（鹤翼阵）[2026-08-30 完成待定制] */
+export const WALLACHIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 2 },
+            { type: 'elite_boyar', count: 4 },
+            { type: 'cav_archer', count: 3 }
         ]
     }
 ];
@@ -1671,28 +1909,28 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     LATIN:        LATIN_TIERS,
     INDIA:        INDIA_TIERS,
     BERBER:       BERBER_TIERS,
-    AMERICA:      LATIN_TIERS,      // ⚠️ [2026-08-24] 暂复用拉丁编成（美洲步兵），待定制
+    AMERICA:      AMERICA_TIERS,      // ⚠️ [2026-08-24] 暂复用拉丁编成（美洲步兵），待定制
     AFRICA:       AFRICA_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
     MALAY:        MALAY_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
-    ANDE:         LATIN_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
-    PURU:         INDIA_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
+    ANDE:         ANDE_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
+    PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
     ORIE:         BERBER_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
-    EAST:         SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
+    EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
     THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
     PERSIAN:      PERSIAN_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
     CUMAN:        CUMAN_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
     BRITONS: BRITONS_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
-    GOTHS: GERMANIC_TIERS,  // 哥特[2026-08-28 暂复用父文化]
+    GOTHS: GOTHS_TIERS,  // 哥特[2026-08-28 暂复用父文化]
     HUNS: STEPPE_TIERS,  // 匈人[2026-08-28 暂复用父文化]
     TEUTONS: GERMANIC_TIERS,  // 条顿[2026-08-28 暂复用父文化]
     VIKINGS: SLAVIC_TIERS,  // 维京[2026-08-28 暂复用父文化]
-    CELTS: GERMANIC_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
-    ITALIANS: LATIN_TIERS,  // 意大利[2026-08-28 暂复用父文化]
+    CELTS: CELTS_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
+    ITALIANS: ITALIANS_TIERS,  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: LATIN_TIERS,  // 西西里[2026-08-28 暂复用父文化]
     BULGARIANS: BULGARIANS_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: STEPPE_TIERS,  // 马扎尔[2026-08-28 暂复用父文化]
-    LITHUANIANS: SLAVIC_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
+    LITHUANIANS: LITHUANIANS_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
     POLES: POLES_TIERS,  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: SLAVIC_TIERS,  // 波希米亚[2026-08-28 暂复用父文化]
     BURGUNDIANS: LATIN_TIERS,  // 勃艮第[2026-08-28 暂复用父文化]
@@ -1701,21 +1939,21 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ETHIOPIANS: ETHIOPIANS_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
     BENGALIS: BENGALIS_TIERS,  // 孟加拉[2026-08-28 暂复用父文化]
     GURJARAS: GURJARAS_TIERS,  // 瞿折罗[2026-08-28 暂复用父文化]
-    PORUS: INDIA_TIERS,  // 补噜[2026-08-28 暂复用父文化]
-    VIETNAMESE: DIANQIAN_TIERS,  // 越南[2026-08-28 暂复用父文化]
-    KHMER: DIANQIAN_TIERS,  // 高棉[2026-08-28 暂复用父文化]
+    PORUS: PORUS_TIERS,  // 补噜[2026-08-28 暂复用父文化]
+    VIETNAMESE: VIETNAMESE_TIERS,  // 越南[2026-08-28 暂复用父文化]
+    KHMER: KHMER_TIERS,  // 高棉[2026-08-28 暂复用父文化]
     MAYANS: MAYANS_TIERS,  // 玛雅[2026-08-28 暂复用父文化]
-    MAPUCHE: LATIN_TIERS,  // 马普切[2026-08-28 暂复用父文化]
-    MUISCA: LATIN_TIERS,  // 穆伊斯卡[2026-08-28 暂复用父文化]
-    TUPI: LATIN_TIERS,  // 图皮[2026-08-28 暂复用父文化]
-    ARMENIANS: CENTRAL_ASIA_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
+    MAPUCHE: MAPUCHE_TIERS,  // 马普切[2026-08-28 暂复用父文化]
+    MUISCA: MUISCA_TIERS,  // 穆伊斯卡[2026-08-28 暂复用父文化]
+    TUPI: TUPI_TIERS,  // 图皮[2026-08-28 暂复用父文化]
+    ARMENIANS: ARMENIANS_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
     GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
     ATHENIANS: GREEK_TIERS,  // 雅典[2026-08-28 暂复用父文化]
     SPARTANS: GREEK_TIERS,  // 斯巴达[2026-08-28 暂复用父文化]
-    MACEDONIANS: GREEK_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
-    ACHAEMENIDS: WEST_ASIA_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
+    MACEDONIANS: ALEXANDER_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
+    ACHAEMENIDS: ACHAEMENIDS_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: DIANQIAN_TIERS,
-    WALLACHIA: SLAVIC_TIERS,
+    WALLACHIA: WALLACHIA_TIERS,
 
 };
 
