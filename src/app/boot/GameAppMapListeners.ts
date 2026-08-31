@@ -1,6 +1,4 @@
 import { CityAssetManager } from '../../assets/CityAssetManager';
-import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
-import { GameConfig } from '../../config/GameConfig';
 import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
 import type { GameApp } from '../GameApp';
 

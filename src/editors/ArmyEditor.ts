@@ -13,8 +13,7 @@
 
 import L from 'leaflet';
 import { FACTIONS } from '../data/factions';
-import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { REGION_LABELS, REGION_ORDER, RegionType, getCityRegion } from '../systems/RegionSystem';
+import {REGION_LABELS, REGION_ORDER, RegionType} from '../systems/RegionSystem';
 import {
     applyCultureFormationPatch,
     convertSlotsToMode,
@@ -26,7 +25,6 @@ import {
 } from '../types/CultureFormations';
 import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
-import { LegionType } from '../types/UnitTypes';
 import { IAnimatedUnit } from '../map/GlobalUnitRenderer';
 import { expandCompositionSlots, expandCompositionScales, getEffectiveSlotScale } from '../types/LegionComposition';
 

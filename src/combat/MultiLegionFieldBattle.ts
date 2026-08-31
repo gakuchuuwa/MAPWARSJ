@@ -21,10 +21,8 @@ import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceU
 import { gameLog } from '../utils/GameLogger';
 
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
-import { PLAYER_SPEED_TIERS } from '../config/GameConfig';
 
 const BATTLE_OFFSET = 0.14;
-const MARCH_TIME = 4.0;
 
 export class MultiLegionFieldBattle {
     private legionManager: LegionManager;

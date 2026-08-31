@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
+import {getCityAnchoredStrategicMagnitude, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedCityAnchoredDefensePulse} from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,

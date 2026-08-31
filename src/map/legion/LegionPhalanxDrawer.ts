@@ -1,15 +1,13 @@
 import { AssetLoader } from '../../core/AssetLoader';
+import { perfDoctor } from '../../debug/PerfDoctor';
 import type { NavalFormationMode } from '../../types/CultureFormations';
 import { FACTION_COMPOSITIONS } from '../../data/FactionCompositions';
 import { SPRITE_PATHS } from '../../config/GameConfig';
-import { FormationSystem } from '../../core/FormationSystem';
 import { GeneralDrawer } from '../GeneralDrawer';
-import { PhalanxVitality } from '../PhalanxVitality';
-import { LegionPhalanxStateManager, LegionUnitState } from './LegionPhalanxState';
+import {LegionPhalanxStateManager} from './LegionPhalanxState';
 import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
-import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
-import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
+import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
 import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
@@ -391,6 +389,8 @@ export class LegionPhalanxDrawer {
             ?? this.unitSpriteCache.get('mixed')
             ?? this.unitSpriteCache.get('light_infantry');
         if (!assets) return null;
+        // LRU 打点：谁最近被画过，谁就不该被淘汰（见 evictUnitSprites）
+        LegionPhalanxDrawer.spriteLastUsed.set(unitAssetsId, performance.now());
         const refSprite = assets.IDLE[direction] || assets.IDLE[0];
         if (!refSprite) return null;
         return this.computeDenseSpacing(
@@ -661,6 +661,8 @@ export class LegionPhalanxDrawer {
                     if (img) {
                         const processed = await this.processImage(img);
                         targetArray[realIdx] = processed;
+                        // 抠绿产物已经是另一张图，原图从此没人用 —— 放掉，别让同一张贴图占两份位图
+                        if (processed !== img) AssetLoader.release(path);
                     }
                 }));
                 if (i + PROC_BATCH < sourcePaths.length) {
@@ -762,6 +764,8 @@ export class LegionPhalanxDrawer {
 
                 await Promise.all(promises);
                 this.unitSpriteCache.set(key, cacheEntry);
+                LegionPhalanxDrawer.spriteLastUsed.set(key, performance.now());
+                LegionPhalanxDrawer.evictUnitSprites();
                 // [PERF] 每个 unit type 处理完再让一次主线程，
                 // 避免连续多个 unit type 紧挨着跑（即使内部已经分批）
                 await yieldMain();
@@ -778,6 +782,7 @@ export class LegionPhalanxDrawer {
         }
 
         this.isLoaded = true;
+        LegionPhalanxDrawer.startSpriteEvictLoop();
         gameLog('unit', '✅ LegionPhalanxDrawer: All dynamic unit assets loaded.');
     }
 
@@ -796,7 +801,18 @@ export class LegionPhalanxDrawer {
         });
     }
 
-    private static async _loadNavalAssets(): Promise<void> {
+    /** 按需加载单个兵种（被淘汰后自动重来的入口，见 ensureUnitTypeLoading） */
+    private static unitLoadInFlight = new Set<string>();
+    public static ensureUnitTypeLoading(key: string): void {
+        if (!key || this.unitSpriteCache.has(key) || this.unitLoadInFlight.has(key)) return;
+        this.unitLoadInFlight.add(key);
+        void this._loadNavalAssets([key])
+            .catch(() => { /* 失败下次再试 */ })
+            .finally(() => this.unitLoadInFlight.delete(key));
+    }
+
+    /** @param keys 要加载的兵种；缺省 = 启动跳过的三种船（历史行为不变） */
+    private static async _loadNavalAssets(keys?: readonly string[]): Promise<void> {
         const yieldMain = () => document.hidden
             ? Promise.resolve()
             : new Promise<void>(r => setTimeout(r, 0));
@@ -817,7 +833,7 @@ export class LegionPhalanxDrawer {
         };
 
         const unitAssets = SPRITE_PATHS.UNIT_ASSETS as any;
-        for (const key of LAZY_BOOT_UNIT_IDS) {
+        for (const key of (keys ?? [...LAZY_BOOT_UNIT_IDS])) {
             const config = unitAssets?.[key];
             if (!config || this.unitSpriteCache.has(key)) continue;
 
@@ -844,9 +860,9 @@ export class LegionPhalanxDrawer {
                 loadBatch(config.DEATH, cacheEntry.DEATH),
             ]);
             this.unitSpriteCache.set(key, cacheEntry);
+            this.spriteLastUsed.set(key, performance.now());
             await yieldMain();
         }
-        gameLog('unit', '⛵ 船贴图懒加载完成（<2万 / 2-5万 / ≥5万 三档）');
     }
 
     /**
@@ -857,7 +873,90 @@ export class LegionPhalanxDrawer {
      * AssetLoader 只对下载去重、不对处理结果去重，所以缓存放在这一层。
      * 产物只作 drawImage 源使用（只读），多处共享同一个 HTMLImageElement 是安全的。
      */
+    /** 每个兵种最近一次被绘制的时刻（LRU 淘汰用） */
+    private static spriteLastUsed = new Map<string, number>();
+    /**
+     * 兵种贴图集**字节预算**。
+     *
+     * 🔴 [2026-08-31 实测] 这个缓存原来**完全没有上限**，Shift+F3 量出 **4900MB**（154 个兵种）。
+     *    而它存的是**已解码位图**——不在 JS 堆里，`performance.memory` 看不到，
+     *    所以之前一直查堆、一直查不出问题（堆只显示 702MB）。
+     *    浏览器图像内存被这么占着，长任务 438 次 / 合计 49 秒，主线程被反复整块占住。
+     *
+     * 1.2GB 的取法：一屏/一场战斗通常用到 10~20 个兵种（≈32MB/种 → 320~640MB），
+     * 留 2 倍余量，**正在画的那批永远不会被淘汰**。
+     * ⚠️ 绝不能激进淘汰：把正在画的兵种顶掉 = 士兵当场消失（2026-08-31 已经栽过一次）。
+     */
+    private static readonly SPRITE_BUDGET_BYTES = 1200 * 1024 * 1024;
+    /** 这么久没被画过才允许淘汰（秒）——防止刚切走镜头就把兵种顶掉、切回来又要重载 */
+    //  有了 ensureUnitTypeLoading 按需补载，淘汰不再意味着「永远回不来」，
+    //  所以可以收紧到 20 秒；正在画的兵种每帧都在打点，永远不会被选中。
+    private static readonly SPRITE_IDLE_SEC = 20;
+
+    /**
+     * 定期淘汰。
+     * 🔴 只在「加载新兵种时」淘汰是不够的：开局把 322 个兵种全预载完之后就再也不会有新加载，
+     *    淘汰器从此不再运行，12.9GB 会一直挂着。必须有一条独立的定期检查。
+     */
+    private static evictTimer: ReturnType<typeof setInterval> | null = null;
+    public static startSpriteEvictLoop(): void {
+        if (this.evictTimer) return;
+        this.evictTimer = setInterval(() => this.evictUnitSprites(), 10000);
+    }
+
+    private static evictUnitSprites(): void {
+        let bytes = this.debugSpriteBytes();
+        if (bytes <= this.SPRITE_BUDGET_BYTES) return;
+        const now = performance.now();
+        const cands = [...this.unitSpriteCache.keys()]
+            .map((k) => ({ k, last: this.spriteLastUsed.get(k) ?? 0 }))
+            .filter((c) => (now - c.last) / 1000 >= this.SPRITE_IDLE_SEC)   // 只淘汰久未使用的
+            .sort((a, b) => a.last - b.last);                               // 最久没用的先走
+        for (const c of cands) {
+            if (bytes <= this.SPRITE_BUDGET_BYTES) break;
+            this.unitSpriteCache.delete(c.k);
+            this.spriteLastUsed.delete(c.k);
+            bytes = this.debugSpriteBytes();
+        }
+    }
+
     private static processedBySrc = new Map<string, Promise<HTMLImageElement>>();
+    /**
+     * 抠绿结果缓存上限（条）。
+     * 🔴 实测 **4272 条**且从不淘汰 —— 它持有已解码 Image 的强引用，
+     *    不清它，上面 unitSpriteCache 淘汰了也**释放不掉内存**（图还被这里钉着）。
+     *    这是派生缓存，淘汰只是下次重新抠一遍绿，不会导致贴图缺失。
+     */
+    private static readonly PROCESSED_MAX = 1200;
+
+    /**
+     * PerfDoctor 体检口子。
+     * 🔴 [2026-08-31] 这两个是**全游戏最大的图片缓存**，此前完全没被监控：
+     *    · `processedBySrc`：抠绿后的图，static Map、**从不淘汰**，且每张都带自己的 data URL；
+     *      注释自陈开局就有 600 张不同的图。
+     *    · `unitSpriteCache`：每个兵种 × 6 动作 × 8 向的整套帧。
+     *    先让它们在 Shift+F3 里**看得见**，再谈要不要加预算 —— 看不见的东西没法优化。
+     */
+    public static debugProcessedCount(): number { return this.processedBySrc.size; }
+    public static debugUnitSetCount(): number { return this.unitSpriteCache.size; }
+    /** 已解码字节：遍历兵种贴图集累加 w×h×4，外加抠绿图的 data URL 字符串 */
+    public static debugSpriteBytes(): number {
+        let b = 0;
+        const seen = new Set<HTMLImageElement>();
+        const addImg = (im: HTMLImageElement | null | undefined) => {
+            if (!im || seen.has(im)) return;
+            seen.add(im);
+            b += (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4;
+            if (im.src && im.src.startsWith('data:')) b += im.src.length * 2;
+        };
+        for (const set of this.unitSpriteCache.values()) {
+            for (const key of Object.keys(set as Record<string, unknown>)) {
+                const arr = (set as unknown as Record<string, unknown>)[key];
+                if (Array.isArray(arr)) for (const im of arr) addImg(im as HTMLImageElement);
+            }
+        }
+        return b;
+    }
 
     private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {
         // 未就绪的图走原路返回且不入缓存 —— 否则会把没抠绿的原图永久钉死在缓存里
@@ -868,6 +967,12 @@ export class LegionPhalanxDrawer {
         if (hit) return hit;
         const pending = this.doProcessImage(img);
         this.processedBySrc.set(key, pending);
+        // 超上限按插入序丢最旧的：它只是派生缓存，丢了下次重抠一遍，不会让贴图缺失。
+        while (this.processedBySrc.size > this.PROCESSED_MAX) {
+            const oldest = this.processedBySrc.keys().next().value;
+            if (oldest === undefined) break;
+            this.processedBySrc.delete(oldest);
+        }
         return pending;
     }
 
@@ -1232,12 +1337,17 @@ export class LegionPhalanxDrawer {
             }
             let currentSet = assets;
             let resolvedUnitType = unitAssetsId; // Default
-            let isMixed = false; // [FIX] Declared at loop scope for combat crowding logic
 
             // [NEW] 14-culture formation slots override
             if (cultureSlots && i < cultureSlots.length) {
                 resolvedUnitType = cultureSlots[i];
                 currentSet = this.unitSpriteCache.get(resolvedUnitType) || assets;
+                // 被淘汰或从未加载 → 后台补载，这一帧先用兜底集顶着（不会空白）
+                if (!LegionPhalanxDrawer.unitSpriteCache.has(resolvedUnitType)) {
+                    LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
+                } else {
+                    LegionPhalanxDrawer.spriteLastUsed.set(resolvedUnitType, performance.now());
+                }
             } else {
                 // [GENERIC FALLBACK] 
                 // If no cultureSlots are defined (e.g. legacy or unconfigured army),
@@ -1247,6 +1357,11 @@ export class LegionPhalanxDrawer {
                     const expandedSlots = expandCompositionSlots(tier.slots);
                     resolvedUnitType = expandedSlots[i] || unitAssetsId;
                     currentSet = this.unitSpriteCache.get(resolvedUnitType) || assets;
+                    if (!LegionPhalanxDrawer.unitSpriteCache.has(resolvedUnitType)) {
+                        LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
+                    } else {
+                        LegionPhalanxDrawer.spriteLastUsed.set(resolvedUnitType, performance.now());
+                    }
                 }
             }
 
@@ -2517,4 +2632,25 @@ export class LegionPhalanxDrawer {
 
         return result;
     }
+}
+
+// [2026-08-31] 登记进 PerfDoctor 体检。这两个是全游戏最大的图片缓存，
+//   此前完全在监控之外 —— 「卡但查不出来」的一大盲区。
+if (import.meta.env.DEV) {
+    perfDoctor.registerCache({
+        name: 'LegionPhalanxDrawer:unitSpriteCache(兵种帧集)',
+        where: 'src/map/legion/LegionPhalanxDrawer.ts:unitSpriteCache',
+        entries: () => LegionPhalanxDrawer.debugUnitSetCount(),
+        bytes: () => LegionPhalanxDrawer.debugSpriteBytes(),
+        limitKind: 'none',
+    });
+    perfDoctor.registerCache({
+        name: 'LegionPhalanxDrawer:processedBySrc(抠绿图·从不淘汰)',
+        where: 'src/map/legion/LegionPhalanxDrawer.ts:processedBySrc',
+        entries: () => LegionPhalanxDrawer.debugProcessedCount(),
+        // 这个 Map 存的是 Promise，取不到实际字节；条目数已能暴露量级，
+        // 真实字节由上面 unitSpriteCache 那条覆盖（同一批图）。
+        bytes: () => 0,
+        limitKind: 'none',
+    });
 }

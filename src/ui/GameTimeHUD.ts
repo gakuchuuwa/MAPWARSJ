@@ -1,6 +1,5 @@
 import { HistoricalEvent } from '../types/core';
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
-import { GameConfig } from '../config/GameConfig';
 import { Season } from '../core/TimeSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';

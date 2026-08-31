@@ -79,6 +79,16 @@ export class AssetLoader {
     /**
      * 清理所有缓存
      */
+    /**
+     * 丢弃单张已加载的原图。
+     * 🔴 [2026-08-31] 兵种贴图抠绿后会生成**另一张** Image（data URL），原图从此再没人用，
+     *    但它一直躺在 loadedImages 里 —— 等于每张贴图的位图在内存里存了两份。
+     *    抠绿完成后调这个把原图放掉；真需要时 preloadImages 会从 HTTP 缓存秒回。
+     */
+    public static release(url: string): void {
+        this.loadedImages.delete(url);
+    }
+
     public static clearCache(): void {
         this.loadedImages.clear();
         this.loadingPromises.clear();

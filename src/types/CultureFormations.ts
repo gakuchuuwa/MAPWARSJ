@@ -26,7 +26,6 @@
  *   编辑器可 per-slot 写 scale 覆盖；未写则走默认
  */
 
-import { GameConfig } from '../config/GameConfig';
 import { RegionType } from '../systems/RegionSystem';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';

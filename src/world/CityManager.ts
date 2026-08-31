@@ -2,7 +2,6 @@ import * as L from 'leaflet';
 import { shortestLongitudeDelta } from '../utils/GeoLongitude';
 import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
-import { GridSystem } from '../systems/GridSystem';
 import { FactionManager } from './FactionManager';
 import { clampCityTroopsForCity } from '../config/CityConfig';
 import { GameConfig } from '../config/GameConfig';
@@ -14,7 +13,6 @@ import { CityAssetManager } from '../assets/CityAssetManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
-import { audioManager } from '../audio/AudioManager';
 import { getSiegeCityBuildingStackScale } from '../config/city-marker-tokens';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 

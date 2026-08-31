@@ -2,7 +2,6 @@ import L from 'leaflet';
 import { GameMap } from '../map/GameMap';
 import { HistoricalEvent } from '../types/core';
 import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
-import { IBattleUnit } from '../combat/CombatSystem';
 import { SiegeEffectRenderer } from '../map/SiegeEffectRenderer';
 
 export class EventVisualizer {

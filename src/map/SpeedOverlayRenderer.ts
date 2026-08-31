@@ -163,7 +163,6 @@ export class SpeedOverlayRenderer {
     public exportAllTerrain(): void {
         const bounds = this.map.getBounds();
         const zoom = this.map.getZoom();
-        const centerLat = 34.26;
 
         const result: any = {};
         const minQ = -50;

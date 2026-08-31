@@ -27,8 +27,8 @@ import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { smoothRoad, removeBacktracks } from '../utils/GeometryUtils';
-import { REGION_CENTERS, REGION_LABELS, REGION_ORDER, getCityRegion, RegionType } from '../systems/RegionSystem';
+import {removeBacktracks} from '../utils/GeometryUtils';
+import {REGION_CENTERS, getCityRegion, RegionType} from '../systems/RegionSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { SeaRouteEditor } from '../sea/SeaRouteEditor';
 

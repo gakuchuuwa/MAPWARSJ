@@ -17,16 +17,15 @@ import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
 import { BanditDrawer, BanditState } from './BanditDrawer';
 import { LegionType } from '../types/UnitTypes';
 
-import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
+import {GameConfig} from '../config/GameConfig';
 import {
     CITY_ART_NATIVE_HEIGHT_PX,
     CITY_ART_NATIVE_WIDTH_PX,
     getCityMarkerBaseWidthPx,
     getSiegeCityScreenWidthPx,
 } from '../config/city-marker-tokens';
-import { FACTIONS } from '../data/factions';
 import { gameLog } from '../utils/GameLogger';
-import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, getStrategicSkillDef } from '../data/GeneralSkills';
+import {GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG} from '../data/GeneralSkills';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { generalIdHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import {

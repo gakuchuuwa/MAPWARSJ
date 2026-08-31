@@ -10,7 +10,6 @@
  */
 import { GameConfig } from '../config/GameConfig';
 import { perfDoctor } from '../debug/PerfDoctor';
-import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import {
     normalizeLongitude,
     shortestLongitudeDelta,

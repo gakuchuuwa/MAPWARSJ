@@ -1,6 +1,5 @@
 import { Army } from '../legion/Army';
 import { IBattleUnit, UnitType } from './CombatSystem';
-import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { gameLog } from '../utils/GameLogger';
 import {
     ensureFactionPortraitPath,

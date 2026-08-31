@@ -13,7 +13,7 @@
  *    - 逆局技触发（rollLuckOnRecompute=true）：每侧重掷一次 luck，使逆局翻盘概率化、与开局技平衡
  */
 
-import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
+import {IBattleUnit, BattleType} from './CombatSystem';
 import type { CityType } from '../types/core';
 import { gameLog } from '../utils/GameLogger';
 import { audioManager } from '../audio/AudioManager';
@@ -30,9 +30,9 @@ import {
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
-import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
-import { getGeneralProfile, POST_BATTLE_RECOVERY_SKILL } from '../data/GeneralSkills';
-import { COMEBACK_LUCK_RANGE, COMEBACK_LUCK_RANGE_GENERIC } from './TacticalConstants';
+import {sumCultureAdjustedTroops, getUnitBattlePowerMultiplier} from '../systems/CultureCombat';
+import {POST_BATTLE_RECOVERY_SKILL} from '../data/GeneralSkills';
+import {COMEBACK_LUCK_RANGE} from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -64,7 +64,6 @@ import {
     pickSideSkillGeneralUnit,
     canUnitUseGeneralSkills,
 } from './GeneralSkillCombat';
-import { BattleUnitFactory } from './BattleUnitFactory';
 
 import {
     reconcileSiegeGarrisonBoostWithLegion,

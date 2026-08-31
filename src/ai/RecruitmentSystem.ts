@@ -26,7 +26,6 @@ import { getCityRegion, REGION_ORDER, REGION_LABELS, RegionType, isRegionCenter 
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
-import { getEuclideanDistance } from '../core/DistanceUtils';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
