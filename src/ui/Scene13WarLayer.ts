@@ -496,8 +496,8 @@ interface WarBuilding {
 }
 
 /**
- * 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔：可射箭（复用 WarArrow 纯视觉弹丸 + 开火火花），
- * 30 秒随建筑一起随机三形态（完整继续射箭 / 破损停火 / 残骸停火，见 applyRandomCollapseForms）。
+ * 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔：可射箭（🔴 [主人需求] 真实穿透伤害，照 DE 箭塔科技；
+ * 连弩三连发 + 开火火花），30 秒随建筑一起随机三形态（完整继续射箭 / 破损停火 / 残骸停火，见 applyRandomCollapseForms）。
  */
 interface ArrowTower {
     /** 城墙内侧的塔贴图（BUILDING: 单帧，撞色兵；world 层、不阻挡） */
@@ -510,9 +510,11 @@ interface ArrowTower {
     range: number;
     /** 开火间隔（秒），按塔档 */
     reload: number;
+    /** 🔴 [主人需求] 射箭攻击力（照 DE 箭塔科技：瞭望 5 / 警戒 6 / 高级 7；城堡 11） */
+    atk: number;
     /** 倒塌后残骸素材目录名（BUILDINGANIM:..._RUBBLE） */
     rubbleAsset: string | null;
-    /** 🔴 30 秒随机切成破损/残骸后置位：不再开火 */
+    /** 🔴 30 秒随机切成破损/残骸后置位：不再开火（完整档保持 false 继续射） */
     down: boolean;
 }
 
@@ -3105,6 +3107,8 @@ export class Scene13WarLayer {
     private wallGates: WarBuilding[] = [];
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
+    /** 🔴 [主人需求] 攻城战守方城堡射手（险要专属；30 秒不坍塌，持续射击） */
+    private castleTowers: ArrowTower[] = [];
     /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；30 秒随机三形态 */
     private cityBuildings: Array<{ sprite: DecorSprite; name: string }> = [];
     private natureCache: Record<string, NatureAsset> = {};
@@ -3946,6 +3950,7 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
+        this.castleTowers = [];
         this.cityBuildings = [];
         this.decorPatches = [];
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
@@ -4086,6 +4091,7 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
+        this.castleTowers = [];
         this.cityBuildings = [];
         this.decorPatches = [];
         this.applyEnvironmentPlan();
@@ -4436,12 +4442,12 @@ export class Scene13WarLayer {
             this.ensureNatureAsset('BUILDING:' + arrowTowerAsset + '_DAMAGED');   // 30 秒「破损」形态
             this.ensureNatureAsset('BUILDINGANIM:' + arrowTowerAsset + '_DESTR'); // 30 秒「残骸」倒塌动画
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
-            this.ensureProj('PROJ_ARROW');
+            this.ensureProj('PROJ_ARROW_FIRE');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
             this.ensureFx('FX_WALL_DUST');
-            const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8 }
-                : arrowTowerAsset.includes('_TOWER_AGE3') ? { range: 360, reload: 2.0 }
-                : { range: 320, reload: 2.2 };   // 瞭望箭塔
+            const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8, atk: 7 }
+                : arrowTowerAsset.includes('_TOWER_AGE3') ? { range: 360, reload: 2.0, atk: 6 }
+                : { range: 320, reload: 2.2, atk: 5 };   // 瞭望箭塔（DE 攻 5）
             const towerX = wallFrontX + 60;                  // 城内一侧，贴近正面主城墙
             const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
             for (const frac of towerYFrac) {
@@ -4451,7 +4457,7 @@ export class Scene13WarLayer {
                 this.arrowTowers.push({
                     sprite, x: towerX, y: ty,
                     cd: Math.random() * 1.5,
-                    range: towerProfile.range, reload: towerProfile.reload,
+                    range: towerProfile.range, reload: towerProfile.reload, atk: towerProfile.atk,
                     rubbleAsset: towerRubble,
                     down: false,
                 });
@@ -4503,6 +4509,15 @@ export class Scene13WarLayer {
                 const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
                 this.decorSprites.push(castleSp);
                 this.trackCityBuilding(castleSp);
+                // 🔴 [主人需求] 城堡射箭（DE 城堡：攻 11、装填 2.0s；射程与高级箭塔同档 400）。
+                //    30 秒不坍塌（applyRandomCollapseForms 跳过 CASTLE），持续射击。
+                this.castleTowers.push({
+                    sprite: castleSp, x: castleSp.x, y: castleSp.y,
+                    cd: Math.random() * 1.5,
+                    range: 400, reload: 2.0, atk: 11,
+                    rubbleAsset: null,
+                    down: false,
+                });
                 const shuffledOthers = side.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
                 for (let i = 0; i < 8; i++) {
                     const sp = place(shuffledOthers[i], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE });
@@ -5658,7 +5673,7 @@ export class Scene13WarLayer {
      *    损毁里「破损」占主体（残垣断壁感），「残骸」少一些（不全是废墟）（纯视觉、不碰撞）：
      *    石墙/垛墙段：完整 40% / 破损 D50 40% / 残骸 D75 20%；栅栏：完整 40% / 直接消失 60%（无残垣档）；
      *    城门：无破损档，完整 40% / 残骸(DESTR→RUBBLE) 60%；
-     *    箭塔：破损(DAMAGED) / 残骸(直接切 RUBBLE) 各 1/2（无完整形态，均停火）；
+     *    箭塔：完整 40%（继续射击）/ 破损(DAMAGED) 30% / 残骸(直接切 RUBBLE) 30%（后两档停火）；
      *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
      */
     private applyRandomCollapseForms(): void {
@@ -5683,11 +5698,13 @@ export class Scene13WarLayer {
             }
         }
         for (const t of this.arrowTowers) {
-            // 🔴 [2026-08-29 主人定] 箭塔无「完整」形态：随机 破损(1/2) / 残骸(1/2)
-            const form: 1 | 2 = Math.random() < 0.5 ? 1 : 2;
+            // 🔴 [主人需求] 箭塔加「完整」档：40% 保持完整继续射击（down 保持 false），
+            //    其余破损(DAMAGED 30%) / 残骸(RUBBLE 30%) 停火（down=true）。
+            const r = Math.random();
+            if (r < 0.4) continue;   // 40% 完整：照旧继续射
             t.down = true;              // 破损/残骸：停火
             const towerName = t.sprite.asset.slice('BUILDING:'.length);
-            if (form === 1) {
+            if (r < 0.7) {
                 const damaged = 'BUILDING:' + towerName + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
             } else {
@@ -5725,60 +5742,70 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
-     *    找射程内最近的攻方士兵（f=0），冷却到点射一支箭（复用 WarArrow 纯视觉弹丸，不改平衡）+
-     *    塔顶开火火花（火花画，无素材依赖）作为攻击特效。塔在 30 秒被随机切成破损/残骸后才停止射击。
+     *    找射程内最近的攻方士兵（f=0），冷却到点射三支箭（连弩三连发 + 塔顶开火火花）+
+     *    🔴 [主人需求] 真实穿透伤害（一发 = atk，照 DE 箭塔科技 5/6/7、城堡 11）。
+     *    塔在 30 秒随机切成破损/残骸（或保持完整继续射）后才停止射击。
      */
     private stepArrowTowers(dt: number): void {
-        if (this.battleType !== 'siege' || this.arrowTowers.length === 0) return;
-        for (const t of this.arrowTowers) {
-            if (t.down || t.sprite.destroyed || t.sprite.collapse) continue;   // 已塌不再射
-            // 🔴 塔贴图未加载（素材不存在/未就绪）→ 不画也不射（看不见的塔开火更假）
-            const towerNa = this.natureCache[t.sprite.asset];
-            if (!towerNa?.img?.complete) continue;
-            t.cd -= dt;
-            if (t.cd > 0) continue;
-            // 塔顶开火点：贴图锚点在塔基，抬到塔身上部
-            const fireX = t.x;
-            const fireY = t.y - UNIT_PX * 0.8;
-            // 射程内最近的攻方士兵
-            let foe: WarMan | null = null, bd = Infinity;
-            for (const m of this.men) {
-                if (m.f === 0 && m.hp > 0) {
-                    const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
-                    if (d < bd) { bd = d; foe = m; }
-                }
+        if (this.battleType !== 'siege') return;
+        for (const t of this.arrowTowers) this.stepTowerShoot(t, dt);
+        for (const c of this.castleTowers) this.stepTowerShoot(c, dt);
+    }
+
+    /** 单座塔/城堡：找射程内最近攻方士兵，冷却到点连发 3 支箭 + 真实穿透伤害。 */
+    private stepTowerShoot(t: ArrowTower, dt: number): void {
+        if (t.down || t.sprite.destroyed || t.sprite.collapse) return;   // 已塌不再射
+        // 🔴 塔贴图未加载（素材不存在/未就绪）→ 不画也不射（看不见的塔开火更假）
+        const towerNa = this.natureCache[t.sprite.asset];
+        if (!towerNa?.img?.complete) return;
+        t.cd -= dt;
+        if (t.cd > 0) return;
+        // 塔顶开火点：贴图锚点在塔基，抬到塔身上部
+        const fireX = t.x;
+        const fireY = t.y - UNIT_PX * 0.8;
+        // 射程内最近的攻方士兵
+        let foe: WarMan | null = null, bd = Infinity;
+        for (const m of this.men) {
+            if (m.f === 0 && m.hp > 0) {
+                const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
+                if (d < bd) { bd = d; foe = m; }
             }
-            if (foe) {
-                if (bd > t.range * t.range) { t.cd = 0.25; continue; }   // 射程外，稍后再看
-                const ax = foe.x - fireX, ay = foe.y - fireY;
-                const ad = Math.hypot(ax, ay) || 1;
-                // 🔴 [2026-08-29 主人需求] 攻击特效 = 诸葛连弩：一次连发 3 支（复用 WarArrow.delay 连发机制，
-                //    每支延迟 v × PROJ_VOLLEY_DELAY 依次射出，视觉上就是连弩的三连发）。
-                for (let v = 0; v < 3; v++) {
-                    this.arrows.push({
-                        x: fireX, y: fireY,
-                        dx: ax / ad, dy: ay / ad, len: ad,
-                        t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW',
-                        delay: v * PROJ_VOLLEY_DELAY,
-                    });
-                }
-                // 攻击特效：塔顶开火闪光（火花）
-                const ang = Math.atan2(ay, ax);
-                for (let i = 0; i < 5; i++) {
-                    const spd = 18 + Math.random() * 30;
-                    const spread = (Math.random() - 0.5) * 0.7;
-                    this.sparks.push({
-                        x: fireX, y: fireY,
-                        vx: Math.cos(ang + spread) * spd,
-                        vy: Math.sin(ang + spread) * spd - 8,
-                        t: 0, dur: 0.10 + Math.random() * 0.12,
-                        color: ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'][(Math.random() * 4) | 0],
-                        size: 1.3 + Math.random() * 1.5,
-                    });
-                }
-            }
-            t.cd = foe ? t.reload : 0.25;   // 无攻方 → 快速重扫（0.25s 后再看），敌一进射程立刻反应
         }
+        if (!foe || bd > t.range * t.range) { t.cd = 0.25; return; }   // 无攻方/射程外，稍后再看
+        // 🔴 [主人需求] 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；
+        //    吃守方八环 sideBonus[1] · 围殴 · 白热化，与士兵同公式（不再纯视觉）。
+        const target = this.statsFor(foe.key, foe.f);
+        const dmg = Math.max(1, t.atk - target.pierceArmor);
+        foe.atkNext++;
+        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul();
+        if (foe.hp <= 0) this.pushCorpse(foe);
+        const ax = foe.x - fireX, ay = foe.y - fireY;
+        const ad = Math.hypot(ax, ay) || 1;
+        // 🔴 [2026-08-29 主人需求] 攻击特效 = 诸葛连弩：一次连发 3 支（复用 WarArrow.delay 连发机制，
+        //    每支延迟 v × PROJ_VOLLEY_DELAY 依次射出，视觉上就是连弩的三连发）。
+        for (let v = 0; v < 3; v++) {
+            this.arrows.push({
+                x: fireX, y: fireY,
+                dx: ax / ad, dy: ay / ad, len: ad,
+                t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW_FIRE',
+                delay: v * PROJ_VOLLEY_DELAY,
+            });
+        }
+        // 攻击特效：塔顶开火闪光（火花）
+        const ang = Math.atan2(ay, ax);
+        for (let i = 0; i < 5; i++) {
+            const spd = 18 + Math.random() * 30;
+            const spread = (Math.random() - 0.5) * 0.7;
+            this.sparks.push({
+                x: fireX, y: fireY,
+                vx: Math.cos(ang + spread) * spd,
+                vy: Math.sin(ang + spread) * spd - 8,
+                t: 0, dur: 0.10 + Math.random() * 0.12,
+                color: ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'][(Math.random() * 4) | 0],
+                size: 1.3 + Math.random() * 1.5,
+            });
+        }
+        t.cd = t.reload;
     }
 
     /**
