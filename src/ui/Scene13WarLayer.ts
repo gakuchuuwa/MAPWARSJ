@@ -4509,9 +4509,9 @@ export class Scene13WarLayer {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
             const frontX = Math.max(...side.map((p) => p.x));
             const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 1).sort((a, b) => a.y - b.y);
-            const barricadeCount = 3 + Math.floor(Math.random() * 2);
-            const topY = frontRow[0].y - 75;
-            const bottomY = frontRow[frontRow.length - 1].y + 75;
+            const barricadeCount = 6 + Math.floor(Math.random() * 4);
+            const topY = frontRow[0].y - 135;
+            const bottomY = frontRow[frontRow.length - 1].y + 135;
             this.ensureNatureAsset(barricadeAsset);
             for (let i = 0; i < barricadeCount; i++) {
                 const t = i / (barricadeCount - 1);
