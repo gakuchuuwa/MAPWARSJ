@@ -62,7 +62,8 @@ const DECROMA_CACHE = new Map<string, string>();
  * 🔴 [2026-08-30] 原来是「2000 条」。实测一条 data URL 平均 **0.81MB**（UTF-16 约 1.6MB 堆），
  *    2000 条 = 名义 3.2GB，而浏览器 jsHeapSizeLimit 只有 4096MB。条数上限在这里等于没有上限。
  */
-const DECROMA_CACHE_MAX_BYTES = 200 * 1024 * 1024;
+// 🔴 [2026-08-31] 实测顶死在 199MB，同上，放到 500MB。
+const DECROMA_CACHE_MAX_BYTES = 500 * 1024 * 1024;
 let decromaCacheBytes = 0;
 
 /** 按字节预算写入抠绿缓存（FIFO，Map 天然有序）。 */
@@ -125,7 +126,9 @@ const CLEAN_CACHE = new Map<string, HTMLImageElement>();
  *    改成按**实际字节**淘汰。300MB 够装 2~3 场的常见兵种，且与染色缓存、抠绿缓存加总后
  *    仍给单场工作集（~760MB，bank 强引用）留出充足余量。
  */
-const CLEAN_CACHE_MAX_BYTES = 300 * 1024 * 1024;
+// 🔴 [2026-08-31] 实测顶死在 296MB → 整场反复淘汰重抠绿。放到 700MB 装得下一整场。
+//    预算的职责是「跨场保留多少」，低于单场工作集只会制造抖动（见 SpriteTinter 同款注释）。
+const CLEAN_CACHE_MAX_BYTES = 700 * 1024 * 1024;
 let cleanCacheBytes = 0;
 
 /**
@@ -4476,6 +4479,27 @@ export class Scene13WarLayer {
             return;
         }
 
+        // 攻击方只在最前排出兵口建筑前铺一道完整木桩拒马线。
+        if (f === 0) {
+            const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
+            const frontX = Math.max(...side.map((p) => p.x));
+            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 1).sort((a, b) => a.y - b.y);
+            const barricadeCount = Math.min(9, Math.max(6, frontRow.length * 3));
+            const topY = frontRow[0].y - 75;
+            const bottomY = frontRow[frontRow.length - 1].y + 75;
+            this.ensureNatureAsset(barricadeAsset);
+            for (let i = 0; i < barricadeCount; i++) {
+                const t = i / (barricadeCount - 1);
+                this.decorSprites.push({
+                    asset: barricadeAsset, frame: 0,
+                    x: frontX + 180,
+                    y: topY + (bottomY - topY) * t,
+                    flip: Math.random() < 0.5, layer: 'world', z: 0,
+                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                });
+            }
+        }
+
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔
         if (this.sideCulture[f] === 'STEPPE') {
             placeYurtCamp();
@@ -4484,24 +4508,6 @@ export class Scene13WarLayer {
         const style = this.buildingStyleFor(f as 0 | 1);
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
-        // 🔴 [2026-08-31 主人需] 攻击方营地前摆拒马鹿角（防御工事，朝向敌方/城一侧）。
-        //    攻方恒定在左（f=0），敌/城在右 → 摆在该方**阵线前沿**（row=0，x 最大的出兵口，
-        //    最靠近城/中线）前方，横排成一线正面防御。
-        if (f === 0) {
-            const BARRICADE_ASSET = 'BATTLEFIELD:STAKE_BARRICADE';
-            const frontX = Math.max(...side.map((p) => p.x));
-            const frontRow = side.filter((p) => p.x >= frontX - 1).sort((a, b) => a.y - b.y);
-            for (let i = 0; i < frontRow.length && i < 5; i++) {
-                const sp = frontRow[i];
-                const asset = BARRICADE_ASSET;
-                this.ensureNatureAsset(asset);
-                this.decorSprites.push({
-                    asset, frame: 0, x: sp.x + 95, y: sp.y + 12,
-                    flip: Math.random() < 0.5, layer: 'world', z: 0,
-                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
-                });
-            }
-        }
         for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
         this.decorSprites.push(place(shuffledSpawns[7], 'OUTPOST'));
         this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`));

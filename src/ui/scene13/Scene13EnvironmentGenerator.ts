@@ -668,7 +668,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
                         input.keepClear ?? [], baseTerrain);
-        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain, input.isSiege ?? false);
+        buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain, input.isSiege ?? false,
+                       input.keepClear ?? []);
 
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
@@ -1658,7 +1659,8 @@ function buildVegetation(
                 largeRockCount++;
             }
         }
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor, decorLimits);
+        const solidExclusion = isSiege && asset.startsWith('ROCK') ? inKeepClear : inArmyCorridor;
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, solidExclusion, decorLimits);
         if (p) {
             const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;
             objects.push({
@@ -1692,7 +1694,8 @@ function buildVegetation(
                     const dist = 22 + rng.next() * 24;
                     const sx = p.x + Math.cos(ang) * dist;
                     const sy = p.y + Math.sin(ang) * dist * 0.6;
-                    if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !inArmyCorridor(sx, sy)) {
+                    const rockExclusion = isSiege ? inKeepClear : inArmyCorridor;
+                    if (sx >= 0 && sx <= VW && sy >= 0 && sy <= VH && !isWater(sx, sy) && !rockExclusion(sx, sy)) {
                         // 🔴 [2026-08-24] 伴生碎石从**该底图配的石头**里取，别硬编码。
                         //    原来写死 ROCK1/2/3，于是 ROCK3（橙褐色沙漠岩盘）
                         //    出现在德国温带、俄罗斯雪原——底图明明只配了灰岩。
@@ -1873,7 +1876,7 @@ function buildVegetation(
     }
 }
 
-function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome, baseTile: string = '', isSiege: boolean = false): void {
+function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSource, objects: EnvironmentObjectPlan[], isWater: WaterChecker, waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined, biome: Biome, baseTile: string = '', isSiege: boolean = false, keepClear: ReadonlyArray<{ x: number; y: number; r: number }> = []): void {
     // 资源按**脚下底图**分配（不是 biome）。
     // 🔴 [2026-08-24 主人：「沙漠中种松树吗？？？」顺查到的同类问题]
     //    原来按 biome 分，于是安定、琅琊这些干裂黄土地(ds2)上长出**浆果丛**。
@@ -1903,10 +1906,13 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     const inArmyCorridor = (x: number, y: number): boolean => {
         return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
     };
+    const inDefenderCity = (x: number, y: number): boolean =>
+        keepClear.some((k) => (x - k.x) * (x - k.x) + (y - k.y) * (y - k.y) <= k.r * k.r);
 
     for (let i = 0; i < resCount; i++) {
         const asset = rng.pick(resAssets);
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, inArmyCorridor);
+        const resourceExclusion = isSiege && asset === 'MINE_STONE' ? inDefenderCity : inArmyCorridor;
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, resourceExclusion);
         if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 

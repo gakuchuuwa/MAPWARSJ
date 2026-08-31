@@ -66,14 +66,22 @@ export class SpriteTinter {
      *    600MB 的取法：单场工作集（bank 强引用，缓存管不着）约 760MB，
      *    缓存再留 600MB 可覆盖上一场的常见兵种，两者相加 ~1.4GB，离 4GB 有充足余量。
      */
-    private static readonly TINTED_CACHE_MAX_BYTES = 600 * 1024 * 1024;
+    /**
+     * 🔴 [2026-08-31 修「战术模式比昨天更卡」] 这个数**必须显著大于一场战斗的工作集**，
+     *    否则就是纯赔本：实测单场 13 的染色图要 **1.34GB**（876MB 位图 + 468MB data URL），
+     *    而预算曾设 600MB → 整场战斗反复淘汰又重染，每次重染跑两遍 getImageData 逐像素 + PNG 编码。
+     *    **而且一分内存都没省**：战斗期间 bank 一直强引用着那些图，删缓存条目不释放内存。
+     *    预算的职责是「跨场保留多少」，不是「场内封顶」—— 低于单场工作集只会制造抖动。
+     */
+    private static readonly TINTED_CACHE_MAX_BYTES = 1600 * 1024 * 1024;
     /** 当前染色缓存已占字节（随写入/淘汰增减，避免每次淘汰都重新遍历统计）。 */
     private static tintedCacheBytes = 0;
 
     // 玩家色遮罩缓存：maskSrc -> Image（加载中/完成）或 'none'（确认无遮罩）
     private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
     /** 遮罩图缓存**字节**预算（理由同 TINTED_CACHE_MAX_BYTES：遮罩与主图同尺寸，条数上限一样失真）。 */
-    private static readonly MASK_CACHE_MAX_BYTES = 300 * 1024 * 1024;
+    /** 同上：实测单场顶死在 300MB 说明不够用，放到 700MB 让它装得下一整场。 */
+    private static readonly MASK_CACHE_MAX_BYTES = 700 * 1024 * 1024;
     /** 当前遮罩缓存已占字节。 */
     private static maskCacheBytes = 0;
     /**
