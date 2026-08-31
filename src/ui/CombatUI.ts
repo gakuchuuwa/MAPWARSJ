@@ -892,28 +892,21 @@ export class CombatUI {
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; align-items: center;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap;`;
-        this.skillsRow.appendChild(this.leftSkillsBox);
-        this.skillsRow.appendChild(this.rightSkillsBox);
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; align-items: center;`;
 
         this.leftTotalMultBadge = document.createElement('span');
         this.leftTotalMultBadge.style.cssText = `
-            position: absolute;
-            right: ${uiPx(36)};
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 5;
             display: none;
             padding: 2px 8px;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(14)};
+            font-size: ${uiPx(13)};
             font-weight: 900;
             line-height: 1.15;
             border: 1px solid rgba(253, 185, 49, 0.9);
             color: #FFD700;
-            background: rgba(35, 12, 4, 0.85);
+            background: rgba(35, 12, 4, 0.9);
             border-radius: 3px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 215, 0, 0.4);
             white-space: nowrap;
@@ -923,26 +916,34 @@ export class CombatUI {
 
         this.rightTotalMultBadge = document.createElement('span');
         this.rightTotalMultBadge.style.cssText = `
-            position: absolute;
-            left: calc(50% + ${uiPx(36)});
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 5;
             display: none;
             padding: 2px 8px;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(14)};
+            font-size: ${uiPx(13)};
             font-weight: 900;
             line-height: 1.15;
             border: 1px solid rgba(90, 170, 190, 0.9);
             color: #70E0FF;
-            background: rgba(5, 20, 30, 0.85);
+            background: rgba(5, 20, 30, 0.9);
             border-radius: 3px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(90, 170, 190, 0.4);
             white-space: nowrap;
             pointer-events: auto;
             cursor: help;
         `;
+
+        const leftWrap = document.createElement('div');
+        leftWrap.style.cssText = `display: flex; align-items: center; gap: ${uiPx(6)}; pointer-events: auto;`;
+        leftWrap.appendChild(this.leftTotalMultBadge);
+        leftWrap.appendChild(this.leftSkillsBox);
+
+        const rightWrap = document.createElement('div');
+        rightWrap.style.cssText = `display: flex; align-items: center; gap: ${uiPx(6)}; pointer-events: auto;`;
+        rightWrap.appendChild(this.rightSkillsBox);
+        rightWrap.appendChild(this.rightTotalMultBadge);
+
+        this.skillsRow.appendChild(leftWrap);
+        this.skillsRow.appendChild(rightWrap);
 
         this.healthBarContainer = document.createElement('div');
         this.healthBarContainer.style.cssText = `
@@ -986,9 +987,6 @@ export class CombatUI {
             clip-path: polygon(0 0, 100% 0, calc(100% - ${uiPx(T.clashBar.clipPx)}) 100%, 0% 100%);
             box-shadow: inset 0 -3px 10px rgba(255, 200, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         `;
-
-        // 左牌挂 attackerBar 内部自然跟随；右牌挂 healthBarContainer（attackerBar 有 clip-path 会切掉外部子节点）
-        this.attackerBar.appendChild(this.leftTotalMultBadge);
 
         this.clashEffect = document.createElement('div');
         this.clashEffect.style.cssText = `
@@ -1045,7 +1043,6 @@ export class CombatUI {
         this.healthBarContainer.appendChild(this.defenderBar);
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
-        this.healthBarContainer.appendChild(this.rightTotalMultBadge);
 
 
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
@@ -1957,25 +1954,24 @@ export class CombatUI {
             opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
         ) => {
+            if (multBadge) multBadge.style.display = 'none'; // 底部总×不再显示
             if (!unit) {
-                if (multBadge) multBadge.style.display = 'none';
                 if (totalBadge) totalBadge.style.display = 'none';
                 return;
             }
             const { totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
 
-            if (multBadge) {
+            if (totalBadge) {
                 const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
-                multBadge.innerHTML = `总×${fmtTotalStr}`;
-                multBadge.title = totalTitle;
+                totalBadge.innerHTML = `总×${fmtTotalStr}`;
+                totalBadge.title = totalTitle;
                 const isBuff = totalMult > 1.001;
                 const isAtt = side === 'attacker';
-                const borderColor = isBuff ? (isAtt ? 'rgba(253, 185, 49, 0.85)' : 'rgba(90, 170, 190, 0.85)') : 'rgba(235, 85, 75, 0.85)';
+                const borderColor = isBuff ? (isAtt ? 'rgba(253, 185, 49, 0.95)' : 'rgba(90, 170, 190, 0.95)') : 'rgba(235, 85, 75, 0.95)';
                 const color = isBuff ? (isAtt ? '#FFD700' : '#70E0FF') : '#FFAA99';
-                const bg = isBuff ? (isAtt ? 'rgba(50, 20, 5, 0.9)' : 'rgba(10, 30, 45, 0.9)') : 'rgba(50, 10, 10, 0.9)';
-                multBadge.style.cssText = `display:inline-block;padding:1px 4px;margin:0 1px;font-size:11.5px;font-weight:800;line-height:1.15;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.4);cursor:help;`;
+                const bg = isBuff ? (isAtt ? 'rgba(40, 15, 5, 0.92)' : 'rgba(10, 25, 38, 0.92)') : 'rgba(45, 10, 10, 0.92)';
+                totalBadge.style.cssText = `display:inline-block;padding:2px 8px;font-family:'Noto Serif SC',serif;font-size:13px;font-weight:900;line-height:1.2;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:4px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.6), 0 0 8px ${borderColor};cursor:help;pointer-events:auto;`;
             }
-            // totalBadge 现在专门由 renderSideLabel 写入兵力数值，此处不再覆盖
         };
 
         const updateReinforcements = (side: 'attacker' | 'defender') => {
@@ -2349,16 +2345,6 @@ export class CombatUI {
             this.sideElement('defender', this.leftTotalMultBadge, this.rightTotalMultBadge),
             defender, attacker, 'defender',
         );
-        updateCultureBadge(attacker, 'attacker');
-        updateCultureBadge(defender, 'defender');
-        updateStyleBadge(attacker, 'attacker');
-        updateStyleBadge(defender, 'defender');
-        updateLegionBadge(attacker, 'attacker');
-        updateLegionBadge(defender, 'defender');
-        updateAptitudeBadge(attacker, 'attacker');
-        updateAptitudeBadge(defender, 'defender');
-        updateLuckBadge('attacker');
-        updateLuckBadge('defender');
         updateCenterSixSetBadges(attacker, defender);
         updateReinforcements('attacker');
         updateReinforcements('defender');
@@ -3015,17 +3001,9 @@ export class CombatUI {
      * [2026-06-12 美化] 数字与地图标签统一为「万」制：≥1 万显示两位小数（战斗中百位变动可见），
      * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
      */
-    private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
+    private renderSideLabel(side: 'attacker' | 'defender', name: string, _troops: number): void {
         const nameEl = this.sideElement(side, this.leftSideNameSpan, this.rightSideNameSpan);
-        const totalBadge = this.sideElement(side, this.leftTotalMultBadge, this.rightTotalMultBadge);
         nameEl.innerHTML = name;
-        if (totalBadge) {
-            const t = Math.max(0, Math.floor(troops));
-            const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-            totalBadge.innerHTML = troopStr;
-            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人（含各路援军）`;
-            totalBadge.style.display = 'inline-block';
-        }
     }
 
     private resolveFactionLabel(factionId: string | null): string {

@@ -6,8 +6,8 @@
  *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；
  *     远征军团 2026-07-27 起同样走表，见 GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
- *   · 整跳扣减：超过 FREE_SUPPLY_SEC（15 游戏秒 = 1 季度携行粮）后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
- *     对当前兵力扣 ATTRITION_CHUNK_RATE（当前 15%，实际值以 GameConfig 为准），保底 MIN_TROOPS_FLOOR；
+ *   · 整跳扣减：陆上超过 15 游戏秒、海上超过 30 游戏秒后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
+ *     对当前兵力按连续跳数逐次加重（当前 15%、30%、45%……），允许归零；
  *   · 豁免：战斗中暂停扣减 / 战后休整停表 / str_13 以战养战全免（远征军团已不再豁免）；
  *   · 一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势
  *     （骑兵得补偿；海运快捷但长途航海同样断粮）。
@@ -23,7 +23,7 @@ import type { Army } from '../Army';
  * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字），0 = 本帧无扣减。
  *
  * 整跳模型（主人裁定 2026-07-21）：断粮后向 attritionChunkSec 累计，攒满 ATTRITION_CHUNK_SEC
- * 一跳、一次扣 ATTRITION_CHUNK_RATE——不逐帧涓流，飘字天然 15 秒一跳、观众可读；单跳至少扣 1。
+ * 一跳、一次提高 ATTRITION_CHUNK_RATE——不逐帧涓流，飘字天然 15 秒一跳、观众可读；单跳至少扣 1。
  * 一帧 dt 再大也只结一跳（余量留到下帧），避免暂停恢复后单帧暴扣。
  */
 export function tickMarchAttrition(army: Army, deltaTime: number): number {
@@ -38,7 +38,7 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     if (cfg.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null) return 0;
 
     const troops = army.getTroops();
-    if (troops <= cfg.MIN_TROOPS_FLOOR) return 0;
+    if (troops <= 0) return 0;
 
     // str_13 以战养战：行军减兵全免（写法照抄 Army.updateTerrainSpeed 查 mountain_march_immunity）
     if (generalHasStrategicEffect(army, 'march_attrition_immunity')) {
@@ -47,8 +47,9 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
         return 0;
     }
 
-    // 免费补给时间窗：FREE_SUPPLY_SEC 游戏秒 = 1 季度携行粮
-    if (army.timeSinceSupply <= cfg.FREE_SUPPLY_SEC) return 0;
+    // 舰船载粮能力更强：海上免费补给期为 30 秒，陆上为 15 秒。
+    const freeSupplySec = army.isOnSea ? cfg.NAVAL_FREE_SUPPLY_SEC : cfg.FREE_SUPPLY_SEC;
+    if (army.timeSinceSupply <= freeSupplySec) return 0;
 
     // 刚跨过免费期首帧：种子化为满 chunk，立刻触发第一次扣减（断粮即损，不等下一轮攒满）
     //
@@ -58,7 +59,7 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     //      第 30s 扣 3825 → 第 31s 又扣 3251；第 45s / 第 46s 同样连跳……
     //    节奏成了 15s、1s、14s、1s…… 实际损耗几乎翻倍，与「15 秒整跳、飘字不刷屏」的定稿不符。
     //    改判「本帧是否**刚**跨过免费窗」：只有跨过那一刻才种子化，此后一律正常累计。
-    const justRanOut = army.timeSinceSupply - deltaTime <= cfg.FREE_SUPPLY_SEC;
+    const justRanOut = army.timeSinceSupply - deltaTime <= freeSupplySec;
     if (justRanOut) {
         army.attritionChunkSec = cfg.ATTRITION_CHUNK_SEC + deltaTime;
     } else {
@@ -66,9 +67,11 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     }
     if (army.attritionChunkSec < cfg.ATTRITION_CHUNK_SEC) return 0;
     army.attritionChunkSec -= cfg.ATTRITION_CHUNK_SEC;
+    army.attritionChunkCount += 1;
+    const escalatingRate = cfg.ATTRITION_CHUNK_RATE * army.attritionChunkCount;
     const loss = Math.min(
-        troops - cfg.MIN_TROOPS_FLOOR,
-        Math.max(1, Math.floor(troops * cfg.ATTRITION_CHUNK_RATE)),
+        troops,
+        Math.max(1, Math.floor(troops * escalatingRate)),
     );
     if (loss <= 0) return 0;
     army.setTroops(troops - loss);
@@ -89,7 +92,7 @@ export function resetSupplyTimerIfNearOwnCity(
     const cfg = GameConfig.MARCH_ATTRITION;
     if (!cfg.ENABLED) return false;
     if (army.isDestroyed) return false;
-    if (army.timeSinceSupply === 0 && army.attritionChunkSec === 0) return false;
+    if (army.timeSinceSupply === 0 && army.attritionChunkSec === 0 && army.attritionChunkCount === 0) return false;
 
     const radiusDeg = cfg.RESET_RADIUS_KM / cfg.KM_PER_DEGREE;
     const pos = army.getPosition();
@@ -98,6 +101,7 @@ export function resetSupplyTimerIfNearOwnCity(
         if (dist <= radiusDeg) {
             army.timeSinceSupply = 0;
             army.attritionChunkSec = 0;
+            army.attritionChunkCount = 0;
             return true;
         }
     }

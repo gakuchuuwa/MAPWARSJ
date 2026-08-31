@@ -207,6 +207,8 @@ export class Army implements IBattleUnit {
      * 战斗/休整期间不累计（扣减暂停）；split 时子军团继承（防拆分刷补给漏洞）。
      */
     public attritionChunkSec: number = 0;
+    /** 连续断粮已结算的减员跳数；补给后归零，用于让后续每跳减员率持续增加。 */
+    public attritionChunkCount: number = 0;
 
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
@@ -290,6 +292,7 @@ export class Army implements IBattleUnit {
             // 行军减兵：战斗胜利 = 就地进行补给，重新计时（主人裁定 2026-07-21）
             this.timeSinceSupply = 0;
             this.attritionChunkSec = 0;
+            this.attritionChunkCount = 0;
             if (!this.isPostBattleResting()) {
                 this.tryEmitPostBattleResumeFx();
             }
@@ -919,6 +922,7 @@ export class Army implements IBattleUnit {
         // 行军减兵：子军团继承父军团断粮计时（防拆分刷补给漏洞；小数累加器不复制，<1 兵无刷取空间）
         newArmy.timeSinceSupply = this.timeSinceSupply;
         newArmy.attritionChunkSec = this.attritionChunkSec;
+        newArmy.attritionChunkCount = this.attritionChunkCount;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;

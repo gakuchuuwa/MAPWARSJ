@@ -2889,6 +2889,8 @@ interface DecorSprite {
     obstructionDisabled: boolean;
     /** 已销毁装饰（城门倒塌动画播完且无残骸兜底）→ 不再绘制、不再阻挡 */
     destroyed?: boolean;
+    /** 奇观、城堡等特殊建筑：任何随机破损、倒塌与残骸入口都不得处理。 */
+    indestructible?: boolean;
     /**
      * 倒塌动画状态（城门/城墙破墙时置入）：破墙后本 sprite 不立即 destroyed，
      * 而是切到倒塌动画素材（asset 已指向 collapseAsset），按 t 推进帧，
@@ -4274,7 +4276,14 @@ export class Scene13WarLayer {
         const place = (
             s: { x: number; y: number },
             asset: string,
-            options?: { flip?: boolean; frame?: number; z?: number; scale?: number; obstruction?: { x: number; y: number } },
+            options?: {
+                flip?: boolean;
+                frame?: number;
+                z?: number;
+                scale?: number;
+                obstruction?: { x: number; y: number };
+                indestructible?: boolean;
+            },
         ): DecorSprite => {
             // 战略大城不含城堡：无论从哪个建筑入口传入，战术大城都禁止落入 CASTLE 素材。
             const resolvedAsset = this.battleType === 'siege' && f === 1
@@ -4302,6 +4311,7 @@ export class Scene13WarLayer {
                 z: options?.z ?? 0,
                 scale: options?.scale,
                 obstruction: options?.obstruction,
+                indestructible: options?.indestructible,
                 obstructionContactSec: 0,
                 obstructionTouched: false,
                 obstructionDisabled: false,
@@ -4322,9 +4332,8 @@ export class Scene13WarLayer {
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
         if (this.battleType === 'siege' && f === 1) {
-            // [2026-08-29 主人定] 城内奇观优先显示：主奇观 + 全部附加奇观都立（有 2 个就显示 2 个），朝向随机（place 默认左右镜像随机）。
-            //    纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型）。
-            //    位置：从 9 口 shuffle 随机取（不再固定后排右下角），建筑池避开奇观占用的口。
+            // 城内特殊建筑优先显示：主奇观占最中央落点，附加奇观依次由中心向外占位。
+            // 纯视觉（BUILDING: 前缀单帧，无碰撞，不破坏阵型），并明确标记为不可坍塌。
             const wonderAssets: string[] = [];
             const wonderSpots: Array<{ x: number; y: number }> = [];
             if (this.defenderCityId) {
@@ -4334,14 +4343,24 @@ export class Scene13WarLayer {
                 if (extraWonders) for (const ex of extraWonders) wonderAssets.push(ex.asset);
             }
             if (wonderAssets.length > 0) {
-                const shuffledSide = [...side].sort(() => Math.random() - 0.5);
+                const centerX = side.reduce((sum, s) => sum + s.x, 0) / side.length;
+                const centerY = side.reduce((sum, s) => sum + s.y, 0) / side.length;
+                const centerPrioritySide = [...side].sort((a, b) => {
+                    const da = Math.hypot(a.x - centerX, a.y - centerY);
+                    const db = Math.hypot(b.x - centerX, b.y - centerY);
+                    return da - db || a.y - b.y || a.x - b.x;
+                });
                 for (let i = 0; i < wonderAssets.length; i++) {
-                    const spot = shuffledSide[Math.min(i, shuffledSide.length - 1)];
+                    const spot = centerPrioritySide[Math.min(i, centerPrioritySide.length - 1)];
                     wonderSpots.push(spot);
-                    this.decorSprites.push(place({ x: spot.x, y: spot.y }, wonderAssets[i], { z: 2, scale: SIEGE_WONDER_SCALE }));
+                    this.decorSprites.push(place(
+                        { x: spot.x, y: spot.y },
+                        wonderAssets[i],
+                        { z: 2, scale: SIEGE_WONDER_SCALE, indestructible: true },
+                    ));
                 }
             }
-            // 🔴 [2026-08-29 主人定「有奇观的优先显示奇观」] 建筑池避开奇观占用的口，奇观独占后排不与其他建筑重叠。
+            // 普通建筑池避开特殊建筑占用的落点，不与其重叠。
             const buildingSide = wonderSpots.length > 0
                 ? side.filter((s) => !wonderSpots.some((w) => w.x === s.x && w.y === s.y))
                 : side;
@@ -4522,7 +4541,10 @@ export class Scene13WarLayer {
                 const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
                 const centerSpawn = side.reduce((best, s) =>
                     Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, side[0]);
-                const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
+                const castleSp = place(centerSpawn, castleAsset, {
+                    scale: SIEGE_CASTLE_SCALE,
+                    indestructible: true,
+                });
                 this.decorSprites.push(castleSp);
                 this.trackCityBuilding(castleSp);
                 // 🔴 [主人需求] 城堡射箭（DE 城堡：攻 11、装填 2.0s；射程与高级箭塔同档 400）。
@@ -5670,14 +5692,15 @@ export class Scene13WarLayer {
     /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
     private collapsibleSprites(): DecorSprite[] {
         const out: DecorSprite[] = [];
-        for (const b of this.wallGates) out.push(b.sprite);
-        for (const t of this.arrowTowers) out.push(t.sprite);
-        for (const b of this.cityBuildings) out.push(b.sprite);
+        for (const b of this.wallGates) if (!b.sprite.indestructible) out.push(b.sprite);
+        for (const t of this.arrowTowers) if (!t.sprite.indestructible) out.push(t.sprite);
+        for (const b of this.cityBuildings) if (!b.sprite.indestructible) out.push(b.sprite);
         return out;
     }
 
     /** 让装饰精灵播倒塌动画 → 切残骸：有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 直接切 rubble。 */
     private collapseToRubble(sprite: DecorSprite, name: string): void {
+        if (sprite.indestructible) return;
         const destr = 'BUILDINGANIM:' + name + '_DESTR';
         const rubble = 'BUILDINGANIM:' + name + '_RUBBLE';
         if (this.natureCache[destr]?.img?.complete) {
@@ -5737,7 +5760,7 @@ export class Scene13WarLayer {
             }
         }
         for (const b of this.cityBuildings) {
-            if (b.name.includes('CASTLE')) continue;   // 城堡不坍塌（主人 08-29 定）
+            if (b.sprite.indestructible || b.name.includes('CASTLE')) continue;
             const r = Math.random();
             if (r < 0.4) continue;   // 40% 保持完整
             if (r < 0.8) {
