@@ -3328,7 +3328,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/daming/qi_d_qijiguang.png": {
-            "scale": 1.17,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": -59
         },
@@ -4613,7 +4613,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/LINGNAN/geng_gengjingzhong.png": {
-            "scale": 0.98,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -3
         },
