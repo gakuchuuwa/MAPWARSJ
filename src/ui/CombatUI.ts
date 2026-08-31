@@ -204,6 +204,36 @@ export function resolveAttackStyleTagLabel(style: string, isAttacker: boolean): 
     return isAttacker ? '锐不可当' : '固若金汤';
 }
 
+/**
+ * 名将光环标签文案：历史名将登场自带 ×1.30 名将光环。
+ */
+export function resolveFamousTagLabel(isFamous: boolean): string | null {
+    return isFamous ? '威震华夏' : null;
+}
+
+/**
+ * 据点地利标签文案：守方在关隘要塞或区域名城时的地利标签。
+ * - 关隘要塞：一夫当关
+ * - 区域名城：名城重镇
+ */
+export function resolveSiteDefenseTagLabel(passMult: number, regionMult: number): string | null {
+    if (passMult > 1.001) return '一夫当关';
+    if (regionMult > 1.001) return '名城重镇';
+    return null;
+}
+
+/**
+ * 援军合力标签文案：多路援军入场时的加权协力标签。
+ * - 得助大顺（>1.05）：同仇敌忾
+ * - 掣肘受阻（<0.95）：各自为战
+ * - 寻常合兵（0.95~1.05）：合兵协力
+ */
+export function resolveReinforcementTagLabel(joinLuck: number): string {
+    if (joinLuck > 1.05) return '同仇敌忾';
+    if (joinLuck < 0.95) return '各自为战';
+    return '合兵协力';
+}
+
 /** 取文化标签；档位未精确命中时就近取档（绝不返回空串让标签凭空消失） */
 export function resolveCultureTagLabel(mult: number, isGarrison: boolean): string {
     const table = isGarrison ? CULTURE_TAG_DEF_LABELS : CULTURE_TAG_ATK_LABELS;
@@ -1306,27 +1336,28 @@ export class CombatUI {
         if (topHud) {
             topHud.style.display = 'none';
         }
-        // ③ 科技 → 屏幕下方居中左右分列
+        // ③ 科技 → 屏幕下方居中左右分列（按着底，向上折行）
         if (this.leftTechBox) {
             this.leftTechBox.style.position = 'fixed';
-            this.leftTechBox.style.bottom = '1.8vh';
+            this.leftTechBox.style.bottom = '0px';
             this.leftTechBox.style.top = 'auto';
             this.leftTechBox.style.right = '50.5vw';
             this.leftTechBox.style.left = 'auto';
             this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
             this.leftTechBox.style.color = '#e8dcc0';
+            this.leftTechBox.style.alignItems = 'flex-end';
         }
         if (this.rightTechBox) {
             this.rightTechBox.style.position = 'fixed';
-            this.rightTechBox.style.bottom = '1.8vh';
+            this.rightTechBox.style.bottom = '0px';
             this.rightTechBox.style.top = 'auto';
             this.rightTechBox.style.left = '50.5vw';
             this.rightTechBox.style.right = 'auto';
             this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
             this.rightTechBox.style.color = '#e8dcc0';
+            this.rightTechBox.style.alignItems = 'flex-end';
         }
-        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（左盒 right:50.5vw / 右盒 left:50.5vw，
-        // 中缝正好是屏幕中线），底边与两盒对齐，一眼看出左金右青是两方各自的科技。
+        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（底边与两盒贴底对齐）
         if (this.techDivider) {
             const size = uiPx(T.sideBar.centerVsIconSize);
             this.techDivider.style.width = size;
@@ -1334,7 +1365,7 @@ export class CombatUI {
             this.techDivider.style.left = '50%';
             this.techDivider.style.right = 'auto';
             this.techDivider.style.top = 'auto';
-            this.techDivider.style.bottom = '1.8vh';
+            this.techDivider.style.bottom = '2px';
             this.techDivider.style.transform = 'translateX(-50%)';
             this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
         }
@@ -1546,7 +1577,7 @@ export class CombatUI {
 
         box.style.display = 'flex';
         box.style.flexDirection = 'row';
-        box.style.alignItems = 'center';
+        box.style.alignItems = 'flex-end';
         box.style.gap = '6px';
         requestAnimationFrame(() => {
             box.style.opacity = '1';
@@ -1604,24 +1635,20 @@ export class CombatUI {
         if (box === this.leftTechBox) {
             const tag = document.createElement('span');
             tag.textContent = isAtt ? '⚔️ 攻方科技' : '🛡️ 守方科技';
-            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help;`;
+            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help; align-self: flex-end; margin-bottom: 2px;`;
             const totalSummary = summarizeTechEffects(own).join(' · ');
             tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
         }
 
-        // 科技列表（每个科技一个垂直对齐的独立卡片/小列）
+        // 科技列表（每个科技一个垂直对齐的独立卡片/小列，按着底向上折行）
         const chipsWrap = document.createElement('div');
-        // 🔴 [2026-08-19 实测] 必须 wrap，不能 nowrap：科技全开后拉丁 16 条 / 日耳曼 15 条，
-        //   单行需 937px，而 1920 屏每侧只分得 806px —— nowrap 会压住中央跟随胶囊 200px 并顶出屏幕
-        //   （1600 压 360px、1366 压 477px，只有 2560 超宽屏放得下）。折行后每侧最多两行，
-        //   卡片有边框分色，两行仍然一眼分得清，不会回到「一片数字」的老问题。
         chipsWrap.style.cssText = `
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap-reverse;
             gap: 3px;
             max-width: 100%;
-            align-items: center;
+            align-items: flex-end;
             justify-content: ${box === this.leftTechBox ? 'flex-start' : 'flex-end'};
         `;
 
@@ -1680,7 +1707,7 @@ export class CombatUI {
         if (box === this.rightTechBox) {
             const tag = document.createElement('span');
             tag.textContent = isAtt ? '攻方科技 ⚔️' : '守方科技 🛡️';
-            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help;`;
+            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help; align-self: flex-end; margin-bottom: 2px;`;
             const totalSummary = summarizeTechEffects(own).join(' · ');
             tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
@@ -2493,7 +2520,7 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'other' = 'other',
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' = 'other',
             sixSetChar?: string,
         ) => {
             const tag = document.createElement('div');
@@ -2568,6 +2595,28 @@ export class CombatUI {
                     bgColor = isFamous ? 'rgba(25, 35, 45, 0.85)' : 'rgba(15, 25, 35, 0.8)';
                     bgHighlight = 'rgba(100, 180, 240, 0.15)';
                     sideColor = '#3a9fd8'; // 坚岩冰蓝
+                }
+            } else if (skillType === 'famous') {
+                // 名将光环标签：霸气华贵的尊贵黑金 / 曜金
+                if (isAttacker) {
+                    bgColor = 'rgba(40, 30, 0, 0.9)';
+                    bgHighlight = 'rgba(255, 215, 0, 0.2)';
+                    sideColor = '#ffd700'; // 纯金
+                } else {
+                    bgColor = 'rgba(30, 25, 10, 0.9)';
+                    bgHighlight = 'rgba(255, 230, 100, 0.2)';
+                    sideColor = '#e0c050'; // 曜金
+                }
+            } else if (skillType === 'reinforcement') {
+                // 援军协力标签：多路合兵的战鼓赤铜 / 旌旗蔚蓝
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(55, 30, 0, 0.85)' : 'rgba(40, 20, 0, 0.8)';
+                    bgHighlight = 'rgba(255, 160, 40, 0.15)';
+                    sideColor = '#e67300'; // 战鼓橙金
+                } else {
+                    bgColor = isFamous ? 'rgba(10, 30, 50, 0.85)' : 'rgba(5, 20, 40, 0.8)';
+                    bgHighlight = 'rgba(70, 150, 255, 0.15)';
+                    sideColor = '#4a90e2'; // 旌旗苍蓝
                 }
             } else {
                 // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
@@ -2650,7 +2699,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'other' = 'other'
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' = 'other'
             ) => {
                 if (pending.length >= 4) return;
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
@@ -2699,6 +2748,13 @@ export class CombatUI {
                 if (label) add(label, '', false, 'aptitude');
             };
 
+            const addFamous = () => {
+                if (!unit.generalId) return;
+                const famousMult = getFamousGeneralMult(unit);
+                const label = resolveFamousTagLabel(famousMult > 1.001);
+                if (label) add(label, '', true, 'famous');
+            };
+
             const addStyle = () => {
                 if (!unit.generalId) return;
                 const profile = getGeneralProfile(unit.generalId);
@@ -2707,12 +2763,26 @@ export class CombatUI {
                 if (label) add(label, '', false, 'style');
             };
 
+            const addSite = () => {
+                const passMult = getPassGarrisonCombatMultiplier(unit);
+                const regionMult = getRegionCenterCombatMultiplier(unit);
+                const label = resolveSiteDefenseTagLabel(passMult, regionMult);
+                if (label) add(label, '', false, 'pass');
+            };
+
             const addLuck = () => {
                 const fateLuck = isAttacker
                     ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
                     : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
                 const label = resolveLuckTagLabel(fateLuck);
                 if (label) add(label, '', false, 'luck');
+            };
+
+            const addReinforcement = () => {
+                const joinLuck = this.getSideReinforcementJoinLuck(sideKey);
+                if (joinLuck === null) return;
+                const label = resolveReinforcementTagLabel(joinLuck);
+                if (label) add(label, '', false, 'reinforcement');
             };
 
             const addSkills = () => {
@@ -2724,20 +2794,25 @@ export class CombatUI {
             };
 
             if (isAttacker) {
-                // 攻击方：精锐 -> 文化 -> 适性 -> 风格 -> 运气 -> 技能
+                // 攻击方：精锐 -> 名将 -> 文化 -> 适性 -> 风格 -> 运气 -> 援军 -> 技能
                 addElite();
+                addFamous();
                 addCulture();
                 addAptitude();
                 addStyle();
                 addLuck();
+                addReinforcement();
                 addSkills();
             } else {
-                // 防守方：技能 -> 运气 -> 风格 -> 适性 -> 文化 -> 精锐
+                // 防守方：技能 -> 援军 -> 运气 -> 风格 -> 适性 -> 文化 -> 据点 -> 名将 -> 精锐
                 addSkills();
+                addReinforcement();
                 addLuck();
                 addStyle();
                 addAptitude();
                 addCulture();
+                addSite();
+                addFamous();
                 addElite();
             }
 

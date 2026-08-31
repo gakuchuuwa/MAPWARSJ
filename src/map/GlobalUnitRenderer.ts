@@ -539,21 +539,31 @@ export class GlobalUnitRenderer {
      *   ② 距离呼吸：半径按半周期缓慢涨缩，两队交替逼近到舷侧齐射距离再拉开。
      *   ③ 进动：整个交战椭圆缓慢转向，战场是「漂着打」而不是原地转圈。
      *
-     * 半径从 110×65 放大到 230×140（主人要「移动范围大一点」）；
-     * 周期同步从 8s 拉到 15s，否则半径翻倍会让船速也翻倍，变成快艇不是帆船。
+     * 半径 110×65 → **210×130**（主人要「移动范围大一点」），周期 8s → **17s**。
+     *
+     * 周期必须同步拉长，否则半径放大等于船速放大，帆船会变快艇。离线验算（`scratch/tune.mjs` 同款公式，
+     * 60 秒逐帧采样）确认这组参数**保住了原来的航速手感、只把场地放大**：
+     *
+     * |            | 船速 px/s [最小,最大,均值] | 两队间距 px [最小,最大,均值] |
+     * |------------|---------------------------|------------------------------|
+     * | 改前 8s/110×65 | [54, 92, **75**]      | [130, 220, 178]（恒定绕圈）  |
+     * | 现在 17s/210×130 | [43, 123, **72**]   | [218, 480, **335**]（会呼吸）|
+     *
+     * 均速 72 vs 75 基本持平；场地约 1.9 倍；间距摆幅从 1.7 倍拉到 2.2 倍 = 对进/拉开看得出来。
+     * 同时验了**角度单调**：60 秒内倒车帧数 = 0（A<1 的数学保证，改参数后请重跑这条）。
      */
-    private static readonly NAVAL_FIELD_ORBIT_PERIOD_SEC = 15;
-    private static readonly NAVAL_FIELD_ORBIT_RX_PX = 230;
-    private static readonly NAVAL_FIELD_ORBIT_RY_PX = 140;
+    private static readonly NAVAL_FIELD_ORBIT_PERIOD_SEC = 17;
+    private static readonly NAVAL_FIELD_ORBIT_RX_PX = 210;
+    private static readonly NAVAL_FIELD_ORBIT_RY_PX = 130;
     private static readonly NAVAL_FIELD_SLOT_PHASE_RAD = 0.34;
     /**
      * 风致角速度摆幅（弧度）。相位写成 `ωt + A·sin(ωt - 风向)`，
      * 角速度 = ω(1 + A·cos(...))，**A<1 就保证单调**（不会倒车）。
      * 两队间距因此在 π ± 2A 之间摆：0.30 → ±34°，一逼一离看得清但不至于脱节。
      */
-    private static readonly NAVAL_FIELD_WIND_SWING = 0.30;
+    private static readonly NAVAL_FIELD_WIND_SWING = 0.24;
     /** 距离呼吸幅度（半径的比例）：0.20 = 最近 0.8R、最远 1.2R，交错时明显贴近 */
-    private static readonly NAVAL_FIELD_RANGE_SWING = 0.20;
+    private static readonly NAVAL_FIELD_RANGE_SWING = 0.16;
     /** 交战椭圆进动角速度（弧度/秒）：3°/s，30 秒转 90°，战场缓慢漂移不显得原地打转 */
     private static readonly NAVAL_FIELD_PRECESS_RAD_S = 3 * Math.PI / 180;
     /** 航迹采样步长（秒）：18 点 × 0.13s ≈ 2.3 秒尾迹，与改前时长一致 */
@@ -572,6 +582,14 @@ export class GlobalUnitRenderer {
      */
     private fieldSceneAlignCache = new Map<string, {
         aligned: L.Point; enemy: L.Point; mid: L.Point;
+    }>();
+    /**
+     * [2026-08-31] 双鱼机动的**每帧**战场几何缓存（键 = 战场对象本身）。
+     * 存的是与「哪艘船」无关的量：中点、双方中心、基准角、初始半间距。
+     * 每帧 animate 开头清空，与 fieldSceneAlignCache 同规矩。
+     */
+    private navalFieldGeomCache = new Map<any, {
+        center: L.Point; baseAngle: number; initialHalfSeparation: number;
     }>();
     /** 本帧 animate 的 dt（ms），供外推时间基 lerp；无则退回 16.7 */
     private frameDeltaMs = 1000 / 60;
@@ -972,6 +990,9 @@ export class GlobalUnitRenderer {
         // [2026-08-10 野战出场对齐] 每帧重算对位（两军位置会变，缓存只服务本帧内三处读取）；
         // 场景退出 size 归零，无残留
         if (this.fieldSceneAlignCache.size > 0) this.fieldSceneAlignCache.clear();
+        // [2026-08-31] 双鱼机动的战场几何每帧只算一次：改前是**每艘船**都重算一遍
+        // 双方中心点（8 艘船 = 同一组平均值算 8 遍），纯浪费。
+        if (this.navalFieldGeomCache.size > 0) this.navalFieldGeomCache.clear();
         // [2026-08-10 临时诊断] 13 编队探针自动落盘（详见 recordScene13Probe 上方说明）
         this.flushScene13Probe();
 
@@ -1414,6 +1435,8 @@ export class GlobalUnitRenderer {
             const defenderIndex = defenders.findIndex((u) => u?.id === unit.id);
             if (attackerIndex < 0 && defenderIndex < 0) continue;
 
+            const cachedGeom = this.navalFieldGeomCache.get(field);
+
             const averagePosition = (side: any[]): { lat: number; lng: number } | null => {
                 let lat = 0, lng = 0, n = 0;
                 for (const battleUnit of side) {
@@ -1425,36 +1448,40 @@ export class GlobalUnitRenderer {
                 }
                 return n > 0 ? { lat: lat / n, lng: lng / n } : null;
             };
-            const attackerCenterLL = averagePosition(attackers);
-            const defenderCenterLL = averagePosition(defenders);
-            if (!attackerCenterLL || !defenderCenterLL) return null;
-            const center = this.map.latLngToContainerPoint([
-                (attackerCenterLL.lat + defenderCenterLL.lat) / 2,
-                (attackerCenterLL.lng + defenderCenterLL.lng) / 2,
-            ]);
-            const attackerCenter = this.map.latLngToContainerPoint([
-                attackerCenterLL.lat,
-                attackerCenterLL.lng,
-            ]);
-            const defenderCenter = this.map.latLngToContainerPoint([
-                defenderCenterLL.lat,
-                defenderCenterLL.lng,
-            ]);
+            let center: L.Point, baseAngle: number, initialHalfSeparation: number;
+            if (cachedGeom) {
+                ({ center, baseAngle, initialHalfSeparation } = cachedGeom);
+            } else {
+                const attackerCenterLL = averagePosition(attackers);
+                const defenderCenterLL = averagePosition(defenders);
+                if (!attackerCenterLL || !defenderCenterLL) return null;
+                center = this.map.latLngToContainerPoint([
+                    (attackerCenterLL.lat + defenderCenterLL.lat) / 2,
+                    (attackerCenterLL.lng + defenderCenterLL.lng) / 2,
+                ]);
+                const attackerCenter = this.map.latLngToContainerPoint([
+                    attackerCenterLL.lat, attackerCenterLL.lng,
+                ]);
+                const defenderCenter = this.map.latLngToContainerPoint([
+                    defenderCenterLL.lat, defenderCenterLL.lng,
+                ]);
+                initialHalfSeparation = Math.max(1, Math.hypot(
+                    attackerCenter.x - defenderCenter.x,
+                    attackerCenter.y - defenderCenter.y,
+                ) / 2);
+                baseAngle = Math.atan2(
+                    attackerCenter.y - center.y,
+                    attackerCenter.x - center.x,
+                );
+                this.navalFieldGeomCache.set(field, { center, baseAngle, initialHalfSeparation });
+            }
             const zoomScale = Math.max(0.55, Math.pow(2, Math.min(10, this.map.getZoom()) - 10));
             const elapsed = Number.isFinite(field.elapsed) ? Math.max(0, field.elapsed) : 0;
             const deployBlend = Math.min(1, elapsed / 1.2);
-            const initialHalfSeparation = Math.max(1, Math.hypot(
-                attackerCenter.x - defenderCenter.x,
-                attackerCenter.y - defenderCenter.y,
-            ) / 2);
             const targetRx = GlobalUnitRenderer.NAVAL_FIELD_ORBIT_RX_PX * zoomScale;
             const targetRy = GlobalUnitRenderer.NAVAL_FIELD_ORBIT_RY_PX * zoomScale;
             const baseRx = initialHalfSeparation + (targetRx - initialHalfSeparation) * deployBlend;
             const baseRy = initialHalfSeparation + (targetRy - initialHalfSeparation) * deployBlend;
-            const baseAngle = Math.atan2(
-                attackerCenter.y - center.y,
-                attackerCenter.x - center.x,
-            );
             const isAttacker = attackerIndex >= 0;
             const ownIndex = isAttacker ? attackerIndex : defenderIndex;
             const ownSide = isAttacker ? attackers : defenders;
