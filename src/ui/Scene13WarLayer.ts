@@ -3017,6 +3017,8 @@ export interface Scene13WarInit {
     defenderCityType?: CityType | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
+    /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，让跟随军团固定在屏幕左边。 */
+    followedOnDefenderSide?: boolean;
 }
 
 export class Scene13WarLayer {
@@ -3035,6 +3037,8 @@ export class Scene13WarLayer {
     private defenderCityType: CityType | null = null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
     private defenderCityId: string | null = null;
+    /** [2026-08-31 主人定] 攻守两侧左右对调：跟随军团在守方侧时置 true，把守方（城）放到屏幕左边、攻方到右边。 */
+    private flipSides = false;
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
     private fleers: WarFleer[] = [];
@@ -3433,6 +3437,8 @@ export class Scene13WarLayer {
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
+        // [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边。
+        this.flipSides = init.followedOnDefenderSide === true;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         this.defenderHolding = this.battleType === 'siege';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
@@ -6880,6 +6886,12 @@ export class Scene13WarLayer {
     private render(): void {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
+        // [2026-08-31 主人定] 攻守两侧左右对调（跟随军团固定左边）：整个战场水平镜像渲染。
+        // 逻辑坐标（移动/索敌/碰撞/胜负/兵力）完全不变，只翻转「画出来的样子」——
+        // 城门 NE/SE 素材翻转后自动朝右、士兵/特效/建筑跟着镜像。
+        // 旗帜文字是预渲染图片（LegionFlagDrawer），会跟着镜像变反字，故下方旗帜三段循环内部反翻转回来。
+        const flip = this.flipSides;
+        if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
         // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
         // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
         if (this.decor) {
@@ -7000,7 +7012,10 @@ export class Scene13WarLayer {
         const flagTick = performance.now();
         for (const m of this.men) {
             if (!m.flag) continue;
-            LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
+            // [2026-08-31] 旗帜反翻转：外层 ctx 已水平镜像，旗帜文字（预渲染图片）会变反字，这里反翻转回正向画。
+            if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
+            LegionFlagDrawer.drawPole(ctx, { x: flip ? cv.width - m.x : m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
+            if (flip) ctx.restore();
         }
 
         for (const v of vis) {
@@ -7046,15 +7061,20 @@ export class Scene13WarLayer {
         //    绝不在 13 里 await 旗帜加载 —— 启动慢那次（89s→11s）就是全屏 24 面旗 await 阻塞。
         for (const m of this.men) {
             if (!m.flag) continue;
-            this.drawOneFlag(ctx, m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
+            // [2026-08-31] 旗帜反翻转（文字正向），同旗杆段。
+            if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
+            this.drawOneFlag(ctx, flip ? cv.width - m.x : m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
+            if (flip) ctx.restore();
         }
         // 倒下的军旗：前半程转倒 90°，全程淡出。
         // 这里**杆和旗面一起**画在旋转变换里 —— 倒下的是整面旗，杆不能留在原地竖着。
         for (const ff of this.fallenFlags) {
             const p = ff.t / FLAG_FALL;
             ctx.save();
-            ctx.translate(ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
-            ctx.rotate(Math.PI / 2 * Math.min(1, p * 2));
+            // [2026-08-31] 旗帜反翻转（文字正向）；镜像后倒下方向也随之反向（rotate 取反）。
+            if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
+            ctx.translate(flip ? cv.width - ff.x : ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
+            ctx.rotate((flip ? -1 : 1) * Math.PI / 2 * Math.min(1, p * 2));
             ctx.globalAlpha = 1 - p;
             LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
             this.drawOneFlag(ctx, 0, 0, ff.f, flagTick + ff.fo);
@@ -7297,5 +7317,6 @@ export class Scene13WarLayer {
                 ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
             }
         }
+        if (flip) ctx.restore();
     }
 }

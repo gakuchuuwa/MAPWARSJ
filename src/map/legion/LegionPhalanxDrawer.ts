@@ -887,11 +887,15 @@ export class LegionPhalanxDrawer {
      * 留 2 倍余量，**正在画的那批永远不会被淘汰**。
      * ⚠️ 绝不能激进淘汰：把正在画的兵种顶掉 = 士兵当场消失（2026-08-31 已经栽过一次）。
      */
-    private static readonly SPRITE_BUDGET_BYTES = 1200 * 1024 * 1024;
+    //  ⚠️ [2026-08-31 实测调参] 1200MB 太紧：稳态就是 1134MB，卡在边缘 → 反复淘汰又重载，
+    //     抠绿（getImageData + 逐像素 + toDataURL，单张 5040×56）被反复触发，长任务不降反升。
+    //     放到 2000MB 留出余量，淘汰变成罕见事件；相对原来的 12961MB 仍然是 6.5 倍收敛。
+    private static readonly SPRITE_BUDGET_BYTES = 2000 * 1024 * 1024;
     /** 这么久没被画过才允许淘汰（秒）——防止刚切走镜头就把兵种顶掉、切回来又要重载 */
-    //  有了 ensureUnitTypeLoading 按需补载，淘汰不再意味着「永远回不来」，
-    //  所以可以收紧到 20 秒；正在画的兵种每帧都在打点，永远不会被选中。
-    private static readonly SPRITE_IDLE_SEC = 20;
+    //  有了 ensureUnitTypeLoading 按需补载，淘汰不再意味着「永远回不来」。
+    //  但 20 秒太短：镜头在军团间来回切，兵种反复进出视野 → 淘汰-重载-再抠绿的死循环。
+    //  120 秒＝真正「这一带打完了」才回收。正在画的兵种每帧打点，永远不会被选中。
+    private static readonly SPRITE_IDLE_SEC = 120;
 
     /**
      * 定期淘汰。
