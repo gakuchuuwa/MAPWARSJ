@@ -142,6 +142,32 @@ const CULTURE_TAG_DEF_LABELS: Record<number, string> = {
     1.00: '据城而守', 0.95: '凭城为守', 0.90: '山城自顾', 0.85: '土垣自蔽', 0.80: '无遮无蔽',
 };
 
+/**
+ * 命运运气标签文案表：血槽上方四字大标签。
+ * 键 = 运气系数档位（[0.80, 1.20] 区间）。
+ */
+const LUCK_TAG_LABELS: Record<number, string> = {
+    1.20: '天命所归', 1.15: '鸿运当头', 1.10: '时运亨通', 1.05: '渐入佳境',
+    1.00: '寻常之数', 0.95: '微见阻滞', 0.90: '时运不济', 0.85: '命途多舛', 0.80: '天道不顺',
+};
+
+/** 取命运运气标签；档位未精确命中时就近取档 */
+export function resolveLuckTagLabel(mult: number): string {
+    const round = Math.round(mult * 100) / 100;
+    const exact = LUCK_TAG_LABELS[round];
+    if (exact) return exact;
+    let best = '寻常之数';
+    let bestGap = Infinity;
+    for (const k of Object.keys(LUCK_TAG_LABELS)) {
+        const gap = Math.abs(parseFloat(k) - round);
+        if (gap < bestGap) {
+            bestGap = gap;
+            best = LUCK_TAG_LABELS[parseFloat(k)];
+        }
+    }
+    return best;
+}
+
 /** 取文化标签；档位未精确命中时就近取档（绝不返回空串让标签凭空消失） */
 export function resolveCultureTagLabel(mult: number, isGarrison: boolean): string {
     const table = isGarrison ? CULTURE_TAG_DEF_LABELS : CULTURE_TAG_ATK_LABELS;
@@ -1538,13 +1564,13 @@ export class CombatUI {
         //   本作无玩家操作、以直播观赏为准：直播画面前的观众没有鼠标，悬停内容他们永远看不到。
         //   它的用途是调平衡时快速核对某方吃到的全维度累计加成，别再往它上面挂「观众要看的东西」。
         //   观众侧的强弱表达只能靠常驻可见元素（分色卡片本身）与 13 的战况演出。
-        // 攻方左标
-        if (isAtt) {
+        // 屏幕左翼标签
+        if (box === this.leftTechBox) {
             const tag = document.createElement('span');
-            tag.textContent = '⚔️ 攻方科技';
-            tag.style.cssText = 'color: #8b5a00; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help;';
+            tag.textContent = isAtt ? '⚔️ 攻方科技' : '🛡️ 守方科技';
+            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help;`;
             const totalSummary = summarizeTechEffects(own).join(' · ');
-            tag.title = `⚔️ 攻方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
+            tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
         }
 
@@ -1560,7 +1586,7 @@ export class CombatUI {
             gap: 3px;
             max-width: 100%;
             align-items: center;
-            justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
+            justify-content: ${box === this.leftTechBox ? 'flex-start' : 'flex-end'};
         `;
 
         for (const t of own) {
@@ -1614,13 +1640,13 @@ export class CombatUI {
 
         box.appendChild(chipsWrap);
 
-        // 守方右标
-        if (!isAtt) {
+        // 屏幕右翼标签
+        if (box === this.rightTechBox) {
             const tag = document.createElement('span');
-            tag.textContent = '守方科技 🛡️';
-            tag.style.cssText = 'color: #1d5f36; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help;';
+            tag.textContent = isAtt ? '攻方科技 ⚔️' : '守方科技 🛡️';
+            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help;`;
             const totalSummary = summarizeTechEffects(own).join(' · ');
-            tag.title = `🛡️ 守方科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
+            tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
             box.appendChild(tag);
         }
 
@@ -2431,7 +2457,7 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other',
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'other' = 'other',
             sixSetChar?: string,
         ) => {
             const tag = document.createElement('div');
@@ -2473,6 +2499,17 @@ export class CombatUI {
                     bgColor = isFamous ? 'rgba(10, 35, 25, 0.85)' : 'rgba(5, 25, 15, 0.8)';
                     bgHighlight = 'rgba(90, 158, 143, 0.15)';
                     sideColor = '#4a8f7c'; // 沉稳的青石
+                }
+            } else if (skillType === 'luck') {
+                // 命运运气标签：高贵神秘的星辉紫晶 / 幽夜星蓝
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(55, 15, 60, 0.85)' : 'rgba(40, 10, 45, 0.8)';
+                    bgHighlight = 'rgba(230, 130, 255, 0.15)';
+                    sideColor = '#b85ee6'; // 紫晶华彩
+                } else {
+                    bgColor = isFamous ? 'rgba(20, 20, 55, 0.85)' : 'rgba(15, 15, 40, 0.8)';
+                    bgHighlight = 'rgba(140, 160, 255, 0.15)';
+                    sideColor = '#7a70e6'; // 星穹幽紫蓝
                 }
             } else {
                 // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
@@ -2555,7 +2592,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'other' = 'other'
             ) => {
                 if (pending.length >= 4) return;
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
@@ -2582,12 +2619,12 @@ export class CombatUI {
                 }
             };
 
-            const addCulture = () => {
-                const cultureMult = getCultureOnlyCombatMultiplier(unit);
-                const round = Math.round(cultureMult * 100) / 100;
-                const isGarrison = unit.unitType === 'city';
-                const label = resolveCultureTagLabel(round, isGarrison);
-                if (label) add(label, '', false, 'culture');
+            const addLuck = () => {
+                const fateLuck = isAttacker
+                    ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+                    : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
+                const label = resolveLuckTagLabel(fateLuck);
+                if (label) add(label, '', false, 'luck');
             };
 
             const addSkills = () => {
@@ -2599,14 +2636,14 @@ export class CombatUI {
             };
 
             if (isAttacker) {
-                // 攻击方：精锐 -> 文化 -> 技能
+                // 攻击方：精锐 -> 运气 -> 技能
                 addElite();
-                addCulture();
+                addLuck();
                 addSkills();
             } else {
-                // 防守方：技能 -> 文化 -> 精锐
+                // 防守方：技能 -> 运气 -> 精锐
                 addSkills();
-                addCulture();
+                addLuck();
                 addElite();
             }
 
@@ -5603,7 +5640,8 @@ export class CombatUI {
         const explicit = key && !CombatUI.LEGACY_GENERIC_PORTRAIT_KEYS.has(key)
             ? this.portraitConfig.getMirror(key, side)
             : undefined;
-        return explicit ?? shouldMirrorPortraitForSide(side, this.portraitSourceFacing[side]);
+        const visualSide = this.isSideOnLeft(side) ? 'attacker' : 'defender';
+        return explicit ?? shouldMirrorPortraitForSide(visualSide, this.portraitSourceFacing[side]);
     }
 
     private applyPortraitFacing(side: 'attacker' | 'defender'): void {

@@ -7576,6 +7576,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.89,
             "offsetX": 0,
             "offsetY": -19
+        },
+        "/assets/CENTRAL/ranwei_d_ranmin.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

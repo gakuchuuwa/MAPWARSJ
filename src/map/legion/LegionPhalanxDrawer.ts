@@ -133,6 +133,47 @@ export class LegionPhalanxDrawer {
 
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
 
+    private static readonly STRATEGIC_DE_UNIT_REPLACEMENTS: Readonly<Record<string, string>> = {
+        mixed: 'militia',
+        huaxia_infantry: 'spearman',
+        huaxia_mixed: 'spearman',
+        huaxia_cavalry: 'light_riders',
+        huihui_cavalry: 'cav_archer',
+        huihui_mixed: 'spearman',
+        zhonghua_infantry: 'spearman',
+        tianchao_infantry: 'spearman',
+        zhonghua_mixed: 'spearman',
+        song_infantry: 'longswordsman',
+        shu_infantry: 'longswordsman',
+        zhou_infantry: 'spearman',
+        yue_infantry: 'longswordsman',
+        e_infantry: 'jian_swordman_shielded',
+        zhonghua_cavalry: 'light_riders',
+        chaoxian_cavalry: 'light_riders',
+        liang_cavalry: 'steppe_lancer',
+        wei_cavalry: 'knight',
+        tujue_cavalry: 'steppe_lancer',
+        tian_cavalry: 'knight',
+        xiyu_cavalry: 'light_riders',
+        crossbow: 'crossbowman',
+        ballista: 'scorpion',
+        light_infantry: 'militia',
+        heavy_infantry: 'longswordsman',
+        shield: 'jian_swordman_shielded',
+        spear: 'spearman',
+        axe: 'norse_warrior',
+        armored: 'champion',
+        lancer: 'light_riders',
+        heavy_cavalry: 'knight',
+        general_cavalry: 'cavalier',
+        horse_archer: 'cav_archer',
+        elephant: 'war_elephant',
+    };
+
+    private static resolveStrategicDEUnitType(unitType: string): string {
+        return this.STRATEGIC_DE_UNIT_REPLACEMENTS[unitType] ?? unitType;
+    }
+
     /**
      * [2026-08-09 13场景阵型] 步兵类型判定：是否展开为 4×2 小阵。
      * 与 UnitAssets.ts / CultureFormations.ts 的步兵分类一致
@@ -1174,23 +1215,46 @@ export class LegionPhalanxDrawer {
         const rows = gridSize;
         const cols = gridSize;
 
-        // Retrieve Asset Cache
-        let assets = this.unitSpriteCache.get(unitAssetsId);
+        let strategicSlotTypes: string[] | null = null;
+        if (!denseFront) {
+            if (cultureSlots && cultureSlots.length > 0) {
+                strategicSlotTypes = cultureSlots.map(type => this.resolveStrategicDEUnitType(type));
+            } else {
+                const tier = getCompositionTier(troops, legionType);
+                const expandedSlots = tier ? expandCompositionSlots(tier.slots) : [];
+                strategicSlotTypes = (expandedSlots.length > 0 ? expandedSlots : [unitAssetsId])
+                    .map(type => this.resolveStrategicDEUnitType(type));
+            }
 
-        // 兜底链只保证「这一帧不画空白」，还得**真正去把正确的那套补载回来**，
-        // 否则改成懒加载后会永远停在兜底贴图上（下面每格位的补载只覆盖 cultureSlots 分支）。
-        if (!assets) {
-            LegionPhalanxDrawer.ensureUnitTypeLoading(unitAssetsId);
+            let waitingForActualAssets = false;
+            for (const type of new Set(strategicSlotTypes)) {
+                if (this.unitSpriteCache.has(type)) {
+                    this.spriteLastUsed.set(type, performance.now());
+                    continue;
+                }
+                this.ensureUnitTypeLoading(type);
+                waitingForActualAssets = true;
+            }
+            if (waitingForActualAssets) return;
+        }
+
+        const displayedUnitAssetsId = denseFront
+            ? unitAssetsId
+            : (strategicSlotTypes?.[0] ?? this.resolveStrategicDEUnitType(unitAssetsId));
+        let assets = this.unitSpriteCache.get(displayedUnitAssetsId);
+
+        if (!assets && denseFront) {
+            LegionPhalanxDrawer.ensureUnitTypeLoading(displayedUnitAssetsId);
             assets = this.unitSpriteCache.get(legionType);
         }
-        if (!assets) {
+        if (!assets && denseFront) {
             assets = this.unitSpriteCache.get('mixed');
         }
-        if (!assets) {
+        if (!assets && denseFront) {
             assets = this.unitSpriteCache.get('light_infantry');
         }
         if (!assets) {
-            console.error(`❌ [LPD] CRITICAL: No assets found for ${unitAssetsId} / ${legionType}. Rendering Aborted.`);
+            console.error(`❌ [LPD] CRITICAL: No assets found for ${displayedUnitAssetsId} / ${legionType}. Rendering Aborted.`);
             return;
         }
 
@@ -1330,13 +1394,18 @@ export class LegionPhalanxDrawer {
 
             // [NEW] 14-culture formation slots override
             if (cultureSlots && i < cultureSlots.length) {
-                resolvedUnitType = cultureSlots[i];
-                currentSet = this.unitSpriteCache.get(resolvedUnitType) || assets;
-                // 被淘汰或从未加载 → 后台补载，这一帧先用兜底集顶着（不会空白）
-                if (!LegionPhalanxDrawer.unitSpriteCache.has(resolvedUnitType)) {
-                    LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
-                } else {
+                resolvedUnitType = denseFront
+                    ? cultureSlots[i]
+                    : (strategicSlotTypes?.[i] ?? this.resolveStrategicDEUnitType(cultureSlots[i]));
+                const loadedSet = this.unitSpriteCache.get(resolvedUnitType);
+                if (loadedSet) {
+                    currentSet = loadedSet;
                     LegionPhalanxDrawer.spriteLastUsed.set(resolvedUnitType, performance.now());
+                } else if (!denseFront) {
+                    LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
+                    continue;
+                } else {
+                    LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
                 }
             } else {
                 // [GENERIC FALLBACK] 
@@ -1345,12 +1414,19 @@ export class LegionPhalanxDrawer {
                 const tier = getCompositionTier(troops, legionType);
                 if (tier) {
                     const expandedSlots = expandCompositionSlots(tier.slots);
-                    resolvedUnitType = expandedSlots[i] || unitAssetsId;
-                    currentSet = this.unitSpriteCache.get(resolvedUnitType) || assets;
-                    if (!LegionPhalanxDrawer.unitSpriteCache.has(resolvedUnitType)) {
-                        LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
-                    } else {
+                    const slotUnitType = expandedSlots[i] || unitAssetsId;
+                    resolvedUnitType = denseFront
+                        ? slotUnitType
+                        : (strategicSlotTypes?.[i] ?? this.resolveStrategicDEUnitType(slotUnitType));
+                    const loadedSet = this.unitSpriteCache.get(resolvedUnitType);
+                    if (loadedSet) {
+                        currentSet = loadedSet;
                         LegionPhalanxDrawer.spriteLastUsed.set(resolvedUnitType, performance.now());
+                    } else if (!denseFront) {
+                        LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
+                        continue;
+                    } else {
+                        LegionPhalanxDrawer.ensureUnitTypeLoading(resolvedUnitType);
                     }
                 }
             }

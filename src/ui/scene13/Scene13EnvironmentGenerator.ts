@@ -455,6 +455,15 @@ function sampleLandPos(
     return null;
 }
 
+function sampleSiegeStoneAnchor(VW: number, VH: number, rng: RandomSource): { ax: number; ay: number } {
+    const roll = rng.next();
+    const quarter = roll < 0.40 ? 0 : roll < 0.70 ? 1 : roll < 0.90 ? 2 : 3;
+    return {
+        ax: VW * ((quarter + rng.next()) / 4),
+        ay: VH * (0.24 + rng.next() * 0.52),
+    };
+}
+
 // ── 水域探测（高精度多尺度雷达密网扫描，判定据点是否临水/有江河海湾） ──
 
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
@@ -1660,13 +1669,17 @@ function buildVegetation(
             }
         }
         const solidExclusion = isSiege && asset.startsWith('ROCK') ? inKeepClear : inArmyCorridor;
-        const anchorX = solidDecorCount === 1
-            ? VW * (0.28 + rng.next() * 0.34)
-            : VW * ((i === 0 ? 0.28 : 0.62) + (rng.next() - 0.5) * 0.10);
-        const anchorY = VH * (0.24 + rng.next() * 0.52);
+        const anchor = isSiege && asset.startsWith('ROCK')
+            ? sampleSiegeStoneAnchor(VW, VH, rng)
+            : {
+                ax: solidDecorCount === 1
+                    ? VW * (0.28 + rng.next() * 0.34)
+                    : VW * ((i === 0 ? 0.28 : 0.62) + (rng.next() - 0.5) * 0.10),
+                ay: VH * (0.24 + rng.next() * 0.52),
+            };
         const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, solidExclusion, {
             ...decorLimits,
-            findClosest: { ax: anchorX, ay: anchorY },
+            findClosest: anchor,
         });
         if (p) {
             const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;
@@ -1919,7 +1932,10 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     for (let i = 0; i < resCount; i++) {
         const asset = rng.pick(resAssets);
         const resourceExclusion = isSiege && asset === 'MINE_STONE' ? inDefenderCity : inArmyCorridor;
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, resourceExclusion);
+        const limits = isSiege && asset === 'MINE_STONE'
+            ? { findClosest: sampleSiegeStoneAnchor(VW, VH, rng) }
+            : undefined;
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, resourceExclusion, limits);
         if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
     }
 
