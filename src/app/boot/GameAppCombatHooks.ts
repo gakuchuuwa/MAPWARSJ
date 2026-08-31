@@ -96,6 +96,8 @@ function startScene13War(
     battleType?: 'siege' | 'field',
     /** 水军攻城战 —— 战场左侧强制出海（主人 2026-08-24 定） */
     isNaval?: boolean,
+    /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边 */
+    followedOnDefenderSide?: boolean,
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
@@ -138,6 +140,8 @@ function startScene13War(
         defenderCityType,
         // [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观 → 守方城中央立奇观地标）
         defenderCityId,
+        // [2026-08-31 主人定] 跟随军团在守方侧 → 攻守两侧左右对调
+        followedOnDefenderSide,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -178,7 +182,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 battle.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
-                isNavalVsFortress ? 'siege' : battle.type, isNavalBattle);
+                isNavalVsFortress ? 'siege' : battle.type, isNavalBattle,
+                battle.defender.id === followedId);
             app.battleScene?.enter(t.id);
         }
     };
@@ -252,7 +257,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         t.center,
                         `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                         isNavalVsFortress ? 'siege' : battleField.type,
-                        isNavalBattle
+                        isNavalBattle,
+                        defenders.some((u) => u.id === followedId)
                     );
                 }
             }

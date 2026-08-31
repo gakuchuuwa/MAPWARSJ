@@ -125,7 +125,7 @@ export class GameApp {
     public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
     public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
     public zhugeliangExpedition!: ZhugeLiangExpedition; // 诸葛亮北伐中原 圆梦脚本
-    public zoomController!: ZoomController; // 自动缩放控制（行军 9 / 战斗 10）
+    public zoomController!: ZoomController; // 自动缩放（规则见 ZoomController 文件头）
     public tacticalModeEnabled: boolean = true; // 是否进入战术模式（zoom13 微观战斗），调试面板开关
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
@@ -696,7 +696,8 @@ export class GameApp {
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
-            // 自动缩放：首次跟随 → 8；战斗结束（战术/战略）→ 陆军 9 / 海军 10；战斗过后永不再用 8。
+            // 自动缩放（2026-08-31 主人重定，权威说明在 ZoomController 文件头）：
+            //   跟随新军团（首次 / 战败换人）→ 8；每场战斗结束 → 陆军 9 / 海军 10；战斗中冻结。
             this.zoomController = new ZoomController(this.map, () => {
                 const id = this.cameraFollowUI.getFollowedArmyId();
                 return id ? legionManager.getLegionById(id) ?? null : null;

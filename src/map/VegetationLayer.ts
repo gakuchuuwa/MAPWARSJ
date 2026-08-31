@@ -20,9 +20,12 @@ const MIN_RENDER_INTERVAL_MS = 200;
  *  保证斑块的地理范围恒定、缩放不跳位。 */
 /** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
  *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
-/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。
- *  ⚠️ 22 太小，实测在 zoom 9 一屏里几乎看不见；30 才读得出是树。 */
-const TREE_BASE_PX = 30;
+/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。 */
+const TREE_BASE_PX = 26;
+/** 战略树木保持为环境层，避免压过城池、军团、道路和势力边界。 */
+const TREE_OPACITY = 0.78;
+/** 树根处的轻微接地阴影，只用于消除贴图悬浮感。 */
+const TREE_SHADOW_OPACITY = 0.14;
 /** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
  *  stride 越大簇越稀、越"成带"。 */
 const CLUSTER_STRIDE = SAMPLE_STEP * 1.6;
@@ -311,8 +314,18 @@ export class VegetationLayer {
         const drawOne = (im: HTMLImageElement, it: { x: number; y: number; h: number }, alpha: number) => {
             if (alpha <= 0.002) return;
             const w = it.h * (im.naturalWidth / im.naturalHeight);
-            ctx.globalAlpha = alpha;
+            ctx.globalAlpha = alpha * TREE_OPACITY;
             ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+        };
+
+        const drawContactShadow = (it: { x: number; y: number; h: number }) => {
+            ctx.save();
+            ctx.globalAlpha = TREE_SHADOW_OPACITY;
+            ctx.fillStyle = '#182016';
+            ctx.beginPath();
+            ctx.ellipse(it.x, it.y - 1, it.h * 0.28, Math.max(1.2, it.h * 0.07), 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         };
 
         for (const it of items) {
@@ -320,6 +333,9 @@ export class VegetationLayer {
             // 下一季的图**整季都在预取**，这里无条件取（不再等 blendAlpha>0 才去拿）
             const nxt = it.c.assetNext !== it.c.asset
                 ? treeImage(it.c.assetNext, this.onTreeImageReady) : cur;
+
+            // 接地阴影与季节贴图无关，每棵只画一次，避免交叉淡出期间叠黑。
+            if (cur || nxt) drawContactShadow(it);
 
             // 🔴 [2026-08-31 修「消失再出现」] 只要**两张里有一张在**就必须画出来。
             //    原来是 `if (!img) continue` —— 当前季的图没下载完就整棵跳过，

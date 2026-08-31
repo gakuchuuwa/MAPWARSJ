@@ -269,6 +269,7 @@
 | **十二、远征精锐**（§12.1–12.4） | `docs/AGENTS/expedition-elite.md` | 三者防重、tier 五级判定、录入/审计命令 |
 | **十三、战斗立绘分配**（13.1–13.6） | `docs/AGENTS/portrait-allocation.md` | 三级优先级、素材目录、运行时分配、禁止清单 |
 | **ZOOM13 战场底图与植被** | `docs/02-design/climate-regions.md` | 26 张底图的气候判据、树种/密度分配、攻城战与野战的真实性规则、验收脚本 |
+| **卡顿诊断（PerfDoctor）** | `docs/03-runtime/perf-doctor.md` | 🔴 **改任何缓存/热路径前必读**：Shift+F3 出结构化诊断、七条规则、五条铁律、已踩死路清单 |
 
 
 ---
