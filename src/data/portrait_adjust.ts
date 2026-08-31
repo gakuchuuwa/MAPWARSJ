@@ -7083,9 +7083,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/kaernute_ketuatusi.png": {
-            "scale": 1.13,
-            "offsetX": -10,
-            "offsetY": 31
+            "scale": 1.19,
+            "offsetX": -7,
+            "offsetY": 30
         },
         "/assets/GERMANIC/keernuwaye_geladelong.png": {
             "scale": 1.2,
@@ -7581,6 +7581,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/GERMANIC/bogendi_dadanchali.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

@@ -4218,6 +4218,34 @@ export class Scene13WarLayer {
 
     private applyBuildingsForSide(f: 0 | 1): void {
         const side = this.spawns.filter((s) => s.f === f);
+        // 攻击方（攻城/野战）与防守方（野战）：在最前排出兵口营地前铺一道完整木桩拒马线。
+        // 攻城守方有城墙，不摆。
+        if (!(this.battleType === 'siege' && f === 1) && side.length > 0) {
+            const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
+            const isAttacker = f === 0;
+            const frontX = isAttacker
+                ? Math.max(...side.map((p) => p.x))
+                : Math.min(...side.map((p) => p.x));
+            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 5).sort((a, b) => a.y - b.y);
+            if (frontRow.length > 0) {
+                const barricadeCount = 6 + Math.floor(Math.random() * 4);
+                const topY = frontRow[0].y - 135;
+                const bottomY = frontRow[frontRow.length - 1].y + 135;
+                const offsetX = isAttacker ? 180 : -180;
+                this.ensureNatureAsset(barricadeAsset);
+                for (let i = 0; i < barricadeCount; i++) {
+                    const t = i / (barricadeCount - 1);
+                    this.decorSprites.push({
+                        asset: barricadeAsset, frame: 0,
+                        x: frontX + offsetX,
+                        y: topY + (bottomY - topY) * t,
+                        flip: isAttacker ? false : true,
+                        layer: 'world', z: 0,
+                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                    });
+                }
+            }
+        }
         if (side.length !== 9) return;
         const camps = ['CAMP_ARCHERY_RANGE', 'CAMP_BARRACKS', 'CAMP_STABLE'];
         const shuffledCamps = [...camps].sort(() => Math.random() - 0.5);
@@ -4502,34 +4530,6 @@ export class Scene13WarLayer {
                 this.trackCityBuilding(sp);
             }
             return;
-        }
-
-        // 攻击方（攻城/野战）与防守方（野战）：在最前排出兵口营地前铺一道完整木桩拒马线。
-        {
-            const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
-            const isAttacker = f === 0;
-            const frontX = isAttacker
-                ? Math.max(...side.map((p) => p.x))
-                : Math.min(...side.map((p) => p.x));
-            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 5).sort((a, b) => a.y - b.y);
-            if (frontRow.length > 0) {
-                const barricadeCount = 6 + Math.floor(Math.random() * 4);
-                const topY = frontRow[0].y - 135;
-                const bottomY = frontRow[frontRow.length - 1].y + 135;
-                const offsetX = isAttacker ? 180 : -180;
-                this.ensureNatureAsset(barricadeAsset);
-                for (let i = 0; i < barricadeCount; i++) {
-                    const t = i / (barricadeCount - 1);
-                    this.decorSprites.push({
-                        asset: barricadeAsset, frame: 0,
-                        x: frontX + offsetX,
-                        y: topY + (bottomY - topY) * t,
-                        flip: isAttacker ? false : true,
-                        layer: 'world', z: 0,
-                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
-                    });
-                }
-            }
         }
 
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔

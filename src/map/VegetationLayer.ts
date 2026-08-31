@@ -6,7 +6,11 @@ import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { lngToDemGlobalX, latToDemGlobalY } from '../world/land-sea/ElevationSampler';
 import { perfDoctor } from '../debug/PerfDoctor';
-import { loadStrategicForestMask, queryStrategicForestBiome } from './StrategicForestMask';
+import {
+    loadStrategicForestMask,
+    queryStrategicCanopyDensity,
+    queryStrategicForestBiome,
+} from './StrategicForestMask';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -125,6 +129,19 @@ function isStrategicForestArea(biome: number, tile: string, elevation: number, l
     if (biome === 1 || biome === 3) return tile === 'gr6' || elevation >= 350;
     if (biome === 2 || biome === 4 || biome === 5 || biome === 12) return elevation >= 450;
     return false;
+}
+
+function forestClusterWeight(
+    biome: number,
+    tile: string,
+    canopyDensity: number,
+): number {
+    const canopy = Math.max(0, Math.min(1, (canopyDensity - 8) / 62));
+    let historicalFloor = 0.14;
+    if (BASE_FOREST_TILES.has(tile)) historicalFloor = 0.55;
+    else if (biome === 6) historicalFloor = 0.34;
+    else if (biome === 1 || biome === 3) historicalFloor = 0.22;
+    return Math.max(historicalFloor, canopy);
 }
 
 function currentTreeSeason(): TreeSeason {
@@ -479,8 +496,11 @@ export class VegetationLayer {
                 const forestBiome = queryStrategicForestBiome(clusterLatLng.lat, clusterLatLng.lng);
                 if (!isStrategicForestArea(forestBiome, tile, elev, clusterLatLng.lat)) continue;
 
-                // 每个森林格都是林区的一部分，不再二次抽签制造雀斑空洞。
-                const count = Math.round(13 + hash(cx, cy, 45) * 6);
+                const canopyDensity = queryStrategicCanopyDensity(clusterLatLng.lat, clusterLatLng.lng);
+                const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity);
+                if (hash(cx, cy, 46) > clusterWeight) continue;
+
+                const count = Math.round(13 + clusterWeight * 6 + hash(cx, cy, 45) * 4);
 
                 for (let i = 0; i < count; i++) {
                     const ang = hash(cx, cy, i + 50) * Math.PI * 2;

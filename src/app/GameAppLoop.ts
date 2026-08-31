@@ -13,6 +13,38 @@ const FOLLOW_RECENTER_DEADZONE_M = 120;
 const FOLLOW_SNAP_DISTANCE_M = 12000;
 /** 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔） */
 const FOLLOW_LERP_FACTOR = 0.22;
+
+/**
+ * 🔴 [2026-08-31 修「zoom9 行军跟拍一顿一顿」] 跟拍平移的**亚像素残差**。
+ *
+ * Leaflet 的 `panBy` 把偏移**取整到整像素，小数部分直接丢弃**。实测（zoom9，每帧固定偏移）：
+ *   请求 0.20px/帧 → 实际 0，30 帧共走 **0** 像素（应走 6）
+ *   请求 0.35px/帧 → 实际 0，30 帧共走 **0** 像素（应走 10.5）
+ *   请求 0.49px/帧 → 实际 0，30 帧共走 **0** 像素（应走 14.7）
+ *   请求 0.80px/帧 → 实际 1，30 帧走 30（应 24，多跑 25%）
+ *
+ * 跟拍是指数平滑（`FOLLOW_LERP_FACTOR`），镜头越接近军团、每帧像素增量越小；
+ * 一旦低于 0.5px，panBy **什么都不做**，镜头彻底冻住，直到军团漂远到增量过半像素
+ * 才猛跳一整格 —— 这就是「行军一顿一顿」。
+ * zoom9 尤其明显：1px ≈ 250m，要动镜头得军团偏离中心 **570m 以上**，
+ * 而行军是慢慢挪的，大部分帧镜头都是静止的。zoom10（125m/px）像素增量翻倍就跟得上。
+ *
+ * 解法是整数量化的标准做法：**把丢掉的小数攒到下一帧**，只把整数部分交给 panBy。
+ * 平均速度因此精确等于请求速度，顿挫被摊成均匀的 1px 步进。
+ */
+const followPanResidual = { x: 0, y: 0 };
+
+/** 累积亚像素残差后按整像素平移；返回是否真的动了。 */
+function panByAccumulated(map: L.Map, dx: number, dy: number): void {
+    const fx = dx + followPanResidual.x;
+    const fy = dy + followPanResidual.y;
+    const ix = Math.round(fx);
+    const iy = Math.round(fy);
+    followPanResidual.x = fx - ix;
+    followPanResidual.y = fy - iy;
+    // 都是 0 就别调 panBy —— 省掉一次 pane transform + move 事件广播
+    if (ix !== 0 || iy !== 0) map.panBy(L.point(ix, iy), { animate: false });
+}
 /** 跟随中重复插队旗号优先（毫秒），避免每帧 setView 刷屏 */
 const FOLLOW_FLAG_PRIORITY_INTERVAL_MS = 600;
 let lastFollowFlagPriorityKick = 0;
@@ -206,6 +238,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             const dist = center.distanceTo(target);
                             if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
                             if (dist >= FOLLOW_SNAP_DISTANCE_M) {
+                                followPanResidual.x = 0; followPanResidual.y = 0;   // 吸附后残差作废
                                 lMap.setView(target, currentZoom, { animate: false });
                                 return;
                             }
@@ -221,7 +254,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             // 跟拍帧时间回落到 ~28ms。吸附（>12km）仍走 setView，见上。
                             const _p1 = lMap.project(center, currentZoom);
                             const _p2 = lMap.project(next, currentZoom);
-                            lMap.panBy(L.point(_p2.x - _p1.x, _p2.y - _p1.y), { animate: false });
+                            panByAccumulated(lMap, _p2.x - _p1.x, _p2.y - _p1.y);
                         }
                     );
                 } else {
@@ -246,6 +279,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 const dist = center.distanceTo(target);
                                 if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
                                 if (dist >= FOLLOW_SNAP_DISTANCE_M) {
+                                    followPanResidual.x = 0; followPanResidual.y = 0;   // 吸附后残差作废
                                     lMap2.setView(target, currentZoom, { animate: false });
                                     return;
                                 }
@@ -256,7 +290,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 // 同上：像素级 panBy 替代 setView，避免每帧 _resetView 全量重定位。
                                 const _p1 = lMap2.project(center, currentZoom);
                                 const _p2 = lMap2.project(next, currentZoom);
-                                lMap2.panBy(L.point(_p2.x - _p1.x, _p2.y - _p1.y), { animate: false });
+                                panByAccumulated(lMap2, _p2.x - _p1.x, _p2.y - _p1.y);
                             }
                         );
                     }
