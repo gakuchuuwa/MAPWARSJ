@@ -168,7 +168,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
     },
     "images": {
         "/assets/xianqin/shang_fuhao.png": {
-            "scale": 0.92,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -23
         },
