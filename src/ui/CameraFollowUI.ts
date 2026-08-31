@@ -367,7 +367,7 @@ export class CameraFollowUI {
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
             left: 0;
             width: 260px;
-            max-height: 72vh;
+            max-height: calc(100vh - 460px);
             overflow-y: auto;
             z-index: 10001;
             background: linear-gradient(to right, rgba(216, 197, 168, 0.6) 0%, rgba(235, 220, 195, 0.35) 70%, rgba(235, 220, 195, 0) 100%);
