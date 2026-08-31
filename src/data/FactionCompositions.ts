@@ -1486,7 +1486,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "halberdier", count: 3 },
+            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
+            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
+            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
+            { type: "halberdier", count: 4 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],
@@ -2571,7 +2574,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "halberdier", count: 3 },
+            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
+            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
+            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
+            { type: "halberdier", count: 4 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],
@@ -2581,7 +2587,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "halberdier", count: 3 },
+            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
+            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
+            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
+            { type: "halberdier", count: 4 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],

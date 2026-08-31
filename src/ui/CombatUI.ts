@@ -219,6 +219,7 @@ export class CombatUI {
     private leftCenterSixBadge!: HTMLSpanElement;
     private rightCenterSixBadge!: HTMLSpanElement;
     private centerSixBadgeGroup!: HTMLDivElement;
+    private centerSituationRow!: HTMLDivElement;
     /** [军事科技] 科技行：双方各自已解锁科技名（只在 13 出兵口互攻时显示） */
     private techRow!: HTMLDivElement;
     /** [军事科技] 双方科技徽记区（内容由 renderTechSide 重绘） */
@@ -299,6 +300,8 @@ export class CombatUI {
     private defenderDisplayName = '';
     private attackerFactionId: string | null = null;
     private defenderFactionId: string | null = null;
+    /** ZOOM 13 展示侧：true 时守方（跟随军团）在左、攻方在右；战斗语义仍保持攻/守不变。 */
+    private scene13SidesFlipped = false;
     private leftMultBadge: HTMLSpanElement | null = null;
     private rightMultBadge: HTMLSpanElement | null = null;
     private leftFactionNameSpan!: HTMLSpanElement;
@@ -323,6 +326,22 @@ export class CombatUI {
     private rightReinfNameSpan!: HTMLSpanElement;
     private rightReinfTroopsSpan!: HTMLSpanElement;
     private rightReinfMultBadge!: HTMLSpanElement;
+
+    private isSideOnLeft(side: 'attacker' | 'defender'): boolean {
+        return side === (this.scene13SidesFlipped ? 'defender' : 'attacker');
+    }
+
+    private sideElement<T>(side: 'attacker' | 'defender', left: T, right: T): T {
+        return this.isSideOnLeft(side) ? left : right;
+    }
+
+    private applyBattleBarOrientation(): void {
+        if (!this.attackerBar || !this.defenderBar) return;
+        const attackerFill = 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px), linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%)';
+        const defenderFill = 'repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.12) 4px, rgba(0,0,0,0.12) 8px), linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%)';
+        this.attackerBar.style.background = this.scene13SidesFlipped ? defenderFill : attackerFill;
+        this.defenderBar.style.background = this.scene13SidesFlipped ? attackerFill : defenderFill;
+    }
 
     private currentBattle: Battle | null = null;
     private currentRegionalUnits: { attackers: IBattleUnit[], defenders: IBattleUnit[] } | null = null;
@@ -461,10 +480,10 @@ export class CombatUI {
                 100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
             }
             @keyframes panel-entrance {
-                0% { transform: translate(-50%, 250%); }
-                60% { transform: translate(-50%, -6px); }
-                80% { transform: translate(-50%, 3px); }
-                100% { transform: translate(-50%, 0); }
+                0% { transform: translateY(250%); }
+                60% { transform: translateY(-6px); }
+                80% { transform: translateY(3px); }
+                100% { transform: translateY(0); }
             }
             /* 立绘外框进场：左从左→右，右从右→左；overshoot 越位再弹回 */
             @keyframes portrait-frame-enter-left {
@@ -549,15 +568,15 @@ export class CombatUI {
         div.style.cssText = `
             position: fixed;
             bottom: 0; 
-            left: 50%;
-            transform: translate(-50%, 250%);
-            width: ${uiPx(T.panelWidth)};
+            left: 0;
+            width: 100vw;
             height: ${uiPx(T.panelHeight)};
             background: transparent;
             padding: 0;
             z-index: ${T.zIndex.panel};
             pointer-events: none;
             overflow: visible;
+            transform: translateY(250%);
         `;
 
         return div;
@@ -589,7 +608,8 @@ export class CombatUI {
         // --- PORTRAITS + 侧栏军名/兵力 ---
         const leftFrame = this.createPortraitFrame();
         this.leftPortraitFrame = leftFrame;
-        leftFrame.style.left = uiPx(T.portraitInset + T.portraitPullToCenter);
+        leftFrame.style.left = '0';
+        leftFrame.style.bottom = '0';
         leftFrame.style.pointerEvents = 'auto';
         this.leftPortraitWrap = this.createPortraitFacingWrap('left');
         this.leftPortrait = this.createPortraitImage();
@@ -607,7 +627,8 @@ export class CombatUI {
 
         const rightFrame = this.createPortraitFrame();
         this.rightPortraitFrame = rightFrame;
-        rightFrame.style.right = uiPx(T.portraitInset + T.portraitPullToCenter);
+        rightFrame.style.right = '0';
+        rightFrame.style.bottom = '0';
         rightFrame.style.pointerEvents = 'auto';
         this.rightPortraitWrap = this.createPortraitFacingWrap('right');
         this.rightPortrait = this.createPortraitImage();
@@ -640,26 +661,27 @@ export class CombatUI {
         rightIndGroup.appendChild(this.indicatorRightLie);
         rightFrame.appendChild(rightIndGroup);
 
+        // 中央局势（均势 + 六计一字双角标）：置于标题正下方，独立行排布，绝不遮挡技能
+        this.centerSituationRow = document.createElement('div');
+        this.centerSituationRow.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: ${uiPx(8)};
+            margin-top: ${uiPx(-6)};
+            margin-bottom: ${uiPx(6)};
+            pointer-events: none;
+            z-index: 25;
+        `;
         this.indicatorJun = this.createIndicatorNode('均');
-        this.indicatorJun.style.position = 'absolute';
-        this.indicatorJun.style.bottom = `calc(${uiPx(T.portraitBottom)} + ${uiPx(620 * 0.415)})`;
-        this.indicatorJun.style.left = '50%';
-        this.indicatorJun.style.transform = 'translateX(-50%)';
-        this.indicatorJun.style.zIndex = '20';
+        this.indicatorJun.style.position = 'relative';
         this.indicatorJun.style.pointerEvents = 'none';
-        this.container.appendChild(this.indicatorJun);
 
-        // 中央局势正下方的六计一字双角标
         this.centerSixBadgeGroup = document.createElement('div');
         this.centerSixBadgeGroup.style.cssText = `
-            position: absolute;
-            top: calc(100% + ${uiPx(4)});
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             align-items: center;
             gap: ${uiPx(4)};
-            z-index: 25;
             pointer-events: none;
             white-space: nowrap;
         `;
@@ -667,20 +689,22 @@ export class CombatUI {
         this.rightCenterSixBadge = document.createElement('span');
         this.centerSixBadgeGroup.appendChild(this.leftCenterSixBadge);
         this.centerSixBadgeGroup.appendChild(this.rightCenterSixBadge);
-        this.indicatorJun.appendChild(this.centerSixBadgeGroup);
+
+        this.centerSituationRow.appendChild(this.indicatorJun);
+        this.centerSituationRow.appendChild(this.centerSixBadgeGroup);
 
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
-        const backdropEdge = uiPx(T.centerBackdropEdge);
         this.centerBackdrop = document.createElement('div');
         this.centerBackdrop.style.cssText = `
             position: absolute;
-            left: -100px;
-            right: -100px;
+            left: 0;
+            right: 0;
             top: 0;
             bottom: 0;
+            width: 100%;
             z-index: 0;
             pointer-events: none;
             background: ${this.buildCenterBackdropBackground()};
@@ -688,18 +712,20 @@ export class CombatUI {
             background-size: 100% 100%;
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-            -webkit-mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
-            mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
+            mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
         `;
         this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
         this.centerPanel.style.transition = 'opacity 0.3s ease';
         this.centerPanel.style.cssText = `
             position: absolute;
-            left: ${backdropEdge};
-            right: ${backdropEdge};
-            top: 0;
+            left: 50%;
             bottom: 0;
+            transform: translateX(-50%);
+            width: calc(100vw - ${uiPx(T.portraitSlotWidth * 1.8)});
+            max-width: ${uiPx(T.clashBarTrackWidth)};
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -989,6 +1015,7 @@ export class CombatUI {
 
         this.centerPanel.appendChild(this.battleYear);
         this.centerPanel.appendChild(this.battleTitle);
+        this.centerPanel.appendChild(this.centerSituationRow);
         this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
@@ -1141,7 +1168,7 @@ export class CombatUI {
         };
         for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
             this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
-            this.leftTechBox, this.rightTechBox, this.indicatorJun, this.toggleCollapseBtn,
+            this.leftTechBox, this.rightTechBox, this.indicatorJun, this.centerSituationRow, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
             this.rightTotalMultBadge, topHud]) save(el);
 
@@ -1157,15 +1184,9 @@ export class CombatUI {
 
 
 
-        // ① 立绘 → 屏幕左下 / 右下角（贴紧屏幕边角）
-        for (const [frame, edge] of [[this.leftPortraitFrame, 'left'], [this.rightPortraitFrame, 'right']] as const) {
+        // ① 立绘：保持在屏幕左下/右下角原生位置
+        for (const frame of [this.leftPortraitFrame, this.rightPortraitFrame]) {
             if (!frame) continue;
-            frame.style.position = 'fixed';
-            frame.style.bottom = '0';
-            frame.style.top = 'auto';
-            frame.style[edge === 'left' ? 'right' : 'left'] = 'auto';
-            frame.style[edge] = '0';
-            frame.style.zIndex = String(T.zIndex.panel);
             frame.style.opacity = '1';
             frame.style.visibility = 'visible';
             frame.style.display = 'block';
@@ -1223,6 +1244,7 @@ export class CombatUI {
         // 🔴 删除血槽面板中的标签（skillsRow）与大地图多余信息
         if (this.skillsRow) this.skillsRow.style.display = 'none';
         if (this.indicatorJun) this.indicatorJun.style.display = 'none';
+        if (this.centerSituationRow) this.centerSituationRow.style.display = 'none';
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
         for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
             if (el) el.style.display = 'none';
@@ -1272,13 +1294,17 @@ export class CombatUI {
     public syncScene13WarStart(init: Scene13WarInit): void {
         this.isVisible = true;
         this.isCollapsed = false;
+        this.scene13SidesFlipped = init.followedOnDefenderSide === true;
+        this.applyBattleBarOrientation();
         this.attackerFactionId = init.attackerFactionId ?? null;
         this.defenderFactionId = init.defenderFactionId ?? null;
 
         // 立绘与武将数据填充
-        if (!this.leftPortrait.src || this.leftPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+        const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+        const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
+        if (!attackerPortrait.src || attackerPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
             this.setPortrait(
-                this.leftPortrait,
+                attackerPortrait,
                 undefined,
                 init.attackerGeneralId || undefined,
                 init.attackerFactionId || undefined,
@@ -1286,33 +1312,37 @@ export class CombatUI {
                 'attacker',
             );
         }
-        if (!this.rightPortrait.src || this.rightPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
+        if (!defenderPortrait.src || defenderPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
             this.setPortrait(
-                this.rightPortrait,
+                defenderPortrait,
                 undefined,
                 init.defenderGeneralId || undefined,
                 init.defenderFactionId || undefined,
                 undefined,
                 'defender',
-                this.leftPortrait.src || undefined,
+                attackerPortrait.src || undefined,
             );
         }
 
         // 武将名牌
+        const attackerNameTag = this.sideElement('attacker', this.leftGeneralNameTag, this.rightGeneralNameTag);
+        const defenderNameTag = this.sideElement('defender', this.leftGeneralNameTag, this.rightGeneralNameTag);
         if (init.attackerGeneralId) {
             const attGen = getGeneralRecordByGeneralId(init.attackerGeneralId);
             if (attGen) {
-                this.leftGeneralNameTag.textContent = attGen.generalName;
-                this.leftGeneralNameTag.dataset.generalId = init.attackerGeneralId;
-                this.leftGeneralNameTag.style.display = 'block';
+                attackerNameTag.textContent = attGen.generalName;
+                attackerNameTag.dataset.generalId = init.attackerGeneralId;
+                attackerNameTag.dataset.side = 'attacker';
+                attackerNameTag.style.display = 'block';
             }
         }
         if (init.defenderGeneralId) {
             const defGen = getGeneralRecordByGeneralId(init.defenderGeneralId);
             if (defGen) {
-                this.rightGeneralNameTag.textContent = defGen.generalName;
-                this.rightGeneralNameTag.dataset.generalId = init.defenderGeneralId;
-                this.rightGeneralNameTag.style.display = 'block';
+                defenderNameTag.textContent = defGen.generalName;
+                defenderNameTag.dataset.generalId = init.defenderGeneralId;
+                defenderNameTag.dataset.side = 'defender';
+                defenderNameTag.style.display = 'block';
             }
         }
 
@@ -1338,17 +1368,19 @@ export class CombatUI {
             ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
             : (defFactionName !== '守方' ? `${defFactionName}军团` : '');
 
+        const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
+        const defenderLegionTag = this.sideElement('defender', this.leftLegionTag, this.rightLegionTag);
         if (attLegionName) {
-            this.leftLegionTag.textContent = attLegionName;
-            this.leftLegionTag.style.display = 'block';
+            attackerLegionTag.textContent = attLegionName;
+            attackerLegionTag.style.display = 'block';
         } else {
-            this.leftLegionTag.style.display = 'none';
+            attackerLegionTag.style.display = 'none';
         }
         if (defLegionName) {
-            this.rightLegionTag.textContent = defLegionName;
-            this.rightLegionTag.style.display = 'block';
+            defenderLegionTag.textContent = defLegionName;
+            defenderLegionTag.style.display = 'block';
         } else {
-            this.rightLegionTag.style.display = 'none';
+            defenderLegionTag.style.display = 'none';
         }
 
         // 启用 13 专属布局并刷新
@@ -1863,11 +1895,12 @@ export class CombatUI {
 
         const updateReinforcements = (side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const nameEl = isAtt ? this.leftReinfNameSpan : this.rightReinfNameSpan;
-            const troopsEl = isAtt ? this.leftReinfTroopsSpan : this.rightReinfTroopsSpan;
-            const badgeEl = isAtt ? this.leftReinfMultBadge : this.rightReinfMultBadge;
-            const joinBadgeEl = isAtt ? this.leftReinfJoinBadge : this.rightReinfJoinBadge;
-            const rowEl = isAtt ? this.leftReinfRow : this.rightReinfRow;
+            const isLeft = this.isSideOnLeft(side);
+            const nameEl = this.sideElement(side, this.leftReinfNameSpan, this.rightReinfNameSpan);
+            const troopsEl = this.sideElement(side, this.leftReinfTroopsSpan, this.rightReinfTroopsSpan);
+            const badgeEl = this.sideElement(side, this.leftReinfMultBadge, this.rightReinfMultBadge);
+            const joinBadgeEl = this.sideElement(side, this.leftReinfJoinBadge, this.rightReinfJoinBadge);
+            const rowEl = this.sideElement(side, this.leftReinfRow, this.rightReinfRow);
             if (!nameEl || !badgeEl || !rowEl || !joinBadgeEl) return;
 
             const bf = this.boundRegionalBattleField;
@@ -1904,15 +1937,15 @@ export class CombatUI {
                 const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
                 const ns = `<span style="white-space: nowrap; color: rgba(255, 235, 200, 0.95);">${dName}</span>`;
                 const ts = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${tStr}</span>`;
-                const line = isAtt
+                const line = isLeft
                     ? `${ns}<span style="margin-left: 6px;">${ts}</span>`
                     : `<span style="margin-right: 6px;">${ts}</span>${ns}`;
-                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35;">${line}</div>`);
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isLeft ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35;">${line}</div>`);
             }
             const extra = reinfUnits.length - shown.length;
             if (extra > 0) {
                 const more = `<span style="opacity: 0.65; color: rgba(255, 235, 200, 0.9);">余 ${extra} 部</span>`;
-                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35; margin-top: 1px;">${more}</div>`);
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isLeft ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35; margin-top: 1px;">${more}</div>`);
             }
             nameEl.innerHTML = lines.join('');
 
@@ -1987,7 +2020,7 @@ export class CombatUI {
 
         const updateCultureBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const badge = isAtt ? this.leftCultureBadge : this.rightCultureBadge;
+            const badge = this.sideElement(side, this.leftCultureBadge, this.rightCultureBadge);
             if (!badge) return;
             if (!unit) { badge.style.display = 'none'; return; }
 
@@ -2017,7 +2050,7 @@ export class CombatUI {
 
         const updateStyleBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const badge = isAtt ? this.leftSkillBadge : this.rightSkillBadge;
+            const badge = this.sideElement(side, this.leftSkillBadge, this.rightSkillBadge);
             if (!badge) return;
             if (!unit) { badge.style.display = 'none'; return; }
 
@@ -2048,7 +2081,7 @@ export class CombatUI {
 
         const updateLegionBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const badge = isAtt ? this.leftLegionBadge : this.rightLegionBadge;
+            const badge = this.sideElement(side, this.leftLegionBadge, this.rightLegionBadge);
             if (!badge) return;
             if (!unit) { badge.style.display = 'none'; return; }
 
@@ -2078,7 +2111,7 @@ export class CombatUI {
 
         const updateLuckBadge = (side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const badge = isAtt ? this.leftLuckBadge : this.rightLuckBadge;
+            const badge = this.sideElement(side, this.leftLuckBadge, this.rightLuckBadge);
             if (!badge) return;
 
             const fateLuck = isAtt
@@ -2108,7 +2141,7 @@ export class CombatUI {
 
         const updateAptitudeBadge = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
             const isAtt = side === 'attacker';
-            const badge = isAtt ? this.leftAptitudeBadge : this.rightAptitudeBadge;
+            const badge = this.sideElement(side, this.leftAptitudeBadge, this.rightAptitudeBadge);
             if (!badge) return;
             if (!unit) { badge.style.display = 'none'; return; }
 
@@ -2217,12 +2250,20 @@ export class CombatUI {
             const attChar = getSixChar(attUnit, 'attacker');
             const defChar = getSixChar(defUnit, 'defender');
 
-            applyCenterBadge(this.leftCenterSixBadge, attChar, true);
-            applyCenterBadge(this.rightCenterSixBadge, defChar, false);
+            applyCenterBadge(this.sideElement('attacker', this.leftCenterSixBadge, this.rightCenterSixBadge), attChar, true);
+            applyCenterBadge(this.sideElement('defender', this.leftCenterSixBadge, this.rightCenterSixBadge), defChar, false);
         };
 
-        applySideBadges(this.leftMultBadge, this.leftTotalMultBadge, attacker, defender, 'attacker');
-        applySideBadges(this.rightMultBadge, this.rightTotalMultBadge, defender, attacker, 'defender');
+        applySideBadges(
+            this.sideElement('attacker', this.leftMultBadge, this.rightMultBadge),
+            this.sideElement('attacker', this.leftTotalMultBadge, this.rightTotalMultBadge),
+            attacker, defender, 'attacker',
+        );
+        applySideBadges(
+            this.sideElement('defender', this.leftMultBadge, this.rightMultBadge),
+            this.sideElement('defender', this.leftTotalMultBadge, this.rightTotalMultBadge),
+            defender, attacker, 'defender',
+        );
         updateCultureBadge(attacker, 'attacker');
         updateCultureBadge(defender, 'defender');
         updateStyleBadge(attacker, 'attacker');
@@ -2575,8 +2616,8 @@ export class CombatUI {
 
             for (const tag of pending) box.appendChild(tag);
         };
-        renderSide(this.leftSkillsBox, attacker, true);
-        renderSide(this.rightSkillsBox, defender, false);
+        renderSide(this.sideElement('attacker', this.leftSkillsBox, this.rightSkillsBox), attacker, true);
+        renderSide(this.sideElement('defender', this.leftSkillsBox, this.rightSkillsBox), defender, false);
     }
 
     /** 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
@@ -2773,8 +2814,8 @@ export class CombatUI {
      * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
      */
     private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
-        const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
-        const totalBadge = side === 'attacker' ? this.leftTotalMultBadge : this.rightTotalMultBadge;
+        const nameEl = this.sideElement(side, this.leftSideNameSpan, this.rightSideNameSpan);
+        const totalBadge = this.sideElement(side, this.leftTotalMultBadge, this.rightTotalMultBadge);
         nameEl.innerHTML = name;
         if (totalBadge) {
             const t = Math.max(0, Math.floor(troops));
@@ -2792,8 +2833,8 @@ export class CombatUI {
     }
 
     private updateFactionDisplay(): void {
-        this.applyFactionName(this.attackerFactionId, this.leftFactionNameSpan);
-        this.applyFactionName(this.defenderFactionId, this.rightFactionNameSpan);
+        this.applyFactionName(this.attackerFactionId, this.sideElement('attacker', this.leftFactionNameSpan, this.rightFactionNameSpan));
+        this.applyFactionName(this.defenderFactionId, this.sideElement('defender', this.leftFactionNameSpan, this.rightFactionNameSpan));
     }
 
     /** 战斗 HUD 叠在深色地图上：势力名一律浅色字，不用旗面色（浅旗会变黑字看不见） */
@@ -2812,7 +2853,9 @@ export class CombatUI {
         img.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (!this.correctorOpen || !this.currentBattleKey) return;
-            const side = img === this.leftPortrait ? 'attacker' : 'defender';
+            const side: 'attacker' | 'defender' = img === this.leftPortrait
+                ? (this.scene13SidesFlipped ? 'defender' : 'attacker')
+                : (this.scene13SidesFlipped ? 'attacker' : 'defender');
             this.toggleMirror(side);
         });
     }
@@ -2987,7 +3030,9 @@ export class CombatUI {
         this.outcomeLocked = true;
         // ① 拉锯条撞底
         const attackerWon = winnerFactionId === this.attackerFactionId;
-        const finalPct = attackerWon ? 100 : 0;
+        const finalPct = this.scene13SidesFlipped
+            ? (attackerWon ? 0 : 100)
+            : (attackerWon ? 100 : 0);
         const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
         this.attackerBar.style.transition = `width ${slam}`;
         this.clashEffect.style.transition = `left ${slam}`;
@@ -3013,8 +3058,11 @@ export class CombatUI {
         }
         // 败方立绘缓缓褪灰（只动 filter，不碰调校 transform；下场开战时复位）
         let loserImg: HTMLImageElement | null = null;
-        if (winnerFactionId === this.attackerFactionId) loserImg = this.rightPortrait;
-        else if (winnerFactionId === this.defenderFactionId) loserImg = this.leftPortrait;
+        if (winnerFactionId === this.attackerFactionId) {
+            loserImg = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
+        } else if (winnerFactionId === this.defenderFactionId) {
+            loserImg = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+        }
         if (loserImg) {
             loserImg.style.transition = 'filter 1.6s ease';
             loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
@@ -3025,6 +3073,8 @@ export class CombatUI {
     // --- LOGIC ---
 
     public show(battle: Battle) {
+        this.scene13SidesFlipped = false;
+        this.applyBattleBarOrientation();
         this.currentBattle = battle;
         this.currentRegionalUnits = null;
         this.boundRegionalBattleField = null;
@@ -3120,8 +3170,10 @@ export class CombatUI {
         this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defenders);
 
+        const attackerPortraitImg = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+        const defenderPortraitImg = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
         this.setPortrait(
-            this.leftPortrait,
+            attackerPortraitImg,
             attacker,
             attacker.generalId,
             attacker.factionId,
@@ -3129,20 +3181,20 @@ export class CombatUI {
             'attacker',
         );
         this.setPortrait(
-            this.rightPortrait,
+            defenderPortraitImg,
             defender,
             defender.generalId,
             defender.factionId,
             defender.generalId ? defenderPortrait : (defenderPortrait ?? defender.portraitPath),
             'defender',
-            this.leftPortrait.src || undefined,
+            attackerPortraitImg.src || undefined,
         );
 
         const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit, side: 'attacker' | 'defender') => {
             this.fillGeneralNameTag(tag, unit, side);
         };
-        setGeneralName(this.leftGeneralNameTag, attacker, 'attacker');
-        setGeneralName(this.rightGeneralNameTag, defender, 'defender');
+        setGeneralName(this.sideElement('attacker', this.leftGeneralNameTag, this.rightGeneralNameTag), attacker, 'attacker');
+        setGeneralName(this.sideElement('defender', this.leftGeneralNameTag, this.rightGeneralNameTag), defender, 'defender');
 
         this.updateStats();
         this.isCollapsed = false;
@@ -3169,7 +3221,7 @@ export class CombatUI {
         generalId: string,
         side: 'attacker' | 'defender',
     ): string | null {
-        const tag = side === 'attacker' ? this.leftGeneralNameTag : this.rightGeneralNameTag;
+        const tag = this.sideElement(side, this.leftGeneralNameTag, this.rightGeneralNameTag);
         if (tag.dataset.generalId === generalId && tag.textContent?.trim()) {
             return tag.textContent.trim();
         }
@@ -3213,14 +3265,19 @@ export class CombatUI {
             side = this.resolveGeneralBattleSide(bf, generalId);
         }
         if (!side && generalId) {
-            if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
-            else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
+            if (this.leftGeneralNameTag.dataset.generalId === generalId) {
+                side = this.leftGeneralNameTag.dataset.side as 'attacker' | 'defender' | undefined ?? null;
+            } else if (this.rightGeneralNameTag.dataset.generalId === generalId) {
+                side = this.rightGeneralNameTag.dataset.side as 'attacker' | 'defender' | undefined ?? null;
+            }
         }
         if (!side && !generalId) {
             const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
             const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
             if (inLeft !== inRight) {
-                side = inLeft ? 'attacker' : 'defender';
+                side = inLeft
+                    ? (this.scene13SidesFlipped ? 'defender' : 'attacker')
+                    : (this.scene13SidesFlipped ? 'attacker' : 'defender');
             }
         }
         if (!side) return;
@@ -3250,7 +3307,7 @@ export class CombatUI {
             this.pulsePortraitForSkill(pulseSide);
             
             // 联动：在立绘正中央弹出巨大化技能文字 Cut-in
-            const frame = pulseSide === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+            const frame = this.sideElement(pulseSide, this.leftPortraitFrame, this.rightPortraitFrame);
             const cutIn = document.createElement('div');
             cutIn.textContent = displayName;
             const isAtt = pulseSide === 'attacker';
@@ -3344,8 +3401,8 @@ export class CombatUI {
         const generalName = this.resolveGeneralSpeechName(generalId, battleSide) ?? rec.generalName;
         const eliteName = gUnit ? getLegionEliteBadgeName(gUnit) : null;
         const opponentHasGeneral = battleSide === 'attacker'
-            ? !!this.rightGeneralNameTag.dataset.generalId
-            : !!this.leftGeneralNameTag.dataset.generalId;
+            ? !!this.sideElement('defender', this.leftGeneralNameTag, this.rightGeneralNameTag).dataset.generalId
+            : !!this.sideElement('attacker', this.leftGeneralNameTag, this.rightGeneralNameTag).dataset.generalId;
         // 2026-08-04 GAKU 拍板：非双将战（对手无将）战斗仅 9 秒，完整技能句
         // （武将+技名+精锐+八字诀 ≈5s）念不完——只保留视觉（Cut-in/标签/音效），不念语音。
         // 双将战（30s 起）照常播报。false = 不播，调用方自排视觉脉冲。
@@ -3374,7 +3431,7 @@ export class CombatUI {
         const bf = this.boundRegionalBattleField;
         // 【2026-08-16 用户指令】单方有将立绘不缩放
         if (bf && !bf.bothSidesHaveGeneral()) return;
-        const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+        const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         const st = this.portraitWind[side];
         frame.style.setProperty('--pre-scale', st.scale.toFixed(4));
         frame.style.transform = ''; // 交还给 surge 动画（both 填充结束时停在 scale(1)）
@@ -3410,15 +3467,17 @@ export class CombatUI {
 
         this.updateMultiplierBadges(attGeneral, defGeneral);
         this.updateSkillBadges(attGeneral, defGeneral);
-        this.setPortrait(this.leftPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
+        const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+        const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
+        this.setPortrait(attackerPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
         this.setPortrait(
-            this.rightPortrait,
+            defenderPortrait,
             defGeneral,
             defGeneral.generalId,
             defGeneral.factionId,
             defGeneral.portraitPath,
             'defender',
-            this.leftPortrait.src || undefined,
+            attackerPortrait.src || undefined,
         );
         this.updateGeneralNameTags(attGeneral, defGeneral);
         this.refreshRegionalSafetyDeadline();
@@ -3543,7 +3602,7 @@ export class CombatUI {
     }
 
     private correctorImg(): HTMLImageElement {
-        return this.correctorSide === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        return this.sideElement(this.correctorSide, this.leftPortrait, this.rightPortrait);
     }
 
     /** 从 img.src 取出 "/assets/.../x.png" 形式路径（解码空格等）。
@@ -3568,7 +3627,7 @@ export class CombatUI {
     private correctorPathForSide(side: 'attacker' | 'defender'): string {
         const staged = this.portraitBindStaging.find((b) => b.side === side);
         if (staged) return staged.destPath;
-        const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        const img = this.sideElement(side, this.leftPortrait, this.rightPortrait);
         return this.srcToPath(img);
     }
 
@@ -3704,7 +3763,9 @@ export class CombatUI {
     }
 
     private applyPortraitAdjustToImg(img: HTMLImageElement, data: PortraitAdjustData = this.correctorData): void {
-        const side: 'attacker' | 'defender' = img === this.leftPortrait ? 'attacker' : 'defender';
+        const side: 'attacker' | 'defender' = img === this.leftPortrait
+            ? (this.scene13SidesFlipped ? 'defender' : 'attacker')
+            : (this.scene13SidesFlipped ? 'attacker' : 'defender');
         const path = this.correctorPathForSide(side);
         if (!this.canPersistPortraitPath(path)) return;
         applyPortraitAdjustToElement(img, path, data);
@@ -3864,18 +3925,12 @@ export class CombatUI {
     private highlightCorrectorSide(): void {
         const outlineStyle = '6px dashed #ff3333';
         const shadowStyle = '0 0 30px #ff3333';
-
-        if (this.correctorSide === 'attacker') {
-            this.leftPortraitFrame.style.outline = outlineStyle;
-            this.leftPortraitFrame.style.boxShadow = shadowStyle;
-            this.rightPortraitFrame.style.outline = '';
-            this.rightPortraitFrame.style.boxShadow = 'none';
-        } else {
-            this.rightPortraitFrame.style.outline = outlineStyle;
-            this.rightPortraitFrame.style.boxShadow = shadowStyle;
-            this.leftPortraitFrame.style.outline = '';
-            this.leftPortraitFrame.style.boxShadow = 'none';
-        }
+        const selected = this.sideElement(this.correctorSide, this.leftPortraitFrame, this.rightPortraitFrame);
+        const other = selected === this.leftPortraitFrame ? this.rightPortraitFrame : this.leftPortraitFrame;
+        selected.style.outline = outlineStyle;
+        selected.style.boxShadow = shadowStyle;
+        other.style.outline = '';
+        other.style.boxShadow = 'none';
     }
 
     private buildCrosshair(): HTMLDivElement {
@@ -4089,7 +4144,7 @@ export class CombatUI {
         }
         // destPath 确认可访问，升级 override 并更新 img.src
         setGeneralPortraitOverride(bind.generalId, bind.destPath);
-        const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        const img = this.sideElement(bind.side, this.leftPortrait, this.rightPortrait);
         const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;
         await new Promise<void>((resolve) => {
             const done = () => {
@@ -4335,11 +4390,13 @@ export class CombatUI {
         this.regionalSafetyDeadline = 0;
         this.attackerFactionId = null;
         this.defenderFactionId = null;
+        this.scene13SidesFlipped = false;
+        this.applyBattleBarOrientation();
         this.resetBattleOverlays();
         this.isCollapsed = false;
         this.updateCollapseState(true);
         this.container.style.animation = 'none';
-        this.container.style.transform = 'translate(-50%, 250%)';
+        this.container.style.transform = 'translateY(250%)';
         this.leftPortraitFrame.style.animation = 'none';
         this.rightPortraitFrame.style.animation = 'none';
         this.leftPortraitFrame.style.transform = '';
@@ -4409,13 +4466,13 @@ export class CombatUI {
 
         if (this.isCollapsed) {
             this.container.classList.add('is-collapsed');
-            this.container.style.transform = 'translate(-50%, 100%)';
+            this.container.style.transform = 'translateY(100%)';
             this.toggleCollapseBtn.innerHTML = `<span>▲</span>`;
             this.toggleCollapseBtn.title = '展开战斗面板 (点击显示)';
         } else {
             this.container.classList.remove('is-collapsed');
             if (!skipAnimation) {
-                this.container.style.transform = 'translate(-50%, 0)';
+                this.container.style.transform = 'translateY(0)';
             }
             this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
             this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
@@ -4618,8 +4675,14 @@ export class CombatUI {
         if (this.leftTechBox && this.rightTechBox) {
             const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
             if (sideTechs) {
-                this.renderTechSide(this.leftTechBox, sideTechs.attacker, sideTechs.defender, true);
-                this.renderTechSide(this.rightTechBox, sideTechs.defender, sideTechs.attacker, false);
+                this.renderTechSide(
+                    this.sideElement('attacker', this.leftTechBox, this.rightTechBox),
+                    sideTechs.attacker, sideTechs.defender, true,
+                );
+                this.renderTechSide(
+                    this.sideElement('defender', this.leftTechBox, this.rightTechBox),
+                    sideTechs.defender, sideTechs.attacker, false,
+                );
                 // 分隔徽记只跟着「确实有科技可显示」走：没有科技时不留一个孤零零的图标
                 if (this.techDivider && this.scene13LayoutOn) {
                     this.techDivider.style.display = 'flex';
@@ -4786,9 +4849,10 @@ export class CombatUI {
         attPct = Math.max(0, Math.min(100, attPct));
 
         if (!this.outcomeLocked) {
-            this.attackerBar.style.width = `${attPct}%`;
-            this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
-            this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
+            const visualLeftPct = this.scene13SidesFlipped ? 100 - attPct : attPct;
+            this.attackerBar.style.width = `${visualLeftPct}%`;
+            this.clashEffect.style.left = `calc(${visualLeftPct}% - 8px)`;
+            this.rightTotalMultBadge.style.left = `calc(${visualLeftPct}% + ${uiPx(36)})`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
@@ -4796,10 +4860,12 @@ export class CombatUI {
         if (!this.outcomeLocked && progress >= PHASE_COLLAPSE_START && total > 0 && attCurrent !== defCurrent) {
             const k = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
             const attBehind = attCurrent < defCurrent;
-            const behindImg = attBehind ? this.leftPortrait : this.rightPortrait;
-            const aheadImg = attBehind ? this.rightPortrait : this.leftPortrait;
-            const behindTag = attBehind ? this.leftGeneralNameTag : this.rightGeneralNameTag;
-            const aheadTag = attBehind ? this.rightGeneralNameTag : this.leftGeneralNameTag;
+            const behindSide: 'attacker' | 'defender' = attBehind ? 'attacker' : 'defender';
+            const aheadSide: 'attacker' | 'defender' = attBehind ? 'defender' : 'attacker';
+            const behindImg = this.sideElement(behindSide, this.leftPortrait, this.rightPortrait);
+            const aheadImg = this.sideElement(aheadSide, this.leftPortrait, this.rightPortrait);
+            const behindTag = this.sideElement(behindSide, this.leftGeneralNameTag, this.rightGeneralNameTag);
+            const aheadTag = this.sideElement(aheadSide, this.leftGeneralNameTag, this.rightGeneralNameTag);
             aheadImg.style.filter = '';
             aheadTag.style.opacity = '';
             behindImg.style.filter =
@@ -4857,11 +4923,11 @@ export class CombatUI {
         setInactive(this.indicatorJun);
 
         if (attAdvantage) {
-            setActive(this.indicatorLeftYou, 'you');
-            setActive(this.indicatorRightLie, 'lie'); // 守方劣势
+            setActive(this.sideElement('attacker', this.indicatorLeftYou, this.indicatorRightYou), 'you');
+            setActive(this.sideElement('defender', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
         } else if (attDisadvantage) {
-            setActive(this.indicatorLeftLie, 'lie');
-            setActive(this.indicatorRightYou, 'you'); // 守方优势
+            setActive(this.sideElement('attacker', this.indicatorLeftLie, this.indicatorRightLie), 'lie');
+            setActive(this.sideElement('defender', this.indicatorLeftYou, this.indicatorRightYou), 'you');
         } else {
             setActive(this.indicatorJun, 'jun');
         }
@@ -4899,8 +4965,8 @@ export class CombatUI {
                 rec = cmdRec;
             }
         }
-        const famousBadge = side === 'attacker' ? this.leftFamousBadge : this.rightFamousBadge;
-        const legionTag = side === 'attacker' ? this.leftLegionTag : this.rightLegionTag;
+        const famousBadge = this.sideElement(side, this.leftFamousBadge, this.rightFamousBadge);
+        const legionTag = this.sideElement(side, this.leftLegionTag, this.rightLegionTag);
         if (rec) {
             tag.textContent = rec.generalName;
             tag.style.display = 'block';
@@ -4930,8 +4996,8 @@ export class CombatUI {
     }
 
     private updateGeneralNameTags(attacker: IBattleUnit, defender: IBattleUnit): void {
-        this.fillGeneralNameTag(this.leftGeneralNameTag, attacker, 'attacker');
-        this.fillGeneralNameTag(this.rightGeneralNameTag, defender, 'defender');
+        this.fillGeneralNameTag(this.sideElement('attacker', this.leftGeneralNameTag, this.rightGeneralNameTag), attacker, 'attacker');
+        this.fillGeneralNameTag(this.sideElement('defender', this.leftGeneralNameTag, this.rightGeneralNameTag), defender, 'defender');
     }
 
     /** F2 关：名牌/立绘均不可点；F2 开：仅名牌虚线可点 */
@@ -5189,7 +5255,7 @@ export class CombatUI {
 
         this.correctorSide = side;
         this.highlightCorrectorSide();
-        const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        const img = this.sideElement(side, this.leftPortrait, this.rightPortrait);
         const onPortraitLoaded = () => {
             // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
             // 按自身路径优先解析（resolvePortraitAdjust 内部会自身→canonical→文件夹兜底）
@@ -5498,7 +5564,7 @@ export class CombatUI {
     }
 
     private applyPortraitFacing(side: 'attacker' | 'defender'): void {
-        const wrap = side === 'attacker' ? this.leftPortraitWrap : this.rightPortraitWrap;
+        const wrap = this.sideElement(side, this.leftPortraitWrap, this.rightPortraitWrap);
         wrap.style.transformOrigin = 'center bottom';
         wrap.style.transform = this.getEffectiveMirror(side) ? 'scaleX(-1)' : 'none';
     }
@@ -5507,7 +5573,9 @@ export class CombatUI {
         const input = event.target as HTMLInputElement;
         if (input.files && input.files[0] && this.currentBattleKey) {
             const file = input.files[0];
-            const side = this.tempIsLeft ? 'attacker' : 'defender';
+            const side: 'attacker' | 'defender' = this.tempIsLeft
+                ? (this.scene13SidesFlipped ? 'defender' : 'attacker')
+                : (this.scene13SidesFlipped ? 'attacker' : 'defender');
             const battleKey = this.currentBattleKey;
 
             const reader = new FileReader();

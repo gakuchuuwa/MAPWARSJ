@@ -143,8 +143,11 @@ const CLEAN_CACHE = new Map<string, HTMLImageElement>();
  *    改成按**实际字节**淘汰。300MB 够装 2~3 场的常见兵种，且与染色缓存、抠绿缓存加总后
  *    仍给单场工作集（~760MB，bank 强引用）留出充足余量。
  */
-// 🔴 [2026-08-31] 实测顶死在 296MB → 整场反复淘汰重抠绿。放到 700MB 装得下一整场。
-//    预算的职责是「跨场保留多少」，低于单场工作集只会制造抖动（见 SpriteTinter 同款注释）。
+// 300 → 700MB（2026-08-31）。⚠️ **「整场反复淘汰重抠绿」是我当时的猜测，事后被证伪**：
+//    补上 churn 计数器实测 `reAdds` 恒为 0，没有任何条目被淘汰后又加回来。
+//    留在 700 只是因为实测单场工作集 375MB 大于旧预算 300MB，能让淘汰变罕见（现测 evicts:0）。
+//    要改这个数先看报告里本项的 churn.reAdds —— 是 0 就别指望抬预算能提性能。
+//    （同款教训见 SpriteTinter.TINTED_CACHE_MAX_BYTES 注释）
 const CLEAN_CACHE_MAX_BYTES = 700 * 1024 * 1024;
 let cleanCacheBytes = 0;
 
@@ -4506,7 +4509,7 @@ export class Scene13WarLayer {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
             const frontX = Math.max(...side.map((p) => p.x));
             const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 1).sort((a, b) => a.y - b.y);
-            const barricadeCount = Math.min(9, Math.max(6, frontRow.length * 3));
+            const barricadeCount = 6 + Math.floor(Math.random() * 4);
             const topY = frontRow[0].y - 75;
             const bottomY = frontRow[frontRow.length - 1].y + 75;
             this.ensureNatureAsset(barricadeAsset);
