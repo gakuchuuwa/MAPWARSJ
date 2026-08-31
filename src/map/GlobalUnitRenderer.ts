@@ -526,11 +526,38 @@ export class GlobalUnitRenderer {
     private static readonly NAVAL_TURN_RATE_DEG_S = 55;
     /** 船朝向指数平滑时间常数（秒）：大角度由上面的角速度封顶主导，小角度靠它缓入，收尾不生硬 */
     private static readonly NAVAL_TURN_TAU_S = 0.30;
-    /** 双舰队野战：一圈约 8 秒，双方在同一椭圆的相对两端构成“双鱼”追逐。 */
-    private static readonly NAVAL_FIELD_ORBIT_PERIOD_SEC = 8;
-    private static readonly NAVAL_FIELD_ORBIT_RX_PX = 110;
-    private static readonly NAVAL_FIELD_ORBIT_RY_PX = 65;
+    /**
+     * 双舰队野战「双鱼」机动（2026-08-31 按大航海时代4 的观感重做）。
+     *
+     * 🔴 改前是**旋转木马**：两队锁在同一椭圆的正对两端，角速度恒定且相同，
+     *    于是彼此距离**永远不变** —— 没有对进、没有交错、没有拉开，只是绕圈。
+     *    帆船海战最好看的恰恰是「抢上风 → 对进 → 舷侧交错 → 拉开重整」这个往复。
+     *
+     * 现在叠了三层，全是**渲染层**的闭式解（不积分、不存状态、不碰 Army 真坐标）：
+     *   ① 风：每场战斗一个固定风向，顺风段角速度快、顶风段慢。
+     *      两队处在椭圆相对两端，同一时刻必然一顺一顶 → **间距自己会呼吸**（±2×WIND_SWING）。
+     *   ② 距离呼吸：半径按半周期缓慢涨缩，两队交替逼近到舷侧齐射距离再拉开。
+     *   ③ 进动：整个交战椭圆缓慢转向，战场是「漂着打」而不是原地转圈。
+     *
+     * 半径从 110×65 放大到 230×140（主人要「移动范围大一点」）；
+     * 周期同步从 8s 拉到 15s，否则半径翻倍会让船速也翻倍，变成快艇不是帆船。
+     */
+    private static readonly NAVAL_FIELD_ORBIT_PERIOD_SEC = 15;
+    private static readonly NAVAL_FIELD_ORBIT_RX_PX = 230;
+    private static readonly NAVAL_FIELD_ORBIT_RY_PX = 140;
     private static readonly NAVAL_FIELD_SLOT_PHASE_RAD = 0.34;
+    /**
+     * 风致角速度摆幅（弧度）。相位写成 `ωt + A·sin(ωt - 风向)`，
+     * 角速度 = ω(1 + A·cos(...))，**A<1 就保证单调**（不会倒车）。
+     * 两队间距因此在 π ± 2A 之间摆：0.30 → ±34°，一逼一离看得清但不至于脱节。
+     */
+    private static readonly NAVAL_FIELD_WIND_SWING = 0.30;
+    /** 距离呼吸幅度（半径的比例）：0.20 = 最近 0.8R、最远 1.2R，交错时明显贴近 */
+    private static readonly NAVAL_FIELD_RANGE_SWING = 0.20;
+    /** 交战椭圆进动角速度（弧度/秒）：3°/s，30 秒转 90°，战场缓慢漂移不显得原地打转 */
+    private static readonly NAVAL_FIELD_PRECESS_RAD_S = 3 * Math.PI / 180;
+    /** 航迹采样步长（秒）：18 点 × 0.13s ≈ 2.3 秒尾迹，与改前时长一致 */
+    private static readonly NAVAL_FIELD_TRAIL_STEP_SEC = 0.13;
     /**
      * [2026-08-04] 攻城外推量平滑缓存：unitId → { push px, 背离城单位方向 }。
      * 开战/停火/城缩回时目标外推量突变，直接套用 = 渲染瞬移（主人红线）。
@@ -1428,7 +1455,6 @@ export class GlobalUnitRenderer {
                 attackerCenter.y - center.y,
                 attackerCenter.x - center.x,
             );
-            const phase = elapsed / GlobalUnitRenderer.NAVAL_FIELD_ORBIT_PERIOD_SEC * Math.PI * 2;
             const isAttacker = attackerIndex >= 0;
             const ownIndex = isAttacker ? attackerIndex : defenderIndex;
             const ownSide = isAttacker ? attackers : defenders;
@@ -1437,27 +1463,41 @@ export class GlobalUnitRenderer {
             const enemyIndex = Math.min(ownIndex, enemySide.length - 1);
             const enemySlot = enemyIndex - (enemySide.length - 1) / 2;
 
-            const pointAt = (attackerSide: boolean, sideSlot: number, angleBack = 0): L.Point => {
-                const angle = baseAngle + phase + (attackerSide ? 0 : Math.PI)
-                    + sideSlot * GlobalUnitRenderer.NAVAL_FIELD_SLOT_PHASE_RAD - angleBack;
-                const rx = baseRx + Math.abs(sideSlot) * 18 * zoomScale;
-                const ry = baseRy + Math.abs(sideSlot) * 10 * zoomScale;
+            const omega = Math.PI * 2 / GlobalUnitRenderer.NAVAL_FIELD_ORBIT_PERIOD_SEC;
+            // 每场战斗一个**固定**风向：用交战轴 baseAngle 派生，同一场每帧一致、不同场各异。
+            // 不用随机数——随机数每帧都变，风向会抖。
+            const windDir = baseAngle + 2.4;
+
+            /**
+             * 某一侧、某个位次、在 tSec 时刻的屏幕位置。
+             * 全部由 tSec 闭式算出，所以尾迹只要代入过去的时刻就**天然贴合航线**
+             * （改前是拿「角度减一点」近似过去位置，公式一复杂就对不上了）。
+             */
+            const poseAt = (tSec: number, attackerSide: boolean, sideSlot: number): L.Point => {
+                const sideOffset = attackerSide ? 0 : Math.PI;
+                // ① 风：顺风快、顶风慢。两队相差 π，同一时刻必然一顺一顶 → 间距自己呼吸。
+                const windTerm = GlobalUnitRenderer.NAVAL_FIELD_WIND_SWING
+                    * Math.sin(omega * tSec + sideOffset - windDir);
+                // ③ 进动：整个交战椭圆缓慢转向
+                const angle = baseAngle
+                    + GlobalUnitRenderer.NAVAL_FIELD_PRECESS_RAD_S * tSec
+                    + omega * tSec + sideOffset + windTerm
+                    + sideSlot * GlobalUnitRenderer.NAVAL_FIELD_SLOT_PHASE_RAD;
+                // ② 距离呼吸：半周期涨缩，逼近到齐射距离再拉开
+                const breathe = 1 + GlobalUnitRenderer.NAVAL_FIELD_RANGE_SWING
+                    * Math.sin(omega * tSec * 0.5 + windDir);
+                const rx = (baseRx + Math.abs(sideSlot) * 18 * zoomScale) * breathe;
+                const ry = (baseRy + Math.abs(sideSlot) * 10 * zoomScale) * breathe;
                 return L.point(center.x + Math.cos(angle) * rx, center.y + Math.sin(angle) * ry);
             };
 
-            const point = pointAt(isAttacker, slot);
-            const enemyPoint = pointAt(!isAttacker, enemySlot);
-            const angle = baseAngle + phase + (isAttacker ? 0 : Math.PI)
-                + slot * GlobalUnitRenderer.NAVAL_FIELD_SLOT_PHASE_RAD;
-            const rx = baseRx + Math.abs(slot) * 18 * zoomScale;
-            const ry = baseRy + Math.abs(slot) * 10 * zoomScale;
-            const tangentX = -Math.sin(angle) * rx;
-            const tangentY = Math.cos(angle) * ry;
+            const point = poseAt(elapsed, isAttacker, slot);
+            const enemyPoint = poseAt(elapsed, !isAttacker, enemySlot);
+            // 航向用**数值微分**：公式再叠几层也不会像手推切线那样算错。
+            const ahead = poseAt(elapsed + 0.08, isAttacker, slot);
+            const tangentX = ahead.x - point.x;
+            const tangentY = ahead.y - point.y;
             const tangentLen = Math.max(0.001, Math.hypot(tangentX, tangentY));
-            const ahead = L.point(
-                point.x + tangentX / tangentLen * 10,
-                point.y + tangentY / tangentLen * 10,
-            );
             const ll = this.map.containerPointToLatLng(point);
             const llAhead = this.map.containerPointToLatLng(ahead);
             const enemyLL = this.map.containerPointToLatLng(enemyPoint);
@@ -1470,7 +1510,10 @@ export class GlobalUnitRenderer {
 
             const trail: { x: number; y: number }[] = [];
             for (let k = 18; k >= 1; k--) {
-                const p = pointAt(isAttacker, slot, k * 0.10);
+                const p = poseAt(
+                    Math.max(0, elapsed - k * GlobalUnitRenderer.NAVAL_FIELD_TRAIL_STEP_SEC),
+                    isAttacker, slot,
+                );
                 trail.push({ x: p.x, y: p.y });
             }
 

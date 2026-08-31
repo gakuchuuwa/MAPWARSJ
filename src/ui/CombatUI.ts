@@ -168,6 +168,42 @@ export function resolveLuckTagLabel(mult: number): string {
     return best;
 }
 
+/**
+ * 三势适性标签文案：根据武将天赋（造势/借势/逆势）与当前战局契合度解析四字标签。
+ * - 契合本命（1.20）：造势「因势乘便」/ 借势「借力打力」 / 逆势「绝处逢生」
+ * - 次适（1.10）：见机行事
+ * - 错位/常态（1.00）：随机制变
+ */
+export function resolveAptitudeTagLabel(aptitude: string, aptMult: number): string {
+    if (aptMult >= 1.19) {
+        if (aptitude === 'create') return '因势乘便';
+        if (aptitude === 'leverage') return '借力打力';
+        if (aptitude === 'reverse') return '绝处逢生';
+    } else if (aptMult >= 1.09) {
+        return '见机行事';
+    }
+    return '随机制变';
+}
+
+/**
+ * 攻防风格标签文案：根据武将攻防风格（善攻/善防/双行）与攻守角色解析四字标签。
+ * - 专攻本位（攻城/野攻）：锐不可当
+ * - 专守本位（守城/驻防）：固若金汤
+ * - 攻守兼备（双行）：攻守兼资
+ * - 善攻处于守方：以攻代守
+ * - 善防处于攻方：勉为其难
+ */
+export function resolveAttackStyleTagLabel(style: string, isAttacker: boolean): string {
+    if (style === 'balanced') return '攻守兼资';
+    if (style === 'attack') {
+        return isAttacker ? '锐不可当' : '以攻代守';
+    }
+    if (style === 'defense') {
+        return isAttacker ? '勉为其难' : '固若金汤';
+    }
+    return isAttacker ? '锐不可当' : '固若金汤';
+}
+
 /** 取文化标签；档位未精确命中时就近取档（绝不返回空串让标签凭空消失） */
 export function resolveCultureTagLabel(mult: number, isGarrison: boolean): string {
     const table = isGarrison ? CULTURE_TAG_DEF_LABELS : CULTURE_TAG_ATK_LABELS;
@@ -2457,7 +2493,7 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'other' = 'other',
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'other' = 'other',
             sixSetChar?: string,
         ) => {
             const tag = document.createElement('div');
@@ -2510,6 +2546,28 @@ export class CombatUI {
                     bgColor = isFamous ? 'rgba(20, 20, 55, 0.85)' : 'rgba(15, 15, 40, 0.8)';
                     bgHighlight = 'rgba(140, 160, 255, 0.15)';
                     sideColor = '#7a70e6'; // 星穹幽紫蓝
+                }
+            } else if (skillType === 'aptitude') {
+                // 三势适性标签：沉静深邃的苍青墨绿 / 玄靛
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(15, 45, 45, 0.85)' : 'rgba(10, 30, 30, 0.8)';
+                    bgHighlight = 'rgba(60, 200, 180, 0.15)';
+                    sideColor = '#2eb8ac'; // 苍碧
+                } else {
+                    bgColor = isFamous ? 'rgba(25, 25, 55, 0.85)' : 'rgba(15, 15, 40, 0.8)';
+                    bgHighlight = 'rgba(130, 140, 240, 0.15)';
+                    sideColor = '#5c6bc0'; // 玄靛
+                }
+            } else if (skillType === 'style') {
+                // 攻防风格标签：攻方锐烈炽金 / 守方坚壁重岩
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(60, 25, 10, 0.85)' : 'rgba(45, 15, 5, 0.8)';
+                    bgHighlight = 'rgba(255, 140, 50, 0.15)';
+                    sideColor = '#ff7b25'; // 烈阳赤橙
+                } else {
+                    bgColor = isFamous ? 'rgba(25, 35, 45, 0.85)' : 'rgba(15, 25, 35, 0.8)';
+                    bgHighlight = 'rgba(100, 180, 240, 0.15)';
+                    sideColor = '#3a9fd8'; // 坚岩冰蓝
                 }
             } else {
                 // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
@@ -2592,7 +2650,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'other' = 'other'
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'other' = 'other'
             ) => {
                 if (pending.length >= 4) return;
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
@@ -2619,6 +2677,36 @@ export class CombatUI {
                 }
             };
 
+            const addCulture = () => {
+                const cultureMult = getCultureOnlyCombatMultiplier(unit);
+                const round = Math.round(cultureMult * 100) / 100;
+                const isGarrison = unit.unitType === 'city';
+                const label = resolveCultureTagLabel(round, isGarrison);
+                if (label) add(label, '', false, 'culture');
+            };
+
+            const addAptitude = () => {
+                if (!unit.generalId) return;
+                const profile = getGeneralProfile(unit.generalId);
+                if (!profile?.aptitude) return;
+                const myUnits = this.getUnitsForSide(sideKey);
+                const oppUnits = this.getOpponentUnitsFor(sideKey);
+                const bf = this.boundRegionalBattleField;
+                const cachedMyTroops = isAttacker ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+                const cachedOppTroops = isAttacker ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
+                const aptMult = getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
+                const label = resolveAptitudeTagLabel(profile.aptitude, aptMult);
+                if (label) add(label, '', false, 'aptitude');
+            };
+
+            const addStyle = () => {
+                if (!unit.generalId) return;
+                const profile = getGeneralProfile(unit.generalId);
+                if (!profile?.attackStyle) return;
+                const label = resolveAttackStyleTagLabel(profile.attackStyle, isAttacker);
+                if (label) add(label, '', false, 'style');
+            };
+
             const addLuck = () => {
                 const fateLuck = isAttacker
                     ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
@@ -2636,14 +2724,20 @@ export class CombatUI {
             };
 
             if (isAttacker) {
-                // 攻击方：精锐 -> 运气 -> 技能
+                // 攻击方：精锐 -> 文化 -> 适性 -> 风格 -> 运气 -> 技能
                 addElite();
+                addCulture();
+                addAptitude();
+                addStyle();
                 addLuck();
                 addSkills();
             } else {
-                // 防守方：技能 -> 运气 -> 精锐
+                // 防守方：技能 -> 运气 -> 风格 -> 适性 -> 文化 -> 精锐
                 addSkills();
                 addLuck();
+                addStyle();
+                addAptitude();
+                addCulture();
                 addElite();
             }
 

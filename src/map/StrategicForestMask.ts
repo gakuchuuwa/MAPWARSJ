@@ -14,6 +14,13 @@ export function queryStrategicForestBiome(lat: number, lng: number): number {
     return store.pixels[(y * store.width + x) * 4] ?? 0;
 }
 
+export function queryStrategicCanopyDensity(lat: number, lng: number): number {
+    if (!store) return 0;
+    const x = ((Math.floor(((lng + 180) / 360) * store.width) % store.width) + store.width) % store.width;
+    const y = Math.max(0, Math.min(store.height - 1, Math.floor(((90 - lat) / 180) * store.height)));
+    return store.pixels[(y * store.width + x) * 4 + 1] ?? 0;
+}
+
 export function loadStrategicForestMask(url = '/world/strategic-forest-mask.png'): Promise<boolean> {
     if (store) return Promise.resolve(true);
     if (loading) return loading;
