@@ -3773,7 +3773,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/CENTRAL/dang_d_zhuwen.png": {
-            "scale": 1.01,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -7088,7 +7088,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 31
         },
         "/assets/GERMANIC/keernuwaye_geladelong.png": {
-            "scale": 1.14,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 26
         },

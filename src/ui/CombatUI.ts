@@ -1018,6 +1018,7 @@ export class CombatUI {
         // --- 隐藏/展开战斗面板 下拉箭头按钮（点击收起面板，避开遮挡战场）---
         this.toggleCollapseBtn = document.createElement('button');
         this.toggleCollapseBtn.className = 'combat-ui-collapse-btn';
+        this.toggleCollapseBtn.style.display = 'none';
         this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
         this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
         this.toggleCollapseBtn.addEventListener('click', (e) => {
@@ -3200,6 +3201,7 @@ export class CombatUI {
         if (this.centerPanel) this.centerPanel.style.display = 'flex';
         if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'block';
         if (this.rightPortraitFrame) this.rightPortraitFrame.style.display = 'block';
+        if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = this.scene13LayoutOn ? 'none' : 'flex';
         this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
     }
@@ -4434,6 +4436,7 @@ export class CombatUI {
             this.rightPortraitFrame.style.transform = '';
         }
         if (this.rightLegionTag) this.rightLegionTag.style.display = 'none';
+        if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
         // 战斗结束：若当前仍有跟随的军团，左下角武将立绘安稳驻留，不随战斗面板收起消失
         if (this.followedArmy && !this.followedArmy.isDestroyed && (this.followedArmy.getTroops?.() ?? 0) > 0) {
             this.showFollowedGeneral(this.followedArmy);
@@ -4513,6 +4516,9 @@ export class CombatUI {
             }
             this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
             this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
+        }
+        if (this.scene13LayoutOn) {
+            this.toggleCollapseBtn.style.display = 'none';
         }
     }
 
