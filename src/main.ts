@@ -2,6 +2,7 @@ import 'leaflet/dist/leaflet.css';
 import '../style.css';
 import { GameApp } from './app/GameApp';
 import { showGameAppErrorOverlay } from './app/boot/GameAppBootUtils';
+import { registerMapwarWebMcpTools } from './webmcp/registerMapwarTools';
 
 if (import.meta.env.DEV) {
     import('./debug/perfEarly');
@@ -32,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const app = new GameApp();
         (window as any).gameApp = app;
-        void app.start().catch(showBootError);
+        void app.start()
+            .then(() => registerMapwarWebMcpTools(app))
+            .catch(showBootError);
     } catch (err) {
         showBootError(err);
     }

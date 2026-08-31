@@ -2458,8 +2458,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -40
         },
         "/assets/LINGNAN/dayue_chenguojun.png": {
-            "scale": 0.98,
-            "offsetX": 4,
+            "scale": 1.02,
+            "offsetX": 9,
             "offsetY": 3
         },
         "/assets/litang/loufan_xuerengui.png": {
@@ -2783,7 +2783,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/liuhan/shuofang_weiqing.png": {
-            "scale": 1.11,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": 6
         },
