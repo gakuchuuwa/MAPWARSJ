@@ -1633,8 +1633,8 @@ function buildVegetation(
     //    我曾按主人发的 DE 截图目测「一屏 18~22 处」把这里从 4~7 提到 10~16，
     //    实测总石头数飙到 34 个、超 DE 密度 5~10 倍。那张截图是**战役地图（手工摆放）**，
     //    不是随机地图，不能拿来当密度基准。
-    //    主岩石 2~4 个 × 每个伴生 1~2 碎石 ≈ 总数 4~10，落在 DE 区间。
-    const solidDecorCount = 2 + rng.int(0, 2);
+    //    主岩石只放 1~2 个，避免大块岩石挤占战场。
+    const solidDecorCount = 1 + rng.int(0, 1);
     // 🔴 [2026-08-26 主人「这种大石头没必要放这么多吧，1-2 块即可」] 巨岩单独限量。
     //    solid 池按底图分两类体量：草地配 ROCK1/2（小岩块堆，2~4 个不显多），
     //    沙漠/戈壁配 ROCK_FORMATION*（层叠柱状风蚀岩，一块就占掉小半屏）。
@@ -1660,7 +1660,14 @@ function buildVegetation(
             }
         }
         const solidExclusion = isSiege && asset.startsWith('ROCK') ? inKeepClear : inArmyCorridor;
-        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, solidExclusion, decorLimits);
+        const anchorX = solidDecorCount === 1
+            ? VW * (0.28 + rng.next() * 0.34)
+            : VW * ((i === 0 ? 0.28 : 0.62) + (rng.next() - 0.5) * 0.10);
+        const anchorY = VH * (0.24 + rng.next() * 0.52);
+        const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, solidExclusion, {
+            ...decorLimits,
+            findClosest: { ax: anchorX, ay: anchorY },
+        });
         if (p) {
             const placementGroup = asset.startsWith('ROCK') ? `solid-${i}` : undefined;
             objects.push({

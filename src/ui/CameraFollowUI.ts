@@ -11,7 +11,6 @@ import { GameConfig } from '../config/GameConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
 import { GENERAL_PROFILES } from '../data/GeneralSkills';
-import { FollowedGeneralPortraitHUD } from './FollowedGeneralPortraitHUD';
 
 export interface HistoricalStreakRecord {
     streak: number;
@@ -46,7 +45,6 @@ export class CameraFollowUI {
     }
 
     // DOM Elements
-    public portraitHUD: FollowedGeneralPortraitHUD;
     private listButton: HTMLButtonElement | null = null;
     private yuefeiButton: HTMLButtonElement | null = null;
     private huoqubingButton: HTMLButtonElement | null = null;
@@ -91,7 +89,6 @@ export class CameraFollowUI {
     private onZhugeLiangExpedition: (() => void) | null = null;
 
     constructor() {
-        this.portraitHUD = new FollowedGeneralPortraitHUD();
         this.createListButton();
         this.createYuefeiButton();
         this.createHuoQubingButton();
@@ -370,7 +367,7 @@ export class CameraFollowUI {
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
             left: 0;
             width: 320px;
-            max-height: calc(100vh - 430px);
+            max-height: 72vh;
             overflow-y: auto;
             z-index: 10001;
             background: linear-gradient(to right, rgba(216, 197, 168, 0.6) 0%, rgba(235, 220, 195, 0.35) 70%, rgba(235, 220, 195, 0) 100%);
@@ -1178,8 +1175,6 @@ export class CameraFollowUI {
         if (!army) return;
         const text = document.getElementById('follow-banner-text');
         if (text) text.innerHTML = this.formatFollowBannerText(army, army.id);
-        const fName = this.factionManager?.getFactionName(army.getFactionId?.() ?? army.factionId ?? '') ?? '';
-        this.portraitHUD.update(army, fName);
     }
 
     public setFollow(armyId: string, armyName: string): void {
@@ -1197,13 +1192,6 @@ export class CameraFollowUI {
 
         const text = document.getElementById('follow-banner-text');
         if (text) text.innerHTML = label;
-        if (this.getArmiesFn) {
-            const army = this.getArmiesFn().find((a) => a.id === armyId);
-            if (army) {
-                const fName = this.factionManager?.getFactionName(army.getFactionId?.() ?? army.factionId ?? '') ?? '';
-                this.portraitHUD.update(army, fName);
-            }
-        }
         if (this.followBanner) {
             const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
             this.followBanner.style.display = inScene13 ? 'none' : 'flex';
@@ -1222,7 +1210,6 @@ export class CameraFollowUI {
         this.autoFollowOnStartPending = false;
         this.waitingForRespawn = false;
         this.followedArmyId = null;
-        this.portraitHUD.hide();
 
         // [2026-06-23 Fix] 不要在取消跟随（如点击✖或拖拽地图）时强行把用户的“自动跟随”设置给关掉。
         // 既然这个 checkbox 代表用户的偏好，就应该一直保持用户自己勾选的状态。

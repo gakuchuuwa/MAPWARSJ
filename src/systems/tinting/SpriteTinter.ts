@@ -227,6 +227,7 @@ export class SpriteTinter {
 
     private static tintedCachePut(key: string, img: HTMLImageElement): void {
         if (this.tintedSpriteCache.has(key)) return;
+        if (this.evictedTintKeys.delete(key)) this.churnStats.tintedReAdds++;
         let counted = imgBytes(img);
         this.tintedSpriteCache.set(key, img);
         this.tintedCacheBytes += counted;
@@ -243,6 +244,26 @@ export class SpriteTinter {
         this.evictTinted();
     }
 
+    /**
+     * 抖动计数（2026-08-31）。
+     * 「缓存顶在预算上」本身**不能**证明有问题 —— 淘汰冷条目是健康行为。
+     * 只有「淘汰掉的又被加回来」才是抖动。`evictedKeys` 记住被淘汰过的 key，
+     * 下次同 key 再进来就记一笔 reAdd。上限 4000 个 key（几十字节/个，可忽略）。
+     */
+    private static churnStats = { tintedEvicts: 0, tintedReAdds: 0, maskEvicts: 0, maskReAdds: 0 };
+    private static evictedTintKeys = new Set<string>();
+    private static evictedMaskKeys = new Set<string>();
+    private static rememberEvicted(set: Set<string>, key: string): void {
+        if (set.size > 4000) set.clear();   // 只为统计，清空最多让比例暂时偏低，不影响功能
+        set.add(key);
+    }
+    public static debugChurnTinted(): { evicts: number; reAdds: number } {
+        return { evicts: this.churnStats.tintedEvicts, reAdds: this.churnStats.tintedReAdds };
+    }
+    public static debugChurnMask(): { evicts: number; reAdds: number } {
+        return { evicts: this.churnStats.maskEvicts, reAdds: this.churnStats.maskReAdds };
+    }
+
     private static evictTinted(): void {
         while (this.tintedCacheBytes > this.TINTED_CACHE_MAX_BYTES && this.tintedSpriteCache.size > 1) {
             const oldest = this.tintedSpriteCache.keys().next().value;
@@ -250,6 +271,8 @@ export class SpriteTinter {
             const victim = this.tintedSpriteCache.get(oldest);
             this.tintedSpriteCache.delete(oldest);
             if (victim) this.tintedCacheBytes -= imgBytes(victim);
+            this.churnStats.tintedEvicts++;
+            this.rememberEvicted(this.evictedTintKeys, oldest);
         }
         if (this.tintedSpriteCache.size === 0) this.tintedCacheBytes = 0;
     }
@@ -257,6 +280,7 @@ export class SpriteTinter {
     /** 遮罩缓存按字节预算 FIFO 淘汰（`'none'` 这种哨兵值不占字节）。 */
     private static maskCachePut(key: string, val: HTMLImageElement | 'none'): void {
         if (this.maskCache.has(key)) { this.maskCache.set(key, val); return; }
+        if (this.evictedMaskKeys.delete(key)) this.churnStats.maskReAdds++;
         this.maskCache.set(key, val);
         if (val === 'none') return;
         let counted = imgBytes(val);
@@ -280,6 +304,8 @@ export class SpriteTinter {
             const victim = this.maskCache.get(oldest);
             this.maskCache.delete(oldest);
             if (victim && victim !== 'none') this.maskCacheBytes -= imgBytes(victim);
+            this.churnStats.maskEvicts++;
+            this.rememberEvicted(this.evictedMaskKeys, oldest);
         }
     }
 
@@ -665,6 +691,7 @@ if (import.meta.env.DEV) {
         bytes: () => SpriteTinter.debugTintedCacheBytes(),
         limitKind: 'bytes',
         limitValue: SpriteTinter.debugTintedCacheLimit(),
+        churn: () => SpriteTinter.debugChurnTinted(),
     });
     perfDoctor.registerCache({
         name: 'SpriteTinter:maskCache(玩家色遮罩)',
@@ -673,5 +700,6 @@ if (import.meta.env.DEV) {
         bytes: () => SpriteTinter.debugMaskCacheBytes(),
         limitKind: 'bytes',
         limitValue: SpriteTinter.debugMaskCacheLimit(),
+        churn: () => SpriteTinter.debugChurnMask(),
     });
 }
