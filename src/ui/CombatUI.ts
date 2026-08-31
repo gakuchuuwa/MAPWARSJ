@@ -368,6 +368,8 @@ export class CombatUI {
     private healthBarContainer!: HTMLDivElement;
     private leftTotalMultBadge!: HTMLSpanElement;
     private rightTotalMultBadge!: HTMLSpanElement;
+    private leftBarTroopsBadge!: HTMLSpanElement;
+    private rightBarTroopsBadge!: HTMLSpanElement;
     private attackerBar!: HTMLDivElement;
     private defenderBar!: HTMLDivElement;
     private clashEffect!: HTMLDivElement;
@@ -1037,12 +1039,61 @@ export class CombatUI {
             filter: blur(1px);
         `;
 
+        this.leftBarTroopsBadge = document.createElement('span');
+        this.leftBarTroopsBadge.style.cssText = `
+            position: absolute;
+            right: ${uiPx(36)};
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            display: none;
+            padding: 2px 8px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(14)};
+            font-weight: 900;
+            line-height: 1.15;
+            border: 1px solid rgba(253, 185, 49, 0.9);
+            color: #FFD700;
+            background: rgba(35, 12, 4, 0.85);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 215, 0, 0.4);
+            white-space: nowrap;
+            pointer-events: auto;
+            cursor: help;
+        `;
+
+        this.rightBarTroopsBadge = document.createElement('span');
+        this.rightBarTroopsBadge.style.cssText = `
+            position: absolute;
+            left: calc(50% + ${uiPx(36)});
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            display: none;
+            padding: 2px 8px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(14)};
+            font-weight: 900;
+            line-height: 1.15;
+            border: 1px solid rgba(90, 170, 190, 0.9);
+            color: #70E0FF;
+            background: rgba(5, 20, 30, 0.85);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(90, 170, 190, 0.4);
+            white-space: nowrap;
+            pointer-events: auto;
+            cursor: help;
+        `;
+
+        this.attackerBar.appendChild(this.leftBarTroopsBadge);
+
         this.clashEffect.appendChild(clashFlare);
         this.clashEffect.appendChild(clashCore);
 
         this.healthBarContainer.appendChild(this.defenderBar);
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
+        this.healthBarContainer.appendChild(this.rightBarTroopsBadge);
 
 
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
@@ -1250,7 +1301,7 @@ export class CombatUI {
             this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.centerSituationRow, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
-            this.rightTotalMultBadge, topHud]) save(el);
+            this.rightTotalMultBadge, this.leftBarTroopsBadge, this.rightBarTroopsBadge, topHud]) save(el);
 
         // 移出 #combat-ui-panel 挂到 body，避免受任何容器 transform 影响
         const detach = (el?: HTMLElement | null) => {
@@ -3001,9 +3052,17 @@ export class CombatUI {
      * [2026-06-12 美化] 数字与地图标签统一为「万」制：≥1 万显示两位小数（战斗中百位变动可见），
      * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
      */
-    private renderSideLabel(side: 'attacker' | 'defender', name: string, _troops: number): void {
+    private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
         const nameEl = this.sideElement(side, this.leftSideNameSpan, this.rightSideNameSpan);
+        const barTroopsBadge = this.sideElement(side, this.leftBarTroopsBadge, this.rightBarTroopsBadge);
         nameEl.innerHTML = name;
+        if (barTroopsBadge) {
+            const t = Math.max(0, Math.floor(troops));
+            const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+            barTroopsBadge.innerHTML = troopStr;
+            barTroopsBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人（含各路援军）`;
+            barTroopsBadge.style.display = 'inline-block';
+        }
     }
 
     private resolveFactionLabel(factionId: string | null): string {
@@ -3182,17 +3241,17 @@ export class CombatUI {
             // 不归位的话新场会从上一场的收尾位置（可能是 100%）起步。
             this.attackerBar.style.transition = 'none';
             this.clashEffect.style.transition = 'none';
-            this.rightTotalMultBadge.style.transition = 'none';
+            this.rightBarTroopsBadge.style.transition = 'none';
             this.attackerBar.style.width = '50%';
             this.clashEffect.style.left = 'calc(50% - 8px)';
-            this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            this.rightBarTroopsBadge.style.left = `calc(50% + ${uiPx(36)})`;
             void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
         // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
         this.outcomeLocked = false;
         this.attackerBar.style.transition = 'width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.clashEffect.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
-        this.rightTotalMultBadge.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.rightBarTroopsBadge.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         this.battleTitle.style.animation = '';
         this.skillPulseLastAt = 0;
@@ -3216,10 +3275,10 @@ export class CombatUI {
         const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
         this.attackerBar.style.transition = `width ${slam}`;
         this.clashEffect.style.transition = `left ${slam}`;
-        this.rightTotalMultBadge.style.transition = `left ${slam}`;
+        this.rightBarTroopsBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
-        this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
+        this.rightBarTroopsBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -5079,7 +5138,7 @@ export class CombatUI {
             const visualLeftPct = this.scene13SidesFlipped ? 100 - attPct : attPct;
             this.attackerBar.style.width = `${visualLeftPct}%`;
             this.clashEffect.style.left = `calc(${visualLeftPct}% - 8px)`;
-            this.rightTotalMultBadge.style.left = `calc(${visualLeftPct}% + ${uiPx(36)})`;
+            this.rightBarTroopsBadge.style.left = `calc(${visualLeftPct}% + ${uiPx(36)})`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
