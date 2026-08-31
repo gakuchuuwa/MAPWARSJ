@@ -4222,7 +4222,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_64.png": {
+        "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_02.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 10
@@ -4337,7 +4337,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_106.png": {
+        "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_01.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -6
@@ -5617,7 +5617,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_95.png": {
+        "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_03.png": {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 0
@@ -6362,12 +6362,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_33.png": {
+        "/assets/DIANQIAN/__暂留__DIANQIAN_01.png": {
             "scale": 0.82,
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_34.png": {
+        "/assets/DIANQIAN/__暂留__DIANQIAN_02.png": {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": -16
@@ -7122,17 +7122,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/GREEK/__多余__GREEK_04.png": {
+        "/assets/GREEK/__暂留__GREEK_01.png": {
             "scale": 1.44,
             "offsetX": 0,
             "offsetY": 58
         },
-        "/assets/GREEK/__多余__GREEK_05.png": {
+        "/assets/GREEK/__暂留__GREEK_02.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/GREEK/__多余__GREEK_06.png": {
+        "/assets/GREEK/__暂留__GREEK_03.png": {
             "scale": 1.21,
             "offsetX": -17,
             "offsetY": 53
@@ -7142,32 +7142,32 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/GREEK/__多余__GREEK_07.png": {
+        "/assets/GREEK/__暂留__GREEK_04.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/GREEK/__多余__GREEK_08.png": {
+        "/assets/GREEK/__暂留__GREEK_05.png": {
             "scale": 1.11,
             "offsetX": 5,
             "offsetY": -2
         },
-        "/assets/GREEK/__多余__GREEK_09.png": {
+        "/assets/GREEK/__暂留__GREEK_06.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/GREEK/__多余__GREEK_10.png": {
+        "/assets/GREEK/__暂留__GREEK_07.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/GREEK/__多余__GREEK_11.png": {
+        "/assets/GREEK/__暂留__GREEK_08.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/GREEK/__多余__GREEK_12.png": {
+        "/assets/GREEK/__暂留__GREEK_09.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 16
@@ -7177,12 +7177,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/GREEK/__多余__GREEK_13.png": {
+        "/assets/GREEK/__暂留__GREEK_10.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/GREEK/__多余__GREEK_14.png": {
+        "/assets/GREEK/__暂留__GREEK_11.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 24
@@ -7197,12 +7197,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/SPANISH/__多余__SPANISH_01.png": {
+        "/assets/SPANISH/__暂留__SPANISH_01.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/SPANISH/__多余__SPANISH_02.png": {
+        "/assets/SPANISH/__暂留__SPANISH_02.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -3
@@ -7212,7 +7212,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/SPANISH/__多余__SPANISH_04.png": {
+        "/assets/SPANISH/__暂留__SPANISH_03.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
@@ -7222,42 +7222,42 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/SPANISH/__多余__SPANISH_05.png": {
+        "/assets/SPANISH/__暂留__SPANISH_04.png": {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/SPANISH/__多余__SPANISH_06.png": {
+        "/assets/SPANISH/__暂留__SPANISH_05.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/SPANISH/__多余__SPANISH_08.png": {
+        "/assets/SPANISH/__暂留__SPANISH_07.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/SPANISH/__多余__SPANISH_07.png": {
+        "/assets/SPANISH/__暂留__SPANISH_06.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/SPANISH/__多余__SPANISH_09.png": {
+        "/assets/SPANISH/__暂留__SPANISH_08.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/SPANISH/__多余__SPANISH_10.png": {
+        "/assets/SPANISH/__暂留__SPANISH_09.png": {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/SPANISH/__多余__SPANISH_11.png": {
+        "/assets/SPANISH/__暂留__SPANISH_10.png": {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/SPANISH/__多余__SPANISH_12.png": {
+        "/assets/SPANISH/__暂留__SPANISH_11.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 11
@@ -7272,27 +7272,27 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/PERSIAN/__多余__PERSIAN_01.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_01.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/PERSIAN/__多余__PERSIAN_02.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_02.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/PERSIAN/__多余__PERSIAN_04.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_04.png": {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/PERSIAN/__多余__PERSIAN_03.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_03.png": {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/PERSIAN/__多余__PERSIAN_05.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_05.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": 21
@@ -7302,42 +7302,42 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/PERSIAN/__多余__PERSIAN_08.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_07.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/PERSIAN/__多余__PERSIAN_09.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_08.png": {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/PERSIAN/__多余__PERSIAN_10.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_09.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/PERSIAN/__多余__PERSIAN_11.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_10.png": {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/PERSIAN/__多余__PERSIAN_12.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_11.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/PERSIAN/__多余__PERSIAN_13.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_12.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/PERSIAN/__多余__PERSIAN_14.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_13.png": {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": 20
         },
-        "/assets/PERSIAN/__多余__PERSIAN_15.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_14.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -2
@@ -7347,7 +7347,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/PERSIAN/__多余__PERSIAN_16.png": {
+        "/assets/PERSIAN/__暂留__PERSIAN_15.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 4
@@ -7372,12 +7372,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_01.png": {
             "scale": 0.82,
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_02.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_02.png": {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": -16
@@ -7387,27 +7387,27 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -30
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_04.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_03.png": {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_05.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_04.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -32
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_06.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_05.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -33
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_07.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_06.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_08.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_07.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -20
@@ -7417,27 +7417,27 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_09.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_08.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_10.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_09.png": {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_11.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_10.png": {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_12.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_11.png": {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_13.png": {
+        "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_12.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -35
@@ -7507,7 +7507,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/LATIN/__闲置__LATIN_21.png": {
+        "/assets/LATIN/__暂留__LATIN_01.png": {
             "scale": 1.44,
             "offsetX": 0,
             "offsetY": 58
@@ -7527,7 +7527,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/LATIN/__闲置__LATIN_22.png": {
+        "/assets/LATIN/__暂留__LATIN_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 18

@@ -1074,7 +1074,7 @@ function buildRiver(
 
     const numSamplePts = 64;
     const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
-    const baseHalfW = 38;    // 河面半宽（px）
+    const baseHalfW = 65;    // 河面半宽（px）
     const halfWVary = 8;     // 弯道半宽起伏
     const shallowDepth = 22; // 浅水环宽度（px）
     const bankDepth = 20;    // 湿泥沙岸宽度（px）

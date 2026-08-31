@@ -33,15 +33,38 @@ const FOLLOW_LERP_FACTOR = 0.22;
  * 平均速度因此精确等于请求速度，顿挫被摊成均匀的 1px 步进。
  */
 const followPanResidual = { x: 0, y: 0 };
+let lastFollowPanArmyId: string | null = null;
 
-/** 累积亚像素残差后按整像素平移；返回是否真的动了。 */
-function panByAccumulated(map: L.Map, dx: number, dy: number): void {
-    const fx = dx + followPanResidual.x;
-    const fy = dy + followPanResidual.y;
-    const ix = Math.round(fx);
-    const iy = Math.round(fy);
-    followPanResidual.x = fx - ix;
-    followPanResidual.y = fy - iy;
+function resetFollowPanResidual(): void {
+    followPanResidual.x = 0;
+    followPanResidual.y = 0;
+}
+
+/** 累积亚像素残差后按整像素平移；1px 内停稳，且绝不越过目标反向修正。 */
+function panByAccumulated(
+    map: L.Map,
+    dx: number,
+    dy: number,
+    remainingX: number,
+    remainingY: number,
+): void {
+    const settleX = Math.abs(remainingX) < 1;
+    const settleY = Math.abs(remainingY) < 1;
+    if (settleX) followPanResidual.x = 0;
+    if (settleY) followPanResidual.y = 0;
+    if (settleX && settleY) return;
+
+    const fx = settleX ? 0 : dx + followPanResidual.x;
+    const fy = settleY ? 0 : dy + followPanResidual.y;
+    const constrain = (step: number, remaining: number, settled: boolean): number => {
+        if (settled || step === 0 || Math.sign(step) !== Math.sign(remaining)) return 0;
+        const maxWholePixels = Math.floor(Math.abs(remaining));
+        return Math.sign(step) * Math.min(Math.abs(step), maxWholePixels);
+    };
+    const ix = constrain(Math.round(fx), remainingX, settleX);
+    const iy = constrain(Math.round(fy), remainingY, settleY);
+    followPanResidual.x = settleX ? 0 : Math.max(-0.499, Math.min(0.499, fx - ix));
+    followPanResidual.y = settleY ? 0 : Math.max(-0.499, Math.min(0.499, fy - iy));
     // 都是 0 就别调 panBy —— 省掉一次 pane transform + move 事件广播
     if (ix !== 0 || iy !== 0) map.panBy(L.point(ix, iy), { animate: false });
 }
@@ -213,6 +236,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.startTimer('camera');
             const legionManager = app.historicalEventManager?.getLegionManager();
             const followedId = app.cameraFollowUI.getFollowedArmyId();
+            if (followedId !== lastFollowPanArmyId) {
+                resetFollowPanResidual();
+                lastFollowPanArmyId = followedId;
+            }
             // 独立战斗画布激活时冻结战略地图的自动缩放与普通跟拍。
             const sceneActive = !!app.battleScene?.isActive();
             if (followedId && legionManager) {
@@ -236,9 +263,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             const currentZoom = lMap.getZoom();
                             const center = lMap.getCenter();
                             const dist = center.distanceTo(target);
-                            if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
+                            if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
+                                resetFollowPanResidual();
+                                return;
+                            }
                             if (dist >= FOLLOW_SNAP_DISTANCE_M) {
-                                followPanResidual.x = 0; followPanResidual.y = 0;   // 吸附后残差作废
+                                resetFollowPanResidual();   // 吸附后残差作废
                                 lMap.setView(target, currentZoom, { animate: false });
                                 return;
                             }
@@ -254,11 +284,19 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             // 跟拍帧时间回落到 ~28ms。吸附（>12km）仍走 setView，见上。
                             const _p1 = lMap.project(center, currentZoom);
                             const _p2 = lMap.project(next, currentZoom);
-                            panByAccumulated(lMap, _p2.x - _p1.x, _p2.y - _p1.y);
+                            const _targetPx = lMap.project(target, currentZoom);
+                            panByAccumulated(
+                                lMap,
+                                _p2.x - _p1.x,
+                                _p2.y - _p1.y,
+                                _targetPx.x - _p1.x,
+                                _targetPx.y - _p1.y,
+                            );
                         }
                     );
                 } else {
                     // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
+                    resetFollowPanResidual();
                     app.battleScene?.tick();
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
                     // 放行普通跟拍逻辑：tickFollowCamera 看到军团阵亡会启动 FOLLOW_SWITCH_DELAY_MS
@@ -277,9 +315,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 const currentZoom = lMap2.getZoom();
                                 const center = lMap2.getCenter();
                                 const dist = center.distanceTo(target);
-                                if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
+                                if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
+                                    resetFollowPanResidual();
+                                    return;
+                                }
                                 if (dist >= FOLLOW_SNAP_DISTANCE_M) {
-                                    followPanResidual.x = 0; followPanResidual.y = 0;   // 吸附后残差作废
+                                    resetFollowPanResidual();   // 吸附后残差作废
                                     lMap2.setView(target, currentZoom, { animate: false });
                                     return;
                                 }
@@ -290,7 +331,14 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 // 同上：像素级 panBy 替代 setView，避免每帧 _resetView 全量重定位。
                                 const _p1 = lMap2.project(center, currentZoom);
                                 const _p2 = lMap2.project(next, currentZoom);
-                                panByAccumulated(lMap2, _p2.x - _p1.x, _p2.y - _p1.y);
+                                const _targetPx = lMap2.project(target, currentZoom);
+                                panByAccumulated(
+                                    lMap2,
+                                    _p2.x - _p1.x,
+                                    _p2.y - _p1.y,
+                                    _targetPx.x - _p1.x,
+                                    _targetPx.y - _p1.y,
+                                );
                             }
                         );
                     }
