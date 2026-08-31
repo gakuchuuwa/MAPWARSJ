@@ -653,143 +653,16 @@ export class LegionPhalanxDrawer {
 
     private static async _doPreload(): Promise<void> {
 
-        // [PERF-FIX] 分批 + 每批让出主线程
-        // 原版用 Promise.all 把一个 unit type 的所有动画帧 (5-15 套动画 × 4-8 帧)
-        // 一次 processImage —— 每张都是同步 getImageData + 像素循环 + putImageData
-        // + toDataURL (浏览器最慢的 API 之一)。这是和 preloadFlags 同等量级的主线程
-        // 杀手，且在 GameApp.start 里两者还并发。
-        //
-        // 后台标签时跳过 yield —— setTimeout 在后台被钳制到 1000ms，几十个 yield 累计
-        // 几十秒会让"切走再回来"启动慢到几分钟。后台时反正没人看 UI，
-        // 同步连跑最快完成。前台时维持 yield 避免主线程卡死。
-        const yieldMain = () => document.hidden
-            ? Promise.resolve()
-            : new Promise<void>(r => setTimeout(r, 0));
-        const PROC_BATCH = 4;
-
-        const loadBatch = async (sourcePaths: readonly string[], targetArray: HTMLImageElement[]) => {
-            await AssetLoader.preloadImages([...sourcePaths]);
-            // 分批 processImage 而不是一把梭，每批之间 yield
-            for (let i = 0; i < sourcePaths.length; i += PROC_BATCH) {
-                const slice = sourcePaths.slice(i, i + PROC_BATCH);
-                await Promise.all(slice.map(async (path, batchIdx) => {
-                    const realIdx = i + batchIdx;
-                    const img = AssetLoader.getImage(path);
-                    if (img) {
-                        const processed = await this.processImage(img);
-                        targetArray[realIdx] = processed;
-                        // 抠绿产物已经是另一张图，原图从此没人用 —— 放掉，别让同一张贴图占两份位图
-                        if (processed !== img) AssetLoader.release(path);
-                    }
-                }));
-                if (i + PROC_BATCH < sourcePaths.length) {
-                    await yieldMain();
-                }
-            }
-        };
-
         gameLog('unit', '🔄 LegionPhalanxDrawer: Processing Dynamic Unit Assets...');
 
         // 1. Load Generic / Legacy Assets (if needed)
         // ...
 
-        // 2. Load Granular Unit Assets from GameConfig.UNIT_ASSETS
-        const unitAssets = SPRITE_PATHS.UNIT_ASSETS as any;
-        if (unitAssets) {
-            for (const [key, assets] of Object.entries(unitAssets)) {
-                if (LAZY_BOOT_UNIT_IDS.has(key)) continue;
-                if (!EAGER_BOOT_UNIT_IDS.has(key)) continue;   // 见 EAGER_BOOT_UNIT_IDS 注释：其余按需加载
-                const config = assets as any;
-                const cacheEntry = {
-                    MOVE: [] as HTMLImageElement[],
-                    ATTACK: [] as HTMLImageElement[],
-                    IDLE: [] as HTMLImageElement[],
-                    DAMAGE: [] as HTMLImageElement[],
-                    DEATH: [] as HTMLImageElement[],
-                    SHOOT: [] as HTMLImageElement[],  // [NEW] For mounted archers
-                    CHARGE: [] as HTMLImageElement[], // [NEW] For cavalry charge animation
-                    SECONDARY: config.SECONDARY ? {
-                        MOVE: [] as HTMLImageElement[],
-                        ATTACK: [] as HTMLImageElement[],
-                        IDLE: [] as HTMLImageElement[],
-                        DAMAGE: [] as HTMLImageElement[],
-
-                        DEATH: [] as HTMLImageElement[],
-                        SHOOT: [] as HTMLImageElement[],
-                        CHARGE: [] as HTMLImageElement[] // [NEW] Added CHARGE support for Secondary
-                    } : undefined,
-                    TERTIARY: config.TERTIARY ? {
-                        MOVE: [] as HTMLImageElement[],
-                        ATTACK: [] as HTMLImageElement[],
-                        IDLE: [] as HTMLImageElement[],
-                        DAMAGE: [] as HTMLImageElement[],
-                        DEATH: [] as HTMLImageElement[],
-                        SHOOT: [] as HTMLImageElement[]
-                    } : undefined
-                };
-
-                // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），渲染走 hotspot 对齐。
-                const _firstUrl: string = (config.MOVE?.[0] ?? config.ATTACK?.[0] ?? config.IDLE?.[0] ?? config.DEATH?.[0] ?? '') as string;
-                if (typeof _firstUrl === 'string' && DE_DYN_DIRS.some(dir => _firstUrl.includes(dir))) {
-                    const _dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
-                    const dyn = await LegionPhalanxDrawer.loadDynMeta(_dir);
-                    if (dyn) (cacheEntry as any).dyn = dyn;
-                }
-
-                const promises = [
-                    loadBatch(config.MOVE, cacheEntry.MOVE),
-                    loadBatch(config.ATTACK, cacheEntry.ATTACK),
-                    loadBatch(config.IDLE, cacheEntry.IDLE),
-                    loadBatch(config.DAMAGE, cacheEntry.DAMAGE),
-                    loadBatch(config.DEATH, cacheEntry.DEATH),
-                ];
-
-                // [NEW] Load SHOOT and CHARGE if available
-                if (config.SHOOT) {
-                    promises.push(loadBatch(config.SHOOT, cacheEntry.SHOOT));
-                }
-                if (config.CHARGE) {
-                    promises.push(loadBatch(config.CHARGE, cacheEntry.CHARGE));
-                }
-
-                if (config.SECONDARY && cacheEntry.SECONDARY) {
-                    promises.push(loadBatch(config.SECONDARY.MOVE, cacheEntry.SECONDARY.MOVE));
-                    promises.push(loadBatch(config.SECONDARY.ATTACK, cacheEntry.SECONDARY.ATTACK));
-                    promises.push(loadBatch(config.SECONDARY.IDLE, cacheEntry.SECONDARY.IDLE));
-                    promises.push(loadBatch(config.SECONDARY.DAMAGE, cacheEntry.SECONDARY.DAMAGE));
-                    promises.push(loadBatch(config.SECONDARY.DEATH, cacheEntry.SECONDARY.DEATH));
-                    if (config.SECONDARY.SHOOT) {
-                        promises.push(loadBatch(config.SECONDARY.SHOOT, cacheEntry.SECONDARY.SHOOT));
-                    }
-                    if (config.SECONDARY.CHARGE) {
-                        promises.push(loadBatch(config.SECONDARY.CHARGE, cacheEntry.SECONDARY.CHARGE));
-                    }
-
-                }
-
-                // [NEW] TERTIARY Support (for 3-tier formations like Mixed)
-                if (config.TERTIARY && (cacheEntry as any).TERTIARY) {
-                    const tert = (cacheEntry as any).TERTIARY;
-                    promises.push(loadBatch(config.TERTIARY.MOVE, tert.MOVE));
-                    promises.push(loadBatch(config.TERTIARY.ATTACK, tert.ATTACK));
-                    promises.push(loadBatch(config.TERTIARY.IDLE, tert.IDLE));
-                    promises.push(loadBatch(config.TERTIARY.DAMAGE, tert.DAMAGE));
-                    promises.push(loadBatch(config.TERTIARY.DEATH, tert.DEATH));
-                    if (config.TERTIARY.SHOOT) {
-                        promises.push(loadBatch(config.TERTIARY.SHOOT, tert.SHOOT));
-                    }
-                }
-
-                await Promise.all(promises);
-                this.unitSpriteCache.set(key, cacheEntry);
-                LegionPhalanxDrawer.spriteLastUsed.set(key, performance.now());
-                LegionPhalanxDrawer.evictUnitSprites();
-                // [PERF] 每个 unit type 处理完再让一次主线程，
-                // 避免连续多个 unit type 紧挨着跑（即使内部已经分批）
-                await yieldMain();
-            }
-        }
-
+        // 2. 预载兜底兵种（其余按需，见 EAGER_BOOT_UNIT_IDS）
+        //    🔴 [2026-08-31] 这里**只委托 _loadNavalAssets**，绝不再自己写一份加载逻辑。
+        //       原来开机和按需各写一份，按需那份漏了 SHOOT/CHARGE/SECONDARY/TERTIARY，
+        //       结果圣殿骑士军团的二三线掉回兜底集，十字军阵里出现三国志10 的兵。
+        await this._loadNavalAssets([...EAGER_BOOT_UNIT_IDS]);
 
         await GeneralDrawer.preload();
 
@@ -844,7 +717,10 @@ export class LegionPhalanxDrawer {
                 await Promise.all(slice.map(async (path, batchIdx) => {
                     const img = AssetLoader.getImage(path);
                     if (img) {
-                        targetArray[i + batchIdx] = await this.processImage(img);
+                        const processed = await this.processImage(img);
+                        targetArray[i + batchIdx] = processed;
+                        // 抠绿产物是另一张图，原图从此没人用 —— 放掉，别存两份位图
+                        if (processed !== img) AssetLoader.release(path);
                     }
                 }));
                 if (i + PROC_BATCH < sourcePaths.length) await yieldMain();
@@ -856,28 +732,73 @@ export class LegionPhalanxDrawer {
             const config = unitAssets?.[key];
             if (!config || this.unitSpriteCache.has(key)) continue;
 
+            // 🔴 [2026-08-31] 这里**必须和开机预载载一模一样的东西**。
+            //    漏了 SECONDARY/TERTIARY 那一版上线后，圣殿骑士军团的二三线掉回兜底集
+            //    （`mixed` 是 S10DB 素材）→ 十字军阵中出现三国志10 的兵。
+            //    开机预载现在直接委托本函数，两条路不再各写一份，杜绝再次漂移。
             const cacheEntry = {
                 MOVE: [] as HTMLImageElement[],
                 ATTACK: [] as HTMLImageElement[],
                 IDLE: [] as HTMLImageElement[],
                 DAMAGE: [] as HTMLImageElement[],
                 DEATH: [] as HTMLImageElement[],
+                SHOOT: [] as HTMLImageElement[],
+                CHARGE: [] as HTMLImageElement[],
+                SECONDARY: config.SECONDARY ? {
+                    MOVE: [] as HTMLImageElement[],
+                    ATTACK: [] as HTMLImageElement[],
+                    IDLE: [] as HTMLImageElement[],
+                    DAMAGE: [] as HTMLImageElement[],
+                    DEATH: [] as HTMLImageElement[],
+                    SHOOT: [] as HTMLImageElement[],
+                    CHARGE: [] as HTMLImageElement[],
+                } : undefined,
+                TERTIARY: config.TERTIARY ? {
+                    MOVE: [] as HTMLImageElement[],
+                    ATTACK: [] as HTMLImageElement[],
+                    IDLE: [] as HTMLImageElement[],
+                    DAMAGE: [] as HTMLImageElement[],
+                    DEATH: [] as HTMLImageElement[],
+                    SHOOT: [] as HTMLImageElement[],
+                } : undefined,
             };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），渲染走 hotspot 对齐。
             //    船目录在 DE_DYN_DIRS 时才有 dyn —— 否则每向 frameW/frameH 不同会画得忽大忽小、锚点乱飘。
-            const _firstUrl: string = (config.MOVE?.[0] ?? config.ATTACK?.[0] ?? config.IDLE?.[0] ?? '') as string;
+            const _firstUrl: string = (config.MOVE?.[0] ?? config.ATTACK?.[0] ?? config.IDLE?.[0] ?? config.DEATH?.[0] ?? '') as string;
             if (typeof _firstUrl === 'string' && DE_DYN_DIRS.some(dir => _firstUrl.includes(dir))) {
                 const _dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
                 const dyn = await LegionPhalanxDrawer.loadDynMeta(_dir);
                 if (dyn) (cacheEntry as any).dyn = dyn;
             }
-            await Promise.all([
+            const jobs = [
                 loadBatch(config.MOVE, cacheEntry.MOVE),
                 loadBatch(config.ATTACK, cacheEntry.ATTACK),
                 loadBatch(config.IDLE, cacheEntry.IDLE),
                 loadBatch(config.DAMAGE, cacheEntry.DAMAGE),
                 loadBatch(config.DEATH, cacheEntry.DEATH),
-            ]);
+            ];
+            if (config.SHOOT) jobs.push(loadBatch(config.SHOOT, cacheEntry.SHOOT));
+            if (config.CHARGE) jobs.push(loadBatch(config.CHARGE, cacheEntry.CHARGE));
+            if (config.SECONDARY && cacheEntry.SECONDARY) {
+                const sec = cacheEntry.SECONDARY;
+                jobs.push(loadBatch(config.SECONDARY.MOVE, sec.MOVE));
+                jobs.push(loadBatch(config.SECONDARY.ATTACK, sec.ATTACK));
+                jobs.push(loadBatch(config.SECONDARY.IDLE, sec.IDLE));
+                jobs.push(loadBatch(config.SECONDARY.DAMAGE, sec.DAMAGE));
+                jobs.push(loadBatch(config.SECONDARY.DEATH, sec.DEATH));
+                if (config.SECONDARY.SHOOT) jobs.push(loadBatch(config.SECONDARY.SHOOT, sec.SHOOT));
+                if (config.SECONDARY.CHARGE) jobs.push(loadBatch(config.SECONDARY.CHARGE, sec.CHARGE));
+            }
+            if (config.TERTIARY && cacheEntry.TERTIARY) {
+                const ter = cacheEntry.TERTIARY;
+                jobs.push(loadBatch(config.TERTIARY.MOVE, ter.MOVE));
+                jobs.push(loadBatch(config.TERTIARY.ATTACK, ter.ATTACK));
+                jobs.push(loadBatch(config.TERTIARY.IDLE, ter.IDLE));
+                jobs.push(loadBatch(config.TERTIARY.DAMAGE, ter.DAMAGE));
+                jobs.push(loadBatch(config.TERTIARY.DEATH, ter.DEATH));
+                if (config.TERTIARY.SHOOT) jobs.push(loadBatch(config.TERTIARY.SHOOT, ter.SHOOT));
+            }
+            await Promise.all(jobs);
             this.unitSpriteCache.set(key, cacheEntry);
             this.spriteLastUsed.set(key, performance.now());
             await yieldMain();
@@ -906,9 +827,11 @@ export class LegionPhalanxDrawer {
      * 留 2 倍余量，**正在画的那批永远不会被淘汰**。
      * ⚠️ 绝不能激进淘汰：把正在画的兵种顶掉 = 士兵当场消失（2026-08-31 已经栽过一次）。
      */
-    //  ⚠️ [2026-08-31 实测调参] 1200MB 太紧：稳态就是 1134MB，卡在边缘 → 反复淘汰又重载，
-    //     抠绿（getImageData + 逐像素 + toDataURL，单张 5040×56）被反复触发，长任务不降反升。
-    //     放到 2000MB 留出余量，淘汰变成罕见事件；相对原来的 12961MB 仍然是 6.5 倍收敛。
+    //  [2026-08-31] 1200 → 2000MB。当时的理由是「稳态 1134MB 卡在预算边缘 → 反复淘汰又重载」，
+    //     ⚠️ 但那个因果**没有测过**（当时还没有 churn 计数器），别当定论引用。
+    //     同日改成按需加载后，这个缓存开机只占 5.9MB、打完一场战术也只有 139MB，
+    //     离 2000MB 预算极远，`evicts/reAdds` 全 0 —— 这个数现在实际上已经不起作用了。
+    //     真正的收益来自 EAGER_BOOT_UNIT_IDS（开机不再全量预载），不是这里的预算。
     private static readonly SPRITE_BUDGET_BYTES = 2000 * 1024 * 1024;
     /** 这么久没被画过才允许淘汰（秒）——防止刚切走镜头就把兵种顶掉、切回来又要重载 */
     //  有了 ensureUnitTypeLoading 按需补载，淘汰不再意味着「永远回不来」。
@@ -2704,6 +2627,8 @@ export class LegionPhalanxDrawer {
 // [2026-08-31] 登记进 PerfDoctor 体检。这两个是全游戏最大的图片缓存，
 //   此前完全在监控之外 —— 「卡但查不出来」的一大盲区。
 if (import.meta.env.DEV) {
+    // 开发期暴露给控制台/AI 体检用（验按需加载有没有把 SECONDARY/TERTIARY 载全）
+    (window as any).LegionPhalanxDrawer = LegionPhalanxDrawer;
     perfDoctor.registerCache({
         name: 'LegionPhalanxDrawer:unitSpriteCache(兵种帧集)',
         where: 'src/map/legion/LegionPhalanxDrawer.ts:unitSpriteCache',

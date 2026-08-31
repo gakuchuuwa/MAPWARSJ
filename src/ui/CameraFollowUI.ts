@@ -366,7 +366,7 @@ export class CameraFollowUI {
             position: fixed;
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
             left: 0;
-            width: 320px;
+            width: 260px;
             max-height: 72vh;
             overflow-y: auto;
             z-index: 10001;
