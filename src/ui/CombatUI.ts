@@ -2673,8 +2673,8 @@ export class CombatUI {
                 flex-direction: column;
                 align-items: center;
                 flex: 0 0 auto;
-                min-width: ${uiPx(76)};
-                max-width: ${uiPx(96)};
+                min-width: ${uiPx(88)};
+                max-width: ${uiPx(115)};
                 box-sizing: border-box;
                 background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
@@ -2682,7 +2682,7 @@ export class CombatUI {
                 border-top: 1px solid rgba(255, 255, 255, 0.15);
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
-                padding: ${uiPx(3)} ${uiPx(4)};
+                padding: ${uiPx(3)} ${uiPx(6)};
                 box-shadow: 
                     inset 0 1px 1px rgba(255,255,255,0.25), 
                     inset 0 -10px 20px ${sideColor}35, 
@@ -3052,15 +3052,23 @@ export class CombatUI {
      * [2026-06-12 美化] 数字与地图标签统一为「万」制：≥1 万显示两位小数（战斗中百位变动可见），
      * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
      */
-    private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
+    private renderSideLabel(side: 'attacker' | 'defender', name: string, regularTroops: number, totalTroops?: number): void {
         const nameEl = this.sideElement(side, this.leftSideNameSpan, this.rightSideNameSpan);
         const barTroopsBadge = this.sideElement(side, this.leftBarTroopsBadge, this.rightBarTroopsBadge);
-        nameEl.innerHTML = name;
+        const isLeft = this.isSideOnLeft(side);
+        const t = Math.max(0, Math.floor(regularTroops));
+        const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+        const nameHtml = `<span style="white-space: nowrap;">${name}</span>`;
+        const troopHtml = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${troopStr}</span>`;
+        nameEl.innerHTML = isLeft
+            ? `${nameHtml}<span style="margin-left: 8px;">${troopHtml}</span>`
+            : `<span style="margin-right: 8px;">${troopHtml}</span>${nameHtml}`;
+
         if (barTroopsBadge) {
-            const t = Math.max(0, Math.floor(troops));
-            const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-            barTroopsBadge.innerHTML = troopStr;
-            barTroopsBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人（含各路援军）`;
+            const tot = Math.max(0, Math.floor(totalTroops ?? regularTroops));
+            const totStr = tot >= 10000 ? `${(tot / 10000).toFixed(2)}万` : `${tot}`;
+            barTroopsBadge.innerHTML = totStr;
+            barTroopsBadge.title = `${side === 'attacker' ? '攻方' : '守方'}全军总兵力：${tot} 人（含各路援军）`;
             barTroopsBadge.style.display = 'inline-block';
         }
     }
@@ -5034,8 +5042,10 @@ export class CombatUI {
         const defPrimary = defUnitsNow.length > 0
             ? (this.pickSideNameUnit(defUnitsNow, 'defender') ?? defUnitsNow[0])
             : null;
-        this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
-        this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
+        const attRegularTroops = attPrimary ? Math.floor(attPrimary.troops) : attCurrent;
+        const defRegularTroops = defPrimary ? Math.floor(defPrimary.troops) : defCurrent;
+        this.renderSideLabel('attacker', this.attackerDisplayName, attRegularTroops, attCurrent);
+        this.renderSideLabel('defender', this.defenderDisplayName, defRegularTroops, defCurrent);
         this.updateFactionDisplay();
         const attTag = attUnitsNow.length > 0 ? this.pickPortraitTagUnit(attUnitsNow, 'attacker') : null;
         const defTag = defUnitsNow.length > 0 ? this.pickPortraitTagUnit(defUnitsNow, 'defender') : null;
