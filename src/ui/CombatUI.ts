@@ -2635,8 +2635,9 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                flex: 0 0 ${uiPx(108)};
-                width: ${uiPx(108)};
+                flex: 0 0 auto;
+                min-width: ${uiPx(76)};
+                max-width: ${uiPx(96)};
                 box-sizing: border-box;
                 background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
@@ -2644,7 +2645,7 @@ export class CombatUI {
                 border-top: 1px solid rgba(255, 255, 255, 0.15);
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
-                padding: ${uiPx(4)} ${uiPx(3)};
+                padding: ${uiPx(3)} ${uiPx(4)};
                 box-shadow: 
                     inset 0 1px 1px rgba(255,255,255,0.25), 
                     inset 0 -10px 20px ${sideColor}35, 
@@ -2656,13 +2657,13 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(18)};
+                font-size: ${uiPx(15)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
                 margin-bottom: ${uiPx(2)};
                 position: relative;
-                top: ${uiPx(7)};
+                top: ${uiPx(5)};
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -2701,7 +2702,6 @@ export class CombatUI {
                 famous: boolean,
                 skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' = 'other'
             ) => {
-                if (pending.length >= 4) return;
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
                 // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
                 // 标签每帧重建，必须按 skillSpentAt 在创建时补挂

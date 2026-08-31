@@ -472,6 +472,10 @@ export class GameMap {
             }
             this.vectorRiverLayer.updateStyle(zoom);
             this.vectorRiverLayer.setOffsetMode(zoom <= GameMap.RIVER_OFFSET_MAX_ZOOM);
+            // 🔴 [2026-08-31] 视口裁剪：只有与「视口外扩一屏」相交的河才进图层。
+            //    实测 zoom9 屏内只有 18/2404 条河、顶点占比 0.2%，
+            //    不裁的话每次 zoomend 白重投影 98 万个顶点（缩放冻结 449ms 里 76~78% 是它）。
+            this.vectorRiverLayer.cullTo(this.map.getBounds());
         } else {
             if (this.map.hasLayer(this.vectorRiverLayer)) {
                 this.map.removeLayer(this.vectorRiverLayer);
@@ -482,6 +486,7 @@ export class GameMap {
     public toggleRiver(enable: boolean) {
         // [FIX] Always clean up old listener to prevent duplicates/ghosts
         this.map.off('zoomend', this.updateRiverVisibility);
+        this.map.off('moveend', this.updateRiverVisibility);
 
         // [MODIFIED] Keep existing RiverOverlayLayer (ESRI) Logic
         if (this.riverLayer) {
@@ -504,6 +509,9 @@ export class GameMap {
         if (enable) {
             // [FIX] Bind listener centrally
             this.map.on('zoomend', this.updateRiverVisibility);
+            // moveend 也要监听：跟拍走出上次裁剪范围时得把新进视野的河补进来。
+            // cullTo 自带「还在上次范围内就直接返回」，所以平移时绝大多数 moveend 是零成本。
+            this.map.on('moveend', this.updateRiverVisibility);
 
             // 1. ESRI 猜色水域层：河道宽、条数少，与下方矢量层互补
             //    （2026-07-19 主人明确要求两套河流都保留，勿再停用）

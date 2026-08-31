@@ -23,6 +23,19 @@ export class VectorRiverLayer extends L.FeatureGroup {
     private wgs84Group: L.FeatureGroup;
     private gcj02Group: L.FeatureGroup;
     private currentOffsetMode: boolean = false;
+    /** 平滑后的两套源数据（带逐要素 bbox），裁剪时据此重建可见子集 */
+    private sourceWgs84: any;
+    private sourceGcj02: any;
+    /** 上次裁剪所用的地图范围；视口没走出它就不重建 */
+    private culledBounds: L.LatLngBounds | null = null;
+    /** 上次裁剪时的 pane（重建子层要用） */
+    private paneName?: string;
+    /**
+     * 裁剪外扩倍数：按当前视口的这么多倍向外取。
+     * 1.0 = 上下左右各多留一个视口（共 3×3），跟拍走完一整屏才需要重建一次。
+     * 太小 → 平移时频繁重建；太大 → 白留的几何又变多。
+     */
+    private static readonly CULL_PAD = 1.0;
     /** 上次设定样式用的 zoom 档位；换组时据此补刷新组 */
     private lastStyledZoom: number | null = null;
     /** 上次真正刷过样式的**档位**（getScaleMultiplier 的返回值）。同档位内换 zoom 值不必重设。 */
@@ -36,31 +49,91 @@ export class VectorRiverLayer extends L.FeatureGroup {
         // [PERF 2026-07-27] 迭代次数 2 → 1。每轮 Chaikin 顶点数约翻倍，2 轮 ≈ 原始的 4 倍，
         // 而 Leaflet 在每次 zoomend 都要把全部顶点重新投影（实测 330~600ms，缩放卡顿的剩余大头）。
         // Chaikin 收敛很快：1 轮已把直角切成圆角，第 2 轮的增量在 2~4px 线宽下肉眼难辨。
-        const smoothedData = VectorRiverLayer.applyChaikinSmoothing(data, 1);
+        // 🔴 [2026-08-31] 先把**永远不画的湖心线**扔掉，再做任何处理。
+        //    `getBorderStyle`/`getWaterStyle` 对 `Lake Centerline` 都返回 `stroke:false, opacity:0`，
+        //    实测 2910 条 path 里有 **506 条**是它（占 17% 的 path、39736 个顶点），
+        //    一根都画不出来，却照样参与每次 zoomend 的全量重投影。
+        const drawableData = VectorRiverLayer.dropNeverDrawn(data);
+        const smoothedData = VectorRiverLayer.applyChaikinSmoothing(drawableData, 1);
 
-        // 1. 初始化 WGS84 组 (Create WGS84 Group)
-        this.wgs84Group = this.createRiverGroup(smoothedData, options?.pane);
+        this.sourceWgs84 = smoothedData;
+        // [PERFORMANCE] GCJ02 偏移在启动时算一次
+        this.sourceGcj02 = VectorRiverLayer.applyGCJ02Offset(smoothedData);
+        VectorRiverLayer.attachBBoxes(this.sourceWgs84);
+        VectorRiverLayer.attachBBoxes(this.sourceGcj02);
 
-        // 2. 预计算偏移数据 (Pre-calculate GCJ02 Data)
-        // [PERFORMANCE] Done once at startup, zero runtime cost later.
-        const offsetData = VectorRiverLayer.applyGCJ02Offset(smoothedData);
-
-        // 3. 初始化 GCJ02 组 (Create GCJ02 Group)
-        this.gcj02Group = this.createRiverGroup(offsetData, options?.pane);
-
-        // 4. Default: Show WGS84 (Standard)
+        // 两组都先建成**空组**，真正的内容由视口裁剪按需填充（见 cullTo）。
+        this.paneName = options?.pane;
+        this.wgs84Group = new L.FeatureGroup();
+        this.gcj02Group = new L.FeatureGroup();
         this.addLayer(this.wgs84Group);
 
         gameLog('startup', '[VectorRiverLayer] Initialized with Chaikin Curve Smoothing & Dual-Buffer ready.');
+    }
+
+    /** 扔掉样式上永远不绘制的要素（目前只有 Lake Centerline）。 */
+    private static dropNeverDrawn(geojson: any): any {
+        const feats: any[] = geojson?.features ?? [];
+        if (!feats.length) return geojson;
+        return {
+            ...geojson,
+            features: feats.filter((f) => f?.properties?.featurecla !== 'Lake Centerline'),
+        };
+    }
+
+    /** 给每个要素挂一份 [minLng, minLat, maxLng, maxLat]，裁剪时只比这四个数。 */
+    private static attachBBoxes(geojson: any): void {
+        for (const f of geojson?.features ?? []) {
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            const scan = (c: any): void => {
+                if (typeof c?.[0] === 'number') {
+                    const x = c[0], y = c[1];
+                    if (x < minX) minX = x; if (x > maxX) maxX = x;
+                    if (y < minY) minY = y; if (y > maxY) maxY = y;
+                    return;
+                }
+                if (Array.isArray(c)) for (const k of c) scan(k);
+            };
+            scan(f?.geometry?.coordinates);
+            (f as any).__bbox = [minX, minY, maxX, maxY];
+        }
+    }
+
+    /**
+     * 🔴 视口裁剪（2026-08-31，本次性能修的**核心**）。
+     *
+     * 实测：zoom9 时屏幕里只有 **18 条**河（全库 2404 条），顶点占比 **0.2%**；
+     * 而 Leaflet 每次 zoomend 会把**全部 985368 个顶点**重新投影 —— 99.8% 是白烧。
+     * 实测缩放一次同步冻结 449ms，其中 **76~78% 是河流**（关掉河流后只剩 107ms）。
+     *
+     * 所以只把与「视口外扩 CULL_PAD 倍」相交的要素放进图层。
+     * 视口仍在上次裁剪范围内就**什么都不做**，跟拍平移不会反复重建。
+     */
+    public cullTo(bounds: L.LatLngBounds): void {
+        if (this.culledBounds && this.culledBounds.contains(bounds)) return;
+        const padded = bounds.pad(VectorRiverLayer.CULL_PAD);
+        this.culledBounds = padded;
+
+        const src = this.currentOffsetMode ? this.sourceGcj02 : this.sourceWgs84;
+        const west = padded.getWest(), east = padded.getEast();
+        const south = padded.getSouth(), north = padded.getNorth();
+        const visible = (src?.features ?? []).filter((f: any) => {
+            const b = f.__bbox;
+            if (!b) return true;                       // 没算出 bbox 的宁可画，不冒消失的险
+            return b[0] <= east && b[2] >= west && b[1] <= north && b[3] >= south;
+        });
+
+        const group = this.currentOffsetMode ? this.gcj02Group : this.wgs84Group;
+        group.clearLayers();
+        this.fillRiverGroup(group, { ...src, features: visible }, this.paneName);
+        this.styleLiveGroup();
     }
 
     /**
      * 辅助方法：创建统一的双层河流组 (Border + Water)
      * Reduces code duplication.
      */
-    private createRiverGroup(data: any, pane?: string): L.FeatureGroup {
-        const group = new L.FeatureGroup();
-
+    private fillRiverGroup(group: L.FeatureGroup, data: any, pane?: string): L.FeatureGroup {
         // 1. 底层描边（Border/Casing Layer）：深墨蓝，切断山谷杂乱阴影，提升山间河流辨识度
         const border = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getBorderStyle(feature, 9),
@@ -96,6 +169,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
         // 所以调用方必须避免在高频路径（行军↔战斗）上跨越坐标系分界。
         this.clearLayers(); // Remove current visible
         this.addLayer(enable ? this.gcj02Group : this.wgs84Group);
+        // 换坐标系 = 换了一套源数据，上次的裁剪结果对新组无效，强制重裁。
+        this.culledBounds = null;
+        if (this._map) this.cullTo(this._map.getBounds());
         this.styleLiveGroup();
     }
 
@@ -106,6 +182,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
     public refresh() {
         this.clearLayers();
         this.addLayer(this.currentOffsetMode ? this.gcj02Group : this.wgs84Group);
+        this.culledBounds = null;
+        if (this._map) this.cullTo(this._map.getBounds());
         this.styleLiveGroup();
     }
 
