@@ -55,6 +55,20 @@ const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 
  *  且只去绿幕、与势力色无关 → 跨战斗、跨势力都能复用。第二次打同样素材跳过抠绿/编码，
  *  只重做染色（势力色每局随机，走 SpriteTinter 现链路）。key = 源图 URL，value = 抠绿后 data URL。
  */
+/**
+ * 抖动计数（2026-08-31）。
+ * 「缓存占用顶在预算上」**不能**证明有问题——淘汰冷条目是健康的。
+ * 只有「淘汰掉的又被加回来」（reAdds）才是抖动，才说明预算装不下单场战斗的工作集。
+ * 光看 MB 这两种情况长得一模一样，我 8-31 就是因为分不清，把预算从 600 盲抬到 1600MB。
+ */
+const CHURN = { cleanEvicts: 0, cleanReAdds: 0, decromaEvicts: 0, decromaReAdds: 0 };
+const EVICTED_CLEAN = new Set<string>();
+const EVICTED_DECROMA = new Set<string>();
+function rememberEvicted(set: Set<string>, key: string): void {
+    if (set.size > 4000) set.clear();
+    set.add(key);
+}
+
 const DECROMA_CACHE = new Map<string, string>();
 /**
  * 抠绿 data URL 缓存**字节**预算。
@@ -69,6 +83,7 @@ let decromaCacheBytes = 0;
 /** 按字节预算写入抠绿缓存（FIFO，Map 天然有序）。 */
 function decromaCachePut(url: string, dataUrl: string): void {
     if (DECROMA_CACHE.has(url)) return;
+    if (EVICTED_DECROMA.delete(url)) CHURN.decromaReAdds++;
     DECROMA_CACHE.set(url, dataUrl);
     decromaCacheBytes += dataUrl.length * 2;
     while (decromaCacheBytes > DECROMA_CACHE_MAX_BYTES && DECROMA_CACHE.size > 1) {
@@ -77,6 +92,8 @@ function decromaCachePut(url: string, dataUrl: string): void {
         const victim = DECROMA_CACHE.get(oldest);
         DECROMA_CACHE.delete(oldest);
         if (victim) decromaCacheBytes -= victim.length * 2;
+        CHURN.decromaEvicts++;
+        rememberEvicted(EVICTED_DECROMA, oldest);
     }
 }
 
@@ -190,6 +207,7 @@ function ensureCleanImage(
 /** 按字节预算写入抠绿图缓存（FIFO）。图已 onload，尺寸可靠，无需补记。 */
 function cleanCachePut(url: string, img: HTMLImageElement): void {
     if (CLEAN_CACHE.has(url)) return;
+    if (EVICTED_CLEAN.delete(url)) CHURN.cleanReAdds++;
     const bytesOf = (im: HTMLImageElement) =>
         (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4 + (im.src?.startsWith('data:') ? im.src.length * 2 : 0);
     CLEAN_CACHE.set(url, img);
@@ -200,6 +218,8 @@ function cleanCachePut(url: string, img: HTMLImageElement): void {
         const victim = CLEAN_CACHE.get(oldest);
         CLEAN_CACHE.delete(oldest);
         if (victim) cleanCacheBytes -= bytesOf(victim);
+        CHURN.cleanEvicts++;
+        rememberEvicted(EVICTED_CLEAN, oldest);
     }
 }
 
@@ -217,6 +237,7 @@ if (import.meta.env.DEV) {
         bytes: () => { let b = 0; for (const im of CLEAN_CACHE.values()) b += bytesOfImg(im); return b; },
         limitKind: 'bytes',
         limitValue: CLEAN_CACHE_MAX_BYTES,
+        churn: () => ({ evicts: CHURN.cleanEvicts, reAdds: CHURN.cleanReAdds }),
     });
     perfDoctor.registerCache({
         name: 'Scene13WarLayer:DECROMA_CACHE(抠绿dataURL)',
@@ -225,6 +246,7 @@ if (import.meta.env.DEV) {
         bytes: () => { let b = 0; for (const v of DECROMA_CACHE.values()) b += v.length * 2; return b; },
         limitKind: 'bytes',
         limitValue: DECROMA_CACHE_MAX_BYTES,
+        churn: () => ({ evicts: CHURN.decromaEvicts, reAdds: CHURN.decromaReAdds }),
     });
 }
 

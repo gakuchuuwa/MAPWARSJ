@@ -41,6 +41,23 @@ const NAVAL_SPLASH_CHANCE = 0.5;
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
 
+/**
+ * 🔴 [2026-08-31 开机长任务风暴] 启动**只**预载这两个兜底兵种，其余全部按需加载。
+ *
+ * 实测证据（PerfDoctor churn 计数器）：开机把 UNIT_ASSETS 里 300 多个兵种全量解码，
+ * 每个都要走抠绿（`getImageData` + 逐像素 + `toDataURL`），而其中 **144 个装完就被淘汰、
+ * 全程没被用过一次**（`evicts:144 / reAdds:0`）—— 一多半是纯白干，
+ * 却贡献了开机那批 600 次 / 合计 160 秒、最长 4.8 秒的长任务。
+ *
+ * 为什么能安全改成懒加载：绘制入口有完整兜底链
+ * （`unitAssetsId → legionType → mixed → light_infantry`），
+ * 且缺哪个就 `ensureUnitTypeLoading` 后台补载、当帧先用兜底集顶着，**不会画空白**。
+ * 这两个键是兜底链的终点，必须常驻，否则会走到 `Rendering Aborted`。
+ *
+ * 代价：某兵种**首次**出现的一两秒内用兜底贴图，之后自动换成正确的。
+ */
+const EAGER_BOOT_UNIT_IDS = new Set(['mixed', 'light_infantry']);
+
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ANT_ELITE_GALLEY/",
 "/SUCAI/ANT_SCOUT/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARBALESTER/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/AZTEC_RAIDER/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTAELEPHANT/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_IMPERIAL/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAVALRYARCHER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITEBOWMAN/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANTARCHER/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECHUKONU/","/SUCAI/ELITECOMPOSITEBOWMAN/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFIREARCHER/","/SUCAI/ELITEFIRELANCER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKARAMBITWARRIOR/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKIPCHAK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITELIAODAO/","/SUCAI/ELITELONGBOWMAN/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMANGUDAI/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITERATTANARCHER/","/SUCAI/ELITESAMURAI/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITESTEPPELANCER/","/SUCAI/ELITETARKAN/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWHITEFEATHERGUARD/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIREARCHER/","/SUCAI/FIRELANCER/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GALLEY/", // 🔴 2026-08-19 海军三档船（DE 桨帆船系列，16 向）
@@ -681,6 +698,7 @@ export class LegionPhalanxDrawer {
         if (unitAssets) {
             for (const [key, assets] of Object.entries(unitAssets)) {
                 if (LAZY_BOOT_UNIT_IDS.has(key)) continue;
+                if (!EAGER_BOOT_UNIT_IDS.has(key)) continue;   // 见 EAGER_BOOT_UNIT_IDS 注释：其余按需加载
                 const config = assets as any;
                 const cacheEntry = {
                     MOVE: [] as HTMLImageElement[],
@@ -806,6 +824,7 @@ export class LegionPhalanxDrawer {
     public static ensureUnitTypeLoading(key: string): void {
         if (!key || this.unitSpriteCache.has(key) || this.unitLoadInFlight.has(key)) return;
         this.unitLoadInFlight.add(key);
+        this.noteUnitLoad(key);   // 抖动计数：这兵种是不是刚被淘汰又要回来
         void this._loadNavalAssets([key])
             .catch(() => { /* 失败下次再试 */ })
             .finally(() => this.unitLoadInFlight.delete(key));
@@ -905,10 +924,35 @@ export class LegionPhalanxDrawer {
     private static evictTimer: ReturnType<typeof setInterval> | null = null;
     public static startSpriteEvictLoop(): void {
         if (this.evictTimer) return;
-        this.evictTimer = setInterval(() => this.evictUnitSprites(), 10000);
+        this.evictTimer = setInterval(() => {
+            // 🔴 战术演出期间不淘汰：13 用的是它自己的 bank，此时动兵种缓存只会在
+            //    战斗最吃紧的时候平白制造一次全量扫描 + 重载。等回战略地图再收拾。
+            if ((window as any).game?.scene13War?.isActive?.() === true) return;
+            this.evictUnitSprites();
+        }, 10000);
+    }
+
+    /** 单个兵种贴图集占多少字节（淘汰时按型号减，避免重复全量扫描） */
+    private static setBytes(set: unknown): number {
+        let b = 0;
+        const seen = new Set<HTMLImageElement>();
+        for (const key of Object.keys(set as Record<string, unknown>)) {
+            const arr = (set as Record<string, unknown>)[key];
+            if (!Array.isArray(arr)) continue;
+            for (const im of arr as (HTMLImageElement | null)[]) {
+                if (!im || seen.has(im)) continue;
+                seen.add(im);
+                b += (im.naturalWidth || 0) * (im.naturalHeight || 0) * 4;
+                if (im.src && im.src.startsWith('data:')) b += im.src.length * 2;
+            }
+        }
+        return b;
     }
 
     private static evictUnitSprites(): void {
+        // 🔴 [2026-08-31] 全量扫描只做**一次**。
+        //    原实现每淘汰一个兵种就 `debugSpriteBytes()` 重扫整个缓存（约 1.5 万张图），
+        //    淘汰 100 个 = 扫 100 遍，这个淘汰器自己就变成了长任务。
         let bytes = this.debugSpriteBytes();
         if (bytes <= this.SPRITE_BUDGET_BYTES) return;
         const now = performance.now();
@@ -918,10 +962,26 @@ export class LegionPhalanxDrawer {
             .sort((a, b) => a.last - b.last);                               // 最久没用的先走
         for (const c of cands) {
             if (bytes <= this.SPRITE_BUDGET_BYTES) break;
+            const set = this.unitSpriteCache.get(c.k);
+            if (set) bytes -= this.setBytes(set);   // 按型号减，不再重扫全量
             this.unitSpriteCache.delete(c.k);
             this.spriteLastUsed.delete(c.k);
-            bytes = this.debugSpriteBytes();
+            this.churn.evicts++;
+            if (this.churnEvicted.size > 4000) this.churnEvicted.clear();
+            this.churnEvicted.add(c.k);
         }
+    }
+
+    /**
+     * 抖动计数（2026-08-31）。淘汰掉的兵种**又被重新加载回来** = 预算装不下工作集。
+     * 只看占用 MB 分不出「正常淘汰冷兵种」和「反复重载同一批兵种」。
+     */
+    private static churn = { evicts: 0, reAdds: 0 };
+    private static churnEvicted = new Set<string>();
+    public static debugChurn(): { evicts: number; reAdds: number } { return { ...this.churn }; }
+    /** 在 ensureUnitTypeLoading 真正开始加载某兵种时调用。 */
+    private static noteUnitLoad(key: string): void {
+        if (this.churnEvicted.delete(key)) this.churn.reAdds++;
     }
 
     private static processedBySrc = new Map<string, Promise<HTMLImageElement>>();
@@ -1194,7 +1254,10 @@ export class LegionPhalanxDrawer {
         // Retrieve Asset Cache
         let assets = this.unitSpriteCache.get(unitAssetsId);
 
+        // 兜底链只保证「这一帧不画空白」，还得**真正去把正确的那套补载回来**，
+        // 否则改成懒加载后会永远停在兜底贴图上（下面每格位的补载只覆盖 cultureSlots 分支）。
         if (!assets) {
+            LegionPhalanxDrawer.ensureUnitTypeLoading(unitAssetsId);
             assets = this.unitSpriteCache.get(legionType);
         }
         if (!assets) {
@@ -2646,7 +2709,11 @@ if (import.meta.env.DEV) {
         where: 'src/map/legion/LegionPhalanxDrawer.ts:unitSpriteCache',
         entries: () => LegionPhalanxDrawer.debugUnitSetCount(),
         bytes: () => LegionPhalanxDrawer.debugSpriteBytes(),
-        limitKind: 'none',
+        // [2026-08-31] 已经有字节预算 + LRU 淘汰了，登记信息要跟上，
+        // 否则报告里一直误报 cache-unbounded/critical，把真问题淹掉。
+        limitKind: 'bytes',
+        limitValue: 2000 * 1024 * 1024,
+        churn: () => LegionPhalanxDrawer.debugChurn(),
     });
     perfDoctor.registerCache({
         name: 'LegionPhalanxDrawer:processedBySrc(抠绿图·从不淘汰)',
@@ -2655,6 +2722,7 @@ if (import.meta.env.DEV) {
         // 这个 Map 存的是 Promise，取不到实际字节；条目数已能暴露量级，
         // 真实字节由上面 unitSpriteCache 那条覆盖（同一批图）。
         bytes: () => 0,
-        limitKind: 'none',
+        limitKind: 'count',
+        limitValue: 1200,
     });
 }

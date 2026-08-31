@@ -13,34 +13,35 @@ export const COMBAT_UI_TOKENS = {
     panelHeight: 360,
     portraitSlotWidth: 380,
     /** 黑底条距容器左右边距（越小条越宽） */
-    centerBackdropEdge: 0,
+    centerBackdropEdge: 16,
     /** 黑底径向渐隐椭圆半径（%）；越小四边越易透出地图 */
-    centerFadeEllipseX: 55,
+    centerFadeEllipseX: 45,
     centerFadeEllipseY: 100,
     /** 径向渐隐色标（%，从中心向外）
      *  [2026-06-12 美化] 内/中色标外推：文字核心区（势力名/军团名/数字）下必须是实底，
      *  此前地图标签（朝歌 4081 等）穿透叠在战报文字上。立绘区边缘仍保持渐隐透出地图。 */
     centerFadeStopInner: 30,
-    centerFadeStopMid: 60,
-    centerFadeStopOuter: 90,
-    /** 中央对峙血条最大宽度（设计 px）；屏宽 ≈ uiPx(本值)。加长全宽模式 */
-    clashBarTrackWidth: 2200,
+    centerFadeStopMid: 58,
+    centerFadeStopOuter: 84,
+    /** 中央对峙血条最大宽度（设计 px）；屏宽 ≈ uiPx(本值)。略伸入立绘槽底缘以铺满中栏黑底 */
+    clashBarTrackWidth: 1480,
     centerMargin: 400,
-    portraitBottom: 0,
-    portraitInset: 0,
-    /** 立绘贴近屏幕边角 */
-    portraitPullToCenter: 0,
-    portraitImageOffset: 0,
+    portraitBottom: -50,
+    portraitInset: 12,
+    /** 立绘槽向中栏轻推，使身体叠在黑底前缘上 */
+    portraitPullToCenter: 36,
+    portraitImageOffset: 20,
     /** 立绘左下/右下水印渐隐（椭圆半径%，相对立绘槽） */
     portraitCornerFadeX: 48,
     portraitCornerFadeY: 30,
     /** 立绘四缘渐隐（%），均等弱化硬边 */
     portraitEdgeFade: 15,
     /**
-     * 立绘横占宽度（设计 px）= inset + slot + pull ≈ 380
+     * 立绘横占宽度（设计 px）= inset + slot + pull ≈ 428 → 屏 300px。
      * 军团信息区须落在此线以右（左）/以左（右），否则被立绘遮挡。
      */
-    portraitHorizontalReserve: 380,
+    portraitHorizontalReserve:
+        12 + 380 + 36, // keep in sync with portraitInset + portraitSlotWidth + portraitPullToCenter
 
     colors: {
         attackerGold: '#FDB931',

@@ -39,6 +39,18 @@ export interface CacheProbe {
     limitKind: 'bytes' | 'count' | 'none';
     /** 上限数值（limitKind='bytes' 时为字节，'count' 时为条数） */
     limitValue?: number;
+    /**
+     * 抖动计数（可选，但**图片缓存强烈建议提供**）。
+     *
+     * 🔴 为什么必须有这个：**「缓存占用顶在预算上」不等于「有问题」**。
+     *    缓存满了淘汰冷条目 = 健康；反复淘汰又重建**同一批**条目 = 抖动，
+     *    纯烧 CPU（重新抠绿/重新染色）却一分内存都省不下来。
+     *    光看 currentMB 这两种情况长得**一模一样**，只能靠计数器分辨。
+     *
+     * - `evicts`：累计淘汰条数
+     * - `reAdds`：**被淘汰过、后来又被重新加进来**的条数 ← 这个才是抖动的证据
+     */
+    churn?: () => { evicts: number; reAdds: number };
 }
 
 /** 热点函数采样。 */
@@ -111,6 +123,12 @@ export class PerfDoctor {
     public reset(): void {
         this.hots.clear();
         this.heapSamples.length = 0;
+        // 🔴 [2026-08-31 修工具自身缺陷] 长任务和帧间隔**也必须清**。
+        //    漏了它们，「reset → 复现 → dump」这个工作流对**最重要的两个指标**失效：
+        //    读到的永远是开机以来的累计，分不清「现在还在卡」和「开机时卡过」。
+        this.longTasks.length = 0;
+        this.frameGaps.length = 0;
+        this.lastFrameAt = 0;
     }
 
     /** 开始堆采样（DEV 自动调用一次即可） */
@@ -358,6 +376,42 @@ export class PerfDoctor {
             }
         }
 
+        // ── 规则 2.5：缓存**抖动**（2026-08-31 新增）──
+        //    背景：我把染色缓存预算 600→1600MB 后它照样顶满，一度以为「还在抖」。
+        //    但顶满可能只是正常淘汰冷条目。加了 reAdds 计数才能判：
+        //    重新加回来的条目占比高 = 真抖动，此时**加预算才有意义**；
+        //    占比低 = 淘汰的都是冷数据，加预算只会白吃内存，该往别处查。
+        for (const c of this.caches) {
+            if (!c.churn) continue;
+            let ch = { evicts: 0, reAdds: 0 };
+            try { ch = c.churn(); } catch { continue; }
+            if (ch.evicts < 50) continue;                     // 样本太少不下结论
+            const ratio = ch.reAdds / Math.max(1, ch.evicts);
+            if (ratio < 0.25) continue;                        // 淘汰的基本是冷数据 → 健康
+            let entries = 0, bytes = 0;
+            try { entries = c.entries(); bytes = c.bytes(); } catch { /* 探针不许抛 */ }
+            out.push({
+                rule: 'cache-thrashing',
+                severity: ratio >= 0.5 ? 'critical' : 'warn',
+                symptom: `缓存【${c.name}】在**抖动**：淘汰 ${ch.evicts} 条，其中 ${ch.reAdds} 条`
+                    + `（${(ratio * 100).toFixed(0)}%）后来又被重新加了回来。`
+                    + '这说明预算装不下**单次场景的工作集**，正在反复重建同一批数据 —— '
+                    + '纯烧 CPU（重新解码/抠绿/染色），内存却一分没省。',
+                evidence: {
+                    evicts: ch.evicts, reAdds: ch.reAdds, reAddRatio: +ratio.toFixed(2),
+                    entries, currentMB: +(bytes / MB).toFixed(1),
+                    limitMB: c.limitValue ? +(c.limitValue / MB).toFixed(0) : '无',
+                },
+                where: c.where,
+                fix: '两条路，**先判断是哪一种**：'
+                    + '① 工作集本身合理但预算太小 → 把预算提到实测工作集的 1.5 倍以上（铁律 2）；'
+                    + '② 工作集本身就异常膨胀（例如每个「贴图×势力色」组合都存一份全尺寸副本）'
+                    + ' → 加预算是饮鸩止渴，要去减少**产生的条目种类**，或改存中间产物而非成品。'
+                    + '判据：把预算翻倍后 reAddRatio 是否显著下降；不降就是 ②。',
+                verify: '再次 dump，本项 reAddRatio 应 <0.25。',
+            });
+        }
+
         // ── 规则 3：热路径上的全量扫描（战略卡顿的真凶形态）──
         for (const [name, s] of this.hots) {
             const avg = s.total / Math.max(1, s.n);
@@ -433,6 +487,7 @@ export class PerfDoctor {
                     MB: +(bytes / MB).toFixed(1),
                     perEntryKB: entries ? +(bytes / entries / 1024).toFixed(0) : 0,
                     limitKind: c.limitKind, limitValue: c.limitValue ?? null,
+                    churn: (() => { try { return c.churn?.() ?? null; } catch { return null; } })(),
                 };
             }).sort((a, b) => b.MB - a.MB),
             hotspots: [...this.hots.entries()].map(([name, s]) => ({
