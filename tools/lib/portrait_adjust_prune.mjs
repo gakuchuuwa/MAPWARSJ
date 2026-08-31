@@ -91,6 +91,7 @@ function main() {
         const base = o.key.split('/').pop() ?? '';
         let c = '正式名';
         if (base.startsWith('__多余__')) c = '多余';
+        else if (base.startsWith('__暂留__')) c = '暂留';
         else if (base.startsWith('__闲置__')) c = '闲置';
         else if (/^[0-9a-f-]{36}\.png$/i.test(base)) c = 'uuid';
         else if (/^image \(\d+\)\.png$/.test(base)) c = 'image(N)';

@@ -74,6 +74,7 @@ addRefsFromText(fs.readFileSync(path.join(ROOT, 'vite.config.ts'), 'utf-8'));
 
 // ── 2) 遍历各文化区/政权夹，分类 ──
 const IDLE_RE = /^__闲置__(.+)_(\d+)\.png$/i; // group1=区名token, group2=编号
+const CLASSIFIED_RE = /^__(闲置|暂留|多余)__(.+)_(\d+)\.png$/i;
 
 const plan = [];            // { folder, from, to }
 let keptUsed = 0, skippedPrev = 0, alreadyIdle = 0;
@@ -102,7 +103,7 @@ for (const ent of fs.readdirSync(ASSETS, { withFileTypes: true })) {
     const existingNames = new Set(files.map((f) => f.toLowerCase()));
     for (const f of files) {
         if (/_prev_/i.test(f)) { skippedPrev++; continue; }
-        if (IDLE_RE.test(f)) continue;                       // 已是闲置命名
+        if (CLASSIFIED_RE.test(f)) continue;                 // 已完成分类命名
         if (isReferenced(folder, f)) { keptUsed++; continue; } // 被引用→保留
         // 分配下一个不冲突的编号
         let dest;

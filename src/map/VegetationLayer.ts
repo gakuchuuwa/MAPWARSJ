@@ -144,26 +144,31 @@ function forestClusterWeight(
     return Math.max(historicalFloor, canopy);
 }
 
+function currentGameSeason(): number {
+    const season = (window as any).game?.timeSystem?.getSeason?.();
+    return typeof season === 'number' && season >= 0 && season <= 3 ? season : 0;
+}
+
 function currentTreeSeason(): TreeSeason {
-    const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
+    const season = currentGameSeason();
     if (season === 2) return 1;
     if (season === 3) return 2;
     return 0;
 }
 
 /**
- * 季节**渐变**（2026-08-31 主人要求）：季末的一段时间里，同一棵树同时画「本季」和「下季」两张，
- * 用透明度交叉淡出，而不是到点整片瞬间换装。
+ * 季节渐变：季末的一段时间里，同一棵树同时画本季和下季两张；
+ * 本季保持可见，下季缓慢覆盖，避免树冠在换装中变稀或消失。
  *
  * 只在季末 `SEASON_BLEND_WINDOW` 这段窗口里混合，其余时间照旧只画一张 —— 平时零额外开销。
  * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
  * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
  */
-const SEASON_BLEND_WINDOW = 0.75;
+const SEASON_BLEND_WINDOW = 0.9;
 
 function nextTreeSeason(s: TreeSeason): TreeSeason {
     // 游戏季推进 春→夏→秋→冬→春；映射到树态就是 0→0→1→2→0
-    const gs = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
+    const gs = currentGameSeason();
     if (gs === 1) return 1;   // 夏 → 下一季是秋
     if (gs === 2) return 2;   // 秋 → 冬
     if (gs === 3) return 0;   // 冬 → 春
@@ -296,6 +301,15 @@ export class VegetationLayer {
         if (this.seasonTimer !== null) return;
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
+            const gameSeason = currentGameSeason();
+            if (this.sampledGameSeason !== gameSeason) {
+                // 换季边界先把上一组命令中的“下一季”画满，再重新采样本季组合，
+                // 避免进度从 1 归零时短暂退回旧季贴图。
+                this.paint();
+                this.lastRenderKey = '';
+                this.scheduleRender();
+                return;
+            }
             // 🔴 [2026-08-31] 直接 paint()，不要走 scheduleRender()。
             //    渲染键已经不含混合档位（见 render 里的说明），走 scheduleRender 会因
             //    「key 没变」直接 return，渐变就冻在原地不动。
@@ -304,6 +318,8 @@ export class VegetationLayer {
         }, 250);
     }
     private seasonTimer: number | null = null;
+    /** 当前 trees 命令所属的游戏季节（春夏必须分开，因为二者的下一季不同） */
+    private sampledGameSeason = -1;
 
     /** 采样出来的树（只存经纬度，屏幕坐标在 paint 时按当前镜头现算） */
     private trees: TreeDrawCommand[] = [];
@@ -319,7 +335,10 @@ export class VegetationLayer {
         const zoom = Math.floor(this.map.getZoom());
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) return;
 
-        const blendAlpha = Math.min(1, Math.max(0, seasonBlend()));
+        const gameSeason = currentGameSeason();
+        const blendAlpha = this.sampledGameSeason === gameSeason
+            ? Math.min(1, Math.max(0, seasonBlend()))
+            : 1;
         const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
 
@@ -362,10 +381,12 @@ export class VegetationLayer {
             // 🔴 [2026-08-31 修「消失再出现」] 只要**两张里有一张在**就必须画出来。
             //    原来是 `if (!img) continue` —— 当前季的图没下载完就整棵跳过，
             //    换季那一瞬间新贴图还在路上，整片林子先消失、图到了再冒出来。
-            //    现在：两张都在 → 正常交叉淡出；只有一张在 → 那张按满不透明顶上。
+            //    现在：两张都在 → 新季缓慢覆盖；只有一张在 → 那张按满不透明顶上。
             //    宁可这一瞬间不渐变，也绝不让树凭空消失。
             if (cur && nxt && cur !== nxt) {
-                drawOne(cur, it, 1 - blendAlpha);
+                // 当前季始终作为满可见底层，新季在其上缓慢显现。
+                // 这样树冠不会在交叉淡出中变稀，更不会因两张轮廓不同而像整片消失。
+                drawOne(cur, it, 1);
                 drawOne(nxt, it, blendAlpha);
             } else if (cur) {
                 drawOne(cur, it, 1);
@@ -434,15 +455,14 @@ export class VegetationLayer {
         const yMax = Math.ceil(se.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
 
         // 采样窗口没跨格 → 这一屏的林区与上次逐格相同（canvas 按 position 跟随平移），直接返回省掉整屏重采样
+        const gameSeason = currentGameSeason();
         const season = currentTreeSeason();
-        // 混合权重量化成 20 档进 key：过渡期每跨一档才重画一次（每档 5% 细腻过渡），
-        // 配合 200ms 节流，一次过渡平滑均匀演进，绝无突然跳变感。
         const nextSeason = nextTreeSeason(season);
         // 🔴 [2026-08-31 修「渐变不连续」] 渲染键**不带**混合档位。
         //    混合只影响「怎么画」，不影响「撒在哪」—— 带上它等于每跨一档就整屏重新撒点，
         //    而重新撒点时若新一季的贴图还没下载完，那批树就先消失、等图到了再冒出来
         //    （主人看到的「消失再出现」）。现在混合完全交给 paint()，采样一次管一整季。
-        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${season}`;
+        const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${gameSeason}`;
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
@@ -577,6 +597,7 @@ export class VegetationLayer {
         //    绘制改为每次平移都按当前镜头重算容器坐标 —— 与动物层同一套架构，
         //    实测这一趟只有 ~200 次 drawImage、不到 1ms，重的采样仍然按 key 节流。
         this.trees = drawCommands;
+        this.sampledGameSeason = gameSeason;
         this.paint();
         drawnTrees = drawCommands.length;
 
