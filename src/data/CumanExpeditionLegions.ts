@@ -29,5 +29,4 @@ export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     fuerjia: { name: '伏尔加军', tier: 4 },         // 察里津·伏尔加
     nuogai: { name: '萨马拉军', tier: 4 },          // 萨马拉·萨马拉河
     xiemian: { name: '萨维尔军', tier: 4 },         // 谢缅杰尔·萨维尔
-    xiadunhe: { name: '罗斯亲兵', tier: 1 },
 };

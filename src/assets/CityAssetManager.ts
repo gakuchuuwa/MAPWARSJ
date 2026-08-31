@@ -1007,7 +1007,7 @@ export class CityAssetManager {
     'xingelana': '新格',
     'eluosi_diguo': '俄罗',
     'gualani': '瓜拉',
-    'xiadunhe': '下顿',
+'xiadunhe': '下顿',
         'kelimiya': '克里',
 'xiaofulijiya': '小弗',
 'mallabhum': '末罗',
