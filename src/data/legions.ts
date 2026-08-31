@@ -1,5 +1,4 @@
 
-import type { Army } from '../legion/Army';
 
 export interface LegionConfig {
     id: string;

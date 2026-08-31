@@ -31,7 +31,6 @@ import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
-import { gameLog } from '../utils/GameLogger';
 import { type RegionType } from '../systems/RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import type { BattleType } from '../combat/CombatSystem';
@@ -1461,13 +1460,11 @@ function siegeBuildingScale(building: string): number {
  *  用更小比例让奇观与周围建筑体量相当，不再鹤立鸡群。 */
 const SIEGE_WONDER_SCALE = 0.5;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
-const DECOR_BLUR = 20;
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
 const MAX_ROAD_STEPS = 80;
 /** 道路边缘羽化（px）：路面是硬化路，边缘要清晰。默认斑块的 24 会把窄路糊成一条白雾 */
 const ROAD_EDGE_BLUR = 10;
 /** DE watershore 图集是宽软边；海岸连续遮罩单独扩大羽化，不影响农田等普通斑块。 */
-const SHORE_BLUR = 10;
 /**
  * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
  * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：

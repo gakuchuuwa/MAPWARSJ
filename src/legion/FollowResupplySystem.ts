@@ -14,7 +14,6 @@ import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { generalIdHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
-import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;

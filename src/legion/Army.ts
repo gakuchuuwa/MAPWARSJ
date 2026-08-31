@@ -1,8 +1,6 @@
 import L from 'leaflet';
 import { GameMap } from '../map/GameMap';
 import { LatLng } from '../types/core';
-import { GridSystem } from '../systems/GridSystem';
-import { TerrainSpeedSystem, TERRAIN_SPEED_CONFIG } from '../core/TerrainSpeedSystem';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { UnitRenderer } from '../map/UnitRenderer';
 import { getGlobalUnitRenderer } from '../map/UnitRenderer';
@@ -15,7 +13,7 @@ import {
     TERRAIN_SPEED_LERP_TAU_SEC,
 } from '../config/GameConfig';
 import { GameTime } from '../app/GameTime';
-import { LegionType, getUnitTypeConfig } from '../types/UnitTypes';
+import {LegionType} from '../types/UnitTypes';
 import type { RegionType } from '../systems/RegionSystem';
 
 import { IBattleUnit } from '../combat/CombatSystem';

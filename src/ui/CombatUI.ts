@@ -1,9 +1,9 @@
-import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
+import {getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import type { Scene13WarInit } from './Scene13WarLayer';
-import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
+import {SPRITE_PATHS} from '../config/GameConfig';
 import {
     BATTLE_PORTRAIT_FALLBACK,
     getCombatPortraitPath,
@@ -16,7 +16,6 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
-import type { RegionType } from '../systems/RegionSystem';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import {
     applyPortraitAdjustToElement,
@@ -31,8 +30,8 @@ import {
     type PortraitAdjustData,
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
-import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
-import { summarizeTechEffects, summarizeSingleTechEffect, unlockedTechs } from '../systems/MilitaryTechState';
+import {COMBAT_UI_TOKENS, uiPx} from '../config/combat-ui-tokens';
+import {summarizeTechEffects, summarizeSingleTechEffect} from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
@@ -59,7 +58,7 @@ import {
     getFamousGeneralMult,
     getOwnSixSetSkillId,
 } from '../combat/GeneralSkillCombat';
-import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
+import {getGeneralProfile} from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import { getCityEliteConfig, getLegionEliteLegionName } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
@@ -95,11 +94,8 @@ const T = COMBAT_UI_TOKENS;
  * 【只改血条】三幕常量 PHASE_STALEMATE_START / PHASE_COLLAPSE_START（0.4/0.8）继续管
  *   攻城三坨火与武将技脉冲，**不动**；血条走自己下面这套三等分时间轴。
  */
-const PORTRAIT_CLIP_HEIGHT_DESIGN = 550;
 /** 立绘长宽比（宽/高）：2026-07-31 抽样 80 张，全部 768×1024 或 765×1024 → 0.75 */
-const PORTRAIT_ASPECT_W_OVER_H = 0.75;
 /** 滑入/技能脉冲把立绘框放大到 1.045（transform-origin: center bottom），最宽时刻按这个算 */
-const PORTRAIT_MAX_SCALE = 1.045;
 /** 第二、三阶段的落点（主人定 80% 左右），与兵力比无关 */
 const CLASH_STALEMATE_PCT = 77;
 /** 第三阶段内部切分：前 5/6 相持（5 秒），后 1/6 断崖（1 秒） */

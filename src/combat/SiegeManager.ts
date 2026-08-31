@@ -10,12 +10,11 @@ import { BattleUnitFactory } from './BattleUnitFactory';
 import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
-import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import {getGeneralRecordByGeneralId} from '../data/FactionGenerals';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId } from './GeneralSkillCombat';
-import { applyLegionSpawnTierToArmy } from '../legion/LegionSpawnTier';
+import {generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId} from './GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);

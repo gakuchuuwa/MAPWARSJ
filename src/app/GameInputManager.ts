@@ -5,7 +5,6 @@ import { VectorRoadEditor } from '../roads/VectorRoadEditor';
 import { CityEditor } from '../editors/CityEditor';
 import { CityManager } from '../world/CityManager';
 import { GameUIManager } from './GameUIManager';
-import { GridSystem } from '../systems/GridSystem';
 import * as L from 'leaflet';
 
 export class GameInputManager {

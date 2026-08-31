@@ -30,10 +30,8 @@ const ELEV_LIGHT_DIR_Y = -0.39;
 const ELEV_LIGHT_K = 2.4;
 
 /** 背光坡面立体压暗深度（multiply） */
-const ELEV_SHADE_DARK = 0.24;
 
 /** 迎光坡面自然受光提亮（screen） */
-const ELEV_SHADE_LIGHT = 0.18;
 /**
  * 斑块撕边幅度：blend 噪声在边界等值线上推拉的量。
  * 实测（等周指标 = 周长 / 2√(π·面积)，1.0 = 完美圆滑）：

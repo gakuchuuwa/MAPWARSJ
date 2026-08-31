@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import { GameMap } from './GameMap';
 
 /**
  * 投射物接口

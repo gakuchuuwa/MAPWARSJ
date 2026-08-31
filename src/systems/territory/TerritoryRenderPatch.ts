@@ -1,6 +1,4 @@
-import * as L from 'leaflet';
 import { City } from '../../types/core';
-import { FactionManager } from '../../core/FactionManager';
 import { GridSystem } from '../GridSystem';
 
 export type HexOwnershipMap = Map<number, City>;

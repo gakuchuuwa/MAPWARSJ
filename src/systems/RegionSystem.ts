@@ -1,5 +1,4 @@
 import { CityType } from '../types/core';
-import { CITY_CONFIG } from '../config/CityConfig';
 import { getCityExclusiveIconPath } from './city-marker/CityExclusiveIcons';
 import { CITIES_V2 } from '../data/cities_v2';
 // import { resolvePath } from '../utils/PathUtils';

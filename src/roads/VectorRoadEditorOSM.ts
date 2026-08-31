@@ -26,7 +26,7 @@ import { CityManager } from '../world/CityManager';
 import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { smoothRoad, removeBacktracks } from '../utils/GeometryUtils';
+import {removeBacktracks} from '../utils/GeometryUtils';
 
 // ===== IEditor 接口 =====
 interface IEditor {

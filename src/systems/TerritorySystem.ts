@@ -9,7 +9,6 @@ import { getCityRegion } from './RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
-import { CITY_WONDER } from '../data/CityWonders';
 // [PERF] Import Territory Worker
 import TerritoryWorker from '../workers/TerritoryWorker?worker';
 import { TerritoryRequest, TerritoryResponse } from '../workers/TerritoryWorker';
@@ -33,9 +32,6 @@ import {
     CITY_MARKER_SIZE_BIG_CLASS,
     getCityMarkerSizeClass,
 } from '../config/city-marker-tokens';
-import {
-    hasCityExclusiveIcon,
-} from './city-marker/CityExclusiveIcons';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import {
     isMacroMapZoom,

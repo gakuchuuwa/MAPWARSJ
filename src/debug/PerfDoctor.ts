@@ -118,6 +118,101 @@ export class PerfDoctor {
         }, intervalMs);
     }
 
+    // ── 帧观测：真实 fps 与帧间空档 ──────────────────────────
+    /**
+     * 🔴 [2026-08-31] 本轮最大的教训：**子系统计时全部正常，游戏照样卡**。
+     *    实测 combat/combatUI/camera 各段都 ≈0ms，而真实 fps 只有 23 —— 时间花在
+     *    **帧与帧之间**（GC 停顿、别的 rAF 循环、浏览器合成），任何「子系统内部计时器」
+     *    都测不到它。必须独立跑一条 rAF 量真实帧间隔。
+     */
+    private frameGaps: number[] = [];
+    private lastFrameAt = 0;
+    private frameTimer = 0;
+    private longTasks: { at: number; ms: number }[] = [];
+
+    public startFrameWatch(): void {
+        if (this.frameTimer) return;
+        const loop = () => {
+            const now = performance.now();
+            if (this.lastFrameAt > 0) {
+                this.frameGaps.push(now - this.lastFrameAt);
+                if (this.frameGaps.length > 1800) this.frameGaps.shift();
+            }
+            this.lastFrameAt = now;
+            this.frameTimer = requestAnimationFrame(loop);
+        };
+        this.frameTimer = requestAnimationFrame(loop);
+
+        // 长任务（>50ms 阻塞主线程）——GC 与同步大计算都会在这里现形
+        try {
+            const po = new PerformanceObserver((l) => {
+                for (const e of l.getEntries()) {
+                    this.longTasks.push({ at: Math.round(e.startTime), ms: Math.round(e.duration) });
+                    if (this.longTasks.length > 600) this.longTasks.shift();
+                }
+            });
+            po.observe({ entryTypes: ['longtask'] });
+        } catch { /* 浏览器不支持就算了，不影响其余指标 */ }
+    }
+
+    // ── 按画布归因：谁在每帧画东西 ────────────────────────────
+    /**
+     * 临时挂钩 Canvas 2D 的绘制方法，按**画布**统计调用次数与耗时，`ms` 毫秒后自动摘钩。
+     *
+     * 🔴 这是本轮唯一一次「一测就现形」的手段：它直接告诉你哪张画布在每秒烧多少毫秒，
+     *    而不必先猜是哪个系统。挂钩本身有开销，所以**只按需短时开启**，不常驻。
+     */
+    public auditCanvas(ms = 3000): Promise<Record<string, { calls: number; ms: number }>> {
+        const proto = CanvasRenderingContext2D.prototype as unknown as Record<string, (...a: unknown[]) => unknown>;
+        const names = ['drawImage', 'clearRect', 'fillRect', 'stroke', 'fill', 'putImageData'];
+        const stat: Record<string, { calls: number; ms: number }> = {};
+        const origs = names.map((n) => proto[n]);
+        const label = (ctx: CanvasRenderingContext2D) => {
+            const c = ctx.canvas;
+            return c.className || c.id || `匿名${c.width}x${c.height}`;
+        };
+        names.forEach((n, i) => {
+            const orig = origs[i];
+            proto[n] = function (this: CanvasRenderingContext2D, ...a: unknown[]) {
+                const t = performance.now();
+                const r = orig.apply(this, a);
+                const k = label(this);
+                const e = stat[k] || (stat[k] = { calls: 0, ms: 0 });
+                e.calls++; e.ms += performance.now() - t;
+                return r;
+            };
+        });
+        return new Promise((resolve) => setTimeout(() => {
+            names.forEach((n, i) => { proto[n] = origs[i]; });
+            for (const k of Object.keys(stat)) stat[k].ms = +(stat[k].ms / (ms / 1000)).toFixed(2);  // → ms/秒
+            resolve(stat);
+        }, ms));
+    }
+
+    // ── 环境自检：数据到底可不可信 ────────────────────────────
+    /**
+     * 🔴 本轮白烧一小时的直接原因：浏览器面板隐藏时 Leaflet 视口是 **0×0**，
+     *    按视口采样的图层只扫到极少格子，我拿这批垃圾数当「回归」追了四轮。
+     *    从此每份报告都带这一段，读的人（或 AI）先看它决定信不信下面的数。
+     */
+    private env(): Record<string, unknown> {
+        const g = (window as unknown as { game?: { map?: { getLeafletMap?: () => { getSize: () => { x: number; y: number } } } } }).game;
+        let vw = -1, vh = -1;
+        try { const sz = g?.map?.getLeafletMap?.().getSize(); if (sz) { vw = sz.x; vh = sz.y; } } catch { /* 没地图就算了 */ }
+        const gaps = this.frameGaps;
+        const rafAlive = gaps.length > 0 && (performance.now() - this.lastFrameAt) < 1000;
+        return {
+            mapViewport: vw >= 0 ? `${vw}x${vh}` : '未知',
+            viewportUsable: vw > 0 && vh > 0,
+            documentHidden: document.hidden,
+            rafRunning: rafAlive,
+            dataTrustworthy: vw > 0 && vh > 0 && rafAlive,
+            警告: (vw === 0 || !rafAlive)
+                ? '⚠️ 视口 0×0 或 rAF 未运行（浏览器面板隐藏）——本报告中所有按视口/按帧的数字都不可信，先让页面真正渲染一次再测。'
+                : '',
+        };
+    }
+
     // ── 规则 ────────────────────────────────────────────────
     /** 堆占天花板比例超过此值 = 必然频繁 major GC，帧间空档就是它 */
     private static readonly HEAP_CRITICAL = 0.65;
@@ -160,6 +255,68 @@ export class PerfDoctor {
                     fix: '先看本报告 caches 段里 limitKind 非 bytes 的项，把它们改成**按字节预算**淘汰；'
                         + '再检查是否有「同一份数据存了两份」（如解码位图 + 它自己的 data URL 字符串）。',
                     verify: '连开 8~10 次相关场景，堆峰值应稳定在上限的 1/3 以下。',
+                });
+            }
+        }
+
+        // ── 规则 1.5：真实卡顿在「帧与帧之间」（本轮最难找的一类）──
+        const gaps = this.frameGaps;
+        if (gaps.length >= 60) {
+            const fps = 1000 / this.q(gaps, 0.5);
+            const p90 = this.q(gaps, 0.9);
+            const p99 = this.q(gaps, 0.99);
+            const over50 = gaps.filter((g) => g > 50).length;
+            // 已知热点每帧合计（把登记过的函数摊到每帧）
+            let knownPerFrame = 0;
+            for (const [, h] of this.hots) knownPerFrame += h.total / Math.max(1, h.n);
+            const ltTotal = this.longTasks.reduce((a, b) => a + b.ms, 0);
+
+            if (fps < 45 || p90 > 33) {
+                out.push({
+                    rule: 'frame-gap-dominant',
+                    severity: fps < 30 ? 'critical' : 'warn',
+                    symptom: `真实帧率中位 ${fps.toFixed(0)}fps（帧间 p90 ${p90.toFixed(0)}ms / p99 ${p99.toFixed(0)}ms），`
+                        + `而已登记热点每帧合计只有 ${knownPerFrame.toFixed(2)}ms。`
+                        + '差额在**帧与帧之间**：GC 停顿、别的 rAF 循环、浏览器合成。'
+                        + '🔴 这类问题任何「子系统内部计时器」都测不到 —— 2026-08-31 实测各段全 ≈0ms、fps 却只有 23，'
+                        + '就是栽在这里，别再拿「各段计时正常」当作不卡的证据。',
+                    evidence: {
+                        fpsP50: +fps.toFixed(1),
+                        frameGapP90ms: +p90.toFixed(1),
+                        frameGapP99ms: +p99.toFixed(1),
+                        帧数: gaps.length,
+                        超50ms帧数: over50,
+                        已登记热点每帧ms: +knownPerFrame.toFixed(2),
+                        长任务数: this.longTasks.length,
+                        长任务合计ms: ltTotal,
+                    },
+                    where: 'src/debug/PerfDoctor.ts (规则 frame-gap-dominant)',
+                    fix: '按顺序做三件事，别跳步：'
+                        + '① 看本报告 heap 段 —— 堆逼近上限就是 GC，先按规则 heap-near-ceiling 修缓存；'
+                        + '② 跑 `await perfDoctor.auditCanvas(3000)` —— 它按**画布**给出每秒耗时，'
+                        + '直接指认是哪一层在烧，不必先猜是哪个系统；'
+                        + '③ 页面里有多个独立 rAF 循环（主循环 / GlobalUnitRenderer / 各装饰层），'
+                        + '检查它们在战术模式或视口 0×0 时有没有空转（应当直接 return）。',
+                    verify: '再次 dump，fpsP50 应回到 55 以上、frameGapP90ms 降到 20 以内。',
+                });
+            }
+        }
+
+        // ── 规则 1.6：长任务（同步大计算/GC 把主线程整块占住）──
+        if (this.longTasks.length > 0) {
+            const worst = [...this.longTasks].sort((a, b) => b.ms - a.ms).slice(0, 5);
+            const total = this.longTasks.reduce((a, b) => a + b.ms, 0);
+            if (total > 300) {
+                out.push({
+                    rule: 'long-tasks',
+                    severity: total > 3000 ? 'critical' : 'warn',
+                    symptom: `主线程被 ${this.longTasks.length} 个长任务占住合计 ${total}ms（单个 >50ms 才算）。`
+                        + '长任务期间画面完全不动，rAF 也排不上。',
+                    evidence: { 个数: this.longTasks.length, 合计ms: total, 最长几个: worst.map((t) => t.ms).join('/') },
+                    where: 'src/debug/PerfDoctor.ts (规则 long-tasks)',
+                    fix: '长任务只有两种来源：**同步大计算**或 **GC**。先看 heap 段排除 GC；'
+                        + '若不是 GC，用 auditCanvas + 已登记 hotspots 定位那段同步计算，把它分帧或加缓存。',
+                    verify: '再次 dump，合计ms 应降到 300 以下。',
                 });
             }
         }
@@ -237,9 +394,25 @@ export class PerfDoctor {
         const mem = (performance as unknown as { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
         const findings = this.buildFindings();
         return {
-            schema: 'mapwar.perf-doctor/1',
+            schema: 'mapwar.perf-doctor/2',
             at: new Date().toISOString(),
             context,
+            // 🔴 先读这一段再读别的：视口 0×0 / rAF 未运行时，下面按视口和按帧的数字全是垃圾。
+            env: this.env(),
+            frames: this.frameGaps.length >= 10 ? {
+                fpsP50: +(1000 / this.q(this.frameGaps, 0.5)).toFixed(1),
+                gapP50ms: +this.q(this.frameGaps, 0.5).toFixed(1),
+                gapP90ms: +this.q(this.frameGaps, 0.9).toFixed(1),
+                gapP99ms: +this.q(this.frameGaps, 0.99).toFixed(1),
+                gapMaxMs: +Math.max(...this.frameGaps).toFixed(0),
+                samples: this.frameGaps.length,
+                over50msFrames: this.frameGaps.filter((g) => g > 50).length,
+            } : null,
+            longTasks: {
+                count: this.longTasks.length,
+                totalMs: this.longTasks.reduce((a, b) => a + b.ms, 0),
+                worstMs: this.longTasks.length ? Math.max(...this.longTasks.map((t) => t.ms)) : 0,
+            },
             heap: mem ? {
                 usedMB: +(mem.usedJSHeapSize / MB).toFixed(0),
                 limitMB: +(mem.jsHeapSizeLimit / MB).toFixed(0),
@@ -267,6 +440,10 @@ export class PerfDoctor {
             /** 给接手 AI 的方法论：这些是**已经踩过的坑**，别重走 */
             aiGuide: {
                 workflow: [
+                    '0) **先看 env.dataTrustworthy**：false 就别读下面任何数字 —— 视口 0×0 / rAF 没跑时全是垃圾。',
+                    '   （2026-08-31 我拿 0×0 视口的数当「植被回归」追了四轮、白烧一小时。）',
+                    '⭐ 卡顿排查主线：frames.fpsP50 低但 hotspots 都很小 → 看 findings 里的 frame-gap-dominant，',
+                    '   然后 `await perfDoctor.auditCanvas(3000)` 按**画布**归因，它会直接指出是哪一层在烧。',
                     '1) perfDoctor.reset()  2) 复现卡顿（进战斗/跑战略）  3) perfDoctor.dump()',
                     '报告落在 scratch/perf_doctor_latest.json，历史追加在 scratch/perf_doctor_log.jsonl。',
                     '游戏里 Shift+F3 等价于 dump()（F3 是给人看的实时面板，两者不同）。',
@@ -287,6 +464,10 @@ export class PerfDoctor {
                     '定位行为树热点：递归包 aiController.behaviorTree 每个节点的 tick 计时，36 个节点一次包完。',
                     '算某场素材内存：遍历 scene13War.bank 累加 naturalWidth*naturalHeight*4，再加 src 里 data: URL 的 length*2。',
                     '⚠️ 逐像素读的 canvas 必须 getContext("2d",{willReadFrequently:true})；主渲染 canvas 反而不能加。',
+                    '⚠️ 页面里有**多个独立 rAF 循环**（GameAppLoop / GlobalUnitRenderer / 植被·动物·商队·资源点·海面生物各层），',
+                    '   任何一个空转都会吃掉帧预算。查它们在 scene13 激活或视口 0×0 时有没有直接 return。',
+                    '⚠️ 给缓存加容量限制时必问两句：淘汰策略会不会饿死当前工作集（FIFO 几乎总会，用 LRU）？',
+                    '   缓存里会不会存「还没解码完的图」、调用方检查了吗？（2026-08-31 军团士兵消失就栽在这两条）',
                 ],
                 thresholds: {
                     heapWarnRatio: PerfDoctor.HEAP_WARN,
@@ -321,5 +502,10 @@ export const perfDoctor = PerfDoctor.getInstance();
 // 挂到 window 供控制台/接手 AI 直接调用：`perfDoctor.dump()` / `perfDoctor.report()`
 if (typeof window !== 'undefined') {
     (window as unknown as { perfDoctor?: PerfDoctor }).perfDoctor = perfDoctor;
-    if (import.meta.env?.DEV) perfDoctor.startHeapWatch();
+    if (import.meta.env?.DEV) {
+        perfDoctor.startHeapWatch();
+        // 🔴 帧观测必须常驻：卡顿发生时才想起来开就已经错过了。
+        //    它自己只是一条 rAF + 一个数组 push，开销可忽略。
+        perfDoctor.startFrameWatch();
+    }
 }

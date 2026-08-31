@@ -18,10 +18,8 @@ const CITY_CLEAR_PX = 42;
 const MIN_RENDER_INTERVAL_MS = 200;
 /** 单块林区斑块在 SAMPLE_ZOOM 投影空间的半径（投影 px）。屏幕半径 = 此值 × 2^(当前zoom−SAMPLE_ZOOM)，
  *  保证斑块的地理范围恒定、缩放不跳位。 */
-const PATCH_RADIUS_PROJ = 32;
 /** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
  *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
-const PATCH_MIN_SCREEN_RADIUS = 24;
 /** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。
  *  ⚠️ 22 太小，实测在 zoom 9 一屏里几乎看不见；30 才读得出是树。 */
 const TREE_BASE_PX = 30;

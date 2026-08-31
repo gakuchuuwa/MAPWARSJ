@@ -1,6 +1,5 @@
 import L from 'leaflet';
 import { GridSystem } from '../systems/GridSystem';
-import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
 
 export class StrategicGridLayer {
     private map: L.Map;

@@ -1,27 +1,16 @@
 import { CityManager } from '../world/CityManager';
 import { LegionManager } from '../legion/LegionManager';
-import { CombatSystem, IBattleUnit } from './CombatSystem';
+import {CombatSystem} from './CombatSystem';
 import { GameMap } from '../map/GameMap';
 import { EventVisualizer } from '../core/EventVisualizer';
 import { FieldBattleData, SiegeData } from '../types/core';
 import { Army } from '../legion/Army';
-import { BattleUnitFactory } from './BattleUnitFactory';
-import { OrientationSystem } from '../core/OrientationSystem';
 import { SiegeManager } from './SiegeManager';
-import { GridSystem } from '../systems/GridSystem';
 import { MultiLegionFieldBattle } from './MultiLegionFieldBattle';
-import { HISTORICAL_LEGIONS } from '../data/legions';
-import { LegionType } from '../types/UnitTypes';
 
-const FIELD_BATTLE_TROOPS = 10000;
-import { GameConfig, PLAYER_SPEED_TIERS } from '../config/GameConfig';
-import { roadRegistry } from '../roads/RoadRegistry';
-import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
-const BATTLE_OFFSET = 0.14; // Approx 16.5km
-const GRID_SIZE = 34.26;
 
 export class FieldBattleManager {
     private cityManager: CityManager;

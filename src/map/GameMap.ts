@@ -7,14 +7,12 @@ import { VectorRiverLayer } from './VectorRiverLayer';
 import { StrategicGridLayer } from './StrategicGridLayer';
 import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
-import { GridSystem } from '../systems/GridSystem';
 import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
 import { MarineLifeLayer } from './MarineLifeLayer';
 import { setAnimalAmbientLayerVisible } from './AnimalAmbientLayer';
 import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
-import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
 
 /**
