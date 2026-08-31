@@ -1917,19 +1917,11 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
         //    只放左侧（城外）。右侧（城内）与中间军团走廊一并排除，免得残骸戳进城里。
         const outsideCityLeft = (x: number, y: number): boolean => inArmyCorridor(x, y) || x >= VW * 0.5;
         const DECAY_POOL = ['BATTLEFIELD:DECAY_TREBUCHET', 'BATTLEFIELD:DECAY_MANGONEL', 'BATTLEFIELD:DECAY_ONAGER', 'BATTLEFIELD:DECAY_BATTERING_RAM', 'BATTLEFIELD:DECAY_SCORPION'];
-        const BARRICADE_POOL = ['BATTLEFIELD:BARRICADE_A', 'BATTLEFIELD:BARRICADE_B', 'BATTLEFIELD:BARRICADE_C', 'BATTLEFIELD:BARRICADE_D', 'BATTLEFIELD:STAKE_BARRICADE'];
         const TORCH_POOL = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
         // 攻城器械残骸 1~2 个（大型，限量）
         const decayCount = 1 + rng.int(0, 1);
         for (let i = 0; i < decayCount; i++) {
             const asset = rng.pick(DECAY_POOL);
-            const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, outsideCityLeft);
-            if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
-        }
-        // 拒马鹿角 2~3 个
-        const barricadeCount = 2 + rng.int(0, 1);
-        for (let i = 0; i < barricadeCount; i++) {
-            const asset = rng.pick(BARRICADE_POOL);
             const p = sampleLandPos(VW, VH, rng, isWater, asset, objects, outsideCityLeft);
             if (p) objects.push({ asset, x: p.x, y: p.y, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
         }

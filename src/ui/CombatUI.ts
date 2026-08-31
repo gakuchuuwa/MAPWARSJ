@@ -461,10 +461,10 @@ export class CombatUI {
                 100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
             }
             @keyframes panel-entrance {
-                0% { transform: translate(-50%, 250%); }
-                60% { transform: translate(-50%, -6px); }
-                80% { transform: translate(-50%, 3px); }
-                100% { transform: translate(-50%, 0); }
+                0% { transform: translateY(250%); }
+                60% { transform: translateY(-6px); }
+                80% { transform: translateY(3px); }
+                100% { transform: translateY(0); }
             }
             /* 立绘外框进场：左从左→右，右从右→左；overshoot 越位再弹回 */
             @keyframes portrait-frame-enter-left {
@@ -549,15 +549,15 @@ export class CombatUI {
         div.style.cssText = `
             position: fixed;
             bottom: 0; 
-            left: 50%;
-            transform: translate(-50%, 250%);
-            width: ${uiPx(T.panelWidth)};
+            left: 0;
+            width: 100vw;
             height: ${uiPx(T.panelHeight)};
             background: transparent;
             padding: 0;
             z-index: ${T.zIndex.panel};
             pointer-events: none;
             overflow: visible;
+            transform: translateY(250%);
         `;
 
         return div;
@@ -589,7 +589,8 @@ export class CombatUI {
         // --- PORTRAITS + 侧栏军名/兵力 ---
         const leftFrame = this.createPortraitFrame();
         this.leftPortraitFrame = leftFrame;
-        leftFrame.style.left = uiPx(T.portraitInset + T.portraitPullToCenter);
+        leftFrame.style.left = '0';
+        leftFrame.style.bottom = '0';
         leftFrame.style.pointerEvents = 'auto';
         this.leftPortraitWrap = this.createPortraitFacingWrap('left');
         this.leftPortrait = this.createPortraitImage();
@@ -607,7 +608,8 @@ export class CombatUI {
 
         const rightFrame = this.createPortraitFrame();
         this.rightPortraitFrame = rightFrame;
-        rightFrame.style.right = uiPx(T.portraitInset + T.portraitPullToCenter);
+        rightFrame.style.right = '0';
+        rightFrame.style.bottom = '0';
         rightFrame.style.pointerEvents = 'auto';
         this.rightPortraitWrap = this.createPortraitFacingWrap('right');
         this.rightPortrait = this.createPortraitImage();
@@ -673,14 +675,14 @@ export class CombatUI {
         this.refreshGeneralNameTagInteract();
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
-        const backdropEdge = uiPx(T.centerBackdropEdge);
         this.centerBackdrop = document.createElement('div');
         this.centerBackdrop.style.cssText = `
             position: absolute;
-            left: -100px;
-            right: -100px;
+            left: 0;
+            right: 0;
             top: 0;
             bottom: 0;
+            width: 100%;
             z-index: 0;
             pointer-events: none;
             background: ${this.buildCenterBackdropBackground()};
@@ -688,18 +690,20 @@ export class CombatUI {
             background-size: 100% 100%;
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-            -webkit-mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
-            mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
+            mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
         `;
         this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
         this.centerPanel.style.transition = 'opacity 0.3s ease';
         this.centerPanel.style.cssText = `
             position: absolute;
-            left: ${backdropEdge};
-            right: ${backdropEdge};
-            top: 0;
+            left: 50%;
             bottom: 0;
+            transform: translateX(-50%);
+            width: calc(100vw - ${uiPx(T.portraitSlotWidth * 1.8)});
+            max-width: ${uiPx(T.clashBarTrackWidth)};
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -3035,6 +3039,7 @@ export class CombatUI {
         this.boundRegionalBattleField = null;
         this.currentBattleType = battle.type;
         this.isVisible = true;
+        (window as any).game?.cameraFollowUI?.portraitHUD?.hide();
         if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
         this.refreshCorrectorDataOnBattleOpen();
         this.resetBattleOverlays();
@@ -3073,6 +3078,7 @@ export class CombatUI {
         this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
+        (window as any).game?.cameraFollowUI?.portraitHUD?.hide();
         this.refreshCorrectorDataOnBattleOpen();
 
         if (this.boundRegionalBattleField) {
@@ -4344,7 +4350,11 @@ export class CombatUI {
         this.isCollapsed = false;
         this.updateCollapseState(true);
         this.container.style.animation = 'none';
-        this.container.style.transform = 'translate(-50%, 250%)';
+        this.container.style.transform = 'translateY(250%)';
+        const followUI = (window as any).game?.cameraFollowUI;
+        if (followUI?.isFollowing?.()) {
+            followUI.portraitHUD?.show();
+        }
         this.leftPortraitFrame.style.animation = 'none';
         this.rightPortraitFrame.style.animation = 'none';
         this.leftPortraitFrame.style.transform = '';
@@ -4414,13 +4424,13 @@ export class CombatUI {
 
         if (this.isCollapsed) {
             this.container.classList.add('is-collapsed');
-            this.container.style.transform = 'translate(-50%, 100%)';
+            this.container.style.transform = 'translateY(100%)';
             this.toggleCollapseBtn.innerHTML = `<span>▲</span>`;
             this.toggleCollapseBtn.title = '展开战斗面板 (点击显示)';
         } else {
             this.container.classList.remove('is-collapsed');
             if (!skipAnimation) {
-                this.container.style.transform = 'translate(-50%, 0)';
+                this.container.style.transform = 'translateY(0)';
             }
             this.toggleCollapseBtn.innerHTML = `<span>▼</span>`;
             this.toggleCollapseBtn.title = '隐藏战斗面板 (点击收起)';
