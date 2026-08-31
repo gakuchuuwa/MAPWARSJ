@@ -4484,6 +4484,24 @@ export class Scene13WarLayer {
         const style = this.buildingStyleFor(f as 0 | 1);
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
+        // 🔴 [2026-08-31 主人需] 攻击方营地前摆拒马鹿角（防御工事，朝向敌方/城一侧）。
+        //    攻方恒定在左（f=0），敌/城在右 → 摆在该方**阵线前沿**（row=0，x 最大的出兵口，
+        //    最靠近城/中线）前方，横排成一线正面防御。
+        if (f === 0) {
+            const BARRICADE_ASSET = 'BATTLEFIELD:STAKE_BARRICADE';
+            const frontX = Math.max(...side.map((p) => p.x));
+            const frontRow = side.filter((p) => p.x >= frontX - 1).sort((a, b) => a.y - b.y);
+            for (let i = 0; i < frontRow.length && i < 5; i++) {
+                const sp = frontRow[i];
+                const asset = BARRICADE_ASSET;
+                this.ensureNatureAsset(asset);
+                this.decorSprites.push({
+                    asset, frame: 0, x: sp.x + 95, y: sp.y + 12,
+                    flip: Math.random() < 0.5, layer: 'world', z: 0,
+                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                });
+            }
+        }
         for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
         this.decorSprites.push(place(shuffledSpawns[7], 'OUTPOST'));
         this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`));
