@@ -69,4 +69,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     lesser_poland: { name: '本津炮卒', tier: 4 },
     saierweiya: { name: '杜尚兵团', tier: 2 },
     kuertaiya: { name: '瓦拉骑兵', tier: 3 },
+    xiadunhe: { name: '罗斯亲兵', tier: 1 },
 };

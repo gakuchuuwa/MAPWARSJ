@@ -6,6 +6,7 @@ import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { lngToDemGlobalX, latToDemGlobalY } from '../world/land-sea/ElevationSampler';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { loadStrategicForestMask, queryStrategicForestBiome } from './StrategicForestMask';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -26,16 +27,10 @@ const TREE_BASE_PX = 26;
 const TREE_OPACITY = 0.78;
 /** 树根处的轻微接地阴影，只用于消除贴图悬浮感。 */
 const TREE_SHADOW_OPACITY = 0.14;
-/** 林区簇网格步长（投影px）：对应 DE 的 number_of_groups（"几簇"），每簇是一大片林区，
- *  stride 越大簇越稀、越"成带"。 */
-const CLUSTER_STRIDE = SAMPLE_STEP * 1.6;
-/** 簇内斑块散布半径（投影px）：对应 DE 的 group_placement_radius + set_loose_grouping。
- *  改小（×0.55）：让同簇斑块聚拢重叠成"一片"而非离散雀斑点；配合 count 增大填实簇内。 */
-const CLUSTER_RADIUS = SAMPLE_STEP * 0.55;
-/** 从现有林簇预算中抽出的孤树比例；只移动位置，不增加树木总数。 */
-const STRAGGLER_SHARE = 0.15;
-const STRAGGLER_RADIUS_MIN = CLUSTER_RADIUS * 1.8;
-const STRAGGLER_RADIUS_MAX = CLUSTER_RADIUS * 3;
+/** 森林掩膜内部的采样步长；相邻簇互相咬合，形成连续林冠。 */
+const CLUSTER_STRIDE = SAMPLE_STEP * 1.15;
+/** 簇半径略大于半个步长，使相邻森林格没有规则空带。 */
+const CLUSTER_RADIUS = CLUSTER_STRIDE * 0.58;
 
 /**
  * 一棵树的采样结果。
@@ -115,17 +110,22 @@ function hash(x: number, y: number, salt = 0): number {
     return n - Math.floor(n);
 }
 
-function densityFor(tile: string): number {
-    if (tile === 'for' || tile === 'fo2' || tile === 'underbrush_leaves' || tile === 'gr6') return 0.42;
-    if (tile === 'grs' || tile === 'gr2' || tile === 'gr3' || tile === 'gr4' || tile === 'sh4' || tile === 'qs2') return 0.28;
-    if (tile === 'gr5' || tile === 'gr7' || tile === 'ds2' || tile === 'ds4') return 0.16;
-    if (tile === 'snd' || tile === 'sno' || tile === 'sn2' || tile === 'snf') return 0.08;
-    if (tile === 'des' || tile === 'pal' || tile === 'pal1' || tile === 'qs' || tile === 'ds5' || tile === 'rck') return 0.045;
-    return 0.18;
-}
+const BASE_FOREST_TILES = new Set([
+    'for',
+    'fo2',
+    'underbrush_leaves',
+    'snf',
+]);
 
-/** 低于此密度的地表（沙漠/荒漠/岩/雪）战略尺度视为无林，不画色块 */
-const MIN_PATCH_DENSITY = 0.16;
+function isStrategicForestArea(biome: number, tile: string, elevation: number, lat: number): boolean {
+    if (biome === 0) return false;
+    if (BASE_FOREST_TILES.has(tile)) return true;
+    if (biome === 14) return true;
+    if (biome === 6) return Math.abs(lat) >= 50;
+    if (biome === 1 || biome === 3) return tile === 'gr6' || elevation >= 350;
+    if (biome === 2 || biome === 4 || biome === 5 || biome === 12) return elevation >= 450;
+    return false;
+}
 
 function currentTreeSeason(): TreeSeason {
     const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
@@ -247,6 +247,11 @@ export class VegetationLayer {
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
         this.resize();
         this.render();
+        void loadStrategicForestMask().then((ready) => {
+            if (!ready) return;
+            this.lastRenderKey = '';
+            this.scheduleRender();
+        });
         this.startSeasonBlendWatch();
     }
 
@@ -469,38 +474,18 @@ export class VegetationLayer {
 
                 if (elev < 0 && !maskSaysLand(clusterLatLng.lat, clusterLatLng.lng)) continue;
 
-                // 绑地形：簇核地表密度决定这是不是林区（沙漠/荒漠 → 无簇 → 留白），DE 的 terrain 类别绑定
+                // 先确定森林地形，再在森林内部填树；草地、农耕平原、草原和荒漠全部留白。
                 const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
-                const density = densityFor(tile);
-                if (density < MIN_PATCH_DENSITY) continue;
+                const forestBiome = queryStrategicForestBiome(clusterLatLng.lat, clusterLatLng.lng);
+                if (!isStrategicForestArea(forestBiome, tile, elev, clusterLatLng.lat)) continue;
 
-                // 成簇：不是每格都长树，按"簇密度 × 随机扰动"决定这一簇成不成立（DE 密度分档 + percent_chance）。
-                // 原来是 density×(0.55~1.45)，草地(0.28)只有 0.15~0.41、林地(0.42)也才 0.23~0.61，
-                // 七成格子直接不长 —— 叠上 zoom 8 的半径缩水就成了「植被不显示」。
-                // 现在放大到 ×2.2：林地 0.65~1.0、草地 0.43~0.75，稀树/半干旱仍然明显稀疏。
-                // 🔴 [2026-08-31 主人「分布太多了」] 系数 2.2 → 1.0。
-                //    2.2 是当初为了对抗「色斑太淡看不见」硬调上去的；现在画的是实体树，
-                //    不需要靠铺满来刷存在感。⚠️ 一度砍到 1.0，实测一屏只剩 ~25 棵、地图基本是光的，
-                //    过犹不及；1.6 是「成林看得出、又不糊屏」的档：林地 0.47~0.87、草地 0.31~0.58。
-                const clusterChance = Math.min(1, density * 1.6 * (0.7 + hash(cx, cy, 43) * 0.6));
-                if (hash(cx, cy, 44) >= clusterChance) continue;
-
-                // 簇内斑块数：密林一簇更多、更实；稀树更少（DE number_of_objects 随档位）。
-                // ×2 提高：斑块散布半径改小后靠叠数量把簇填实，连成一片而非稀疏点缀。
-                // 同上：14/10/6 是「色斑要连成片」时代的数。画实体树用不了那么多，
-                // 但也不能太少（6/4/2 实测太空）。10/7/4 一簇能看出是片林子。
-                const baseCount = density >= 0.4 ? 10 : density >= 0.25 ? 7 : 4;
-                const count = Math.max(1, Math.round(baseCount * (0.7 + hash(cx, cy, 45) * 0.7)));
-                const stragglerCount = Math.floor(count * STRAGGLER_SHARE);
-                const clusteredCount = count - stragglerCount;
+                // 每个森林格都是林区的一部分，不再二次抽签制造雀斑空洞。
+                const count = Math.round(13 + hash(cx, cy, 45) * 6);
 
                 for (let i = 0; i < count; i++) {
                     const ang = hash(cx, cy, i + 50) * Math.PI * 2;
                     const radiusHash = hash(cx, cy, i + 60);
-                    // 约 15% 的现有林簇树移到簇外成为孤树；其余仍按原规则填充林簇。
-                    const rad = i >= clusteredCount
-                        ? STRAGGLER_RADIUS_MIN + radiusHash * (STRAGGLER_RADIUS_MAX - STRAGGLER_RADIUS_MIN)
-                        : Math.sqrt(radiusHash) * CLUSTER_RADIUS;
+                    const rad = Math.sqrt(radiusHash) * CLUSTER_RADIUS;
                     const px = cxJ + Math.cos(ang) * rad;
                     const py = cyJ + Math.sin(ang) * rad;
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
@@ -534,9 +519,10 @@ export class VegetationLayer {
                     );
                     if (ptKind !== 'land') { if (ptKind === 'pending') missingTiles++; continue; }
 
-                    // 斑块再绑地形：落到林区外的斑块丢弃，保持林区边界干净
+                    // 每棵树再次检查森林掩膜，裁出世界坐标固定的真实林区边缘。
                     const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
-                    if (densityFor(ptTile) < MIN_PATCH_DENSITY * 0.6) continue;
+                    const ptBiome = queryStrategicForestBiome(ptLatLng.lat, ptLatLng.lng);
+                    if (!isStrategicForestArea(ptBiome, ptTile, elev, ptLatLng.lat)) continue;
 
                     const center = this.map.latLngToContainerPoint(ptLatLng);
                     if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;

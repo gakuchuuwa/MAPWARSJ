@@ -4504,24 +4504,31 @@ export class Scene13WarLayer {
             return;
         }
 
-        // 攻击方只在最前排出兵口建筑前铺一道完整木桩拒马线。
-        if (f === 0) {
+        // 攻击方（攻城/野战）与防守方（野战）：在最前排出兵口营地前铺一道完整木桩拒马线。
+        {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
-            const frontX = Math.max(...side.map((p) => p.x));
-            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 1).sort((a, b) => a.y - b.y);
-            const barricadeCount = 6 + Math.floor(Math.random() * 4);
-            const topY = frontRow[0].y - 135;
-            const bottomY = frontRow[frontRow.length - 1].y + 135;
-            this.ensureNatureAsset(barricadeAsset);
-            for (let i = 0; i < barricadeCount; i++) {
-                const t = i / (barricadeCount - 1);
-                this.decorSprites.push({
-                    asset: barricadeAsset, frame: 0,
-                    x: frontX + 180,
-                    y: topY + (bottomY - topY) * t,
-                    flip: Math.random() < 0.5, layer: 'world', z: 0,
-                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
-                });
+            const isAttacker = f === 0;
+            const frontX = isAttacker
+                ? Math.max(...side.map((p) => p.x))
+                : Math.min(...side.map((p) => p.x));
+            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 5).sort((a, b) => a.y - b.y);
+            if (frontRow.length > 0) {
+                const barricadeCount = 6 + Math.floor(Math.random() * 4);
+                const topY = frontRow[0].y - 135;
+                const bottomY = frontRow[frontRow.length - 1].y + 135;
+                const offsetX = isAttacker ? 180 : -180;
+                this.ensureNatureAsset(barricadeAsset);
+                for (let i = 0; i < barricadeCount; i++) {
+                    const t = i / (barricadeCount - 1);
+                    this.decorSprites.push({
+                        asset: barricadeAsset, frame: 0,
+                        x: frontX + offsetX,
+                        y: topY + (bottomY - topY) * t,
+                        flip: isAttacker ? false : true,
+                        layer: 'world', z: 0,
+                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                    });
+                }
             }
         }
 

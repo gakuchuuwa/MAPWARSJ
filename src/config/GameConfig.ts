@@ -551,8 +551,8 @@ export const PLAYER_SPEED_TIERS = {
 export const SEA_SPEED_MULTIPLIER = 1.2;
 
 export const MOVEMENT_MATRIX = {
-    /** 平原 2.4（原 3.0）：仍明显快于步骑 1.5；山地 0.9 垫底，步兵 1.1 为山地之王 */
-    CAVALRY:  { plain: 2.4, mountain: 0.9 },
+    /** 平原 2.0（原 2.4）：略微降速，仍快于步骑 1.5；山地 0.9 垫底，步兵 1.1 为山地之王 */
+    CAVALRY:  { plain: 2.0, mountain: 0.9 },
     MIXED:    { plain: 1.5, mountain: 0.9 }, // 中原等步骑：平原基准，山地受马辎拖累
     INFANTRY: { plain: 1.4, mountain: 1.1 }, // 日本/川蜀/江南：山地之王
     ELEPHANT: { plain: 1.2, mountain: 0.7 }, // 岭南/滇缅：战略机动笨重

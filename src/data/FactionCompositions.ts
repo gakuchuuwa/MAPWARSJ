@@ -8780,12 +8780,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiadunhe": {
-        legionName: "草原军团",
-        formationMode: "triangle",
+        legionName: "斯拉夫军团",
+        legionType: "region",
+        formationMode: "fish_scale",
         slots: [
-            { type: "keshik", count: 2 },
-            { type: "steppe_lancer", count: 3 },
-            { type: "mangudai_elite", count: 4 },
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "bulu": {

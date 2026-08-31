@@ -3009,7 +3009,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_baku', name: '巴库', factionId: 'xierwan', lat: 40.4, lng: 49.9, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA', note: '希尔万要塞/拜火教圣地；18世纪前常住人口仅约1万，19世纪石油时代后爆发增长' },
     { id: 'city_xiemianjieer', name: '谢缅杰尔', factionId: 'xiemian', lat: 43, lng: 47.4, type: 'small_city', troops: 30000, region: 'STEPPE', note: '可萨汗国早期首都；10世纪被罗斯大公斯维亚托斯拉夫摧毁后彻底废弃淹没' },
         { id: 'city_yidier', name: '伊蒂尔', factionId: 'yidier', lat: 46, lng: 48, type: 'medium_city', troops: 30000, region: 'STEPPE', note: '可萨汗国鼎盛期首都，伏尔加河三角洲，丝路草原枢纽' },
-    { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'xiadunhe', lat: 47.705, lng: 42.27306, type: 'small_city', troops: 30000, region: 'STEPPE', note: '9世纪可萨汗国在顿河左岸修筑的砖城堡，拜占庭工程师协助营建；965年被斯维亚托斯拉夫攻取后称白塔，遗址今沉于齐姆良斯克水库' },
+    { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'xiadunhe', lat: 47.705, lng: 42.27306, type: 'small_city', troops: 20000, region: 'SLAVIC' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'medium_city', troops: 30000, region: 'CUMAN', note: '金帐汗国乌拉尔河渡口大城，草原丝路伏尔加-中亚段枢纽' },
     { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'small_city', troops: 30000, region: 'STEPPE', note: '里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
     { id: 'city_kefu', name: '科孚', factionId: 'kejila', lat: 39.62, lng: 19.92, type: 'pass', troops: 30000, region: 'GREEK', note: '古科基拉城邦都城（前8世纪-前229年独立），威尼斯堡垒扼亚得里亚海出口，四次围城' },

@@ -1101,7 +1101,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yilaka': 'city_suojiamosuo',
     'xingelana': 'city_banama',
     'gualani': 'city_yiguasu',
-    'xiadunhe': 'city_saerkeer',
+'xiadunhe': 'city_saerkeer',
     'bulu': 'city_atuoke',
     'xiaofulijiya': 'city_dasijiliweng',
 'mallabhum': 'city_bishnupur',
