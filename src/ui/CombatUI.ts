@@ -218,8 +218,8 @@ export class CombatUI {
     private indicatorJun!: HTMLDivElement;
     private leftCenterSixBadge!: HTMLSpanElement;
     private rightCenterSixBadge!: HTMLSpanElement;
-    private centerSixBadgeGroup!: HTMLDivElement;
     private centerSituationRow!: HTMLDivElement;
+    private followedArmy: any = null;
     /** [军事科技] 科技行：双方各自已解锁科技名（只在 13 出兵口互攻时显示） */
     private techRow!: HTMLDivElement;
     /** [军事科技] 双方科技徽记区（内容由 renderTechSide 重绘） */
@@ -576,7 +576,6 @@ export class CombatUI {
             z-index: ${T.zIndex.panel};
             pointer-events: none;
             overflow: visible;
-            transform: translateY(250%);
         `;
 
         return div;
@@ -677,21 +676,12 @@ export class CombatUI {
         this.indicatorJun.style.position = 'relative';
         this.indicatorJun.style.pointerEvents = 'none';
 
-        this.centerSixBadgeGroup = document.createElement('div');
-        this.centerSixBadgeGroup.style.cssText = `
-            display: flex;
-            align-items: center;
-            gap: ${uiPx(4)};
-            pointer-events: none;
-            white-space: nowrap;
-        `;
         this.leftCenterSixBadge = document.createElement('span');
         this.rightCenterSixBadge = document.createElement('span');
-        this.centerSixBadgeGroup.appendChild(this.leftCenterSixBadge);
-        this.centerSixBadgeGroup.appendChild(this.rightCenterSixBadge);
 
+        this.centerSituationRow.appendChild(this.leftCenterSixBadge);
         this.centerSituationRow.appendChild(this.indicatorJun);
-        this.centerSituationRow.appendChild(this.centerSixBadgeGroup);
+        this.centerSituationRow.appendChild(this.rightCenterSixBadge);
 
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
@@ -712,26 +702,26 @@ export class CombatUI {
             background-size: 100% 100%;
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
-            -webkit-mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
-            mask-image: radial-gradient(ellipse 60% 100% at 50% 50%, black 75%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 80%, transparent 100%);
+            mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 80%, transparent 100%);
         `;
         this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
         this.centerPanel.style.transition = 'opacity 0.3s ease';
         this.centerPanel.style.cssText = `
             position: absolute;
-            left: 50%;
+            left: 0;
+            right: 0;
             bottom: 0;
-            transform: translateX(-50%);
-            width: calc(100vw - ${uiPx(T.portraitSlotWidth * 1.8)});
-            max-width: ${uiPx(T.clashBarTrackWidth)};
+            width: 100vw;
+            max-width: 100vw;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: ${T.zIndex.centerCard};
-            padding: ${uiPx(20)} ${uiPx(42)} ${uiPx(18)};
+            padding: ${uiPx(16)} 0 ${uiPx(14)};
             box-sizing: border-box;
             pointer-events: auto;
             overflow: visible;
@@ -864,8 +854,8 @@ export class CombatUI {
 
         this.healthBarContainer = document.createElement('div');
         this.healthBarContainer.style.cssText = `
-            width: 100%;
-            max-width: ${uiPx(T.clashBarTrackWidth)};
+            width: 100vw;
+            max-width: 100vw;
             height: ${uiPx(T.clashBar.height + 4)};
             background: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(6px);
@@ -877,12 +867,8 @@ export class CombatUI {
             position: relative;
             margin-bottom: ${uiPx(8)};
             overflow: hidden;
-            clip-path: polygon(
-                8px 0, calc(100% - 8px) 0, 
-                100% 8px, 100% calc(100% - 8px), 
-                calc(100% - 8px) 100%, 8px 100%, 
-                0 calc(100% - 8px), 0 8px
-            );
+            border-radius: 0;
+            clip-path: none;
         `;
 
         this.defenderBar = document.createElement('div');
@@ -1020,6 +1006,10 @@ export class CombatUI {
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
         this.centerPanel.appendChild(this.eventDescription);
+        this.centerBackdrop.style.display = 'none';
+        this.centerPanel.style.display = 'none';
+        leftFrame.style.display = 'none';
+        rightFrame.style.display = 'none';
         this.container.appendChild(this.centerBackdrop);
         this.container.appendChild(this.centerPanel);
         this.container.appendChild(leftFrame);
@@ -1383,6 +1373,16 @@ export class CombatUI {
             defenderLegionTag.style.display = 'none';
         }
 
+        if (this.leftPortraitFrame) {
+            this.leftPortraitFrame.style.display = 'block';
+            this.leftPortraitFrame.style.opacity = '1';
+            this.leftPortraitFrame.style.visibility = 'visible';
+        }
+        if (this.rightPortraitFrame) {
+            this.rightPortraitFrame.style.display = 'block';
+            this.rightPortraitFrame.style.opacity = '1';
+            this.rightPortraitFrame.style.visibility = 'visible';
+        }
         // 启用 13 专属布局并刷新
         this.applyScene13Layout(true);
         this.updateStats();
@@ -1696,23 +1696,24 @@ export class CombatUI {
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(T.sideBar.factionNameSize)};
+            font-size: ${uiPx(T.sideBar.factionNameSize + 4)};
             font-weight: 900;
             letter-spacing: ${uiPx(2)};
-            text-shadow: 0 2px 6px rgba(0,0,0,0.85);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(255, 215, 0, 0.35);
             white-space: nowrap;
             color: #FFF;
         `;
         row.appendChild(nameSpan);
 
-        // 标签组：总加成 + 文化 + 技能，紧挨排列
+        // 标签组：所有加成标签（总+文+攻/防+军+适+运+援）统一步入单行紧挨排列
         const badgeGroup = document.createElement('div');
         badgeGroup.style.cssText = `
             display: flex;
             flex-direction: ${isAtt ? 'row' : 'row-reverse'};
             align-items: center;
-            gap: ${uiPx(2)};
+            gap: ${uiPx(3)};
             flex-shrink: 0;
+            white-space: nowrap;
         `;
 
         const multBadge = document.createElement('span');
@@ -1727,6 +1728,22 @@ export class CombatUI {
         skillBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
         badgeGroup.appendChild(skillBadge);
 
+        const legionBadge = document.createElement('span');
+        legionBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(legionBadge);
+
+        const aptitudeBadge = document.createElement('span');
+        aptitudeBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(aptitudeBadge);
+
+        const luckBadge = document.createElement('span');
+        luckBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(luckBadge);
+
+        const reinfJoinBadge = document.createElement('span');
+        reinfJoinBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(reinfJoinBadge);
+
         row.appendChild(badgeGroup);
 
         if (isAtt) {
@@ -1734,11 +1751,19 @@ export class CombatUI {
             this.leftMultBadge = multBadge;
             this.leftCultureBadge = cultureBadge;
             this.leftSkillBadge = skillBadge;
+            this.leftLegionBadge = legionBadge;
+            this.leftLuckBadge = luckBadge;
+            this.leftAptitudeBadge = aptitudeBadge;
+            this.leftReinfJoinBadge = reinfJoinBadge;
         } else {
             this.rightFactionNameSpan = nameSpan;
             this.rightMultBadge = multBadge;
             this.rightCultureBadge = cultureBadge;
             this.rightSkillBadge = skillBadge;
+            this.rightLegionBadge = legionBadge;
+            this.rightLuckBadge = luckBadge;
+            this.rightAptitudeBadge = aptitudeBadge;
+            this.rightReinfJoinBadge = reinfJoinBadge;
         }
         return row;
     }
@@ -1757,55 +1782,25 @@ export class CombatUI {
 
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(15)};
+            font-weight: 800;
             white-space: nowrap;
-            line-height: 1.15;
-            color: ${isAtt ? T.colors.attackerName : T.colors.defenderName};
+            line-height: 1.2;
+            letter-spacing: 1px;
+            color: ${isAtt ? '#f5d6a8' : '#c8e5f5'};
+            text-shadow: 0 1px 4px rgba(0,0,0,0.95);
             text-align: ${isAtt ? 'left' : 'right'};
         `;
 
-        // 标签组：精锐(军) + 三势 + 运气，紧挨排列
-        const badgeGroup = document.createElement('div');
-        badgeGroup.style.cssText = `
-            display: flex;
-            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
-            align-items: center;
-            gap: ${uiPx(2)};
-            flex-shrink: 0;
-        `;
-
-        const legionBadge = document.createElement('span');
-        legionBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(legionBadge);
-
-        const aptitudeBadge = document.createElement('span');
-        aptitudeBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(aptitudeBadge);
-
-        const luckBadge = document.createElement('span');
-        luckBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(luckBadge);
-
-        const reinfJoinBadge = document.createElement('span');
-        reinfJoinBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(reinfJoinBadge);
-
         label.appendChild(nameSpan);
-        label.appendChild(badgeGroup);
 
         if (isAtt) {
             this.leftSideNameSpan = nameSpan;
             this.leftSideTroopsSpan = document.createElement('span');
-            this.leftLegionBadge = legionBadge;
-            this.leftLuckBadge = luckBadge;
-            this.leftAptitudeBadge = aptitudeBadge;
-            this.leftReinfJoinBadge = reinfJoinBadge;
         } else {
             this.rightSideNameSpan = nameSpan;
             this.rightSideTroopsSpan = document.createElement('span');
-            this.rightLegionBadge = legionBadge;
-            this.rightLuckBadge = luckBadge;
-            this.rightAptitudeBadge = aptitudeBadge;
-            this.rightReinfJoinBadge = reinfJoinBadge;
         }
 
         return label;
@@ -3091,6 +3086,8 @@ export class CombatUI {
         this.isCollapsed = false;
         this.updateCollapseState(true);
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        this.leftPortraitFrame.style.display = 'block';
+        this.rightPortraitFrame.style.display = 'block';
         this.playPortraitEntrance();
     }
 
@@ -3199,8 +3196,42 @@ export class CombatUI {
         this.updateStats();
         this.isCollapsed = false;
         this.updateCollapseState(true);
-        this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        if (this.centerBackdrop) this.centerBackdrop.style.display = 'block';
+        if (this.centerPanel) this.centerPanel.style.display = 'flex';
+        if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'block';
+        if (this.rightPortraitFrame) this.rightPortraitFrame.style.display = 'block';
+        this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
+    }
+
+    
+    public setFollowedArmy(army?: any): void {
+        this.followedArmy = army;
+        if (!this.isVisible) {
+            if (army && !army.isDestroyed && (army.getTroops?.() ?? 0) > 0) {
+                this.showFollowedGeneral(army);
+            } else {
+                if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'none';
+            }
+        }
+    }
+
+    public showFollowedGeneral(army: any): void {
+        if (!army || !this.leftPortraitFrame) return;
+        const generalId = army.generalId;
+        const factionId = army.getFactionId?.() ?? army.factionId;
+        this.setPortrait(this.leftPortrait, { generalId, factionId, id: army.id, name: army.name } as any, generalId, factionId, undefined, 'attacker');
+        this.fillGeneralNameTag(this.leftGeneralNameTag, { generalId, factionId, id: army.id, name: army.name } as any, 'attacker');
+        if (this.leftLegionTag) {
+            this.leftLegionTag.textContent = army.name || '';
+            this.leftLegionTag.style.display = army.name ? 'block' : 'none';
+        }
+        if (this.leftFamousBadge) {
+            this.leftFamousBadge.style.display = (generalId && getGeneralProfile(generalId)?.tier === 'famous') ? 'block' : 'none';
+        }
+        this.leftPortraitFrame.style.display = 'block';
+        this.leftPortraitFrame.style.opacity = '1';
+        this.leftPortraitFrame.style.visibility = 'visible';
     }
 
     public isRegionalVisible(): boolean {
@@ -4395,14 +4426,20 @@ export class CombatUI {
         this.resetBattleOverlays();
         this.isCollapsed = false;
         this.updateCollapseState(true);
-        this.container.style.animation = 'none';
-        this.container.style.transform = 'translateY(250%)';
-        this.leftPortraitFrame.style.animation = 'none';
-        this.rightPortraitFrame.style.animation = 'none';
-        this.leftPortraitFrame.style.transform = '';
-        this.rightPortraitFrame.style.transform = '';
-        if (this.leftLegionTag) this.leftLegionTag.style.display = 'none';
+        if (this.centerBackdrop) this.centerBackdrop.style.display = 'none';
+        if (this.centerPanel) this.centerPanel.style.display = 'none';
+        if (this.rightPortraitFrame) {
+            this.rightPortraitFrame.style.animation = 'none';
+            this.rightPortraitFrame.style.display = 'none';
+            this.rightPortraitFrame.style.transform = '';
+        }
         if (this.rightLegionTag) this.rightLegionTag.style.display = 'none';
+        // 战斗结束：若当前仍有跟随的军团，左下角武将立绘安稳驻留，不随战斗面板收起消失
+        if (this.followedArmy && !this.followedArmy.isDestroyed && (this.followedArmy.getTroops?.() ?? 0) > 0) {
+            this.showFollowedGeneral(this.followedArmy);
+        } else {
+            if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'none';
+        }
         if (this.leftTechBox) {
             this.leftTechBox.style.opacity = '0';
             this.leftTechBox.style.display = 'none';

@@ -7566,6 +7566,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/CENTRAL_ASIA/chatigangren_wumeidehan.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/INDIA/mallabhum_bierhanbier.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -19
         }
     },
     "folderGuides": {

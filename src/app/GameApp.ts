@@ -556,11 +556,13 @@ export class GameApp {
                 (armyId) => {
                     legionManager.setFollowedLegionId(armyId);
                     if (!armyId) {
+                        this.combatUI.setFollowedArmy(null);
                         this.combatUI.hide();
                         CityAssetManager.prioritizeFollowedFaction(null);
                     } else {
                         const army = legionManager.getLegionById(armyId);
                         CityAssetManager.prioritizeFollowedFaction(army?.getFactionId() ?? null);
+                        this.combatUI.setFollowedArmy(army);
                         // 切换跟随目标时，若新目标已在战斗中则立即弹出战斗 UI
                         // 先查区域战 (BattleField)
                         let found = false;
