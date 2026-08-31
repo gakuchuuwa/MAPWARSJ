@@ -2543,7 +2543,7 @@ function serverGetCurrentPortraitPath(filePath: string, generalId: string): stri
 }
 
 // 立绘分类改名的口径与 TOOL/rename_duplicate_idle_portraits.mjs 保持一致：
-//   未引用 + 内容重复 → __多余__（主人审阅后手删）  未引用 + 独一无二 → __闲置__（库存随机池）
+//   未引用 + 同文件夹重复 → __多余__；仅跨文件夹重复 → __暂留__；独一无二 → __闲置__
 const PORTRAIT_SCAN_EXCLUDE_TOP = new Set(['avg', 'bgm_backup', 'inbox']);
 
 /** 遍历 public/assets 下参与比对的立绘（排除 avg/bgm_backup/inbox 与 _prev_ 备份） */
@@ -2566,32 +2566,41 @@ function serverForEachPortraitFile(
  * 全库内容重复检测：库内除自己外是否还有另一份字节完全相同的图。
  * 先按文件大小筛（重复必同尺寸），只对同尺寸的少数候选算 SHA-256，1200 张库 ≈ 几十毫秒。
  */
-function serverHasDuplicateInLibrary(publicAssetsRoot: string, fileAbs: string): boolean {
+function serverDuplicateScope(
+    publicAssetsRoot: string,
+    fileAbs: string,
+): 'same-folder' | 'cross-folder' | 'none' {
     try {
         const self = path.resolve(fileAbs);
+        const selfDir = path.dirname(self);
         const size = fs.statSync(self).size;
-        const candidates: string[] = [];
+        const candidates: Array<{ abs: string; sameFolder: boolean }> = [];
         serverForEachPortraitFile(publicAssetsRoot, (_folder, file, abs) => {
             if (path.resolve(abs) === self) return;
             // 留活口（2026-08-04）：同为 __多余__ 的副本不算"安全副本"——都标多余=主人批量清理时删绝。
             // 只有被引用正本 / __闲置__ / chongfu 对照能兜底，才允许把本张标成可删的 __多余__。
             if (/^__多余__/i.test(file)) return;
             try {
-                if (fs.statSync(abs).size === size) candidates.push(abs);
+                if (fs.statSync(abs).size === size) {
+                    candidates.push({ abs, sameFolder: path.dirname(path.resolve(abs)) === selfDir });
+                }
             } catch { /* 扫描期文件消失，忽略 */ }
         });
-        if (candidates.length === 0) return false;
+        if (candidates.length === 0) return 'none';
         const selfSha = crypto.createHash('sha256').update(fs.readFileSync(self)).digest('hex');
-        for (const abs of candidates) {
+        let hasCrossFolder = false;
+        for (const candidate of candidates) {
             try {
-                const sha = crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex');
-                if (sha === selfSha) return true;
+                const sha = crypto.createHash('sha256').update(fs.readFileSync(candidate.abs)).digest('hex');
+                if (sha !== selfSha) continue;
+                if (candidate.sameFolder) return 'same-folder';
+                hasCrossFolder = true;
             } catch { /* 同上 */ }
         }
-        return false;
+        return hasCrossFolder ? 'cross-folder' : 'none';
     } catch (e) {
         console.warn('  ⚠ [BindPortrait] 重复检测失败，按「闲置」处理:', e);
-        return false;
+        return 'none';
     }
 }
 
@@ -2602,12 +2611,12 @@ function serverHasDuplicateInLibrary(publicAssetsRoot: string, fileAbs: string):
 function serverNextClassifiedName(
     publicAssetsRoot: string,
     dirAbs: string,
-    prefix: '闲置' | '多余',
+    prefix: '闲置' | '暂留' | '多余',
 ): string {
     const token = path.basename(dirAbs);
     const key = `${prefix}|${token.toLowerCase()}`;
     let maxNum = 0;
-    const NUM_RE = /^__(闲置|多余)__(.+)_(\d+)\.png$/i;
+    const NUM_RE = /^__(闲置|暂留|多余)__(.+)_(\d+)\.png$/i;
     serverForEachPortraitFile(publicAssetsRoot, (_folder, f) => {
         const m = f.match(NUM_RE);
         if (!m) return;
@@ -2624,9 +2633,10 @@ function serverNextClassifiedName(
     return name;
 }
 
-/** 被顶下来的旧立绘该叫什么：库内还有【非多余的】同内容副本 → __多余__，否则 → __闲置__（留活口） */
+/** 被顶下来的旧立绘按重复范围分类：同夹 → __多余__，跨夹 → __暂留__，无重复 → __闲置__。 */
 function serverNextDemotedName(publicAssetsRoot: string, dirAbs: string, fileAbs: string): string {
-    const prefix = serverHasDuplicateInLibrary(publicAssetsRoot, fileAbs) ? '多余' : '闲置';
+    const scope = serverDuplicateScope(publicAssetsRoot, fileAbs);
+    const prefix = scope === 'same-folder' ? '多余' : scope === 'cross-folder' ? '暂留' : '闲置';
     return serverNextClassifiedName(publicAssetsRoot, dirAbs, prefix);
 }
 
@@ -2690,7 +2700,7 @@ function serverBindGeneralPortrait(
     // 文件改名清单：调校记录（portrait_adjust images 键）随文件新名字迁移，不留孤儿
     const adjustMoves: Array<{ from: string; to: string }> = [];
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
-        // ① 旧绑定文件（可能在其他文件夹）→ 按内容分类改名（重复=__多余__ / 独有=__闲置__），不删不丢
+        // ① 旧绑定文件（可能在其他文件夹）→ 按同夹/跨夹/独有三档分类改名，不删不丢
         const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
         if (oldPortraitWeb && oldPortraitWeb.startsWith('/assets/')) {
             const oldAbs = serverWebPathToAbs(publicAssetsRoot, oldPortraitWeb);
@@ -2714,8 +2724,8 @@ function serverBindGeneralPortrait(
             console.log(`  🗂️  [BindPortrait] 目标位置旧立绘退役 → ${backupName}`);
         }
         // ③ 源图 → 目标（始终在源图自己的文件夹内，不跨文化区）：
-        //    闲置图(__闲置__) 直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
-        if (path.basename(srcAbs).startsWith('__闲置__')) {
+        //    闲置/暂留图直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
+        if (/^__(闲置|暂留)__/.test(path.basename(srcAbs))) {
             fs.renameSync(srcAbs, destAbs);
             adjustMoves.push({ from: sourceWebPath, to: destWeb });
         } else {
