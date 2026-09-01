@@ -29,6 +29,7 @@ import {
 import {
     pollSiegeReinforcements,
     tryJoinLegionToBattle,
+    landNavalLegionForSiege,
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
@@ -942,6 +943,16 @@ export class SiegeManager {
             isWaitingSiege: (id) => this.isArmyWaitingSiege(id),
         });
         siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位（无传送）后开战`);
+
+        // 🔴 [2026-09-01] 攻城战里没有船：开战瞬间所有参战的海上军团一律上岸。
+        //    （上一行的「城周就位」只统一转向面城、不改坐标，挪不动船，上岸得自己来。）
+        //    改前只有 pollSiegeReinforcements（中途增援）走登陆，开战瞬间这两条路径漏了 ——
+        //    同一支舰队「早到 = 船打城墙 / 晚到 = 登陆步战」，行为不一致。
+        //    主攻军团同理：到港后靠 updateTerrainSpeed 迟滞要 3 秒才上岸，期间是船在城下。
+        //    登陆必定成功，不会因此把水军挡在战场外（见 landNavalLegionForSiege 注释）。
+        for (const legion of [army, ...nearbyAttackerLegions, ...nearbyDefenderLegions]) {
+            landNavalLegionForSiege(legion, cityPos);
+        }
 
         const siegePreset = siegeData.result;
 

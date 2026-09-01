@@ -70,26 +70,36 @@ export function isEligibleReinforcement(
     return true;
 }
 
-/** 海军舰队成为攻城援军：先靠岸登陆（船→陆），再编入陆战攻城。 */
-function landNavalLegionForSiege(legion: Army, center: LatLng): void {
+/**
+ * 海军舰队参加攻城战：强制登陆（船→陆）。
+ * 🔴 攻城战里没有船（主人定：舰队打据点=陆战），但**绝不因为找不到岸就拒绝参战**。
+ *    城心必然是陆地，所以从当前位置朝城心推进一定踩得到陆地 —— 登陆永远成功。
+ *    改前是沿「舰队→城」方向按 7 个定长档试探，0.22° 内没陆地就放弃：
+ *    早期放弃后照常编入 → 船停在城墙下打攻城；后来改成放弃就不编入 → 整支水军干等着不参战。
+ *    两个都不对，正解是「一定能上岸」。
+ * 落点：沿「舰队→城心」取**第一个**陆地点 = 离舰队最近的滩头，位移尽量小。
+ *    （beforeJoinLegion / repositionAllLegionsNearSiegeCity 只统一转向面城、不改坐标，
+ *      所以上岸这一步必须自己挪位，指望它把船摆到陆地上是错的。）
+ */
+export function landNavalLegionForSiege(legion: Army, center: LatLng): void {
     if (!legion.isOnSea) return;
     const pos = legion.getPosition();
-    let dx = center.lat - pos.lat;
-    let dy = center.lng - pos.lng;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    if (len < 1e-9) return;
-    dx /= len;
-    dy /= len;
-    // 从舰队位置沿「舰队→城」方向找最近陆地（岸线在舰队与城之间）
-    for (const step of [0.02, 0.04, 0.06, 0.09, 0.12, 0.16, 0.22]) {
-        const lat = pos.lat + dx * step;
-        const lng = pos.lng + dy * step;
-        if (LandSeaSystem.isLandAt({ lat, lng } as any)) {
-            legion.setPosition(lat, lng);
-            legion.isOnSea = false; // 强制上岸（绕过迟滞，下一帧 updateTerrainSpeed 清零累积）
-            return;
-        }
+    const dLat = center.lat - pos.lat;
+    const dLng = center.lng - pos.lng;
+    // 当前位置 → 城心等分推进，第一个陆地点即滩头（i=0 就是陆地则原地上岸，不挪位）
+    const STEPS = 24;
+    for (let i = 0; i <= STEPS; i++) {
+        const t = i / STEPS;
+        const lat = pos.lat + dLat * t;
+        const lng = pos.lng + dLng * t;
+        if (!LandSeaSystem.isLandAt({ lat, lng } as any)) continue;
+        if (i > 0) legion.setPosition(lat, lng);
+        legion.isOnSea = false; // 强制上岸（绕过迟滞，下一帧 updateTerrainSpeed 清零累积）
+        return;
     }
+    // 整条线都判成水（掩膜异常）→ 仍旧上岸，原地不挪位。
+    // 宁可贴图从船变步兵，也不要让水军漂在圈里干等着不参战。
+    legion.isOnSea = false;
 }
 
 function createLegionAdapter(
@@ -137,12 +147,15 @@ export function tryJoinLegionToBattle(
 
     deps.beforeJoinLegion?.(legion, center);
 
-    // 海军舰队成为攻城援军：先靠岸登陆（船→陆），否则船停在海上无法攻城
+    legion.stopMovement(true);
+
+    // 海军舰队成为攻城援军：登陆（船→陆），否则船停在海上打攻城。登陆必定成功，
+    // 绝不会因此拒收援军 —— 见 landNavalLegionForSiege 注释。
+    // 🔴 必须排在 stopMovement(true) **之后**：登陆走 setPosition，对行军中军团会清空路径，
+    //    先登陆会把战前航线存档一起毁掉，战后舰队无法续航。
     if (legion.isOnSea && battleField.type === 'siege') {
         landNavalLegionForSiege(legion, center);
     }
-
-    legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);
     legion.isSiegeAttacker = isAttacker; // 援军按攻守方正确设置器械标记
     // 攻方增援也挂攻城目标城 id：GlobalUnitRenderer 攻城外推反查城图用（2026-08-04 修复——
