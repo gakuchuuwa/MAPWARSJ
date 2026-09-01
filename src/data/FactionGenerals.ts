@@ -125,7 +125,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     piketai: { generalId: 'gen_onuist_i', generalName: '奥恩格斯', portrait: '/assets/GERMANIC/piketai_aoengesi.png' },
     gaer: { generalId: 'gen_domhnall', generalName: '多姆纳尔', portrait: '/assets/GERMANIC/gaer_duomunaer.png' },
     mangsite: { generalId: 'mangsite_bulaienbolu', generalName: '布赖恩博鲁', portrait: '/assets/GERMANIC/mangsite_bulaienbolu.png' },
-    tuomengde: { generalId: 'tuomengde_aobulaien', generalName: '奥布赖恩', portrait: '' },
+    tuomengde: { generalId: 'tuomengde_aobulaien', generalName: '奥布赖恩', portrait: '/assets/GERMANIC/tuomengde_aobulaien.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/LATIN/bulietani_alan.png' },
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/SLAVIC/saierweiya_sidifendushang.png' },
 

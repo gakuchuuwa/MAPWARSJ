@@ -544,6 +544,78 @@ export class LegionPhalanxDrawer {
      * 🔴 [2026-08-21 全 16 向船] 战船已挂全 16 向，drawNaval 传 is16=true → 键 = direction 直取（0-15）。
      *    其余调用（陆军 8 向）不传 → 行为逐像素不变。
      */
+    /** 取 9 格阵型的布局表（行 r / 列 c）；非 9 格阵型返回 null，走老的方阵网格。 */
+    private static layoutOf(mode: FormationMode): readonly { r: number; c: number }[] | null {
+        switch (mode) {
+            case 'triangle': return this.TRIANGLE_9_LAYOUT;
+            case 'echelon': return this.ECHELON_9_LAYOUT;
+            case 'fish_scale': return this.FISH_SCALE_9_LAYOUT;
+            case 'crane_wing': return this.CRANE_WING_9_LAYOUT;
+            case 'square': return this.SQUARE_9_LAYOUT;
+            case 'crescent': return this.CRESCENT_9_LAYOUT;
+            case 'balance_yoke': return this.BALANCE_YOKE_9_LAYOUT;
+            default: return null;
+        }
+    }
+
+    /**
+     * 逐行格位间距（战略地图 8/9/10 专用）。
+     *
+     * 🔴 [2026-09-01 修「孔雀战象的阵型和别人不一样」] 原来整团只算**一个**间距，
+     *    取的是全团最大兵种的尺寸 —— 混编军团里最大的那个把 9 个格位全撑开：
+     *    孔雀是 2 象 + 4 软剑士 + 3 长弓，桑纳亚战象 108×168 比软剑士 32×48 大近 4 倍
+     *    （横 3.86× / 纵 4.20×），于是 7 个人也按象的间距站位，人和人之间空出大片。
+     *    反过来若按小兵算，象又会叠成一坨（2026-08-18 主人实锤过）。
+     *
+     *    解法：**每一行按自己那个兵种算**（编成本来就是按行定义的，一行 = 一个兵种）：
+     *      · 行内横向间距 = 该行兵种的宽
+     *      · 行与行的纵向间距 = 相邻两行取较大者（谁高听谁的，两边都不糊）
+     *    象那一排照旧拉开，软剑士和长弓两排紧凑。
+     *    同尺寸军团（门巴那种全骑兵，团内只差 1.14×）算出来每行都一样，**逐像素不变**。
+     */
+    private static rowMetrics(
+        layout: readonly { r: number; c: number }[],
+        slotTypes: (string | undefined)[],
+        baseSpacingX: number,
+        baseSpacingY: number,
+        scale: number,
+        cultureScales: number[] | null,
+        direction: number,
+        fallbackFrame: { fw: number; fh: number },
+    ): { spacingX: number[]; gapY: number[] } {
+        const rowCount = layout.reduce((m, p) => Math.max(m, p.r), 0) + 1;
+        const spacingX: number[] = new Array(rowCount).fill(baseSpacingX);
+        const rowH: number[] = new Array(rowCount).fill(baseSpacingY);
+
+        for (let r = 0; r < rowCount; r++) {
+            let w = 0;
+            let h = 0;
+            for (let i = 0; i < layout.length; i++) {
+                if (layout[i].r !== r) continue;
+                const type = slotTypes[i];
+                const set = type ? this.unitSpriteCache.get(type) : undefined;
+                const dyn = set ? this.metaDirFor((set as any).dyn?.IDLE, direction) : undefined;
+                const ref = set?.IDLE?.[direction] || set?.IDLE?.[0];
+                // DE 有 dyn 元数据 → 真实帧框；S10DB 无 dyn → 帧为正方形，用整图高
+                const fw = dyn ? dyn.fw : (ref ? ref.height : fallbackFrame.fw);
+                const fh = dyn ? dyn.fh : (ref ? ref.height : fallbackFrame.fh);
+                const slotScale = cultureScales?.[i] ?? 1;
+                const unitScale = 60 * scale * slotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
+                w = Math.max(w, fw * unitScale * 0.5);
+                // 所有军团统一采用前中后三排，纵向排距统一收紧。
+                h = Math.max(h, fh * unitScale * 0.65);
+            }
+            // 只抬不降：与 2026-08-18 的口径一致，小兵种保持原有密集队列
+            spacingX[r] = Math.max(baseSpacingX, w);
+            rowH[r] = Math.max(baseSpacingY, h);
+        }
+
+        // 行距取相邻两行的较大者：谁高听谁的
+        const gapY: number[] = [];
+        for (let r = 0; r + 1 < rowCount; r++) gapY.push(Math.max(rowH[r], rowH[r + 1]));
+        return { spacingX, gapY };
+    }
+
     private static metaDirFor(
         dynEntry: { dirs16?: boolean; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> } | undefined,
         direction: number,
@@ -1297,6 +1369,8 @@ export class LegionPhalanxDrawer {
         // [3x3 TUNED] 前后排距拉开为长方形军阵（0.60 兵高），三排层次分明不遮挡
         let spacingX = estRenderW * 0.50;
         let spacingY = renderH * 0.60;
+        /** 逐行格位间距（战略地图混编军团用；13 场景不走这条） */
+        let rowMetric: { spacingX: number[]; gapY: number[] } | null = null;
 
         // [2026-08-09 13场景阵型] 主阵 3×3 间距放大到「编队占位尺寸」：
         // 9 个格位 = 9 个编队锚点，按比例分开，避免 8人/6人编队互相重叠（主人截图实锤「9个编队挤在一起」）。
@@ -1332,6 +1406,27 @@ export class LegionPhalanxDrawer {
             const fh = dyn ? dyn.fh : refSprite.height;
             spacingX = Math.max(spacingX, fw * unitScale * 0.5);
             spacingY = Math.max(spacingY, fh * unitScale * 0.75);
+
+            // 🔴 [2026-09-01] 上面这两个是**全团一个**间距（按最大兵种撑开）。混编军团里
+            //    最大的那个会把 9 个格位全撑开 —— 孔雀 2 象 + 7 人，人也按象的间距站位（散）。
+            //    这里再按行各算一份，行内用本行兵种的宽、行距取相邻两行较大者；
+            //    同尺寸军团每行算出来都一样，退化成上面的值，逐像素不变。
+            const layoutForRows = LegionPhalanxDrawer.layoutOf(formationKind);
+            if (layoutForRows) {
+                const slotTypes: (string | undefined)[] = [];
+                for (let i = 0; i < layoutForRows.length; i++) {
+                    const raw = cultureSlots && i < cultureSlots.length ? cultureSlots[i] : undefined;
+                    slotTypes.push(
+                        raw
+                            ? (strategicSlotTypes?.[i] ?? this.resolveStrategicDEUnitType(raw))
+                            : undefined,
+                    );
+                }
+                rowMetric = LegionPhalanxDrawer.rowMetrics(
+                    layoutForRows, slotTypes, spacingX, spacingY, scale, cultureScales, direction,
+                    { fw, fh },
+                );
+            }
         }
 
         // --- 2. UPDATE STATE ---
@@ -1344,7 +1439,7 @@ export class LegionPhalanxDrawer {
             isFighting || state === 'DEATH',
             center, unprojectFn,
             (idx) => {
-                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind);
+                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind, rowMetric);
                 const squadOff = squadOffsets && squadOffsets[idx];
                 if (!squadOff) return baseOff;
                 const sa = (direction + 1) * Math.PI / 4;
@@ -1485,7 +1580,7 @@ export class LegionPhalanxDrawer {
             // Skip if invisible
             if (dynamicAlpha <= 0.01) continue;
 
-            const baseOffset = this.getFormationOffset(i, spacingX, spacingY, direction, legionType, rows, formationKind);
+            const baseOffset = this.getFormationOffset(i, spacingX, spacingY, direction, legionType, rows, formationKind, rowMetric);
             // [2026-08-09 编队独立移动] 每编队独立推进偏移（像素，旋转前叠加随 direction 转）：
             // getFormationOffset 有缓存（key 不含偏移），返回的是共享对象 → 只读，另建新对象叠加。
             let drawOffset = baseOffset;
@@ -2653,9 +2748,14 @@ export class LegionPhalanxDrawer {
         direction: number,
         type: LegionType,
         gridSizeInput?: number,
-        formationMode: FormationMode = 'square'
+        formationMode: FormationMode = 'square',
+        /** 逐行间距（见 rowMetrics）：给了就按行摆，没给退回全团统一间距 */
+        rowMetric?: { spacingX: number[]; gapY: number[] } | null,
     ): { x: number, y: number } {
-        const key = `${index}_${direction}_${spacingX.toFixed(2)}_${spacingY.toFixed(2)}_${type}_${gridSizeInput}_${formationMode}`;
+        const rowKey = rowMetric
+            ? `${rowMetric.spacingX.map((v) => v.toFixed(1)).join(',')}|${rowMetric.gapY.map((v) => v.toFixed(1)).join(',')}`
+            : '';
+        const key = `${index}_${direction}_${spacingX.toFixed(2)}_${spacingY.toFixed(2)}_${type}_${gridSizeInput}_${formationMode}_${rowKey}`;
 
         if (this.offsetCache.has(key)) {
             return this.offsetCache.get(key)!;
@@ -2665,34 +2765,22 @@ export class LegionPhalanxDrawer {
         let originalY = 0;
 
         // --- FORMATION LOGIC ---
-        if (formationMode === 'triangle' && index < 9) {
-            const pos = LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[index] ?? LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'echelon' && index < 9) {
-            const pos = LegionPhalanxDrawer.ECHELON_9_LAYOUT[index] ?? LegionPhalanxDrawer.ECHELON_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'fish_scale' && index < 9) {
-            const pos = LegionPhalanxDrawer.FISH_SCALE_9_LAYOUT[index] ?? LegionPhalanxDrawer.FISH_SCALE_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'crane_wing' && index < 9) {
-            const pos = LegionPhalanxDrawer.CRANE_WING_9_LAYOUT[index] ?? LegionPhalanxDrawer.CRANE_WING_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'square' && index < 9) {
-            const pos = LegionPhalanxDrawer.SQUARE_9_LAYOUT[index] ?? LegionPhalanxDrawer.SQUARE_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'crescent' && index < 9) {
-            const pos = LegionPhalanxDrawer.CRESCENT_9_LAYOUT[index] ?? LegionPhalanxDrawer.CRESCENT_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
-        } else if (formationMode === 'balance_yoke' && index < 9) {
-            const pos = LegionPhalanxDrawer.BALANCE_YOKE_9_LAYOUT[index] ?? LegionPhalanxDrawer.BALANCE_YOKE_9_LAYOUT[0];
-            originalY = (pos.r - 1.0) * spacingY;
-            originalX = pos.c * spacingX;
+        const layout = index < 9 ? this.layoutOf(formationMode) : null;
+        if (layout) {
+            const pos = layout[index] ?? layout[0];
+            // 逐行度量：行内用该行自己的横向间距，行距用相邻两行的较大者（中间行为基准 y=0）。
+            // 没有逐行度量时退回原公式 (pos.r - 1.0) * spacingY / pos.c * spacingX，逐像素不变。
+            if (rowMetric && rowMetric.spacingX.length > pos.r) {
+                originalX = pos.c * rowMetric.spacingX[pos.r];
+                const mid = 1;   // 3 排编成的中间排
+                let y = 0;
+                if (pos.r > mid) for (let r = mid; r < pos.r; r++) y += rowMetric.gapY[r] ?? spacingY;
+                else if (pos.r < mid) for (let r = pos.r; r < mid; r++) y -= rowMetric.gapY[r] ?? spacingY;
+                originalY = y;
+            } else {
+                originalY = (pos.r - 1.0) * spacingY;
+                originalX = pos.c * spacingX;
+            }
         } else {
             const gridSize = gridSizeInput || 3;
             const rows = gridSize;

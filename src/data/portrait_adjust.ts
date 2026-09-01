@@ -5107,11 +5107,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/GERMANIC/__闲置__GERMANIC_17.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/GERMANIC/__闲置__GERMANIC_16.png": {
             "scale": 1.0533,
             "offsetX": 0,
@@ -7591,6 +7586,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/GERMANIC/tuomengde_aobulaien.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -1
         }
     },
     "folderGuides": {
