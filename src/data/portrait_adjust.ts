@@ -5093,7 +5093,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 31
         },
         "/assets/GERMANIC/mozeer_junshitanding.png": {
-            "scale": 1.13,
+            "scale": 1.19,
             "offsetX": 2,
             "offsetY": 29
         },
@@ -5258,7 +5258,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 39
         },
         "/assets/GERMANIC/jialuolin_chalidadi.png": {
-            "scale": 1.08,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 0
         },

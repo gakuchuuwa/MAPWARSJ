@@ -23,14 +23,15 @@ interface CreatureAsset {
     screenW: number;
 }
 
-const ASSETS: Record<'DOLPHIN' | 'WHALE', CreatureAsset> = {
+const ASSETS: Record<'DOLPHIN' | 'WHALE' | 'BOX_TURTLES', CreatureAsset> = {
     // 硬编码来自 _meta.json（加载时再 fetch 覆盖一次，保证一致）
-    DOLPHIN: { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png', frames: 104, boxW: 40, boxH: 60, anchorX: 52, anchorY: 56, screenW: 34 },
-    WHALE:   { url: '/SUCAI_RESOURCE/WHALE/frames.png',   frames: 241, boxW: 148, boxH: 64, anchorX: 82, anchorY: 58, screenW: 118 },
+    DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, boxW: 40, boxH: 60, anchorX: 52, anchorY: 56, screenW: 34 },
+    WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, boxW: 148, boxH: 64, anchorX: 82, anchorY: 58, screenW: 118 },
+    BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, boxW: 68, boxH: 28, anchorX: 32, anchorY: 16, screenW: 42 },
 };
 
 interface Creature {
-    kind: 'DOLPHIN' | 'WHALE';
+    kind: 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES';
     offsetLat: number; // 相对军团的世界坐标偏移（度）
     offsetLng: number;
     frame: number;
@@ -79,6 +80,14 @@ export class MarineLifeLayer extends L.Layer {
         return this;
     }
 
+    public setVisible(visible: boolean): void {
+        this.canvas.style.display = visible ? 'block' : 'none';
+        if (!visible) {
+            this.creature = null;
+            if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+    }
+
     private resize = (): void => {
         if (!this.map) return;
         const size = this.map.getSize();
@@ -89,7 +98,7 @@ export class MarineLifeLayer extends L.Layer {
     };
 
     private async ensureAssets(): Promise<void> {
-        await Promise.all((Object.keys(ASSETS) as Array<'DOLPHIN' | 'WHALE'>).map(async (kind) => {
+        await Promise.all((Object.keys(ASSETS) as Array<'DOLPHIN' | 'WHALE' | 'BOX_TURTLES'>).map(async (kind) => {
             const a = ASSETS[kind];
             const im = new Image();
             await new Promise<void>((resolve) => { im.onload = () => resolve(); im.onerror = () => resolve(); im.src = a.url; });
@@ -149,7 +158,19 @@ export class MarineLifeLayer extends L.Layer {
         if (!LandSeaSystem.isSeaAt(L.latLng(pos.lat, pos.lng))) return;
 
         this.lastTriggerAt = now;
-        const kind: 'DOLPHIN' | 'WHALE' = Math.random() < 0.65 ? 'WHALE' : 'DOLPHIN'; // 鲸鱼喷水最显眼，为主
+        // 暖温海域（|lat| < 42°，如地中海、南洋、红海、波斯湾、加勒比、东海）支持海龟
+        const isWarmSea = Math.abs(pos.lat) < 42;
+        let kind: 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES';
+        if (isWarmSea) {
+            const r = Math.random();
+            if (r < 0.45) kind = 'WHALE';
+            else if (r < 0.75) kind = 'DOLPHIN';
+            else kind = 'BOX_TURTLES'; // 25% 概率出现海龟游弋
+        } else {
+            // 高纬寒带海域保持鲸鱼与海豚
+            kind = Math.random() < 0.65 ? 'WHALE' : 'DOLPHIN';
+        }
+
         const angle = Math.random() * Math.PI * 2;
         const dist = 0.05 + Math.random() * 0.1;
         this.creature = {
@@ -190,4 +211,14 @@ export class MarineLifeLayer extends L.Layer {
         // 切帧 drawImage（源图超宽也 OK，只取一帧）
         g.drawImage(img, sx, 0, a.boxW, a.boxH, p.x - w / 2, p.y - h * 0.5, w, h);
     }
+}
+
+let marineSingleton: MarineLifeLayer | null = null;
+
+export function registerMarineLifeLayer(layer: MarineLifeLayer): void {
+    marineSingleton = layer;
+}
+
+export function setMarineAnimalVisible(nextVisible: boolean): void {
+    marineSingleton?.setVisible(nextVisible);
 }

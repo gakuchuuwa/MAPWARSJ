@@ -698,8 +698,9 @@ export class GameApp {
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
-            // 自动缩放（2026-08-31 主人重定，权威说明在 ZoomController 文件头）：
-            //   跟随新军团（首次 / 战败换人）→ 8；每场战斗结束 → 陆军 9 / 海军 10；战斗中冻结。
+            // 自动缩放（2026-09-01 主人重定，权威说明在 ZoomController 文件头）：
+            //   跟随新军团（首次 / 战败换人）→ 8；战略地图上一开打就按形态切 —— 海战（舰队 vs
+            //   舰队）10、陆地战（含攻城战，一律算陆战）9；战术层 13 期间冻结；战斗结束不再切。
             this.zoomController = new ZoomController(this.map, () => {
                 const id = this.cameraFollowUI.getFollowedArmyId();
                 return id ? legionManager.getLegionById(id) ?? null : null;
@@ -709,6 +710,9 @@ export class GameApp {
                 const followedId = this.cameraFollowUI.getFollowedArmyId();
                 if (!followedId) return false;
                 return this.combatSystem.getActiveBattleFields().some((bf) => !bf.isOver && bf.hasParticipant(followedId));
+            }, () => {
+                // 战术层（13 独立画布）激活期间不参与规则 5：13 自己管镜头
+                return !!this.battleScene?.isActive?.();
             });
 
             // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，

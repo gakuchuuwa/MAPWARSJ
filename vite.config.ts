@@ -2943,6 +2943,14 @@ function serverReadAllEntityData() {
         if (key) capitals[key] = m[3];
     }
 
+    // factionColors: { [factionId]: colorHex }
+    const colorsText = fs.readFileSync(path.resolve(__dirname, 'src/data/HistoricalFactionColors.ts'), 'utf-8');
+    const factionColors: Record<string, string> = {};
+    for (const m of colorsText.matchAll(/(?:'([^']+)'|(\w+)):\s*'(#[0-9a-fA-F]{6})'/g)) {
+        const key = m[1] || m[2];
+        if (key) factionColors[key] = m[3];
+    }
+
     // generals: { [factionId]: { generalId, generalName, portrait } }
     const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
     for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
@@ -3085,7 +3093,7 @@ function serverReadAllEntityData() {
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, factionColors, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -3812,6 +3820,12 @@ function serverValidateEntities(): {
         if (!data.flags[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺旗号`, factionId: f.id });
     }
 
+    // 4.5. 势力缺 HistoricalFactionColors 历史势力色
+    for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
+        if (!data.factionColors?.[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺 HistoricalFactionColors 势力色`, factionId: f.id });
+    }
+
     // 5. 势力缺 StartingCapitals
     for (const f of data.factions) {
         if (skipFactions.has(f.id)) continue;
@@ -3821,6 +3835,42 @@ function serverValidateEntities(): {
     // 6. StartingCapitals 引用不存在的据点
     for (const [fId, cId] of Object.entries(data.capitals)) {
         if (!cityById.has(cId)) issues.push({ level: 'error', msg: `StartingCapitals: ${fId} → ${cId} (据点不存在)`, factionId: fId });
+    }
+
+    // 6.5. StartingCapitals 首府据点实际归属 (cities_v2 factionId) 必须一致
+    for (const [fId, cId] of Object.entries(data.capitals)) {
+        const city = cityById.get(cId);
+        if (city && city.factionId !== fId) {
+            const actualFaction = factionById.get(city.factionId)?.name ?? city.factionId;
+            const myFaction = factionById.get(fId)?.name ?? fId;
+            issues.push({
+                level: 'error',
+                msg: `首府归属冲突：势力 "${myFaction}" (${fId}) 首府是 "${city.name}" (${cId})，但据点实际归属于 "${actualFaction}" (${city.factionId})`,
+                factionId: fId,
+            });
+        }
+    }
+
+    // 6.6. 据点完整性铁律：严禁叛军据点，正规势力不得占领多城、也不得为 0 据点
+    const citiesByFactionMap = new Map<string, typeof data.cities>();
+    for (const c of data.cities) {
+        if (c.factionId === 'panjun') {
+            issues.push({ level: 'error', msg: `据点 "${c.name}" (${c.id}) 归属于叛军 panjun（严禁任何叛军据点）` });
+            continue;
+        }
+        if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
+        citiesByFactionMap.get(c.factionId)!.push(c);
+    }
+    for (const [fId, cityList] of citiesByFactionMap.entries()) {
+        if (cityList.length > 1) {
+            const fName = factionById.get(fId)?.name ?? fId;
+            const cNames = cityList.map(c => c.name).join('、');
+            issues.push({
+                level: 'error',
+                msg: `势力多据点冲突：势力 "${fName}" (${fId}) 占领了 ${cityList.length} 个据点（${cNames}），违反一城一势力铁律`,
+                factionId: fId,
+            });
+        }
     }
 
     // 7. StartingCapitals 引用不存在的势力

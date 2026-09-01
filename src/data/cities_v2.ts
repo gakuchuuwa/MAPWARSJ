@@ -1966,7 +1966,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_gdansk', name: '格但斯克', factionId: 'boumeilaniyan', lat: 54.35, lng: 18.64, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', troops: 30000, region: 'GERMANIC', note: '波美拉尼亚公国首府，格里芬王朝驻地' },
-    { id: 'city_toulouse', name: '图卢兹', factionId: 'xigete', lat: 43.6, lng: 1.44, type: 'small_city', troops: 30000, region: 'GOTHS' },
+    { id: 'city_toulouse', name: '图卢兹', factionId: 'langgeduoke', lat: 43.6, lng: 1.44, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_nantes', name: '南特', factionId: 'aermolika', lat: 47.21, lng: -1.55, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_florence', name: '佛罗伦萨', factionId: 'tuosikana', lat: 43.76, lng: 11.25, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
     { id: 'city_venice', name: '威尼斯', factionId: 'yadelaiya', lat: 45.44, lng: 12.31, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
@@ -2980,7 +2980,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'small_city', troops: 20000, region: 'ACHAEMENIDS' },
 
     { id: 'city_feiluzhabade', name: '菲鲁扎巴德', factionId: 'sashan', lat: 28.85, lng: 52.53, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '萨珊建立者阿尔达希尔一世所建第一城（古阿尔达希尔-花拉），今伊朗法尔斯' },
-    { id: 'city_susa', name: '苏萨', factionId: 'aqimeinide', lat: 32.19, lng: 48.24, type: 'small_city', troops: 30000, region: 'ACHAEMENIDS' },
+    { id: 'city_susa', name: '苏萨', factionId: 'ailan', lat: 32.19, lng: 48.24, type: 'small_city', troops: 30000, region: 'ACHAEMENIDS' },
     { id: 'city_yisifahan', name: '伊斯法罕', factionId: 'safawei_d', lat: 32.65, lng: 51.66, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
     { id: 'city_wuluke', name: '乌鲁克', factionId: 'sumeier', lat: 31.32, lng: 45.64, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_alepo', name: '阿勒颇', factionId: 'ayoubu', lat: 36.2, lng: 37.16, type: 'medium_city', troops: 30000, region: 'ORIE', note: '阿尤布都，黎凡特商路枢纽' },

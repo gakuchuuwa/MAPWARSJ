@@ -69,10 +69,6 @@ interface ValidationIssue {
     factionId?: string;
 }
 
-interface AttackStyleCoverageStats {
-    registered: { covered: number; total: number };
-    famous: { covered: number; total: number };
-}
 
 interface SkillCoverageReport {
     ok: boolean;
@@ -1803,16 +1799,17 @@ async function runValidation(): Promise<void> {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
         issues = data.issues ?? [];
-        const coverage = data.stats?.attackStyle as AttackStyleCoverageStats | undefined;
-        if (coverage) {
-            issues.unshift({
-                level: 'info',
-                msg: `攻守风格覆盖：在册 ${coverage.registered.covered}/${coverage.registered.total}，名将 ${coverage.famous.covered}/${coverage.famous.total}`,
-            });
+        
+        const errorsOrWarns = issues.filter(i => i.level === 'error' || i.level === 'warn');
+        if (errorsOrWarns.length > 0) {
+            els.validationTitle.textContent = '校验结果';
+            renderValidation();
+            els.validation.style.display = 'block';
+            showToast(`校验发现 ${errorsOrWarns.length} 处问题`, true);
+        } else {
+            els.validation.style.display = 'none';
+            showToast('✓ 校验通过，未发现任何错误');
         }
-        els.validationTitle.textContent = '校验结果';
-        renderValidation();
-        els.validation.style.display = 'block';
         applyFilter();
         renderTable();
         updateStats();
