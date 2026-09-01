@@ -178,9 +178,15 @@ export interface Scene13EnvironmentInput {
     siegeWallFrontX?: number;
 }
 
-/** 河岸只允许当地岩石；海滩石、海礁以及主题 solid 中的墓碑/木桶等均不得混入。 */
+/** 河岸只允许河滩鹅卵石/湿石（如 ROCK_BEACH/ROCK1/ROCK2/ROCK3）；排除巨型风蚀岩柱(ROCK_FORMATION/ROCK_PILLAR)、海礁与非石物件。 */
 export function filterRiverBankRockAssets(assets: readonly string[]): string[] {
-    return assets.filter((name) => name.startsWith('ROCK') && name !== 'ROCK_BEACH' && !name.startsWith('ROCK_SEA'));
+    return assets.filter((name) =>
+        (name.startsWith('ROCK') || name === 'ROCK_BEACH') &&
+        !name.startsWith('ROCK_FORMATION') &&
+        name !== 'ROCK_PILLAR' &&
+        name !== 'ROCK_JUNGLE' &&
+        !name.startsWith('ROCK_SEA')
+    );
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
@@ -1716,7 +1722,7 @@ function buildVegetation(
     ]);
     const MAX_LARGE_ROCKS = 1;
     const smallSolids = themeDecor.solid.filter((a: string) => !LARGE_ROCKS.has(a));
-    let largeRockCount = 0;
+    let largeRockCount = objects.filter((o) => LARGE_ROCKS.has(o.asset)).length;
     for (let i = 0; i < solidDecorCount; i++) {
         let asset = rng.pick(themeDecor.solid);
         if (LARGE_ROCKS.has(asset)) {
