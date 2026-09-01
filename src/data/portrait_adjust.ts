@@ -5933,7 +5933,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -37
         },
         "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 1.19,
+            "scale": 1.25,
             "offsetX": 0,
             "offsetY": -26
         },
