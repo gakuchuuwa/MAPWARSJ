@@ -26,6 +26,7 @@ import { loadDeMaps } from './de-map';
 
 const TERRAIN_BASE_URL = '/SUCAI_TERRAIN/';
 const NATURE_BASE_URL = '/SUCAI_NATURE/';
+const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 
 type Season = 0 | 1 | 2;
 type WaterKind = 'sea' | 'lake' | 'river' | 'none';
@@ -33,6 +34,17 @@ interface NatureMeta { box_w: number; box_h: number; anchor_x: number; anchor_y:
 
 const SEASON_NAME = ['春夏', '秋', '冬'];
 const WATER_NAME: Record<WaterKind, string> = { none: '无水', sea: '海岸', lake: '湖', river: '河' };
+
+/** 文化区建筑风格对应 */
+const REGION_BUILDING_STYLE: Record<string, string> = {
+    'zhongyuan': 'EAST', 'jiangnan': 'EAST', 'lingnan': 'EAST', 'sichuan': 'EAST',
+    'guanzhong': 'EAST', 'shandong': 'EAST', 'hebei': 'EAST', 'shanxi': 'EAST',
+    'hubian': 'EAST', 'dongnan': 'EAST', 'xinan': 'EAST', 'taiwan': 'EAST',
+    'korea': 'EAST', 'japan': 'EAST',
+    'west_europe': 'WEST', 'east_europe': 'EAST_EUROPE', 'mediterranean': 'MEDITERRANEAN',
+    'middle_east': 'MESO', 'central_asia': 'CENTRAL_ASIA', 'south_asia': 'SOUTH_ASIA',
+    'southeast_asia': 'SOUTHEAST_ASIA', 'africa': 'AFRI', 'steppe': 'STEPPE',
+};
 
 /** 素材缓存：整个工具共用，几十张图只加载一次 */
 const imgCache = new Map<string, HTMLImageElement | null>();
@@ -48,15 +60,17 @@ function loadImg(url: string): Promise<HTMLImageElement | null> {
     });
 }
 
-async function loadMeta(asset: string): Promise<NatureMeta | null> {
-    if (metaCache.has(asset)) return metaCache.get(asset) ?? null;
+async function loadMeta(asset: string, isBuilding: boolean = false): Promise<NatureMeta | null> {
+    const key = (isBuilding ? 'B:' : 'N:') + asset;
+    if (metaCache.has(key)) return metaCache.get(key) ?? null;
     try {
-        const r = await fetch(NATURE_BASE_URL + asset + '/_meta.json');
+        const base = isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL;
+        const r = await fetch(base + asset + '/_meta.json');
         const m = r.ok ? ((await r.json()) as NatureMeta) : null;
-        metaCache.set(asset, m);
+        metaCache.set(key, m);
         return m;
     } catch {
-        metaCache.set(asset, null);
+        metaCache.set(key, null);
         return null;
     }
 }
@@ -121,27 +135,95 @@ async function renderPlan(
 
 async function drawSprite(
     g: CanvasRenderingContext2D,
-    o: { asset: string; x: number; y: number; frame: number; flip: boolean },
+    o: { asset: string; x: number; y: number; frame: number; flip: boolean; scale?: number },
     painter: Scene13GroundPainter,
 ): Promise<void> {
-    const meta = await loadMeta(o.asset);
+    const isBuilding = o.asset.startsWith('BUILDING:');
+    const assetName = isBuilding ? o.asset.slice('BUILDING:'.length) : o.asset;
+    const meta = await loadMeta(assetName, isBuilding);
     if (!meta) return;
-    const img = await loadImg(NATURE_BASE_URL + o.asset + '/frames.png');
+    const base = isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL;
+    const imgUrl = isBuilding ? base + assetName + '/preview.png' : base + assetName + '/frames.png';
+    const img = await loadImg(imgUrl);
     if (!img) return;
-    const fr = meta.frames > 0 ? (o.frame % meta.frames) : 0;
-    const sw = meta.box_w;
-    const sh = meta.box_h;
-    const sx = fr * sw;
+    const fr = meta.frames > 0 && !isBuilding ? (o.frame % meta.frames) : 0;
+    const sw = isBuilding ? (img.naturalWidth || meta.box_w) : meta.box_w;
+    const sh = isBuilding ? (img.naturalHeight || meta.box_h) : meta.box_h;
+    const sx = isBuilding ? 0 : fr * sw;
+    const scale = o.scale ?? 1;
     const drawY = o.y - painter.elevationLiftAt(o.x, o.y);
+    const dw = sw * scale;
+    const dh = sh * scale;
+    const ax = meta.anchor_x * scale;
+    const ay = meta.anchor_y * scale;
     if (o.flip) {
         g.save();
         g.translate(o.x, drawY);
         g.scale(-1, 1);
-        g.drawImage(img, sx, 0, sw, sh, -meta.anchor_x, -meta.anchor_y, sw, sh);
+        g.drawImage(img, sx, 0, sw, sh, -ax, -ay, dw, dh);
         g.restore();
     } else {
-        g.drawImage(img, sx, 0, sw, sh, o.x - meta.anchor_x, drawY - meta.anchor_y, sw, sh);
+        g.drawImage(img, sx, 0, sw, sh, o.x - ax, drawY - ay, dw, dh);
     }
+}
+
+/** 生成攻城战城防城墙与建筑群 */
+function generateSiegeBuildings(city: CityDataV2, W: number, H: number): Array<{ asset: string; x: number; y: number; frame: number; flip: boolean; layer: string; z: number; scale?: number }> {
+    const objs: Array<{ asset: string; x: number; y: number; frame: number; flip: boolean; layer: string; z: number; scale?: number }> = [];
+    const style = REGION_BUILDING_STYLE[city.region ?? ''] ?? 'EAST';
+    const wallMat = city.tier === 0 ? 'FORTIFIED' : (city.tier === 4 ? 'PALISADE' : 'STONE');
+    const wBase = wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
+    const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
+    const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST` : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`);
+
+    const wallFrontX = Math.round(W * 0.62);
+    const midY = H * 0.50;
+    const pitch = 36 * (H / 1080);
+    const pitchDx = 48 * (W / 1920);
+    const pitchDy = 24 * (H / 1080);
+    const topWallY = midY - 8.5 * pitch;
+    const botWallY = midY + 8.5 * pitch;
+
+    // 1. 北翼城门及斜墙
+    objs.push({ asset: 'BUILDING:' + gBase + '_NE', x: wallFrontX + 65, y: topWallY - 32, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+    for (let k = 1; k <= 10; k++) {
+        objs.push({ asset: 'BUILDING:' + wBase + '_NE', x: wallFrontX + 130 + k * pitchDx, y: topWallY - 64 - k * pitchDy, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+    }
+    objs.push({ asset: 'BUILDING:' + wallPost, x: wallFrontX + 130 + 11 * pitchDx, y: topWallY - 64 - 11 * pitchDy, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+
+    // 2. 正面主城墙
+    for (let i = -8.5; i <= 8.5; i += 1.0) {
+        objs.push({ asset: 'BUILDING:' + wBase + '_N', x: wallFrontX, y: midY + i * pitch, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+    }
+
+    // 3. 南翼城门及斜墙
+    objs.push({ asset: 'BUILDING:' + gBase + '_SE', x: wallFrontX + 65, y: botWallY + 32, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+    for (let k = 1; k <= 10; k++) {
+        objs.push({ asset: 'BUILDING:' + wBase + '_SE', x: wallFrontX + 130 + k * pitchDx, y: botWallY + 64 + k * pitchDy, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+    }
+    objs.push({ asset: 'BUILDING:' + wallPost, x: wallFrontX + 130 + 11 * pitchDx, y: botWallY + 64 + 11 * pitchDy, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.9 });
+
+    // 4. 4座并列箭塔
+    const towerAsset = city.tier === 0 ? `${style}_TOWER_AGE4` : (city.tier === 4 ? `${style}_TOWER_AGE2` : `${style}_TOWER_AGE3`);
+    const towerX = wallFrontX + 55;
+    for (const frac of [0.125, 0.375, 0.625, 0.875]) {
+        objs.push({ asset: 'BUILDING:' + towerAsset, x: towerX, y: topWallY + (botWallY - topWallY) * frac, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.8 });
+    }
+
+    // 5. 城内建筑群
+    const bTypes = ['TOWN_CENTER_AGE4', 'BARRACKS_AGE3', 'BLACKSMITH_AGE3', 'MARKET_AGE3', 'HOUSE_AGE3', 'STABLE_AGE3', 'ARCHERY_RANGE_AGE3', 'HOUSE_AGE3'];
+    const spots = [
+        { x: W * 0.76, y: H * 0.30 }, { x: W * 0.86, y: H * 0.32 },
+        { x: W * 0.74, y: H * 0.50 }, { x: W * 0.84, y: H * 0.52 },
+        { x: W * 0.75, y: H * 0.70 }, { x: W * 0.85, y: H * 0.72 },
+        { x: W * 0.92, y: H * 0.42 }, { x: W * 0.92, y: H * 0.60 },
+    ];
+    for (let i = 0; i < Math.min(bTypes.length, spots.length); i++) {
+        const aName = `${style}_${bTypes[i]}`;
+        objs.push({ asset: 'BUILDING:' + aName, x: spots[i].x, y: spots[i].y, frame: 0, flip: false, layer: 'world', z: 1, scale: 0.75 });
+    }
+
+    return objs;
 }
 // ── 城池枚举 & 页面 ──────────────────────────────────────────
 
@@ -444,11 +526,13 @@ async function run(): Promise<void> {
     const W = parseInt(sel('size').value, 10);
     const H = Math.round(W * 1080 / 2000);
     const season = parseInt(sel('season').value, 10) as Season;
-    const siegeSel = sel('siege').value;
+        const siegeSel = sel('siege').value;
     const regionSel = sel('region').value;
     const tierSel = sel('tier').value;
     const baseSel = sel('base').value;
     const limit = parseInt(sel('limit').value, 10);
+    const query = (document.getElementById('search') as HTMLInputElement)?.value?.trim().toLowerCase() ?? '';
+    const showBuildings = (document.getElementById('buildings') as HTMLInputElement)?.checked ?? true;
 
     const sieges = siegeSel === 'all' ? [true, false] : [siegeSel === 'siege'];
 
@@ -461,7 +545,7 @@ async function run(): Promise<void> {
         const baseCount = new Set(combos.map((c) => c.base)).size;
         stat.textContent = baseCount + ' 张底图 / ' + combos.length + ' 种搭配，生成中…';
         let n = 0;
-        for (const combo of combos) {
+                for (const combo of combos) {
             const { city, isSiege } = combo;
             const plan = generateEnvironment({
                 width: W, height: H,
@@ -470,6 +554,10 @@ async function run(): Promise<void> {
                 getCalendarSeason: () => season,
                 isSiege,
             });
+            if (isSiege && showBuildings) {
+                const bObjs = generateSiegeBuildings(city, W, H);
+                (plan.objects as any).push(...bObjs);
+            }
             const canvas = await renderPlan(plan, W, H);
             if (token !== runToken) return;
             grid.appendChild(buildCard(canvas, city, plan, season, isSiege, combo));
@@ -483,11 +571,20 @@ async function run(): Promise<void> {
         return;
     }
 
-    // ── 城池模式 ──
+        // ── 城池模式 ──
     let cities = ALL_CITIES.filter((c) => !blacklist.has(c.id));
-    if (regionSel !== 'all') cities = cities.filter((c) => c.region === regionSel);
-    if (tierSel !== 'all') cities = cities.filter((c) => String(c.tier ?? 4) === tierSel);
-    if (limit > 0) cities = cities.slice(0, limit);
+    if (query) {
+        cities = cities.filter((c) => 
+            c.name.toLowerCase().includes(query) || 
+            c.id.toLowerCase().includes(query) || 
+            (c.pinyin && c.pinyin.toLowerCase().includes(query)) ||
+            (c.region && c.region.toLowerCase().includes(query))
+        );
+    } else {
+        if (regionSel !== 'all') cities = cities.filter((c) => c.region === regionSel);
+        if (tierSel !== 'all') cities = cities.filter((c) => String(c.tier ?? 4) === tierSel);
+        if (limit > 0) cities = cities.slice(0, limit);
+    }
 
     const total = cities.length * sieges.length;
     stat.textContent = '共 ' + total + ' 张，生成中…';
@@ -502,6 +599,10 @@ async function run(): Promise<void> {
                 getCalendarSeason: () => season,
                 isSiege: siege,
             });
+            if (siege && showBuildings) {
+                const bObjs = generateSiegeBuildings(city, W, H);
+                (plan.objects as any).push(...bObjs);
+            }
             const canvas = await renderPlan(plan, W, H);
             if (token !== runToken) return;
             grid.appendChild(buildCard(canvas, city, plan, season, siege));
@@ -564,6 +665,8 @@ sel('mode').addEventListener('change', () => { applyModeDefaults(); void run(); 
 applyModeDefaults();
 
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
+document.getElementById('search')?.addEventListener('input', () => { void run(); });
+document.getElementById('buildings')?.addEventListener('change', () => { void run(); });
 document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
 document.getElementById('undel')!.addEventListener('click', restoreAll);
 document.getElementById('export')!.addEventListener('click', exportBlacklist);
