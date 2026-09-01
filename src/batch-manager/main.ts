@@ -116,7 +116,7 @@ let rows: FactionRow[] = [];
 let filteredRows: FactionRow[] = [];
 let issues: ValidationIssue[] = [];
 let searchQuery = '';
-let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'no-skill' | 'errors' = 'all';
+let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'no-legion' | 'no-skill' | 'errors' = 'all';
 let sortCol = 'id';
 let sortAsc = true;
 let editingFactionId: string | null = null;
@@ -144,6 +144,7 @@ app.innerHTML = `
     <option value="no-general">缺武将</option>
     <option value="no-portrait">缺立绘</option>
     <option value="no-elite">缺精锐</option>
+    <option value="no-legion">缺军团</option>
     <option value="no-skill">缺武将技</option>
     <option value="errors">有错误</option>
   </select>
@@ -446,7 +447,8 @@ function buildRows(): void {
         if (profile?.tacticalSkillId) completeness++;
         else if (gen) { /* 有武将无战术技：不计入技能完整度 */ }
         if (elite) completeness++;
-        completeness = Math.round(completeness / 5 * 100);
+        if (FACTION_COMPOSITIONS[f.id]?.legionName) completeness++;
+        completeness = Math.round(completeness / 6 * 100);
 
         return {
             id: f.id,
@@ -529,6 +531,7 @@ function applyFilter(): void {
             case 'no-general': return !r.generalId;
             case 'no-portrait': return !!r.generalId && !(r.portrait ?? '').trim();
             case 'no-elite': return !r.eliteName;
+            case 'no-legion': return !r.legionName;
             case 'no-skill': return rowHasSkillError(r);
             case 'errors': return errorFactionIds.has(r.id) || rowHasSkillError(r);
         }
@@ -554,12 +557,13 @@ function updateStats(): void {
     const noPortrait = rows.filter(r => !!r.generalId && !(r.portrait ?? '').trim()).length;
     const noSkill = rows.filter(r => rowHasSkillError(r)).length;
     const noElite = rows.filter(r => !r.eliteName).length;
+    const noLegion = rows.filter(r => !r.legionName).length;
     const famous = rows.filter(r => r.tier === 'famous').length;
     const ordinary = rows.filter(r => r.tier === 'ordinary').length;
     const t = [0, 0, 0, 0, 0];
     for (const r of rows) if (r.eliteTier != null && r.eliteTier >= 0 && r.eliteTier <= 4) t[r.eliteTier]++;
     els.stats.innerHTML =
-        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
+        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 缺军团 ${noLegion} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
         + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`;
 }

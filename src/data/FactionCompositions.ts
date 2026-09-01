@@ -9017,4 +9017,465 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
+
+    // ===== [2026-09-01 批量安置] 以下 51 个缺军团势力按文化/dynasty 补显式条目（消除 batch-manager 军团列 ✗）=====
+    "jileinaijia": {
+        legionName: "希腊军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "greek_noble_cavalry", count: 3 },
+            { type: "elite_greek_cavalry", count: 4 },
+            { type: "cretan_archer", count: 2 }
+        ],
+    },
+    "langgeduoke": {
+        legionName: "拉丁军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 }
+        ],
+    },
+    "aquidan": {
+        legionName: "拉丁军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 }
+        ],
+    },
+    "bulabante": {
+        legionName: "日耳曼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 }
+        ],
+    },
+    "kaernute": {
+        legionName: "拉丁军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 }
+        ],
+    },
+    "mangsite": {
+        legionName: "日耳曼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 }
+        ],
+    },
+    "xiyindu": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "jialebi": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "xiongyati": {
+        legionName: "日耳曼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 }
+        ],
+    },
+    "pelianci": {
+        legionName: "日耳曼军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "paladin", count: 4 },
+            { type: "crossbowman", count: 3 }
+        ],
+    },
+    "mengtainiya": {
+        legionName: "瓦拉几亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "cav_archer", count: 3 }
+        ],
+    },
+    "walajiyia": {
+        legionName: "瓦拉几亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "cav_archer", count: 3 }
+        ],
+    },
+    "chu": {
+        legionName: "汉朝军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "tiger_rider", count: 2 },
+            { type: "antiquity_cavalry_archer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 }
+        ],
+    },
+    "pinghai": {
+        legionName: "河朔军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 4 },
+            { type: "chukonu", count: 2 }
+        ],
+    },
+    "wenling": {
+        legionName: "岭南军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "armored_elephant", count: 2 },
+            { type: "imperial_skirmisher", count: 3 },
+            { type: "rattan_archer_elite", count: 4 }
+        ],
+    },
+    "cangsong": {
+        legionName: "汉朝军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "tiger_rider", count: 2 },
+            { type: "antiquity_cavalry_archer", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 }
+        ],
+    },
+    "womaya": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "paermila": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "samaila": {
+        legionName: "西亚军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "cav_archer_heavy", count: 2 }
+        ],
+    },
+    "youfaladi": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "ailan": {
+        legionName: "波斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "elite_war_elephant", count: 3 },
+            { type: "savar", count: 4 },
+            { type: "cav_archer", count: 2 }
+        ],
+    },
+    "ayoubu": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "mamuluke": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "nabatai": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "dedan": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "maidina": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "gulaishi": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 }
+        ],
+    },
+    "baiyiya": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "tupinijin": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "tuotuonake": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "taino": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "adal": {
+        legionName: "非洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "gbeto", count: 3 },
+            { type: "elite_gbeto", count: 4 },
+            { type: "camel_archer", count: 2 }
+        ],
+    },
+    "suomunate": {
+        legionName: "瞿折罗军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_elephant_archer", count: 2 },
+            { type: "elite_chakram_thrower", count: 4 },
+            { type: "elite_shrivamsha_rider", count: 3 }
+        ],
+    },
+    "sengjialuo": {
+        legionName: "达罗毗荼军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "war_elephant", count: 2 }
+        ],
+    },
+    "kushi": {
+        legionName: "非洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "gbeto", count: 3 },
+            { type: "elite_gbeto", count: 4 },
+            { type: "camel_archer", count: 2 }
+        ],
+    },
+    "aimala": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "aolisha": {
+        legionName: "印度军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "sannahya", count: 2 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "pattiyoda_longbowman", count: 3 }
+        ],
+    },
+    "kanata": {
+        legionName: "达罗毗荼军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "war_elephant", count: 2 }
+        ],
+    },
+    "adile": {
+        legionName: "达罗毗荼军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "war_elephant", count: 2 }
+        ],
+    },
+    "foluolida": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "pidisha": {
+        legionName: "印度军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "sannahya", count: 2 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "pattiyoda_longbowman", count: 3 }
+        ],
+    },
+    "jiaye": {
+        legionName: "印度军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "sannahya", count: 2 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "pattiyoda_longbowman", count: 3 }
+        ],
+    },
+    "jienei": {
+        legionName: "非洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "gbeto", count: 3 },
+            { type: "elite_gbeto", count: 4 },
+            { type: "camel_archer", count: 2 }
+        ],
+    },
+    "kuertaiya": {
+        legionName: "瓦拉几亚军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "champion", count: 2 },
+            { type: "elite_boyar", count: 4 },
+            { type: "cav_archer", count: 3 }
+        ],
+    },
+    "varendra": {
+        legionName: "孟加拉军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "swordsman", count: 4 },
+            { type: "elite_ratha_ranged", count: 3 },
+            { type: "archer", count: 2 }
+        ],
+    },
+    "chatigangren": {
+        legionName: "孟加拉军团",
+        formationMode: "echelon",
+        slots: [
+            { type: "swordsman", count: 4 },
+            { type: "elite_ratha_ranged", count: 3 },
+            { type: "archer", count: 2 }
+        ],
+    },
+    "duonaobaojia": {
+        legionName: "保加利亚军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "konnik", count: 3 },
+            { type: "elite_konnik", count: 4 },
+            { type: "cav_archer", count: 2 }
+        ],
+    },
+    "yilaka": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "xingelana": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "gualani": {
+        legionName: "美洲军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "eagle_warrior", count: 3 },
+            { type: "elite_eagle_warrior", count: 4 },
+            { type: "plumed_archer", count: 2 }
+        ],
+    },
+    "qutb_shahi": {
+        legionName: "达罗毗荼军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "war_elephant", count: 2 }
+        ],
+    },
 };

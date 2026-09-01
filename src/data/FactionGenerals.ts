@@ -174,7 +174,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
     mengtainiya: { generalId: 'mengtainiya_radu_iii', generalName: '拉杜三世', portrait: '/assets/LATIN/kuertaiya_kuertaiya.png' },
     litaowan: { generalId: 'gen_gediminas', generalName: '格迪米纳斯', portrait: '/assets/SLAVIC/litaowan_gediminasi.png' },
-    bolan: { generalId: 'gen_jogaila', generalName: '雅盖沃', portrait: '/assets/SLAVIC/bolan_yagaiwo.png' },
+    bolan: { generalId: 'bolan_suobiesiji', generalName: '索别斯基', portrait: '/assets/SLAVIC/bolan_suobiesiji.png' },
     // ── 2026-08-04 新增：普热梅斯二世（波兹南公爵/大波兰公/波兰国王）──
     dabolan: { generalId: 'gen_przemysl_ii', generalName: '普热梅斯', portrait: '/assets/SLAVIC/dabolan_puremeisi.png' },
     dunhe: { generalId: 'gen_mikhail_tatarinov', generalName: '塔塔里诺夫', portrait: '/assets/SLAVIC/dunhe_tatalinuofu.png' },

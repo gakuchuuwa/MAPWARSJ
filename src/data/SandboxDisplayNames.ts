@@ -141,7 +141,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'keluodiya': '克罗',
   qincha: '钦察',
 'litaowan': '立陶',
-  bolan: '波兰',
+'bolan': '波兰',
 'dabolan': '大波',
   piyasite: '皮雅',
 'baojian_qishi': '宝剑',

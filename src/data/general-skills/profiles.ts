@@ -3042,7 +3042,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_idris_i: { generalId: 'gen_idris_i', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_486', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage', attackStyle: 'attack' },
     gen_james_i_aragon: { generalId: 'gen_james_i_aragon', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_308', atkBalanceSkillId: 'ts_537', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_712', aptitude: 'leverage', attackStyle: 'attack' },
     gen_jan_zizka: { generalId: 'gen_jan_zizka', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_319', atkBalanceSkillId: 'ts_705', atkDisadvantageSkillId: 'ts_412', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_822', aptitude: 'create', attackStyle: 'balanced' },
-    gen_jogaila: { generalId: 'gen_jogaila', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_322', atkBalanceSkillId: 'ts_767', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage', attackStyle: 'attack' },
     // ── 2026-08-04 新增：普热梅斯二世 @ 波兹南／大波兰 ──
     gen_przemysl_ii: { generalId: 'gen_przemysl_ii', tier: 'ordinary', tacticalSkillId: 'ts_474', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_109', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },
     gen_julian_apostate: { generalId: 'gen_julian_apostate', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_325', atkBalanceSkillId: 'ts_768', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_542', defDisadvantageSkillId: 'ts_016', aptitude: 'leverage', attackStyle: 'attack' },
@@ -3197,6 +3196,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_seuthes_iii: { generalId: 'gen_seuthes_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     gen_chabrias: { generalId: 'gen_chabrias', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     tuomengde_aobulaien: { generalId: 'tuomengde_aobulaien', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    bolan_suobiesiji: { generalId: 'bolan_suobiesiji', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
 };
 
 
