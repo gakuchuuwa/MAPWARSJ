@@ -56,6 +56,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
     pelianci: { name: '拉赫骑士', tier: 4 },
     bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士,
-    anggelu: { name: '撒克逊盾墙兵', tier: 2 },
     tuomengde: { name: '达尔卡斯斧卫', tier: 3 },
+    anggelu: { name: '撒克逊盾墙', tier: 2 },
 };

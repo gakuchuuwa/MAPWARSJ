@@ -503,7 +503,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/STEPPE/pugu_ashinaguduolu.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -5093,8 +5093,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/GERMANIC/maixiya_aofa.png": {
-            "scale": 1.1,
-            "offsetX": 0,
+            "scale": 1.2,
+            "offsetX": 6,
             "offsetY": 15
         },
         "/assets/LATIN/fulandesi_luobeierershi.png": {
@@ -5268,7 +5268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/GERMANIC/anggelu_aerfuleide.png": {
-            "scale": 0.91,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -7606,6 +7606,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/STEPPE/__闲置__STEPPE_89.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/GERMANIC/yinggelan_hengliwushi.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 22
         }
     },
     "folderGuides": {

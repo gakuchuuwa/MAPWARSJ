@@ -1028,7 +1028,7 @@ export class CityAssetManager {
 'naxos_ancient': '纳克',
 'zhibuluotuo': '直布',
         'saierweiya': '拉什',
-        'anggelu': '盎格',
+'anggelu': '盎格',
         'fulandesi': '阿图',
 'tuomengde': '托蒙',
         'bolan': '波兰',

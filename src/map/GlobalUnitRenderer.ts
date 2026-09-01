@@ -1050,7 +1050,9 @@ export class GlobalUnitRenderer {
                 if (Date.now() - unit.fadeOutStart <= duration && this.isUnitInContainerView(unit)) {
                     hasVisibleCorpses = true;
                 }
-                continue;
+                // 解散单位保持原地淡出；神出鬼没属于仍在行军的非战死渐隐，
+                // 必须继续更新位移方向与 MOVE 动画，否则会以待命姿态滑行消失。
+                if (unit.isDestroyed) continue;
             }
             if (unit.isDestroyed) {
                 const t0 = unit.destroyTime ?? Date.now();
@@ -1528,7 +1530,9 @@ export class GlobalUnitRenderer {
             const ll = this.map.containerPointToLatLng(point);
             const llAhead = this.map.containerPointToLatLng(ahead);
             const enemyLL = this.map.containerPointToLatLng(enemyPoint);
-            const headingRad = Math.atan2(llAhead.lng - ll.lng, llAhead.lat - ll.lat);
+            // 🔴 [2026-09-01] 航向直接用屏幕切线（罗盘制：北=0 顺时针；屏幕 y 向下所以取 -tangentY）。
+            //    改前是 point→latLng→atan2(dLng,dLat)，把已经正确的屏幕角又折回经纬度，白白吃一次 Mercator 误差。
+            const headingRad = Math.atan2(tangentX, -tangentY);
 
             const enemyX = enemyPoint.x - point.x;
             const enemyY = enemyPoint.y - point.y;
@@ -2187,11 +2191,9 @@ export class GlobalUnitRenderer {
         if (navalFieldPose) {
             const angle = navalFieldPose.headingRad;
             this.unitVisualAngles.set(unit.id || 'unknown', angle);
-            const virtualLat = unitPos.lat + Math.cos(angle) * 0.001;
-            const virtualLng = unitPos.lng + Math.sin(angle) * 0.001;
-            directionIndex = OrientationSystem.get8DirectionIndex(
-                unitPos,
-                { lat: virtualLat, lng: virtualLng },
+            // headingRad 已是屏幕罗盘角，直接换算，不再经过经纬度虚拟点（否则被 Mercator 校正两次）
+            directionIndex = OrientationSystem.get8DirectionFromAngle(
+                OrientationSystem.compassToMathDeg(angle * 180 / Math.PI),
             );
             unit.lastDirection = directionIndex;
         } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
@@ -2202,14 +2204,16 @@ export class GlobalUnitRenderer {
                 directionIndex = OrientationSystem.get8DirectionIndex(unitPos, unit.targetPos);
                 unit.lastDirection = directionIndex;
                 // Sync visual angle to target immediately to avoid "slow turn" during attack start
-                const angle = Math.atan2(unit.targetPos.lng - unitPos.lng, unit.targetPos.lat - unitPos.lat);
+                const angle = OrientationSystem.getScreenCompassDeg(unitPos, unit.targetPos) * Math.PI / 180;
                 this.unitVisualAngles.set(unit.id || 'unknown', angle);
             }
         } else if (unit.isMoving) {
             // [UX FIX] Smooth Rotation to prevent jitter
             // 1. Calculate raw target angle (Radians)
-            const dy = unitPos.lng - unit.lastPosition.lng;
-            const dx = unitPos.lat - unit.lastPosition.lat; // Note: lat is x-axis in Leaflet projection usually? No, lat is Y. 
+            // 🔴 [2026-09-01] 屏幕轴位移（Mercator），不用原始经纬度差；dx=北向、dy=东向，配 atan2(dy,dx)=罗盘角
+            const sd = OrientationSystem.screenDelta(unit.lastPosition, unitPos);
+            const dy = sd.dx;
+            const dx = sd.dy;
             // OrientationSystem uses (lat, lng). atan2(x, y)? 
             // OrientationSystem: 
             // const angle = Math.atan2(target.lng - current.lng, target.lat - current.lat);
@@ -2277,15 +2281,10 @@ export class GlobalUnitRenderer {
                 // If 0=S, then dLat=-1. atan2(0, -1) = PI.
 
                 // Let's just use the cached currentAngle to project a "virtual point" and ask OrientationSystem
-                const virtualLat = unitPos.lat + Math.cos(currentAngle) * 0.001;
-                const virtualLng = unitPos.lng + Math.sin(currentAngle) * 0.001;
-
-                // Actually, since we used atan2(dLng, dLat), 
-                // dx=dLat (cos), dy=dLng (sin).
-
+                // currentAngle 已是屏幕罗盘角，直接换成数学角量化（改前用经纬度虚拟点，会被 Mercator 再校正一次）
                 directionIndex = OrientationSystem.get8DirectionWithHysteresis(
                     unit.lastDirection,
-                    Math.atan2(virtualLat - unitPos.lat, virtualLng - unitPos.lng) * 180 / Math.PI,
+                    OrientationSystem.compassToMathDeg(currentAngle * 180 / Math.PI),
                 );
 
                 unit.lastDirection = directionIndex;
@@ -2343,7 +2342,7 @@ export class GlobalUnitRenderer {
                 if (navalFieldPose) {
                     navalAngleRad = navalFieldPose.headingRad;
                 } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
-                    navalAngleRad = Math.atan2(unit.targetPos.lng - unitPos.lng, unit.targetPos.lat - unitPos.lat);
+                    navalAngleRad = OrientationSystem.getScreenCompassDeg(unitPos, unit.targetPos) * Math.PI / 180;
                 } else if (unit.isMoving) {
                     navalAngleRad = (Number.isFinite(unit.navalHeadingRad) ? unit.navalHeadingRad as number : null)
                         ?? this.unitVisualAngles.get(unit.id || 'unknown')

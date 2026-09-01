@@ -169,6 +169,8 @@ const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     luoma_diguo: 'WAR_GALLEY',     // 罗马帝国（原 LATIN→HULK 北欧柯克船，错；应地中海桨帆战船）
     naxos_ancient: 'TRIREME',      // 纳克索斯（原 MACEDONIANS→WAR_LEMBOS 马其顿船，错；应希腊三列桨）
     jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳（原 AMERICA→CANOE 独木舟，错；应西班牙无敌舰队精锐）
+    yinggelan: 'WAR_HULK',         // 英格兰·亨利五世（原 GERMANIC→HULK 柯克货船，错；应英王柯克战船：百年战争斯勒伊斯海战）
+    kanpaniya: 'WAR_GALLEY',       // 那不勒斯·安茹（原 LATIN→HULK 北海柯克货船，错；应地中海桨帆战船：意大利南部地中海港，安茹王朝海军）
 };
 
 export function getCultureNavalShip(region?: string | null, factionId?: string | null): NavalShipAssetId {

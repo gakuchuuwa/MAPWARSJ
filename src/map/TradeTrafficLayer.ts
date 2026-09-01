@@ -521,9 +521,10 @@ export class TradeTrafficLayer {
     private dirIndex(asset: TradeAsset, from: Pt, to: Pt, lastIdx: number, lastDeg: number): { idx: number; deg: number } {
         // 🔴 [2026-09-01 修「商队频繁更换朝向」] 朝向量化加迟滞（死区 10°）：
         //    折线方向停在扇区边界时，微小角度波动不再让贴图来回跳。
+        // 🔴 [2026-09-01] 走 Mercator 屏幕轴，不用原始经纬度差（高纬斜向会整档打偏）
         const deg = asset.dirs16
-            ? Math.atan2(to.lng - from.lng, to.lat - from.lat) * 180 / Math.PI
-            : Math.atan2(to.lat - from.lat, to.lng - from.lng) * 180 / Math.PI;
+            ? OrientationSystem.getScreenCompassDeg(from, to)
+            : OrientationSystem.getScreenAngleDeg(from, to);
         const half = asset.dirs16 ? 11.25 : 22.5;
         if (Number.isFinite(lastDeg)) {
             let diff = ((deg - lastDeg) % 360 + 360) % 360;
