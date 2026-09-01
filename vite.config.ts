@@ -744,6 +744,7 @@ export default defineConfig({
                     if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
                     try {
                         const data = serverReadAllEntityData();
+                        res.setHeader('Cache-Control', 'no-store');
                         res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify(data));
                     } catch (err: any) {
@@ -2998,14 +2999,12 @@ function serverReadAllEntityData() {
             if (tier) misplacedProfiles.push(m[1]);
             continue;
         }
-        if (!tier || !tacticalSkillId) {
-            if (tier && !tacticalSkillId) malformedProfiles.push(m[1]);
-            continue;
-        }
+        if (!tier) continue;
+        if (!tacticalSkillId) malformedProfiles.push(m[1]);
         const gidField = profileEntryField(body, 'generalId');
         if (gidField && gidField !== m[1]) profileIdMismatches[m[1]] = gidField;
         profiles[m[1]] = {
-            tier, tacticalSkillId,
+            tier, tacticalSkillId: tacticalSkillId ?? '',
             strategicSkillId: profileEntryField(body, 'strategicSkillId'),
             advantageSkillId: profileEntryField(body, 'advantageSkillId'),
             balanceSkillId: profileEntryField(body, 'balanceSkillId'),

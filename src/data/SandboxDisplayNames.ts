@@ -1056,7 +1056,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'safawei': '吉兰',
 'yilihanguo': '阿杰',
     'yilihanguo_d': '伊利',
-    'asaibaijiang': '阿塞',
+'asaibaijiang': '阿塞',
     'wulaertu': '亚美',
 'wulaertu_guo': '乌图',
 'gelujiya': '格鲁',

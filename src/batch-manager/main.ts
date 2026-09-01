@@ -414,7 +414,7 @@ function attachPortraitSearch(input: HTMLInputElement): void {
 // ── Data Loading ──
 
 async function loadData(): Promise<void> {
-    const res = await fetch('/api/entity-data');
+    const res = await fetch('/api/entity-data', { cache: 'no-store' });
     if (!res.ok) throw new Error(await res.text());
     entityData = await res.json();
     buildRows();
@@ -778,37 +778,6 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     const isNew = !row;
     const title = isNew ? '新增实体' : `编辑: ${row!.name}`;
 
-    const tacOptions = (entityData?.tacticalSkills ?? []).map(s =>
-        `<option value="${s.id}" ${s.id === (row?.tacticalSkillId ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
-    ).join('');
-    // 三格下拉：只列对应三类的技；当前值类别不符时保留在顶部并标注（防止保存时被静默清掉）
-    //   借势(leverage)武将故意跨类放技，不标⚠
-    // 槽位→允许的六计（攻守互补）
-    const SLOT_SIX_CLASS: Record<string, string[]> = {
-        atkAdvantage: ['攻战计', '胜战计'],
-        atkBalance: ['敌战计', '混战计'],
-        atkDisadvantage: ['并战计', '败战计'],
-        defAdvantage: ['胜战计', '攻战计'],
-        defBalance: ['混战计', '敌战计'],
-        defDisadvantage: ['败战计', '并战计'],
-    };
-    const slotOptions = (slot: string, selected?: string, aptitude?: string) => {
-        const allowed = SLOT_SIX_CLASS[slot] ?? [];
-        const pool = (entityData?.tacticalSkills ?? []).filter(s => s.sixClass && allowed.includes(s.sixClass));
-        pool.sort((a, b) => {
-            const na = parseInt(a.id.replace('ts_', ''), 10);
-            const nb = parseInt(b.id.replace('ts_', ''), 10);
-            return na - nb;
-        });
-        let html = pool.map(s =>
-            `<option value="${s.id}" ${s.id === (selected ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
-        ).join('');
-        if (selected && !pool.some(s => s.id === selected) && aptitude !== 'leverage') {
-            const cur = entityData?.tacticalSkills.find(s => s.id === selected);
-            html = `<option value="${selected}" selected>⚠ ${cur ? `${cur.grid} ${cur.displayName}` : selected}（类别不符）</option>` + html;
-        }
-        return html;
-    };
     const currentRegion = row?.cityRegion ?? row?.eliteRegion ?? '';
     const regionOptions = (entityData?.regions ?? []).map(r =>
         `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r} (${r})</option>`
@@ -957,7 +926,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </div>
           <label><span>文化区</span>
             <select name="region">
-              ${currentRegion ? '' : '<option value="" selected>保持</option>'}
+              ${currentRegion ? '' : '<option value="" selected>请选择</option>'}
               ${regionOptions}
             </select>
           </label>
@@ -995,75 +964,28 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-row">
             <label><span>品阶</span>
               <select name="tier">
-                ${row!.tier ? '' : '<option value="" selected>保持</option>'}
+                ${row!.tier ? '' : '<option value="" selected>请选择</option>'}
                 <option value="famous" ${row!.tier === 'famous' ? 'selected' : ''}>名将 (famous)</option>
                 <option value="ordinary" ${row!.tier === 'ordinary' ? 'selected' : ''}>普将 (ordinary)</option>
               </select>
             </label>
           </div>
           <h4 style="margin:10px 0 6px;font-size:13px;color:#8ab4c4">攻守风格 · 人物标签（影子字段，不参与战斗结算）</h4>
-          <label><span>攻守风格（独立于三势，不是技能）</span>
-            <select name="attackStyle">
-              ${row!.attackStyle ? '' : '<option value="" selected>保持</option>'}
-              <option value="attack" ${row!.attackStyle === 'attack' ? 'selected' : ''}>善攻 attack</option>
-              <option value="defense" ${row!.attackStyle === 'defense' ? 'selected' : ''}>善防 defense</option>
-              <option value="balanced" ${row!.attackStyle === 'balanced' ? 'selected' : ''}>双行 balanced</option>
-            </select>
-          </label>
-          <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
-            下方攻防六槽仅保留作旧数据兼容，可不配齐；当前战斗选技由技能池随机抽取。攻守风格不属于三势或技能。
-          </p>
-          <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">攻方三槽 · 攻城</h4>
           <div class="form-row">
-            <label><span>攻·优势（攻战/胜战）</span>
-              <select name="atkAdvantageSkillId">
-                ${row!.atkAdvantageSkillId ?? row!.advantageSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('atkAdvantage', row!.atkAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
-              </select>
-            </label>
-            <label><span>攻·均势（敌战/混战）</span>
-              <select name="atkBalanceSkillId">
-                ${row!.atkBalanceSkillId ?? row!.balanceSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('atkBalance', row!.atkBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
-              </select>
-            </label>
-          </div>
-          <div class="form-row">
-            <label><span>攻·劣势（并战/败战）</span>
-              <select name="atkDisadvantageSkillId">
-                ${row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('atkDisadvantage', row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
+            <label><span>攻守风格（独立于三势，不是技能）</span>
+              <select name="attackStyle">
+                ${row!.attackStyle ? '' : '<option value="" selected>请选择</option>'}
+                <option value="attack" ${row!.attackStyle === 'attack' ? 'selected' : ''}>善攻 attack</option>
+                <option value="defense" ${row!.attackStyle === 'defense' ? 'selected' : ''}>善防 defense</option>
+                <option value="balanced" ${row!.attackStyle === 'balanced' ? 'selected' : ''}>双行 balanced</option>
               </select>
             </label>
             <label><span>三势 aptitude</span>
               <select name="aptitude">
-                ${row!.aptitude ? '' : '<option value="" selected>保持</option>'}
+                ${row!.aptitude ? '' : '<option value="" selected>请选择</option>'}
                 <option value="create" ${row!.aptitude === 'create' ? 'selected' : ''}>造势 create</option>
                 <option value="leverage" ${row!.aptitude === 'leverage' ? 'selected' : ''}>借势 leverage</option>
                 <option value="reverse" ${row!.aptitude === 'reverse' ? 'selected' : ''}>逆势 reverse</option>
-              </select>
-            </label>
-          </div>
-          <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">守方三槽 · 守城</h4>
-          <div class="form-row">
-            <label><span>守·优势（胜战/攻战）</span>
-              <select name="defAdvantageSkillId">
-                ${row!.defAdvantageSkillId ?? row!.advantageSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('defAdvantage', row!.defAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
-              </select>
-            </label>
-            <label><span>守·均势（混战/敌战）</span>
-              <select name="defBalanceSkillId">
-                ${row!.defBalanceSkillId ?? row!.balanceSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('defBalance', row!.defBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
-              </select>
-            </label>
-          </div>
-          <div class="form-row">
-            <label><span>守·劣势（败战/并战）</span>
-              <select name="defDisadvantageSkillId">
-                ${row!.defDisadvantageSkillId ?? row!.disadvantageSkillId ? '' : '<option value="" selected>保持</option>'}
-                ${slotOptions('defDisadvantage', row!.defDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
           </div>
@@ -1073,7 +995,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>番号名</span><input name="eliteName" value="${row!.eliteName ?? ''}" /></label>
             <label><span>级别</span>
               <select name="eliteTier">
-                ${row!.eliteTier == null ? '<option value="" selected>保持</option>' : ''}
+                ${row!.eliteTier == null ? '<option value="" selected>请选择</option>' : ''}
                 <option value="0" ${row!.eliteTier === 0 ? 'selected' : ''}>T0</option>
                 <option value="1" ${row!.eliteTier === 1 ? 'selected' : ''}>T1</option>
                 <option value="2" ${row!.eliteTier === 2 ? 'selected' : ''}>T2</option>

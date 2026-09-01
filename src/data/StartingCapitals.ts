@@ -990,7 +990,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'safawei': 'city_jiaziwen',
 'yilihanguo': 'city_zanzhan',
     'yilihanguo_d': 'city_dabulishi',
-    'asaibaijiang': 'city_malagai',
+'asaibaijiang': 'city_malagai',
     'wulaertu': 'city_ailiwen',
 'wulaertu_guo': 'city_tushpa',
     'gelujiya': 'city_dibilisi',
