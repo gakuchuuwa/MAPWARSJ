@@ -651,13 +651,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 const rockX = VW * 0.12 + rng.next() * VW * 0.08;
                 objects.push({ asset: ra, x: rockX, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
-        // 🔴 [2026-09-01 主人定：照史实来，删掉「攻城战不出河」那条] 名城多依水而建，
-        //    河本来就是城防的一部分 —— 襄阳隔汉水对峙五年、马格德堡的易北河、巴黎的塞纳河、
-        //    开封的汴河。围城方渡河抵近城墙是真实的战争画面，不该因为「怕挡路」就不生成。
-        //    野战 → 中轴渡口（crossing）；攻城战 → 贴城墙外侧的临城河（moat），并避开城池占地。
-        } else if (topology === 'river_crossing' || waterKind === 'river') {
-            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng,
-                                 input.isSiege ? 'moat' : 'crossing', input.isSiege ? (input.keepClear ?? []) : []);
+        // ⚠️ [2026-09-01] 攻城战出河（临城河）已回退，等实测清楚河形/水色/石头三件事再重做。
+        //    史实上名城多依水而建（襄阳汉水、马格德堡易北河、巴黎塞纳河），攻城战**应该**有河，
+        //    这里暂时只在野战出河，是「还没做好」，不是「不该做」。
+        } else if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng);
         } else if (waterKind === 'lake') {
             // 内陆湖 / 绿洲水塘。攻防战也出——水塘只占战场一角，不像江河那样横切战场。
             const corridor = (x: number, y: number): boolean =>
@@ -1044,18 +1042,6 @@ function buildRiver(
     biome: Biome = 'temperate_forest',
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
-    /**
-     * 河道位置。
-     *   'crossing'  野战江河渡口 —— 纵向大 S 蛇曲横贯战场中轴（DE Rivers / Crossing 原样）。
-     *   'moat'      攻城战临河筑城 —— 河**贴着城墙外侧**纵向流过，攻方须渡河强攻。
-     *
-     * 🔴 [2026-09-01 主人定：照史实来] 名城多依水而建，河本来就是城防的一部分：
-     *    襄阳隔汉水对峙五年、马格德堡的易北河、巴黎的塞纳河、开封的汴河。
-     *    围城方渡河抵近城墙是真实的战争画面 —— 攻城战照样出河。
-     */
-    layout: 'crossing' | 'moat' = 'crossing',
-    /** 禁区（攻城战传城池占地）：河不进这些圆，免得水从城里穿过去 */
-    keepClear: ReadonlyArray<{ x: number; y: number; r: number }> = [],
 ): WaterChecker {
     // 🌊 DE 原版 Rivers / Crossing 规范（2026-08-26 美化重构）：
     //   1. Catmull-Rom 样条平滑蜿蜒河道，消除僵硬折线与塑料感；
@@ -1065,13 +1051,7 @@ function buildRiver(
     // 1. 生成 7 个稀疏控制点并用 Catmull-Rom 密集插值
     const numControls = 7;
     const controls: Array<{ x: number; y: number }> = [];
-    const moat = layout === 'moat';
-    // 攻方恒在左、城恒在右。渡口河走中轴；临城河压到城墙外侧，摆幅收窄免得甩进城里。
-    const baseCenterX = moat ? VW * 0.60 : VW * 0.50;
-    const bandLo = moat ? VW * 0.52 : VW * 0.32;
-    const bandHi = moat ? VW * 0.66 : VW * 0.68;
-    const swing1 = moat ? 30 : 65;
-    const swing2 = moat ? 13 : 28;
+    const baseCenterX = VW * 0.50;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
 
@@ -1083,8 +1063,8 @@ function buildRiver(
         const y = yMin + i * controlStep;
         const t = i / (numControls - 1);
         // 自然大 S 蛇曲弯折
-        const offset = Math.sin(t * Math.PI * 2.0 + phase1) * swing1 + Math.cos(t * Math.PI * 3.5 + phase2) * swing2;
-        const x = Math.max(bandLo, Math.min(bandHi, baseCenterX + offset));
+        const offset = Math.sin(t * Math.PI * 2.0 + phase1) * 65 + Math.cos(t * Math.PI * 3.5 + phase2) * 28;
+        const x = Math.max(VW * 0.32, Math.min(VW * 0.68, baseCenterX + offset));
         controls.push({ x, y });
     }
 
@@ -1133,11 +1113,6 @@ function buildRiver(
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
             const py = isoCellY(gx, gy, oy);
-            // 临城河：城池占地内一律不铺水，免得河从城里穿过去
-            if (keepClear.length && keepClear.some((c) => {
-                const dx = px - c.x, dy = py - c.y;
-                return dx * dx + dy * dy <= c.r * c.r;
-            })) continue;
             let minDist = 999999;
             for (let k = 0; k <= numSamplePts; k++) {
                 const d = Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5);
@@ -1194,8 +1169,13 @@ function buildRiver(
         const oxX = pt.x + side * pt.nx * dist;
         const oyY = pt.y + side * pt.ny * dist * 0.55;
 
-        // 水生植物（芦苇/睡莲）或湿石卵石
-        const asset = rng.pick(['REEDS', 'REEDS', 'WATER_LILY', 'ROCK_BEACH', 'ROCK1', 'ROCK2', 'ROCK_SEA1']);
+        // 水生植物（芦苇/睡莲）与**河滩**卵石。
+        // 🔴 [2026-09-01 主人指出] 河岸**不许放 ROCK_SEA1/2** —— 那是海礁，只该出现在
+        //    海岸线（buildCoastline）。内陆淡水河用河滩鹅卵石；热带雨林额外给丛林石。
+        const bankRocks = (biome === 'tropical_rainforest')
+            ? ['ROCK_BEACH', 'ROCK1', 'ROCK2', 'ROCK_JUNGLE']
+            : ['ROCK_BEACH', 'ROCK1', 'ROCK2'];
+        const asset = rng.pick(['REEDS', 'REEDS', 'WATER_LILY', ...bankRocks]);
         objects.push({
             asset,
             x: oxX,

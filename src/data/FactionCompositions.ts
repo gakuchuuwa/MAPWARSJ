@@ -750,83 +750,83 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
     "shu": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "huizhou_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "langzhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "jingmen": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "qingqiang": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "yangzhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "yueyi": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "lizhou_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "fu_zhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     // 匈牙利王国·布达佩斯（马加什一世 · 马扎尔军团 · 鱼鳞阵 3+4+2：马扎尔骠骑 3 + 精锐马扎尔骠骑 4 + 骑射手 2）
@@ -1486,10 +1486,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
-            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
-            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
-            { type: "halberdier", count: 4 },
+            { type: "halberdier", count: 3 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],
@@ -1988,15 +1985,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：哥特近卫军精锐 4 + 长戟兵 3 + 长弓兵 2）
-    donggete: {
-        // [2026-08-31] 同上：占用文化军团【哥特军团】却是另一套编制。
-        //   东哥特王国（拉文纳）与泛哥特文化区分开，给自己的番号。
-        legionName: "东哥特军团",
-        formationMode: 'echelon',
+    "donggete": {
+        legionName: "哥特军团",
+        formationMode: "echelon",
         slots: [
-            { type: 'elite_huskarl', count: 4 },      // Row 0 前卫主力 = 哥特近卫军精锐 4人（哥特城堡兵·反弓重盾步兵主力盾墙）
-            { type: 'halberdier', count: 3 },         // Row 1 中排 = 长戟兵 3人（长戟反骑接应）
-            { type: 'longbowman', count: 2 },         // Row 2 后排 = 长弓兵 2人（远程压制）
+            { type: "elite_huskarl", count: 4 },
+            { type: "halberdier", count: 3 },
+            { type: "longbowman", count: 2 },
         ],
     },
     // 色雷斯·普罗夫迪夫（西美昂 · 色雷斯长刃斩手与精锐重骑军团 · 鹤翼阵 2+4+3：色雷斯长刃斩手 2 + 冲击重骑兵 4 + 精锐标枪手 3）
@@ -2070,15 +2065,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     gaer: {
         legionName: "凯尔特军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'woad_raider', count: 3 },
-            { type: 'elite_woad_raider', count: 4 },
-            { type: 'longbowman', count: 2 },
-        ],
-    },
-    tuomengde: {
-        legionName: "托蒙德军团",
         formationMode: 'fish_scale',
         slots: [
             { type: 'woad_raider', count: 3 },
@@ -2583,23 +2569,17 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
-            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
-            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
-            { type: "halberdier", count: 4 },
+            { type: "halberdier", count: 3 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],
     },
     // 耶路撒冷王国·阿卡（鲍德温四世 · 耶路撒冷王国军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
-    yelusalengwg: {
+    "yelusalengwg": {
         legionName: "圣殿骑士团军团",
         formationMode: "fish_scale",
         slots: [
-            // 🔴 [2026-08-31] count 3→4。全库 975 个编成里 972 个 slots 总和是 9，
-            //    只有「圣殿骑士团军团」这三家是 8 —— 第 9 格没兵种，渲染时掉回默认集，
-            //    十字军阵中会混进 S10DB（三国志10）的兵。主力占 4 档也符合阵型铁律。
-            { type: "halberdier", count: 4 },
+            { type: "halberdier", count: 3 },
             { type: "crusader_knight", count: 3 },
             { type: "arbalest", count: 2 },
         ],
@@ -2737,9 +2717,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 朱罗王朝·坦贾武尔（拉金德拉 · 达罗毗荼军团 · 偃月阵 3+2+4：剑士 3 + 攻城战象 2 + 精锐乌鲁米剑士 4；象拆剩攻城象一排，骑象弓迁潘地亚）
     "zhuluo": {
-        // [2026-08-31] 原名占用了文化军团【达罗毗荼军团】却是另一套编制（同名不同编）。
-        //   朱罗是南印度海权帝国，本就该有自己的番号；改成特定军团，编制原样保留。
-        legionName: "朱罗军团",
+        legionName: "达罗毗荼军团",
         formationMode: "crescent",
         slots: [
             { type: "sickle_warrior", count: 3 },
@@ -3845,11 +3823,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "qiuchi": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "helian": {
@@ -4124,20 +4102,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "guo": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "zi": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "long2": {
@@ -4349,11 +4327,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "baishui": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "baiji": {
@@ -4754,11 +4732,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "tujia_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "zhuang_d": {
@@ -4925,11 +4903,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "nanzhong": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "xiaobolu": {
@@ -4997,11 +4975,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "zhongxiang": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "yang_aner": {
@@ -5294,20 +5272,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "chenghan": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "shuixi": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "yang_zhou": {
@@ -5402,11 +5380,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "miaomin": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "xiadun": {
@@ -5474,11 +5452,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "qianhui": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "miao_qing": {
@@ -5879,11 +5857,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yang_bozhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "tian_sizhou": {
@@ -5969,11 +5947,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "cong": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "zhe_d": {
@@ -6005,11 +5983,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wuling": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "weili": {
@@ -6041,11 +6019,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "bandun": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "seljuq": {
@@ -6077,29 +6055,29 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "xiang_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "tan_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "ran_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "chu_d": {
@@ -6122,11 +6100,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "qingyi": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "wuxi": {
@@ -6158,11 +6136,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kuai": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "shen": {
@@ -6176,11 +6154,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "sou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "shaodang": {
@@ -6275,20 +6253,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "she": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "liao": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "nong2": {
@@ -6986,39 +6964,39 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "qiong": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "zhuoshi": {
         legionName: "川蜀军团",
         legionType: "era",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "chenzhou_d": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "qianzhong": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "cuanshi": {
@@ -7203,38 +7181,38 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yidou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "boren": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "wanzhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "kui": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "danluo": {
@@ -7455,11 +7433,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "dangchang": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "mi": {
@@ -8040,11 +8018,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wumeng": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "lelang": {
@@ -8319,11 +8297,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "haikou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "shanshan": {
@@ -8490,11 +8468,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "weizhou": {
         legionName: "川蜀军团",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "chukonu", count: 2 },
-            { type: "hei_kuang_heavy", count: 4 },
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "yingzhou_d2": {
@@ -8789,13 +8767,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiadunhe": {
-        legionName: "斯拉夫军团",
-        legionType: "region",
-        formationMode: "fish_scale",
+        legionName: "草原军团",
+        formationMode: "triangle",
         slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
+            { type: "keshik", count: 2 },
+            { type: "steppe_lancer", count: 3 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
     "bulu": {
@@ -9017,15 +8994,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
-
     // ===== [2026-09-01 批量安置] 以下 51 个缺军团势力按文化/dynasty 补显式条目（消除 batch-manager 军团列 ✗）=====
     "jileinaijia": {
-        legionName: "希腊军团",
-        formationMode: "fish_scale",
+        legionName: "马其顿军团",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "greek_noble_cavalry", count: 3 },
-            { type: "elite_greek_cavalry", count: 4 },
-            { type: "cretan_archer", count: 2 }
+            { type: "phalangite", count: 4 },
+            { type: "cretan_archer", count: 2 },
+            { type: "companion_cavalry", count: 3 },
         ],
     },
     "langgeduoke": {
@@ -9038,165 +9014,67 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "aquidan": {
-        legionName: "拉丁军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 }
-        ],
-    },
-    "bulabante": {
-        legionName: "日耳曼军团",
-        formationMode: "crane_wing",
+        legionName: "不列颠军团",
+        formationMode: "triangle",
         slots: [
             { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 }
-        ],
-    },
-    "kaernute": {
-        legionName: "拉丁军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 }
-        ],
-    },
-    "mangsite": {
-        legionName: "日耳曼军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 }
-        ],
-    },
-    "xiyindu": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "jialebi": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "xiongyati": {
-        legionName: "日耳曼军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 }
-        ],
-    },
-    "pelianci": {
-        legionName: "日耳曼军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 }
+            { type: "longbowman", count: 3 },
+            { type: "longbowman_elite", count: 4 },
         ],
     },
     "mengtainiya": {
-        legionName: "瓦拉几亚军团",
+        legionName: "拉丁军团",
         formationMode: "crane_wing",
         slots: [
-            { type: "champion", count: 2 },
-            { type: "elite_boyar", count: 4 },
-            { type: "cav_archer", count: 3 }
+            { type: "heavy_pikeman", count: 2 },
+            { type: "knight", count: 4 },
+            { type: "arbalest", count: 3 },
         ],
     },
     "walajiyia": {
-        legionName: "瓦拉几亚军团",
+        legionName: "东欧军团",
+        legionType: "region",
         formationMode: "crane_wing",
         slots: [
-            { type: "champion", count: 2 },
+            { type: "composite_bowman", count: 3 },
             { type: "elite_boyar", count: 4 },
-            { type: "cav_archer", count: 3 }
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "chu": {
-        legionName: "汉朝军团",
+        legionName: "川蜀军团",
         formationMode: "triangle",
         slots: [
-            { type: "tiger_rider", count: 2 },
-            { type: "antiquity_cavalry_archer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 }
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "pinghai": {
-        legionName: "河朔军团",
+        legionName: "东北军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
-            { type: "hei_kuang_heavy", count: 4 },
-            { type: "chukonu", count: 2 }
+            { type: "iron_pagoda", count: 3 },
+            { type: "elite_iron_pagoda", count: 4 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "wenling": {
-        legionName: "岭南军团",
+        legionName: "江南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
-            { type: "imperial_skirmisher", count: 3 },
-            { type: "rattan_archer_elite", count: 4 }
+            { type: "jian_swordsman", count: 2 },
+            { type: "chukonu", count: 3 },
+            { type: "elite_fire_archer", count: 4 },
         ],
     },
     "cangsong": {
-        legionName: "汉朝军团",
+        legionName: "川蜀军团",
         formationMode: "triangle",
         slots: [
-            { type: "tiger_rider", count: 2 },
-            { type: "antiquity_cavalry_archer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 }
-        ],
-    },
-    "womaya": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "paermila": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "samaila": {
-        legionName: "西亚军团",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_composite_bowman", count: 4 },
-            { type: "eastern_swordsman", count: 3 },
-            { type: "cav_archer_heavy", count: 2 }
-        ],
-    },
-    "youfaladi": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
+            { type: "white_feather_guard", count: 2 },
+            { type: "elite_white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     "ailan": {
@@ -9208,274 +9086,113 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "cav_archer", count: 2 }
         ],
     },
-    "ayoubu": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "mamuluke": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "nabatai": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "dedan": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "maidina": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "gulaishi": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 }
-        ],
-    },
-    "baiyiya": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "tupinijin": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "tuotuonake": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "taino": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "adal": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "gbeto", count: 3 },
-            { type: "elite_gbeto", count: 4 },
-            { type: "camel_archer", count: 2 }
-        ],
-    },
     "suomunate": {
-        legionName: "瞿折罗军团",
-        formationMode: "crane_wing",
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: "elite_elephant_archer", count: 2 },
-            { type: "elite_chakram_thrower", count: 4 },
-            { type: "elite_shrivamsha_rider", count: 3 }
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
         ],
     },
     "sengjialuo": {
-        legionName: "达罗毗荼军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
-            { type: "war_elephant", count: 2 }
-        ],
-    },
-    "kushi": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "gbeto", count: 3 },
-            { type: "elite_gbeto", count: 4 },
-            { type: "camel_archer", count: 2 }
-        ],
-    },
-    "aimala": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
+            { type: "sannahya", count: 2 },
         ],
     },
     "aolisha": {
-        legionName: "印度军团",
-        formationMode: "crane_wing",
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: "sannahya", count: 2 },
+            { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
-            { type: "pattiyoda_longbowman", count: 3 }
+            { type: "sannahya", count: 2 },
         ],
     },
     "kanata": {
-        legionName: "达罗毗荼军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
-            { type: "war_elephant", count: 2 }
+            { type: "sannahya", count: 2 },
         ],
     },
     "adile": {
-        legionName: "达罗毗荼军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
-            { type: "war_elephant", count: 2 }
-        ],
-    },
-    "foluolida": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
+            { type: "sannahya", count: 2 },
         ],
     },
     "pidisha": {
-        legionName: "印度军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "sannahya", count: 2 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "pattiyoda_longbowman", count: 3 }
-        ],
-    },
-    "jiaye": {
-        legionName: "印度军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "sannahya", count: 2 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "pattiyoda_longbowman", count: 3 }
-        ],
-    },
-    "jienei": {
-        legionName: "非洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "gbeto", count: 3 },
-            { type: "elite_gbeto", count: 4 },
-            { type: "camel_archer", count: 2 }
-        ],
-    },
-    "kuertaiya": {
-        legionName: "瓦拉几亚军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "elite_boyar", count: 4 },
-            { type: "cav_archer", count: 3 }
-        ],
-    },
-    "varendra": {
-        legionName: "孟加拉军团",
-        formationMode: "echelon",
-        slots: [
-            { type: "swordsman", count: 4 },
-            { type: "elite_ratha_ranged", count: 3 },
-            { type: "archer", count: 2 }
-        ],
-    },
-    "chatigangren": {
-        legionName: "孟加拉军团",
-        formationMode: "echelon",
-        slots: [
-            { type: "swordsman", count: 4 },
-            { type: "elite_ratha_ranged", count: 3 },
-            { type: "archer", count: 2 }
-        ],
-    },
-    "duonaobaojia": {
-        legionName: "保加利亚军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "konnik", count: 3 },
-            { type: "elite_konnik", count: 4 },
-            { type: "cav_archer", count: 2 }
-        ],
-    },
-    "yilaka": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "xingelana": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "gualani": {
-        legionName: "美洲军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "eagle_warrior", count: 3 },
-            { type: "elite_eagle_warrior", count: 4 },
-            { type: "plumed_archer", count: 2 }
-        ],
-    },
-    "qutb_shahi": {
-        legionName: "达罗毗荼军团",
+        legionName: "补噜军团",
         formationMode: "fish_scale",
         slots: [
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
-            { type: "war_elephant", count: 2 }
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "jiaye": {
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "kuertaiya": {
+        legionName: "东欧军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
+        ],
+    },
+    "varendra": {
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "chatigangren": {
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
+        ],
+    },
+    "duonaobaojia": {
+        legionName: "色雷斯军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "rhomphaia_warrior", count: 3 },
+            { type: "elite_peltast", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+        ],
+    },
+    "qutb_shahi": {
+        legionName: "补噜军团",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "urumi_swordsman", count: 3 },
+            { type: "elite_urumi_swordsman", count: 4 },
+            { type: "sannahya", count: 2 },
         ],
     },
 };
