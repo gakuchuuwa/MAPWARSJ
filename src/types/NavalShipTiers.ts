@@ -168,7 +168,14 @@ const FALLBACK_SHIP = 'WAR_GALLEY';
 const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     luoma_diguo: 'WAR_GALLEY',     // 罗马帝国（原 LATIN→HULK 北欧柯克船，错；应地中海桨帆战船）
     naxos_ancient: 'TRIREME',      // 纳克索斯（原 MACEDONIANS→WAR_LEMBOS 马其顿船，错；应希腊三列桨）
-    jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳（原 AMERICA→CANOE 独木舟，错；应西班牙无敌舰队精锐）
+    jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳（原 AMERICA→CANOE 独木舟，错；西班牙珍宝船队要塞，应西班牙卡拉维尔）
+    foluolida: 'ELITE_CARAVEL',    // 佛罗里达·圣奥古斯丁（原 AMERICA→CANOE 独木舟，错；梅嫩德斯·西班牙海军上将，应西班牙卡拉维尔）
+    xiyindu: 'ELITE_CARAVEL',      // 西印度·圣多明各（原 AMERICA→CANOE 独木舟，错；哥伦布殖民总督要塞，应西班牙卡拉维尔）
+    xingelana: 'ELITE_CARAVEL',    // 新格拉纳达·巴拿马（原 AMERICA→CANOE 独木舟，错；卡斯蒂利亚殖民总督要塞，应西班牙卡拉维尔）
+    baiyiya: 'CARAVEL',            // 巴西·萨尔瓦多（原 AMERICA→CANOE 独木舟，错；葡属巴西都督府，军团「索萨远征队」= 葡王室远征队，应葡萄牙卡拉维尔）
+    // ⚠️ 勿加 tupinijin：圣维森特那座城的 note 写的是「葡萄牙首座殖民村镇」，但**势力**是图皮尼金
+    //    （Tupiniquim，factions.ts 注明「圣维森特一带原住民」，军团「图皮尼金弓」）—— 原住民用独木舟没错。
+    //    判据看**势力**不看城池 note，别再按 note 里的「殖民」字样配船（2026-09-02 已撤销一次）。
     yinggelan: 'WAR_HULK',         // 英格兰·亨利五世（原 GERMANIC→HULK 柯克货船，错；应英王柯克战船：百年战争斯勒伊斯海战）
     kanpaniya: 'WAR_GALLEY',       // 那不勒斯·安茹（原 LATIN→HULK 北海柯克货船，错；应地中海桨帆战船：意大利南部地中海港，安茹王朝海军）
 };

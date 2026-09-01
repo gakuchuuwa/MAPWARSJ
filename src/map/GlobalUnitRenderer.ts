@@ -123,6 +123,8 @@ interface NavalFieldBattlePose {
     headingRad: number;
     trail: { x: number; y: number }[];
     broadsideReady: boolean;
+    /** 沿轨道的瞬时航速（度/秒，世界坐标）：给划桨随速用，海战里桨速跟着风/呼吸快慢变 */
+    speedDegPerSec: number;
 }
 
 /**
@@ -1548,6 +1550,14 @@ export class GlobalUnitRenderer {
                 trail.push({ x: p.x, y: p.y });
             }
 
+            // 🔴 [2026-09-02] 轨道瞬时航速：ll → llAhead 正好相隔 0.08 单位时间（航向就是这么微分出来的），
+            //    直接量出世界坐标位移即可。改前海战 navalSpeedFactor 恒为 1，18 艘划桨船在海战里
+            //    匀速划桨，风顺风逆、呼吸涨缩全看不出来 —— 移动信息在海战里被掐掉了。
+            const speedDegPerSec = Math.hypot(
+                llAhead.lat - ll.lat,
+                llAhead.lng - ll.lng,
+            ) / 0.08;
+
             return {
                 point,
                 latLng: { lat: ll.lat, lng: ll.lng },
@@ -1555,6 +1565,7 @@ export class GlobalUnitRenderer {
                 headingRad,
                 trail,
                 broadsideReady: Math.abs(forwardDot) <= 0.55,
+                speedDegPerSec,
             };
         }
         return null;
@@ -2426,7 +2437,10 @@ export class GlobalUnitRenderer {
                 // [2026-08-27 §② 划桨随速] 用世界坐标位移/真实时间估计船速（地图平移不改变世界坐标 → 不误判为"飞快"）。
                 //   归一化：海速底 ≈ 0.24 度/游戏秒 → speedFactor≈1；>1 快桨、<1 慢桨、≈0 收桨锚泊。
                 let navalSpeedFactor = 1;
-                if (!navalFieldPose && unit.id) {
+                if (navalFieldPose) {
+                    // 海战：桨速跟轨道瞬时航速走（顺风快桨 / 顶风慢桨 / 呼吸涨缩），与行军同一归一化基准
+                    navalSpeedFactor = Math.max(0.05, Math.min(2.5, navalFieldPose.speedDegPerSec / 0.24));
+                } else if (unit.id) {
                     const now = performance.now();
                     const trk = this.navalSpeedTrack.get(unit.id);
                     if (trk && trk.t > 0) {
@@ -2437,10 +2451,17 @@ export class GlobalUnitRenderer {
                     }
                     this.navalSpeedTrack.set(unit.id, { lat: unitPos.lat, lng: unitPos.lng, t: now, speed: trk?.speed ?? 0 });
                 }
+                // 🔴 [2026-09-02 主人「海战让后面的船保持移动时候的状态」] 海战中舰队一直在沿轨道航行，
+                //    基础状态就该是 MOVE（划桨/航行），不是钉在 ATTACK 上：
+                //      · ATTACK 分支帧率写死 150ms，上面刚接的轨道航速（顺风快桨/顶风慢桨）根本走不到；
+                //      · drawNaval 里「沿航迹排队」也只有非静止态才成立。
+                //    开炮是间歇事件，已由 naval_cannon_fire（2.6s 节流 + broadsideReady）单独演出，
+                //    不靠常驻 ATTACK 帧表达。DEATH / DAMAGE / 逐舰沉没优先级更高，此处不覆盖。
+                const navalAnimState = (navalFieldPose && state === 'ATTACK') ? 'MOVE' : state;
                 LegionPhalanxDrawer.drawNaval(
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
-                    state,
+                    navalAnimState,
                     navalDir16,
                     scale * (unit.previewScale ?? 1),
                     troops,
