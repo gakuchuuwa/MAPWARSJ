@@ -65,7 +65,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'buni': '布匿',
   aguelabu: '阿格',
   telibolisi: '的黎',
-  jileinaijia: '基雷',
+'jileinaijia': '基雷',
   talike: '塔里',
 
   maixiya: '麦西',
@@ -499,7 +499,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'gurkha': '廓喀',
 'xiadun': '夏顿',
     'kazakh': '哈萨',
-    'kokand': '霍罕',
+'kokand': '霍罕',
     'badakhshan': '达克',
     // ── 2026-05-25 晚清／近代势力（21个）──
 'taiping': '太平',
@@ -950,7 +950,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'wula': '乌拉',
 'mengwu': '蒙兀',
 'pugu': '仆骨',
-    'bayegu': '拔野',
+'bayegu': '拔野',
     'ketagalan': '凯达',
 'shanrong': '蓟',
 'suke': '素',

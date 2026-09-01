@@ -58,6 +58,7 @@ export const FACTIONS: Faction[] = [
   { id: 'aguelabu', name: '阿格拉布' },
   { id: 'telibolisi', name: '的黎波里塔' },
   { id: 'jileinaijia', name: '基雷奈加' },
+
   { id: 'talike', name: '塔里克' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）
 
   { id: 'maixiya', name: '麦西亚' },
@@ -100,6 +101,7 @@ export const FACTIONS: Faction[] = [
   { id: 'fulandesi', name: '阿图瓦' },
 
   { id: 'bogendi', name: '勃艮第' },
+
   { id: 'bulabante', name: '布拉班特' },
   { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
   { id: 'kaernute', name: '卡尔努特' },
@@ -171,6 +173,7 @@ export const FACTIONS: Faction[] = [
 
   // ── 2026-08-04 新增：大波兰（波兹南，大波兰公国/王国核心）──
   { id: 'dabolan', name: '波兰亚' },
+
   { id: 'piyasite', name: '皮雅斯特' },
   { id: 'baojian_qishi', name: '宝剑骑士团' },
   { id: 'teweier_gongguo', name: '特维公国' },
@@ -661,6 +664,7 @@ export const FACTIONS: Faction[] = [
     // 西域沙金 - 高昌国(高昌壁)
     // 暗灰 - 黠戛斯(坚昆都督府)
     { id: 'xiaobolu', name: '勃律' },
+
      // 暗板岩灰 - 小勃律(孽多城)
     // 火砖红 - 李希烈淮西叛镇(蔡州)
     // 深红 - 魏博节度使田氏(魏州)
@@ -836,7 +840,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xiadun', name: '夏顿' },
 
     { id: 'kazakh', name: '哈萨' },
-    { id: 'kokand', name: '霍罕' },                 // 暗紫 - 霍罕/浩罕汗国
+    { id: 'kokand', name: '霍罕' },
+                 // 暗紫 - 霍罕/浩罕汗国
     { id: 'badakhshan', name: '达克' },
 
     // ── 2026-05-26 晚清／近代势力（21个）──
@@ -1296,6 +1301,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'wuzhumuqin', name: '乌珠穆沁' },
+
     { id: 'xingan', name: '布特哈' },
 
     { id: 'zhadalan', name: '扎答兰' },
@@ -1319,6 +1325,7 @@ export const FACTIONS: Faction[] = [
     { id: 'loufan', name: '楼烦' },
              // 宁武关·楼烦族
     { id: 'xianyu', name: '土门' },
+
 
 
              // 井陉关·中山国（原鲜虞）
@@ -1632,6 +1639,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pugu', name: '仆骨' },
 
     { id: 'bayegu', name: '拔野古' },
+
     { id: 'ketagalan', name: '凯达格兰' },
     { id: 'shanrong', name: '蓟州' },
 

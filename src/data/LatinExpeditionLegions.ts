@@ -73,4 +73,5 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     naxos_ancient: { name: '爱琴舰队', tier: 2 },
     zhibuluotuo: { name: '基督骑士', tier: 2 },
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
+    bogendi: { name: '勃艮第骑', tier: 3 },
 };

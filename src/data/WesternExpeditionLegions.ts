@@ -52,4 +52,5 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     tajikezu: { name: '帕米尔山民', tier: 4 },
     khoja: { name: '白山派卫兵', tier: 4 },
     chagatai: { name: '戊己屯军', tier: 2 },
+    kokand: { name: '浩罕骑兵', tier: 4 },
 };

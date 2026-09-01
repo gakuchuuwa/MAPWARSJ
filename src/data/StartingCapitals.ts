@@ -50,7 +50,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'buni': 'city_jiataji',
   'aguelabu': 'city_kailuwan',
   'telibolisi': 'city_deliboli',
-  'jileinaijia': 'city_banjiaxi',
+'jileinaijia': 'city_banjiaxi',
   'talike': 'city_danjier',
 
   'maixiya': 'city_oxford',
@@ -475,7 +475,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gurkha': 'city_kathmandu',
 'xiadun': 'city_tingbu',
     'kazakh': 'city_turkestan',
-    'kokand': 'city_kokand',
+'kokand': 'city_kokand',
     'badakhshan': 'city_fayzabad',
 
 'taiping': 'city_jintian',
@@ -887,7 +887,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'wula': 'city_wushecheng',
 'mengwu': 'city_langjuxu',
 'pugu': 'city_yanran',
-    'bayegu': 'city_jiluoshan',
+'bayegu': 'city_jiluoshan',
     'ketagalan': 'city_mengjia',
 'shanrong': 'city_wuzhong',
 'suke': 'city_shuanghe',

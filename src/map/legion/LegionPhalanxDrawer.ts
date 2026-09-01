@@ -38,9 +38,6 @@ const NAVAL_SPLASH_DELAY_MS = 700;
 /** 每发炮打空（播落水声）的概率：全中显得没有落点、全空显得没打中，取一半 */
 const NAVAL_SPLASH_CHANCE = 0.5;
 
-/** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
-const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
-
 /**
  * 🔴 [2026-08-31 开机长任务风暴] 启动**只**预载这两个兜底兵种，其余全部按需加载。
  *
@@ -807,21 +804,6 @@ export class LegionPhalanxDrawer {
         gameLog('unit', '✅ LegionPhalanxDrawer: All dynamic unit assets loaded.');
     }
 
-    // ─── 船贴图懒加载（2026-06-12 修复）────────────────────────────
-    // LAZY_BOOT_UNIT_IDS 当年只做了"启动跳过"没做"事后加载"，
-    // unitSpriteCache 永远没有三种船 → drawNaval 永远早退 → 船从不显示。
-    // 现在由 drawNaval 首次被调用时触发后台加载（与 _doPreload 同样的分批 + 抠绿流程）。
-    private static navalLoadStarted = false;
-
-    private static ensureNavalAssetsLoading(): void {
-        if (this.navalLoadStarted) return;
-        this.navalLoadStarted = true;
-        void this._loadNavalAssets().catch((e) => {
-            gameLog('unit', '❌ 船贴图懒加载失败', e);
-            this.navalLoadStarted = false; // 允许下次重试
-        });
-    }
-
     /** 按需加载单个兵种（被淘汰后自动重来的入口，见 ensureUnitTypeLoading） */
     private static unitLoadInFlight = new Set<string>();
     public static ensureUnitTypeLoading(key: string): void {
@@ -833,8 +815,7 @@ export class LegionPhalanxDrawer {
             .finally(() => this.unitLoadInFlight.delete(key));
     }
 
-    /** @param keys 要加载的兵种；缺省 = 启动跳过的三种船（历史行为不变） */
-    private static async _loadNavalAssets(keys?: readonly string[]): Promise<void> {
+    private static async _loadNavalAssets(keys: readonly string[]): Promise<void> {
         const yieldMain = () => document.hidden
             ? Promise.resolve()
             : new Promise<void>(r => setTimeout(r, 0));
@@ -858,7 +839,7 @@ export class LegionPhalanxDrawer {
         };
 
         const unitAssets = SPRITE_PATHS.UNIT_ASSETS as any;
-        for (const key of (keys ?? [...LAZY_BOOT_UNIT_IDS])) {
+        for (const key of keys) {
             const config = unitAssets?.[key];
             if (!config || this.unitSpriteCache.has(key)) continue;
 
@@ -2269,7 +2250,7 @@ export class LegionPhalanxDrawer {
                 audioManager.playNavalSfx(unitId, stillAlive ? 'naval_sink' : 'naval_explode');
             }
             // 海战开火音效：ATTACK 状态周期性触发（仅跟拍军团实际发声）
-            //   箭声 1.2s 一轮；炮声 2.6s 一轮，且只有旗舰档（ship_large 在编队里恒存在）开炮。
+            //   箭声 1.2s 一轮；炮声 2.6s 一轮，由旗舰领衔开火。
             if (isFighting) {
                 if (nowMs - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
                     lastNavalFireAt = nowMs;
@@ -2292,10 +2273,11 @@ export class LegionPhalanxDrawer {
         //   navalState.ships 保持编队满员逐舰沉没（DYING 渐隐→DEAD），若这里仍按当前兵力
         //   shipCountForTroops(troops) 现算，编队会随 troops 缩短、队尾沉没中的船被直接裁掉
         //   不渲染 = 突然消失。无 unitId/首次无 state 时才按 troops 兜底。
-        // 确定文化专属战舰（每文化一种，舰队统一）
-        const targetShipId: NavalShipAssetId = (lockedShipId && lockedShipId !== 'ship_small' && lockedShipId !== 'ship_medium' && lockedShipId !== 'ship_large')
-            ? lockedShipId
-            : getCultureNavalShip((FACTION_COMPOSITIONS as any)[factionId]?.region, factionId);
+        // 已锁定且素材仍存在就沿用；否则按势力文化重新取船，旧的无效锁不会让舰船消失。
+        const lockedShipIsAvailable = !!lockedShipId && !!(SPRITE_PATHS.UNIT_ASSETS as any)[lockedShipId];
+        const targetShipId: NavalShipAssetId = lockedShipIsAvailable
+            ? lockedShipId!
+            : getCultureNavalShip(null, factionId);
 
         const shipCount = navalState?.shipCount ?? shipCountForTroops(troops);
         const formation = this.navalFormation(shipCount, navalMode, targetShipId);
@@ -2346,7 +2328,11 @@ export class LegionPhalanxDrawer {
         if (!flagship) return;
         const flagDyn = flagship.dyn ? this.metaDirFor(flagship.dynEntry, direction, true) : undefined;
         const flagshipW = flagDyn ? flagDyn.fw * flagship.s! : flagship.w;
-        const shipDepth = flagshipW * 1.15;
+        // 船头朝上/朝下时 fw 只是窄船宽；用较长边计算纵队间距，避免数艘船叠成一张破碎船图。
+        const flagshipLength = flagDyn
+            ? Math.max(flagDyn.fw, flagDyn.fh) * flagship.s!
+            : Math.max(flagship.w, flagship.h);
+        const shipDepth = flagshipLength * 1.15;
         const shipSpread = flagshipW;
 
         // 对角朝向 c 轴加 0.15 补偿视觉压缩；正朝向不变。
@@ -2361,10 +2347,11 @@ export class LegionPhalanxDrawer {
         //     ① 后随船沿旗舰**走过的航迹**回溯定位（航迹早就在采样了，一路传下来却被丢掉），
         //        每船朝向 = 自己所在那段航迹的切线 → 转弯自动排成蛇形，也不会切弯插上岸。
         //     ② 每船各自量化出 16 向帧，量化丢掉的 ±11.25° 用 ctx.rotate 补回去，台阶消失。
-        //   无航迹（军团编辑器预览、刚下水第一帧）→ sampleNavalPath 退化为直线，逐像素回到旧行为。
+        //   无航迹（军团编辑器预览、刚下水第一帧、静止待命）→ sampleNavalPath 退化为直线，保持整齐朝向。
         const headDeg = headingDeg ?? (45 + 22.5 * direction);
         const flagAng = headDeg * Math.PI / 180 - Math.PI / 2;   // 屏幕数学角（前进方向）
-        const path = this.buildNavalPath(center, trail);
+        const activeTrail = state === 'MOVE' ? trail : undefined;
+        const path = this.buildNavalPath(center, activeTrail);
         const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态

@@ -65,9 +65,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   chechen: { name: '车臣汗骑', tier: 4 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '主儿乞军', tier: 4 },       // 温都尔汗·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 4 },  // 拜达里克·图蒙肯抗卫拉特（缺乏极其著名的战术高光，降T3）
-  bayegu: { name: '拔野古轻骑', tier: 4 },       // 稽落山·屈利失助唐灭薛延陀（缺乏极其著名的战术高光，降T3）
     zubu: { name: '特尔浑游骑', tier: 4 },
-  wuzhumuqin: { name: '赛堪轻骑', tier: 4 },    // 乌珠穆沁·多尔济随征噶尔丹（缺乏极其著名的战术高光，降T3）
     xingan: { name: '索伦营', tier: 2 },             // 索伦鄂温克达斡尔精锐，清朝极具特色的边疆建制，升T2
   baidi: { name: '阴山徒兵', tier: 3 },          // 集宁·白狄：阴山一带狄人徒兵，避将名/族名叠字
   shiwei: { name: '室韦猎骑', tier: 4 },         // 俱轮泊·室韦都督府部众
@@ -107,4 +105,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
     helian: { name: '铁弗宿卫', tier: 3 },
     xiongnu: { name: '鸣镝精骑', tier: 1 },
+    bayegu: { name: '拔野古骑', tier: 4 },
+    wuzhumuqin: { name: '赛堪骑兵', tier: 4 },
 };

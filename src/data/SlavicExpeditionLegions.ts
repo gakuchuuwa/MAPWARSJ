@@ -34,7 +34,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     lagusa: { name: '拉古萨舰队', tier: 3 },          // 拉古萨·德拉甘：亚得里亚海商船共和国
     liwoniya: { name: '利沃骑士', tier: 3 },          // 塔林·普雷特贝格：波罗的海十字军
     walajiyia: { name: '维特吉', tier: 3 },
-    dabolan: { name: '瓦尔塔轻骑', tier: 3 },
 
     // ── T4 存在之兵 ──
     teweier_gongguo: { name: '伏尔加骑兵', tier: 4 },          // 特维尔·米哈伊尔：抗衡莫斯科
@@ -71,4 +70,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     xiadunhe: { name: '罗斯亲兵', tier: 1 },
     valois_angouleme: { name: '国王宪兵', tier: 1 },
     bolan: { name: '翼骑兵', tier: 3 },
+    dabolan: { name: '瓦尔塔骑', tier: 3 },
 };
