@@ -675,19 +675,19 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "heng1": {
-        legionName: "北宋禁军团",
+        legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
+            { type: "elite_fire_lancer", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "keshik", count: 2 },
         ],
     },
     "changshan": {
-        legionName: "北宋禁军团",
+        legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
+            { type: "elite_fire_lancer", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "keshik", count: 2 },
         ],
@@ -703,28 +703,28 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "yanzhou": {
-        legionName: "北宋禁军团",
+        legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
+            { type: "elite_fire_lancer", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "keshik", count: 2 },
         ],
     },
     "huan": {
-        legionName: "北宋禁军团",
+        legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
+            { type: "elite_fire_lancer", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "keshik", count: 2 },
         ],
     },
     "didao": {
-        legionName: "北宋禁军团",
+        legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "liao_dao", count: 3 },
+            { type: "elite_fire_lancer", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "keshik", count: 2 },
         ],
@@ -739,12 +739,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiangzhou": {
-        legionName: "南宋行营军团",
-        formationMode: "triangle",
+        legionName: "蕃落骑军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: "elite_fire_lancer", count: 2 },
-            { type: "liao_dao", count: 3 },
-            { type: "elite_chukonu", count: 4 },
+            { type: "elite_fire_lancer", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
@@ -9156,9 +9156,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
         formationMode: "crane_wing",
         slots: [
-            { type: "composite_bowman", count: 2 },
+            { type: "composite_bowman", count: 3 },
             { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 3 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "varendra": {
@@ -9204,87 +9204,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "rhomphaia_warrior", count: 4 },
             { type: "thracian_peltast", count: 2 },
             { type: "elite_peltast", count: 3 },
-        ],
-    },
-    "womaya": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "paermila": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "youfaladi": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "ayoubu": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "mamuluke": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "nabatai": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "dedan": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "maidina": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "gulaishi": {
-        legionName: "阿拉伯军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "camel_rider", count: 3 },
-            { type: "camel_archer", count: 4 },
         ],
     },
 };

@@ -430,7 +430,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yuchi: { generalId: 'yuchi_weichiyao', generalName: '尉迟曜', portrait: '/assets/WESTERN/yuchi_weichiyao.png' },
     zhuxie: { generalId: 'zhuxie_zhuxiechixin', generalName: '朱邪赤心', portrait: '/assets/STEPPE/zhuxie_zhuxiechixin.png' },
     kala: { generalId: 'kala_satuke', generalName: '萨图克', portrait: '/assets/WESTERN/kala_satuke.png' },
-    an: { generalId: 'an_xibanni', generalName: '昔班尼', portrait: '/assets/CENTRAL_ASIA/an_xibanni.png' },
+    an: { generalId: 'an_xibanni', generalName: '昔班尼', portrait: '/assets/STEPPE/an_xibanni.png' },
     saman: { generalId: 'saman_yisimayi', generalName: '伊斯玛仪', portrait: '/assets/CENTRAL_ASIA/saman_yisimayi.png' },
     wusun: { generalId: 'wusun_liejiaomi', generalName: '猎骄靡', portrait: '/assets/WESTERN/wusun_liejiaomi.png' },
     tujishi: { generalId: 'tujishi_sulukehan', generalName: '苏禄', portrait: '/assets/WESTERN/tujishi_sulu.png' },

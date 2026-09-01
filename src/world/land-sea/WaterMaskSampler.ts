@@ -3,6 +3,12 @@ import { latLngToTilePixel } from './ElevationSampler';
 import { DEM_ZOOM, TERRARIUM_TILE_SIZE } from './TerrariumCodec';
 import { ESRI_SHADED_RELIEF_URL, buildWaterMask, isDefectGrayTile } from './WaterMask';
 
+/** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
+const TILE_RETRY_COOLDOWN_MS = 60_000;
+/** 负缓存/警告去重表的上限，超了整表清空（宁可多试一次，也不让 Map 无限涨） */
+const TILE_FAIL_CACHE_MAX = 4096;
+
+
 /** 取图超时 (ms)：拿不到就回退海拔判据，不能让判定悬着 */
 const TILE_TIMEOUT_MS = 8000;
 
@@ -28,6 +34,19 @@ export class WaterMaskSampler {
     private readonly cache = new Map<string, Uint8Array | null>();
     private readonly cacheOrder: string[] = [];
     private readonly pending = new Set<string>();
+    /**
+     * 🔴 [2026-09-02 主人「周围没据点反而卡，尤其海上/咸海/撒哈拉」] 取瓦片**失败**的负缓存。
+     * 改前：ensureTile 失败只 console.warn + return false，`finally` 把 key 从 pending 删掉，
+     * 既不入 cache 也不记失败 —— 于是下一次 scheduleFetch 又是全新的一次 new Image() 请求。
+     * 而 Army.update **每帧**都调 scheduleFetch（还有 isSeaAt 在 elev===null 时也调），
+     * 所以只要瓦片源在那一带没有数据（大洋 / 咸海 / 撒哈拉这类 404 或空覆盖区），
+     * 就变成「每帧发一次注定失败的请求 + 每帧一条 console.warn」，一顿一顿的就是这么来的。
+     * 反过来，据点和军团多的地方是陆地核心区、瓦片齐全，命中缓存反而不卡 —— 与主人观察一致。
+     * 失败后冷却 TILE_RETRY_COOLDOWN_MS 才允许重试（网络抖动仍能恢复，不会永久放弃）。
+     */
+    private readonly failedAt = new Map<string, number>();
+    /** 已经警告过的 key：同一块瓦片只吼一次，别刷屏（console.warn 本身在热路径上也不便宜） */
+    private readonly warnedKeys = new Set<string>();
     private readonly maxCacheTiles: number;
     private tileLoadedListeners = new Set<TileLoadedListener>();
 
@@ -101,6 +120,9 @@ export class WaterMaskSampler {
         const key = tileCacheKey(zoom, x, y);
         if (this.cache.has(key)) return true;
         if (this.pending.has(key)) return false;
+        // 负缓存：上次失败还在冷却期内 → 直接放弃，不再发请求（见 failedAt 注释）
+        const failedTs = this.failedAt.get(key);
+        if (failedTs !== undefined && Date.now() - failedTs < TILE_RETRY_COOLDOWN_MS) return false;
 
         this.pending.add(key);
         try {
@@ -140,10 +162,18 @@ export class WaterMaskSampler {
             );
             this.touchCache(key);
             this.evictIfNeeded();
+            this.failedAt.delete(key);
             this.notifyTileLoaded();
             return true;
         } catch (err) {
-            console.warn('[WaterMaskSampler]', err);
+            // 记负缓存 + 只警告一次：这块瓦片在冷却期内不再重试，避免每帧重发（见 failedAt 注释）
+            this.failedAt.set(key, Date.now());
+            if (this.failedAt.size > TILE_FAIL_CACHE_MAX) this.failedAt.clear();
+            if (!this.warnedKeys.has(key)) {
+                this.warnedKeys.add(key);
+                if (this.warnedKeys.size > TILE_FAIL_CACHE_MAX) this.warnedKeys.clear();
+                console.warn('[WaterMaskSampler]', err);
+            }
             return false;
         } finally {
             this.pending.delete(key);
