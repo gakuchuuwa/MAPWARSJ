@@ -38,6 +38,14 @@ interface GraphEdge {
     weight: number;      // 距离 (km)
     coordinates: [number, number][]; // [lng, lat][] 完整路径坐标
     roadFeature: VectorRoadFeature;  // 原始道路数据引用
+    /**
+     * 这条边是不是**海路**（来自 SEA_ROUTE_DATA）。
+     * 🔴 [2026-09-01] 军团的陆军/海军形态就按它定 —— 见 Army.updateTerrainSpeed：
+     *    形态跟着「走的是哪条路」走，而不是逐帧采样「脚下像不像海」。海路两端必是港口城，
+     *    所以登船/上岸天然只发生在港口，段内恒定，海岸线锯齿再碎也抖不起来。
+     *    反向边由 `{...edge}` 继承，不用另设。
+     */
+    isSea?: boolean;
 }
 
 interface PathResult {
@@ -45,6 +53,8 @@ interface PathResult {
     edges: GraphEdge[];        // 经过的边序列
     totalDistance: number;      // 总距离 (km)
     coordinates: [number, number][]; // 完整路径坐标 [lng, lat][]
+    /** 与 coordinates 一一对应：该点所属的边是不是海路（见 GraphEdge.isSea） */
+    seaFlags: boolean[];
 }
 
 /** Dijkstra 小根堆（替代每轮 array.sort，避免 O(V² log V)） */
@@ -231,6 +241,7 @@ export class RoadRegistry {
                 weight: this.calculatePathLength(path),
                 coordinates: path,
                 roadFeature: feature as unknown as VectorRoadFeature,
+                isSea: true,   // 军团走这条边 = 海军形态（见 GraphEdge.isSea）
             });
             added++;
         }
@@ -366,7 +377,8 @@ export class RoadRegistry {
         const hit = this.edgeGeomCache.get(edge.id);
         if (hit) return hit;
         if (edge.coordinates.length === 0) return null;
-        const coords = edge.coordinates.map(([lng, lat]) => ({ lat, lng }));
+        const isSea = !!edge.isSea;
+        const coords = edge.coordinates.map(([lng, lat]) => ({ lat, lng, sea: isSea }));
         let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
         for (const c of coords) {
             if (c.lat < minLat) minLat = c.lat;
@@ -483,11 +495,14 @@ export class RoadRegistry {
         nodes.unshift(startNodeId);
 
         const coordinates: [number, number][] = [];
+        const seaFlags: boolean[] = [];
         for (let i = 0; i < edges.length; i++) {
             const edgeCoords = edges[i].coordinates;
+            const isSea = !!edges[i].isSea;
             const startIdx = i === 0 ? 0 : 1;
             for (let j = startIdx; j < edgeCoords.length; j++) {
                 coordinates.push(edgeCoords[j]);
+                seaFlags.push(isSea);   // 点归它所在的那条边（形态判定用，见 GraphEdge.isSea）
             }
         }
 
@@ -496,6 +511,7 @@ export class RoadRegistry {
             edges,
             totalDistance: dist.get(endNodeId) || 0,
             coordinates,
+            seaFlags,
         };
     }
 
@@ -528,8 +544,8 @@ export class RoadRegistry {
     /**
      * 将路径坐标转为 {lat, lng}[] 格式 (Leaflet 兼容)
      */
-    public pathToLatLngs(path: PathResult): { lat: number; lng: number }[] {
-        return path.coordinates.map(([lng, lat]) => ({ lat, lng }));
+    public pathToLatLngs(path: PathResult): { lat: number; lng: number; sea?: boolean }[] {
+        return path.coordinates.map(([lng, lat], i) => ({ lat, lng, sea: path.seaFlags[i] }));
     }
 
     // ===== 旧版兼容接口 =====
@@ -680,16 +696,16 @@ export class RoadRegistry {
     ): {
         fromNodeId: string;
         toNodeId: string;
-        coords: { lat: number; lng: number }[];
-        projPoint: { lat: number; lng: number };
+        coords: { lat: number; lng: number; sea?: boolean }[];
+        projPoint: { lat: number; lng: number; sea?: boolean };
         segmentIndex: number;
         distance: number;
     } | null {
         let best: {
             fromNodeId: string;
             toNodeId: string;
-            coords: { lat: number; lng: number }[];
-            projPoint: { lat: number; lng: number };
+            coords: { lat: number; lng: number; sea?: boolean }[];
+            projPoint: { lat: number; lng: number; sea?: boolean };
             segmentIndex: number;
             distance: number;
         } | null = null;
@@ -715,7 +731,8 @@ export class RoadRegistry {
                     fromNodeId: edge.from,
                     toNodeId: edge.to,
                     coords,
-                    projPoint: np.point,
+                    // 投影点是新造的点，得继承所在边的海路标记，否则「归队那一段」丢形态
+                    projPoint: { ...np.point, sea: !!edge.isSea },
                     segmentIndex: np.segmentIndex,
                     distance: np.distance,
                 };

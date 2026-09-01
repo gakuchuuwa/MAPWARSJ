@@ -1169,6 +1169,29 @@ export class VectorRoadEditor implements IEditor {
         const existingRoads = VECTOR_ROAD_DATA.features.filter(f => f.properties.id !== excludeRoadId);
         if (existingRoads.length === 0) return newCoords;
 
+        // 🔴 [2026-09-01 修「连接路时卡住」] 包围盒剪枝。
+        //    原实现对新路的**每个点**都遍历全部 1368 条路的全部 40444 个顶点：
+        //    一条 607 点的长路要算 2450 万次点-线段投影，主线程同步跑 = 编辑器假死。
+        //    先按「点到该路包围盒的距离」筛掉够不着的路（盒外距离是真实距离的下界，
+        //    不会漏判），只对少数候选跑逐段投影。同 RoadRegistry.findNearestRoadEntry 的做法。
+        const bboxes = existingRoads.map((f) => {
+            const cs = f.geometry.coordinates as [number, number][];
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            for (const c of cs) {
+                if (c[0] < minX) minX = c[0];
+                if (c[0] > maxX) maxX = c[0];
+                if (c[1] < minY) minY = c[1];
+                if (c[1] > maxY) maxY = c[1];
+            }
+            return { minX, maxX, minY, maxY };
+        });
+        /** 点到包围盒的距离（盒内为 0）；这是点到该路任意一段距离的下界 */
+        const bboxDist = (p: [number, number], b: { minX: number; maxX: number; minY: number; maxY: number }): number => {
+            const dx = p[0] < b.minX ? b.minX - p[0] : p[0] > b.maxX ? p[0] - b.maxX : 0;
+            const dy = p[1] < b.minY ? b.minY - p[1] : p[1] > b.maxY ? p[1] - b.maxY : 0;
+            return Math.hypot(dx, dy);
+        };
+
         // Helper: 计算点到折线(Polyline)的最近点信息
         const nearestOnPolyline = (p: [number, number], polyCoords: [number, number][]): {
             segIdx: number;  // 最近线段的起始索引
@@ -1212,6 +1235,10 @@ export class VectorRoadEditor implements IEditor {
         const snapInfos: SnapInfo[] = newCoords.map(p => {
             let best: SnapInfo = null;
             for (let ri = 0; ri < existingRoads.length; ri++) {
+                // 剪枝：盒距已经够不着吸附半径（或不可能比当前最优更近）→ 整条路跳过
+                const lower = bboxDist(p, bboxes[ri]);
+                if (lower >= SNAP_DIST) continue;
+                if (best && lower >= best.dist) continue;
                 const roadCoords = existingRoads[ri].geometry.coordinates as [number, number][];
                 const nearest = nearestOnPolyline(p, roadCoords);
                 if (nearest && nearest.dist < SNAP_DIST && (!best || nearest.dist < best.dist)) {

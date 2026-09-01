@@ -174,17 +174,27 @@ export class SeaRouteEditor implements IEditor {
         `;
 
         this.statusLabel = document.createElement('span');
-        this.statusLabel.style.cssText = 'color:#4fc3f7;min-width:220px;font-weight:bold;';
+        // 🔴 [2026-09-01 修「保存 UI 总是来回移动」] 状态文字**必须定宽**。
+        //    原来是 min-width:220px，而文案从「🚢 请点击第一个港口城市（起点）」变到
+        //    「✅ 罗马城-卡利亚里 (527km, 40点) | 记得点 💾 保存」再到「✅ 已保存到
+        //    VectorSeaRouteData.ts (123456 字节)」，长度差一倍多 —— 面板整体宽度跟着变，
+        //    而面板是 left:50% + translateX(-50%) 居中的，于是整排按钮左右横跳。
+        //    定宽 + 单行省略号后，无论文案多长面板尺寸都不动；全文挂 title 上，鼠标悬停可看。
+        this.statusLabel.style.cssText =
+            'color:#4fc3f7;font-weight:bold;flex:0 0 320px;width:320px;'
+            + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
         this.statusLabel.textContent = '🚢 请点击第一个港口城市（起点）';
 
         this.routeFilter = document.createElement('input');
         this.routeFilter.type = 'text';
         this.routeFilter.placeholder = '🔍 搜索海路...';
-        this.routeFilter.style.cssText = `background:#0f2a40;color:#d0e4f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;width:150px;outline:none;`;
+        this.routeFilter.style.cssText = `background:#0f2a40;color:#d0e4f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 150px;width:150px;outline:none;`;
         this.routeFilter.addEventListener('input', () => this.updateRouteSelect());
 
         this.routeSelect = document.createElement('select');
-        this.routeSelect.style.cssText = `background:#0f2a40;color:#4fc3f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;min-width:160px;font-weight:bold;`;
+        // 定宽同理：海路名长短不一（「卡塔赫纳-圣多明各」vs「阿卡-塞浦路斯」），
+        // 用 min-width 会被选中项撑开，面板又跟着横跳。
+        this.routeSelect.style.cssText = `background:#0f2a40;color:#4fc3f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 200px;width:200px;font-weight:bold;`;
         this.updateRouteSelect();
         this.routeSelect.addEventListener('change', () => this.selectRoute(this.routeSelect!.value));
 
@@ -225,7 +235,9 @@ export class SeaRouteEditor implements IEditor {
     }
 
     private setStatus(text: string): void {
-        if (this.statusLabel) this.statusLabel.textContent = text;
+        if (!this.statusLabel) return;
+        this.statusLabel.textContent = text;
+        this.statusLabel.title = text;   // 定宽截断后靠 title 看全文
     }
 
     private updateRouteSelect(): void {
