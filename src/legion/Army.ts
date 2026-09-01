@@ -34,10 +34,17 @@ import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode } fro
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
 
+/**
+ * 行军路点。`sea` 是路网给的**这一段属于海路还是陆路**（RoadRegistry.GraphEdge.isSea），
+ * 军团的陆军/海军形态直接按它定 —— 见 `updateTerrainSpeed`。
+ * 没有这个字段 = 不是沿路网走的（战场集结、瞬移、存档旧数据），回落到海陆掩膜采样。
+ */
+export type MarchPoint = LatLng & { sea?: boolean };
+
 export class Army implements IBattleUnit {
     private map: GameMap;
     private position: LatLng;
-    private destination: LatLng;
+    private destination: MarchPoint;
     private targetCity: any;
     /** 攻城目标城 id（SiegeManager 攻城开始时对主攻+参战攻方设置；战斗结束不清——城破后 5s 城图缩回窗口
      *  外推仍需反查城图，残留由 isCitySiegeZoomed 判定自然兜底；GlobalUnitRenderer 攻城外推反查城图用，2026-08-04 修复外推死代码） */
@@ -79,7 +86,7 @@ export class Army implements IBattleUnit {
     }
 
     // Path movement
-    private pathQueue: LatLng[] = [];
+    private pathQueue: MarchPoint[] = [];
 
     private marker: L.Polygon | null = null;
     private label: L.Marker | null = null;
@@ -129,7 +136,7 @@ export class Army implements IBattleUnit {
      * 🔴 [2026-09-01 修「海上行军一颤一颤」] 55°/s → 120°/s。
      * 55°/s 时最小转弯半径 0.31°，而海路相邻顶点中位间距只有 0.54° —— 转弯半径接近
      * 航段本身，船永远对不准下一个路点，`NAVAL_MIN_FORWARD_FACTOR` 常年压在 0.12，
-     * 离线验算（scratch/_sim_naval_march.mts）实测中位步距只有满速的 13.6%、
+     * 离线验算（scratch/sim_naval_march.mts）实测中位步距只有满速的 13.6%、
      * 全程耗时是理论直线的 3.08 倍。120°/s 起半径降到 0.14°，中位步距回到满速、
      * 全程 ×1.05，船仍走可见弧线而不是原地掉头。
      */
@@ -158,6 +165,8 @@ export class Army implements IBattleUnit {
     private seaFlipDist: number = 0;
     /** 反向判定已持续的游戏秒（原地不动时的兜底） */
     private seaFlipElapsed: number = 0;
+    /** 上一帧所在行进段的海路标记（见 currentLegSea）：用来识别「刚踏上陆路段」= 上岸那一下 */
+    private prevLegSea: boolean | null = null;
     /** 上一次海陆采样时的位置，用来算每帧位移 */
     private prevSeaCheckPos: { lat: number; lng: number } | null = null;
     /**
@@ -685,7 +694,7 @@ export class Army implements IBattleUnit {
         // 🔴 [2026-09-01 修「海上行军一颤一颤」] 到达判定**绝不能用最小转弯半径当捕获半径**。
         //    旧写法 captureRadius = max(moveDist, minTurnRadius) = 0.31°（35 km），而海路
         //    相邻顶点中位间距只有 0.54° —— 船走到离路点 35 km 就被瞬移到点上，
-        //    等于每段航程有一半多是「跳」过去的。离线验算（scratch/_sim_naval_march.mts）：
+        //    等于每段航程有一半多是「跳」过去的。离线验算（scratch/sim_naval_march.mts）：
         //    单帧最大位移 0.3124° = 正常步距的 39 倍，全程 76 次瞬移 —— 这就是主人看到的颤抖。
         //    现在捕获半径只按本帧步距；终点额外给 NAVAL_FINAL_SNAP_DEG(≈2 km) 贴齐，
         //    远小于攻城到达判定 0.2°，不影响任何抵达逻辑。
@@ -787,15 +796,34 @@ export class Army implements IBattleUnit {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
 
-        // 海陆贴图去抖（主人 2026-08-04 定「宁可迟钝也不要频繁切换」→ 08-29 再「B+A 区域投票+迟滞」）：
-        // 军团沿海岸线行军时单点 isSeaAt 会在海/陆边界反复抖（海岸线锯齿），直接赋值会让贴图
-        // 在陆军方阵↔三船阵之间来回横跳。两层保险：
-        //   ① 区域多数投票（isSeaAtMajority 九宫格 9 点，水域多数才算海）—— 从根上平滑锯齿；
-        //   ② 迟滞（反向判定累计走出 SEA_FLIP_CONFIRM_DEG 或过 SEA_FLIP_CONFIRM_SEC 才翻转）—— 兜底。
+        // 海陆形态去抖，三层（2026-09-01 主人定「按路线判定·港口登船」后的现状）：
+        //   ⓪ **路线判定**（下面那段，主力）：走海路段就是海军、走陆路段就是陆军，段内恒定；
+        //   ① 区域多数投票（isSeaAtMajority 九宫格 9 点，水域多数才算海）—— 平滑海岸线锯齿；
+        //   ② 迟滞（反向判定累计走出 SEA_FLIP_CONFIRM_DEG 或过 SEA_FLIP_CONFIRM_SEC 才翻转）。
+        // ①② 现在只服务「不沿路网走」的情形：战场集结、被推下海、瞬移、到站停着。
+        // 主人 2026-08-04 的老话仍然算数：宁可迟钝，也不要频繁切换。
         const step = this.prevSeaCheckPos
             ? Math.hypot(pos.lat - this.prevSeaCheckPos.lat, pos.lng - this.prevSeaCheckPos.lng)
             : 0;
         this.prevSeaCheckPos = { lat: pos.lat, lng: pos.lng };
+
+        // 🔴 [2026-09-01 主人定「按路线判定·港口登船」] 形态优先跟着**走的是哪条路**：
+        //    路网给的 `sea` 标记（RoadRegistry.GraphEdge.isSea）一段之内恒定，海路两端必是
+        //    港口城 —— 登船/上岸只发生在港口，海岸线锯齿再碎也抖不起来，迟滞对它无意义。
+        //      · 踏上海路段 → 当场登船，整段锁死海军形态（下面的采样根本不跑）；
+        //      · 踏上陆路段 → 当场上岸，但**只强制这一下**，之后仍放行采样 + 迟滞 ——
+        //        万一哪条「陆路」其实跨着水面（跨海峡的边），军团还能靠迟滞翻成船，
+        //        不至于以陆军形态泡在海里、还丢掉 `isOnSea` 带来的沿岸 ZOC 免疫。
+        const legSea = this.currentLegSea();
+        const legChanged = legSea !== this.prevLegSea;
+        this.prevLegSea = legSea;
+        if (legSea === true || (legSea === false && legChanged)) {
+            this.isOnSea = legSea;
+            this.seaFlipDist = 0;
+            this.seaFlipElapsed = 0;
+            this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+            return;
+        }
 
         const rawSea = LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng);
         if (rawSea === this.isOnSea) {
@@ -815,11 +843,27 @@ export class Army implements IBattleUnit {
             }
         }
 
+        this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+    }
+
+    /**
+     * 当前行进段是不是海路：`null` = 这一段不是沿路网走的（形态交回掩膜采样）。
+     * 用 `destination`（下一个路点）代表「正在走的这一段」；已经到站停着的军团不算，
+     * 免得停在港口的军团被上一段的海路标记按住不变回陆军。
+     */
+    private currentLegSea(): boolean | null {
+        if (this.hasArrived) return null;
+        const flag = this.destination?.sea;
+        return typeof flag === 'boolean' ? flag : null;
+    }
+
+    /** 海/陆形态确定之后的共同收尾：船型锁 → 速度目标 → 平滑 → 同步渲染层。 */
+    private applySeaOrLandSpeed(wasOnSea: boolean, pos: LatLng, deltaTime: number): void {
         // 船型锁：登船（上岸→海）当刻按兵力定船，锁定整航程；上岸清空。
         //   （已在海上却无锁，如中途注册的情形，也补一次锁，防回退到实时算法闪图。）
         if (this.isOnSea) {
             if (!wasOnSea || this.navalShipTierLock === null) {
-                this.navalShipTierLock = getNavalShipAssetId(this.getTroops());
+                this.navalShipTierLock = getNavalShipAssetId(this.getTroops(), this.cultureRegion, this.getFactionId());
             }
         } else if (this.navalShipTierLock !== null) {
             this.navalShipTierLock = null;
@@ -1180,7 +1224,7 @@ export class Army implements IBattleUnit {
         return true;
     }
 
-    public moveAlongPath(path: LatLng[]): void {
+    public moveAlongPath(path: MarchPoint[]): void {
         if (path.length === 0) return;
 
         // clone to avoid side effects；滤掉坏点，避免一路写进 NaN

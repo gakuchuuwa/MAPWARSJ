@@ -41050,23 +41050,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "休达-加的斯",
-                type: "road",
-                id: "road_city_xiuta_city_jiadisi_1785580167884",
-                startConnection: "city_xiuta",
-                endConnection: "city_jiadisi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-5.31, 35.89],
-                    [-6.28, 36.52],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "加的斯-塞维利亚",
                 type: "road",
                 id: "road_city_jiadisi_city_seville_1785580179095",
@@ -43737,61 +43720,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "卡利亚里-巴勒莫",
-                type: "road",
-                id: "road_city_cagliari_city_palermo_1785581827397",
-                startConnection: "city_cagliari",
-                endConnection: "city_palermo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [9.12, 39.22],
-                    [13.36, 38.11],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "卡利亚里-罗马",
-                type: "road",
-                id: "road_city_cagliari_city_luoma_1785581836317",
-                startConnection: "city_cagliari",
-                endConnection: "city_luoma"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [9.12, 39.22],
-                    [9.816284179687502, 39.16414104768742],
-                    [9.962499999999999, 39.89],
-                    [10.805, 40.56],
-                    [12.49, 41.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "卡利亚里-迦太基",
-                type: "road",
-                id: "road_city_cagliari_city_jiataji_1785581859256",
-                startConnection: "city_cagliari",
-                endConnection: "city_jiataji"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [9.12, 39.22],
-                    [10.228271484375002, 38.0091482264894],
-                    [10.32, 36.85],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "切尔卡瑟-佩列斯拉夫",
                 type: "road",
                 id: "road_city_cherkasy_city_peilieyasilafu_1785581892612",
@@ -45615,33 +45543,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "赫尔松涅斯-阿克曼",
-                type: "road",
-                id: "road_city_heersongniesi_city_akeman_1785582793756",
-                startConnection: "city_heersongniesi",
-                endConnection: "city_akeman"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [33.49, 44.61],
-                    [33.20363636363636, 44.75363636363636],
-                    [32.91727272727273, 44.89727272727273],
-                    [32.63090909090909, 45.04090909090909],
-                    [32.344545454545454, 45.18454545454545],
-                    [32.05818181818182, 45.32818181818182],
-                    [31.771818181818183, 45.47181818181818],
-                    [31.485454545454544, 45.61545454545455],
-                    [31.19909090909091, 45.75909090909091],
-                    [30.912727272727274, 45.90272727272727],
-                    [30.626363636363635, 46.04636363636364],
-                    [30.34, 46.19],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卡法-特拉布宗",
                 type: "road",
                 id: "road_city_kafa_city_telabuzong_1785582811094",
@@ -45707,204 +45608,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [29.445789473684208, 41.38894736842105],
                     [29.207894736842103, 41.199473684210524],
                     [28.97, 41.01],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "迦太基-巴勒莫",
-                type: "road",
-                id: "road_city_jiataji_city_palermo_1785583175534",
-                startConnection: "city_jiataji",
-                endConnection: "city_palermo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.32, 36.85],
-                    [11.84, 37.480000000000004],
-                    [12.4749755859375, 37.97884504049713],
-                    [13.36, 38.11],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "巴勒莫-罗马",
-                type: "road",
-                id: "road_city_palermo_city_luoma_1785583208984",
-                startConnection: "city_palermo",
-                endConnection: "city_luoma"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [13.36, 38.11],
-                    [13.302, 38.36266666666667],
-                    [13.244, 38.61533333333333],
-                    [13.186, 38.868],
-                    [13.128, 39.120666666666665],
-                    [13.07, 39.373333333333335],
-                    [13.012, 39.626],
-                    [12.954, 39.87866666666667],
-                    [12.895999999999999, 40.13133333333333],
-                    [12.838, 40.384],
-                    [12.78, 40.63666666666666],
-                    [12.722, 40.88933333333333],
-                    [12.664, 41.141999999999996],
-                    [12.606, 41.394666666666666],
-                    [12.548, 41.647333333333336],
-                    [12.49, 41.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "热那亚-巴塞罗那",
-                type: "road",
-                id: "road_city_genoa_city_barcelona_1785583233269",
-                startConnection: "city_genoa",
-                endConnection: "city_barcelona"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [8.94, 44.4],
-                    [8.632272727272726, 44.26272727272727],
-                    [8.324545454545454, 44.125454545454545],
-                    [8.294677734375002, 43.77109381775651],
-                    [7.822265625000001, 43.6599240747891],
-                    [7.487182617187501, 43.56447158721811],
-                    [7.130126953125001, 43.45291889355465],
-                    [6.855468750000001, 43.213183300738876],
-                    [6.50390625, 43.03677585761058],
-                    [6.1962890625, 42.956422511073335],
-                    [5.916137695312501, 42.93631775765237],
-                    [5.555, 42.89],
-                    [5.247272727272727, 42.75272727272727],
-                    [4.9395454545454545, 42.61545454545455],
-                    [4.631818181818182, 42.47818181818182],
-                    [4.324090909090909, 42.34090909090909],
-                    [4.016363636363636, 42.20363636363636],
-                    [3.708636363636364, 42.06636363636364],
-                    [3.4009090909090904, 41.92909090909091],
-                    [3.1860351562500004, 41.7508241355329],
-                    [2.8839111328125004, 41.57025176609894],
-                    [2.5103759765625, 41.46742831254425],
-                    [2.17, 41.38],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "热那亚-罗马",
-                type: "road",
-                id: "road_city_genoa_city_luoma_1785583288606",
-                startConnection: "city_genoa",
-                endConnection: "city_luoma"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [8.94, 44.4],
-                    [9.193571428571428, 44.22142857142857],
-                    [9.447142857142858, 44.042857142857144],
-                    [9.700714285714286, 43.864285714285714],
-                    [9.954285714285714, 43.68571428571428],
-                    [10.207857142857144, 43.50714285714285],
-                    [10.244750976562502, 43.20917969039356],
-                    [10.541381835937502, 42.807491865911544],
-                    [10.72265625, 42.67839711889055],
-                    [10.903930664062502, 42.581399679665054],
-                    [11.118164062500002, 42.273244264402734],
-                    [11.4697265625, 42.18375873465217],
-                    [11.744384765625002, 41.99624282178583],
-                    [12.02178955078125, 41.85319643776675],
-                    [12.49, 41.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "加的斯-里斯本",
-                type: "road",
-                id: "road_city_jiadisi_city_lisiben_1785583409127",
-                startConnection: "city_jiadisi",
-                endConnection: "city_lisiben"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-6.28, 36.52],
-                    [-6.5175, 36.70333333333333],
-                    [-7.036743164062501, 36.677230602346214],
-                    [-7.360839843750001, 36.87522650673953],
-                    [-7.778320312500001, 36.89719446989036],
-                    [-8.201293945312502, 36.89280138293986],
-                    [-8.624267578125002, 36.89719446989036],
-                    [-9.201049804687502, 36.914764288955936],
-                    [-9.244995117187502, 37.85316995894978],
-                    [-9.118652343750002, 38.12591462924157],
-                    [-9.135131835937502, 38.29424797320529],
-                    [-9.396057128906252, 38.528830289587695],
-                    [-9.13, 38.72],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "巴伦西亚-阿尔及尔",
-                type: "road",
-                id: "road_city_valencia_city_aerjier_1785583474916",
-                startConnection: "city_valencia",
-                endConnection: "city_aerjier"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-0.37, 39.47],
-                    [3.05, 36.75],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "巴塞罗那-阿尔及尔",
-                type: "road",
-                id: "road_city_barcelona_city_aerjier_1785583494434",
-                startConnection: "city_barcelona",
-                endConnection: "city_aerjier"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [2.17, 41.38],
-                    [2.2686767578125004, 39.05758374935667],
-                    [3.05, 36.75],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "锡拉库萨-班加西",
-                type: "road",
-                id: "road_city_syracuse_city_banjiaxi_1785583715131",
-                startConnection: "city_syracuse",
-                endConnection: "city_banjiaxi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [15.28, 37.07],
-                    [20.06, 32.11],
                 ]
             }
         },
@@ -46072,50 +45775,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "科孚-锡拉库萨",
-                type: "road",
-                id: "road_city_kefu_city_syracuse_1785674205102",
-                startConnection: "city_kefu",
-                endConnection: "city_syracuse"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [19.92, 39.62],
-                    [15.28, 37.07],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "那不勒斯-巴勒莫",
-                type: "road",
-                id: "road_city_naples_city_palermo_1785674213715",
-                startConnection: "city_naples",
-                endConnection: "city_palermo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [14.26, 40.85],
-                    [14.178181818181818, 40.60090909090909],
-                    [14.096363636363636, 40.35181818181818],
-                    [14.014545454545454, 40.10272727272727],
-                    [13.932727272727272, 39.85363636363636],
-                    [13.85090909090909, 39.60454545454545],
-                    [13.76909090909091, 39.35545454545455],
-                    [13.687272727272727, 39.10636363636364],
-                    [13.605454545454545, 38.85727272727273],
-                    [13.523636363636363, 38.60818181818182],
-                    [13.441818181818181, 38.35909090909091],
-                    [13.36, 38.11],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "阿卡-大马士革",
                 type: "road",
                 id: "road_city_ake_city_damasikusi_1785732660277",
@@ -46228,61 +45887,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [36.129034642670625, 36.00873603542095],
                     [36.12491022045383, 36.03760699093853],
                     [36.16, 36.2],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "锡拉库萨-马耳他",
-                type: "road",
-                id: "road_city_syracuse_city_malta_1785732845840",
-                startConnection: "city_syracuse",
-                endConnection: "city_malta"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [15.28, 37.07],
-                    [15.218811035156252, 36.39475669987386],
-                    [14.44, 35.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "马耳他-的黎波里",
-                type: "road",
-                id: "road_city_malta_city_deliboli_1785732857234",
-                startConnection: "city_malta",
-                endConnection: "city_deliboli"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [14.44, 35.9],
-                    [14.533027594678668, 35.8168732691407],
-                    [13.19, 32.88],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "马耳他-迦太基",
-                type: "road",
-                id: "road_city_malta_city_jiataji_1785732866684",
-                startConnection: "city_malta",
-                endConnection: "city_jiataji"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [14.44, 35.9],
-                    [12.379999999999999, 36.375],
-                    [11.074820149760473, 37.163769066999905],
-                    [10.32, 36.85],
                 ]
             }
         },
@@ -47439,26 +47043,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阿尔及尔-卡利亚里",
-                type: "road",
-                id: "road_city_aerjier_city_cagliari_1785812520507",
-                startConnection: "city_aerjier",
-                endConnection: "city_cagliari"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [3.05, 36.75],
-                    [6.084999999999999, 37.985],
-                    [7.602499999999999, 38.6025],
-                    [9.110412597656252, 38.724090458956965],
-                    [9.12, 39.22],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "基辅-佩列斯拉夫",
                 type: "road",
                 id: "road_city_jifu_city_peilieyasilafu_1785830428799",
@@ -48555,48 +48139,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阿尔及尔-休达",
-                type: "road",
-                id: "road_city_aerjier_city_xiuta_1785988754960",
-                startConnection: "city_aerjier",
-                endConnection: "city_xiuta"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [3.05, 36.75],
-                    [2.7284615384615383, 36.716923076923074],
-                    [2.4279785156250004, 36.73668306473141],
-                    [2.1313476562500004, 36.758690821098426],
-                    [1.8127441406250002, 36.771892444961026],
-                    [1.4694213867187502, 36.74108512094412],
-                    [1.1398315429687502, 36.70365959719456],
-                    [0.7882690429687501, 36.65079252503471],
-                    [0.46966552734375006, 36.5581877663607],
-                    [0.1561538461538463, 36.45230769230769],
-                    [-0.16538461538461569, 36.41923076923077],
-                    [-0.4869230769230768, 36.386153846153846],
-                    [-0.6069946289062501, 36.20439070158873],
-                    [-0.9915161132812501, 36.049098959065645],
-                    [-1.4419555664062502, 35.97133794592998],
-                    [-1.8731689453125002, 36.07352228885536],
-                    [-2.094615384615385, 36.22076923076923],
-                    [-2.416153846153846, 36.18769230769231],
-                    [-2.737692307692307, 36.15461538461538],
-                    [-3.0592307692307683, 36.121538461538464],
-                    [-3.380769230769231, 36.08846153846154],
-                    [-3.7023076923076923, 36.05538461538462],
-                    [-3.9276123046875004, 35.88014896488361],
-                    [-4.295654296875001, 35.71083783530009],
-                    [-4.718627929687501, 35.85343961959182],
-                    [-4.9884615384615385, 35.92307692307693],
-                    [-5.31, 35.89],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "巴库-第比利斯",
                 type: "road",
                 id: "road_city_baku_city_dibilisi_1786063761994",
@@ -49268,24 +48810,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [19.92, 39.62],
                     [20.657043457031254, 38.955137225429574],
                     [20.98, 39.16],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "塔兰托-科孚",
-                type: "road",
-                id: "road_city_talanduo_city_kefu_1787063229136",
-                startConnection: "city_talanduo",
-                endConnection: "city_kefu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [17.24, 40.47],
-                    [17.687988281250004, 39.72620102617506],
-                    [19.92, 39.62],
                 ]
             }
         },
@@ -55384,31 +54908,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "瓦尔纳-君士坦丁堡",
-                type: "road",
-                id: "road_city_waerna_city_junshitandingbao_1787902223546",
-                startConnection: "city_waerna",
-                endConnection: "city_junshitandingbao"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [27.915, 43.214],
-                    [28.03222222222222, 42.96911111111111],
-                    [28.149444444444445, 42.724222222222224],
-                    [28.266666666666666, 42.47933333333333],
-                    [28.383888888888887, 42.23444444444444],
-                    [28.50111111111111, 41.989555555555555],
-                    [28.618333333333332, 41.74466666666667],
-                    [28.735555555555553, 41.49977777777777],
-                    [28.852777777777778, 41.254888888888885],
-                    [28.97, 41.01],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "凯鲁万-杰姆",
                 type: "road",
                 id: "road_city_kailuwan_city_jiemu_1787902246924",
@@ -61073,6 +60572,95 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [-89.665606, 20.209225],
                     [-89.663869, 20.233538],
                     [-89.771, 20.359],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里斯本-科尔多瓦",
+                type: "road",
+                id: "road_city_lisiben_city_cordoba_1788228380087",
+                startConnection: "city_lisiben",
+                endConnection: "city_cordoba"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-9.13, 38.72],
+                    [-9.058892, 38.576347],
+                    [-9.023401, 38.598298],
+                    [-8.871055, 38.571616],
+                    [-8.819039, 38.569545],
+                    [-8.758266, 38.587739],
+                    [-8.6242, 38.583673],
+                    [-8.570161, 38.599978],
+                    [-8.422703, 38.623481],
+                    [-8.317722, 38.610863],
+                    [-8.269176, 38.617245],
+                    [-8.24702, 38.635154],
+                    [-8.191368, 38.643945],
+                    [-8.171473, 38.638637],
+                    [-8.153635, 38.624391],
+                    [-8.055649, 38.584735],
+                    [-8.021443, 38.587226],
+                    [-7.908524, 38.605893],
+                    [-7.82345, 38.685508],
+                    [-7.765448, 38.722802],
+                    [-7.721217, 38.731383],
+                    [-7.672938, 38.773996],
+                    [-7.619315, 38.79897],
+                    [-7.563788, 38.791421],
+                    [-7.507729, 38.789263],
+                    [-7.367691, 38.838118],
+                    [-7.236922, 38.859229],
+                    [-7.223749, 38.868773],
+                    [-7.216363, 38.882155],
+                    [-7.172838, 38.898827],
+                    [-7.096951, 38.868516],
+                    [-7.07062, 38.863307],
+                    [-7.009164, 38.870978],
+                    [-6.970287, 38.861866],
+                    [-6.910344, 38.877529],
+                    [-6.887643, 38.873918],
+                    [-6.880997, 38.819457],
+                    [-6.869029, 38.804634],
+                    [-6.814501, 38.709274],
+                    [-6.667808, 38.642201],
+                    [-6.625193, 38.615413],
+                    [-6.554996, 38.538126],
+                    [-6.513581, 38.506555],
+                    [-6.456609, 38.473497],
+                    [-6.386783, 38.412023],
+                    [-6.364437, 38.398256],
+                    [-6.3088, 38.380581],
+                    [-6.207137, 38.35874],
+                    [-6.157423, 38.34369],
+                    [-6.100155, 38.313858],
+                    [-6.042388, 38.270859],
+                    [-6.013512, 38.254695],
+                    [-5.965863, 38.246971],
+                    [-5.921941, 38.256678],
+                    [-5.860013, 38.278274],
+                    [-5.820722, 38.28133],
+                    [-5.765756, 38.26992],
+                    [-5.673813, 38.291469],
+                    [-5.609801, 38.293954],
+                    [-5.479864, 38.266507],
+                    [-5.436016, 38.262418],
+                    [-5.391855, 38.267517],
+                    [-5.29784, 38.294771],
+                    [-5.257157, 38.298866],
+                    [-5.221379, 38.285892],
+                    [-5.16447, 38.233321],
+                    [-5.145371, 38.219799],
+                    [-5.066768, 38.188374],
+                    [-5.018753, 38.156389],
+                    [-4.920834, 38.120991],
+                    [-4.859995, 38.068642],
+                    [-4.821137, 38.041189],
+                    [-4.826063, 38.014425],
+                    [-4.77, 37.88],
                 ]
             }
         },

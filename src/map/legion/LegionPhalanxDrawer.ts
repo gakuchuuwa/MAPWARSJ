@@ -9,7 +9,7 @@ import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
 import type { FormationMode } from '../../types/CultureFormations';
-import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { getNavalShipDrawScale, getCultureNavalShip, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 
@@ -216,6 +216,23 @@ export class LegionPhalanxDrawer {
      * + DE 骑兵（DE_CAVALRY_TYPES）。
      * public：GlobalUnitRenderer 的编队判定（视觉框收缩系数）也用它，两处必须同源。
      */
+    /**
+     * 取死亡帧；素材没有 death 动作时回退到 idle。
+     * 🔴 [2026-09-01] DE 船只素材 41 套里有 28 套**没有 death 动作**（`npm run naval:sprite-audit`
+     *    会列出来）。原来直接 `currentSet.DEATH[dir]` 取到 undefined → 整格跳过绘制 →
+     *    船在阵亡那一刻**凭空消失**，没有下沉过程。
+     *    回退时必须**连 animState 一起退回 IDLE**：动态帧框（_meta.json 的 fw/帧数）是按
+     *    动作分别记的，拿 DEATH 的参数去切 IDLE 的雪碧图会切出错位的半张图。
+     */
+    private static pickDeathFrame(
+        set: { DEATH: HTMLImageElement[]; IDLE: HTMLImageElement[] },
+        dir: number,
+    ): { sprite: HTMLImageElement | undefined; state: PhalanxAnimState } {
+        const death = set.DEATH?.[dir] || set.DEATH?.[0];
+        if (death) return { sprite: death, state: 'DEATH' };
+        return { sprite: set.IDLE?.[dir] || set.IDLE?.[0], state: 'IDLE' };
+    }
+
     public static isCavalryType(type: string): boolean {
         return (
             type === 'lancer' ||
@@ -1519,8 +1536,9 @@ export class LegionPhalanxDrawer {
 
             if (slot.state === 'DYING' || slot.state === 'DEAD') {
                 const deathDir = slot.deathDirection ?? direction;
-                rawSprite = currentSet.DEATH[deathDir] || currentSet.DEATH[0];
-                animState = 'DEATH';
+                const picked = LegionPhalanxDrawer.pickDeathFrame(currentSet, deathDir);
+                rawSprite = picked.sprite;
+                animState = picked.state;
             } else if (state === 'DEATH') {
                 // [2026-05-30] 全局 DEATH 状态 (ArmyEditor 预览用)
                 // 每兵真随机朝向 (Math.random) + 起始时间
@@ -1529,8 +1547,9 @@ export class LegionPhalanxDrawer {
                     slot.deathDirection = Math.floor(Math.random() * 8);
                     slot.stateStartTime = tick;
                 }
-                rawSprite = currentSet.DEATH[slot.deathDirection] || currentSet.DEATH[0];
-                animState = 'DEATH';
+                const pickedGlobal = LegionPhalanxDrawer.pickDeathFrame(currentSet, slot.deathDirection);
+                rawSprite = pickedGlobal.sprite;
+                animState = pickedGlobal.state;
             } else if (effState === 'DEATH') {
                 // [2026-08-09 编队级阵亡] 编队独立死亡：首次进入把槽位转 DYING
                 // （设死亡朝向/起始帧），后续帧走 slot DYING/DEAD 分支播死亡动画 +
@@ -1553,8 +1572,9 @@ export class LegionPhalanxDrawer {
                     }
                 }
                 const deathDir = slot.deathDirection ?? direction;
-                rawSprite = currentSet.DEATH[deathDir] || currentSet.DEATH[0];
-                animState = 'DEATH';
+                const pickedSquad = LegionPhalanxDrawer.pickDeathFrame(currentSet, deathDir);
+                rawSprite = pickedSquad.sprite;
+                animState = pickedSquad.state;
             } else if (effState === 'DAMAGE') {
                 animState = 'DAMAGE';
                 rawSprite = currentSet.DAMAGE[effDir] || currentSet.DAMAGE[0];
@@ -1789,7 +1809,6 @@ export class LegionPhalanxDrawer {
                 //    放大到 0.64/0.60 让楔形肉眼可见。改此值须同步 getSquadSupportRadius / getSquadWidthFactor / debug depth。
                 const triSpacingX = item.drawParams.dw * 0.64;
                 const triSpacingY = item.drawParams.dh * 0.60;
-                // 旋转矩阵（与 getFormationOffset 同款）：三角偏移按阵内坐标算，再转到屏幕
                 const cAngle = (direction + 1) * Math.PI / 4;
                 const cCos = Math.cos(cAngle);
                 const cSin = Math.sin(cAngle);
@@ -1946,11 +1965,10 @@ export class LegionPhalanxDrawer {
     private static navalFormation(
         shipCount: number,
         mode: NavalFormationMode = 'auto',
+        shipId: NavalShipAssetId = 'LOU_CHUAN',
     ): { r: number; c: number; ship: NavalShipAssetId }[] {
-        const shipType = (i: number): NavalShipAssetId =>
-            i === 0 ? 'ship_large' : i <= 4 ? 'ship_medium' : 'ship_small';
         const formation: { r: number; c: number; ship: NavalShipAssetId }[] = [
-            { r: 0, c: 0, ship: 'ship_large' },
+            { r: 0, c: 0, ship: shipId },
         ];
 
         // [2026-08-20] 队形改为可配置（军团编辑器「海军阵型」），auto = 下面的旧行为逐像素不变。
@@ -1958,7 +1976,7 @@ export class LegionPhalanxDrawer {
             // 一字横阵：全队与航向垂直排开，舷侧齐射面最大。左右交替向外长，旗舰居中。
             for (let i = 1; i < shipCount; i++) {
                 const k = Math.ceil(i / 2);
-                formation.push({ r: 0, c: (i % 2 === 1 ? -k : k), ship: shipType(i) });
+                formation.push({ r: 0, c: (i % 2 === 1 ? -k : k), ship: shipId });
             }
             return formation;
         }
@@ -1966,21 +1984,21 @@ export class LegionPhalanxDrawer {
             // 楔形雁行：旗舰居前，后随向两翼斜后方展开（每多一对，后退一段、外扩一列）
             for (let i = 1; i < shipCount; i++) {
                 const k = Math.ceil(i / 2);
-                formation.push({ r: -k, c: (i % 2 === 1 ? -k * 0.6 : k * 0.6), ship: shipType(i) });
+                formation.push({ r: -k, c: (i % 2 === 1 ? -k * 0.6 : k * 0.6), ship: shipId });
             }
             return formation;
         }
         if (mode === 'column' || (mode === 'auto' && shipCount <= 4)) {
             // 单纵队：后随船依次向后排
             for (let i = 1; i < shipCount; i++) {
-                formation.push({ r: -i, c: 0, ship: shipType(i) });
+                formation.push({ r: -i, c: 0, ship: shipId });
             }
         } else {
             // 双列：后 4~7 艘分两列交错（左右各一行，最后单艘补左列）
             let r = 1;
             for (let i = 1; i < shipCount; i++) {
                 const col = (i % 2 === 1) ? -0.5 : 0.5;   // ±0.5 × 船宽 = 两列中心隔一个船宽
-                formation.push({ r: -r, c: col, ship: shipType(i) });
+                formation.push({ r: -r, c: col, ship: shipId });
                 if (i % 2 === 0) r += 1;
             }
         }
@@ -2178,10 +2196,15 @@ export class LegionPhalanxDrawer {
         //   navalState.ships 保持编队满员逐舰沉没（DYING 渐隐→DEAD），若这里仍按当前兵力
         //   shipCountForTroops(troops) 现算，编队会随 troops 缩短、队尾沉没中的船被直接裁掉
         //   不渲染 = 突然消失。无 unitId/首次无 state 时才按 troops 兜底。
-        const shipCount = navalState?.shipCount ?? shipCountForTroops(troops);
-        const formation = this.navalFormation(shipCount, navalMode);
+        // 确定文化专属战舰（每文化一种，舰队统一）
+        const targetShipId: NavalShipAssetId = (lockedShipId && lockedShipId !== 'ship_small' && lockedShipId !== 'ship_medium' && lockedShipId !== 'ship_large')
+            ? lockedShipId
+            : getCultureNavalShip((FACTION_COMPOSITIONS as any)[factionId]?.region, factionId);
 
-        // 按三档船型各备一份贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
+        const shipCount = navalState?.shipCount ?? shipCountForTroops(troops);
+        const formation = this.navalFormation(shipCount, navalMode, targetShipId);
+
+        // 按所需船型准备贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
         interface NavalTypeDraw {
             set: NonNullable<ReturnType<typeof LegionPhalanxDrawer.getUnitAssets>>;
             totalFrames: number;
@@ -2195,11 +2218,12 @@ export class LegionPhalanxDrawer {
             dynEntry?: { dirs16?: boolean; frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> };
         }
         const typeDraws = new Map<NavalShipAssetId, NavalTypeDraw>();
-        for (const typeId of ['ship_small', 'ship_medium', 'ship_large'] as const) {
+        const neededShips = Array.from(new Set(formation.map(f => f.ship)));
+        for (const typeId of neededShips) {
             const set = this.unitSpriteCache.get(typeId);
             const sample = set?.IDLE[direction] || set?.IDLE[0];
             if (!set || !sample?.complete || sample.naturalWidth === 0) {
-                this.ensureNavalAssetsLoading();
+                this.ensureUnitTypeLoading(typeId);
                 return;
             }
             // 🔴 DE 动态帧框（hotspot 对齐）：每向 box 尺寸不同，用 _meta.json 的 fw/fh/hx/hy + 统一缩放 s。
@@ -2219,10 +2243,11 @@ export class LegionPhalanxDrawer {
             }
         }
 
-        // 编队间距以旗舰（大船）尺寸为基准。
+        // 编队间距以旗舰（首舰）尺寸为基准。
         // 🔴 [2026-08-19 修·叠船] 纵向间距基准 = 船长（fw）× 1.15，配 formation 的 r 步进 1.0 → 船距 1.15 船长。
-        // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心正好隔一个船宽，刚好不叠。
-        const flagship = typeDraws.get('ship_large')!;
+        // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心隔一个船宽，刚好不叠。
+        const flagship = typeDraws.get(targetShipId) || typeDraws.values().next().value;
+        if (!flagship) return;
         const flagDyn = flagship.dyn ? this.metaDirFor(flagship.dynEntry, direction, true) : undefined;
         const flagshipW = flagDyn ? flagDyn.fw * flagship.s! : flagship.w;
         const shipDepth = flagshipW * 1.15;
