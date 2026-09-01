@@ -37,7 +37,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     you: { name: '上谷突骑', tier: 1 },
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
     changshan: { name: '倒马寒锋', tier: 3 },
-    xianyu: { name: '赤帜轻骑', tier: 2 },
+    xianyu: { name: '赤帜骑兵', tier: 2 },
     linhu: { name: '山西镇骑', tier: 3 },
     lingqiu: { name: '胡服骑射', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）

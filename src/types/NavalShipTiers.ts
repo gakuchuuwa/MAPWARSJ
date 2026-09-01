@@ -140,12 +140,30 @@ for (const row of CULTURE_SHIP) {
     for (const r of row.regions) if (!REGION_TO_SHIP.has(r)) REGION_TO_SHIP.set(r, row.ship);
 }
 
+import { CITIES_V2 } from '../data/cities_v2';
+import { getCityRegion } from '../systems/RegionSystem';
+
+const _factionRegionCache = new Map<string, string>();
+
+export function getFactionCultureRegion(factionId: string): string | undefined {
+    if (_factionRegionCache.has(factionId)) return _factionRegionCache.get(factionId) || undefined;
+    const city = CITIES_V2.find((c) => c.factionId === factionId);
+    if (!city) {
+        _factionRegionCache.set(factionId, '');
+        return undefined;
+    }
+    const region = city.region || getCityRegion({ latitude: city.lat, longitude: city.lng });
+    _factionRegionCache.set(factionId, region);
+    return region;
+}
+
 /** 兜底：区未登记时用通用桨帆战船（不是楼船 —— 别让欧洲势力默认开中国船） */
 const FALLBACK_SHIP = 'WAR_GALLEY';
 
-export function getCultureNavalShip(region?: string | null, _factionId?: string | null): NavalShipAssetId {
-    if (!region) return FALLBACK_SHIP;
-    return REGION_TO_SHIP.get(region.toUpperCase()) ?? FALLBACK_SHIP;
+export function getCultureNavalShip(region?: string | null, factionId?: string | null): NavalShipAssetId {
+    const resolvedRegion = region ?? (factionId ? getFactionCultureRegion(factionId) : null);
+    if (!resolvedRegion) return FALLBACK_SHIP;
+    return REGION_TO_SHIP.get(resolvedRegion.toUpperCase()) ?? FALLBACK_SHIP;
 }
 
 /** 供验收脚本读的分配明细（区 → 船 + 史实依据） */

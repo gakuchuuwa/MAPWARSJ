@@ -27,7 +27,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── 2026-06-16 新增：青藏大区平衡补全（23支） ──
   yangtong: { name: '羊同勇士', tier: 3 },  // 象雄（羊同）古国，佛教传入前统治西藏的庞大文明（苯教发源地），极度硬核的高原古文明代表，升入T3知名
   supi: { name: '苏毗女卫', tier: 3 }, // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-  xiaobolu: { name: '勃律轻骑', tier: 4 },
+    xiaobolu: { name: '勃律骑兵', tier: 4 },
     gandenpozhang: { name: '扎敦卫藏兵', tier: 4 },
   gaxa: { name: '噶厦代本', tier: 4 },
     ladakh: { name: '玛域雪山卫', tier: 3 },

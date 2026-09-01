@@ -1462,28 +1462,7 @@ export const SPRITE_PATHS = {
             DEATH: [653, 654, 655, 656, 657, 658, 659, 660].map(id => `/SUCAI/S10DB/${id}-1.png`),
             CHARGE: [637, 638, 639, 640, 641, 642, 643, 644].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
-        'ship_small': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/move_${d}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/attack_${d}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
-            DEATH: [],
-        },
-        'ship_medium': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/move_${d}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/attack_${d}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
-            DEATH: [],
-        },
-        'ship_large': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/move_${d}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/attack_${d}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ANT_ELITE_GALLEY/idle_${d}.png`),
-            DEATH: [],
-        },
-        // ── 12 文化圈专属历史战舰（对照 DE & 史实） ────────────────
+        // ── 各文化圈专属历史战舰（对照 DE & 史实） ────────────────
         'ELITE_CARAVEL': {
             // 西班牙无敌舰队精锐
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/move_${d}.png`),

@@ -190,10 +190,9 @@ export class Army implements IBattleUnit {
      */
     private static readonly SEA_FLIP_CONFIRM_SEC = 3.0;
     /**
-     * 海上船型锁（2026-07-06）：登船那一刻按兵力定好小/中/大船，锁定整个航程；
-     * 上岸清空，下次登船再按当时兵力重定。避免航行中折损跨过兵力档位、船贴图当场缩水的怪象。
+     * 海上文化船图锁：登船时确定，锁定整个航程；上岸清空。
      */
-    public navalShipTierLock: NavalShipAssetId | null = null;
+    public navalShipAssetLock: NavalShipAssetId | null = null;
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
@@ -862,11 +861,11 @@ export class Army implements IBattleUnit {
         // 船型锁：登船（上岸→海）当刻按兵力定船，锁定整航程；上岸清空。
         //   （已在海上却无锁，如中途注册的情形，也补一次锁，防回退到实时算法闪图。）
         if (this.isOnSea) {
-            if (!wasOnSea || this.navalShipTierLock === null) {
-                this.navalShipTierLock = getNavalShipAssetId(this.getTroops(), this.cultureRegion, this.getFactionId());
+            if (!wasOnSea || this.navalShipAssetLock === null) {
+                this.navalShipAssetLock = getNavalShipAssetId(this.getTroops(), this.cultureRegion, this.getFactionId());
             }
-        } else if (this.navalShipTierLock !== null) {
-            this.navalShipTierLock = null;
+        } else if (this.navalShipAssetLock !== null) {
+            this.navalShipAssetLock = null;
         }
 
         // 水域：登船后全军统一速度（兵种加成失效）
@@ -917,7 +916,7 @@ export class Army implements IBattleUnit {
 
         if (this.renderer) {
             this.renderer.isOnSea = this.isOnSea;
-            this.renderer.navalShipTierLock = this.navalShipTierLock;
+            this.renderer.navalShipAssetLock = this.navalShipAssetLock;
         }
     }
 

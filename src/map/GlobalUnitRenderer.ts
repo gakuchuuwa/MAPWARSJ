@@ -106,8 +106,8 @@ export interface IAnimatedUnit extends IRenderable {
     formationMode?: FormationMode | null; // [NEW] 阵型（渲染层据此定布局）
     /** 海域 hex：渲染船贴图而非陆地方阵 */
     isOnSea?: boolean;
-    /** 登船时锁定的船型（小/中/大）；null/缺省=按实时兵力算 */
-    navalShipTierLock?: NavalShipAssetId | null;
+    /** 登船时锁定的文化船图。 */
+    navalShipAssetLock?: NavalShipAssetId | null;
     /** 海军实际船首航向（弧度；lat=cos、lng=sin），由 Army 航行计算提供。 */
     navalHeadingRad?: number | null;
     /** ArmyEditor：强制模拟海上 */
@@ -2447,7 +2447,7 @@ export class GlobalUnitRenderer {
                     troops,
                     Date.now(),
                     unit.factionId || 'zhonghua',
-                    unit.navalShipTierLock ?? null,
+                    unit.navalShipAssetLock ?? null,
                     unit.id ?? '',
                     navalTrail,
                     navalHeadingDeg,

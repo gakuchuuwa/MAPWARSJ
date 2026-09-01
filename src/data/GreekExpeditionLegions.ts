@@ -32,4 +32,5 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     yilisi: { name: '埃利斯战车', tier: 4 },
     maqidun: { name: '伙伴骑兵', tier: 0 },
     xiaofulijiya: { name: '希腊雇佣兵', tier: 2 },
+    jileinaijia: { name: '昔兰尼骑兵', tier: 4 },
 };
