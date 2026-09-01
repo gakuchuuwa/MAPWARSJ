@@ -481,6 +481,30 @@ export default defineConfig({
                     });
                 });
 
+                // [2026-09-01 卡死诊断] 军团静止看门狗落盘（src/debug/StuckLegionWatchdog.ts）：
+                // 写 scratch/stuck_legion_latest.json + 追加 stuck_legion_log.jsonl，给 AI 直接读。
+                server.middlewares.use('/api/stuck-legion', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        const body = Buffer.concat(chunks).toString('utf-8');
+                        try {
+                            fs.writeFileSync(path.resolve(__dirname, 'scratch/stuck_legion_latest.json'), body, 'utf-8');
+                            fs.appendFileSync(
+                                path.resolve(__dirname, 'scratch/stuck_legion_log.jsonl'),
+                                JSON.stringify(JSON.parse(body)) + String.fromCharCode(10),
+                                'utf-8',
+                            );
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 server.middlewares.use('/api/scene13-probe', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
