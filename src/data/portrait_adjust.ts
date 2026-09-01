@@ -1603,9 +1603,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/panjun/dashun_lizicheng.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
-            "offsetY": -18
+            "offsetY": -15
         },
         "/assets/panjun/__闲置__PANJUN_04.png": {
             "scale": 0.97,
@@ -4898,7 +4898,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 52
         },
         "/assets/GERMANIC/aersasi_youlian.png": {
-            "scale": 0.8904,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -5263,7 +5263,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/GERMANIC/boximiya_yangjiesika.png": {
-            "scale": 0.9,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -5493,7 +5493,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/SLAVIC/bolan_yagaiwo.png": {
-            "scale": 1.17,
+            "scale": 1.21,
             "offsetX": 17,
             "offsetY": 15
         },
@@ -5548,7 +5548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/GERMANIC/ruishi_ciwenli.png": {
-            "scale": 0.87,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": 24
         },
@@ -6588,7 +6588,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/GERMANIC/pomeilaniya_bojisilafu.png": {
-            "scale": 1.19,
+            "scale": 1.25,
             "offsetX": 12,
             "offsetY": 29
         },
@@ -7586,6 +7586,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/SOUTHEAST_ASIA/__闲置__MALAY_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {

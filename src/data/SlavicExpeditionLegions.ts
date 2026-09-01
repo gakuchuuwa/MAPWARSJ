@@ -70,4 +70,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     saierweiya: { name: '杜尚兵团', tier: 2 },
     kuertaiya: { name: '瓦拉骑兵', tier: 3 },
     xiadunhe: { name: '罗斯亲兵', tier: 1 },
+    valois_angouleme: { name: '国王宪兵', tier: 1 },
 };

@@ -98,6 +98,7 @@ export const FACTIONS: Faction[] = [
   { id: 'xila', name: '阿提卡' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
   { id: 'xilagu', name: '西西里东' },
   { id: 'fulandesi', name: '阿图瓦' },
+
   { id: 'bogendi', name: '勃艮第' },
   { id: 'bulabante', name: '布拉班特' },
   { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
@@ -695,6 +696,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chagatai', name: '车师' },
 
 
+
            // 汗国深绿 - 察合台汗国(阿力麻里)
     { id: 'ogodei', name: '窝阔台' },
     // 波斯靛紫 - 伊儿汗国(玛拉固阿)
@@ -1275,6 +1277,7 @@ export const FACTIONS: Faction[] = [
     { id: 'huizhou', name: '会州' },
     { id: 'huizhou_d', name: '徽州' },
     { id: 'yiwu', name: '伊吾' },
+
     { id: 'pulei', name: '蒲类' },
 
     { id: 'duerbote', name: '杜尔伯特' },
@@ -1940,6 +1943,7 @@ export const FACTIONS: Faction[] = [
     { id: 'vidin_tsardom', name: '维丁国' },
     { id: 'gondarine', name: '贡德尔朝' },
     { id: 'valois_angouleme', name: '瓦卢瓦' },
+
     { id: 'samtskhe', name: '萨姆茨赫' },
     { id: 'tomara_gwalior', name: '托摩罗' },
     { id: 'tawantinsuyu', name: '塔万廷苏尤' },

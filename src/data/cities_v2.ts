@@ -2003,7 +2003,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 30000, region: 'CELTS' },
     { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 30000, region: 'LATIN' },
+    { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 20000, region: 'LATIN', mirror: true },
+
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 30000, region: 'GREEK' },
     { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '15世纪成为瓦拉几亚王侯驻地' },
@@ -2399,8 +2400,10 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
-    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 30000, region: 'WESTERN', note: '草原环线西南锚点；文化西域；明羁縻军事卫所' },
-    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 30000, region: 'WESTERN' },
+    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 20000, region: 'WESTERN', mirror: true },
+
+    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 20000, region: 'WESTERN', mirror: true },
+
 
 
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 30000, region: 'HEXI' },
@@ -3092,7 +3095,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'small_city', troops: 20000, region: 'BENGALIS' },
     { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 20000, region: 'BULGARIANS', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
     { id: 'city_fasil_fort', name: '法西尔堡', factionId: 'gondarine', lat: 12.6075, lng: 37.469, type: 'pass', troops: 20000, region: 'ETHIOPIANS', note: '贡德尔皇城法西尔盖比，法西里德创建的埃塞俄比亚皇都要塞' },
-    { id: 'city_chambord', name: '香波堡', factionId: 'valois_angouleme', lat: 47.616, lng: 1.517, type: 'pass', troops: 20000, region: 'FRANKS', note: '法国瓦卢瓦王朝弗朗索瓦一世营建的王家城堡' },
+    { id: 'city_chambord', name: '香波堡', factionId: 'valois_angouleme', lat: 47.616, lng: 1.517, type: 'pass', troops: 20000, region: 'SLAVIC' },
+
     { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 20000, region: 'GEORGIANS', note: '萨姆茨赫治所，拉巴提城堡所在地' },
     { id: 'city_gwalior_fort', name: '瓜廖尔堡', factionId: 'tomara_gwalior', lat: 26.231, lng: 78.169, type: 'pass', troops: 20000, region: 'GURJARAS', note: '托摩罗王朝都城要塞，曼辛格扩建宫堡' },
     { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'tawantinsuyu', lat: -13.1631, lng: -72.545, type: 'pass', troops: 20000, region: 'INCAS', note: '帕查库提时期营建的印加王家山城' },
