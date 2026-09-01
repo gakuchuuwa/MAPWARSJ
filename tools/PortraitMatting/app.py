@@ -680,4 +680,5 @@ with gr.Blocks(title="智能抠图工具", theme=gr.themes.Soft()) as demo:
                             outputs=batch_result)
 
 if __name__ == "__main__":
-    demo.launch(inbrowser=True)
+    # 固定端口 7861：gradio 默认抢 7860、被占才跳 7861，端口会漂，收藏的地址就失效。
+    demo.launch(server_name="127.0.0.1", server_port=7861, inbrowser=True)

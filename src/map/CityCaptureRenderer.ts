@@ -154,6 +154,9 @@ export class CityCaptureRenderer {
     private draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // 占城烟属于战略地图；独立战术场景（含战后 5 秒残局停留）期间不绘制。
+        if ((window as any).game?.battleScene?.isActive?.() === true) return;
+
         // [USER REQUEST] zoom <= 8（俯瞰全景）不显示占领烟雾特效，与 SiegeEffectRenderer 的火焰/攻城烟雾保持一致
         const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
         if (currentZoom <= 8) return;
