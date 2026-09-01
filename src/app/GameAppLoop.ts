@@ -247,12 +247,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 const followedArmy = legionManager.getLegionById(followedId);
 
                 // ── 自动缩放（ZoomController）──
-                // 规则见 ZoomController 文件头（2026-08-31 主人重定）：
-                //   跟随新军团 → 8；每场战斗结束 → 陆 9 / 海 10；战斗中冻结。
-                // 🔴 **必须无条件调用，不能包在 `!sceneActive` 里**：
-                //    战术战斗（独立画布）期间若不调，控制器的 `wasInBattle` 永远不会置 true，
-                //    战术打完那一下的「战斗结束」边沿就触发不了 —— 主人明确要求「战略战斗、
-                //    战术战斗，只要结束就切」。控制器内部自己有「战斗中冻结」，不会乱动镜头。
+                // 规则见 ZoomController 文件头（2026-09-01 主人重定）：
+                //   跟随新军团 → 8；战略地图上一开打就切（海战 10 / 陆地战 9，攻城算陆地战）；
+                //   战术层 13 期间冻结；战斗结束不再切。
+                // 无条件调用即可：控制器自己按「战术层是否激活」冻结，不会在 13 期间乱动镜头。
                 app.zoomController.tick();
 
                 if (!sceneActive) {

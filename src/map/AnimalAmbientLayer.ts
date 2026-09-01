@@ -45,7 +45,7 @@ interface AnimalEntry {
 // ── 可调参数 ──────────────────────────────────────────────────────────────
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
 const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
-const BIRD_DENSITY = 0.07;          // 格出现飞鸟的概率（与陆生动物一致）
+const BIRD_DENSITY = 0.015;         // 格出现飞鸟的概率（稀疏点缀，视野内偶见数只翱翔，不喧宾夺主）
 const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 // 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
 //    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
@@ -173,8 +173,23 @@ export class AnimalAmbientLayer {
         this.running = false;
     }
 
+    private landVisible = false;
+    private birdsVisible = true;
+
     public setVisible(visible: boolean): void {
         this.canvas.style.display = visible ? 'block' : 'none';
+    }
+
+    public setLandVisible(visible: boolean): void {
+        if (this.landVisible === visible) return;
+        this.landVisible = visible;
+        this.lastCellRange = null; // 触发重新撒点
+    }
+
+    public setBirdsVisible(visible: boolean): void {
+        if (this.birdsVisible === visible) return;
+        this.birdsVisible = visible;
+        this.lastCellRange = null; // 触发重新撒点
     }
 
     // ── 素材加载 ────────────────────────────────────────────────────────
@@ -282,7 +297,7 @@ export class AnimalAmbientLayer {
 
                 // 陆上动物
                 const lh = hash01(col, row, 1);
-                if (lh < LAND_DENSITY) {
+                if (this.landVisible && lh < LAND_DENSITY) {
                     const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
                     const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
                     const pos = { lat: clat + offLat, lng: clng + offLng };
@@ -297,7 +312,7 @@ export class AnimalAmbientLayer {
 
                 // 飞鸟
                 const bh = hash01(col, row, 2);
-                if (bh < BIRD_DENSITY) {
+                if (this.birdsVisible && bh < BIRD_DENSITY) {
                     const offLat = (hash01(col, row, 8) - 0.5) * CELL_DEG * 0.8;
                     const offLng = (hash01(col, row, 9) - 0.5) * CELL_DEG * 0.8;
                     const pos = { lat: clat + offLat, lng: clng + offLng };
@@ -401,6 +416,8 @@ export class AnimalAmbientLayer {
 
 let singleton: AnimalAmbientLayer | null = null;
 let visible = true;
+let landVisible = false;
+let birdsVisible = true;
 
 export function initializeAnimalAmbientLayer(gameMap: GameMap): AnimalAmbientLayer {
     if (singleton) return singleton;
@@ -418,6 +435,8 @@ export function initializeAnimalAmbientLayer(gameMap: GameMap): AnimalAmbientLay
         });
     }
     singleton.setVisible(visible);
+    singleton.setLandVisible(landVisible);
+    singleton.setBirdsVisible(birdsVisible);
     return singleton;
 }
 
@@ -428,4 +447,14 @@ export function getAnimalAmbientLayer(): AnimalAmbientLayer | null {
 export function setAnimalAmbientLayerVisible(nextVisible: boolean): void {
     visible = nextVisible;
     singleton?.setVisible(visible);
+}
+
+export function setLandAnimalVisible(nextVisible: boolean): void {
+    landVisible = nextVisible;
+    singleton?.setLandVisible(landVisible);
+}
+
+export function setFlyingAnimalVisible(nextVisible: boolean): void {
+    birdsVisible = nextVisible;
+    singleton?.setBirdsVisible(birdsVisible);
 }

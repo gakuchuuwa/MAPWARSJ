@@ -808,6 +808,7 @@ const _FIXED: Record<string, string> = {
     'bendou_d': '#245678',
     'heti': '#955020',
     'fulijiya': '#A06828',
+    'xiaofulijiya': '#9E6830', // 小弗里吉亚·达斯基利翁（赫勒斯滂古金褐）
     'ldiya': '#B88820',
     'pajiama': '#285E7B',
     'bitiniya': '#486078',

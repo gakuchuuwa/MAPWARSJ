@@ -9,8 +9,8 @@ import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { MonumentLayer } from './MonumentLayer';
 import { VegetationLayer } from './VegetationLayer';
-import { MarineLifeLayer } from './MarineLifeLayer';
-import { setAnimalAmbientLayerVisible } from './AnimalAmbientLayer';
+import { MarineLifeLayer, registerMarineLifeLayer } from './MarineLifeLayer';
+import { setAnimalAmbientLayerVisible, setLandAnimalVisible, setFlyingAnimalVisible } from './AnimalAmbientLayer';
 import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { gameLog } from '../utils/GameLogger';
@@ -201,6 +201,7 @@ export class GameMap {
 
         this.vegetationLayer = new VegetationLayer(this.map);
         this.marineLifeLayer = new MarineLifeLayer().addTo(this.map);
+        registerMarineLifeLayer(this.marineLifeLayer);
 
         if (import.meta.env.DEV) {
             this.addStyleControl();
@@ -679,8 +680,16 @@ export class GameMap {
                         <b>🌲 开启植被图层</b>
                     </label>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#6d4c41;margin-top:4px;">
-                        <input type="checkbox" id="chk-animal" checked>
-                        <b>🦌 显示动物</b>
+                        <input type="checkbox" id="chk-land-animal">
+                        <b>🦌 陆地动物</b>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0288d1;margin-top:4px;">
+                        <input type="checkbox" id="chk-flying-animal" checked>
+                        <b>🦅 飞行动物</b>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0097a7;margin-top:4px;">
+                        <input type="checkbox" id="chk-marine-animal" checked>
+                        <b>🐬 海洋动物</b>
                     </label>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#8d6e63;margin-top:4px;">
                         <input type="checkbox" id="chk-trade-traffic" checked>
@@ -978,10 +987,24 @@ export class GameMap {
             const chkTree = document.getElementById('chk-tree') as HTMLInputElement;
             if (chkTree) chkTree.addEventListener('change', (e: any) => this.toggleTree(e.target.checked));
 
-            const chkAnimal = document.getElementById('chk-animal') as HTMLInputElement;
-            if (chkAnimal) {
-                chkAnimal.addEventListener('change', (e: any) => {
-                    setAnimalAmbientLayerVisible(!!e.target.checked);
+            const chkLandAnimal = document.getElementById('chk-land-animal') as HTMLInputElement;
+            if (chkLandAnimal) {
+                chkLandAnimal.addEventListener('change', (e: any) => {
+                    setLandAnimalVisible(!!e.target.checked);
+                });
+            }
+
+            const chkFlyingAnimal = document.getElementById('chk-flying-animal') as HTMLInputElement;
+            if (chkFlyingAnimal) {
+                chkFlyingAnimal.addEventListener('change', (e: any) => {
+                    setFlyingAnimalVisible(!!e.target.checked);
+                });
+            }
+
+            const chkMarineAnimal = document.getElementById('chk-marine-animal') as HTMLInputElement;
+            if (chkMarineAnimal) {
+                chkMarineAnimal.addEventListener('change', (e: any) => {
+                    this.marineLifeLayer?.setVisible(!!e.target.checked);
                 });
             }
 
