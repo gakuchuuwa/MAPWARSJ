@@ -2819,7 +2819,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_dinggucheng', name: '顶骨城', factionId: 'najie', lat: 34.43, lng: 70.45, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
 
     // —— 2026-06-20 新增：旁遮普·阿托克 ——
-    { id: 'city_atuoke', name: '阿托克', factionId: 'bulu', lat: 33.7666, lng: 72.3608, type: 'pass', region: 'PORUS', troops: 30000, note: '印度河阿托克要塞；兰季特·辛格旁遮普帝国西北锁钥，哈里·辛格扼开伯尔隘口' },
+    { id: 'city_atuoke', name: '阿托克', factionId: 'pangzha', lat: 33.7666, lng: 72.3608, type: 'pass', region: 'PORUS', troops: 30000, note: '印度河阿托克要塞；兰季特·辛格旁遮普帝国西北锁钥，哈里·辛格扼开伯尔隘口' },
+    { id: 'city_meng', name: '蒙格', factionId: 'bulu', lat: 32.64744, lng: 73.50914, type: 'small_city', region: 'PORUS', troops: 30000, note: '杰赫勒姆河（古称海达斯佩斯河）南岸蒙格村；公元前326年亚历山大与补噜王会战地点' },
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'small_city', troops: 30000, region: 'BURMESE', note: '旧称莫索波；雍笈牙起兵并建立贡榜王朝之地' },
 
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'pass', troops: 30000, region: 'JIANGNAN' },
