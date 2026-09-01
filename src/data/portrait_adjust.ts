@@ -4282,11 +4282,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -23
         },
-        "/assets/CENTRAL_ASIA/an_xibanni.png": {
-            "scale": 1.21,
-            "offsetX": 0,
-            "offsetY": 12
-        },
         "/assets/CENTRAL_ASIA/saman_yisimayi.png": {
             "scale": 1.23,
             "offsetX": 0,
@@ -5921,11 +5916,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.83,
             "offsetX": 0,
             "offsetY": -26
-        },
-        "/assets/STEPPE/__闲置__STEPPE_68.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -13
         },
         "/assets/STEPPE/__闲置__STEPPE_65.png": {
             "scale": 0.87,
@@ -7616,6 +7606,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 22
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_117.png": {
+            "scale": 1.21,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/STEPPE/an_xibanni.png": {
+            "scale": 1.15,
+            "offsetX": 6,
+            "offsetY": -17
         }
     },
     "folderGuides": {
