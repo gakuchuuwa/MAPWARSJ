@@ -922,7 +922,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_jeonju', name: '完山', factionId: 'zhen', lat: 35.75, lng: 127.14, type: 'small_city', troops: 30000, region: 'KOREA' },
 
 
-    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 30000, region: 'KOREA' },
+    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 20000, region: 'KOREA', mirror: true },
+
 
     {
         id: 'city_suncheon_k',

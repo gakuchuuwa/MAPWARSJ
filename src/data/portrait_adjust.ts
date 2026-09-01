@@ -1233,7 +1233,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/JAPAN/zhuqian_shaoerzineng.png": {
-            "scale": 0.94,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -25
         },
@@ -3728,7 +3728,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/WEST_ASIA/beileinisi_tuolemiershi.png": {
-            "scale": 0.87,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -3858,7 +3858,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/WEST_ASIA/womaya_muaweiye.png": {
-            "scale": 0.91,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 10
         },
