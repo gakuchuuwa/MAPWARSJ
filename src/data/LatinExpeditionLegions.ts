@@ -60,7 +60,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力；专名偏弱 → T3（勿挂「教皇军」）
     puluowangsi: { name: '圣吉尔骑', tier: 3 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军；金马刺步兵已挂 didi「佛兰德军」，此处不夺步兵符号
-    fulandesi: { name: '阿图瓦枪兵', tier: 2 },
     mengtainiya: { name: '宫廷侍从', tier: 4 },
     baizanting: { name: '铁甲圣骑', tier: 1 },
     mozeer: { name: '特里尔步兵', tier: 3 },
@@ -69,9 +68,9 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     fodejiao: { name: '克里奥民兵', tier: 4 },   // 里贝拉·诺利：佛得角首府守备民兵（1585 德雷克、1712 卡萨尔两度洗劫）
     keernuwaye: { name: '布列塔尼重骑', tier: 4 },
     kaernute: { name: '卡尔努特兵', tier: 4 },   // 沙特尔·科图阿图斯：高卢卡尔努特部族战团，前52年塞纳布姆起义,
-    valois_angouleme: { name: '王家宪兵', tier: 1 },
     braganza_house: { name: '阿维斯骑', tier: 2 },
     trastamara: { name: '圣会骑兵', tier: 3 },
     naxos_ancient: { name: '爱琴舰队', tier: 2 },
     zhibuluotuo: { name: '基督骑士', tier: 2 },
+    fulandesi: { name: '阿图瓦枪兵', tier: 2 },
 };

@@ -118,9 +118,6 @@ const BAR_SWING_ACT2_FROM = 6;
 const BAR_SWING_ACT2_TO = 4;
 /** 第三阶段相持的摆幅（主人要「大浮动摇摆」，故远大于前两阶段的收束值） */
 const BAR_SWING_ACT3 = 7;
-/** 溃败悬停（2026-08-03 主人定）：败方兵力数字减到初始的该比例即停住（残兵困守），
- *  断崖 1 秒内随条子 u^6 同步崩到 0（兵败如山倒）。纯显示层，不碰引擎实际兵力。 */
-const LOSER_HOLD_PCT = 0.10;
 
 /**
  * 文化标签文案表：技能条上那枚「能征惯战 / 山河险固」样式的名牌。
@@ -5006,32 +5003,7 @@ export class CombatUI {
         // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）
         this.updatePortraitWinddown();
 
-        // 溃败悬停（2026-08-03 主人定）：第三阶段起败方兵力数字减到初始 10% 即停住，
-        // 断崖 1 秒内随条子 u^6 同步崩到 0——「残兵困守 → 兵败如山倒」的溃败感。
-        // 方向跟随 collapseStartAttPct（第三阶段锁定，与条子断崖同侧），翻盘不横穿。
-        // 纯显示层：只改渲染给玩家的数字，title 仍写引擎真实兵力。
-        // outcomeLocked 后停用：否则第三阶段中段被 forceResolve/城易主提前结束时，
-        // 败方引擎兵力已清零，数字却会被钳回 10% 一直挂着（正常流程 u≈1 已崩到 0，无碍）。
-        // 🔴 [2026-08-12 修「兵没死光数字已归零」] 13 期间**整段跳过**这套溃败表演。
-        //    它是给 8/9/10 引擎战斗做戏剧化的（把败方数字钉在 10% 再按 u^6 崩到 0），
-        //    可 13 里屏幕上摆着真实精灵，数字必须等于场上实数 —— 两套一起跑就会出现
-        //    「地图上兵还在打、数字已经 0」（主人实锤）。演出在跑时 liveWar 即唯一真相。
-        if (!liveWar && !this.outcomeLocked && this.collapseStartAttPct !== null) {
-            const bc: any = this.boundRegionalBattleField || this.currentBattle;
-            const prog = bc ? Math.min(1, (bc.elapsed || 0) / Math.max(1, bc.targetDuration || 17)) : 1;
-            if (prog >= PHASE_COLLAPSE_START) {
-                const s = Math.min(1, (prog - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
-                const attWins = this.collapseStartAttPct >= 50;
-                const applyLoserHold = (cur: number, max: number) => {
-                    const base = max * LOSER_HOLD_PCT;
-                    if (s < BAR_CLIFF_START) return Math.max(cur, base); // 相持段：减到 10% 即悬停
-                    const u = (s - BAR_CLIFF_START) / Math.max(0.0001, 1 - BAR_CLIFF_START);
-                    return base * (1 - Math.pow(u, 6)); // 断崖段：10% 随条子 u^6 崩到 0
-                };
-                if (!attWins) attCurrent = applyLoserHold(attCurrent, attMax);
-                else defCurrent = applyLoserHold(defCurrent, defMax);
-            }
-        }
+        // 兵力数值全程严格跟随战斗引擎真实实时扣减，无人工悬停停顿（所见即所得）
 
         // 第二行名字/兵力 = pickSideNameUnit（本城或开局波次）；立绘/标签 = pickPortraitTagUnit。
         // 其余部队由 updateReinforcements 第三行列出。

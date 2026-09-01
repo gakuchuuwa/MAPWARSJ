@@ -21,10 +21,6 @@ const CITY_CLEAR_PX = 42;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
-/** 单块林区斑块在 SAMPLE_ZOOM 投影空间的半径（投影 px）。屏幕半径 = 此值 × 2^(当前zoom−SAMPLE_ZOOM)，
- *  保证斑块的地理范围恒定、缩放不跳位。 */
-/** 斑块屏幕半径下限（px）。zoom 8 时缩放系数是 0.5，26 会缩成 13px，一屏十几个 13px 的淡斑
- *  肉眼基本看不出来 —— 战略地图默认就在 zoom 8，所以给个下限保证「看得见」。 */
 /** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。 */
 const TREE_BASE_PX = 26;
 /** 战略树木保持为环境层，避免压过城池、军团、道路和势力边界。 */
@@ -35,6 +31,15 @@ const TREE_SHADOW_OPACITY = 0.14;
 const CLUSTER_STRIDE = SAMPLE_STEP * 1.15;
 /** 簇半径略大于半个步长，使相邻森林格没有规则空带。 */
 const CLUSTER_RADIUS = CLUSTER_STRIDE * 0.58;
+
+/**
+ * 季节渐变窗口：季末 45% 的时间里，同一棵树进行平滑换装；
+ * 前 55% 时间保持纯正当季风貌，后 45% 时间平缓过渡到下一季。
+ *
+ * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
+ * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
+ */
+const SEASON_BLEND_WINDOW = 0.45;
 
 /**
  * 一棵树的采样结果。
@@ -54,11 +59,6 @@ interface TreeDrawCommand {
 
 /**
  * 战略地图树贴图缓存：树名 → `public/SUCAI_NATURE/<树名>/preview.png`（DE 单棵成品图）。
- *
- * 🔴 [2026-08-31 主人：「植被只显示这种雀斑」] 本层原来画的是**径向渐变柔边色圆**，
- *    在地图上就是一团团模糊绿斑，既不像树也看不出植被类型 —— 而 DE 的树素材早就摆进
- *    `public/SUCAI_NATURE/` 了（133 个，每个都有 preview.png 单棵图，8~23KB）。
- *    改成直接画树。
  */
 const TREE_IMG = new Map<string, HTMLImageElement>();
 /** 已确认加载失败的树名（不再重试，免得每帧刷 404） */
@@ -76,8 +76,6 @@ function treeImage(asset: string, onReady: () => void): HTMLImageElement | null 
     return null;
 }
 
-// [2026-08-31] 按 PerfDoctor 的铁律登记：任何图片缓存都必须能报**字节数**。
-//   这个缓存条数不多（≤133 个树种）且每张 preview 只有 8~23KB，但登记了才有据可查。
 if (import.meta.env.DEV) {
     perfDoctor.registerCache({
         name: 'VegetationLayer:TREE_IMG(战略树贴图)',
@@ -94,16 +92,7 @@ if (import.meta.env.DEV) {
 }
 
 /**
- * 水陆判定的**纠偏层**：海拔说「低于海平面」时，再问一次 WaterMask 是不是其实是陆地。
- *
- * 🔴 为什么是这个组合（2026-08-31 走了两条弯路才定下来）：
- *   · 主判据必须用 `getElevationAtMapPixel` —— 它会**按需发起瓦片请求**，
- *     而 `createBlockProber` / `probeLandSea` 只读同步缓存、从不请求。
- *     我一度把整套判定换成探针，结果瓦片没人去拉、探针恒返回 'pending'，
- *     实测德意志 187 棵→5 棵、俄北 224→0（render 只剩 0.3ms，全卡在第一道闸）。
- *   · 但**只看海拔是错的**：里海(-27m)、吐鲁番(-51m) 是低于海平面的陆地，
- *     单看海拔那一带永远不长树。所以海拔说「水」时，用掩膜纠偏一次；
- *     掩膜没到（返回 null）就维持海拔的判断，宁可少画几棵也不要把树画进海。
+ * 水陆判定的纠偏层：海拔说「低于海平面」时，再问一次 WaterMask 是不是其实是陆地。
  */
 function maskSaysLand(lat: number, lng: number): boolean {
     return LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === false;
@@ -156,18 +145,7 @@ function currentTreeSeason(): TreeSeason {
     return 0;
 }
 
-/**
- * 季节渐变：季末的一段时间里，同一棵树同时画本季和下季两张；
- * 本季保持可见，下季缓慢覆盖，避免树冠在换装中变稀或消失。
- *
- * 只在季末 `SEASON_BLEND_WINDOW` 这段窗口里混合，其余时间照旧只画一张 —— 平时零额外开销。
- * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
- * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
- */
-const SEASON_BLEND_WINDOW = 0.9;
-
 function nextTreeSeason(s: TreeSeason): TreeSeason {
-    // 游戏季推进 春→夏→秋→冬→春；映射到树态就是 0→0→1→2→0
     const gs = currentGameSeason();
     if (gs === 1) return 1;   // 夏 → 下一季是秋
     if (gs === 2) return 2;   // 秋 → 冬
@@ -175,19 +153,16 @@ function nextTreeSeason(s: TreeSeason): TreeSeason {
     return s;                 // 春 → 夏，树态不变
 }
 
-/** 0 = 不混合；>0 = 下一季占的权重 */
+/** 0 = 不混合；>0 = 下一季占的全局基准权重 */
 function seasonBlend(): number {
     const p = (window as any).game?.timeSystem?.getSeasonProgress?.();
     if (typeof p !== 'number') return 0;
     if (p <= 1 - SEASON_BLEND_WINDOW) return 0;
     const t = (p - (1 - SEASON_BLEND_WINDOW)) / SEASON_BLEND_WINDOW;   // 0→1 线性
-    // 🔴 [2026-08-31 主人「慢慢渐变」] smoothstep：头尾斜率为 0，起手和收尾都柔、中段才快。
-    //    线性混合在窗口起点会「啪」地开始变色，这条曲线让它是**渐渐地开始、渐渐地收住**。
-    //    到 p=1（换季那一刻）恰好等于 1，与换季后 blend 归零、直接显示新一季无缝衔接。
-    return t * t * (3 - 2 * t);
+    // smoothstep 曲线：起手和收尾极柔，到换季那一刻严密收敛为 1.0
+    return Math.min(1, Math.max(0, t * t * (3 - 2 * t)));
 }
 
-/** 树种 → 林区色相类别（用于色调随植被类型变化） */
 function hueClass(asset: string): 'conifer' | 'broadleaf' | 'arid' | 'dead' {
     if (/PINE|CYPRESS|SNOW_|BAMBOO|CEDAR/i.test(asset)) return 'conifer';
     if (/PALM|ACACIA|BAOBAB|OLIVE|DRAGON_TREE/i.test(asset)) return 'arid';
@@ -195,22 +170,21 @@ function hueClass(asset: string): 'conifer' | 'broadleaf' | 'arid' | 'dead' {
     return 'broadleaf';
 }
 
-/** 色相表：季节(0绿/1橙/2白) × 类别 → 林区块基色（可调，主人看观感后微调） */
 const PATCH_COLOR: Record<'conifer' | 'broadleaf' | 'arid' | 'dead', [number, number, number]> = {
-    conifer:   [36, 86, 52],   // 针叶偏冷深绿
-    broadleaf: [72, 110, 52],  // 阔叶暖绿
-    arid:      [130, 128, 58], // 棕榈/旱生偏黄绿
-    dead:      [112, 104, 90], // 枯树灰褐
+    conifer:   [36, 86, 52],
+    broadleaf: [72, 110, 52],
+    arid:      [130, 128, 58],
+    dead:      [112, 104, 90],
 };
 const PATCH_COLOR_AUTUMN: Record<'conifer' | 'broadleaf' | 'arid' | 'dead', [number, number, number]> = {
     conifer:   [88, 104, 52],
-    broadleaf: [168, 108, 42], // 阔叶秋橙
+    broadleaf: [168, 108, 42],
     arid:      [150, 128, 58],
     dead:      [136, 116, 92],
 };
 const PATCH_COLOR_WINTER: Record<'conifer' | 'broadleaf' | 'arid' | 'dead', [number, number, number]> = {
     conifer:   [118, 138, 122],
-    broadleaf: [176, 172, 160], // 阔叶冬灰白
+    broadleaf: [176, 172, 160],
     arid:      [160, 154, 138],
     dead:      [150, 140, 124],
 };
@@ -228,19 +202,16 @@ export class VegetationLayer {
     private readonly ctx: CanvasRenderingContext2D;
     private visible = false;
     private renderTimer: number | null = null;
-    /** 上次重画时的采样格窗口指纹：没跨格 = 林区斑块集合一模一样，canvas 跟随平移即可，不必重画 */
     private lastRenderKey = '';
     private lastRenderAt = 0;
-    /** 瓦片没到时的补画计数（按视口指纹计），封顶防止离线时无限空转 */
     private retryKey = '';
     private retryCount = 0;
 
     private readonly onViewportChanged = () => this.scheduleRender();
     private readonly onResize = () => { this.resize(); this.scheduleRender(); };
-    /** 只挪画布位置，不重绘（连续平移每帧调用） */
     private readonly onCanvasFollow = () => {
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
-        this.paint();   // 画布被重新钉到屏幕上了，内容必须按新镜头重画，否则树会相对地形滑动
+        this.paint();
     };
     private readonly onTerrainReady = () => { this.lastRenderKey = ''; this.scheduleRender(200); };
 
@@ -248,8 +219,6 @@ export class VegetationLayer {
         this.map = map;
         if (!map.getPane(PANE)) map.createPane(PANE);
         const pane = map.getPane(PANE)!;
-        // 🔴 [2026-08-31] 见 AnimalAmbientLayer 顶部说明：必须低于 UNITS_LOW(580)，
-        //    否则会盖掉攻城战里画在城池背后的士兵。
         pane.style.zIndex = '565';
         pane.style.pointerEvents = 'none';
 
@@ -260,10 +229,6 @@ export class VegetationLayer {
         pane.appendChild(this.canvas);
 
         map.on('moveend zoomend', this.onViewportChanged);
-        // 🔴 [2026-08-31 修「军团一动树也动」] 必须绑 `move`（连续平移中每帧都发），
-        //    不能只绑 `moveend`。跟拍时 GameAppLoop 每帧 panBy 平移地图，而画布位置原来只在
-        //    **停下来**才更新一次，于是树相对地形一路滑动 —— 看着就像树跟着军团跑。
-        //    这里只做 setPosition（一次 transform，不重绘不重采样），开销可忽略。
         map.on('move zoom', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
@@ -293,40 +258,65 @@ export class VegetationLayer {
     }
 
     /**
-     * 季节渐变心跳：过渡窗口里镜头可能完全不动，没人触发重画，渐变就会卡在某一档。
-     * 每 600ms 敲一次 scheduleRender —— render() 开头会比对 key，档位没变就立刻返回，
-     * 所以非过渡期这个心跳的实际开销约等于零（实测 render 平均 2.3ms，且大部分是 key 命中直接 return）。
+     * 季节渐变驱动：
+     * - 低频轮询（200ms）检测换季与进入渐变窗口；
+     * - 一旦进入渐变期，无缝唤醒 requestAnimationFrame 进行 60 FPS 极度丝滑重绘；
+     * - 渐变结束或非过渡期自动平稳休眠，零多余性能开销。
      */
     private startSeasonBlendWatch(): void {
-        if (this.seasonTimer !== null) return;
+        if (this.seasonTimer !== null || this.rafId !== null) return;
+
+        let isRafActive = false;
+
+        const rafLoop = () => {
+            if (!this.visible) {
+                isRafActive = false;
+                this.rafId = null;
+                return;
+            }
+            const gameSeason = currentGameSeason();
+            if (this.sampledGameSeason !== gameSeason) {
+                this.lastRenderKey = '';
+                this.scheduleRender();
+                isRafActive = false;
+                this.rafId = null;
+                return;
+            }
+            const blend = seasonBlend();
+            if (blend > 0) {
+                this.paint();
+                this.rafId = requestAnimationFrame(rafLoop);
+            } else {
+                isRafActive = false;
+                this.rafId = null;
+            }
+        };
+
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
             const gameSeason = currentGameSeason();
             if (this.sampledGameSeason !== gameSeason) {
-                // 换季边界先把上一组命令中的“下一季”画满，再重新采样本季组合，
-                // 避免进度从 1 归零时短暂退回旧季贴图。
-                this.paint();
                 this.lastRenderKey = '';
                 this.scheduleRender();
                 return;
             }
-            // 🔴 [2026-08-31] 直接 paint()，不要走 scheduleRender()。
-            //    渲染键已经不含混合档位（见 render 里的说明），走 scheduleRender 会因
-            //    「key 没变」直接 return，渐变就冻在原地不动。
-            //    paint 只是一趟 drawImage（实测 ~200 次 < 1ms），250ms 一次足够顺滑。
-            if (seasonBlend() > 0) this.paint();
-        }, 250);
+            if (seasonBlend() > 0 && !isRafActive) {
+                isRafActive = true;
+                this.rafId = requestAnimationFrame(rafLoop);
+            }
+        }, 200);
     }
     private seasonTimer: number | null = null;
-    /** 当前 trees 命令所属的游戏季节（春夏必须分开，因为二者的下一季不同） */
+    private rafId: number | null = null;
     private sampledGameSeason = -1;
 
-    /** 采样出来的树（只存经纬度，屏幕坐标在 paint 时按当前镜头现算） */
     private trees: TreeDrawCommand[] = [];
 
     /**
-     * 只绘制，不采样。每次地图平移/缩放都调，成本 ≈ 一趟 drawImage。
-     * 树的季节混合权重在这里现取，所以渐变期间平移也能跟着变。
+     * 绘制树木：
+     * - 采用 60 FPS 连续插值；
+     * - 引入单树经纬度微错峰（Per-Tree Organic Phase）；
+     * - 对称 Cross-Fade 交叉淡出，彻底消除换季跳闪与树木消失。
      */
     private paint(): void {
         const ctx = this.ctx;
@@ -336,13 +326,13 @@ export class VegetationLayer {
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) return;
 
         const gameSeason = currentGameSeason();
-        const blendAlpha = this.sampledGameSeason === gameSeason
+        const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 1;
+        const seasonProgress = (window as any).game?.timeSystem?.getSeasonProgress?.() ?? 0;
         const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
 
-        // 先算屏幕坐标并剔除屏外，再按 y 排序（北侧先画，南侧树冠盖住北侧树干）
         const items: { x: number; y: number; h: number; c: TreeDrawCommand }[] = [];
         for (const c of this.trees) {
             const pt = this.map.latLngToContainerPoint([c.lat, c.lng]);
@@ -371,23 +361,29 @@ export class VegetationLayer {
 
         for (const it of items) {
             const cur = treeImage(it.c.asset, this.onTreeImageReady);
-            // 下一季的图**整季都在预取**，这里无条件取（不再等 blendAlpha>0 才去拿）
             const nxt = it.c.assetNext !== it.c.asset
                 ? treeImage(it.c.assetNext, this.onTreeImageReady) : cur;
 
-            // 接地阴影与季节贴图无关，每棵只画一次，避免交叉淡出期间叠黑。
             if (cur || nxt) drawContactShadow(it);
 
-            // 🔴 [2026-08-31 修「消失再出现」] 只要**两张里有一张在**就必须画出来。
-            //    原来是 `if (!img) continue` —— 当前季的图没下载完就整棵跳过，
-            //    换季那一瞬间新贴图还在路上，整片林子先消失、图到了再冒出来。
-            //    现在：两张都在 → 新季缓慢覆盖；只有一张在 → 那张按满不透明顶上。
-            //    宁可这一瞬间不渐变，也绝不让树凭空消失。
-            if (cur && nxt && cur !== nxt) {
-                // 当前季始终作为满可见底层，新季在其上缓慢显现。
-                // 这样树冠不会在交叉淡出中变稀，更不会因两张轮廓不同而像整片消失。
-                drawOne(cur, it, 1);
-                drawOne(nxt, it, blendAlpha);
+            // 每棵树基于经纬度哈希进行微小错峰（范围 ±0.06），模拟自然森林参差换季
+            let treeBlend = baseBlend;
+            if (baseBlend > 0 && it.c.assetNext !== it.c.asset) {
+                const offset = (hash(it.c.lat, it.c.lng, 99) - 0.5) * 0.12;
+                const start = Math.max(0.1, Math.min(0.9, (1 - SEASON_BLEND_WINDOW) + offset));
+                if (seasonProgress <= start) {
+                    treeBlend = 0;
+                } else {
+                    const t = (seasonProgress - start) / (1 - start);
+                    treeBlend = Math.min(1, Math.max(0, t * t * (3 - 2 * t)));
+                }
+            }
+
+            if (cur && nxt && cur !== nxt && treeBlend > 0) {
+                // 严密对称 Cross-Fade：本季平滑淡出 (1 - treeBlend)，下季平滑淡入 (treeBlend)
+                // 在换季交接点 (treeBlend=1) 与新季首帧 (treeBlend=0) 像素级 100% 严密吻合
+                drawOne(cur, it, 1 - treeBlend);
+                drawOne(nxt, it, treeBlend);
             } else if (cur) {
                 drawOne(cur, it, 1);
             } else if (nxt) {
@@ -397,18 +393,13 @@ export class VegetationLayer {
         }
     }
 
-    /** 树贴图到货 → 重画本屏（贴图是异步的，首帧必然缺一批） */
     private onTreeImageReady = (): void => {
-        // 贴图到货只需**重绘**，不必重新采样：树的位置早就采好了。
-        // 原来清 lastRenderKey + scheduleRender，等于每到一张图就全屏重采一遍，白花钱。
         this.paint();
     };
 
     private scheduleRender(delay = 0): void {
         if (!this.visible) return;
         if (this.renderTimer !== null) window.clearTimeout(this.renderTimer);
-        // 跟拍时 moveend 每帧都来：距上次重画不足 MIN_RENDER_INTERVAL_MS 就把这次往后推，
-        // 保证「连续平移」期间最多 5 次/秒重画，而不是 60 次/秒。
         const since = performance.now() - this.lastRenderAt;
         const wait = Math.max(delay, since >= MIN_RENDER_INTERVAL_MS ? 0 : MIN_RENDER_INTERVAL_MS - since);
         this.renderTimer = window.setTimeout(() => {
@@ -419,15 +410,12 @@ export class VegetationLayer {
 
     private render(): void {
         if (!import.meta.env.DEV) { this.renderInner(); return; }
-        // [2026-08-31] 接 PerfDoctor：树多了到底卡不卡，靠这条数说话，别靠感觉。
-        // scanned 记本次画了多少棵树，便于把「棵数」和「耗时」对起来看。
         const t0 = performance.now();
         this.renderInner();
         perfDoctor.note('VegetationLayer.render', performance.now() - t0,
             'src/map/VegetationLayer.ts:render', this.lastTreeCount);
     }
 
-    /** 本次 render 实际画了多少棵树（PerfDoctor 采样用） */
     private lastTreeCount = 0;
 
     private renderInner(): void {
@@ -438,12 +426,9 @@ export class VegetationLayer {
         this.canvas.style.display = inRange ? 'block' : 'none';
         if (!inRange) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.lastRenderKey = ''; return; }
 
-        // 尺寸兜底：构造时地图容器还没布局出来（0×0）的话 canvas 会一直是 0×0，
-        // 之后没人再触发 resize 就永远画不出东西。每次画之前对一下尺寸。
         const size = this.map.getSize();
         if (size.x > 0 && (this.canvas.width !== size.x || this.canvas.height !== size.y)) this.resize();
 
-        // canvas 跟随图层平移（含缩放动画期间的对齐）
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
 
         const bounds = this.map.getBounds();
@@ -454,65 +439,48 @@ export class VegetationLayer {
         const yMin = Math.floor(nw.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
         const yMax = Math.ceil(se.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
 
-        // 采样窗口没跨格 → 这一屏的林区与上次逐格相同（canvas 按 position 跟随平移），直接返回省掉整屏重采样
         const gameSeason = currentGameSeason();
         const season = currentTreeSeason();
         const nextSeason = nextTreeSeason(season);
-        // 🔴 [2026-08-31 修「渐变不连续」] 渲染键**不带**混合档位。
-        //    混合只影响「怎么画」，不影响「撒在哪」—— 带上它等于每跨一档就整屏重新撒点，
-        //    而重新撒点时若新一季的贴图还没下载完，那批树就先消失、等图到了再冒出来
-        //    （主人看到的「消失再出现」）。现在混合完全交给 paint()，采样一次管一整季。
+
         const key = `${zoom}|${xMin}|${xMax}|${yMin}|${yMax}|${gameSeason}`;
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 屏幕半径 = 投影半径 × 2^(当前zoom−SAMPLE_ZOOM)：斑块地理范围恒定，缩放不跳
-        const screenRadiusScale = Math.pow(2, zoom - SAMPLE_ZOOM);
-        // DEM 瓦片是异步到的：这一轮有格子因为瓦片没到被跳过，就不能把这次当成「画完了」
         let missingTiles = 0;
-        // 树贴图也是异步的：首帧一定有一批没到，同样不能算「画完了」
         let pendingImages = 0;
         let drawnTrees = 0;
         const drawCommands: TreeDrawCommand[] = [];
-        // 与海陆分界线图层同款：整屏共用一个按瓦片缓存的探针（逐点查会踩 LRU 抖动）
         const probeLand = LandSeaSystem.createBlockProber();
-
 
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
             .map((city) => this.map.latLngToContainerPoint([city.lat, city.lng]));
 
-        // DE 式成簇采样：按簇网格撒"林区簇核"，簇核地表密度决定成不成林，簇内斑块数随密度分档。
-        // 对应 DE 的 number_of_groups(几簇) + group_placement_radius(簇半径) + set_loose_grouping(松散成簇)。
         for (let cy = yMin; cy <= yMax; cy += CLUSTER_STRIDE) {
             for (let cx = xMin; cx <= xMax; cx += CLUSTER_STRIDE) {
-                // 簇核：落在簇格中央并随机抖动，避免机械网格感
                 const cxJ = cx + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 41) - 0.5) * CLUSTER_STRIDE * 0.5;
                 const cyJ = cy + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 42) - 0.5) * CLUSTER_STRIDE * 0.5;
                 const clusterLatLng = this.map.unproject([cxJ, cyJ], SAMPLE_ZOOM);
                 if (clusterLatLng.lat < -58 || clusterLatLng.lat > 75) continue;
 
-                // 🔴 [2026-08-31 修「树长到海里」] 水陆判定必须走 probeLandSea（掩膜 AND 海拔），
-                //    **不能用 `elev < 0`** —— 里海(-27m)、吐鲁番(-51m) 是低于海平面的**陆地**，
-                //    单看海拔会把它们判成海、那一带永远不长树。判据只认 WaterMask 这一套。
-                // 🔴 顺序不能反：`getElevationAtMapPixel` 会**按需发起瓦片请求**，
-                //    而 `createBlockProber` 只读同步缓存、从不请求。
-                //    我一度把水陆判定放在它前面，结果瓦片永远没人去拉 → 探针恒返回 'pending'
-                //    → 整屏 continue，实测德意志 187 棵掉到 5 棵、俄北 224→0（render 只剩 0.4ms，
-                //    全在第一道闸被拦掉）。先取高程把瓦片拉起来，再问水陆。
                 const elev = LandSeaSystem.getElevationAtMapPixel(
                     cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
                 );
                 if (elev === null) { missingTiles++; continue; }
-                if (elev > 3600) continue;   // 雪线以上无乔木
+                if (elev > 3600) continue;
 
                 if (elev < 0 && !maskSaysLand(clusterLatLng.lat, clusterLatLng.lng)) continue;
 
-                // 先确定森林地形，再在森林内部填树；草地、农耕平原、草原和荒漠全部留白。
-                const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, season);
+                // 🔴 [2026-09-01 修复「树木有时候有、有时候消失」]
+                //    林区采样必须统一使用【常态自然地理底图】(isWinter: false / season: 0)！
+                //    严禁传入随季节变化的 isWinter: true，否则冬季大量温带林地被判定为雪原而判定失败，
+                //    导致大片森林在冬天凭空消失、春天又突然冒出。森林空间分布是恒定的地理现实！
+                const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: false })
+                    ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, 0);
                 const forestBiome = queryStrategicForestBiome(clusterLatLng.lat, clusterLatLng.lng);
                 if (!isStrategicForestArea(forestBiome, tile, elev, clusterLatLng.lat)) continue;
 
@@ -530,37 +498,13 @@ export class VegetationLayer {
                     const py = cyJ + Math.sin(ang) * rad;
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
 
-                    // 🔴 [2026-08-31 修「树长到海里」·真正的根因] **每一棵树都要单独判水陆**。
-                    //    原来只有簇核判了，簇内的树是从簇核往外撒 CLUSTER_RADIUS 的，
-                    //    簇核在岸上、树照样能被甩进海里 —— 希腊/爱琴海那种破碎海岸线一眼就露馅
-                    //    （主人 2026-08-31 截图：满爱琴海都是树）。
-                    //    queryBaseTile 查的是**气候底图**不是水陆掩膜，海上采样照样返回陆地贴图，
-                    //    所以它挡不住这件事，必须显式问 probeLandSea。
-                    // 🔴 [2026-08-31 修「树长到海里」] **每棵树都要单独判水陆**：
-                    //    原来只有簇核判了，而簇内的树是从簇核往外撒 CLUSTER_RADIUS 的，
-                    //    簇核在岸上、树照样被甩进海（主人截图：满爱琴海是树）。
-                    //    queryBaseTile 查的是**气候底图**不是水陆掩膜，海上照样返回陆地贴图，挡不住。
-                    // 🔴 每棵树单独挡海（主人截图：满爱琴海是树）。簇核在岸上，
-                    //    但树是从簇核往外撒 CLUSTER_RADIUS 的，照样会被甩进海。
-                    //    这里**只问掩膜、绝不查高程**：
-                    //    树点散布在簇核之外，常落到还没加载的相邻高程瓦片，逐点查会大量返回 null
-                    //    → 被当成「瓦片没到」跳过，实测德意志 187 棵→9 棵、俄北 224→0。
-                    //    （这正是记忆里「批量采样别逐点查、会踩 LRU」那条的现场版。）
-                    //    掩膜是同步只读的：明确说是水才丢弃；没加载(null)就照画，
-                    //    宁可偶尔漏一棵在海边，也不要整片森林消失。
-                    // 🔴 [2026-08-31] 用与「海陆分界线」调试图层**同一套探针**（主人提示的正解）：
-                    //    createBlockProber 按瓦片缓存，整屏顺序采样命中同一块，比逐点查快得多。
-                    //    这里**严格要求 'land'**：'sea' 丢弃，'pending' 也丢弃并计入 missingTiles，
-                    //    等瓦片到了自动重画补上 —— 宁可晚几秒出树，也不要树浮在海面上。
-                    //    （我一度改成宽松版「只有明确说是水才丢」，是因为被 0×0 视口测出的假数据
-                    //      吓退；那批数字是垃圾，见记忆 never-ask-user-to-read-logs。）
                     const ptKind = probeLand(
                         lngToDemGlobalX(ptLatLng.lng), latToDemGlobalY(ptLatLng.lat),
                     );
                     if (ptKind !== 'land') { if (ptKind === 'pending') missingTiles++; continue; }
 
-                    // 每棵树再次检查森林掩膜，裁出世界坐标固定的真实林区边缘。
-                    const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: season === 2 }) ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, season);
+                    const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: false })
+                        ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, 0);
                     const ptBiome = queryStrategicForestBiome(ptLatLng.lat, ptLatLng.lng);
                     if (!isStrategicForestArea(ptBiome, ptTile, elev, ptLatLng.lat)) continue;
 
@@ -568,51 +512,29 @@ export class VegetationLayer {
                     if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
 
                     const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
-                    // 季末交叉淡出：下一季的同位置树种（换装了才混，没换装就当没这回事）
-                    // 🔴 **无条件**算下一季树种（不再等混合开始才算）：
-                    //    这样下一季的贴图在整季一开始就发起加载，等真的渐变时早已就绪，
-                    //    不会出现「渐变刚开始那几秒没图 → 树先消失」。
                     const assetNext = pickTree({
                         baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng,
                         season: nextSeason, isSiege: false,
                     });
-                    // 🔴 这里**只发起贴图加载、不因为图没到就丢掉这棵树**：
-                    //    树的位置属于采样结果，不该被贴图加载进度左右。图没到时 paint() 自然跳过，
-                    //    到货后 onTreeImageReady 会触发重绘补上。
-                    //    （原来写的是 `if (!img) { pendingImages++; continue; }`，
-                    //      等于首屏把还没下载完的树种整片丢掉，要等下一次跨格采样才补回来。）
+
                     if (!treeImage(asset, this.onTreeImageReady)) pendingImages++;
                     if (assetNext !== asset) treeImage(assetNext, this.onTreeImageReady);
-                    // 每棵树固定的高度抖动（存进采样结果，保证平移/缩放时这棵树大小稳定）
                     const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
                     drawCommands.push({ lat: ptLatLng.lat, lng: ptLatLng.lng, jitter, asset, assetNext });
                 }
             }
         }
 
-        // 🔴 [2026-08-31 修「军团一动树也动」·真正的修法]
-        //    采样结果只存**经纬度**，不存屏幕坐标 —— 屏幕坐标一旦存下来，
-        //    地图平移时内容就固定在屏幕上、地形在底下滑，看着就是树跟着镜头跑。
-        //    （我上一版把画布每帧重新钉到屏幕上，方向正好修反了，反而更明显。）
-        //    绘制改为每次平移都按当前镜头重算容器坐标 —— 与动物层同一套架构，
-        //    实测这一趟只有 ~200 次 drawImage、不到 1ms，重的采样仍然按 key 节流。
         this.trees = drawCommands;
         this.sampledGameSeason = gameSeason;
         this.paint();
         drawnTrees = drawCommands.length;
 
-        // DEM 瓦片异步到达：这轮被跳过的格子必须补画。
-        // 只靠 land-sea-tiles-updated 不够 —— 瓦片可能在两次 render 的间隙就位，
-        // 而 lastRenderKey 已经把这屏标成「画过了」，结果一屏空白一直留到下次跨格。
         this.lastTreeCount = drawnTrees;
-        // 树贴图这一轮有没到的 → 把本屏标记为未画完，等 onTreeImageReady 触发重画
         if (pendingImages > 0) this.lastRenderKey = '';
 
         if (missingTiles > 0) {
             if (this.retryKey !== key) { this.retryKey = key; this.retryCount = 0; }
-            // 高程瓦片是 S3 上的 Mapzen Terrarium，冷启动一屏几十片、十几秒才齐。
-            // 实测印度那一屏：等 5 秒画出来 0%，等到瓦片齐了是 8.1%。所以补画要等得够久，
-            // 用退避拉长间隔（0.6s 起、每次 +0.3s，共 15 次≈40 秒），拉不到就收手不空转。
             if (this.retryCount < 15) {
                 this.retryCount++;
                 this.lastRenderKey = '';
@@ -621,7 +543,6 @@ export class VegetationLayer {
         }
     }
 
-    /** 径向渐变柔边斑块：中心实色 → 外缘透明，模拟林地边缘柔化 */
     private drawPatch(x: number, y: number, radius: number, r: number, g: number, b: number, alpha: number): void {
         const ctx = this.ctx;
         const grad = ctx.createRadialGradient(x, y, radius * 0.15, x, y, radius);

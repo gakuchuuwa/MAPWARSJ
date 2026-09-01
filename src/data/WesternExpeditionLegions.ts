@@ -36,7 +36,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     quli: { name: '轮台屯骑', tier: 3 },
   yarkand: { name: '英吉沙骑兵', tier: 4 },
     gaochang: { name: '高昌铁骑', tier: 3 },          // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-  yiwu: { name: '关西卫骑', tier: 4 },       // 哈密卫·明关西七卫（都城高昌，咸通前）
+    yiwu: { name: '关西卫骑', tier: 4 },
   adao_d: { name: '昆岗军台营', tier: 4 },      // 昆岗·阿克苏道军台驿卒
   weitou: { name: '尉头国飞军', tier: 4 },    // 阿合奇·尉头国王城
   yumi: { name: '扜弥锐兵', tier: 4 },        // 阿赫雅尔·扜弥国王都

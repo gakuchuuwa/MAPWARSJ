@@ -665,7 +665,7 @@ export class CityAssetManager {
         'jingmen': '荆门',
         'pingyuan': '高唐',
 'xuan': '宣',
-        'yiwu': '伊吾',
+'yiwu': '伊吾',
 
 'ningkou': '居延',
 'hongzhou': '洪',
@@ -1029,6 +1029,7 @@ export class CityAssetManager {
 'zhibuluotuo': '直布',
         'saierweiya': '拉什',
         'anggelu': '盎格',
+        'fulandesi': '阿图',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
