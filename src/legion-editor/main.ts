@@ -1578,29 +1578,38 @@ function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFacti
     const all = getAllDistinctLegions();
     const options: LayerLegionOption[] = [];
 
+    // 🔴 [2026-09-01 主人铁律] 一个文化一个军团，65个文化必须正好65个文化军团，不可篡改、不能多、不能少！
+    if (layer === 'culture') {
+        for (const rg of REGION_ORDER) {
+            const name = getCultureLegionName(rg);
+            const def = getRegionDefaultLegion(rg);
+            const entry = all.get(name);
+            const regionLabel = REGION_LABELS[rg] ?? rg;
+            const fidsCount = entry?.fids.length ?? 0;
+            const label = `🏛️ ${name} (${regionLabel})`;
+            const description = `${regionLabel}${fidsCount ? ` · ${fidsCount} 势力使用` : ' · 文化默认'} · ${legionSummary(def.formationMode, def.slots)}`;
+
+            options.push({
+                key: `culture:${name}`,
+                label,
+                legionName: name,
+                formationMode: def.formationMode,
+                slots: def.slots.map(s => ({ ...s })),
+                description,
+            });
+        }
+        return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
+    }
+
     for (const entry of all.values()) {
         const tab = classifyLegionTab(entry.name, entry.fids.length);
         if (tab !== layer) continue;
 
-        let label: string;
-        let description: string;
-
-        if (tab === 'culture') {
-            const regionLabel = entry.region ? (REGION_LABELS[entry.region] ?? entry.region) : '文化';
-            label = `🏛️ ${entry.name} (${regionLabel})`;
-            description = `${regionLabel}${entry.fids.length ? ` · ${entry.fids.length} 势力使用` : '文化默认'} · ${legionSummary(entry.formationMode, entry.slots)}`;
-        } else if (tab === 'branch') {
-            const generals = entry.fids.map(f => (FACTION_GENERALS as any)[f]?.generalName || allRows.find(r => r.factionId === f)?.factionName).filter(Boolean);
-            const sampleGens = generals.slice(0, 3).join('/') + (generals.length > 3 ? ` 等${generals.length}将` : '');
-            label = `🚩 ${entry.name} (${entry.fids.length}将共享: ${sampleGens})`;
-            description = `共享大军团 · ${legionSummary(entry.formationMode, entry.slots)}`;
-        } else {
-            const fid = entry.fids[0];
-            const row = fid ? allRows.find(r => r.factionId === fid) : undefined;
-            const owner = row?.generalName ? `武将:${row.generalName}` : (row ? `势力:${row.factionName}` : '');
-            label = `⭐ ${entry.name} (${owner} · ${row?.regionLabel ?? ''})`;
-            description = `${row?.regionLabel ?? ''} · 只能一个套用 · ${legionSummary(entry.formationMode, entry.slots)}`;
-        }
+        const fid = entry.fids[0];
+        const row = fid ? allRows.find(r => r.factionId === fid) : undefined;
+        const owner = row?.generalName ? `武将:${row.generalName}` : (row ? `势力:${row.factionName}` : '');
+        const label = `⭐ ${entry.name} (${owner} · ${row?.regionLabel ?? ''})`;
+        const description = `${row?.regionLabel ?? ''} · ${entry.fids.length} 势力使用 · ${legionSummary(entry.formationMode, entry.slots)}`;
 
         options.push({
             key: `${tab}:${entry.name}`,
