@@ -55,7 +55,7 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     battle_elephant: 2,             // DE原型 BATELE（象）
     bayinnaung_elephant: 2,         // 人工指定
     dagnajan_elephant: 2,           // 人工指定
-    elephant: 2,                    // 人工指定
+    elephant: 3,                    // 人工指定（波斯战象 450 血，2026-09-01 2→3）
     elephant_archer: 2,             // DE原型 ELEAR（象）
     elite_armored_elephant: 2,      // 人工指定
     elite_ballista_elephant: 2,     // DE原型 EELEBALI（象）
@@ -63,7 +63,7 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     elite_elephant_archer: 2,       // 人工指定
     elite_hussite_wagon: 5,         // 人工指定
     elite_war_chariot: 3.75,           // 人工指定
-    elite_war_elephant: 2,          // 人工指定
+    elite_war_elephant: 3,          // 人工指定（波斯战象精锐 600 血，2026-09-01 2→3）
     elite_war_wagon: 5,             // 人工指定
     hussite_wagon: 5,               // 人工指定
     porus_elephant: 2,              // 人工指定
@@ -73,7 +73,7 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     sannahya: 2,                    // 人工指定（孔雀王朝战象）
     war_chariot: 3.75,                 // 人工指定
     war_chariot_ranged: 3.75,          // 人工指定
-    war_elephant: 2,                // 人工指定
+    war_elephant: 3,                // 人工指定（波斯战象 450 血，2026-09-01 2→3）
     war_wagon: 5,                   // 人工指定
 };
 export function popCostOf(key: string): number {
