@@ -124,12 +124,22 @@ export class Army implements IBattleUnit {
     private navalOrbitSec = 0;
     /** 上一帧到下一个路点的距离，用来判断是否在靠近 */
     private navalPrevDistToNext: number | null = null;
-    /** 船舶最大转向角速度：与战略地图原有海军视觉转速保持一致。 */
-    private static readonly NAVAL_TURN_RATE_RAD_S = 55 * Math.PI / 180;
+    /**
+     * 船舶最大转向角速度。
+     * 🔴 [2026-09-01 修「海上行军一颤一颤」] 55°/s → 120°/s。
+     * 55°/s 时最小转弯半径 0.31°，而海路相邻顶点中位间距只有 0.54° —— 转弯半径接近
+     * 航段本身，船永远对不准下一个路点，`NAVAL_MIN_FORWARD_FACTOR` 常年压在 0.12，
+     * 离线验算（scratch/_sim_naval_march.mts）实测中位步距只有满速的 13.6%、
+     * 全程耗时是理论直线的 3.08 倍。120°/s 起半径降到 0.14°，中位步距回到满速、
+     * 全程 ×1.05，船仍走可见弧线而不是原地掉头。
+     */
+    private static readonly NAVAL_TURN_RATE_RAD_S = 120 * Math.PI / 180;
     /** 大角度操舵时仍保留少量前进量，形成调头弧线而不是原地旋转。 */
     private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
-    /** 连续这么多秒没靠近下一个路点 = 判定绕圈，强制到点脱出 */
+    /** 连续这么多秒没靠近下一个路点 = 判定绕圈，直接换下一个路点脱出（不瞬移） */
     private static readonly NAVAL_ORBIT_BAILOUT_SEC = 3;
+    /** 航线终点的贴齐半径（度，≈2km）：只用于最后一个路点，避免停在目标外几百米 */
+    private static readonly NAVAL_FINAL_SNAP_DEG = 0.02;
 
     /**
      * 锚点滞回状态：上一次决策用的是「老家锚点」吗（见 LegionBehaviors 的 ANCHOR_HYSTERESIS_*）。
@@ -670,14 +680,21 @@ export class Army implements IBattleUnit {
         const forwardFactor = Army.NAVAL_MIN_FORWARD_FACTOR
             + (1 - Army.NAVAL_MIN_FORWARD_FACTOR) * Math.max(0, Math.cos(remainingAngle));
         const advance = moveDist * forwardFactor;
-        // 🔴 [2026-08-31 修「出海就转圈圈」] 最小转弯半径 = 速度 ÷ 角速度，**不能再乘
-        //    NAVAL_MIN_FORWARD_FACTOR(0.12)**。原公式把半径算小了 8 倍：
-        //      · 船真正绕路点转的圈，半径是 v/ω（快对准时 forwardFactor→1，走的是全速）
-        //      · 而「算到达」的判定半径只有 v/ω × 0.12
-        //    船永远进不了那个小圈 → 绕着路点无限转 → 到不了目标 → 也就永远进不了战斗状态。
-        //    ×1.25 余量：forwardFactor 在 0.12~1 之间浮动，取全速半径再放一点，宁可早一帧到点。
         const minTurnRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S * 1.25;
-        const captureRadius = Math.max(0.000001, moveDist, minTurnRadius);
+
+        // 🔴 [2026-09-01 修「海上行军一颤一颤」] 到达判定**绝不能用最小转弯半径当捕获半径**。
+        //    旧写法 captureRadius = max(moveDist, minTurnRadius) = 0.31°（35 km），而海路
+        //    相邻顶点中位间距只有 0.54° —— 船走到离路点 35 km 就被瞬移到点上，
+        //    等于每段航程有一半多是「跳」过去的。离线验算（scratch/_sim_naval_march.mts）：
+        //    单帧最大位移 0.3124° = 正常步距的 39 倍，全程 76 次瞬移 —— 这就是主人看到的颤抖。
+        //    现在捕获半径只按本帧步距；终点额外给 NAVAL_FINAL_SNAP_DEG(≈2 km) 贴齐，
+        //    远小于攻城到达判定 0.2°，不影响任何抵达逻辑。
+        const isFinalWaypoint = this.pathQueue.length === 0;
+        const captureRadius = Math.max(
+            0.000001,
+            moveDist,
+            isFinalWaypoint ? Army.NAVAL_FINAL_SNAP_DEG : 0,
+        );
 
         if (distToNext <= captureRadius) {
             this.position.lat = this.destination.lat;
@@ -687,25 +704,32 @@ export class Army implements IBattleUnit {
             return;
         }
 
-        // 🔴 [2026-08-31] 兜底：只要「离路点没变近」就累计计时，超过 NAVAL_ORBIT_BAILOUT_SEC
-        //    直接判到达。转弯半径公式再准也只是模型，真实里还有速度倍率、路点贴着岸线、
-        //    连续急转等情况能让船绕住；绕圈是**死循环**（到不了点 → 不换点 → 继续绕），
-        //    必须有一条无条件能脱出的路，不能只靠公式吃住所有情况。
-        if (this.navalPrevDistToNext !== null && distToNext >= this.navalPrevDistToNext - 1e-9) {
-            this.navalOrbitSec += deltaTime;
-            if (this.navalOrbitSec >= Army.NAVAL_ORBIT_BAILOUT_SEC) {
-                this.navalOrbitSec = 0;
-                this.navalPrevDistToNext = null;
-                this.position.lat = this.destination.lat;
-                this.position.lng = this.destination.lng;
-                this.reachCurrentWaypoint();
-                return;
-            }
+        // 「掠过」判定取代旧的瞬移：船受最小转弯半径限制，本来就进不了路点那么近，
+        //  但只要它已经贴到半径以内又开始**远离**，这个路点在航海意义上就是已经过了 ——
+        //  换下一个路点继续开，位置一寸不挪（旧实现在这里把船瞬移到点上）。
+        const receding =
+            this.navalPrevDistToNext !== null && distToNext > this.navalPrevDistToNext;
+        if (receding && distToNext <= minTurnRadius) {
+            this.reachCurrentWaypoint();
         } else {
-            this.navalOrbitSec = 0;   // 在靠近 → 正常航行，清零
+            // 🔴 [2026-08-31] 兜底：只要「离路点没变近」就累计计时，超过 NAVAL_ORBIT_BAILOUT_SEC
+            //    换下一个路点脱出。转弯半径公式再准也只是模型，真实里还有速度倍率、路点贴着
+            //    岸线、连续急转等情况能让船绕住；绕圈是**死循环**（到不了点 → 不换点 → 继续
+            //    绕），必须有一条无条件能脱出的路，不能只靠公式吃住所有情况。
+            const notCloser =
+                this.navalPrevDistToNext !== null && distToNext >= this.navalPrevDistToNext - 1e-9;
+            if (notCloser && this.navalOrbitSec + deltaTime >= Army.NAVAL_ORBIT_BAILOUT_SEC) {
+                // 换点，且**不要**再写 navalPrevDistToNext —— 上一段的距离会被当成新路点的
+                // 基准，下一帧第一时间误判成「没靠近」（reachCurrentWaypoint 已把它清空）。
+                this.reachCurrentWaypoint();
+            } else {
+                this.navalOrbitSec = notCloser ? this.navalOrbitSec + deltaTime : 0;
+                this.navalPrevDistToNext = distToNext;
+            }
         }
-        this.navalPrevDistToNext = distToNext;
 
+        // 换点/脱出都不打断本帧位移：船一帧都不停，避免换点那一帧出现停顿。
+        if (this.hasArrived) return;
         this.position.lat += Math.cos(this.navalHeadingRad) * advance;
         this.position.lng += Math.sin(this.navalHeadingRad) * advance;
         this.lastDirection = this.navalHeadingRad;
