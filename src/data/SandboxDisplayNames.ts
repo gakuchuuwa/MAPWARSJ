@@ -103,7 +103,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
   gaer: '盖尔',
   mangsite: '芒斯',
-  tuomengde: '托蒙',
+'tuomengde': '托蒙',
   piketai: '皮克',
 'anggelu': '盎格',
   yinggelan: '英格',

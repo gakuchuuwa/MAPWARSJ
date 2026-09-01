@@ -2003,7 +2003,9 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 30000, region: 'CELTS' },
     { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'small_city', troops: 30000, region: 'CELTS' },
+    { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'small_city', troops: 20000, region: 'CELTS' },
+
+
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 20000, region: 'LATIN', mirror: true },
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },

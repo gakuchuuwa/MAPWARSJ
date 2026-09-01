@@ -1030,6 +1030,7 @@ export class CityAssetManager {
         'saierweiya': '拉什',
         'anggelu': '盎格',
         'fulandesi': '阿图',
+'tuomengde': '托蒙',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
