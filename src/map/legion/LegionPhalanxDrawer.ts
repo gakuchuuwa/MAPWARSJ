@@ -600,7 +600,9 @@ export class LegionPhalanxDrawer {
                 const unitScale = 60 * scale * slotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
                 w = Math.max(w, fw * unitScale * 0.5);
                 // 所有军团统一采用前中后三排，纵向排距统一收紧。
-                h = Math.max(h, fh * unitScale * 0.65);
+                // [2026-09-01 主人：战象前中后偏散/脱节] 0.65 → 0.58：战象行距 130→116px（0.61→0.55 象身），
+                //   战象-步兵连贯不脱节，战象前后仍留 0.45 空隙不穿模（下限 0.47）。全局收紧，步兵同步更密。
+                h = Math.max(h, fh * unitScale * 0.58);
             }
             // 只抬不降：与 2026-08-18 的口径一致，小兵种保持原有密集队列
             spacingX[r] = Math.max(baseSpacingX, w);

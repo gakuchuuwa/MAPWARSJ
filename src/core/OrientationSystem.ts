@@ -72,9 +72,45 @@ export class OrientationSystem {
      * @param from Source position
      * @param to Target position
      */
+    /**
+     * 🔴 [2026-09-01] Web Mercator 屏幕位移。
+     * 战略地图是 Web Mercator：屏幕上纵向被 1/cos(lat) 拉伸，纬度越高拉得越狠。
+     * 用原始经纬度差算出来的角度 ≠ 屏幕上看到的行进角度（lat 45° 差 ~10°，lat 60° 差 ~19.5°），
+     * 8 向量化后会整档打偏，观感就是「军团侧着走」。所有朝向一律先换到屏幕轴再算角。
+     */
+    private static mercatorY(latDeg: number): number {
+        const lat = Math.max(-85.0511, Math.min(85.0511, latDeg)) * Math.PI / 180;
+        return Math.log(Math.tan(Math.PI / 4 + lat / 2));
+    }
+
+    /** 经纬度位移 → 屏幕轴位移（dx 向东为正，dy 向北为正；单位任意，只用比值） */
+    public static screenDelta(from: LatLng, to: LatLng): { dx: number; dy: number } {
+        return {
+            dx: (to.lng - from.lng) * Math.PI / 180,
+            dy: this.mercatorY(to.lat) - this.mercatorY(from.lat),
+        };
+    }
+
+    /** 屏幕角（数学制：0=东，逆时针为正），供 get8DirectionFromAngle 用 */
+    public static getScreenAngleDeg(from: LatLng, to: LatLng): number {
+        const d = this.screenDelta(from, to);
+        return Math.atan2(d.dy, d.dx) * (180 / Math.PI);
+    }
+
+    /** 屏幕罗盘角（0=北，顺时针为正），供船 16 向 / 平滑转向用 */
+    public static getScreenCompassDeg(from: LatLng, to: LatLng): number {
+        const d = this.screenDelta(from, to);
+        return Math.atan2(d.dx, d.dy) * (180 / Math.PI);
+    }
+
+    /** 罗盘角（0=北 CW） → 数学角（0=东 CCW） */
+    public static compassToMathDeg(compassDeg: number): number {
+        return 90 - compassDeg;
+    }
+
     public static get8DirectionIndex(from: LatLng, to: LatLng): number {
-        const dx = to.lng - from.lng;
-        const dy = to.lat - from.lat;
+        // 🔴 走 Mercator 屏幕轴，不用原始经纬度差（见 screenDelta 注释）
+        const { dx, dy } = this.screenDelta(from, to);
 
         // Atan2 returns angle in radians from -PI to PI
         // 0 is East (Right), -PI/2 is North (Up), PI/2 is South (Down), PI/-PI is West (Left)
