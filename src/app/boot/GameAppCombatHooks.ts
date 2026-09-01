@@ -114,6 +114,9 @@ function startScene13War(
     const defenderCityId: string | null = battleType === 'siege'
         ? (defender.getEntity?.()?.id as string | undefined) ?? null
         : null;
+    const defenderCityEntity = battleType === 'siege' ? defender.getEntity?.() : null;
+    const defenderCityLat = typeof defenderCityEntity?.latitude === 'number' ? defenderCityEntity.latitude : undefined;
+    const defenderCityLng = typeof defenderCityEntity?.longitude === 'number' ? defenderCityEntity.longitude : undefined;
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
@@ -140,6 +143,8 @@ function startScene13War(
         defenderCityType,
         // [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观 → 守方城中央立奇观地标）
         defenderCityId,
+        defenderCityLat,
+        defenderCityLng,
         // [2026-08-31 主人定] 跟随军团在守方侧 → 攻守两侧左右对调
         followedOnDefenderSide,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁

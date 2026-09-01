@@ -666,85 +666,85 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 赵宋军团·开封及宋将（赵匡胤 / 杨业 / 杨延昭 / 狄青 / 种世衡 / 种师道 / 王韶 / 宗泽 / 韩世忠 / 文天祥 · 鱼鳞阵 3+4+2：火矛兵 3 + 火矛兵精锐主力 4 + 火焰弓手 2）
     "song": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "heng1": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "changshan": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "zhai_han": {
-        legionName: "翟国军团",
+        legionName: "蕃落骑军团",
         legionType: "solo",
         formationMode: "fish_scale",
         slots: [
             { type: "elite_fire_lancer", count: 3 },
-            { type: "hei_kuang", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "yanzhou": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "huan": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "didao": {
-        legionName: "蕃落骑军团",
+        legionName: "北宋禁军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "qing": {
         legionName: "蕃落骑军团",
         formationMode: "fish_scale",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "elite_fire_lancer", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "keshik", count: 2 },
         ],
     },
     "xiangzhou": {
-        legionName: "蕃落骑军团",
-        formationMode: "fish_scale",
+        legionName: "南宋行营军团",
+        formationMode: "triangle",
         slots: [
-            { type: "fire_lancer", count: 3 },
-            { type: "elite_fire_lancer", count: 4 },
-            { type: "fire_archer", count: 2 },
+            { type: "elite_fire_lancer", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "elite_chukonu", count: 4 },
         ],
     },
     // 蜀汉·刘备 / 诸葛亮 / 关羽 / 张飞 / 赵云 / 马超 / 姜维 / 王平 / 张嶷 / 廖化 / 严颜 白毦兵精锐军团（鱼鳞阵 3+4+2：白毦兵前卫 3 + 精锐白毦兵主力 4 + 诸葛弩 2）
@@ -851,194 +851,194 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 草原与中亚诸大汗·怯薛铁骑军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
-    menggu_d: {
+    "menggu_d": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },          // Row 0 前卫突破 = 鞑靼怯薛军 3骑
-            { type: 'steppe_lancer', count: 2 },   // Row 1 中军 = 草原枪骑兵 2骑（草原枪骑兵接应）
-            { type: 'mangudai_elite', count: 4 },  // Row 2 底边主力 = 精锐蒙古突骑 4骑（蒙古突骑精锐主力游射）
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    jinzhang: {
+    "jinzhang": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    yuan_d: {
+    "yuan_d": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
     // 帖木儿帝国·撒马尔罕（帖木儿 · 蒙古军团 · 偃月阵 3+2+4：怯薛军 3 + 草原枪兵 2 + 精锐蒙古突骑 4）
-    tiemuer: {
+    "tiemuer": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },              // Row 0 前卫突骑 = 鞑靼怯薛军 3骑（前沿突击尖刀）
-            { type: 'steppe_lancer', count: 2 },       // Row 1 中军 = 草原枪骑兵 2骑（草原枪骑兵接应）
-            { type: 'mangudai_elite', count: 4 },      // Row 2 底边主力 = 精锐蒙古突骑 4骑（高机动轻骑精锐游射压制）
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    asaibaijiang: {
+    "asaibaijiang": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    wuliangha: {
+    "wuliangha": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    jalair: {
+    "jalair": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    kiyad: {
+    "kiyad": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    zhadalan: {
+    "zhadalan": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    wala: {
+    "wala": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    oirat_ming: {
+    "oirat_ming": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    an: {
+    "an": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    babuer: {
+    "babuer": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    da_yuan: {
+    "da_yuan": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    chahar: {
+    "chahar": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    zhaowu: {
+    "zhaowu": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    manghuti: {
+    "manghuti": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    khoshut: {
+    "khoshut": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    yilihanguo_d: {
+    "yilihanguo_d": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    yilihanguo: {
+    "yilihanguo": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
-    salai: {
+    "salai": {
         legionName: "蒙古军团",
-        formationMode: 'crescent',
+        formationMode: "crescent",
         slots: [
-            { type: 'keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: "elite_keshik", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+            { type: "mangudai_elite", count: 4 },
         ],
     },
     // 马其顿·亚历山大帝国军团（雁行阵 4+3+2：马其顿方阵兵 4 + 伙伴骑兵 3 + 克里特弓手 2）

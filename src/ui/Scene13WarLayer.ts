@@ -3045,6 +3045,9 @@ export interface Scene13WarInit {
     /** 战场中心坐标（由 GameAppCombatHooks 传入；P2 地形 biome 判定用） */
     centerLat?: number;
     centerLng?: number;
+    /** 攻防战守方据点坐标，仅供环境层判定该城是否临水。 */
+    defenderCityLat?: number;
+    defenderCityLng?: number;
     /** [军事科技] 当前年份 getter（由 GameAppCombatHooks 注入；战斗跨年时刷新科技分表） */
     getYear?: () => number;
     /** [环境生成] 显式种子（测试用）；不传则从经纬度 + 双方势力/武将 id 派生 */
@@ -3565,12 +3568,19 @@ export class Scene13WarLayer {
                 this.spawnSiegeWeapons(VW, VH, mx, depth);
             }
 
+            const defenderSpawnXs = this.spawns.filter((s) => s.f === 1).map((s) => s.x);
+            const siegeWallFrontX = this.battleType === 'siege' && defenderSpawnXs.length > 0
+                ? Math.round(Math.min(...defenderSpawnXs) - 380)
+                : undefined;
+
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
             this.environmentPlan = generateEnvironment({
                 lat: init.centerLat,
                 lng: init.centerLng,
+                waterProbeLat: init.defenderCityLat,
+                waterProbeLng: init.defenderCityLng,
                 seed: init.environmentSeed,
                 width: VW,
                 height: VH,
@@ -3579,6 +3589,7 @@ export class Scene13WarLayer {
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
                 isSiege: init.battleType === 'siege',
+                siegeWallFrontX,
                 // 🔴 [2026-08-24 主人定]「水军的攻城战，做用左边是海的图」。
                 //    强制出海，不靠 probeWater 探测碰运气——水军打的城本来就在海边，
                 //    探测失灵就变成内陆战场，那这仗就白是水军了。
