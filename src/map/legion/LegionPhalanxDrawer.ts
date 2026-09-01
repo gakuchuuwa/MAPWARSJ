@@ -1354,9 +1354,10 @@ export class LegionPhalanxDrawer {
         const refTotalFrames = this.getFrameCount(refSprite);
         // [2026-08-20 主人：战略地图的兵有点大] 方阵格位间距基准 75 → 68（−10%），与下面单兵
         // 绘制基准 60 → 54 同比例，整个方阵等比缩小、疏密不变。
+        // [2026-09-01 主人「军团稍大一点」] 间距 68 → 73、绘制 54 → 58 同比例放大（+7.4%），疏密不变。
         // 🔴 只影响非 13（denseFront=false）：13 的间距由 computeDenseSpacing 覆盖、绘制基准另走
         //    分支，逐像素不变（8/9/10 是成品，13 是禁区，这次只动战略地图的观感）。
-        const baseHeight = 68; // Standard size for all units
+        const baseHeight = 73; // Standard size for all units
 
         // [DYNAMIC RATIO]
         // Do NOT force unitRatio here. We calculate it per-sprite in the loop.
@@ -1803,9 +1804,9 @@ export class LegionPhalanxDrawer {
             // Apply dynamic scale (spawn animation etc.) into the single scaling factor
             scalingFactor *= dynamicScale;
 
-            // 战略地图军团兵模：非 13 单兵绘制基准 50 → 54（2026-08-30 主人「战略地图士兵稍大一点」）；
+            // 战略地图军团兵模：非 13 单兵绘制基准 54 → 58（2026-09-01 主人「军团稍大一点」）；
             // 13（denseFront）保持 60 不动，13 的对位/前缘半径按 60 算（见 §measure 的 SPRITE_BASE_H）。
-            const baseHeight = denseFront ? 60 : 54;
+            const baseHeight = denseFront ? 60 : 58;
             if (dynDir) {
                 // 🔴 DE：统一缩放 s（站立高度 64 参考），hotspot(canvas中心) 对齐单位位置，脚底随动作浮动。
                 const s = baseHeight * scale * scalingFactor / 64;

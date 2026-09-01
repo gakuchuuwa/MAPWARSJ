@@ -114,6 +114,28 @@ export class OrientationSystem {
         return (9 - sector) % 8;
     }
 
+    /**
+     * 带迟滞的 8 方向量化（2026-09-01 主人报「军团/商队频繁更换朝向」）：
+     * 移动方向停在扇区边界（±22.5°）附近时，微小角度波动会让朝向贴图在相邻 index 来回跳。
+     * 加死区：角度必须越过「当前扇区边界 + deadZoneDeg」才切换，边界抖动被死区吸收。
+     */
+    public static get8DirectionWithHysteresis(
+        currentIndex: number,
+        angleDeg: number,
+        deadZoneDeg: number = 10,
+    ): number {
+        const candidate = this.get8DirectionFromAngle(angleDeg);
+        if (candidate === currentIndex) return currentIndex;
+        // 当前 index 的扇区中心角（逆推 get8DirectionFromAngle：sector=(9-index)%8，中心=45°×sector）
+        const sector = (9 - currentIndex) % 8;
+        const centerDeg = sector * 45;
+        let diff = ((angleDeg - centerDeg) % 360 + 360) % 360;
+        if (diff > 180) diff -= 360;
+        // 半扇区 22.5° + 死区：角度还没越出当前扇区（含死区）→ 保持不切换
+        if (Math.abs(diff) <= 22.5 + deadZoneDeg) return currentIndex;
+        return candidate;
+    }
+
     public static getCityImageTransform(longitude: number): string {
         return 'none';
     }

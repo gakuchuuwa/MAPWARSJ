@@ -1484,13 +1484,149 @@ export const SPRITE_PATHS = {
             DEATH: [],
         },
         // ── 12 文化圈专属历史战舰（对照 DE & 史实） ────────────────
+        'ELITE_CARAVEL': {
+            // 西班牙无敌舰队精锐
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/death_${d}.png`),
+        },
+        'BIREME': {
+            // 腓尼基双列桨（阿契美尼德）（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/BIREME/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/BIREME/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/BIREME/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/BIREME/idle_${d}.png`),
+            DEATH: [],
+        },
+        'DEMO_RAFT': {
+            // 内陆渡河木筏（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DEMO_RAFT/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DEMO_RAFT/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DEMO_RAFT/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DEMO_RAFT/idle_${d}.png`),
+            DEATH: [],
+        },
+        'ELITE_LONGBOAT': {
+            // 盖尔长船（凯尔特）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/death_${d}.png`),
+        },
+        'FIRE_GALLEY': {
+            // 黎凡特-红海火攻快船（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/FIRE_GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/FIRE_GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/FIRE_GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/FIRE_GALLEY/idle_${d}.png`),
+            DEATH: [],
+        },
+        'GALLEON': {
+            // 威尼斯/热那亚大帆船（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEON/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEON/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEON/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEON/idle_${d}.png`),
+            DEATH: [],
+        },
+        'GALLEY': {
+            // 金人水军小型战船（东北）（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HEAVY_INCENDIARY_SHIP': {
+            // 伊洛瓦底江重型内河战船（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_INCENDIARY_SHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_INCENDIARY_SHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_INCENDIARY_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_INCENDIARY_SHIP/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HEAVY_LEMBOS': {
+            // 哥特/汪达尔重型伦博斯（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_LEMBOS/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_LEMBOS/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_LEMBOS/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_LEMBOS/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HULK': {
+            // 北海-波罗的海柯克船（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HULK/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HULK/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HULK/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HULK/idle_${d}.png`),
+            DEATH: [],
+        },
+        'INCENDIARY_SHIP': {
+            // 火攻艨艟（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/INCENDIARY_SHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/INCENDIARY_SHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/INCENDIARY_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/INCENDIARY_SHIP/idle_${d}.png`),
+            DEATH: [],
+        },
+        'LEMBOS': {
+            // 黑海-多瑙河轻型伦博斯（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LEMBOS/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LEMBOS/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LEMBOS/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LEMBOS/idle_${d}.png`),
+            DEATH: [],
+        },
+        'LONGBOAT': {
+            // 维京龙首长船
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LONGBOAT/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LONGBOAT/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LONGBOAT/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LONGBOAT/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LONGBOAT/death_${d}.png`),
+        },
+        'MONOREME': {
+            // 罗斯独木船队（斯拉夫）（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MONOREME/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MONOREME/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MONOREME/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MONOREME/idle_${d}.png`),
+            DEATH: [],
+        },
+        'WAR_GALLEY': {
+            // 地中海桨帆战船（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_GALLEY/idle_${d}.png`),
+            DEATH: [],
+        },
+        'WAR_HULK': {
+            // 英王柯克战船（不列颠）（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_HULK/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_HULK/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_HULK/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_HULK/idle_${d}.png`),
+            DEATH: [],
+        },
+        'WAR_LEMBOS': {
+            // 马其顿伦博斯突击舰（DE 素材无 death 动作）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_LEMBOS/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_LEMBOS/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_LEMBOS/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/WAR_LEMBOS/idle_${d}.png`),
+            DEATH: [],
+        },
         'LOU_CHUAN': {
             // 中国古代大型楼船（中华各区）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LOU_CHUAN/move_${d}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LOU_CHUAN/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LOU_CHUAN/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LOU_CHUAN/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/LOU_CHUAN/death_${d}.png`),
         },
         'TURTLE_SHIP': {
             // 朝鲜李朝龟甲船（高丽）
@@ -1498,7 +1634,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TURTLE_SHIP/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TURTLE_SHIP/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TURTLE_SHIP/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TURTLE_SHIP/death_${d}.png`),
         },
         'DRAGON_SHIP': {
             // 维京龙头长船（北欧/蛮族/草原）
@@ -1506,7 +1642,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DRAGON_SHIP/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DRAGON_SHIP/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DRAGON_SHIP/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DRAGON_SHIP/death_${d}.png`),
         },
         'DROMON': {
             // 希腊火德罗蒙重型战舰（拜占庭/东欧）
@@ -1514,7 +1650,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DROMON/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DROMON/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DROMON/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DROMON/death_${d}.png`),
         },
         'TRIREME': {
             // 古典三列桨座战船（希腊城邦）
@@ -1530,7 +1666,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/death_${d}.png`),
         },
         'CARAVEL': {
             // 卡拉维尔帆船（西班牙/葡萄牙）
@@ -1538,7 +1674,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CARAVEL/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CARAVEL/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CARAVEL/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CARAVEL/death_${d}.png`),
         },
         'CARRACK': {
             // 克拉克高舷战舰（西欧/中欧）
@@ -1562,7 +1698,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/death_${d}.png`),
         },
         'ANT_WAR_GALLEY': {
             // 日本安宅战船（日本）
