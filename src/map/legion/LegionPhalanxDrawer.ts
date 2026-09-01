@@ -62,6 +62,14 @@ const DE_DYN_DIRS = ["/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTI
 
 export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
+/** 库中 18 艘拥有完整 16 向 move 划桨/动效动画的战船（其余 28 艘为 1 帧静态中世纪帆船/木筏） */
+const NAVAL_OARED_ANIMATED_SHIPS = new Set([
+    'BIREME', 'CANOE', 'CATAPULT_SHIP', 'DRAGON_SHIP', 'DROMON',
+    'ELITE_LEMBOS', 'ELITE_TURTLE_SHIP', 'HEAVY_LEMBOS', 'HERO_ARTEMISIA',
+    'HERO_THEMISTOCLES', 'LEMBOS', 'LEVIATHAN', 'LOU_CHUAN', 'MONOREME',
+    'ONAGER_SHIP', 'TRIREME', 'TURTLE_SHIP', 'WAR_LEMBOS',
+]);
+
 export class LegionPhalanxDrawer {
 
     /** 骑兵格位内部小三角（6 人 1+2+3）：denseFront 时每个骑兵编队内部展开成楔形。
@@ -1180,13 +1188,33 @@ export class LegionPhalanxDrawer {
         BOB_ELE_SPEED: 0.0039,  // 象兵步频：更稳
     } as const;
 
-    /** [2026-08-27 §D 浮沉横摇] 船贴「活着」的微动：浮沉(bob)竖向 1~2px + 横摇(roll)小角度，逐船错相。
-     *  速度单位 rad/ms（同 MICRO_MOTION）；振幅按 scale 缩放，远观自动收敛为微光感。 */
+    /**
+     * [2026-08-27 §D 浮沉横摇 / 2026-09-02 双轨自适应] 船贴「水体波浪动力学」微动。
+     * 区分静态帆船（28艘）与划桨动画船（18艘），并区分行军 MOVE 与停泊 IDLE：
+     *   - 静态帆船在 MOVE 状态适度强化浪涌升沉与小幅横摇，消除纸片滑行感；IDLE 状态柔和漂浮。
+     *   - 18 艘划桨船自带完整 30 帧划桨水花，微动适度收敛，避免双重晃动。
+     */
     private static readonly NAVAL_MICRO = {
-        BOB_AMP: 1.2,
-        BOB_SPEED: 0.0026,   // ≈2.4s 一次升沉，比步兵(1.2s)更沉
-        ROLL_AMP: 0.024,     // 弧度，≈1.4°
-        ROLL_SPEED: 0.0021,  // 稍慢于升沉，避免机械同频
+        STATIC: {
+            MOVE_BOB_AMP: 2.2,
+            MOVE_BOB_SPEED: 0.0032,
+            MOVE_ROLL_AMP: 0.028,    // ≈1.6°
+            MOVE_ROLL_SPEED: 0.0028,
+            IDLE_BOB_AMP: 1.0,
+            IDLE_BOB_SPEED: 0.0020,
+            IDLE_ROLL_AMP: 0.016,    // ≈0.9°
+            IDLE_ROLL_SPEED: 0.0018,
+        },
+        OARED: {
+            MOVE_BOB_AMP: 1.2,
+            MOVE_BOB_SPEED: 0.0026,
+            MOVE_ROLL_AMP: 0.018,    // ≈1.0°
+            MOVE_ROLL_SPEED: 0.0022,
+            IDLE_BOB_AMP: 0.8,
+            IDLE_BOB_SPEED: 0.0018,
+            IDLE_ROLL_AMP: 0.012,    // ≈0.7°
+            IDLE_ROLL_SPEED: 0.0016,
+        },
     } as const;
 
     /**
@@ -2393,9 +2421,10 @@ export class LegionPhalanxDrawer {
             while (resDeg < -180) resDeg += 360;
             const shipRot = resDeg * Math.PI / 180;
 
-            // [2026-08-27 §D 浮沉横摇] 逐船错相微动：浮沉竖移 + 横摇小角度。只叠在贴图绘制上，
-            //   不动舰队逻辑位/尾迹（wake 仍踩逻辑位，1~2px 浮沉不会脱节）。
-            //   相位 = 舰队 id 哈希(0..2π) + 船位序 i×1.7：同舰队不错频，跨舰队也不同步。
+            // [2026-08-27 §D 浮沉横摇 / 2026-09-02 双轨分档] 逐船错相微动：
+            //   - 区分 28 艘静态帆船 (STATIC) 与 18 艘划桨船 (OARED)；
+            //   - 区分行军 MOVE 浪涌与停泊 IDLE 呼吸微澜；
+            //   - 只叠在贴图绘制上，不动舰队逻辑位/尾迹。
             let unitPhase = 0;
             if (unitId) {
                 let h = 0;
@@ -2403,8 +2432,16 @@ export class LegionPhalanxDrawer {
                 unitPhase = (h % 628) / 100;
             }
             const microPhase = unitPhase + i * 1.7;
-            const bobY = Math.sin(tick * LegionPhalanxDrawer.NAVAL_MICRO.BOB_SPEED + microPhase) * -LegionPhalanxDrawer.NAVAL_MICRO.BOB_AMP * scale;
-            const roll = Math.sin(tick * LegionPhalanxDrawer.NAVAL_MICRO.ROLL_SPEED + microPhase * 1.3) * LegionPhalanxDrawer.NAVAL_MICRO.ROLL_AMP;
+            const isOared = NAVAL_OARED_ANIMATED_SHIPS.has(pos.ship ?? targetShipId);
+            const microCfg = isOared ? LegionPhalanxDrawer.NAVAL_MICRO.OARED : LegionPhalanxDrawer.NAVAL_MICRO.STATIC;
+            const isMoving = state === 'MOVE';
+            const bobAmp = (isMoving ? microCfg.MOVE_BOB_AMP : microCfg.IDLE_BOB_AMP) * scale;
+            const bobSpeed = isMoving ? microCfg.MOVE_BOB_SPEED : microCfg.IDLE_BOB_SPEED;
+            const rollAmp = isMoving ? microCfg.MOVE_ROLL_AMP : microCfg.IDLE_ROLL_AMP;
+            const rollSpeed = isMoving ? microCfg.MOVE_ROLL_SPEED : microCfg.IDLE_ROLL_SPEED;
+
+            const bobY = Math.sin(tick * bobSpeed + microPhase) * -bobAmp;
+            const roll = Math.sin(tick * rollSpeed + microPhase * 1.3) * rollAmp;
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];
@@ -2467,7 +2504,11 @@ export class LegionPhalanxDrawer {
                 spriteAnimState = 'MOVE';
                 // [2026-08-27 §② 划桨随速] 浆速贴真实船速：speedFactor>1 快浆、<1 慢浆、≈0 收浆锚泊。
                 //   连续相位累加（本帧推进 dt/oarMs 帧）：变速只影响后续推进，不会让帧跳到任意处。
-                const oarMs = Math.max(55, Math.min(600, 150 / Math.max(0.05, speedFactor ?? 1)));
+                // [2026-09-02 修·快桨地板 bug] DE 划桨基准循环 ≈1500ms（30帧船在基速每帧 50ms）：
+                //   放宽下限钳位至 12ms，避免 speedFactor ≥ 1.11 时直接撞死在 30ms 地板导致快桨失效。
+                const moveFrameN = frameCountFor(spriteAnimState, rawSprite);
+                const baseCycleMs = 1500;
+                const oarMs = Math.max(12, Math.min(600, (baseCycleMs / Math.max(1, moveFrameN)) / Math.max(0.05, speedFactor ?? 1)));
                 const prevTick = navalOarTick.get(unitId) ?? tick;
                 navalOarTick.set(unitId, tick);
                 // dt 钳到 120ms：舰队闲置/战斗后回归 MOVE 时不猛跳，日常 60fps(≈17ms) 不受影响。
