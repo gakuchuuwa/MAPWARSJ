@@ -9206,4 +9206,85 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_peltast", count: 3 },
         ],
     },
+    "womaya": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "paermila": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "youfaladi": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "ayoubu": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "mamuluke": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "nabatai": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "dedan": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "maidina": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
+    "gulaishi": {
+        legionName: "阿拉伯军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "mameluke", count: 2 },
+            { type: "camel_rider", count: 3 },
+            { type: "camel_archer", count: 4 },
+        ],
+    },
 };

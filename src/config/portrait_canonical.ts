@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/9/1 13:09:18（共 54 条）
+ * 生成时间：2026/9/1 20:44:27（共 56 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -42,6 +42,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_12.png": "/assets/DIANQIAN/ternate_babula.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_01.png": "/assets/DIANQIAN/__暂留__DIANQIAN_01.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_02.png": "/assets/DIANQIAN/__暂留__DIANQIAN_02.png",
+    "/assets/GERMANIC/yinggelan_hengliwushi.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
     "/assets/LATIN/__暂留__LATIN_01.png": "/assets/GREEK/__暂留__GREEK_01.png",
     "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/GREEK/__暂留__GREEK_02.png",
     "/assets/LATIN/fujisi_fujiweng.png": "/assets/GREEK/__暂留__GREEK_03.png",
@@ -53,6 +54,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__暂留__GREEK_09.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__暂留__GREEK_10.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",
+    "/assets/SLAVIC/bolan_suobiesiji.png": "/assets/SLAVIC/__多余__SLAVIC_04.png",
     "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": "/assets/SLAVIC/__多余__SLAVIC_03.png",
     "/assets/SLAVIC/nuowei_halaer.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png": "/assets/SLAVIC/__多余__SLAVIC_02.png",

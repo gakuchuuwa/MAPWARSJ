@@ -7582,7 +7582,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/SLAVIC/image.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_04.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 9
