@@ -4823,7 +4823,7 @@ export class Scene13WarLayer {
             // 1. 贴上当前水体专属的局部羽化软边
             offCtx.drawImage(softMask, 0, 0);
 
-            // 2. 填充流动水纹贴图（source-in 仅保留羽化遮罩范围）
+            // 2. 填充流动水纹贴图（第1层 source-in 仅保留羽化遮罩范围，后续层 source-atop 叠加不降 alpha）
             offCtx.save();
             offCtx.globalCompositeOperation = 'source-in';
 
@@ -4837,13 +4837,16 @@ export class Scene13WarLayer {
                 if (pat) this.waterPatternCache.set(img, pat);
             }
             if (pat) {
-                // 主流动波
+                // 主流动波（source-in 裁切入遮罩）
                 const ox = ((dx - bx) % tw + tw) % tw - tw;
                 const oy = ((dy - by) % th + th) % th - th;
                 offCtx.translate(ox, oy);
                 offCtx.fillStyle = pat;
                 offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+                // 切换为 source-atop：仅在已有水体像素上叠加，不溢出遮罩且绝不破坏目标 alpha
+                offCtx.globalCompositeOperation = 'source-atop';
 
                 // 次级微波干涉（轻微反向慢速干涉，产生自然波光层次）
                 offCtx.globalAlpha = 0.22;
@@ -4855,9 +4858,11 @@ export class Scene13WarLayer {
                 offCtx.fillStyle = pat;
                 offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
+            } else {
+                offCtx.globalCompositeOperation = 'source-atop';
             }
 
-            // 清澈碧蓝浅水微光
+            // 清澈碧蓝浅水微光（source-atop 叠加）
             offCtx.globalAlpha = 0.10;
             offCtx.fillStyle = '#60c8e8';
             offCtx.fillRect(0, 0, bw, bh);

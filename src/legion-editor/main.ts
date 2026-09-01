@@ -2232,6 +2232,8 @@ function computeLegionNameViolations(): string[] {
         factionName: r.factionName,
         name: effectiveLegionName(r),
         sig: legionSig(r),
+        // 没有自定义编成的势力，编制来自文化保底 —— 报错时要标出来，否则看不懂为什么会「重名」
+        hasCustom: !!localCustomCompositions[r.factionId],
     }));
 
     // ① 相同编制必须同名
@@ -2264,7 +2266,38 @@ function computeLegionNameViolations(): string[] {
     }
     for (const [name, sigs] of nameSigs.entries()) {
         if (sigs.size > 1) {
-            violations.push(`军团名【${name}】被用于不同编制（重名）：${nameFactions.get(name)!.join('、')}（同名军团必须同编制）`);
+            // 🔴 [2026-09-01 主人要求] 光列势力名等于没说 —— 必须讲清**谁和谁、差在哪一格**。
+            //    按编制分组列出，再逐格比出差异；没有自定义编成的势力标出「用文化保底编制」。
+            const groups = new Map<string, string[]>();
+            for (const e of eff) {
+                if (e.name !== name) continue;
+                if (!groups.has(e.sig)) groups.set(e.sig, []);
+                groups.get(e.sig)!.push(e.factionName + (e.hasCustom ? '' : '〔无自定义编成·用文化保底〕'));
+            }
+            const entries = [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
+            const lines: string[] = [
+                `军团名【${name}】被 ${entries.length} 种不同编制共用（同名军团必须同编制）：`,
+            ];
+            const readable = (sig: string): string[] => {
+                const [mode, body] = sig.split('|');
+                const slots = (body || '').split(',').filter(Boolean)
+                    .map(s => { const [ty, ct] = s.split(':'); return `${getUnitDisplayName(ty)}×${ct}`; });
+                return [...slots, `阵型 ${mode}`];
+            };
+            entries.forEach(([sig, fs], i) => {
+                lines.push(`　编制${String.fromCharCode(65 + i)}（${fs.length} 家）${fs.join('、')}`);
+                lines.push(`　　　${readable(sig).join(' + ').replace(' + 阵型', '　·　阵型')}`);
+            });
+            // 逐格比对前两种编制，指出差在第几格
+            if (entries.length >= 2) {
+                const a = readable(entries[0][0]), b = readable(entries[1][0]);
+                const diffs: string[] = [];
+                for (let i = 0; i < Math.max(a.length, b.length); i++) {
+                    if (a[i] !== b[i]) diffs.push(`第 ${i + 1} 格：编制A ${a[i] ?? '（无）'} ↔ 编制B ${b[i] ?? '（无）'}`);
+                }
+                if (diffs.length) lines.push(`　差异 → ${diffs.join('；')}`);
+            }
+            violations.push(lines.join(String.fromCharCode(10)));
         }
     }
 
@@ -2319,36 +2352,20 @@ function computeLegionNameViolations(): string[] {
         violations.push(`据点文化【${rg}】不在 65 个文化区内（REGION_ORDER 无此项），保底军团被静默算成【${getCultureLegionName(rg as RegionType)}】：${fs.join('、')}（请把这些据点的文化改成正式文化区）`);
     }
 
-    const cultureNameToRegion = new Map<string, RegionType>();
-    for (const rg of REGION_ORDER) {
-        const n = CULTURE_LEGION_NAMES[rg];
-        if (n) cultureNameToRegion.set(n, rg);
-    }
-    //    ⚠️ 这类实测有 66 个且多为子文化有意复用，逐条列会刷屏 —— 按「文化 × 借用军团」聚合成一行。
-    //    只报告，**一键修复不会自动改**（见 autoFixLegions 里的说明）。
-    const borrowed = new Map<string, { region: RegionType; name: string; factions: string[] }>();
-    for (const row of allRows) {
-        const name = effectiveLegionName(row);
-        const owner = cultureNameToRegion.get(name);
-        if (!owner || owner === row.region) continue;
-        const key = `${row.region}|${name}`;
-        if (!borrowed.has(key)) borrowed.set(key, { region: row.region as RegionType, name, factions: [] });
-        borrowed.get(key)!.factions.push(row.factionName);
-    }
-    for (const b of [...borrowed.values()].sort((x, y) => y.factions.length - x.factions.length)) {
-        const label = REGION_LABELS[b.region] ?? b.region;
-        const head = b.factions.slice(0, 4).join('、') + (b.factions.length > 4 ? `…共 ${b.factions.length} 个` : '');
-        violations.push(`〔提示·不自动修〕「${label}」文化的 ${b.factions.length} 个势力在用其他文化的军团【${b.name}】：${head}（本文化军团为【${getCultureLegionName(b.region)}】；若为子文化有意复用可忽略）`);
-    }
+    // 🔴 [2026-09-01 主人拍板] 「跨文化借用军团」的提示已删除：
+    //    实测 66 个多为子文化有意复用，**根本不用改**，却刷出十几条刷屏，把真错误淹掉。
+    //    这里只报真正要改的：相同编制不同名 / 重名不同编 / 个人军团被多家套用 /
+    //    文化缺保底军团 / 据点文化不在 65 区内。不用改的一律不提示。
 
     return violations;
 }
 
 /** 校验并自动报错：无违规提示通过；有违规弹窗列出全部 */
-function reportLegionNameViolations(): void {
+function reportLegionNameViolations(silentWhenClean = false): void {
     const violations = computeLegionNameViolations();
     if (violations.length === 0) {
-        showToast('✅ 军团命名检查通过：无同名/相同编制不同名违规');
+        // 打开编辑器时的自动校验走 silent：没错就别弹绿条打扰
+        if (!silentWhenClean) showToast('✅ 军团命名检查通过：无同名/相同编制不同名违规');
         return;
     }
     openLegionViolationsModal(violations);
@@ -3611,6 +3628,10 @@ buildRows();
 applyFilter();
 renderTable();
 
+
+// 🔴 [2026-09-01 主人要求「有错误要自动弹出」] 打开编辑器就自动校验一次，
+//    有违规直接弹窗，没有就安静 —— 不用改的事一律不提示。
+reportLegionNameViolations(true);
 // 默认选中第一个势力
 if (filteredRows.length > 0) {
     selectFaction(filteredRows[0].factionId);
