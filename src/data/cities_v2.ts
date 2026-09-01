@@ -874,7 +874,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_xiayangdu', name: '龙门', factionId: 'xiayang_d', lat: 35.602, lng: 110.452, type: 'pass', troops: 30000, region: 'CENTRAL' },
 
     // ── 战略渡口 ──
-    { id: 'city_piaoyujin', name: '漂渝津', factionId: 'pinghai', lat: 39.02, lng: 117.6, type: 'pass', troops: 20000, region: 'NORTH' },
+    { id: 'city_piaoyujin', name: '漂渝津', factionId: 'pinghai', lat: 39.02, lng: 117.6, type: 'small_city', troops: 20000, region: 'NORTH' },
+
 
     // ── 太行陉关隘 ──
     { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
@@ -2070,7 +2071,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 30000, region: 'CUMAN' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 20000, region: 'LITHUANIANS' },
 
-    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 30000, region: 'POLES' },
+    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 20000, region: 'POLES' },
+
     // ── 2026-08-04 新增：波兹南（大波兰公国治所；普热梅斯二世故都）──
     { id: 'city_poznan', name: '波兹南', factionId: 'dabolan', lat: 52.4064, lng: 16.9252, type: 'small_city', troops: 30000, region: 'POLES' },
     { id: 'city_kelakefu', name: '克拉科夫', factionId: 'piyasite', lat: 50.06, lng: 19.94, type: 'medium_city', troops: 30000, region: 'POLES' },

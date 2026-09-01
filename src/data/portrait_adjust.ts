@@ -3642,11 +3642,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/CENTRAL_ASIA/xianhai_shamalike.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": -35
-        },
         "/assets/xianqin/__闲置__xianqin_38.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -5487,11 +5482,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/SLAVIC/bolan_yagaiwo.png": {
-            "scale": 1.21,
-            "offsetX": 17,
-            "offsetY": 15
-        },
         "/assets/LATIN/mengtainiya_basalabu.png": {
             "scale": 1.22,
             "offsetX": 16,
@@ -6627,11 +6617,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/GERMANIC/yinggelan_hengliwushi.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": 15
-        },
         "/assets/BERBER/__多余__BERBER_01.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -7552,11 +7537,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 1,
             "offsetY": 17
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_115.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -7591,6 +7571,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_116.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": -35
+        },
+        "/assets/CENTRAL_ASIA/xianhai_shamalike.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/image.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/SLAVIC/__闲置__SLAVIC_06.png": {
+            "scale": 1.21,
+            "offsetX": 17,
+            "offsetY": 15
+        },
+        "/assets/SLAVIC/bolan_suobiesiji.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_17.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/GERMANIC/gen_henry_v.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {

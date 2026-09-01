@@ -1031,6 +1031,7 @@ export class CityAssetManager {
         'anggelu': '盎格',
         'fulandesi': '阿图',
 'tuomengde': '托蒙',
+        'bolan': '波兰',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

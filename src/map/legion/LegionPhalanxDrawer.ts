@@ -2425,23 +2425,30 @@ export class LegionPhalanxDrawer {
 
             let rawSprite: HTMLImageElement | undefined;
             let currentFrameIndex = 0;
+            let spriteAnimState: PhalanxAnimState = 'IDLE';
+            const frameCountFor = (anim: PhalanxAnimState, sprite?: HTMLImageElement): number =>
+                (currentSet as any).dyn?.[anim]?.frames
+                ?? (sprite ? this.getFrameCount(sprite) : td.totalFrames);
 
             let shipAlpha: number | undefined;
             if (shipDead) {
                 // 残骸：定格在死亡动画最后一帧，随军团尸体一同渐隐；无 death 帧（DE 桨帆船）→ 已沉没，不画
                 if (currentSet.DEATH.length === 0) continue;
                 rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
-                currentFrameIndex = td.totalFrames - 1;
+                spriteAnimState = 'DEATH';
+                currentFrameIndex = frameCountFor(spriteAnimState, rawSprite) - 1;
             } else if (shipDying) {
                 // 逐舰阵亡动画：用该舰的 stateStartTime 驱动；无 death 帧 → idle 兜底 + 渐隐淡出
                 const timeDead = Math.max(0, tick - shipSlot.stateStartTime);
                 if (currentSet.DEATH.length === 0) {
                     rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
+                    spriteAnimState = 'IDLE';
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
                     rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
-                    currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
+                    spriteAnimState = 'DEATH';
+                    currentFrameIndex = Math.min(Math.floor(timeDead / 150), frameCountFor(spriteAnimState, rawSprite) - 1);
                 }
             } else if (state === 'DEATH') {
                 // 全局 DEATH（战斗结束残余舰统一沉没）；无 death 帧 → 淡出
@@ -2449,20 +2456,25 @@ export class LegionPhalanxDrawer {
                 const timeDead = Math.max(0, tick - (starts[i] ?? tick));
                 if (currentSet.DEATH.length === 0) {
                     rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
+                    spriteAnimState = 'IDLE';
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
                 } else {
                     rawSprite = currentSet.DEATH[shipDir] || currentSet.DEATH[0];
-                    currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
+                    spriteAnimState = 'DEATH';
+                    currentFrameIndex = Math.min(Math.floor(timeDead / 150), frameCountFor(spriteAnimState, rawSprite) - 1);
                 }
             } else if (state === 'DAMAGE') {
                 rawSprite = currentSet.DAMAGE[shipDir] || currentSet.DAMAGE[0];
-                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
+                spriteAnimState = 'IDLE';
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % frameCountFor(spriteAnimState, rawSprite);
             } else if (state === 'ATTACK') {
                 rawSprite = currentSet.ATTACK[shipDir] || currentSet.ATTACK[0];
-                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
+                spriteAnimState = 'ATTACK';
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % frameCountFor(spriteAnimState, rawSprite);
             } else if (state === 'MOVE') {
                 rawSprite = currentSet.MOVE[shipDir] || currentSet.MOVE[0];
+                spriteAnimState = 'MOVE';
                 // [2026-08-27 §② 划桨随速] 浆速贴真实船速：speedFactor>1 快浆、<1 慢浆、≈0 收浆锚泊。
                 //   连续相位累加（本帧推进 dt/oarMs 帧）：变速只影响后续推进，不会让帧跳到任意处。
                 const oarMs = Math.max(55, Math.min(600, 150 / Math.max(0.05, speedFactor ?? 1)));
@@ -2472,18 +2484,22 @@ export class LegionPhalanxDrawer {
                 const dtMs = Math.min(120, Math.max(0, tick - prevTick));
                 const phase = (navalOarPhase.get(unitId) ?? 0) + dtMs / oarMs;
                 navalOarPhase.set(unitId, phase);
-                currentFrameIndex = Math.floor(phase + i * 0.18) % td.totalFrames;
+                currentFrameIndex = Math.floor(phase + i * 0.18) % frameCountFor(spriteAnimState, rawSprite);
             } else {
                 rawSprite = currentSet.IDLE[shipDir] || currentSet.IDLE[0];
+                spriteAnimState = 'IDLE';
             }
             if (!rawSprite?.complete || rawSprite.naturalWidth === 0) continue;
 
             const tintedSprite = SpriteTinter.getTintedSprite(rawSprite, factionId);
             if (!tintedSprite) continue;
 
+            const activeDynEntry = (currentSet as any).dyn?.[spriteAnimState] ?? td.dynEntry;
+            const activeTotalFrames = activeDynEntry?.frames ?? this.getFrameCount(tintedSprite);
+
             if (td.dyn) {
                 // DE：hotspot 对齐。帧框按该船自己的朝向查；缺该向元数据 → 回落旗舰向（typeDraws 已确认存在）
-                const dd = this.metaDirFor(td.dynEntry, shipDir, true) ?? this.metaDirFor(td.dynEntry, direction, true)!;
+                const dd = this.metaDirFor(activeDynEntry, shipDir, true) ?? this.metaDirFor(activeDynEntry, direction, true)!;
                 ships.push({
                     ax: dx, ay: dy, ox: -dd.hx * td.s!, oy: -dd.hy * td.s!, r: pos.r,
                     img: tintedSprite,
@@ -2492,7 +2508,7 @@ export class LegionPhalanxDrawer {
                     alpha: shipAlpha, rot: shipRot, bobY, roll,
                 });
             } else {
-                const tfw = tintedSprite.width / td.totalFrames;
+                const tfw = tintedSprite.width / activeTotalFrames;
                 ships.push({
                     ax: dx, ay: dy, ox: -td.w / 2, oy: -td.h / 2, r: pos.r,
                     img: tintedSprite,

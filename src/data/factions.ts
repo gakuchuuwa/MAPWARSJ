@@ -168,6 +168,7 @@ export const FACTIONS: Faction[] = [
   { id: 'mengtainiya', name: '蒙泰尼亚' },
   { id: 'litaowan', name: '立陶宛' },
   { id: 'bolan', name: '波兰' },
+
   // ── 2026-08-04 新增：大波兰（波兹南，大波兰公国/王国核心）──
   { id: 'dabolan', name: '波兰亚' },
   { id: 'piyasite', name: '皮雅斯特' },
@@ -851,6 +852,7 @@ export const FACTIONS: Faction[] = [
 
 
 { id: 'pinghai', name: '平海' },
+
        // 漂渝津·来护儿征东舟师
                 // 深绿 - 杜文秀平南国(大理)
     { id: 'qianhui', name: '回军' },

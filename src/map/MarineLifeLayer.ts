@@ -171,16 +171,49 @@ export class MarineLifeLayer extends L.Layer {
             kind = Math.random() < 0.65 ? 'WHALE' : 'DOLPHIN';
         }
 
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 0.05 + Math.random() * 0.1;
+        let offsetLat = 0;
+        let offsetLng = 0;
+        let foundSeaPlacement = false;
+        for (let attempt = 0; attempt < 16; attempt++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 0.05 + Math.random() * 0.1;
+            offsetLat = Math.sin(angle) * dist;
+            offsetLng = Math.cos(angle) * dist;
+            if (this.isSeaPlacement(pos.lat + offsetLat, pos.lng + offsetLng, kind)) {
+                foundSeaPlacement = true;
+                break;
+            }
+        }
+        if (!foundSeaPlacement) return;
+
         this.creature = {
             kind,
-            offsetLat: Math.sin(angle) * dist,
-            offsetLng: Math.cos(angle) * dist,
+            offsetLat,
+            offsetLng,
             frame: Math.floor(Math.random() * ASSETS[kind].frames),
             expiresAt: now + 15000 + Math.random() * 10000,
         };
         this.lastFrameAt = now;
+    }
+
+    private isSeaPlacement(lat: number, lng: number, kind: Creature['kind']): boolean {
+        if (!this.map) return false;
+        const a = ASSETS[kind];
+        const center = this.map.latLngToContainerPoint(L.latLng(lat, lng));
+        const halfW = a.screenW / 2;
+        const halfH = (a.boxH / a.boxW) * a.screenW / 2;
+        const samples = [
+            center,
+            L.point(center.x - halfW, center.y),
+            L.point(center.x + halfW, center.y),
+            L.point(center.x, center.y - halfH),
+            L.point(center.x, center.y + halfH),
+            L.point(center.x - halfW, center.y - halfH),
+            L.point(center.x + halfW, center.y - halfH),
+            L.point(center.x - halfW, center.y + halfH),
+            L.point(center.x + halfW, center.y + halfH),
+        ];
+        return samples.every((point) => LandSeaSystem.isSeaAt(this.map!.containerPointToLatLng(point)));
     }
 
     private render(): void {
@@ -203,6 +236,10 @@ export class MarineLifeLayer extends L.Layer {
 
         const lat = pos.lat + this.creature.offsetLat;
         const lng = pos.lng + this.creature.offsetLng;
+        if (!this.isSeaPlacement(lat, lng, this.creature.kind)) {
+            this.creature = null;
+            return;
+        }
         const p = this.map.latLngToContainerPoint(L.latLng(lat, lng));
         const w = a.screenW;
         const h = (a.boxH / a.boxW) * w;
