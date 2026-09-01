@@ -2283,9 +2283,9 @@ export class GlobalUnitRenderer {
                 // Actually, since we used atan2(dLng, dLat), 
                 // dx=dLat (cos), dy=dLng (sin).
 
-                directionIndex = OrientationSystem.get8DirectionIndex(
-                    unitPos,
-                    { lat: virtualLat, lng: virtualLng }
+                directionIndex = OrientationSystem.get8DirectionWithHysteresis(
+                    unit.lastDirection,
+                    Math.atan2(virtualLat - unitPos.lat, virtualLng - unitPos.lng) * 180 / Math.PI,
                 );
 
                 unit.lastDirection = directionIndex;

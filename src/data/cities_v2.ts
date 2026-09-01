@@ -1402,7 +1402,8 @@ export const PERIPHERY: CityDataV2[] = [
 
     // ── 2026-05-25 晚清／近代城市（35个）──
     // 第一类：太平天国
-    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'pass', troops: 30000, region: 'JIANGNAN' },
+    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
 
     // 第三类：大明国/小刀会

@@ -46,6 +46,8 @@ interface Caravan {
     shipDir: string;       // 商船皮肤目录
     phase: number;         // 动画相位（帧偏移）
     ageMs: number;
+    lastDirIdx: number[];  // 每单位上一帧朝向 index（迟滞用）
+    lastDirDeg: number[];  // 每单位上一帧朝向角度（迟滞用）
 }
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
@@ -394,6 +396,7 @@ export class TradeTrafficLayer {
             path, cumLen: cum, totalLen: total,
             dist: initialDist, count, cartDir, shipDir: shipDirName,
             phase: Math.floor(Math.random() * 30), ageMs: 0,
+            lastDirIdx: new Array(count).fill(-1), lastDirDeg: new Array(count).fill(NaN),
         });
     }
 
@@ -497,7 +500,10 @@ export class TradeTrafficLayer {
                     : 0;
 
                 const prevPos = TradeTrafficLayer.pointAt(c.path, c.cumLen, Math.max(0, ud - 0.001));
-                const dirIdx = this.dirIndex(asset, prevPos, pos);
+                const dirRes = this.dirIndex(asset, prevPos, pos, c.lastDirIdx[u], c.lastDirDeg[u]);
+                const dirIdx = dirRes.idx;
+                c.lastDirIdx[u] = dirRes.idx;
+                c.lastDirDeg[u] = dirRes.deg;
                 const box = asset.dirs[String(dirIdx)];
                 if (!box) continue;
                 const sheet = asset.sheets[dirIdx];
@@ -512,13 +518,22 @@ export class TradeTrafficLayer {
         }
     }
 
-    private dirIndex(asset: TradeAsset, from: Pt, to: Pt): number {
-        if (asset.dirs16) {
-            const rad = Math.atan2(to.lng - from.lng, to.lat - from.lat);
-            const deg = rad * 180 / Math.PI;
-            return ((Math.round((deg - 45) / 22.5) % 16) + 16) % 16;
+    private dirIndex(asset: TradeAsset, from: Pt, to: Pt, lastIdx: number, lastDeg: number): { idx: number; deg: number } {
+        // 🔴 [2026-09-01 修「商队频繁更换朝向」] 朝向量化加迟滞（死区 10°）：
+        //    折线方向停在扇区边界时，微小角度波动不再让贴图来回跳。
+        const deg = asset.dirs16
+            ? Math.atan2(to.lng - from.lng, to.lat - from.lat) * 180 / Math.PI
+            : Math.atan2(to.lat - from.lat, to.lng - from.lng) * 180 / Math.PI;
+        const half = asset.dirs16 ? 11.25 : 22.5;
+        if (Number.isFinite(lastDeg)) {
+            let diff = ((deg - lastDeg) % 360 + 360) % 360;
+            if (diff > 180) diff -= 360;
+            if (Math.abs(diff) <= half + 10) return { idx: lastIdx, deg: lastDeg };
         }
-        return OrientationSystem.get8DirectionIndex(from, to);
+        const idx = asset.dirs16
+            ? ((Math.round((deg - 45) / 22.5) % 16) + 16) % 16
+            : OrientationSystem.get8DirectionFromAngle(deg);
+        return { idx, deg };
     }
 }
 

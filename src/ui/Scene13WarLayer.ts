@@ -1474,8 +1474,8 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
-/** 险要九建筑中的守城城堡专用缩放。 */
-const SIEGE_CASTLE_SCALE = 0.76;
+/** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。 */
+const SIEGE_CASTLE_SCALE = 0.84;
 /** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。 */
 const SIEGE_MARKET_SCALE = 0.65;
 /** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
@@ -1487,8 +1487,8 @@ function siegeBuildingScale(building: string): number {
     return SIEGE_CITY_BUILDING_SCALE;
 }
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
- *  用更小比例让奇观与周围建筑体量相当，不再鹤立鸡群。 */
-const SIEGE_WONDER_SCALE = 0.5;
+ *  用更小比例让奇观与周围建筑体量相当；2026-09-01 主人「特殊建筑略大一点」→ 0.5 略调大。 */
+const SIEGE_WONDER_SCALE = 0.55;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
 const MAX_ROAD_STEPS = 80;
