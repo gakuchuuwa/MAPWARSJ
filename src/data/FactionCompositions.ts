@@ -2077,6 +2077,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'longbowman', count: 2 },
         ],
     },
+    tuomengde: {
+        legionName: "托蒙德军团",
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'woad_raider', count: 3 },
+            { type: 'elite_woad_raider', count: 4 },
+            { type: 'longbowman', count: 2 },
+        ],
+    },
     // 孔雀战象软剑军团·华氏城/曲女城/瓦拉纳西/索姆纳特（旃陀罗笈多 / 戒日王 / 频毗娑罗 / 普拉塔帕 · 鹤翼阵 2+4+3：桑纳亚装甲战象 2 + 软剑士精锐主力 4 + 帕提尤达长弓 3）
     kongque: {
         legionName: "印度军团",
