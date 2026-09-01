@@ -3320,7 +3320,8 @@ export class CombatUI {
     // --- LOGIC ---
 
     public show(battle: Battle) {
-        this.scene13SidesFlipped = false;
+        const followedId = this.followedArmy?.id;
+        this.scene13SidesFlipped = !!followedId && battle.defender.id === followedId;
         this.applyBattleBarOrientation();
         this.currentBattle = battle;
         this.currentRegionalUnits = null;
@@ -3356,6 +3357,10 @@ export class CombatUI {
         battleField?: BattleField
     ) {
         if (attackers.length === 0 || defenders.length === 0) return;
+
+        const followedId = this.followedArmy?.id;
+        this.scene13SidesFlipped = !!followedId && defenders.some(u => u.id === followedId || (u as any).armyId === followedId);
+        this.applyBattleBarOrientation();
 
         this.clearRegionalTimers();
         this.resetBattleOverlays(battleField);

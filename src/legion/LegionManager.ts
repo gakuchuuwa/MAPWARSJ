@@ -49,6 +49,7 @@ import {
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
 import { tickDeploy } from './DeployGate';
+import { tickStuckLegionWatchdog } from '../debug/StuckLegionWatchdog';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -504,6 +505,9 @@ export class LegionManager {
             // Armies can now pass through friendly armies or neutrals freely.
             // SpatialRegistry sync is already handled by Army.setPosition/moveArmy.
         });
+
+        // 军团卡死看门狗（DEV 诊断，不改玩法）：静止超时即把现场状态落盘，见 StuckLegionWatchdog
+        if (import.meta.env.DEV) tickStuckLegionWatchdog(this.armies, deltaTime);
 
         // 阵亡军团：清路径，延迟移出管理器（尸体由 GlobalUnitRenderer 保留 CORPSE_DISPLAY_MS）
         const corpseMs = GameConfig.LEGION.CORPSE_DISPLAY_MS;
