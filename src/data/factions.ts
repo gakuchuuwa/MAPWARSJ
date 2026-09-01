@@ -111,6 +111,9 @@ export const FACTIONS: Faction[] = [
   { id: 'mangsite', name: '芒斯特' },  // 爱尔兰南部王国，卡舍尔为其传统首都
   { id: 'tuomengde', name: '托蒙德' },
 
+
+
+
   // 爱尔兰中西部王国（Thomond），利默里克为其核心王城
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
@@ -1813,6 +1816,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yilihanguo_d', name: '伊利汗国' },
     { id: 'asaibaijiang', name: '阿塞拜疆' },
+
     { id: 'wulaertu', name: '亚美尼亚' },  // 别名：埃里温所在，亚美尼亚王国；⚠ 乌拉尔图是另一个势力 wulaertu_guo（都城图什帕），别混
     { id: 'wulaertu_guo', name: '乌拉尔图' },
   // 图什帕·乌拉尔图王国（公元前高加索古国）

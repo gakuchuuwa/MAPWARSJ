@@ -2006,6 +2006,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'small_city', troops: 20000, region: 'CELTS' },
 
 
+
+
+
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'pass', troops: 20000, region: 'LATIN', mirror: true },
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
@@ -2945,7 +2948,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_dabulishi', name: '大不里士', factionId: 'yilihanguo_d', lat: 38.08, lng: 46.29, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
-    { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'small_city', troops: 30000, region: 'PERSIAN' },
+    { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'small_city', troops: 20000, region: 'PERSIAN' },
+
     { id: 'city_ailiwen', name: '埃里温', factionId: 'wulaertu', lat: 40.18, lng: 44.51, type: 'small_city', troops: 30000, region: 'ARMENIANS' },
     { id: 'city_tushpa', name: '图什帕', factionId: 'wulaertu_guo', lat: 38.5, lng: 43.37, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
 

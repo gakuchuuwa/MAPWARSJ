@@ -856,7 +856,7 @@ export class CityAssetManager {
 'safawei': '吉兰',
 'yilihanguo': '阿杰',
         'yilihanguo_d': '伊利',
-        'asaibaijiang': '阿塞',
+'asaibaijiang': '阿塞',
         'wulaertu': '亚美',
 'wulaertu_guo': '乌图',
 'gelujiya': '格鲁',

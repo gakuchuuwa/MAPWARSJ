@@ -28,7 +28,6 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     safawei: { name: '吉兰义军', tier: 3 },         // 加兹温·吉兰：里海南岸萨法维起源地
     yilihanguo: { name: '阿杰姆卫队', tier: 3 },    // 赞詹·阿杰姆
     ribale: { name: '雷伊卫军', tier: 3 },          // 雷伊·日巴勒
-    asaibaijiang: { name: '阿塞轻骑', tier: 3 },    // 马拉盖·阿塞拜疆
     saerbadaer: { name: '萨尔巴达尔', tier: 3 },    // 白哈格·萨尔巴达尔：波斯起义民兵
 
     // ── T4 存在之兵 ──
@@ -47,4 +46,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     yisatisi: { name: '亚兹德圣火卫', tier: 4 },
     kerman_bam: { name: '萨法尔骑', tier: 2 },
     aqimeinide: { name: '不死军', tier: 2 },
+    asaibaijiang: { name: '伊儿汗怯薛', tier: 1 },
 };
