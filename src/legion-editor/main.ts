@@ -2162,12 +2162,6 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
         const target = options.find(o => o.key === key);
         if (!target) { showToast('找不到该军团配置', true); return; }
 
-        // 🔴 独立军团：只能一个套用，已被其他势力/武将占用则禁止
-        if (selectedLayerTab === 'sub' && isLegionUsedByOther(row.factionId, target.legionName)) {
-            showToast(`⚠️【${target.legionName}】是独立军团，已被其他势力/武将套用，禁止重复使用`, true);
-            return;
-        }
-
         currentEditingLegion = {
             legionName: target.legionName,
             formationMode: target.formationMode,

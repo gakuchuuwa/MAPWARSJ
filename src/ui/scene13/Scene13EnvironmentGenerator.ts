@@ -178,6 +178,11 @@ export interface Scene13EnvironmentInput {
     siegeWallFrontX?: number;
 }
 
+/** 河岸只允许当地岩石；海滩石、海礁以及主题 solid 中的墓碑/木桶等均不得混入。 */
+export function filterRiverBankRockAssets(assets: readonly string[]): string[] {
+    return assets.filter((name) => name.startsWith('ROCK') && name !== 'ROCK_BEACH' && !name.startsWith('ROCK_SEA'));
+}
+
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
 // 挡路障碍物被单位连续接触满 N 秒后释放碰撞（防卡死）。主人 2026-08-21 定「5 秒一切换，就树和岩石」。
 const TREE_MIN_CENTER_SPACING_TILES = 1.4;
@@ -656,10 +661,20 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             //    呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
             //    野战与攻防战都出海：主人九成战斗是攻防战，只在野战出就等于看不见。
             isWater = buildCoastline(gw, gh, ox, oy, VW, VH, true, rng, patches, occupied, theme!, season, input.lat, elev, biome, input.lng);
-            for (let i = 0; i < 4; i++) {
-                const ra = rng.pick(['ROCK_BEACH', 'ROCK1', 'ROCK2', 'OYSTERS', 'REEDS', 'ROCK_SEA1', 'ROCK_SEA2']);
-                const rockX = VW * 0.12 + rng.next() * VW * 0.08;
-                objects.push({ asset: ra, x: rockX, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
+                        // 🔴 [2026-09-01 主人指出「石头有点多」] 海岸线以生蚝海贝、海滩芦苇为主，海礁/海石整条岸线严格封顶最多 1 块，且沿 Y 轴分散
+            let coastRockCount = 0;
+            const MAX_COAST_ROCKS = 1;
+            for (let i = 0; i < 3; i++) {
+                const pool = (coastRockCount >= MAX_COAST_ROCKS)
+                    ? ['OYSTERS', 'REEDS', 'REEDS']
+                    : ['OYSTERS', 'REEDS', 'ROCK_BEACH', 'ROCK_SEA1'];
+                const ra = rng.pick(pool);
+                if (ra.startsWith('ROCK')) {
+                    coastRockCount++;
+                }
+                const rockX = VW * 0.08 + rng.next() * VW * 0.08;
+                const rockY = ((i + 0.5 + (rng.next() - 0.5) * 0.5) / 3) * VH;
+                objects.push({ asset: ra, x: rockX, y: rockY, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
         // 🔴 [2026-09-01 主人定] 挨着河的攻防战就该有河 —— 名城多依水而建：
         //    襄阳汉水、马格德堡易北河、巴黎塞纳河、开封汴河，围城方渡河强攻是真实画面。
@@ -1063,21 +1078,29 @@ function buildRiver(
      *    ⚠️ 摆幅必须和野战同量级（65/28），收窄过头河会变成一条直线（2026-09-01 实锤）。
      */
     layout: 'crossing' | 'moat' = 'crossing',
+    siegeWallFrontX?: number,
 ): WaterChecker {
     // 🌊 DE 原版 Rivers / Crossing 规范（2026-08-26 美化重构）：
     //   1. Catmull-Rom 样条平滑蜿蜒河道，消除僵硬折线与塑料感；
     //   2. 四层自然河岸分层：湿泥沙岸 (beach_wet) → 清透浅水 (sh2) → 碧绿/蔚蓝江水核心 (river_clean_green/wtr)；
     //   3. 丰富水岸生态：沿岸点缀水草芦苇 (REEDS/WATER_LILY)、河滩鹅卵石与湿石 (ROCK_BEACH/ROCK1/ROCK2)。
     
+    const baseHalfW = 56;    // 河心深水半宽（px）
+    const halfWVary = 8;     // 弯道半宽起伏
+    const shallowDepth = 36; // 浅水环宽度（px，明显展现近岸涉水浅滩）
+    const bankDepth = 30;    // 湿泥沙岸宽度（px，自然衔接陆地草地与河岸）
+
     // 1. 生成 7 个稀疏控制点并用 Catmull-Rom 密集插值
     const numControls = 7;
     const controls: Array<{ x: number; y: number }> = [];
     const moat = layout === 'moat';
-    // 攻方恒在左、城恒在右（城墙约在 0.65 VW）。渡口河走中轴；临城河压到城墙外侧。
-    // 摆幅两者一致 —— 河就是要蜿蜒，收窄只会得到一条笔直的沟。
-    const baseCenterX = moat ? VW * 0.57 : VW * 0.50;
-    const bandLo = moat ? VW * 0.48 : VW * 0.32;
-    const bandHi = moat ? VW * 0.64 : VW * 0.68;
+    const maxCurveOffset = 65 + 28;
+    const outerHalfW = baseHalfW + halfWVary + shallowDepth + bankDepth;
+    // 攻方恒在左、城恒在右。临城河的最外岸抵正面城墙，不再假定城墙固定在 0.65 VW。
+    const wallX = siegeWallFrontX ?? VW * 0.65;
+    const baseCenterX = moat ? wallX - outerHalfW - maxCurveOffset : VW * 0.50;
+    const bandLo = moat ? Math.max(VW * 0.32, baseCenterX - maxCurveOffset) : VW * 0.32;
+    const bandHi = moat ? wallX - outerHalfW : VW * 0.68;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
 
@@ -1103,11 +1126,6 @@ function buildRiver(
 
     const numSamplePts = 64;
     const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
-    const baseHalfW = 56;    // 河心深水半宽（px）
-    const halfWVary = 8;     // 弯道半宽起伏
-    const shallowDepth = 36; // 浅水环宽度（px，明显展现近岸涉水浅滩）
-    const bankDepth = 30;    // 湿泥沙岸宽度（px，自然衔接陆地草地与河岸）
-
     for (let i = 0; i <= numSamplePts; i++) {
         const y = yMin + (yMax - yMin) * (i / numSamplePts);
         const segment = Math.max(0, Math.min(controls.length - 2, Math.floor((y - yMin) / controlStep)));
@@ -1202,7 +1220,7 @@ function buildRiver(
         const oyY = pt.y + side * pt.ny * dist * 0.55;
 
         // 水生植物（芦苇/睡莲）与河滩岩石（岩石封顶 1 块，其余为芦苇睡莲）
-        const bankRocks = decorForTheme(theme, season, lat, elev, biome, lng).solid;
+        const bankRocks = filterRiverBankRockAssets(decorForTheme(theme, season, lat, elev, biome, lng).solid);
         const pool = (riverRockCount >= MAX_RIVER_ROCKS || bankRocks.length === 0)
             ? ['REEDS', 'REEDS', 'WATER_LILY']
             : ['REEDS', 'REEDS', 'WATER_LILY', ...bankRocks];
@@ -1685,7 +1703,7 @@ function buildVegetation(
     //    实测总石头数飙到 34 个、超 DE 密度 5~10 倍。那张截图是**战役地图（手工摆放）**，
     //    不是随机地图，不能拿来当密度基准。
     //    主岩石只放 1~2 个，避免大块岩石挤占战场。
-    const solidDecorCount = 1 + rng.int(0, 1);
+    const solidDecorCount = 1; // 🔴 [2026-09-01 主人指出「石头有点多」] 全图主岩石固定为 1 处
     // 🔴 [2026-08-26 主人「这种大石头没必要放这么多吧，1-2 块即可」] 巨岩单独限量。
     //    solid 池按底图分两类体量：草地配 ROCK1/2（小岩块堆，2~4 个不显多），
     //    沙漠/戈壁配 ROCK_FORMATION*（层叠柱状风蚀岩，一块就占掉小半屏）。

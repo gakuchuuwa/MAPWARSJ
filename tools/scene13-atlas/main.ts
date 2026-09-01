@@ -532,12 +532,12 @@ async function run(): Promise<void> {
     const baseSel = sel('base').value;
     const limit = parseInt(sel('limit').value, 10);
     const query = (document.getElementById('search') as HTMLInputElement)?.value?.trim().toLowerCase() ?? '';
-    const showBuildings = (document.getElementById('buildings') as HTMLInputElement)?.checked ?? true;
+    const showBuildings = (sel('buildings')?.value ?? 'none') === 'show';
 
     const sieges = siegeSel === 'all' ? [true, false] : [siegeSel === 'siege'];
 
     // ── 组合模式：按「底图 × 树」去重，每种搭配一张 ──
-    if (sel('mode').value === 'combo') {
+    if (sel('mode').value === 'combo' && !query) {
         let combos = enumerateCombos(season, sieges);
         if (baseSel !== 'all') combos = combos.filter((c) => c.base === baseSel);
         if (limit > 0) combos = combos.slice(0, limit);
@@ -665,7 +665,13 @@ sel('mode').addEventListener('change', () => { applyModeDefaults(); void run(); 
 applyModeDefaults();
 
 document.getElementById('run')!.addEventListener('click', () => { void run(); });
-document.getElementById('search')?.addEventListener('input', () => { void run(); });
+document.getElementById('search')?.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value.trim();
+    if (v && sel('mode').value === 'combo') {
+        sel('mode').value = 'city';
+    }
+    void run();
+});
 document.getElementById('buildings')?.addEventListener('change', () => { void run(); });
 document.getElementById('reseed')!.addEventListener('click', () => { seedSalt++; void run(); });
 document.getElementById('undel')!.addEventListener('click', restoreAll);
