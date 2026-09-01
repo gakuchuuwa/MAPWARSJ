@@ -1663,7 +1663,7 @@ function renderNavalPanel(row: FactionLegionRow): void {
     if (!currentEditingLegion) return;
     const cur: NavalFormationMode = currentEditingLegion.navalFormation ?? 'auto';
     const desc: Record<NavalFormationMode, string> = {
-        auto: '≤4 艘单纵 / ≥5 艘双列（旧行为）',
+        auto: '鱼贯而行 · 战列线（默认，等同单纵队）',
         column: '鱼贯而行 · 内河海峡最窄不蹭岸',
         double: '纵深减半 · 正面加宽一个船身',
         line: '横向排开 · 舷侧齐射面最大',
