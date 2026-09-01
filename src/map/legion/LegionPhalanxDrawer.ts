@@ -1189,6 +1189,26 @@ export class LegionPhalanxDrawer {
      *   - 静态帆船在 MOVE 状态适度强化浪涌升沉与小幅横摇，消除纸片滑行感；IDLE 状态柔和漂浮。
      *   - 18 艘划桨船自带完整 30 帧划桨水花，微动适度收敛，避免双重晃动。
      */
+    /**
+     * [2026-09-02 主人「航行就好像僵硬的蛇」] 后随舰**站位误差**。
+     * 根因不是船速，是编队零误差：backDist = 槽位×1.15船长 恒定，八条船间距分毫不差、
+     * 永不掉队也永不抢前，海路两顶点之间又是直线航行 —— 于是一条笔直的等距队列。
+     * 真实纵队一直在「追上—掉队」之间来回。这里给每条僚舰叠一个低频、逐舰错相的位移：
+     *   · 纵向 ±8% 船距：跟距呼吸，队列不再等距；
+     *   · 横向 ±0.12 船宽：轻微偏舵，队列不再一条几何直线。
+     * 只加在**僚舰**上（旗舰是基准，主人定「旗舰很好不用动」），且只在沿航迹航行时生效
+     * （停泊/攻城面城退直线纵队，那时抖动只会显得队伍站不稳）。
+     */
+    private static readonly NAVAL_STATION_KEEPING = {
+        // 🔴 LONG_AMP 有上限，别随手调大：相邻两舰相位差 2.3 rad，相对摆幅 = 2·sin(1.15) = 1.82 倍单舰幅度。
+        //    船距是 1.15 船长，所以 LONG_AMP × 1.82 × 1.15 必须 < 0.15，即 **LONG_AMP < 0.072**，
+        //    否则前后舰会缩到不足一个船长、艏艉叠上。要更明显的跟距变化得先拉开 shipDepth。
+        LONG_AMP: 0.07,      // 纵向误差，占一档船距的比例（最小间距 ≈ 1.004 船长，不叠）
+        LONG_SPEED: 0.00082, // ≈7.7s 一个周期
+        LAT_AMP: 0.12,       // 横向误差，占一个船宽的比例
+        LAT_SPEED: 0.00061,  // ≈10.3s，与纵向不同频，避免两轴同相变成整齐画圈
+    } as const;
+
     private static readonly NAVAL_MICRO = {
         STATIC: {
             MOVE_BOB_AMP: 2.2,
@@ -2090,13 +2110,19 @@ export class LegionPhalanxDrawer {
             }
             return formation;
         }
-        if (mode === 'column' || (mode === 'auto' && shipCount <= 4)) {
+        // 🔴 [2026-09-02 主人定「取消 4/5 换形，全部走单纵队」] auto 一律鱼贯而行（line-ahead）。
+        //    改前：auto 在 4 艘和 5 艘之间换形（≤4 单纵 / ≥5 双列），于是
+        //      ① 兵力跨过 45000 的两支舰队看起来像两种航行模式；
+        //      ② 非战斗时船数按当前兵力实时重建，同一支舰队掉兵跨线会**航行途中**从双列变单列，
+        //         剩余船的横向槽位 c 从 ±0.5 直接归 0，横向跳半个船宽。
+        //    单纵队是风帆时代的战列线，也最经得起看。双列没删：编辑器里仍是独立可选的 'double'。
+        if (mode === 'column' || mode === 'auto') {
             // 单纵队：后随船依次向后排
             for (let i = 1; i < shipCount; i++) {
                 formation.push({ r: -i, c: 0, ship: shipId });
             }
         } else {
-            // 双列：后 4~7 艘分两列交错（左右各一行，最后单艘补左列）
+            // 双列（仅显式选 'double' 时走）：分两列交错（左右各一行，最后单艘补左列）
             let r = 1;
             for (let i = 1; i < shipCount; i++) {
                 const col = (i % 2 === 1) ? -0.5 : 0.5;   // ±0.5 × 船宽 = 两列中心隔一个船宽
@@ -2395,13 +2421,30 @@ export class LegionPhalanxDrawer {
         const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number }[] = [];
 
+        // 逐军团相位种子（只依赖 unitId）：站位误差与浮沉横摇共用，避免同屏所有舰队同频共振
+        let unitPhase = 0;
+        if (unitId) {
+            let h = 0;
+            for (let k = 0; k < unitId.length; k++) h = (h * 31 + unitId.charCodeAt(k)) | 0;
+            unitPhase = (h % 628) / 100;
+        }
+
         for (let i = 0; i < formation.length; i++) {
             const pos = formation[i] ?? formation[0];
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
 
             // ① 沿航迹定位：backDist = 该船落后旗舰多少像素（r 为负代表后方）
-            const backDist = -pos.r * shipDepth;
+            let backDist = -pos.r * shipDepth;
+            // 站位误差：只动僚舰，只在沿航迹航行时生效（见 NAVAL_STATION_KEEPING 注释）
+            let lateralJitter = 0;
+            if (backDist > 0.0001 && activeTrail) {
+                const SK = LegionPhalanxDrawer.NAVAL_STATION_KEEPING;
+                const skPhase = unitPhase + i * 2.3;   // 逐舰错相，别和 bob/roll 的 1.7 同步
+                backDist += Math.sin(tick * SK.LONG_SPEED + skPhase) * SK.LONG_AMP * shipDepth;
+                backDist = Math.max(0.0001, backDist);   // 误差再大也不许越到旗舰前面
+                lateralJitter = Math.cos(tick * SK.LAT_SPEED + skPhase * 1.4) * SK.LAT_AMP * shipSpread;
+            }
             let node: { x: number; y: number };
             let localAng: number;
             if (backDist <= 0.0001) {
@@ -2415,7 +2458,7 @@ export class LegionPhalanxDrawer {
                 localAng = Math.atan2(a0.y - a1.y, a0.x - a1.x);
             }
             // ② 横向偏移沿当地法线（与旧刚体式 (cos angle, sin angle) 同向：angle = localAng + π/2）
-            const origX = pos.c * shipSpread * cMult;
+            const origX = pos.c * shipSpread * cMult + lateralJitter;
             const dx = node.x + origX * -Math.sin(localAng);
             const dy = node.y + origX * Math.cos(localAng);
 
@@ -2432,12 +2475,6 @@ export class LegionPhalanxDrawer {
             //   - 区分 28 艘静态帆船 (STATIC) 与 18 艘划桨船 (OARED)；
             //   - 区分行军 MOVE 浪涌与停泊 IDLE 呼吸微澜；
             //   - 只叠在贴图绘制上，不动舰队逻辑位/尾迹。
-            let unitPhase = 0;
-            if (unitId) {
-                let h = 0;
-                for (let k = 0; k < unitId.length; k++) h = (h * 31 + unitId.charCodeAt(k)) | 0;
-                unitPhase = (h % 628) / 100;
-            }
             const microPhase = unitPhase + i * 1.7;
             const isOared = NAVAL_OARED_ANIMATED_SHIPS.has(pos.ship ?? targetShipId);
             const microCfg = isOared ? LegionPhalanxDrawer.NAVAL_MICRO.OARED : LegionPhalanxDrawer.NAVAL_MICRO.STATIC;
