@@ -949,6 +949,7 @@ const _FIXED: Record<string, string> = {
     'piketai': '#2E4E8F', // 苏格兰·爱丁堡（苏格兰蓝）
     'gaer': '#1C4E8C', // 盖尔·都柏林（圣帕特里克蓝）
     'mangsite': '#A67B1E', // 芒斯特·卡舍尔（蓝底三金冠，取金冠铜金，避盖尔蓝）
+    'tuomengde': '#1D5A3A', // 托蒙德·利默里克（爱尔兰深林绿）
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）

@@ -109,6 +109,7 @@ export const FACTIONS: Faction[] = [
   { id: 'piketai', name: '皮克特' },  // 别名：苏格兰凯尔特系（Picts）
   { id: 'gaer', name: '盖尔' },  // 别名：爱尔兰凯尔特系（Gaels）
   { id: 'mangsite', name: '芒斯特' },  // 爱尔兰南部王国，卡舍尔为其传统首都
+  { id: 'tuomengde', name: '托蒙德' },  // 爱尔兰中西部王国（Thomond），利默里克为其核心王城
   { id: 'bulietani', name: '布列塔尼' },
   { id: 'saierweiya', name: '塞尔维亚' },
 
@@ -1750,6 +1751,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'xiyuduhu', name: '西域都护' },
+
     { id: 'shaozhou_d', name: '邵陵' }, // 三国吴宝鼎元年置邵陵郡治此（原名「邵州」与据点名相同，违 §266 严格不等）
 
     { id: 'zizhou', name: '昌城' },

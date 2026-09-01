@@ -772,40 +772,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "坎佩尔-卡舍尔",
-                type: "sea",
-                id: "sea_city_kanpeier_city_kasheer_1787911336534",
-                startConnection: "city_kanpeier",
-                endConnection: "city_kasheer"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-4.103, 47.995],
-                    [-4.509444, 48.325761],
-                    [-4.54189, 48.34733],
-                    [-4.780599, 48.299559],
-                    [-4.899391, 48.509285],
-                    [-5.003463, 48.693021],
-                    [-5.06401, 48.799916],
-                    [-5.079929, 48.828019],
-                    [-5.15354, 48.957978],
-                    [-5.236329, 49.104141],
-                    [-5.630965, 49.800862],
-                    [-5.672084, 49.873457],
-                    [-5.783648, 49.997799],
-                    [-5.8714, 50.4096],
-                    [-6.11285, 50.782747],
-                    [-6.132679, 50.813392],
-                    [-6.843006, 51.911162],
-                    [-6.979327, 52.121838],
-                    [-7.8907, 52.5202],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "普里-吉大港",
                 type: "sea",
                 id: "sea_city_puli_city_jidagang_1787912052749",
@@ -2388,44 +2354,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "金石城-原之辻",
-                type: "sea",
-                id: "sea_city_tsushima_city_yuanzhishi_1788088411801",
-                startConnection: "city_tsushima",
-                endConnection: "city_yuanzhishi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [129.2892, 34.2031],
-                    [129.353027, 33.72434],
-                    [129.327562, 33.499895],
-                    [129.703, 33.791],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "原之辻-太宰府",
-                type: "sea",
-                id: "sea_city_yuanzhishi_city_taizaifu_1788088413955",
-                startConnection: "city_yuanzhishi",
-                endConnection: "city_taizaifu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [129.703, 33.791],
-                    [130.260489, 33.715739],
-                    [130.259399, 33.661496],
-                    [130.52, 33.51],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "府内-松山",
                 type: "sea",
                 id: "sea_city_funei_city_songshan_1788088416168",
@@ -3598,6 +3526,1000 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.134472, 35.868837],
                     [24.980878, 35.57585000000001],
                     [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿克曼-赫尔松涅斯",
+                type: "sea",
+                id: "sea_city_akeman_city_heersongniesi_1788229213515",
+                startConnection: "city_akeman",
+                endConnection: "city_heersongniesi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [30.34, 46.19],
+                    [31.5, 45.91667],
+                    [31.91667, 45.66667],
+                    [31.91667, 45.16667],
+                    [32.16667, 44.91667],
+                    [32.66667, 44.91667],
+                    [33.49, 44.61],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "赫尔松涅斯-瓦尔纳",
+                type: "sea",
+                id: "sea_city_heersongniesi_city_waerna_1788229217887",
+                startConnection: "city_heersongniesi",
+                endConnection: "city_waerna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [33.49, 44.61],
+                    [32.91667, 44.66667],
+                    [32.27253, 44.12585],
+                    [30.114413, 44.090652],
+                    [29.0322, 44.073],
+                    [28.438708, 43.022658],
+                    [27.915, 43.214],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿克曼-瓦尔纳",
+                type: "sea",
+                id: "sea_city_akeman_city_waerna_1788229227224",
+                startConnection: "city_akeman",
+                endConnection: "city_waerna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [30.34, 46.19],
+                    [30.58333, 45.5],
+                    [30.58333, 45],
+                    [30.16667, 44.91667],
+                    [29.83333, 44.41667],
+                    [29.33333, 44.41667],
+                    [28.91667, 43.66667],
+                    [28.91667, 43.16667],
+                    [27.915, 43.214],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-瓦尔纳",
+                type: "sea",
+                id: "sea_city_junshitandingbao_city_waerna_1788229242071",
+                startConnection: "city_junshitandingbao",
+                endConnection: "city_waerna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [29.050519, 41.15205000000001],
+                    [29.096026, 41.186306],
+                    [29.132431, 41.242447],
+                    [28.0975, 42.4188],
+                    [28.438708, 43.022658],
+                    [27.915, 43.214],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-阿克曼",
+                type: "sea",
+                id: "sea_city_junshitandingbao_city_akeman_1788229248394",
+                startConnection: "city_junshitandingbao",
+                endConnection: "city_akeman"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [29.050519, 41.15205000000001],
+                    [29.096026, 41.186306],
+                    [29.132431, 41.242447],
+                    [29.596413, 42.596499],
+                    [30.011631, 43.808135],
+                    [30.114413, 44.090652],
+                    [29.83333, 44.41667],
+                    [30.16667, 44.91667],
+                    [30.58333, 45],
+                    [30.58333, 45.5],
+                    [30.34, 46.19],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "赫尔松涅斯-君士坦丁堡",
+                type: "sea",
+                id: "sea_city_heersongniesi_city_junshitandingbao_1788229256851",
+                startConnection: "city_heersongniesi",
+                endConnection: "city_junshitandingbao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [33.49, 44.61],
+                    [33.951449, 44.153237],
+                    [33, 43],
+                    [29.132431, 41.242447],
+                    [29.096026, 41.186306],
+                    [29.050519, 41.15205000000001],
+                    [28.97, 41.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡法-特拉布宗",
+                type: "sea",
+                id: "sea_city_kafa_city_telabuzong_1788229297236",
+                startConnection: "city_kafa",
+                endConnection: "city_telabuzong"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.38, 45.03],
+                    [36.4, 45],
+                    [36.846449, 44.211352],
+                    [37.240766, 43.514796],
+                    [37.36535400000001, 43.294712],
+                    [37.94708, 42.267099],
+                    [37.980452, 42.208149],
+                    [38.43160000000001, 41.4112],
+                    [39.73, 41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特拉布宗-潘提卡彭",
+                type: "sea",
+                id: "sea_city_telabuzong_city_pantika_1788229306131",
+                startConnection: "city_telabuzong",
+                endConnection: "city_pantika"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.73, 41],
+                    [38.43160000000001, 41.4112],
+                    [37.980452, 42.208149],
+                    [37.94708, 42.267099],
+                    [37.36535400000001, 43.294712],
+                    [37.240766, 43.514796],
+                    [36.846449, 44.211352],
+                    [36.4, 45],
+                    [36.47, 45.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "威尼斯-拉文纳",
+                type: "sea",
+                id: "sea_city_venice_city_ravenna_1788229380306",
+                startConnection: "city_venice",
+                endConnection: "city_ravenna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.31, 45.44],
+                    [12.381121, 45.077311],
+                    [12.775514, 45.124423],
+                    [12.669433, 44.934376],
+                    [12.629892, 44.863538],
+                    [12.367772, 44.76023],
+                    [12.2, 44.41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "威尼斯-拉古萨",
+                type: "sea",
+                id: "sea_city_venice_city_ragusa_1788229383577",
+                startConnection: "city_venice",
+                endConnection: "city_ragusa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.31, 45.44],
+                    [12.911428, 45.540728],
+                    [13.1, 45.3],
+                    [13.391686, 45.073133],
+                    [13.671293, 44.855661],
+                    [13.725541, 44.813468],
+                    [14, 44.6],
+                    [14.188601, 44.458549],
+                    [14.8, 44],
+                    [14.929191, 44.021834],
+                    [15.132163, 43.865895],
+                    [15.430688, 43.671351],
+                    [16.022885, 43.469128],
+                    [16.416064, 43.488501],
+                    [16.418491, 43.342174],
+                    [16.3457, 43.2385],
+                    [16.320196, 43.084808],
+                    [16.839582, 43.02806000000001],
+                    [17.087139, 42.97481],
+                    [17.237615, 42.939285],
+                    [17.684189, 42.772042],
+                    [18.09, 42.65],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉古萨-科孚",
+                type: "sea",
+                id: "sea_city_ragusa_city_kefu_1788229388459",
+                startConnection: "city_ragusa",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [18.09, 42.65],
+                    [18.538505, 42.386023],
+                    [18.562221, 42.236046],
+                    [18.612901, 41.915558],
+                    [18.658023, 41.630215],
+                    [18.678545, 41.50043800000001],
+                    [18.720104, 41.237629],
+                    [18.749921, 41.04906900000001],
+                    [18.805157, 40.69977],
+                    [18.827151, 40.560681],
+                    [18.838272, 40.49035400000001],
+                    [18.843188, 40.459268],
+                    [19.011287, 40.361696],
+                    [19.9547, 39.81410000000001],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科孚-安布拉基亚",
+                type: "sea",
+                id: "sea_city_kefu_city_anbulajiya_1788229396150",
+                startConnection: "city_kefu",
+                endConnection: "city_anbulajiya"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.92, 39.62],
+                    [20.169, 39.3866],
+                    [20.3557, 39.11440000000001],
+                    [20.73133, 38.922972],
+                    [20.98, 39.16],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科孚-斯巴达",
+                type: "sea",
+                id: "sea_city_kefu_city_sparta_1788229402274",
+                startConnection: "city_kefu",
+                endConnection: "city_sparta"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.92, 39.62],
+                    [20.169, 39.3866],
+                    [20.3557, 39.11440000000001],
+                    [20.4876, 38.5495],
+                    [20.8281, 38.16620000000001],
+                    [20.98035, 38.076305],
+                    [21.000731, 37.867297],
+                    [21.5038, 36.8502],
+                    [22.42, 37.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哥本哈根-罗斯托克",
+                type: "sea",
+                id: "sea_city_gebenhagen_city_rostock_1788229509809",
+                startConnection: "city_gebenhagen",
+                endConnection: "city_rostock"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.57, 55.68],
+                    [12.68255, 55.305583],
+                    [12.650642, 54.924726],
+                    [12.2, 54.5],
+                    [12.13, 54.09],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哥本哈根-哥德堡",
+                type: "sea",
+                id: "sea_city_gebenhagen_city_gothenburg_1788229551675",
+                startConnection: "city_gebenhagen",
+                endConnection: "city_gothenburg"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.57, 55.68],
+                    [12.75, 55.9],
+                    [12.629725, 56.063887],
+                    [12.409121, 56.337379],
+                    [11.988567, 56.905254],
+                    [12.205419, 57.084621],
+                    [11.97, 57.7],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哥德堡-海牙",
+                type: "sea",
+                id: "sea_city_gothenburg_city_hague_1788229562979",
+                startConnection: "city_gothenburg",
+                endConnection: "city_hague"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [11.97, 57.7],
+                    [10.7333, 57.8],
+                    [9.952745, 57.599859],
+                    [8.9354, 57.406],
+                    [7.983627, 56.821663],
+                    [7.7379, 56.6708],
+                    [6.837383, 55.808317],
+                    [6.475957, 55.462156],
+                    [5.795345, 54.764853],
+                    [5.343228, 54.126148],
+                    [4.9, 53.5],
+                    [4.308389, 52.513982],
+                    [3.9, 52],
+                    [4.069748, 51.987629],
+                    [4.3, 52.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "海牙-伦敦",
+                type: "sea",
+                id: "sea_city_hague_city_lundun_1788229568861",
+                startConnection: "city_hague",
+                endConnection: "city_lundun"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [4.3, 52.07],
+                    [4.069748, 51.987629],
+                    [3.9, 52],
+                    [3.354826, 51.945483],
+                    [2.9, 51.9],
+                    [1.806977, 51.701268],
+                    [1.539869, 51.652703],
+                    [1.25, 51.6],
+                    [0.8262, 51.5038],
+                    [0.5034, 51.4996],
+                    [0.4499, 51.479],
+                    [-0.12, 51.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "海牙-加莱",
+                type: "sea",
+                id: "sea_city_hague_city_calais_1788229572617",
+                startConnection: "city_hague",
+                endConnection: "city_calais"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [4.3, 52.07],
+                    [4.069748, 51.987629],
+                    [3.9, 52],
+                    [3.559619, 51.659619],
+                    [3.4, 51.5],
+                    [2.356699, 51.178984],
+                    [2.1, 51.1],
+                    [1.85, 50.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "爱丁堡-哥德堡",
+                type: "sea",
+                id: "sea_city_aidingbao_city_gothenburg_1788229594304",
+                startConnection: "city_aidingbao",
+                endConnection: "city_gothenburg"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-3.18, 55.95],
+                    [-2.809638, 56.459614],
+                    [-2.3, 56.3],
+                    [-1.4, 57.3],
+                    [0.482902, 58.275074],
+                    [3.831853, 58.106573],
+                    [4.598436, 58.068003],
+                    [5.95, 58],
+                    [8.05, 57.95],
+                    [9.754772, 57.878654],
+                    [9.916106, 57.865686],
+                    [9.973674, 57.861058],
+                    [10.7333, 57.8],
+                    [11.97, 57.7],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "爱丁堡-海牙",
+                type: "sea",
+                id: "sea_city_aidingbao_city_hague_1788229602988",
+                startConnection: "city_aidingbao",
+                endConnection: "city_hague"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-3.18, 55.95],
+                    [-2.809638, 56.459614],
+                    [-2.3, 56.3],
+                    [-1.690521, 55.77889],
+                    [-1, 55.1],
+                    [-0.754169, 54.819051],
+                    [0.3771, 53.9975],
+                    [0.83333, 53.41667],
+                    [1.0757, 53.5],
+                    [2.1349, 52.7457],
+                    [3.028876, 52.368023],
+                    [3.327388, 52.241911],
+                    [3.9, 52],
+                    [4.069748, 51.987629],
+                    [4.3, 52.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "爱丁堡-伦敦",
+                type: "sea",
+                id: "sea_city_aidingbao_city_lundun_1788229614502",
+                startConnection: "city_aidingbao",
+                endConnection: "city_lundun"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-3.18, 55.95],
+                    [-2.809638, 56.459614],
+                    [-2.3, 56.3],
+                    [-1.690521, 55.77889],
+                    [-1, 55.1],
+                    [-0.754169, 54.819051],
+                    [0.3771, 53.9975],
+                    [0.83333, 53.41667],
+                    [1.0757, 53.5],
+                    [2.1349, 52.7457],
+                    [1.761684, 52.03871],
+                    [1.5065, 51.878829],
+                    [1.25, 51.6],
+                    [0.8262, 51.5038],
+                    [0.5034, 51.4996],
+                    [0.4499, 51.479],
+                    [-0.12, 51.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "都柏林-加莱",
+                type: "sea",
+                id: "sea_city_dublin_city_calais_1788229642615",
+                startConnection: "city_dublin",
+                endConnection: "city_calais"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-6.26, 53.34],
+                    [-6.027722, 52.977904],
+                    [-5.733548, 52.917129],
+                    [-5.742388, 52.779797],
+                    [-5.781725, 52.16867],
+                    [-5.9, 51.25],
+                    [-6.022929, 51.019331],
+                    [-5.8714, 50.4096],
+                    [-5.783648, 49.997799],
+                    [-5.611439, 49.881674],
+                    [-5.196944, 49.937831],
+                    [-4.115519, 50.084349],
+                    [-4, 50.1],
+                    [-2.624015, 50.023556],
+                    [-2.270882, 50.112738],
+                    [-2.100162, 50.138244],
+                    [-1.755087, 50.189798],
+                    [-1.577583, 50.216317],
+                    [-1.251907, 50.264973],
+                    [-0.76446, 50.337798],
+                    [-0.672505, 50.358079],
+                    [-0.505582, 50.395477],
+                    [0.301537, 50.576304],
+                    [1.149895, 50.76637],
+                    [1.3, 50.8],
+                    [1.441366, 50.849032],
+                    [1.567687, 50.892845],
+                    [1.85, 50.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "原之辻-太宰府",
+                type: "sea",
+                id: "sea_city_yuanzhishi_city_taizaifu_1788229798481",
+                startConnection: "city_yuanzhishi",
+                endConnection: "city_taizaifu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [129.703, 33.791],
+                    [130.260489, 33.715739],
+                    [130.259399, 33.661496],
+                    [130.52, 33.51],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "原之辻-金石城",
+                type: "sea",
+                id: "sea_city_yuanzhishi_city_tsushima_1788229804771",
+                startConnection: "city_yuanzhishi",
+                endConnection: "city_tsushima"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [129.703, 33.791],
+                    [129.327562, 33.499895],
+                    [129.353027, 33.72434],
+                    [129.2892, 34.2031],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "江户城-骏府",
+                type: "sea",
+                id: "sea_city_edo_city_junfucheng_1788229823105",
+                startConnection: "city_edo",
+                endConnection: "city_junfucheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [139.76, 35.68],
+                    [139.792786, 35.23889],
+                    [139.63623, 35.016501],
+                    [139.3, 35],
+                    [139.191284, 34.65580400000001],
+                    [138.867175, 34.45606200000001],
+                    [138.38, 34.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "江户城-青叶城",
+                type: "sea",
+                id: "sea_city_edo_city_xiantai_1788229831946",
+                startConnection: "city_edo",
+                endConnection: "city_xiantai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [139.76, 35.68],
+                    [139.792786, 35.23889],
+                    [139.63623, 35.016501],
+                    [139.9, 34.8],
+                    [140.476685, 35.086203],
+                    [141.022082, 35.682829],
+                    [141.373456, 36.906782],
+                    [141.724829, 38.11141],
+                    [140.87, 38.27],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "根城-胜山馆",
+                type: "sea",
+                id: "sea_city_genjo_city_katsuyama_1788229840080",
+                startConnection: "city_genjo",
+                endConnection: "city_katsuyama"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [141.4644, 40.5047],
+                    [141.586304, 40.626461],
+                    [141.556091, 41.481833],
+                    [141.277588, 41.681992],
+                    [140.0994, 41.8008],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "根城-白老",
+                type: "sea",
+                id: "sea_city_genjo_city_bailao_1788229843402",
+                startConnection: "city_genjo",
+                endConnection: "city_bailao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [141.4644, 40.5047],
+                    [141.586304, 40.626461],
+                    [141.556091, 41.481833],
+                    [141.277588, 41.681992],
+                    [141.308899, 41.881831],
+                    [141.36, 42.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "胜山馆-白老",
+                type: "sea",
+                id: "sea_city_katsuyama_city_bailao_1788229866461",
+                startConnection: "city_katsuyama",
+                endConnection: "city_bailao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [140.0994, 41.8008],
+                    [141.277588, 41.681992],
+                    [141.308899, 41.881831],
+                    [141.36, 42.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "白主-宗谷",
+                type: "sea",
+                id: "sea_city_baizhu_city_zonggu_1788229964353",
+                startConnection: "city_baizhu",
+                endConnection: "city_zonggu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [142.52, 46.71],
+                    [142.91667, 46],
+                    [142.66667, 46.08333],
+                    [141.93, 45.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "白主-莫约罗",
+                type: "sea",
+                id: "sea_city_baizhu_city_moyoro_1788229972331",
+                startConnection: "city_baizhu",
+                endConnection: "city_moyoro"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [142.52, 46.71],
+                    [142.58333, 45.83333],
+                    [142.91667, 45.5],
+                    [142.91667, 45.33333],
+                    [143.5, 44.91667],
+                    [144.16667, 44.58333],
+                    [144.27, 44.02],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "莫约罗-宗谷",
+                type: "sea",
+                id: "sea_city_moyoro_city_zonggu_1788229995712",
+                startConnection: "city_moyoro",
+                endConnection: "city_zonggu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [144.27, 44.02],
+                    [144.16667, 44.58333],
+                    [143.5, 44.91667],
+                    [142.91667, 45.33333],
+                    [141.93, 45.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "利默里克-坎佩尔",
+                type: "sea",
+                id: "sea_city_limerick_city_kanpeier_1788230317551",
+                startConnection: "city_limerick",
+                endConnection: "city_kanpeier"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-8.6957, 52.6664],
+                    [-9.542274, 52.584346],
+                    [-9.666053, 52.585821],
+                    [-9.740589, 52.552651],
+                    [-10.472335, 52.228385],
+                    [-10.646733, 51.734257],
+                    [-10.229645, 51.536513],
+                    [-9.6, 51.3333],
+                    [-6.674013, 49.79761],
+                    [-6.5833, 49.75],
+                    [-6.196961, 49.363661],
+                    [-5.74304, 48.90974],
+                    [-5.594299, 48.760999],
+                    [-5.5, 48.6667],
+                    [-5.003463, 48.693021],
+                    [-4.899391, 48.509285],
+                    [-4.780599, 48.299559],
+                    [-4.54189, 48.34733],
+                    [-4.509444, 48.325761],
+                    [-4.103, 47.995],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "都柏林-利默里克",
+                type: "sea",
+                id: "sea_city_dublin_city_limerick_1788230374015",
+                startConnection: "city_dublin",
+                endConnection: "city_limerick"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-6.26, 53.34],
+                    [-6.027722, 52.977904],
+                    [-5.733548, 52.917129],
+                    [-5.742388, 52.779797],
+                    [-5.781725, 52.16867],
+                    [-6.274194, 52.030384],
+                    [-6.843006, 51.911162],
+                    [-8.045595, 51.659101],
+                    [-9.6, 51.3333],
+                    [-10.229645, 51.536513],
+                    [-10.646733, 51.734257],
+                    [-10.472335, 52.228385],
+                    [-9.740589, 52.552651],
+                    [-9.666053, 52.585821],
+                    [-9.542274, 52.584346],
+                    [-8.6957, 52.6664],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "加莱-波尔多",
+                type: "sea",
+                id: "sea_city_calais_city_bordeaux_1788230407457",
+                startConnection: "city_calais",
+                endConnection: "city_bordeaux"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [1.85, 50.95],
+                    [1.567687, 50.892845],
+                    [1.441366, 50.849032],
+                    [1.3, 50.8],
+                    [1.149895, 50.76637],
+                    [0.301537, 50.576304],
+                    [-0.505582, 50.395477],
+                    [-0.672505, 50.358079],
+                    [-0.764313, 50.33751],
+                    [-1.278136, 50.222393],
+                    [-1.674061, 50.13369],
+                    [-1.735418, 50.112405],
+                    [-1.830445, 49.999758],
+                    [-1.922118, 49.984562],
+                    [-2.179347, 49.941924],
+                    [-2.346621, 49.877686],
+                    [-3.499218, 49.440497],
+                    [-3.987832, 49.141576],
+                    [-4.030414, 49.115729],
+                    [-4.212755, 49.005047],
+                    [-4.463092, 48.853091],
+                    [-4.635033, 48.717601],
+                    [-4.899391, 48.509285],
+                    [-4.780599, 48.299559],
+                    [-4.785234, 48.038342],
+                    [-4.360199, 47.76333],
+                    [-3.436411, 47.685381],
+                    [-2.648099, 47.026601],
+                    [-2.539513, 46.935858],
+                    [-2.523473, 46.925111],
+                    [-1.92304, 46.522834],
+                    [-1.568247, 46.310725],
+                    [-1.7, 46.1],
+                    [-1.25, 45.6],
+                    [-1.051941, 45.583846],
+                    [-0.769043, 45.391199],
+                    [-0.65, 45.1],
+                    [-0.57, 44.83],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "波尔多-波尔图",
+                type: "sea",
+                id: "sea_city_bordeaux_city_boertu_1788230411252",
+                startConnection: "city_bordeaux",
+                endConnection: "city_boertu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-0.57, 44.83],
+                    [-0.65, 45.1],
+                    [-0.769043, 45.391199],
+                    [-1.051941, 45.583846],
+                    [-1.25, 45.6],
+                    [-2.893913, 45.214531],
+                    [-3.703909, 45.024601],
+                    [-4.250379, 44.896463],
+                    [-5.771103, 44.539879],
+                    [-7.26845, 44.188777],
+                    [-8.5, 43.9],
+                    [-8.843063, 43.591243],
+                    [-9.5, 43],
+                    [-9.346233, 42.269608],
+                    [-9.304966, 42.07359000000001],
+                    [-9, 41.1],
+                    [-8.62, 41.15],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "波尔图-里斯本",
+                type: "sea",
+                id: "sea_city_boertu_city_lisiben_1788230414749",
+                startConnection: "city_boertu",
+                endConnection: "city_lisiben"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-8.62, 41.15],
+                    [-9.008789, 40.526327],
+                    [-9.464722, 39.377834],
+                    [-9.6, 38.5],
+                    [-9.13, 38.72],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "休达-拉巴特",
+                type: "sea",
+                id: "sea_city_xiuta_city_labate_1788230430319",
+                startConnection: "city_xiuta",
+                endConnection: "city_labate"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.31, 35.89],
+                    [-5.354867, 35.96881900000001],
+                    [-5.75, 35.95000000000001],
+                    [-7.1, 34.4],
+                    [-6.822, 34.024],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉巴特-特尔德",
+                type: "sea",
+                id: "sea_city_labate_city_telde_1788230437267",
+                startConnection: "city_labate",
+                endConnection: "city_telde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-6.822, 34.024],
+                    [-7.7875, 34.076471],
+                    [-8.751058, 33.623031],
+                    [-10.1, 31.8],
+                    [-12.194387, 29.156452],
+                    [-15.145809, 28.538331],
+                    [-15.42, 28],
                 ]
             }
         },

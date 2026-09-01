@@ -101,6 +101,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'piketai': 'city_aidingbao',
   'gaer': 'city_dublin',
   'mangsite': 'city_kasheer',
+  'tuomengde': 'city_limerick',
   'bulietani': 'city_rennes',
 'saierweiya': 'city_belgrade',
 

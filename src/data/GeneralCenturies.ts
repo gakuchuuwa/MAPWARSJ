@@ -924,6 +924,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_charles_martel': 8,                            // 查理马特 · falanji · 科隆
     'gen_civilis': 1,                                   // 西维利斯 · batawei · 乌特勒支
     'gen_domhnall': 9,                                  // 多姆纳尔 · gaer · 都柏林
+    'tuomengde_aobulaien': 12,                          // 奥布赖恩 · tuomengde · 利默里克
     'gen_eric_bloodaxe': 10,                             // 埃里克 · weijing_york · 约克
     'gen_frederick_i_nuremberg': 15,                     // 腓特烈一世 · huohengsuolun · 纽伦堡
     'gen_gero_margrave': 10,                             // 杰罗 · wende · 马格德堡
