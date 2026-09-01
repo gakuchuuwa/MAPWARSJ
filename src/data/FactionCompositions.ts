@@ -9156,9 +9156,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
         formationMode: "crane_wing",
         slots: [
-            { type: "composite_bowman", count: 3 },
+            { type: "composite_bowman", count: 2 },
             { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
+            { type: "elite_steppe_lancer", count: 3 },
         ],
     },
     "varendra": {

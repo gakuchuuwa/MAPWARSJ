@@ -160,7 +160,19 @@ export function getFactionCultureRegion(factionId: string): string | undefined {
 /** 兜底：区未登记时用通用桨帆战船（不是楼船 —— 别让欧洲势力默认开中国船） */
 const FALLBACK_SHIP = 'WAR_GALLEY';
 
+/**
+ * 势力级船型覆盖（2026-09-01 修「舰队模型错」）：文化区映射会误伤同区其他势力
+ * （如 LATIN 区另有法兰克/意大利城邦、AMERICA 区另有美洲原住民），这里按省份精确指定，
+ * 优先级最高，不动文化区表。素材都已提取（16 向齐全），改映射即生效。
+ */
+const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
+    luoma_diguo: 'WAR_GALLEY',     // 罗马帝国（原 LATIN→HULK 北欧柯克船，错；应地中海桨帆战船）
+    naxos_ancient: 'TRIREME',      // 纳克索斯（原 MACEDONIANS→WAR_LEMBOS 马其顿船，错；应希腊三列桨）
+    jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳（原 AMERICA→CANOE 独木舟，错；应西班牙无敌舰队精锐）
+};
+
 export function getCultureNavalShip(region?: string | null, factionId?: string | null): NavalShipAssetId {
+    if (factionId && FACTION_NAVAL_SHIP_OVERRIDE[factionId]) return FACTION_NAVAL_SHIP_OVERRIDE[factionId];
     const resolvedRegion = region ?? (factionId ? getFactionCultureRegion(factionId) : null);
     if (!resolvedRegion) return FALLBACK_SHIP;
     return REGION_TO_SHIP.get(resolvedRegion.toUpperCase()) ?? FALLBACK_SHIP;
