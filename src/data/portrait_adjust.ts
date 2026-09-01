@@ -928,7 +928,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LINGNAN/duanzhou_d_caojin.png": {
-            "scale": 0.85,
+            "scale": 0.89,
             "offsetX": 16,
             "offsetY": 6
         },
