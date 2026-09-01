@@ -2017,11 +2017,20 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 一键恢复文化军团
     document.getElementById('le-btn-revert-culture')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
+        const previous = localCustomCompositions[row.factionId];
         localCustomCompositions[row.factionId] = buildCultureLegion(row.region);
+        const saved = await saveAllCompositions();
+        if (!saved) {
+            if (previous) localCustomCompositions[row.factionId] = previous;
+            else delete localCustomCompositions[row.factionId];
+            buildRows();
+            applyFilter();
+            selectFaction(row.factionId);
+            return;
+        }
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        await saveAllCompositions();
         showToast(`↺ 已恢复【${row.factionName}】为文化军团【${getCultureLegionName(row.region)}】`);
     });
 
@@ -3529,7 +3538,7 @@ function startCanvasPreview(): void {
 // 8. 存盘与全局事件
 // ============================================================
 
-async function saveAllCompositions(): Promise<void> {
+async function saveAllCompositions(): Promise<boolean> {
     try {
         const res = await fetch('/api/save-faction-compositions', {
             method: 'POST',
@@ -3538,13 +3547,15 @@ async function saveAllCompositions(): Promise<void> {
         });
 
         if (!res.ok) throw new Error(await res.text());
-
-        showToast('🎉 已写入 FactionCompositions.ts');
-        // 🔴 自动报错：写盘后自动校验军团命名铁律，有违规弹窗列出
-        reportLegionNameViolations();
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
+        return false;
     }
+
+    showToast('🎉 已写入 FactionCompositions.ts');
+    // 🔴 自动报错：写盘后自动校验军团命名铁律，有违规弹窗列出
+    reportLegionNameViolations();
+    return true;
 }
 
 // 事件绑定

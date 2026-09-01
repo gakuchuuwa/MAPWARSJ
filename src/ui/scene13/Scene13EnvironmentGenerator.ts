@@ -23,6 +23,7 @@ import {
 } from '../Scene13Biome';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
+import { isNearStrategicRiver } from '../../map/StrategicRiverProximity';
 import { RandomSource, createRandom, hashString } from './Random';
 import {queryBaseTile} from './WorldBaseMap';
 import { pickTree, treeDensityFor } from './TreeAssignment';
@@ -129,6 +130,9 @@ export interface Scene13EnvironmentInput {
     /** 战场中心经纬度（缺省走防御分支） */
     lat?: number;
     lng?: number;
+    /** 攻防战守方据点坐标：只用于判定据点是否临水，不改变镜头与气候坐标。 */
+    waterProbeLat?: number;
+    waterProbeLng?: number;
     /** 显式种子（测试用）；不传则从经纬度 + 双方势力/武将 id 派生 */
     seed?: string;
     /** 画布宽（VW） */
@@ -170,6 +174,8 @@ export interface Scene13EnvironmentInput {
     forceHasRoad?: boolean;
     /** 战斗类型：是否为攻防战（攻城战/据点防守战） */
     isSiege?: boolean;
+    /** 攻防战正面城墙的实际屏幕 X；临城河据此贴墙生成。 */
+    siegeWallFrontX?: number;
 }
 
 const HALF_TILE_OBSTRUCTION = { x: 0.5, y: 0.5 } as const;
@@ -468,6 +474,9 @@ function sampleSiegeStoneAnchor(VW: number, VH: number, rng: RandomSource): { ax
 
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
+
+    // 战略地图可见河流还包含 Natural Earth 矢量中心线；复用同一份数据，避免战略有河、战术没河。
+    if (isNearStrategicRiver(lat, lng, 25)) return 'river';
     
     // 1. 优先直接检查 ESRI 真实瓦片水体像素（支持 Zoom 13 / 10 / 9 多级瓦片）
     for (const z of [13, 10, 9]) {
@@ -592,7 +601,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         ?? (hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland');
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
-    const waterKind = input.forceWaterKind ?? probeWater(input.lat, input.lng);
+    const waterKind = input.forceWaterKind
+        ?? probeWater(input.waterProbeLat ?? input.lat, input.waterProbeLng ?? input.lng);
     const topology: Scene13Topology = resolveBattleTopology(hasCoord, waterKind, elev, slope, biome, rng);
     const theme = input.forceTheme
         ? DE_MAP_THEMES[input.forceTheme]
@@ -651,11 +661,14 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 const rockX = VW * 0.12 + rng.next() * VW * 0.08;
                 objects.push({ asset: ra, x: rockX, y: rng.next() * VH, layer: 'world', z: 0, flip: rng.chance(0.5), frame: rng.int(0, 99999) });
             }
-        // ⚠️ [2026-09-01] 攻城战出河（临城河）已回退，等实测清楚河形/水色/石头三件事再重做。
-        //    史实上名城多依水而建（襄阳汉水、马格德堡易北河、巴黎塞纳河），攻城战**应该**有河，
-        //    这里暂时只在野战出河，是「还没做好」，不是「不该做」。
-        } else if (!input.isSiege && (topology === 'river_crossing' || waterKind === 'river')) {
-            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng);
+        // 🔴 [2026-09-01 主人定] 挨着河的攻防战就该有河 —— 名城多依水而建：
+        //    襄阳汉水、马格德堡易北河、巴黎塞纳河、开封汴河，围城方渡河强攻是真实画面。
+        //    判据是 probeWater 扫出来的真实水系（waterKind==="river"），不是给每座城硬塞一条。
+        //    野战 → 中轴渡口（crossing）；临河城攻防 → 贴城墙外侧的临城河（moat）。
+        } else if (topology === 'river_crossing' || waterKind === 'river') {
+            // 只有 probeWater 判定「城池周边真有水系」的攻城战才出河；内陆无水的城照旧无河。
+            isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng,
+                                 input.isSiege ? 'moat' : 'crossing', input.siegeWallFrontX);
         } else if (waterKind === 'lake') {
             // 内陆湖 / 绿洲水塘。攻防战也出——水塘只占战场一角，不像江河那样横切战场。
             const corridor = (x: number, y: number): boolean =>
@@ -916,9 +929,6 @@ function buildCoastline(
     lng?: number,
 ): WaterChecker {
     // 🌊 DE 原版自然有机海岸线（2026-08-26 美化重构）：
-    // 1. 弃用单调平滑的大圆弧：引入多频分形谐波噪声（低频宏观大曲率 + 中频海湾岬角 + 高频自然微起伏）；
-    // 2. 真实三层水色生态：外海清澈蔚蓝海水 -> 近岸通透浅水(透出水下金沙) -> 水陆交界湿润沙滩过渡 -> 干燥沙滩；
-    // 🌊 DE 原版自然有机海岸线（2026-08-26 美化重构）：
     // 1. 彻底消除平滑圆弧与单调大波浪：引入 5 级分形谐波侵蚀（宏观大走势 + 中频半月小海湾与突岬 + 高频凹凸沙嘴 + 细碎潮汐侵蚀锯齿）；
     // 2. 真实 DE 通透水色生态：金黄水下沙床垫底 -> 近岸清澈通透浅水(透出水下金沙) -> 湿润潮汐沙滩 -> 宽阔干燥金沙过渡带；
     // 3. 严格安全占地：水域与浅水/湿沙带全部标记为 occupied，确保营帐和哨塔必定稳固坐落在干燥陆地草地上。
@@ -1042,6 +1052,17 @@ function buildRiver(
     biome: Biome = 'temperate_forest',
     /** 战场经度 —— 积雪判定要查真实气候数据，不能只按纬度估 */
     lng?: number,
+    /**
+     * 河道位置。
+     *   'crossing' 野战江河渡口 —— 纵向大 S 横贯战场中轴（DE Rivers / Crossing 原样）。
+     *   'moat'     临河城攻防 —— 河压在城墙外侧，攻方渡河强攻。
+     *
+     * 🔴 [2026-09-01 主人定] 只有**真的挨着河**的城才出河（waterKind==='river' 由 probeWater
+     *    扫城池周边 500m~25km 的真实水域掩膜得出），不是所有攻城战都塞一条。
+     *    史实上名城多依水而建：襄阳汉水、马格德堡易北河、巴黎塞纳河、开封汴河。
+     *    ⚠️ 摆幅必须和野战同量级（65/28），收窄过头河会变成一条直线（2026-09-01 实锤）。
+     */
+    layout: 'crossing' | 'moat' = 'crossing',
 ): WaterChecker {
     // 🌊 DE 原版 Rivers / Crossing 规范（2026-08-26 美化重构）：
     //   1. Catmull-Rom 样条平滑蜿蜒河道，消除僵硬折线与塑料感；
@@ -1051,7 +1072,12 @@ function buildRiver(
     // 1. 生成 7 个稀疏控制点并用 Catmull-Rom 密集插值
     const numControls = 7;
     const controls: Array<{ x: number; y: number }> = [];
-    const baseCenterX = VW * 0.50;
+    const moat = layout === 'moat';
+    // 攻方恒在左、城恒在右（城墙约在 0.65 VW）。渡口河走中轴；临城河压到城墙外侧。
+    // 摆幅两者一致 —— 河就是要蜿蜒，收窄只会得到一条笔直的沟。
+    const baseCenterX = moat ? VW * 0.57 : VW * 0.50;
+    const bandLo = moat ? VW * 0.48 : VW * 0.32;
+    const bandHi = moat ? VW * 0.64 : VW * 0.68;
     const phase1 = rng.next() * Math.PI * 2;
     const phase2 = rng.next() * Math.PI * 2;
 
@@ -1064,7 +1090,7 @@ function buildRiver(
         const t = i / (numControls - 1);
         // 自然大 S 蛇曲弯折
         const offset = Math.sin(t * Math.PI * 2.0 + phase1) * 65 + Math.cos(t * Math.PI * 3.5 + phase2) * 28;
-        const x = Math.max(VW * 0.32, Math.min(VW * 0.68, baseCenterX + offset));
+        const x = Math.max(bandLo, Math.min(bandHi, baseCenterX + offset));
         controls.push({ x, y });
     }
 
@@ -1077,10 +1103,10 @@ function buildRiver(
 
     const numSamplePts = 64;
     const pts: Array<{ x: number; y: number; nx: number; ny: number; wW: number }> = [];
-    const baseHalfW = 65;    // 河面半宽（px）
+    const baseHalfW = 56;    // 河心深水半宽（px）
     const halfWVary = 8;     // 弯道半宽起伏
-    const shallowDepth = 22; // 浅水环宽度（px）
-    const bankDepth = 20;    // 湿泥沙岸宽度（px）
+    const shallowDepth = 36; // 浅水环宽度（px，明显展现近岸涉水浅滩）
+    const bankDepth = 30;    // 湿泥沙岸宽度（px，自然衔接陆地草地与河岸）
 
     for (let i = 0; i <= numSamplePts; i++) {
         const y = yMin + (yMax - yMin) * (i / numSamplePts);
@@ -1147,19 +1173,25 @@ function buildRiver(
     // 由外向内四层渲染：
     // 1. 湿泥沙岸过渡（消除河岸与陆地草皮的生硬交界）
     if (bankCells.length > 0) {
-        patches.push({ tile: wetBankTile, cells: bankCells, polygon: [...bL, ...bR], alpha: 0.80, category: 'shore', blur: 14 });
+        patches.push({ tile: wetBankTile, cells: bankCells, polygon: [...bL, ...bR], alpha: 0.85, category: 'shore', blur: 16 });
     }
-    // 2. 清透见底近岸浅水（sh2 浅水材质，透出水下泥沙河床）
+    // 2. 水下泥沙底床垫底（铺在浅水区下，确保半透明浅水能透出水下沙泥质感）
     if (shallowCells.length > 0) {
-        patches.push({ tile: 'sh2', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.72, category: 'shore', blur: 12 });
+        patches.push({ tile: wetBankTile, cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.90, category: 'shore', blur: 14 });
     }
-    // 3. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）
+    // 3. 清透见底近岸浅水（sh2 浅水材质，透出水下泥沙河床）
+    if (shallowCells.length > 0) {
+        patches.push({ tile: 'sh2', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.58, category: 'shore', blur: 14 });
+    }
+    // 4. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）
     if (waterCells.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 8 });
+        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 10 });
     }
 
     // 4. 水岸自然生态点缀：芦苇、睡莲、河滩湿石
     const decorCount = 8;
+    let riverRockCount = 0;
+    const MAX_RIVER_ROCKS = 1; // 🔴 [2026-09-01 主人定] 一条河流全长范围内最多只放 1 块石头
     for (let i = 0; i < decorCount; i++) {
         const tIdx = Math.floor((i + rng.next() * 0.8) / decorCount * (numSamplePts - 1));
         const pt = pts[tIdx];
@@ -1169,13 +1201,15 @@ function buildRiver(
         const oxX = pt.x + side * pt.nx * dist;
         const oyY = pt.y + side * pt.ny * dist * 0.55;
 
-        // 水生植物（芦苇/睡莲）与**河滩**卵石。
-        // 🔴 [2026-09-01 主人指出] 河岸**不许放 ROCK_SEA1/2** —— 那是海礁，只该出现在
-        //    海岸线（buildCoastline）。内陆淡水河用河滩鹅卵石；热带雨林额外给丛林石。
-        const bankRocks = (biome === 'tropical_rainforest')
-            ? ['ROCK_BEACH', 'ROCK1', 'ROCK2', 'ROCK_JUNGLE']
-            : ['ROCK_BEACH', 'ROCK1', 'ROCK2'];
-        const asset = rng.pick(['REEDS', 'REEDS', 'WATER_LILY', ...bankRocks]);
+        // 水生植物（芦苇/睡莲）与河滩岩石（岩石封顶 1 块，其余为芦苇睡莲）
+        const bankRocks = decorForTheme(theme, season, lat, elev, biome, lng).solid;
+        const pool = (riverRockCount >= MAX_RIVER_ROCKS || bankRocks.length === 0)
+            ? ['REEDS', 'REEDS', 'WATER_LILY']
+            : ['REEDS', 'REEDS', 'WATER_LILY', ...bankRocks];
+        const asset = rng.pick(pool);
+        if (asset.startsWith('ROCK')) {
+            riverRockCount++;
+        }
         objects.push({
             asset,
             x: oxX,

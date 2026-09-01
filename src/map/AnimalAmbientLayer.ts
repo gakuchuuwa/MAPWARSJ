@@ -46,6 +46,9 @@ interface AnimalEntry {
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
 const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
 const BIRD_DENSITY = 0.015;         // 格出现飞鸟的概率（稀疏点缀，视野内偶见数只翱翔，不喧宾夺主）
+/** 🔴 [2026-09-01 主人定] 动物只在这两个缩放层显示：9 和 10 */
+const ANIMAL_MIN_ZOOM = 9;
+const ANIMAL_MAX_ZOOM = 10;
 const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 // 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
 //    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
@@ -345,7 +348,7 @@ export class AnimalAmbientLayer {
         // 🔴 [2026-08-31] 战术模式（scene13）下战略地图被整屏盖住，这一层每帧清屏重画纯属白烧。
         //    原实现的 rAF 无条件永久运行，既不看缩放也不看可见性。
         //    画布已经清空过一次就不必再清，直接跳过本帧。
-        if (this.isObscured()) {
+        if (this.isHiddenNow()) {
             if (!this.clearedWhileHidden) {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.clearedWhileHidden = true;
@@ -361,6 +364,18 @@ export class AnimalAmbientLayer {
     }
 
     private clearedWhileHidden = false;
+
+    /**
+     * 本帧要不要整层跳过（不重算、不重画，只清一次屏）。
+     * 🔴 [2026-09-01 主人定] 动物只在 **zoom 9 / 10** 两层出现：
+     *    8 是全局俯瞰（动物变成满屏小点），11+ 已是战场尺度，都不该有野生动物。
+     *    在这里拦掉而不是只藏画布 —— 顺带省掉 recomputeEntries + draw 的每帧开销。
+     */
+    private isHiddenNow(): boolean {
+        if (this.isObscured()) return true;
+        const z = Math.round(this.map.getZoom());
+        return z < ANIMAL_MIN_ZOOM || z > ANIMAL_MAX_ZOOM;
+    }
 
     /** 战略地图此刻是否被战术演出盖住（或视口尺寸为 0） */
     private isObscured(): boolean {

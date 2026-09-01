@@ -15,6 +15,7 @@
     "tier:check": "npx tsx scratch/check_tier_audit_conflicts.mjs",
     "flag-text:check": "npx tsx scratch/audit_flag_text_luminance.mjs",
     "zoom:rules-test": "npx tsx scratch/test_zoom_controller_naval.mts",
+    "scene13:moat-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_siege_moat.mts",
     "scene13:water-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_scene13_water_color.mts",
     "phalanx:row-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_phalanx_row_spacing.mts",
     "naval:ship-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_culture_naval_ships.mts",

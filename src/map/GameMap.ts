@@ -4,6 +4,7 @@ import { TILE_CONFIG, tileToLatLng } from './TileMapConfig';
 import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
 import { VectorRiverLayer } from './VectorRiverLayer';
+import { setStrategicRiverProximityData } from './StrategicRiverProximity';
 import { StrategicGridLayer } from './StrategicGridLayer';
 import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
@@ -529,6 +530,7 @@ export class GameMap {
                     })
                     .then(data => {
                         gameLog('startup', '[GameMap] Vector river data loaded');
+                        setStrategicRiverProximityData(data);
                         this.vectorRiverLayer = new VectorRiverLayer(data, { pane: 'vectorRiverPane' });
 
                         // [FIX] Initial Visibility Check

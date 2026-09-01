@@ -1995,13 +1995,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 色雷斯·普罗夫迪夫（西美昂 · 色雷斯长刃斩手与精锐重骑军团 · 鹤翼阵 2+4+3：色雷斯长刃斩手 2 + 冲击重骑兵 4 + 精锐标枪手 3）
-    seleisi: {
-        legionName: "色雷斯长刃斩手与精锐重骑军团",
-        formationMode: 'crane_wing',
+    "seleisi": {
+        legionName: "色雷斯军团",
+        legionType: "region",
+        formationMode: "balance_yoke",
         slots: [
-            { type: 'rhomphaia_warrior', count: 2 },   // Row 0 前锋坚壁 = 色雷斯长刃斩手 2人（纯步兵·无马，双手逆刃长刀引敌接战）
-            { type: 'shock_cavalry', count: 4 },       // Row 1 中军主力 = 冲击重骑兵 4骑（重装贵族铁骑核心冲锋破阵）
-            { type: 'elite_peltast', count: 3 },       // Row 2 尾收远射 = 精锐标枪手 3人（纯步兵·无马，高穿透投枪两翼火力掩护）
+            { type: "rhomphaia_warrior", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+            { type: "elite_peltast", count: 3 },
         ],
     },
     // 塞浦路斯王国·尼科西亚（居伊·德·吕西尼昂 · 十字军重骑士与劲弩大阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
@@ -2904,6 +2905,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "lagusa": {
         legionName: "斯拉夫军团",
+        legionType: "region",
         formationMode: "fish_scale",
         slots: [
             { type: "composite_bowman", count: 3 },
@@ -3582,7 +3584,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3591,7 +3593,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3690,7 +3692,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3744,7 +3746,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3753,7 +3755,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3762,7 +3764,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -3906,7 +3908,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4167,7 +4169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4194,7 +4196,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4419,7 +4421,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4527,7 +4529,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4554,7 +4556,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4743,7 +4745,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4752,7 +4754,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4869,7 +4871,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4950,7 +4952,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -4959,7 +4961,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5121,7 +5123,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5148,7 +5150,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5301,7 +5303,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5364,7 +5366,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5436,7 +5438,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5463,7 +5465,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5850,7 +5852,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5868,7 +5870,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5895,7 +5897,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5904,7 +5906,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5913,7 +5915,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5922,7 +5924,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5931,7 +5933,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -5940,7 +5942,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6039,7 +6041,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6111,7 +6113,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6129,7 +6131,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6174,7 +6176,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6183,7 +6185,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6192,7 +6194,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6219,7 +6221,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6273,7 +6275,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -6426,7 +6428,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7021,7 +7023,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7030,7 +7032,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7039,7 +7041,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7066,7 +7068,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7156,7 +7158,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7165,7 +7167,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7174,7 +7176,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7840,7 +7842,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7849,7 +7851,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7858,7 +7860,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7876,7 +7878,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -7948,7 +7950,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8380,7 +8382,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8389,7 +8391,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8434,7 +8436,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8443,7 +8445,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8659,7 +8661,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "岭南军团",
         formationMode: "triangle",
         slots: [
-            { type: "armored_elephant", count: 2 },
+            { type: "battle_elephant", count: 2 },
             { type: "imperial_skirmisher", count: 3 },
             { type: "rattan_archer_elite", count: 4 },
         ],
@@ -8703,11 +8705,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "aodesuosi": {
         legionName: "色雷斯军团",
-        formationMode: "fish_scale",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "rhomphaia_warrior", count: 3 },
-            { type: "elite_peltast", count: 4 },
+            { type: "rhomphaia_warrior", count: 4 },
             { type: "thracian_peltast", count: 2 },
+            { type: "elite_peltast", count: 3 },
         ],
     },
     "disidelusi": {
@@ -8767,12 +8769,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiadunhe": {
-        legionName: "草原军团",
-        formationMode: "triangle",
+        legionName: "斯拉夫军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: "keshik", count: 2 },
-            { type: "steppe_lancer", count: 3 },
-            { type: "mangudai_elite", count: 4 },
+            { type: "composite_bowman", count: 3 },
+            { type: "elite_boyar", count: 4 },
+            { type: "elite_steppe_lancer", count: 2 },
         ],
     },
     "bulu": {
@@ -8968,11 +8970,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 奥德里西亚王国·塞乌托波利（色雷斯）→ 色雷斯军团
     "odrysian_late": {
         legionName: "色雷斯军团",
-        formationMode: "fish_scale",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "rhomphaia_warrior", count: 3 },
-            { type: "elite_peltast", count: 4 },
+            { type: "rhomphaia_warrior", count: 4 },
             { type: "thracian_peltast", count: 2 },
+            { type: "elite_peltast", count: 3 },
         ],
     },
     "aqimeinide": {
@@ -9179,11 +9181,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "duonaobaojia": {
         legionName: "色雷斯军团",
-        formationMode: "fish_scale",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "rhomphaia_warrior", count: 3 },
-            { type: "elite_peltast", count: 4 },
+            { type: "rhomphaia_warrior", count: 4 },
             { type: "thracian_peltast", count: 2 },
+            { type: "elite_peltast", count: 3 },
         ],
     },
     "qutb_shahi": {
@@ -9193,6 +9195,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "urumi_swordsman", count: 3 },
             { type: "elite_urumi_swordsman", count: 4 },
             { type: "sannahya", count: 2 },
+        ],
+    },
+    "tuomengde": {
+        legionName: "色雷斯军团",
+        formationMode: "balance_yoke",
+        slots: [
+            { type: "rhomphaia_warrior", count: 4 },
+            { type: "thracian_peltast", count: 2 },
+            { type: "elite_peltast", count: 3 },
         ],
     },
 };
