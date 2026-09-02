@@ -1,6 +1,6 @@
 export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
-import { getRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
+import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
 
 export type SoundKey =
@@ -222,14 +222,15 @@ const BGM_REGION_GAIN: Record<string, number> = {
  * 放完后不循环单曲，在全部曲目里洗牌随机轮播（不立刻重复同一首）；
  * 镜头进入新文化区/势力范围则区域优先立刻切歌。
  */
-const BGM_ROTATION_FOLDERS: readonly string[] = [
-    ...REGION_ORDER,
-    // 势力夹专属曲（9）
-    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong',
-    // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
-    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate',
-    'game_of_thrones', 'shadow_assassin', 'age_of_kings',
-];
+/** 实际存在且完成响度标定的曲目；随机池只允许从这里取，避免抽到不存在的区域文件。 */
+const AVAILABLE_BGM_FOLDERS = new Set<string>(Object.keys(BGM_REGION_GAIN));
+const BGM_ROTATION_FOLDERS: readonly string[] = Object.freeze([...AVAILABLE_BGM_FOLDERS]);
+const GENERIC_BGM_FALLBACK = 'age_of_kings';
+
+function resolveAvailableBgmFolder(folder: string): string {
+    // 没有对应文化曲时用无文化归属的游戏主题曲，不能拿中原音乐冒充其他文明。
+    return AVAILABLE_BGM_FOLDERS.has(folder) ? folder : GENERIC_BGM_FALLBACK;
+}
 
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
@@ -272,6 +273,8 @@ export class AudioManager {
     /** 播报进行中：音效 + 音乐压低（优先级闪避） */
     private speechDucking = false;
     private bgmAudio: HTMLAudioElement | null = null;
+    /** 当前 BGM 专用 blob URL；换曲/停歌后立即释放，不进入长期对象 URL 缓存。 */
+    private bgmObjectUrl: string | null = null;
     private currentBgmFolder: string = '';
     private currentBgmSrc: string = '';
     private failedBgmFolders = new Set<string>();
@@ -290,8 +293,8 @@ export class AudioManager {
     private lastBgmRequest: { portraitPath?: string; lat: number; lng: number } | null = null;
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
-    /** 正在播放的一次性音效克隆元素（暂停时一并停掉）*/
-    private activeOneShots = new Set<HTMLAudioElement>();
+    /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
+    private activeOneShots = new Map<HTMLAudioElement, SoundDefinition>();
     /** 每个音频元素正在进行的音量渐变（setInterval id）；再次调整时先撤销旧渐变 */
     private volumeRamps = new Map<HTMLAudioElement, ReturnType<typeof setInterval>>();
 
@@ -398,8 +401,8 @@ export class AudioManager {
      * .aud 不在下载器监控扩展名内，fetch 不被 IDM/迅雷 抓取；
      * blob: URL 无扩展名，<audio> 也不被抓取；重标 type 确保浏览器按 ogg 解码。
      */
-    private async fetchObjectUrl(src: string): Promise<string | null> {
-        const cached = this.objectUrlCache.get(src);
+    private async fetchObjectUrl(src: string, cache: boolean = true): Promise<string | null> {
+        const cached = cache ? this.objectUrlCache.get(src) : undefined;
         if (cached) return cached;
         try {
             // 破缓存：加 ?ts 防止旧文件被浏览器磁盘缓存死咬
@@ -407,9 +410,16 @@ export class AudioManager {
             const res = await fetch(cacheKey);
             if (!res.ok) return null;
             const buf = await res.arrayBuffer();
+            // Vite 对不存在的静态资源可能返回 200 + index.html。只看 res.ok 会把网页误标成
+            // audio/ogg，最终既播不出，也进不了 BGM 的 CENTRAL 回退分支。
+            if (buf.byteLength < 4) return null;
+            const magic = new Uint8Array(buf, 0, 4);
+            if (magic[0] !== 0x4f || magic[1] !== 0x67 || magic[2] !== 0x67 || magic[3] !== 0x53) {
+                return null; // OggS
+            }
             const blob = new Blob([buf], { type: 'audio/ogg' });
             const url = URL.createObjectURL(blob);
-            this.objectUrlCache.set(src, url);
+            if (cache) this.objectUrlCache.set(src, url);
             return url;
         } catch {
             return null;
@@ -437,10 +447,14 @@ export class AudioManager {
         this.lastPlayedAt.set(key, Date.now());
 
         // 追踪在播克隆，暂停时一并停掉；播完自动移除
-        this.activeOneShots.add(audio);
-        audio.addEventListener('ended', () => this.activeOneShots.delete(audio), { once: true });
+        this.activeOneShots.set(audio, definition);
+        audio.addEventListener('ended', () => {
+            this.cancelVolumeRamp(audio);
+            this.activeOneShots.delete(audio);
+        }, { once: true });
 
         void audio.play().catch((error) => {
+            this.cancelVolumeRamp(audio);
             this.activeOneShots.delete(audio);
             this.warnMissingOnce(key, error);
         });
@@ -666,7 +680,7 @@ export class AudioManager {
 
         void this.ensureLoopElement(key, definition).then((audio) => {
             // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
-            if (!audio || !this.wantedLoops.has(key)) return;
+            if (!audio || !this.settings.enabled || !this.wantedLoops.has(key)) return;
             if (this.gamePaused && definition.category !== 'bgm') return;
             if (audio.paused) {
                 audio.currentTime = 0;
@@ -694,7 +708,8 @@ export class AudioManager {
     }
 
     private stopAllLoops(): void {
-        for (const key of this.loopCache.keys()) {
+        const keys = new Set<SoundKey>([...this.wantedLoops, ...this.loopCache.keys()]);
+        for (const key of keys) {
             this.stopLoop(key);
         }
     }
@@ -710,8 +725,9 @@ export class AudioManager {
                 }
             }
             // 停掉所有在播的一次性音效（一次性事件不恢复，直接丢弃）
-            for (const audio of this.activeOneShots) {
+            for (const audio of this.activeOneShots.keys()) {
                 audio.pause();
+                this.cancelVolumeRamp(audio);
             }
             this.activeOneShots.clear();
         } else {
@@ -736,11 +752,15 @@ export class AudioManager {
         this.currentBgmSrc = '';
         this.cameraRegionFolder = '';
         this.bgmLoadToken++; // 作废任何在途加载
-        if (!this.bgmAudio) return;
-        this.cancelVolumeRamp(this.bgmAudio); // 撤销可能在进行的交叉淡化
-        this.bgmAudio.pause();
-        this.bgmAudio.currentTime = 0;
+        if (this.bgmAudio) {
+            this.cancelVolumeRamp(this.bgmAudio); // 撤销可能在进行的交叉淡化
+            this.bgmAudio.pause();
+            this.bgmAudio.removeAttribute('src');
+            this.bgmAudio.load();
+        }
+        if (this.bgmObjectUrl) URL.revokeObjectURL(this.bgmObjectUrl);
         this.bgmAudio = null;
+        this.bgmObjectUrl = null;
     }
 
     /** 每帧调用：以地理区域 BGM 为基础，有专属 BGM 的势力文件夹才覆盖 */
@@ -762,18 +782,18 @@ export class AudioManager {
         // 检查立绘文件夹是否有专属 BGM（如 manqing/daming/litang 等势力夹）
         const portraitFolder = portraitPath ? extractPortraitFolder(portraitPath) : undefined;
         const portraitDir = portraitFolder ? portraitFolder.replace(/^\/assets\/([^/]+)\/$/, '$1') : undefined;
-        if (portraitDir && !BGM_FALLBACK_MAP[portraitDir]) {
+        if (portraitDir && !BGM_FALLBACK_MAP[portraitDir] && AVAILABLE_BGM_FOLDERS.has(portraitDir)) {
             folderName = portraitDir;
         }
 
-        this.applyCameraFolder(folderName);
+        this.applyCameraFolder(resolveAvailableBgmFolder(folderName));
     }
 
 
     /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
     public syncRegionBgm(lat: number, lng: number): void {
         if (!this.settings.enabled || !this.unlocked) return;
-        this.applyCameraFolder(getRegion(lat, lng));
+        this.applyCameraFolder(resolveAvailableBgmFolder(getRegion(lat, lng)));
     }
 
     /**
@@ -795,9 +815,10 @@ export class AudioManager {
         }
     }
 
-    /** 播放某文化区/势力夹 BGM；单曲不循环，放完随机轮播下一曲（27 全曲洗牌循环）。
+    /** 播放某文化区/势力夹 BGM；单曲不循环，放完在全部有效曲目中洗牌轮播。
      *  集中目录：public/assets/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
     private playBgmFolder(folder: string): void {
+        folder = resolveAvailableBgmFolder(folder);
         const src = `/assets/bgm/${folder}_bgm.aud`;
         // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
         if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
@@ -805,18 +826,23 @@ export class AudioManager {
         this.currentBgmSrc = src;
         const token = ++this.bgmLoadToken;
 
-        void this.fetchObjectUrl(src).then((url) => {
+        // BGM 单曲体积远大于音效，不进入永久 objectUrlCache；旧曲交叉淡出后立即 revoke。
+        void this.fetchObjectUrl(src, false).then((url) => {
             // 异步期间又切了歌 / 停了 BGM → 作废本次回调
-            if (token !== this.bgmLoadToken || !this.settings.enabled || !this.unlocked) return;
+            if (token !== this.bgmLoadToken || !this.settings.enabled || !this.unlocked) {
+                if (url) URL.revokeObjectURL(url);
+                return;
+            }
             if (!url) {
                 this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
                 // 记录失败文件夹，避免每帧重试
                 this.failedBgmFolders.add(folder);
-                // 区域 BGM 缺失 → 回落 CENTRAL（必定存在）
-                if (folder !== 'CENTRAL') this.playBgmFolder('CENTRAL');
+                // 文件意外缺失/损坏 → 回落无文化归属的通用主题曲。
+                if (folder !== GENERIC_BGM_FALLBACK) this.playBgmFolder(GENERIC_BGM_FALLBACK);
                 return;
             }
             const oldAudio = this.bgmAudio;
+            const oldObjectUrl = this.bgmObjectUrl;
             const audio = new Audio();
             audio.src = url;
             audio.loop = false; // 单曲不循环：放完随机轮播下一文化
@@ -835,17 +861,21 @@ export class AudioManager {
                 { once: true },
             );
             this.bgmAudio = audio;
+            this.bgmObjectUrl = url;
             void audio.play().catch((error) => {
                 this.warnMissingOnce('bgm_main', error);
             });
-            // 新曲淡入：若当前正在战斗中（音效循环已激活），BGM 开机即静音
-            const duckedVol = this.isSfxLoopActive() ? 0 : targetVol;
-            this.setVolume(audio, duckedVol, FADE.bgmCrossfade);
+            // targetVol 已由 resolveVolume 按播报/行军/战斗状态完成闪避，不能再次强制归零。
+            this.setVolume(audio, targetVol, FADE.bgmCrossfade);
             if (oldAudio) {
                 this.setVolume(oldAudio, 0, FADE.bgmCrossfade, () => {
                     oldAudio.pause();
-                    oldAudio.currentTime = 0;
+                    oldAudio.removeAttribute('src');
+                    oldAudio.load();
+                    if (oldObjectUrl) URL.revokeObjectURL(oldObjectUrl);
                 });
+            } else if (oldObjectUrl) {
+                URL.revokeObjectURL(oldObjectUrl);
             }
         });
     }
@@ -863,7 +893,7 @@ export class AudioManager {
         return next;
     }
 
-    /** Fisher–Yates 洗牌全部 BGM folder（18 文化区 + 9 势力专属） */
+    /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。 */
     private shuffledBgmFolders(): string[] {
         const arr = [...BGM_ROTATION_FOLDERS];
         for (let i = arr.length - 1; i > 0; i--) {
@@ -885,6 +915,10 @@ export class AudioManager {
             const definition = SOUND_DEFINITIONS[key];
             // 已停(未在期望中)的循环音不要被 duck 渐变重新拉响；停音自己的淡出各管各的
             if (!definition || !this.wantedLoops.has(key)) continue;
+            this.setVolume(audio, this.resolveVolume(definition), durationMs);
+        }
+        for (const [audio, definition] of this.activeOneShots.entries()) {
+            if (audio.paused || audio.ended) continue;
             this.setVolume(audio, this.resolveVolume(definition), durationMs);
         }
         if (this.bgmAudio) {
@@ -994,16 +1028,6 @@ export class AudioManager {
         }
         // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
         return this.speechDucking ? DUCK.sfxUnderSpeech : 1;
-    }
-
-    /** 是否有音效循环(行军/战斗)正在播放（暂停时视为无声，不压低音乐） */
-    private isSfxLoopActive(): boolean {
-        if (this.gamePaused) return false;
-        return (
-            this.wantedLoops.has('march_loop') ||
-            this.wantedLoops.has('cavalry_march_loop') ||
-            this.wantedLoops.has('battle_loop')
-        );
     }
 
     /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新）；durationMs>0 平滑渐变 */
