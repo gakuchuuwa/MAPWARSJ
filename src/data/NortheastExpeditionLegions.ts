@@ -38,7 +38,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     dazhen: { name: '女真甲骑', tier: 3 },
     yeren_nvzhen: { name: '瑷珲马甲', tier: 4 },      // 缺乏知名度支撑，降T3
   wuji: { name: '勿吉步卒', tier: 4 },            // 伯都·乙力支朝贡北魏（缺乏极其著名的战术高光，降T3）
-  jilin: { name: '吉林屯营', tier: 4 },           // 宽城子·富俊编练屯田（常规番号，降T3）
+    jilin: { name: '吉林屯营', tier: 4 },
   kuye: { name: '库页猎兵', tier: 4 },            // 白主·费雅喀猎户
   sushen: { name: '楛矢射手', tier: 3 },          // 中国先秦史籍记载的东北夷神兵图腾“楛矢石砮”，极具历史文化辨识度，升入T3知名
   yilou: { name: '挹娄突骑', tier: 4 },           // 凤林城·恼犽助战高句丽

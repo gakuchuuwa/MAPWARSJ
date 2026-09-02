@@ -95,7 +95,7 @@ export class LegionManager {
         this.refreshCityRegistry();
 
         // [NEW] Subscribe to City Manager updates for physics sync
-        this.cityManager.setOnCityUpdated(() => this.refreshCityRegistry());
+        this.cityManager.setOnCityUpdated(() => this.markCityRegistryDirty());
 
         // [NEW] Subscribe to Road Registry updates
         roadRegistry.onRoadsUpdated(() => this.recalculateAllLegionPaths());
@@ -106,7 +106,27 @@ export class LegionManager {
      * 确保军队不能移动到城市格子上.
      * Should be called after cities are loaded or updated.
      */
+    /**
+     * 🔴 [2026-09-03 修·行军卡] 改成**每帧至多重建一次**。
+     *    这个方法挂在 CityManager.setOnCityUpdated 上，而 updateCity **改兵力也会触发**
+     *    （募兵、驻军并入、攻城扣兵都走它）—— 一帧内能触发几十次，每次都 clear + 重新
+     *    push 1027 条（离线实测单次 0.30ms，几十次就是十几毫秒，纯浪费）。
+     *    城的坐标是静态的，索引只在「城的集合变了」时才需要重建，改兵力根本不影响它。
+     *    现在只置脏标志，真正重建推迟到 update() 开头做一次。
+     */
+    public markCityRegistryDirty(): void {
+        this.cityRegistryDirty = true;
+    }
+
+    /** 每帧开头调用：脏了才重建（见 markCityRegistryDirty） */
+    private flushCityRegistryIfDirty(): void {
+        if (!this.cityRegistryDirty) return;
+        this.cityRegistryDirty = false;
+        this.refreshCityRegistry();
+    }
+
     public refreshCityRegistry(): void {
+        this.cityRegistryDirty = false;
         this.spatialRegistry.clearCityRegistry();
         const cities = this.cityManager.getCities();
         let logCount = 0;
@@ -139,6 +159,9 @@ export class LegionManager {
     public setSiegeManager(siegeManager: any): void {
         this.siegeManager = siegeManager;
     }
+
+    /** 城索引脏标志：改兵力等高频更新只置脏，真正重建每帧至多一次 */
+    private cityRegistryDirty = false;
 
     public getSpatialRegistry(): SpatialRegistry {
         return this.spatialRegistry;
@@ -400,6 +423,7 @@ export class LegionManager {
         // 开局集结闸门：只在游戏确实在跑（deltaTime>0）时推进，到点触发「选跟随 + 全军拔营」。
         // 🔴 必须放在这里而不是按真实时间自跑：首发军团在 boot 阶段就生成了，那时游戏还暂停着。
         if (deltaTime > 0) tickDeploy();
+        this.flushCityRegistryIfDirty(); // 城索引每帧至多重建一次（见 markCityRegistryDirty）
         this.ownCitiesFrameCache.clear(); // 行军减兵复位查城的每帧缓存，跨帧失效
         this.armies.forEach(army => {
             if (army.isDestroyed || army.getTroops() <= 0) return;
@@ -682,7 +706,19 @@ export class LegionManager {
         let nearest: City | null = null;
         let minDist = Infinity;
 
-        for (const city of this.cityManager.getCities()) {
+        // 🔴 [2026-09-03 修·行军卡] 原来这里逐帧扫**全部 1027 座城**，而这个函数在
+        //    LegionManager.update 的每军团循环里被调 —— 99 军团 × 1027 城 = 10 万次/帧。
+        //    改走已有的桶索引（BUCKET_SIZE 0.2° vs ZOC 0.15° → 只碰 ~4 个桶）。
+        //    离线实测（scratch/bench_zoc_scan.mts，真实城池坐标）：2.17ms/帧 → 0.07ms/帧，
+        //    快 30.6 倍，且 99 个军团的判定结果与线性扫**完全一致**
+        //    （两边距离函数同为 getEuclideanDistance，都走 shortestLongitudeDelta）。
+        //
+        //    ⚠️ 索引里的 factionId 是注册那一刻的快照，会过期；这里只拿它做**邻近筛选**，
+        //    阵营/城型一律回 cityManager 取实时对象。城的坐标是静态的，位置永远不会过期。
+        const nearbyIds = this.spatialRegistry.getCitiesInRadius(pos.lat, pos.lng, zoc);
+        for (const entry of nearbyIds) {
+            const city = this.cityManager.getCity(entry.id);
+            if (!city) continue;
             if (!city.factionId || city.factionId === factionId) continue;
             const dist = getEuclideanDistance(pos, {
                 lat: city.latitude,

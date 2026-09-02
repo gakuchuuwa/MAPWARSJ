@@ -1480,13 +1480,14 @@ const SIEGE_CASTLE_SCALE = 0.84;
 const SIEGE_MARKET_SCALE = 0.65;
 /** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
 const SIEGE_TOWN_CENTER_SCALE = 0.6;
-/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余统一 SIEGE_CITY_BUILDING_SCALE。 */
+/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余统一 SIEGE_CITY_BUILDING_SCALE。
+ *  2026-09-03 主人定：城寨(stockade)建筑(庄园/定居点/棚屋/蒙古包)放大到自然尺寸 1.0，与攻击方营地建筑一致。 */
 function siegeBuildingScale(building: string): number {
     if (building === 'MARKET') return SIEGE_MARKET_SCALE;
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
-    if (building === 'SETTLEMENT') return 0.55;
-    if (building === 'FOLWARK') return 0.55;
-    if (building.startsWith('HUT_') || building.startsWith('YURT_')) return 0.65;
+    if (building === 'SETTLEMENT') return 1.0;
+    if (building === 'FOLWARK') return 1.0;
+    if (building.startsWith('HUT_') || building.startsWith('YURT_')) return 1.0;
     return SIEGE_CITY_BUILDING_SCALE;
 }
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
@@ -3488,7 +3489,8 @@ export class Scene13WarLayer {
         // [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边。
         this.flipSides = init.followedOnDefenderSide === true;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
-        this.defenderHolding = this.battleType === 'siege';
+        // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
+        this.defenderHolding = this.battleType === 'siege' && this.defenderCityType !== 'stockade';
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
@@ -3567,7 +3569,8 @@ export class Scene13WarLayer {
             ) as [number, number];
 
             // 🔴 [2026-08-22 主人定] 攻城战：按守方城级给攻方配备攻城武器（正常参战兵种，前置到攻方前排）
-            if (this.battleType === 'siege') {
+            // 🔴 [2026-09-03 主人定] 城寨(stockade)攻击方不带攻城武器——和野战一样直接开战
+            if (this.battleType === 'siege' && this.defenderCityType !== 'stockade') {
                 this.spawnSiegeWeapons(VW, VH, mx, depth);
             }
 
@@ -4183,6 +4186,8 @@ export class Scene13WarLayer {
     private cityRoadFoundationTile(): string {
         // 🔴 [2026-08-27 主人定] 草原文化：pm1 泥地/草原营地底图
         if (this.sideCulture[1] === 'STEPPE') return 'pm1';
+        // 🔴 [2026-09-03 主人定] 城寨(stockade)地基一律和草原一样——pm1 牧场地基（不分文化）
+        if (this.defenderCityType === 'stockade') return 'pm1';
         // 🔴 [2026-08-27 主人定] 按城市等级选底图：大城 rd1 石板 / 中城 rd2 碎石 / 险要 rck 岩石（不再按文化）
         if (this.defenderCityType === 'big_city') return 'rd1';   // 大城（帝国）：石板大道
         if (this.defenderCityType === 'medium_city') return 'rd2'; // 中城（城堡）：碎石子路
@@ -4270,7 +4275,9 @@ export class Scene13WarLayer {
                 const barricadeCount = 6 + Math.floor(Math.random() * 4);
                 const topY = frontRow[0].y - 135;
                 const bottomY = frontRow[frontRow.length - 1].y + 135;
-                const offsetX = isAttacker ? 180 : -180;
+                const offsetX = isAttacker ? 180
+                    // 主人 2026-09-03：城寨守方拒马顶到正面墙原位置(-380)，在箭塔(-320)之前（拒马在前、箭塔在后）；其余守方 -180
+                    : (this.defenderCityType === 'stockade' ? -380 : -180);
                 this.ensureNatureAsset(barricadeAsset);
                 for (let i = 0; i < barricadeCount; i++) {
                     const t = i / (barricadeCount - 1);
@@ -4488,6 +4495,19 @@ export class Scene13WarLayer {
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
+
+            // 🔴 [2026-09-03 主人定] 城寨(stockade)直接开战、和野战一样：围墙/城门全部纯贴图（去碰撞），
+            //    不卡兵。别的城市靠 30 秒 collapseFrontWalls 去碰撞，城寨没有 30 秒坍塌，这里一上来就清掉。
+            if (this.defenderCityType === 'stockade') {
+                for (const b of this.wallGates) {
+                    b.sprite.obstruction = undefined;
+                    b.sprite.obstructionDisabled = true;
+                    if (b.extraSprites) for (const sp of b.extraSprites) {
+                        sp.obstruction = undefined;
+                        sp.obstructionDisabled = true;
+                    }
+                }
+            }
 
             // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
@@ -6161,7 +6181,8 @@ export class Scene13WarLayer {
         this.spawnTick(dt);
         // 🔴 [2026-08-23 主人改] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
         //    随机坍塌一次——即使攻城武器还没打穿墙，30 秒后也强制随机塌一批，留出足够缺口。
-        if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
+        //    🔴 [2026-09-03 主人定] 城寨(stockade)无 30 秒坍塌——被攻方打穿才塌，和野战一样。
+        if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
         }

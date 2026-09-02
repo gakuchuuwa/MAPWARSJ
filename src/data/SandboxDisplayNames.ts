@@ -840,7 +840,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'wure': '兀惹',
 'houliao': '东辽',
 'dazhen': '大真',
-    'jilin': '吉林',
+'jilin': '吉林',
     'sunite': '苏尼',
 'dayuzi': '玉兹',
     'weiwuer': '维吾',

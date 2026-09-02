@@ -6323,7 +6323,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 25
         },
         "/assets/CENTRAL/nanzhong_mazhong.png": {
-            "scale": 1.03,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": -5
         },
