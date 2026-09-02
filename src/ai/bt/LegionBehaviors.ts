@@ -279,14 +279,19 @@ function pickNearbyEnemyLegion(
         const ePos = other.getPosition();
         const d = getEuclideanDistance(myPos, ePos);
         if (d > huntR) continue;
-        // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城
+        // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城。
+        // 🔴 贴身例外（2026-09-02 主人「前面的军团不知道扭头攻击」）：敌军贴到
+        //    HUNT_CLOSE_EXCEPTION_RADIUS 内，不管方向都扭头迎战，否则身后追兵贴脸了还无视。
         if (corridorTarget && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
-            btLog(
-                ctx,
-                `skip_hunt:${other.id}`,
-                `[AI] ${ctx.army.name} 0.8° 内敌军【${other.name}】不在行军走廊，不打断攻城`
-            );
-            continue;
+            if (d > GameConfig.AI.HUNT_CLOSE_EXCEPTION_RADIUS) {
+                btLog(
+                    ctx,
+                    `skip_hunt:${other.id}`,
+                    `[AI] ${ctx.army.name} 0.8° 内敌军【${other.name}】不在行军走廊，不打断攻城`
+                );
+                continue;
+            }
+            // 贴身：放行（扭头迎战），不 skip
         }
         if (d < bestDist) {
             bestDist = d;
