@@ -1376,7 +1376,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     NORTHEAST: 'ASIA',
     KOREA: 'ASIA',
     JAPAN: 'ASIA',
-    CENTRAL_ASIA: 'ORIE', // [2026-08-27] CEAS→ORIE（塞尔柱波斯-突厥，与战略一致）
+    CENTRAL_ASIA: 'CEAS', // [2026-09-02] ORIE→CEAS（塞尔柱/花拉子模/帖木儿=中亚鞑靼，与战略对齐）
     WEST_ASIA: 'ORIE',
     INDIA: 'INDI',
     BERBER: 'ORIE',    // [2026-08-27] AFRI→ORIE（柏柏尔在北非近东，与战略一致）
@@ -1393,32 +1393,32 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
     BRITONS: 'WEST',  // 不列颠[2026-08-28]
     GOTHS: 'EAST',  // 哥特[2026-08-28]
-    HUNS: 'CEAS',  // 匈人[2026-08-28]
+    HUNS: 'EAST',  // 匈人[2026-08-28]
     TEUTONS: 'EAST',  // 条顿[2026-08-28]
     VIKINGS: 'EAST',  // 维京[2026-08-28]
     CELTS: 'WEST',  // 凯尔特[2026-08-28]
     ITALIANS: 'MEDI',  // 意大利[2026-08-28]
     SICILIANS: 'MEDI',  // 西西里[2026-08-28]
     BULGARIANS: 'SLAV',  // 保加利亚[2026-08-28]
-    MAGYAR: 'CEAS',  // 马扎尔[2026-08-28]
+    MAGYAR: 'SLAV',  // 马扎尔[2026-08-28]
     LITHUANIANS: 'SLAV',  // 立陶宛[2026-08-28]
     POLES: 'SLAV',  // 波兰[2026-08-28]
     BOHEMIANS: 'SLAV',  // 波希米亚[2026-08-28]
-    BURGUNDIANS: 'MEDI',  // 勃艮第[2026-08-28]
+    BURGUNDIANS: 'WEST',  // 勃艮第[2026-08-28]
     SPANISH: 'MEDI',  // 西班牙[2026-08-28]
     PORTUGUESE: 'MEDI',  // 葡萄牙[2026-08-28]
     ETHIOPIANS: 'AFRI',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: 'INDI',  // 孟加拉[2026-08-28]
     GURJARAS: 'INDI',  // 瞿折罗[2026-08-28]
-    PORUS: 'PURU',  // 补噜[2026-08-28]
-    VIETNAMESE: 'SEAS',  // 越南[2026-08-28]
+    PORUS: 'INDI',  // 补噜[2026-08-28]
+    VIETNAMESE: 'ASIA',  // 越南[2026-08-28]
     KHMER: 'SEAS',  // 高棉[2026-08-28]
     MAYANS: 'MESO',  // 玛雅[2026-08-28]
     MAPUCHE: 'ANDE',  // 马普切[2026-08-28]
     MUISCA: 'ANDE',  // 穆伊斯卡[2026-08-28]
     TUPI: 'ANDE',  // 图皮[2026-08-28]
-    ARMENIANS: 'ORIE',  // 亚美尼亚[2026-08-28]
-    GEORGIANS: 'ORIE',  // 格鲁吉亚[2026-08-28]
+    ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
+    GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
     ATHENIANS: 'MEDI',  // 雅典[2026-08-28]
     SPARTANS: 'MEDI',  // 斯巴达[2026-08-28]
     MACEDONIANS: 'MEDI',  // 马其顿[2026-08-28]
