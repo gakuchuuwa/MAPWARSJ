@@ -480,6 +480,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
+
     { id: 'suzhou', name: '肃州' },
 
 
