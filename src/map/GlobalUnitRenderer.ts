@@ -6,7 +6,7 @@ import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Preload only
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
-import type { NavalShipAssetId } from '../types/NavalShipTiers';
+import { getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { LegionPhalanxStateManager } from './legion/LegionPhalanxState';
 import { NavalPhalanxStateManager } from './legion/NavalPhalanxState';
 import {
@@ -153,6 +153,9 @@ export class GlobalUnitRenderer {
     /** [2026-08-30 海战演出] 海战开火节流：箭雨 / 重炮 各自独立（对齐 naval_arrow_fire / naval_cannon_fire 音效）。 */
     private navalArrowAt: Map<string, number> = new Map();
     private navalCannonAt: Map<string, number> = new Map();
+    /** 抛石重器（楼船牵引抛石机 / 抛石舰）与希腊火喷射各自的节流表 */
+    private navalStoneAt: Map<string, number> = new Map();
+    private navalGreekFireAt: Map<string, number> = new Map();
 
     private lastTime: number = 0;
     private isRunning: boolean = false;
@@ -1383,8 +1386,15 @@ export class GlobalUnitRenderer {
         const start = L.latLng(startPos.lat, startPos.lng);
         const end = L.latLng(enemy.lat, enemy.lng);
 
-        // 重炮：2.6s 节流（与 drawNaval 内 naval_cannon_fire 同频，音画同步）
-        if ((!maneuver || maneuver.broadsideReady)
+        // 🔴 [2026-09-02] 开什么火按船的武器表走，判据是「先史实、再 DE 本体」，见
+        //    NavalShipTiers.getNavalWeapons。箭是所有船都有的基础层。
+        const shipAsset = unit.navalShipAssetLock ?? getCultureNavalShip(null, unit.factionId);
+        const weapons = getNavalWeapons(shipAsset, unit.factionId);
+        const hasCannon = weapons.includes('cannon');
+
+        // 火炮：2.6s 节流（与 drawNaval 内 naval_cannon_fire 同频，音画同步）
+        if (hasCannon
+            && (!maneuver || maneuver.broadsideReady)
             && now - (this.navalCannonAt.get(id) ?? 0) >= 2600) {
             this.navalCannonAt.set(id, now);
             this.projectileSystem.spawnVolley(start, end, {
@@ -1393,17 +1403,46 @@ export class GlobalUnitRenderer {
                 staggerMs: 150,
                 durationMs: 700,
                 type: 'cannon',
+                naval: true,
             });
         }
-        // 箭雨：1.2s 节流（与 naval_arrow_fire 同频）
-        if (now - (this.navalArrowAt.get(id) ?? 0) >= 1200) {
-            this.navalArrowAt.set(id, now);
+        // 抛石重器：3.4s 一轮，比炮慢 —— 绞盘上弦的抛石机本来就比炮慢。石弹一样会砸出水花。
+        if (weapons.includes('trebuchet')
+            && (!maneuver || maneuver.broadsideReady)
+            && now - (this.navalStoneAt.get(id) ?? 0) >= 3400) {
+            this.navalStoneAt.set(id, now);
+            this.projectileSystem.spawnVolley(start, end, {
+                count: 1,
+                spreadFactor: 0.035,
+                durationMs: 900,
+                type: 'stone',
+                naval: true,
+            });
+        }
+        // 希腊火 / 喷火：1.6s 一轮，近距连发，没有炮声
+        if (weapons.includes('greekfire')
+            && now - (this.navalGreekFireAt.get(id) ?? 0) >= 1600) {
+            this.navalGreekFireAt.set(id, now);
             this.projectileSystem.spawnVolley(start, end, {
                 count: 3,
-                spreadFactor: 0.04,
-                staggerMs: 60,
+                spreadFactor: 0.05,
+                staggerMs: 90,
+                durationMs: 480,
+                type: 'fire',
+                naval: true,
+            });
+        }
+        // 箭雨：1.2s 节流（与 naval_arrow_fire 同频）。没有重武器的船靠箭撑场面，射得更密。
+        if (now - (this.navalArrowAt.get(id) ?? 0) >= 1200) {
+            this.navalArrowAt.set(id, now);
+            const heavy = hasCannon || weapons.includes('trebuchet');
+            this.projectileSystem.spawnVolley(start, end, {
+                count: heavy ? 3 : 5,
+                spreadFactor: heavy ? 0.04 : 0.05,
+                staggerMs: heavy ? 60 : 45,
                 durationMs: 520,
                 type: 'arrow',
+                naval: true,
             });
         }
     }

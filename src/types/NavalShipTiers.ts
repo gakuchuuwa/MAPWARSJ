@@ -193,3 +193,101 @@ export function getNavalShipAssetId(
 ): NavalShipAssetId {
     return getCultureNavalShip(region, factionId);
 }
+
+/**
+ * ═══ 战船武器：先照史实，再照 DE 本体 ═══════════════════════════════
+ *
+ * 🔴 [2026-09-02 主人裁决] 判据只有两条，顺序不能反：**首先符合历史**，然后参考 DE 怎么做。
+ *
+ * 每条都注明依据。DE 依据取自本体单位说明原文
+ * （`resources/en/strings/key-value/key-value-strings-utf8.txt`，2026-09-02 实读），
+ * 不是转述、不是记忆。DE 本体里**唯一**被标 "Gunpowder" 的战船是加农炮舰，
+ * 也**只有**它有炮口焰素材（`MUZZLE_CANNONGALLEON`，16 向）。
+ *
+ * ⚠️ 已作废的写法（2026-09-02 撤销，勿再写回来）：曾有一张 `isNavalCannonCapable`
+ *    的布尔清单，把楼船和德罗蒙判成「重炮」—— 汉代楼船没有火炮，拜占庭德罗蒙用的是
+ *    希腊火虹吸喷管也不是炮；那张表里还有 8 项船号在本作根本取不到（CARRACK/GALLEON
+ *    等，本文件开头明令严禁使用）。
+ */
+export type NavalWeapon =
+    /** 火炮：炮口焰 + 炮声 + 炮弹落水水花 */
+    | 'cannon'
+    /** 希腊火 / 喷火：火焰弹，无炮声 */
+    | 'greekfire'
+    /** 投石/抛石重器：石弹 + 落水水花，无炮声 */
+    | 'trebuchet'
+    /** 弓弩箭雨：所有战船的基础火力（甲板上永远有弓手） */
+    | 'arrow'
+    /** 撞角冲撞 / 接舷 / 自爆：近战，不产生投射物 */
+    | 'ram';
+
+/**
+ * 船号 → 除箭之外的武器。箭是所有船的基础层，不写进表里。
+ * 表里没有的船 = 只有箭（兜底 WAR_GALLEY 正是这一类）。
+ */
+const SHIP_EXTRA_WEAPONS: Record<string, { weapons: NavalWeapon[]; why: string }> = {
+    // ── 火炮 ────────────────────────────────────────────────
+    CANNON_GALLEON: { weapons: ['cannon'], why: 'DE 原文 "Siege Gunpowder Warship"：本体唯一标火药的战船' },
+    ELITE_CANNON_GALLEON: { weapons: ['cannon'], why: '同上（精锐级）' },
+    CARAVEL: { weapons: ['cannon'], why: '史实 15-16 世纪卡拉维尔/大帆船装舷炮；DE 原文 "ranged pass through attack"' },
+    ELITE_CARAVEL: { weapons: ['cannon'], why: '同上（精锐级）' },
+    TURTLE_SHIP: { weapons: ['cannon'], why: '史实 1592 李舜臣龟船装天/地/玄/黄字铳筒；DE 原文 "Siege Warship"' },
+    ELITE_TURTLE_SHIP: { weapons: ['cannon'], why: '同上（精锐级）' },
+
+    // ── 希腊火 / 喷火 ────────────────────────────────────────
+    DROMON: { weapons: ['greekfire'], why: '史实拜占庭德罗蒙用希腊火虹吸喷管（不是炮）；DE 原文 "long range blast attack"' },
+    FIRE_GALLEY: { weapons: ['greekfire'], why: 'DE 原文 "spews fire at close range"' },
+    FIRE_SHIP: { weapons: ['greekfire'], why: 'DE 原文 "spews fire at close range"' },
+    FAST_FIRE_SHIP: { weapons: ['greekfire'], why: 'DE 原文 "spews fire at close range"' },
+    DRAGON_SHIP: { weapons: ['greekfire'], why: 'DE 原文 "Chinese unique Warship that spews fire at close range"' },
+
+    // ── 投石重器 ────────────────────────────────────────────
+    LOU_CHUAN: { weapons: ['trebuchet'], why: 'DE 原文 "fires arrows at units and uses a long range trebuchet weapon against buildings"：汉代楼船是箭 + 牵引抛石机，没有火炮' },
+    CATAPULT_GALLEON: { weapons: ['trebuchet'], why: 'DE 原文 "Anti-building Siege Warship with long range"' },
+    CATAPULT_SHIP: { weapons: ['trebuchet'], why: '同抛石舰一类' },
+    ONAGER_SHIP: { weapons: ['trebuchet'], why: 'DE 原文 "Siege Warship with ranged blast attack"' },
+
+    // ── 撞角 / 接舷 / 自爆（近战，甲板弓手仍照常放箭）──────────
+    TRIREME: { weapons: ['ram'], why: 'DE 原文 "Melee Warship powerful charged attack"：古典三列桨靠撞角' },
+    BIREME: { weapons: ['ram'], why: '同上（双列桨）' },
+    MONOREME: { weapons: ['ram'], why: '同上（单列桨）' },
+    LEMBOS: { weapons: ['ram'], why: 'DE 原文 "Light scouting Warship with weak melee attack"' },
+    WAR_LEMBOS: { weapons: ['ram'], why: '同上' },
+    HEAVY_LEMBOS: { weapons: ['ram'], why: '同上' },
+    ELITE_LEMBOS: { weapons: ['ram'], why: '同上' },
+    HULK: { weapons: ['ram'], why: 'DE 原文 "close range melee attack"' },
+    WAR_HULK: { weapons: ['ram'], why: '同上' },
+    CARRACK: { weapons: ['ram'], why: '同上' },
+    DEMO_RAFT: { weapons: ['ram'], why: 'DE 原文 "armed with explosives that self-destructs"：渡河筏，没有远程重器' },
+    DEMO_SHIP: { weapons: ['ram'], why: '同上' },
+    HEAVY_DEMO_SHIP: { weapons: ['ram'], why: '同上' },
+    INCENDIARY_RAFT: { weapons: ['ram', 'greekfire'], why: 'DE 原文 "Burning Demolition Warship that self-destructs"：火攻船，带火' },
+    INCENDIARY_SHIP: { weapons: ['ram', 'greekfire'], why: '同上' },
+    HEAVY_INCENDIARY_SHIP: { weapons: ['ram', 'greekfire'], why: '同上' },
+};
+
+/**
+ * 势力级武器覆盖：同一船号在不同年代不是同一回事，用势力精确修。优先级高于船表。
+ */
+const FACTION_NAVAL_WEAPON_OVERRIDE: Record<string, NavalWeapon[]> = {
+    // 奥斯曼·穆罕默德二世（15 世纪）：加莱船首已架重炮，1453 年封锁博斯普鲁斯即用舰炮。
+    // 船型仍是 WAR_GALLEY（史实就是加莱），但通用加莱的「只有箭」在这个年代不成立。
+    osman: ['arrow', 'cannon'],
+};
+
+/**
+ * 取一艘船的全部武器。箭是基础层，永远包含 —— 甲板上永远有弓手/标枪手，
+ * 纯自爆船也一样（否则内陆势力的海战会一声不响，本作是观赏向直播）。
+ */
+export function getNavalWeapons(shipAssetId?: string | null, factionId?: string | null): NavalWeapon[] {
+    if (factionId && FACTION_NAVAL_WEAPON_OVERRIDE[factionId]) {
+        return FACTION_NAVAL_WEAPON_OVERRIDE[factionId];
+    }
+    const extra = shipAssetId ? SHIP_EXTRA_WEAPONS[shipAssetId]?.weapons : undefined;
+    return extra ? ['arrow', ...extra] : ['arrow'];
+}
+
+/** 供验收脚本读的武器分配明细（船号 → 武器 + 依据） */
+export function listNavalShipWeapons(): Record<string, { weapons: NavalWeapon[]; why: string }> {
+    return SHIP_EXTRA_WEAPONS;
+}
