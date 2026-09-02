@@ -1,0 +1,13 @@
+{
+  "source": "AoE2 DE / MUZZLE_CANNONGALLEON/dir02",
+  "frames": 24,
+  "fw": 96,
+  "fh": 82,
+  "anchorX": 0,
+  "anchorY": 64,
+  "fps": 24,
+  "durationMs": 1000,
+  "srcFrames": 60,
+  "droppedTornFrames": 22,
+  "atlasScale": 0.412017
+}

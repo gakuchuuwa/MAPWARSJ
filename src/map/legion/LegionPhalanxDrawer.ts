@@ -9,7 +9,7 @@ import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
 import type { FormationMode } from '../../types/CultureFormations';
-import { getNavalShipDrawScale, getCultureNavalShip, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 
@@ -2305,12 +2305,18 @@ export class LegionPhalanxDrawer {
                 audioManager.playNavalSfx(unitId, stillAlive ? 'naval_sink' : 'naval_explode');
             }
             // 海战开火音效：ATTACK 状态周期性触发（仅跟拍军团实际发声）
-            //   箭声 1.2s 一轮；炮声 2.6s 一轮，由旗舰领衔开火。
+            //   箭声 1.2s 一轮；炮声 2.6s 一轮（仅火器战舰），由旗舰领衔开火。
             if (isFighting) {
                 if (nowMs - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
                     lastNavalFireAt = nowMs;
                 }
-                if (nowMs - lastNavalCannonAt > 2600 && audioManager.playNavalSfx(unitId, 'naval_cannon_fire')) {
+                // 炮声只给真装火炮的船。判据见 NavalShipTiers.getNavalWeapons（先史实、再 DE 本体）。
+                // 🔴 取船号的写法必须和 GlobalUnitRenderer.fireNavalProjectile 一模一样，
+                //    否则会出现「画面开炮、声音不开炮」。这里问的是「这支舰队开的是什么船」，
+                //    与下面 lockedShipIsAvailable 那个「素材在不在、该画哪张图」是两回事，别混用。
+                const shipIdForSfx = lockedShipId ?? getCultureNavalShip(null, factionId);
+                const hasCannon = getNavalWeapons(shipIdForSfx, factionId).includes('cannon');
+                if (hasCannon && nowMs - lastNavalCannonAt > 2600 && audioManager.playNavalSfx(unitId, 'naval_cannon_fire')) {
                     lastNavalCannonAt = nowMs;
                     // 这一发是否打空：打空才排落水声，命中就没有落水
                     pendingNavalSplashAt =
@@ -2349,6 +2355,8 @@ export class LegionPhalanxDrawer {
             s?: number;
             dyn?: boolean;
             dynEntry?: { dirs16?: boolean; frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> };
+            /** 归一化参考船长（最长边）：16 向帧框尺寸不一致，用它作统一基准消除转弯尺寸 pop */
+            refLen?: number;
         }
         const typeDraws = new Map<NavalShipAssetId, NavalTypeDraw>();
         const neededShips = Array.from(new Set(formation.map(f => f.ship)));
@@ -2366,7 +2374,13 @@ export class LegionPhalanxDrawer {
             const dynEntry = (set as any).dyn?.IDLE;
             if (dynEntry && this.metaDirFor(dynEntry, direction, true)) {
                 const s = baseHeight * scale * getNavalShipDrawScale(typeId) / 64;
-                typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, dynEntry });
+                // 🔴 [2026-09-02 修·转弯一卡一卡] 16 向帧框 (fw/fh) 尺寸不一致（SLD 提取未归一化），
+                //    直接按每向 fw/fh 绘制 → 船转弯跨 22.5° 边界时尺寸 pop。取最长边作统一基准，绘制时归一。
+                let refLen = 0;
+                for (const d of Object.values(dynEntry.dirs) as { fw: number; fh: number }[]) {
+                    refLen = Math.max(refLen, d.fw, d.fh);
+                }
+                typeDraws.set(typeId, { set, totalFrames: dynEntry.frames, w: 0, h: 0, s, dyn: true, dynEntry, refLen });
             } else {
                 const totalFrames = this.getFrameCount(sample);
                 const frameW = sample.width / totalFrames;
@@ -2381,12 +2395,9 @@ export class LegionPhalanxDrawer {
         // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心隔一个船宽，刚好不叠。
         const flagship = typeDraws.get(targetShipId) || typeDraws.values().next().value;
         if (!flagship) return;
-        const flagDyn = flagship.dyn ? this.metaDirFor(flagship.dynEntry, direction, true) : undefined;
-        const flagshipW = flagDyn ? flagDyn.fw * flagship.s! : flagship.w;
-        // 船头朝上/朝下时 fw 只是窄船宽；用较长边计算纵队间距，避免数艘船叠成一张破碎船图。
-        const flagshipLength = flagDyn
-            ? Math.max(flagDyn.fw, flagDyn.fh) * flagship.s!
-            : Math.max(flagship.w, flagship.h);
+        // 🔴 [2026-09-02] 归一化后船长恒定 = refLen × s；纵/横间距基准也用它，避免归一化尺寸与变化的每向帧框错配（叠船/过散）
+        const flagshipW = flagship.dyn ? flagship.refLen! * flagship.s! : flagship.w;
+        const flagshipLength = flagship.dyn ? flagship.refLen! * flagship.s! : Math.max(flagship.w, flagship.h);
         const shipDepth = flagshipLength * 1.15;
         const shipSpread = flagshipW;
 
@@ -2588,11 +2599,14 @@ export class LegionPhalanxDrawer {
             if (td.dyn) {
                 // DE：hotspot 对齐。帧框按该船自己的朝向查；缺该向元数据 → 回落旗舰向（typeDraws 已确认存在）
                 const dd = this.metaDirFor(activeDynEntry, shipDir, true) ?? this.metaDirFor(activeDynEntry, direction, true)!;
+                // 🔴 [2026-09-02] 归一化：每向帧框尺寸不同 → 按参考船长统一缩放，转弯尺寸不再 pop。
+                //    源裁剪 (sw/sh) 仍用每向框；目标尺寸/热点偏移统一乘 normS，船转任何角度船长恒定。
+                const normS = (td.refLen ?? Math.max(dd.fw, dd.fh)) / Math.max(dd.fw, dd.fh);
                 ships.push({
-                    ax: dx, ay: dy, ox: -dd.hx * td.s!, oy: -dd.hy * td.s!, r: pos.r,
+                    ax: dx, ay: dy, ox: -dd.hx * td.s! * normS, oy: -dd.hy * td.s! * normS, r: pos.r,
                     img: tintedSprite,
                     sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
-                    w: dd.fw * td.s!, h: dd.fh * td.s!,
+                    w: dd.fw * td.s! * normS, h: dd.fh * td.s! * normS,
                     alpha: shipAlpha, rot: shipRot, bobY, roll,
                 });
             } else {

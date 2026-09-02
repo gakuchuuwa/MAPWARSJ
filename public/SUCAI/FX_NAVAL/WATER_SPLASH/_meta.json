@@ -1,0 +1,13 @@
+{
+  "source": "AoE2 DE / WATER_SPLASH/WATER_IMPACT_LARGE",
+  "frames": 24,
+  "fw": 96,
+  "fh": 81,
+  "anchorX": 56,
+  "anchorY": 28,
+  "fps": 24,
+  "durationMs": 1000,
+  "srcFrames": 60,
+  "droppedTornFrames": 19,
+  "atlasScale": 0.644295
+}

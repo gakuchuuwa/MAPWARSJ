@@ -9206,4 +9206,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "elite_peltast", count: 3 },
         ],
     },
+    "xingelana": {
+        legionName: "西班牙军团",
+        formationMode: "crescent",
+        slots: [
+            { type: "halberdier", count: 3 },
+            { type: "hand_cannoneer", count: 2 },
+            { type: "elite_conquistador", count: 4 },
+        ],
+    },
 };
