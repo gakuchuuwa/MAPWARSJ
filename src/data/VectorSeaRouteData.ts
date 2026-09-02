@@ -974,29 +974,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "塞拉-麦加",
-                type: "sea",
-                id: "sea_city_zeila_city_maijia_1787916384896",
-                startConnection: "city_zeila",
-                endConnection: "city_maijia"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [43.4731, 11.3533],
-                    [43.746586, 12.40439],
-                    [43.3, 12.7],
-                    [42.541058, 13.676089],
-                    [42.34130900000001, 14.509144],
-                    [41.000977, 17.098792],
-                    [38.572998, 20.807472],
-                    [39.8, 21.4],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "圣彼得堡-斯德哥尔摩",
                 type: "sea",
                 id: "sea_city_shengpidebao_city_sidedegelmo_1787916465357",
@@ -4520,6 +4497,128 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-12.194387, 29.156452],
                     [-15.145809, 28.538331],
                     [-15.42, 28],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "麦加-贝雷尼斯",
+                type: "sea",
+                id: "sea_city_maijia_city_beileinisi_1788321477472",
+                startConnection: "city_maijia",
+                endConnection: "city_beileinisi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.8, 21.4],
+                    [38.572998, 20.807472],
+                    [38.006929, 19.986548],
+                    [36.108, 24.0443],
+                    [35.48, 23.91],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩特拉-贝雷尼斯",
+                type: "sea",
+                id: "sea_city_peitra_city_beileinisi_1788321491649",
+                startConnection: "city_peitra",
+                endConnection: "city_beileinisi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.4, 30.3],
+                    [34.925537, 29.461123],
+                    [34.47235100000001, 27.987126],
+                    [34.5, 27],
+                    [34.5, 27.41667],
+                    [34.41667, 27],
+                    [34.66667, 26.75],
+                    [35.25, 26.66667],
+                    [35.25, 26],
+                    [35.08333, 25.83333],
+                    [35.25, 25.66667],
+                    [35.25, 25.33333],
+                    [35.75, 24.83333],
+                    [35.48, 23.91],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "麦加-塞拉",
+                type: "sea",
+                id: "sea_city_maijia_city_zeila_1788321500955",
+                startConnection: "city_maijia",
+                endConnection: "city_zeila"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.8, 21.4],
+                    [38.572998, 20.807472],
+                    [41.000977, 17.098792],
+                    [42.34130900000001, 14.509144],
+                    [42.541058, 13.676089],
+                    [43.3, 12.7],
+                    [43.746586, 12.40439],
+                    [43.4731, 11.3533],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巴库-伊蒂尔",
+                type: "sea",
+                id: "sea_city_baku_city_yidier_1788321549288",
+                startConnection: "city_baku",
+                endConnection: "city_yidier"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [49.9, 40.4],
+                    [50.765625, 41.50613],
+                    [49.344401, 43.264905],
+                    [47.8023, 45.1174],
+                    [47.782562, 45.394294],
+                    [47.698791, 45.682042],
+                    [47.637474, 45.721894],
+                    [47.645714, 45.768157],
+                    [47.684166, 45.806481],
+                    [47.671463, 45.84765],
+                    [47.622436, 45.880277],
+                    [47.662262, 45.938593],
+                    [47.694534, 45.981573],
+                    [48, 46],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨莱楚克-巴库",
+                type: "sea",
+                id: "sea_city_salaichuke_city_baku_1788321587848",
+                startConnection: "city_salaichuke",
+                endConnection: "city_baku"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [51.7, 47.5],
+                    [49.9337, 45.3495],
+                    [49.61206, 45.076922],
+                    [50.818028, 43.557566],
+                    [50.765625, 41.50613],
+                    [49.9, 40.4],
                 ]
             }
         },
