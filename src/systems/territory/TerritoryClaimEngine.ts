@@ -19,6 +19,7 @@ export function getMaxRadiusForCity(city: City): number {
     if (cityType === 'medium_city' || cityType === 'pass' || cityType.includes('medium')) {
         return 2;
     }
+    // 小城与城寨：1 圈（城寨 2026-09-03 新增，走这条默认分支，不另开口子）
     return 1;
 }
 

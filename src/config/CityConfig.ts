@@ -45,6 +45,13 @@ export const CITY_CONFIG: Record<CityType, CityTypeConfig> = {
         growthRate: 0.008,
         recruitPerSeason: 100,
     },
+    stockade: {         // 城寨（2026-09-03 主人定：军事哨所，比小城还小；可出兵，无守城加成）
+        name: '城寨',
+        maxTroops: 15000,
+        initialTroops: 5000,
+        growthRate: 0.006,
+        recruitPerSeason: 60,
+    },
     pass: {             // 关隘（可出兵；守城有额外防御系数见 PASS_GARRISON_MULT）
         name: '关隘',
         maxTroops: 60000,

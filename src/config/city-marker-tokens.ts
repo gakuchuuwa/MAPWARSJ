@@ -14,6 +14,7 @@ export const CITY_MARKER_BASE_WIDTH_BY_TYPE: Readonly<Record<string, number>> = 
     big_city: 140,
     medium_city: 120,
     small_city: 100,
+    stockade: 100,   // 城寨与小城/关隘同档
     pass: 100,
 };
 
@@ -71,6 +72,7 @@ export function getCityMarkerSizeClass(cityType: string): string {
             return CITY_MARKER_SIZE_MEDIUM_CLASS;
         case 'pass':
         case 'small_city':
+        case 'stockade':
             return CITY_MARKER_SIZE_SMALL_CLASS;
         default:
             return CITY_MARKER_SIZE_SMALL_CLASS;

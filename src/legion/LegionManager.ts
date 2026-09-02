@@ -676,7 +676,7 @@ export class LegionManager {
 
     /** 供 AI：军团站在敌对据点 ZOC 内时必须先处理该城 */
     public findHostileCityNear(pos: LatLng, factionId: string, army?: Army | null): City | null {
-        // 长驱深入(str_11)：远征军团默认 50% 绕 small_city；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
+        // 长驱深入(str_11)：远征军团默认 50% 绕 small_city / stockade；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
         const smallCityBypassChance = army ? getLongDriveDeepBypassChance(army) : 0;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
         let nearest: City | null = null;
@@ -688,13 +688,14 @@ export class LegionManager {
                 lat: city.latitude,
                 lng: city.longitude,
             });
-            // 长驱深入：仅 small_city 可被绕过，按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
+            // 长驱深入：仅 small_city 与 stockade（2026-09-03 新增，比小城更小）可被绕过，
+            //   按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
             // 不逐帧闪烁），命中概率 = magnitude。big_city / medium_city / pass 不进此分支，恒拦截。
             // 本军团自己的攻击目标城不适用绕过：绕过意为"路过不被拦"，若绕过自己要打的城，
             // 军团会一直走到城中心才触发攻城，开战时贴在城头上（离城 0 而非统一的 0.1）。
             if (
                 dist <= zoc &&
-                city.type === 'small_city' &&
+                (city.type === 'small_city' || city.type === 'stockade') &&
                 smallCityBypassChance > 0 &&
                 army &&
                 city.id !== army.getTargetCity?.()?.id &&

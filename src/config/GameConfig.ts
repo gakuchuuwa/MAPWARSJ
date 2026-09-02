@@ -97,9 +97,16 @@ export class GameConfig {
             big_city: 20000,
             pass: 20000,
             region_center: 20000,
+            /**
+             * 🔴 [2026-09-03] 城寨是唯一不走 20000 的类型 —— 它驻军上限只有 15000，
+             *    而 armySize = 驻军 × 0.9，按 20000 卡它**永远出不了兵**，与「城寨可出兵」的
+             *    定位矛盾。这里按上限同比例下调到 12000（满员 15000×0.9=13500 ≥ 12000）。
+             *    要恢复「全类型统一 20000」，把这行删掉即可，代价是城寨变成纯驻防据点。
+             */
+            stockade: 12000,
         } as const,
-        /** 可出兵据点：大城、中城、小城、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */
-        SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'pass'] as const,
+        /** 可出兵据点：大城、中城、小城、城寨、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */
+        SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'stockade', 'pass'] as const,
         /** 全兵种军团兵力上限（出征 / 跟随补兵；主人 2026-07-09 统一 10 万） */
         ARMY_MAX_TROOPS: 100_000,
         /**
@@ -172,6 +179,7 @@ export class GameConfig {
             field: 0.3,
             pass: 0.3,
             small_city: 0.3,
+            stockade: 0.3,
             medium_city: 0.3,
             big_city: 0.3,
         } as Record<string, number>,

@@ -939,6 +939,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               <option value="small_city" ${(row!.cityType ?? 'small_city') === 'small_city' ? 'selected' : ''}>小城 (small_city)</option>
               <option value="medium_city" ${row!.cityType === 'medium_city' ? 'selected' : ''}>中城 (medium_city)</option>
               <option value="big_city" ${row!.cityType === 'big_city' ? 'selected' : ''}>大城 (big_city)</option>
+              <option value="stockade" ${row!.cityType === 'stockade' ? 'selected' : ''}>城寨 (stockade)</option>
               <option value="pass" ${row!.cityType === 'pass' ? 'selected' : ''}>关隘 (pass)</option>
             </select>
           </label>

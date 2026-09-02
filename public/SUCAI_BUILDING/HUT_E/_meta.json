@@ -1,0 +1,9 @@
+{
+  "name": "HUT_E",
+  "frames": 1,
+  "box_w": 128,
+  "box_h": 124,
+  "anchor_x": 60,
+  "anchor_y": 84,
+  "sld_source": "b_scen_hut_e"
+}
