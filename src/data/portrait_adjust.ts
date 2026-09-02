@@ -647,11 +647,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/JIANGNAN/min_wangshenzhi.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 28
-        },
         "/assets/JIANGNAN/quanzhou_liucongxiao.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -3328,7 +3323,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/daming/qi_d_qijiguang.png": {
-            "scale": 1.13,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": -59
         },
@@ -5897,11 +5892,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_28.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -48
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_29.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -7616,6 +7606,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 6,
             "offsetY": -17
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_30.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/JIANGNAN/min_wangshenzhi.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -48
         }
     },
     "folderGuides": {
