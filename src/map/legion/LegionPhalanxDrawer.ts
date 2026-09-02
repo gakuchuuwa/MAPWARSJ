@@ -2355,7 +2355,7 @@ export class LegionPhalanxDrawer {
             s?: number;
             dyn?: boolean;
             dynEntry?: { dirs16?: boolean; frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> };
-            /** 归一化参考船长（最长边）：16 向帧框尺寸不一致，用它作统一基准消除转弯尺寸 pop */
+            /** 参考船长 = 16 向里最长的一边（侧向船长）。**只用于编队间距**，不参与绘制缩放 */
             refLen?: number;
         }
         const typeDraws = new Map<NavalShipAssetId, NavalTypeDraw>();
@@ -2374,8 +2374,7 @@ export class LegionPhalanxDrawer {
             const dynEntry = (set as any).dyn?.IDLE;
             if (dynEntry && this.metaDirFor(dynEntry, direction, true)) {
                 const s = baseHeight * scale * getNavalShipDrawScale(typeId) / 64;
-                // 🔴 [2026-09-02 修·转弯一卡一卡] 16 向帧框 (fw/fh) 尺寸不一致（SLD 提取未归一化），
-                //    直接按每向 fw/fh 绘制 → 船转弯跨 22.5° 边界时尺寸 pop。取最长边作统一基准，绘制时归一。
+                // 参考船长 = 16 向最长边（= 侧向船长）。给编队间距当固定基准用，见下方 flagshipW。
                 let refLen = 0;
                 for (const d of Object.values(dynEntry.dirs) as { fw: number; fh: number }[]) {
                     refLen = Math.max(refLen, d.fw, d.fh);
@@ -2395,7 +2394,9 @@ export class LegionPhalanxDrawer {
         // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心隔一个船宽，刚好不叠。
         const flagship = typeDraws.get(targetShipId) || typeDraws.values().next().value;
         if (!flagship) return;
-        // 🔴 [2026-09-02] 归一化后船长恒定 = refLen × s；纵/横间距基准也用它，避免归一化尺寸与变化的每向帧框错配（叠船/过散）
+        // 🔴 [2026-09-02 修·转弯一卡一卡] 间距基准改成**与朝向无关**的 refLen×s。
+        //    旧写法取的是舰队当前朝向那一向的 fw：舰队一转弯，fw 从 128 掉到 52（GALLEY 差 2.5 倍），
+        //    整支编队的船距跟着一起缩放，看上去就是「转弯时一卡一卡」。船长是常量，间距就该是常量。
         const flagshipW = flagship.dyn ? flagship.refLen! * flagship.s! : flagship.w;
         const flagshipLength = flagship.dyn ? flagship.refLen! * flagship.s! : Math.max(flagship.w, flagship.h);
         const shipDepth = flagshipLength * 1.15;
@@ -2599,14 +2600,17 @@ export class LegionPhalanxDrawer {
             if (td.dyn) {
                 // DE：hotspot 对齐。帧框按该船自己的朝向查；缺该向元数据 → 回落旗舰向（typeDraws 已确认存在）
                 const dd = this.metaDirFor(activeDynEntry, shipDir, true) ?? this.metaDirFor(activeDynEntry, direction, true)!;
-                // 🔴 [2026-09-02] 归一化：每向帧框尺寸不同 → 按参考船长统一缩放，转弯尺寸不再 pop。
-                //    源裁剪 (sw/sh) 仍用每向框；目标尺寸/热点偏移统一乘 normS，船转任何角度船长恒定。
-                const normS = (td.refLen ?? Math.max(dd.fw, dd.fh)) / Math.max(dd.fw, dd.fh);
+                // 🔴🔴 [2026-09-02 实测否决] 这里**绝不能**按 refLen 把每向缩放归一化。
+                //    16 向 fw/fh 不一致不是 SLD 提取的 bug，是 DE 的等距前缩：实测 fw 随方向
+                //    走平滑余弦、fh 走互补正弦、且严格 16 向对称（GALLEY fw 100/124/128/124/100/64/52/68…）。
+                //    归一化 = 把前缩抹掉：GALLEY 船头朝观众那几向会被放大到 1.6 倍，
+                //    转向时船一大一小地脉动，比原来的 pop 难看得多（已逐向出图比对）。
+                //    正确画法就是按每向自己的帧框、用统一的 s 画 —— 这就是 DE 的原样。
                 ships.push({
-                    ax: dx, ay: dy, ox: -dd.hx * td.s! * normS, oy: -dd.hy * td.s! * normS, r: pos.r,
+                    ax: dx, ay: dy, ox: -dd.hx * td.s!, oy: -dd.hy * td.s!, r: pos.r,
                     img: tintedSprite,
                     sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
-                    w: dd.fw * td.s! * normS, h: dd.fh * td.s! * normS,
+                    w: dd.fw * td.s!, h: dd.fh * td.s!,
                     alpha: shipAlpha, rot: shipRot, bobY, roll,
                 });
             } else {

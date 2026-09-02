@@ -29,8 +29,12 @@ interface NavalFx {
     pos: L.LatLng;
     progress: number; // 0.0 -> 1.0
     speed: number; // 速度 (progress per second)
-    /** 弧度；炮口焰按开火方位角转，水花不转 */
-    rotation: number;
+    /**
+     * 炮口焰要按开火方位角转；朝向存的是「瞄准点」而不是算好的弧度 ——
+     * 角度必须在屏幕坐标系里算（墨卡托下纬度是非线性的，直接拿经纬差算高纬度会偏）。
+     * 水花不需要转向，传 null。
+     */
+    aim: L.LatLng | null;
 }
 
 /**
@@ -81,19 +85,19 @@ export class ProjectileRenderer {
 
         // 开炮瞬间在船位点一团 DE 炮口焰：橙红火光一闪 → 米白硝烟膨胀上飘（约 1 秒）
         if (naval && type === 'cannon') {
-            this.pushFx('CANNON_MUZZLE', start, Math.atan2(end.lat - start.lat, end.lng - start.lng) * -1);
+            this.pushFx('CANNON_MUZZLE', start, end);
         }
     }
 
-    /** 起一次海战特效；朝向用屏幕坐标系的弧度（y 轴向下，故纬度差要取反）。 */
-    private pushFx(name: NavalFxName, pos: L.LatLng, rotation: number): void {
+    /** 起一次海战特效。aim 给了就按「pos → aim」的屏幕方位角转向。 */
+    private pushFx(name: NavalFxName, pos: L.LatLng, aim: L.LatLng | null = null): void {
         this.navalFx.push({
             id: Math.random().toString(36).substr(2, 9),
             name,
             pos,
             progress: 0,
             speed: 1000 / NAVAL_FX[name].durationMs,
-            rotation,
+            aim,
         });
     }
 
@@ -157,7 +161,7 @@ export class ProjectileRenderer {
                 // 炮弹 / 石弹砸进海里 → DE 的落水水花。只认 naval 标志：
                 // 攻城战投石机同样走 'stone'，落点在城墙上，绝不能溅水。
                 if (p.naval && (p.type === 'cannon' || p.type === 'stone')) {
-                    this.pushFx('WATER_SPLASH', p.end, 0);
+                    this.pushFx('WATER_SPLASH', p.end);
                 }
             }
         }
@@ -181,7 +185,12 @@ export class ProjectileRenderer {
         //    先画特效再画投射物，硝烟才不会盖住正在飞的弹丸。
         for (const fx of this.navalFx) {
             const pt = this.map.latLngToContainerPoint(fx.pos);
-            NavalFxSprites.draw(ctx, fx.name, pt.x, pt.y, fx.progress, currentScale, fx.rotation);
+            let rotation = 0;
+            if (fx.aim) {
+                const aimPt = this.map.latLngToContainerPoint(fx.aim);
+                rotation = Math.atan2(aimPt.y - pt.y, aimPt.x - pt.x);
+            }
+            NavalFxSprites.draw(ctx, fx.name, pt.x, pt.y, fx.progress, currentScale, rotation);
         }
 
         // 2. 绘制飞行道具（箭矢/炮弹/火箭/石弹）

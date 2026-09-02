@@ -82,13 +82,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 大秦长城军团·高阙塞（蒙恬 · 长城烽火卫 · 鱼鳞阵 4+3+2：虎豹骑 4 + 先秦远程战车 3 + 古典骑射手 2）
-    baiyang: {
-        legionName: "大秦长城军团",
-        formationMode: 'fish_scale',
+    "baiyang": {
+        legionName: "秦长城军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'tiger_rider', count: 4 },                      // Row 0 前卫突骑 = 虎豹骑 4骑（北逐匈奴前锋突骑）
-            { type: 'war_chariot_ranged', count: 3 },               // Row 1 中军战车 = 先秦远程战车 3乘（塞外平原战车核心冲击）
-            { type: 'antiquity_cavalry_archer', count: 2 },         // Row 2 尾收远射 = 古典骑射手 2骑（长城边防轻骑游射压制）
+            { type: "elite_chukonu", count: 3 },
+            { type: "war_chariot_ranged", count: 3 },
+            { type: "tiger_rider", count: 2 },
         ],
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
