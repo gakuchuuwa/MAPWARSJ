@@ -4445,7 +4445,10 @@ export class Scene13WarLayer {
             //   换成 ARCHAIC_WALL_PALISADE（DE 可玩建筑 b_archaic_wall_palisade，两端平切口 →
             //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
             // 城寨用 DE 细编篱笆（s_archaic_fence），小城与游牧为 PALISADE 木栅（2026-09-03 主人改：用DE里的篱笆）
-            const wallMat = (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
+            // 主人 2026-09-03：中原/北方/江南小城用中城同款石墙（STONE），其余小城与游牧仍用木栅
+            const stoneSmallCityRegions = new Set<string>(['CENTRAL', 'NORTH', 'JIANGNAN']);
+            const wallMat = (this.defenderCityType === 'small_city' && stoneSmallCityRegions.has(this.sideCulture[1])) ? 'STONE'
+                : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
             const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);

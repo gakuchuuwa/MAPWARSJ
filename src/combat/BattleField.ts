@@ -1367,8 +1367,14 @@ export class BattleField implements IOpeningPulseSink {
         for (const bu of all) {
             const u = bu.unit;
             if (u.unitType !== 'legion' && u.unitType !== 'army') continue;
-            const army = u as IBattleUnit & { clearExternalCombatState?: () => void };
+            const army = u as IBattleUnit & {
+                clearExternalCombatState?: () => void;
+                weakCheckAfterBattle?: boolean;
+            };
             army.clearExternalCombatState?.();
+            // 这条路径是「没收到 onBattleEnd」的兜底：残兵判定闸也要在这里开，
+            // 否则漏掉 onBattleEnd 的军团战后永远不判 5000 阈值，残兵不回城。
+            if (!army.isDestroyed) army.weakCheckAfterBattle = true;
         }
     }
 

@@ -248,7 +248,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tang': 'city_changan',
     'min': 'city_fuzhou',
 'shazhou': 'city_dunhuang',
-    'shatuo': 'city_guanglu',
+'shatuo': 'city_guanglu',
 'qidan': 'city_chifeng',
     'donghu': 'city_bayanwula',
     'luoyue': 'city_huashan',
@@ -283,7 +283,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'cao_d': 'city_qiaojun',
     'jiaodong': 'city_jimo',
 'jibei': 'city_boyang',
-    'wusun': 'city_chigucheng',
+'wusun': 'city_chigucheng',
 'dayuan': 'city_guishancheng',
     'gouding': 'city_guangnan',
 

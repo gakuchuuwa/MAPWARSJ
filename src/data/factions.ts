@@ -376,6 +376,7 @@ export const FACTIONS: Faction[] = [
     { id: 'quanzhou', name: '泉州' },
     { id: 'shazhou', name: '沙州' },
     { id: 'shatuo', name: '沙陀' },
+
     { id: 'qidan', name: '契丹' },
     { id: 'bing', name: '并州' },
 
@@ -457,6 +458,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jingmen', name: '荆门' },
     { id: 'jibei', name: '泰山' },
     { id: 'wusun', name: '乌孙' },
+
     { id: 'dayuan', name: '大宛' },
     { id: 'gouding', name: '句町' },
     { id: 'wuhuan', name: '乌桓' },
@@ -955,6 +957,7 @@ export const FACTIONS: Faction[] = [
               // 草原绿 - 阿史德氏(突厥别部)
     { id: 'kiyad', name: '乞颜' },
     { id: 'borjigin', name: '孛儿只斤' },
+
           // 黄金家族褐 - 孛儿只斤氏(蒙古黄金家族/斡难河源)
     // 部族棕 - 泰赤乌部(蒙古部族/斡难河中游)
     { id: 'jalair', name: '札剌亦儿' },

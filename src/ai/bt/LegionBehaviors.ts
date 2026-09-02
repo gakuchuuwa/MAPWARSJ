@@ -810,7 +810,13 @@ export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
 // 残兵撤退（据点军团兵力跌破阈值 → 回出发城解散、兵力并入驻军；远征军团不受此限）
 // =====================
 
-/** 兵力 < 阈值、非远征、出发城仍属己方 → 该撤回解散；已锁定撤退意图的军团途中补兵不掉头 */
+/**
+ * 战后残兵 < 阈值、非远征、出发城仍属己方 → 该撤回解散；已锁定撤退意图的军团途中补兵不掉头。
+ *
+ * 🔴 [2026-09-03 主人定] 「5000 人以下回城」只认**战后**，行军中不算。
+ *    兵力阈值仅在 Army.weakCheckAfterBattle 为 true（刚打完一仗）时判一次，判完就关闸；
+ *    行军减兵把兵磨到阈值以下**不会**让军团掉头回家。
+ */
 export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     const army = ctx.army;
     if (isCampaignLegion(army)) return false; // 远征军团不解散
@@ -829,7 +835,10 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
         return true;
     }
 
-    // 首次触发：兵力低于阈值且老家仍在
+    // 首次触发：只在刚打完一仗时判，且判过即消耗掉这次机会（行军减兵不触发）
+    if (!army.weakCheckAfterBattle) return false;
+    army.weakCheckAfterBattle = false;
+
     if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
     if (!homeAlive) return false;
 

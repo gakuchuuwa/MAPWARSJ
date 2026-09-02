@@ -2,8 +2,8 @@
   "name": "FENCE_GATE_NE",
   "frames": 1,
   "box_w": 108,
-  "box_h": 56,
-  "anchor_x": 54,
-  "anchor_y": 46,
-  "sld_source": "s_archaic_fence"
+  "box_h": 44,
+  "anchor_x": 58,
+  "anchor_y": 26,
+  "sld_source": "b_scen_fence"
 }

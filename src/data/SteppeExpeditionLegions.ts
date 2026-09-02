@@ -13,13 +13,11 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     liao_d: { name: '皮室军', tier: 1 },
   yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略
     menggu_d: { name: '怯薛宿卫', tier: 0 },
-  borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫
   ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
     yuan_d: { name: '秃鲁花军', tier: 3 },
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
     huige: { name: '回纥精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回纥汗国绝对主力，升入T1战略
-  // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
@@ -106,4 +104,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xiongnu: { name: '鸣镝精骑', tier: 1 },
     bayegu: { name: '拔野古骑', tier: 4 },
     wuzhumuqin: { name: '赛堪骑兵', tier: 4 },
+    borjigin: { name: '那可儿伴当', tier: 1 },
+    shatuo: { name: '鸦儿军', tier: 1 },
 };
