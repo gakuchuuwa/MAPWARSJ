@@ -135,11 +135,10 @@ export function tickStuckLegionWatchdog(armies: readonly Army[], deltaSec: numbe
     if (now - lastReportAt < REPORT_INTERVAL_MS) return;
     lastReportAt = now;
 
-    const game = (window as unknown as { game?: { timeSystem?: { getYear?: () => number; getSpeed?: () => number } } }).game;
+    const game = (window as unknown as { game?: { timeSystem?: { getYear?: () => number } } }).game;
     const payload = {
         at: new Date().toISOString(),
         year: game?.timeSystem?.getYear?.() ?? null,
-        speed: game?.timeSystem?.getSpeed?.() ?? null,
         stuckCount: stuck.length,
         armies: stuck,
     };

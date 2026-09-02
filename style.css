@@ -175,19 +175,6 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     background: #555;
 }
 
-.speed-btn {
-    font-size: 12px;
-    padding: 4px 8px;
-    min-width: 40px;
-}
-
-.speed-btn.active {
-    background: #22C55E;
-    border-color: #16A34A;
-    color: white;
-    font-weight: bold;
-}
-
 /* City Labels */
 .city-label {
     background: transparent;

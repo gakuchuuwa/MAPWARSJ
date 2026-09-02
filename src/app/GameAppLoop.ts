@@ -102,7 +102,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
             }
             return;
         }
-        const gameDelta = GameTime.toGameDelta(deltaTime, app.timeSystem.getSpeed());
+        const gameDelta = deltaTime;
         app.timeSystem.update(gameDelta);
         app.cityManager.updateYear(app.timeSystem.getYear());
         if (app.historicalEventManager) {
@@ -129,7 +129,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
         const isPaused = app.timeSystem.isGamePaused();
 
         if (!isPaused && app.cityManager) {
-            const gameDelta = GameTime.toGameDelta(deltaTime, app.timeSystem.getSpeed());
+            const gameDelta = deltaTime;
 
             perfMonitor.startTimer('calendar');
             const _tA = performance.now();
@@ -197,7 +197,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
         if (app.combatUI) {
             perfMonitor.startTimer('combatUI');
-            app.combatUI.update(app.timeSystem.getSpeed());
+            app.combatUI.update(1);
             perfMonitor.endTimer('combatUI');
 
             // 每帧检查：跟随军团在战斗中但 UI 未显示 → 补弹
@@ -214,7 +214,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             app.combatUI.showRegional(
                                 attackers, defenders, undefined, undefined,
                                 (window as any).__huoqubingBattleTitle ?? bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`),
-                                '', false, bf.targetDuration, app.timeSystem.getSpeed(), bf,
+                                '', false, bf.targetDuration, 1, bf,
                             );
                         } catch (e) { /* ignore */ }
                         break;

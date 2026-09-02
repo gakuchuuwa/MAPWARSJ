@@ -1,40 +1,5 @@
 // ==================== ç²¾çµå›¾è·¯å¾„ (Sprite Paths) ====================
 export const SPRITE_PATHS = {
-    PLAYER_ZHONGHUA: {
-        // [NEW 8-DIRECTION SYSTEM] S10DB Assets
-        // 0:South -> 7:SE (Standard S10DB mapping)
-        // Move: 460-467
-        // Attack: 468-475
-        // Idle: 484-491
-        // Damage: 492-499
-        // Death: 500-507
-        // Format: /SUCAI/S10DB/{ID}-1.png
-
-        MOVE: [460, 461, 462, 463, 464, 465, 466, 467].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        ATTACK: [468, 469, 470, 471, 472, 473, 474, 475].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        IDLE: [484, 485, 486, 487, 488, 489, 490, 491].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DAMAGE: [492, 493, 494, 495, 496, 497, 498, 499].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DEATH: [500, 501, 502, 503, 504, 505, 506, 507].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        // Keep 'frames' for compatibility if needed, but we should switch to using the arrays above.
-        // We can alias frames to IDLE for safety
-        frames: [484, 485, 486, 487, 488, 489, 490, 491].map(id => `/SUCAI/S10DB/${id}-1.png`),
-    },
-    // [NEW] Use same assets for standard LEGION units
-    LEGION: {
-        MOVE: [460, 461, 462, 463, 464, 465, 466, 467].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        ATTACK: [468, 469, 470, 471, 472, 473, 474, 475].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        IDLE: [484, 485, 486, 487, 488, 489, 490, 491].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DAMAGE: [492, 493, 494, 495, 496, 497, 498, 499].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DEATH: [500, 501, 502, 503, 504, 505, 506, 507].map(id => `/SUCAI/S10DB/${id}-1.png`),
-    },
-    // [NEW] Player General Sprite (S10DB)
-    PLAYER_GENERAL: {
-        MOVE: [240, 241, 242, 243, 244, 245, 246, 247].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        ATTACK: [248, 249, 250, 251, 252, 253, 254, 255].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        IDLE: [256, 257, 258, 259, 260, 261, 262, 263].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DAMAGE: [264, 265, 266, 267, 268, 269, 270, 271].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DEATH: [272, 273, 274, 275, 276, 277, 278, 279].map(id => `/SUCAI/S10DB/${id}-1.png`),
-    },
     // [NEW] General Portraits (Mapped by General ID；缺省走 portrait_defaults 文化区随机池)
     GENERAL_PORTRAITS: {
         // ── 秦势力将领立绘 ──
@@ -66,14 +31,6 @@ export const SPRITE_PATHS = {
         'zaoyang_d_menggong': '/assets/zhaosong/zaoyang_d_menggong.png',
     },
     PHALANX: {
-        // format: /SUCAI/S10DB/{ID}-1.png
-        // 8 directions: South(0) -> SE(7)
-        // éª‘å…µè´´å›¾ (Cavalry sprites): 154-193
-        MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        ATTACK: [162, 163, 164, 165, 166, 167, 168, 169].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        IDLE: [170, 171, 172, 173, 174, 175, 176, 177].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DAMAGE: [178, 179, 180, 181, 182, 183, 184, 185].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        DEATH: [186, 187, 188, 189, 190, 191, 192, 193].map(id => `/SUCAI/S10DB/${id}-1.png`),
         FLAG: {
             POLE: '/SUCAI/S10QZ/1-1.png',
             BODY: '/SUCAI/S10QZ/7-1.png', // 
