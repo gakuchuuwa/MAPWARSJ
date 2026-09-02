@@ -61,11 +61,20 @@ const DUCK = {
     /** 行军音效循环时音乐压到 50%（2026-08-04 GAKU 反馈行军几乎听不到 BGM：0.30 叠加 bgm 层 0.55 后音乐仅剩音效一半） */
     bgmUnderMarch: 0.50,
     /**
-     * 13 接触音景（land_contact）循环时音乐压到 60% —— 比战斗 0.30、行军 0.50 都轻。
+     * 13 接触音景（land_contact）循环时音乐压到 85% —— 比战斗 0.30、行军 0.50 都轻。
      * 主人 2026-08-19 定「少压一点就行」：这段音景本身是战场底噪、不含旋律，
      * 压太狠会把 BGM 整个吃掉，只要给它让出一点空间、听得出「音乐退了半步」即可。
+     *
+     * 🔴 [2026-09-02 主人「战术模式好像依然没有背景音乐」] 0.60 → 0.85。
+     *    实测（浏览器里逐个读 audio.volume 折算到 master 0.5，不是估算）：
+     *      战略地图 BGM 0.173 → 进 13 压成 0.104，而 land_contact 底噪是 0.199，
+     *      音乐比底噪低 5.7dB；再叠上火器 0.261 / 攻城撞击 0.295 / 爆炸 0.309 /
+     *      火炮 0.404（比音乐高 8~11.8dB），BGM 被整段宽频底噪彻底掩蔽 ——
+     *      听感就是「13 里没有音乐」，但它其实一直在播（bgmAudio.paused === false）。
+     *    0.85 后 BGM = 0.147，只比底噪低 2.6dB，能听出旋律又不抢戏。
+     *    ⚠️ 这条只管**音景**那一路；播报仍走 bgmUnderSpeech 0.35（语音优先不动）。
      */
-    bgmUnderBattleAmbience: 0.60,
+    bgmUnderBattleAmbience: 0.85,
     /** 播报时音效压到 12%（微弱衬托，不抢语音） */
     sfxUnderSpeech: 0.28,
 } as const;
@@ -1020,7 +1029,7 @@ export class AudioManager {
             if (this.wantedLoops.has('battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
             // 🔴 [2026-08-19] land_contact（13 接触音景）必须在这里登记，否则它循环起来时
             //    BGM 一点都不会被压 —— 本表只认列出来的 key，新增循环音不登记就是「静默失效」。
-            if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.60（少压一点）
+            if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.85（少压一点，2026-09-02 由 0.60 上调）
             if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')) {
                 return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
             }

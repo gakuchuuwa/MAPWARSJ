@@ -80,7 +80,7 @@ export function getNavalShipDrawScale(shipId?: string): number {
 }
 
 /**
- * 文化圈 → 代表战舰。每条都写清史实依据；拿不准的宁可给通用船，不硬安专属。
+ * 文化圈 → 代表战舰。每条都写清史实依据；严禁使用无帆残骸/空壳船（如 HULK/CARRACK/GALLEON/WAR_HULK）。
  * 顺序 = 查表顺序，命中即返回。
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
@@ -110,21 +110,18 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'ARMENIANS', 'GEORGIANS'] },
     { ship: 'MONOREME', why: '罗斯独木船队（monoxyla）：第聂伯河下黑海', regions: ['SLAVIC'] },
 
-    // ── 北欧 / 西欧 / 中欧 ──────────────────────────────────
+    // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
     { ship: 'ELITE_LONGBOAT', why: '盖尔长船（birlinn）：源自维京长船，爱尔兰海/苏格兰高地', regions: ['CELTS'] },
-    { ship: 'WAR_HULK', why: '英王柯克战船：百年战争斯勒伊斯海战', regions: ['BRITONS'] },
-    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：十字纹大风帆，中世纪晚期与大航海开拓主力', regions: ['GERMANIC', 'LATIN', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE'] },
-    { ship: 'CARRACK', why: '克拉克大帆船：汉萨同盟与北海武装商船', regions: ['TEUTONS'] },
-    { ship: 'GALLEON', why: '威尼斯/热那亚远洋大帆船', regions: ['ITALIANS'] },
+    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS'] },
+    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'GERMANIC', 'LATIN', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
     { ship: 'WAR_GALLEY', why: '地中海桨帆战船：诺曼西西里海军', regions: ['SICILIANS'] },
-    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐：勒班陀与新大陆征服', regions: ['SPANISH'] },
 
     // ── 中东 / 北非 ─────────────────────────────────────────
     { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
     { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE'] },
     { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER'] },
-    { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军（火炮盖伦跨时代，不用）', regions: ['PERSIAN'] },
+    { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['PERSIAN'] },
 
     // ── 美洲 ────────────────────────────────────────────────
     { ship: 'CANOE', why: '武装独木战舟：美洲无风帆远洋船，特斯科科湖水战形制', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'] },
@@ -165,15 +162,15 @@ const FALLBACK_SHIP = 'WAR_GALLEY';
  * 优先级最高，不动文化区表。素材都已提取（16 向齐全），改映射即生效。
  */
 const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
-    luoma_diguo: 'WAR_GALLEY',     // 罗马帝国（原 LATIN→HULK 北欧柯克船，错；应地中海桨帆战船）
-    naxos_ancient: 'TRIREME',      // 纳克索斯（原 MACEDONIANS→WAR_LEMBOS 马其顿船，错；应希腊三列桨）
-    jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳（原 AMERICA→CANOE 独木舟，错；西班牙珍宝船队要塞，应西班牙卡拉维尔）
-    foluolida: 'ELITE_CARAVEL',    // 佛罗里达·圣奥古斯丁（原 AMERICA→CANOE 独木舟，错；梅嫩德斯·西班牙海军上将，应西班牙卡拉维尔）
-    xiyindu: 'ELITE_CARAVEL',      // 西印度·圣多明各（原 AMERICA→CANOE 独木舟，错；哥伦布殖民总督要塞，应西班牙卡拉维尔）
-    xingelana: 'ELITE_CARAVEL',    // 新格拉纳达·巴拿马（原 AMERICA→CANOE 独木舟，错；卡斯蒂利亚殖民总督要塞，应西班牙卡拉维尔）
-    baiyiya: 'CARAVEL',            // 巴西·萨尔瓦多（原 AMERICA→CANOE 独木舟，错；葡属巴西都督府，军团「索萨远征队」= 葡王室远征队，应葡萄牙卡拉维尔）
-    yinggelan: 'WAR_HULK',         // 英格兰·亨利五世（原 GERMANIC→HULK 柯克货船，错；应英王柯克战船：百年战争斯勒伊斯海战）
-    kanpaniya: 'WAR_GALLEY',       // 那不勒斯·安茹（原 LATIN→HULK 北海柯克货船，错；应地中海桨帆战船：意大利南部地中海港，安茹王朝海军）
+    luoma_diguo: 'WAR_GALLEY',     // 罗马帝国：地中海桨帆战船
+    naxos_ancient: 'TRIREME',      // 纳克索斯：希腊三列桨
+    jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳：西班牙珍宝船队要塞，应西班牙精锐卡拉维尔
+    foluolida: 'ELITE_CARAVEL',    // 佛罗里达·圣奥古斯丁：梅嫩德斯·西班牙海军上将，应西班牙精锐卡拉维尔
+    xiyindu: 'ELITE_CARAVEL',      // 西印度·圣多明各：哥伦布殖民总督要塞，应西班牙精锐卡拉维尔
+    xingelana: 'ELITE_CARAVEL',    // 新格拉纳达·巴拿马：卡斯蒂利亚殖民总督要塞，应西班牙精锐卡拉维尔
+    baiyiya: 'CARAVEL',            // 巴西·萨尔瓦多：葡属巴西都督府，军团「索萨远征队」= 葡王室远征队，应葡萄牙卡拉维尔
+    yinggelan: 'CARAVEL',          // 英格兰·亨利五世：英格兰正规风帆战舰
+    kanpaniya: 'WAR_GALLEY',       // 那不勒斯·安茹：地中海桨帆战船
     osman: 'WAR_GALLEY',           // 奥斯曼·穆罕默德二世：15世纪地中海桨帆舰队
 };
 
