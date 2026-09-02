@@ -100,7 +100,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xierhe: { name: '毡的弓骑', tier: 3 },            // 哲德·乌古斯后钦察要城：毡的(Jand)乌古斯骑射，T3知名
     mangshi: { name: '曼格骑卫', tier: 4 },
     tuerhute: { name: '鹰娑川铁骑', tier: 3 },
-    quanrong: { name: '西戎骑兵', tier: 4 },
     ashide: { name: '阿史德骑', tier: 4 },
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
     helian: { name: '铁弗宿卫', tier: 3 },
