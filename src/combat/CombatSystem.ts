@@ -281,7 +281,7 @@ export class Battle {
             return;
         }
 
-        // deltaTime = gameDelta（GameApp 已乘 timeScale）
+        // deltaTime = gameDelta（= 真实秒，倍速已删）
         const timeLeft = Math.max(0.05, this.targetDuration - this.elapsed);
         let damageToLoser = Math.max(
             this.loserDPS * deltaTime,

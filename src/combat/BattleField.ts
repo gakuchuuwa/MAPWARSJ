@@ -971,7 +971,7 @@ export class BattleField implements IOpeningPulseSink {
             return;
         }
 
-        // deltaTime = gameDelta（GameApp 已乘 timeScale）
+        // deltaTime = gameDelta（= 真实秒，倍速已删）
         this.elapsed += deltaTime;
         this.tryReleaseStalemateSkillUi();
 

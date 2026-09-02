@@ -18,7 +18,6 @@ export class TimeSystem {
     private accumulatedTime: number = 0;
     /** 累计游戏秒（2026-08-03 加）：暂停不累计、倍速自然加速；供战败冷却等绝对时间戳使用 */
     private elapsedGameSeconds: number = 0;
-    public timeScale: number = 1.0;
     private isPaused: boolean = true;
 
     constructor(startYear: number = GameConfig.TIME.TIMELINE_START_YEAR) {
@@ -36,7 +35,7 @@ export class TimeSystem {
         this.notifySeasonChange();
     }
 
-    /** @param gameDelta 已乘 timeScale 的游戏时间秒数 */
+    /** @param gameDelta 游戏时间秒数（=真实秒，倍速已删） */
     /**
      * 单帧最多补算几个季度（2026-06-12 性能）：正常游玩每帧只推进一点点，永远 ≤1 季；
      * 仅在卡顿/切后台再切回那一帧会欠下大量时间——封顶后把补算摊到接下来几帧，
@@ -159,13 +158,5 @@ export class TimeSystem {
     /** 距离下一季还剩多少游戏秒 */
     public getTimeToNextSeason(): number {
         return Math.max(0, GameTime.SEASON_DURATION - this.accumulatedTime);
-    }
-
-    public getSpeed(): number {
-        return this.timeScale;
-    }
-
-    public setSpeed(scale: number): void {
-        this.timeScale = Math.max(0, scale);
     }
 }

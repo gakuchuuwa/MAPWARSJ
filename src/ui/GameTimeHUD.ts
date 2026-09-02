@@ -20,8 +20,6 @@ export class GameTimeHUD {
     private yearEl: HTMLElement | null = null;
     private seasonEl: HTMLElement | null = null;
     private runBtn: HTMLElement | null = null;
-    private speedBtn: HTMLElement | null = null;
-    private speed2Btn: HTMLElement | null = null;
     private zoomLevelEl: HTMLElement | null = null;
 
     init(): void {
@@ -29,8 +27,6 @@ export class GameTimeHUD {
         this.yearEl = document.getElementById('game-year-display');
         this.seasonEl = document.getElementById('game-season-display');
         this.runBtn = document.getElementById('run-event-btn');
-        this.speedBtn = document.getElementById('speed-btn');
-        this.speed2Btn = document.getElementById('speed2-btn');
 
         if (!this.root || !this.yearEl || !this.seasonEl) {
             console.warn('⚠️ [GameTimeHUD] DOM not found');
@@ -80,36 +76,10 @@ export class GameTimeHUD {
             });
         }
 
-        if (this.speedBtn) {
-            this.speedBtn.addEventListener('click', () => {
-                const game = (window as any).game;
-                if (game?.timeSystem) {
-                    const ts = game.timeSystem;
-                    const isActive = ts.getSpeed() === 5.0;
-                    ts.setSpeed(isActive ? 1.0 : 5.0);
-                    this.speedBtn!.classList.toggle('active', !isActive);
-                    this.speed2Btn?.classList.remove('active');
-                }
-            });
-        }
-
         const perfBtn = document.getElementById('perf-toggle-btn');
         if (perfBtn) {
             perfBtn.addEventListener('click', () => {
                 PerformanceMonitor.getInstance().toggle();
-            });
-        }
-
-        if (this.speed2Btn) {
-            this.speed2Btn.addEventListener('click', () => {
-                const game = (window as any).game;
-                if (game?.timeSystem) {
-                    const ts = game.timeSystem;
-                    const isActive = ts.getSpeed() === 2.0;
-                    ts.setSpeed(isActive ? 1.0 : 2.0);
-                    this.speed2Btn!.classList.toggle('active', !isActive);
-                    this.speedBtn?.classList.remove('active');
-                }
             });
         }
 

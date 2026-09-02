@@ -5039,7 +5039,7 @@ export class CombatUI {
 
         // 视觉微摆：配合 BattleField 三阶段节奏（40%/80%/100%）
         let progress = 0;
-        let battleClockSec = 0; // 战斗逻辑秒（已乘 timeScale）：暂停即停摆、倍速同频
+        let battleClockSec = 0; // 战斗逻辑秒（= 真实秒）：暂停即停摆
         if (this.currentBattle) {
             const b: any = this.currentBattle;
             battleClockSec = b.elapsed || 0;

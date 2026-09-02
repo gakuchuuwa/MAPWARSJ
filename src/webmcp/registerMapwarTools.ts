@@ -47,7 +47,6 @@ function getGameStatus(app: GameApp) {
         year: time.getYear(),
         season: time.getSeason(),
         paused: time.isGamePaused(),
-        speed: time.getSpeed(),
         cityCount: app.cityManager.getCities().length,
         activeLegionCount: app.legionManager?.getActiveLegionCount() ?? 0,
         map: {
@@ -175,31 +174,6 @@ function createTools(app: GameApp): WebMcpToolDefinition[] {
                     state: app.timeSystem.isGamePaused() ? 'paused' : 'playing',
                     date: app.timeSystem.getFormattedDate(),
                 };
-            },
-        },
-        {
-            name: 'set_simulation_speed',
-            title: '设置推演速度',
-            description: '把推演速度设置为页面支持的 1 倍、2 倍或 5 倍，并同步现有速度按钮。',
-            inputSchema: {
-                type: 'object',
-                properties: {
-                    speed: { type: 'number', enum: [1, 2, 5] },
-                },
-                required: ['speed'],
-                additionalProperties: false,
-            },
-            annotations: { readOnlyHint: false, untrustedContentHint: false },
-            execute: (rawInput) => {
-                const input = asObject(rawInput);
-                if (input.speed !== 1 && input.speed !== 2 && input.speed !== 5) {
-                    throw new Error('speed 必须是 1、2 或 5');
-                }
-
-                app.timeSystem.setSpeed(input.speed);
-                document.getElementById('speed2-btn')?.classList.toggle('active', input.speed === 2);
-                document.getElementById('speed-btn')?.classList.toggle('active', input.speed === 5);
-                return { speed: app.timeSystem.getSpeed() };
             },
         },
     ];

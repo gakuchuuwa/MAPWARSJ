@@ -212,7 +212,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             'startup',
             `⚔️ [GameApp] Regional Battle (followed army involved) - ${attackers.length} vs ${defenders.length}`
         );
-        const scale = app.timeSystem.getSpeed();
+        const scale = 1;
         // [2026-08-30 主人改] 进 13 条件：开关开 + 双方兵力都 ≥1万（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
         // [2026-08-16 主人改·含援军] 兵力门槛看每方**合计**（含所有已编入的援军），
         //   不再是「每个单位单独 ≥1万」。因为 13 冻结引擎暂停游戏，开战时编入的援军
@@ -334,7 +334,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
 
         const title = (window as any).__huoqubingBattleTitle ?? battleField.customTitle ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
         const dur = battleField.targetDuration;
-        const scale = app.timeSystem.getSpeed();
+        const scale = 1;
         try {
             app.combatUI.showRegional(
                 attackers,

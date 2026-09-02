@@ -863,33 +863,103 @@ function generateElevation(
         return grid;
     }
 
-    const hillCount = (elev !== null && (elev >= 800 || (slope !== null && slope >= 10)))
-        ? 4 + rng.int(0, 2)
-        : (elev !== null && elev >= 300)
-            ? 3 + rng.int(0, 2)
-            : 2 + rng.int(0, 2);
+    // 🔴 [2026-09-02 主人定] 丘陵尺度复合共存体系：
+    //   每张地图中大、中、小丘陵共同存在：
+    //   1. 大丘陵（出现几率低）：全场 0 ~ 1 个（高海拔 1~2 个）大型制高台地；
+    //   2. 中丘陵（出现几率中）：全场 1 ~ 3 个错落分布的中型战术高地；
+    //   3. 小丘陵（出现几率高）：全场 4 ~ 8 个轻柔起伏的微地形缓丘群。
+    interface HillSpec {
+        regionX: number;
+        regionY: number;
+        rx: number;
+        ry: number;
+        hMax: number;
+    }
+    const hills: HillSpec[] = [];
 
-    for (let i = 0; i < hillCount; i++) {
-        // 严格限制在屏幕中央安全区，绝不延伸到屏幕/网格边界
-        const regionX = (i % 2) * 0.36 + 0.32 + (rng.next() - 0.5) * 0.12;
-        const regionY = Math.floor(i / 2) * 0.36 + 0.32 + (rng.next() - 0.5) * 0.12;
-        const hillScreenX = VW * Math.max(0.20, Math.min(0.80, regionX));
-        const hillScreenY = VH * Math.max(0.22, Math.min(0.78, regionY));
+    // 1. 大丘陵（低概率 0 ~ 1 个，高海拔 1 ~ 2 个）
+    let largeCount = 0;
+    if (elev !== null && elev >= 800) {
+        largeCount = rng.chance(0.60) ? rng.int(1, 2) : 0;
+    } else if (elev !== null && elev >= 300) {
+        largeCount = rng.chance(0.35) ? 1 : 0;
+    } else {
+        largeCount = rng.chance(0.25) ? 1 : 0;
+    }
+
+    if (largeCount === 1) {
+        hills.push({
+            regionX: 0.42 + (rng.next() - 0.5) * 0.16,
+            regionY: 0.48 + (rng.next() - 0.5) * 0.16,
+            rx: 11.0 + rng.next() * 4.0, // 11 ~ 15 格宏大跨度
+            ry: 7.5 + rng.next() * 2.8,  // 7.5 ~ 10.3 格纵向跨度
+            hMax: (elev !== null && elev >= 800) ? 3 : 2,
+        });
+    } else if (largeCount === 2) {
+        hills.push({
+            regionX: 0.33 + (rng.next() - 0.5) * 0.10,
+            regionY: 0.38 + (rng.next() - 0.5) * 0.10,
+            rx: 9.0 + rng.next() * 3.0,
+            ry: 6.0 + rng.next() * 2.2,
+            hMax: (elev !== null && elev >= 800) ? 3 : 2,
+        });
+        hills.push({
+            regionX: 0.63 + (rng.next() - 0.5) * 0.10,
+            regionY: 0.60 + (rng.next() - 0.5) * 0.10,
+            rx: 9.0 + rng.next() * 3.0,
+            ry: 6.0 + rng.next() * 2.2,
+            hMax: (elev !== null && elev >= 800) ? 3 : 2,
+        });
+    }
+
+    // 2. 中丘陵（中等概率 1 ~ 3 个）
+    const mediumCount = rng.int(1, 3);
+    const medSlots = [
+        { x: 0.32, y: 0.35 },
+        { x: 0.62, y: 0.58 },
+        { x: 0.36, y: 0.68 },
+        { x: 0.60, y: 0.32 },
+        { x: 0.48, y: 0.50 },
+    ];
+    const shuffledSlots = [...medSlots].sort(() => rng.next() - 0.5);
+    for (let i = 0; i < mediumCount; i++) {
+        const slot = shuffledSlots[i % shuffledSlots.length];
+        hills.push({
+            regionX: slot.x + (rng.next() - 0.5) * 0.12,
+            regionY: slot.y + (rng.next() - 0.5) * 0.12,
+            rx: 5.5 + rng.next() * 2.8,  // 5.5 ~ 8.3 格
+            ry: 3.8 + rng.next() * 2.0,  // 3.8 ~ 5.8 格
+            hMax: (i === 0 && elev !== null && elev >= 800) ? 3 : 2,
+        });
+    }
+
+    // 3. 小丘陵（高频出现 4 ~ 8 个微地形起伏群）
+    const smallCount = rng.int(4, 8);
+    for (let i = 0; i < smallCount; i++) {
+        const col = i % 3;
+        const row = Math.floor(i / 3);
+        hills.push({
+            regionX: col * 0.22 + 0.28 + (rng.next() - 0.5) * 0.12,
+            regionY: row * 0.24 + 0.26 + (rng.next() - 0.5) * 0.12,
+            rx: 2.6 + rng.next() * 1.8,  // 2.6 ~ 4.4 格
+            ry: 1.8 + rng.next() * 1.3,  // 1.8 ~ 3.1 格
+            hMax: 1,                     // 纯 1 档微起伏
+        });
+    }
+
+    for (const hSpec of hills) {
+        const hillScreenX = VW * Math.max(0.18, Math.min(0.82, hSpec.regionX));
+        const hillScreenY = VH * Math.max(0.20, Math.min(0.80, hSpec.regionY));
 
         const [hillGx, hillGy] = screenToGrid(hillScreenX, hillScreenY, ox, oy);
-        const cx = Math.max(5, Math.min(gw - 6, hillGx));
-        const cy = Math.max(5, Math.min(gh - 6, hillGy));
-
-        const isMajor = i === 0;
-        const rx = isMajor ? (9 + rng.next() * 5) : (4.5 + rng.next() * 3.5);
-        const ry = isMajor ? (6.5 + rng.next() * 3.5) : (3.2 + rng.next() * 2.5);
-        const hMax = isMajor ? ((elev !== null && elev >= 800) ? 3 : 2) : 1;
+        const cx = Math.max(4, Math.min(gw - 5, hillGx));
+        const cy = Math.max(4, Math.min(gh - 5, hillGy));
         const angle = (rng.next() - 0.5) * 1.5;
 
         // 仅在局部山丘半径内扫描
-        const maxR = Math.ceil(Math.max(rx, ry) * 1.25);
-        const minX = Math.max(4, cx - maxR), maxX = Math.min(gw - 5, cx + maxR);
-        const minY = Math.max(4, cy - maxR), maxY = Math.min(gh - 5, cy + maxR);
+        const maxR = Math.ceil(Math.max(hSpec.rx, hSpec.ry) * 1.25);
+        const minX = Math.max(3, cx - maxR), maxX = Math.min(gw - 4, cx + maxR);
+        const minY = Math.max(3, cy - maxR), maxY = Math.min(gh - 4, cy + maxR);
 
         for (let y = minY; y <= maxY; y++) {
             for (let x = minX; x <= maxX; x++) {
@@ -897,16 +967,19 @@ function generateElevation(
                 const dy = y - cy;
                 const rxRot = dx * Math.cos(angle) - dy * Math.sin(angle);
                 const ryRot = dx * Math.sin(angle) + dy * Math.cos(angle);
-                const normDist = Math.sqrt((rxRot / rx) ** 2 + (ryRot / ry) ** 2);
+                const normDist = Math.sqrt((rxRot / hSpec.rx) ** 2 + (ryRot / hSpec.ry) ** 2);
                 if (normDist >= 1.0) continue; // 局部严格闭合，超出半径严格归 0
 
                 let h = 0;
-                if (normDist < 0.38) {
-                    h = hMax; // 丘顶平坦高台
-                } else if (normDist < 0.75) {
-                    h = Math.max(1, hMax - 1); // 宽阔缓坡
+                if (hSpec.hMax >= 3) {
+                    if (normDist < 0.35) h = 3;
+                    else if (normDist < 0.68) h = 2;
+                    else h = 1;
+                } else if (hSpec.hMax === 2) {
+                    if (normDist < 0.40) h = 2; // 丘顶平坦高台
+                    else h = 1;                // 宽阔缓坡过渡
                 } else {
-                    h = 1; // 坡脚过渡
+                    h = 1;                     // 小丘陵纯 1 档微起伏
                 }
 
                 if (h > grid[y][x]) {
@@ -1174,28 +1247,18 @@ function buildRiver(
         return Math.min(Math.abs(y - northGateY), Math.abs(y - southGateY));
     };
 
-    const getDeepFactor = (distY: number): number => {
-        if (distY <= 75) return 0; // 核心浅滩区：无深水
-        if (distY >= 175) return 1; // 正常深水区
-        const t = (distY - 75) / 100;
-        return 0.5 - 0.5 * Math.cos(t * Math.PI); // 余弦平滑插值 0 -> 1
-    };
-
     interface SampleRiverPt {
         x: number;
         y: number;
         nx: number;
         ny: number;
         wW: number;
-        fDeep: number;
-        wW_deep: number;
         wW_shallow: number;
         wW_bank: number;
     }
 
     const riverPts: SampleRiverPt[] = pts.map(p => {
         const distY = getShallowDistY(p.y);
-        const fDeep = getDeepFactor(distY);
         const fExpand = Math.max(0, 1 - distY / 175);
         const shallowExtra = fExpand * 36;
         const bankExtra = fExpand * 28;
@@ -1205,8 +1268,6 @@ function buildRiver(
             nx: p.nx,
             ny: p.ny,
             wW: p.wW,
-            fDeep,
-            wW_deep: p.wW * fDeep,
             wW_shallow: p.wW + shallowDepth + shallowExtra,
             wW_bank: p.wW + shallowDepth + bankDepth + shallowExtra + bankExtra,
         };
@@ -1226,7 +1287,7 @@ function buildRiver(
                     closestPt = rp;
                 }
             }
-            if (minDist < closestPt.wW_deep && closestPt.wW_deep > 4) {
+            if (minDist < closestPt.wW) {
                 waterCells.push([gx, gy]);
             } else if (minDist < closestPt.wW_shallow) {
                 shallowCells.push([gx, gy]);
@@ -1263,31 +1324,11 @@ function buildRiver(
     if (shallowCells.length > 0) {
         patches.push({ tile: 'sh2', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.58, category: 'shore', blur: 16 });
     }
-    // 4. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）：在浅滩处平滑收细渐变合拢
+    // 4. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）：全线贯通一体，且通透可见水下地基与路面
     if (waterCells.length > 0) {
-        if (moat) {
-            const deepSegments: Array<typeof riverPts> = [];
-            let currentSeg: typeof riverPts = [];
-            for (const pt of riverPts) {
-                if (pt.fDeep <= 0) {
-                    if (currentSeg.length >= 2) deepSegments.push(currentSeg);
-                    currentSeg = [];
-                } else {
-                    currentSeg.push(pt);
-                }
-            }
-            if (currentSeg.length >= 2) deepSegments.push(currentSeg);
-
-            for (const seg of deepSegments) {
-                const segWL = seg.map(p => ({ x: p.x + p.nx * p.wW_deep, y: p.y + p.ny * p.wW_deep * 0.55 }));
-                const segWR = seg.map(p => ({ x: p.x - p.nx * p.wW_deep, y: p.y - p.ny * p.wW_deep * 0.55 })).reverse();
-                patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...segWL, ...segWR], alpha: 0.96, category: 'shore', blur: 14 });
-            }
-        } else {
-            const wL = riverPts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
-            const wR = riverPts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
-            patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 10 });
-        }
+        const wL = riverPts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
+        const wR = riverPts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
+        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.70, category: 'shore', blur: 12 });
     }
 
     // 4. 水岸自然生态点缀：芦苇、睡莲、河滩湿石（自动排除开阔浅滩渡口）

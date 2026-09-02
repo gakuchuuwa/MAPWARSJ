@@ -10,13 +10,12 @@
  *        每帧比对可以等它写好再切；`applyZoom` 本身幂等，已经到位就不动。
  *   3. **战术层（zoom13 独立画布）激活期间冻结**，一格都不动 —— 13 自己管镜头
  *        （进场 flyTo 13、退场 flyTo 回 8）。
- *   5. **zoom 8 连续行军 15 秒仍无战斗 → 陆军 9 / 海军 10**（2026-09-02 主人定）。
- *        理由：zoom 8 视野面积是 9 的四倍，行军途中长时间停在 8 会卡。
+ *   5. **陆/海行军连续 15 秒 → 切到目标 zoom**（2026-09-02 二修）：
+ *        陆上行军 15 秒 → 9（除非已经在 9）；海上行军 15 秒 → 10（除非已经在 10）。
+ *        **无论当前 zoom 是几**（8/9/10 都算），只看「是否已到目标 zoom」。
  *        计时口径 = **真实秒**（卡顿是真实时间现象，与游戏倍速无关）。
- *        海军判据在这里只看 `isOnSea` —— 规则 2 那个 `&& currentBattleType==='field'`
- *        是为了把「攻城算陆战」摘出去，行军途中没有战斗类型可言，不能照抄。
  *        计时器在这些时刻清零重来：开打、进 13、换人（规则 1 回 8）、军团停下
- *        （到站 / 受阻 / 战后休整）、当前 zoom 已不是 8。
+ *        （到站 / 受阻 / 战后休整）、陆↔海切换（换了 15 秒窗口重新计）、已到目标 zoom。
  *   4. **战斗结束不切**（2026-09-01 主人去掉）：开打那一下已经切到位了，
  *        打完再切一次纯属多余的缩放动作。战后保持当前 zoom，直到下一场开打或换人。
  *        战败的军团同理不切 —— 它马上要被换掉（CameraFollowUI 5 秒延迟），
@@ -36,8 +35,8 @@ const LAND_ZOOM = 9;
 const NAVAL_ZOOM = 10;
 /** 开始跟随一支新军团时的 zoom（首次跟随 / 战败换人都用它） */
 const FOLLOW_START_ZOOM = 8;
-/** 规则 5：在 zoom 8 连续行军多久（真实毫秒）后自动切走 */
-const ZOOM8_MARCH_TIMEOUT_MS = 15_000;
+/** 规则 5：陆/海行军连续多久（真实毫秒）后切到目标 zoom */
+const MARCH_ZOOM_TIMEOUT_MS = 15_000;
 
 export class ZoomController {
     private map: GameMap;
@@ -48,8 +47,10 @@ export class ZoomController {
 
     /** 上一帧跟随的军团 id —— 变了就说明「换人了」，触发规则 1 */
     private lastArmyId: string | null = null;
-    /** 规则 5：在 zoom 8 连续行军的起始真实时刻；null = 没在计时 */
-    private zoom8MarchSinceMs: number | null = null;
+    /** 规则 5：陆/海行军连续行军的起始真实时刻；null = 没在计时 */
+    private marchZoomSinceMs: number | null = null;
+    /** 规则 5：当前行军是海(true)/陆(false)；切换时清零计时 */
+    private marchSeaType: boolean | null = null;
     /** 时钟（可注入，便于验收脚本快进） */
     private now: () => number;
 
@@ -78,7 +79,7 @@ export class ZoomController {
         const armyAlive = !!army && army.isDestroyed !== true && (army.getTroops?.() ?? 0) > 0;
 
         // 开打 / 进 13 一律清零规则 5 的计时器：这两种情况下 zoom 由规则 2、3 接管
-        if (inBattle || this.getIsTacticalScene()) this.zoom8MarchSinceMs = null;
+        if (inBattle || this.getIsTacticalScene()) this.marchZoomSinceMs = null;
 
         // ── 规则 2：战略地图上一开打就按形态切（海战 10 / 陆地战 9，攻城=陆地战）──
         //    战术层（13 独立画布）自己管镜头，激活期间让位给规则 3 的冻结。
@@ -98,36 +99,40 @@ export class ZoomController {
         //    首次跟随、战败后换人，走的都是这一条。
         if (armyId !== this.lastArmyId) {
             this.lastArmyId = armyId;
-            this.zoom8MarchSinceMs = null;   // 换人 = 规则 5 重新计时
+            this.marchZoomSinceMs = null;   // 换人 = 规则 5 重新计时
             if (armyId && armyAlive) this.applyZoom(FOLLOW_START_ZOOM);
         }
 
-        // ── 规则 5：zoom 8 连续行军 15 秒仍无战斗 → 陆军 9 / 海军 10 ──
-        this.tickZoom8MarchTimeout(army, armyId, armyAlive);
+        // ── 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆 9 / 海 10）──
+        this.tickMarchZoomSwitch(army, armyId, armyAlive);
 
         // 其余情况：保持当前 zoom 不动（行军途中、战后待命都锁定）
     }
 
     /**
-     * 规则 5：在 zoom 8 上连续行军超时后切走。军团一停（到站 / 受阻 / 战后休整）
-     * 或已经不在 8 上，计时清零重来 —— 只惩罚「长时间停在 8 赶路」这一种情形。
+     * 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆→9、海→10），除非已经到目标。
+     * **不看当前 zoom 是几**（8/9/10 都触发），只看「是否已到目标」。
+     * 军团一停 / 陆↔海切换 / 已到目标，计时清零重来。
      */
-    private tickZoom8MarchTimeout(army: any, armyId: string | null, armyAlive: boolean): void {
+    private tickMarchZoomSwitch(army: any, armyId: string | null, armyAlive: boolean): void {
         const marching = typeof army?.isMarching === 'function' ? army.isMarching() === true : false;
-        const atZoom8 = Math.abs(this.map.getLeafletMap().getZoom() - FOLLOW_START_ZOOM) < 0.01;
-        if (!armyId || !armyAlive || !marching || !atZoom8) {
-            this.zoom8MarchSinceMs = null;
+        const isOnSea = army?.isOnSea === true;
+        const targetZoom = isOnSea ? NAVAL_ZOOM : LAND_ZOOM;
+        const atTarget = Math.abs(this.map.getLeafletMap().getZoom() - targetZoom) < 0.01;
+        if (!armyId || !armyAlive || !marching || atTarget || this.marchSeaType !== isOnSea) {
+            this.marchZoomSinceMs = null;
+            this.marchSeaType = isOnSea;
             return;
         }
         const t = this.now();
-        if (this.zoom8MarchSinceMs === null) {
-            this.zoom8MarchSinceMs = t;
+        if (this.marchZoomSinceMs === null) {
+            this.marchZoomSinceMs = t;
             return;
         }
-        if (t - this.zoom8MarchSinceMs < ZOOM8_MARCH_TIMEOUT_MS) return;
+        if (t - this.marchZoomSinceMs < MARCH_ZOOM_TIMEOUT_MS) return;
         // 行军途中没有战斗类型，海军判据只看 isOnSea（勿照抄规则 2 的 field 条件）
-        this.applyZoom(army?.isOnSea === true ? NAVAL_ZOOM : LAND_ZOOM);
-        this.zoom8MarchSinceMs = null;
+        this.applyZoom(targetZoom);
+        this.marchZoomSinceMs = null;
     }
 
     /**

@@ -270,18 +270,6 @@ export class Army implements IBattleUnit {
             getGlobalUnitRenderer()?.invalidateView();
         }
 
-        // [DISABLED] 自动调速功能已禁用
-        // const game = (window as any).game;
-        // if (game && game.timeSystem) {
-        //     if (isFighting) {
-        //         console.log(`⏱️ [Auto-Speed] Combat Started -> Set Speed 1.0x`);
-        //         game.timeSystem.setSpeed(1.0);
-        //     } else {
-        //         console.log(`⏱️ [Auto-Speed] Combat Ended -> Set Speed 10.0x`);
-        //         game.timeSystem.setSpeed(10.0);
-        //     }
-        // }
-
         // Update marker style if exists
         if (this.marker) {
             const element = this.marker.getElement();

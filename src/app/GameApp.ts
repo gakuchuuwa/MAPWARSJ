@@ -576,7 +576,7 @@ export class GameApp {
                                 this.combatUI.showRegional(
                                     attackers, defenders, undefined, undefined,
                                     (window as any).__huoqubingBattleTitle ?? bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${this.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${this.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${this.cityManager.getFactionName(bf.getDefenderFactionId())}`),
-                                    '', false, bf.targetDuration, this.timeSystem.getSpeed(), bf,
+                                    '', false, bf.targetDuration, 1, bf,
                                 );
                                 found = true;
                             } catch (err) {
