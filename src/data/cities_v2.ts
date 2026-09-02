@@ -1485,9 +1485,8 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 新增：渤海国王族大氏 ──
     // ── 2026-05-26 新增：漠北草原势力 ──
     { id: 'city_xiaoyenisei', name: '贝加尔', factionId: 'dingling', lat: 51.8368, lng: 107.6138, type: 'pass', region: 'STEPPE', troops: 30000, note: '丁零王统丁零游骑牧北海' },
-    { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'pass', region: 'NORTHEAST', troops: 30000,
-        note: '嘎仙洞；鲜卑关隘',
-    },
+    { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
+
     { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '浚稽山；高车关隘',
     },

@@ -354,6 +354,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiongnu', name: '匈奴' },
 
     { id: 'xianbei', name: '鲜卑' },
+
     { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
     { id: 'beidi', name: '北地' },
 
