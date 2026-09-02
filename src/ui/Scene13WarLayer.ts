@@ -7117,7 +7117,9 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
             //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
             //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
-            else if (m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[0]?.length) {
+            // 首批列阵仍在整体推进时，骑兵会用自身高速追上按最慢兵种前移的槽位，随后多帧停在
+            // ARRIVE_EPS 内等槽位继续前移；这不是堵死，不能因 stuckT 改播 idle，避免骑兵静止滑行。
+            else if (!m.march && m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[0]?.length) {
                 set = 'idle';
             }
             else if (m.st === 0) {
