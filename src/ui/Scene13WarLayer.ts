@@ -1484,6 +1484,9 @@ const SIEGE_TOWN_CENTER_SCALE = 0.6;
 function siegeBuildingScale(building: string): number {
     if (building === 'MARKET') return SIEGE_MARKET_SCALE;
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
+    if (building === 'SETTLEMENT') return 0.55;
+    if (building === 'FOLWARK') return 0.55;
+    if (building.startsWith('HUT_') || building.startsWith('YURT_')) return 0.65;
     return SIEGE_CITY_BUILDING_SCALE;
 }
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
@@ -4244,7 +4247,7 @@ export class Scene13WarLayer {
      *  野战双方都布；攻城双方也布（守方守城）；只对普通编制 9 口生效，纯骑 6 口不布。
      *  建筑为 world 层**纯贴图**（无碰撞，不破坏阵型），单帧。
      *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），建筑朝向随机（左右镜像随机）。
-     *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔。
+     *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔。
      *  🔴 [2026-08-22 主人改] 攻城战守方按城等级分时代：大城=帝国 age4（城堡+全建筑）、中城=城堡 age3（城堡+基础+警戒塔）、险要=封建 age2+城堡（要塞，7 封建+警戒塔）、小城=封建 age2（无城堡，7 封建+瞭望塔+警戒塔）。 */
     private applySpawnBuildings(): void {
         const sides: Array<0 | 1> = [0, 1];
@@ -4384,8 +4387,8 @@ export class Scene13WarLayer {
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
                 const st = WALL_GATE_STATS[key];
-                // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；木栅栏 PALISADE 无破损档 → 破墙直接消失
-                const destrAssets = asset.includes('PALISADE') ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
+                // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；木栅栏/篱笆无破损档 → 破墙直接消失
+                const destrAssets = (asset.includes('PALISADE') || asset.includes('FENCE')) ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
                 if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
                 this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets });
             };
@@ -4407,9 +4410,11 @@ export class Scene13WarLayer {
                     extraSprites.push(extra);
                 }
                 // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
-                const rubbleAsset = `${asset}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
-                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                const rubbleAsset = asset.includes('FENCE') ? 'FENCE_WALL_POST' : `${asset}_RUBBLE`;
+                if (!asset.includes('FENCE')) {
+                    this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
+                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                }
                 this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
@@ -4439,14 +4444,15 @@ export class Scene13WarLayer {
             //   （DE 场景道具 b_scen_wall_palisade_fortified，参差尖桩丛，无平切口 → 等距平铺错落叠压）
             //   换成 ARCHAIC_WALL_PALISADE（DE 可玩建筑 b_archaic_wall_palisade，两端平切口 →
             //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
+            // 城寨设为 FENCE 篱笆，小城与游牧为 PALISADE 木栅（2026-09-03 主人定）
             const wallMat = (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
+                : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
-            const wBase = wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`;
-            const gBase = wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`;
-            // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅带材质后缀
-            // 石墙 = _WALL_POST；垛墙 = _WALL_FORTIFIED_POST；木栅栏 = DARK_WALL_PALISADE_POST（ARCHAIC 墙段无 POST 素材，复用 DARK_GATE 同套立柱）
-            const wallPost = wallMat === 'STONE' ? `${style}_WALL_POST`
-                : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`);
+            const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
+            const gBase = wallMat === 'FENCE' ? 'FENCE_GATE' : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
+            // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅/篱笆带材质后缀
+            const wallPost = wallMat === 'FENCE' ? 'FENCE_WALL_POST' : (wallMat === 'STONE' ? `${style}_WALL_POST`
+                : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`));
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
@@ -4480,7 +4486,7 @@ export class Scene13WarLayer {
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
             //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随机三形态（applyRandomCollapseForms）。
             const arrowTowerAsset =
-                this.defenderCityType === 'small_city' ? `${style}_TOWER_AGE2`
+                (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade') ? `${style}_TOWER_AGE2`
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
                 : `${style}_TOWER_AGE4`;
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
@@ -4520,6 +4526,18 @@ export class Scene13WarLayer {
                 const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSmall.length; i++) {
                     const sp = place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) });
+                    this.decorSprites.push(sp);
+                    this.trackCityBuilding(sp);
+                }
+                return;
+            }
+            // 城寨（stockade）：大庄园/定居点/棚屋A~G/蒙古包A~D 随机9个（2026-09-03 主人定）
+            if (this.defenderCityType === 'stockade') {
+                const stockadePool = ['FOLWARK', 'SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G', 'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D'];
+                const shuffledBuildings = [...stockadePool].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
+                const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
+                for (let i = 0; i < shuffledSide.length; i++) {
+                    const sp = place(shuffledSide[i], shuffledBuildings[i], { scale: siegeBuildingScale(shuffledBuildings[i]) });
                     this.decorSprites.push(sp);
                     this.trackCityBuilding(sp);
                 }
@@ -4596,7 +4614,7 @@ export class Scene13WarLayer {
             return;
         }
 
-        // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 哨站 + 1 瞭望塔
+        // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔
         if (this.sideCulture[f] === 'STEPPE') {
             placeYurtCamp();
             return;
@@ -4605,7 +4623,9 @@ export class Scene13WarLayer {
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
         for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
-        this.decorSprites.push(place(shuffledSpawns[7], 'OUTPOST'));
+        // 🔴 [2026-09-03 主人改] 哨站(OUTPOST)换成强化哨站（FORTIFIED_OUTPOST = DE b_archaic_fortified_outpost_age1）。
+        //    强化哨站是哨站的加固升级版（能攻击），不是警戒塔/防卫塔（TOWER_AGE3）。
+        this.decorSprites.push(place(shuffledSpawns[7], 'FORTIFIED_OUTPOST'));
         this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`));
     }
 

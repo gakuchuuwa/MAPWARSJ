@@ -82,6 +82,20 @@ const DE_CASTLE_FALLBACK: Record<string, string> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
+// 城寨建筑池（13 种：大庄园 / 定居点 / 棚屋 A~G / 蒙古包 A~D，随机取 9 种，2026-09-03 主人定）
+const DE_STOCKADE_BUILDING_POOL = [
+    'FOLWARK', 'SETTLEMENT',
+    'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
+    'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
+];
+
+const DE_STOCKADE_SCALES: Record<string, number> = {
+    FOLWARK: 0.38,
+    SETTLEMENT: 0.40,
+    HUT_A: 0.30, HUT_B: 0.30, HUT_C: 0.32, HUT_D: 0.30, HUT_E: 0.30, HUT_F: 0.30, HUT_G: 0.30,
+    YURT_A: 0.30, YURT_B: 0.30, YURT_C: 0.30, YURT_D: 0.30,
+};
+
 // 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
 const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 
@@ -149,7 +163,7 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
 function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion: string | undefined, lat: number, lng: number): string | null {
     if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
     // 小城/关隘/中城/大城都按文化套用 DE 建筑（2026-08-27 扩充大城，帝国时代）
-    if (cityType !== 'small_city' && cityType !== 'pass' && cityType !== 'medium_city' && cityType !== 'big_city') return null;
+    if (cityType !== 'small_city' && cityType !== 'stockade' && cityType !== 'pass' && cityType !== 'medium_city' && cityType !== 'big_city') return null;
     const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
     return REGION_TO_DE_STYLE[region] ?? null;
 }
@@ -231,6 +245,34 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
         pctY: 75.9,
         widthFactor: 0.34,
         path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png', // 另一朝向双塔木城门（主人 2026-08-26 指定，弃正南 SE 款）
+    },
+};
+
+// 篱笆部件锚点（提取自 DE s_archaic_fence 经典编织木条/竹篾篱笆）
+const DE_FENCE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
+    NE: {
+        pctX: 89.3,
+        pctY: 63.9,
+        widthFactor: 0.15,
+        path: '/SUCAI_BUILDING/FENCE_WALL_NE/preview.png',
+    },
+    SE: {
+        pctX: 89.3,
+        pctY: 91.7,
+        widthFactor: 0.15,
+        path: '/SUCAI_BUILDING/FENCE_WALL_SE/preview.png',
+    },
+    POST: {
+        pctX: 41.7,
+        pctY: 70.5,
+        widthFactor: 0.08,
+        path: '/SUCAI_BUILDING/FENCE_WALL_POST/preview.png',
+    },
+    GATE: {
+        pctX: 50.0,
+        pctY: 82.1,
+        widthFactor: 0.26,
+        path: '/SUCAI_BUILDING/FENCE_GATE_NE/preview.png',
     },
 };
 
@@ -552,6 +594,81 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const zIndex = Math.round(100 + w.y);
         const pieceW = baseSize * anchor.widthFactor;
         // 镜像段：素材 anchor 翻转后落在 (100-pctX)%，故 translate 用 (100-pctX) 对齐，再 scaleX(-1)
+        const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
+        const flip = w.flipX ? ' scaleX(-1)' : '';
+
+        parts.push(
+            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
+        );
+    });
+
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
+
+/** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，硬木栅栏围墙）
+ *  2026-09-03 主人定 */
+function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: string): string {
+    const rnd = deMulberry32(deHashString(cityId));
+    const pool = [...DE_STOCKADE_BUILDING_POOL];
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const ring = pool.slice(0, 9);
+    const rotation = rnd() * 360;
+
+    // 容器尺寸（紧凑包裹闭合围墙与木大门）
+    const W = baseSize * 2.3;
+    const H = baseSize * 2.0;
+
+    const parts: string[] = [];
+
+    // 中间 1 个建筑（随机选，居中）+ 自然地基
+    const centerB = ring[0];
+    const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.35) * 1.15;
+    const centerGroundW = centerW * 2.3;
+    const centerGroundH = centerGroundW * 0.58;
+    const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
+    parts.push(
+        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+    );
+    parts.push(
+        `<img src="/SUCAI_BUILDING/${centerB}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+    );
+
+    // 周围 8 个扇区随机散布（每建筑一个 45° 扇区，角度+半径双重扰动）
+    const surround = ring.slice(1);
+    surround.forEach((b, i) => {
+        const baseAngle = rotation + i * (360 / surround.length);
+        const angleJitter = (rnd() * 30 - 15);
+        const angle = (baseAngle + angleJitter) * Math.PI / 180;
+        const r = (0.32 + rnd() * 0.10) * baseSize;
+        const x = Math.cos(angle) * r;
+        const y = Math.sin(angle) * r * 0.58;
+        const bW = baseSize * (DE_STOCKADE_SCALES[b] || 0.30);
+        const zIndex = Math.round(100 + y);
+        const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
+
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${b}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
+    });
+
+    // 严密咬合的篱笆围墙与篱笆门
+    const wallPieces = computePalisadeWallAndGate(baseSize);
+    if (rnd() < 0.5) {
+        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+    }
+    wallPieces.forEach((w) => {
+        const anchor = DE_FENCE_ANCHORS[w.type];
+        const zIndex = Math.round(100 + w.y);
+        const pieceW = baseSize * anchor.widthFactor;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
 
@@ -1774,6 +1891,7 @@ export class TerritorySystem {
                 break;
             case 'pass':
             case 'small_city':
+            case 'stockade':   // 城寨与小城同尺寸
                 baseSize = 100;
                 break;
             default:
@@ -1861,7 +1979,9 @@ export class TerritorySystem {
                                       ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
                                       : city.type === 'pass'
                                           ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, city.mirror)
-                                          : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
+                                          : city.type === 'stockade'
+                                              ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
+                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;

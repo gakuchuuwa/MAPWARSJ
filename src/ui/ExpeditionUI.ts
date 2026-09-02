@@ -220,7 +220,7 @@ export class ExpeditionUI {
         }
 
         // 每个领头势力取一座城：优先首都 → 大城 → 中城 → 小城 → 关隘
-        const CITY_TYPE_RANK: Record<string, number> = { big_city: 1, medium_city: 2, small_city: 3, pass: 4 };
+        const CITY_TYPE_RANK: Record<string, number> = { big_city: 1, medium_city: 2, small_city: 3, pass: 4, stockade: 5 };
         const out: { city: ExpeditionCity; region: RegionType }[] = [];
         for (const fid of leaders) {
             const factionCities = allCities.filter(c => c.factionId === fid);

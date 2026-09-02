@@ -437,7 +437,7 @@ export class SiegeEffectRenderer {
         const smallCityTypes = [
             'pass', 'mountain_pass', 'north_mountain_pass', 'chuan_mountain_pass',
             'south_mountain_pass', 'hanling_mountain_pass', 'hanfu_small_city',
-            'hanhuang_small_city', 'hanling_small_city', 'west_small_city', 'small_city',
+            'hanhuang_small_city', 'hanling_small_city', 'west_small_city', 'small_city', 'stockade',
             'nanping_pass', 'huangping_pass', 'beiping_pass', 'xiyu_ping_pass',
             'grassland_fortress', 'western_fortress', 'tibetan_fortress', 'huangdukou',
         ];

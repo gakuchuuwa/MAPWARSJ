@@ -5,7 +5,7 @@ export function rollSessionCityMirror(type: CityType, dataMirror?: boolean): boo
     if (type === 'pass') {
         return !!dataMirror;
     }
-    if (type === 'big_city' || type === 'medium_city' || type === 'small_city') {
+    if (type === 'big_city' || type === 'medium_city' || type === 'small_city' || type === 'stockade') {
         return Math.random() < 0.5;
     }
     return !!dataMirror;

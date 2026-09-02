@@ -93,7 +93,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 远征技能（非战略技能；远征系统专用，禁止混入战略技能） ──
 
-    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'expedition', note: '【远征技能】50% 概率绕过 small_city ZOC（远征机制专用，非战略技能）' },
+    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'expedition', note: '【远征技能】50% 概率绕过 small_city / stockade 的 ZOC（远征机制专用，非战略技能）' },
 
     str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', category: 'speed', note: '胜后休整置 0（造势）' },
 
@@ -101,7 +101,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'march_attrition_immunity', magnitude: 1, engineStatus: 'ready', category: 'supply', note: '行军减兵全免（均势）' },
 
-    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0, engineStatus: 'ready', category: 'supply', postBattlePctByCityType: { pass: 0.01, small_city: 0.02, medium_city: 0.03, big_city: 0.04 }, note: '攻城胜后按城型补兵（逆势·以战养战）' },
+    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0, engineStatus: 'ready', category: 'supply', postBattlePctByCityType: { stockade: 0.01, pass: 0.01, small_city: 0.02, medium_city: 0.03, big_city: 0.04 }, note: '攻城胜后按城型补兵（逆势·以战养战）' },
 
     // str_28 已退役（2026-07-31）：原「调兵遣将（征兵×1.1）」已被 str_29 调兵遣将（过城补兵100%）取代
 

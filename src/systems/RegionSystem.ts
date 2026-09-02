@@ -1009,6 +1009,9 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
     } else if (city.type === 'pass') {
         scale = 'pass';
     } else {
+        // 小城 + 城寨都走 small 图。
+        // 🔴 [2026-09-03 主人定] 城寨**暂时复用本区小城图**，等专属立绘出来再给 STYLE_MAP 加第 5 档
+        //    （命名建议 <区名>_zhai.png）。在那之前城寨和小城长得一样，是有意为之，不是漏配。
         scale = 'small';
     }
 

@@ -132,6 +132,7 @@ export class VectorRoadEditor implements IEditor {
         medium_city: 0.95,
         pass:        1.0,
         small_city:  1.0,
+        stockade:    1.0,
     };
     private static readonly REGION_CENTER_WEIGHT = 0.9;
     private static readonly MAX_CONNECTION_DIST_KM = 500;

@@ -1,0 +1,9 @@
+{
+  "name": "FORTIFIED_OUTPOST",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 172,
+  "anchor_x": 108,
+  "anchor_y": 148,
+  "sld_source": "b_archaic_fortified_outpost_age1"
+}
