@@ -1024,7 +1024,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'sashan': 'city_feiluzhabade',
     'ailan': 'city_susa',
     'safawei_d': 'city_yisifahan',
-    'sumeier': 'city_wuluke',
+'sumeier': 'city_wuluke',
     'ayoubu': 'city_alepo',
     'aosiruowen': 'city_aidesa',
     'kesa': 'city_daerban',

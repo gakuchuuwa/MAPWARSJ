@@ -168,9 +168,10 @@ function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion
     return REGION_TO_DE_STYLE[region] ?? null;
 }
 
-/** 草原营地（YURT 特例）：逐水草而居——无地基/无石路/无栅栏，参照战斗模式。
- *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。 */
-function buildYurtCampHtml(baseSize: number, cityId: string): string {
+/** 草原营地（YURT 特例）：逐水草而居——无地基/无石路。
+ *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。
+ *  2026-09-03 主人定：草原**大城/中城**围一圈硬木栅栏（fence=true，同战术 PALISADE），小城/城寨/关隘仍无栅栏（纯游牧驻牧）。 */
+function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): string {
     const rnd = deMulberry32(deHashString(cityId));
     const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L']; // 8 蒙古包全用满（不剔，与战术一致）
     const TOWER = 'TOWER';
@@ -180,7 +181,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
         [items[i], items[j]] = [items[j], items[i]];
     }
     const rotation = rnd() * 360;
-    const W = baseSize * 2.0, H = baseSize * 1.7;
+    const W = baseSize * (fence ? 2.3 : 2.0), H = baseSize * (fence ? 2.0 : 1.7);
     const parts: string[] = [];
     const srcOf = (k: string) => k === TOWER ? '/SUCAI_BUILDING/ASIA_TOWER_AGE2/preview.png' : `/SUCAI_BUILDING/${k}/preview.png`;
     const sizeOf = (k: string, center: boolean) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
@@ -215,6 +216,24 @@ function buildYurtCampHtml(baseSize: number, cityId: string): string {
         );
         parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
+
+    // 2026-09-03 主人定：大城/中城围一圈硬木栅栏（同战术 PALISADE）——computePalisadeWallAndGate + DE_PALISADE_ANCHORS（与小城共源）
+    if (fence) {
+        const wallPieces = computePalisadeWallAndGate(baseSize);
+        if (rnd() < 0.5) {
+            for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+        }
+        wallPieces.forEach((w) => {
+            const anchor = DE_PALISADE_ANCHORS[w.type];
+            const zIndex = Math.round(100 + w.y);
+            const pieceW = baseSize * anchor.widthFactor;
+            const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
+            const flip = w.flipX ? ' scaleX(-1)' : '';
+            parts.push(
+                `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />`
+            );
+        });
+    }
 
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
@@ -753,7 +772,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     // 12 种城堡建筑随机洗牌，取前 9（中1+周8）
     const ring = [...DE_MEDIUM_CITY_POOL];
@@ -834,7 +853,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
 // 大城帝国时代建筑渲染（2026-08-27 主人定「大城全部采用帝国时代建筑」：城镇中心/市场/大学用 AGE4，其余 AGE3；11 取 9 中1+周8 + 石墙外扩）
 function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     // [2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有：
     //   城镇中心固定居中（帝王城市地标）+ 市场/大学 + 6 种 AGE3 随机分布周围 8（共 9 = 中1+周8）

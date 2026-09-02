@@ -4256,9 +4256,10 @@ export class Scene13WarLayer {
 
     private applyBuildingsForSide(f: 0 | 1): void {
         const side = this.spawns.filter((s) => s.f === f);
-        // 攻击方（攻城/野战）与防守方（野战）：在最前排出兵口营地前铺一道完整木桩拒马线。
-        // 攻城守方有城墙，不摆。
-        if (!(this.battleType === 'siege' && f === 1) && side.length > 0) {
+        // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)守方**都在最前排营地前铺一道木桩拒马线。
+        // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
+        const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade';
+        if (!skipBarricade && side.length > 0) {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
             const isAttacker = f === 0;
             const frontX = isAttacker
@@ -4470,8 +4471,11 @@ export class Scene13WarLayer {
 
             // 2. 正面城墙：整排连续垂直主城墙（2026-08-22 主人定：正面中央是城墙，城门只留北翼/南翼 2 座）
             //    正面墙段 linked=true（参与「一处破 → 前排全倒」联动）
-            for (let i = -8.5; i <= 8.5; i += 1.0) {
-                placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL', true);
+            //    主人 2026-09-03：城寨(stockade)只换**前排**——正面不铺篱笆墙（改拒马线，见 applyBuildingsForSide），两侧篱笆保留
+            if (this.defenderCityType !== 'stockade') {
+                for (let i = -8.5; i <= 8.5; i += 1.0) {
+                    placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL', true);
+                }
             }
 
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
@@ -4488,8 +4492,13 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
             //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随机三形态（applyRandomCollapseForms）。
+            // 主人 2026-09-03：草原(STEPPE)游牧不筑石塔——箭塔统一用亚洲木质瞭望塔(ASIA_TOWER)，与蒙古包/亚洲瞭望塔配套（弃 CEAS 石构）
             const arrowTowerAsset =
-                (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade') ? `${style}_TOWER_AGE2`
+                (this.sideCulture[1] === 'STEPPE')
+                    ? (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade') ? 'ASIA_TOWER_AGE2'
+                    : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'ASIA_TOWER_AGE3'
+                    : 'ASIA_TOWER_AGE4'
+                : (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade') ? `${style}_TOWER_AGE2`
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? `${style}_TOWER_AGE3`
                 : `${style}_TOWER_AGE4`;
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
@@ -4505,9 +4514,12 @@ export class Scene13WarLayer {
                 : { range: 320, reload: 2.2, atk: 5 };   // 瞭望箭塔（DE 攻 5）
             const towerX = wallFrontX + 60;                  // 城内一侧，贴近正面主城墙
             const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
-            for (const frac of towerYFrac) {
+            // 主人 2026-09-03：城寨(stockade) 4 箭塔 → 2 强化哨塔(FORTIFIED_OUTPOST) + 2 瞭望箭塔；其余城等级 4 座全瞭望箭塔
+            const isStockadeTower = this.defenderCityType === 'stockade';
+            towerYFrac.forEach((frac, i) => {
                 const ty = topWallY + (botWallY - topWallY) * frac;
-                const sprite = place({ x: towerX, y: ty }, arrowTowerAsset, { z: 1, scale: SIEGE_CITY_BUILDING_SCALE });
+                const towerAsset = (isStockadeTower && (i === 0 || i === 3)) ? 'FORTIFIED_OUTPOST' : arrowTowerAsset;
+                const sprite = place({ x: towerX, y: ty }, towerAsset, { z: 1, scale: SIEGE_CITY_BUILDING_SCALE });
                 this.decorSprites.push(sprite);
                 this.arrowTowers.push({
                     sprite, x: towerX, y: ty,
@@ -4516,7 +4528,7 @@ export class Scene13WarLayer {
                     rubbleAsset: towerRubble,
                     down: false,
                 });
-            }
+            });
 
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
