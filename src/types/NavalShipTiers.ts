@@ -178,6 +178,7 @@ const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     //    判据看**势力**不看城池 note，别再按 note 里的「殖民」字样配船（2026-09-02 已撤销一次）。
     yinggelan: 'WAR_HULK',         // 英格兰·亨利五世（原 GERMANIC→HULK 柯克货船，错；应英王柯克战船：百年战争斯勒伊斯海战）
     kanpaniya: 'WAR_GALLEY',       // 那不勒斯·安茹（原 LATIN→HULK 北海柯克货船，错；应地中海桨帆战船：意大利南部地中海港，安茹王朝海军）
+    osman: 'WAR_GALLEY',           // 奥斯曼·穆罕默德二世：15世纪地中海桨帆舰队
 };
 
 export function getCultureNavalShip(region?: string | null, factionId?: string | null): NavalShipAssetId {
