@@ -5278,7 +5278,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/GERMANIC/batawei_xiweilisi.png": {
-            "scale": 1.16,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 20
         },
@@ -7593,9 +7593,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/GERMANIC/yinggelan_hengliwushi.png": {
-            "scale": 1.06,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 22
+            "offsetY": 19
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_117.png": {
             "scale": 1.21,
