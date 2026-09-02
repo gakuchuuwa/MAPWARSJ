@@ -4887,57 +4887,62 @@ export class Scene13WarLayer {
         }
     }
 
-    /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪 */
+    /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪与水花 */
     private renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
-        const waterPatches = this.decorPatches.filter((p) => p.isWater && p.bbox);
-        if (waterPatches.length === 0) return;
+        const isWater = this.environmentPlan?.isWater;
+        if (!isWater) return;
 
         ctx.save();
-        ctx.lineWidth = 1.5;
 
-        // 1. 活人涉水移动涟漪
+        // 1. 活人涉水过河：产生双重交错向外荡漾扩散的 2:1 等距椭圆水圈与涉水激浪微光
         for (let i = 0; i < this.men.length; i++) {
             const m = this.men[i];
-            let inWater = false;
-            for (const p of waterPatches) {
-                const b = p.bbox!;
-                if (m.x >= b.x && m.x <= b.x + b.w && m.y >= b.y && m.y <= b.y + b.h) {
-                    inWater = true;
-                    break;
-                }
-            }
-            if (!inWater) continue;
+            if (m.hp <= 0) continue;
+            if (!isWater(m.x, m.y)) continue;
 
             const drawY = m.y - this.elevationLiftAt(m.x, m.y);
-            const cycle = (t * 1.8 + (i % 7) * 0.4) % 1.0;
-            const r = 4 + cycle * 12;
-            const a = (1 - cycle) * 0.36;
+            
+            // 双层同心外扩涟漪
+            const cycle1 = (t * 1.6 + (i * 0.17)) % 1.0;
+            const cycle2 = (cycle1 + 0.5) % 1.0;
 
-            ctx.strokeStyle = `rgba(220, 242, 255, ${a.toFixed(2)})`;
+            const r1 = 3 + cycle1 * 14;
+            const a1 = (1 - cycle1) * 0.42;
+            const r2 = 3 + cycle2 * 14;
+            const a2 = (1 - cycle2) * 0.42;
+
+            // 绘制第 1 圈外扩水波
+            ctx.lineWidth = 1.6;
+            ctx.strokeStyle = `rgba(220, 245, 255, ${a1.toFixed(2)})`;
             ctx.beginPath();
-            ctx.ellipse(m.x, drawY + 2, r, r * 0.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(m.x, drawY + 1, r1, r1 * 0.5, 0, 0, Math.PI * 2);
             ctx.stroke();
+
+            // 绘制第 2 圈外扩水波
+            ctx.strokeStyle = `rgba(180, 230, 255, ${a2.toFixed(2)})`;
+            ctx.beginPath();
+            ctx.ellipse(m.x, drawY + 1, r2, r2 * 0.5, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 脚下涉水微小水花泛光
+            ctx.fillStyle = `rgba(255, 255, 255, ${((1 - cycle1) * 0.32).toFixed(2)})`;
+            ctx.beginPath();
+            ctx.ellipse(m.x, drawY + 2, 2.5, 1.2, 0, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         // 2. 阵亡落水尸体（微弱静水缓波涟漪）
         for (let i = 0; i < Math.min(this.corpses.length, 30); i++) {
             const c = this.corpses[i];
-            let inWater = false;
-            for (const p of waterPatches) {
-                const b = p.bbox!;
-                if (c.x >= b.x && c.x <= b.x + b.w && c.y >= b.y && c.y <= b.y + b.h) {
-                    inWater = true;
-                    break;
-                }
-            }
-            if (!inWater) continue;
+            if (!isWater(c.x, c.y)) continue;
 
             const drawY = c.y - this.elevationLiftAt(c.x, c.y);
-            const cycle = (t * 0.8 + (i % 5) * 0.5) % 1.0;
-            const r = 6 + cycle * 8;
-            const a = (1 - cycle) * 0.22;
+            const cycle = (t * 0.8 + (i * 0.25)) % 1.0;
+            const r = 5 + cycle * 10;
+            const a = (1 - cycle) * 0.25;
 
-            ctx.strokeStyle = `rgba(200, 230, 255, ${a.toFixed(2)})`;
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = `rgba(200, 235, 255, ${a.toFixed(2)})`;
             ctx.beginPath();
             ctx.ellipse(c.x, drawY, r, r * 0.5, 0, 0, Math.PI * 2);
             ctx.stroke();

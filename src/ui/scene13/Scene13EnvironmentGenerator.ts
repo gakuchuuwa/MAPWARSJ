@@ -1368,7 +1368,8 @@ function buildRiver(
     }
     return (px: number, py: number): boolean => {
         for (let k = 0; k <= numSamplePts; k += 2) {
-            if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW + 4) return true;
+            const rp = riverPts[k];
+            if (Math.hypot(px - rp.x, (py - rp.y) * 1.5) < rp.wW_shallow + 6) return true;
         }
         return false;
     };
