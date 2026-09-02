@@ -36907,26 +36907,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "贝雷尼斯-麦加",
-                type: "road",
-                id: "road_city_beileinisi_city_maijia_1785192087529",
-                startConnection: "city_beileinisi",
-                endConnection: "city_maijia"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [35.48, 23.91],
-                    [37.64, 22.655],
-                    [38.72, 22.0275],
-                    [39.17724609375001, 21.506740872957945],
-                    [39.8, 21.4],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "伊斯法罕-雷伊",
                 type: "road",
                 id: "road_city_yisifahan_city_leiyi_1785192327789",
@@ -49496,37 +49476,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [94.790692, 27.281459],
                     [94.852558, 27.330952],
                     [94.8889, 27.479],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "麦加-阿克苏姆",
-                type: "road",
-                id: "road_city_maijia_city_aksum_1787639929629",
-                startConnection: "city_maijia",
-                endConnection: "city_aksum"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [39.8, 21.4],
-                    [39.61532592773438, 20.961039029694465],
-                    [39.39559936523438, 20.841759659476],
-                    [39.53, 19.5825],
-                    [39.26, 17.765],
-                    [39.74716186523438, 15.753717510761323],
-                    [39.11682128906251, 15.424456749107705],
-                    [38.87786865234376, 15.2371018694967],
-                    [38.792037963867195, 14.878412129333869],
-                    [38.84765625000001, 14.695888137975034],
-                    [38.76251220703126, 14.533811736691186],
-                    [38.80439758300782, 14.339677683645872],
-                    [38.84628295898438, 14.262170100439375],
-                    [38.86722564697266, 14.223416308836127],
-                    [38.888168334960945, 14.184662517232878],
-                    [38.72, 14.13],
                 ]
             }
         },

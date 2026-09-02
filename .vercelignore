@@ -67,3 +67,21 @@ close_cities_report.json
 # 但 vite build 会把 public/ 整个复制进 dist —— 28.8MB 白占部署体积。
 # 只排除部署，本地文件保留（转码参数以后要回调时还得用它们）。
 public/sfx/*.WAV
+
+# ===== 2026-09-02 修复 CLI 单文件 10MB 上限（Request body too large）=====
+# 本地道路编辑器矢量源数据（已被 .gitignore 的 *.geojson 排除，但 CLI 只认 .vercelignore，
+# 不认 .gitignore —— 这两个 47MB/28MB 会照样上传，顶爆 10MB 单文件上限）
+public/assets/roads_filtered.geojson
+public/assets/roads_osm_test.geojson
+# 开发工具/缓存/工作树目录（CLI 上传会带进部署；.worktrees 是 git worktree 旧备份 2.9GB，
+# .claude 是 Claude Code 缓存 1.6GB，含大量 >10MB 文件）
+.worktrees
+.claude
+.cache
+.tmp_chrome_profile
+claudedocs
+.cursor
+.gemini
+.hermes
+.agents
+.vscode
