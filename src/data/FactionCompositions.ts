@@ -9034,13 +9034,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "walajiyia": {
-        legionName: "东欧军团",
+        legionName: "瓦拉几亚军团",
         legionType: "region",
         formationMode: "crane_wing",
         slots: [
-            { type: "composite_bowman", count: 3 },
+            { type: "champion", count: 2 },
             { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
+            { type: "cav_archer", count: 3 },
         ],
     },
     "chu": {
