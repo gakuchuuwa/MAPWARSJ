@@ -5570,12 +5570,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "jiazini": {
-        legionName: "伊朗军团",
-        formationMode: "crane_wing",
+        legionName: "波斯军团",
+        legionType: "region",
+        formationMode: "fish_scale",
         slots: [
-            { type: "elite_composite_bowman", count: 4 },
-            { type: "eastern_swordsman", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "elite_war_elephant", count: 3 },
+            { type: "savar", count: 4 },
+            { type: "cav_archer", count: 2 },
         ],
     },
     "jibin": {

@@ -187,7 +187,7 @@ export class CityAssetManager {
         'chaozhou_d': '潮',
         'jiaodong': '胶东',
 'jibei': '泰山',
-        'wusun': '乌孙',
+'wusun': '乌孙',
 'dayuan': '大宛',
         'gouding': '句町',
 'dongxian': '东海',

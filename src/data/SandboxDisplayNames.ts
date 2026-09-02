@@ -334,7 +334,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'gongsun_d': '辽东',
     'jiaodong': '胶东',
 'jibei': '泰山',
-    'wusun': '乌孙',
+'wusun': '乌孙',
 'dayuan': '大宛',
     'gouding': '句町',
 'dongxian': '东海',

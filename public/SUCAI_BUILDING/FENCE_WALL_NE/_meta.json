@@ -1,9 +1,9 @@
 {
   "name": "FENCE_WALL_NE",
   "frames": 1,
-  "box_w": 56,
-  "box_h": 72,
-  "anchor_x": 50,
-  "anchor_y": 46,
-  "sld_source": "s_archaic_fence"
+  "box_w": 72,
+  "box_h": 60,
+  "anchor_x": 42,
+  "anchor_y": 34,
+  "sld_source": "b_scen_fence"
 }

@@ -450,6 +450,15 @@ export class Army implements IBattleUnit {
     public wasDisbanded: boolean = false;
     /** 撤退意图锁：兵力 < DISBAND_TROOP_THRESHOLD 后锁定，途中补兵不掉头，抵家解散或老家沦陷才解除 */
     public isRetreatingHome: boolean = false;
+    /**
+     * 残兵判定闸：只有**刚打完一仗**才置 true，行为树 IsWeakLegion 判过即消耗掉。
+     *
+     * 🔴 [2026-09-03 主人定] 「5000 人以下回城」是**战后**标准，**行军中不算**。
+     *    原来 IsWeakLegion 直接看 getTroops() < 5000，不问兵是怎么少的 —— 行军减兵
+     *    （MarchAttritionSystem，每 15 秒一跳，对所有军团一视同仁）把兵磨到 5000 以下
+     *    同样会让军团掉头回家解散。有了这个闸，兵力阈值一场仗只判一次，判完就关。
+     */
+    public weakCheckAfterBattle: boolean = false;
 
     // [IBattleUnit Implementation]
     public get factionId(): string {
@@ -1297,6 +1306,8 @@ export class Army implements IBattleUnit {
             // 战败：只清战斗态。即将 destroy 留 15s 尸体，禁止 resume（会触发隐身/清档）
             this.clearExternalCombatState();
         }
+        // 开一次残兵判定闸：兵力阈值只在战后判，行为树判完即关（见 weakCheckAfterBattle）
+        this.weakCheckAfterBattle = true;
     };
 
     // [IBattleUnit Implementation]

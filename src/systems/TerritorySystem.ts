@@ -248,31 +248,38 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
     },
 };
 
-// 篱笆部件锚点（提取自 DE s_archaic_fence 经典编织木条/竹篾篱笆）
+// 篱笆部件锚点（2026-09-03 主人定：城寨像小城一样围一圈，用 DE b_scen_fence 真·编织篱笆）
 const DE_FENCE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
     NE: {
-        pctX: 89.3,
-        pctY: 63.9,
-        widthFactor: 0.15,
+        pctX: 58.3,
+        pctY: 56.7,
+        widthFactor: 0.13,
         path: '/SUCAI_BUILDING/FENCE_WALL_NE/preview.png',
     },
     SE: {
-        pctX: 89.3,
-        pctY: 91.7,
-        widthFactor: 0.15,
+        pctX: 69.4,
+        pctY: 65.6,
+        widthFactor: 0.13,
         path: '/SUCAI_BUILDING/FENCE_WALL_SE/preview.png',
     },
     POST: {
-        pctX: 41.7,
-        pctY: 70.5,
+        pctX: 68.8,
+        pctY: 58.3,
         widthFactor: 0.08,
         path: '/SUCAI_BUILDING/FENCE_WALL_POST/preview.png',
     },
     GATE: {
-        pctX: 50.0,
-        pctY: 82.1,
+        pctX: 53.7,
+        pctY: 59.1,
         widthFactor: 0.26,
         path: '/SUCAI_BUILDING/FENCE_GATE_NE/preview.png',
+    },
+    // L形转角件（DE b_scen_fence f2）：无缝连接两段篱笆，放在四角替代单柱 f4
+    CORNER: {
+        pctX: 54.0,
+        pctY: 58.3,
+        widthFactor: 0.18,
+        path: '/SUCAI_BUILDING/FENCE_CORNER/preview.png',
     },
 };
 
@@ -457,7 +464,7 @@ const DE_FORTIFIED_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: numbe
 interface PalisadeGridPiece {
     x: number;
     y: number;
-    type: 'NE' | 'SE' | 'POST' | 'GATE';
+    type: 'NE' | 'SE' | 'POST' | 'GATE' | 'CORNER';
     /** 等轴镜像：素材只有右上(NE)/右下(SE)两种斜段，东南边/西南边须 scaleX(-1) 翻转成左下/左上段 */
     flipX?: boolean;
 }
@@ -527,7 +534,7 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     return pieces;
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string): string {
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_POOL];
@@ -582,15 +589,17 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         );
     });
 
-    // 3. 严密咬合的硬木栅栏围墙与正南木城门（基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合）
+    // 3. 严密咬合的围墙：默认硬木栅栏（木城门）；中原/北方/江南小城用中城同款石墙（主人 2026-09-03）
+    //    （石墙沿用中城 DE_STONE_ANCHORS_BY_STYLE，锚点按风格独立、同 style='ASIA'）
     const wallPieces = computePalisadeWallAndGate(baseSize);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
+    const stoneAnchors = DE_STONE_ANCHORS_BY_STYLE[style];
     wallPieces.forEach((w) => {
-        const anchor = DE_PALISADE_ANCHORS[w.type];
+        const anchor = (useStoneWall && stoneAnchors) ? stoneAnchors[w.type] : DE_PALISADE_ANCHORS[w.type];
         const zIndex = Math.round(100 + w.y);
         const pieceW = baseSize * anchor.widthFactor;
         // 镜像段：素材 anchor 翻转后落在 (100-pctX)%，故 translate 用 (100-pctX) 对齐，再 scaleX(-1)
@@ -605,8 +614,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
-/** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，硬木栅栏围墙）
- *  2026-09-03 主人定 */
+/** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，DE 编织篱笆围墙）
+ *  2026-09-03 主人定 · 围墙用 DE 细编篱笆（s_archaic_fence），2026-09-03 按 DE 标准重新解析 box/anchor */
 function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: string): string {
     const rnd = deMulberry32(deHashString(cityId));
     const pool = [...DE_STOCKADE_BUILDING_POOL];
@@ -660,8 +669,9 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         );
     });
 
-    // 严密咬合的篱笆围墙与篱笆门
+    // 严密咬合的篱笆围墙与篱笆门：四角用 DE 的 L 形转角件（FENCE_CORNER）无缝连接，不是单柱 f4
     const wallPieces = computePalisadeWallAndGate(baseSize);
+    for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -1898,6 +1908,10 @@ export class TerritorySystem {
                 baseSize = 100;
         }
 
+        // [2026-09-03 主人] 中原/北方/江南小城用中城同款石墙（默认木栅）
+        const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
+        const useStoneWall = cityRegion === 'CENTRAL' || cityRegion === 'NORTH' || cityRegion === 'JIANGNAN';
+
         // [2026-08-26 第三步] 小城/关隘按文化区套用 DE 建筑组合（非小城返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng);
 
@@ -1981,7 +1995,7 @@ export class TerritorySystem {
                                           ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, city.mirror)
                                           : city.type === 'stockade'
                                               ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
-                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle))
+                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;

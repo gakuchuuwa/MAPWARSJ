@@ -1,9 +1,9 @@
 {
-  "name": "FENCE_WALL_POST",
+  "name": "FENCE_CORNER",
   "frames": 1,
-  "box_w": 32,
+  "box_w": 100,
   "box_h": 72,
-  "anchor_x": 22,
+  "anchor_x": 54,
   "anchor_y": 42,
   "sld_source": "b_scen_fence"
 }
