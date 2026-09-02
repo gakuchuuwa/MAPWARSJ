@@ -2411,7 +2411,16 @@ export class LegionPhalanxDrawer {
         //      · 停泊待命 / 攻城转向面城：航迹是旧路线、方向对不上 → 退直线纵队，8-21 那个 bug 不会回来。
         const headVX = Math.cos(flagAng);
         const headVY = Math.sin(flagAng);
-        const activeTrail = (trail && this.trailAlignedWithHeading(trail, headVX, headVY))
+        // 🔴 [2026-09-02 二修「海上移动时后面的船也木棍甩」] 09-02 早上的修复把判据整个换成
+        // trailAlignedWithHeading，治好了海战绕行（ATTACK 丢航迹），却误伤了「行军转弯」：
+        // 旗舰在航线拐弯点急转向时，最新一段航迹还停在旧方向，跟新航向夹角 >45°，被 45° 门槛
+        // 误判成「停泊待命」→ 退回直线纵队 → 整队像木棍甩。而行军(MOVE)的航迹每 16px 实时采样、
+        // 永远新鲜，急转弯也该直接沿航迹（后随船跟着旗舰的弯走，天然蛇形）。
+        // 所以 MOVE 无条件沿航迹；ATTACK/待命仍走 45° 门槛，区分「海战绕行(沿航迹)」vs
+        // 「攻城面城/停泊(航迹是旧路线→退直线纵队)」，08-21 的堆叠 bug 不会回来。
+        const activeTrail = (trail && (
+            state === 'MOVE' || this.trailAlignedWithHeading(trail, headVX, headVY)
+        ))
             ? trail
             : undefined;
         const path = this.buildNavalPath(center, activeTrail);
