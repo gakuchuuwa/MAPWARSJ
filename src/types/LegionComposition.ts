@@ -26,11 +26,11 @@ export const HUAXIA_MIXED_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spear', count: 3 },               // Row 0: 枪步兵
-            { type: 'lancer', count: 1 },              // Row 1 Left: 枪骑兵
-            { type: 'general_cavalry', count: 1 },     // Row 1 Center: 将骑兵
-            { type: 'lancer', count: 1 },              // Row 1 Right: 枪骑兵
-            { type: 'crossbow', count: 3 }             // Row 2: 弩步兵
+            { type: 'pikeman', count: 3 },               // Row 0: 枪步兵
+            { type: 'light_riders', count: 1 },          // Row 1 Left: 枪骑兵
+            { type: 'tiger_rider', count: 1 },           // Row 1 Center: 将骑兵
+            { type: 'light_riders', count: 1 },          // Row 1 Right: 枪骑兵
+            { type: 'crossbowman', count: 3 }            // Row 2: 弩步兵
         ]
     }
 ];
@@ -44,10 +44,10 @@ export const GENERIC_MIXED_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'light_infantry', count: 3 },         // Row 0: 轻步兵
-            { type: 'lancer', count: 1 },                  // Row 1 Left: 枪骑兵
-            { type: 'general_cavalry', count: 1 },         // Row 1 Center: 将骑兵
-            { type: 'lancer', count: 1 },                  // Row 1 Right: 枪骑兵
+            { type: 'swordsman', count: 3 },               // Row 0: 轻步兵
+            { type: 'light_riders', count: 1 },            // Row 1 Left: 枪骑兵
+            { type: 'tiger_rider', count: 1 },             // Row 1 Center: 将骑兵
+            { type: 'light_riders', count: 1 },            // Row 1 Right: 枪骑兵
             { type: 'archer', count: 3 }                   // Row 2: 弓步兵
         ]
     }
@@ -62,11 +62,11 @@ export const HUIHUI_MIXED_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'huaxia_infantry', count: 3 },    // Row 0: 步兵
-            { type: 'huihui_cavalry', count: 1 },     // Row 1 Left: 弓骑兵
-            { type: 'general_cavalry', count: 1 },    // Row 1 Center: 将骑兵
-            { type: 'huihui_cavalry', count: 1 },     // Row 1 Right: 弓骑兵
-            { type: 'archer', count: 3 }               // Row 2: 弓步兵
+            { type: 'halberdier', count: 3 },        // Row 0: 步兵
+            { type: 'cav_archer', count: 1 },        // Row 1 Left: 弓骑兵
+            { type: 'tiger_rider', count: 1 },       // Row 1 Center: 将骑兵
+            { type: 'cav_archer', count: 1 },        // Row 1 Right: 弓骑兵
+            { type: 'archer', count: 3 }             // Row 2: 弓步兵
         ]
     }
 ];
