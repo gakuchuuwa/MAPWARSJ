@@ -25,40 +25,40 @@ export interface CustomFactionLegion {
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 秦国军团·天水/咸阳/长子/武关/骊山/商邑/番禺（司马错 / 白起 / 王翦 / 章邯 / 商鞅 / 赵佗 · 雁行阵 4+3+2：枪兵长 4 + 先秦远程战车 3 + 诸葛弩 2）
-    qin: {
+    "qin": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },                   // Row 0 前排·步兵前锋 = 枪兵长 4人
-            { type: 'war_chariot_ranged', count: 3 },        // Row 1 中排 = 先秦远程战车 3乘
-            { type: 'chukonu', count: 2 },                   // Row 2 后排压阵 = 诸葛弩 2人
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
-    xin: {
+    "xin": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
-    wazhai: {
+    "wazhai": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "nanyue": {
         legionName: "秦国军团",
-        formationMode: "echelon",
+        formationMode: "fish_scale",
         slots: [
-            { type: "kamayuk", count: 4 },
-            { type: "war_chariot_ranged", count: 3 },
-            { type: "chukonu", count: 2 },
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
@@ -72,13 +72,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 晋国·曲沃（先轸 · 晋中军 · 先秦战车大阵 · 雁行阵 4+3+2：长矛前阵 4 + 先秦战车 3 + 劲弩压阵 2）
-    jin: {
+    "jin": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },                   // Row 0 前排坚矛 = 枪兵长 4人（春秋长矛步兵列阵抗线）
-            { type: 'war_chariot_ranged', count: 3 },        // Row 1 中排战车主力 = 先秦远程战车 3乘（晋中军春秋战车核心冲击）
-            { type: 'chukonu', count: 2 },                   // Row 2 后排压阵齐射 = 劲弩手 2人（后排劲弩暴雨抛射）
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 大秦长城军团·高阙塞（蒙恬 · 长城烽火卫 · 鱼鳞阵 4+3+2：虎豹骑 4 + 先秦远程战车 3 + 古典骑射手 2）
@@ -375,13 +375,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_chariot_ranged', count: 2 },
         ],
     },
-    ruo: {
+    "ruo": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     jiaodong: {
@@ -411,13 +411,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'war_chariot_ranged', count: 2 },
         ],
     },
-    shangzhou: {
+    "shangzhou": {
         legionName: "秦国军团",
-        formationMode: 'echelon',
+        formationMode: "fish_scale",
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'chukonu', count: 2 },
+            { type: "white_feather_guard", count: 3 },
+            { type: "chukonu", count: 4 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     ba: {
@@ -1483,12 +1483,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 圣殿骑士团·阿卡（莫莱 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
     "shengdian_qishi": {
-        legionName: "圣殿骑士团军团",
-        formationMode: "fish_scale",
+        legionName: "圣殿骑士军团",
+        formationMode: "triangle",
         slots: [
-            { type: "halberdier", count: 3 },
-            { type: "crusader_knight", count: 3 },
-            { type: "arbalest", count: 2 },
+            { type: "halberdier", count: 2 },
+            { type: "arbalest", count: 3 },
+            { type: "crusader_knight", count: 4 },
         ],
     },
     // 宝剑骑士团·里加（阿尔伯特）
@@ -2567,22 +2567,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 奥斯若恩·埃德萨（鲍德温 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军圣殿骑士 3 + 劲弩手 2）
     "aosiruowen": {
-        legionName: "圣殿骑士团军团",
-        formationMode: "fish_scale",
+        legionName: "圣殿骑士军团",
+        formationMode: "triangle",
         slots: [
-            { type: "halberdier", count: 3 },
-            { type: "crusader_knight", count: 3 },
-            { type: "arbalest", count: 2 },
+            { type: "halberdier", count: 2 },
+            { type: "arbalest", count: 3 },
+            { type: "crusader_knight", count: 4 },
         ],
     },
     // 耶路撒冷王国·阿卡（鲍德温四世 · 耶路撒冷王国军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
     "yelusalengwg": {
-        legionName: "圣殿骑士团军团",
-        formationMode: "fish_scale",
+        legionName: "圣殿骑士军团",
+        formationMode: "triangle",
         slots: [
-            { type: "halberdier", count: 3 },
-            { type: "crusader_knight", count: 3 },
-            { type: "arbalest", count: 2 },
+            { type: "halberdier", count: 2 },
+            { type: "arbalest", count: 3 },
+            { type: "crusader_knight", count: 4 },
         ],
     },
     // 纳巴泰王国·佩特拉（阿雷塔斯 · 纳巴驼骑军团 · 鹤翼阵 2+4+3：火焰骆驼 2 + 骆驼骑兵 4 + 骆驼弓骑 3）
@@ -3447,11 +3447,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "heishui": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "kelie": {
@@ -3609,11 +3609,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "nifuhe": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "muer": {
@@ -3852,11 +3852,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "xianbei": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "jie": {
@@ -3978,11 +3978,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "bohai": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "dangxiang": {
@@ -4212,11 +4212,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "fuyu": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "shule": {
@@ -4302,11 +4302,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "sushen": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "chile": {
@@ -4437,11 +4437,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kakizaki": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "fujiwara": {
@@ -4590,11 +4590,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yingzhou_ying_d": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "erzhu": {
@@ -4932,11 +4932,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "dongdan": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "dali": {
@@ -5022,11 +5022,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "dongxia": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "chagatai": {
@@ -5166,29 +5166,29 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "jianzhou_nvzhen": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "yeren_nvzhen": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "hezhe": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "luchuan": {
@@ -5481,47 +5481,47 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "dajin": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "yizhou": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "yilou": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "wuji": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "mohe": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "shiwei": {
@@ -5535,20 +5535,20 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "huimo": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "mao_wenlong": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "kala": {
@@ -6372,11 +6372,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "nanai": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "anushidgin": {
@@ -6408,11 +6408,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "dawoer": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "tumengken": {
@@ -6453,11 +6453,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "suolun": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "tuva": {
@@ -7309,38 +7309,38 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wure": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "houliao": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "dazhen": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "jilin": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "sunite": {
@@ -7381,11 +7381,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "keerqin": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "xiangxiong": {
@@ -7498,38 +7498,38 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "ewenki": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "dongping": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "maomingan": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "aola": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "bulat": {
@@ -7642,11 +7642,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wangyan": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "tianxiong": {
@@ -8200,11 +8200,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "jilizhou": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "xingxingxia": {
@@ -8398,11 +8398,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "elunchunzu": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "wazu": {
@@ -9054,11 +9054,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "pinghai": {
         legionName: "东北军团",
-        formationMode: "balance_yoke",
+        formationMode: "fish_scale",
         slots: [
+            { type: "iron_pagoda", count: 3 },
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "xianbei_raider", count: 2 },
-            { type: "kipchak", count: 3 },
+            { type: "kipchak", count: 2 },
         ],
     },
     "wenling": {
