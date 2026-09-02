@@ -12,6 +12,7 @@ import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
+import { SPRITE_BASE_H, SPACING_KX, SPACING_KY } from '../../config/LegionSpacing';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 import { NavalPhalanxStateManager, shipCountForTroops, type NavalUnitState } from './NavalPhalanxState';
@@ -276,6 +277,8 @@ export class LegionPhalanxDrawer {
     /** S10DB 多数步兵/弩弓条带行高 64px；长枪、骑兵条带为 84px。绘制时按 64 归一化，避免同 scale 下 84px 素材显小。 */
     private static readonly S10DB_REF_FRAME_H = 64;
 
+    /** 战略地图方阵的尺寸与间距参数：唯一标准见 src/config/LegionSpacing.ts */
+
     /**
      * [2026-08-09 接触距离] 各类编队的**横向占位宽度**（单位：单兵宽，含两端各半个精灵）。
      * 与四支展开分支的子间距一一对应，改子间距务必同步改这里：
@@ -413,7 +416,7 @@ export class LegionPhalanxDrawer {
      * 密集编队（zoom13 战斗场景）的 3×3 格位间距 —— 唯一实现，draw() 与外部对齐都走这里。
      *
      * 格位间距必须由「单兵实际绘制尺寸」推导，不能用估计常数：
-     *   dw = SPRITE_BASE_H * scale * slotScale * (frameH / S10DB_REF_FRAME_H) * (frameW / frameH)
+     *   dw = DENSE_SPRITE_BASE_H * scale * slotScale * (frameH / S10DB_REF_FRAME_H) * (frameW / frameH)
      * 编队占位需含两端各半个精灵，不能只算中心点跨度：
      *   步兵 4×2 交错 横向 3.5×0.75+1 = 3.625 兵宽 ← 最宽
      *   远程 3×3      纵深 2×0.50+1  = 2.00 兵高 ← 最深
@@ -424,7 +427,9 @@ export class LegionPhalanxDrawer {
         scale: number,
         cultureScales: number[] | null,
     ): { x: number; y: number } {
-        const SPRITE_BASE_H = 60;      // 与 draw() 循环内 baseHeight 一致
+        // 13 场景专用基准，与 draw() 循环内 denseFront 分支的 baseHeight 一致。
+        // 🔴 别改名成 SPRITE_BASE_H —— 那是战略地图的导入常量，13 不跟战略地图联动。
+        const DENSE_SPRITE_BASE_H = 60;
         // [2026-08-10 修·编队挤团] 5×2 交错方阵并集宽 = 4.5 列距 + 两端半兵 = 4.375 兵宽
         // （与 getSquadWidthFactor 步兵同源）。原 3.625 是 4×2 时代旧值 → 编队实际宽 > 格距
         // → 相邻编队横向压叠（主人实锤「一上来就重叠/挤成一团」）。
@@ -441,7 +446,7 @@ export class LegionPhalanxDrawer {
         const maxSlotScale = cultureScales && cultureScales.length
             ? Math.max(...cultureScales)
             : 1;
-        const unitH = SPRITE_BASE_H * scale * maxSlotScale
+        const unitH = DENSE_SPRITE_BASE_H * scale * maxSlotScale
             * (refFrameH / LegionPhalanxDrawer.S10DB_REF_FRAME_H);
         const unitW = unitH * (refFrameW / refFrameH);
 
@@ -600,16 +605,14 @@ export class LegionPhalanxDrawer {
                 const fw = dyn ? dyn.fw : (ref ? ref.height : fallbackFrame.fw);
                 const fh = dyn ? dyn.fh : (ref ? ref.height : fallbackFrame.fh);
                 const slotScale = cultureScales?.[i] ?? 1;
-                const unitScale = 60 * scale * slotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
-                w = Math.max(w, fw * unitScale * 0.5);
-                // 所有军团统一采用前中后三排，纵向排距统一收紧。
-                // [2026-09-01 主人：战象前中后偏散/脱节] 0.65 → 0.58：战象行距 130→116px（0.61→0.55 象身），
-                //   战象-步兵连贯不脱节，战象前后仍留 0.45 空隙不穿模（下限 0.47）。全局收紧，步兵同步更密。
-                h = Math.max(h, fh * unitScale * 0.58);
+                // 与 draw() 内单兵绘制口径完全同源：dw = fw × baseHeight×scale×slotScale/64
+                const drawScale = SPRITE_BASE_H
+                    * scale * slotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
+                w = Math.max(w, fw * drawScale * SPACING_KX);
+                h = Math.max(h, fh * drawScale * SPACING_KY);
             }
-            // 只抬不降：与 2026-08-18 的口径一致，小兵种保持原有密集队列
-            spacingX[r] = Math.max(baseSpacingX, w);
-            rowH[r] = Math.max(baseSpacingY, h);
+            spacingX[r] = w || baseSpacingX;
+            rowH[r] = h || baseSpacingY;
         }
 
         // 行距取相邻两行的较大者：谁高听谁的
@@ -1385,10 +1388,8 @@ export class LegionPhalanxDrawer {
         //    分支，逐像素不变（8/9/10 是成品，13 是禁区，这次只动战略地图的观感）。
         const baseHeight = 73; // Standard size for all units
 
-        // [DYNAMIC RATIO]
-        // Do NOT force unitRatio here. We calculate it per-sprite in the loop.
-        // We just need a rough spacing estimation here.
-        // Assuming typical sprite is roughly square-ish or 0.8 ratio.
+        // [DYNAMIC RATIO] 下面这对初值只给 13（denseFront）之外的极端兜底用
+        // （素材元数据全缺时 rowMetrics 会退回它）；正常路径一律被按绘制尺寸算出的间距覆盖。
         const estRatio = 0.8;
         const renderH = baseHeight * scale;
         const estRenderW = renderH * estRatio;
@@ -1411,28 +1412,18 @@ export class LegionPhalanxDrawer {
             spacingX = dense.x;
             spacingY = dense.y;
         } else {
-            // 🔴 [2026-08-18 修·战斗象糊成一坨] 上面那两个间距是**与素材尺寸无关的固定常数**
-            //    （estRatio 0.8 + baseHeight 75 全写死），而单兵**绘制尺寸是按素材帧尺寸走的**
-            //    （DE 路径 dw = frameW × 60×scale/64）。两者不挂钩 → 帧越大的兵种被压得越狠：
-            //      戟兵   48×44  → 画 45×41px，占 30×45px 格 = 横向 1.5 倍重叠（正常的密集队列）
-            //      战斗象 104×144 → 画 97×135px，占**同样** 30×45px 格 = 横向 3.3 / 纵向 3.0 倍
-            //      → 二十头象叠成一整块，象背的鞍布连成一片（主人实锤「东南亚战斗象」）。
-            //    修法：按本兵种真实绘制尺寸给间距加一条**下限，只抬不降**。
-            //    基准取素材参考尺寸 64px 见方的标准兵：它按绘制口径画 60×60px、占 30×45px 格，
-            //    所以占位比 = 横向 0.5、纵向 0.75 —— 代进去正好还原今天的 30/45，现状零改动。
-            //    ⚠️ 别拿上面那个 estRatio(0.8) 推系数：绘制路径根本不用它，用它会算出 37.5 反把
-            //       S10DB 全体撑开。系数只能从**绘制口径**（dw = frameW × 60×scale/64）推。
-            //    效果：≤ 参考尺寸的兵种间距逐像素不变（戟兵算下来 22.5/30.9，都低于现值 30/45），
-            //    超大素材被撑开的倍数正好等于它比标准兵大的倍数 ——
-            //    战斗象 30→48.8 / 45→101.3，压叠比回到 2.0 倍，**与所有其他兵种完全一致**。
+            // 战略地图方阵间距：唯一标准见 SPACING_KX / SPACING_KY —— 间距 = 本兵种绘制尺寸 × 通用系数。
+            // 上面那两个 spacingX/spacingY 初值是与素材无关的估算常数，这里整个覆盖掉，不做 max 兜底。
             const dyn = this.metaDirFor((assets as any).dyn?.IDLE, direction);
             const maxSlotScale = cultureScales && cultureScales.length ? Math.max(...cultureScales) : 1;
-            const unitScale = 60 * scale * maxSlotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
+            const unitScale = SPRITE_BASE_H
+                * scale * maxSlotScale / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
             // DE 有 dyn 元数据 → 用真实帧框；S10DB 无 dyn → 用整图比例推（帧为正方形，宽=高）
             const fw = dyn ? dyn.fw : refSprite.height;
             const fh = dyn ? dyn.fh : refSprite.height;
-            spacingX = Math.max(spacingX, fw * unitScale * 0.5);
-            spacingY = Math.max(spacingY, fh * unitScale * 0.75);
+            // 全团兜底（编成没有分行布局时用），与逐行同一套系数，不设下限
+            spacingX = fw * unitScale * SPACING_KX;
+            spacingY = fh * unitScale * SPACING_KY;
 
             // 🔴 [2026-09-01] 上面这两个是**全团一个**间距（按最大兵种撑开）。混编军团里
             //    最大的那个会把 9 个格位全撑开 —— 孔雀 2 象 + 7 人，人也按象的间距站位（散）。
@@ -1453,10 +1444,6 @@ export class LegionPhalanxDrawer {
                     layoutForRows, slotTypes, spacingX, spacingY, scale, cultureScales, direction,
                     { fw, fh },
                 );
-                if (factionId === 'kongque') {
-                    const KONGQUE_ROW_GAP_SCALE = 0.58 / 0.75;
-                    rowMetric.gapY = rowMetric.gapY.map((gap) => gap * KONGQUE_ROW_GAP_SCALE);
-                }
             }
         }
 
@@ -1835,8 +1822,8 @@ export class LegionPhalanxDrawer {
             scalingFactor *= dynamicScale;
 
             // 战略地图军团兵模：非 13 单兵绘制基准 54 → 58（2026-09-01 主人「军团稍大一点」）；
-            // 13（denseFront）保持 60 不动，13 的对位/前缘半径按 60 算（见 §measure 的 SPRITE_BASE_H）。
-            const baseHeight = denseFront ? 60 : 58;
+            // 13（denseFront）保持 60 不动，13 的对位/前缘半径按 60 算（见 computeDenseSpacing）。
+            const baseHeight = denseFront ? 60 : SPRITE_BASE_H;
             if (dynDir) {
                 // 🔴 DE：统一缩放 s（站立高度 64 参考），hotspot(canvas中心) 对齐单位位置，脚底随动作浮动。
                 const s = baseHeight * scale * scalingFactor / 64;
