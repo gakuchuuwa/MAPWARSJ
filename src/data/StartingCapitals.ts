@@ -782,7 +782,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dongping': 'city_xierka',
 'houliao': 'city_xianping',
 'dazhen': 'city_xupin',
-    'jilin': 'city_kuanchengzi',
+'jilin': 'city_kuanchengzi',
     'sunite': 'city_saihantala',
 'dayuzi': 'city_sailan',
     'keerqin': 'city_daerhan',

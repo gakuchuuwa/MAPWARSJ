@@ -105,13 +105,45 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
         const gameDelta = deltaTime;
         app.timeSystem.update(gameDelta);
         app.cityManager.updateYear(app.timeSystem.getYear());
+        // [2026-09-03 查行军卡] 这条后台心跳路径此前**一个探针都没有**。
+        //   窗口被遮挡/最小化/切到 OBS 时 rAF 被节流，推演全走这里 —— 也就是说
+        //   直播常态很可能就在这条路上，测不到等于白测。与 tickGameAppFrame 同名同源。
+        const dev = import.meta.env.DEV;
         if (app.historicalEventManager) {
-            app.historicalEventManager.updateLegions(gameDelta);
+            if (dev) {
+                perfDoctor.measure('LegionManager.update(行军)',
+                    () => app.historicalEventManager!.updateLegions(gameDelta),
+                    'src/legion/LegionManager.ts:update');
+            } else {
+                app.historicalEventManager.updateLegions(gameDelta);
+            }
             app.historicalEventManager.updateEvents(gameDelta);
         }
-        if (app.combatSystem) app.combatSystem.update(gameDelta);
-        if (app.aiController) app.aiController.update();
-        if (app.recruitmentSystem) app.recruitmentSystem.update(gameDelta);
+        if (app.combatSystem) {
+            if (dev) {
+                perfDoctor.measure('CombatSystem.update(战斗)',
+                    () => app.combatSystem!.update(gameDelta), 'src/combat/CombatSystem.ts:update');
+            } else {
+                app.combatSystem.update(gameDelta);
+            }
+        }
+        if (app.aiController) {
+            if (dev) {
+                perfDoctor.measure('AIController.update', () => app.aiController!.update(),
+                    'src/ai/AIController.ts:update');
+            } else {
+                app.aiController.update();
+            }
+        }
+        if (app.recruitmentSystem) {
+            if (dev) {
+                perfDoctor.measure('RecruitmentSystem.update(募兵)',
+                    () => app.recruitmentSystem!.update(gameDelta),
+                    'src/systems/RecruitmentSystem.ts:update');
+            } else {
+                app.recruitmentSystem.update(gameDelta);
+            }
+        }
     } catch (error) {
         console.error('❌ Background Tick Error:', error);
     }
@@ -144,7 +176,15 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             if (app.historicalEventManager) {
                 perfMonitor.startTimer('historicalEvent');
                 perfMonitor.startTimer('legion');
-                app.historicalEventManager.updateLegions(gameDelta);
+                // [2026-09-03 查行军卡] 军团行军单帧成本 —— 主人报「行军还是卡」，
+                //   而此前 PerfDoctor 只测了 AI，行军与绘制两段全是黑的。
+                if (import.meta.env.DEV) {
+                    perfDoctor.measure('LegionManager.update(行军)',
+                        () => app.historicalEventManager!.updateLegions(gameDelta),
+                        'src/legion/LegionManager.ts:update');
+                } else {
+                    app.historicalEventManager.updateLegions(gameDelta);
+                }
                 perfMonitor.endTimer('legion');
                 app.historicalEventManager.updateEvents(gameDelta);
                 perfMonitor.endTimer('historicalEvent');
@@ -152,7 +192,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
             if (app.combatSystem) {
                 perfMonitor.startTimer('combat');
-                app.combatSystem.update(gameDelta);
+                if (import.meta.env.DEV) {
+                    perfDoctor.measure('CombatSystem.update(战斗)',
+                        () => app.combatSystem!.update(gameDelta),
+                        'src/combat/CombatSystem.ts:update');
+                } else {
+                    app.combatSystem.update(gameDelta);
+                }
                 perfMonitor.endTimer('combat');
             }
 

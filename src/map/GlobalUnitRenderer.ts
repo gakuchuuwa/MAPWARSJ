@@ -3,6 +3,7 @@ import { GameMap } from './GameMap';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { GridSystem } from '../systems/GridSystem';
 import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Preload only
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
@@ -904,6 +905,8 @@ export class GlobalUnitRenderer {
     // [OPTIMIZATION]
     // Track if any unit is moving or animating to decide if we need to redraw
     private lastFrameDrawMs = 0;
+    /** 本帧实际调用 renderUnit 的次数（PerfDoctor 归因用：区分「军团多」还是「单支慢」） */
+    private lastFrameDrawnUnits = 0;
 
     public getLastFrameDrawMs(): number {
         return this.lastFrameDrawMs;
@@ -1174,6 +1177,7 @@ export class GlobalUnitRenderer {
         }
 
         const corpseFadeMs = GameConfig.LEGION.CORPSE_FADE_OUT_MS;
+        let drawnUnits = 0;
         for (let i = 0; i < drawList.length; i++) {
             const unit = drawList[i];
 
@@ -1196,6 +1200,7 @@ export class GlobalUnitRenderer {
                 }
             }
 
+            drawnUnits++;
             if (corpseAlpha < 1) {
                 const prevAlpha = this.ctx.globalAlpha;
                 this.ctx.globalAlpha = prevAlpha * corpseAlpha;
@@ -1205,6 +1210,7 @@ export class GlobalUnitRenderer {
                 this.renderUnit(unit, this.ctx);
             }
         }
+        this.lastFrameDrawnUnits = drawnUnits;
 
         // [2026-08-09 独立战斗场景] 攻城战守军 9 编队（城图边缘，面向攻方）：
         // 守方是 city 单位不注册渲染，须在此补画。仅场景激活时渲染，非 13 保持原样（守军不画士兵）。
@@ -1230,6 +1236,12 @@ export class GlobalUnitRenderer {
         this.lastFrameDrawMs = performance.now() - frameStart;
         if (pm?.reportCount) {
             pm.reportCount('renderDrawMs', this.lastFrameDrawMs);
+        }
+        // [2026-09-03 查行军卡] 整帧绘制成本进 PerfDoctor（此前只进 perfMonitor，拿不到归因）。
+        //   scanned = 本帧实际画了几支军团，用来区分「军团多」还是「单支画得慢」。
+        if (import.meta.env.DEV) {
+            perfDoctor.note('GlobalUnitRenderer.animate(绘制)', this.lastFrameDrawMs,
+                'src/map/GlobalUnitRenderer.ts:animate', this.lastFrameDrawnUnits);
         }
         endCanvasTiming();
 
