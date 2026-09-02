@@ -1165,8 +1165,9 @@ function buildRiver(
     //    3. 浅水（sh2）与水下湿沙床（wetBankTile）在浅滩处扇形自然展开，配合 16~18px 高斯羽化；
     //    4. 浅滩水面清爽：排除 130px 范围内的芦苇与河石。
     const midY = VH / 2;
-    const northGateY = midY - 444;
-    const southGateY = midY + 444;
+    // 🔴 [2026-09-02 主人需求] 两浅滩向中间靠拢（由 ±444 调整为 ±320，更贴近中央交战区）
+    const northGateY = midY - 320;
+    const southGateY = midY + 320;
 
     const getShallowDistY = (y: number): number => {
         if (!moat) return 99999;
