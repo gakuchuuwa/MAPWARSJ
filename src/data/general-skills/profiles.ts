@@ -418,7 +418,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xianbei_tuobamao: { generalId: 'xianbei_tuobamao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_521', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_006', aptitude: 'create' , attackStyle: 'attack'},
+    xianbei_tuobamao: { generalId: 'xianbei_tuobamao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_521', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_006', aptitude: 'create', attackStyle: 'attack' },
 
 
 
