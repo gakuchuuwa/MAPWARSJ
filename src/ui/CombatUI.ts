@@ -5026,8 +5026,13 @@ export class CombatUI {
         this.updateFactionDisplay();
         const attTag = attUnitsNow.length > 0 ? this.pickPortraitTagUnit(attUnitsNow, 'attacker') : null;
         const defTag = defUnitsNow.length > 0 ? this.pickPortraitTagUnit(defUnitsNow, 'defender') : null;
-        this.updateMultiplierBadges(attTag, defTag);
-        this.updateSkillBadges(attTag, defTag);
+        // 🔴 [2026-09-02 修「战斗结束后面板信息会变」] 总×/技能条每帧按当前单位重算；战斗一结束
+        // forceResolve 把败方清零(isDefeated/troops=0)，再重算就拿战损后的单位算 → 八环连乘漂移。
+        // 总× 是开战锁定的战斗口径，结算后必须定格，不再重算；血槽照常显示结果（败方归零，与战略地图一致）。
+        if (!this.boundRegionalBattleField || !this.boundRegionalBattleField.isOver) {
+            this.updateMultiplierBadges(attTag, defTag);
+            this.updateSkillBadges(attTag, defTag);
+        }
 
         const total = attCurrent + defCurrent;
         const realAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
