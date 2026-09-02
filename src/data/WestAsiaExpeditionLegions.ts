@@ -28,7 +28,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
 
     // ── T3 风土之兵：文化知名度或兵种特色，无可考大捷 ──
-    sumeier: { name: '苏美尔方阵', tier: 3 },      // 乌鲁克·扎吉西：乌尔军旗／鹰碑所载人类最早重装密集阵
+    sumeier: { name: '苏美尔方阵', tier: 3 },
     ldiya: { name: '吕底亚骑', tier: 3 },          // 斯法尔德·克罗伊斯：希罗多德称当时最强骑兵，铸币与其名同为符号
     aiaoniya: { name: '爱奥尼亚团', tier: 3 },
     jialatai: { name: '加拉太卫', tier: 3 },       // 安卡拉·德奥塔鲁斯：加拉太凯尔特雇佣兵在希腊化世界赫赫有名

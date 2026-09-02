@@ -353,6 +353,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'xiongnu', name: '匈奴' },
 
+
     { id: 'xianbei', name: '鲜卑' },
 
     { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
@@ -1873,6 +1874,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ailan', name: '埃兰' },  // 别名：Elam，两河东南、波斯前身
     { id: 'safawei_d', name: '萨法维' },
     { id: 'sumeier', name: '苏美尔' },
+
     { id: 'ayoubu', name: '阿尤布' },
     { id: 'mamuluke', name: '马穆鲁克' },  // 阿音贾鲁特·马穆鲁克王朝（拜巴尔斯击败蒙古）
     // ── 2026-08-04 新增：奥斯若恩（埃德萨，奥斯若恩国都／十字军伯国）──
@@ -1881,6 +1883,7 @@ export const FACTIONS: Faction[] = [
     { id: 'aiaoniya', name: '爱奥尼亚' },
     { id: 'jialatai', name: '加拉太' },
     { id: 'guyashu', name: '阿舒尔' },
+
     { id: 'ansxi', name: '安息帝国' },
     { id: 'nabatai', name: '纳巴泰王国' },
     { id: 'xike', name: '锡克帝国' },

@@ -1090,7 +1090,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'sashan': '萨珊',
     'ailan': '埃兰',
     'safawei_d': '萨法',
-    'sumeier': '苏美',
+'sumeier': '苏美',
     'ayoubu': '阿尤',
     'mamuluke': '马穆',
     aosiruowen: '埃德',  // [2026-08-26 旗号去重] 奥斯若恩：「奥斯」与奥斯曼撞；该国即以埃德萨(Edessa)为都
