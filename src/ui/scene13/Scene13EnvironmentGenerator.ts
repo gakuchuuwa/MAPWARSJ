@@ -1159,6 +1159,19 @@ function buildRiver(
     const shallowCells: Array<[number, number]> = [];
     const bankCells: Array<[number, number]> = [];
 
+    // 🔴 [2026-09-02 主人需求] 城门道路穿河浅滩（Shallows）：
+    //    攻城战临城河（moat）与北门/南门两条进场石道相交处转为涉水浅滩。
+    //    深水核心（actualWaterTile）在道路通道避让断开，道路上方铺半透明清透浅水（sh2），
+    //    清晰透出底层石板/碎石路基，配合涉水波纹（renderWadingRipples）展现 DE 经典渡河攻城演出。
+    const midY = VH / 2;
+    const moatShallowCorridors: Array<{ y: number; halfH: number }> = moat ? [
+        { y: midY - 444, halfH: 48 }, // 北翼城门进场大道浅滩
+        { y: midY + 444, halfH: 48 }, // 南翼城门进场大道浅滩
+    ] : [];
+
+    const inShallowCorridor = (y: number): boolean =>
+        moatShallowCorridors.some(c => Math.abs(y - c.y) <= c.halfH);
+
     for (let gy = 0; gy < gh; gy++) {
         for (let gx = 0; gx < gw; gx++) {
             const px = isoCellX(gx, gy, ox);
@@ -1169,7 +1182,11 @@ function buildRiver(
                 if (d < minDist) minDist = d;
             }
             if (minDist < baseHalfW) {
-                waterCells.push([gx, gy]);
+                if (inShallowCorridor(py)) {
+                    shallowCells.push([gx, gy]);
+                } else {
+                    waterCells.push([gx, gy]);
+                }
             } else if (minDist < baseHalfW + shallowDepth) {
                 shallowCells.push([gx, gy]);
             } else if (minDist < baseHalfW + shallowDepth + bankDepth) {
@@ -1183,8 +1200,6 @@ function buildRiver(
     for (const [x, y] of bankCells) occupied.add(`${x},${y}`);
 
     // 等距投影比例多边形边界
-    const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
-    const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
     const sL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth), y: p.y + p.ny * (p.wW + shallowDepth) * 0.55 }));
     const sR = pts.map(p => ({ x: p.x - p.nx * (p.wW + shallowDepth), y: p.y - p.ny * (p.wW + shallowDepth) * 0.55 })).reverse();
     const bL = pts.map(p => ({ x: p.x + p.nx * (p.wW + shallowDepth + bankDepth), y: p.y + p.ny * (p.wW + shallowDepth + bankDepth) * 0.55 }));
@@ -1203,16 +1218,38 @@ function buildRiver(
     if (shallowCells.length > 0) {
         patches.push({ tile: wetBankTile, cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.90, category: 'shore', blur: 14 });
     }
-    // 3. 清透见底近岸浅水（sh2 浅水材质，透出水下泥沙河床）
+    // 3. 清透见底近岸浅水（sh2 浅水材质，透出水下泥沙与浅滩地基石路）
     if (shallowCells.length > 0) {
         patches.push({ tile: 'sh2', cells: shallowCells, polygon: [...sL, ...sR], alpha: 0.58, category: 'shore', blur: 14 });
     }
-    // 4. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）
+    // 4. 河心深水核心（清澈翡翠绿/明亮蔚蓝江水）：在浅滩通道处自然切分断开
     if (waterCells.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 10 });
+        if (moatShallowCorridors.length > 0) {
+            const deepSegments: Array<typeof pts> = [];
+            let currentSeg: typeof pts = [];
+            for (const pt of pts) {
+                if (inShallowCorridor(pt.y)) {
+                    if (currentSeg.length >= 2) deepSegments.push(currentSeg);
+                    currentSeg = [];
+                } else {
+                    currentSeg.push(pt);
+                }
+            }
+            if (currentSeg.length >= 2) deepSegments.push(currentSeg);
+
+            for (const seg of deepSegments) {
+                const segWL = seg.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
+                const segWR = seg.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
+                patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...segWL, ...segWR], alpha: 0.96, category: 'shore', blur: 10 });
+            }
+        } else {
+            const wL = pts.map(p => ({ x: p.x + p.nx * p.wW, y: p.y + p.ny * p.wW * 0.55 }));
+            const wR = pts.map(p => ({ x: p.x - p.nx * p.wW, y: p.y - p.ny * p.wW * 0.55 })).reverse();
+            patches.push({ tile: actualWaterTile, cells: waterCells, polygon: [...wL, ...wR], alpha: 0.96, category: 'shore', blur: 10 });
+        }
     }
 
-    // 4. 水岸自然生态点缀：芦苇、睡莲、河滩湿石
+    // 4. 水岸自然生态点缀：芦苇、睡莲、河滩湿石（自动排除浅滩道路通行区）
     const decorCount = 8;
     let riverRockCount = 0;
     const MAX_RIVER_ROCKS = 1; // 🔴 [2026-09-01 主人定] 一条河流全长范围内最多只放 1 块石头
@@ -1220,10 +1257,13 @@ function buildRiver(
         const tIdx = Math.floor((i + rng.next() * 0.8) / decorCount * (numSamplePts - 1));
         const pt = pts[tIdx];
         if (!pt || pt.y < 30 || pt.y > VH - 30) continue;
+        if (inShallowCorridor(pt.y)) continue;
+
         const side = rng.chance(0.5) ? 1 : -1;
         const dist = pt.wW + shallowDepth * (0.3 + rng.next() * 0.9);
         const oxX = pt.x + side * pt.nx * dist;
         const oyY = pt.y + side * pt.ny * dist * 0.55;
+        if (inShallowCorridor(oyY)) continue;
 
         // 水生植物（芦苇/睡莲）与河滩岩石（岩石封顶 1 块，其余为芦苇睡莲）
         const bankRocks = filterRiverBankRockAssets(decorForTheme(theme, season, lat, elev, biome, lng).solid);
@@ -1244,7 +1284,6 @@ function buildRiver(
             frame: rng.int(0, 99999),
         });
     }
-
     return (px: number, py: number): boolean => {
         for (let k = 0; k <= numSamplePts; k += 2) {
             if (Math.hypot(px - pts[k].x, (py - pts[k].y) * 1.5) < pts[k].wW + 4) return true;

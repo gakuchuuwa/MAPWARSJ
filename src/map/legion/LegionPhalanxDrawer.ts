@@ -1453,6 +1453,10 @@ export class LegionPhalanxDrawer {
                     layoutForRows, slotTypes, spacingX, spacingY, scale, cultureScales, direction,
                     { fw, fh },
                 );
+                if (factionId === 'kongque') {
+                    const KONGQUE_ROW_GAP_SCALE = 0.58 / 0.75;
+                    rowMetric.gapY = rowMetric.gapY.map((gap) => gap * KONGQUE_ROW_GAP_SCALE);
+                }
             }
         }
 
