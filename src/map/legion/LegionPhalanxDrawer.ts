@@ -461,8 +461,8 @@ export class LegionPhalanxDrawer {
     ): { x: number; y: number } | null {
         const assets = this.unitSpriteCache.get(unitAssetsId)
             ?? this.unitSpriteCache.get(legionType)
-            ?? this.unitSpriteCache.get('mixed')
-            ?? this.unitSpriteCache.get('light_infantry');
+            ?? this.unitSpriteCache.get('swordsman')
+            ?? this.unitSpriteCache.get('spearman');
         if (!assets) return null;
         // LRU 打点：谁最近被画过，谁就不该被淘汰（见 evictUnitSprites）
         LegionPhalanxDrawer.spriteLastUsed.set(unitAssetsId, performance.now());
