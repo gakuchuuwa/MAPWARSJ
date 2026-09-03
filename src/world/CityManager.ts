@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { shortestLongitudeDelta } from '../utils/GeoLongitude';
 import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
@@ -303,6 +304,8 @@ export class CityManager {
         }
         this.pendingRenderFrame = requestAnimationFrame(() => {
             this.pendingRenderFrame = null;
+            const _t0 = performance.now();
+            queueMicrotask(() => perfDoctor.note('CityManager.flushTerritoryRefresh(领土/城重绘·同步段)', performance.now() - _t0, 'src/world/CityManager.ts:flushTerritoryRefresh'));
             if (!this.territoryLayerVisible) {
                 void this.renderCitiesOnly();
                 return;

@@ -92,6 +92,8 @@ export class PerfDoctor {
     private hots = new Map<string, HotSample & { where: string }>();
     /** 堆采样滚动窗口（MB） */
     private heapSamples: number[] = [];
+    /** 与 heapSamples 一一对应的采样时刻（performance.now），用于把 GC 回落和长任务对上 */
+    private heapAt: number[] = [];
     private heapTimer: ReturnType<typeof setInterval> | null = null;
 
     // ── 登记 ────────────────────────────────────────────────
@@ -123,6 +125,7 @@ export class PerfDoctor {
     public reset(): void {
         this.hots.clear();
         this.heapSamples.length = 0;
+        this.heapAt.length = 0;
         // 🔴 [2026-08-31 修工具自身缺陷] 长任务和帧间隔**也必须清**。
         //    漏了它们，「reset → 复现 → dump」这个工作流对**最重要的两个指标**失效：
         //    读到的永远是开机以来的累计，分不清「现在还在卡」和「开机时卡过」。
@@ -138,7 +141,8 @@ export class PerfDoctor {
             const m = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
             if (!m) return;
             this.heapSamples.push(m.usedJSHeapSize / MB);
-            if (this.heapSamples.length > 900) this.heapSamples.shift();
+            this.heapAt.push(performance.now());
+            if (this.heapSamples.length > 900) { this.heapSamples.shift(); this.heapAt.shift(); }
         }, intervalMs);
     }
 
@@ -345,6 +349,31 @@ export class PerfDoctor {
             }
         }
 
+        // ── 规则 1.7：GC 嫌疑（2026-09-03 战略行军「偶尔一顿」）──
+        //    特征：主循环自己每帧只有几 ms、已登记热点全部很小，但帧间隔时不时 120~300ms；
+        //    堆呈锯齿（涨到峰值 → 一次回落几十 MB），回落时刻与长任务对得上 = major GC。
+        //    这种卡任何子系统计时器都测不到，只能靠「堆回落 × 长任务」配对。
+        {
+            const gc = this.gcStats();
+            if (gc.drops >= 2 && (gc.matchedLongTasks >= 1 || gc.allocRateMBps >= 3)) {
+                out.push({
+                    rule: 'gc-suspect',
+                    severity: gc.matchedLongTasks >= 2 ? 'critical' : 'warn',
+                    symptom: `堆呈锯齿：${gc.drops} 次回落（平均每次 ${gc.avgDropMB}MB），分配速率约 ${gc.allocRateMBps}MB/s；`
+                        + `其中 ${gc.matchedLongTasks} 次回落 ±2.5s 内有长任务。`
+                        + '这是 major GC 的样子：主循环各段计时正常、帧却整块掉。',
+                    evidence: { 回落次数: gc.drops, 平均回落MB: gc.avgDropMB, 分配速率MBps: gc.allocRateMBps,
+                        与长任务配对次数: gc.matchedLongTasks, 堆p50MB: gc.p50MB, 堆峰MB: gc.peakMB },
+                    where: 'src/debug/PerfDoctor.ts (规则 gc-suspect)',
+                    fix: '找每秒分配几 MB 的那条路：① Chrome Performance 面板开 Memory 看分配采样（Allocation sampling），'
+                        + '按函数排序取前 5；② 优先怀疑每帧 new 数组/对象/字符串的地方（.map/.filter/展开、模板字符串、toFixed、'
+                        + 'Leaflet latLng/project 返回的新对象）；③ data URL 字符串缓存也在 JS 堆里，它们让每次 major GC 要扫的东西变多。'
+                        + '把热路径改成对象池/复用数组，或把大字符串缓存换成 Blob/ImageBitmap（不在 JS 堆）。',
+                    verify: '再次 dump，回落次数与配对次数应明显下降；长任务合计 ms 同步下降。',
+                });
+            }
+        }
+
         // ── 规则 2：按条数限容（两轮卡顿的共同根因）──
         for (const c of this.caches) {
             let entries = 0, bytes = 0;
@@ -450,6 +479,31 @@ export class PerfDoctor {
 
     // ── 输出 ────────────────────────────────────────────────
     /** 生成结构化报告（给 AI 读；人读不友好是有意的） */
+    /** 堆锯齿统计：相邻两次采样回落 ≥ DROP 视为一次 GC；回落时刻 ±2.5s 内有长任务算配对 */
+    private gcStats(): { drops: number; avgDropMB: number; allocRateMBps: number; matchedLongTasks: number; p50MB: number; peakMB: number } {
+        const DROP_MB = 40, WIN = 2500;
+        const hs = this.heapSamples, at = this.heapAt;
+        let drops = 0, dropSum = 0, matched = 0, riseSum = 0, riseMs = 0;
+        const lts = this.longTasks;
+        for (let i = 1; i < hs.length && i < at.length; i++) {
+            const d = hs[i - 1] - hs[i];
+            if (d >= DROP_MB) {
+                drops++; dropSum += d;
+                if (lts.some((t) => Math.abs(t.at - at[i]) <= WIN)) matched++;
+            } else if (d < 0) {
+                riseSum += -d; riseMs += at[i] - at[i - 1];
+            }
+        }
+        return {
+            drops,
+            avgDropMB: drops ? +(dropSum / drops).toFixed(0) : 0,
+            allocRateMBps: riseMs > 0 ? +(riseSum / (riseMs / 1000)).toFixed(1) : 0,
+            matchedLongTasks: matched,
+            p50MB: hs.length ? +this.q(hs, 0.5).toFixed(0) : 0,
+            peakMB: hs.length ? +Math.max(...hs).toFixed(0) : 0,
+        };
+    }
+
     public report(context: Record<string, unknown> = {}): Record<string, unknown> {
         const mem = (performance as unknown as { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
         const findings = this.buildFindings();
@@ -478,6 +532,7 @@ export class PerfDoctor {
                 limitMB: +(mem.jsHeapSizeLimit / MB).toFixed(0),
                 peakMB: this.heapSamples.length ? +Math.max(...this.heapSamples).toFixed(0) : null,
                 p50MB: this.heapSamples.length ? +this.q(this.heapSamples, 0.5).toFixed(0) : null,
+                gc: this.gcStats(),
             } : null,
             caches: this.caches.map(c => {
                 let entries = 0, bytes = 0;

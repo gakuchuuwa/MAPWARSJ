@@ -28,7 +28,16 @@
 > 所以手动 Shift+F3 拿到的热点/长任务只覆盖**最近 ≤20s**。这是有意的：让自动落盘的报告只含
 > 当下这一窗口，不掺开机噪声。要看更长窗口就先暂停推演再复现。
 
-### 主人只说「卡」时，AI 先按症状读对应的落盘文件（全部自动落盘，主人不用按任何键）
+### 主人的触发词只有两句：「战略地图卡」「战术地图卡」
+
+主人不看 JSON、不按键。听到这两句，AI 按下表读文件、按案例集排查、改完再读文件验收，全程自己来。
+
+| 主人说 | AI 依次做 |
+|---|---|
+| **战略地图卡** | ① `stuck_legion_log.jsonl` 最新几条：看 `采样帧数`、`longFrame` 占比、每条 `frame` 里哪段大 ② `perf_doctor_latest.json`：`hotspots` 排序 + `heap.gc` + `findings` ③ `zoom_perf_latest.json` 看是不是缩放那一下 ④ 对照案例集 H |
+| **战术地图卡** | ① `scene13_probe_latest.json` 的 `perf`：`water` / `waterOps` / `render` / `tint` / `step` 谁大 ② 有水先按案例 F，无水看 `spikes` 里 `men`/`arrows` 数 |
+
+### 按症状读对应的落盘文件（全部自动落盘）
 
 | 症状 | 先读 | 谁写的 / 什么时候写 |
 |---|---|---|
@@ -103,6 +112,7 @@ aiGuide       方法论 + 已踩过的死路
 | `hot-call-over-budget` | 单次 ≥8ms（≥16.7ms 且样本 ≥20 才 critical） | 同上（31.7ms/次） |
 | `frame-gap-dominant` | fps<45 或帧间 p90>33ms，**而已登记热点很小** | 各子系统计时全 ≈0ms、fps 却只有 23 |
 | `long-tasks` | 长任务合计 >300ms | 实测 438 次 / 49 秒 / 最长 8.9 秒 |
+| `gc-suspect` | 堆锯齿回落 ≥2 次（单次 ≥40MB）且（回落 ±2.5s 内有长任务 或 分配 ≥3MB/s） | 09-03 战略行军「偶尔一顿」：主循环每帧 5ms、热点全小，帧却掉 120~300ms |
 
 > `hot-call-over-budget` 有**样本数下限 20**：很多函数首次调用要建缓存
 > （`findNearestRoadEntry` 首调 29~88ms、之后 0.2ms），少样本不判 critical，免得把冷启动当成稳态热点。
@@ -207,8 +217,12 @@ AnimalAmbientLayer 动物、TradeTrafficLayer 商队、**LegionPhalanxDrawer 兵
 `RoadRegistry.findNearestRoadEntry` / `getFullPathToCity(重算路径)`（带 scanned 计数）、
 `VegetationLayer.render`、`GlobalUnitRenderer.animate(绘制)`。
 
+**独立 rAF 循环**（09-03 起全部登记，长任务能对上是哪条）：`AnimalAmbientLayer.tick`、`TradeTrafficLayer.tick`、
+`MarineLifeLayer.tick`、`CityCaptureRenderer.loop`、`CityManager.flushTerritoryRefresh(同步段)`、
+`TerritorySystem.zoomVisual`、`HillshadeLayer.handleWorkerMessage(瓦片上屏)`。
+
 **自动探针**（不用按键）：`MarchStutterProbe`（行军顿挫，含自动 dump）、`ZoomPerfProbe`（缩放）、
-`Scene13WarLayer.diagFlush`（13 每场 perf）、`StuckLegionWatchdog`（军团不动）。
+`Scene13WarLayer.diagFlush`（13 每场 perf，含 `waterOps` 分段）、`StuckLegionWatchdog`（军团不动）。
 
 > 新增任何图片缓存或每帧热路径，**顺手登记**——看不见的东西没法优化。
 
