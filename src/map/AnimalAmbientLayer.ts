@@ -357,9 +357,11 @@ export class AnimalAmbientLayer {
             return;
         }
         this.clearedWhileHidden = false;
+        const _t0 = performance.now();
         this.recomputeEntries();
         this.evictAssets();
         this.draw();
+        perfDoctor.note('AnimalAmbientLayer.tick(动物层)', performance.now() - _t0, 'src/map/AnimalAmbientLayer.ts:tick');
         requestAnimationFrame(this.tick.bind(this));
     }
 

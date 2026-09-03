@@ -451,8 +451,10 @@ export class TradeTrafficLayer {
             }
         }
 
+        const _t0 = performance.now();
         this.stepCaravans(dt);
         this.draw();
+        perfDoctor.note('TradeTrafficLayer.tick(商队层)', performance.now() - _t0, 'src/map/TradeTrafficLayer.ts:tick');
         requestAnimationFrame(this.tick.bind(this));
     }
 

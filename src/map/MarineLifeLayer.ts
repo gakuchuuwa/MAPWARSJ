@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
@@ -123,6 +124,12 @@ export class MarineLifeLayer extends L.Layer {
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
         if (!this.map || !this.ctx || !this.ready) return;
+        const _t0 = performance.now();
+        try { this.tickBody(now); } finally { perfDoctor.note('MarineLifeLayer.tick(海洋生物层)', performance.now() - _t0, 'src/map/MarineLifeLayer.ts:tick'); }
+    };
+
+    private tickBody(now: number): void {
+        if (!this.map || !this.ctx) return;
         const zoom = this.map.getZoom();
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) { this.render(); return; }
 
@@ -144,7 +151,7 @@ export class MarineLifeLayer extends L.Layer {
             this.creature.frame = (this.creature.frame + 1) % a.frames;
         }
         this.render();
-    };
+    }
 
     private tryTrigger(now: number): void {
         const followedId = getFollowedArmyId();

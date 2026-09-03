@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
 import { City } from '../types/core';
 import { FactionManager } from '../world/FactionManager';
@@ -216,14 +217,14 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
         parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
 
-    // 2026-09-03 主人定：大城/中城围一圈硬木栅栏（同战术 PALISADE）——computePalisadeWallAndGate + DE_PALISADE_ANCHORS（与小城共源）
+    // 2026-09-03 主人定：草原营地(大/中/小城)围一圈「栅栏」ARCHAIC_WALL_PALISADE（非硬木）——computePalisadeWallAndGate + DE_ARCHAIC_PALISADE_ANCHORS
     if (fence) {
         const wallPieces = computePalisadeWallAndGate(baseSize);
         if (rnd() < 0.5) {
             for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
         }
         wallPieces.forEach((w) => {
-            const anchor = DE_PALISADE_ANCHORS[w.type];
+            const anchor = DE_ARCHAIC_PALISADE_ANCHORS[w.type];
             const zIndex = Math.round(100 + w.y);
             const pieceW = baseSize * anchor.widthFactor;
             const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
@@ -239,9 +240,38 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
 
 // 各类栅栏/城门部件的精准锚点百分比与尺寸权重（提取自 DE _meta.json anchor_x / anchor_y）
 // 栅栏比例进一步调至 0.165x（高度约 15px），角楼与栅栏比例平衡，彻底展现村落全景通透感
-// 🔴 [2026-09-03 主人定] 用 DE 正式「栅栏」ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade，两端平切口整齐栅栏），
-//    不是「硬木栅栏」HARDWOOD_WALL_PALISADE（b_scen_wall_palisade_fortified 参差尖桩丛）、也不是篱笆 b_scen_fence 编织。
+// 【非草原小城/村民围栏】用 DE「硬木栅栏」HARDWOOD_WALL_PALISADE（b_scen_wall_palisade_fortified 参差尖桩丛）。
+// 草原营地（YURT 大/中/小城）另用 DE「栅栏」ARCHAIC_WALL_PALISADE（见 DE_ARCHAIC_PALISADE_ANCHORS）。
 const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
+    NE: {
+        pctX: 53.8,
+        pctY: 74.1,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png',
+    },
+    SE: {
+        pctX: 56.0,
+        pctY: 77.8,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_SE/preview.png',
+    },
+    POST: {
+        pctX: 60.0,
+        pctY: 75.0,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png',
+    },
+    GATE: {
+        pctX: 58.6,
+        pctY: 75.9,
+        widthFactor: 0.34,
+        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png', // 另一朝向双塔木城门（主人 2026-08-26 指定，弃正南 SE 款）
+    },
+};
+
+// 🔴 [2026-09-03 主人定] 草原营地围栏专用：DE 正式「栅栏」ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade，两端平切口整齐栅栏），
+//    不是硬木栅栏 HARDWOOD（参差尖桩）、也不是篱笆 b_scen_fence（编织）。锚点按 ARCHAIC _meta 重算。
+const DE_ARCHAIC_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
     NE: {
         pctX: 60.0,
         pctY: 80.8,
@@ -264,7 +294,7 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
         pctX: 58.6,
         pctY: 75.9,
         widthFactor: 0.34,
-        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png', // 另一朝向双塔木城门（主人 2026-08-26 指定，弃正南 SE 款）
+        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png',
     },
 };
 
@@ -713,7 +743,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原险要也围栅栏（同大/中/小城 ARCHAIC 栅栏）
 
     // 险要矩形城容器（长8段+门 × 宽4段）
     const W = baseSize * 2.6;
@@ -1019,8 +1049,10 @@ export class TerritorySystem {
             if (this.zoomVisualRafId !== null) return;
             this.zoomVisualRafId = requestAnimationFrame(() => {
                 this.zoomVisualRafId = null;
+                const _t0 = performance.now();
                 this.updateCityScales();
                 this.updateTerritoryStyle();
+                perfDoctor.note('TerritorySystem.zoomVisual(缩放时城标/领土样式)', performance.now() - _t0, 'src/systems/TerritorySystem.ts:zoom rAF');
             });
         });
 

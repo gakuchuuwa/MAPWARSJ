@@ -41,7 +41,7 @@
 | [C. 跟拍一顿一顿](#c) | `panBy` 取整丢小数 | 0.2px/帧 走 **0** → 走满 |
 | [D. 缩放冻结半秒](#d) | 河流 99.8% 顶点在屏外仍重投影 | 449ms → **18.7ms** |
 | [E. zoom9 平移偏慢](#e) | 植被层每次 move 重画 | 5.20 → 4.23（与 8/10 持平）|
-| [F. 13「做完色调后卡的不行」](#f) | ① DOM 混合层（已废）② 真凶是水面共用离屏画布每帧重设尺寸 | water 26.7ms/帧 → **待验证** |
+| [F. 13「做完色调后卡的不行」](#f) | 水面每帧全量合成（第一刀「每块各一张」反而 96ms）| water 26.7→96.3ms/帧 → 改 15Hz 半分辨率 **待验证** |
 | [G. 行军探针零记录](#g) | 探针挂错分支，主路从没调过 | 0 条 → 每 20s 一条 |
 | [H. 战略行军一顿一顿（进行中）](#h) | 缩放窗口内长任务 50~322ms 连片，**归因未定** | 待探针自动 dump |
 
@@ -212,9 +212,15 @@ zoom10 是 125m/px，同样航速像素增量翻倍就跟得上。
 
 色调 0.0ms，**水面吃了八成帧预算**。所以「做完色调后卡」是水面在卡，与色调无关。
 
-**真凶嫌疑**：`renderDynamicWater` 所有水块共用一张离屏 canvas，两块尺寸不同就每帧 `offCv.width = bw` 重设两次
-（释放 + 重建 + 清空，可能掉回软件渲染）。**已改每块各一张**（`waterOffscreenByPatch`）。
-**验收**：下一场有水的仗，`perf.water` 中位应从 26.7ms 掉一个数量级；没掉则下一个嫌疑是 pattern 填充（每帧 2 次 `fillRect` 铺贴图）。
+**第一刀（错）**：以为是所有水块共用一张离屏 canvas、每帧按各自尺寸重设导致。改成每块各一张后，21:26 那场（1702 帧、2 块）
+`water` 中位 **96.3ms**、render 101ms——比改前还差（两场水块面积不同，不能直接比，但至少证明「重设尺寸」不是主因）。
+
+**第二刀（现行）**：水面每帧要做 clear + 软遮罩 drawImage + 两次 pattern `fillRect`（各铺满 bbox+2 贴图）+ 一次色 fillRect + 上屏，
+全在**满分辨率**（2552×1274×1.5 DPR）上做，一块半屏海就是几百万像素 × 5 次。改成：
+① 只按 15Hz 重新合成，其余帧把上次结果 `drawImage` 上屏（水流才 8px/s）；② 合成画布半分辨率（像素量 /4，水本来有 14~16px 羽化）。
+**量具**：`perf.waterOps` 分 `composeAvgMs / composeN / blitAvgMs / blitN`，下一场直接看合成和上屏各多少。
+**验收**：`perf.water` 中位应 <10ms；若 `blitAvgMs` 仍大，说明主画布 drawImage 本身慢（怀疑 canvas 掉软件渲染），
+那时查 `getContext('2d', {willReadFrequently})` 是否被误设到主画布、以及画布数量。
 
 > ⚠️ 这条与「不是瓶颈」清单里「13 的 step/render 中位 2.4+2.3ms」不矛盾：那是**无水**的场。有水先看 `perf.water`。
 > ⚠️ 记忆里「13 卡的是动态水面（8-21）」记的是发现，不是修好——09-03 数据证明它还在。
@@ -249,9 +255,26 @@ Leaflet 监听器最大才 14ms；山体瓦片本次新算 126 块（有 worker�
 
 **别再走的路**（都被前面案例否掉）：Dijkstra、河流平移、画布绘制量、13 的 step/render、抬缓存预算。
 
-**下一步已经自动化**：探针每次命中都带本帧子系统分解；一窗口 ≥3 次命中自动 `perfDoctor.dump()`，
-热点表里会直接出现是 `LegionManager.update` / `AIController.update` / `findNearestRoadEntry` / `GlobalUnitRenderer.animate` 哪一个。
-**接手的 AI：读 `stuck_legion_log.jsonl` 最新几条的 `frame` + `perf_doctor_latest.json` 的 `hotspots`，不要先改代码。**
+**探针修好后第一批数据**（21:21~21:29，全部 `site:main`，167 条 longFrame）：
+
+| | 数值 |
+|---|---|
+| longFrame 帧间隔 p50 / p90 / max | 171 / 280 / 785 ms |
+| 同一帧主循环自身 lastFrameTotal p50 / p90 | **6.8 / 26 ms** |
+| ai / legion / combat / render p50 | 0.6 / 2.1 / 0.4 / 2.1 ms |
+| 自动 dump：fpsP50 57、gapP90 28ms、over50ms 7/991 帧 | 大部分时间正常 |
+| 长任务 | 4 个 / 803ms / 最长 333ms（20s 窗口）|
+| 已登记热点最大单次 | AIController.update 108.8ms（一次），其余 <8ms |
+| heap | used 974 / p50 820 / peak 944 MB（锯齿）|
+
+**读法**：帧掉 170~300ms 时主循环自己只花 5~7ms → 时间在主循环**之外**。候选只剩三类：
+① major GC（堆 820↔944 锯齿，每次回落约 120MB，`heap.gc` 规则 09-03 已加，等下一份 dump 看 `与长任务配对次数`）；
+② 其他独立 rAF 循环 / Leaflet 回调（09-03 已把 7 条循环全部登记进 hotspots，下一份 dump 谁大谁现形）；
+③ 山体瓦片：缩放窗口 `缓存 240/240、命中 0、新算 84~126`，每次切档整批重算（worker 算，但上屏 + LRU 在主线程，已登记）。
+刚回战略图的第一个窗口（21:26:33）155 帧里 84 帧 >120ms，是战后素材回填期，与稳态的「偶尔一顿」分开看。
+
+**接手的 AI**：读最新 `perf_doctor_latest.json`（`context.trigger:'march-stutter'`）的 `heap.gc`、`hotspots` 前 5、`findings`；
+`gc-suspect` 成立就去找每秒分配几 MB 的那条路（规则里写了怎么找），不成立就看 hotspots 里新登记的 7 条循环谁的 `maxMs` 大。**不要先改代码。**
 
 ---
 

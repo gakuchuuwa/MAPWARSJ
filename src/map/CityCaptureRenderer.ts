@@ -1,4 +1,5 @@
 import { GameMap } from './GameMap';
+import { perfDoctor } from '../debug/PerfDoctor';
 
 interface Particle {
     x: number;
@@ -112,8 +113,10 @@ export class CityCaptureRenderer {
     }
 
     private loop() {
+        const _t0 = performance.now();
         this.update();
         this.draw();
+        perfDoctor.note('CityCaptureRenderer.loop(占城特效)', performance.now() - _t0, 'src/map/CityCaptureRenderer.ts:loop');
         this.animationFrameId = requestAnimationFrame(() => this.loop());
     }
 

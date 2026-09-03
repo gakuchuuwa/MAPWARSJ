@@ -3952,6 +3952,7 @@ export class Scene13WarLayer {
                 onField: field[0] + field[1],
                 step: this.perfStat(this.perfStep),
                 water: this.perfStat(this.perfWater),
+                waterOps: { composeAvgMs: +(this.perfWaterOps.compose / Math.max(1, this.perfWaterOps.composeN)).toFixed(2), composeN: this.perfWaterOps.composeN, blitAvgMs: +(this.perfWaterOps.blit / Math.max(1, this.perfWaterOps.blitN)).toFixed(2), blitN: this.perfWaterOps.blitN },
                 tint: this.perfStat(this.perfTint),
                 waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
@@ -4799,7 +4800,14 @@ export class Scene13WarLayer {
     /** 🔴 [2026-09-03] 每个水块各自一张离屏画布。此前全部水块共用一张：两块尺寸不同就每帧
      *  `offCv.width = bw` 重分配两次（画布重设尺寸 = 释放+重建+清空，还可能掉回软件渲染），
      *  实测 2 个水块 water p50 = 26.7ms/帧（scratch/scene13_probe_latest.json 2026-09-03 21:01）。 */
-    private waterOffscreenByPatch = new WeakMap<object, { cv: HTMLCanvasElement; ctx: CanvasRenderingContext2D }>();
+    private waterOffscreenByPatch = new WeakMap<object, { cv: HTMLCanvasElement; ctx: CanvasRenderingContext2D; composedAt: number }>();
+    /** [2026-09-03 二修] 每块各一张后实测反而 96.3ms/帧（21:26 场，2 块）：纯合成量太大。
+     *  改成：① 水纹只按 WATER_COMPOSE_HZ 重新合成，其余帧直接把上次结果 drawImage 上屏（水流 8px/s，15Hz 肉眼无差）；
+     *  ② 合成画布用 WATER_RES 半分辨率（合成像素量 /4，水本来就有 14~16px 羽化，看不出）。
+     *  DEV 下按操作分段计时进 perf.waterOps，下一场直接看是哪一步贵。 */
+    private static readonly WATER_COMPOSE_HZ = 15;
+    private static readonly WATER_RES = 0.5;
+    private perfWaterOps = { compose: 0, blit: 0, composeN: 0, blitN: 0 };
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
 
@@ -4899,15 +4907,34 @@ export class Scene13WarLayer {
             let off = this.waterOffscreenByPatch.get(p);
             if (!off) {
                 const cv = document.createElement('canvas');
-                off = { cv, ctx: cv.getContext('2d')! };
+                off = { cv, ctx: cv.getContext('2d')!, composedAt: -Infinity };
                 this.waterOffscreenByPatch.set(p, off);
             }
             const offCv = off.cv, offCtx = off.ctx;
-            if (offCv.width !== bw || offCv.height !== bh) {
-                offCv.width = bw;
-                offCv.height = bh;
+            const R = Scene13WarLayer.WATER_RES;
+            const cw = Math.max(1, Math.ceil(bw * R)), ch = Math.max(1, Math.ceil(bh * R));
+            if (offCv.width !== cw || offCv.height !== ch) {
+                offCv.width = cw;
+                offCv.height = ch;
+                off.composedAt = -Infinity;
             }
-            offCtx.clearRect(0, 0, bw, bh);
+            const nowMs = t * 1000;
+            const needCompose = nowMs - off.composedAt >= 1000 / Scene13WarLayer.WATER_COMPOSE_HZ;
+            if (!needCompose) {
+                const _b0 = import.meta.env.DEV ? performance.now() : 0;
+                ctx.save();
+                ctx.globalAlpha = a;
+                ctx.drawImage(offCv, bx, by, bw, bh);
+                ctx.restore();
+                if (import.meta.env.DEV) { this.perfWaterOps.blit += performance.now() - _b0; this.perfWaterOps.blitN++; }
+                continue;
+            }
+            off.composedAt = nowMs;
+            const _c0 = import.meta.env.DEV ? performance.now() : 0;
+            offCtx.setTransform(1, 0, 0, 1, 0, 0);
+            offCtx.clearRect(0, 0, cw, ch);
+            // 以下全部在半分辨率坐标系里画：把 (bw,bh) 空间缩到 (cw,ch)
+            offCtx.setTransform(R, 0, 0, R, 0, 0);
 
             // 1. 贴上当前水体专属的局部羽化软边
             offCtx.drawImage(softMask, 0, 0);
@@ -4932,7 +4959,7 @@ export class Scene13WarLayer {
                 offCtx.translate(ox, oy);
                 offCtx.fillStyle = pat;
                 offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
-                offCtx.setTransform(1, 0, 0, 1, 0, 0);
+                offCtx.setTransform(R, 0, 0, R, 0, 0);
 
                 // 切换为 source-atop：仅在已有水体像素上叠加，不溢出遮罩且绝不破坏目标 alpha
                 offCtx.globalCompositeOperation = 'source-atop';
@@ -4946,7 +4973,7 @@ export class Scene13WarLayer {
                 offCtx.translate(ox2, oy2);
                 offCtx.fillStyle = pat;
                 offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
-                offCtx.setTransform(1, 0, 0, 1, 0, 0);
+                offCtx.setTransform(R, 0, 0, R, 0, 0);
             } else {
                 offCtx.globalCompositeOperation = 'source-atop';
             }
@@ -4956,12 +4983,16 @@ export class Scene13WarLayer {
             offCtx.fillStyle = '#60c8e8';
             offCtx.fillRect(0, 0, bw, bh);
             offCtx.restore();
+            offCtx.setTransform(1, 0, 0, 1, 0, 0);
+            if (import.meta.env.DEV) { this.perfWaterOps.compose += performance.now() - _c0; this.perfWaterOps.composeN++; }
 
-            // 3. 将羽化流动水体合成到主画布
+            // 3. 将羽化流动水体合成到主画布（半分辨率 → 拉回原尺寸）
+            const _b1 = import.meta.env.DEV ? performance.now() : 0;
             ctx.save();
             ctx.globalAlpha = a;
-            ctx.drawImage(offCv, bx, by);
+            ctx.drawImage(offCv, bx, by, bw, bh);
             ctx.restore();
+            if (import.meta.env.DEV) { this.perfWaterOps.blit += performance.now() - _b1; this.perfWaterOps.blitN++; }
         }
     }
 

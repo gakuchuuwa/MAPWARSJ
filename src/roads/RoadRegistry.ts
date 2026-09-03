@@ -623,9 +623,9 @@ export class RoadRegistry {
         targetCityId: string,
         sourceCityId?: string
     ): { lat: number; lng: number }[] {
-        const __t0 = import.meta.env.DEV ? performance.now() : 0;
+        const __t0 = import.meta.env?.DEV ? performance.now() : 0;
         const r = this.getFullPathToCityInner(startPos, targetCityId, sourceCityId);
-        if (import.meta.env.DEV) {
+        if (import.meta.env?.DEV) {
             // [2026-09-03 查「偏远地区/海上行军一顿一顿」] 记重算路径的**频率**。
             //   主人报的现象是「四周没有据点反而顿」，与「东西多所以慢」正好相反，
             //   所以怀疑点在这里：buildCityAnchoredPath 需要 0.5° 内有城（findNearestCityId），
@@ -758,7 +758,7 @@ export class RoadRegistry {
             }
         }
 
-        if (import.meta.env.DEV) {
+        if (import.meta.env?.DEV) {
             perfDoctor.note('RoadRegistry.findNearestRoadEntry', performance.now() - __t0,
                 'src/roads/RoadRegistry.ts:findNearestRoadEntry', __scanned);
         }

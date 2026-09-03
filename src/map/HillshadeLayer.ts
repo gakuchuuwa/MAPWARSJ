@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import { perfDoctor } from '../debug/PerfDoctor';
 import HillshadeWorker from '../workers/HillshadeWorker?worker'; // Vite Worker Import
 import { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers/HillshadeWorker';
 import { HISTORICAL_REGIONS } from '../data/HistoricalRegions';
@@ -136,8 +137,10 @@ export class HillshadeLayer extends L.GridLayer {
         }
 
         try {
+            const _t0 = performance.now();
             ctx.drawImage(bitmap, 0, 0);
             this.cachePut(cacheKey, bitmap);
+            perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
         } catch (err) {
             // 位图刚从 Worker transfer 过来，正常不会 detach；真出事也必须保证 done() 被调，
             // 否则 Leaflet 会把这块瓦片永远挂在加载态。
