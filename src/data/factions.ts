@@ -195,6 +195,7 @@ export const FACTIONS: Faction[] = [
   { id: 'kasidiliya', name: '卡斯蒂利亚' },
   { id: 'duluo', name: '杜罗' },
   { id: 'teluoyi', name: '达尔达尼亚' },
+
   { id: 'alabo', name: '阿拉伯' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },

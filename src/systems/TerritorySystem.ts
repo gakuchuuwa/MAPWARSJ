@@ -82,15 +82,14 @@ const DE_CASTLE_FALLBACK: Record<string, string> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（13 种：大庄园 / 定居点 / 棚屋 A~G / 蒙古包 A~D，随机取 9 种，2026-09-03 主人定）
+// 城寨建筑池（12 种：定居点 / 棚屋 A~G / 蒙古包 A~D，随机取 9 种，2026-09-03 主人定；删 FOLWARK 波兰农庄）
 const DE_STOCKADE_BUILDING_POOL = [
-    'FOLWARK', 'SETTLEMENT',
+    'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
 ];
 
 const DE_STOCKADE_SCALES: Record<string, number> = {
-    FOLWARK: 0.38,
     SETTLEMENT: 0.40,
     HUT_A: 0.30, HUT_B: 0.30, HUT_C: 0.32, HUT_D: 0.30, HUT_E: 0.30, HUT_F: 0.30, HUT_G: 0.30,
     YURT_A: 0.30, YURT_B: 0.30, YURT_C: 0.30, YURT_D: 0.30,

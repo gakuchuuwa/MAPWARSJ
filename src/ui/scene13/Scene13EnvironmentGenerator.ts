@@ -486,9 +486,24 @@ function sampleSiegeStoneAnchor(VW: number, VH: number, rng: RandomSource): { ax
 function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | 'lake' | 'river' | 'none' {
     if (lat === undefined || lng === undefined) return 'none';
 
+    // 高精度多尺度同心圆环密网扫描（500米 ~ 25公里，覆盖城郊所有江河水系与海湾）
+    const distances = [0.005, 0.015, 0.035, 0.08, 0.20];
+    const angles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
+
+    // 🔴 [2026-09-03 主人定] 港口/沿海城市：海优先（水在一侧海岸线）——先于战略河流检测，
+    //    避免河口/海湾/沿海城池被误判成中轴江河战场（buildRiver 把水放中间）。
+    if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
+    for (const dist of distances) {
+        for (const ang of angles) {
+            const curLat = lat + dist * Math.cos(ang);
+            const curLng = lng + dist * Math.sin(ang);
+            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) return 'sea';
+        }
+    }
+
     // 战略地图可见河流还包含 Natural Earth 矢量中心线；复用同一份数据，避免战略有河、战术没河。
     if (isNearStrategicRiver(lat, lng, 25)) return 'river';
-    
+
     // 1. 优先直接检查 ESRI 真实瓦片水体像素（支持 Zoom 13 / 10 / 9 多级瓦片）
     for (const z of [13, 10, 9]) {
         const { tileX, tileY } = latLngToTilePixel(lat, lng, z);
@@ -499,31 +514,22 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | '
             for (let k = 0; k < m.length; k++) {
                 if (m[k] === 1) waterPixels++;
             }
-            // 🔴 [2026-08-24 主人定·撤销 08-22 的「彻底取消海滩场景」] 真·海 → 左侧海岸线登陆战；
-            //    内陆水系仍走中轴河流对峙战场。判据用 isSeaAt，不拿水像素数猜。
             if (waterPixels > 30) {
                 return LandSeaSystem.isSeaAt({ lat, lng }) ? 'sea' : 'river';
             }
         }
     }
 
-    // 2. 高精度多尺度同心圆环密网扫描（500米 ~ 25公里，覆盖城郊所有江河水系与海湾）
-    const distances = [0.005, 0.015, 0.035, 0.08, 0.20];
-    const angles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
-    
     if (LandSeaSystem.isSeaAt({ lat, lng })) return 'sea';
     if (LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === true) {
         return 'river';
     }
 
-    // 密网环形雷达扫描
+    // 环形雷达（内陆河补充检测）
     for (const dist of distances) {
         for (const ang of angles) {
-            const dlat = dist * Math.cos(ang);
-            const dlng = dist * Math.sin(ang);
-            const curLat = lat + dlat;
-            const curLng = lng + dlng;
-            if (LandSeaSystem.isSeaAt({ lat: curLat, lng: curLng })) return 'sea';
+            const curLat = lat + dist * Math.cos(ang);
+            const curLng = lng + dist * Math.sin(ang);
             if (LandSeaSystem.getWaterSampler().isWaterSync(curLat, curLng) === true) {
                 return 'river';
             }

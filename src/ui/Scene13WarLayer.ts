@@ -37,6 +37,7 @@ import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
+import { resolveTimeOfDay, Scene13TimeOfDayOverlay } from './scene13/Scene13TimeOfDay';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -1486,7 +1487,6 @@ function siegeBuildingScale(building: string): number {
     if (building === 'MARKET') return SIEGE_MARKET_SCALE;
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
     if (building === 'SETTLEMENT') return 1.0;
-    if (building === 'FOLWARK') return 1.0;
     if (building.startsWith('HUT_') || building.startsWith('YURT_')) return 1.0;
     return SIEGE_CITY_BUILDING_SCALE;
 }
@@ -3103,6 +3103,8 @@ export class Scene13WarLayer {
     private sceneSeason: 0 | 1 | 2 = 0;
     /** 本场环境方案（生成器产出，纯数据；Scene13WarLayer 只负责画） */
     private environmentPlan: Scene13EnvironmentPlan | null = null;
+    /** [2026-09-03] 时段色调覆盖层（DOM multiply/screen，GPU 合成，逐帧零成本） */
+    private timeOfDay = new Scene13TimeOfDayOverlay();
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     private centerLat: number | undefined;
     private centerLng: number | undefined;
@@ -3617,6 +3619,19 @@ export class Scene13WarLayer {
                 },
             });
             this.sceneSeason = this.environmentPlan.season;
+            // [2026-09-03 主人定] 时段色调：按环境种子确定性抽时段，叠季节/群系/纬度偏色，每场看起来都不一样
+            {
+                const grade = resolveTimeOfDay({
+                    seed: this.environmentPlan.seed,
+                    calendarSeason: (window as any).game?.timeSystem?.getSeason?.() ?? 0,
+                    biome: this.environmentPlan.biome ?? null,
+                    lat: init.centerLat ?? null,
+                    isSiege: init.battleType === 'siege',
+                    isNaval: !!init.isNaval,
+                });
+                this.timeOfDay.apply(grade);
+                this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
+            }
             this.initTerrain();
             // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
@@ -3992,6 +4007,7 @@ export class Scene13WarLayer {
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
             this.canvas.style.display = 'none';
+            this.timeOfDay.hide();
         }
     }
 
@@ -4566,9 +4582,10 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 城寨（stockade）：大庄园/定居点/棚屋A~G/蒙古包A~D 随机9个（2026-09-03 主人定）
+            // 城寨（stockade）：定居点/棚屋A~G/蒙古包A~D 随机9个（2026-09-03 主人定）
+            // 2026-09-03 主人删：FOLWARK（波兰风车磨坊庄园）— 草原城寨不用农庄。
             if (this.defenderCityType === 'stockade') {
-                const stockadePool = ['FOLWARK', 'SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G', 'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D'];
+                const stockadePool = ['SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G', 'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D'];
                 const shuffledBuildings = [...stockadePool].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
                 const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSide.length; i++) {
