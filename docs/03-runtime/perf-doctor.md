@@ -24,6 +24,28 @@
 
 **AI 标准工作流**：`reset()` → 复现卡顿 → `dump()` → 读 `findings`。
 
+> ⚠️ 2026-09-03 起，战略地图跟拍期间**行军顿挫探针每 20s 会自动 `perfDoctor.reset()`**（见下节），
+> 所以手动 Shift+F3 拿到的热点/长任务只覆盖**最近 ≤20s**。这是有意的：让自动落盘的报告只含
+> 当下这一窗口，不掺开机噪声。要看更长窗口就先暂停推演再复现。
+
+### 主人只说「卡」时，AI 先按症状读对应的落盘文件（全部自动落盘，主人不用按任何键）
+
+| 症状 | 先读 | 谁写的 / 什么时候写 |
+|---|---|---|
+| 战略地图**行军**一顿一顿 / 镜头跟不上 | `scratch/stuck_legion_log.jsonl`（过滤 `probe:'march-stutter'`） | `src/debug/MarchStutterProbe.ts`，跟拍期间每 20s 一条 |
+| 顿得多时自动附带的热点归因 | `scratch/perf_doctor_latest.json`（`context.trigger:'march-stutter'`） | 探针一个窗口内命中 ≥3 次自动 `dump()`，最短间隔 60s |
+| **缩放**那一下冻住 | `scratch/zoom_perf_latest.json` | `src/debug/ZoomPerfProbe.ts`，每次切档自动写 |
+| **13 战术画面**卡 | `scratch/scene13_probe_latest.json` 的 `perf`（step/water/tint/render） | `Scene13WarLayer.diagFlush`，每场结束自动写 |
+| 军团**不动**了 | `scratch/stuck_legion_latest.json`（无 `probe` 字段的那种） | `StuckLegionWatchdog` |
+| 开机慢 | `scratch/boot_timing_latest.json` | 启动计时器 |
+
+**行军顿挫探针的记录怎么读**（`现场[]` 每条）：
+- `kind`：`cameraFreezeJump` 相机连续 ≥3 帧没动然后跳 ≥6px（镜头跟不上）/ `unitPositionSpike` 军团屏幕位移是近期中位数 4 倍以上（瞬移）/ `longFrame` 帧间隔 ≥120ms（整帧掉）。
+- `frame`：这一帧主循环各子系统毫秒（ai / combat / legion / render …）。**注意 camera 段在采样时还没结束，不含跟拍本身**。
+- `site`：`main` = 战略地图正常跟拍主路；`battleScene` = 战略层战斗画布激活时那条跟拍分支。
+- `统计.采样帧数` 只有 1、`frameMs` 十几万：那是从 13 回到战略图的**第一帧**，不是顿。09-03 起已在探针内过滤（缩放变化 / 间隔 ≥2s 一律重置基线不判定）。
+- `onSea` / `citiesWithin05` / `citiesWithin2`：主人原话「没据点的荒地和海上反而顿」，这三个字段就是为验证它准备的。
+
 战略／战术**共用同一套**，报告里 `context.scene` 自动标 `tactical(scene13)` 或 `strategic`。
 
 ---
@@ -156,7 +178,7 @@ FIFO 按插入年龄淘汰，与「谁在用」无关 —— 会把**正在画�
 |---|---|
 | 用 `performance.memory` 判断内存问题 | **已解码位图不在 JS 堆**。heap 报 702MB 时，贴图缓存实占 **12961MB** |
 | 先怀疑寻路算法 | Dijkstra 缓存命中率 **99%**、单次 0.9ms |
-| 先怀疑 13 的 step/render | 中位 2.4ms + 2.3ms，占 60fps 预算不到 30% |
+| 先怀疑 13 的 step/render（**无水**的场） | 中位 2.4ms + 2.3ms。⚠️ **有水**的场另论：09-03 实测 render 中位 32ms，其中 water 26.7ms，先看 `perf.water` |
 | 信注释里的估算 | 「冷路径」「一张约 64KB」两次都被证伪（差 26 倍） |
 | 把「子系统计时正常」读成「不卡」 | GC 停顿在**帧与帧之间**，任何子系统计时器都测不到 |
 | 面板隐藏时测图层 | 视口 `0×0`，一屏只采到 4 个格子（正常是 54） |
@@ -164,6 +186,10 @@ FIFO 按插入年龄淘汰，与「谁在用」无关 —— 会把**正在画�
 | 用错量具：拿 `setView` 测跟拍 | 跟拍走的是 `panBy`，整组基准作废（详见案例集 C）|
 | 靠 `display:none` 藏 pane 来定位平移开销 | 只挡绘制、不挡 move 回调，测不出差别 |
 | 以为矢量河流拖慢的是**平移** | 藏掉后平移 p50 完全不变；河流是**缩放**的开销（占 76~78%）|
+| 探针落盘文件**不存在**就当「没卡」 | 09-03：`MarchStutterProbe` 挂在了「战斗画布激活」的 else 分支，战略地图主路从没调过它，文件根本没生成。**文件不存在 = 探针没跑，不是没顿**；先确认采样点在游戏真正走的那条分支 |
+| 游戏在跑时改了 src 就以为立刻生效 | `ReloadGate`：推演在跑（或 13 激活）整页刷新被闸住，改动**积压到主人暂停/未开播时才补刷**。读到旧结构的记录别当成改动无效 |
+| 在 13 的 canvas 上叠 DOM `mix-blend-mode` 覆盖层做全局调色 | 09-03 时段色调第一版：混合层的背景是整个 body 堆叠上下文（地图 DOM + 几千矢量元素），主人实测「卡的不行」。全局调色只许画在 13 自己的 canvas 里、固定次数整画布合成（现为 2 次，`perf.tint` 中位 0.0ms） |
+| 多个动态区域共用一张离屏 canvas、每帧按各自尺寸 `cv.width = …` | 重设尺寸 = 释放 + 重建 + 清空，还可能掉回软件渲染。13 水面 2 个水块共用一张，实测 `water` 中位 **26.7ms/帧**（09-03 21:01 场）。已改每块各一张，待下一场 `perf.water` 验证 |
 | 开机把所有资源**预载一遍**图省事 | 322 个兵种全量抠绿，其中 **144 个装完就淘汰、一次没用过**；改按需后开机长任务 600 次/160 秒 → **39 次/7.1 秒**，最长 4804ms → 1066ms |
 
 **数字反常时先加计数器问「每道闸各拦掉多少」，不要连猜。**
@@ -177,8 +203,12 @@ FIFO 按插入年龄淘汰，与「谁在用」无关 —— 会把**正在画�
 **缓存**：SpriteTinter 染色/遮罩、Scene13 CLEAN/DECROMA、VegetationLayer 树贴图、
 AnimalAmbientLayer 动物、TradeTrafficLayer 商队、**LegionPhalanxDrawer 兵种帧集/抠绿图**。
 
-**热点**：`AIController.update`、`RoadRegistry.findNearestRoadEntry`（带 scanned 计数）、
-`VegetationLayer.render`。
+**热点**：`AIController.update`、`LegionManager.update(行军)`、`CombatSystem.update(战斗)`、`RecruitmentSystem.update(募兵)`、
+`RoadRegistry.findNearestRoadEntry` / `getFullPathToCity(重算路径)`（带 scanned 计数）、
+`VegetationLayer.render`、`GlobalUnitRenderer.animate(绘制)`。
+
+**自动探针**（不用按键）：`MarchStutterProbe`（行军顿挫，含自动 dump）、`ZoomPerfProbe`（缩放）、
+`Scene13WarLayer.diagFlush`（13 每场 perf）、`StuckLegionWatchdog`（军团不动）。
 
 > 新增任何图片缓存或每帧热路径，**顺手登记**——看不见的东西没法优化。
 

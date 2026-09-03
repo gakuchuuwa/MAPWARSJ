@@ -2928,7 +2928,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/CENTRAL/hongnong_jun_yangsu.png": {
-            "scale": 0.96,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": 8
         },

@@ -37,7 +37,7 @@ import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
-import { resolveTimeOfDay, Scene13TimeOfDayOverlay } from './scene13/Scene13TimeOfDay';
+import { resolveTimeOfDay, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -3103,8 +3103,9 @@ export class Scene13WarLayer {
     private sceneSeason: 0 | 1 | 2 = 0;
     /** 本场环境方案（生成器产出，纯数据；Scene13WarLayer 只负责画） */
     private environmentPlan: Scene13EnvironmentPlan | null = null;
-    /** [2026-09-03] 时段色调覆盖层（DOM multiply/screen，GPU 合成，逐帧零成本） */
-    private timeOfDay = new Scene13TimeOfDayOverlay();
+    /** [2026-09-03] 时段色调：画布内每帧固定两次整画布合成（DOM 混合层版实测卡死已废） */
+    private timeOfDay = new Scene13TimeOfDayGrader();
+    private perfTint: number[] = [];
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     private centerLat: number | undefined;
     private centerLng: number | undefined;
@@ -3629,7 +3630,7 @@ export class Scene13WarLayer {
                     isSiege: init.battleType === 'siege',
                     isNaval: !!init.isNaval,
                 });
-                this.timeOfDay.apply(grade);
+                this.timeOfDay.begin(grade, performance.now());
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
             }
             this.initTerrain();
@@ -3951,6 +3952,7 @@ export class Scene13WarLayer {
                 onField: field[0] + field[1],
                 step: this.perfStat(this.perfStep),
                 water: this.perfStat(this.perfWater),
+                tint: this.perfStat(this.perfTint),
                 waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
             },
@@ -4007,7 +4009,7 @@ export class Scene13WarLayer {
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
             this.canvas.style.display = 'none';
-            this.timeOfDay.hide();
+            this.timeOfDay.end();
         }
     }
 
@@ -4794,8 +4796,10 @@ export class Scene13WarLayer {
     private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
     private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
     private waterSoftMaskCache = new WeakMap<object, HTMLCanvasElement>();
-    private waterOffscreen: HTMLCanvasElement | null = null;
-    private waterOffscreenCtx: CanvasRenderingContext2D | null = null;
+    /** 🔴 [2026-09-03] 每个水块各自一张离屏画布。此前全部水块共用一张：两块尺寸不同就每帧
+     *  `offCv.width = bw` 重分配两次（画布重设尺寸 = 释放+重建+清空，还可能掉回软件渲染），
+     *  实测 2 个水块 water p50 = 26.7ms/帧（scratch/scene13_probe_latest.json 2026-09-03 21:01）。 */
+    private waterOffscreenByPatch = new WeakMap<object, { cv: HTMLCanvasElement; ctx: CanvasRenderingContext2D }>();
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
 
@@ -4833,15 +4837,10 @@ export class Scene13WarLayer {
         if (waterPatches.length === 0) return;
 
         const W = ctx.canvas.width, H = ctx.canvas.height;
-        if (!this.waterOffscreen) {
-            this.waterOffscreen = document.createElement('canvas');
-            this.waterOffscreenCtx = this.waterOffscreen.getContext('2d')!;
-        }
         if (!this.waterMaskCv) {
             this.waterMaskCv = document.createElement('canvas');
             this.waterMaskCtx = this.waterMaskCv.getContext('2d')!;
         }
-        const offCv = this.waterOffscreen, offCtx = this.waterOffscreenCtx!;
         const maskCv = this.waterMaskCv, maskCtx = this.waterMaskCtx!;
 
         for (const p of waterPatches) {
@@ -4897,6 +4896,13 @@ export class Scene13WarLayer {
                 this.waterSoftMaskCache.set(p, softMask);
             }
 
+            let off = this.waterOffscreenByPatch.get(p);
+            if (!off) {
+                const cv = document.createElement('canvas');
+                off = { cv, ctx: cv.getContext('2d')! };
+                this.waterOffscreenByPatch.set(p, off);
+            }
+            const offCv = off.cv, offCtx = off.ctx;
             if (offCv.width !== bw || offCv.height !== bh) {
                 offCv.width = bw;
                 offCv.height = bh;
@@ -7542,5 +7548,14 @@ export class Scene13WarLayer {
             }
         }
         if (flip) ctx.restore();
+        // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
+        if (this.timeOfDay.active) {
+            const _tt0 = import.meta.env.DEV ? performance.now() : 0;
+            this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
+            if (import.meta.env.DEV) {
+                this.perfTint.push(performance.now() - _tt0);
+                if (this.perfTint.length > 1800) this.perfTint.shift();
+            }
+        }
     }
 }

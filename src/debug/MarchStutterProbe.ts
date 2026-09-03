@@ -22,6 +22,9 @@
  * 只诊断，不自愈：根因未定，先拿数据。
  */
 
+import { PerformanceMonitor } from './PerformanceMonitor';
+import { perfDoctor } from './PerfDoctor';
+
 /** 相机连续零位移多少帧后再跳，算一次「冻结后突跳」 */
 const FREEZE_FRAMES = 3;
 /** 冻结后这一跳达到多少像素才算顿 */
@@ -38,6 +41,12 @@ const WINDOW = 60;
 const REPORT_INTERVAL_MS = 20_000;
 /** 单次上报最多带几条现场 */
 const MAX_EVENTS = 40;
+/** 帧间隔超过这个值视为「刚从 13 / 后台回来」：重置基线、不算顿（否则会记出 13 万 ms 的假长帧） */
+const RESUME_GAP_MS = 2000;
+/** 一个上报窗口内命中 ≥ 此数就自动 perfDoctor.dump（带热点归因），免得主人再按 Shift+F3 */
+const AUTO_DUMP_MIN_HITS = 3;
+/** 自动 dump 最短间隔 */
+const AUTO_DUMP_INTERVAL_MS = 60_000;
 
 interface StutterEvent {
     kind: 'cameraFreezeJump' | 'unitPositionSpike' | 'longFrame';
@@ -66,6 +75,10 @@ interface StutterEvent {
     /** 2° 内的城数：看是不是真·荒僻 */
     citiesWithin2: number;
     armyName: string;
+    /** 采样点：main=战略地图正常跟拍主路；battleScene=战略层战斗画布激活时的跟拍分支 */
+    site: 'main' | 'battleScene';
+    /** 本帧主循环子系统分解（ms，PerformanceMonitor 帧内计时；camera 段此时尚未结束故不含跟拍本身） */
+    frame: Record<string, number>;
 }
 
 export class MarchStutterProbe {
@@ -82,6 +95,9 @@ export class MarchStutterProbe {
     private hits = { cameraFreezeJump: 0, unitPositionSpike: 0, longFrame: 0 };
     /** 各分支被走到的帧数：deadzone 占比高 = 相机大部分时间根本没动 */
     private branchCount = { deadzone: 0, snap: 0, lerp: 0 };
+    private siteCount = { main: 0, battleScene: 0 };
+    private lastZoom = -1;
+    private lastDumpAt = 0;
 
     /** 跟拍目标换人：清空历史，避免拿上一支军团的相位算突变 */
     private resetFor(armyId: string): void {
@@ -110,6 +126,7 @@ export class MarchStutterProbe {
         ctx: {
             lat: number; lng: number; onSea: boolean; zoom: number;
             branch: 'deadzone' | 'snap' | 'lerp';
+            site: 'main' | 'battleScene';
             gapM: number;
             countCities: (deg: number) => number;
         },
@@ -124,8 +141,18 @@ export class MarchStutterProbe {
         }
         const frameMs = this.lastTs ? now - this.lastTs : 0;
         this.lastTs = now;
+        // 缩放变了（像素坐标系整体换算）或刚从 13 / 后台回来：重置基线，本帧不判定
+        if (ctx.zoom !== this.lastZoom || frameMs >= RESUME_GAP_MS) {
+            this.lastZoom = ctx.zoom;
+            this.lastUnitPx = { ...unitPx };
+            this.lastCamPx = { ...camPx };
+            this.freezeRun = 0;
+            this.steps.length = 0;
+            return;
+        }
         this.frames++;
         this.branchCount[ctx.branch]++;
+        this.siteCount[ctx.site]++;
 
         const unitStep = this.lastUnitPx
             ? Math.hypot(unitPx.x - this.lastUnitPx.x, unitPx.y - this.lastUnitPx.y) : 0;
@@ -151,9 +178,10 @@ export class MarchStutterProbe {
                 camStepPx: +camStep.toFixed(2), camGapPx: +camGap.toFixed(1),
                 freezeFrames, armyName,
                 lat: ctx.lat, lng: ctx.lng, onSea: ctx.onSea, zoom: ctx.zoom,
-                branch: ctx.branch, gapM: ctx.gapM,
+                branch: ctx.branch, site: ctx.site, gapM: ctx.gapM,
                 citiesWithin05: ctx.countCities(0.5),
                 citiesWithin2: ctx.countCities(2),
+                frame: MarchStutterProbe.frameBreakdown(),
             });
         };
 
@@ -186,18 +214,39 @@ export class MarchStutterProbe {
             probe: 'march-stutter',
             at: new Date().toISOString(),
             说明: '行军顿挫探针：kind=cameraFreezeJump 相机冻结后突跳 / unitPositionSpike 军团屏幕位移突变 / longFrame 掉帧',
-            统计: { 采样帧数: this.frames, ...this.hits, 分支帧数: { ...this.branchCount } },
+            统计: { 采样帧数: this.frames, ...this.hits, 分支帧数: { ...this.branchCount }, 采样点帧数: { ...this.siteCount } },
             现场: this.events,
         };
+        const hitsTotal = this.hits.cameraFreezeJump + this.hits.unitPositionSpike + this.hits.longFrame;
         this.events = [];
         this.frames = 0;
         this.hits = { cameraFreezeJump: 0, unitPositionSpike: 0, longFrame: 0 };
         this.branchCount = { deadzone: 0, snap: 0, lerp: 0 };
+        this.siteCount = { main: 0, battleScene: 0 };
         void fetch('/api/stuck-legion', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
         }).catch(() => { /* 诊断失败不影响玩法 */ });
+        // 顿得够多 → 自动落一份 PerfDoctor（热点函数 where/fix + 长任务 + 缓存），窗口只含最近 20s
+        const now = performance.now();
+        if (hitsTotal >= AUTO_DUMP_MIN_HITS && now - this.lastDumpAt >= AUTO_DUMP_INTERVAL_MS) {
+            this.lastDumpAt = now;
+            void perfDoctor.dump({ trigger: 'march-stutter', 窗口统计: body.统计 }).catch(() => { /* 同上 */ });
+        }
+        perfDoctor.reset();
+    }
+
+    /** 主循环子系统分解（本帧已结束计时的段；未跑的为 0） */
+    private static frameBreakdown(): Record<string, number> {
+        const s = PerformanceMonitor.getInstance().getSnapshot();
+        const r = (v: number) => +(v || 0).toFixed(1);
+        return {
+            ai: r(s.aiTime), combat: r(s.combatTime), legion: r(s.legionTime),
+            historicalEvent: r(s.historicalEventTime), recruitment: r(s.recruitmentTime),
+            combatUI: r(s.combatUITime), render: r(s.renderTime),
+            lastFrameTotal: r(s.frameTime), fps: r(s.fps),
+        };
     }
 }
 

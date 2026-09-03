@@ -5,10 +5,12 @@
  * 让同一块地图打十场看起来不是同一场。
  *
  * 实现约束（13 性能史）：
- *   - 绝不在 canvas 里逐帧 fillRect 整画布（动态水面曾把 fps 从 55 拖到 5）。
- *   - 这里只用两个 DOM 覆盖层（multiply 压色 + screen 提亮），由浏览器合成器在 GPU 上混合，
- *     JS 每帧零成本；进场 1.5s 淡入，退场即隐藏。
- *   - 覆盖层 z-index 401/402：只压 13 的 canvas（400），血条/立绘/HUD（450、9000、10002）不受影响。
+ *   - 第一版用 DOM `mix-blend-mode` 覆盖层，主人实测「卡的不行」——混合层的背景是整个 body
+ *     堆叠上下文（含地图 DOM 与几千个矢量元素），浏览器每帧都得把它们合成进混合组。已废。
+ *   - 现行：在 13 自己的 canvas 上、所有精灵画完之后做 **两次整画布合成**（multiply 压色 + screen 提亮）。
+ *     动态水面的教训是「每个 patch 每帧 3 次整画布」= 几十次；这里固定 2 次，与 patch 数无关。
+ *     DEV 下单独计时进 perf.tint，落盘可查。
+ *   - 开关：window.__s13Tint = false 关闭（只影响画面）。
  *
  * 时段来源：TimeSystem 没有时辰，故按环境种子确定性抽取（同一场仗重放结果相同），
  * 战斗 AI / 伤害 / 出兵一律不读这里的随机。
@@ -19,14 +21,25 @@ import type { Biome } from '../Scene13Biome';
 
 export type DayPhase = 'dawn' | 'morning' | 'noon' | 'afternoon' | 'dusk' | 'night';
 
+type RGB = [number, number, number];
+
+export interface ScreenGlow {
+    /** 提亮色 */
+    rgb: RGB;
+    /** 顶部 alpha（渐变起点） */
+    top: number;
+    /** 渐变终点所在高度比例（0~1）；0 = 纯色平铺（用 top 作 alpha） */
+    fadeTo: number;
+}
+
 export interface TimeOfDayGrade {
     phase: DayPhase;
     /** multiply 层颜色（白 = 不改变） */
-    multiply: [number, number, number];
-    /** screen 层：CSS background（渐变或纯色，含 alpha） */
-    screen: string;
+    multiply: RGB;
+    /** screen 层提亮 */
+    screen: ScreenGlow;
     /** 战斗内缓慢漂移：multiply 目标色（例如黄昏→入夜），null = 不漂移 */
-    driftTo: [number, number, number] | null;
+    driftTo: RGB | null;
 }
 
 interface ResolveInput {
@@ -39,8 +52,6 @@ interface ResolveInput {
     isNaval: boolean;
 }
 
-type RGB = [number, number, number];
-
 const BASE_MULTIPLY: Record<DayPhase, RGB> = {
     dawn:      [236, 214, 206],
     morning:   [255, 250, 236],
@@ -50,25 +61,25 @@ const BASE_MULTIPLY: Record<DayPhase, RGB> = {
     night:     [138, 156, 204],
 };
 
-const BASE_SCREEN: Record<DayPhase, string> = {
-    dawn:      'linear-gradient(180deg, rgba(255,160,110,0.20) 0%, rgba(255,160,110,0.06) 45%, rgba(255,160,110,0) 75%)',
-    morning:   'linear-gradient(180deg, rgba(255,245,215,0.08) 0%, rgba(255,245,215,0) 60%)',
-    noon:      'rgba(255,255,235,0.05)',
-    afternoon: 'linear-gradient(180deg, rgba(255,225,170,0.10) 0%, rgba(255,225,170,0) 65%)',
-    dusk:      'linear-gradient(180deg, rgba(255,120,55,0.24) 0%, rgba(255,120,55,0.08) 40%, rgba(255,120,55,0) 70%)',
-    night:     'rgba(80,100,175,0.08)',
+const BASE_SCREEN: Record<DayPhase, ScreenGlow> = {
+    dawn:      { rgb: [255, 160, 110], top: 0.20, fadeTo: 0.75 },
+    morning:   { rgb: [255, 245, 215], top: 0.08, fadeTo: 0.60 },
+    noon:      { rgb: [255, 255, 235], top: 0.05, fadeTo: 0 },
+    afternoon: { rgb: [255, 225, 170], top: 0.10, fadeTo: 0.65 },
+    dusk:      { rgb: [255, 120, 55],  top: 0.24, fadeTo: 0.70 },
+    night:     { rgb: [80, 100, 175],  top: 0.08, fadeTo: 0 },
 };
 
 /** 各时段抽取权重（战斗多在白天；夜战存在但少） */
 function phaseWeights(input: ResolveInput): Record<DayPhase, number> {
-    const w: Record<DayPhase, number> = { dawn: 0.12, morning: 0.26, noon: 0.22, afternoon: 0.16, dusk: 0.14, night: 0.10 };
-    // 夜袭多见于攻城战；水战夜里基本不打
-    if (input.isSiege) w.night += 0.04;
-    if (input.isNaval) { w.night = 0.03; w.morning += 0.05; w.noon += 0.02; }
+    // [2026-09-03 主人定] 夜战要少：一场仗里色调基本不变（只有黄昏/黎明慢漂），夜里整场都暗没意思
+    const w: Record<DayPhase, number> = { dawn: 0.14, morning: 0.28, noon: 0.24, afternoon: 0.16, dusk: 0.14, night: 0.04 };
+    // 水战夜里基本不打
+    if (input.isNaval) { w.night = 0.01; w.morning += 0.05; w.noon += 0.02; }
     // 高纬度太阳低：晨昏更长、正午更少
     if (input.lat != null && Math.abs(input.lat) > 50) { w.dawn += 0.04; w.dusk += 0.05; w.noon -= 0.06; }
     // 冬季白天短：晨昏/夜略增
-    if (input.calendarSeason === 3) { w.dusk += 0.03; w.night += 0.02; w.noon -= 0.04; }
+    if (input.calendarSeason === 3) { w.dusk += 0.03; w.night += 0.01; w.noon -= 0.04; }
     // 夏季白天长
     if (input.calendarSeason === 1) { w.noon += 0.04; w.afternoon += 0.03; w.night -= 0.03; }
     for (const k of Object.keys(w) as DayPhase[]) w[k] = Math.max(0.01, w[k]);
@@ -132,70 +143,70 @@ export function resolveTimeOfDay(input: ResolveInput): TimeOfDayGrade {
     return { phase, multiply, screen: BASE_SCREEN[phase], driftTo };
 }
 
-/** 两个全屏 DOM 覆盖层：multiply 压色 + screen 提亮；GPU 合成，逐帧零 JS 成本。 */
-export class Scene13TimeOfDayOverlay {
-    private mul: HTMLDivElement | null = null;
-    private scr: HTMLDivElement | null = null;
-    private driftTimer: number | null = null;
-    /** 覆盖层压在 13 canvas（z 400）之上、退出按钮（450）与战斗面板（9000）之下 */
-    private static readonly Z_MULTIPLY = 401;
-    private static readonly Z_SCREEN = 402;
-    /** 黄昏/黎明漂移时长（与双将战 60s 封顶同量级，普通 30s 战只走一半） */
+/**
+ * 画布内调色：每帧固定两次整画布合成（multiply + screen）。
+ * 进场 1.5s 淡入（避免硬切），黄昏/黎明 60s 线性漂移。
+ */
+export class Scene13TimeOfDayGrader {
+    private grade: TimeOfDayGrade | null = null;
+    private t0 = 0;
+    private gradCache: { w: number; h: number; key: string; g: CanvasGradient | string } | null = null;
+    private static readonly FADE_MS = 1500;
     private static readonly DRIFT_MS = 60_000;
 
-    private ensure(): void {
-        if (this.mul && this.scr) return;
-        const mk = (z: number, blend: string) => {
-            const d = document.createElement('div');
-            d.style.cssText = `position:fixed;inset:0;z-index:${z};pointer-events:none;display:none;` +
-                `mix-blend-mode:${blend};opacity:0;transition:opacity 1.5s ease, background-color ${Scene13TimeOfDayOverlay.DRIFT_MS}ms linear;`;
-            document.body.appendChild(d);
-            return d;
-        };
-        this.mul = mk(Scene13TimeOfDayOverlay.Z_MULTIPLY, 'multiply');
-        this.scr = mk(Scene13TimeOfDayOverlay.Z_SCREEN, 'screen');
+    begin(grade: TimeOfDayGrade, now: number): void {
+        this.grade = grade;
+        this.t0 = now;
+        this.gradCache = null;
     }
 
-    apply(grade: TimeOfDayGrade): void {
-        this.ensure();
-        const mul = this.mul!, scr = this.scr!;
-        if (this.driftTimer != null) { clearTimeout(this.driftTimer); this.driftTimer = null; }
-        const rgb = (c: [number, number, number]) => `rgb(${c[0]},${c[1]},${c[2]})`;
-        // 先无过渡地落到起始色，再开启过渡（否则会从上一场的颜色缓慢滑过来）
-        mul.style.transition = 'none';
-        mul.style.backgroundColor = rgb(grade.multiply);
-        mul.style.background = rgb(grade.multiply);
-        scr.style.background = grade.screen;
-        mul.style.display = 'block';
-        scr.style.display = 'block';
-        // 强制回流后再启用过渡与淡入
-        void mul.offsetHeight;
-        mul.style.transition = `opacity 1.5s ease, background-color ${Scene13TimeOfDayOverlay.DRIFT_MS}ms linear`;
-        mul.style.opacity = '1';
-        scr.style.opacity = '1';
-        if (grade.driftTo) {
-            const to = grade.driftTo;
-            this.driftTimer = window.setTimeout(() => {
-                this.driftTimer = null;
-                if (this.mul) this.mul.style.backgroundColor = rgb(to);
-            }, 1600);
+    end(): void {
+        this.grade = null;
+        this.gradCache = null;
+    }
+
+    get active(): boolean { return !!this.grade; }
+
+    /** 在所有精灵画完之后调用（flip 之外：调色对称，翻不翻都一样） */
+    paint(ctx: CanvasRenderingContext2D, w: number, h: number, now: number): void {
+        const g = this.grade;
+        if (!g) return;
+        if ((globalThis as any).__s13Tint === false) return;
+        const fade = Math.min(1, (now - this.t0) / Scene13TimeOfDayGrader.FADE_MS);
+        let mul = g.multiply;
+        if (g.driftTo) {
+            const k = Math.min(1, (now - this.t0) / Scene13TimeOfDayGrader.DRIFT_MS);
+            mul = mix(g.multiply, g.driftTo, k);
         }
+        // 淡入：把 multiply 色向白插值（白 = 不改变）
+        if (fade < 1) mul = mix([255, 255, 255], mul, fade);
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = `rgb(${mul[0] | 0},${mul[1] | 0},${mul[2] | 0})`;
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'screen';
+        ctx.globalAlpha = fade;
+        ctx.fillStyle = this.screenFill(ctx, g.screen, w, h);
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
     }
 
-    hide(): void {
-        if (this.driftTimer != null) { clearTimeout(this.driftTimer); this.driftTimer = null; }
-        for (const d of [this.mul, this.scr]) {
-            if (!d) continue;
-            d.style.opacity = '0';
-            d.style.display = 'none';
+    private screenFill(ctx: CanvasRenderingContext2D, s: ScreenGlow, w: number, h: number): CanvasGradient | string {
+        const key = `${s.rgb.join(',')}|${s.top}|${s.fadeTo}`;
+        const c = this.gradCache;
+        if (c && c.w === w && c.h === h && c.key === key) return c.g;
+        const [r, gg, b] = s.rgb;
+        let fill: CanvasGradient | string;
+        if (s.fadeTo <= 0) {
+            fill = `rgba(${r},${gg},${b},${s.top})`;
+        } else {
+            const grad = ctx.createLinearGradient(0, 0, 0, h * s.fadeTo);
+            grad.addColorStop(0, `rgba(${r},${gg},${b},${s.top})`);
+            grad.addColorStop(0.55, `rgba(${r},${gg},${b},${s.top * 0.3})`);
+            grad.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+            fill = grad;
         }
-    }
-
-    dispose(): void {
-        this.hide();
-        this.mul?.remove();
-        this.scr?.remove();
-        this.mul = null;
-        this.scr = null;
+        this.gradCache = { w, h, key, g: fill };
+        return fill;
     }
 }
