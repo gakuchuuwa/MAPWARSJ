@@ -40,6 +40,23 @@ const NAVAL_SPLASH_DELAY_MS = 700;
 const NAVAL_SPLASH_CHANCE = 0.5;
 
 /**
+ * 🔴 [2026-09-04 主人定] 非双将不进入海战模式：查 unitId 所在战斗是否攻守双方都有武将（双将战）。
+ * 与 GlobalUnitRenderer.isDualGeneralBattle / getNavalFieldBattlePose 的闸门同口径。
+ * 开火音效必须跟着对射演出一起关掉，否则出现「声音开炮、画面不开炮」。
+ */
+function isDualGeneralNavalBattle(unitId: string): boolean {
+    if (!unitId) return false;
+    const fields: any[] = (window as any).game?.combatSystem?.getActiveBattleFields?.() ?? [];
+    for (const f of fields) {
+        if (!f || f.isOver) continue;
+        const units = [...(f.getAttackerUnits?.() ?? []), ...(f.getDefenderUnits?.() ?? [])];
+        if (!units.some((u: any) => u?.id === unitId)) continue;
+        return !!f.bothSidesHaveGeneral?.();
+    }
+    return false;
+}
+
+/**
  * 🔴 [2026-08-31 开机长任务风暴] 启动**只**预载这两个兜底兵种，其余全部按需加载。
  *
  * 实测证据（PerfDoctor churn 计数器）：开机把 UNIT_ASSETS 里 300 多个兵种全量解码，
@@ -2190,7 +2207,8 @@ export class LegionPhalanxDrawer {
             }
             // 海战开火音效：ATTACK 状态周期性触发（仅跟拍军团实际发声）
             //   箭声 1.2s 一轮；炮声 2.6s 一轮（仅火器战舰），由旗舰领衔开火。
-            if (isFighting) {
+            // 🔴 [2026-09-04 主人定] 非双将不进入海战模式：开火音效与对射演出同步关掉。
+            if (isFighting && isDualGeneralNavalBattle(unitId)) {
                 if (nowMs - lastNavalFireAt > 1200 && audioManager.playNavalSfx(unitId, 'naval_arrow_fire')) {
                     lastNavalFireAt = nowMs;
                 }

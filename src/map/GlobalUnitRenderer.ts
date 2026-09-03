@@ -1382,12 +1382,30 @@ export class GlobalUnitRenderer {
     }
 
     /**
+     * 🔴 [2026-09-04 主人定] 非双将不进入海战模式：查 unit 所在战斗是否攻守双方都有武将（双将战）。
+     * 与 getNavalFieldBattlePose 里的字段级闸门同口径；单独成方法是因为对射闸门必须放在
+     * fireNavalProjectile 入口（findNavalEnemy 的 targetPos 兜底会绕过字段级闸门，非双将仍会开火）。
+     */
+    private isDualGeneralBattle(unit: IAnimatedUnit): boolean {
+        const fields: any[] = (window as any).game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        for (const f of fields) {
+            if (!f || f.isOver) continue;
+            const units = [...(f.getAttackerUnits?.() ?? []), ...(f.getDefenderUnits?.() ?? [])];
+            if (!units.some((u: any) => u?.id === unit.id)) continue;
+            return !!f.bothSidesHaveGeneral?.();
+        }
+        return false;
+    }
+
+    /**
      * [2026-08-30 海战演出·档1] 海军野战对射。
      * 普通海战向敌舰位置射击；纯舰队野战则从双鱼机动的实时屏幕位置互射。
      * 炮弹（cannon，2.6s 节流对齐 naval_cannon_fire）+ 箭矢（arrow，1.2s 节流对齐
      * naval_arrow_fire）。纯视觉，不参与任何结算。
      */
     private fireNavalProjectile(unit: IAnimatedUnit, currentPos: { lat: number; lng: number }): void {
+        // 🔴 [2026-09-04 主人定] 非双将不进入海战模式：对射演出只在攻守双方都有武将（双将战）时启用。
+        if (!this.isDualGeneralBattle(unit)) return;
         const maneuver = this.getNavalFieldBattlePose(unit);
         const enemy = maneuver?.enemyLatLng ?? this.findNavalEnemy(unit, currentPos);
         if (!enemy) return;
@@ -1485,6 +1503,10 @@ export class GlobalUnitRenderer {
                 return entity?.isOnSea === true && entity?.isDestroyed !== true;
             };
             if (!attackers.every(isFleet) || !defenders.every(isFleet)) continue;
+
+            // 🔴 [2026-09-04 主人定] 非双将不进入海战模式：海战演出（双鱼机动 + 对射）只在
+            //    攻守双方都有武将（双将战）时启用，非双将的海战退回「舰队停点沉船」的旧样。
+            if (!field.bothSidesHaveGeneral?.()) continue;
 
             const attackerIndex = attackers.findIndex((u) => u?.id === unit.id);
             const defenderIndex = defenders.findIndex((u) => u?.id === unit.id);
