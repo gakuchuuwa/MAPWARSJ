@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { GameTime } from './GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { perfDoctor } from '../debug/PerfDoctor';
+import { marchStutterProbe } from '../debug/MarchStutterProbe';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { GameConfig } from '../config/GameConfig';
 import type { GameApp } from './GameApp';
@@ -359,6 +360,30 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 const currentZoom = lMap2.getZoom();
                                 const center = lMap2.getCenter();
                                 const dist = center.distanceTo(target);
+                                // [2026-09-03] 行军顿挫探针 —— 🔴 必须放在三条分支**之前**：
+                                //   死区提前 return（相机冻结）与吸附 setView（相机突跳）这两条路
+                                //   压根走不到下面的 panByAccumulated，而它们恰恰是最像「一顿一顿」的两种。
+                                if (import.meta.env.DEV) {
+                                    const fid = app.cameraFollowUI?.getFollowedArmyId?.();
+                                    const fa = fid ? legionManager.getLegionById(fid) : null;
+                                    if (fa) {
+                                        marchStutterProbe.sample(
+                                            fid!, fa.name,
+                                            lMap2.project(target, currentZoom),
+                                            lMap2.project(center, currentZoom),
+                                            {
+                                                lat: +pos.lat.toFixed(4), lng: +pos.lng.toFixed(4),
+                                                onSea: !!(fa as any).isOnSea, zoom: currentZoom,
+                                                branch: dist <= FOLLOW_RECENTER_DEADZONE_M ? 'deadzone'
+                                                    : dist >= FOLLOW_SNAP_DISTANCE_M ? 'snap' : 'lerp',
+                                                gapM: Math.round(dist),
+                                                // 惰性：只有判定为「顿」时才真去查城，别把诊断本身变成负担
+                                                countCities: (deg: number) => legionManager.getSpatialRegistry()
+                                                    .getCitiesInRadius(pos.lat, pos.lng, deg).length,
+                                            },
+                                        );
+                                    }
+                                }
                                 if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
                                     resetFollowPanResidual();
                                     return;

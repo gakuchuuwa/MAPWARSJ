@@ -623,6 +623,25 @@ export class RoadRegistry {
         targetCityId: string,
         sourceCityId?: string
     ): { lat: number; lng: number }[] {
+        const __t0 = import.meta.env.DEV ? performance.now() : 0;
+        const r = this.getFullPathToCityInner(startPos, targetCityId, sourceCityId);
+        if (import.meta.env.DEV) {
+            // [2026-09-03 查「偏远地区/海上行军一顿一顿」] 记重算路径的**频率**。
+            //   主人报的现象是「四周没有据点反而顿」，与「东西多所以慢」正好相反，
+            //   所以怀疑点在这里：buildCityAnchoredPath 需要 0.5° 内有城（findNearestCityId），
+            //   偏远/海上找不到 → 每次都掉进 buildPathViaNearestRoad 的全网扫描分支。
+            //   若 calls/秒 很高，说明是在**每帧重算**，那才是顿的根源。
+            perfDoctor.note('RoadRegistry.getFullPathToCity(重算路径)',
+                performance.now() - __t0, 'src/roads/RoadRegistry.ts:getFullPathToCity');
+        }
+        return r;
+    }
+
+    private getFullPathToCityInner(
+        startPos: { lat: number; lng: number },
+        targetCityId: string,
+        sourceCityId?: string
+    ): { lat: number; lng: number }[] {
         const start = { lat: startPos.lat, lng: startPos.lng };
 
         const cityRoute = this.buildCityAnchoredPath(start, targetCityId, sourceCityId);

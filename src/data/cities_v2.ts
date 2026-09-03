@@ -3035,7 +3035,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 30000, region: 'VIKINGS' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 30000, region: 'SPANISH' },
     { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'LATIN', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
-    { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.95, lng: 26.23, type: 'stockade', troops: 30000, region: 'WEST_ASIA' },
+    { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.95, lng: 26.23, type: 'small_city', troops: 20000, region: 'WEST_ASIA' },
+
     { id: 'city_bashila', name: '巴士拉', factionId: 'alabo', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '巴士拉；阿拉伯帝国 636 年军事营地' },
     { id: 'city_tenochtitlan', name: '特诺奇提特兰', factionId: 'aztec', lat: 19.43, lng: -99.13, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '阿兹特克帝国都城，特斯科科湖心岛' },
     { id: 'city_cusco', name: '库斯科', factionId: 'inca', lat: -13.52, lng: -71.97, type: 'medium_city', troops: 20000, region: 'ANDE' },
