@@ -776,14 +776,17 @@ export class CameraFollowUI {
 
             const winStreak = (army as any).winStreak || 0;
             const streakHtml = winStreak > 0
-                ? `<span style="display:inline-flex; align-items:center; margin-left:6px; padding:0 5px; font-size:10px; font-weight:800; color:#9c302f; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.4); border-radius:10px; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
+                ? `<span style="display:inline-flex; flex-shrink:0; align-items:center; margin-left:6px; padding:0 5px; font-size:10px; font-weight:800; color:#9c302f; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.4); border-radius:10px; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
                 : '';
 
             // 第一行：名次 + 军团名 + 连胜 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
+            // 🔴 连胜徽章移出 ellipsis span：长名军团的徽章曾被 overflow:hidden 裁掉（2026-09-03 修复「有的军团不显示连胜」）
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8c7e6b; font-weight:normal; font-size:12px;">${idx + 1}.</span> ${titleHtml}${streakHtml}
+                    <span style="flex:1; min-width:0; display:flex; align-items:center; ${nameStyle}">
+                        <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            ${isFollowed ? '🎥 ' : ''}<span style="color:#8c7e6b; font-weight:normal; font-size:12px;">${idx + 1}.</span> ${titleHtml}
+                        </span>${streakHtml}
                     </span>
                     <span style="color:#9c302f; font-size:12px; font-weight:bold; margin-left:8px; white-space:nowrap; font-family:'JetBrains Mono', serif;">
                         ${this.formatTroops(troops)}
