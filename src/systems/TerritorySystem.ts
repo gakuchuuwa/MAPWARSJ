@@ -239,24 +239,26 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
 
 // 各类栅栏/城门部件的精准锚点百分比与尺寸权重（提取自 DE _meta.json anchor_x / anchor_y）
 // 栅栏比例进一步调至 0.165x（高度约 15px），角楼与栅栏比例平衡，彻底展现村落全景通透感
+// 🔴 [2026-09-03 主人定] 用 DE 正式「栅栏」ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade，两端平切口整齐栅栏），
+//    不是「硬木栅栏」HARDWOOD_WALL_PALISADE（b_scen_wall_palisade_fortified 参差尖桩丛）、也不是篱笆 b_scen_fence 编织。
 const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
     NE: {
-        pctX: 53.8,
-        pctY: 74.1,
+        pctX: 60.0,
+        pctY: 80.8,
         widthFactor: 0.165,
-        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png',
+        path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_NE/preview.png',
     },
     SE: {
-        pctX: 56.0,
-        pctY: 77.8,
+        pctX: 60.0,
+        pctY: 80.8,
         widthFactor: 0.165,
-        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_SE/preview.png',
+        path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_SE/preview.png',
     },
     POST: {
-        pctX: 60.0,
-        pctY: 75.0,
+        pctX: 56.0,
+        pctY: 77.1,
         widthFactor: 0.165,
-        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png',
+        path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png',
     },
     GATE: {
         pctX: 58.6,
@@ -553,7 +555,7 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
 }
 
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId);
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原小城也围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_POOL];
     for (let i = ring.length - 1; i > 0; i--) {

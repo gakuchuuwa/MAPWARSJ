@@ -308,6 +308,30 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             const currentZoom = lMap.getZoom();
                             const center = lMap.getCenter();
                             const dist = center.distanceTo(target);
+                            // [2026-09-03] 行军顿挫探针 —— 🔴 必须放在三条分支**之前**（死区 return / 吸附 setView
+                            //   走不到 panByAccumulated，而它们恰恰最像「一顿一顿」）。
+                            // 🔴 修：探针原先只挂在下面「战斗画布激活」的 else 分支，战略地图正常跟拍这条主路
+                            //   从没调过它，所以 scratch/stuck_legion_log.jsonl 一条都没有。
+                            if (import.meta.env.DEV) {
+                                const fa = legionManager.getLegionById(followedId);
+                                if (fa) {
+                                    marchStutterProbe.sample(
+                                        followedId, fa.name,
+                                        lMap.project(target, currentZoom),
+                                        lMap.project(center, currentZoom),
+                                        {
+                                            lat: +pos.lat.toFixed(4), lng: +pos.lng.toFixed(4),
+                                            onSea: !!(fa as any).isOnSea, zoom: currentZoom,
+                                            branch: dist <= FOLLOW_RECENTER_DEADZONE_M ? 'deadzone'
+                                                : dist >= FOLLOW_SNAP_DISTANCE_M ? 'snap' : 'lerp',
+                                            site: 'main',
+                                            gapM: Math.round(dist),
+                                            countCities: (deg: number) => legionManager.getSpatialRegistry()
+                                                .getCitiesInRadius(pos.lat, pos.lng, deg).length,
+                                        },
+                                    );
+                                }
+                            }
                             if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
                                 resetFollowPanResidual();
                                 return;
@@ -376,6 +400,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                                 onSea: !!(fa as any).isOnSea, zoom: currentZoom,
                                                 branch: dist <= FOLLOW_RECENTER_DEADZONE_M ? 'deadzone'
                                                     : dist >= FOLLOW_SNAP_DISTANCE_M ? 'snap' : 'lerp',
+                                                site: 'battleScene',
                                                 gapM: Math.round(dist),
                                                 // 惰性：只有判定为「顿」时才真去查城，别把诊断本身变成负担
                                                 countCities: (deg: number) => legionManager.getSpatialRegistry()
