@@ -255,7 +255,7 @@ export class GameMap {
 
         const pane = this.map.getPane('tilePane');
         if (pane) {
-            pane.style.filter = 'sepia(10%) saturate(100%) contrast(110%)';
+            pane.style.filter = 'sepia(24%) saturate(86%) contrast(114%) brightness(98%)';
         }
 
         if (!syncSidebarCheckboxes) return;
@@ -402,12 +402,10 @@ export class GameMap {
             this.currentTileLayer.addTo(this.map);
         }
 
-        // 保持之前的滤镜：LOCAL 源恢复默认古纸滤镜；其他源（ESRI 晕渲）不用滤镜。
-        // [FIX 2026-08-12] 旧逻辑读不存在的 chk-ancient → 永远走 filter='none'，
-        // 运行中切回 LOCAL 后 sepia 永久丢失（applyDefaultMapVisuals 只在构造时执行）。
+        // 保持之前的滤镜：LOCAL 源恢复默认古卷滤镜；其他源（ESRI 晕渲）不用滤镜。
         const tilesPane = document.querySelector('.leaflet-tile-pane') as HTMLElement;
         if (tilesPane) {
-            tilesPane.style.filter = sourceKey === 'LOCAL' ? 'sepia(10%) saturate(100%) contrast(110%)' : 'none';
+            tilesPane.style.filter = sourceKey === 'LOCAL' ? 'sepia(24%) saturate(86%) contrast(114%) brightness(98%)' : 'none';
         }
 
         // 保持河流和地形的顺序
@@ -635,19 +633,19 @@ export class GameMap {
 
                     <div id="style-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            复古做旧 (Sepia) <span id="val-sep">10%</span>
+                            复古做旧 (Sepia) <span id="val-sep">24%</span>
                         </label>
-                        <input type="range" id="rng-sep" min="0" max="100" step="5" value="10" style="width:120px;">
+                        <input type="range" id="rng-sep" min="0" max="100" step="1" value="24" style="width:120px;">
 
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            色彩饱和 (Sat) <span id="val-sat">100%</span>
+                            色彩饱和 (Sat) <span id="val-sat">86%</span>
                         </label>
-                        <input type="range" id="rng-sat" min="0" max="200" step="10" value="100" style="width:120px;">
+                        <input type="range" id="rng-sat" min="0" max="200" step="2" value="86" style="width:120px;">
                         
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            对比度 (Con) <span id="val-con">110%</span>
+                            对比度 (Con) <span id="val-con">114%</span>
                         </label>
-                        <input type="range" id="rng-con" min="50" max="200" step="5" value="110" style="width:120px;">
+                        <input type="range" id="rng-con" min="50" max="200" step="2" value="114" style="width:120px;">
                     </div>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0066cc;margin-top:8px;">
@@ -956,7 +954,7 @@ export class GameMap {
                         if (valSat) valSat.innerText = sat + '%';
                         if (valCon) valCon.innerText = con + '%';
 
-                        pane.style.filter = `sepia(${sep}%) saturate(${sat}%) contrast(${con}%)`;
+                        pane.style.filter = `sepia(${sep}%) saturate(${sat}%) contrast(${con}%) brightness(98%)`;
                     } else {
                         pane.style.filter = 'none';
                     }
@@ -1225,6 +1223,12 @@ export class GameMap {
 
             const savedInputs = savedDebugPanelState?.inputs;
             if (savedInputs && panelContent) {
+                // 如果是旧版本默认值 (10/100/110)，自动升级到新古卷默认值 (24/86/114)
+                if (savedInputs['rng-sep'] === '10' && savedInputs['rng-sat'] === '100' && savedInputs['rng-con'] === '110') {
+                    savedInputs['rng-sep'] = '24';
+                    savedInputs['rng-sat'] = '86';
+                    savedInputs['rng-con'] = '114';
+                }
                 for (const [id, value] of Object.entries(savedInputs)) {
                     const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
                     if (!input) continue;
