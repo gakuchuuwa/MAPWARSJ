@@ -1650,7 +1650,7 @@ export const PERIPHERY: CityDataV2[] = [
         troops: 30000,
         tier: 1,
         
-        note: '华闾；京族小城', region: 'LINGNAN' },
+        note: '华闾；京族小城', region: 'VIETNAMESE' },
     {
         id: 'city_hoabinh', name: '和平', factionId: 'muong',
         lat: 20.7667, lng: 105.3333, type: 'stockade', region: 'LINGNAN', troops: 30000, note: '申从岳芒族据守和平' },
@@ -1663,9 +1663,9 @@ export const PERIPHERY: CityDataV2[] = [
 
 
 
-    { id: 'city_xidu', name: '蓝山', factionId: 'leloi', lat: 19.8, lng: 105.7833, type: 'small_city', troops: 30000, region: 'LINGNAN' },
+    { id: 'city_xidu', name: '蓝山', factionId: 'leloi', lat: 19.8, lng: 105.7833, type: 'small_city', troops: 30000, region: 'VIETNAMESE' },
 
-    { id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan', lat: 16.4667, lng: 107.5833, type: 'small_city', troops: 30000, region: 'LINGNAN' },
+    { id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan', lat: 16.4667, lng: 107.5833, type: 'small_city', troops: 30000, region: 'VIETNAMESE' },
 
 
 
@@ -2898,7 +2898,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'stockade', troops: 30000, region: 'STEPPE' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 30000, region: 'LINGNAN' },
-    { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 30000, region: 'LINGNAN', mirror: true },
+    { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 30000, region: 'KHMER', mirror: true },
 
     { id: 'city_langbolabang', name: '琅勃拉邦', factionId: 'lancang', lat: 20.0469, lng: 102.2292, type: 'small_city', troops: 30000, region: 'LINGNAN' },
 
@@ -3051,7 +3051,7 @@ export const CITIES_V2: CityDataV2[] = [
     //  1565-67 葡军自圣维森特北上逐走法国「南极法兰西」，正式建里约城。
     { id: 'city_ribeira', name: '里贝拉', factionId: 'fodejiao', lat: 14.92, lng: -23.60, type: 'small_city', troops: 30000, region: 'LATIN', note: '佛得角首府里贝拉格兰德（今 Cidade Velha），1462 建，横渡大西洋的西非大迂回起点' },
     { id: 'city_salvador', name: '萨尔瓦多', factionId: 'baiyiya', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
-    { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'stockade', troops: 30000, region: 'AMERICA', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
+    { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'stockade', troops: 30000, region: 'TUPI', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
     // ── [2026-08-26] 跨大西洋航线据点：让美洲接入旧大陆，并给特诺奇提特兰补出海口 ──
     //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
@@ -3098,7 +3098,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'duonaobaojia', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 30000, region: 'BULGARIANS', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
     { id: 'city_aidiernei', name: '埃迪尔内', factionId: 'lumiliya', lat: 41.6781, lng: 26.5591, type: 'small_city', troops: 30000, region: 'THRACIAN', note: '古称阿德里安堡，奥斯曼帝国迁都君士坦丁堡前的都城；塞利姆二世命米马尔·希南于1568—1575年营建塞利米耶清真寺' },
-    { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 30000, region: 'AMERICA', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁' },
+    { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 30000, region: 'MUISCA', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁' },
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 30000, region: 'AMERICA', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位' },
     { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 30000, region: 'AMERICA', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
     { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xiyindu', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 30000, region: 'AMERICA', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },

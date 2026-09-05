@@ -15,8 +15,9 @@ export interface CustomFactionLegion {
     /** 军团名称（前中后三排组成的这支部队的名字，如「瓦兰吉卫队军团」）。
      *  🔴 与「精锐番号」（ExpeditionLegions 的福建水师/北府兵等）不是一回事，别混。 */
     legionName?: string;
-    /** 军团种类（编辑器判型）：region 地区军团 / era 时代军团 / solo 个人军团；缺省按名字语义推断 */
-    legionType?: 'region' | 'era' | 'solo';
+    /** 军团种类（编辑器判型）：region 文化军团 / solo 特定军团。
+     *  🔴 [2026-09-06 主人铁律] 只有这两种，era「时代军团」已废除，不许再写。 */
+    legionType?: 'region' | 'solo';
     formationMode: FormationMode;
     slots: CompositionSlot[];
     /** 水战/航行时的舰队队形；缺省 = 'auto'（按船数自动，旧行为） */
@@ -1342,13 +1343,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 扶南与高棉·范蔓 / 刀更孟 战象与爪刀精锐军团（鱼鳞阵 3+4+2：精锐战象前卫 3 + 精锐爪刀勇士主力 4 + 步弓手 2；象拆入战象一排）
-    funan: {
-        legionName: "扶南军团",
-        formationMode: 'fish_scale',
+    "funan": {
+        legionName: "高棉军团",
+        legionType: "region",
+        formationMode: "triangle",
         slots: [
-            { type: 'elite_battle_elephant', count: 3 },     // Row 0 前卫巨兽 = 精锐战象 3（唯一象，战斗象高级践踏）
-            { type: 'karambit_warrior_elite', count: 4 },    // Row 1 中军主力 = 精锐爪刀勇士 4
-            { type: 'archer', count: 2 },                    // Row 2 尾收支援 = 步弓手 2
+            { type: "elite_ballista_elephant", count: 2 },
+            { type: "spearman", count: 3 },
+            { type: "archer", count: 4 },
         ],
     },
     basha_d: {
@@ -1722,7 +1724,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     "zhibuluotuo": {
         legionName: "十字军团",
-        legionType: "era",
+        legionType: "solo",
         formationMode: "fish_scale",
         slots: [
             { type: "teutonic_knight", count: 3 },
@@ -1967,45 +1969,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "composite_bowman", count: 3 },
         ],
     },
-    "shaiyue": {
-        legionName: "斯拉夫军团",
-        legionType: "region",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
-        ],
-    },
-    "molaweiya": {
-        legionName: "日耳曼军团",
-        legionType: "region",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 },
-        ],
-    },
-    "damolaweiya": {
-        legionName: "日耳曼军团",
-        legionType: "region",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "champion", count: 2 },
-            { type: "paladin", count: 4 },
-            { type: "crossbowman", count: 3 },
-        ],
-    },
-    "quanrong": {
-        legionName: "草原军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "keshik", count: 2 },
-            { type: "steppe_lancer", count: 3 },
-            { type: "mangudai_elite", count: 4 },
-        ],
-    },
     "xibolai": {
         legionName: "马格里布军团",
         formationMode: "triangle",
@@ -2116,206 +2079,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "mameluke", count: 2 },
             { type: "genitour", count: 3 },
             { type: "camel_archer", count: 4 },
-        ],
-    },
-    // ===== [2026-09-01 批量安置] 以下 51 个缺军团势力按文化/dynasty 补显式条目（消除 batch-manager 军团列 ✗）=====
-    "jileinaijia": {
-        legionName: "马其顿军团",
-        formationMode: "balance_yoke",
-        slots: [
-            { type: "phalangite", count: 4 },
-            { type: "cretan_archer", count: 2 },
-            { type: "companion_cavalry", count: 3 },
-        ],
-    },
-    "aquidan": {
-        legionName: "英格兰军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "champion", count: 3 },
-            { type: "longbowman_elite", count: 4 },
-            { type: "light_riders", count: 2 },
-        ],
-    },
-    "mengtainiya": {
-        legionName: "拉丁军团",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "heavy_pikeman", count: 2 },
-            { type: "knight", count: 4 },
-            { type: "arbalest", count: 3 },
-        ],
-    },
-    "chu": {
-        legionName: "川蜀军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "white_feather_guard", count: 2 },
-            { type: "elite_white_feather_guard", count: 3 },
-            { type: "elite_chukonu", count: 4 },
-        ],
-    },
-    "pinghai": {
-        legionName: "东北军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "iron_pagoda", count: 3 },
-            { type: "elite_iron_pagoda", count: 4 },
-            { type: "kipchak", count: 2 },
-        ],
-    },
-    "wenling": {
-        legionName: "江南军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "jian_swordsman", count: 2 },
-            { type: "chukonu", count: 3 },
-            { type: "elite_fire_archer", count: 4 },
-        ],
-    },
-    "cangsong": {
-        legionName: "川蜀军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "white_feather_guard", count: 2 },
-            { type: "elite_white_feather_guard", count: 3 },
-            { type: "elite_chukonu", count: 4 },
-        ],
-    },
-    "ailan": {
-        legionName: "波斯军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "elite_war_elephant", count: 3 },
-            { type: "savar", count: 4 },
-            { type: "cav_archer", count: 2 }
-        ],
-    },
-    "suomunate": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "sengjialuo": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "aolisha": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "kanata": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "adile": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "pidisha": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "jiaye": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "kuertaiya": {
-        legionName: "东欧军团",
-        legionType: "region",
-        formationMode: "crane_wing",
-        slots: [
-            { type: "composite_bowman", count: 3 },
-            { type: "elite_boyar", count: 4 },
-            { type: "elite_steppe_lancer", count: 2 },
-        ],
-    },
-    "varendra": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "chatigangren": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "duonaobaojia": {
-        legionName: "色雷斯军团",
-        formationMode: "balance_yoke",
-        slots: [
-            { type: "rhomphaia_warrior", count: 4 },
-            { type: "thracian_peltast", count: 2 },
-            { type: "elite_peltast", count: 3 },
-        ],
-    },
-    "qutb_shahi": {
-        legionName: "补噜军团",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "urumi_swordsman", count: 3 },
-            { type: "elite_urumi_swordsman", count: 4 },
-            { type: "sannahya", count: 2 },
-        ],
-    },
-    "tuomengde": {
-        legionName: "色雷斯军团",
-        formationMode: "balance_yoke",
-        slots: [
-            { type: "rhomphaia_warrior", count: 4 },
-            { type: "thracian_peltast", count: 2 },
-            { type: "elite_peltast", count: 3 },
-        ],
-    },
-    "xingelana": {
-        legionName: "西班牙军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "halberdier", count: 3 },
-            { type: "hand_cannoneer", count: 2 },
-            { type: "elite_conquistador", count: 4 },
         ],
     },
 };
