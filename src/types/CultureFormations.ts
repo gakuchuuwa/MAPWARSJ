@@ -172,7 +172,7 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
-    SLAVIC:       'fish_scale',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
+    SLAVIC:       'crane_wing',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
     LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
@@ -239,7 +239,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ARMENIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
     ATHENIANS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
-    SPARTANS: 'square',  // [2026-09-06] 与同名势力专属军团对齐
+    SPARTANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     MACEDONIANS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
@@ -1321,13 +1321,12 @@ export const SLAVIC_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'composite_bowman', count: 3 },     // Row 0 前排 = 复合弓箭手 3人
-            { type: 'elite_boyar', count: 4 },          // Row 1 中坚主力 = 精锐贵族铁骑 4骑
-            { type: 'elite_steppe_lancer', count: 2 }   // Row 2 后排 = 精锐草原枪骑 2骑 [2026-08-30 主人设计]
+            { type: 'elite_steppe_lancer', count: 2, scale: 1 },
+            { type: 'composite_bowman', count: 4, scale: 1 },
+            { type: 'elite_boyar', count: 3, scale: 1 }
         ]
     }
 ];
-
 /** 17. 日耳曼 冠军剑士+游侠+弩手（鹤翼阵 2+4+3：冠军剑士前锋 + 游侠圣骑主力 + 弩手后排） */
 export const GERMANIC_TIERS: CompositionTier[] = [
     {
@@ -2025,13 +2024,12 @@ export const SPARTANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hippeus', count: 3 },   // Row 0 = 希腊骑兵 3骑
-            { type: 'hippeus', count: 3 },   // Row 1 = 希腊骑兵 3骑
-            { type: 'hippeus', count: 3 }   // Row 2 = 希腊骑兵 3骑
+            { type: 'elite_peltast', count: 2, scale: 1 },
+            { type: 'hippeus', count: 4 },
+            { type: 'elite_greek_cavalry', count: 3, scale: 1 }
         ]
     }
 ];
-
 /** 缅甸 精锐战斗象+步弓手+精锐飞镖骑兵（三角阵 2+3+4：战象尖刀 + 步弓手中坚 + 飞镖骑兵主力底边）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃固/东吁/贡榜/骠/孟/蒲甘/阿瓦 7 势力），文化保底与它对齐，消除「同名不同编」。 */
 export const BURMESE_TIERS: CompositionTier[] = [

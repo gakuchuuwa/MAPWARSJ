@@ -1973,7 +1973,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_nantes', name: '南特', factionId: 'aermolika', lat: 47.21, lng: -1.55, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_florence', name: '佛罗伦萨', factionId: 'tuosikana', lat: 43.76, lng: 11.25, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
     { id: 'city_venice', name: '威尼斯', factionId: 'yadelaiya', lat: 45.44, lng: 12.31, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
-        { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', troops: 25000, region: 'GREEK', note: '大希腊第一古都·塔兰托湾港口·斯巴达海外移民古都' },
+        { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', troops: 25000, region: 'SPARTANS', note: '大希腊第一古都·塔兰托湾港口·斯巴达海外移民古都' },
 { id: 'city_naples', name: '那不勒斯', factionId: 'kanpaniya', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 30000, region: 'LATIN' },
@@ -2103,7 +2103,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-08-04 新增：沃罗涅日（1586南疆要塞，守穆拉夫小道防鞑靼）──
     { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'yedi', lat: 51.6608, lng: 39.2003, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '俄国沃罗涅日；1586年费奥多尔一世诏建要塞于沃罗涅日河畔，督军萨布罗夫主持；守穆拉夫小道，防克里米亚/诺盖鞑靼；后入别尔哥罗德防线；彼得一世顿河舰队造船基地' },
     { id: 'city_peilieyasilafu', name: '佩列斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'stockade', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'weijiebusike_gongguo', lat: 55.19, lng: 30.2, type: 'stockade', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'weijiebusike_gongguo', lat: 55.19, lng: 30.2, type: 'stockade', troops: 30000, region: 'LITHUANIANS' },
 
     ...T0_CAPITALS,
     ...T1_MEDIUM_CITIES,
@@ -2954,12 +2954,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'stockade', troops: 20000, region: 'PERSIAN' },
 
     { id: 'city_ailiwen', name: '埃里温', factionId: 'wulaertu', lat: 40.18, lng: 44.51, type: 'small_city', troops: 30000, region: 'ARMENIANS' },
-    { id: 'city_tushpa', name: '图什帕', factionId: 'wulaertu_guo', lat: 38.5, lng: 43.37, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
+    { id: 'city_tushpa', name: '图什帕', factionId: 'wulaertu_guo', lat: 38.5, lng: 43.37, type: 'small_city', troops: 20000, region: 'ARMENIANS' },
 
     { id: 'city_dibilisi', name: '第比利斯', factionId: 'gelujiya', lat: 41.72, lng: 44.79, type: 'medium_city', troops: 30000, region: 'GEORGIANS' },
     { id: 'city_telabuzong', name: '特拉布宗', factionId: 'bendou', lat: 41, lng: 39.73, type: 'small_city', troops: 30000, region: 'GREEK' },
 
-    { id: 'city_kutayixi', name: '库塔伊西', factionId: 'keerjisi', lat: 42.27, lng: 42.7, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
+    { id: 'city_kutayixi', name: '库塔伊西', factionId: 'keerjisi', lat: 42.27, lng: 42.7, type: 'small_city', troops: 30000, region: 'GEORGIANS' },
     { id: 'city_amaxiya', name: '阿马西亚', factionId: 'bendou_d', lat: 40.65, lng: 35.83, type: 'stockade', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_hatusha', name: '哈图沙', factionId: 'heti', lat: 40.02, lng: 34.61, type: 'stockade', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_geerdiweng', name: '戈尔迪乌姆', factionId: 'fulijiya', lat: 39.65, lng: 31.98, type: 'stockade', troops: 30000, region: 'WEST_ASIA' },
@@ -2986,7 +2986,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_duershelujin', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
 
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 30000, region: 'ORIE' },
-    { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
+    { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'ACHAEMENIDS', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
     { id: 'city_adana', name: '阿达纳', factionId: 'qiliqiya', lat: 37.06, lng: 35.77, type: 'stockade', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'stockade', troops: 20000, region: 'ACHAEMENIDS' },
 
@@ -3007,7 +3007,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'small_city', troops: 30000, region: 'ORIE', note: '纳巴泰王国首都；公元363/551年大地震后彻底废弃沦为古城遗址，18世纪前无常住人口' },
-    { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'INDIA', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },
+    { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'PORUS', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },
     { id: 'city_deli', name: '德里', factionId: 'deli', lat: 28.61, lng: 77.23, type: 'big_city', troops: 30000, region: 'INDIA', note: '德里苏丹国首都（1206–1526），阿拉乌丁·卡尔吉击退蒙古入侵，帝国版图巅峰' },
     { id: 'city_agela', name: '阿格拉', factionId: 'mowoer', lat: 27.18, lng: 78.02, type: 'big_city', troops: 30000, region: 'INDIA', note: '莫卧儿帝国首都（阿克巴大帝），泰姬陵所在地' },
         { id: 'city_qunvcheng', name: '曲女城', factionId: 'jieri', lat: 27.05, lng: 79.92, type: 'medium_city', troops: 30000, region: 'INDIA', note: '戒日帝国首都，玄奘到访，统一北印度' },
@@ -3034,7 +3034,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', troops: 30000, region: 'VIKINGS', note: '哥本哈根；丹麦，阿布萨隆 1167 建城' },
     { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 30000, region: 'VIKINGS' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 30000, region: 'SPANISH' },
-    { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'LATIN', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
+    { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.95, lng: 26.23, type: 'small_city', troops: 20000, region: 'WEST_ASIA' },
 
     { id: 'city_bashila', name: '巴士拉', factionId: 'alabo', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '巴士拉；阿拉伯帝国 636 年军事营地' },
@@ -3078,7 +3078,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 30000, region: 'LINGNAN', note: '澜沧王国后期首都，塔銮所在地' },
     { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 30000, region: 'AFRICA', note: '库施王国都城，黑金字塔群' },
-    { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'aimala', lat: -16.554, lng: -68.673, type: 'stockade', troops: 30000, region: 'AMERICA', note: '前印加蒂亚瓦纳科文明中心' },
+    { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'aimala', lat: -16.554, lng: -68.673, type: 'stockade', troops: 30000, region: 'ANDE', note: '前印加蒂亚瓦纳科文明中心' },
     { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'stockade', troops: 30000, region: 'INDIA', note: '印度教圣城，贾格纳特神庙' },
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 30000, region: 'PURU', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一' },
     { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 30000, region: 'PURU', note: '比贾布尔苏丹国都，戈尔贡巴兹' },
@@ -3113,16 +3113,16 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 20000, region: 'GEORGIANS', note: '萨姆茨赫治所，拉巴提城堡所在地' },
     { id: 'city_gwalior_fort', name: '瓜廖尔堡', factionId: 'tomara_gwalior', lat: 26.231, lng: 78.169, type: 'pass', troops: 20000, region: 'GURJARAS', note: '托摩罗王朝都城要塞，曼辛格扩建宫堡' },
-    { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'tawantinsuyu', lat: -13.1631, lng: -72.545, type: 'pass', troops: 20000, region: 'INCAS', note: '帕查库提时期营建的印加王家山城' },
-    { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 20000, region: 'INDIANS', note: '库特布沙希王朝都城与德干高原堡垒' },
+    { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'tawantinsuyu', lat: -13.1631, lng: -72.545, type: 'pass', troops: 20000, region: 'ANDE', note: '帕查库提时期营建的印加王家山城' },
+    { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 20000, region: 'INDIA', note: '库特布沙希王朝都城与德干高原堡垒' },
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'stockade', troops: 20000, region: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'stockade', troops: 20000, region: 'MAYANS', note: '普克风格玛雅城邦，休族传统统治中心' },
-    { id: 'city_bam_citadel', name: '巴姆古城', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 20000, region: 'PERSIANS', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
+    { id: 'city_bam_citadel', name: '巴姆古城', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 20000, region: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
     { id: 'city_bedzin', name: '本津堡', factionId: 'lesser_poland', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 20000, region: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
     { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'stockade', troops: 20000, region: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 20000, region: 'SPANISH', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
-    { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 20000, region: 'THRACIANS', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
-    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 20000, region: 'MACEDONIANS', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
+    { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 20000, region: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
+    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 20000, region: 'ATHENIANS', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

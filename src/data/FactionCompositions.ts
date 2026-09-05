@@ -1077,13 +1077,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 塔兰托·大希腊古都（阿契塔 · 塔兰丁标枪轻骑与重步兵方阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 塔兰丁骑兵 3 + 罗得岛投石兵 2）
-    talanduo: {
-        legionName: "塔兰托骑兵军团",
-        formationMode: 'fish_scale',
+    "talanduo": {
+        legionName: "塔兰托军团",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫长枪坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，大希腊青铜圆盾长枪抗线）
-            { type: 'tarantine_cavalry', count: 3 },   // Row 1 中军标枪突击 = 塔兰丁骑兵 3骑（大希腊王牌机动穿甲轻标枪轻骑）
-            { type: 'rhodian_slinger', count: 2 },     // Row 2 尾收超远投石 = 罗得岛投石兵 2人（纯步兵·无马，地中海重铅弹超视距压制）
+            { type: "mercenary_hoplite", count: 4 },
+            { type: "tarantine_cavalry", count: 3 },
+            { type: "rhodian_slinger", count: 2 },
         ],
     },
     // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培（罗马军团 · 雁行阵 4+3+2：罗马军 4 + 精锐百夫长 3 + 精锐掷矛手 2）
