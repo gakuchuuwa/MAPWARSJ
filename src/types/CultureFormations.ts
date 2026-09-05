@@ -211,15 +211,15 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PERSIAN:      'fish_scale',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
     BRITONS: 'triangle',  // 不列颠[2026-08-28 暂复用父文化]
-    GOTHS: 'fish_scale',  // 哥特[2026-08-28 暂复用父文化]
-    HUNS: 'triangle',  // 匈人[2026-08-28 暂复用父文化]
+    GOTHS: 'fish_scale',  // 哥特[2026-09-05 主人定：雁行阵 4+3+2]
+    HUNS: 'crescent',  // 匈人[2026-09-05 主人定：偃月阵 3+2+4]
     TEUTONS: 'crane_wing',  // 条顿[2026-08-28 暂复用父文化]
     VIKINGS: 'fish_scale',  // 维京[2026-08-28 暂复用父文化]
     CELTS: 'fish_scale',  // 凯尔特[2026-08-28 暂复用父文化]
     ITALIANS: 'fish_scale',  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: 'crane_wing',  // 西西里[2026-08-28 暂复用父文化]
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
-    MAGYAR: 'triangle',  // 马扎尔[2026-08-28 暂复用父文化]
+    MAGYAR: 'crescent',  // 马扎尔[2026-09-05 主人定：正规马扎尔军团偃月阵 3+2+4]
     LITHUANIANS: 'crane_wing',  // 立陶宛[2026-08-28 暂复用父文化]
     POLES: 'echelon',  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: 'fish_scale',  // 波希米亚[2026-08-28 暂复用父文化]
@@ -1209,6 +1209,33 @@ export const STEPPE_TIERS: CompositionTier[] = [
     }
 ];
 
+/** 马扎尔 骑射手+标枪骑兵+精锐马扎尔骠骑（偃月阵 3+2+4：骑射手前卫 + 标枪骑兵中坚 + 精锐马扎尔骠骑主力 4） */
+export const MAGYAR_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cav_archer', count: 3 },          // Row 0 前卫 = 骑射手 3骑
+            { type: 'genitour', count: 2 },            // Row 1 中坚 = 标枪骑兵 2骑
+            { type: 'elite_magyar_huszar', count: 4 }  // Row 2 主力 = 精锐马扎尔骠骑 4骑
+        ]
+    }
+];
+
+/** 匈人 古典骑射手+草原枪骑兵+匈奴答剌罕骑兵精锐（偃月阵 3+2+4：古典骑射手前卫 + 草原枪骑兵中坚 + 匈奴答剌罕骑兵精锐主力 4） */
+export const HUNS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_tarkan', count: 4 }
+        ]
+    }
+];
 /** 7. 河西 精锐辽刀+黑光铠骑兵+诸葛弩（雁行阵 4+3+2：精锐辽刀宽线主力 + 黑光铠骑兵中坚 + 诸葛弩压阵） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
@@ -1708,13 +1735,12 @@ export const GOTHS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'huskarl', count: 3 },
+            { type: 'thracian_peltast', count: 3 },
             { type: 'elite_huskarl', count: 4 },
-            { type: 'throwing_axeman', count: 2 }
+            { type: 'shock_cavalry', count: 2 }
         ]
     }
 ];
-
 /** 凯尔特军团（鱼鳞阵）[2026-08-30 完成待定制] */
 export const CELTS_TIERS: CompositionTier[] = [
     {
@@ -1935,14 +1961,14 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CUMAN:        CUMAN_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
     BRITONS: BRITONS_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
     GOTHS: GOTHS_TIERS,  // 哥特[2026-08-28 暂复用父文化]
-    HUNS: STEPPE_TIERS,  // 匈人[2026-08-28 暂复用父文化]
+    HUNS: HUNS_TIERS,  // 匈人[2026-09-05 主人定：独立编成]
     TEUTONS: GERMANIC_TIERS,  // 条顿[2026-08-28 暂复用父文化]
     VIKINGS: SLAVIC_TIERS,  // 维京[2026-08-28 暂复用父文化]
     CELTS: CELTS_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
     ITALIANS: ITALIANS_TIERS,  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: LATIN_TIERS,  // 西西里[2026-08-28 暂复用父文化]
     BULGARIANS: BULGARIANS_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
-    MAGYAR: STEPPE_TIERS,  // 马扎尔[2026-08-28 暂复用父文化]
+    MAGYAR: MAGYAR_TIERS,  // 马扎尔[2026-09-05 主人定：正规马扎尔军团编成]
     LITHUANIANS: LITHUANIANS_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
     POLES: POLES_TIERS,  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: SLAVIC_TIERS,  // 波希米亚[2026-08-28 暂复用父文化]

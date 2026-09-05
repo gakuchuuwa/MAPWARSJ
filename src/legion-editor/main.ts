@@ -2052,6 +2052,12 @@ function bindPanelEvents(row: FactionLegionRow): void {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
             return;
         }
+        // [2026-09-05 主人定] 一个文化只有一个军团：编辑文化军团 = 覆盖文化保底（CULTURE_TIERS_MAP + 阵型），
+        //    不写特定势力，否则会多出第二个同名文化军团（保存不上、刷新后还是旧的）。
+        if (resolveCurrentLayer(row) === 'culture') {
+            await saveCultureComposition(row.region, currentEditingLegion);
+            return;
+        }
         const savedLegionName = currentEditingLegion.legionName?.trim()
             || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
@@ -3540,6 +3546,30 @@ function startCanvasPreview(): void {
 // ============================================================
 // 8. 存盘与全局事件
 // ============================================================
+
+/** 保存文化军团编制：覆盖 CultureFormations.ts 的 CULTURE_TIERS_MAP + CULTURE_FORMATION_MODE（一个文化只有一个军团） */
+async function saveCultureComposition(culture: RegionType, legion: CustomFactionLegion): Promise<void> {
+    try {
+        const res = await fetch('/api/save-culture-formations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                culture,
+                slots: legion.slots,
+                formationMode: legion.formationMode,
+            }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        showToast(`✅ 已保存【${getCultureLegionName(culture)}】文化军团并写入 CultureFormations.ts`);
+        // 文化保底已变，重跑行数据刷新界面
+        buildRows();
+        applyFilter();
+        renderTable();
+        if (selectedFactionId) selectFaction(selectedFactionId);
+    } catch (e: any) {
+        showToast('❌ 保存失败：' + (e?.message || e), true);
+    }
+}
 
 async function saveAllCompositions(): Promise<boolean> {
     try {
