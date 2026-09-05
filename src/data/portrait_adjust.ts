@@ -2033,8 +2033,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/yingqin/ruo_wangjian.png": {
-            "scale": 1.03,
-            "offsetX": 0,
+            "scale": 1.07,
+            "offsetX": 1,
             "offsetY": 11
         },
         "/assets/zhaosong/sizhou_hanshizhong.png": {
@@ -2833,8 +2833,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/STEPPE/jiyuan_huluguang.png": {
-            "scale": 0.87,
-            "offsetX": 0,
+            "scale": 0.93,
+            "offsetX": 9,
             "offsetY": -5
         },
         "/assets/STEPPE/kelie_zhaheganbu.png": {
@@ -5628,7 +5628,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/INDIA/boluo_damoboluo.png": {
-            "scale": 1.14,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -6858,9 +6858,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/INDIA/varendra_tipoboluo.png": {
-            "scale": 1.03,
+            "scale": 1.13,
             "offsetX": -7,
-            "offsetY": -14
+            "offsetY": -16
         },
         "/assets/DIANQIAN/medang_panankalan.png": {
             "scale": 1.09,

@@ -61,8 +61,8 @@ export class GameConfig {
         SPLIT_BUFFER: 1000,
         /** @deprecated 乱斗季末补兵见 CityConfig.recruitPerSeason（大200/中150/小100/关50） */
         RECRUIT_PER_SEASON: 1000,
-        /** 自建军团最低出兵数 */
-        MIN_ARMY_SIZE: 10000,
+        /** 自建军团最低出兵数（军团成立绝对底线） */
+        MIN_ARMY_SIZE: 5000,
         /**
          * 据点军团**战后**兵力跌破此值 → 撤回出发城解散、兵力并入驻军（远征军团不受此限）。
          * 🔴 [2026-09-03 主人重申] 只认战后，**行军中不算**。阈值判定由 Army.weakCheckAfterBattle
@@ -94,20 +94,14 @@ export class GameConfig {
         DESPAWN_FADE_OUT_MS: 5000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
         FOLLOW_SWITCH_DELAY_MS: 5000,
-        /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。2026-08-07 主人定：全部统一 20000。 */
+        /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。统一 5000（与军团成立绝对底线一致）。 */
         CITY_MIN_SPAWN_TROOPS: {
-            small_city: 20000,
-            medium_city: 20000,
-            big_city: 20000,
-            pass: 20000,
-            region_center: 20000,
-            /**
-             * 🔴 [2026-09-03] 城寨是唯一不走 20000 的类型 —— 它驻军上限只有 15000，
-             *    而 armySize = 驻军 × 0.9，按 20000 卡它**永远出不了兵**，与「城寨可出兵」的
-             *    定位矛盾。这里按上限同比例下调到 12000（满员 15000×0.9=13500 ≥ 12000）。
-             *    要恢复「全类型统一 20000」，把这行删掉即可，代价是城寨变成纯驻防据点。
-             */
-            stockade: 12000,
+            small_city: 5000,
+            medium_city: 5000,
+            big_city: 5000,
+            pass: 5000,
+            region_center: 5000,
+            stockade: 5000,
         } as const,
         /** 可出兵据点：大城、中城、小城、城寨、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */
         SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'stockade', 'pass'] as const,

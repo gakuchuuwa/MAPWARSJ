@@ -44,6 +44,14 @@ export class ZoomController {
     private getIsInBattle: () => boolean;
     /** 战术层（zoom13 独立画布）是否激活 —— 激活期间规则 5 让位给规则 3 的冻结 */
     private getIsTacticalScene: () => boolean;
+    /**
+     * 当前跟随的是不是玩家（独行 或 入伍随军都算）。
+     * 🔴 **只用来关规则 1**（跟随新目标 → 8）：玩家的镜头交给玩家自己。
+     *    规则 5（行军 15 秒 → 陆 9 / 海 10）对玩家照常生效 ——
+     *    2026-09-05 主人报「玩家行军 15 秒 ZOOM 不变」，根因就是当时把玩家整个排除在
+     *    ZoomController 之外（getFollowedArmy 对玩家返回 null），连规则 5 一起关掉了。
+     */
+    private getIsPlayerHost: () => boolean;
 
     /** 上一帧跟随的军团 id —— 变了就说明「换人了」，触发规则 1 */
     private lastArmyId: string | null = null;
@@ -61,12 +69,14 @@ export class ZoomController {
         getFollowedArmy: () => any,
         getIsInBattle: () => boolean,
         getIsTacticalScene: () => boolean = () => false,
+        getIsPlayerHost: () => boolean = () => false,
         now: () => number = () => Date.now(),
     ) {
         this.map = map;
         this.getFollowedArmy = getFollowedArmy;
         this.getIsInBattle = getIsInBattle;
         this.getIsTacticalScene = getIsTacticalScene;
+        this.getIsPlayerHost = getIsPlayerHost;
         this.now = now;
     }
 
@@ -100,7 +110,8 @@ export class ZoomController {
         if (armyId !== this.lastArmyId) {
             this.lastArmyId = armyId;
             this.marchZoomSinceMs = null;   // 换人 = 规则 5 重新计时
-            if (armyId && armyAlive) this.applyZoom(FOLLOW_START_ZOOM);
+            // 玩家入伍的军团：不缩放到 8（玩家镜头手动控制），但 lastArmyId 照常更新
+            if (armyId && armyAlive && !this.getIsPlayerHost()) this.applyZoom(FOLLOW_START_ZOOM);
         }
 
         // ── 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆 9 / 海 10）──

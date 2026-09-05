@@ -966,6 +966,18 @@ export function getElitePowerMult(unit: IBattleUnit): number {
 }
 
 /**
+ * 第8环·玩家官阶 —— 玩家入伍的军团整体战力 × 官阶乘数（斥候1.1 → 元帅1.5）。
+ * 乘数由 PlayerHero.attachTo 写入军团的 playerHostPowerMult；无玩家入伍返回 1。
+ */
+export function getPlayerHostPowerMult(units: IBattleUnit[]): number {
+    for (const u of units) {
+        const p = (u as { playerHostPowerMult?: number | null } | undefined)?.playerHostPowerMult;
+        if (typeof p === 'number' && p > 1) return p;
+    }
+    return 1;
+}
+
+/**
  * 战略技不再作用于战斗面板滚点（2026-07-16 定案）。
  * 全部 21 个战略技只在大地图层生效（行军/补给/征兵/视野/威慑/纵横/防务）。
  * 此函数保留以兼容 UI 调用方，始终返回 1。
@@ -2135,6 +2147,10 @@ export function applyOpeningTacticalToRolls(
     const defEliteUnit = findEligibleGeneralUnit(defenderUnits, defCommander);
     outAtt *= (attEliteUnit ? getElitePowerMult(attEliteUnit) : 1);
     outDef *= (defEliteUnit ? getElitePowerMult(defEliteUnit) : 1);
+
+    // 第8环·玩家官阶（玩家入伍的军团整体战力 × 官阶乘数 1.1~1.5）
+    outAtt *= getPlayerHostPowerMult(attackerUnits);
+    outDef *= getPlayerHostPowerMult(defenderUnits);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }

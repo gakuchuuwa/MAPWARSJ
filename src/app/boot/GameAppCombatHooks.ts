@@ -172,9 +172,12 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             && (unitIsFortress(battle.attacker) || unitIsFortress(battle.defender));
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
+        // [2026-09-05 玩家] 玩家入伍的仗不进 13（改弹大地图战斗面板观战），只保留普通军团「双将+精锐」进 13
+        const playerIn = app.playerHero?.isAttachedTo(followedId) === true;
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
-            && !!battle.attacker.generalId && !!battle.defender.generalId
-            && attHasElite && defHasElite;
+            && !playerIn
+            && (!!battle.attacker.generalId && !!battle.defender.generalId
+                && attHasElite && defHasElite);
         if (eligible) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
             const t = battleSceneTarget(centerUnit);
@@ -229,8 +232,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
+        // [2026-09-05 玩家] 玩家入伍的仗不进 13（改弹大地图战斗面板观战），只保留普通军团「双将+精锐」进 13
+        const playerIn = app.playerHero?.isAttachedTo(followedId) === true;
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
-            && attHasGen && defHasGen && attHasElite && defHasElite;
+            && !playerIn
+            && (attHasGen && defHasGen && attHasElite && defHasElite);
         if (eligible) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
@@ -332,7 +338,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             `⚔️ [GameApp] Followed army joined battle as reinforcement - showing Combat UI`
         );
 
-        const title = (window as any).__huoqubingBattleTitle ?? battleField.customTitle ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
+        const title = battleField.customTitle ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
         const dur = battleField.targetDuration;
         const scale = 1;
         try {

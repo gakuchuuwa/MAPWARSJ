@@ -9,8 +9,8 @@ body {
 #map {
     width: 100%;
     height: 100%;
-    background: #8e9b82;
-    /* 古宣纸平原灰绿兜底：与古典设色山水同调，替代刺眼现代绿与米黄板砖 */
+    background: #6395b8;
+    /* 统一海洋蓝底色：与大海同色，消除视口外和未加载区域的绿色暴露 */
     position: relative;
 }
 
@@ -432,8 +432,9 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
 
 .event-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+    gap: 8px;
     margin-bottom: 8px;
     font-size: 18px; /* 加大标题字号 */
     font-weight: bold;

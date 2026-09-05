@@ -8,6 +8,7 @@ import {
     isSeaElevation,
 } from './TerrariumCodec';
 import { WaterMaskSampler } from './WaterMaskSampler';
+import { latLngToTile } from '../../map/TileMapConfig';
 
 type LandSeaKind = 'land' | 'sea';
 
@@ -49,8 +50,24 @@ export class LandSeaSystem {
 
     static bindLeafletMap(map: L.Map): void {
         this.initialize();
+        /**
+         * 🔴 [2026-09-05 修「玩家移动时战略画面卡」] 视口瓦片范围没变就整个跳过。
+         *
+         * 跟拍镜头**每帧**都 `panBy`，而 Leaflet 的 panBy（animate:false）每次都 fire 一次 `moveend` ——
+         * 也就是说这个回调在跟拍期间是**每帧**跑的，而它做的是「遍历整个视口的瓦片网格」
+         * （zoom9 下约 130 块 × 两个采样器）。镜头挪几个像素并不会换一块瓦片，
+         * 这些遍历里绝大多数是重复的空转。
+         *
+         * 只比四个整数（瓦片范围）就能挡掉：真跨到新瓦片才重新预取，行为完全等价、瓦片一块不少。
+         */
+        let lastKey = '';
         const prefetch = () => {
             const b = map.getBounds();
+            const nw = latLngToTile(b.getNorth(), b.getWest(), DEM_ZOOM);
+            const se = latLngToTile(b.getSouth(), b.getEast(), DEM_ZOOM);
+            const key = `${Math.min(nw.x, se.x)},${Math.max(nw.x, se.x)},${Math.min(nw.y, se.y)},${Math.max(nw.y, se.y)}`;
+            if (key === lastKey) return;
+            lastKey = key;
             this.sampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
             this.waterSampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
         };

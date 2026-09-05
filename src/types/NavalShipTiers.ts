@@ -50,6 +50,7 @@ const SHIP_SIDE_WIDTH: Record<string, number> = {
     LEMBOS: 100,
     LONGBOAT: 128,
     LOU_CHUAN: 260,
+    MERCHANT_SHIP: 144,
     MONOREME: 132,
     ONAGER_SHIP: 268,
     THIRISADAI: 320,

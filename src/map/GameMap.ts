@@ -471,7 +471,8 @@ export class GameMap {
                 if (this.riverLayer) this.riverLayer.bringToFront();
             }
             this.vectorRiverLayer.updateStyle(zoom);
-            this.vectorRiverLayer.setOffsetMode(zoom <= GameMap.RIVER_OFFSET_MAX_ZOOM);
+            // 全球与国内统一使用标准 WGS84 坐标，消除火星坐标（GCJ-02）导致的 500 米偏位重影
+            this.vectorRiverLayer.setOffsetMode(false);
             // 🔴 [2026-08-31] 视口裁剪：只有与「视口外扩一屏」相交的河才进图层。
             //    实测 zoom9 屏内只有 18/2404 条河、顶点占比 0.2%，
             //    不裁的话每次 zoomend 白重投影 98 万个顶点（缩放冻结 449ms 里 76~78% 是它）。
@@ -1300,6 +1301,8 @@ export class GameMap {
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (['w', 'a', 's', 'd'].includes(key)) {
+                // [2026-09-05 玩家] F2 立绘校正期间：WASD 只微调立绘，不平移镜头
+                if ((window as any).game?.combatUI?.isCorrectorOpen?.()) return;
                 keys[key] = true;
             }
         });

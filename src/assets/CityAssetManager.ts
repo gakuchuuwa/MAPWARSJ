@@ -818,7 +818,7 @@ export class CityAssetManager {
         'heisha_d': '黑沙',
         'kumoxi': '奚',
 'haikou': '寇',
-        'shanshan': '鄯善',
+'shanshan': '鄯善',
 'wuyue': '吴越',
 'xiyuduhu': '都护',
 'zizhou': '梓',
@@ -1033,6 +1033,7 @@ export class CityAssetManager {
 'tuomengde': '托蒙',
         'bolan': '波兰',
         'jileinaijia': '基雷',
+        'moxina': '墨西',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
@@ -1850,26 +1851,71 @@ export class CityAssetManager {
     }
 
     /**
-     * [DYNAMIC REFACTOR] Dynamically render flag text using DynamicFlagTextGenerator
+     * 🔴 [2026-09-05 修「玩家移动时战略画面卡」] 旗号文字生成的**分帧预算**。
+     *
+     * 症状与归因：CPU Profile 实测（玩家移动 12 秒）`toDataURL` 占 **20% CPU**，
+     * 100% 来自 `DynamicFlagTextGenerator.generate` ← `getProcessedFlagText` ← `renderSingleCity`。
+     * 它**有缓存**、每个势力只生成一次，但全局 800+ 势力，镜头扫过没去过的地区时会**集中**触发几十次，
+     * 每次是一张 512×960 的 PNG 编码 —— 集中在少数几帧里就是肉眼可见的卡顿尖峰。
+     *
+     * 为什么不用另外两条更省事的路（都试算过，都不安全）：
+     *   · **降超采样**：旗面一格屏幕尺寸 32×40 ×1.4 ×1.2 ≈ 54×67 CSS px，2× DPR 需要 107×134 物理像素，
+     *     而一格源图正好 128×160（`renderScale=4`）—— **刚好够，没有余量**，降到 3 倍就在高分屏发糊。
+     *   · **砍雪碧图行数**：据点旗只用第 4 行，但 `LegionFlagDrawer.drawFlag` 按朝向取 6 行都要用，砍了军团旗就没字。
+     *
+     * 所以这里**一个像素都不改**，只把生成摊开：每 16ms 窗口最多生成 `FLAG_TEXT_PER_FRAME` 张，
+     * 超出的排队，由 `requestIdleCallback` 在浏览器空闲时补齐，补齐后就地给该势力的据点打上文字补丁。
+     * 代价只有「刚进视野的新势力，旗号文字晚一两帧出现」，旗面本身一直都在。
      */
-    public static getProcessedFlagText(factionId: string): string | null {
-        // [USER-REQUEST] Hide flag text for panjun
-        if (!factionId || factionId === 'panjun') return null;
+    private static readonly FLAG_TEXT_PER_FRAME = 2;
+    private static flagTextWindowAt = 0;
+    private static flagTextBudget = 0;
+    private static flagTextQueue = new Set<string>();
+    private static flagTextDrainScheduled = false;
 
+    private static takeFlagTextBudget(): boolean {
+        const now = performance.now();
+        if (now - this.flagTextWindowAt >= 16) {
+            this.flagTextWindowAt = now;
+            this.flagTextBudget = this.FLAG_TEXT_PER_FRAME;
+        }
+        if (this.flagTextBudget <= 0) return false;
+        this.flagTextBudget--;
+        return true;
+    }
+
+    /** 这个势力的旗号文字是不是「排队中」（而不是「本来就没有」）——调用方据此决定要不要抹掉已有文字 */
+    public static isFlagTextPending(factionId: string): boolean {
+        return this.flagTextQueue.has(factionId);
+    }
+
+    private static scheduleFlagTextDrain(): void {
+        if (this.flagTextDrainScheduled) return;
+        this.flagTextDrainScheduled = true;
+        const run = (): void => {
+            this.flagTextDrainScheduled = false;
+            const next = this.flagTextQueue.values().next();
+            if (next.done) return;
+            const factionId = next.value;
+            this.flagTextQueue.delete(factionId);
+            this.buildFlagText(factionId);
+            // 🔴 只 patch、**不能**走 CityManager.refreshFactionFlagText：那个会先删缓存，
+            //    删完 patch 又要重新生成一张，等于把刚省下的活儿原样做回去（还会无限循环）。
+            try {
+                (window as unknown as {
+                    game?: { cityManager?: { getTerritorySystem?(): { patchFactionFlagText?(id: string): void } } };
+                }).game?.cityManager?.getTerritorySystem?.()?.patchFactionFlagText?.(factionId);
+            } catch { /* 渲染层还没就绪就算了，下次自然重绘会补上 */ }
+            if (this.flagTextQueue.size > 0) this.scheduleFlagTextDrain();
+        };
+        const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
+        if (typeof ric === 'function') ric(run, { timeout: 500 });
+        else setTimeout(run, 30);
+    }
+
+    /** 旗号文字的渲染参数（文字内容 + 配色 + 缓存键），生成与查缓存共用一份，避免两处算歪 */
+    private static resolveFlagTextSpec(factionId: string): { variantKey: string; text: string; fill: string; stroke: string } {
         let textToRender = SANDBOX_DISPLAY_NAMES[factionId];
-
-        // 岳飞北伐脚本进行中：郾川旗面临时改「岳」（结束/覆没后恢复「郾」）
-        if (factionId === 'yanchuan_d' && (window as any).__yuefeiExpeditionActive) {
-            textToRender = '岳';
-        }
-        // 霍去病封狼居胥脚本进行中：肃州旗面临时改「汉」（结束/覆没后恢复）
-        if (factionId === 'suzhou' && (window as any).__huoqubingExpeditionActive) {
-            textToRender = '汉';
-        }
-        // 诸葛亮北伐中原脚本进行中：季汉旗面临时改「漢」（结束/覆没后恢复）
-        if (factionId === 'huizhou_d' && (window as any).__zhugeliangExpeditionActive) {
-            textToRender = '漢';
-        }
 
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;
@@ -1884,17 +1930,47 @@ export class CityAssetManager {
 
         // §10.2.1：浅旗黑字白边，深旗白字黑边
         const useWhiteText = this.resolveFlagTextIsDark(factionId);
-        const fill   = useWhiteText ? '#f0f0e8' : '#1a1a1a';
-        const stroke = useWhiteText ? 'rgba(0,0,0,0.80)' : 'rgba(255,255,255,0.70)';
+        return {
+            variantKey: `dynamic_text_${factionId}_${useWhiteText ? 'w' : 'b'}`,
+            text: textToRender,
+            fill: useWhiteText ? '#f0f0e8' : '#1a1a1a',
+            stroke: useWhiteText ? 'rgba(0,0,0,0.80)' : 'rgba(255,255,255,0.70)',
+        };
+    }
 
-        const variantKey = `dynamic_text_${factionId}_${useWhiteText ? 'w' : 'b'}`;
-        if (this.processedFlagCache.has(variantKey)) {
-            return this.processedFlagCache.get(variantKey)!;
-        }
-
-        const textImgUrl = DynamicFlagTextGenerator.generate(textToRender, fill, stroke);
-        this.processedFlagCache.set(variantKey, textImgUrl);
+    /** 真正生成并入缓存（不受预算限制，供队列补齐调用） */
+    private static buildFlagText(factionId: string): string {
+        const spec = this.resolveFlagTextSpec(factionId);
+        const cached = this.processedFlagCache.get(spec.variantKey);
+        if (cached) return cached;
+        const textImgUrl = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
+        this.processedFlagCache.set(spec.variantKey, textImgUrl);
         return textImgUrl;
+    }
+
+    /**
+     * [DYNAMIC REFACTOR] Dynamically render flag text using DynamicFlagTextGenerator
+     *
+     * 返回 null 有**两种**含义，调用方必须分清（见 isFlagTextPending）：
+     *   · 这个势力本来就不显示文字（panjun）→ 该抹掉已有文字
+     *   · 本帧生成预算用完、已排队 → **保留**已有文字，等补齐，别抹（抹了会闪）
+     */
+    public static getProcessedFlagText(factionId: string): string | null {
+        // [USER-REQUEST] Hide flag text for panjun
+        if (!factionId || factionId === 'panjun') return null;
+
+        const spec = this.resolveFlagTextSpec(factionId);
+        const cached = this.processedFlagCache.get(spec.variantKey);
+        if (cached) return cached;
+
+        // 本窗口配额用完 → 排队，交给空闲回调补齐（见 FLAG_TEXT_PER_FRAME 上方说明）
+        if (!this.takeFlagTextBudget()) {
+            this.flagTextQueue.add(factionId);
+            this.scheduleFlagTextDrain();
+            return null;
+        }
+        this.flagTextQueue.delete(factionId);
+        return this.buildFlagText(factionId);
     }
 
     /**
@@ -1970,7 +2046,9 @@ export class CityAssetManager {
                             canvas = document.createElement('canvas');
                             canvas.width = w;
                             canvas.height = h;
-                            ctx = canvas.getContext('2d');
+                            // [2026-09-05] 本函数逐片 getImageData 抠色，画布必须走 CPU 后端
+                            //（不带这个标志每次读像素都要 GPU→CPU 回读；同族坑见 TileDecoder.ts）
+                            ctx = canvas.getContext('2d', { willReadFrequently: true });
                             if (!ctx) {
                                 reject(new Error('Canvas 2d unavailable'));
                                 return;

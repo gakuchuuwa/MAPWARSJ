@@ -10,7 +10,6 @@
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
-import { GENERAL_PROFILES } from '../data/GeneralSkills';
 
 export interface HistoricalStreakRecord {
     streak: number;
@@ -46,9 +45,6 @@ export class CameraFollowUI {
 
     // DOM Elements
     private listButton: HTMLButtonElement | null = null;
-    private yuefeiButton: HTMLButtonElement | null = null;
-    private huoqubingButton: HTMLButtonElement | null = null;
-    private zhugeliangButton: HTMLButtonElement | null = null;
     private listPanel: HTMLDivElement | null = null;
     private followBanner: HTMLDivElement | null = null;
     public isListOpen: boolean = false;
@@ -73,56 +69,44 @@ export class CameraFollowUI {
     private static readonly LIST_REFRESH_INTERVAL_MS = 500;
     /** 军团按钮下缘 ≈ 62px；岳飞按钮固定于此，列表面板 z-index 更高盖住它 */
     private static readonly STACK_LEFT_PX = 16;
-    private static readonly YUEFEI_BTN_TOP_PX = 62;
-    private static readonly HUOQUBING_BTN_TOP_PX = 104;
-    private static readonly ZHUGELIANG_BTN_TOP_PX = 146;
     private static readonly LIST_PANEL_TOP_PX = 62;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
 
-    /** 「岳飞北伐黄龙」圆梦按钮回调（由 GameApp 注入） */
-    private onYuefeiExpedition: (() => void) | null = null;
-    /** 「霍去病封狼居胥」按钮回调（由 GameApp 注入） */
-    private onHuoQubingExpedition: (() => void) | null = null;
-    /** 「诸葛亮北伐中原」按钮回调（由 GameApp 注入） */
-    private onZhugeLiangExpedition: (() => void) | null = null;
-
     constructor() {
         this.createListButton();
-        this.createYuefeiButton();
-        this.createHuoQubingButton();
-        this.createZhugeLiangButton();
         this.createListPanel();
         this.createFollowBanner();
     }
 
-    /** 注入「岳飞北伐黄龙」按钮点击回调 */
-    public setYuefeiHandler(fn: () => void): void {
-        this.onYuefeiExpedition = fn;
+    /** 玩家单骑；入伍时对外报的"跟随军团 id" = 所在军团（引擎/战斗 UI/13 都按军团认），否则 = 玩家本人 */
+    private playerHero: { id: string; name: string; getHostLegionId(): string | null; getTravelCityId?(): string | null; factionId?: string | null; getHostLegion?(): any } | null = null;
+
+    public setPlayerHero(hero: { id: string; name: string; getHostLegionId(): string | null; getTravelCityId?(): string | null; factionId?: string | null; getHostLegion?(): any } | null): void {
+        this.playerHero = hero;
     }
 
-    /** 注入「霍去病封狼居胥」按钮点击回调 */
-    public setHuoQubingHandler(fn: () => void): void {
-        this.onHuoQubingExpedition = fn;
+    public isFollowingPlayer(): boolean {
+        return !!this.playerHero && this.followedArmyId === this.playerHero.id;
     }
 
-    /** 注入「诸葛亮北伐中原」按钮点击回调 */
-    public setZhugeLiangHandler(fn: () => void): void {
-        this.onZhugeLiangExpedition = fn;
+    public followPlayer(): void {
+        if (!this.playerHero) return;
+        this.setFollow(this.playerHero.id, this.playerHero.name);
     }
 
-    /** 开局尚未手动选军团时，首次出现野战军团则自动跟随（名将优先，否则兵力最多） */
-    private autoFollowOnStartPending = true;
-    private pendingFollowName: string | null = null;
-
-    private waitingForRespawn = false;
-
-    private autoFollowEnabled = true;
-    private autoFollowCheckbox: HTMLInputElement | null = null;
-    /** 自动跟随计时：无目标时开始计时，5秒后触发 */
-    private autoFollowNoTargetSince = 0;
-    private static readonly AUTO_FOLLOW_DELAY_MS = 5000;
+    /** 玩家入伍/离队/改名后：对外的跟随 id 变了（军团 ↔ 本人），重新广播给引擎侧监听者 */
+    public refreshPlayerFollow(): void {
+        if (!this.isFollowingPlayer()) return;
+        this.syncFollowedHighlight();
+        // [2026-09-05 玩家] 改名后同步跟拍横幅上的玩家名
+        if (this.playerHero) {
+            const text = document.getElementById('follow-banner-text');
+            if (text) text.innerHTML = this.formatFollowBannerText(this.playerHero, this.playerHero.name);
+        }
+        this.onFollowChange?.(this.getFollowedArmyId());
+    }
 
     /**
      * 注入依赖：军队列表、跟随回调、军团上限变更（写 GameConfig + 裁军）
@@ -216,148 +200,7 @@ export class CameraFollowUI {
         this.listButton = btn;
     }
 
-    // ─── 1b. 岳飞北伐黄龙（固定于军团按钮下；列表展开时被面板盖住） ────────
-
-    private createYuefeiButton(): void {
-        const btn = document.createElement('button');
-        btn.id = 'yuefei-expedition-btn';
-        btn.title = '岳飞率背嵬军十万，自郾城北伐：开封 → 北京 → 沈阳 → 黄龙府';
-        btn.innerHTML = '⚔ 岳飞痛饮黄龙';
-        btn.style.cssText = `
-            position: fixed;
-            top: ${CameraFollowUI.YUEFEI_BTN_TOP_PX}px;
-            left: ${CameraFollowUI.STACK_LEFT_PX}px;
-            z-index: 10000;
-            padding: 7px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fdfbf7;
-            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(156, 48, 47, 0.45);
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
-            transition: all 0.25s ease;
-            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-            letter-spacing: 2px;
-        `;
-
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = '#d4a843';
-            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
-            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
-            btn.style.transform = 'translateY(-1px)';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
-            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
-            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
-            btn.style.transform = 'none';
-        });
-
-        btn.addEventListener('click', () => this.onYuefeiExpedition?.());
-
-        document.body.appendChild(btn);
-        this.yuefeiButton = btn;
-    }
-
-    // ─── 1c. 霍去病封狼居胥（固定于岳飞按钮下） ────────
-
-    private createHuoQubingButton(): void {
-        const btn = document.createElement('button');
-        btn.id = 'huoqubing-expedition-btn';
-        btn.title = '霍去病率轻勇骑，出灵仙北伐：上都 → 应昌 → 阔亦田 → 狼居胥山 → 姑衍山 → 贝加尔';
-        btn.innerHTML = '⚔ 霍去病封狼居胥';
-        btn.style.cssText = `
-            position: fixed;
-            top: ${CameraFollowUI.HUOQUBING_BTN_TOP_PX}px;
-            left: ${CameraFollowUI.STACK_LEFT_PX}px;
-            z-index: 10000;
-            padding: 7px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fdfbf7;
-            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(156, 48, 47, 0.45);
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
-            transition: all 0.25s ease;
-            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-            letter-spacing: 2px;
-        `;
-
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = '#d4a843';
-            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
-            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
-            btn.style.transform = 'translateY(-1px)';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
-            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
-            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
-            btn.style.transform = 'none';
-        });
-
-        btn.addEventListener('click', () => this.onHuoQubingExpedition?.());
-
-        document.body.appendChild(btn);
-        this.huoqubingButton = btn;
-    }
-
-    // ─── 1d. 诸葛亮北伐中原（固定于霍去病按钮下） ────────
-
-    private createZhugeLiangButton(): void {
-        const btn = document.createElement('button');
-        btn.id = 'zhugeliang-expedition-btn';
-        btn.title = '诸葛亮率白毦军，出汉中北伐：略阳 → 河池 → 天水 → 汧源(街亭) → 岐山(五丈原) → 长安';
-        btn.innerHTML = '⚔ 诸葛亮北伐中原';
-        btn.style.cssText = `
-            position: fixed;
-            top: ${CameraFollowUI.ZHUGELIANG_BTN_TOP_PX}px;
-            left: ${CameraFollowUI.STACK_LEFT_PX}px;
-            z-index: 10000;
-            padding: 7px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fdfbf7;
-            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(156, 48, 47, 0.45);
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
-            transition: all 0.25s ease;
-            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-            letter-spacing: 2px;
-        `;
-
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = '#d4a843';
-            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
-            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
-            btn.style.transform = 'translateY(-1px)';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
-            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
-            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
-            btn.style.transform = 'none';
-        });
-
-        btn.addEventListener('click', () => this.onZhugeLiangExpedition?.());
-
-        document.body.appendChild(btn);
-        this.zhugeliangButton = btn;
-    }
-
-    // ─── 2. 军团列表面板（z-index 高于岳飞/霍去病/诸葛亮按钮，展开时盖住下层按钮） ────────
+    // ─── 2. 军团列表面板（z-index 高于军团按钮，展开时盖住下层按钮） ────────
 
     private createListPanel(): void {
         const panel = document.createElement('div');
@@ -399,30 +242,6 @@ export class CameraFollowUI {
         headerTitle.textContent = '⚔ 军团·势力榜 (0) ⚔';
         header.appendChild(headerTitle);
         this.listHeader = headerTitle as unknown as HTMLDivElement;
-
-        const autoFollowLabel = document.createElement('label');
-        autoFollowLabel.title = '无目标时自动跟随：名将优先，同档比兵力';
-        autoFollowLabel.style.cssText = `
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        `;
-        const autoFollowCheckbox = document.createElement('input');
-        autoFollowCheckbox.type = 'checkbox';
-        autoFollowCheckbox.checked = this.autoFollowEnabled;
-        autoFollowCheckbox.style.cursor = 'pointer';
-        autoFollowCheckbox.style.accentColor = '#9c302f';
-        autoFollowCheckbox.addEventListener('change', (e) => {
-            this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
-            this.autoFollowNoTargetSince = 0;
-        });
-        this.autoFollowCheckbox = autoFollowCheckbox;
-        autoFollowLabel.appendChild(autoFollowCheckbox);
-        header.appendChild(autoFollowLabel);
 
         panel.appendChild(header);
 
@@ -547,23 +366,6 @@ export class CameraFollowUI {
             if (this.isListOpen) {
                 this.refreshList();
             }
-            // 全军覆灭后在等待，现在新军团出现了 → 自动跟随
-            // 勾选自动跟随时，无目标10秒后自动跟随最强军团
-            if (this.autoFollowEnabled && !this.followedArmyId && count > 0) {
-                const now = performance.now();
-                if (this.autoFollowNoTargetSince === 0) {
-                    this.autoFollowNoTargetSince = now;
-                } else if (now - this.autoFollowNoTargetSince >= CameraFollowUI.AUTO_FOLLOW_DELAY_MS) {
-                    this.autoFollowNoTargetSince = 0;
-                    this.followLargestLegion();
-                }
-            } else if (this.autoFollowEnabled && this.followedArmyId) {
-                this.autoFollowNoTargetSince = 0;
-            }
-            if (this.waitingForRespawn && count > 0) {
-                this.waitingForRespawn = false;
-                this.followLargestLegion();
-            }
         }
         // 面板展开时，即使军团数不变也节流刷新，保持势力兵力/据点/色条实时
         if (this.isListOpen) {
@@ -573,23 +375,6 @@ export class CameraFollowUI {
                 this.refreshList();
             }
         }
-        this.tryPendingFollowByName();
-    }
-
-    /** 等该名字的军团上场后跟随（已存在则立刻挂上） */
-    public followByNameWhenReady(name: string): void {
-        this.pendingFollowName = name;
-        this.autoFollowOnStartPending = false;
-        this.tryPendingFollowByName();
-    }
-
-    private tryPendingFollowByName(): void {
-        if (!this.pendingFollowName || !this.getArmiesFn) return;
-        const name = this.pendingFollowName;
-        const army = this.getActiveLegions().find((a) => a.name === name);
-        if (!army) return;
-        this.pendingFollowName = null;
-        this.setFollow(army.id, army.name || name);
     }
 
     private getActiveLegions(): any[] {
@@ -645,9 +430,7 @@ export class CameraFollowUI {
             this.preScene13ListOpen = true;
         }
         this.closeList();
-        for (const button of [this.listButton, this.yuefeiButton, this.huoqubingButton, this.zhugeliangButton]) {
-            if (button) button.style.display = 'none';
-        }
+        if (this.listButton) this.listButton.style.display = 'none';
         // 🔴 幂等修复（2026-08-26）：onEnter 会被 Scene13WarLayer.start 与 BattleSceneLayer.enter
         //    各调一次。第二次进来时 banner 已被第一次隐藏（display='none'），原 else 分支把
         //    preScene13FollowBannerVisible 覆盖回 false，导致退出时 onExit 永不恢复跟随面板。
@@ -660,9 +443,7 @@ export class CameraFollowUI {
 
     /** 退 13 战斗场景时恢复展开状态 */
     public onExitBattleScene13(): void {
-        for (const button of [this.listButton, this.yuefeiButton, this.huoqubingButton, this.zhugeliangButton]) {
-            if (button) button.style.display = '';
-        }
+        if (this.listButton) this.listButton.style.display = '';
         if (this.preScene13ListOpen) {
             this.preScene13ListOpen = false;
             this.openList();
@@ -819,11 +600,6 @@ export class CameraFollowUI {
                 }
             });
 
-            item.addEventListener('click', () => {
-                this.setFollow(army.id, name);
-                this.closeList();
-            });
-
             container.appendChild(item);
         }
     }
@@ -942,30 +718,8 @@ export class CameraFollowUI {
                     streakCard.style.background = 'rgba(255,255,255,0.45)';
                     streakCard.style.borderColor = 'rgba(255,255,255,0.7)';
                 });
-                streakCard.addEventListener('click', () => {
-                    this.setFollow(streakArmyId, streakArmyName);
-                    this.closeList();
-                });
             }
         }
-    }
-
-    private isFamousGeneralLegion(army: any): boolean {
-        const gid = army.generalId as string | undefined;
-        if (!gid) return false;
-        return GENERAL_PROFILES[gid]?.tier === 'famous';
-    }
-
-    /**
-     * [2026-08-09 主人定] 自动跟随：名将优先保留，同档随机。
-     * 开局兵力全相同 → "兵力高者优先"恒等无意义（此前导致总跟第一支生成的军团，如莫斯科）。
-     * 实现：名将池非空 → 名将池随机取一；否则全场随机取一。不走 sort（随机比较器有风险）。
-     */
-    private pickBestAutoFollowLegion(armies: any[]): any | null {
-        if (armies.length === 0) return null;
-        const famous = armies.filter((a) => this.isFamousGeneralLegion(a));
-        const pool = famous.length > 0 ? famous : armies;
-        return pool[Math.floor(Math.random() * pool.length)];
     }
 
     private formatTroops(n: number): string {
@@ -983,16 +737,16 @@ export class CameraFollowUI {
             display: none;
             align-items: center;
             gap: 8px;
-            padding: 6px 18px;
+            padding: 7px 18px;
             font-size: 14px;
-            font-weight: bold;
-            color: #1a1612;
-            background: linear-gradient(135deg, rgba(248, 242, 230, 0.68) 0%, rgba(235, 220, 198, 0.75) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(125, 111, 90, 0.22);
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
+            font-weight: 700;
+            color: #f5e6c8;
+            background: rgba(20, 16, 12, 0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.55);
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
             font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             letter-spacing: 0.5px;
             pointer-events: auto;
@@ -1001,56 +755,45 @@ export class CameraFollowUI {
 
         const text = document.createElement('span');
         text.id = 'follow-banner-text';
-        text.textContent = '🎥 正在跟随：';
+        text.textContent = '🎥 正在跟随';
         banner.appendChild(text);
 
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = '✕ 取消';
-        closeBtn.style.cssText = `
-            background: rgba(156, 48, 47, 0.1);
-            border: 1px solid rgba(156, 48, 47, 0.35);
-            color: #9c302f;
-            padding: 2px 9px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            margin-left: 4px;
-        `;
-        closeBtn.addEventListener('mouseenter', () => {
-            closeBtn.style.background = 'rgba(156, 48, 47, 0.22)';
-        });
-        closeBtn.addEventListener('mouseleave', () => {
-            closeBtn.style.background = 'rgba(156, 48, 47, 0.1)';
-        });
-        closeBtn.addEventListener('click', () => {
-            this.cancelFollow();
-        });
         const renameBtn = document.createElement('button');
         renameBtn.textContent = '✎ 改名';
         renameBtn.style.cssText = `
-            background: rgba(91, 122, 102, 0.12);
-            border: 1px solid rgba(91, 122, 102, 0.35);
-            color: #1d3326;
-            padding: 2px 9px;
-            border-radius: 12px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #dfc28c;
+            padding: 2px 8px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 12px;
             font-family: inherit;
-            font-weight: bold;
+            font-weight: 700;
             transition: all 0.2s ease;
-            margin-left: 6px;
+            margin-left: 8px;
         `;
         renameBtn.addEventListener('mouseenter', () => {
-            renameBtn.style.background = 'rgba(91, 122, 102, 0.25)';
+            renameBtn.style.background = 'rgba(212, 175, 55, 0.28)';
+            renameBtn.style.borderColor = 'rgba(212, 175, 55, 0.8)';
+            renameBtn.style.color = '#fffcee';
         });
         renameBtn.addEventListener('mouseleave', () => {
-            renameBtn.style.background = 'rgba(91, 122, 102, 0.12)';
+            renameBtn.style.background = 'rgba(212, 175, 55, 0.12)';
+            renameBtn.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+            renameBtn.style.color = '#dfc28c';
         });
         renameBtn.addEventListener('click', () => {
             if (!this.followedArmyId || !this.getArmiesFn) return;
+            // [2026-09-05 玩家] 乱入者改名：跟玩家本人（type='hero'）时改玩家名，不再走军团改名
+            const player = (window as any).game?.playerHero;
+            if (player && this.followedArmyId === player.id) {
+                const trimmed = prompt('请输入新的玩家名称：', player.name)?.trim();
+                if (!trimmed || trimmed === player.name) return;
+                player.rename(trimmed);
+                this.refreshPlayerFollow();
+                return;
+            }
             const army = this.getArmiesFn().find(
                 (a) => a.id === this.followedArmyId && !a.isDestroyed && a.type === 'legion'
             );
@@ -1064,9 +807,38 @@ export class CameraFollowUI {
                 : ((army.name = trimmed), true);
             if (!ok) return;
 
-            this.setFollow(army.id, army.name);
             if (this.isListOpen) this.refreshList();
         });
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕ 取消';
+        closeBtn.style.cssText = `
+            background: rgba(156, 48, 47, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #f5c8c8;
+            padding: 2px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            margin-left: 5px;
+        `;
+        closeBtn.addEventListener('mouseenter', () => {
+            closeBtn.style.background = 'rgba(156, 48, 47, 0.45)';
+            closeBtn.style.borderColor = 'rgba(212, 175, 55, 0.75)';
+            closeBtn.style.color = '#ffffff';
+        });
+        closeBtn.addEventListener('mouseleave', () => {
+            closeBtn.style.background = 'rgba(156, 48, 47, 0.2)';
+            closeBtn.style.borderColor = 'rgba(212, 175, 55, 0.35)';
+            closeBtn.style.color = '#f5c8c8';
+        });
+        closeBtn.addEventListener('click', () => {
+            this.cancelFollow();
+        });
+
         banner.appendChild(renameBtn);
         banner.appendChild(closeBtn);
 
@@ -1096,6 +868,15 @@ export class CameraFollowUI {
         const followedId = this.followedArmyId;
         if (!followedId) return;
 
+        // [2026-09-05 玩家] 跟随玩家分支：镜头贴着玩家，横幅固定显示玩家当前前往的目标
+        if (this.isFollowingPlayer()) {
+            this.clearPendingAutoSwitch();
+            this.restoreFollowBannerName();
+            const playerPos = (window as any).game?.playerHero?.getPosition?.();
+            if (playerPos) panToLegion(playerPos);
+            return;
+        }
+
         const army = getLegionById(followedId);
         const alive = !!(army && !army.isDestroyed && army.getTroops() > 0);
 
@@ -1121,17 +902,18 @@ export class CameraFollowUI {
 
         if (performance.now() >= this.pendingAutoSwitchAt) {
             this.clearPendingAutoSwitch();
-            this.followLargestLegion();
+            this.followPlayer();
         }
     }
 
     private showPendingSwitchBanner(delayMs: number): void {
         const sec = Math.ceil(delayMs / 1000);
         const text = document.getElementById('follow-banner-text');
-        if (text) text.textContent = `🎥 军团阵亡，${sec} 秒后切换视角…`;
+        if (text) text.innerHTML = `<span style="margin-right:6px;">🎥</span>军团阵亡，<span style="color:#ffd700;font-weight:900;">${sec}</span> 秒后切换视角…`;
     }
 
     private formatFollowBannerText(army: any, fallbackName: string): string {
+        const isPlayer = !!(army.isPlayerHero || this.isFollowingPlayer() || (this.playerHero && army.id === this.playerHero.id));
         let label = army.name || fallbackName;
 
         let generalName = '';
@@ -1140,53 +922,118 @@ export class CameraFollowUI {
             if (generalRecord) generalName = generalRecord.generalName;
         }
 
-        const factionId = army.getFactionId?.() ?? '';
-        const factionName = this.factionManager?.getFactionName(factionId) ?? '';
+        const factionId = (typeof army.getFactionId === 'function' ? army.getFactionId() : army.factionId) ?? '';
+        const rawFactionName = this.factionManager?.getFactionName(factionId);
+        const factionName = rawFactionName && rawFactionName !== '未知势力' ? rawFactionName : '';
+
+        let targetCityId = '';
+        let isExpedition = false;
+
+        if (isPlayer) {
+            const player = (window as any).game?.playerHero ?? army;
+            const travelId = player.getTravelCityId?.() || player.army?.getTargetCity?.()?.id;
+            const host = player.getHostLegion?.();
+            if (travelId) {
+                targetCityId = travelId;
+                isExpedition = false;
+            } else if (host) {
+                if (host.expeditionTargetCityId) {
+                    targetCityId = host.expeditionTargetCityId;
+                    isExpedition = true;
+                } else if (host.getTargetCity?.()?.id) {
+                    targetCityId = host.getTargetCity().id;
+                    isExpedition = false;
+                }
+            }
+        } else {
+            if (army.expeditionTargetCityId) {
+                targetCityId = army.expeditionTargetCityId;
+                isExpedition = true;
+            } else if (army.getTargetCity?.()?.id) {
+                targetCityId = army.getTargetCity().id;
+                isExpedition = false;
+            }
+        }
 
         let targetCityName = '';
-        if (army.expeditionTargetCityId) {
-            const targetCity = CITIES_V2.find((c: any) => c.id === army.expeditionTargetCityId);
+        if (targetCityId) {
+            const targetCity = CITIES_V2.find((c: any) => c.id === targetCityId)
+                ?? (this.cityManager as any)?.getCity?.(targetCityId);
             if (targetCity) targetCityName = targetCity.name;
         }
 
-        const tagFaction = factionName
-            ? `<span style="color:#2e6b48;font-weight:800;margin-right:6px;font-size:13px;">${factionName}</span>`
-            : '';
-        const tagGen = generalName
-            ? `<span style="color:#9c302f;font-weight:900;letter-spacing:0.5px;font-size:15px;">${generalName}</span>`
-            : '';
-        const tagShuai = `<span style="color:#5c4e3e;font-size:12px;margin:0 3px;font-weight:bold;">率</span>`;
-        const tagElite = `<span style="color:#1a1612;font-weight:800;font-size:14px;">${label}</span>`;
-        const tagYuanZheng = `<span style="color:#9c302f;font-size:12px;font-weight:bold;margin:0 4px;">远征 →</span>`;
-        const tagTarget = `<span style="color:#9c302f;font-weight:800;background:rgba(156,48,47,0.08);border:1px solid rgba(156,48,47,0.35);border-radius:4px;padding:1px 6px;">${targetCityName}</span>`;
+        // 图标：出征为 ⚔️，行军前往为 🐎，驻留守备为 🛡️
+        const icon = isExpedition ? '⚔️' : (targetCityName ? '🐎' : '🛡️');
 
-        if (generalName && targetCityName) {
-            return `${tagFaction}${tagGen}${tagShuai}${tagElite}${tagYuanZheng}${tagTarget}`;
+        // 势力前缀（非未知势力时展示）
+        const factionHtml = factionName
+            ? `<span style="color:#d4af37;font-weight:700;margin-right:4px;">[${factionName}]</span>`
+            : '';
+
+        // 主体名称拼接
+        let subjectHtml = '';
+        if (isPlayer) {
+            const host = ((window as any).game?.playerHero ?? army)?.getHostLegion?.();
+            const hostGenName = host?.generalId ? getGeneralRecordByGeneralId(host.generalId)?.generalName : null;
+            if (hostGenName) {
+                subjectHtml = `<span style="color:#f5e6c8;font-weight:700;">${hostGenName}</span><span style="color:#dfc28c;margin:0 2px;">率</span><span style="color:#ffffff;font-weight:700;">${label}</span>`;
+            } else {
+                subjectHtml = `<span style="color:#ffffff;font-weight:700;">${label}</span>`;
+            }
+        } else {
+            if (generalName && label && label !== generalName) {
+                subjectHtml = `<span style="color:#ffffff;font-weight:700;">${generalName}</span><span style="color:#dfc28c;margin:0 2px;">·</span><span style="color:#f5e6c8;font-weight:700;">${label}</span>`;
+            } else if (generalName) {
+                subjectHtml = `<span style="color:#ffffff;font-weight:700;">${generalName}</span>`;
+            } else {
+                subjectHtml = `<span style="color:#ffffff;font-weight:700;">${label}</span>`;
+            }
         }
-        if (generalName) {
-            return `${tagFaction}${tagGen}${tagShuai}${tagElite}`;
-        }
+
+        // 动作与据点（黑金【据点】风格）
+        let actionHtml = '';
         if (targetCityName) {
-            return `${tagFaction}${tagElite}${tagYuanZheng}${tagTarget}`;
+            const verb = isExpedition ? '征伐' : '前往';
+            actionHtml = `<span style="color:#e6c894;margin-left:4px;">${verb}</span><span style="color:#fffcee;font-weight:900;">【${targetCityName}】</span>`;
         }
-        return `${tagFaction}${tagElite}`;
+
+        return `<span style="margin-right:6px;">${icon}</span>${factionHtml}${subjectHtml}${actionHtml}`;
     }
 
     private restoreFollowBannerName(): void {
-        if (!this.followedArmyId || !this.getArmiesFn) return;
-        const army = this.getArmiesFn().find((a) => a.id === this.followedArmyId);
-        if (!army) return;
+        if (!this.followedArmyId) return;
         const text = document.getElementById('follow-banner-text');
-        if (text) text.innerHTML = this.formatFollowBannerText(army, army.id);
+        if (!text) return;
+
+        let newHtml: string | null = null;
+        if (this.isFollowingPlayer()) {
+            const player = (window as any).game?.playerHero ?? this.playerHero;
+            if (player) {
+                newHtml = this.formatFollowBannerText(player, player.name || '乱入者');
+            }
+        } else if (this.getArmiesFn) {
+            const army = this.getArmiesFn().find((a) => a.id === this.followedArmyId);
+            if (army) {
+                newHtml = this.formatFollowBannerText(army, army.name || this.followedArmyId);
+            }
+        }
+
+        if (newHtml && text.innerHTML !== newHtml) {
+            text.innerHTML = newHtml;
+        }
     }
 
     public setFollow(armyId: string, armyName: string): void {
         this.clearPendingAutoSwitch();
         this.followedArmyId = armyId;
-        this.autoFollowNoTargetSince = 0;
 
         let label = armyName;
-        if (this.getArmiesFn) {
+        if (this.isFollowingPlayer()) {
+            const player = (window as any).game?.playerHero ?? this.playerHero;
+            if (player) {
+                label = this.formatFollowBannerText(player, armyName);
+            }
+        } else if (this.getArmiesFn) {
             const army = this.getArmiesFn().find((a) => a.id === armyId);
             if (army) {
                 label = this.formatFollowBannerText(army, armyName);
@@ -1205,19 +1052,12 @@ export class CameraFollowUI {
             this.refreshList();
         }
 
-        if (this.onFollowChange) this.onFollowChange(armyId);
+        if (this.onFollowChange) this.onFollowChange(this.getFollowedArmyId());
     }
 
     public cancelFollow(): void {
         this.clearPendingAutoSwitch();
-        this.autoFollowOnStartPending = false;
-        this.waitingForRespawn = false;
         this.followedArmyId = null;
-
-        // [2026-06-23 Fix] 不要在取消跟随（如点击✖或拖拽地图）时强行把用户的“自动跟随”设置给关掉。
-        // 既然这个 checkbox 代表用户的偏好，就应该一直保持用户自己勾选的状态。
-        // this.autoFollowEnabled = false;
-        // if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = false;
 
         if (this.followBanner) this.followBanner.style.display = 'none';
         this.syncFollowedHighlight();
@@ -1232,47 +1072,17 @@ export class CameraFollowUI {
     /** 跟随军团高亮（地图上区分玩家关注的一支） */
     private syncFollowedHighlight(): void {
         if (!this.getArmiesFn) return;
-        const id = this.followedArmyId;
+        const id = this.getFollowedArmyId();
         for (const army of this.getActiveLegions()) {
             army.setFollowedHighlight?.(army.id === id);
         }
     }
 
-    /** 跟随军团阵亡/无目标时：优先切到名将军团，否则兵力最多 */
-    public followLargestLegion(): void {
-        this.clearPendingAutoSwitch();
-        if (!this.getArmiesFn) {
-            this.cancelFollow();
-            return;
-        }
-
-        const armies = this.getActiveLegions();
-        if (armies.length === 0) {
-            // 全军覆灭，保持跟随状态等待新军团
-            this.waitingForRespawn = true;
-            const text = document.getElementById('follow-banner-text');
-            if (text) text.textContent = '🎥 军团全部阵亡，等待新军团…';
-            if (this.followBanner) {
-                const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
-                this.followBanner.style.display = inScene13 ? 'none' : 'flex';
-            }
-            return;
-        }
-
-        const best = this.pickBestAutoFollowLegion(armies);
-        if (!best) return;
-        this.setFollow(best.id, best.name || best.id);
-    }
-
-    /** 游戏开始后自动跟随：尚无选中军团且场上已有野战军团时（名将优先，仅触发一次） */
-    public tryAutoFollowOnStart(): void {
-        if (!this.autoFollowOnStartPending || this.followedArmyId) return;
-        if (!this.getArmiesFn || this.getActiveLegions().length === 0) return;
-        this.autoFollowOnStartPending = false;
-        this.followLargestLegion();
-    }
-
     public getFollowedArmyId(): string | null {
+        // [2026-09-05 玩家] 跟玩家时对外报所在军团 id（入伍中）或玩家本人 id（独行）
+        if (this.playerHero && this.followedArmyId === this.playerHero.id) {
+            return this.playerHero.getHostLegionId() ?? this.playerHero.id;
+        }
         return this.followedArmyId;
     }
 

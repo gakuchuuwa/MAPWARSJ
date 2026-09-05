@@ -45,6 +45,7 @@ import { GameConfig } from '../config/GameConfig';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
+import type { Scene13PlayerSetup } from '../player/PlayerHero'; // [2026-09-05 玩家] 战术模式玩家布置
 
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
@@ -532,6 +533,9 @@ interface ArrowTower {
 export const WAR_TYPES: Record<string, WarType> = {
     tarantine_cavalry: { name: '塔兰丁骑兵', cls: 'cav', sz: 1, hp: 60, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.7, spd: 130, dmgType: 'pierce', bonus: { 1: 3, 15: 4, 27: 4, 28: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
     light_infantry: { name: '轻步兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
+    // 🔴 [2026-09-05 玩家] 乱入者（借用关羽 DE 素材）。⚠️ 估值：本机 scratch 里没有该英雄的 dat 抽取数据，
+    //    按 DE 英雄骑兵档估（血厚、攻高、装填快、骑速）；主人若从 DE 本体核出真值直接改这一行。
+    guanyu: { name: '乱入者', cls: 'cav', sz: 1.15, hp: 600, atk: 24, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1.5, spd: 130, dmgType: 'melee', bonus: { 1: 4, 8: 4 }, armorTags: [8, 31] },
     heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 52, dmgType: 'melee', armorTags: [1, 31] },
     shield: { name: '近卫兵', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
     spear: { name: '青州兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 52, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
@@ -1316,7 +1320,7 @@ const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ["/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ANT_SCOUT/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARBALESTER/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/AZTEC_RAIDER/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTAELEPHANT/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_IMPERIAL/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAVALRYARCHER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITEBOWMAN/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANTARCHER/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECHUKONU/","/SUCAI/ELITECOMPOSITEBOWMAN/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFIREARCHER/","/SUCAI/ELITEFIRELANCER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKARAMBITWARRIOR/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKIPCHAK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITELIAODAO/","/SUCAI/ELITELONGBOWMAN/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMANGUDAI/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITERATTANARCHER/","/SUCAI/ELITESAMURAI/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITESTEPPELANCER/","/SUCAI/ELITETARKAN/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWHITEFEATHERGUARD/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIREARCHER/","/SUCAI/FIRELANCER/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/GUECHA_ELITE/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYCAMELRIDER/","/SUCAI/HEAVYCAVALRYARCHER/","/SUCAI/HEAVYHEIKUANG/","/SUCAI/HEAVYPIKEMAN/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEIKUANG/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IBIRAPEMA_ELITE/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIALSKIRMISHER/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRONPAGODA/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/JI_INFANTRY/","/SUCAI/JI_INFANTRY_ELITE/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBITWARRIOR/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAODAO/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/ORGAN_ELITE/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PATTIYODHA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTANARCHER/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEELEPHANT/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPELANCER/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWINGAXEMAN/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGERCAVALRY/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITEFEATHERGUARD/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEIRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
+const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ANT_SCOUT/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARBALESTER/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/AZTEC_RAIDER/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTAELEPHANT/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_IMPERIAL/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAVALRYARCHER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITEBOWMAN/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANTARCHER/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECHUKONU/","/SUCAI/ELITECOMPOSITEBOWMAN/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFIREARCHER/","/SUCAI/ELITEFIRELANCER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKARAMBITWARRIOR/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKIPCHAK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITELIAODAO/","/SUCAI/ELITELONGBOWMAN/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMANGUDAI/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITERATTANARCHER/","/SUCAI/ELITESAMURAI/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITESTEPPELANCER/","/SUCAI/ELITETARKAN/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWHITEFEATHERGUARD/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIREARCHER/","/SUCAI/FIRELANCER/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/GUECHA_ELITE/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYCAMELRIDER/","/SUCAI/HEAVYCAVALRYARCHER/","/SUCAI/HEAVYHEIKUANG/","/SUCAI/HEAVYPIKEMAN/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEIKUANG/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IBIRAPEMA_ELITE/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIALSKIRMISHER/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRONPAGODA/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/JI_INFANTRY/","/SUCAI/JI_INFANTRY_ELITE/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBITWARRIOR/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAODAO/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/ORGAN_ELITE/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PATTIYODHA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTANARCHER/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEELEPHANT/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPELANCER/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWINGAXEMAN/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGERCAVALRY/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITEFEATHERGUARD/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEIRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
 
 // ── 场景云装饰（三国群英传素材，`云/9..10.png`，927×817 大朵积云）──
 // 🔴 云盖在**最上层**（士兵、旗帜、箭矢之上），半透明横向飘过——俯视视角下云本来就在人上面。
@@ -2252,6 +2256,9 @@ const ZORDER_EPS = 4;
  * 表里没有的（老 S10DB 兵种等）落 SEP_DIST/2，与旧行为一致。
  */
 const UNIT_RADIUS: Record<string, number> = {
+    // [2026-09-05 玩家] 玩家（骑马英雄）按骑兵档 10.0，与 knight/paladin 同口径。
+    //   漏登记会落到 `SEP_DIST / 2 = 8.5` 的步兵档，质量随之从 1.56 掉到 1.13 —— 被小兵推得更动。
+    guanyu: 10.0,
     // ── [2026-08-18 补齐] 新补录兵种：同族继承；无同族者按类别取 DE 档位（步/远 8、骑 10、象与攻城 20） ──
     antiquity_battering_ram: 18.0,
     antiquity_capped_ram: 18.0,
@@ -2660,11 +2667,21 @@ interface WarSpawn {
     slotN: number;
     /** 本口兵种的人口占用（1 精灵 = pop × SPRITE_TROOPS 兵；见 popCostOf） */
     pop: number;
+    /** [2026-09-05 玩家] 出兵口序号（= 编队 id，玩家指挥按它认队） */
+    lane: number;
+    /** [2026-09-05 玩家] 所在排：0 前 / 1 中 / 2 后；-1 = 玩家自带精锐（前排之前） */
+    row: number;
+    /** [2026-09-05 玩家] 玩家自带精锐编队 */
+    playerElite?: boolean;
 }
 
 interface WarMan {
     f: 0 | 1;
     key: string;
+    /** [2026-09-05 玩家] 所属出兵口（WarSpawn.lane）；-1 = 攻城武器 / 玩家本人 */
+    lane: number;
+    /** [2026-09-05 玩家] 玩家本人（乱入者）：不计兵力、不留尸（落马后回本方边缘重整）、按键/点击可操控 */
+    hero?: boolean;
     /** 出生递增序号（终身不变）：渲染 z-order 排序的稳定 tiebreaker，防拥挤时 y 抖动导致重叠兵谁在上谁在下狂闪 */
     zid: number;
     x: number;
@@ -3232,6 +3249,189 @@ export class Scene13WarLayer {
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
 
+    // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──
+    /** 本场玩家布置（start 时从 window.game.playerHero 取；玩家不在军中 = null） */
+    private playerSetup: Scene13PlayerSetup | null = null;
+    /** 玩家可指挥的出兵口（lane）集合，按官阶定：探马 1 队 / 先锋整前排 / 将军三排 */
+    private playerCtlLanes = new Set<number>();
+    /** 受控编队当前指令：attack 自动索敌（默认）/ hold 待命（不动，够得着照打） */
+    private playerCmd: 'attack' | 'hold' = 'attack';
+    /** 玩家键盘移动输入（屏幕方向单位向量；null = 没按） */
+    private heroInput: { dx: number; dy: number } | null = null;
+    private heroMan: WarMan | null = null;
+    /** 本场玩家（本人 + 受控编队）击杀精灵数 */
+    private playerKills = 0;
+
+    public hasPlayerHero(): boolean { return this.active && !!this.heroMan; }
+
+    /** 键盘移动：屏幕方向 → 逻辑方向（左右对调时 x 取反） */
+    public setHeroInput(v: { dx: number; dy: number } | null): void {
+        this.heroInput = v;
+        if (!v && this.heroMan) { this.heroMan.tx = this.heroMan.x; this.heroMan.ty = this.heroMan.y; }
+    }
+
+    /** 点战场地面 → 玩家前往（屏幕坐标 → 逻辑坐标，含左右对调换算） */
+    public setHeroMoveToScreen(x: number, y: number): void {
+        const m = this.heroMan;
+        if (!m || !this.active) return;
+        const W = this.canvas?.width ?? window.innerWidth;
+        const lx = this.flipSides ? W - x : x;
+        [m.tx, m.ty] = this.fieldBound(lx, y);
+        this.heroInput = null;
+    }
+
+    public setPlayerCommand(cmd: 'attack' | 'hold'): void { this.playerCmd = cmd; }
+    public getPlayerCommand(): 'attack' | 'hold' { return this.playerCmd; }
+
+    public getPlayerBattleState(): {
+        heroAlive: boolean; heroHp: number; heroMaxHp: number;
+        controlledLanes: number; controlledMen: number; command: 'attack' | 'hold'; kills: number;
+    } | null {
+        if (!this.playerSetup || !this.heroMan) return null;
+        let controlledMen = 0;
+        for (const m of this.men) if (m.hp > 0 && this.playerCtlLanes.has(m.lane)) controlledMen++;
+        const f = this.playerSetup.side;
+        return {
+            heroAlive: this.heroMan.hp > 0 && this.men.includes(this.heroMan),
+            heroHp: this.heroMan.hp,
+            heroMaxHp: this.statsFor(this.heroMan.key, f).hp,
+            controlledLanes: this.playerCtlLanes.size,
+            controlledMen,
+            command: this.playerCmd,
+            kills: this.playerKills,
+        };
+    }
+
+    /** 玩家落点（屏幕坐标，含对调）；HUD/镜头用 */
+    public getHeroScreenPos(): { x: number; y: number } | null {
+        const m = this.heroMan;
+        if (!m) return null;
+        const W = this.canvas?.width ?? window.innerWidth;
+        return { x: this.flipSides ? W - m.x : m.x, y: m.y };
+    }
+
+    /**
+     * start 里布置玩家：自带精锐编队（探马及以上且选了精锐）放在前排之前，玩家再往前一点。
+     * 受控编队按官阶：one = 自带精锐（没有就前排第一口）/ front = 整个前排 + 自带精锐 / all = 本方全部口。
+     */
+    private setupPlayerUnits(init: Scene13WarInit, depth: number, midY: number): void {
+        this.playerSetup = null;
+        this.playerCtlLanes.clear();
+        this.playerCmd = 'attack';
+        this.heroInput = null;
+        this.heroMan = null;
+        this.playerKills = 0;
+        const game = (window as any).game;
+        const setup: Scene13PlayerSetup | null =
+            game?.playerHero?.buildScene13Setup?.(init.followedOnDefenderSide === true) ?? null;
+        if (!setup) return;
+        const f = setup.side;
+        const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
+        if (!row0.length) return;
+        const frontX = f === 0 ? Math.max(...row0.map((s) => s.x)) : Math.min(...row0.map((s) => s.x));
+        const toward = f === 0 ? 1 : -1;
+        this.playerSetup = setup;
+
+        if (setup.eliteLane) {
+            const key = setup.eliteLane.key;
+            this.ensureType(key);
+            if (this.statsFor(key, f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
+            if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');
+            const pop = popCostOf(key);
+            this.spawns.push({
+                f, key,
+                x: frontX + toward * depth * 0.55,
+                y: midY,
+                pool: Math.max(1, Math.round(setup.eliteLane.troops / SPRITE_TROOPS / pop)),
+                pop, spawned: 0, slotN: 0,
+                lane: this.spawns.length, row: -1, playerElite: true,
+            });
+        }
+        for (const s of this.spawns) {
+            if (s.f !== f) continue;
+            if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
+            else if (setup.control === 'front' && s.row <= 0) this.playerCtlLanes.add(s.lane);
+        }
+        if (setup.control === 'one') {
+            const pick = this.spawns.find((s) => s.f === f && s.row === -1) ?? row0[0];
+            if (pick) this.playerCtlLanes.add(pick.lane);
+        }
+
+        this.ensureType(setup.heroKey);
+        const hx = frontX + toward * depth * 0.9;
+        const hy = midY;
+        const fadeDur = DEPLOY_FADE;
+        const hero: WarMan = {
+            f, key: setup.heroKey, jx: 0, jy: 0, lane: -1, hero: true,
+            zid: this.manSeq++,
+            x: hx, y: hy, tx: hx, ty: hy,
+            hp: this.statsFor(setup.heroKey, f).hp,
+            dir: f === 0 ? 2 : 6,
+            ph: 0, st: 0, foe: null, next: 0.1,
+            fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+            prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
+            flag: false, fo: Math.random() * 600,
+            march: false, port: null, dep: 0, slotY: 0, pop: 0,
+            flank: false,
+            claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
+        };
+        this.heroMan = hero;
+        this.men.push(hero);
+        this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, elite: setup.eliteLane?.key ?? null });
+    }
+
+    /** 玩家键盘移动（有输入时接管这一帧：不索敌不出手，只走）。返回 true = 本帧已处理 */
+    private stepHeroInput(m: WarMan, dt: number): boolean {
+        const inp = this.heroInput;
+        if (!inp) return false;
+        const spd = this.statsFor(m.key, m.f).spd;
+        const dx = this.flipSides ? -inp.dx : inp.dx;
+        const dy = inp.dy;
+        const [bx, by] = this.fieldBound(m.x + dx * spd * dt, m.y + dy * spd * dt);
+        m.x = bx; m.y = by; m.tx = bx; m.ty = by;
+        m.dir = this.dir8Hyst(m.dir, dx, dy);
+        m.st = 0;
+        m.foe = null;
+        m.fightT = 0;
+        m.lock = Math.max(0, (m.lock ?? 0) - dt);
+        m.stuckT = 0;
+        if (m.fadeT > 0) m.fadeT -= dt;
+        m.ph += dt * 8;
+        return true;
+    }
+
+    /**
+     * 有人被打到 0 血的唯一出口：玩家落马 → 回本方边缘重整（不留尸、不算兵力）；
+     * 其余照常留尸/溃逃，并给玩家（本人或受控编队）记功。
+     */
+    private onManKilled(victim: WarMan, killer: WarMan): void {
+        if (victim.hero) {
+            this.heroDown(victim);
+            return;
+        }
+        this.pushCorpse(victim);
+        if (this.playerSetup && killer.f === this.playerSetup.side
+            && (killer.hero || this.playerCtlLanes.has(killer.lane))) {
+            this.playerKills++;
+            this.playerSetup.onKill(!!killer.hero);
+        }
+    }
+
+    private heroDown(m: WarMan): void {
+        const vw = this.canvas?.width ?? 1920;
+        const vh = this.canvas?.height ?? 1080;
+        const mx = Math.max(60, vw * 0.07);
+        const x = m.f === 0 ? mx * 0.6 : vw - mx * 0.6;
+        const y = vh / 2;
+        m.hp = this.statsFor(m.key, m.f).hp;
+        m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
+        m.foe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
+        m.fadeT = 2; m.fadeMax = 2;
+        this.heroInput = null;
+        this.playerSetup?.onHeroDown();
+        this.diagPush('heroDown', { sec: +this.battleSec.toFixed(1) });
+    }
+
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
     private exitBtn: HTMLButtonElement | null = null;
 
@@ -3563,9 +3763,13 @@ export class Scene13WarLayer {
                         pop: popCostOf(key),
                         spawned: 0,
                         slotN: 0,
+                        lane: this.spawns.length,
+                        row: cell.row,
                     });
                 });
             }
+            // [2026-09-05 玩家] 玩家在军中 → 布置玩家 + 自带精锐编队 + 受控编队（在 initPool 之前，精锐兵力计入本方总量）
+            this.setupPlayerUnits(init, depth, midY);
             // 开局总兵力存档（精灵），供 getInitialTroops 回写战斗面板演出进度用
             this.initPool = [0, 1].map(f =>
                 Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool * s.pop : 0), 0)),
@@ -3734,7 +3938,7 @@ export class Scene13WarLayer {
                 prevX: x, prevY: y, anchorX: x, anchorY: y, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: y,
                 flag: false, fo: Math.random() * 600,
                 march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(key),
-                flank: false, siegeW: true,
+                flank: false, siegeW: true, lane: -1,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
             });
         }
@@ -4006,6 +4210,11 @@ export class Scene13WarLayer {
         this.castleTowers = [];
         this.cityBuildings = [];
         this.decorPatches = [];
+        // [2026-09-05 玩家] 战术布置随场清空
+        this.playerSetup = null;
+        this.playerCtlLanes.clear();
+        this.heroInput = null;
+        this.heroMan = null;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
@@ -5518,7 +5727,7 @@ export class Scene13WarLayer {
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
-                    flank: isFlank,
+                    flank: isFlank, lane: s.lane,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -5739,7 +5948,11 @@ export class Scene13WarLayer {
         // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）。
         // 🔴 [2026-08-22 主人定] 攻方优先攻击城墙：正面体系（linked）墙/门优先于任何敌兵——
         //    远程原地站桩射墙、近战贴墙砍。斜墙不参与优先（兜底循环照打，破墙同样触发全墙联动）。
-        if (this.battleType === 'siege' && m.f === 0) {
+        // [2026-09-05 玩家] 玩家不砍墙：破墙前无目标（等），破墙后只打人（下面的城墙兜底循环也跳过）
+        const isHero = (m as { hero?: boolean }).hero === true;
+        if (this.battleType === 'siege' && m.f === 0 && isHero) {
+            if (this.defenderHolding) return null;
+        } else if (this.battleType === 'siege' && m.f === 0) {
             let bw: WarBuilding | null = null, bwd = r2;
             for (const b of this.wallGates) {
                 // 🔴 [2026-08-23] 墙已坍塌（obstructionDisabled = 纯贴图不挡路）→ 士兵不再锁定它打，
@@ -5759,6 +5972,7 @@ export class Scene13WarLayer {
             if (this.defenderHolding) return null;
         }
         for (const b of this.wallGates) {
+            if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -6012,7 +6226,7 @@ export class Scene13WarLayer {
                     o.atkNext++;
                     o.hurtBy = m;   // 【被攻击反击】范围伤也记录攻击者
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
-                    if (o.hp <= 0) this.pushCorpse(o);
+                    if (o.hp <= 0) this.onManKilled(o, m);
                 }
             }
         }
@@ -6282,7 +6496,8 @@ export class Scene13WarLayer {
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
             //    不再列阵行军（inMarch 攻城战已全 false），直接各自索敌接战。
-            const holdSiege = this.defenderHolding && !m.siegeW;
+            // [2026-09-05 玩家] 玩家不受「攻城双方按兵不动」约束（玩家自己操控）
+            const holdSiege = this.defenderHolding && !m.siegeW && !m.hero;
             if (holdSiege) {
                 m.st = 0;
                 m.foe = null;
@@ -6292,6 +6507,10 @@ export class Scene13WarLayer {
                 m.ph += dt * 8 / 1.5;   // 待命动画
                 continue;
             }
+            // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
+            if (m.hero && this.stepHeroInput(m, dt)) continue;
+            const holdCmd = !m.hero && this.playerCmd === 'hold' && this.playerCtlLanes.has(m.lane);
+            if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
@@ -6364,17 +6583,18 @@ export class Scene13WarLayer {
 
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
             // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
-            if (m.march && m.port) {
+            if (m.march && m.port && !holdCmd) {
                 // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
                 //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
                 const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
                 [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
-            } else if (!m.foe && !holdSiege) {
+            } else if (!m.foe && !holdSiege && !holdCmd) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
+                // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
                 m.aimT = (m.aimT ?? 0) - dt;
                 if (m.aimT <= 0) {
-                    const aim = this.aimAt(m);
+                    const aim = m.hero ? null : this.aimAt(m);
                     if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                     m.aimT = 0.5;
                 }
@@ -6487,7 +6707,7 @@ export class Scene13WarLayer {
                 // 列阵推进期间**够不着就不追**（帝国 DE 的 Stand Ground 行军）：回自己的槽位随队压上。
                 // 放在迟滞带之前：迟滞带会让人站住不动，那是接战后的防抖装置，列阵段必须继续走。
                 // 够得着的照常落到下面的攻击分支 —— 远程在队形里放箭，不禁火。
-                if (m.march && !inReach) {
+                if (m.march && !inReach && !holdCmd) {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
                     const step = stats.spd * dt;
@@ -6511,7 +6731,7 @@ export class Scene13WarLayer {
                     continue;
                 }
                 // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
-                if (holdSiege && !inReach) {
+                if ((holdSiege || holdCmd) && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -6730,7 +6950,7 @@ export class Scene13WarLayer {
                         //    士兵打墙只降 hp 做视觉破损（上方 damage stage），墙 hp 归零**不在此破墙、不联动坍塌**——
                         //    墙保持破损贴图 + 阻挡，等 30 秒统一坍塌。只有非建筑（士兵/单位）阵亡才走尸体。
                         if (foe.hp <= 0 && !('sprite' in foe)) {
-                            this.pushCorpse(foe);
+                            this.onManKilled(foe, m);   // [2026-09-05 玩家] 玩家落马重整 / 玩家记功，其余留尸
                         }
                     }
                 }
@@ -7267,6 +7487,31 @@ export class Scene13WarLayer {
             return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
         });
 
+        // ── [2026-09-05 玩家] 受控编队脚下标记环（画在人之下）：攻击=绿 / 待命=蓝；玩家脚下金环 ──
+        if (this.playerSetup && this.playerCtlLanes.size) {
+            ctx.save();
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = this.playerCmd === 'hold' ? 'rgba(120,180,255,0.75)' : 'rgba(120,235,140,0.7)';
+            for (const m of this.men) {
+                if (m.hp <= 0 || m.hero || !this.playerCtlLanes.has(m.lane)) continue;
+                const r = this.radiusOf(m.key) * 0.9;
+                ctx.beginPath();
+                ctx.ellipse(m.x, m.y - this.elevationLiftAt(m.x, m.y) + 1, r, r * 0.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        if (this.heroMan && this.heroMan.hp > 0) {
+            const h = this.heroMan;
+            ctx.save();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(255,210,122,0.95)';
+            ctx.beginPath();
+            ctx.ellipse(h.x, h.y - this.elevationLiftAt(h.x, h.y) + 1, 22, 11, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
         // ── 旗杆：画在士兵层**之下**（主人 2026-08-12「只改旗杆，放到士兵层下面」）──
         // 与大地图同序：GlobalUnitRenderer 先 drawPole（Behind Soldiers）、后 drawFlag（On Top）。
         // 只画不等：LegionFlagDrawer 没预加载完时自己 return，绝不在 13 里 await。
@@ -7339,6 +7584,30 @@ export class Scene13WarLayer {
             ctx.globalAlpha = 1 - p;
             LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
             this.drawOneFlag(ctx, 0, 0, ff.f, flagTick + ff.fo);
+            ctx.restore();
+        }
+
+        // ── [2026-09-05 玩家] 玩家头顶名牌 + 血条（画在人之上；镜像时反翻转让文字正向）──
+        if (this.heroMan && this.heroMan.hp > 0 && this.playerSetup) {
+            const h = this.heroMan;
+            const maxHp = this.statsFor(h.key, h.f).hp || 1;
+            const sx = flip ? cv.width - h.x : h.x;
+            const sy = h.y - this.elevationLiftAt(h.x, h.y) - UNIT_PX * 1.25;
+            ctx.save();
+            if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
+            ctx.font = "bold 13px 'Noto Serif SC','SimSun',serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+            ctx.strokeText(this.playerSetup.heroName, sx, sy);
+            ctx.fillStyle = '#ffd27a';
+            ctx.fillText(this.playerSetup.heroName, sx, sy);
+            const bw = 40, bh = 4;
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(sx - bw / 2, sy + 2, bw, bh);
+            ctx.fillStyle = '#e04a3a';
+            ctx.fillRect(sx - bw / 2, sy + 2, bw * Math.max(0, Math.min(1, h.hp / maxHp)), bh);
             ctx.restore();
         }
 

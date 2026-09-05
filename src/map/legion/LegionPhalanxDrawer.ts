@@ -788,17 +788,41 @@ export class LegionPhalanxDrawer {
             : new Promise<void>(r => setTimeout(r, 0));
         const PROC_BATCH = 4;
 
+        /**
+         * 🔴 [2026-09-05 修「朝北/东北攻击动作不对」] 原图释放**必须等这个兵种的所有动作组都处理完**。
+         *
+         * 症状：远程兵种的 `SHOOT` 数组只有 4 个方向（0-3），`ATTACK` 有 8 个。
+         * 战略地图攻击分支取 `SHOOT[effDir] || SHOOT[0]` —— 方向 4~7 取不到就**回退到方向 0 的贴图**，
+         * 而帧框 `dynDir` 仍按 effDir 取。贴图是南向、切片参数是北向 → `sx = frame * fw` 与
+         * hotspot 双重错位，画出来是错位碎片（主人截图里战车只剩马、车厢不见了就是这个）。
+         *
+         * 根因是**竞态**，不是素材问题（全项目 487 个素材目录的 meta 与 PNG 尺寸实测全部吻合）：
+         * `SHOOT` 与 `ATTACK` 在 UnitAssets 里指向**同一批文件**（远程兵种的常规写法），
+         * 两个 loadBatch 由 `Promise.all(jobs)` 并行跑；先完成的那个 `AssetLoader.release(path)`
+         * 把原图从 loadedImages 删掉，后完成的 `getImage(path)` 拿到 undefined → 该下标不赋值 → 空洞。
+         * 批次之间有 `yieldMain()` 让出主线程，正好给了对方释放的机会，所以稳定缺后半截。
+         *
+         * 两道保险：① 释放推迟到 `await Promise.all(jobs)` 之后统一做；
+         * ② 万一还是拿不到（别处释放/加载失败），就地重拉一次，绝不留空洞。
+         */
+        const pendingRelease = new Set<string>();
         const loadBatch = async (sourcePaths: readonly string[], targetArray: HTMLImageElement[]) => {
             await AssetLoader.preloadImages([...sourcePaths]);
             for (let i = 0; i < sourcePaths.length; i += PROC_BATCH) {
                 const slice = sourcePaths.slice(i, i + PROC_BATCH);
                 await Promise.all(slice.map(async (path, batchIdx) => {
-                    const img = AssetLoader.getImage(path);
+                    let img = AssetLoader.getImage(path);
+                    if (!img) {
+                        // 兜底：被并发任务释放掉了 → 重拉（HTTP 缓存命中，基本无成本）
+                        await AssetLoader.preloadImages([path]);
+                        img = AssetLoader.getImage(path);
+                    }
                     if (img) {
                         const processed = await this.processImage(img);
                         targetArray[i + batchIdx] = processed;
-                        // 抠绿产物是另一张图，原图从此没人用 —— 放掉，别存两份位图
-                        if (processed !== img) AssetLoader.release(path);
+                        // 抠绿产物是另一张图，原图从此没人用 —— 放掉，别存两份位图。
+                        // 但**不能在这里放**：同一批图可能还有别的动作组在处理（见上）。
+                        if (processed !== img) pendingRelease.add(path);
                     }
                 }));
                 if (i + PROC_BATCH < sourcePaths.length) await yieldMain();
@@ -877,6 +901,9 @@ export class LegionPhalanxDrawer {
                 if (config.TERTIARY.SHOOT) jobs.push(loadBatch(config.TERTIARY.SHOOT, ter.SHOOT));
             }
             await Promise.all(jobs);
+            // 所有动作组都处理完了，这批原图才真的没人要（见 pendingRelease 上方说明）
+            for (const p of pendingRelease) AssetLoader.release(p);
+            pendingRelease.clear();
             this.unitSpriteCache.set(key, cacheEntry);
             this.spriteLastUsed.set(key, performance.now());
             await yieldMain();
@@ -1047,7 +1074,11 @@ export class LegionPhalanxDrawer {
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
+            // 🔴 [2026-09-05] `willReadFrequently` 不能少：下一行就是 getImageData，
+            //    不带这个标志画布会落在 GPU 上，每次读像素都要一次 GPU→CPU 同步回读。
+            //    CPU Profile 实测（玩家移动 12 秒）这一处 getImageData 1674ms + toDataURL 1124ms，
+            //    是修完瓦片解码后的最大单项。同族的坑见 world/land-sea/TileDecoder.ts 文件头。
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
             if (!ctx) { resolve(img); return; }
             ctx.drawImage(img, 0, 0);
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -1056,12 +1087,46 @@ export class LegionPhalanxDrawer {
                 if (data[i + 1] > 200 && data[i] < 100 && data[i + 2] < 100) data[i + 3] = 0;
             }
             ctx.putImageData(imageData, 0, 0);
-            const newImg = new Image();
-            // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，丢失原始路径；
-            // 保留 sourceUrl 供 SpriteTinter 推导同目录 `.pc.png` 遮罩（帝国决定 DE 素材）。
-            (newImg as any).sourceUrl = img.src;
-            newImg.onload = () => resolve(newImg);
-            newImg.src = canvas.toDataURL();
+            /**
+             * 🔴 [2026-09-05 修「玩家移动时战略画面卡」] 这里原来是 `newImg.src = canvas.toDataURL()`，
+             *    等于把刚处理好的位图**再 PNG 编码一遍**，浏览器拿到 data URL 后**再解码一遍**。
+             *    两趟纯浪费，而 DE 的雪碧图很大（关羽攻击帧 8820×160，别的兵种到 12240×144），
+             *    PNG 编码这种尺寸一张就是几十毫秒。CPU Profile 实测（玩家移动 12 秒）：
+             *    `toDataURL` 占 **16.1% CPU**，是补完 willReadFrequently 之后的最大单项。
+             *
+             *    改用 `createImageBitmap`：不编码、不重解码，产物是 GPU 友好的不可变位图，
+             *    `drawImage` 它与 Image 一样快（直接返回 canvas 则每帧上传，反而拖慢渲染）。
+             *    下游要的是 Image 的**形状**（naturalWidth/complete/src），补齐即可 ——
+             *    全项目没有一处 `instanceof HTMLImageElement`，已 grep 确认。
+             */
+            const finish = (bmp: ImageBitmap | null): void => {
+                if (!bmp) {
+                    // 兜底：createImageBitmap 不可用时退回原来的 data URL 路径，行为不变只是慢
+                    const fallback = new Image();
+                    (fallback as any).sourceUrl = img.src;
+                    fallback.onload = () => resolve(fallback);
+                    fallback.src = canvas.toDataURL();
+                    return;
+                }
+                const out = bmp as unknown as HTMLImageElement;
+                const def = (k: string, v: unknown) =>
+                    Object.defineProperty(out, k, { value: v, configurable: true });
+                def('naturalWidth', bmp.width);
+                def('naturalHeight', bmp.height);
+                def('complete', true);
+                // src 留空串：setBytes 靠 `src.startsWith('data:')` 判断要不要额外计字符串开销，
+                // ImageBitmap 没有 data URL，空串正好让它只算 w×h×4（比原来更准）。
+                def('src', '');
+                // [2026-08-15 玩家色遮罩] 抠绿后丢失原始路径；保留 sourceUrl 供 SpriteTinter
+                // 推导同目录 `.pc.png` 遮罩（帝国决定 DE 素材）。
+                (out as unknown as { sourceUrl: string }).sourceUrl = img.src;
+                resolve(out);
+            };
+            if (typeof createImageBitmap === 'function') {
+                createImageBitmap(canvas).then(finish).catch(() => finish(null));
+            } else {
+                finish(null);
+            }
         });
     }
 
@@ -1611,8 +1676,11 @@ export class LegionPhalanxDrawer {
                 animState = 'ATTACK';
                 // [2026-08-09 消失修复·进入条件] 轮播只在 SHOOT/CHARGE「本方向帧真实可用」时进——
                 // 原来只看数组非空，元素未加载完(complete=false)时取到无效帧 → 1037 跳过整格消失（主人实锤弓骑闪没）。
-                const shootFrame = (currentSet as any).SHOOT?.[effDir] ?? (currentSet as any).SHOOT?.[0];
-                const chargeFrame = (currentSet as any).CHARGE?.[effDir] ?? (currentSet as any).CHARGE?.[0];
+                // 🔴 [2026-09-05] **不许跨方向回退**（原来是 `?? SHOOT[0]`）。
+                //    帧框 dynDir 是按 effDir 取的，贴图却退回方向 0 → 切片宽度与 hotspot 全错位，
+                //    画出来是碎片而不是「换个朝向的兵」。缺这个方向就让它落到下面用同方向的 ATTACK。
+                const shootFrame = (currentSet as any).SHOOT?.[effDir];
+                const chargeFrame = (currentSet as any).CHARGE?.[effDir];
                 if (shootFrame && chargeFrame && shootFrame.complete && chargeFrame.complete) {
                     const cycleDuration = 4000;
                     // [2026-08-10 每个编队单独] 13 场景（denseFront）：轮播加格位相位，
@@ -1622,10 +1690,12 @@ export class LegionPhalanxDrawer {
                     else if (cyclePhase < 0.50) rawSprite = chargeFrame;
                     else if (cyclePhase < 0.75) rawSprite = currentSet.ATTACK[effDir] || currentSet.ATTACK[0];
                     else rawSprite = shootFrame;
-                } else if ((currentSet as any).SHOOT && (currentSet as any).SHOOT.length > 0) {
-                    rawSprite = (currentSet as any).SHOOT[effDir] || (currentSet as any).SHOOT[0];
                 } else {
-                    rawSprite = currentSet.ATTACK[effDir] || currentSet.ATTACK[0];
+                    // 同上：优先本方向的 SHOOT，没有就用**本方向**的 ATTACK；
+                    // 只有本方向两者都缺才退方向 0（那时帧框也会跟着退，见下方 dynSpriteDir）。
+                    rawSprite = (currentSet as any).SHOOT?.[effDir]
+                        || currentSet.ATTACK[effDir]
+                        || currentSet.ATTACK[0];
                 }
             } else if (effState === 'MOVE') {
                 animState = 'MOVE';

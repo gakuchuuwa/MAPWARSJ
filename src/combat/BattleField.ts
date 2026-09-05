@@ -1323,7 +1323,9 @@ export class BattleField implements IOpeningPulseSink {
             // 找一个失败方单位作为对手
             const opponent = loserGroup.units[0]?.unit;
             if (opponent) {
-                bu.unit.onBattleEnd?.('victory', opponent, 0);
+                // 🔴 [修复] enemyKilled 原写死 0 → 玩家随军战胜的战略战功永远结算不到。
+                //   失败方（攻城战守军/野战败军）已被 setTroops(0) 全歼，敌军战损 = 失败方开战总兵力。
+                bu.unit.onBattleEnd?.('victory', opponent, loserGroup.initialTotalTroops);
             }
         });
 

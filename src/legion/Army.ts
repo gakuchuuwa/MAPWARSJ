@@ -125,12 +125,32 @@ export class Army implements IBattleUnit {
     public lastPosition: { lat: number; lng: number } = { lat: 0, lng: 0 };
     public lastDirection: number = 0; // Cache direction
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
+    /** [2026-09-05 玩家] 玩家入伍的军团：官阶战力乘数（第九环，1.1~1.5）。null = 无玩家入伍 */
+    public playerHostPowerMult: number | null = null;
+    /** [2026-09-05 玩家] 玩家入伍的军团：玩家官阶名（4 字，战斗面板标签显示）。null = 无玩家入伍 */
+    public playerHostRankName: string | null = null;
     /** 海上实际船首航向（弧度；lat=cos、lng=sin）。null 表示尚未开始一次海上航行。 */
     private navalHeadingRad: number | null = null;
     /** 连续「没有靠近下一个路点」的秒数（绕圈兜底用，见 advanceNaval） */
     private navalOrbitSec = 0;
     /** 上一帧到下一个路点的距离，用来判断是否在靠近 */
     private navalPrevDistToNext: number | null = null;
+    /**
+     * 绕当前路点**累计转过的角度**（带符号，弧度）——判绕圈用的量具。
+     *
+     * 🔴 [2026-09-05 修「海军在某个地点转两圈再走」] 为什么要换量具：
+     *    原来三道脱出机制全靠**距离**判断，而绕圈时距离是**忽近忽远**的 ——
+     *    「三秒兜底」要求「距离持续没变近」，只要有一帧变近计时器就清零，
+     *    于是这道专为绕圈准备的保险，恰恰被绕圈本身的特征绕过去了。
+     *    离线验算（173 条真实海路逐帧模拟）：15 条会绕圈、共 16 次、单次最多 **11.7 圈**，
+     *    而 orbitSec 全程连 3 秒都攒不满。
+     *
+     *    绕圈的本质不是「离得远」，是「一直在同一个方向绕」——所以直接量累计转角。
+     *    **带符号**累计：绕圈是单向的会一路累加，S 形航线一左一右会自相抵消，不会误判。
+     */
+    private navalOrbitAngle = 0;
+    /** 上一帧「船 → 当前路点」的方位角，算累计转角用；null = 本段还没起算 */
+    private navalPrevBearingToDest: number | null = null;
     /**
      * 船舶最大转向角速度。
      * 🔴 [2026-09-01 修「海上行军一颤一颤」] 55°/s → 120°/s。
@@ -145,6 +165,24 @@ export class Army implements IBattleUnit {
     private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
     /** 连续这么多秒没靠近下一个路点 = 判定绕圈，直接换下一个路点脱出（不瞬移） */
     private static readonly NAVAL_ORBIT_BAILOUT_SEC = 3;
+    /**
+     * 绕当前路点累计转过这么多角度 = 在绕圈，强制判过点（见 navalOrbitAngle）。
+     *
+     * 取 **0.6 圈（216°）**，是扫描出来的：真实海路里最大的一次掉头是 **178°（≈0.49 圈）**，
+     * 阈值必须大于它才不会误伤正常掉头；而越小脱出越早。0.6 圈两头都占：
+     *
+     * | 阈值(圈) | 实际最多绕 | 173 条航线总航时 | 因转角脱出 |
+     * |---|---|---|---|
+     * | 修前（无此判据） | **11.7** | 6657s | — |
+     * | 0.5 | 0.5 | 6231s | 18 次 |
+     * | **0.6（现行）** | **0.6** | **6239s** | **16 次**（最少） |
+     * | 0.75 | 0.8 | 6248s | 17 次 |
+     *
+     * 脱出时离路点最远只有 2.8km（转弯半径 16km 的 17%）—— 船本来就贴在路点边上转，
+     * 提前判过点不会「抄近路」偏离航线，总航时反而缩短 6%。
+     * 验收：`npm run naval:orbit-audit`。
+     */
+    private static readonly NAVAL_ORBIT_ANGLE_LIMIT = Math.PI * 1.2;
     /** 航线终点的贴齐半径（度，≈2km）：只用于最后一个路点，避免停在目标外几百米 */
     private static readonly NAVAL_FINAL_SNAP_DEG = 0.02;
 
@@ -459,6 +497,8 @@ export class Army implements IBattleUnit {
      *    同样会让军团掉头回家解散。有了这个闸，兵力阈值一场仗只判一次，判完就关。
      */
     public weakCheckAfterBattle: boolean = false;
+    /** [2026-09-05 玩家] 免开局集结闸门（只有玩家单骑置 true，见 update 第一段） */
+    public exemptFromDeployHold: boolean = false;
 
     // [IBattleUnit Implementation]
     public get factionId(): string {
@@ -531,7 +571,9 @@ export class Army implements IBattleUnit {
 
         // 开局集结期：全军在都城列阵待命，不移动（见 DeployGate）。
         // 到点由时间自动放行，不依赖回调，因此不会把军团永久钉死。
-        if (isDeployHeld()) return;
+        // [2026-09-05 玩家] 玩家单骑豁免：集结是「首发军团齐发」的开场仪式，玩家不是首发军团，
+        //   点了据点就该走；否则开局头 5 秒点谁都不动，看着像卡住。
+        if (!this.exemptFromDeployHold && isDeployHeld()) return;
 
         this.updateTerrainSpeed(deltaTime);
 
@@ -671,6 +713,16 @@ export class Army implements IBattleUnit {
             this.navalHeadingRad = targetHeading;
         }
 
+        // 累计「绕这个路点转过多少角度」——绕圈判据（见 navalOrbitAngle）。
+        // 必须在任何 return 之前累计，否则贴近路点那几帧不计入，转角会少算。
+        if (this.navalPrevBearingToDest !== null) {
+            let bearingDelta = targetHeading - this.navalPrevBearingToDest;
+            while (bearingDelta <= -Math.PI) bearingDelta += Math.PI * 2;
+            while (bearingDelta > Math.PI) bearingDelta -= Math.PI * 2;
+            this.navalOrbitAngle += bearingDelta;
+        }
+        this.navalPrevBearingToDest = targetHeading;
+
         let diff = targetHeading - this.navalHeadingRad;
         while (diff <= -Math.PI) diff += Math.PI * 2;
         while (diff > Math.PI) diff -= Math.PI * 2;
@@ -714,7 +766,12 @@ export class Army implements IBattleUnit {
         //  换下一个路点继续开，位置一寸不挪（旧实现在这里把船瞬移到点上）。
         const receding =
             this.navalPrevDistToNext !== null && distToNext > this.navalPrevDistToNext;
-        if (receding && distToNext <= minTurnRadius) {
+        if (Math.abs(this.navalOrbitAngle) >= Army.NAVAL_ORBIT_ANGLE_LIMIT) {
+            // 🔴 [2026-09-05] 绕圈的**主**判据：已经绕着这个路点转过 3/4 圈 —— 不管此刻离它多远、
+            //    也不管这一帧是在靠近还是远离，都算过点。下面那两条基于距离的判据留着兜别的情形，
+            //    但它们对「绕圈」本身是失灵的（绕圈时距离忽近忽远，见 navalOrbitAngle 说明）。
+            this.reachCurrentWaypoint();
+        } else if (receding && distToNext <= minTurnRadius) {
             this.reachCurrentWaypoint();
         } else {
             // 🔴 [2026-08-31] 兜底：只要「离路点没变近」就累计计时，超过 NAVAL_ORBIT_BAILOUT_SEC
@@ -746,6 +803,9 @@ export class Army implements IBattleUnit {
         // 否则上一段的距离会被当成新路点的基准，第一帧就误判成「没靠近」。
         this.navalOrbitSec = 0;
         this.navalPrevDistToNext = null;
+        // 累计转角是**对当前路点**而言的，换点必须归零，否则上一段绕的角度会算到新路点头上
+        this.navalOrbitAngle = 0;
+        this.navalPrevBearingToDest = null;
         if (this.pathQueue.length > 0) {
             this.destination = this.pathQueue.shift()!;
             return;
@@ -871,10 +931,12 @@ export class Army implements IBattleUnit {
             this.confirmedLandKind = null;
             this.landFlipFrames = 0;
         } else {
-            // 上岸：清掉海军航向与绕圈兜底计数，免得下次出海带着上一段航程的旧账
+            // 上岸：清掉海军航向与绕圈判据，免得下次出海带着上一段航程的旧账
             this.navalHeadingRad = null;
             this.navalOrbitSec = 0;
             this.navalPrevDistToNext = null;
+            this.navalOrbitAngle = 0;
+            this.navalPrevBearingToDest = null;
             // 陆地：四系 × 平原/山地；如履平地 → 山地按平原格查表
             const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
             const desiredKind: 'plain' | 'mountain' =
@@ -1289,6 +1351,13 @@ export class Army implements IBattleUnit {
         } else {
             this.winStreak = 0;
         }
+
+        // [2026-09-05 玩家] 若玩家随军入伍，结算战略战功
+        const game = (window as any).game;
+        if (game?.playerHero && game.playerHero.getHostLegionId() === this.id) {
+            game.playerHero.onHostBattleEnd(result, _enemyKilled);
+        }
+
         if (this.isDestroyed) return;
         // 攻城战后：战前存档路径的终点 = 刚打完的城锚点，恢复它 = 打完先进城再走。
         // 必须清存档让行为树重新选目标 → moveLegionToCity 走「来路折返」直接去下一个目标。

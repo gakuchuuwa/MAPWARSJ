@@ -5,7 +5,6 @@ import { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers
 import { HISTORICAL_REGIONS } from '../data/HistoricalRegions';
 import { gameLog } from '../utils/GameLogger';
 import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
-import { WebGLTerrainRenderer } from '../render/webgl/WebGLTerrainRenderer';
 
 // 转换 HistoricalRegion 为 Worker 友好结构(扁平化, 默认值)
 const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
@@ -17,8 +16,7 @@ const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
     elevMax: r.elevMax ?? 9000
 }));
 
-// [FALLBACK] 高程瓦片加载失败或缺失时的兜底色（Sage 海拔平原绿，与全局古卷底色优雅对齐）
-const FALLBACK_TILE_COLOR = '#8e9b82';
+
 
 // 瓦片 (z, x, y) → lat/lng 边界 (Web Mercator)
 function tileBoundsFromCoords(z: number, x: number, y: number) {
@@ -129,10 +127,8 @@ export class HillshadeLayer extends L.GridLayer {
         const { ctx, tile, done, cacheKey } = task;
 
         if (!bitmap) {
-            // [FALLBACK] 取图/解码失败：平涂古图纸色，杜绝山体消失露出底图空白
+            // [FALLBACK] 取图/解码失败：保持透明自然透出底图，杜绝实色方块破洞
             if (error) console.warn('[Hillshade] tile failed:', error);
-            ctx.fillStyle = FALLBACK_TILE_COLOR;
-            ctx.fillRect(0, 0, tile.clientWidth || 256, tile.clientHeight || 256);
             done(undefined, tile);
             return;
         }
@@ -143,11 +139,8 @@ export class HillshadeLayer extends L.GridLayer {
             this.cachePut(cacheKey, bitmap);
             perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
         } catch (err) {
-            // 位图刚从 Worker transfer 过来，正常不会 detach；真出事也必须保证 done() 被调，
-            // 否则 Leaflet 会把这块瓦片永远挂在加载态。
-            console.warn('[Hillshade] 位图绘制失败，改用兜底色:', err);
-            ctx.fillStyle = FALLBACK_TILE_COLOR;
-            ctx.fillRect(0, 0, tile.clientWidth || 256, tile.clientHeight || 256);
+            // 异常兜底：保持透明透出底图，释放位图并确保 done() 被调用
+            console.warn('[Hillshade] 位图绘制失败，透出底图:', err);
             bitmap.close();
         }
         done(undefined, tile);
@@ -275,10 +268,9 @@ export class HillshadeLayer extends L.GridLayer {
             return tile;
         }
 
-        // 创建时立即填古纸色，消除 zoom 切换期间透明底 + 红绿高程色暴露
-        ctx.fillStyle = FALLBACK_TILE_COLOR;
-        ctx.fillRect(0, 0, size.x, size.y);
+        // 创建时保持透明，在 Worker 计算完成前自然透出底图，彻底消除棋盘方块闪烁
 
+        this.ensureWorkers();
         const cacheKey = `${coords.z}/${coords.x}/${coords.y}`;
 
         // ── 缓存命中：来回切 zoom 时的常见路径，无网络、无 Worker、无像素回读 ──
@@ -287,80 +279,33 @@ export class HillshadeLayer extends L.GridLayer {
             this.statCacheHits++;
             // done() 必须异步：Leaflet 在 createTile 返回后才把该瓦片登记进 _tiles
             queueMicrotask(() => {
+                // [FIX 2026-07-28] 不能用上面捕获的 cached 引用画图。
+                // 微任务这一跳之间，位图可能已经被 close() 掉：
+                //   · 缩放 → applyHillshadeForZoom → setParams → clearTileCache() 释放全部位图
+                //   · 新瓦片入缓存 → cachePut 触发 LRU 淘汰，close 掉最久未用的一块
+                // 对已释放的 ImageBitmap 调 drawImage 会抛
+                // InvalidStateError: The image source is detached。
+                // 改为重新查一次缓存：条目还在 ⇒ 位图必定有效（淘汰是「close + 删键」成对做的）。
                 const fresh = this.cacheGet(cacheKey);
                 try {
                     if (fresh) {
                         ctx.drawImage(fresh, 0, 0);
                     } else {
-                        ctx.fillStyle = FALLBACK_TILE_COLOR;
-                        ctx.fillRect(0, 0, size.x, size.y);
+                        // 缓存已被清空：保持透明，随后 Leaflet redraw 会重建这块瓦片
                     }
                 } catch (err) {
-                    console.warn('[Hillshade] 缓存位图绘制失败，改用兜底色:', err);
-                    ctx.fillStyle = FALLBACK_TILE_COLOR;
-                    ctx.fillRect(0, 0, size.x, size.y);
+                    // 兜底：任何绘制异常保持透明，确保 done() 调用避免死锁
+                    console.warn('[Hillshade] 缓存位图绘制失败，保持透明:', err);
                 }
                 done(undefined, tile);
             });
             return tile;
         }
 
-        // ── GPU WebGL 硬件光照渲染管线优先 (<0.3ms 极速出图) ──
-        const gpuRenderer = WebGLTerrainRenderer.getInstance();
-        if (gpuRenderer) {
-            const url = `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${coords.z}/${coords.x}/${coords.y}.png`;
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                try {
-                    const _t0 = performance.now();
-                    const renderedCanvas = gpuRenderer.renderTileToCanvas(img, {
-                        azimuth: (this.options as HillshadeOptions).azimuth || 315,
-                        altitude: (this.options as HillshadeOptions).altitude || 40,
-                        zFactor: this.zFactor,
-                        shadowOpacity: this.shadowOpacity,
-                        useElevationColor: this.useElevationColor,
-                    });
-                    ctx.drawImage(renderedCanvas, 0, 0);
-                    this.statTilesComputed++;
-                    perfDoctor.note('HillshadeLayer.createTile(GPU硬件地形渲染)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:createTile');
-                    createImageBitmap(tile).then(bmp => {
-                        this.cachePut(cacheKey, bmp);
-                    }).catch(() => {});
-                    done(undefined, tile);
-                } catch (err) {
-                    console.warn('[Hillshade] GPU渲染异常，回退Worker:', err);
-                    this.dispatchToWorker(coords, ctx, tile, done, cacheKey, size);
-                }
-            };
-            img.onerror = () => {
-                ctx.fillStyle = FALLBACK_TILE_COLOR;
-                ctx.fillRect(0, 0, size.x, size.y);
-                done(undefined, tile);
-            };
-            img.src = url;
-            return tile;
-        }
-
-        // ── 降级回退：Web Worker CPU 软算 ──
-        this.dispatchToWorker(coords, ctx, tile, done, cacheKey, size);
-        return tile;
-    }
-
-    /**
-     * Web Worker 软算派发路径 (WebGL 不可用或渲染异常时的可靠降级)
-     */
-    private dispatchToWorker(
-        coords: L.Coords,
-        ctx: CanvasRenderingContext2D,
-        tile: HTMLCanvasElement,
-        done: L.DoneCallback,
-        cacheKey: string,
-        size: L.Point
-    ): void {
-        this.ensureWorkers();
         const reqId = this.msgIdCounter++;
         const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
+        // 仅传与当前瓦片相交的区域,减少 Worker 内逐像素检查的循环次数
+        // 沙漠涂色关闭（调试开关）→ 不传任何区域，Worker 走纯海拔着色，可对比开关前后效果
         const relevantRegions = this.useDesertColoring
             ? REGIONS_FOR_WORKER.filter(r => {
                 const latMin = r.center[0] - r.radii[0];
@@ -375,6 +320,8 @@ export class HillshadeLayer extends L.GridLayer {
         const request: HillshadeRequest = {
             id: reqId,
             url: `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${coords.z}/${coords.x}/${coords.y}.png`,
+            // 注意 ESRI 是 {z}/{y}/{x}，y 在前。Worker 只在该瓦片确实含海平面以下像素时
+            // 才会真去取（见 hasBelowSeaPixel），内陆瓦片这个 URL 根本不会被请求。
             waterMaskUrl: ESRI_SHADED_RELIEF_URL
                 .replace('{z}', String(coords.z))
                 .replace('{y}', String(coords.y))
@@ -395,8 +342,11 @@ export class HillshadeLayer extends L.GridLayer {
         this.statTilesComputed++;
         this.pendingTiles.set(reqId, { ctx, tile, done, cacheKey });
 
+        // 轮询派发：Worker 内部 fetch 是异步的，多块并行在途才不会被串行拖慢
         this.workers[this.rrIndex].postMessage(request);
         this.rrIndex = (this.rrIndex + 1) % this.workers.length;
+
+        return tile;
     }
 
     // [FIX] 避免过渡动画完成时图层已被 remove 导致的 TypeError: Cannot read properties of null (reading 'getCenter')

@@ -67,6 +67,7 @@ export interface IBattleUnit {
     isInvincible?: boolean;
     getEntity?(): any; // [NEW] Access to original entity
     playerParticipation?: { ratio: number }; // [ADDED] For player joining battles
+    playerHostRankName?: string | null; // [ADDED] 玩家官阶标签名
     lastDamageTime?: number; // [ADDED] For visual feedback
     // [NEW] Morale System
     morale: number;

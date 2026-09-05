@@ -44,6 +44,7 @@
 | [F. 13「做完色调后卡的不行」](#f) | 水面每帧全量合成（第一刀「每块各一张」反而 96ms）| water 26.7→96.3ms/帧 → 改 15Hz 半分辨率 **待验证** |
 | [G. 行军探针零记录](#g) | 探针挂错分支，主路从没调过 | 0 条 → 每 20s 一条 |
 | [H. 战略行军一顿一顿（进行中）](#h) | 缩放窗口内长任务 50~322ms 连片，**归因未定** | 待探针自动 dump |
+| [I. 玩家移动时战略画面卡](#i) | `getImageData` 独占 46% CPU（瓦片解码漏 `willReadFrequently`）+ 抠绿 PNG 往返 + 旗号文字集中生成 | 长任务 20365 → **6513ms**；最坏 712 → **313ms** |
 
 ---
 
@@ -277,6 +278,90 @@ Leaflet 监听器最大才 14ms；山体瓦片本次新算 126 块（有 worker�
 `gc-suspect` 成立就去找每秒分配几 MB 的那条路（规则里写了怎么找），不成立就看 hotspots 里新登记的 7 条循环谁的 `maxMs` 大。**不要先改代码。**
 
 ---
+
+---
+
+<a id="i"></a>
+## I. 玩家移动时战略画面卡 —— `getImageData` 占一半 CPU（2026-09-05）
+
+**主人原话**：「玩家移动的时候战略画面很卡」。
+
+**为什么这次一测就中**：已登记的热点计时器全都正常（每帧合计只有 22ms，而帧间隔 200ms），
+`findings` 只会给出「差额在帧与帧之间」这种方向性结论。**这时候必须上 CPU Profile**，
+按 `selfTime` 排序 + **回溯调用链**，不要再往已登记的计时点里找。
+脚本：`node scratch/probe_cpu_callers.mjs`（先起 dev server），它直接给出
+「哪个原生函数吃了多少毫秒、是谁调的」。
+
+**第一刀（真凶）**：`getImageData` 占 **46% CPU**（12 秒采样 5581ms），回溯调用者：
+
+| 调用者 | 耗时 |
+|---|---|
+| `ElevationSampler.ensureTile` | 4287ms |
+| `WaterMaskSampler.ensureTile` | 1278ms |
+
+`ElevationSampler` 与 `ImagerySampler` 用的是**裸** `getContext('2d')` —— 画布落在 GPU 上，
+每次 `getImageData` 都要一次 GPU→CPU 同步回读。**与 SpriteTinter 那次（13 开场卡 12.8 秒）同一个坑。**
+顺带两处结构问题：① 每块瓦片新建一张 256×256 画布；
+② `LandSeaSystem.bindLeafletMap` 把**整个视口的瓦片预取**挂在 `moveend` 上，
+而跟拍镜头**每帧** `panBy`、Leaflet 每次都 fire `moveend` —— 这个回调其实是每帧在跑。
+
+**修法**：新建 `src/world/land-sea/TileDecoder.ts`（共享画布 + `willReadFrequently`），三个采样器共用；
+预取加「视口瓦片范围没变就跳过」（只比四个整数，行为等价、瓦片一块不少）。
+
+**第二刀（排掉第一层后浮出来的）**：抠绿 `LegionPhalanxDrawer.doProcessImage`
+`getImageData 1674ms + toDataURL 1124ms`。它把刚处理好的位图**再 PNG 编码一遍**、
+浏览器拿到 data URL **再解码一遍**，而 DE 雪碧图动辄 8820×160 到 12240×144。
+改用 `createImageBitmap`（不编码不重解码，产物 GPU 友好），并给四处抠绿画布补上 `willReadFrequently`
+（`LegionPhalanxDrawer` / `LegionFlagDrawer` / `GeneralDrawer` / `CityAssetManager`）。
+> ⚠️ 直接返回 canvas 是**错的**：canvas 每帧 drawImage 都要重新上传，反而拖慢渲染。用 ImageBitmap。
+> 下游要的只是 Image 的**形状**（`naturalWidth`/`complete`/`src`），补齐即可 —— 全项目无 `instanceof HTMLImageElement`。
+
+**顺带两个每帧开销**：`getGeneralRecordByGeneralId` 每次调用都 `Object.entries` 摊平 800+ 条再线性扫，
+而它是**每帧每单位**调（画名牌查将领名）→ 改反向索引 Map；`HeroSpriteDrawer.drawLabel`
+每帧描边+填充文字 → 预渲染成小图复用。
+
+**结果**（同一环境，玩家移动 10~12 秒采样）：
+
+| | 修前 | 修后 |
+|---|---|---|
+| `getImageData` | 5581ms（46%）| **780ms（8.4%）** |
+| 抠绿的 `toDataURL` | 1124ms | **0** |
+| `drawImage` | 469ms | **42ms** |
+| 主线程 `(idle)` | 160ms（1.3%）| **2029ms（19.4%）** |
+
+**视觉验收**：46 支军团、城池旗号、关羽精灵全部正常，控制台 0 错误
+（ImageBitmap 换掉了图片对象类型，这一步**必须**截图确认，别只看数字）。
+
+**⚠️ fps 不要当结论**：headless 是软件渲染，同一配置三轮 idle 测出 43.9 / 7.2 / 25.7fps，
+噪声比信号大。要判断改善**只看 CPU Profile 的确定性归因**。
+
+**第三刀（旗号文字，2026-09-05 同日补完）**：`DynamicFlagTextGenerator.generate` 占约 20% CPU ——
+每个势力**一次**地生成 512×960（`renderScale=4`）的旗号文字 PNG。有缓存，但全局 800+ 势力，
+镜头扫过没去过的地区时**集中**触发几十次，全砸在少数几帧里 = 卡顿尖峰。
+
+先算了两条「省事」的路，**都不安全，别再试**：
+- **降超采样**：旗面一格屏幕尺寸 `32×40 ×flagScale1.4 ×visualScale1.2 ≈ 54×67` CSS px，
+  2× DPR 需要 107×134 物理像素，而一格源图正好 `32×4 × 40×4 = 128×160` —— **刚好够、零余量**，
+  降到 3 倍（96×120）就在高分屏发糊。
+- **砍雪碧图行数**：据点旗确实只用第 4 行（`background-position-y` 写死 `-160*1.4`，横向 4 帧是 CSS 动画），
+  但 `LegionFlagDrawer.drawFlag` 按朝向取 `text.height / 6` 的第 `direction` 行 —— **6 行军团旗都要用**，砍了军团旗就没字。
+
+**采用的第三条**：产物一个像素不改，只把生成**摊开** —— 每 16ms 窗口最多生成 2 张，
+超出的进队列由 `requestIdleCallback` 补齐，补齐后调 `patchFactionFlagText` 就地给该势力据点补上文字。
+> 🔴 补齐**只能** patch，**不能**走 `CityManager.refreshFactionFlagText`：那个会先删缓存，
+> 删完 patch 又重新生成一张，等于把省下的活儿原样做回去（还会自我循环）。
+> 🔴 `getProcessedFlagText` 返回 null 从此有**两种**含义，`patchFlagTextOverlay` 必须用
+> `isFlagTextPending` 分清：「排队中」要**保留**已有文字，抹掉会让旗号一闪一闪。
+
+**长任务（最能反映「卡」的指标，长任务期间画面完全不动）**：
+
+| 场景 | 修前 次数/总时长/最坏 | 修后 |
+|---|---|---|
+| 玩家移动 | 184 / 20365ms / 712ms | **72 / 6513ms / 313ms** |
+| 静止 | 115 / 12533ms / 274ms | **25 / 1952ms / 342ms** |
+
+**视觉验收**：49 支军团、旗号文字（郢/荆/荆门/宜都）、关羽精灵全部正常，控制台 0 错误。
+
 
 ## 二、本轮一并量到的「不是瓶颈」清单
 

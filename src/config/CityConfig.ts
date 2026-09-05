@@ -34,21 +34,21 @@ export const CITY_CONFIG: Record<CityType, CityTypeConfig> = {
     medium_city: {       // 中城
         name: '中城',
         maxTroops: 60000,
-        initialTroops: 5000,
+        initialTroops: 10000,
         growthRate: 0.01,
         recruitPerSeason: 150,
     },
     small_city: {       // 小城（含渡口，可出兵）
         name: '小城',
         maxTroops: 30000,
-        initialTroops: 5000,
+        initialTroops: 10000,
         growthRate: 0.008,
         recruitPerSeason: 100,
     },
-    stockade: {         // 城寨（2026-09-03 主人定：军事哨所，比小城还小；可出兵，无守城加成）
+    stockade: {         // 城寨（军事哨所，比小城还小；可出兵，无守城加成）
         name: '城寨',
-        maxTroops: 15000,
-        initialTroops: 5000,
+        maxTroops: 10000,
+        initialTroops: 10000,
         growthRate: 0.006,
         recruitPerSeason: 60,
     },

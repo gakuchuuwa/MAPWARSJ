@@ -18,9 +18,15 @@ export function yieldToBrowser(): Promise<void> {
 const BACKGROUND_TICK_INTERVAL_MS = 200;
 /**
  * rAF 超过此时长未更新 lastFrameTime，判定为被浏览器节流/停止。
- * 60fps 下 lastFrameTime 约每 16ms 更新一次，100ms 阈值留有充足余量。
+ *
+ * 🔴 [2026-09-05 修「人物移动一顿一顿」100 → 500] 100ms 等于「帧率一掉到 10fps 以下就判定 rAF 停了」，
+ *    而本作卡顿时（战略地图跟拍、进 13、大批精灵）帧率**经常**低于 10fps —— 于是心跳与 rAF
+ *    互相插队、互相覆写 lastFrameTime，rAF 那一拍算出负 delta 被整段丢弃（详见 GameAppLoop
+ *    的 clampFrameDelta）。实测 11fps 下 80 帧里 60 帧位移为 0。
+ *    500ms ≈ 2fps 才判定停止：真正的 tab 隐藏/最小化时 rAF 是**完全停止**的，age 会一路涨到
+ *    任何阈值以上，最多晚半秒接管，对后台推演没有影响；而正常的低帧率不再被误判。
  */
-const BACKGROUND_TICK_THRESHOLD_MS = 100;
+const BACKGROUND_TICK_THRESHOLD_MS = 500;
 
 /**
  * 启动全程运行的后台心跳：

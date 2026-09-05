@@ -2,6 +2,7 @@ import { latLngToTile } from '../../map/TileMapConfig';
 import { latLngToTilePixel } from './ElevationSampler';
 import { DEM_ZOOM, TERRARIUM_TILE_SIZE } from './TerrariumCodec';
 import { ESRI_SHADED_RELIEF_URL, buildWaterMask, isDefectGrayTile } from './WaterMask';
+import { decodeTileRGBA } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -143,15 +144,10 @@ export class WaterMaskSampler {
                 el.src = url;
             });
 
-            const canvas = document.createElement('canvas');
-            canvas.width = TERRARIUM_TILE_SIZE;
-            canvas.height = TERRARIUM_TILE_SIZE;
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            if (!ctx) return false;
-
-            // ESRI 瓦片原生 256px，与 TERRARIUM_TILE_SIZE 一致；万一尺寸不符这里会自动缩放到同一网格
-            ctx.drawImage(img, 0, 0, TERRARIUM_TILE_SIZE, TERRARIUM_TILE_SIZE);
-            const rgba = ctx.getImageData(0, 0, TERRARIUM_TILE_SIZE, TERRARIUM_TILE_SIZE).data;
+            // ESRI 瓦片原生 256px，与 TERRARIUM_TILE_SIZE 一致；万一尺寸不符 decodeTileRGBA 会缩放到同一网格。
+            // [2026-09-05] 画布改共享复用（原来逐瓦片新建）；willReadFrequently 本来就有，保持。
+            const rgba = decodeTileRGBA(img, TERRARIUM_TILE_SIZE);
+            if (!rgba) return false;
             // 坏瓦片（整块纯灰）会被误读成「整块都是陆地」，会让海面变成可行军的陆地。
             // 存 null 占位：既标记为不可用，又避免每次查询都重新拉取。
             this.cache.set(

@@ -465,6 +465,8 @@ export class CombatUI {
     public pauseHook?: { setPaused(p: boolean): void; isGamePaused(): boolean };
     /** 立绘校正面板（游戏内一键校正 + 方向键微调 + 保存） */
     private correctorOpen = false;
+    /** 立绘校正器是否打开（供键盘导航等外部模块判定：校正期间方向键/WASD 不得平移镜头） */
+    public isCorrectorOpen(): boolean { return this.correctorOpen; }
     private correctorSide: 'attacker' | 'defender' = 'attacker';
     private correctorPanel: HTMLDivElement | null = null;
     private correctorPrevPaused = false;
@@ -2554,7 +2556,7 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' = 'other',
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' | 'player_rank' = 'other',
             sixSetChar?: string,
         ) => {
             const tag = document.createElement('div');
@@ -2565,7 +2567,18 @@ export class CombatUI {
             let bgHighlight = '';
             let sideColor = isAttacker ? '#e63900' : '#0066cc'; // 默认战术/其他：攻血红 守深蓝
 
-            if (skillType === 'pass') {
+            if (skillType === 'player_rank') {
+                // 玩家官阶标签：独一无二的尊贵曜金 / 冰魄霜蓝
+                if (isAttacker) {
+                    bgColor = 'rgba(60, 38, 6, 0.95)';
+                    bgHighlight = 'rgba(255, 215, 0, 0.35)';
+                    sideColor = '#ffd700'; // 纯曜金
+                } else {
+                    bgColor = 'rgba(15, 38, 58, 0.95)';
+                    bgHighlight = 'rgba(100, 220, 255, 0.35)';
+                    sideColor = '#66d9ff'; // 霜雪苍蓝
+                }
+            } else if (skillType === 'pass') {
                 if (isAttacker) {
                     bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
                     bgHighlight = 'rgba(196, 164, 90, 0.15)';
@@ -2669,9 +2682,11 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
                 flex: 0 0 auto;
                 min-width: ${uiPx(88)};
                 max-width: ${uiPx(115)};
+                min-height: ${uiPx(42)};
                 box-sizing: border-box;
                 background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
@@ -2679,7 +2694,7 @@ export class CombatUI {
                 border-top: 1px solid rgba(255, 255, 255, 0.15);
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
-                padding: ${uiPx(3)} ${uiPx(6)};
+                padding: ${uiPx(4)} ${uiPx(6)};
                 box-shadow: 
                     inset 0 1px 1px rgba(255,255,255,0.25), 
                     inset 0 -10px 20px ${sideColor}35, 
@@ -2695,9 +2710,8 @@ export class CombatUI {
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
+                line-height: 1.2;
                 margin-bottom: ${uiPx(2)};
-                position: relative;
-                top: ${uiPx(5)};
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -2710,9 +2724,10 @@ export class CombatUI {
             effectEl.style.cssText = `
                 font-family: 'Noto Sans SC', sans-serif;
                 font-size: ${uiPx(10)};
-                font-weight: 400;
-                color: rgba(255, 255, 255, 0.7);
-                letter-spacing: 1px;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.78);
+                letter-spacing: 0.5px;
+                line-height: 1.2;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -2734,7 +2749,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' = 'other'
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'luck' | 'aptitude' | 'style' | 'famous' | 'reinforcement' | 'other' | 'player_rank' = 'other'
             ) => {
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
                 // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
@@ -2746,17 +2761,29 @@ export class CombatUI {
                 pending.push(el);
             };
 
-            // 关隘/名城不再显示为顶部四字卡（2026-07-17 主人定口径：顶部卡=恒有信息（文化/技能/精锐），
-            // 时有时无的条件信息走下方乘区链条二字词——关隘「险要」、区中心「名城」，避免双份显示）
-            // const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
-            // if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
-            // const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
-            // if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
+            const fmtMult = (m: number): string => {
+                if (!m || isNaN(m)) return '1.0';
+                const rounded = Math.round(m * 100) / 100;
+                if (Number.isInteger(rounded)) return rounded.toFixed(1);
+                if (Math.round(rounded * 10) === rounded * 10) return rounded.toFixed(1);
+                return rounded.toFixed(2);
+            };
+
+            const addPlayerRank = () => {
+                const rankName = (unit as { playerHostRankName?: string | null } | null)?.playerHostRankName
+                    ?? (unit as { getEntity?: () => any } | null)?.getEntity?.()?.playerHostRankName;
+                if (rankName) {
+                    const mult = (unit as { playerHostPowerMult?: number | null } | null)?.playerHostPowerMult
+                        ?? (unit as { getEntity?: () => any } | null)?.getEntity?.()?.playerHostPowerMult;
+                    const val = (mult && mult > 0) ? mult : 1.0;
+                    add(rankName, `战力×${fmtMult(val)}`, true, 'player_rank');
+                }
+            };
 
             const addElite = () => {
                 const legionMult = getEliteCombatMultiplier(unit);
                 if (Math.abs(legionMult - 1) > 0.001) {
-                    add(getLegionEliteBadgeName(unit), '', true, 'elite');
+                    add(getLegionEliteBadgeName(unit), `战力×${fmtMult(legionMult)}`, true, 'elite');
                 }
             };
 
@@ -2765,7 +2792,7 @@ export class CombatUI {
                 const round = Math.round(cultureMult * 100) / 100;
                 const isGarrison = unit.unitType === 'city';
                 const label = resolveCultureTagLabel(round, isGarrison);
-                if (label) add(label, '', false, 'culture');
+                if (label) add(label, `战力×${fmtMult(cultureMult)}`, false, 'culture');
             };
 
             const addAptitude = () => {
@@ -2779,75 +2806,77 @@ export class CombatUI {
                 const cachedOppTroops = isAttacker ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
                 const aptMult = getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
                 const label = resolveAptitudeTagLabel(profile.aptitude, aptMult);
-                if (label) add(label, '', false, 'aptitude');
+                if (label) add(label, `战力×${fmtMult(aptMult)}`, false, 'aptitude');
             };
 
-            const addFamous = () => {
-                if (!unit.generalId) return;
-                const famousMult = getFamousGeneralMult(unit);
-                const label = resolveFamousTagLabel(famousMult > 1.001);
-                if (label) add(label, '', true, 'famous');
-            };
+            // 名将光环标签已按主人要求删除（不再在顶部标签栏展示「威震华夏」等卡片，名将加成仍保留于战力总×八环计算与悬停明细中）
 
             const addStyle = () => {
                 if (!unit.generalId) return;
                 const profile = getGeneralProfile(unit.generalId);
                 if (!profile?.attackStyle) return;
+                const styleMult = getAttackStylePowerMult(unit, isAttacker);
                 const label = resolveAttackStyleTagLabel(profile.attackStyle, isAttacker);
-                if (label) add(label, '', false, 'style');
+                if (label) add(label, `战力×${fmtMult(styleMult)}`, false, 'style');
             };
 
-            const addSite = () => {
-                const passMult = getPassGarrisonCombatMultiplier(unit);
-                const regionMult = getRegionCenterCombatMultiplier(unit);
-                const label = resolveSiteDefenseTagLabel(passMult, regionMult);
-                if (label) add(label, '', false, 'pass');
-            };
+            // 词语标签严格对应九环战力中的 7 个乘区：
+            // 1. 玩家官阶 (addPlayerRank)
+            // 2. 精锐部队 (addElite)
+            // 3. 文化加成 (addCulture)
+            // 4. 三势适性 (addAptitude)
+            // 5. 攻防风格 (addStyle)
+            // 6. 战局运气 (addLuck)
+            // 7. 战术技能 (addSkills)
+            // （名将光环为底层特权乘区不占词、据点地利属于场地属性走下方乘区链、兵力走血槽）
 
             const addLuck = () => {
                 const fateLuck = isAttacker
                     ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
                     : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
                 const label = resolveLuckTagLabel(fateLuck);
-                if (label) add(label, '', false, 'luck');
-            };
-
-            const addReinforcement = () => {
-                const joinLuck = this.getSideReinforcementJoinLuck(sideKey);
-                if (joinLuck === null) return;
-                const label = resolveReinforcementTagLabel(joinLuck);
-                if (label) add(label, '', false, 'reinforcement');
+                if (label) add(label, `战力×${fmtMult(fateLuck)}`, false, 'luck');
             };
 
             const addSkills = () => {
                 if (unit.generalId) {
+                    const bf = this.boundRegionalBattleField;
+                    const cachedMyTroops = isAttacker ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+                    const cachedOppTroops = isAttacker ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
+                    const myUnits = this.getUnitsForSide(sideKey);
+                    const oppUnits = this.getOpponentUnitsFor(sideKey);
+                    const battleType = bf?.type ?? this.currentBattleType;
+                    const terrain = this.getBattleTerrainForUi();
+                    const oppCommander = isAttacker ? bf?.getDefenderCommander() : bf?.getAttackerCommander();
+                    const tacMult = getOpeningTacticalPowerMultiplier(
+                        myUnits, oppUnits, isAttacker, { battleType, terrain }, unit,
+                        oppCommander,
+                        cachedMyTroops, cachedOppTroops,
+                    );
                     for (const tag of getGeneralSkillDisplayTags(unit)) {
-                        add(tag.name, '', tag.isFamous, tag.skillType);
+                        add(tag.name, `战力×${fmtMult(tacMult)}`, tag.isFamous, tag.skillType);
                     }
                 }
             };
 
             if (isAttacker) {
-                // 攻击方：精锐 -> 名将 -> 文化 -> 适性 -> 风格 -> 运气 -> 援军 -> 技能
+                // 攻击方（7个词语标签）：玩家官阶 -> 精锐 -> 文化 -> 适性 -> 风格 -> 运气 -> 技能
+                addPlayerRank();
                 addElite();
-                addFamous();
                 addCulture();
                 addAptitude();
                 addStyle();
                 addLuck();
-                addReinforcement();
                 addSkills();
             } else {
-                // 防守方：技能 -> 援军 -> 运气 -> 风格 -> 适性 -> 文化 -> 据点 -> 名将 -> 精锐
+                // 防守方（7个词语标签）：技能 -> 运气 -> 风格 -> 适性 -> 文化 -> 精锐 -> 玩家官阶
                 addSkills();
-                addReinforcement();
                 addLuck();
                 addStyle();
                 addAptitude();
                 addCulture();
-                addSite();
-                addFamous();
                 addElite();
+                addPlayerRank();
             }
 
             for (const tag of pending) box.appendChild(tag);
@@ -2980,6 +3009,9 @@ export class CombatUI {
         // [2026-08-06 修] 总× 为固定乘区连乘，**不含合兵 luck**（引擎胜负判定 per-unit 加权，
         // 合兵信息由第三行「得/掣×」徽章承载；此前把指挥官单位的 joinLuck 乘进整侧总×，与引擎口径不一致）。
 
+        const playerMult = (unit as { playerHostPowerMult?: number | null } | null)?.playerHostPowerMult
+            ?? (unit as { getEntity?: () => any } | null)?.getEntity?.()?.playerHostPowerMult ?? 1;
+
         // [2026-08-06 撤回] multSpan 挂载已被用户否决（名×/城×/技× 不在规则设计内）——
         // topChain 生成逻辑整段删除；各环只算数值供 totalMult / title 悬停明细使用。
         const allDetail = [
@@ -2991,16 +3023,17 @@ export class CombatUI {
             { label: '三势适性', shortName: aptChar, val: aptMult },
             { label: '攻防风格', shortName: styleChar, val: styleMult },
             { label: '命运运气', shortName: '运', val: fateLuck },
+            { label: '玩家官阶', shortName: '阶', val: playerMult },
         ].filter(f => Math.abs(f.val - 1) > 0.001);
 
         // [2026-08-06 修] 据点环与引擎同行为：Math.max（关隘/文化中心取大不叠加，焊死上限 1.2）——
         // 此前用 × 相乘，与引擎 getUnitCultureCombatMultiplier 的 max 不同；数值上现无差（149 关隘/15 中心零重叠），
         // 但将来若某文化中心 type 改 pass，引擎仍 1.2、面板会静默 1.44（同坑第二次）。
         const siteMult = Math.max(passMult, regionMult);
-        const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck;
+        const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck * playerMult;
         const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
 
-        const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
+        const totalTitle = `综合战力加成（九环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
             ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
             : '• 无额外增减益（均势 1.00）');
 

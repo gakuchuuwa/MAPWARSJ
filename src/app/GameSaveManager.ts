@@ -21,6 +21,7 @@ import { SpatialRegistry } from '../world/SpatialRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CameraFollowUI, type HistoricalStreakRecord } from '../ui/CameraFollowUI';
+import type { PlayerSaveState } from '../player/PlayerHero';
 
 const SAVE_PREFIX = 'mapwar-save-';
 const SAVE_VERSION = 1;
@@ -84,6 +85,8 @@ export interface GameSave {
     armies: ArmySnapshot[];
     /** 全局历史最高连胜纪录（即使军团阵亡也永久保留） */
     maxWinStreak?: HistoricalStreakRecord | null;
+    /** [2026-09-05 玩家] 玩家：功勋/势力/已学精锐/位置（入伍与任务不存：军团重建后 id 已变，读档一律独行） */
+    player?: PlayerSaveState;
 }
 
 export interface SaveMeta {
@@ -146,6 +149,7 @@ export class GameSaveManager {
             cities,
             armies,
             maxWinStreak: CameraFollowUI.historicalMaxStreak,
+            player: app.playerHero?.toSaveState(),
         };
     }
 
@@ -231,6 +235,14 @@ export class GameSaveManager {
         //    否则之后一开播，runInitialSpawn 会 ① 从各无军据点批量补刷军团，
         //    ② 其开头的 trimLegionsToCap() 还会把这里 force 加入的军团削掉。
         app.recruitmentSystem?.markInitialSpawnDone?.();
+
+        // 6. [2026-09-05 玩家] 玩家：任务作废（军团已重建），功勋/势力/精锐/位置照存档灌回，镜头仍跟玩家
+        if (app.playerHero) {
+            app.playerQuests?.clearForRestore();
+            if (save.player) app.playerHero.restoreSaveState(save.player);
+            else app.playerHero.detach();
+            app.cameraFollowUI?.refreshPlayerFollow?.();
+        }
 
         gameLog('world', `💾 [读档] ${save.date}：纪年 ${save.year} · 据点 ${cityHit}/${save.cities.length} · 军团 ${armyHit}`);
     }

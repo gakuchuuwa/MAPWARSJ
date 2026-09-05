@@ -4,8 +4,11 @@ import { gameLog } from '../utils/GameLogger';
 import {
     ensureFactionPortraitPath,
     getFactionCultureRegion,
+    resolveGeneralPortraitPath,
     resolvePortraitAssetPath,
 } from '../config/portrait_defaults';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchorFactionId } from '../data/ExpeditionLegions';
 import { getCityRegion } from '../systems/RegionSystem';
 import type { RegionType } from '../systems/RegionSystem';
 import {
@@ -75,8 +78,18 @@ export class BattleUnitFactory {
                 longitude: entity.longitude,
                 region: entity.region,
             }) as RegionType;
+            // [2026-09-05 玩家] 据点武将不在（出征）时，依旧用本城锚定武将立绘，不再随机挑人物（只不显示人名）
+            const anchoredGeneral = getCityAnchoredGeneral(entity.id);
+            const anchorFaction = getCityAnchorFactionId(entity.id);
+            const anchoredPortrait = anchoredGeneral
+                ? resolveGeneralPortraitPath(anchoredGeneral.portrait, {
+                    factionId: anchorFaction ?? ownerFactionId,
+                    region: cityRegion,
+                })
+                : undefined;
             const rawPortrait =
                 siegePortrait ??
+                anchoredPortrait ??
                 ensureFactionPortraitPath(ownerFactionId, { region: cityRegion });
             cityPortraitPath = resolvePortraitAssetPath(rawPortrait, {
                 factionId: ownerFactionId,
@@ -100,6 +113,9 @@ export class BattleUnitFactory {
                     return readSiegeGarrisonGeneralId(entity) ?? entity.generalId;
                 }
                 return entity.generalId;
+            },
+            get playerHostRankName() {
+                return (entity as any)?.playerHostRankName ?? null;
             },
             get portraitPath() {
                 if (isCity) {
