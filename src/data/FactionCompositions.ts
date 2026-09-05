@@ -1984,16 +1984,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'camel_archer', count: 2 },
         ],
     },
-    // 哥特·狄奥多里克大帝（哥特军团 · 雁行阵 4+3+2：哥特近卫军精锐 4 + 长戟兵 3 + 长弓兵 2）
-    "donggete": {
-        legionName: "哥特军团",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_huskarl", count: 4 },
-            { type: "halberdier", count: 3 },
-            { type: "longbowman", count: 2 },
-        ],
-    },
     // 色雷斯·普罗夫迪夫（西美昂 · 色雷斯长刃斩手与精锐重骑军团 · 鹤翼阵 2+4+3：色雷斯长刃斩手 2 + 冲击重骑兵 4 + 精锐标枪手 3）
     "seleisi": {
         legionName: "色雷斯军团",

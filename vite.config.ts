@@ -2317,7 +2317,7 @@ ${slotsStr}
 
 /** 更新 CULTURE_FORMATION_MODE 中某文化的阵型类型 */
 function serverReplaceFormationMode(text: string, culture: string, mode: string): string {
-    const pattern = new RegExp(`(\\s+${culture}:\\s*)'(triangle|square)'`);
+    const pattern = new RegExp(`(\\s+${culture}:\\s*)'[a-z_]+'`);
     if (!pattern.test(text)) {
         throw new Error(`Cannot find formation mode entry for ${culture}`);
     }
