@@ -1512,7 +1512,7 @@ function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
     return `${names}（${getFormationModeLabel(mode)}）`;
 }
 
-let selectedLayerTab: 'culture' | 'branch' | 'sub' = 'culture';
+let selectedLayerTab: 'culture' | 'sub' = 'culture';
 let selectedLayerKey: string = '';
 /** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
 let legionSearchQuery = '';
@@ -1539,11 +1539,10 @@ function isRegionLegionName(name: string): boolean {
     return REGION_LEGION_BASE_SET.has(base) || REGION_TAB_LABEL_SET.has(base);
 }
 
-/** 某军团归哪个页签：地区名→地区；否则按共用人数（≥2→时代，=1→独立） */
-function classifyLegionTab(name: string, _sharedCount: number): 'culture' | 'branch' | 'sub' {
-    if (isRegionLegionName(name)) return 'culture';
-    // [2026-08-30 主人] 其他（自定义军团）一律归「个人军团」，「时代军团」branch 层取消。
-    return 'sub';
+/** 🔴 [2026-09-06 主人铁律] 军团只有两种：文化军团（名字是 65 个文化军团名之一）/ 特定军团（其余全部）。
+ *  「时代军团」branch 那一层已彻底删除，别再加回来 —— 多一类就是误导。 */
+function classifyLegionTab(name: string, _sharedCount: number): 'culture' | 'sub' {
+    return isRegionLegionName(name) ? 'culture' : 'sub';
 }
 
 /** 全部独立军团（=地区默认 + 所有自定义军团），按军团名聚合 */
@@ -1586,7 +1585,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
 }
 
 /** 取三类军团的全部可选军团（按名字语义判型：地区 / 时代 / 独立） */
-function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFactionId: string): LayerLegionOption[] {
+function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: string): LayerLegionOption[] {
     const all = getAllDistinctLegions();
     const options: LayerLegionOption[] = [];
 
@@ -1636,11 +1635,11 @@ function getLayerLegionOptions(layer: 'culture' | 'branch' | 'sub', currentFacti
     return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
 }
 
+
 /** 层全名（信息卡 / 步骤标题用） */
-const LAYER_FULL_LABEL: Record<'culture' | 'branch' | 'sub', string> = {
+const LAYER_FULL_LABEL: Record<'culture' | 'sub', string> = {
     culture: '文化军团',
-    branch: '时代军团',
-    sub: '个人军团',
+    sub: '特定军团',
 };
 
 /** 编成签名：阵型 + slots 的 type:count 序列（同名铁律判据） */
@@ -1649,15 +1648,13 @@ function legionSig(v: { formationMode: string; slots: { type: string; count: num
 }
 
 /** 当前军团属于哪一类：legionType 优先；无则按名字语义/共用人数推断 */
-function resolveCurrentLayer(row: FactionLegionRow): 'culture' | 'branch' | 'sub' {
+function resolveCurrentLayer(row: FactionLegionRow): 'culture' | 'sub' {
     const lt = currentEditingLegion?.legionType;
     if (lt === 'region') return 'culture';
-    if (lt === 'era') return 'branch';
-    if (lt === 'solo') return 'sub';
+    if (lt === 'solo' || lt === 'era') return 'sub';   // era 已废，一律并入特定军团
     const name = currentEditingLegion?.legionName?.trim();
     if (!name) return 'culture';
     if (getLayerLegionOptions('culture', row.factionId).some(o => o.legionName === name)) return 'culture';
-    if (getLayerLegionOptions('branch', row.factionId).some(o => o.legionName === name)) return 'branch';
     return 'sub';
 }
 
@@ -1750,14 +1747,13 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     // 三步向导状态：当前层 / 三层选项 / 当前层可选军团
     const curLayer = resolveCurrentLayer(row);
-    const curLegionType: 'region' | 'era' | 'solo' = currentEditingLegion?.legionType
-        ?? (curLayer === 'culture' ? 'region' : curLayer === 'branch' ? 'era' : 'solo');
+    const curLegionType: 'region' | 'solo' = currentEditingLegion?.legionType === 'region' ? 'region' : 'solo';
     const currentLegionName = currentEditingLegion.legionName?.trim()
         || (curLayer === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
     const optCulture = getLayerLegionOptions('culture', row.factionId);
-    const optBranch = getLayerLegionOptions('branch', row.factionId);
     const optSub = getLayerLegionOptions('sub', row.factionId);
-    const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture : selectedLayerTab === 'branch' ? optBranch : optSub;
+    const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture : optSub;
+    const legionCounts = { culture: optCulture.length, sub: optSub.length };
 
     const rowLabels = mode === 'triangle'
         ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人 · 4档主力)']
@@ -1813,10 +1809,10 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-step-title">从现有军团套用（点击卡片即套用，再点底部「保存」落盘）</div>
       <div class="le-layer-grid" style="margin-bottom:8px;">
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
-          <div class="le-layer-title">🏛️ 文化军团</div>
+          <div class="le-layer-title">🏛️ 文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
-          <div class="le-layer-title">⭐ 特定军团</div>
+          <div class="le-layer-title">⭐ 特定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
         </button>
       </div>
       <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
@@ -1910,11 +1906,11 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-step-title">军团种类（文化军团 / 特定军团）</div>
       <div class="le-layer-grid">
         <button type="button" class="le-layer-btn ${curLegionType === 'region' ? 'active' : ''}" data-legiontype="region">
-          <div class="le-layer-title">🏛️ 文化军团</div>
-          <div class="le-layer-desc">文化区默认<br/>一键可恢复</div>
+          <div class="le-layer-title">🏛️ 文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
+          <div class="le-layer-desc">一文化一个<br/>一键可恢复</div>
         </button>
         <button type="button" class="le-layer-btn ${curLegionType === 'solo' ? 'active' : ''}" data-legiontype="solo">
-          <div class="le-layer-title">⭐ 特定军团</div>
+          <div class="le-layer-title">⭐ 特定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
           <div class="le-layer-desc">自己创建<br/>独立不联动</div>
         </button>
       </div>
@@ -1927,7 +1923,7 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span style="font-size:11px;color:#a89f8f;font-weight:normal;">必须以「军团」二字结尾</span>
       </div>
       <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || row.factionName + '军团'}" placeholder="例如：秦国军团、大秦长城军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
-      ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''} · 选「个人军团」自动命名为【${row.eliteName}军团】</div>` : ''}
+      ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''} · 选「特定军团」自动命名为【${row.eliteName}军团】</div>` : ''}
     </div>
 
     <!-- 实时预览（折叠） -->
@@ -2138,10 +2134,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 军团种类选择（第三步）
     els.panelContent.querySelectorAll('.le-layer-btn[data-legiontype]').forEach(btn => {
         btn.addEventListener('click', () => {
-            const lt = (btn as HTMLElement).dataset.legiontype as 'region' | 'era' | 'solo';
+            const lt = (btn as HTMLElement).dataset.legiontype as 'region' | 'solo';
             if (currentEditingLegion) {
                 currentEditingLegion.legionType = lt;
-                // 个人军团 → 军团名自动命名「精锐番号 + 军团」（如 蕃落骑 → 蕃落骑军团）
+                // 特定军团 → 军团名自动命名「精锐番号 + 军团」（如 蕃落骑 → 蕃落骑军团）
                 if (lt === 'solo' && row.eliteName) {
                     currentEditingLegion.legionName = row.eliteName.replace(/军+$/, '') + '军团';
                 }
@@ -2153,7 +2149,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 选军团 · 三层切换（仅更新标签高亮 + 重绘卡片，不整屏重渲染，保住搜索框焦点）
     els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(btn => {
         btn.addEventListener('click', () => {
-            selectedLayerTab = (btn as HTMLElement).dataset.legiontab as 'culture' | 'branch' | 'sub';
+            selectedLayerTab = (btn as HTMLElement).dataset.legiontab as 'culture' | 'sub';
             els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(b => {
                 b.classList.toggle('active', (b as HTMLElement).dataset.legiontab === selectedLayerTab);
             });
@@ -2218,7 +2214,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
         : '<div class="le-empty-hint" style="padding:14px;">该类型暂无军团可选</div>');
     gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
-    // 删除军团（仅个人军团层渲染删除按钮；文化军团不渲染，天然不可删）
+    // 删除军团（仅特定军团层渲染删除按钮；文化军团不渲染，天然不可删）
     gridEl.querySelectorAll('.le-legion-delete[data-delete-name]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -2331,7 +2327,7 @@ function computeLegionNameViolations(): string[] {
         }
     }
 
-    // ③ 个人军团只能一个套用
+    // ③ 特定军团只能一个势力套用
     const soloUsers = new Map<string, string[]>();
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
@@ -2344,7 +2340,7 @@ function computeLegionNameViolations(): string[] {
     }
     for (const [name, users] of soloUsers.entries()) {
         if (users.length > 1) {
-            violations.push(`个人军团【${name}】被多个势力使用（只能一个套用）：${users.join('、')}`);
+            violations.push(`特定军团【${name}】被多个势力使用（只能一个套用）：${users.join('、')}`);
         }
     }
 

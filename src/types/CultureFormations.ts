@@ -224,7 +224,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     POLES: 'echelon',  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: 'echelon',  // [2026-09-06] 与同名势力专属军团对齐
     BURGUNDIANS: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
-    SPANISH: 'crescent',  // 西班牙[2026-08-28 暂复用父文化]
+    SPANISH: 'fish_scale',  // 西班牙[2026-08-28 暂复用父文化]
     PORTUGUESE: 'balance_yoke',  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: 'echelon',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
     BENGALIS: 'echelon',  // 孟加拉[2026-08-28 暂复用父文化]
@@ -1178,9 +1178,9 @@ export const HUNS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_tarkan', count: 4 },   // Row 0
-            { type: 'steppe_lancer', count: 2 },   // Row 1
-            { type: 'cav_archer', count: 3 }   // Row 2
+            { type: 'elite_tarkan', count: 4 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'antiquity_cavalry_archer', count: 3, scale: 1 }
         ]
     }
 ];
@@ -1437,9 +1437,9 @@ export const PERSIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_war_elephant', count: 3 },
-            { type: 'savar', count: 4 },
-            { type: 'cav_archer', count: 2 }
+            { type: 'cav_archer', count: 3 },   // Row 0 前卫 = 骑射手 3骑
+            { type: 'savar', count: 4 },   // Row 1 主力 = 萨瓦尔铁骑 4骑
+            { type: 'elite_war_elephant', count: 2 }   // Row 2 = 精锐战象 2头（象只许占 2 档）
         ]
     }
 ];
@@ -1451,13 +1451,12 @@ export const SPANISH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 3 },
-            { type: 'hand_cannoneer', count: 2 },
-            { type: 'elite_conquistador', count: 4 }
+            { type: 'huskarl', count: 3, scale: 1 },
+            { type: 'elite_conquistador', count: 4, scale: 1 },
+            { type: 'arbalest', count: 2, scale: 1 }
         ]
     }
 ];
-
 /** 保加利亚军团（鱼鳞阵 342）[2026-08-30 主人设计] */
 export const BULGARIANS_TIERS: CompositionTier[] = [
     {
@@ -1495,9 +1494,9 @@ export const PORTUGUESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 4 },
-            { type: 'arbalest', count: 2 },
-            { type: 'elite_organ_gun', count: 3 }
+            { type: 'halberdier', count: 4 },   // Row 0 宽线主力 = 戟兵 4人
+            { type: 'elite_organ_gun', count: 2 },   // Row 1 = 精锐风琴炮 2门（火器只许占 2 档）
+            { type: 'arbalest', count: 3 }   // Row 2 后排 = 劲弩手 3人
         ]
     }
 ];
@@ -1790,9 +1789,9 @@ export const KHMER_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spearman', count: 2 },   // Row 0
-            { type: 'elite_ballista_elephant', count: 3 },   // Row 1
-            { type: 'archer', count: 4 }   // Row 2
+            { type: 'elite_ballista_elephant', count: 2 },   // Row 0 尖刀 = 精锐弩炮象 2头（象只许占 2 档）
+            { type: 'spearman', count: 3 },   // Row 1 中坚 = 长枪兵 3人
+            { type: 'archer', count: 4 }   // Row 2 底边主力 = 弓箭手 4人
         ]
     }
 ];
@@ -1854,13 +1853,12 @@ export const ARMENIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'warrior_priest', count: 3 },   // Row 0
-            { type: 'composite_bowman', count: 2 },   // Row 1
-            { type: 'elite_composite_bowman', count: 4 }   // Row 2
+            { type: 'warrior_priest', count: 3 },
+            { type: 'elite_composite_bowman', count: 2, scale: 1 },
+            { type: 'sarmatian', count: 4, scale: 1 }
         ]
     }
 ];
-
 /** 阿契美尼德军团（鹤翼阵）[2026-08-30 完成待定制] */
 export const ACHAEMENIDS_TIERS: CompositionTier[] = [
     {
@@ -1868,9 +1866,9 @@ export const ACHAEMENIDS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'immortal', count: 2 },
-            { type: 'savar', count: 4 },
-            { type: 'war_elephant', count: 3 }
+            { type: 'war_elephant', count: 2 },   // Row 0 前锋 = 战象 2头（象只许占 2 档）
+            { type: 'savar', count: 4 },   // Row 1 主力 = 萨瓦尔铁骑 4骑
+            { type: 'immortal', count: 3 }   // Row 2 后排 = 不死军 3人
         ]
     }
 ];
@@ -1983,13 +1981,12 @@ export const BOHEMIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 4 },   // Row 0 宽线主力 = 戟兵 4人
-            { type: 'elite_hussite_wagon', count: 3 },   // Row 1 中坚 = 精锐胡斯战车 3辆
-            { type: 'arbalest', count: 2 }   // Row 2 压阵 = 劲弩手 2人
+            { type: 'elite_hussite_wagon', count: 4, scale: 1 },
+            { type: 'konnik_foot', count: 3, scale: 1 },
+            { type: 'arbalest', count: 2, scale: 1 }
         ]
     }
 ];
-
 /** 勃艮第 火枪手+佛兰德长枪兵+精锐扈从骑兵（三角阵 2+3+4：火枪手尖刀 + 长枪兵中坚 + 扈从骑兵主力底边）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃艮第），文化保底与它对齐，消除「同名不同编」。 */
 export const BURGUNDIANS_TIERS: CompositionTier[] = [
