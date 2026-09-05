@@ -40,6 +40,15 @@ export const SPRITE_PATHS = {
     // [NEW] Granular Unit Asset Configuration
     // Allows defining sprites for specific unit types (e.g. 'huaxia_infantry', 'roman_legion')
     UNIT_ASSETS: {
+        'guanyu': {
+            // 【guanyu】玩家乱入者（借用关羽 DE 素材 u_cav_hero_guan_yu），2026-09-05 接线：
+            //   大地图单骑 + 13 战术模式玩家本体；IDLE 45 帧 / MOVE 30 帧 / ATTACK 45 帧 / DEATH 45 帧（_meta.json）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/death_${dir}.png`),
+        },
         'jian_swordman_shielded': {
             // 【jian_swordman_shielded】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/move_${dir}.png`),
@@ -1155,6 +1164,14 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/idle_${d}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/death_${d}.png`),
+        },
+        'MERCHANT_SHIP': {
+            // 帆布商船（民用贸易商船）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
+            DEATH: [],
         },
         'ANT_WAR_GALLEY': {
             // 日本安宅战船（日本）

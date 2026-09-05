@@ -13,7 +13,7 @@
 export interface HistoricalRegion {
     id: string;
     name: string;
-    type: 'desert' | 'wetland' | 'ancient_lake';
+    type: 'desert' | 'wetland' | 'ancient_lake' | 'loess' | 'plateau';
     /** 椭圆中心 [lat, lng] */
     center: [number, number];
     /** 椭圆半径 [latDeg, lngDeg] - 控制覆盖范围 */
@@ -271,6 +271,38 @@ export const HISTORICAL_REGIONS: HistoricalRegion[] = [
         color: [202, 192, 162],  // 蒙古戈壁灰调
         blendStrength: 0.6,
         elevMin: 900, elevMax: 1700
+    },
+
+    // === 黄土高原与西北干旱走廊（恢复历史苍茫厚重黄土地貌，保护平原与南方森林） ===
+    {
+        id: 'loess_plateau',
+        name: '黄土高原',
+        type: 'loess',
+        center: [36.8, 108.8],
+        radii: [3.4, 4.8],
+        color: [214, 192, 138],  // 苍茫厚重暖土黄
+        blendStrength: 0.72,
+        elevMin: 580, elevMax: 2400 // 580m以下保护关中/汾河平原绿地，2400m以上保护高山岩石
+    },
+    {
+        id: 'longxi_plateau',
+        name: '陇西高原',
+        type: 'loess',
+        center: [35.5, 104.5],
+        radii: [2.0, 2.8],
+        color: [212, 190, 140],  // 陇右暖黄土
+        blendStrength: 0.68,
+        elevMin: 1100, elevMax: 2500
+    },
+    {
+        id: 'hexi_corridor',
+        name: '河西走廊',
+        type: 'loess',
+        center: [39.3, 99.5],
+        radii: [2.0, 5.2],
+        color: [220, 198, 145],  // 干燥戈壁沙驼黄
+        blendStrength: 0.68,
+        elevMin: 1000, elevMax: 2500 // 避开祁连山高寒雪峰
     },
 
     // === 湿地/古湖 ===

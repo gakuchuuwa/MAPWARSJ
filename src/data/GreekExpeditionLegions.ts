@@ -19,7 +19,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522 守岛
-    moxina: { name: '诺曼骑士', tier: 2 },          // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡
 
     // ── T3 风土之兵 ──
     kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前 433 西波塔海战；避势力「科基拉」叠字

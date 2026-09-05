@@ -34,6 +34,7 @@ import {
     expandCompositionSlots,
 } from '../types/LegionComposition';
 import { getCultureTier, getFactionCompositionSlots, type FormationMode } from '../types/CultureFormations';
+import { HeroSpriteDrawer } from './player/HeroSpriteDrawer'; // [2026-09-05 玩家] 单骑精灵
 
 /** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
 interface SquadHit {
@@ -2375,6 +2376,84 @@ export class GlobalUnitRenderer {
             }
         }
 
+        // [2026-09-05 玩家] 单骑（乱入者）与进海变船：
+        //   · 进海（isOnSea = true）：
+        //       - 若随军入伍：使用与母军团相同的船，在前排前锋引路航行；
+        //       - 若独行：使用小船（CANOE 独木战舟）。
+        //   · 陆地：未入伍时居中画单人精灵；入伍时画在军团前排前锋。
+        if ((unit as any).isPlayerHero) {
+            const hero = (unit as any).playerHero as {
+                getHostLegion?(): {
+                    getRenderer(): { lastDirection?: number; isAttacking: boolean; isMoving: boolean; isOnSea?: boolean; navalShipAssetLock?: any } | null;
+                    isOnSea?: boolean;
+                    navalShipAssetLock?: any;
+                    cultureRegion?: any;
+                    getFactionId?(): string;
+                    navalHeadingRad?: number;
+                } | undefined;
+                factionId: string | null;
+                name: string;
+                heroKey: string;
+            } | undefined;
+            const hostLegion = hero?.getHostLegion?.();
+            const hostR = hostLegion?.getRenderer() ?? null;
+            const isNaval = !this.isBattleScene13() && !!(unit.isOnSea || hostLegion?.isOnSea || hostR?.isOnSea);
+
+            if (hostR) {
+                if (!isNaval) {
+                    // 入伍在陆地：画在军团前排前锋位置
+                    let hx = centerPoint.x, hy = centerPoint.y;
+                    const dir = hostR.lastDirection ?? directionIndex;
+                    const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = hostR.isAttacking ? 'ATTACK' : hostR.isMoving ? 'MOVE' : 'IDLE';
+                    const off = HeroSpriteDrawer.forwardOffset(dir, 96 * scale);
+                    hx += off.x; hy += off.y;
+                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? 'guanyu', { x: hx, y: hy }, heroState, dir, scale,
+                        hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
+                    unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
+                    return;
+                }
+
+                // 🔴 入伍随军进海：使用与母军团相同的船，在前锋领航
+                const hostShipId = (hostLegion as any)?.navalShipAssetLock
+                    ?? (hostR as any)?.navalShipAssetLock
+                    ?? getCultureNavalShip((hostLegion as any)?.cultureRegion, (hostLegion as any)?.getFactionId?.() ?? hero?.factionId ?? 'zhonghua');
+
+                unit.navalShipAssetLock = hostShipId;
+                unit.isOnSea = true;
+                if (!unit.factionId) unit.factionId = hero?.factionId || (hostLegion as any)?.getFactionId?.() || 'zhonghua';
+
+                // 同步母军团移动状态、朝向与航向角
+                unit.isMoving = hostR.isMoving;
+                unit.isAttacking = hostR.isAttacking;
+                if ((hostLegion as any)?.navalHeadingRad !== undefined) {
+                    unit.navalHeadingRad = (hostLegion as any).navalHeadingRad;
+                }
+                const dir = hostR.lastDirection ?? directionIndex;
+                directionIndex = dir;
+                unit.lastDirection = dir;
+
+                // 前锋领航偏移：随军战船位于母军团前排前锋引路
+                const off = HeroSpriteDrawer.forwardOffset(dir, 100 * scale);
+                centerPoint = L.point(centerPoint.x + off.x, centerPoint.y + off.y);
+            } else {
+                // 独行玩家（未入伍）：
+                if (!isNaval) {
+                    // 独行陆地形态：画单骑小人
+                    const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = unit.isMoving ? 'MOVE' : 'IDLE';
+                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? 'guanyu', { x: centerPoint.x, y: centerPoint.y }, heroState, directionIndex, scale,
+                        hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
+                    unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
+                    return;
+                }
+
+                // 🔴 独行进海：玩家使用商船（MERCHANT_SHIP 帆布商船）！
+                unit.navalShipAssetLock = 'MERCHANT_SHIP';
+                unit.isOnSea = true;
+                // [2026-09-05 玩家] 离队（无势力）时保持空，不 fallback 挂中原旗
+                if (!unit.factionId && hero?.factionId) unit.factionId = hero.factionId;
+            }
+        }
+
         if (isBandit) {
             // [NEW] Snap NPC position to Hex center
             const hex = GridSystem.latLngToAxial(unitPos.lat, unitPos.lng);
@@ -2446,12 +2525,16 @@ export class GlobalUnitRenderer {
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
 
             // 1. Draw Flag Pole (Behind Soldiers / Ship)
-            LegionFlagDrawer.drawPole(
-                ctx,
-                { x: centerPoint.x, y: centerPoint.y },
-                useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
-                unit.factionId || 'panjun'
-            );
+            // [2026-09-05 玩家] 乱入者离队（无势力）时不画旗杆/旗帜
+            const playerNoFaction = (unit as any).isPlayerHero && !(unit as any).playerHero?.factionId;
+            if (!playerNoFaction) {
+                LegionFlagDrawer.drawPole(
+                    ctx,
+                    { x: centerPoint.x, y: centerPoint.y },
+                    useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
+                    unit.factionId || 'panjun'
+                );
+            }
 
             // ── 攻城器械（仅攻城方陆战；覆灭后留尸体同步士兵）──
             if (!useNavalVisual && (activelySieging || LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear))) {
@@ -2609,15 +2692,17 @@ export class GlobalUnitRenderer {
             // [NEW] Get current year for conditional flag logic
             const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
 
-            LegionFlagDrawer.drawFlag(
-                ctx,
-                { x: centerPoint.x, y: centerPoint.y },
-                directionIndex,
-                useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
-                Date.now(),
-                unit.factionId || 'panjun',
-                currentYear // [NEW] Pass year
-            );
+            if (!playerNoFaction) {
+                LegionFlagDrawer.drawFlag(
+                    ctx,
+                    { x: centerPoint.x, y: centerPoint.y },
+                    directionIndex,
+                    useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
+                    Date.now(),
+                    unit.factionId || 'panjun',
+                    currentYear // [NEW] Pass year
+                );
+            }
         }
 
         // Update last position for next frame
@@ -2670,24 +2755,30 @@ export class GlobalUnitRenderer {
             currentY += genFontSize + 4;
         }
 
-        // 2. Draw Elite / Unit Name (White)
+        // 2. Draw Elite / Unit Name (White, Player Gold Serif)
         if (eliteText) {
-            const nameFontSize = 13; // Changed back to 13 to keep name prominent
-            ctx.font = `bold ${nameFontSize}px Arial`;
+            const isPlayer = !!((unit as any).isPlayerHero || (unit as any).playerHero);
+            const nameFontSize = 13;
+            ctx.font = isPlayer
+                ? `bold ${nameFontSize}px 'Noto Serif SC', 'SimSun', serif`
+                : `bold ${nameFontSize}px Arial`;
             
-            ctx.strokeStyle = 'black';
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
             ctx.lineWidth = 3;
             ctx.lineJoin = 'round';
             ctx.strokeText(eliteText, center.x, currentY);
 
-            ctx.fillStyle = '#ffffff'; // White
-            ctx.shadowBlur = 0; // Reset shadow
+            ctx.fillStyle = isPlayer ? '#ffd27a' : '#ffffff';
+            ctx.shadowBlur = 0;
             ctx.fillText(eliteText, center.x, currentY);
             
             currentY += nameFontSize + 4;
         }
 
         // 3. Draw Troops（虚张声势 ×2；与其他视野技同步——非战移动时生效）
+        // 🔴 [2026-09-05] 玩家英雄（乱入者）不显示兵力数字（无需显示"1"）
+        if ((unit as any).isPlayerHero || (unit as any).playerHero) return;
+
         const bluffCount = generalIdHasStrategicEffect(unit.generalId, 'bluff_troop_count');
         const rawTroops = Math.floor(unit.getTroops());
         const bluffMult = getBluffMagnitude(unit.generalId);

@@ -1965,7 +1965,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'small_city', troops: 20000, region: 'BERBER' },
 
-    { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 30000, region: 'BRITONS' },
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_gdansk', name: '格但斯克', factionId: 'boumeilaniyan', lat: 54.35, lng: 18.64, type: 'stockade', troops: 30000, region: 'GERMANIC' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', troops: 30000, region: 'GERMANIC', note: '波美拉尼亚公国首府，格里芬王朝驻地' },
@@ -1987,7 +1987,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'stockade', troops: 30000, region: 'GERMANIC' },
     { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 30000, region: 'EAST' },
+    { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 30000, region: 'BRITONS' },
     { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'pass', troops: 30000, region: 'CELTS' },
         { id: 'city_dijon', name: '第戎', factionId: 'bogendi', lat: 47.32, lng: 5.04, type: 'small_city', troops: 20000, region: 'BURGUNDIANS' },
 
@@ -2026,7 +2026,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 20000, region: 'BRITONS' },
 
 
-    { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 30000, region: 'BRITONS' },
     { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'medium_city', troops: 30000, region: 'LATIN', note: '1600年前约15–22万，中世纪欧洲最大城仍未达50万，降 medium_city' },
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 30000, region: 'LATIN', note: '卡尔努特人首府，沙特尔圣母主教座堂' },
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },

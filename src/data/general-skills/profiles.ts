@@ -186,7 +186,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_289', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_354', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'defense' },
+    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_289', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_354', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'balanced' },
 
 
 
@@ -2527,7 +2527,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    shanshan_weituqi: { generalId: 'shanshan_weituqi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_406', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse' , attackStyle: 'defense'},
+    shanshan_weituqi: { generalId: 'shanshan_weituqi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_406', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 

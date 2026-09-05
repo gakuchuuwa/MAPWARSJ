@@ -48,14 +48,18 @@ import { setDefeatCooldownTimeSource } from '../legion/DefeatCooldown';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
-import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆梦脚本
-import { HuoQubingExpedition } from './HuoQubingExpedition'; // 霍去病封狼居胥 脚本
-import { ZhugeLiangExpedition } from './ZhugeLiangExpedition'; // 诸葛亮北伐中原 圆梦脚本
 import { ZoomController } from './ZoomController'; // 自动缩放控制
 import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { GameSaveManager } from './GameSaveManager'; // 世界存档（跨天续摊）
+// [2026-09-05 玩家] 乱入者：单骑 / 据点任务 / 面板 / 战术模式操控
+import { PlayerHero } from '../player/PlayerHero';
+import { PlayerQuestSystem } from '../player/PlayerQuestSystem';
+import { PlayerHUD } from '../player/PlayerHUD';
+import { PlayerScene13Control } from '../player/PlayerScene13Control';
+import { PLAYER_START_CITY_ID } from '../player/PlayerConfig';
+import type { LegionManager } from '../legion/LegionManager';
 import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
@@ -122,13 +126,15 @@ export class GameApp {
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
-    public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
-    public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
-    public zhugeliangExpedition!: ZhugeLiangExpedition; // 诸葛亮北伐中原 圆梦脚本
     public zoomController!: ZoomController; // 自动缩放（规则见 ZoomController 文件头）
     public tacticalModeEnabled: boolean = true; // 是否进入战术模式（zoom13 微观战斗），调试面板开关
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
+    // [2026-09-05 玩家] 乱入者
+    public playerHero: PlayerHero | null = null;
+    public playerQuests: PlayerQuestSystem | null = null;
+    public playerHUD: PlayerHUD | null = null;
+    public playerScene13Control: PlayerScene13Control | null = null;
 
     // Game Loop
     public lastFrameTime: number = 0;
@@ -575,7 +581,7 @@ export class GameApp {
                             try {
                                 this.combatUI.showRegional(
                                     attackers, defenders, undefined, undefined,
-                                    (window as any).__huoqubingBattleTitle ?? bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${this.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${this.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${this.cityManager.getFactionName(bf.getDefenderFactionId())}`),
+                                    bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${this.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${this.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${this.cityManager.getFactionName(bf.getDefenderFactionId())}`),
                                     '', false, bf.targetDuration, 1, bf,
                                 );
                                 found = true;
@@ -614,6 +620,9 @@ export class GameApp {
             this.cameraFollowUI.setFactionStats(this.cityManager, this.factionManager);
             this.cameraFollowUI.update();
 
+            // [2026-09-05 玩家] 玩家登场：镜头改为永远跟玩家
+            this.setupPlayer(legionManager);
+
             this.expeditionUI = new ExpeditionUI();
             this.expeditionUI.init(
                 () => {
@@ -623,78 +632,6 @@ export class GameApp {
                 this.cityManager
             );
 
-            // 岳飞北伐黄龙 圆梦脚本：军团按钮下方按钮触发
-            this.yuefeiExpedition = new YuefeiExpedition({
-                legionManager,
-                cityManager: this.cityManager,
-                cameraFollowUI: this.cameraFollowUI,
-                notify: (msg) => gameLog('expedition', msg),
-                ensureUnpaused: () => {
-                    if (this.timeSystem.isGamePaused()) {
-                        this.timeSystem.setPaused(false);
-                    }
-                },
-                snapCameraToArmy: (armyId) => {
-                    const army = legionManager.getLegionById(armyId);
-                    if (!army) return;
-                    const pos = army.getPosition();
-                    const lMap = this.map.getLeafletMap();
-                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
-                },
-                kickLegionAi: (armyId) => {
-                    this.aiController?.tickArmyById(armyId);
-                },
-            });
-            this.cameraFollowUI.setYuefeiHandler(() => this.yuefeiExpedition.start());
-            this.cameraFollowUI.setHuoQubingHandler(() => this.huoqubingExpedition.start());
-
-            // 霍去病封狼居胥 脚本
-            this.huoqubingExpedition = new HuoQubingExpedition({
-                legionManager,
-                cityManager: this.cityManager,
-                cameraFollowUI: this.cameraFollowUI,
-                notify: (msg) => gameLog('expedition', msg),
-                ensureUnpaused: () => {
-                    if (this.timeSystem.isGamePaused()) {
-                        this.timeSystem.setPaused(false);
-                    }
-                },
-                snapCameraToArmy: (armyId) => {
-                    const army = legionManager.getLegionById(armyId);
-                    if (!army) return;
-                    const pos = army.getPosition();
-                    const lMap = this.map.getLeafletMap();
-                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
-                },
-                kickLegionAi: (armyId) => {
-                    this.aiController?.tickArmyById(armyId);
-                },
-            });
-
-            // 诸葛亮北伐中原 脚本
-            this.zhugeliangExpedition = new ZhugeLiangExpedition({
-                legionManager,
-                cityManager: this.cityManager,
-                cameraFollowUI: this.cameraFollowUI,
-                notify: (msg) => gameLog('expedition', msg),
-                ensureUnpaused: () => {
-                    if (this.timeSystem.isGamePaused()) {
-                        this.timeSystem.setPaused(false);
-                    }
-                },
-                snapCameraToArmy: (armyId) => {
-                    const army = legionManager.getLegionById(armyId);
-                    if (!army) return;
-                    const pos = army.getPosition();
-                    const lMap = this.map.getLeafletMap();
-                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
-                },
-                kickLegionAi: (armyId) => {
-                    this.aiController?.tickArmyById(armyId);
-                },
-            });
-            this.cameraFollowUI.setZhugeLiangHandler(() => this.zhugeliangExpedition.start());
-
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
@@ -703,7 +640,15 @@ export class GameApp {
             //   舰队）10、陆地战（含攻城战，一律算陆战）9；战术层 13 期间冻结；战斗结束不再切。
             this.zoomController = new ZoomController(this.map, () => {
                 const id = this.cameraFollowUI.getFollowedArmyId();
-                return id ? legionManager.getLegionById(id) ?? null : null;
+                if (!id) return null;
+                // [2026-09-05 玩家·二修] 玩家独行时返回**玩家本体**（原来返回 null）。
+                //   返回 null 等于把 ZoomController 的所有规则一起关掉 —— 包括规则 5
+                //   「行军 15 秒 → 陆 9 / 海 10」，主人实测「玩家行军 15 秒 ZOOM 不变」就是它。
+                //   「玩家不许自动缩放」这条只针对**规则 1（跟随新目标 → 8）**，
+                //   现在由下面第四个回调（跟随玩家时为 true）单独关掉，规则 5 照常生效。
+                //   玩家入伍后 getFollowedArmyId 返回所在军团 id，走下面一行取军团，行为不变。
+                if (this.playerHero && id === this.playerHero.id) return this.playerHero.army;
+                return legionManager.getLegionById(id) ?? null;
             }, () => {
                 // 是否在战斗中：战术模式（zoom13 微观战斗）+ 战略地图区域战（跟随军团参战）
                 if (this.battleScene?.isActive?.()) return true;
@@ -713,6 +658,10 @@ export class GameApp {
             }, () => {
                 // 战术层（13 独立画布）激活期间不参与规则 5：13 自己管镜头
                 return !!this.battleScene?.isActive?.();
+            }, () => {
+                // 跟随玩家时（独行 或 入伍随军都算）：规则 1「跟随新目标 → 8」不缩放，
+                // 镜头交给玩家。⚠️ 只关规则 1 —— 规则 5「行军 15 秒 → 9/10」仍要生效。
+                return this.cameraFollowUI.isFollowingPlayer();
             });
 
             // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，
@@ -757,6 +706,58 @@ export class GameApp {
         tickGameAppFrame(this, timestamp);
     }
 
+    /**
+     * [2026-09-05 玩家] 乱入者：出生在长安（汉唐古都），镜头从此永远跟玩家；
+     * 点据点前往 → 抵达对话 → 接任务入伍 → 随军进 13 亲自砍人攒功勋。
+     */
+    private setupPlayer(legionManager: LegionManager): void {
+        const startCity = this.cityManager.getCity(PLAYER_START_CITY_ID) ?? this.cityManager.getCities()[0];
+        if (!startCity) return;
+        const hero = new PlayerHero({
+            map: this.map,
+            cityManager: this.cityManager,
+            getLegionById: (id) => legionManager.getLegionById(id),
+            notify: (msg) => this.playerHUD?.notify(msg),
+            followCamera: () => this.cameraFollowUI.followPlayer(),
+            releaseCamera: () => this.cameraFollowUI.cancelFollow(),
+        }, { lat: startCity.latitude, lng: startCity.longitude });
+        this.playerHero = hero;
+
+        const quests = new PlayerQuestSystem({
+            hero,
+            cityManager: this.cityManager,
+            legionManager,
+            showDialogue: (p) => this.playerHUD?.showDialogue(p),
+            closeDialogue: () => this.playerHUD?.closeDialogue(),
+            notify: (msg) => this.playerHUD?.notify(msg),
+            kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
+            ensureUnpaused: () => {
+                if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
+            },
+            feed: this.brawlFeedPanel,
+        });
+        this.playerQuests = quests;
+
+        this.playerHUD = new PlayerHUD(hero, quests, {
+            getFactionName: (id) => this.cityManager.getFactionName(id),
+            getCityName: (id) => this.cityManager.getCity(id)?.name ?? id,
+            isScene13Active: () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
+            pause: this.timeSystem,
+            onLeaveHost: () => {
+                quests.leaveHost();
+                this.cameraFollowUI.refreshPlayerFollow();
+            },
+        });
+        this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War);
+
+        this.cameraFollowUI.setPlayerHero(hero);
+        hero.onChange(() => this.cameraFollowUI.refreshPlayerFollow());
+        // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
+        const lMap = this.map.getLeafletMap();
+        lMap.setView([startCity.latitude, startCity.longitude], lMap.getZoom(), { animate: false });
+        gameLog('startup', `👤 [玩家] ${hero.name}登场于【${startCity.name}】`);
+    }
+
     private exposeGlobals(): void {
         exposeGameAppGlobals(this);
     }
@@ -792,7 +793,7 @@ if (import.meta.hot) {
                 game.cityManager.addCity({
                     id: c.id, name: c.name, factionId: c.factionId,
                     latitude: c.lat, longitude: c.lng, type: c.type as any,
-                    troops: c.troops ?? 5000,
+                    troops: c.troops ?? 10000,
                 });
                 added++;
             }

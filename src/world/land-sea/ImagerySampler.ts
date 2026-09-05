@@ -1,4 +1,5 @@
 import { latLngToTilePixel } from './ElevationSampler';
+import { decodeTileRGBA } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -181,15 +182,10 @@ export class ImagerySampler {
                 el.src = url;
             });
 
-            const canvas = document.createElement('canvas');
-            canvas.width = IMAGERY_TILE_SIZE;
-            canvas.height = IMAGERY_TILE_SIZE;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return false;
-
-            ctx.drawImage(img, 0, 0, IMAGERY_TILE_SIZE, IMAGERY_TILE_SIZE);
-            const imageData = ctx.getImageData(0, 0, IMAGERY_TILE_SIZE, IMAGERY_TILE_SIZE);
-            this.cache.set(key, imageData.data);
+            // [2026-09-05] 同 ElevationSampler：共享画布 + willReadFrequently（原来是裸 getContext）
+            const data = decodeTileRGBA(img, IMAGERY_TILE_SIZE);
+            if (!data) return false;
+            this.cache.set(key, data);
             this.touchCache(key);
             this.evictIfNeeded();
             this.failedAt.delete(key);

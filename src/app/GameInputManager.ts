@@ -113,7 +113,11 @@ export class GameInputManager {
             // [2026-08-05] 原先这里把点中的敌城写进一个「玩家战略目标」静态字段
             // 并打印「战略目标已设定」，但该字段自改成近敌池抽签后就再没被读过 ——
             // 点了没有任何效果，日志纯属误导，连同字段一起删除。
-            // 本作是无玩家操作的观赏推演，军团目标一律由行为树决定，不接受点击指派。
+            // 军团目标一律由行为树决定，不接受点击指派。
+            // [2026-09-05 玩家] 点据点 = 玩家单骑前往（入伍中由 travelToCity 自己拒绝并提示）。
+            //   道路编辑器启用时会整个替换 setOnCityClick 的回调，走不到这里，无需再判。
+            const hero = (window as any).game?.playerHero;
+            if (hero) hero.travelToCity(city.id);
         });
 
         // 5. Keyboard Shortcuts
@@ -124,11 +128,23 @@ export class GameInputManager {
             const step = 20; // pixels
             const map = this.map.getLeafletMap();
 
+            // [2026-09-05 玩家] 战术模式里玩家在操控主角：WASD/QE/方向键 让给 PlayerScene13Control，不平移地图
+            if ((window as any).game?.playerScene13Control?.isControlling?.()
+                && ['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                return;
+            }
+
+            // [2026-09-05 玩家] F2 立绘校正期间：方向键/WASD 只微调立绘，不平移镜头、不脱离跟拍
+            if ((window as any).game?.combatUI?.isCorrectorOpen?.()
+                && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                return;
+            }
+
             switch (e.key.toLowerCase()) {
-                case 'w': map.panBy([0, -step]); break;
-                case 's': map.panBy([0, step]); break;
-                case 'a': map.panBy([-step, 0]); break;
-                case 'd': map.panBy([step, 0]); break;
+                case 'w': case 'arrowup': map.panBy([0, -step]); break;
+                case 's': case 'arrowdown': map.panBy([0, step]); break;
+                case 'a': case 'arrowleft': map.panBy([-step, 0]); break;
+                case 'd': case 'arrowright': map.panBy([step, 0]); break;
                 case 'p': PerformanceMonitor.getInstance().logSnapshot(); break;
                 case 'x':
                     // [DEV] 快速测试远征：把当前跟随军团补到 5.5 万（生产构建自动剔除）
@@ -144,12 +160,12 @@ export class GameInputManager {
                     break;
             }
 
-            // [NEW] WASD 移动时取消军团跟随
-            if (['w', 'a', 's', 'd'].includes(e.key.toLowerCase())) {
-                // const game = (window as any).game;
-                // if (game?.cameraFollowUI?.isFollowing()) {
-                //     game.cameraFollowUI.cancelFollow();
-                // }
+            // [2026-09-05 玩家] WASD/方向键 移动镜头时脱离跟拍：否则跟拍每帧把镜头拉回主角，屏幕被锁死。
+            if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                const game = (window as any).game;
+                if (game?.cameraFollowUI?.isFollowing()) {
+                    game.cameraFollowUI.cancelFollow();
+                }
             }
 
             if (e.ctrlKey && e.key.toLowerCase() === 'z') {

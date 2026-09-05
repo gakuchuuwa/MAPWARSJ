@@ -48,7 +48,7 @@ export class StreamModeToggle {
         if (!this.wasActiveLastSession()) return;
         document.body.classList.add('stream-mode');
         if (this.button) {
-            this.button.textContent = '📺 直播中';
+            this.button.textContent = '直播中';
             this.button.style.color = '#e8b25a';
         }
     }
@@ -119,7 +119,7 @@ export class StreamModeToggle {
         // 改文件刷不刷新与本按钮无关（ReloadGate 读的是推演运行状态）。
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
         if (this.button) {
-            this.button.textContent = on ? '📺 直播中' : '画面';
+            this.button.textContent = on ? '直播中' : '画面';
             this.button.style.color = on ? '#e8b25a' : '';
         }
         if (on) {

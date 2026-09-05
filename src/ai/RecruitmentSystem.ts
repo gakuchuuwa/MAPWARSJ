@@ -99,7 +99,6 @@ export class RecruitmentSystem {
         // 🔴 必须在生成**之前**起闸：先生成再起闸的话，最早那几支已经开拔了。
         const holdMs = GameConfig.LEGION.INITIAL_DEPLOY_HOLD_MS;
         armDeploy(holdMs, () => {
-            (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
             gameLog('recruitment', `🚩 [募兵] 集结完毕，全军同时拔营（集结 ${holdMs}ms 游戏运行时间）`);
         });
 
@@ -177,28 +176,8 @@ export class RecruitmentSystem {
             if (!this.isCityGarrisonCommitted(city.id)) {
                 const region = this.getCityRegion(city as RecruitmentCity);
                 const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[region] ?? 1.0;
-                
-                // D类据点系：S⑭足食足兵（招兵买马 recruit_cooldown_mult 另有独立管线）
-                const skillMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult');
-                
-                const baseAdded = Math.floor(cfg.recruitPerSeason * recruitMult);
-                const added = Math.floor(baseAdded * skillMult);
+                const added = Math.floor(cfg.recruitPerSeason * recruitMult);
                 city.troops = clampCityTroops(city.type, (city.troops || 0) + added, region);
-                
-                // S⑭足食足兵：跟拍军团出身城季度补兵 ×2
-                if (skillMult > 1.0 && added > baseAdded) {
-                    const followedId = getFollowedArmyId();
-                    const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
-                    if (followedArmy) {
-                        emitFollowedCityAnchoredDefensePulse(
-                            city.id,
-                            city.latitude,
-                            city.longitude,
-                            'city_growth_mult',
-                            followedArmy,
-                        );
-                    }
-                }
             }
             this.pendingLabelCityIds.add(city.id);
         }

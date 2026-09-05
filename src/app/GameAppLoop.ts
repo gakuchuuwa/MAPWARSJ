@@ -12,8 +12,8 @@ import type { GameApp } from './GameApp';
 const FOLLOW_RECENTER_DEADZONE_M = 120;
 /** 距离过大（切换跟随目标等）时直接吸附，不做插值 */
 const FOLLOW_SNAP_DISTANCE_M = 12000;
-/** 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔） */
-const FOLLOW_LERP_FACTOR = 0.22;
+/** 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔）。0.22 滞后太大，玩家拐弯时镜头「冲过头再退回来」 */
+const FOLLOW_LERP_FACTOR = 0.5;
 
 /**
  * 🔴 [2026-08-31 修「zoom9 行军跟拍一顿一顿」] 跟拍平移的**亚像素残差**。
@@ -55,6 +55,11 @@ function panByAccumulated(
     if (settleY) followPanResidual.y = 0;
     if (settleX && settleY) return;
 
+    // 🔴 拐弯（移动方向反转）时清零残差：旧方向攒下的小数带到新方向会造成过度转向，
+    //    观感就是镜头「退一步」。判据：本帧位移 dx/dy 与残差方向相反。
+    if (dx !== 0 && followPanResidual.x !== 0 && Math.sign(dx) !== Math.sign(followPanResidual.x)) followPanResidual.x = 0;
+    if (dy !== 0 && followPanResidual.y !== 0 && Math.sign(dy) !== Math.sign(followPanResidual.y)) followPanResidual.y = 0;
+
     const fx = settleX ? 0 : dx + followPanResidual.x;
     const fy = settleY ? 0 : dy + followPanResidual.y;
     const constrain = (step: number, remaining: number, settled: boolean): number => {
@@ -68,6 +73,38 @@ function panByAccumulated(
     followPanResidual.y = settleY ? 0 : Math.max(-0.499, Math.min(0.499, fy - iy));
     // 都是 0 就别调 panBy —— 省掉一次 pane transform + move 事件广播
     if (ix !== 0 || iy !== 0) map.panBy(L.point(ix, iy), { animate: false });
+}
+/**
+ * 🔴 [2026-09-05 修「人物移动一顿一顿」] 单帧时间步：**下限 0、上限 0.1**。
+ *
+ * 修前只有上限（`Math.min(rawDelta, 0.1)`），负 delta 会原样传下去，而负 delta 在移动代码里
+ * 一律等于「这一段推进整个丢掉」（`moveDist = speed * dt` 为负 → `while (remainingDist > 0)`
+ * 一次都不进；13 的 `m.x += dx * spd * dt` 更糟，直接**倒退**）。
+ *
+ * 负 delta 从哪来（实测，不是推测）：后台心跳 `setupGameAppBackgroundHeartbeat` 与 rAF 主循环
+ * **各自**用 `performance.now()` / rAF timestamp 去减同一个 `app.lastFrameTime` 并覆写它。
+ * rAF 的 timestamp 是「本帧开始时刻」，在回调真正执行之前就已确定；心跳若在这中间插了一拍，
+ * 它写入的是**更晚**的 now，随后执行的 rAF 帧拿旧 timestamp 一减就是负数。
+ *
+ * 实测（无头 Chrome 11fps，探针挂在 Army.update 上）：
+ *   修前 80 个更新帧里 **60 帧 delta 为负、位移被整段丢弃**，只有 20 帧在动，
+ *   均速只剩设计值的 30% —— 观感就是主人报的「一顿一顿」；修后零位移帧 0/50、速度比 ≈ 1.0。
+ * 心跳阈值同步放宽（见 GameAppBootUtils.BACKGROUND_TICK_THRESHOLD_MS），从根上少触发这种交替。
+ * 回归脚本：`node scratch/probe_player_move.mjs`（需先起 dev server）。
+ */
+function clampFrameDelta(rawDelta: number): number {
+    if (!Number.isFinite(rawDelta) || rawDelta <= 0) return 0;
+    return Math.min(rawDelta, 0.1);
+}
+
+/**
+ * [2026-09-05 玩家] 跟随目标解析：玩家单骑不在 LegionManager 里，id 命中玩家就返回玩家本体，
+ * 否则按军团查。跟拍/自动缩放/音效都走这一个入口，别再各写一份。
+ */
+function resolveFollowTarget(app: GameApp, id: string) {
+    const hero = app.playerHero;
+    if (hero && hero.id === id) return hero.army;
+    return app.historicalEventManager?.getLegionManager()?.getLegionById(id);
 }
 /** 跟随中重复插队旗号优先（毫秒），避免每帧 setView 刷屏 */
 const FOLLOW_FLAG_PRIORITY_INTERVAL_MS = 600;
@@ -85,8 +122,10 @@ let lastBgmFollowedId: string | null = null;
  */
 export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
     const rawDelta = (timestamp - app.lastFrameTime) / 1000;
-    const deltaTime = Math.min(rawDelta, 0.1);
-    app.lastFrameTime = timestamp;
+    const deltaTime = clampFrameDelta(rawDelta);
+    // 🔴 时间戳只许前进：心跳与 rAF 交替时，rAF 的 timestamp 可能早于心跳刚写入的 lastFrameTime，
+    //    直接覆盖会让下一拍再算出一个负 delta（见 clampFrameDelta）。
+    if (timestamp > app.lastFrameTime) app.lastFrameTime = timestamp;
     try {
         if (app.timeSystem.isGamePaused() || !app.cityManager) {
             // 🔴 [2026-08-10 修死锁] 战术层期间 timeSystem 是暂停的，但战斗必须继续推进。
@@ -119,6 +158,10 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
                 app.historicalEventManager.updateLegions(gameDelta);
             }
             app.historicalEventManager.updateEvents(gameDelta);
+            // [2026-09-05 玩家] 单骑行军 / 入伍贴军团（大战略未暂停才动；13 期间冻结）
+            app.playerHero?.update(gameDelta);
+            // [2026-09-05 玩家] 任务跟踪：目标据点易主 → 判成功；军团覆灭 → 判失败
+            app.playerQuests?.tick();
         }
         if (app.combatSystem) {
             if (dev) {
@@ -152,8 +195,8 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
 
 export function tickGameAppFrame(app: GameApp, timestamp: number): void {
     const rawDelta = (timestamp - app.lastFrameTime) / 1000;
-    const deltaTime = Math.min(rawDelta, 0.1);
-    app.lastFrameTime = timestamp;
+    const deltaTime = clampFrameDelta(rawDelta);
+    if (timestamp > app.lastFrameTime) app.lastFrameTime = timestamp;
 
     const perfMonitor = PerformanceMonitor.getInstance();
     perfMonitor.beginFrame();
@@ -188,6 +231,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 }
                 perfMonitor.endTimer('legion');
                 app.historicalEventManager.updateEvents(gameDelta);
+            // [2026-09-05 玩家] 单骑行军 / 入伍贴军团（大战略未暂停才动；13 期间冻结）
+            app.playerHero?.update(gameDelta);
+            // [2026-09-05 玩家] 任务跟踪：目标据点易主 → 判成功；军团覆灭 → 判失败
+            app.playerQuests?.tick();
                 perfMonitor.endTimer('historicalEvent');
             }
 
@@ -260,7 +307,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                         try {
                             app.combatUI.showRegional(
                                 attackers, defenders, undefined, undefined,
-                                (window as any).__huoqubingBattleTitle ?? bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`),
+                                bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`),
                                 '', false, bf.targetDuration, 1, bf,
                             );
                         } catch (e) { /* ignore */ }
@@ -291,18 +338,24 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             const sceneActive = !!app.battleScene?.isActive();
             if (followedId && legionManager) {
                 const lMap = app.map.getLeafletMap();
-                const followedArmy = legionManager.getLegionById(followedId);
+                const followedArmy = resolveFollowTarget(app, followedId);
 
                 // ── 自动缩放（ZoomController）──
                 // 规则见 ZoomController 文件头（2026-09-01 主人重定）：
                 //   跟随新军团 → 8；战略地图上一开打就切（海战 10 / 陆地战 9，攻城算陆地战）；
                 //   战术层 13 期间冻结；战斗结束不再切。
-                // 无条件调用即可：控制器自己按「战术层是否激活」冻结，不会在 13 期间乱动镜头。
-                app.zoomController.tick();
+                // ── 自动缩放/镜头自动跟随总开关（调试面板「🔍 自动缩放」）──
+                // 关闭后：战略层不自动缩放（ZoomController 停）也不自动跟拍（tickFollowCamera 停），
+                // 镜头完全交给玩家手动控制，除非玩家自己操作。开启时行为保持不变。
+                const autoCtrl = app.zoomController.enabled;
+                if (autoCtrl) app.zoomController.tick();
 
                 if (!sceneActive) {
-                    app.cameraFollowUI.tickFollowCamera(
-                        (id) => legionManager.getLegionById(id),
+                    if (!autoCtrl) {
+                        resetFollowPanResidual();   // 关闭自动缩放：镜头冻结，交给玩家手动控制
+                    } else {
+                        app.cameraFollowUI.tickFollowCamera(
+                        (id) => resolveFollowTarget(app, id),
                         (pos) => {
                             const target = L.latLng(pos.lat, pos.lng);
                             const currentZoom = lMap.getZoom();
@@ -363,18 +416,19 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             );
                         }
                     );
+                    }
                 } else {
                     // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
                     resetFollowPanResidual();
                     app.battleScene?.tick();
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
                     // 放行普通跟拍逻辑：tickFollowCamera 看到军团阵亡会启动 FOLLOW_SWITCH_DELAY_MS
-                    // 延迟 → 到期 followLargestLegion() 切新军团。13 画面保持到切换那一刻
+                    // 延迟 → 到期切回玩家。13 画面保持到切换那一刻
                     // （battleScene.tick 内部的 linger 到期才 exit 回 zoom8）。
                     const warStillActive = (window as any).game?.scene13War?.isActive?.() === true;
                     if (!warStillActive) {
                         app.cameraFollowUI.tickFollowCamera(
-                            (id) => legionManager.getLegionById(id),
+                            (id) => resolveFollowTarget(app, id),
                             (pos) => {
                                 // 🔴 13 场景仍激活（战败停留中）→ 不移动镜头：冻结画面保持到 exit。
                                 // 镜头只在 linger 到期 exit（回 zoom8）后才跟着新军团走。
@@ -463,7 +517,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             app.cameraFollowUI.update();
             // BGM 仅跟随军团切换时播放（不随镜头移动）
             if (followedId && legionManager) {
-                const legion = legionManager.getLegionById(followedId);
+                const legion = resolveFollowTarget(app, followedId);
                 const pos = legion?.getPosition();
                 if (pos && followedId !== lastBgmFollowedId) {
                     lastBgmFollowedId = followedId;

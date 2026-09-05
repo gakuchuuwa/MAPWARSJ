@@ -56,28 +56,48 @@ export class SaveLoadUI {
             #${PANEL_ID} {
                 position: fixed; right: 16px; bottom: 64px; z-index: 4000;
                 width: 320px; max-height: 60vh; overflow-y: auto;
-                background: #1a1713; border: 1px solid #3a3226; border-radius: 8px;
-                padding: 10px; color: #ece4d3; font-size: 13px;
-                font-family: "PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-                box-shadow: 0 6px 24px rgba(0,0,0,.5);
+                background: rgba(20, 16, 12, 0.95);
+                border: 1px solid rgba(212, 175, 55, 0.55);
+                border-radius: 4px;
+                padding: 12px; color: #f5e6c8; font-size: 13px;
+                font-family: 'Noto Serif SC', 'SimSun', serif;
+                box-shadow: 0 8px 32px rgba(0,0,0,.7), inset 0 0 20px rgba(0,0,0,0.5);
+                backdrop-filter: blur(8px);
             }
-            #${PANEL_ID} h4 { margin: 0 0 8px; color: #d8b95e; font-size: 14px; display:flex; justify-content:space-between; align-items:center; }
-            #${PANEL_ID} .sl-close { cursor:pointer; color:#8a8271; background:none; border:none; font-size:16px; }
+            #${PANEL_ID} h4 {
+                margin: 0 0 10px; color: #ffd700; font-size: 15px; font-weight: 700;
+                letter-spacing: 0.1em;
+                display: flex; justify-content: space-between; align-items: center;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+                padding-bottom: 6px;
+            }
+            #${PANEL_ID} .sl-close {
+                cursor: pointer; color: #ba9e7b; background: none; border: none; font-size: 18px; line-height: 1;
+                transition: color 0.15s;
+            }
+            #${PANEL_ID} .sl-close:hover { color: #fff; }
             #${PANEL_ID} .sl-row {
-                display:flex; justify-content:space-between; align-items:center; gap:6px;
-                padding:7px 6px; border-bottom:1px solid #262117;
+                display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                padding: 8px 6px; border-bottom: 1px solid rgba(212, 175, 55, 0.15);
             }
-            #${PANEL_ID} .sl-row:last-of-type { border-bottom:none; }
-            #${PANEL_ID} .sl-date { font-weight:600; color:#ece4d3; }
-            #${PANEL_ID} .sl-meta { color:#8a8271; font-size:11px; }
+            #${PANEL_ID} .sl-row:last-of-type { border-bottom: none; }
+            #${PANEL_ID} .sl-date { font-weight: 700; color: #ffd700; font-size: 13px; }
+            #${PANEL_ID} .sl-meta { color: #ba9e7b; font-size: 11px; margin-top: 2px; }
             #${PANEL_ID} button.sl-act {
-                background:#241f18; border:1px solid #3a3226; color:#d8b95e;
-                border-radius:4px; padding:3px 8px; cursor:pointer; font-size:12px;
+                background: rgba(35, 28, 20, 0.92); border: 1px solid rgba(212, 175, 55, 0.45);
+                color: #dfc28c; border-radius: 3px; padding: 4px 10px; cursor: pointer; font-size: 12px;
+                font-family: inherit; transition: all 0.15s;
             }
-            #${PANEL_ID} button.sl-act:hover { border-color:#d8b95e; }
-            #${PANEL_ID} button.sl-del { color:#c9736a; }
-            #${PANEL_ID} .sl-foot { display:flex; gap:6px; margin-top:8px; padding-top:8px; border-top:1px solid #3a3226; }
-            #${PANEL_ID} .sl-empty { color:#8a8271; padding:12px 4px; text-align:center; }
+            #${PANEL_ID} button.sl-act:hover {
+                background: rgba(48, 38, 28, 0.95); border-color: rgba(212, 175, 55, 0.85); color: #fffcee;
+            }
+            #${PANEL_ID} button.sl-del { color: #e06c75; }
+            #${PANEL_ID} button.sl-del:hover { color: #ff8888; border-color: rgba(224, 108, 117, 0.6); }
+            #${PANEL_ID} .sl-foot {
+                display: flex; gap: 8px; margin-top: 10px; padding-top: 10px;
+                border-top: 1px solid rgba(212, 175, 55, 0.25);
+            }
+            #${PANEL_ID} .sl-empty { color: #8a8271; padding: 16px 4px; text-align: center; }
         `;
         document.head.appendChild(style);
     }

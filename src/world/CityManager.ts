@@ -468,7 +468,7 @@ export class CityManager {
     }
 
     // [2026-07-11 删除死代码] updateTroops()（growthRate 自然增长管线）全仓无调用方，从未运行；
-    // 城市增兵唯一活管线 = RecruitmentSystem.recruitSeasonGarrison（每季补驻军，足食足兵×2 挂在那）。
+    // 城市增兵唯一活管线 = RecruitmentSystem.recruitSeasonGarrison（每季补驻军）。
 
     public updateCity(
         id: string,

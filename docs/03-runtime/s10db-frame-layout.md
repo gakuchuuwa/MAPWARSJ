@@ -172,3 +172,48 @@
 21 种 = 步 6 + 骑 5 + 弓 4 + 特殊 6（冲车 723 / 霹雳车 793 / 粮草车 836 / 走舸 863 / 斗舰 906 / 蒙冲 949）。
 **粮草车 836 已开图确认**：载麻袋的双轮车，三组 = 移动 / 待命 / 翻倒损毁，**没有攻击动作**。
 三国志 10 兵种表里的「木兽」不在这 931 张内。
+
+---
+
+## ⚠️ 动作组「方向空洞」——远程兵种朝北/西侧攻击动作错乱（2026-09-05 定案）
+
+**症状**（主人报，附战略地图截图）：火焰弓箭手、诸葛弩、先秦远程战车等**朝北/东北**攻击时动作不对；
+截图里战车只剩两匹马，车厢和弩手整个不见。
+
+**先排除的（都实测过，别再查）**：
+- 素材没坏：全项目 **487 个** `_meta.json` 目录，`fw × frames == 实际图宽`、`fh == 实际图高` **全部吻合**。
+- 帧数没错：`loadDynMeta` 把小写 `attack` 正确映射到 `ATTACK/DAMAGE/SHOOT/CHARGE`，`frames` 取值正确。
+- 不是 `dirs16`：这些素材顶层没有该标志，8 向直取。
+- 不是朝向画错：同一兵种 `idle` 与 `attack` 的逐方向 alpha 重心偏移**完全同型**，素材内部自洽。
+
+**真凶：加载竞态导致 `SHOOT` 数组只有 4 个方向。**
+
+实测（`LegionPhalanxDrawer.getUnitAssets`）：
+
+| 兵种 | IDLE | MOVE | ATTACK | SHOOT |
+|---|---:|---:|---:|---:|
+| fire_archer / chukonu / war_chariot_ranged / archer | 8 | 8 | 8 | **4** |
+
+成因：`SHOOT` 与 `ATTACK` 在 `UnitAssets` 里指向**同一批文件**（远程兵种的常规写法，全项目 **111 个**兵种如此）。
+`_loadNavalAssets` 里各动作组由 `Promise.all(jobs)` **并行** `loadBatch`，而 `loadBatch` 处理完一张就
+`AssetLoader.release(path)` 把原图从 `loadedImages` 删掉；后完成的那个动作组 `getImage(path)` 拿到
+`undefined` → **该下标不赋值** → 数组尾部留空洞。批次间的 `yieldMain()` 正好给了对方释放的窗口，
+所以稳定缺后半截（0-3 有、4-7 无）。
+
+**为什么表现成「动作错乱」而不是「不显示」**：战略地图攻击分支原本是
+`SHOOT[effDir] || SHOOT[0]` —— 方向 4~7 取不到就**退回方向 0 的贴图**，
+而帧框 `dynDir = metaDirFor(dynEntry, effDir)` 仍按**当前方向**取。
+于是拿北向的 `fw/hx/hy` 去切南向的图 → `sx = frame * fw` 越切越偏 + hotspot 错位 = 画面碎片。
+
+**修法（两道）**：
+1. **根因**：`pendingRelease` 收集待释放路径，推迟到 `await Promise.all(jobs)` **之后**统一 release；
+   并在 `getImage` 拿空时就地重拉一次兜底。
+2. **防护**：攻击分支**不许跨方向回退**。`SHOOT[effDir]` 缺就用**同方向**的 `ATTACK[effDir]`，
+   本方向两者都没有才退方向 0（那时帧框也一起退，不会错配）。
+
+**验收**：`node scratch/probe_sprite_dir_holes.mjs`（需先起 dev server）——
+判据是每个动作组的方向数必须 = 8 且无 null。修后实测 40 个同源兵种**零空洞**，
+8 方向渲染图里战车/弓手各方向完整、朝向连续。
+
+> 🔴 以后往 `UNIT_ASSETS` 里加 `SHOOT`/`DAMAGE`/`CHARGE` 复用 `ATTACK` 文件的条目，
+> 不需要额外处理——但**不要**在 `loadBatch` 内部改回「处理完立刻 release」，那会把这个坑原样带回来。

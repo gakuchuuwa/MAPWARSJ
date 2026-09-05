@@ -1145,23 +1145,44 @@ export function setGeneralPortraitOverride(generalId: string, portraitPath: stri
     _generalPortraitOverrides[generalId] = portraitPath;
 }
 
+/**
+ * `generalId → { factionId, 档案 }` 反向索引（惰性建一次）。
+ *
+ * 🔴 [2026-09-05 修「玩家移动时战略画面卡」] 改前这个函数是
+ * `for (const [factionId, general] of Object.entries(FACTION_GENERALS))` ——
+ * **每次调用都把 800+ 条的对象摊成一个全新数组再线性扫**。
+ * 而它在 `GlobalUnitRenderer.renderInfo` 里是**每帧每个单位**调一次（画军团名牌要查将领名），
+ * 一屏二十支军团就是每秒上千次 × 800 次遍历 + 上千个临时数组，CPU Profile 实测占 2.3%，
+ * 且制造的垃圾直接推高 GC 频率。
+ * 语义保持不变：同一 generalId 挂在多个势力下时仍取**第一个**（与原 for 循环一致）。
+ */
+let _generalIdIndex: Map<string, { factionId: string; general: FactionGeneral }> | null = null;
+
+function getGeneralIdIndex(): Map<string, { factionId: string; general: FactionGeneral }> {
+    if (_generalIdIndex) return _generalIdIndex;
+    const index = new Map<string, { factionId: string; general: FactionGeneral }>();
+    for (const [factionId, general] of Object.entries(FACTION_GENERALS)) {
+        if (!index.has(general.generalId)) index.set(general.generalId, { factionId, general });
+    }
+    _generalIdIndex = index;
+    return index;
+}
+
 export function getGeneralRecordByGeneralId(
     generalId: string,
     options?: { region?: import('../systems/RegionSystem').RegionType },
 ): FactionGeneral | null {
-    for (const [factionId, general] of Object.entries(FACTION_GENERALS)) {
-        if (general.generalId === generalId) {
-            const dedicated = _generalPortraitOverrides[generalId] ?? general.portrait;
-            return {
-                ...general,
-                portrait: resolveGeneralPortraitPath(dedicated, {
-                    factionId,
-                    region: options?.region,
-                }),
-};
-        }
-    }
-    return null;
+    const hit = getGeneralIdIndex().get(generalId);
+    if (!hit) return null;
+    // 立绘 override 每次现取：它可以在运行时被改（setGeneralPortraitOverride），不能进索引
+    const dedicated = _generalPortraitOverrides[generalId] ?? hit.general.portrait;
+    return {
+        ...hit.general,
+        portrait: resolveGeneralPortraitPath(dedicated, {
+            factionId: hit.factionId,
+            region: options?.region,
+        }),
+    };
 }
 
 // @ts-ignore
@@ -1172,6 +1193,7 @@ if (import.meta.hot) {
         const target = FACTION_GENERALS as Record<string, FactionGeneral>;
         for (const key of Object.keys(target)) delete (target as any)[key];
         Object.assign(target, newModule.FACTION_GENERALS);
+        _generalIdIndex = null;   // 表变了，反向索引作废，下次查询重建
         console.log(`[HMR] FactionGenerals → ${Object.keys(newModule.FACTION_GENERALS).length} 条武将已热更新`);
     });
 }

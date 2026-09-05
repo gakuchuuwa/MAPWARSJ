@@ -280,10 +280,21 @@ function pickNearbyEnemyLegion(
         const d = getEuclideanDistance(myPos, ePos);
         if (d > huntR) continue;
         // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城。
-        // 🔴 贴身例外（2026-09-02 主人「前面的军团不知道扭头攻击」）：敌军贴到
-        //    HUNT_CLOSE_EXCEPTION_RADIUS 内，不管方向都扭头迎战，否则身后追兵贴脸了还无视。
+        // 🔴 身后例外（2026-09-04 主人「前面的舰队应该掉头攻击后面的舰队」）：
+        //    敌人在行军方向「身后」（与目标城方向夹角 >90°）且不绕远路（≤城距）时应掉头迎战，
+        //    不能背着敌军赶路——否则身前先到、追兵贴脸的观感就是「蠢」。
+        //    侧翼(45~90°)仍排除，保留 P2 的「拉扯」保护；贴身(<0.3°)源自 2026-09-02 仍放行。
         if (corridorTarget && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
-            if (d > GameConfig.AI.HUNT_CLOSE_EXCEPTION_RADIUS) {
+            const angleDeg = directionAngleDeg(myPos, ePos, corridorTarget);
+            const isBehind = angleDeg > 90;
+            const close = d <= GameConfig.AI.HUNT_CLOSE_EXCEPTION_RADIUS;
+            // 距离目标城太远：仍按走廊排除（不绕远路，贴身例外除外）
+            const cityDist = getEuclideanDistance(myPos, {
+                lat: corridorTarget.latitude,
+                lng: corridorTarget.longitude,
+            });
+            const tooFar = d > cityDist * GameConfig.AI.HUNT_MAX_DETOUR_RATIO;
+            if ((!isBehind || tooFar) && !close) {
                 btLog(
                     ctx,
                     `skip_hunt:${other.id}`,
@@ -291,7 +302,7 @@ function pickNearbyEnemyLegion(
                 );
                 continue;
             }
-            // 贴身：放行（扭头迎战），不 skip
+            // 身后且不绕远路 / 贴身：放行（掉头迎战），不 skip
         }
         if (d < bestDist) {
             bestDist = d;
@@ -352,6 +363,26 @@ export function isEnemyInMarchCorridor(
     const cosAngle = (toCityLat * toEnemyLat + toCityLng * toEnemyLng) / (cityDist * enemyDist);
     const angleDeg = (Math.acos(Math.min(1, Math.max(-1, cosAngle))) * 180) / Math.PI;
     return angleDeg <= GameConfig.AI.HUNT_CORRIDOR_HALF_ANGLE_DEG;
+}
+
+/**
+ * 我军→敌军 与 我军→目标城 的方向夹角（度）。0=正前方、90=正侧翼、180=正后方。
+ * 与 isEnemyInMarchCorridor 同口径（lat/lng 欧氏近似，0.8° 内误差可忽略）。
+ */
+function directionAngleDeg(
+    myPos: { lat: number; lng: number },
+    ePos: { lat: number; lng: number },
+    targetPos: { latitude: number; longitude: number },
+): number {
+    const toTargetLat = targetPos.latitude - myPos.lat;
+    const toTargetLng = targetPos.longitude - myPos.lng;
+    const toEnemyLat = ePos.lat - myPos.lat;
+    const toEnemyLng = ePos.lng - myPos.lng;
+    const targetDist = Math.hypot(toTargetLat, toTargetLng);
+    const enemyDist = Math.hypot(toEnemyLat, toEnemyLng);
+    if (targetDist < 1e-9 || enemyDist < 1e-9) return 0;
+    const cosAngle = (toTargetLat * toEnemyLat + toTargetLng * toEnemyLng) / (targetDist * enemyDist);
+    return (Math.acos(Math.min(1, Math.max(-1, cosAngle))) * 180) / Math.PI;
 }
 
 export const HasTarget = new Condition('HasTarget', (ctx) => {

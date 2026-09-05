@@ -50,7 +50,8 @@ export class GeneralDrawer {
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
+            // [2026-09-05] 抠绿要逐像素读，画布必须走 CPU 后端（同 LegionPhalanxDrawer.doProcessImage）
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
             if (!ctx) {
                 resolve(img);
                 return;

@@ -1942,19 +1942,21 @@ export class TerritorySystem {
         // [NEW] Ghost Style - [FIX] Allow interaction for editor
         const ghostStyle = isGhost ? 'opacity: 0.5; filter: grayscale(100%);' : '';
 
-        // Size Logic: 大城 140 / 中城 120 / 小城与关隘 100（严格由 city.type 决定）
+        // Size Logic: 大城 140 / 中城与险要 120 / 小城 100 / 城寨 80（严格由 city.type 决定）
         let baseSize = 100;
         switch (city.type) {
             case 'big_city':
                 baseSize = 140;
                 break;
             case 'medium_city':
+            case 'pass':         // 险要与中城同档（其次）
                 baseSize = 120;
                 break;
-            case 'pass':
             case 'small_city':
-            case 'stockade':   // 城寨与小城同尺寸
                 baseSize = 100;
+                break;
+            case 'stockade':     // 城寨最小（比小城略小）
+                baseSize = 80;
                 break;
             default:
                 baseSize = 100;
@@ -2182,6 +2184,9 @@ export class TerritorySystem {
         let overlay = flagBody.querySelector<HTMLElement>('.city-flag-text-overlay');
 
         if (!textUrl) {
+            // [2026-09-05] 「排队中」不等于「没有文字」：分帧生成时会短暂返回 null，
+            // 这时抹掉已有文字会让旗号一闪一闪。等空闲补齐后 patchFactionFlagText 会再来一次。
+            if (CityAssetManager.isFlagTextPending(city.factionId)) return;
             overlay?.remove();
             return;
         }
@@ -2286,6 +2291,13 @@ export class TerritorySystem {
     public updateCityLabel(city: City) {
         const labelOriginal = this.cityLabels.get(city.id);
         if (labelOriginal) {
+            // 城名不变，只有城防数字变 → 直接改第二个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
+            const el = labelOriginal.getElement();
+            const spans = el?.querySelectorAll('span');
+            if (el && spans && spans.length >= 2) {
+                spans[1].textContent = TerritorySystem.formatTroopsLabel(city.troops);
+                return;
+            }
             const newIcon = L.divIcon({
                 className: 'city-troop-label',
                 html: TerritorySystem.buildCityLabelHtml(city),

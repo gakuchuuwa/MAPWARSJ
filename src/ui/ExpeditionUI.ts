@@ -68,9 +68,6 @@ for (const [region, cityIds] of Object.entries(REGION_CENTERS) as [RegionType, s
 }
 
 export class ExpeditionUI {
-    /** 跟拍军团远征中：顶部横幅显示当前远征目标 */
-    private statusBanner: HTMLDivElement | null = null;
-
     private getFollowedArmy: (() => ExpeditionArmy | null) | null = null;
     private cityManager: ExpeditionCityAccess | null = null;
 
@@ -80,68 +77,11 @@ export class ExpeditionUI {
     ): void {
         this.getFollowedArmy = getFollowedArmy;
         this.cityManager = cityManager;
-        this.createStatusBanner();
         window.setInterval(() => this.refresh(), GameConfig.EXPEDITION.SCAN_INTERVAL_MS);
     }
 
-    /** 远征目标横幅（跟随横幅正下方） */
-    private createStatusBanner(): void {
-        const banner = document.createElement('div');
-        banner.id = 'expedition-status';
-        banner.style.cssText = `
-            display: none;
-            align-items: center;
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffe0b2;
-            background: linear-gradient(180deg, rgba(30, 20, 12, 0.94) 0%, rgba(45, 28, 15, 0.90) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(230, 150, 60, 0.45);
-            border-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.1);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            letter-spacing: 0.5px;
-            pointer-events: auto;
-            white-space: nowrap;
-        `;
-
-        const container = document.getElementById('top-center-hud');
-        if (container) {
-            container.appendChild(banner);
-        } else {
-            document.body.appendChild(banner);
-        }
-        this.statusBanner = banner;
-    }
-
-    /** 半秒一次：远征中显示目标横幅；否则跟拍军团达标即自动出征 */
+    /** 半秒一次：达标即自动出征 */
     private refresh(): void {
-        if (!this.statusBanner) return;
-
-        const followed = this.getFollowedArmy?.() ?? null;
-        const targetId = followed && !followed.isDestroyed ? followed.expeditionTargetCityId : null;
-        if (followed && targetId) {
-            const cityName = this.cityManager?.getCity(targetId)?.name ?? targetId;
-            // 历史使命远征（名将执念目标）：横幅打出「将名·⭐依据」高潮字幕；否则普通远征只报区·城名
-            const historic = getGeneralFirstTarget(followed.generalId);
-            if (historic && historic.cityId === targetId) {
-                const genName = followed.generalId
-                    ? getGeneralRecordByGeneralId(followed.generalId)?.generalName
-                    : null;
-                this.statusBanner.textContent =
-                    `🐎 ${genName ? `${genName} · ` : ''}⭐${historic.label} → ${cityName}`;
-            } else {
-                const region = REGION_BY_CENTER.get(targetId);
-                this.statusBanner.textContent =
-                    `🐎 远征 → ${region ? `${REGION_LABELS[region]}·` : ''}${cityName}`;
-            }
-            this.statusBanner.style.display = 'block';
-            return;
-        }
-
-        this.statusBanner.style.display = 'none';
-
         // 达标即自动远征（2026-07-06）：跟拍军团一够 5 万且可远征，立即锁定目标出征
         //   （避免军团先跑去乱打把自己耗残、解锁又被撤销）。
         const army = this.eligibleArmy();
@@ -165,7 +105,7 @@ export class ExpeditionUI {
         army.expeditionTargetCityId = targetId;
         gameLog(
             'expedition',
-            `🐎 [远征] ${army.name}（${Math.floor(army.getTroops() / 10000)} 万兵·自动）远征【${targetName}·${label}】——断粮不回，直至占领或全军覆没`
+            `🐎 [征伐] ${army.name}（${Math.floor(army.getTroops() / 10000)} 万兵·自动）征伐【${targetName}·${label}】——断粮不回，直至占领或全军覆没`
         );
         this.pushFeed(army.getFactionId(), army.name, targetName, 'depart');
     }
@@ -273,15 +213,15 @@ export class ExpeditionUI {
     public devBoostTroops(): string {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return '⚠ 先在「🎖️ 军团」列表点一支军团跟随，再按 X';
-        if (army.expeditionTargetCityId) return `${army.name} 已在远征中（目标未变）`;
+        if (army.expeditionTargetCityId) return `${army.name} 已在征伐中（目标未变）`;
         const setter = (army as unknown as { setTroops?: (n: number) => void }).setTroops;
         if (!setter) return `${army.name}：无法设置兵力（setTroops 缺失）`;
         setter.call(army, 55000);
         const canLaunch = canLegionLaunchExpedition(army);
-        gameLog('expedition', `⚔ [DEV] ${army.name} 兵力补至 5.5 万${canLaunch ? '（已解锁，半秒内自动远征）' : '（无精锐番号，不能远征）'}`);
+        gameLog('expedition', `⚔ [DEV] ${army.name} 兵力补至 5.5 万${canLaunch ? '（已解锁，半秒内自动出征）' : '（无精锐番号，不能出征）'}`);
         return canLaunch
-            ? `⚔ ${army.name} 已补至 5.5 万·已解锁——半秒内将自动锁定目标出征，盯着远征图标看`
-            : `⚔ ${army.name} 已补至 5.5 万，但该势力无史籍精锐番号，不能远征`;
+            ? `⚔ ${army.name} 已补至 5.5 万·已解锁——半秒内将自动锁定目标出征，盯着征伐图标看`
+            : `⚔ ${army.name} 已补至 5.5 万，但该势力无史籍精锐番号，不能征伐`;
     }
 
     /** 军情面板播报（S 级「征」徽章行） */

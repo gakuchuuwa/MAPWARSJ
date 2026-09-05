@@ -101,25 +101,21 @@ function initLUTs() {
     const shallowCyan = [105, 160, 185];    // -30m 大陆架(渤海/黄海主体)
     const shoalCyan = [140, 185, 200];      // -5m 近岸浅水
     const coastalFoam = [180, 200, 200];    // 0m 潮间带(降低亮度,避免白带)
-    // [GLOBAL-TERRAIN-COLOR] 参照 Natural Earth + Swiss Topo 国际物理制图标准色阶
-    // 0-400m 全球平原与低地：温润低饱和平原森林绿 (Sage / Lowland Green)
-    const coastalSand = [165, 180, 150];    // 海岸冲积
-    const lowlandPale = [148, 176, 134];    // 0-400m 平原低地绿 (沉稳温润)
-    const lowlandEnd = [132, 160, 118];     // 400m 丘陵台地过渡绿
-    // 400-1200m 中山与丘陵林地：自然过渡为柔和橄榄山林色 (消灭断层)
-    const uplandOlive = [156, 170, 132];    // 800m 中山橄榄绿
-    const subalpineOchre = [174, 172, 140]; // 1200m 山麓中性浅赭色 (告别刺眼死黄土)
-    // 1200-2500m 全球中高山地与山麓草甸：中性温和暖岩石色 (Warm Ochre / Rock Buff)
-    const montaneBuff = [182, 176, 144];    // 1800m 中高山暖岩
-    const montaneSlate = [174, 168, 146];   // 2500m 中高山草甸暖灰
-    // 2500-3800m 高山过渡带：由暖转冷，引入高山冷灰岩 (Alpine Cool Gray)
-    const alpineCool = [160, 162, 156];     // ~3200m 高山冷灰
-    const alpineMeadow = [172, 168, 148];   // ~3800m 高山草甸灰岩
-    // 3800-5200m 高寒寒漠与青灰冷岩
-    const highColdDesert = [145, 150, 160]; // ~4200m 寒漠石灰岩
-    const permafrost = [115, 122, 138];     // ~4600m 永冻土冷青灰
-    const rockGrey = [90, 98, 115];         // ~5000m 冷板岩(雪线下裸岩)
-    const snowWhite = [255, 255, 255];      // 5300m+ 终年积雪纯白
+    // [TERRAIN-COLOR-REV2] 参照 Map Library "Vegetation-Based" + EU4 + QGIS 专业制图色阶
+    // 低地绿对标 sage green RGB(143,188,143) 16% 饱和,而非"草坪绿"
+    const coastalSand = [165, 180, 150];    // 海岸冲积低饱和绿 (16%饱和)
+    const lowlandPale = [150, 178, 135];    // 0-400m sage 平原绿 (对标 Map Library)
+    const lowlandEnd = [130, 160, 115];     // 400m 锚点林地深绿 (22%饱和)
+    const sandBeige = [168, 172, 136];      // 1000m 中山林地到浅暖岩过渡 (温润通透)
+    const loessYellow = [186, 178, 142];    // 1300m 中高山温润暖岩石基底
+    const loessMid = [188, 178, 146];       // 2500m 亚高山暖石基底
+    // [TERRAIN-COLOR-REV2] 高原色相由暖转冷,参照 Bartholomew "高海拔灰" + "3000m+ pale blue" 传统
+    const gobiBrown = [172, 168, 156];      // ~3000m 高山过渡微暖灰褐 (告别水泥冷灰)
+    const alpineSteppe = [185, 175, 140];   // ~3800m 高山草甸黄(保持,本身正确)
+    const highColdDesert = [145, 150, 160]; // ~4200m 冷调石灰(寒漠)
+    const permafrost = [110, 120, 140];     // ~4600m 永冻土冷青灰
+    const rockGrey = [85, 95, 115];         // ~5000m 冷板岩(雪线下裸岩)
+    const snowWhite = [255, 255, 255];
 
     for (let i = 0; i < range; i++) {
         const elev = i - LUT_OFFSET;
@@ -130,19 +126,18 @@ function initLUTs() {
         else if (elev < -300) lerpColor(deepOcean, shelfBlue, (elev + 1500) / 1200, lut, offset);
         else if (elev < -30) lerpColor(shelfBlue, shallowCyan, (elev + 300) / 270, lut, offset);
         else if (elev < -3) lerpColor(shallowCyan, shoalCyan, (elev + 30) / 27, lut, offset);
-        else if (elev < 0) lerpColor(shoalCyan, coastalFoam, (elev + 3) / 3, lut, offset);
-        else if (elev < 20) lerpColor(coastalFoam, lowlandPale, elev / 20, lut, offset);
+        else if (elev < 0) lerpColor(shoalCyan, coastalSand, (elev + 3) / 3, lut, offset);
+        else if (elev < 20) lerpColor(coastalSand, lowlandPale, elev / 20, lut, offset);
         else if (elev < 400) lerpColor(lowlandPale, lowlandEnd, (elev - 20) / 380, lut, offset);
-        else if (elev < 800) lerpColor(lowlandEnd, uplandOlive, (elev - 400) / 400, lut, offset);
-        else if (elev < 1200) lerpColor(uplandOlive, subalpineOchre, (elev - 800) / 400, lut, offset);
-        else if (elev < 1800) lerpColor(subalpineOchre, montaneBuff, (elev - 1200) / 600, lut, offset);
-        else if (elev < 2500) lerpColor(montaneBuff, montaneSlate, (elev - 1800) / 700, lut, offset);
-        else if (elev < 3200) lerpColor(montaneSlate, alpineCool, (elev - 2500) / 700, lut, offset);
-        else if (elev < 3800) lerpColor(alpineCool, alpineMeadow, (elev - 3200) / 600, lut, offset);
-        else if (elev < 4300) lerpColor(alpineMeadow, highColdDesert, (elev - 3800) / 500, lut, offset);
-        else if (elev < 4700) lerpColor(highColdDesert, permafrost, (elev - 4300) / 400, lut, offset);
-        else if (elev < 5100) lerpColor(permafrost, rockGrey, (elev - 4700) / 400, lut, offset);
-        else if (elev < 5350) lerpColor(rockGrey, snowWhite, (elev - 5100) / 250, lut, offset);
+        else if (elev < 1000) lerpColor(lowlandEnd, sandBeige, (elev - 400) / 600, lut, offset);
+        else if (elev < 1300) lerpColor(sandBeige, loessYellow, (elev - 1000) / 300, lut, offset);
+        else if (elev < 2500) lerpColor(loessYellow, loessMid, (elev - 1300) / 1200, lut, offset);
+        else if (elev < 3500) lerpColor(loessMid, gobiBrown, (elev - 2500) / 1000, lut, offset);
+        else if (elev < 4000) lerpColor(gobiBrown, alpineSteppe, (elev - 3500) / 500, lut, offset);
+        else if (elev < 4400) lerpColor(alpineSteppe, highColdDesert, (elev - 4000) / 400, lut, offset);
+        else if (elev < 4800) lerpColor(highColdDesert, permafrost, (elev - 4400) / 400, lut, offset);
+        else if (elev < 5200) lerpColor(permafrost, rockGrey, (elev - 4800) / 400, lut, offset);
+        else if (elev < 5500) lerpColor(rockGrey, snowWhite, (elev - 5200) / 300, lut, offset);
         else { lut[offset] = snowWhite[0]; lut[offset + 1] = snowWhite[1]; lut[offset + 2] = snowWhite[2]; }
     }
     colorLUT = lut;
@@ -208,8 +203,8 @@ function renderHillshade(
     const WEIGHT_SECONDARY = 0.35;
 
     const INV_8 = 0.125;
-    let divisor = 320 - (params.zFactor * 9.5);
-    if (divisor < 35) divisor = 35;
+    let divisor = 320 - (params.zFactor * 10);
+    if (divisor < 20) divisor = 20;
 
     // [OPTIMIZATION-PERF] Branch logic outside the loop
     if (params.useElevationColor) {
@@ -263,24 +258,24 @@ function renderHillshade(
                 // Color Logic
                 const zAvg = (zTL + zT + zTR + zL + zR + zBL + zB + zBR) * INV_8;
                 const curvature = zC - zAvg;
-                const aoStrength = Math.min(3.5, 1.2 * (params.zFactor * 0.1));
+                const aoStrength = Math.min(4.0, 1.5 * (params.zFactor * 0.1));
                 let aoFactor = (curvature < 0)
-                    ? Math.max(0.48, 1.0 + (curvature * 0.0035 * aoStrength))
-                    : Math.min(1.18, 1.0 + (curvature * 0.0022 * aoStrength)); // 突出刚劲山脊与深邃峡谷
+                    ? Math.max(0.5, 1.0 + (curvature * 0.004 * aoStrength))
+                    : Math.min(1.25, 1.0 + (curvature * 0.003 * aoStrength)); // 山脊增亮上限 1.15→1.25
                 hillshade *= aoFactor;
 
-                let shadowStrength = 0.62;
-                let ambientBase = 0.65;
-                if (zC < 1000) { shadowStrength = 0.80; ambientBase = 0.45; }
+                let shadowStrength = 0.55;
+                let ambientBase = 0.70;
+                if (zC < 1000) { shadowStrength = 0.75; ambientBase = 0.50; }
                 else if (zC < 1300) {
                     const t = (zC - 1000) * 0.003333;
-                    shadowStrength = 0.80 - (0.18 * t);
-                    ambientBase = 0.45 + (0.20 * t);
+                    shadowStrength = 0.75 - (0.20 * t);
+                    ambientBase = 0.50 + (0.20 * t);
                 }
                 if (zC > 4200) {
                     const t = Math.min(1.0, (zC - 4200) * 0.001);
-                    shadowStrength = 0.62 - (0.12 * t);
-                    ambientBase = 0.65 + (0.12 * t);
+                    shadowStrength = 0.55 - (0.1 * t);
+                    ambientBase = 0.70 + (0.1 * t);
                 }
 
                 // [FIX] Apply Opacity Parameter
@@ -311,13 +306,25 @@ function renderHillshade(
                 let g = colorLut[lIdx + 1];
                 let b = colorLut[lIdx + 2];
 
-                // [OCEAN-TEXTURE] 海面极轻微微扰，破除死板纯色
+                // [优化第1步] 关闭陆地与高山高频伪随机噪点，消除山体表面的石膏粉砂纸感
+                /*
+                if (colorZ > 0 && colorZ < 1500) {
+                    const grain = 1.0 + (noise * 0.03);
+                    r *= grain; g *= grain; b *= grain;
+                }
+                // [NEW] High Altitude Noise for greater texture
+                if (zC > 3000) {
+                    const grain = 1.0 + (noise * 0.05); // Stronger grain for rock/mountain
+                    r *= grain; g *= grain; b *= grain;
+                }
+                */
+                // [OCEAN-TEXTURE] 海面极轻微噪声,破除"死板纯色",模拟水面光斑
                 if (zC < 0) {
                     const oceanNoise = noiseLut[noiseYRow + (x & 255)];
-                    const oceanGrain = 1.0 + (oceanNoise * 0.004); // ±0.4% 亮度微扰
+                    const oceanGrain = 1.0 + (oceanNoise * 0.006); // ±0.6% 亮度微扰
                     r *= oceanGrain; g *= oceanGrain; b *= oceanGrain;
                 }
-                // [HISTORICAL-REGIONS] 全球沙漠/湿地/古湖/内陆低洼等历史地理特殊区域精准着色
+                // [HISTORICAL-REGIONS] 沙漠/湿地/古湖/内陆低洼等历史地理特殊区域着色
                 if (hasRegions && (zC > 0 || zC >= -500)) {
                     const lat = tileBounds!.north + y * regionLatStep;
                     const lng = tileBounds!.west + x * regionLngStep;
@@ -336,6 +343,12 @@ function renderHillshade(
                         g = g * iw + reg.color[1] * w;
                         b = b * iw + reg.color[2] * w;
                     }
+                }
+                // 高山山脊裸岩微高光强化
+                if (zC > 4000 && curvature > 2.0) {
+                    const rStr = Math.min(0.4, (curvature - 2.0) * 0.05);
+                    const invR = 1 - rStr;
+                    r = r * invR + 230 * rStr; g = g * invR + 220 * rStr; b = b * invR + 210 * rStr;
                 }
 
                 output[idx] = r * shadeFactor;

@@ -1,13 +1,13 @@
-/* 左下 HUD — 水墨儒将风 (Xuan Paper, Lotus, Willow, Ink Green) */
+/* 右下 HUD — 黑金玄漆风 (Black-Gold Lacquer Theme) */
 
 #game-time-hud {
     --hud-w: 200px;
-    --gold: #1d3326;          /* 深黛青/石绿 (用于主要数值) */
-    --gold-glow: #9c302f;     /* 朱砂红/点绛唇 (用于高亮/地形) */
-    --silver: #b3a286;        /* 枯茶色 (用于莲花暗纹 SVG) */
-    --ink-label: #5b7a66;     /* 柳叶青 (用于标签，清新古雅) */
-    --panel-bg: linear-gradient(135deg, #ebdcc3 0%, #d8c5a8 100%); /* 宣纸骨白色 */
-    --stone-border: #7d6f5a;  /* 焦茶色边框 */
+    --gold: #f5e6c8;          /* 象牙金字 (主要数值) */
+    --gold-glow: #ffd700;     /* 纯金高亮 */
+    --silver: rgba(212, 175, 55, 0.45); /* 装饰暗金 */
+    --ink-label: #ba9e7b;     /* 古铜雅金 (标签) */
+    --panel-bg: rgba(20, 16, 12, 0.94); /* 黑金玄漆微透底 */
+    --stone-border: rgba(212, 175, 55, 0.55); /* 纯正细金边框 */
     --cinnabar-top: #9c302f;  /* 朱砂红顶 */
     --cinnabar-bot: #681b1d;  /* 朱砂红底 */
     
@@ -21,7 +21,7 @@
     gap: 8px;
     pointer-events: auto;
     font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
 }
 
 #game-time-hud .hud-stack {
@@ -31,29 +31,25 @@
     width: var(--hud-w);
 }
 
-/* ── 信息面板（宣纸底 + 莲瓣纹） ── */
+/* ── 信息面板（黑金玄漆底 + 细金边） ── */
 #game-time-hud .hud-map-panel {
     position: relative;
     width: var(--hud-w);
     padding: 10px 12px 8px;
     box-sizing: border-box;
     background: var(--panel-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--stone-border);
-    border-radius: 2px;
+    border-radius: 6px;
     box-shadow:
-        inset 0 0 40px rgba(138, 115, 85, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 rgba(255, 235, 170, 0.12),
+        0 4px 14px rgba(0, 0, 0, 0.55);
 }
 
-/* 模拟宣纸纹理噪点 */
+/* 移除浅色宣纸噪点，保持通透深邃质感 */
 #game-time-hud .hud-map-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.25;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+    display: none;
 }
 
 /* 莲花纹饰角落 */
@@ -103,7 +99,7 @@
     padding: 5px 4px;
     font-size: 13px;
     line-height: 1.35;
-    border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
+    border-bottom: 1px dashed rgba(212, 175, 55, 0.25);
 }
 
 #game-time-hud .hud-map-row--terrain {
@@ -120,7 +116,7 @@
 }
 
 #game-time-hud .hud-map-row .value {
-    color: var(--gold);
+    color: var(--gold-glow);
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 14px;
     font-weight: 700;
@@ -129,9 +125,9 @@
 }
 
 #game-time-hud #terrain-type {
-    color: var(--gold-glow);
+    color: #fffcee;
     font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
 }
 
@@ -141,21 +137,16 @@
     flex-direction: column;
     width: 28px;
     flex-shrink: 0;
-    border-radius: 2px;
+    border-radius: 4px;
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 0 8px rgba(138, 115, 85, 0.2);
-    border: 1px solid rgba(125, 111, 90, 0.35);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: rgba(35, 28, 20, 0.9);
 }
 
 #game-time-hud .hud-zoom::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.25;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+    display: none;
 }
 
 #game-time-hud .hud-zoom-btn {
@@ -167,7 +158,7 @@
     font-size: 18px;
     font-weight: 700;
     line-height: 1;
-    color: var(--gold);
+    color: #dfc28c;
     background: transparent;
     transition: color 0.15s ease, background 0.15s ease;
     position: relative;
@@ -175,12 +166,12 @@
 }
 
 #game-time-hud .hud-zoom-btn:hover {
-    color: var(--gold-glow);
-    background: rgba(156, 48, 47, 0.08); /* 微微泛红 */
+    color: #ffd700;
+    background: rgba(212, 175, 55, 0.18);
 }
 
 #game-time-hud .hud-zoom-btn:active {
-    background: rgba(156, 48, 47, 0.15);
+    background: rgba(212, 175, 55, 0.3);
 }
 
 #game-time-hud .hud-zoom-level {
@@ -191,65 +182,61 @@
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 12px;
     font-weight: 700;
-    color: var(--gold-glow);
-    border-top: 1px solid rgba(125, 111, 90, 0.4);
-    border-bottom: 1px solid rgba(125, 111, 90, 0.4);
-    background: rgba(29, 51, 38, 0.06);
+    color: #ffd700;
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+    background: rgba(20, 16, 12, 0.8);
     user-select: none;
     font-variant-numeric: tabular-nums;
     position: relative;
     z-index: 1;
 }
 
-/* ── 纪年条（朱砂漆器轴） ── */
+/* ── 纪年条（黑金玄玉轴） ── */
 #game-time-hud .hud-date-bar {
     display: flex;
     align-items: stretch;
     width: var(--hud-w);
     min-height: 42px;
     box-sizing: border-box;
-    /* 移除 overflow hidden，改用 filter 统一投影，这样边缘能有更生动的立体感 */
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
     margin-bottom: 2px;
 }
 
 #game-time-hud .hud-date-cap {
-    flex: 0 0 18px;
-    /* 模拟垂直漆器卷轴的圆柱高光 */
-    background: linear-gradient(to right, #3a0d0d 0%, #8b2323 30%, #c43838 50%, #8b2323 70%, #3a0d0d 100%);
+    flex: 0 0 16px;
+    background: linear-gradient(to right, #1a1005 0%, #3d2b12 30%, #5c421e 50%, #3d2b12 70%, #1a1005 100%);
     position: relative;
     z-index: 2;
-    border-top: 2px solid #220505;
-    border-bottom: 2px solid #220505;
+    border-top: 2px solid rgba(212, 175, 55, 0.6);
+    border-bottom: 2px solid rgba(212, 175, 55, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* 隐藏原本单薄的 teardrop SVG */
 #game-time-hud .hud-date-cap svg {
     display: none;
 }
 
-/* 卷轴中间的鎏金细线装饰 */
 #game-time-hud .hud-date-cap::after {
     content: '';
     position: absolute;
     top: 6px; bottom: 6px;
     left: 45%; right: 45%;
-    background: linear-gradient(to bottom, #b38728 0%, #fdf5a9 50%, #b38728 100%);
+    background: linear-gradient(to bottom, #d4af37 0%, #fdf5a9 50%, #d4af37 100%);
     border-radius: 1px;
     box-shadow: 0 0 4px rgba(253, 245, 169, 0.6);
 }
 
 #game-time-hud .hud-date-cap--l {
     border-radius: 5px 0 0 5px;
-    border-left: 2px solid #220505;
+    border-left: 2px solid rgba(212, 175, 55, 0.6);
 }
 
 #game-time-hud .hud-date-cap--r {
     border-radius: 0 5px 5px 0;
-    border-right: 2px solid #220505;
+    border-right: 2px solid rgba(212, 175, 55, 0.6);
 }
 
 #game-time-hud .hud-date-body {
@@ -257,26 +244,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 更温润的宣纸渐变 */
-    background: linear-gradient(135deg, #f0e6d2 0%, #dfcba4 100%);
+    background: rgba(20, 16, 12, 0.95);
     position: relative;
     z-index: 1;
-    border-top: 1px solid #b89d71;
-    border-bottom: 1px solid #b89d71;
-    /* 卷轴在轴承处的自然纸张内阴影（阴影贴合两侧木轴） */
+    border-top: 1px solid rgba(212, 175, 55, 0.6);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.6);
     box-shadow: 
-        inset 14px 0 14px -10px rgba(0,0,0,0.65),
-        inset -14px 0 14px -10px rgba(0,0,0,0.65);
+        inset 14px 0 14px -10px rgba(0,0,0,0.8),
+        inset -14px 0 14px -10px rgba(0,0,0,0.8);
 }
 
 #game-time-hud .hud-date-body::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.35;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+    display: none;
 }
 
 #game-time-hud .hud-date-inner {
@@ -286,11 +265,10 @@
     letter-spacing: 0.15em;
     font-size: 17px;
     font-weight: 900;
-    color: #1a2f22; /* 浓重的徽墨色/深黛绿 */
+    color: #ffd700;
     position: relative;
     z-index: 1;
-    /* 活字印刷的微凹陷质感：一点点白色下沉高光 */
-    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.55);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 #game-year-display,
@@ -299,7 +277,7 @@
     font: inherit;
 }
 
-/* ── 青灰砚台 / 绿竹按键 ── */
+/* ── 操作按键（黑漆金框按键） ── */
 #game-time-hud .hud-controls {
     display: flex;
     flex-wrap: wrap;
@@ -308,68 +286,64 @@
 }
 
 #game-time-hud .hud-controls > .game-time-btn {
-    flex: 1 1 calc(25% - 6px); /* 默认约四分之一宽，超出换行 */
+    flex: 1 1 calc(25% - 6px);
 }
 
 #game-time-hud .game-time-btn {
-    height: 36px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    border: 1px solid var(--stone-border);
-    border-radius: 2px;
+    padding: 0 4px;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 4px;
     cursor: pointer;
     font-family: 'Noto Serif SC', 'SimSun', serif;
     font-size: 13px;
     font-weight: 700;
-    color: var(--gold);
+    color: #dfc28c;
     letter-spacing: 0.08em;
-    background: linear-gradient(180deg, #ebdcc3 0%, #dbcbaf 100%);
+    background: rgba(35, 28, 20, 0.92);
     box-shadow:
-        inset 1px 1px 2px rgba(255, 255, 255, 0.6),
-        0 2px 4px rgba(0, 0, 0, 0.2);
+        inset 0 1px 0 rgba(255, 235, 170, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.35);
     transition: all 0.15s ease;
     position: relative;
     overflow: hidden;
 }
 
 #game-time-hud .game-time-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.25;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+    display: none;
 }
 
 #game-time-hud .game-time-btn:hover {
-    filter: brightness(1.05);
-    color: var(--gold-glow);
+    filter: brightness(1.15);
+    color: #fffcee;
+    background: rgba(48, 38, 28, 0.95);
+    border-color: rgba(212, 175, 55, 0.85);
 }
 
 #game-time-hud .game-time-btn:active {
     transform: translateY(1px);
     box-shadow:
-        inset 1px 2px 5px rgba(100, 80, 50, 0.4),
-        0 1px 1px rgba(0, 0, 0, 0.1);
+        inset 0 2px 4px rgba(0, 0, 0, 0.6),
+        0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
-/* 激活状态：朱砂红印章感 */
+/* 激活状态：朱砂赤金印章感 */
 #game-time-hud .game-time-btn.active,
 #game-time-hud .game-time-btn.playing {
-    color: #ebdcc3;
-    background: linear-gradient(180deg, var(--cinnabar-top) 0%, var(--cinnabar-bot) 100%);
-    border-color: #681b1d;
+    color: #fffcee;
+    background: linear-gradient(180deg, rgba(156, 48, 47, 0.9) 0%, rgba(104, 27, 29, 0.95) 100%);
+    border-color: rgba(212, 175, 55, 0.75);
     box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.5),
-        0 0 8px rgba(156, 48, 47, 0.3);
+        inset 0 2px 6px rgba(0, 0, 0, 0.6),
+        0 0 8px rgba(212, 175, 55, 0.35);
 }
 
 #game-time-hud .game-time-btn.active::before,
 #game-time-hud .game-time-btn.playing::before {
-    opacity: 0.15;
+    display: none;
 }
 
 /* ── 折叠/展开隐藏箭头 ── */
@@ -378,10 +352,10 @@
     margin-bottom: -4px;
     height: 22px;
     padding: 0 10px;
-    background: var(--panel-bg);
-    border: 1px solid var(--stone-border);
+    background: rgba(20, 16, 12, 0.92);
+    border: 1px solid rgba(212, 175, 55, 0.45);
     border-radius: 4px 4px 0 0;
-    color: var(--gold);
+    color: #dfc28c;
     font-family: inherit;
     font-size: 11px;
     font-weight: 700;
@@ -392,20 +366,22 @@
     cursor: pointer;
     pointer-events: auto;
     z-index: 5001;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.35);
     user-select: none;
     transition: all 0.2s ease;
 }
+
 #game-time-hud .hud-toggle-collapse-btn:hover {
-    filter: brightness(1.05);
-    color: var(--gold-glow);
-    border-color: var(--gold-glow);
+    color: #ffd700;
+    border-color: rgba(212, 175, 55, 0.85);
 }
+
 #game-time-hud.is-collapsed .hud-stack {
     display: none !important;
 }
+
 #game-time-hud.is-collapsed .hud-toggle-collapse-btn {
     border-radius: 4px;
-    border-bottom: 1px solid var(--stone-border);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.45);
     margin-bottom: 0;
 }

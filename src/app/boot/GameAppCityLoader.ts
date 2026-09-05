@@ -31,7 +31,7 @@ export function loadGameAppCityData(app: GameApp): void {
             latitude: c.lat,
             longitude: c.lng,
             type: c.type,
-            troops: 30000,
+            troops: 10000,
             region: c.region,
             image: getCityImage(c),
             mirror: hasCityExclusiveIcon(c.id) ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),
