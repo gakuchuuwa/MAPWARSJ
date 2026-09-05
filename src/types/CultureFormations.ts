@@ -2005,7 +2005,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     THRACIAN:     '色雷斯军团',
     PERSIAN:      '波斯军团',
     CUMAN:        '库曼军团',
-    BRITONS:      '不列颠军团',
+    BRITONS:      '英格兰军团',
     GOTHS: '哥特军团',
     HUNS: '匈人军团',
     TEUTONS: '条顿军团',

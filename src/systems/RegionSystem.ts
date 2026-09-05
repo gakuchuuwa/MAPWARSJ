@@ -166,7 +166,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     THRACIAN: '色雷斯',
     PERSIAN: '波斯',
     CUMAN: '库曼',
-    BRITONS: '不列颠',
+    BRITONS: '英格兰',
     GOTHS: '哥特',
     HUNS: '匈人',
     TEUTONS: '条顿',
@@ -242,7 +242,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GREEK: '希腊',
     THRACIAN: '色雷斯',
     PERSIAN: '波斯',
-    CUMAN: '库曼',    BRITONS: '不列颠',
+    CUMAN: '库曼',
+    BRITONS: '英格兰',
     GOTHS: '哥特',
     HUNS: '匈人',
     TEUTONS: '条顿',
@@ -1084,7 +1085,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
     PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
-    BRITONS: ['city_lundun'],  // 不列颠（中心据点已挂）
+    BRITONS: ['city_lundun'],  // 英格兰（中心据点已挂）
     GOTHS: ['city_toulouse'],  // 哥特（中心据点已挂）
     HUNS: ['city_saigede'],  // 匈人（中心据点已挂）
     TEUTONS: ['city_kenisibao'],  // 条顿（中心据点已挂）

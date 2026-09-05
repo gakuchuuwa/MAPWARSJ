@@ -276,12 +276,12 @@ export class PlayerHUD {
             b.addEventListener('click', () => opt.onPick());
             btns.appendChild(b);
         }
-        // [2026-09-05 玩家] 抵达据点后弹出任务对话框，1 秒后自动确认（自动点接任务选项）
+        // [2026-09-05 玩家] 抵达据点后弹出任务对话框，3 秒后自动确认（自动点接任务选项）
         const primary = p.options.find((o) => o.accent);
         if (primary) {
             window.setTimeout(() => {
                 if (this.overlay) primary.onPick();
-            }, 1000);
+            }, 3000);
         }
         box.appendChild(btns);
         overlay.appendChild(box);

@@ -993,7 +993,8 @@ export class CameraFollowUI {
         // 动作与据点（黑金【据点】风格）
         let actionHtml = '';
         if (targetCityName) {
-            const verb = isExpedition ? '征伐' : '前往';
+            // [2026-09-05 玩家] 军团移动=征伐（无论是否远征），玩家独行/入伍=前往
+            const verb = isPlayer ? '前往' : '征伐';
             actionHtml = `<span style="color:#e6c894;margin-left:4px;">${verb}</span><span style="color:#fffcee;font-weight:900;">【${targetCityName}】</span>`;
         }
 
