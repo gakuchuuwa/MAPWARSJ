@@ -27,6 +27,8 @@
     "naval:leg-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_march_sea_legs.mts",
     "naval:step-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_naval_step_spacing.mts",
     "naval:orbit-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_naval_orbit.mts",
+    "legion:editor-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_editor_vs_game.mts",
+    "legion:culture-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_culture_legion_pairing.mts",
     "expedition:audit": "npx tsx scratch/audit_expedition_regions.mjs",
     "expedition:triple-check": "npx tsx scratch/audit_expedition_triple_names.mjs",
     "expedition:coverage": "npx tsx scratch/audit_expedition_coverage.mjs",

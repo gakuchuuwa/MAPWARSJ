@@ -755,8 +755,11 @@ interface FactionLegionRow {
      *  🔴 番号 ≠ 军团名：军团名是这套三排编成自己的名字，存在 legion.legionName。 */
     eliteName?: string;
     eliteTier?: number;
-    /** 军团名称（三排编成这支部队的名字，如「瓦兰吉卫队军团」） */
+    /** 军团名称（三排编成这支部队的名字，如「瓦兰吉卫队军团」）。
+     *  没有势力专属名时回退成**所属文化区的军团名**，此时 isCultureLegion=true。 */
     legionName?: string;
+    /** true = 上面那个名字是**文化军团保底名**（不是这个势力自己的），表格里另作样式、且不可改名 */
+    isCultureLegion?: boolean;
     formationMode: FormationMode;
     slots: CompositionSlot[];
     row1Type: string;
@@ -1274,7 +1277,14 @@ function buildRows(): void {
             generalName: FACTION_GENERALS[f.id]?.generalName,
             eliteName: getExpeditionEliteConfig(f.id)?.name,
             eliteTier: getExpeditionEliteConfig(f.id)?.tier,
-            legionName: (localCustomCompositions[f.id] as any)?.legionName || undefined,
+            // 🔴 [2026-09-06] 势力没有专属军团名时，回退显示**所属文化区的军团名**。
+            //    原来只读 localCustomCompositions（= FACTION_COMPOSITIONS），而走文化军团的势力
+            //    压根不在那张表里 —— 于是「军团名」列一律显示「—」，编好的哥特文化军团看着像没保存
+            //    （主人 2026-09-06 报「军团总是保存不上」，实际编成早已写进 CultureFormations.ts）。
+            //    ⚠️ 铁律：一个文化 = 一个军团 = 一种编制。表格里**不分两类显示**（曾加过灰/金两种样式，
+            //    主人 2026-09-06 明确否决），军团名就是军团名，一个样子。
+            legionName: (localCustomCompositions[f.id] as any)?.legionName || getCultureLegionName(region),
+            isCultureLegion: !(localCustomCompositions[f.id] as any)?.legionName,
             formationMode,
             slots,
             row1Type: r1,
@@ -1369,7 +1379,9 @@ function renderTable(): void {
             <td><span class="cell-unit">${getUnitDisplayName(r.row1Type)}</span></td>
             <td><span class="cell-unit">${getUnitDisplayName(r.row2Type)}</span></td>
             <td><span class="cell-unit">${getUnitDisplayName(r.row3Type)}</span></td>
-            <td>${r.legionName ? `<span style="color:#c9a86a;font-size:11px;">⚔ ${r.legionName}</span>` : `<span style="color:#7a7266;font-size:11px;">—</span>`}</td>
+            <td>${r.legionName
+                ? `<span style="color:#c9a86a;font-size:11px;">${r.legionName}</span>`
+                : `<span style="color:#7a7266;font-size:11px;">—</span>`}</td>
             <td>${r.isCustom ? `<span class="status-tag status-custom">专属</span>` : `<span class="status-tag status-default">默认</span>`}</td>
           </tr>
         `).join('')}
