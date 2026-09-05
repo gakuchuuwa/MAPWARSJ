@@ -584,7 +584,7 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     return pieces;
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false): string {
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原小城也围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_POOL];
@@ -601,8 +601,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     const parts: string[] = [];
 
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
-    const centerB = ring[0];
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4);
+    const centerB = centerCastle ? 'CASTLE' : ring[0];
+    const centerW = baseSize * (centerCastle ? 0.68 : (DE_BUILDING_SCALES[centerB] || 0.4));
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
@@ -610,7 +610,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE${centerCastle ? 3 : 2}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 周围 8 个扇区随机散布（每建筑一个 45° 扇区，角度+半径双重扰动）
@@ -2046,7 +2046,9 @@ export class TerritorySystem {
                                   : city.type === 'medium_city'
                                       ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
                                       : city.type === 'pass'
-                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, city.mirror)
+                                          ? (city.region === 'JAPAN'
+                                              ? buildDeSmallCityStackHtml(baseSize, city.id, deStyle, false, true)  // 2026-09-05 主人定：日本险要=小城样式+中间城堡
+                                              : buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, city.mirror))
                                           : city.type === 'stockade'
                                               ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
                                               : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall))

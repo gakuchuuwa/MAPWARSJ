@@ -338,7 +338,7 @@ export class PlayerHero {
             const host = this.getHostLegion();
             if (!host || host.isDestroyed || host.getTroops() <= 0) {
                 const lastId = this.hostLegionId;
-                this.hostLegionId = null;
+                // 🔴 不清 hostLegionId：让 onHostLost → finishQuest(false) → detach() 统一「清军团+退出势力+归零」
                 this.resetMerit('随军军团覆灭');
                 this.emitChange();
                 this.onHostLost?.(lastId);

@@ -761,7 +761,7 @@ const REGION_LABELS: Record<string, string> = {
     INDIA: '印度', BERBER: '柏柏尔', AMERICA: '美洲', AFRICA: '非洲',
     MALAY: '马来', ANDE: '安第斯', PURU: '南印度', ORIE: '阿拉伯',
     EAST: '东欧', GREEK: '希腊', THRACIAN: '色雷斯', PERSIAN: '波斯', CUMAN: '库曼',
-    BRITONS: '不列颠', GOTHS: '哥特', HUNS: '匈人', TEUTONS: '条顿',
+    BRITONS: '英格兰', GOTHS: '哥特', HUNS: '匈人', TEUTONS: '条顿',
     VIKINGS: '维京', CELTS: '凯尔特', ITALIANS: '意大利', SICILIANS: '西西里',
     BULGARIANS: '保加利亚', MAGYAR: '马扎尔', LITHUANIANS: '立陶宛', POLES: '波兰',
     BOHEMIANS: '波希米亚', BURGUNDIANS: '勃艮第', SPANISH: '西班牙', PORTUGUESE: '葡萄牙',
