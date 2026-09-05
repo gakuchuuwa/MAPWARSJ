@@ -180,14 +180,14 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
-    BASHU:        'fish_scale',   // 川蜀：白毦兵前卫(3) + 精锐白毦兵主力(4) + 诸葛弩后排(2)
+    BASHU: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
-    LINGNAN:      'triangle',     // 岭南：皮甲战象(2) + 帝王掷矛手(3) + 精锐藤弓兵主力(4)
+    LINGNAN: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
@@ -203,46 +203,46 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
     MALAY:        'crane_wing',  // 马来近战主力
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
-    PURU:         'fish_scale',  // 南印度象兵主力（朱罗/潘地亚）
+    PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
-    THRACIAN:     'fish_scale',  // 色雷斯轻盾兵主力
+    THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
     PERSIAN:      'fish_scale',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
-    BRITONS: 'triangle',  // 不列颠[2026-08-28 暂复用父文化]
+    BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
     GOTHS: 'fish_scale',  // 哥特[2026-09-05 主人定：雁行阵 4+3+2]
-    HUNS: 'crescent',  // 匈人[2026-09-05 主人定：偃月阵 3+2+4]
-    TEUTONS: 'crane_wing',  // 条顿[2026-08-28 暂复用父文化]
-    VIKINGS: 'fish_scale',  // 维京[2026-08-28 暂复用父文化]
-    CELTS: 'fish_scale',  // 凯尔特[2026-08-28 暂复用父文化]
-    ITALIANS: 'fish_scale',  // 意大利[2026-08-28 暂复用父文化]
-    SICILIANS: 'crane_wing',  // 西西里[2026-08-28 暂复用父文化]
+    HUNS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
+    TEUTONS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
+    VIKINGS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
+    CELTS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
+    ITALIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
+    SICILIANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: 'crescent',  // 马扎尔[2026-09-05 主人定：正规马扎尔军团偃月阵 3+2+4]
-    LITHUANIANS: 'crane_wing',  // 立陶宛[2026-08-28 暂复用父文化]
+    LITHUANIANS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
     POLES: 'echelon',  // 波兰[2026-08-28 暂复用父文化]
-    BOHEMIANS: 'fish_scale',  // 波希米亚[2026-08-28 暂复用父文化]
-    BURGUNDIANS: 'crane_wing',  // 勃艮第[2026-08-28 暂复用父文化]
+    BOHEMIANS: 'echelon',  // [2026-09-06] 与同名势力专属军团对齐
+    BURGUNDIANS: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
     SPANISH: 'crescent',  // 西班牙[2026-08-28 暂复用父文化]
     PORTUGUESE: 'balance_yoke',  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: 'echelon',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
     BENGALIS: 'echelon',  // 孟加拉[2026-08-28 暂复用父文化]
     GURJARAS: 'crane_wing',  // 瞿折罗[2026-08-28 暂复用父文化]
-    PORUS: 'fish_scale',  // 补噜[2026-08-28 暂复用父文化]
-    VIETNAMESE: 'fish_scale',  // 越南[2026-08-28 暂复用父文化]
-    KHMER: 'crane_wing',  // 高棉[2026-08-28 暂复用父文化]
+    PORUS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
+    VIETNAMESE: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    KHMER: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     MAYANS: 'crescent',  // 玛雅[2026-08-28 暂复用父文化]
-    MAPUCHE: 'fish_scale',  // 马普切[2026-08-28 暂复用父文化]
-    MUISCA: 'fish_scale',  // 穆伊斯卡[2026-08-28 暂复用父文化]
-    TUPI: 'fish_scale',  // 图皮[2026-08-28 暂复用父文化]
-    ARMENIANS: 'crane_wing',  // 亚美尼亚[2026-08-28 暂复用父文化]
+    MAPUCHE: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
+    MUISCA: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    TUPI: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    ARMENIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
-    ATHENIANS: 'fish_scale',  // 雅典[2026-08-28 暂复用父文化]
-    SPARTANS: 'fish_scale',  // 斯巴达[2026-08-28 暂复用父文化]
-    MACEDONIANS: 'crane_wing',  // 马其顿[2026-08-28 暂复用父文化]
+    ATHENIANS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
+    SPARTANS: 'square',  // [2026-09-06] 与同名势力专属军团对齐
+    MACEDONIANS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
-    BURMESE: 'triangle',
+    BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
     WALLACHIA: 'crane_wing',
 
 };
@@ -980,72 +980,18 @@ export function isBerberDynasty(factionId?: string | null, generalId?: string | 
 
 
 /** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
+
+/** 势力专属军团查表。
+ *  🔴 [2026-09-06 主人拍板] 铁律「一个文化 = 一个军团 = 一种编制」：
+ *     这里**只剩一层** —— 势力有自己的番号军团（如【不死军团】【翼骑兵军团】）就用它，
+ *     否则返回 null，交给调用方按**募兵据点所属文化**回落到该文化军团。
+ *  已删除原来的第 2 层「武将专属」和第 3 层「朝代判定」（QIN/HAN/WEI/TANG/SONG/MING/
+ *  ROMAN/PERSIAN/POLISH/TEUTONIC/BYZANTINE/BERBER/SENGOKU）：它们让 97 个势力拿到
+ *  既不是自己番号、也不是所属文化的第三套编制，正是铁律的破口。
+ *  ⚠️ 别再加回来。要给某个势力特殊编制，就在 FACTION_COMPOSITIONS 里给它一个**有番号名**的条目。 */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    // 1. 势力专属覆盖最优先（含支文化细分，如伊贺忍者军团、波斯帝国军团、波兰翼骑兵军团、条顿骑士军团、拜占庭圣骑兵军团、柏柏尔沙漠军团）
     const custom = FACTION_COMPOSITIONS[factionId];
-    if (custom) {
-        return [...custom.slots];
-    }
-    // 2. 武将专属判断
-    if (generalId) {
-        if (QIN_DYNASTY_GENERAL_IDS.has(generalId)) return [...QIN_FACTION_COMPOSITION];
-        if (HAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...HAN_FACTION_COMPOSITION];
-        if (WEI_DYNASTY_GENERAL_IDS.has(generalId)) return [...WEI_FACTION_COMPOSITION];
-        if (TANG_DYNASTY_GENERAL_IDS.has(generalId)) return [...TANG_FACTION_COMPOSITION];
-        if (SONG_DYNASTY_GENERAL_IDS.has(generalId)) return [...SONG_FACTION_COMPOSITION];
-        if (MING_DYNASTY_GENERAL_IDS.has(generalId)) {
-            if (generalId === 'ming_d_zhudi') return [...MING_FACTION_COMPOSITION]; // 朱棣保留大明鱼鳞阵
-            return [...MING_GENERAL_COMPOSITION]; // 其他大明武将：火矛手+黑光铠骑兵+精锐火焰弓手
-        }
-        if (ROMAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...ROMAN_FACTION_COMPOSITION];
-        if (PERSIAN_DYNASTY_GENERAL_IDS.has(generalId)) return [...PERSIAN_FACTION_COMPOSITION];
-        if (POLISH_DYNASTY_GENERAL_IDS.has(generalId)) return [...POLISH_FACTION_COMPOSITION];
-        if (TEUTONIC_DYNASTY_GENERAL_IDS.has(generalId)) return [...TEUTONIC_FACTION_COMPOSITION];
-        if (BYZANTINE_DYNASTY_GENERAL_IDS.has(generalId)) return [...BYZANTINE_FACTION_COMPOSITION];
-        if (BERBER_DYNASTY_GENERAL_IDS.has(generalId)) return [...BERBER_FACTION_COMPOSITION];
-        if (SENGOKU_GENERAL_IDS.has(generalId)) return [...SENGOKU_TIERS[0].slots];
-    }
-    // 3. 文化区判定
-    if (isQinDynasty(factionId)) {
-        return [...QIN_FACTION_COMPOSITION];
-    }
-    if (isHanDynasty(factionId)) {
-        return [...HAN_FACTION_COMPOSITION];
-    }
-    if (isWeiDynasty(factionId)) {
-        return [...WEI_FACTION_COMPOSITION];
-    }
-    if (isTangDynasty(factionId)) {
-        return [...TANG_FACTION_COMPOSITION];
-    }
-    if (isSongDynasty(factionId)) {
-        return [...SONG_FACTION_COMPOSITION];
-    }
-    if (isMingDynasty(factionId)) {
-        return [...MING_GENERAL_COMPOSITION];
-    }
-    if (isRomanDynasty(factionId)) {
-        return [...ROMAN_FACTION_COMPOSITION];
-    }
-    if (isPersianDynasty(factionId)) {
-        return [...PERSIAN_FACTION_COMPOSITION];
-    }
-    if (isPolishDynasty(factionId)) {
-        return [...POLISH_FACTION_COMPOSITION];
-    }
-    if (isTeutonicDynasty(factionId)) {
-        return [...TEUTONIC_FACTION_COMPOSITION];
-    }
-    if (isByzantineDynasty(factionId)) {
-        return [...BYZANTINE_FACTION_COMPOSITION];
-    }
-    if (isBerberDynasty(factionId)) {
-        return [...BERBER_FACTION_COMPOSITION];
-    }
-    if (isSengoku(factionId)) {
-        return [...SENGOKU_TIERS[0].slots];
-    }
-    return null;
+    return custom ? [...custom.slots] : null;
 }
 
 export interface LegionCompositionTarget {
@@ -1223,16 +1169,18 @@ export const MAGYAR_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 匈人 古典骑射手+草原枪骑兵+匈奴答剌罕骑兵精锐（偃月阵 3+2+4：古典骑射手前卫 + 草原枪骑兵中坚 + 匈奴答剌罕骑兵精锐主力 4） */
+/** HUNS 文化军团（balance_yoke 4+2+3）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （匈人），原文化表那份已过时，作废。 */
 export const HUNS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'elite_tarkan', count: 4 }
+            { type: 'elite_tarkan', count: 4 },   // Row 0
+            { type: 'steppe_lancer', count: 2 },   // Row 1
+            { type: 'cav_archer', count: 3 }   // Row 2
         ]
     }
 ];
@@ -1250,16 +1198,18 @@ export const HEXI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 8. 川蜀 白毦兵+精锐白毦兵+诸葛弩（鱼鳞阵 3+4+2：白毦兵前卫 + 精锐白毦兵突击主力 + 诸葛弩后排支援） */
+/** BASHU 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 44 个势力实际在用的这套
+ *  （蜀国、徽州、阆州、荆门…），原文化表那份已过时，作废。 */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 3 },       // Row 0 前卫 = 白毦兵 3人
-            { type: 'elite_white_feather_guard', count: 4 }, // Row 1 中军突击主力 = 精锐白毦兵 4人
-            { type: 'chukonu', count: 2 }                    // Row 2 尾收支援 = 诸葛弩 2人
+            { type: 'white_feather_guard', count: 2 },   // Row 0
+            { type: 'elite_white_feather_guard', count: 3 },   // Row 1
+            { type: 'elite_chukonu', count: 4 }   // Row 2
         ]
     }
 ];
@@ -1278,16 +1228,18 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 10. 岭南 皮甲战象+帝王掷矛手+精锐藤弓兵（三角阵 2+3+4：皮甲战象尖刀 + 帝王掷矛手中坚 + 精锐藤弓兵主力底边） */
+/** LINGNAN 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 57 个势力实际在用的这套
+ *  （墨侬、水真、黔中、广州…），原文化表那份已过时，作废。 */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored_elephant', count: 2 },    // Row 0 尖刀巨兽 = 皮甲战象 2人
-            { type: 'imperial_skirmisher', count: 3 }, // Row 1 掷矛中坚 = 帝王掷矛手 3人
-            { type: 'rattan_archer_elite', count: 4 }  // Row 2 底边主力齐射 = 精锐藤弓兵 4人
+            { type: 'battle_elephant', count: 2 },   // Row 0
+            { type: 'imperial_skirmisher', count: 3 },   // Row 1
+            { type: 'rattan_archer_elite', count: 4 }   // Row 2
         ]
     }
 ];
@@ -1447,16 +1399,18 @@ export const GREEK_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 亚历山大·马其顿帝国军团（鹤翼阵 2+4+3：马其顿方阵兵前锋 + 伙伴骑兵主力 + 克里特弓手后排） */
+/** MACEDONIANS 文化军团（balance_yoke 4+2+3）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
+ *  （马其顿、托勒密、塞琉古、帕加马…），原文化表那份已过时，作废。 */
 export const ALEXANDER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'phalangite', count: 2 },         // Row 0 步兵前锋 = 马其顿方阵兵 2人
-            { type: 'companion_cavalry', count: 4 },  // Row 1 骑兵主力两翼合围 = 伙伴骑兵 4人
-            { type: 'cretan_archer', count: 3 }       // Row 2 中军后排支援 = 克里特弓手 3人
+            { type: 'phalangite', count: 4 },   // Row 0
+            { type: 'cretan_archer', count: 2 },   // Row 1
+            { type: 'companion_cavalry', count: 3 }   // Row 2
         ]
     }
 ];
@@ -1518,16 +1472,18 @@ export const BULGARIANS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 不列颠军团（三角阵 234）[2026-08-30 主人设计] */
+/** BRITONS 文化军团（fish_scale 3+4+2）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 2 个势力实际在用的这套
+ *  （麦西亚、英格兰），原文化表那份已过时，作废。 */
 export const BRITONS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },
-            { type: 'longbowman', count: 3 },
-            { type: 'longbowman_elite', count: 4 }
+            { type: 'champion', count: 3 },   // Row 0
+            { type: 'longbowman_elite', count: 4 },   // Row 1
+            { type: 'light_riders', count: 2 }   // Row 2
         ]
     }
 ];
@@ -1672,30 +1628,34 @@ export const AFRICA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 东欧军团（鹤翼阵）[2026-08-30 完成待定制] */
+/** 东欧 冠军剑士+精锐贵族铁骑+复合弓箭手（鹤翼阵 2+4+3）
+ *  [2026-09-06] 这里**不跟势力走**：维京·约克 / 挪威两个势力写的那份 formationMode 与格位自相矛盾
+ *  （标 crane_wing 却是 3+4+2），且与斯拉夫编制完全重复。保留文化这份，改那两个势力对齐。 */
 export const EAST_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'composite_bowman', count: 3 }
+            { type: 'champion', count: 2 },   // Row 0
+            { type: 'elite_boyar', count: 4 },   // Row 1 主力
+            { type: 'composite_bowman', count: 3 }   // Row 2
         ]
     }
 ];
 
-/** 达罗毗荼军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** PURU 文化军团（crescent 3+2+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （朱罗），原文化表那份已过时，作废。 */
 export const PURU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'war_elephant', count: 2 }
+            { type: 'sickle_warrior', count: 3 },   // Row 0
+            { type: 'ballista_elephant', count: 2 },   // Row 1
+            { type: 'elite_urumi_swordsman', count: 4 }   // Row 2
         ]
     }
 ];
@@ -1741,142 +1701,162 @@ export const GOTHS_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 凯尔特军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** CELTS 文化军团（fish_scale 3+4+2）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 3 个势力实际在用的这套
+ *  （坎布里亚、皮克特、盖尔），原文化表那份已过时，作废。 */
 export const CELTS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'woad_raider', count: 3 },
-            { type: 'elite_woad_raider', count: 4 },
-            { type: 'archer', count: 2 }
+            { type: 'woad_raider', count: 3 },   // Row 0
+            { type: 'elite_woad_raider', count: 4 },   // Row 1
+            { type: 'longbowman', count: 2 }   // Row 2
         ]
     }
 ];
 
-/** 意大利军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** ITALIANS 文化军团（crescent 3+2+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
+ *  （利古里亚、阿诺、托斯卡纳、伦巴第…），原文化表那份已过时，作废。 */
 export const ITALIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'condottiero', count: 3 },
-            { type: 'elite_genoese_crossbowman', count: 4 },
-            { type: 'arbalest', count: 2 }
+            { type: 'condottiero', count: 3 },   // Row 0
+            { type: 'genoese_crossbowman', count: 2 },   // Row 1
+            { type: 'elite_genoese_crossbowman', count: 4 }   // Row 2
         ]
     }
 ];
 
-/** 立陶宛军团（鹤翼阵）[2026-08-30 完成待定制] */
+/** LITHUANIANS 文化军团（fish_scale 3+4+2）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 2 个势力实际在用的这套
+ *  （立陶宛、涅曼），原文化表那份已过时，作废。 */
 export const LITHUANIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },
-            { type: 'elite_leitis', count: 4 },
-            { type: 'cav_archer', count: 3 }
+            { type: 'winged_hussar', count: 3 },   // Row 0
+            { type: 'elite_leitis', count: 4 },   // Row 1
+            { type: 'cav_archer', count: 2 }   // Row 2
         ]
     }
 ];
 
-/** 补噜军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** PORUS 文化军团（fish_scale 3+4+2）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （补噜），原文化表那份已过时，作废。 */
 export const PORUS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'urumi_swordsman', count: 3 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'porus_elephant', count: 2 }
+            { type: 'urumi_swordsman', count: 3 },   // Row 0
+            { type: 'elite_urumi_swordsman', count: 4 },   // Row 1
+            { type: 'sannahya', count: 2 }   // Row 2
         ]
     }
 ];
 
-/** 越南军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** VIETNAMESE 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （大越），原文化表那份已过时，作废。 */
 export const VIETNAMESE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rattan_archer', count: 3 },
-            { type: 'elite_rattan_archer', count: 4 },
-            { type: 'battle_elephant', count: 2 }
+            { type: 'elite_battle_elephant', count: 2 },   // Row 0
+            { type: 'imperial_skirmisher', count: 3 },   // Row 1
+            { type: 'rattan_archer_elite', count: 4 }   // Row 2
         ]
     }
 ];
 
-/** 高棉军团（鹤翼阵）[2026-08-30 完成待定制] */
+/** KHMER 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （真腊），原文化表那份已过时，作废。 */
 export const KHMER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },
-            { type: 'champion', count: 4 },
-            { type: 'elite_ballista_elephant', count: 3 }
+            { type: 'spearman', count: 2 },   // Row 0
+            { type: 'elite_ballista_elephant', count: 3 },   // Row 1
+            { type: 'archer', count: 4 }   // Row 2
         ]
     }
 ];
 
-/** 马普切军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** MAPUCHE 文化军团（fish_scale 3+4+2）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （马普切），原文化表那份已过时，作废。 */
 export const MAPUCHE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 3 },
-            { type: 'elite_bolas_rider', count: 4 },
-            { type: 'archer', count: 2 }
+            { type: 'kona', count: 3 },   // Row 0
+            { type: 'elite_kona', count: 4 },   // Row 1
+            { type: 'elite_bolas_rider', count: 2 }   // Row 2
         ]
     }
 ];
 
-/** 穆伊斯卡军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** MUISCA 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （穆伊斯卡），原文化表那份已过时，作废。 */
 export const MUISCA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'temple_guard', count: 3 },
-            { type: 'elite_temple_guard', count: 4 },
-            { type: 'guecha_warrior', count: 2 }
+            { type: 'elite_champi_warrior', count: 2 },   // Row 0
+            { type: 'elite_temple_guard', count: 3 },   // Row 1
+            { type: 'elite_guecha_warrior', count: 4 }   // Row 2
         ]
     }
 ];
 
-/** 图皮军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** TUPI 文化军团（triangle 2+3+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （图皮），原文化表那份已过时，作废。 */
 export const TUPI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'ibirapema_warrior', count: 3 },
-            { type: 'elite_ibirapema_warrior', count: 4 },
-            { type: 'blackwood_archer', count: 2 }
+            { type: 'elite_champi_warrior', count: 2 },   // Row 0
+            { type: 'elite_ibirapema_warrior', count: 3 },   // Row 1
+            { type: 'elite_blackwood_archer', count: 4 }   // Row 2
         ]
     }
 ];
 
-/** 亚美尼亚军团（鹤翼阵）[2026-08-30 完成待定制] */
+/** ARMENIANS 文化军团（crescent 3+2+4）
+ *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
+ *  （亚美尼亚），原文化表那份已过时，作废。 */
 export const ARMENIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },
-            { type: 'elite_boyar', count: 4 },
-            { type: 'elite_composite_bowman', count: 3 }
+            { type: 'warrior_priest', count: 3 },   // Row 0
+            { type: 'composite_bowman', count: 2 },   // Row 1
+            { type: 'elite_composite_bowman', count: 4 }   // Row 2
         ]
     }
 ];
@@ -1927,6 +1907,150 @@ export const ORIE_TIERS: CompositionTier[] = [
 // 15 文化 → CompositionTier[] 映射
 // ============================================================
 
+/* ────────────────────────────────────────────────────────────────
+ * [2026-09-06 主人拍板铁律] 一个文化 = 一个军团 = 一种编制。
+ * 以下 9 个文化此前直接引用父文化的 *_TIERS（THRACIAN/VIKINGS/BOHEMIANS→斯拉夫、
+ * TEUTONS→日耳曼、SICILIANS/BURGUNDIANS→拉丁、ATHENIANS/SPARTANS→希腊、BURMESE→滇缅），
+ * 名义上各有军团、实际共用同一支，违反铁律。此处按「游戏合理 + 符合历史」各自定制。
+ * 格位必须与 CULTURE_FORMATION_MODE 的阵型一致，主力兵种占 4 档（见 culture-formation-main-unit-rule）。
+ * ──────────────────────────────────────────────────────────────── */
+
+/** 色雷斯 罗姆菲亚镰刀剑士+轻盾兵+精锐轻盾兵（衡轭阵 4+2+3：镰刀剑士宽线主力 + 轻盾兵中排 + 精锐轻盾兵后排）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（seleisi/奥德里西亚等 5 势力），文化保底与它对齐，消除「同名不同编」。 */
+export const THRACIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'rhomphaia_warrior', count: 4 },   // Row 0 宽线主力 = 罗姆菲亚镰刀剑士 4人
+            { type: 'thracian_peltast', count: 2 },   // Row 1 中排 = 色雷斯轻盾兵 2人
+            { type: 'elite_peltast', count: 3 }   // Row 2 后排 = 精锐轻盾兵 3人
+        ]
+    }
+];
+
+/** 条顿 条顿骑士+精锐条顿骑士+十字军骑士（鱼鳞阵 3+4+2：条顿骑士前卫 + 精锐条顿骑士主力 + 十字军骑士压阵）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（条顿骑士团/宝剑骑士团/利沃尼亚），文化保底与它对齐，消除「同名不同编」。 */
+export const TEUTONS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'teutonic_knight', count: 3 },   // Row 0 前卫 = 条顿骑士 3人
+            { type: 'elite_teutonic_knight', count: 4 },   // Row 1 主力 = 精锐条顿骑士 4人
+            { type: 'crusader_knight', count: 2 }   // Row 2 压阵 = 十字军骑士 2骑
+        ]
+    }
+];
+
+/** 维京 北欧战士+精锐狂战士+散兵（鱼鳞阵 3+4+2：北欧战士前卫 + 狂战士主力突破 + 散兵压阵）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（挪威/丹麦/瑞典），文化保底与它对齐，消除「同名不同编」。 */
+export const VIKINGS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'norse_warrior', count: 3 },   // Row 0 前卫 = 北欧战士 3人
+            { type: 'elite_berserk', count: 4 },   // Row 1 主力 = 精锐狂战士 4人
+            { type: 'skirmisher', count: 2 }   // Row 2 压阵 = 散兵 2人
+        ]
+    }
+];
+
+/** 西西里 诺曼军士+精锐军士+劲弩手（鹤翼阵 2+4+3：军士前锋 + 精锐军士主力 + 劲弩手后排）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（西西里王国/墨西拿/撒丁），文化保底与它对齐，消除「同名不同编」。 */
+export const SICILIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'serjeant', count: 2 },   // Row 0 前锋 = 诺曼军士 2人
+            { type: 'elite_serjeant', count: 4 },   // Row 1 主力 = 精锐军士 4人
+            { type: 'arbalest', count: 3 }   // Row 2 后排 = 劲弩手 3人
+        ]
+    }
+];
+
+/** 波希米亚 戟兵+精锐胡斯战车+劲弩手（雁行阵 4+3+2：戟兵宽线主力 + 胡斯战车中坚 + 劲弩手压阵）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（波希米亚），文化保底与它对齐，消除「同名不同编」。 */
+export const BOHEMIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'halberdier', count: 4 },   // Row 0 宽线主力 = 戟兵 4人
+            { type: 'elite_hussite_wagon', count: 3 },   // Row 1 中坚 = 精锐胡斯战车 3辆
+            { type: 'arbalest', count: 2 }   // Row 2 压阵 = 劲弩手 2人
+        ]
+    }
+];
+
+/** 勃艮第 火枪手+佛兰德长枪兵+精锐扈从骑兵（三角阵 2+3+4：火枪手尖刀 + 长枪兵中坚 + 扈从骑兵主力底边）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃艮第），文化保底与它对齐，消除「同名不同编」。 */
+export const BURGUNDIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hand_cannoneer', count: 2 },   // Row 0 尖刀 = 火枪手 2人
+            { type: 'flemish_pikeman', count: 3 },   // Row 1 中坚 = 佛兰德长枪兵 3人
+            { type: 'elite_coustillier', count: 4 }   // Row 2 底边主力 = 精锐扈从骑兵 4骑
+        ]
+    }
+];
+
+/** 雅典 重装步兵+将军+精锐古典散兵（鱼鳞阵 3+4+2：重装步兵前卫 + 将军主力 + 散兵压阵）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（希腊(xila)），文化保底与它对齐，消除「同名不同编」。 */
+export const ATHENIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hoplite', count: 3 },   // Row 0 前卫 = 雅典重装步兵 3人
+            { type: 'strategos', count: 4 },   // Row 1 主力 = 将军 4人
+            { type: 'elite_antiquity_skirmisher', count: 2 }   // Row 2 压阵 = 精锐古典散兵 2人
+        ]
+    }
+];
+
+/** 斯巴达 希腊骑兵三排同兵（方阵 3+3+3；方阵是主人单独指定的形态，不参与「主力占 4 档」规则）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（拉哥尼亚），文化保底与它对齐，消除「同名不同编」。 */
+export const SPARTANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hippeus', count: 3 },   // Row 0 = 希腊骑兵 3骑
+            { type: 'hippeus', count: 3 },   // Row 1 = 希腊骑兵 3骑
+            { type: 'hippeus', count: 3 }   // Row 2 = 希腊骑兵 3骑
+        ]
+    }
+];
+
+/** 缅甸 精锐战斗象+步弓手+精锐飞镖骑兵（三角阵 2+3+4：战象尖刀 + 步弓手中坚 + 飞镖骑兵主力底边）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃固/东吁/贡榜/骠/孟/蒲甘/阿瓦 7 势力），文化保底与它对齐，消除「同名不同编」。 */
+export const BURMESE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_battle_elephant', count: 2 },   // Row 0 尖刀 = 精锐战斗象 2头（象只许占 2 档）
+            { type: 'archer', count: 3 },   // Row 1 中坚 = 步弓手 3人
+            { type: 'elite_arambai', count: 4 }   // Row 2 底边主力 = 精锐飞镖骑兵 4骑
+        ]
+    }
+];
+
+
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
     NORTH:        NORTH_TIERS,
@@ -1956,23 +2080,23 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ORIE:         ORIE_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
     EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
-    THRACIAN:     SLAVIC_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（巴尔干步骑），待定制
+    THRACIAN: THRACIAN_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
     PERSIAN:      PERSIAN_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
     CUMAN:        CUMAN_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
     BRITONS: BRITONS_TIERS,  // 不列颠[2026-08-28 暂复用父文化]
     GOTHS: GOTHS_TIERS,  // 哥特[2026-08-28 暂复用父文化]
     HUNS: HUNS_TIERS,  // 匈人[2026-09-05 主人定：独立编成]
-    TEUTONS: GERMANIC_TIERS,  // 条顿[2026-08-28 暂复用父文化]
-    VIKINGS: SLAVIC_TIERS,  // 维京[2026-08-28 暂复用父文化]
+    TEUTONS: TEUTONS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GERMANIC_TIERS，已改独立编成
+    VIKINGS: VIKINGS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
     CELTS: CELTS_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
     ITALIANS: ITALIANS_TIERS,  // 意大利[2026-08-28 暂复用父文化]
-    SICILIANS: LATIN_TIERS,  // 西西里[2026-08-28 暂复用父文化]
+    SICILIANS: SICILIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用LATIN_TIERS，已改独立编成
     BULGARIANS: BULGARIANS_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: MAGYAR_TIERS,  // 马扎尔[2026-09-05 主人定：正规马扎尔军团编成]
     LITHUANIANS: LITHUANIANS_TIERS,  // 立陶宛[2026-08-28 暂复用父文化]
     POLES: POLES_TIERS,  // 波兰[2026-08-28 暂复用父文化]
-    BOHEMIANS: SLAVIC_TIERS,  // 波希米亚[2026-08-28 暂复用父文化]
-    BURGUNDIANS: LATIN_TIERS,  // 勃艮第[2026-08-28 暂复用父文化]
+    BOHEMIANS: BOHEMIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
+    BURGUNDIANS: BURGUNDIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用LATIN_TIERS，已改独立编成
     SPANISH: SPANISH_TIERS,  // 西班牙[2026-08-28 暂复用父文化]
     PORTUGUESE: PORTUGUESE_TIERS,  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: ETHIOPIANS_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
@@ -1987,11 +2111,11 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     TUPI: TUPI_TIERS,  // 图皮[2026-08-28 暂复用父文化]
     ARMENIANS: ARMENIANS_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
     GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
-    ATHENIANS: GREEK_TIERS,  // 雅典[2026-08-28 暂复用父文化]
-    SPARTANS: GREEK_TIERS,  // 斯巴达[2026-08-28 暂复用父文化]
+    ATHENIANS: ATHENIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GREEK_TIERS，已改独立编成
+    SPARTANS: SPARTANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GREEK_TIERS，已改独立编成
     MACEDONIANS: ALEXANDER_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
     ACHAEMENIDS: ACHAEMENIDS_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
-    BURMESE: DIANQIAN_TIERS,
+    BURMESE: BURMESE_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用DIANQIAN_TIERS，已改独立编成
     WALLACHIA: WALLACHIA_TIERS,
 
 };
