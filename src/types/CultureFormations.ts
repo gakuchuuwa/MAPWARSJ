@@ -219,7 +219,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
-    BASHU: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
     NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
@@ -1276,18 +1276,21 @@ export const HEXI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** BASHU 文化军团（triangle 2+3+4）
- *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 44 个势力实际在用的这套
- *  （蜀国、徽州、阆州、荆门…），原文化表那份已过时，作废。 */
+/** 古典古蜀军团（雁行 4+3+2，主力在前排）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（三星堆金沙古蜀王国）：
+ *   · 前排主力 先锋重装步兵（4档【重装】） —— 三星堆青铜黄金面具、青铜大立人、彩绘皮甲重铠与重盾，正面推进肉搏抗线，占 4 档重装主力。
+ *   · 中坚 蜀白毦兵（3档） —— 古蜀特有的插白鸟之羽（白毦）近战精锐，双手持无格柳叶形青铜剑轻捷穿插突击，悍勇不畏死，占 3 档中坚。
+ *   · 后排 古典掷矛手高级（2档【高级】） —— 巴蜀崇山密林毒箭短矛飞投死士，在矛盾掩护下侧后穿透狙杀，占 2 档支援。 */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 2 },   // Row 0
-            { type: 'elite_white_feather_guard', count: 3 },   // Row 1
-            { type: 'elite_chukonu', count: 4 }   // Row 2
+            { type: 'vanguard', count: 4 },
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
