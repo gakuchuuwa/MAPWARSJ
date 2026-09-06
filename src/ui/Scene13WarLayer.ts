@@ -3624,12 +3624,15 @@ export class Scene13WarLayer {
         } else if (NOMAD_DESERT.has(culture)) {
             // 沙漠：骆驼投石机
             items.push('mounted_trebuchet');
+        } else if (culture === 'STEPPE') {
+            // 草原/鞑靼：鞑靼火焰骆驼（自爆火焰破门）
+            items.push('flaming_camel');
         } else {
-            // 西洋中世纪：攻城塔 (移动攻城楼)
-            items.push('siege_tower');
+            // 西洋中世纪：攻城塔 + 爆破工兵（自爆炸药破门）
+            items.push('siege_tower', 'petard');
         }
 
-        return items.slice(0, 9);
+        return items.slice(0, 10);
     }
 
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
