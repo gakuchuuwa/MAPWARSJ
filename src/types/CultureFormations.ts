@@ -2205,16 +2205,21 @@ export const EGYPT_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 迦太基 战象+长矛兵+标枪手（鹤翼阵 2+4+3：破阵战象尖刀2 + 利比亚长矛主力两翼合围4 + 标枪手压阵3） */
+/** 古典布匿军团（鹤翼阵 2+4+3，中坚重装主力）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。大象只占 2 档。
+ *  史实依据（迦太基与汉尼拔布匿战争）：
+ *   · 前锋 战象（2档【大象降2档】） —— 汉尼拔翻越阿尔卑斯山奇袭罗马、扎马战役80头战象踏阵冲锋，用古典桑纳亚战象代北非森林象，占 2 档尖刀。
+ *   · 中坚主力 先锋重装步兵（4档【重装】） —— 迦太基神圣军团公民精锐重步兵，身披青铜重铠、持大盾长矛，稳坐中军正面抗线与决死斩阵，占 4 档重装主力。
+ *   · 后排 罗得岛投石兵（3档） —— 代巴利阿里投石索手（西地中海最负盛名的致命投石雇佣兵团），汉尼拔军中关键远程火力，曲射飞石密集压制。 */
 export const CARTHAGE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },
-            { type: 'spearman', count: 4 },
-            { type: 'skirmisher', count: 3 }
+            { type: 'sannahya', count: 2 },
+            { type: 'vanguard', count: 4 },
+            { type: 'rhodian_slinger', count: 3 }
         ]
     }
 ];
