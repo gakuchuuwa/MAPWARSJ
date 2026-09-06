@@ -282,7 +282,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     BABYLON: 'balance_yoke',
     HITTITES: 'triangle',    // 古典赫梯：锥形阵 2+3+4 底边双轮战车高级主力
     ASSYRIAN: 'fish_scale',
-    SCYTHIANS: 'triangle',
+    SCYTHIANS:     'triangle',    // 古典斯基泰：锥形阵 2+3+4 尖刀斯基泰斧骑2+中坚斯基泰骑射3+底边斯基泰骑射手高级4档主力
     BYZANTINE: 'square',
     FRANKS: 'triangle',
     SASANIAN: 'triangle',
@@ -2306,7 +2306,12 @@ export const ASSYRIAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 斯基泰 战斧骑兵+骑射手+骑射主力（锥形阵 2+3+4：斧骑先锋2 + 骑射手3 + 草原骑射主力4） */
+/** 古典斯基泰军团（锥形阵 2+3+4，主力在底边）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（黑海北岸大草原·斯基泰游牧帝国骑射与斧骑战法）：
+ *   · 尖刀先锋 斯基泰斧骑兵（2档） —— 希罗多德《历史》第四卷所载斯基泰精锐突骑，手持致命的短柄铁战斧（Sagaris）破阵劈砍撕裂敌线，占 2 档尖刀。
+ *   · 冲击中坚 斯基泰骑射手（3档） —— 庞廷草原传统游牧骑手，装备斯基泰反曲复合弓（Gorytos双弓袋），机动回旋奔射，占 3 档中坚。
+ *   · 底边主力 斯基泰骑射手高级（4档【高级】） —— 皇家斯基泰（Royal Scyths）王室黄金近卫神射手，远距暴烈破甲齐射主导决胜，占 4 档高级主力。 */
 export const SCYTHIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -2315,7 +2320,7 @@ export const SCYTHIANS_TIERS: CompositionTier[] = [
         slots: [
             { type: 'scythian_axe_cavalry', count: 2 },
             { type: 'scythian_horse_archer', count: 3 },
-            { type: 'scythian_horse_archer', count: 4 }
+            { type: 'elite_scythian_horse_archer', count: 4 }
         ]
     }
 ];
