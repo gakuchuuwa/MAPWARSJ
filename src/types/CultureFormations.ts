@@ -317,7 +317,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HEBREWS: 'square',
     WUSUN: 'triangle',
     QIANG: 'fish_scale',
-    NABATAEANS: 'crane_wing',
+    NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
     HEPHTHALITES: 'triangle',
     AINU: 'fish_scale',
     SWISS: 'square',
@@ -2772,16 +2772,21 @@ export const QIANG_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 纳巴泰 红海香路沙漠驼骑+岩壁神射手+悬崖护卫（鹤翼阵 2+4+3） */
+/** 古典纳巴泰军团（鹤翼阵 2+4+3，主力在中坚）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（佩特拉玫瑰岩凿要塞·红海香料商路沙漠骑兵）：
+ *   · 前锋两翼 古吉拉特骆驼斥候（2档） —— 红海沙漠香料商路先导驼骑，穿越内盖夫沙漠与阿拉伯荒漠，克制马匹穿插破风，占 2 档前锋。
+ *   · 中坚主力 古典骑射手重装（4档【重装】） —— 纳巴泰近东沙漠重装复合弓突骑，两翼合围冲锋突破，机动与射程兼具，占 4 档重装主力。
+ *   · 后排支援 巴克特里亚弓手（3档） —— 佩特拉粉红岩壁居高临下齐射的近东强弓手，长程压制敌军，占 3 档支援。 */
 export const NABATAEANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cav_archer', count: 2 },
-            { type: 'knight', count: 4 },
-            { type: 'archer', count: 3 }
+            { type: 'camel_scout', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'bactrian_archer', count: 3 }
         ]
     }
 ];
