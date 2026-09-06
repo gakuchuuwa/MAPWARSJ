@@ -998,7 +998,7 @@ export const PERIPHERY: CityDataV2[] = [
         note: '蒺藜山；懿州关隘', region: 'NORTHEAST' },
 
     // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
-    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 30000, region: 'NORTHEAST' },
+    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'big_city', troops: 30000, region: 'JURCHEN', note: '大金第一都城上京会宁府，完颜阿骨打立国之基，铁浮屠与猛安谋克圣地' },
 
 
     { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', troops: 30000, region: 'STEPPE' },
@@ -1006,7 +1006,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // 额尔古纳已删：室韦都城为俱轮泊 city_julunbo
-    { id: 'city_hetuala', name: '赫图阿拉', factionId: 'aisin_d', lat: 41.715981, lng: 125.032654, type: 'pass', troops: 20000, region: 'NORTHEAST' },
+    { id: 'city_hetuala', name: '赫图阿拉', factionId: 'aisin_d', lat: 41.715981, lng: 125.032654, type: 'pass', troops: 30000, region: 'MANCHU', note: '努尔哈赤建后金定八旗之开国都城，满洲发祥圣地' },
 
     { id: 'city_wuguo', name: '五国城', factionId: 'jurchen', lat: 46.32, lng: 129.56, type: 'pass', region: 'NORTHEAST', troops: 30000,
         note: '五国城；女真小城',
@@ -1237,7 +1237,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.24, lng: 59.63, type: 'medium_city', troops: 20000, region: 'CENTRAL_ASIA', mirror: true },
 
 
-    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'PERSIAN', troops: 30000, note: '大塞尔柱都城马鲁/梅尔夫；史籍常称木鹿' },
+    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'SELJUQ', troops: 30000, note: '大塞尔柱帝国东部都城马鲁/梅尔夫；苏丹桑贾尔王陵与突厥铁骑大本营' },
     { id: 'city_pagan', name: '蒲甘', factionId: 'pagan', lat: 21.207449, lng: 94.894409, type: 'medium_city', troops: 30000, tier: 1, region: 'BURMESE', note: '蒲甘王朝都，万塔之城' },
         // 第二类：四大汗国
     { id: 'city_almaliq', name: '弓月城', factionId: 'geluolu', lat: 43.979013, lng: 79.648132, type: 'small_city', region: 'STEPPE', troops: 30000, mirror: true,
@@ -2027,7 +2027,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 30000, region: 'BRITONS' },
-    { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'medium_city', troops: 30000, region: 'LATIN', note: '1600年前约15–22万，中世纪欧洲最大城仍未达50万，降 medium_city' },
+    { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 30000, region: 'FRENCH', note: '法兰西王国都城巴黎，百年战争决战要津，查理七世敕令骑兵大本营' },
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 30000, region: 'LATIN', note: '卡尔努特人首府，沙特尔圣母主教座堂' },
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 30000, region: 'GREEK' },
@@ -2057,7 +2057,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'medium_city', troops: 30000, region: 'EAST', mirror: true },
     { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'liulike', lat: 58.52, lng: 31.27, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city' },
     { id: 'city_mosike', name: '莫斯科', factionId: 'mosike_gongguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'medium_city', troops: 30000, region: 'SLAVIC', note: '彼得大帝1703年建于涅瓦河口，1712-1918俄罗斯帝国首都，俄罗斯帝国波罗的海出海口与海军基地；北方战争波尔塔瓦大捷背景下营建' },
+    { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'medium_city', troops: 30000, region: 'RUSSIAN', note: '彼得大帝1703年建于涅瓦河口，1712-1918俄罗斯帝国首都，俄罗斯帝国波罗的海出海口与海军基地；北方战争波尔塔瓦大捷背景下营建' },
     { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'xieerpuhuofu_gongguo', lat: 54.92, lng: 37.41, type: 'pass', troops: 30000, region: 'SLAVIC' },
     { id: 'city_fulajimier', name: '弗拉基米尔', factionId: 'fulajimier_gongguo', lat: 56.12, lng: 40.4, type: 'small_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_simolengsike', name: '斯摩棱斯克', factionId: 'daniebo', lat: 54.78, lng: 32.04, type: 'small_city', troops: 30000, region: 'SLAVIC' },
@@ -2992,7 +2992,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_feiluzhabade', name: '菲鲁扎巴德', factionId: 'sashan', lat: 28.85, lng: 52.53, type: 'stockade', troops: 30000, region: 'SASANIAN', note: '萨珊建立者阿尔达希尔一世所建第一城（古阿尔达希尔-花拉），今伊朗法尔斯' },
     { id: 'city_susa', name: '苏萨', factionId: 'ailan', lat: 32.19, lng: 48.24, type: 'stockade', troops: 30000, region: 'ACHAEMENIDS' },
-    { id: 'city_yisifahan', name: '伊斯法罕', factionId: 'safawei_d', lat: 32.65, lng: 51.66, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
+    { id: 'city_yisifahan', name: '伊斯法罕', factionId: 'safawei_d', lat: 32.65, lng: 51.66, type: 'medium_city', troops: 30000, region: 'SAFAVID', note: '萨法维帝国极盛都城（阿拔斯一世大帝），伊斯法罕半天下' },
     { id: 'city_wuluke', name: '乌鲁克', factionId: 'sumeier', lat: 31.32, lng: 45.64, type: 'small_city', troops: 20000, region: 'BABYLON' },
 
     { id: 'city_alepo', name: '阿勒颇', factionId: 'ayoubu', lat: 36.2, lng: 37.16, type: 'medium_city', troops: 30000, region: 'ORIE', note: '阿尤布都，黎凡特商路枢纽' },
@@ -3002,14 +3002,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 30000, region: 'STEPPE' },
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 30000, region: 'GREEK' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.93, lng: 32.87, type: 'small_city', troops: 30000, region: 'HITTITES' },
-    { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '奥斯曼帝国第一都城（1326–1363）；丝路绸都' },
+    { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'big_city', troops: 30000, region: 'OTTOMAN', note: '奥斯曼帝国第一都城（1326–1363）；苏丹亲兵耶尼切里军团大本营' },
     { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'BABYLON' },
 
     { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'ACHAEMENIDS', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'small_city', troops: 30000, region: 'ORIE', note: '纳巴泰王国首都；公元363/551年大地震后彻底废弃沦为古城遗址，18世纪前无常住人口' },
-    { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'INDIA', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },
+    { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'SIKH', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },
     { id: 'city_deli', name: '德里', factionId: 'deli', lat: 28.61, lng: 77.23, type: 'big_city', troops: 30000, region: 'INDIA', note: '德里苏丹国首都（1206–1526），阿拉乌丁·卡尔吉击退蒙古入侵，帝国版图巅峰' },
-    { id: 'city_agela', name: '阿格拉', factionId: 'mowoer', lat: 27.18, lng: 78.02, type: 'big_city', troops: 30000, region: 'INDIA', note: '莫卧儿帝国首都（阿克巴大帝），泰姬陵所在地' },
+    { id: 'city_agela', name: '阿格拉', factionId: 'mowoer', lat: 27.18, lng: 78.02, type: 'big_city', troops: 30000, region: 'MUGHAL', note: '莫卧儿帝国首都（阿克巴大帝），泰姬陵所在地' },
         { id: 'city_qunvcheng', name: '曲女城', factionId: 'jieri', lat: 27.05, lng: 79.92, type: 'medium_city', troops: 30000, region: 'INDIA', note: '戒日帝国首都，玄奘到访，统一北印度' },
     { id: 'city_walanaxi', name: '瓦拉纳西', factionId: 'jiashi_d', lat: 25.32, lng: 83.01, type: 'medium_city', troops: 30000, region: 'INDIA', note: '迦尸国（十六雄国之一）首都，印度教圣城；城居常估约10万级（约1300年前后破10万、1600年约15万），升 medium_city' },
         { id: 'city_huashicheng', name: '华氏城', factionId: 'kongque', lat: 25.61, lng: 85.13, type: 'big_city', troops: 30000, region: 'INDIA', mirror: true },

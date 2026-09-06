@@ -418,6 +418,15 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SOGDIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     TANGUT: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     JAVANESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    JURCHEN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
+    SELJUQ: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    OTTOMAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    FRENCH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, trebuchet: true },
+    MANCHU: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    MUGHAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    SAFAVID: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    RUSSIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    SIKH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
 };
 
 /**
@@ -1142,6 +1151,15 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SOGDIANS: 'CEAS',
     TANGUT: 'ASIA',
     JAVANESE: 'SEAS',
+    JURCHEN: 'ASIA',
+    SELJUQ: 'CEAS',
+    OTTOMAN: 'ORIE',
+    FRENCH: 'WEST',
+    MANCHU: 'ASIA',
+    MUGHAL: 'INDI',
+    SAFAVID: 'PERS',
+    RUSSIAN: 'EAST',
+    SIKH: 'INDI',
 };
 
 

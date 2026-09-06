@@ -17,7 +17,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     sashan: { name: '萨瓦兰铁骑', tier: 2 },        // 菲鲁扎巴德·萨珊：铁甲重骑兵（波斯铁甲圣骑）
     safawei_d: { name: '红头军', tier: 2 },         // 伊斯法罕·萨法维：土库曼精锐骑兵（奇兹尔巴什）
     ansxi: { name: '帕提亚铁骑', tier: 2 },         // 尼萨·安息：铁甲重骑兵
-    seljuq: { name: '塞尔柱近卫', tier: 2 },        // 木鹿·塞尔柱：突厥近卫
+    seljuq: { name: '古拉姆', tier: 2 },        // 木鹿·塞尔柱：突厥近卫
     yilihanguo_d: { name: '伊利汗卫', tier: 2 },    // 大不里士·伊利汗国：蒙古怯薛
 
     // ── T3 风土之兵 ──

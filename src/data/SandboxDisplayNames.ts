@@ -1090,7 +1090,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'aqimeinide': '阿契',
 'sashan': '萨珊',
     'ailan': '埃兰',
-    'safawei_d': '萨法',
+    'safawei_d': '萨朝',
 'sumeier': '苏美',
     'ayoubu': '阿尤',
     'mamuluke': '马穆',

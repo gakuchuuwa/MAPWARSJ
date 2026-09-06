@@ -8,7 +8,7 @@
 export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     xike: { name: '卡尔萨战士', tier: 2 },      // 拉合尔·兰季特·辛格：锡克卡尔萨军民兵合一，统一旁遮普的战略主力
     deli: { name: '德里苏丹骑', tier: 3 },      // 德里·阿拉乌丁·卡尔吉：击退蒙古入侵的德里苏丹国骑兵
-    mowoer: { name: '莫卧铁骑', tier: 2 },       // 阿格拉·阿克巴：莫卧儿帝国统一北印度的铁骑主力
+    mowoer: { name: '铁甲象军', tier: 2 },       // 阿格拉·阿克巴：莫卧儿帝国阿克巴披挂锁子甲的皇家重装象军主力（三防重：避开旗号莫卧同字）
     jieri: { name: '戒日象军', tier: 3 },        // 曲女城·戒日王：统一北印度的象军
     jiashi_d: { name: '迦尸象兵', tier: 4 },     // 瓦拉纳西·梵摩达：迦尸国十六雄国象兵
     kongque: { name: '孔雀战象', tier: 2 },      // 华氏城·旃陀罗笈多：孔雀帝国统一印度的战象军团
