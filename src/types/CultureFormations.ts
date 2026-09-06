@@ -146,7 +146,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     UIGHUR: 'CAVALRY',
     MOHE: 'INFANTRY',
     ANGLO_SAXON: 'INFANTRY',
-    AVARS: 'CAVALRY',
     GHANA: 'INFANTRY',
     KHAZARS: 'CAVALRY',
     VANDALS: 'MIXED',
@@ -220,10 +219,10 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
-    NORTHEAST:    'fish_scale',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
+    NORTHEAST:    'triangle',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
-    CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
+    CENTRAL:      'echelon',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
@@ -232,7 +231,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
-    HEXI:         'echelon',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
+    HEXI:         'fish_scale',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 
     // 印度（鱼鳞 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
@@ -291,12 +290,11 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NANZHAO: 'fish_scale',
     SRIVIJAYA: 'crane_wing',
     KUSHAN: 'triangle',
-    KUSH: 'crane_wing',
+    KUSH: 'crane_wing',   // 古典努比亚：鹤翼阵 2+4+3 前锋麦查伊飞矛+中坚先锋重步主力+后排努比亚强弓
     KHITAN: 'triangle',
     UIGHUR: 'triangle',
     MOHE: 'fish_scale',
     ANGLO_SAXON: 'square',
-    AVARS: 'crane_wing',
     GHANA: 'echelon',
     KHAZARS: 'crane_wing',
     VANDALS: 'echelon',
@@ -316,7 +314,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SIKH: 'fish_scale',
     HEBREWS: 'square',
     WUSUN: 'triangle',
-    QIANG: 'fish_scale',
+    QIANG: 'triangle',
     NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
     HEPHTHALITES: 'triangle',
     AINU: 'fish_scale',
@@ -1142,13 +1140,12 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordsman', count: 2 }, // Row 0 尖刀先锋 = 刀剑手 2人
-            { type: 'fire_archer', count: 3 },    // Row 1 齐射中坚 = 火焰弓箭手 3人
-            { type: 'elite_chukonu', count: 4 }   // Row 2 底边主力齐射 = 精锐诸葛弩 4人
+            { type: 'white_feather_guard', count: 4, scale: 1 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'war_chariot_ranged', count: 2, scale: 1 }
         ]
     }
 ];
-
 /** 2. 北方 辽刀+精锐黑光铠骑兵+诸葛弩（鱼鳞阵 3+4+2：辽刀前卫 + 精锐黑光铠骑兵主力 + 诸葛弩后排支援） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
@@ -1170,13 +1167,12 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 3 },        // Row 0 前卫突破 = 金国铁浮图 3骑
-            { type: 'elite_iron_pagoda', count: 4 },  // Row 1 中军主力 = 精锐铁浮图 4骑
-            { type: 'kipchak', count: 2 }             // Row 2 尾收支援 = 钦察弓骑 2骑
+            { type: 'tiger_rider', count: 2, scale: 1 },
+            { type: 'kipchak', count: 3, scale: 1 },
+            { type: 'xianbei_raider', count: 4, scale: 1 }
         ]
     }
 ];
-
 /** 4. 朝鲜 剑士+黑光铠骑兵+火焰弓箭手（鹤翼阵 2+4+3：剑士步兵前锋 + 黑光铠骑兵主力 + 火焰弓箭手后排） */
 export const KOREA_TIERS: CompositionTier[] = [
     {
@@ -1269,13 +1265,12 @@ export const HEXI_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_liao_dao', count: 4 }, // Row 0 主力·宽线抗线 = 精锐辽刀 4人
-            { type: 'hei_kuang', count: 3 },      // Row 1 中军接应 = 黑光铠骑兵 3骑
-            { type: 'chukonu', count: 2 }         // Row 2 压阵远程 = 诸葛弩 2人
+            { type: 'white_feather_guard', count: 3, scale: 1 },
+            { type: 'elite_chukonu', count: 4, scale: 1 },
+            { type: 'tiger_rider', count: 2, scale: 1 }
         ]
     }
 ];
-
 /** 古典古蜀军团（雁行 4+3+2，主力在前排）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（三星堆金沙古蜀王国）：
@@ -1404,15 +1399,26 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
 ];
 
 /** 16. 斯拉夫 贵族铁骑+精锐贵族铁骑+复合弓箭手（鹤翼阵 2+4+3：贵族铁骑前锋 + 精锐波雅尔重骑主力 + 复合弓后排） */
+/** 封建罗斯军团（鹤翼 2+4+3，主力在两翼展开那一档）。
+ *  2026-09-07 重配。原编制把「亚美尼亚复合弓手」放在 4 档主力 —— 那是亚美尼亚的兵、
+ *  而且是城堡档；真正的罗斯主力贵族铁骑反被压在后排 3 档，主次颠倒。
+ *
+ *  史实依据（基辅罗斯，9–11 世纪）：
+ *   · 主力 4 档 斯拉夫贵族铁骑精锐 —— 大公的「德鲁日纳」(дружина) 亲卫队，
+ *     罗斯军队的核心与决战力量，符合「主力须为重装/高级/精锐」。
+ *   · 前排 2 档 诺斯狂暴战士 —— 罗斯本由瓦良格（北欧）人建国，留里克一系的斧兵
+ *     是早期罗斯军的锋刃，与拜占庭的瓦兰吉卫队同源。
+ *   · 后排 3 档 层压复合弓手 —— 罗斯与草原诸部长期交手，习得筋角层压复合弓，
+ *     取代原来那个亚美尼亚兵。 */
 export const SLAVIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_steppe_lancer', count: 2, scale: 1 },
-            { type: 'composite_bowman', count: 4, scale: 1 },
-            { type: 'elite_boyar', count: 3, scale: 1 }
+            { type: 'norse_warrior', count: 2, scale: 1 },
+            { type: 'elite_boyar', count: 4, scale: 1 },
+            { type: 'laminated_bowman', count: 3, scale: 1 }
         ]
     }
 ];
@@ -1936,7 +1942,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     UIGHUR: '封建回鹘军团',
     MOHE: '封建靺鞨军团',
     ANGLO_SAXON: '封建盎格鲁-撒克逊军团',
-    AVARS: '封建阿瓦尔军团',
     GHANA: '封建加纳军团',
     KHAZARS: '封建可萨军团',
     VANDALS: '封建汪达尔军团',
@@ -1956,7 +1961,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SIKH: '帝王锡克军团',
     HEBREWS: '古典希伯来军团',
     WUSUN: '古典乌孙军团',
-    QIANG: '古典先零羌军团',
+    QIANG: '古典羌族军团',
     NABATAEANS: '古典纳巴泰军团',
     HEPHTHALITES: '封建嚈哒军团',
     AINU: '城堡阿伊努军团',
@@ -2408,16 +2413,21 @@ export const KUSHAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 古典努比亚 努比亚神射手+长矛兵+轻装散兵（鹤翼阵 4+3+2：复合弓手4 + 长矛兵3 + 散兵2） */
+/** 古典努比亚军团（鹤翼阵 2+4+3，主力在中坚）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（“弓之国度”塔-塞提·库施与麦罗埃铁器强权）：
+ *   · 前锋两翼 古典掷矛手高级（2档【高级】） —— 努比亚麦查伊（Medjay）荒漠飞矛死士，身手矫捷，以破甲标枪两翼游击撕扯，占 2 档前锋。
+ *   · 中坚主力 先锋重装步兵（4档【重装】） —— 麦罗埃“古代非洲伯明翰”冶铁中心锻造的铁甲长矛勇士，中坚厚实抗线突破，占 4 档重装主力。
+ *   · 后排支援 巴克特里亚弓手（3档） —— 古埃及名震遐迩的“弓之国度”大复合强木弓神射手，超长射程与极高杀伤覆盖战场，占 3 档支援。 */
 export const KUSH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'composite_bowman', count: 4 },
-            { type: 'spearman', count: 3 },
-            { type: 'skirmisher', count: 2 }
+            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'vanguard', count: 4 },
+            { type: 'bactrian_archer', count: 3 }
         ]
     }
 ];
@@ -2478,19 +2488,6 @@ export const ANGLO_SAXON_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 阿瓦尔 双马镫装甲骑射+阿瓦尔长骑枪+轻骑兵（鹤翼阵 4+3+2） */
-export const AVARS_TIERS: CompositionTier[] = [
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'cav_archer', count: 4 },
-            { type: 'lancer', count: 3 },
-            { type: 'scout_cavalry', count: 2 }
-        ]
-    }
-];
 
 /** 加纳 索宁克黄金长矛+淬毒长箭弓兵+近卫骆驼（雁行阵 4+3+2） */
 export const GHANA_TIERS: CompositionTier[] = [
@@ -2765,13 +2762,12 @@ export const QIANG_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'spearman', count: 3 },
-            { type: 'light_cavalry', count: 2 }
+            { type: 'antiquity_spearman', count: 2, scale: 1 },
+            { type: 'antiquity_scout_cavalry', count: 3, scale: 1 },
+            { type: 'antiquity_cavalry_archer', count: 4, scale: 1 }
         ]
     }
 ];
-
 /** 古典纳巴泰军团（鹤翼阵 2+4+3，主力在中坚）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（佩特拉玫瑰岩凿要塞·红海香料商路沙漠骑兵）：
@@ -2937,7 +2933,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     UIGHUR: UIGHUR_TIERS,
     MOHE: MOHE_TIERS,
     ANGLO_SAXON: ANGLO_SAXON_TIERS,
-    AVARS: AVARS_TIERS,
     GHANA: GHANA_TIERS,
     KHAZARS: KHAZARS_TIERS,
     VANDALS: VANDALS_TIERS,

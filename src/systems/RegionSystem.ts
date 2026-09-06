@@ -97,7 +97,6 @@ export type RegionType =
     | 'UIGHUR'       // 回鹘（漠北回鹘汗国金镞角弓与耐力突骑）
     | 'MOHE'         // 靺鞨（海东盛国渤海鹿角硬弓与雪原山城）
     | 'ANGLO_SAXON'  // 盎格鲁-撒克逊（双手大斧长矛步兵盾墙）
-    | 'AVARS'        // 阿瓦尔（多瑙河双马镫装甲骑射鼻祖）
     | 'GHANA'        // 加纳（西非黄金之国索宁克长矛方阵）
     | 'KHAZARS'      // 可萨（高加索里海拉尔西亚锁甲铁骑）
     | 'VANDALS'      // 汪达尔（西地中海两栖抢滩与重长枪方阵）
@@ -184,7 +183,6 @@ export const REGION_ORDER: RegionType[] = [
     'UIGHUR',
     'MOHE',
     'ANGLO_SAXON',
-    'AVARS',
     'GHANA',
     'KHAZARS',
     'VANDALS',
@@ -291,7 +289,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     UIGHUR: '封建回鹘',
     MOHE: '封建靺鞨',
     ANGLO_SAXON: '封建盎格鲁-撒克逊',
-    AVARS: '封建阿瓦尔',
     GHANA: '封建加纳',
     KHAZARS: '封建可萨',
     VANDALS: '封建汪达尔',
@@ -407,7 +404,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     UIGHUR: '封建回鹘',
     MOHE: '封建靺鞨',
     ANGLO_SAXON: '封建盎格鲁-撒克逊',
-    AVARS: '封建阿瓦尔',
     GHANA: '封建加纳',
     KHAZARS: '封建可萨',
     VANDALS: '封建汪达尔',
@@ -474,8 +470,6 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'INCAS': 'ANDE',                // 塔万廷苏尤(马丘比丘) = 印加帝国，本来就在用【安第斯军团】
     'INDIANS': 'PURU',              // 库特布朝(戈尔康达, 17.4°N 德干) —— 泰卢固语区，属达罗毗荼南印度。
                                     //   注意别写成 PORUS(补噜)：那是旁遮普的波鲁斯王，在印度西北，方位相反。
-    'FRANKS': 'LATIN',              // 瓦卢瓦(香波堡, 卢瓦尔河谷) —— 法兰西王室；本表无 FRANCE，
-                                    //   拉丁基督教世界是最贴的现有归属（坐标自动判定也给 LATIN，互相印证）。
 };
 
 export type CityScale = 'big' | 'medium' | 'small' | 'pass';
@@ -675,7 +669,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     UIGHUR: '#b8860b',
     MOHE: '#2e8b57',
     ANGLO_SAXON: '#4682b4',
-    AVARS: '#8b0000',
     GHANA: '#ffd700',
     KHAZARS: '#4b0082',
     VANDALS: '#5c6b73',
@@ -1243,12 +1236,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
-    AVARS: {
-        small: resolvePath('/cities/slavic_small.png'),
-        medium: resolvePath('/cities/slavic_medium.png'),
-        big: resolvePath('/cities/slavic_big.png'),
-        pass: resolvePath('/cities/slavic_pass.png')
-    },
     GHANA: {
         small: resolvePath('/cities/africa_small.png'),
         medium: resolvePath('/cities/africa_medium.png'),
@@ -1567,7 +1554,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     UIGHUR:      ['city_woluoduobali'],
     MOHE:        ['city_shangjing_longquan'],
     ANGLO_SAXON: ['city_winchester'],
-    AVARS:       ['city_pannonia'],
     GHANA:       ['city_kumbi_saleh'],
     KHAZARS:     ['city_itil'],
     VANDALS:     ['city_xibo'],

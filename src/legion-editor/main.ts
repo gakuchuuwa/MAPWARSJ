@@ -880,7 +880,6 @@ interface FactionLegionRow {
     capitalCityName?: string;
     region: RegionType;
     regionLabel: string;
-    isCustom: boolean;
     /** 该势力的史实将领名（搜索用：主人习惯按武将找势力，如「施琅」→ wenling） */
     generalName?: string;
     /** 精锐**番号** + tier（如 wenling → 福建水师 T3），出处 ExpeditionLegions。
@@ -909,7 +908,6 @@ let clipboardLegion: CustomFactionLegion | null = null;
 
 let searchQuery = '';
 let selectedRegionFilter: string = 'all';
-let selectedStatusFilter: 'all' | 'custom' | 'default' = 'all';
 let animState: 'idle' | 'move' | 'attack' = 'idle';
 let animDirection: number = 2; // 默认朝东南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
 let animTimer: number | null = null;
@@ -964,11 +962,6 @@ app.innerHTML = `
     <option value="all">全部文化区 (18)</option>
     ${REGION_ORDER.map(r => `<option value="${r}">${REGION_LABELS[r]} (${r})</option>`).join('')}
   </select>
-  <select id="le-status-filter" class="le-select">
-    <option value="all">全部状态</option>
-    <option value="custom">仅已专属定制</option>
-    <option value="default">仅文化区默认</option>
-  </select>
   <span id="le-stats" class="le-stats">加载中…</span>
 </div>
 <div class="le-toolbar" id="le-toolbar-units" style="display:none;">
@@ -1017,7 +1010,6 @@ injectStyles();
 const els = {
     search: document.getElementById('le-search') as HTMLInputElement,
     regionFilter: document.getElementById('le-region-filter') as HTMLSelectElement,
-    statusFilter: document.getElementById('le-status-filter') as HTMLSelectElement,
     stats: document.getElementById('le-stats')!,
     tableWrap: document.getElementById('le-table-wrap')!,
     panel: document.getElementById('le-panel')!,
@@ -1405,7 +1397,6 @@ function buildRows(): void {
         const flagText = SANDBOX_DISPLAY_NAMES[f.id] || f.name.slice(0, 2);
 
         const custom = localCustomCompositions[f.id];
-        const isCustom = !!custom;
 
         let formationMode: FormationMode = custom?.formationMode ?? CULTURE_FORMATION_MODE[region] ?? 'square';
         let slots: CompositionSlot[] = custom?.slots
@@ -1425,7 +1416,6 @@ function buildRows(): void {
             capitalCityName: capCity?.name || '未知',
             region,
             regionLabel,
-            isCustom,
             generalName: FACTION_GENERALS[f.id]?.generalName,
             eliteName: getExpeditionEliteConfig(f.id)?.name,
             eliteTier: getExpeditionEliteConfig(f.id)?.tier,
@@ -1457,10 +1447,10 @@ function sortRows(): void {
             }
             return sortAsc ? a.regionLabel.localeCompare(b.regionLabel, 'zh-CN') : b.regionLabel.localeCompare(a.regionLabel, 'zh-CN');
         }
-        if (sortCol === 'isCustom') {
-            const na = a.isCustom ? 1 : 0;
-            const nb = b.isCustom ? 1 : 0;
-            return sortAsc ? na - nb : nb - na;
+        if (sortCol === 'legionName') {
+            const la = effectiveLegionName(a);
+            const lb = effectiveLegionName(b);
+            return sortAsc ? la.localeCompare(lb, 'zh-CN') : lb.localeCompare(la, 'zh-CN');
         }
         let va: any = (a as any)[sortCol] ?? '';
         let vb: any = (b as any)[sortCol] ?? '';
@@ -1473,8 +1463,6 @@ function applyFilter(): void {
     const q = searchQuery.toLowerCase().trim();
     filteredRows = allRows.filter(r => {
         if (selectedRegionFilter !== 'all' && r.region !== selectedRegionFilter) return false;
-        if (selectedStatusFilter === 'custom' && !r.isCustom) return false;
-        if (selectedStatusFilter === 'default' && r.isCustom) return false;
         if (q) {
             const match = r.factionId.toLowerCase().includes(q)
                 || r.factionName.toLowerCase().includes(q)
@@ -1490,8 +1478,7 @@ function applyFilter(): void {
 
     sortRows();
 
-    const customCount = allRows.filter(r => r.isCustom).length;
-    els.stats.innerHTML = `已定制势力: <b style="color:#7cd688">${customCount}</b> / ${allRows.length} | 当前显示: <b>${filteredRows.length}</b>`;
+    els.stats.innerHTML = `当前显示: <b>${filteredRows.length}</b>`;
 }
 
 function renderTable(): void {
@@ -1516,7 +1503,6 @@ function renderTable(): void {
           <th data-col="row2Type">中坚${sortArrow('row2Type')}</th>
           <th data-col="row3Type">后排${sortArrow('row3Type')}</th>
           <th data-col="legionName">军团名${sortArrow('legionName')}</th>
-          <th data-col="isCustom" style="width:66px;">状态${sortArrow('isCustom')}</th>
         </tr>
       </thead>
       <tbody>
@@ -1543,7 +1529,6 @@ function renderTable(): void {
             <td>${r.legionName
                 ? `<span style="color:#c9a86a;font-size:11px;">${r.legionName}</span>`
                 : `<span style="color:#7a7266;font-size:11px;">—</span>`}</td>
-            <td>${r.isCustom ? `<span class="status-tag status-custom">专属</span>` : `<span class="status-tag status-default">默认</span>`}</td>
           </tr>
         `).join('')}
       </tbody>
