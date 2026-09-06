@@ -296,7 +296,13 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ANGLO_SAXON: 'WEST_CASTLE_AGE3',         // 盎格鲁-撒克逊：温彻斯特西欧石堡
     AVARS: 'SLAV_CASTLE_AGE3',               // 阿瓦尔：潘诺尼亚环形营要塞
     GHANA: 'AFRI_CASTLE_AGE3',               // 加纳：西非黄金要塞
-    KHAZARS: 'CEAS_CASTLE_AGE3',             // 可萨：可萨阿的尔要塞
+    KHAZARS: 'CEAS_CASTLE_AGE3',
+    VANDALS: 'WEST_CASTLE_AGE3',             // 汪达尔：西地中海迦太基海堡
+    LOMBARDS: 'WEST_CASTLE_AGE3',            // 伦巴第：北意大利帕维亚石堡
+    ROURAN: 'CEAS_CASTLE_AGE3',              // 柔然：大漠游牧王帐要塞
+    SOGDIANS: 'CEAS_CASTLE_AGE3',            // 粟特：河中绿洲城郭要塞
+    TANGUT: 'ASIA_CASTLE_AGE3',              // 党项：贺兰山灵夏边寨
+    JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞             // 可萨：可萨阿的尔要塞
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

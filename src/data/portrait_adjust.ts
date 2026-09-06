@@ -7626,6 +7626,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/STEPPE/__闲置__STEPPE_86.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/STEPPE/__闲置__STEPPE_87.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/STEPPE/__闲置__STEPPE_88.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/STEPPE/image.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/STEPPE/sijitai_ataiasi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {

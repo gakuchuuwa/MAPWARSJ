@@ -24,7 +24,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T3 风土之兵 ──
     liguliya: { name: '利古里亚弩', tier: 3 },          // 热那亚弩手专名；避据点「热那亚」叠字
-    lunbadi: { name: '米兰弩手', tier: 3 },          // 米兰·斯福尔扎
+    lunbadi: { name: '撒克斯重砍手', tier: 3 },          // 米兰·阿尔博因：伦巴第撒克斯单刃大刀近卫
     gaolu: { name: '敕令骑兵', tier: 3 },          // 巴黎·查理七世：compagnies d'ordonnance；避势力「法兰西」叠字
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     langgeduoke: { name: '图卢兹骑士', tier: 4 },

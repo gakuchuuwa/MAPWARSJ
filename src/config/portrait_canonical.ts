@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/9/6 21:28:15（共 57 条）
+ * 生成时间：2026/9/6 22:15:08（共 59 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -58,7 +58,9 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": "/assets/SLAVIC/__多余__SLAVIC_03.png",
     "/assets/SLAVIC/nuowei_halaer.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
     "/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png": "/assets/SLAVIC/__多余__SLAVIC_02.png",
+    "/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png": "/assets/SOUTHEAST_ASIA/image.png",
     "/assets/SPANISH/trastamara_feidinanershi.png": "/assets/SPANISH/__多余__SPANISH_03.png",
-    "/assets/STEPPE/sijitai_ateas.png": "/assets/STEPPE/dingling_weilu.png",
+    "/assets/STEPPE/dingling_weilu.png": "/assets/STEPPE/__多余__STEPPE_03.png",
+    "/assets/STEPPE/sijitai_ataiasi.png": "/assets/STEPPE/image.png",
     "/assets/STEPPE/__闲置__STEPPE_85.png": "/assets/STEPPE/__多余__STEPPE_02.png"
 };

@@ -68,6 +68,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     jinling_tandaoji: { generalId: 'jinling_tandaoji', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_683', defBalanceSkillId: 'ts_262', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_010', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},
 
+    sijitai_ateas: { generalId: 'sijitai_ateas', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_711', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_098', aptitude: 'create', attackStyle: 'attack' },
+
 
 
     guangzhou_liuyin: { generalId: 'guangzhou_liuyin', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'attack'},

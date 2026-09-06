@@ -105,7 +105,13 @@ export type RegionType =
     | 'ANGLO_SAXON'  // 盎格鲁-撒克逊（双手大斧长矛步兵盾墙）
     | 'AVARS'        // 阿瓦尔（多瑙河双马镫装甲骑射鼻祖）
     | 'GHANA'        // 加纳（西非黄金之国索宁克长矛方阵）
-    | 'KHAZARS';     // 可萨（高加索里海拉尔西亚锁甲铁骑）
+    | 'KHAZARS'      // 可萨（高加索里海拉尔西亚锁甲铁骑）
+    | 'VANDALS'      // 汪达尔（西地中海两栖抢滩与重长枪方阵）
+    | 'LOMBARDS'     // 伦巴第（铁王冠撒克斯单刃大刀与飞斧破阵）
+    | 'ROURAN'       // 柔然（大漠首创可汗生铁具装马铠铁骑）
+    | 'SOGDIANS'     // 粟特（丝路昭武九姓双层锁甲武装商卫与重弩）
+    | 'TANGUT'       // 党项（贺兰山灵夏铁索系鞍铁鹞子与步战山讹）
+    | 'JAVANESE';    // 爪哇（婆罗浮屠夏连特拉波浪淬毒克利斯剑）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -166,6 +172,12 @@ export const REGION_ORDER: RegionType[] = [
     'AVARS',
     'GHANA',
     'KHAZARS',
+    'VANDALS',
+    'LOMBARDS',
+    'ROURAN',
+    'SOGDIANS',
+    'TANGUT',
+    'JAVANESE',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -258,6 +270,12 @@ export const REGION_LABELS: Record<RegionType, string> = {
     AVARS: '封建阿瓦尔',
     GHANA: '封建加纳',
     KHAZARS: '封建可萨',
+    VANDALS: '封建汪达尔',
+    LOMBARDS: '封建伦巴第',
+    ROURAN: '封建柔然',
+    SOGDIANS: '封建粟特',
+    TANGUT: '城堡党项',
+    JAVANESE: '封建爪哇',
 };
 
 /**
@@ -356,6 +374,12 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     AVARS: '封建阿瓦尔',
     GHANA: '封建加纳',
     KHAZARS: '封建可萨',
+    VANDALS: '封建汪达尔',
+    LOMBARDS: '封建伦巴第',
+    ROURAN: '封建柔然',
+    SOGDIANS: '封建粟特',
+    TANGUT: '城堡党项',
+    JAVANESE: '封建爪哇',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -606,6 +630,12 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     AVARS: '#8b0000',
     GHANA: '#ffd700',
     KHAZARS: '#4b0082',
+    VANDALS: '#5c6b73',
+    LOMBARDS: '#8b4513',
+    ROURAN: '#4a0e17',
+    SOGDIANS: '#c19a6b',
+    TANGUT: '#795548',
+    JAVANESE: '#2e8540',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1201,6 +1231,42 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
     },
+    VANDALS: {
+        small: resolvePath('/cities/mediterranean_small.png'),
+        medium: resolvePath('/cities/mediterranean_medium.png'),
+        big: resolvePath('/cities/mediterranean_big.png'),
+        pass: resolvePath('/cities/mediterranean_pass.png')
+    },
+    LOMBARDS: {
+        small: resolvePath('/cities/western_small.png'),
+        medium: resolvePath('/cities/western_medium.png'),
+        big: resolvePath('/cities/western_big.png'),
+        pass: resolvePath('/cities/western_pass.png')
+    },
+    ROURAN: {
+        small: resolvePath('/cities/steppe_small.png'),
+        medium: resolvePath('/cities/steppe_medium.png'),
+        big: resolvePath('/cities/steppe_big.png'),
+        pass: resolvePath('/cities/steppe_pass.png')
+    },
+    SOGDIANS: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    TANGUT: {
+        small: resolvePath('/cities/city_small.png'),
+        medium: resolvePath('/cities/city_medium.png'),
+        big: resolvePath('/cities/city_big.png'),
+        pass: resolvePath('/cities/pass.png')
+    },
+    JAVANESE: {
+        small: resolvePath('/cities/southeast_asia_small.png'),
+        medium: resolvePath('/cities/southeast_asia_medium.png'),
+        big: resolvePath('/cities/southeast_asia_big.png'),
+        pass: resolvePath('/cities/southeast_asia_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1356,13 +1422,13 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     HITTITES: ['city_hatusha'],          // 赫梯（哈图沙都城）
     ASSYRIAN: ['city_niniwei'],         // 亚述（尼尼微帝都）
     PARTHIA: ['city_nisa'],             // 安息（尼萨王都）
-    SCYTHIANS: ['city_asu'],            // 斯基泰（阿速城/塔纳伊斯游牧贸易王庭）
+    SCYTHIANS: ['city_asu'],            // 斯基泰（塔纳伊斯游牧商埠与贸易要津）
     BYZANTINE: ['city_junshitandingbao'], // 拜占庭（君士坦丁堡帝都）
     FRANKS: ['city_kelong', 'city_yachen'], // 法兰克（科隆加洛林重镇、亚琛帝都）
     SASANIAN: ['city_feiluzhabade'],     // 萨珊（菲鲁扎巴德开国帝都）
     TURKS: ['city_otuken', 'city_suiye'], // 突厥（于都斤山神圣牙帐、碎叶重镇）
     NANZHAO: ['city_mengshe', 'city_dali_city'], // 南诏（蒙舍诏故都、羊苴咩城大理都城）
-    SRIVIJAYA: ['city_sanfoqi'],        // 三佛齐（室利佛逝巨港都城）
+    SRIVIJAYA: ['city_sanfoqi'],        // 室利佛逝/三佛齐（巨港都城）
     KUSHAN: ['city_baishawa', 'city_lanshi'], // 贵霜（白沙瓦帝都、蓝氏城故都）
     KUSH: ['city_mailuoe'],             // 库施（麦罗埃黑金字塔都城）
     KHITAN:      ['city_shangjing'],
@@ -1372,6 +1438,12 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     AVARS:       ['city_pannonia'],
     GHANA:       ['city_kumbi_saleh'],
     KHAZARS:     ['city_itil'],
+    VANDALS:     ['city_xibo'],
+    LOMBARDS:    ['city_milan'],
+    ROURAN:      ['city_saierwusu'],
+    SOGDIANS:    ['city_varaksha'],
+    TANGUT:      ['city_xingqingfu2'],
+    JAVANESE:    ['city_kalasan'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

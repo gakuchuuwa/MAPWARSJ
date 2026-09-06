@@ -598,7 +598,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_raymond_v': 12,                                 // 雷蒙五世 · langgeduoke · 图卢兹
     'gen_robert_ii': 11,                                 // 罗贝尔二世 · fulandesi · 加莱
     'gen_roger_i': 11,                                   // 罗杰 · moxina · 梅西纳
-    'gen_sforza': 15,                                    // 斯福尔扎 · lunbadi · 米兰
+    'lunbadi_alboin': 6,                                 // 阿尔博因 · lunbadi · 米兰
     'gen_tashfin': 11,                                   // 塔什芬 · mulabite · 马拉喀什
     'gen_theodoric_great': 5,                           // 狄奥多里克 · donggete · 拉文纳
     'gen_ugolino': 13,                                   // 乌戈里诺 · anuo · 比萨
@@ -1030,6 +1030,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_ferdinand_ii': 15,
     'gen_seuthes_iii': -4,
     'gen_chabrias': -4,
+    'wangdaer_gaisalike': 5,                             // 盖萨里克 · wangdaer · 希波
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

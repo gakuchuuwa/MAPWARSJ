@@ -1747,8 +1747,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.4265, lng: 124.6591, type: 'stockade', region: 'NORTHEAST', troops: 30000,
         note: '伯都；勿吉小城',
     },
-    { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'stockade', troops: 30000, 
-        note: '瓦拉赫沙；粟特小城', region: 'CENTRAL_ASIA' },
+    { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 30000, 
+        note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS' },
     {
         id: 'city_raoleshui',
         name: '饶乐水',
@@ -1997,7 +1997,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
+    { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 30000, region: 'LOMBARDS', note: '伦巴第王国早期重镇与中世纪铁王冠要邑' },
     { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 20000, region: 'GOTHS' },
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 30000, region: 'SPANISH' },
@@ -2092,7 +2092,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'chude', lat: 58.37, lng: 26.72, type: 'stockade', troops: 30000, region: 'SLAVIC' },
     { id: 'city_jiridao', name: '基日岛', factionId: 'kaleiliya', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 30000, region: 'SLAVIC' },
     { id: 'city_akeman', name: '阿克曼', factionId: 'deniesite', lat: 46.19, lng: 30.34, type: 'pass', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_asu', name: '阿速城', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'medium_city', troops: 30000, region: 'SCYTHIANS', note: '古代塔纳伊斯（Tanais），顿河入海口草原要津；大斯基泰王国阿泰阿斯王庭要邑，大草原游牧贸易与军事中心' },
+    { id: 'city_asu', name: '塔纳伊斯', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'small_city', troops: 20000, region: 'SCYTHIANS', note: '古代塔纳伊斯（Tanais），顿河入海口草原与希腊贸易要津；大斯基泰王国阿泰阿斯王庭商埠，大草原北方贸易市集与军事要冲' },
     { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'nieman', lat: 53.68, lng: 23.83, type: 'stockade', troops: 30000, region: 'LITHUANIANS' },
     { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 30000, region: 'STEPPE' },
     { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'stockade', troops: 30000, region: 'STEPPE' },
@@ -2343,7 +2343,7 @@ export const CITIES_V2: CityDataV2[] = [
         note: '净州塞；汪古关隘',
     },
 
-    { id: 'city_saierwusu', name: '赛尔乌苏', factionId: 'rouran', lat: 44.818872, lng: 106.800842, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_saierwusu', name: '赛尔乌苏', factionId: 'rouran', lat: 44.818872, lng: 106.800842, type: 'stockade', region: 'ROURAN', troops: 30000,
         note: '赛尔乌苏；柔然小城',
     },
     { id: 'city_tongdi', name: '铜鞮', factionId: 'yangshe', lat: 36.824653, lng: 112.826843, type: 'small_city', region: 'CENTRAL', troops: 30000,
@@ -2371,7 +2371,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'stockade', region: 'CENTRAL', troops: 30000,
         note: '鸣沙；应理小城',
     },
-    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 30000, region: 'CENTRAL' },
+    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 30000, region: 'TANGUT' },
 
 
     { id: 'city_lingju', name: '令居', factionId: 'guangwu', lat: 36.73, lng: 103.26, type: 'stockade', troops: 30000, region: 'TIBET' },
@@ -3065,8 +3065,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 20000, region: 'ETHIOPIANS' },
 
     { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
-    { id: 'city_sanfoqi', name: '三佛齐', factionId: 'sanfoqi', lat: -2.99, lng: 104.75, type: 'big_city', troops: 30000, region: 'SRIVIJAYA', note: '室利佛逝王国都城巨港，扼守马六甲海峡之海上佛教贸易霸权' },
-    { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'stockade', troops: 20000, region: 'MALAY', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）' },
+        { id: 'city_xibo', name: '希波', factionId: 'wangdaer', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 30000, region: 'VANDALS', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城' },
+    { id: 'city_sanfoqi', name: '巨港', factionId: 'sanfoqi', lat: -2.99, lng: 104.75, type: 'big_city', troops: 30000, region: 'SRIVIJAYA', note: '室利佛逝都城巨港（Palembang），扼守马六甲海峡之海上佛教贸易霸权' },
+    { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'stockade', troops: 20000, region: 'JAVANESE', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）' },
     { id: 'city_deernate', name: '德尔纳特', factionId: 'ternate', lat: 0.7852, lng: 127.3832, type: 'small_city', troops: 30000, region: 'MALAY', note: '特尔纳特苏丹国都城(维基作德那第)，世界香料之源丁香群岛核心，加马拉火山岛；巴布拉苏丹1570-1583在此亲统水军攻陷葡属卡斯特拉要塞，驱逐殖民者称霸东部印尼群岛' },
     { id: 'city_huoluo', name: '霍洛', factionId: 'sulu', lat: 6.0531, lng: 121.0008, type: 'small_city', troops: 30000, region: 'MALAY', note: '霍洛(Jolo)，苏禄苏丹国都城，苏禄群岛南海-香料群岛十字路口与南洋珍珠/海盗据点；苏禄东王巴都葛·叭哈剌1417年率三王使团340人朝贡大明，返程卒葬德州' },
     { id: 'city_manila', name: '马尼拉', factionId: 'xishudongyin', lat: 14.5904, lng: 120.9804, type: 'medium_city', troops: 30000, region: 'MALAY', note: '马尼拉(Manila)，西属东印度首府，跨太平洋大帆船贸易终点与吕宋华人海商港；莱加斯皮1571年征服吕宋筑马尼拉王城(Intramuros)奠定西属菲律宾殖民地' },

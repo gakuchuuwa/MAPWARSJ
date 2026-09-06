@@ -31,6 +31,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
+    wangdaer: { name: '汪达尔长枪兵', tier: 3 },      // 希波·盖萨里克：西地中海两栖重长枪突击方阵
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米

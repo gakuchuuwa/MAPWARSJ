@@ -155,6 +155,12 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     AVARS: 'CAVALRY',
     GHANA: 'INFANTRY',
     KHAZARS: 'CAVALRY',
+    VANDALS: 'MIXED',
+    LOMBARDS: 'INFANTRY',
+    ROURAN: 'CAVALRY',
+    SOGDIANS: 'MIXED',
+    TANGUT: 'CAVALRY',
+    JAVANESE: 'INFANTRY',
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -287,6 +293,12 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     AVARS: 'crane_wing',
     GHANA: 'echelon',
     KHAZARS: 'crane_wing',
+    VANDALS: 'echelon',
+    LOMBARDS: 'square',
+    ROURAN: 'triangle',
+    SOGDIANS: 'fish_scale',
+    TANGUT: 'triangle',
+    JAVANESE: 'crane_wing',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -2396,6 +2408,90 @@ export const KHAZARS_TIERS: CompositionTier[] = [
         ]
     }
 ];
+/** 汪达尔 重装突击长枪+突击重骑+掷矛手（梯形阵 4+3+2） */
+export const VANDALS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'heavy_cavalry', count: 3 },
+            { type: 'skirmisher', count: 2 }
+        ]
+    }
+];
+
+/** 伦巴第 撒克斯重单刃刀+铁王冠突击重骑+掷斧步兵（方阵 4+3+2） */
+export const LOMBARDS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'heavy_cavalry', count: 3 },
+            { type: 'axe', count: 2 }
+        ]
+    }
+];
+
+/** 柔然 全具装生铁马铠重骑+鸣镝长角弓骑+诱伏轻骑（锋矢阵 4+3+2） */
+export const ROURAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cataphract', count: 4 },
+            { type: 'horse_archer', count: 3 },
+            { type: 'scout_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 粟特 绿洲城守重弩+双层锁甲武装商队铁骑+复合弓手（鱼鳞阵 4+3+2） */
+export const SOGDIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'crossbowman', count: 4 },
+            { type: 'heavy_cavalry', count: 3 },
+            { type: 'archer', count: 2 }
+        ]
+    }
+];
+
+/** 党项 铁索缚鞍铁鹞子+山讹攀岩重斧步兵+神臂步弩手（锋矢阵 4+3+2） */
+export const TANGUT_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'heavy_infantry', count: 3 },
+            { type: 'crossbowman', count: 2 }
+        ]
+    }
+];
+
+/** 爪哇 波浪淬毒克利斯剑士+热带竹标枪手+跳帮突击武士（鹤翼阵 4+3+2） */
+export const JAVANESE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'skirmisher', count: 3 },
+            { type: 'light_infantry', count: 2 }
+        ]
+    }
+];
+
 
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
@@ -2485,6 +2581,12 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     AVARS: AVARS_TIERS,
     GHANA: GHANA_TIERS,
     KHAZARS: KHAZARS_TIERS,
+    VANDALS: VANDALS_TIERS,
+    LOMBARDS: LOMBARDS_TIERS,
+    ROURAN: ROURAN_TIERS,
+    SOGDIANS: SOGDIANS_TIERS,
+    TANGUT: TANGUT_TIERS,
+    JAVANESE: JAVANESE_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -2578,6 +2680,12 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     AVARS: '封建阿瓦尔军团',
     GHANA: '封建加纳军团',
     KHAZARS: '封建可萨军团',
+    VANDALS: '封建汪达尔军团',
+    LOMBARDS: '封建伦巴第军团',
+    ROURAN: '封建柔然军团',
+    SOGDIANS: '封建粟特军团',
+    TANGUT: '城堡党项军团',
+    JAVANESE: '封建爪哇军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */
