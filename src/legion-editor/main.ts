@@ -1280,6 +1280,13 @@ function injectStyles(): void {
       .le-layer-btn .le-layer-title { font-size:13px; font-weight:bold; color:#f5e6c8; }
       .le-layer-btn.active .le-layer-title { color:#f5d78e; }
       .le-layer-btn .le-layer-desc { font-size:10px; color:#a89f8f; margin-top:3px; line-height:1.5; }
+      .le-era-tabs { display:flex; gap:4px; margin-bottom:8px; }
+      .le-era-btn {
+        flex:1; padding:5px 4px; font-size:11px; cursor:pointer; white-space:nowrap;
+        background:#1a1816; color:#a89f8f; border:1px solid #2f2a24; border-radius:4px;
+      }
+      .le-era-btn:hover { color:#f5e6c8; border-color:#4a4238; }
+      .le-era-btn.active { background:#3a3020; color:#f5d78e; border-color:#7a6438; font-weight:bold; }
       .le-legion-grid {
         display:grid; grid-template-columns:1fr; gap:6px;
         max-height:360px; overflow-y:auto; padding-right:4px;
@@ -1669,6 +1676,28 @@ let selectedLayerTab: 'culture' | 'sub' = 'culture';
 let selectedLayerKey: string = '';
 /** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
 let legionSearchQuery = '';
+/** 军团时代筛选（文化军团按四时代分开看） */
+let legionEraFilter: 'all' | UnitAge = 'all';
+
+/** 军团名前缀 → 时代。文化军团名本身就带时代（如「城堡阿兹特克军团」），名字即权威。 */
+const LEGION_ERA_PREFIX: Record<string, UnitAge> = {
+    '古典': 'antiquity', '封建': 'feudal', '城堡': 'castle', '帝王': 'imperial',
+};
+
+/** 一支军团的时代：**以军团名的时代前缀为准**（作者写死的意图）；
+ *  没有前缀的（部分特定军团）才退回按编成里最晚那个兵种推定。 */
+function getLegionEra(legionName: string, slots: Array<{ type: string }>): UnitAge {
+    const m = legionName.match(/^(古典|封建|城堡|帝王)/);
+    if (m) return LEGION_ERA_PREFIX[m[1]];
+    let idx = 0;
+    for (const s of slots) {
+        const u = DE_UNITS_MAP.get(s.type);
+        if (!u) continue;
+        const i = AGE_ORDER.indexOf(u.age);
+        if (i > idx) idx = i;
+    }
+    return AGE_ORDER[idx];
+}
 
 interface LayerLegionOption {
     key: string;
@@ -1967,6 +1996,10 @@ function renderEditPanel(row: FactionLegionRow): void {
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
           <div class="le-layer-title">⭐ 特定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
         </button>
+      </div>
+      <div class="le-era-tabs">
+        <button type="button" class="le-era-btn ${legionEraFilter === 'all' ? 'active' : ''}" data-legionera="all">全部</button>
+        ${AGE_ORDER.map(a => '<button type="button" class="le-era-btn ' + (legionEraFilter === a ? 'active' : '') + '" data-legionera="' + a + '" title="' + AGE_YEARS[a].span + '　' + AGE_YEARS[a].anchor + '">' + AGE_LABEL[a] + '</button>').join('')}
       </div>
       <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
       <div class="le-legion-grid"></div>
@@ -2355,17 +2388,31 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
     const gridEl = els.panelContent.querySelector('.le-legion-grid');
     if (!gridEl) return;
     const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
-    const visible = filterLegionOptionsByQuery(options);
+    const visible = filterLegionOptionsByQuery(options)
+        .filter(o => legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
     const isSubLayer = selectedLayerTab === 'sub';
+    const eraCount = (a: UnitAge) => options.filter(o => getLegionEra(o.legionName, o.slots) === a).length;
     gridEl.innerHTML = visible.map(opt => `
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
-        <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}</div>
+        <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}
+          <span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>
+        </div>
         <div class="lc-meta">${opt.description}</div>
         ${isSubLayer ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此军团，用它的势力恢复为所在文化军团">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
         : '<div class="le-empty-hint" style="padding:14px;">该类型暂无军团可选</div>');
+    els.panelContent.querySelectorAll('.le-era-btn[data-legionera]').forEach(b => {
+        const a = (b as HTMLElement).dataset.legionera!;
+        if (a !== 'all') b.textContent = `${AGE_LABEL[a as UnitAge]} ${eraCount(a as UnitAge)}`;
+        else b.textContent = `全部 ${options.length}`;
+        b.classList.toggle('active', legionEraFilter === a);
+        b.addEventListener('click', () => {
+            legionEraFilter = a as 'all' | UnitAge;
+            renderLegionCardGrid(row);
+        });
+    });
     gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
     // 删除军团（仅特定军团层渲染删除按钮；文化军团不渲染，天然不可删）
     gridEl.querySelectorAll('.le-legion-delete[data-delete-name]').forEach(btn => {
