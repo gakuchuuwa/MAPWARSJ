@@ -104,7 +104,7 @@ export const CATEGORY_LABEL: Record<UnitCategory, string> = {
  */
 export type SubCategory =
     // 步兵
-    | 'two_handed' | 'sword_shield' | 'spear' | 'special'
+    | 'sword_shield' | 'spear' | 'two_handed'
     // 远程
     | 'archer' | 'crossbow' | 'thrown' | 'gunpowder'
     // 骑兵
@@ -117,10 +117,9 @@ export type SubCategory =
     | 'mounted_hero' | 'foot_hero' | 'elephant_hero' | 'naval_hero';
 
 export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
-    two_handed: '双手',
     sword_shield: '刀盾',
     spear: '长矛',
-    special: '特殊',
+    two_handed: '双手',
     archer: '弓手',
     crossbow: '弩手',
     thrown: '投掷',
@@ -144,7 +143,7 @@ export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
 
 /** 每个大类下有哪些子类（图鉴子类过滤下拉 + 排序都用它） */
 export const SUBCATEGORY_BY_CATEGORY: Record<UnitCategory, SubCategory[]> = {
-    infantry: ['two_handed', 'sword_shield', 'spear', 'special'],
+    infantry: ['sword_shield', 'spear', 'two_handed'],
     ranged: ['archer', 'crossbow', 'thrown', 'gunpowder'],
     cavalry: ['melee_cav', 'horse_archer', 'elephant', 'chariot'],
     siege: ['gunpowder_siege', 'mechanical'],
@@ -311,9 +310,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_war_chariot', name: '双轮战车高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_WAR_CHARIOT/' },
     { id: 'elite_war_dog', name: '战犬高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITEWARDOG/' },
     { id: 'elite_war_elephant', name: '波斯战象精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWARELEPHANT/' },
-    { id: 'bayinnaung_elephant', name: '莽应龙御驾战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/BAYINNAUNG_ELEPHANT/' },
-    { id: 'dagnajan_elephant', name: '达格纳詹御驾战象', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/DAGNAJAN_ELEPHANT/' },
-    { id: 'porus_elephant', name: '波鲁斯王战象', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/PORUS_ELEPHANT/' },
+    { id: 'bayinnaung_elephant', name: '莽应龙御驾战象', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/BAYINNAUNG_ELEPHANT/' },
+    { id: 'dagnajan_elephant', name: '达格纳詹御驾战象', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/DAGNAJAN_ELEPHANT/' },
+    { id: 'porus_elephant', name: '波鲁斯王战象', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/PORUS_ELEPHANT/' },
     { id: 'elite_war_wagon', name: '高丽战车精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWARWAGON/' },
     { id: 'elite_woad_raider', name: '凯尔特靛蓝突袭者精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEWOADRAIDER/' },
     { id: 'flaming_camel', name: '鞑靼火焰骆驼', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/FLAMINGCAMEL/' },
@@ -324,7 +323,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'genoese_crossbowman', name: '意大利热那亚弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
     { id: 'ghulam', name: '印度斯坦古拉姆', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/GHULAM/' },
     { id: 'greek_noble_cavalry', name: '希腊贵族骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/GREEK_NOBLE_CAVALRY/' },
-    { id: 'grenadier', name: '掷弹兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GRENADIER/' },
+    { id: 'grenadier', name: '掷弹兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/GRENADIER/' },
     { id: 'guecha_warrior', name: '穆伊斯卡格查勇士', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GUECHAWARRIOR/' },
     { id: 'hand_cannoneer', name: '火枪手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/HANDCANNONEER/' },
     { id: 'heavy_rocket_cart', name: '重型火箭车', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HEAVYROCKETCART/' },
@@ -552,7 +551,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '武士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '巽他皇家战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
-    { id: 'envoy', name: '使者', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
+    { id: 'envoy', name: '使者', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
@@ -567,8 +566,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_lembos', name: '小艇精锐', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_LEMBOS/' },
     { id: 'heavy_lembos', name: '小艇重装', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/HEAVY_LEMBOS/' },
     { id: 'dromon', name: '德罗蒙战舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/DROMON/' },
-    { id: 'hulk', name: '霍克船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/HULK/' },
-    { id: 'war_hulk', name: '霍克船高级', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/WAR_HULK/' },
+    { id: 'hulk', name: '霍克船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/HULK/' },
+    { id: 'war_hulk', name: '霍克船高级', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/WAR_HULK/' },
     { id: 'galleon', name: '盖伦帆船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/GALLEON/' },
     { id: 'carrack', name: '克拉克帆船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/CARRACK/' },
     { id: 'catapult_galleon', name: '投石盖伦船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/CATAPULT_GALLEON/' },
@@ -595,8 +594,8 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     manatarms: 'sword_shield',
     
     
-    sunda_royal_fighter: 'two_handed',
-    envoy: 'special',
+    sunda_royal_fighter: 'spear',
+    envoy: 'melee_cav',
     lancer: 'melee_cav',
     scout_cavalry: 'melee_cav',
     light_cavalry: 'melee_cav',
@@ -622,46 +621,49 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     merchant_ship: 'warship',
     lou_chuan: 'warship',
     leviathan: 'warship',
-    hero_themistocles: 'naval_hero',
-    hero_artemisia: 'naval_hero',
-    hero_dionysus: 'naval_hero',
-    hero_aeginetan: 'naval_hero',
+
 
     // ── 步兵 ──
     // 刀盾（单手近战 + 盾：刀/剑/斧/棒/锤等单手兵器，含盾斧兵、盾棒兵）
     swordsman: 'sword_shield', champion: 'sword_shield',
-    jian_swordsman: 'sword_shield', samurai: 'sword_shield', samurai_elite: 'sword_shield',
-    eastern_swordsman: 'sword_shield', legionary: 'sword_shield', elite_ghulam: 'sword_shield',
-    elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield', elite_shotel_warrior: 'sword_shield',
-    elite_teutonic_knight: 'sword_shield', elite_woad_raider: 'sword_shield', ghulam: 'sword_shield',
+    jian_swordsman: 'sword_shield',
+    eastern_swordsman: 'sword_shield', legionary: 'sword_shield',
+    elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield',
+    elite_teutonic_knight: 'sword_shield', elite_woad_raider: 'sword_shield',
     jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
     levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
-    serjeant: 'sword_shield', shotel_warrior: 'sword_shield', teutonic_knight: 'sword_shield',
+    serjeant: 'sword_shield', teutonic_knight: 'sword_shield',
     vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield',
     sakan_axeman: 'sword_shield', champi_warrior: 'sword_shield',
     elite_champi_warrior: 'sword_shield', champi_runner: 'sword_shield', champi_scout: 'sword_shield',
     norse_warrior: 'sword_shield', strategos: 'sword_shield',
     huskarl: 'sword_shield', elite_huskarl: 'sword_shield',
     berserk: 'sword_shield', elite_berserk: 'sword_shield',
+    jaguar_warrior: 'sword_shield', elite_jaguar_warrior: 'sword_shield',
+    urumi_swordsman: 'sword_shield', elite_urumi_swordsman: 'sword_shield',
+    sickle_warrior: 'sword_shield', ekdromos: 'sword_shield',
     // 长矛（枪/矛/戟/长枪等长杆兵器）
     kamayuk: 'spear', fire_lancer: 'spear', elite_fire_lancer: 'spear', heavy_pikeman: 'spear', pikeman: 'spear',
-    liao_dao: 'two_handed', elite_liao_dao: 'two_handed', white_feather_guard: 'spear', elite_white_feather_guard: 'spear',
-    ekdromos: 'spear', elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
+    white_feather_guard: 'spear', elite_white_feather_guard: 'spear',
+    ghulam: 'spear', elite_ghulam: 'spear',
+    elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', hoplite: 'spear', immortal: 'spear', mercenary_hoplite: 'spear',
     phalangite: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
     sacred_band: 'spear', amazon_warrior: 'spear',
     temple_guard: 'spear', elite_temple_guard: 'spear', hill_tribesman: 'spear', indian_tribesman: 'spear',
     guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
-    // 双手（双手剑/巨斧/战锤/长刃）
+    eagle_scout: 'spear', eagle_warrior: 'spear', elite_eagle_warrior: 'spear',
+    // 双手（双手剑/巨斧/战锤/长刃/无盾近战）
+    liao_dao: 'two_handed', elite_liao_dao: 'two_handed',
     elite_ibirapema_warrior: 'two_handed', ibirapema_warrior: 'two_handed', elite_obuch: 'two_handed', obuch: 'two_handed',
     jian_swordman_unshielded: 'two_handed', rhomphaia_warrior: 'two_handed',
     two_handed_swordsman: 'two_handed',
-    // 特殊（野兽/异形兵器/部落奇兵）
-    ninja: 'special', karambit_warrior: 'special', karambit_warrior_elite: 'special', eagle_scout: 'special',
-    eagle_warrior: 'special', elite_eagle_warrior: 'special', elite_jaguar_warrior: 'special',
-    elite_urumi_swordsman: 'special', elite_war_dog: 'special', jaguar_warrior: 'special', urumi_swordsman: 'special',
-    war_dog: 'special', warrior_priest: 'special',
-    iroquois_warrior: 'special', sickle_warrior: 'special',
+    ninja: 'two_handed',
+    samurai: 'two_handed', samurai_elite: 'two_handed',
+    shotel_warrior: 'two_handed', elite_shotel_warrior: 'two_handed',
+    karambit_warrior: 'two_handed', karambit_warrior_elite: 'two_handed',
+    war_dog: 'two_handed', elite_war_dog: 'two_handed',
+    warrior_priest: 'two_handed', iroquois_warrior: 'two_handed',
 
     // ── 远程 ──
     // 弓手
@@ -680,9 +682,9 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     chakram_thrower: 'thrown', elite_chakram_thrower: 'thrown', gbeto: 'thrown', elite_gbeto: 'thrown',
     guecha_warrior: 'thrown', elite_guecha_warrior: 'thrown', elite_skirmisher: 'thrown', skirmisher: 'thrown',
     rhodian_slinger: 'thrown', slinger: 'thrown', thracian_peltast: 'thrown', elite_peltast: 'thrown',
-    antiquity_skirmisher: 'thrown', elite_antiquity_skirmisher: 'thrown',
+    antiquity_skirmisher: 'thrown', elite_antiquity_skirmisher: 'thrown', grenadier: 'thrown',
     // 火器
-    hand_cannoneer: 'gunpowder', grenadier: 'gunpowder', janissary: 'gunpowder', elite_janissary: 'gunpowder',
+    hand_cannoneer: 'gunpowder', janissary: 'gunpowder', elite_janissary: 'gunpowder',
     royal_janissary: 'gunpowder',
 
     // ── 骑兵 ──
@@ -713,8 +715,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     antiquity_heavy_cavalry_archer: 'horse_archer',
     // 象兵
     war_elephant: 'elephant', battle_elephant: 'elephant', armored_elephant: 'elephant', elite_armored_elephant: 'elephant',
-    bayinnaung_elephant: 'elephant', dagnajan_elephant: 'elephant', porus_elephant: 'elephant', sannahya: 'elephant',
-    elite_battle_elephant: 'elephant', elite_war_elephant: 'elephant',
+    sannahya: 'elephant', elite_battle_elephant: 'elephant', elite_war_elephant: 'elephant',
     // 战车
     war_chariot: 'chariot', war_chariot_ranged: 'chariot', elite_war_chariot: 'chariot', war_wagon: 'chariot',
     elite_war_wagon: 'chariot', ratha_melee: 'chariot', ratha_ranged: 'chariot', elite_ratha_melee: 'chariot',
@@ -745,35 +746,43 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     caravel: 'warship', elite_caravel: 'warship', longboat: 'warship', elite_longboat: 'warship', turtle_ship: 'warship',
     elite_turtle_ship: 'warship', dragon_ship: 'warship', thirisadai: 'warship',
 
-    // ── 英雄（默认骑马；步战/象驾按名显式标）──
-    hero_alaric: 'mounted_hero', hero_algirdas: 'mounted_hero', hero_arariboiamelee: 'mounted_hero',
-    hero_aristagoras: 'mounted_hero', hero_aristides: 'mounted_hero', hero_artaphernes: 'mounted_hero',
-    hero_ataulf: 'mounted_hero', hero_attila: 'mounted_hero', hero_basileus: 'mounted_hero',
-    hero_bernardarmagnac: 'mounted_hero', hero_bohemond: 'mounted_hero', hero_brasidas: 'mounted_hero',
-    hero_caocao: 'mounted_hero', hero_cleitus: 'mounted_hero', hero_cumanchief: 'mounted_hero',
-    hero_cunhambebe: 'mounted_hero', hero_cusiyupanqui: 'mounted_hero', hero_dafyddapgruffydd: 'mounted_hero',
-    hero_datis: 'mounted_hero', hero_dinhle: 'mounted_hero', hero_mounted_alexander: 'mounted_hero',
-    hero_edwardlongshanks: 'mounted_hero', hero_gajahmada: 'mounted_hero', hero_galvarino: 'mounted_hero',
-    hero_generalaraiyan: 'mounted_hero', hero_gidajan: 'mounted_hero', hero_gilbertdeclare: 'mounted_hero',
-    hero_girgenkhan: 'mounted_hero', hero_guacolda: 'mounted_hero', hero_guanyu: 'mounted_hero', hero_ivaylo: 'mounted_hero',
-    hero_janzizka: 'mounted_hero', hero_joanofarc: 'mounted_hero', hero_jogaila: 'mounted_hero',
-    hero_johnthefearless: 'mounted_hero', hero_kestutis: 'mounted_hero', hero_kotyankhan: 'mounted_hero',
-    hero_kushluk: 'mounted_hero', hero_lautaro: 'mounted_hero', hero_leloi: 'mounted_hero', hero_liubei: 'mounted_hero',
-    hero_llywelynapgruffydd: 'mounted_hero', hero_lubu: 'mounted_hero', hero_lysander: 'mounted_hero',
-    hero_macedonian_commander: 'mounted_hero', hero_osman: 'mounted_hero', hero_pacanchique: 'mounted_hero',
-    hero_pachacuti: 'mounted_hero', hero_parmenion: 'mounted_hero', hero_perdiccas: 'mounted_hero',
-    hero_philipthegood: 'mounted_hero', hero_prithviraj: 'mounted_hero', hero_qutlugh: 'mounted_hero',
-    hero_rajendrachola: 'mounted_hero', hero_robertguiscard: 'mounted_hero', hero_rogerbosso: 'mounted_hero',
-    hero_sforza: 'mounted_hero', hero_shahismail: 'mounted_hero',     hero_subotai: 'mounted_hero', hero_sumanguru: 'mounted_hero', hero_sunce: 'mounted_hero', hero_sundjata: 'mounted_hero',
-    hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero', hero_thoros: 'mounted_hero',
-    hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero', hero_ulrichvonjungingen: 'mounted_hero',
-    hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero', hero_yodit: 'mounted_hero',
-    hero_zhangfei: 'mounted_hero',
-    // 步战英雄
-    hero_dismounted_alexander: 'foot_hero', hero_ivaylofoot: 'foot_hero', hero_joanthemaid: 'foot_hero',
-    hero_williamwallace: 'foot_hero',
-    // 象驾英雄
-      };
+    // ── 英雄：骑马（51 位）──
+    hero_alaric: 'mounted_hero', hero_algirdas: 'mounted_hero', hero_aristagoras: 'mounted_hero',
+    hero_artaphernes: 'mounted_hero', hero_attila: 'mounted_hero', hero_basileus: 'mounted_hero',
+    hero_bernardarmagnac: 'mounted_hero', hero_bohemond: 'mounted_hero', hero_caocao: 'mounted_hero',
+    hero_cleitus: 'mounted_hero', hero_cumanchief: 'mounted_hero', hero_datis: 'mounted_hero',
+    hero_dinhle: 'mounted_hero', hero_mounted_alexander: 'mounted_hero', hero_edwardlongshanks: 'mounted_hero',
+    hero_generalaraiyan: 'mounted_hero', hero_gilbertdeclare: 'mounted_hero', hero_girgenkhan: 'mounted_hero',
+    hero_guanyu: 'mounted_hero', hero_ivaylo: 'mounted_hero', hero_janzizka: 'mounted_hero',
+    hero_joanofarc: 'mounted_hero', hero_jogaila: 'mounted_hero', hero_johnthefearless: 'mounted_hero',
+    hero_kestutis: 'mounted_hero', hero_kotyankhan: 'mounted_hero', hero_kushluk: 'mounted_hero',
+    hero_lautaro: 'mounted_hero', hero_lubu: 'mounted_hero', hero_osman: 'mounted_hero',
+    hero_perdiccas: 'mounted_hero', hero_philipthegood: 'mounted_hero', hero_prithviraj: 'mounted_hero',
+    hero_qutlugh: 'mounted_hero', hero_rajendrachola: 'mounted_hero', hero_robertguiscard: 'mounted_hero',
+    hero_rogerbosso: 'mounted_hero', hero_shahismail: 'mounted_hero', hero_subotai: 'mounted_hero',
+    hero_sumanguru: 'mounted_hero', hero_sunce: 'mounted_hero', hero_sundjata: 'mounted_hero',
+    hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero',
+    hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero',
+    hero_ulrichvonjungingen: 'mounted_hero', hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero',
+
+    // ── 英雄：步战（26 位）──
+    hero_arariboiamelee: 'foot_hero', hero_aristides: 'foot_hero', hero_ataulf: 'foot_hero',
+    hero_brasidas: 'foot_hero', hero_cunhambebe: 'foot_hero', hero_cusiyupanqui: 'foot_hero',
+    hero_dafyddapgruffydd: 'foot_hero', hero_dismounted_alexander: 'foot_hero', hero_gajahmada: 'foot_hero',
+    hero_galvarino: 'foot_hero', hero_gidajan: 'foot_hero', hero_guacolda: 'foot_hero',
+    hero_ivaylofoot: 'foot_hero', hero_joanthemaid: 'foot_hero', hero_leloi: 'foot_hero',
+    hero_liubei: 'foot_hero', hero_llywelynapgruffydd: 'foot_hero', hero_lysander: 'foot_hero',
+    hero_macedonian_commander: 'foot_hero', hero_pacanchique: 'foot_hero', hero_pachacuti: 'foot_hero',
+    hero_parmenion: 'foot_hero', hero_sforza: 'foot_hero', hero_williamwallace: 'foot_hero',
+    hero_yodit: 'foot_hero', hero_zhangfei: 'foot_hero',
+
+    // ── 英雄：旗舰（4 位）──
+    hero_themistocles: 'naval_hero', hero_artemisia: 'naval_hero',
+    hero_dionysus: 'naval_hero', hero_aeginetan: 'naval_hero',
+
+    // ── 英雄：象驾（3 位）──
+    porus_elephant: 'elephant_hero', dagnajan_elephant: 'elephant_hero', bayinnaung_elephant: 'elephant_hero',
+};
 
 /** 取兵种二级分类；未登记返回 undefined（图鉴显示「—」）。 */
 export function getUnitSubcategory(id: string): SubCategory | undefined {
