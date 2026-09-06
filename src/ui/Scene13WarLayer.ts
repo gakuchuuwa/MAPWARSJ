@@ -403,6 +403,8 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     TURKS: { battering_ram: true, capped_ram: true, mangonel: true, onager: true },
     NANZHAO: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     SRIVIJAYA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, battle_elephant: true },
+    KUSHAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, armored_elephant: true, battle_elephant: true },
+    KUSH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
 };
 
 /**
@@ -1112,6 +1114,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     TURKS: 'CEAS',
     NANZHAO: 'ASIA',
     SRIVIJAYA: 'SEAS',
+    KUSHAN: 'CEAS',
+    KUSH: 'AFRI',
 };
 
 
