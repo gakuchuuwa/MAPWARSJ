@@ -39,7 +39,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
 
     manatarms: 6,
     sunda_royal_fighter: 6,
-    envoy: 6,
+    envoy: 12,
     scout_cavalry: 12,
     light_cavalry: 12,
     frankish_paladin: 12,
