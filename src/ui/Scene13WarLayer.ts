@@ -51,7 +51,7 @@ import type { Scene13PlayerSetup } from '../player/PlayerHero'; // [2026-09-05 �
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis', 'siege_ballista']);
 
 /** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
  *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
@@ -1382,6 +1382,7 @@ const PROJ_TYPE: Record<string, string> = {
     elite_ballista_elephant: 'PROJ_BOLT',
     scorpion: 'PROJ_BOLT',
     heavy_scorpion: 'PROJ_BOLT',
+    siege_ballista: 'PROJ_BOLT',
     // 投石兵/投索兵（投掷轻石弹：标准弧线、落地无爆炸；复用重炮石弹素材但弹道独立）
     slinger: 'PROJ_SLING',
     rhodian_slinger: 'PROJ_SLING',
@@ -3538,39 +3539,106 @@ export class Scene13WarLayer {
         return resolveCastleAsset(style, this.sideFaction[1], this.sideCulture[1]);
     }
 
+    /**
+     * 🔴 [2026-09-06 主人定] 攻城战前 30 秒攻城武器体系（严格遵循三大铁律）：
+     * 1. 符合历史：每个文化所采用的攻城武器均根据真实历史与战术传统精准对应；
+     * 2. 纯冷兵器：彻底排除火药火炮等热兵器，只能采用攻城类冷兵器；
+     * 3. 全素材物尽其用：将库内全部 26 种攻城冷兵器素材（含古典器械、床弩车、赫勒波利斯巨塔、骆驼投石机、弩炮战象、攻城塔等）100% 全部用上。
+     * 每场攻城战攻方生成 9 辆器械：破门冲车/冲象 ×3 + 投石/抛石机 ×3 + 弩炮/床弩/象弩 ×2 + 特色/巨型攻城器 ×1。
+     */
+    private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
+        const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
+        const CLASSICAL = new Set(['GREEK', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'LATIN', 'THRACIAN', 'ACHAEMENIDS']);
+        const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS']);
+        const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
+        // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
+        const NOMAD_DESERT = new Set(['CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'ORIE', 'HEXI']);
+
+        const items: string[] = [];
+
+        // 1. 破门冲撞器 (3 辆)
+        if (SOUTH_ASIAN.has(culture)) {
+            // 印度/南亚：装甲攻城战象（披甲破门巨象）
+            items.push('armored_elephant', 'armored_elephant', 'elite_armored_elephant');
+        } else if (CLASSICAL.has(culture)) {
+            // 古典文明：古典轻/装甲/重型攻城槌
+            items.push('antiquity_battering_ram', 'antiquity_capped_ram', 'antiquity_siege_ram');
+        } else if (culture === 'KHMER' || culture === 'BURMESE' || culture === 'DIANQIAN') {
+            // 东南亚：冲车配合坚固装甲
+            items.push('battering_ram', 'capped_ram', 'capped_ram');
+        } else {
+            // 华夏、西洋中世纪与常规文明：中世纪轻/装甲/重型攻城槌
+            items.push('battering_ram', 'capped_ram', 'siege_ram');
+        }
+
+        // 2. 投石/重型抛石器 (3 辆)
+        if (CHINESE.has(culture)) {
+            // 华夏系：牵引投石机·砲 (3 辆人力拉索巨抛)
+            items.push('traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet');
+        } else if (CLASSICAL.has(culture)) {
+            // 古典文明：古典轻/中/重型投石车
+            items.push('antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager');
+        } else if (NOMAD_DESERT.has(culture)) {
+            // 沙漠：骆驼投石机 + 中型投石车
+            items.push('mounted_trebuchet', 'mounted_trebuchet', 'onager');
+        } else {
+            // 西洋及其他常规文明：轻/中/重型投石车
+            items.push('mangonel', 'onager', 'siege_onager');
+        }
+
+        // 3. 远程射击/压制器 (2 辆)
+        if (CHINESE.has(culture)) {
+            // 华夏系：攻城床弩车 (大弓床子弩) + 重型弩炮
+            items.push('siege_ballista', 'heavy_scorpion');
+        } else if (culture === 'KHMER') {
+            // 高棉：吴哥弩炮战象 (双弦巨弩象)
+            items.push('ballista_elephant', 'elite_ballista_elephant');
+        } else if (CLASSICAL.has(culture)) {
+            // 古典文明：古典弩炮 + 古典重型弩炮
+            items.push('antiquity_scorpion', 'antiquity_heavy_scorpion');
+        } else if (SE_ASIAN.has(culture)) {
+            // 东南亚其他：弩炮战象 + 重型弩炮
+            items.push('ballista_elephant', 'heavy_scorpion');
+        } else {
+            // 西洋及其他常规文明：弩炮 + 重型弩炮
+            items.push('scorpion', 'heavy_scorpion');
+        }
+
+        // 4. 特色/巨型攻城器 (1 辆)
+        if (CLASSICAL.has(culture)) {
+            // 希腊马其顿：世界古代第一赫勒波利斯攻城巨塔；罗马等：古典攻城塔
+            if (culture === 'GREEK' || culture === 'MACEDONIANS' || culture === 'ATHENIANS' || culture === 'SPARTANS') {
+                items.push('helepolis');
+            } else {
+                items.push('antiquity_siege_tower');
+            }
+        } else if (CHINESE.has(culture)) {
+            // 华夏：临冲攻城云梯塔
+            items.push('siege_tower');
+        } else if (SOUTH_ASIAN.has(culture)) {
+            // 印度南亚：装甲攻城巨象
+            items.push('armored_elephant');
+        } else if (culture === 'KHMER') {
+            // 高棉：精锐弩炮战象
+            items.push('elite_ballista_elephant');
+        } else if (NOMAD_DESERT.has(culture)) {
+            // 沙漠：骆驼投石机
+            items.push('mounted_trebuchet');
+        } else {
+            // 西洋中世纪：攻城塔 (移动攻城楼)
+            items.push('siege_tower');
+        }
+
+        return items.slice(0, 9);
+    }
+
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
-        const tech = SIEGE_TECH_BY_CULTURE[culture];
-        if (!tech) return;
-        const ok = (key: string): boolean => !!tech[key];
-        // 🔴 [2026-08-29 主人改] 一律 9 个攻城武器，种类符合文化科技树、多样性、随机：
-        //   冲车 3（攻城主力，无冲车线→装甲战象）+ 投石车/火箭车/牵引抛石机 3（随机档）
-        //   + 弩炮 2（有战象文化→战象混入）+ 特色 1（战象优先，否则补投石车/弩炮/冲车）。
-        const ramKey = SIEGE_RAM_LINE.find(k => ok(k)) ?? (ok('armored_elephant') ? 'armored_elephant' : undefined);
-        const mnLine = SIEGE_MANGONEL_LINE[culture] ?? ['mangonel', 'onager', 'siege_onager'];
-        const mnAvail = mnLine.filter(k => ok(k));
-        const scAvail = ['heavy_scorpion', 'scorpion'].filter(k => ok(k));
-        const eleByCulture = SIEGE_ELEPHANT_BY_CULTURE[culture];
-        const eleAvail = [
-            ...(eleByCulture ? [eleByCulture] : []),
-            ...['war_elephant', 'armored_elephant', 'battle_elephant'].filter(k => ok(k) && k !== ramKey),
-        ].filter((k, i, a) => a.indexOf(k) === i);   // 去重
-        const pick = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
-        const items: string[] = [];
-        for (let i = 0; i < 3; i++) if (ramKey) items.push(ramKey);                 // 冲车 ×3
-        for (let i = 0; i < 3; i++) if (mnAvail.length) items.push(pick(mnAvail));   // 投石车/火箭车 ×3（随机档）
-        const scElePool = eleAvail.length ? [...eleAvail, ...scAvail] : scAvail;
-        for (let i = 0; i < 2; i++) if (scElePool.length) items.push(pick(scElePool));  // 弩炮/战象 ×2
-        if (eleAvail.length) items.push(pick(eleAvail));                             // 特色 ×1（战象优先）
-        else if (mnAvail.length) items.push(pick(mnAvail));
-        else if (scAvail.length) items.push(pick(scAvail));
-        else if (ramKey) items.push(ramKey);
-        while (items.length < 9 && ramKey) items.push(ramKey);                       // 不足 9 补冲车
-        const nine = items.slice(0, 9);
+        const nine = this.getColdSiegeWeaponsForCulture(culture);
         if (!nine.length) return;
-        // 🔴 [2026-08-29 主人改] 位置：攻方出兵口（row0）与城墙之间的中间。
-        //   攻方 row0 x = mx+2×depth；城墙 x = VW−mx−2×depth−380（wallFrontX，比守方 row0 再前 380）。
-        //   中点 = (VW−380)/2 ≈ 战场中央。
+
+        // 位置：攻方出兵口（row0）与城墙之间的中间。
+        // 攻方 row0 x = mx+2×depth；城墙 x = VW−mx−2×depth−380。中点 ≈ 战场中央。
         const lineX = (VW - 380) / 2;
         const midY = VH / 2, spanY = VH * 0.8;
         const yMin = midY - spanY / 2, yMax = midY + spanY / 2;

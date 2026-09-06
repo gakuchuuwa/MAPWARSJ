@@ -278,7 +278,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_ghulam', name: '印度斯坦古拉姆精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEGHULAM/' },
     { id: 'elite_guecha_warrior', name: '穆伊斯卡格查勇士高级', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEGUECHAWARRIOR/' },
     { id: 'elite_huskarl', name: '哥特近卫军精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSKARL/' },
-    { id: 'elite_hussite_wagon', name: '波希米亚胡斯战车精锐', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
+    { id: 'elite_hussite_wagon', name: '波希米亚胡斯战车精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
     { id: 'elite_ibirapema_warrior', name: '图皮战棍勇士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
     { id: 'elite_iron_pagoda', name: '女真铁浮屠精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEIRONPAGODA/' },
     { id: 'elite_jaguar_warrior', name: '阿兹特克豹勇士精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEJAGUARWARRIOR/' },
@@ -335,7 +335,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'houfnice', name: '榴弹炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HOUFNICE/' },
     { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HUSKARL/' },
     { id: 'hussar', name: '骠骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
-    { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
+    { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
     { id: 'ibirapema_warrior', name: '图皮战棍勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'immortal_ranged', name: '波斯长生军(弓)', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
@@ -580,7 +580,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
-    { id: 'hero_aeginetan', name: '英雄·埃伊纳指挥官', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },]
+    { id: 'hero_aeginetan', name: '英雄·埃伊纳指挥官', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },
+]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
 
@@ -725,8 +726,8 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     // 热兵器（火药/火）
     bombard_cannon: 'gunpowder_siege', organ_gun: 'gunpowder_siege', elite_organ_gun: 'gunpowder_siege',
     houfnice: 'gunpowder_siege', rocket_cart: 'gunpowder_siege', heavy_rocket_cart: 'gunpowder_siege',
-    flamethrower: 'gunpowder_siege', petard: 'gunpowder_siege', flaming_camel: 'gunpowder_siege',
-    hussite_wagon: 'gunpowder_siege', elite_hussite_wagon: 'gunpowder_siege',
+    flamethrower: 'gunpowder_siege', petard: 'mechanical', flaming_camel: 'mechanical',
+    hussite_wagon: 'chariot', elite_hussite_wagon: 'chariot',
     // 冷兵器（机械/扭力/重力）
     ballista_elephant: 'mechanical', elite_ballista_elephant: 'mechanical', battering_ram: 'mechanical',
     capped_ram: 'mechanical', heavy_scorpion: 'mechanical',
@@ -973,25 +974,25 @@ app.innerHTML = `
 <div class="le-toolbar" id="le-toolbar-units" style="display:none;">
   <input id="le-cat-search" class="le-input" type="search" placeholder="搜索兵种 中文名 / ID / 素材目录…" />
   <select id="le-cat-filter" class="le-select">
-    <option value="all">全部类别</option>
-    <option value="infantry">🛡️ 步兵</option>
-    <option value="cavalry">🐎 骑兵</option>
-    <option value="ranged">🏹 远程</option>
-    <option value="siege">⚙️ 攻城</option>
-    <option value="naval">🚢 船只</option>
-    <option value="hero">👑 英雄</option>
+    <option value="all">全部类别 (${DE_UNITS_CATALOG.length})</option>
+    <option value="infantry">🛡️ 步兵 (${DE_UNITS_CATALOG.filter(u => u.category === 'infantry').length})</option>
+    <option value="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u => u.category === 'cavalry').length})</option>
+    <option value="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u => u.category === 'ranged').length})</option>
+    <option value="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u => u.category === 'siege').length})</option>
+    <option value="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u => u.category === 'naval').length})</option>
+    <option value="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u => u.category === 'hero').length})</option>
   </select>
   <select id="le-sub-filter" class="le-select">
-    <option value="all">全部子类</option>
+    <option value="all">全部子类 (${DE_UNITS_CATALOG.length})</option>
   </select>
   <select id="le-age-filter" class="le-select">
-    <option value="all">全部时代</option>
-    ${AGE_ORDER.map(a => `<option value="${a}">${AGE_LABEL[a]}（${AGE_YEARS[a].span}）</option>`).join('')}
+    <option value="all">全部时代 (${DE_UNITS_CATALOG.length})</option>
+    ${AGE_ORDER.map(a => `<option value="${a}">${AGE_LABEL[a]} (${DE_UNITS_CATALOG.filter(u => u.age === a).length})（${AGE_YEARS[a].span}）</option>`).join('')}
   </select>
   <select id="le-tier-filter" class="le-select">
-    <option value="all">全部升级档</option>
-    <option value="elite">⭐ 仅精锐 / 帝王档</option>
-    <option value="base">仅普通档</option>
+    <option value="all">全部升级档 (${DE_UNITS_CATALOG.length})</option>
+    <option value="elite">⭐ 仅精锐 / 帝王档 (${DE_UNITS_CATALOG.filter(u => getUnitTier(u) === 'elite').length})</option>
+    <option value="base">仅普通档 (${DE_UNITS_CATALOG.filter(u => getUnitTier(u) !== 'elite').length})</option>
   </select>
   <span id="le-cat-stats" class="le-stats">加载中…</span>
 </div>
@@ -2787,6 +2788,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'cavalry' ? 'active' : ''}" data-cat="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='cavalry').length})</div>
             <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
             <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
+            <div class="le-modal-tab ${currentTab === 'naval' ? 'active' : ''}" data-cat="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u=>u.category==='naval').length})</div>
             <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>u.category==='hero').length})</div>
           </div>
           <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
@@ -2940,11 +2942,23 @@ function switchMainView(view: MainView): void {
 function populateSubFilter(): void {
     const cat = catalogCatFilter;
     const groups: [string, SubCategory[]][] = cat === 'all'
-        ? (CATEGORY_ORDER as UnitCategory[]).map(c => [CATEGORY_LABEL[c], SUBCATEGORY_BY_CATEGORY[c]])
-        : [[CATEGORY_LABEL[cat], SUBCATEGORY_BY_CATEGORY[cat]]];
-    els.subFilter.innerHTML = `<option value="all">全部子类</option>`
+        ? (CATEGORY_ORDER as UnitCategory[]).map(c => [
+            `${CATEGORY_LABEL[c]} (${DE_UNITS_CATALOG.filter(u => u.category === c).length})`,
+            SUBCATEGORY_BY_CATEGORY[c]
+        ])
+        : [[
+            `${CATEGORY_LABEL[cat]} (${DE_UNITS_CATALOG.filter(u => u.category === cat).length})`,
+            SUBCATEGORY_BY_CATEGORY[cat]
+        ]];
+    const totalInCat = cat === 'all'
+        ? DE_UNITS_CATALOG.length
+        : DE_UNITS_CATALOG.filter(u => u.category === cat).length;
+    els.subFilter.innerHTML = `<option value="all">全部子类 (${totalInCat})</option>`
         + groups.map(([label, subs]) =>
-            `<optgroup label="${label}">${subs.map(s => `<option value="${s}">${SUBCATEGORY_LABEL[s]}</option>`).join('')}</optgroup>`
+            `<optgroup label="${label}">${subs.map(s => {
+                const count = DE_UNITS_CATALOG.filter(u => getUnitSubcategory(u.id) === s).length;
+                return `<option value="${s}">${SUBCATEGORY_LABEL[s]} (${count})</option>`;
+            }).join('')}</optgroup>`
         ).join('');
 }
 
@@ -2967,10 +2981,18 @@ function applyCatalogFilter(): void {
     sortCatalogRows();
 
     const eliteTotal = DE_UNITS_CATALOG.filter(u => getUnitTier(u) === 'elite').length;
-    const unknownTotal = 0;
+    const infC = DE_UNITS_CATALOG.filter(u => u.category === 'infantry').length;
+    const cavC = DE_UNITS_CATALOG.filter(u => u.category === 'cavalry').length;
+    const ranC = DE_UNITS_CATALOG.filter(u => u.category === 'ranged').length;
+    const sieC = DE_UNITS_CATALOG.filter(u => u.category === 'siege').length;
+    const navC = DE_UNITS_CATALOG.filter(u => u.category === 'naval').length;
+    const herC = DE_UNITS_CATALOG.filter(u => u.category === 'hero').length;
+
     els.catStats.innerHTML =
-        `全部兵种 <b>${DE_UNITS_CATALOG.length}</b> | 精锐档 <b style="color:#f5d78e">${eliteTotal}</b>`
-        + ` | 时代待核 <b style="color:#c88a7a">${unknownTotal}</b> | 当前显示 <b>${catalogRows.length}</b>`;
+        `全部 <b>${DE_UNITS_CATALOG.length}</b>`
+        + ` <span style="color:#8c8273;margin:0 4px;">|</span> 步 <b>${infC}</b> · 骑 <b>${cavC}</b> · 远 <b>${ranC}</b> · 械 <b>${sieC}</b> · 船 <b>${navC}</b> · 雄 <b>${herC}</b>`
+        + ` <span style="color:#8c8273;margin:0 4px;">|</span> 精锐 <b style="color:#f5d78e">${eliteTotal}</b>`
+        + ` <span style="color:#8c8273;margin:0 4px;">|</span> 当前显示 <b>${catalogRows.length}</b>`;
 }
 
 function sortCatalogRows(): void {

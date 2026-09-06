@@ -210,10 +210,10 @@ export class PlayerHero {
         }
         if (enemyKilled <= 0) return;
         const rank = this.getRank();
-        // 官阶指挥分成：斥候2% / 探马5% / 先锋10% / 将军元帅20%（2026-09-05 降5倍，防战略地图晋升过快）
-        const ratio = rank.control === 'none' ? 0.02
+        // 官阶指挥分成：平民2% / 斥候3% / 探马5% / 先锋8% / 将军12% / 元帅16% / 公侯20% / 国王25% / 皇帝30%
+        const ratio = rank.meritShare ?? (rank.control === 'none' ? 0.02
             : rank.control === 'one' ? 0.05
-            : rank.control === 'front' ? 0.1 : 0.2;
+            : rank.control === 'front' ? 0.1 : 0.2);
         const gained = Math.max(20, Math.round(enemyKilled * ratio));
         this.addMerit(gained);
         this.deps.notify(`🚩 大捷！随军斩敌 ${enemyKilled.toLocaleString()}，按【${rank.name}】军职记战功 ${gained.toLocaleString()}`);

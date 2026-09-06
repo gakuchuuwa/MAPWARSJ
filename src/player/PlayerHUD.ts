@@ -114,8 +114,10 @@ export class PlayerHUD {
         const row = (k: string, v: string, color = '#f5e6c8') =>
             `<div style="display:flex;justify-content:space-between;gap:8px;line-height:1.6;"><span style="color:#ba9e7b;font-weight:600;">${k}</span><span style="color:${color};font-weight:700;text-align:right;">${v}</span></div>`;
         let html = '';
-        html += row('官阶', rank.name, '#ffd700');
-        html += row('功勋', next ? `${hero.merit} / ${next.merit}（→${next.name}）` : `${hero.merit}（已至顶）`, '#fffcee');
+        html += row('官阶', `${rank.name}（${rank.title}）`, '#ffd700');
+        html += row('战力', `第九环 ×${rank.powerMult.toFixed(1)}`, '#ffd700');
+        html += row('职权', rank.authority, '#9ec5e8');
+        html += row('功勋', next ? `${hero.merit.toLocaleString()} / ${next.merit.toLocaleString()}（→${next.name}）` : `${hero.merit.toLocaleString()}（已登极顶）`, '#fffcee');
         html += row('势力', factionName, hero.factionId ? '#52c486' : '#ba9e7b');
         html += row('状态', state, '#f5e6c8');
         html += row('任务', questText, quest ? '#ff8585' : '#ba9e7b');
@@ -146,7 +148,7 @@ export class PlayerHUD {
         if (rank.control === 'none') {
             const hint = document.createElement('div');
             hint.style.cssText = 'font-size:11px;color:#9e8a75;margin-top:3px;';
-            hint.textContent = '斥候只管自己，升探马后可领一队';
+            hint.textContent = '平民与斥候只管自己，升探马后可领一队';
             this.body.appendChild(hint);
         }
 
