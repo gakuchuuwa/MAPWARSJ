@@ -247,7 +247,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
     THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
-    PERSIAN:      'fish_scale',  // 波斯铁甲圣骑主力（萨珊重骑+复合弓）
+    PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
     BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
     GOTHS: 'fish_scale',  // 哥特[2026-09-05 主人定：雁行阵 4+3+2]
@@ -280,7 +280,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WALLACHIA: 'crane_wing',
     EGYPT: 'echelon',
     CARTHAGE: 'crane_wing',
-    BABYLON: 'echelon',
+    BABYLON: 'balance_yoke',
     HITTITES: 'triangle',
     ASSYRIAN: 'fish_scale',
     SCYTHIANS: 'triangle',
@@ -2227,12 +2227,11 @@ export const BABYLON_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'elite_war_chariot', count: 4 },
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'bactrian_archer', count: 2 }
+            { type: 'antiquity_spearman', count: 2 },
+            { type: 'bactrian_archer', count: 3 }
         ]
     }
 ];
-
 /** 赫梯 重战车+长矛兵+主力重战车（锥形阵 2+3+4：尖刀战车2 + 长矛掩护3 + 重型战车集群主力4） */
 export const HITTITES_TIERS: CompositionTier[] = [
     {

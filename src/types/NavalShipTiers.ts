@@ -103,7 +103,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 地中海古典 ──────────────────────────────────────────
     { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK'] },
     { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['GREEK'] },
-    { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟', regions: ['ACHAEMENIDS'] },
+    { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
     { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON'] },
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
@@ -124,7 +124,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
     { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE'] },
     { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER'] },
-    { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['PERSIAN'] },
+    { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['SASANIAN'] },
 
     // ── 美洲 ────────────────────────────────────────────────
     { ship: 'CANOE', why: '武装独木战舟：美洲无风帆远洋船，特斯科科湖水战形制', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'] },
