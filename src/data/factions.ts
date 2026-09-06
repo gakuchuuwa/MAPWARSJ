@@ -305,7 +305,6 @@ export const FACTIONS: Faction[] = [
 { id: 'guangping', name: '广平' },     // 洞海城·阮文张象兵水师               // 广州@番禺（州府/广南核心）
     // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
     { id: 'duanzhou_d', name: '端州' },
-    { id: 'dunhe', name: '顿河' },
 
 
     { id: 'qin', name: '秦国' },
@@ -1989,6 +1988,7 @@ export const FACTIONS: Faction[] = [
     { id: 'odrysian_late', name: '奥德里西亚' },
     { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
+    { id: 'wangdaer', name: '汪达尔' },
 ];
 
 // @ts-ignore

@@ -2841,6 +2841,8 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     KOREA: { file: 'KoreaExpeditionLegions.ts', varName: 'KOREA_EXPEDITION_ELITE_LEGIONS' },
     NORTHEAST: { file: 'NortheastExpeditionLegions.ts', varName: 'NORTHEAST_EXPEDITION_ELITE_LEGIONS' },
     STEPPE: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },
+    SCYTHIANS: { file: 'ScythiansExpeditionLegions.ts', varName: 'SCYTHIANS_EXPEDITION_ELITE_LEGIONS' },
+    SRIVIJAYA: { file: 'SriVijayaExpeditionLegions.ts', varName: 'SRIVIJAYA_EXPEDITION_ELITE_LEGIONS' },
     WESTERN: { file: 'WesternExpeditionLegions.ts', varName: 'WESTERN_EXPEDITION_ELITE_LEGIONS' },
     CENTRAL_ASIA: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },
     WEST_ASIA: { file: 'WestAsiaExpeditionLegions.ts', varName: 'WEST_ASIA_EXPEDITION_ELITE_LEGIONS' },

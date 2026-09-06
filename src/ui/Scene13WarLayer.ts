@@ -412,6 +412,12 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     AVARS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     GHANA: { battering_ram: true, capped_ram: true, mangonel: true },
     KHAZARS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    VANDALS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    LOMBARDS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    ROURAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    SOGDIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    TANGUT: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
+    JAVANESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
 };
 
 /**
@@ -1130,6 +1136,12 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     AVARS: 'SLAV',
     GHANA: 'AFRI',
     KHAZARS: 'CEAS',
+    VANDALS: 'WEST',
+    LOMBARDS: 'WEST',
+    ROURAN: 'CEAS',
+    SOGDIANS: 'CEAS',
+    TANGUT: 'ASIA',
+    JAVANESE: 'SEAS',
 };
 
 

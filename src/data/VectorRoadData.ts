@@ -47792,7 +47792,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞契-阿速城",
+                name: "塞契-塔纳伊斯",
                 type: "road",
                 id: "road_city_zhapoluore_city_asu_1786512147678",
                 startConnection: "city_zhapoluore",
@@ -47873,7 +47873,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "哈尔科夫-阿速城",
+                name: "哈尔科夫-塔纳伊斯",
                 type: "road",
                 id: "road_city_haerkefu_city_asu_1786512166440",
                 startConnection: "city_haerkefu",
@@ -48823,7 +48823,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "潘提卡彭-阿速城",
+                name: "潘提卡彭-塔纳伊斯",
                 type: "road",
                 id: "road_city_pantika_city_asu_1787063618710",
                 startConnection: "city_pantika",
@@ -52691,7 +52691,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阿速城-萨尔克尔",
+                name: "塔纳伊斯-萨尔克尔",
                 type: "road",
                 id: "road_city_asu_city_saerkeer_1787900504291",
                 startConnection: "city_asu",
@@ -60495,6 +60495,25 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [119.032481, 26.19831],
                     [119.078868, 26.154486],
                     [119.3, 26.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希波-迦太基",
+                type: "road",
+                id: "road_city_xibo_city_jiataji_1788888888888",
+                startConnection: "city_xibo",
+                endConnection: "city_jiataji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [7.76, 36.90],
+                    [8.60, 36.95],
+                    [9.50, 36.88],
+                    [10.32, 36.85]
                 ]
             }
         },

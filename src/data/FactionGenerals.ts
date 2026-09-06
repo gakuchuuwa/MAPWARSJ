@@ -104,7 +104,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     gaolu_luoma: { generalId: 'gen_clovis_i', generalName: '克洛维', portrait: '/assets/LATIN/gaolu_luoma_keluowei.png' },
     aquidan: { generalId: 'gen_black_prince', generalName: '黑太子', portrait: '/assets/LATIN/aquidan_heitaizi.png' },
     puluowangsi: { generalId: 'gen_raymond_iv', generalName: '雷蒙四世', portrait: '/assets/LATIN/puluowangsi_leimengsishi.png' },
-    lunbadi: { generalId: 'gen_sforza', generalName: '斯福尔扎', portrait: '/assets/LATIN/lunbadi_sifuerzha.png' },
+    lunbadi: { generalId: 'lunbadi_alboin', generalName: '阿尔博因', portrait: '/assets/GERMANIC/lunbadi_aerboyin.png' },
     donggete: { generalId: 'gen_theodoric_great', generalName: '狄奥多里克', portrait: '/assets/LATIN/donggete_diaoduolike.png' },
     xigete: { generalId: 'gen_alfonso_vi', generalName: '阿方索六世', portrait: '/assets/LATIN/xigete_afangsuoliushi.png' },
     andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
@@ -1124,7 +1124,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     trastamara: { generalId: 'gen_ferdinand_ii', generalName: '斐迪南二世', portrait: '/assets/SPANISH/trastamara_feidinanershi.png' },
     odrysian_late: { generalId: 'gen_seuthes_iii', generalName: '塞乌特斯', portrait: '/assets/GREEK/odrysian_late_saiwutesi.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
-    sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ateas.png' },
+    sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
+    wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

@@ -1005,7 +1005,6 @@ const _FIXED: Record<string, string> = {
     'suzidaer': '#2D5E9E', // 苏兹达尔·下诺城（苏兹达尔蓝）
     'gesake': '#96284B', // 塞契·塞契（哥萨克猩红）
     'keluodiya': '#A32638', // 格拉代茨·克罗地亚（克罗地亚红）
-    'dunhe': '#2F5FA5', // 阿速城·顿河（顿河哥萨克蓝）
     'moerdaweiya': '#AF3030', // 摩尔达维亚·雅西（摩尔达维亚红）
     'walajiyia': '#3A6EA7', // 瓦拉几亚·特尔城（瓦拉几亚蓝）
     'liwoniya': '#3E7A4A', // 利沃尼亚·塔林（利沃尼亚绿）
@@ -1054,7 +1053,10 @@ const _FIXED: Record<string, string> = {
     'yilaka': '#D2A72C',
     'xingelana': '#E0A32E',
     'gualani': '#287A4B',
-    'xiadunhe': '#D9D4C6',
+    'xiadunhe': '#D9D4C6',
+    'sanfoqi': '#2E6FB0', // 三佛齐·室利佛逝（海上帝国蓝）
+    'sijitai': '#C8A24B', // 斯基泰·阿泰阿斯（草原金棕）
+    'wangdaer': '#5C6B73', // 汪达尔·盖萨里克（海岩风暴灰）
     'guanche': '#8A6B4A', // 关切·特尔德（加那利羊皮褐；关切人属柏柏尔系）
 
     // ── 2026-08-30 补齐全部正规势力固定色：有旗帜/纹章从其主色，无统一国色则取史地物质文化色 ──
