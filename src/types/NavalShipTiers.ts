@@ -110,6 +110,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'BIREME', why: '红海双列桨战船：纳巴泰控制阿卡巴湾艾拉港与红海东岸香料航路，装备双列桨战船巡弋红海北端', regions: ['NABATAEANS'] },
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
     { ship: 'MONOREME', why: '青铜时代单列桨战船：赫梯苏庇路里乌玛二世征调安纳托利亚/奇里乞亚舰队，在塞浦路斯近海进行人类有文字记载的最早海战', regions: ['HITTITES'] },
+    { ship: 'MONOREME', why: '尼罗河单列桨帆战船：努比亚黑法老皮耶北伐全埃及（麦罗埃与纳帕塔尼罗河水军舰队主力）', regions: ['KUSH'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 

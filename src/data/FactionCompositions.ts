@@ -258,60 +258,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 先秦军团·朝歌/殷墟/岐山/孤竹/姑苏/临淄/云梦/会稽/安邑/邯郸/古北口/郯城/武关/即墨/曲阜/上海/商邑/重庆/铜鞮/竟陵/竹山（子受/妇好/姬发/孙武/司马穰苴/熊旅/勾践/吴起/廉颇/乐毅/孙膑/王翦/田单/曹刿/黄歇/商鞅/巴蔓子/羊舌职/鬬廉/庐戢黎 · 鱼鳞阵 3+4+2：华夏刀剑手 3 + 弓兵 4 + 先秦远程战车 2）
-    yin: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },            // Row 0 前卫抗线 = 华夏刀剑手 3人（商周春秋戈盾甲士）
-            { type: 'bowman', count: 4 },                    // Row 1 中军主力 = 弓兵 4人（先秦步弓手齐射）
-            { type: 'war_chariot_ranged', count: 2 },        // Row 2 尾收战车 = 先秦远程战车 2乘（先秦驷马戎车压阵轰击）
-        ],
-    },
-    shang: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    zhou: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    guzhu: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    wu: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    qi: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
     "mi_chu": {
         legionName: "安陆军团",
         formationMode: "echelon",
@@ -319,51 +265,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "white_feather_guard", count: 4 },
             { type: "crossbowman", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    yue: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    wei: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    zhao: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    yan: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    dongxian: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
         ],
     },
     "ruo": {
@@ -375,33 +276,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
-    jiaodong: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    kong_d: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    chunshen: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
     "shangzhou": {
         legionName: "秦国军团",
         formationMode: "fish_scale",
@@ -409,42 +283,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "white_feather_guard", count: 3 },
             { type: "chukonu", count: 4 },
             { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    ba: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    yangshe: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    ruochu: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
-        ],
-    },
-    yong: {
-        legionName: "先秦军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 2 },
         ],
     },
     // ⚠ 例外（用户特批 2026-08-26）：神机营三排全火器，突破「三排最多一排特殊」规则——大明神机营本就是全火器营，历史特色保留
@@ -1197,16 +1035,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 扶南与高棉·范蔓 / 刀更孟 战象与爪刀精锐军团（鱼鳞阵 3+4+2：精锐战象前卫 3 + 精锐爪刀勇士主力 4 + 步弓手 2；象拆入战象一排）
-    "funan": {
-        legionName: "高棉军团",
-        legionType: "region",
-        formationMode: "triangle",
-        slots: [
-            { type: "elite_ballista_elephant", count: 2 },
-            { type: "spearman", count: 3 },
-            { type: "archer", count: 4 },
-        ],
-    },
     basha_d: {
         legionName: "扶南军团",
         formationMode: 'fish_scale',

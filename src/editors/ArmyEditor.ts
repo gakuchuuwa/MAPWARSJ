@@ -112,7 +112,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     UIGHUR: 'huihu',
     MOHE: 'bohai',
     ANGLO_SAXON: 'falanji',
-    AVARS: 'mosike_gongguo',
     GHANA: 'mali',
     KHAZARS: 'seljuq',
     VANDALS: 'wangdaer',

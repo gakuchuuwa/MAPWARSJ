@@ -288,7 +288,6 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     UIGHUR: 'CEAS_CASTLE_AGE3',              // 回鹘：漠北窝鲁朵八里高台
     MOHE: 'JURC_CASTLE_AGE3',                // 靺鞨：海东盛国山城木石要塞
     ANGLO_SAXON: 'WEST_CASTLE_AGE3',         // 盎格鲁-撒克逊：温彻斯特西欧石堡
-    AVARS: 'SLAV_CASTLE_AGE3',               // 阿瓦尔：潘诺尼亚环形营要塞
     GHANA: 'AFRI_CASTLE_AGE3',               // 加纳：西非黄金要塞
     KHAZARS: 'CEAS_CASTLE_AGE3',
     VANDALS: 'WEST_CASTLE_AGE3',             // 汪达尔：西地中海迦太基海堡
