@@ -245,7 +245,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
-    THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
+    THRACIAN:     'balance_yoke', // 古典色雷斯：衡轭阵 4+2+3 前排色雷斯标枪手高级4档主力+中坚标枪手2+后排长刃斩手3
     PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
     BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
@@ -2000,17 +2000,21 @@ export const ORIE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 色雷斯 罗姆菲亚镰刀剑士+轻盾兵+精锐轻盾兵（衡轭阵 4+2+3：镰刀剑士宽线主力 + 轻盾兵中排 + 精锐轻盾兵后排）
- *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（seleisi/奥德里西亚等 5 势力），文化保底与它对齐，消除「同名不同编」。 */
+/** 古典色雷斯军团（衡轭阵 4+2+3，主力在前排宽线）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（巴尔干奥德里西亚·色雷斯轻盾飞矛与罗姆菲亚战法）：
+ *   · 宽线主力 色雷斯标枪手高级（4档【高级】） —— 修昔底德与色诺芬所载地中海最致命的轻盾标枪王牌（Elite Peltasts），手持皮盾与破甲飞矛，前线大扇面压制重装方阵，占 4 档高级主力。
+ *   · 中排接应 色雷斯标枪手（2档） —— 传统山地敏捷轻盾兵，梯次掩护投射，占 2 档接应。
+ *   · 后排斩击 色雷斯长刃斩手（3档） —— 挥舞巨型双手镰刀长剑（Rhomphaia）的狂暴死士，在敌阵受创动摇后发起狂暴冲击撕裂残敌，占 3 档冲锋。 */
 export const THRACIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rhomphaia_warrior', count: 4 },   // Row 0 宽线主力 = 罗姆菲亚镰刀剑士 4人
-            { type: 'thracian_peltast', count: 2 },   // Row 1 中排 = 色雷斯轻盾兵 2人
-            { type: 'elite_peltast', count: 3 }   // Row 2 后排 = 精锐轻盾兵 3人
+            { type: 'elite_peltast', count: 4 },
+            { type: 'thracian_peltast', count: 2 },
+            { type: 'rhomphaia_warrior', count: 3 }
         ]
     }
 ];
