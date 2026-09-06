@@ -2522,7 +2522,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/death_${dir}.png`),
         },
-        'takabara': {
+        'sakan_axeman': {
             // 【塔卡巴拉】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAKAN_AXEMAN/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAKAN_AXEMAN/attack_${dir}.png`),
@@ -2819,14 +2819,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/death_${dir}.png`),
         },
-        // 【强弩兵】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材）
-        'arbalester': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/death_${dir}.png`),
-        },
+        // 【强弩兵】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材）
         // 【攻城战象】Armored Elephant 装甲战象（8方向，AoE2 DE SLD 素材）
 
         // 【桨帆船】8方向，AoE2 DE SLD 素材
@@ -3828,37 +3821,5 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
-        },
-        // 【华夏戟兵】8方向，AoE2 DE SLD 素材
-        'ji_infantry': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/death_${dir}.png`),
-        },
-        // 【精锐华夏戟兵】8方向，AoE2 DE SLD 素材
-        'ji_infantry_elite': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/death_${dir}.png`),
-        },
-        // 【阿兹特克突袭者】8方向，AoE2 DE SLD 素材
-        'aztec_raider': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/death_${dir}.png`),
-        },
-        // 【攻城战象】8方向，AoE2 DE SLD 素材
-        'siege_elephant': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/death_${dir}.png`),
         },
 } as const;
