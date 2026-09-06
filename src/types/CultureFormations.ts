@@ -244,7 +244,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
-    GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
+    GREEK:        'echelon',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
     THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
     PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
@@ -312,7 +312,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SAFAVID: 'triangle',
     RUSSIAN: 'fish_scale',
     SIKH: 'fish_scale',
-    HEBREWS: 'square',
+    HEBREWS: 'fish_scale',
     WUSUN: 'triangle',
     QIANG: 'triangle',
     NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
@@ -1370,16 +1370,25 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 14. 西域 斯基泰斧骑兵+斯基泰骑射手+斯基泰骑射手精锐（三角阵 2+3+4：斧骑兵尖刀 + 骑射手中坚 + 精锐骑射主力底边） */
+/** 14. 古典塞种军团（锋矢 2+3+4，主力在后排压阵）
+ *  史料：塞种 = 波斯语 Saka，指葱岭以东至伊犁的东伊朗游牧，《汉书》「塞王南君罽宾」。
+ *        波斯贝希斯敦铭文分其为尖帽塞人（Sakā tigraxaudā）与饮豪麻塞人（Sakā haumavargā）。
+ *        与黑海的斯基泰同源异地：塞种紧邻大夏绿洲，故弓手取巴克特里亚系而非黑海系。
+ *  ⚠️ 与 [SCYTHIANS 古典斯基泰] 必须编制不同（曾经完全一样，2026-09-07 分开）：
+ *     塞种＝萨迦斧兵开路 + 大夏弓手 + 精锐骑射主力；斯基泰＝斧骑兵开路 + 本族骑射两档。
+ *    前 2 萨迦斧兵      —— 尖帽塞人的徒步斧战部众
+ *    中 3 巴克特里亚弓手 —— 塞种南下罽宾/大夏后吸收的绿洲步射
+ *    后 4 精锐骑射手    —— 主力齐射
+ */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'scythian_axe_cavalry', count: 2 },       // Row 0 尖刀先锋 = 斯基泰斧骑兵 2人
-            { type: 'scythian_horse_archer', count: 3 },      // Row 1 冲击中坚 = 斯基泰骑射手 3人
-            { type: 'elite_scythian_horse_archer', count: 4 } // Row 2 底边主力齐射 = 斯基泰骑射手精锐 4人
+            { type: 'sakan_axeman', count: 2 },
+            { type: 'bactrian_archer', count: 3 },
+            { type: 'elite_scythian_horse_archer', count: 4 }
         ]
     }
 ];
@@ -1488,17 +1497,28 @@ export const BERBER_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 19. 希腊 希腊重装步兵+底比斯圣队+色雷斯轻装兵（鱼鳞阵 3+4+2：希腊重装步兵前卫 + 底比斯圣队突破主力 + 色雷斯标枪后排） */
-// [2026-08-27 撤销并入] 希腊恢复独立区，本表重新被 CULTURE_TIERS_MAP 引用。
+/** 19. 古典希腊军团（雁行 4+3+2，主力在前排）
+ *  史料：希腊城邦战争的胜负由重装步兵方阵（phalanx）正面决出——马拉松（前 490）、
+ *        普拉提亚（前 479）、伯罗奔尼撒战争皆然。城邦多山少马，骑兵是次要兵种，
+ *        真正的强骑兵在帖萨利亚与马其顿，不在城邦本身。
+ *        雁行＝斜行阵：埃帕米农达在留克特拉（前 371）左翼加厚至五十列斜进破斯巴达，
+ *        领头的正是底比斯圣队，故主力在前排、圣队居次列。
+ *        罗得岛投石兵见色诺芬《长征记》——其射程胜过波斯弓手，是希腊远射的招牌。
+ *  ⚠️ 旧编制是「贵族骑兵×3 + 精锐贵族骑兵×4 + 克里特弓×2」，两档骑兵当主力，
+ *     与古典希腊的兵制完全相反，2026-09-07 按史实重排。
+ *    前 4 希腊重装步兵 —— 方阵主力，斜行阵加厚的那一翼
+ *    中 3 底比斯圣队   —— 精锐重步，留克特拉的破阵尖端
+ *    后 2 罗得岛投石兵 —— psiloi 轻兵远射
+ */
 export const GREEK_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'greek_noble_cavalry', count: 3 },
-            { type: 'elite_greek_cavalry', count: 4 },
-            { type: 'cretan_archer', count: 2 }
+            { type: 'hoplite', count: 4 },
+            { type: 'sacred_band', count: 3 },
+            { type: 'rhodian_slinger', count: 2 }
         ]
     }
 ];
@@ -2737,30 +2757,54 @@ export const SIKH_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 希伯来 基利提重装圣卫+投石手+佩剑卫士（方阵 3+3+3） */
+/** 古典希伯来军团（鱼鳞 3+4+2，主力在中排）
+ *  史料：以色列-犹大王国（扫罗—大卫—所罗门，约前 1050—前 586）以山地步兵立国。
+ *        甩石：《士师记》20:16 便雅悯「能用机弦甩石打人，毫发不差」；
+ *              《历代志上》12:2 便雅悯人「能用左右两手甩石射箭」；
+ *              大卫击歌利亚用的正是投石（《撒母耳记上》17:49）——希伯来最著名的战斗意象。
+ *        重装：大卫的「勇士」gibborim（三十勇士，《撒母耳记下》23）是王室常备精锐。
+ *        战车：以色列早期缺车（《士师记》1:19 有铁车的是敌人），
+ *              至所罗门才建米吉多/夏琐/基色三座战车城，《列王纪上》10:26 载战车一千四百辆，
+ *              故战车只占 2 档，不作主力。
+ *  ⚠️ 旧编制是 guardsman / longswordsman / archer 三档通用兵，无任何希伯来特征，
+ *     2026-09-07 按史实重排。
+ *    前 3 投石兵     —— 便雅悯甩石手
+ *    中 4 先锋重装步兵 —— 大卫的勇士 gibborim，王室常备主力
+ *    后 2 双轮战车   —— 所罗门战车城的车队，仅 2 档
+ */
 export const HEBREWS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'guardsman', count: 3 },
-            { type: 'longswordsman', count: 3 },
-            { type: 'archer', count: 3 }
+            { type: 'slinger', count: 3 },
+            { type: 'vanguard', count: 4 },
+            { type: 'war_chariot', count: 2 }
         ]
     }
 ];
 
-/** 乌孙 大漠控弦突骑+耐力重装骑矛手+轻骑射（三角阵 4+3+2） */
+/** 古典乌孙军团（锋矢 2+3+4，主力在后排压阵）
+ *  史料：《汉书·西域传》「乌孙国，大昆弥治赤谷城……户十二万，口六十三万，胜兵十八万八千八百人」
+ *        「不田作种树，随畜逐水草，与匈奴同俗。国多马，富人至四五千匹」
+ *        「乌孙民有塞种、大月氏种云」——族源杂塞种与月氏遗民。
+ *        本始三年（前 71）乌孙五万骑与汉五道并出，破匈奴右谷蠡王庭。
+ *  取舍：乌孙是纯游牧骑射国，史书未载具装重骑（具装是萨尔马提亚/贵霜/安息那条线），
+ *        故主力取「古典骑射手重装」而非具装枪骑；前排萨迦斧兵出自「民有塞种」。
+ *    前 2 萨迦斧兵    —— 塞种徒步部众，斧战开路
+ *    中 3 古典轻骑兵  —— 「国多马」的游骑，绕射扰袭
+ *    后 4 重装骑射手  —— 控弦十八万的主力，居后齐射压阵
+ */
 export const WUSUN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'scythian_axe_cavalry', count: 4 },
+            { type: 'sakan_axeman', count: 2 },
+            { type: 'antiquity_light_cavalry', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ]
     }
 ];
