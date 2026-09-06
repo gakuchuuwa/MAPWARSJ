@@ -1064,6 +1064,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'zhagewei': 'city_lalibeila',
     'adal': 'city_zeila',
     'malacca': 'city_malacca',
+    'sanfoqi': 'city_sanfoqi',
     'medang': 'city_kalasan',
     'ternate': 'city_deernate',
     'sulu': 'city_huoluo',

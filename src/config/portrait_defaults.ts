@@ -124,6 +124,12 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     ASSYRIAN: 'WEST_ASIA',       // 亚述 → 西亚立绘池（亚述将领图在WEST_ASIA）
     PARTHIA: 'PERSIAN',          // 安息 → 波斯立绘池（帕提亚将领图在PERSIAN/CENTRAL_ASIA）
     SCYTHIANS: 'STEPPE',         // 斯基泰 → 草原立绘池（斯基泰骑兵将领图在STEPPE/LATIN）
+    BYZANTINE: 'LATIN',          // 拜占庭 → 拉丁立绘池（拜占庭罗马将领图在LATIN）
+    FRANKS: 'GERMANIC',          // 法兰克 → 日耳曼立绘池（西欧重装骑士图在GERMANIC）
+    SASANIAN: 'PERSIAN',         // 萨珊 → 波斯立绘池（萨珊帝国将领图在PERSIAN/CENTRAL_ASIA）
+    TURKS: 'STEPPE',             // 突厥 → 草原立绘池（突厥狼骑将领图在STEPPE）
+    NANZHAO: 'DIANQIAN',         // 南诏 → 滇黔立绘池（南诏统帅图在DIANQIAN）
+    SRIVIJAYA: 'MALAY',          // 三佛齐 → 马来立绘池（室利佛逝南洋将领图在MALAY）
 };
 
 /** 希腊专用池：四类希腊据点统一读取 public/assets/GREEK，禁止串用其他文化立绘。 */

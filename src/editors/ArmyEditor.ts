@@ -106,6 +106,12 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ASSYRIAN: 'yashu',
     PARTHIA: 'ansxi',
     SCYTHIANS: 'sijitai',
+    BYZANTINE: 'baizanting',
+    FRANKS: 'falanji',
+    SASANIAN: 'sashan',
+    TURKS: 'tujue',
+    NANZHAO: 'nanzhao',
+    SRIVIJAYA: 'sanfoqi',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

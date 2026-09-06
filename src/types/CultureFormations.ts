@@ -140,6 +140,12 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     ASSYRIAN: 'MIXED',
     PARTHIA: 'CAVALRY',
     SCYTHIANS: 'CAVALRY',
+    BYZANTINE: 'MIXED',
+    FRANKS: 'CAVALRY',
+    SASANIAN: 'CAVALRY',
+    TURKS: 'CAVALRY',
+    NANZHAO: 'INFANTRY',
+    SRIVIJAYA: 'MIXED',
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -257,6 +263,12 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ASSYRIAN: 'fish_scale',
     PARTHIA: 'triangle',
     SCYTHIANS: 'triangle',
+    BYZANTINE: 'square',
+    FRANKS: 'triangle',
+    SASANIAN: 'triangle',
+    TURKS: 'triangle',
+    NANZHAO: 'fish_scale',
+    SRIVIJAYA: 'crane_wing',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -2155,6 +2167,90 @@ export const SCYTHIANS_TIERS: CompositionTier[] = [
     }
 ];
 
+/** 拜占庭 圣骑兵+重步兵+复合弓兵（方阵 3+4+2：具装圣骑兵3 + 斯库塔托重步兵4 + 复合弓兵2） */
+export const BYZANTINE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cataphract', count: 3 },
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'composite_bowman', count: 2 }
+        ]
+    }
+];
+
+/** 法兰克 查理曼圣骑士+封建重骑士+强弩兵（锥形阵 2+3+4：圣骑士前锋2 + 重装骑士3 + 强弩兵4） */
+export const FRANKS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'paladin', count: 2 },
+            { type: 'knight', count: 3 },
+            { type: 'crossbowman', count: 4 }
+        ]
+    }
+];
+
+/** 萨珊 不死全具装铁骑+不死卫队+复合弓兵（锥形阵 2+3+4：Savan铁骑2 + 不死卫队3 + 萨珊弓手4） */
+export const SASANIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'savar', count: 2 },
+            { type: 'immortal', count: 3 },
+            { type: 'composite_bowman', count: 4 }
+        ]
+    }
+];
+
+/** 突厥 答剌罕精骑+草原枪骑+草原骑射手（锥形阵 2+3+4：答剌罕重骑2 + 草原枪骑3 + 骑射手4） */
+export const TURKS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'steppe_lancer', count: 3 },
+            { type: 'scythian_horse_archer', count: 4 }
+        ]
+    }
+];
+
+/** 南诏 战象+罗苴子重步兵+藤甲神射（鱼鳞阵 2+4+3：山地象军2 + 罗苴子甲士4 + 藤甲弓手3） */
+export const NANZHAO_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'war_elephant', count: 2 },
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'rattan_archer', count: 3 }
+        ]
+    }
+];
+
+/** 三佛齐 爪刀短剑士+藤甲弓手+王家战象（鹤翼阵 4+3+2：波浪短剑士4 + 藤甲战弓手3 + 战象2） */
+export const SRIVIJAYA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'karambit_warrior', count: 4 },
+            { type: 'rattan_archer', count: 3 },
+            { type: 'war_elephant', count: 2 }
+        ]
+    }
+];
+
 
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
@@ -2229,31 +2325,37 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ASSYRIAN: ASSYRIAN_TIERS,
     PARTHIA: PARTHIA_TIERS,
     SCYTHIANS: SCYTHIANS_TIERS,
+    BYZANTINE: BYZANTINE_TIERS,
+    FRANKS: FRANKS_TIERS,
+    SASANIAN: SASANIAN_TIERS,
+    TURKS: TURKS_TIERS,
+    NANZHAO: NANZHAO_TIERS,
+    SRIVIJAYA: SRIVIJAYA_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
  *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
  *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
 export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
-    CENTRAL:      '中原军团',
-    NORTH:        '河朔军团',
+    CENTRAL:      '古典中原军团',
+    NORTH:        '古典河朔军团',
     NORTHEAST:    '东北军团',
     KOREA:        '朝鲜军团',
     JAPAN:        '日本军团',
-    STEPPE:       '草原军团',
-    HEXI:         '河西军团',
-    BASHU:        '川蜀军团',
+    STEPPE:       '古典匈奴军团',
+    HEXI:         '古典河西军团',
+    BASHU:        '古典川蜀军团',
     JIANGNAN:     '江南军团',
-    LINGNAN:      '岭南军团',
-    DIANQIAN:     '滇缅军团',
+    LINGNAN:      '古典岭南军团',
+    DIANQIAN:     '古典滇缅军团',
     TIBET:        '青藏军团',
     CENTRAL_ASIA: '中亚军团',
     WEST_ASIA:    '西亚军团',
-    WESTERN:      '西域军团',
+    WESTERN:      '古典西域军团',
     SLAVIC:       '斯拉夫军团',
-    GERMANIC:     '日耳曼军团',
-    LATIN:        '拉丁军团',
-    INDIA:        '印度军团',
+    GERMANIC:     '古典日耳曼军团',
+    LATIN:        '古典拉丁军团',
+    INDIA:        '古典孔雀军团',
     BERBER:       '柏柏尔军团',
     AMERICA:      '美洲军团',
     AFRICA:       '非洲军团',
@@ -2262,16 +2364,16 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     PURU:         '达罗毗荼军团',
     ORIE:         '阿拉伯军团',
     EAST:         '东欧军团',
-    GREEK:        '希腊军团',
-    THRACIAN:     '色雷斯军团',
-    PERSIAN:      '波斯军团',
+    GREEK:        '古典爱琴海军团',
+    THRACIAN:     '古典色雷斯军团',
+    PERSIAN:      '萨法维波斯军团',
     CUMAN:        '库曼军团',
     BRITONS:      '英格兰军团',
     GOTHS: '哥特军团',
     HUNS: '匈人军团',
     TEUTONS: '条顿军团',
     VIKINGS: '维京军团',
-    CELTS: '凯尔特军团',
+    CELTS: '古典凯尔特军团',
     ITALIANS: '意大利军团',
     SICILIANS: '西西里军团',
     BULGARIANS: '保加利亚军团',
@@ -2285,28 +2387,34 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ETHIOPIANS: '埃塞俄比亚军团',
     BENGALIS: '孟加拉军团',
     GURJARAS: '瞿折罗军团',
-    PORUS: '补噜军团',
+    PORUS: '古典包腊瓦军团',
     VIETNAMESE: '越南军团',
     KHMER: '高棉军团',
-    MAYANS: '玛雅军团',
+    MAYANS: '古典玛雅军团',
     MAPUCHE: '马普切军团',
     MUISCA: '穆伊斯卡军团',
     TUPI: '图皮军团',
-    ARMENIANS: '亚美尼亚军团',
+    ARMENIANS: '古典亚美尼亚军团',
     GEORGIANS: '格鲁吉亚军团',
-    ATHENIANS: '雅典军团',
-    SPARTANS: '斯巴达军团',
-    MACEDONIANS: '马其顿军团',
-    ACHAEMENIDS: '阿契美尼德军团',
+    ATHENIANS: '古典雅典军团',
+    SPARTANS: '古典斯巴达军团',
+    MACEDONIANS: '古典马其顿军团',
+    ACHAEMENIDS: '古典波斯军团',
     BURMESE: '缅甸军团',
     WALLACHIA: '瓦拉几亚军团',
-    EGYPT: '埃及军团',
-    CARTHAGE: '迦太基军团',
-    BABYLON: '巴比伦军团',
-    HITTITES: '赫梯军团',
-    ASSYRIAN: '亚述军团',
-    PARTHIA: '安息军团',
-    SCYTHIANS: '斯基泰军团',
+    EGYPT: '古典埃及军团',
+    CARTHAGE: '古典迦太基军团',
+    BABYLON: '古典巴比伦军团',
+    HITTITES: '古典赫梯军团',
+    ASSYRIAN: '古典亚述军团',
+    PARTHIA: '古典帕提亚军团',
+    SCYTHIANS: '古典斯基泰军团',
+    BYZANTINE: '拜占庭帝国军团',
+    FRANKS: '法兰克骑士军团',
+    SASANIAN: '萨珊不死军团',
+    TURKS: '突厥狼骑军团',
+    NANZHAO: '南诏罗苴军团',
+    SRIVIJAYA: '三佛齐海神军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

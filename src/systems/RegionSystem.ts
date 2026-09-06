@@ -90,7 +90,13 @@ export type RegionType =
     | 'HITTITES'     // 赫梯（小亚细亚安纳托利亚铁器与战车强权）
     | 'ASSYRIAN'     // 亚述（两河流域铁血军事帝国）
     | 'PARTHIA'      // 安息（帕提亚帝国）
-    | 'SCYTHIANS';   // 斯基泰（欧亚大草原游牧始祖文明）
+    | 'SCYTHIANS'    // 斯基泰（欧亚大草原游牧始祖文明）
+    | 'BYZANTINE'    // 拜占庭（东罗马帝国、地中海封建灯塔与军区制）
+    | 'FRANKS'       // 法兰克（加洛林帝国/法兰克王国、西欧封建骑士制度真正源头）
+    | 'SASANIAN'     // 萨珊（第二波斯帝国、祆教拜火教巅峰与萨珊具装铁骑）
+    | 'TURKS'        // 突厥（第一/第二突厥汗国、隋唐欧亚草原两万里大霸主）
+    | 'NANZHAO'      // 南诏（西南第一军国、盛唐天宝之战六诏归一）
+    | 'SRIVIJAYA';   // 三佛齐（室利佛逝、马六甲海峡海上佛教贸易帝国）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -143,30 +149,36 @@ export const REGION_ORDER: RegionType[] = [
     'ASSYRIAN',
     'PARTHIA',
     'SCYTHIANS',
+    'BYZANTINE',
+    'FRANKS',
+    'SASANIAN',
+    'TURKS',
+    'NANZHAO',
+    'SRIVIJAYA',
 ];
 
 // [UI] Display labels (Chinese + English code)
 // 用于 CityEditor 等 UI 动态生成 region 下拉
 export const REGION_LABELS: Record<RegionType, string> = {
     SLAVIC: '斯拉夫',
-    GERMANIC: '日耳曼',
-    LATIN: '拉丁',
-    CENTRAL: '中原',
-    NORTH: '北方',
+    GERMANIC: '古典日耳曼',
+    LATIN: '古典拉丁',
+    CENTRAL: '古典中原',
+    NORTH: '古典河朔',
     JIANGNAN: '江南',
-    LINGNAN: '岭南',  // 含福建
-    BASHU: '川蜀',
-    DIANQIAN: '滇缅',
-    HEXI: '河西',
-    WESTERN: '西域',
+    LINGNAN: '古典岭南',  // 含福建
+    BASHU: '古典川蜀',
+    DIANQIAN: '古典滇缅',
+    HEXI: '古典河西',
+    WESTERN: '古典西域',
     TIBET: '青藏',
-    STEPPE: '草原',
+    STEPPE: '古典匈奴',
     NORTHEAST: '东北',
     KOREA: '朝鲜',
     JAPAN: '日本',
     CENTRAL_ASIA: '中亚',
     WEST_ASIA: '西亚',
-    INDIA: '印度',
+    INDIA: '古典孔雀',
     BERBER: '柏柏尔',
     AMERICA: '美洲',
     AFRICA: '非洲',
@@ -175,16 +187,16 @@ export const REGION_LABELS: Record<RegionType, string> = {
     PURU: '南印度',
     ORIE: '阿拉伯',
     EAST: '东欧',
-    GREEK: '希腊',
-    THRACIAN: '色雷斯',
-    PERSIAN: '波斯',
+    GREEK: '古典爱琴海',
+    THRACIAN: '古典色雷斯',
+    PERSIAN: '萨法维波斯',
     CUMAN: '库曼',
     BRITONS: '英格兰',
     GOTHS: '哥特',
     HUNS: '匈人',
     TEUTONS: '条顿',
     VIKINGS: '维京',
-    CELTS: '凯尔特',
+    CELTS: '古典凯尔特',
     ITALIANS: '意大利',
     SICILIANS: '西西里',
     BULGARIANS: '保加利亚',
@@ -198,28 +210,34 @@ export const REGION_LABELS: Record<RegionType, string> = {
     ETHIOPIANS: '埃塞俄比亚',
     BENGALIS: '孟加拉',
     GURJARAS: '瞿折罗',
-    PORUS: '补噜',
+    PORUS: '古典包腊瓦',
     VIETNAMESE: '越南',
     KHMER: '高棉',
-    MAYANS: '玛雅',
+    MAYANS: '古典玛雅',
     MAPUCHE: '马普切',
     MUISCA: '穆伊斯卡',
     TUPI: '图皮',
-    ARMENIANS: '亚美尼亚',
+    ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '格鲁吉亚',
-    ATHENIANS: '雅典',
-    SPARTANS: '斯巴达',
-    MACEDONIANS: '马其顿',
-    ACHAEMENIDS: '阿契美尼德',
+    ATHENIANS: '古典雅典',
+    SPARTANS: '古典斯巴达',
+    MACEDONIANS: '古典马其顿',
+    ACHAEMENIDS: '古典波斯',
     BURMESE: '缅甸',
     WALLACHIA: '瓦拉几亚',
-    EGYPT: '埃及',
-    CARTHAGE: '迦太基',
-    BABYLON: '巴比伦',
-    HITTITES: '赫梯',
-    ASSYRIAN: '亚述',
-    PARTHIA: '安息',
-    SCYTHIANS: '斯基泰',
+    EGYPT: '古典埃及',
+    CARTHAGE: '古典迦太基',
+    BABYLON: '古典巴比伦',
+    HITTITES: '古典赫梯',
+    ASSYRIAN: '古典亚述',
+    PARTHIA: '古典帕提亚',
+    SCYTHIANS: '古典斯基泰',
+    BYZANTINE: '拜占庭',
+    FRANKS: '法兰克',
+    SASANIAN: '萨珊',
+    TURKS: '突厥',
+    NANZHAO: '南诏',
+    SRIVIJAYA: '三佛齐',
 };
 
 /**
@@ -232,23 +250,23 @@ export const REGION_LABELS: Record<RegionType, string> = {
  */
 export const CULTURE_NAMES: Record<RegionType, string> = {
     SLAVIC: '斯拉夫',
-    GERMANIC: '日耳曼',
-    LATIN: '拉丁',
-    CENTRAL: '中原',
-    NORTH: '河朔',
+    GERMANIC: '古典日耳曼',
+    LATIN: '古典拉丁',
+    CENTRAL: '古典中原',
+    NORTH: '古典河朔',
     JIANGNAN: '江南',
-    BASHU: '川蜀',
-    HEXI: '河西',
-    LINGNAN: '岭南',
-    STEPPE: '蒙古',
+    BASHU: '古典川蜀',
+    HEXI: '古典河西',
+    LINGNAN: '古典岭南',
+    STEPPE: '古典匈奴',
     NORTHEAST: '东北',
     TIBET: '青藏',
-    WESTERN: '西域',
+    WESTERN: '古典西域',
     CENTRAL_ASIA: '中亚',
     WEST_ASIA: '西亚',
-    INDIA: '印度',
+    INDIA: '古典孔雀',
     BERBER: '柏柏尔',
-    DIANQIAN: '滇缅',
+    DIANQIAN: '古典滇缅',
     KOREA: '朝鲜',
     JAPAN: '日本',
     AMERICA: '美洲',
@@ -258,16 +276,16 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     PURU: '达罗毗荼',
     ORIE: '阿拉伯',
     EAST: '东欧',
-    GREEK: '希腊',
-    THRACIAN: '色雷斯',
-    PERSIAN: '波斯',
+    GREEK: '古典爱琴海',
+    THRACIAN: '古典色雷斯',
+    PERSIAN: '萨法维波斯',
     CUMAN: '库曼',
     BRITONS: '英格兰',
     GOTHS: '哥特',
     HUNS: '匈人',
     TEUTONS: '条顿',
     VIKINGS: '维京',
-    CELTS: '凯尔特',
+    CELTS: '古典凯尔特',
     ITALIANS: '意大利',
     SICILIANS: '西西里',
     BULGARIANS: '保加利亚',
@@ -281,28 +299,34 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     ETHIOPIANS: '埃塞俄比亚',
     BENGALIS: '孟加拉',
     GURJARAS: '瞿折罗',
-    PORUS: '补噜',
+    PORUS: '古典包腊瓦',
     VIETNAMESE: '越南',
     KHMER: '高棉',
-    MAYANS: '玛雅',
+    MAYANS: '古典玛雅',
     MAPUCHE: '马普切',
     MUISCA: '穆伊斯卡',
     TUPI: '图皮',
-    ARMENIANS: '亚美尼亚',
+    ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '格鲁吉亚',
-    ATHENIANS: '雅典',
-    SPARTANS: '斯巴达',
-    MACEDONIANS: '马其顿',
-    ACHAEMENIDS: '阿契美尼德',
+    ATHENIANS: '古典雅典',
+    SPARTANS: '古典斯巴达',
+    MACEDONIANS: '古典马其顿',
+    ACHAEMENIDS: '古典波斯',
     BURMESE: '缅甸',
     WALLACHIA: '瓦拉几亚',
-    EGYPT: '古埃及',
-    CARTHAGE: '迦太基',
-    BABYLON: '巴比伦',
-    HITTITES: '赫梯',
-    ASSYRIAN: '亚述',
-    PARTHIA: '帕提亚',
-    SCYTHIANS: '斯基泰',
+    EGYPT: '古典埃及',
+    CARTHAGE: '古典迦太基',
+    BABYLON: '古典巴比伦',
+    HITTITES: '古典赫梯',
+    ASSYRIAN: '古典亚述',
+    PARTHIA: '古典帕提亚',
+    SCYTHIANS: '古典斯基泰',
+    BYZANTINE: '拜占庭',
+    FRANKS: '法兰克',
+    SASANIAN: '萨珊波斯',
+    TURKS: '突厥',
+    NANZHAO: '南诏',
+    SRIVIJAYA: '室利佛逝',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -538,6 +562,12 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ASSYRIAN: '#b71c1c',   // 亚述（铁血战神赤红）
     PARTHIA: '#6a1b9a',    // 安息（帕提亚皇室深紫）
     SCYTHIANS: '#fbc02d',  // 斯基泰（大草原黄金色）
+    BYZANTINE: '#7b1fa2',  // 拜占庭（拜占庭皇室深紫）
+    FRANKS: '#1565c0',     // 法兰克（加洛林皇家蓝）
+    SASANIAN: '#c62828',   // 萨珊（波斯祆教烈火深绯红）
+    TURKS: '#00838f',      // 突厥（草原苍狼天青蓝）
+    NANZHAO: '#4e342e',    // 南诏（苍山洱海玄木褐）
+    SRIVIJAYA: '#00695c',  // 三佛齐（南洋海洋碧青）
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1043,6 +1073,42 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/nomadic_big.png'),
         pass: resolvePath('/cities/nomadic_pass.png')
     },
+    BYZANTINE: {
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    FRANKS: {
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    SASANIAN: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    TURKS: {
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
+    NANZHAO: {
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    SRIVIJAYA: {
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1146,7 +1212,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     EAST:         ['city_jifu'],                         // 基辅 (基辅罗斯都城; 2026-08-27 新增东欧区)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
-    INDIA:        ['city_deli'],                      // 德里 (德里苏丹国/莫卧儿政治中心, 持续千年印度核心)
+    INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典次大陆核心)
     BERBER:       ['city_malajiashen'],               // 马拉喀什 (穆拉比特/穆瓦希德柏柏尔帝国核心)
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     AFRICA:       ['city_aksum'],                     // 阿克苏姆 (阿克苏姆帝国都; 2026-08-24 新增非洲区)
@@ -1154,9 +1220,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
     PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)
     ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
-    GREEK:        ['city_thebes'],                    // 雅典 (希腊城邦核心; 2026-08-27 撤销并入拉丁)
+    GREEK:        ['city_thebes'],                    // 底比斯 (爱琴海城邦核心; 2026-08-27 撤销并入拉丁)
     THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
-    PERSIAN:      ['city_bosibolisi'],                // 波斯波利斯 (阿契美尼德帝都; 2026-08-27 新增波斯区)
+    PERSIAN:      ['city_yisifahan'],                 // 伊斯法罕 (萨法维波斯帝都; 2026-08-27 新增波斯区)
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
     BRITONS: ['city_lundun'],  // 英格兰（中心据点已挂）
     GOTHS: ['city_toulouse'],  // 哥特（中心据点已挂）
@@ -1188,8 +1254,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）
     ATHENIANS: ['city_yadian'],  // 雅典（中心据点已挂）
     SPARTANS: ['city_sparta'],  // 斯巴达（中心据点已挂）
-    MACEDONIANS: ['city_salonica'],  // 马其顿·佩拉（中心据点已挂）
-    ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（中心据点已挂）
+    MACEDONIANS: ['city_salonica'],  // 马其顿-佩拉（中心据点已挂）
+    ACHAEMENIDS: ['city_bosibolisi'],  // 波斯波利斯（阿契美尼德帝都）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
     WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）
     EGYPT: ['city_mengfeisi'],          // 埃及（孟菲斯，古王国都城）
@@ -1199,6 +1265,12 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ASSYRIAN: ['city_niniwei'],         // 亚述（尼尼微帝都）
     PARTHIA: ['city_nisa'],             // 安息（尼萨王都）
     SCYTHIANS: ['city_asu'],            // 斯基泰（阿速城/塔纳伊斯游牧贸易王庭）
+    BYZANTINE: ['city_junshitandingbao'], // 拜占庭（君士坦丁堡帝都）
+    FRANKS: ['city_kelong', 'city_yachen'], // 法兰克（科隆加洛林重镇、亚琛帝都）
+    SASANIAN: ['city_feiluzhabade'],     // 萨珊（菲鲁扎巴德开国帝都）
+    TURKS: ['city_otuken', 'city_suiye'], // 突厥（于都斤山神圣牙帐、碎叶重镇）
+    NANZHAO: ['city_mengshe', 'city_dali_city'], // 南诏（蒙舍诏故都、羊苴咩城大理都城）
+    SRIVIJAYA: ['city_sanfoqi'],        // 三佛齐（室利佛逝巨港都城）
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

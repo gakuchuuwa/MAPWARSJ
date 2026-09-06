@@ -397,6 +397,12 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ASSYRIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     PARTHIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     SCYTHIANS: { battering_ram: true, capped_ram: true, mangonel: true },
+    BYZANTINE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    FRANKS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    SASANIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    TURKS: { battering_ram: true, capped_ram: true, mangonel: true, onager: true },
+    NANZHAO: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    SRIVIJAYA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, battle_elephant: true },
 };
 
 /**
@@ -1100,6 +1106,12 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     ASSYRIAN: 'ORIE',
     PARTHIA: 'PERSIAN',
     SCYTHIANS: 'CEAS',
+    BYZANTINE: 'MEDI',
+    FRANKS: 'WEST',
+    SASANIAN: 'PERSIAN',
+    TURKS: 'CEAS',
+    NANZHAO: 'ASIA',
+    SRIVIJAYA: 'SEAS',
 };
 
 
@@ -4148,7 +4160,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 城池硬化地面道路贴图（文化自适应）：东方 rd2 碎石子 / 罗马・拜占庭 rd1 石板 / 中东 rd5 砾石土路。
+     * 城池硬化地面道路贴图（文化自适应）：东方 rd2 碎石子 / 罗马与拜占庭 rd1 石板 / 中东 rd5 砾石土路。
      * 🔴 applyDefenderCityRoad（城内建筑地基）与 addGateFoundation（城门前地基）共用同一映射，改贴图只此一处。
      */
     private cityRoadFoundationTile(): string {
