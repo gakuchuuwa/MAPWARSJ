@@ -227,7 +227,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
-    DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
+    DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
@@ -1325,16 +1325,21 @@ export const LINGNAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 11. 滇缅 东南亚战斗象+步弓手+马来爪刀勇士（三角阵 2+3+4：战斗象尖刀 + 步弓手中坚 + 爪刀勇士主力底边） */
+/** 古典古滇军团（锥形阵 2+3+4，战象尖刀+底边重步主力）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。大象只占 2 档。
+ *  史实依据（战国西汉滇池古滇王国）：
+ *   · 前排尖刀 战象（2档【大象降2档】） —— 《华阳国志》记载南中夷人「乘象入阵」，晋宁石寨山贮贝器青铜雕塑生动展现乘象作战，用古典桑纳亚战象代西南雨林战象，占 2 档尖刀开道。
+ *   · 中坚掩护 古典掷矛手高级（3档【高级】） —— 西南密林善用剧毒药矢与短矛标枪，穿透抛射压制敌方阵线，占 3 档中坚。
+ *   · 后排主力 先锋重装步兵（4档【重装】） —— 石寨山与李家山出土的孔雀羽战盔、镂空剑鞘青铜短剑与重铠武士，底边主力结阵冲锋决胜，占 4 档重装主力。 */
 export const DIANQIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },   // Row 0 尖刀巨兽 = 东南亚战斗象 2人
-            { type: 'archer', count: 3 },            // Row 1 散射中坚 = 步弓手 3人
-            { type: 'karambit_warrior', count: 4 }   // Row 2 底边主力突击 = 马来爪刀勇士 4人
+            { type: 'sannahya', count: 2 },
+            { type: 'elite_antiquity_skirmisher', count: 3 },
+            { type: 'vanguard', count: 4 }
         ]
     }
 ];
