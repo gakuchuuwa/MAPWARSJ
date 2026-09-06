@@ -254,7 +254,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HUNS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     TEUTONS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
     VIKINGS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
-    CELTS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
+    CELTS: 'fish_scale',  // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
     ITALIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     SICILIANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
@@ -1793,18 +1793,21 @@ export const GOTHS_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** CELTS 文化军团（fish_scale 3+4+2）
- *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 3 个势力实际在用的这套
- *  （坎布里亚、皮克特、盖尔），原文化表那份已过时，作废。 */
+/** 古典凯尔特军团（鱼鳞阵 3+4+2，主力在中坚）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（拉坦诺文化·高卢与不列颠凯尔特蛮族强权）：
+ *   · 前排前卫 战犬（3档） —— 古典时代不列颠凯尔特英国猛犬（Mastiff），成群咆哮冲锋撕咬，打乱敌军前列阵脚，占 3 档前锋。
+ *   · 中坚主力 先锋重装步兵（4档【重装】） —— 高卢凯尔特锁子甲长剑重步兵，手持大椭圆盾与拉坦诺重铁剑，中腰厚实重拳突破，占 4 档重装主力。
+ *   · 后排支援 古典掷矛手高级（2档【高级】） —— 凯尔特崇山密林重标枪与飞矛投掷死士，在阵后提供强力穿刺掩护，占 2 档支援。 */
 export const CELTS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'woad_raider', count: 3 },   // Row 0
-            { type: 'elite_woad_raider', count: 4 },   // Row 1
-            { type: 'longbowman', count: 2 }   // Row 2
+            { type: 'war_dog', count: 3 },
+            { type: 'vanguard', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
