@@ -1490,76 +1490,84 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 / 萨利蒂 双轮战车军团（雁行阵 4+3+2：弓兵 4 + 双轮战车精锐 3 + 持盾步兵 2）
-    heti: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "heti": {
+        legionName: "古典赫梯军团",
+        legionType: "region",
+        formationMode: "triangle",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4（埃及／赫梯／亚述军队主体是大量弓手）
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "war_chariot_ranged", count: 2 },
+            { type: "spearman", count: 3 },
+            { type: "war_chariot_ranged", count: 4 },
         ],
     },
-    aiji: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "aiji": {
+        legionName: "古典埃及军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "cretan_archer", count: 2 },
         ],
     },
-    dibisi: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "dibisi": {
+        legionName: "古典埃及军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "cretan_archer", count: 2 },
         ],
     },
-    sumeier: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "sumeier": {
+        legionName: "古典巴比伦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "elite_war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "bactrian_archer", count: 2 },
         ],
     },
-    jialedi: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "jialedi": {
+        legionName: "古典巴比伦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "elite_war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "bactrian_archer", count: 2 },
         ],
     },
-    yashu: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "yashu": {
+        legionName: "古典巴比伦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "elite_war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "bactrian_archer", count: 2 },
         ],
     },
-    guyashu: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "guyashu": {
+        legionName: "古典巴比伦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "elite_war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "bactrian_archer", count: 2 },
         ],
     },
-    xikesuosi: {
-        legionName: "近东军团",
-        formationMode: 'echelon',
+    "xikesuosi": {
+        legionName: "古典埃及军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'bowman', count: 4 },                    // Row 0 前排齐射 = 弓兵 4
-            { type: 'elite_war_chariot', count: 3 },         // Row 1 核心战车 = 双轮战车精锐 3
-            { type: 'sparabara', count: 2 },                 // Row 2 后排接应 = 持盾步兵 2
+            { type: "war_chariot", count: 4 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "cretan_archer", count: 2 },
         ],
     },
     // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（雁行阵 4+3+2：步弓手 4 + 精锐战斗象 3 + 爪刀勇士 2）

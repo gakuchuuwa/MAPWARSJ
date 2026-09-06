@@ -2142,8 +2142,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_315', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 315,
         displayName: '设伏歼锐', ownerName: '李牧', ownerGeneralId: 'wuzhou_limu', sourceQuote: '【李牧】《史记·廉颇蔺相如列传》：示弱诱匈奴，纵奇兵设伏歼其精锐。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
     },
     {
         id: 'ts_316', ownerName: '周瑜', ownerGeneralId: 'jiujiang_zhouyu', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 316,
@@ -4574,7 +4574,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_776', ownerName: '田单', ownerGeneralId: 'jiaodong_tiandan', layer: 'tactical', series: 'counter', index: 776, displayName: '反间奇谋', sourceQuote: '利用敌方内部矛盾，使敌方战术布置直接瘱痪', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready', note: '同源：田单·反间去乐毅（与 ts_416 同典）' },
     { id: 'ts_777', ownerName: '李广', ownerGeneralId: 'li_lx_d_liguang', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 777, displayName: '备边固守', sourceQuote: '边防长期守备稳守御敌，如妇好驻守边境等多将皆有。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready' },
     { id: 'ts_778', ownerName: '百地丹波', ownerGeneralId: 'iga_d_baididanbo', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'casualty', index: 778, displayName: '林伏脱身', sourceQuote: '《伊贺乱记》：伊贺众遭织田军围剿，散入密林脱身，保存首领。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.18, engineStatus: 'ready', note: '【百地丹波】势reverse·劣局专属' },
-    { id: 'ts_780', ownerName: '戚继光', ownerGeneralId: 'qi_d_qijiguang', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 780, displayName: '金城御海', sourceQuote: '凭借坚城防御海上入侵者，如金首露筑伽倻城等，守海之法。', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_780', ownerName: '戚继光', ownerGeneralId: 'qi_d_qijiguang', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 780, displayName: '金城御海', sourceQuote: '凭借坚城防御海上入侵者，如金首露筑伽倻城等，守海之法。', baseEffect: 'self_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.25, engineStatus: 'ready' },
     { id: 'ts_781', layer: 'tactical', series: 'casualty', index: 781, displayName: '河畔聚部', ownerName: '沙牟奢允', ownerGeneralId: 'beihai_shamusheyun', sourceQuote: '【沙牟奢允】在河畔聚集部众绝地自保', baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback', magnitude: 1,
         comebackThreshold: 0.8, engineStatus: 'ready', note: '【孛端察儿】势reverse·劣局专属' },
     { id: 'ts_782', ownerName: '莎车贤', ownerGeneralId: 'shache_xian_suoche_shachexian', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'fate', index: 782, displayName: '南道自固', sourceQuote: '【莎车贤】《汉书·西域传》：莎车缩守南道，自固其境。', baseEffect: 'self_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.25, engineStatus: 'ready' },

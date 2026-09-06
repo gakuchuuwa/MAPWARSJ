@@ -1308,6 +1308,7 @@ function injectStyles(): void {
       .le-legion-card .lc-name { font-size:13px; font-weight:bold; color:#f5e6c8; }
       .le-legion-card.active .lc-name { color:#f5d78e; }
       .le-legion-card .lc-meta { font-size:11px; color:#a89f8f; margin-top:2px; line-height:1.5; }
+      .le-legion-card .lc-power { font-size:11px; font-weight:bold; font-family:monospace; margin-left:6px; float:right; }
       .le-legion-card .lc-sig { font-size:11px; color:#8ab4c4; margin-top:2px; }
       .le-collapse-toggle {
         display:flex; align-items:center; justify-content:space-between; width:100%;
@@ -2405,6 +2406,13 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
         <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}
           <span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>
+          ${(() => {
+            const lp = getLegionPower(opt.slots);
+            if (!lp) return '';
+            const detail = lp.rows.map((x, i) => `${['前排', '中坚', '后排'][i] ?? '第' + (i + 1) + '排'} ${getUnitDisplayName(x.type)}×${x.count} = ${x.index ?? '?'}`).join('\n');
+            const color = lp.index >= 200 ? '#e08a5a' : lp.index >= 100 ? '#e0c060' : '#8fae8f';
+            return `<span class="lc-power" style="color:${color};" title="军团战力 ${lp.index}（按格位人数加权平均，中位兵=100）&#10;${detail}">⚔ ${lp.index}</span>`;
+          })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
         ${isSubLayer ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此军团，用它的势力恢复为所在文化军团">🗑</button>` : ''}
