@@ -90,13 +90,20 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
     { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DIANQIAN'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
+    { ship: 'GALLEY', why: '辽东-渤海湾小型战船：辽据辽东半岛，圣宗东征高丽须渡鸭绿江与辽东近海', regions: ['KHITAN'] },
+    { ship: 'GALLEY', why: '渤海国「日本道」渡海船：靺鞨自图们江出海通日本，三十四次遣日使皆走海路', regions: ['MOHE'] },
+    { ship: 'GALLEY', why: '黑龙江水师战船：清初为雅克萨之战在吉林乌拉设船厂，八旗水师沿松花江-黑龙江作战', regions: ['MANCHU'] },
+    { ship: 'LOU_CHUAN', why: '金军楼船：完颜亮南侵所用宋式大舰，一一六一年陈家岛海战为李宝火攻所破', regions: ['JURCHEN'] },
+    { ship: 'INCENDIARY_SHIP', why: '洱海火攻快船：南诏水军扼洱海，天宝战争两度全歼唐军于洱海之滨', regions: ['NANZHAO'] },
     { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰', regions: ['KOREA'] },
     // DE 没有日本专属战船。安宅船是高舷箱型大舰，先用古代大型桨帆战船顶着（⚠️无 death 帧）
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },
 
     // ── 南亚 / 东南亚 ───────────────────────────────────────
     { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'] },
-    { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY'] },
+    { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY', 'SRIVIJAYA'] },
+    { ship: 'WAR_GALLEY', why: '爪哇 jong 大帆战船：满者伯夷以舰队制海群岛，郑和随员马欢与葡人皆记其船体巨大', regions: ['JAVANESE'] },
+    { ship: 'HEAVY_INCENDIARY_SHIP', why: '恒河-布拉马普特拉重型内河战船：莫卧儿孟加拉总督的 nawara 舰队，长期与阿拉干-葡萄牙海盗争河口', regions: ['MUGHAL'] },
     { ship: 'INCENDIARY_SHIP', why: '红河/白藤江火攻船', regions: ['VIETNAMESE', 'KHMER'] },
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '伊洛瓦底江重型内河战船', regions: ['BURMESE'] },
 
@@ -106,18 +113,22 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN'] },
     { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['GREEK'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
-    { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON'] },
+    { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON', 'ASSYRIAN'] },
     { ship: 'BIREME', why: '红海双列桨战船：纳巴泰控制阿卡巴湾艾拉港与红海东岸香料航路，装备双列桨战船巡弋红海北端', regions: ['NABATAEANS'] },
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
     { ship: 'MONOREME', why: '青铜时代单列桨战船：赫梯苏庇路里乌玛二世征调安纳托利亚/奇里乞亚舰队，在塞浦路斯近海进行人类有文字记载的最早海战', regions: ['HITTITES'] },
     { ship: 'MONOREME', why: '尼罗河单列桨帆战船：努比亚黑法老皮耶北伐全埃及（麦罗埃与纳帕塔尼罗河水军舰队主力）', regions: ['KUSH'] },
     { ship: 'MONOREME', why: '涅达姆单列长船：日耳曼北海与波罗的海沿岸突击战船（丹麦涅达姆沼泽发掘形制，维京长船最直接始祖）', regions: ['GERMANIC'] },
-    { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
+    { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS', 'VANDALS'] },
+    { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
+    { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
-    { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'ARMENIANS', 'GEORGIANS'] },
+    { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS'] },
     { ship: 'MONOREME', why: '罗斯独木船队（monoxyla）：第聂伯河下黑海', regions: ['SLAVIC'] },
+    { ship: 'MONOREME', why: '伏尔加-里海船队：可萨据伊蒂尔扼伏尔加河口，罗斯人下里海劫掠须经其许可放行', regions: ['KHAZARS'] },
+    { ship: 'WAR_GALLEY', why: '桨帆战船队：彼得一世的斯克拉桨帆舰队，一七一四年甘古特海战以桨帆船胜瑞典风帆舰', regions: ['RUSSIAN'] },
 
     // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
