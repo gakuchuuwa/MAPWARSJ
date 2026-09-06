@@ -81,7 +81,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     JAPAN:        'INFANTRY', // 日本纯步兵
     BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
-    LINGNAN:      'ELEPHANT',
+    LINGNAN:      'INFANTRY',
     DIANQIAN:     'ELEPHANT',
     SLAVIC:       'MIXED',   // 东欧步骑
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
@@ -226,7 +226,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'triangle',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
-    LINGNAN: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     DIANQIAN:     'triangle',     // 滇缅：战斗象(2) + 步弓手(3) + 爪刀勇士主力(4)
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
@@ -1306,18 +1306,21 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** LINGNAN 文化军团（triangle 2+3+4）
- *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 57 个势力实际在用的这套
- *  （墨侬、水真、黔中、广州…），原文化表那份已过时，作废。 */
+/** 古典百越军团（雁行 4+3+2，主力在前排）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（古典越国—南越/骆越/西瓯）：
+ *   · 前排主力 先锋重装步兵（4档【重装】） —— 句吴、于越青铜冶炼巅峰，欧冶子、干将莫邪菱纹宝剑，精选重铠决死死士，大盾短矛正面推进肉搏。
+ *   · 中坚 吴火焰弓箭手（3档） —— 句吴与百越江东舟师火箭手，水网沼泽密集火矢抛射压制。
+ *   · 后排 古典掷矛手高级（2档【高级】） —— 西瓯、骆越岭南丛林标枪伏击死士，秦瓯骆之战杀尉屠睢之利器，侧后穿透狙杀。 */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },   // Row 0
-            { type: 'imperial_skirmisher', count: 3 },   // Row 1
-            { type: 'rattan_archer_elite', count: 4 }   // Row 2
+            { type: 'vanguard', count: 4 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
