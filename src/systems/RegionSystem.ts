@@ -128,8 +128,8 @@ export type RegionType =
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
-    'SLAVIC', 'EAST', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
-    'CENTRAL', 'NORTH', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
+    'SLAVIC', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
+    'CENTRAL', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
     'CENTRAL_ASIA', 'PASHTUN', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
     'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ASSYRIAN', 'ORIE',
     'AMERICA', 'ANDE', 'AFRICA', 'MALAY',
@@ -227,8 +227,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     NORTHEAST: '古典鲜卑',
     KOREA: '封建高句丽',
     JAPAN: '城堡日本',
-    CENTRAL_ASIA: '封建突厥',
-    WEST_ASIA: '封建拜占庭',
+    CENTRAL_ASIA: '封建河中',
+    WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
     AMERICA: '城堡阿兹特克',
@@ -282,7 +282,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SASANIAN: '封建波斯',
     TURKS: '封建突厥',
     NANZHAO: '封建白蛮',
-    SRIVIJAYA: '封建马来',
+    SRIVIJAYA: '封建三佛齐',
     KUSHAN: '古典月氏',
     KUSH: '古典努比亚',
     KHITAN: '封建契丹',
@@ -339,8 +339,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     NORTHEAST: '古典鲜卑',
     TIBET: '封建吐蕃',
     WESTERN: '古典塞种',
-    CENTRAL_ASIA: '封建突厥',
-    WEST_ASIA: '封建拜占庭',
+    CENTRAL_ASIA: '封建河中',
+    WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
     DIANQIAN: '古典古滇',
@@ -397,7 +397,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SASANIAN: '封建波斯',
     TURKS: '封建突厥',
     NANZHAO: '封建白蛮',
-    SRIVIJAYA: '封建马来',
+    SRIVIJAYA: '封建三佛齐',
     KUSHAN: '古典月氏',
     KUSH: '古典努比亚',
     KHITAN: '封建契丹',
@@ -1492,7 +1492,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     WEST_ASIA:    ['city_bageda'],                     // 巴格达 (阿拔斯王朝都城; 2026-08-18 改: 原君士坦丁堡的 region 字段与坐标判定均落在 LATIN,
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
     SLAVIC:       ['city_mosike'],                       // 莫斯科 (莫斯科公国/东斯拉夫核心; 2026-08-27 原基辅迁东欧改)
-    EAST:         ['city_jifu'],                         // 基辅 (基辅罗斯都城; 2026-08-27 新增东欧区)
+    EAST:         ['city_mosike'],                       // [2026-09-07] 东欧区已解散(约克/博尔贡→维京,基辅→斯拉夫),此项仅为类型占位
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
     INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典印度核心)

@@ -1987,7 +1987,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'stockade', troops: 30000, region: 'GERMANIC' },
     { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 30000, region: 'EAST' },
+    { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 30000, region: 'VIKINGS' },
     { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'pass', troops: 30000, region: 'CELTS' },
         { id: 'city_dijon', name: '第戎', factionId: 'bogendi', lat: 47.32, lng: 5.04, type: 'small_city', troops: 20000, region: 'BURGUNDIANS' },
 
@@ -2054,7 +2054,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'molaweiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 30000, region: 'BOHEMIANS' },
     { id: 'city_buernuo', name: '布尔诺', factionId: 'damolaweiya', lat: 49.19, lng: 16.6, type: 'stockade', troops: 30000, region: 'BOHEMIANS' },
 
-    { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'medium_city', troops: 30000, region: 'EAST', mirror: true },
+    { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'medium_city', troops: 30000, region: 'SLAVIC', mirror: true },
     { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'liulike', lat: 58.52, lng: 31.27, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city' },
     { id: 'city_mosike', name: '莫斯科', factionId: 'mosike_gongguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'medium_city', troops: 30000, region: 'RUSSIAN', note: '彼得大帝1703年建于涅瓦河口，1712-1918俄罗斯帝国首都，俄罗斯帝国波罗的海出海口与海军基地；北方战争波尔塔瓦大捷背景下营建' },
@@ -3087,7 +3087,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'stockade', troops: 30000, region: 'AMERICA', note: '西班牙1565年建的美洲最古欧洲殖民城' },
     { id: 'city_deerfei', name: '德尔斐', factionId: 'fujisi', lat: 38.482, lng: 22.501, type: 'stockade', troops: 30000, region: 'GREEK', note: '阿波罗神谕圣地' },
     { id: 'city_aolinpiya', name: '奥林匹亚', factionId: 'yilisi', lat: 37.639, lng: 21.631, type: 'stockade', troops: 30000, region: 'GREEK', note: '古代奥运圣地' },
-    { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'stockade', troops: 30000, region: 'EAST', note: '挪威松恩峡湾木板教堂' },
+    { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'stockade', troops: 30000, region: 'VIKINGS', note: '挪威松恩峡湾木板教堂' },
     { id: 'city_kanpeier', name: '坎佩尔', factionId: 'keernuwaye', lat: 47.995, lng: -4.103, type: 'small_city', troops: 30000, region: 'LATIN', note: '布列塔尼首府，圣科朗坦大教堂' },
     { id: 'city_waerna', name: '瓦尔纳', factionId: 'aodesuosi', lat: 43.214, lng: 27.915, type: 'stockade', troops: 30000, region: 'THRACIAN', note: '古奥德索斯城，黑海港' },
     { id: 'city_jiemu', name: '杰姆', factionId: 'disidelusi', lat: 35.296, lng: 10.706, type: 'stockade', troops: 30000, region: 'CARTHAGE', note: '罗马蒂斯德鲁斯城，圆形剧场' },
