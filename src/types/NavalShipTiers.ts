@@ -107,6 +107,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
     { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON'] },
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
+    { ship: 'MONOREME', why: '青铜时代单列桨战船：赫梯苏庇路里乌玛二世征调安纳托利亚/奇里乞亚舰队，在塞浦路斯近海进行人类有文字记载的最早海战', regions: ['HITTITES'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 

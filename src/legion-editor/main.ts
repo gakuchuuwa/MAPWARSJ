@@ -1933,6 +1933,9 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     // 记住「高级微调」折叠面板的展开状态（重渲染时恢复，避免自动收缩）
     const tuneDetailsOpen = (document.getElementById('le-tune-details') as HTMLDetailsElement | null)?.open ?? true;
+    // 点卡片会整块重渲染面板，不记住滚动位置的话军团列表每次都弹回顶部（主人 2026-09-07 报）
+    const prevGridScroll = els.panelContent.querySelector('.le-legion-grid')?.scrollTop ?? 0;
+    const prevPanelScroll = els.panelContent.scrollTop;
 
     const mode = currentEditingLegion.formationMode;
     const slots = currentEditingLegion.slots;
@@ -2170,6 +2173,10 @@ function renderEditPanel(row: FactionLegionRow): void {
     if (tuneDetails) tuneDetails.open = tuneDetailsOpen;
     bindPanelEvents(row);
     renderLegionCardGrid(row);
+    // 还原滚动位置：网格自己滚 + 面板整体滚，两个都要还，否则点完卡片视线被甩走
+    const grid = els.panelContent.querySelector('.le-legion-grid');
+    if (grid) grid.scrollTop = prevGridScroll;
+    els.panelContent.scrollTop = prevPanelScroll;
     startCanvasPreview();
 }
 
@@ -2509,38 +2516,20 @@ function computeLegionNameViolations(): string[] {
     }
     for (const [name, sigs] of nameSigs.entries()) {
         if (sigs.size > 1) {
-            // 🔴 [2026-09-01 主人要求] 光列势力名等于没说 —— 必须讲清**谁和谁、差在哪一格**。
-            //    按编制分组列出，再逐格比出差异；没有自定义编成的势力标出「用文化保底编制」。
+            // 🔴 [2026-09-07 主人改口] 只写**哪两拨势力的编制不一样**就够，不要逐格 diff。
+            //    （原 2026-09-01 要求「讲清差在哪一格」，实际读起来太长，已作废。
+            //     要看差在哪，点进那个势力对比编成即可。）
             const groups = new Map<string, string[]>();
             for (const e of eff) {
                 if (e.name !== name) continue;
                 if (!groups.has(e.sig)) groups.set(e.sig, []);
-                groups.get(e.sig)!.push(e.factionName + (e.hasCustom ? '' : '〔无自定义编成·用文化保底〕'));
+                groups.get(e.sig)!.push(e.factionName);
             }
             const entries = [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
-            const lines: string[] = [
-                `军团名【${name}】被 ${entries.length} 种不同编制共用（同名军团必须同编制）：`,
-            ];
-            const readable = (sig: string): string[] => {
-                const [mode, body] = sig.split('|');
-                const slots = (body || '').split(',').filter(Boolean)
-                    .map(s => { const [ty, ct] = s.split(':'); return `${getUnitDisplayName(ty)}×${ct}`; });
-                return [...slots, `阵型 ${mode}`];
-            };
-            entries.forEach(([sig, fs], i) => {
-                lines.push(`　编制${String.fromCharCode(65 + i)}（${fs.length} 家）${fs.join('、')}`);
-                lines.push(`　　　${readable(sig).join(' + ').replace(' + 阵型', '　·　阵型')}`);
-            });
-            // 逐格比对前两种编制，指出差在第几格
-            if (entries.length >= 2) {
-                const a = readable(entries[0][0]), b = readable(entries[1][0]);
-                const diffs: string[] = [];
-                for (let i = 0; i < Math.max(a.length, b.length); i++) {
-                    if (a[i] !== b[i]) diffs.push(`第 ${i + 1} 格：编制A ${a[i] ?? '（无）'} ↔ 编制B ${b[i] ?? '（无）'}`);
-                }
-                if (diffs.length) lines.push(`　差异 → ${diffs.join('；')}`);
-            }
-            violations.push(lines.join(String.fromCharCode(10)));
+            const side = (fs: string[]) => fs.length > 4 ? `${fs.slice(0, 4).join('、')}等 ${fs.length} 家` : fs.join('、');
+            violations.push(
+                `【${name}】编制不一致：` + entries.map(([, fs]) => side(fs)).join('　↔　'),
+            );
         }
     }
 
