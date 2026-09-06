@@ -117,7 +117,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
 
     // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
-    { ship: 'ELITE_LONGBOAT', why: '盖尔长船（birlinn）：源自维京长船，爱尔兰海/苏格兰高地', regions: ['CELTS'] },
+    { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS'] },
     { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS'] },
     { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'GERMANIC', 'LATIN', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
     { ship: 'WAR_GALLEY', why: '地中海桨帆战船：诺曼西西里海军', regions: ['SICILIANS'] },
