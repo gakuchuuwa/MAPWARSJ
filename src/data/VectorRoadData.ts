@@ -48998,6 +48998,26 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "三佛齐-马六甲",
+                type: "road",
+                id: "road_city_sanfoqi_city_malacca_1787580970000",
+                startConnection: "city_sanfoqi",
+                endConnection: "city_malacca"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [104.75, -2.99],
+                    [104.2, -1.5],
+                    [103.5, 0.5],
+                    [102.8, 1.4],
+                    [102.25, 2.19]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "马六甲-阿瑜陀耶",
                 type: "road",
                 id: "road_city_malacca_city_ayutthaya_1787580969639",

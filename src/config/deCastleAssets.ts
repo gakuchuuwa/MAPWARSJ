@@ -282,6 +282,12 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ASSYRIAN: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 亚述：古代重装宫阙要塞
     PARTHIA: 'PERS_CASTLE_AGE3',              // 安息：帕提亚石堡
     SCYTHIANS: 'MONG_CASTLE_AGE3',            // 斯基泰：欧亚大草原要塞
+    BYZANTINE: 'BYZA_CASTLE_AGE3',            // 拜占庭：东罗马拜占庭要塞
+    FRANKS: 'FRAN_CASTLE_AGE3',               // 法兰克：加洛林法兰克石堡
+    SASANIAN: 'PERS_CASTLE_AGE3',             // 萨珊：萨珊波斯圆城要塞
+    TURKS: 'TURK_CASTLE_AGE3',                // 突厥：突厥可汗牙帐要塞
+    NANZHAO: 'DIANQIAN_CASTLE_AGE3',          // 南诏：太和苍山云关要塞
+    SRIVIJAYA: 'MALA_CASTLE_AGE3',            // 三佛齐：室利佛逝巨港水寨
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
