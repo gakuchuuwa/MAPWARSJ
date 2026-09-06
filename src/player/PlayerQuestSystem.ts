@@ -15,6 +15,7 @@ import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import { compareGeneralsByPriority } from '../data/generalSelection';
 import { getFactionCompositionSlots } from '../types/CultureFormations';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
@@ -365,9 +366,9 @@ export class PlayerQuestSystem {
         if (city) this.deps.hero.travelToCity(city.id);
     }
 
-    /** 遍历据点，找城中武将在（未率军在外）的，按「名将(2分)+双行(1分)」打分取最高，同分随机 */
+    /** 遍历据点，找城中武将在（未率军在外）的，按「兵最多→名将→双行→擅攻」排序取第一个，同档随机（与军团出征一致） */
     private pickAutoCity(): City | null {
-        const candidates: { city: City; score: number }[] = [];
+        const candidates: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const g = getCityAnchoredGeneral(c.id);
@@ -376,19 +377,15 @@ export class PlayerQuestSystem {
                 (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId,
             );
             if (away) continue;
-            const prof = getGeneralProfile(g.generalId);
-            const famous = prof?.tier === 'famous';
-            const balanced = prof?.attackStyle === 'balanced';
-            const aggressive = prof?.attackStyle === 'attack';
-            const create = prof?.aptitude === 'create';
-            // 优先级：名将(8) > 双行(4) > 擅攻(2) > 造势(1)，同分随机
-            candidates.push({ city: c, score: (famous ? 8 : 0) + (balanced ? 4 : 0) + (aggressive ? 2 : 0) + (create ? 1 : 0) });
+            candidates.push(c);
         }
         if (!candidates.length) return null;
-        candidates.sort((a, b) => b.score - a.score);
-        const top = candidates[0].score;
-        const topOnes = candidates.filter((c) => c.score === top);
-        return topOnes[Math.floor(Math.random() * topOnes.length)].city;
+        // [2026-09-05 主人定] 与军团出征共用同一套选将优先级（compareGeneralsByPriority）
+        candidates.sort((a, b) => compareGeneralsByPriority(
+            { troops: a.troops || 0, cityId: a.id },
+            { troops: b.troops || 0, cityId: b.id },
+        ));
+        return candidates[0];
     }
 
     private onHostLost(_lastId: string): void {

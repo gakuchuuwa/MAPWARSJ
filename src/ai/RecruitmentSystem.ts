@@ -28,6 +28,7 @@ import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { armDeploy } from '../legion/DeployGate';
 
@@ -206,53 +207,14 @@ export class RecruitmentSystem {
     }
 
     /**
-     * 候选城排序：优先让「擅攻/双行」的武将（所在据点）出兵形成军团（2026-08-07 主人定）。
-     *
-     * 优先级（档越小越先出兵，档内随机洗牌保持画面多样性）：
-     *   名将 > 普将（无锚定将殿后）
-     *   擅攻/双行 > 擅守
-     *   造势 > 借势 > 逆势
-     * 即：名将·擅攻双行·造势 最先出兵；普将·擅守·逆势 最后出兵。
+     * 候选城排序（2026-09-05 主人定，与玩家选将一致）：
+     *   1 兵最多 > 2 名将 > 3 双行 > 4 擅攻；同档随机洗牌保持画面多样性。
      */
     private static sortSpawnCandidates(candidates: SpawnCandidate[]): void {
-        const priorityOf = (c: SpawnCandidate): number => {
-            const general = getCityAnchoredGeneral(c.city.id);
-            const profile = general ? getGeneralProfile(general.generalId) : null;
-            // 无将（未录入档案）一律殿后：tier 取 2，整档 200+ 排在所有有将档之后。
-            // [2026-08-07 修] 原写法 `profile?.tier === 'famous' ? 0 : 1` 把无将当普将（tier=1），
-            // 又因 attackStyle 判空落到「擅攻」(style=0)，实际排进 102 档、插在 110/111/112 前面，
-            // 与本注释「殿后」矛盾。当前 922 城全部有将走不到，但新增未录入将的城会插队。
-            if (!profile) return 222;
-            // 名将 0 / 普将 1
-            const tier = profile.tier === 'famous' ? 0 : 1;
-            // 擅攻/双行 0 / 擅守 1
-            const style = profile.attackStyle === 'defense' ? 1 : 0;
-            // 造势 0 / 借势 1 / 逆势 2
-            const apt = profile.aptitude === 'create' ? 0
-                : profile.aptitude === 'leverage' ? 1 : 2;
-            return tier * 100 + style * 10 + apt;
-        };
-
-        // 分档：同档内 Fisher-Yates 洗牌（随机），档间按优先级（小→大）
-        const buckets = new Map<number, SpawnCandidate[]>();
-        for (const c of candidates) {
-            const p = priorityOf(c);
-            let arr = buckets.get(p);
-            if (!arr) { arr = []; buckets.set(p, arr); }
-            arr.push(c);
-        }
-        const keys = [...buckets.keys()].sort((a, b) => a - b);
-        const out: SpawnCandidate[] = [];
-        for (const k of keys) {
-            const arr = buckets.get(k)!;
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            out.push(...arr);
-        }
-        candidates.length = 0;
-        candidates.push(...out);
+        candidates.sort((a, b) => compareGeneralsByPriority(
+            { troops: a.armySize, cityId: a.city.id },
+            { troops: b.armySize, cityId: b.city.id },
+        ));
     }
 
     private getCityRegion(city: RecruitmentCity): RegionType {
