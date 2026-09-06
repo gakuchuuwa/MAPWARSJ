@@ -56,19 +56,18 @@ export const AGE_LABEL: Record<UnitAge, string> = {
 export const AGE_ORDER: UnitAge[] = ['antiquity', 'feudal', 'castle', 'imperial'];
 
 /**
- * 四时代的历史断年（事件锚定法，2026-09-06 主人定）。
- * 节点取欧亚大陆共同经历的巨变，不用整百年——欧洲、东亚、中东都讲得通：
- *   476  西罗马灭亡      → 中央军团解体，转入蛮族割据与采邑制；东方对应汉末魏晋门阀
- *   1066 诺曼征服英格兰   → 石砌城堡与封建采邑体系全面成熟，进入十字军/攻城战时代
- *   1453 君士坦丁堡陷落   → 乌尔班巨炮轰碎千年石墙，火器终结纯冷兵器城堡
- *   1648 威斯特伐利亚和约 → 近代民族国家确立，告别中世纪帝国模式
- * 归档判据：看这个兵种/人物**本人活跃的年代**落在哪一段，不看它在 AoE2 里挂哪个科技。
+ * 四时代的历史断年（2026-09-06 主人最新定）：
+ *   古典时代：起始 – 公元 400 年
+ *   封建时代：公元 400 年 – 公元 1050 年
+ *   城堡时代：公元 1050 年 – 公元 1500 年
+ *   帝王时代：公元 1500 年 – 公元 1900 年
+ * 归档判据：看这个兵种/人物本人活跃的年代落在哪一段，不看它在 AoE2 里挂哪个科技。
  */
 export const AGE_YEARS: Record<UnitAge, { span: string; anchor: string }> = {
-    antiquity: { span: '前 500 – 476', anchor: '止于西罗马帝国灭亡' },
-    feudal: { span: '476 – 1066', anchor: '止于诺曼征服英格兰' },
-    castle: { span: '1066 – 1453', anchor: '止于君士坦丁堡陷落' },
-    imperial: { span: '1453 – 1648', anchor: '止于威斯特伐利亚和约' },
+    antiquity: { span: '起始 – 公元 400 年', anchor: '起始至公元 400 年' },
+    feudal: { span: '公元 400 年 – 公元 1050 年', anchor: '公元 400 年至 1050 年' },
+    castle: { span: '公元 1050 年 – 公元 1500 年', anchor: '公元 1050 年至 1500 年' },
+    imperial: { span: '公元 1500 年 – 公元 1900 年', anchor: '公元 1500 年至 1900 年' },
 };
 
 
@@ -206,7 +205,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'mangudai_elite', name: '蒙古突骑精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MANGUDAI_ELITE/' },
     { id: 'rattan_archer', name: '越南藤弓兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RATTAN_ARCHER/' },
     { id: 'rattan_archer_elite', name: '越南藤弓兵精锐', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/RATTAN_ARCHER_ELITE/' },
-    { id: 'imperial_skirmisher', name: '帝王掷矛手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
+    { id: 'imperial_skirmisher', name: '帝王掷矛手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
     { id: 'archer', name: '南方步弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
     { id: 'cav_archer', name: '骑射手', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER/' },
     { id: 'cav_archer_heavy', name: '骑射手重装', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
@@ -267,7 +266,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_ghulam', name: '印度斯坦古拉姆精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEGHULAM/' },
     { id: 'elite_guecha_warrior', name: '穆伊斯卡格查勇士高级', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEGUECHAWARRIOR/' },
     { id: 'elite_huskarl', name: '哥特近卫军精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEHUSKARL/' },
-    { id: 'elite_hussite_wagon', name: '波希米亚胡斯战车精锐', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
+    { id: 'elite_hussite_wagon', name: '波希米亚胡斯战车精锐', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
     { id: 'elite_ibirapema_warrior', name: '图皮战棍勇士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
     { id: 'elite_iron_pagoda', name: '女真铁浮屠精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEIRONPAGODA/' },
     { id: 'elite_jaguar_warrior', name: '阿兹特克豹勇士精锐', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITEJAGUARWARRIOR/' },
@@ -324,7 +323,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'houfnice', name: '榴弹炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HOUFNICE/' },
     { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HUSKARL/' },
     { id: 'hussar', name: '骠骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
-    { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
+    { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
     { id: 'ibirapema_warrior', name: '图皮战棍勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'immortal_ranged', name: '波斯长生军(弓)', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
@@ -712,9 +711,10 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     bombard_cannon: 'gunpowder_siege', organ_gun: 'gunpowder_siege', elite_organ_gun: 'gunpowder_siege',
     houfnice: 'gunpowder_siege', rocket_cart: 'gunpowder_siege', heavy_rocket_cart: 'gunpowder_siege',
     flamethrower: 'gunpowder_siege', petard: 'gunpowder_siege', flaming_camel: 'gunpowder_siege',
+    hussite_wagon: 'gunpowder_siege', elite_hussite_wagon: 'gunpowder_siege',
     // 冷兵器（机械/扭力/重力）
     ballista_elephant: 'mechanical', elite_ballista_elephant: 'mechanical', battering_ram: 'mechanical',
-    capped_ram: 'mechanical', hussite_wagon: 'mechanical', elite_hussite_wagon: 'mechanical', heavy_scorpion: 'mechanical',
+    capped_ram: 'mechanical', heavy_scorpion: 'mechanical',
     mangonel: 'mechanical', mounted_trebuchet: 'mechanical', onager: 'mechanical', scorpion: 'mechanical',
     siege_onager: 'mechanical', siege_ram: 'mechanical', traction_trebuchet: 'mechanical', helepolis: 'mechanical',
     siege_tower: 'mechanical', antiquity_battering_ram: 'mechanical', antiquity_capped_ram: 'mechanical',
