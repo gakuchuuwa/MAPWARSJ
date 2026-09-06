@@ -280,7 +280,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WALLACHIA: 'crane_wing',
     EGYPT: 'echelon',
     CARTHAGE: 'crane_wing',
-    BABYLON: 'square',
+    BABYLON: 'echelon',
     HITTITES: 'triangle',
     ASSYRIAN: 'fish_scale',
     SCYTHIANS: 'triangle',
@@ -2211,16 +2211,21 @@ export const CARTHAGE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 巴比伦 古典长矛兵+双轮战车+巴克特里亚弓手（方阵 3+3+3：前排铜盾矛墙3 + 中排战车冲击3 + 后排复合角弓支援3） */
+/** 古典巴比伦军团（雁行 4+3+2，主力在前排）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（美索不达米亚古巴比伦—新巴比伦）：
+ *   · 前排主力 双轮战车高级（4档【高级】） —— 美索不达米亚是双轮马拉战车的发源地，喀西特与新巴比伦皇家突击双轮战车集群以强悍冲击力撼动近东战场，占 4 档高级主力。
+ *   · 中坚 古典长矛兵（3档） —— 苏美尔秃鹰碑与汉谟拉比时代传承的铜盔大盾密集长矛方阵，跟进抗线压住正面阵线。
+ *   · 后排 巴克特里亚弓手（2档） —— 近东高护甲复合角弓手，在矛墙掩护下进行抛射火力压制。 */
 export const BABYLON_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
+            { type: 'elite_war_chariot', count: 4 },
             { type: 'antiquity_spearman', count: 3 },
-            { type: 'war_chariot', count: 3 },
-            { type: 'bactrian_archer', count: 3 }
+            { type: 'bactrian_archer', count: 2 }
         ]
     }
 ];
