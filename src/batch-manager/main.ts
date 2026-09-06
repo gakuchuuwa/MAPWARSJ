@@ -777,7 +777,7 @@ const REGION_LABELS: Record<string, string> = {
     ETHIOPIANS: '埃塞俄比亚', BENGALIS: '孟加拉', GURJARAS: '瞿折罗', PORUS: '补噜',
     VIETNAMESE: '越南', KHMER: '高棉', MAYANS: '玛雅', MAPUCHE: '马普切',
     MUISCA: '穆伊斯卡', TUPI: '图皮', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
-    ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIANS: '马其顿', ACHAEMENIDS: '阿契美尼德',
+    ACHAEMENIDS: '阿契美尼德',
     BURMESE: '缅甸', WALLACHIA: '瓦拉几亚',
 };
 

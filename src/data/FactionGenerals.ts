@@ -148,7 +148,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bafaliya: { generalId: 'gen_tassilo_iii', generalName: '塔西洛三世', portrait: '/assets/GERMANIC/bafaliya_taxiluosanshi.png' },
     huohengsuolun: { generalId: 'gen_frederick_i_nuremberg', generalName: '腓特烈一世', portrait: '/assets/GERMANIC/huohengsuolun_feitelieyishi.png' },
     mozeer: { generalId: 'gen_constantine_great', generalName: '君士坦丁', portrait: '/assets/GERMANIC/mozeer_junshitanding.png' },
-    ruishi: { generalId: 'gen_zwingli', generalName: '茨温利', portrait: '/assets/GERMANIC/ruishi_ciwenli.png' },
+    ruishi: { generalId: 'gen_winkelried', generalName: '温克尔里德', portrait: '/assets/GERMANIC/ruishi_ciwenli.png' },
     aersasi: { generalId: 'gen_julian_apostate', generalName: '尤里安', portrait: '/assets/GERMANIC/aersasi_youlian.png' },
     molaweiya: { generalId: 'gen_swatopluk', generalName: '斯瓦托', portrait: '/assets/GERMANIC/molaweiya_siwatuo.png' },
     damolaweiya: { generalId: 'gen_mojmir_i', generalName: '莫伊米尔', portrait: '/assets/GERMANIC/damolaweiya_moyimier.png' },

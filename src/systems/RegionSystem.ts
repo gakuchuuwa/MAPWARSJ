@@ -78,9 +78,6 @@ export type RegionType =
     | 'TUPI'  // 图皮[2026-08-28 补 DE 文明]
     | 'ARMENIANS'  // 亚美尼亚[2026-08-28 补 DE 文明]
     | 'GEORGIANS'  // 格鲁吉亚[2026-08-28 补 DE 文明]
-    | 'ATHENIANS'  // 雅典[2026-08-28 补 DE 文明]
-    | 'SPARTANS'  // 斯巴达[2026-08-28 补 DE 文明]
-    | 'MACEDONIANS'  // 马其顿[2026-08-28 补 DE 文明]
     | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明]
     | 'BURMESE'      // 缅甸
     | 'WALLACHIA'    // 瓦拉几亚
@@ -275,9 +272,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
-    ATHENIANS: '古典希腊',
-    SPARTANS: '古典希腊',
-    MACEDONIANS: '古典希腊',
     ACHAEMENIDS: '古典波斯',
     BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
@@ -323,7 +317,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     QIANG: '古典先零羌',
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
-    AINU: '封建阿伊努',
+    AINU: '城堡阿伊努',
     SWISS: '城堡瑞士',
     PASHTUN: '帝王普什图',
     SWEDISH: '帝王瑞典',
@@ -397,9 +391,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
-    ATHENIANS: '古典希腊',
-    SPARTANS: '古典希腊',
-    MACEDONIANS: '古典希腊',
     ACHAEMENIDS: '古典波斯',
     BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
@@ -445,7 +436,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     QIANG: '古典先零羌',
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
-    AINU: '封建阿伊努',
+    AINU: '城堡阿伊努',
     SWISS: '城堡瑞士',
     PASHTUN: '帝王普什图',
     SWEDISH: '帝王瑞典',
@@ -670,10 +661,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     MUISCA: '#1e88e5',  // 穆伊斯卡[2026-08-28]
     TUPI: '#00897b',  // 图皮[2026-08-28]
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
-    GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]
-    ATHENIANS: '#1565c0',  // 雅典[2026-08-28]
-    SPARTANS: '#5d4037',  // 斯巴达[2026-08-28]
-    MACEDONIANS: '#455a64',  // 马其顿[2026-08-28]
+    GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]  // 雅典[2026-08-28]  // 斯巴达[2026-08-28]  // 马其顿[2026-08-28]
     ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
     BURMESE: '#b8860b',
     WALLACHIA: '#7f1d1d',
@@ -1150,24 +1138,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
     },
-    ATHENIANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
-        small: resolvePath('/cities/latin_small.png'),
-        medium: resolvePath('/cities/latin_medium.png'),
-        big: resolvePath('/cities/latin_big.png'),
-        pass: resolvePath('/cities/latin_pass.png')
-    },
-    SPARTANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
-        small: resolvePath('/cities/latin_small.png'),
-        medium: resolvePath('/cities/latin_medium.png'),
-        big: resolvePath('/cities/latin_big.png'),
-        pass: resolvePath('/cities/latin_pass.png')
-    },
-    MACEDONIANS: { // 继承 GREEK 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（希腊石造，待专属素材）
-        small: resolvePath('/cities/latin_small.png'),
-        medium: resolvePath('/cities/latin_medium.png'),
-        big: resolvePath('/cities/latin_big.png'),
-        pass: resolvePath('/cities/latin_pass.png')
-    },
     ACHAEMENIDS: { // 继承 PERSIAN 城市素材 // ⚠️ [2026-08-27 新增] 暂借西亚图标（波斯中东，待专属素材）
         small: resolvePath('/cities/west_asia_small.png'),
         medium: resolvePath('/cities/west_asia_medium.png'),
@@ -1604,10 +1574,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     MUISCA: ['city_bacata'],  // 穆伊斯卡（中心据点已挂）
     TUPI: ['city_guanabara'],  // 图皮（中心据点已挂）
     ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（中心据点已挂）
-    GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）
-    ATHENIANS: ['city_yadian'],  // 雅典（中心据点已挂）
-    SPARTANS: ['city_sparta'],  // 斯巴达（中心据点已挂）
-    MACEDONIANS: ['city_salonica'],  // 马其顿-佩拉（中心据点已挂）
+    GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）  // 雅典（中心据点已挂）  // 斯巴达（中心据点已挂）  // 马其顿-佩拉（中心据点已挂）
     ACHAEMENIDS: ['city_bosibolisi'],  // 波斯波利斯（阿契美尼德帝都）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
     WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）

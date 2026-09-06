@@ -127,9 +127,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     TUPI: 'INFANTRY',  // 图皮[2026-08-28]
     ARMENIANS: 'MIXED',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MIXED',  // 格鲁吉亚[2026-08-28]
-    ATHENIANS: 'INFANTRY',  // 雅典[2026-08-28]
-    SPARTANS: 'INFANTRY',  // 斯巴达[2026-08-28]
-    MACEDONIANS: 'MIXED',  // 马其顿[2026-08-28]
     ACHAEMENIDS: 'MIXED',  // 阿契美尼德[2026-08-28]
     BURMESE: 'ELEPHANT',
     WALLACHIA: 'MIXED',
@@ -283,9 +280,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     TUPI: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     ARMENIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
-    ATHENIANS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
-    SPARTANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
-    MACEDONIANS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
     WALLACHIA: 'crane_wing',
@@ -1488,7 +1482,7 @@ export const GREEK_TIERS: CompositionTier[] = [
     }
 ];
 
-/** MACEDONIANS 文化军团（balance_yoke 4+2+3）
+/** GREEK 希腊文化军团（balance_yoke 4+2+3）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
  *  （马其顿、托勒密、塞琉古、帕加马…），原文化表那份已过时，作废。 */
 export const ALEXANDER_TIERS: CompositionTier[] = [
@@ -1997,7 +1991,7 @@ export const ORIE_TIERS: CompositionTier[] = [
 /* ────────────────────────────────────────────────────────────────
  * [2026-09-06 主人拍板铁律] 一个文化 = 一个军团 = 一种编制。
  * 以下 9 个文化此前直接引用父文化的 *_TIERS（THRACIAN/VIKINGS/BOHEMIANS→斯拉夫、
- * TEUTONS→日耳曼、SICILIANS/BURGUNDIANS→拉丁、ATHENIANS/SPARTANS→希腊、BURMESE→滇缅），
+ * TEUTONS→日耳曼、SICILIANS/BURGUNDIANS→拉丁、BURMESE→滇缅），
  * 名义上各有军团、实际共用同一支，违反铁律。此处按「游戏合理 + 符合历史」各自定制。
  * 格位必须与 CULTURE_FORMATION_MODE 的阵型一致，主力兵种占 4 档（见 culture-formation-main-unit-rule）。
  * ──────────────────────────────────────────────────────────────── */
@@ -2093,33 +2087,9 @@ export const BURGUNDIANS_TIERS: CompositionTier[] = [
 
 /** 雅典 重装步兵+将军+精锐古典散兵（鱼鳞阵 3+4+2：重装步兵前卫 + 将军主力 + 散兵压阵）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（希腊(xila)），文化保底与它对齐，消除「同名不同编」。 */
-export const ATHENIANS_TIERS: CompositionTier[] = [
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'hoplite', count: 3 },   // Row 0 前卫 = 雅典重装步兵 3人
-            { type: 'strategos', count: 4 },   // Row 1 主力 = 将军 4人
-            { type: 'elite_antiquity_skirmisher', count: 2 }   // Row 2 压阵 = 精锐古典散兵 2人
-        ]
-    }
-];
 
 /** 斯巴达 希腊骑兵三排同兵（方阵 3+3+3；方阵是主人单独指定的形态，不参与「主力占 4 档」规则）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（拉哥尼亚），文化保底与它对齐，消除「同名不同编」。 */
-export const SPARTANS_TIERS: CompositionTier[] = [
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'elite_peltast', count: 2, scale: 1 },
-            { type: 'hippeus', count: 4 },
-            { type: 'elite_greek_cavalry', count: 3, scale: 1 }
-        ]
-    }
-];
 /** 缅甸 精锐战斗象+步弓手+精锐飞镖骑兵（三角阵 2+3+4：战象尖刀 + 步弓手中坚 + 飞镖骑兵主力底边）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃固/东吁/贡榜/骠/孟/蒲甘/阿瓦 7 势力），文化保底与它对齐，消除「同名不同编」。 */
 export const BURMESE_TIERS: CompositionTier[] = [
@@ -2833,9 +2803,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     TUPI: TUPI_TIERS,  // 图皮[2026-08-28 暂复用父文化]
     ARMENIANS: ARMENIANS_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
     GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
-    ATHENIANS: ATHENIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GREEK_TIERS，已改独立编成
-    SPARTANS: SPARTANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GREEK_TIERS，已改独立编成
-    MACEDONIANS: ALEXANDER_TIERS,  // 马其顿[2026-08-28 暂复用父文化]
     ACHAEMENIDS: ACHAEMENIDS_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: BURMESE_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用DIANQIAN_TIERS，已改独立编成
     WALLACHIA: WALLACHIA_TIERS,
@@ -2950,9 +2917,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TUPI: '城堡图皮军团',
     ARMENIANS: '古典亚美尼亚军团',
     GEORGIANS: '封建格鲁吉亚军团',
-    ATHENIANS: '古典希腊军团',
-    SPARTANS: '古典希腊军团',
-    MACEDONIANS: '古典希腊军团',
     ACHAEMENIDS: '古典波斯军团',
     BURMESE: '城堡缅族军团',
     WALLACHIA: '封建瓦拉几亚军团',
@@ -2998,7 +2962,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     QIANG: '古典先零羌军团',
     NABATAEANS: '古典纳巴泰军团',
     HEPHTHALITES: '封建嚈哒军团',
-    AINU: '封建阿伊努军团',
+    AINU: '城堡阿伊努军团',
     SWISS: '城堡瑞士军团',
     PASHTUN: '帝王普什图军团',
     SWEDISH: '帝王瑞典军团',

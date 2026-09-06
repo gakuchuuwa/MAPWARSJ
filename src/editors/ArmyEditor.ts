@@ -93,9 +93,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     TUPI: 'inca',  // 图皮 → 待建势力对齐（暂用父文化势力占位）
     ARMENIANS: 'seljuq',  // 亚美尼亚 → 待建势力对齐（暂用父文化势力占位）
     GEORGIANS: 'seljuq',  // 格鲁吉亚 → 待建势力对齐（暂用父文化势力占位）
-    ATHENIANS: 'xila',  // 雅典 → 待建势力对齐（暂用父文化势力占位）
-    SPARTANS: 'xila',  // 斯巴达 → 待建势力对齐（暂用父文化势力占位）
-    MACEDONIANS: 'xila',  // 马其顿 → 待建势力对齐（暂用父文化势力占位）
     ACHAEMENIDS: 'aqimeinide',  // 阿契美尼德 → 待建势力对齐（暂用父文化势力占位）
     BURMESE: 'pagan',
     WALLACHIA: 'walajiyia',
