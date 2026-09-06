@@ -135,19 +135,35 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS'] },
     { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS'] },
     { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
+    { ship: 'CARAVEL', why: '法兰西风帆战舰：一三四〇年斯勒伊斯海战的法国舰队，与地中海桨帆分队并立', regions: ['FRENCH'] },
+    { ship: 'CARAVEL', why: '波罗的海风帆战舰：瑞典帝国海军（瓦萨号形制），十七世纪波罗的海霸权支柱', regions: ['SWEDISH'] },
+    { ship: 'MONOREME', why: '涅达姆式北海长船：盎格鲁-撒克逊渡海入不列颠所用形制（萨顿胡船葬），阿尔弗雷德大王据此建舰队御丹麦人', regions: ['ANGLO_SAXON'] },
+    { ship: 'MONOREME', why: '莱茵-塞纳河单列桨长船：法兰克承日耳曼船制，查理曼设海岸防务以御维京', regions: ['FRANKS'] },
     { ship: 'WAR_GALLEY', why: '地中海桨帆战船：诺曼西西里海军', regions: ['SICILIANS'] },
+    { ship: 'WAR_GALLEY', why: '亚得里亚-波河桨帆战船：伦巴第王国居意大利内陆，海岸多在拜占庭手中，仅维持近岸与河川战船', regions: ['LOMBARDS'] },
 
     // ── 中东 / 北非 ─────────────────────────────────────────
     { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
     { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE'] },
     { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['SASANIAN'] },
+    { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨法维经营阿巴斯港，一六二二年联英夺霍尔木兹逐葡萄牙人', regions: ['SAFAVID'] },
+    { ship: 'WAR_GALLEY', why: '黑海-地中海桨帆战船：罗姆苏丹凯考巴德一世建锡诺普与阿拉尼亚两处船厂', regions: ['SELJUQ'] },
+    { ship: 'WAR_GALLEY', why: '奥斯曼桨帆舰队：普雷韦扎（1538）与勒班陀（1571）的地中海主力形制', regions: ['OTTOMAN'] },
+    { ship: 'CANOE', why: '板缀舟 itaomacip：阿伊努渡北海道-库页岛-千岛列岛的缝合板舟，兼作海兽猎舟', regions: ['AINU'] },
+    { ship: 'CANOE', why: '尼日尔河战舟：西非内陆帝国以河船控尼日尔河湾商道，加纳-马里皆恃之', regions: ['GHANA'] },
 
     // ── 美洲 ────────────────────────────────────────────────
     { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'] },
 
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'WESTERN', 'CENTRAL_ASIA', 'HEXI', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'SCYTHIANS'] },
+    // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
+    //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'WESTERN', 'CENTRAL_ASIA', 'HEXI', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'SCYTHIANS', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'WUSUN', 'PASHTUN'] },
+    { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
+    { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
+    { ship: 'DEMO_RAFT', why: '旁遮普五河渡筏：锡克帝国全境内陆，仅需渡萨特累季/杰赫勒姆等河', regions: ['SIKH'] },
+    { ship: 'DEMO_RAFT', why: '阿尔卑斯湖筏：瑞士各州全境内陆，仅琉森湖/日内瓦湖有舟楫之利', regions: ['SWISS'] },
 ];
 
 /** 区 → 船的查找表（模块加载时摊平一次） */

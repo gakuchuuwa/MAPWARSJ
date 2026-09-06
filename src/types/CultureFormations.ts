@@ -235,7 +235,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
 
     // 印度（鱼鳞 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
-    INDIA:        'crane_wing',
+    INDIA:        'crane_wing',   // 古典印度：鹤翼阵 2+4+3 前锋桑纳亚战象2+中坚双轮战车高级4档主力+后排镰刀战士3
     BERBER:       'triangle',
     AMERICA:      'fish_scale',  // 美洲步兵主力（阿兹特克/玛雅/印加）
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
@@ -281,7 +281,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CARTHAGE: 'crane_wing',
     BABYLON: 'balance_yoke',
     HITTITES: 'triangle',    // 古典赫梯：锥形阵 2+3+4 底边双轮战车高级主力
-    ASSYRIAN: 'fish_scale',
+    ASSYRIAN:     'fish_scale',   // 古典亚述：鱼鳞阵 3+4+2 前排持盾步兵3+中坚古典重装骑射4档主力+后排装甲攻城槌2
     SCYTHIANS:     'triangle',    // 古典斯基泰：锥形阵 2+3+4 尖刀斯基泰斧骑2+中坚斯基泰骑射3+底边斯基泰骑射手高级4档主力
     BYZANTINE: 'square',
     FRANKS: 'triangle',
@@ -289,7 +289,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     TURKS: 'triangle',
     NANZHAO: 'fish_scale',
     SRIVIJAYA: 'crane_wing',
-    KUSHAN: 'triangle',
+    KUSHAN:       'triangle',     // 古典月氏：锥形阵 2+3+4 尖刀波鲁斯战象2+中坚粟特铁骑3+底边古典重装骑射4档主力
     KUSH: 'crane_wing',   // 古典努比亚：鹤翼阵 2+4+3 前锋麦查伊飞矛+中坚先锋重步主力+后排努比亚强弓
     KHITAN: 'triangle',
     UIGHUR: 'triangle',
@@ -1469,7 +1469,16 @@ export const LATIN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 19. 印度 软剑士+精锐软剑士+桑纳亚战象（鱼鳞阵 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵） */
+/** 古典印度军团（鹤翼 2+4+3，主力在中排）
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；大象只许占 2 档；三兵全部为古典档位。
+ *  史料：孔雀王朝（前 322—前 185）。印度兵制的本名就是「四支军」caturaṅga——
+ *        象、车、马、步四兵种并列，《政事论》与麦加斯梯尼《印度志》皆载。
+ *        普林尼与普鲁塔克记旃陀罗笈多有战象九千、战车八千、步兵六十万；
+ *        战车自《摩诃婆罗多》起就是刹帝利贵族的传统主战兵种。
+ *    前 2 孔雀桑纳亚战象 —— 四支军之「象」，象类只占 2 档
+ *    中 4 双轮战车高级（主力【高级】）—— 四支军之「车」，刹帝利贵族战车主力
+ *    后 3 达罗毗荼镰刀战士 —— 四支军之「步」，持盾弯刃长刀传统近卫步兵
+ */
 export const INDIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -1477,8 +1486,8 @@ export const INDIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'sannahya', count: 2 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 3 }
+            { type: 'elite_war_chariot', count: 4 },
+            { type: 'sickle_warrior', count: 3 }
         ]
     }
 ];
@@ -2188,15 +2197,27 @@ export const TUPI_TIERS: CompositionTier[] = [
 /** ARMENIANS 文化军团（crescent 3+2+4）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
  *  （亚美尼亚），原文化表那份已过时，作废。 */
+/** 古典亚美尼亚军团（弯月 3+2+4，主力在后排）
+ *  史料：以阿瓦莱尔战役（451）为形象——萨珊伊嗣俟二世强令亚美尼亚改奉拜火教，
+ *        瓦尔丹·马米科尼扬率各家族起兵抗之，圣职者随军祝祷，战于亚拉腊山北的阿瓦莱尔平原。
+ *        此役虽败，却迫使萨珊在《纳瓦萨克和约》中承认亚美尼亚信仰自由，是民族史的核心事件。
+ *        亚美尼亚高地全境山谷，作战恃山民步兵与远射，弯月阵正合两翼前伸的山谷设伏。
+ *  ⚠️ 旧主力是「萨尔马提亚重骑」——那是黑海草原的萨尔马提亚人，与亚美尼亚无关，
+ *     2026-09-07 换回本族兵种。DE 亚美尼亚文明的专属单位正是修士战士与复合弓手，
+ *     其重骑走通用线无专属，故不硬安一支挂着别国名字的具装骑（拜占庭圣骑/萨珊萨瓦尔/格鲁吉亚莫纳斯帕）。
+ *    前 3 山地部落民       —— 亚美尼亚高地各家族的山民步兵
+ *    中 2 精锐复合弓手     —— 本族招牌远射
+ *    后 4 修士战士（主力） —— 阿瓦莱尔随军的圣职武装，编制中战力最强的一档
+ */
 export const ARMENIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'warrior_priest', count: 3 },
+            { type: 'hill_tribesman', count: 3 },
             { type: 'elite_composite_bowman', count: 2, scale: 1 },
-            { type: 'sarmatian', count: 4, scale: 1 }
+            { type: 'warrior_priest', count: 4, scale: 1 }
         ]
     }
 ];
@@ -2312,16 +2333,27 @@ export const HITTITES_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 亚述 东方步兵+重装步兵+复合弓（鱼鳞阵 3+4+2：前排大盾3 + 中腰铁血重步突破主力4 + 后排复合弓2） */
+/** 古典亚述军团（鱼鳞 3+4+2，主力在中排）
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；攻城类只占 2 档；三兵全部为古典档位。
+ *  史料：新亚述帝国（前 911—前 609）建起人类第一支常备职业军队——提格拉特帕拉沙尔三世改革
+ *        设「王家部队」kiṣir šarrūti，脱离农时征召。其军事优势有两处：
+ *        ① 骑兵取代战车：前九世纪起亚述以骑射取代双轮战车为机动主力，浮雕中大量重装骑射，
+ *           这是近东战争形态的转折，后来的波斯军制即承其余绪；
+ *        ② 攻城：辛那赫里布围拉吉（前 701）的尼尼微浮雕，带装甲棚顶的攻城槌推上土坡破城，
+ *           是古代世界最系统的攻城技术，亚述以此逐一拔除叙利亚-巴勒斯坦的城邦。
+ *    前 3 波斯持盾步兵（近东持盾矛兵） —— 近东大盾矛步兵线原型
+ *    中 4 古典骑射手重装（主力【重装】）—— 亚述骑兵改革的王牌机动主力
+ *    后 2 古典装甲攻城槌 —— 拉吉之围形制，攻城类只占 2 档
+ */
 export const ASSYRIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'longswordsman', count: 4 },
-            { type: 'composite_bowman', count: 2 }
+            { type: 'sparabara', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'antiquity_capped_ram', count: 2 }
         ]
     }
 ];
@@ -2429,16 +2461,26 @@ export const SRIVIJAYA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 古典月氏 具装铁骑+骑射手+战象（三角阵 4+3+2：具装甲骑4 + 古典骑射3 + 战象2） */
+/** 古典月氏军团（锥形阵 2+3+4，主力在底边）
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；大象只许占 2 档；三兵全部为古典档位。
+ *  史料：《汉书·西域传》「大月氏国……本居敦煌、祁连间，至冒顿单于攻破月氏，
+ *        而老上单于杀月氏王，以其头为饮器，月氏乃远去」「户十万，口四十万，胜兵十万人」
+ *        ——「控弦」立国，骑射为本。西迁后据大夏（巴克特里亚），五翕侯归一而成贵霜帝国。
+ *        迦腻色迦时代的钱币与苏尔赫科塔尔造像所见，是长袍长靴佩长剑的骑马贵族，
+ *        承帕提亚—中亚传统的具装铁骑；南下所并的北印度属地则供给象兵。
+ *    前 2 波鲁斯王战象 —— 北印度与犍陀罗属地的大象，象类只占 2 档
+ *    中 3 粟特甲胄骑兵 —— 贵霜核心统治区粟特-大夏具装铁骑
+ *    后 4 古典骑射手重装（主力【重装】）—— 大月氏王室「控弦胜兵十万」的核心主力
+ */
 export const KUSHAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 2 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'cataphract', count: 4 },
+            { type: 'porus_elephant', count: 2 },
+            { type: 'sogdian_cataphract', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ]
     }
 ];
