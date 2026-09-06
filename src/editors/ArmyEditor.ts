@@ -105,7 +105,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     HITTITES: 'heti',
     ASSYRIAN: 'yashu',
     PARTHIA: 'ansxi',
-    SCYTHIANS: 'bosi_puluosi',
+    SCYTHIANS: 'sijitai',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

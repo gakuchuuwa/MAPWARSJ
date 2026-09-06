@@ -2069,7 +2069,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salai', name: '萨莱', factionId: 'jinzhang', lat: 48.15, lng: 47.15, type: 'big_city', troops: 30000, region: 'CUMAN', note: '金帐汗国都城（新萨莱）；盛期人口高估约60万，约40万门槛从宽升 big_city' },
     { id: 'city_kashan', name: '喀山', factionId: 'baojiaer', lat: 55.79, lng: 49.11, type: 'medium_city', troops: 30000, region: 'STEPPE' },
     { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'pass', troops: 30000, region: 'SCYTHIANS' },
-        { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 28000, region: 'SCYTHIANS', note: '博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
+    { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 28000, region: 'GREEK', note: '希腊化博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'pass', troops: 20000, region: 'SLAVIC', mirror: true },
 
     { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'stockade', troops: 30000, region: 'CUMAN' },
@@ -2092,7 +2092,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'chude', lat: 58.37, lng: 26.72, type: 'stockade', troops: 30000, region: 'SLAVIC' },
     { id: 'city_jiridao', name: '基日岛', factionId: 'kaleiliya', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 30000, region: 'SLAVIC' },
     { id: 'city_akeman', name: '阿克曼', factionId: 'deniesite', lat: 46.19, lng: 30.34, type: 'pass', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_asu', name: '阿速城', factionId: 'dunhe', lat: 47.23, lng: 39.70, type: 'small_city', troops: 30000, region: 'SCYTHIANS', note: '俄罗斯亚速（Азов，中文亦称阿速夫）；顿河下游河口，距亚速海16km；古希腊殖民地塔纳伊斯→中世纪热那亚商站塔纳→奥斯曼亚速堡；1637顿河哥萨克攻占，1641亚速围城战以少胜多坚守' },
+    { id: 'city_asu', name: '阿速城', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'medium_city', troops: 30000, region: 'SCYTHIANS', note: '古代塔纳伊斯（Tanais），顿河入海口草原要津；大斯基泰王国阿泰阿斯王庭要邑，大草原游牧贸易与军事中心' },
     { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'nieman', lat: 53.68, lng: 23.83, type: 'stockade', troops: 30000, region: 'LITHUANIANS' },
     { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 30000, region: 'STEPPE' },
     { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'stockade', troops: 30000, region: 'STEPPE' },
@@ -2983,7 +2983,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_samaila', name: '萨迈拉', factionId: 'samaila', lat: 34.206, lng: 43.880, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_awalisi', name: '阿瓦里斯', factionId: 'xikesuosi', lat: 30.79, lng: 31.83, type: 'stockade', troops: 30000, region: 'EGYPT' },
-    { id: 'city_duershelujin', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'ASSYRIAN' },
+    { id: 'city_niniwei', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'ASSYRIAN', note: '新亚述帝国极盛王都，亚述巴尼拔皇家图书馆所在地' },
 
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 30000, region: 'ORIE' },
     { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'ACHAEMENIDS', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },

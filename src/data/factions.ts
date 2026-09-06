@@ -1987,6 +1987,7 @@ export const FACTIONS: Faction[] = [
     { id: 'trastamara', name: '特拉斯塔' },
     { id: 'odrysian_late', name: '奥德里西亚' },
     { id: 'naxos_ancient', name: '纳克索斯' },
+    { id: 'sijitai', name: '斯基泰' },
 ];
 
 // @ts-ignore

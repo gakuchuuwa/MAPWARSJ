@@ -457,8 +457,8 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_geergang', 'city_mizhina', 'city_shwebo', 'city_pagan', 'city_srikshetra', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_piyetuo', 'city_shimenguan', 'city_dajianlu'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
     { region: 'PERSIAN', cityIds: ['city_dabulishi', 'city_susa', 'city_feiluzhabade', 'city_kandaha', 'city_gaofu', 'city_merv', 'city_nisa', 'city_dabulishi'] },
-    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_duershelujin', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
-    { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_beileinisi', 'city_wasaite', 'city_yalishanda', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_duershelujin', 'city_susa'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_niniwei', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
+    { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_beileinisi', 'city_wasaite', 'city_yalishanda', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_niniwei', 'city_susa'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
     { region: 'INDIA', cityIds: ['city_laheer', 'city_deli', 'city_agela', 'city_qunvcheng', 'city_walanaxi', 'city_huashicheng', 'city_wangshecheng', 'city_gaodacheng', 'city_danmoledi', 'city_laheer'] },
     { region: 'BERBER', cityIds: ['city_feisi', 'city_malajiashen', 'city_teleimusen', 'city_aerjier', 'city_bujiaya', 'city_jiataji', 'city_kailuwan', 'city_deliboli', 'city_banjiaxi', 'city_feisi'] },
@@ -1196,9 +1196,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     CARTHAGE: ['city_jiataji'],          // 迦太基（迦太基都城）
     BABYLON: ['city_babilun'],          // 巴比伦（巴比伦帝都）
     HITTITES: ['city_hatusha'],          // 赫梯（哈图沙都城）
-    ASSYRIAN: ['city_duershelujin'],     // 亚述（尼尼微/杜尔舍鲁金帝都）
+    ASSYRIAN: ['city_niniwei'],         // 亚述（尼尼微帝都）
     PARTHIA: ['city_nisa'],             // 安息（尼萨王都）
-    SCYTHIANS: ['city_pantika'],        // 斯基泰（潘提卡彭王都）
+    SCYTHIANS: ['city_asu'],            // 斯基泰（阿速城/塔纳伊斯游牧贸易王庭）
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

@@ -1123,7 +1123,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     trastamara: { generalId: 'gen_ferdinand_ii', generalName: '斐迪南二世', portrait: '/assets/SPANISH/trastamara_feidinanershi.png' },
     odrysian_late: { generalId: 'gen_seuthes_iii', generalName: '塞乌特斯', portrait: '/assets/GREEK/odrysian_late_saiwutesi.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
-
+    sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ateas.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

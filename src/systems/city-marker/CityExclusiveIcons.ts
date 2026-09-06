@@ -81,7 +81,7 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_york: '/cities/germanic/0yueke.png',
     york: '/cities/germanic/0yueke.png',
     yueke: '/cities/germanic/0yueke.png',
-    city_duershelujin: '/cities/WEST_ASIA/0niniwei.png',
+    city_niniwei: '/cities/WEST_ASIA/0niniwei.png',
     city_salai: '/cities/STEPPE/0salai.png',
     city_karakorum: '/cities/STEPPE/0halahelin.png',
     karakorum: '/cities/STEPPE/0halahelin.png',
