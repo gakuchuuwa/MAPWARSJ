@@ -136,6 +136,15 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SAFAVID: 'safawei_d',
     RUSSIAN: 'eluosi_diguo',
     SIKH: 'xike',
+    HEBREWS: 'xibolai',
+    WUSUN: 'wusun',
+    QIANG: 'xianlingqiang',
+    NABATAEANS: 'nabatai',
+    HEPHTHALITES: 'yanda',
+    AINU: 'ayinu_ezo',
+    SWISS: 'ruishi',
+    PASHTUN: 'dulan_d',
+    SWEDISH: 'ruidian_yota',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

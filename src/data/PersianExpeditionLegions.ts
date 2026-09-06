@@ -35,7 +35,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     aba: { name: '萨珊重装骑', tier: 1 },           // 尼沙布尔·阿巴尔
     kalan: { name: '卡伦军', tier: 4 },             // 图斯·卡伦
     kumisi: { name: '库米斯军', tier: 4 },          // 达姆甘·库米斯
-    dulan_d: { name: '普什图骑兵', tier: 1 },       // 坎大哈·杜兰尼
+    dulan_d: { name: '普什图骑', tier: 1 },       // 坎大哈·杜兰尼
     babuer: { name: '阿富汗游骑', tier: 3 },        // 喀布尔·阿富汗
     fanyanna: { name: '梵衍那军', tier: 4 },        // 巴米扬·梵衍那
     xisi: { name: '萨法尔圣兵', tier: 2 },

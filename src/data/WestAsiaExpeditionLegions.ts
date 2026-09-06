@@ -44,4 +44,5 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     wuer: { name: '乌尔重步', tier: 3 },
     shengdian_qishi: { name: '圣殿骑士', tier: 2 },
     samtskhe: { name: '梅斯赫骑', tier: 4 },
+    xibolai: { name: '基利提圣卫', tier: 2 },  // 耶路撒冷·大卫：大卫王王牌精锐卫队
 };

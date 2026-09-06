@@ -120,7 +120,16 @@ export type RegionType =
     | 'MUGHAL'       // 莫卧儿（阿格拉锁子甲战象冲阵与拉杰普特弯刀铁骑）
     | 'SAFAVID'      // 萨法维（伊斯法罕克兹尔巴什红头军弯刀铁骑狂暴突击）
     | 'RUSSIAN'      // 俄罗斯（圣彼得堡传统巴迪什重战斧肉搏与哥萨克马刀冲锋）
-    | 'SIKH';        // 锡克（拉合尔卡尔萨誓死卫队飞轮战刀圆盾近战突击）
+    | 'SIKH'         // 锡克（拉合尔卡尔萨誓死卫队飞轮战刀圆盾近战突击）
+    | 'HEBREWS'      // 希伯来（耶路撒冷所罗门圣殿与大卫基利提圣卫）
+    | 'WUSUN'        // 乌孙（伊犁河谷赤谷城大昆弥控弦铁骑）
+    | 'QIANG'        // 先零羌（湟水流域允吾金城长矛断道山地步骑）
+    | 'NABATAEANS'   // 纳巴泰（佩特拉粉红岩凿要塞与红海香路驼骑）
+    | 'HEPHTHALITES' // 嚈哒（白匈奴阿姆河阿缓火国城横扫中亚南亚铁骑）
+    | 'AINU'        // 阿伊努
+    | 'SWISS'       // 瑞士
+    | 'PASHTUN'     // 普什图
+    | 'SWEDISH';     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -196,6 +205,12 @@ export const REGION_ORDER: RegionType[] = [
     'SAFAVID',
     'RUSSIAN',
     'SIKH',
+    'HEBREWS',
+    'WUSUN',
+    'QIANG',
+    'NABATAEANS',
+    'HEPHTHALITES',
+    'AINU',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -238,7 +253,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
     CELTS: '古典凯尔特',
-    ITALIANS: '城堡拉丁',
+    ITALIANS: '城堡意大利',
     SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
     MAGYAR: '城堡马扎尔',
@@ -303,6 +318,15 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SAFAVID: '帝王波斯',
     RUSSIAN: '帝王俄罗斯',
     SIKH: '帝王锡克',
+    HEBREWS: '古典希伯来',
+    WUSUN: '古典乌孙',
+    QIANG: '古典先零羌',
+    NABATAEANS: '古典纳巴泰',
+    HEPHTHALITES: '封建嚈哒',
+    AINU: '封建阿伊努',
+    SWISS: '城堡瑞士',
+    PASHTUN: '帝王普什图',
+    SWEDISH: '帝王瑞典',
 };
 
 /**
@@ -351,7 +375,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
     CELTS: '古典凯尔特',
-    ITALIANS: '城堡拉丁',
+    ITALIANS: '城堡意大利',
     SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
     MAGYAR: '城堡马扎尔',
@@ -416,6 +440,15 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SAFAVID: '帝王波斯',
     RUSSIAN: '帝王俄罗斯',
     SIKH: '帝王锡克',
+    HEBREWS: '古典希伯来',
+    WUSUN: '古典乌孙',
+    QIANG: '古典先零羌',
+    NABATAEANS: '古典纳巴泰',
+    HEPHTHALITES: '封建嚈哒',
+    AINU: '封建阿伊努',
+    SWISS: '城堡瑞士',
+    PASHTUN: '帝王普什图',
+    SWEDISH: '帝王瑞典',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -579,71 +612,71 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
 export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
-    SLAVIC: '封建罗斯',
+    SLAVIC: '#3949ab',
     GERMANIC: '#455a64',
     LATIN: '#6a1b9a',
     CENTRAL: '#8d6e63',
     NORTH: '#5d4037',
-    JIANGNAN: '封建华夏',
+    JIANGNAN: '#1565c0',
     LINGNAN: '#e65100',
     BASHU: '#2e7d32',
     DIANQIAN: '#6a1b9a',
     HEXI: '#bf360c',
     WESTERN: '#f9a825',
-    TIBET: '封建吐蕃',
+    TIBET: '#00838f',
     STEPPE: '#c0a050',
-    NORTHEAST: '封建东斯拉夫',
-    KOREA: '封建高句丽',
-    JAPAN: '封建日本',
-    CENTRAL_ASIA: '封建中亚',
-    WEST_ASIA: '封建安纳托利亚', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
+    NORTHEAST: '#388e3c',
+    KOREA: '#7b1fa2',
+    JAPAN: '#c2185b',
+    CENTRAL_ASIA: '#455a64',
+    WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
     INDIA: '#d84315',   // 深橙红（印度香料）
-    BERBER: '封建柏柏尔',  // 青绿（地中海/绿洲）
-    AMERICA: '封建阿兹特克', // 棕（美洲）[2026-08-24]
-    AFRICA: '封建马里',  // 橄榄（非洲）[2026-08-24]
-    MALAY: '封建南洋',   // 青（马来）[2026-08-24]
-    ANDE: '封建印加',  // 琥珀（安第斯金）[2026-08-27]
-    PURU: '封建达罗毗荼',  // 深红（达罗毗荼）[2026-08-27]
-    ORIE: '封建阿拉伯',  // 深绿（伊斯兰绿）[2026-08-27]
-    EAST: '封建东斯拉夫',  // 深蓝灰（东欧蛮族钢铁）[2026-08-27]
+    BERBER: '#00897b',  // 青绿（地中海/绿洲）
+    AMERICA: '#6d4c41', // 棕（美洲）[2026-08-24]
+    AFRICA: '#9e9d24',  // 橄榄（非洲）[2026-08-24]
+    MALAY: '#00838f',   // 青（马来）[2026-08-24]
+    ANDE: '#ff8f00',  // 琥珀（安第斯金）[2026-08-27]
+    PURU: '#c62828',  // 深红（达罗毗荼）[2026-08-27]
+    ORIE: '#00695c',  // 深绿（伊斯兰绿）[2026-08-27]
+    EAST: '#37474f',  // 深蓝灰（东欧蛮族钢铁）[2026-08-27]
     GREEK: '#1e88e5',  // 蓝（希腊爱琴海）[2026-08-27]
     THRACIAN: '#ad1457',  // 深品红（色雷斯巴尔干）[2026-08-27]
-    PERSIAN: '封建波斯',  // 深紫（阿契美尼德波斯王紫）[2026-08-27]
-    CUMAN: '封建库曼',  // 灰褐（库曼钦察草原）[2026-08-27]
-    BRITONS: '封建英格兰',  // 不列颠[2026-08-28]
-    GOTHS: '封建哥特',  // 哥特[2026-08-28]
-    HUNS: '封建匈人',  // 匈人[2026-08-28]
-    TEUTONS: '封建条顿',  // 条顿[2026-08-28]
-    VIKINGS: '封建维京',  // 维京[2026-08-28]
+    PERSIAN: '#4527a0',  // 深紫（阿契美尼德波斯王紫）[2026-08-27]
+    CUMAN: '#a1887f',  // 灰褐（库曼钦察草原）[2026-08-27]
+    BRITONS: '#37474f',  // 不列颠[2026-08-28]
+    GOTHS: '#546e7a',  // 哥特[2026-08-28]
+    HUNS: '#6d4c41',  // 匈人[2026-08-28]
+    TEUTONS: '#4e342e',  // 条顿[2026-08-28]
+    VIKINGS: '#006064',  // 维京[2026-08-28]
     CELTS: '#2e7d32',  // 凯尔特[2026-08-28]
-    ITALIANS: '封建意大利',  // 意大利[2026-08-28]
-    SICILIANS: '封建西西里',  // 西西里[2026-08-28]
-    BULGARIANS: '封建保加利亚',  // 保加利亚[2026-08-28]
-    MAGYAR: '封建马扎尔',  // 马扎尔[2026-08-28]
-    LITHUANIANS: '封建立陶宛',  // 立陶宛[2026-08-28]
-    POLES: '封建波兰',  // 波兰[2026-08-28]
-    BOHEMIANS: '封建波希米亚',  // 波希米亚[2026-08-28]
-    BURGUNDIANS: '封建勃艮第',  // 勃艮第[2026-08-28]
-    SPANISH: '封建西班牙',  // 西班牙[2026-08-28]
-    PORTUGUESE: '封建葡萄牙',  // 葡萄牙[2026-08-28]
-    ETHIOPIANS: '封建埃塞俄比亚',  // 埃塞俄比亚[2026-08-28]
-    BENGALIS: '封建孟加拉',  // 孟加拉[2026-08-28]
-    GURJARAS: '封建瞿折罗',  // 瞿折罗[2026-08-28]
+    ITALIANS: '#1a237e',  // 意大利[2026-08-28]
+    SICILIANS: '#4527a0',  // 西西里[2026-08-28]
+    BULGARIANS: '#7b1fa2',  // 保加利亚[2026-08-28]
+    MAGYAR: '#bf360c',  // 马扎尔[2026-08-28]
+    LITHUANIANS: '#00695c',  // 立陶宛[2026-08-28]
+    POLES: '#8e24aa',  // 波兰[2026-08-28]
+    BOHEMIANS: '#283593',  // 波希米亚[2026-08-28]
+    BURGUNDIANS: '#c2185b',  // 勃艮第[2026-08-28]
+    SPANISH: '#f9a825',  // 西班牙[2026-08-28]
+    PORTUGUESE: '#00838f',  // 葡萄牙[2026-08-28]
+    ETHIOPIANS: '#9e9d24',  // 埃塞俄比亚[2026-08-28]
+    BENGALIS: '#d84315',  // 孟加拉[2026-08-28]
+    GURJARAS: '#ff8f00',  // 瞿折罗[2026-08-28]
     PORUS: '#c62828',  // 补噜[2026-08-28]
-    VIETNAMESE: '封建大越',  // 越南[2026-08-28]
-    KHMER: '封建高棉',  // 高棉[2026-08-28]
+    VIETNAMESE: '#2e7d32',  // 越南[2026-08-28]
+    KHMER: '#00695c',  // 高棉[2026-08-28]
     MAYANS: '#6d4c41',  // 玛雅[2026-08-28]
-    MAPUCHE: '帝王马普切',  // 马普切[2026-08-28]
-    MUISCA: '封建穆伊斯卡',  // 穆伊斯卡[2026-08-28]
-    TUPI: '封建图皮',  // 图皮[2026-08-28]
+    MAPUCHE: '#ad1457',  // 马普切[2026-08-28]
+    MUISCA: '#1e88e5',  // 穆伊斯卡[2026-08-28]
+    TUPI: '#00897b',  // 图皮[2026-08-28]
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
-    GEORGIANS: '封建格鲁吉亚',  // 格鲁吉亚[2026-08-28]
+    GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]
     ATHENIANS: '#1565c0',  // 雅典[2026-08-28]
     SPARTANS: '#5d4037',  // 斯巴达[2026-08-28]
     MACEDONIANS: '#455a64',  // 马其顿[2026-08-28]
     ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
-    BURMESE: '封建缅甸',
-    WALLACHIA: '封建瓦拉几亚',
+    BURMESE: '#b8860b',
+    WALLACHIA: '#7f1d1d',
     EGYPT: '#d4af37',      // 埃及（金字塔黄金）
     CARTHAGE: '#800020',   // 迦太基（布匿紫红）
     BABYLON: '#1a237e',    // 巴比伦（伊什塔尔门青金石蓝）
@@ -651,12 +684,12 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ASSYRIAN: '#b71c1c',   // 亚述（铁血战神赤红）
     PARTHIA: '#6a1b9a',    // 安息（帕提亚皇室深紫）
     SCYTHIANS: '#fbc02d',  // 斯基泰（大草原黄金色）
-    BYZANTINE: '封建拜占庭',  // 拜占庭（拜占庭皇室深紫）
-    FRANKS: '封建法兰克',     // 法兰克（加洛林皇家蓝）
-    SASANIAN: '封建波斯',   // 萨珊（波斯祆教烈火深绯红）
-    TURKS: '封建突厥',      // 突厥（草原苍狼天青蓝）
-    NANZHAO: '封建白蛮',    // 南诏（苍山洱海玄木褐）
-    SRIVIJAYA: '封建马来',  // 三佛齐（南洋海洋碧青）
+    BYZANTINE: '#7b1fa2',  // 拜占庭（拜占庭皇室深紫）
+    FRANKS: '#1565c0',     // 法兰克（加洛林皇家蓝）
+    SASANIAN: '#c62828',   // 萨珊（波斯祆教烈火深绯红）
+    TURKS: '#00838f',      // 突厥（草原苍狼天青蓝）
+    NANZHAO: '#4e342e',    // 南诏（苍山洱海玄木褐）
+    SRIVIJAYA: '#00695c',  // 三佛齐（南洋海洋碧青）
     KUSHAN: '#d97706',     // 贵霜（犍陀罗佛陀金赭）
     KUSH: '#78350f',       // 库施（努比亚黑金赤檀）
     KHITAN: '#5c4033',
@@ -681,6 +714,15 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SAFAVID: '#4527a0',
     RUSSIAN: '#1565c0',
     SIKH: '#ff8f00',
+    HEBREWS: '#1e88e5',
+    WUSUN: '#b8860b',
+    QIANG: '#795548',
+    NABATAEANS: '#c2185b',
+    HEPHTHALITES: '#8b0000',
+    AINU: '#006064',
+    SWISS: '#d32f2f',
+    PASHTUN: '#00695c',
+    SWEDISH: '#1565c0',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1366,6 +1408,60 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
     },
+    HEBREWS: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    WUSUN: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    QIANG: {
+        small: resolvePath('/cities/north_small.png'),
+        medium: resolvePath('/cities/north_medium.png'),
+        big: resolvePath('/cities/north_big.png'),
+        pass: resolvePath('/cities/north_pass.png')
+    },
+    NABATAEANS: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    HEPHTHALITES: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    AINU: {
+        small: resolvePath('/cities/city_small.png'),
+        medium: resolvePath('/cities/city_medium.png'),
+        big: resolvePath('/cities/city_big.png'),
+        pass: resolvePath('/cities/pass.png')
+    },
+    SWISS: {
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    PASHTUN: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    SWEDISH: {
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1552,6 +1648,15 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SAFAVID:     ['city_yisifahan'],
     RUSSIAN:     ['city_shengpidebao'],
     SIKH:        ['city_laheer'],
+    HEBREWS:     ['city_yelusaleng'],
+    WUSUN:       ['city_chigucheng'],
+    QIANG:       ['city_yunwu'],
+    NABATAEANS:  ['city_peitra'],
+    HEPHTHALITES:['city_huoguocheng'],
+    AINU:        ['city_moyoro'],
+    SWISS:       ['city_basaier'],
+    PASHTUN:     ['city_kandaha'],
+    SWEDISH:     ['city_gothenburg'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

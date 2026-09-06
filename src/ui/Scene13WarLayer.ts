@@ -427,6 +427,15 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SAFAVID: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
     RUSSIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
     SIKH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    HEBREWS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    WUSUN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    QIANG: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    NABATAEANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    HEPHTHALITES: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    AINU: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    SWISS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, trebuchet: true },
+    PASHTUN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: false, trebuchet: true },
+    SWEDISH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true, trebuchet: true },
 };
 
 /**
@@ -1160,6 +1169,15 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SAFAVID: 'PERS',
     RUSSIAN: 'EAST',
     SIKH: 'INDI',
+    HEBREWS: 'ORIE',
+    WUSUN: 'CEAS',
+    QIANG: 'ASIA',
+    NABATAEANS: 'ORIE',
+    HEPHTHALITES: 'CEAS',
+    AINU: 'ASIA',
+    SWISS: 'EUROPE',
+    PASHTUN: 'CENTRAL_ASIA',
+    SWEDISH: 'EUROPE',
 };
 
 

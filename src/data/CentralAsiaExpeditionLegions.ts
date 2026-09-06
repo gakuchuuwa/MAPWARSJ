@@ -8,7 +8,7 @@
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    yanda: { name: '阿尔洪铁骑', tier: 2 }, // 白匈奴重要分支，摧毁印度笈多帝国的战术尖刀，升入T2战术
+    yanda: { name: '头罗铁骑', tier: 2 }, // 白匈奴重要分支，摧毁印度笈多帝国的战术尖刀，升入T2战术
   saman: { name: '萨曼古拉姆', tier: 3 },     // 伊斯兰世界古拉姆制度的标志性代表，升入T3知名
     huarazim: { name: '康里精骑', tier: 1 },
   qincha: { name: '钦察弓骑兵', tier: 3 },              // 萨拉托夫·巴奇曼：钦察骑射手（DE Kipchak 库曼弓骑）
@@ -46,7 +46,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
     najie: { name: '那竭方阵兵', tier: 3 },
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
-    dulan_d: { name: '普什图骑兵', tier: 1 },
+    dulan_d: { name: '普什图骑', tier: 1 },
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
   baha: { name: '巴哈铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
     hali: { name: '萨洛尔弓骑', tier: 4 },
