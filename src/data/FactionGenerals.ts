@@ -1060,7 +1060,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     zhagewei: { generalId: 'zhagewei_gebulei', generalName: '拉利贝拉', portrait: '/assets/AFRICA/zhagewei_lalibeila.png' },
     adal: { generalId: 'adal_ghazi', generalName: '格拉尼', portrait: '/assets/AFRICA/adal_gelani.png' },
     malacca: { generalId: 'gen_parameswara', generalName: '拜里米苏拉', portrait: '/assets/SOUTHEAST_ASIA/malacca_bailimisula.png' },
-    sanfoqi: { generalId: 'sanfoqi_dapunta', generalName: '达本陀', portrait: '/assets/MALAY/sanfoqi_dapunta.png' },
+    sanfoqi: { generalId: 'sanfoqi_dapunta', generalName: '达本陀', portrait: '/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png' },
     medang: { generalId: 'gen_panangkaran', generalName: '帕南卡兰', portrait: '/assets/DIANQIAN/medang_panankalan.png' },
     ternate: { generalId: 'ternate_babula', generalName: '巴布拉', portrait: '/assets/DIANQIAN/ternate_babula.png' },
     sulu: { generalId: 'sulu_paduka', generalName: '巴杜卡', portrait: '/assets/AFRICA/sulu_baduka.png' },

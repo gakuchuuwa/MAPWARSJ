@@ -486,7 +486,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
 
 
-    { id: 'city_jicheng', name: '棘城', factionId: 'murong', lat: 41.58, lng: 121.055, type: 'small_city', troops: 30000, region: 'STEPPE' },
+    { id: 'city_jicheng', name: '棘城', factionId: 'murong', lat: 41.58, lng: 121.055, type: 'small_city', troops: 30000, region: 'NORTHEAST' },
 
 
     {
@@ -495,7 +495,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         factionId: 'wuhuan',
         lat: 41.40, lng: 119.64,
         type: 'stockade',
-        region: 'STEPPE',
+        region: 'NORTHEAST',
         troops: 30000,
         note: '白狼山；乌桓关隘',
     },
@@ -1755,7 +1755,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
         factionId: 'kumoxi',
         lat: 43.27, lng: 118.48,
         type: 'pass',
-        region: 'STEPPE',
+        region: 'NORTHEAST',
         troops: 30000,
         note: '西拉木伦河（饶乐水）；库莫奚本部牧地（《魏书·库莫奚传》）' },
     // ── 武川镇 ──
