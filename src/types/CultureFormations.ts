@@ -281,7 +281,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     EGYPT: 'echelon',
     CARTHAGE: 'crane_wing',
     BABYLON: 'balance_yoke',
-    HITTITES: 'triangle',
+    HITTITES: 'triangle',    // 古典赫梯：锥形阵 2+3+4 底边双轮战车高级主力
     ASSYRIAN: 'fish_scale',
     SCYTHIANS: 'triangle',
     BYZANTINE: 'square',
@@ -2250,16 +2250,21 @@ export const BABYLON_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 赫梯 重战车+长矛兵+主力重战车（锥形阵 2+3+4：尖刀战车2 + 长矛掩护3 + 重型战车集群主力4） */
+/** 古典赫梯军团（锥形阵 2+3+4，主力在底边）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（安纳托利亚青铜时代铁器霸主·卡迭石大决战）：
+ *   · 尖刀先锋 双轮战车（2档） —— 小亚细亚先导快车前出破风与侦查骚扰，占 2 档尖刀。
+ *   · 中坚护翼 古典长矛兵（3档） —— 赫梯铁矛青铜甲步兵方阵居中，护住战车集群中轴与两翼，占 3 档中坚。
+ *   · 底边决战 双轮战车高级（4档【高级】） —— 赫梯标志性三人重型铁甲战车集群，卡迭石战役穆瓦塔利二世亲率决战突击主力，占 4 档高级主力。 */
 export const HITTITES_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_chariot_ranged', count: 2 },
-            { type: 'spearman', count: 3 },
-            { type: 'war_chariot_ranged', count: 4 }
+            { type: 'war_chariot', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'elite_war_chariot', count: 4 }
         ]
     }
 ];

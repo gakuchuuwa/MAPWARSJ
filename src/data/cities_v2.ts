@@ -395,12 +395,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_longxi', name: '襄武', factionId: 'li_lx_d', lat: 35.032229, lng: 104.587097, type: 'small_city', troops: 30000, region: 'CENTRAL' },
 
 
-    { id: 'city_wuwei', name: '姑臧', factionId: 'liangzhou', lat: 37.93, lng: 102.64, type: 'medium_city', troops: 30000, region: 'CENTRAL' },
+    { id: 'city_wuwei', name: '姑臧', factionId: 'liangzhou', lat: 37.93, lng: 102.64, type: 'medium_city', troops: 30000, region: 'HEXI' },
 
 
-    { id: 'city_zhangye', name: '张掖', factionId: 'ganzhou', lat: 38.93, lng: 100.45, type: 'medium_city', troops: 30000, region: 'CENTRAL' },
+    { id: 'city_zhangye', name: '张掖', factionId: 'ganzhou', lat: 38.93, lng: 100.45, type: 'medium_city', troops: 30000, region: 'HEXI' },
 
-    { id: 'city_jiuquan', name: '嘉峪关', factionId: 'suzhou', lat: 39.7822, lng: 98.3414, type: 'pass', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_jiuquan', name: '嘉峪关', factionId: 'suzhou', lat: 39.7822, lng: 98.3414, type: 'pass', troops: 20000, region: 'HEXI' },
 
 
 
@@ -454,12 +454,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         factionId: 'shazhou',
         lat: 40.14, lng: 94.66,
         type: 'medium_city',
-        region: 'CENTRAL',
+        region: 'HEXI',
         troops: 30000,
         tier: 1,
         note: '敦煌；沙州小城',
     },
-    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 30000, region: 'CENTRAL' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 30000, region: 'HEXI' },
 
 
     { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 30000, region: 'TIBET' },
@@ -847,7 +847,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 30000, region: 'CENTRAL' },
 
 
-    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 30000, region: 'CENTRAL', mirror: true },
+    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 30000, region: 'HEXI', mirror: true },
 
 
 
@@ -1959,7 +1959,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 30000, region: 'BERBER' },
     { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 30000, region: 'CARTHAGE', mirror: true },
-    { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 30000, region: 'CARTHAGE' },
+    { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 20000, region: 'GREEK' },
 
@@ -2031,7 +2031,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 30000, region: 'LATIN', note: '卡尔努特人首府，沙特尔圣母主教座堂' },
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 30000, region: 'GREEK' },
-    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'CARTHAGE' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 30000, region: 'PORTUGUESE' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'medium_city', troops: 30000, region: 'GERMANIC', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
@@ -2174,7 +2174,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 20000, region: 'WESTERN' },
 
-    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'CENTRAL', troops: 30000, mirror: true,
+    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'HEXI', troops: 30000, mirror: true,
         note: '肩水金关；浑邪关隘',
     },//镜像
 
@@ -2983,7 +2983,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_samaila', name: '萨迈拉', factionId: 'samaila', lat: 34.206, lng: 43.880, type: 'medium_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_awalisi', name: '阿瓦里斯', factionId: 'xikesuosi', lat: 30.79, lng: 31.83, type: 'stockade', troops: 30000, region: 'EGYPT' },
-    { id: 'city_niniwei', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'BABYLON', note: '新亚述帝国极盛王都，亚述巴尼拔皇家图书馆所在地' },
+    { id: 'city_niniwei', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'ASSYRIAN', note: '新亚述帝国极盛王都，亚述巴尼拔皇家图书馆所在地' },
 
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 30000, region: 'ORIE' },
     { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'PERSIAN', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
@@ -3003,7 +3003,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 30000, region: 'GREEK' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.93, lng: 32.87, type: 'small_city', troops: 30000, region: 'HITTITES' },
     { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'big_city', troops: 30000, region: 'OTTOMAN', note: '奥斯曼帝国第一都城（1326–1363）；苏丹亲兵耶尼切里军团大本营' },
-    { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'BABYLON' },
+    { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'ASSYRIAN' },
 
     { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'medium_city', troops: 30000, region: 'NABATAEANS', note: '纳巴泰王国玫瑰红岩凿都城，红海香料商路要津，世界七大奇迹' },

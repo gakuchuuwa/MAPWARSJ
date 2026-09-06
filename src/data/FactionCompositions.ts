@@ -507,71 +507,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 满清军团·抚顺/赫图阿拉/盛京/吉林乌拉/呼伦贝尔/威远营/西宁（努尔哈赤 / 皇太极 / 多尔衮 / 阿桂 / 海兰察 / 年羹尧 / 岳钟琪 · 鱼鳞阵 3+4+2：女真铁浮屠 3 + 草原枪骑兵精锐 4 + 重装骑射手 2）
-    "manzhou": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "aisin_d": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "manzhou_d": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "agui": {
-        legionName: "满清军团",
-        legionType: "region",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "xingan": {
-        legionName: "满清军团",
-        legionType: "region",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "weiyuan": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "qinghai": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
     // 南宋·岳飞 / 韩世忠 / 孟珙 / 刘锜 火矛手军团（鱼鳞阵 3+4+2：精锐火矛手前卫 3 + 刀剑手主力 4 + 诸葛弩 2）
     "yanchuan_d": {
         legionName: "背嵬军团",
@@ -739,15 +674,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 奥斯曼帝国·布尔萨（穆罕默德二世 · 三角阵 2+3+4：土耳其禁卫军 2 + 土耳其禁卫军精锐 3 + 奥斯曼皇家禁卫军主力 4）
-    osman: {
-        legionName: "土耳其军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'steppe_lancer', count: 2 },           // Row 0 前卫 = 草原枪骑兵 2骑（草原枪骑兵突击开路）
-            { type: 'cav_archer_heavy', count: 4 },        // Row 1 中军主力 = 重装骑射手 4骑（骑射手重装主力游射）
-            { type: 'elite_janissary', count: 3 },         // Row 2 后排 = 精锐苏丹亲兵 3人（土耳其禁卫军精锐火枪）
-        ],
-    },
     // 草原与中亚诸大汗·怯薛铁骑军团（鱼鳞阵 3+4+2：怯薛军前卫 3 + 精锐怯薛军主力 4 + 蒙古突骑 2）
     // 包含：成吉思汗、拔都、忽必烈、帖木儿、旭烈兀、速不台、木华黎、也速该、札木合、也先、噶尔丹、昔班尼、巴布尔、突厥大汗等
     "menggu_d": {
@@ -1096,15 +1022,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'elite_skirmisher', count: 2 },    // Row 2 尾收标枪压制 = 精锐掷矛手 2人（重标枪破盾抛射）
         ],
     },
-    gaolu_luoma: {
-        legionName: "法兰克军团",
-        formationMode: 'crescent',
-        slots: [
-            { type: 'champion', count: 3 },
-            { type: 'paladin', count: 2 },
-            { type: 'elite_throwing_axeman', count: 4 },
-        ],
-    },
     mozeer: {
         legionName: "罗马军团",
         formationMode: 'echelon',
@@ -1133,34 +1050,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
-    safawei_d: {
-        legionName: "萨法维军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'ghulam', count: 2 },            // Row 0 前哨抗线 = 古拉姆近卫战士 2人（高加索重装死士抗线）
-            { type: 'qizilbash_warrior', count: 4 }, // Row 1 两翼主力 = 奇兹尔巴什红头战士 4骑（萨非核心红头狂热战骑雷霆突贯）
-            { type: 'hand_cannoneer', count: 3 },    // Row 2 后排火力 = 火枪兵 3人（波斯正规火枪军团排枪齐射）
-        ],
-    },
-    safawei: {
-        legionName: "萨法维军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'ghulam', count: 2 },
-            { type: 'qizilbash_warrior', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
-        ],
-    },
     // 粟特王国·瓦拉赫沙（德瓦什提奇 · 鹤翼阵 2+4+3：持盾步兵 2 + 粟特甲胄铁骑主力 4 + 古典重装骑射 3）
-    sogdian: {
-        legionName: "粟特商队护卫军团",
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'sparabara', count: 2 },                      // Row 0 前哨诱敌 = 波斯持盾步兵 2人（大盾结阵抗线吸引火力）
-            { type: 'sogdian_cataphract', count: 4 },            // Row 1 两翼绝对主力 = 粟特甲胄骑兵 4骑（全人马披挂重装具装铁骑合围突破）
-            { type: 'antiquity_heavy_cavalry_archer', count: 3 }, // Row 2 中军后排支援 = 古典重装骑射手 3骑（重装弓骑兵漫天箭雨压制）
-        ],
-    },
     // 圣殿骑士团·阿卡（莫莱 · 圣殿骑士团军团 · 鱼鳞阵 4+3+2：圣殿楷模武士 4 + 十字军骑士 3 + 劲弩手 2）
     "shengdian_qishi": {
         legionName: "圣殿骑士军团",
@@ -1231,42 +1121,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 法兰克与法兰西·查理曼 / 查理马特 / 查理七世 / 吉尔德雷斯（法兰克军团 · 偃月阵 3+2+4：冠军剑士 3 + 游侠 2 + 精锐掷斧兵 4）
-    jialuolin: {
-        legionName: "法兰克军团",
-        formationMode: 'crescent',
-        slots: [
-            { type: 'champion', count: 3 },               // Row 0 前卫重剑 = 冠军剑士 3人
-            { type: 'paladin', count: 2 },                // Row 1 中排驰援 = 游侠圣骑士 2人
-            { type: 'elite_throwing_axeman', count: 4 },  // Row 2 底边主力 = 法兰克掷斧兵精锐 4人
-        ],
-    },
-    falanji: {
-        legionName: "法兰克军团",
-        formationMode: 'crescent',
-        slots: [
-            { type: 'champion', count: 3 },
-            { type: 'paladin', count: 2 },
-            { type: 'elite_throwing_axeman', count: 4 },
-        ],
-    },
-    gaolu: {
-        legionName: "法兰克军团",
-        formationMode: 'crescent',
-        slots: [
-            { type: 'champion', count: 3 },
-            { type: 'paladin', count: 2 },
-            { type: 'elite_throwing_axeman', count: 4 },
-        ],
-    },
-    aermolika: {
-        legionName: "法兰克军团",
-        formationMode: 'crescent',
-        slots: [
-            { type: 'champion', count: 3 },
-            { type: 'paladin', count: 2 },
-            { type: 'elite_throwing_axeman', count: 4 },
-        ],
-    },
     // 基辅罗斯·基辅/切尔尼戈夫（雅罗斯拉夫 / 勇士姆斯季斯拉夫 · 瓦兰吉卫队军团 · 鱼鳞阵 3+4+2：诺斯狂暴战士 3 + 维京狂战士精锐 4 + 斯拉夫贵族铁骑 2）
     "luosi": {
         legionName: "瓦兰吉军团",
@@ -1432,34 +1286,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'imperial_camel_rider', count: 3 },      // Row 2 后排 = 帝王骆驼兵 3骑（帝王骆驼骑兵护阵）
         ],
     },
-    mowoer: {
-        legionName: "阿克巴火器军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'ghulam', count: 3 },
-            { type: 'imperial_camel_rider', count: 4 },
-            { type: 'elephant_archer', count: 2 },
-        ],
-    },
     // 印度与锡克·兰季特·辛格 / 拉其特 / 哈里·辛格 飞轮掷手漫天破阵精锐军团（三角阵 2+3+4：重装长枪前卫 2 + 飞轮掷手 3 + 精锐飞轮掷手主力 4）
-    xike: {
-        legionName: "锡克军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'heavy_pikeman', count: 2 },           // Row 0 尖刀坚壁 = 重装长枪兵 2人（纯步兵·无马，前排抗线拒马）
-            { type: 'chakram_thrower', count: 3 },         // Row 1 中军投射 = 古吉拉特飞轮掷手 3人（纯步兵·无马，中距离回旋飞轮）
-            { type: 'elite_chakram_thrower', count: 4 },   // Row 2 底边主力弹幕 = 古吉拉特飞轮掷手精锐 4人（纯步兵·无马，漫天飞轮破阵）
-        ],
-    },
-    ahaomu: {
-        legionName: "锡克军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'heavy_pikeman', count: 2 },
-            { type: 'chakram_thrower', count: 3 },
-            { type: 'elite_chakram_thrower', count: 4 },
-        ],
-    },
     // 旁遮普·阿托克（哈里·辛格 · 海达斯佩斯河波鲁斯王巨象战阵 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 帕提尤达长弓手 3 + 波鲁斯王战象 2）
     pangzha: {
         legionName: "旁遮普军团",
@@ -1471,105 +1298,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 迦太基与布匿·汉尼拔 / 哈米尔卡 战象践踏与标枪精锐军团（雁行阵 4+3+2：掷矛手 4 + 精锐战象 3 + 长矛兵 2）
-    buni: {
-        legionName: "迦太基军团",
-        formationMode: 'echelon',
-        slots: [
-            { type: 'skirmisher', count: 4 },                // Row 0 前排投射 = 掷矛手 4
-            { type: 'elite_war_elephant', count: 3 },        // Row 1 核心战象 = 精锐战象 3（主力 3 档，象兵不占 4 档）
-            { type: 'spearman', count: 2 },                  // Row 2 后排接应 = 长矛兵 2
-        ],
-    },
-    feiniqi: {
-        legionName: "迦太基军团",
-        formationMode: 'echelon',
-        slots: [
-            { type: 'skirmisher', count: 4 },                // Row 0 前排投射 = 掷矛手 4
-            { type: 'elite_war_elephant', count: 3 },        // Row 1 核心战象 = 精锐战象 3
-            { type: 'spearman', count: 2 },                  // Row 2 后排接应 = 长矛兵 2
-        ],
-    },
     // 古埃及、赫梯与美索不达米亚·拉美西斯 / 穆瓦塔利 / 图特摩斯 / 卢伽尔扎克西 / 尼布甲尼撒 / 萨尔贡 / 沙姆希阿达德 / 萨利蒂 双轮战车军团（雁行阵 4+3+2：弓兵 4 + 双轮战车精锐 3 + 持盾步兵 2）
-    "heti": {
-        legionName: "古典赫梯军团",
-        legionType: "region",
-        formationMode: "triangle",
-        slots: [
-            { type: "war_chariot_ranged", count: 2 },
-            { type: "spearman", count: 3 },
-            { type: "war_chariot_ranged", count: 4 },
-        ],
-    },
-    "aiji": {
-        legionName: "古典埃及军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "cretan_archer", count: 2 },
-        ],
-    },
-    "dibisi": {
-        legionName: "古典埃及军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "cretan_archer", count: 2 },
-        ],
-    },
-    "sumeier": {
-        legionName: "古典巴比伦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "bactrian_archer", count: 2 },
-        ],
-    },
-    "jialedi": {
-        legionName: "古典巴比伦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "bactrian_archer", count: 2 },
-        ],
-    },
-    "yashu": {
-        legionName: "古典巴比伦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "bactrian_archer", count: 2 },
-        ],
-    },
-    "guyashu": {
-        legionName: "古典巴比伦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "bactrian_archer", count: 2 },
-        ],
-    },
-    "xikesuosi": {
-        legionName: "古典埃及军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "cretan_archer", count: 2 },
-        ],
-    },
     // 中南半岛·纳黎萱 / 阿奴律陀 / 阇耶跋摩 东南亚战象与步弓精锐军团（雁行阵 4+3+2：步弓手 4 + 精锐战斗象 3 + 爪刀勇士 2）
     siam: {
         legionName: "暹罗军团",
@@ -1647,88 +1376,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 刹帝利灵猫骑兵军团·巴米扬/坎大哈（突骑施 / 艾哈迈德沙 · 鱼鳞阵 3+4+2：刹帝利灵猫骑兵前卫 3 + 刹帝利精锐主力 4 + 步弓手 2）
-    fanyanna: {
-        legionName: "阿富汗军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'shrivamsha_rider', count: 3 },
-            { type: 'elite_shrivamsha_rider', count: 4 },
-            { type: 'archer', count: 2 },
-        ],
-    },
-    dulan_d: {
-        legionName: "阿富汗军团",
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'shrivamsha_rider', count: 3 },
-            { type: 'elite_shrivamsha_rider', count: 4 },
-            { type: 'archer', count: 2 },
-        ],
-    },
     // 马格里布骆驼弓骑军团·特莱姆森/布佳亚/凯鲁万/非斯/马拉喀什/阿尔及尔/的黎波里（亚格姆拉森 / 哈马德 / 奥克巴 / 伊德里斯 / 塔什芬 / 巴巴罗萨 / 德拉古特 · 三角阵 2+3+4：萨拉森马穆鲁克 2 + 柏柏尔标枪骑兵 3 + 柏柏尔骆驼弓骑主力 4）
-    zhayan: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },      // Row 0 尖刀先锋 = 萨拉森马穆鲁克 2人
-            { type: 'genitour', count: 3 },      // Row 1 冲击中坚 = 柏柏尔标枪骑兵 3人
-            { type: 'camel_archer', count: 4 },  // Row 2 底边主力齐射 = 柏柏尔骆驼弓骑 4人
-        ],
-    },
-    hamade: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
-    aguelabu: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
-    yidelisi: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
-    mulabite: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
-    babali: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
-    telibolisi: {
-        legionName: "马格里布军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'genitour', count: 3 },
-            { type: 'camel_archer', count: 4 },
-        ],
-    },
     // 休达·直布罗陀（恩里克王子 · 1415征服休达葡萄牙要塞军团 · 鱼鳞阵 4+3+2：重装长枪兵 4 + 重装骑士 3 + 劲弩手 2）
     "zhibuluotuo": {
         legionName: "十字军团",
@@ -1819,105 +1467,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 纳巴泰王国·佩特拉（阿雷塔斯 · 纳巴驼骑军团 · 鹤翼阵 2+4+3：火焰骆驼 2 + 骆驼骑兵 4 + 骆驼弓骑 3）
     // 奴儿干都司与极北海岛军团·特林/囊哈儿/普禄/诺托罗/白主/宗谷/莫约罗/白老（康旺/吉里迷/费雅喀/鄂罗克/苦夷/阿伊努 · 三角阵 2+3+4：答剌罕骑兵 2 + 反曲长弓手 3 + 鲜卑掠骑兵 4）
-    nuergan: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },           // Row 0 尖刀突骑 = 答剌罕骑兵 2骑（极北通古斯重骑突击）
-            { type: 'recurve_bowman', count: 3 },   // Row 1 中坚步射 = 反曲长弓手 3人（林海强弓齐射）
-            { type: 'xianbei_raider', count: 4 },   // Row 2 主力骑射 = 鲜卑掠骑兵 4骑（雪原快马游射压制）
-        ],
-    },
-    jilimi: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    feiyaka: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    eluoke: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    kuye: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    beihai: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    ayinu_ezo: {
-        legionName: "奴儿干军团",
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'xianbei_raider', count: 4 },
-        ],
-    },
-    "ayinu": {
-        legionName: "奴儿干军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "tarkan", count: 2 },
-            { type: "recurve_bowman", count: 3 },
-            { type: "xianbei_raider", count: 4 },
-        ],
-    },
-    "yehe": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "wula": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
-    "haixi_nvzhen": {
-        legionName: "满清军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "steppe_lancer", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 2 },
-            { type: "cav_archer_heavy", count: 4 },
-        ],
-    },
     // 阿兹特克·特诺奇提特兰（库奥特莫克 · 阿兹特克军团 · 偃月阵 3+2+4：精锐鹰勇士 3 + 豹勇士 2 + 精锐豹勇士 4）
     aztec: {
         legionName: "阿兹特克军团",
@@ -1977,24 +1526,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "composite_bowman", count: 3 },
         ],
     },
-    "xibolai": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
-    "guanche": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
     "fujisi": {
         legionName: "福基斯重步军团",
         formationMode: "fish_scale",
@@ -2011,15 +1542,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "war_chariot", count: 3 },
             { type: "hoplite", count: 4 },
             { type: "thracian_peltast", count: 2 },
-        ],
-    },
-    "disidelusi": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
         ],
     },
     "puxiangyindu": {
@@ -2042,15 +1564,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "cav_archer_heavy", count: 4 },
         ],
     },
-    "muwaxide": {
-        legionName: "马格里布军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "mameluke", count: 2 },
-            { type: "genitour", count: 3 },
-            { type: "camel_archer", count: 4 },
-        ],
-    },
     "xiaofulijiya": {
         legionName: "希腊雇佣军团",
         formationMode: "fish_scale",
@@ -2061,15 +1574,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团
-    "valois_angouleme": {
-        legionName: "法兰克军团",
-        formationMode: "crescent",
-        slots: [
-            { type: "champion", count: 3 },
-            { type: "paladin", count: 2 },
-            { type: "elite_throwing_axeman", count: 4 },
-        ],
-    },
     "aqimeinide": {
         legionName: "不死军团",
         formationMode: "square",
@@ -2087,15 +1591,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "mameluke", count: 2 },
             { type: "genitour", count: 3 },
             { type: "camel_archer", count: 4 },
-        ],
-    },
-    "sijitai": {
-        legionName: "大斯基泰金甲骑射军团",
-        formationMode: "triangle",
-        slots: [
-            { type: "scythian_axe_cavalry", count: 2 },
-            { type: "scythian_horse_archer", count: 3 },
-            { type: "scythian_horse_archer", count: 4 },
         ],
     },
 };
