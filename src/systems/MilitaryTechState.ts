@@ -44,7 +44,6 @@ const TECH_CULTURE_PARENT: Partial<Record<RegionType, RegionType>> = {
     BABYLON: 'WEST_ASIA',
     HITTITES: 'WEST_ASIA',
     ASSYRIAN: 'WEST_ASIA',
-    PARTHIA: 'PERSIAN',
     SCYTHIANS: 'STEPPE',
     BYZANTINE: 'LATIN',
     FRANKS: 'GERMANIC',

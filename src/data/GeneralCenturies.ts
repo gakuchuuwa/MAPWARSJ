@@ -947,7 +947,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_willem_juliette': 13,                           // 威廉一世 · didi · 布鲁日
     'gen_william_silent': 16,                            // 威廉奥兰治 · nidelan · 海牙
     'gen_william_wallace': 13,                           // 华莱士 · kanbuliya · 卡莱尔
-    'gen_zwingli': 16,                                   // 茨温利 · ruishi · 巴塞尔
+    'gen_winkelried': 16,                                   // 温克尔里德 · ruishi · 巴塞尔
     'xiongyati_yannuoshi': 15,                          // 匈雅提亚诺什 · xiongyati · 胡内多阿拉
     'mazhaer_majiashi': 15,                             // 马加什一世 · mazhaer · 布达佩斯
     'mangsite_bulaienbolu': 10,                         // 布赖恩博鲁 · mangsite · 卡舍尔

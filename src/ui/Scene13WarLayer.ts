@@ -375,7 +375,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ETHIOPIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     BENGALIS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true, armored_elephant: true },
     GURJARAS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, armored_elephant: true },
-    PORUS: { scorpion: true, heavy_scorpion: true, mangonel: true, armored_elephant: true },
     VIETNAMESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     KHMER: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     MAYANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
@@ -384,7 +383,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     TUPI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     ARMENIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GEORGIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
-    ACHAEMENIDS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     WALLACHIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     EGYPT: { battering_ram: true, capped_ram: true, mangonel: true, onager: true },
@@ -392,7 +390,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     BABYLON: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     HITTITES: { battering_ram: true, capped_ram: true, siege_ram: true, mangonel: true },
     ASSYRIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    PARTHIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     SCYTHIANS: { battering_ram: true, capped_ram: true, mangonel: true },
     BYZANTINE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     FRANKS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -1114,7 +1111,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     ETHIOPIANS: 'AFRI',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: 'INDI',  // 孟加拉[2026-08-28]
     GURJARAS: 'INDI',  // 瞿折罗[2026-08-28]
-    PORUS: 'INDI',  // 补噜[2026-08-28]
     VIETNAMESE: 'ASIA',  // 越南[2026-08-28]
     KHMER: 'SEAS',  // 高棉[2026-08-28]
     MAYANS: 'MESO',  // 玛雅[2026-08-28]
@@ -1123,7 +1119,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     TUPI: 'ANDE',  // 图皮[2026-08-28]
     ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
-    ACHAEMENIDS: 'PERSIAN',  // 阿契美尼德[2026-08-28]
     BURMESE: 'SEAS',
     WALLACHIA: 'SLAV',
     EGYPT: 'ORIE',
@@ -1131,7 +1126,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     BABYLON: 'ORIE',
     HITTITES: 'ORIE',
     ASSYRIAN: 'ORIE',
-    PARTHIA: 'PERSIAN',
     SCYTHIANS: 'CEAS',
     BYZANTINE: 'MEDI',
     FRANKS: 'WEST',

@@ -100,7 +100,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     // 南亚 → INDIA（孟加拉/瞿折罗/补噜）
     BENGALIS: 'INDIA',
     GURJARAS: 'INDIA',
-    PORUS: 'INDIA',
     // 高加索 → 中亚（亚美尼亚/格鲁吉亚）
     ARMENIANS: 'CENTRAL_ASIA',
     GEORGIANS: 'CENTRAL_ASIA',
@@ -112,14 +111,12 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     CUMAN: 'STEPPE',         // 库曼/钦察 → 草原游牧
     PURU: 'INDIA',           // 南印度 → 印度
     ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
-    ACHAEMENIDS: 'CENTRAL_ASIA', // 阿契美尼德（古波斯）→ 中亚
     WALLACHIA: 'SLAVIC',         // 瓦拉几亚 → 沿用现有斯拉夫立绘池
     EGYPT: 'WEST_ASIA',          // 埃及 → 西亚立绘池（古埃及将领图在WEST_ASIA）
     CARTHAGE: 'BERBER',          // 迦太基 → 柏柏尔立绘池（布匿/汉尼拔图在BERBER）
     BABYLON: 'WEST_ASIA',        // 巴比伦 → 西亚立绘池（两河将领图在WEST_ASIA）
     HITTITES: 'WEST_ASIA',       // 赫梯 → 西亚立绘池（赫梯将领图在WEST_ASIA）
     ASSYRIAN: 'WEST_ASIA',       // 亚述 → 西亚立绘池（亚述将领图在WEST_ASIA）
-    PARTHIA: 'PERSIAN',          // 安息 → 波斯立绘池（帕提亚将领图在PERSIAN/CENTRAL_ASIA）
     SCYTHIANS: 'STEPPE',         // 斯基泰 → 草原立绘池（斯基泰骑兵将领图在STEPPE/LATIN）
     BYZANTINE: 'LATIN',          // 拜占庭 → 拉丁立绘池（拜占庭罗马将领图在LATIN）
     FRANKS: 'GERMANIC',          // 法兰克 → 日耳曼立绘池（西欧重装骑士图在GERMANIC）
