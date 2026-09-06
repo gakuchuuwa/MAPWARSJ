@@ -111,6 +111,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
     { ship: 'MONOREME', why: '青铜时代单列桨战船：赫梯苏庇路里乌玛二世征调安纳托利亚/奇里乞亚舰队，在塞浦路斯近海进行人类有文字记载的最早海战', regions: ['HITTITES'] },
     { ship: 'MONOREME', why: '尼罗河单列桨帆战船：努比亚黑法老皮耶北伐全埃及（麦罗埃与纳帕塔尼罗河水军舰队主力）', regions: ['KUSH'] },
+    { ship: 'MONOREME', why: '涅达姆单列长船：日耳曼北海与波罗的海沿岸突击战船（丹麦涅达姆沼泽发掘形制，维京长船最直接始祖）', regions: ['GERMANIC'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 
@@ -122,7 +123,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
     { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS'] },
     { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS'] },
-    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'GERMANIC', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
+    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
     { ship: 'WAR_GALLEY', why: '地中海桨帆战船：诺曼西西里海军', regions: ['SICILIANS'] },
 
     // ── 中东 / 北非 ─────────────────────────────────────────
