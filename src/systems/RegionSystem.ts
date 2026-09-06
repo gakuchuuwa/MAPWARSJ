@@ -26,10 +26,10 @@ export type RegionType =
     | 'NORTH'         // 北方 (河北、山东、晋北)
     | 'JIANGNAN'      // 江南 (长江中下游、湘鄂赣浙)
     | 'LINGNAN'       // 岭南 (粤、桂、海南、福建)    ← 已含原 MIN
-    | 'BASHU'         // 巴蜀 (川渝)
-    | 'DIANQIAN'      // 滇黔 (云贵、川西)
+    | 'BASHU'         // 古蜀 (川渝古蜀文明)
+    | 'DIANQIAN'      // 古滇 (云贵古滇文明)
     | 'HEXI'          // 河西陇右 (甘肃走廊、陇右)
-    | 'WESTERN'       // 西域 (塔里木、北疆)
+    | 'WESTERN'       // 塞种 (西域塞克人文明)
     | 'TIBET'         // 吐蕃 (西藏、青海、川甘藏区)
     | 'STEPPE'        // 塞外 (蒙古高原、含西伯利亚)
     | 'NORTHEAST'     // 东北 (满洲、通古斯)
@@ -85,7 +85,7 @@ export type RegionType =
     | 'BURMESE'      // 缅甸
     | 'WALLACHIA'    // 瓦拉几亚
     | 'EGYPT'        // 埃及（古埃及尼罗河法老文明）
-    | 'CARTHAGE'     // 迦太基（布匿西地中海商业与军事帝国）
+    | 'CARTHAGE'     // 布匿（西地中海商业与军事帝国）
     | 'BABYLON'      // 巴比伦（两河流域美索不达米亚文明）
     | 'HITTITES'     // 赫梯（小亚细亚安纳托利亚铁器与战车强权）
     | 'ASSYRIAN'     // 亚述（两河流域铁血军事帝国）
@@ -97,8 +97,15 @@ export type RegionType =
     | 'TURKS'        // 突厥（第一/第二突厥汗国、隋唐欧亚草原两万里大霸主）
     | 'NANZHAO'      // 南诏（西南第一军国、盛唐天宝之战六诏归一）
     | 'SRIVIJAYA'    // 三佛齐（室利佛逝、马六甲海峡海上佛教贸易帝国）
-    | 'KUSHAN'       // 贵霜（大月氏贵霜帝国、犍陀罗佛法与欧亚商路文明）
-    | 'KUSH';        // 库施（努比亚黑法老与麦罗埃黑金字塔文明）
+    | 'KUSHAN'       // 月氏（大月氏、犍陀罗佛法与欧亚商路文明）
+    | 'KUSH'         // 努比亚（黑法老与麦罗埃黑金字塔文明）
+    | 'KHITAN'       // 契丹（大辽皮室军具装铁骑与铁骨朵）
+    | 'UIGHUR'       // 回鹘（漠北回鹘汗国金镞角弓与耐力突骑）
+    | 'MOHE'         // 靺鞨（海东盛国渤海鹿角硬弓与雪原山城）
+    | 'ANGLO_SAXON'  // 盎格鲁-撒克逊（双手大斧长矛步兵盾墙）
+    | 'AVARS'        // 阿瓦尔（多瑙河双马镫装甲骑射鼻祖）
+    | 'GHANA'        // 加纳（西非黄金之国索宁克长矛方阵）
+    | 'KHAZARS';     // 可萨（高加索里海拉尔西亚锁甲铁骑）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -152,6 +159,13 @@ export const REGION_ORDER: RegionType[] = [
     'SRIVIJAYA',
     'KUSHAN',
     'KUSH',
+    'KHITAN',
+    'UIGHUR',
+    'MOHE',
+    'ANGLO_SAXON',
+    'AVARS',
+    'GHANA',
+    'KHAZARS',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -163,80 +177,87 @@ export const REGION_LABELS: Record<RegionType, string> = {
     CENTRAL: '古典华夏',
     NORTH: '古典华夏',
     JIANGNAN: '封建华夏',
-    LINGNAN: '古典百越',  // 含福建
-    BASHU: '古典巴蜀',
-    DIANQIAN: '古典西南夷',
+    LINGNAN: '古典百越',
+    BASHU: '古典古蜀',
+    DIANQIAN: '古典古滇',
     HEXI: '古典华夏',
-    WESTERN: '古典西域',
+    WESTERN: '古典塞种',
     TIBET: '封建吐蕃',
-    STEPPE: '古典匈奴',
+    STEPPE: '城堡蒙古',
     NORTHEAST: '古典鲜卑',
     KOREA: '封建高句丽',
-    JAPAN: '封建日本',
-    CENTRAL_ASIA: '封建中亚',
-    WEST_ASIA: '封建安纳托利亚',
+    JAPAN: '城堡日本',
+    CENTRAL_ASIA: '封建突厥',
+    WEST_ASIA: '封建拜占庭',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
-    AMERICA: '封建阿兹特克',
-    AFRICA: '封建马里',
-    MALAY: '封建南洋',
-    ANDE: '封建印加',
+    AMERICA: '城堡阿兹特克',
+    AFRICA: '城堡马里',
+    MALAY: '封建室利佛逝',
+    ANDE: '城堡印加',
     PURU: '封建达罗毗荼',
     ORIE: '封建阿拉伯',
-    EAST: '封建东斯拉夫',
+    EAST: '封建罗斯',
     GREEK: '古典希腊',
     THRACIAN: '古典色雷斯',
-    PERSIAN: '封建波斯',
-    CUMAN: '封建库曼',
-    BRITONS: '封建英格兰',
+    PERSIAN: '古典波斯',
+    CUMAN: '城堡库曼',
+    BRITONS: '城堡不列颠',
     GOTHS: '封建哥特',
     HUNS: '封建匈人',
-    TEUTONS: '封建条顿',
+    TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
     CELTS: '古典凯尔特',
-    ITALIANS: '封建意大利',
-    SICILIANS: '封建西西里',
+    ITALIANS: '城堡拉丁',
+    SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
-    MAGYAR: '封建马扎尔',
-    LITHUANIANS: '封建立陶宛',
-    POLES: '封建波兰',
-    BOHEMIANS: '封建波希米亚',
-    BURGUNDIANS: '封建勃艮第',
-    SPANISH: '封建西班牙',
-    PORTUGUESE: '封建葡萄牙',
+    MAGYAR: '城堡马扎尔',
+    LITHUANIANS: '城堡立陶宛',
+    POLES: '城堡波兰',
+    BOHEMIANS: '城堡波希米亚',
+    BURGUNDIANS: '城堡勃艮第',
+    SPANISH: '帝王西班牙',
+    PORTUGUESE: '帝王葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
     PORUS: '古典印度',
-    VIETNAMESE: '封建大越',
-    KHMER: '封建高棉',
+    VIETNAMESE: '城堡大越',
+    KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '封建马普切',
-    MUISCA: '封建穆伊斯卡',
-    TUPI: '封建图皮',
+    MAPUCHE: '城堡马普切',
+    MUISCA: '城堡穆伊斯卡',
+    TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     ATHENIANS: '古典希腊',
     SPARTANS: '古典希腊',
     MACEDONIANS: '古典希腊',
     ACHAEMENIDS: '古典波斯',
-    BURMESE: '封建缅甸',
+    BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
-    CARTHAGE: '古典迦太基',
-    BABYLON: '古典两河',
+    CARTHAGE: '古典布匿',
+    BABYLON: '古典巴比伦',
     HITTITES: '古典赫梯',
-    ASSYRIAN: '古典两河',
+    ASSYRIAN: '古典亚述',
     PARTHIA: '古典波斯',
     SCYTHIANS: '古典斯基泰',
     BYZANTINE: '封建拜占庭',
     FRANKS: '封建法兰克',
-    SASANIAN: '封建萨珊',
+    SASANIAN: '封建波斯',
     TURKS: '封建突厥',
-    NANZHAO: '封建南诏',
-    SRIVIJAYA: '封建室利佛逝',
-    KUSHAN: '古典贵霜',
-    KUSH: '古典库施',
+    NANZHAO: '封建白蛮',
+    SRIVIJAYA: '封建马来',
+    KUSHAN: '古典月氏',
+    KUSH: '古典努比亚',
+    KHITAN: '封建契丹',
+    UIGHUR: '封建回鹘',
+    MOHE: '封建靺鞨',
+    ANGLO_SAXON: '封建盎格鲁-撒克逊',
+    AVARS: '封建阿瓦尔',
+    GHANA: '封建加纳',
+    KHAZARS: '封建可萨',
 };
 
 /**
@@ -254,80 +275,87 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     CENTRAL: '古典华夏',
     NORTH: '古典华夏',
     JIANGNAN: '封建华夏',
-    BASHU: '古典巴蜀',
+    BASHU: '古典古蜀',
     HEXI: '古典华夏',
     LINGNAN: '古典百越',
-    STEPPE: '古典匈奴',
+    STEPPE: '城堡蒙古',
     NORTHEAST: '古典鲜卑',
     TIBET: '封建吐蕃',
-    WESTERN: '古典西域',
-    CENTRAL_ASIA: '封建中亚',
-    WEST_ASIA: '封建安纳托利亚',
+    WESTERN: '古典塞种',
+    CENTRAL_ASIA: '封建突厥',
+    WEST_ASIA: '封建拜占庭',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
-    DIANQIAN: '古典西南夷',
+    DIANQIAN: '古典古滇',
     KOREA: '封建高句丽',
-    JAPAN: '封建日本',
-    AMERICA: '封建阿兹特克',
-    AFRICA: '封建马里',
-    MALAY: '封建南洋',
-    ANDE: '封建印加',
+    JAPAN: '城堡日本',
+    AMERICA: '城堡阿兹特克',
+    AFRICA: '城堡马里',
+    MALAY: '封建室利佛逝',
+    ANDE: '城堡印加',
     PURU: '封建达罗毗荼',
     ORIE: '封建阿拉伯',
-    EAST: '封建东斯拉夫',
+    EAST: '封建罗斯',
     GREEK: '古典希腊',
     THRACIAN: '古典色雷斯',
-    PERSIAN: '封建波斯',
-    CUMAN: '封建库曼',
-    BRITONS: '封建英格兰',
+    PERSIAN: '古典波斯',
+    CUMAN: '城堡库曼',
+    BRITONS: '城堡不列颠',
     GOTHS: '封建哥特',
     HUNS: '封建匈人',
-    TEUTONS: '封建条顿',
+    TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
     CELTS: '古典凯尔特',
-    ITALIANS: '封建意大利',
-    SICILIANS: '封建西西里',
+    ITALIANS: '城堡拉丁',
+    SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
-    MAGYAR: '封建马扎尔',
-    LITHUANIANS: '封建立陶宛',
-    POLES: '封建波兰',
-    BOHEMIANS: '封建波希米亚',
-    BURGUNDIANS: '封建勃艮第',
-    SPANISH: '封建西班牙',
-    PORTUGUESE: '封建葡萄牙',
+    MAGYAR: '城堡马扎尔',
+    LITHUANIANS: '城堡立陶宛',
+    POLES: '城堡波兰',
+    BOHEMIANS: '城堡波希米亚',
+    BURGUNDIANS: '城堡勃艮第',
+    SPANISH: '帝王西班牙',
+    PORTUGUESE: '帝王葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
     PORUS: '古典印度',
-    VIETNAMESE: '封建大越',
-    KHMER: '封建高棉',
+    VIETNAMESE: '城堡大越',
+    KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '封建马普切',
-    MUISCA: '封建穆伊斯卡',
-    TUPI: '封建图皮',
+    MAPUCHE: '城堡马普切',
+    MUISCA: '城堡穆伊斯卡',
+    TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     ATHENIANS: '古典希腊',
     SPARTANS: '古典希腊',
     MACEDONIANS: '古典希腊',
     ACHAEMENIDS: '古典波斯',
-    BURMESE: '封建缅甸',
+    BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
-    CARTHAGE: '古典迦太基',
-    BABYLON: '古典两河',
+    CARTHAGE: '古典布匿',
+    BABYLON: '古典巴比伦',
     HITTITES: '古典赫梯',
-    ASSYRIAN: '古典两河',
+    ASSYRIAN: '古典亚述',
     PARTHIA: '古典波斯',
     SCYTHIANS: '古典斯基泰',
     BYZANTINE: '封建拜占庭',
     FRANKS: '封建法兰克',
-    SASANIAN: '封建萨珊',
+    SASANIAN: '封建波斯',
     TURKS: '封建突厥',
-    NANZHAO: '封建南诏',
-    SRIVIJAYA: '封建室利佛逝',
-    KUSHAN: '古典贵霜',
-    KUSH: '古典库施',
+    NANZHAO: '封建白蛮',
+    SRIVIJAYA: '封建马来',
+    KUSHAN: '古典月氏',
+    KUSH: '古典努比亚',
+    KHITAN: '封建契丹',
+    UIGHUR: '封建回鹘',
+    MOHE: '封建靺鞨',
+    ANGLO_SAXON: '封建盎格鲁-撒克逊',
+    AVARS: '封建阿瓦尔',
+    GHANA: '封建加纳',
+    KHAZARS: '封建可萨',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -565,12 +593,19 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SCYTHIANS: '#fbc02d',  // 斯基泰（大草原黄金色）
     BYZANTINE: '封建拜占庭',  // 拜占庭（拜占庭皇室深紫）
     FRANKS: '封建法兰克',     // 法兰克（加洛林皇家蓝）
-    SASANIAN: '封建萨珊',   // 萨珊（波斯祆教烈火深绯红）
+    SASANIAN: '封建波斯',   // 萨珊（波斯祆教烈火深绯红）
     TURKS: '封建突厥',      // 突厥（草原苍狼天青蓝）
-    NANZHAO: '封建南诏',    // 南诏（苍山洱海玄木褐）
-    SRIVIJAYA: '封建室利佛逝',  // 三佛齐（南洋海洋碧青）
+    NANZHAO: '封建白蛮',    // 南诏（苍山洱海玄木褐）
+    SRIVIJAYA: '封建马来',  // 三佛齐（南洋海洋碧青）
     KUSHAN: '#d97706',     // 贵霜（犍陀罗佛陀金赭）
     KUSH: '#78350f',       // 库施（努比亚黑金赤檀）
+    KHITAN: '#5c4033',
+    UIGHUR: '#b8860b',
+    MOHE: '#2e8b57',
+    ANGLO_SAXON: '#4682b4',
+    AVARS: '#8b0000',
+    GHANA: '#ffd700',
+    KHAZARS: '#4b0082',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1124,6 +1159,48 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/west_asia_big.png'),
         pass: resolvePath('/cities/west_asia_pass.png')
     },
+    KHITAN: {
+        small: resolvePath('/cities/north_small.png'),
+        medium: resolvePath('/cities/north_medium.png'),
+        big: resolvePath('/cities/north_big.png'),
+        pass: resolvePath('/cities/north_pass.png')
+    },
+    UIGHUR: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    MOHE: {
+        small: resolvePath('/cities/north_small.png'),
+        medium: resolvePath('/cities/north_medium.png'),
+        big: resolvePath('/cities/north_big.png'),
+        pass: resolvePath('/cities/north_pass.png')
+    },
+    ANGLO_SAXON: {
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    AVARS: {
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    GHANA: {
+        small: resolvePath('/cities/africa_small.png'),
+        medium: resolvePath('/cities/africa_medium.png'),
+        big: resolvePath('/cities/africa_big.png'),
+        pass: resolvePath('/cities/africa_pass.png')
+    },
+    KHAZARS: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1227,7 +1304,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     EAST:         ['city_jifu'],                         // 基辅 (基辅罗斯都城; 2026-08-27 新增东欧区)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
-    INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典次大陆核心)
+    INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典印度核心)
     BERBER:       ['city_malajiashen'],               // 马拉喀什 (穆拉比特/穆瓦希德柏柏尔帝国核心)
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     AFRICA:       ['city_aksum'],                     // 阿克苏姆 (阿克苏姆帝国都; 2026-08-24 新增非洲区)
@@ -1288,6 +1365,13 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SRIVIJAYA: ['city_sanfoqi'],        // 三佛齐（室利佛逝巨港都城）
     KUSHAN: ['city_baishawa', 'city_lanshi'], // 贵霜（白沙瓦帝都、蓝氏城故都）
     KUSH: ['city_mailuoe'],             // 库施（麦罗埃黑金字塔都城）
+    KHITAN:      ['city_shangjing'],
+    UIGHUR:      ['city_woluoduobali'],
+    MOHE:        ['city_shangjing_longquan'],
+    ANGLO_SAXON: ['city_winchester'],
+    AVARS:       ['city_pannonia'],
+    GHANA:       ['city_kumbi_saleh'],
+    KHAZARS:     ['city_itil'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

@@ -114,6 +114,13 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SRIVIJAYA: 'sanfoqi',
     KUSHAN: 'guishuang',
     KUSH: 'kushi',
+    KHITAN: 'liao',
+    UIGHUR: 'huihu',
+    MOHE: 'bohai',
+    ANGLO_SAXON: 'falanji',
+    AVARS: 'mosike_gongguo',
+    GHANA: 'mali',
+    KHAZARS: 'seljuq',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

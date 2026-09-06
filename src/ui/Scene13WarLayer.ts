@@ -405,6 +405,13 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     SRIVIJAYA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, battle_elephant: true },
     KUSHAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, armored_elephant: true, battle_elephant: true },
     KUSH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    KHITAN: { battering_ram: true, capped_ram: true, scorpion: true, traction_trebuchet: true },
+    UIGHUR: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    MOHE: { battering_ram: true, capped_ram: true, mangonel: true, onager: true, traction_trebuchet: true },
+    ANGLO_SAXON: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    AVARS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    GHANA: { battering_ram: true, capped_ram: true, mangonel: true },
+    KHAZARS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
 };
 
 /**
@@ -1116,6 +1123,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SRIVIJAYA: 'SEAS',
     KUSHAN: 'CEAS',
     KUSH: 'AFRI',
+    KHITAN: 'ASIA',
+    UIGHUR: 'CEAS',
+    MOHE: 'ASIA',
+    ANGLO_SAXON: 'WEST',
+    AVARS: 'SLAV',
+    GHANA: 'AFRI',
+    KHAZARS: 'CEAS',
 };
 
 

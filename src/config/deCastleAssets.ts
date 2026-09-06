@@ -290,6 +290,13 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SRIVIJAYA: 'MALA_CASTLE_AGE3',            // 三佛齐：室利佛逝巨港水寨
     KUSHAN: 'CEAS_CASTLE_AGE3',               // 贵霜：中亚犍陀罗高台要塞
     KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
+    KHITAN: 'KHIT_CASTLE_AGE3',              // 契丹：辽式边墙要塞
+    UIGHUR: 'CEAS_CASTLE_AGE3',              // 回鹘：漠北窝鲁朵八里高台
+    MOHE: 'JURC_CASTLE_AGE3',                // 靺鞨：海东盛国山城木石要塞
+    ANGLO_SAXON: 'WEST_CASTLE_AGE3',         // 盎格鲁-撒克逊：温彻斯特西欧石堡
+    AVARS: 'SLAV_CASTLE_AGE3',               // 阿瓦尔：潘诺尼亚环形营要塞
+    GHANA: 'AFRI_CASTLE_AGE3',               // 加纳：西非黄金要塞
+    KHAZARS: 'CEAS_CASTLE_AGE3',             // 可萨：可萨阿的尔要塞
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
