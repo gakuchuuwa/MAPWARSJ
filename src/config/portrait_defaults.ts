@@ -130,6 +130,8 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     TURKS: 'STEPPE',             // 突厥 → 草原立绘池（突厥狼骑将领图在STEPPE）
     NANZHAO: 'DIANQIAN',         // 南诏 → 滇黔立绘池（南诏统帅图在DIANQIAN）
     SRIVIJAYA: 'MALAY',          // 三佛齐 → 马来立绘池（室利佛逝南洋将领图在MALAY）
+    KUSHAN: 'CENTRAL_ASIA',      // 贵霜 → 中亚立绘池（犍陀罗中亚将领图在CENTRAL_ASIA）
+    KUSH: 'AFRICA',              // 库施 → 非洲立绘池（努比亚黑金字塔将领图在AFRICA）
 };
 
 /** 希腊专用池：四类希腊据点统一读取 public/assets/GREEK，禁止串用其他文化立绘。 */

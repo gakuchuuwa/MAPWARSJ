@@ -1028,7 +1028,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.58829, lng: 104.661255, type: 'pass', troops: 30000, region: 'CENTRAL' },
     { id: 'city_chilechuan', name: '九原', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 30000, region: 'CENTRAL' },
 
-    { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.71248, lng: 67.08252, type: 'medium_city', troops: 30000, region: 'CENTRAL_ASIA' },
+    { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.71248, lng: 67.08252, type: 'medium_city', troops: 30000, region: 'KUSHAN' },
 
 
 
@@ -2692,7 +2692,7 @@ export const CITIES_V2: CityDataV2[] = [
     },
     // ── 2026-08-05 罽宾迁白沙瓦；喀布尔归还巴布尔（1504 发迹地）──
     { id: 'city_gaofu', name: '喀布尔', factionId: 'babuer', lat: 34.55, lng: 69.2, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '喀布尔；巴布尔发迹地（帖木儿王朝后裔 1504 占城）' },
-    { id: 'city_baishawa', name: '白沙瓦', factionId: 'jibin', lat: 34.01, lng: 71.52, type: 'medium_city', troops: 30000, region: 'CENTRAL_ASIA', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）' },
+    { id: 'city_baishawa', name: '白沙瓦', factionId: 'jibin', lat: 34.01, lng: 71.52, type: 'medium_city', troops: 30000, region: 'KUSHAN', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）' },
 
 
 
@@ -3078,7 +3078,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_anulade', name: '阿努拉德', factionId: 'sengjialuo', lat: 8.3533, lng: 80.3956, type: 'medium_city', troops: 30000, region: 'PURU', note: '阿努拉德普勒(Anuradhapura)，斯里兰卡僧伽罗王朝千年佛教圣都与灌溉枢纽（圣菩提树/鲁梵维利萨亚塔）；杜图伽摩尼击溃南印度泰米尔埃拉兰统一全岛光复圣都' },
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 30000, region: 'LINGNAN', note: '澜沧王国后期首都，塔銮所在地' },
-    { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 30000, region: 'AFRICA', note: '库施王国都城，黑金字塔群' },
+    { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 30000, region: 'KUSH', note: '库施王国都城，黑金字塔群' },
     { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'aimala', lat: -16.554, lng: -68.673, type: 'stockade', troops: 30000, region: 'ANDE', note: '前印加蒂亚瓦纳科文明中心' },
     { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'stockade', troops: 30000, region: 'INDIA', note: '印度教圣城，贾格纳特神庙' },
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 30000, region: 'PURU', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一' },

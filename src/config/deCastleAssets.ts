@@ -288,6 +288,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     TURKS: 'TURK_CASTLE_AGE3',                // 突厥：突厥可汗牙帐要塞
     NANZHAO: 'DIANQIAN_CASTLE_AGE3',          // 南诏：太和苍山云关要塞
     SRIVIJAYA: 'MALA_CASTLE_AGE3',            // 三佛齐：室利佛逝巨港水寨
+    KUSHAN: 'CEAS_CASTLE_AGE3',               // 贵霜：中亚犍陀罗高台要塞
+    KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
