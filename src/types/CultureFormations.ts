@@ -161,6 +161,15 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SOGDIANS: 'MIXED',
     TANGUT: 'CAVALRY',
     JAVANESE: 'INFANTRY',
+    JURCHEN: 'CAVALRY',
+    SELJUQ: 'CAVALRY',
+    OTTOMAN: 'MIXED',
+    FRENCH: 'CAVALRY',
+    MANCHU: 'CAVALRY',
+    MUGHAL: 'MIXED',
+    SAFAVID: 'CAVALRY',
+    RUSSIAN: 'INFANTRY',
+    SIKH: 'INFANTRY',
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -299,6 +308,15 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SOGDIANS: 'fish_scale',
     TANGUT: 'triangle',
     JAVANESE: 'crane_wing',
+    JURCHEN: 'triangle',
+    SELJUQ: 'crane_wing',
+    OTTOMAN: 'square',
+    FRENCH: 'triangle',
+    MANCHU: 'triangle',
+    MUGHAL: 'crane_wing',
+    SAFAVID: 'triangle',
+    RUSSIAN: 'square',
+    SIKH: 'fish_scale',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -2491,8 +2509,133 @@ export const JAVANESE_TIERS: CompositionTier[] = [
         ]
     }
 ];
+/** 女真 全具装铁浮屠连环重骑+两翼拐子马弓骑+硬弓重步兵（锋矢阵 4+3+2） */
+export const JURCHEN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cataphract', count: 4 },
+            { type: 'horse_archer', count: 3 },
+            { type: 'heavy_infantry', count: 2 }
+        ]
+    }
+];
+
+/** 塞尔柱 丹丹纳突厥重装骑枪兵+反曲角弓骑+突厥马刀轻骑（鹤翼阵 4+3+2） */
+export const SELJUQ_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'lancer', count: 4 },
+            { type: 'horse_archer', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 奥斯曼 苏丹亲兵耶尼切里步火兵+西帕希重骑兵+大弯刀死士（方阵 4+3+2） */
+export const OTTOMAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'heavy_cavalry', count: 3 },
+            { type: 'heavy_infantry', count: 2 }
+        ]
+    }
+];
+
+/** 法兰西 敕令重装板甲骑士+大十字弩手+长戟步兵（锋矢阵 4+3+2） */
+export const FRENCH_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'crossbowman', count: 3 },
+            { type: 'halberdier', count: 2 }
+        ]
+    }
+];
 
 
+
+/** 满洲 八旗骑射手+白甲精锐马铠铁骑+重装步兵（锋矢阵 4+3+2） */
+export const MANCHU_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'heavy_infantry', count: 2 }
+        ]
+    }
+];
+
+/** 莫卧儿 锁子甲铁甲战象+拉杰普特重弯刀骑兵+复合弓手（鹤翼阵 2+4+3） */
+export const MUGHAL_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'war_elephant', count: 2 },
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'archer', count: 3 }
+        ]
+    }
+];
+
+/** 萨法维 红头军克兹尔巴什弯刀重骑兵+骑射手+古拉姆卫士（三角阵 4+3+2） */
+export const SAFAVID_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'guardsman', count: 2 }
+        ]
+    }
+];
+
+/** 俄罗斯 传统双手大战斧步兵+射击军+哥萨克轻骑（方阵 4+3+2） */
+export const RUSSIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 锡克 卡尔萨近战狂热战士+战刀突击队+长枪火枪队（鱼鳞阵 4+3+2） */
+export const SIKH_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'guardsman', count: 3 },
+            { type: 'hand_cannoneer', count: 2 }
+        ]
+    }
+];
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
     NORTH:        NORTH_TIERS,
@@ -2587,6 +2730,15 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SOGDIANS: SOGDIANS_TIERS,
     TANGUT: TANGUT_TIERS,
     JAVANESE: JAVANESE_TIERS,
+    JURCHEN: JURCHEN_TIERS,
+    SELJUQ: SELJUQ_TIERS,
+    OTTOMAN: OTTOMAN_TIERS,
+    FRENCH: FRENCH_TIERS,
+    MANCHU: MANCHU_TIERS,
+    MUGHAL: MUGHAL_TIERS,
+    SAFAVID: SAFAVID_TIERS,
+    RUSSIAN: RUSSIAN_TIERS,
+    SIKH: SIKH_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -2606,17 +2758,17 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     DIANQIAN: '古典古滇军团',
     TIBET: '封建吐蕃军团',
     CENTRAL_ASIA: '封建突厥军团',
-    WEST_ASIA: '封建拜占庭军团',
+    WEST_ASIA: '封建希腊军团',
     WESTERN: '古典塞种军团',
     SLAVIC: '封建罗斯军团',
     GERMANIC: '古典日耳曼军团',
     LATIN: '古典罗马军团',
     INDIA: '古典印度军团',
     BERBER: '封建柏柏尔军团',
-    AMERICA: '城堡阿兹特克军团',
-    AFRICA: '城堡马里军团',
+    AMERICA: '城堡墨西加军团',
+    AFRICA: '城堡曼丁哥军团',
     MALAY: '封建马来军团',
-    ANDE: '城堡印加军团',
+    ANDE: '城堡克丘亚军团',
     PURU: '封建达罗毗荼军团',
     ORIE: '封建阿拉伯军团',
     EAST: '封建罗斯军团',
@@ -2630,13 +2782,13 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TEUTONS: '城堡条顿军团',
     VIKINGS: '封建维京军团',
     CELTS: '古典凯尔特军团',
-    ITALIANS: '城堡拉丁军团',
+    ITALIANS: '城堡意大利军团',
     SICILIANS: '城堡诺曼军团',
     BULGARIANS: '封建保加利亚军团',
     MAGYAR: '城堡马扎尔军团',
     LITHUANIANS: '城堡立陶宛军团',
     POLES: '城堡波兰军团',
-    BOHEMIANS: '城堡波希米亚军团',
+    BOHEMIANS: '城堡捷克军团',
     BURGUNDIANS: '城堡勃艮第军团',
     SPANISH: '帝王西班牙军团',
     PORTUGUESE: '帝王葡萄牙军团',
@@ -2644,10 +2796,10 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     BENGALIS: '封建孟加拉军团',
     GURJARAS: '封建瞿折罗军团',
     PORUS: '古典印度军团',
-    VIETNAMESE: '城堡大越军团',
+    VIETNAMESE: '城堡京族军团',
     KHMER: '城堡高棉军团',
     MAYANS: '古典玛雅军团',
-    MAPUCHE: '城堡马普切军团',
+    MAPUCHE: '帝王马普切军团',
     MUISCA: '城堡穆伊斯卡军团',
     TUPI: '城堡图皮军团',
     ARMENIANS: '古典亚美尼亚军团',
@@ -2656,7 +2808,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SPARTANS: '古典希腊军团',
     MACEDONIANS: '古典希腊军团',
     ACHAEMENIDS: '古典波斯军团',
-    BURMESE: '城堡缅甸军团',
+    BURMESE: '城堡缅族军团',
     WALLACHIA: '封建瓦拉几亚军团',
     EGYPT: '古典埃及军团',
     CARTHAGE: '古典布匿军团',
@@ -2665,7 +2817,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ASSYRIAN: '古典亚述军团',
     PARTHIA: '古典波斯军团',
     SCYTHIANS: '古典斯基泰军团',
-    BYZANTINE: '封建拜占庭军团',
+    BYZANTINE: '封建希腊军团',
     FRANKS: '封建法兰克军团',
     SASANIAN: '封建波斯军团',
     TURKS: '封建突厥军团',
@@ -2686,6 +2838,15 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SOGDIANS: '封建粟特军团',
     TANGUT: '城堡党项军团',
     JAVANESE: '封建爪哇军团',
+    JURCHEN: '城堡女真军团',
+    SELJUQ: '城堡塞尔柱军团',
+    OTTOMAN: '城堡奥斯曼军团',
+    FRENCH: '城堡法兰西军团',
+    MANCHU: '帝王满洲军团',
+    MUGHAL: '帝王莫卧儿军团',
+    SAFAVID: '帝王波斯军团',
+    RUSSIAN: '帝王俄罗斯军团',
+    SIKH: '帝王锡克军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

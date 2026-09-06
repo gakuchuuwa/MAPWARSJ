@@ -127,6 +127,15 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SOGDIANS: 'sogdian',
     TANGUT: 'dangxiang',
     JAVANESE: 'medang',
+    JURCHEN: 'dajin',
+    SELJUQ: 'seljuq',
+    OTTOMAN: 'osman',
+    FRENCH: 'gaolu',
+    MANCHU: 'aisin_d',
+    MUGHAL: 'mowoer',
+    SAFAVID: 'safawei_d',
+    RUSSIAN: 'eluosi_diguo',
+    SIKH: 'xike',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

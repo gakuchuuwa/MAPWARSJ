@@ -302,7 +302,16 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ROURAN: 'CEAS_CASTLE_AGE3',              // 柔然：大漠游牧王帐要塞
     SOGDIANS: 'CEAS_CASTLE_AGE3',            // 粟特：河中绿洲城郭要塞
     TANGUT: 'ASIA_CASTLE_AGE3',              // 党项：贺兰山灵夏边寨
-    JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞             // 可萨：可萨阿的尔要塞
+    JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞
+    JURCHEN: 'JURC_CASTLE_AGE3',             // 女真：金式边墙要塞
+    SELJUQ: 'TURK_CASTLE_AGE3',              // 塞尔柱：塞尔柱苏丹要塞
+    OTTOMAN: 'TURK_CASTLE_AGE3',             // 奥斯曼：鲁梅利海峡要塞
+    FRENCH: 'FRAN_CASTLE_AGE3',              // 法兰西：百年战争法兰西石堡
+    MANCHU: 'ASIA_CASTLE_AGE3',              // 满洲：赫图阿拉八旗山城
+    MUGHAL: 'INDI_CASTLE_AGE3',              // 莫卧儿：阿格拉莫卧儿红堡
+    SAFAVID: 'PERS_CASTLE_AGE3',             // 萨法维：伊斯法罕萨法维王堡
+    RUSSIAN: 'SLAV_CASTLE_AGE3',             // 俄罗斯：圣彼得堡彼得保罗要塞
+    SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

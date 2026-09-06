@@ -81,7 +81,7 @@ export type RegionType =
     | 'ATHENIANS'  // 雅典[2026-08-28 补 DE 文明]
     | 'SPARTANS'  // 斯巴达[2026-08-28 补 DE 文明]
     | 'MACEDONIANS'  // 马其顿[2026-08-28 补 DE 文明]
-    | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明];
+    | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明]
     | 'BURMESE'      // 缅甸
     | 'WALLACHIA'    // 瓦拉几亚
     | 'EGYPT'        // 埃及（古埃及尼罗河法老文明）
@@ -111,7 +111,16 @@ export type RegionType =
     | 'ROURAN'       // 柔然（大漠首创可汗生铁具装马铠铁骑）
     | 'SOGDIANS'     // 粟特（丝路昭武九姓双层锁甲武装商卫与重弩）
     | 'TANGUT'       // 党项（贺兰山灵夏铁索系鞍铁鹞子与步战山讹）
-    | 'JAVANESE';    // 爪哇（婆罗浮屠夏连特拉波浪淬毒克利斯剑）
+    | 'JAVANESE'     // 爪哇（婆罗浮屠夏连特拉波浪淬毒克利斯剑）
+    | 'JURCHEN'      // 女真（大金会宁府铁浮屠与拐子马）
+    | 'SELJUQ'       // 塞尔柱（木鹿梅尔夫大塞尔柱帝国丹丹纳骑）
+    | 'OTTOMAN'      // 奥斯曼（布尔萨苏丹亲兵耶尼切里军团）
+    | 'FRENCH'       // 法兰西（百年战争巴黎敕令重装骑士）
+    | 'MANCHU'       // 满洲（八旗重弓大箭骑射与巴牙喇白甲双层重铠肉搏突阵）
+    | 'MUGHAL'       // 莫卧儿（阿格拉锁子甲战象冲阵与拉杰普特弯刀铁骑）
+    | 'SAFAVID'      // 萨法维（伊斯法罕克兹尔巴什红头军弯刀铁骑狂暴突击）
+    | 'RUSSIAN'      // 俄罗斯（圣彼得堡传统巴迪什重战斧肉搏与哥萨克马刀冲锋）
+    | 'SIKH';        // 锡克（拉合尔卡尔萨誓死卫队飞轮战刀圆盾近战突击）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -178,6 +187,15 @@ export const REGION_ORDER: RegionType[] = [
     'SOGDIANS',
     'TANGUT',
     'JAVANESE',
+    'JURCHEN',
+    'SELJUQ',
+    'OTTOMAN',
+    'FRENCH',
+    'MANCHU',
+    'MUGHAL',
+    'SAFAVID',
+    'RUSSIAN',
+    'SIKH',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -237,7 +255,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '城堡马普切',
+    MAPUCHE: '帝王马普切',
     MUISCA: '城堡穆伊斯卡',
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
@@ -276,6 +294,15 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SOGDIANS: '封建粟特',
     TANGUT: '城堡党项',
     JAVANESE: '封建爪哇',
+    JURCHEN: '城堡女真',
+    SELJUQ: '城堡塞尔柱',
+    OTTOMAN: '城堡奥斯曼',
+    FRENCH: '城堡法兰西',
+    MANCHU: '帝王满洲',
+    MUGHAL: '帝王莫卧儿',
+    SAFAVID: '帝王波斯',
+    RUSSIAN: '帝王俄罗斯',
+    SIKH: '帝王锡克',
 };
 
 /**
@@ -341,7 +368,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '城堡马普切',
+    MAPUCHE: '帝王马普切',
     MUISCA: '城堡穆伊斯卡',
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
@@ -380,6 +407,15 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SOGDIANS: '封建粟特',
     TANGUT: '城堡党项',
     JAVANESE: '封建爪哇',
+    JURCHEN: '城堡女真',
+    SELJUQ: '城堡塞尔柱',
+    OTTOMAN: '城堡奥斯曼',
+    FRENCH: '城堡法兰西',
+    MANCHU: '帝王满洲',
+    MUGHAL: '帝王莫卧儿',
+    SAFAVID: '帝王波斯',
+    RUSSIAN: '帝王俄罗斯',
+    SIKH: '帝王锡克',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -597,7 +633,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     VIETNAMESE: '封建大越',  // 越南[2026-08-28]
     KHMER: '封建高棉',  // 高棉[2026-08-28]
     MAYANS: '#6d4c41',  // 玛雅[2026-08-28]
-    MAPUCHE: '封建马普切',  // 马普切[2026-08-28]
+    MAPUCHE: '帝王马普切',  // 马普切[2026-08-28]
     MUISCA: '封建穆伊斯卡',  // 穆伊斯卡[2026-08-28]
     TUPI: '封建图皮',  // 图皮[2026-08-28]
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
@@ -636,6 +672,15 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SOGDIANS: '#c19a6b',
     TANGUT: '#795548',
     JAVANESE: '#2e8540',
+    JURCHEN: '#d4af37',
+    SELJUQ: '#006a4e',
+    OTTOMAN: '#b22222',
+    FRENCH: '#002395',
+    MANCHU: '#d4af37',
+    MUGHAL: '#c2185b',
+    SAFAVID: '#4527a0',
+    RUSSIAN: '#1565c0',
+    SIKH: '#ff8f00',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1267,6 +1312,60 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/southeast_asia_big.png'),
         pass: resolvePath('/cities/southeast_asia_pass.png')
     },
+    JURCHEN: {
+        small: resolvePath('/cities/city_small.png'),
+        medium: resolvePath('/cities/city_medium.png'),
+        big: resolvePath('/cities/city_big.png'),
+        pass: resolvePath('/cities/pass.png')
+    },
+    SELJUQ: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    OTTOMAN: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    FRENCH: {
+        small: resolvePath('/cities/western_small.png'),
+        medium: resolvePath('/cities/western_medium.png'),
+        big: resolvePath('/cities/western_big.png'),
+        pass: resolvePath('/cities/western_pass.png')
+    },
+    MANCHU: {
+        small: resolvePath('/cities/city_small.png'),
+        medium: resolvePath('/cities/city_medium.png'),
+        big: resolvePath('/cities/city_big.png'),
+        pass: resolvePath('/cities/pass.png')
+    },
+    MUGHAL: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    SAFAVID: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    RUSSIAN: {
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    SIKH: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1444,6 +1543,15 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SOGDIANS:    ['city_varaksha'],
     TANGUT:      ['city_xingqingfu2'],
     JAVANESE:    ['city_kalasan'],
+    JURCHEN:     ['city_huining'],
+    SELJUQ:      ['city_merv'],
+    OTTOMAN:     ['city_buersa'],
+    FRENCH:      ['city_bali'],
+    MANCHU:      ['city_hetuala'],
+    MUGHAL:      ['city_agela'],
+    SAFAVID:     ['city_yisifahan'],
+    RUSSIAN:     ['city_shengpidebao'],
+    SIKH:        ['city_laheer'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
