@@ -90,6 +90,44 @@ export function getCombatPower(unitId: string): PowerBreakdown | undefined {
     return { dps, ehp, raw, index: Math.round((raw / medianRaw) * 100) };
 }
 
+/** 军团（三排编成）战力。 */
+export interface LegionPower {
+    /** 军团战力指数：按格位人数加权平均，口径与单兵一致（全表中位兵 = 100）。 */
+    index: number;
+    /** 逐排明细，顺序就是编成里的格位顺序（前排 / 中坚 / 后排）。 */
+    rows: Array<{ type: string; name: string; count: number; index: number | null }>;
+    /** 编成里有几个人查不到战力（旧 ID / 非战斗单位），用来在界面上提示口径不全。 */
+    unknownCount: number;
+}
+
+/**
+ * 算一支军团的综合战力。
+ *
+ * 口径 = Σ(每格兵种战力 × 该格人数) ÷ 总人数（编成恒为 9 人，见「编成九格位总和必须=9」）。
+ * 用加权**平均**而不是加总：人数恒定 9 的前提下两者只差一个常数，但平均值和单兵战力同一把尺子，
+ * 「军团 165」可以直接跟「游侠 165」比，加总就没这个直觉了。
+ *
+ * ⚠️ 同样不含相克，也不含阵型/站位的战术收益 —— 前排扛伤、后排输出这些由 13 的实际交战决定，
+ *    压不进一个静态数。这个分数回答的是「这支编成的兵，单位质量有多高」。
+ */
+export function getLegionPower(slots: Array<{ type: string; count: number }>): LegionPower | undefined {
+    if (!slots || slots.length === 0) return undefined;
+    let weighted = 0, people = 0, unknownCount = 0;
+    const rows: LegionPower['rows'] = [];
+    for (const s of slots) {
+        const count = s.count ?? 0;
+        const p = getCombatPower(s.type);
+        rows.push({ type: s.type, name: WAR_TYPES[s.type]?.name ?? s.type, count, index: p?.index ?? null });
+        people += count;
+        if (p) weighted += p.index * count;
+        else unknownCount += count;
+    }
+    if (people <= 0) return undefined;
+    // 分母只算查得到战力的人，免得一个查不到的格位把整支军团的分数拖低
+    const known = people - unknownCount;
+    return { index: known > 0 ? Math.round(weighted / known) : 0, rows, unknownCount };
+}
+
 /** 当前使用的参考攻击值，界面上要标出来（换了参考值排名会变，得让人看得见）。 */
 export function getPowerRefs(): { melee: number; pierce: number } {
     if (!refs) refs = computeRefAttacks();
