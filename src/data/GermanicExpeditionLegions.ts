@@ -25,7 +25,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
     piketai: { name: '靛蓝皮克特', tier: 2 },          // 爱丁堡·奥恩格斯（涂菘蓝战士，DE 靛蓝突袭者）
     aersasi: { name: '莱茵重步兵', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
-    ruishi: { name: '瑞士长枪', tier: 2 },          // 巴塞尔·阿诺德：森帕赫长枪方阵
+    ruishi: { name: '邦联长矛', tier: 2 },          // 巴塞尔·茨温利：森帕赫长枪方阵；避据点「巴塞尔」、旗号「瑞士」叠字
 
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）

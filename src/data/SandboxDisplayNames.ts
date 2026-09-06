@@ -27,7 +27,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
 
-  ayinu_ezo: '阿伊',
+  ayinu_ezo: '虾夷',
 
   boootiya: '波奥',
   luodesi: '多德',
@@ -899,7 +899,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     'xianhai': '咸海',
 'nandou': '难兜',
-'yanda': '阿洪',
+'yanda': '白匈',
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',

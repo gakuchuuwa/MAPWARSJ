@@ -312,6 +312,15 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SAFAVID: 'PERS_CASTLE_AGE3',             // 萨法维：伊斯法罕萨法维王堡
     RUSSIAN: 'SLAV_CASTLE_AGE3',             // 俄罗斯：圣彼得堡彼得保罗要塞
     SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
+    HEBREWS: 'MIDD_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
+    WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
+    QIANG: 'ASIA_CASTLE_AGE3',               // 先零羌：金城湟水山寨石堡
+    NABATAEANS: 'MIDD_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
+    HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
+    AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
+    SWISS: 'TEUTONS_CASTLE_AGE3',            // 瑞士：阿尔卑斯山地条顿石砌城堡
+    PASHTUN: 'SARACENS_CASTLE_AGE3',          // 普什图：兴都库什山地伊斯兰砖石城堡
+    SWEDISH: 'VIKINGS_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

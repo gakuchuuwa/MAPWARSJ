@@ -22,7 +22,7 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     yelusalengwg: { name: '圣墓骑士', tier: 3 },     // 阿卡·鲍德温四世：耶路撒冷王国圣墓骑士团（风土/建制符号）
 
     // ── T3 风土之兵 ──
-    nabatai: { name: '纳巴驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
+    nabatai: { name: '香路驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
     aiji: { name: '麦查伊军', tier: 3 },           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表

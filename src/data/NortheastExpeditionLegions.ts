@@ -52,4 +52,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     elunchunzu: { name: '鄂伦春猎骑', tier: 3 },
     yingzhou_ying_d: { name: '黄龙兵', tier: 1 },
     wangyan: { name: '八字军', tier: 2 },
+    ayinu_ezo: { name: '毒木箭手', tier: 3 },  // 莫约罗·柯沙玛因：阿伊努独立猎人附子毒矢神射勇士
 };

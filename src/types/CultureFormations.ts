@@ -170,6 +170,15 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SAFAVID: 'CAVALRY',
     RUSSIAN: 'INFANTRY',
     SIKH: 'INFANTRY',
+    HEBREWS: 'INFANTRY',
+    WUSUN: 'CAVALRY',
+    QIANG: 'MIXED',
+    NABATAEANS: 'CAVALRY',
+    HEPHTHALITES: 'CAVALRY',
+    AINU: 'INFANTRY',
+    SWISS: 'INFANTRY',
+    PASHTUN: 'CAVALRY',
+    SWEDISH: 'INFANTRY',
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -317,6 +326,15 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SAFAVID: 'triangle',
     RUSSIAN: 'square',
     SIKH: 'fish_scale',
+    HEBREWS: 'square',
+    WUSUN: 'triangle',
+    QIANG: 'fish_scale',
+    NABATAEANS: 'crane_wing',
+    HEPHTHALITES: 'triangle',
+    AINU: 'fish_scale',
+    SWISS: 'square',
+    PASHTUN: 'crescent',
+    SWEDISH: 'square',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -2636,6 +2654,125 @@ export const SIKH_TIERS: CompositionTier[] = [
         ]
     }
 ];
+/** 希伯来 基利提重装圣卫+投石手+佩剑卫士（方阵 3+3+3） */
+export const HEBREWS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'guardsman', count: 3 },
+            { type: 'heavy_infantry', count: 3 },
+            { type: 'archer', count: 3 }
+        ]
+    }
+];
+
+/** 乌孙 大漠控弦突骑+耐力重装骑矛手+轻骑射（三角阵 4+3+2） */
+export const WUSUN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 先零羌 湟水山地长矛步兵+断道短刀死士+羌族突骑（鱼鳞阵 4+3+2） */
+export const QIANG_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'spearman', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 纳巴泰 红海香路沙漠驼骑+岩壁神射手+悬崖护卫（鹤翼阵 2+4+3） */
+export const NABATAEANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cav_archer', count: 2 },
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'archer', count: 3 }
+        ]
+    }
+];
+/** 嚈哒 白匈奴生铁具装马铠重骑+复合角弓骑射+突厥马刀死士（三角阵 4+3+2） */
+export const HEPHTHALITES_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+/** 阿伊努 鄂霍次克附子毒矢猎人+山地长矛短刀+森林勇士（鱼鳞阵 4+3+2） */
+export const AINU_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'archer', count: 4 },
+            { type: 'spearman', count: 3 },
+            { type: 'guardsman', count: 2 }
+        ]
+    }
+];
+export const SWISS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'spearman', count: 4 },
+            { type: 'guardsman', count: 3 },
+            { type: 'crossbowman', count: 2 }
+        ]
+    }
+];
+export const PASHTUN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_cavalry', count: 4 },
+            { type: 'archer', count: 3 },
+            { type: 'light_cavalry', count: 2 }
+        ]
+    }
+];
+
+export const SWEDISH_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'spearman', count: 4 },
+            { type: 'guardsman', count: 3 },
+            { type: 'crossbowman', count: 2 }
+        ]
+    }
+];
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
     NORTH:        NORTH_TIERS,
@@ -2739,6 +2876,15 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SAFAVID: SAFAVID_TIERS,
     RUSSIAN: RUSSIAN_TIERS,
     SIKH: SIKH_TIERS,
+    HEBREWS: HEBREWS_TIERS,
+    WUSUN: WUSUN_TIERS,
+    QIANG: QIANG_TIERS,
+    NABATAEANS: NABATAEANS_TIERS,
+    HEPHTHALITES: HEPHTHALITES_TIERS,
+    AINU: AINU_TIERS,
+    SWISS: SWISS_TIERS,
+    PASHTUN: PASHTUN_TIERS,
+    SWEDISH: SWEDISH_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -2847,6 +2993,15 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SAFAVID: '帝王波斯军团',
     RUSSIAN: '帝王俄罗斯军团',
     SIKH: '帝王锡克军团',
+    HEBREWS: '古典希伯来军团',
+    WUSUN: '古典乌孙军团',
+    QIANG: '古典先零羌军团',
+    NABATAEANS: '古典纳巴泰军团',
+    HEPHTHALITES: '封建嚈哒军团',
+    AINU: '封建阿伊努军团',
+    SWISS: '城堡瑞士军团',
+    PASHTUN: '帝王普什图军团',
+    SWEDISH: '帝王瑞典军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */
