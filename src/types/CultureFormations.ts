@@ -2174,15 +2174,25 @@ export const WALLACHIA_TIERS: CompositionTier[] = [
 ];
 
 /** 埃及 复合弓手+双轮战车+长矛兵（雁行阵 4+3+2：复合弓手宽线齐射4 + 双轮战车中军冲击3 + 长矛兵压阵抗线2） */
+/** 古典埃及军团（雁行 4+3+2，主力在前排）。
+ *  2026-09-07 重配。原编制三个兵全是错的：复合弓手是亚美尼亚的且属城堡档、
+ *  远程战车是「先秦」中国战车、长矛兵是封建档 —— 文化和时代都对不上。
+ *
+ *  史实依据（新王国—晚期埃及）：
+ *   · 前排主力 双轮战车 —— 埃及是战车文明，卡叠石之战法老亲率战车队正面冲阵，
+ *     两马轻车、御手+弓手编组，是法老军队的决定性兵种，故占 4 档主力。
+ *   · 中坚 古典长矛兵 —— 持盾长矛步兵是埃及步兵主体，战车之后压住阵线。
+ *   · 后排 克里特弓箭手 —— 埃及自身的复合弓手目录表里没有对应兵种；
+ *     克里特雇佣弓手确有其事：托勒密王朝长期招募克里特弓兵充当军中射手。 */
 export const EGYPT_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'composite_bowman', count: 4 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'spearman', count: 2 }
+            { type: 'war_chariot', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'cretan_archer', count: 2 }
         ]
     }
 ];
@@ -2201,16 +2211,16 @@ export const CARTHAGE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 巴比伦 复合弓手+战车+东方步兵（方阵 3+3+3：前排复合弓齐射3 + 中排战车冲击3 + 后排大盾长矛抗线3） */
+/** 巴比伦 古典长矛兵+双轮战车+巴克特里亚弓手（方阵 3+3+3：前排铜盾矛墙3 + 中排战车冲击3 + 后排复合角弓支援3） */
 export const BABYLON_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'composite_bowman', count: 3 },
-            { type: 'war_chariot_ranged', count: 3 },
-            { type: 'eastern_swordsman', count: 3 }
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'war_chariot', count: 3 },
+            { type: 'bactrian_archer', count: 3 }
         ]
     }
 ];
