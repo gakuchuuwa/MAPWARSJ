@@ -130,15 +130,19 @@ export type RegionType =
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
     'SLAVIC', 'EAST', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
-    'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
-    'CENTRAL_ASIA', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ORIE',
+    'CENTRAL', 'NORTH', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
+    'CENTRAL_ASIA', 'PASHTUN', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
+    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ASSYRIAN', 'ORIE',
     'AMERICA', 'ANDE', 'AFRICA', 'MALAY',
     'BRITONS',
     'GOTHS',
     'HUNS',
     'TEUTONS',
+
+    'SWISS',
     'VIKINGS',
+
+    'SWEDISH',
     'CELTS',
     'ITALIANS',
     'SICILIANS',

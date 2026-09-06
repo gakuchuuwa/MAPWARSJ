@@ -1773,23 +1773,32 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
 
     // 🔴 [2026-09-01 主人铁律] 一个文化一个军团，65个文化必须正好65个文化军团，不可篡改、不能多、不能少！
     if (layer === 'culture') {
+        // 🔴 按**军团名**去重，不是按文化区。一支军团可以服务多个文化区
+        //    （古典希腊军团覆盖 4 区、古典秦汉军团覆盖北方+河西），
+        //    列表的单位是「军团」，同一支不该出多张卡。卡片上标出它服务哪几个区。
+        const seen = new Map<string, string[]>();
         for (const rg of REGION_ORDER) {
             const name = getCultureLegionName(rg);
-            const def = getRegionDefaultLegion(rg);
-            const entry = all.get(name);
-            const regionLabel = REGION_LABELS[rg] ?? rg;
-            const fidsCount = entry?.fids.length ?? 0;
-            const label = `🏛️ ${name} (${regionLabel})`;
-            const description = `${regionLabel}${fidsCount ? ` · ${fidsCount} 势力使用` : ' · 文化默认'} · ${legionSummary(def.formationMode, def.slots)}`;
+            const label = REGION_LABELS[rg] ?? rg;
+            if (seen.has(name)) { seen.get(name)!.push(label); continue; }
+            seen.set(name, [label]);
 
+            const def = getRegionDefaultLegion(rg);
             options.push({
                 key: `culture:${name}`,
-                label,
+                label: `🏛️ ${name}`,
                 legionName: name,
                 formationMode: def.formationMode,
                 slots: def.slots.map(s => ({ ...s })),
-                description,
+                description: '',   // 下面统一填，等所有同名区都归拢完
             });
+        }
+        for (const o of options) {
+            const regions = [...new Set(seen.get(o.legionName) ?? [])];
+            const fidsCount = all.get(o.legionName)?.fids.length ?? 0;
+            o.label = `🏛️ ${o.legionName} (${regions.join('、')})`;
+            o.description = `${regions.join('、')}${regions.length > 1 ? ` · ${regions.length} 区共用` : ''}`
+                + `${fidsCount ? ` · ${fidsCount} 势力使用` : ' · 文化默认'} · ${legionSummary(o.formationMode, o.slots)}`;
         }
         return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
     }

@@ -3629,7 +3629,7 @@ export class Scene13WarLayer {
     private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
         const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
         const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS']);
-        const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS']);
+        const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS']);
         const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
         // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
         const NOMAD_DESERT = new Set(['CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'ORIE', 'HEXI']);
