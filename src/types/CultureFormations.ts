@@ -211,7 +211,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       'crane_wing',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
-    GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
+    GERMANIC:     'crane_wing',   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
     LATIN:        'fish_scale',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
 
@@ -1422,16 +1422,21 @@ export const SLAVIC_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 17. 日耳曼 冠军剑士+游侠+弩手（鹤翼阵 2+4+3：冠军剑士前锋 + 游侠圣骑主力 + 弩手后排） */
+/** 古典日耳曼军团（鹤翼阵 2+4+3，主力在中坚）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（条顿堡森林大捷·日耳曼尼亚步骑协同战法）：
+ *   · 前锋两翼 古典轻骑兵（2档） —— 凯撒《高卢战记》所载日耳曼轻捷突骑，与飞跑步兵混编协同，两翼破风包抄，占 2 档前锋。
+ *   · 中坚主力 先锋重装步兵（4档【重装】） —— 阿米尼乌斯条顿堡伏击战精锐重铠长剑卫队，正面死磕重拳突破，占 4 档重装主力。
+ *   · 后排支援 古典掷矛手高级（3档【高级】） —— 塔西佗《日耳曼尼亚志》所载 Framea 飞矛死士，远掷近刺破盾穿透掩护，占 3 档支援。 */
 export const GERMANIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },   // Row 0 步兵前锋 = 冠军剑士 2人
-            { type: 'paladin', count: 4 },    // Row 1 骑兵主力两翼合围 = 游侠 4人
-            { type: 'crossbowman', count: 3 } // Row 2 中军后排支援 = 弩手 3人
+            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'vanguard', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 3 }
         ]
     }
 ];
