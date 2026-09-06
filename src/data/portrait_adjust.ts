@@ -7616,6 +7616,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -48
+        },
+        "/assets/SOUTHEAST_ASIA/image.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {
