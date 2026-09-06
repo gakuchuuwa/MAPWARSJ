@@ -133,7 +133,13 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     ACHAEMENIDS: 'MIXED',  // 阿契美尼德[2026-08-28]
     BURMESE: 'ELEPHANT',
     WALLACHIA: 'MIXED',
-
+    EGYPT: 'MIXED',
+    CARTHAGE: 'ELEPHANT',
+    BABYLON: 'MIXED',
+    HITTITES: 'CAVALRY',
+    ASSYRIAN: 'MIXED',
+    PARTHIA: 'CAVALRY',
+    SCYTHIANS: 'CAVALRY',
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -244,7 +250,13 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ACHAEMENIDS: 'crane_wing',  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
     WALLACHIA: 'crane_wing',
-
+    EGYPT: 'echelon',
+    CARTHAGE: 'crane_wing',
+    BABYLON: 'square',
+    HITTITES: 'triangle',
+    ASSYRIAN: 'fish_scale',
+    PARTHIA: 'triangle',
+    SCYTHIANS: 'triangle',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -2045,6 +2057,104 @@ export const BURMESE_TIERS: CompositionTier[] = [
     }
 ];
 
+/** 埃及 复合弓手+双轮战车+长矛兵（雁行阵 4+3+2：复合弓手宽线齐射4 + 双轮战车中军冲击3 + 长矛兵压阵抗线2） */
+export const EGYPT_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'composite_bowman', count: 4 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'spearman', count: 2 }
+        ]
+    }
+];
+
+/** 迦太基 战象+长矛兵+标枪手（鹤翼阵 2+4+3：破阵战象尖刀2 + 利比亚长矛主力两翼合围4 + 标枪手压阵3） */
+export const CARTHAGE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'battle_elephant', count: 2 },
+            { type: 'spearman', count: 4 },
+            { type: 'skirmisher', count: 3 }
+        ]
+    }
+];
+
+/** 巴比伦 复合弓手+战车+东方步兵（方阵 3+3+3：前排复合弓齐射3 + 中排战车冲击3 + 后排大盾长矛抗线3） */
+export const BABYLON_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'composite_bowman', count: 3 },
+            { type: 'war_chariot_ranged', count: 3 },
+            { type: 'eastern_swordsman', count: 3 }
+        ]
+    }
+];
+
+/** 赫梯 重战车+长矛兵+主力重战车（锥形阵 2+3+4：尖刀战车2 + 长矛掩护3 + 重型战车集群主力4） */
+export const HITTITES_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'war_chariot_ranged', count: 2 },
+            { type: 'spearman', count: 3 },
+            { type: 'war_chariot_ranged', count: 4 }
+        ]
+    }
+];
+
+/** 亚述 东方步兵+重装步兵+复合弓（鱼鳞阵 3+4+2：前排大盾3 + 中腰铁血重步突破主力4 + 后排复合弓2） */
+export const ASSYRIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'eastern_swordsman', count: 3 },
+            { type: 'heavy_infantry', count: 4 },
+            { type: 'composite_bowman', count: 2 }
+        ]
+    }
+];
+
+/** 安息 具装骑兵+斯基泰骑射+古典重装骑射（锥形阵 2+3+4：铁甲圣骑尖刀2 + 回马弓骑3 + 重装骑射主力4） */
+export const PARTHIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'cataphract', count: 2 },
+            { type: 'scythian_horse_archer', count: 3 },
+            { type: 'antiquity_cavalry_archer', count: 4 }
+        ]
+    }
+];
+
+/** 斯基泰 战斧骑兵+骑射手+骑射主力（锥形阵 2+3+4：斧骑先锋2 + 骑射手3 + 草原骑射主力4） */
+export const SCYTHIANS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'scythian_horse_archer', count: 3 },
+            { type: 'scythian_horse_archer', count: 4 }
+        ]
+    }
+];
+
 
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL:      CENTRAL_TIERS,
@@ -2112,7 +2222,13 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ACHAEMENIDS: ACHAEMENIDS_TIERS,  // 阿契美尼德[2026-08-28 暂复用父文化]
     BURMESE: BURMESE_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用DIANQIAN_TIERS，已改独立编成
     WALLACHIA: WALLACHIA_TIERS,
-
+    EGYPT: EGYPT_TIERS,
+    CARTHAGE: CARTHAGE_TIERS,
+    BABYLON: BABYLON_TIERS,
+    HITTITES: HITTITES_TIERS,
+    ASSYRIAN: ASSYRIAN_TIERS,
+    PARTHIA: PARTHIA_TIERS,
+    SCYTHIANS: SCYTHIANS_TIERS,
 };
 
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
@@ -2184,7 +2300,13 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ACHAEMENIDS: '阿契美尼德军团',
     BURMESE: '缅甸军团',
     WALLACHIA: '瓦拉几亚军团',
-
+    EGYPT: '埃及军团',
+    CARTHAGE: '迦太基军团',
+    BABYLON: '巴比伦军团',
+    HITTITES: '赫梯军团',
+    ASSYRIAN: '亚述军团',
+    PARTHIA: '安息军团',
+    SCYTHIANS: '斯基泰军团',
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

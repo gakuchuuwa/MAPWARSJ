@@ -275,6 +275,13 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞
     BURMESE: 'BURM_CASTLE_AGE3',             // 缅甸：蒲甘佛塔城堡
     WALLACHIA: 'POENARI_CASTLE',             // 瓦拉几亚：波耶纳里山堡
+    EGYPT: 'ORIE_CASTLE_AGE3',                // 埃及：近东石堡
+    CARTHAGE: 'ROMA_CASTLE_AGE3',             // 迦太基：地中海古典石堡
+    BABYLON: 'ORIE_CASTLE_AGE3',              // 巴比伦：两河美索不达米亚城堡
+    HITTITES: 'TURK_CASTLE_AGE3',             // 赫梯：小亚细亚安纳托利亚石堡
+    ASSYRIAN: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 亚述：古代重装宫阙要塞
+    PARTHIA: 'PERS_CASTLE_AGE3',              // 安息：帕提亚石堡
+    SCYTHIANS: 'MONG_CASTLE_AGE3',            // 斯基泰：欧亚大草原要塞
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

@@ -99,7 +99,13 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ACHAEMENIDS: 'aqimeinide',  // 阿契美尼德 → 待建势力对齐（暂用父文化势力占位）
     BURMESE: 'pagan',
     WALLACHIA: 'walajiyia',
-
+    EGYPT: 'aiji',
+    CARTHAGE: 'buni',
+    BABYLON: 'jialedi',
+    HITTITES: 'heti',
+    ASSYRIAN: 'yashu',
+    PARTHIA: 'ansxi',
+    SCYTHIANS: 'bosi_puluosi',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

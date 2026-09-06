@@ -84,6 +84,13 @@ export type RegionType =
     | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明];
     | 'BURMESE'      // 缅甸
     | 'WALLACHIA'    // 瓦拉几亚
+    | 'EGYPT'        // 埃及（古埃及尼罗河法老文明）
+    | 'CARTHAGE'     // 迦太基（布匿西地中海商业与军事帝国）
+    | 'BABYLON'      // 巴比伦（两河流域美索不达米亚文明）
+    | 'HITTITES'     // 赫梯（小亚细亚安纳托利亚铁器与战车强权）
+    | 'ASSYRIAN'     // 亚述（两河流域铁血军事帝国）
+    | 'PARTHIA'      // 安息（帕提亚帝国）
+    | 'SCYTHIANS';   // 斯基泰（欧亚大草原游牧始祖文明）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -129,7 +136,13 @@ export const REGION_ORDER: RegionType[] = [
     'ACHAEMENIDS',
     'BURMESE',
     'WALLACHIA',
-
+    'EGYPT',
+    'CARTHAGE',
+    'BABYLON',
+    'HITTITES',
+    'ASSYRIAN',
+    'PARTHIA',
+    'SCYTHIANS',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -200,7 +213,13 @@ export const REGION_LABELS: Record<RegionType, string> = {
     ACHAEMENIDS: '阿契美尼德',
     BURMESE: '缅甸',
     WALLACHIA: '瓦拉几亚',
-
+    EGYPT: '埃及',
+    CARTHAGE: '迦太基',
+    BABYLON: '巴比伦',
+    HITTITES: '赫梯',
+    ASSYRIAN: '亚述',
+    PARTHIA: '安息',
+    SCYTHIANS: '斯基泰',
 };
 
 /**
@@ -277,7 +296,13 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     ACHAEMENIDS: '阿契美尼德',
     BURMESE: '缅甸',
     WALLACHIA: '瓦拉几亚',
-
+    EGYPT: '古埃及',
+    CARTHAGE: '迦太基',
+    BABYLON: '巴比伦',
+    HITTITES: '赫梯',
+    ASSYRIAN: '亚述',
+    PARTHIA: '帕提亚',
+    SCYTHIANS: '斯基泰',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -506,7 +531,13 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
     BURMESE: '#b8860b',
     WALLACHIA: '#7f1d1d',
-
+    EGYPT: '#d4af37',      // 埃及（金字塔黄金）
+    CARTHAGE: '#800020',   // 迦太基（布匿紫红）
+    BABYLON: '#1a237e',    // 巴比伦（伊什塔尔门青金石蓝）
+    HITTITES: '#795548',   // 赫梯（铁器青铜棕）
+    ASSYRIAN: '#b71c1c',   // 亚述（铁血战神赤红）
+    PARTHIA: '#6a1b9a',    // 安息（帕提亚皇室深紫）
+    SCYTHIANS: '#fbc02d',  // 斯基泰（大草原黄金色）
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -970,6 +1001,48 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/slavic_big.png'),
         pass: resolvePath('/cities/slavic_pass.png')
     },
+    EGYPT: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    CARTHAGE: {
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    BABYLON: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    HITTITES: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    ASSYRIAN: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    PARTHIA: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    SCYTHIANS: {
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1119,7 +1192,13 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ACHAEMENIDS: ['city_susa'],  // 阿契美尼德（中心据点已挂）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
     WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）
-
+    EGYPT: ['city_mengfeisi'],          // 埃及（孟菲斯，古王国都城）
+    CARTHAGE: ['city_jiataji'],          // 迦太基（迦太基都城）
+    BABYLON: ['city_babilun'],          // 巴比伦（巴比伦帝都）
+    HITTITES: ['city_hatusha'],          // 赫梯（哈图沙都城）
+    ASSYRIAN: ['city_duershelujin'],     // 亚述（尼尼微/杜尔舍鲁金帝都）
+    PARTHIA: ['city_nisa'],             // 安息（尼萨王都）
+    SCYTHIANS: ['city_pantika'],        // 斯基泰（潘提卡彭王都）
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
