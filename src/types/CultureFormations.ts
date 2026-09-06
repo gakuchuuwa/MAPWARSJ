@@ -1510,16 +1510,21 @@ export const NUERGAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 波斯军团（鱼鳞阵 342）[2026-08-30 主人设计] */
+/** 古典波斯军团（鱼鳞阵 3+4+2，中坚重装突破）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（阿契美尼德帝国—安息帝国）：
+ *   · 前排 波斯持盾步兵（3档） —— 编柳皮盾（Spara）巨盾矛兵，排成长达数十米的盾墙，吸收箭雨、阻遏敌骑冲击，稳固前线。
+ *   · 中坚主力 古典骑射手重装（4档【重装】） —— 阿契美尼德与安息著名的重装骑射手与甲骑，身披鱼鳞铁甲、持强劲角弓，中军厚实部位游弋机动，重装冲锋与暴风箭雨突破。
+ *   · 后排禁卫 波斯长生军（2档） —— 希罗多德记载的阿契美尼德万人不死军禁卫，铁叶鳞甲、短矛与利刃，坐镇后军督战与决死肉搏。 */
 export const PERSIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cav_archer', count: 3 },   // Row 0 前卫 = 骑射手 3骑
-            { type: 'savar', count: 4 },   // Row 1 主力 = 萨瓦尔铁骑 4骑
-            { type: 'elite_war_elephant', count: 2 }   // Row 2 = 精锐战象 2头（象只许占 2 档）
+            { type: 'sparabara', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'immortal', count: 2 }
         ]
     }
 ];
