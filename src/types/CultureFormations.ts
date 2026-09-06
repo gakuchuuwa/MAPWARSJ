@@ -213,7 +213,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       'crane_wing',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     GERMANIC:     'crane_wing',   // 日耳曼：冠军剑士(2) + 游侠圣骑主力(4) + 弩手后排(3)
-    LATIN:        'crane_wing',   // 拉丁：重装长枪(2) + 重装骑士主力(4) + 劲弩手后排(3)
+    LATIN:        'fish_scale',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
@@ -1430,16 +1430,21 @@ export const GERMANIC_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 18. 拉丁 重装长枪兵+重装骑士+劲弩手（鹤翼阵 2+4+3：重装长枪兵前锋 + 重装骑士主力 + 劲弩手后排） */
+/** 古典罗马军团（鱼鳞阵 3+4+2，主力在中坚）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（罗马共和国与帝国古典大军团·三线阵 Triplex Acies 经典战法）：
+ *   · 前排前卫 军团步兵（3档） —— 罗马方盾短剑正规军团步兵（Legionary），结成坚密大盾墙抗线推进，占 3 档前锋。
+ *   · 中坚主力 罗马百夫长精锐（4档【精锐】） —— 罗马军团灵魂骨干百夫长，率鹰旗重甲突击中军，厚实重拳突破，战力 172 冠绝地中海，占 4 档精锐主力。
+ *   · 后排支援 古典掷矛手高级（2档【高级】） —— 罗马重投枪（Pilum）飞掷死士，在阵后提供破甲毁盾穿透掩护，占 2 档支援。 */
 export const LATIN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 2 }, // Row 0 步兵前锋 = 重装长枪兵 2人
-            { type: 'knight', count: 4 },        // Row 1 骑兵主力两翼合围 = 重装骑士 4人
-            { type: 'arbalest', count: 3 }       // Row 2 中军后排支援 = 劲弩手 3人
+            { type: 'legionary', count: 3 },
+            { type: 'elite_centurion', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
