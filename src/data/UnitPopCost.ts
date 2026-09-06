@@ -22,6 +22,7 @@
  *   其余默认 1（步/弓/骑/弓骑/轻型火器）
  */
 export const POP_COST_BY_KEY: Record<string, number> = {
+    siege_elephant: 2,   // 象（Armored Elephant）
     antiquity_battering_ram: 3,     // class 13（攻城器械）
     antiquity_capped_ram: 3,        // class 13（攻城器械）
     antiquity_heavy_scorpion: 3,    // class 55（类55）
@@ -76,7 +77,6 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     war_elephant: 3,                // 人工指定（波斯战象 450 血，2026-09-01 2→3）
     war_wagon: 5,                   // 人工指定
     siege_ballista: 3,
-    siege_elephant: 2,
 };
 export function popCostOf(key: string): number {
     return POP_COST_BY_KEY[key] ?? 1;

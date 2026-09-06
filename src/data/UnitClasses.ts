@@ -32,19 +32,20 @@
  * 指纹命中 255 条 + 人工指定 13 条；编制上场的 129 个兵种已 100% 定类。
  */
 export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
-    manatarms: 6,
     ji_infantry: 6,
     ji_infantry_elite: 6,
+    aztec_raider: 12,
+    siege_elephant: 12,
+
+    manatarms: 6,
     sunda_royal_fighter: 6,
     envoy: 6,
-    aztec_raider: 12,
     scout_cavalry: 12,
     light_cavalry: 12,
     frankish_paladin: 12,
     jarl: 12,
     siege_ballista: 55,
     arbalester: 0,
-    siege_elephant: 12,
 
     amazon_archer: 0,
     amazon_warrior: 6,

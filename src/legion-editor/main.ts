@@ -27,6 +27,9 @@ import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+import { WAR_TYPES, type WarType } from '../data/WarTypes';
+import { getCombatPower, getPowerRefs } from '../data/CombatPower';
+import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon } from '../types/NavalShipTiers';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -171,7 +174,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'tarkan', name: '匈奴答剌罕骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/TARKAN/' },
     { id: 'elite_tarkan', name: '匈奴答剌罕骑兵精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
     { id: 'boyar', name: '斯拉夫贵族铁骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
-    { id: 'savar', name: '萨瓦尔重骑', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/SAVAR/' },
+    { id: 'savar', name: '萨瓦尔重骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SAVAR/' },
     { id: 'camel_heavy', name: '骆驼兵重装', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
     { id: 'paladin', name: '游侠(圣骑士)', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/PALADIN/' },
     { id: 'coustillier', name: '勃艮第马上轻骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
@@ -301,7 +304,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hill_tribesman', name: '山地部落民', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/HILL_TRIBESMAN/' },
     { id: 'hippeus', name: '斯巴达希皮乌斯', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HIPPEUS/' },
     { id: 'hoplite', name: '希腊重装步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HOPLITE/' },
-    { id: 'strategos', name: '雅典将军卫队', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/STRATEGOS/' },
+    { id: 'strategos', name: '雅典将军卫队', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/STRATEGOS/' },
     { id: 'houfnice', name: '榴弹炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/HOUFNICE/' },
     { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HUSKARL/' },
     { id: 'hussar', name: '骠骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
@@ -342,7 +345,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'rocket_cart', name: '火箭车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ROCKETCART/' },
     { id: 'royal_janissary', name: '皇家苏丹亲兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
     { id: 'sacred_band', name: '底比斯圣队', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SACRED_BAND/' },
-    { id: 'sannahya', name: '孔雀王朝桑纳亚战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/SANNAHYA/' },
+    { id: 'sannahya', name: '孔雀王朝桑纳亚战象', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SANNAHYA/' },
     { id: 'scorpion', name: '弩炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SCORPION/' },
     { id: 'scythian_axe_cavalry', name: '斯基泰斧骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
     { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
@@ -353,21 +356,21 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'siege_onager', name: '重型攻城投石车', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/SIEGEONAGER/' },
     { id: 'siege_ram', name: '重型攻城槌', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/SIEGERAM/' },
     { id: 'skirmisher', name: '掷矛手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SKIRMISHER/' },
-    { id: 'slinger', name: '投石兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/SLINGER/' },
+    { id: 'slinger', name: '投石兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SLINGER/' },
     { id: 'sogdian_cataphract', name: '粟特甲胄骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
-    { id: 'sparabara', name: '波斯持盾步兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SPARABARA/' },
+    { id: 'sparabara', name: '波斯持盾步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SPARABARA/' },
     { id: 'spearman', name: '长矛兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SPEARMAN/' },
-    { id: 'takabara', name: '波斯轻盾标枪兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
+    { id: 'takabara', name: '波斯轻盾标枪兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
     { id: 'temple_guard', name: '穆伊斯卡神庙守卫', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TEMPLEGUARD/' },
     { id: 'teutonic_knight', name: '条顿武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },
     { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
-    { id: 'thracian_peltast', name: '色雷斯标枪手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
+    { id: 'thracian_peltast', name: '色雷斯标枪手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
     { id: 'traction_trebuchet', name: '牵引投石机', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
     { id: 'two_handed_swordsman', name: '双手剑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
     { id: 'urumi_swordsman', name: '达罗毗荼软剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/URUMISWORDSMAN/' },
     { id: 'war_chariot', name: '双轮战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WAR_CHARIOT/' },
     { id: 'war_chariot_ranged', name: '先秦远程战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WARCHARIOT/' },
-    { id: 'war_dog', name: '战犬', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/WARDOG/' },
+    { id: 'war_dog', name: '战犬', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/WARDOG/' },
     { id: 'war_wagon', name: '高丽战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/WARWAGON/' },
     { id: 'warrior_priest', name: '亚美尼亚修士战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/WARRIORPRIEST/' },
     { id: 'winged_hussar', name: '翼骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
@@ -520,8 +523,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '装甲步兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
-    { id: 'ji_infantry', name: '华夏戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JI_INFANTRY/' },
-    { id: 'ji_infantry_elite', name: '精锐华夏戟兵', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/JI_INFANTRY_ELITE/' },
     { id: 'sunda_royal_fighter', name: '巽他皇家战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '和平使者', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LANCER/' },
@@ -554,14 +555,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
     { id: 'hero_aeginetan', name: '英雄·埃伊纳指挥官', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },
     { id: 'arbalester', name: '强弩兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ARBALESTER/' },
-
-    { id: 'siege_elephant', name: '攻城战象', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGEELEPHANT/' },
-
-    { id: 'aztec_raider', name: '阿兹特克突袭者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/AZTEC_RAIDER/' },
-
-    { id: 'ant_scout', name: '古典轻装斥候', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ANT_SCOUT/' },
-
-];
+]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
 
@@ -573,8 +567,8 @@ export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u =>
  */
 export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     manatarms: 'sword_shield',
-    ji_infantry: 'spear',
-    ji_infantry_elite: 'spear',
+    
+    
     sunda_royal_fighter: 'two_handed',
     envoy: 'special',
     lancer: 'melee_cav',
@@ -771,6 +765,47 @@ export function getUnitTier(u: DeUnitDef): 'elite' | 'base' {
 }
 
 /** 旧版兵种 ID（三国志10体系 S10DB 素材）→ 中文名映射 */
+// ── 兵种属性 ──
+//   数值直接读 13 战斗在用的那张 WAR_TYPES（src/data/WarTypes.ts），出处是本机 empires2_x2_p1.dat。
+//   鉴赏只读不改；要改数值改那张表。船只走 NavalShipTiers（13 没有海战），没有的一律显示「—」，不编。
+
+/** DE 护甲类（armor class）编号 → 中文；编号含义抄自 WarTypes.ts 表头，表里没有的照原样显示数字。 */
+const ARMOR_CLASS_LABEL: Record<number, string> = {
+    1: '步兵', 3: '基础穿刺', 4: '基础近战', 5: '战象', 8: '骑兵', 11: '建筑',
+    13: '石质防御', 15: '射手', 16: '船', 17: '冲车', 19: '独特单位', 20: '攻城武器',
+    21: '标准建筑', 22: '城墙', 26: '城堡', 27: '长枪', 28: '弓骑', 29: '鹰勇士',
+    30: '骆驼', 31: '有机',
+};
+const armorClassName = (c: number): string => ARMOR_CLASS_LABEL[c] ?? `类${c}`;
+
+const getUnitStats = (unitId: string): WarType | undefined => WAR_TYPES[unitId];
+
+/** 射程：WAR_TYPES 存像素（DE 格 ×40），鉴赏按 DE 的「格」显示更好读。 */
+const rangeInTiles = (rngPx: number): string => rngPx > 0 ? String(+(rngPx / 40).toFixed(1)) : '—';
+
+/** 素材目录名（大写）—— 船只那两张表按它作键，不是兵种 id。 */
+const assetDirOf = (u: DeUnitDef): string =>
+    u.pathPrefix.split('/').filter(Boolean).pop()?.toUpperCase() ?? '';
+
+const NAVAL_WEAPON_LABEL: Record<NavalWeapon, string> = {
+    cannon: '火炮', greekfire: '希腊火', trebuchet: '抛石', arrow: '弓弩', ram: '撞角',
+};
+
+/** 船只属性：武器（含 DE 依据）+ 哪些文化在用。战船不进 WAR_TYPES，属性从这两张表来。 */
+function getShipInfo(u: DeUnitDef): { weapons: string; why: string; regions: string[] } | undefined {
+    if (u.category !== 'naval') return undefined;
+    const dir = assetDirOf(u);
+    const extra = listNavalShipWeapons()[dir];
+    // 箭是所有船的基础层，NavalShipTiers 表里不写；表里没有的船 = 只有箭
+    const weapons: NavalWeapon[] = ['arrow', ...(extra?.weapons ?? [])];
+    return {
+        weapons: weapons.map(w => NAVAL_WEAPON_LABEL[w]).join(' + '),
+        why: extra?.why ?? 'DE 表未单列 = 只有甲板弓手的箭',
+        regions: listCultureNavalShips().find(c => c.ship === dir)?.regions ?? [],
+    };
+}
+
+/** 旧版兵种 ID（三国志10体系 S10DB 素材）→ 中文名映射 */
 const LEGACY_UNIT_NAMES: Record<string, string> = {
     'horse_archer': '弓骑兵',
     'shield': '盾兵',
@@ -856,7 +891,7 @@ let catalogCatFilter: 'all' | UnitCategory = 'all';
 let catalogSubFilter: 'all' | SubCategory = 'all';
 let catalogTierFilter: 'all' | 'elite' | 'base' = 'all';
 let catalogAgeFilter: 'all' | UnitAge = 'all';
-let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'tier' | 'age' = 'name';
+let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' = 'name';
 let catalogSortAsc = true;
 let selectedUnitId: string | null = null;
 
@@ -1050,6 +1085,18 @@ function injectStyles(): void {
         background:#241f1a; color:#c8b088; border:1px solid #4a3c2a; white-space:nowrap;
       }
       .cell-path { color:#6a6258; font-family:monospace; font-size:10px; }
+      .stat-cell { text-align:center; font-family:monospace; font-size:12px; }
+      .le-power-bar {
+        display:flex; align-items:center; gap:12px; margin-bottom:10px; padding:8px 10px;
+        background:#1a1712; border:1px solid #3a3228; border-radius:6px;
+      }
+      .le-power-num { font-size:26px; font-weight:bold; color:#e0c060; font-family:monospace; }
+      .le-power-unit { font-size:11px; color:#8a8175; margin-left:6px; }
+      .le-power-note { font-size:11px; color:#8a8175; line-height:1.6; flex:1; }
+      .le-stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+      .le-stat-box { background:#181614; border:1px solid #2a2620; border-radius:5px; padding:6px 4px; text-align:center; }
+      .le-stat-label { font-size:10px; color:#8a8175; }
+      .le-stat-value { font-size:15px; font-weight:bold; color:#f5e6c8; font-family:monospace; margin-top:2px; }
       td.cell-thumb { padding:2px 8px; }
       .le-cat-thumb {
         width:44px; height:44px; display:block; background:#141210;
@@ -2906,6 +2953,24 @@ function sortCatalogRows(): void {
             if (d !== 0) return dir * d;
             return a.name.localeCompare(b.name, 'zh-CN');
         }
+        if (catalogSortCol === 'power') {
+            const pa = getCombatPower(a.id)?.index, pb = getCombatPower(b.id)?.index;
+            if (pa == null && pb == null) return a.name.localeCompare(b.name, 'zh-CN');
+            if (pa == null) return 1;
+            if (pb == null) return -1;
+            if (pa !== pb) return dir * (pa - pb);
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'hp' || catalogSortCol === 'atk' || catalogSortCol === 'rng') {
+            // 没属性的（船只等）一律沉底，不跟着正反序来回跳
+            const sa = getUnitStats(a.id), sb = getUnitStats(b.id);
+            if (!sa && !sb) return a.name.localeCompare(b.name, 'zh-CN');
+            if (!sa) return 1;
+            if (!sb) return -1;
+            const d = sa[catalogSortCol] - sb[catalogSortCol];
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
         if (catalogSortCol === 'id') return dir * a.id.localeCompare(b.id);
         return dir * a.name.localeCompare(b.name, 'zh-CN');
     });
@@ -2931,7 +2996,13 @@ function renderCatalogTable(): void {
           <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
           <th data-col="category" style="width:100px;">类别${arrow('category')}</th>
           <th data-col="subcategory" style="width:90px;">子类${arrow('subcategory')}</th>
-          <th data-col="id" style="width:200px;">兵种 ID${arrow('id')}</th>
+          <th data-col="power" style="width:62px;" title="综合战力指数：√(有效输出 × 有效血)，全表中位数=100。只作粗排序，不含相克">战力${arrow('power')}</th>
+          <th data-col="hp" style="width:52px;" title="DE hit_points">血${arrow('hp')}</th>
+          <th data-col="atk" style="width:52px;" title="DE displayed_attack 基础攻击">攻${arrow('atk')}</th>
+          <th style="width:62px;" title="近防 / 远防（DE melee armor / pierce armor）">防</th>
+          <th data-col="rng" style="width:58px;" title="DE max_range，单位「格」；白刃 = 贴身">射程${arrow('rng')}</th>
+          <th style="width:52px;" title="DE reload_time 装填秒数，越小越快">射速</th>
+          <th data-col="id" style="width:170px;">兵种 ID${arrow('id')}</th>
           <th>素材目录</th>
         </tr>
       </thead>
@@ -2939,6 +3010,9 @@ function renderCatalogTable(): void {
         ${catalogRows.map(u => {
             const tier = getUnitTier(u);
             const sub = getUnitSubcategory(u.id);
+            const st = getUnitStats(u.id);
+            const pw = getCombatPower(u.id);
+            const dash = `<span style="color:#5a5348;">—</span>`;
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
             <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
@@ -2949,6 +3023,12 @@ function renderCatalogTable(): void {
                 : `<span class="tier-tag tier-base">普通</span>`}</td>
             <td><span class="cat-tag">${CATEGORY_LABEL[u.category]}</span></td>
             <td>${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : `<span style="color:#7a7266;">—</span>`}</td>
+            <td class="stat-cell">${pw ? `<b style="color:${pw.index >= 200 ? '#e08a5a' : pw.index >= 100 ? '#e0c060' : '#8fae8f'};font-size:13px;">${pw.index}</b>` : dash}</td>
+            <td class="stat-cell">${st ? `<b style="color:#d98a7a;">${st.hp}</b>` : dash}</td>
+            <td class="stat-cell">${st ? `<b style="color:#e0c060;">${st.atk}</b>` : dash}</td>
+            <td class="stat-cell">${st ? `<span style="color:#9fb8c8;">${st.meleeArmor}/${st.pierceArmor}</span>` : dash}</td>
+            <td class="stat-cell">${st ? (st.rng > 0 ? rangeInTiles(st.rng) : `<span style="color:#7a7266;">白刃</span>`) : dash}</td>
+            <td class="stat-cell">${st ? st.reload : dash}</td>
             <td><span class="cell-id" style="margin-left:0;">${u.id}</span></td>
             <td><span class="cell-path">${u.pathPrefix}</span></td>
           </tr>`;
@@ -2978,6 +3058,86 @@ function renderCatalogTable(): void {
     });
 
     observeThumbs(els.catTableWrap);
+}
+
+/** 右侧面板的「战斗属性」段：陆战兵种读 WAR_TYPES，船只读 NavalShipTiers。 */
+function renderUnitStatsSection(u: DeUnitDef): string {
+    const box = (label: string, value: string, tip = '') =>
+        `<div class="le-stat-box" ${tip ? `title="${tip}"` : ''}>
+           <div class="le-stat-label">${label}</div><div class="le-stat-value">${value}</div>
+         </div>`;
+
+    const st = getUnitStats(u.id);
+    if (st) {
+        const bonus = st.bonus
+            ? Object.entries(st.bonus).map(([c, v]) => `对${armorClassName(+c)} <b>+${v}</b>`).join('、')
+            : '无';
+        const tags = st.armorTags?.length ? st.armorTags.map(armorClassName).join('、') : '无';
+        const flags = [
+            st.aoe ? '范围伤' : '',
+            st.kite ? `放风筝 ${st.kite}px` : '',
+            st.dmgType === 'pierce' ? '穿刺伤害' : '近战伤害',
+        ].filter(Boolean).join(' · ');
+        return `
+    <div class="le-form-section">
+      <div class="le-section-title"><span>战斗属性</span>
+        <span style="font-size:11px;color:#7a7266;font-weight:normal;">13 战斗在用 · 出处 empires2_x2_p1.dat</span>
+      </div>
+      ${(() => {
+          const pw = getCombatPower(u.id);
+          if (!pw) return '';
+          const refs = getPowerRefs();
+          return `<div class="le-power-bar">
+            <div><span class="le-power-num">${pw.index}</span><span class="le-power-unit">战力指数</span></div>
+            <div class="le-power-note">
+              √(有效输出 ${pw.dps.toFixed(1)} × 有效血 ${Math.round(pw.ehp)})，全表中位数 = 100<br>
+              护甲折算参考敌方攻击：近战 ${refs.melee} / 穿刺 ${refs.pierce}（DE 护甲是减法，换参考值排名会变）<br>
+              <b>不含相克</b>——长枪对骑兵那类加成只在特定对手身上兑现，看下面「加成伤害」
+            </div>
+          </div>`;
+      })()}
+      <div class="le-stat-grid">
+        ${box('血', String(st.hp), 'DE hit_points')}
+        ${box('攻', String(st.atk), 'DE displayed_attack（基础攻击，不含加成）')}
+        ${box('近防', String(st.meleeArmor), 'DE melee armor')}
+        ${box('远防', String(st.pierceArmor), 'DE pierce armor')}
+        ${box('射程', st.rng > 0 ? `${rangeInTiles(st.rng)} 格` : '白刃', `DE max_range；表里存 ${st.rng}px = 格×40`)}
+        ${box('射速', `${st.reload}s`, 'DE reload_time 装填时间，越小越快')}
+        ${box('移速', String(st.spd), 'px/秒；DE 五维不含移速，这是 13 自己的档位')}
+        ${box('体型', `×${st.sz}`, '渲染尺寸倍率')}
+      </div>
+      <div style="font-size:12px;color:#a89f8f;line-height:1.9;margin-top:8px;">
+        <div>伤害特性：<span style="color:#c8bda8;">${flags}</span></div>
+        <div>加成伤害：<span style="color:#c8bda8;">${bonus}</span></div>
+        <div>自身护甲类：<span style="color:#8a8175;">${tags}</span></div>
+      </div>
+    </div>`;
+    }
+
+    const ship = getShipInfo(u);
+    if (ship) {
+        const regions = ship.regions.length
+            ? ship.regions.map(r => REGION_LABELS[r as RegionType] ?? r).join('、')
+            : '无文化指派（未被任何文化选用）';
+        return `
+    <div class="le-form-section">
+      <div class="le-section-title"><span>战船属性</span>
+        <span style="font-size:11px;color:#7a7266;font-weight:normal;">出处 NavalShipTiers</span>
+      </div>
+      <div style="font-size:12px;color:#a89f8f;line-height:1.9;">
+        <div>武器：<span style="color:#e0c060;font-weight:bold;">${ship.weapons}</span></div>
+        <div style="color:#7a7266;font-size:11px;">依据：${ship.why}</div>
+        <div style="margin-top:6px;">使用文化：<span style="color:#c8bda8;">${regions}</span></div>
+        <div style="color:#7a7266;font-size:11px;margin-top:6px;">海战只在战略地图，13 不结算船，所以战船没有血/攻/防五维。</div>
+      </div>
+    </div>`;
+    }
+
+    return `
+    <div class="le-form-section">
+      <div class="le-section-title"><span>战斗属性</span></div>
+      <div style="font-size:12px;color:#7a7266;line-height:1.9;">WAR_TYPES 里没有这一条，暂无数值。</div>
+    </div>`;
 }
 
 /** 右侧面板：单兵种动作预览 + 素材帧信息 */
@@ -3017,6 +3177,8 @@ function renderUnitPanel(unitId: string): void {
         </select>
       </div>
     </div>
+
+    ${renderUnitStatsSection(u)}
 
     <div class="le-form-section">
       <div class="le-section-title"><span>素材信息</span></div>
