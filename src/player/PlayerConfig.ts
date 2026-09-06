@@ -23,7 +23,7 @@ export interface PlayerRank {
     id: PlayerRankId;
     /** 阶段阶位简称（平民 / 斥候 / 探马 / 先锋 / 将军 / 元帅 / 公侯 / 国王 / 皇帝） */
     title: string;
-    /** 四字词语标签（布衣平民 / 风行斥候 / 探马蓝旗 / 陷阵先锋 / 百战将军 / 兵马元帅 / 列土封侯 / 一国之主 / 九五至尊） */
+    /** 四字词语标签（布衣平民 / 风行斥候 / 探马蓝旗 / 破阵先锋 / 百战将军 / 兵马元帅 / 列土封侯 / 一国之主 / 九五至尊） */
     name: string;
     /** 达到此功勋即晋升（功勋 = 玩家本人 + 玩家指挥编队的击杀精灵数，1 精灵 = 20 兵） */
     merit: number;
@@ -41,7 +41,7 @@ export const PLAYER_RANKS: readonly PlayerRank[] = [
     { id: 'civilian', title: '平民', name: '布衣平民', merit: 0, control: 'none', powerMult: 1.1, authority: '单骑独行，随军出征（只管自己）', meritShare: 0.02 },
     { id: 'scout', title: '斥候', name: '风行斥候', merit: 1000, control: 'none', powerMult: 1.2, authority: '刺探军情，独战游击（机动牵制）', meritShare: 0.03 },
     { id: 'outrider', title: '探马', name: '探马蓝旗', merit: 3000, control: 'one', powerMult: 1.3, authority: '先头前哨，指挥前排 1 队（可领精锐）', meritShare: 0.05 },
-    { id: 'vanguard', title: '先锋', name: '陷阵先锋', merit: 8000, control: 'front', powerMult: 1.4, authority: '陷阵冲锋，统率突击前排全体编队', meritShare: 0.08 },
+    { id: 'vanguard', title: '先锋', name: '破阵先锋', merit: 8000, control: 'front', powerMult: 1.4, authority: '破阵冲锋，统率突击前排全体编队', meritShare: 0.08 },
     { id: 'general', title: '将军', name: '百战将军', merit: 20000, control: 'all', powerMult: 1.5, authority: '临阵决机，调度前中后全军 3 排编队', meritShare: 0.12 },
     { id: 'marshal', title: '元帅', name: '兵马元帅', merit: 50000, control: 'all', powerMult: 1.6, authority: '执掌帅印，节制三军主力，全军提振', meritShare: 0.16 },
     { id: 'duke', title: '公侯', name: '列土封侯', merit: 120000, control: 'all', powerMult: 1.7, authority: '裂土分封，自领精锐军府，威震方镇', meritShare: 0.20 },
