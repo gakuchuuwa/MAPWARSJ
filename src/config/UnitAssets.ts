@@ -2703,14 +2703,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
         },
-        'ant_scout': {
-            // 【古典斥候骑兵】AoE2 DE 素材
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANT_SCOUT/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANT_SCOUT/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANT_SCOUT/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANT_SCOUT/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANT_SCOUT/death_${dir}.png`),
-        },
+
         'flamethrower': {
             // 【猛火油柜】AoE2 DE 素材
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FLAMETHROWER/move_${dir}.png`),
@@ -2765,21 +2758,9 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/death_${dir}.png`),
         },
         // 【华夏戟兵】华夏戟兵（Pikeman 同兵）（8方向，AoE2 DE SLD 素材）
-        'ji_infantry': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/death_${dir}.png`),
-        },
+
         // 【精锐华夏戟兵】精锐华夏戟兵（Halberdier 同兵）（8方向，AoE2 DE SLD 素材）
-        'ji_infantry_elite': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/death_${dir}.png`),
-        },
+
         // 【巽他皇家战士】Sunda Royal Fighter（8方向，AoE2 DE SLD 素材）
         'sunda_royal_fighter': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SUNDA_ROYAL_FIGHTER/move_${dir}.png`),
@@ -2797,13 +2778,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ENVOY/death_${dir}.png`),
         },
         // 【阿兹特克突袭者】阿兹特克突袭者（Xolotl Warrior 同兵）（8方向，AoE2 DE SLD 素材）
-        'aztec_raider': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/death_${dir}.png`),
-        },
+
         // 【斥候骑兵】Scout Cavalry（8方向，AoE2 DE SLD 素材）
         'scout_cavalry': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/move_${dir}.png`),
@@ -2853,13 +2828,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALESTER/death_${dir}.png`),
         },
         // 【攻城战象】Armored Elephant 装甲战象（8方向，AoE2 DE SLD 素材）
-        'siege_elephant': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/death_${dir}.png`),
-        },
+
         // 【桨帆船】8方向，AoE2 DE SLD 素材
         'galley': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/move_${dir}.png`),
@@ -3859,5 +3828,37 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
+        },
+        // 【华夏戟兵】8方向，AoE2 DE SLD 素材
+        'ji_infantry': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY/death_${dir}.png`),
+        },
+        // 【精锐华夏戟兵】8方向，AoE2 DE SLD 素材
+        'ji_infantry_elite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JI_INFANTRY_ELITE/death_${dir}.png`),
+        },
+        // 【阿兹特克突袭者】8方向，AoE2 DE SLD 素材
+        'aztec_raider': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/AZTEC_RAIDER/death_${dir}.png`),
+        },
+        // 【攻城战象】8方向，AoE2 DE SLD 素材
+        'siege_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/death_${dir}.png`),
         },
 } as const;
