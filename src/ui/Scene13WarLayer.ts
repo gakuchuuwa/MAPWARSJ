@@ -384,9 +384,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     TUPI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     ARMENIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GEORGIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
-    ATHENIANS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    SPARTANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
-    MACEDONIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ACHAEMENIDS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     WALLACHIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -1126,9 +1123,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     TUPI: 'ANDE',  // 图皮[2026-08-28]
     ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
-    ATHENIANS: 'MEDI',  // 雅典[2026-08-28]
-    SPARTANS: 'MEDI',  // 斯巴达[2026-08-28]
-    MACEDONIANS: 'MEDI',  // 马其顿[2026-08-28]
     ACHAEMENIDS: 'PERSIAN',  // 阿契美尼德[2026-08-28]
     BURMESE: 'SEAS',
     WALLACHIA: 'SLAV',
@@ -3640,7 +3634,7 @@ export class Scene13WarLayer {
      */
     private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
         const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
-        const CLASSICAL = new Set(['GREEK', 'ATHENIANS', 'SPARTANS', 'MACEDONIANS', 'LATIN', 'THRACIAN', 'ACHAEMENIDS']);
+        const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS']);
         const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS']);
         const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
         // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
@@ -3699,7 +3693,7 @@ export class Scene13WarLayer {
         // 4. 特色/巨型攻城器 (1 辆)
         if (CLASSICAL.has(culture)) {
             // 希腊马其顿：世界古代第一赫勒波利斯攻城巨塔；罗马等：古典攻城塔
-            if (culture === 'GREEK' || culture === 'MACEDONIANS' || culture === 'ATHENIANS' || culture === 'SPARTANS') {
+            if (culture === 'GREEK') {
                 items.push('helepolis');
             } else {
                 items.push('antiquity_siege_tower');

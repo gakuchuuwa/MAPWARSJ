@@ -101,8 +101,8 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '伊洛瓦底江重型内河战船', regions: ['BURMESE'] },
 
     // ── 地中海古典 ──────────────────────────────────────────
-    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK', 'ATHENIANS', 'SPARTANS'] },
-    { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['MACEDONIANS'] },
+    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK'] },
+    { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['GREEK'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟', regions: ['ACHAEMENIDS'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },

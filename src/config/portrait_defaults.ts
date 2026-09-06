@@ -89,9 +89,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     ITALIANS: 'LATIN',
     SICILIANS: 'LATIN',
     PORTUGUESE: 'LATIN',
-    ATHENIANS: 'GREEK',
-    SPARTANS: 'GREEK',
-    MACEDONIANS: 'GREEK',
     GOTHS: 'LATIN',
     // 东欧斯拉夫 → SLAVIC（立陶宛/波兰）
     LITHUANIANS: 'SLAVIC',
@@ -137,9 +134,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
 /** 希腊专用池：四类希腊据点统一读取 public/assets/GREEK，禁止串用其他文化立绘。 */
 const GREEK_PORTRAIT_REGIONS: ReadonlySet<RegionType> = new Set([
     'GREEK',
-    'ATHENIANS',
-    'SPARTANS',
-    'MACEDONIANS',
 ]);
 
 /** 西班牙专用池：西班牙据点统一读取 public/assets/SPANISH，禁止串用其他文化立绘。 */

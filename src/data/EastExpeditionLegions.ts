@@ -29,6 +29,6 @@ export const EAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     danmai: { name: '丹斧兵', tier: 3 },              // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
 
     // ── T4 存在之兵 ──
-    ruidian_yota: { name: '卡尔马盟', tier: 4 },      // 哥德堡·卡尔九世：卡尔马战争可考
+    ruidian_yota: { name: '古斯塔夫方阵', tier: 4 },      // 哥德堡·卡尔九世：卡尔马战争可考
     nuowei: { name: '维京海盗', tier: 3 },
 };

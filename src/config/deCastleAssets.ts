@@ -248,9 +248,6 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ITALIANS: 'MEDI_CASTLE_AGE3',            // 意大利：地中海石堡
     SICILIANS: 'SICI_CASTLE_AGE3',           // 西西里：诺曼阿拉伯石堡
     GREEK: 'GREEK_CASTLE_AGE3',              // 古希腊：希腊卫城
-    ATHENIANS: 'ATHENIANS_CASTLE_AGE3',      // 雅典：雅典卫城城堡
-    SPARTANS: 'SPARTANS_CASTLE_AGE3',        // 斯巴达：斯巴达军垒
-    MACEDONIANS: 'MACEDONIAN_CASTLE_AGE3',   // 马其顿：马其顿要塞
     SPANISH: 'SPAN_CASTLE_AGE3',             // 西班牙：塞哥维亚石堡
     PORTUGUESE: 'PORT_CASTLE_AGE3',          // 葡萄牙：贝伦塔航海石堡
 
