@@ -553,6 +553,14 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
     { id: 'hero_aeginetan', name: '英雄·埃伊纳指挥官', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },
+    { id: 'arbalester', name: '强弩兵', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ARBALESTER/' },
+
+    { id: 'siege_elephant', name: '攻城战象', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGEELEPHANT/' },
+
+    { id: 'aztec_raider', name: '阿兹特克突袭者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/AZTEC_RAIDER/' },
+
+    { id: 'ant_scout', name: '古典轻装斥候', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ANT_SCOUT/' },
+
 ];
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
