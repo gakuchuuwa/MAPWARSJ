@@ -95,7 +95,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },
 
     // ── 南亚 / 东南亚 ───────────────────────────────────────
-    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS'] },
+    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'] },
     { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY'] },
     { ship: 'INCENDIARY_SHIP', why: '红河/白藤江火攻船', regions: ['VIETNAMESE', 'KHMER'] },
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '伊洛瓦底江重型内河战船', regions: ['BURMESE'] },

@@ -93,7 +93,7 @@ const CART_OX_ASIA: RegionType[] = [
     'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN',
 ];
 const CART_OX_AFRI: RegionType[] = [
-    'AFRICA', 'ETHIOPIANS', 'INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS',
+    'AFRICA', 'ETHIOPIANS', 'INDIA', 'PURU', 'BENGALIS', 'GURJARAS',
     'MALAY', 'VIETNAMESE', 'KHMER',
 ];
 const CART_LLAMA: RegionType[] = ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'];
@@ -118,7 +118,7 @@ function landAssetDir(region: RegionType): string {
 const SHIP_JUNK: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'DIANQIAN', 'HEXI', 'WESTERN',
     'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'VIETNAMESE', 'KHMER', 'MALAY',
-    'INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'PORUS',
+    'INDIA', 'PURU', 'BENGALIS', 'GURJARAS',
 ];
 const SHIP_COG: RegionType[] = [
     'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
