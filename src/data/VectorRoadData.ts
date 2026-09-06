@@ -35388,9 +35388,9 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "亚述城-尼尼微",
                 type: "road",
-                id: "road_city_yashucheng_city_duershelujin_1785183726182",
+                id: "road_city_yashucheng_city_niniwei_1785183726182",
                 startConnection: "city_yashucheng",
-                endConnection: "city_duershelujin"
+                endConnection: "city_niniwei"
             },
             geometry: {
                 type: "LineString",
@@ -35419,8 +35419,8 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "尼尼微-马拉盖",
                 type: "road",
-                id: "road_city_duershelujin_city_malagai_1785183734303",
-                startConnection: "city_duershelujin",
+                id: "road_city_niniwei_city_malagai_1785183734303",
+                startConnection: "city_niniwei",
                 endConnection: "city_malagai"
             },
             geometry: {
@@ -46155,8 +46155,8 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "尼尼微-埃德萨",
                 type: "road",
-                id: "road_city_duershelujin_city_aidesa_1785811342132",
-                startConnection: "city_duershelujin",
+                id: "road_city_niniwei_city_aidesa_1785811342132",
+                startConnection: "city_niniwei",
                 endConnection: "city_aidesa"
             },
             geometry: {

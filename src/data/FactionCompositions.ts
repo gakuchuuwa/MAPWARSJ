@@ -2081,4 +2081,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
+    "sijitai": {
+        legionName: "大斯基泰金甲骑射军团",
+        formationMode: "triangle",
+        slots: [
+            { type: "scythian_axe_cavalry", count: 2 },
+            { type: "scythian_horse_archer", count: 3 },
+            { type: "scythian_horse_archer", count: 4 },
+        ],
+    },
 };
