@@ -45,7 +45,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     frankish_paladin: 12,
     jarl: 12,
     siege_ballista: 55,
-    arbalester: 0,
 
     amazon_archer: 0,
     amazon_warrior: 6,
@@ -308,7 +307,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     steppe_lancer: 12,
     strategos: 6,
     swordsman: 6,
-    takabara: 6,
+    sakan_axeman: 6,
     tarantine_cavalry: 36,
     tarkan: 12,
     temple_guard: 6,
