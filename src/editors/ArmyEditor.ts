@@ -84,7 +84,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ETHIOPIANS: 'mali',  // 埃塞俄比亚 → 待建势力对齐（暂用父文化势力占位）
     BENGALIS: 'kongque',  // 孟加拉 → 待建势力对齐（暂用父文化势力占位）
     GURJARAS: 'kongque',  // 瞿折罗 → 待建势力对齐（暂用父文化势力占位）
-    PORUS: 'zhuluo',  // 补噜 → 待建势力对齐（暂用父文化势力占位）
     VIETNAMESE: 'dali',  // 越南 → 待建势力对齐（暂用父文化势力占位）
     KHMER: 'dali',  // 高棉 → 待建势力对齐（暂用父文化势力占位）
     MAYANS: 'aztec',  // 玛雅 → 待建势力对齐（暂用父文化势力占位）
@@ -93,7 +92,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     TUPI: 'inca',  // 图皮 → 待建势力对齐（暂用父文化势力占位）
     ARMENIANS: 'seljuq',  // 亚美尼亚 → 待建势力对齐（暂用父文化势力占位）
     GEORGIANS: 'seljuq',  // 格鲁吉亚 → 待建势力对齐（暂用父文化势力占位）
-    ACHAEMENIDS: 'aqimeinide',  // 阿契美尼德 → 待建势力对齐（暂用父文化势力占位）
     BURMESE: 'pagan',
     WALLACHIA: 'walajiyia',
     EGYPT: 'aiji',
@@ -101,7 +99,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     BABYLON: 'jialedi',
     HITTITES: 'heti',
     ASSYRIAN: 'yashu',
-    PARTHIA: 'ansxi',
     SCYTHIANS: 'sijitai',
     BYZANTINE: 'baizanting',
     FRANKS: 'falanji',

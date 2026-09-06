@@ -95,6 +95,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aquidan: '阿奎',
   puluowangsi: '普罗',
   lunbadi: '伦巴',
+  wangdaer: '汪达',
 'donggete': '东哥',
   xigete: '西哥',
   andaluoxiya: '安达',

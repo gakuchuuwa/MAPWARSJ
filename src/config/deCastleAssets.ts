@@ -220,13 +220,11 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
     PURU: 'INDI_CASTLE_AGE3',                // 达罗毗荼：昆巴哈尔石圆塔
-    PORUS: 'PURU_CASTLE_AGE3',               // 波鲁斯：古印度石台
 
     // ── 3. 中亚、西亚与北非 (7 个) ──
     CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',        // 中亚：鞑靼·赫拉特要塞
     CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
     PERSIAN: 'PERS_CASTLE_AGE3',             // 波斯：巴姆古城
-    ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 阿契美尼德：波斯波利斯高台
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
     WEST_ASIA: 'TURK_CASTLE_AGE3',           // 西亚：突厥奥斯曼要塞
     BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
@@ -277,7 +275,6 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     BABYLON: 'ORIE_CASTLE_AGE3',              // 巴比伦：两河美索不达米亚城堡
     HITTITES: 'TURK_CASTLE_AGE3',             // 赫梯：小亚细亚安纳托利亚石堡
     ASSYRIAN: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 亚述：古代重装宫阙要塞
-    PARTHIA: 'PERS_CASTLE_AGE3',              // 安息：帕提亚石堡
     SCYTHIANS: 'MONG_CASTLE_AGE3',            // 斯基泰：欧亚大草原要塞
     BYZANTINE: 'BYZA_CASTLE_AGE3',            // 拜占庭：东罗马拜占庭要塞
     FRANKS: 'FRAN_CASTLE_AGE3',               // 法兰克：加洛林法兰克石堡

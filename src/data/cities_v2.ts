@@ -2938,11 +2938,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wulihong', name: '乌利洪', factionId: 'manghuti', lat: 49.53, lng: 112.54, type: 'stockade', troops: 30000, region: 'STEPPE' },
     { id: 'city_mubang', name: '木邦', factionId: 'xingwei', lat: 23.32, lng: 97.98, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
     { id: 'city_baihage', name: '白哈格', factionId: 'saerbadaer', lat: 36.21, lng: 57.68, type: 'stockade', troops: 30000, region: 'PERSIAN' },
-    { id: 'city_damugan', name: '达姆甘', factionId: 'kumisi', lat: 36.17, lng: 54.35, type: 'stockade', troops: 30000, region: 'ACHAEMENIDS' },
+    { id: 'city_damugan', name: '达姆甘', factionId: 'kumisi', lat: 36.17, lng: 54.35, type: 'stockade', troops: 30000, region: 'PERSIAN' },
     // [2026-08-19 修] region 原为 WEST_ASIA，与紧邻的达姆甘、加兹温（均 CENTRAL_ASIA）不一致：
     // 三城同在伊朗高原北路（呼罗珊大道）上首尾相接，文化同质，雷伊无 note 说明为何单列西亚。
     // 本项目 WEST_ASIA 的定义是安纳托利亚/黎凡特/阿拉伯/埃及/两河，不含伊朗高原。
-    { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 30000, region: 'ACHAEMENIDS' },
+    { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 30000, region: 'PERSIAN' },
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei', lat: 36.27, lng: 50, type: 'small_city', troops: 30000, region: 'PERSIAN' },
 
 
@@ -2986,12 +2986,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_niniwei', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 30000, region: 'BABYLON', note: '新亚述帝国极盛王都，亚述巴尼拔皇家图书馆所在地' },
 
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 30000, region: 'ORIE' },
-    { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'ACHAEMENIDS', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
+    { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 30000, region: 'PERSIAN', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
     { id: 'city_adana', name: '阿达纳', factionId: 'qiliqiya', lat: 37.06, lng: 35.77, type: 'stockade', troops: 30000, region: 'HITTITES' },
-    { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'stockade', troops: 20000, region: 'ACHAEMENIDS' },
+    { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'stockade', troops: 20000, region: 'PERSIAN' },
 
     { id: 'city_feiluzhabade', name: '菲鲁扎巴德', factionId: 'sashan', lat: 28.85, lng: 52.53, type: 'stockade', troops: 30000, region: 'SASANIAN', note: '萨珊建立者阿尔达希尔一世所建第一城（古阿尔达希尔-花拉），今伊朗法尔斯' },
-    { id: 'city_susa', name: '苏萨', factionId: 'ailan', lat: 32.19, lng: 48.24, type: 'stockade', troops: 30000, region: 'ACHAEMENIDS' },
+    { id: 'city_susa', name: '苏萨', factionId: 'ailan', lat: 32.19, lng: 48.24, type: 'stockade', troops: 30000, region: 'PERSIAN' },
     { id: 'city_yisifahan', name: '伊斯法罕', factionId: 'safawei_d', lat: 32.65, lng: 51.66, type: 'medium_city', troops: 30000, region: 'SAFAVID', note: '萨法维帝国极盛都城（阿拔斯一世大帝），伊斯法罕半天下' },
     { id: 'city_wuluke', name: '乌鲁克', factionId: 'sumeier', lat: 31.32, lng: 45.64, type: 'small_city', troops: 20000, region: 'BABYLON' },
 
@@ -3005,7 +3005,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'big_city', troops: 30000, region: 'OTTOMAN', note: '奥斯曼帝国第一都城（1326–1363）；苏丹亲兵耶尼切里军团大本营' },
     { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'BABYLON' },
 
-    { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'ACHAEMENIDS', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
+    { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'PERSIAN', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'medium_city', troops: 30000, region: 'NABATAEANS', note: '纳巴泰王国玫瑰红岩凿都城，红海香料商路要津，世界七大奇迹' },
     { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'SIKH', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },
     { id: 'city_deli', name: '德里', factionId: 'deli', lat: 28.61, lng: 77.23, type: 'big_city', troops: 30000, region: 'INDIA', note: '德里苏丹国首都（1206–1526），阿拉乌丁·卡尔吉击退蒙古入侵，帝国版图巅峰' },

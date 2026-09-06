@@ -69,7 +69,6 @@ export type RegionType =
     | 'ETHIOPIANS'  // 埃塞俄比亚[2026-08-28 补 DE 文明]
     | 'BENGALIS'  // 孟加拉[2026-08-28 补 DE 文明]
     | 'GURJARAS'  // 瞿折罗[2026-08-28 补 DE 文明]
-    | 'PORUS'  // 补噜[2026-08-28 补 DE 文明]
     | 'VIETNAMESE'  // 越南[2026-08-28 补 DE 文明]
     | 'KHMER'  // 高棉[2026-08-28 补 DE 文明]
     | 'MAYANS'  // 玛雅[2026-08-28 补 DE 文明]
@@ -78,7 +77,6 @@ export type RegionType =
     | 'TUPI'  // 图皮[2026-08-28 补 DE 文明]
     | 'ARMENIANS'  // 亚美尼亚[2026-08-28 补 DE 文明]
     | 'GEORGIANS'  // 格鲁吉亚[2026-08-28 补 DE 文明]
-    | 'ACHAEMENIDS'  // 阿契美尼德[2026-08-28 补 DE 文明]
     | 'BURMESE'      // 缅甸
     | 'WALLACHIA'    // 瓦拉几亚
     | 'EGYPT'        // 埃及（古埃及尼罗河法老文明）
@@ -86,7 +84,6 @@ export type RegionType =
     | 'BABYLON'      // 巴比伦（两河流域美索不达米亚文明）
     | 'HITTITES'     // 赫梯（小亚细亚安纳托利亚铁器与战车强权）
     | 'ASSYRIAN'     // 亚述（两河流域铁血军事帝国）
-    | 'PARTHIA'      // 安息（帕提亚帝国）
     | 'SCYTHIANS'    // 斯基泰（欧亚大草原游牧始祖文明）
     | 'BYZANTINE'    // 拜占庭（东罗马帝国、地中海封建灯塔与军区制）
     | 'FRANKS'       // 法兰克（加洛林帝国/法兰克王国、西欧封建骑士制度真正源头）
@@ -164,7 +161,6 @@ export const REGION_ORDER: RegionType[] = [
     'TUPI',
     'ARMENIANS',
     'GEORGIANS',
-    'ACHAEMENIDS',
     'BURMESE',
     'WALLACHIA',
     'EGYPT',
@@ -216,13 +212,13 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
     GERMANIC: '古典日耳曼',
     LATIN: '古典罗马',
-    CENTRAL: '古典华夏',
-    NORTH: '古典华夏',
+    CENTRAL: '古典先秦',
+    NORTH: '古典秦汉',
     JIANGNAN: '封建华夏',
     LINGNAN: '古典百越',
     BASHU: '古典古蜀',
     DIANQIAN: '古典古滇',
-    HEXI: '古典华夏',
+    HEXI: '古典秦汉',
     WESTERN: '古典塞种',
     TIBET: '封建吐蕃',
     STEPPE: '城堡蒙古',
@@ -263,7 +259,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
-    PORUS: '古典印度',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
@@ -272,7 +267,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
-    ACHAEMENIDS: '古典波斯',
     BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
@@ -280,7 +274,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     BABYLON: '古典巴比伦',
     HITTITES: '古典赫梯',
     ASSYRIAN: '古典亚述',
-    PARTHIA: '古典波斯',
     SCYTHIANS: '古典斯基泰',
     BYZANTINE: '封建拜占庭',
     FRANKS: '封建法兰克',
@@ -335,11 +328,11 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
     GERMANIC: '古典日耳曼',
     LATIN: '古典罗马',
-    CENTRAL: '古典华夏',
-    NORTH: '古典华夏',
+    CENTRAL: '古典先秦',
+    NORTH: '古典秦汉',
     JIANGNAN: '封建华夏',
     BASHU: '古典古蜀',
-    HEXI: '古典华夏',
+    HEXI: '古典秦汉',
     LINGNAN: '古典百越',
     STEPPE: '城堡蒙古',
     NORTHEAST: '古典鲜卑',
@@ -382,7 +375,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
-    PORUS: '古典印度',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
@@ -391,7 +383,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     TUPI: '城堡图皮',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
-    ACHAEMENIDS: '古典波斯',
     BURMESE: '城堡缅甸',
     WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
@@ -399,7 +390,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     BABYLON: '古典巴比伦',
     HITTITES: '古典赫梯',
     ASSYRIAN: '古典亚述',
-    PARTHIA: '古典波斯',
     SCYTHIANS: '古典斯基泰',
     BYZANTINE: '封建拜占庭',
     FRANKS: '封建法兰克',
@@ -653,7 +643,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ETHIOPIANS: '#9e9d24',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: '#d84315',  // 孟加拉[2026-08-28]
     GURJARAS: '#ff8f00',  // 瞿折罗[2026-08-28]
-    PORUS: '#c62828',  // 补噜[2026-08-28]
     VIETNAMESE: '#2e7d32',  // 越南[2026-08-28]
     KHMER: '#00695c',  // 高棉[2026-08-28]
     MAYANS: '#6d4c41',  // 玛雅[2026-08-28]
@@ -662,7 +651,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     TUPI: '#00897b',  // 图皮[2026-08-28]
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
     GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]  // 雅典[2026-08-28]  // 斯巴达[2026-08-28]  // 马其顿[2026-08-28]
-    ACHAEMENIDS: '#4527a0',  // 阿契美尼德[2026-08-28]
     BURMESE: '#b8860b',
     WALLACHIA: '#7f1d1d',
     EGYPT: '#d4af37',      // 埃及（金字塔黄金）
@@ -670,7 +658,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     BABYLON: '#1a237e',    // 巴比伦（伊什塔尔门青金石蓝）
     HITTITES: '#795548',   // 赫梯（铁器青铜棕）
     ASSYRIAN: '#b71c1c',   // 亚述（铁血战神赤红）
-    PARTHIA: '#6a1b9a',    // 安息（帕提亚皇室深紫）
     SCYTHIANS: '#fbc02d',  // 斯基泰（大草原黄金色）
     BYZANTINE: '#7b1fa2',  // 拜占庭（拜占庭皇室深紫）
     FRANKS: '#1565c0',     // 法兰克（加洛林皇家蓝）
@@ -1084,12 +1071,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/dianqian_big.png'),
         pass: resolvePath('/cities/dianqian_pass.png')
     },
-    PORUS: { // 继承 PURU 城市素材 // ⚠️ [2026-08-27 新增] 暂借印度图标（南印度，待专属素材）
-        small: resolvePath('/cities/dianqian_small.png'),
-        medium: resolvePath('/cities/dianqian_medium.png'),
-        big: resolvePath('/cities/dianqian_big.png'),
-        pass: resolvePath('/cities/dianqian_pass.png')
-    },
     VIETNAMESE: { // 继承 DIANQIAN 城市素材 // ✅ 已有
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
@@ -1138,12 +1119,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
     },
-    ACHAEMENIDS: { // 继承 PERSIAN 城市素材 // ⚠️ [2026-08-27 新增] 暂借西亚图标（波斯中东，待专属素材）
-        small: resolvePath('/cities/west_asia_small.png'),
-        medium: resolvePath('/cities/west_asia_medium.png'),
-        big: resolvePath('/cities/west_asia_big.png'),
-        pass: resolvePath('/cities/west_asia_pass.png')
-    },
     BURMESE: {
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
@@ -1181,12 +1156,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/west_asia_pass.png')
     },
     ASSYRIAN: {
-        small: resolvePath('/cities/west_asia_small.png'),
-        medium: resolvePath('/cities/west_asia_medium.png'),
-        big: resolvePath('/cities/west_asia_big.png'),
-        pass: resolvePath('/cities/west_asia_pass.png')
-    },
-    PARTHIA: {
         small: resolvePath('/cities/west_asia_small.png'),
         medium: resolvePath('/cities/west_asia_medium.png'),
         big: resolvePath('/cities/west_asia_big.png'),
@@ -1566,7 +1535,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（中心据点已挂）
     BENGALIS: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
     GURJARAS: ['city_patan'],  // 瞿折罗（中心据点已挂）
-    PORUS: ['city_atuoke'],  // 补噜（中心据点已挂）
     VIETNAMESE: ['city_shenglong'],  // 越南（中心据点已挂）
     KHMER: ['city_angkor'],  // 高棉（中心据点已挂）
     MAYANS: ['city_tikal'],  // 玛雅（中心据点已挂）
@@ -1575,7 +1543,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     TUPI: ['city_guanabara'],  // 图皮（中心据点已挂）
     ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（中心据点已挂）
     GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）  // 雅典（中心据点已挂）  // 斯巴达（中心据点已挂）  // 马其顿-佩拉（中心据点已挂）
-    ACHAEMENIDS: ['city_bosibolisi'],  // 波斯波利斯（阿契美尼德帝都）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
     WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）
     EGYPT: ['city_mengfeisi'],          // 埃及（孟菲斯，古王国都城）
@@ -1583,7 +1550,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     BABYLON: ['city_babilun'],          // 巴比伦（巴比伦帝都）
     HITTITES: ['city_hatusha'],          // 赫梯（哈图沙都城）
     ASSYRIAN: ['city_niniwei'],         // 亚述（尼尼微帝都）
-    PARTHIA: ['city_nisa'],             // 安息（尼萨王都）
     SCYTHIANS: ['city_asu'],            // 斯基泰（塔纳伊斯游牧商埠与贸易要津）
     BYZANTINE: ['city_junshitandingbao'], // 拜占庭（君士坦丁堡帝都）
     FRANKS: ['city_kelong', 'city_yachen'], // 法兰克（科隆加洛林重镇、亚琛帝都）
