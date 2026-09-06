@@ -7,6 +7,8 @@
 
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { getCityRegion } from '../systems/RegionSystem';
+import { getCultureLegionName } from '../types/CultureFormations';
 
 interface FactionRow {
     id: string;
@@ -440,6 +442,13 @@ function buildRows(): void {
         const elite = entityData!.elites[f.id];
         const flag = entityData!.flags[f.id];
 
+        // 🔴 与 legion-editor 保持一致：势力没有专属军团名时，回退显示所属文化区的军团名
+        //    （一个文化 = 一个军团，人人都有；否则这里会误报「缺军团」）
+        const region = city
+            ? getCityRegion({ latitude: city.lat, longitude: city.lng, region: city.region })
+            : 'CENTRAL';
+        const legionName = FACTION_COMPOSITIONS[f.id]?.legionName || getCultureLegionName(region);
+
         let completeness = 0;
         if (flag) completeness++;
         if (cId && city) completeness++;
@@ -447,7 +456,7 @@ function buildRows(): void {
         if (profile?.tacticalSkillId) completeness++;
         else if (gen) { /* 有武将无战术技：不计入技能完整度 */ }
         if (elite) completeness++;
-        if (FACTION_COMPOSITIONS[f.id]?.legionName) completeness++;
+        if (legionName) completeness++;
         completeness = Math.round(completeness / 6 * 100);
 
         return {
@@ -480,7 +489,7 @@ function buildRows(): void {
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
             cityRegion: city?.region,
-            legionName: FACTION_COMPOSITIONS[f.id]?.legionName,
+            legionName,
             completeness,
         };
     });
