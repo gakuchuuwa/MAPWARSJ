@@ -887,10 +887,8 @@ interface FactionLegionRow {
     eliteName?: string;
     eliteTier?: number;
     /** 军团名称（三排编成这支部队的名字，如「瓦兰吉卫队军团」）。
-     *  没有势力专属名时回退成**所属文化区的军团名**，此时 isCultureLegion=true。 */
+     *  没有势力专属名时回退成**所属文化区的军团名**。 */
     legionName?: string;
-    /** true = 上面那个名字是**文化军团保底名**（不是这个势力自己的），表格里另作样式、且不可改名 */
-    isCultureLegion?: boolean;
     formationMode: FormationMode;
     slots: CompositionSlot[];
     row1Type: string;
@@ -1171,11 +1169,6 @@ function injectStyles(): void {
       .cell-id { color:#8ab4c4; font-family:monospace; margin-left:4px; font-size:11px; }
       .cell-mode { color:#e0c888; font-weight:bold; }
       .cell-unit { color:#d0c8b8; font-size:11px; }
-      .status-tag {
-        display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:bold;
-      }
-      .status-custom { background:#1e3820; color:#7cd688; border:1px solid #36663c; }
-      .status-default { background:#201e1c; color:#8a8276; border:1px solid #36322c; }
 
       /* 编辑表单 */
       .le-form-section {
@@ -1426,7 +1419,6 @@ function buildRows(): void {
             //    ⚠️ 铁律：一个文化 = 一个军团 = 一种编制。表格里**不分两类显示**（曾加过灰/金两种样式，
             //    主人 2026-09-06 明确否决），军团名就是军团名，一个样子。
             legionName: (localCustomCompositions[f.id] as any)?.legionName || getCultureLegionName(region),
-            isCultureLegion: !(localCustomCompositions[f.id] as any)?.legionName,
             formationMode,
             slots,
             legionPower: getLegionPower(slots)?.index ?? 0,
@@ -1970,9 +1962,6 @@ function renderEditPanel(row: FactionLegionRow): void {
           <div style="font-size:17px;font-weight:bold;color:#f5e6c8;">${row.generalName || row.factionName}</div>
           <div style="font-size:11px;color:#a89f8f;margin-top:2px;">势力：${row.factionName} | 据点：${row.capitalCityName} | 文化区：${row.regionLabel}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
         </div>
-      </div>
-      <div>
-        ${row.isCustom ? `<span class="status-tag status-custom" style="font-size:12px;padding:4px 8px;">专属定制</span>` : `<span class="status-tag status-default" style="font-size:12px;padding:4px 8px;">文化默认</span>`}
       </div>
     </div>
 
@@ -3935,12 +3924,6 @@ els.search.addEventListener('input', () => {
 
 els.regionFilter.addEventListener('change', () => {
     selectedRegionFilter = els.regionFilter.value;
-    applyFilter();
-    renderTable();
-});
-
-els.statusFilter.addEventListener('change', () => {
-    selectedStatusFilter = els.statusFilter.value as any;
     applyFilter();
     renderTable();
 });

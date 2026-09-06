@@ -136,7 +136,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'] },
 
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'WESTERN', 'CENTRAL_ASIA', 'HEXI', 'MAGYAR', 'BOHEMIANS', 'AFRICA'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'WESTERN', 'CENTRAL_ASIA', 'HEXI', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'SCYTHIANS'] },
 ];
 
 /** 区 → 船的查找表（模块加载时摊平一次） */

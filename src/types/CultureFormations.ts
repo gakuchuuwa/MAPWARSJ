@@ -228,7 +228,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
-    WESTERN:      'triangle',     // 古典塞种：锥形阵 2+3+4 尖刀斧骑2+中坚骑射3+底边斯基泰骑射手高级4档主力
+    WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
     HEXI:         'fish_scale',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
@@ -245,7 +245,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
-    THRACIAN:     'balance_yoke', // 古典色雷斯：衡轭阵 4+2+3 前排色雷斯标枪手高级4档主力+中坚标枪手2+后排长刃斩手3
+    THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
     PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
     BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
@@ -305,12 +305,12 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JAVANESE: 'crane_wing',
     JURCHEN: 'triangle',
     SELJUQ: 'crane_wing',
-    OTTOMAN: 'square',
+    OTTOMAN: 'crescent',
     FRENCH: 'triangle',
     MANCHU: 'triangle',
     MUGHAL: 'crane_wing',
     SAFAVID: 'triangle',
-    RUSSIAN: 'square',
+    RUSSIAN: 'fish_scale',
     SIKH: 'fish_scale',
     HEBREWS: 'square',
     WUSUN: 'triangle',
@@ -1370,21 +1370,16 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 古典塞种军团（锥形阵 2+3+4，主力在底边）。
- *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
- *  史实依据（中亚天山塞克·亚洲斯基泰游牧与绿洲邦国骑射战法）：
- *   · 尖刀先锋 斯基泰斧骑兵（2档） —— 《汉书·西域传》与希罗多德所载塞人（Saka/Sacae）精锐突骑，擅使短柄铁战斧（Sagaris）持重甲撕裂敌阵，占 2 档尖刀。
- *   · 冲击中坚 斯基泰骑射手（3档） —— 伊犁河流域与帕米尔高原塞种轻骑，擅长双弓袋奔射与安息回马箭回旋拉扯，占 3 档中坚。
- *   · 底边主力 斯基泰骑射手高级（4档【高级】） —— 尖顶塞克（Saka Tigrakhauda）王室黄金近卫神射手，远距暴烈破甲齐射奠定胜局，占 4 档高级主力。 */
+/** 14. 西域 斯基泰斧骑兵+斯基泰骑射手+斯基泰骑射手精锐（三角阵 2+3+4：斧骑兵尖刀 + 骑射手中坚 + 精锐骑射主力底边） */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'scythian_axe_cavalry', count: 2 },
-            { type: 'scythian_horse_archer', count: 3 },
-            { type: 'elite_scythian_horse_archer', count: 4 }
+            { type: 'scythian_axe_cavalry', count: 2 },       // Row 0 尖刀先锋 = 斯基泰斧骑兵 2人
+            { type: 'scythian_horse_archer', count: 3 },      // Row 1 冲击中坚 = 斯基泰骑射手 3人
+            { type: 'elite_scythian_horse_archer', count: 4 } // Row 2 底边主力齐射 = 斯基泰骑射手精锐 4人
         ]
     }
 ];
@@ -1565,9 +1560,9 @@ export const SPANISH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'huskarl', count: 3, scale: 1 },
-            { type: 'elite_conquistador', count: 4, scale: 1 },
-            { type: 'arbalest', count: 2, scale: 1 }
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'elite_conquistador', count: 2 },
         ]
     }
 ];
@@ -1886,8 +1881,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     LINGNAN: '古典百越军团',
     DIANQIAN: '古典古滇军团',
     TIBET: '封建吐蕃军团',
-    CENTRAL_ASIA: '封建突厥军团',
-    WEST_ASIA: '封建希腊军团',
+    CENTRAL_ASIA: '封建河中军团',
+    WEST_ASIA: '封建西亚军团',
     WESTERN: '古典塞种军团',
     SLAVIC: '封建罗斯军团',
     GERMANIC: '古典日耳曼军团',
@@ -1945,7 +1940,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SASANIAN: '封建波斯军团',
     TURKS: '封建突厥军团',
     NANZHAO: '封建白蛮军团',
-    SRIVIJAYA: '封建马来军团',
+    SRIVIJAYA: '封建三佛齐军团',
     KUSHAN: '古典月氏军团',
     KUSH: '古典努比亚军团',
     KHITAN: '封建契丹军团',
@@ -2000,21 +1995,17 @@ export const ORIE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 古典色雷斯军团（衡轭阵 4+2+3，主力在前排宽线）。
- *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
- *  史实依据（巴尔干奥德里西亚·色雷斯轻盾飞矛与罗姆菲亚战法）：
- *   · 宽线主力 色雷斯标枪手高级（4档【高级】） —— 修昔底德与色诺芬所载地中海最致命的轻盾标枪王牌（Elite Peltasts），手持皮盾与破甲飞矛，前线大扇面压制重装方阵，占 4 档高级主力。
- *   · 中排接应 色雷斯标枪手（2档） —— 传统山地敏捷轻盾兵，梯次掩护投射，占 2 档接应。
- *   · 后排斩击 色雷斯长刃斩手（3档） —— 挥舞巨型双手镰刀长剑（Rhomphaia）的狂暴死士，在敌阵受创动摇后发起狂暴冲击撕裂残敌，占 3 档冲锋。 */
+/** 色雷斯 罗姆菲亚镰刀剑士+轻盾兵+精锐轻盾兵（衡轭阵 4+2+3：镰刀剑士宽线主力 + 轻盾兵中排 + 精锐轻盾兵后排）
+ *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（seleisi/奥德里西亚等 5 势力），文化保底与它对齐，消除「同名不同编」。 */
 export const THRACIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_peltast', count: 4 },
-            { type: 'thracian_peltast', count: 2 },
-            { type: 'rhomphaia_warrior', count: 3 }
+            { type: 'rhomphaia_warrior', count: 4 },   // Row 0 宽线主力 = 罗姆菲亚镰刀剑士 4人
+            { type: 'thracian_peltast', count: 2 },   // Row 1 中排 = 色雷斯轻盾兵 2人
+            { type: 'elite_peltast', count: 3 }   // Row 2 后排 = 精锐轻盾兵 3人
         ]
     }
 ];
@@ -2072,9 +2063,9 @@ export const BOHEMIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_hussite_wagon', count: 4, scale: 1 },
-            { type: 'konnik_foot', count: 3, scale: 1 },
-            { type: 'arbalest', count: 2, scale: 1 }
+            { type: 'elite_obuch', count: 4 },
+            { type: 'arbalest', count: 3 },
+            { type: 'elite_hussite_wagon', count: 2 },
         ]
     }
 ];
@@ -2337,8 +2328,8 @@ export const BYZANTINE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'cataphract', count: 3 },
-            { type: 'longswordsman', count: 4 },
-            { type: 'composite_bowman', count: 2 }
+            { type: 'eastern_swordsman', count: 3 },
+            { type: 'composite_bowman', count: 3 },
         ]
     }
 ];
@@ -2392,9 +2383,9 @@ export const NANZHAO_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
+            { type: 'rattan_archer', count: 3 },
+            { type: 'elite_temple_guard', count: 4 },
             { type: 'war_elephant', count: 2 },
-            { type: 'longswordsman', count: 4 },
-            { type: 'rattan_archer', count: 3 }
         ]
     }
 ];
@@ -2406,9 +2397,9 @@ export const SRIVIJAYA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'karambit_warrior', count: 4 },
-            { type: 'rattan_archer', count: 3 },
-            { type: 'war_elephant', count: 2 }
+            { type: 'karambit_warrior', count: 2 },
+            { type: 'karambit_warrior_elite', count: 4 },
+            { type: 'rattan_archer_elite', count: 3 },
         ]
     }
 ];
@@ -2420,9 +2411,9 @@ export const KUSHAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cataphract', count: 4 },
+            { type: 'battle_elephant', count: 2 },
             { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'battle_elephant', count: 2 }
+            { type: 'cataphract', count: 4 },
         ]
     }
 ];
@@ -2453,9 +2444,9 @@ export const KHITAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 4 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'cav_archer', count: 3 },
-            { type: 'longswordsman', count: 2 }
+            { type: 'elite_liao_dao', count: 4 },
         ]
     }
 ];
@@ -2467,9 +2458,9 @@ export const UIGHUR_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cav_archer', count: 4 },
-            { type: 'lancer', count: 3 },
-            { type: 'knight', count: 2 }
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'elite_composite_bowman', count: 4 },
         ]
     }
 ];
@@ -2481,9 +2472,9 @@ export const MOHE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'archer', count: 4 },
-            { type: 'pikeman', count: 3 },
-            { type: 'swordsman', count: 2 }
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'cataphract', count: 4 },
+            { type: 'spearman', count: 2 },
         ]
     }
 ];
@@ -2524,9 +2515,9 @@ export const KHAZARS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
+            { type: 'spearman', count: 2 },
+            { type: 'elite_konnik', count: 4 },
             { type: 'cav_archer', count: 3 },
-            { type: 'longswordsman', count: 2 }
         ]
     }
 ];
@@ -2552,9 +2543,9 @@ export const LOMBARDS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
+            { type: 'two_handed_swordsman', count: 3 },
             { type: 'knight', count: 3 },
-            { type: 'longswordsman', count: 2 }
+            { type: 'throwing_axeman', count: 3 },
         ]
     }
 ];
@@ -2566,9 +2557,9 @@ export const ROURAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cataphract', count: 4 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
             { type: 'cav_archer', count: 3 },
-            { type: 'scout_cavalry', count: 2 }
+            { type: 'elite_steppe_lancer', count: 4 },
         ]
     }
 ];
@@ -2580,9 +2571,9 @@ export const SOGDIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'crossbowman', count: 4 },
-            { type: 'knight', count: 3 },
-            { type: 'archer', count: 2 }
+            { type: 'bactrian_archer', count: 3 },
+            { type: 'sogdian_cataphract', count: 4 },
+            { type: 'camel_rider', count: 2 },
         ]
     }
 ];
@@ -2594,9 +2585,9 @@ export const TANGUT_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'longswordsman', count: 3 },
-            { type: 'crossbowman', count: 2 }
+            { type: 'hill_tribesman', count: 2 },
+            { type: 'chukonu', count: 3 },
+            { type: 'elite_cataphract', count: 4 },
         ]
     }
 ];
@@ -2608,9 +2599,9 @@ export const JAVANESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'skirmisher', count: 3 },
-            { type: 'swordsman', count: 2 }
+            { type: 'war_elephant', count: 2 },
+            { type: 'elite_arambai', count: 4 },
+            { type: 'rattan_archer', count: 3 },
         ]
     }
 ];
@@ -2622,9 +2613,9 @@ export const JURCHEN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cataphract', count: 4 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'cav_archer', count: 3 },
-            { type: 'longswordsman', count: 2 }
+            { type: 'elite_iron_pagoda', count: 4 },
         ]
     }
 ];
@@ -2636,9 +2627,9 @@ export const SELJUQ_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'lancer', count: 4 },
+            { type: 'camel_rider', count: 2 },
+            { type: 'elite_ghulam', count: 4 },
             { type: 'cav_archer', count: 3 },
-            { type: 'light_cavalry', count: 2 }
         ]
     }
 ];
@@ -2650,9 +2641,9 @@ export const OTTOMAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'knight', count: 3 },
-            { type: 'longswordsman', count: 2 }
+            { type: 'composite_bowman', count: 3 },
+            { type: 'elite_janissary', count: 2 },
+            { type: 'elite_ghulam', count: 4 },
         ]
     }
 ];
@@ -2664,9 +2655,9 @@ export const FRENCH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'crossbowman', count: 3 },
-            { type: 'halberdier', count: 2 }
+            { type: 'halberdier', count: 2 },
+            { type: 'genoese_crossbowman', count: 3 },
+            { type: 'elite_coustillier', count: 4 },
         ]
     }
 ];
@@ -2678,9 +2669,9 @@ export const MANCHU_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'longswordsman', count: 2 }
+            { type: 'spearman', count: 2 },
+            { type: 'cav_archer_heavy', count: 3 },
+            { type: 'imperial_cavalry', count: 4 },
         ]
     }
 ];
@@ -2706,9 +2697,9 @@ export const SAFAVID_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'guardsman', count: 2 }
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_camel_archer', count: 3 },
+            { type: 'qizilbash_warrior', count: 4 },
         ]
     }
 ];
@@ -2720,9 +2711,9 @@ export const RUSSIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
-            { type: 'light_cavalry', count: 2 }
+            { type: 'halberdier', count: 3 },
+            { type: 'elite_boyar', count: 4 },
+            { type: 'hand_cannoneer', count: 2 },
         ]
     }
 ];
@@ -2734,9 +2725,9 @@ export const SIKH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'guardsman', count: 3 },
-            { type: 'hand_cannoneer', count: 2 }
+            { type: 'elite_chakram_thrower', count: 3 },
+            { type: 'elite_urumi_swordsman', count: 4 },
+            { type: 'hand_cannoneer', count: 2 },
         ]
     }
 ];
@@ -2762,9 +2753,9 @@ export const WUSUN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'light_cavalry', count: 2 }
+            { type: 'antiquity_spearman', count: 2 },
+            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 4 },
         ]
     }
 ];
@@ -2808,9 +2799,9 @@ export const HEPHTHALITES_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
+            { type: 'bactrian_archer', count: 2 },
             { type: 'cav_archer', count: 3 },
-            { type: 'light_cavalry', count: 2 }
+            { type: 'elite_tarkan', count: 4 },
         ]
     }
 ];
@@ -2822,9 +2813,9 @@ export const AINU_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'archer', count: 4 },
-            { type: 'spearman', count: 3 },
-            { type: 'guardsman', count: 2 }
+            { type: 'hill_tribesman', count: 3 },
+            { type: 'elite_blackwood_archer', count: 4 },
+            { type: 'war_dog', count: 2 },
         ]
     }
 ];
@@ -2835,9 +2826,9 @@ export const SWISS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spearman', count: 4 },
-            { type: 'guardsman', count: 3 },
-            { type: 'crossbowman', count: 2 }
+            { type: 'halberdier', count: 3 },
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'arbalest', count: 3 },
         ]
     }
 ];
@@ -2848,9 +2839,9 @@ export const PASHTUN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'knight', count: 4 },
-            { type: 'archer', count: 3 },
-            { type: 'light_cavalry', count: 2 }
+            { type: 'hill_tribesman', count: 3 },
+            { type: 'elite_camel_archer', count: 2 },
+            { type: 'elite_ghulam', count: 4 },
         ]
     }
 ];
@@ -2861,9 +2852,9 @@ export const SWEDISH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spearman', count: 4 },
-            { type: 'guardsman', count: 3 },
-            { type: 'crossbowman', count: 2 }
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'hussar', count: 3 },
         ]
     }
 ];
