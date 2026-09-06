@@ -102,6 +102,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
 
     // ── 地中海古典 ──────────────────────────────────────────
     { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK'] },
+    { ship: 'TRIREME', why: '三列桨座主力战舰：迦太基西地中海海上霸权核心主力（第一次布匿战争埃加迪群岛海战形制）', regions: ['CARTHAGE'] },
     { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['GREEK'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
     { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON'] },
