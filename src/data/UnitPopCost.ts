@@ -75,6 +75,8 @@ export const POP_COST_BY_KEY: Record<string, number> = {
     war_chariot_ranged: 3.75,          // 人工指定
     war_elephant: 3,                // 人工指定（波斯战象 450 血，2026-09-01 2→3）
     war_wagon: 5,                   // 人工指定
+    siege_ballista: 3,
+    siege_elephant: 2,
 };
 export function popCostOf(key: string): number {
     return POP_COST_BY_KEY[key] ?? 1;
