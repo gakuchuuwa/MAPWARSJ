@@ -270,7 +270,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     GURJARAS: 'crane_wing',  // 瞿折罗[2026-08-28 暂复用父文化]
     VIETNAMESE: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     KHMER: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
-    MAYANS: 'crescent',  // 玛雅[2026-08-28 暂复用父文化]
+    MAYANS: 'crescent',  // 古典玛雅：偃月阵 3+2+4 前排鹰斥候+中坚高级标枪+底边先锋重步主力
     MAPUCHE: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
     MUISCA: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     TUPI: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
@@ -1655,16 +1655,21 @@ export const BENGALIS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 玛雅军团（新月阵 324）[2026-08-30 主人设计] */
+/** 古典玛雅军团（偃月阵 3+2+4，主力在底边）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（古典期玛雅城邦·蒂卡尔与卡拉克穆尔雨林战法）：
+ *   · 前排前卫 美洲鹰斥候（3档） —— 佩滕热带雨林飞跃穿插的轻装侦察与突袭战士，身着轻棉甲与翎羽头饰，占 3 档前锋。
+ *   · 中腰掩护 古典掷矛手高级（2档【高级】） —— 中美洲最致命的投矛器（Atlatl）黑曜石飞矛死士，在阵中提供高初速穿甲火力，占 2 档支援。
+ *   · 底边决战 先锋重装步兵（4档【重装】） —— 玛雅贵族王家近卫，身披浸渍盐水多层坚韧厚棉甲（Ichcahuipilli）与大木盾，手持黑曜石重武器正面碾碎敌军，占 4 档重装主力。 */
 export const MAYANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eagle_warrior', count: 3 },
-            { type: 'plumed_archer', count: 2 },
-            { type: 'elite_plumed_archer', count: 4 }
+            { type: 'eagle_scout', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'vanguard', count: 4 }
         ]
     }
 ];
