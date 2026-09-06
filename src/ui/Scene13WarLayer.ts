@@ -308,6 +308,7 @@ const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'batte
 const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
     DIANQIAN: 'battle_elephant',    // 缅甸/越南战斗象（近战）
     LINGNAN: 'battle_elephant',     // 越南战斗象（近战）
+    CARTHAGE: 'armored_elephant',   // 迦太基装甲战象（攻城）
 };
 
 /**
@@ -389,6 +390,13 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ACHAEMENIDS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     WALLACHIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    EGYPT: { battering_ram: true, capped_ram: true, mangonel: true, onager: true },
+    CARTHAGE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, armored_elephant: true },
+    BABYLON: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    HITTITES: { battering_ram: true, capped_ram: true, siege_ram: true, mangonel: true },
+    ASSYRIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    PARTHIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    SCYTHIANS: { battering_ram: true, capped_ram: true, mangonel: true },
 };
 
 /**
@@ -1085,7 +1093,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     ACHAEMENIDS: 'PERSIAN',  // 阿契美尼德[2026-08-28]
     BURMESE: 'SEAS',
     WALLACHIA: 'SLAV',
-
+    EGYPT: 'ORIE',
+    CARTHAGE: 'MEDI',
+    BABYLON: 'ORIE',
+    HITTITES: 'ORIE',
+    ASSYRIAN: 'ORIE',
+    PARTHIA: 'PERSIAN',
+    SCYTHIANS: 'CEAS',
 };
 
 
