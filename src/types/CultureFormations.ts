@@ -228,7 +228,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
-    WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
+    WESTERN:      'triangle',     // 古典塞种：锥形阵 2+3+4 尖刀斧骑2+中坚骑射3+底边斯基泰骑射手高级4档主力
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
     HEXI:         'fish_scale',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
@@ -1370,16 +1370,21 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 14. 西域 斯基泰斧骑兵+斯基泰骑射手+斯基泰骑射手精锐（三角阵 2+3+4：斧骑兵尖刀 + 骑射手中坚 + 精锐骑射主力底边） */
+/** 古典塞种军团（锥形阵 2+3+4，主力在底边）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  史实依据（中亚天山塞克·亚洲斯基泰游牧与绿洲邦国骑射战法）：
+ *   · 尖刀先锋 斯基泰斧骑兵（2档） —— 《汉书·西域传》与希罗多德所载塞人（Saka/Sacae）精锐突骑，擅使短柄铁战斧（Sagaris）持重甲撕裂敌阵，占 2 档尖刀。
+ *   · 冲击中坚 斯基泰骑射手（3档） —— 伊犁河流域与帕米尔高原塞种轻骑，擅长双弓袋奔射与安息回马箭回旋拉扯，占 3 档中坚。
+ *   · 底边主力 斯基泰骑射手高级（4档【高级】） —— 尖顶塞克（Saka Tigrakhauda）王室黄金近卫神射手，远距暴烈破甲齐射奠定胜局，占 4 档高级主力。 */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'scythian_axe_cavalry', count: 2 },       // Row 0 尖刀先锋 = 斯基泰斧骑兵 2人
-            { type: 'scythian_horse_archer', count: 3 },      // Row 1 冲击中坚 = 斯基泰骑射手 3人
-            { type: 'elite_scythian_horse_archer', count: 4 } // Row 2 底边主力齐射 = 斯基泰骑射手精锐 4人
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'scythian_horse_archer', count: 3 },
+            { type: 'elite_scythian_horse_archer', count: 4 }
         ]
     }
 ];
