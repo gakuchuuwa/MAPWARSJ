@@ -255,51 +255,51 @@ export function getCultureFormationMode(culture: RegionType): FormationMode {
 export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     if (mode === 'triangle') {
         return [
-            { type: 'horse_archer', count: 2 },
-            { type: 'horse_archer', count: 3 },
-            { type: 'horse_archer', count: 4 },
+            { type: 'cav_archer', count: 2 },
+            { type: 'cav_archer', count: 3 },
+            { type: 'cav_archer', count: 4 },
         ];
     }
     if (mode === 'echelon') {
         return [
-            { type: 'shield', count: 4 },
-            { type: 'crossbow', count: 3 },
-            { type: 'crossbow', count: 2 },
+            { type: 'guardsman', count: 4 },
+            { type: 'crossbowman', count: 3 },
+            { type: 'crossbowman', count: 2 },
         ];
     }
     if (mode === 'fish_scale') {
         return [
-            { type: 'shield', count: 3 },
+            { type: 'guardsman', count: 3 },
             { type: 'lancer', count: 4 },
-            { type: 'crossbow', count: 2 },
+            { type: 'crossbowman', count: 2 },
         ];
     }
     if (mode === 'crane_wing') {
         return [
-            { type: 'shield', count: 2 },
+            { type: 'guardsman', count: 2 },
             { type: 'lancer', count: 4 },
-            { type: 'crossbow', count: 3 },
+            { type: 'crossbowman', count: 3 },
         ];
     }
     if (mode === 'crescent') {
         return [
-            { type: 'shield', count: 3 },
+            { type: 'guardsman', count: 3 },
             { type: 'lancer', count: 2 },
-            { type: 'crossbow', count: 4 },
+            { type: 'crossbowman', count: 4 },
         ];
     }
     if (mode === 'balance_yoke') {
         return [
-            { type: 'shield', count: 4 },
+            { type: 'guardsman', count: 4 },
             { type: 'lancer', count: 2 },
-            { type: 'crossbow', count: 3 },
+            { type: 'crossbowman', count: 3 },
         ];
     }
     // square (3+3+3 方阵)
     return [
-        { type: 'shield', count: 3 },
-        { type: 'shield', count: 3 },
-        { type: 'crossbow', count: 3 },
+        { type: 'guardsman', count: 3 },
+        { type: 'guardsman', count: 3 },
+        { type: 'crossbowman', count: 3 },
     ];
 }
 
