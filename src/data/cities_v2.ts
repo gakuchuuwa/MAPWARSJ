@@ -3049,9 +3049,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_onondaga', name: '奥农多加', factionId: 'yiluokui', lat: 43.05, lng: -76.15, type: 'medium_city', troops: 30000, region: 'IROQUOIS', note: '易洛魁联盟「中央火塘」所在，五族大议事会驻地' },
     { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 30000, region: 'CHIMU', note: '奇穆王国都城，前哥伦布时期美洲最大土坯城' },
     { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'medium_city', troops: 30000, region: 'TARASCAN', note: '塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」' },
-    { id: 'city_tlaxcala', name: '特拉斯卡拉', factionId: 'telasikala', lat: 19.32, lng: -98.24, type: 'medium_city', troops: 30000, region: 'AMERICA', note: '特拉斯卡拉四城邦联盟中心，抗阿兹特克并助科尔特斯灭阿兹特克帝国' },
     { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'small_city', troops: 30000, region: 'AMERICA', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约' },
     { id: 'city_quebec', name: '魁北克', factionId: 'xinfalanxi', lat: 46.81, lng: -71.21, type: 'small_city', troops: 30000, region: 'AMERICA', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽' },
+    { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xinxibanya', lat: 16.85, lng: -99.92, type: 'small_city', troops: 30000, region: 'AMERICA', note: '新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗' },
     { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'small_city', troops: 30000, region: 'TAIRONA', note: '泰罗纳石阶山城（失落之城），圣玛尔塔内华达山' },
     { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'small_city', troops: 30000, region: 'TEHUELCHE', note: '1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来' },
     // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──

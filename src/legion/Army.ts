@@ -231,6 +231,12 @@ export class Army implements IBattleUnit {
      * 海上文化船图锁：登船时确定，锁定整个航程；上岸清空。
      */
     public navalShipAssetLock: NavalShipAssetId | null = null;
+    /** 首选船型：设了就优先于「按文化区/兵力算」。
+     *  🔴 [2026-09-07 主人定「玩家海上用独木舟」] 玩家单骑 cultureRegion 为 null，
+     *     原本会掉进 FALLBACK_SHIP（通用桨帆战船）。用这个钩子指定，
+     *     而不是在共享的 applySeaOrLandSpeed 里特判 type==='hero'。
+     *     ⚠️ 随军时玩家跟宿主舰队走（PlayerHero.update 里显式覆盖），本字段只管单骑。 */
+    public preferredNavalShip: NavalShipAssetId | null = null;
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
@@ -919,7 +925,8 @@ export class Army implements IBattleUnit {
         //   （已在海上却无锁，如中途注册的情形，也补一次锁，防回退到实时算法闪图。）
         if (this.isOnSea) {
             if (!wasOnSea || this.navalShipAssetLock === null) {
-                this.navalShipAssetLock = getNavalShipAssetId(this.getTroops(), this.cultureRegion, this.getFactionId());
+                this.navalShipAssetLock = this.preferredNavalShip
+                    ?? getNavalShipAssetId(this.getTroops(), this.cultureRegion, this.getFactionId());
             }
         } else if (this.navalShipAssetLock !== null) {
             this.navalShipAssetLock = null;

@@ -24,6 +24,7 @@ import {
     PLAYER_HERO_SPEED_MULT,
     PLAYER_RANKS,
     rankForMerit,
+    rankFor,
     type PlayerRank,
 } from './PlayerConfig';
 
@@ -116,6 +117,9 @@ export class PlayerHero {
             undefined,
         );
         this.army.type = 'hero';
+        // 🔴 [2026-09-07 主人定「海上用独木舟」] 玩家单骑无文化区，指定独木舟；
+        //    随军时下面 update() 会按宿主舰队覆盖，这里只管一个人漂海。
+        this.army.preferredNavalShip = 'CANOE';
         this.army.setSpeedMultiplier(PLAYER_HERO_SPEED_MULT);
         // 开局集结闸门是给首发军团的开场仪式，玩家不受它约束（否则开局 5 秒内点据点没反应）
         this.army.exemptFromDeployHold = true;
@@ -141,7 +145,8 @@ export class PlayerHero {
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
-    public getRank(): PlayerRank { return rankForMerit(this.merit); }
+    /** 已投效势力则保底斥候（主人 2026-09-07 定），否则按功勋 */
+    public getRank(): PlayerRank { return rankFor(this.merit, this.factionId !== null); }
     public getHostLegionId(): string | null { return this.hostLegionId; }
     public setAutoMode(on: boolean): void {
         if (this.autoMode === on) return;

@@ -373,7 +373,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     RUS:             'fish_scale',   // 城堡罗斯：鱼鳞阵 3+4+2 贵族铁骑精锐3 + 双手大剑士4 + 骑射手2
     KARA_KHITAN:     'triangle',     // 城堡西辽：锥形阵 2+3+4 草原枪骑兵高级2 + 骑射手3 + 重装骑兵4
     TIMURID:         'triangle',     // 城堡帖木儿：锥形阵 2+3+4 波斯具装铁骑重装2 + 察合台骑射3 + 骑士重装4
-    DELHI:           'fish_scale',   // 城堡德里：鱼鳞阵 3+4+2 战斗象3 + 古拉姆精锐4 + 复合弓手2
+    DELHI:           'triangle',     // 城堡德里：锥形阵 2+3+4 装甲攻城战象2 + 古拉姆精锐3 + 古拉姆4
+                                     // [2026-09-07 订正] 原标 fish_scale 且注释还停在旧编成（战斗象3+复合弓手2），
+                                     // 与实际三格及其逐格注释「尖刀2/中坚3/侧翼4」不符 —— 格位自洽，是标签过期
     CASTILE:         'echelon',      // 城堡卡斯蒂利亚：雁行阵 4+3+2 骑士重装4 + 欧洲双手剑士3 + 标枪骑兵高级2
     SCOTLAND:        'balance_yoke', // 城堡苏格兰：衡轭阵 4+2+3 长枪兵重装4 + 双手大剑士3 + 轻型骑兵2
     HRE:             'echelon',      // 城堡神圣罗马：雁行阵 4+3+2 骑士重装4 + 双手大剑士3 + 弩兵2
@@ -3310,9 +3312,9 @@ export const JOSEON_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordman_shielded', count: 2, scale: 1 },
-            { type: 'war_wagon', count: 3 },
-            { type: 'hand_cannoneer', count: 4, scale: 1 }
+            { type: 'jian_swordman_shielded', count: 2, scale: 1 },   // 两翼 = 华夏持盾刀剑手高级（牌刀手）
+            { type: 'war_wagon', count: 4 },                          // 中坚主力 = 高丽战车（神机箭火车）
+            { type: 'hand_cannoneer', count: 3, scale: 1 }            // 后排 = 火枪手
         ]
     }
 ];

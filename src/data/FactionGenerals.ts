@@ -48,9 +48,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     talasike: { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '' },
     tailuona: { generalId: 'gen_cuchacique', generalName: '库查西克', portrait: '' },
     teweierqie: { generalId: 'gen_casimiro_bigua', generalName: '卡西米罗·比格', portrait: '' },
-    telasikala: { generalId: 'gen_xicotencatl', generalName: '希科滕卡特', portrait: '' },
     xinnidelan: { generalId: 'gen_stuyvesant', generalName: '斯泰弗森特', portrait: '' },
     xinfalanxi: { generalId: 'gen_champlain', generalName: '尚普兰', portrait: '' },
+    xinxibanya: { generalId: 'gen_urdaneta', generalName: '乌尔达内塔', portrait: '' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
