@@ -86,21 +86,21 @@ export function getNavalShipDrawScale(shipId?: string): number {
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
-    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'HEXI'] },
+    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'HEXI', 'SONG'] },
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
-    { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DIANQIAN'] },
+    { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DIANQIAN', 'DALI'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
     { ship: 'GALLEY', why: '辽东-渤海湾小型战船：辽据辽东半岛，圣宗东征高丽须渡鸭绿江与辽东近海', regions: ['KHITAN'] },
     { ship: 'GALLEY', why: '渤海国「日本道」渡海船：靺鞨自图们江出海通日本，三十四次遣日使皆走海路', regions: ['MOHE'] },
     { ship: 'GALLEY', why: '黑龙江水师战船：清初为雅克萨之战在吉林乌拉设船厂，八旗水师沿松花江-黑龙江作战', regions: ['MANCHU'] },
     { ship: 'LOU_CHUAN', why: '金军楼船：完颜亮南侵所用宋式大舰，一一六一年陈家岛海战为李宝火攻所破', regions: ['JURCHEN'] },
     { ship: 'INCENDIARY_SHIP', why: '洱海火攻快船：南诏水军扼洱海，天宝战争两度全歼唐军于洱海之滨', regions: ['NANZHAO'] },
-    { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰', regions: ['KOREA'] },
+    { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰', regions: ['KOREA', 'GORYEO'] },
     // DE 没有日本专属战船。安宅船是高舷箱型大舰，先用古代大型桨帆战船顶着（⚠️无 death 帧）
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },
 
     // ── 南亚 / 东南亚 ───────────────────────────────────────
-    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'] },
+    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'DELHI'] },
     { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY', 'SRIVIJAYA'] },
     { ship: 'WAR_GALLEY', why: '爪哇 jong 大帆战船：满者伯夷以舰队制海群岛，郑和随员马欢与葡人皆记其船体巨大', regions: ['JAVANESE'] },
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '恒河-布拉马普特拉重型内河战船：莫卧儿孟加拉总督的 nawara 舰队，长期与阿拉干-葡萄牙海盗争河口', regions: ['MUGHAL'] },
@@ -128,15 +128,15 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
     { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS'] },
-    { ship: 'MONOREME', why: '罗斯独木船队（monoxyla）：第聂伯河下黑海', regions: ['SLAVIC'] },
+    { ship: 'MONOREME', why: '罗斯独木船队（monoxyla）：第聂伯河下黑海', regions: ['SLAVIC', 'RUS'] },
     { ship: 'MONOREME', why: '伏尔加-里海船队：可萨据伊蒂尔扼伏尔加河口，罗斯人下里海劫掠须经其许可放行', regions: ['KHAZARS'] },
     { ship: 'WAR_GALLEY', why: '桨帆战船队：彼得一世的斯克拉桨帆舰队，一七一四年甘古特海战以桨帆船胜瑞典风帆舰', regions: ['RUSSIAN'] },
 
     // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
-    { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS'] },
-    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS'] },
-    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS'] },
+    { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS', 'SCOTLAND'] },
+    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS', 'CASTILE'] },
+    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS', 'CRUSADERS'] },
     { ship: 'CARAVEL', why: '法兰西风帆战舰：一三四〇年斯勒伊斯海战的法国舰队，与地中海桨帆分队并立', regions: ['FRENCH'] },
     { ship: 'CARAVEL', why: '波罗的海风帆战舰：瑞典帝国海军（瓦萨号形制），十七世纪波罗的海霸权支柱', regions: ['SWEDISH'] },
     { ship: 'MONOREME', why: '涅达姆式北海长船：盎格鲁-撒克逊渡海入不列颠所用形制（萨顿胡船葬），阿尔弗雷德大王据此建舰队御丹麦人', regions: ['ANGLO_SAXON'] },
@@ -146,7 +146,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
 
     // ── 中东 / 北非 ─────────────────────────────────────────
     { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
-    { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE'] },
+    { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE', 'MAMLUKS'] },
     { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['SASANIAN'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨法维经营阿巴斯港，一六二二年联英夺霍尔木兹逐葡萄牙人', regions: ['SAFAVID'] },
@@ -161,7 +161,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'GUSILUO', 'KARA_KHITAN', 'TIMURID'] },
     { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
