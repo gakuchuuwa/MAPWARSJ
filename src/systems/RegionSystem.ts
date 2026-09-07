@@ -137,6 +137,7 @@ export type RegionType =
     | 'AMAZONS' // 古典亚马逊（特尔莫冬河口忒弥斯基拉的黑海女战士部族）
     | 'SONG' // 赵宋（城堡赵宋：两宋神臂弩步骑大阵与岳家军背嵬铁骑）
     | 'GORYEO' // 高丽（城堡高丽：别武班重骑、长枪与高丽硬弓手）
+    | 'JOSEON' // 朝鲜王朝（帝国朝鲜：火铳火炮、高丽战车与龟甲船水师）
     | 'DALI' // 大理（城堡大理：西南大理象兵、大理马突击轻骑与白蛮藤弓步阵）
     | 'GUSILUO' // 角斯罗（城堡角斯罗：青唐吐蕃宗喀冷锻瘊子甲铁骑与河湟弓骑）
     | 'MAMLUKS' // 马穆鲁克（城堡马穆鲁克：埃及叙利亚苏丹马穆鲁克重装马刀骑兵与苏丹亲卫驼骑）
@@ -249,6 +250,7 @@ export const REGION_ORDER: RegionType[] = [
     'AMAZONS',
     'SONG',
     'GORYEO',
+    'JOSEON',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -387,6 +389,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     AMAZONS: '古典亚马逊',
     SONG: '城堡赵宋',
     GORYEO: '城堡高丽',
+    JOSEON: '帝国朝鲜',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -531,6 +534,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     AMAZONS: '古典亚马逊',
     SONG: '城堡赵宋',
     GORYEO: '城堡高丽',
+    JOSEON: '帝国朝鲜',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -825,6 +829,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     AMAZONS: '#AD1457',
     SONG: '#c62828',
     GORYEO: '#1565c0',
+    JOSEON: '#e65100',
     DALI: '#00897b',
     GUSILUO: '#8e24aa',
     MAMLUKS: '#d4af37',
@@ -1621,6 +1626,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/korea_big.png'),
         pass: resolvePath('/cities/korea_pass.png')
     },
+    JOSEON: {
+        small: resolvePath('/cities/korea_small.png'),
+        medium: resolvePath('/cities/korea_medium.png'),
+        big: resolvePath('/cities/korea_big.png'),
+        pass: resolvePath('/cities/korea_pass.png')
+    },
     DALI: {
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
@@ -1913,6 +1924,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     AMAZONS:         ['city_themiskyra'],
     SONG:            ['city_huaiyin'],
     GORYEO:          ['city_kaesong'],
+    JOSEON:          ['city_hanseong'],
     DALI:            ['city_dali_city', 'city_tonghai'],
     GUSILUO:         ['city_qingtang'],
     MAMLUKS:         ['city_alepo', 'city_ayinzhaluete'],

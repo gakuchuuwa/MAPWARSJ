@@ -906,7 +906,7 @@ export const PERIPHERY: CityDataV2[] = [
         type: 'medium_city',
         troops: 30000,
         tier: 1,
-        region: 'KOREA',
+        region: 'JOSEON',
         note: '朝鲜王朝（李朝）都城汉阳/汉城' },
     { id: 'city_pyongyang', name: '平壤', factionId: 'gaogouli', lat: 39.02, lng: 125.76, type: 'medium_city', troops: 30000, region: 'KOREA' },
 
@@ -925,7 +925,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_jeonju', name: '完山', factionId: 'zhen', lat: 35.75, lng: 127.14, type: 'small_city', troops: 30000, region: 'KOREA' },
 
 
-    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 20000, region: 'KOREA', mirror: true },
+    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 20000, region: 'JOSEON', mirror: true },
 
 
     {

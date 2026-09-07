@@ -5,6 +5,7 @@ import { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers
 import { HISTORICAL_REGIONS } from '../data/HistoricalRegions';
 import { gameLog } from '../utils/GameLogger';
 import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
+import { MATERIAL_BUDGET_BYTES } from './StrategicTerrainMaterial';
 
 // 转换 HistoricalRegion 为 Worker 友好结构(扁平化, 默认值)
 const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
@@ -55,6 +56,9 @@ export class HillshadeLayer extends L.GridLayer {
     private useDesertColoring: boolean;
 
     private workers: Worker[] = [];
+    private materialBytesByWorker = new Map<Worker, number>();
+    private workerRenderMs = 0;
+    private workerRenderSamples = 0;
     private rrIndex: number = 0; // Worker 轮询下标
     private msgIdCounter: number = 0;
     private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, cacheKey: string }> = new Map();
@@ -75,6 +79,8 @@ export class HillshadeLayer extends L.GridLayer {
             cacheSize: this.tileCache.size,
             cacheMax: TILE_CACHE_MAX,
             pending: this.pendingTiles.size,
+            materialBytes: [...this.materialBytesByWorker.values()].reduce((sum, bytes) => sum + bytes, 0),
+            workerRenderMeanMs: this.workerRenderSamples ? this.workerRenderMs / this.workerRenderSamples : 0,
         };
     }
 
@@ -92,6 +98,15 @@ export class HillshadeLayer extends L.GridLayer {
         this.shadowOpacity = options?.shadowOpacity ?? 1.0;
         this.useElevationColor = options?.useElevationColor ?? true;
         this.useDesertColoring = options?.useDesertColoring ?? true;
+        perfDoctor.registerCache({
+            name: 'HillshadeLayer:DE materials(战略地表)',
+            where: 'src/map/StrategicTerrainMaterial.ts:textures',
+            entries: () => this.materialBytesByWorker.size,
+            bytes: () => [...this.materialBytesByWorker.values()].reduce((sum, bytes) => sum + bytes, 0),
+            limitKind: 'bytes',
+            limitValue: MATERIAL_BUDGET_BYTES * WORKER_POOL_SIZE,
+            churn: () => ({ evicts: 0, reAdds: 0 }),
+        });
 
         this.ensureWorkers();
 
@@ -115,6 +130,13 @@ export class HillshadeLayer extends L.GridLayer {
 
     private handleWorkerMessage(e: MessageEvent<HillshadeResponse>) {
         const { id, bitmap, error } = e.data;
+        if (e.data.materialBytes !== undefined) {
+            this.materialBytesByWorker.set(e.target as Worker, e.data.materialBytes);
+        }
+        if (e.data.renderMs !== undefined) {
+            this.workerRenderMs += e.data.renderMs;
+            this.workerRenderSamples++;
+        }
         const task = this.pendingTiles.get(id);
         this.pendingTiles.delete(id);
 
@@ -358,6 +380,7 @@ export class HillshadeLayer extends L.GridLayer {
     // Cleanup if layer removed
     onRemove(map: L.Map): this {
         for (const w of this.workers) w.terminate();
+        this.materialBytesByWorker.clear();
         this.workers.length = 0;
         this.pendingTiles.clear();
         this.clearTileCache();

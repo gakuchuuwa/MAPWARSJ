@@ -186,6 +186,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     AMAZONS:         'MIXED',     // 古典亚马逊：女骑射为主力，步战女武士护阵
     SONG:            'MIXED',     // 城堡赵宋：步骑弩协同体系
     GORYEO:          'MIXED',     // 城堡高丽：别武班步骑协同体系
+    JOSEON:          'MIXED',     // 帝国朝鲜：牌刀手步骑火器协同体系
     DALI:            'ELEPHANT',  // 城堡大理：大理战象象步体系
     GUSILUO:         'CAVALRY',   // 城堡角斯罗：青唐冷锻甲铁骑纯骑体系
     MAMLUKS:         'CAVALRY',   // 城堡马穆鲁克：埃及叙利亚苏丹亲卫马穆鲁克纯骑体系
@@ -364,6 +365,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     AMAZONS:         'crane_wing', // 古典亚马逊：鹤翼阵 2+4+3 女弓手2 + 斯基泰骑射手高级4 + 女战士3
     SONG:            'balance_yoke', // 城堡赵宋：衡轭阵 4+2+3 持盾刀剑手4 + 攻城床弩2 + 骑士重装3
     GORYEO:          'triangle',   // 城堡高丽：鹤翼阵 2+4+3 长枪兵重装2 + 女真铁浮屠4 + 越南藤弓兵3
+    JOSEON:          'crane_wing', // 帝国朝鲜：鹤翼阵 2+4+3 牌刀手2 + 高丽战车4 + 火枪兵3
     DALI:            'crane_wing',   // 城堡大理：鱼鳞阵 3+4+2 战斗象3 + 越南藤弓兵精锐4 + 持盾刀剑手2
     GUSILUO:         'triangle',     // 城堡角斯罗：锥形阵 2+3+4 贵族铁骑精锐2 + 具装铁骑3 + 骑射手4
     MAMLUKS:         'crane_wing',   // 城堡马穆鲁克：鹤翼阵 2+4+3 骆驼弓骑精锐2 + 骑士重装4 + 骆驼骑兵3
@@ -2070,6 +2072,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HELLENIC: '古典希伦军团',
     SONG: '城堡赵宋军团',
     GORYEO: '城堡高丽军团',
+    JOSEON: '帝国朝鲜军团',
     DALI: '城堡大理军团',
     GUSILUO: '城堡角斯罗军团',
     MAMLUKS: '城堡马穆鲁克军团',
@@ -3299,6 +3302,20 @@ export const GORYEO_TIERS: CompositionTier[] = [
         ]
     }
 ];
+
+/** 帝国朝鲜 牌刀手抗线+高丽战车突击+火枪兵火器压制（鹤翼阵 2+4+3，综合战力 68） */
+export const JOSEON_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'jian_swordman_shielded', count: 2, scale: 1 },
+            { type: 'elite_war_wagon', count: 3 },
+            { type: 'hand_cannoneer', count: 4, scale: 1 }
+        ]
+    }
+];
 /** 大理 战象冲阵铁拳突破+西南藤弓兵精锐暴雨攒射+华夏持盾刀剑手侧卫（鱼鳞阵 3+4+2，综合战力 88） */
 export const DALI_TIERS: CompositionTier[] = [
     {
@@ -3403,9 +3420,9 @@ export const DELHI_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_armored_elephant', count: 3 }, // 尖刀突破【高级】 = 装甲攻城战象高级（苏丹铁甲巨象破门践踏）
-            { type: 'elite_ghulam', count: 4 },           // 中坚核心【精锐】 = 印度斯坦古拉姆精锐（苏丹亲兵古拉姆近卫铁甲剑士）
-            { type: 'ghulam', count: 2 }                  // 侧翼近卫【重装】 = 印度斯坦古拉姆（苏丹侍卫古拉姆持盾长矛剑士）
+            { type: 'armored_elephant', count: 2 }, // 尖刀突破【重装】 = 装甲攻城战象（苏丹铁甲巨象破门践踏）
+            { type: 'elite_ghulam', count: 3 },     // 中坚核心【精锐】 = 印度斯坦古拉姆精锐（苏丹亲兵古拉姆近卫铁甲剑士）
+            { type: 'ghulam', count: 4 }            // 侧翼近卫【重装】 = 印度斯坦古拉姆（苏丹侍卫古拉姆持盾长矛剑士）
         ]
     }
 ];
@@ -3627,6 +3644,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     AMAZONS: AMAZONS_TIERS,
     SONG: SONG_TIERS,
     GORYEO: GORYEO_TIERS,
+    JOSEON: JOSEON_TIERS,
     DALI: DALI_TIERS,
     GUSILUO: GUSILUO_TIERS,
     MAMLUKS: MAMLUKS_TIERS,

@@ -255,7 +255,7 @@ export class GameMap {
 
         const pane = this.map.getPane('tilePane');
         if (pane) {
-            pane.style.filter = 'sepia(24%) saturate(86%) contrast(114%) brightness(98%)';
+            pane.style.filter = 'sepia(8%) saturate(104%) contrast(104%) brightness(98%)';
         }
 
         if (!syncSidebarCheckboxes) return;
@@ -281,8 +281,8 @@ export class GameMap {
 
     private getZFactor(zoom: number): number {
         if (zoom <= 7) return 15.0;
-        // 8-11 统一 30：避免 zoom 切换时 zFactor 变化触发 HillshadeLayer 全量瓦片重建
-        else if (zoom <= 11) return 30.0;
+        // 战略视图统一强度，保留山脊起伏并避免跨级重复重建瓦片。
+        else if (zoom <= 11) return 27.0;
         else if (zoom <= 12) return 45.0;
         else return 50.0;
     }
@@ -405,7 +405,7 @@ export class GameMap {
         // 保持之前的滤镜：LOCAL 源恢复默认古卷滤镜；其他源（ESRI 晕渲）不用滤镜。
         const tilesPane = document.querySelector('.leaflet-tile-pane') as HTMLElement;
         if (tilesPane) {
-            tilesPane.style.filter = sourceKey === 'LOCAL' ? 'sepia(24%) saturate(86%) contrast(114%) brightness(98%)' : 'none';
+            tilesPane.style.filter = sourceKey === 'LOCAL' ? 'sepia(8%) saturate(104%) contrast(104%) brightness(98%)' : 'none';
         }
 
         // 保持河流和地形的顺序
@@ -433,7 +433,7 @@ export class GameMap {
                     maxZoom: 18,
                     azimuth: 305,  // 偏西光照，更好突出东亚东西向山脉（秦岭、昆仑）
                     altitude: 45,  // 与 getAltitude() 对齐，避免首次 zoomend 触发全量重建
-                    zFactor: 30,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
+                    zFactor: 27,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
                 });
             }
             if (!this.map.hasLayer(this.hillshadeLayer)) {
@@ -634,19 +634,19 @@ export class GameMap {
 
                     <div id="style-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            复古做旧 (Sepia) <span id="val-sep">24%</span>
+                            复古做旧 (Sepia) <span id="val-sep">8%</span>
                         </label>
-                        <input type="range" id="rng-sep" min="0" max="100" step="1" value="24" style="width:120px;">
+                        <input type="range" id="rng-sep" min="0" max="100" step="1" value="8" style="width:120px;">
 
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            色彩饱和 (Sat) <span id="val-sat">86%</span>
+                            色彩饱和 (Sat) <span id="val-sat">104%</span>
                         </label>
-                        <input type="range" id="rng-sat" min="0" max="200" step="2" value="86" style="width:120px;">
+                        <input type="range" id="rng-sat" min="0" max="200" step="2" value="104" style="width:120px;">
                         
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            对比度 (Con) <span id="val-con">114%</span>
+                            对比度 (Con) <span id="val-con">104%</span>
                         </label>
-                        <input type="range" id="rng-con" min="50" max="200" step="2" value="114" style="width:120px;">
+                        <input type="range" id="rng-con" min="50" max="200" step="2" value="104" style="width:120px;">
                     </div>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0066cc;margin-top:8px;">
