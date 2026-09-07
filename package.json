@@ -28,6 +28,7 @@
     "naval:step-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_naval_step_spacing.mts",
     "naval:orbit-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_naval_orbit.mts",
     "legion:editor-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_editor_vs_game.mts",
+    "legion:unit-coverage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_unit_coverage_all.mts",
     "legion:power-balance": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_power_balance.mts",
     "legion:antiquity-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_antiquity_legions.mts",
     "legion:antiquity-coverage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_antiquity_unit_coverage.mts",
