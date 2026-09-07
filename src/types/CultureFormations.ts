@@ -1479,9 +1479,9 @@ export const LATIN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'equites', count: 4 },
-            { type: 'centurion', count: 3 },
-            { type: 'imperial_centurion', count: 2 }
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
