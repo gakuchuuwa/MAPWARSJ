@@ -217,7 +217,7 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
-    SLAVIC:       'echelon',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
+    SLAVIC:       'fish_scale',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     GERMANIC:     'crane_wing',   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
     LATIN:        'echelon',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
@@ -1442,9 +1442,13 @@ export const SLAVIC_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'vanguard', count: 4 },
-            { type: 'fire_archer', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 }
+            // 🔴 [2026-09-07] 原为 先锋重装步兵4 / 吴火焰弓箭手3 / 古典掷矛手高级2 —— 两个毛病：
+            //    ① 与【古典百越军团】编制逐格相同，违反「相同编制必须同名」（审计②）；
+            //    ② 吴火焰弓箭手是东吴的兵（古典 3 世纪），摆进基辅罗斯军团是民族串门。
+            //    换成罗斯本族三件套：瓦良格亲兵 + 波雅尔铁骑 + 草原骑射。
+            { type: 'berserk', count: 3 },      // 前排 = 维京狂战士（罗斯本由瓦良格人所建，亲兵队 druzhina 即出此源）
+            { type: 'boyar', count: 4 },        // 中坚主力 = 斯拉夫贵族铁骑（波雅尔重骑，罗斯诸公国的核心）
+            { type: 'cav_archer', count: 2 }    // 后排 = 骑射手（与佩切涅格、波洛伏齐长期交手，罗斯亦用骑射）
         ]
     }
 ];
@@ -2456,18 +2460,16 @@ export const TURKS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 南诏 战象+罗苴子重步兵+藤甲神射（鱼鳞阵 2+4+3：山地象军2 + 罗苴子甲士4 + 藤甲弓手3） */
+/** 南诏 战象+罗苴子重步兵+藤甲神射（鱼鳞阵 3+4+2：南方步弓手3 + 华夏刀剑手高级4 + 战斗象2） */
 export const NANZHAO_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            // 🔴 [2026-09-07] 原 4 档是「穆伊斯卡神庙守卫精锐」—— 穆伊斯卡在南美哥伦比亚，
-            //    跟洱海的南诏白蛮毫无关系，是民族串门；换回本地的藤弓兵升级档，战力也从 133 收到 126。
-            { type: 'rattan_archer', count: 3 },
-            { type: 'rattan_archer_elite', count: 4 },
-            { type: 'war_elephant', count: 2 },
+            { type: 'archer', count: 3 }, // 前排 = 南方步弓手
+            { type: 'jian_swordsman', count: 4 }, // 中坚主力【高级】 = 华夏刀剑手高级（罗苴子重铠甲士）
+            { type: 'battle_elephant', count: 2 }, // 压阵 = 战斗象
         ]
     }
 ];
@@ -2542,21 +2544,21 @@ export const KHITAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 回鹘 金镞角弓骑+回鹘突骑+长刀轻骑（三角阵 4+3+2） */
+/** 回鹘 金镞角弓骑+回鹘突骑+长刀轻骑（三角阵 2+3+4） */
 export const UIGHUR_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'elite_composite_bowman', count: 4 },
+            { type: 'steppe_lancer', count: 2 }, // 前锋 = 草原枪骑兵
+            { type: 'cav_archer', count: 3 }, // 中坚 = 骑射手
+            { type: 'elite_scythian_horse_archer', count: 4 }, // 主力底边【高级】 = 斯基泰骑射手高级（回鹘金镞角弓骑）
         ]
     }
 ];
 
-/** 靺鞨 鹿角硬弓步兵+山地重长矛+雪原短刀手（鱼鳞阵 4+3+2） */
+/** 靺鞨 鹿角硬弓步兵+山地黑光铁骑+防线长矛（鱼鳞阵 3+4+2） */
 export const MOHE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -2564,7 +2566,7 @@ export const MOHE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'recurve_bowman', count: 3 }, // 前排 = 反曲长弓手
-            { type: 'elite_cataphract', count: 4 }, // 中坚主力【精锐】 = 拜占庭圣骑兵精锐
+            { type: 'hei_kuang_heavy', count: 4 }, // 中坚主力【重装】 = 南北朝黑光铠骑兵重装
             { type: 'spearman', count: 2 } // 后排 = 长矛兵
         ]
     }

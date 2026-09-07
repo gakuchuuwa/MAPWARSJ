@@ -25,149 +25,6 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 韩国·雁行阵（4+3+2：与秦国同阵）
-    "han": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
-    "suzhou": {
-        legionName: "古典秦汉军团",
-        legionType: "region",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "elite_chukonu", count: 4 },
-            { type: "tiger_rider", count: 2 },
-        ],
-    },
-    "shuofang": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "xianyu": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "li_lx_d": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "lingqiu": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "hejian": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "linhu": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "jiyuan": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "jiluo_d": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "pulei": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "you": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "dongsheng": {
-        legionName: "城堡蒙古军团",
-        legionType: "region",
-        formationMode: "triangle",
-        slots: [
-            { type: "keshik", count: 2 },
-            { type: "steppe_lancer", count: 3 },
-            { type: "mangudai_elite", count: 4 },
-        ],
-    },
-    // 曹魏·曹操 / 张辽 / 邓艾 / 司马懿 / 于禁 / 田豫 虎豹铁骑军团（鹤翼阵 2+4+3：魏武虎豹骑 2 + 魏武虎豹骑精锐 4 + 诸葛弩 3）
-    "cao_d": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
     "lu": {
         legionName: "庐州军团",
         formationMode: "crane_wing",
@@ -175,36 +32,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "jian_swordman_unshielded", count: 2 },
             { type: "elite_tiger_cavalry", count: 4 },
             { type: "chukonu", count: 3 },
-        ],
-    },
-    "wudu": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "sima_d": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "bozhou_d": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 白袍军团·虎牢关（陈庆之 · 白袍破阵纯骑军团 · 方形阵 3+3+3：精锐虎豹骑 3 + 精锐虎豹骑 3 + 精锐虎豹骑 3 / 9骑纯骑兵大阵）
@@ -646,28 +473,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "mangudai_elite", count: 4 },
         ],
     },
-    // 贝雷尼斯·红海东非要塞（达格纳詹 · 东非阿克苏姆双曲弯刀与御驾巨象战阵 · 鱼鳞阵 4+3+2：弯刀勇士 4 + 精锐弯刀勇士 3 + 御驾战象 2）
-    "beileinisi": {
-        legionName: "古典埃及军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_war_chariot", count: 4 },
-            { type: "antiquity_spearman", count: 3 },
-            { type: "cretan_archer", count: 2 },
-        ],
-    },
-    // 伊庇鲁斯王国·安布拉基亚（皮洛士大帝 · 战象与希腊长枪铁骑大阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 战象 2）
-    "yipilusi": {
-        legionName: "古典希腊军团",
-        legionType: "region",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "hoplite", count: 3 },
-            { type: "elite_greek_cavalry", count: 4 },
-            { type: "gastraphetes", count: 2 },
-        ],
-    },
     // 底比斯圣队军团·底比斯（伊巴密浓达 · 鱼鳞阵 3+4+2：希腊重装步兵 3 + 底比斯圣队主力 4 + 色雷斯标枪手 2）
     "boootiya": {
         legionName: "古典希伦军团",
@@ -774,28 +579,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'arbalest', count: 2 },            // Row 2 尾收重弩 = 劲弩手 2人（纯步兵·无马，山地高穿透强弩射击掩护）
         ],
     },
-    // 塔兰托·大希腊古都（阿契塔 · 塔兰丁标枪轻骑与重步兵方阵 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 塔兰丁骑兵 3 + 罗得岛投石兵 2）
-    "talanduo": {
-        legionName: "古典大希腊军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "ekdromos", count: 4 },
-            { type: "greek_noble_cavalry", count: 3 },
-            { type: "tarantine_cavalry", count: 2 },
-        ],
-    },
-    // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培（罗马军团 · 雁行阵 4+3+2：罗马军 4 + 精锐百夫长 3 + 精锐掷矛手 2）
-    "luoma_diguo": {
-        legionName: "古典罗马军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "legionary", count: 4 },
-            { type: "elite_centurion", count: 3 },
-            { type: "elite_antiquity_skirmisher", count: 2 },
-        ],
-    },
     // 【古典罗马禁卫军团】= IMPERIAL_ROME 文化军团的同名副本，编制必须与它逐格一致。
     // 🔴 [2026-09-07] 这里曾被我测试保存写成「雁行阵 4+3+2」——那是摩泽尔所在区 LATIN 的阵型，
     //    把禁卫军团的锥形阵 2+3+4 挤变形了，造成「同名不同编」。已按 13:04 建区原版改回。
@@ -868,17 +651,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'antiquity_spearman', count: 2 },              // Row 0 步兵前哨 = 古典长矛兵 2人（纯步兵·无马，黑海希腊长盾结阵抗线）
             { type: 'sarmatian', count: 4 },                       // Row 1 两翼绝对主力 = 萨尔马提亚重骑兵 4骑（人马俱装鱼鳞铁甲冲击重骑大合围）
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },  // Row 2 中军后排支援 = 古典重装骑射手 3骑（斯基泰-萨尔马提亚复合强弓漫天箭雨）
-        ],
-    },
-    // 特洛伊卫队军团·特洛伊（赫克托耳 · 鱼鳞阵 3+4+2：希腊雇佣重步兵 3 + 近卫军精锐 4 + 弓兵 2）
-    "teluoyi": {
-        legionName: "封建西亚军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "elite_composite_bowman", count: 4 },
-            { type: "eastern_swordsman", count: 3 },
-            { type: "militia", count: 2 },
         ],
     },
     // 马耳他·圣约翰（瓦莱特 · 马耳他医院骑士军团 · 鱼鳞阵 3+4+2：重装长枪兵 3 + 十字军圣骑士 4 + 火枪兵 2）
@@ -1343,17 +1115,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "mercenary_hoplite", count: 4 },
             { type: "shock_cavalry", count: 2 },
             { type: "gastraphetes", count: 3 },
-        ],
-    },
-    // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团
-    "aqimeinide": {
-        legionName: "古典阿契美尼德军团",
-        legionType: "region",
-        formationMode: "fish_scale",
-        slots: [
-            { type: "immortal", count: 3 },
-            { type: "antiquity_heavy_cavalry_archer", count: 4 },
-            { type: "immortal_ranged", count: 2 },
         ],
     },
     "zhagewei": {
