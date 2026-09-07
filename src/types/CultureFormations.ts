@@ -1588,7 +1588,7 @@ export const SPANISH_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'heavy_pikeman', count: 3 }, // 前排 = 长枪兵重装（西班牙大方阵长枪）
-            { type: 'elite_conquistador', count: 4 }, // 中坚主力【精锐】 = 西班牙征服者精锐（2026-09-07 主人删掉「火器只能占 2 档」，火器可当主力）
+            { type: 'elite_conquistador', count: 4 }, // 中坚主力【精锐】 = 西班牙征服者精锐
             { type: 'champion', count: 2 } // 后排 = 冠军剑士精锐
         ]
     }
@@ -1631,7 +1631,7 @@ export const PORTUGUESE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'heavy_pikeman', count: 4 }, // 前排主力【重装】 = 长枪兵重装
-            { type: 'elite_organ_gun', count: 2 }, // 中排 = 葡萄牙风琴炮精锐（火器只能占 2 档）
+            { type: 'elite_organ_gun', count: 2 }, // 中排 = 葡萄牙风琴炮精锐
             { type: 'arbalest', count: 3 } // 后排 = 劲弩手
         ]
     }
@@ -1842,9 +1842,9 @@ export const GOTHS_TIERS: CompositionTier[] = [
     }
 ];
 /** 古典凯尔特军团（鱼鳞阵 3+4+2，主力在中坚）。
- *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
+ *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
  *  史实依据（拉坦诺文化·高卢与不列颠凯尔特蛮族强权）：
- *   · 前排前卫 战犬（3档） —— 古典时代不列颠凯尔特英国猛犬（Mastiff），成群咆哮冲锋撕咬，打乱敌军前列阵脚，占 3 档前锋。
+ *   · 前排前卫 战犬高级（3档【高级】） —— 古典时代不列颠凯尔特英国猛犬（Mastiff），身披硬皮胸铠成群咆哮撕咬，打乱敌军阵脚。
  *   · 中坚主力 先锋重装步兵（4档【重装】） —— 高卢凯尔特锁子甲长剑重步兵，手持大椭圆盾与拉坦诺重铁剑，中腰厚实重拳突破，占 4 档重装主力。
  *   · 后排支援 古典掷矛手高级（2档【高级】） —— 凯尔特崇山密林重标枪与飞矛投掷死士，在阵后提供强力穿刺掩护，占 2 档支援。 */
 export const CELTS_TIERS: CompositionTier[] = [
@@ -1853,9 +1853,9 @@ export const CELTS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_dog', count: 3 },
-            { type: 'vanguard', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 2 }
+            { type: 'elite_war_dog', count: 3 }, // 前排 = 战犬高级
+            { type: 'vanguard', count: 4 }, // 中坚主力【重装】 = 先锋重装步兵
+            { type: 'elite_antiquity_skirmisher', count: 2 } // 后排 = 古典掷矛手高级
         ]
     }
 ];
@@ -2025,8 +2025,11 @@ export const ORIE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 色雷斯 罗姆菲亚镰刀剑士+轻盾兵+精锐轻盾兵（衡轭阵 4+2+3：镰刀剑士宽线主力 + 轻盾兵中排 + 精锐轻盾兵后排）
- *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（seleisi/奥德里西亚等 5 势力），文化保底与它对齐，消除「同名不同编」。 */
+/** 色雷斯 罗姆菲亚长刃斩手+萨尔马提亚重装铁骑+精锐轻盾标枪手（衡轭阵 3+2+4 / 4+2+3）
+ *  史实依据（奥德里西亚王国与巴尔干-多瑙河战役同盟）：
+ *   · 前排 = 色雷斯长刃斩手（3档） —— 双手挥舞破甲大长刃，凶残撕裂罗马与马其顿步兵盾阵。
+ *   · 中排 = 萨尔马提亚重装铁骑（2档【重装】） —— 多瑙河与巴尔干北岸著名的全具装重骑兵，以铁矛与重铠撕扯冲乱敌阵。
+ *   · 后排主力 = 色雷斯标枪手高级（4档【高级】） —— 色雷斯名扬希腊化世界的轻盾标枪大师，致命投掷压制主力。 */
 export const THRACIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -2034,7 +2037,7 @@ export const THRACIAN_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'rhomphaia_warrior', count: 3 }, // 前排 = 色雷斯长刃斩手
-            { type: 'shock_cavalry', count: 2 }, // 中排 = 冲击重骑兵（奥德里西亚贵族重骑）
+            { type: 'sarmatian', count: 2 }, // 中排【重装】 = 萨尔马提亚重装铁骑
             { type: 'elite_peltast', count: 4 } // 后排主力【高级】 = 色雷斯标枪手高级
         ]
     }
@@ -2140,7 +2143,7 @@ export const KHMER_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_ballista_elephant', count: 2 }, // 尖刀 = 高棉弩炮战象精锐（战象只能占 2 档）
+            { type: 'elite_ballista_elephant', count: 2 }, // 尖刀 = 高棉弩炮战象精锐
             { type: 'archer', count: 3 }, // 中坚 = 南方步弓手
             { type: 'heavy_pikeman', count: 4 } // 底边主力【重装】 = 长枪兵重装
         ]
@@ -2753,7 +2756,7 @@ export const MUGHAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 2 }, // 前锋 = 波斯战象（战象只能占 2 档）
+            { type: 'war_elephant', count: 2 }, // 前锋 = 波斯战象
             { type: 'cavalier', count: 4 }, // 中坚主力【重装】 = 骑士重装
             { type: 'archer', count: 3 } // 后排 = 南方步弓手
         ]
