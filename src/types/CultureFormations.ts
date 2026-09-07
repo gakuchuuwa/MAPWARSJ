@@ -176,6 +176,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     HELLENIC:     'INFANTRY',   // 古典希伦：雅典与斯巴达重步兵方阵
     IMPERIAL_ROME: 'CAVALRY',    // 古典帝国罗马：全员铁骑禁卫突击
     GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
+    MAGNA_GRAECIA:   'MIXED',     // 古典大希腊：步骑标枪综合战阵体系
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -329,6 +330,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
     IMPERIAL_ROME: 'triangle',   // 古典帝国罗马：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
+    MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1918,6 +1920,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     LATIN: '古典共和国罗马军团',
     IMPERIAL_ROME: '古典帝国罗马军团',
     GREEK_MERCENARY: '古典希腊雇佣军团',
+    MAGNA_GRAECIA: '古典大希腊军团',
     INDIA: '古典印度军团',
     BERBER: '封建柏柏尔军团',
     AMERICA: '城堡墨西加军团',
@@ -2985,6 +2988,27 @@ export const PASHTUN_TIERS: CompositionTier[] = [
  *   · 中坚冲阵 希腊化冲击骑兵重装（3档【重装】） —— 希腊化继业者时代雇佣具装重骑兵，以铁矛破开敌线。
  *   · 后排掩护 希腊腹弩手（2档） —— 叙拉古兵工厂发明的古希腊腹弩（Gastraphetes），提供强劲机械抛射支援。
  */
+
+/** 古典大希腊军团（雁行阵 4+3+2，步兵宽线推进）。
+ *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
+ *  史实依据（南意大利与西西里大希腊城邦同盟·塔兰托体系）：
+ *   · 前排主力 希腊埃克德罗摩斯高级（4档【高级】） —— 著名脱阵疾跑破袭重步兵，持矛盾高速切入压制敌方阵脚。
+ *   · 中坚冲阵 希腊贵族骑兵（3档） —— 大希腊各城邦公民骑士阶层冲击铁骑，中腰强力突破。
+ *   · 后翼远射 塔兰丁骑兵（2档） —— 大希腊塔兰托名噪地中海的独门标枪轻骑兵，两翼高速掠袭投射标枪。
+ */
+export const MAGNA_GRAECIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'ekdromos', count: 4 }, // 前排主力【高级】 = 希腊埃克德罗摩斯高级
+            { type: 'greek_noble_cavalry', count: 3 }, // 中坚 = 希腊贵族骑兵
+            { type: 'tarantine_cavalry', count: 2 } // 后翼 = 塔兰丁骑兵
+        ]
+    }
+];
+
 export const GREEK_MERCENARY_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3159,6 +3183,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     HELLENIC: HELLENIC_TIERS,
     IMPERIAL_ROME: IMPERIAL_ROME_TIERS,
     GREEK_MERCENARY: GREEK_MERCENARY_TIERS,
+    MAGNA_GRAECIA: MAGNA_GRAECIA_TIERS,
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

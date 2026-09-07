@@ -142,6 +142,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     HELLENIC: 'xila',
     IMPERIAL_ROME: 'luoma',
     GREEK_MERCENARY: 'xila',
+    MAGNA_GRAECIA: 'talanduo',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
