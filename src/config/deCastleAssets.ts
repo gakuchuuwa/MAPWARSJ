@@ -316,7 +316,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SWEDISH: 'VIKINGS_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
     MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
     HELLENIC: 'MACEDONIAN_CASTLE_AGE3',
-    IMPERIAL_ROME: 'ROMAN_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
+    IMPERIAL_ROME: 'ROMAN_CASTLE_AGE3',
+    GREEK_MERCENARY: 'GREEK_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
