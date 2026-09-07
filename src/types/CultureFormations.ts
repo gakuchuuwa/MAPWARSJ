@@ -177,6 +177,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     IMPERIAL_ROME: 'CAVALRY',    // 古典帝国罗马：全员铁骑禁卫突击
     GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
     MAGNA_GRAECIA:   'MIXED',     // 古典大希腊：步骑标枪综合战阵体系
+    ACHAEMENIDS:     'MIXED',     // 古典阿契美尼德：万人不死卫队步骑弓协同体系
     AMAZONS:         'MIXED',     // 古典亚马逊：女骑射为主力，步战女武士护阵
 };
 
@@ -332,6 +333,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     IMPERIAL_ROME: 'triangle',   // 古典帝国罗马：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
     MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
+    ACHAEMENIDS:     'fish_scale', // 古典阿契美尼德：鱼鳞阵 3+4+2 不死军矛兵3 + 古典重装骑射4 + 不死军弓手2
     AMAZONS:         'crane_wing', // 古典亚马逊：鹤翼阵 2+4+3 女弓手2 + 斯基泰骑射手高级4 + 女战士3
 };
 
@@ -1923,6 +1925,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     IMPERIAL_ROME: '古典帝国罗马军团',
     GREEK_MERCENARY: '古典希腊雇佣军团',
     MAGNA_GRAECIA: '古典大希腊军团',
+    ACHAEMENIDS: '古典阿契美尼德军团',
     AMAZONS: '古典亚马逊军团',
     INDIA: '古典印度军团',
     BERBER: '封建柏柏尔军团',
@@ -3020,6 +3023,27 @@ export const AMAZONS_TIERS: CompositionTier[] = [
     }
 ];
 
+
+/** 古典阿契美尼德军团（鱼鳞阵 3+4+2，中坚突破+不死军步弓协同）。
+ *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
+ *  史实依据（阿契美尼德帝国皇家万人不死卫队 Immortal 体系）：
+ *   · 前排主力 波斯长生军（3档） —— 希罗多德记载的阿契美尼德万人不死军精锐矛步兵，铁叶鳞甲短矛破阵，坚壁御敌。
+ *   · 中坚主力 古典骑射手重装（4档【重装】） —— 波斯帝国精锐具装复合弓骑兵，中阵机动迂回穿插与致命齐射。
+ *   · 后排近卫 波斯长生军弓手（2档） —— 不死军御前弓兵近卫，复合重弓暴雨覆盖，与近战长生军前排形成史实步弓一体协同。
+ */
+export const ACHAEMENIDS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'immortal', count: 3 }, // 前排主力 = 波斯长生军
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 }, // 中坚主力【重装】 = 古典骑射手重装
+            { type: 'immortal_ranged', count: 2 } // 后排近卫 = 波斯长生军弓手
+        ]
+    }
+];
+
 export const MAGNA_GRAECIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3208,6 +3232,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     IMPERIAL_ROME: IMPERIAL_ROME_TIERS,
     GREEK_MERCENARY: GREEK_MERCENARY_TIERS,
     MAGNA_GRAECIA: MAGNA_GRAECIA_TIERS,
+    ACHAEMENIDS: ACHAEMENIDS_TIERS,
     AMAZONS: AMAZONS_TIERS,
 };
 

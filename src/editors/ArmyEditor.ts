@@ -143,6 +143,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     IMPERIAL_ROME: 'luoma',
     GREEK_MERCENARY: 'xila',
     MAGNA_GRAECIA: 'talanduo',
+    ACHAEMENIDS: 'aqimeinide',
     AMAZONS: 'yamaxun',
 };
 

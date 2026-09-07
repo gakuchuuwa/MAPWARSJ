@@ -319,7 +319,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     IMPERIAL_ROME: 'ROMAN_CASTLE_AGE3',
     GREEK_MERCENARY: 'GREEK_CASTLE_AGE3',
     AMAZONS: 'GREEK_CASTLE_AGE3',            // 古典亚马逊：忒弥斯基拉在黑海南岸希腊化圈，用希腊城堡
-    MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
+    MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',
+    ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

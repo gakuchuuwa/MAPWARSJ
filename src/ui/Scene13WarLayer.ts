@@ -434,6 +434,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     IMPERIAL_ROME: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     GREEK_MERCENARY: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     MAGNA_GRAECIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    ACHAEMENIDS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     AMAZONS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
 };
 
@@ -1173,6 +1174,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     IMPERIAL_ROME: 'MEDITERRANEAN',
     GREEK_MERCENARY: 'MEDITERRANEAN',
     MAGNA_GRAECIA: 'MEDITERRANEAN',
+    ACHAEMENIDS: 'MIDDLE_EAST',
     AMAZONS: 'MEDITERRANEAN',
 };
 
