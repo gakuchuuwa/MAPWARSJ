@@ -403,6 +403,11 @@ export class PlayerQuestSystem {
         if (!success) {
             hero.resetMerit('随军任务失败');
             hero.detach();
+            // [2026-09-08 主人定] 自动模式战败后不再自动寻找下一个军团：关闭自动模式，断掉「覆灭→再找军团」的无限链条。
+            if (hero.autoMode) {
+                hero.setAutoMode(false);
+                this.deps.notify('💥 战败，自动模式已关闭——不再自动寻找军团');
+            }
         }
         if (success) {
             if (q.kind === 'restore') {

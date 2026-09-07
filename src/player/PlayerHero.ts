@@ -205,7 +205,14 @@ export class PlayerHero {
     /** 大地图战略战斗结算：随军军团战胜时，按歼敌兵力与官阶指挥分成获得战略战功；战败则功勋归零降职 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
         if (result === 'defeat') {
+            // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
+            // 走 onHostLost → finishQuest(false) → detach() 统一清场（含 factionId / host / 权限乘数 / 自动模式）。
             this.resetMerit('随军战败');
+            if (this.onHostLost) {
+                this.onHostLost(this.hostLegionId ?? '');
+            } else {
+                this.detach();
+            }
             return;
         }
         if (enemyKilled <= 0) return;

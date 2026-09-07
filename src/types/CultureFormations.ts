@@ -3303,7 +3303,7 @@ export const GORYEO_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 帝国朝鲜 牌刀手抗线+高丽战车突击+火枪兵火器压制（鹤翼阵 2+4+3，综合战力 68） */
+/** 帝国朝鲜 牌刀手抗线+高丽战车突击+火枪兵火器压制（鹤翼阵 2+4+3，综合战力 107） */
 export const JOSEON_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3311,7 +3311,7 @@ export const JOSEON_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'jian_swordman_shielded', count: 2, scale: 1 },
-            { type: 'elite_war_wagon', count: 3 },
+            { type: 'war_wagon', count: 3 },
             { type: 'hand_cannoneer', count: 4, scale: 1 }
         ]
     }
