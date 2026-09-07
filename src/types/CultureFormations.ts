@@ -177,6 +177,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     IMPERIAL_ROME: 'CAVALRY',    // 古典帝国罗马：全员铁骑禁卫突击
     GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
     MAGNA_GRAECIA:   'MIXED',     // 古典大希腊：步骑标枪综合战阵体系
+    AMAZONS:         'MIXED',     // 古典亚马逊：女骑射为主力，步战女武士护阵
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -331,6 +332,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     IMPERIAL_ROME: 'triangle',   // 古典帝国罗马：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
     MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
+    AMAZONS:         'crane_wing', // 古典亚马逊：鹤翼阵 2+4+3 女弓手2 + 斯基泰骑射手高级4 + 女战士3
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1921,6 +1923,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     IMPERIAL_ROME: '古典帝国罗马军团',
     GREEK_MERCENARY: '古典希腊雇佣军团',
     MAGNA_GRAECIA: '古典大希腊军团',
+    AMAZONS: '古典亚马逊军团',
     INDIA: '古典印度军团',
     BERBER: '封建柏柏尔军团',
     AMERICA: '城堡墨西加军团',
@@ -2996,6 +2999,27 @@ export const PASHTUN_TIERS: CompositionTier[] = [
  *   · 中坚冲阵 希腊贵族骑兵（3档） —— 大希腊各城邦公民骑士阶层冲击铁骑，中腰强力突破。
  *   · 后翼远射 塔兰丁骑兵（2档） —— 大希腊塔兰托名噪地中海的独门标枪轻骑兵，两翼高速掠袭投射标枪。
  */
+/** 古典亚马逊军团（鹤翼阵 2+4+3，主力在中坚）
+ *  史料：希罗多德《历史》四·110-117 —— 亚马逊人在塔奈斯河口与斯基泰青年合流成萨尔马提亚人，
+ *        其女子「骑马、射猎、上阵，与男子无异」；希腊传统把她们的都城放在特尔莫冬河口的忒弥斯基拉。
+ *        顿河—伏尔加草原的斯基泰-萨尔马提亚库尔干墓里确有大量随葬弓箭短剑的女性墓，是这条传说的实证底子。
+ *    前 2 亚马逊女弓手       —— 轻装步射，两翼游斗
+ *    中 4 斯基泰骑射手高级   —— 主力【高级】：她们的正体就是草原女骑射，与斯基泰同制
+ *    后 3 亚马逊女战士       —— 圆盾长矛的近战女武士，压住阵线
+ */
+export const AMAZONS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'amazon_archer', count: 2 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
+            { type: 'amazon_warrior', count: 3 }
+        ]
+    }
+];
+
 export const MAGNA_GRAECIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3184,6 +3208,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     IMPERIAL_ROME: IMPERIAL_ROME_TIERS,
     GREEK_MERCENARY: GREEK_MERCENARY_TIERS,
     MAGNA_GRAECIA: MAGNA_GRAECIA_TIERS,
+    AMAZONS: AMAZONS_TIERS,
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

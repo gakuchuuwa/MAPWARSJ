@@ -6,4 +6,5 @@
  */
 export const SCYTHIANS_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     sijitai: { name: '斯基泰弓骑', tier: 3 },   // 斯基泰骑射手：草原骑射始祖，文化知名
+    yamaxun: { name: '奥尔帕塔', tier: 3 },     // 希罗多德四·110：斯基泰人称亚马逊人 Oiorpata「杀男者」，史载专名
 };

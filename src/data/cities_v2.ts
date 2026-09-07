@@ -3125,6 +3125,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 20000, region: 'SPANISH', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'small_city', troops: 20000, region: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
     { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 20000, region: 'GREEK', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
+    { id: 'city_themiskyra', name: '忒弥斯基拉', factionId: 'yamaxun', lat: 41.2, lng: 36.98, type: 'small_city', troops: 30000, region: 'AMAZONS', note: '特尔莫冬河口（今土耳其特尔梅），古希腊传统中亚马逊人的都城；赫拉克勒斯第九件功业「夺希波吕忒腰带」即远征此地。希罗多德四·110-117 记亚马逊人自此漂至塔奈斯河口，与斯基泰青年合流成萨尔马提亚人' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

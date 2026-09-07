@@ -318,6 +318,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     HELLENIC: 'MACEDONIAN_CASTLE_AGE3',
     IMPERIAL_ROME: 'ROMAN_CASTLE_AGE3',
     GREEK_MERCENARY: 'GREEK_CASTLE_AGE3',
+    AMAZONS: 'GREEK_CASTLE_AGE3',            // 古典亚马逊：忒弥斯基拉在黑海南岸希腊化圈，用希腊城堡
     MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
 };
 

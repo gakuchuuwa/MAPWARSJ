@@ -1123,6 +1123,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'trastamara': 'city_la_mota',
     'odrysian_late': 'city_seuthopolis',
     'naxos_ancient': 'city_chimarros',
+    'yamaxun': 'city_themiskyra',
 };
 
 // @ts-ignore

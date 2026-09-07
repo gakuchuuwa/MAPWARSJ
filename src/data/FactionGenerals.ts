@@ -1125,6 +1125,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     odrysian_late: { generalId: 'gen_seuthes_iii', generalName: '塞乌特斯', portrait: '/assets/GREEK/odrysian_late_saiwutesi.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
     sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
+    yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
 };
 
