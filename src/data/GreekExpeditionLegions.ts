@@ -32,4 +32,10 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     maqidun: { name: '伙伴骑兵', tier: 0 },
     xiaofulijiya: { name: '希腊雇佣兵', tier: 2 },
     jileinaijia: { name: '昔兰尼骑兵', tier: 4 },
+
+    // ── 2026-09 古典希腊 DE 英雄 ──
+    laxidaimeng: { name: '斯巴达重步', tier: 1 },          // 安菲波利斯·巴西达斯：斯巴达重步兵，422 阵亡守城
+    boluobennisa: { name: '斯巴达舰队', tier: 1 },          // 羊河·吕山德：斯巴达海军舰队，405 全歼雅典海军
+    ajidewangchao: { name: '帖撒利骑', tier: 2 },          // 格拉尼库斯·帕曼纽：帖撒利重骑兵，左翼破阵
+    jiyezhe: { name: '马其顿方阵', tier: 1 },          // 佩鲁西姆·佩尔狄卡斯：马其顿方阵步兵
 };

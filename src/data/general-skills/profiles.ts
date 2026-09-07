@@ -3222,6 +3222,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_robert_guiscard: { generalId: 'gen_robert_guiscard', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 诺曼南意大利征服 → 名将
     gen_yodit: { generalId: 'gen_yodit', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' }, // 半传说女王·摧毁阿克苏姆 → 普将
     gen_osman_i: { generalId: 'gen_osman_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 奥斯曼开国·加齐圣战 → 名将
+    gen_brasidas: { generalId: 'gen_brasidas', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 安菲波利斯之战歼灭雅典军而阵亡 → 名将
+    gen_lysander: { generalId: 'gen_lysander', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 羊河海战全歼雅典舰队 → 名将
+    gen_parmenion: { generalId: 'gen_parmenion', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 亚历山大副帅，三大会战统左翼 → 名将
+    gen_perdiccas: { generalId: 'gen_perdiccas', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 帝国摄政，征埃及兵败被弑 → 普将
+    gen_artemisia: { generalId: 'gen_artemisia', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 卡里亚女王，萨拉米斯助波斯无胜绩 → 普将
 };
 
 

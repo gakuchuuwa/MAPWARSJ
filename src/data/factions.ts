@@ -1938,6 +1938,11 @@ export const FACTIONS: Faction[] = [
     { id: 'apuliya', name: '阿普利亚' },        // 梅尔菲·阿普利亚公爵国（吉斯卡尔）
     { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
     { id: 'aosimanbeiyiguo', name: '奥斯曼贝伊国' },        // 瑟于特·奥斯曼贝伊国（奥斯曼一世）
+    { id: 'laxidaimeng', name: '拉栖代蒙' },        // 安菲波利斯·斯巴达正式古称拉栖代蒙（巴西达斯）
+    { id: 'boluobennisa', name: '伯罗奔尼撒' },        // 羊河·伯罗奔尼撒同盟（吕山德）
+    { id: 'ajidewangchao', name: '阿吉德王朝' },        // 格拉尼库斯·马其顿阿吉德王朝（帕曼纽）
+    { id: 'jiyezhe', name: '继业者' },        // 佩鲁西姆·亚历山大帝国继业者（佩尔狄卡斯）
+    { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏·卡里亚王国（阿尔特米西亚）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

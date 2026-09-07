@@ -2980,6 +2980,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_meierfei', name: '梅尔菲', factionId: 'apuliya', lat: 40.99, lng: 15.65, type: 'small_city', troops: 30000, region: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'small_city', troops: 30000, region: 'ETHIOPIANS', note: '塞米恩山脉贝塔以色列王国故地，传说尤迪特由此摧毁阿克苏姆' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'aosimanbeiyiguo', lat: 40.03, lng: 30.18, type: 'small_city', troops: 30000, region: 'OTTOMAN', note: '奥斯曼贝伊国第一都城，奥斯曼一世加齐圣战起源地' },
+    { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'laxidaimeng', lat: 40.82, lng: 23.85, type: 'small_city', troops: 30000, region: 'GREEK', note: '色雷斯海岸希腊殖民城，巴西达斯424年攻克、422年战死守城' },
+    { id: 'city_yanghe', name: '羊河', factionId: 'boluobennisa', lat: 40.36, lng: 26.61, type: 'stockade', troops: 30000, region: 'GREEK', note: '羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队' },
+    { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'ajidewangchao', lat: 40.32, lng: 27.28, type: 'stockade', troops: 30000, region: 'MACEDONIAN', note: '格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
+    { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'jiyezhe', lat: 31.04, lng: 32.55, type: 'stockade', troops: 30000, region: 'EGYPT', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
+    { id: 'city_halikanasu', name: '哈利卡纳苏', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 30000, region: 'GREEK', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯' },
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.51, lng: 36.29, type: 'big_city', troops: 30000, region: 'ORIE', note: '倭马亚都，西亚千年都会' },
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'big_city', troops: 30000, region: 'HEBREWS', note: '大卫王定都与所罗门圣殿所在地，三大一神教圣城' },

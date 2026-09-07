@@ -27,6 +27,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     bendou: { name: '阿克里泰', tier: 2 },         // 特拉布宗·阿历克塞：科穆宁边防军史载专名，长期抗突厥袭扰有实绩
     saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
+    kaliya: { name: '卡里亚水师', tier: 2 },       // 哈利卡纳苏·阿尔特米西亚：卡里亚女王萨拉米斯海战五舰助波斯
 
     // ── T3 风土之兵：文化知名度或兵种特色，无可考大捷 ──
     sumeier: { name: '苏美尔方阵', tier: 3 },
