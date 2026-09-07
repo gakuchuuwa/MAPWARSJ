@@ -3137,13 +3137,25 @@ export class Scene13WarLayer {
                 lane: this.spawns.length, row: -1, playerElite: true,
             });
         }
+        // 🔴 [2026-09-07 主人定]「探马控同兵种的一队、先锋控同兵种的一排」。
+        //    setup.unitKey = 玩家面板选中的本势力兵种；本方阵中 key 相同的口才归他指挥。
+        //    还没学到兵种（unitKey 为 null）→ 退回旧口径：one=自带精锐/前排第一口，front=整个前排。
+        const sameKey = (s: { f: number; key: string }) =>
+            setup.unitKey !== null && s.f === f && s.key === setup.unitKey;
         for (const s of this.spawns) {
             if (s.f !== f) continue;
             if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
-            else if (setup.control === 'front' && s.row <= 0) this.playerCtlLanes.add(s.lane);
+            else if (setup.control === 'front') {
+                // 先锋：同兵种的整整一排（该兵种所在的那一排全给他）
+                if (setup.unitKey !== null) { if (sameKey(s)) this.playerCtlLanes.add(s.lane); }
+                else if (s.row <= 0) this.playerCtlLanes.add(s.lane);
+            }
         }
         if (setup.control === 'one') {
-            const pick = this.spawns.find((s) => s.f === f && s.row === -1) ?? row0[0];
+            // 探马：同兵种里挑一队
+            const pick = this.spawns.find((s) => sameKey(s))
+                ?? this.spawns.find((s) => s.f === f && s.row === -1)
+                ?? row0[0];
             if (pick) this.playerCtlLanes.add(pick.lane);
         }
 
@@ -3167,7 +3179,7 @@ export class Scene13WarLayer {
         };
         this.heroMan = hero;
         this.men.push(hero);
-        this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, elite: setup.eliteLane?.key ?? null });
+        this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, elite: setup.eliteLane?.key ?? null, unitKey: setup.unitKey });
     }
 
     /** 玩家键盘移动（有输入时接管这一帧：不索敌不出手，只走）。返回 true = 本帧已处理 */

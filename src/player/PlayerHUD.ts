@@ -4,7 +4,7 @@
 import type { PlayerHero } from './PlayerHero';
 import type { PlayerQuestSystem } from './PlayerQuestSystem';
 import type { DialoguePayload } from './PlayerQuestSystem';
-import { nextRankAfter } from './PlayerConfig';
+import { nextRankAfter, PLAYER_RANKS } from './PlayerConfig';
 import { uiPx, COMBAT_UI_TOKENS as T } from '../config/combat-ui-tokens';
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
@@ -101,50 +101,71 @@ export class PlayerHUD {
         const next = nextRankAfter(rank);
         const quest = this.quests.getQuest();
         const host = hero.getHostLegion();
-        const factionName = hero.factionId ? this.deps.getFactionName(hero.factionId) : '无（独行）';
+        const factionName = hero.factionId ? this.deps.getFactionName(hero.factionId) : '独行';
         const travel = hero.getTravelCityId();
         const state = host
-            ? `随军 ${host.name}（${Math.floor(host.getTroops() / 10000 * 10) / 10}万）`
+            ? `随军 ${host.name}`
             : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';
         const questText = quest
             ? (quest.kind === 'restore'
                 ? `助${quest.generalName}复国【${quest.cityName}】`
                 : `随${quest.generalName}攻【${quest.targetCityName}】`)
-            : '无（到据点找武将）';
+            : '到据点找武将';
         const row = (k: string, v: string, color = '#f5e6c8') =>
             `<div style="display:flex;justify-content:space-between;gap:8px;line-height:1.6;"><span style="color:#ba9e7b;font-weight:600;">${k}</span><span style="color:${color};font-weight:700;text-align:right;">${v}</span></div>`;
         let html = '';
-        html += row('官阶', `${rank.name}（${rank.title}）`, '#ffd700');
+        html += row('官阶', rank.name, '#ffd700');
         html += row('战力', `第九环 ×${rank.powerMult.toFixed(1)}`, '#ffd700');
         html += row('职权', rank.authority, '#9ec5e8');
-        html += row('功勋', next ? `${hero.merit.toLocaleString()} / ${next.merit.toLocaleString()}（→${next.name}）` : `${hero.merit.toLocaleString()}（已登极顶）`, '#fffcee');
+        html += row('功勋', next ? `${hero.merit.toLocaleString()} / ${next.merit.toLocaleString()}` : hero.merit.toLocaleString(), '#fffcee');
         html += row('势力', factionName, hero.factionId ? '#52c486' : '#ba9e7b');
         html += row('状态', state, '#f5e6c8');
         html += row('任务', questText, quest ? '#ff8585' : '#ba9e7b');
-        html += `<div style="margin-top:7px;margin-bottom:3px;color:#ba9e7b;font-size:12px;font-weight:600;">精锐战法（战术模式自领）</div>`;
+        html += row('本势力兵种', hero.learnedUnits.length
+            ? hero.learnedUnits.map((u) => u.unitName).join(' / ')
+            : '尚未学会', hero.learnedUnits.length ? '#9ec5e8' : '#ba9e7b');
+        html += `<div style="margin-top:7px;margin-bottom:3px;color:#ba9e7b;font-size:12px;font-weight:600;">我的兵种</div>`;
         this.body.innerHTML = html;
 
-        const select = document.createElement('select');
-        select.style.cssText = `
-            width:100%; margin-top:2px; font-family:inherit; font-size:12px; padding:3px 6px;
+        // 🔴 [2026-09-07 主人定] 斥候学 1 个、探马学 2 个并**可自选**、先锋集齐 3 个。
+        //    选中的兵种既是玩家在地图/13 里的素材，也决定战术模式能控哪些口（同兵种）。
+        const uSel = document.createElement('select');
+        uSel.style.cssText = `
+            width:100%; margin-top:2px; margin-bottom:6px; font-family:inherit; font-size:12px; padding:3px 6px;
             background:rgba(35,28,20,0.92); color:#f5e6c8;
             border:1px solid rgba(212,175,55,0.45); border-radius:5px;
             outline:none; cursor:pointer; box-sizing:border-box;
         `;
-        const none = document.createElement('option');
-        none.value = '-1';
-        none.textContent = hero.learnedElites.length ? '不带精锐' : '尚未学会（出征克城可学）';
-        select.appendChild(none);
-        hero.learnedElites.forEach((e, i) => {
-            const opt = document.createElement('option');
-            opt.value = String(i);
-            opt.textContent = `${e.name}（${e.factionName}）`;
-            select.appendChild(opt);
+        if (!hero.learnedUnits.length) {
+            const o = document.createElement('option');
+            o.value = '-1'; o.textContent = '近东民兵';
+            uSel.appendChild(o);
+        }
+        hero.learnedUnits.forEach((u, i) => {
+            const o = document.createElement('option');
+            o.value = String(i);
+            o.textContent = u.unitName;
+            uSel.appendChild(o);
         });
-        select.value = String(hero.selectedElite);
-        select.disabled = hero.learnedElites.length === 0 || rank.control === 'none';
-        select.addEventListener('change', () => hero.selectElite(Number(select.value)));
-        this.body.appendChild(select);
+        uSel.value = String(hero.selectedUnit);
+        // 斥候只有一个兵种、且主人定「探马才可挑」→ 斥候阶段锁死
+        const canPickUnit = hero.learnedUnits.length > 1
+            && PLAYER_RANKS.findIndex((r) => r.id === rank.id) >= PLAYER_RANKS.findIndex((r) => r.id === 'outrider');
+        uSel.disabled = !canPickUnit;
+        uSel.addEventListener('change', () => hero.selectUnit(Number(uSel.value)));
+        this.body.appendChild(uSel);
+        if (!canPickUnit && hero.learnedUnits.length) {
+            const h = document.createElement('div');
+            h.style.cssText = 'font-size:11px;color:#9e8a75;margin-top:-4px;margin-bottom:6px;';
+            h.textContent = '升至探马后可自选兵种素材';
+            this.body.appendChild(h);
+        }
+
+        // 🔴 [2026-09-07 主人定「精锐战法是什么玩意，删除」] 面板里的「精锐战法」下拉已删。
+        //    它选的是打城拿到的精锐番号（learnedElites → Scene13 自领编队 eliteLane），
+        //    与新的「我的兵种」（本势力三排按官阶学，决定素材与受控编队）是两套东西，重复且难懂。
+        //    ⚠️ 只删了面板入口；底层 learnedElites / eliteLane 仍在（出征克城照旧发奖励，存档不动）。
+        //    要连底层一起拆，说一声。
         if (rank.control === 'none') {
             const hint = document.createElement('div');
             hint.style.cssText = 'font-size:11px;color:#9e8a75;margin-top:3px;';
@@ -161,7 +182,7 @@ export class PlayerHUD {
         autoCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37;';
         autoCheck.addEventListener('change', () => hero.setAutoMode(autoCheck.checked));
         autoLabel.appendChild(autoCheck);
-        autoLabel.appendChild(document.createTextNode('🤖 自动模式（自动入伍征战）'));
+        autoLabel.appendChild(document.createTextNode('🤖 自动模式'));
         this.body.appendChild(autoLabel);
 
         if (host) {

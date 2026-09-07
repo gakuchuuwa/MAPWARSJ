@@ -1,3 +1,6 @@
+import { getFactionCultureRegion } from '../config/portrait_defaults';
+import { CULTURE_TIERS_MAP } from '../types/CultureFormations';
+import { WAR_TYPES } from '../data/WarTypes';
 /**
  * PlayerHero —— 玩家单骑（乱入者）在战略地图上的本体。
  *
@@ -20,6 +23,9 @@ import {
     PLAYER_CITY_ARRIVE_DIST,
     PLAYER_ELITE_SQUAD_TROOPS,
     PLAYER_HERO_KEY,
+    heroKeyForRank,
+    moveClassForHeroKey,
+    type PlayerRankId,
     PLAYER_HERO_NAME,
     PLAYER_HERO_SPEED_MULT,
     PLAYER_RANKS,
@@ -27,6 +33,18 @@ import {
     rankFor,
     type PlayerRank,
 } from './PlayerConfig';
+
+/** 从本势力文化军团三排里学到的兵种（≠ 打城拿到的精锐番号 LearnedElite）。 */
+export interface LearnedUnit {
+    /** 兵种 key（UNIT_ASSETS / WAR_TYPES 同名） */
+    unitKey: string;
+    /** 兵种中文名（面板显示） */
+    unitName: string;
+    /** 学到时所属势力 */
+    factionId: string;
+    /** 该兵种在本势力军团里的排号：0 前排 / 1 中坚 / 2 后排 */
+    row: number;
+}
 
 export interface LearnedElite {
     /** 精锐番号（如「福建水师」） */
@@ -42,6 +60,8 @@ export interface PlayerSaveState {
     heroDowns: number;
     factionId: string | null;
     learnedElites: LearnedElite[];
+    learnedUnits?: LearnedUnit[];
+    selectedUnit?: number;
     selectedElite: number;
     lat: number;
     lng: number;
@@ -56,6 +76,10 @@ export interface Scene13PlayerSetup {
     control: PlayerRank['control'];
     /** 玩家自选精锐编队（探马及以上且已选精锐才有） */
     eliteLane: { key: string; troops: number; name: string } | null;
+    /** 🔴 [2026-09-07 主人定] 玩家当前套用的本势力兵种 key。
+     *  受控编队按它挑：探马 = 同兵种的**一队**，先锋 = 同兵种的**一排**。
+     *  还没学到兵种时为 null → 退回旧口径（前排第一口 / 整个前排）。 */
+    unitKey: string | null;
     onKill: (byHero: boolean) => void;
     onHeroDown: () => void;
 }
@@ -87,6 +111,12 @@ export class PlayerHero {
     /** 当前效忠势力（接任务时加入；null = 独行） */
     public factionId: string | null = null;
     public learnedElites: LearnedElite[] = [];
+
+    /** 🔴 [2026-09-07 主人定] 本势力已学兵种：斥候学 1 个、探马再 1 个、先锋再 1 个，
+     *  到先锋集齐该势力文化军团的三排。学到的兵种即玩家自己的素材（可在面板里挑）。 */
+    public learnedUnits: LearnedUnit[] = [];
+    /** 面板选中的已学兵种下标；-1 = 还没学到（用近东民兵） */
+    public selectedUnit = -1;
     /** 选中带入战术模式的精锐下标（-1 = 不带） */
     public selectedElite = -1;
 
@@ -120,6 +150,9 @@ export class PlayerHero {
         // 🔴 [2026-09-07 主人定「海上用独木舟」] 玩家单骑无文化区，指定独木舟；
         //    随军时下面 update() 会按宿主舰队覆盖，这里只管一个人漂海。
         this.army.preferredNavalShip = 'CANOE';
+        // 🔴 [2026-09-07 主人定「骑兵/步兵/船 移动速度要区分」] 按当前素材定行军大类；
+        //    官阶变化会换素材，故 syncMoveProfile() 在升阶/入伙/脱离时都要再调一次。
+        this.syncMoveProfile();
         this.army.setSpeedMultiplier(PLAYER_HERO_SPEED_MULT);
         // 开局集结闸门是给首发军团的开场仪式，玩家不受它约束（否则开局 5 秒内点据点没反应）
         this.army.exemptFromDeployHold = true;
@@ -134,7 +167,13 @@ export class PlayerHero {
 
     public get id(): string { return this.army.id; }
     public get name(): string { return this.playerName; }
-    public get heroKey(): string { return PLAYER_HERO_KEY; }
+    /** 玩家素材：随官阶变（主人 2026-09-07 定「起始套用民兵」）。
+     *  ⚠️ 同时决定 13 里的血/攻/防 —— Scene13 用 statsFor(heroKey) 取 WAR_TYPES。 */
+    public get heroKey(): string {
+        // 🔴 [2026-09-07 主人定「学到的兵种给玩家套用」] 优先用面板选中的本势力已学兵种；
+        //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（平民=近东民兵）。
+        return this.getSelectedUnit()?.unitKey ?? heroKeyForRank(this.getRank().id);
+    }
     public rename(newName: string): void {
         const trimmed = newName.trim();
         if (!trimmed) return;
@@ -142,6 +181,12 @@ export class PlayerHero {
         this.army.name = trimmed;
         // renderer.name 是 getter（返回 army.name），改了 army.name 即自动生效，无需给 renderer 赋值
         this.emitChange();
+    }
+
+    /** 同步玩家的地图行军大类（骑=CAVALRY 平原2.0 / 步=INFANTRY 平原1.4·山地1.1）。
+     *  海上不归它管：登船后全军统一 SEA_SPEED_MULTIPLIER，兵种加成失效。 */
+    private syncMoveProfile(): void {
+        this.army.preferredMoveClass = moveClassForHeroKey(this.heroKey);
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
@@ -173,6 +218,8 @@ export class PlayerHero {
         this.merit += n;
         const after = this.getRank();
         if (after.id !== before.id) {
+            this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
+            this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
             this.deps.notify(`🎖️ 功勋 ${this.merit}，${PLAYER_HERO_NAME}晋升为【${after.name}】`);
             gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（功勋 ${this.merit}）`);
             // 晋升：入伍中则同步军团第九环战力乘数 + 官阶名
@@ -190,6 +237,8 @@ export class PlayerHero {
         const prevMerit = this.merit;
         this.merit = 0;
         const after = this.getRank();
+        this.syncLearnedUnits();  // 降阶：收回超额已学兵种
+        this.syncMoveProfile();
         const host = this.getHostLegion();
         if (host) {
             host.playerHostPowerMult = after.powerMult;
@@ -231,6 +280,66 @@ export class PlayerHero {
         this.deps.notify(`🚩 大捷！随军斩敌 ${enemyKilled.toLocaleString()}，按【${rank.name}】军职记战功 ${gained.toLocaleString()}`);
     }
 
+    // ── 本势力兵种（按官阶学） ──────────────────────────────
+    /** 该官阶应当已学会几个本势力兵种：斥候1 / 探马2 / 先锋及以上3。 */
+    private learnQuotaForRank(rankId: PlayerRankId): number {
+        const idx = PLAYER_RANKS.findIndex((r) => r.id === rankId);
+        const q = (id: PlayerRankId) => PLAYER_RANKS.findIndex((r) => r.id === id);
+        if (idx >= q('vanguard')) return 3;   // 先锋起：集齐三排
+        if (idx >= q('outrider')) return 2;   // 探马：两个
+        if (idx >= q('scout')) return 1;      // 斥候：一个
+        return 0;                              // 平民：还没入伙，用近东民兵
+    }
+
+    /**
+     * 按当前官阶补齐应学的本势力兵种。
+     * 🔴 [2026-09-07 主人定]「斥候学一个（三排随机）→ 探马再一个 → 先锋再一个，集齐三排」。
+     *    随机只在**还没学过的排**里抽，所以到先锋必然三排各一个，不会重复。
+     *    学到即可套用：玩家素材 = 选中的已学兵种（见 heroKey）。
+     */
+    public syncLearnedUnits(): void {
+        const want = this.learnQuotaForRank(this.getRank().id);
+        if (!this.factionId) { 
+            if (this.learnedUnits.length) { this.learnedUnits = []; this.selectedUnit = -1; }
+            return;
+        }
+        const region = getFactionCultureRegion(this.factionId);
+        const slots = region ? (CULTURE_TIERS_MAP[region]?.[0]?.slots ?? []) : [];
+        if (!slots.length) return;
+        // 换了势力：清空重学（学的是「该势力的兵」）
+        if (this.learnedUnits.some((u) => u.factionId !== this.factionId)) {
+            this.learnedUnits = [];
+            this.selectedUnit = -1;
+        }
+        while (this.learnedUnits.length < want && this.learnedUnits.length < slots.length) {
+            const taken = new Set(this.learnedUnits.map((u) => u.row));
+            const pool = (slots as Array<{ type: string; count: number }>)
+                .map((sl, row) => ({ sl, row })).filter((x) => !taken.has(x.row));
+            if (!pool.length) break;
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            const name = WAR_TYPES[pick.sl.type]?.name ?? pick.sl.type;
+            this.learnedUnits.push({ unitKey: pick.sl.type, unitName: name, factionId: this.factionId, row: pick.row });
+            if (this.selectedUnit < 0) this.selectedUnit = 0;
+            this.deps.notify(`🗡️ 学会本势力兵种【${name}】`);
+        }
+        // 掉阶（功勋清零）时收回超额
+        if (this.learnedUnits.length > want) {
+            this.learnedUnits.length = want;
+            if (this.selectedUnit >= this.learnedUnits.length) this.selectedUnit = this.learnedUnits.length - 1;
+        }
+    }
+
+    /** 面板选兵种素材（探马及以上才开放，见 PlayerHUD） */
+    public selectUnit(idx: number): void {
+        this.selectedUnit = idx >= 0 && idx < this.learnedUnits.length ? idx : -1;
+        this.syncMoveProfile();
+        this.emitChange();
+    }
+
+    public getSelectedUnit(): LearnedUnit | null {
+        return this.learnedUnits[this.selectedUnit] ?? null;
+    }
+
     // ── 精锐 ──────────────────────────────────────────────
     public learnElite(e: LearnedElite): boolean {
         if (this.learnedElites.some((x) => x.unitKey === e.unitKey && x.factionId === e.factionId)) return false;
@@ -253,6 +362,8 @@ export class PlayerHero {
     public joinFaction(factionId: string): void {
         this.factionId = factionId;
         this.army.setFactionId(factionId);
+        this.syncLearnedUnits();  // 入伙即斥候 → 立刻从该势力三排随机学一个
+        this.syncMoveProfile();   // 素材换成学到的兵 → 行军大类跟着变
         const r = this.army.getRenderer();
         if (r) r.factionId = factionId;
         this.emitChange();
@@ -286,6 +397,8 @@ export class PlayerHero {
         // [2026-09-05 玩家] 退出势力：离队后不再属于该势力，不挂势力旗帜
         this.factionId = null;
         this.army.setFactionId('');
+        this.syncLearnedUnits();  // 退出势力：清空已学兵种（学的是「该势力的兵」）
+        this.syncMoveProfile();   // 素材回近东民兵（步）
         const rr = this.army.getRenderer();
         if (rr) rr.factionId = undefined;
         this.deps.releaseCamera();
@@ -420,6 +533,7 @@ export class PlayerHero {
             heroName: this.name,
             control: rank.control,
             eliteLane: elite ? { key: elite.unitKey, troops: PLAYER_ELITE_SQUAD_TROOPS, name: elite.name } : null,
+            unitKey: this.getSelectedUnit()?.unitKey ?? null,
             onKill: () => this.addMerit(20),
             onHeroDown: () => this.noteHeroDown(),
         };
@@ -433,6 +547,8 @@ export class PlayerHero {
             heroDowns: this.heroDowns,
             factionId: this.factionId,
             learnedElites: this.learnedElites.map((e) => ({ ...e })),
+            learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
+            selectedUnit: this.selectedUnit,
             selectedElite: this.selectedElite,
             lat: p.lat,
             lng: p.lng,
@@ -445,6 +561,8 @@ export class PlayerHero {
         this.merit = s.merit ?? 0;
         this.heroDowns = s.heroDowns ?? 0;
         this.learnedElites = (s.learnedElites ?? []).map((e) => ({ ...e }));
+        this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
+        this.selectedUnit = s.selectedUnit ?? -1;
         this.selectedElite = Math.min(this.learnedElites.length - 1, s.selectedElite ?? -1);
         if (s.factionId) this.joinFaction(s.factionId);
         if (Number.isFinite(s.lat) && Number.isFinite(s.lng)) this.army.setPosition(s.lat, s.lng);

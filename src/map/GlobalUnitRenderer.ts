@@ -2413,28 +2413,15 @@ export class GlobalUnitRenderer {
                     return;
                 }
 
-                // 🔴 入伍随军进海：使用与母军团相同的船，在前锋领航
-                const hostShipId = (hostLegion as any)?.navalShipAssetLock
-                    ?? (hostR as any)?.navalShipAssetLock
-                    ?? getCultureNavalShip((hostLegion as any)?.cultureRegion, (hostLegion as any)?.getFactionId?.() ?? hero?.factionId ?? 'zhonghua');
-
-                unit.navalShipAssetLock = hostShipId;
+                // 🔴 [2026-09-07 主人定「玩家加入势力后，海上只显示势力船只，不用显示玩家」]
+                //    改前：玩家被画成**一条单独的船**（母军团船型 + 前方 100px 前锋领航），
+                //    海上因此出现两条船 —— 玩家那条纯属重复。现在随军进海直接不画玩家，
+                //    母军团自己的舰队就是唯一显示。位置仍同步，只是不出图。
+                //    不动 navalShipAssetLock：PlayerHero.update 每帧会把它同步成母军团船型，
+                //    这里改它只会跟那边打架；不画就够了。
                 unit.isOnSea = true;
-                if (!unit.factionId) unit.factionId = hero?.factionId || (hostLegion as any)?.getFactionId?.() || 'zhonghua';
-
-                // 同步母军团移动状态、朝向与航向角
-                unit.isMoving = hostR.isMoving;
-                unit.isAttacking = hostR.isAttacking;
-                if ((hostLegion as any)?.navalHeadingRad !== undefined) {
-                    unit.navalHeadingRad = (hostLegion as any).navalHeadingRad;
-                }
-                const dir = hostR.lastDirection ?? directionIndex;
-                directionIndex = dir;
-                unit.lastDirection = dir;
-
-                // 前锋领航偏移：随军战船位于母军团前排前锋引路
-                const off = HeroSpriteDrawer.forwardOffset(dir, 100 * scale);
-                centerPoint = L.point(centerPoint.x + off.x, centerPoint.y + off.y);
+                unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
+                return;
             } else {
                 // 独行玩家（未入伍）：
                 if (!isNaval) {
@@ -2446,8 +2433,12 @@ export class GlobalUnitRenderer {
                     return;
                 }
 
-                // 🔴 独行进海：玩家使用商船（MERCHANT_SHIP 帆布商船）！
-                unit.navalShipAssetLock = 'MERCHANT_SHIP';
+                // 🔴 [2026-09-07 主人定「海上用独木舟」] 原来这里写死 'MERCHANT_SHIP'，
+                //    把 Army.preferredNavalShip 盖掉了 —— 玩家设的独木舟根本没机会生效。
+                //    改为优先用玩家自己的船型锁/首选船型，取不到才退回商船。
+                unit.navalShipAssetLock = (unit as any).navalShipAssetLock
+                    ?? (unit as any).preferredNavalShip
+                    ?? 'MERCHANT_SHIP';
                 unit.isOnSea = true;
                 // [2026-09-05 玩家] 离队（无势力）时保持空，不 fallback 挂中原旗
                 if (!unit.factionId && hero?.factionId) unit.factionId = hero.factionId;
