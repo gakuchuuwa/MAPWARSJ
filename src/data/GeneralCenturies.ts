@@ -1031,6 +1031,65 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_seuthes_iii': -4,
     'gen_chabrias': -4,
     'wangdaer_gaisalike': 5,                             // 盖萨里克 · wangdaer · 希波
+
+    // ══════ 封建与全库新增武将成名世纪（57人，史实核定补入）══════
+    'xiongren_atila':                    5,     // 阿提拉 · xiongren · 匈人帝国上帝之鞭（在位434-453）
+    'talike_talike':                     8,     // 塔里克 · talike · 直布罗陀征服者（711年渡海）
+    'sanfoqi_dapunta':                   7,     // 达本陀 · sanfoqi · 三佛齐开国君主（683年立国）
+    'gen_panangkaran':                   8,     // 帕南卡兰 · medang · 夏连特拉王朝国王（746-784在位）
+    'gen_mihirabhoja':                   9,     // 迷企罗波阇 · gurjara · 普腊蒂哈腊帝国皇帝（836-885在位）
+    'zhuluo_lajindela':                  11,    // 拉金德拉一世 · zhuluo · 朱罗帝国大帝远征南洋（1014-1044在位）
+    'jienei_jienei':                     10,    // 杰内 · jienei · 西非杰内古城中世纪早期领主
+    'nuowei_halaer':                     9,     // 哈拉尔一世 · nuowei · 金发哈拉尔统一挪威（872-930在位）
+    'sashan_aerdaxier':                  3,     // 阿尔达希尔一世 · sashan · 萨珊波斯开国君主（224-242在位）
+    'gen_ezana':                         4,     // 埃扎纳 · ethiopia · 阿克苏姆帝国定教大帝（320-360在位）
+    'gen_bolusi':                        -4,    // 波鲁斯 · bulu · 古印度波鲁斯国王对抗亚历山大（前326年海达斯佩斯河战役）
+    'sijitai_ateas':                     -4,    // 阿泰阿斯 · sijitai · 斯基泰国王（前339年阵亡）
+    'yamaxun_xibolvte':                  -12,   // 希波吕忒 · yamaxun · 亚马逊女王神话时代（前12世纪）
+    'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
+    'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约前2112年）
+    'fujisi_fujiweng':                   -4,    // 福基翁 · fujisi · 雅典城邦政治家军事家（前4世纪）
+    'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（前776年）
+    'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约前24年）
+    'jiaye_jiaye':                       1,     // 金首露/伽耶 · jiaye · 伽耶开国君主（公元1世纪）
+    'pidisha_pidisha':                   -2,    // 毗底沙 · pidisha · 巽伽王朝陪都名邑（前2世纪）
+    'aodesuosi_aodesuosi':               -4,    // 奥德索斯 · aodesuosi · 黑海希腊殖民城邦首领（前4世纪）
+    'disidelusi_disidelusi':             2,     // 蒂斯德鲁斯 · disidelusi · 罗马阿非利加行省竞技场督造官（2世纪）
+    'yisatisi_yisatisi':                 -6,    // 伊萨提斯 · yisatisi · 古波斯行省总督（前6世纪）
+    'keernuwaye_geladelong':             5,     // 格拉德隆 · keernuwaye · 凯尔特布列塔尼科努瓦耶国王（5世纪）
+    'gen_henry_v':                       15,    // 亨利五世 · yinggelan · 阿金库尔战役英王（1415年成名）
+    'gen_baodewen_iv':                   12,    // 鲍德温四世 · yelusalengwg · 耶路撒冷麻风王蒙吉萨战役（1177年成名）
+    'mamuluke_baibaisi':                 13,    // 拜巴尔斯 · mamuluke · 马穆鲁克阿音札鲁特击退蒙古（1260年成名）
+    'gen_vladimir_andreyevich':          14,    // 勇者弗拉基米尔 · xieerpuhuofu_gongguo · 库利科沃战役伏击奇功（1380年成名）
+    'gen_parameswara':                   15,    // 拜里米苏拉 · malacca · 马六甲苏丹国开国君主（约1400年成名）
+    'pandiya_jiatawaerman':              13,    // 贾塔瓦尔曼 · pandiya · 潘地亚王朝复兴雄主（1251-1268在位）
+    'gen_sundjata':                      13,    // 松迪亚塔 · manding · 马里帝国开国狮父（1235年吉里纳之战）
+    'xisi_safaer':                       12,    // 萨法尔 · xisi · 奇里乞亚亚美尼亚王国将领（12世纪）
+    'aolisha_anatabamo':                 12,    // 阿纳塔跋摩 · aolisha · 东恒伽王朝国王建造太阳神庙（12世纪）
+    'gen_jasawchan':                     8,     // 亚斯纳昌 · maya · 玛雅蒂卡尔第二十任君主打败卡拉克穆尔（682-734在位，8世纪）
+    'gen_saguamanchica':                 15,    // 萨瓜曼奇卡 · muisca · 穆伊斯卡联合酋长（1470-1490在位）
+    'gen_pachacuti':                     15,    // 帕查库提 · tawantinsuyu · 印加帝国缔造者（1438-1471在位）
+    'pomeilaniya_bogislaw':              15,    // 博吉斯拉夫十世 · pomeilaniya · 波美拉尼亚公国统帅（1474-1523在位）
+    'kaernute_kotuatousi':               1,     // 科图阿图斯 · kaernute · 高卢卡努特部落抗罗马首领（公元1世纪）
+    'gen_kaernute_kotuatousi':           1,     // 科图阿图斯 · kaernute · 高卢卡努特部落抗罗马首领（公元1世纪）
+    'bolan_suobiesiji':                  17,    // 扬三世·索别斯基 · bolan · 维也纳之战翼骑兵冲锋（1683年解围）
+    'xibanya_pisaluo':                   16,    // 皮萨罗 · xibanya · 西班牙征服印加帝国（1532年成名）
+    'gen_cuauhtemoc':                    16,    // 库奥特莫克 · aztec · 阿兹特克抵抗西班牙末代君主（1520-1521成名）
+    'gen_lautaro':                       16,    // 劳塔罗 · mapuche · 马普切抗西班牙反殖民统帅（1553年图卡佩尔战役）
+    'gen_arariboia':                     16,    // 阿拉里博亚 · tupi · 图皮南巴部落酋长（16世纪）
+    'gen_tibirica':                      16,    // 蒂巴里萨 · tupinijin · 巴西图皮尼金酋长（16世纪）
+    'gen_chicomacatl':                   16,    // 奇科马卡特 · tuotuonake · 托托纳克胖酋长联络科尔特斯（1519年）
+    'gen_hatuey':                        16,    // 哈土依 · taino · 加勒比泰诺人反抗西班牙首领（1511年）
+    'gen_bentejui':                      15,    // 本特胡伊 · guanche · 加那利柏柏尔关切人抵抗卡斯蒂利亚首领（1483年）
+    'gen_noli':                          15,    // 诺利 · fodejiao · 佛得角航海探险总督（1462年成名）
+    'gen_tome_sousa':                    16,    // 托梅·德·索萨 · baiyiya · 葡萄牙首任巴西总督建立萨尔瓦多（1549年）
+    'gen_cipriano_figueiredo':           16,    // 西普里亚诺 · yasuer · 亚速尔群岛抵抗西班牙名督（1581年萨尔加战役）
+    'liaozu_saitatila':                  16,    // 赛塔提腊 · liaozu · 澜沧王国迁都万象抗缅雄主（1548-1571在位）
+    'kanata_lamalaya':                   16,    // 阿里亚·拉玛·拉亚 · kanata · 维奢耶那伽罗王朝塔利科塔战役（1565年）
+    'adile_adilesha':                    16,    // 尤素福·阿迪勒·沙阿 · adile · 比贾布尔苏丹国开国君主（1489-1510成名）
+    'foluolida_meinendeshi':             16,    // 佩德罗·梅嫩德斯 · foluolida · 建立圣奥古斯丁（1565年成名）
+    'meitai_hagenba':                    15,    // 彼得·冯·哈根巴赫 · meitai · 勃艮第占领阿尔萨斯总督（1474年公审）
+    'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
