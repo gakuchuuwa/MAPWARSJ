@@ -1,0 +1,60 @@
+# 兵种重命名（2026-09-07）
+
+格式：**文化 + 特征 + 档次**（档次 = 精锐 / 高级 / 重装）。
+
+| id | 原名 | 新名 |
+|---|---|---|
+| `helepolis` | 希腊赫勒波利斯攻城塔 | **希腊赫勒波利斯攻城塔重装** |
+| `siege_onager` | 重型攻城投石车 | **欧洲重型投石车重装** |
+| `antiquity_siege_onager` | 古典重型投石车 | **古典重型投石车重装** |
+| `houfnice` | 榴弹炮 | **波希米亚榴弹炮重装** |
+| `elephant` | 象兵 | **南亚战象** |
+| `traction_trebuchet` | 牵引投石机 | **华夏牵引投石机重装** |
+| `onager` | 中型投石车 | **欧洲中型投石车高级** |
+| `antiquity_onager` | 古典中型投石车 | **古典中型投石车高级** |
+| `siege_elephant` | 攻城战象 | **南亚攻城战象重装** |
+| `envoy` | 使者 | **欧洲使者** |
+| `sannahya` | 孔雀王朝桑纳亚战象 | **孔雀桑纳亚战象精锐** |
+| `bombard_cannon` | 火炮 | **欧洲攻城火炮重装** |
+| `mangonel` | 轻型投石车 | **欧洲轻型投石车** |
+| `frankish_paladin` | 法兰克圣骑士 | **法兰克圣骑士精锐** |
+| `siege_tower` | 攻城塔 | **欧洲攻城塔** |
+| `jarl` | 维京首领骑兵 | **维京首领骑兵精锐** |
+| `shock_cavalry` | 冲击重骑兵 | **希腊化冲击骑兵重装** |
+| `heavy_scorpion` | 重型弩炮 | **欧洲重型弩炮重装** |
+| `imperial_centurion` | 帝国百夫长 | **罗马百夫长重装** |
+| `antiquity_heavy_scorpion` | 古典重型弩炮 | **古典重型弩炮重装** |
+| `general_cavalry` | 虎豹骑 | **华夏虎豹骑精锐** |
+| `flamethrower` | 华夏猛火油柜 | **华夏猛火油柜重装** |
+| `scythian_axe_cavalry` | 斯基泰斧骑兵 | **斯基泰斧骑兵精锐** |
+| `mounted_trebuchet` | 骆驼投石机 | **沙漠骆驼投石机高级** |
+| `sunda_royal_fighter` | 巽他皇家战士 | **爪哇巽他皇家战士精锐** |
+| `sosso_guard` | 西非索索禁卫军 | **西非索索禁卫军精锐** |
+| `siege_ram` | 重型攻城槌 | **欧洲重型攻城槌重装** |
+| `antiquity_siege_ram` | 古典重型攻城槌 | **古典重型攻城槌重装** |
+| `companion_cavalry` | 马其顿伙伴骑兵 | **马其顿伙伴骑兵精锐** |
+| `ekdromos` | 埃克德罗摩斯 | **希腊埃克德罗摩斯精锐** |
+| `aztec_raider` | 阿兹特克突袭者 | **阿兹特克突袭者精锐** |
+| `heavy_cavalry` | 重骑兵 | **欧洲重骑兵重装** |
+| `xolotl_warrior` | 阿兹特克索洛特尔骑兵 | **阿兹特克索洛特尔骑兵精锐** |
+| `hippeus` | 斯巴达希皮乌斯 | **斯巴达希皮乌斯精锐** |
+| `paragon` | 圣殿楷模武士 | **十字军圣殿楷模武士精锐** |
+| `siege_ballista` | 攻城床弩车 | **华夏攻城床弩车重装** |
+| `ballista` | 元戎弩 | **华夏元戎弩高级** |
+| `scorpion` | 弩炮 | **欧洲弩炮** |
+| `jian_swordsman` | 华夏刀剑手 | **华夏刀剑手精锐** |
+| `jian_swordman_shielded` | 持盾刀剑手 | **华夏持盾刀剑手精锐** |
+| `equites` | 罗马伴随骑士 | **罗马伴随骑士精锐** |
+| `shield` | 近卫兵 | **欧洲近卫兵精锐** |
+| `imperial_camel_rider` | 印度斯坦帝王骆驼骑兵 | **印度斯坦骆驼骑兵重装** |
+| `royal_janissary` | 皇家苏丹亲兵 | **奥斯曼皇家亲兵精锐** |
+| `sakan_axeman` | 萨迦斧兵 | **塞种萨迦斧兵精锐** |
+| `warrior_priest` | 亚美尼亚修士战士 | **亚美尼亚修士战士精锐** |
+| `camel_raider` | 骆驼突袭者 | **沙漠骆驼突袭者高级** |
+| `winged_hussar` | 翼骑兵 | **波兰翼骑兵精锐** |
+| `capped_ram` | 装甲攻城槌 | **欧洲装甲攻城槌高级** |
+| `strategos` | 雅典将军卫队 | **雅典将军卫队精锐** |
+| `antiquity_capped_ram` | 古典装甲攻城槌 | **古典装甲攻城槌高级** |
+| `jian_swordman_unshielded` | 华夏双手剑士 | **华夏双手剑士精锐** |
+| `condottiero` | 佣兵 | **意大利佣兵精锐** |
+| `two_handed_swordsman` | 双手剑士 | **欧洲双手剑士** |

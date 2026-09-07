@@ -314,7 +314,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SWISS: 'TEUTONS_CASTLE_AGE3',            // 瑞士：阿尔卑斯山地条顿石砌城堡
     PASHTUN: 'SARACENS_CASTLE_AGE3',          // 普什图：兴都库什山地伊斯兰砖石城堡
     SWEDISH: 'VIKINGS_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
-    MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
+    MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
+    HELLENIC: 'MACEDONIAN_CASTLE_AGE3',     // 马其顿：希马鲁石塔城堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
