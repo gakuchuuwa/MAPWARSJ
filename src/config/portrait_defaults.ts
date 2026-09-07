@@ -76,6 +76,11 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     MAPUCHE: 'AMERICA',
     MUISCA: 'AMERICA',
     TUPI: 'AMERICA',
+    IROQUOIS: 'AMERICA',
+    CHIMU: 'ANDE',
+    TARASCAN: 'AMERICA',
+    TAIRONA: 'MUISCA',
+    TEHUELCHE: 'MAPUCHE',
     ANDE: 'AMERICA',
     // 日耳曼系 → GERMANIC（条顿/维京/凯尔特/马扎尔/波希米亚/勃艮第/不列颠）
     TEUTONS: 'GERMANIC',

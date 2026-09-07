@@ -704,7 +704,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/death_${dir}.png`),
         },
-        // 【岭南帝王掷矛手】Imperial Skirmisher 越南帝王掷矛手（8方向，AoE2 DE SLD 素材，u_arc_imperialskirmisher）
+        // 【岭南帝国掷矛手】Imperial Skirmisher 越南帝国掷矛手（8方向，AoE2 DE SLD 素材，u_arc_imperialskirmisher）
         'imperial_skirmisher': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/attack_${dir}.png`),
@@ -2097,7 +2097,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/death_${dir}.png`),
         },
         'imperial_camel_rider': {
-            // 【印度斯坦帝王骆驼骑兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            // 【印度斯坦帝国骆驼骑兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/idle_${dir}.png`),
@@ -2105,7 +2105,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/death_${dir}.png`),
         },
         'imperial_centurion': {
-            // 【帝王百夫长】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            // 【帝国百夫长】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/idle_${dir}.png`),
@@ -2658,7 +2658,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XOLOTLWARRIOR/death_${dir}.png`),
         },
         'longswordsman': {
-            // 【长剑士】AoE2 DE 素材
+            // 【中东剑士】AoE2 DE 素材
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/idle_${dir}.png`),

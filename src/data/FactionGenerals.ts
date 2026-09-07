@@ -38,6 +38,11 @@ export interface FactionGeneral {
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/NORTHEAST/ayinu_ezo_keshamayin.png' },
+    yiluokui: { generalId: 'gen_hiawatha', generalName: '海华沙', portrait: '/assets/IROQUOIS/yiluokui_hiawatha.png' },
+    qimu: { generalId: 'gen_minchancaman', generalName: '明查凯曼', portrait: '/assets/CHIMU/qimu_minchancaman.png' },
+    talasike: { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '/assets/TARASCAN/talasike_tzitzipandaquare.png' },
+    tailuona: { generalId: 'gen_cuchacique', generalName: '库查西克', portrait: '/assets/TAIRONA/tailuona_cuchacique.png' },
+    teweierqie: { generalId: 'gen_casimiro_bigua', generalName: '卡西米罗·比格', portrait: '/assets/TEHUELCHE/teweierqie_casimiro_bigua.png' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },

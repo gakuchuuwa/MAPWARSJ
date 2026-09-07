@@ -124,6 +124,11 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     MAPUCHE: 'MIXED',  // 马普切[2026-08-28]
     MUISCA: 'MIXED',  // 穆伊斯卡[2026-08-28]
     TUPI: 'INFANTRY',  // 图皮[2026-08-28]
+    IROQUOIS: 'INFANTRY',  // 城堡易洛魁[2026-09-07 新建]
+    CHIMU: 'INFANTRY',  // 城堡奇穆[2026-09-07 新建]
+    TARASCAN: 'INFANTRY',  // 城堡塔拉斯科[2026-09-07 新建]
+    TAIRONA: 'INFANTRY',  // 城堡泰罗纳[2026-09-07 新建]
+    TEHUELCHE: 'CAVALRY',  // 帝国特维尔切[2026-09-07 新建]
     ARMENIANS: 'MIXED',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MIXED',  // 格鲁吉亚[2026-08-28]
     BURMESE: 'ELEPHANT',
@@ -297,6 +302,11 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     MAPUCHE: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
     MUISCA: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
     TUPI: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
+    IROQUOIS: 'fish_scale',  // 城堡易洛魁[2026-09-07 新建]
+    CHIMU: 'echelon',  // 城堡奇穆[2026-09-07 新建]
+    TARASCAN: 'fish_scale',  // 城堡塔拉斯科[2026-09-07 新建]
+    TAIRONA: 'triangle',  // 城堡泰罗纳[2026-09-07 新建]
+    TEHUELCHE: 'crane_wing',  // 帝国特维尔切[2026-09-07 新建]
     ARMENIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
     BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
@@ -357,18 +367,18 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     DALI:            'fish_scale',   // 城堡大理：鱼鳞阵 3+4+2 战斗象3 + 越南藤弓兵精锐4 + 持盾刀剑手2
     GUSILUO:         'triangle',     // 城堡角斯罗：锥形阵 2+3+4 贵族铁骑精锐2 + 具装铁骑3 + 骑射手4
     MAMLUKS:         'crane_wing',   // 城堡马穆鲁克：鹤翼阵 2+4+3 骆驼弓骑精锐2 + 骑士重装4 + 骆驼骑兵3
-    CRUSADERS:       'fish_scale',   // 城堡十字军：鱼鳞阵 3+4+2 十字军骑士高级3 + 长剑士4 + 十字军弩手2
+    CRUSADERS:       'fish_scale',   // 城堡十字军：鱼鳞阵 3+4+2 十字军骑士高级3 + 圣殿楷模武士4 + 十字军弩手2
     RUS:             'fish_scale',   // 城堡罗斯：鱼鳞阵 3+4+2 贵族铁骑精锐3 + 双手大剑士4 + 骑射手2
     KARA_KHITAN:     'triangle',     // 城堡西辽：锥形阵 2+3+4 草原枪骑兵高级2 + 骑射手3 + 重装骑兵4
     TIMURID:         'triangle',     // 城堡帖木儿：锥形阵 2+3+4 波斯具装铁骑重装2 + 察合台骑射3 + 骑士重装4
     DELHI:           'fish_scale',   // 城堡德里：鱼鳞阵 3+4+2 战斗象3 + 古拉姆精锐4 + 复合弓手2
-    CASTILE:         'echelon',      // 城堡卡斯蒂利亚：雁行阵 4+3+2 骑士重装4 + 长剑士3 + 标枪骑兵高级2
+    CASTILE:         'echelon',      // 城堡卡斯蒂利亚：雁行阵 4+3+2 骑士重装4 + 欧洲双手剑士3 + 标枪骑兵高级2
     SCOTLAND:        'balance_yoke', // 城堡苏格兰：衡轭阵 4+2+3 长枪兵重装4 + 双手大剑士3 + 轻型骑兵2
     HRE:             'echelon',      // 城堡神圣罗马：雁行阵 4+3+2 骑士重装4 + 双手大剑士3 + 弩兵2
     ALMOHAD:         'crane_wing',   // 城堡摩洛哥：鹤翼阵 2+4+3 骆驼弓骑精锐2 + 骑士重装4 + 标枪骑兵高级3
     SERBIA:          'fish_scale',   // 城堡塞尔维亚：鱼鳞阵 3+4+2 长枪兵重装3 + 骑士重装4 + 骑射手2
     ILKHANATE:       'triangle',     // 城堡伊利汗：锥形阵 2+3+4 波斯具装铁骑重装2 + 骑射手3 + 重装骑兵4
-    ARAGON:          'fish_scale',   // 城堡阿拉贡：鱼鳞阵 3+4+2 骑士重装3 + 长剑士4 + 标枪骑兵高级2
+    ARAGON:          'fish_scale',   // 城堡阿拉贡：鱼鳞阵 3+4+2 骑士重装3 + 欧洲双手剑士4 + 标枪骑兵高级2
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1228,9 +1238,9 @@ export const KOREA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 2 }, // 前锋 = 剑士
-            { type: 'hei_kuang_heavy', count: 4 }, // 中坚主力【重装】 = 南北朝黑光铠骑兵重装
-            { type: 'fire_archer', count: 3 } // 后排 = 吴火焰弓箭手
+            { type: 'swordsman', count: 2 },   // 两翼 = 剑士
+            { type: 'hei_kuang_heavy', count: 4 },   // 中坚主力 = 南北朝黑光铠骑兵重装
+            { type: 'bowman', count: 3 }   // 后排齐射 = 弓兵（高句丽以善射得名）
         ]
     }
 ];
@@ -1313,9 +1323,9 @@ export const HEXI_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 3, scale: 1 },
-            { type: 'elite_chukonu', count: 4, scale: 1 },
-            { type: 'tiger_rider', count: 2, scale: 1 }
+            { type: 'white_feather_guard', count: 3 },   // 前排 = 蜀白毦兵
+            { type: 'elite_chukonu', count: 4 },   // 中坚主力 = 中国诸葛弩精锐
+            { type: 'elite_tiger_cavalry', count: 2 }   // 后排突击 = 魏虎骑兵精锐（曹魏虎豹骑，中原本区）
         ]
     }
 ];
@@ -1571,9 +1581,9 @@ export const GREEK_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 3 },
-            { type: 'elite_greek_cavalry', count: 4 },
-            { type: 'gastraphetes', count: 2 }
+            { type: 'hoplite', count: 3 },   // 前排 = 希腊重装步兵
+            { type: 'elite_greek_cavalry', count: 4 },   // 中坚主力 = 希腊贵族骑兵高级
+            { type: 'thracian_peltast', count: 2 }   // 后排轻装标枪 = 色雷斯标枪手（伊菲克拉特斯改革即以色雷斯佩尔塔为轻兵，色雷斯紧邻希腊）
         ]
     }
 ];
@@ -1992,17 +2002,22 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     POLES: '城堡波兰军团',
     BOHEMIANS: '城堡捷克军团',
     BURGUNDIANS: '城堡勃艮第军团',
-    SPANISH: '帝王西班牙军团',
-    PORTUGUESE: '帝王葡萄牙军团',
+    SPANISH: '帝国西班牙军团',
+    PORTUGUESE: '帝国葡萄牙军团',
     ETHIOPIANS: '封建埃塞俄比亚军团',
     BENGALIS: '封建孟加拉军团',
     GURJARAS: '封建瞿折罗军团',
     VIETNAMESE: '城堡京族军团',
     KHMER: '城堡高棉军团',
     MAYANS: '城堡玛雅军团',
-    MAPUCHE: '帝王马普切军团',
+    MAPUCHE: '帝国马普切军团',
     MUISCA: '城堡穆伊斯卡军团',
     TUPI: '城堡图皮军团',
+    IROQUOIS: '城堡易洛魁军团',
+    CHIMU: '城堡奇穆军团',
+    TARASCAN: '城堡塔拉斯科军团',
+    TAIRONA: '城堡泰罗纳军团',
+    TEHUELCHE: '帝国特维尔切军团',
     ARMENIANS: '古典亚美尼亚军团',
     GEORGIANS: '封建格鲁吉亚军团',
     BURMESE: '城堡缅族军团',
@@ -2037,11 +2052,11 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SELJUQ: '城堡塞尔柱军团',
     OTTOMAN: '城堡奥斯曼军团',
     FRENCH: '城堡法兰西军团',
-    MANCHU: '帝王满洲军团',
-    MUGHAL: '帝王莫卧儿军团',
-    SAFAVID: '帝王波斯军团',
-    RUSSIAN: '帝王俄罗斯军团',
-    SIKH: '帝王锡克军团',
+    MANCHU: '帝国满洲军团',
+    MUGHAL: '帝国莫卧儿军团',
+    SAFAVID: '帝国波斯军团',
+    RUSSIAN: '帝国俄罗斯军团',
+    SIKH: '帝国锡克军团',
     HEBREWS: '古典希伯来军团',
     WUSUN: '古典乌孙军团',
     QIANG: '古典羌族军团',
@@ -2049,8 +2064,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HEPHTHALITES: '封建嚈哒军团',
     AINU: '城堡阿伊努军团',
     SWISS: '城堡瑞士军团',
-    PASHTUN: '帝王普什图军团',
-    SWEDISH: '帝王瑞典军团',
+    PASHTUN: '帝国普什图军团',
+    SWEDISH: '帝国瑞典军团',
     MACEDONIAN: '古典马其顿军团',
     HELLENIC: '古典希伦军团',
     SONG: '城堡赵宋军团',
@@ -2133,9 +2148,9 @@ export const VIKINGS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'norse_warrior', count: 3 },
-            { type: 'elite_berserk', count: 4 },
-            { type: 'skirmisher', count: 2 }
+            { type: 'norse_warrior', count: 3 },   // 前排 = 诺斯狂暴战士
+            { type: 'jarl', count: 4 },   // 中坚主力 = 维京首领骑兵高级（雅尔亲卫骑）
+            { type: 'skirmisher', count: 2 }   // 后排 = 掷矛手
         ]
     }
 ];
@@ -2178,9 +2193,9 @@ export const BURGUNDIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hand_cannoneer', count: 2 },
-            { type: 'flemish_pikeman', count: 3 },
-            { type: 'elite_coustillier', count: 4 }
+            { type: 'flemish_pikeman_f', count: 2 },   // 尖刀 = 勃艮第佛兰德民兵F（与基础档同队）
+            { type: 'flemish_pikeman', count: 3 },   // 中坚 = 勃艮第佛兰德民兵
+            { type: 'elite_coustillier', count: 4 }   // 底边主力 = 勃艮第马上轻骑精锐
         ]
     }
 ];
@@ -2194,9 +2209,9 @@ export const VIETNAMESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },   // Row 0
-            { type: 'imperial_skirmisher', count: 3 },   // Row 1
-            { type: 'rattan_archer_elite', count: 4 }   // Row 2
+            { type: 'rattan_archer', count: 2 },   // 尖刀 = 越南藤弓兵
+            { type: 'imperial_skirmisher', count: 3 },   // 中坚 = 帝国掷矛手
+            { type: 'rattan_archer_elite', count: 4 }   // 底边主力 = 越南藤弓兵精锐
         ]
     }
 ];
@@ -2259,6 +2274,81 @@ export const TUPI_TIERS: CompositionTier[] = [
             { type: 'ibirapema_warrior', count: 2 },        // 尖刀先锋 = 图皮战棍勇士（伊比拉佩马硬木战棍死士）
             { type: 'elite_blackwood_archer', count: 3 },   // 中坚压制【精锐】 = 黑木弓箭手精锐（亚马逊雨林淬毒强弓）
             { type: 'elite_ibirapema_warrior', count: 4 }   // 底边主力【精锐】 = 图皮战棍勇士精锐（图皮南巴部落终极狂战士）
+        ]
+    }
+];
+
+/** 城堡易洛魁军团 —— 北美东北林地，豪德诺索尼易洛魁联盟；为安置易洛魁战士、美洲鹰斥候而建
+ *  [2026-09-07 主人定「兵种无处安放就建新军团」] 阵型 fish_scale */
+export const IROQUOIS_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'eagle_scout', count: 3 },   // 前排斥候 = 美洲鹰斥候
+            { type: 'iroquois_warrior', count: 4 },   // 中坚主力 = 易洛魁战士
+            { type: 'elite_plumed_archer', count: 2 }   // 后排齐射 = 玛雅羽箭手精锐（中美邻区弓手）
+        ]
+    }
+];
+
+/** 城堡奇穆军团 —— 安第斯北岸奇穆王国 900–1470；为安置枪兵长、尚皮飞毛腿、尚皮勇士高级而建
+ *  [2026-09-07 主人定「兵种无处安放就建新军团」] 阵型 echelon */
+export const CHIMU_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'elite_champi_warrior', count: 4 },   // 前排主力 = 印加尚皮勇士高级（安第斯星锤）
+            { type: 'kamayuk', count: 3 },   // 中坚 = 枪兵长
+            { type: 'champi_runner', count: 2 }   // 后排 = 印加尚皮飞毛腿
+        ]
+    }
+];
+
+/** 城堡塔拉斯科军团 —— 中美西部米却肯塔拉斯科(普雷佩查)王国，终阿兹特克之世未被征服；为安置豹勇士精锐、羽箭手精锐而建
+ *  [2026-09-07 主人定「兵种无处安放就建新军团」] 阵型 fish_scale */
+export const TARASCAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'jaguar_warrior', count: 3 },   // 前排 = 阿兹特克豹勇士
+            { type: 'elite_jaguar_warrior', count: 4 },   // 中坚主力 = 阿兹特克豹勇士精锐
+            { type: 'plumed_archer', count: 2 }   // 后排齐射 = 玛雅羽箭手
+        ]
+    }
+];
+
+/** 城堡泰罗纳军团 —— 哥伦比亚圣玛尔塔内华达山泰罗纳；为安置神庙守卫精锐、黑木弓箭手而建
+ *  [2026-09-07 主人定「兵种无处安放就建新军团」] 阵型 triangle */
+export const TAIRONA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'blackwood_archer', count: 2 },   // 尖刀 = 图皮黑木弓箭手
+            { type: 'guecha_warrior', count: 3 },   // 中坚 = 穆伊斯卡格查勇士（邻区同族）
+            { type: 'elite_temple_guard', count: 4 }   // 底边主力 = 穆伊斯卡神庙守卫精锐
+        ]
+    }
+];
+
+/** 帝国特维尔切军团 —— 巴塔哥尼亚特维尔切(阿奥尼肯)流星锤猎手；为安置套索骑兵精锐而建
+ *  [2026-09-07 主人定「兵种无处安放就建新军团」] 阵型 crane_wing */
+export const TEHUELCHE_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'bolas_rider', count: 2 },   // 两翼 = 马普切套索骑兵
+            { type: 'elite_bolas_rider', count: 4 },   // 中坚主力 = 马普切套索骑兵精锐（特维尔切流星锤骑手）
+            { type: 'kona', count: 3 }   // 后排 = 马普切科纳勇士
         ]
     }
 ];
@@ -2378,9 +2468,9 @@ export const BABYLON_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_war_chariot', count: 4 },
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'bactrian_archer', count: 3 }
+            { type: 'elite_war_chariot', count: 4 },   // 底边主力 = 双轮战车高级
+            { type: 'guardsman', count: 2 },   // 尖刀 = 近卫军（巴比伦王家近卫，古典近战步兵）
+            { type: 'elite_guardsman', count: 3 }   // 中坚 = 近卫军高级
         ]
     }
 ];
@@ -2419,9 +2509,9 @@ export const ASSYRIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'sparabara', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'war_chariot', count: 2 }
+            { type: 'militia', count: 3 },   // 前排 = 中东民兵（亚述征召步兵，本区兵）
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },   // 中坚主力 = 古典骑射手重装
+            { type: 'war_chariot', count: 2 }   // 后排 = 双轮战车
         ]
     }
 ];
@@ -2566,9 +2656,9 @@ export const KUSH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_antiquity_skirmisher', count: 2 },
-            { type: 'vanguard', count: 4 },
-            { type: 'bactrian_archer', count: 3 }
+            { type: 'antiquity_scout_cavalry', count: 2 },   // 尖刀 = 古典斥候骑兵（努比亚轻骑侦察）
+            { type: 'vanguard', count: 4 },   // 中坚主力 = 先锋重装步兵
+            { type: 'bactrian_archer', count: 3 }   // 后排 = 巴克特里亚弓手
         ]
     }
 ];
@@ -2608,9 +2698,9 @@ export const MOHE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'recurve_bowman', count: 3 }, // 前排 = 反曲长弓手
-            { type: 'hei_kuang_heavy', count: 4 }, // 中坚主力【重装】 = 南北朝黑光铠骑兵重装
-            { type: 'spearman', count: 2 } // 后排 = 长矛兵
+            { type: 'laminated_bowman', count: 3 },   // 前排 = 层压复合弓手（东北亚层压角弓）
+            { type: 'hei_kuang_heavy', count: 4 },   // 中坚主力 = 南北朝黑光铠骑兵重装
+            { type: 'spearman', count: 2 }   // 后排 = 长矛兵
         ]
     }
 ];
@@ -2624,7 +2714,7 @@ export const ANGLO_SAXON_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'manatarms', count: 3 }, // 前排盾墙 = 长剑士 3队（撒克逊 shield wall）
+            { type: 'manatarms', count: 3 }, // 前排盾墙 = 武士 3队（撒克逊 shield wall）
             { type: 'champion', count: 4 },      // 中坚主力【高级】 = 欧洲冠军剑士高级 4队（撒克斯双手战斧/皇家侍从禁卫）
             { type: 'longbowman', count: 2 }     // 后排齐射 = 不列颠长弓兵 2队（黑斯廷斯撒军弓手本就极少）
         ]
@@ -2667,12 +2757,9 @@ export const VANDALS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cavalier', count: 4 }, // 前排主力【重装】 = 骑士重装
-            { type: 'longswordsman', count: 3 }, // 中坚 = 长剑士
-            // 🔴 [2026-09-07] 原为「掷矛手」—— 与史料直接冲突：普罗柯比《战记》三·八记汪达尔人
-            //    「全是骑兵，用矛与剑，不习弓与标枪」。汪达尔编制里放投矛散兵是错的，
-            //    换成斥候骑兵（素材是锁子甲带盔持剑的骑手，正合汪达尔骑兵样貌）。
-            { type: 'scout_cavalry', count: 2 } // 后排 = 斥候骑兵
+            { type: 'cavalier', count: 4 },   // 前排主力 = 骑士重装
+            { type: 'lancer', count: 3 },   // 中坚 = 枪骑兵
+            { type: 'scout_cavalry', count: 2 }   // 后排 = 斥候骑兵
         ]
     }
 ];
@@ -2700,9 +2787,9 @@ export const ROURAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'xianbei_raider', count: 2 },        // 尖刀诱伏 = 鲜卑掠骑兵 2骑（南北朝草原掠袭轻骑）
-            { type: 'cav_archer_heavy', count: 3 },      // 中坚扰乱【重装】 = 骑射手重装 3骑
-            { type: 'elite_steppe_lancer', count: 4 }   // 压阵主力【高级】 = 草原枪骑兵高级 4骑
+            { type: 'raider', count: 2 },   // 尖刀 = 掠骑兵
+            { type: 'cav_archer_heavy', count: 3 },   // 中坚 = 骑射手重装
+            { type: 'elite_steppe_lancer', count: 4 }   // 底边主力 = 草原枪骑兵高级
         ]
     }
 ];
@@ -2735,7 +2822,7 @@ export const TANGUT_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 爪哇 东南亚战斗象高级+爪刀跳帮勇士精锐+群岛重剑武士（鹤翼阵 2+4+3：战斗象高级前锋2 + 爪刀勇士精锐主力4 + 长剑士卫队3）
+/** 爪哇 东南亚战斗象高级+爪刀跳帮勇士精锐+群岛重剑武士（鹤翼阵 2+4+3：战斗象高级前锋2 + 爪刀勇士精锐主力4 + 巽他皇家战士卫队3）
  *  史实依据：爪哇马打兰王国与满者伯夷帝国以热带丛林驯化战象突击开道，
  *  中坚以擅长波浪克利斯剑（Keris）与爪刀（Karambit）的跳帮近战死士为主力，辅以群岛水陆重剑士，
  *  彻底清除波斯战象、缅甸飞镖骑与越南藤弓之跨国大乱炖，战力由超标的128平抑至93黄金健康带。 */
@@ -2745,9 +2832,9 @@ export const JAVANESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'karambit_warrior_elite', count: 4 },
-            { type: 'longswordsman', count: 3 }
+            { type: 'elite_battle_elephant', count: 2 },   // 两翼 = 战斗象高级
+            { type: 'karambit_warrior_elite', count: 4 },   // 中坚主力 = 马来爪刀勇士精锐
+            { type: 'sunda_royal_fighter', count: 3 }   // 后排 = 爪哇巽他皇家战士高级（巽他本族兵）
         ]
     }
 ];
@@ -2759,9 +2846,9 @@ export const JURCHEN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 2 },            // 两翼铁拳【重装】 = 女真铁浮屠（金源重甲铁骑正面突击）
-            { type: 'cav_archer', count: 3 },             // 中坚游射 = 骑射手（女真反曲强弓游击）
-            { type: 'elite_iron_pagoda', count: 4 }       // 底边主力【精锐】 = 女真铁浮屠精锐（金兀术王牌铁浮屠重铠主战）
+            { type: 'iron_pagoda', count: 2 },   // 尖刀 = 女真铁浮屠
+            { type: 'grenadier', count: 3 },   // 中坚 = 女真掷弹兵（金军震天雷/铁火炮，1221 守汴京即用，属城堡代）
+            { type: 'elite_iron_pagoda', count: 4 }   // 底边主力 = 女真铁浮屠精锐
         ]
     }
 ];
@@ -2773,9 +2860,9 @@ export const SELJUQ_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'camel_rider', count: 2 },
-            { type: 'elite_ghulam', count: 4 },
-            { type: 'cav_archer', count: 3 }
+            { type: 'camel_rider', count: 2 },        // 两翼 = 骆驼骑兵
+            { type: 'elite_ghulam', count: 4 },       // 中坚主力 = 印度斯坦古拉姆精锐（古拉姆制即塞尔柱-伊斯兰奴隶亲兵）
+            { type: 'longswordsman', count: 3 }       // 后排 = 中东剑士（本兵素材样貌即中东剑士，城堡代，归中东文化区）
         ]
     }
 ];
@@ -2787,9 +2874,9 @@ export const OTTOMAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'janissary', count: 3 },             // 前排拒马 = 土耳其苏丹亲兵（耶尼切里早期火枪战线）
-            { type: 'elite_janissary', count: 2 },       // 中军枢纽【精锐】 = 苏丹亲兵精锐（苏丹近卫耶尼切里重火枪）
-            { type: 'elite_ghulam', count: 4 }           // 后排决胜【精锐】 = 重装古拉姆精锐（奥斯曼重装马穆鲁克/西帕希步战死士）
+            { type: 'janissary', count: 3 },   // 前排 = 土耳其苏丹亲兵
+            { type: 'elite_janissary', count: 2 },   // 中坚 = 土耳其苏丹亲兵精锐
+            { type: 'royal_janissary', count: 4 }   // 底边主力 = 奥斯曼皇家亲兵高级（耶尼切里三档同堂）
         ]
     }
 ];
@@ -2815,9 +2902,9 @@ export const MANCHU_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spearman', count: 2 },
-            { type: 'cav_archer_heavy', count: 3 },
-            { type: 'imperial_cavalry', count: 4 },
+            { type: 'spearman', count: 2 },   // 尖刀 = 长矛兵
+            { type: 'cav_archer_heavy', count: 3 },   // 中坚 = 骑射手重装
+            { type: 'imperial_cavalry', count: 4 }   // 底边主力 = 波斯具装铁骑重装
         ]
     }
 ];
@@ -2829,9 +2916,9 @@ export const MUGHAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 2 },
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'archer', count: 3 }
+            { type: 'war_elephant', count: 2 },   // 两翼 = 波斯战象
+            { type: 'archer', count: 4 },   // 中坚主力 = 南方步弓手
+            { type: 'imperial_camel_rider', count: 3 }   // 后排 = 印度斯坦骆驼骑兵重装
         ]
     }
 ];
@@ -3325,7 +3412,7 @@ export const DELHI_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 卡斯蒂利亚 圣地亚哥重装骑士突锋+西班牙长剑士中坚+标枪骑兵高级护翼（雁行阵 4+3+2，综合战力 73） */
+/** 卡斯蒂利亚 圣地亚哥重装骑士突锋+欧洲双手剑士中坚+标枪骑兵高级护翼（雁行阵 4+3+2，综合战力 73） */
 export const CASTILE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3333,7 +3420,7 @@ export const CASTILE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'cavalier', count: 4 },               // 前排冲击【重装】 = 骑士重装（圣地亚哥骑士团与卡斯蒂利亚具装骑兵）
-            { type: 'longswordsman', count: 3 },          // 中坚推进 = 长剑士（伊比利亚收复失地重步兵）
+            { type: 'two_handed_swordsman', count: 3 },    // 中坚推进 = 欧洲双手剑士（伊比利亚收复失地重步兵）
             { type: 'elite_genitour', count: 2 }          // 侧卫轻骑【高级】 = 标枪骑兵高级（西班牙希内特标枪轻骑）
         ]
     }
@@ -3417,7 +3504,7 @@ export const ARAGON_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'cavalier', count: 3 },               // 尖刀铁拳【重装】 = 骑士重装（加泰罗尼亚-阿拉贡封建具装骑士）
-            { type: 'longswordsman', count: 4 },          // 中坚主力 = 长剑士（著名的加泰罗尼亚阿尔加瓦蛮勇长剑士 Almogavars）
+            { type: 'two_handed_swordsman', count: 4 },   // 中坚主力 = 欧洲双手剑士（阿拉贡重装剑士劲卒）
             { type: 'elite_genitour', count: 2 }          // 后排侧卫【高级】 = 标枪骑兵高级（地中海希内特轻骑与标枪游击）
         ]
     }
@@ -3480,6 +3567,11 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     MAPUCHE: MAPUCHE_TIERS,  // 马普切[2026-08-28 暂复用父文化]
     MUISCA: MUISCA_TIERS,  // 穆伊斯卡[2026-08-28 暂复用父文化]
     TUPI: TUPI_TIERS,  // 图皮[2026-08-28 暂复用父文化]
+    IROQUOIS: IROQUOIS_TIERS,
+    CHIMU: CHIMU_TIERS,
+    TARASCAN: TARASCAN_TIERS,
+    TAIRONA: TAIRONA_TIERS,
+    TEHUELCHE: TEHUELCHE_TIERS,
     ARMENIANS: ARMENIANS_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
     GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
     BURMESE: BURMESE_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用DIANQIAN_TIERS，已改独立编成

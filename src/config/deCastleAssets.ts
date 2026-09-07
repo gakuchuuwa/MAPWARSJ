@@ -268,6 +268,11 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
     MUISCA: 'MUIS_CASTLE_AGE3',              // 穆伊斯卡：黄金国要塞
     TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞
+    IROQUOIS: 'TUPI_CASTLE_AGE3',   // 城堡易洛魁[2026-09-07 新建，暂借美洲要塞]
+    CHIMU: 'TUPI_CASTLE_AGE3',   // 城堡奇穆[2026-09-07 新建，暂借美洲要塞]
+    TARASCAN: 'TUPI_CASTLE_AGE3',   // 城堡塔拉斯科[2026-09-07 新建，暂借美洲要塞]
+    TAIRONA: 'TUPI_CASTLE_AGE3',   // 城堡泰罗纳[2026-09-07 新建，暂借美洲要塞]
+    TEHUELCHE: 'TUPI_CASTLE_AGE3',   // 帝国特维尔切[2026-09-07 新建，暂借美洲要塞]
     BURMESE: 'BURM_CASTLE_AGE3',             // 缅甸：蒲甘佛塔城堡
     WALLACHIA: 'POENARI_CASTLE',             // 瓦拉几亚：波耶纳里山堡
     EGYPT: 'ORIE_CASTLE_AGE3',                // 埃及：近东石堡

@@ -70,7 +70,7 @@
 | `jian_swordman_shielded` | 持盾刀剑手 | **华夏持盾刀剑手精锐** |
 | `equites` | 罗马伴随骑士 | **罗马伴随骑士精锐** |
 | `shield` | 近卫兵 | **欧洲近卫兵精锐** |
-| `imperial_camel_rider` | 印度斯坦帝王骆驼骑兵 | **印度斯坦骆驼骑兵重装** |
+| `imperial_camel_rider` | 印度斯坦帝国骆驼骑兵 | **印度斯坦骆驼骑兵重装** |
 | `royal_janissary` | 皇家苏丹亲兵 | **奥斯曼皇家亲兵精锐** |
 | `sakan_axeman` | 萨迦斧兵 | **塞种萨迦斧兵精锐** |
 | `warrior_priest` | 亚美尼亚修士战士 | **亚美尼亚修士战士精锐** |

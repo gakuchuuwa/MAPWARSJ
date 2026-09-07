@@ -381,6 +381,11 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     MAPUCHE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     MUISCA: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     TUPI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    IROQUOIS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    CHIMU: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    TARASCAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    TAIRONA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    TEHUELCHE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     ARMENIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GEORGIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
@@ -1138,6 +1143,11 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     MAPUCHE: 'ANDE',  // 马普切[2026-08-28]
     MUISCA: 'ANDE',  // 穆伊斯卡[2026-08-28]
     TUPI: 'ANDE',  // 图皮[2026-08-28]
+    IROQUOIS: 'AMERICA',  // 城堡易洛魁[2026-09-07 新建]
+    CHIMU: 'ANDE',  // 城堡奇穆[2026-09-07 新建]
+    TARASCAN: 'AMERICA',  // 城堡塔拉斯科[2026-09-07 新建]
+    TAIRONA: 'MUISCA',  // 城堡泰罗纳[2026-09-07 新建]
+    TEHUELCHE: 'MAPUCHE',  // 帝国特维尔切[2026-09-07 新建]
     ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
     BURMESE: 'SEAS',
