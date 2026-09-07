@@ -1625,7 +1625,7 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
         if (custom?.legionName?.trim() === legionName) {
-            localCustomCompositions[row.factionId] = buildCultureLegion(row.region);
+            delete localCustomCompositions[row.factionId];
             affected.push(row.factionName);
         }
     }
@@ -2259,11 +2259,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
     document.getElementById('le-btn-revert-culture')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
         const previous = localCustomCompositions[row.factionId];
-        localCustomCompositions[row.factionId] = buildCultureLegion(row.region);
+        delete localCustomCompositions[row.factionId];
         const saved = await saveAllCompositions();
         if (!saved) {
             if (previous) localCustomCompositions[row.factionId] = previous;
-            else delete localCustomCompositions[row.factionId];
             buildRows();
             applyFilter();
             selectFaction(row.factionId);
