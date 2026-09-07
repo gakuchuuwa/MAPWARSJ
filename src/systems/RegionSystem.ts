@@ -75,6 +75,11 @@ export type RegionType =
     | 'MAPUCHE'  // 马普切[2026-08-28 补 DE 文明]
     | 'MUISCA'  // 穆伊斯卡[2026-08-28 补 DE 文明]
     | 'TUPI'  // 图皮[2026-08-28 补 DE 文明]
+    | 'IROQUOIS' // 城堡易洛魁[2026-09-07 新建：为安置无处套用的美洲兵种]
+    | 'CHIMU' // 城堡奇穆[2026-09-07 新建：为安置无处套用的美洲兵种]
+    | 'TARASCAN' // 城堡塔拉斯科[2026-09-07 新建：为安置无处套用的美洲兵种]
+    | 'TAIRONA' // 城堡泰罗纳[2026-09-07 新建：为安置无处套用的美洲兵种]
+    | 'TEHUELCHE' // 帝国特维尔切[2026-09-07 新建：为安置无处套用的美洲兵种]
     | 'ARMENIANS'  // 亚美尼亚[2026-08-28 补 DE 文明]
     | 'GEORGIANS'  // 格鲁吉亚[2026-08-28 补 DE 文明]
     | 'BURMESE'      // 缅甸
@@ -140,7 +145,7 @@ export type RegionType =
     | 'KARA_KHITAN' // 西辽（城堡西辽：黑契丹皮室具装铁骑、反曲弓骑射手与辽式铁斧精骑）
     | 'TIMURID' // 帖木儿（城堡帖木儿：河中察合台具装重骑兵、游牧重骑射手与精锐重骑突阵）
     | 'DELHI' // 德里（城堡德里：德里苏丹国重装战象铁甲冲阵、古拉姆近卫铁甲剑士与突厥复合强弓手）
-    | 'CASTILE' // 卡斯蒂利亚（城堡卡斯蒂利亚：伊比利亚收复失地运动圣地亚哥骑士、西班牙长剑士与标枪骑兵）
+    | 'CASTILE' // 卡斯蒂利亚（城堡卡斯蒂利亚：伊比利亚收复失地运动圣地亚哥骑士、欧洲双手剑士与标枪骑兵）
     | 'SCOTLAND' // 苏格兰（城堡苏格兰：苏格兰独立战争长矛刺猬密集方阵、高地巨剑士与苏格兰轻骑）
     | 'HRE' // 神圣罗马（城堡神圣罗马：德意志帝国重装板甲骑士、双手巨剑士与汉萨十字弩）
     | 'ALMOHAD' // 摩洛哥（城堡摩洛哥：穆瓦希德与穆拉比特帝国撒哈拉苏丹驼骑、黑骑兵与柏柏尔标枪游击）
@@ -186,6 +191,11 @@ export const REGION_ORDER: RegionType[] = [
     'MAPUCHE',
     'MUISCA',
     'TUPI',
+    'IROQUOIS',
+    'CHIMU',
+    'TARASCAN',
+    'TAIRONA',
+    'TEHUELCHE',
     'ARMENIANS',
     'GEORGIANS',
     'BURMESE',
@@ -304,17 +314,22 @@ export const REGION_LABELS: Record<RegionType, string> = {
     POLES: '城堡波兰',
     BOHEMIANS: '城堡波希米亚',
     BURGUNDIANS: '城堡勃艮第',
-    SPANISH: '帝王西班牙',
-    PORTUGUESE: '帝王葡萄牙',
+    SPANISH: '帝国西班牙',
+    PORTUGUESE: '帝国葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '帝王马普切',
+    MAPUCHE: '帝国马普切',
     MUISCA: '城堡穆伊斯卡',
     TUPI: '城堡图皮',
+    IROQUOIS: '城堡易洛魁',
+    CHIMU: '城堡奇穆',
+    TARASCAN: '城堡塔拉斯科',
+    TAIRONA: '城堡泰罗纳',
+    TEHUELCHE: '帝国特维尔切',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     BURMESE: '城堡缅甸',
@@ -349,11 +364,11 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
     FRENCH: '城堡法兰西',
-    MANCHU: '帝王满洲',
-    MUGHAL: '帝王莫卧儿',
-    SAFAVID: '帝王波斯',
-    RUSSIAN: '帝王俄罗斯',
-    SIKH: '帝王锡克',
+    MANCHU: '帝国满洲',
+    MUGHAL: '帝国莫卧儿',
+    SAFAVID: '帝国波斯',
+    RUSSIAN: '帝国俄罗斯',
+    SIKH: '帝国锡克',
     HEBREWS: '古典希伯来',
     WUSUN: '古典乌孙',
     QIANG: '古典先零羌',
@@ -361,8 +376,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
     SWISS: '城堡瑞士',
-    PASHTUN: '帝王普什图',
-    SWEDISH: '帝王瑞典',
+    PASHTUN: '帝国普什图',
+    SWEDISH: '帝国瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典罗马禁卫',
@@ -443,17 +458,22 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     POLES: '城堡波兰',
     BOHEMIANS: '城堡波希米亚',
     BURGUNDIANS: '城堡勃艮第',
-    SPANISH: '帝王西班牙',
-    PORTUGUESE: '帝王葡萄牙',
+    SPANISH: '帝国西班牙',
+    PORTUGUESE: '帝国葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
     MAYANS: '古典玛雅',
-    MAPUCHE: '帝王马普切',
+    MAPUCHE: '帝国马普切',
     MUISCA: '城堡穆伊斯卡',
     TUPI: '城堡图皮',
+    IROQUOIS: '城堡易洛魁',
+    CHIMU: '城堡奇穆',
+    TARASCAN: '城堡塔拉斯科',
+    TAIRONA: '城堡泰罗纳',
+    TEHUELCHE: '帝国特维尔切',
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     BURMESE: '城堡缅甸',
@@ -488,11 +508,11 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
     FRENCH: '城堡法兰西',
-    MANCHU: '帝王满洲',
-    MUGHAL: '帝王莫卧儿',
-    SAFAVID: '帝王波斯',
-    RUSSIAN: '帝王俄罗斯',
-    SIKH: '帝王锡克',
+    MANCHU: '帝国满洲',
+    MUGHAL: '帝国莫卧儿',
+    SAFAVID: '帝国波斯',
+    RUSSIAN: '帝国俄罗斯',
+    SIKH: '帝国锡克',
     HEBREWS: '古典希伯来',
     WUSUN: '古典乌孙',
     QIANG: '古典先零羌',
@@ -500,8 +520,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
     SWISS: '城堡瑞士',
-    PASHTUN: '帝王普什图',
-    SWEDISH: '帝王瑞典',
+    PASHTUN: '帝国普什图',
+    SWEDISH: '帝国瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典罗马禁卫',
@@ -743,6 +763,11 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     MAPUCHE: '#ad1457',  // 马普切[2026-08-28]
     MUISCA: '#1e88e5',  // 穆伊斯卡[2026-08-28]
     TUPI: '#00897b',  // 图皮[2026-08-28]
+    IROQUOIS: '#6d4c41',  // 城堡易洛魁[2026-09-07]
+    CHIMU: '#ef6c00',  // 城堡奇穆[2026-09-07]
+    TARASCAN: '#ad1457',  // 城堡塔拉斯科[2026-09-07]
+    TAIRONA: '#2e7d32',  // 城堡泰罗纳[2026-09-07]
+    TEHUELCHE: '#4527a0',  // 帝国特维尔切[2026-09-07]
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
     GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]  // 雅典[2026-08-28]  // 斯巴达[2026-08-28]  // 马其顿[2026-08-28]
     BURMESE: '#b8860b',
@@ -1231,6 +1256,36 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/latin_pass.png')
     },
     TUPI: { // 继承 ANDE 城市素材 // ⚠️ [2026-08-27 新增] 暂借拉丁图标（安第斯石造，待专属素材）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    IROQUOIS: { // 继承美洲城市素材 [2026-09-07 新建]
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    CHIMU: { // 继承美洲城市素材 [2026-09-07 新建]
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    TARASCAN: { // 继承美洲城市素材 [2026-09-07 新建]
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    TAIRONA: { // 继承美洲城市素材 [2026-09-07 新建]
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    TEHUELCHE: { // 继承美洲城市素材 [2026-09-07 新建]
         small: resolvePath('/cities/latin_small.png'),
         medium: resolvePath('/cities/latin_medium.png'),
         big: resolvePath('/cities/latin_big.png'),
@@ -1785,7 +1840,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     POLES: ['city_kelakefu'],  // 波兰（中心据点已挂）
     BOHEMIANS: ['city_bulage'],  // 波希米亚（中心据点已挂）
     BURGUNDIANS: ['city_dijon'],  // 勃艮第（中心据点已挂）
-    SPANISH: ['city_lima'],  // 利马 [2026-09-07] 本区唯一据点(帝王西班牙＝哈布斯堡殖民帝国，利马为秘鲁总督区首府)；原挂托莱多已划归 CASTILE 区
+    SPANISH: ['city_lima'],  // 利马 [2026-09-07] 本区唯一据点(帝国西班牙＝哈布斯堡殖民帝国，利马为秘鲁总督区首府)；原挂托莱多已划归 CASTILE 区
     PORTUGUESE: ['city_lisiben'],  // 葡萄牙（中心据点已挂）
     ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（中心据点已挂）
     BENGALIS: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
@@ -1796,6 +1851,11 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     MAPUCHE: ['city_tucapel'],  // 马普切（中心据点已挂）
     MUISCA: ['city_bacata'],  // 穆伊斯卡（中心据点已挂）
     TUPI: ['city_guanabara'],  // 图皮（中心据点已挂）
+    IROQUOIS: ['city_onondaga'],  // 城堡易洛魁[2026-09-07]
+    CHIMU: ['city_chanchan'],  // 城堡奇穆[2026-09-07]
+    TARASCAN: ['city_tzintzuntzan'],  // 城堡塔拉斯科[2026-09-07]
+    TAIRONA: ['city_teyuna'],  // 城堡泰罗纳[2026-09-07]
+    TEHUELCHE: ['city_sanjulian'],  // 帝国特维尔切[2026-09-07]
     ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（中心据点已挂）
     GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）  // 雅典（中心据点已挂）  // 斯巴达（中心据点已挂）  // 马其顿-佩拉（中心据点已挂）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）

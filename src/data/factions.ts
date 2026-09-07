@@ -1920,6 +1920,11 @@ export const FACTIONS: Faction[] = [
     { id: 'mapuche', name: '马普切' },        // 图卡佩尔·马普切人
     { id: 'muisca', name: '穆伊斯卡' },       // 巴卡塔·穆伊斯卡联盟
     { id: 'tupi', name: '图皮' },             // 瓜纳巴拉·图皮人
+    { id: 'yiluokui', name: '易洛魁联盟' },        // 奥农多加·豪德诺索尼五族联盟
+    { id: 'qimu', name: '奇穆' },        // 昌昌·奇穆王国
+    { id: 'talasike', name: '塔拉斯科' },        // 钦聪灿·塔拉斯科(普雷佩查)王国
+    { id: 'tailuona', name: '泰罗纳' },        // 特尤纳·泰罗纳
+    { id: 'teweierqie', name: '特维尔切' },        // 圣胡利安港·特维尔切(阿奥尼肯)
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

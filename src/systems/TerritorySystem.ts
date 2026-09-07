@@ -887,7 +887,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     // [2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有：
-    //   城镇中心固定居中（帝王城市地标）+ 市场/大学 + 6 种 AGE3 随机分布周围 8（共 9 = 中1+周8）
+    //   城镇中心固定居中（帝国城市地标）+ 市场/大学 + 6 种 AGE3 随机分布周围 8（共 9 = 中1+周8）
     const center: [string, string] = ['TOWN_CENTER', 'AGE4'];
     const age3Pool = DE_IMPERIAL_CITY_POOL.filter(([, a]) => a === 'AGE3');        // 8 种 AGE3
     const noble = DE_IMPERIAL_CITY_POOL.filter(([b]) => b === 'MARKET' || b === 'UNIVERSITY'); // 市场/大学必有

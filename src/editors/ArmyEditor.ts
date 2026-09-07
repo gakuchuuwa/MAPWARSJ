@@ -90,6 +90,11 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     MAPUCHE: 'inca',  // 马普切 → 待建势力对齐（暂用父文化势力占位）
     MUISCA: 'inca',  // 穆伊斯卡 → 待建势力对齐（暂用父文化势力占位）
     TUPI: 'inca',  // 图皮 → 待建势力对齐（暂用父文化势力占位）
+    IROQUOIS: 'yiluokui',  // 城堡易洛魁[2026-09-07 新建]
+    CHIMU: 'qimu',  // 城堡奇穆[2026-09-07 新建]
+    TARASCAN: 'talasike',  // 城堡塔拉斯科[2026-09-07 新建]
+    TAIRONA: 'tailuona',  // 城堡泰罗纳[2026-09-07 新建]
+    TEHUELCHE: 'teweierqie',  // 帝国特维尔切[2026-09-07 新建]
     ARMENIANS: 'seljuq',  // 亚美尼亚 → 待建势力对齐（暂用父文化势力占位）
     GEORGIANS: 'seljuq',  // 格鲁吉亚 → 待建势力对齐（暂用父文化势力占位）
     BURMESE: 'pagan',

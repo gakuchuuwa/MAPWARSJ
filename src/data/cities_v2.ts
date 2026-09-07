@@ -3045,6 +3045,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tucapel', name: '图卡佩尔', factionId: 'mapuche', lat: -37.7, lng: -73.4, type: 'pass', troops: 30000, region: 'MAPUCHE', note: '马普切要塞，1553劳塔罗在此击杀瓦尔迪维亚' },
     { id: 'city_bacata', name: '巴卡塔', factionId: 'muisca', lat: 4.71, lng: -74.07, type: 'medium_city', troops: 30000, region: 'MUISCA', note: '穆伊斯卡联盟西帕首府，今波哥大' },
     { id: 'city_guanabara', name: '瓜纳巴拉', factionId: 'tupi', lat: -22.9, lng: -43.2, type: 'pass', troops: 30000, region: 'TUPI', note: '图皮塔莫约核心湾，阿拉里博亚战场' },
+    { id: 'city_onondaga', name: '奥农多加', factionId: 'yiluokui', lat: 43.05, lng: -76.15, type: 'medium_city', troops: 30000, region: 'IROQUOIS', note: '易洛魁联盟「中央火塘」所在，五族大议事会驻地' },
+    { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 30000, region: 'CHIMU', note: '奇穆王国都城，前哥伦布时期美洲最大土坯城' },
+    { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'medium_city', troops: 30000, region: 'TARASCAN', note: '塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」' },
+    { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'small_city', troops: 30000, region: 'TAIRONA', note: '泰罗纳石阶山城（失落之城），圣玛尔塔内华达山' },
+    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'small_city', troops: 30000, region: 'TEHUELCHE', note: '1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来' },
     // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──
     //  1501 韦斯普奇船队：里斯本 → 佛得角 → 借东北信风横渡 → 圣罗克角 → 沿岸南下
     //  → 1502-01-01 发现瓜纳巴拉湾（误认作河，命名 Rio de Janeiro）。
