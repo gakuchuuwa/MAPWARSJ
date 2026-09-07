@@ -125,7 +125,8 @@ export type RegionType =
     | 'SWEDISH'     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
     | 'MACEDONIAN' // 古典马其顿（佩拉王都与亚历山大方阵骑步）
     | 'HELLENIC' // 古典希伦（雅典民主与斯巴达双王城邦同盟）
-    | 'IMPERIAL_ROME'; // 古典帝国罗马（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
+    | 'IMPERIAL_ROME' // 古典帝国罗马（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
+    | 'GREEK_MERCENARY'; // 古典希腊雇佣（色诺芬万人军与地中海游历雇佣方阵）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -212,6 +213,7 @@ export const REGION_ORDER: RegionType[] = [
     'MACEDONIAN',
     'HELLENIC',
     'IMPERIAL_ROME',
+    'GREEK_MERCENARY',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -324,6 +326,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典帝国罗马',
+    GREEK_MERCENARY: '古典希腊雇佣',
 };
 
 /**
@@ -442,6 +445,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典帝国罗马',
+    GREEK_MERCENARY: '古典希腊雇佣',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -710,6 +714,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     MACEDONIAN: '#8E24AA',
     HELLENIC: '#0288D1',
     IMPERIAL_ROME: '#C62828',
+    GREEK_MERCENARY: '#00838F',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1407,6 +1412,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/middle_eastern_big.png'),
         pass: resolvePath('/cities/middle_eastern_pass.png')
     },
+    GREEK_MERCENARY: {
+        small: resolvePath('/cities/greek_small.png'),
+        medium: resolvePath('/cities/greek_medium.png'),
+        big: resolvePath('/cities/greek_big.png'),
+        pass: resolvePath('/cities/greek_pass.png')
+    },
     HELLENIC: {
         small: resolvePath('/cities/greek_small.png'),
         medium: resolvePath('/cities/greek_medium.png'),
@@ -1616,6 +1627,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     MACEDONIAN:  ['city_salonica'],
     HELLENIC:    ['city_yadian', 'city_sparta'],
     IMPERIAL_ROME: ['city_roma'],
+    GREEK_MERCENARY: ['city_rhodes'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

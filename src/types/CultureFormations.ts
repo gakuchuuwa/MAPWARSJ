@@ -175,6 +175,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     MACEDONIAN:   'MIXED',      // 马其顿方阵步兵+伙伴骑兵
     HELLENIC:     'INFANTRY',   // 古典希伦：雅典与斯巴达重步兵方阵
     IMPERIAL_ROME: 'CAVALRY',    // 古典帝国罗马：全员铁骑禁卫突击
+    GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -327,6 +328,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
     IMPERIAL_ROME: 'triangle',   // 古典帝国罗马：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
+    GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1915,6 +1917,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     GERMANIC: '古典日耳曼军团',
     LATIN: '古典共和国罗马军团',
     IMPERIAL_ROME: '古典帝国罗马军团',
+    GREEK_MERCENARY: '古典希腊雇佣军团',
     INDIA: '古典印度军团',
     BERBER: '封建柏柏尔军团',
     AMERICA: '城堡墨西加军团',
@@ -2974,6 +2977,27 @@ export const PASHTUN_TIERS: CompositionTier[] = [
  *   · 中坚战列 罗马百夫长（3档） —— 跨马战列百夫长中坚突刺冲阵。
  *   · 底边主力 罗马百夫长重装（4档【重装】） —— 奥古斯都皇帝御前禁卫亲军（Equites Singulares Augusti），具装铁壁势不可挡。
  */
+
+/** 古典希腊雇佣军团（雁行阵 4+3+2，步兵宽线推进）。
+ *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
+ *  史实依据（色诺芬《长征记》万人军与希腊化地中海雇佣大军）：
+ *   · 前排主力 希腊雇佣重步兵高级（4档【高级】） —— 身经百战的地中海职业希腊雇佣方阵，大圆盾青铜铠正面推进。
+ *   · 中坚冲阵 希腊化冲击骑兵重装（3档【重装】） —— 希腊化继业者时代雇佣具装重骑兵，以铁矛破开敌线。
+ *   · 后排掩护 希腊腹弩手（2档） —— 叙拉古兵工厂发明的古希腊腹弩（Gastraphetes），提供强劲机械抛射支援。
+ */
+export const GREEK_MERCENARY_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'mercenary_hoplite', count: 4 }, // 前排主力【高级】 = 希腊雇佣重步兵高级
+            { type: 'shock_cavalry', count: 3 }, // 中坚【重装】 = 希腊化冲击骑兵重装
+            { type: 'gastraphetes', count: 2 } // 后排 = 希腊腹弩手
+        ]
+    }
+];
+
 export const IMPERIAL_ROME_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3134,6 +3158,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     MACEDONIAN: MACEDONIAN_TIERS,
     HELLENIC: HELLENIC_TIERS,
     IMPERIAL_ROME: IMPERIAL_ROME_TIERS,
+    GREEK_MERCENARY: GREEK_MERCENARY_TIERS,
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */
