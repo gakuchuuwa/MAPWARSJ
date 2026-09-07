@@ -58,3 +58,83 @@
 | `jian_swordman_unshielded` | 华夏双手剑士 | **华夏双手剑士精锐** |
 | `condottiero` | 佣兵 | **意大利佣兵精锐** |
 | `two_handed_swordsman` | 双手剑士 | **欧洲双手剑士** |
+
+
+## 补充：「精锐」只留给城堡兵的升级档（2026-09-07 主人定）
+
+以下 31 个 id 不是 `elite_*` 升级档，档次词由「精锐」改为「高级」。
+
+| id | 原名 | 新名 |
+|---|---|---|
+| `aztec_raider` | 阿兹特克突袭者精锐 | **阿兹特克突袭者高级** |
+| `sunda_royal_fighter` | 爪哇巽他皇家战士精锐 | **爪哇巽他皇家战士高级** |
+| `frankish_paladin` | 法兰克圣骑士精锐 | **法兰克圣骑士高级** |
+| `jarl` | 维京首领骑兵精锐 | **维京首领骑兵高级** |
+| `shield` | 欧洲近卫兵精锐 | **欧洲近卫兵高级** |
+| `jian_swordsman` | 华夏刀剑手精锐 | **华夏刀剑手高级** |
+| `savar` | 波斯萨瓦尔重骑精锐 | **波斯萨瓦尔重骑高级** |
+| `champion` | 欧洲冠军剑士精锐 | **欧洲冠军剑士高级** |
+| `paladin` | 欧洲游侠精锐 | **欧洲游侠高级** |
+| `legionary` | 罗马军团步兵精锐 | **罗马军团步兵高级** |
+| `general_cavalry` | 华夏虎豹骑精锐 | **华夏虎豹骑高级** |
+| `companion_cavalry` | 马其顿伙伴骑兵精锐 | **马其顿伙伴骑兵高级** |
+| `condottiero` | 意大利佣兵精锐 | **意大利佣兵高级** |
+| `ekdromos` | 希腊埃克德罗摩斯精锐 | **希腊埃克德罗摩斯高级** |
+| `hippeus` | 斯巴达希皮乌斯精锐 | **斯巴达希皮乌斯高级** |
+| `qizilbash_warrior` | 波斯红头骑士精锐 | **波斯红头骑士高级** |
+| `royal_janissary` | 奥斯曼皇家亲兵精锐 | **奥斯曼皇家亲兵高级** |
+| `sacred_band` | 希腊底比斯圣队精锐 | **希腊底比斯圣队高级** |
+| `sannahya` | 孔雀桑纳亚战象精锐 | **孔雀桑纳亚战象高级** |
+| `scythian_axe_cavalry` | 斯基泰斧骑兵精锐 | **斯基泰斧骑兵高级** |
+| `strategos` | 雅典将军卫队精锐 | **雅典将军卫队高级** |
+| `sakan_axeman` | 塞种萨迦斧兵精锐 | **塞种萨迦斧兵高级** |
+| `warrior_priest` | 亚美尼亚修士战士精锐 | **亚美尼亚修士战士高级** |
+| `winged_hussar` | 波兰翼骑兵精锐 | **波兰翼骑兵高级** |
+| `xolotl_warrior` | 阿兹特克索洛特尔骑兵精锐 | **阿兹特克索洛特尔骑兵高级** |
+| `jian_swordman_unshielded` | 华夏双手剑士精锐 | **华夏双手剑士高级** |
+| `sosso_guard` | 西非索索禁卫军精锐 | **西非索索禁卫军高级** |
+| `jian_swordman_shielded` | 华夏持盾刀剑手精锐 | **华夏持盾刀剑手高级** |
+| `paragon` | 十字军圣殿楷模武士精锐 | **十字军圣殿楷模武士高级** |
+| `equites` | 罗马伴随骑士精锐 | **罗马伴随骑士高级** |
+| `crusader_knight` | 欧洲十字军骑士精锐 | **欧洲十字军骑士高级** |
+
+
+## 补充二：查 DE 本体分清专属兵 / 通用线（2026-09-07）
+
+判据 = DE 单位说明里有没有「X unique …」字样。以下 8 个是专属兵的 elite 升级档，档次词由「高级」改回「精锐」；
+另修「精锐华夏戟兵」的词序（档次词必须在最后）。
+
+| id | 原名 | 新名 | DE 判定 |
+|---|---|---|---|
+| `elite_blackwood_archer` | 图皮黑木弓箭手高级 | **图皮黑木弓箭手精锐** | Tupi unique |
+| `elite_bolas_rider` | 马普切套索骑兵高级 | **马普切套索骑兵精锐** | Mapuche unique |
+| `elite_guecha_warrior` | 穆伊斯卡格查勇士高级 | **穆伊斯卡格查勇士精锐** | Muisca unique |
+| `elite_ibirapema_warrior` | 图皮战棍勇士高级 | **图皮战棍勇士精锐** | Tupi unique |
+| `elite_kona` | 马普切科纳勇士高级 | **马普切科纳勇士精锐** | Mapuche unique |
+| `elite_konnik_foot` | 锤炼兵高级 | **锤炼兵精锐** | Bulgarian unique |
+| `elite_shrivamsha_rider` | 什里瓦姆沙骑手高级 | **什里瓦姆沙骑手精锐** | Gurjara unique |
+| `elite_temple_guard` | 穆伊斯卡神庙守卫高级 | **穆伊斯卡神庙守卫精锐** | Muisca unique |
+| `ji_infantry_elite` | 精锐华夏戟兵 | **华夏戟兵精锐** | 项目自造·词序修正 |
+
+
+## 补充三：按 DE 字符串分段定文明归属（2026-09-07）
+
+DE `key-value-strings-utf8.txt` 里**同一段连号 id 就是同一个文明的兵表**。
+`405001-405053` 那段（Immortal / Strategos / Hippeus / Hoplite / Lembos 四档 /
+Lancer → Shock Cavalry → Imperial Cavalry / Sparabara / Sakan Axeman）
+= 《Chronicles: Battle for Greece》希腊-阿契美尼德那批。据此：
+
+| id | 原名 | 新名 | 依据 |
+|---|---|---|---|
+| `shock_cavalry` | 希腊化冲击骑兵重装 | **波斯冲击铁骑高级** | 尖顶盔+札甲马铠的具装形制；DE 里是 Lancer→Shock Cavalry→Imperial Cavalry 马厩线，同段配 Sparabara/Immortal |
+| `imperial_cavalry` | 拜占庭骑兵重装 | **波斯具装铁骑重装** | DE 原文「Upgrade to Imperial Cavalry — Upgrades your Shock Cavalry」，同线最后一档 |
+| `lembos` | 小艇 | **希腊轻型伦博斯** | DE 405009 |
+| `war_lembos` | 小艇高级 | **希腊战型伦博斯高级** | DE 405010 |
+| `heavy_lembos` | 小艇重装 | **希腊重型伦博斯重装** | DE 405011 |
+| `elite_lembos` | 小艇精锐 | **希腊旗舰伦博斯重装** | DE 405012；船坞船不是城堡兵，不用「精锐」 |
+
+### 保持不动（主人 2026-09-07 拍板）
+
+- 卡拉维尔帆船高级 / 维京长船高级 / 龟船高级：DE 判 unique，但**船坞造的不是城堡兵**，规则字面如此，保持「高级」。
+- `imperial_centurion` **罗马百夫长重装**：与罗马百夫长精锐是同一张素材，DE 未给文明，归罗马。
+- 古典色雷斯军团 2 档保留波斯冲击铁骑高级（战力 70），不换回本族兵。
