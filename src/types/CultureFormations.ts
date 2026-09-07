@@ -1305,16 +1305,16 @@ export const BASHU_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 9. 江南 刀剑手+诸葛弩+精锐火焰弓箭手（三角阵 2+3+4：刀剑手尖刀 + 诸葛弩中坚 + 精锐火焰弓箭手主力底边） */
+/** 9. 封建华夏军团 华夏双手剑士高级+诸葛弩+南北朝黑光铠骑兵重装（锥形阵 2+3+4：双手剑先锋 + 诸葛弩中坚 + 黑光重装底边主力，战力72） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordsman', count: 2 },    // Row 0 尖刀先锋 = 刀剑手 2人
-            { type: 'chukonu', count: 3 },           // Row 1 齐射中坚 = 诸葛弩 3人
-            { type: 'elite_fire_archer', count: 4 }  // Row 2 底边主力齐射 = 精锐火焰弓箭手 4人
+            { type: 'jian_swordman_unshielded', count: 2 }, // Row 0 尖刀先锋【高级】 = 华夏双手剑士高级 2人
+            { type: 'chukonu', count: 3 },                  // Row 1 齐射中坚 = 诸葛弩 3人
+            { type: 'hei_kuang_heavy', count: 4 }           // Row 2 底边主力【重装】 = 南北朝黑光铠骑兵重装 4骑
         ]
     }
 ];
@@ -1512,16 +1512,16 @@ export const INDIA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 20. 柏柏尔 马穆鲁克+标枪骑兵+骆驼弓骑（三角阵 2+3+4：马穆鲁克尖刀 + 标枪骑兵中坚 + 骆驼弓骑主力） */
+/** 20. 封建柏柏尔军团 沙漠骆驼突袭者高级+柏柏尔骆驼弓骑+骆驼弓骑精锐（锥形阵 2+3+4：骆驼突袭尖刀 + 骆驼弓骑中坚 + 骆驼弓骑精锐底边主力，战力57） */
 export const BERBER_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'camel_heavy', count: 2 },
-            { type: 'elite_genitour', count: 3 },
-            { type: 'elite_camel_archer', count: 4 }
+            { type: 'camel_raider', count: 2 },        // Row 0 尖刀先锋【高级】 = 沙漠骆驼突袭者高级 2骑
+            { type: 'camel_archer', count: 3 },        // Row 1 机动中坚 = 柏柏尔骆驼弓骑 3骑
+            { type: 'elite_camel_archer', count: 4 }   // Row 2 底边主力【精锐】 = 柏柏尔骆驼弓骑精锐 4骑
         ]
     }
 ];
@@ -1606,16 +1606,16 @@ export const SPANISH_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 保加利亚军团（鱼鳞阵 342）[2026-08-30 主人设计] */
+/** 封建保加利亚军团（鱼鳞阵 3+4+2：保加利亚骑兵3 + 骑兵精锐中坚4 + 保加利亚锤炼兵精锐2，战力93） */
 export const BULGARIANS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'konnik', count: 3 },
-            { type: 'elite_konnik', count: 4 },
-            { type: 'cav_archer', count: 2 }
+            { type: 'konnik', count: 3 },             // 前排 = 保加利亚骑兵 3骑
+            { type: 'elite_konnik', count: 4 },       // 中坚主力【精锐】 = 保加利亚骑兵精锐 4骑
+            { type: 'elite_konnik_foot', count: 2 }   // 后排重装【精锐】 = 保加利亚锤炼兵精锐 2人
         ]
     }
 ];
@@ -1692,16 +1692,16 @@ export const GEORGIANS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 孟加拉军团（雁行阵 432）[2026-08-30 主人设计] */
+/** 封建孟加拉军团（雁行阵 4+3+2：拉塔战车近战精锐前锋4 + 拉塔弓战车精锐中坚3 + 步弓手后卫2，战力77） */
 export const BENGALIS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_ratha_ranged', count: 4 }, // 前排主力【精锐】 = 孟加拉拉塔战车(弓)精锐
-            { type: 'swordsman', count: 3 }, // 中坚 = 剑士
-            { type: 'archer', count: 2 } // 后排 = 南方步弓手
+            { type: 'elite_ratha_melee', count: 4 },  // 前排冲锋【精锐】 = 孟加拉拉塔战车(近战)精锐 4车
+            { type: 'elite_ratha_ranged', count: 3 }, // 中坚主力【精锐】 = 孟加拉拉塔战车(弓)精锐 3车
+            { type: 'archer', count: 2 }              // 后排掩护 = 南方步弓手 2人
         ]
     }
 ];
@@ -1808,9 +1808,9 @@ export const PURU_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'sickle_warrior', count: 3 },   // Row 0
-            { type: 'ballista_elephant', count: 2 },   // Row 1
-            { type: 'elite_urumi_swordsman', count: 4 }   // Row 2
+            { type: 'sickle_warrior', count: 3 },         // Row 0 前列抵挡 = 镰刀勇士 3人
+            { type: 'elephant_archer', count: 2 },        // Row 1 象背齐射 = 象弓骑兵 2象
+            { type: 'elite_urumi_swordsman', count: 4 }   // Row 2 底边主力【精锐】 = 达罗毗荼软剑士精锐 4人
         ]
     }
 ];
@@ -2433,23 +2433,24 @@ export const FRANKS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 萨珊 不死全具装铁骑+不死卫队+复合弓兵（锥形阵 2+3+4：Savan铁骑2 + 不死卫队3 + 萨珊弓手4） */
+/** 萨珊 波斯战象旗舰+波斯长生军+骑士重装（锥形阵 2+3+4：复合弓2 + 战象中坚1+长生军2 + 骑士重装4，战力111） */
 export const SASANIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'composite_bowman', count: 2 }, // 尖刀 = 亚美尼亚复合弓手
-            { type: 'immortal', count: 3 }, // 中坚 = 波斯长生军
-            { type: 'savar', count: 4 } // 底边主力【精锐】 = 萨瓦尔重骑精锐（萨珊 Savaran 具装王牌）
+            { type: 'composite_bowman', count: 2 }, // 尖刀 = 亚美尼亚复合弓手 2人
+            { type: 'war_elephant', count: 1 },     // 中军攻坚 = 萨珊波斯战象 1象（将帅战象旗舰）
+            { type: 'immortal', count: 2 },         // 中军近卫 = 波斯长生军 2人
+            { type: 'cavalier', count: 4 }          // 底边主力【重装】 = 骑士重装 4骑（波斯具装铁甲主力）
         ]
     }
 ];
 
-/** 突厥 答剌罕重骑+突厥骑射手+草原枪骑兵高级（锥形阵 2+3+4：答剌罕重骑2 + 骑射手3 + 草原枪骑兵高级4）
+/** 突厥 答剌罕重骑+突厥重装骑射手+草原枪骑兵高级（锥形阵 2+3+4：答剌罕重骑2 + 重装骑射手3 + 草原枪骑兵高级4，战力66）
  *  史实依据：突厥汗国以狼头纛下突厥汗室贵族特权答剌罕甲骑突击开道，
- *  中坚以突厥复合弓骑射压制，底边由大草原高级冲击枪骑兵决胜，彻底消除古典斯基泰穿越。 */
+ *  中坚以精锐重装复合弓骑射压制，底边由大草原高级冲击枪骑兵决胜。 */
 export const TURKS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -2457,7 +2458,7 @@ export const TURKS_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'tarkan', count: 2 },              // 尖刀先锋 = 答剌罕重骑 2骑（突厥可汗亲贵精锐）
-            { type: 'cav_archer', count: 3 },          // 中坚扰乱 = 封建骑射手 3骑（突厥狼骑骑射手，剔除古典斯基泰）
+            { type: 'cav_archer_heavy', count: 3 },    // 中坚扰乱【重装】 = 骑射手重装 3骑（精锐复合弓重装骑射）
             { type: 'elite_steppe_lancer', count: 4 }  // 底边主力【高级】 = 草原枪骑兵高级 4骑
         ]
     }
@@ -2653,18 +2654,18 @@ export const LOMBARDS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 柔然 全具装草原重骑+鸣镝长角弓骑+斥候轻骑（锋矢阵 2+3+4：斥候骑兵2 + 骑射手3 + 草原枪骑兵高级4）
- *  史实依据：北朝时期漠北柔然蠕蠕汗国，善用轻骑斥候与大漠诱伏，
- *  中坚以骑射游击袭扰，主力以大草原高级枪骑兵突击破阵，剔除古典斥候残留。 */
+/** 柔然 鲜卑掠骑兵+骑射手重装+草原枪骑兵高级（锥形阵 2+3+4：鲜卑掠骑2 + 重装骑射3 + 草原枪骑兵高级4，战力56）
+ *  史实依据：北魏北朝时期漠北柔然汗国善用草原鲜卑轻骑掠扰，
+ *  中坚以精锐重装复合弓骑射压制，底边以草原枪骑兵高级突击决胜。 */
 export const ROURAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'scout_cavalry', count: 2 },       // 尖刀诱伏 = 斥候骑兵 2骑（封建轻骑，剔除古典斥候）
-            { type: 'cav_archer', count: 3 },          // 中坚扰乱 = 骑射手 3骑
-            { type: 'elite_steppe_lancer', count: 4 }, // 压阵主力【高级】 = 草原枪骑兵高级 4骑
+            { type: 'xianbei_raider', count: 2 },        // 尖刀诱伏 = 鲜卑掠骑兵 2骑（南北朝草原掠袭轻骑）
+            { type: 'cav_archer_heavy', count: 3 },      // 中坚扰乱【重装】 = 骑射手重装 3骑
+            { type: 'elite_steppe_lancer', count: 4 }   // 压阵主力【高级】 = 草原枪骑兵高级 4骑
         ]
     }
 ];
