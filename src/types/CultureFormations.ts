@@ -172,6 +172,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SWISS: 'INFANTRY',
     PASHTUN: 'CAVALRY',
     SWEDISH: 'INFANTRY',
+    MACEDONIAN:   'MIXED',      // 马其顿方阵步兵+伙伴骑兵
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -219,7 +220,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
-    NORTHEAST:    'triangle',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
+    NORTHEAST:    'crescent',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
     CENTRAL:      'echelon',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
@@ -321,6 +322,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SWISS: 'square',
     PASHTUN: 'crescent',
     SWEDISH: 'square',
+    MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1167,8 +1169,8 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tiger_rider', count: 2, scale: 1 },
-            { type: 'kipchak', count: 3, scale: 1 },
+            { type: 'tiger_rider', count: 3, scale: 1 },
+            { type: 'antiquity_cavalry_archer', count: 2, scale: 1 },
             { type: 'xianbei_raider', count: 4, scale: 1 }
         ]
     }
@@ -2002,6 +2004,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SWISS: '城堡瑞士军团',
     PASHTUN: '帝王普什图军团',
     SWEDISH: '帝王瑞典军团',
+    MACEDONIAN: '古典马其顿军团',
 };
 
 
@@ -2033,7 +2036,10 @@ export const THRACIAN_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'rhomphaia_warrior', count: 4 },   // Row 0 宽线主力 = 罗姆菲亚镰刀剑士 4人
-            { type: 'thracian_peltast', count: 2 },   // Row 1 中排 = 色雷斯轻盾兵 2人
+            // 🔴 [2026-09-07 平衡] 原来 2 档是色雷斯标枪手（战力 49），整支只有 52，古典里倒数第二。
+            //    换成冲击重骑兵 = 奥德里西亚贵族重骑：色雷斯贵族本来就借希腊-波斯甲骑形制，
+            //    素材样貌是高盔具装骑，与色雷斯黄金骑士相称；战力抬到 72。
+            { type: 'shock_cavalry', count: 2 },   // Row 1 中排 = 冲击重骑兵 2骑（奥德里西亚贵族重骑）
             { type: 'elite_peltast', count: 3 }   // Row 2 后排 = 精锐轻盾兵 3人
         ]
     }
@@ -2477,7 +2483,10 @@ export const KUSHAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'porus_elephant', count: 2 },
+            // 🔴 [2026-09-07 平衡] 原来前 2 是「波鲁斯王战象」—— 那是 hero 类素材，战力 347，
+            //    一支军团被它顶到 156，是古典第一、全表第二。换成通用的桑纳亚战象（182），
+            //    样貌同为披挂战象，战力回到 119，仍是古典顶档但不再离群。
+            { type: 'sannahya', count: 2 },
             { type: 'sogdian_cataphract', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ]
@@ -2857,9 +2866,12 @@ export const QIANG_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'antiquity_spearman', count: 2, scale: 1 },
-            { type: 'antiquity_scout_cavalry', count: 3, scale: 1 },
-            { type: 'antiquity_cavalry_archer', count: 4, scale: 1 }
+            // 🔴 [2026-09-07 平衡] 原编成（古典长矛兵2/古典斥候骑兵3/古典骑射手4）战力 41，
+            //    是全部 102 个文化军团的并列垫底，且 4 档放的是白板「古典骑射手」，本身就违反 4 档铁律。
+            //    三格全部换成样貌相称的羌人兵：山民步兵 + 游骑 + 重装骑射，战力 65 回到古典带内。
+            { type: 'antiquity_light_cavalry', count: 2, scale: 1 },        // 前 2 尖刀 = 古典轻骑兵（羌游骑绕袭）
+            { type: 'hill_tribesman', count: 3, scale: 1 },                 // 中 3 骨干 = 山地部落民（湟中山民步兵，样貌是皮裘山民）
+            { type: 'antiquity_heavy_cavalry_archer', count: 4, scale: 1 }  // 后 4 主力【重装】 = 古典骑射手重装（羌骑控弦）
         ]
     }
 ];
@@ -2932,6 +2944,31 @@ export const PASHTUN_TIERS: CompositionTier[] = [
             { type: 'hill_tribesman', count: 3 },
             { type: 'elite_camel_archer', count: 2 },
             { type: 'elite_ghulam', count: 4 },
+        ]
+    }
+];
+
+
+/** 古典马其顿军团（雁行阵 4+3+2，主力在前排宽线）。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；不安排攻城武器；三兵全部为古典档位。
+ *  史料：亚历山大大帝与腓力二世（前 359—前 323）马其顿大军团体系。
+ *        古代军事史上最著名的「铁锤与铁砧」（Hammer and Anvil）协同战法：
+ *        ① 铁砧：前排以坚如磐石的重装步兵与萨里沙超长矛方阵（长达 5.5—6 米长矛）筑成牢不可破的钢铁之墙，
+ *           高加米拉战役中以梯队展开（Echelon）牢牢钉死波斯大军正面；
+ *        ② 铁锤：亚历山大亲率王室伙伴重骑兵（Hetairoi），在敌阵拉扯出空隙时发起雷霆万钧的楔形冲锋，一击直插敌军王中军！
+ *    前 4 希腊重装步兵（主力【重装】） —— 战线核心盾墙支柱
+ *    中 3 马其顿方阵步兵 —— 萨里沙超长矛方阵穿透刺杀
+ *    后 2 马其顿伙伴骑兵 —— 亚历山大亲率王家冲击重骑铁锤侧击
+ */
+export const MACEDONIAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hoplite', count: 4 },
+            { type: 'phalangite', count: 3 },
+            { type: 'companion_cavalry', count: 2 }
         ]
     }
 ];
@@ -3054,6 +3091,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SWISS: SWISS_TIERS,
     PASHTUN: PASHTUN_TIERS,
     SWEDISH: SWEDISH_TIERS,
+    MACEDONIAN: MACEDONIAN_TIERS,
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */

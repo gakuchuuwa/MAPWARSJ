@@ -138,6 +138,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SWISS: 'ruishi',
     PASHTUN: 'dulan_d',
     SWEDISH: 'ruidian_yota',
+    MACEDONIAN: 'maqidun',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
