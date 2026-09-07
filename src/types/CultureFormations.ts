@@ -1266,9 +1266,9 @@ export const HUNS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_tarkan', count: 4 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'antiquity_cavalry_archer', count: 3, scale: 1 }
+            { type: 'elite_tarkan', count: 4 }, // 宽线主力【精锐】 = 匈奴答剌罕骑兵精锐 4骑（阿提拉王帐铁骑）
+            { type: 'steppe_lancer', count: 2 }, // 中排接应 = 草原枪骑兵 2骑
+            { type: 'cav_archer', count: 3 }     // 后排齐射 = 封建骑射手 3骑（剔除古典骑射手残留）
         ]
     }
 ];
@@ -1356,30 +1356,34 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 12. 青藏 黑光铠骑兵+精锐答剌罕骑兵+蒙古突骑（鹤翼阵 2+4+3：黑光铠骑兵前锋 2 + 精锐答剌罕骑兵主力 4 + 蒙古突骑后排支援 3） */
+/** 12. 青藏 黑光铠骑兵+黑光铠重装+骑射手（鹤翼阵 2+4+3：黑光铠骑兵前锋 2 + 黑光铠骑兵重装中军主力 4 + 骑射手后排支援 3）
+ *  史实依据：《新唐书·吐蕃传》「其兵刃弓矢俱美，人马皆被重铠，带其面目，独开双眸，虽劲弩利刃不能破也」。
+ *  中坚主力以冷锻铁甲重铠武装，彻底剔除匈奴答剌罕与蒙古突骑之跨时空错配。 */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hei_kuang', count: 2 },       // Row 0 前锋 = 黑光铠骑兵 2骑
-            { type: 'elite_tarkan', count: 4 },    // Row 1 中军突击主力 = 精锐答剌罕骑兵 4骑
-            { type: 'mangudai', count: 3 }         // Row 2 尾收支援 = 蒙古突骑 3骑
+            { type: 'hei_kuang', count: 2 },            // Row 0 前锋接应 = 南北朝黑光铠骑兵 2骑
+            { type: 'hei_kuang_heavy', count: 4 },      // Row 1 中军突击主力【重装】 = 南北朝黑光铠骑兵重装 4骑（青藏高原冷锻具装甲骑）
+            { type: 'cav_archer', count: 3 }            // Row 2 尾收支援 = 封建骑射手 3骑（青藏角弓善射手）
         ]
     }
 ];
 
-/** 13. 中亚 萨瓦尔+精锐草原枪兵+精锐钦察（衡轭阵 4+2+3：萨瓦尔铁骑宽线主力 + 精锐草原枪兵中排接应 + 精锐钦察后排齐射） */
+/** 13. 中亚 萨瓦尔+草原枪兵+精锐钦察（衡轭阵 4+2+3：萨瓦尔铁骑宽线主力 + 草原枪兵中排接应 + 精锐钦察后排齐射）
+ *  史实依据：河中绿洲城邦（布哈拉/撒马尔罕）与萨曼王朝、花剌子模古拉姆近卫萨瓦尔重骑兵为中枢主力，
+ *  辅助以中亚突厥游牧轻枪骑与库曼钦察复合弓骑，战力平抑至带内 111 黄金区间。 */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'savar', count: 4 },                // Row 0 宽线主力 = 萨瓦尔 4人
-            { type: 'elite_steppe_lancer', count: 2 },  // Row 1 中排接应 = 精锐草原枪兵 2人
-            { type: 'elite_kipchak', count: 3 }         // Row 2 后排齐射 = 精锐钦察 3人
+            { type: 'savar', count: 4 },          // Row 0 宽线主力【高级】 = 波斯萨瓦尔重骑高级 4骑（绿洲古拉姆具装精骑）
+            { type: 'steppe_lancer', count: 2 },  // Row 1 中排接应 = 草原枪骑兵 2骑（游牧辅军）
+            { type: 'elite_kipchak', count: 3 }   // Row 2 后排齐射【精锐】 = 库曼钦察弓骑精锐 3骑
         ]
     }
 ];
@@ -2446,16 +2450,18 @@ export const SASANIAN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 突厥 答剌罕精骑+草原枪骑+草原骑射手（锥形阵 2+3+4：答剌罕重骑2 + 草原枪骑3 + 骑射手4） */
+/** 突厥 答剌罕重骑+突厥骑射手+草原枪骑兵高级（锥形阵 2+3+4：答剌罕重骑2 + 骑射手3 + 草原枪骑兵高级4）
+ *  史实依据：突厥汗国以狼头纛下突厥汗室贵族特权答剌罕甲骑突击开道，
+ *  中坚以突厥复合弓骑射压制，底边由大草原高级冲击枪骑兵决胜，彻底消除古典斯基泰穿越。 */
 export const TURKS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tarkan', count: 2 }, // 尖刀 = 匈奴答剌罕骑兵
-            { type: 'scythian_horse_archer', count: 3 }, // 中坚 = 斯基泰骑射手
-            { type: 'elite_steppe_lancer', count: 4 } // 底边主力【高级】 = 草原枪骑兵高级
+            { type: 'tarkan', count: 2 },              // 尖刀先锋 = 答剌罕重骑 2骑（突厥可汗亲贵精锐）
+            { type: 'cav_archer', count: 3 },          // 中坚扰乱 = 封建骑射手 3骑（突厥狼骑骑射手，剔除古典斯基泰）
+            { type: 'elite_steppe_lancer', count: 4 }  // 底边主力【高级】 = 草原枪骑兵高级 4骑
         ]
     }
 ];
@@ -2648,16 +2654,18 @@ export const LOMBARDS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 柔然 全具装生铁马铠重骑+鸣镝长角弓骑+诱伏轻骑（锋矢阵 4+3+2） */
+/** 柔然 全具装草原重骑+鸣镝长角弓骑+斥候轻骑（锋矢阵 2+3+4：斥候骑兵2 + 骑射手3 + 草原枪骑兵高级4）
+ *  史实依据：北朝时期漠北柔然蠕蠕汗国，善用轻骑斥候与大漠诱伏，
+ *  中坚以骑射游击袭扰，主力以大草原高级枪骑兵突击破阵，剔除古典斥候残留。 */
 export const ROURAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'antiquity_scout_cavalry', count: 2 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'scout_cavalry', count: 2 },       // 尖刀诱伏 = 斥候骑兵 2骑（封建轻骑，剔除古典斥候）
+            { type: 'cav_archer', count: 3 },          // 中坚扰乱 = 骑射手 3骑
+            { type: 'elite_steppe_lancer', count: 4 }, // 压阵主力【高级】 = 草原枪骑兵高级 4骑
         ]
     }
 ];
