@@ -174,7 +174,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SWEDISH: 'INFANTRY',
     MACEDONIAN:   'MIXED',      // 马其顿方阵步兵+伙伴骑兵
     HELLENIC:     'INFANTRY',   // 古典希伦：雅典与斯巴达重步兵方阵
-    IMPERIAL_ROME: 'CAVALRY',    // 古典帝国罗马：全员铁骑禁卫突击
+    IMPERIAL_ROME: 'CAVALRY',    // 古典罗马禁卫：全员铁骑禁卫突击
     GREEK_MERCENARY: 'MIXED',     // 古典希腊雇佣：步骑弩综合雇佣军体系
     MAGNA_GRAECIA:   'MIXED',     // 古典大希腊：步骑标枪综合战阵体系
     ACHAEMENIDS:     'MIXED',     // 古典阿契美尼德：万人不死卫队步骑弓协同体系
@@ -330,7 +330,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SWEDISH: 'fish_scale',
     MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
-    IMPERIAL_ROME: 'triangle',   // 古典帝国罗马：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
+    IMPERIAL_ROME: 'triangle',   // 古典罗马禁卫：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
     MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
     ACHAEMENIDS:     'fish_scale', // 古典阿契美尼德：鱼鳞阵 3+4+2 不死军矛兵3 + 古典重装骑射4 + 不死军弓手2
@@ -1299,7 +1299,8 @@ export const BASHU_TIERS: CompositionTier[] = [
         slots: [
             { type: 'vanguard', count: 4 },
             { type: 'white_feather_guard', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 }
+            // 🔴 [2026-09-07] 原为「古典掷矛手高级」。巴蜀山民短矛飞投属散兵，史无常备精锐建制，降回基础档。
+            { type: 'antiquity_skirmisher', count: 2 }
         ]
     }
 ];
@@ -1416,7 +1417,10 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         slots: [
             { type: 'elite_composite_bowman', count: 4 }, // Row 0 主力·宽线齐射 = 精锐复合弓箭手 4人
             { type: 'eastern_swordsman', count: 3 },      // Row 1 中军接应 = 东方剑士 3人（留 3 档补偿，见文件头）
-            { type: 'cav_archer_heavy', count: 2 }        // Row 2 压阵骑射 = 重装骑射手 2人
+            // 🔴 [2026-09-07] 原为「骑射手重装」—— 骑射是突厥-塞尔柱系的打法，不是黎凡特本土兵。
+            //    换成中东民兵：叙利亚城镇的「艾哈达斯」（aḥdāth）市民民兵，十至十二世纪大马士革、
+            //    阿勒颇的城防主力，是封建西亚真实存在的建制。
+            { type: 'militia', count: 2 }        // Row 2 压阵骑射 = 重装骑射手 2人
         ]
     }
 ];
@@ -1714,7 +1718,9 @@ export const MAYANS_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'eagle_scout', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            // 🔴 [2026-09-07] 原为「古典掷矛手高级」。玛雅的投矛器（atlatl）是全民普及的
+            //    征召兵器，不是常备精锐建制，降回基础档；且该高级兵原被 8 支军团共用，过滥。
+            { type: 'antiquity_skirmisher', count: 2 },
             { type: 'vanguard', count: 4 }
         ]
     }
@@ -1863,7 +1869,9 @@ export const CELTS_TIERS: CompositionTier[] = [
         slots: [
             { type: 'elite_war_dog', count: 3 }, // 前排 = 战犬高级
             { type: 'vanguard', count: 4 }, // 中坚主力【重装】 = 先锋重装步兵
-            { type: 'elite_antiquity_skirmisher', count: 2 } // 后排 = 古典掷矛手高级
+            // 🔴 [2026-09-07] 原为「古典掷矛手高级」。凯撒《高卢战记》里高卢-不列颠部族标枪是
+            //    普通战士人手一支的常规散兵武器，不是精锐；降回基础档。
+            { type: 'antiquity_skirmisher', count: 2 } // 后排 = 古典掷矛手
         ]
     }
 ];
@@ -1921,8 +1929,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     WESTERN: '古典塞种军团',
     SLAVIC: '封建罗斯军团',
     GERMANIC: '古典日耳曼军团',
-    LATIN: '古典共和国罗马军团',
-    IMPERIAL_ROME: '古典帝国罗马军团',
+    LATIN: '古典罗马军团',
+    IMPERIAL_ROME: '古典罗马禁卫军团',
     GREEK_MERCENARY: '古典希腊雇佣军团',
     MAGNA_GRAECIA: '古典大希腊军团',
     ACHAEMENIDS: '古典阿契美尼德军团',
@@ -2616,7 +2624,10 @@ export const VANDALS_TIERS: CompositionTier[] = [
         slots: [
             { type: 'cavalier', count: 4 }, // 前排主力【重装】 = 骑士重装
             { type: 'longswordsman', count: 3 }, // 中坚 = 长剑士
-            { type: 'skirmisher', count: 2 } // 后排 = 掷矛手
+            // 🔴 [2026-09-07] 原为「掷矛手」—— 与史料直接冲突：普罗柯比《战记》三·八记汪达尔人
+            //    「全是骑兵，用矛与剑，不习弓与标枪」。汪达尔编制里放投矛散兵是错的，
+            //    换成斥候骑兵（素材是锁子甲带盔持剑的骑手，正合汪达尔骑兵样貌）。
+            { type: 'scout_cavalry', count: 2 } // 后排 = 斥候骑兵
         ]
     }
 ];
@@ -2838,7 +2849,9 @@ export const HEBREWS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'slinger', count: 3 },
+            // 🔴 [2026-09-07] 原为「投石兵」—— 那是城堡时代档的兵，待在古典军团里是穿越。
+            //    换成近东民兵：以色列行支派征召制，《民数记》一章各支派点兵，战时召民成军而非常备军。
+            { type: 'levy', count: 3 },
             { type: 'vanguard', count: 4 },
             { type: 'war_chariot', count: 2 }
         ]
@@ -2979,7 +2992,7 @@ export const PASHTUN_TIERS: CompositionTier[] = [
  *   · 后翼策应 雅典将军卫队精锐（2档【精锐】） —— 雅典十将军直属近卫精兵，高敏突击掩护两翼。
  */
 
-/** 古典帝国罗马军团（锥形阵 2+3+4，全员帝国铁骑突击）。
+/** 古典罗马禁卫军团（锥形阵 2+3+4，全员禁卫铁骑突击）。
  *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
  *  史实依据（罗马帝国与元首制帝国禁卫铁骑体系）：
  *   · 尖刀前锋 罗马伴随骑兵高级（2档【高级】） —— 公民骑士精锐破风切入两翼撕开空隙。

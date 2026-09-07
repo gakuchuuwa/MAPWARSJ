@@ -265,6 +265,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/death_${dir}.png`),
         },
+        'scout_cavalry': {
+            // 【斥候骑兵】AoE2 DE 素材，2026-09-07 接线（此前只有兵种数值与编辑器条目、无素材声明 → 战场上不可见）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/death_${dir}.png`),
+        },
         'antiquity_spearman': {
             // 【antiquity_spearman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SPEARMAN/move_${dir}.png`),
