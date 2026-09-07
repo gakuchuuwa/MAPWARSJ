@@ -136,6 +136,14 @@ function markRoadSaveWrite(): void {
     roadSaveSuppressReloadUntil = Date.now() + 8000;
 }
 
+// 军团编辑器保存（/api/save-culture-formations 与 /api/save-faction-compositions）
+// 抑制整页刷新，防止用户编辑军团时页面突然重载重置当前选中的势力
+let legionSaveSuppressReloadUntil = 0;
+function markLegionSaveWrite(): void {
+    legionSaveSuppressReloadUntil = Date.now() + 8000;
+}
+
+
 // ── 运行闸门（2026-08-03 主人定，取代 08-01 错定的「直播按钮」判据）─────────
 // 推演正在运行 → 改文件不整页刷新（游戏在跑=可能正在直播，刷新会搅乱直播画面）；
 // 推演暂停/未开播 → 说明主人正在修游戏，改文件立刻刷新，
