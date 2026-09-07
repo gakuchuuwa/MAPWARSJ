@@ -34,6 +34,7 @@
     "legion:full-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_all_era_coverage.mts",
     "legion:era-mix-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_unit_era.mts",
     "legion:era-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_unit_era_consistency.mts",
+    "hero:missing": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_hero_missing_generals.mts",
     "hero:general-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_hero_vs_general.mts",
     "hero:audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_hero_coverage.mts",
     "legion:castle-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_castle_coverage.mts",

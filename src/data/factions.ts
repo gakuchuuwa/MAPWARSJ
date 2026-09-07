@@ -1929,6 +1929,15 @@ export const FACTIONS: Faction[] = [
     { id: 'xinnidelan', name: '新尼德兰' },        // 新阿姆斯特丹·荷兰西印度公司北美殖民地
     { id: 'xinfalanxi', name: '新法兰西' },        // 魁北克·法属北美殖民地（尚普兰）
     { id: 'xinxibanya', name: '新西班牙' },        // 阿卡普尔科·西班牙新西班牙总督区（马尼拉大帆船美洲终点）
+    { id: 'manzheboyi', name: '满者伯夷' },        // 特罗武兰·满者伯夷王朝（加查马达）
+    { id: 'zhelouqi', name: '遮娄其' },        // 阿杰梅尔·乔汉(遮娄其)王朝（普里特维）
+    { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
+    { id: 'antiaokegongguo', name: '安条克公国' },        // 拉塔基亚·安条克公国（博希蒙德）
+    { id: 'aoerlianggongguo', name: '奥尔良公国' },        // 兰斯·奥尔良公国（贞德）
+    { id: 'jinquehua', name: '金雀花' },        // 卡那封·金雀花王朝（长腿爱德华）
+    { id: 'apuliya', name: '阿普利亚' },        // 梅尔菲·阿普利亚公爵国（吉斯卡尔）
+    { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
+    { id: 'aosimanbeiyiguo', name: '奥斯曼贝伊国' },        // 瑟于特·奥斯曼贝伊国（奥斯曼一世）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

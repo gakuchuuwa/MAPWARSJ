@@ -75,4 +75,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
     bogendi: { name: '勃艮第骑', tier: 3 },
     moxina: { name: '诺曼骑士', tier: 2 },
+    aoerlianggongguo: { name: '圣女旗队', tier: 2 },   // 兰斯·贞德：圣女白旗所部，1429解围奥尔良
+    apuliya: { name: '阿普利亚骑', tier: 2 },   // 梅尔菲·吉斯卡尔：诺曼阿普利亚公爵骑兵
 };

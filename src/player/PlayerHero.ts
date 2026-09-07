@@ -463,10 +463,14 @@ export class PlayerHero {
             const host = this.getHostLegion();
             if (!host || host.isDestroyed || host.getTroops() <= 0) {
                 const lastId = this.hostLegionId;
-                // 🔴 不清 hostLegionId：让 onHostLost → finishQuest(false) → detach() 统一「清军团+退出势力+归零」
+                // 🔴 不清 hostLegionId：让 onHostLost → finishQuest(false)/detach() 统一「清军团+退出势力+归零」。
+                //    ⚠️ [2026-09-08] onHostLost 现在**无论有没有任务都会 detach**（见 PlayerQuestSystem.onHostLost），
+                //    否则这里每帧重入、玩家被钉在死军团上动不了、自动模式也永不触发。
                 this.resetMerit('随军军团覆灭');
                 this.emitChange();
                 this.onHostLost?.(lastId);
+                // 兜底：回调没接线或它没解绑时自己清掉，绝不让这个分支空转
+                if (this.hostLegionId === lastId) this.detach();
                 return;
             }
             const p = host.getPosition();

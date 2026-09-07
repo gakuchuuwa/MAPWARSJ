@@ -1122,6 +1122,15 @@ const _FIXED: Record<string, string> = {
     'xinxibanya': '#B53828', // 新西班牙·阿卡普尔科（西班牙勃艮第十字绛红）
     'dunhe': '#2E5A6E', // 顿河·维申斯卡亚（顿河哥萨克河蓝）
     'yamaxun': '#4A2E5E', // 亚马逊·忒弥斯基拉（黑海女战士暗紫）
+    'manzheboyi': '#9C3240', // 满者伯夷·特罗武兰（满者伯夷红白旗绯红）
+    'zhelouqi': '#C07A1E', // 遮娄其·阿杰梅尔（拉其普特藏红琥珀）
+    'suosuo': '#4A3626', // 索索·库姆比萨利赫（坎特铁匠部族乌褐）
+    'antiaokegongguo': '#982026', // 安条克公国·拉塔基亚（诺曼十字军暗红）
+    'aoerlianggongguo': '#2A5E9E', // 奥尔良公国·兰斯（法兰西王室蓝）
+    'jinquehua': '#A8322A', // 金雀花·卡那封（金雀花王朝红）
+    'apuliya': '#8A5A2E', // 阿普利亚·梅尔菲（诺曼南意大利土褐）
+    'saimien': '#3E7A44', // 塞米恩·塞米恩（塞米恩山地绿）
+    'aosimanbeiyiguo': '#9E2620', // 奥斯曼贝伊国·瑟于特（奥斯曼红）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

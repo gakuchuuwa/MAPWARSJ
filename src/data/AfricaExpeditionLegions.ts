@@ -11,6 +11,8 @@ export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     zhagewei: { name: '阿高武士', tier: 4 },
     kushi: { name: '努比亚弓手', tier: 3 },
     jienei: { name: '杰内水军', tier: 4 },
+    suosuo: { name: '索索骑兵', tier: 3 },  // 库姆比萨利赫·苏曼古鲁：索索骑兵
+    saimien: { name: '塞米恩战士', tier: 3 },  // 塞米恩·尤迪特：塞米恩贝塔以色列战士
     adal: { name: '阿达尔火枪兵', tier: 2 },   // 塞拉·格拉尼：奥斯曼援助重装火绳枪+精钢弯刀圣战突击主力
     gondarine: { name: '皇城卫队', tier: 4 },
 };

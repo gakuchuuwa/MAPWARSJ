@@ -16,6 +16,7 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     boluo: { name: '拉塔战车', tier: 3 },        // 高达城·达磨波罗：孟加拉战车（DE Ratha 双栖）
     sumo: { name: '耽摩水师', tier: 4 },         // 耽摩栗底·苏摩：孟加拉湾海上丝路港口水师
     gurjara: { name: '飞轮掷手', tier: 3 },    // 帕坦·迷企罗·波阇：瞿折罗飞轮掷手（DE Chakram Thrower，投掷飞轮的步兵）
+    zhelouqi: { name: '拉其普特骑', tier: 2 },  // 阿杰梅尔·普里特维：拉其普特骑兵（塔拉因之战）
     suomunate: { name: '湿婆卫士', tier: 4 },   // 索姆纳特·库马拉帕拉：印度教湿婆神庙守军（编）
     aolisha: { name: '奥里萨战象', tier: 3 },
     pidisha: { name: '毗底沙戍卒', tier: 4 },
