@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_BARRACKS_AGE3",
+  "frames": 1,
+  "box_w": 332,
+  "box_h": 272,
+  "anchor_x": 180,
+  "anchor_y": 192,
+  "sld_source": "b_thracian_barracks_age3"
+}

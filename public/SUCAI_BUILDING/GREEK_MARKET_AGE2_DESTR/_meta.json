@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MARKET_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 412,
+  "box_h": 300,
+  "anchor_x": 212,
+  "anchor_y": 188,
+  "sld_source": "b_greek_market_age2_destruction"
+}

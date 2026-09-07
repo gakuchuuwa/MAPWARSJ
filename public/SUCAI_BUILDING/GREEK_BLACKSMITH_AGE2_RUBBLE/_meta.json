@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_BLACKSMITH_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 148,
+  "anchor_x": 152,
+  "anchor_y": 96,
+  "sld_source": "b_greek_blacksmith_age2_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MILL_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 292,
+  "box_h": 192,
+  "anchor_x": 142,
+  "anchor_y": 138,
+  "sld_source": "b_greek_mill_age2_destruction"
+}

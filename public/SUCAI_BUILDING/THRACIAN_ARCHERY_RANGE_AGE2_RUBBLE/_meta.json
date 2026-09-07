@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_ARCHERY_RANGE_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 224,
+  "box_h": 144,
+  "anchor_x": 88,
+  "anchor_y": 88,
+  "sld_source": "b_thracian_archery_range_age2_rubble"
+}

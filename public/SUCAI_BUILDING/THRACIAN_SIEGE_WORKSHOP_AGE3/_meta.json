@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_SIEGE_WORKSHOP_AGE3",
+  "frames": 1,
+  "box_w": 372,
+  "box_h": 248,
+  "anchor_x": 184,
+  "anchor_y": 144,
+  "sld_source": "b_thracian_siege_workshop_age3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WALL_FORTIFIED_POST",
+  "frames": 1,
+  "box_w": 168,
+  "box_h": 184,
+  "anchor_x": 108,
+  "anchor_y": 152,
+  "sld_source": "b_greek_wall_fortified"
+}

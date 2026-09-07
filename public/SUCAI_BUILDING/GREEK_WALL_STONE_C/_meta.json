@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WALL_STONE_C",
+  "frames": 1,
+  "box_w": 91,
+  "box_h": 123,
+  "anchor_x": 45.0,
+  "anchor_y": 100.0,
+  "sld_source": "b_greek_wall_stone frame0"
+}

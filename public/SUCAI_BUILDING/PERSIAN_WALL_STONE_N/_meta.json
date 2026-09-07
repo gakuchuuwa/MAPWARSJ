@@ -1,10 +1,9 @@
 {
   "name": "PERSIAN_WALL_STONE_N",
   "frames": 1,
-  "box_w": 101,
-  "box_h": 126,
-  "anchor_x": 67,
-  "anchor_y": 99,
-  "sld_source": "b_persian_wall_stone_x1.sld",
-  "frame_idx": 4
+  "box_w": 65,
+  "box_h": 124,
+  "anchor_x": 32.0,
+  "anchor_y": 99.0,
+  "sld_source": "b_persian_wall_stone frame4"
 }

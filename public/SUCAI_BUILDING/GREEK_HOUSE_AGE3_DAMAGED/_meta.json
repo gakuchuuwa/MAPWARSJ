@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_HOUSE_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 228,
+  "box_h": 188,
+  "anchor_x": 126,
+  "anchor_y": 130,
+  "sld_source": "b_greek_house_age3"
+}

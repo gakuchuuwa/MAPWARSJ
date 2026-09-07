@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MONASTERY_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 340,
+  "box_h": 276,
+  "anchor_x": 160,
+  "anchor_y": 188,
+  "sld_source": "b_greek_monastery_age3_destruction"
+}

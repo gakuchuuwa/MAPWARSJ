@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_TOWN_CENTER_AGE4_DESTR",
+  "frames": 60,
+  "box_w": 520,
+  "box_h": 336,
+  "anchor_x": 256,
+  "anchor_y": 248,
+  "sld_source": "b_thracian_town_center_age4_destruction"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MARKET_AGE4_DAMAGED",
+  "frames": 1,
+  "box_w": 400,
+  "box_h": 312,
+  "anchor_x": 204,
+  "anchor_y": 212,
+  "sld_source": "b_greek_market_age4"
+}

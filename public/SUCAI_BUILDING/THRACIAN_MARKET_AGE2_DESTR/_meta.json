@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_MARKET_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 420,
+  "box_h": 336,
+  "anchor_x": 224,
+  "anchor_y": 232,
+  "sld_source": "b_thracian_market_age2_destruction"
+}

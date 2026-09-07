@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_TOWN_CENTER_AGE4_RUBBLE",
+  "frames": 1,
+  "box_w": 236,
+  "box_h": 124,
+  "anchor_x": 116,
+  "anchor_y": 108,
+  "sld_source": "b_thracian_town_center_age4_rubble"
+}

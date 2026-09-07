@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MILL_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 244,
+  "box_h": 124,
+  "anchor_x": 126,
+  "anchor_y": 70,
+  "sld_source": "b_greek_mill_age3_rubble"
+}

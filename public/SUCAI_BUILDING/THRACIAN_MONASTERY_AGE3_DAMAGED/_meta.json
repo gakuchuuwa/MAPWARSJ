@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_MONASTERY_AGE3_DAMAGED",
+  "frames": 1,
+  "box_w": 324,
+  "box_h": 260,
+  "anchor_x": 176,
+  "anchor_y": 192,
+  "sld_source": "b_thracian_monastery_age3"
+}

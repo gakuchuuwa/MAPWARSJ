@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_ARCHERY_RANGE_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 404,
+  "box_h": 304,
+  "anchor_x": 192,
+  "anchor_y": 208,
+  "sld_source": "b_greek_archery_range_age2_destruction"
+}
