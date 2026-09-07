@@ -86,7 +86,7 @@ export function getNavalShipDrawScale(shipId?: string): number {
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
-    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU'] },
+    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'HEXI'] },
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
     { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DIANQIAN'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
@@ -111,7 +111,6 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰：迦太基西地中海海上霸权核心主力（第一次布匿战争埃加迪群岛海战形制）', regions: ['CARTHAGE'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN'] },
-    { ship: 'WAR_LEMBOS', why: '伦博斯突击舰：马其顿-伊利里亚海军主力（腓力五世大量装备）', regions: ['GREEK'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
     { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON', 'ASSYRIAN'] },
     { ship: 'BIREME', why: '红海双列桨战船：纳巴泰控制阿卡巴湾艾拉港与红海东岸香料航路，装备双列桨战船巡弋红海北端', regions: ['NABATAEANS'] },
@@ -122,6 +121,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS', 'VANDALS'] },
     { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
     { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
+    { ship: 'MONOREME', why: '黑海斯基泰单列桨船：斯基泰扼塔奈斯河口与博斯普鲁斯王国合流，希腊船匠在亚速海-黑海北岸为其造桨船', regions: ['SCYTHIANS'] },
     { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
@@ -159,7 +159,8 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'WESTERN', 'CENTRAL_ASIA', 'HEXI', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'SCYTHIANS', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'WUSUN', 'PASHTUN'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN'] },
+    { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
     { ship: 'DEMO_RAFT', why: '旁遮普五河渡筏：锡克帝国全境内陆，仅需渡萨特累季/杰赫勒姆等河', regions: ['SIKH'] },
@@ -200,6 +201,8 @@ const FALLBACK_SHIP = 'WAR_GALLEY';
 const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     luoma_diguo: 'WAR_GALLEY',     // 罗马帝国：地中海桨帆战船
     naxos_ancient: 'TRIREME',      // 纳克索斯：希腊三列桨
+    maqidun: 'WAR_LEMBOS',         // 马其顿·佩拉：腓力五世大批装备伦博斯突击舰，与伊利里亚同制
+    kejila: 'ELITE_LEMBOS',        // 科孚：亚得里亚-伊利里亚海域精锐伦博斯快船
     jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳：西班牙珍宝船队要塞，应西班牙精锐卡拉维尔
     foluolida: 'ELITE_CARAVEL',    // 佛罗里达·圣奥古斯丁：梅嫩德斯·西班牙海军上将，应西班牙精锐卡拉维尔
     xiyindu: 'ELITE_CARAVEL',      // 西印度·圣多明各：哥伦布殖民总督要塞，应西班牙精锐卡拉维尔

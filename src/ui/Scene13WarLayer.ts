@@ -3626,7 +3626,16 @@ export class Scene13WarLayer {
      */
     private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
         const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
-        const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS']);
+        // 🔴 [2026-09-07] 古典器械要覆盖**全部古典时代军团**，不能只给希腊/罗马/色雷斯。
+        //    原来这里只有 4 个区，其中 ACHAEMENIDS 早已不在 REGION_ORDER（死名），
+        //    结果 28 个「古典 XX 军团」里除希腊/罗马/色雷斯外，攻城时全推出中世纪投石车。
+        //    华夏系（先秦/秦汉/古蜀/百越/鲜卑）走 CHINESE 的牵引抛石机，古滇走东南亚冲车，
+        //    印度走南亚破门战象（SOUTH_ASIAN 先判），其余古典区一律古典器械。
+        const CLASSICAL = new Set([
+            'GREEK', 'LATIN', 'THRACIAN', 'PERSIAN', 'EGYPT', 'CARTHAGE', 'BABYLON', 'HITTITES',
+            'ASSYRIAN', 'SCYTHIANS', 'KUSHAN', 'KUSH', 'HEBREWS', 'WUSUN', 'QIANG', 'NABATAEANS',
+            'CELTS', 'MAYANS', 'ARMENIANS', 'GERMANIC', 'WESTERN', 'INDIA',
+        ]);
         const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS']);
         const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
         // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
