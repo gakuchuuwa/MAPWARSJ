@@ -30,7 +30,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
-import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode } from '../types/CultureFormations';
+import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
 
@@ -237,6 +237,14 @@ export class Army implements IBattleUnit {
      *     而不是在共享的 applySeaOrLandSpeed 里特判 type==='hero'。
      *     ⚠️ 随军时玩家跟宿主舰队走（PlayerHero.update 里显式覆盖），本字段只管单骑。 */
     public preferredNavalShip: NavalShipAssetId | null = null;
+
+    /** 首选行军大类：设了就优先于「按文化区查表」。
+     *  🔴 [2026-09-07 主人定「玩家是骑兵和步兵，还是船，在地图上的移动速度要区分」]
+     *     玩家 cultureRegion 为 null → 原本恒走 MIXED（平原1.5/山地0.9），
+     *     不分他现在是民兵（步）还是乱入者（骑）。用这个钩子按玩家当前素材的 cls 指定。
+     *     ⚠️ 海上不受此字段影响：登船后全军统一 SEA_SPEED_MULTIPLIER（兵种加成失效），
+     *        这是既有规则，船速的区分靠的就是「上船即换成海速」这一档。 */
+    public preferredMoveClass: MovementClass | null = null;
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
@@ -965,9 +973,8 @@ export class Army implements IBattleUnit {
                 this.landFlipFrames = 0;
             }
 
-            const moveClass = this.cultureRegion
-                ? getCultureMovementClass(this.cultureRegion)
-                : 'MIXED';
+            const moveClass = this.preferredMoveClass
+                ?? (this.cultureRegion ? getCultureMovementClass(this.cultureRegion) : 'MIXED');
             this.terrainSpeedTarget = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
         }
 

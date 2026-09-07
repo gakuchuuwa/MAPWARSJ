@@ -3422,7 +3422,7 @@ export const DELHI_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored_elephant', count: 2 }, // 尖刀突破【重装】 = 装甲攻城战象（苏丹铁甲巨象破门践踏）
+            { type: 'elite_armored_elephant', count: 2 }, // 尖刀突破【高级】 = 装甲攻城战象高级（精锐留本文化：装甲攻城象是德里苏丹国的兵；基础档留邻区缅族）
             { type: 'elite_ghulam', count: 3 },     // 中坚核心【精锐】 = 印度斯坦古拉姆精锐（苏丹亲兵古拉姆近卫铁甲剑士）
             { type: 'ghulam', count: 4 }            // 侧翼近卫【重装】 = 印度斯坦古拉姆（苏丹侍卫古拉姆持盾长矛剑士）
         ]
