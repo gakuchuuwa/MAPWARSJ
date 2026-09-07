@@ -5302,7 +5302,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/LATIN/lunbadi_sifuerzha.png": {
+        "/assets/LATIN/__闲置__LATIN_21.png": {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 32
@@ -7617,7 +7617,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -48
         },
-        "/assets/SOUTHEAST_ASIA/image.png": {
+        "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -26
@@ -7642,7 +7642,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 28
         },
-        "/assets/STEPPE/image.png": {
+        "/assets/STEPPE/__多余__STEPPE_04.png": {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -26
