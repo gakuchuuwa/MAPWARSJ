@@ -111,6 +111,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰：迦太基西地中海海上霸权核心主力（第一次布匿战争埃加迪群岛海战形制）', regions: ['CARTHAGE'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN'] },
+    { ship: 'TRIREME', why: '三列桨座战船：亚历山大大帝提尔之围与尼阿卡斯印度洋远征舰队主力（爱琴海与东地中海战舰形制）', regions: ['MACEDONIAN'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
     { ship: 'BIREME', why: '两河流域双列桨战船：辛那赫里布与尼布甲尼撒招募腓尼基工匠在幼发拉底河打造的战舰（波斯湾远征主力）', regions: ['BABYLON', 'ASSYRIAN'] },
     { ship: 'BIREME', why: '红海双列桨战船：纳巴泰控制阿卡巴湾艾拉港与红海东岸香料航路，装备双列桨战船巡弋红海北端', regions: ['NABATAEANS'] },

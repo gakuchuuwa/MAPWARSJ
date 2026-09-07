@@ -122,7 +122,8 @@ export type RegionType =
     | 'AINU'        // 阿伊努
     | 'SWISS'       // 瑞士
     | 'PASHTUN'     // 普什图
-    | 'SWEDISH';     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
+    | 'SWEDISH'     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
+    | 'MACEDONIAN'; // 古典马其顿（佩拉王都与亚历山大方阵骑步）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -206,6 +207,7 @@ export const REGION_ORDER: RegionType[] = [
     'NABATAEANS',
     'HEPHTHALITES',
     'AINU',
+    'MACEDONIAN',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -315,6 +317,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SWISS: '城堡瑞士',
     PASHTUN: '帝王普什图',
     SWEDISH: '帝王瑞典',
+    MACEDONIAN: '古典马其顿',
 };
 
 /**
@@ -430,6 +433,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SWISS: '城堡瑞士',
     PASHTUN: '帝王普什图',
     SWEDISH: '帝王瑞典',
+    MACEDONIAN: '古典马其顿',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -695,6 +699,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SWISS: '#d32f2f',
     PASHTUN: '#00695c',
     SWEDISH: '#1565c0',
+    MACEDONIAN: '#8E24AA',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1386,6 +1391,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/middle_eastern_big.png'),
         pass: resolvePath('/cities/middle_eastern_pass.png')
     },
+    MACEDONIAN: {
+        small: resolvePath('/cities/greek_small.png'),
+        medium: resolvePath('/cities/greek_medium.png'),
+        big: resolvePath('/cities/greek_big.png'),
+        pass: resolvePath('/cities/greek_pass.png')
+    },
     SWEDISH: {
         small: resolvePath('/cities/germanic_small.png'),
         medium: resolvePath('/cities/germanic_medium.png'),
@@ -1580,6 +1591,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SWISS:       ['city_basaier'],
     PASHTUN:     ['city_kandaha'],
     SWEDISH:     ['city_gothenburg'],
+    MACEDONIAN:  ['city_salonica'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
