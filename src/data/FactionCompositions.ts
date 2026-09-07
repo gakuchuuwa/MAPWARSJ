@@ -743,13 +743,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 叙拉古·锡拉库萨（阿加索克利斯 / 狄奥尼修斯一世 · 机械腹弩与雇佣重装步兵军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 机械腹弩手 2）
-    xilagu: {
-        legionName: "机械腹弩与雇佣重装步兵军团",
-        formationMode: 'fish_scale',
+    "xilagu": {
+        legionName: "古典希腊军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，叙拉古青铜圆盾重长枪结阵抗线）
-            { type: 'shock_cavalry', count: 3 },       // Row 1 中军铁骑 = 冲击重骑兵 3骑（叙拉古贵族重装铁骑中坚机动策应）
-            { type: 'gastraphetes', count: 2 },        // Row 2 尾收机械重弩 = 希腊机械腹弩手 2人（纯步兵·无马，叙拉古独门机械重弩超远距离高穿透齐射）
+            { type: "hoplite", count: 4 },
+            { type: "sacred_band", count: 3 },
+            { type: "rhodian_slinger", count: 2 },
         ],
     },
     // 罗得岛·罗得城（维拉雷 · 罗得岛铅弹投石与海岛要塞军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 十字军骑士 3 + 罗得岛投石兵 2）
