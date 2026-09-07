@@ -1126,6 +1126,9 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'mapuche': '马普',
     'muisca': '穆伊',
     'tupi': '图皮',
+    'telasikala': '斯卡',  // 特拉斯卡拉联盟：「特拉」已被特拉斯塔马(trastamara)占用，取后两字
+    'xinnidelan': '新尼',
+    'xinfalanxi': '新法',
     'xibanya': '西班',
 'manding': '曼丁',
 'ethiopia': '埃塞',
