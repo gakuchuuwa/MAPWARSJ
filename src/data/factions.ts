@@ -1938,11 +1938,13 @@ export const FACTIONS: Faction[] = [
     { id: 'apuliya', name: '阿普利亚' },        // 梅尔菲·阿普利亚公爵国（吉斯卡尔）
     { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
     { id: 'aosimanbeiyiguo', name: '奥斯曼贝伊国' },        // 瑟于特·奥斯曼贝伊国（奥斯曼一世）
-    { id: 'laxidaimeng', name: '拉栖代蒙' },        // 安菲波利斯·斯巴达正式古称拉栖代蒙（巴西达斯）
-    { id: 'boluobennisa', name: '伯罗奔尼撒' },        // 羊河·伯罗奔尼撒同盟（吕山德）
-    { id: 'ajidewangchao', name: '阿吉德王朝' },        // 格拉尼库斯·马其顿阿吉德王朝（帕曼纽）
-    { id: 'jiyezhe', name: '继业者' },        // 佩鲁西姆·亚历山大帝国继业者（佩尔狄卡斯）
-    { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏·卡里亚王国（阿尔特米西亚）
+    { id: 'aiduoniya', name: '埃多尼亚' },        // 安菲波利斯·斯特里蒙河色雷斯埃多尼部落区（巴西达斯）
+    { id: 'qiesuonisuosi', name: '切索尼索斯' },        // 羊河·色雷斯切索尼索斯半岛（吕山德）
+    { id: 'mixiya', name: '密西亚' },        // 格拉尼库斯·小亚密西亚地区（帕曼纽）
+    { id: 'xiaaiji', name: '下埃及' },        // 佩鲁西姆·尼罗河三角洲下埃及（佩尔狄卡斯）
+    { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏斯·卡里亚王国（阿尔特米西亚）
+    { id: 'bosidiguo', name: '波斯帝国' },        // 克拉佐美奈·阿契美尼德波斯帝国（老阿尔塔弗涅斯）
+    { id: 'jikelazes', name: '基克拉泽斯' },        // 提洛·爱琴海基克拉泽斯群岛（达提斯）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

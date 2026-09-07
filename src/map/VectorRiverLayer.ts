@@ -226,7 +226,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
     // --- Styling Logic ---
 
-    // 1. Border Style — 底层深墨蓝描边，切断山谷阴影，让山间水系清晰显现
+    // 河岸用较薄的半透明灰青描边，与地面融合，同时保留山谷中的可读性。
     private static getBorderStyle(feature: any, zoom: number): L.PathOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -239,16 +239,16 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
         const waterWeight = Math.max(2.0 * zoomMult, 1.0);
         return {
-            color: 'rgba(20, 38, 60, 0.75)',
-            weight: waterWeight + 1.8,
-            opacity: 0.85,
+            color: '#496D72',
+            weight: waterWeight + 1.2,
+            opacity: 0.45,
             lineCap: 'round',
             lineJoin: 'round',
             className: 'vector-river-border'
         };
     }
 
-    // 2. Water Style — 顶层浅蓝水流主体
+    // 水流主体与 RiverWorker 的宽河道、湖海水面使用同一灰蓝色。
     private static getWaterStyle(feature: any, zoom: number): L.PathOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -260,7 +260,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
         return {
-            color: '#6496C8',
+            color: '#6899AD',
             weight: Math.max(2.0 * zoomMult, 1.0),
             opacity: 1.0,
             lineCap: 'round',

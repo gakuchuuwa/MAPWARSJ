@@ -71,16 +71,16 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
                 else if (x < width - 1 && !isRiver[idx + 1]) isEdge = true;
 
                 if (isEdge) {
-                    // 边缘颜色（深蓝）
-                    outData[pixelIdx] = 60;
-                    outData[pixelIdx + 1] = 90;
-                    outData[pixelIdx + 2] = 140;
+                    // 河岸与水面采用相近色值，避免一圈深蓝硬框。
+                    outData[pixelIdx] = 88;
+                    outData[pixelIdx + 1] = 130;
+                    outData[pixelIdx + 2] = 142;
                     outData[pixelIdx + 3] = 255;
                 } else {
-                    // 主体颜色（浅蓝）
-                    outData[pixelIdx] = 100;
-                    outData[pixelIdx + 1] = 150;
-                    outData[pixelIdx + 2] = 200;
+                    // 与 VectorRiverLayer 水流主体 #6899AD 保持一致。
+                    outData[pixelIdx] = 104;
+                    outData[pixelIdx + 1] = 153;
+                    outData[pixelIdx + 2] = 173;
                     outData[pixelIdx + 3] = 255;
                 }
             } else {
