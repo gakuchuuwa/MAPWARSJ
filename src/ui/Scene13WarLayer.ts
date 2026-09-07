@@ -436,6 +436,18 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     MAGNA_GRAECIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     ACHAEMENIDS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     AMAZONS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    SONG: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
+    GORYEO: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
+    DALI: { battering_ram: true, capped_ram: true, mangonel: true },
+    GUSILUO: { battering_ram: true, capped_ram: true, mangonel: true },
+    MAMLUKS: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
+    CRUSADERS: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
+    RUS: { battering_ram: true, capped_ram: true, mangonel: true },
+    KARA_KHITAN: { battering_ram: true, capped_ram: true, mangonel: true, traction_trebuchet: true },
+    TIMURID: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
+    DELHI: { battering_ram: true, capped_ram: true, mangonel: true },
+    CASTILE: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
+    SCOTLAND: { battering_ram: true, capped_ram: true, mangonel: true },
 };
 
 /**
@@ -1176,6 +1188,18 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     MAGNA_GRAECIA: 'MEDITERRANEAN',
     ACHAEMENIDS: 'MIDDLE_EAST',
     AMAZONS: 'MEDITERRANEAN',
+    SONG: 'ASIA',
+    GORYEO: 'ASIA',
+    DALI: 'SEAS',
+    GUSILUO: 'ASIA',
+    MAMLUKS: 'ORIE',
+    CRUSADERS: 'WEST',
+    RUS: 'EAST',
+    KARA_KHITAN: 'CEAS',
+    TIMURID: 'CEAS',
+    DELHI: 'INDI',
+    CASTILE: 'WEST',
+    SCOTLAND: 'WEST',
 };
 
 

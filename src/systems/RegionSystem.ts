@@ -129,7 +129,19 @@ export type RegionType =
     | 'GREEK_MERCENARY' // 古典希腊雇佣（色诺芬万人军与地中海游历雇佣方阵）
     | 'MAGNA_GRAECIA' // 古典大希腊（塔兰托与南意大利希腊殖民城邦世界）
     | 'ACHAEMENIDS' // 古典阿契美尼德（波斯帝国万人不死军与皇权霸业）
-    | 'AMAZONS'; // 古典亚马逊（特尔莫冬河口忒弥斯基拉的黑海女战士部族）
+    | 'AMAZONS' // 古典亚马逊（特尔莫冬河口忒弥斯基拉的黑海女战士部族）
+    | 'SONG' // 赵宋（城堡赵宋：两宋神臂弩步骑大阵与岳家军背嵬铁骑）
+    | 'GORYEO' // 高丽（城堡高丽：别武班重骑、长枪与高丽硬弓手）
+    | 'DALI' // 大理（城堡大理：西南大理象兵、大理马突击轻骑与白蛮藤弓步阵）
+    | 'GUSILUO' // 角斯罗（城堡角斯罗：青唐吐蕃宗喀冷锻瘊子甲铁骑与河湟弓骑）
+    | 'MAMLUKS' // 马穆鲁克（城堡马穆鲁克：埃及叙利亚苏丹马穆鲁克重装马刀骑兵与苏丹亲卫驼骑）
+    | 'CRUSADERS' // 十字军（城堡十字军：近东圣殿医院骑士团具装骑士与长剑步兵十字军阵）
+    | 'RUS' // 罗斯（城堡罗斯：诺夫哥罗德与弗拉基米尔大公博雅尔贵族铁骑与双手长斧破阵勇士）
+    | 'KARA_KHITAN' // 西辽（城堡西辽：黑契丹皮室具装铁骑、反曲弓骑射手与辽式铁斧精骑）
+    | 'TIMURID' // 帖木儿（城堡帖木儿：河中察合台具装重骑兵、游牧重骑射手与精锐重骑突阵）
+    | 'DELHI' // 德里（城堡德里：德里苏丹国重装战象铁甲冲阵、古拉姆近卫铁甲剑士与突厥复合强弓手）
+    | 'CASTILE' // 卡斯蒂利亚（城堡卡斯蒂利亚：伊比利亚收复失地运动圣地亚哥骑士、西班牙长剑士与标枪骑兵）
+    | 'SCOTLAND'; // 苏格兰（城堡苏格兰：苏格兰独立战争长矛刺猬密集方阵、高地巨剑士与苏格兰轻骑）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -220,6 +232,18 @@ export const REGION_ORDER: RegionType[] = [
     'MAGNA_GRAECIA',
     'ACHAEMENIDS',
     'AMAZONS',
+    'SONG',
+    'GORYEO',
+    'DALI',
+    'GUSILUO',
+    'MAMLUKS',
+    'CRUSADERS',
+    'RUS',
+    'KARA_KHITAN',
+    'TIMURID',
+    'DELHI',
+    'CASTILE',
+    'SCOTLAND',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -240,7 +264,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     STEPPE: '城堡蒙古',
     NORTHEAST: '古典鲜卑',
     KOREA: '封建高句丽',
-    JAPAN: '城堡日本',
+    JAPAN: '城堡镰仓',
     CENTRAL_ASIA: '封建河中',
     WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
@@ -336,6 +360,18 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
+    SONG: '城堡赵宋',
+    GORYEO: '城堡高丽',
+    DALI: '城堡大理',
+    GUSILUO: '城堡角斯罗',
+    MAMLUKS: '城堡马穆鲁克',
+    CRUSADERS: '城堡十字军',
+    RUS: '城堡罗斯',
+    KARA_KHITAN: '城堡西辽',
+    TIMURID: '城堡帖木儿',
+    DELHI: '城堡德里',
+    CASTILE: '城堡卡斯蒂利亚',
+    SCOTLAND: '城堡苏格兰',
 };
 
 /**
@@ -366,7 +402,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     BERBER: '封建柏柏尔',
     DIANQIAN: '古典古滇',
     KOREA: '封建高句丽',
-    JAPAN: '城堡日本',
+    JAPAN: '城堡镰仓',
     AMERICA: '城堡阿兹特克',
     AFRICA: '城堡马里',
     MALAY: '封建马来',
@@ -458,6 +494,18 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
+    SONG: '城堡赵宋',
+    GORYEO: '城堡高丽',
+    DALI: '城堡大理',
+    GUSILUO: '城堡角斯罗',
+    MAMLUKS: '城堡马穆鲁克',
+    CRUSADERS: '城堡十字军',
+    RUS: '城堡罗斯',
+    KARA_KHITAN: '城堡西辽',
+    TIMURID: '城堡帖木儿',
+    DELHI: '城堡德里',
+    CASTILE: '城堡卡斯蒂利亚',
+    SCOTLAND: '城堡苏格兰',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -730,6 +778,18 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     MAGNA_GRAECIA: '#0097A7',
     ACHAEMENIDS: '#512DA8',
     AMAZONS: '#AD1457',
+    SONG: '#c62828',
+    GORYEO: '#1565c0',
+    DALI: '#00897b',
+    GUSILUO: '#8e24aa',
+    MAMLUKS: '#d4af37',
+    CRUSADERS: '#e63946',
+    RUS: '#b7410e',
+    KARA_KHITAN: '#457b9d',
+    TIMURID: '#0077b6',
+    DELHI: '#2a9d8f',
+    CASTILE: '#e05638',
+    SCOTLAND: '#1d3557',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1469,6 +1529,78 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/germanic_big.png'),
         pass: resolvePath('/cities/germanic_pass.png')
     },
+    SONG: {
+        small: resolvePath('/cities/central_small.png'),
+        medium: resolvePath('/cities/central_medium.png'),
+        big: resolvePath('/cities/central_big.png'),
+        pass: resolvePath('/cities/central_pass.png')
+    },
+    GORYEO: {
+        small: resolvePath('/cities/korea_small.png'),
+        medium: resolvePath('/cities/korea_medium.png'),
+        big: resolvePath('/cities/korea_big.png'),
+        pass: resolvePath('/cities/korea_pass.png')
+    },
+    DALI: {
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    GUSILUO: {
+        small: resolvePath('/cities/tibet_small.png'),
+        medium: resolvePath('/cities/tibet_medium.png'),
+        big: resolvePath('/cities/tibet_big.png'),
+        pass: resolvePath('/cities/tibet_pass.png')
+    },
+    MAMLUKS: {
+        small: resolvePath('/cities/orie_small.png'),
+        medium: resolvePath('/cities/orie_medium.png'),
+        big: resolvePath('/cities/orie_big.png'),
+        pass: resolvePath('/cities/orie_pass.png')
+    },
+    CRUSADERS: {
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    RUS: {
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    KARA_KHITAN: {
+        small: resolvePath('/cities/steppe_small.png'),
+        medium: resolvePath('/cities/steppe_medium.png'),
+        big: resolvePath('/cities/steppe_big.png'),
+        pass: resolvePath('/cities/steppe_pass.png')
+    },
+    TIMURID: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    DELHI: {
+        small: resolvePath('/cities/india_small.png'),
+        medium: resolvePath('/cities/india_medium.png'),
+        big: resolvePath('/cities/india_big.png'),
+        pass: resolvePath('/cities/india_pass.png')
+    },
+    CASTILE: {
+        small: resolvePath('/cities/spanish_small.png'),
+        medium: resolvePath('/cities/spanish_medium.png'),
+        big: resolvePath('/cities/spanish_big.png'),
+        pass: resolvePath('/cities/spanish_pass.png')
+    },
+    SCOTLAND: {
+        small: resolvePath('/cities/britons_small.png'),
+        medium: resolvePath('/cities/britons_medium.png'),
+        big: resolvePath('/cities/britons_big.png'),
+        pass: resolvePath('/cities/britons_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1664,6 +1796,18 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     MAGNA_GRAECIA:   ['city_talanduo'],
     ACHAEMENIDS:     ['city_bosibolisi'],
     AMAZONS:         ['city_themiskyra'],
+    SONG:            ['city_kaifeng', 'city_yanchuan_d'],
+    GORYEO:          ['city_kaicheng', 'city_hancheng'],
+    DALI:            ['city_yangjumei', 'city_tonghai'],
+    GUSILUO:         ['city_qingtong'],
+    MAMLUKS:         ['city_alepo', 'city_ayinzhaluete'],
+    CRUSADERS:       ['city_ake', 'city_aidesa'],
+    RUS:             ['city_nuofugeerdede', 'city_mosike'],
+    KARA_KHITAN:     ['city_suiye'],
+    TIMURID:         ['city_samaerhan'],
+    DELHI:           ['city_deli'],
+    CASTILE:         ['city_toledo', 'city_madeli'],
+    SCOTLAND:        ['city_carlisle', 'city_aidingbao'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

@@ -145,6 +145,18 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     MAGNA_GRAECIA: 'talanduo',
     ACHAEMENIDS: 'aqimeinide',
     AMAZONS: 'yamaxun',
+    SONG: 'yanchuan_d',
+    GORYEO: 'goryeo',
+    DALI: 'dali',
+    GUSILUO: 'tufa_d',
+    MAMLUKS: 'mamuluke',
+    CRUSADERS: 'yelusalengwg',
+    RUS: 'liulike',
+    KARA_KHITAN: 'xiliao',
+    TIMURID: 'tiemuer',
+    DELHI: 'deli',
+    CASTILE: 'kasidiliya',
+    SCOTLAND: 'kanbuliya',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

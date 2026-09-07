@@ -321,6 +321,18 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     AMAZONS: 'GREEK_CASTLE_AGE3',            // 古典亚马逊：忒弥斯基拉在黑海南岸希腊化圈，用希腊城堡
     MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',
     ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
+    SONG: 'ASIA_CASTLE_AGE3',                // 赵宋：中原宋式城池堡垒
+    GORYEO: 'ASIA_CASTLE_AGE3',              // 高丽：半岛高丽山城要塞
+    DALI: 'MALA_CASTLE_AGE3',                // 大理：横断山地苍山要塞
+    GUSILUO: 'ASIA_CASTLE_AGE3',             // 角斯罗：青唐吐蕃宗喀山寨城堡
+    MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
+    CRUSADERS: 'WEST_CASTLE_AGE3',           // 十字军：阿卡与圣女修道院骑士团十字军石堡
+    RUS: 'EAST_CASTLE_AGE3',                 // 罗斯：诺夫哥罗德与弗拉基米尔木石克里姆林
+    KARA_KHITAN: 'CEAS_CASTLE_AGE3',         // 西辽：七河与碎叶楚河流域大漠重镇
+    TIMURID: 'CEAS_CASTLE_AGE3',             // 帖木儿：撒马尔罕比比哈努姆与青金石城堡
+    DELHI: 'INDI_CASTLE_AGE3',               // 德里：德里苏丹国西里要塞与德里红堡
+    CASTILE: 'SPAN_CASTLE_AGE3',             // 卡斯蒂利亚：塞哥维亚与托莱多石砌城堡
+    SCOTLAND: 'CELT_CASTLE_AGE3',            // 苏格兰：爱丁堡与高地石构塔堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
