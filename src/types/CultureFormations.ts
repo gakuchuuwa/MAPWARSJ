@@ -281,7 +281,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CARTHAGE: 'crane_wing',
     BABYLON: 'balance_yoke',
     HITTITES: 'triangle',    // 古典赫梯：锥形阵 2+3+4 底边双轮战车高级主力
-    ASSYRIAN:     'fish_scale',   // 古典亚述：鱼鳞阵 3+4+2 前排持盾步兵3+中坚古典重装骑射4档主力+后排装甲攻城槌2
+    ASSYRIAN:     'fish_scale',   // 古典亚述：鱼鳞阵 3+4+2 前排持盾步兵3+中坚古典重装骑射4档主力+后排双轮战车2
     SCYTHIANS:     'triangle',    // 古典斯基泰：锥形阵 2+3+4 尖刀斯基泰斧骑2+中坚斯基泰骑射3+底边斯基泰骑射手高级4档主力
     BYZANTINE: 'square',
     FRANKS: 'triangle',
@@ -2334,16 +2334,15 @@ export const HITTITES_TIERS: CompositionTier[] = [
 ];
 
 /** 古典亚述军团（鱼鳞 3+4+2，主力在中排）
- *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；攻城类只占 2 档；三兵全部为古典档位。
+ *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；不安排攻城武器，全部为野战正规兵种；三兵全部为古典档位。
  *  史料：新亚述帝国（前 911—前 609）建起人类第一支常备职业军队——提格拉特帕拉沙尔三世改革
- *        设「王家部队」kiṣir šarrūti，脱离农时征召。其军事优势有两处：
- *        ① 骑兵取代战车：前九世纪起亚述以骑射取代双轮战车为机动主力，浮雕中大量重装骑射，
- *           这是近东战争形态的转折，后来的波斯军制即承其余绪；
- *        ② 攻城：辛那赫里布围拉吉（前 701）的尼尼微浮雕，带装甲棚顶的攻城槌推上土坡破城，
- *           是古代世界最系统的攻城技术，亚述以此逐一拔除叙利亚-巴勒斯坦的城邦。
+ *        设「王家部队」kiṣir šarrūti，脱离农时征召。其战法融合近东传统重战车与骑兵改革：
+ *        ① 前排持盾长矛步兵线稳住正面阵型；
+ *        ② 重装骑射手为机动决战主力，两翼狂暴抛射撕扯敌阵；
+ *        ③ 双轮王家战车后排压阵，适时发起雷霆冲锋击溃敌军残阵。
  *    前 3 波斯持盾步兵（近东持盾矛兵） —— 近东大盾矛步兵线原型
  *    中 4 古典骑射手重装（主力【重装】）—— 亚述骑兵改革的王牌机动主力
- *    后 2 古典装甲攻城槌 —— 拉吉之围形制，攻城类只占 2 档
+ *    后 2 双轮战车 —— 亚述王室双轮重战车冲锋压阵
  */
 export const ASSYRIAN_TIERS: CompositionTier[] = [
     {
@@ -2353,7 +2352,7 @@ export const ASSYRIAN_TIERS: CompositionTier[] = [
         slots: [
             { type: 'sparabara', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'antiquity_capped_ram', count: 2 }
+            { type: 'war_chariot', count: 2 }
         ]
     }
 ];
