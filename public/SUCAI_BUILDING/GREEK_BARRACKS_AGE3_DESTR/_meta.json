@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_BARRACKS_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 464,
+  "box_h": 308,
+  "anchor_x": 236,
+  "anchor_y": 196,
+  "sld_source": "b_greek_barracks_age3_destruction"
+}

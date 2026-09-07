@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_MILL_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 220,
+  "box_h": 116,
+  "anchor_x": 114,
+  "anchor_y": 58,
+  "sld_source": "b_thracian_mill_age2_rubble"
+}

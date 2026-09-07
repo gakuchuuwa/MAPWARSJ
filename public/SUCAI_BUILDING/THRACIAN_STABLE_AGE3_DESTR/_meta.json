@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_STABLE_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 328,
+  "box_h": 228,
+  "anchor_x": 168,
+  "anchor_y": 156,
+  "sld_source": "b_thracian_stable_age3_destruction"
+}

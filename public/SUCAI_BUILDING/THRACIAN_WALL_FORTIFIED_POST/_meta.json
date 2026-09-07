@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_WALL_FORTIFIED_POST",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 184,
+  "anchor_x": 116,
+  "anchor_y": 156,
+  "sld_source": "b_thracian_wall_fortified"
+}

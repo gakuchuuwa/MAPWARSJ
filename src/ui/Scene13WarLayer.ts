@@ -1115,8 +1115,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
     EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
-    GREEK: 'MEDI',    // [2026-08-27] GREEK→MEDI（greek 战役前缀无 AGE3 池会 404，与战略一致）
-    THRACIAN: 'SLAV', // [2026-08-27] THRACIAN→SLAV（thracian 战役前缀无 AGE3 池会 404，与战略一致）
+    GREEK: 'GREEK',   // [2026-09-07] 古典希腊 → DE 的 GREEK 风格集（183 件已补提，不再 404）
+    THRACIAN: 'THRACIAN',   // [2026-09-07] 古典色雷斯 → DE 的 THRACIAN 风格集（165 件已补提）
     PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
     BRITONS: 'WEST',  // 不列颠[2026-08-28]
@@ -1144,11 +1144,11 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     MAPUCHE: 'ANDE',  // 马普切[2026-08-28]
     MUISCA: 'ANDE',  // 穆伊斯卡[2026-08-28]
     TUPI: 'ANDE',  // 图皮[2026-08-28]
-    IROQUOIS: 'AMERICA',  // 城堡易洛魁[2026-09-07 新建]
+    IROQUOIS: 'MESO',   // [2026-09-07] 城堡易洛魁：AMERICA 是文化区名不是风格集名（我建区时写错）
     CHIMU: 'ANDE',  // 城堡奇穆[2026-09-07 新建]
-    TARASCAN: 'AMERICA',  // 城堡塔拉斯科[2026-09-07 新建]
-    TAIRONA: 'MUISCA',  // 城堡泰罗纳[2026-09-07 新建]
-    TEHUELCHE: 'MAPUCHE',  // 帝国特维尔切[2026-09-07 新建]
+    TARASCAN: 'MESO',   // [2026-09-07] 城堡塔拉斯科：同上，且塔拉斯科本就在中美
+    TAIRONA: 'ANDE',   // [2026-09-07] 城堡泰罗纳：MUISCA 是文化区名不是风格集名（我写错）；泰罗纳在安第斯北端
+    TEHUELCHE: 'ANDE',   // [2026-09-07] 帝国特维尔切：同上；巴塔哥尼亚归安第斯
     ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
     BURMESE: 'SEAS',
@@ -1185,7 +1185,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     FRENCH: 'WEST',
     MANCHU: 'ASIA',
     MUGHAL: 'INDI',
-    SAFAVID: 'PERS',
+    SAFAVID: 'PERSIAN',   // [2026-09-07] 帝国波斯：PERS 只有 3 件城堡，是拼写掉字，风格集叫 PERSIAN
     RUSSIAN: 'EAST',
     SIKH: 'INDI',
     HEBREWS: 'ORIE',
@@ -1194,16 +1194,16 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     NABATAEANS: 'ORIE',
     HEPHTHALITES: 'CEAS',
     AINU: 'ASIA',
-    SWISS: 'EUROPE',
+    SWISS: 'WEST',   // [2026-09-07] 城堡瑞士：EUROPE 不是 DE 风格集
     PASHTUN: 'CENTRAL_ASIA',
-    SWEDISH: 'EUROPE',
-    MACEDONIAN: 'MEDITERRANEAN',
-    HELLENIC: 'MEDITERRANEAN',
-    IMPERIAL_ROME: 'MEDITERRANEAN',
-    GREEK_MERCENARY: 'MEDITERRANEAN',
-    MAGNA_GRAECIA: 'MEDITERRANEAN',
+    SWEDISH: 'EAST',   // [2026-09-07] 帝国瑞典：EUROPE 不是 DE 风格集；与封建维京同用 EAST
+    MACEDONIAN: 'GREEK',   // [2026-09-07] 古典马其顿
+    HELLENIC: 'GREEK',   // [2026-09-07] 古典希伦（雅典/斯巴达/底比斯）
+    IMPERIAL_ROME: 'MEDI',   // [2026-09-07] 古典罗马禁卫 → 罗马是地中海风格，不是希腊
+    GREEK_MERCENARY: 'GREEK',   // [2026-09-07] 古典希腊雇佣
+    MAGNA_GRAECIA: 'GREEK',   // [2026-09-07] 古典大希腊（南意大利希腊殖民城邦）
     ACHAEMENIDS: 'MIDDLE_EAST',
-    AMAZONS: 'MEDITERRANEAN',
+    AMAZONS: 'GREEK',   // [2026-09-07] 古典亚马逊（忒弥斯基拉在小亚黑海南岸，希腊人笔下的城）
     SONG: 'ASIA',
     GORYEO: 'ASIA',
     JOSEON: 'ASIA',

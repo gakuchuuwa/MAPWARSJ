@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MONASTERY_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 252,
+  "box_h": 132,
+  "anchor_x": 116,
+  "anchor_y": 68,
+  "sld_source": "b_greek_monastery_age3_rubble"
+}

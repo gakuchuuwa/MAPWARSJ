@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_ARCHERY_RANGE_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 368,
+  "box_h": 300,
+  "anchor_x": 188,
+  "anchor_y": 208,
+  "sld_source": "b_thracian_archery_range_age3_destruction"
+}

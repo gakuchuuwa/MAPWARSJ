@@ -1,9 +1,9 @@
 {
   "name": "CEAS_WALL_STONE",
   "frames": 1,
-  "box_w": 108,
-  "box_h": 104,
-  "anchor_x": 64,
-  "anchor_y": 80,
-  "sld_source": "b_ceas_wall_stone"
+  "box_w": 100,
+  "box_h": 79,
+  "anchor_x": 49.5,
+  "anchor_y": 69.0,
+  "sld_source": "b_ceas_wall_stone frame3"
 }

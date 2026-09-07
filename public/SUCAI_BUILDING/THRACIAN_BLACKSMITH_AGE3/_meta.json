@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_BLACKSMITH_AGE3",
+  "frames": 1,
+  "box_w": 336,
+  "box_h": 232,
+  "anchor_x": 180,
+  "anchor_y": 168,
+  "sld_source": "b_thracian_blacksmith_age3"
+}

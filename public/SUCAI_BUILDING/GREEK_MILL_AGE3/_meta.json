@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_MILL_AGE3",
+  "frames": 1,
+  "box_w": 232,
+  "box_h": 180,
+  "anchor_x": 132,
+  "anchor_y": 132,
+  "sld_source": "b_greek_mill_age3"
+}

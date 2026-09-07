@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WALL_FORTIFIED_SE",
+  "frames": 1,
+  "box_w": 136,
+  "box_h": 136,
+  "anchor_x": 84,
+  "anchor_y": 108,
+  "sld_source": "b_greek_wall_fortified"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_BLACKSMITH_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 348,
+  "box_h": 228,
+  "anchor_x": 156,
+  "anchor_y": 172,
+  "sld_source": "b_greek_blacksmith_age2_destruction"
+}

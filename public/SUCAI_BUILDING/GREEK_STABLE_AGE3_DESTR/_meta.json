@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_STABLE_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 340,
+  "box_h": 220,
+  "anchor_x": 184,
+  "anchor_y": 148,
+  "sld_source": "b_greek_stable_age3_destruction"
+}

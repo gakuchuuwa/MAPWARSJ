@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_HOUSE_AGE3_RUBBLE",
+  "frames": 3,
+  "box_w": 284,
+  "box_h": 136,
+  "anchor_x": 138,
+  "anchor_y": 70,
+  "sld_source": "b_greek_house_age3_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_TOWN_CENTER_AGE3_DESTR",
+  "frames": 60,
+  "box_w": 448,
+  "box_h": 284,
+  "anchor_x": 228,
+  "anchor_y": 212,
+  "sld_source": "b_greek_town_center_age3_destruction"
+}

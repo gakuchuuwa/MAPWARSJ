@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_HOUSE_AGE2_DESTR",
+  "frames": 60,
+  "box_w": 248,
+  "box_h": 176,
+  "anchor_x": 126,
+  "anchor_y": 122,
+  "sld_source": "b_thracian_house_age2_destruction"
+}

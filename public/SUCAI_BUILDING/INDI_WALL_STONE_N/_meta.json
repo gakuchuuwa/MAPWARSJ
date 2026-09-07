@@ -1,10 +1,9 @@
 {
   "name": "INDI_WALL_STONE_N",
   "frames": 1,
-  "box_w": 76,
-  "box_h": 117,
-  "anchor_x": 51,
-  "anchor_y": 88,
-  "sld_source": "b_indi_wall_stone_x1.sld",
-  "frame_idx": 4
+  "box_w": 42,
+  "box_h": 114,
+  "anchor_x": 20.5,
+  "anchor_y": 88.0,
+  "sld_source": "b_indi_wall_stone frame4"
 }
