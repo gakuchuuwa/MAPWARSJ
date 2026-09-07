@@ -1821,7 +1821,12 @@ function resolveCurrentLayer(row: FactionLegionRow): 'culture' | 'sub' {
     if (lt === 'solo' || lt === 'era') return 'sub';   // era 已废，一律并入特定军团
     const name = currentEditingLegion?.legionName?.trim();
     if (!name) return 'culture';
-    if (getLayerLegionOptions('culture', row.factionId).some(o => o.legionName === name)) return 'culture';
+    // 🔴 [2026-09-07 修「保存把别的文化区冲了」] 这里原来拿名字去比**全部 109 个文化军团名**，
+    //    只要撞上任何一个就判成文化层 —— 多德卡尼斯的势力军团叫「古典希腊雇佣军团」
+    //    （那是 GREEK_MERCENARY 的名字），于是 💾 被路由进它自己所在的 GREEK 区，
+    //    把古典希腊军团整个冲成了雇佣那套。同样的事故在罗马身上也发生过一次。
+    //    正确判据：只有当名字 == **该势力自己文化区**的军团名时，才是在编文化军团。
+    if (name === getCultureLegionName(row.region)) return 'culture';
     return 'sub';
 }
 
@@ -3869,25 +3874,58 @@ function startCanvasPreview(): void {
 // 8. 存盘与全局事件
 // ============================================================
 
-/** 保存文化军团编制：覆盖 CultureFormations.ts 的 CULTURE_TIERS_MAP + CULTURE_FORMATION_MODE（一个文化只有一个军团） */
+/**
+ * 保存文化军团编制。
+ *
+ * 🔴 [2026-09-07 主人定] 两条铁律，都是被实际事故逼出来的：
+ *   ① **同名一律覆盖**：一个军团名只能有一种编制。保存时把**所有同名的文化军团 + 势力军团**
+ *      一起刷成这一份 —— 原来只改自己那一个，同名的别人不动，于是每存一次就多留一份
+ *      「同名不同编」，界面弹「编制不一致」，军团越改越多。主人原话「重名不覆盖，那么军团
+ *      岂不是越改越多」。
+ *   ② **写完立刻同步内存**：`CULTURE_*` 是页面加载时导入的静态对象，保存只写文件不改它们，
+ *      而保存后又立刻 buildRows/renderTable 用这份旧内存重绘 —— 于是「选了阵型、点保存、
+ *      阵型自己弹回去」。文件其实是对的，是界面拿旧数据把自己覆盖了。
+ */
 async function saveCultureComposition(culture: RegionType, legion: CustomFactionLegion): Promise<void> {
     try {
+        const legionName = legion.legionName?.trim() || getCultureLegionName(culture);
+        const slots = legion.slots.map(s => ({ ...s }));
+        const formationMode = legion.formationMode;
+
+        // ① 找出所有同名的文化区（含改名前就叫这个名的），一起覆盖
+        const alsoCultures = (REGION_ORDER as RegionType[]).filter(
+            r => r !== culture && getCultureLegionName(r) === legionName,
+        );
+
         const res = await fetch('/api/save-culture-formations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                culture,
-                slots: legion.slots,
-                formationMode: legion.formationMode,
-                // 🔴 [2026-09-07] 原来不发军团名 —— 于是「选一个军团 → 编辑 → 保存」只落了三排兵种，
-                //    名字原封不动。主人套用【古典希腊军团】存到罗马帝国，编制变成希腊的、名字还叫
-                //    【古典罗马军团】，界面上「保存【古典希腊军团】」和实际结果对不上（实锤保存错误）。
-                legionName: legion.legionName?.trim() || undefined,
-            }),
+            body: JSON.stringify({ culture, slots, formationMode, legionName, alsoCultures }),
         });
         if (!res.ok) throw new Error(await res.text());
-        showToast(`✅ 已保存【${getCultureLegionName(culture)}】文化军团并写入 CultureFormations.ts`);
-        // 文化保底已变，重跑行数据刷新界面
+
+        // ② 内存同步（否则下面重绘会把界面刷回旧编制）
+        for (const r of [culture, ...alsoCultures]) {
+            (CULTURE_LEGION_NAMES as Record<string, string>)[r] = legionName;
+            (CULTURE_FORMATION_MODE as Record<string, FormationMode>)[r] = formationMode;
+            const tiers = (CULTURE_TIERS_MAP as Record<string, any>)[r];
+            if (tiers?.[0]) tiers[0].slots = slots.map(s => ({ ...s }));
+        }
+
+        // ③ 势力表里同名的势力军团也一起覆盖（同名 = 同一个军团）
+        let factionSync = 0;
+        for (const fid of Object.keys(localCustomCompositions)) {
+            const comp = localCustomCompositions[fid];
+            if (comp?.legionName?.trim() !== legionName) continue;
+            localCustomCompositions[fid] = { ...comp, formationMode, slots: slots.map(s => ({ ...s })) };
+            factionSync++;
+        }
+        if (factionSync > 0) await saveAllCompositions();
+
+        showToast(`✅ 已保存【${legionName}】`
+            + (alsoCultures.length ? `，同名文化区同步 ${alsoCultures.length} 个` : '')
+            + (factionSync ? `，同名势力同步 ${factionSync} 个` : ''));
+
         buildRows();
         applyFilter();
         renderTable();

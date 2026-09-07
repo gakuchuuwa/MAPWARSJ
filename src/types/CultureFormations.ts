@@ -331,7 +331,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     MACEDONIAN:   'balance_yoke',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
     IMPERIAL_ROME: 'triangle',   // 古典罗马禁卫：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
-    GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
+    GREEK_MERCENARY: 'balance_yoke',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
     MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
     ACHAEMENIDS:     'fish_scale', // 古典阿契美尼德：鱼鳞阵 3+4+2 不死军矛兵3 + 古典重装骑射4 + 不死军弓手2
     AMAZONS:         'crane_wing', // 古典亚马逊：鹤翼阵 2+4+3 女弓手2 + 斯基泰骑射手高级4 + 女战士3
@@ -1533,13 +1533,12 @@ export const GREEK_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 3 }, // 前排 = 希腊重装步兵
-            { type: 'elite_greek_cavalry', count: 4 }, // 中坚主力【高级】 = 希腊贵族骑兵高级
-            { type: 'gastraphetes', count: 2 } // 后排 = 希腊腹弩手
+            { type: 'hoplite', count: 3 },
+            { type: 'elite_greek_cavalry', count: 4 },
+            { type: 'gastraphetes', count: 2 }
         ]
     }
 ];
-
 /** GREEK 希腊文化军团（balance_yoke 4+2+3）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
  *  （马其顿、托勒密、塞琉古、帕加马…），原文化表那份已过时，作废。 */
@@ -2069,9 +2068,13 @@ export const TEUTONS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'teutonic_knight', count: 3 },   // Row 0 前卫 = 条顿骑士 3人
-            { type: 'elite_teutonic_knight', count: 4 },   // Row 1 主力 = 精锐条顿骑士 4人
-            { type: 'crusader_knight', count: 2 }   // Row 2 压阵 = 十字军骑士 2骑
+            // 🔴 [2026-09-07 战力均衡] 原为 条顿武士3 / 条顿武士精锐4 / 十字军骑士高级2 = 215，
+            //    是全表唯一的极端离群（第二名才 133）。条顿武士精锐战力 297 全表步兵第一，占 4 档必然顶穿。
+            //    改法也合史：骑士团野战军的主体从来不是修士骑士本身，而是征调的普鲁士/利沃尼亚土兵
+            //    与雇佣弩手，修士骑士只是少数尖刀 —— 精锐降到 2 档正对。
+            { type: 'teutonic_knight', count: 3 },   // Row 0 前卫 = 条顿武士
+            { type: 'arbalest', count: 4 },   // Row 1 主力 = 欧洲劲弩手高级（骑士团招牌的雇佣弩手）
+            { type: 'elite_teutonic_knight', count: 2 }   // Row 2 尖刀 = 条顿武士精锐（修士骑士本就人少）
         ]
     }
 ];
@@ -2179,7 +2182,8 @@ export const MAPUCHE_TIERS: CompositionTier[] = [
         slots: [
             { type: 'kona', count: 3 },   // Row 0
             { type: 'elite_kona', count: 4 },   // Row 1
-            { type: 'elite_bolas_rider', count: 2 }   // Row 2
+            // 🔴 [2026-09-07 战力均衡] 支援位不必也上精锐档（科纳勇士精锐已在 4 档）
+            { type: 'bolas_rider', count: 2 }   // Row 2
         ]
     }
 ];
@@ -2269,7 +2273,9 @@ export const WALLACHIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'champion', count: 2 },
-            { type: 'elite_boyar', count: 4 },
+            // 🔴 [2026-09-07 战力均衡] 原为「斯拉夫贵族铁骑精锐」（199，全表骑兵第二），整支 126；
+            //    降为基础档后 91，回到中段。瓦拉几亚本就是多瑙河边的公国，不该压过母国罗斯。
+            { type: 'boyar', count: 4 },
             { type: 'cav_archer', count: 3 }
         ]
     }
@@ -2461,8 +2467,10 @@ export const NANZHAO_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
+            // 🔴 [2026-09-07] 原 4 档是「穆伊斯卡神庙守卫精锐」—— 穆伊斯卡在南美哥伦比亚，
+            //    跟洱海的南诏白蛮毫无关系，是民族串门；换回本地的藤弓兵升级档，战力也从 133 收到 126。
             { type: 'rattan_archer', count: 3 },
-            { type: 'elite_temple_guard', count: 4 },
+            { type: 'rattan_archer_elite', count: 4 },
             { type: 'war_elephant', count: 2 },
         ]
     }
@@ -2588,8 +2596,10 @@ export const GHANA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 4 }, // 前排主力【重装】 = 长枪兵重装
-            { type: 'archer', count: 3 }, // 中坚 = 南方步弓手
+            // 🔴 [2026-09-07 战力均衡] 原为 长枪兵重装4/南方步弓手3/骆驼骑兵2 = 43，全表倒数第二。
+            //    换上西非本土精锐「索索禁卫军」（加纳亡于索索、索索再亡于马里，是同一脉），战力 78 回到中段。
+            { type: 'sosso_guard', count: 4 }, // 前排主力 = 西非索索禁卫军高级
+            { type: 'pikeman', count: 3 }, // 中坚 = 长枪兵
             { type: 'camel_rider', count: 2 } // 后排 = 骆驼骑兵
         ]
     }
@@ -2945,9 +2955,12 @@ export const SWISS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 3 }, // 前排 = 戟兵
-            { type: 'heavy_pikeman', count: 4 }, // 中坚主力【重装】 = 长枪兵重装
-            { type: 'arbalest', count: 2 } // 后排 = 劲弩手
+            // 🔴 [2026-09-07 战力均衡] 原为 戟兵3/长枪兵重装4/劲弩手2 = 42，全表垫底。
+            //    瑞士的招牌是戟兵与长枪方阵，戟兵升 4 档；支援位换双饷兵（冠军剑士高级），
+            //    即瑞士人自己的 Doppelsöldner 前排重赏死士。
+            { type: 'heavy_pikeman', count: 3 }, // 前排 = 长枪兵重装（方阵线）
+            { type: 'halberdier', count: 4 }, // 中坚主力 = 欧洲重装戟兵（瑞士戟兵）
+            { type: 'champion', count: 2 } // 后排 = 欧洲冠军剑士高级（双饷兵）
         ]
     }
 ];
@@ -3070,13 +3083,12 @@ export const GREEK_MERCENARY_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'mercenary_hoplite', count: 4 }, // 前排主力【高级】 = 希腊雇佣重步兵高级
-            { type: 'shock_cavalry', count: 3 }, // 中坚【重装】 = 希腊化冲击骑兵重装
-            { type: 'gastraphetes', count: 2 } // 后排 = 希腊腹弩手
+            { type: 'mercenary_hoplite', count: 4 },
+            { type: 'shock_cavalry', count: 2 },
+            { type: 'gastraphetes', count: 3 }
         ]
     }
 ];
-
 export const IMPERIAL_ROME_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
