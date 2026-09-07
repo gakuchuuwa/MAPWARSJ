@@ -95,7 +95,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     PURU:         'ELEPHANT', // 南印度战象（步象）
     ORIE:         'CAVALRY',  // 阿拉伯骆驼骑（纯骑）
     EAST:         'MIXED',    // 东欧蛮族步骑（波雅尔铁骑+弓，套斯拉夫编成）
-    GREEK:        'INFANTRY', // 希腊重装步兵/方阵
+    GREEK:        'MIXED',    // 古典希腊：步骑弩综合体系（重步抗线+贵族骑兵突击+腹弩掩护）
     THRACIAN:     'INFANTRY', // 色雷斯轻盾兵
     PERSIAN:      'MIXED',    // 波斯铁甲圣骑+步弓
     CUMAN:        'CAVALRY',  // 库曼钦察草原游牧（纯骑）
@@ -245,8 +245,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
-    GREEK:        'echelon',  // 希腊重装步兵主力（重装步兵/底比斯圣队）
-    THRACIAN: 'balance_yoke',  // [2026-09-06] 与同名势力专属军团对齐
+    GREEK:        'fish_scale', // 古典希腊：鱼鳞阵 3+4+2 前排希腊重步3+中坚希腊贵族骑兵高级4档主力+后排希腊腹弩2
+    THRACIAN: 'crescent',  // [2026-09-06] 与同名势力专属军团对齐
     PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
     BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
@@ -284,7 +284,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HITTITES: 'triangle',    // 古典赫梯：锥形阵 2+3+4 底边双轮战车高级主力
     ASSYRIAN:     'fish_scale',   // 古典亚述：鱼鳞阵 3+4+2 前排持盾步兵3+中坚古典重装骑射4档主力+后排双轮战车2
     SCYTHIANS:     'triangle',    // 古典斯基泰：锥形阵 2+3+4 尖刀斯基泰斧骑2+中坚斯基泰骑射3+底边斯基泰骑射手高级4档主力
-    BYZANTINE: 'square',
+    BYZANTINE: 'fish_scale',
     FRANKS: 'triangle',
     SASANIAN: 'triangle',
     TURKS: 'triangle',
@@ -295,11 +295,11 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     KHITAN: 'triangle',
     UIGHUR: 'triangle',
     MOHE: 'fish_scale',
-    ANGLO_SAXON: 'square',
+    ANGLO_SAXON: 'fish_scale',
     GHANA: 'echelon',
     KHAZARS: 'crane_wing',
     VANDALS: 'echelon',
-    LOMBARDS: 'square',
+    LOMBARDS: 'fish_scale',
     ROURAN: 'triangle',
     SOGDIANS: 'fish_scale',
     TANGUT: 'triangle',
@@ -319,9 +319,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
     HEPHTHALITES: 'triangle',
     AINU: 'fish_scale',
-    SWISS: 'square',
+    SWISS: 'fish_scale',
     PASHTUN: 'crescent',
-    SWEDISH: 'square',
+    SWEDISH: 'fish_scale',
     MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
 };
 
@@ -1142,9 +1142,9 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 4, scale: 1 },
-            { type: 'fire_archer', count: 3 },
-            { type: 'war_chariot_ranged', count: 2, scale: 1 }
+            { type: 'elite_white_feather_guard', count: 4 }, // 前排主力【精锐】 = 蜀白毦兵精锐
+            { type: 'fire_archer', count: 3 }, // 中坚 = 吴火焰弓箭手
+            { type: 'war_chariot_ranged', count: 2 } // 后排 = 先秦远程战车
         ]
     }
 ];
@@ -1169,9 +1169,9 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tiger_rider', count: 3, scale: 1 },
-            { type: 'antiquity_cavalry_archer', count: 2, scale: 1 },
-            { type: 'xianbei_raider', count: 4, scale: 1 }
+            { type: 'tiger_rider', count: 3 }, // 前排 = 魏虎骑兵
+            { type: 'xianbei_raider', count: 2 }, // 中排 = 鲜卑掠骑兵
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 } // 后排主力【重装】 = 古典骑射手重装（南北朝黑光铠是 420-589 年，过了古典的线，不能用）
         ]
     }
 ];
@@ -1182,9 +1182,9 @@ export const KOREA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 2 },        // Row 0 步兵前锋 = 剑士 2人
-            { type: 'hei_kuang', count: 4 },        // Row 1 骑兵主力两翼合围 = 黑光铠骑兵 4人
-            { type: 'fire_archer', count: 3 }       // Row 2 中军后排支援 = 火焰弓箭手 3人
+            { type: 'swordsman', count: 2 }, // 前锋 = 剑士
+            { type: 'hei_kuang_heavy', count: 4 }, // 中坚主力【重装】 = 南北朝黑光铠骑兵重装
+            { type: 'fire_archer', count: 3 } // 后排 = 吴火焰弓箭手
         ]
     }
 ];
@@ -1508,18 +1508,10 @@ export const BERBER_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 19. 古典希腊军团（雁行 4+3+2，主力在前排）
- *  史料：希腊城邦战争的胜负由重装步兵方阵（phalanx）正面决出——马拉松（前 490）、
- *        普拉提亚（前 479）、伯罗奔尼撒战争皆然。城邦多山少马，骑兵是次要兵种，
- *        真正的强骑兵在帖萨利亚与马其顿，不在城邦本身。
- *        雁行＝斜行阵：埃帕米农达在留克特拉（前 371）左翼加厚至五十列斜进破斯巴达，
- *        领头的正是底比斯圣队，故主力在前排、圣队居次列。
- *        罗得岛投石兵见色诺芬《长征记》——其射程胜过波斯弓手，是希腊远射的招牌。
- *  ⚠️ 旧编制是「贵族骑兵×3 + 精锐贵族骑兵×4 + 克里特弓×2」，两档骑兵当主力，
- *     与古典希腊的兵制完全相反，2026-09-07 按史实重排。
- *    前 4 希腊重装步兵 —— 方阵主力，斜行阵加厚的那一翼
- *    中 3 底比斯圣队   —— 精锐重步，留克特拉的破阵尖端
- *    后 2 罗得岛投石兵 —— psiloi 轻兵远射
+/** 19. 古典希腊军团（鱼鳞阵 3+4+2，中坚希腊贵族骑兵高级为主力）
+ *  前排 3 希腊重装步兵 —— 经典方阵大圆盾墙扛线（hoplite）
+ *  中坚 4 希腊贵族骑兵高级 —— 【高级】主力铁骑重拳破阵（elite_greek_cavalry）
+ *  后排 2 希腊腹弩手 —— 机械腹弩（gastraphetes）抛射火力掩护
  */
 export const GREEK_TIERS: CompositionTier[] = [
     {
@@ -1527,9 +1519,9 @@ export const GREEK_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 4 },
-            { type: 'sacred_band', count: 3 },
-            { type: 'rhodian_slinger', count: 2 }
+            { type: 'hoplite', count: 3 }, // 前排 = 希腊重装步兵
+            { type: 'elite_greek_cavalry', count: 4 }, // 中坚主力【高级】 = 希腊贵族骑兵高级
+            { type: 'gastraphetes', count: 2 } // 后排 = 希腊腹弩手
         ]
     }
 ];
@@ -1591,9 +1583,9 @@ export const SPANISH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'champion', count: 4 },
-            { type: 'elite_conquistador', count: 2 },
+            { type: 'heavy_pikeman', count: 3 }, // 前排 = 长枪兵重装（西班牙大方阵长枪）
+            { type: 'elite_conquistador', count: 4 }, // 中坚主力【精锐】 = 西班牙征服者精锐（2026-09-07 主人删掉「火器只能占 2 档」，火器可当主力）
+            { type: 'champion', count: 2 } // 后排 = 冠军剑士精锐
         ]
     }
 ];
@@ -1634,9 +1626,9 @@ export const PORTUGUESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 4 },   // Row 0 宽线主力 = 戟兵 4人
-            { type: 'elite_organ_gun', count: 2 },   // Row 1 = 精锐风琴炮 2门（火器只许占 2 档）
-            { type: 'arbalest', count: 3 }   // Row 2 后排 = 劲弩手 3人
+            { type: 'heavy_pikeman', count: 4 }, // 前排主力【重装】 = 长枪兵重装
+            { type: 'elite_organ_gun', count: 2 }, // 中排 = 葡萄牙风琴炮精锐（火器只能占 2 档）
+            { type: 'arbalest', count: 3 } // 后排 = 劲弩手
         ]
     }
 ];
@@ -1690,9 +1682,9 @@ export const BENGALIS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 4 },
-            { type: 'elite_ratha_ranged', count: 3 },
-            { type: 'archer', count: 2 }
+            { type: 'elite_ratha_ranged', count: 4 }, // 前排主力【精锐】 = 孟加拉拉塔战车(弓)精锐
+            { type: 'swordsman', count: 3 }, // 中坚 = 剑士
+            { type: 'archer', count: 2 } // 后排 = 南方步弓手
         ]
     }
 ];
@@ -2020,9 +2012,9 @@ export const ORIE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'mameluke', count: 2 },
-            { type: 'camel_rider', count: 3 },
-            { type: 'camel_archer', count: 4 }
+            { type: 'mameluke', count: 2 }, // 尖刀 = 萨拉森马穆鲁克
+            { type: 'camel_rider', count: 3 }, // 中坚 = 骆驼骑兵
+            { type: 'elite_camel_archer', count: 4 } // 底边主力【精锐】 = 柏柏尔骆驼弓骑精锐
         ]
     }
 ];
@@ -2035,12 +2027,9 @@ export const THRACIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rhomphaia_warrior', count: 4 },   // Row 0 宽线主力 = 罗姆菲亚镰刀剑士 4人
-            // 🔴 [2026-09-07 平衡] 原来 2 档是色雷斯标枪手（战力 49），整支只有 52，古典里倒数第二。
-            //    换成冲击重骑兵 = 奥德里西亚贵族重骑：色雷斯贵族本来就借希腊-波斯甲骑形制，
-            //    素材样貌是高盔具装骑，与色雷斯黄金骑士相称；战力抬到 72。
-            { type: 'shock_cavalry', count: 2 },   // Row 1 中排 = 冲击重骑兵 2骑（奥德里西亚贵族重骑）
-            { type: 'elite_peltast', count: 3 }   // Row 2 后排 = 精锐轻盾兵 3人
+            { type: 'rhomphaia_warrior', count: 3 }, // 前排 = 色雷斯长刃斩手
+            { type: 'shock_cavalry', count: 2 }, // 中排 = 冲击重骑兵（奥德里西亚贵族重骑）
+            { type: 'elite_peltast', count: 4 } // 后排主力【高级】 = 色雷斯标枪手高级
         ]
     }
 ];
@@ -2145,9 +2134,9 @@ export const KHMER_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_ballista_elephant', count: 2 },   // Row 0 尖刀 = 精锐弩炮象 2头（象只许占 2 档）
-            { type: 'spearman', count: 3 },   // Row 1 中坚 = 长枪兵 3人
-            { type: 'archer', count: 4 }   // Row 2 底边主力 = 弓箭手 4人
+            { type: 'elite_ballista_elephant', count: 2 }, // 尖刀 = 高棉弩炮战象精锐（战象只能占 2 档）
+            { type: 'archer', count: 3 }, // 中坚 = 南方步弓手
+            { type: 'heavy_pikeman', count: 4 } // 底边主力【重装】 = 长枪兵重装
         ]
     }
 ];
@@ -2221,9 +2210,9 @@ export const ARMENIANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hill_tribesman', count: 3 },
-            { type: 'elite_composite_bowman', count: 2, scale: 1 },
-            { type: 'warrior_priest', count: 4, scale: 1 }
+            { type: 'warrior_priest', count: 3 }, // 前排 = 亚美尼亚修士战士
+            { type: 'hill_tribesman', count: 2 }, // 中排 = 山地部落民
+            { type: 'elite_composite_bowman', count: 4 } // 后排主力【精锐】 = 亚美尼亚复合弓手精锐
         ]
     }
 ];
@@ -2276,9 +2265,9 @@ export const EGYPT_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_chariot', count: 4 },
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'cretan_archer', count: 2 }
+            { type: 'elite_war_chariot', count: 4 }, // 前排主力【高级】 = 双轮战车高级（法老战车）
+            { type: 'antiquity_spearman', count: 3 }, // 中坚 = 古典长矛兵
+            { type: 'cretan_archer', count: 2 } // 后排 = 克里特弓箭手
         ]
     }
 ];
@@ -2389,9 +2378,9 @@ export const BYZANTINE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'cataphract', count: 3 },
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'composite_bowman', count: 3 },
+            { type: 'eastern_swordsman', count: 3 }, // 前排 = 东方剑士
+            { type: 'elite_cataphract', count: 4 }, // 中坚主力【精锐】 = 拜占庭圣骑兵精锐
+            { type: 'composite_bowman', count: 2 } // 后排 = 亚美尼亚复合弓手
         ]
     }
 ];
@@ -2403,9 +2392,9 @@ export const FRANKS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'paladin', count: 2 },
-            { type: 'knight', count: 3 },
-            { type: 'crossbowman', count: 4 }
+            { type: 'paladin', count: 2 }, // 尖刀 = 游侠(圣骑士)
+            { type: 'crossbowman', count: 3 }, // 中坚 = 弩兵
+            { type: 'cavalier', count: 4 } // 底边主力【重装】 = 骑士重装
         ]
     }
 ];
@@ -2417,9 +2406,9 @@ export const SASANIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'savar', count: 2 },
-            { type: 'immortal', count: 3 },
-            { type: 'composite_bowman', count: 4 }
+            { type: 'composite_bowman', count: 2 }, // 尖刀 = 亚美尼亚复合弓手
+            { type: 'immortal', count: 3 }, // 中坚 = 波斯长生军
+            { type: 'savar', count: 4 } // 底边主力【精锐】 = 萨瓦尔重骑精锐（萨珊 Savaran 具装王牌）
         ]
     }
 ];
@@ -2431,9 +2420,9 @@ export const TURKS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
-            { type: 'scythian_horse_archer', count: 4 }
+            { type: 'tarkan', count: 2 }, // 尖刀 = 匈奴答剌罕骑兵
+            { type: 'scythian_horse_archer', count: 3 }, // 中坚 = 斯基泰骑射手
+            { type: 'elite_steppe_lancer', count: 4 } // 底边主力【高级】 = 草原枪骑兵高级
         ]
     }
 ];
@@ -2547,9 +2536,9 @@ export const MOHE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'recurve_bowman', count: 3 },
-            { type: 'cataphract', count: 4 },
-            { type: 'spearman', count: 2 },
+            { type: 'recurve_bowman', count: 3 }, // 前排 = 反曲长弓手
+            { type: 'elite_cataphract', count: 4 }, // 中坚主力【精锐】 = 拜占庭圣骑兵精锐
+            { type: 'spearman', count: 2 } // 后排 = 长矛兵
         ]
     }
 ];
@@ -2561,9 +2550,9 @@ export const ANGLO_SAXON_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 3 },
-            { type: 'swordsman', count: 3 },
-            { type: 'pikeman', count: 3 }
+            { type: 'longswordsman', count: 3 }, // 前排 = 长剑士
+            { type: 'heavy_pikeman', count: 4 }, // 中坚主力【重装】 = 长枪兵重装
+            { type: 'swordsman', count: 2 } // 后排 = 剑士
         ]
     }
 ];
@@ -2576,9 +2565,9 @@ export const GHANA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'pikeman', count: 4 },
-            { type: 'archer', count: 3 },
-            { type: 'camel_rider', count: 2 }
+            { type: 'heavy_pikeman', count: 4 }, // 前排主力【重装】 = 长枪兵重装
+            { type: 'archer', count: 3 }, // 中坚 = 南方步弓手
+            { type: 'camel_rider', count: 2 } // 后排 = 骆驼骑兵
         ]
     }
 ];
@@ -2604,9 +2593,9 @@ export const VANDALS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'knight', count: 3 },
-            { type: 'skirmisher', count: 2 }
+            { type: 'cavalier', count: 4 }, // 前排主力【重装】 = 骑士重装
+            { type: 'longswordsman', count: 3 }, // 中坚 = 长剑士
+            { type: 'skirmisher', count: 2 } // 后排 = 掷矛手
         ]
     }
 ];
@@ -2618,9 +2607,9 @@ export const LOMBARDS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'knight', count: 3 },
-            { type: 'throwing_axeman', count: 3 },
+            { type: 'two_handed_swordsman', count: 3 }, // 前排 = 双手剑士
+            { type: 'cavalier', count: 4 }, // 中坚主力【重装】 = 骑士重装
+            { type: 'throwing_axeman', count: 2 } // 后排 = 法兰克掷斧兵
         ]
     }
 ];
@@ -2758,9 +2747,9 @@ export const MUGHAL_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 2 },
-            { type: 'knight', count: 4 },
-            { type: 'archer', count: 3 }
+            { type: 'war_elephant', count: 2 }, // 前锋 = 波斯战象（战象只能占 2 档）
+            { type: 'cavalier', count: 4 }, // 中坚主力【重装】 = 骑士重装
+            { type: 'archer', count: 3 } // 后排 = 南方步弓手
         ]
     }
 ];
@@ -2928,9 +2917,9 @@ export const SWISS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 3 },
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'arbalest', count: 3 },
+            { type: 'halberdier', count: 3 }, // 前排 = 戟兵
+            { type: 'heavy_pikeman', count: 4 }, // 中坚主力【重装】 = 长枪兵重装
+            { type: 'arbalest', count: 2 } // 后排 = 劲弩手
         ]
     }
 ];
@@ -2979,9 +2968,9 @@ export const SWEDISH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'hussar', count: 3 },
+            { type: 'two_handed_swordsman', count: 3 }, // 前排 = 双手剑士
+            { type: 'heavy_pikeman', count: 4 }, // 中坚主力【重装】 = 长枪兵重装
+            { type: 'hussar', count: 2 } // 后排 = 骠骑兵
         ]
     }
 ];
@@ -3014,7 +3003,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
     ORIE:         ORIE_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
     EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
-    GREEK:        GREEK_TIERS,      // ✅ [2026-08-27] 恢复原希腊编成（重装步兵+圣队+轻装兵）
+    GREEK:        GREEK_TIERS,      // 古典希腊军团（鱼鳞阵 3+4+2：希腊重步3 + 希腊贵族骑兵高级4 + 希腊腹弩2）
     THRACIAN: THRACIAN_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
     PERSIAN:      PERSIAN_TIERS,  // ⚠️ [2026-08-27] 暂复用西亚编成（铁甲圣骑兵=波斯/萨珊招牌），待定制
     CUMAN:        CUMAN_TIERS,     // ⚠️ [2026-08-27] 暂复用草原编成（弓骑+轻骑游牧），待定制
