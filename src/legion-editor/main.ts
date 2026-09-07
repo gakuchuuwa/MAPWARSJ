@@ -2135,13 +2135,23 @@ function renderEditPanel(row: FactionLegionRow): void {
       </div>
     </details>
 
-    <!-- 保存 -->
+    <!-- 保存：两件事分开（2026-09-07 主人定「一个是武将套用军团，一个编辑军团，分开了」） -->
     <div class="le-form-section">
-      <div class="le-section-title"><span>保存配置</span></div>
-      <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;">↺ 一键恢复为文化军团【${getCultureLegionName(row.region)}】</button>
-      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;margin-top:8px;">💾 为【${row.factionName}】保存【${currentLegionName}】配置</button>
-      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为新军团（独立命名，不同步同名势力）</button>
-      <div style="font-size:11px;color:var(--muted-foreground);margin-top:6px;line-height:1.5;">⚠️ 保存只改当前势力一个；「恢复文化军团」会让该势力回到所在文化区的默认军团。</div>
+      <div class="le-section-title"><span>① 套用军团给这个势力</span></div>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
+        只改【${row.factionName}】一家：把上面选中的军团挂到它头上。<b>不会动军团本身，也不会影响别的势力。</b>
+      </div>
+      <button type="button" id="le-btn-apply-faction" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">🎖️ 套用【${currentLegionName}】给【${row.generalName || row.factionName}】</button>
+      <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">↺ 取消套用，回到文化军团【${getCultureLegionName(row.region)}】</button>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title"><span>② 编辑军团本身</span></div>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
+        改的是【${currentLegionName}】这支军团的编成，<b>所有用它的文化区和势力一起变</b>（一个军团名只能有一种编制）。
+      </div>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">✏️ 保存【${currentLegionName}】的编成（同名一起改）</button>
+      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为新军团（起个新名字，只给这一家）</button>
     </div>
     `;
 
@@ -2231,6 +2241,28 @@ function bindPanelEvents(row: FactionLegionRow): void {
         showToast(`↺ 已恢复【${row.factionName}】为文化军团【${getCultureLegionName(row.region)}】`);
     });
 
+    // ① 套用军团给这个势力：只写 FactionCompositions 一条，绝不碰文化军团、也不碰别的势力。
+    //    🔴 [2026-09-07 主人定「一个是武将套用军团，一个编辑军团，分开了」]
+    //       原来只有一个 💾，它会按「当前是不是文化层」自己决定写哪儿 —— 结果主人想给
+    //       某个武将换支军团，却把整个文化区冲掉（罗马、希腊、赫梯先后中招三次）。
+    document.getElementById('le-btn-apply-faction')?.addEventListener('click', async () => {
+        if (!currentEditingLegion) return;
+        const name = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
+        localCustomCompositions[row.factionId] = {
+            legionName: name,
+            legionType: currentEditingLegion.legionType,
+            formationMode: currentEditingLegion.formationMode,
+            navalFormation: currentEditingLegion.navalFormation ?? 'auto',
+            slots: currentEditingLegion.slots.map(s => ({ ...s })),
+        };
+        buildRows();
+        applyFilter();
+        selectFaction(row.factionId);
+        if (await saveAllCompositions()) {
+            showToast(`🎖️ 已把【${name}】套用给【${row.generalName || row.factionName}】（只改这一家）`);
+        }
+    });
+
     // 保存单条专属
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
@@ -2240,14 +2272,19 @@ function bindPanelEvents(row: FactionLegionRow): void {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
             return;
         }
-        // [2026-09-05 主人定] 一个文化只有一个军团：编辑文化军团 = 覆盖文化保底（CULTURE_TIERS_MAP + 阵型），
-        //    不写特定势力，否则会多出第二个同名文化军团（保存不上、刷新后还是旧的）。
-        if (resolveCurrentLayer(row) === 'culture') {
-            await saveCultureComposition(row.region, currentEditingLegion);
+        // 🔴 [2026-09-07 主人定] 这个按钮只干一件事：**改这支军团本身**。
+        //    落到哪个文化区，看的是**军团名归谁**，不是「当前势力在哪个区」——
+        //    原来按势力所在区写，于是给奇里乞亚（在赫梯区）套罗马军团再保存，
+        //    就把古典赫梯军团整个冲成了罗马那套（罗马、希腊、赫梯先后被冲三次）。
+        const savedLegionName = inputLegionName || `${row.factionName}军团`;
+        const owningCultures = (REGION_ORDER as RegionType[]).filter(
+            r => getCultureLegionName(r) === savedLegionName,
+        );
+        if (owningCultures.length > 0) {
+            // 这个名字是某个文化军团的 → 写到它自己的文化区（saveCultureComposition 内部会把同名的一并覆盖）
+            await saveCultureComposition(owningCultures[0], currentEditingLegion);
             return;
         }
-        const savedLegionName = currentEditingLegion.legionName?.trim()
-            || (resolveCurrentLayer(row) === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
 
         // 🔴 [2026-08-30 主人] 改名不连锁（改一个势力名只改它自己——之前青藏→唐朝→川蜀的灾难根因），
         //    但同名军团共享编制（编制同步）：同名 = 同一军团 = 同编制（铁律要求）。

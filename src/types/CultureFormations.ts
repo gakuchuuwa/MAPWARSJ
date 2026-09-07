@@ -330,7 +330,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SWEDISH: 'fish_scale',
     MACEDONIAN:   'balance_yoke',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
-    IMPERIAL_ROME: 'triangle',   // 古典罗马禁卫：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
+    IMPERIAL_ROME: 'echelon',   // 古典罗马禁卫：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'balance_yoke',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
     MAGNA_GRAECIA:   'echelon',    // 古典大希腊：雁行阵 4+3+2 埃克德罗摩斯4 + 希腊贵族骑3 + 塔兰丁骑2
     ACHAEMENIDS:     'fish_scale', // 古典阿契美尼德：鱼鳞阵 3+4+2 不死军矛兵3 + 古典重装骑射4 + 不死军弓手2
@@ -2360,7 +2360,6 @@ export const HITTITES_TIERS: CompositionTier[] = [
         ]
     }
 ];
-
 /** 古典亚述军团（鱼鳞 3+4+2，主力在中排）
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；不安排攻城武器，全部为野战正规兵种；三兵全部为古典档位。
  *  史料：新亚述帝国（前 911—前 609）建起人类第一支常备职业军队——提格拉特帕拉沙尔三世改革
@@ -3095,9 +3094,11 @@ export const IMPERIAL_ROME_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'equites', count: 2 }, // 前锋 = 罗马伴随骑士高级
+            // 🔴 [2026-09-07 主人亲改] 锥形阵 2+3+4 → 雁行阵 4+3+2：伴随骑士高级上前排主力。
+            //    战力也从 126 降到 116。（我一度误判成测试残留给改回去了，是我判错，已按主人原意改回。）
+            { type: 'equites', count: 4 }, // 前排主力 = 罗马伴随骑士高级
             { type: 'centurion', count: 3 }, // 中坚 = 罗马百夫长
-            { type: 'imperial_centurion', count: 4 } // 底边主力【重装】 = 罗马百夫长重装
+            { type: 'imperial_centurion', count: 2 } // 后排 = 罗马百夫长重装
         ]
     }
 ];
