@@ -2332,12 +2332,6 @@ ${slotsStr}
 /** 更新 CULTURE_FORMATION_MODE 中某文化的阵型类型 */
 /**
  * 改文化军团名：只动 CULTURE_LEGION_NAMES 里那一行。
- * 🔴 [2026-09-07] 补这个函数之前，军团编辑器保存**只写编制不写名字** ——
- *    主人「选一个军团 → 编辑 → 保存」，编制换了名字没换，界面与落盘对不上。
- *    定位必须先切到 CULTURE_LEGION_NAMES 这段再找 key，否则会误伤同名 key 的别的表。
- */
-/**
- * 改文化军团名：只动 CULTURE_LEGION_NAMES 里那一行。
  * [2026-09-07] 补这个函数之前，军团编辑器保存**只写编制不写名字** ——
  *    主人「选一个军团 -> 编辑 -> 保存」，编制换了名字没换，界面与落盘对不上。
  *    定位必须先切到 CULTURE_LEGION_NAMES 这段再找 key，否则会误伤别的表里的同名 key。
@@ -2349,7 +2343,7 @@ function serverReplaceCultureLegionName(text: string, culture: string, name: str
     const end = text.indexOf('\n};', start);
     if (end === -1) throw new Error('Cannot find end of CULTURE_LEGION_NAMES');
     const block = text.slice(start, end);
-    const pattern = new RegExp('(' + '\n' + '\\s*' + culture + ':\\s*)' + "\'" + '[^' + "\'" + ']*' + "\'");
+    const pattern = new RegExp(`(\\n\\s*${culture}:\\s*)'[^']*'`);
     if (!pattern.test(block)) throw new Error(`Cannot find legion name entry for ${culture}`);
     return text.slice(0, start) + block.replace(pattern, `$1'${name}'`) + text.slice(end);
 }
