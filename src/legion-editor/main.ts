@@ -472,6 +472,11 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'thirisadai', name: '孟加拉楼船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/THIRISADAI/' },
     { id: 'catapult_ship', name: '投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/CATAPULT_SHIP/' },
     { id: 'onager_ship', name: '重型投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
+    { id: 'hero_khan', name: '英雄·可汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-09-07 补提] 草原可汗通用形象，蒙古/库曼 11–15 世纪
+    { id: 'hero_jadwiga', name: '英雄·雅德维加', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JADWIGA/' },   // [2026-09-07 补提] 波兰女王 1373–1399
+    { id: 'hero_tamar', name: '英雄·塔玛尔', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TAMAR/' },   // [2026-09-07 补提] 格鲁吉亚女王 1160–1213
+    { id: 'hero_zhugeliang', name: '英雄·诸葛亮', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHUGELIANG/' },   // [2026-09-07 补提] 蜀汉丞相 181–234
+    { id: 'hero_bucephalus', name: '英雄·布塞法洛斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/BUCEPHALUS/' },   // [2026-09-07 补提] 亚历山大的战马，前 355–326
     { id: 'hero_alaric', name: '英雄·亚拉里克', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ALARIC/' },
     { id: 'hero_algirdas', name: '英雄·阿尔吉尔达斯', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ALGIRDAS/' },
     { id: 'hero_arariboiamelee', name: '英雄·阿拉里博亚', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARARIBOIAMELEE/' },

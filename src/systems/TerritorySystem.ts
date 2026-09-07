@@ -137,8 +137,10 @@ const REGION_TO_DE_STYLE: Record<string, string> = {
     EAST: 'EAST',
     PERSIAN: 'PERSIAN', // DE 波斯 = PERSIAN 套装（PERSIAN_WONDER_ACHAEMENIDS 阿契美尼德奇观在此）
     CUMAN: 'CEAS', // DE 库曼/鞑靼 = CEAS 套装（CEAS_WONDER_CUMANS/TATARS 在此）
-    GREEK: 'MEDI', // DE 希腊/拜占庭 = 地中海套装（MEDI_WONDER_BYZANTINES 拜占庭奇观在此，greek 战役前缀无 AGE3 建筑池）
-    THRACIAN: 'SLAV', // DE 色雷斯/保加利亚 = 东欧套装（SLAV_WONDER_BULGARIANS 保加利亚奇观在此，thracian 战役前缀无 AGE3 建筑池）
+    GREEK: 'GREEK', // [2026-09-08] 改回 GREEK 本套。原挂 MEDI 的理由是「greek 无 AGE3 建筑池」——
+                    // 那是没提取造成的，现已补提 119 件（含 13 件 AGE3）。拜占庭奇观仍在 MEDI，不影响这里。
+    THRACIAN: 'THRACIAN', // [2026-09-08] 同上，已补提 115 件（含 13 件 AGE3）。
+                          // 保加利亚奇观仍在 SLAV，不影响这里。
     // ── [2026-08-29 补全→08-29 修正] 支文化/细分势力：DE 具体文明无 AGE2 素材，归到 DE 权威建筑风格
     //   （fandom Architecture set）。每个区 1 个据点。权威归属：
     //   中欧(EAST)=哥特/匈奴/条顿/维京；东欧(SLAV)=马扎尔/波西米亚/保加利亚/立陶宛/波兰；
@@ -419,6 +421,18 @@ const DE_STONE_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; p
         SE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.1, pctY: 85.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_STONE_NE/preview.png' },
+    },
+    GREEK: {
+        NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_NE/preview.png' },
+        SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_SE/preview.png' },
+        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
+        GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/GREEK_GATE_STONE_NE/preview.png' },
+    },
+    THRACIAN: {
+        NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_NE/preview.png' },
+        SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_SE/preview.png' },
+        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
+        GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/THRACIAN_GATE_STONE_NE/preview.png' },
     },
 };
 

@@ -145,6 +145,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'bolan': '波兰',
 'dabolan': '大波',
   piyasite: '皮雅',
+  hongluseniya: '红鲁',
 'baojian_qishi': '宝剑',
   teweier_gongguo: '特维',
   suzidaer: '苏兹',

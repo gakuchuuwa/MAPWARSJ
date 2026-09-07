@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_GATE_STONE_SE",
+  "frames": 1,
+  "box_w": 176,
+  "box_h": 176,
+  "anchor_x": 108,
+  "anchor_y": 144,
+  "sld_source": "b_thracian_gate_stone_se_open"
+}

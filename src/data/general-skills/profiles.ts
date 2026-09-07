@@ -3204,6 +3204,15 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_chabrias: { generalId: 'gen_chabrias', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     tuomengde_aobulaien: { generalId: 'tuomengde_aobulaien', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     bolan_suobiesiji: { generalId: 'bolan_suobiesiji', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
+    gen_hiawatha: { generalId: 'gen_hiawatha', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 易洛魁联盟缔造者·和平缔造，无史载胜绩 → 普将
+    gen_minchancaman: { generalId: 'gen_minchancaman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 奇穆皇帝，被印加征服 → 普将
+    gen_tzitzipandaquare: { generalId: 'gen_tzitzipandaquare', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 塔拉斯科王，1470年代劣势击退阿兹特克入侵 → 普将
+    gen_cuchacique: { generalId: 'gen_cuchacique', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 泰罗纳酋长，抗西班牙殖民 → 普将
+    gen_casimiro_bigua: { generalId: 'gen_casimiro_bigua', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 特维尔切酋长 → 普将
+    gen_stuyvesant: { generalId: 'gen_stuyvesant', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 新尼德兰末代总督，1664守城降英 → 普将
+    gen_champlain: { generalId: 'gen_champlain', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 新法兰西创始人，亲率攻易洛魁（小规模）→ 普将
+    gen_urdaneta: { generalId: 'gen_urdaneta', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 航海家，发现马尼拉大帆船回航航线 → 普将
+    gen_jadwiga: { generalId: 'gen_jadwiga', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 波兰女王，1387亲征收复红鲁塞尼亚 → 普将
 };
 
 

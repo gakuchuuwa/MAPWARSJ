@@ -1,0 +1,10 @@
+{
+  "name": "THRACIAN_WALL_POST",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 168,
+  "anchor_x": 100,
+  "anchor_y": 140,
+  "sld_source": "b_thracian_wall_stone_x1.sld",
+  "frame_idx": 2
+}

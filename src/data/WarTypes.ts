@@ -367,6 +367,14 @@ export const WAR_TYPES: Record<string, WarType> = {
     // 数值 = DE 本体 empires2_x2_p1.dat 实测抽取（血/攻/近防/远防/射程/装填/加成/护甲类）。
     // 只有两处按本表既有口径改写：① 射程不足 2 格的记 0（贴身白刃）② 移速用本表档位（步55/骑130/象40，DE五维不含移速）。
     // 4 个「海军英雄」（地米斯托克利/阿尔特米西亚/狄奥尼索斯/埃伊纳指挥官）本体是旗舰船，走 NavalShipTiers，不在此表。
+    // 🔴 [2026-09-07] 补提的 DE 英雄。数值一律取自 DE dat（scratch/de_ref.json），
+    //    换算与既有英雄同口径：hp/atk/护甲 1:1，射程 ×40（DE 6.0 格 = 240），移速 DE 1.40 → 130。
+    //    ⚠️ 其中 4 位 DE 原值 atk=0（非战斗英雄），照抄不改，别看着别扭就补一个。
+    hero_khan: { name: '英雄·可汗', cls: 'cav', sz: 1, hp: 220, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2.1, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE HKHAN id=1771（本图 u_cav_hero_khan 有 3 个同名 DAT 条目 731/1275/1771，取标准档）；草原可汗通用形象
+    hero_jadwiga: { name: '英雄·雅德维加', cls: 'cav', sz: 1, hp: 270, atk: 0, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 1.6, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE JADWIGA id=1715；波兰女王 1373–1399，雅盖隆王朝共主。DE 原值 atk=0，是非战斗英雄
+    hero_tamar: { name: '英雄·塔玛尔', cls: 'cav', sz: 1, hp: 320, atk: 0, meleeArmor: 1, pierceArmor: 2, rng: 360, reload: 1.6, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE TAMAR id=1822；格鲁吉亚女王 1160–1213，格鲁吉亚黄金时代。DE 原值 atk=0
+    hero_zhugeliang: { name: '英雄·诸葛亮', cls: 'melee', sz: 1, hp: 160, atk: 0, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.0, spd: 107, dmgType: 'melee', armorTags: [15, 31, 36] },   // DE HZHUGELIANG id=2036；蜀汉丞相 181–234。DE 素材是 u_king_hero（步行），且本体无攻击动作、atk=0
+    hero_bucephalus: { name: '英雄·布塞法洛斯', cls: 'cav', sz: 1, hp: 150, atk: 0, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.0, spd: 130, dmgType: 'melee', armorTags: [8, 31, 36] },   // DE Bucephalus id=2525；亚历山大的战马，前 355–326。DE 本体无攻击动作、atk=0
     hero_alaric: { name: '英雄·亚拉里克', cls: 'cav', sz: 1, hp: 350, atk: 14, meleeArmor: 1, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 11: 2, 15: 3, 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_algirdas: { name: '英雄·阿尔吉尔达斯', cls: 'cav', sz: 1, hp: 240, atk: 18, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_arariboiamelee: { name: '英雄·阿拉里博亚', cls: 'cav', sz: 1, hp: 230, atk: 14, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 11: 2, 30: 0 }, armorTags: [1, 15, 31, 36] },
