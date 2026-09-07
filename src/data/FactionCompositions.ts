@@ -26,13 +26,14 @@ export interface CustomFactionLegion {
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 韩国·雁行阵（4+3+2：与秦国同阵）
-    han: {
-        legionName: "韩卒劲弩军团",
-        formationMode: 'echelon',
+    "han": {
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人
-            { type: 'heavy_pikeman', count: 3 },             // 中军接应 = 长枪方阵 3人
-            { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 先秦远程战车 2乘
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
@@ -145,13 +146,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 曹魏·曹操 / 张辽 / 邓艾 / 司马懿 / 于禁 / 田豫 虎豹铁骑军团（鹤翼阵 2+4+3：魏武虎豹骑 2 + 魏武虎豹骑精锐 4 + 诸葛弩 3）
-    cao_d: {
-        legionName: "曹魏军团",
-        formationMode: 'crane_wing',
+    "cao_d": {
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'tiger_rider', count: 2 },          // Row 0 前哨牵制 = 魏武虎豹骑 2骑
-            { type: 'elite_tiger_cavalry', count: 4 },  // Row 1 铁骑主力两翼合围 = 魏武虎豹骑精锐 4骑
-            { type: 'chukonu', count: 3 },              // Row 2 中军后排支援 = 诸葛弩 3人
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "lu": {
@@ -163,31 +165,34 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "chukonu", count: 3 },
         ],
     },
-    wudu: {
-        legionName: "曹魏军团",
-        formationMode: 'crane_wing',
+    "wudu": {
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'tiger_rider', count: 2 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
-    sima_d: {
-        legionName: "曹魏军团",
-        formationMode: 'crane_wing',
+    "sima_d": {
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'tiger_rider', count: 2 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
-    bozhou_d: {
-        legionName: "曹魏军团",
-        formationMode: 'crane_wing',
+    "bozhou_d": {
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'tiger_rider', count: 2 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 3 },
+            { type: "elite_white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 白袍军团·虎牢关（陈庆之 · 白袍破阵纯骑军团 · 方形阵 3+3+3：精锐虎豹骑 3 + 精锐虎豹骑 3 + 精锐虎豹骑 3 / 9骑纯骑兵大阵）
@@ -660,13 +665,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 罗得岛·罗得城（维拉雷 · 罗得岛铅弹投石与海岛要塞军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 十字军骑士 3 + 罗得岛投石兵 2）
-    luodesi: {
-        legionName: "罗得岛铅弹投石与海岛要塞军团",
-        formationMode: 'fish_scale',
+    "luodesi": {
+        legionName: "古典希腊军团",
+        legionType: "region",
+        formationMode: "fish_scale",
         slots: [
-            { type: 'mercenary_hoplite', count: 4 },   // Row 0 前卫坚壁 = 希腊雇佣重步兵 4人（纯步兵·无马，罗得岛要塞青铜圆盾重枪死守抗线）
-            { type: 'crusader_knight', count: 3 },     // Row 1 中军铁骑 = 十字军骑士 3骑（罗得岛医院骑士团重装铁骑中坚策应）
-            { type: 'rhodian_slinger', count: 2 },     // Row 2 尾收超远投石 = 罗得岛投石兵 2人（纯步兵·无马，世界最远射程重铅弹超视距精准压制）
+            { type: "hoplite", count: 3 },
+            { type: "elite_greek_cavalry", count: 4 },
+            { type: "gastraphetes", count: 2 },
         ],
     },
     // 日本战国·织田信长军团（鱼鳞阵 3+4+2：日本武士 3 + 精锐武士 4 + 手炮手 2）
@@ -767,39 +773,43 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培（罗马军团 · 雁行阵 4+3+2：罗马军 4 + 精锐百夫长 3 + 精锐掷矛手 2）
     "luoma_diguo": {
-        legionName: "罗马军团",
+        legionName: "古典罗马军团",
+        legionType: "region",
         formationMode: "echelon",
         slots: [
             { type: "legionary", count: 4 },
             { type: "elite_centurion", count: 3 },
-            { type: "elite_skirmisher", count: 2 },
+            { type: "elite_antiquity_skirmisher", count: 2 },
         ],
     },
     "mozeer": {
-        legionName: "罗马军团",
+        legionName: "古典罗马军团",
+        legionType: "region",
         formationMode: "echelon",
         slots: [
             { type: "legionary", count: 4 },
             { type: "elite_centurion", count: 3 },
-            { type: "elite_skirmisher", count: 2 },
+            { type: "elite_antiquity_skirmisher", count: 2 },
         ],
     },
     "aersasi": {
-        legionName: "罗马军团",
-        formationMode: "echelon",
+        legionName: "古典日耳曼军团",
+        legionType: "region",
+        formationMode: "crane_wing",
         slots: [
-            { type: "legionary", count: 4 },
-            { type: "elite_centurion", count: 3 },
-            { type: "elite_skirmisher", count: 2 },
+            { type: "antiquity_light_cavalry", count: 2 },
+            { type: "vanguard", count: 4 },
+            { type: "elite_antiquity_skirmisher", count: 3 },
         ],
     },
     "qiliqiya": {
-        legionName: "罗马军团",
-        formationMode: "echelon",
+        legionName: "古典赫梯军团",
+        legionType: "region",
+        formationMode: "triangle",
         slots: [
-            { type: "legionary", count: 4 },
-            { type: "elite_centurion", count: 3 },
-            { type: "elite_skirmisher", count: 2 },
+            { type: "war_chariot", count: 2 },
+            { type: "antiquity_spearman", count: 3 },
+            { type: "elite_war_chariot", count: 4 },
         ],
     },
     // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
@@ -844,13 +854,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 特洛伊卫队军团·特洛伊（赫克托耳 · 鱼鳞阵 3+4+2：希腊雇佣重步兵 3 + 近卫军精锐 4 + 弓兵 2）
-    teluoyi: {
-        legionName: "特洛伊卫队军团",
-        formationMode: 'fish_scale',
+    "teluoyi": {
+        legionName: "封建西亚军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: 'mercenary_hoplite', count: 3 },    // Row 0 前卫抗线 = 希腊雇佣重步兵 3人（青铜大盾结阵御敌）
-            { type: 'elite_guardsman', count: 4 },      // Row 1 中军主力 = 近卫军精锐 4人（赫克托耳重装近卫精锐主力）
-            { type: 'bowman', count: 2 },               // Row 2 尾收远程 = 弓兵 2人（步弓手远距齐射）
+            { type: "elite_composite_bowman", count: 4 },
+            { type: "eastern_swordsman", count: 3 },
+            { type: "militia", count: 2 },
         ],
     },
     // 马耳他·圣约翰（瓦莱特 · 马耳他医院骑士军团 · 鱼鳞阵 3+4+2：重装长枪兵 3 + 十字军圣骑士 4 + 火枪兵 2）
@@ -1318,12 +1329,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团
     "aqimeinide": {
-        legionName: "不死军团",
-        formationMode: "square",
+        legionName: "古典阿契美尼德军团",
+        legionType: "region",
+        formationMode: "fish_scale",
         slots: [
-            { type: "elite_war_elephant", count: 3 },
             { type: "immortal", count: 3 },
-            { type: "immortal_ranged", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 4 },
+            { type: "immortal_ranged", count: 2 },
         ],
     },
     "zhagewei": {
