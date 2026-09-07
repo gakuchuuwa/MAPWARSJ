@@ -51,6 +51,38 @@
       "regions": [
         "SELJUQ"
       ]
+    },
+    {
+      "date": "2026-09-07",
+      "quote": "未套兵种26是什么意思，不是说所有都要被套用吗 / 精锐留给本文化，普通给合适的兵种就行 / 波斯大象精锐太厉害，可以降低其他两个兵。用最弱的。/ 普通条顿可以给十字军。",
+      "scope": "把最后 25 个未套用兵种全部安置；精锐留本文化、基础档给邻区",
+      "regions": [
+        "KHITAN",
+        "FRENCH",
+        "LINGNAN",
+        "CUMAN",
+        "BURMESE",
+        "SLAVIC",
+        "BYZANTINE",
+        "SIKH",
+        "SPANISH",
+        "STEPPE",
+        "ORIE",
+        "GHANA",
+        "FRANKS",
+        "SASANIAN",
+        "GOTHS",
+        "SERBIA",
+        "SWISS",
+        "BULGARIANS",
+        "LITHUANIANS",
+        "MAGYAR",
+        "POLES",
+        "INDIA",
+        "ETHIOPIANS",
+        "TEUTONS",
+        "CRUSADERS"
+      ]
     }
   ]
 }

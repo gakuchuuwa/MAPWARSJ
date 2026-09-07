@@ -24,4 +24,14 @@ export interface CustomFactionLegion {
     navalFormation?: NavalFormationMode;
 }
 
-export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {};
+export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "dian": {
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "battle_elephant", count: 2 },
+            { type: "crossbowman", count: 4 },
+            { type: "jian_swordman_shielded", count: 3 },
+        ],
+    },
+};
