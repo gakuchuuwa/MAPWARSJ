@@ -1362,22 +1362,6 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAKRAMTHROWER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAKRAMTHROWER/death_${dir}.png`),
         },
-        'champion_runner': {
-            // 【冠军剑士】AoE2 DE 素材，2026-08-16 全兵种批量接入
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPIRUNNER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPIRUNNER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPIRUNNER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPIRUNNER/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPIRUNNER/death_${dir}.png`),
-        },
-        'champion_scout': {
-            // 【冠军剑士】AoE2 DE 素材，2026-08-16 全兵种批量接入
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPISCOUT/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPISCOUT/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPISCOUT/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPISCOUT/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPISCOUT/death_${dir}.png`),
-        },
         'condottiero': {
             // 【雇佣军】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONDOTTIERO/move_${dir}.png`),
@@ -2819,7 +2803,8 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/death_${dir}.png`),
         },
-        // 【强弩兵】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材）
+        // 【强弩兵】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材）
+
         // 【攻城战象】Armored Elephant 装甲战象（8方向，AoE2 DE SLD 素材）
 
         // 【桨帆船】8方向，AoE2 DE SLD 素材

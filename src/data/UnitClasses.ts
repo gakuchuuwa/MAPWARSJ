@@ -95,8 +95,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     champi_scout: 6,
     champi_warrior: 6,
     champion: 6,
-    champion_runner: 6,
-    champion_scout: 6,
     chukonu: 0,
     companion_cavalry: 12,
     composite_bowman: 0,
