@@ -140,6 +140,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SWEDISH: 'ruidian_yota',
     MACEDONIAN: 'maqidun',
     HELLENIC: 'xila',
+    IMPERIAL_ROME: 'luoma',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
@@ -159,7 +160,7 @@ const UNIT_TYPES: { id: string; label: string; category: '步' | '骑' | '远' |
     { id: 'elephant',         label: '象兵',     category: '骑' },
     // 远程类
     { id: 'archer',         label: '弓兵',       category: '远' },
-    { id: 'crossbow',       label: '弩兵',       category: '远' },
+    { id: 'crossbowman',    label: '弩兵',       category: '远' },
     { id: 'ballista',       label: '床弩兵',     category: '远' },
 ];
 

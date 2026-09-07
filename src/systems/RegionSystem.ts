@@ -124,7 +124,8 @@ export type RegionType =
     | 'PASHTUN'     // 普什图
     | 'SWEDISH'     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
     | 'MACEDONIAN' // 古典马其顿（佩拉王都与亚历山大方阵骑步）
-    | 'HELLENIC'; // 古典希伦（雅典民主与斯巴达双王城邦同盟）
+    | 'HELLENIC' // 古典希伦（雅典民主与斯巴达双王城邦同盟）
+    | 'IMPERIAL_ROME'; // 古典帝国罗马（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -210,6 +211,7 @@ export const REGION_ORDER: RegionType[] = [
     'AINU',
     'MACEDONIAN',
     'HELLENIC',
+    'IMPERIAL_ROME',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -217,7 +219,7 @@ export const REGION_ORDER: RegionType[] = [
 export const REGION_LABELS: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
     GERMANIC: '古典日耳曼',
-    LATIN: '古典罗马',
+    LATIN: '古典共和国罗马',
     CENTRAL: '古典先秦',
     NORTH: '古典秦汉',
     JIANGNAN: '封建华夏',
@@ -321,6 +323,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SWEDISH: '帝王瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
+    IMPERIAL_ROME: '古典帝国罗马',
 };
 
 /**
@@ -438,6 +441,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SWEDISH: '帝王瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
+    IMPERIAL_ROME: '古典帝国罗马',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -705,6 +709,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SWEDISH: '#1565c0',
     MACEDONIAN: '#8E24AA',
     HELLENIC: '#0288D1',
+    IMPERIAL_ROME: '#C62828',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -879,6 +884,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/germanic_medium.png'),
         big: resolvePath('/cities/germanic_big.png'),
         pass: resolvePath('/cities/germanic_pass.png')
+    },
+    IMPERIAL_ROME: {
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
     },
     LATIN: { // ✅ 拉丁
         small: resolvePath('/cities/latin_small.png'),
@@ -1604,6 +1615,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SWEDISH:     ['city_gothenburg'],
     MACEDONIAN:  ['city_salonica'],
     HELLENIC:    ['city_yadian', 'city_sparta'],
+    IMPERIAL_ROME: ['city_roma'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
