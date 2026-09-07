@@ -1411,19 +1411,19 @@ export const WESTERN_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 15. 西亚 东方剑士+重装骑射手+精锐复合弓箭手（雁行阵 4+3+2：东方剑士宽线肉盾主力 + 重装骑射中坚 + 精锐复合弓压阵） */
+/** 15. 西亚 亚美尼亚修士战士高级+东方剑士+精锐复合弓箭手（雁行阵 4+3+2：修士战士高级主力4 + 东方剑士中坚3 + 精锐复合弓压阵2）
+ *  史实依据：小亚细亚安纳托利亚高地、本都与奇里乞亚亚美尼亚王国，
+ *  以身披重锁子甲手持破甲利刃的亚美尼亚修士重装战士为精锐主力，东方剑士抗线，复合弓精锐压阵，
+ *  彻底剔除战力仅36的中东白板民兵，战力由52偏低提升至72黄金健康带。 */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_composite_bowman', count: 4 }, // Row 0 主力·宽线齐射 = 精锐复合弓箭手 4人
-            { type: 'eastern_swordsman', count: 3 },      // Row 1 中军接应 = 东方剑士 3人（留 3 档补偿，见文件头）
-            // 🔴 [2026-09-07] 原为「骑射手重装」—— 骑射是突厥-塞尔柱系的打法，不是黎凡特本土兵。
-            //    换成中东民兵：叙利亚城镇的「艾哈达斯」（aḥdāth）市民民兵，十至十二世纪大马士革、
-            //    阿勒颇的城防主力，是封建西亚真实存在的建制。
-            { type: 'militia', count: 2 }        // Row 2 压阵骑射 = 重装骑射手 2人
+            { type: 'warrior_priest', count: 4 },         // Row 0 宽线主力【高级】 = 亚美尼亚修士战士高级 4人
+            { type: 'eastern_swordsman', count: 3 },      // Row 1 中军接应 = 东方剑士 3人
+            { type: 'elite_composite_bowman', count: 2 }  // Row 2 后排压阵【精锐】 = 亚美尼亚复合弓手精锐 2人
         ]
     }
 ];
@@ -1446,13 +1446,9 @@ export const SLAVIC_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            // 🔴 [2026-09-07] 原为 先锋重装步兵4 / 吴火焰弓箭手3 / 古典掷矛手高级2 —— 两个毛病：
-            //    ① 与【古典百越军团】编制逐格相同，违反「相同编制必须同名」（审计②）；
-            //    ② 吴火焰弓箭手是东吴的兵（古典 3 世纪），摆进基辅罗斯军团是民族串门。
-            //    换成罗斯本族三件套：瓦良格亲兵 + 波雅尔铁骑 + 草原骑射。
-            { type: 'berserk', count: 3 },      // 前排 = 维京狂战士（罗斯本由瓦良格人所建，亲兵队 druzhina 即出此源）
-            { type: 'boyar', count: 4 },        // 中坚主力 = 斯拉夫贵族铁骑（波雅尔重骑，罗斯诸公国的核心）
-            { type: 'cav_archer', count: 2 }    // 后排 = 骑射手（与佩切涅格、波洛伏齐长期交手，罗斯亦用骑射）
+            { type: 'boyar', count: 3 },               // 前排铁骑 = 斯拉夫贵族铁骑 3骑（波雅尔重装冲击铁骑）
+            { type: 'elite_berserk', count: 4 },       // 中坚主力【精锐】 = 维京狂战士精锐 4人（基辅罗斯大公瓦良格亲兵侍卫队 druzhina）
+            { type: 'cav_archer', count: 2 }           // 后排支援 = 封建骑射手 2骑（草原附庸骑射）
         ]
     }
 ];
@@ -1847,16 +1843,18 @@ export const ANDE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 哥特军团（鱼鳞阵）[2026-08-30 完成待定制] */
+/** 哥特 封建弩兵+哥特近卫军精锐+封建重骑士（鱼鳞阵 3+4+2：弩手前锋3 + 哥特近卫精锐中坚4 + 封建骑士突击2）
+ *  史实依据：西罗马崩溃后东哥特狄奥多里克大帝定都拉文纳，
+ *  以持盾重铠哥特近卫军为绝对核心盾墙主力，配以封建冲击重骑与破甲弩兵，彻底消除古典希腊化与色雷斯兵种穿越。 */
 export const GOTHS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'thracian_peltast', count: 3 },
-            { type: 'elite_huskarl', count: 4 },
-            { type: 'shock_cavalry', count: 2 }
+            { type: 'crossbowman', count: 3 },       // 前排破甲 = 弩兵 3队（中世纪封建强弩）
+            { type: 'elite_huskarl', count: 4 },     // 中坚主力【精锐】 = 哥特近卫军精锐 4队（拉文纳王帐铁壁近卫军）
+            { type: 'knight', count: 2 }             // 侧翼突击 = 封建骑士 2骑（日耳曼哥特冲击重骑）
         ]
     }
 ];
@@ -1985,7 +1983,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HITTITES: '古典赫梯军团',
     ASSYRIAN: '古典亚述军团',
     SCYTHIANS: '古典斯基泰军团',
-    BYZANTINE: '封建希腊军团',
+    BYZANTINE: '封建拜占庭军团',
     FRANKS: '封建法兰克军团',
     SASANIAN: '封建波斯军团',
     TURKS: '封建突厥军团',
@@ -2270,18 +2268,17 @@ export const BURMESE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 瓦拉几亚军团（鹤翼阵）[2026-08-30 完成待定制] */
+/** 瓦拉几亚 斯拉夫贵族铁骑+多瑙河近卫重剑士+草原骑射手（鹤翼阵 2+4+3：铁骑前锋2 + 冠军剑士高级主力4 + 骑射手后排3）
+ *  史实依据：多瑙河畔瓦拉几亚公国以近卫重步兵结阵为主力，两侧配以游动波雅尔轻重铁骑与袭扰骑射。 */
 export const WALLACHIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 2 },
-            // 🔴 [2026-09-07 战力均衡] 原为「斯拉夫贵族铁骑精锐」（199，全表骑兵第二），整支 126；
-            //    降为基础档后 91，回到中段。瓦拉几亚本就是多瑙河边的公国，不该压过母国罗斯。
-            { type: 'boyar', count: 4 },
-            { type: 'cav_archer', count: 3 }
+            { type: 'boyar', count: 2 },       // 前锋游击 = 斯拉夫贵族铁骑 2骑
+            { type: 'champion', count: 4 },    // 中坚主力【高级】 = 欧洲冠军剑士高级 4队（公国近卫重铠剑士）
+            { type: 'cav_archer', count: 3 }   // 后排袭扰 = 封建骑射手 3骑
         ]
     }
 ];
@@ -2578,16 +2575,18 @@ export const MOHE_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 盎格鲁-撒克逊 撒克斯双手大斧+坚矛盾墙长矛+猎弓兵（方阵 3+3+3） */
+/** 盎格鲁-撒克逊 坚矛盾墙长剑+撒克斯双手战斧+不列颠长弓（鹤翼阵 2+4+3：长剑前锋2 + 冠军剑士高级主力4 + 长弓手后排3）
+ *  史实依据：黑斯廷斯战役（1066年）盎格鲁-撒克逊哈罗德二世以皇家侍从大斧与长剑结成坚固盾墙，
+ *  配以英格兰森林长弓手压制，彻底修复原先战力仅50全库垫底的白板重长枪问题。 */
 export const ANGLO_SAXON_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 3 }, // 前排 = 长剑士
-            { type: 'heavy_pikeman', count: 4 }, // 中坚主力【重装】 = 长枪兵重装
-            { type: 'swordsman', count: 2 } // 后排 = 剑士
+            { type: 'longswordsman', count: 2 }, // 前排抗线 = 长剑士 2队（撒克逊坚矛盾墙）
+            { type: 'champion', count: 4 },      // 中坚主力【高级】 = 欧洲冠军剑士高级 4队（撒克斯双手战斧/皇家侍从禁卫）
+            { type: 'longbowman', count: 3 }     // 后排齐射 = 不列颠长弓兵 3队（长弓密集抛射）
         ]
     }
 ];
@@ -2698,16 +2697,19 @@ export const TANGUT_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 爪哇 波浪淬毒克利斯剑士+热带竹标枪手+跳帮突击武士（鹤翼阵 4+3+2） */
+/** 爪哇 东南亚战斗象高级+爪刀跳帮勇士精锐+群岛重剑武士（鹤翼阵 2+4+3：战斗象高级前锋2 + 爪刀勇士精锐主力4 + 长剑士卫队3）
+ *  史实依据：爪哇马打兰王国与满者伯夷帝国以热带丛林驯化战象突击开道，
+ *  中坚以擅长波浪克利斯剑（Keris）与爪刀（Karambit）的跳帮近战死士为主力，辅以群岛水陆重剑士，
+ *  彻底清除波斯战象、缅甸飞镖骑与越南藤弓之跨国大乱炖，战力由超标的128平抑至93黄金健康带。 */
 export const JAVANESE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 2 },
-            { type: 'elite_arambai', count: 4 },
-            { type: 'rattan_archer', count: 3 },
+            { type: 'elite_battle_elephant', count: 2 },  // 前锋开道【高级】 = 战斗象高级 2头（南洋驯化战象）
+            { type: 'karambit_warrior_elite', count: 4 }, // 中坚主力【精锐】 = 马来爪刀勇士精锐 4队（克利斯/爪刀近卫死士）
+            { type: 'longswordsman', count: 3 },          // 中军接应 = 长剑士 3队（群岛水陆重剑卫队）
         ]
     }
 ];
