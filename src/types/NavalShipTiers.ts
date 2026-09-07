@@ -95,7 +95,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'GALLEY', why: '黑龙江水师战船：清初为雅克萨之战在吉林乌拉设船厂，八旗水师沿松花江-黑龙江作战', regions: ['MANCHU'] },
     { ship: 'LOU_CHUAN', why: '金军楼船：完颜亮南侵所用宋式大舰，一一六一年陈家岛海战为李宝火攻所破', regions: ['JURCHEN'] },
     { ship: 'INCENDIARY_SHIP', why: '洱海火攻快船：南诏水军扼洱海，天宝战争两度全歼唐军于洱海之滨', regions: ['NANZHAO'] },
-    { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰', regions: ['GORYEO'] },
+    { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰（鸣梁/闲山岛海战）', regions: ['JOSEON'] },
     { ship: 'GALLEY', why: '高句丽水军战船：隋唐东征高句丽，水军沿渤海/黄海之滨与鸭绿江、大同江出击（612 隋炀帝遣水军趋平壤、645 唐军水陆攻安市）', regions: ['KOREA'] },
     // DE 没有日本专属战船。安宅船是高舷箱型大舰，先用古代大型桨帆战船顶着（⚠️无 death 帧）
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },

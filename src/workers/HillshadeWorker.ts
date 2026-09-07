@@ -4,6 +4,7 @@
  */
 
 import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
+import { createTerrainMaterial, getMaterialBytes } from '../map/StrategicTerrainMaterial';
 
 /** 水域掩膜取图超时 (ms)；超时即放弃掩膜，绝不拖住山体瓦片出图 */
 const WATER_MASK_TIMEOUT_MS = 4000;
@@ -68,6 +69,8 @@ export interface HillshadeRequest {
 
 export interface HillshadeResponse {
     id: number;
+    materialBytes?: number;
+    renderMs?: number;
     /** 算好的瓦片位图（transferable）；主线程只需 drawImage，零像素拷贝 */
     bitmap?: ImageBitmap;
     /** 取图/解码失败：主线程平涂兜底色 */
@@ -171,6 +174,7 @@ function renderHillshade(
     data: Uint8ClampedArray,
     req: HillshadeRequest,
     waterMask: Uint8Array | null = null,
+    material: Uint8ClampedArray | null = null,
 ): Uint8ClampedArray<ArrayBuffer> {
     // LUT 在调用前由 initLUTs() 建好；取成局部常量，让类型收窄在本函数内成立
     initLUTs();
@@ -260,22 +264,22 @@ function renderHillshade(
                 const curvature = zC - zAvg;
                 const aoStrength = Math.min(4.0, 1.5 * (params.zFactor * 0.1));
                 let aoFactor = (curvature < 0)
-                    ? Math.max(0.5, 1.0 + (curvature * 0.004 * aoStrength))
-                    : Math.min(1.25, 1.0 + (curvature * 0.003 * aoStrength)); // 山脊增亮上限 1.15→1.25
+                    ? Math.max(0.7, 1.0 + (curvature * 0.004 * aoStrength))
+                    : Math.min(1.12, 1.0 + (curvature * 0.003 * aoStrength));
                 hillshade *= aoFactor;
 
-                let shadowStrength = 0.55;
-                let ambientBase = 0.70;
-                if (zC < 1000) { shadowStrength = 0.75; ambientBase = 0.50; }
+                let shadowStrength = 0.42;
+                let ambientBase = 0.72;
+                if (zC < 1000) { shadowStrength = 0.55; ambientBase = 0.62; }
                 else if (zC < 1300) {
                     const t = (zC - 1000) * 0.003333;
-                    shadowStrength = 0.75 - (0.20 * t);
-                    ambientBase = 0.50 + (0.20 * t);
+                    shadowStrength = 0.55 - (0.13 * t);
+                    ambientBase = 0.62 + (0.10 * t);
                 }
                 if (zC > 4200) {
                     const t = Math.min(1.0, (zC - 4200) * 0.001);
-                    shadowStrength = 0.55 - (0.1 * t);
-                    ambientBase = 0.70 + (0.1 * t);
+                    shadowStrength = 0.42 - (0.07 * t);
+                    ambientBase = 0.72 + (0.07 * t);
                 }
 
                 // [FIX] Apply Opacity Parameter
@@ -305,6 +309,15 @@ function renderHillshade(
                 let r = colorLut[lIdx];
                 let g = colorLut[lIdx + 1];
                 let b = colorLut[lIdx + 2];
+
+                // 气候材质提供地表色与纹理；高程仍决定起伏，高山雪线保留原有着色。
+                if (material && colorZ > 0 && material[idx + 3] > 0) {
+                    const snowFade = Math.max(0, Math.min(1, (5200 - colorZ) / 1000));
+                    const blend = 0.60 * snowFade * material[idx + 3] / 255;
+                    r += (material[idx] - r) * blend;
+                    g += (material[idx + 1] - g) * blend;
+                    b += (material[idx + 2] - b) * blend;
+                }
 
                 // [优化第1步] 关闭陆地与高山高频伪随机噪点，消除山体表面的石膏粉砂纸感
                 /*
@@ -458,6 +471,9 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
         initLUTs();
         if (!colorLUT || !noiseLUT) throw new Error('LUT init failed');
 
+        const materialPending = req.params.useElevationColor && req.tileBounds
+            ? createTerrainMaterial(req.tileBounds, req.width, req.height).catch(() => null)
+            : Promise.resolve(null);
         const resp = await fetch(req.url, { mode: 'cors' });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
@@ -476,11 +492,14 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
             ? await fetchWaterMask(req.waterMaskUrl, req.width, req.height)
             : null;
 
-        const output = renderHillshade(src, req, mask);
+        const material = await materialPending;
+        const renderStart = performance.now();
+        const output = renderHillshade(src, req, mask, material);
+        const renderMs = performance.now() - renderStart;
         const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
 
         // Cast to any to avoid TS matching Window.postMessage instead of Worker.postMessage
-        (self as any).postMessage({ id: req.id, bitmap } as HillshadeResponse, [bitmap]);
+        (self as any).postMessage({ id: req.id, bitmap, materialBytes: getMaterialBytes(), renderMs } as HillshadeResponse, [bitmap]);
     } catch (err) {
         (self as any).postMessage({ id: req.id, error: String(err) } as HillshadeResponse);
     }

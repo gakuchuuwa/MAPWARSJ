@@ -328,6 +328,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
     SONG: 'ASIA_CASTLE_AGE3',                // 赵宋：中原宋式城池堡垒
     GORYEO: 'ASIA_CASTLE_AGE3',              // 高丽：半岛高丽山城要塞
+    JOSEON: 'ASIA_CASTLE_AGE3',              // 朝鲜王朝：半岛王城汉城要塞
     DALI: 'MALA_CASTLE_AGE3',                // 大理：横断山地苍山要塞
     GUSILUO: 'ASIA_CASTLE_AGE3',             // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
