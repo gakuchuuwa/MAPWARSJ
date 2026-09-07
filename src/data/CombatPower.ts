@@ -4,7 +4,7 @@
  * 🔴 这不是八环有效战力，不参与任何战斗结算，改这里不影响平衡。
  *
  * 算法 = 兰彻斯特式 √(有效输出 × 有效血)：
- *   有效输出 = 攻 / 装填 × 射程系数
+ *   有效输出 = 攻 / 装填 × 射程系数（1 + 0.22×√(射程/40)，见 RANGE_K）
  *   有效血   = 血 × 护甲折算（AoE2 护甲是**减法**，所以必须假定一个参考敌方攻击）
  *   战力指数 = √(有效输出 × 有效血) 归一化到全表中位数 = 100
  *
@@ -25,9 +25,24 @@ const MIN_RELOAD = 1.0;
  *  这里把一次性伤害摊到一段名义交战时间上，量级才对得上持续输出的兵种。 */
 const ONESHOT_WINDOW = 10;
 
-/** 射程系数：每格射程给的加成。远程能白打几轮，但收益递减，取一个温和的线性值。
+/** 射程系数：`1 + RANGE_K × √(射程/40)`。
+ *
+ *  🔴 [2026-09-07 主人提「射程是不是该算进去，不然近战普遍高于远程」——实测坐实了]
+ *     改前是**线性** `1 + 0.05×(射程/40)`，160 射程只给 ×1.20。实测全表中位：
+ *     近战步兵 80 / 射手 **73** —— 典型远程系统性偏低一档。
+ *     （均值看不出来：远程均值被少数投石车 500+ 拉高，中位数才是典型值。）
+ *     根因：射程只乘在**输出**上，可远程真正的价值是**挨打少**（能白打两三轮、能放风筝），
+ *     这部分模型没有。把系数抬到位就是在补这块。
+ *  改后 `1 + 0.22×√(射程/40)`：射手中位 73 → 80，与近战步兵持平；骑兵 99→100 基本不动；
+ *     最高攻城 443→478，没有炸。
+ *  ⚠️ 用**开方**不用线性：原注释本来就写着「收益递减」，但代码是线性的，射程越长加成越猛，
+ *     跟注释说反了。开方才递减，也免得 480 射程的攻城器械被系数顶穿。
  *  这是本文件唯一的经验参数，想让远程更值钱就调大它。 */
-const RANGE_K = 0.05;
+const RANGE_K = 0.22;
+/** 射程系数：射程 0 = 1.0，之后按平方根递增。 */
+function rangeFactor(rng: number): number {
+    return rng > 0 ? 1 + RANGE_K * Math.sqrt(rng / 40) : 1;
+}
 
 export interface PowerBreakdown {
     /** 有效输出（攻/装填 × 射程系数） */
@@ -61,7 +76,7 @@ function rawPower(u: WarType): number {
     if (!refs) refs = computeRefAttacks();
     if (u.atk <= 0) return 0;                       // 非战斗单位（使者等）
 
-    const dps = (u.atk / (u.reload > 0 ? Math.max(u.reload, MIN_RELOAD) : ONESHOT_WINDOW)) * (1 + RANGE_K * (u.rng / 40));
+    const dps = (u.atk / (u.reload > 0 ? Math.max(u.reload, MIN_RELOAD) : ONESHOT_WINDOW)) * rangeFactor(u.rng);
 
     // AoE2 护甲是减法且最低吃 1 点伤，所以折算 = 参考攻击 / max(参考攻击 - 护甲, 1)
     const soak = (ref: number, armor: number) => ref / Math.max(ref - armor, 1);
@@ -84,7 +99,7 @@ export function getCombatPower(unitId: string): PowerBreakdown | undefined {
     if (raw <= 0) return undefined;
     ensureMedian();
     if (!refs) refs = computeRefAttacks();
-    const dps = (u.atk / (u.reload > 0 ? Math.max(u.reload, MIN_RELOAD) : ONESHOT_WINDOW)) * (1 + RANGE_K * (u.rng / 40));
+    const dps = (u.atk / (u.reload > 0 ? Math.max(u.reload, MIN_RELOAD) : ONESHOT_WINDOW)) * rangeFactor(u.rng);
     const soak = (ref: number, armor: number) => ref / Math.max(ref - armor, 1);
     const ehp = u.hp * 0.5 * (soak(refs.melee, u.meleeArmor) + soak(refs.pierce, u.pierceArmor));
     return { dps, ehp, raw, index: Math.round((raw / medianRaw) * 100) };

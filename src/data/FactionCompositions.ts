@@ -666,13 +666,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 罗得岛·罗得城（维拉雷 · 罗得岛铅弹投石与海岛要塞军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 十字军骑士 3 + 罗得岛投石兵 2）
     "luodesi": {
-        legionName: "古典希腊军团",
-        legionType: "region",
-        formationMode: "fish_scale",
+        legionName: "古典希腊雇佣军团",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "hoplite", count: 3 },
-            { type: "elite_greek_cavalry", count: 4 },
-            { type: "gastraphetes", count: 2 },
+            { type: "mercenary_hoplite", count: 4 },
+            { type: "shock_cavalry", count: 2 },
+            { type: "gastraphetes", count: 3 },
         ],
     },
     // 日本战国·织田信长军团（鱼鳞阵 3+4+2：日本武士 3 + 精锐武士 4 + 手炮手 2）
@@ -783,13 +782,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "mozeer": {
-        legionName: "古典罗马军团",
+        legionName: "古典罗马禁卫军团",
         legionType: "region",
         formationMode: "echelon",
         slots: [
-            { type: "legionary", count: 4 },
-            { type: "elite_centurion", count: 3 },
-            { type: "elite_antiquity_skirmisher", count: 2 },
+            { type: "equites", count: 4 },
+            { type: "centurion", count: 3 },
+            { type: "imperial_centurion", count: 2 },
         ],
     },
     "aersasi": {
@@ -1319,12 +1318,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "xiaofulijiya": {
-        legionName: "希腊雇佣军团",
-        formationMode: "fish_scale",
+        legionName: "古典希腊雇佣军团",
+        legionType: "region",
+        formationMode: "balance_yoke",
         slots: [
-            { type: "mercenary_hoplite", count: 3 },
-            { type: "hoplite", count: 4 },
-            { type: "gastraphetes", count: 2 },
+            { type: "mercenary_hoplite", count: 4 },
+            { type: "shock_cavalry", count: 2 },
+            { type: "gastraphetes", count: 3 },
         ],
     },
     // 瓦卢瓦王朝·香波堡（法兰西）→ 法兰克军团

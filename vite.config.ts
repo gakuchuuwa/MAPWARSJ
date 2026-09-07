@@ -1018,6 +1018,14 @@ export default defineConfig({
                             if (data.legionName) {
                                 text = serverReplaceCultureLegionName(text, data.culture, data.legionName);
                             }
+                            // [2026-09-07 主人定]「重名就覆盖」：同名的其他文化区一并刷成同一份编制。
+                            //   一个军团名只能有一种编制，否则每存一次就多留一份「同名不同编」，
+                            //   界面弹「编制不一致」，军团越改越多。
+                            for (const other of (data.alsoCultures || []) as string[]) {
+                                text = serverReplaceTierBlock(text, other, data.slots);
+                                if (data.formationMode) text = serverReplaceFormationMode(text, other, data.formationMode);
+                                if (data.legionName) text = serverReplaceCultureLegionName(text, other, data.legionName);
+                            }
                             markLegionSaveWrite();
                             fs.writeFileSync(filePath, text, 'utf-8');
                             res.setHeader('Content-Type', 'application/json');

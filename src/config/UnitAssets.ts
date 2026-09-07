@@ -265,6 +265,16 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ANTIQUITY_SCOUT_CAVALRY/death_${dir}.png`),
         },
+        // 🔴 [2026-09-07] 英雄类素材原本只登记在 SPRITE_PATHS.GENERAL 里，而军团渲染
+        //    （LegionPhalanxDrawer / Scene13WarLayer）只读 UNIT_ASSETS —— 主人把「英雄·马其顿指挥官」
+        //    编进古典马其顿军团后，那两个格位在战场上画不出来。这里补一份，让它在军团里也能显示。
+        'hero_macedonian_commander': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/death_${dir}.png`),
+        },
         'scout_cavalry': {
             // 【斥候骑兵】AoE2 DE 素材，2026-09-07 接线（此前只有兵种数值与编辑器条目、无素材声明 → 战场上不可见）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/move_${dir}.png`),
@@ -2732,15 +2742,11 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RECURVE_BOWMAN/death_${dir}.png`),
         },
-    },
-    // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
-    // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
-    GENERAL: {
-        IDLE: '/SUCAI/S10B/42-1.png',
-        MOVE: '/SUCAI/S10B/43-1.png',
-        ATTACK: '/SUCAI/S10B/42-1.png',
-        DAMAGE: '/SUCAI/S10B/92-1.png'
-    },
+        // ═══════════════════════════════════════════════════════════════
+        // [2026-09-07] 以下整段原本写在 UNIT_ASSETS 对象**外面**（成了 SPRITE_PATHS 的兄弟键），
+        //   军团渲染只读 UNIT_ASSETS → 这些兵种在战场上一律画不出来。已搬回对象内。
+        //   含 80 个英雄类素材：主人 2026-09-07 定「登记但不套用，编不编进军团他自己来」。
+        // ═══════════════════════════════════════════════════════════════
     // 【装甲步兵】Man-at-Arms 剑士（8方向，AoE2 DE SLD 素材）
         'manatarms': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/move_${dir}.png`),
@@ -2772,14 +2778,6 @@ export const SPRITE_PATHS = {
         // 【阿兹特克突袭者】阿兹特克突袭者（Xolotl Warrior 同兵）（8方向，AoE2 DE SLD 素材）
 
         // 【斥候骑兵】Scout Cavalry（8方向，AoE2 DE SLD 素材）
-        'scout_cavalry': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/death_${dir}.png`),
-        },
-        // 【轻骑兵】Light Cavalry（8方向，AoE2 DE SLD 素材）
         'light_cavalry': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/attack_${dir}.png`),
@@ -3384,14 +3382,6 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LYSANDER/death_${dir}.png`),
         },
         // 【英雄·马其顿指挥官】8方向，AoE2 DE SLD 素材
-        'hero_macedonian_commander': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/death_${dir}.png`),
-        },
-        // 【英雄·奥斯曼一世】8方向，AoE2 DE SLD 素材
         'hero_osman': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/OSMAN/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/OSMAN/attack_${dir}.png`),
@@ -3815,4 +3805,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
         },
+    },
+    // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
+    // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
+    GENERAL: {
+        IDLE: '/SUCAI/S10B/42-1.png',
+        MOVE: '/SUCAI/S10B/43-1.png',
+        ATTACK: '/SUCAI/S10B/42-1.png',
+        DAMAGE: '/SUCAI/S10B/92-1.png'
+    },
 } as const;
