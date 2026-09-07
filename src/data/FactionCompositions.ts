@@ -27,39 +27,43 @@ export interface CustomFactionLegion {
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 秦国军团·天水/咸阳/长子/武关/骊山/商邑/番禺（司马错 / 白起 / 王翦 / 章邯 / 商鞅 / 赵佗 · 雁行阵 4+3+2：枪兵长 4 + 先秦远程战车 3 + 诸葛弩 2）
     "qin": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "xin": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "wazhai": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "nanyue": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典百越军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
-            { type: "war_chariot_ranged", count: 2 },
+            { type: "vanguard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "elite_antiquity_skirmisher", count: 2 },
         ],
     },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
@@ -74,22 +78,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 晋国·曲沃（先轸 · 晋中军 · 先秦战车大阵 · 雁行阵 4+3+2：长矛前阵 4 + 先秦战车 3 + 劲弩压阵 2）
     "jin": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 大秦长城军团·高阙塞（蒙恬 · 长城烽火卫 · 鱼鳞阵 4+3+2：虎豹骑 4 + 先秦远程战车 3 + 古典骑射手 2）
     "baiyang": {
-        legionName: "秦长城军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "elite_chukonu", count: 3 },
-            { type: "war_chariot_ranged", count: 3 },
-            { type: "tiger_rider", count: 2 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
+            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
@@ -268,20 +274,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "ruo": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
     "shangzhou": {
-        legionName: "秦国军团",
-        formationMode: "fish_scale",
+        legionName: "古典先秦军团",
+        legionType: "region",
+        formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 3 },
-            { type: "chukonu", count: 4 },
+            { type: "white_feather_guard", count: 4 },
+            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
@@ -851,40 +859,40 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     // 罗马帝国·恺撒 / 君士坦丁 / 尤里安 / 庞培（罗马军团 · 雁行阵 4+3+2：罗马军 4 + 精锐百夫长 3 + 精锐掷矛手 2）
-    luoma_diguo: {
+    "luoma_diguo": {
         legionName: "罗马军团",
-        formationMode: 'echelon',
+        formationMode: "echelon",
         slots: [
-            { type: 'legionary', count: 4 },           // Row 0 前排大盾宽线 = 罗马军 4人（纯步兵·无马，矩形大盾短剑正面推进）
-            { type: 'elite_centurion', count: 3 },     // Row 1 中军铁骑突击 = 精锐百夫长 3骑（罗马百夫长精锐伴随重骑中坚突贯）
-            { type: 'elite_skirmisher', count: 2 },    // Row 2 尾收标枪压制 = 精锐掷矛手 2人（重标枪破盾抛射）
+            { type: "legionary", count: 4 },
+            { type: "elite_centurion", count: 3 },
+            { type: "elite_skirmisher", count: 2 },
         ],
     },
-    mozeer: {
+    "mozeer": {
         legionName: "罗马军团",
-        formationMode: 'echelon',
+        formationMode: "echelon",
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: "legionary", count: 4 },
+            { type: "elite_centurion", count: 3 },
+            { type: "elite_skirmisher", count: 2 },
         ],
     },
-    aersasi: {
+    "aersasi": {
         legionName: "罗马军团",
-        formationMode: 'echelon',
+        formationMode: "echelon",
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: "legionary", count: 4 },
+            { type: "elite_centurion", count: 3 },
+            { type: "elite_skirmisher", count: 2 },
         ],
     },
-    qiliqiya: {
+    "qiliqiya": {
         legionName: "罗马军团",
-        formationMode: 'echelon',
+        formationMode: "echelon",
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: "legionary", count: 4 },
+            { type: "elite_centurion", count: 3 },
+            { type: "elite_skirmisher", count: 2 },
         ],
     },
     // 萨非帝国·伊斯法罕/加兹温（阿拔斯大帝 / 艾斯迈尔 · 奇兹尔巴什红头军团 · 鹤翼阵 2+4+3：古拉姆近卫 2 + 奇兹尔巴什红头战士主力 4 + 火枪兵 3）
