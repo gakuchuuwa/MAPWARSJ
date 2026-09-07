@@ -1740,43 +1740,43 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 
 export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL:      ['city_luoyang'],                // 洛阳
-    NORTH:        ['city_beijing'],                  // 北京
+    NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
     BASHU:        ['city_chengdu'],                  // 成都
-    DIANQIAN:     ['city_dianchi'],                // 滇池 (古滇王国都城)              // 羊苴咩（缅甸拆为独立文化区后，滇缅余区中心回归大理）
+    DIANQIAN:     ['city_tuodongcheng'],                // 滇池 (古滇王国都城)              // 羊苴咩（缅甸拆为独立文化区后，滇缅余区中心回归大理）
     HEXI:         ['city_wuwei'],                    // 姑臧 (古名, 即凉州/武威)
     WESTERN:      ['city_yiluolucheng'],             // 伊逻卢城 (龟兹国都; 延城)
     TIBET:        ['city_luoxie'],                   // 逻些 (古名, 即拉萨)
     STEPPE:       ['city_karakorum'],                // 哈拉和林
     NORTHEAST:    ['city_gaxian'],                   // 嘎仙洞 (拓跋鲜卑发祥圣地)
-    KOREA:        ['city_kaesong'],                  // 开城 (高丽都)
+    KOREA:        ['city_pyongyang'],                // 平壤 [2026-09-07 主人定] 高句丽 427–668 年都平壤；原挂开城是高丽(GORYEO)王京，不属本区
     JAPAN:        ['city_kyoto'],                    // 京都 (平安京)
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
     WEST_ASIA:    ['city_bageda'],                     // 巴格达 (阿拔斯王朝都城; 2026-08-18 改: 原君士坦丁堡的 region 字段与坐标判定均落在 LATIN,
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
-    SLAVIC:       ['city_mosike'],                       // 莫斯科 (莫斯科公国/东斯拉夫核心; 2026-08-27 原基辅迁东欧改)
-    EAST:         ['city_mosike'],                       // [2026-09-07] 东欧区已解散(约克/博尔贡→维京,基辅→斯拉夫),此项仅为类型占位
-    GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
-    LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
+    SLAVIC:       ['city_jifu'],                          // 基辅 [2026-09-07] 封建罗斯=基辅罗斯 882–1240，都基辅；原挂莫斯科已划归 RUS 区(城堡罗斯)
+    EAST:         ['city_jifu'],                          // [2026-09-07] 东欧区已解散(不在 REGION_ORDER)，此项仅为类型占位，跟随 SLAVIC 指向基辅
+    GERMANIC:     ['city_meiyinci'],                      // 美因茨 [2026-09-07] 罗马 Mogontiacum＝日耳曼尼亚上省首府，古典日耳曼本区最大城；原挂科隆已划归 FRANKS 区
+    LATIN:        ['city_naples'],                     // 那不勒斯 [2026-09-07] 罗马城已划归 IMPERIAL_ROME(禁卫军驻都城)，古典罗马军团＝行省军团，锚意大利本土最大本区城 Neapolis
     INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典印度核心)
-    BERBER:       ['city_malajiashen'],               // 马拉喀什 (穆拉比特/穆瓦希德柏柏尔帝国核心)
+    BERBER:       ['city_feisi'],                     // 非斯 [2026-09-07] 伊德里斯王朝 789 年建都，正合封建代 400–1050；原挂马拉喀什(1070建城)已划归 ALMOHAD 区
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
-    AFRICA:       ['city_aksum'],                     // 阿克苏姆 (阿克苏姆帝国都; 2026-08-24 新增非洲区)
+    AFRICA:       ['city_timbuktu'],                  // 廷巴克图 [2026-09-07] 本区是城堡马里，廷巴克图为马里帝国核心；原挂阿克苏姆已划归 ETHIOPIANS 区
     MALAY:        ['city_malacca'],                   // 马六甲 (满剌加苏丹国都; 2026-08-24 新增马来区)
     ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
     PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)
     ORIE:         ['city_maijia'],                    // 麦加 (伊斯兰圣城; 2026-08-27 新增阿拉伯区)
-    GREEK:        ['city_yadian'],                    // 雅典 (希腊文明圣城)                    // 底比斯 (爱琴海城邦核心; 2026-08-27 撤销并入拉丁)
-    THRACIAN:     ['city_teernuowo'],                 // 特尔诺沃 (第二保加利亚帝国都城; 2026-08-27 新增色雷斯区)
-    PERSIAN:      ['city_yisifahan'],                 // 伊斯法罕 (萨法维波斯帝都; 2026-08-27 新增波斯区)
+    GREEK:        ['city_thebes'],                    // 底比斯 [2026-09-07] 雅典已划归 HELLENIC(古典希伦)，底比斯是本区仅存的希腊本土城邦(伊巴密浓达)
+    THRACIAN:     ['city_seuthopolis'],               // 塞乌托波利 [2026-09-07] 奥德里西亚色雷斯王国王都，正合古典代；原挂特尔诺沃是保加利亚第二帝国都(1185)且已划归 BULGARIANS
+    PERSIAN:      ['city_hamadan'],                   // 哈马丹 [2026-09-07] 埃克巴坦那，米底/阿契美尼德都城，正合古典代；原挂伊斯法罕是萨法维(1500+)都且已划归 SAFAVID
     CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
-    BRITONS: ['city_lundun'],  // 英格兰（中心据点已挂）
-    GOTHS: ['city_toulouse'],  // 哥特（中心据点已挂）
+    BRITONS: ['city_winchester'],  // 温彻斯特 [2026-09-07] 本区唯一据点；⚠️史实上温彻斯特是盎格鲁-撒克逊王都、伦敦是诺曼后英格兰王都，现两城的 region 归属与史实相反，待主人裁决
+    GOTHS: ['city_ravenna'],  // 拉文纳 [2026-09-07] 东哥特王国都城 493–540，正合封建代；原挂图卢兹(西哥特都)已划归 LATIN 区
     HUNS: ['city_saigede'],  // 匈人（中心据点已挂）
     TEUTONS: ['city_kenisibao'],  // 条顿（中心据点已挂）
     VIKINGS: ['city_gebenhagen'],  // 维京（中心据点已挂）
-    CELTS: ['city_aidingbao'],  // 凯尔特（中心据点已挂）
+    CELTS: ['city_dublin'],  // 都柏林 [2026-09-07] 本区最大据点(爱尔兰＝凯尔特腹地)；原挂爱丁堡已划归 SCOTLAND 区
     ITALIANS: ['city_genoa'],  // 意大利（中心据点已挂）
     SICILIANS: ['city_palermo'],  // 西西里（中心据点已挂）
     BULGARIANS: ['city_puleisilafu'],  // 保加利亚（中心据点已挂）
@@ -1785,7 +1785,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     POLES: ['city_kelakefu'],  // 波兰（中心据点已挂）
     BOHEMIANS: ['city_bulage'],  // 波希米亚（中心据点已挂）
     BURGUNDIANS: ['city_dijon'],  // 勃艮第（中心据点已挂）
-    SPANISH: ['city_toledo'],  // 西班牙（中心据点已挂）
+    SPANISH: ['city_lima'],  // 利马 [2026-09-07] 本区唯一据点(帝王西班牙＝哈布斯堡殖民帝国，利马为秘鲁总督区首府)；原挂托莱多已划归 CASTILE 区
     PORTUGUESE: ['city_lisiben'],  // 葡萄牙（中心据点已挂）
     ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（中心据点已挂）
     BENGALIS: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
@@ -1809,17 +1809,17 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     BYZANTINE: ['city_junshitandingbao'], // 拜占庭（君士坦丁堡帝都）
     FRANKS: ['city_kelong', 'city_yachen'], // 法兰克（科隆加洛林重镇、亚琛帝都）
     SASANIAN: ['city_feiluzhabade'],     // 萨珊（菲鲁扎巴德开国帝都）
-    TURKS: ['city_otuken', 'city_suiye'], // 突厥（于都斤山神圣牙帐、碎叶重镇）
-    NANZHAO: ['city_mengshe', 'city_dali_city'], // 南诏（蒙舍诏故都、羊苴咩城大理都城）
+    TURKS: ['city_otuken'], // 于都斤山 [2026-09-07] 突厥汗国圣山牙帐；删去碎叶——碎叶已划归 KARA_KHITAN(城堡西辽)区
+    NANZHAO: ['city_mengshe'], // 蒙舍城 [2026-09-07] 蒙舍诏＝南诏发源；删去羊苴咩——已划归 DALI(城堡大理)区
     SRIVIJAYA: ['city_sanfoqi'],        // 室利佛逝/三佛齐（巨港都城）
     KUSHAN: ['city_baishawa', 'city_lanshi'], // 贵霜（白沙瓦帝都、蓝氏城故都）
     KUSH: ['city_mailuoe'],             // 库施（麦罗埃黑金字塔都城）
-    KHITAN:      ['city_shangjing'],
-    UIGHUR:      ['city_woluoduobali'],
-    MOHE:        ['city_shangjing_longquan'],
-    ANGLO_SAXON: ['city_winchester'],
-    GHANA:       ['city_kumbi_saleh'],
-    KHAZARS:     ['city_itil'],
+    KHITAN:      ['city_linhuang'],
+    UIGHUR:      ['city_woluduocheng'],
+    MOHE:        ['city_lahasusu'],
+    ANGLO_SAXON: ['city_lundun'],  // 伦敦 [2026-09-07] 本区据点(盎格鲁势力所据)；⚠️见 BRITONS 条的史实倒置说明
+    GHANA:       ['city_jienei'],
+    KHAZARS:     ['city_yidier'],
     VANDALS:     ['city_xibo'],
     LOMBARDS:    ['city_milan'],
     ROURAN:      ['city_saierwusu'],
@@ -1846,15 +1846,15 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SWEDISH:     ['city_gothenburg'],
     MACEDONIAN:  ['city_salonica'],
     HELLENIC:    ['city_yadian', 'city_sparta'],
-    IMPERIAL_ROME: ['city_roma'],
-    GREEK_MERCENARY: ['city_rhodes'],
+    IMPERIAL_ROME: ['city_luoma'],
+    GREEK_MERCENARY: ['city_dasijiliweng'],  // 达斯基利翁 [2026-09-07] 本区唯一据点；小弗里吉亚总督阿尔西提斯在格拉尼库斯河会战的主力即希腊雇佣兵(门农指挥)
     MAGNA_GRAECIA:   ['city_talanduo'],
     ACHAEMENIDS:     ['city_bosibolisi'],
     AMAZONS:         ['city_themiskyra'],
-    SONG:            ['city_kaifeng', 'city_yanchuan_d'],
-    GORYEO:          ['city_kaicheng', 'city_hancheng'],
-    DALI:            ['city_yangjumei', 'city_tonghai'],
-    GUSILUO:         ['city_qingtong'],
+    SONG:            ['city_huaiyin'],
+    GORYEO:          ['city_kaesong'],
+    DALI:            ['city_dali_city', 'city_tonghai'],
+    GUSILUO:         ['city_qingtang'],
     MAMLUKS:         ['city_alepo', 'city_ayinzhaluete'],
     CRUSADERS:       ['city_ake', 'city_aidesa'],
     RUS:             ['city_nuofugeerdede', 'city_mosike'],
