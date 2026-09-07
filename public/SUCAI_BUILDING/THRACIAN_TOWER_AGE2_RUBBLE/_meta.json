@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_TOWER_AGE2_RUBBLE",
+  "frames": 1,
+  "box_w": 64,
+  "box_h": 64,
+  "anchor_x": 52,
+  "anchor_y": 24,
+  "sld_source": "b_thracian_tower_age2_rubble"
+}

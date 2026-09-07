@@ -192,6 +192,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dabolan: { generalId: 'gen_przemysl_ii', generalName: '普热梅斯', portrait: '/assets/SLAVIC/dabolan_puremeisi.png' },
     dunhe: { generalId: 'gen_mikhail_tatarinov', generalName: '塔塔里诺夫', portrait: '/assets/SLAVIC/dunhe_tatalinuofu.png' },
     piyasite: { generalId: 'gen_boleslaw_brave', generalName: '勇者波列', portrait: '/assets/GERMANIC/piyasite_yongzhebolie.png' },
+    hongluseniya: { generalId: 'gen_jadwiga', generalName: '雅德维加', portrait: '' },
     baojian_qishi: { generalId: 'gen_albert_riga', generalName: '阿尔伯特', portrait: '/assets/SLAVIC/baojian_qishi_aerbote.png' },
     teweier_gongguo: { generalId: 'gen_mikhail_tver', generalName: '米哈伊尔', portrait: '/assets/SLAVIC/teweier_gongguo_mihayier.png' },
     suzidaer: { generalId: 'gen_dmitry_suzdal', generalName: '康斯坦丁诺', portrait: '/assets/SLAVIC/suzidaer_kangsitandingnuo.png' },

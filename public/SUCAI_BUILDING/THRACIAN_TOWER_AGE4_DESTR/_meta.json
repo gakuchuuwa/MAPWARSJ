@@ -1,0 +1,9 @@
+{
+  "name": "THRACIAN_TOWER_AGE4_DESTR",
+  "frames": 60,
+  "box_w": 172,
+  "box_h": 244,
+  "anchor_x": 88,
+  "anchor_y": 200,
+  "sld_source": "b_thracian_tower_age4_destruction"
+}

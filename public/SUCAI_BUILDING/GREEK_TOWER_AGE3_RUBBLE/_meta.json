@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_TOWER_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 220,
+  "box_h": 116,
+  "anchor_x": 108,
+  "anchor_y": 64,
+  "sld_source": "b_greek_tower_age3_rubble"
+}

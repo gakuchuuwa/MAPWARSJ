@@ -1,0 +1,10 @@
+{
+  "name": "THRACIAN_WALL_STONE_SE",
+  "frames": 1,
+  "box_w": 108,
+  "box_h": 100,
+  "anchor_x": 62,
+  "anchor_y": 74,
+  "sld_source": "b_thracian_wall_stone_x1.sld",
+  "frame_idx": 1
+}
