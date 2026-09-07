@@ -333,6 +333,11 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     DELHI: 'INDI_CASTLE_AGE3',               // 德里：德里苏丹国西里要塞与德里红堡
     CASTILE: 'SPAN_CASTLE_AGE3',             // 卡斯蒂利亚：塞哥维亚与托莱多石砌城堡
     SCOTLAND: 'CELT_CASTLE_AGE3',            // 苏格兰：爱丁堡与高地石构塔堡
+    HRE: 'TEUTONS_CASTLE_AGE3',              // 神圣罗马：维也纳与纽伦堡帝国石砌重要塞
+    ALMOHAD: 'AFRI_CASTLE_AGE3',             // 摩洛哥：马拉喀什与拉巴特穆瓦希德红堡
+    SERBIA: 'SLAV_CASTLE_AGE3',              // 塞尔维亚：贝尔格莱德与斯梅代雷沃石堡
+    ILKHANATE: 'MONG_CASTLE_AGE3',           // 伊利汗：大不里士与马拉盖蒙古王汗城堡
+    ARAGON: 'MEDI_CASTLE_AGE3',              // 阿拉贡：萨拉戈萨与巴塞罗那地中海海堡
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

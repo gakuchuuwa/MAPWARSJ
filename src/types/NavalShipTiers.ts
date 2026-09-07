@@ -124,7 +124,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
     { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
     { ship: 'MONOREME', why: '黑海斯基泰单列桨船：斯基泰扼塔奈斯河口与博斯普鲁斯王国合流，希腊船匠在亚速海-黑海北岸为其造桨船', regions: ['SCYTHIANS'] },
-    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['AMAZONS', 'THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
+    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['AMAZONS', 'THRACIAN', 'BULGARIANS', 'WALLACHIA', 'SERBIA'] },
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
     { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS'] },
@@ -135,8 +135,8 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
     { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS', 'SCOTLAND'] },
-    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS', 'CASTILE'] },
-    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS', 'CRUSADERS'] },
+    { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS', 'CASTILE', 'ARAGON'] },
+    { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS', 'CRUSADERS', 'HRE'] },
     { ship: 'CARAVEL', why: '法兰西风帆战舰：一三四〇年斯勒伊斯海战的法国舰队，与地中海桨帆分队并立', regions: ['FRENCH'] },
     { ship: 'CARAVEL', why: '波罗的海风帆战舰：瑞典帝国海军（瓦萨号形制），十七世纪波罗的海霸权支柱', regions: ['SWEDISH'] },
     { ship: 'MONOREME', why: '涅达姆式北海长船：盎格鲁-撒克逊渡海入不列颠所用形制（萨顿胡船葬），阿尔弗雷德大王据此建舰队御丹麦人', regions: ['ANGLO_SAXON'] },
@@ -147,7 +147,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 中东 / 北非 ─────────────────────────────────────────
     { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
     { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE', 'MAMLUKS'] },
-    { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER'] },
+    { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER', 'ALMOHAD'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['SASANIAN'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨法维经营阿巴斯港，一六二二年联英夺霍尔木兹逐葡萄牙人', regions: ['SAFAVID'] },
     { ship: 'WAR_GALLEY', why: '黑海-地中海桨帆战船：罗姆苏丹凯考巴德一世建锡诺普与阿拉尼亚两处船厂', regions: ['SELJUQ'] },
@@ -161,7 +161,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'GUSILUO', 'KARA_KHITAN', 'TIMURID'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'GUSILUO', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE'] },
     { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
@@ -233,6 +233,57 @@ export function getNavalShipAssetId(
     factionId?: string | null,
 ): NavalShipAssetId {
     return getCultureNavalShip(region, factionId);
+}
+
+/** 战船 AssetID 对应官方标准中文名 */
+export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
+    LOU_CHUAN: '中国楼船',
+    DRAGON_SHIP: '龙头战舰',
+    INCENDIARY_SHIP: '燃烧战船',
+    GALLEY: '桨帆船',
+    TURTLE_SHIP: '龟船',
+    ANT_WAR_GALLEY: '古典大战舰',
+    THIRISADAI: '孟加拉楼船',
+    FAST_FIRE_SHIP: '快速喷火船',
+    WAR_GALLEY: '大战舰',
+    HEAVY_INCENDIARY_SHIP: '重型燃烧战船',
+    TRIREME: '三列桨座战船',
+    BIREME: '双列桨座战船',
+    MONOREME: '单列桨座战船',
+    HEAVY_LEMBOS: '希腊重型伦博斯',
+    LEMBOS: '希腊轻型伦博斯',
+    DROMON: '德罗蒙战舰',
+    LONGBOAT: '维京长船',
+    ELITE_LONGBOAT: '维京长船高级',
+    ELITE_CARAVEL: '卡拉维尔帆船高级',
+    CARAVEL: '卡拉维尔帆船',
+    FIRE_GALLEY: '喷火桨帆船',
+    FIRE_SHIP: '喷火船',
+    CANOE: '独木舟',
+    DEMO_RAFT: '爆破木筏',
+    ANT_GALLEY: '古典桨帆船',
+    ANT_ELITE_GALLEY: '古典精锐桨帆船',
+    CARRACK: '卡拉克大帆船',
+    CANNON_GALLEON: '火炮战舰',
+    ELITE_CANNON_GALLEON: '精锐火炮战舰',
+    CATAPULT_GALLEON: '投石机战船',
+    CATAPULT_SHIP: '投石战舰',
+    DEMO_SHIP: '爆破船',
+    HEAVY_DEMO_SHIP: '重型爆破船',
+    INCENDIARY_RAFT: '燃烧木筏',
+    MERCHANT_SHIP: '商船',
+    ONAGER_SHIP: '中型投石舰',
+    WAR_HULK: '重装霍克船',
+    HULK: '霍克船',
+    WAR_LEMBOS: '战用伦博斯',
+    ELITE_LEMBOS: '精锐伦博斯',
+    GALLEON: '大型大帆船',
+};
+
+/** 获取战船标准中文名 */
+export function getNavalShipChineseName(shipId?: string | null): string {
+    if (!shipId) return '战舰';
+    return NAVAL_SHIP_CHINESE_NAMES[shipId.toUpperCase()] ?? shipId;
 }
 
 /**

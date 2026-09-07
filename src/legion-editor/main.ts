@@ -29,7 +29,7 @@ import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower } from '../data/CombatPower';
-import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon } from '../types/NavalShipTiers';
+import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -1682,6 +1682,8 @@ interface LayerLegionOption {
     formationMode: FormationMode;
     slots: CompositionSlot[];
     description: string;
+    shipId?: string;
+    shipName?: string;
 }
 
 /** 地区军团名基（文化区默认军团名的「地区名」部分） */
@@ -1760,6 +1762,8 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
             seen.set(name, [label]);
 
             const def = getRegionDefaultLegion(rg);
+            const shipId = getCultureNavalShip(rg, null);
+            const shipName = getNavalShipChineseName(shipId);
             options.push({
                 key: `culture:${name}`,
                 label: `🏛️ ${name}`,
@@ -1767,6 +1771,8 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
                 formationMode: def.formationMode,
                 slots: def.slots.map(s => ({ ...s })),
                 description: '',   // 下面统一填，等所有同名区都归拢完
+                shipId,
+                shipName,
             });
         }
         for (const o of options) {
@@ -1788,6 +1794,8 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
         const owner = row?.generalName ? `武将:${row.generalName}` : (row ? `势力:${row.factionName}` : '');
         const label = `⭐ ${entry.name} (${owner} · ${row?.regionLabel ?? ''})`;
         const description = `${row?.regionLabel ?? ''} · ${entry.fids.length} 势力使用 · ${legionSummary(entry.formationMode, entry.slots)}`;
+        const shipId = getCultureNavalShip(row?.region ?? null, fid);
+        const shipName = getNavalShipChineseName(shipId);
 
         options.push({
             key: `${tab}:${entry.name}`,
@@ -1796,6 +1804,8 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
             formationMode: entry.formationMode,
             slots: entry.slots.map(s => ({ ...s })),
             description,
+            shipId,
+            shipName,
         });
     }
 
@@ -1850,6 +1860,15 @@ function renderNavalPanel(row: FactionLegionRow): void {
         line: '横向排开 · 舷侧齐射面最大',
         wedge: '旗舰居前 · 后随向两翼斜后展开',
     };
+    const shipAssetId = getCultureNavalShip(row.region, row.factionId);
+    const shipName = getNavalShipChineseName(shipAssetId);
+    const shipWeapons = getNavalWeapons(shipAssetId, row.factionId);
+    const weaponLabel: Record<string, string> = {
+        cannon: '火炮', greekfire: '希腊火', trebuchet: '抛石', arrow: '弓弩', ram: '撞角',
+    };
+    const weaponsStr = shipWeapons.map(w => weaponLabel[w] || w).join(' + ');
+    const shipWhy = listCultureNavalShips().find(c => c.ship === shipAssetId)?.why ?? '史实战舰配置';
+
     els.panelContent.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -1857,6 +1876,20 @@ function renderNavalPanel(row: FactionLegionRow): void {
         <div>
           <div style="font-size:16px;font-weight:bold;color:#f5e6c8;">${currentEditingLegion?.legionName || row.factionName}</div>
           <div style="font-size:11px;color:#a89f8f;margin-top:2px;">首都：${row.capitalCityName} | 文化区：${row.regionLabel}${row.generalName ? ` | 武将：${row.generalName}` : ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>套用战舰</span>
+        <span style="font-size:11px;color:#8ab4c4;font-weight:normal;">出处 NavalShipTiers</span>
+      </div>
+      <div style="background:#141210;border:1px solid #2a2620;border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:bold;color:#7ec0ee;">🚢 ${shipName} <span style="font-size:11px;color:#8a8070;font-weight:normal;font-family:monospace;">(${shipAssetId})</span></div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:4px;">舰载武器：<b style="color:#e0c060;">${weaponsStr}</b></div>
+          <div style="font-size:11px;color:#7a7266;margin-top:2px;">考据依据：${shipWhy}</div>
         </div>
       </div>
     </div>
@@ -1973,6 +2006,7 @@ function renderEditPanel(row: FactionLegionRow): void {
       <span style="font-size:11px;color:#a89f8f;">当前军团：</span>
       <b style="color:#f5d78e;font-size:13px;">【${currentEditingLegion?.legionName?.trim() || (curLayer === 'culture' ? getCultureLegionName(row.region) : row.factionName + '军团')}】</b>
       <span style="font-size:11px;color:#8ab4c4;">${LAYER_FULL_LABEL[curLayer]} · ${legionSummary(mode, slots)}</span>
+      <span style="font-size:11px;padding:2px 7px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;">🚢 套用战舰：${getNavalShipChineseName(getCultureNavalShip(row.region, row.factionId))}</span>
     </div>
 
     <!-- 选军团：从现有军团套用（同名同编制） -->
@@ -2427,6 +2461,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
         <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}
           <span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>
+          ${opt.shipName ? `<span class="le-ship-tag" style="font-size:9px;padding:1px 5px;margin-left:4px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;font-weight:normal;" title="套用战舰：${opt.shipName} (${opt.shipId})">🚢 ${opt.shipName}</span>` : ''}
           ${(() => {
             const lp = getLegionPower(opt.slots);
             if (!lp) return '';
