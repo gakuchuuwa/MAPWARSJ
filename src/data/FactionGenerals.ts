@@ -60,6 +60,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     apuliya: { generalId: 'gen_robert_guiscard', generalName: '吉斯卡尔', portrait: '' },
     saimien: { generalId: 'gen_yodit', generalName: '尤迪特', portrait: '' },
     aosimanbeiyiguo: { generalId: 'gen_osman_i', generalName: '奥斯曼一世', portrait: '' },
+    laxidaimeng: { generalId: 'gen_brasidas', generalName: '巴西达斯', portrait: '' },
+    boluobennisa: { generalId: 'gen_lysander', generalName: '吕山德', portrait: '' },
+    ajidewangchao: { generalId: 'gen_parmenion', generalName: '帕曼纽', portrait: '' },
+    jiyezhe: { generalId: 'gen_perdiccas', generalName: '佩尔狄卡斯', portrait: '' },
+    kaliya: { generalId: 'gen_artemisia', generalName: '阿特米西娅', portrait: '' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },

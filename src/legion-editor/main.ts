@@ -472,7 +472,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'thirisadai', name: '孟加拉楼船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/THIRISADAI/' },
     { id: 'catapult_ship', name: '投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/CATAPULT_SHIP/' },
     { id: 'onager_ship', name: '重型投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
-    { id: 'hero_khan', name: '英雄·可汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-09-07 补提] 草原可汗通用形象，蒙古/库曼 11–15 世纪
+    { id: 'hero_khan', name: '英雄·成吉思汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 全球知名度第一的可汗；本人在武将册 menggu_d_chengjisihan 且无专属素材
     { id: 'hero_jadwiga', name: '英雄·雅德维加', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JADWIGA/' },   // [2026-09-07 补提] 波兰女王 1373–1399
     { id: 'hero_tamar', name: '英雄·塔玛尔', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TAMAR/' },   // [2026-09-07 补提] 格鲁吉亚女王 1160–1213
     { id: 'hero_zhugeliang', name: '英雄·诸葛亮', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHUGELIANG/' },   // [2026-09-07 补提] 蜀汉丞相 181–234
@@ -491,7 +491,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_brasidas', name: '英雄·巴西达斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/BRASIDAS/' },
     { id: 'hero_caocao', name: '英雄·曹操', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/CAOCAO/' },
     { id: 'hero_cleitus', name: '英雄·克雷图斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/CLEITUS/' },
-    { id: 'hero_cumanchief', name: '英雄·库曼酋长', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/CUMANCHIEF/' },
+    { id: 'hero_cumanchief', name: '英雄·巴奇曼', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/CUMANCHIEF/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 钦察抗蒙首领，在册 qincha_baqiman@萨拉托夫；忽炭汗已有专属素材 hero_kotyankhan，不占这套
     { id: 'hero_cunhambebe', name: '英雄·昆汉贝贝', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CUNHAMBEBE/' },
     { id: 'hero_cusiyupanqui', name: '英雄·库西尤潘基', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/CUSIYUPANQUI/' },
     { id: 'hero_dafyddapgruffydd', name: '英雄·戴菲德', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/DAFYDDAPGRUFFYDD/' },
@@ -502,7 +502,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_edwardlongshanks', name: '英雄·长腿爱德华', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/EDWARDLONGSHANKS/' },
     { id: 'hero_gajahmada', name: '英雄·加查·马达', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GAJAHMADA/' },
     { id: 'hero_galvarino', name: '英雄·加尔瓦里诺', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/GALVARINO/' },
-    { id: 'hero_generalaraiyan', name: '英雄·阿赖扬将军', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GENERALARAIYAN/' },
+    { id: 'hero_generalaraiyan', name: '英雄·拉贾拉贾一世', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GENERALARAIYAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 朱罗海权开创者 985–1014；Araiyan 是泰米尔语「王/首领」，素材本属朱罗系
     { id: 'hero_gidajan', name: '英雄·吉达扬', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GIDAJAN/' },
     { id: 'hero_gilbertdeclare', name: '英雄·吉尔伯特', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GILBERTDECLARE/' },
     { id: 'hero_girgenkhan', name: '英雄·吉尔根汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GIRGENKHAN/' },
@@ -524,7 +524,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_llywelynapgruffydd', name: '英雄·卢埃林', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/LLYWELYNAPGRUFFYDD/' },
     { id: 'hero_lubu', name: '英雄·吕布', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/LUBU/' },
     { id: 'hero_lysander', name: '英雄·吕山德', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/LYSANDER/' },
-    { id: 'hero_macedonian_commander', name: '英雄·马其顿指挥官', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/MACEDONIAN_COMMANDER/' },
+    { id: 'hero_macedonian_commander', name: '英雄·腓力二世', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/MACEDONIAN_COMMANDER/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 马其顿方阵/萨里沙/伙伴骑兵的缔造者，前 382–336；亚历山大已有 MOUNTED/DISMOUNTED_ALEXANDER 两套专属素材
     { id: 'hero_osman', name: '英雄·奥斯曼一世', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/OSMAN/' },
     { id: 'hero_pacanchique', name: '英雄·帕坎奇克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/PACANCHIQUE/' },
     { id: 'hero_pachacuti', name: '英雄·帕查库特克', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/PACHACUTI/' },
@@ -546,7 +546,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_sunquan', name: '英雄·孙权', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/SUNQUAN/' },
     { id: 'hero_tariqibnziyad', name: '英雄·塔里克', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/TARIQIBNZIYAD/' },
     { id: 'hero_thoros', name: '英雄·托罗斯', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/THOROS/' },
-    { id: 'hero_thracian_chieftain', name: '英雄·色雷斯酋长', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/THRACIAN_CHIEFTAIN/' },
+    { id: 'hero_thracian_chieftain', name: '英雄·塞乌特斯三世', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/THRACIAN_CHIEFTAIN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 奥德里西亚色雷斯王，在册 gen_seuthes_iii@塞乌托波利（正是色雷斯区中心）
     { id: 'hero_tsarkonstantin', name: '英雄·君士坦丁沙皇', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TSARKONSTANTIN/' },
     { id: 'hero_ulrichvonjungingen', name: '英雄·容金根', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ULRICHVONJUNGINGEN/' },
     { id: 'hero_vladdracula', name: '英雄·穿刺公德古拉', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/VLADDRACULA/' },
@@ -556,7 +556,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '武士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
-    { id: 'envoy', name: '英雄·欧洲使者', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
+    { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
@@ -585,7 +585,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
-    { id: 'hero_aeginetan', name: '英雄·埃伊纳指挥官', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },
+    { id: 'hero_aeginetan', name: '英雄·波利克里托斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 希罗多德点名记载的萨拉米斯海战埃伊纳英雄；素材是 u_shp 舰船类，须海军将领
 ]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));

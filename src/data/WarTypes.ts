@@ -59,7 +59,7 @@ export const WAR_TYPES: Record<string, WarType> = {
 
     manatarms: { name: '武士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     sunda_royal_fighter: { name: '爪哇巽他皇家战士高级', cls: 'melee', sz: 1, hp: 90, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 29: 2, 21: 1 }, armorTags: [1, 31] },
-    envoy: { name: '英雄·欧洲使者', cls: 'cav', sz: 1, hp: 250, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [8, 31] },
+    envoy: { name: '英雄·柏朗嘉宾', cls: 'cav', sz: 1, hp: 250, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [8, 31] },
     scout_cavalry: { name: '斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
     light_cavalry: { name: '轻型骑兵', cls: 'cav', sz: 1.15, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 139, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     frankish_paladin: { name: '法兰克圣骑士高级', cls: 'cav', sz: 1, hp: 160, atk: 14, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
@@ -370,7 +370,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     // 🔴 [2026-09-07] 补提的 DE 英雄。数值一律取自 DE dat（scratch/de_ref.json），
     //    换算与既有英雄同口径：hp/atk/护甲 1:1，射程 ×40（DE 6.0 格 = 240），移速 DE 1.40 → 130。
     //    ⚠️ 其中 4 位 DE 原值 atk=0（非战斗英雄），照抄不改，别看着别扭就补一个。
-    hero_khan: { name: '英雄·可汗', cls: 'cav', sz: 1, hp: 220, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2.1, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE HKHAN id=1771（本图 u_cav_hero_khan 有 3 个同名 DAT 条目 731/1275/1771，取标准档）；草原可汗通用形象
+    hero_khan: { name: '英雄·成吉思汗', cls: 'cav', sz: 1, hp: 220, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2.1, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE HKHAN id=1771（本图 u_cav_hero_khan 有 3 个同名 DAT 条目 731/1275/1771，取标准档）；草原可汗通用形象
     hero_jadwiga: { name: '英雄·雅德维加', cls: 'cav', sz: 1, hp: 270, atk: 0, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 1.6, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE JADWIGA id=1715；波兰女王 1373–1399，雅盖隆王朝共主。DE 原值 atk=0，是非战斗英雄
     hero_tamar: { name: '英雄·塔玛尔', cls: 'cav', sz: 1, hp: 320, atk: 0, meleeArmor: 1, pierceArmor: 2, rng: 360, reload: 1.6, spd: 130, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE TAMAR id=1822；格鲁吉亚女王 1160–1213，格鲁吉亚黄金时代。DE 原值 atk=0
     hero_zhugeliang: { name: '英雄·诸葛亮', cls: 'melee', sz: 1, hp: 160, atk: 0, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.0, spd: 107, dmgType: 'melee', armorTags: [15, 31, 36] },   // DE HZHUGELIANG id=2036；蜀汉丞相 181–234。DE 素材是 u_king_hero（步行），且本体无攻击动作、atk=0
@@ -389,7 +389,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_brasidas: { name: '英雄·巴西达斯', cls: 'cav', sz: 1, hp: 500, atk: 9, meleeArmor: 5, pierceArmor: 5, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 16: 0, 20: 0, 21: 2, 25: 0, 30: 0 }, armorTags: [1, 19, 31] },
     hero_caocao: { name: '英雄·曹操', cls: 'cav', sz: 1, hp: 475, atk: 14, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 11: 0, 15: 3, 20: 0, 38: 0, 39: -3 }, armorTags: [8, 19, 31, 36] },
     hero_cleitus: { name: '英雄·克雷图斯', cls: 'cav', sz: 1, hp: 350, atk: 14, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
-    hero_cumanchief: { name: '英雄·库曼酋长', cls: 'cav', sz: 1, hp: 180, atk: 12, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
+    hero_cumanchief: { name: '英雄·巴奇曼', cls: 'cav', sz: 1, hp: 180, atk: 12, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_cunhambebe: { name: '英雄·昆汉贝贝', cls: 'cav', sz: 1, hp: 350, atk: 20, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 21: 2, 23: 0, 29: 2, 30: 0 }, armorTags: [1, 31, 36] },
     hero_cusiyupanqui: { name: '英雄·库西尤潘基', cls: 'cav', sz: 1, hp: 255, atk: 12, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 3, 15: 0, 16: 1, 20: 3, 21: 0, 25: 8, 30: 2 }, armorTags: [1, 29, 31, 36] },
     hero_dafyddapgruffydd: { name: '英雄·戴菲德', cls: 'cav', sz: 1, hp: 200, atk: 14, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 1: 10, 8: 0, 11: 2, 15: 0, 30: 0 }, armorTags: [1, 19, 31, 36] },
@@ -400,7 +400,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_edwardlongshanks: { name: '英雄·长腿爱德华', cls: 'cav', sz: 1, hp: 200, atk: 16, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_gajahmada: { name: '英雄·加查·马达', cls: 'cav', sz: 1, hp: 425, atk: 20, meleeArmor: 2, pierceArmor: 0, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 21: 4, 29: 8, 30: 0 }, armorTags: [1, 31, 36] },
     hero_galvarino: { name: '英雄·加尔瓦里诺', cls: 'cav', sz: 1, hp: 190, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.3, spd: 130, dmgType: 'melee', bonus: { 8: 0, 21: 1, 23: 5, 29: 2, 30: 0 }, armorTags: [1, 19, 31, 36] },
-    hero_generalaraiyan: { name: '英雄·阿赖扬将军', cls: 'cav', sz: 1, hp: 290, atk: 19, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
+    hero_generalaraiyan: { name: '英雄·拉贾拉贾一世', cls: 'cav', sz: 1, hp: 290, atk: 19, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_gidajan: { name: '英雄·吉达扬', cls: 'cav', sz: 1, hp: 300, atk: 18, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 21: 2, 29: 2, 30: 0 }, armorTags: [1, 31, 36] },
     hero_gilbertdeclare: { name: '英雄·吉尔伯特', cls: 'cav', sz: 1, hp: 150, atk: 11, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_girgenkhan: { name: '英雄·吉尔根汗', cls: 'cav', sz: 1, hp: 170, atk: 10, meleeArmor: 3, pierceArmor: 3, rng: 240, reload: 2, spd: 130, dmgType: 'pierce', bonus: { 15: 0, 17: 0, 21: 0, 27: 2, 38: 0, 39: -3 }, armorTags: [8, 15, 28, 31, 36] },
@@ -422,7 +422,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_llywelynapgruffydd: { name: '英雄·卢埃林', cls: 'cav', sz: 1, hp: 250, atk: 14, meleeArmor: 2, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 11: 2, 15: 5, 30: 0 }, armorTags: [1, 19, 31, 36] },
     hero_lubu: { name: '英雄·吕布', cls: 'cav', sz: 1, hp: 425, atk: 18, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 2, 20: 0, 30: 1, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_lysander: { name: '英雄·吕山德', cls: 'cav', sz: 1, hp: 350, atk: 14, meleeArmor: 2, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 21: 5, 29: 0, 30: 0 }, armorTags: [1, 19, 31] },
-    hero_macedonian_commander: { name: '英雄·马其顿指挥官', cls: 'cav', sz: 1, hp: 300, atk: 13, meleeArmor: 5, pierceArmor: 5, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 38: 0 }, armorTags: [1, 31, 36] },
+    hero_macedonian_commander: { name: '英雄·腓力二世', cls: 'cav', sz: 1, hp: 300, atk: 13, meleeArmor: 5, pierceArmor: 5, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 38: 0 }, armorTags: [1, 31, 36] },
     hero_osman: { name: '英雄·奥斯曼一世', cls: 'cav', sz: 1, hp: 180, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2, spd: 130, dmgType: 'pierce', bonus: { 15: 0, 17: 0, 21: 10, 27: 6, 38: 0, 39: -3 }, armorTags: [8, 15, 28, 31, 36] },
     hero_pacanchique: { name: '英雄·帕坎奇克', cls: 'cav', sz: 1, hp: 240, atk: 16, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 3, 16: 1, 20: 3, 21: 0, 25: 8, 30: 2 }, armorTags: [1, 31, 36] },
     hero_pachacuti: { name: '英雄·帕查库特克', cls: 'cav', sz: 1, hp: 230, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 16, 15: 0, 30: 13 }, armorTags: [1, 31, 36] },
@@ -444,7 +444,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_sunquan: { name: '英雄·孙权', cls: 'cav', sz: 1, hp: 280, atk: 20, meleeArmor: 2, pierceArmor: 2, rng: 160, reload: 6, spd: 130, dmgType: 'pierce', bonus: { 15: 0, 21: 0, 27: 2, 39: -3 }, armorTags: [8, 15, 28, 31, 36] },
     hero_tariqibnziyad: { name: '英雄·塔里克', cls: 'cav', sz: 1, hp: 170, atk: 15, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 3, spd: 130, dmgType: 'pierce', bonus: { 15: 5, 17: 0, 21: 0, 38: 0, 39: -3 }, armorTags: [8, 15, 31, 36, 38] },
     hero_thoros: { name: '英雄·托罗斯', cls: 'cav', sz: 1, hp: 275, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 15: 3, 20: 0, 21: 2, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
-    hero_thracian_chieftain: { name: '英雄·色雷斯酋长', cls: 'cav', sz: 1, hp: 300, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 11: 3, 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
+    hero_thracian_chieftain: { name: '英雄·塞乌特斯三世', cls: 'cav', sz: 1, hp: 300, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 11: 3, 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_tsarkonstantin: { name: '英雄·君士坦丁沙皇', cls: 'cav', sz: 1, hp: 300, atk: 14, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 0, 15: 0, 20: 0, 21: 0, 38: 0, 39: -3 }, armorTags: [8, 19, 31, 36] },
     hero_ulrichvonjungingen: { name: '英雄·容金根', cls: 'cav', sz: 1, hp: 350, atk: 17, meleeArmor: 8, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 20: 0, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_vladdracula: { name: '英雄·穿刺公德古拉', cls: 'cav', sz: 1, hp: 210, atk: 16, meleeArmor: 6, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 0, 20: 0, 38: 0, 39: -3 }, armorTags: [8, 19, 31, 36] },
@@ -503,6 +503,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     demo_raft: { name: '爆破木筏', cls: 'melee', sz: 1, hp: 40, atk: 75, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 0.0, spd: 87, dmgType: 'melee', bonus: { 11: 180 }, armorTags: [16, 31] },
     lou_chuan: { name: '中国楼船', cls: 'ranged', sz: 1, hp: 175, atk: 25, meleeArmor: 0, pierceArmor: 9, rng: 520, reload: 5.5, spd: 67, dmgType: 'pierce', bonus: { 11: 230, 20: 10 }, armorTags: [16, 31, 60] },
     hero_themistocles: { name: '英雄·地米斯托克利', cls: 'melee', sz: 1, hp: 425, atk: 18, meleeArmor: 6, pierceArmor: 8, rng: 0, reload: 4.0, spd: 81, dmgType: 'melee', bonus: { 11: 8, 16: 11, 17: 4 }, armorTags: [16, 31] },
-    hero_aeginetan: { name: '英雄·埃伊纳指挥官', cls: 'ranged', sz: 1, hp: 500, atk: 90, meleeArmor: 2, pierceArmor: 6, rng: 360, reload: 7.0, spd: 73, dmgType: 'pierce', bonus: { 11: 0, 16: 0, 17: 0 }, armorTags: [16, 31, 60] },
+    hero_aeginetan: { name: '英雄·波利克里托斯', cls: 'ranged', sz: 1, hp: 500, atk: 90, meleeArmor: 2, pierceArmor: 6, rng: 360, reload: 7.0, spd: 73, dmgType: 'pierce', bonus: { 11: 0, 16: 0, 17: 0 }, armorTags: [16, 31, 60] },
 
 };
