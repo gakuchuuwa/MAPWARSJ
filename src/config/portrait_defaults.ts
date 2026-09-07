@@ -77,10 +77,10 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     MUISCA: 'AMERICA',
     TUPI: 'AMERICA',
     IROQUOIS: 'AMERICA',
-    CHIMU: 'ANDE',
+    CHIMU: 'AMERICA',   // [2026-09-07 订正] 原写 'ANDE'，但 public/assets/ANDE/ 根本不存在，池子为空会导致破图直出
     TARASCAN: 'AMERICA',
-    TAIRONA: 'MUISCA',
-    TEHUELCHE: 'MAPUCHE',
+    TAIRONA: 'AMERICA',   // [2026-09-07 订正] 原写 'MUISCA'，但 public/assets/MUISCA/ 根本不存在，池子为空会导致破图直出
+    TEHUELCHE: 'AMERICA',   // [2026-09-07 订正] 原写 'MAPUCHE'，但 public/assets/MAPUCHE/ 根本不存在，池子为空会导致破图直出
     ANDE: 'AMERICA',
     // 日耳曼系 → GERMANIC（条顿/维京/凯尔特/马扎尔/波希米亚/勃艮第/不列颠）
     TEUTONS: 'GERMANIC',

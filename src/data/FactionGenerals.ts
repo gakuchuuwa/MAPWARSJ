@@ -37,12 +37,20 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    // 🔴 [2026-09-07] 下面 5 位是新建美洲文化区的开局武将。portrait 一律留空 —— 
+    //    我（AI）一张图都没看过，绝不凭空编专属立绘路径（曾编过 /assets/IROQUOIS/... 之类根本不存在的夹）。
+    //    留空＝走文化池回落（见 resolveGeneralPortraitPath）。等主人放图后再按约定填：
+    //    **势力key_中文名拼音.png**（例：恺撒→luoma_diguo_kaisa.png、柯沙玛因→ayinu_ezo_keshamayin.png），
+    //    不是英文转写。文件放进该区的物理立绘夹，不许跨区借图。
     ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/NORTHEAST/ayinu_ezo_keshamayin.png' },
-    yiluokui: { generalId: 'gen_hiawatha', generalName: '海华沙', portrait: '/assets/IROQUOIS/yiluokui_hiawatha.png' },
-    qimu: { generalId: 'gen_minchancaman', generalName: '明查凯曼', portrait: '/assets/CHIMU/qimu_minchancaman.png' },
-    talasike: { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '/assets/TARASCAN/talasike_tzitzipandaquare.png' },
-    tailuona: { generalId: 'gen_cuchacique', generalName: '库查西克', portrait: '/assets/TAIRONA/tailuona_cuchacique.png' },
-    teweierqie: { generalId: 'gen_casimiro_bigua', generalName: '卡西米罗·比格', portrait: '/assets/TEHUELCHE/teweierqie_casimiro_bigua.png' },
+    yiluokui: { generalId: 'gen_hiawatha', generalName: '海华沙', portrait: '' },
+    qimu: { generalId: 'gen_minchancaman', generalName: '明查凯曼', portrait: '' },
+    talasike: { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '' },
+    tailuona: { generalId: 'gen_cuchacique', generalName: '库查西克', portrait: '' },
+    teweierqie: { generalId: 'gen_casimiro_bigua', generalName: '卡西米罗·比格', portrait: '' },
+    telasikala: { generalId: 'gen_xicotencatl', generalName: '希科滕卡特', portrait: '' },
+    xinnidelan: { generalId: 'gen_stuyvesant', generalName: '斯泰弗森特', portrait: '' },
+    xinfalanxi: { generalId: 'gen_champlain', generalName: '尚普兰', portrait: '' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
