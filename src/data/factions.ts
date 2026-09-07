@@ -1989,6 +1989,7 @@ export const FACTIONS: Faction[] = [
     { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
     { id: 'wangdaer', name: '汪达尔' },
+    { id: 'yamaxun', name: '亚马逊' },
 ];
 
 // @ts-ignore

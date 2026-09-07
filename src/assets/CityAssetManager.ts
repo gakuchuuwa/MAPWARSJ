@@ -1037,6 +1037,7 @@ export class CityAssetManager {
         'bolan': '波兰',
         'jileinaijia': '基雷',
         'moxina': '墨西',
+        'yamaxun': '亚马',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

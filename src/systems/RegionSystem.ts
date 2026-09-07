@@ -127,7 +127,8 @@ export type RegionType =
     | 'HELLENIC' // 古典希伦（雅典民主与斯巴达双王城邦同盟）
     | 'IMPERIAL_ROME' // 古典帝国罗马（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
     | 'GREEK_MERCENARY' // 古典希腊雇佣（色诺芬万人军与地中海游历雇佣方阵）
-    | 'MAGNA_GRAECIA'; // 古典大希腊（塔兰托与南意大利希腊殖民城邦世界）
+    | 'MAGNA_GRAECIA' // 古典大希腊（塔兰托与南意大利希腊殖民城邦世界）
+    | 'AMAZONS'; // 古典亚马逊（特尔莫冬河口忒弥斯基拉的黑海女战士部族）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -216,6 +217,7 @@ export const REGION_ORDER: RegionType[] = [
     'IMPERIAL_ROME',
     'GREEK_MERCENARY',
     'MAGNA_GRAECIA',
+    'AMAZONS',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -330,6 +332,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     IMPERIAL_ROME: '古典帝国罗马',
     GREEK_MERCENARY: '古典希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
+    AMAZONS: '古典亚马逊',
 };
 
 /**
@@ -450,6 +453,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     IMPERIAL_ROME: '古典帝国罗马',
     GREEK_MERCENARY: '古典希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
+    AMAZONS: '古典亚马逊',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -720,6 +724,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     IMPERIAL_ROME: '#C62828',
     GREEK_MERCENARY: '#00838F',
     MAGNA_GRAECIA: '#0097A7',
+    AMAZONS: '#AD1457',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -894,6 +899,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/germanic_medium.png'),
         big: resolvePath('/cities/germanic_big.png'),
         pass: resolvePath('/cities/germanic_pass.png')
+    },
+    AMAZONS: {
+        small: resolvePath('/cities/greek_small.png'),
+        medium: resolvePath('/cities/greek_medium.png'),
+        big: resolvePath('/cities/greek_big.png'),
+        pass: resolvePath('/cities/greek_pass.png')
     },
     IMPERIAL_ROME: {
         small: resolvePath('/cities/latin_small.png'),
@@ -1640,6 +1651,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     IMPERIAL_ROME: ['city_roma'],
     GREEK_MERCENARY: ['city_rhodes'],
     MAGNA_GRAECIA:   ['city_talanduo'],
+    AMAZONS:         ['city_themiskyra'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

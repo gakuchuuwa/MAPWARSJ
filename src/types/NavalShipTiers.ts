@@ -124,7 +124,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
     { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
     { ship: 'MONOREME', why: '黑海斯基泰单列桨船：斯基泰扼塔奈斯河口与博斯普鲁斯王国合流，希腊船匠在亚速海-黑海北岸为其造桨船', regions: ['SCYTHIANS'] },
-    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
+    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['AMAZONS', 'THRACIAN', 'BULGARIANS', 'WALLACHIA'] },
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
     { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS'] },
