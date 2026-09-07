@@ -448,6 +448,11 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     DELHI: { battering_ram: true, capped_ram: true, mangonel: true },
     CASTILE: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
     SCOTLAND: { battering_ram: true, capped_ram: true, mangonel: true },
+    HRE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, trebuchet: true },
+    ALMOHAD: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
+    SERBIA: { battering_ram: true, capped_ram: true, mangonel: true },
+    ILKHANATE: { battering_ram: true, capped_ram: true, mangonel: true, traction_trebuchet: true },
+    ARAGON: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
 };
 
 /**
@@ -1200,6 +1205,11 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     DELHI: 'INDI',
     CASTILE: 'WEST',
     SCOTLAND: 'WEST',
+    HRE: 'WEST',
+    ALMOHAD: 'ORIE',
+    SERBIA: 'SLAV',
+    ILKHANATE: 'CEAS',
+    ARAGON: 'MEDI',
 };
 
 

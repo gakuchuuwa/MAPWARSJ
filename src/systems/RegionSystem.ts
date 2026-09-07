@@ -141,7 +141,12 @@ export type RegionType =
     | 'TIMURID' // 帖木儿（城堡帖木儿：河中察合台具装重骑兵、游牧重骑射手与精锐重骑突阵）
     | 'DELHI' // 德里（城堡德里：德里苏丹国重装战象铁甲冲阵、古拉姆近卫铁甲剑士与突厥复合强弓手）
     | 'CASTILE' // 卡斯蒂利亚（城堡卡斯蒂利亚：伊比利亚收复失地运动圣地亚哥骑士、西班牙长剑士与标枪骑兵）
-    | 'SCOTLAND'; // 苏格兰（城堡苏格兰：苏格兰独立战争长矛刺猬密集方阵、高地巨剑士与苏格兰轻骑）
+    | 'SCOTLAND' // 苏格兰（城堡苏格兰：苏格兰独立战争长矛刺猬密集方阵、高地巨剑士与苏格兰轻骑）
+    | 'HRE' // 神圣罗马（城堡神圣罗马：德意志帝国重装板甲骑士、双手巨剑士与汉萨十字弩）
+    | 'ALMOHAD' // 摩洛哥（城堡摩洛哥：穆瓦希德与穆拉比特帝国撒哈拉苏丹驼骑、黑骑兵与柏柏尔标枪游击）
+    | 'SERBIA' // 塞尔维亚（城堡塞尔维亚：尼曼雅王朝斯蒂芬杜尚大帝重装骑士近卫与巴尔干长枪方阵）
+    | 'ILKHANATE' // 伊利汗（城堡伊利汗：旭烈兀西征伊兰波斯具装铁骑与蒙古强弓铁骑突袭）
+    | 'ARAGON'; // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -244,6 +249,11 @@ export const REGION_ORDER: RegionType[] = [
     'DELHI',
     'CASTILE',
     'SCOTLAND',
+    'HRE',
+    'ALMOHAD',
+    'SERBIA',
+    'ILKHANATE',
+    'ARAGON',
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -372,6 +382,11 @@ export const REGION_LABELS: Record<RegionType, string> = {
     DELHI: '城堡德里',
     CASTILE: '城堡卡斯蒂利亚',
     SCOTLAND: '城堡苏格兰',
+    HRE: '城堡神圣罗马',
+    ALMOHAD: '城堡摩洛哥',
+    SERBIA: '城堡塞尔维亚',
+    ILKHANATE: '城堡伊利汗',
+    ARAGON: '城堡阿拉贡',
 };
 
 /**
@@ -506,6 +521,11 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     DELHI: '城堡德里',
     CASTILE: '城堡卡斯蒂利亚',
     SCOTLAND: '城堡苏格兰',
+    HRE: '城堡神圣罗马',
+    ALMOHAD: '城堡摩洛哥',
+    SERBIA: '城堡塞尔维亚',
+    ILKHANATE: '城堡伊利汗',
+    ARAGON: '城堡阿拉贡',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -790,6 +810,11 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     DELHI: '#2a9d8f',
     CASTILE: '#e05638',
     SCOTLAND: '#1d3557',
+    HRE: '#ffb703',
+    ALMOHAD: '#2d6a4f',
+    SERBIA: '#d62828',
+    ILKHANATE: '#48cae4',
+    ARAGON: '#f77f00',
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -1601,6 +1626,36 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/britons_big.png'),
         pass: resolvePath('/cities/britons_pass.png')
     },
+    HRE: {
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    ALMOHAD: {
+        small: resolvePath('/cities/orie_small.png'),
+        medium: resolvePath('/cities/orie_medium.png'),
+        big: resolvePath('/cities/orie_big.png'),
+        pass: resolvePath('/cities/orie_pass.png')
+    },
+    SERBIA: {
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    ILKHANATE: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    ARAGON: {
+        small: resolvePath('/cities/spanish_small.png'),
+        medium: resolvePath('/cities/spanish_medium.png'),
+        big: resolvePath('/cities/spanish_big.png'),
+        pass: resolvePath('/cities/spanish_pass.png')
+    },
 };
 
 // 5. Main Accessor
@@ -1808,6 +1863,11 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     DELHI:           ['city_deli'],
     CASTILE:         ['city_toledo', 'city_madeli'],
     SCOTLAND:        ['city_carlisle', 'city_aidingbao'],
+    HRE:             ['city_weiyeena', 'city_niulunbao'],
+    ALMOHAD:         ['city_malajiashen', 'city_labate'],
+    SERBIA:          ['city_belgrade', 'city_sarajevo'],
+    ILKHANATE:       ['city_dabulishi', 'city_malagai'],
+    ARAGON:          ['city_zaragoza'],
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

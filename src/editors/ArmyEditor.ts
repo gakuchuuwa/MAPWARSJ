@@ -157,6 +157,11 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     DELHI: 'deli',
     CASTILE: 'kasidiliya',
     SCOTLAND: 'kanbuliya',
+    HRE: 'habusibao',
+    ALMOHAD: 'mulabite',
+    SERBIA: 'saierweiya',
+    ILKHANATE: 'yilihanguo_d',
+    ARAGON: 'alagong',
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
