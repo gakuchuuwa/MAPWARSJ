@@ -262,6 +262,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_yodit': 'feudal',
     'gen_osman_i': 'castle',
     'gen_artemisia': 'antiquity',
+    'gen_artaphernes': 'antiquity',
     'gen_brasidas': 'antiquity',
     'gen_lysander': 'antiquity',
     'gen_parmenion': 'antiquity',

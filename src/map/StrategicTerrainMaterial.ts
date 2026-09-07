@@ -1,12 +1,14 @@
 import { queryBaseTile, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
 
 type Bounds = { north: number; south: number; west: number; east: number };
+export type MaterialNode = ReadonlyArray<{ pixels: Uint8ClampedArray; weight: number }>;
 const SIZE = 128;
 const STEP = 64;
 // 世界查找图 + 至多 24 张缩小的材质；只存像素，解码位图立即释放。
 export const MATERIAL_BUDGET_BYTES = 12 * 1024 * 1024;
 const textures = new Map<string, Promise<Uint8ClampedArray | null>>();
 let worldReady: Promise<boolean> | undefined;
+let worldWidth = 0, worldHeight = 0;
 let residentBytes = 0;
 export const getMaterialBytes = (): number => residentBytes;
 
@@ -29,6 +31,8 @@ function loadWorld(): Promise<boolean> {
     return worldReady ??= readPixels('/world/world-base.png').then(image => {
         if (image.data.byteLength > MATERIAL_BUDGET_BYTES - 24 * SIZE * SIZE * 4) return false;
         setWorldBaseData(image.data, image.width, image.height);
+        worldWidth = image.width;
+        worldHeight = image.height;
         residentBytes += image.data.byteLength;
         return true;
     }).catch(() => false);
@@ -47,29 +51,53 @@ function loadTexture(name: string): Promise<Uint8ClampedArray | null> {
     return pending;
 }
 
+/** 在全球气候像素中心之间连续插值；经度环绕，南北极钳制。 */
+export function sampleClimateMaterials(
+    lat: number, lng: number, width: number, height: number,
+    lookup: (lat: number, lng: number) => string | null,
+): Map<string, number> {
+    const px = (lng + 180) / 360 * width - 0.5;
+    const py = (90 - lat) / 180 * height - 0.5;
+    const x0 = Math.floor(px), y0 = Math.floor(py);
+    const fx = px - x0, fy = py - y0;
+    const result = new Map<string, number>();
+    for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) {
+        const x = ((x0 + dx) % width + width) % width;
+        const y = Math.max(0, Math.min(height - 1, y0 + dy));
+        const name = lookup(90 - (y + 0.5) / height * 180, (x + 0.5) / width * 360 - 180);
+        const weight = (dx ? fx : 1 - fx) * (dy ? fy : 1 - fy);
+        if (name && weight > 0) result.set(name, (result.get(name) ?? 0) + weight);
+    }
+    return result;
+}
+
 /** 在共享采样节点间混合材质，避免气候块边缘和相邻瓦片出现硬接缝。 */
 export function blendMaterialGrid(
-    grid: (Uint8ClampedArray | null)[], columns: number, width: number, height: number,
+    grid: MaterialNode[], columns: number, width: number, height: number,
 ): Uint8ClampedArray<ArrayBuffer> {
     const output = new Uint8ClampedArray(width * height * 4);
     for (let y = 0; y < height; y++) {
         const gy = Math.floor(y / STEP), fy = (y % STEP) / STEP;
         for (let x = 0; x < width; x++) {
             const gx = Math.floor(x / STEP), fx = (x % STEP) / STEP;
-            const a = grid[gy * columns + gx], b = grid[gy * columns + gx + 1];
-            const c = grid[(gy + 1) * columns + gx], d = grid[(gy + 1) * columns + gx + 1];
-            const wa = a ? (1 - fx) * (1 - fy) : 0, wb = b ? fx * (1 - fy) : 0;
-            const wc = c ? (1 - fx) * fy : 0, wd = d ? fx * fy : 0;
-            const weight = wa + wb + wc + wd;
-            if (weight === 0) continue;
             const source = ((y % SIZE) * SIZE + x % SIZE) * 4;
             const target = (y * width + x) * 4;
-            for (let channel = 0; channel < 3; channel++) {
-                output[target + channel] = ((a?.[source + channel] ?? 0) * wa
-                    + (b?.[source + channel] ?? 0) * wb
-                    + (c?.[source + channel] ?? 0) * wc
-                    + (d?.[source + channel] ?? 0) * wd) / weight;
+            let r = 0, g = 0, b = 0, weight = 0;
+            for (let corner = 0; corner < 4; corner++) {
+                const dx = corner & 1, dy = corner >> 1;
+                const cornerWeight = (dx ? fx : 1 - fx) * (dy ? fy : 1 - fy);
+                for (const sample of grid[(gy + dy) * columns + gx + dx]) {
+                    const w = sample.weight * cornerWeight;
+                    r += sample.pixels[source] * w;
+                    g += sample.pixels[source + 1] * w;
+                    b += sample.pixels[source + 2] * w;
+                    weight += w;
+                }
             }
+            if (weight === 0) continue;
+            output[target] = r / weight;
+            output[target + 1] = g / weight;
+            output[target + 2] = b / weight;
             output[target + 3] = weight * 255;
         }
     }
@@ -84,16 +112,21 @@ export async function createTerrainMaterial(
     const rows = Math.ceil(height / STEP) + 1;
     const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
     const southY = Math.asinh(Math.tan(bounds.south * Math.PI / 180));
-    const names: (string | null)[] = [];
+    const nodes: Map<string, number>[] = [];
     for (let y = 0; y < rows; y++) {
         const lat = Math.atan(Math.sinh(northY + (southY - northY) * y * STEP / height)) * 180 / Math.PI;
         for (let x = 0; x < columns; x++) {
             const lng = bounds.west + (bounds.east - bounds.west) * x * STEP / width;
-            names.push(queryBaseTile({ lat, lng, isSiege: false, isWinter: false }));
+            nodes.push(sampleClimateMaterials(lat, lng, worldWidth, worldHeight,
+                (sampleLat, sampleLng) => queryBaseTile({ lat: sampleLat, lng: sampleLng, isSiege: false, isWinter: false })));
         }
     }
     const assets = new Map<string, Uint8ClampedArray | null>();
-    await Promise.all([...new Set(names)].filter((name): name is string => name !== null)
+    await Promise.all([...new Set(nodes.flatMap(node => [...node.keys()]))]
         .map(async name => assets.set(name, await loadTexture(name))));
-    return blendMaterialGrid(names.map(name => name ? assets.get(name) ?? null : null), columns, width, height);
+    const grid = nodes.map(node => [...node].flatMap(([name, weight]) => {
+        const pixels = assets.get(name);
+        return pixels ? [{ pixels, weight }] : [];
+    }));
+    return blendMaterialGrid(grid, columns, width, height);
 }

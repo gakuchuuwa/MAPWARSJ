@@ -1131,11 +1131,12 @@ const _FIXED: Record<string, string> = {
     'apuliya': '#8A5A2E', // 阿普利亚·梅尔菲（诺曼南意大利土褐）
     'saimien': '#3E7A44', // 塞米恩·塞米恩（塞米恩山地绿）
     'aosimanbeiyiguo': '#9E2620', // 奥斯曼贝伊国·瑟于特（奥斯曼红）
-    'laxidaimeng': '#8A2038', // 拉栖代蒙·安菲波利斯（斯巴达绯红）
-    'boluobennisa': '#1E5E8C', // 伯罗奔尼撒·羊河（爱琴海海军蓝）
-    'ajidewangchao': '#7E2A8C', // 阿吉德王朝·格拉尼库斯（马其顿王室紫）
-    'jiyezhe': '#6E7A8A', // 继业者·佩鲁西姆（银盾银灰）
-    'kaliya': '#C89A3A', // 卡里亚·哈利卡纳苏（摩索拉斯陵墓金）
+    'aiduoniya': '#8A2038', // 埃多尼亚·安菲波利斯（斯特里蒙河色雷斯绯红）
+    'qiesuonisuosi': '#1E5E8C', // 切索尼索斯·羊河（爱琴海海军蓝）
+    'mixiya': '#7E2A8C', // 密西亚·格拉尼库斯（小亚密西亚紫）
+    'xiaaiji': '#6E7A8A', // 下埃及·佩鲁西姆（银盾银灰）
+    'kaliya': '#C89A3A', // 卡里亚·哈利卡纳苏斯（摩索拉斯陵墓金）
+    'bosidiguo': '#4A3A8A', // 波斯帝国·克拉佐美奈（阿契美尼德靛紫）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

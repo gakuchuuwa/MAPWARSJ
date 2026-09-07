@@ -3227,6 +3227,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_parmenion: { generalId: 'gen_parmenion', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 亚历山大副帅，三大会战统左翼 → 名将
     gen_perdiccas: { generalId: 'gen_perdiccas', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 帝国摄政，征埃及兵败被弑 → 普将
     gen_artemisia: { generalId: 'gen_artemisia', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 卡里亚女王，萨拉米斯助波斯无胜绩 → 普将
+    gen_artaphernes: { generalId: 'gen_artaphernes', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' }, // 吕底亚总督，以弗所会战全歼雅典远征军 → 名将
 };
 
 

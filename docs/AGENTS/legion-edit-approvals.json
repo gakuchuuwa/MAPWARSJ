@@ -91,6 +91,23 @@
       "regions": [
         "DELHI"
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "quote": "好的走A。",
+      "quote_context": "主人先说「战略地图上，古典先秦军团的阵型，不规整呀」；我量出真凶是战车帧框(最宽162px)远超格位间距(46px)，给了三条路，A=给战车类 slot 加 scale，主人选 A。",
+      "scope": "只给战车类 slot 加 scale 字段压绘制尺寸；兵种、count、九格位、阵型 mode 一律未动",
+      "regions": [
+        "CENTRAL",
+        "EGYPT",
+        "BABYLON",
+        "HITTITES",
+        "ASSYRIAN",
+        "HEBREWS",
+        "GORYEO",
+        "JOSEON",
+        "QIN_FACTION_COMPOSITION"
+      ]
     }
   ]
 }

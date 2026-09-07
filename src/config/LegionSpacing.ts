@@ -15,6 +15,21 @@
  *   · 与素材无关的常数间距下限（「只抬不降」）。
  *   · `kongque` 势力专属行距系数 0.58/0.75。
  *
+ * 🔴 [2026-09-08 主人定「走A」] 唯一例外：**战车类 slot 带 `scale`**。
+ *    起因：主人「战略地图上，古典先秦军团的阵型，不规整呀」。实测 DE 战车帧框远超格位间距 ——
+ *    先秦远程战车 move 最宽 152×136 → 绘制 162×144px，而 STRATEGIC_SPACING_X 只有 46px；
+ *    雁行阵后排那 2 格在 c=±0.5（中心距 = 1×46px，七个阵型里最窄的一对），
+ *    两乘重叠 116px 糊成一坨，纵向 144px 又压进中排，整排比 4 人前排还宽。
+ *    间距是常数不许动（上面那条铁律），所以只能压绘制尺寸：
+ *      **战车类绘制宽度上限 = 2 × STRATEGIC_SPACING_X = 92px**（一对战车各露一半，整排不超前排 footprint）
+ *      scale = 92 ÷ (move 最宽帧 × SPRITE_BASE_H / DE_REF_FRAME_H)
+ *      war_chariot 0.66 / war_chariot_ranged 0.57 / elite_war_chariot 0.66
+ *      war_wagon 0.59 / elite_war_wagon 0.53
+ *    落地后绘制高 78~88px：仍高于步兵 68px、低于战象 115px，量级排序不乱。
+ *    ⚠️ slot scale 只乘绘制尺寸，不进 spacingX/Y；13 的 computeDenseSpacing 取 max(cultureScales)，
+ *       同编成里其余 slot 都是 1.0，故 13 的密集间距逐像素不变。
+ *    ⚠️ 这是**战车类专属**，不是「按兵种算尺寸」的口子。别推广到别的兵种，也别据此复活 rowMetrics。
+ *
  * ⚠️ 只管战略地图。zoom 13 走 LegionPhalanxDrawer.computeDenseSpacing，是另一套，别混。
  *
  * 验收：`npm run legion:spacing-audit`（全势力编成扫一遍，「间距÷绘制尺寸」必须全局唯一）

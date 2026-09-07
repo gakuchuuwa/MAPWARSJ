@@ -550,7 +550,7 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 枪兵长 4人
-    { type: 'war_chariot_ranged', count: 3 },  // Row 1 中排 = 先秦远程战车 3乘
+    { type: 'war_chariot_ranged', count: 3, scale: 0.57 },  // Row 1 中排 = 先秦远程战车 3乘
     { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
 ];
 
@@ -1204,7 +1204,7 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         slots: [
             { type: 'elite_white_feather_guard', count: 4 }, // 前排主力【精锐】 = 蜀白毦兵精锐
             { type: 'fire_archer', count: 3 }, // 中坚 = 吴火焰弓箭手
-            { type: 'war_chariot_ranged', count: 2 } // 后排 = 先秦远程战车
+            { type: 'war_chariot_ranged', count: 2, scale: 0.57 } // 后排 = 先秦远程战车
         ]
     }
 ];
@@ -2435,7 +2435,7 @@ export const EGYPT_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_war_chariot', count: 4 }, // 前排主力【高级】 = 双轮战车高级（法老战车）
+            { type: 'elite_war_chariot', count: 4, scale: 0.66 }, // 前排主力【高级】 = 双轮战车高级（法老战车）
             { type: 'antiquity_spearman', count: 3 }, // 中坚 = 古典长矛兵
             { type: 'cretan_archer', count: 2 } // 后排 = 克里特弓箭手
         ]
@@ -2473,7 +2473,7 @@ export const BABYLON_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_war_chariot', count: 4 },   // 底边主力 = 双轮战车高级
+            { type: 'elite_war_chariot', count: 4, scale: 0.66 },   // 底边主力 = 双轮战车高级
             { type: 'guardsman', count: 2 },   // 尖刀 = 近卫军（巴比伦王家近卫，古典近战步兵）
             { type: 'elite_guardsman', count: 3 }   // 中坚 = 近卫军高级
         ]
@@ -2491,9 +2491,9 @@ export const HITTITES_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_chariot', count: 2 },
+            { type: 'war_chariot', count: 2, scale: 0.66 },
             { type: 'antiquity_spearman', count: 3 },
-            { type: 'elite_war_chariot', count: 4 }
+            { type: 'elite_war_chariot', count: 4, scale: 0.66 }
         ]
     }
 ];
@@ -2516,7 +2516,7 @@ export const ASSYRIAN_TIERS: CompositionTier[] = [
         slots: [
             { type: 'militia', count: 3 },   // 前排 = 中东民兵（亚述征召步兵，本区兵）
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },   // 中坚主力 = 古典骑射手重装
-            { type: 'war_chariot', count: 2 }   // 后排 = 双轮战车
+            { type: 'war_chariot', count: 2, scale: 0.66 }   // 后排 = 双轮战车
         ]
     }
 ];
@@ -2995,7 +2995,7 @@ export const HEBREWS_TIERS: CompositionTier[] = [
             //    换成近东民兵：以色列行支派征召制，《民数记》一章各支派点兵，战时召民成军而非常备军。
             { type: 'levy', count: 3 },
             { type: 'vanguard', count: 4 },
-            { type: 'war_chariot', count: 2 }
+            { type: 'war_chariot', count: 2, scale: 0.66 }
         ]
     }
 ];
@@ -3299,7 +3299,7 @@ export const GORYEO_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'spearman', count: 2, scale: 1 },
-            { type: 'elite_war_wagon', count: 3 },
+            { type: 'elite_war_wagon', count: 3, scale: 0.53 },
             { type: 'fire_archer', count: 4, scale: 1 }
         ]
     }
@@ -3313,7 +3313,7 @@ export const JOSEON_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'jian_swordman_shielded', count: 2, scale: 1 },   // 两翼 = 华夏持盾刀剑手高级（牌刀手）
-            { type: 'war_wagon', count: 4 },                          // 中坚主力 = 高丽战车（神机箭火车）
+            { type: 'war_wagon', count: 4, scale: 0.59 },                          // 中坚主力 = 高丽战车（神机箭火车）
             { type: 'hand_cannoneer', count: 3, scale: 1 }            // 后排 = 火枪手
         ]
     }
