@@ -3213,6 +3213,15 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_champlain: { generalId: 'gen_champlain', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 新法兰西创始人，亲率攻易洛魁（小规模）→ 普将
     gen_urdaneta: { generalId: 'gen_urdaneta', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 航海家，发现马尼拉大帆船回航航线 → 普将
     gen_jadwiga: { generalId: 'gen_jadwiga', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 波兰女王，1387亲征收复红鲁塞尼亚 → 普将
+    gen_gajah_mada: { generalId: 'gen_gajah_mada', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' }, // 满者伯夷宰相·帕拉帕誓言，非战场统帅 → 普将
+    gen_prithviraj: { generalId: 'gen_prithviraj', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 遮娄其王，塔拉因首战败古尔 → 名将
+    gen_sumanguru: { generalId: 'gen_sumanguru', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 索索王，灭加纳后基里纳败于松迪亚塔 → 普将
+    gen_bohemond: { generalId: 'gen_bohemond', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 安条克公国首任君主，1098首占安条克 → 名将
+    gen_joanofarc: { generalId: 'gen_joanofarc', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 奥尔良解围·兰斯加冕 → 名将
+    gen_edward_longshanks: { generalId: 'gen_edward_longshanks', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 征服威尔士·苏格兰之锤 → 名将
+    gen_robert_guiscard: { generalId: 'gen_robert_guiscard', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 诺曼南意大利征服 → 名将
+    gen_yodit: { generalId: 'gen_yodit', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' }, // 半传说女王·摧毁阿克苏姆 → 普将
+    gen_osman_i: { generalId: 'gen_osman_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 奥斯曼开国·加齐圣战 → 名将
 };
 
 

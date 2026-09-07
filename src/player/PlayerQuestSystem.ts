@@ -389,8 +389,19 @@ export class PlayerQuestSystem {
     }
 
     private onHostLost(_lastId: string): void {
-        if (this.quest) this.finishQuest(false);
-        else this.deps.notify('所在军团已覆灭，你独自留在原地');
+        // 🔴 [2026-09-08 主人报障「军团覆灭，留在原地……不继续自动，我在面板中开着自动呢」]
+        //    改前：没有任务时**只发一句提示，不 detach**。而 PlayerHero.update 的覆灭分支
+        //    故意不清 hostLegionId（指望 onHostLost → finishQuest → detach 统一清场），
+        //    于是「任务已成功、之后军团才覆灭」这条路上 detach 永远不来 ——
+        //    玩家被钉在一支死军团上：每帧重入覆灭分支、travelToCity 因 hostLegionId 还在而拒绝，
+        //    tick() 里自动模式的条件 !isAttached() 也永远不成立 → 自动不触发。
+        //    现在无论有没有任务，一律先解绑；位置不动（玩家就留在军团覆灭的地方）。
+        if (this.quest) {
+            this.finishQuest(false);
+        } else {
+            this.deps.hero.detach();
+            this.deps.notify('所在军团已覆灭，你留在原地');
+        }
     }
 
     private finishQuest(success: boolean): void {
@@ -403,11 +414,10 @@ export class PlayerQuestSystem {
         if (!success) {
             hero.resetMerit('随军任务失败');
             hero.detach();
-            // [2026-09-08 主人定] 自动模式战败后不再自动寻找下一个军团：关闭自动模式，断掉「覆灭→再找军团」的无限链条。
-            if (hero.autoMode) {
-                hero.setAutoMode(false);
-                this.deps.notify('💥 战败，自动模式已关闭——不再自动寻找军团');
-            }
+            // 🔴 [2026-09-08 主人改口] 原先这里「战败即关闭自动模式」，主人当日又提：
+            //    「不继续自动，我在面板中开着自动呢」—— 面板开着自动就该继续找下一支军团，
+            //    不许代他把开关关掉。已删除自动关闭；要停自动，玩家自己在面板里取消勾选。
+            //    （detach() 已解绑军团，tick() 下一帧就会重新触发 autoTravelToBestCity。）
         }
         if (success) {
             if (q.kind === 'restore') {
