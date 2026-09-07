@@ -551,7 +551,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '武士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
-    { id: 'envoy', name: '欧洲使者', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
+    { id: 'envoy', name: '英雄·欧洲使者', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
