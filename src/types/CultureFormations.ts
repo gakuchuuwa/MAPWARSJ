@@ -219,7 +219,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       'crane_wing',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     GERMANIC:     'crane_wing',   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
-    LATIN:        'fish_scale',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
+    LATIN:        'echelon',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
@@ -296,7 +296,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     TURKS: 'triangle',
     NANZHAO: 'fish_scale',
     SRIVIJAYA: 'crane_wing',
-    KUSHAN:       'triangle',     // 古典月氏：锥形阵 2+3+4 尖刀波鲁斯战象2+中坚粟特铁骑3+底边古典重装骑射4档主力
+    KUSHAN:       'crane_wing',     // 古典月氏：锥形阵 2+3+4 尖刀波鲁斯战象2+中坚粟特铁骑3+底边古典重装骑射4档主力
     KUSH: 'crane_wing',   // 古典努比亚：鹤翼阵 2+4+3 前锋麦查伊飞矛+中坚先锋重步主力+后排努比亚强弓
     KHITAN: 'triangle',
     UIGHUR: 'triangle',
@@ -1480,13 +1480,12 @@ export const LATIN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'legionary', count: 3 },
-            { type: 'elite_centurion', count: 4 },
+            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
-
 /** 古典印度军团（鹤翼 2+4+3，主力在中排）
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档；大象只许占 2 档；三兵全部为古典档位。
  *  史料：孔雀王朝（前 322—前 185）。印度兵制的本名就是「四支军」caturaṅga——
@@ -2501,16 +2500,12 @@ export const KUSHAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            // 🔴 [2026-09-07 平衡] 原来前 2 是「波鲁斯王战象」—— 那是 hero 类素材，战力 347，
-            //    一支军团被它顶到 156，是古典第一、全表第二。换成通用的桑纳亚战象（182），
-            //    样貌同为披挂战象，战力回到 119，仍是古典顶档但不再离群。
             { type: 'sannahya', count: 2 },
-            { type: 'sogdian_cataphract', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'sogdian_cataphract', count: 4 },
+            { type: 'antiquity_cavalry_archer', count: 3, scale: 1 }
         ]
     }
 ];
-
 /** 古典努比亚军团（鹤翼阵 2+4+3，主力在中坚）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（“弓之国度”塔-塞提·库施与麦罗埃铁器强权）：
