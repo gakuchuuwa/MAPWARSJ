@@ -108,7 +108,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '伊洛瓦底江重型内河战船', regions: ['BURMESE'] },
 
     // ── 地中海古典 ──────────────────────────────────────────
-    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK', 'GREEK_MERCENARY'] },
+    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK', 'GREEK_MERCENARY', 'MAGNA_GRAECIA'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰：迦太基西地中海海上霸权核心主力（第一次布匿战争埃加迪群岛海战形制）', regions: ['CARTHAGE'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN', 'IMPERIAL_ROME'] },
     { ship: 'TRIREME', why: '三列桨座战船：亚历山大大帝提尔之围与尼阿卡斯印度洋远征舰队主力（爱琴海与东地中海战舰形制）', regions: ['MACEDONIAN'] },

@@ -433,6 +433,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     HELLENIC: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     IMPERIAL_ROME: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     GREEK_MERCENARY: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    MAGNA_GRAECIA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
 };
 
 /**
@@ -1170,6 +1171,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     HELLENIC: 'MEDITERRANEAN',
     IMPERIAL_ROME: 'MEDITERRANEAN',
     GREEK_MERCENARY: 'MEDITERRANEAN',
+    MAGNA_GRAECIA: 'MEDITERRANEAN',
 };
 
 
@@ -3630,7 +3632,7 @@ export class Scene13WarLayer {
      */
     private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
         const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
-        const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS', 'MACEDONIAN', 'HELLENIC', 'IMPERIAL_ROME', 'GREEK_MERCENARY']);
+        const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS', 'MACEDONIAN', 'HELLENIC', 'IMPERIAL_ROME', 'GREEK_MERCENARY', 'MAGNA_GRAECIA']);
         const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS']);
         const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
         // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
