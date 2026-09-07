@@ -260,7 +260,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HUNS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     TEUTONS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
     VIKINGS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
-    CELTS: 'fish_scale',  // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
+    CELTS: 'crane_wing',  // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
     ITALIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     SICILIANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
@@ -1864,15 +1864,12 @@ export const CELTS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_war_dog', count: 3 }, // 前排 = 战犬高级
-            { type: 'vanguard', count: 4 }, // 中坚主力【重装】 = 先锋重装步兵
-            // 🔴 [2026-09-07] 原为「古典掷矛手高级」。凯撒《高卢战记》里高卢-不列颠部族标枪是
-            //    普通战士人手一支的常规散兵武器，不是精锐；降回基础档。
-            { type: 'antiquity_skirmisher', count: 2 } // 后排 = 古典掷矛手
+            { type: 'elite_war_dog', count: 2, scale: 1 },
+            { type: 'elite_woad_raider', count: 4, scale: 1 },
+            { type: 'woad_raider', count: 3, scale: 1 }
         ]
     }
 ];
-
 /** ITALIANS 文化军团（crescent 3+2+4）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
  *  （利古里亚、阿诺、托斯卡纳、伦巴第…），原文化表那份已过时，作废。 */

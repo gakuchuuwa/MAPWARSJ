@@ -1366,4 +1366,31 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "camel_archer", count: 4 },
         ],
     },
+    "mangsite": {
+        legionName: "古典凯尔特军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_war_dog", count: 2 },
+            { type: "elite_woad_raider", count: 4 },
+            { type: "woad_raider", count: 3 },
+        ],
+    },
+    "jialatai": {
+        legionName: "古典凯尔特军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_war_dog", count: 2 },
+            { type: "elite_woad_raider", count: 4 },
+            { type: "woad_raider", count: 3 },
+        ],
+    },
+    "kaernute": {
+        legionName: "古典凯尔特军团",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "elite_war_dog", count: 2 },
+            { type: "elite_woad_raider", count: 4 },
+            { type: "woad_raider", count: 3 },
+        ],
+    },
 };
