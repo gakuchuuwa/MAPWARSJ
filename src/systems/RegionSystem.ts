@@ -125,7 +125,7 @@ export type RegionType =
     | 'SWEDISH'     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
     | 'MACEDONIAN' // 古典马其顿（佩拉王都与亚历山大方阵骑步）
     | 'HELLENIC' // 古典希伦（雅典民主与斯巴达双王城邦同盟）
-    | 'IMPERIAL_ROME' // 古典帝国罗马（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
+    | 'IMPERIAL_ROME' // 古典罗马禁卫（奥古斯都元首制近卫铁骑与禁卫百夫长军团）
     | 'GREEK_MERCENARY' // 古典希腊雇佣（色诺芬万人军与地中海游历雇佣方阵）
     | 'MAGNA_GRAECIA' // 古典大希腊（塔兰托与南意大利希腊殖民城邦世界）
     | 'ACHAEMENIDS' // 古典阿契美尼德（波斯帝国万人不死军与皇权霸业）
@@ -227,7 +227,7 @@ export const REGION_ORDER: RegionType[] = [
 export const REGION_LABELS: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
     GERMANIC: '古典日耳曼',
-    LATIN: '古典共和国罗马',
+    LATIN: '古典罗马',
     CENTRAL: '古典先秦',
     NORTH: '古典秦汉',
     JIANGNAN: '封建华夏',
@@ -331,7 +331,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SWEDISH: '帝王瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
-    IMPERIAL_ROME: '古典帝国罗马',
+    IMPERIAL_ROME: '古典罗马禁卫',
     GREEK_MERCENARY: '古典希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
@@ -453,7 +453,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SWEDISH: '帝王瑞典',
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
-    IMPERIAL_ROME: '古典帝国罗马',
+    IMPERIAL_ROME: '古典罗马禁卫',
     GREEK_MERCENARY: '古典希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
