@@ -3879,6 +3879,10 @@ async function saveCultureComposition(culture: RegionType, legion: CustomFaction
                 culture,
                 slots: legion.slots,
                 formationMode: legion.formationMode,
+                // 🔴 [2026-09-07] 原来不发军团名 —— 于是「选一个军团 → 编辑 → 保存」只落了三排兵种，
+                //    名字原封不动。主人套用【古典希腊军团】存到罗马帝国，编制变成希腊的、名字还叫
+                //    【古典罗马军团】，界面上「保存【古典希腊军团】」和实际结果对不上（实锤保存错误）。
+                legionName: legion.legionName?.trim() || undefined,
             }),
         });
         if (!res.ok) throw new Error(await res.text());
