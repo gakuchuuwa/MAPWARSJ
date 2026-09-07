@@ -1242,9 +1242,9 @@ export const JAPAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'samurai', count: 3 },          // Row 0 前卫 = 日本武士 3人
-            { type: 'samurai_elite', count: 4 },    // Row 1 中军突击主力 = 精锐武士 4人
-            { type: 'rattan_archer', count: 2 }     // Row 2 尾收支援 = 藤弓兵 2人
+            { type: 'samurai', count: 3 },                // 尖刀斩阵 = 日本武士（野太刀破阵突击）
+            { type: 'samurai_elite', count: 4 },          // 中军主力【精锐】 = 日本武士精锐（镰仓武士名誉斩阵）
+            { type: 'ninja', count: 2 }                   // 后卫奇袭 = 日本忍者（伊贺甲贺隐密暗杀飞镖奇袭）
         ]
     }
 ];
@@ -1270,9 +1270,9 @@ export const STEPPE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'keshik', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
-            { type: 'mangudai_elite', count: 4 }
+            { type: 'keshik', count: 2 },                 // 尖刀重骑 = 怯薛军（蒙古大汗宿卫近战铁骑）
+            { type: 'mangudai', count: 3 },               // 中坚奔射 = 蒙古突骑（草原机动骑射游走风筝）
+            { type: 'mangudai_elite', count: 4 }          // 底边主力【精锐】 = 蒙古突骑精锐（王牌突骑漫天箭雨终结）
         ]
     }
 ];
@@ -1733,14 +1733,14 @@ export const BENGALIS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_ratha_melee', count: 4 },
-            { type: 'elite_ratha_ranged', count: 3 },
-            { type: 'archer', count: 2 }
+            { type: 'elite_ratha_melee', count: 4 },      // 前排突击【精锐】 = 孟加拉拉塔战车精锐（冲锋突击双姿态战车）
+            { type: 'elite_ratha_ranged', count: 3 },     // 中军飞箭【精锐】 = 孟加拉拉塔弓战车精锐（移动远程倾泻火力）
+            { type: 'pattiyoda_longbowman', count: 2 }    // 后排重箭 = 僧伽罗帕提尤达长弓手（南亚大竹弓贯穿抛射）
         ]
     }
 ];
 
-/** 古典玛雅军团（偃月阵 3+2+4，主力在底边）。
+/** 城堡玛雅军团（偃月阵 3+2+4，主力在底边）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（古典期玛雅城邦·蒂卡尔与卡拉克穆尔雨林战法）：
  *   · 前排前卫 美洲鹰斥候（3档） —— 佩滕热带雨林飞跃穿插的轻装侦察与突袭战士，身着轻棉甲与翎羽头饰，占 3 档前锋。
@@ -1752,11 +1752,9 @@ export const MAYANS_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eagle_scout', count: 3 },
-            // 🔴 [2026-09-07] 原为「古典掷矛手高级」。玛雅的投矛器（atlatl）是全民普及的
-            //    征召兵器，不是常备精锐建制，降回基础档；且该高级兵原被 8 支军团共用，过滥。
-            { type: 'antiquity_skirmisher', count: 2 },
-            { type: 'vanguard', count: 4 }
+            { type: 'eagle_warrior', count: 3 },          // 尖刀疾行 = 鹰勇士（美洲轻装高机动鹰图腾先锋）
+            { type: 'slinger', count: 2 },                // 中坚飞石 = 投石兵（安第斯-中美洲破甲投石）
+            { type: 'plumed_archer', count: 4 }           // 底边密箭 = 玛雅羽箭手（尤卡坦半岛王牌羽冠轻装速射弓手）
         ]
     }
 ];
@@ -1854,9 +1852,9 @@ export const AMERICA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jaguar_warrior', count: 3 },        // 前排突击 = 阿兹特克豹勇士（特诺奇蒂特兰豹武士突击队）
-            { type: 'elite_jaguar_warrior', count: 4 },  // 中坚铁拳【精锐】 = 阿兹特克豹勇士精锐（太阳神禁卫特装豹勇士）
-            { type: 'elite_plumed_archer', count: 2 }    // 后排压制【精锐】 = 玛雅羽箭手精锐（美洲雨林穿甲精锐射手）
+            { type: 'jaguar_warrior', count: 3 },         // 尖刀獠牙 = 阿兹特克豹勇士（黑曜石大棒嗜血破阵）
+            { type: 'elite_eagle_warrior', count: 4 },    // 中坚神鹰【高级】 = 鹰勇士高级（阿兹特克太阳神鹰精锐重装战士）
+            { type: 'xolotl_warrior', count: 2 }          // 侧翼铁蹄【高级】 = 阿兹特克索洛特尔骑兵高级（美洲特种近战反抗骑兵）
         ]
     }
 ];
@@ -2001,7 +1999,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     GURJARAS: '封建瞿折罗军团',
     VIETNAMESE: '城堡京族军团',
     KHMER: '城堡高棉军团',
-    MAYANS: '古典玛雅军团',
+    MAYANS: '城堡玛雅军团',
     MAPUCHE: '帝王马普切军团',
     MUISCA: '城堡穆伊斯卡军团',
     TUPI: '城堡图皮军团',
@@ -2303,9 +2301,9 @@ export const BURMESE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'archer', count: 3 },
-            { type: 'elite_arambai', count: 4 }
+            { type: 'armored_elephant', count: 2 },       // 尖刀破城 = 装甲攻城战象（缅甸贡榜王朝披甲攻城战象）
+            { type: 'archer', count: 3 },                 // 中坚齐射 = 弓兵（缅族长弓抛射压制）
+            { type: 'elite_arambai', count: 4 }          // 底边主力【精锐】 = 飞镖骑兵精锐（阿瓦王家精锐飞镖毒骑）
         ]
     }
 ];
@@ -2761,9 +2759,9 @@ export const JURCHEN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'xianbei_raider', count: 2 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'iron_pagoda', count: 2 },            // 两翼铁拳【重装】 = 女真铁浮屠（金源重甲铁骑正面突击）
+            { type: 'cav_archer', count: 3 },             // 中坚游射 = 骑射手（女真反曲强弓游击）
+            { type: 'elite_iron_pagoda', count: 4 }       // 底边主力【精锐】 = 女真铁浮屠精锐（金兀术王牌铁浮屠重铠主战）
         ]
     }
 ];
@@ -2803,9 +2801,9 @@ export const FRENCH_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'halberdier', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
-            { type: 'elite_coustillier', count: 4 }
+            { type: 'halberdier', count: 2 },             // 尖刀护阵【重装】 = 重装戟兵（瑞士与诺曼戟兵拒骑）
+            { type: 'genoese_crossbowman', count: 3 },    // 中坚狙击【精锐】 = 热那亚弩手精锐（西欧雇佣大盾强弩火力压制）
+            { type: 'frankish_paladin', count: 4 }        // 底边主力【高级】 = 法兰克圣骑士高级（法兰西百年战争王家顶级具装圣骑士）
         ]
     }
 ];
@@ -3194,9 +3192,9 @@ export const SONG_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordman_shielded', count: 4 }, // 前排抗线【高级】 = 华夏持盾刀剑手高级（大宋步人甲刀盾方阵）
-            { type: 'siege_ballista', count: 2 },         // 中坚火力【重装】 = 华夏攻城床弩车重装（三弓八牛床子弩与神臂弩）
-            { type: 'cavalier', count: 3 }               // 铁骑突袭【重装】 = 骑士重装（岳家军背嵬具装铁骑）
+            { type: 'elite_fire_lancer', count: 4 },      // 前排主力【高级】 = 南宋火矛手高级（顺昌大捷飞火枪步骑撕裂）
+            { type: 'fire_lancer', count: 2 },            // 中军突阵 = 南宋火矛手（火矛近战喷刺）
+            { type: 'cavalier', count: 3 }               // 后排铁壁【重装】 = 骑士重装（大宋具装甲骑护卫）
         ]
     }
 ];
@@ -3208,9 +3206,9 @@ export const GORYEO_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_pikeman', count: 2 },          // 两翼掩护【重装】 = 长枪兵重装（别武班抗骑长枪阵）
-            { type: 'iron_pagoda', count: 4 },            // 中坚铁骑【重装】 = 女真铁浮屠（别武班神骑军具装重骑，邻接东北近战重骑）
-            { type: 'rattan_archer', count: 3 }          // 后排齐射 = 越南藤弓兵（高丽片箭强弓手）
+            { type: 'war_wagon', count: 2 },              // 两翼掩护 = 高丽战车（重装战车两翼压制）
+            { type: 'elite_war_wagon', count: 4 },        // 中坚核心【精锐】 = 高丽战车精锐（王牌神机铁甲战车正面平推）
+            { type: 'heavy_pikeman', count: 3 }          // 后排枪林【重装】 = 长枪兵重装（朝鲜重甲拒骑）
         ]
     }
 ];
@@ -3320,7 +3318,7 @@ export const DELHI_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'battle_elephant', count: 3 },        // 尖刀突破 = 战斗象（德里苏丹铁甲战象重碾）
+            { type: 'elite_armored_elephant', count: 3 }, // 尖刀突破【高级】 = 装甲攻城战象高级（苏丹铁甲巨象破门践踏）
             { type: 'elite_ghulam', count: 4 },           // 中坚核心【精锐】 = 印度斯坦古拉姆精锐（苏丹亲兵古拉姆近卫铁甲剑士）
             { type: 'ghulam', count: 2 }                  // 侧翼近卫【重装】 = 印度斯坦古拉姆（苏丹侍卫古拉姆持盾长矛剑士）
         ]

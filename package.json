@@ -30,6 +30,8 @@
     "legion:editor-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_editor_vs_game.mts",
     "legion:unit-coverage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_unit_coverage_all.mts",
     "legion:general-usage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_general_usage.mts",
+    "region:center-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_region_centers.mts",
+    "legion:full-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_all_era_coverage.mts",
     "legion:era-mix-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_unit_era.mts",
     "legion:era-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_unit_era_consistency.mts",
     "legion:castle-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_castle_coverage.mts",
