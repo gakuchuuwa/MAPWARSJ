@@ -217,7 +217,7 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
-    SLAVIC:       'crane_wing',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
+    SLAVIC:       'echelon',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     GERMANIC:     'crane_wing',   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
     LATIN:        'echelon',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
@@ -328,7 +328,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SWISS: 'fish_scale',
     PASHTUN: 'crescent',
     SWEDISH: 'fish_scale',
-    MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
+    MACEDONIAN:   'balance_yoke',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
     HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
     IMPERIAL_ROME: 'triangle',   // 古典罗马禁卫：锥形阵 2+3+4 伴随骑兵2 + 罗马百夫长3 + 罗马百夫长重装4
     GREEK_MERCENARY: 'echelon',    // 古典希腊雇佣：雁行阵 4+3+2 雇佣重步4 + 冲击重骑3 + 希腊腹弩2
@@ -1337,7 +1337,6 @@ export const LINGNAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-
 /** 古典古滇军团（锥形阵 2+3+4，战象尖刀+底边重步主力）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。大象只占 2 档。
  *  史实依据（战国西汉滇池古滇王国）：
@@ -1443,9 +1442,9 @@ export const SLAVIC_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'norse_warrior', count: 2, scale: 1 },
-            { type: 'elite_boyar', count: 4, scale: 1 },
-            { type: 'laminated_bowman', count: 3, scale: 1 }
+            { type: 'vanguard', count: 4 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 2 }
         ]
     }
 ];
@@ -1480,9 +1479,9 @@ export const LATIN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'elite_centurion', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 }
+            { type: 'equites', count: 4 },
+            { type: 'centurion', count: 3 },
+            { type: 'imperial_centurion', count: 2 }
         ]
     }
 ];
@@ -3110,13 +3109,12 @@ export const MACEDONIAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 4 },
-            { type: 'phalangite', count: 3 },
-            { type: 'companion_cavalry', count: 2 }
+            { type: 'phalangite', count: 4, scale: 1 },
+            { type: 'hero_macedonian_commander', count: 2, scale: 1 },
+            { type: 'companion_cavalry', count: 3 }
         ]
     }
 ];
-
 export const SWEDISH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,

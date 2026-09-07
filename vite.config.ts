@@ -306,7 +306,7 @@ export default defineConfig({
                 let pendingBatchReloadTimer: ReturnType<typeof setTimeout> | null = null;
                 const sendQueuedFullReload = (): void => {
                     // 若任一抑制窗仍开着（期间又有保存顺延了窗口），继续等到全部关闭
-                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil, roadSaveSuppressReloadUntil) - Date.now();
+                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil, roadSaveSuppressReloadUntil, legionSaveSuppressReloadUntil) - Date.now();
                     if (wait > 0) {
                         pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, wait + 250);
                         return;
@@ -369,13 +369,14 @@ export default defineConfig({
                         const inPortrait = now < portraitDevSuppressReloadUntil;
                         const inBatch = now < batchSaveSuppressReloadUntil;
                         const inRoad = now < roadSaveSuppressReloadUntil;
-                        if (!inPortrait && !inBatch && !inRoad && isRunGateClosed()) {
+                        const inLegion = now < legionSaveSuppressReloadUntil;
+                        if (!inPortrait && !inBatch && !inRoad && !inLegion && isRunGateClosed()) {
                             markReloadNeeded();
                             console.log('[HMR-Suppress] 已拦截整页刷新（推演运行中；暂停推演即刷新）');
                             return;
                         }
-                        if (inPortrait || inBatch || inRoad) {
-                            if (inBatch && !inPortrait && !inRoad) {
+                        if (inPortrait || inBatch || inRoad || inLegion) {
+                            if (inBatch && !inPortrait && !inRoad && !inLegion) {
                                 if (pendingBatchReloadTimer) clearTimeout(pendingBatchReloadTimer);
                                 pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, batchSaveSuppressReloadUntil - now + 250);
                                 console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（批量窗口，结束后自动补发）');
@@ -1006,6 +1007,7 @@ export default defineConfig({
                             if (data.formationMode) {
                                 text = serverReplaceFormationMode(text, data.culture, data.formationMode);
                             }
+                            markLegionSaveWrite();
                             fs.writeFileSync(filePath, text, 'utf-8');
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
@@ -1040,6 +1042,7 @@ export default defineConfig({
                             const prevText = fs.existsSync(factionCompositionsPath)
                                 ? fs.readFileSync(factionCompositionsPath, 'utf-8') : '';
                             const formatted = serverPatchFactionCompositions(prevText, data.compositions || {});
+                            markLegionSaveWrite();
                             serverSafeWriteFileSync(factionCompositionsPath, formatted);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
