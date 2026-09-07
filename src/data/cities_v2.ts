@@ -1920,7 +1920,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bremen', name: '不莱梅', factionId: 'weixi', lat: 53.07, lng: 8.8, type: 'small_city', troops: 30000, region: 'GERMANIC' },
 
         { id: 'city_anbulajiya', name: '安布拉基亚', factionId: 'yipilusi', lat: 39.16, lng: 20.98, type: 'small_city', troops: 28000, region: 'GREEK', note: '伊庇鲁斯王国古都·皮洛士大帝王都·希腊西方锁钥' },
-{ id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 30000, region: 'GREEK' },
+{ id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 30000, region: 'HELLENIC' },
     { id: 'city_salonica', name: '佩拉', factionId: 'maqidun', lat: 40.76, lng: 22.5192, type: 'small_city', troops: 20000, region: 'MACEDONIAN' },
 
 
@@ -2030,7 +2030,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 30000, region: 'FRENCH', note: '法兰西王国都城巴黎，百年战争决战要津，查理七世敕令骑兵大本营' },
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 30000, region: 'LATIN', note: '卡尔努特人首府，沙特尔圣母主教座堂' },
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 30000, region: 'GREEK' },
+    { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 30000, region: 'HELLENIC' },
     { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'CARTHAGE' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 30000, region: 'PORTUGUESE' },
 

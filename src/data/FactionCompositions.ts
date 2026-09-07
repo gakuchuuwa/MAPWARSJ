@@ -25,47 +25,6 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 秦国军团·天水/咸阳/长子/武关/骊山/商邑/番禺（司马错 / 白起 / 王翦 / 章邯 / 商鞅 / 赵佗 · 雁行阵 4+3+2：枪兵长 4 + 先秦远程战车 3 + 诸葛弩 2）
-    "qin": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "xin": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "wazhai": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "nanyue": {
-        legionName: "古典百越军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "vanguard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "elite_antiquity_skirmisher", count: 2 },
-        ],
-    },
     // 韩国·雁行阵（4+3+2：与秦国同阵）
     han: {
         legionName: "韩卒劲弩军团",
@@ -74,28 +33,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'chukonu', count: 4 },                   // 主力·宽线齐射 = 劲弩手 4人
             { type: 'heavy_pikeman', count: 3 },             // 中军接应 = 长枪方阵 3人
             { type: 'war_chariot_ranged', count: 2 },        // 压阵战车 = 先秦远程战车 2乘
-        ],
-    },
-    // 晋国·曲沃（先轸 · 晋中军 · 先秦战车大阵 · 雁行阵 4+3+2：长矛前阵 4 + 先秦战车 3 + 劲弩压阵 2）
-    "jin": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    // 大秦长城军团·高阙塞（蒙恬 · 长城烽火卫 · 鱼鳞阵 4+3+2：虎豹骑 4 + 先秦远程战车 3 + 古典骑射手 2）
-    "baiyang": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
         ],
     },
     // 轻勇骑军团·嘉峪关/延恩/井陉关/襄武/平型关/文安/偏头关/轵关/涿邪山/巴里坤/居庸关/君子津（霍去病 / 卫青 / 韩信 / 李广 / 赵雍 / 公孙瓒 / 马芳 / 斛律光 / 窦宪 / 窦固 / 耿弇 / 魏尚 · 三角阵 2+3+4：虎豹骑 2 + 古典骑射手 3 + 重装古典骑射手 4）
@@ -268,28 +205,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "安陆军团",
         formationMode: "echelon",
         slots: [
-            { type: "white_feather_guard", count: 4 },
+            { type: "elite_white_feather_guard", count: 4 },
             { type: "crossbowman", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "ruo": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
-            { type: "war_chariot_ranged", count: 2 },
-        ],
-    },
-    "shangzhou": {
-        legionName: "古典先秦军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "white_feather_guard", count: 4 },
-            { type: "fire_archer", count: 3 },
             { type: "war_chariot_ranged", count: 2 },
         ],
     },
@@ -740,17 +657,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: 'hoplite', count: 3 },              // Row 0 前卫抗线 = 希腊重装步兵 3人（青铜圆盾长枪正面抗线）
             { type: 'sacred_band', count: 4 },          // Row 1 中军主力 = 底比斯圣队 4人（300同袍死士王牌突击主力）
             { type: 'thracian_peltast', count: 2 },     // Row 2 尾收远程 = 色雷斯标枪手 2人（希腊高穿透投枪两翼掩护）
-        ],
-    },
-    // 叙拉古·锡拉库萨（阿加索克利斯 / 狄奥尼修斯一世 · 机械腹弩与雇佣重装步兵军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 冲击重骑兵 3 + 机械腹弩手 2）
-    "xilagu": {
-        legionName: "古典希腊军团",
-        legionType: "region",
-        formationMode: "echelon",
-        slots: [
-            { type: "hoplite", count: 4 },
-            { type: "sacred_band", count: 3 },
-            { type: "rhodian_slinger", count: 2 },
         ],
     },
     // 罗得岛·罗得城（维拉雷 · 罗得岛铅弹投石与海岛要塞军团 · 鱼鳞阵 4+3+2：希腊雇佣重步兵 4 + 十字军骑士 3 + 罗得岛投石兵 2）

@@ -173,6 +173,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     PASHTUN: 'CAVALRY',
     SWEDISH: 'INFANTRY',
     MACEDONIAN:   'MIXED',      // 马其顿方阵步兵+伙伴骑兵
+    HELLENIC:     'INFANTRY',   // 古典希伦：雅典与斯巴达重步兵方阵
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -323,6 +324,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PASHTUN: 'crescent',
     SWEDISH: 'fish_scale',
     MACEDONIAN:   'echelon',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
+    HELLENIC:     'echelon',    // 古典希伦：斜行/雁行阵 4+3+2 斯巴达希皮乌斯精锐4 + 希腊底比斯圣队精锐3 + 雅典将军卫队精锐2
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -1997,6 +1999,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     PASHTUN: '帝王普什图军团',
     SWEDISH: '帝王瑞典军团',
     MACEDONIAN: '古典马其顿军团',
+    HELLENIC: '古典希伦军团',
 };
 
 
@@ -2949,6 +2952,27 @@ export const PASHTUN_TIERS: CompositionTier[] = [
  *    中 3 马其顿方阵步兵 —— 萨里沙超长矛方阵穿透刺杀
  *    后 2 马其顿伙伴骑兵 —— 亚历山大亲率王家冲击重骑铁锤侧击
  */
+
+/** 古典希伦军团（斜行/雁行阵 4+3+2，主力在前排宽线）。
+ *  严格遵守军团铁律：三排中必有一排精锐/高级/重装，符合古典时代，不安排攻城武器。
+ *  史实依据：古希腊古典城邦世界（Hellas）雅典、斯巴达、底比斯三大霸主联合军阵。
+ *   · 前排主力 斯巴达希皮乌斯精锐（4档【精锐】） —— 斯巴达国王贴身三百勇士，手执阿斯庇斯重盾组成的钢铁盾墙。
+ *   · 中坚战列 希腊底比斯圣队精锐（3档【精锐】） —— 留克特拉会战一战成名的 150 对生死搭档，斜行阵突刺破坚之矛。
+ *   · 后翼策应 雅典将军卫队精锐（2档【精锐】） —— 雅典十将军直属近卫精兵，高敏突击掩护两翼。
+ */
+export const HELLENIC_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hippeus', count: 4 }, // 前排主力【精锐】 = 斯巴达希皮乌斯精锐
+            { type: 'sacred_band', count: 3 }, // 中坚【精锐】 = 希腊底比斯圣队精锐
+            { type: 'strategos', count: 2 } // 后翼【精锐】 = 雅典将军卫队精锐
+        ]
+    }
+];
+
 export const MACEDONIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -3081,6 +3105,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     PASHTUN: PASHTUN_TIERS,
     SWEDISH: SWEDISH_TIERS,
     MACEDONIAN: MACEDONIAN_TIERS,
+    HELLENIC: HELLENIC_TIERS,
 };
 
 /** 取第一层文化军团名（未知区兜底中原军团） */
