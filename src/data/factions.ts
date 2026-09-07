@@ -1925,9 +1925,9 @@ export const FACTIONS: Faction[] = [
     { id: 'talasike', name: '塔拉斯科' },        // 钦聪灿·塔拉斯科(普雷佩查)王国
     { id: 'tailuona', name: '泰罗纳' },        // 特尤纳·泰罗纳
     { id: 'teweierqie', name: '特维尔切' },        // 圣胡利安港·特维尔切(阿奥尼肯)
-    { id: 'telasikala', name: '特拉斯卡拉联盟' },        // 特拉斯卡拉·特拉斯卡拉四城邦联盟（抗阿兹特克、助科尔特斯）
     { id: 'xinnidelan', name: '新尼德兰' },        // 新阿姆斯特丹·荷兰西印度公司北美殖民地
     { id: 'xinfalanxi', name: '新法兰西' },        // 魁北克·法属北美殖民地（尚普兰）
+    { id: 'xinxibanya', name: '新西班牙' },        // 阿卡普尔科·西班牙新西班牙总督区（马尼拉大帆船美洲终点）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

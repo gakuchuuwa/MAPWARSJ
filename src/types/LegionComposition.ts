@@ -36,7 +36,14 @@ export const HUAXIA_MIXED_TIERS: CompositionTier[] = [
 ];
 
 /**
- * 通用 Mixed 组合（轻步兵 + 骑兵 + 弓手）
+ * 通用兜底编成 —— 没有 cultureSlots 的部队（含玩家单骑，其 cultureRegion 为 null）走这里。
+ *
+ * 🔴 [2026-09-07 主人定「游戏开始的时候，玩家套用的模式采用近东民兵」]
+ *    改前是「剑士×3 / 枪骑+虎骑+枪骑 / 弓手×3」这套杂编，
+ *    玩家一开局在长安单骑起步、身无一物，却顶着一支混编精锐的阵容，不合定位；
+ *    而且这套正是记忆里「掉回默认集渲染成三国志10的兵」说的那一坨。
+ *    现统一为**近东民兵**（levy）：全表最低档的征召步兵，配得上白身起家。
+ *    ⚠️ 这是兜底，不是文化军团；文化军团一律走 CULTURE_TIERS_MAP，不受此表影响。
  */
 export const GENERIC_MIXED_TIERS: CompositionTier[] = [
     {
@@ -44,11 +51,7 @@ export const GENERIC_MIXED_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'swordsman', count: 3 },               // Row 0: 轻步兵
-            { type: 'light_riders', count: 1 },            // Row 1 Left: 枪骑兵
-            { type: 'tiger_rider', count: 1 },             // Row 1 Center: 将骑兵
-            { type: 'light_riders', count: 1 },            // Row 1 Right: 枪骑兵
-            { type: 'archer', count: 3 }                   // Row 2: 弓步兵
+            { type: 'levy', count: 9 }                     // 九格全部 = 近东民兵
         ]
     }
 ];

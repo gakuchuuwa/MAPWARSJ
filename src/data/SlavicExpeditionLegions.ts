@@ -67,6 +67,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     saierweiya: { name: '杜尚兵团', tier: 2 },
     kuertaiya: { name: '瓦拉骑兵', tier: 3 },
     xiadunhe: { name: '罗斯亲兵', tier: 1 },
+    dunhe: { name: '顿河哥萨克', tier: 3 },  // 维申斯卡亚·塔塔里诺夫：顿河哥萨克，1637-1642亚速围城抗奥斯曼
     valois_angouleme: { name: '国王宪兵', tier: 1 },
     bolan: { name: '翼骑兵', tier: 3 },
     dabolan: { name: '瓦尔塔骑', tier: 3 },

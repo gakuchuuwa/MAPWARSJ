@@ -49,10 +49,25 @@ export const PLAYER_RANKS: readonly PlayerRank[] = [
     { id: 'emperor', title: '皇帝', name: '九五至尊', merit: 600000, control: 'all', powerMult: 1.9, authority: '九五至尊，号令四海诸王，天下兵马尽归驱策', meritShare: 0.30 },
 ];
 
+/** 加入势力后的**保底官阶**：白身投效即为斥候，不必先攒功勋。
+ *  🔴 [2026-09-07 主人定「加入势力后，即可变为斥候，无需功绩」]
+ *     平民(civilian) 是「还没投任何势力的独行客」这一状态；一旦入伍，
+ *     人已在军中，再挂「布衣平民」不合身份。功勋只决定**斥候以上**怎么升。 */
+export const JOINED_FACTION_MIN_RANK: PlayerRankId = 'scout';
+
 export function rankForMerit(merit: number): PlayerRank {
     let r = PLAYER_RANKS[0];
     for (const rank of PLAYER_RANKS) if (merit >= rank.merit) r = rank;
     return r;
+}
+
+/** 玩家实际官阶：功勋算一档，已入势力再兜底到 [[JOINED_FACTION_MIN_RANK]]，取高者。 */
+export function rankFor(merit: number, joinedFaction: boolean): PlayerRank {
+    const byMerit = rankForMerit(merit);
+    if (!joinedFaction) return byMerit;
+    const floorIdx = PLAYER_RANKS.findIndex((r) => r.id === JOINED_FACTION_MIN_RANK);
+    const meritIdx = PLAYER_RANKS.findIndex((r) => r.id === byMerit.id);
+    return meritIdx >= floorIdx ? byMerit : PLAYER_RANKS[floorIdx];
 }
 
 export function nextRankAfter(rank: PlayerRank): PlayerRank | null {
