@@ -1,9 +1,12 @@
 {
   "name": "GREEK_GATE_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 188,
-  "box_h": 216,
-  "anchor_x": 128,
-  "anchor_y": 192,
-  "sld_source": "b_greek_gate_fortified_se_open"
+  "box_w": 316,
+  "box_h": 251,
+  "anchor_x": 186,
+  "anchor_y": 185,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_greek_gate_fortified_se_closed + b_greek_gate_fortified_corner"
 }
