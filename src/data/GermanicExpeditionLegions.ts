@@ -17,7 +17,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     jialuolin: { name: '加洛林亲兵', tier: 1 },          // 亚琛·查理大帝：scara 御林亲兵，征西欧
     yinggelan: { name: '英格兰长弓', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
     jinquehua: { name: '威尔士长弓', tier: 3 },          // 卡那封·长腿爱德华：威尔士长弓兵
-    geluositeboguo: { name: '格洛斯特弓手', tier: 3 },          // 格洛斯特·吉尔伯特：格洛斯特伯国长弓手
+    geluositeboguo: { name: '格洛斯特弓', tier: 3 },          // 格洛斯特·吉尔伯特：格洛斯特伯国长弓手
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
@@ -33,7 +33,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
-    wangdaer: { name: '汪达尔长枪兵', tier: 3 },      // 希波·盖萨里克：西地中海两栖重长枪突击方阵
+    wangdaer: { name: '希波长枪兵', tier: 3 },      // 希波·盖萨里克：西地中海两栖重长枪突击方阵
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米
@@ -59,6 +59,8 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
     pelianci: { name: '拉赫骑士', tier: 4 },
     bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士,
-    tuomengde: { name: '达尔卡斯斧卫', tier: 3 },
+    tuomengde: { name: '达尔战斧卫', tier: 3 },
     anggelu: { name: '撒克逊盾墙', tier: 2 },
+    gewennesi: { name: '斯诺登战团', tier: 3 },   // 哈瓦登·戴菲德：1282夜袭哈瓦登城堡点燃抗英终战，斯诺登要塞山地战团
+    weiershigongguo: { name: '红龙卫队', tier: 2 }, // 布伊尔斯·卢埃林：威尔士公国大公亲王卫队，高举红龙战旗，1282欧温桥之战
 };

@@ -20,8 +20,16 @@ function resolvePath(path: string): string {
 // ============================================================
 export type RegionType =
     | 'SLAVIC'        // 斯拉夫
+    | 'SLAVIC_FEUDAL' // 封建斯拉夫（封建时代：大摩拉维亚/马扎尔/波兰皮雅斯特）
+    | 'SLAVIC_CASTLE' // 城堡斯拉夫（城堡时代：瓦拉几亚/保加利亚第二帝国）
+    | 'SLAVIC_IMPERIAL' // 帝国斯拉夫（帝国时代：波兰立陶宛/哥萨克/克罗地亚）
     | 'GERMANIC'      // 日耳曼
+    | 'GERMANIC_FEUDAL' // 封建日耳曼（封建时代：东法兰克/萨克森/巴伐利亚）
+    | 'GERMANIC_IMPERIAL' // 帝国日耳曼（帝国时代：尼德兰/瑞士/利沃尼亚）
+    | 'GERMANIC_CASTLE' // 城堡日耳曼（城堡时代：丹麦/瑞典）
     | 'LATIN'         // 拉丁
+    | 'LATIN_CASTLE' // 城堡拉丁（城堡时代：葡萄牙勃艮第王朝）
+    | 'LATIN_IMPERIAL' // 帝国拉丁（帝国时代：意大利/法兰西/马耳他）
     | 'CENTRAL'       // 中原 (豫、关中、晋南)
     | 'NORTH'         // 北方 (河北、山东、晋北)
     | 'JIANGNAN'      // 江南 (长江中下游、湘鄂赣浙)
@@ -170,8 +178,12 @@ export type RegionType =
     | 'WESTERN_CASTLE' // 城堡西域（城堡时代：喀喇汗/西辽/于阗）
     | 'WESTERN_IMPERIAL' // 帝国西域（帝国时代：叶尔羌/浩罕/和卓）
     | 'AFRICA_IMPERIAL' // 帝国非洲（帝国时代：埃塞俄比亚贡德尔/北非奥斯曼）
+    | 'AFRICA_ANTIQUITY' // 古典非洲（古典时代：阿克苏姆/努比亚）
+    | 'AFRICA_CASTLE' // 城堡非洲（城堡时代：拉利贝拉/关切人）
     | 'PERSIAN_CASTLE' // 城堡波斯（城堡时代：古尔/伽色尼/库尔提）
     | 'SEASIA_IMPERIAL' // 帝国东南亚（帝国时代：东吁/贡榜/阮朝/苏禄）
+    | 'SEASIA_CASTLE' // 城堡东南亚（城堡时代：满剌加/满者伯夷）
+    | 'SEASIA_FEUDAL' // 封建东南亚（封建时代：骠族/大越）
     | 'NORTHAM_IMPERIAL' // 帝国北美（帝国时代：西属/法属/荷属美洲总督区）
     | 'SOUTHAM_IMPERIAL' // 帝国南美（帝国时代：马普切/图皮/穆伊斯卡）
     | 'LATIN_FEUDAL' // 封建拉丁（封建时代：凯尔特/加泰罗尼亚/布列塔尼）
@@ -189,7 +201,7 @@ export type RegionType =
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
-    'SLAVIC', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
+    'SLAVIC', 'SLAVIC_FEUDAL', 'SLAVIC_CASTLE', 'SLAVIC_IMPERIAL', 'GERMANIC', 'GERMANIC_FEUDAL', 'GERMANIC_IMPERIAL', 'GERMANIC_CASTLE', 'LATIN', 'LATIN_CASTLE', 'LATIN_IMPERIAL', 'GREEK', 'THRACIAN', 'BERBER',
     'CENTRAL', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
     'CENTRAL_ASIA', 'PASHTUN', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
     'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE', 'ASSYRIAN', 'ORIE',
@@ -297,8 +309,12 @@ export const REGION_ORDER: RegionType[] = [
     'WESTERN_CASTLE',
     'WESTERN_IMPERIAL',
     'AFRICA_IMPERIAL',
+    'AFRICA_ANTIQUITY',
+    'AFRICA_CASTLE',
     'PERSIAN_CASTLE',
     'SEASIA_IMPERIAL',
+    'SEASIA_CASTLE',
+    'SEASIA_FEUDAL',
     'NORTHAM_IMPERIAL',
     'SOUTHAM_IMPERIAL',
     'LATIN_FEUDAL',
@@ -332,8 +348,16 @@ export const REGION_ORDER: RegionType[] = [
 // 用于 CityEditor 等 UI 动态生成 region 下拉
 export const REGION_LABELS: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
+    SLAVIC_FEUDAL: '封建斯拉夫',
+    SLAVIC_CASTLE: '城堡斯拉夫',
+    SLAVIC_IMPERIAL: '帝国斯拉夫',
     GERMANIC: '古典日耳曼',
+    GERMANIC_FEUDAL: '封建日耳曼',
+    GERMANIC_IMPERIAL: '帝国日耳曼',
+    GERMANIC_CASTLE: '城堡日耳曼',
     LATIN: '古典罗马',
+    LATIN_CASTLE: '城堡拉丁',
+    LATIN_IMPERIAL: '帝国拉丁',
     LATIN_FEUDAL: '封建拉丁',
     CENTRAL: '古典华夏',
     NORTH: '古典秦汉',
@@ -375,9 +399,13 @@ export const REGION_LABELS: Record<RegionType, string> = {
     NORTHAM_IMPERIAL: '帝国北美',
     AFRICA: '城堡马里',
     AFRICA_IMPERIAL: '帝国非洲',
+    AFRICA_ANTIQUITY: '古典非洲',
+    AFRICA_CASTLE: '城堡非洲',
     MALAY: '封建马来',
     SEASIA_ANTIQUITY: '古典东南亚',
     SEASIA_IMPERIAL: '帝国东南亚',
+    SEASIA_CASTLE: '城堡东南亚',
+    SEASIA_FEUDAL: '封建东南亚',
     ANDE: '城堡印加',
     SOUTHAM_IMPERIAL: '帝国南美',
     PURU: '封建达罗毗荼',
@@ -508,8 +536,16 @@ export const REGION_LABELS: Record<RegionType, string> = {
  */
 export const CULTURE_NAMES: Record<RegionType, string> = {
     SLAVIC: '封建罗斯',
+    SLAVIC_FEUDAL: '封建斯拉夫',
+    SLAVIC_CASTLE: '城堡斯拉夫',
+    SLAVIC_IMPERIAL: '帝国斯拉夫',
     GERMANIC: '古典日耳曼',
+    GERMANIC_FEUDAL: '封建日耳曼',
+    GERMANIC_IMPERIAL: '帝国日耳曼',
+    GERMANIC_CASTLE: '城堡日耳曼',
     LATIN: '古典罗马',
+    LATIN_CASTLE: '城堡拉丁',
+    LATIN_IMPERIAL: '帝国拉丁',
     LATIN_FEUDAL: '封建拉丁',
     CENTRAL: '古典华夏',
     NORTH: '古典秦汉',
@@ -551,9 +587,13 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     NORTHAM_IMPERIAL: '帝国北美',
     AFRICA: '城堡马里',
     AFRICA_IMPERIAL: '帝国非洲',
+    AFRICA_ANTIQUITY: '古典非洲',
+    AFRICA_CASTLE: '城堡非洲',
     MALAY: '封建马来',
     SEASIA_ANTIQUITY: '古典东南亚',
     SEASIA_IMPERIAL: '帝国东南亚',
+    SEASIA_CASTLE: '城堡东南亚',
+    SEASIA_FEUDAL: '封建东南亚',
     ANDE: '城堡印加',
     SOUTHAM_IMPERIAL: '帝国南美',
     PURU: '封建达罗毗荼',
@@ -834,8 +874,16 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
 export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SLAVIC: '#3949ab',
+    SLAVIC_FEUDAL: '#5c6bc0',  // 封建斯拉夫（浅靛）
+    SLAVIC_CASTLE: '#283e66',  // 城堡斯拉夫（暗蓝）
+    SLAVIC_IMPERIAL: '#2a3f8f',  // 帝国斯拉夫（中靛）
     GERMANIC: '#455a64',
+    GERMANIC_FEUDAL: '#4f5b62',  // 封建日耳曼（蓝灰）
+    GERMANIC_IMPERIAL: '#1c313a',  // 帝国日耳曼（暗蓝灰）
+    GERMANIC_CASTLE: '#33525e',  // 城堡日耳曼（蓝灰）
     LATIN: '#6a1b9a',
+    LATIN_CASTLE: '#9c27b0',  // 城堡拉丁（紫）
+    LATIN_IMPERIAL: '#4a148c',  // 帝国拉丁（暗紫）
     LATIN_FEUDAL: '#00838f',
     CENTRAL: '#8d6e63',
     NORTH: '#5d4037',
@@ -877,9 +925,13 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     NORTHAM_IMPERIAL: '#4e342e',
     AFRICA: '#9e9d24',  // 橄榄（非洲）[2026-08-24]
     AFRICA_IMPERIAL: '#827717',
+    AFRICA_ANTIQUITY: '#c0ca33',  // 古典非洲（黄绿）
+    AFRICA_CASTLE: '#558b2f',  // 城堡非洲（绿）
     MALAY: '#00838f',   // 青（马来）[2026-08-24]
     SEASIA_ANTIQUITY: '#004d40',
     SEASIA_IMPERIAL: '#00695c',
+    SEASIA_CASTLE: '#00796b',  // 城堡东南亚（青）
+    SEASIA_FEUDAL: '#005b4f',  // 封建东南亚（暗青）
     ANDE: '#ff8f00',  // 琥珀（安第斯金）[2026-08-27]
     SOUTHAM_IMPERIAL: '#bf360c',
     PURU: '#c62828',  // 深红（达罗毗荼）[2026-08-27]
@@ -1275,7 +1327,43 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/slavic_big.png'),
         pass: resolvePath('/cities/slavic_pass.png')
     },
+    SLAVIC_FEUDAL: { // ✅ 复用斯拉夫（封建斯拉夫）
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    SLAVIC_CASTLE: { // ✅ 复用斯拉夫（城堡斯拉夫）
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
+    SLAVIC_IMPERIAL: { // ✅ 复用斯拉夫（帝国斯拉夫）
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
+    },
     GERMANIC: { // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    GERMANIC_FEUDAL: { // ✅ 复用日耳曼（封建日耳曼）
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    GERMANIC_IMPERIAL: { // ✅ 复用日耳曼（帝国日耳曼）
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
+    },
+    GERMANIC_CASTLE: { // ✅ 复用日耳曼（城堡日耳曼）
         small: resolvePath('/cities/germanic_small.png'),
         medium: resolvePath('/cities/germanic_medium.png'),
         big: resolvePath('/cities/germanic_big.png'),
@@ -1294,6 +1382,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/latin_pass.png')
     },
     LATIN: { // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    LATIN_CASTLE: { // ✅ 复用拉丁（城堡拉丁）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    LATIN_IMPERIAL: { // ✅ 复用拉丁（帝国拉丁）
         small: resolvePath('/cities/latin_small.png'),
         medium: resolvePath('/cities/latin_medium.png'),
         big: resolvePath('/cities/latin_big.png'),
@@ -1365,6 +1465,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
+    AFRICA_ANTIQUITY: { // ✅ 复用非洲（古典非洲）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
+    AFRICA_CASTLE: { // ✅ 复用非洲（城堡非洲）
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
+    },
     MALAY: { // ⚠️ [2026-08-24 新增] 暂借滇缅图标（马来东南亚，待专属素材）
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
@@ -1372,6 +1484,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/dianqian_pass.png')
     },
     SEASIA_IMPERIAL: { // ✅ 复用东南亚（帝国东南亚）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    SEASIA_CASTLE: { // ✅ 复用东南亚（城堡东南亚）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    SEASIA_FEUDAL: { // ✅ 复用东南亚（封建东南亚）
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
@@ -2179,9 +2303,17 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     WEST_ASIA_CASTLE: ['city_yikeniwumu'],             // 伊科尼乌姆/科尼亚（城堡西亚·罗姆苏丹国都）
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
     SLAVIC:       ['city_jifu'],                          // 基辅 [2026-09-07] 封建罗斯=基辅罗斯 882–1240，都基辅；原挂莫斯科已划归 RUS 区(城堡罗斯)
+    SLAVIC_FEUDAL: ['city_kelakefu'],                     // 克拉科夫（封建斯拉夫·皮雅斯特）
+    SLAVIC_CASTLE: ['city_teernuowo'],                    // 特尔诺沃（城堡斯拉夫·保加利亚第二帝国）
+    SLAVIC_IMPERIAL: ['city_huasha'],                     // 华沙（帝国斯拉夫·波兰立陶宛）
     EAST:         ['city_jifu'],                          // [2026-09-07] 东欧区已解散(不在 REGION_ORDER)，此项仅为类型占位，跟随 SLAVIC 指向基辅
     GERMANIC:     ['city_meiyinci'],                      // 美因茨 [2026-09-07] 罗马 Mogontiacum＝日耳曼尼亚上省首府，古典日耳曼本区最大城；原挂科隆已划归 FRANKS 区
+    GERMANIC_FEUDAL: ['city_magedebao'],                  // 马格德堡（封建日耳曼·奥托一世萨克森）
+    GERMANIC_IMPERIAL: ['city_hague'],                    // 海牙（帝国日耳曼·尼德兰）
+    GERMANIC_CASTLE: ['city_gebenhagen'],                 // 哥本哈根（城堡日耳曼·丹麦）
     LATIN:        ['city_naples'],                     // 那不勒斯 [2026-09-07] 罗马城已划归 IMPERIAL_ROME(禁卫军驻都城)，古典罗马军团＝行省军团，锚意大利本土最大本区城 Neapolis
+    LATIN_CASTLE: ['city_lisiben'],                    // 里斯本（城堡拉丁·葡萄牙勃艮第王朝）
+    LATIN_IMPERIAL: ['city_genoa'],                    // 热那亚（帝国拉丁·意大利）
     LATIN_FEUDAL: ['city_naples'],                     // 那不勒斯（封建拉丁）
     INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典印度核心)
     INDIA_FEUDAL: ['city_qunvcheng'],                 // 曲女城（封建印度·戒日都）
@@ -2193,9 +2325,13 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     NORTHAM_FEUDAL: ['city_tikal'],                   // 蒂卡尔（封建北美·玛雅）
     AFRICA:       ['city_timbuktu'],                  // 廷巴克图 [2026-09-07] 本区是城堡马里，廷巴克图为马里帝国核心；原挂阿克苏姆已划归 ETHIOPIANS 区
     AFRICA_IMPERIAL: ['city_gongdeer'],               // 贡德尔（帝国非洲·埃塞俄比亚）
+    AFRICA_ANTIQUITY: ['city_aksum'],                 // 阿克苏姆（古典非洲·埃塞俄比亚）
+    AFRICA_CASTLE: ['city_lalibeila'],                // 拉利贝拉（城堡非洲·埃塞俄比亚）
     MALAY:        ['city_malacca'],                   // 马六甲 (满剌加苏丹国都; 2026-08-24 新增马来区)
     SEASIA_ANTIQUITY: ['city_funan'],                 // 毗耶陀（扶南·古典东南亚）
     SEASIA_IMPERIAL: ['city_ayutthaya'],             // 阿瑜陀耶（帝国东南亚）
+    SEASIA_CASTLE: ['city_malacca'],                 // 马六甲（城堡东南亚·满剌加）
+    SEASIA_FEUDAL: ['city_srikshetra'],              // 室利差罗（封建东南亚·骠族）
     ANDE:         ['city_cusco'],                     // 库斯科 (印加帝都; 2026-08-27 新增安第斯区)
     SOUTHAM_IMPERIAL: ['city_cusco'],                 // 库斯科（帝国南美）
     PURU:         ['city_tanjiawuer'],                // 坦贾武尔 (朱罗帝都; 2026-08-27 新增南印度区)

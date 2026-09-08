@@ -24,7 +24,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T3 风土之兵 ──
     liguliya: { name: '利古里亚弩', tier: 3 },          // 热那亚弩手专名；避据点「热那亚」叠字
-    lunbadi: { name: '撒克斯重砍手', tier: 3 },          // 米兰·阿尔博因：伦巴第撒克斯单刃大刀近卫
+    lunbadi: { name: '撒克斯刀卫', tier: 3 },          // 米兰·阿尔博因：伦巴第撒克斯单刃大刀近卫
     gaolu: { name: '敕令骑兵', tier: 3 },          // 巴黎·查理七世：compagnies d'ordonnance；避势力「法兰西」叠字
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     langgeduoke: { name: '图卢兹骑士', tier: 4 },
@@ -66,7 +66,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // ── [2026-08-26] 大西洋航线：亚速尔 / 佛得角 ──
     yasuer: { name: '特塞拉牛阵', tier: 2 },     // 安格拉·西普里亚诺：1581 萨尔加之战驱牛群冲散西班牙登陆部队
     fodejiao: { name: '克里奥民兵', tier: 4 },   // 里贝拉·诺利：佛得角首府守备民兵（1585 德雷克、1712 卡萨尔两度洗劫）
-    keernuwaye: { name: '布列塔尼重骑', tier: 4 },
+    keernuwaye: { name: '布列塔尼骑', tier: 4 },
     kaernute: { name: '卡尔努特兵', tier: 4 },   // 沙特尔·科图阿图斯：高卢卡尔努特部族战团，前52年塞纳布姆起义,
     braganza_house: { name: '阿维斯骑', tier: 2 },
     trastamara: { name: '圣会骑兵', tier: 3 },
@@ -78,5 +78,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     aoerlianggongguo: { name: '圣女旗队', tier: 2 },   // 兰斯·贞德：圣女白旗所部，1429解围奥尔良
     apuliya: { name: '阿普利亚骑', tier: 2 },   // 梅尔菲·吉斯卡尔：诺曼阿普利亚公爵骑兵
     bogendigongguo: { name: '勃艮第重骑', tier: 3 },   // 蒙特罗·无畏的约翰：勃艮第重装骑士
-    amaniyake: { name: '阿马尼亚克骑', tier: 3 },   // 欧什·贝尔纳·德·阿马尼亚克：阿马尼亚克党骑兵
+    amaniyake: { name: '加斯科涅骑', tier: 3 },   // 欧什·贝尔纳·德·阿马尼亚克：阿马尼亚克伯爵所统领的西南加斯科涅重装骑士
+    bogengnidielan: { name: '金羊毛骑士', tier: 2 },   // 里尔·好人菲利普：1430年创立金羊毛骑士团，1454年里尔野鸡宴会誓师东征
 };
