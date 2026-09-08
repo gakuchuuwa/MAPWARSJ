@@ -903,6 +903,7 @@ export class CombatUI {
         this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; align-items: center;`;
 
         this.leftTotalMultBadge = document.createElement('span');
+        this.leftTotalMultBadge.className = 'combat-number-badge';
         this.leftTotalMultBadge.style.cssText = `
             display: none;
             padding: 2px 8px;
@@ -921,6 +922,7 @@ export class CombatUI {
         `;
 
         this.rightTotalMultBadge = document.createElement('span');
+        this.rightTotalMultBadge.className = 'combat-number-badge';
         this.rightTotalMultBadge.style.cssText = `
             display: none;
             padding: 2px 8px;
@@ -1045,6 +1047,7 @@ export class CombatUI {
         `;
 
         this.leftBarTroopsBadge = document.createElement('span');
+        this.leftBarTroopsBadge.className = 'combat-number-badge';
         this.leftBarTroopsBadge.style.cssText = `
             position: absolute;
             right: ${uiPx(36)};
@@ -1068,6 +1071,7 @@ export class CombatUI {
         `;
 
         this.rightBarTroopsBadge = document.createElement('span');
+        this.rightBarTroopsBadge.className = 'combat-number-badge';
         this.rightBarTroopsBadge.style.cssText = `
             position: absolute;
             left: calc(50% + ${uiPx(36)});

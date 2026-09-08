@@ -32,25 +32,34 @@
 }
 
 #army-list-panel > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 14px 12px !important;
     background: #d4b57d09 !important;
     border-bottom: 1px solid var(--map-hud-line) !important;
     letter-spacing: 1px !important;
 }
 
+#army-list-panel.is-collapsed > div:not(:first-child) { display: none !important; }
+#army-list-panel.is-collapsed { overflow: hidden !important; }
+#army-list-panel .army-panel-toggle {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    color: var(--map-hud-text);
+    background: #d4b57d0d;
+    border: 1px solid var(--map-hud-line);
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
 #army-list-items > div { line-height: 1.65; }
 #army-list-items > div:nth-child(even) { background-color: #d4b57d05; }
 #army-top-stats { flex-wrap: wrap; }
 #army-top-stats > div { min-width: 120px !important; }
-
-#army-list-btn {
-    background: var(--map-hud-bg) !important;
-    color: var(--map-hud-gold) !important;
-    border: 1px solid var(--map-hud-line) !important;
-    border-radius: 8px !important;
-    box-shadow: var(--map-hud-shadow) !important;
-    min-height: 38px;
-}
 
 #player-hero-panel {
     width: var(--map-hud-width) !important;
@@ -81,11 +90,11 @@
 
 /* The feed occupies its own card, not a full-height blurred map overlay. */
 #event-display.event-panel {
-    top: 76px;
-    right: calc(var(--map-hud-width) + 32px);
+    top: calc(var(--player-hud-bottom, 400px) + 12px);
+    right: 16px;
     bottom: auto !important;
-    width: 300px;
-    max-height: min(420px, calc(100dvh - 260px));
+    width: var(--map-hud-width);
+    max-height: min(420px, max(54px, calc(100dvh - var(--player-hud-bottom, 400px) - 190px)));
     padding: 14px 16px;
     box-sizing: border-box;
     background: var(--map-hud-bg);
@@ -103,7 +112,7 @@
 #event-display.event-panel.collapsed { padding: 10px 14px; }
 #event-display.event-panel #event-content {
     height: auto;
-    max-height: min(340px, max(80px, calc(100dvh - 340px)));
+    max-height: min(340px, max(0px, calc(100dvh - var(--player-hud-bottom, 400px) - 270px)));
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #8c7854 transparent;
@@ -145,16 +154,12 @@
 #game-time-hud .hud-date-inner { color: var(--map-hud-gold); letter-spacing: .08em; }
 #game-time-hud .hud-date-body { background: var(--map-hud-bg); border-color: var(--map-hud-line); }
 
-:is(#army-list-btn, #follow-banner button, #player-hero-panel select,
+:is(.army-panel-toggle, #follow-banner button, #player-hero-panel select,
     #player-hero-panel button, #event-display button, #game-time-hud button):focus-visible {
     outline: 2px solid var(--map-hud-gold);
     outline-offset: 3px;
 }
 
-@media (max-width: 1100px) {
-    #event-display.event-panel { top: 76px; right: calc(var(--map-hud-width) + 32px); width: 240px; max-height: 180px; }
-    #event-display.event-panel #event-content { max-height: 100px; }
-}
 
 /* Battle HUD uses the same reading surface; portrait elements are untouched. */
 #combat-ui-panel:not(.is-scene13) .combat-backdrop {
@@ -188,6 +193,13 @@
     text-shadow: 0 1px 2px #0008;
 }
 
+#combat-ui-panel:not(.is-scene13) .combat-number-badge {
+    font-size: clamp(11px, .8vw, 14px) !important;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3 !important;
+    box-shadow: 0 1px 3px #0006 !important;
+}
+
 #combat-ui-panel .combat-ui-collapse-btn {
     border-color: var(--map-hud-line) !important;
     color: var(--map-hud-gold) !important;
@@ -198,4 +210,12 @@
 /* Reserve the existing 252px battle panel plus a gap, instead of covering it. */
 body:has(#combat-ui-panel.is-battle-visible:not(.is-collapsed):not(.is-scene13)) #army-list-panel {
     max-height: calc(100dvh - 330px) !important;
+}
+
+body:has(#combat-ui-panel.is-battle-visible:not(.is-collapsed):not(.is-scene13)) #player-hero-panel {
+    max-height: calc(100dvh - 330px);
+}
+
+body:has(#event-display:not(.collapsed)) #player-hero-panel {
+    max-height: min(45dvh, calc(100dvh - 330px));
 }

@@ -494,7 +494,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         name: '白狼山',
         factionId: 'wuhuan',
         lat: 41.40, lng: 119.64,
-        type: 'stockade',
+        type: 'pass',
         region: 'NORTHEAST',
         troops: 30000,
         note: '白狼山；乌桓关隘',
@@ -994,7 +994,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_yalu', name: '鸭绿府', factionId: 'luzhou', lat: 41.81, lng: 126.91, type: 'small_city', region: 'KOREA', troops: 30000,
         note: '鸭绿府；渌州小城',
     },
-    { id: 'city_jilishan', name: '蒺藜山', factionId: 'yizhou', lat: 42.25, lng: 121.80, type: 'stockade', troops: 30000, 
+    { id: 'city_jilishan', name: '蒺藜山', factionId: 'yizhou', lat: 42.25, lng: 121.80, type: 'pass', troops: 30000, 
         note: '蒺藜山；懿州关隘', region: 'NORTHEAST' },
 
     // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
@@ -1191,7 +1191,7 @@ export const PERIPHERY: CityDataV2[] = [
     
     
 
-    { id: 'city_songmo', name: '马盂山', factionId: 'kumo', lat: 41.017350, lng: 118.699036, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_songmo', name: '马盂山', factionId: 'kumo', lat: 41.017350, lng: 118.699036, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '马盂山；奚族关隘',
     },
 
@@ -1301,7 +1301,7 @@ export const PERIPHERY: CityDataV2[] = [
 
     {
         id: 'city_shaxian', name: '沙戍堡', factionId: 'dengmaoqi',
-        lat: 26.40, lng: 117.79, type: 'stockade', troops: 30000, tier: 4,
+        lat: 26.40, lng: 117.79, type: 'pass', troops: 30000, tier: 4,
         
         note: '沙戍堡；铲平关隘', region: 'LINGNAN' },
     {
@@ -1467,7 +1467,7 @@ export const PERIPHERY: CityDataV2[] = [
     
     {
         id: 'city_pidao', name: '皮岛', factionId: 'mao_wenlong',
-        lat: 39.5539, lng: 124.6611, type: 'stockade', troops: 30000,
+        lat: 39.5539, lng: 124.6611, type: 'pass', troops: 30000,
         
         note: '皮岛；毛文龙关隘', region: 'NORTHEAST' },
 
@@ -1509,13 +1509,13 @@ export const PERIPHERY: CityDataV2[] = [
 
     {
         id: 'city_burhan', name: '不儿罕山', factionId: 'kiyad',
-        lat: 48.50, lng: 109.00, type: 'stockade', troops: 30000, tier: 4,
+        lat: 48.50, lng: 109.00, type: 'pass', troops: 30000, tier: 4,
         
         note: '不儿罕山；乞颜关隘', region: 'STEPPE' },
     
     { id: 'city_kerulen', name: '巴拉斯城', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', troops: 30000, region: 'STEPPE', note: '克鲁伦中游巴尔斯浩特/契丹河董城；清克鲁伦巴尔和屯会盟城；札剌亦儿' },
 
-    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '捕鱼儿海；弘吉剌关隘',
     },
     { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 30000, region: 'STEPPE' },
@@ -1550,7 +1550,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
 
     // === 第二类：雪域土著与古老强族 ===
-    { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'stockade', region: 'TIBET', troops: 30000,
+    { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'pass', region: 'TIBET', troops: 30000,
         note: '白海堡；多弥关隘',
     },
     { id: 'city_mapangyongcuo', name: '玛旁雍错', factionId: 'nvguo', lat: 30.814997, lng: 81.430664, type: 'stockade', region: 'TIBET', troops: 30000,
@@ -1583,7 +1583,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 17.3333, lng: 96.4667, type: 'medium_city', region: 'BURMESE', troops: 30000, tier: 1,
         note: '勃固；汉达瓦底王国都城',
     },
-    { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'stockade', region: 'DIANQIAN', troops: 30000,
+    { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'pass', region: 'DIANQIAN', troops: 30000,
         note: '乌蒙山；乌蛮关隘',
     },
     { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', region: 'DIANQIAN', troops: 30000,
@@ -1602,7 +1602,7 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 第三类：世袭土司与门阀 ──
     { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 30000, region: 'DALI' },
 
-    { id: 'city_hailongtun', name: '海龙屯', factionId: 'yang_bozhou', lat: 27.751638, lng: 106.924438, type: 'stockade', region: 'BASHU', mirror: true, troops: 30000,
+    { id: 'city_hailongtun', name: '海龙屯', factionId: 'yang_bozhou', lat: 27.751638, lng: 106.924438, type: 'pass', region: 'BASHU', mirror: true, troops: 30000,
         note: '海龙屯；播州关隘',
     },
     { id: 'city_zhenyuan', name: '㵲溪', factionId: 'tian_sizhou', lat: 27.05, lng: 108.42, type: 'stockade', troops: 30000, region: 'LINGNAN' },
@@ -2181,7 +2181,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // ── 2026-05-28 新增：药罗葛(博尔巴任)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     // 瓦剌（卫拉特）药罗葛部牧地，与明代卫拉（科布多）分立
-    { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'wala', lat: 49.664324, lng: 95.767822, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'wala', lat: 49.664324, lng: 95.767822, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '博尔巴任；瓦剌关隘',
     },
     { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.176, lng: 125.228, type: 'stockade', troops: 30000, region: 'NORTHEAST' },
@@ -2340,7 +2340,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jining', name: '集宁', factionId: 'baidi', lat: 41.03, lng: 113.1, type: 'stockade', region: 'STEPPE', troops: 30000,
         note: '集宁；白狄小城',
     },
-    { id: 'city_jingzhou', name: '净州塞', factionId: 'ongut', lat: 41.56, lng: 111.66, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_jingzhou', name: '净州塞', factionId: 'ongut', lat: 41.56, lng: 111.66, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '净州塞；汪古关隘',
     },
 
@@ -2421,7 +2421,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 30000, region: 'CENTRAL' },
 
-    { id: 'city_buergenjuntai', name: '布尔根', factionId: 'wulianghai', lat: 46.09, lng: 91.53, type: 'stockade', region: 'STEPPE', troops: 30000,
+    { id: 'city_buergenjuntai', name: '布尔根', factionId: 'wulianghai', lat: 46.09, lng: 91.53, type: 'pass', region: 'STEPPE', troops: 30000,
         note: '布尔根；乌梁海关隘',
     },
     { id: 'city_zhabuhanjuntai', name: '扎布汗', factionId: 'wuli_d', lat: 47.844489, lng: 94.174805, type: 'stockade', region: 'STEPPE', troops: 30000, note: '乌里雅苏台将军辖区；策楞定边左副将军驻节' },
@@ -2457,7 +2457,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', troops: 30000, note: '温宿国王城常备武装' },
     { id: 'city_kungang', name: '昆岗', factionId: 'adao_d', lat: 40.54, lng: 81.26, type: 'stockade', region: 'WESTERN', troops: 30000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
-    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'stockade', region: 'WESTERN', troops: 30000,
+    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'pass', region: 'WESTERN', troops: 30000,
         note: '麻扎塔格；毗沙关隘',
     },
     { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'medium_city', region: 'WESTERN', troops: 30000,
@@ -2683,7 +2683,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
-    { id: 'city_dashicheng', name: '大石堡', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'stockade', region: 'WESTERN', troops: 30000,
+    { id: 'city_dashicheng', name: '大石堡', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN', troops: 30000,
         note: '大石城；朱邪关隘',
     },
     { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', troops: 30000, note: '尉头国王城驻军' },
@@ -2764,7 +2764,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
-    { id: 'city_gongzhubao', name: '公主堡', factionId: 'kepantuo', lat: 37.2008, lng: 75.3745, type: 'stockade', troops: 30000, 
+    { id: 'city_gongzhubao', name: '公主堡', factionId: 'kepantuo', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 30000, 
         note: '公主堡；渴盘陀关隘', region: 'WESTERN' },
     { id: 'city_jimai', name: '吉麦', factionId: 'gongtang', lat: 29.3012, lng: 90.6812, type: 'stockade', region: 'TIBET', troops: 30000,
         note: '吉麦；贡唐小城',
@@ -2983,7 +2983,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'aiduoniya', lat: 40.82, lng: 23.85, type: 'small_city', troops: 30000, region: 'GREEK', note: '色雷斯海岸希腊殖民城，巴西达斯424年攻克、422年战死守城' },
     { id: 'city_yanghe', name: '羊河', factionId: 'qiesuonisuosi', lat: 40.36, lng: 26.61, type: 'stockade', troops: 30000, region: 'GREEK', note: '羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队' },
     { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'mixiya', lat: 40.32, lng: 27.28, type: 'stockade', troops: 30000, region: 'MACEDONIAN', note: '格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
-    { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'xiaaiji', lat: 31.04, lng: 32.55, type: 'stockade', troops: 30000, region: 'EGYPT', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
+    { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'xiaaiji', lat: 31.04, lng: 32.55, type: 'pass', troops: 30000, region: 'EGYPT', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
     { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 30000, region: 'GREEK', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯' },
     { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'bosidiguo', lat: 38.36, lng: 26.77, type: 'small_city', troops: 30000, region: 'GREEK', note: '爱奥尼亚半岛海港要塞，老阿尔塔弗涅斯497年亲统波斯第三军团强攻收复' },
     { id: 'city_tiluo', name: '提洛', factionId: 'jikelazes', lat: 37.39, lng: 25.27, type: 'small_city', troops: 30000, region: 'GREEK', note: '爱琴海阿波罗圣地岛，达提斯490年主祭阿波罗、焚香300他连得并归还神像' },

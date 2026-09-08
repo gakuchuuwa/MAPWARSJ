@@ -17,6 +17,7 @@ export class PlayerHUD {
     private title: HTMLDivElement | null = null;
     private minimizeBtn: HTMLButtonElement | null = null;
     private minimized = false;
+    private panelSizeObserver: ResizeObserver | null = null;
     private overlay: HTMLDivElement | null = null;
     private toast: HTMLDivElement | null = null;
     private toastTimer: number | null = null;
@@ -78,6 +79,11 @@ export class PlayerHUD {
         panel.appendChild(body);
         document.body.appendChild(panel);
         this.panel = panel;
+        this.panelSizeObserver = new ResizeObserver(() => {
+            const bottom = panel.getBoundingClientRect().bottom;
+            document.documentElement.style.setProperty('--player-hud-bottom', `${bottom}px`);
+        });
+        this.panelSizeObserver.observe(panel);
         this.body = body;
         this.minimizeBtn = minBtn;
     }
@@ -346,6 +352,8 @@ export class PlayerHUD {
     }
 
     public dispose(): void {
+        this.panelSizeObserver?.disconnect();
+        document.documentElement.style.removeProperty('--player-hud-bottom');
         if (this.refreshTimer) window.clearInterval(this.refreshTimer);
         this.closeDialogue();
         this.panel?.remove();

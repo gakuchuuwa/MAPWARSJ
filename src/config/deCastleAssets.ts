@@ -205,11 +205,13 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
  */
 export const REGION_CASTLE: Record<RegionType, string> = {
     // ── 1. 东亚 / 中华文化区 (13 个) ──
-    CENTRAL: 'WEI_CASTLE_AGE3',              // 中原：曹魏高台
+    CENTRAL: 'WEI_CASTLE_AGE3',             // 中原：曹魏高台（主人 2026-09-08 定：中原=曹魏 / 川蜀=蜀汉 / 江南=孙吴，三国配套）
+
     NORTH: 'CHIN_CASTLE_AGE3',               // 北方：中国城楼
     JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：孙吴水榭坞堡
     BASHU: 'SHU_CASTLE_AGE3',                // 巴蜀：蜀汉高台阙楼
-    HEXI: 'KHIT_CASTLE_AGE3',                // 河西：西夏/黑水城
+    HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用契丹/黑水城形制
+
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
     KOREA: 'KORE_CASTLE_AGE3',               // 朝鲜：高丽山城
     JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
@@ -226,14 +228,15 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
-    PURU: 'INDI_CASTLE_AGE3',                // 达罗毗荼：昆巴哈尔石圆塔
+    PURU: 'PURU_CASTLE_AGE3',                // 达罗毗荼/南印度：DE 普鲁（PURU）建筑集本套城堡，同名同源；原用 INDI 导致 PURU 基础城堡 65 个里唯一闲置
+
 
     // ── 3. 中亚、西亚与北非 (7 个) ──
     CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',        // 中亚：鞑靼·赫拉特要塞
     CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
-    PERSIAN: 'PERS_CASTLE_AGE3',             // 波斯：巴姆古城
+    PERSIAN: 'PERSIAN_CASTLE_AGE3',           // 波斯文化区用 PERSIAN 风格集本套城堡；PERS 留给萨珊/可萨等具体政权
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
-    WEST_ASIA: 'TURK_CASTLE_AGE3',           // 西亚：突厥奥斯曼要塞
+    WEST_ASIA: 'ORIE_CASTLE_AGE3',          // 近东套
     BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
 
     // ── 4. 高加索与东欧 / 斯拉夫 (10 个) ──
@@ -249,7 +252,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     EAST: 'EAST_CASTLE_AGE3',                // 东欧：东欧石堡
 
     // ── 5. 地中海 / 南欧古典 (9 个) ──
-    LATIN: 'ROMA_CASTLE_AGE3',               // 拉丁：罗马军团石堡
+    LATIN: 'MEDI_CASTLE_AGE3',              // 地中海拉丁（休达/加莱/马耳他为中世纪据点，用地中海套而非古罗马）
     ITALIANS: 'MEDI_CASTLE_AGE3',            // 意大利：地中海石堡
     SICILIANS: 'SICI_CASTLE_AGE3',           // 西西里：诺曼阿拉伯石堡
     GREEK: 'GREEK_CASTLE_AGE3',              // 古希腊：希腊卫城
@@ -258,13 +261,13 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 6. 西欧与北欧 (8 个) ──
     GERMANIC: 'WEST_CASTLE_AGE3',            // 日耳曼：西欧重装石堡
-    BRITONS: 'FRAN_CASTLE_AGE3',             // 不列颠：英法百年战争石堡
+    BRITONS: 'CELT_CASTLE_AGE3',            // 不列颠凯尔特（哈瓦登/布伊尔斯为威尔士边境堡）
     BURGUNDIANS: 'BURG_CASTLE_AGE3',         // 勃艮第：法式重装城堡
     CELTS: 'CELT_CASTLE_AGE3',               // 凯尔特：苏格兰圆形塔堡
     VIKINGS: 'VIKI_CASTLE_AGE3',             // 维京：诺斯长屋环形要塞
     GOTHS: 'GOTH_CASTLE_AGE3',               // 哥特：哥特蛮族石堡
     HUNS: 'HUNS_CASTLE_AGE3',                // 匈人：匈人要塞
-    TEUTONS: 'BYZA_CASTLE_AGE3',             // 条顿：条顿/拜占庭重石要塞
+    TEUTONS: 'EAST_WONDER_TEUTONS',         // 条顿骑士团（里加/柯尼斯堡），用 DE 条顿奇观——骑士团砖砌堡垒
 
     // ── 7. 非洲与美洲 (8 个) ──
     AFRICA: 'AFRI_CASTLE_AGE3',              // 非洲：马里生土要塞
@@ -275,82 +278,82 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
     MUISCA: 'MUIS_CASTLE_AGE3',              // 穆伊斯卡：黄金国要塞
     TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞
-    IROQUOIS: 'TUPI_CASTLE_AGE3',   // 城堡易洛魁[2026-09-07 新建，暂借美洲要塞]
-    CHIMU: 'TUPI_CASTLE_AGE3',   // 城堡奇穆[2026-09-07 新建，暂借美洲要塞]
-    TARASCAN: 'TUPI_CASTLE_AGE3',   // 城堡塔拉斯科[2026-09-07 新建，暂借美洲要塞]
-    TAIRONA: 'TUPI_CASTLE_AGE3',   // 城堡泰罗纳[2026-09-07 新建，暂借美洲要塞]
-    TEHUELCHE: 'TUPI_CASTLE_AGE3',   // 帝国特维尔切[2026-09-07 新建，暂借美洲要塞]
+    IROQUOIS: 'MAYA_CASTLE_AGE3',             // 易洛魁在北美东部林地，美洲素材里只有中美系可近似
+    CHIMU: 'INCA_CASTLE_AGE3',                // 奇穆在秘鲁北岸，昌昌古城为印加所并，属安第斯体系
+    TARASCAN: 'MESO_CASTLE_AGE3',             // 塔拉斯科（普雷佩查）在墨西哥米却肯，属中美洲
+    TAIRONA: 'MUIS_CASTLE_AGE3',              // 泰罗纳与穆伊斯卡同在哥伦比亚，同属奇布查文化圈
+    TEHUELCHE: 'MAPU_CASTLE_AGE3',            // 特维尔切与马普切同在巴塔哥尼亚—南锥体
     BURMESE: 'BURM_CASTLE_AGE3',             // 缅甸：蒲甘佛塔城堡
     WALLACHIA: 'POENARI_CASTLE',             // 瓦拉几亚：波耶纳里山堡
     EGYPT: 'ORIE_CASTLE_AGE3',                // 埃及：近东石堡
     CARTHAGE: 'ROMA_CASTLE_AGE3',             // 迦太基：地中海古典石堡
-    BABYLON: 'ORIE_CASTLE_AGE3',              // 巴比伦：两河美索不达米亚城堡
-    HITTITES: 'TURK_CASTLE_AGE3',             // 赫梯：小亚细亚安纳托利亚石堡
+    BABYLON: 'PERSIAN_CASTLE_AGE3',           // 两河美索不达米亚，与伊朗高原同属古代近东砖构体系
+    HITTITES: 'ORIE_CASTLE_AGE3',             // 赫梯是安纳托利亚青铜时代古国，与突厥（TURK）无族属关系，归近东
     ASSYRIAN: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 亚述：古代重装宫阙要塞
-    SCYTHIANS: 'MONG_CASTLE_AGE3',            // 斯基泰：欧亚大草原要塞
+    SCYTHIANS: 'GREEK_CASTLE_AGE3',         // 赫尔松涅斯本身是克里米亚的希腊殖民城邦，城防为希腊式
     BYZANTINE: 'BYZA_CASTLE_AGE3',            // 拜占庭：东罗马拜占庭要塞
     FRANKS: 'FRAN_CASTLE_AGE3',               // 法兰克：加洛林法兰克石堡
     SASANIAN: 'PERS_CASTLE_AGE3',             // 萨珊：萨珊波斯圆城要塞
     TURKS: 'TURK_CASTLE_AGE3',                // 突厥：突厥可汗牙帐要塞
     NANZHAO: 'DIANQIAN_CASTLE_AGE3',          // 南诏：太和苍山云关要塞
-    SRIVIJAYA: 'MALA_CASTLE_AGE3',            // 三佛齐：室利佛逝巨港水寨
-    KUSHAN: 'CEAS_CASTLE_AGE3',               // 贵霜：中亚犍陀罗高台要塞
+    SRIVIJAYA: 'SEAS_CASTLE_AGE3',            // 三佛齐在苏门答腊，用东南亚风格集本套
+    KUSHAN: 'INDI_CASTLE_AGE3',               // 贵霜（大月氏）据犍陀罗，建筑为希腊—印度混合的犍陀罗式
     KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
     KHITAN: 'KHIT_CASTLE_AGE3',              // 契丹：辽式边墙要塞
     UIGHUR: 'CEAS_CASTLE_AGE3',              // 回鹘：漠北窝鲁朵八里高台
     MOHE: 'JURC_CASTLE_AGE3',                // 靺鞨：海东盛国山城木石要塞
-    ANGLO_SAXON: 'WEST_CASTLE_AGE3',         // 盎格鲁-撒克逊：温彻斯特西欧石堡
+    ANGLO_SAXON: 'CELT_CASTLE_AGE3',          // 盎格鲁—撒克逊在不列颠岛，用海岛系而非大陆西欧
     GHANA: 'AFRI_CASTLE_AGE3',               // 加纳：西非黄金要塞
-    KHAZARS: 'CEAS_CASTLE_AGE3',
-    VANDALS: 'WEST_CASTLE_AGE3',             // 汪达尔：西地中海迦太基海堡
-    LOMBARDS: 'WEST_CASTLE_AGE3',            // 伦巴第：北意大利帕维亚石堡
-    ROURAN: 'CEAS_CASTLE_AGE3',              // 柔然：大漠游牧王帐要塞
-    SOGDIANS: 'CEAS_CASTLE_AGE3',            // 粟特：河中绿洲城郭要塞
-    TANGUT: 'ASIA_CASTLE_AGE3',              // 党项：贺兰山灵夏边寨
+    KHAZARS: 'PERS_CASTLE_AGE3',            // 打耳班里海铁门要塞为萨珊波斯所建，可萨为后来占据者
+    VANDALS: 'BERB_CASTLE_AGE3',              // 汪达尔渡海入北非、定都迦太基，城防承马格里布传统
+    LOMBARDS: 'SICI_CASTLE_AGE3',             // 伦巴第在意大利本土，用意大利—西西里堡而非泛西欧
+    ROURAN: 'MONG_CASTLE_AGE3',               // 柔然据蒙古高原，是突厥、蒙古之前的漠北霸主
+    SOGDIANS: 'PERS_CASTLE_AGE3',             // 粟特是河中伊朗语族，文化上属波斯圈而非草原
+    TANGUT: 'KHIT_CASTLE_AGE3',               // 西夏党项：主人 2026-09-08 定，与河西同用契丹/黑水城形制
     JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞
     JURCHEN: 'JURC_CASTLE_AGE3',             // 女真：金式边墙要塞
     SELJUQ: 'TURK_CASTLE_AGE3',              // 塞尔柱：塞尔柱苏丹要塞
     OTTOMAN: 'TURK_CASTLE_AGE3',             // 奥斯曼：鲁梅利海峡要塞
     FRENCH: 'FRAN_CASTLE_AGE3',              // 法兰西：百年战争法兰西石堡
-    MANCHU: 'ASIA_CASTLE_AGE3',              // 满洲：赫图阿拉八旗山城
+    MANCHU: 'JURC_CASTLE_AGE3',             // 满洲即女真后裔
     MUGHAL: 'INDI_CASTLE_AGE3',              // 莫卧儿：阿格拉莫卧儿红堡
     SAFAVID: 'PERS_CASTLE_AGE3',             // 萨法维：伊斯法罕萨法维王堡
     RUSSIAN: 'SLAV_CASTLE_AGE3',             // 俄罗斯：圣彼得堡彼得保罗要塞
     SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
     HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
-    QIANG: 'ASIA_CASTLE_AGE3',               // 先零羌：金城湟水山寨石堡
+    QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
-    SWISS: 'EAST_CASTLE_AGE3',            // 瑞士：阿尔卑斯山地条顿石砌城堡
-    PASHTUN: 'ORIE_CASTLE_AGE3',          // 普什图：兴都库什山地伊斯兰砖石城堡
+    SWISS: 'BURG_CASTLE_AGE3',                // 瑞士各州脱胎于勃艮第—上莱茵地带，阿尔卑斯石堡近勃艮第形制
+    PASHTUN: 'PERS_CASTLE_AGE3',              // 普什图属东伊朗语族，兴都库什山地城防承波斯传统
     SWEDISH: 'VIKI_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
     MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
     HELLENIC: 'MACEDONIAN_CASTLE_AGE3',
     IMPERIAL_ROME: 'ROMA_CASTLE_AGE3',
-    GREEK_MERCENARY: 'GREEK_CASTLE_AGE3',
-    AMAZONS: 'GREEK_CASTLE_AGE3',            // 古典亚马逊：忒弥斯基拉在黑海南岸希腊化圈，用希腊城堡
-    MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',
+    GREEK_MERCENARY: 'ATHENIANS_CASTLE_AGE3', // 希腊雇佣兵（万人远征）以雅典—伯罗奔尼撒重装步兵为主体
+    AMAZONS: 'THRACIANS_CASTLE_AGE3',         // 忒弥斯基拉在黑海南岸，属色雷斯—安纳托利亚交界文化带
+    MAGNA_GRAECIA: 'SPARTANS_CASTLE_AGE3',    // 大希腊——塔兰托是斯巴达唯一的海外殖民地，用斯巴达堡最贴
     ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
-    SONG: 'ASIA_CASTLE_AGE3',                // 赵宋：中原宋式城池堡垒
-    GORYEO: 'ASIA_CASTLE_AGE3',              // 高丽：半岛高丽山城要塞
-    JOSEON: 'ASIA_CASTLE_AGE3',              // 朝鲜王朝：半岛王城汉城要塞
-    DALI: 'MALA_CASTLE_AGE3',                // 大理：横断山地苍山要塞
+    SONG: 'CHIN_CASTLE_AGE3',               // 两宋，同属中华
+    GORYEO: 'KORE_CASTLE_AGE3',             // 高丽
+    JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
+    DALI: 'DIANQIAN_CASTLE_AGE3',             // 大理在云南横断山地，属古滇文化圈；原挂马来（MALA）是明显错配
     GUSILUO: 'ASIA_CASTLE_AGE3',             // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
-    CRUSADERS: 'WEST_CASTLE_AGE3',           // 十字军：阿卡与圣女修道院骑士团十字军石堡
-    RUS: 'EAST_CASTLE_AGE3',                 // 罗斯：诺夫哥罗德与弗拉基米尔木石克里姆林
-    KARA_KHITAN: 'CEAS_CASTLE_AGE3',         // 西辽：七河与碎叶楚河流域大漠重镇
-    TIMURID: 'CEAS_CASTLE_AGE3',             // 帖木儿：撒马尔罕比比哈努姆与青金石城堡
+    CRUSADERS: 'MEDI_CASTLE_AGE3',          // 十字军（阿卡），无专属；十字军城堡是拉丁人所建，取地中海套
+    RUS: 'SLAV_CASTLE_AGE3',                  // 罗斯的克里姆林是东斯拉夫木石城塞，归斯拉夫
+    KARA_KHITAN: 'KHIT_CASTLE_AGE3',          // 西辽即契丹西迁所建，直接沿用契丹形制
+    TIMURID: 'TURK_CASTLE_AGE3',              // 帖木儿是突厥化蒙古贵族，撒马尔罕城防属突厥—伊斯兰体系
     DELHI: 'INDI_CASTLE_AGE3',               // 德里：德里苏丹国西里要塞与德里红堡
     CASTILE: 'SPAN_CASTLE_AGE3',             // 卡斯蒂利亚：塞哥维亚与托莱多石砌城堡
     SCOTLAND: 'CELT_CASTLE_AGE3',            // 苏格兰：爱丁堡与高地石构塔堡
     HRE: 'EAST_CASTLE_AGE3',              // 神圣罗马：维也纳与纽伦堡帝国石砌重要塞
-    ALMOHAD: 'AFRI_CASTLE_AGE3',             // 摩洛哥：马拉喀什与拉巴特穆瓦希德红堡
+    ALMOHAD: 'BERB_CASTLE_AGE3',              // 阿尔摩哈德本身就是柏柏尔马斯穆达部建立的王朝，用柏柏尔堡
     SERBIA: 'SLAV_CASTLE_AGE3',              // 塞尔维亚：贝尔格莱德与斯梅代雷沃石堡
     ILKHANATE: 'MONG_CASTLE_AGE3',           // 伊利汗：大不里士与马拉盖蒙古王汗城堡
-    ARAGON: 'MEDI_CASTLE_AGE3',              // 阿拉贡：萨拉戈萨与巴塞罗那地中海海堡
+    ARAGON: 'SPAN_CASTLE_AGE3',             // 阿拉贡（拉莫塔堡在卡斯蒂利亚—阿拉贡界），取西班牙套
 };
 
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */

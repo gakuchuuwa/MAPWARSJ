@@ -69,13 +69,12 @@ export class CameraFollowUI {
     private static readonly LIST_REFRESH_INTERVAL_MS = 500;
     /** 军团按钮下缘 ≈ 62px；岳飞按钮固定于此，列表面板 z-index 更高盖住它 */
     private static readonly STACK_LEFT_PX = 16;
-    private static readonly LIST_PANEL_TOP_PX = 62;
+    private static readonly LIST_PANEL_TOP_PX = 16;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
 
     constructor() {
-        this.createListButton();
         this.createListPanel();
         this.createFollowBanner();
     }
@@ -153,58 +152,10 @@ export class CameraFollowUI {
 
     // ─── 1. 入口按钮（左上角） ──────────────────────────
 
-    private createListButton(): void {
-        const btn = document.createElement('button');
-        btn.id = 'army-list-btn';
-        btn.title = '野战军团列表';
-        btn.innerHTML = '🎖️ 军团';
-        btn.style.cssText = `
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 10000;
-            padding: 7px 18px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #eee3ce;
-            background: linear-gradient(135deg, rgba(246, 240, 228, 0.88) 0%, rgba(230, 218, 198, 0.92) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(125, 111, 90, 0.28);
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
-            transition: all 0.25s ease;
-            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-            letter-spacing: 2px;
-        `;
-
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = 'rgba(156, 48, 47, 0.55)';
-            btn.style.color = '#e9ad83';
-            btn.style.background = 'linear-gradient(135deg, rgba(255, 250, 242, 0.96) 0%, rgba(242, 232, 216, 0.96) 100%)';
-            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.2), inset 0 1px 0 rgba(255,255,255,0.9)';
-            btn.style.transform = 'translateY(-1px)';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(125, 111, 90, 0.28)';
-            btn.style.color = '#eee3ce';
-            btn.style.background = 'linear-gradient(135deg, rgba(246, 240, 228, 0.88) 0%, rgba(230, 218, 198, 0.92) 100%)';
-            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7)';
-            btn.style.transform = 'none';
-        });
-
-        btn.addEventListener('click', () => this.toggleList());
-
-        document.body.appendChild(btn);
-        this.listButton = btn;
-    }
-
-    // ─── 2. 军团列表面板（z-index 高于军团按钮，展开时盖住下层按钮） ────────
-
     private createListPanel(): void {
         const panel = document.createElement('div');
         panel.id = 'army-list-panel';
+        panel.classList.add('is-collapsed');
         panel.style.cssText = `
             position: fixed;
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
@@ -218,7 +169,7 @@ export class CameraFollowUI {
             -webkit-backdrop-filter: blur(3px);
             border: none;
             box-shadow: none;
-            display: none;
+            display: block;
             font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             color: #eee3ce;
             padding: 0 10px 10px 0;
@@ -240,6 +191,14 @@ export class CameraFollowUI {
         `;
         const headerTitle = document.createElement('span');
         headerTitle.textContent = '⚔ 军团·势力榜 (0) ⚔';
+        const collapseBtn = document.createElement('button');
+        collapseBtn.type = 'button';
+        collapseBtn.className = 'army-panel-toggle';
+        collapseBtn.textContent = '▼ 展开';
+        collapseBtn.setAttribute('aria-expanded', 'false');
+        collapseBtn.addEventListener('click', () => this.toggleList());
+        header.appendChild(collapseBtn);
+        this.listButton = collapseBtn;
         header.appendChild(headerTitle);
         this.listHeader = headerTitle as unknown as HTMLDivElement;
 
@@ -401,7 +360,8 @@ export class CameraFollowUI {
 
     private updateCountDisplay(count: number): void {
         if (this.listButton) {
-            this.listButton.innerHTML = `🎖️ 军团 (${count})`;
+            this.listButton.textContent = this.isListOpen ? '▲ 收起' : '▼ 展开';
+            this.listButton.setAttribute('aria-expanded', String(this.isListOpen));
         }
         if (this.listHeader) {
             this.listHeader.textContent = `⚔ 军团·势力榜 (${count}) ⚔`;
@@ -410,19 +370,9 @@ export class CameraFollowUI {
     }
 
     private toggleList(): void {
-        this.isListOpen = !this.isListOpen;
-        if (this.isListOpen) {
-            const count = this.getActiveLegionCount();
-            this.updateCountDisplay(count);
-            this.lastLegionCount = count;
-            this.refreshList();
-            this.listPanel!.style.display = 'block';
-        } else {
-            this.listPanel!.style.display = 'none';
-        }
+        if (this.isListOpen) this.closeList();
+        else this.openList();
     }
-
-
 
     /** 进 13 战斗场景时保存状态并收起军团列表与跟随面板 */
     public onEnterBattleScene13(): void {
@@ -430,6 +380,7 @@ export class CameraFollowUI {
             this.preScene13ListOpen = true;
         }
         this.closeList();
+        if (this.listPanel) this.listPanel.style.display = 'none';
         if (this.listButton) this.listButton.style.display = 'none';
         // 🔴 幂等修复（2026-08-26）：onEnter 会被 Scene13WarLayer.start 与 BattleSceneLayer.enter
         //    各调一次。第二次进来时 banner 已被第一次隐藏（display='none'），原 else 分支把
@@ -443,6 +394,7 @@ export class CameraFollowUI {
 
     /** 退 13 战斗场景时恢复展开状态 */
     public onExitBattleScene13(): void {
+        if (this.listPanel) this.listPanel.style.display = 'block';
         if (this.listButton) this.listButton.style.display = '';
         if (this.preScene13ListOpen) {
             this.preScene13ListOpen = false;
@@ -457,6 +409,7 @@ export class CameraFollowUI {
     public openList(): void {
         if (this.isListOpen) return;
         this.isListOpen = true;
+        this.listPanel?.classList.remove('is-collapsed');
         const count = this.getActiveLegionCount();
         this.updateCountDisplay(count);
         this.lastLegionCount = count;
@@ -466,7 +419,8 @@ export class CameraFollowUI {
 
     public closeList(): void {
         this.isListOpen = false;
-        if (this.listPanel) this.listPanel.style.display = 'none';
+        this.listPanel?.classList.add('is-collapsed');
+        this.updateCountDisplay(this.getActiveLegionCount());
     }
 
     private refreshList(): void {
