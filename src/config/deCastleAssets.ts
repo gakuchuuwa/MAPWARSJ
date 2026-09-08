@@ -215,6 +215,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
     KOREA: 'KORE_CASTLE_AGE3',               // 朝鲜：高丽山城
     JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
+    JAPAN_ANTIQUITY: 'ASIA_CASTLE_AGE3',
     JAPAN_IMPERIAL: 'ASIA_CASTLE_AGE3',      // 帝国日本：日式天守阁
     STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
     STEPPE_IMPERIAL: 'MONG_CASTLE_AGE3',    // 帝国草原：蒙古要塞
@@ -231,6 +232,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     VIETNAMESE: 'VIET_CASTLE_AGE3',          // 越南：升龙城式重檐
     KHMER: 'SEAS_CASTLE_AGE3',               // 高棉：吴哥窟式砂岩塔
     MALAY: 'MALA_CASTLE_AGE3',               // 马来：满剌加木石水寨
+    SEASIA_ANTIQUITY: 'MALA_CASTLE_AGE3',
     SEASIA_IMPERIAL: 'MALA_CASTLE_AGE3',    // 帝国东南亚：木石水寨
     INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
@@ -245,6 +247,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     PERSIAN: 'PERSIAN_CASTLE_AGE3',           // 波斯文化区用 PERSIAN 风格集本套城堡；PERS 留给萨珊/可萨等具体政权
     PERSIAN_CASTLE: 'PERSIAN_CASTLE_AGE3',
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
+    ORIE_ANTIQUITY: 'ORIE_CASTLE_AGE3',
     WEST_ASIA: 'ORIE_CASTLE_AGE3',          // 近东套
     BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
 
