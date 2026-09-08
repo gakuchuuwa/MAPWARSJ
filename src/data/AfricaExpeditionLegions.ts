@@ -15,4 +15,6 @@ export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     saimien: { name: '塞米恩战士', tier: 3 },  // 塞米恩·尤迪特：塞米恩贝塔以色列战士
     adal: { name: '阿达尔火枪兵', tier: 2 },   // 塞拉·格拉尼：奥斯曼援助重装火绳枪+精钢弯刀圣战突击主力
     gondarine: { name: '皇城卫队', tier: 4 },
+    tigelei: { name: '提格雷长矛', tier: 3 },  // 德布雷达莫·吉达扬：提格雷崖堡长矛守军
+    xiaoa: { name: '肖阿象军', tier: 3 },  // 德布雷利巴诺斯·达格纳詹：肖阿高原象军
 };

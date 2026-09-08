@@ -1,5 +1,6 @@
 import 'leaflet/dist/leaflet.css';
 import '../style.css';
+import './ui/map-hud-theme.css';
 import { GameApp } from './app/GameApp';
 import { showGameAppErrorOverlay } from './app/boot/GameAppBootUtils';
 import { registerMapwarWebMcpTools } from './webmcp/registerMapwarTools';

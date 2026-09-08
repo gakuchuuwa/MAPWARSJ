@@ -59,7 +59,7 @@ export class PlayerHUD {
         const titleRow = document.createElement('div');
         titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(212,175,55,0.25);';
         const title = document.createElement('div');
-        title.style.cssText = 'font-weight:900; font-size:15px; letter-spacing:1px; color:#ffd700; text-shadow:0 1px 3px rgba(0,0,0,0.8);';
+        title.style.cssText = 'font-weight:900; font-size:15px; letter-spacing:1px; color:#e8c77e; text-shadow:0 1px 3px rgba(0,0,0,0.8);';
         title.textContent = `👤 ${this.hero.name}`;
         this.title = title;
         const minBtn = document.createElement('button');
@@ -74,6 +74,7 @@ export class PlayerHUD {
         titleRow.appendChild(minBtn);
         panel.appendChild(titleRow);
         const body = document.createElement('div');
+        body.className = 'player-hud-body';
         panel.appendChild(body);
         document.body.appendChild(panel);
         this.panel = panel;
@@ -112,10 +113,10 @@ export class PlayerHUD {
                 : `随${quest.generalName}攻【${quest.targetCityName}】`)
             : '到据点找武将';
         const row = (k: string, v: string, color = '#f5e6c8') =>
-            `<div style="display:flex;justify-content:space-between;gap:8px;line-height:1.6;"><span style="color:#ba9e7b;font-weight:600;">${k}</span><span style="color:${color};font-weight:700;text-align:right;">${v}</span></div>`;
+            `<div class="player-hud-row" style="display:flex;justify-content:space-between;gap:8px;line-height:1.6;"><span style="color:#ba9e7b;font-weight:600;">${k}</span><span style="color:${color};font-weight:700;text-align:right;">${v}</span></div>`;
         let html = '';
-        html += row('官阶', rank.name, '#ffd700');
-        html += row('战力', `第九环 ×${rank.powerMult.toFixed(1)}`, '#ffd700');
+        html += row('官阶', rank.name, '#e8c77e');
+        html += row('战力', `第九环 ×${rank.powerMult.toFixed(1)}`, '#e8c77e');
         html += row('职权', rank.authority, '#9ec5e8');
         html += row('功勋', next ? `${hero.merit.toLocaleString()} / ${next.merit.toLocaleString()}` : hero.merit.toLocaleString(), '#fffcee');
         html += row('势力', factionName, hero.factionId ? '#52c486' : '#ba9e7b');
@@ -156,7 +157,7 @@ export class PlayerHUD {
         this.body.appendChild(uSel);
         if (!canPickUnit && hero.learnedUnits.length) {
             const h = document.createElement('div');
-            h.style.cssText = 'font-size:11px;color:#9e8a75;margin-top:-4px;margin-bottom:6px;';
+            h.style.cssText = 'font-size:12px;color:#b9ab95;margin-top:-4px;margin-bottom:6px;';
             h.textContent = '升至探马后可自选兵种素材';
             this.body.appendChild(h);
         }
@@ -168,7 +169,7 @@ export class PlayerHUD {
         //    要连底层一起拆，说一声。
         if (rank.control === 'none') {
             const hint = document.createElement('div');
-            hint.style.cssText = 'font-size:11px;color:#9e8a75;margin-top:3px;';
+            hint.style.cssText = 'font-size:12px;color:#b9ab95;margin-top:3px;';
             hint.textContent = '平民与斥候只管自己，升探马后可领一队';
             this.body.appendChild(hint);
         }
@@ -187,12 +188,12 @@ export class PlayerHUD {
 
         if (host) {
             const note = document.createElement('div');
-            note.style.cssText = 'margin-top:8px; font-size:11px; color:#ff8585; text-align:center; font-weight:bold;';
+            note.style.cssText = 'margin-top:8px; font-size:12px; color:#ff8585; text-align:center; font-weight:bold;';
             note.textContent = '随军出征中，军团覆灭前不可离开';
             this.body.appendChild(note);
         }
         const tip = document.createElement('div');
-        tip.style.cssText = 'font-size:11px;color:#8a7a66;margin-top:8px;border-top:1px dashed rgba(212,175,55,0.25);padding-top:5px;line-height:1.4;';
+        tip.style.cssText = 'font-size:12px;color:#b9ab95;margin-top:8px;border-top:1px dashed rgba(212,175,55,0.25);padding-top:5px;line-height:1.4;';
         tip.textContent = '战术模式：WASD/方向键 移动，点地面前往；Q 全军攻击，E 待命';
         this.body.appendChild(tip);
     }

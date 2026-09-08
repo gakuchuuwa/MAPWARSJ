@@ -3242,6 +3242,20 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_qutlugh: { generalId: 'gen_qutlugh', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 巴布尔之母，坐镇筹粮守城，非统帅 → 普将
     gen_pacanchiq: { generalId: 'gen_pacanchiq', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 穆伊斯卡酋长，无够格胜绩 → 普将
     gen_cunhambebe: { generalId: 'gen_cunhambebe', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 塔莫约酋长，抗葡萄牙殖民 → 普将
+    gen_galvarino: { generalId: 'gen_galvarino', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' }, // 断臂复仇马普切战士，米利亚拉普埃战死 → 普将
+    gen_guacolda: { generalId: 'gen_guacolda', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' }, // 传奇战巫女，随劳塔罗北伐战死 → 普将
+    gen_john_fearless: { generalId: 'gen_john_fearless', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 勃艮第公爵，阿马尼亚克内战、1419被刺 → 普将
+    gen_bernard_armagnac: { generalId: 'gen_bernard_armagnac', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' }, // 阿马尼亚克伯爵，百年战争党争领袖 → 普将
+    gen_gilbert: { generalId: 'gen_gilbert', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 格洛斯特伯爵，威尔士边境贵族 → 普将
+    gen_alaric: { generalId: 'gen_alaric', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 西哥特首王，410陷罗马 → 名将
+    gen_ataulf: { generalId: 'gen_ataulf', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 西哥特王，娶罗马公主建高卢共治 → 普将
+    gen_philip_good: { generalId: 'gen_philip_good', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 勃艮第公爵，建金羊毛骑士团 → 普将
+    gen_dafydd: { generalId: 'gen_dafydd', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 末代威尔士亲王，1282抗英被擒 → 普将
+    gen_llywelyn: { generalId: 'gen_llywelyn', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 威尔士亲王，1282欧温桥阵亡 → 普将
+    gen_dinhle: { generalId: 'gen_dinhle', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' }, // 丁朝太子·南越王，坐镇驩州抗林邑 → 普将
+    gen_gidajan: { generalId: 'gen_gidajan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 阿克苏姆末代皇储，崖堡避难抗尤迪特 → 普将
+    gen_thoros: { generalId: 'gen_thoros', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 奇里乞亚复国英雄，屡破拜占庭军 → 名将
+    gen_dagnajan: { generalId: 'gen_dagnajan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 阿克苏姆末代帝王，象军南征经略肖阿 → 普将
 };
 
 

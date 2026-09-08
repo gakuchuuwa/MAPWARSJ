@@ -441,6 +441,26 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     ];
 }
 
+/** 七阵型各排格位数（唯一权威）。与 LegionPhalanxDrawer 的 *_9_LAYOUT 一一对应。
+ *  🔴 渲染层按扁平 index 0..8 把 cultureSlots 填进布局表第 i 个格位 —— slots 自身不带分排信息，
+ *  分排边界完全由阵型决定。所以 slots 的分组数必须与本表逐项相等，否则兵种跨排错位。 */
+export const FORMATION_ROW_COUNTS: Readonly<Record<FormationMode, readonly [number, number, number]>> = {
+    triangle:     [2, 3, 4],
+    echelon:      [4, 3, 2],
+    fish_scale:   [3, 4, 2],
+    crane_wing:   [2, 4, 3],
+    crescent:     [3, 2, 4],
+    balance_yoke: [4, 2, 3],
+    square:       [3, 3, 3],
+};
+
+/** slots 的分组数是否与该阵型的分排数逐项相等（不等 = 渲染时必然跨排错位） */
+export function slotsMatchFormation(slots: CompositionSlot[], mode: FormationMode): boolean {
+    const want = FORMATION_ROW_COUNTS[mode];
+    if (!want || slots.length !== want.length) return false;
+    return slots.every((s, i) => s.count === want[i]);
+}
+
 /** 从 slot 结构推断阵型（兼容旧草稿；七阵型均为 9 人，靠各排 count 分布区分） */
 export function inferFormationModeFromSlots(slots: CompositionSlot[]): FormationMode {
     const counts = slots.map(s => s.count);
@@ -1188,6 +1208,19 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     } else {
         army.formationMode = inferFormationModeFromSlots(slots)
             ?? getCultureFormationMode(culture);
+    }
+
+    // 🔴 [2026-09-08 主人定] 阵型/编成一致性闸门 —— 七个阵型都是前中后三排，排列必须正确。
+    //    渲染层按扁平 index 把 cultureSlots 填进阵型布局的 9 个格位，slots 自身不带分排信息，
+    //    分排边界只由阵型决定。上面的朝代/势力覆盖只改阵型、不改 slots，而这些势力大多没有
+    //    势力专属编制、slots 落回文化区 tier（实测 168 个势力命中，其中有专属编制的 0 个），
+    //    于是「鹤翼 2+4+3 的格位」装「雁行 4+3+2 的兵」→ 前排主力被抽走、兵种跨排劈开。
+    //    规则：**前中后三排兵种身份不动，阵型说每排几个人就是几个人。**
+    //    绝不反过来把阵型回落成编成推出来的那个（那会丢掉朝代/势力的阵型设计）。
+    if (army.formationMode && !slotsMatchFormation(slots, army.formationMode)) {
+        const fixed = convertSlotsToMode(slots, army.formationMode);
+        army.cultureSlots = expandCompositionSlots(fixed);
+        army.cultureScales = expandCompositionScales(fixed);
     }
 }
 
