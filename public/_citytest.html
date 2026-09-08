@@ -285,7 +285,7 @@
       </select>
     </div>
 
-    <button id="btnMirror">城墙镜像: 关 (NW+SE)</button>
+    <button id="btnMirror" class="active" style="background:#b7791f;border-color:#f6e05e;color:#fff;">城墙镜像: 🎲 随机</button>
     <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机二选一</button>
     <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机三选一</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
@@ -557,10 +557,32 @@
 <script>
 const META = {"ASIA": {"FORTIFIED": {"NE": {"name": "ASIA_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "SE": {"name": "ASIA_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "POST": {"name": "ASIA_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_asia_wall_fortified"}, "GATE_NE": {"name": "ASIA_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 259, "anchor_x": 184, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_fortified_ne_closed + b_asia_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ASIA_WALL_STONE_NE", "frames": 1, "box_w": 99, "box_h": 91, "anchor_x": 60, "anchor_y": 71, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ASIA_WALL_STONE_SE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ASIA_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 245, "anchor_x": 177, "anchor_y": 182, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_stone_ne_closed + b_asia_gate_stone_corner"}}}, "WEST": {"FORTIFIED": {"NE": {"name": "WEST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 88, "anchor_y": 100, "sld_source": "b_west_wall_fortified"}, "SE": {"name": "WEST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 132, "anchor_x": 88, "anchor_y": 104, "sld_source": "b_west_wall_fortified"}, "POST": {"name": "WEST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 188, "anchor_x": 120, "anchor_y": 160, "sld_source": "b_west_wall_fortified"}, "GATE_NE": {"name": "WEST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 257, "anchor_x": 189, "anchor_y": 195, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_fortified_ne_closed + b_west_gate_fortified_corner"}}, "STONE": {"NE": {"name": "WEST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "WEST_WALL_STONE_SE", "frames": 1, "box_w": 109, "box_h": 100, "anchor_x": 66, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "WEST_GATE_STONE_NE", "frames": 1, "box_w": 307, "box_h": 254, "anchor_x": 184, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_stone_ne_closed + b_west_gate_stone_corner"}}}, "MEDI": {"FORTIFIED": {"NE": {"name": "MEDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_medi_wall_fortified"}, "SE": {"name": "MEDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_medi_wall_fortified"}, "POST": {"name": "MEDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 192, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_medi_wall_fortified"}, "GATE_NE": {"name": "MEDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 311, "box_h": 259, "anchor_x": 189, "anchor_y": 197, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_fortified_ne_closed + b_medi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MEDI_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MEDI_WALL_STONE_SE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MEDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_stone_ne_closed + b_medi_gate_stone_corner"}}}, "CEAS": {"FORTIFIED": {"NE": {"name": "CEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "SE": {"name": "CEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "POST": {"name": "CEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_ceas_wall_fortified"}, "GATE_NE": {"name": "CEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 301, "box_h": 257, "anchor_x": 181, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_fortified_ne_closed + b_ceas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "CEAS_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 98, "anchor_x": 63, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "CEAS_WALL_STONE_SE", "frames": 1, "box_w": 104, "box_h": 98, "anchor_x": 62, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "CEAS_GATE_STONE_NE", "frames": 1, "box_w": 297, "box_h": 245, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_stone_ne_closed + b_ceas_gate_stone_corner"}}}, "ORIE": {"FORTIFIED": {"NE": {"name": "ORIE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 120, "anchor_x": 80, "anchor_y": 92, "sld_source": "b_orie_wall_fortified"}, "SE": {"name": "ORIE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_orie_wall_fortified"}, "POST": {"name": "ORIE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 156, "box_h": 180, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_orie_wall_fortified"}, "GATE_NE": {"name": "ORIE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 178, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_fortified_ne_closed + b_orie_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ORIE_WALL_STONE_NE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ORIE_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ORIE_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 248, "anchor_x": 182, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_stone_ne_closed + b_orie_gate_stone_corner"}}}, "INDI": {"FORTIFIED": {"NE": {"name": "INDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "SE": {"name": "INDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "POST": {"name": "INDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 152, "box_h": 180, "anchor_x": 100, "anchor_y": 152, "sld_source": "b_indi_wall_fortified"}, "GATE_NE": {"name": "INDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 293, "box_h": 246, "anchor_x": 171, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_fortified_ne_closed + b_indi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "INDI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "INDI_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 79, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "INDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 241, "anchor_x": 175, "anchor_y": 179, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_stone_ne_closed + b_indi_gate_stone_corner"}}}, "MESO": {"FORTIFIED": {"NE": {"name": "MESO_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "SE": {"name": "MESO_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "POST": {"name": "MESO_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_meso_wall_fortified"}, "GATE_NE": {"name": "MESO_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 258, "anchor_x": 180, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_fortified_ne_closed + b_meso_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MESO_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 97, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MESO_WALL_STONE_SE", "frames": 1, "box_w": 107, "box_h": 98, "anchor_x": 64, "anchor_y": 75, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MESO_GATE_STONE_NE", "frames": 1, "box_w": 299, "box_h": 249, "anchor_x": 178, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_stone_ne_closed + b_meso_gate_stone_corner"}}}, "SLAV": {"FORTIFIED": {"NE": {"name": "SLAV_WALL_FORTIFIED_NE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "SE": {"name": "SLAV_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "POST": {"name": "SLAV_WALL_FORTIFIED_POST", "frames": 1, "box_w": 188, "box_h": 244, "anchor_x": 124, "anchor_y": 212, "sld_source": "b_slav_wall_fortified"}, "GATE_NE": {"name": "SLAV_GATE_FORTIFIED_NE", "frames": 1, "box_w": 327, "box_h": 312, "anchor_x": 194, "anchor_y": 247, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_fortified_ne_closed + b_slav_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SLAV_WALL_STONE_NE", "frames": 1, "box_w": 113, "box_h": 110, "anchor_x": 71, "anchor_y": 88, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SLAV_WALL_STONE_SE", "frames": 1, "box_w": 115, "box_h": 110, "anchor_x": 72, "anchor_y": 89, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SLAV_GATE_STONE_NE", "frames": 1, "box_w": 315, "box_h": 282, "anchor_x": 188, "anchor_y": 218, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_stone_ne_closed + b_slav_gate_stone_corner"}}}, "EAST": {"FORTIFIED": {"NE": {"name": "EAST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "SE": {"name": "EAST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "POST": {"name": "EAST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 204, "anchor_x": 124, "anchor_y": 172, "sld_source": "b_east_wall_fortified"}, "GATE_NE": {"name": "EAST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 325, "box_h": 269, "anchor_x": 195, "anchor_y": 205, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_fortified_ne_closed + b_east_gate_fortified_corner"}}, "STONE": {"NE": {"name": "EAST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 101, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "EAST_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "EAST_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 250, "anchor_x": 185, "anchor_y": 189, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_stone_ne_closed + b_east_gate_stone_corner"}}}, "AFRI": {"FORTIFIED": {"NE": {"name": "AFRI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "SE": {"name": "AFRI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "POST": {"name": "AFRI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 188, "anchor_x": 112, "anchor_y": 160, "sld_source": "b_afri_wall_fortified"}, "GATE_NE": {"name": "AFRI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 255, "anchor_x": 182, "anchor_y": 193, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_fortified_ne_closed + b_afri_gate_fortified_corner"}}, "STONE": {"NE": {"name": "AFRI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 94, "anchor_x": 63, "anchor_y": 71, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "AFRI_WALL_STONE_SE", "frames": 1, "box_w": 106, "box_h": 96, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "AFRI_GATE_STONE_NE", "frames": 1, "box_w": 313, "box_h": 254, "anchor_x": 182, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_stone_ne_closed + b_afri_gate_stone_corner"}}}, "ANDE": {"FORTIFIED": {"NE": {"name": "ANDE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "SE": {"name": "ANDE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "POST": {"name": "ANDE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_ande_wall_fortified"}, "GATE_NE": {"name": "ANDE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 254, "anchor_x": 179, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_fortified_ne_closed + b_ande_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ANDE_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 93, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ANDE_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 96, "anchor_x": 63, "anchor_y": 72, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ANDE_GATE_STONE_NE", "frames": 1, "box_w": 298, "box_h": 248, "anchor_x": 172, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_stone_ne_closed + b_ande_gate_stone_corner"}}}, "PURU": {"FORTIFIED": {"NE": {"name": "PURU_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_puru_wall_fortified"}, "SE": {"name": "PURU_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_puru_wall_fortified"}, "POST": {"name": "PURU_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_puru_wall_fortified"}, "GATE_NE": {"name": "PURU_GATE_FORTIFIED_NE", "frames": 1, "box_w": 305, "box_h": 257, "anchor_x": 177, "anchor_y": 194, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_fortified_ne_closed + b_puru_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PURU_WALL_STONE_NE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PURU_WALL_STONE_SE", "frames": 1, "box_w": 111, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PURU_GATE_STONE_NE", "frames": 1, "box_w": 321, "box_h": 261, "anchor_x": 186, "anchor_y": 199, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_stone_ne_closed + b_puru_gate_stone_corner"}}}, "SEAS": {"FORTIFIED": {"NE": {"name": "SEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 136, "anchor_x": 76, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "SE": {"name": "SEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 136, "anchor_x": 72, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "POST": {"name": "SEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 212, "anchor_x": 124, "anchor_y": 184, "sld_source": "b_seas_wall_fortified"}, "GATE_NE": {"name": "SEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 318, "box_h": 280, "anchor_x": 190, "anchor_y": 217, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_fortified_ne_closed + b_seas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SEAS_WALL_STONE_NE", "frames": 1, "box_w": 98, "box_h": 93, "anchor_x": 55, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SEAS_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 57, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SEAS_GATE_STONE_NE", "frames": 1, "box_w": 305, "box_h": 263, "anchor_x": 180, "anchor_y": 201, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_stone_ne_closed + b_seas_gate_stone_corner"}}}, "PERSIAN": {"FORTIFIED": {"NE": {"name": "PERSIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "SE": {"name": "PERSIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "POST": {"name": "PERSIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 176, "box_h": 196, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_persian_wall_fortified"}, "GATE_NE": {"name": "PERSIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 264, "anchor_x": 186, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_fortified_ne_closed + b_persian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PERSIAN_WALL_STONE_NE", "frames": 1, "box_w": 128, "box_h": 118, "anchor_x": 81, "anchor_y": 94, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PERSIAN_WALL_STONE_SE", "frames": 1, "box_w": 125, "box_h": 122, "anchor_x": 76, "anchor_y": 98, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PERSIAN_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 252, "anchor_x": 182, "anchor_y": 188, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_stone_ne_closed + b_persian_gate_stone_corner"}}}, "GREEK": {"FORTIFIED": {"NE": {"name": "GREEK_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_greek_wall_fortified"}, "SE": {"name": "GREEK_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 136, "anchor_x": 84, "anchor_y": 108, "sld_source": "b_greek_wall_fortified"}, "POST": {"name": "GREEK_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 184, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_greek_wall_fortified"}, "GATE_NE": {"name": "GREEK_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 251, "anchor_x": 186, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_greek_gate_fortified_ne_closed + b_greek_gate_fortified_corner"}}, "STONE": {"NE": {"name": "GREEK_WALL_STONE_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "GREEK_WALL_STONE_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "GREEK_GATE_STONE_NE", "frames": 1, "box_w": 188, "box_h": 212, "anchor_x": 128, "anchor_y": 188, "sld_source": "b_greek_gate_stone_ne_open"}}}, "THRACIAN": {"FORTIFIED": {"NE": {"name": "THRACIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_thracian_wall_fortified"}, "SE": {"name": "THRACIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_thracian_wall_fortified"}, "POST": {"name": "THRACIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 184, "anchor_x": 116, "anchor_y": 156, "sld_source": "b_thracian_wall_fortified"}, "GATE_NE": {"name": "THRACIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 254, "anchor_x": 185, "anchor_y": 191, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_thracian_gate_fortified_ne_closed + b_thracian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "THRACIAN_WALL_STONE_NE", "frames": 1, "box_w": 104, "box_h": 96, "anchor_x": 58, "anchor_y": 70, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "THRACIAN_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "THRACIAN_GATE_STONE_NE", "frames": 1, "box_w": 176, "box_h": 176, "anchor_x": 108, "anchor_y": 144, "sld_source": "b_thracian_gate_stone_ne_open"}}}};
 
+/** 16 套 DE 建筑风格集的中文名（与 TerritorySystem 的 REGION_TO_DE_STYLE 值域一致）。 */
+const STYLE_LABELS = {
+  ASIA: '华夏东亚', WEST: '西欧法兰克', MEDI: '罗马地中海', CEAS: '游牧草原/中亚',
+  ORIE: '中东近东/阿拉伯', INDI: '印度次大陆', MESO: '美洲玛雅', SLAV: '东欧斯拉夫',
+  EAST: '拜占庭东欧', PERSIAN: '波斯萨珊', AFRI: '非洲', ANDE: '安第斯',
+  PURU: '普鲁', SEAS: '东南亚', GREEK: '希腊', THRACIAN: '色雷斯',
+};
+
+/** 风格下拉按 META 的实际覆盖动态生成，别再手写 option —— 手写那版只列了 10 个，漏了 6 套。 */
+function fillStyleSelect() {
+  const sel = document.getElementById('selStyle');
+  if (!sel) return;
+  const keys = Object.keys(META);
+  sel.innerHTML = keys.map(function (k) {
+    return '<option value="' + k + '"' + (k === curStyle ? ' selected' : '') + '>'
+      + k + ' · ' + (STYLE_LABELS[k] || k) + '</option>';
+  }).join('');
+}
+
 let curType = 'all';
 let curZoom = 1.25; // 默认 125%（5据点同屏整齐并排） // 默认放大到 200%
 let curStyle = 'ASIA';
-let isMirror = false;
+/* 城墙镜像三态：'off' 关(NW+SE) / 'on' 开(NE+SW) / 'rnd' 每个据点各自掷骰。
+ * 'rnd' 对齐游戏里 TerritorySystem 的真实行为（那边就是 rnd() < 0.5 逐座随机），
+ * 种子挂 randomSeedOffset，点 🎲 重掷一轮，与中城城门、城寨形状同一套机制。 */
+let curMirror = 'rnd';   // [2026-09-08 主人定] 默认就是随机镜像
 let showBuildings = true;
 let curGroundMult = 1.7;
 let curRadiusMult = 1.0;
@@ -588,98 +610,130 @@ const DE_STONE_ANCHORS_BY_STYLE = {
     AFRI: {
         NE: { pctX: 58.9, pctY: 75.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.5, pctY: 76.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 65.1, pctY: 82.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/AFRI_WALL_POST/preview.png' },
+        POST: { pctX: 65.1, pctY: 82.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_WALL_POST/preview.png' },
         GATE: { pctX: 58.1, pctY: 73.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/AFRI_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 72.2, pctY: 87.9, widthFactor: 0.349, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 89.4, widthFactor: 0.356, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE4/preview.png' },
     },
     ANDE: {
         NE: { pctX: 60.2, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.3, pctY: 75.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 64.9, pctY: 85.2, widthFactor: 0.26, path: '/SUCAI_BUILDING/ANDE_WALL_POST/preview.png' },
+        POST: { pctX: 64.9, pctY: 85.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_WALL_POST/preview.png' },
         GATE: { pctX: 57.7, pctY: 75.0, widthFactor: 0.34, path: '/SUCAI_BUILDING/ANDE_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 65.3, pctY: 85.5, widthFactor: 0.317, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.0, pctY: 86.6, widthFactor: 0.323, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE4/preview.png' },
     },
     ASIA: {
         NE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_NE/preview.png' },
         SE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 66.9, pctY: 84.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png' },
+        POST: { pctX: 66.9, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png' },
         GATE: { pctX: 58.8, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/ASIA_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 66.7, pctY: 88.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.1, pctY: 87.1, widthFactor: 0.381, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE4/preview.png' },
     },
     CEAS: {
         NE: { pctX: 60.0, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.6, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 68.6, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/CEAS_WALL_POST/preview.png' },
+        POST: { pctX: 68.6, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.6, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/CEAS_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 72.3, pctY: 87.9, widthFactor: 0.304, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.9, pctY: 89.2, widthFactor: 0.31, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE4/preview.png' },
     },
     EAST: {
         NE: { pctX: 60.7, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.2, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 68.5, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/EAST_WALL_POST/preview.png' },
+        POST: { pctX: 68.5, pctY: 86.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/EAST_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 88.5, widthFactor: 0.336, path: '/SUCAI_BUILDING/EAST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 88.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/EAST_TOWER_AGE4/preview.png' },
     },
     INDI: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.9, pctY: 78.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 67.8, pctY: 84.6, widthFactor: 0.26, path: '/SUCAI_BUILDING/INDI_WALL_POST/preview.png' },
+        POST: { pctX: 67.8, pctY: 84.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.1, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/INDI_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 89.1, widthFactor: 0.336, path: '/SUCAI_BUILDING/INDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 73.6, pctY: 89.1, widthFactor: 0.343, path: '/SUCAI_BUILDING/INDI_TOWER_AGE4/preview.png' },
     },
     MEDI: {
         NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/MEDI_WALL_POST/preview.png' },
+        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/MEDI_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 87.0, widthFactor: 0.304, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.0, pctY: 87.5, widthFactor: 0.323, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE4/preview.png' },
     },
     MESO: {
         NE: { pctX: 59.0, pctY: 76.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.8, pctY: 76.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 67.7, pctY: 84.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/MESO_WALL_POST/preview.png' },
+        POST: { pctX: 67.7, pctY: 84.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_WALL_POST/preview.png' },
         GATE: { pctX: 59.5, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/MESO_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 69.2, pctY: 86.6, widthFactor: 0.336, path: '/SUCAI_BUILDING/MESO_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 84.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/MESO_TOWER_AGE4/preview.png' },
     },
     ORIE: {
         NE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.9, pctY: 86.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/ORIE_WALL_POST/preview.png' },
+        POST: { pctX: 69.9, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_WALL_POST/preview.png' },
         GATE: { pctX: 60.5, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/ORIE_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 69.1, pctY: 87.1, widthFactor: 0.356, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 90.3, widthFactor: 0.349, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE4/preview.png' },
     },
     PERSIAN: {
         NE: { pctX: 63.3, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.8, pctY: 80.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/PERSIAN_WALL_POST/preview.png' },
+        POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_WALL_POST/preview.png' },
         GATE: { pctX: 58.9, pctY: 74.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/PERSIAN_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 86.4, widthFactor: 0.368, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.375, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE4/preview.png' },
     },
     PURU: {
         NE: { pctX: 60.9, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.4, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 68.3, pctY: 86.2, widthFactor: 0.26, path: '/SUCAI_BUILDING/PURU_WALL_POST/preview.png' },
+        POST: { pctX: 68.3, pctY: 86.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_WALL_POST/preview.png' },
         GATE: { pctX: 57.9, pctY: 76.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/PURU_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 69.6, pctY: 85.5, widthFactor: 0.362, path: '/SUCAI_BUILDING/PURU_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 88.1, widthFactor: 0.356, path: '/SUCAI_BUILDING/PURU_TOWER_AGE4/preview.png' },
     },
     SEAS: {
         NE: { pctX: 56.1, pctY: 77.4, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.6, pctY: 76.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 67.3, pctY: 85.9, widthFactor: 0.26, path: '/SUCAI_BUILDING/SEAS_WALL_POST/preview.png' },
+        POST: { pctX: 67.3, pctY: 85.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.0, pctY: 76.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/SEAS_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 68.0, pctY: 87.3, widthFactor: 0.323, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.8, pctY: 88.7, widthFactor: 0.343, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE4/preview.png' },
     },
     SLAV: {
         NE: { pctX: 62.8, pctY: 80.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 80.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 67.5, pctY: 86.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/SLAV_WALL_POST/preview.png' },
+        POST: { pctX: 67.5, pctY: 86.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_WALL_POST/preview.png' },
         GATE: { pctX: 59.7, pctY: 77.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/SLAV_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 65.4, pctY: 89.4, widthFactor: 0.336, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 89.0, widthFactor: 0.349, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE4/preview.png' },
     },
     WEST: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 68.1, pctY: 85.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_WALL_POST/preview.png' },
+        POST: { pctX: 68.1, pctY: 85.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.5, widthFactor: 0.31, path: '/SUCAI_BUILDING/WEST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.6, pctY: 87.7, widthFactor: 0.297, path: '/SUCAI_BUILDING/WEST_TOWER_AGE4/preview.png' },
     },
     GREEK: {
         NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
+        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
         GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/GREEK_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 68.4, pctY: 86.4, widthFactor: 0.368, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.375, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE4/preview.png' },
     },
     THRACIAN: {
         NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
+        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
         GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/THRACIAN_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.3, widthFactor: 0.31, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 71.2, pctY: 87.7, widthFactor: 0.336, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE4/preview.png' },
     },
 };
 
@@ -849,7 +903,7 @@ function computeRectWall(baseSize, LSeg, WSeg) {
   const pieces = [];
   const put = (x, y, type, flipX) => pieces.push({ x: x - cx, y: y - cy, type, flipX: !!flipX });
 
-  put(P0.x, P0.y, 'POST'); put(P1.x, P1.y, 'POST'); put(P2.x, P2.y, 'POST'); put(P3.x, P3.y, 'POST');
+  put(P0.x, P0.y, 'TOWER_AGE4'); put(P1.x, P1.y, 'TOWER_AGE3'); put(P2.x, P2.y, 'TOWER_AGE4'); put(P3.x, P3.y, 'TOWER_AGE3');
   const halfL = Math.floor(LSeg / 2);
 
   // 底边 P0→P1
@@ -1014,13 +1068,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     parts.push('<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:calc(50% + ' + cOffsetY + 'px);width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:' + (cZ - 1) + ';opacity:0.92;pointer-events:none;" />');
     parts.push('<img src="/SUCAI_BUILDING/' + style + '_CASTLE_AGE3/preview.png" style="position:absolute;left:50%;top:calc(50% + ' + cOffsetY + 'px);width:' + cW.toFixed(1) + 'px;transform:translate(-50%,-65%)' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + cZ + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
 
-    const tW = baseSize * 0.36 * tierScale * curBldgScale;
-    const tgW = tW * 1.5, tgH = tgW * 0.58;
-    const diag = baseSize * 0.28, tx = -diag, ty = -diag * 0.58;
-    const tFlip = rnd() < 0.5;
-    const tZ = Math.round(500 + ty);
-    parts.push('<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:' + tgW.toFixed(1) + 'px;height:' + tgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + tx.toFixed(1) + 'px),calc(-50% + ' + ty.toFixed(1) + 'px));z-index:' + (tZ - 1) + ';opacity:0.92;pointer-events:none;" />');
-    parts.push('<img src="/SUCAI_BUILDING/' + style + '_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:' + tW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + tx.toFixed(1) + 'px),calc(-50% + ' + ty.toFixed(1) + 'px - 15%))' + (tFlip ? ' scaleX(-1)' : '') + ';z-index:' + tZ + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    // 险要内部建筑只保留核心城堡（四角城垛换为 2 大型箭塔 + 2 警戒箭塔）
     return parts.join('');
   }
 
@@ -1245,7 +1293,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
 }
 // 渲染完整据点形态 HTML
 function renderCityTypeHtml(baseSize, style, type, mirror) {
-  const parts = [renderBuildings(baseSize, style, type, (mirror ? "mir" : "nomir"))];
+  const parts = [renderBuildings(baseSize, style, type, 'base')];
   let pieces = [];
   let anchors = {};
   const AUTO = 1.2;
@@ -1258,7 +1306,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
       ? true
       : (curMediumGates === '2')
         ? false
-        : ((hashString(style + '_' + type + '_' + (mirror ? 'mir' : 'nomir') + '_' + randomSeedOffset + '_medwall') & 1) === 1);
+        : ((hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_medwall') & 1) === 1);
     pieces = computeRingWall(baseSize, 6, isFourGates);
     anchors = getStoneAnchors(style);
   } else if (type === 'small') {
@@ -1271,7 +1319,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
         ? 1
         : (curStockadeShape === 'octagon')
           ? 2
-          : (hashString(style + '_' + type + '_' + (mirror ? 'mir' : 'nomir') + '_' + randomSeedOffset + '_stkshape') % 3);
+          : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 3);
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize);
     } else if (stkShape === 2) {
@@ -1286,9 +1334,20 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     anchors = getStoneAnchors(style);
   }
 
-  if (mirror) {
+  /* 三态解析：rnd 时按 style+type+种子 掷骰，所以同一屏里 5 种据点各自独立、
+   * 换风格或点 🎲 会重新分配，刷新页面结果保持一致（哈希而非 Math.random）。 */
+  /* 🔴 用 mulberry32 取随机数，**不要**直接取 hashString 的最低位：
+   *    实测最低位相关性太强，同屏 5 种据点只在两种组合间交替
+   *    （medium/pass/small 永远同步、big/stockade 永远与之相反），看着一点不随机。
+   *    走 mulberry32 后与游戏 TerritorySystem 的 `rnd() < 0.5` 完全同构。 */
+  var doMirror = (mirror === 'on') ? true
+    : (mirror === 'rnd')
+      ? (mulberry32(hashString(style + '_' + type + '_w_' + randomSeedOffset + '_mirror'))() < 0.5)
+      : false;
+
+  if (doMirror) {
     if (type !== 'big') {
-      const isMedFour = (type === 'medium') && ((curMediumGates === '4') || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + (mirror ? 'mir' : 'nomir') + '_' + randomSeedOffset + '_medwall') & 1) === 1)));
+      const isMedFour = (type === 'medium') && ((curMediumGates === '4') || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_medwall') & 1) === 1)));
       if (!isMedFour) {
         for (const p of pieces) { p.x = -p.x; p.flipX = !p.flipX; }
       }
@@ -1298,9 +1357,9 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
   pieces.forEach(w => {
     const a = anchors[w.type];
     const zIndex = Math.round(500 + w.y);
-    const baseGateScale = (type === 'medium' || type === 'pass') ? 1.25 : 1.0;
+    const baseGateScale = 1.0; // 和大城一致：门不额外放大（1.0x），墙段严密咬入门塔
     const gateMul = (w.type === 'GATE') ? (baseGateScale * curGateScale) : 1.0;
-    const pW = baseSize * a.widthFactor * (type === 'big' || type === 'medium' || type === 'pass' ? AUTO : 1.0) * gateMul;
+    const pW = baseSize * a.widthFactor * (type === 'big' ? AUTO : 1.0) * gateMul;
     const pctX = w.flipX ? (100 - a.pctX) : a.pctX;
     const flip = w.flipX ? ' scaleX(-1)' : '';
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + pW.toFixed(1) + 'px;transform:translate(calc(-' + pctX.toFixed(1) + '% + ' + w.x.toFixed(1) + 'px),calc(-' + a.pctY.toFixed(1) + '% + ' + w.y.toFixed(1) + 'px))' + flip + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />');
@@ -1320,7 +1379,7 @@ function renderGateCloseup(style, type) {
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'medium') {
     const a = getStoneAnchors(style).GATE;
-    const gW = baseW * 0.34 * 1.2 * 1.25 * curGateScale;
+    const gW = baseW * 0.34 * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'small') {
     const a = PALISADE_ANCHORS.GATE;
@@ -1346,11 +1405,11 @@ function refresh() {
 
     // 渲染 5 大类型据点（按 curZoom 缩放，默认 200% = baseSize 250）
     const baseStage = Math.round(120 * curZoom);
-    document.getElementById('stageBig').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'big', isMirror);
-    document.getElementById('stageMedium').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'medium', isMirror);
-    document.getElementById('stageSmall').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'small', isMirror);
-    document.getElementById('stageStockade').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'stockade', isMirror);
-    document.getElementById('stagePass').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'pass', isMirror);
+    document.getElementById('stageBig').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'big', curMirror);
+    document.getElementById('stageMedium').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'medium', curMirror);
+    document.getElementById('stageSmall').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'small', curMirror);
+    document.getElementById('stageStockade').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'stockade', curMirror);
+    document.getElementById('stagePass').innerHTML = renderCityTypeHtml(baseStage, curStyle, 'pass', curMirror);
 
     // 渲染 5 种城门特写
     document.getElementById('gateBig').innerHTML = renderGateCloseup(curStyle, 'big');
@@ -1364,10 +1423,13 @@ function refresh() {
 
     const names = { big: '大城 (Big City)', medium: '中城 (Medium City)', small: '小城 (Small City)', stockade: '城寨 (Stockade)', pass: '险要 (Pass 要塞)' };
     document.getElementById('singleTitle').innerText = names[curType] + ' · 战略据点放大特写与细节呈现';
-    document.getElementById('singleStage').innerHTML = renderCityTypeHtml(Math.round(180 * curZoom), curStyle, curType, isMirror);
+    document.getElementById('singleStage').innerHTML = renderCityTypeHtml(Math.round(180 * curZoom), curStyle, curType, curMirror);
 
     // 渲染 8 主流文化风格矩阵
-    const cults = ['ASIA', 'WEST', 'MEDI', 'CEAS', 'ORIE', 'INDI', 'MESO', 'SLAV'];
+    // [2026-09-08 主人定：全部显示] 原来写死 8 个主流风格，漏掉 AFRI/ANDE/PURU/SEAS/
+    // GREEK/THRACIAN/EAST/PERSIAN 一半。改成跟着 META 走 —— META、两张锚点表都是 16 套，
+    // 数据层本来就全的，以后 DE 加风格也会自动出现在这里。
+    const cults = Object.keys(META);
     let gridHtml = '';
     cults.forEach(c => {
       gridHtml += '<div class="card">' +
@@ -1394,10 +1456,26 @@ document.getElementById('selStyle').addEventListener('change', e => {
   refresh();
 });
 
+/** 按钮外观与三态同步（点击与 URL 初始化共用，避免两处文案写歪） */
+function syncMirrorBtn() {
+  const b = document.getElementById('btnMirror');
+  if (!b) return;
+  if (curMirror === 'on') {
+    b.innerText = '城墙镜像: 开 (NE+SW)';
+    b.style.background = '#2b6cb0'; b.style.borderColor = '#63b3ed'; b.style.color = '#fff';
+  } else if (curMirror === 'rnd') {
+    b.innerText = '城墙镜像: 🎲 随机';
+    b.style.background = '#b7791f'; b.style.borderColor = '#f6e05e'; b.style.color = '#fff';
+  } else {
+    b.innerText = '城墙镜像: 关 (NW+SE)';
+    b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
+  }
+  b.classList.toggle('active', curMirror !== 'off');
+}
+
 document.getElementById('btnMirror').addEventListener('click', () => {
-  isMirror = !isMirror;
-  document.getElementById('btnMirror').innerText = '城墙镜像: ' + (isMirror ? '开 (NE+SW)' : '关 (NW+SE)');
-  document.getElementById('btnMirror').classList.toggle('active', isMirror);
+  curMirror = (curMirror === 'off') ? 'on' : (curMirror === 'on') ? 'rnd' : 'off';
+  syncMirrorBtn();
   refresh();
 });
 
@@ -1461,6 +1539,12 @@ if (urlParams.has('type')) {
       else b.classList.remove('active');
     });
   }
+}
+if (urlParams.has('mirror')) {
+  const mv = urlParams.get('mirror');
+  curMirror = (mv === 'rnd' || mv === 'random') ? 'rnd'
+    : (mv === '1' || mv === 'true') ? 'on' : 'off';
+  syncMirrorBtn();
 }
 if (urlParams.has('style')) {
   curStyle = urlParams.get('style');
@@ -1578,6 +1662,8 @@ if (btnStkShape) {
   });
 }
 
+fillStyleSelect();  // 16 套风格全部列进下拉（原 HTML 只写死了 10 个）
+syncMirrorBtn();   // 无 ?mirror 参数时也要让按钮外观与默认态一致
 refresh();
 
 /* ==========================================================================
