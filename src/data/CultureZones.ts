@@ -47,6 +47,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', GUSILUO: '青藏', TIBET_IMPERIAL: '青藏', TIBET_CASTLE: '青藏', YARLUNG: '青藏', WESTERN_FEUDAL: '西域', WESTERN_CASTLE: '西域', WESTERN_IMPERIAL: '西域',
     // ── 南亚 / 东南亚 ──
     INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
+    INDIA_FEUDAL: '印度', INDIA_CASTLE: '印度', INDIA_IMPERIAL: '印度',
     BENGALIS: '印度', SIKH: '印度', PASHTUN: '印度',
     MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚',
     BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',

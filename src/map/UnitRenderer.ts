@@ -124,6 +124,16 @@ export class UnitRenderer implements IAnimatedUnit {
         return (this.unit as any).formationMode ?? null;
     }
 
+    /** 首选船型，委托底层 Army。
+     *  🔴 [2026-09-09] 少了这个 getter，玩家「海上用独木舟」就是一句空话：
+     *     GlobalUnitRenderer 的玩家分支写的是
+     *       `unit.navalShipAssetLock = unit.navalShipAssetLock ?? unit.preferredNavalShip ?? 'MERCHANT_SHIP'`，
+     *     而那里的 `unit` 是**本渲染器**不是 Army —— 渲染器上没有 preferredNavalShip，
+     *     取到 undefined 就直接兜到商船。Army 上明明设着 'CANOE' 也没用。 */
+    public get preferredNavalShip(): NavalShipAssetId | null {
+        return (this.unit as any).preferredNavalShip ?? null;
+    }
+
     /** 攻城方器械标记（委托底层 Army；GlobalUnitRenderer 石弹发射条件 reads 此值） */
     public get isSiegeAttacker(): boolean {
         return !!(this.unit as any).isSiegeAttacker;

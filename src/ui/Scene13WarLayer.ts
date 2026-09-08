@@ -361,6 +361,9 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     DIANQIAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     INDIA: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     PURU: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true, battle_elephant: true, armored_elephant: true },
+    INDIA_FEUDAL: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
+    INDIA_CASTLE: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
+    INDIA_IMPERIAL: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     WEST_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     ORIE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ORIE_ANTIQUITY: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -1139,6 +1142,9 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     CENTRAL_ASIA_IMPERIAL: 'CEAS',
     WEST_ASIA: 'ORIE',
     INDIA: 'INDI',
+    INDIA_FEUDAL: 'INDI',
+    INDIA_CASTLE: 'INDI',
+    INDIA_IMPERIAL: 'INDI',
     BERBER: 'ORIE',    // [2026-08-27] AFRI→ORIE（柏柏尔在北非近东，与战略一致）
     AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
     NORTHAM_IMPERIAL: 'MESO',

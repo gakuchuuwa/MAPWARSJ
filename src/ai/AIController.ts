@@ -89,6 +89,9 @@ export class AIController {
             a.type === 'legion' &&
             true
         );
+        // 🔴 [2026-09-09] 用 Set 而不是原来的 `newArmies.includes(army)`：
+        //    那是 O(n) 数组查找，还写在下面的轮询循环里 → 整体 O(n²)。
+        const newArmyIds = new Set(newArmies.map(a => a.id));
 
         for (const army of newArmies) {
             if (performance.now() - startTime > FRAME_BUDGET_MS) break;
@@ -97,8 +100,15 @@ export class AIController {
         }
 
         // [NEW] 2. 时间分片：继续轮询旧军团
-        while (processed < MAX_PROCESS_PER_FRAME && processed < armies.length) {
+        // 🔴 [2026-09-09 修·AI 空转] 原来循环条件写的是 `processed < armies.length`，
+        //    而下面两个 `continue`（已毁灭/非军团、本帧已 tick 过的新军团）**不增加 processed**
+        //    —— 被跳过的军团一多，循环条件永远成立，就在这里空转到 8ms 预算耗尽，
+        //    每转一圈还做一次 O(n) 的 includes。实测 AIController.update 峰值 228ms。
+        //    改用独立的 scanned 计数做循环边界：每看一个就算一个，跳过的也算，绝不空转。
+        let scanned = 0;
+        while (processed < MAX_PROCESS_PER_FRAME && scanned < armies.length) {
             if (performance.now() - startTime > FRAME_BUDGET_MS) break;
+            scanned++;
 
             this.currentArmyIndex = (this.currentArmyIndex + 1) % armies.length;
             const army = armies[this.currentArmyIndex];
@@ -107,7 +117,7 @@ export class AIController {
             if (army.isDestroyed || army.type !== 'legion') continue;
 
             // 新军团刚才已经优先 tick 过了，本帧内轮询若再抽到可直接跳过
-            if (newArmies.includes(army)) continue;
+            if (newArmyIds.has(army.id)) continue;
 
             this.tickArmy(army);
             processed++;

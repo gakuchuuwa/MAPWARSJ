@@ -110,6 +110,8 @@ export interface IAnimatedUnit extends IRenderable {
     isOnSea?: boolean;
     /** 登船时锁定的文化船图。 */
     navalShipAssetLock?: NavalShipAssetId | null;
+    /** 首选船型（玩家「海上用独木舟」靠它）。UnitRenderer 用 getter 委托给底层 Army。 */
+    preferredNavalShip?: NavalShipAssetId | null;
     /** 海军实际船首航向（弧度；lat=cos、lng=sin），由 Army 航行计算提供。 */
     navalHeadingRad?: number | null;
     /** ArmyEditor：强制模拟海上 */
@@ -1179,6 +1181,10 @@ export class GlobalUnitRenderer {
 
         const corpseFadeMs = GameConfig.LEGION.CORPSE_FADE_OUT_MS;
         let drawnUnits = 0;
+        // 🔴 [2026-09-09 卡顿探针] animate 实测峰值 1150ms、均值只有 6.9ms —— 偶发的同步大操作。
+        //    这里记下「准备段」和「绘制段」各花多少，超阈值自动落盘，免得每次都靠猜。
+        const drawLoopStart = performance.now();
+        const prepMs = drawLoopStart - frameStart;
         for (let i = 0; i < drawList.length; i++) {
             const unit = drawList[i];
 
@@ -1243,6 +1249,16 @@ export class GlobalUnitRenderer {
         if (import.meta.env.DEV) {
             perfDoctor.note('GlobalUnitRenderer.animate(绘制)', this.lastFrameDrawMs,
                 'src/map/GlobalUnitRenderer.ts:animate', this.lastFrameDrawnUnits);
+            // 🔴 [2026-09-09 卡顿探针] 只在这一帧确实卡了（>100ms）时落一条，平时零开销。
+            //    分「准备段」和「绘制段」两截，直接指出是排序/剔除慢还是画军团慢。
+            const totalMs = performance.now() - frameStart;
+            if (totalMs > 100) {
+                const drawMs = performance.now() - drawLoopStart;
+                perfDoctor.note('GlobalUnitRenderer:准备段(排序/剔除)', prepMs,
+                    'src/map/GlobalUnitRenderer.ts:animate 前半', drawList.length);
+                perfDoctor.note('GlobalUnitRenderer:绘制段(逐军团)', drawMs,
+                    'src/map/GlobalUnitRenderer.ts:animate drawList 循环', drawnUnits);
+            }
         }
         endCanvasTiming();
 

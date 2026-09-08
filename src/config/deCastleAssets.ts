@@ -239,6 +239,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
     PURU: 'PURU_CASTLE_AGE3',                // 达罗毗荼/南印度：DE 普鲁（PURU）建筑集本套城堡，同名同源；原用 INDI 导致 PURU 基础城堡 65 个里唯一闲置
+    INDIA_FEUDAL: 'HIND_CASTLE_AGE3',        // 封建印度：德里莫卧儿红砂岩堡
+    INDIA_CASTLE: 'HIND_CASTLE_AGE3',        // 城堡印度：德里莫卧儿红砂岩堡
+    INDIA_IMPERIAL: 'HIND_CASTLE_AGE3',      // 帝国印度：德里莫卧儿红砂岩堡
 
 
     // ── 3. 中亚、西亚与北非 (7 个) ──
