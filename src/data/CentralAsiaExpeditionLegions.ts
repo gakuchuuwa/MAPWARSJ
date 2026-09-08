@@ -79,4 +79,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     //    jialedi paermila abasi xikesuosi yashu youfaladi qiliqiya sumeier ayoubu aiaoniya
     //    jialatai guyashu nabatai beileinisi dedan maidina gulaishi,
     an: { name: '乌兹别克骑', tier: 3 },
+    feierganna: { name: '费尔干纳骑', tier: 3 },          // 阿赫西克特·忽都鲁：费尔干纳谷地骑兵
 };

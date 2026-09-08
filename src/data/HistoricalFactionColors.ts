@@ -1142,6 +1142,14 @@ const _FIXED: Record<string, string> = {
     'youbeiya': '#4A8A5E', // 优卑亚·卡里斯托斯（优卑亚岛橄榄绿）
     'zeta': '#4E7A8C', // 泽塔·安提瓦里（亚得里亚海青蓝）
     'haerjijiji': '#8A7A3E', // 哈尔基季基·奥林索斯（哈尔基季基橄榄褐）
+    'telakaigongguo': '#3E7A5E', // 特拉凯公国·卡乌纳斯（立陶宛森林绿）
+    'duobuluojia': '#6E8A4A', // 多布罗加·德鲁斯塔尔（多瑙河绿）
+    'aertai': '#5A6E7A', // 阿尔泰·也儿的石（阿尔泰山灰蓝）
+    'kumanni': '#4A7A8C', // 库曼尼亚·卡尔卡河（钦察草原钢蓝）
+    'xikuman': '#7A6E4A', // 西库曼·密尔科夫（喀尔巴阡褐）
+    'feierganna': '#8C6E3A', // 费尔干纳·阿赫西克特（费尔干纳谷黄褐）
+    'qibucha': '#8A6E3A', // 奇布查·洪萨（穆伊斯卡黄金褐）
+    'tamoyue': '#6E4A3A', // 塔莫约·卡布弗里乌（乌鲁库胭脂木褐）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

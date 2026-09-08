@@ -106,4 +106,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     borjigin: { name: '那可儿伴当', tier: 1 },
     shatuo: { name: '鸦儿军', tier: 1 },
     xiongnu: { name: '鸣镝精骑', tier: 1 },
+    aertai: { name: '乃蛮残骑', tier: 3 },          // 也儿的石·屈出律：乃蛮残部骑兵
 };

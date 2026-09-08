@@ -73,4 +73,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     bolan: { name: '翼骑兵', tier: 3 },
     dabolan: { name: '瓦尔塔骑', tier: 3 },
     zeta: { name: '泽塔骑兵', tier: 3 },          // 安提瓦里·柏朗嘉宾：泽塔公国骑兵（编）
+    telakaigongguo: { name: '立陶宛骑', tier: 2 },          // 卡乌纳斯·科斯图提斯：立陶宛轻骑兵
 };

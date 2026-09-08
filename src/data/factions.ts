@@ -1949,6 +1949,14 @@ export const FACTIONS: Faction[] = [
     { id: 'youbeiya', name: '优卑亚' },        // 卡里斯托斯·优卑亚岛（达提斯）
     { id: 'zeta', name: '泽塔' },        // 安提瓦里·中世纪泽塔公国（柏朗嘉宾）
     { id: 'haerjijiji', name: '哈尔基季基' },        // 奥林索斯·哈尔基季基半岛（腓力二世）
+    { id: 'telakaigongguo', name: '特拉凯公国' },        // 卡乌纳斯·特拉凯公国（科斯图提斯）
+    { id: 'duobuluojia', name: '多布罗加' },        // 德鲁斯塔尔·多布罗加地区（伊瓦伊洛）
+    { id: 'aertai', name: '阿尔泰' },        // 也儿的石·阿尔泰乃蛮故地（屈出律）
+    { id: 'kumanni', name: '库曼尼亚' },        // 卡尔卡河·库曼尼亚（忽炭汗）
+    { id: 'xikuman', name: '西库曼' },        // 密尔科夫·西库曼（吉尔根汗）
+    { id: 'feierganna', name: '费尔干纳' },        // 阿赫西克特·费尔干纳（忽都鲁）
+    { id: 'qibucha', name: '奇布查' },        // 洪萨·穆伊斯卡奇布查人（帕坎奇克）
+    { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）
