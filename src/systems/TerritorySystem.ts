@@ -871,75 +871,83 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
+// 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城；城门 1.25x 雄伟关口）
 function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
-    // 12 种城堡建筑随机洗牌，取前 9（中1+周8）
+
+    // 12 种城堡时代建筑随机洗牌，取前 9 栋
     const ring = [...DE_MEDIUM_CITY_POOL];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
     }
-    const nine = ring.slice(0, 9);
-    const centerB = nine[0];
-    const rotation = rnd() * 360;
+    const pool = ring.slice(0, 9);
+    // 9 建筑整体打乱，完全随机分配到 3*3 网格
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
 
     // 容器尺寸（比小城宽，容纳更宽的布局与石城墙）
     const W = baseSize * 2.6;
     const H = baseSize * 2.3;
-
-    // 中城建筑比例比小城大一些（baseSize=120 已大于小城 100，再乘 1.1 放大视觉）
     const AUTO = 1.1;
 
     const parts: string[] = [];
 
-    // 中间 1 个建筑（随机）+ 地基
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4) * AUTO;
-    const centerGroundW = centerW * 2.3;
-    const centerGroundH = centerGroundW * 0.58;
-    const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
-    parts.push(
-        `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+    // [2026-09-08 主人定] 中城底层菱形 clip-path 裁切青石广场地基：撑满全城包括城北角楼，城内饱满无漏黑，城外零溢出
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const AX = 12; // 中城 S=6, AX=12
+    const rX = AX * stepX;
+    const rY = AX * stepY;
+    const groundParts: string[] = [];
+    const fullGW = rX * 2.8, fullGH = rY * 5.6;
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />`
+    );
+    // 西北门与东南门通门石路
+    const gateW = baseSize * 0.85, gateH = gateW * 0.58;
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(6 * stepX).toFixed(1)}px),calc(-50% - ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+    );
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(6 * stepX).toFixed(1)}px),calc(-50% + ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // 周围 8 个扇区（每种建筑一次，45° 扇区 + 角度/半径扰动，半径比小城略大）
-    const surround = nine.slice(1);
-    surround.forEach((b, i) => {
-        const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
-        const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
-        const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.36 + rnd() * 0.10) * baseSize;               // 半径 0.36~0.46（中城比小城 0.32~0.42 略外扩）
-        const x = Math.cos(angle) * r;
-        const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
-        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32) * AUTO;
-        const zIndex = Math.round(100 + y);                       // 动态深度
-        const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
+    // [2026-09-08 主人定] 中城 9 建筑按 3*3 等轴网格排列（步长微展至 baseSize * 0.30），位置完全随机，独立随机镜像，尺寸统一 0.32
+    const step = baseSize * 0.30;
+    const slots: Array<{ x: number; y: number }> = [];
+    for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+            const x = (c - r) * step;
+            const y = (c + r) * step * 0.58;
+            slots.push({ x, y });
+        }
+    }
+    slots.sort((a, b) => a.y - b.y);
 
-        const bGroundW = bW * 2.3;
-        const bGroundH = bGroundW * 0.58;
-
-        // 该建筑下方的地基底图
+    slots.forEach((slot, i) => {
+        const b = pool[i];
+        const bW = baseSize * 0.32 * AUTO; // 统一大小 0.32
+        const zIndex = Math.round(500 + slot.y);
+        const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
         parts.push(
-            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
-        );
-        // 该建筑本体
-        parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
         );
     });
 
-    // 石墙绕城一圈（复用木栅栏拓扑，但用 DE_STONE_ANCHORS 石墙/石门；[2026-08-27 城墙外扩] S=6）
+    // 石墙绕城一圈（S=6；带 1.25x 雄伟城门）
     const wallPieces = computePalisadeWallAndGate(baseSize, 6);
-    // 城墙整体镜像（与小城同款，城门朝向多样化）
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
-        const zIndex = Math.round(100 + w.y);
+        const zIndex = Math.round(500 + w.y);
         const gateScale = (w.type === 'GATE') ? 1.25 : 1.0; // 2026-09-08 主人定：中城城门放大到1.25x雄伟关口
         const pieceW = baseSize * anchor.widthFactor * AUTO * gateScale;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
@@ -952,82 +960,78 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
-// 大城帝国时代建筑渲染（2026-08-27 主人定「大城全部采用帝国时代建筑」：城镇中心/市场/大学用 AGE4，其余 AGE3；11 取 9 中1+周8 + 石墙外扩）
+// 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城）
 function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
-    // [2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有：
-    //   城镇中心固定居中（帝国城市地标）+ 市场/大学 + 6 种 AGE3 随机分布周围 8（共 9 = 中1+周8）
-    const center: [string, string] = ['TOWN_CENTER', 'AGE4'];
+
+    // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 8 选 6 种 AGE3，共 9 栋建筑
+    const noble: Array<[string, string]> = [
+        ['TOWN_CENTER', 'AGE4'],
+        ['MARKET', 'AGE4'],
+        ['UNIVERSITY', 'AGE4'],
+    ];
     const age3Pool = DE_IMPERIAL_CITY_POOL.filter(([, a]) => a === 'AGE3');        // 8 种 AGE3
-    const noble = DE_IMPERIAL_CITY_POOL.filter(([b]) => b === 'MARKET' || b === 'UNIVERSITY'); // 市场/大学必有
     const age3 = [...age3Pool];
     for (let i = age3.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [age3[i], age3[j]] = [age3[j], age3[i]];
     }
-    const ring = [...noble, ...age3.slice(0, 6)];   // 市场+大学+6 种 AGE3 = 8 周围
-    for (let i = ring.length - 1; i > 0; i--) {
+    const pool: Array<[string, string]> = [...noble, ...age3.slice(0, 6)];
+    // 9 建筑整体洗牌打乱（中心不再固定，位置完全随机）
+    for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
-        [ring[i], ring[j]] = [ring[j], ring[i]];
+        [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    const nine = [center, ...ring];                  // 中1(城镇中心) + 周8
-    const [centerB, centerAge] = nine[0];
-    const rotation = rnd() * 360;
 
     // 容器尺寸（比中城更大，容纳更宽的布局与石城墙）
     const W = baseSize * 2.8;
     const H = baseSize * 2.5;
-
-    // 大城建筑比例更大（baseSize=140 已大于中城 120，再乘 1.2 放大视觉；方案二：建筑保持原生比例，不额外放大）
     const AUTO = 1.2;
 
     const parts: string[] = [];
 
-    // [2026-09-08 方案二：只放大地基] 城门通门石路：在西北门与东南门正下方铺设专属大理石路基，彻底消除城门悬空与虚空
+    // [2026-09-08 修复城北地基缺失与全城地基] 底层菱形 clip-path 裁切大理石地基：撑满全城包括城北角楼，城内饱满无漏黑，城外零溢出
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
-    const gateRoadW = baseSize * 1.35;
-    const gateRoadH = gateRoadW * 0.58;
-    parts.push(
-        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateRoadW.toFixed(1)}px;height:${gateRoadH.toFixed(1)}px;transform:translate(calc(-50% - ${(7 * stepX).toFixed(1)}px),calc(-50% - ${(7 * stepY).toFixed(1)}px));z-index:96;opacity:0.95;pointer-events:none;" />`
+    const AX = 14;
+    const rX = AX * stepX;
+    const rY = AX * stepY;
+    const groundParts: string[] = [];
+    const fullGW = rX * 2.8, fullGH = rY * 4.8;
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />`
+    );
+    // 西北门与东南门通门石路
+    const gateW = baseSize * 0.9, gateH = gateW * 0.58;
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(7 * stepX).toFixed(1)}px),calc(-50% - ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+    );
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(7 * stepX).toFixed(1)}px),calc(-50% + ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateRoadW.toFixed(1)}px;height:${gateRoadH.toFixed(1)}px;transform:translate(calc(-50% + ${(7 * stepX).toFixed(1)}px),calc(-50% + ${(7 * stepY).toFixed(1)}px));z-index:96;opacity:0.95;pointer-events:none;" />`
+        `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // 中间 1 个建筑（城镇中心）+ 扩展地基（铺满中庭，地基扩大到 2.8x）
-    const centerW = baseSize * (DE_BUILDING_SCALES[centerB] || 0.4) * AUTO;
-    const centerGroundW = centerW * 2.8;
-    const centerGroundH = centerGroundW * 0.58;
-    const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
-    parts.push(
-        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
-    );
-    parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_${centerAge}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
-    );
+    // [2026-09-08 主人定] 大城 9 建筑按 3*3 等轴网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32
+    const step = baseSize * 0.30;
+    const slots: Array<{ x: number; y: number }> = [];
+    for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+            const x = (c - r) * step;
+            const y = (c + r) * step * 0.58;
+            slots.push({ x, y });
+        }
+    }
+    slots.sort((a, b) => a.y - b.y);
 
-    // 周围 8 个扇区（方案二：保持原生散布半径 0.40~0.50，地基扩展至 2.8x 铺满全城与城墙根部）
-    const surround = nine.slice(1);
-    surround.forEach(([b, age], i) => {
-        const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
-        const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
-        const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.40 + rnd() * 0.10) * baseSize;               // 原生半径 0.40~0.50，建筑紧凑自然
-        const x = Math.cos(angle) * r;
-        const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
-        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32) * AUTO;
-        const zIndex = Math.round(100 + y);                       // 动态深度
-        const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
-
-        const bGroundW = bW * 2.8;
-        const bGroundH = bGroundW * 0.58;
-
+    slots.forEach((slot, i) => {
+        const [b, age] = pool[i];
+        const bW = baseSize * 0.32 * AUTO; // 9 建筑统一大小 0.32
+        const zIndex = Math.round(500 + slot.y);
+        const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
         parts.push(
-            `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
-        );
-        parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
         );
     });
 
@@ -1039,7 +1043,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     const fortifiedAnchors = DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
     wallPieces.forEach((w) => {
         const anchor = fortifiedAnchors[w.type];
-        const zIndex = Math.round(100 + w.y);
+        const zIndex = Math.round(500 + w.y);
         const pieceW = baseSize * anchor.widthFactor * AUTO;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
