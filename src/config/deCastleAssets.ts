@@ -363,5 +363,6 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
         const byRegion = REGION_CASTLE[region as RegionType];
         if (byRegion) return byRegion;
     }
+    if (style === 'ANDE') return 'INCA_CASTLE_AGE3';
     return `${style}_CASTLE_AGE3`;
 }
