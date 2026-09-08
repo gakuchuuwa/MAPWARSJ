@@ -1164,6 +1164,9 @@ const _FIXED: Record<string, string> = {
     'tigelei': '#7A6E2E', // 提格雷·德布雷达莫（提格雷岩褐）
     'luben': '#7A4E2E', // 鲁本·瓦卡（奇里乞亚山褐）
     'xiaoa': '#4A8A6E', // 肖阿·德布雷利巴诺斯（肖阿高原青）
+    'miandian': '#8A6E20', // 缅甸·三塔关（缅甸黄金）
+    'malai': '#2E7A6E', // 马来·淡马锡（马六甲海峡青）
+    'taimier': '#A06030', // 泰米尔·金奇（泰米尔赭）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

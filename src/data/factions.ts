@@ -1971,6 +1971,9 @@ export const FACTIONS: Faction[] = [
     { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
     { id: 'luben', name: '鲁本' },        // 瓦卡·奇里乞亚亚美尼亚鲁本王朝（托罗斯二世）
     { id: 'xiaoa', name: '肖阿' },        // 德布雷利巴诺斯·肖阿（达格纳詹）
+    { id: 'miandian', name: '缅甸' },        // 三塔关·缅甸（摩诃·悉都）
+    { id: 'malai', name: '马来' },        // 淡马锡·马来（桑尼拉乌他马）
+    { id: 'taimier', name: '泰米尔' },        // 金奇·泰米尔（拉贾拉姆）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）
