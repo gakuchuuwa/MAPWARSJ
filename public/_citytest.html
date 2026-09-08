@@ -849,7 +849,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     pool = shuffle([...noble, ...pickedAge3], rnd);
   } else if (type === 'medium') {
     const medList = [
-      { b: 'TOWN_CENTER', age: 'AGE3', s: 0.42 },
+      { b: 'TOWN_CENTER', age: 'AGE3', s: 0.32 },
       { b: 'MARKET', age: 'AGE3', s: 0.32 },
       { b: 'BARRACKS', age: 'AGE3', s: 0.32 },
       { b: 'STABLE', age: 'AGE3', s: 0.32 },
@@ -860,7 +860,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'MONASTERY', age: 'AGE3', s: 0.32 },
       { b: 'SIEGE_WORKSHOP', age: 'AGE3', s: 0.32 },
       { b: 'HOUSE', age: 'AGE3', s: 0.32 },
-      { b: 'TOWER', age: 'AGE3', s: 0.36 }
+      { b: 'TOWER', age: 'AGE3', s: 0.32 }
     ];
     pool = shuffle(medList, rnd).slice(0, 9);
   } else if (type === 'small') {
@@ -925,6 +925,45 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     slots.forEach((slot, i) => {
       const b = pool[i];
       const bW = baseSize * b.s * tierScale * curBldgScale;
+      const zIndex = Math.round(500 + slot.y);
+      const isFlip = rnd() < 0.5;
+      const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+      parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    });
+
+    return parts.join('');
+  }
+
+  // 中城：底层菱形 clip-path 裁切青石广场地基（彻底覆盖城北角楼与全城，城内饱满无漏黑，城外零溢出），9建筑按 3*3 网格排列、位置随机、独立随机镜像、统一大小 0.32
+  if (type === 'medium') {
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const AX = 12; // 中城 S=6, AX=12
+    const rX = AX * stepX;
+    const rY = AX * stepY;
+    const groundParts = [];
+    const fullGW = rX * 2.8, fullGH = rY * 5.6;
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />');
+    const gateW = baseSize * 0.85, gateH = gateW * 0.58;
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (6*stepX).toFixed(1) + 'px),calc(-50% - ' + (6*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + (6*stepX).toFixed(1) + 'px),calc(-50% + ' + (6*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
+    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:10;pointer-events:none;">' + groundParts.join('') + '</div>');
+
+    // 中城 9 建筑按 3*3 排列（步长微展至 baseSize * 0.30）
+    const step = baseSize * 0.30 * curRadiusMult;
+    const slots = [];
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        const x = (c - r) * step;
+        const y = (c + r) * step * 0.58;
+        slots.push({ x, y });
+      }
+    }
+    slots.sort((a, b) => a.y - b.y);
+
+    // 9 建筑统一大小 0.32、位置完全随机打乱、独立随机镜像
+    slots.forEach((slot, i) => {
+      const b = pool[i];
+      const bW = baseSize * 0.32 * tierScale * curBldgScale;
       const zIndex = Math.round(500 + slot.y);
       const isFlip = rnd() < 0.5;
       const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
