@@ -309,7 +309,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     LOMBARDS: 'SICI_CASTLE_AGE3',             // 伦巴第在意大利本土，用意大利—西西里堡而非泛西欧
     ROURAN: 'MONG_CASTLE_AGE3',               // 柔然据蒙古高原，是突厥、蒙古之前的漠北霸主
     SOGDIANS: 'PERS_CASTLE_AGE3',             // 粟特是河中伊朗语族，文化上属波斯圈而非草原
-    TANGUT: 'KHIT_CASTLE_AGE3',               // 西夏党项：主人 2026-09-08 定，与河西同用契丹/黑水城形制
+    TANGUT: 'KHIT_CASTLE_AGE3',               // 西夏党项：主人 2026-09-08 定，与河西同用契丹/黑水城形制
     JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞
     JURCHEN: 'JURC_CASTLE_AGE3',             // 女真：金式边墙要塞
     SELJUQ: 'TURK_CASTLE_AGE3',              // 塞尔柱：塞尔柱苏丹要塞
@@ -322,7 +322,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
     HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
-    QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
+    QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
@@ -339,6 +339,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SONG: 'CHIN_CASTLE_AGE3',               // 两宋，同属中华
     GORYEO: 'KORE_CASTLE_AGE3',             // 高丽
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
+    GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形
     DALI: 'DIANQIAN_CASTLE_AGE3',             // 大理在云南横断山地，属古滇文化圈；原挂马来（MALA）是明显错配
     GUSILUO: 'ASIA_CASTLE_AGE3',             // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞

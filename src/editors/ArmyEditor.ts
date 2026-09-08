@@ -153,6 +153,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SONG: 'yanchuan_d',
     GORYEO: 'goryeo',
     JOSEON: 'joseon',
+    GOJOSEON: 'chen3',
     DALI: 'dali',
     GUSILUO: 'tufa_d',
     MAMLUKS: 'mamuluke',

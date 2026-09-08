@@ -4,11 +4,11 @@
  * 铁律出处 = src/legion-editor/main.ts 里 AGE_YEARS 上方那段注释（2026-09-06 确立），
  * 核心准则「符合历史，游戏合理」。本脚本只读不改，退出码非 0 表示有违规。
  *
- *  铁律1 绝对断代：古典 –400 / 封建 400–1050 / 城堡 1050–1500 / 帝王 1500–1900
+ *  铁律1 绝对断代：古典 –400 / 封建 400–1050 / 城堡 1050–1500 / 帝国 1500–1900
  *  铁律2 进阶跨度：基础形态与其精锐/高级/重装形态，必须同代或只差一代，不许跨两代
  *  铁律3 生态合理：封建是轻装交锋生态 —— 不许火器早产、不许重型攻城前置；
- *                  远洋帆船（盖伦/克拉克）属大航海，归帝王。
- *                  ⚠️ 火器本身不等于帝王：中国火箭车（宋–明）、葡萄牙风琴炮（15 世纪）
+ *                  远洋帆船（盖伦/克拉克）属大航海，归帝国。
+ *                  ⚠️ 火器本身不等于帝国：中国火箭车（宋–明）、葡萄牙风琴炮（15 世纪）
  *                     都在 1500 年以前，DE 里也都是城堡档，属于合规。
  */
 import fs from 'fs';
@@ -52,7 +52,7 @@ const v3 = [];
 for (const r of rows) {
     if (r.age === 'feudal' && GUN.test(r.name)) v3.push(`${r.name} 火器早产于封建`);
     if (r.age === 'feudal' && HEAVY_SIEGE.test(r.name)) v3.push(`${r.name} 重型攻城前置于封建`);
-    if (OCEAN.test(r.name) && r.age !== 'imperial') v3.push(`${r.name} 远洋帆船应归帝王（现 ${r.age}）`);
+    if (OCEAN.test(r.name) && r.age !== 'imperial') v3.push(`${r.name} 远洋帆船应归帝国（现 ${r.age}）`);
 }
 if (v3.length) { console.log('\n✗ 铁律3 生态违规：'); v3.forEach(x => console.log('   ', x)); bad += v3.length; }
 

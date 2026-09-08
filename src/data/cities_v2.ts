@@ -947,7 +947,7 @@ export const PERIPHERY: CityDataV2[] = [
         troops: 30000,
         tier: 4,
          
-        note: '金海；伽倻小城', region: 'KOREA' },
+        note: '金海；伽倻小城', region: 'GOJOSEON' },
     { id: 'city_jincheng_silla', name: '金城', factionId: 'xinluo', lat: 35.808912, lng: 129.210205, type: 'big_city', region: 'KOREA', troops: 30000, tier: 0,
         note: '新罗金城王都',
     }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
@@ -2432,7 +2432,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_douweihunhe', name: '都尉溷河', factionId: 'kelie', lat: 47.859243, lng: 103.96637, type: 'stockade', troops: 30000, region: 'STEPPE' },
 
-    { id: 'city_xicheng', name: '息谷', factionId: 'lelang', lat: 39.62, lng: 125.66, type: 'stockade', troops: 30000, region: 'KOREA' },
+    { id: 'city_xicheng', name: '息谷', factionId: 'lelang', lat: 39.62, lng: 125.66, type: 'stockade', troops: 30000, region: 'GOJOSEON' },
 
     { id: 'city_qudiaoalan', name: '曲雕阿兰', factionId: 'borjigin', lat: 47.146753, lng: 109.204102, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
@@ -2615,11 +2615,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_karakorum', name: '哈拉和林', factionId: 'menggu_d', lat: 47.137441, lng: 103.035278, type: 'medium_city', troops: 30000, region: 'STEPPE' },
 
     { id: 'city_xingzhuting', name: '星主厅', factionId: 'danluo', lat: 33.5131, lng: 126.5215, type: 'stockade', region: 'GORYEO', troops: 30000, note: '南方/日本/朝鲜环线共用锚点；文化朝鲜（济州）' },
-    { id: 'city_deokwon', name: '德源', factionId: 'donghui', lat: 39.54, lng: 127.24, type: 'pass', region: 'KOREA', troops: 30000, note: '朝鲜德源郡旧地；咸兴—平壤道关隘；≠黑龙江双城' },
-    { id: 'city_yuezhi', name: '大木岳', factionId: 'chen3', lat: 36.8353, lng: 127.0417, type: 'pass', region: 'KOREA', troops: 30000,
+    { id: 'city_deokwon', name: '德源', factionId: 'donghui', lat: 39.54, lng: 127.24, type: 'pass', region: 'GOJOSEON', troops: 30000, note: '朝鲜德源郡旧地；咸兴—平壤道关隘；≠黑龙江双城' },
+    { id: 'city_yuezhi', name: '大木岳', factionId: 'chen3', lat: 36.8353, lng: 127.0417, type: 'pass', region: 'GOJOSEON', troops: 30000,
         note: '大木岳；欢州关隘',
     },
-    { id: 'city_heseluo', name: '何瑟罗', factionId: 'hui', lat: 37.75, lng: 128.89, type: 'stockade', region: 'KOREA', troops: 30000, note: '不耐侯濊族君长驻何瑟罗' },
+    { id: 'city_heseluo', name: '何瑟罗', factionId: 'hui', lat: 37.75, lng: 128.89, type: 'stockade', region: 'GOJOSEON', troops: 30000, note: '不耐侯濊族君长驻何瑟罗' },
     { id: 'city_wushecheng', name: '乌舍寨', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'stockade', troops: 30000, region: 'NORTHEAST' },
 
 
