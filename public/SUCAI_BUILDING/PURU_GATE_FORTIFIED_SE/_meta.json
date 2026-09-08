@@ -1,9 +1,12 @@
 {
   "name": "PURU_GATE_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 184,
-  "box_h": 204,
-  "anchor_x": 120,
-  "anchor_y": 176,
-  "sld_source": "b_puru_gate_fortified_se_open"
+  "box_w": 305,
+  "box_h": 257,
+  "anchor_x": 177,
+  "anchor_y": 194,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_puru_gate_fortified_se_closed + b_puru_gate_fortified_corner"
 }

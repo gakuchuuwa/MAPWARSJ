@@ -1,9 +1,12 @@
 {
   "name": "SLAV_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 192,
-  "box_h": 204,
-  "anchor_x": 124,
-  "anchor_y": 168,
-  "sld_source": "b_slav_gate_fortified_ne_open"
+  "box_w": 327,
+  "box_h": 312,
+  "anchor_x": 194,
+  "anchor_y": 247,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_slav_gate_fortified_ne_closed + b_slav_gate_fortified_corner"
 }

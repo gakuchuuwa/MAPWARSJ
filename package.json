@@ -42,6 +42,7 @@
     "legion:power-balance": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_power_balance.mts",
     "legion:antiquity-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_antiquity_legions.mts",
     "legion:antiquity-coverage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_antiquity_unit_coverage.mts",
+    "city:wall-anchor-audit": "npx tsx scratch/audit_city_wall_anchors.mts",
     "legion:formation-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_formation_row_counts.mts",
     "legion:culture-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_culture_legion_pairing.mts",
     "expedition:audit": "npx tsx scratch/audit_expedition_regions.mjs",

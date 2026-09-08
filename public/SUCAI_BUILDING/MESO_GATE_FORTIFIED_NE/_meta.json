@@ -1,9 +1,12 @@
 {
   "name": "MESO_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 180,
-  "box_h": 192,
-  "anchor_x": 120,
-  "anchor_y": 160,
-  "sld_source": "b_meso_gate_fortified_ne_open"
+  "box_w": 303,
+  "box_h": 258,
+  "anchor_x": 180,
+  "anchor_y": 196,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_meso_gate_fortified_ne_closed + b_meso_gate_fortified_corner"
 }

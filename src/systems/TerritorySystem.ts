@@ -442,86 +442,98 @@ const DE_FORTIFIED_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: numbe
     AFRI: {
         NE: { pctX: 62.4, pctY: 79.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 67.9, pctY: 85.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.5, pctY: 75.7, widthFactor: 0.34, path: '/SUCAI_BUILDING/AFRI_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 66.7, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/AFRI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 60.0, pctY: 82.7, widthFactor: 0.21, path: '/SUCAI_BUILDING/AFRI_GATE_FORTIFIED_NE/preview.png' },
     },
     ANDE: {
         NE: { pctX: 59.4, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 59.0, pctY: 78.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 67.3, pctY: 85.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.1, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/ANDE_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 65.9, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/ANDE_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 66.0, pctY: 84.3, widthFactor: 0.21, path: '/SUCAI_BUILDING/ANDE_GATE_FORTIFIED_NE/preview.png' },
     },
     ASIA: {
         NE: { pctX: 60.0, pctY: 77.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 59.5, pctY: 77.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 68.1, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.1, pctY: 75.7, widthFactor: 0.34, path: '/SUCAI_BUILDING/ASIA_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 66.7, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/ASIA_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 67.4, pctY: 86.0, widthFactor: 0.21, path: '/SUCAI_BUILDING/ASIA_GATE_FORTIFIED_NE/preview.png' },
     },
     CEAS: {
         NE: { pctX: 63.4, pctY: 81.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 62.8, pctY: 81.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 69.4, pctY: 86.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.1, pctY: 76.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/CEAS_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 68.3, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/CEAS_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.0, pctY: 82.4, widthFactor: 0.22, path: '/SUCAI_BUILDING/CEAS_GATE_FORTIFIED_NE/preview.png' },
     },
     EAST: {
         NE: { pctX: 60.9, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 61.7, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 68.0, pctY: 85.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.0, pctY: 76.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/EAST_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 67.4, pctY: 84.3, widthFactor: 0.20, path: '/SUCAI_BUILDING/EAST_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 67.4, pctY: 87.2, widthFactor: 0.20, path: '/SUCAI_BUILDING/EAST_GATE_FORTIFIED_NE/preview.png' },
+    },
+    GREEK: {
+        NE: { pctX: 61.8, pctY: 76.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 61.5, pctY: 78.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 69.8, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/GREEK_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.4, pctY: 84.0, widthFactor: 0.21, path: '/SUCAI_BUILDING/GREEK_GATE_FORTIFIED_NE/preview.png' },
     },
     INDI: {
         NE: { pctX: 60.0, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 60.7, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 66.4, pctY: 85.6, widthFactor: 0.26, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 58.4, pctY: 75.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/INDI_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 65.8, pctY: 84.4, widthFactor: 0.19, path: '/SUCAI_BUILDING/INDI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 61.4, pctY: 84.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/INDI_GATE_FORTIFIED_NE/preview.png' },
     },
     MEDI: {
         NE: { pctX: 61.8, pctY: 76.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 61.5, pctY: 78.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 70.1, pctY: 86.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.8, pctY: 76.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/MEDI_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 69.8, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/MEDI_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.4, pctY: 84.0, widthFactor: 0.21, path: '/SUCAI_BUILDING/MEDI_GATE_FORTIFIED_NE/preview.png' },
     },
     MESO: {
         NE: { pctX: 58.9, pctY: 78.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 58.1, pctY: 78.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 67.9, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.4, pctY: 76.0, widthFactor: 0.34, path: '/SUCAI_BUILDING/MESO_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 68.3, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/MESO_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 66.7, pctY: 83.3, widthFactor: 0.21, path: '/SUCAI_BUILDING/MESO_GATE_FORTIFIED_NE/preview.png' },
     },
     ORIE: {
         NE: { pctX: 61.9, pctY: 78.4, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 61.5, pctY: 78.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 69.5, pctY: 86.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.1, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/ORIE_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 69.2, pctY: 84.4, widthFactor: 0.19, path: '/SUCAI_BUILDING/ORIE_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 65.9, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/ORIE_GATE_FORTIFIED_NE/preview.png' },
     },
     PERSIAN: {
         NE: { pctX: 63.6, pctY: 80.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 64.1, pctY: 81.1, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 67.8, pctY: 85.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.4, pctY: 74.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/PERSIAN_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 68.2, pctY: 83.7, widthFactor: 0.20, path: '/SUCAI_BUILDING/PERSIAN_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 67.3, pctY: 87.3, widthFactor: 0.22, path: '/SUCAI_BUILDING/PERSIAN_GATE_FORTIFIED_NE/preview.png' },
     },
     PURU: {
         NE: { pctX: 59.2, pctY: 78.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 60.3, pctY: 79.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 66.2, pctY: 85.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 58.0, pctY: 75.5, widthFactor: 0.34, path: '/SUCAI_BUILDING/PURU_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 65.9, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/PURU_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 66.0, pctY: 86.3, widthFactor: 0.21, path: '/SUCAI_BUILDING/PURU_GATE_FORTIFIED_NE/preview.png' },
     },
     SEAS: {
         NE: { pctX: 60.0, pctY: 81.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 59.7, pctY: 80.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 68.2, pctY: 87.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.7, pctY: 77.5, widthFactor: 0.34, path: '/SUCAI_BUILDING/SEAS_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 67.4, pctY: 86.8, widthFactor: 0.20, path: '/SUCAI_BUILDING/SEAS_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.0, pctY: 83.3, widthFactor: 0.22, path: '/SUCAI_BUILDING/SEAS_GATE_FORTIFIED_NE/preview.png' },
     },
     SLAV: {
         NE: { pctX: 65.0, pctY: 81.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 64.2, pctY: 81.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 66.7, pctY: 87.9, widthFactor: 0.26, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 59.3, pctY: 79.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/SLAV_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 66.0, pctY: 86.9, widthFactor: 0.21, path: '/SUCAI_BUILDING/SLAV_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.6, pctY: 82.4, widthFactor: 0.21, path: '/SUCAI_BUILDING/SLAV_GATE_FORTIFIED_NE/preview.png' },
+    },
+    THRACIAN: {
+        NE: { pctX: 61.8, pctY: 76.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_FORTIFIED_NE/preview.png' },
+        SE: { pctX: 61.5, pctY: 78.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_FORTIFIED_SE/preview.png' },
+        POST: { pctX: 69.8, pctY: 85.4, widthFactor: 0.20, path: '/SUCAI_BUILDING/THRACIAN_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 64.4, pctY: 84.0, widthFactor: 0.21, path: '/SUCAI_BUILDING/THRACIAN_GATE_FORTIFIED_NE/preview.png' },
     },
     WEST: {
         NE: { pctX: 62.7, pctY: 79.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 80.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_SE/preview.png' },
-        POST: { pctX: 69.6, pctY: 85.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_POST/preview.png' },
-        GATE: { pctX: 60.4, pctY: 75.9, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_FORTIFIED_NE/preview.png' },
+        POST: { pctX: 69.8, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/WEST_WALL_FORTIFIED_POST/preview.png' },
+        GATE: { pctX: 65.9, pctY: 85.1, widthFactor: 0.20, path: '/SUCAI_BUILDING/WEST_GATE_FORTIFIED_NE/preview.png' },
     },
 };
 
@@ -595,6 +607,54 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     put(P2.x - halfL * sx, P2.y - halfL * sy, 'GATE', true);
     // 左边 P3→P0（左下=SE镜像）短边纯墙
     for (let k = 1; k < WSeg; k++) put(P3.x - k * sx, P3.y + k * sy, 'SE', true);
+    return pieces;
+}
+
+/** 大城加固城墙与双塔门楼体系：
+ *  2026-09-08 优化重构：加固门素材为单体裸拱门，两翼角楼(POST)置于门框外侧两侧(k=S±2，净空4步长=42px)，
+ *  形成严密咬合的雄伟双阙门楼，彻底消除两角楼互穿及堵死门洞问题；东南门与西北门对称并正确镜像对齐。 */
+function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeGridPiece[] {
+    const stepX = baseSize * 0.075;
+    const stepY = stepX * 0.58;
+    const AX = 2 * S;
+    const pieces: PalisadeGridPiece[] = [];
+
+    const westX = -AX * stepX;
+    const eastX = AX * stepX;
+    const northY = -AX * stepY;
+    const southY = AX * stepY;
+
+    // 四角加固角楼
+    pieces.push({ x: westX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: northY, type: 'POST' });
+    pieces.push({ x: eastX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: southY, type: 'POST' });
+
+    // 西北边：西角→北角（NE右上走向）
+    // 门洞中心在 k = S，两翼门垛角楼置于 k = S - 2 与 k = S + 2（各距门中心 2 步长，两角楼中心距 42px，通畅容纳门洞）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 2 && k <= S + 2) continue;
+        pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
+    }
+    pieces.push({ x: westX + (S - 2) * stepX, y: -(S - 2) * stepY, type: 'POST' }); // 西北门左翼角楼
+    pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });             // 西北门中部门洞
+    pieces.push({ x: westX + (S + 2) * stepX, y: -(S + 2) * stepY, type: 'POST' }); // 西北门右翼角楼
+
+    // 东北边：北角→东角（SE右下走向）
+    for (let k = 1; k < AX; k++) pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+
+    // 东南边：东角→南角（SE左下走向，带镜像）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 2 && k <= S + 2) continue;
+        pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
+    }
+    pieces.push({ x: eastX - (S - 2) * stepX, y: (S - 2) * stepY, type: 'POST', flipX: true }); // 东南门左翼角楼
+    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE', flipX: true });             // 东南门中部门洞
+    pieces.push({ x: eastX - (S + 2) * stepX, y: (S + 2) * stepY, type: 'POST', flipX: true }); // 东南门右翼角楼
+
+    // 西南边：南角→西角（NE左上走向，带镜像）
+    for (let k = 1; k < AX; k++) pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+
     return pieces;
 }
 
@@ -964,8 +1024,8 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         );
     });
 
-    // 石墙绕城一圈（S=7，比中城 6 更外扩；大城用加固墙/垛墙 WALL_FORTIFIED）
-    const wallPieces = computePalisadeWallAndGate(baseSize, 7);
+    // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
+    const wallPieces = computeFortifiedWallAndGate(baseSize, 7);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }

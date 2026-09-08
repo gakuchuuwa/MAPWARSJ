@@ -1,9 +1,12 @@
 {
   "name": "ANDE_GATE_FORTIFIED_SE",
   "frames": 1,
-  "box_w": 188,
-  "box_h": 208,
-  "anchor_x": 124,
-  "anchor_y": 172,
-  "sld_source": "b_ande_gate_fortified_se_open"
+  "box_w": 303,
+  "box_h": 254,
+  "anchor_x": 179,
+  "anchor_y": 192,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_ande_gate_fortified_se_closed + b_ande_gate_fortified_corner"
 }
