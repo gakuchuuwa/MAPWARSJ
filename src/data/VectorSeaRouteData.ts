@@ -5264,5 +5264,65 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "特罗武兰-霍洛",
+                type: "sea",
+                id: "sea_city_teluowulan_city_huoluo_1788852927214",
+                startConnection: "city_teluowulan",
+                endConnection: "city_huoluo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [112.37, -7.55],
+                    [112.656555, -6.780535],
+                    [112.966712, -6.234898],
+                    [113.263383, -5.575759],
+                    [113.756047, -4.480697],
+                    [114.099995, -4.579754],
+                    [116.4446, -4.168516],
+                    [117.173914, -1.689876],
+                    [117.608643, -0.98872],
+                    [117.740479, -0.615223],
+                    [119.359208, 0.740273],
+                    [119.500199, 1.100146],
+                    [119.58333, 1.16667],
+                    [119.33333, 1.08333],
+                    [119.25, 1.5],
+                    [118.91667, 1.83333],
+                    [118.91667, 2.66667],
+                    [118.25, 3],
+                    [118.25, 3.66667],
+                    [119.16667, 3.91667],
+                    [119.33333, 4.25],
+                    [120.16667, 4.41667],
+                    [120.5, 4.75],
+                    [121, 4.91667],
+                    [121.0008, 6.0531],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡那封-都柏林",
+                type: "sea",
+                id: "sea_city_kanafeng_city_dublin_1788853642625",
+                startConnection: "city_kanafeng",
+                endConnection: "city_dublin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-4.27, 53.14],
+                    [-4.229134, 53.441057],
+                    [-4.736989, 53.596254],
+                    [-5.7, 53.4],
+                    [-6.26, 53.34],
+                ]
+            }
+        },
     ]
 };
