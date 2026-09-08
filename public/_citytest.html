@@ -219,6 +219,7 @@
 
     <button id="btnMirror">城墙镜像: 关 (NW+SE)</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
+    <button id="btnShuffle" style="background:#6b46c1;border-color:#9f7aea;color:#fff;font-weight:600;">🎲 9建筑重新随机布局/镜像</button>
 
     <div class="ctrl" style="background:#111823;padding:4px 10px;border-radius:6px;border:1px solid #233044;">
       <label style="color:#f687b3;font-weight:600;">同屏缩放：</label>
@@ -309,7 +310,7 @@
         <strong>架构体系：</strong>
         <ul>
           <li><strong>城墙</strong>：S = 5 紧凑硬木尖桩栅栏（HARDWOOD）</li>
-          <li><strong>城门</strong>：双塔硬木城门（DARK_GATE_PALISADE）</li>
+          <li><strong>城门</strong>：<strong>关闭状态双塔木门</strong>（左右原木哨塔 + 铁栅插地闭门）</li>
           <li><strong>建筑</strong>：封建时代 AGE2 9 建筑群（磨坊/兵营）</li>
           <li><strong>地基</strong>：sr2_plaza 压实泥石地基</li>
         </ul>
@@ -372,7 +373,7 @@
       <div class="viewport viewport-gate"><div id="gateMedium" style="position:relative;width:100%;height:100%;pointer-events:none;"></div></div>
     </div>
     <div class="card">
-      <div class="card-header"><span>小城：双塔木城门</span><span class="tag tag-sml">原木框架门楼</span></div>
+      <div class="card-header"><span>小城：关闭双塔木门</span><span class="tag tag-sml">原木框架门楼</span></div>
       <div class="viewport viewport-gate"><div id="gateSmall" style="position:relative;width:100%;height:100%;pointer-events:none;"></div></div>
     </div>
     <div class="card">
@@ -434,6 +435,7 @@
       </div>
     </div>
   </div>
+</div> <!-- 闭合 viewAll -->
 
 <!-- 单类型全屏展示视区 -->
 <div class="single-view-container" id="singleViewContainer">
@@ -755,141 +757,200 @@ function computeRectWall(baseSize, LSeg, WSeg) {
 }
 
 // 建筑群生成器
-function renderBuildings(baseSize, style, type) {
+// 恢复并对齐 TerritorySystem.ts 原原本本的极坐标随机算法（每个城 360° 旋转 + 极坐标扇区扰动 + 随机镜像）
+let randomSeedOffset = 0;
+
+function mulberry32(a) {
+  return function() {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
+
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
+}
+
+function shuffle(arr, rnd) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 统一据点建筑放大阶梯（以城寨为 1.00x 绝对基准逐级放大）
+const CITY_TIER_SCALE = {
+  stockade: 1.00,
+  small:    1.15,
+  medium:   1.32,
+  big:      1.50,
+  pass:     1.32
+};
+
+function renderBuildings(baseSize, style, type, seedKey = '') {
   if (!showBuildings) return '';
-  const AUTO = 1.2;
+  const rnd = mulberry32(hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset));
+  const tierScale = CITY_TIER_SCALE[type] || 1.00;
+  const rotation = rnd() * 360; // 360 度随机主旋转角度（与 TerritorySystem 一模一样）
   const parts = [];
 
-  if (type === 'big') {
-    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
-    const gateRoadW = baseSize * 0.85 * curGroundMult, gateRoadH = gateRoadW * 0.58;
-    parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateRoadW.toFixed(1) + 'px;height:' + gateRoadH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (7*stepX).toFixed(1) + 'px),calc(-50% - ' + (7*stepY).toFixed(1) + 'px));z-index:96;opacity:0.95;pointer-events:none;" />');
-    parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateRoadW.toFixed(1) + 'px;height:' + gateRoadH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + (7*stepX).toFixed(1) + 'px),calc(-50% + ' + (7*stepY).toFixed(1) + 'px));z-index:96;opacity:0.95;pointer-events:none;" />');
-
-    const list = [
-      { b: 'TOWN_CENTER', age: 'AGE4', s: 0.45, isCenter: true },
-      { b: 'MARKET', age: 'AGE4', s: 0.35, angle: 45, r: 0.42 },
-      { b: 'UNIVERSITY', age: 'AGE4', s: 0.35, angle: 90, r: 0.45 },
-      { b: 'BARRACKS', age: 'AGE3', s: 0.33, angle: 135, r: 0.40 },
-      { b: 'BLACKSMITH', age: 'AGE3', s: 0.32, angle: 180, r: 0.44 },
-      { b: 'MONASTERY', age: 'AGE3', s: 0.34, angle: 225, r: 0.41 },
-      { b: 'SIEGE_WORKSHOP', age: 'AGE3', s: 0.35, angle: 270, r: 0.43 },
-      { b: 'ARCHERY_RANGE', age: 'AGE3', s: 0.33, angle: 315, r: 0.42 },
-      { b: 'STABLE', age: 'AGE3', s: 0.34, angle: 0, r: 0.44 }
-    ];
-    list.forEach(item => {
-      const bW = baseSize * item.s * AUTO * curBldgScale;
-      const gW = bW * 2.2 * curGroundMult, gH = gW * 0.58;
-      if (item.isCenter) {
-        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      } else {
-        const rad = item.angle * Math.PI / 180;
-        const curR = item.r * (type === 'big' ? curRadiusMult : 1.0); const x = Math.cos(rad) * curR * baseSize, y = Math.sin(rad) * curR * baseSize * 0.58;
-        const zIndex = Math.round(100 + y);
-        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:' + (zIndex-1) + ';opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%));z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      }
-    });
-  } else if (type === 'medium') {
-    const list = [
-      { b: 'TOWN_CENTER', age: 'AGE3', s: 0.42, isCenter: true },
-      { b: 'MARKET', age: 'AGE3', s: 0.35, angle: 40, r: 0.38 },
-      { b: 'BARRACKS', age: 'AGE3', s: 0.33, angle: 85, r: 0.40 },
-      { b: 'STABLE', age: 'AGE3', s: 0.34, angle: 130, r: 0.38 },
-      { b: 'BLACKSMITH', age: 'AGE3', s: 0.32, angle: 175, r: 0.40 },
-      { b: 'MILL', age: 'AGE3', s: 0.32, angle: 220, r: 0.38 },
-      { b: 'ARCHERY_RANGE', age: 'AGE3', s: 0.33, angle: 265, r: 0.40 },
-      { b: 'UNIVERSITY', age: 'AGE3', s: 0.34, angle: 310, r: 0.39 },
-      { b: 'MONASTERY', age: 'AGE3', s: 0.34, angle: 355, r: 0.40 }
-    ];
-    list.forEach(item => {
-      const bW = baseSize * item.s * AUTO;
-      const gW = bW * 2.2, gH = gW * 0.58;
-      if (item.isCenter) {
-        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      } else {
-        const rad = item.angle * Math.PI / 180;
-        const curR = item.r * (type === 'big' ? curRadiusMult : 1.0); const x = Math.cos(rad) * curR * baseSize, y = Math.sin(rad) * curR * baseSize * 0.58;
-        const zIndex = Math.round(100 + y);
-        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:' + (zIndex-1) + ';opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%));z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      }
-    });
-  } else if (type === 'small') {
-    const list = [
-      { b: 'TOWN_CENTER', age: 'AGE2', s: 0.40, isCenter: true },
-      { b: 'MILL', age: 'AGE2', s: 0.32, angle: 45, r: 0.35 },
-      { b: 'HOUSE', age: 'AGE2', s: 0.28, angle: 90, r: 0.36 },
-      { b: 'BARRACKS', age: 'AGE2', s: 0.32, angle: 135, r: 0.35 },
-      { b: 'BLACKSMITH', age: 'AGE2', s: 0.30, angle: 180, r: 0.36 },
-      { b: 'ARCHERY_RANGE', age: 'AGE2', s: 0.32, angle: 225, r: 0.35 },
-      { b: 'TOWER', age: 'AGE2', s: 0.28, angle: 270, r: 0.36 },
-      { b: 'STABLE', age: 'AGE2', s: 0.32, angle: 315, r: 0.35 },
-      { b: 'MARKET', age: 'AGE2', s: 0.32, angle: 0, r: 0.36 }
-    ];
-    list.forEach(item => {
-      const bW = baseSize * item.s;
-      const gW = bW * 2.3, gH = gW * 0.58;
-      if (item.isCenter) {
-        parts.push('<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      } else {
-        const rad = item.angle * Math.PI / 180;
-        const curR = item.r * (type === 'big' ? curRadiusMult : 1.0); const x = Math.cos(rad) * curR * baseSize, y = Math.sin(rad) * curR * baseSize * 0.58;
-        const zIndex = Math.round(100 + y);
-        parts.push('<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:' + (zIndex-1) + ';opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + style + '_' + item.b + '_' + item.age + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%));z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      }
-    });
-  } else if (type === 'stockade') {
-    const list = [
-      { b: 'SETTLEMENT', s: 0.40, isCenter: true },
-      { b: 'HUT_A', s: 0.30, angle: 45, r: 0.35 },
-      { b: 'HUT_B', s: 0.30, angle: 90, r: 0.36 },
-      { b: 'YURT_A', s: 0.30, angle: 135, r: 0.35 },
-      { b: 'HUT_C', s: 0.32, angle: 180, r: 0.36 },
-      { b: 'HUT_D', s: 0.30, angle: 225, r: 0.35 },
-      { b: 'YURT_B', s: 0.30, angle: 270, r: 0.36 },
-      { b: 'HUT_E', s: 0.30, angle: 315, r: 0.35 },
-      { b: 'YURT_C', s: 0.30, angle: 0, r: 0.36 }
-    ];
-    list.forEach(item => {
-      const bW = baseSize * item.s * 1.15;
-      const gW = bW * 2.3, gH = gW * 0.58;
-      if (item.isCenter) {
-        parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + item.b + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      } else {
-        const rad = item.angle * Math.PI / 180;
-        const curR = item.r * (type === 'big' ? curRadiusMult : 1.0); const x = Math.cos(rad) * curR * baseSize, y = Math.sin(rad) * curR * baseSize * 0.58;
-        const zIndex = Math.round(100 + y);
-        parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:' + (zIndex-1) + ';opacity:0.92;pointer-events:none;" />');
-        parts.push('<img src="/SUCAI_BUILDING/' + item.b + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%));z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
-      }
-    });
-  } else if (type === 'pass') {
+  if (type === 'pass') {
     // 险要：核心城堡 + 警戒箭塔
-    const cW = baseSize * 0.68;
+    const cW = baseSize * 0.52 * tierScale * curBldgScale;
     const cgW = cW * 1.55, cgH = cgW * 0.58;
+    const cFlip = rnd() < 0.5;
     parts.push('<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />');
-    parts.push('<img src="/SUCAI_BUILDING/' + style + '_CASTLE_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(-50%,-65%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    parts.push('<img src="/SUCAI_BUILDING/' + style + '_CASTLE_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(-50%,-65%)' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
 
-    // 箭塔
-    const tW = baseSize * 0.36;
+    const tW = baseSize * 0.36 * tierScale * curBldgScale;
     const tgW = tW * 1.5, tgH = tgW * 0.58;
     const diag = baseSize * 0.28, tx = -diag, ty = -diag * 0.58;
+    const tFlip = rnd() < 0.5;
     parts.push('<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:' + tgW.toFixed(1) + 'px;height:' + tgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + tx.toFixed(1) + 'px),calc(-50% + ' + ty.toFixed(1) + 'px));z-index:97;opacity:0.92;pointer-events:none;" />');
-    parts.push('<img src="/SUCAI_BUILDING/' + style + '_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:' + tW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + tx.toFixed(1) + 'px),calc(-50% + ' + ty.toFixed(1) + 'px - 15%));z-index:98;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    parts.push('<img src="/SUCAI_BUILDING/' + style + '_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:' + tW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + tx.toFixed(1) + 'px),calc(-50% + ' + ty.toFixed(1) + 'px - 15%))' + (tFlip ? ' scaleX(-1)' : '') + ';z-index:98;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    return parts.join('');
   }
+
+  // 大城、中城、小城、城寨：选出 9 建筑（完全洗牌打乱，中心不再固定某建筑）
+  let pool = [];
+  if (type === 'big') {
+    const noble = [
+      { b: 'TOWN_CENTER', age: 'AGE4', s: 0.42 },
+      { b: 'MARKET', age: 'AGE4', s: 0.32 },
+      { b: 'UNIVERSITY', age: 'AGE4', s: 0.32 }
+    ];
+    const age3List = [
+      { b: 'BARRACKS', age: 'AGE3', s: 0.32 },
+      { b: 'BLACKSMITH', age: 'AGE3', s: 0.32 },
+      { b: 'MONASTERY', age: 'AGE3', s: 0.32 },
+      { b: 'SIEGE_WORKSHOP', age: 'AGE3', s: 0.32 },
+      { b: 'ARCHERY_RANGE', age: 'AGE3', s: 0.32 },
+      { b: 'STABLE', age: 'AGE3', s: 0.32 },
+      { b: 'HOUSE', age: 'AGE3', s: 0.32 },
+      { b: 'MILL', age: 'AGE3', s: 0.32 }
+    ];
+    const pickedAge3 = shuffle(age3List, rnd).slice(0, 6);
+    pool = shuffle([...noble, ...pickedAge3], rnd);
+  } else if (type === 'medium') {
+    const medList = [
+      { b: 'TOWN_CENTER', age: 'AGE3', s: 0.42 },
+      { b: 'MARKET', age: 'AGE3', s: 0.32 },
+      { b: 'BARRACKS', age: 'AGE3', s: 0.32 },
+      { b: 'STABLE', age: 'AGE3', s: 0.32 },
+      { b: 'BLACKSMITH', age: 'AGE3', s: 0.32 },
+      { b: 'MILL', age: 'AGE3', s: 0.32 },
+      { b: 'ARCHERY_RANGE', age: 'AGE3', s: 0.32 },
+      { b: 'UNIVERSITY', age: 'AGE3', s: 0.32 },
+      { b: 'MONASTERY', age: 'AGE3', s: 0.32 },
+      { b: 'SIEGE_WORKSHOP', age: 'AGE3', s: 0.32 },
+      { b: 'HOUSE', age: 'AGE3', s: 0.32 },
+      { b: 'TOWER', age: 'AGE3', s: 0.36 }
+    ];
+    pool = shuffle(medList, rnd).slice(0, 9);
+  } else if (type === 'small') {
+    const smlList = [
+      { b: 'TOWN_CENTER', age: 'AGE2', s: 0.42 },
+      { b: 'MILL', age: 'AGE2', s: 0.32 },
+      { b: 'HOUSE', age: 'AGE2', s: 0.32 },
+      { b: 'BARRACKS', age: 'AGE2', s: 0.32 },
+      { b: 'BLACKSMITH', age: 'AGE2', s: 0.32 },
+      { b: 'ARCHERY_RANGE', age: 'AGE2', s: 0.32 },
+      { b: 'TOWER', age: 'AGE2', s: 0.36 },
+      { b: 'STABLE', age: 'AGE2', s: 0.32 },
+      { b: 'MARKET', age: 'AGE2', s: 0.32 }
+    ];
+    pool = shuffle(smlList, rnd);
+  } else if (type === 'stockade') {
+    const stkList = [
+      { b: 'SETTLEMENT', s: 0.42 },
+      { b: 'HUT_A', s: 0.32 },
+      { b: 'HUT_B', s: 0.32 },
+      { b: 'HUT_C', s: 0.32 },
+      { b: 'HUT_D', s: 0.32 },
+      { b: 'HUT_E', s: 0.32 },
+      { b: 'HUT_F', s: 0.32 },
+      { b: 'HUT_G', s: 0.32 },
+      { b: 'YURT_A', s: 0.32 },
+      { b: 'YURT_B', s: 0.32 },
+      { b: 'YURT_C', s: 0.32 },
+      { b: 'YURT_D', s: 0.32 }
+    ];
+    pool = shuffle(stkList, rnd).slice(0, 9);
+  }
+
+  // 大城：底层菱形 clip-path 裁切广场地基（z-index: 10，城外 0 溢出）
+  if (type === 'big') {
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const AX = 14;
+    const rX = AX * stepX;
+    const rY = AX * stepY;
+    const groundParts = [];
+    const fullGW = rX * 2.1, fullGH = rY * 2.1;
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />');
+    const gateW = baseSize * 0.9, gateH = gateW * 0.58;
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (7*stepX).toFixed(1) + 'px),calc(-50% - ' + (7*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
+    groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + (7*stepX).toFixed(1) + 'px),calc(-50% + ' + (7*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
+    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:10;pointer-events:none;">' + groundParts.join('') + '</div>');
+  }
+
+  // 1. 中间建筑（带自然随机偏移，不钉死在绝对 0,0）
+  const centerItem = pool[0];
+  const centerOffsetX = (rnd() - 0.5) * baseSize * 0.12;
+  const centerOffsetY = (rnd() - 0.5) * baseSize * 0.12 * 0.58;
+  const cW = baseSize * centerItem.s * tierScale * curBldgScale;
+  const cFlip = rnd() < 0.5;
+  const cZIndex = Math.round(500 + centerOffsetY);
+
+  if (type !== 'big') {
+    const cgW = cW * 2.3, cgH = cgW * 0.58;
+    const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
+    parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px));z-index:' + (cZIndex - 1) + ';opacity:0.92;pointer-events:none;" />');
+  }
+  const cPath = (type === 'stockade')
+    ? ('/SUCAI_BUILDING/' + centerItem.b + '/preview.png')
+    : ('/SUCAI_BUILDING/' + style + '_' + centerItem.b + '_' + centerItem.age + '/preview.png');
+  parts.push('<img src="' + cPath + '" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px - 15%))' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + cZIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+
+  // 2. 周围 8 个建筑（原汁原味 45° 极坐标扇区，基于 rotation 全角度旋转 + 扇区扰动 + 随机镜像）
+  const surround = pool.slice(1);
+  surround.forEach((b, i) => {
+    const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
+    const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
+    const angle = (baseAngle + angleJitter) * Math.PI / 180;
+    const rBase = (type === 'big') ? 0.40 : (type === 'medium') ? 0.36 : 0.32;
+    const r = (rBase + rnd() * 0.10) * baseSize * (type === 'big' ? curRadiusMult : 1.0);
+    const x = Math.cos(angle) * r;
+    const y = Math.sin(angle) * r * 0.58;
+    const bW = baseSize * b.s * tierScale * curBldgScale;
+    const zIndex = Math.round(500 + y);
+    const bFlip = rnd() < 0.5;
+
+    if (type !== 'big') {
+      const gW = bW * 2.3, gH = gW * 0.58;
+      const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
+      parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:' + (zIndex - 1) + ';opacity:0.92;pointer-events:none;" />');
+    }
+
+    const bPath = (type === 'stockade')
+      ? ('/SUCAI_BUILDING/' + b.b + '/preview.png')
+      : ('/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png');
+    parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%))' + (bFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  });
 
   return parts.join('');
 }
-
 // 渲染完整据点形态 HTML
 function renderCityTypeHtml(baseSize, style, type, mirror) {
-  const parts = [renderBuildings(baseSize, style, type)];
+  const parts = [renderBuildings(baseSize, style, type, (mirror ? "mir" : "nomir"))];
   let pieces = [];
   let anchors = {};
   const AUTO = 1.2;
@@ -918,7 +979,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
 
   pieces.forEach(w => {
     const a = anchors[w.type];
-    const zIndex = Math.round(100 + w.y);
+    const zIndex = Math.round(500 + w.y);
     const pW = baseSize * a.widthFactor * (type === 'big' || type === 'medium' ? AUTO : 1.0);
     const pctX = w.flipX ? (100 - a.pctX) : a.pctX;
     const flip = w.flipX ? ' scaleX(-1)' : '';
@@ -1020,6 +1081,11 @@ document.getElementById('btnMirror').addEventListener('click', () => {
   refresh();
 });
 
+document.getElementById('btnShuffle').addEventListener('click', () => {
+  randomSeedOffset++;
+  refresh();
+});
+
 document.getElementById('btnBuildings').addEventListener('click', () => {
   showBuildings = !showBuildings;
   document.getElementById('btnBuildings').innerText = '城内建筑: ' + (showBuildings ? '开' : '关');
@@ -1058,6 +1124,24 @@ document.querySelectorAll('.zoom-btn').forEach(btn => {
     refresh();
   });
 });
+
+// 支持 URL 参数直达某据点（例如 ?type=big 即可只看大城）
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('type')) {
+  const t = urlParams.get('type');
+  if (['all', 'big', 'medium', 'small', 'stockade', 'pass'].includes(t)) {
+    curType = t;
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.getAttribute('data-type') === t) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+  }
+}
+if (urlParams.has('style')) {
+  curStyle = urlParams.get('style');
+  const sel = document.getElementById('selStyle');
+  if (sel) sel.value = curStyle;
+}
 
 refresh();
 </script>
