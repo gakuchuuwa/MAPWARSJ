@@ -248,6 +248,12 @@
       <input type="range" id="rngBldgScale" min="0.8" max="1.4" step="0.05" value="1.0" style="width:85px;" />
       <span id="valBldgScale" style="color:#f6ad55;min-width:32px;">1.0x</span>
     </div>
+
+    <div class="ctrl" style="background:#111823;padding:4px 10px;border-radius:6px;border:1px solid #233044;">
+      <label style="color:#feb2b2;font-weight:600;">城门缩放比例：</label>
+      <input type="range" id="rngGateScale" min="0.8" max="1.6" step="0.05" value="1.0" style="width:85px;" />
+      <span id="valGateScale" style="color:#fc8181;min-width:32px;">1.00x</span>
+    </div>
   </div>
 </header>
 
@@ -461,6 +467,7 @@ let showBuildings = true;
 let curGroundMult = 1.7;
 let curRadiusMult = 1.0;
 let curBldgScale = 1.0;
+let curGateScale = 1.0;
 
 const PALISADE_ANCHORS = {
   NE: { pctX: 53.8, pctY: 74.1, widthFactor: 0.165, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png' },
@@ -1005,7 +1012,9 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
   pieces.forEach(w => {
     const a = anchors[w.type];
     const zIndex = Math.round(500 + w.y);
-    const pW = baseSize * a.widthFactor * (type === 'big' || type === 'medium' ? AUTO : 1.0);
+    const baseGateScale = (type === 'medium') ? 1.25 : 1.0;
+    const gateMul = (w.type === 'GATE') ? (baseGateScale * curGateScale) : 1.0;
+    const pW = baseSize * a.widthFactor * (type === 'big' || type === 'medium' ? AUTO : 1.0) * gateMul;
     const pctX = w.flipX ? (100 - a.pctX) : a.pctX;
     const flip = w.flipX ? ' scaleX(-1)' : '';
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + pW.toFixed(1) + 'px;transform:translate(calc(-' + pctX.toFixed(1) + '% + ' + w.x.toFixed(1) + 'px),calc(-' + a.pctY.toFixed(1) + '% + ' + w.y.toFixed(1) + 'px))' + flip + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />');
@@ -1021,23 +1030,23 @@ function renderGateCloseup(style, type) {
 
   if (type === 'big') {
     const a = getFortifiedAnchors(style).GATE;
-    const gW = baseW * 0.34 * 1.2;
+    const gW = baseW * 0.34 * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'medium') {
     const a = getStoneAnchors(style).GATE;
-    const gW = baseW * 0.34 * 1.2;
+    const gW = baseW * 0.34 * 1.2 * 1.25 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'small') {
     const a = PALISADE_ANCHORS.GATE;
-    const gW = baseW * a.widthFactor;
+    const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'stockade') {
     const a = FENCE_ANCHORS.GATE;
-    const gW = baseW * a.widthFactor * 1.2;
+    const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'pass') {
     const a = getStoneAnchors(style).GATE;
-    const gW = baseW * 0.34 * 1.1;
+    const gW = baseW * 0.34 * 1.1 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   }
 
@@ -1133,6 +1142,11 @@ document.getElementById('rngBldgScale').addEventListener('input', e => {
   document.getElementById('valBldgScale').innerText = curBldgScale.toFixed(2) + 'x';
   refresh();
 });
+document.getElementById('rngGateScale').addEventListener('input', e => {
+  curGateScale = parseFloat(e.target.value);
+  document.getElementById('valGateScale').innerText = curGateScale.toFixed(2) + 'x';
+  refresh();
+});
 
 // 绑定缩放倍率切换
 document.querySelectorAll('.zoom-btn').forEach(btn => {
@@ -1166,6 +1180,13 @@ if (urlParams.has('style')) {
   curStyle = urlParams.get('style');
   const sel = document.getElementById('selStyle');
   if (sel) sel.value = curStyle;
+}
+if (urlParams.has('gateScale')) {
+  curGateScale = parseFloat(urlParams.get('gateScale'));
+  const rng = document.getElementById('rngGateScale');
+  if (rng) rng.value = curGateScale;
+  const val = document.getElementById('valGateScale');
+  if (val) val.innerText = curGateScale.toFixed(2) + 'x';
 }
 
 refresh();

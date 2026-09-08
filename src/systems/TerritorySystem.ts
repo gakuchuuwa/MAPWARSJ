@@ -940,7 +940,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(100 + w.y);
-        const pieceW = baseSize * anchor.widthFactor * AUTO;
+        const gateScale = (w.type === 'GATE') ? 1.25 : 1.0; // 2026-09-08 主人定：中城城门放大到1.25x雄伟关口
+        const pieceW = baseSize * anchor.widthFactor * AUTO * gateScale;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
