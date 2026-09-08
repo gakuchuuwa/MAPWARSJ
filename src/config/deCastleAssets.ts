@@ -1,6 +1,13 @@
 import type { RegionType } from '../systems/RegionSystem';
 
 /**
+ * 🔴 [2026-09-08] 城堡素材名必须是 public/SUCAI_BUILDING 下**真实存在的目录名**。
+ *    本表第二层（REGION_CASTLE）没有任何兜底 —— 写错一个字，那个文化区的险要城堡就是
+ *    一张 404 空图。当时有 5 个值指向不存在的目录：VIKINGS→VIKI、ROMAN→ROMA 是拼写，
+ *    MIDD / SARACENS / TEUTONS 素材里压根没有（分别归入 ORIE / ORIE / EAST 风格集）。
+ *    验收 `npm run building:usage-audit`。
+ */
+/**
  * DE 城堡素材映射（FACTION_CASTLE + REGION_CASTLE）。
  * 2026-08-27 从 Scene13WarLayer.ts 迁移至此，供战略（TerritorySystem 险要）与战术（Scene13WarLayer）共用，
  * 确保 DE 的 65 个城堡素材（风格集 13 + 文明专属 52）都用上，不再让文明专属城堡闲置。
@@ -310,18 +317,18 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SAFAVID: 'PERS_CASTLE_AGE3',             // 萨法维：伊斯法罕萨法维王堡
     RUSSIAN: 'SLAV_CASTLE_AGE3',             // 俄罗斯：圣彼得堡彼得保罗要塞
     SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
-    HEBREWS: 'MIDD_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
+    HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
     QIANG: 'ASIA_CASTLE_AGE3',               // 先零羌：金城湟水山寨石堡
-    NABATAEANS: 'MIDD_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
+    NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
-    SWISS: 'TEUTONS_CASTLE_AGE3',            // 瑞士：阿尔卑斯山地条顿石砌城堡
-    PASHTUN: 'SARACENS_CASTLE_AGE3',          // 普什图：兴都库什山地伊斯兰砖石城堡
-    SWEDISH: 'VIKINGS_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
+    SWISS: 'EAST_CASTLE_AGE3',            // 瑞士：阿尔卑斯山地条顿石砌城堡
+    PASHTUN: 'ORIE_CASTLE_AGE3',          // 普什图：兴都库什山地伊斯兰砖石城堡
+    SWEDISH: 'VIKI_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
     MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
     HELLENIC: 'MACEDONIAN_CASTLE_AGE3',
-    IMPERIAL_ROME: 'ROMAN_CASTLE_AGE3',
+    IMPERIAL_ROME: 'ROMA_CASTLE_AGE3',
     GREEK_MERCENARY: 'GREEK_CASTLE_AGE3',
     AMAZONS: 'GREEK_CASTLE_AGE3',            // 古典亚马逊：忒弥斯基拉在黑海南岸希腊化圈，用希腊城堡
     MAGNA_GRAECIA: 'GREEK_CASTLE_AGE3',
@@ -339,7 +346,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     DELHI: 'INDI_CASTLE_AGE3',               // 德里：德里苏丹国西里要塞与德里红堡
     CASTILE: 'SPAN_CASTLE_AGE3',             // 卡斯蒂利亚：塞哥维亚与托莱多石砌城堡
     SCOTLAND: 'CELT_CASTLE_AGE3',            // 苏格兰：爱丁堡与高地石构塔堡
-    HRE: 'TEUTONS_CASTLE_AGE3',              // 神圣罗马：维也纳与纽伦堡帝国石砌重要塞
+    HRE: 'EAST_CASTLE_AGE3',              // 神圣罗马：维也纳与纽伦堡帝国石砌重要塞
     ALMOHAD: 'AFRI_CASTLE_AGE3',             // 摩洛哥：马拉喀什与拉巴特穆瓦希德红堡
     SERBIA: 'SLAV_CASTLE_AGE3',              // 塞尔维亚：贝尔格莱德与斯梅代雷沃石堡
     ILKHANATE: 'MONG_CASTLE_AGE3',           // 伊利汗：大不里士与马拉盖蒙古王汗城堡

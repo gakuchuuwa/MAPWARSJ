@@ -628,14 +628,14 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     return pieces;
 }
 
-/** 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定） */
+/** 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定优化） */
 function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
     const sy = sx * 0.58;
-    const Rx = 6.6 * sx;
+    const Rx = 7.0 * sx;
     const Ry = Rx * 0.58;
     const pieces: PalisadeGridPiece[] = [];
-    const N = 32;
+    const N = 34;
     for (let i = 0; i < N; i++) {
         const angle = -90 + i * (360.0 / N);
         const rad = angle * Math.PI / 180;
@@ -663,51 +663,54 @@ function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
     return pieces;
 }
 
-/** 城寨方案B：圆润八角羊圈围栏（切去生硬尖角，八面围场平缓过渡，2026-09-08 主人定） */
+/** 城寨方案B：圆润八角羊圈围栏（优化放大尺寸，切去生硬尖角，八面围场舒展过渡，2026-09-08 主人定优化） */
 function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
     const sy = sx * 0.58;
     const pieces: PalisadeGridPiece[] = [];
-    // 1. 东北边 (4段 SE)
-    for (let k = 0; k < 4; k++) {
-        const x = (2.2 + k * 0.8) * sx;
-        const y = (-4.6 + k * 0.8) * sy;
-        pieces.push({ x, y, type: 'SE' });
+    const N_seg = 5;
+    // 1. 东北边 (右上，SE段)
+    for (let k = 0; k < N_seg; k++) {
+        const t = k / (N_seg - 1);
+        pieces.push({ x: (2.6 + t * 3.8) * sx, y: (-6.4 + t * 3.8) * sy, type: 'SE' });
     }
-    // 2. 东角过渡 (立柱 POST)
-    pieces.push({ x: 5.2 * sx, y: -0.8 * sy, type: 'POST' });
-    pieces.push({ x: 5.4 * sx, y: 0.8 * sy, type: 'POST' });
-    // 3. 东南边 (4段 SE flipX，带门)
-    for (let k = 0; k < 4; k++) {
-        const x = (4.6 - k * 0.8) * sx;
-        const y = (2.0 + k * 0.8) * sy;
+    // 2. 东角过渡弧
+    pieces.push({ x: 6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    pieces.push({ x: 7.1 * sx, y: 0, type: 'POST' });
+    pieces.push({ x: 6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    // 3. 东南边 (右下，SE flipX段，带门)
+    for (let k = 0; k < N_seg; k++) {
+        const t = k / (N_seg - 1);
+        const x = (6.4 - t * 3.8) * sx;
+        const y = (2.6 + t * 3.8) * sy;
         if (k === 2) {
             pieces.push({ x, y, type: 'GATE' });
         } else {
             pieces.push({ x, y, type: 'SE', flipX: true });
         }
     }
-    // 4. 南角过渡 (立柱 POST)
-    pieces.push({ x: 0.8 * sx, y: 5.2 * sy, type: 'POST' });
-    pieces.push({ x: -0.8 * sx, y: 5.2 * sy, type: 'POST' });
-    // 5. 西南边 (4段 NE flipX)
-    for (let k = 0; k < 4; k++) {
-        const x = (-2.0 - k * 0.8) * sx;
-        const y = (4.6 - k * 0.8) * sy;
-        pieces.push({ x, y, type: 'NE', flipX: true });
+    // 4. 南角过渡弧
+    pieces.push({ x: 1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    pieces.push({ x: 0, y: 7.1 * sy, type: 'POST' });
+    pieces.push({ x: -1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    // 5. 西南边 (左下，NE flipX段)
+    for (let k = 0; k < N_seg; k++) {
+        const t = k / (N_seg - 1);
+        pieces.push({ x: (-2.6 - t * 3.8) * sx, y: (6.4 - t * 3.8) * sy, type: 'NE', flipX: true });
     }
-    // 6. 西角过渡 (立柱 POST)
-    pieces.push({ x: -5.2 * sx, y: 0.8 * sy, type: 'POST' });
-    pieces.push({ x: -5.4 * sx, y: -0.8 * sy, type: 'POST' });
-    // 7. 西北边 (4段 NE)
-    for (let k = 0; k < 4; k++) {
-        const x = (-4.6 + k * 0.8) * sx;
-        const y = (-2.0 - k * 0.8) * sy;
-        pieces.push({ x, y, type: 'NE' });
+    // 6. 西角过渡弧
+    pieces.push({ x: -6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    pieces.push({ x: -7.1 * sx, y: 0, type: 'POST' });
+    pieces.push({ x: -6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    // 7. 西北边 (左上，NE段)
+    for (let k = 0; k < N_seg; k++) {
+        const t = k / (N_seg - 1);
+        pieces.push({ x: (-6.4 + t * 3.8) * sx, y: (-2.6 - t * 3.8) * sy, type: 'NE' });
     }
-    // 8. 北角过渡 (立柱 POST)
-    pieces.push({ x: -0.8 * sx, y: -5.2 * sy, type: 'POST' });
-    pieces.push({ x: 0.8 * sx, y: -5.2 * sy, type: 'POST' });
+    // 8. 北角过渡弧
+    pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'POST' });
+    pieces.push({ x: 0, y: -7.1 * sy, type: 'POST' });
+    pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'POST' });
     return pieces;
 }
 
@@ -945,15 +948,18 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
         ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
         : castleAsset;
-    const centerW = baseSize * 0.68;
+    // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
+    const centerW = baseSize * 0.56;
     const centerGroundW = centerW * 1.55;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
+    const cOffsetY = -8;
+    const castleZ = Math.round(500 + cOffsetY);
     parts.push(
-        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:calc(50% + ${cOffsetY}px);width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:${castleZ - 1};opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:calc(50% + ${cOffsetY}px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${castleZ};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 城堡西北方一座警戒箭塔（左上，地基 1.5 贴建筑）
@@ -963,19 +969,22 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const diag = baseSize * 0.28;
     const tx = -diag, ty = -diag * 0.58;
     const tFlip = (deHashString(cityId + '|passTower') & 1) === 1;
+    const towerZ = Math.round(500 + ty);
     parts.push(
-        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${towerGroundW.toFixed(1)}px;height:${towerGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px));z-index:97;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:50%;width:${towerGroundW.toFixed(1)}px;height:${towerGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px));z-index:${towerZ - 1};opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${towerW.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px - 15%))${tFlip ? ' scaleX(-1)' : ''};z-index:98;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="/SUCAI_BUILDING/${style}_TOWER_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${towerW.toFixed(1)}px;transform:translate(calc(-50% + ${tx.toFixed(1)}px),calc(-50% + ${ty.toFixed(1)}px - 15%))${tFlip ? ' scaleX(-1)' : ''};z-index:${towerZ};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
     // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、城垛朝外
     const wallPieces = computeRectWall(baseSize, 8, 4);
+    const AUTO = 1.1;
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
-        const zIndex = Math.round(100 + w.y);
-        const pieceW = baseSize * anchor.widthFactor;
+        const zIndex = Math.round(500 + w.y);
+        const gateScale = (w.type === 'GATE') ? 1.25 : 1.0; // 2026-09-08 主人指出：险要城门与以前中城一样太小，统一放大到1.25x雄伟关口并密合城墙
+        const pieceW = baseSize * anchor.widthFactor * AUTO * gateScale;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
