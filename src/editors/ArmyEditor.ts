@@ -47,7 +47,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     NORTHEAST:    'bohai',     // 东北-龙源(龙泉府) → 渤海
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
+    JAPAN_IMPERIAL: 'edo',     // 帝国日本（江户）
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
+    CENTRAL_ASIA_IMPERIAL: 'kokand', // 帝国中亚（浩罕/布哈拉）
     WEST_ASIA:    'baizanting', // 西亚-君士坦丁堡 → 拜占庭
     SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
@@ -155,6 +157,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     JOSEON: 'joseon',
     GOJOSEON: 'chen3',
     MING: 'ming_d',
+    HUAXIA_IMPERIAL: 'dashun',
     DALI: 'dali',
     GUSILUO: 'tufa_d',
     MAMLUKS: 'mamuluke',

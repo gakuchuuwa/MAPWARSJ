@@ -154,7 +154,10 @@ export type RegionType =
     | 'ILKHANATE' // 伊利汗（城堡伊利汗：旭烈兀西征伊兰波斯具装铁骑与蒙古强弓铁骑突袭）
     | 'ARAGON' // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
     | 'GOJOSEON' // 朝鲜（古典朝鲜：古朝鲜/三韩/辰国/伽倻，步弓与轻骑）
-    | 'MING'; // 大明（帝国大明：明王朝）
+    | 'MING' // 大明（帝国大明：明王朝）
+    | 'JAPAN_IMPERIAL' // 帝国日本（帝国时代：战国末至江户）
+    | 'HUAXIA_IMPERIAL' // 帝国华夏（帝国时代·汉族民间/流寇/土司，非明廷非清廷）
+    | 'CENTRAL_ASIA_IMPERIAL'; // 帝国中亚（帝国时代：乌兹别克/浩罕/布哈拉）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -255,6 +258,9 @@ export const REGION_ORDER: RegionType[] = [
     'JOSEON',
     'GOJOSEON',
     'MING',
+    'JAPAN_IMPERIAL',
+    'HUAXIA_IMPERIAL',
+    'CENTRAL_ASIA_IMPERIAL',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -291,7 +297,9 @@ export const REGION_LABELS: Record<RegionType, string> = {
     NORTHEAST: '古典鲜卑',
     KOREA: '封建高句丽',
     JAPAN: '城堡镰仓',
+    JAPAN_IMPERIAL: '帝国日本',
     CENTRAL_ASIA: '封建河中',
+    CENTRAL_ASIA_IMPERIAL: '帝国中亚',
     WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
@@ -396,6 +404,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
     MING: '帝国大明',
+    HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -436,12 +445,14 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     TIBET: '封建吐蕃',
     WESTERN: '古典塞种',
     CENTRAL_ASIA: '封建河中',
+    CENTRAL_ASIA_IMPERIAL: '帝国中亚',
     WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
     BERBER: '封建柏柏尔',
     DIANQIAN: '古典古滇',
     KOREA: '封建高句丽',
     JAPAN: '城堡镰仓',
+    JAPAN_IMPERIAL: '帝国日本',
     AMERICA: '城堡阿兹特克',
     AFRICA: '城堡马里',
     MALAY: '封建马来',
@@ -543,6 +554,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
     MING: '帝国大明',
+    HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -735,7 +747,9 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     NORTHEAST: '#388e3c',
     KOREA: '#7b1fa2',
     JAPAN: '#c2185b',
+    JAPAN_IMPERIAL: '#8e24aa',
     CENTRAL_ASIA: '#455a64',
+    CENTRAL_ASIA_IMPERIAL: '#006064',
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
     INDIA: '#d84315',   // 深橙红（印度香料）
     BERBER: '#00897b',  // 青绿（地中海/绿洲）
@@ -840,6 +854,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JOSEON: '#e65100',
     GOJOSEON: '#2e7d32',
     MING: '#7A1418',
+    HUAXIA_IMPERIAL: '#8B0000',
     DALI: '#00897b',
     GUSILUO: '#8e24aa',
     MAMLUKS: '#d4af37',
@@ -932,6 +947,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_big.png'),
         pass: resolvePath('/cities/central_pass.png')
     },
+    HUAXIA_IMPERIAL: { // ✅ 复用中原（帝国华夏）
+        small: resolvePath('/cities/central_small.png'),
+        medium: resolvePath('/cities/central_medium.png'),
+        big: resolvePath('/cities/central_big.png'),
+        pass: resolvePath('/cities/central_pass.png')
+    },
     NORTH: { // ✅ 已有
         small: resolvePath('/cities/north_small.png'),
         medium: resolvePath('/cities/north_medium.png'),
@@ -1016,7 +1037,19 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/japan_big.png'),
         pass: resolvePath('/cities/japan_pass.png')
     },
+    JAPAN_IMPERIAL: { // ✅ 复用日本素材（帝国日本）
+        small: resolvePath('/cities/japan_small.png'),
+        medium: resolvePath('/cities/japan_medium.png'),
+        big: resolvePath('/cities/japan_big.png'),
+        pass: resolvePath('/cities/japan_pass.png')
+    },
     CENTRAL_ASIA: {
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    CENTRAL_ASIA_IMPERIAL: { // ✅ 复用中亚（帝国中亚）
         small: resolvePath('/cities/central_asia_small.png'),
         medium: resolvePath('/cities/central_asia_medium.png'),
         big: resolvePath('/cities/central_asia_big.png'),
@@ -1830,6 +1863,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL:      ['city_luoyang'],                // 洛阳
     GOJOSEON:     ['city_gimhae'],                 // 金海（古典朝鲜/迦罗伽倻）
     MING:         ['city_beijing'],                // 北京（大明京师）
+    HUAXIA_IMPERIAL: ['city_ziwu'],               // 子午谷（帝国华夏·李自成大顺）
     NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
@@ -1842,7 +1876,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     NORTHEAST:    ['city_gaxian'],                   // 嘎仙洞 (拓跋鲜卑发祥圣地)
     KOREA:        ['city_pyongyang'],                // 平壤 [2026-09-07 主人定] 高句丽 427–668 年都平壤；原挂开城是高丽(GORYEO)王京，不属本区
     JAPAN:        ['city_kyoto'],                    // 京都 (平安京)
+    JAPAN_IMPERIAL: ['city_edo'],                    // 江户（帝国日本）
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
+    CENTRAL_ASIA_IMPERIAL: ['city_bukhara'],         // 布哈拉（帝国中亚）
     WEST_ASIA:    ['city_bageda'],                     // 巴格达 (阿拔斯王朝都城; 2026-08-18 改: 原君士坦丁堡的 region 字段与坐标判定均落在 LATIN,
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
     SLAVIC:       ['city_jifu'],                          // 基辅 [2026-09-07] 封建罗斯=基辅罗斯 882–1240，都基辅；原挂莫斯科已划归 RUS 区(城堡罗斯)
