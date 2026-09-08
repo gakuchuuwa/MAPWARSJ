@@ -1540,11 +1540,13 @@ export class CombatUI {
             this.leftPortraitFrame.style.display = 'block';
             this.leftPortraitFrame.style.opacity = '1';
             this.leftPortraitFrame.style.visibility = 'visible';
+            this.container.classList.add('has-left-portrait');
         }
         if (this.rightPortraitFrame) {
             this.rightPortraitFrame.style.display = 'block';
             this.rightPortraitFrame.style.opacity = '1';
             this.rightPortraitFrame.style.visibility = 'visible';
+            this.container.classList.add('has-right-portrait');
         }
         // 启用 13 专属布局并刷新
         this.applyScene13Layout(true);
@@ -3392,6 +3394,8 @@ export class CombatUI {
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.leftPortraitFrame.style.display = 'block';
         this.rightPortraitFrame.style.display = 'block';
+        this.container.classList.add('has-left-portrait');
+        this.container.classList.add('has-right-portrait');
         this.playPortraitEntrance();
     }
 
@@ -3507,8 +3511,14 @@ export class CombatUI {
         this.updateCollapseState(true);
         if (this.centerBackdrop) this.centerBackdrop.style.display = 'block';
         if (this.centerPanel) this.centerPanel.style.display = 'flex';
-        if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'block';
-        if (this.rightPortraitFrame) this.rightPortraitFrame.style.display = 'block';
+        if (this.leftPortraitFrame) {
+            this.leftPortraitFrame.style.display = 'block';
+            this.container.classList.add('has-left-portrait');
+        }
+        if (this.rightPortraitFrame) {
+            this.rightPortraitFrame.style.display = 'block';
+            this.container.classList.add('has-right-portrait');
+        }
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = this.scene13LayoutOn ? 'none' : 'flex';
         this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
@@ -3522,6 +3532,7 @@ export class CombatUI {
                 this.showFollowedGeneral(army);
             } else {
                 if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'none';
+                this.container.classList.remove('has-left-portrait');
             }
         }
     }
@@ -3538,6 +3549,7 @@ export class CombatUI {
         this.leftPortraitFrame.style.display = 'block';
         this.leftPortraitFrame.style.opacity = '1';
         this.leftPortraitFrame.style.visibility = 'visible';
+        this.container.classList.add('has-left-portrait');
     }
 
     public isRegionalVisible(): boolean {
@@ -4725,6 +4737,7 @@ export class CombatUI {
             this.rightPortraitFrame.style.animation = 'none';
             this.rightPortraitFrame.style.display = 'none';
             this.rightPortraitFrame.style.transform = '';
+            this.container.classList.remove('has-right-portrait');
         }
         if (this.rightLegionTag) this.rightLegionTag.style.display = 'none';
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
@@ -4733,6 +4746,7 @@ export class CombatUI {
             this.showFollowedGeneral(this.followedArmy);
         } else {
             if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'none';
+            this.container.classList.remove('has-left-portrait');
         }
         if (this.leftTechBox) {
             this.leftTechBox.style.opacity = '0';

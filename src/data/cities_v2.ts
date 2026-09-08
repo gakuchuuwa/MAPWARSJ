@@ -890,7 +890,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
 // 周边 — 待添加 (日本七道、朝鲜八道、各古政权首都)
 // ============================================================
 export const PERIPHERY: CityDataV2[] = [
-    { id: 'city_dali_city', name: '羊苴咩', factionId: 'dali', lat: 25.6983, lng: 100.1488, type: 'medium_city', troops: 30000, region: 'DALI' },
+    { id: 'city_dali_city', name: '羊苴咩', factionId: 'dali', lat: 25.6983, lng: 100.1488, type: 'medium_city', troops: 30000, region: 'NANZHAO' },
 
 
 
@@ -906,18 +906,18 @@ export const PERIPHERY: CityDataV2[] = [
         type: 'medium_city',
         troops: 30000,
         tier: 1,
-        region: 'JOSEON',
+        region: 'GORYEO',
         note: '朝鲜王朝（李朝）都城汉阳/汉城' },
     { id: 'city_pyongyang', name: '平壤', factionId: 'gaogouli', lat: 39.02, lng: 125.76, type: 'medium_city', troops: 30000, region: 'KOREA' },
 
 
-    { id: 'city_kaesong', name: '开城', factionId: 'goryeo', lat: 37.97, lng: 126.55, type: 'medium_city', troops: 30000, region: 'GORYEO' },
+    { id: 'city_kaesong', name: '开城', factionId: 'goryeo', lat: 37.97, lng: 126.55, type: 'medium_city', troops: 30000, region: 'KOREA' },
 
     { id: 'city_hamhung', name: '咸兴', factionId: 'woju', lat: 39.968685, lng: 127.499084, type: 'stockade', troops: 30000, 
         note: '咸兴；沃沮小城', region: 'GORYEO' },
-    { id: 'city_longer', name: '笼耳', factionId: 'jingcheng_d', lat: 40.967, lng: 129.551, type: 'stockade', troops: 30000, region: 'KOREA' },
+    { id: 'city_longer', name: '笼耳', factionId: 'jingcheng_d', lat: 40.967, lng: 129.551, type: 'stockade', troops: 30000, region: 'GORYEO' },
 
-    { id: 'city_guoyuancheng', name: '国原城', factionId: 'chungju_d', lat: 36.991, lng: 127.926, type: 'small_city', troops: 30000, region: 'KOREA' },
+    { id: 'city_guoyuancheng', name: '国原城', factionId: 'chungju_d', lat: 36.991, lng: 127.926, type: 'small_city', troops: 30000, region: 'JOSEON' },
 
     { id: 'city_geumseong', name: '锦城', factionId: 'naju_d', lat: 35.015, lng: 126.71, type: 'small_city', troops: 30000, region: 'KOREA' },
 
@@ -936,7 +936,7 @@ export const PERIPHERY: CityDataV2[] = [
         type: 'small_city',
         troops: 30000,
         tier: 4,
-        region: 'KOREA',
+        region: 'JOSEON',
         note: '高丽成宗升州牧治所；古称升州；壬辰倭乱水军重镇' },
     {
         id: 'city_gimhae',
@@ -953,7 +953,7 @@ export const PERIPHERY: CityDataV2[] = [
     }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
         { id: 'city_haeju', name: '瀑池', factionId: 'hai2', lat: 38.03, lng: 125.71, type: 'stockade', troops: 30000, region: 'GORYEO' },
 
-    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 30000, region: 'GORYEO' },
+    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 30000, region: 'KOREA' },
 
     // === 第三批新增据点 ===
     { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 30000, region: 'TIBET' },
@@ -1525,7 +1525,7 @@ export const PERIPHERY: CityDataV2[] = [
 
     { id: 'city_hanhai', name: '瀚海', factionId: 'tiele', lat: 44.144832, lng: 103.697205, type: 'stockade', troops: 30000, region: 'STEPPE_FEUDAL' },
 
-    { id: 'city_keyimen', name: '克夷门', factionId: 'yeli', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 30000, region: 'TANGUT' },
+    { id: 'city_keyimen', name: '克夷门', factionId: 'yeli', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 30000, region: 'TIBET' },
 
 
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
@@ -1542,7 +1542,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 30000, region: 'TIBET_IMPERIAL' },
 
 
-    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 30000, region: 'GUSILUO' },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 30000, region: 'TIBET' },
 
 
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'stockade', region: 'TIBET_IMPERIAL', troops: 30000,
@@ -1591,7 +1591,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
     {
         id: 'city_srikshetra', name: '室利差罗', factionId: 'pyu',
-        lat: 18.8333, lng: 95.25, type: 'stockade', region: 'BURMESE', troops: 30000, tier: 4,
+        lat: 18.8333, lng: 95.25, type: 'stockade', region: 'SEASIA_FEUDAL', troops: 30000, tier: 4,
         note: '室利差罗；骠族小城',
     },
     {
@@ -1600,7 +1600,7 @@ export const PERIPHERY: CityDataV2[] = [
         note: '直通；孟族古城与直通王国都城',
     },
     // ── 第三类：世袭土司与门阀 ──
-    { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 30000, region: 'DALI' },
+    { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 30000, region: 'NANZHAO' },
 
     { id: 'city_hailongtun', name: '海龙屯', factionId: 'yang_bozhou', lat: 27.751638, lng: 106.924438, type: 'pass', region: 'HUAXIA_IMPERIAL', mirror: true, troops: 30000,
         note: '海龙屯；播州关隘',
@@ -1650,7 +1650,7 @@ export const PERIPHERY: CityDataV2[] = [
         troops: 30000,
         tier: 1,
         
-        note: '华闾；京族小城', region: 'VIETNAMESE' },
+        note: '华闾；京族小城', region: 'SEASIA_FEUDAL' },
     {
         id: 'city_hoabinh', name: '和平', factionId: 'muong',
         lat: 20.7667, lng: 105.3333, type: 'stockade', region: 'SONG', troops: 30000, note: '申从岳芒族据守和平' },
@@ -1940,14 +1940,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_messina', name: '梅西纳', factionId: 'moxina', lat: 38.19, lng: 15.55, type: 'pass', troops: 30000, region: 'SICILIANS' },
     { id: 'city_cagliari', name: '卡利亚里', factionId: 'sading', lat: 39.22, lng: 9.12, type: 'pass', troops: 30000, region: 'SICILIANS' },
     { id: 'city_feisi', name: '非斯', factionId: 'yidelisi', lat: 34.03, lng: -5, type: 'medium_city', troops: 30000, region: 'BERBER' },
-    { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'qiekase', lat: 49.44, lng: 32.06, type: 'stockade', troops: 30000, region: 'RUS' },
+    { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'qiekase', lat: 49.44, lng: 32.06, type: 'stockade', troops: 30000, region: 'SLAVIC_IMPERIAL' },
     { id: 'city_sofia', name: '索非亚', factionId: 'saierdika', lat: 42.7, lng: 23.32, type: 'medium_city', troops: 30000, region: 'BULGARIANS' },
     { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'stockade', troops: 30000, region: 'SERBIA' },
-    { id: 'city_gradeci', name: '格拉代茨', factionId: 'keluodiya', lat: 45.81, lng: 15.97, type: 'stockade', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_gradeci', name: '格拉代茨', factionId: 'keluodiya', lat: 45.81, lng: 15.97, type: 'stockade', troops: 30000, region: 'SLAVIC_IMPERIAL' },
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'ALMOHAD' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 20000, region: 'PORTUGUESE' },
+    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 20000, region: 'LATIN_CASTLE' },
 
 
 
@@ -1957,7 +1957,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 30000, region: 'ALMOHAD' },
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 30000, region: 'AFRICA_IMPERIAL' },
-    { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 30000, region: 'ALMOHAD' },
+    { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 30000, region: 'CARTHAGE', mirror: true },
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 30000, region: 'BERBER' },
     { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'pass', troops: 30000, region: 'AFRICA_IMPERIAL' },
@@ -1966,7 +1966,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'pass', troops: 20000, region: 'ALMOHAD', note: '拉巴特＝阿拉伯语 Ribat（边防要塞）；阿尔摩哈德哈里发雅各布·曼苏尔所建 Ribat al-Fath 胜利之堡，对伊比利亚圣战的集结要塞，乌达亚堡' },
 
     { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 30000, region: 'ANGLO_SAXON' },
-    { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 30000, region: 'GERMANIC_IMPERIAL' },
     { id: 'city_gdansk', name: '格但斯克', factionId: 'boumeilaniyan', lat: 54.35, lng: 18.64, type: 'stockade', troops: 30000, region: 'POLES' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', troops: 30000, region: 'HRE', note: '波美拉尼亚公国首府，格里芬王朝驻地' },
     { id: 'city_toulouse', name: '图卢兹', factionId: 'langgeduoke', lat: 43.6, lng: 1.44, type: 'small_city', troops: 30000, region: 'FRENCH' },
@@ -1977,8 +1977,8 @@ export const CITIES_V2: CityDataV2[] = [
 { id: 'city_naples', name: '那不勒斯', factionId: 'kanpaniya', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
     { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', troops: 30000, region: 'LATIN_FEUDAL' },
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 30000, region: 'ALMOHAD' },
-    { id: 'city_genoa', name: '热那亚', factionId: 'liguliya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 30000, region: 'ITALIANS' },
-        { id: 'city_teernuowo', name: '特尔诺沃', factionId: 'baojialiya', lat: 43.08, lng: 25.65, type: 'small_city', troops: 28000, region: 'BULGARIANS', note: '保加利亚第二帝国都城·沙皇之城·查雷维茨要塞' },
+    { id: 'city_genoa', name: '热那亚', factionId: 'liguliya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 30000, region: 'LATIN_IMPERIAL' },
+        { id: 'city_teernuowo', name: '特尔诺沃', factionId: 'baojialiya', lat: 43.08, lng: 25.65, type: 'small_city', troops: 28000, region: 'SLAVIC_CASTLE', note: '保加利亚第二帝国都城·沙皇之城·查雷维茨要塞' },
 { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'pass', troops: 20000, region: 'BULGARIANS' },
 
     { id: 'city_brest', name: '布列斯特', factionId: 'bolisiya', lat: 52.09, lng: 23.68, type: 'pass', troops: 30000, region: 'LITHUANIANS' },
@@ -2003,7 +2003,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 30000, region: 'CASTILE' },
     { id: 'city_cordoba', name: '科尔多瓦', factionId: 'andaluoxiya', lat: 37.88, lng: -4.77, type: 'big_city', troops: 30000, region: 'ORIE', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 30000, region: 'ARAGON' },
-    { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'pass', troops: 30000, region: 'MAGYAR' },
+    { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'pass', troops: 30000, region: 'SLAVIC_FEUDAL' },
 
     { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 30000, region: 'LATIN_FEUDAL' },
     { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'stockade', troops: 30000, region: 'LATIN_FEUDAL' },
@@ -2017,11 +2017,11 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'stockade', troops: 30000, region: 'LATIN_FEUDAL' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 30000, region: 'GREEK' },
-    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '15世纪成为瓦拉几亚王侯驻地' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 30000, region: 'SLAVIC_CASTLE', note: '15世纪成为瓦拉几亚王侯驻地' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 20000, region: 'SERBIA' },
 
 
-    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 30000, region: 'SCOTLAND' },
+    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 30000, region: 'GERMANIC_FEUDAL' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'stockade', troops: 30000, region: 'VIKINGS' },
     { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 20000, region: 'ANGLO_SAXON' },
 
@@ -2032,7 +2032,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'IMPERIAL_ROME' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'pass', troops: 30000, region: 'HELLENIC' },
     { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'CARTHAGE' },
-    { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 30000, region: 'PORTUGUESE' },
+    { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 30000, region: 'LATIN_CASTLE' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'medium_city', troops: 30000, region: 'HRE', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
     { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 30000, region: 'BOHEMIANS' },
@@ -2040,19 +2040,19 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'xiongyati', lat: 45.749, lng: 22.888, type: 'pass', troops: 20000, region: 'MAGYAR' },
     { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'pass', troops: 30000, region: 'HUNS', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
     { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 30000, region: 'FRANKS' },
-    { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'pelianci', lat: 50.402359, lng: 7.252187, type: 'stockade', troops: 30000, region: 'HRE', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫' },
+    { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'pelianci', lat: 50.402359, lng: 7.252187, type: 'stockade', troops: 30000, region: 'GERMANIC_FEUDAL', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫' },
     { id: 'city_yachen', name: '亚琛', factionId: 'jialuolin', lat: 50.77, lng: 6.08, type: 'small_city', troops: 30000, region: 'FRANKS' },
-    { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 30000, region: 'HRE' },
-    { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'pass', troops: 30000, region: 'HRE' },
+    { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 30000, region: 'GERMANIC_FEUDAL' },
+    { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'pass', troops: 30000, region: 'GERMANIC_FEUDAL' },
     { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'pass', troops: 30000, region: 'HRE' },
-    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'pass', troops: 30000, region: 'HRE' },
-    { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'pass', troops: 30000, region: 'HRE' },
+    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'pass', troops: 30000, region: 'GERMANIC_FEUDAL' },
+    { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'pass', troops: 30000, region: 'GERMANIC_FEUDAL' },
     { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'pass', troops: 30000, region: 'HRE' },
     { id: 'city_teerier', name: '特里尔', factionId: 'mozeer', lat: 49.75, lng: 6.64, type: 'small_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_basaier', name: '巴塞尔', factionId: 'ruishi', lat: 47.55, lng: 7.58, type: 'small_city', troops: 30000, region: 'SWISS' },
+    { id: 'city_basaier', name: '巴塞尔', factionId: 'ruishi', lat: 47.55, lng: 7.58, type: 'small_city', troops: 30000, region: 'GERMANIC_IMPERIAL' },
     { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'aersasi', lat: 48.57, lng: 7.75, type: 'pass', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'molaweiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 30000, region: 'BOHEMIANS' },
-    { id: 'city_buernuo', name: '布尔诺', factionId: 'damolaweiya', lat: 49.19, lng: 16.6, type: 'pass', troops: 30000, region: 'BOHEMIANS' },
+    { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'molaweiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 30000, region: 'SLAVIC_FEUDAL' },
+    { id: 'city_buernuo', name: '布尔诺', factionId: 'damolaweiya', lat: 49.19, lng: 16.6, type: 'pass', troops: 30000, region: 'SLAVIC_FEUDAL' },
 
     { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'medium_city', troops: 30000, region: 'SLAVIC', mirror: true },
     { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'liulike', lat: 58.52, lng: 31.27, type: 'small_city', troops: 30000, region: 'RUS', note: '商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city' },
@@ -2075,24 +2075,24 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'pass', troops: 30000, region: 'CUMAN' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 20000, region: 'LITHUANIANS' },
 
-    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 20000, region: 'POLES' },
+    { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 20000, region: 'SLAVIC_IMPERIAL' },
 
     // ── 2026-08-04 新增：波兹南（大波兰公国治所；普热梅斯二世故都）──
     { id: 'city_poznan', name: '波兹南', factionId: 'dabolan', lat: 52.4064, lng: 16.9252, type: 'small_city', troops: 20000, region: 'POLES' },
 
-    { id: 'city_kelakefu', name: '克拉科夫', factionId: 'piyasite', lat: 50.06, lng: 19.94, type: 'medium_city', troops: 30000, region: 'POLES' },
+    { id: 'city_kelakefu', name: '克拉科夫', factionId: 'piyasite', lat: 50.06, lng: 19.94, type: 'medium_city', troops: 30000, region: 'SLAVIC_FEUDAL' },
     { id: 'city_liweifu', name: '利沃夫', factionId: 'hongluseniya', lat: 49.84, lng: 24.03, type: 'small_city', troops: 30000, region: 'POLES', note: '红鲁塞尼亚主城，1387年雅德维加亲征从匈牙利收复' },
     { id: 'city_liga', name: '里加', factionId: 'baojian_qishi', lat: 56.95, lng: 24.1, type: 'pass', troops: 30000, region: 'TEUTONS' },
     { id: 'city_teweier', name: '特维尔', factionId: 'teweier_gongguo', lat: 56.86, lng: 35.9, type: 'stockade', troops: 30000, region: 'RUS' },
     { id: 'city_xianuofugeerdede', name: '下诺城', factionId: 'suzidaer', lat: 56.32, lng: 44, type: 'small_city', troops: 30000, region: 'RUS' },
     { id: 'city_zhapoluore', name: '塞契', factionId: 'gesake', lat: 47.83, lng: 35.16, type: 'pass', troops: 30000, region: 'RUSSIAN', note: '扎波罗热哥萨克军事营地（Sich=设防要塞）' },
-    { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 30000, region: 'WALLACHIA' },
-    { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 30000, region: 'WALLACHIA', note: '特尔戈维什泰；瓦拉几亚长期王都' },
+    { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 30000, region: 'SLAVIC_CASTLE' },
+    { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 30000, region: 'SLAVIC_CASTLE', note: '特尔戈维什泰；瓦拉几亚长期王都' },
     { id: 'city_kenisibao', name: '柯尼斯堡', factionId: 'tiaodun_qishi', lat: 54.71, lng: 20.51, type: 'pass', troops: 30000, region: 'TEUTONS' },
-    { id: 'city_talin', name: '塔林', factionId: 'liwoniya', lat: 59.43, lng: 24.75, type: 'small_city', troops: 30000, region: 'TEUTONS' },
+    { id: 'city_talin', name: '塔林', factionId: 'liwoniya', lat: 59.43, lng: 24.75, type: 'small_city', troops: 30000, region: 'GERMANIC_IMPERIAL' },
     { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'chude', lat: 58.37, lng: 26.72, type: 'stockade', troops: 30000, region: 'RUS' },
     { id: 'city_jiridao', name: '基日岛', factionId: 'kaleiliya', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 30000, region: 'RUSSIAN' },
-    { id: 'city_akeman', name: '阿克曼', factionId: 'deniesite', lat: 46.19, lng: 30.34, type: 'pass', troops: 30000, region: 'OTTOMAN' },
+    { id: 'city_akeman', name: '阿克曼', factionId: 'deniesite', lat: 46.19, lng: 30.34, type: 'pass', troops: 30000, region: 'SLAVIC_IMPERIAL' },
     { id: 'city_asu', name: '塔纳伊斯', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'small_city', troops: 20000, region: 'SCYTHIANS', note: '古代塔纳伊斯（Tanais），顿河入海口草原与希腊贸易要津；大斯基泰王国阿泰阿斯王庭商埠，大草原北方贸易市集与军事要冲' },
     { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'nieman', lat: 53.68, lng: 23.83, type: 'pass', troops: 30000, region: 'LITHUANIANS' },
     { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 30000, region: 'STEPPE' },
@@ -2270,7 +2270,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wutucheng', name: '迪化城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'small_city', troops: 30000, region: 'STEPPE_ANTIQUITY' },
 
 
-    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'medium_city', region: 'UIGHUR', troops: 30000, mirror: true, tier: 1,
+    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'medium_city', region: 'WESTERN_CASTLE', troops: 30000, mirror: true, tier: 1,
         note: '高昌；亦都护小城',
     },
 
@@ -2318,7 +2318,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wugucheng', name: '乌骨城', factionId: 'huimo', lat: 40.7685, lng: 123.9395, type: 'pass', region: 'KOREA', troops: 30000,
         note: '乌骨城；濊貊关隘',
     },
-    { id: 'city_shangzhou', name: '三白', factionId: 'sabeol', lat: 36.41, lng: 128.16, type: 'stockade', troops: 30000, region: 'KOREA' },
+    { id: 'city_shangzhou', name: '三白', factionId: 'sabeol', lat: 36.41, lng: 128.16, type: 'stockade', troops: 30000, region: 'JOSEON' },
 
     { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'stockade', region: 'JAPAN_ANTIQUITY', troops: 30000, note: '壹岐国府旧址' },
     { id: 'city_taizaifu', name: '太宰府', factionId: 'zhuqian', lat: 33.51, lng: 130.52, type: 'medium_city', troops: 30000, region: 'JAPAN' },
@@ -2372,7 +2372,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'stockade', region: 'SONG', troops: 30000,
         note: '鸣沙；应理小城',
     },
-    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 30000, region: 'TANGUT' },
+    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 30000, region: 'TIBET' },
 
 
     { id: 'city_lingju', name: '令居', factionId: 'guangwu', lat: 36.73, lng: 103.26, type: 'stockade', troops: 30000, region: 'QIANG' },
@@ -2726,7 +2726,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_lingzhou', name: '回乐', factionId: 'lingzhou', lat: 37.998341, lng: 106.295471, type: 'small_city', region: 'JIANGNAN', troops: 30000,
         note: '回乐；灵武小城',
     },
-    { id: 'city_nuergan', name: '特林', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'pass', region: 'NORTHEAST', troops: 30000, note: '明奴儿干都司；康旺；旗面「都卫」避与据点名 §4.1 防重' },
+    { id: 'city_nuergan', name: '特林', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'pass', region: 'JURCHEN', troops: 30000, note: '明奴儿干都司；康旺；旗面「都卫」避与据点名 §4.1 防重' },
     { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'stockade', troops: 30000, region: 'MANCHU' },
 
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
@@ -2773,7 +2773,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'stockade', region: 'MANCHU', troops: 30000, note: '库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
     { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'stockade', region: 'MANCHU', troops: 30000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
     { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'stockade', region: 'AINU', troops: 30000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
-    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'stockade', troops: 30000, region: 'AINU' },
+    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'stockade', troops: 30000, region: 'JAPAN_IMPERIAL' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'dongping', lat: 46.9, lng: 134.1, type: 'stockade', troops: 30000, region: 'MANCHU' },
     { id: 'city_niman', name: '尼满', factionId: 'wure', lat: 45.51, lng: 131.96, type: 'stockade', region: 'MOHE', troops: 30000, note: '兀惹部乌昭度居地（《辽史》）' },
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境据点 ──
@@ -2929,7 +2929,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_haomen', name: '浩门', factionId: 'weiyuan', lat: 37.464, lng: 101.4258, type: 'stockade', troops: 30000, region: 'MANCHU' },
     { id: 'city_yulin', name: '榆林', factionId: 'yansui', lat: 38.3567, lng: 109.7644, type: 'small_city', troops: 30000, region: 'HUAXIA_IMPERIAL' },
-    { id: 'city_jingbianbao', name: '靖边堡', factionId: 'xiazhou', lat: 37.5685, lng: 108.8608, type: 'stockade', troops: 30000, region: 'TANGUT' },
+    { id: 'city_jingbianbao', name: '靖边堡', factionId: 'xiazhou', lat: 37.5685, lng: 108.8608, type: 'stockade', troops: 30000, region: 'TIBET' },
     { id: 'city_quyancheng', name: '朐衍', factionId: 'yanzhou', lat: 37.7794, lng: 107.4078, type: 'stockade', troops: 30000, region: 'JIANGNAN' },
 
     { id: 'city_lishi', name: '离石', factionId: 'shizhou', lat: 37.48, lng: 111.09, type: 'small_city', troops: 30000, region: 'CENTRAL' },
@@ -2954,11 +2954,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_dabulishi', name: '大不里士', factionId: 'yilihanguo_d', lat: 38.08, lng: 46.29, type: 'medium_city', troops: 30000, region: 'ILKHANATE' },
     { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'stockade', troops: 20000, region: 'ILKHANATE' },
 
-    { id: 'city_ailiwen', name: '埃里温', factionId: 'wulaertu', lat: 40.18, lng: 44.51, type: 'small_city', troops: 30000, region: 'ARMENIANS' },
+    { id: 'city_ailiwen', name: '埃里温', factionId: 'wulaertu', lat: 40.18, lng: 44.51, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_tushpa', name: '图什帕', factionId: 'wulaertu_guo', lat: 38.5, lng: 43.37, type: 'pass', troops: 20000, region: 'ARMENIANS' },
 
-    { id: 'city_dibilisi', name: '第比利斯', factionId: 'gelujiya', lat: 41.72, lng: 44.79, type: 'medium_city', troops: 30000, region: 'GEORGIANS' },
-    { id: 'city_telabuzong', name: '特拉布宗', factionId: 'bendou', lat: 41, lng: 39.73, type: 'small_city', troops: 30000, region: 'BYZANTINE' },
+    { id: 'city_dibilisi', name: '第比利斯', factionId: 'gelujiya', lat: 41.72, lng: 44.79, type: 'medium_city', troops: 30000, region: 'WEST_ASIA_CASTLE' },
+    { id: 'city_telabuzong', name: '特拉布宗', factionId: 'bendou', lat: 41, lng: 39.73, type: 'small_city', troops: 30000, region: 'WEST_ASIA_CASTLE' },
 
     { id: 'city_kutayixi', name: '库塔伊西', factionId: 'keerjisi', lat: 42.27, lng: 42.7, type: 'small_city', troops: 30000, region: 'GEORGIANS' },
     { id: 'city_amaxiya', name: '阿马西亚', factionId: 'bendou_d', lat: 40.65, lng: 35.83, type: 'stockade', troops: 30000, region: 'WEST_ASIA_ANTIQUITY' },
@@ -2971,9 +2971,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yikeniwumu', name: '伊科尼乌姆', factionId: 'luomu', lat: 37.87, lng: 32.48, type: 'stockade', troops: 30000, region: 'WEST_ASIA_CASTLE' },
         { id: 'city_nikexiya', name: '尼科西亚', factionId: 'saipulusi', lat: 35.18, lng: 33.38, type: 'small_city', troops: 28000, region: 'CRUSADERS', note: '塞浦路斯王国都城·东地中海海岛要塞·居伊·德·吕西尼昂开国王都' },
 { id: 'city_antiejiya', name: '安提俄基亚', factionId: 'sailiugu', lat: 36.2, lng: 36.16, type: 'big_city', troops: 30000, region: 'GREEK', mirror: true },
-    { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 30000, region: 'JAVANESE', note: '满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉' },
+    { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 30000, region: 'SEASIA_CASTLE', note: '满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉' },
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 30000, region: 'INDIA_CASTLE', note: '乔汉(遮娄其)王朝都城，普里特维抗古尔' },
-    { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 30000, region: 'GHANA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
+    { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 30000, region: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 30000, region: 'CRUSADERS', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国' },
     { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 30000, region: 'FRENCH', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
     { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 30000, region: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地' },
@@ -2992,7 +2992,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_antiwali', name: '安提瓦里', factionId: 'zeta', lat: 42.10, lng: 19.10, type: 'small_city', troops: 30000, region: 'ITALIANS', note: '今黑山巴尔港，柏朗嘉宾1248–1252任该地大主教并卒于此' },
     { id: 'city_aolinsuosi', name: '奥林索斯', factionId: 'haerjijiji', lat: 40.29, lng: 23.35, type: 'small_city', troops: 30000, region: 'GREEK', note: '卡尔基季基同盟首府，腓力二世348年攻克并夷平' },
     { id: 'city_kawunas', name: '卡乌纳斯', factionId: 'telakaigongguo', lat: 54.90, lng: 23.91, type: 'pass', troops: 30000, region: 'LITHUANIANS', note: '立陶宛第二城，科斯图提斯1362年在此抵御条顿骑士团' },
-    { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'duobuluojia', lat: 44.12, lng: 27.26, type: 'pass', troops: 30000, region: 'BULGARIANS', note: '多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
+    { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'duobuluojia', lat: 44.12, lng: 27.26, type: 'pass', troops: 30000, region: 'SLAVIC_CASTLE', note: '多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
     { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 30000, region: 'STEPPE', note: '额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部' },
     { id: 'city_kaerkahe', name: '卡尔卡河', factionId: 'kumanni', lat: 47.27, lng: 37.55, type: 'pass', troops: 30000, region: 'CUMAN', note: '1223卡尔卡河之战库曼联军前哨，忽炭汗力促罗斯王公结盟' },
     { id: 'city_mierkefu', name: '密尔科夫', factionId: 'xikuman', lat: 45.65, lng: 27.05, type: 'pass', troops: 30000, region: 'CUMAN', note: '喀尔巴阡东麓库曼主教区要塞，吉尔根汗庇护库曼难民' },
@@ -3010,11 +3010,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 30000, region: 'BRITONS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
     { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 30000, region: 'BRITONS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
     { id: 'city_yian', name: '义安', factionId: 'huanzhou', lat: 18.67, lng: 105.68, type: 'small_city', troops: 30000, region: 'VIETNAMESE', note: '丁礼受封南越王坐镇驩州抗击林邑之地' },
-    { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'tigelei', lat: 14.37, lng: 39.27, type: 'pass', troops: 30000, region: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },
+    { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'tigelei', lat: 14.37, lng: 39.27, type: 'pass', troops: 30000, region: 'AFRICA_CASTLE', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },
     { id: 'city_waka', name: '瓦卡', factionId: 'luben', lat: 37.81, lng: 35.91, type: 'pass', troops: 30000, region: 'WEST_ASIA_CASTLE', note: '陶鲁斯山岩顶城堡，托罗斯二世复国第一城' },
     { id: 'city_debuleilibanuosi', name: '德布雷利巴诺斯', factionId: 'xiaoa', lat: 9.71, lng: 38.85, type: 'pass', troops: 30000, region: 'ETHIOPIANS', note: '肖阿高原皇家修道据点，达格纳詹南征经略之地' },
     { id: 'city_santaguan', name: '三塔关', factionId: 'miandian', lat: 14.35, lng: 98.43, type: 'pass', troops: 30000, region: 'SEASIA_IMPERIAL', note: '缅甸-暹罗边境三塔关，缅军入侵阿瑜陀耶的孔道' },
-    { id: 'city_danmaxi', name: '淡马锡', factionId: 'malai', lat: 1.29, lng: 103.85, type: 'pass', troops: 30000, region: 'MALAY', note: '新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口' },
+    { id: 'city_danmaxi', name: '淡马锡', factionId: 'malai', lat: 1.29, lng: 103.85, type: 'pass', troops: 30000, region: 'SEASIA_CASTLE', note: '新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口' },
     { id: 'city_jinqi', name: '金奇', factionId: 'taimier', lat: 12.25, lng: 79.42, type: 'pass', troops: 30000, region: 'INDIA_IMPERIAL', note: '泰米尔纳德三山连堡，东方特洛伊，马拉塔与莫卧儿反复争夺' },
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.51, lng: 36.29, type: 'big_city', troops: 30000, region: 'ORIE', note: '倭马亚都，西亚千年都会' },
 
@@ -3063,7 +3063,7 @@ export const CITIES_V2: CityDataV2[] = [
         { id: 'city_wangshecheng', name: '王舍城', factionId: 'mojietuo', lat: 25.03, lng: 85.42, type: 'medium_city', troops: 30000, region: 'INDIA', note: '摩揭陀王国古都（频毗娑罗/阿阇世王），佛陀弘法地' },
     { id: 'city_gaodacheng', name: '高达城', factionId: 'boluo', lat: 24.88, lng: 88.13, type: 'big_city', troops: 30000, region: 'BENGALIS', note: '波罗帝国首都（达磨波罗），印度最后一个佛教大帝国' },
     { id: 'city_suomapuli', name: '索玛普利', factionId: 'varendra', lat: 25.031111, lng: 88.976944, type: 'stockade', troops: 30000, region: 'BENGALIS', note: '索玛普利大寺（Somapura Mahavihara）；伐连陀历史文化区内的波罗王朝寺院城与佛教中心，今巴哈尔布尔遗址' },
-    { id: 'city_jidagang', name: '吉大港', factionId: 'chatigangren', lat: 22.335, lng: 91.8325, type: 'small_city', troops: 30000, region: 'BENGALIS', note: '古称查蒂格拉姆、查蒂冈；孟加拉湾古港，1666年乌梅德汗统军攻取后改称伊斯兰堡并任首任守将' },
+    { id: 'city_jidagang', name: '吉大港', factionId: 'chatigangren', lat: 22.335, lng: 91.8325, type: 'small_city', troops: 30000, region: 'INDIA_IMPERIAL', note: '古称查蒂格拉姆、查蒂冈；孟加拉湾古港，1666年乌梅德汗统军攻取后改称伊斯兰堡并任首任守将' },
         { id: 'city_danmoledi', name: '耽摩栗底', factionId: 'sumo', lat: 22.28, lng: 87.92, type: 'small_city', troops: 30000, region: 'INDIA', note: '古代孟加拉湾第一大港，海上丝路起点，法显回国出发港' },
     { id: 'city_beileinisi', name: '贝雷尼斯', factionId: 'beileinisi', lat: 23.91, lng: 35.48, type: 'small_city', troops: 30000, region: 'EGYPT', note: '托勒密/罗马时期埃及红海第一大港，通往印度商路起点' },
     { id: 'city_taima', name: '泰马', factionId: 'dedan', lat: 27.6, lng: 38.5, type: 'stockade', troops: 30000, region: 'ORIE_ANTIQUITY', note: '德丹王国古商路大绿洲，纳巴泰/阿拉伯贸易枢纽' },
@@ -3076,12 +3076,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_weishen', name: '维申斯卡亚', factionId: 'dunhe', lat: 49.63, lng: 41.74, type: 'small_city', troops: 20000, region: 'RUSSIAN', note: '顿河哥萨克重镇，肖洛霍夫《静静的顿河》的故乡；真·顿河军府切尔卡斯克/新切尔卡斯克因距塔纳伊斯<50km 放不下' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'medium_city', troops: 30000, region: 'CUMAN', note: '金帐汗国乌拉尔河渡口大城，草原丝路伏尔加-中亚段枢纽' },
     { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'stockade', troops: 30000, region: 'STEPPE_FEUDAL', note: '里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
-    { id: 'city_kefu', name: '科孚', factionId: 'kejila', lat: 39.62, lng: 19.92, type: 'small_city', troops: 30000, region: 'ITALIANS', note: '古科基拉城邦都城（前8世纪-前229年独立），威尼斯堡垒扼亚得里亚海出口，四次围城' },
-    { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', troops: 30000, region: 'CRUSADERS', note: '医院骑士团堡垒岛驻地（1530起），1565马耳他大围攻圣埃尔莫堡血战' },
-    { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', troops: 30000, region: 'VIKINGS', note: '哥本哈根；丹麦，阿布萨隆 1167 建城' },
-    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 30000, region: 'VIKINGS' },
+    { id: 'city_kefu', name: '科孚', factionId: 'kejila', lat: 39.62, lng: 19.92, type: 'small_city', troops: 30000, region: 'LATIN_IMPERIAL', note: '古科基拉城邦都城（前8世纪-前229年独立），威尼斯堡垒扼亚得里亚海出口，四次围城' },
+    { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', troops: 30000, region: 'LATIN_IMPERIAL', note: '医院骑士团堡垒岛驻地（1530起），1565马耳他大围攻圣埃尔莫堡血战' },
+    { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', troops: 30000, region: 'GERMANIC_CASTLE', note: '哥本哈根；丹麦，阿布萨隆 1167 建城' },
+    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 30000, region: 'GERMANIC_CASTLE' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 30000, region: 'CASTILE' },
-    { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
+    { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 30000, region: 'LATIN_CASTLE', note: '波尔图；杜罗河口，葡萄牙国名发源地' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.95, lng: 26.23, type: 'small_city', troops: 20000, region: 'WEST_ASIA_ANTIQUITY' },
 
     { id: 'city_bashila', name: '巴士拉', factionId: 'alabo', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '巴士拉；阿拉伯帝国 636 年军事营地' },
@@ -3112,19 +3112,19 @@ export const CITIES_V2: CityDataV2[] = [
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
     { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 30000, region: 'NORTHAM_IMPERIAL', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
     { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 30000, region: 'NORTHAM_IMPERIAL', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
-    { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 30000, region: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
+    { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 30000, region: 'AFRICA_CASTLE', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 30000, region: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 30000, region: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 20000, region: 'AFRICA' },
 
-    { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 20000, region: 'ETHIOPIANS' },
+    { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 20000, region: 'AFRICA_ANTIQUITY' },
 
-    { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
+    { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 30000, region: 'SEASIA_CASTLE', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
         { id: 'city_xibo', name: '希波', factionId: 'wangdaer', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 30000, region: 'VANDALS', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城' },
     { id: 'city_sanfoqi', name: '巨港', factionId: 'sanfoqi', lat: -2.99, lng: 104.75, type: 'big_city', troops: 30000, region: 'SRIVIJAYA', note: '室利佛逝都城巨港（Palembang），扼守马六甲海峡之海上佛教贸易霸权' },
     { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'stockade', troops: 20000, region: 'JAVANESE', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）' },
     { id: 'city_deernate', name: '德尔纳特', factionId: 'ternate', lat: 0.7852, lng: 127.3832, type: 'small_city', troops: 30000, region: 'SEASIA_IMPERIAL', note: '特尔纳特苏丹国都城(维基作德那第)，世界香料之源丁香群岛核心，加马拉火山岛；巴布拉苏丹1570-1583在此亲统水军攻陷葡属卡斯特拉要塞，驱逐殖民者称霸东部印尼群岛' },
-    { id: 'city_huoluo', name: '霍洛', factionId: 'sulu', lat: 6.0531, lng: 121.0008, type: 'small_city', troops: 30000, region: 'MALAY', note: '霍洛(Jolo)，苏禄苏丹国都城，苏禄群岛南海-香料群岛十字路口与南洋珍珠/海盗据点；苏禄东王巴都葛·叭哈剌1417年率三王使团340人朝贡大明，返程卒葬德州' },
+    { id: 'city_huoluo', name: '霍洛', factionId: 'sulu', lat: 6.0531, lng: 121.0008, type: 'small_city', troops: 30000, region: 'SEASIA_CASTLE', note: '霍洛(Jolo)，苏禄苏丹国都城，苏禄群岛南海-香料群岛十字路口与南洋珍珠/海盗据点；苏禄东王巴都葛·叭哈剌1417年率三王使团340人朝贡大明，返程卒葬德州' },
     { id: 'city_manila', name: '马尼拉', factionId: 'xishudongyin', lat: 14.5904, lng: 120.9804, type: 'medium_city', troops: 30000, region: 'SEASIA_IMPERIAL', note: '马尼拉(Manila)，西属东印度首府，跨太平洋大帆船贸易终点与吕宋华人海商港；莱加斯皮1571年征服吕宋筑马尼拉王城(Intramuros)奠定西属菲律宾殖民地' },
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 30000, region: 'GURJARAS', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
     { id: 'city_suomunate', name: '索姆纳特', factionId: 'suomunate', lat: 20.8878, lng: 70.4014, type: 'stockade', troops: 30000, region: 'INDIA_CASTLE', note: '帕布哈斯帕坦，印度教湿婆神庙（十二光辉林伽之首），1026年遭马哈茂德·伽色尼洗劫，索兰基王朝重建' },
@@ -3151,7 +3151,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_sangqi', name: '桑奇', factionId: 'pidisha', lat: 23.480, lng: 77.739, type: 'stockade', troops: 30000, region: 'INDIA', note: '阿育王始建桑奇大佛塔' },
     { id: 'city_putijiaye', name: '菩提伽耶', factionId: 'jiaye', lat: 24.696, lng: 84.991, type: 'stockade', troops: 30000, region: 'INDIA', note: '佛陀成道圣地' },
     { id: 'city_jienei', name: '杰内城', factionId: 'jienei', lat: 13.905, lng: -4.555, type: 'small_city', troops: 30000, region: 'GHANA', note: '马里帝国名城，杰内大清真寺' },
-    { id: 'city_agesi', name: '库尔泰亚', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'pass', troops: 20000, region: 'WALLACHIA' },
+    { id: 'city_agesi', name: '库尔泰亚', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'pass', troops: 20000, region: 'SLAVIC_CASTLE' },
 
     { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'duonaobaojia', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 30000, region: 'BULGARIANS', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
     { id: 'city_aidiernei', name: '埃迪尔内', factionId: 'lumiliya', lat: 41.6781, lng: 26.5591, type: 'small_city', troops: 30000, region: 'OTTOMAN', note: '古称阿德里安堡，奥斯曼帝国迁都君士坦丁堡前的都城；塞利姆二世命米马尔·希南于1568—1575年营建塞利米耶清真寺' },
@@ -3160,23 +3160,23 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 30000, region: 'NORTHAM_IMPERIAL', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
     { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xiyindu', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 30000, region: 'AMERICA', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },
     { id: 'city_katachena', name: '卡塔赫纳', factionId: 'jialebi', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 30000, region: 'NORTHAM_IMPERIAL', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
-    { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 30000, region: 'ETHIOPIANS', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地' },
+    { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 30000, region: 'AFRICA_CASTLE', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地' },
     { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 30000, region: 'AFRICA_IMPERIAL', note: '泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'xiaofulijiya', lat: 40.1322, lng: 28.0504, type: 'pass', troops: 20000, region: 'GREEK_MERCENARY' },
-    { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'stockade', troops: 20000, region: 'BENGALIS' },
-    { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 20000, region: 'BULGARIANS', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
+    { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'stockade', troops: 20000, region: 'INDIA_IMPERIAL' },
+    { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 20000, region: 'SLAVIC_CASTLE', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
     { id: 'city_fasil_fort', name: '法西尔堡', factionId: 'gondarine', lat: 12.6075, lng: 37.469, type: 'pass', troops: 20000, region: 'AFRICA_IMPERIAL', note: '贡德尔皇城法西尔盖比，法西里德创建的埃塞俄比亚皇都要塞' },
-    { id: 'city_chambord', name: '香波堡', factionId: 'valois_angouleme', lat: 47.616, lng: 1.517, type: 'pass', troops: 20000, region: 'FRENCH' },
+    { id: 'city_chambord', name: '香波堡', factionId: 'valois_angouleme', lat: 47.616, lng: 1.517, type: 'pass', troops: 20000, region: 'LATIN_IMPERIAL' },
 
-    { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 20000, region: 'GEORGIANS', note: '萨姆茨赫治所，拉巴提城堡所在地' },
+    { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 20000, region: 'WEST_ASIA_CASTLE', note: '萨姆茨赫治所，拉巴提城堡所在地' },
     { id: 'city_gwalior_fort', name: '瓜廖尔堡', factionId: 'tomara_gwalior', lat: 26.231, lng: 78.169, type: 'pass', troops: 20000, region: 'MUGHAL', note: '托摩罗王朝都城要塞，曼辛格扩建宫堡' },
     { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'tawantinsuyu', lat: -13.1631, lng: -72.545, type: 'pass', troops: 20000, region: 'ANDE', note: '帕查库提时期营建的印加王家山城' },
     { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 20000, region: 'INDIA_IMPERIAL', note: '库特布沙希王朝都城与德干高原堡垒' },
-    { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'stockade', troops: 20000, region: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心' },
+    { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'stockade', troops: 20000, region: 'SEASIA_CASTLE', note: '米南加保王国王宫所在，尖顶大屋建筑中心' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'stockade', troops: 20000, region: 'NORTHAM_FEUDAL', note: '普克风格玛雅城邦，休族传统统治中心' },
     { id: 'city_bam_citadel', name: '巴姆古城', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 20000, region: 'SASANIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
     { id: 'city_bedzin', name: '本津堡', factionId: 'lesser_poland', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 20000, region: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
-    { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 20000, region: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基' },
+    { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 20000, region: 'LATIN_CASTLE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 20000, region: 'ARAGON', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'pass', troops: 20000, region: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
     { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 20000, region: 'GREEK', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },

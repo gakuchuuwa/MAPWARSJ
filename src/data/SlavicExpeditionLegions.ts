@@ -40,7 +40,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     daniebo: { name: '罗姆什拉团', tier: 4 },          // 斯摩棱斯克·罗姆什拉夫；避据点/势力「斯摩棱」叠字
     qiernigeweifu_gongguo: { name: '姆斯蒂骑', tier: 4 },          // 切尔尼戈夫·姆斯蒂；避势力「杰斯纳」叠字
     jialixiya: { name: '加利奇骑士', tier: 4 },          // 加利奇·丹尼尔
-    hongluseniya: { name: '红鲁塞尼亚骑', tier: 4 },      // 利沃夫·雅德维加：1387亲征收复红鲁塞尼亚的波兰-鲁塞尼亚骑兵
+    hongluseniya: { name: '利沃夫重骑', tier: 4 },      // 利沃夫·雅德维加：1387亲征收复红鲁塞尼亚首府利沃夫的波兰-鲁塞尼亚重骑兵
     // 梁赞·尤里：科洛夫拉特抗蒙传说/文学符号 → T3（勿造「死士」抬 T2）
     ouka: { name: '科洛夫拉特', tier: 3 },
     xideweina: { name: '德维纳步兵', tier: 4 },          // 波洛茨克·布列斯拉夫

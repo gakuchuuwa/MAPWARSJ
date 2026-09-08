@@ -65,8 +65,16 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     WEST_ASIA_ANTIQUITY: 'baizanting',
     WEST_ASIA_CASTLE: 'baizanting',
     SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
+    SLAVIC_FEUDAL: 'mosike_gongguo',
+    SLAVIC_CASTLE: 'mosike_gongguo',
+    SLAVIC_IMPERIAL: 'mosike_gongguo',
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
+    GERMANIC_FEUDAL: 'falanji',
+    GERMANIC_IMPERIAL: 'falanji',
+    GERMANIC_CASTLE: 'falanji',
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
+    LATIN_CASTLE: 'luoma_diguo',
+    LATIN_IMPERIAL: 'luoma_diguo',
     LATIN_FEUDAL: 'luoma_diguo',
     INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
     INDIA_FEUDAL: 'kongque',     // 封建印度 → 孔雀（套印度）
@@ -78,9 +86,13 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     NORTHAM_FEUDAL: 'aztec',
     AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
     AFRICA_IMPERIAL: 'mali',
+    AFRICA_ANTIQUITY: 'mali',
+    AFRICA_CASTLE: 'mali',
     MALAY:        'malacca',     // 马来 → 满剌加（待建势力对齐）
     SEASIA_ANTIQUITY: 'malacca',
     SEASIA_IMPERIAL: 'malacca',
+    SEASIA_CASTLE: 'malacca',
+    SEASIA_FEUDAL: 'malacca',
     ANDE:         'inca',        // 安第斯 → 印加（待建势力对齐）
     SOUTHAM_IMPERIAL: 'inca',
     PURU:         'zhuluo',      // 南印度 → 朱罗（待建势力对齐）

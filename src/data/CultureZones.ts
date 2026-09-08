@@ -49,7 +49,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
     INDIA_FEUDAL: '印度', INDIA_CASTLE: '印度', INDIA_IMPERIAL: '印度',
     BENGALIS: '印度', SIKH: '印度', PASHTUN: '印度',
-    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚',
+    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚', SEASIA_CASTLE: '东南亚', SEASIA_FEUDAL: '东南亚',
     BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',
     // ── 波斯 / 中亚 ──
     PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
@@ -60,16 +60,16 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     WEST_ASIA: '西亚', BYZANTINE: '西亚', ARMENIANS: '西亚', GEORGIANS: '西亚', OTTOMAN: '西亚', WEST_ASIA_ANTIQUITY: '西亚', WEST_ASIA_CASTLE: '西亚',
     ORIE: '阿拉伯', ALMOHAD: '阿拉伯', ORIE_ANTIQUITY: '阿拉伯',
     // ── 斯拉夫 / 拉丁 / 日耳曼 ──
-    SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫',
+    SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫', SLAVIC_FEUDAL: '斯拉夫', SLAVIC_CASTLE: '斯拉夫', SLAVIC_IMPERIAL: '斯拉夫',
     BOHEMIANS: '斯拉夫', WALLACHIA: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',
-    LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁', LATIN_FEUDAL: '拉丁',
+    LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁', LATIN_FEUDAL: '拉丁', LATIN_CASTLE: '拉丁', LATIN_IMPERIAL: '拉丁',
     GREEK: '拉丁', THRACIAN: '拉丁', MACEDONIAN: '拉丁', HELLENIC: '拉丁', GREEK_MERCENARY: '拉丁', MAGNA_GRAECIA: '拉丁',
     AMAZONS: '拉丁', CRUSADERS: '拉丁', CASTILE: '拉丁', ARAGON: '拉丁', SWISS: '日耳曼', CELTS: '拉丁', FRENCH: '拉丁',
-    GERMANIC: '日耳曼', TEUTONS: '日耳曼', VIKINGS: '日耳曼', GOTHS: '日耳曼', VANDALS: '日耳曼', LOMBARDS: '日耳曼',
+    GERMANIC: '日耳曼', TEUTONS: '日耳曼', VIKINGS: '日耳曼', GOTHS: '日耳曼', VANDALS: '日耳曼', LOMBARDS: '日耳曼', GERMANIC_FEUDAL: '日耳曼', GERMANIC_IMPERIAL: '日耳曼', GERMANIC_CASTLE: '日耳曼',
     FRANKS: '日耳曼', BURGUNDIANS: '日耳曼', BRITONS: '日耳曼', SCOTLAND: '日耳曼', HRE: '日耳曼',
     SWEDISH: '日耳曼', ANGLO_SAXON: '日耳曼',
     // ── 非洲 / 美洲 ──
-    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '非洲', BERBER: '非洲', AFRICA_IMPERIAL: '非洲',
+    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '非洲', BERBER: '非洲', AFRICA_IMPERIAL: '非洲', AFRICA_ANTIQUITY: '非洲', AFRICA_CASTLE: '非洲',
     AMERICA: '北美', MAYANS: '北美', IROQUOIS: '北美', TAIRONA: '北美', NORTHAM_IMPERIAL: '北美', NORTHAM_FEUDAL: '北美',
     ANDE: '南美', MAPUCHE: '南美', MUISCA: '南美', TUPI: '南美', TEHUELCHE: '南美', CHIMU: '南美', TARASCAN: '南美', SOUTHAM_IMPERIAL: '南美',
 };

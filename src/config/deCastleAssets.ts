@@ -237,6 +237,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MALAY: 'MALA_CASTLE_AGE3',               // 马来：满剌加木石水寨
     SEASIA_ANTIQUITY: 'MALA_CASTLE_AGE3',
     SEASIA_IMPERIAL: 'MALA_CASTLE_AGE3',    // 帝国东南亚：木石水寨
+    SEASIA_CASTLE: 'MALA_CASTLE_AGE3',
+    SEASIA_FEUDAL: 'MALA_CASTLE_AGE3',
     INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
@@ -265,6 +267,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ARMENIANS: 'ARME_CASTLE_AGE3',           // 亚美尼亚：高山石堡
     GEORGIANS: 'GEOR_CASTLE_AGE3',           // 格鲁吉亚：高加索石碉
     SLAVIC: 'SLAV_CASTLE_AGE3',              // 斯拉夫：洋葱顶木石堡
+    SLAVIC_FEUDAL: 'SLAV_CASTLE_AGE3',
+    SLAVIC_CASTLE: 'SLAV_CASTLE_AGE3',
+    SLAVIC_IMPERIAL: 'SLAV_CASTLE_AGE3',
     BULGARIANS: 'BULG_CASTLE_AGE3',          // 保加利亚：沙皇城堡
     MAGYAR: 'MAGY_CASTLE_AGE3',              // 马扎尔：匈牙利科文堡
     BOHEMIANS: 'BOHE_CASTLE_AGE3',           // 波希米亚：捷克卡尔施泰因堡
@@ -275,6 +280,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 5. 地中海 / 南欧古典 (9 个) ──
     LATIN: 'MEDI_CASTLE_AGE3',              // 地中海拉丁（休达/加莱/马耳他为中世纪据点，用地中海套而非古罗马）
+    LATIN_CASTLE: 'MEDI_CASTLE_AGE3',
+    LATIN_IMPERIAL: 'MEDI_CASTLE_AGE3',
     LATIN_FEUDAL: 'MEDI_CASTLE_AGE3',
     ITALIANS: 'MEDI_CASTLE_AGE3',            // 意大利：地中海石堡
     SICILIANS: 'SICI_CASTLE_AGE3',           // 西西里：诺曼阿拉伯石堡
@@ -284,6 +291,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 6. 西欧与北欧 (8 个) ──
     GERMANIC: 'WEST_CASTLE_AGE3',            // 日耳曼：西欧重装石堡
+    GERMANIC_FEUDAL: 'WEST_CASTLE_AGE3',
+    GERMANIC_IMPERIAL: 'WEST_CASTLE_AGE3',
+    GERMANIC_CASTLE: 'WEST_CASTLE_AGE3',
     BRITONS: 'CELT_CASTLE_AGE3',            // 不列颠凯尔特（哈瓦登/布伊尔斯为威尔士边境堡）
     BURGUNDIANS: 'BURG_CASTLE_AGE3',         // 勃艮第：法式重装城堡
     CELTS: 'CELT_CASTLE_AGE3',               // 凯尔特：苏格兰圆形塔堡
@@ -295,6 +305,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     // ── 7. 非洲与美洲 (8 个) ──
     AFRICA: 'AFRI_CASTLE_AGE3',              // 非洲：马里生土要塞
     AFRICA_IMPERIAL: 'AFRI_CASTLE_AGE3',    // 帝国非洲：生土要塞
+    AFRICA_ANTIQUITY: 'AFRI_CASTLE_AGE3',
+    AFRICA_CASTLE: 'AFRI_CASTLE_AGE3',
     ETHIOPIANS: 'ETHI_CASTLE_AGE3',          // 埃塞俄比亚：法西尔盖比石堡
     MAYANS: 'MAYA_CASTLE_AGE3',              // 玛雅：阶梯金字塔石堡
     AMERICA: 'MESO_CASTLE_AGE3',             // 中美洲：阿兹特克金字塔

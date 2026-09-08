@@ -99,8 +99,16 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     LINGNAN:      'INFANTRY',
     DIANQIAN:     'ELEPHANT',
     SLAVIC:       'MIXED',   // 东欧步骑
+    SLAVIC_FEUDAL: 'MIXED',
+    SLAVIC_CASTLE: 'MIXED',
+    SLAVIC_IMPERIAL: 'MIXED',
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
+    GERMANIC_FEUDAL: 'MIXED',
+    GERMANIC_IMPERIAL: 'MIXED',
+    GERMANIC_CASTLE: 'MIXED',
     LATIN:        'INFANTRY', // 西欧重步/军团
+    LATIN_CASTLE: 'INFANTRY',
+    LATIN_IMPERIAL: 'INFANTRY',
     LATIN_FEUDAL: 'INFANTRY',
     INDIA:        'ELEPHANT', // 印度战象（步象）
     BERBER:       'CAVALRY',  // 柏柏尔骆驼骑（纯骑）
@@ -109,9 +117,13 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     NORTHAM_FEUDAL:'MIXED',
     AFRICA:       'MIXED',    // 非洲步+骆驼
     AFRICA_IMPERIAL:'MIXED',
+    AFRICA_ANTIQUITY:'MIXED',
+    AFRICA_CASTLE:'MIXED',
     MALAY:        'INFANTRY', // 马来近战/海军
     SEASIA_ANTIQUITY:'INFANTRY',
     SEASIA_IMPERIAL:'INFANTRY',
+    SEASIA_CASTLE:'INFANTRY',
+    SEASIA_FEUDAL:'INFANTRY',
     ANDE:         'MIXED',    // 安第斯步+鹰武士
     SOUTHAM_IMPERIAL:'MIXED',
     PURU:         'ELEPHANT', // 南印度战象（步象）
@@ -272,8 +284,16 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鹤翼阵 (2+4+3，步骑远：步兵前锋2 + 主力骑兵两翼包抄4 + 远程中军后排3)
     KOREA:        'crane_wing',   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       'fish_scale',   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
+    SLAVIC_FEUDAL: 'fish_scale',
+    SLAVIC_CASTLE: 'fish_scale',
+    SLAVIC_IMPERIAL: 'fish_scale',
     GERMANIC:     'crane_wing',   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
+    GERMANIC_FEUDAL: 'crane_wing',
+    GERMANIC_IMPERIAL: 'crane_wing',
+    GERMANIC_CASTLE: 'crane_wing',
     LATIN:        'echelon',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
+    LATIN_CASTLE: 'echelon',
+    LATIN_IMPERIAL: 'echelon',
     LATIN_FEUDAL: 'echelon',
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
     TIBET_CASTLE:  'crane_wing',
@@ -319,9 +339,13 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTHAM_FEUDAL:'fish_scale',
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
     AFRICA_IMPERIAL:'fish_scale',
+    AFRICA_ANTIQUITY:'fish_scale',
+    AFRICA_CASTLE:'fish_scale',
     MALAY:        'crane_wing',  // 马来近战主力
     SEASIA_ANTIQUITY:'crane_wing',
     SEASIA_IMPERIAL:'crane_wing',
+    SEASIA_CASTLE:'crane_wing',
+    SEASIA_FEUDAL:'crane_wing',
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
     SOUTHAM_IMPERIAL:'fish_scale',
     PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
@@ -2082,8 +2106,16 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     WESTERN_CASTLE: '城堡西域军团',
     WESTERN_IMPERIAL: '帝国西域军团',
     SLAVIC: '封建罗斯军团',
+    SLAVIC_FEUDAL: '封建斯拉夫军团',
+    SLAVIC_CASTLE: '城堡斯拉夫军团',
+    SLAVIC_IMPERIAL: '帝国斯拉夫军团',
     GERMANIC: '古典日耳曼军团',
+    GERMANIC_FEUDAL: '封建日耳曼军团',
+    GERMANIC_IMPERIAL: '帝国日耳曼军团',
+    GERMANIC_CASTLE: '城堡日耳曼军团',
     LATIN: '古典罗马军团',
+    LATIN_CASTLE: '城堡拉丁军团',
+    LATIN_IMPERIAL: '帝国拉丁军团',
     LATIN_FEUDAL: '封建拉丁军团',
     IMPERIAL_ROME: '古典罗马禁卫军团',
     GREEK_MERCENARY: '古典希腊雇佣军团',
@@ -2097,9 +2129,13 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     NORTHAM_FEUDAL: '封建北美军团',
     AFRICA: '城堡曼丁哥军团',
     AFRICA_IMPERIAL: '帝国非洲军团',
+    AFRICA_ANTIQUITY: '古典非洲军团',
+    AFRICA_CASTLE: '城堡非洲军团',
     MALAY: '封建马来军团',
     SEASIA_ANTIQUITY: '古典东南亚军团',
     SEASIA_IMPERIAL: '帝国东南亚军团',
+    SEASIA_CASTLE: '城堡东南亚军团',
+    SEASIA_FEUDAL: '封建东南亚军团',
     ANDE: '城堡克丘亚军团',
     SOUTHAM_IMPERIAL: '帝国南美军团',
     PURU: '封建达罗毗荼军团',
@@ -3713,8 +3749,16 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     WESTERN_CASTLE: WESTERN_TIERS,
     WESTERN_IMPERIAL: WESTERN_TIERS,
     SLAVIC:       SLAVIC_TIERS,
+    SLAVIC_FEUDAL: SLAVIC_TIERS,
+    SLAVIC_CASTLE: SLAVIC_TIERS,
+    SLAVIC_IMPERIAL: SLAVIC_TIERS,
     GERMANIC:     GERMANIC_TIERS,
+    GERMANIC_FEUDAL: GERMANIC_TIERS,
+    GERMANIC_IMPERIAL: GERMANIC_TIERS,
+    GERMANIC_CASTLE: GERMANIC_TIERS,
     LATIN:        LATIN_TIERS,
+    LATIN_CASTLE: LATIN_TIERS,
+    LATIN_IMPERIAL: LATIN_TIERS,
     LATIN_FEUDAL: LATIN_TIERS,
     INDIA:        INDIA_TIERS,
     BERBER:       BERBER_TIERS,
@@ -3723,9 +3767,13 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     NORTHAM_FEUDAL: AMERICA_TIERS,
     AFRICA:       AFRICA_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
     AFRICA_IMPERIAL: AFRICA_TIERS,
+    AFRICA_ANTIQUITY: AFRICA_TIERS,
+    AFRICA_CASTLE: AFRICA_TIERS,
     MALAY:        MALAY_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
     SEASIA_ANTIQUITY: MALAY_TIERS,
     SEASIA_IMPERIAL: MALAY_TIERS,
+    SEASIA_CASTLE: MALAY_TIERS,
+    SEASIA_FEUDAL: MALAY_TIERS,
     ANDE:         ANDE_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     SOUTHAM_IMPERIAL: ANDE_TIERS,
     PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制

@@ -17,6 +17,6 @@ export const BERBER_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     hamade: { name: '贝尼哈马团', tier: 4 },     // 布佳亚·哈马德：卡拉阿·贝尼·哈马德；避势力「哈马德」叠字
     // ── [2026-08-26] 大西洋航线：加那利关切人 ──
     guanche: { name: '关切投石兵', tier: 3 },   // 特尔德·本特胡伊：无金属武器，以投石与火硬木矛抗西班牙火器，兵种特色独树一帜
-    disidelusi: { name: '蒂斯德鲁斯卫队', tier: 4 },
+    disidelusi: { name: '杰姆角斗士', tier: 4 }, // 杰姆·蒂斯德鲁斯：世界第三大罗马圆形竞技场所在地，角斗士战团
     muwaxide: { name: '穆瓦骑兵', tier: 1 },
 };
