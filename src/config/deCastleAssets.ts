@@ -220,6 +220,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
     STEPPE_IMPERIAL: 'MONG_CASTLE_AGE3',    // 帝国草原：蒙古要塞
     TIBET: 'TIBET_CASTLE_AGE3',              // 青藏：藏式金顶宗堡
+    TIBET_CASTLE: 'TIBET_CASTLE_AGE3',
     TIBET_IMPERIAL: 'TIBET_CASTLE_AGE3',    // 帝国青藏：藏式金顶宗堡
     WESTERN: 'WESTERN_CASTLE_AGE3',          // 西域：汉伊高台绿洲要塞
     WESTERN_FEUDAL: 'WESTERN_CASTLE_AGE3',  // 封建西域：绿洲要塞
@@ -340,6 +341,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
     QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
+    YARLUNG: 'KHIT_CASTLE_AGE3',
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨

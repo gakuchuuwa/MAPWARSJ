@@ -46,6 +46,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     WESTERN_CASTLE: 'qiuci',
     WESTERN_IMPERIAL: 'qiuci',
     TIBET:        'tubo',      // 青藏-拉萨(逻些) → 吐蕃
+    TIBET_CASTLE: 'tubo',
     TIBET_IMPERIAL: 'tubo',
     STEPPE:       'menggu_d',  // 草原-哈拉和林 → 蒙古
     STEPPE_IMPERIAL: 'menggu_d',
@@ -154,6 +155,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     HEBREWS: 'xibolai',
     WUSUN: 'wusun',
     QIANG: 'xianlingqiang',
+    YARLUNG: 'xianlingqiang',
     NABATAEANS: 'nabatai',
     HEPHTHALITES: 'yanda',
     AINU: 'ayinu_ezo',
