@@ -72,15 +72,15 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
 
                 if (isEdge) {
                     // 河岸与水面采用相近色值，避免一圈深蓝硬框。
-                    outData[pixelIdx] = 88;
-                    outData[pixelIdx + 1] = 130;
-                    outData[pixelIdx + 2] = 142;
+                    outData[pixelIdx] = 55;
+                    outData[pixelIdx + 1] = 106;
+                    outData[pixelIdx + 2] = 135;
                     outData[pixelIdx + 3] = 255;
                 } else {
-                    // 与 VectorRiverLayer 水流主体 #6899AD 保持一致。
-                    outData[pixelIdx] = 104;
-                    outData[pixelIdx + 1] = 153;
-                    outData[pixelIdx + 2] = 173;
+                    // 与 VectorRiverLayer 水流主体 #347FA8 保持一致。
+                    outData[pixelIdx] = 52;
+                    outData[pixelIdx + 1] = 127;
+                    outData[pixelIdx + 2] = 168;
                     outData[pixelIdx + 3] = 255;
                 }
             } else {
