@@ -38,7 +38,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     JAPAN: '日本', AINU: '日本', JAPAN_ANTIQUITY: '日本', JAPAN_IMPERIAL: '日本',
     KOREA: '朝鲜', GORYEO: '朝鲜', JOSEON: '朝鲜', GOJOSEON: '朝鲜',
     NORTHEAST: '满洲', MANCHU: '满洲', JURCHEN: '满洲', MOHE: '满洲',
-    STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原',
+    STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原', STEPPE_ANTIQUITY: '草原', STEPPE_FEUDAL: '草原',
     ROURAN: '草原', KHAZARS: '草原', AVARS: '草原', SCYTHIANS: '草原', KHITAN: '草原', TANGUT: '青藏',
     // ── 华夏系（按朝代在二层分，一层均为「华夏」）──
     CENTRAL: '华夏', NORTH: '华夏', JIANGNAN: '华夏', LINGNAN: '华夏', BASHU: '华夏',
@@ -53,11 +53,11 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',
     // ── 波斯 / 中亚 ──
     PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
-    CENTRAL_ASIA: '中亚', SOGDIANS: '中亚', HEPHTHALITES: '中亚', KUSHAN: '中亚', CENTRAL_ASIA_IMPERIAL: '中亚',
+    CENTRAL_ASIA: '中亚', SOGDIANS: '中亚', HEPHTHALITES: '中亚', KUSHAN: '中亚', CENTRAL_ASIA_IMPERIAL: '中亚', CENTRAL_ASIA_ANTIQUITY: '中亚', CENTRAL_ASIA_CASTLE: '中亚',
     SELJUQ: '中亚', TIMURID: '中亚', ILKHANATE: '中亚', KARA_KHITAN: '中亚',
     // ── 中东 / 西亚 / 阿拉伯 ──
     BABYLON: '中东', ASSYRIAN: '中东', HITTITES: '中东', HEBREWS: '中东', NABATAEANS: '中东', EGYPT: '中东', MAMLUKS: '中东',
-    WEST_ASIA: '西亚', BYZANTINE: '西亚', ARMENIANS: '西亚', GEORGIANS: '西亚', OTTOMAN: '西亚',
+    WEST_ASIA: '西亚', BYZANTINE: '西亚', ARMENIANS: '西亚', GEORGIANS: '西亚', OTTOMAN: '西亚', WEST_ASIA_ANTIQUITY: '西亚', WEST_ASIA_CASTLE: '西亚',
     ORIE: '阿拉伯', ALMOHAD: '阿拉伯', ORIE_ANTIQUITY: '阿拉伯',
     // ── 斯拉夫 / 拉丁 / 日耳曼 ──
     SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫',

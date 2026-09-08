@@ -309,9 +309,39 @@
 }
 
 #combat-ui-panel:not(.is-scene13) .combat-title {
-    background-image: linear-gradient(180deg, #f6e4b6, #d5ad60) !important;
-    letter-spacing: .16em !important;
-    filter: drop-shadow(0 2px 2px #0008) !important;
+    background: none !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    letter-spacing: .2em !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 12px rgba(255, 200, 80, 0.35)) !important;
+}
+
+#combat-ui-panel .combat-title-text {
+    font-family: 'Noto Serif SC', 'SimSun', serif;
+    font-weight: 900;
+    color: transparent;
+    background: linear-gradient(180deg, #fffbe0 0%, #ffdf73 35%, #d4951a 65%, #8f5a0a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#combat-ui-panel .combat-title-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    margin-left: 10px;
+    font-size: 0.42em;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    color: #ffdf73;
+    background: rgba(25, 18, 12, 0.85);
+    border: 1px solid rgba(212, 175, 55, 0.75);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), inset 0 0 5px rgba(212, 175, 55, 0.25);
+    vertical-align: middle;
+    transform: translateY(-3px);
 }
 
 #combat-ui-panel:not(.is-scene13) .combat-bar-track {

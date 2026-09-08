@@ -122,8 +122,9 @@ export class PlayerHero {
 
     private hostLegionId: string | null = null;
     private travelCityId: string | null = null;
-    /** 自动模式：自动选据点（优先名将+双行）、自动入伍、军团战败自动换下一个势力 */
-    public autoMode = false;
+    /** 自动模式：自动选据点（优先名将+双行）、自动入伍、军团战败自动换下一个势力。
+     *  🔴 [2026-09-09 主人定「玩家开局默认自动」] 默认开启，HUD 里可随时手动关掉。 */
+    public autoMode = true;
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -298,34 +299,32 @@ export class PlayerHero {
      *    学到即可套用：玩家素材 = 选中的已学兵种（见 heroKey）。
      */
     public syncLearnedUnits(): void {
+        // 🔴 [2026-09-09 主人定「这种是玩家奖励，终身获取的」]
+        //    已学兵种**永不回收**：军团战败、脱离势力、改投他家、掉阶，一律保留。
+        //    改前有三处会把它清光——① factionId 为空就清空（军团战败 → detach 清 factionId，
+        //    奖励当场蒸发）；② 换势力清空重学；③ 掉阶按总数截断。全部去掉。
+        //    配额只约束「本势力还能再学几个」，按**当前势力已学数**算，不看历史总数，
+        //    所以改投新势力后照样能从头学三排，旧势力学的也还留着能选。
         const want = this.learnQuotaForRank(this.getRank().id);
-        if (!this.factionId) { 
-            if (this.learnedUnits.length) { this.learnedUnits = []; this.selectedUnit = -1; }
-            return;
-        }
+        if (!this.factionId) return;               // 独行期：不新学，但旧的原样保留
         const region = getFactionCultureRegion(this.factionId);
         const slots = region ? (CULTURE_TIERS_MAP[region]?.[0]?.slots ?? []) : [];
         if (!slots.length) return;
-        // 换了势力：清空重学（学的是「该势力的兵」）
-        if (this.learnedUnits.some((u) => u.factionId !== this.factionId)) {
-            this.learnedUnits = [];
-            this.selectedUnit = -1;
-        }
-        while (this.learnedUnits.length < want && this.learnedUnits.length < slots.length) {
-            const taken = new Set(this.learnedUnits.map((u) => u.row));
+
+        const mineCount = () => this.learnedUnits.filter((u) => u.factionId === this.factionId).length;
+        while (mineCount() < want && mineCount() < slots.length) {
+            // 只在「本势力还没学过的排」里抽，历史上别家学的不占本势力的排
+            const taken = new Set(
+                this.learnedUnits.filter((u) => u.factionId === this.factionId).map((u) => u.row),
+            );
             const pool = (slots as Array<{ type: string; count: number }>)
                 .map((sl, row) => ({ sl, row })).filter((x) => !taken.has(x.row));
             if (!pool.length) break;
             const pick = pool[Math.floor(Math.random() * pool.length)];
             const name = WAR_TYPES[pick.sl.type]?.name ?? pick.sl.type;
             this.learnedUnits.push({ unitKey: pick.sl.type, unitName: name, factionId: this.factionId, row: pick.row });
-            if (this.selectedUnit < 0) this.selectedUnit = 0;
+            if (this.selectedUnit < 0) this.selectedUnit = this.learnedUnits.length - 1;
             this.deps.notify(`🗡️ 学会本势力兵种【${name}】`);
-        }
-        // 掉阶（功勋清零）时收回超额
-        if (this.learnedUnits.length > want) {
-            this.learnedUnits.length = want;
-            if (this.selectedUnit >= this.learnedUnits.length) this.selectedUnit = this.learnedUnits.length - 1;
         }
     }
 

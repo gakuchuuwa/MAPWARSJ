@@ -68,7 +68,8 @@ export class LegionManager {
     /** 行军首段异常日志节流（armyId -> timestamp） */
     private marchDiagLogCooldown: Map<string, number> = new Map();
     /** 行军减兵复位查城的每帧缓存（factionId -> 己方城列表；update 开头清空，同帧归属变化最坏下一帧才复位，无感） */
-    private ownCitiesFrameCache: Map<string, readonly { latitude: number; longitude: number }[]> = new Map();
+    private ownCitiesFrameCache: Map<string, { latitude: number; longitude: number }[]> = new Map();
+    private ownCitiesFrameCacheReady = false;
 
     constructor(cityManager: CityManager, map: GameMap) {
         this.cityManager = cityManager;
@@ -116,6 +117,7 @@ export class LegionManager {
      */
     public markCityRegistryDirty(): void {
         this.cityRegistryDirty = true;
+        this.ownCitiesFrameCacheReady = false;
     }
 
     /** 每帧开头调用：脏了才重建（见 markCityRegistryDirty） */
@@ -425,6 +427,7 @@ export class LegionManager {
         if (deltaTime > 0) tickDeploy();
         this.flushCityRegistryIfDirty(); // 城索引每帧至多重建一次（见 markCityRegistryDirty）
         this.ownCitiesFrameCache.clear(); // 行军减兵复位查城的每帧缓存，跨帧失效
+        this.ownCitiesFrameCacheReady = false;
         this.armies.forEach(army => {
             if (army.isDestroyed || army.getTroops() <= 0) return;
             const oldPos = army.getPosition();
@@ -996,12 +999,19 @@ export class LegionManager {
 
     /** 行军减兵复位查城：每帧每势力 memoize（主人复核建议；缓存在 update 开头清空，跨帧失效） */
     private getOwnCitiesForSupplyReset(factionId: string): readonly { latitude: number; longitude: number }[] {
-        let cities = this.ownCitiesFrameCache.get(factionId);
-        if (!cities) {
-            cities = this.cityManager.getCitiesByFaction(factionId);
-            this.ownCitiesFrameCache.set(factionId, cities);
+        if (!this.ownCitiesFrameCacheReady) {
+            this.ownCitiesFrameCache.clear();
+            for (const city of this.cityManager.getCities()) {
+                let cities = this.ownCitiesFrameCache.get(city.factionId);
+                if (!cities) {
+                    cities = [];
+                    this.ownCitiesFrameCache.set(city.factionId, cities);
+                }
+                cities.push(city);
+            }
+            this.ownCitiesFrameCacheReady = true;
         }
-        return cities;
+        return this.ownCitiesFrameCache.get(factionId) ?? [];
     }
 
     /**

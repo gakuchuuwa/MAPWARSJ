@@ -219,6 +219,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     JAPAN_IMPERIAL: 'ASIA_CASTLE_AGE3',      // 帝国日本：日式天守阁
     STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
     STEPPE_IMPERIAL: 'MONG_CASTLE_AGE3',    // 帝国草原：蒙古要塞
+    STEPPE_ANTIQUITY: 'MONG_CASTLE_AGE3',   // 古典草原：蒙古要塞
+    STEPPE_FEUDAL: 'MONG_CASTLE_AGE3',      // 封建草原：蒙古要塞
     TIBET: 'TIBET_CASTLE_AGE3',              // 青藏：藏式金顶宗堡
     TIBET_CASTLE: 'TIBET_CASTLE_AGE3',
     TIBET_IMPERIAL: 'TIBET_CASTLE_AGE3',    // 帝国青藏：藏式金顶宗堡
@@ -247,12 +249,16 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     // ── 3. 中亚、西亚与北非 (7 个) ──
     CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',        // 中亚：鞑靼·赫拉特要塞
     CENTRAL_ASIA_IMPERIAL: 'CEAS_CASTLE_AGE3',
+    CENTRAL_ASIA_ANTIQUITY: 'CEAS_CASTLE_AGE3',
+    CENTRAL_ASIA_CASTLE: 'CEAS_CASTLE_AGE3',
     CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
     PERSIAN: 'PERSIAN_CASTLE_AGE3',           // 波斯文化区用 PERSIAN 风格集本套城堡；PERS 留给萨珊/可萨等具体政权
     PERSIAN_CASTLE: 'PERSIAN_CASTLE_AGE3',
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
     ORIE_ANTIQUITY: 'ORIE_CASTLE_AGE3',
     WEST_ASIA: 'ORIE_CASTLE_AGE3',          // 近东套
+    WEST_ASIA_ANTIQUITY: 'ORIE_CASTLE_AGE3',
+    WEST_ASIA_CASTLE: 'ORIE_CASTLE_AGE3',
     BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
 
     // ── 4. 高加索与东欧 / 斯拉夫 (10 个) ──

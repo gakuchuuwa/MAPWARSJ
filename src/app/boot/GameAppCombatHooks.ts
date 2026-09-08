@@ -172,10 +172,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             && (unitIsFortress(battle.attacker) || unitIsFortress(battle.defender));
         const attHasElite = unitHasElite(battle.attacker);
         const defHasElite = unitHasElite(battle.defender);
-        // [2026-09-05 玩家] 玩家入伍的仗不进 13（改弹大地图战斗面板观战），只保留普通军团「双将+精锐」进 13
-        const playerIn = app.playerHero?.isAttachedTo(followedId) === true;
+        // 🔴 [2026-09-09 主人报障「游戏不进入战术模式」] 去掉 2026-09-05 加的 `!playerIn`。
+        //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
+        //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
+        //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥1万 / 不都是海军 / 双方都有将+精锐）不变。
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
-            && !playerIn
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite);
         if (eligible) {
@@ -232,10 +233,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
-        // [2026-09-05 玩家] 玩家入伍的仗不进 13（改弹大地图战斗面板观战），只保留普通军团「双将+精锐」进 13
-        const playerIn = app.playerHero?.isAttachedTo(followedId) === true;
+        // 🔴 [2026-09-09 同上] 区域战同样去掉 `!playerIn`，玩家入伍照常进 13。
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
-            && !playerIn
             && (attHasGen && defHasGen && attHasElite && defHasElite);
         if (eligible) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
