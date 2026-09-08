@@ -337,6 +337,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAGNA_GRAECIA: 'SPARTANS_CASTLE_AGE3',    // 大希腊——塔兰托是斯巴达唯一的海外殖民地，用斯巴达堡最贴
     ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
     SONG: 'CHIN_CASTLE_AGE3',               // 两宋，同属中华
+    MING: 'CHIN_CASTLE_AGE3',               // 大明，承中华
     GORYEO: 'KORE_CASTLE_AGE3',             // 高丽
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
     GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形

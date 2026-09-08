@@ -132,7 +132,8 @@ export class BrawlFeedPanel {
     private root: HTMLElement | null = null;
     private contentEl: HTMLElement | null = null;
     private toggleBtn: HTMLElement | null = null;
-    private expanded = true;
+    private drawerBtn: HTMLElement | null = null;
+    private expanded = false; // 默认收起划入右侧
     private passSiegeCooldowns: Map<string, number> = new Map();
     private preScene13Expanded = false;
 
@@ -166,8 +167,14 @@ export class BrawlFeedPanel {
         this.expanded = expanded;
         this.root?.classList.toggle('collapsed', !expanded);
         if (this.toggleBtn) {
-            this.toggleBtn.innerHTML = expanded ? '▲ 收起' : '▼ 展开';
+            this.toggleBtn.innerHTML = expanded ? '▶ 收起' : '◀ 展开';
             this.toggleBtn.title = expanded ? '收起面板' : '展开面板';
+        }
+        if (this.drawerBtn) {
+            this.drawerBtn.innerHTML = expanded
+                ? '▶<span class="drawer-label">收起</span>'
+                : '◀<span class="drawer-label">军情</span>';
+            this.drawerBtn.title = expanded ? '收起军情面板' : '展开军情面板';
         }
     }
 
@@ -194,8 +201,21 @@ export class BrawlFeedPanel {
             });
         }
 
-        // 初始状态：直播时展开，非直播时收起
-        this.setExpanded(StreamModeToggle.isActive());
+        // 侧边常驻外露抽屉按钮（折叠时贴在屏幕右边）
+        const drawerBtn = document.createElement('button');
+        drawerBtn.id = 'event-panel-drawer-btn';
+        drawerBtn.type = 'button';
+        drawerBtn.className = 'event-panel-drawer-btn';
+        drawerBtn.innerHTML = '◀<span class="drawer-label">军情</span>';
+        drawerBtn.title = '展开军情面板';
+        drawerBtn.addEventListener('click', () => {
+            this.setExpanded(!this.expanded);
+        });
+        this.root.appendChild(drawerBtn);
+        this.drawerBtn = drawerBtn;
+
+        // 默认划入右侧边不显示，除非点箭头
+        this.setExpanded(false);
 
         // 监听直播模式切换
         window.addEventListener('stream-mode-change', (e: Event) => {

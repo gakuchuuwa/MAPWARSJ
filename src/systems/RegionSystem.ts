@@ -153,7 +153,8 @@ export type RegionType =
     | 'SERBIA' // 塞尔维亚（城堡塞尔维亚：尼曼雅王朝斯蒂芬杜尚大帝重装骑士近卫与巴尔干长枪方阵）
     | 'ILKHANATE' // 伊利汗（城堡伊利汗：旭烈兀西征伊兰波斯具装铁骑与蒙古强弓铁骑突袭）
     | 'ARAGON' // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
-    | 'GOJOSEON'; // 朝鲜（古典朝鲜：古朝鲜/三韩/辰国/伽倻，步弓与轻骑）
+    | 'GOJOSEON' // 朝鲜（古典朝鲜：古朝鲜/三韩/辰国/伽倻，步弓与轻骑）
+    | 'MING'; // 大明（帝国大明：明王朝）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -253,6 +254,7 @@ export const REGION_ORDER: RegionType[] = [
     'GORYEO',
     'JOSEON',
     'GOJOSEON',
+    'MING',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -393,6 +395,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
+    MING: '帝国大明',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -539,6 +542,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
+    MING: '帝国大明',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -835,6 +839,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     GORYEO: '#1565c0',
     JOSEON: '#e65100',
     GOJOSEON: '#2e7d32',
+    MING: '#7A1418',
     DALI: '#00897b',
     GUSILUO: '#8e24aa',
     MAMLUKS: '#d4af37',
@@ -916,6 +921,12 @@ export function getCityRegion(city: { latitude: number; longitude: number; regio
 const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string, pass: string }> = {
     // === 中国汉地核心 ===
     CENTRAL: { // ✅ 已有
+        small: resolvePath('/cities/central_small.png'),
+        medium: resolvePath('/cities/central_medium.png'),
+        big: resolvePath('/cities/central_big.png'),
+        pass: resolvePath('/cities/central_pass.png')
+    },
+    MING: { // ✅ 复用中原（大明京师/汉地）
         small: resolvePath('/cities/central_small.png'),
         medium: resolvePath('/cities/central_medium.png'),
         big: resolvePath('/cities/central_big.png'),
@@ -1818,6 +1829,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL:      ['city_luoyang'],                // 洛阳
     GOJOSEON:     ['city_gimhae'],                 // 金海（古典朝鲜/迦罗伽倻）
+    MING:         ['city_beijing'],                // 北京（大明京师）
     NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)

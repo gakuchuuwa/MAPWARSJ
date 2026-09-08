@@ -16,7 +16,8 @@ export class PlayerHUD {
     private body: HTMLDivElement | null = null;
     private title: HTMLDivElement | null = null;
     private minimizeBtn: HTMLButtonElement | null = null;
-    private minimized = false;
+    private drawerBtn: HTMLButtonElement | null = null;
+    private minimized = true; // 默认划入上方收起
     private panelSizeObserver: ResizeObserver | null = null;
     private overlay: HTMLDivElement | null = null;
     private toast: HTMLDivElement | null = null;
@@ -33,6 +34,9 @@ export class PlayerHUD {
             isScene13Active(): boolean;
             pause: { isGamePaused(): boolean; setPaused(v: boolean): void };
             onLeaveHost(): void;
+            followCamera?(): void;
+            releaseCamera?(): void;
+            isFollowing?(): boolean;
         },
     ) {
         this.createPanel();
@@ -47,36 +51,74 @@ export class PlayerHUD {
     private createPanel(): void {
         const panel = document.createElement('div');
         panel.id = 'player-hero-panel';
+        panel.classList.add('is-collapsed');
         panel.style.cssText = `
-            position:fixed; right:16px; top:16px; z-index:10003;
-            width:230px; padding:10px 14px; box-sizing:border-box;
+            position:fixed; left:50%; top:0; z-index:10003;
+            width:280px; padding:10px 14px 10px; box-sizing:border-box;
             color:#f5e6c8; font-family:${FONT}; font-size:13px; line-height:1.5;
-            background:rgba(20,16,12,0.94);
+            background:rgba(20,16,12,0.95);
             backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-            border:1px solid rgba(212,175,55,0.55); border-radius:8px;
-            box-shadow:0 6px 20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,235,170,0.12);
+            border:1px solid rgba(212,175,55,0.55); border-top:none; border-radius:0 0 10px 10px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,235,170,0.12);
             pointer-events:auto; user-select:none;
+            transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform:translate(-50%, -100%);
         `;
         const titleRow = document.createElement('div');
         titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(212,175,55,0.25);';
+        
+        const titleLeft = document.createElement('div');
+        titleLeft.style.cssText = 'display:flex; align-items:center; gap:6px;';
+
         const title = document.createElement('div');
         title.style.cssText = 'font-weight:900; font-size:15px; letter-spacing:1px; color:#e8c77e; text-shadow:0 1px 3px rgba(0,0,0,0.8);';
         title.textContent = `👤 ${this.hero.name}`;
         this.title = title;
+        titleLeft.appendChild(title);
+
+        const renameBtn = document.createElement('button');
+        renameBtn.type = 'button';
+        renameBtn.textContent = '✎ 改名';
+        renameBtn.title = '修改玩家名称';
+        renameBtn.style.cssText = 'cursor:pointer; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:#dfc28c; font-size:11px; padding:2px 6px; border-radius:4px; line-height:1.2; font-family:inherit;';
+        renameBtn.addEventListener('mouseenter', () => { renameBtn.style.color = '#fffcee'; renameBtn.style.background = 'rgba(212,175,55,0.3)'; });
+        renameBtn.addEventListener('mouseleave', () => { renameBtn.style.color = '#dfc28c'; renameBtn.style.background = 'rgba(212,175,55,0.15)'; });
+        renameBtn.addEventListener('click', () => {
+            const trimmed = prompt('请输入新的玩家名称：', this.hero.name)?.trim();
+            if (!trimmed || trimmed === this.hero.name) return;
+            this.hero.rename(trimmed);
+            this.refresh();
+        });
+        titleLeft.appendChild(renameBtn);
+
         const minBtn = document.createElement('button');
         minBtn.type = 'button';
-        minBtn.textContent = '▾';
-        minBtn.title = '最小化';
+        minBtn.textContent = '▲';
+        minBtn.title = '收起面板';
         minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:15px; font-weight:900; line-height:1; padding:2px 4px; transition:color 0.2s;';
         minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
         minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
         minBtn.addEventListener('click', () => this.toggleMinimize());
-        titleRow.appendChild(title);
+        
+        titleRow.appendChild(titleLeft);
         titleRow.appendChild(minBtn);
         panel.appendChild(titleRow);
+
         const body = document.createElement('div');
         body.className = 'player-hud-body';
         panel.appendChild(body);
+
+        // 下缘常驻外露抽屉把手（默认折叠时贴在屏幕正上方中央）
+        const drawerBtn = document.createElement('button');
+        drawerBtn.id = 'player-panel-drawer-btn';
+        drawerBtn.type = 'button';
+        drawerBtn.className = 'player-panel-drawer-btn';
+        drawerBtn.innerHTML = `👤 ${this.hero.name} <span class="drawer-arrow">▼</span>`;
+        drawerBtn.title = '展开玩家面板';
+        drawerBtn.addEventListener('click', () => this.toggleMinimize());
+        panel.appendChild(drawerBtn);
+        this.drawerBtn = drawerBtn;
+
         document.body.appendChild(panel);
         this.panel = panel;
         this.panelSizeObserver = new ResizeObserver(() => {
@@ -90,16 +132,29 @@ export class PlayerHUD {
 
     private toggleMinimize(): void {
         this.minimized = !this.minimized;
-        if (this.body) this.body.style.display = this.minimized ? 'none' : 'block';
+        if (this.panel) {
+            this.panel.classList.toggle('is-collapsed', this.minimized);
+            this.panel.style.transform = this.minimized ? 'translate(-50%, -100%)' : 'translate(-50%, 0)';
+        }
+        if (this.drawerBtn) {
+            this.drawerBtn.innerHTML = this.minimized
+                ? `👤 ${this.hero.name} <span class="drawer-arrow">▼</span>`
+                : `👤 ${this.hero.name} <span class="drawer-arrow">▲</span>`;
+            this.drawerBtn.title = this.minimized ? '展开玩家面板' : '收起玩家面板';
+        }
         if (this.minimizeBtn) {
-            this.minimizeBtn.textContent = this.minimized ? '▸' : '▾';
-            this.minimizeBtn.title = this.minimized ? '展开' : '最小化';
+            this.minimizeBtn.textContent = this.minimized ? '▼' : '▲';
+            this.minimizeBtn.title = this.minimized ? '展开' : '收起';
         }
     }
 
     public refresh(): void {
         if (!this.panel || !this.body) return;
         if (this.title) this.title.textContent = `👤 ${this.hero.name}`;
+        if (this.drawerBtn) {
+            const arrow = this.minimized ? '▼' : '▲';
+            this.drawerBtn.innerHTML = `👤 ${this.hero.name} <span class="drawer-arrow">${arrow}</span>`;
+        }
         this.panel.style.display = this.deps.isScene13Active() ? 'none' : 'block';
         if (this.panel.style.display === 'none') return;
 
@@ -180,9 +235,12 @@ export class PlayerHUD {
             this.body.appendChild(hint);
         }
 
-        // 自动模式开关
+        // 控制栏：自动模式 + 视角跟随
+        const ctrlRow = document.createElement('div');
+        ctrlRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px;';
+
         const autoLabel = document.createElement('label');
-        autoLabel.style.cssText = 'display:flex; align-items:center; gap:6px; margin-top:8px; cursor:pointer; font-size:12px; color:#52c486; font-weight:700;';
+        autoLabel.style.cssText = 'display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:#52c486; font-weight:700;';
         const autoCheck = document.createElement('input');
         autoCheck.type = 'checkbox';
         autoCheck.checked = hero.autoMode;
@@ -190,7 +248,33 @@ export class PlayerHUD {
         autoCheck.addEventListener('change', () => hero.setAutoMode(autoCheck.checked));
         autoLabel.appendChild(autoCheck);
         autoLabel.appendChild(document.createTextNode('🤖 自动模式'));
-        this.body.appendChild(autoLabel);
+        ctrlRow.appendChild(autoLabel);
+
+        if (this.deps.followCamera) {
+            const followBtn = document.createElement('button');
+            followBtn.type = 'button';
+            const isF = this.deps.isFollowing?.() ?? false;
+            followBtn.textContent = isF ? '🎥 跟随中' : '🎥 跟随视角';
+            followBtn.title = isF ? '正在跟随玩家视角（点击取消）' : '点击对准并跟随玩家';
+            followBtn.style.cssText = `
+                cursor:pointer; font-size:11px; font-weight:700; padding:2px 7px; border-radius:4px; font-family:inherit;
+                background:${isF ? 'rgba(82,196,134,0.2)' : 'rgba(212,175,55,0.12)'};
+                color:${isF ? '#52c486' : '#dfc28c'};
+                border:1px solid ${isF ? 'rgba(82,196,134,0.5)' : 'rgba(212,175,55,0.35)'};
+                transition:all 0.2s ease;
+            `;
+            followBtn.addEventListener('click', () => {
+                if (this.deps.isFollowing?.()) {
+                    this.deps.releaseCamera?.();
+                } else {
+                    this.deps.followCamera?.();
+                }
+                this.refresh();
+            });
+            ctrlRow.appendChild(followBtn);
+        }
+
+        this.body.appendChild(ctrlRow);
 
         if (host) {
             const note = document.createElement('div');
