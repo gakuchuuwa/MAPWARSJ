@@ -628,6 +628,89 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     return pieces;
 }
 
+/** 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定） */
+function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
+    const sx = baseSize * 0.075;
+    const sy = sx * 0.58;
+    const Rx = 6.6 * sx;
+    const Ry = Rx * 0.58;
+    const pieces: PalisadeGridPiece[] = [];
+    const N = 32;
+    for (let i = 0; i < N; i++) {
+        const angle = -90 + i * (360.0 / N);
+        const rad = angle * Math.PI / 180;
+        const x = Rx * Math.cos(rad);
+        const y = Ry * Math.sin(rad);
+        // 正前方东南开一扇篱笆门 (angle 在 50° ~ 75° 之间)
+        if (angle >= 50 && angle <= 75) {
+            if (Math.abs(angle - 62.5) < 7) {
+                pieces.push({ x, y, type: 'GATE' });
+            }
+            continue;
+        }
+        if (i % 4 === 0) {
+            pieces.push({ x, y, type: 'POST' });
+        } else if (angle > -90 && angle < 0) {
+            pieces.push({ x, y, type: 'SE' });
+        } else if (angle >= 0 && angle < 90) {
+            pieces.push({ x, y, type: 'SE', flipX: true });
+        } else if (angle >= 90 && angle < 180) {
+            pieces.push({ x, y, type: 'NE', flipX: true });
+        } else {
+            pieces.push({ x, y, type: 'NE' });
+        }
+    }
+    return pieces;
+}
+
+/** 城寨方案B：圆润八角羊圈围栏（切去生硬尖角，八面围场平缓过渡，2026-09-08 主人定） */
+function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
+    const sx = baseSize * 0.075;
+    const sy = sx * 0.58;
+    const pieces: PalisadeGridPiece[] = [];
+    // 1. 东北边 (4段 SE)
+    for (let k = 0; k < 4; k++) {
+        const x = (2.2 + k * 0.8) * sx;
+        const y = (-4.6 + k * 0.8) * sy;
+        pieces.push({ x, y, type: 'SE' });
+    }
+    // 2. 东角过渡 (立柱 POST)
+    pieces.push({ x: 5.2 * sx, y: -0.8 * sy, type: 'POST' });
+    pieces.push({ x: 5.4 * sx, y: 0.8 * sy, type: 'POST' });
+    // 3. 东南边 (4段 SE flipX，带门)
+    for (let k = 0; k < 4; k++) {
+        const x = (4.6 - k * 0.8) * sx;
+        const y = (2.0 + k * 0.8) * sy;
+        if (k === 2) {
+            pieces.push({ x, y, type: 'GATE' });
+        } else {
+            pieces.push({ x, y, type: 'SE', flipX: true });
+        }
+    }
+    // 4. 南角过渡 (立柱 POST)
+    pieces.push({ x: 0.8 * sx, y: 5.2 * sy, type: 'POST' });
+    pieces.push({ x: -0.8 * sx, y: 5.2 * sy, type: 'POST' });
+    // 5. 西南边 (4段 NE flipX)
+    for (let k = 0; k < 4; k++) {
+        const x = (-2.0 - k * 0.8) * sx;
+        const y = (4.6 - k * 0.8) * sy;
+        pieces.push({ x, y, type: 'NE', flipX: true });
+    }
+    // 6. 西角过渡 (立柱 POST)
+    pieces.push({ x: -5.2 * sx, y: 0.8 * sy, type: 'POST' });
+    pieces.push({ x: -5.4 * sx, y: -0.8 * sy, type: 'POST' });
+    // 7. 西北边 (4段 NE)
+    for (let k = 0; k < 4; k++) {
+        const x = (-4.6 + k * 0.8) * sx;
+        const y = (-2.0 - k * 0.8) * sy;
+        pieces.push({ x, y, type: 'NE' });
+    }
+    // 8. 北角过渡 (立柱 POST)
+    pieces.push({ x: -0.8 * sx, y: -5.2 * sy, type: 'POST' });
+    pieces.push({ x: 0.8 * sx, y: -5.2 * sy, type: 'POST' });
+    return pieces;
+}
+
 /** 大城加固城墙与双塔门楼体系：
  *  加固城门采用 AoE2 DE 标准关闭状态双塔城门（closed + gate corner），左右自带门塔，
  *  在西北与东南墙段中部各设一门（k = S-1..S+1 留空让给双塔门楼），两端城墙严丝合缝咬入门塔外壁。 */
@@ -814,9 +897,20 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         );
     });
 
-    // 严密咬合的篱笆围墙与篱笆门：四角用 DE 的 L 形转角件（FENCE_CORNER）无缝连接，不是单柱 f4
-    const wallPieces = computePalisadeWallAndGate(baseSize);
-    for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
+    // 严密咬合的篱笆围墙与篱笆门：[2026-09-08 主人定] 三种样式随机三选一：
+    // 0: 原有正方形 (四角L形转角件 FENCE_CORNER)
+    // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈)
+    // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场)
+    const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 3;
+    let wallPieces: PalisadeGridPiece[];
+    if (stockadeStyle === 1) {
+        wallPieces = computeCorralRoundWall(baseSize);
+    } else if (stockadeStyle === 2) {
+        wallPieces = computeCorralOctagonWall(baseSize);
+    } else {
+        wallPieces = computePalisadeWallAndGate(baseSize);
+        for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
+    }
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
