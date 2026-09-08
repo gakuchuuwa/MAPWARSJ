@@ -217,8 +217,13 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
     JAPAN_IMPERIAL: 'ASIA_CASTLE_AGE3',      // 帝国日本：日式天守阁
     STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
+    STEPPE_IMPERIAL: 'MONG_CASTLE_AGE3',    // 帝国草原：蒙古要塞
     TIBET: 'TIBET_CASTLE_AGE3',              // 青藏：藏式金顶宗堡
+    TIBET_IMPERIAL: 'TIBET_CASTLE_AGE3',    // 帝国青藏：藏式金顶宗堡
     WESTERN: 'WESTERN_CASTLE_AGE3',          // 西域：汉伊高台绿洲要塞
+    WESTERN_FEUDAL: 'WESTERN_CASTLE_AGE3',  // 封建西域：绿洲要塞
+    WESTERN_CASTLE: 'WESTERN_CASTLE_AGE3',
+    WESTERN_IMPERIAL: 'WESTERN_CASTLE_AGE3',
     DIANQIAN: 'DIANQIAN_CASTLE_AGE3',        // 滇黔：大理白塔飞瀑云关
     LINGNAN: 'LINGNAN_CASTLE_AGE3',          // 岭南：南越宫阙·广府镬耳围楼
 
@@ -226,6 +231,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     VIETNAMESE: 'VIET_CASTLE_AGE3',          // 越南：升龙城式重檐
     KHMER: 'SEAS_CASTLE_AGE3',               // 高棉：吴哥窟式砂岩塔
     MALAY: 'MALA_CASTLE_AGE3',               // 马来：满剌加木石水寨
+    SEASIA_IMPERIAL: 'MALA_CASTLE_AGE3',    // 帝国东南亚：木石水寨
     INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
@@ -237,6 +243,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     CENTRAL_ASIA_IMPERIAL: 'CEAS_CASTLE_AGE3',
     CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
     PERSIAN: 'PERSIAN_CASTLE_AGE3',           // 波斯文化区用 PERSIAN 风格集本套城堡；PERS 留给萨珊/可萨等具体政权
+    PERSIAN_CASTLE: 'PERSIAN_CASTLE_AGE3',
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
     WEST_ASIA: 'ORIE_CASTLE_AGE3',          // 近东套
     BERBER: 'BERB_CASTLE_AGE3',              // 柏柏尔：北非卡斯巴土堡
@@ -255,6 +262,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 5. 地中海 / 南欧古典 (9 个) ──
     LATIN: 'MEDI_CASTLE_AGE3',              // 地中海拉丁（休达/加莱/马耳他为中世纪据点，用地中海套而非古罗马）
+    LATIN_FEUDAL: 'MEDI_CASTLE_AGE3',
     ITALIANS: 'MEDI_CASTLE_AGE3',            // 意大利：地中海石堡
     SICILIANS: 'SICI_CASTLE_AGE3',           // 西西里：诺曼阿拉伯石堡
     GREEK: 'GREEK_CASTLE_AGE3',              // 古希腊：希腊卫城
@@ -273,10 +281,14 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 7. 非洲与美洲 (8 个) ──
     AFRICA: 'AFRI_CASTLE_AGE3',              // 非洲：马里生土要塞
+    AFRICA_IMPERIAL: 'AFRI_CASTLE_AGE3',    // 帝国非洲：生土要塞
     ETHIOPIANS: 'ETHI_CASTLE_AGE3',          // 埃塞俄比亚：法西尔盖比石堡
     MAYANS: 'MAYA_CASTLE_AGE3',              // 玛雅：阶梯金字塔石堡
     AMERICA: 'MESO_CASTLE_AGE3',             // 中美洲：阿兹特克金字塔
+    NORTHAM_IMPERIAL: 'MESO_CASTLE_AGE3',
+    NORTHAM_FEUDAL: 'MESO_CASTLE_AGE3',
     ANDE: 'INCA_CASTLE_AGE3',                // 安第斯：印加萨克赛瓦曼
+    SOUTHAM_IMPERIAL: 'INCA_CASTLE_AGE3',
     MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
     MUISCA: 'MUIS_CASTLE_AGE3',              // 穆伊斯卡：黄金国要塞
     TUPI: 'TUPI_CASTLE_AGE3',                // 图皮：图皮丛林要塞

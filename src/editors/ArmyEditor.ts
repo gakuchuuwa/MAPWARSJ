@@ -42,8 +42,13 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     DIANQIAN:     'dali',      // 滇缅-大理(羊苴咩城) → 大理
     HEXI:         'liangzhou',     // 河西-武威(姑臧) → 凉州
     WESTERN:      'qiuci',     // 西域-龟兹(伊逻卢城) → 龟兹
+    WESTERN_FEUDAL: 'qiuci',
+    WESTERN_CASTLE: 'qiuci',
+    WESTERN_IMPERIAL: 'qiuci',
     TIBET:        'tubo',      // 青藏-拉萨(逻些) → 吐蕃
+    TIBET_IMPERIAL: 'tubo',
     STEPPE:       'menggu_d',  // 草原-哈拉和林 → 蒙古
+    STEPPE_IMPERIAL: 'menggu_d',
     NORTHEAST:    'bohai',     // 东北-龙源(龙泉府) → 渤海
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
@@ -54,18 +59,25 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
+    LATIN_FEUDAL: 'luoma_diguo',
     INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
     BERBER:       'mulabite',    // 柏柏尔-马拉喀什 → 穆拉比特
     AMERICA:      'aztec',       // 美洲 → 阿兹特克（待建势力对齐）
+    NORTHAM_IMPERIAL: 'aztec',
+    NORTHAM_FEUDAL: 'aztec',
     AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
+    AFRICA_IMPERIAL: 'mali',
     MALAY:        'malacca',     // 马来 → 满剌加（待建势力对齐）
+    SEASIA_IMPERIAL: 'malacca',
     ANDE:         'inca',        // 安第斯 → 印加（待建势力对齐）
+    SOUTHAM_IMPERIAL: 'inca',
     PURU:         'zhuluo',      // 南印度 → 朱罗（待建势力对齐）
     ORIE:         'womaya',      // 阿拉伯 → 倭马亚（待建势力对齐）
     EAST:         'luosi',       // 东欧 → 罗斯（基辅罗斯）
     GREEK:        'xila',        // 希腊 → 希腊（雅典）
     THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚
     PERSIAN:      'aqimeinide',  // 波斯 → 阿契美尼德（波斯波利斯）
+    PERSIAN_CASTLE: 'aqimeinide',
     CUMAN:        'qincha',      // 库曼 → 钦察（萨拉托夫）
     BRITONS: 'falanji',  // 不列颠 → 待建势力对齐（暂用父文化势力占位）
     GOTHS: 'falanji',  // 哥特 → 待建势力对齐（暂用父文化势力占位）

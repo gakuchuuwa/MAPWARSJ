@@ -38,20 +38,20 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     JAPAN: '日本', AINU: '日本', JAPAN_IMPERIAL: '日本',
     KOREA: '朝鲜', GORYEO: '朝鲜', JOSEON: '朝鲜', GOJOSEON: '朝鲜',
     NORTHEAST: '满洲', MANCHU: '满洲', JURCHEN: '满洲', MOHE: '满洲',
-    STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原',
+    STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原',
     ROURAN: '草原', KHAZARS: '草原', AVARS: '草原', SCYTHIANS: '草原', KHITAN: '草原', TANGUT: '青藏',
     // ── 华夏系（按朝代在二层分，一层均为「华夏」）──
     CENTRAL: '华夏', NORTH: '华夏', JIANGNAN: '华夏', LINGNAN: '华夏', BASHU: '华夏',
     DIANQIAN: '华夏', HEXI: '华夏', SONG: '华夏', MING: '华夏', HUAXIA_IMPERIAL: '华夏',
     // ── 西域 / 青藏 ──
-    WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', GUSILUO: '青藏',
+    WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', GUSILUO: '青藏', TIBET_IMPERIAL: '青藏', WESTERN_FEUDAL: '西域', WESTERN_CASTLE: '西域', WESTERN_IMPERIAL: '西域',
     // ── 南亚 / 东南亚 ──
     INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
     BENGALIS: '印度', SIKH: '印度', PASHTUN: '印度',
-    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚',
+    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_IMPERIAL: '东南亚',
     BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',
     // ── 波斯 / 中亚 ──
-    PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯',
+    PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
     CENTRAL_ASIA: '中亚', SOGDIANS: '中亚', HEPHTHALITES: '中亚', KUSHAN: '中亚', CENTRAL_ASIA_IMPERIAL: '中亚',
     SELJUQ: '中亚', TIMURID: '中亚', ILKHANATE: '中亚', KARA_KHITAN: '中亚',
     // ── 中东 / 西亚 / 阿拉伯 ──
@@ -61,16 +61,16 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     // ── 斯拉夫 / 拉丁 / 日耳曼 ──
     SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫',
     BOHEMIANS: '斯拉夫', WALLACHIA: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',
-    LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁',
+    LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁', LATIN_FEUDAL: '拉丁',
     GREEK: '拉丁', THRACIAN: '拉丁', MACEDONIAN: '拉丁', HELLENIC: '拉丁', GREEK_MERCENARY: '拉丁', MAGNA_GRAECIA: '拉丁',
     AMAZONS: '拉丁', CRUSADERS: '拉丁', CASTILE: '拉丁', ARAGON: '拉丁', SWISS: '日耳曼', CELTS: '拉丁', FRENCH: '拉丁',
     GERMANIC: '日耳曼', TEUTONS: '日耳曼', VIKINGS: '日耳曼', GOTHS: '日耳曼', VANDALS: '日耳曼', LOMBARDS: '日耳曼',
     FRANKS: '日耳曼', BURGUNDIANS: '日耳曼', BRITONS: '日耳曼', SCOTLAND: '日耳曼', HRE: '日耳曼',
     SWEDISH: '日耳曼', ANGLO_SAXON: '日耳曼',
     // ── 非洲 / 美洲 ──
-    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '非洲', BERBER: '非洲',
-    AMERICA: '北美', MAYANS: '北美', IROQUOIS: '北美', TAIRONA: '北美',
-    ANDE: '南美', MAPUCHE: '南美', MUISCA: '南美', TUPI: '南美', TEHUELCHE: '南美', CHIMU: '南美', TARASCAN: '南美',
+    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '非洲', BERBER: '非洲', AFRICA_IMPERIAL: '非洲',
+    AMERICA: '北美', MAYANS: '北美', IROQUOIS: '北美', TAIRONA: '北美', NORTHAM_IMPERIAL: '北美', NORTHAM_FEUDAL: '北美',
+    ANDE: '南美', MAPUCHE: '南美', MUISCA: '南美', TUPI: '南美', TEHUELCHE: '南美', CHIMU: '南美', TARASCAN: '南美', SOUTHAM_IMPERIAL: '南美',
 };
 
 /** 一键取大区（未知回华夏） */
