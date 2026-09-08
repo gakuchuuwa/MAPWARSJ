@@ -85,3 +85,5 @@ claudedocs
 .hermes
 .agents
 .vscode
+# 原始录音（16MB，src 零引用；线上音效只走 public/sfx/*.aud）。本地保留，不上传。
+public/sfx/*.WAV

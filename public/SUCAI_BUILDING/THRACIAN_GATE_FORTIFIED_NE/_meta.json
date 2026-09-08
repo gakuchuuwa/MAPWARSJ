@@ -1,9 +1,12 @@
 {
   "name": "THRACIAN_GATE_FORTIFIED_NE",
   "frames": 1,
-  "box_w": 196,
-  "box_h": 216,
-  "anchor_x": 132,
-  "anchor_y": 192,
-  "sld_source": "b_thracian_gate_fortified_ne_open"
+  "box_w": 316,
+  "box_h": 254,
+  "anchor_x": 185,
+  "anchor_y": 191,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_thracian_gate_fortified_ne_closed + b_thracian_gate_fortified_corner"
 }
