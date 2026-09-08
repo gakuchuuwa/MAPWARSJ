@@ -343,6 +343,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     STEPPE_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CUMAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     JAPAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    JAPAN_ANTIQUITY: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     JAPAN_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
     CENTRAL_ASIA_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
@@ -361,6 +362,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     PURU: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true, battle_elephant: true, armored_elephant: true },
     WEST_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     ORIE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    ORIE_ANTIQUITY: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     AMERICA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     NORTHAM_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     NORTHAM_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -369,6 +371,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     AFRICA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     AFRICA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     MALAY: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    SEASIA_ANTIQUITY: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     SEASIA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     BRITONS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GOTHS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
@@ -1127,6 +1130,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     NORTHEAST: 'ASIA',
     KOREA: 'ASIA',
     JAPAN: 'ASIA',
+    JAPAN_ANTIQUITY: 'ASIA',
     JAPAN_IMPERIAL: 'ASIA',
     CENTRAL_ASIA: 'CEAS', // [2026-09-02] ORIE→CEAS（塞尔柱/花拉子模/帖木儿=中亚鞑靼，与战略对齐）
     CENTRAL_ASIA_IMPERIAL: 'CEAS',
@@ -1139,11 +1143,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
     AFRICA_IMPERIAL: 'AFRI',
     MALAY: 'SEAS',    // [2026-08-24] 马来东南亚
+    SEASIA_ANTIQUITY: 'SEAS',
     SEASIA_IMPERIAL: 'SEAS',
     ANDE: 'ANDE',     // [2026-08-27] 安第斯石构（印加/马普切/穆伊斯卡）
     SOUTHAM_IMPERIAL: 'ANDE',
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
+    ORIE_ANTIQUITY: 'ORIE',
     EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
     GREEK: 'GREEK',   // [2026-09-07] 古典希腊 → DE 的 GREEK 风格集（183 件已补提，不再 404）
     THRACIAN: 'THRACIAN',   // [2026-09-07] 古典色雷斯 → DE 的 THRACIAN 风格集（165 件已补提）

@@ -52,6 +52,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     NORTHEAST:    'bohai',     // 东北-龙源(龙泉府) → 渤海
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
+    JAPAN_ANTIQUITY: 'ashikaga',
     JAPAN_IMPERIAL: 'edo',     // 帝国日本（江户）
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
     CENTRAL_ASIA_IMPERIAL: 'kokand', // 帝国中亚（浩罕/布哈拉）
@@ -68,11 +69,13 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
     AFRICA_IMPERIAL: 'mali',
     MALAY:        'malacca',     // 马来 → 满剌加（待建势力对齐）
+    SEASIA_ANTIQUITY: 'malacca',
     SEASIA_IMPERIAL: 'malacca',
     ANDE:         'inca',        // 安第斯 → 印加（待建势力对齐）
     SOUTHAM_IMPERIAL: 'inca',
     PURU:         'zhuluo',      // 南印度 → 朱罗（待建势力对齐）
     ORIE:         'womaya',      // 阿拉伯 → 倭马亚（待建势力对齐）
+    ORIE_ANTIQUITY: 'womaya',
     EAST:         'luosi',       // 东欧 → 罗斯（基辅罗斯）
     GREEK:        'xila',        // 希腊 → 希腊（雅典）
     THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚

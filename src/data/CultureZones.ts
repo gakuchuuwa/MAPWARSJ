@@ -35,7 +35,7 @@ export type CultureEra = (typeof CULTURE_ERAS)[number];
 /** region → 大区 */
 export const REGION_TO_ZONE: Record<string, CultureZone> = {
     // ── 东亚 ──
-    JAPAN: '日本', AINU: '日本', JAPAN_IMPERIAL: '日本',
+    JAPAN: '日本', AINU: '日本', JAPAN_ANTIQUITY: '日本', JAPAN_IMPERIAL: '日本',
     KOREA: '朝鲜', GORYEO: '朝鲜', JOSEON: '朝鲜', GOJOSEON: '朝鲜',
     NORTHEAST: '满洲', MANCHU: '满洲', JURCHEN: '满洲', MOHE: '满洲',
     STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原',
@@ -48,7 +48,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     // ── 南亚 / 东南亚 ──
     INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
     BENGALIS: '印度', SIKH: '印度', PASHTUN: '印度',
-    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_IMPERIAL: '东南亚',
+    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚',
     BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',
     // ── 波斯 / 中亚 ──
     PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
@@ -57,7 +57,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     // ── 中东 / 西亚 / 阿拉伯 ──
     BABYLON: '中东', ASSYRIAN: '中东', HITTITES: '中东', HEBREWS: '中东', NABATAEANS: '中东', EGYPT: '中东', MAMLUKS: '中东',
     WEST_ASIA: '西亚', BYZANTINE: '西亚', ARMENIANS: '西亚', GEORGIANS: '西亚', OTTOMAN: '西亚',
-    ORIE: '阿拉伯', ALMOHAD: '阿拉伯',
+    ORIE: '阿拉伯', ALMOHAD: '阿拉伯', ORIE_ANTIQUITY: '阿拉伯',
     // ── 斯拉夫 / 拉丁 / 日耳曼 ──
     SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫',
     BOHEMIANS: '斯拉夫', WALLACHIA: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',

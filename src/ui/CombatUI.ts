@@ -5694,7 +5694,7 @@ export class CombatUI {
         if (cultureLegionName) {
             return cultureLegionName;
         }
-        return side === 'attacker' ? '古典先秦军团' : '古典秦汉军团';
+        return side === 'attacker' ? '古典华夏军团' : '古典秦汉军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {

@@ -85,6 +85,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     WESTERN_CASTLE:'MIXED',
     WESTERN_IMPERIAL:'MIXED',
     JAPAN:        'INFANTRY', // 日本纯步兵
+    JAPAN_ANTIQUITY:'INFANTRY',
     JAPAN_IMPERIAL:'MIXED',   // 帝国日本：武士步骑协同
     BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
@@ -102,11 +103,13 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     AFRICA:       'MIXED',    // 非洲步+骆驼
     AFRICA_IMPERIAL:'MIXED',
     MALAY:        'INFANTRY', // 马来近战/海军
+    SEASIA_ANTIQUITY:'INFANTRY',
     SEASIA_IMPERIAL:'INFANTRY',
     ANDE:         'MIXED',    // 安第斯步+鹰武士
     SOUTHAM_IMPERIAL:'MIXED',
     PURU:         'ELEPHANT', // 南印度战象（步象）
     ORIE:         'CAVALRY',  // 阿拉伯骆驼骑（纯骑）
+    ORIE_ANTIQUITY:'CAVALRY',
     EAST:         'MIXED',    // 东欧蛮族步骑（波雅尔铁骑+弓，套斯拉夫编成）
     GREEK:        'MIXED',    // 古典希腊：步骑弩综合体系（重步抗线+贵族骑兵突击+腹弩掩护）
     THRACIAN:     'INFANTRY', // 色雷斯轻盾兵
@@ -267,6 +270,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
+    JAPAN_ANTIQUITY:'fish_scale',
     JAPAN_IMPERIAL:'fish_scale',  // 帝国日本：武士抗线+精锐武士主力+火绳足轻
     BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
     NORTHEAST:    'crescent',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
@@ -298,11 +302,13 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
     AFRICA_IMPERIAL:'fish_scale',
     MALAY:        'crane_wing',  // 马来近战主力
+    SEASIA_ANTIQUITY:'crane_wing',
     SEASIA_IMPERIAL:'crane_wing',
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
     SOUTHAM_IMPERIAL:'fish_scale',
     PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
+    ORIE_ANTIQUITY:'triangle',
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
     GREEK:        'fish_scale', // 古典希腊：鱼鳞阵 3+4+2 前排希腊重步3+中坚希腊贵族骑兵高级4档主力+后排希腊腹弩2
     THRACIAN: 'crescent',  // [2026-09-06] 与同名势力专属军团对齐
@@ -2023,11 +2029,12 @@ export const LITHUANIANS_TIERS: CompositionTier[] = [
  *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
  *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
 export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
-    CENTRAL: '古典先秦军团',
+    CENTRAL: '古典华夏军团',
     NORTH: '古典秦汉军团',
     NORTHEAST: '古典鲜卑军团',
     KOREA: '封建高句丽军团',
     JAPAN: '城堡镰仓军团',
+    JAPAN_ANTIQUITY: '古典日本军团',
     JAPAN_IMPERIAL: '帝国日本军团',
     STEPPE: '城堡蒙古军团',
     STEPPE_IMPERIAL: '帝国草原军团',
@@ -2062,11 +2069,13 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     AFRICA: '城堡曼丁哥军团',
     AFRICA_IMPERIAL: '帝国非洲军团',
     MALAY: '封建马来军团',
+    SEASIA_ANTIQUITY: '古典东南亚军团',
     SEASIA_IMPERIAL: '帝国东南亚军团',
     ANDE: '城堡克丘亚军团',
     SOUTHAM_IMPERIAL: '帝国南美军团',
     PURU: '封建达罗毗荼军团',
     ORIE: '封建阿拉伯军团',
+    ORIE_ANTIQUITY: '古典阿拉伯军团',
     EAST: '封建罗斯军团',
     GREEK: '古典希腊军团',
     THRACIAN: '古典色雷斯军团',
@@ -3645,6 +3654,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     NORTHEAST:    NORTHEAST_TIERS,
     KOREA:        KOREA_TIERS,
     JAPAN:        JAPAN_TIERS,
+    JAPAN_ANTIQUITY: JAPAN_TIERS,
     JAPAN_IMPERIAL: JAPAN_TIERS,
     STEPPE:       STEPPE_TIERS,
     STEPPE_IMPERIAL: STEPPE_TIERS,
@@ -3674,11 +3684,13 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     AFRICA:       AFRICA_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
     AFRICA_IMPERIAL: AFRICA_TIERS,
     MALAY:        MALAY_TIERS,   // ⚠️ [2026-08-24] 暂复用滇缅编成（马来），待定制
+    SEASIA_ANTIQUITY: MALAY_TIERS,
     SEASIA_IMPERIAL: MALAY_TIERS,
     ANDE:         ANDE_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     SOUTHAM_IMPERIAL: ANDE_TIERS,
     PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
     ORIE:         ORIE_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
+    ORIE_ANTIQUITY: ORIE_TIERS,
     EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制
     GREEK:        GREEK_TIERS,      // 古典希腊军团（鱼鳞阵 3+4+2：希腊重步3 + 希腊贵族骑兵高级4 + 希腊腹弩2）
     THRACIAN: THRACIAN_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
