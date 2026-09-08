@@ -109,6 +109,9 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     ANDE:         'MIXED',    // 安第斯步+鹰武士
     SOUTHAM_IMPERIAL:'MIXED',
     PURU:         'ELEPHANT', // 南印度战象（步象）
+    INDIA_FEUDAL: 'ELEPHANT', // 封建印度战象（步象）
+    INDIA_CASTLE: 'ELEPHANT', // 城堡印度战象（步象）
+    INDIA_IMPERIAL:'ELEPHANT', // 帝国印度战象（步象）
     ORIE:         'CAVALRY',  // 阿拉伯骆驼骑（纯骑）
     ORIE_ANTIQUITY:'CAVALRY',
     EAST:         'MIXED',    // 东欧蛮族步骑（波雅尔铁骑+弓，套斯拉夫编成）
@@ -310,6 +313,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ANDE:         'fish_scale',  // 安第斯步兵主力（印加/马普切）
     SOUTHAM_IMPERIAL:'fish_scale',
     PURU: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
+    INDIA_FEUDAL: 'crane_wing',  // 封建印度：鹤翼阵
+    INDIA_CASTLE: 'crane_wing',  // 城堡印度：鹤翼阵
+    INDIA_IMPERIAL: 'crane_wing',  // 帝国印度：鹤翼阵
     ORIE:         'triangle',    // 阿拉伯弓骑主力（骆驼弓骑）
     ORIE_ANTIQUITY:'triangle',
     EAST:         'crane_wing',  // 东欧蛮族近战骑主力（哥特重骑/条顿骑士）
@@ -2079,6 +2085,9 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ANDE: '城堡克丘亚军团',
     SOUTHAM_IMPERIAL: '帝国南美军团',
     PURU: '封建达罗毗荼军团',
+    INDIA_FEUDAL: '封建印度军团',
+    INDIA_CASTLE: '城堡印度军团',
+    INDIA_IMPERIAL: '帝国印度军团',
     ORIE: '封建阿拉伯军团',
     ORIE_ANTIQUITY: '古典阿拉伯军团',
     EAST: '封建罗斯军团',
@@ -3696,6 +3705,9 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ANDE:         ANDE_TIERS,      // ⚠️ [2026-08-27] 暂复用拉丁编成（安第斯步兵），待定制
     SOUTHAM_IMPERIAL: ANDE_TIERS,
     PURU:         PURU_TIERS,      // ⚠️ [2026-08-27] 暂复用印度编成（南印度象兵），待定制
+    INDIA_FEUDAL: INDIA_TIERS,
+    INDIA_CASTLE: INDIA_TIERS,
+    INDIA_IMPERIAL: INDIA_TIERS,
     ORIE:         ORIE_TIERS,     // ⚠️ [2026-08-27] 暂复用柏柏尔编成（阿拉伯骆驼骑），待定制
     ORIE_ANTIQUITY: ORIE_TIERS,
     EAST:         EAST_TIERS,     // ⚠️ [2026-08-27] 暂复用斯拉夫编成（东欧波雅尔铁骑+弓，罗斯已迁入），待定制

@@ -174,7 +174,10 @@ export type RegionType =
     | 'JAPAN_ANTIQUITY' // 古典日本（古典时代：邪马台/倭国）
     | 'SEASIA_ANTIQUITY' // 古典东南亚（古典时代：扶南/占婆）
     | 'TIBET_CASTLE' // 城堡吐蕃（城堡时代：萨迦/帕木竹巴/格鲁派）
-    | 'YARLUNG'; // 古典雅隆（古典时代：雅隆部落/聂赤赞普）
+    | 'YARLUNG' // 古典雅隆（古典时代：雅隆部落/聂赤赞普）
+    | 'INDIA_FEUDAL' // 封建印度（封建时代：戒日/曲女城）
+    | 'INDIA_CASTLE' // 城堡印度（城堡时代：东恒伽/普里）
+    | 'INDIA_IMPERIAL'; // 帝国印度（帝国时代：马拉塔/德干苏丹）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -295,6 +298,9 @@ export const REGION_ORDER: RegionType[] = [
     'SEASIA_ANTIQUITY',
     'TIBET_CASTLE',
     'YARLUNG',
+    'INDIA_FEUDAL',
+    'INDIA_CASTLE',
+    'INDIA_IMPERIAL',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -344,6 +350,9 @@ export const REGION_LABELS: Record<RegionType, string> = {
     CENTRAL_ASIA_IMPERIAL: '帝国中亚',
     WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
+    INDIA_FEUDAL: '封建印度',
+    INDIA_CASTLE: '城堡印度',
+    INDIA_IMPERIAL: '帝国印度',
     BERBER: '封建柏柏尔',
     AMERICA: '城堡阿兹特克',
     NORTHAM_FEUDAL: '封建北美',
@@ -506,6 +515,9 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     CENTRAL_ASIA_IMPERIAL: '帝国中亚',
     WEST_ASIA: '封建西亚',
     INDIA: '古典印度',
+    INDIA_FEUDAL: '封建印度',
+    INDIA_CASTLE: '城堡印度',
+    INDIA_IMPERIAL: '帝国印度',
     BERBER: '封建柏柏尔',
     DIANQIAN: '古典古滇',
     KOREA: '封建高句丽',
@@ -828,6 +840,9 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     CENTRAL_ASIA_IMPERIAL: '#006064',
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
     INDIA: '#d84315',   // 深橙红（印度香料）
+    INDIA_FEUDAL: '#e64a19',  // 封建印度（深橙）
+    INDIA_CASTLE: '#ff7043',  // 城堡印度（珊瑚橙）
+    INDIA_IMPERIAL: '#8d2f00',  // 帝国印度（焦橙）
     BERBER: '#00897b',  // 青绿（地中海/绿洲）
     AMERICA: '#6d4c41', // 棕（美洲）[2026-08-24]
     NORTHAM_FEUDAL: '#8d6e63',
@@ -1227,6 +1242,24 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/latin_pass.png')
     },
     INDIA: { // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    INDIA_FEUDAL: { // ✅ 复用印度（封建印度）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    INDIA_CASTLE: { // ✅ 复用印度（城堡印度）
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    INDIA_IMPERIAL: { // ✅ 复用印度（帝国印度）
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
@@ -2081,6 +2114,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     LATIN:        ['city_naples'],                     // 那不勒斯 [2026-09-07] 罗马城已划归 IMPERIAL_ROME(禁卫军驻都城)，古典罗马军团＝行省军团，锚意大利本土最大本区城 Neapolis
     LATIN_FEUDAL: ['city_naples'],                     // 那不勒斯（封建拉丁）
     INDIA:        ['city_huashicheng'],               // 华氏城 (孔雀帝国都城/古典印度核心)
+    INDIA_FEUDAL: ['city_qunvcheng'],                 // 曲女城（封建印度·戒日都）
+    INDIA_CASTLE: ['city_puli'],                      // 普里（城堡印度·东恒伽）
+    INDIA_IMPERIAL: ['city_bijiabuer'],               // 比贾布尔（帝国印度·德干苏丹）
     BERBER:       ['city_feisi'],                     // 非斯 [2026-09-07] 伊德里斯王朝 789 年建都，正合封建代 400–1050；原挂马拉喀什(1070建城)已划归 ALMOHAD 区
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     NORTHAM_IMPERIAL: ['city_tenochtitlan'],          // 特诺奇提特兰（帝国北美）

@@ -63,6 +63,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
     LATIN_FEUDAL: 'luoma_diguo',
     INDIA:        'kongque',     // 印度-华氏城 → 孔雀帝国
+    INDIA_FEUDAL: 'kongque',     // 封建印度 → 孔雀（套印度）
+    INDIA_CASTLE: 'kongque',     // 城堡印度 → 孔雀（套印度）
+    INDIA_IMPERIAL: 'kongque',   // 帝国印度 → 孔雀（套印度）
     BERBER:       'mulabite',    // 柏柏尔-马拉喀什 → 穆拉比特
     AMERICA:      'aztec',       // 美洲 → 阿兹特克（待建势力对齐）
     NORTHAM_IMPERIAL: 'aztec',
