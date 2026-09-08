@@ -267,6 +267,12 @@ export class VectorRoadEditor implements IEditor {
         this.renderAllRoads();
         // 道路线宽随地图缩放（Leaflet weight 固定像素，需手动按 zoom 等比缩放）
         this.map.on('zoomend', this.onZoomEnd);
+        // 路网一改（增删路、拖点落位）就丢弃吸附包围盒缓存 —— 光看 features.length 挡不住
+        // 「条数没变但某条路的形状变了」，那会让吸附漏掉已经移开的路。
+        if (!this.snapCacheHooked) {
+            this.snapCacheHooked = true;
+            roadRegistry.onRoadsUpdated(() => this.invalidateSnapBboxCache());
+        }
         this.applyZoomWeight();
         // === 关键: 等图构建完再允许城市选择 ===
         this.loadGeoJSONGraph().then(() => {
@@ -5140,6 +5146,49 @@ export class VectorRoadEditor implements IEditor {
         this.midMarkers.delete(roadId);
     }
 
+    /** 每条路的经纬度包围盒 [minLat, minLng, maxLat, maxLng]，按 feature 顺序平铺。
+     *  🔴 [2026-09-08] findSnapTarget 原来是全网扫描：1365 条路 / 41070 段，每段两次
+     *  latLngToContainerPoint ≈ 8 万次 Leaflet 投影，而它挂在**拖拽的 mousemove** 上，
+     *  每动一下鼠标跑一遍 —— 这就是「道路编辑器寻路卡」。改成先用包围盒在经纬度空间
+     *  粗筛，只有可能落在吸附半径内的路才做投影细算。同一套思路见 RoadRegistry 的
+     *  findNearestRoadEntry（那次修的是游戏侧，编辑器这条漏了）。 */
+    private snapBboxCache: Float64Array | null = null;
+    private snapBboxCount = 0;
+    /** onRoadsUpdated 没有退订接口，只订阅一次，避免每次 show() 叠加一个回调。 */
+    private snapCacheHooked = false;
+
+    /** 路网数据变了就丢弃包围盒缓存（增删路、拖点都会改 VECTOR_ROAD_DATA）。 */
+    public invalidateSnapBboxCache(): void {
+        this.snapBboxCache = null;
+        this.snapBboxCount = 0;
+    }
+
+    private ensureSnapBboxCache(): Float64Array {
+        const feats = VECTOR_ROAD_DATA.features;
+        if (this.snapBboxCache && this.snapBboxCount === feats.length) return this.snapBboxCache;
+        const boxes = new Float64Array(feats.length * 4);
+        for (let i = 0; i < feats.length; i++) {
+            const coords = feats[i]?.geometry?.coordinates;
+            if (!coords || !coords.length) {
+                boxes[i * 4] = NaN;   // 标记为空，细扫时跳过
+                continue;
+            }
+            let minLat = Infinity, minLng = Infinity, maxLat = -Infinity, maxLng = -Infinity;
+            for (let j = 0; j < coords.length; j++) {
+                const lng = coords[j][0], lat = coords[j][1];
+                if (lat < minLat) minLat = lat;
+                if (lat > maxLat) maxLat = lat;
+                if (lng < minLng) minLng = lng;
+                if (lng > maxLng) maxLng = lng;
+            }
+            boxes[i * 4] = minLat; boxes[i * 4 + 1] = minLng;
+            boxes[i * 4 + 2] = maxLat; boxes[i * 4 + 3] = maxLng;
+        }
+        this.snapBboxCache = boxes;
+        this.snapBboxCount = feats.length;
+        return boxes;
+    }
+
     /**
      * [SNAP] Find nearest point on OTHER roads (pixel based)
      * Prioritizes existing vertices (Nodes) over edges.
@@ -5151,9 +5200,29 @@ export class VectorRoadEditor implements IEditor {
 
         const currentPoint = this.map.latLngToContainerPoint([lat, lng]);
 
-        for (const feature of VECTOR_ROAD_DATA.features) {
+        // 15px 在当前 zoom/纬度下对应多少度 —— 用它把包围盒外扩，作为粗筛的搜索框。
+        // 乘 2 留余量：墨卡托下经度尺度随纬度变，宁可多放进来几条也别漏掉该吸附的。
+        const probe = this.map.containerPointToLatLng([
+            currentPoint.x + SNAP_THRESHOLD_PX,
+            currentPoint.y + SNAP_THRESHOLD_PX,
+        ]);
+        const padLat = Math.abs(probe.lat - lat) * 2 || 1e-4;
+        const padLng = Math.abs(probe.lng - lng) * 2 || 1e-4;
+
+        const boxes = this.ensureSnapBboxCache();
+        const feats = VECTOR_ROAD_DATA.features;
+
+        for (let fi = 0; fi < feats.length; fi++) {
+            const feature = feats[fi];
             if (feature.properties.id === excludeRoadId) continue;
             if (!feature.geometry.coordinates) continue;
+
+            // 包围盒粗筛：整条路都离鼠标太远就整条跳过，省掉它全部顶点的投影
+            const b = fi * 4;
+            const minLat = boxes[b];
+            if (Number.isNaN(minLat)) continue;
+            if (lat < minLat - padLat || lat > boxes[b + 2] + padLat) continue;
+            if (lng < boxes[b + 1] - padLng || lng > boxes[b + 3] + padLng) continue;
 
             const coords = feature.geometry.coordinates;
             // Check segments

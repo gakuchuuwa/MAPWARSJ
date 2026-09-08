@@ -44,6 +44,7 @@
     "legion:antiquity-coverage": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_antiquity_unit_coverage.mts",
     "deploy": "node tools/deploy.cjs",
     "vercel:prune": "node -e \"require('./tools/vercel_prune.cjs').pruneOldDeployments()\"",
+    "road:snap-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_road_snap_pruning.mts",
     "city:wall-anchor-audit": "npx tsx scratch/audit_city_wall_anchors.mts",
     "legion:formation-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_formation_row_counts.mts",
     "legion:culture-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_culture_legion_pairing.mts",
