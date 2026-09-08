@@ -24,6 +24,8 @@ export const EAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     // ── T3 风土之兵 ──
     donggete: { name: '哥特近卫军', tier: 3 },        // 拉文纳·狄奥多里克：493 攻陷拉文纳建东哥特王国，亲卫为征服主力
     xigete: { name: '卡斯蒂骑士', tier: 3 },          // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑士为收复失地核心
+    baerta: { name: '哥特重骑', tier: 3 },          // 科森扎·亚拉里克：巴尔塔王朝哥特重骑兵
+    saiputimanniya: { name: '哥特亲卫', tier: 3 },          // 纳博讷·阿陶尔夫：塞普提曼尼亚哥特亲卫
     weijing_york: { name: '丹法盾墙', tier: 3 },      // 约克·血斧埃里克：丹法区约维克戍军；避势力「约维克」叠字
     nuosi: { name: '维京狂战士', tier: 3 },           // 乌普萨拉·奥拉夫：诺斯狂暴战士（DE 狂战士 Berserk）
     danmai: { name: '丹斧兵', tier: 3 },              // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）

@@ -782,6 +782,7 @@ export class CombatUI {
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
         this.centerBackdrop = document.createElement('div');
+        this.centerBackdrop.className = 'combat-backdrop';
         this.centerBackdrop.style.cssText = `
             position: absolute;
             left: 0;
@@ -801,6 +802,7 @@ export class CombatUI {
         `;
         this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
+        this.centerPanel.className = 'combat-center';
         this.centerPanel.style.transition = 'opacity 0.3s ease';
         this.centerPanel.style.cssText = `
             position: absolute;
@@ -861,6 +863,7 @@ export class CombatUI {
 
         // 1. Battle Title — 区域冲突稿：居中金色大标题
         this.battleTitle = document.createElement('div');
+        this.battleTitle.className = 'combat-title';
         this.battleTitle.style.cssText = `
             font-family: 'Noto Serif SC', serif;
             font-size: ${uiPx(T.typography.titleSize + 4)};
@@ -881,6 +884,7 @@ export class CombatUI {
         this.topInfoRow.style.display = 'none';
 
         this.skillsRow = document.createElement('div');
+        this.skillsRow.className = 'combat-modifiers';
         this.skillsRow.style.cssText = `
             width: 100%;
             display: flex;
@@ -948,6 +952,7 @@ export class CombatUI {
         this.skillsRow.appendChild(rightWrap);
 
         this.healthBarContainer = document.createElement('div');
+        this.healthBarContainer.className = 'combat-bar-track';
         this.healthBarContainer.style.cssText = `
             width: 100vw;
             max-width: 100vw;
@@ -1099,6 +1104,7 @@ export class CombatUI {
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
         const portraitPad = uiPx(T.portraitHorizontalReserve);
         this.sideStatsRow = document.createElement('div');
+        this.sideStatsRow.className = 'combat-side-stats';
         this.sideStatsRow.style.cssText = `
             width: 100%;
             display: grid;
@@ -1258,6 +1264,7 @@ export class CombatUI {
     public applyScene13Layout(on: boolean): void {
         if (on === this.scene13LayoutOn) return;
         this.scene13LayoutOn = on;
+        this.container.classList.toggle('is-scene13', on);
 
         if (!on) {
             // 分隔徽记挂在 body、不在样式快照里，退出时手动收起
@@ -1425,6 +1432,7 @@ export class CombatUI {
      */
     public syncScene13WarStart(init: Scene13WarInit): void {
         this.isVisible = true;
+        this.container.classList.add('is-battle-visible');
         this.isCollapsed = false;
         this.scene13SidesFlipped = init.followedOnDefenderSide === true;
         this.applyBattleBarOrientation();
@@ -3365,6 +3373,7 @@ export class CombatUI {
         this.boundRegionalBattleField = null;
         this.currentBattleType = battle.type;
         this.isVisible = true;
+        this.container.classList.add('is-battle-visible');
         if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
         this.refreshCorrectorDataOnBattleOpen();
         this.resetBattleOverlays();
@@ -3409,6 +3418,7 @@ export class CombatUI {
         this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
+        this.container.classList.add('is-battle-visible');
         this.refreshCorrectorDataOnBattleOpen();
 
         if (this.boundRegionalBattleField) {
@@ -4690,6 +4700,7 @@ export class CombatUI {
         else this.closePortraitPicker();
         this.clearRegionalTimers();
         this.isVisible = false;
+        this.container.classList.remove('is-battle-visible');
         if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
         this.currentBattle = null;
         this.currentRegionalUnits = null;

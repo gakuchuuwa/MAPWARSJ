@@ -1,0 +1,201 @@
+/* World-map HUD: opaque reading surfaces keep terrain detail behind the map. */
+:root {
+    --map-hud-bg: linear-gradient(155deg, rgba(43, 36, 27, .97), rgba(23, 21, 17, .97));
+    --map-hud-line: rgba(204, 174, 116, .38);
+    --map-hud-text: #eee3ce;
+    --map-hud-muted: #b9ab95;
+    --map-hud-gold: #e8c77e;
+    --map-hud-shadow: 0 8px 24px #0004, inset 0 1px 0 #ffe5aa12;
+    --map-hud-width: clamp(260px, 17vw, 320px);
+}
+
+#army-list-panel,
+#player-hero-panel,
+#follow-banner {
+    background: var(--map-hud-bg) !important;
+    border: 1px solid var(--map-hud-line) !important;
+    border-radius: 10px !important;
+    box-shadow: var(--map-hud-shadow) !important;
+    color: var(--map-hud-text);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    font-variant-numeric: tabular-nums;
+}
+
+#army-list-panel {
+    left: 16px !important;
+    width: clamp(280px, 19vw, 360px) !important;
+    max-height: calc(100dvh - 100px) !important;
+    padding: 0 0 6px !important;
+    scrollbar-width: thin;
+    scrollbar-color: #8c7854 transparent;
+}
+
+#army-list-panel > div:first-child {
+    padding: 14px 12px !important;
+    background: #d4b57d09 !important;
+    border-bottom: 1px solid var(--map-hud-line) !important;
+    letter-spacing: 1px !important;
+}
+
+#army-list-items > div { line-height: 1.65; }
+#army-list-items > div:nth-child(even) { background-color: #d4b57d05; }
+#army-top-stats { flex-wrap: wrap; }
+#army-top-stats > div { min-width: 120px !important; }
+
+#army-list-btn {
+    background: var(--map-hud-bg) !important;
+    color: var(--map-hud-gold) !important;
+    border: 1px solid var(--map-hud-line) !important;
+    border-radius: 8px !important;
+    box-shadow: var(--map-hud-shadow) !important;
+    min-height: 38px;
+}
+
+#player-hero-panel {
+    width: var(--map-hud-width) !important;
+    padding: 14px 16px !important;
+    font-size: clamp(13px, .85vw, 16px) !important;
+    max-height: calc(100dvh - 200px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #8c7854 transparent;
+}
+
+#player-hero-panel .player-hud-row {
+    padding: 4px 0;
+    border-bottom: 1px solid #d4b57d0c;
+    align-items: baseline;
+}
+#player-hero-panel .player-hud-row > span:first-child { flex-shrink: 0; }
+#player-hero-panel select {
+    min-height: 32px;
+    font-size: 13px !important;
+    margin-top: 5px !important;
+}
+#player-hero-panel select:disabled { opacity: .8; }
+#player-hero-panel label { padding: 6px 0; }
+
+#follow-banner { padding: 9px 14px !important; }
+#follow-banner button { min-height: 28px; }
+
+/* The feed occupies its own card, not a full-height blurred map overlay. */
+#event-display.event-panel {
+    top: 76px;
+    right: calc(var(--map-hud-width) + 32px);
+    bottom: auto !important;
+    width: 300px;
+    max-height: min(420px, calc(100dvh - 260px));
+    padding: 14px 16px;
+    box-sizing: border-box;
+    background: var(--map-hud-bg);
+    border: 1px solid var(--map-hud-line);
+    border-radius: 10px;
+    box-shadow: var(--map-hud-shadow);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+    color: var(--map-hud-text);
+}
+#event-display.event-panel.expanded { width: min(380px, calc(100vw - 32px)); }
+#event-display.event-panel::before { display: none; }
+#event-display.event-panel.collapsed { padding: 10px 14px; }
+#event-display.event-panel #event-content {
+    height: auto;
+    max-height: min(340px, max(80px, calc(100dvh - 340px)));
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #8c7854 transparent;
+}
+#event-display .event-header {
+    color: var(--map-hud-gold);
+    font-size: 15px;
+    border-bottom: 1px solid var(--map-hud-line);
+    padding-bottom: 10px;
+}
+#event-display .event-header button {
+    color: var(--map-hud-text);
+    border-color: var(--map-hud-line);
+    background: #d4b57d0d;
+}
+#event-display .event-item { border-bottom: 1px solid #d4b57d1c; padding: 12px 0; }
+#event-display .event-title,
+#event-display .feed-faction { color: var(--map-hud-text); }
+#event-display .event-desc,
+#event-display .event-item--hint,
+#event-display .feed-action { color: var(--map-hud-muted); }
+#event-display .feed-time,
+#event-display .event-meta { color: var(--map-hud-gold); }
+#event-display .feed-legion { color: #d8c7a7; background: #d4b57d0d; border-color: var(--map-hud-line); }
+#event-display .feed-city { color: #a5c5d5; }
+#event-display .feed-fall,
+#event-display .feed-wipe { color: #efa397; }
+#event-display .feed-restore { color: #a7c4a1; }
+#event-display .event-desc--feed { font-size: 13px; line-height: 1.8; gap: 4px; }
+
+#game-time-hud {
+    --gold-glow: var(--map-hud-gold);
+    --stone-border: var(--map-hud-line);
+    --panel-bg: #211d17f7;
+    right: 16px;
+    bottom: 16px;
+}
+#game-time-hud .game-time-btn { min-height: 32px; border-radius: 6px; }
+#game-time-hud .hud-date-inner { color: var(--map-hud-gold); letter-spacing: .08em; }
+#game-time-hud .hud-date-body { background: var(--map-hud-bg); border-color: var(--map-hud-line); }
+
+:is(#army-list-btn, #follow-banner button, #player-hero-panel select,
+    #player-hero-panel button, #event-display button, #game-time-hud button):focus-visible {
+    outline: 2px solid var(--map-hud-gold);
+    outline-offset: 3px;
+}
+
+@media (max-width: 1100px) {
+    #event-display.event-panel { top: 76px; right: calc(var(--map-hud-width) + 32px); width: 240px; max-height: 180px; }
+    #event-display.event-panel #event-content { max-height: 100px; }
+}
+
+/* Battle HUD uses the same reading surface; portrait elements are untouched. */
+#combat-ui-panel:not(.is-scene13) .combat-backdrop {
+    background: linear-gradient(180deg, #2b241bf5, #171511fc) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    border-top: 1px solid var(--map-hud-line);
+    box-shadow: 0 -8px 24px #0003, inset 0 1px 0 #ffe5aa0c;
+    box-sizing: border-box;
+}
+
+#combat-ui-panel:not(.is-scene13) .combat-title {
+    background-image: linear-gradient(180deg, #f6e4b6, #d5ad60) !important;
+    letter-spacing: .16em !important;
+    filter: drop-shadow(0 2px 2px #0008) !important;
+}
+
+#combat-ui-panel:not(.is-scene13) .combat-bar-track {
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    border-radius: 5px !important;
+    box-shadow: 0 0 0 1px #d4b57d40, 0 3px 10px #0005 !important;
+    backdrop-filter: none !important;
+    flex-shrink: 0;
+}
+
+#combat-ui-panel:not(.is-scene13) .combat-side-stats {
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px #0008;
+}
+
+#combat-ui-panel .combat-ui-collapse-btn {
+    border-color: var(--map-hud-line) !important;
+    color: var(--map-hud-gold) !important;
+    background: #2b241bf7 !important;
+    border-radius: 6px 6px 0 0 !important;
+}
+
+/* Reserve the existing 252px battle panel plus a gap, instead of covering it. */
+body:has(#combat-ui-panel.is-battle-visible:not(.is-collapsed):not(.is-scene13)) #army-list-panel {
+    max-height: calc(100dvh - 330px) !important;
+}

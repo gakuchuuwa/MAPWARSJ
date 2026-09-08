@@ -1957,6 +1957,20 @@ export const FACTIONS: Faction[] = [
     { id: 'feierganna', name: '费尔干纳' },        // 阿赫西克特·费尔干纳（忽都鲁）
     { id: 'qibucha', name: '奇布查' },        // 洪萨·穆伊斯卡奇布查人（帕坎奇克）
     { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）
+    { id: 'naweierbuta', name: '纳韦尔布塔' },        // 科利普利·纳韦尔布塔山脉马普切（加尔瓦里诺）
+    { id: 'alaokaniya', name: '阿劳卡尼亚' },        // 彼得罗阿·阿劳卡尼亚马普切（瓜科尔达）
+    { id: 'bogendigongguo', name: '勃艮第公国' },        // 蒙特罗·勃艮第公国（无畏的约翰）
+    { id: 'amaniyake', name: '阿马尼亚克' },        // 欧什·阿马尼亚克伯爵领（贝尔纳·德·阿马尼亚克）
+    { id: 'geluositeboguo', name: '格洛斯特伯国' },        // 格洛斯特·格洛斯特伯国（吉尔伯特）
+    { id: 'baerta', name: '巴尔塔' },        // 科森扎·西哥特巴尔塔王朝（亚拉里克）
+    { id: 'saiputimanniya', name: '塞普提曼尼亚' },        // 纳博讷·塞普提曼尼亚（阿陶尔夫）
+    { id: 'bogengnidielan', name: '勃艮第尼德兰' },        // 里尔·勃艮第尼德兰（好人菲利普）
+    { id: 'gewennesi', name: '格温内斯' },        // 哈瓦登·格温内斯（戴菲德）
+    { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
+    { id: 'huanzhou', name: '驩州' },        // 义安·驩州（丁礼）
+    { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
+    { id: 'luben', name: '鲁本' },        // 瓦卡·奇里乞亚亚美尼亚鲁本王朝（托罗斯二世）
+    { id: 'xiaoa', name: '肖阿' },        // 德布雷利巴诺斯·肖阿（达格纳詹）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

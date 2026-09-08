@@ -13,6 +13,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xian_d: { name: '高凉犀甲', tier: 3 },
     dayue: { name: '白藤江射手', tier: 0 },
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领统一十二使君的禁卫军
+    huanzhou: { name: '驩州水军', tier: 3 },         // 义安·丁礼：驩州南越王水军
     leloi: { name: '蓝山义军', tier: 1 },
     nguyen_guangnan: { name: '富春禁卫', tier: 3 },
   // guangnanguo → 洞海城归 panjun

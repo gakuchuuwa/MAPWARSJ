@@ -49,4 +49,5 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     shengdian_qishi: { name: '圣殿骑士', tier: 2 },
     samtskhe: { name: '梅斯赫骑', tier: 4 },
     xibolai: { name: '基利提圣卫', tier: 2 },  // 耶路撒冷·大卫：大卫王王牌精锐卫队
+    luben: { name: '鲁本重步', tier: 3 },  // 瓦卡·托罗斯二世：奇里乞亚鲁本王朝山民重步兵
 };

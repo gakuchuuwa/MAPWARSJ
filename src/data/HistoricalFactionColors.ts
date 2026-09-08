@@ -1150,6 +1150,20 @@ const _FIXED: Record<string, string> = {
     'feierganna': '#8C6E3A', // 费尔干纳·阿赫西克特（费尔干纳谷黄褐）
     'qibucha': '#8A6E3A', // 奇布查·洪萨（穆伊斯卡黄金褐）
     'tamoyue': '#6E4A3A', // 塔莫约·卡布弗里乌（乌鲁库胭脂木褐）
+    'naweierbuta': '#3E6E5A', // 纳韦尔布塔·科利普利（纳韦尔布塔山绿）
+    'alaokaniya': '#5E4A6E', // 阿劳卡尼亚·彼得罗阿（阿劳卡尼亚紫）
+    'bogendigongguo': '#6E1B2E', // 勃艮第公国·蒙特罗（深酒红）
+    'amaniyake': '#4A6E3E', // 阿马尼亚克·欧什（加斯科涅绿）
+    'geluositeboguo': '#3E5A6E', // 格洛斯特伯国·格洛斯特（蓝灰）
+    'baerta': '#4A3E6E', // 巴尔塔·科森扎（哥特紫）
+    'saiputimanniya': '#3E8A5E', // 塞普提曼尼亚·纳博讷（塞普提曼尼亚绿）
+    'bogengnidielan': '#6E2E4A', // 勃艮第尼德兰·里尔（深绯）
+    'gewennesi': '#3E5A4E', // 格温内斯·哈瓦登（格温内斯绿）
+    'weiershigongguo': '#4E5A6E', // 威尔士公国·布伊尔斯（威尔士灰蓝）
+    'huanzhou': '#5E8A4A', // 驩州·义安（交趾绿）
+    'tigelei': '#7A6E2E', // 提格雷·德布雷达莫（提格雷岩褐）
+    'luben': '#7A4E2E', // 鲁本·瓦卡（奇里乞亚山褐）
+    'xiaoa': '#4A8A6E', // 肖阿·德布雷利巴诺斯（肖阿高原青）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
