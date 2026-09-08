@@ -23,4 +23,5 @@ export const THRACIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     duonaobaojia: { name: '不朽军', tier: 1 },
     lumiliya: { name: '阿肯骑兵', tier: 3 },
     odrysian_late: { name: '色雷斯骑', tier: 3 },
+    duobuluojia: { name: '猪倌义军', tier: 2 },          // 德鲁斯塔尔·伊瓦伊洛：猪倌起义军，连破金帐汗国与拜占庭
 };

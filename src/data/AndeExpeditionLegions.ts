@@ -16,4 +16,6 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     aimala: { name: '艾马拉战士', tier: 4 },
     yilaka: { name: '圭查武士', tier: 3 },
     tawantinsuyu: { name: '印加禁卫', tier: 3 },
+    qibucha: { name: '奇布查勇士', tier: 3 },   // 洪萨·帕坎奇克：穆伊斯卡奇布查战士
+    tamoyue: { name: '塔莫约勇士', tier: 3 },   // 卡布弗里乌·昆汉贝贝：塔莫约联盟战士
 };

@@ -3234,6 +3234,14 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_philip_ii: { generalId: 'gen_philip_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 马其顿方阵缔造者，喀罗尼亚大捷统一希腊 → 名将
     gen_carpini: { generalId: 'gen_carpini', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 方济各使节·安提瓦里大主教，非战将 → 普将
     zhuluo_lajialajia: { generalId: 'zhuluo_lajialajia', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 朱罗海权开创者，建布里哈迪希瓦拉神庙、跨海征服锡兰 → 名将
+    gen_kestutis: { generalId: 'gen_kestutis', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 立陶宛大公，数十年抵御条顿骑士团 → 名将
+    gen_ivaylo: { generalId: 'gen_ivaylo', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 猪倌起义沙皇，连破金帐汗国与拜占庭 → 名将
+    gen_kuchlug: { generalId: 'gen_kuchlug', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' }, // 乃蛮末代王子，篡西辽被蒙古擒杀，无胜绩 → 普将
+    gen_kotyan: { generalId: 'gen_kotyan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 库曼大汗，卡尔卡会战败、奔匈牙利被杀 → 普将
+    gen_girgen: { generalId: 'gen_girgen', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 西库曼酋长，喀尔巴阡抗蒙古 → 普将
+    gen_qutlugh: { generalId: 'gen_qutlugh', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 巴布尔之母，坐镇筹粮守城，非统帅 → 普将
+    gen_pacanchiq: { generalId: 'gen_pacanchiq', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 穆伊斯卡酋长，无够格胜绩 → 普将
+    gen_cunhambebe: { generalId: 'gen_cunhambebe', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 塔莫约酋长，抗葡萄牙殖民 → 普将
 };
 
 
