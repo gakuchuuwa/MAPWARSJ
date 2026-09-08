@@ -329,6 +329,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     EAST: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     GERMANIC: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     LATIN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    LATIN_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GREEK: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     THRACIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
     BERBER: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
@@ -339,15 +340,21 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     HEXI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     LINGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     STEPPE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    STEPPE_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CUMAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     JAPAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     JAPAN_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     CENTRAL_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
     CENTRAL_ASIA_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true },
     PERSIAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
+    PERSIAN_CASTLE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, war_elephant: true },
     NORTHEAST: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     TIBET: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    TIBET_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     WESTERN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    WESTERN_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    WESTERN_CASTLE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    WESTERN_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     KOREA: { battering_ram: true, capped_ram: true, scorpion: true, traction_trebuchet: true },
     DIANQIAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     INDIA: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
@@ -355,9 +362,14 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     WEST_ASIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true },
     ORIE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     AMERICA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    NORTHAM_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    NORTHAM_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ANDE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
+    SOUTHAM_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     AFRICA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    AFRICA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     MALAY: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
+    SEASIA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     BRITONS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GOTHS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     HUNS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true },
@@ -1096,6 +1108,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SLAVIC: 'SLAV',
     GERMANIC: 'WEST',
     LATIN: 'MEDI',
+    LATIN_FEUDAL: 'MEDI',
     CENTRAL: 'ASIA',
     NORTH: 'ASIA',
     JIANGNAN: 'ASIA',
@@ -1104,8 +1117,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     DIANQIAN: 'ASIA',  // [2026-08-27] SEAS→ASIA（主人定滇缅归中国区，与战略一致）
     HEXI: 'ASIA',
     WESTERN: 'ASIA',   // [2026-08-27] CEAS→ASIA（主人定西域归中国区，与战略一致）
+    WESTERN_FEUDAL: 'ASIA',
+    WESTERN_CASTLE: 'ASIA',
+    WESTERN_IMPERIAL: 'ASIA',
     TIBET: 'INDI',
+    TIBET_IMPERIAL: 'INDI',
     STEPPE: 'CEAS',    // 草原特例：战术无蒙古包，用库曼建筑近似（保持不动）
+    STEPPE_IMPERIAL: 'CEAS',
     NORTHEAST: 'ASIA',
     KOREA: 'ASIA',
     JAPAN: 'ASIA',
@@ -1116,15 +1134,21 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     INDIA: 'INDI',
     BERBER: 'ORIE',    // [2026-08-27] AFRI→ORIE（柏柏尔在北非近东，与战略一致）
     AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
+    NORTHAM_IMPERIAL: 'MESO',
+    NORTHAM_FEUDAL: 'MESO',
     AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
+    AFRICA_IMPERIAL: 'AFRI',
     MALAY: 'SEAS',    // [2026-08-24] 马来东南亚
+    SEASIA_IMPERIAL: 'SEAS',
     ANDE: 'ANDE',     // [2026-08-27] 安第斯石构（印加/马普切/穆伊斯卡）
+    SOUTHAM_IMPERIAL: 'ANDE',
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
     EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
     GREEK: 'GREEK',   // [2026-09-07] 古典希腊 → DE 的 GREEK 风格集（183 件已补提，不再 404）
     THRACIAN: 'THRACIAN',   // [2026-09-07] 古典色雷斯 → DE 的 THRACIAN 风格集（165 件已补提）
     PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
+    PERSIAN_CASTLE: 'PERSIAN',
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
     BRITONS: 'WEST',  // 不列颠[2026-08-28]
     GOTHS: 'EAST',  // 哥特[2026-08-28]
