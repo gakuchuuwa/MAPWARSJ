@@ -824,7 +824,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   let pool = [];
   if (type === 'big') {
     const noble = [
-      { b: 'TOWN_CENTER', age: 'AGE4', s: 0.42 },
+      { b: 'TOWN_CENTER', age: 'AGE4', s: 0.32 },
       { b: 'MARKET', age: 'AGE4', s: 0.32 },
       { b: 'UNIVERSITY', age: 'AGE4', s: 0.32 }
     ];
@@ -887,19 +887,44 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     pool = shuffle(stkList, rnd).slice(0, 9);
   }
 
-  // 大城：底层菱形 clip-path 裁切广场地基（z-index: 10，城外 0 溢出）
+  // 大城：底层菱形 clip-path 裁切广场地基（修复城北地基覆盖），9建筑按 3*3 排列、位置随机、随机镜像
   if (type === 'big') {
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 14;
     const rX = AX * stepX;
     const rY = AX * stepY;
     const groundParts = [];
-    const fullGW = rX * 2.1, fullGH = rY * 2.1;
+    // 放大撑满整个城内（消除 rd1_plaza 自身四周透明边造成的城北虚空）
+    const fullGW = rX * 2.8, fullGH = rY * 4.8;
     groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />');
     const gateW = baseSize * 0.9, gateH = gateW * 0.58;
     groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (7*stepX).toFixed(1) + 'px),calc(-50% - ' + (7*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
     groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + (7*stepX).toFixed(1) + 'px),calc(-50% + ' + (7*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
     parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:10;pointer-events:none;">' + groundParts.join('') + '</div>');
+
+    // 大城中的 9 建筑按 3*3 排列
+    const step = baseSize * 0.30 * curRadiusMult;
+    const slots = [];
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        const x = (c - r) * step;
+        const y = (c + r) * step * 0.58;
+        slots.push({ x, y });
+      }
+    }
+    slots.sort((a, b) => a.y - b.y);
+
+    // 位置随机（洗牌后的 pool 分配到 9 个槽位）+ 随机镜像
+    slots.forEach((slot, i) => {
+      const b = pool[i];
+      const bW = baseSize * b.s * tierScale * curBldgScale;
+      const zIndex = Math.round(500 + slot.y);
+      const isFlip = rnd() < 0.5;
+      const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+      parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+    });
+
+    return parts.join('');
   }
 
   // 1. 中间建筑（带自然随机偏移，不钉死在绝对 0,0）
