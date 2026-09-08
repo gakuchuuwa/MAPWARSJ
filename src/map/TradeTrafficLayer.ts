@@ -85,11 +85,11 @@ const CANOE_CHANCE = 0.20;          // 海上：独木舟概率
 const CART_CAMEL: RegionType[] = ['ORIE', 'WEST_ASIA', 'CENTRAL_ASIA', 'PERSIAN', 'BERBER', 'CUMAN'];
 const CART_HORSE: RegionType[] = [
     'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
-    'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
+    'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
     'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'EAST', 'GREEK', 'THRACIAN',
 ];
 const CART_OX_ASIA: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'DIANQIAN', 'HEXI', 'WESTERN',
+    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN',
     'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN',
 ];
 const CART_OX_AFRI: RegionType[] = [
@@ -116,13 +116,13 @@ function landAssetDir(region: RegionType): string {
 
 /** 文化区 → 商船皮肤（多样性池：3 商船 + 运输船 + 独木舟） */
 const SHIP_JUNK: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN', 'BASHU', 'DIANQIAN', 'HEXI', 'WESTERN',
+    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN',
     'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'VIETNAMESE', 'KHMER', 'MALAY',
     'INDIA', 'PURU', 'BENGALIS', 'GURJARAS',
 ];
 const SHIP_COG: RegionType[] = [
     'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
-    'CELTS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
+    'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
     'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'EAST', 'GREEK', 'THRACIAN',
 ];
 function shipDir(region: RegionType): string {

@@ -77,7 +77,10 @@ export function nextRankAfter(rank: PlayerRank): PlayerRank | null {
 }
 
 /** 玩家素材 key（UnitAssets.UNIT_ASSETS / Scene13 WAR_TYPES 同名）。
- *  🔴 [2026-09-07] 这是「乱入者」的默认/顶层形象；**开局不是它**，见下面的 heroKeyForRank。 */
+ *  🔴 [2026-09-07] 这是「乱入者」的默认/顶层形象；**开局不是它**，见下面的 heroKeyForRank。
+ *  ⚠️ [2026-09-09] `'guanyu'` **只是借用的 DE 素材目录名**（u_cav_hero_guan_yu），
+ *     玩家角色叫「乱入者」，**不是关羽**，跟势力武将 chu_guanyu 也毫无关系。
+ *     别因为这个 key 就在文档/对话里管玩家叫关羽。 */
 export const PLAYER_HERO_KEY = 'guanyu';
 
 /** 官阶 → 玩家在地图与 13 里的素材 key。

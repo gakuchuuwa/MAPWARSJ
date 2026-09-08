@@ -37,9 +37,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     CENTRAL:      'tang',      // 中原-长安 → 唐
     NORTH:        'yan',       // 北方-北京 → 燕
     JIANGNAN:     'ming_d',    // 南方-南京 → 大明
-    LINGNAN:      'yue',       // 岭南-番禺 → 越
-    BASHU:        'shu',       // 川蜀-成都 → 蜀
-    DIANQIAN:     'dali',      // 滇缅-大理(羊苴咩城) → 大理
     HEXI:         'liangzhou',     // 河西-武威(姑臧) → 凉州
     WESTERN:      'qiuci',     // 西域-龟兹(伊逻卢城) → 龟兹
     WESTERN_FEUDAL: 'qiuci',
@@ -83,7 +80,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     BERBER:       'mulabite',    // 柏柏尔-马拉喀什 → 穆拉比特
     AMERICA:      'aztec',       // 美洲 → 阿兹特克（待建势力对齐）
     NORTHAM_IMPERIAL: 'aztec',
-    NORTHAM_FEUDAL: 'aztec',
     AFRICA:       'mali',        // 非洲 → 马里（待建势力对齐）
     AFRICA_IMPERIAL: 'mali',
     AFRICA_ANTIQUITY: 'mali',
@@ -109,7 +105,8 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     HUNS: 'menggu_d',  // 匈人 → 待建势力对齐（暂用父文化势力占位）
     TEUTONS: 'falanji',  // 条顿 → 待建势力对齐（暂用父文化势力占位）
     VIKINGS: 'mosike_gongguo',  // 维京 → 待建势力对齐（暂用父文化势力占位）
-    CELTS: 'falanji',  // 凯尔特 → 待建势力对齐（暂用父文化势力占位）
+     // 凯尔特 → 待建势力对齐（暂用父文化势力占位）
+    CELTS_FEUDAL: 'falanji',
     ITALIANS: 'luoma_diguo',  // 意大利 → 待建势力对齐（暂用父文化势力占位）
     SICILIANS: 'luoma_diguo',  // 西西里 → 待建势力对齐（暂用父文化势力占位）
     BULGARIANS: 'mosike_gongguo',  // 保加利亚 → 待建势力对齐（暂用父文化势力占位）
@@ -137,7 +134,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ARMENIANS: 'seljuq',  // 亚美尼亚 → 待建势力对齐（暂用父文化势力占位）
     GEORGIANS: 'seljuq',  // 格鲁吉亚 → 待建势力对齐（暂用父文化势力占位）
     BURMESE: 'pagan',
-    WALLACHIA: 'walajiyia',
     EGYPT: 'aiji',
     CARTHAGE: 'buni',
     BABYLON: 'jialedi',
@@ -180,7 +176,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     NABATAEANS: 'nabatai',
     HEPHTHALITES: 'yanda',
     AINU: 'ayinu_ezo',
-    SWISS: 'ruishi',
     PASHTUN: 'dulan_d',
     SWEDISH: 'ruidian_yota',
     MACEDONIAN: 'maqidun',
@@ -197,7 +192,6 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     MING: 'ming_d',
     HUAXIA_IMPERIAL: 'dashun',
     DALI: 'dali',
-    GUSILUO: 'tufa_d',
     MAMLUKS: 'mamuluke',
     CRUSADERS: 'yelusalengwg',
     RUS: 'liulike',

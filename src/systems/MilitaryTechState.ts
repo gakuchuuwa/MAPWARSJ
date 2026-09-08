@@ -37,8 +37,7 @@ export interface TechModifiableStats {
 }
 
 const TECH_CULTURE_PARENT: Partial<Record<RegionType, RegionType>> = {
-    BURMESE: 'DIANQIAN',
-    WALLACHIA: 'SLAVIC',
+    BURMESE: 'MALAY',
     EGYPT: 'WEST_ASIA',
     CARTHAGE: 'BERBER',
     BABYLON: 'WEST_ASIA',
@@ -49,7 +48,7 @@ const TECH_CULTURE_PARENT: Partial<Record<RegionType, RegionType>> = {
     FRANKS: 'GERMANIC',
     SASANIAN: 'PERSIAN',
     TURKS: 'STEPPE',
-    NANZHAO: 'DIANQIAN',
+    NANZHAO: 'MALAY',
     SRIVIJAYA: 'MALAY',
     KUSHAN: 'CENTRAL_ASIA',
     KUSH: 'AFRICA',

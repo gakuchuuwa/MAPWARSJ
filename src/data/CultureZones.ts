@@ -41,10 +41,10 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原', STEPPE_ANTIQUITY: '草原', STEPPE_FEUDAL: '草原',
     ROURAN: '草原', KHAZARS: '草原', AVARS: '草原', SCYTHIANS: '草原', KHITAN: '草原', TANGUT: '青藏',
     // ── 华夏系（按朝代在二层分，一层均为「华夏」）──
-    CENTRAL: '华夏', NORTH: '华夏', JIANGNAN: '华夏', LINGNAN: '华夏', BASHU: '华夏',
-    DIANQIAN: '华夏', HEXI: '华夏', SONG: '华夏', MING: '华夏', HUAXIA_IMPERIAL: '华夏',
+    CENTRAL: '华夏', NORTH: '华夏', JIANGNAN: '华夏', BASHU: '华夏',
+    HEXI: '华夏', SONG: '华夏', MING: '华夏', HUAXIA_IMPERIAL: '华夏',
     // ── 西域 / 青藏 ──
-    WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', GUSILUO: '青藏', TIBET_IMPERIAL: '青藏', TIBET_CASTLE: '青藏', YARLUNG: '青藏', WESTERN_FEUDAL: '西域', WESTERN_CASTLE: '西域', WESTERN_IMPERIAL: '西域',
+    WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', TIBET_IMPERIAL: '青藏', TIBET_CASTLE: '青藏', YARLUNG: '青藏', WESTERN_FEUDAL: '西域', WESTERN_CASTLE: '西域', WESTERN_IMPERIAL: '西域',
     // ── 南亚 / 东南亚 ──
     INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
     INDIA_FEUDAL: '印度', INDIA_CASTLE: '印度', INDIA_IMPERIAL: '印度',
@@ -61,10 +61,10 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     ORIE: '阿拉伯', ALMOHAD: '阿拉伯', ORIE_ANTIQUITY: '阿拉伯',
     // ── 斯拉夫 / 拉丁 / 日耳曼 ──
     SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫', SLAVIC_FEUDAL: '斯拉夫', SLAVIC_CASTLE: '斯拉夫', SLAVIC_IMPERIAL: '斯拉夫',
-    BOHEMIANS: '斯拉夫', WALLACHIA: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',
+    BOHEMIANS: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',
     LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁', LATIN_FEUDAL: '拉丁', LATIN_CASTLE: '拉丁', LATIN_IMPERIAL: '拉丁',
     GREEK: '拉丁', THRACIAN: '拉丁', MACEDONIAN: '拉丁', HELLENIC: '拉丁', GREEK_MERCENARY: '拉丁', MAGNA_GRAECIA: '拉丁',
-    AMAZONS: '拉丁', CRUSADERS: '拉丁', CASTILE: '拉丁', ARAGON: '拉丁', SWISS: '日耳曼', CELTS: '拉丁', FRENCH: '拉丁',
+    AMAZONS: '拉丁', CRUSADERS: '拉丁', CASTILE: '拉丁', ARAGON: '拉丁', CELTS_FEUDAL: '拉丁', FRENCH: '拉丁',
     GERMANIC: '日耳曼', TEUTONS: '日耳曼', VIKINGS: '日耳曼', GOTHS: '日耳曼', VANDALS: '日耳曼', LOMBARDS: '日耳曼', GERMANIC_FEUDAL: '日耳曼', GERMANIC_IMPERIAL: '日耳曼', GERMANIC_CASTLE: '日耳曼',
     FRANKS: '日耳曼', BURGUNDIANS: '日耳曼', BRITONS: '日耳曼', SCOTLAND: '日耳曼', HRE: '日耳曼',
     SWEDISH: '日耳曼', ANGLO_SAXON: '日耳曼',

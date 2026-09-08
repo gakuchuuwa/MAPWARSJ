@@ -41,7 +41,8 @@ export const SPRITE_PATHS = {
     // Allows defining sprites for specific unit types (e.g. 'huaxia_infantry', 'roman_legion')
     UNIT_ASSETS: {
         'guanyu': {
-            // 【guanyu】玩家乱入者（借用关羽 DE 素材 u_cav_hero_guan_yu），2026-09-05 接线：
+            // 【guanyu】玩家「乱入者」的顶层形象。目录名沿用 DE 素材 u_cav_hero_guan_yu，
+            //   **角色不是关羽**，与势力武将 chu_guanyu 无关。2026-09-05 接线：
             //   大地图单骑 + 13 战术模式玩家本体；IDLE 45 帧 / MOVE 30 帧 / ATTACK 45 帧 / DEATH 45 帧（_meta.json）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/attack_${dir}.png`),

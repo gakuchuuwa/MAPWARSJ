@@ -120,7 +120,9 @@ export class PlayerScene13Control {
             bar.appendChild(b);
             return b;
         };
-        this.btnAttack = mk('Q 攻击', 'attack');
+        // 🔴 [2026-09-09 主人定「设置两个选项，自动和待命」「默认自动」]
+        //    自动 = 玩家本人与受控编队一起索敌开打；待命 = 都不主动动，够得着才还手。
+        this.btnAttack = mk('Q 自动', 'attack');
         this.btnHold = mk('E 待命', 'hold');
         const hint = document.createElement('span');
         hint.style.cssText = 'font-size:11px; color:#c9b58a;';
@@ -152,9 +154,10 @@ export class PlayerScene13Control {
         const off = 'rgba(255,255,255,0.06)';
         if (this.btnAttack) this.btnAttack.style.background = st.command === 'attack' ? on : off;
         if (this.btnHold) this.btnHold.style.background = st.command === 'hold' ? on : off;
-        const disabled = st.controlledLanes === 0;
-        if (this.btnAttack) this.btnAttack.disabled = disabled;
-        if (this.btnHold) this.btnHold.disabled = disabled;
+        // 🔴 [2026-09-09] 原来「没有受控编队就禁用两个按钮」—— 平民阶只管自己，
+        //    按钮全灰、切都切不了。现在自动/待命也管**玩家本人**，所以始终可用。
+        if (this.btnAttack) this.btnAttack.disabled = false;
+        if (this.btnHold) this.btnHold.disabled = false;
     }
 
     public dispose(): void {

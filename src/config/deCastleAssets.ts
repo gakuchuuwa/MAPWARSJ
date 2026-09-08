@@ -209,7 +209,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     NORTH: 'CHIN_CASTLE_AGE3',               // 北方：中国城楼
     JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：孙吴水榭坞堡
-    BASHU: 'SHU_CASTLE_AGE3',                // 巴蜀：蜀汉高台阙楼
+                   // 巴蜀：蜀汉高台阙楼
     HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用契丹/黑水城形制
 
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
@@ -228,8 +228,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     WESTERN_FEUDAL: 'WESTERN_CASTLE_AGE3',  // 封建西域：绿洲要塞
     WESTERN_CASTLE: 'WESTERN_CASTLE_AGE3',
     WESTERN_IMPERIAL: 'WESTERN_CASTLE_AGE3',
-    DIANQIAN: 'DIANQIAN_CASTLE_AGE3',        // 滇黔：大理白塔飞瀑云关
-    LINGNAN: 'LINGNAN_CASTLE_AGE3',          // 岭南：南越宫阙·广府镬耳围楼
+           // 滇黔：大理白塔飞瀑云关
+             // 岭南：南越宫阙·广府镬耳围楼
 
     // ── 2. 东南亚与南亚 (8 个) ──
     VIETNAMESE: 'VIET_CASTLE_AGE3',          // 越南：升龙城式重檐
@@ -296,7 +296,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     GERMANIC_CASTLE: 'WEST_CASTLE_AGE3',
     BRITONS: 'CELT_CASTLE_AGE3',            // 不列颠凯尔特（哈瓦登/布伊尔斯为威尔士边境堡）
     BURGUNDIANS: 'BURG_CASTLE_AGE3',         // 勃艮第：法式重装城堡
-    CELTS: 'CELT_CASTLE_AGE3',               // 凯尔特：苏格兰圆形塔堡
+                  // 凯尔特：苏格兰圆形塔堡
+    CELTS_FEUDAL: 'CELT_CASTLE_AGE3',
     VIKINGS: 'VIKI_CASTLE_AGE3',             // 维京：诺斯长屋环形要塞
     GOTHS: 'GOTH_CASTLE_AGE3',               // 哥特：哥特蛮族石堡
     HUNS: 'HUNS_CASTLE_AGE3',                // 匈人：匈人要塞
@@ -311,7 +312,6 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAYANS: 'MAYA_CASTLE_AGE3',              // 玛雅：阶梯金字塔石堡
     AMERICA: 'MESO_CASTLE_AGE3',             // 中美洲：阿兹特克金字塔
     NORTHAM_IMPERIAL: 'MESO_CASTLE_AGE3',
-    NORTHAM_FEUDAL: 'MESO_CASTLE_AGE3',
     ANDE: 'INCA_CASTLE_AGE3',                // 安第斯：印加萨克赛瓦曼
     SOUTHAM_IMPERIAL: 'INCA_CASTLE_AGE3',
     MAPUCHE: 'MAPU_CASTLE_AGE3',             // 马普切：马普切木石要塞
@@ -323,7 +323,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     TAIRONA: 'MUIS_CASTLE_AGE3',              // 泰罗纳与穆伊斯卡同在哥伦比亚，同属奇布查文化圈
     TEHUELCHE: 'MAPU_CASTLE_AGE3',            // 特维尔切与马普切同在巴塔哥尼亚—南锥体
     BURMESE: 'BURM_CASTLE_AGE3',             // 缅甸：蒲甘佛塔城堡
-    WALLACHIA: 'POENARI_CASTLE',             // 瓦拉几亚：波耶纳里山堡
+                // 瓦拉几亚：波耶纳里山堡
     EGYPT: 'ORIE_CASTLE_AGE3',                // 埃及：近东石堡
     CARTHAGE: 'ROMA_CASTLE_AGE3',             // 迦太基：地中海古典石堡
     BABYLON: 'PERSIAN_CASTLE_AGE3',           // 两河美索不达米亚，与伊朗高原同属古代近东砖构体系
@@ -366,7 +366,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
-    SWISS: 'BURG_CASTLE_AGE3',                // 瑞士各州脱胎于勃艮第—上莱茵地带，阿尔卑斯石堡近勃艮第形制
+                   // 瑞士各州脱胎于勃艮第—上莱茵地带，阿尔卑斯石堡近勃艮第形制
     PASHTUN: 'PERS_CASTLE_AGE3',              // 普什图属东伊朗语族，兴都库什山地城防承波斯传统
     SWEDISH: 'VIKI_CASTLE_AGE3',           // 瑞典：斯堪的纳维亚木石城堡
     MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
@@ -383,7 +383,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
     GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形
     DALI: 'DIANQIAN_CASTLE_AGE3',             // 大理在云南横断山地，属古滇文化圈；原挂马来（MALA）是明显错配
-    GUSILUO: 'ASIA_CASTLE_AGE3',             // 角斯罗：青唐吐蕃宗喀山寨城堡
+                // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
     CRUSADERS: 'MEDI_CASTLE_AGE3',          // 十字军（阿卡），无专属；十字军城堡是拉丁人所建，取地中海套
     RUS: 'SLAV_CASTLE_AGE3',                  // 罗斯的克里姆林是东斯拉夫木石城塞，归斯拉夫

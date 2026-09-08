@@ -839,7 +839,6 @@ async function loadGenerals(): Promise<void> {
 
         const REGION_LABELS: Record<string, string> = {
             CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', BASHU: '川蜀',
-            LINGNAN: '岭南', HEXI: '河西', STEPPE: '草原', NORTHEAST: '东北',
             KOREA: '朝鲜', JAPAN: '日本', XIYU: '西域', QINGZANG: '青藏',
             DIANMIAN: '滇缅', CENTRAL_ASIA: '中亚',
         };
