@@ -152,7 +152,8 @@ export type RegionType =
     | 'ALMOHAD' // 摩洛哥（城堡摩洛哥：穆瓦希德与穆拉比特帝国撒哈拉苏丹驼骑、黑骑兵与柏柏尔标枪游击）
     | 'SERBIA' // 塞尔维亚（城堡塞尔维亚：尼曼雅王朝斯蒂芬杜尚大帝重装骑士近卫与巴尔干长枪方阵）
     | 'ILKHANATE' // 伊利汗（城堡伊利汗：旭烈兀西征伊兰波斯具装铁骑与蒙古强弓铁骑突袭）
-    | 'ARAGON'; // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
+    | 'ARAGON' // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
+    | 'GOJOSEON'; // 朝鲜（古典朝鲜：古朝鲜/三韩/辰国/伽倻，步弓与轻骑）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -251,6 +252,7 @@ export const REGION_ORDER: RegionType[] = [
     'SONG',
     'GORYEO',
     'JOSEON',
+    'GOJOSEON',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -276,7 +278,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     LATIN: '古典罗马',
     CENTRAL: '古典先秦',
     NORTH: '古典秦汉',
-    JIANGNAN: '封建华夏',
+    JIANGNAN: '封建隋唐',
     LINGNAN: '古典百越',
     BASHU: '古典古蜀',
     DIANQIAN: '古典古滇',
@@ -387,9 +389,10 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
-    SONG: '城堡赵宋',
+    SONG: '城堡两宋',
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
+    GOJOSEON: '古典朝鲜',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -421,7 +424,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     LATIN: '古典罗马',
     CENTRAL: '古典先秦',
     NORTH: '古典秦汉',
-    JIANGNAN: '封建华夏',
+    JIANGNAN: '封建隋唐',
     BASHU: '古典古蜀',
     HEXI: '古典秦汉',
     LINGNAN: '古典百越',
@@ -532,9 +535,10 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
-    SONG: '城堡赵宋',
+    SONG: '城堡两宋',
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
+    GOJOSEON: '古典朝鲜',
     DALI: '城堡大理',
     GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
@@ -830,6 +834,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     SONG: '#c62828',
     GORYEO: '#1565c0',
     JOSEON: '#e65100',
+    GOJOSEON: '#2e7d32',
     DALI: '#00897b',
     GUSILUO: '#8e24aa',
     MAMLUKS: '#d4af37',
@@ -983,6 +988,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/northeast_pass.png')
     },
     KOREA: { // ✅ 已有
+        small: resolvePath('/cities/korea_small.png'),
+        medium: resolvePath('/cities/korea_medium.png'),
+        big: resolvePath('/cities/korea_big.png'),
+        pass: resolvePath('/cities/korea_pass.png')
+    },
+    GOJOSEON: { // ✅ 复用朝鲜素材（古典朝鲜今朝鲜半岛）
         small: resolvePath('/cities/korea_small.png'),
         medium: resolvePath('/cities/korea_medium.png'),
         big: resolvePath('/cities/korea_big.png'),
@@ -1806,6 +1817,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 
 export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL:      ['city_luoyang'],                // 洛阳
+    GOJOSEON:     ['city_gimhae'],                 // 金海（古典朝鲜/迦罗伽倻）
     NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
