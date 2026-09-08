@@ -93,6 +93,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tigelei: { generalId: 'gen_gidajan', generalName: '吉达扬', portrait: '' },
     luben: { generalId: 'gen_thoros', generalName: '托罗斯二世', portrait: '' },
     xiaoa: { generalId: 'gen_dagnajan', generalName: '达格纳詹', portrait: '' },
+    miandian: { generalId: 'gen_maha_thiha_thura', generalName: '摩诃·悉都', portrait: '' },
+    malai: { generalId: 'gen_sang_nila_utama', generalName: '桑尼拉乌他马', portrait: '' },
+    taimier: { generalId: 'gen_rajaram', generalName: '拉贾拉姆', portrait: '' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },

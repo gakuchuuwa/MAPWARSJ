@@ -3256,6 +3256,9 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_gidajan: { generalId: 'gen_gidajan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 阿克苏姆末代皇储，崖堡避难抗尤迪特 → 普将
     gen_thoros: { generalId: 'gen_thoros', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 奇里乞亚复国英雄，屡破拜占庭军 → 名将
     gen_dagnajan: { generalId: 'gen_dagnajan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 阿克苏姆末代帝王，象军南征经略肖阿 → 普将
+    gen_maha_thiha_thura: { generalId: 'gen_maha_thiha_thura', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 缅将，1767经三塔关灭阿瑜陀耶 → 名将
+    gen_sang_nila_utama: { generalId: 'gen_sang_nila_utama', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 新加坡拉开国君主，半传说无胜绩 → 普将
+    gen_rajaram: { generalId: 'gen_rajaram', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 马拉塔王，金奇抗莫卧儿九年围城 → 普将
 };
 
 
