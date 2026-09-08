@@ -172,7 +172,9 @@ export type RegionType =
     | 'NORTHAM_FEUDAL' // 封建北美（封建时代：玛雅古典期）
     | 'ORIE_ANTIQUITY' // 古典阿拉伯（古典时代：帕尔米拉/纳巴泰）
     | 'JAPAN_ANTIQUITY' // 古典日本（古典时代：邪马台/倭国）
-    | 'SEASIA_ANTIQUITY'; // 古典东南亚（古典时代：扶南/占婆）
+    | 'SEASIA_ANTIQUITY' // 古典东南亚（古典时代：扶南/占婆）
+    | 'TIBET_CASTLE' // 城堡吐蕃（城堡时代：萨迦/帕木竹巴/格鲁派）
+    | 'YARLUNG'; // 古典雅隆（古典时代：雅隆部落/聂赤赞普）
 // [2026-08-27 主人定·扩文化] GREEK 已从 LATIN 拆出恢复独立（撤销 08-19 收敛）。
 //   NUERGAN 仍并入 NORTHEAST，勿再新增该枚举。
 
@@ -291,6 +293,8 @@ export const REGION_ORDER: RegionType[] = [
     'ORIE_ANTIQUITY',
     'JAPAN_ANTIQUITY',
     'SEASIA_ANTIQUITY',
+    'TIBET_CASTLE',
+    'YARLUNG',
     'DALI',
     'GUSILUO',
     'MAMLUKS',
@@ -327,6 +331,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     WESTERN_CASTLE: '城堡西域',
     WESTERN_IMPERIAL: '帝国西域',
     TIBET: '封建吐蕃',
+    TIBET_CASTLE: '城堡吐蕃',
     TIBET_IMPERIAL: '帝国青藏',
     STEPPE: '城堡蒙古',
     STEPPE_IMPERIAL: '帝国草原',
@@ -431,6 +436,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     HEBREWS: '古典希伯来',
     WUSUN: '古典乌孙',
     QIANG: '古典先零羌',
+    YARLUNG: '古典雅隆',
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
@@ -490,6 +496,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     STEPPE_IMPERIAL: '帝国草原',
     NORTHEAST: '古典鲜卑',
     TIBET: '封建吐蕃',
+    TIBET_CASTLE: '城堡吐蕃',
     TIBET_IMPERIAL: '帝国青藏',
     WESTERN: '古典塞种',
     WESTERN_FEUDAL: '封建西域',
@@ -596,6 +603,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     HEBREWS: '古典希伯来',
     WUSUN: '古典乌孙',
     QIANG: '古典先零羌',
+    YARLUNG: '古典雅隆',
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
@@ -807,6 +815,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     WESTERN_CASTLE: '#d4af37',
     WESTERN_IMPERIAL: '#8B4513',
     TIBET: '#00838f',
+    TIBET_CASTLE: '#00695c',
     TIBET_IMPERIAL: '#004d40',
     STEPPE: '#c0a050',
     STEPPE_IMPERIAL: '#b8860b',
@@ -911,6 +920,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     HEBREWS: '#1e88e5',
     WUSUN: '#b8860b',
     QIANG: '#795548',
+    YARLUNG: '#5d4037',
     NABATAEANS: '#c2185b',
     HEPHTHALITES: '#8b0000',
     AINU: '#006064',
@@ -1093,6 +1103,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/western_pass.png')
     },
     TIBET: { // ✅ 已有 (范围扩到含青海+川西甘孜)
+        small: resolvePath('/cities/tibet_small.png'),
+        medium: resolvePath('/cities/tibet_medium.png'),
+        big: resolvePath('/cities/tibet_big.png'),
+        pass: resolvePath('/cities/tibet_pass.png')
+    },
+    TIBET_CASTLE: { // ✅ 复用青藏（城堡吐蕃）
         small: resolvePath('/cities/tibet_small.png'),
         medium: resolvePath('/cities/tibet_medium.png'),
         big: resolvePath('/cities/tibet_big.png'),
@@ -1768,6 +1784,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/north_big.png'),
         pass: resolvePath('/cities/north_pass.png')
     },
+    YARLUNG: { // ✅ 复用先零羌（古典雅隆）
+        small: resolvePath('/cities/north_small.png'),
+        medium: resolvePath('/cities/north_medium.png'),
+        big: resolvePath('/cities/north_big.png'),
+        pass: resolvePath('/cities/north_pass.png')
+    },
     NABATAEANS: {
         small: resolvePath('/cities/middle_eastern_small.png'),
         medium: resolvePath('/cities/middle_eastern_medium.png'),
@@ -2040,6 +2062,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     WESTERN_CASTLE: ['city_qiuzi'],
     WESTERN_IMPERIAL: ['city_qiuzi'],
     TIBET:        ['city_luoxie'],                   // 逻些 (古名, 即拉萨)
+    TIBET_CASTLE: ['city_sajia'],                    // 萨迦（城堡吐蕃）
     TIBET_IMPERIAL: ['city_luoxie'],                // 拉萨（帝国青藏）
     STEPPE:       ['city_karakorum'],                // 哈拉和林
     STEPPE_IMPERIAL: ['city_karakorum'],             // 哈拉和林（帝国草原）
@@ -2149,6 +2172,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     HEBREWS:     ['city_yelusaleng'],
     WUSUN:       ['city_chigucheng'],
     QIANG:       ['city_yunwu'],
+    YARLUNG:     ['city_saga'],
     NABATAEANS:  ['city_peitra'],
     HEPHTHALITES:['city_huoguocheng'],
     AINU:        ['city_moyoro'],

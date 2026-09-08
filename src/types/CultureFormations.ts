@@ -71,6 +71,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     STEPPE:       'CAVALRY',
     STEPPE_IMPERIAL:'CAVALRY',
     TIBET:        'CAVALRY',
+    TIBET_CASTLE:  'CAVALRY',
     TIBET_IMPERIAL:'CAVALRY',
     CENTRAL_ASIA: 'CAVALRY',
     CENTRAL_ASIA_IMPERIAL: 'CAVALRY',
@@ -188,6 +189,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     HEBREWS: 'INFANTRY',
     WUSUN: 'CAVALRY',
     QIANG: 'MIXED',
+    YARLUNG: 'MIXED',
     NABATAEANS: 'CAVALRY',
     HEPHTHALITES: 'CAVALRY',
     AINU: 'INFANTRY',
@@ -265,6 +267,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LATIN:        'echelon',   // 古典罗马：鱼鳞阵 3+4+2 军团步兵抗线+百夫长精锐主力突破
     LATIN_FEUDAL: 'echelon',
     TIBET:        'crane_wing',   // 青藏：黑光铠骑兵前锋(2) + 精锐答剌罕主力(4) + 蒙古突骑后排(3)
+    TIBET_CASTLE:  'crane_wing',
     TIBET_IMPERIAL:'crane_wing',
 
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
@@ -387,6 +390,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HEBREWS: 'fish_scale',
     WUSUN: 'triangle',
     QIANG: 'triangle',
+    YARLUNG: 'triangle',
     NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
     HEPHTHALITES: 'triangle',
     AINU: 'fish_scale',
@@ -2044,6 +2048,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     LINGNAN: '古典百越军团',
     DIANQIAN: '古典古滇军团',
     TIBET: '封建吐蕃军团',
+    TIBET_CASTLE: '城堡吐蕃军团',
     TIBET_IMPERIAL: '帝国青藏军团',
     CENTRAL_ASIA: '封建河中军团',
     CENTRAL_ASIA_IMPERIAL: '帝国中亚军团',
@@ -2154,6 +2159,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HEBREWS: '古典希伯来军团',
     WUSUN: '古典乌孙军团',
     QIANG: '古典羌族军团',
+    YARLUNG: '古典雅隆军团',
     NABATAEANS: '古典纳巴泰军团',
     HEPHTHALITES: '封建嚈哒军团',
     AINU: '城堡阿伊努军团',
@@ -3664,6 +3670,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     LINGNAN:      LINGNAN_TIERS,
     DIANQIAN:     DIANQIAN_TIERS,
     TIBET:        TIBET_TIERS,
+    TIBET_CASTLE: TIBET_TIERS,
     TIBET_IMPERIAL: TIBET_TIERS,
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
     CENTRAL_ASIA_IMPERIAL: CENTRAL_ASIA_TIERS,
@@ -3769,6 +3776,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     HEBREWS: HEBREWS_TIERS,
     WUSUN: WUSUN_TIERS,
     QIANG: QIANG_TIERS,
+    YARLUNG: QIANG_TIERS,
     NABATAEANS: NABATAEANS_TIERS,
     HEPHTHALITES: HEPHTHALITES_TIERS,
     AINU: AINU_TIERS,
