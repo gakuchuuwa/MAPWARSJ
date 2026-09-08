@@ -75,11 +75,6 @@ const DE_BUILDING_SCALES: Record<string, number> = {
     CASTLE: 0.50,  // 城堡（险要核心地标，比普通建筑大）
 };
 
-// 城堡素材缺失的 fallback（ANDE 安第斯无 CASTLE_AGE3，险要用城镇中心代替）
-const DE_CASTLE_FALLBACK: Record<string, string> = {
-    ANDE: 'TOWN_CENTER',
-};
-
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
@@ -346,128 +341,128 @@ const DE_STONE_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; p
         SE: { pctX: 57.5, pctY: 76.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 65.1, pctY: 82.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_WALL_POST/preview.png' },
         GATE: { pctX: 58.1, pctY: 73.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/AFRI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 72.2, pctY: 87.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.7, pctY: 89.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 72.2, pctY: 87.9, widthFactor: 0.26, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 89.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE4/preview.png' },
     },
     ANDE: {
         NE: { pctX: 60.2, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.3, pctY: 75.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_SE/preview.png' },
         POST: { pctX: 64.9, pctY: 85.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_WALL_POST/preview.png' },
         GATE: { pctX: 57.7, pctY: 75.0, widthFactor: 0.34, path: '/SUCAI_BUILDING/ANDE_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 65.3, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.0, pctY: 86.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 65.3, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.0, pctY: 86.6, widthFactor: 0.26, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE4/preview.png' },
     },
     ASIA: {
         NE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_NE/preview.png' },
         SE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_SE/preview.png' },
         POST: { pctX: 66.9, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png' },
         GATE: { pctX: 58.8, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/ASIA_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 66.7, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.1, pctY: 87.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 66.7, pctY: 88.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.1, pctY: 87.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE4/preview.png' },
     },
     CEAS: {
         NE: { pctX: 60.0, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.6, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.6, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.6, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/CEAS_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 72.3, pctY: 87.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.9, pctY: 89.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 72.3, pctY: 87.9, widthFactor: 0.26, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.9, pctY: 89.2, widthFactor: 0.26, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE4/preview.png' },
     },
     EAST: {
         NE: { pctX: 60.7, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.2, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.5, pctY: 86.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/EAST_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 71.2, pctY: 88.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 68.5, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 88.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/EAST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 88.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/EAST_TOWER_AGE4/preview.png' },
     },
     INDI: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.9, pctY: 78.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.8, pctY: 84.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.1, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/INDI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 71.2, pctY: 89.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 73.6, pctY: 89.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 89.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/INDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 73.6, pctY: 89.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/INDI_TOWER_AGE4/preview.png' },
     },
     MEDI: {
         NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/MEDI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.2, pctY: 87.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.0, pctY: 87.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 87.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.0, pctY: 87.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE4/preview.png' },
     },
     MESO: {
         NE: { pctX: 59.0, pctY: 76.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.8, pctY: 76.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.7, pctY: 84.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_WALL_POST/preview.png' },
         GATE: { pctX: 59.5, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/MESO_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.2, pctY: 86.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.7, pctY: 84.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.2, pctY: 86.6, widthFactor: 0.26, path: '/SUCAI_BUILDING/MESO_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 84.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/MESO_TOWER_AGE4/preview.png' },
     },
     ORIE: {
         NE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_SE/preview.png' },
         POST: { pctX: 69.9, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_WALL_POST/preview.png' },
         GATE: { pctX: 60.5, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/ORIE_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.1, pctY: 87.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.7, pctY: 90.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.1, pctY: 87.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 90.3, widthFactor: 0.26, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE4/preview.png' },
     },
     PERSIAN: {
         NE: { pctX: 63.3, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.8, pctY: 80.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_SE/preview.png' },
         POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_WALL_POST/preview.png' },
         GATE: { pctX: 58.9, pctY: 74.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/PERSIAN_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.2, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 86.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE4/preview.png' },
     },
     PURU: {
         NE: { pctX: 60.9, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.4, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.3, pctY: 86.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_WALL_POST/preview.png' },
         GATE: { pctX: 57.9, pctY: 76.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/PURU_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.6, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.7, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.6, pctY: 85.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/PURU_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 88.1, widthFactor: 0.26, path: '/SUCAI_BUILDING/PURU_TOWER_AGE4/preview.png' },
     },
     SEAS: {
         NE: { pctX: 56.1, pctY: 77.4, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.6, pctY: 76.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.3, pctY: 85.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.0, pctY: 76.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/SEAS_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 68.0, pctY: 87.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.8, pctY: 88.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 68.0, pctY: 87.3, widthFactor: 0.26, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.8, pctY: 88.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE4/preview.png' },
     },
     SLAV: {
         NE: { pctX: 62.8, pctY: 80.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 80.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.5, pctY: 86.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_WALL_POST/preview.png' },
         GATE: { pctX: 59.7, pctY: 77.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/SLAV_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 65.4, pctY: 89.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 68.5, pctY: 89.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 65.4, pctY: 89.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 89.0, widthFactor: 0.26, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE4/preview.png' },
     },
     WEST: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.1, pctY: 85.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.8, pctY: 87.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.6, pctY: 87.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.5, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.6, pctY: 87.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/WEST_TOWER_AGE4/preview.png' },
     },
     GREEK: {
         NE: { pctX: 60.6, pctY: 78.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.0, pctY: 78.1, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_SE/preview.png' },
         POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
         GATE: { pctX: 59.7, pctY: 74.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/GREEK_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 68.4, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 68.4, pctY: 86.4, widthFactor: 0.26, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.26, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE4/preview.png' },
     },
     THRACIAN: {
         NE: { pctX: 55.8, pctY: 72.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.4, pctY: 74.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_SE/preview.png' },
         POST: { pctX: 64.1, pctY: 83.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
         GATE: { pctX: 57.2, pctY: 73.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/THRACIAN_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.8, pctY: 87.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 71.2, pctY: 87.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.3, widthFactor: 0.26, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 71.2, pctY: 87.7, widthFactor: 0.26, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE4/preview.png' },
     },
 };
 
@@ -634,8 +629,8 @@ function computePalisadeWallAndGate(baseSize: number, S: number = 5, fourGates: 
     return pieces;
 }
 
-/** 险要矩形城墙：长 = LSeg 个 SE 段+门，宽 = WSeg 个 NE 段，两门朝外一致、城垛朝外（2026-08 主人定矩形城样式） */
-function computeRectWall(baseSize: number, LSeg: number, WSeg: number): PalisadeGridPiece[] {
+/** 险要矩形城墙：长 = LSeg 个 SE 段+门，宽 = WSeg 个 NE 段，两门朝外一致、四角箭塔随机洗牌（2026-08 主人定矩形城样式，2026-09-08 主人定四角箭塔随机分布） */
+function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () => number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075, sy = sx * 0.58;
     const P0 = { x: 0, y: 0 };
     const P1 = { x: LSeg * sx, y: LSeg * sy };
@@ -645,7 +640,19 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number): Palisade
     const pieces: PalisadeGridPiece[] = [];
     const put = (x: number, y: number, type: 'NE' | 'SE' | 'POST' | 'GATE' | 'TOWER_AGE3' | 'TOWER_AGE4', flipX?: boolean) =>
         pieces.push({ x: x - cx, y: y - cy, type, flipX: !!flipX });
-    put(P0.x, P0.y, 'TOWER_AGE4'); put(P1.x, P1.y, 'TOWER_AGE3'); put(P2.x, P2.y, 'TOWER_AGE4'); put(P3.x, P3.y, 'TOWER_AGE3');
+
+    // 四角随机洗牌放置 2 大型箭塔 + 2 警戒箭塔，位置不再固定（2026-09-08 主人定）
+    const towerPool: ('TOWER_AGE3' | 'TOWER_AGE4')[] = ['TOWER_AGE4', 'TOWER_AGE4', 'TOWER_AGE3', 'TOWER_AGE3'];
+    if (rnd) {
+        for (let i = towerPool.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            [towerPool[i], towerPool[j]] = [towerPool[j], towerPool[i]];
+        }
+    }
+    put(P0.x, P0.y, towerPool[0]);
+    put(P1.x, P1.y, towerPool[1]);
+    put(P2.x, P2.y, towerPool[2]);
+    put(P3.x, P3.y, towerPool[3]);
     const halfL = Math.floor(LSeg / 2);
     // 底边 P0→P1（右下=SE）长边+门
     for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P0.x + k * sx, P0.y + k * sy, 'SE'); }
@@ -984,11 +991,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 
     const parts: string[] = [];
 
-    // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认；ANDE 无风格集城堡 fallback 城镇中心）
-    const castleAsset = resolveCastleAsset(style, factionId, region);
-    const castleDir = (castleAsset === `${style}_CASTLE_AGE3` && DE_CASTLE_FALLBACK[style])
-        ? `${style}_${DE_CASTLE_FALLBACK[style]}_AGE3`
-        : castleAsset;
+    // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认，ANDE 自动对号入座 INCA_CASTLE_AGE3）
+    const castleDir = resolveCastleAsset(style, factionId, region);
     // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
     const centerW = baseSize * 0.56;
     const centerGroundW = centerW * 1.55;
@@ -1003,10 +1007,9 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:calc(50% + ${cOffsetY}px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${castleZ};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
-    // 险要内部建筑只保留核心城堡（四角城垛换为 2 大型箭塔 + 2 警戒箭塔）
-
-    // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、城垛朝外
-    const wallPieces = computeRectWall(baseSize, 8, 4);
+    // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、四角箭塔随机洗牌分布
+    const passTowerRnd = deMulberry32(deHashString(cityId + '|pass_towers'));
+    const wallPieces = computeRectWall(baseSize, 8, 4, passTowerRnd);
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(500 + w.y);
