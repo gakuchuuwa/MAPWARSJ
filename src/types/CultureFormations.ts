@@ -71,6 +71,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     STEPPE:       'CAVALRY',
     TIBET:        'CAVALRY',
     CENTRAL_ASIA: 'CAVALRY',
+    CENTRAL_ASIA_IMPERIAL: 'CAVALRY',
     WEST_ASIA:    'MIXED',
     NORTH:        'MIXED',
     CENTRAL:      'MIXED',
@@ -79,6 +80,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     HEXI:         'MIXED',
     WESTERN:      'MIXED',
     JAPAN:        'INFANTRY', // 日本纯步兵
+    JAPAN_IMPERIAL:'MIXED',   // 帝国日本：武士步骑协同
     BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
     LINGNAN:      'INFANTRY',
@@ -189,6 +191,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     JOSEON:          'MIXED',     // 帝国朝鲜：牌刀手步骑火器协同体系
     GOJOSEON:        'MIXED',     // 古典朝鲜：步弓步兵与轻骑协同体系
     MING:            'MIXED',     // 帝国大明：火矛步骑与火器协同体系
+    HUAXIA_IMPERIAL: 'MIXED',     // 帝国华夏：步骑协同体系
     DALI:            'ELEPHANT',  // 城堡大理：大理战象象步体系
     GUSILUO:         'CAVALRY',   // 城堡角斯罗：青唐冷锻甲铁骑纯骑体系
     MAMLUKS:         'CAVALRY',   // 城堡马穆鲁克：埃及叙利亚苏丹亲卫马穆鲁克纯骑体系
@@ -250,6 +253,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 鱼鳞阵 (3+4+2，2近战+1远程：前卫抗线3 + 主力近战突破4 + 远程后排支援2)
     NORTH:        'fish_scale',   // 北方：辽刀前卫(3) + 精锐黑光铠骑兵突击主力(4) + 诸葛弩后排(2)
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
+    JAPAN_IMPERIAL:'fish_scale',  // 帝国日本：武士抗线+精锐武士主力+火绳足轻
     BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
     NORTHEAST:    'crescent',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
@@ -260,6 +264,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
+    CENTRAL_ASIA_IMPERIAL: 'balance_yoke',
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
 
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
@@ -370,6 +375,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JOSEON:          'crane_wing', // 帝国朝鲜：鹤翼阵 2+4+3 牌刀手2 + 高丽战车4 + 火枪兵3
     GOJOSEON:        'square',     // 古典朝鲜：方阵 3+3+3 古典长矛兵3 + 古典掷矛手3 + 古典骑射手3
     MING:            'fish_scale', // 帝国大明：鱼鳞阵 3+4+2 牌刀手3 + 黑光铠骑兵4 + 神机箭火箭车2
+    HUAXIA_IMPERIAL: 'fish_scale', // 帝国华夏：鱼鳞阵 3+4+2
     DALI:            'crane_wing',   // 城堡大理：鱼鳞阵 3+4+2 战斗象3 + 越南藤弓兵精锐4 + 持盾刀剑手2
     GUSILUO:         'triangle',     // 城堡角斯罗：锥形阵 2+3+4 贵族铁骑精锐2 + 具装铁骑3 + 骑射手4
     MAMLUKS:         'crane_wing',   // 城堡马穆鲁克：鹤翼阵 2+4+3 骆驼弓骑精锐2 + 骑士重装4 + 骆驼骑兵3
@@ -1998,6 +2004,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     NORTHEAST: '古典鲜卑军团',
     KOREA: '封建高句丽军团',
     JAPAN: '城堡镰仓军团',
+    JAPAN_IMPERIAL: '帝国日本军团',
     STEPPE: '城堡蒙古军团',
     HEXI: '古典秦汉军团',
     BASHU: '古典古蜀军团',
@@ -2006,6 +2013,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     DIANQIAN: '古典古滇军团',
     TIBET: '封建吐蕃军团',
     CENTRAL_ASIA: '封建河中军团',
+    CENTRAL_ASIA_IMPERIAL: '帝国中亚军团',
     WEST_ASIA: '封建西亚军团',
     WESTERN: '古典塞种军团',
     SLAVIC: '封建罗斯军团',
@@ -2114,6 +2122,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     JOSEON: '帝国朝鲜军团',
     GOJOSEON: '古典朝鲜军团',
     MING: '帝国大明军团',
+    HUAXIA_IMPERIAL: '帝国华夏军团',
     DALI: '城堡大理军团',
     GUSILUO: '城堡角斯罗军团',
     MAMLUKS: '城堡马穆鲁克军团',
@@ -3600,6 +3609,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     NORTHEAST:    NORTHEAST_TIERS,
     KOREA:        KOREA_TIERS,
     JAPAN:        JAPAN_TIERS,
+    JAPAN_IMPERIAL: JAPAN_TIERS,
     STEPPE:       STEPPE_TIERS,
     HEXI:         HEXI_TIERS,
     BASHU:        BASHU_TIERS,
@@ -3608,6 +3618,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     DIANQIAN:     DIANQIAN_TIERS,
     TIBET:        TIBET_TIERS,
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
+    CENTRAL_ASIA_IMPERIAL: CENTRAL_ASIA_TIERS,
     WEST_ASIA:    WEST_ASIA_TIERS,
     WESTERN:      WESTERN_TIERS,
     SLAVIC:       SLAVIC_TIERS,
@@ -3716,6 +3727,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     JOSEON: JOSEON_TIERS,
     GOJOSEON: GOJOSEON_TIERS,
     MING: MING_TIERS,
+    HUAXIA_IMPERIAL: MING_TIERS,
     DALI: DALI_TIERS,
     GUSILUO: GUSILUO_TIERS,
     MAMLUKS: MAMLUKS_TIERS,

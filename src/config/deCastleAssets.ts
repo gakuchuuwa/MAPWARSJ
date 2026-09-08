@@ -215,6 +215,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
     KOREA: 'KORE_CASTLE_AGE3',               // 朝鲜：高丽山城
     JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
+    JAPAN_IMPERIAL: 'ASIA_CASTLE_AGE3',      // 帝国日本：日式天守阁
     STEPPE: 'MONG_CASTLE_AGE3',              // 草原：蒙古要塞
     TIBET: 'TIBET_CASTLE_AGE3',              // 青藏：藏式金顶宗堡
     WESTERN: 'WESTERN_CASTLE_AGE3',          // 西域：汉伊高台绿洲要塞
@@ -233,6 +234,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     // ── 3. 中亚、西亚与北非 (7 个) ──
     CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',        // 中亚：鞑靼·赫拉特要塞
+    CENTRAL_ASIA_IMPERIAL: 'CEAS_CASTLE_AGE3',
     CUMAN: 'CUMA_CASTLE_AGE3',               // 库曼：库曼汗国要塞
     PERSIAN: 'PERSIAN_CASTLE_AGE3',           // 波斯文化区用 PERSIAN 风格集本套城堡；PERS 留给萨珊/可萨等具体政权
     ORIE: 'ORIE_CASTLE_AGE3',                // 阿拉伯：萨拉森生土要塞
@@ -338,6 +340,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ACHAEMENIDS: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',     // 马其顿：希马鲁石塔城堡
     SONG: 'CHIN_CASTLE_AGE3',               // 两宋，同属中华
     MING: 'CHIN_CASTLE_AGE3',               // 大明，承中华
+    HUAXIA_IMPERIAL: 'CHIN_CASTLE_AGE3',    // 帝国华夏，承中华
     GORYEO: 'KORE_CASTLE_AGE3',             // 高丽
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
     GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形
