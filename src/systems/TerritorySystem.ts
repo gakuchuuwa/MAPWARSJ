@@ -121,8 +121,8 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
 //   EAST(哥特/维京/匈人/条顿)→EAST 套装；ANDE(马普切/穆伊斯卡/图皮)→ANDE 套装；
 //   (拜占庭已迁 LATIN，君士坦丁堡奇观=MEDI_WONDER_BYZANTINES，与 WEST_ASIA 无关)
 const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = {
-    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', LINGNAN: 'ASIA', BASHU: 'ASIA',
-    DIANQIAN: 'ASIA', HEXI: 'ASIA', WESTERN: 'ASIA', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
+    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
+    HEXI: 'ASIA', WESTERN: 'ASIA', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
     TIBET: 'INDI',
     STEPPE: 'YURT',
     SLAVIC: 'SLAV', SLAVIC_FEUDAL: 'SLAV', SLAVIC_CASTLE: 'SLAV', SLAVIC_IMPERIAL: 'SLAV', GERMANIC: 'WEST', GERMANIC_FEUDAL: 'WEST', GERMANIC_IMPERIAL: 'WEST', GERMANIC_CASTLE: 'WEST', LATIN: 'MEDI', LATIN_CASTLE: 'MEDI', LATIN_IMPERIAL: 'MEDI',
@@ -144,7 +144,7 @@ const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = 
     //   中欧(EAST)=哥特/匈奴/条顿/维京；东欧(SLAV)=马扎尔/波西米亚/保加利亚/立陶宛/波兰；
     //   地中海(MEDI)=意大利/西西里/西班牙/葡萄牙/亚美尼亚/格鲁吉亚/雅典/斯巴达/马其顿；
     //   东亚(ASIA)=越南；东南亚(SEAS)=高棉；南美(ANDE)=马普切/穆伊斯卡/图皮；中美洲(MESO)=玛雅。
-    BRITONS: 'WEST', CELTS: 'WEST', BURGUNDIANS: 'WEST',
+    BRITONS: 'WEST', CELTS_FEUDAL: 'WEST', BURGUNDIANS: 'WEST',
     GOTHS: 'EAST', TEUTONS: 'EAST', VIKINGS: 'EAST', HUNS: 'EAST',
     ITALIANS: 'MEDI', SICILIANS: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI',
     ARMENIANS: 'MEDI', GEORGIANS: 'MEDI',
@@ -156,7 +156,6 @@ const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = 
     MAPUCHE: 'ANDE', TUPI: 'ANDE', MUISCA: 'ANDE',
     ETHIOPIANS: 'AFRI',
     BURMESE: 'SEAS',
-    WALLACHIA: 'SLAV',
     LATIN_FEUDAL: 'MEDI',
     WESTERN_FEUDAL: 'ASIA',
     WESTERN_CASTLE: 'ASIA',
@@ -177,7 +176,6 @@ const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = 
     WEST_ASIA_ANTIQUITY: 'ORIE',
     WEST_ASIA_CASTLE: 'ORIE',
     NORTHAM_IMPERIAL: 'MESO',
-    NORTHAM_FEUDAL: 'MESO',
     AFRICA_IMPERIAL: 'AFRI',
     AFRICA_ANTIQUITY: 'AFRI',
     AFRICA_CASTLE: 'AFRI',
@@ -235,7 +233,6 @@ const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = 
     NABATAEANS: 'ORIE',
     HEPHTHALITES: 'CEAS',
     AINU: 'ASIA',
-    SWISS: 'WEST',
     PASHTUN: 'CEAS',
     SWEDISH: 'EAST',
     MACEDONIAN: 'GREEK',
@@ -251,7 +248,6 @@ const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = 
     MING: 'ASIA',
     HUAXIA_IMPERIAL: 'ASIA',
     DALI: 'SEAS',
-    GUSILUO: 'ASIA',
     MAMLUKS: 'ORIE',
     CRUSADERS: 'WEST',
     RUS: 'EAST',

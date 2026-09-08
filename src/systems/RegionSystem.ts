@@ -33,9 +33,6 @@ export type RegionType =
     | 'CENTRAL'       // 中原 (豫、关中、晋南)
     | 'NORTH'         // 北方 (河北、山东、晋北)
     | 'JIANGNAN'      // 江南 (长江中下游、湘鄂赣浙)
-    | 'LINGNAN'       // 岭南 (粤、桂、海南、福建)    ← 已含原 MIN
-    | 'BASHU'         // 古蜀 (川渝古蜀文明)
-    | 'DIANQIAN'      // 古滇 (云贵古滇文明)
     | 'HEXI'          // 河西陇右 (甘肃走廊、陇右)
     | 'WESTERN'       // 塞种 (西域塞克人文明)
     | 'TIBET'         // 吐蕃 (西藏、青海、川甘藏区)
@@ -65,7 +62,7 @@ export type RegionType =
     | 'HUNS'  // 匈人[2026-08-28 补 DE 文明]
     | 'TEUTONS'  // 条顿[2026-08-28 补 DE 文明]
     | 'VIKINGS'  // 维京[2026-08-28 补 DE 文明]
-    | 'CELTS'  // 凯尔特[2026-08-28 补 DE 文明]
+    | 'CELTS_FEUDAL' // 封建凯尔特（封建时代：盖尔/芒斯特/布列塔尼/康沃尔）
     | 'ITALIANS'  // 意大利[2026-08-28 补 DE 文明]
     | 'SICILIANS'  // 西西里[2026-08-28 补 DE 文明]
     | 'BULGARIANS'  // 保加利亚[2026-08-28 补 DE 文明]
@@ -93,7 +90,6 @@ export type RegionType =
     | 'ARMENIANS'  // 亚美尼亚[2026-08-28 补 DE 文明]
     | 'GEORGIANS'  // 格鲁吉亚[2026-08-28 补 DE 文明]
     | 'BURMESE'      // 缅甸
-    | 'WALLACHIA'    // 瓦拉几亚
     | 'EGYPT'        // 埃及（古埃及尼罗河法老文明）
     | 'CARTHAGE'     // 布匿（西地中海商业与军事帝国）
     | 'BABYLON'      // 巴比伦（两河流域美索不达米亚文明）
@@ -135,7 +131,6 @@ export type RegionType =
     | 'NABATAEANS'   // 纳巴泰（佩特拉粉红岩凿要塞与红海香路驼骑）
     | 'HEPHTHALITES' // 嚈哒（白匈奴阿姆河阿缓火国城横扫中亚南亚铁骑）
     | 'AINU'        // 阿伊努
-    | 'SWISS'       // 瑞士
     | 'PASHTUN'     // 普什图
     | 'SWEDISH'     // 瑞典        // 阿伊努（北海道莫约罗鄂霍次克毒矢独立猎人）
     | 'MACEDONIAN' // 古典马其顿（佩拉王都与亚历山大方阵骑步）
@@ -149,7 +144,6 @@ export type RegionType =
     | 'GORYEO' // 高丽（城堡高丽：别武班重骑、长枪与高丽硬弓手）
     | 'JOSEON' // 朝鲜王朝（帝国朝鲜：火铳火炮、高丽战车与龟甲船水师）
     | 'DALI' // 大理（城堡大理：西南大理象兵、大理马突击轻骑与白蛮藤弓步阵）
-    | 'GUSILUO' // 角斯罗（城堡角斯罗：青唐吐蕃宗喀冷锻瘊子甲铁骑与河湟弓骑）
     | 'MAMLUKS' // 马穆鲁克（城堡马穆鲁克：埃及叙利亚苏丹马穆鲁克重装马刀骑兵与苏丹亲卫驼骑）
     | 'CRUSADERS' // 十字军（城堡十字军：近东圣殿医院骑士团具装骑士与长剑步兵十字军阵）
     | 'RUS' // 罗斯（城堡罗斯：诺夫哥罗德与弗拉基米尔大公博雅尔贵族铁骑与双手长斧破阵勇士）
@@ -187,7 +181,6 @@ export type RegionType =
     | 'NORTHAM_IMPERIAL' // 帝国北美（帝国时代：西属/法属/荷属美洲总督区）
     | 'SOUTHAM_IMPERIAL' // 帝国南美（帝国时代：马普切/图皮/穆伊斯卡）
     | 'LATIN_FEUDAL' // 封建拉丁（封建时代：凯尔特/加泰罗尼亚/布列塔尼）
-    | 'NORTHAM_FEUDAL' // 封建北美（封建时代：玛雅古典期）
     | 'ORIE_ANTIQUITY' // 古典阿拉伯（古典时代：帕尔米拉/纳巴泰）
     | 'JAPAN_ANTIQUITY' // 古典日本（古典时代：邪马台/倭国）
     | 'SEASIA_ANTIQUITY' // 古典东南亚（古典时代：扶南/占婆）
@@ -202,20 +195,18 @@ export type RegionType =
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
     'SLAVIC', 'SLAVIC_FEUDAL', 'SLAVIC_CASTLE', 'SLAVIC_IMPERIAL', 'GERMANIC', 'GERMANIC_FEUDAL', 'GERMANIC_IMPERIAL', 'GERMANIC_CASTLE', 'LATIN', 'LATIN_CASTLE', 'LATIN_IMPERIAL', 'GREEK', 'THRACIAN', 'BERBER',
-    'CENTRAL', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
+    'CENTRAL', 'HEXI', 'JIANGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
     'CENTRAL_ASIA', 'PASHTUN', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE', 'ASSYRIAN', 'ORIE',
+    'KOREA', 'INDIA', 'PURU', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE', 'ASSYRIAN', 'ORIE',
     'AMERICA', 'ANDE', 'AFRICA', 'MALAY',
     'BRITONS',
     'GOTHS',
     'HUNS',
     'TEUTONS',
-
-    'SWISS',
     'VIKINGS',
 
     'SWEDISH',
-    'CELTS',
+    'CELTS_FEUDAL',
     'ITALIANS',
     'SICILIANS',
     'BULGARIANS',
@@ -243,7 +234,6 @@ export const REGION_ORDER: RegionType[] = [
     'ARMENIANS',
     'GEORGIANS',
     'BURMESE',
-    'WALLACHIA',
     'EGYPT',
     'CARTHAGE',
     'BABYLON',
@@ -318,7 +308,6 @@ export const REGION_ORDER: RegionType[] = [
     'NORTHAM_IMPERIAL',
     'SOUTHAM_IMPERIAL',
     'LATIN_FEUDAL',
-    'NORTHAM_FEUDAL',
     'ORIE_ANTIQUITY',
     'JAPAN_ANTIQUITY',
     'SEASIA_ANTIQUITY',
@@ -328,7 +317,6 @@ export const REGION_ORDER: RegionType[] = [
     'INDIA_CASTLE',
     'INDIA_IMPERIAL',
     'DALI',
-    'GUSILUO',
     'MAMLUKS',
     'CRUSADERS',
     'RUS',
@@ -362,9 +350,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     CENTRAL: '古典华夏',
     NORTH: '古典秦汉',
     JIANGNAN: '封建隋唐',
-    LINGNAN: '古典百越',
-    BASHU: '古典古蜀',
-    DIANQIAN: '古典古滇',
     HEXI: '古典秦汉',
     WESTERN: '古典塞种',
     WESTERN_FEUDAL: '封建西域',
@@ -395,13 +380,12 @@ export const REGION_LABELS: Record<RegionType, string> = {
     INDIA_IMPERIAL: '帝国印度',
     BERBER: '封建柏柏尔',
     AMERICA: '城堡阿兹特克',
-    NORTHAM_FEUDAL: '封建北美',
     NORTHAM_IMPERIAL: '帝国北美',
     AFRICA: '城堡马里',
     AFRICA_IMPERIAL: '帝国非洲',
     AFRICA_ANTIQUITY: '古典非洲',
     AFRICA_CASTLE: '城堡非洲',
-    MALAY: '封建马来',
+    MALAY: '城堡马来',
     SEASIA_ANTIQUITY: '古典东南亚',
     SEASIA_IMPERIAL: '帝国东南亚',
     SEASIA_CASTLE: '城堡东南亚',
@@ -422,7 +406,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     HUNS: '封建匈人',
     TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
-    CELTS: '古典凯尔特',
+    CELTS_FEUDAL: '封建凯尔特',
     ITALIANS: '城堡意大利',
     SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
@@ -438,10 +422,10 @@ export const REGION_LABELS: Record<RegionType, string> = {
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
-    MAYANS: '古典玛雅',
+    MAYANS: '封建玛雅',
     MAPUCHE: '帝国马普切',
     MUISCA: '城堡穆伊斯卡',
-    TUPI: '城堡图皮',
+    TUPI: '帝国图皮',
     IROQUOIS: '城堡易洛魁',
     CHIMU: '城堡奇穆',
     TARASCAN: '城堡塔拉斯科',
@@ -450,7 +434,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     BURMESE: '城堡缅甸',
-    WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
     CARTHAGE: '古典布匿',
     BABYLON: '古典巴比伦',
@@ -493,7 +476,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
-    SWISS: '城堡瑞士',
     PASHTUN: '帝国普什图',
     SWEDISH: '帝国瑞典',
     MACEDONIAN: '古典马其顿',
@@ -510,7 +492,6 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MING: '帝国大明',
     HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
-    GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
     CRUSADERS: '城堡十字军',
     RUS: '城堡罗斯',
@@ -550,9 +531,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     CENTRAL: '古典华夏',
     NORTH: '古典秦汉',
     JIANGNAN: '封建隋唐',
-    BASHU: '古典古蜀',
     HEXI: '古典秦汉',
-    LINGNAN: '古典百越',
     STEPPE: '城堡蒙古',
     STEPPE_IMPERIAL: '帝国草原',
     STEPPE_ANTIQUITY: '古典草原',
@@ -577,19 +556,17 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     INDIA_CASTLE: '城堡印度',
     INDIA_IMPERIAL: '帝国印度',
     BERBER: '封建柏柏尔',
-    DIANQIAN: '古典古滇',
     KOREA: '封建高句丽',
     JAPAN: '城堡镰仓',
     JAPAN_ANTIQUITY: '古典日本',
     JAPAN_IMPERIAL: '帝国日本',
     AMERICA: '城堡阿兹特克',
-    NORTHAM_FEUDAL: '封建北美',
     NORTHAM_IMPERIAL: '帝国北美',
     AFRICA: '城堡马里',
     AFRICA_IMPERIAL: '帝国非洲',
     AFRICA_ANTIQUITY: '古典非洲',
     AFRICA_CASTLE: '城堡非洲',
-    MALAY: '封建马来',
+    MALAY: '城堡马来',
     SEASIA_ANTIQUITY: '古典东南亚',
     SEASIA_IMPERIAL: '帝国东南亚',
     SEASIA_CASTLE: '城堡东南亚',
@@ -610,7 +587,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     HUNS: '封建匈人',
     TEUTONS: '城堡条顿',
     VIKINGS: '封建维京',
-    CELTS: '古典凯尔特',
+    CELTS_FEUDAL: '封建凯尔特',
     ITALIANS: '城堡意大利',
     SICILIANS: '城堡诺曼',
     BULGARIANS: '封建保加利亚',
@@ -626,10 +603,10 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
-    MAYANS: '古典玛雅',
+    MAYANS: '封建玛雅',
     MAPUCHE: '帝国马普切',
     MUISCA: '城堡穆伊斯卡',
-    TUPI: '城堡图皮',
+    TUPI: '帝国图皮',
     IROQUOIS: '城堡易洛魁',
     CHIMU: '城堡奇穆',
     TARASCAN: '城堡塔拉斯科',
@@ -638,7 +615,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     ARMENIANS: '古典亚美尼亚',
     GEORGIANS: '封建格鲁吉亚',
     BURMESE: '城堡缅甸',
-    WALLACHIA: '封建瓦拉几亚',
     EGYPT: '古典埃及',
     CARTHAGE: '古典布匿',
     BABYLON: '古典巴比伦',
@@ -681,7 +657,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     NABATAEANS: '古典纳巴泰',
     HEPHTHALITES: '封建嚈哒',
     AINU: '城堡阿伊努',
-    SWISS: '城堡瑞士',
     PASHTUN: '帝国普什图',
     SWEDISH: '帝国瑞典',
     MACEDONIAN: '古典马其顿',
@@ -698,7 +673,6 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MING: '帝国大明',
     HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
-    GUSILUO: '城堡角斯罗',
     MAMLUKS: '城堡马穆鲁克',
     CRUSADERS: '城堡十字军',
     RUS: '城堡罗斯',
@@ -735,9 +709,9 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'NOMADIC': 'STEPPE',            // 纯改名
     'CENTRAL_WORLD': 'CENTRAL_ASIA',// 纯改名
     'WEST_WORLD': 'CENTRAL_ASIA',   // 合并 (老 WEST_WORLD 范围已被 getRegion 自动归中亚)
-    'TROPICS': 'LINGNAN',           // 合并 (老 TROPICS 范围已被 getRegion 自动归岭南)
+    'TROPICS': 'CENTRAL',       // 合并 (老 TROPICS 范围归古典华夏)
     'SIBERIA': 'STEPPE',            // 合并 (老 SIBERIA 已被 getRegion 自动归塞外)
-    'MIN': 'LINGNAN',               // [2026-05-28] 合并: 14 区方案, 福建归岭南
+    'MIN': 'CENTRAL',           // [2026-05-28] 合并: 福建归古典华夏
     'NUERGAN': 'NORTHEAST',         // [2026-08-19] 合并: 18 大文化收敛, 奴儿干归东北
     'SOUTH_HEMISPHERE': 'CENTRAL',  // fallback (不该出现)
     'NEW_WORLD': 'CENTRAL',         // fallback (不该出现)
@@ -857,11 +831,8 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'CUMAN', cityIds: ['city_daerban', 'city_chalijin', 'city_kashan', 'city_wufa', 'city_salaichuke', 'city_mangshilake', 'city_daerban'] },
     { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_urgench', 'city_daerban', 'city_xianuofugeerdede', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu', 'city_liaoyang'] },
     { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_loulan', 'city_hamiwei', 'city_guihua', 'city_fushi', 'city_lanzhou'] },
-    { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong', 'city_xiangyang'] },
     { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_gugudao', 'city_xingzhuting', 'city_yangzhou'] },
     { region: 'JAPAN', cityIds: ['city_gugudao', 'city_shuri', 'city_edo', 'city_moyoro', 'city_zonggu', 'city_xingzhuting', 'city_gugudao'] },
-    { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_piyetuo', 'city_shimenguan'] },
-    { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_geergang', 'city_mizhina', 'city_shwebo', 'city_pagan', 'city_srikshetra', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_piyetuo', 'city_shimenguan', 'city_dajianlu'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
     { region: 'PERSIAN', cityIds: ['city_dabulishi', 'city_susa', 'city_feiluzhabade', 'city_kandaha', 'city_gaofu', 'city_merv', 'city_nisa', 'city_dabulishi'] },
     { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_niniwei', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
@@ -888,9 +859,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     CENTRAL: '#8d6e63',
     NORTH: '#5d4037',
     JIANGNAN: '#1565c0',
-    LINGNAN: '#e65100',
-    BASHU: '#2e7d32',
-    DIANQIAN: '#6a1b9a',
     HEXI: '#bf360c',
     WESTERN: '#f9a825',
     WESTERN_FEUDAL: '#b8860b',
@@ -921,7 +889,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     INDIA_IMPERIAL: '#8d2f00',  // 帝国印度（焦橙）
     BERBER: '#00897b',  // 青绿（地中海/绿洲）
     AMERICA: '#6d4c41', // 棕（美洲）[2026-08-24]
-    NORTHAM_FEUDAL: '#8d6e63',
     NORTHAM_IMPERIAL: '#4e342e',
     AFRICA: '#9e9d24',  // 橄榄（非洲）[2026-08-24]
     AFRICA_IMPERIAL: '#827717',
@@ -948,7 +915,8 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     HUNS: '#6d4c41',  // 匈人[2026-08-28]
     TEUTONS: '#4e342e',  // 条顿[2026-08-28]
     VIKINGS: '#006064',  // 维京[2026-08-28]
-    CELTS: '#2e7d32',  // 凯尔特[2026-08-28]
+     // 凯尔特[2026-08-28]
+    CELTS_FEUDAL: '#1b5e20',  // 封建凯尔特（深绿）
     ITALIANS: '#1a237e',  // 意大利[2026-08-28]
     SICILIANS: '#4527a0',  // 西西里[2026-08-28]
     BULGARIANS: '#7b1fa2',  // 保加利亚[2026-08-28]
@@ -976,7 +944,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     ARMENIANS: '#3949ab',  // 亚美尼亚[2026-08-28]
     GEORGIANS: '#1e88e5',  // 格鲁吉亚[2026-08-28]  // 雅典[2026-08-28]  // 斯巴达[2026-08-28]  // 马其顿[2026-08-28]
     BURMESE: '#b8860b',
-    WALLACHIA: '#7f1d1d',
     EGYPT: '#d4af37',      // 埃及（金字塔黄金）
     CARTHAGE: '#800020',   // 迦太基（布匿紫红）
     BABYLON: '#1a237e',    // 巴比伦（伊什塔尔门青金石蓝）
@@ -1019,7 +986,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     NABATAEANS: '#c2185b',
     HEPHTHALITES: '#8b0000',
     AINU: '#006064',
-    SWISS: '#d32f2f',
     PASHTUN: '#00695c',
     SWEDISH: '#1565c0',
     MACEDONIAN: '#8E24AA',
@@ -1036,7 +1002,6 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     MING: '#7A1418',
     HUAXIA_IMPERIAL: '#8B0000',
     DALI: '#00897b',
-    GUSILUO: '#8e24aa',
     MAMLUKS: '#d4af37',
     CRUSADERS: '#e63946',
     RUS: '#b7410e',
@@ -1145,26 +1110,8 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/south_big.png'),
         pass: resolvePath('/cities/south_pass.png')
     },
-    LINGNAN: { // ✅ 已有 (范围收窄，福建剥离到 MIN)
-        small: resolvePath('/cities/lingnan_small.png'),
-        medium: resolvePath('/cities/lingnan_medium.png'),
-        big: resolvePath('/cities/lingnan_big.png'),
-        pass: resolvePath('/cities/lingnan_pass.png')
-    },
 
     // === 中国江南/西南 ===
-    BASHU: { // ✅ 继承原 CHU_SHU 全部 PNG (chushu_*.png) - 川渝盆地素材
-        small: resolvePath('/cities/chushu_small.png'),
-        medium: resolvePath('/cities/chushu_medium.png'),
-        big: resolvePath('/cities/chushu_big.png'),
-        pass: resolvePath('/cities/chushu_pass.png')
-    },
-    DIANQIAN: { // ✅ 已有
-        small: resolvePath('/cities/dianqian_small.png'),
-        medium: resolvePath('/cities/dianqian_medium.png'),
-        big: resolvePath('/cities/dianqian_big.png'),
-        pass: resolvePath('/cities/dianqian_pass.png')
-    },
 
     // === 中国西部边疆 ===
     HEXI: { // ✅ 继承原 NORTHWEST 全部 PNG (northwest_*.png)
@@ -1447,12 +1394,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
-    NORTHAM_FEUDAL: { // ✅ 复用美洲（封建北美）
-        small: resolvePath('/cities/latin_small.png'),
-        medium: resolvePath('/cities/latin_medium.png'),
-        big: resolvePath('/cities/latin_big.png'),
-        pass: resolvePath('/cities/latin_pass.png')
-    },
     AFRICA: { // ⚠️ [2026-08-24 新增] 暂借拉丁图标（非洲，待专属素材）
         small: resolvePath('/cities/latin_small.png'),
         medium: resolvePath('/cities/latin_medium.png'),
@@ -1603,7 +1544,7 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/slavic_big.png'),
         pass: resolvePath('/cities/slavic_pass.png')
     },
-    CELTS: { // 继承 GERMANIC 城市素材 // ✅ 日耳曼
+    CELTS_FEUDAL: { // ✅ 复用凯尔特（封建凯尔特）
         small: resolvePath('/cities/germanic_small.png'),
         medium: resolvePath('/cities/germanic_medium.png'),
         big: resolvePath('/cities/germanic_big.png'),
@@ -1770,12 +1711,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
         pass: resolvePath('/cities/dianqian_pass.png')
-    },
-    WALLACHIA: {
-        small: resolvePath('/cities/slavic_small.png'),
-        medium: resolvePath('/cities/slavic_medium.png'),
-        big: resolvePath('/cities/slavic_big.png'),
-        pass: resolvePath('/cities/slavic_pass.png')
     },
     EGYPT: {
         small: resolvePath('/cities/west_asia_small.png'),
@@ -2029,12 +1964,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/city_big.png'),
         pass: resolvePath('/cities/pass.png')
     },
-    SWISS: {
-        small: resolvePath('/cities/germanic_small.png'),
-        medium: resolvePath('/cities/germanic_medium.png'),
-        big: resolvePath('/cities/germanic_big.png'),
-        pass: resolvePath('/cities/germanic_pass.png')
-    },
     PASHTUN: {
         small: resolvePath('/cities/middle_eastern_small.png'),
         medium: resolvePath('/cities/middle_eastern_medium.png'),
@@ -2100,12 +2029,6 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
         pass: resolvePath('/cities/dianqian_pass.png')
-    },
-    GUSILUO: {
-        small: resolvePath('/cities/tibet_small.png'),
-        medium: resolvePath('/cities/tibet_medium.png'),
-        big: resolvePath('/cities/tibet_big.png'),
-        pass: resolvePath('/cities/tibet_pass.png')
     },
     MAMLUKS: {
         small: resolvePath('/cities/orie_small.png'),
@@ -2274,9 +2197,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     HUAXIA_IMPERIAL: ['city_ziwu'],               // 子午谷（帝国华夏·李自成大顺）
     NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
     JIANGNAN:     ['city_nanjing'],                  // 南京
-    LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
-    BASHU:        ['city_chengdu'],                  // 成都
-    DIANQIAN:     ['city_tuodongcheng'],                // 滇池 (古滇王国都城)              // 羊苴咩（缅甸拆为独立文化区后，滇缅余区中心回归大理）
     HEXI:         ['city_wuwei'],                    // 姑臧 (古名, 即凉州/武威)
     WESTERN:      ['city_yiluolucheng'],             // 伊逻卢城 (龟兹国都; 延城)
     WESTERN_FEUDAL: ['city_qiuzi'],                 // 龟兹（封建西域）
@@ -2322,7 +2242,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     BERBER:       ['city_feisi'],                     // 非斯 [2026-09-07] 伊德里斯王朝 789 年建都，正合封建代 400–1050；原挂马拉喀什(1070建城)已划归 ALMOHAD 区
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     NORTHAM_IMPERIAL: ['city_tenochtitlan'],          // 特诺奇提特兰（帝国北美）
-    NORTHAM_FEUDAL: ['city_tikal'],                   // 蒂卡尔（封建北美·玛雅）
     AFRICA:       ['city_timbuktu'],                  // 廷巴克图 [2026-09-07] 本区是城堡马里，廷巴克图为马里帝国核心；原挂阿克苏姆已划归 ETHIOPIANS 区
     AFRICA_IMPERIAL: ['city_gongdeer'],               // 贡德尔（帝国非洲·埃塞俄比亚）
     AFRICA_ANTIQUITY: ['city_aksum'],                 // 阿克苏姆（古典非洲·埃塞俄比亚）
@@ -2347,7 +2266,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     HUNS: ['city_saigede'],  // 匈人（中心据点已挂）
     TEUTONS: ['city_kenisibao'],  // 条顿（中心据点已挂）
     VIKINGS: ['city_gebenhagen'],  // 维京（中心据点已挂）
-    CELTS: ['city_dublin'],  // 都柏林 [2026-09-07] 本区最大据点(爱尔兰＝凯尔特腹地)；原挂爱丁堡已划归 SCOTLAND 区
+    CELTS_FEUDAL: ['city_dublin'],  // 都柏林（封建凯尔特·爱尔兰）
     ITALIANS: ['city_genoa'],  // 意大利（中心据点已挂）
     SICILIANS: ['city_palermo'],  // 西西里（中心据点已挂）
     BULGARIANS: ['city_puleisilafu'],  // 保加利亚（中心据点已挂）
@@ -2375,7 +2294,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     ARMENIANS: ['city_ailiwen'],  // 亚美尼亚（中心据点已挂）
     GEORGIANS: ['city_dibilisi'],  // 格鲁吉亚（中心据点已挂）  // 雅典（中心据点已挂）  // 斯巴达（中心据点已挂）  // 马其顿-佩拉（中心据点已挂）
     BURMESE: ['city_pagan'],  // 缅甸（蒲甘王朝都）
-    WALLACHIA: ['city_teergewishite'],  // 瓦拉几亚（特尔戈维什泰）
     EGYPT: ['city_mengfeisi'],          // 埃及（孟菲斯，古王国都城）
     CARTHAGE: ['city_jiataji'],          // 迦太基（迦太基都城）
     BABYLON: ['city_babilun'],          // 巴比伦（巴比伦帝都）
@@ -2418,7 +2336,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     NABATAEANS:  ['city_peitra'],
     HEPHTHALITES:['city_huoguocheng'],
     AINU:        ['city_moyoro'],
-    SWISS:       ['city_basaier'],
     PASHTUN:     ['city_kandaha'],
     SWEDISH:     ['city_gothenburg'],
     MACEDONIAN:  ['city_salonica'],
@@ -2432,7 +2349,6 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     GORYEO:          ['city_kaesong'],
     JOSEON:          ['city_hanseong'],
     DALI:            ['city_dali_city', 'city_tonghai'],
-    GUSILUO:         ['city_qingtang'],
     MAMLUKS:         ['city_alepo', 'city_ayinzhaluete'],
     CRUSADERS:       ['city_ake', 'city_aidesa'],
     RUS:             ['city_nuofugeerdede', 'city_mosike'],

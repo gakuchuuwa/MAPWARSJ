@@ -186,7 +186,6 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
  *    表本身没错，是**文件换了表没跟着换**。审计脚本就是防这个的。
  */
 const BGM_REGION_GAIN: Record<string, number> = {
-    BASHU: 0.708,  // -18.0 LUFS
     CENTRAL: 0.7,  // -17.9 LUFS
     CENTRAL_ASIA: 0.708,  // -18.0 LUFS
     BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
@@ -196,7 +195,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
     daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
-    DIANQIAN: 0.733,  // -18.3 LUFS
     HEXI: 0.708,  // -18.0 LUFS
     helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
     hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
@@ -205,7 +203,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     JIANGNAN: 0.708,  // -18.0 LUFS
     KOREA: 0.708,  // -18.0 LUFS
     LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
-    LINGNAN: 0.708,  // -18.0 LUFS · 大幅压低
     litang: 0.716,  // -18.1 LUFS
     liuhan: 0.708,  // -18.0 LUFS
     manqing: 0.708,  // -18.0 LUFS

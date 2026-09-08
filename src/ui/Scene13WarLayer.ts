@@ -306,8 +306,8 @@ const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'batte
  *    判据是「这地方**什么最多**」，不是「有没有用过」，见 §5.6.13 那条标准。
  */
 const SIEGE_ELEPHANT_BY_CULTURE: Partial<Record<RegionType, string>> = {
-    DIANQIAN: 'battle_elephant',    // 缅甸/越南战斗象（近战）
-    LINGNAN: 'battle_elephant',     // 越南战斗象（近战）
+       // 缅甸/越南战斗象（近战）
+        // 越南战斗象（近战）
     CARTHAGE: 'armored_elephant',   // 迦太基装甲战象（攻城）
 };
 
@@ -344,9 +344,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     CENTRAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
     NORTH: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, traction_trebuchet: true },
     JIANGNAN: { battering_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, traction_trebuchet: true },
-    BASHU: { battering_ram: true, capped_ram: true, siege_ram: true, mangonel: true, onager: true, traction_trebuchet: true },
     HEXI: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
-    LINGNAN: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, traction_trebuchet: true },
     STEPPE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     STEPPE_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     STEPPE_ANTIQUITY: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
@@ -370,7 +368,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     WESTERN_CASTLE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     WESTERN_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     KOREA: { battering_ram: true, capped_ram: true, scorpion: true, traction_trebuchet: true },
-    DIANQIAN: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     INDIA: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     PURU: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true, battle_elephant: true, armored_elephant: true },
     INDIA_FEUDAL: { scorpion: true, mangonel: true, onager: true, armored_elephant: true },
@@ -383,7 +380,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ORIE_ANTIQUITY: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     AMERICA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     NORTHAM_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
-    NORTHAM_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ANDE: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     SOUTHAM_IMPERIAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     AFRICA: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -400,7 +396,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     HUNS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, mangonel: true },
     TEUTONS: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     VIKINGS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
-    CELTS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
+    CELTS_FEUDAL: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     ITALIANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
     SICILIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     BULGARIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
@@ -428,7 +424,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     ARMENIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
     GEORGIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     BURMESE: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
-    WALLACHIA: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     EGYPT: { battering_ram: true, capped_ram: true, mangonel: true, onager: true },
     CARTHAGE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     BABYLON: { battering_ram: true, capped_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true },
@@ -471,7 +466,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     NABATAEANS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     HEPHTHALITES: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     AINU: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
-    SWISS: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, trebuchet: true },
     PASHTUN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: false, trebuchet: true },
     SWEDISH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true, trebuchet: true },
     MACEDONIAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
@@ -488,7 +482,6 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     MING: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     HUAXIA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     DALI: { battering_ram: true, capped_ram: true, mangonel: true },
-    GUSILUO: { battering_ram: true, capped_ram: true, mangonel: true },
     MAMLUKS: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
     CRUSADERS: { battering_ram: true, capped_ram: true, mangonel: true, trebuchet: true },
     RUS: { battering_ram: true, capped_ram: true, mangonel: true },
@@ -524,8 +517,6 @@ const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>>
     CENTRAL: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     NORTH: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     JIANGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    LINGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    BASHU: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     HEXI: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     NORTHEAST: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     KOREA: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
@@ -1146,9 +1137,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     CENTRAL: 'ASIA',
     NORTH: 'ASIA',
     JIANGNAN: 'ASIA',
-    LINGNAN: 'ASIA',
-    BASHU: 'ASIA',
-    DIANQIAN: 'ASIA',  // [2026-08-27] SEAS→ASIA（主人定滇缅归中国区，与战略一致）
+     // [2026-08-27] SEAS→ASIA（主人定滇缅归中国区，与战略一致）
     HEXI: 'ASIA',
     WESTERN: 'ASIA',   // [2026-08-27] CEAS→ASIA（主人定西域归中国区，与战略一致）
     WESTERN_FEUDAL: 'ASIA',
@@ -1180,7 +1169,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     BERBER: 'ORIE',    // [2026-08-27] AFRI→ORIE（柏柏尔在北非近东，与战略一致）
     AMERICA: 'MESO',  // [2026-08-24] 美洲石造（阿兹特克/玛雅/印加）
     NORTHAM_IMPERIAL: 'MESO',
-    NORTHAM_FEUDAL: 'MESO',
     AFRICA: 'AFRI',   // [2026-08-24] 非洲（马里/埃塞）
     AFRICA_IMPERIAL: 'AFRI',
     AFRICA_ANTIQUITY: 'AFRI',
@@ -1206,7 +1194,8 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     HUNS: 'EAST',  // 匈人[2026-08-28]
     TEUTONS: 'EAST',  // 条顿[2026-08-28]
     VIKINGS: 'EAST',  // 维京[2026-08-28]
-    CELTS: 'WEST',  // 凯尔特[2026-08-28]
+     // 凯尔特[2026-08-28]
+    CELTS_FEUDAL: 'WEST',
     ITALIANS: 'MEDI',  // 意大利[2026-08-28]
     SICILIANS: 'MEDI',  // 西西里[2026-08-28]
     BULGARIANS: 'SLAV',  // 保加利亚[2026-08-28]
@@ -1234,7 +1223,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     ARMENIANS: 'MEDI',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MEDI',  // 格鲁吉亚[2026-08-28]
     BURMESE: 'SEAS',
-    WALLACHIA: 'SLAV',
     EGYPT: 'ORIE',
     CARTHAGE: 'MEDI',
     BABYLON: 'ORIE',
@@ -1277,7 +1265,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     NABATAEANS: 'ORIE',
     HEPHTHALITES: 'CEAS',
     AINU: 'ASIA',
-    SWISS: 'WEST',   // [2026-09-07] 城堡瑞士：EUROPE 不是 DE 风格集
+      // [2026-09-07] 城堡瑞士：EUROPE 不是 DE 风格集
     PASHTUN: 'CENTRAL_ASIA',
     SWEDISH: 'EAST',   // [2026-09-07] 帝国瑞典：EUROPE 不是 DE 风格集；与封建维京同用 EAST
     MACEDONIAN: 'GREEK',   // [2026-09-07] 古典马其顿
@@ -1294,7 +1282,6 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     MING: 'ASIA',
     HUAXIA_IMPERIAL: 'ASIA',
     DALI: 'SEAS',
-    GUSILUO: 'ASIA',
     MAMLUKS: 'ORIE',
     CRUSADERS: 'WEST',
     RUS: 'EAST',
@@ -3779,10 +3766,10 @@ export class Scene13WarLayer {
      * 每场攻城战攻方生成 9 辆器械：破门冲车/冲象 ×3 + 投石/抛石机 ×3 + 弩炮/床弩/象弩 ×2 + 特色/巨型攻城器 ×1。
      */
     private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
-        const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'LINGNAN', 'NORTHEAST', 'KOREA']);
+        const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'NORTHEAST', 'KOREA']);
         const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS', 'MACEDONIAN', 'HELLENIC', 'IMPERIAL_ROME', 'GREEK_MERCENARY', 'MAGNA_GRAECIA']);
         const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS']);
-        const SE_ASIAN = new Set(['KHMER', 'DIANQIAN', 'BURMESE', 'MALAY', 'VIETNAMESE']);
+        const SE_ASIAN = new Set(['KHMER', 'BURMESE', 'MALAY', 'VIETNAMESE']);
         // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
         const NOMAD_DESERT = new Set(['CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'ORIE', 'HEXI']);
 
@@ -3795,7 +3782,7 @@ export class Scene13WarLayer {
         } else if (CLASSICAL.has(culture)) {
             // 古典文明：古典轻/装甲/重型攻城槌
             items.push('antiquity_battering_ram', 'antiquity_capped_ram', 'antiquity_siege_ram');
-        } else if (culture === 'KHMER' || culture === 'BURMESE' || culture === 'DIANQIAN') {
+        } else if (culture === 'KHMER' || culture === 'BURMESE') {
             // 东南亚：冲车配合坚固装甲
             items.push('battering_ram', 'capped_ram', 'capped_ram');
         } else {
@@ -6454,8 +6441,11 @@ export class Scene13WarLayer {
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
             //    不再列阵行军（inMarch 攻城战已全 false），直接各自索敌接战。
-            // [2026-09-05 玩家] 玩家不受「攻城双方按兵不动」约束（玩家自己操控）
-            const holdSiege = this.defenderHolding && !m.siegeW && !m.hero;
+            // 🔴 [2026-09-09 主人定「玩家要和其他军团一样，有攻城的话等 30 秒再动」]
+            //    去掉 2026-09-05 加的 `!m.hero`（原为「玩家自己操控故不受约束」）——
+            //    现在玩家与普通军团同规矩：攻城战开局一起按兵不动，等攻城器把墙砸塌
+            //    （defenderHolding=false）再一起开打。期间键盘输入同样不生效，因为本分支先 continue。
+            const holdSiege = this.defenderHolding && !m.siegeW;
             if (holdSiege) {
                 m.st = 0;
                 m.foe = null;
@@ -6467,7 +6457,9 @@ export class Scene13WarLayer {
             }
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
-            const holdCmd = !m.hero && this.playerCmd === 'hold' && this.playerCtlLanes.has(m.lane);
+            // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
+            //    原来写的是 `!m.hero`，本人被排除在待命之外。
+            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
             if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
@@ -6552,7 +6544,10 @@ export class Scene13WarLayer {
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
                 m.aimT = (m.aimT ?? 0) - dt;
                 if (m.aimT <= 0) {
-                    const aim = m.hero ? null : this.aimAt(m);
+                    // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
+                    //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
+                    //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
+                    const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
                     if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                     m.aimT = 0.5;
                 }

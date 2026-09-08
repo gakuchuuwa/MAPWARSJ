@@ -94,10 +94,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     JAPAN:        'INFANTRY', // 日本纯步兵
     JAPAN_ANTIQUITY:'INFANTRY',
     JAPAN_IMPERIAL:'MIXED',   // 帝国日本：武士步骑协同
-    BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
-    LINGNAN:      'INFANTRY',
-    DIANQIAN:     'ELEPHANT',
     SLAVIC:       'MIXED',   // 东欧步骑
     SLAVIC_FEUDAL: 'MIXED',
     SLAVIC_CASTLE: 'MIXED',
@@ -114,7 +111,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     BERBER:       'CAVALRY',  // 柏柏尔骆驼骑（纯骑）
     AMERICA:      'MIXED',    // 美洲步+鹰武士
     NORTHAM_IMPERIAL:'MIXED',
-    NORTHAM_FEUDAL:'MIXED',
     AFRICA:       'MIXED',    // 非洲步+骆驼
     AFRICA_IMPERIAL:'MIXED',
     AFRICA_ANTIQUITY:'MIXED',
@@ -143,7 +139,8 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     HUNS: 'CAVALRY',  // 匈人[2026-08-28]
     TEUTONS: 'MIXED',  // 条顿[2026-08-28]
     VIKINGS: 'INFANTRY',  // 维京[2026-08-28]
-    CELTS: 'INFANTRY',  // 凯尔特[2026-08-28]
+     // 凯尔特[2026-08-28]
+    CELTS_FEUDAL: 'INFANTRY',
     ITALIANS: 'INFANTRY',  // 意大利[2026-08-28]
     SICILIANS: 'MIXED',  // 西西里[2026-08-28]
     BULGARIANS: 'MIXED',  // 保加利亚[2026-08-28]
@@ -171,7 +168,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     ARMENIANS: 'MIXED',  // 亚美尼亚[2026-08-28]
     GEORGIANS: 'MIXED',  // 格鲁吉亚[2026-08-28]
     BURMESE: 'ELEPHANT',
-    WALLACHIA: 'MIXED',
     EGYPT: 'MIXED',
     CARTHAGE: 'ELEPHANT',
     BABYLON: 'MIXED',
@@ -214,7 +210,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     NABATAEANS: 'CAVALRY',
     HEPHTHALITES: 'CAVALRY',
     AINU: 'INFANTRY',
-    SWISS: 'INFANTRY',
     PASHTUN: 'CAVALRY',
     SWEDISH: 'INFANTRY',
     MACEDONIAN:   'MIXED',      // 马其顿方阵步兵+伙伴骑兵
@@ -231,7 +226,6 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     MING:            'MIXED',     // 帝国大明：火矛步骑与火器协同体系
     HUAXIA_IMPERIAL: 'MIXED',     // 帝国华夏：步骑协同体系
     DALI:            'ELEPHANT',  // 城堡大理：大理战象象步体系
-    GUSILUO:         'CAVALRY',   // 城堡角斯罗：青唐冷锻甲铁骑纯骑体系
     MAMLUKS:         'CAVALRY',   // 城堡马穆鲁克：埃及叙利亚苏丹亲卫马穆鲁克纯骑体系
     CRUSADERS:       'INFANTRY',  // 城堡十字军：步兵长剑与重装骑士鱼鳞阵
     RUS:             'INFANTRY',  // 城堡罗斯：博雅尔重骑与双手长斧步兵阵
@@ -304,7 +298,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JAPAN:        'fish_scale',   // 日本：日本武士(3) + 精锐武士主力(4) + 藤弓兵后排(2)
     JAPAN_ANTIQUITY:'fish_scale',
     JAPAN_IMPERIAL:'fish_scale',  // 帝国日本：武士抗线+精锐武士主力+火绳足轻
-    BASHU: 'echelon',   // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
+      // 古典古蜀：雁行阵 4+3+2 前排先锋重步主力
     NORTHEAST:    'crescent',   // 东北：铁浮图前卫(3) + 精锐铁浮图主力(4) + 钦察后排(2)
 
     // 三角阵 (2+3+4，尖刀先锋2 + 冲击中坚3 + 主力底边4)
@@ -313,9 +307,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     STEPPE_IMPERIAL:'triangle',
     STEPPE_ANTIQUITY:'triangle',
     STEPPE_FEUDAL:'triangle',
-    JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
-    LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
-    DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
+    JIANGNAN:     'echelon',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
+     // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     CENTRAL_ASIA_IMPERIAL: 'balance_yoke',
     CENTRAL_ASIA_ANTIQUITY: 'balance_yoke',
@@ -336,7 +329,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     BERBER:       'triangle',
     AMERICA:      'fish_scale',  // 美洲步兵主力（阿兹特克/玛雅/印加）
     NORTHAM_IMPERIAL:'fish_scale',
-    NORTHAM_FEUDAL:'fish_scale',
     AFRICA:       'fish_scale',  // 非洲步兵主力（马里/埃塞）
     AFRICA_IMPERIAL:'fish_scale',
     AFRICA_ANTIQUITY:'fish_scale',
@@ -365,7 +357,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     HUNS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     TEUTONS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
     VIKINGS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
-    CELTS: 'crane_wing',  // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
+     // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
+    CELTS_FEUDAL: 'crane_wing',
     ITALIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     SICILIANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
@@ -393,7 +386,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ARMENIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
     GEORGIANS: 'fish_scale',  // 格鲁吉亚[2026-08-28 暂复用父文化]
     BURMESE: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
-    WALLACHIA: 'crane_wing',
     EGYPT: 'echelon',
     CARTHAGE: 'crane_wing',
     BABYLON: 'balance_yoke',
@@ -436,7 +428,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NABATAEANS: 'crane_wing',   // 古典纳巴泰：鹤翼阵 2+4+3 前锋沙漠驼骑+中坚古典重装骑射主力+后排岩壁神射手
     HEPHTHALITES: 'triangle',
     AINU: 'fish_scale',
-    SWISS: 'fish_scale',
     PASHTUN: 'crescent',
     SWEDISH: 'fish_scale',
     MACEDONIAN:   'balance_yoke',    // 古典马其顿：雁行阵 4+3+2 希腊重装步兵4档主力+马其顿方阵3+伙伴骑兵2
@@ -453,7 +444,6 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     MING:            'fish_scale', // 帝国大明：鱼鳞阵 3+4+2 牌刀手3 + 黑光铠骑兵4 + 神机箭火箭车2
     HUAXIA_IMPERIAL: 'fish_scale', // 帝国华夏：鱼鳞阵 3+4+2
     DALI:            'crane_wing',   // 城堡大理：鱼鳞阵 3+4+2 战斗象3 + 越南藤弓兵精锐4 + 持盾刀剑手2
-    GUSILUO:         'triangle',     // 城堡角斯罗：锥形阵 2+3+4 贵族铁骑精锐2 + 具装铁骑3 + 骑射手4
     MAMLUKS:         'crane_wing',   // 城堡马穆鲁克：鹤翼阵 2+4+3 骆驼弓骑精锐2 + 骑士重装4 + 骆驼骑兵3
     CRUSADERS:       'fish_scale',   // 城堡十字军：鱼鳞阵 3+4+2 十字军骑士高级3 + 圣殿楷模武士4 + 十字军弩手2
     RUS:             'fish_scale',   // 城堡罗斯：鱼鳞阵 3+4+2 贵族铁骑精锐3 + 双手大剑士4 + 骑射手2
@@ -1479,13 +1469,12 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordman_unshielded', count: 2 }, // Row 0 尖刀先锋【高级】 = 华夏双手剑士高级 2人
-            { type: 'chukonu', count: 3 },                  // Row 1 齐射中坚 = 诸葛弩 3人
-            { type: 'hei_kuang_heavy', count: 4 }           // Row 2 底边主力【重装】 = 南北朝黑光铠骑兵重装 4骑
+            { type: 'liao_dao', count: 4, scale: 1 },
+            { type: 'elite_chukonu', count: 3, scale: 1 },
+            { type: 'hei_kuang_heavy', count: 2 }
         ]
     }
 ];
-
 /** 古典百越军团（雁行 4+3+2，主力在前排）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（古典越国—南越/骆越/西瓯）：
@@ -2087,10 +2076,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     STEPPE_ANTIQUITY: '古典草原军团',
     STEPPE_FEUDAL: '封建草原军团',
     HEXI: '古典秦汉军团',
-    BASHU: '古典古蜀军团',
     JIANGNAN: '封建隋唐军团',
-    LINGNAN: '古典百越军团',
-    DIANQIAN: '古典古滇军团',
     TIBET: '封建吐蕃军团',
     TIBET_CASTLE: '城堡吐蕃军团',
     TIBET_IMPERIAL: '帝国青藏军团',
@@ -2126,12 +2112,11 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     BERBER: '封建柏柏尔军团',
     AMERICA: '城堡墨西加军团',
     NORTHAM_IMPERIAL: '帝国北美军团',
-    NORTHAM_FEUDAL: '封建北美军团',
     AFRICA: '城堡曼丁哥军团',
     AFRICA_IMPERIAL: '帝国非洲军团',
     AFRICA_ANTIQUITY: '古典非洲军团',
     AFRICA_CASTLE: '城堡非洲军团',
-    MALAY: '封建马来军团',
+    MALAY: '城堡马来军团',
     SEASIA_ANTIQUITY: '古典东南亚军团',
     SEASIA_IMPERIAL: '帝国东南亚军团',
     SEASIA_CASTLE: '城堡东南亚军团',
@@ -2155,7 +2140,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HUNS: '封建匈人军团',
     TEUTONS: '城堡条顿军团',
     VIKINGS: '封建维京军团',
-    CELTS: '古典凯尔特军团',
+    CELTS_FEUDAL: '封建凯尔特军团',
     ITALIANS: '城堡意大利军团',
     SICILIANS: '城堡诺曼军团',
     BULGARIANS: '封建保加利亚军团',
@@ -2171,10 +2156,10 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     GURJARAS: '封建瞿折罗军团',
     VIETNAMESE: '城堡京族军团',
     KHMER: '城堡高棉军团',
-    MAYANS: '城堡玛雅军团',
+    MAYANS: '封建玛雅军团',
     MAPUCHE: '帝国马普切军团',
     MUISCA: '城堡穆伊斯卡军团',
-    TUPI: '城堡图皮军团',
+    TUPI: '帝国图皮军团',
     IROQUOIS: '城堡易洛魁军团',
     CHIMU: '城堡奇穆军团',
     TARASCAN: '城堡塔拉斯科军团',
@@ -2183,7 +2168,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     ARMENIANS: '古典亚美尼亚军团',
     GEORGIANS: '封建格鲁吉亚军团',
     BURMESE: '城堡缅族军团',
-    WALLACHIA: '封建瓦拉几亚军团',
     EGYPT: '古典埃及军团',
     CARTHAGE: '古典布匿军团',
     BABYLON: '古典巴比伦军团',
@@ -2226,7 +2210,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     NABATAEANS: '古典纳巴泰军团',
     HEPHTHALITES: '封建嚈哒军团',
     AINU: '城堡阿伊努军团',
-    SWISS: '城堡瑞士军团',
     PASHTUN: '帝国普什图军团',
     SWEDISH: '帝国瑞典军团',
     MACEDONIAN: '古典马其顿军团',
@@ -2238,7 +2221,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     MING: '帝国大明军团',
     HUAXIA_IMPERIAL: '帝国华夏军团',
     DALI: '城堡大理军团',
-    GUSILUO: '城堡角斯罗军团',
     MAMLUKS: '城堡马穆鲁克军团',
     CRUSADERS: '城堡十字军军团',
     RUS: '城堡罗斯军团',
@@ -3446,13 +3428,12 @@ export const SONG_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_fire_lancer', count: 4 },      // 前排主力【高级】 = 南宋火矛手高级（顺昌大捷飞火枪步骑撕裂）
-            { type: 'fire_lancer', count: 2 },            // 中军突阵 = 南宋火矛手（火矛近战喷刺）
-            { type: 'cavalier', count: 3 }               // 后排铁壁【重装】 = 骑士重装（大宋具装甲骑护卫）
+            { type: 'liao_dao', count: 4, scale: 1 },
+            { type: 'elite_fire_lancer', count: 2, scale: 1 },
+            { type: 'elite_chukonu', count: 3, scale: 1 }
         ]
     }
 ];
-
 /** 高丽 长枪兵重装抗线+铁浮屠具装铁骑突击+高丽硬弓手密集抛射（鹤翼阵 2+4+3，综合战力 69） */
 export const GORYEO_TIERS: CompositionTier[] = [
     {
@@ -3730,10 +3711,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     STEPPE_ANTIQUITY: STEPPE_TIERS,
     STEPPE_FEUDAL: STEPPE_TIERS,
     HEXI:         HEXI_TIERS,
-    BASHU:        BASHU_TIERS,
     JIANGNAN:     JIANGNAN_TIERS,
-    LINGNAN:      LINGNAN_TIERS,
-    DIANQIAN:     DIANQIAN_TIERS,
     TIBET:        TIBET_TIERS,
     TIBET_CASTLE: TIBET_TIERS,
     TIBET_IMPERIAL: TIBET_TIERS,
@@ -3764,7 +3742,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     BERBER:       BERBER_TIERS,
     AMERICA:      AMERICA_TIERS,      // ⚠️ [2026-08-24] 暂复用拉丁编成（美洲步兵），待定制
     NORTHAM_IMPERIAL: AMERICA_TIERS,
-    NORTHAM_FEUDAL: AMERICA_TIERS,
     AFRICA:       AFRICA_TIERS,     // ⚠️ [2026-08-24] 暂复用柏柏尔编成（非洲步/骆驼），待定制
     AFRICA_IMPERIAL: AFRICA_TIERS,
     AFRICA_ANTIQUITY: AFRICA_TIERS,
@@ -3793,7 +3770,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     HUNS: HUNS_TIERS,  // 匈人[2026-09-05 主人定：独立编成]
     TEUTONS: TEUTONS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用GERMANIC_TIERS，已改独立编成
     VIKINGS: VIKINGS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用SLAVIC_TIERS，已改独立编成
-    CELTS: CELTS_TIERS,  // 凯尔特[2026-08-28 暂复用父文化]
+    CELTS_FEUDAL: CELTS_TIERS,
     ITALIANS: ITALIANS_TIERS,  // 意大利[2026-08-28 暂复用父文化]
     SICILIANS: SICILIANS_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用LATIN_TIERS，已改独立编成
     BULGARIANS: BULGARIANS_TIERS,  // 保加利亚[2026-08-28 暂复用父文化]
@@ -3821,7 +3798,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     ARMENIANS: ARMENIANS_TIERS,  // 亚美尼亚[2026-08-28 暂复用父文化]
     GEORGIANS: GEORGIANS_TIERS,  // 格鲁吉亚[2026-08-28 暂复用父文化]
     BURMESE: BURMESE_TIERS,  // [2026-09-06 铁律「一文化=一军团=一编制」] 原借用DIANQIAN_TIERS，已改独立编成
-    WALLACHIA: WALLACHIA_TIERS,
     EGYPT: EGYPT_TIERS,
     CARTHAGE: CARTHAGE_TIERS,
     BABYLON: BABYLON_TIERS,
@@ -3864,7 +3840,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     NABATAEANS: NABATAEANS_TIERS,
     HEPHTHALITES: HEPHTHALITES_TIERS,
     AINU: AINU_TIERS,
-    SWISS: SWISS_TIERS,
     PASHTUN: PASHTUN_TIERS,
     SWEDISH: SWEDISH_TIERS,
     MACEDONIAN: MACEDONIAN_TIERS,
@@ -3881,7 +3856,6 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     MING: MING_TIERS,
     HUAXIA_IMPERIAL: MING_TIERS,
     DALI: DALI_TIERS,
-    GUSILUO: GUSILUO_TIERS,
     MAMLUKS: MAMLUKS_TIERS,
     CRUSADERS: CRUSADERS_TIERS,
     RUS: RUS_TIERS,

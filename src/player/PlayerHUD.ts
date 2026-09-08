@@ -284,7 +284,7 @@ export class PlayerHUD {
         }
         const tip = document.createElement('div');
         tip.style.cssText = 'font-size:12px;color:#b9ab95;margin-top:8px;border-top:1px dashed rgba(212,175,55,0.25);padding-top:5px;line-height:1.4;';
-        tip.textContent = '战术模式：WASD/方向键 移动，点地面前往；Q 全军攻击，E 待命';
+        tip.textContent = '战术模式：默认自动作战；Q 自动，E 待命；WASD/方向键 移动，点地面前往';
         this.body.appendChild(tip);
     }
 

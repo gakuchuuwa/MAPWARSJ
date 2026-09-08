@@ -86,9 +86,9 @@ export function getNavalShipDrawScale(shipId?: string): number {
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
-    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU', 'HEXI', 'SONG'] },
+    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'SONG'] },
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
-    { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DIANQIAN', 'DALI'] },
+    { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DALI'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
     { ship: 'GALLEY', why: '辽东-渤海湾小型战船：辽据辽东半岛，圣宗东征高丽须渡鸭绿江与辽东近海', regions: ['KHITAN'] },
     { ship: 'GALLEY', why: '渤海国「日本道」渡海船：靺鞨自图们江出海通日本，三十四次遣日使皆走海路', regions: ['MOHE'] },
@@ -125,7 +125,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
     { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
     { ship: 'MONOREME', why: '黑海斯基泰单列桨船：斯基泰扼塔奈斯河口与博斯普鲁斯王国合流，希腊船匠在亚速海-黑海北岸为其造桨船', regions: ['SCYTHIANS'] },
-    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['AMAZONS', 'THRACIAN', 'BULGARIANS', 'WALLACHIA', 'SERBIA'] },
+    { ship: 'LEMBOS', why: '轻型伦博斯：黑海-多瑙河沿岸快船', regions: ['AMAZONS', 'THRACIAN', 'BULGARIANS', 'SERBIA'] },
 
     // ── 拜占庭 / 东欧 ───────────────────────────────────────
     { ship: 'DROMON', why: 'DE 拜占庭专属德罗蒙：希腊火战舰', regions: ['EAST', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS'] },
@@ -135,7 +135,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
 
     // ── 北欧 / 西欧 / 中欧 / 意大利 ───────────────────────────
     { ship: 'LONGBOAT', why: 'DE 维京专属长船：龙首、可抢滩', regions: ['VIKINGS'] },
-    { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['CELTS', 'SCOTLAND'] },
+    { ship: 'ELITE_LONGBOAT', why: '盖尔长船与大洋战舟（birlinn/currach）：不列颠-爱尔兰海凯尔特传统航海长船，兼顾抢滩与远洋', regions: ['SCOTLAND'] },
     { ship: 'ELITE_CARAVEL', why: '无敌舰队精锐/意大利远洋大帆船：威尼斯/热那亚/西班牙远洋霸权', regions: ['SPANISH', 'ITALIANS', 'CASTILE', 'ARAGON'] },
     { ship: 'CARAVEL', why: '卡拉维尔/西欧风帆战舰：英吉利/北海/大西洋十字纹大风帆主力', regions: ['BRITONS', 'BURGUNDIANS', 'POLES', 'LITHUANIANS', 'PORTUGUESE', 'TEUTONS', 'CRUSADERS', 'HRE'] },
     { ship: 'CARAVEL', why: '法兰西风帆战舰：一三四〇年斯勒伊斯海战的法国舰队，与地中海桨帆分队并立', regions: ['FRENCH'] },
@@ -162,7 +162,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'GUSILUO', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE'] },
     { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },

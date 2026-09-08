@@ -85,7 +85,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     // 日耳曼系 → GERMANIC（条顿/维京/凯尔特/马扎尔/波希米亚/勃艮第/不列颠）
     TEUTONS: 'GERMANIC',
     VIKINGS: 'GERMANIC',
-    CELTS: 'GERMANIC',
     MAGYAR: 'GERMANIC',
     BOHEMIANS: 'GERMANIC',
     BURGUNDIANS: 'GERMANIC',
@@ -116,7 +115,6 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     CUMAN: 'STEPPE',         // 库曼/钦察 → 草原游牧
     PURU: 'INDIA',           // 南印度 → 印度
     ORIE: 'WEST_ASIA',       // 阿拉伯 → 西亚
-    WALLACHIA: 'SLAVIC',         // 瓦拉几亚 → 沿用现有斯拉夫立绘池
     EGYPT: 'WEST_ASIA',          // 埃及 → 西亚立绘池（古埃及将领图在WEST_ASIA）
     CARTHAGE: 'BERBER',          // 迦太基 → 柏柏尔立绘池（布匿/汉尼拔图在BERBER）
     BABYLON: 'WEST_ASIA',        // 巴比伦 → 西亚立绘池（两河将领图在WEST_ASIA）
@@ -127,7 +125,7 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     FRANKS: 'GERMANIC',          // 法兰克 → 日耳曼立绘池（西欧重装骑士图在GERMANIC）
     SASANIAN: 'PERSIAN',         // 萨珊 → 波斯立绘池（萨珊帝国将领图在PERSIAN/CENTRAL_ASIA）
     TURKS: 'STEPPE',             // 突厥 → 草原立绘池（突厥狼骑将领图在STEPPE）
-    NANZHAO: 'DIANQIAN',         // 南诏 → 滇黔立绘池（南诏统帅图在DIANQIAN）
+    NANZHAO: 'MALAY',         // 南诏 → 东南亚立绘池（南诏统帅图）
     SRIVIJAYA: 'MALAY',          // 三佛齐 → 马来立绘池（室利佛逝南洋将领图在MALAY）
     KUSHAN: 'CENTRAL_ASIA',      // 贵霜 → 中亚立绘池（犍陀罗中亚将领图在CENTRAL_ASIA）
     KUSH: 'AFRICA',              // 库施 → 非洲立绘池（努比亚黑金字塔将领图在AFRICA）
@@ -205,8 +203,8 @@ const KNOWN_PORTRAIT_PATHS = new Set(
 
 /** 旧拼音夹名 → 文化区池（政权 FACTION 映射仍引用这些变量，物理文件已迁入区名夹） */
 const _zhongyuanPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
-const _shuguoPortraitPool = REGION_PORTRAIT_POOLS.BASHU;
-const _dianmianPortraitPool = REGION_PORTRAIT_POOLS.DIANQIAN;
+const _shuguoPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
+const _dianmianPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
 const _xiyuPortraitPool = REGION_PORTRAIT_POOLS.WESTERN;
 const _hexiPortraitPool = REGION_PORTRAIT_POOLS.HEXI;
 const _tuboPortraitPool = REGION_PORTRAIT_POOLS.TIBET;
@@ -216,8 +214,8 @@ const _chaoxianPortraitPool = REGION_PORTRAIT_POOLS.KOREA;
 const _ribenPortraitPool = REGION_PORTRAIT_POOLS.JAPAN;
 const _zhongyaPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL_ASIA;
 const _jiangnanPortraitPool = REGION_PORTRAIT_POOLS.JIANGNAN;
-const _lingnanPortraitPool = REGION_PORTRAIT_POOLS.LINGNAN;
-const _guangzhouPortraitPool = REGION_PORTRAIT_POOLS.LINGNAN;
+const _lingnanPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
+const _guangzhouPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
 const _beifangPortraitPool = REGION_PORTRAIT_POOLS.NORTH;
 
 // ── 政权专属立绘（夹名保持政权/史料专夹，不走 14 区重命名）──
