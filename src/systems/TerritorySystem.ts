@@ -197,7 +197,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     parts.push(
-        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
 
@@ -346,128 +346,128 @@ const DE_STONE_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; p
         SE: { pctX: 57.5, pctY: 76.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/AFRI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 65.1, pctY: 82.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_WALL_POST/preview.png' },
         GATE: { pctX: 58.1, pctY: 73.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/AFRI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 72.2, pctY: 87.9, widthFactor: 0.349, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.7, pctY: 89.4, widthFactor: 0.356, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 72.2, pctY: 87.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 89.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/AFRI_TOWER_AGE4/preview.png' },
     },
     ANDE: {
         NE: { pctX: 60.2, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.3, pctY: 75.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ANDE_WALL_STONE_SE/preview.png' },
         POST: { pctX: 64.9, pctY: 85.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_WALL_POST/preview.png' },
         GATE: { pctX: 57.7, pctY: 75.0, widthFactor: 0.34, path: '/SUCAI_BUILDING/ANDE_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 65.3, pctY: 85.5, widthFactor: 0.317, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.0, pctY: 86.6, widthFactor: 0.323, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 65.3, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.0, pctY: 86.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/ANDE_TOWER_AGE4/preview.png' },
     },
     ASIA: {
         NE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_NE/preview.png' },
         SE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ASIA_WALL_STONE_SE/preview.png' },
         POST: { pctX: 66.9, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_WALL_POST/preview.png' },
         GATE: { pctX: 58.8, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/ASIA_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 66.7, pctY: 88.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.1, pctY: 87.1, widthFactor: 0.381, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 66.7, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.1, pctY: 87.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ASIA_TOWER_AGE4/preview.png' },
     },
     CEAS: {
         NE: { pctX: 60.0, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.6, pctY: 77.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/CEAS_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.6, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.6, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/CEAS_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 72.3, pctY: 87.9, widthFactor: 0.304, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.9, pctY: 89.2, widthFactor: 0.31, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 72.3, pctY: 87.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.9, pctY: 89.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/CEAS_TOWER_AGE4/preview.png' },
     },
     EAST: {
         NE: { pctX: 60.7, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.2, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/EAST_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.5, pctY: 86.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/EAST_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 71.2, pctY: 88.5, widthFactor: 0.336, path: '/SUCAI_BUILDING/EAST_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 68.5, pctY: 88.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/EAST_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 88.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/EAST_TOWER_AGE4/preview.png' },
     },
     INDI: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.9, pctY: 78.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/INDI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.8, pctY: 84.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.1, pctY: 74.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/INDI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 71.2, pctY: 89.1, widthFactor: 0.336, path: '/SUCAI_BUILDING/INDI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 73.6, pctY: 89.1, widthFactor: 0.343, path: '/SUCAI_BUILDING/INDI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 71.2, pctY: 89.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 73.6, pctY: 89.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/INDI_TOWER_AGE4/preview.png' },
     },
     MEDI: {
         NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/MEDI_WALL_STONE_SE/preview.png' },
         POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_WALL_POST/preview.png' },
         GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/MEDI_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.2, pctY: 87.0, widthFactor: 0.304, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.0, pctY: 87.5, widthFactor: 0.323, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 87.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.0, pctY: 87.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/MEDI_TOWER_AGE4/preview.png' },
     },
     MESO: {
         NE: { pctX: 59.0, pctY: 76.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_NE/preview.png' },
         SE: { pctX: 59.8, pctY: 76.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/MESO_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.7, pctY: 84.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_WALL_POST/preview.png' },
         GATE: { pctX: 59.5, pctY: 75.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/MESO_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.2, pctY: 86.6, widthFactor: 0.336, path: '/SUCAI_BUILDING/MESO_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.7, pctY: 84.1, widthFactor: 0.349, path: '/SUCAI_BUILDING/MESO_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.2, pctY: 86.6, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 84.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/MESO_TOWER_AGE4/preview.png' },
     },
     ORIE: {
         NE: { pctX: 61.0, pctY: 78.5, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 77.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/ORIE_WALL_STONE_SE/preview.png' },
         POST: { pctX: 69.9, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_WALL_POST/preview.png' },
         GATE: { pctX: 60.5, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/ORIE_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.1, pctY: 87.1, widthFactor: 0.356, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 66.7, pctY: 90.3, widthFactor: 0.349, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.1, pctY: 87.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 66.7, pctY: 90.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/ORIE_TOWER_AGE4/preview.png' },
     },
     PERSIAN: {
         NE: { pctX: 63.3, pctY: 79.7, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.8, pctY: 80.3, widthFactor: 0.16, path: '/SUCAI_BUILDING/PERSIAN_WALL_STONE_SE/preview.png' },
         POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_WALL_POST/preview.png' },
         GATE: { pctX: 58.9, pctY: 74.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/PERSIAN_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.2, pctY: 86.4, widthFactor: 0.368, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.375, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.2, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/PERSIAN_TOWER_AGE4/preview.png' },
     },
     PURU: {
         NE: { pctX: 60.9, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.4, pctY: 77.2, widthFactor: 0.16, path: '/SUCAI_BUILDING/PURU_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.3, pctY: 86.2, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_WALL_POST/preview.png' },
         GATE: { pctX: 57.9, pctY: 76.2, widthFactor: 0.34, path: '/SUCAI_BUILDING/PURU_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 69.6, pctY: 85.5, widthFactor: 0.362, path: '/SUCAI_BUILDING/PURU_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 72.7, pctY: 88.1, widthFactor: 0.356, path: '/SUCAI_BUILDING/PURU_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 69.6, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 72.7, pctY: 88.1, widthFactor: 0.18, path: '/SUCAI_BUILDING/PURU_TOWER_AGE4/preview.png' },
     },
     SEAS: {
         NE: { pctX: 56.1, pctY: 77.4, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_NE/preview.png' },
         SE: { pctX: 57.6, pctY: 76.6, widthFactor: 0.16, path: '/SUCAI_BUILDING/SEAS_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.3, pctY: 85.9, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_WALL_POST/preview.png' },
         GATE: { pctX: 59.0, pctY: 76.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/SEAS_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 68.0, pctY: 87.3, widthFactor: 0.323, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.8, pctY: 88.7, widthFactor: 0.343, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 68.0, pctY: 87.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.8, pctY: 88.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/SEAS_TOWER_AGE4/preview.png' },
     },
     SLAV: {
         NE: { pctX: 62.8, pctY: 80.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_NE/preview.png' },
         SE: { pctX: 62.6, pctY: 80.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/SLAV_WALL_STONE_SE/preview.png' },
         POST: { pctX: 67.5, pctY: 86.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_WALL_POST/preview.png' },
         GATE: { pctX: 59.7, pctY: 77.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/SLAV_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 65.4, pctY: 89.4, widthFactor: 0.336, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 68.5, pctY: 89.0, widthFactor: 0.349, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 65.4, pctY: 89.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 68.5, pctY: 89.0, widthFactor: 0.18, path: '/SUCAI_BUILDING/SLAV_TOWER_AGE4/preview.png' },
     },
     WEST: {
         NE: { pctX: 60.7, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_NE/preview.png' },
         SE: { pctX: 60.6, pctY: 78.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/WEST_WALL_STONE_SE/preview.png' },
         POST: { pctX: 68.1, pctY: 85.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_WALL_POST/preview.png' },
         GATE: { pctX: 59.9, pctY: 75.6, widthFactor: 0.34, path: '/SUCAI_BUILDING/WEST_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.8, pctY: 87.5, widthFactor: 0.31, path: '/SUCAI_BUILDING/WEST_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.6, pctY: 87.7, widthFactor: 0.297, path: '/SUCAI_BUILDING/WEST_TOWER_AGE4/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.6, pctY: 87.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/WEST_TOWER_AGE4/preview.png' },
     },
     GREEK: {
-        NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_NE/preview.png' },
-        SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
-        GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/GREEK_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 68.4, pctY: 86.4, widthFactor: 0.368, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.375, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE4/preview.png' },
+        NE: { pctX: 60.6, pctY: 78.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_NE/preview.png' },
+        SE: { pctX: 60.0, pctY: 78.1, widthFactor: 0.16, path: '/SUCAI_BUILDING/GREEK_WALL_STONE_SE/preview.png' },
+        POST: { pctX: 66.7, pctY: 84.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_WALL_POST/preview.png' },
+        GATE: { pctX: 59.7, pctY: 74.1, widthFactor: 0.34, path: '/SUCAI_BUILDING/GREEK_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 68.4, pctY: 86.4, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 69.0, pctY: 86.8, widthFactor: 0.18, path: '/SUCAI_BUILDING/GREEK_TOWER_AGE4/preview.png' },
     },
     THRACIAN: {
-        NE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_NE/preview.png' },
-        SE: { pctX: 62.1, pctY: 79.8, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_SE/preview.png' },
-        POST: { pctX: 69.7, pctY: 85.5, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
-        GATE: { pctX: 59.8, pctY: 75.4, widthFactor: 0.34, path: '/SUCAI_BUILDING/THRACIAN_GATE_STONE_NE/preview.png' },
-        TOWER_AGE3: { pctX: 70.8, pctY: 87.3, widthFactor: 0.31, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE3/preview.png' },
-        TOWER_AGE4: { pctX: 71.2, pctY: 87.7, widthFactor: 0.336, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE4/preview.png' },
+        NE: { pctX: 55.8, pctY: 72.9, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_NE/preview.png' },
+        SE: { pctX: 57.4, pctY: 74.0, widthFactor: 0.16, path: '/SUCAI_BUILDING/THRACIAN_WALL_STONE_SE/preview.png' },
+        POST: { pctX: 64.1, pctY: 83.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_WALL_POST/preview.png' },
+        GATE: { pctX: 57.2, pctY: 73.3, widthFactor: 0.34, path: '/SUCAI_BUILDING/THRACIAN_GATE_STONE_NE/preview.png' },
+        TOWER_AGE3: { pctX: 70.8, pctY: 87.3, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE3/preview.png' },
+        TOWER_AGE4: { pctX: 71.2, pctY: 87.7, widthFactor: 0.18, path: '/SUCAI_BUILDING/THRACIAN_TOWER_AGE4/preview.png' },
     },
 };
 
@@ -813,6 +813,15 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     const parts: string[] = [];
 
+    // [2026-09-08 主人定] 小城底层菱形 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（S=5, AX=10）
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const AX = 10;
+    const rX = AX * stepX, rY = AX * stepY;
+    const fullGW = rX * 2.8, fullGH = rY * 5.6;
+    parts.push(
+        `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>`
+    );
+
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
     const centerW = baseSize * (centerCastle ? 0.68 : (DE_BUILDING_SCALES[centerB] || 0.4));
@@ -820,7 +829,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     parts.push(
-        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
         `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE${centerCastle ? 3 : 2}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
@@ -902,7 +911,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
     parts.push(
-        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:99;opacity:0.92;pointer-events:none;" />`
+        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
         `<img src="/SUCAI_BUILDING/${centerB}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
