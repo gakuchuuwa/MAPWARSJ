@@ -1480,40 +1480,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "雅典-以弗所",
-                type: "sea",
-                id: "sea_city_yadian_city_yifusuo_1788082731952",
-                startConnection: "city_yadian",
-                endConnection: "city_yifusuo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.72, 37.98],
-                    [23.6425, 37.8192],
-                    [23.885914, 37.616154],
-                    [24.063647, 37.62149800000001],
-                    [24.083063, 37.715634],
-                    [24.114615, 37.769372],
-                    [24.372282, 37.856919],
-                    [24.520041, 37.90673000000001],
-                    [24.537948, 37.902017],
-                    [24.612093, 37.988022],
-                    [24.849245, 38.014229],
-                    [25.538027, 38.090345],
-                    [25.764817, 38.115406],
-                    [25.916846, 38.132207],
-                    [25.989139, 38.080913],
-                    [26.126767, 38.210142],
-                    [26.172739, 38.253308],
-                    [26.951817, 37.765535],
-                    [27.34, 37.94],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "雅典-诺索斯",
                 type: "sea",
                 id: "sea_city_yadian_city_knossos_1788082742241",
@@ -1804,57 +1770,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [25.090282, 36.883539],
                     [25.257671, 36.849342],
                     [25.53, 36.965],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "希马鲁塔-罗得城",
-                type: "sea",
-                id: "sea_city_chimarros_city_rhodes_1788082979512",
-                startConnection: "city_chimarros",
-                endConnection: "city_rhodes"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.53, 36.965],
-                    [25.507264, 36.798352],
-                    [25.794122, 36.73974900000001],
-                    [26.478546, 36.667753],
-                    [26.649029, 36.62852],
-                    [27.002784, 36.547109],
-                    [27.401862, 36.520229],
-                    [27.871663, 36.48859],
-                    [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "希马鲁塔-以弗所",
-                type: "sea",
-                id: "sea_city_chimarros_city_yifusuo_1788082985978",
-                startConnection: "city_chimarros",
-                endConnection: "city_yifusuo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.53, 36.965],
-                    [25.31357, 37.123878],
-                    [25.525085, 37.251137],
-                    [25.538442, 37.285018],
-                    [25.706749, 37.71193800000001],
-                    [25.76963, 37.905616],
-                    [25.93489, 38.029975],
-                    [25.989139, 38.080913],
-                    [26.126767, 38.210142],
-                    [26.172739, 38.253308],
-                    [26.951817, 37.765535],
-                    [27.34, 37.94],
                 ]
             }
         },
@@ -3628,28 +3543,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "威尼斯-拉文纳",
-                type: "sea",
-                id: "sea_city_venice_city_ravenna_1788229380306",
-                startConnection: "city_venice",
-                endConnection: "city_ravenna"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [12.31, 45.44],
-                    [12.381121, 45.077311],
-                    [12.775514, 45.124423],
-                    [12.669433, 44.934376],
-                    [12.629892, 44.863538],
-                    [12.367772, 44.76023],
-                    [12.2, 44.41],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "威尼斯-拉古萨",
                 type: "sea",
                 id: "sea_city_venice_city_ragusa_1788229383577",
@@ -5321,6 +5214,864 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-4.736989, 53.596254],
                     [-5.7, 53.4],
                     [-6.26, 53.34],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哈利卡纳苏斯-罗得城",
+                type: "sea",
+                id: "sea_city_halikanasu_city_rhodes_1788854782782",
+                startConnection: "city_halikanasu",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.43, 37.03],
+                    [27.364413, 36.809881],
+                    [27.344997, 36.700987],
+                    [27.405673, 36.63869300000001],
+                    [27.871663, 36.48859],
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "以弗所-希马鲁塔",
+                type: "sea",
+                id: "sea_city_yifusuo_city_chimarros_1788854801970",
+                startConnection: "city_yifusuo",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.34, 37.94],
+                    [26.951817, 37.765535],
+                    [26.172739, 38.253308],
+                    [26.126767, 38.210142],
+                    [25.989139, 38.080913],
+                    [25.93489, 38.029975],
+                    [25.76963, 37.905616],
+                    [25.706749, 37.71193800000001],
+                    [25.538442, 37.285018],
+                    [25.525085, 37.251137],
+                    [25.31357, 37.123878],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡里斯托斯-提洛",
+                type: "sea",
+                id: "sea_city_kalisituosi_city_tiluo_1788854826943",
+                startConnection: "city_kalisituosi",
+                endConnection: "city_tiluo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 38.01],
+                    [24.537948, 37.902017],
+                    [24.606498, 37.883974],
+                    [24.728654, 37.85182300000001],
+                    [25.172635, 37.48347900000001],
+                    [25.27, 37.39],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "提洛-希马鲁塔",
+                type: "sea",
+                id: "sea_city_tiluo_city_chimarros_1788854828374",
+                startConnection: "city_tiluo",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.27, 37.39],
+                    [25.145718, 37.292709],
+                    [25.525085, 37.251137],
+                    [25.31357, 37.123878],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希马鲁塔-罗得城",
+                type: "sea",
+                id: "sea_city_chimarros_city_rhodes_1788854832230",
+                startConnection: "city_chimarros",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.53, 36.965],
+                    [25.507264, 36.798352],
+                    [25.794122, 36.73974900000001],
+                    [26.478546, 36.667753],
+                    [26.649029, 36.62852],
+                    [27.002784, 36.547109],
+                    [27.401862, 36.520229],
+                    [27.871663, 36.48859],
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "希马鲁塔-哈利卡纳苏斯",
+                type: "sea",
+                id: "sea_city_chimarros_city_halikanasu_1788854834313",
+                startConnection: "city_chimarros",
+                endConnection: "city_halikanasu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.53, 36.965],
+                    [25.31357, 37.123878],
+                    [25.525085, 37.251137],
+                    [25.538442, 37.285018],
+                    [26.023353, 37.283125],
+                    [26.177005, 37.278399],
+                    [26.430146, 37.266748],
+                    [26.938326, 37.243358],
+                    [27.517316, 37.216708],
+                    [27.43, 37.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "提洛-哈利卡纳苏斯",
+                type: "sea",
+                id: "sea_city_tiluo_city_halikanasu_1788854838390",
+                startConnection: "city_tiluo",
+                endConnection: "city_halikanasu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.27, 37.39],
+                    [25.145718, 37.292713],
+                    [25.538442, 37.285018],
+                    [26.023353, 37.283125],
+                    [26.177005, 37.278399],
+                    [26.430146, 37.266748],
+                    [26.938326, 37.243358],
+                    [27.517316, 37.216708],
+                    [27.43, 37.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "提洛-以弗所",
+                type: "sea",
+                id: "sea_city_tiluo_city_yifusuo_1788854839791",
+                startConnection: "city_tiluo",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.27, 37.39],
+                    [25.172635, 37.48347900000001],
+                    [25.420359, 37.642786],
+                    [25.657886, 37.82152700000001],
+                    [25.76963, 37.905616],
+                    [25.93489, 38.029975],
+                    [25.989139, 38.080913],
+                    [26.126767, 38.210142],
+                    [26.172739, 38.253308],
+                    [26.951817, 37.765535],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡里斯托斯-克拉佐美奈",
+                type: "sea",
+                id: "sea_city_kalisituosi_city_kelazuomeinai_1788854841497",
+                startConnection: "city_kalisituosi",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 38.01],
+                    [24.612093, 37.988022],
+                    [24.6863, 38.0741],
+                    [25.432437, 38.327161],
+                    [25.753004, 38.636582],
+                    [26.157985, 38.716479],
+                    [26.289642, 38.78712500000001],
+                    [26.53194, 38.694131],
+                    [26.677562, 38.603147],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡里斯托斯-以弗所",
+                type: "sea",
+                id: "sea_city_kalisituosi_city_yifusuo_1788854843049",
+                startConnection: "city_kalisituosi",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 38.01],
+                    [24.612093, 37.988022],
+                    [24.849245, 38.014229],
+                    [25.538027, 38.090345],
+                    [25.764817, 38.115406],
+                    [25.916846, 38.132207],
+                    [25.989139, 38.080913],
+                    [26.126767, 38.210142],
+                    [26.172739, 38.253308],
+                    [26.951817, 37.765535],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡里斯托斯-佩尔加蒙",
+                type: "sea",
+                id: "sea_city_kalisituosi_city_peierjiameng_1788854845013",
+                startConnection: "city_kalisituosi",
+                endConnection: "city_peierjiameng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.42, 38.01],
+                    [24.612093, 37.988022],
+                    [24.6863, 38.0741],
+                    [25.432437, 38.327161],
+                    [25.753004, 38.636582],
+                    [26.157985, 38.716479],
+                    [26.289642, 38.78712500000001],
+                    [26.5, 38.9],
+                    [27.18, 39.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安提瓦里-科孚",
+                type: "sea",
+                id: "sea_city_antiwali_city_kefu_1788855035200",
+                startConnection: "city_antiwali",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.1, 42.1],
+                    [19.476562, 41.76159],
+                    [19.3944, 41.2626],
+                    [19.104583, 40.581085],
+                    [19.076028, 40.513936],
+                    [19.058808, 40.473442],
+                    [19.011287, 40.361696],
+                    [19.9547, 39.81410000000001],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安提瓦里-拉古萨",
+                type: "sea",
+                id: "sea_city_antiwali_city_ragusa_1788855037959",
+                startConnection: "city_antiwali",
+                endConnection: "city_ragusa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.1, 42.1],
+                    [18.562221, 42.236046],
+                    [18.538505, 42.386023],
+                    [18.09, 42.65],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安提瓦里-塔兰托",
+                type: "sea",
+                id: "sea_city_antiwali_city_talanduo_1788855040506",
+                startConnection: "city_antiwali",
+                endConnection: "city_talanduo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.1, 42.1],
+                    [18.612901, 41.915558],
+                    [18.658023, 41.630215],
+                    [18.678545, 41.50043800000001],
+                    [18.507903, 41.229771],
+                    [18.3, 40.9],
+                    [18.264508, 40.872091],
+                    [18.104545, 40.746307],
+                    [17.24, 40.47],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安提瓦里-拉文纳",
+                type: "sea",
+                id: "sea_city_antiwali_city_ravenna_1788855047178",
+                startConnection: "city_antiwali",
+                endConnection: "city_ravenna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.1, 42.1],
+                    [18.562221, 42.236046],
+                    [18.51642, 42.248419],
+                    [18.047817, 42.375008],
+                    [17.84558, 42.42964],
+                    [16.611248, 42.763618],
+                    [16.054971, 42.929323],
+                    [15.704769, 42.939026],
+                    [15.396206, 42.947575],
+                    [14.993057, 42.958745],
+                    [14.196682, 43.496836],
+                    [13.932002, 43.675674],
+                    [13.673727, 43.70183200000001],
+                    [13.201458, 43.907001],
+                    [13.019431, 44.027532],
+                    [12.890798, 44.10600800000001],
+                    [12.687836, 44.216466],
+                    [12.2, 44.41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉古萨-拉文纳",
+                type: "sea",
+                id: "sea_city_ragusa_city_ravenna_1788855050388",
+                startConnection: "city_ragusa",
+                endConnection: "city_ravenna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [18.09, 42.65],
+                    [17.84558, 42.42964],
+                    [16.611248, 42.763618],
+                    [16.054971, 42.929323],
+                    [15.704769, 42.939026],
+                    [15.396206, 42.947575],
+                    [14.993057, 42.958745],
+                    [14.196682, 43.496836],
+                    [13.932002, 43.675674],
+                    [13.673727, 43.70183200000001],
+                    [13.201458, 43.907001],
+                    [13.019431, 44.027532],
+                    [12.890798, 44.10600800000001],
+                    [12.687836, 44.216466],
+                    [12.2, 44.41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "威尼斯-拉文纳",
+                type: "sea",
+                id: "sea_city_venice_city_ravenna_1788855052018",
+                startConnection: "city_venice",
+                endConnection: "city_ravenna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.31, 45.44],
+                    [12.381121, 45.077311],
+                    [12.775514, 45.124423],
+                    [12.669433, 44.934376],
+                    [12.629892, 44.863538],
+                    [12.367772, 44.76023],
+                    [12.2, 44.41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "威尼斯-安提瓦里",
+                type: "sea",
+                id: "sea_city_venice_city_antiwali_1788855053998",
+                startConnection: "city_venice",
+                endConnection: "city_antiwali"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.31, 45.44],
+                    [12.911428, 45.540728],
+                    [13.1, 45.3],
+                    [13.391686, 45.073133],
+                    [13.671293, 44.855661],
+                    [13.725541, 44.813468],
+                    [14, 44.6],
+                    [14.188601, 44.458549],
+                    [14.8, 44],
+                    [15.038754, 43.801038],
+                    [15.362021, 43.531649],
+                    [15.940817, 43.049319],
+                    [16.035233, 43.00063],
+                    [16.054971, 42.929323],
+                    [16.611248, 42.763618],
+                    [17.84558, 42.42964],
+                    [18.047817, 42.375008],
+                    [18.51642, 42.248419],
+                    [18.562221, 42.236046],
+                    [19.1, 42.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥林索斯-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_aolinsuosi_city_kalisituosi_1788855087205",
+                startConnection: "city_aolinsuosi",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.35, 40.29],
+                    [23.384156, 39.91289600000001],
+                    [23.17973, 39.81610100000001],
+                    [23.878784, 39.069313],
+                    [24.1753, 38.80960000000001],
+                    [24.350414, 38.557553],
+                    [24.657285, 38.115863],
+                    [24.6863, 38.0741],
+                    [24.612093, 37.988022],
+                    [24.42, 38.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥林索斯-特洛伊",
+                type: "sea",
+                id: "sea_city_aolinsuosi_city_teluoyi_1788855088815",
+                startConnection: "city_aolinsuosi",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.35, 40.29],
+                    [23.384156, 39.91289600000001],
+                    [23.879193, 39.87940900000001],
+                    [24.489301, 39.944518],
+                    [24.95604, 39.994326],
+                    [25.012617, 40.000364],
+                    [25.18931, 40.02138],
+                    [25.636365, 40.074552],
+                    [26.23, 39.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩拉-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_salonica_city_kalisituosi_1788855094298",
+                startConnection: "city_salonica",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.5192, 40.76],
+                    [22.8, 40.20000000000001],
+                    [23.17973, 39.81610100000001],
+                    [23.878784, 39.069313],
+                    [24.1753, 38.80960000000001],
+                    [24.350414, 38.557553],
+                    [24.657285, 38.115863],
+                    [24.6863, 38.0741],
+                    [24.612093, 37.988022],
+                    [24.42, 38.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩拉-克拉佐美奈",
+                type: "sea",
+                id: "sea_city_salonica_city_kelazuomeinai_1788855104135",
+                startConnection: "city_salonica",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.5192, 40.76],
+                    [22.871974, 40.252748],
+                    [23.384156, 39.91289600000001],
+                    [24.533054, 39.466082],
+                    [24.906079, 39.32101],
+                    [25.337942, 39.153055],
+                    [25.4689, 39.102125],
+                    [25.517867, 39.083332],
+                    [25.711847, 39.008882],
+                    [26.022956, 38.889479],
+                    [26.289642, 38.78712500000001],
+                    [26.53194, 38.694131],
+                    [26.677562, 38.603147],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥林索斯-克拉佐美奈",
+                type: "sea",
+                id: "sea_city_aolinsuosi_city_kelazuomeinai_1788855106263",
+                startConnection: "city_aolinsuosi",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.35, 40.29],
+                    [23.384156, 39.91289600000001],
+                    [24.533054, 39.466082],
+                    [24.906079, 39.32101],
+                    [25.337942, 39.153055],
+                    [25.4689, 39.102125],
+                    [25.517867, 39.083332],
+                    [25.711847, 39.008882],
+                    [26.022956, 38.889479],
+                    [26.289642, 38.78712500000001],
+                    [26.53194, 38.694131],
+                    [26.677562, 38.603147],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩拉-雅典",
+                type: "sea",
+                id: "sea_city_salonica_city_yadian_1788855123167",
+                startConnection: "city_salonica",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.5192, 40.76],
+                    [22.8, 40.20000000000001],
+                    [23.17973, 39.81610100000001],
+                    [23.878784, 39.069313],
+                    [24.1753, 38.80960000000001],
+                    [24.350414, 38.557553],
+                    [24.657285, 38.115863],
+                    [24.520041, 37.90673000000001],
+                    [24.372282, 37.856919],
+                    [24.114615, 37.769372],
+                    [24.083063, 37.715634],
+                    [24.063647, 37.62149800000001],
+                    [23.888901, 37.61587500000001],
+                    [23.6425, 37.8192],
+                    [23.72, 37.98],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩拉-以弗所",
+                type: "sea",
+                id: "sea_city_salonica_city_yifusuo_1788855126258",
+                startConnection: "city_salonica",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.5192, 40.76],
+                    [22.871974, 40.252748],
+                    [23.384156, 39.91289600000001],
+                    [24.533054, 39.466082],
+                    [24.906079, 39.32101],
+                    [25.337942, 39.153055],
+                    [25.4689, 39.102125],
+                    [25.517867, 39.083332],
+                    [25.711847, 39.008882],
+                    [26.022956, 38.889479],
+                    [26.289642, 38.78712500000001],
+                    [26.53194, 38.694131],
+                    [26.677562, 38.603147],
+                    [26.825612, 38.456953],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "以弗所-雅典",
+                type: "sea",
+                id: "sea_city_yifusuo_city_yadian_1788855131677",
+                startConnection: "city_yifusuo",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.34, 37.94],
+                    [26.951817, 37.765535],
+                    [26.172739, 38.253308],
+                    [26.126767, 38.210142],
+                    [25.989139, 38.080913],
+                    [25.916846, 38.132207],
+                    [25.764817, 38.115406],
+                    [25.538027, 38.090345],
+                    [24.849245, 38.014229],
+                    [24.612093, 37.988022],
+                    [24.537948, 37.902017],
+                    [24.520041, 37.90673000000001],
+                    [24.372282, 37.856919],
+                    [24.114615, 37.769372],
+                    [24.083063, 37.715634],
+                    [24.063647, 37.62149800000001],
+                    [23.888901, 37.61587500000001],
+                    [23.6425, 37.8192],
+                    [23.72, 37.98],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-羊河",
+                type: "sea",
+                id: "sea_city_junshitandingbao_city_yanghe_1788855186215",
+                startConnection: "city_junshitandingbao",
+                endConnection: "city_yanghe"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [28.977708, 40.971568],
+                    [28.501542, 40.82216],
+                    [28.449481, 40.805825],
+                    [27.277634, 40.60495],
+                    [26.61, 40.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "羊河-特洛伊",
+                type: "sea",
+                id: "sea_city_yanghe_city_teluoyi_1788855191771",
+                startConnection: "city_yanghe",
+                endConnection: "city_teluoyi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.61, 40.36],
+                    [26.2, 40.1],
+                    [26.143615, 39.992927],
+                    [26.23, 39.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-佩拉",
+                type: "sea",
+                id: "sea_city_teluoyi_city_salonica_1788855194386",
+                startConnection: "city_teluoyi",
+                endConnection: "city_salonica"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [25.636365, 40.074552],
+                    [25.18931, 40.02138],
+                    [25.012617, 40.000364],
+                    [24.95604, 39.994326],
+                    [24.489301, 39.944518],
+                    [23.879193, 39.87940900000001],
+                    [23.384156, 39.91289600000001],
+                    [22.871974, 40.252748],
+                    [22.5192, 40.76],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_teluoyi_city_kalisituosi_1788855197438",
+                startConnection: "city_teluoyi",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [25.766724, 39.666724],
+                    [25.700208, 39.600208],
+                    [25.5, 39.4],
+                    [25.337942, 39.153055],
+                    [24.657285, 38.115863],
+                    [24.6863, 38.0741],
+                    [24.612093, 37.988022],
+                    [24.42, 38.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-以弗所",
+                type: "sea",
+                id: "sea_city_teluoyi_city_yifusuo_1788855199795",
+                startConnection: "city_teluoyi",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [25.766724, 39.666724],
+                    [25.764313, 39.573574],
+                    [25.737168, 39.281416],
+                    [25.825253, 39.23737400000001],
+                    [25.830528, 39.136019],
+                    [26.289027, 38.78756700000001],
+                    [26.53194, 38.694131],
+                    [26.677562, 38.603147],
+                    [26.825612, 38.456953],
+                    [27.34, 37.94],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特洛伊-雅典",
+                type: "sea",
+                id: "sea_city_teluoyi_city_yadian_1788855204963",
+                startConnection: "city_teluoyi",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [25.766724, 39.666724],
+                    [25.700208, 39.600208],
+                    [25.5, 39.4],
+                    [25.337942, 39.153055],
+                    [24.657285, 38.115863],
+                    [24.520041, 37.90673000000001],
+                    [24.372282, 37.856919],
+                    [24.114615, 37.769372],
+                    [24.083063, 37.715634],
+                    [24.063647, 37.62149800000001],
+                    [23.888901, 37.61587500000001],
+                    [23.6425, 37.8192],
+                    [23.72, 37.98],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-达斯基利翁",
+                type: "sea",
+                id: "sea_city_junshitandingbao_city_dasijiliweng_1788855226695",
+                startConnection: "city_junshitandingbao",
+                endConnection: "city_dasijiliweng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [28.977708, 40.971568],
+                    [28.87552, 40.769296],
+                    [28.746305, 40.51352700000001],
+                    [28.0504, 40.1322],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-布尔萨",
+                type: "sea",
+                id: "sea_city_junshitandingbao_city_buersa_1788855234069",
+                startConnection: "city_junshitandingbao",
+                endConnection: "city_buersa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [28.977708, 40.971568],
+                    [29.2382, 40.7382],
+                    [29.06, 40.18],
                 ]
             }
         },
