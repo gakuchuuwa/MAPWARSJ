@@ -228,6 +228,10 @@
   .bldg-tag.st-DAMAGED { background:#744210; color:#faf089; }
   .bldg-tag.st-DESTR { background:#742a2a; color:#feb2b2; }
   .bldg-tag.st-RUBBLE { background:#4a5568; color:#cbd5e0; }
+  .bldg-tag.use-regular { background:#2a4365; color:#90cdf4; }
+  .bldg-tag.use-special { background:#7b341e; color:#fbd38d; font-weight:600; }
+  .bldg-tag.use-defense { background:#285e61; color:#81e6d9; }
+  .bldg-tag.use-decor { background:#2d3748; color:#718096; }
   .bldg-tag.grp-style { background:#22543d; color:#9ae6b4; }
   .bldg-tag.grp-civ { background:#553c9a; color:#d6bcfa; }
   .bldg-tag.grp-misc { background:#2d3748; color:#a0aec0; }
@@ -283,6 +287,7 @@
 
     <button id="btnMirror">城墙镜像: 关 (NW+SE)</button>
     <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机二选一</button>
+    <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机三选一</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
     <button id="btnShuffle" style="background:#6b46c1;border-color:#9f7aea;color:#fff;font-weight:600;">🎲 9建筑重新随机布局/镜像</button>
 
@@ -525,6 +530,7 @@
 <div id="viewBuildings" style="display:none;">
   <div class="bldg-toolbar">
     <input type="search" id="bldgSearch" placeholder="搜索 目录名 / 建筑类型 / 前缀…" />
+    <select id="bldgUsage"><option value="all">全部用途</option></select>
     <select id="bldgGroup"><option value="all">全部分组</option></select>
     <select id="bldgPrefix"><option value="all">全部风格 / 文明</option></select>
     <select id="bldgType"><option value="all">全部建筑类型</option></select>
@@ -561,6 +567,7 @@ let curRadiusMult = 1.0;
 let curBldgScale = 1.0;
 let curGateScale = 1.0;
 let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
+let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon'
 
 const PALISADE_ANCHORS = {
   NE: { pctX: 53.8, pctY: 74.1, widthFactor: 0.165, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png' },
@@ -865,6 +872,70 @@ function computeRectWall(baseSize, LSeg, WSeg) {
   // 左边 P3→P0
   for (let k = 1; k < WSeg; k++) put(P3.x - k * sx, P3.y + k * sy, 'SE', true);
 
+  return pieces;
+}
+
+// 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定）
+function computeCorralRoundWall(baseSize) {
+  const sx = baseSize * 0.075, sy = sx * 0.58;
+  const Rx = 6.6 * sx, Ry = Rx * 0.58;
+  const pieces = [];
+  const N = 32;
+  for (let i = 0; i < N; i++) {
+    const angle = -90 + i * (360.0 / N);
+    const rad = angle * Math.PI / 180;
+    const x = Rx * Math.cos(rad);
+    const y = Ry * Math.sin(rad);
+    if (angle >= 50 && angle <= 75) {
+      if (Math.abs(angle - 62.5) < 7) {
+        pieces.push({ x, y, type: 'GATE' });
+      }
+      continue;
+    }
+    if (i % 4 === 0) {
+      pieces.push({ x, y, type: 'POST' });
+    } else if (angle > -90 && angle < 0) {
+      pieces.push({ x, y, type: 'SE' });
+    } else if (angle >= 0 && angle < 90) {
+      pieces.push({ x, y, type: 'SE', flipX: true });
+    } else if (angle >= 90 && angle < 180) {
+      pieces.push({ x, y, type: 'NE', flipX: true });
+    } else {
+      pieces.push({ x, y, type: 'NE' });
+    }
+  }
+  return pieces;
+}
+
+// 城寨方案B：圆润八角羊圈围栏（切去生硬尖角，八面围场平缓过渡，2026-09-08 主人定）
+function computeCorralOctagonWall(baseSize) {
+  const sx = baseSize * 0.075, sy = sx * 0.58;
+  const pieces = [];
+  for (let k = 0; k < 4; k++) {
+    pieces.push({ x: (2.2 + k * 0.8) * sx, y: (-4.6 + k * 0.8) * sy, type: 'SE' });
+  }
+  pieces.push({ x: 5.2 * sx, y: -0.8 * sy, type: 'POST' });
+  pieces.push({ x: 5.4 * sx, y: 0.8 * sy, type: 'POST' });
+  for (let k = 0; k < 4; k++) {
+    const x = (4.6 - k * 0.8) * sx, y = (2.0 + k * 0.8) * sy;
+    if (k === 2) {
+      pieces.push({ x, y, type: 'GATE' });
+    } else {
+      pieces.push({ x, y, type: 'SE', flipX: true });
+    }
+  }
+  pieces.push({ x: 0.8 * sx, y: 5.2 * sy, type: 'POST' });
+  pieces.push({ x: -0.8 * sx, y: 5.2 * sy, type: 'POST' });
+  for (let k = 0; k < 4; k++) {
+    pieces.push({ x: (-2.0 - k * 0.8) * sx, y: (4.6 - k * 0.8) * sy, type: 'NE', flipX: true });
+  }
+  pieces.push({ x: -5.2 * sx, y: 0.8 * sy, type: 'POST' });
+  pieces.push({ x: -5.4 * sx, y: -0.8 * sy, type: 'POST' });
+  for (let k = 0; k < 4; k++) {
+    pieces.push({ x: (-4.6 + k * 0.8) * sx, y: (-2.0 - k * 0.8) * sy, type: 'NE' });
+  }
+  pieces.push({ x: -0.8 * sx, y: -5.2 * sy, type: 'POST' });
+  pieces.push({ x: 0.8 * sx, y: -5.2 * sy, type: 'POST' });
   return pieces;
 }
 
@@ -1173,8 +1244,21 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     pieces = computeRingWall(baseSize, 5);
     anchors = PALISADE_ANCHORS;
   } else if (type === 'stockade') {
-    pieces = computeRingWall(baseSize, 5);
-    for (const w of pieces) { if (w.type === 'POST') w.type = 'CORNER'; }
+    const stkShape = (curStockadeShape === 'square')
+      ? 0
+      : (curStockadeShape === 'round')
+        ? 1
+        : (curStockadeShape === 'octagon')
+          ? 2
+          : (hashString(style + '_' + type + '_' + (mirror ? 'mir' : 'nomir') + '_' + randomSeedOffset + '_stkshape') % 3);
+    if (stkShape === 1) {
+      pieces = computeCorralRoundWall(baseSize);
+    } else if (stkShape === 2) {
+      pieces = computeCorralOctagonWall(baseSize);
+    } else {
+      pieces = computeRingWall(baseSize, 5);
+      for (const w of pieces) { if (w.type === 'POST') w.type = 'CORNER'; }
+    }
     anchors = FENCE_ANCHORS;
   } else if (type === 'pass') {
     pieces = computeRectWall(baseSize, 8, 4);
@@ -1418,7 +1502,280 @@ if (btnMedGates) {
   });
 }
 
+if (urlParams.has('stockadeShape')) {
+  const s = urlParams.get('stockadeShape');
+  if (['rnd', 'square', 'round', 'octagon'].includes(s)) {
+    curStockadeShape = s;
+    const btn = document.getElementById('btnStkShape');
+    if (btn) {
+      if (s === 'square') {
+        btn.innerText = '城寨围栏: 样式一 (正方标准)';
+        btn.style.background = '#2b6cb0';
+        btn.style.borderColor = '#63b3ed';
+      } else if (s === 'round') {
+        btn.innerText = '城寨围栏: 样式二 (圆形羊圈)';
+        btn.style.background = '#276749';
+        btn.style.borderColor = '#48bb78';
+      } else if (s === 'octagon') {
+        btn.innerText = '城寨围栏: 样式三 (八角羊圈)';
+        btn.style.background = '#d69e2e';
+        btn.style.borderColor = '#ecc94b';
+      } else {
+        btn.innerText = '城寨围栏: 🎲 随机三选一';
+        btn.style.background = '#243246';
+        btn.style.borderColor = '#4a5568';
+      }
+    }
+  }
+}
+
+const btnStkShape = document.getElementById('btnStkShape');
+if (btnStkShape) {
+  btnStkShape.addEventListener('click', () => {
+    if (curStockadeShape === 'rnd') {
+      curStockadeShape = 'square';
+      btnStkShape.innerText = '城寨围栏: 样式一 (正方标准)';
+      btnStkShape.style.background = '#2b6cb0';
+      btnStkShape.style.borderColor = '#63b3ed';
+    } else if (curStockadeShape === 'square') {
+      curStockadeShape = 'round';
+      btnStkShape.innerText = '城寨围栏: 样式二 (圆形羊圈)';
+      btnStkShape.style.background = '#276749';
+      btnStkShape.style.borderColor = '#48bb78';
+    } else if (curStockadeShape === 'round') {
+      curStockadeShape = 'octagon';
+      btnStkShape.innerText = '城寨围栏: 样式三 (八角羊圈)';
+      btnStkShape.style.background = '#d69e2e';
+      btnStkShape.style.borderColor = '#ecc94b';
+    } else {
+      curStockadeShape = 'rnd';
+      btnStkShape.innerText = '城寨围栏: 🎲 随机三选一';
+      btnStkShape.style.background = '#243246';
+      btnStkShape.style.borderColor = '#4a5568';
+    }
+    refresh();
+  });
+}
+
 refresh();
+
+/* ==========================================================================
+ * 建筑鉴赏（2026-09-08）
+ * 对标 legion-editor 的「兵种鉴赏」：全量素材图鉴 + 多维筛选 + 点击放大。
+ * 数据源 /assets/de_buildings_catalog.json 由 scratch/build_de_buildings_catalog.mjs
+ * 扫描 public/SUCAI_BUILDING 生成；素材增删后重跑那个脚本即可。
+ * 2471 张图不能一次性塞进 DOM —— 图片一律走 IntersectionObserver 懒加载，
+ * 只有滚进视口才真正下载。
+ * ========================================================================== */
+(function initBuildingCatalog() {
+  var rows = [], filtered = [], modalIdx = -1;
+
+  var el = {
+    grid: document.getElementById('bldgGrid'),
+    stats: document.getElementById('bldgStats'),
+    count: document.getElementById('bldgCount'),
+    search: document.getElementById('bldgSearch'),
+    usage: document.getElementById('bldgUsage'),
+    group: document.getElementById('bldgGroup'),
+    prefix: document.getElementById('bldgPrefix'),
+    type: document.getElementById('bldgType'),
+    age: document.getElementById('bldgAge'),
+    state: document.getElementById('bldgState'),
+    size: document.getElementById('bldgSize'),
+    viewBuildings: document.getElementById('viewBuildings'),
+    modal: document.getElementById('bldgModal'),
+    modalImg: document.getElementById('bldgModalImg'),
+    modalTitle: document.getElementById('bldgModalTitle'),
+    modalMeta: document.getElementById('bldgModalMeta')
+  };
+
+  /* 据点评估视图的所有顶层块：切到建筑鉴赏时整体隐藏 */
+  function cityNodes() {
+    return Array.prototype.filter.call(document.body.children, function (n) {
+      return !n.classList.contains('view-bar')
+        && n.id !== 'viewBuildings' && n.id !== 'bldgModal'
+        && n.tagName !== 'SCRIPT';
+    });
+  }
+
+  /* 图片懒加载用浏览器原生 loading="lazy"，不自己写 IntersectionObserver。
+   * 🔴 [2026-09-08] 原来用 IO + data-src，实测在页面未获得渲染焦点时**回调根本不派发**
+   * （布局正常、元素在视口内、IO 也存在，但一张都没换上 src）→ 满屏空白卡片。
+   * 原生 lazy 由浏览器自己调度，没有这个坑，代码也少一半。 */
+
+  function countBy(key, val) {
+    var n = 0;
+    for (var i = 0; i < rows.length; i++) { if (rows[i][key] === val) n++; }
+    return n;
+  }
+
+  function fillSelect(sel, values, key, allLabel) {
+    sel.innerHTML = '';
+    var first = document.createElement('option');
+    first.value = 'all';
+    first.textContent = allLabel;
+    sel.appendChild(first);
+    values.forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v;
+      o.textContent = v + ' (' + countBy(key, v) + ')';
+      sel.appendChild(o);
+    });
+  }
+
+  function buildFilters() {
+    var groups = [], prefixes = [], types = [], ages = [];
+    var seen = {};
+    rows.forEach(function (r) {
+      if (!seen['g' + r.groupLabel]) { seen['g' + r.groupLabel] = 1; groups.push(r.groupLabel); }
+      if (!seen['p' + r.prefix]) { seen['p' + r.prefix] = 1; prefixes.push(r.prefix); }
+      if (!seen['t' + r.building]) { seen['t' + r.building] = 1; types.push(r.building); }
+      if (r.age && !seen['a' + r.age]) { seen['a' + r.age] = 1; ages.push(r.age); }
+    });
+    groups.sort(); prefixes.sort(); types.sort(); ages.sort();
+
+    /* 用途是最主要的维度，按「常规 → 特殊 → 城防 → 装饰」固定顺序，不排字母序 */
+    var USAGE_ORDER = [
+      ['regular', '常规建筑'], ['special', '特殊建筑'],
+      ['defense', '城防构件'], ['decor', '装饰·其他']
+    ];
+    el.usage.innerHTML = '';
+    var uAll = document.createElement('option');
+    uAll.value = 'all';
+    uAll.textContent = '全部用途 (' + rows.length + ')';
+    el.usage.appendChild(uAll);
+    USAGE_ORDER.forEach(function (pair) {
+      var n = countBy('usage', pair[0]);
+      if (!n) return;
+      var o = document.createElement('option');
+      o.value = pair[0];
+      o.textContent = pair[1] + ' (' + n + ')';
+      el.usage.appendChild(o);
+    });
+
+    fillSelect(el.group, groups, 'groupLabel', '全部分组 (' + rows.length + ')');
+    fillSelect(el.prefix, prefixes, 'prefix', '全部风格 / 文明 (' + prefixes.length + ' 种)');
+    fillSelect(el.type, types, 'building', '全部建筑类型 (' + types.length + ' 种)');
+    fillSelect(el.age, ages, 'age', '全部时代 (' + ages.length + ' 档)');
+
+    /* 状态默认「仅完好」—— 一上来就 2471 张（含受损/摧毁/废墟）太乱 */
+    var stateLabel = { NORMAL: '完好', DAMAGED: '受损', DESTR: '摧毁', RUBBLE: '废墟' };
+    el.state.innerHTML = '';
+    ['NORMAL', 'DAMAGED', 'DESTR', 'RUBBLE', 'all'].forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v;
+      o.textContent = v === 'all'
+        ? ('全部状态 (' + rows.length + ')')
+        : ('仅' + stateLabel[v] + ' (' + countBy('state', v) + ')');
+      el.state.appendChild(o);
+    });
+    el.state.value = 'NORMAL';
+  }
+
+  function applyFilters() {
+    var q = el.search.value.trim().toUpperCase();
+    var u = el.usage.value, g = el.group.value, p = el.prefix.value, t = el.type.value,
+        a = el.age.value, st = el.state.value;
+    filtered = rows.filter(function (r) {
+      if (u !== 'all' && r.usage !== u) { return false; }
+      if (g !== 'all' && r.groupLabel !== g) { return false; }
+      if (p !== 'all' && r.prefix !== p) { return false; }
+      if (t !== 'all' && r.building !== t) { return false; }
+      if (a !== 'all' && r.age !== a) { return false; }
+      if (st !== 'all' && r.state !== st) { return false; }
+      if (q && r.dir.indexOf(q) < 0 && r.building.indexOf(q) < 0 && r.prefix.indexOf(q) < 0) { return false; }
+      return true;
+    });
+    render();
+  }
+
+  function render() {
+    el.stats.textContent = filtered.length + ' / ' + rows.length + ' 个建筑素材';
+    if (!filtered.length) {
+      el.grid.innerHTML = '<div style="color:#718096;padding:40px;grid-column:1/-1;text-align:center;">没有匹配的建筑</div>';
+      return;
+    }
+    el.grid.innerHTML = filtered.map(function (r, i) {
+      var tags = '<span class="bldg-tag use-' + r.usage + '">' + r.usageLabel + '</span>'
+        + '<span class="bldg-tag grp-' + r.group + '">' + r.groupLabel + '</span>';
+      if (r.age) { tags += '<span class="bldg-tag age">' + r.age + '</span>'; }
+      if (r.state !== 'NORMAL') { tags += '<span class="bldg-tag st-' + r.state + '">' + r.stateLabel + '</span>'; }
+      tags += '<span class="bldg-tag">' + r.w + '×' + r.h + '</span>';
+      return '<div class="bldg-card" data-i="' + i + '">'
+        + '<div class="bldg-thumb"><img src="' + r.img + '" alt="' + r.dir + '" loading="lazy" decoding="async" /></div>'
+        + '<div class="bldg-meta"><div class="bldg-name">' + r.dir + '</div>'
+        + '<div class="bldg-sub">' + tags + '</div></div></div>';
+    }).join('');
+  }
+
+  function openModal(i) {
+    if (i < 0 || i >= filtered.length) { return; }
+    modalIdx = i;
+    var r = filtered[i];
+    el.modalImg.src = r.img;
+    el.modalTitle.textContent = r.dir;
+    el.modalMeta.innerHTML = r.usageLabel + '　·　' + r.groupLabel + '　·　建筑 ' + r.building
+      + (r.age ? '　·　' + r.age : '') + '　·　' + r.stateLabel + '<br>'
+      + '图片 ' + r.w + '×' + r.h + ' px　·　帧数 ' + (r.frames == null ? '—' : r.frames)
+      + '　·　DE 包围盒 ' + (r.boxW == null ? '—' : r.boxW + '×' + r.boxH)
+      + '　·　素材 ' + r.kb + ' KB<br>'
+      + '<span style="color:#4a5568;">' + r.img + '</span><br>'
+      + '第 ' + (i + 1) + ' / ' + filtered.length + ' 个';
+    el.modal.classList.add('open');
+  }
+
+  el.grid.addEventListener('click', function (e) {
+    var card = e.target.closest('.bldg-card');
+    if (card) { openModal(parseInt(card.dataset.i, 10)); }
+  });
+  el.modal.addEventListener('click', function () { el.modal.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) {
+    if (!el.modal.classList.contains('open')) { return; }
+    if (e.key === 'Escape') { el.modal.classList.remove('open'); }
+    else if (e.key === 'ArrowRight') { openModal(modalIdx + 1); }
+    else if (e.key === 'ArrowLeft') { openModal(modalIdx - 1); }
+  });
+
+  ['search', 'usage', 'group', 'prefix', 'type', 'age', 'state'].forEach(function (k) {
+    el[k].addEventListener(k === 'search' ? 'input' : 'change', applyFilters);
+  });
+  el.size.addEventListener('change', function () {
+    var v = parseInt(el.size.value, 10);
+    document.documentElement.style.setProperty('--bldg-thumb', v + 'px');
+    document.documentElement.style.setProperty('--bldg-cell', (v + 40) + 'px');
+  });
+
+  document.querySelectorAll('.view-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.view-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var toBuildings = btn.dataset.view === 'buildings';
+      cityNodes().forEach(function (n) { n.style.display = toBuildings ? 'none' : ''; });
+      el.viewBuildings.style.display = toBuildings ? '' : 'none';
+      if (toBuildings && !rows.length) { load(); }
+    });
+  });
+
+  function load() {
+    el.stats.textContent = '加载建筑清单…';
+    fetch('/assets/de_buildings_catalog.json')
+      .then(function (r) {
+        if (!r.ok) { throw new Error('HTTP ' + r.status); }
+        return r.json();
+      })
+      .then(function (json) {
+        rows = json.rows || [];
+        el.count.textContent = '(' + rows.length + ')';
+        buildFilters();
+        applyFilters();
+      })
+      .catch(function (err) {
+        el.stats.textContent = '清单加载失败：' + err.message
+          + '（先跑 node scratch/build_de_buildings_catalog.mjs 生成）';
+      });
+  }
+})();
+
 </script>
 </body>
 </html>
