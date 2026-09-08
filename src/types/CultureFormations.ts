@@ -70,12 +70,18 @@ export type MovementClass = 'CAVALRY' | 'MIXED' | 'INFANTRY' | 'ELEPHANT';
 export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     STEPPE:       'CAVALRY',
     STEPPE_IMPERIAL:'CAVALRY',
+    STEPPE_ANTIQUITY:'CAVALRY',
+    STEPPE_FEUDAL:'CAVALRY',
     TIBET:        'CAVALRY',
     TIBET_CASTLE:  'CAVALRY',
     TIBET_IMPERIAL:'CAVALRY',
     CENTRAL_ASIA: 'CAVALRY',
     CENTRAL_ASIA_IMPERIAL: 'CAVALRY',
+    CENTRAL_ASIA_ANTIQUITY: 'CAVALRY',
+    CENTRAL_ASIA_CASTLE: 'CAVALRY',
     WEST_ASIA:    'MIXED',
+    WEST_ASIA_ANTIQUITY: 'MIXED',
+    WEST_ASIA_CASTLE: 'MIXED',
     NORTH:        'MIXED',
     CENTRAL:      'MIXED',
     NORTHEAST:    'MIXED',
@@ -285,11 +291,15 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'echelon',     // 中原：刀剑手(2) + 火焰弓箭手(3) + 精锐诸葛弩主力(4)
     STEPPE:       'triangle',     // 草原：怯薛军(2) + 草原枪骑兵(3) + 精锐蒙古突骑主力(4)
     STEPPE_IMPERIAL:'triangle',
+    STEPPE_ANTIQUITY:'triangle',
+    STEPPE_FEUDAL:'triangle',
     JIANGNAN:     'triangle',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
     LINGNAN: 'echelon',  // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     DIANQIAN:     'triangle',     // 古典古滇：锥形阵 2+3+4 战象尖刀 + 高级标枪中坚 + 先锋重步底边主力
     CENTRAL_ASIA: 'balance_yoke', // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     CENTRAL_ASIA_IMPERIAL: 'balance_yoke',
+    CENTRAL_ASIA_ANTIQUITY: 'balance_yoke',
+    CENTRAL_ASIA_CASTLE: 'balance_yoke',
     WESTERN:      'triangle',     // 西域：斯基泰斧骑(2) + 斯基泰骑射(3) + 精锐斯基泰骑射主力(4)
     WESTERN_FEUDAL:'triangle',
     WESTERN_CASTLE:'triangle',
@@ -298,6 +308,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     // 雁行阵 (4+3+2，前排宽线主力4 + 中坚3 + 压阵2)
     HEXI:         'fish_scale',      // 河西：精锐辽刀主力(4前) + 黑光铠骑兵中坚(3中) + 诸葛弩后排(2后)
     WEST_ASIA:    'echelon',      // 西亚：东方剑士前排抗线(4) + 重装骑射手中坚(3) + 精锐复合弓后排(2)
+    WEST_ASIA_ANTIQUITY: 'echelon',
+    WEST_ASIA_CASTLE: 'echelon',
 
     // 印度（鱼鳞 3+4+2：软剑士前卫 + 精锐软剑士主力 + 战象压阵）；柏柏尔（三角 2+3+4：骆驼弓骑主力）
     INDIA:        'crane_wing',   // 古典印度：鹤翼阵 2+4+3 前锋桑纳亚战象2+中坚双轮战车高级4档主力+后排镰刀战士3
@@ -2048,6 +2060,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     JAPAN_IMPERIAL: '帝国日本军团',
     STEPPE: '城堡蒙古军团',
     STEPPE_IMPERIAL: '帝国草原军团',
+    STEPPE_ANTIQUITY: '古典草原军团',
+    STEPPE_FEUDAL: '封建草原军团',
     HEXI: '古典秦汉军团',
     BASHU: '古典古蜀军团',
     JIANGNAN: '封建隋唐军团',
@@ -2058,7 +2072,11 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TIBET_IMPERIAL: '帝国青藏军团',
     CENTRAL_ASIA: '封建河中军团',
     CENTRAL_ASIA_IMPERIAL: '帝国中亚军团',
+    CENTRAL_ASIA_ANTIQUITY: '古典中亚军团',
+    CENTRAL_ASIA_CASTLE: '城堡中亚军团',
     WEST_ASIA: '封建西亚军团',
+    WEST_ASIA_ANTIQUITY: '古典西亚军团',
+    WEST_ASIA_CASTLE: '城堡西亚军团',
     WESTERN: '古典塞种军团',
     WESTERN_FEUDAL: '封建西域军团',
     WESTERN_CASTLE: '城堡西域军团',
@@ -3673,6 +3691,8 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     JAPAN_IMPERIAL: JAPAN_TIERS,
     STEPPE:       STEPPE_TIERS,
     STEPPE_IMPERIAL: STEPPE_TIERS,
+    STEPPE_ANTIQUITY: STEPPE_TIERS,
+    STEPPE_FEUDAL: STEPPE_TIERS,
     HEXI:         HEXI_TIERS,
     BASHU:        BASHU_TIERS,
     JIANGNAN:     JIANGNAN_TIERS,
@@ -3683,7 +3703,11 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     TIBET_IMPERIAL: TIBET_TIERS,
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
     CENTRAL_ASIA_IMPERIAL: CENTRAL_ASIA_TIERS,
+    CENTRAL_ASIA_ANTIQUITY: CENTRAL_ASIA_TIERS,
+    CENTRAL_ASIA_CASTLE: CENTRAL_ASIA_TIERS,
     WEST_ASIA:    WEST_ASIA_TIERS,
+    WEST_ASIA_ANTIQUITY: WEST_ASIA_TIERS,
+    WEST_ASIA_CASTLE: WEST_ASIA_TIERS,
     WESTERN:      WESTERN_TIERS,
     WESTERN_FEUDAL: WESTERN_TIERS,
     WESTERN_CASTLE: WESTERN_TIERS,

@@ -77,7 +77,7 @@ type TileLoadedListener = () => void;
  */
 export class ElevationSampler {
     private readonly cache = new Map<string, Uint8ClampedArray>();
-    private readonly cacheOrder: string[] = [];
+    private readonly cacheOrder = new Set<string>();
     private readonly pending = new Set<string>();
     /**
      * 🔴 [2026-09-02 主人「周围没据点反而卡，尤其海上/咸海/撒哈拉」] 取瓦片**失败**的负缓存。
@@ -111,14 +111,14 @@ export class ElevationSampler {
     }
 
     private touchCache(key: string): void {
-        const idx = this.cacheOrder.indexOf(key);
-        if (idx >= 0) this.cacheOrder.splice(idx, 1);
-        this.cacheOrder.push(key);
+        this.cacheOrder.delete(key);
+        this.cacheOrder.add(key);
     }
 
     private evictIfNeeded(): void {
-        while (this.cache.size > this.maxCacheTiles && this.cacheOrder.length > 0) {
-            const oldest = this.cacheOrder.shift()!;
+        while (this.cache.size > this.maxCacheTiles && this.cacheOrder.size > 0) {
+            const oldest = this.cacheOrder.values().next().value!;
+            this.cacheOrder.delete(oldest);
             this.cache.delete(oldest);
         }
     }

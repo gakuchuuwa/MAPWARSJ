@@ -1,3 +1,4 @@
+import { drawUnitLabel } from './UnitLabelCache';
 import L from 'leaflet';
 import { GameMap } from './GameMap';
 import { OrientationSystem } from '../core/OrientationSystem';
@@ -2754,10 +2755,8 @@ export class GlobalUnitRenderer {
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 3;
             ctx.lineJoin = 'round';
-            ctx.strokeText(generalText, center.x, currentY);
-
             ctx.fillStyle = '#00FFFF'; // Bright Cyan
-            ctx.fillText(generalText, center.x, currentY);
+            drawUnitLabel(ctx, generalText, center.x, currentY, '#00FFFF');
             
             currentY += genFontSize + 4;
         }
@@ -2773,11 +2772,9 @@ export class GlobalUnitRenderer {
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
             ctx.lineWidth = 3;
             ctx.lineJoin = 'round';
-            ctx.strokeText(eliteText, center.x, currentY);
-
             ctx.fillStyle = isPlayer ? '#ffd27a' : '#ffffff';
             ctx.shadowBlur = 0;
-            ctx.fillText(eliteText, center.x, currentY);
+            drawUnitLabel(ctx, eliteText, center.x, currentY, isPlayer ? '#ffd27a' : '#ffffff');
             
             currentY += nameFontSize + 4;
         }
@@ -2796,10 +2793,8 @@ export class GlobalUnitRenderer {
 
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
-        ctx.strokeText(troopsText, center.x, currentY);
-
         ctx.fillStyle = '#ffd700'; // Gold
-        ctx.fillText(troopsText, center.x, currentY);
+        drawUnitLabel(ctx, troopsText, center.x, currentY, '#ffd700');
     }
 
     public destroy(): void {

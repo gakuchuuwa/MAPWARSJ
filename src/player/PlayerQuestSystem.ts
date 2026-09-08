@@ -366,7 +366,23 @@ export class PlayerQuestSystem {
         if (city) this.deps.hero.travelToCity(city.id);
     }
 
-    /** 遍历据点，找城中武将在（未率军在外）的，按「兵最多→名将→双行→擅攻」排序取第一个，同档随机（与军团出征一致） */
+    /** 两点球面距离（公里），只用来在同档候选里比远近，不需要高精度。 */
+    private static distKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+        const R = 6371;
+        const dLat = (b.lat - a.lat) * Math.PI / 180;
+        const dLng = (b.lng - a.lng) * Math.PI / 180;
+        const la = a.lat * Math.PI / 180, lb = b.lat * Math.PI / 180;
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la) * Math.cos(lb) * Math.sin(dLng / 2) ** 2;
+        return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+
+    /** 遍历据点，找城中武将在（未率军在外）的。
+     *  🔴 [2026-09-09 主人定]「**必须**选兵多的、**必须**选名将、**必须**选双行」
+     *     —— 这三条是**硬条件，不因为距离而降级**。所以顺序是：
+     *       ① 先用 compareGeneralsByPriority 排出最优档（兵最多→名将→双行→擅攻）；
+     *       ② **只在与第一名完全同档的候选里**，挑离玩家最近的那个。
+     *     绝不能反过来先按距离分圈再挑将——那样近处没名将时就会选到次优的，
+     *     等于把「必须」降成了「优先」。 */
     private pickAutoCity(): City | null {
         const candidates: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
@@ -380,12 +396,36 @@ export class PlayerQuestSystem {
             candidates.push(c);
         }
         if (!candidates.length) return null;
-        // [2026-09-05 主人定] 与军团出征共用同一套选将优先级（compareGeneralsByPriority）
-        candidates.sort((a, b) => compareGeneralsByPriority(
+
+        // ① [2026-09-05 主人定] 与军团出征共用同一套选将优先级（compareGeneralsByPriority）
+        const sorted = [...candidates].sort((a, b) => compareGeneralsByPriority(
             { troops: a.troops || 0, cityId: a.id },
             { troops: b.troops || 0, cityId: b.id },
         ));
-        return candidates[0];
+        const best = sorted[0];
+        if (!best) return null;
+
+        // ② 取出与第一名**完全同档**的那一批：compareGeneralsByPriority 在四项判据都打平时
+        //    返回 Math.random()-0.5（随机数），不能直接拿它判等 —— 必须逐项比对。
+        const keyOf = (c: City) => {
+            const g = getCityAnchoredGeneral(c.id);
+            const p = g ? getGeneralProfile(g.generalId) : null;
+            return `${c.troops || 0}|${p ? (p.tier === 'famous' ? 1 : 0) : -1}|${p?.attackStyle ?? '-'}`;
+        };
+        const bestKey = keyOf(best);
+        const tied = sorted.filter((c) => keyOf(c) === bestKey);
+        if (tied.length === 1) return best;
+
+        // ③ 同档之间才比远近
+        const me = this.deps.hero.getPosition();
+        if (!me || typeof me.lat !== 'number') return best;
+        let pick = tied[0];
+        let pickD = Infinity;
+        for (const c of tied) {
+            const d = PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude });
+            if (d < pickD) { pickD = d; pick = c; }
+        }
+        return pick;
     }
 
     private onHostLost(_lastId: string): void {

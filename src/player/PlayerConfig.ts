@@ -82,14 +82,17 @@ export const PLAYER_HERO_KEY = 'guanyu';
 
 /** 官阶 → 玩家在地图与 13 里的素材 key。
  *
- *  🔴 [2026-09-07 主人定「玩家起始套用民兵」] 开局是白身投军的**近东民兵**，不是关羽。
- *     骑砍式成长：先当个大头兵，投效势力（→斥候）之后才换成乱入者本尊。
- *     ⚠️ 这个 key 同时决定 **13 里的血/攻/防**（Scene13 用 statsFor(heroKey) 取 WAR_TYPES），
- *        所以换 key = 连外观带数值一起换，不是只换皮。
+ *  🔴 [2026-09-09 主人定「玩家陆军初始形象改为古典斥候骑兵」] 开局是 antiquity_scout_cavalry，
+ *     不是关羽（关羽是投效势力、升上去之后的乱入者本尊）。
+ *     ⚠️ 这个 key 同时决定 **13 里的血/攻/防**（Scene13 用 statsFor(heroKey) 取 WAR_TYPES）：
+ *        古典斥候骑兵 hp45 / atk3 / 近防0 远防2 / 速130，所以换 key = 连外观带数值一起换。
+ *     ⚠️ 它还决定**地图行军速度大类**：cls='cav' → moveClassForHeroKey 返回 CAVALRY
+ *        （平原 2.0 / 山地 0.9），比原来的民兵（步兵档 1.4/1.1）平原更快、山地更慢。
  *     ⚠️ 素材必须在 UNIT_ASSETS 登记过（HeroSpriteDrawer 直接读它）：
- *        levy → /SUCAI/LEVY/（idle60 move30 attack30 death30，已验）。 */
+ *        antiquity_scout_cavalry 已于 2026-08-18 接线。
+ *     （前身：2026-09-07 曾定「起始套用民兵 levy」，本行已取代它。） */
 export const PLAYER_RANK_HERO_KEYS: Readonly<Partial<Record<PlayerRankId, string>>> = {
-    civilian: 'levy',
+    civilian: 'antiquity_scout_cavalry',
 };
 
 export function heroKeyForRank(rankId: PlayerRankId): string {

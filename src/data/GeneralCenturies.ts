@@ -1021,7 +1021,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_fasilides': 17,
     'gen_francis_i': 16,
     'gen_sargis_jaqeli': 13,
-    'gen_man_singh_tomar': 15,
+    'gen_man_singh_tomar': 16,
     'gen_ibrahim_qutb': 16,
     'gen_adityawarman': 14,
     'gen_chan_chak': 10,

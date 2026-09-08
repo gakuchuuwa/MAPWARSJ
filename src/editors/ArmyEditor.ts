@@ -50,6 +50,8 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     TIBET_IMPERIAL: 'tubo',
     STEPPE:       'menggu_d',  // 草原-哈拉和林 → 蒙古
     STEPPE_IMPERIAL: 'menggu_d',
+    STEPPE_ANTIQUITY: 'menggu_d',
+    STEPPE_FEUDAL: 'menggu_d',
     NORTHEAST:    'bohai',     // 东北-龙源(龙泉府) → 渤海
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
@@ -57,7 +59,11 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     JAPAN_IMPERIAL: 'edo',     // 帝国日本（江户）
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
     CENTRAL_ASIA_IMPERIAL: 'kokand', // 帝国中亚（浩罕/布哈拉）
+    CENTRAL_ASIA_ANTIQUITY: 'seljuq',
+    CENTRAL_ASIA_CASTLE: 'seljuq',
     WEST_ASIA:    'baizanting', // 西亚-君士坦丁堡 → 拜占庭
+    WEST_ASIA_ANTIQUITY: 'baizanting',
+    WEST_ASIA_CASTLE: 'baizanting',
     SLAVIC:       'mosike_gongguo', // 斯拉夫-莫斯科 → 莫斯科公国（2026-08-27 基辅迁东欧改）
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国

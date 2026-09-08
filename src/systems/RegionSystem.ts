@@ -37,6 +37,8 @@ export type RegionType =
     | 'JAPAN'         // 日本
     | 'CENTRAL_ASIA' // 中亚伊斯兰 (粟特、河中、大食)
     | 'WEST_ASIA'   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+    | 'WEST_ASIA_ANTIQUITY' // 古典西亚（古典时代：吕底亚/本都/特洛伊/弗里吉亚）
+    | 'WEST_ASIA_CASTLE' // 城堡西亚（城堡时代：罗姆/奇里乞亚/尼西亚）
     | 'INDIA'       // 印度 (恒河平原、南亚次大陆)
     | 'BERBER'      // 柏柏尔 (马格里布、北非)
     | 'AMERICA'     // 美洲 (阿兹特克/玛雅/印加/马普切/穆伊斯卡/图皮)[2026-08-24 新增]
@@ -158,7 +160,11 @@ export type RegionType =
     | 'JAPAN_IMPERIAL' // 帝国日本（帝国时代：战国末至江户）
     | 'HUAXIA_IMPERIAL' // 帝国华夏（帝国时代·汉族民间/流寇/土司，非明廷非清廷）
     | 'CENTRAL_ASIA_IMPERIAL' // 帝国中亚（帝国时代：乌兹别克/浩罕/布哈拉）
+    | 'CENTRAL_ASIA_ANTIQUITY' // 古典中亚（古典时代：犍陀罗/印度-希腊）
+    | 'CENTRAL_ASIA_CASTLE' // 城堡中亚（城堡时代：花剌子模/伊勒巴斯）
     | 'STEPPE_IMPERIAL' // 帝国草原（帝国时代：卫拉特/喀尔喀/准噶尔等蒙古诸部）
+    | 'STEPPE_ANTIQUITY' // 古典草原（古典时代：匈奴/狄/丁零）
+    | 'STEPPE_FEUDAL' // 封建草原（封建时代：铁勒/薛延陀/高车/室韦/坚昆）
     | 'TIBET_IMPERIAL' // 帝国青藏（帝国时代：噶厦/和硕特/准噶尔经略）
     | 'WESTERN_FEUDAL' // 封建西域（封建时代：昭武九姓/西突厥/疏勒/回鹘）
     | 'WESTERN_CASTLE' // 城堡西域（城堡时代：喀喇汗/西辽/于阗）
@@ -186,7 +192,7 @@ export const REGION_ORDER: RegionType[] = [
     'SLAVIC', 'GERMANIC', 'LATIN', 'GREEK', 'THRACIAN', 'BERBER',
     'CENTRAL', 'HEXI', 'JIANGNAN', 'BASHU', 'LINGNAN', 'STEPPE', 'CUMAN', 'JAPAN',
     'CENTRAL_ASIA', 'PASHTUN', 'PERSIAN', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'ASSYRIAN', 'ORIE',
+    'KOREA', 'DIANQIAN', 'INDIA', 'PURU', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE', 'ASSYRIAN', 'ORIE',
     'AMERICA', 'ANDE', 'AFRICA', 'MALAY',
     'BRITONS',
     'GOTHS',
@@ -281,7 +287,11 @@ export const REGION_ORDER: RegionType[] = [
     'JAPAN_IMPERIAL',
     'HUAXIA_IMPERIAL',
     'CENTRAL_ASIA_IMPERIAL',
+    'CENTRAL_ASIA_ANTIQUITY',
+    'CENTRAL_ASIA_CASTLE',
     'STEPPE_IMPERIAL',
+    'STEPPE_ANTIQUITY',
+    'STEPPE_FEUDAL',
     'TIBET_IMPERIAL',
     'WESTERN_FEUDAL',
     'WESTERN_CASTLE',
@@ -341,6 +351,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     TIBET_IMPERIAL: '帝国青藏',
     STEPPE: '城堡蒙古',
     STEPPE_IMPERIAL: '帝国草原',
+    STEPPE_ANTIQUITY: '古典草原',
+    STEPPE_FEUDAL: '封建草原',
     NORTHEAST: '古典鲜卑',
     KOREA: '封建高句丽',
     JAPAN: '城堡镰仓',
@@ -348,7 +360,11 @@ export const REGION_LABELS: Record<RegionType, string> = {
     JAPAN_IMPERIAL: '帝国日本',
     CENTRAL_ASIA: '封建河中',
     CENTRAL_ASIA_IMPERIAL: '帝国中亚',
+    CENTRAL_ASIA_ANTIQUITY: '古典中亚',
+    CENTRAL_ASIA_CASTLE: '城堡中亚',
     WEST_ASIA: '封建西亚',
+    WEST_ASIA_ANTIQUITY: '古典西亚',
+    WEST_ASIA_CASTLE: '城堡西亚',
     INDIA: '古典印度',
     INDIA_FEUDAL: '封建印度',
     INDIA_CASTLE: '城堡印度',
@@ -503,6 +519,8 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     LINGNAN: '古典百越',
     STEPPE: '城堡蒙古',
     STEPPE_IMPERIAL: '帝国草原',
+    STEPPE_ANTIQUITY: '古典草原',
+    STEPPE_FEUDAL: '封建草原',
     NORTHEAST: '古典鲜卑',
     TIBET: '封建吐蕃',
     TIBET_CASTLE: '城堡吐蕃',
@@ -513,7 +531,11 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     WESTERN_IMPERIAL: '帝国西域',
     CENTRAL_ASIA: '封建河中',
     CENTRAL_ASIA_IMPERIAL: '帝国中亚',
+    CENTRAL_ASIA_ANTIQUITY: '古典中亚',
+    CENTRAL_ASIA_CASTLE: '城堡中亚',
     WEST_ASIA: '封建西亚',
+    WEST_ASIA_ANTIQUITY: '古典西亚',
+    WEST_ASIA_CASTLE: '城堡西亚',
     INDIA: '古典印度',
     INDIA_FEUDAL: '封建印度',
     INDIA_CASTLE: '城堡印度',
@@ -831,6 +853,8 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     TIBET_IMPERIAL: '#004d40',
     STEPPE: '#c0a050',
     STEPPE_IMPERIAL: '#b8860b',
+    STEPPE_ANTIQUITY: '#a9700a',  // 古典草原（暗金）
+    STEPPE_FEUDAL: '#6b5a1e',  // 封建草原（暗橄榄）
     NORTHEAST: '#388e3c',
     KOREA: '#7b1fa2',
     JAPAN: '#c2185b',
@@ -838,7 +862,11 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JAPAN_IMPERIAL: '#8e24aa',
     CENTRAL_ASIA: '#455a64',
     CENTRAL_ASIA_IMPERIAL: '#006064',
+    CENTRAL_ASIA_ANTIQUITY: '#607d8b',  // 古典中亚（蓝灰）
+    CENTRAL_ASIA_CASTLE: '#263238',  // 城堡中亚（暗蓝灰）
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
+    WEST_ASIA_ANTIQUITY: '#3f51b5',  // 古典西亚（靛）
+    WEST_ASIA_CASTLE: '#1b2a6b',  // 城堡西亚（暗靛）
     INDIA: '#d84315',   // 深橙红（印度香料）
     INDIA_FEUDAL: '#e64a19',  // 封建印度（深橙）
     INDIA_CASTLE: '#ff7043',  // 城堡印度（珊瑚橙）
@@ -1149,6 +1177,18 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/nomadic_big.png'),
         pass: resolvePath('/cities/nomadic_pass.png')
     },
+    STEPPE_ANTIQUITY: { // ✅ 复用草原（古典草原）
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
+    STEPPE_FEUDAL: { // ✅ 复用草原（封建草原）
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
     NORTHEAST: { // ✅ 已有
         small: resolvePath('/cities/northeast_small.png'),
         medium: resolvePath('/cities/northeast_medium.png'),
@@ -1197,7 +1237,31 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
     },
+    CENTRAL_ASIA_ANTIQUITY: { // ✅ 复用中亚（古典中亚）
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    CENTRAL_ASIA_CASTLE: { // ✅ 复用中亚（城堡中亚）
+        small: resolvePath('/cities/central_asia_small.png'),
+        medium: resolvePath('/cities/central_asia_medium.png'),
+        big: resolvePath('/cities/central_asia_big.png'),
+        pass: resolvePath('/cities/central_asia_pass.png')
+    },
     WEST_ASIA: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    WEST_ASIA_ANTIQUITY: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    WEST_ASIA_CASTLE: {
         small: resolvePath('/cities/west_asia_small.png'),
         medium: resolvePath('/cities/west_asia_medium.png'),
         big: resolvePath('/cities/west_asia_big.png'),
@@ -2098,6 +2162,8 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     TIBET_CASTLE: ['city_sajia'],                    // 萨迦（城堡吐蕃）
     TIBET_IMPERIAL: ['city_luoxie'],                // 拉萨（帝国青藏）
     STEPPE:       ['city_karakorum'],                // 哈拉和林
+    STEPPE_ANTIQUITY: ['city_toumancheng'],          // 头曼城（古典草原·冒顿单于庭）
+    STEPPE_FEUDAL: ['city_tongwancheng'],            // 统万城（封建草原·赫连夏都）
     STEPPE_IMPERIAL: ['city_karakorum'],             // 哈拉和林（帝国草原）
     NORTHEAST:    ['city_gaxian'],                   // 嘎仙洞 (拓跋鲜卑发祥圣地)
     KOREA:        ['city_pyongyang'],                // 平壤 [2026-09-07 主人定] 高句丽 427–668 年都平壤；原挂开城是高丽(GORYEO)王京，不属本区
@@ -2106,7 +2172,11 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JAPAN_IMPERIAL: ['city_edo'],                    // 江户（帝国日本）
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
     CENTRAL_ASIA_IMPERIAL: ['city_bukhara'],         // 布哈拉（帝国中亚）
+    CENTRAL_ASIA_ANTIQUITY: ['city_dinggucheng'],    // 难揭（古典中亚·犍陀罗）
+    CENTRAL_ASIA_CASTLE: ['city_khiva'],             // 希瓦（城堡中亚·花剌子模）
     WEST_ASIA:    ['city_bageda'],                     // 巴格达 (阿拔斯王朝都城; 2026-08-18 改: 原君士坦丁堡的 region 字段与坐标判定均落在 LATIN,
+    WEST_ASIA_ANTIQUITY: ['city_sifaerde'],            // 斯法尔德/萨第斯（古典西亚·吕底亚都）
+    WEST_ASIA_CASTLE: ['city_yikeniwumu'],             // 伊科尼乌姆/科尼亚（城堡西亚·罗姆苏丹国都）
                                                      //          吃拉丁系数却享西亚中心加成,故换回本区内的城)
     SLAVIC:       ['city_jifu'],                          // 基辅 [2026-09-07] 封建罗斯=基辅罗斯 882–1240，都基辅；原挂莫斯科已划归 RUS 区(城堡罗斯)
     EAST:         ['city_jifu'],                          // [2026-09-07] 东欧区已解散(不在 REGION_ORDER)，此项仅为类型占位，跟随 SLAVIC 指向基辅

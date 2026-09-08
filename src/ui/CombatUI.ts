@@ -868,15 +868,14 @@ export class CombatUI {
             font-family: 'Noto Serif SC', serif;
             font-size: ${uiPx(T.typography.titleSize + 4)};
             font-weight: 900;
-            color: transparent;
-            background: linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
             letter-spacing: ${uiPx(10)};
             margin-bottom: ${uiPx(12)};
             white-space: nowrap;
             text-align: center;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95)) drop-shadow(0 0 12px rgba(255,200,80,0.35));
         `;
 
         // 中央对峙条（攻橙 / 守蓝，参考稿主进度条）
@@ -1446,27 +1445,29 @@ export class CombatUI {
         // 立绘与武将数据填充
         const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
         const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
-        if (!attackerPortrait.src || attackerPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
-            this.setPortrait(
-                attackerPortrait,
-                undefined,
-                init.attackerGeneralId || undefined,
-                init.attackerFactionId || undefined,
-                undefined,
-                'attacker',
-            );
-        }
-        if (!defenderPortrait.src || defenderPortrait.src.endsWith(BATTLE_PORTRAIT_FALLBACK)) {
-            this.setPortrait(
-                defenderPortrait,
-                undefined,
-                init.defenderGeneralId || undefined,
-                init.defenderFactionId || undefined,
-                undefined,
-                'defender',
-                attackerPortrait.src || undefined,
-            );
-        }
+        // 🔴 [2026-09-09 主人报障「防守方立绘不显示」] 这里原来带条件
+        //    `if (!portrait.src || src.endsWith(FALLBACK))` —— 本意是「已经有图就别重设」，
+        //    但对战斗立绘是错的：**每场对手都不同，必须重设**。而且跟拍时
+        //    `showFollowedGeneral()` 只设左边、从不碰右边，右边 src 一直是空；
+        //    真打起来若这条件因任何原因没进去，守方就永远空着（实测 0×0、src 空）。
+        //    改成每场无条件重设；手动选的立绘不会丢——setPortrait 第①步就先读 portraitConfig。
+        this.setPortrait(
+            attackerPortrait,
+            undefined,
+            init.attackerGeneralId || undefined,
+            init.attackerFactionId || undefined,
+            undefined,
+            'attacker',
+        );
+        this.setPortrait(
+            defenderPortrait,
+            undefined,
+            init.defenderGeneralId || undefined,
+            init.defenderFactionId || undefined,
+            undefined,
+            'defender',
+            attackerPortrait.src || undefined,
+        );
 
         // 武将名牌
         const attackerNameTag = this.sideElement('attacker', this.leftGeneralNameTag, this.rightGeneralNameTag);
@@ -1497,7 +1498,9 @@ export class CombatUI {
             locName = c?.name || init.defenderCityId;
         }
         const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
-        this.battleTitle.textContent = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
+        const fullTitle = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
+        this.battleTitle.style.background = 'none';
+        this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${fullTitle}</span>`;
 
         // 势力名与军团名显示
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
@@ -3344,10 +3347,8 @@ export class CombatUI {
         // ③ 「XX 勝」弹出
         const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
         if (name && name !== '未知势力') {
-            this.battleTitle.style.background = 'linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%)';
-            this.battleTitle.style.webkitBackgroundClip = 'text';
-            this.battleTitle.style.backgroundClip = 'text';
-            this.battleTitle.textContent = `${name} 勝`;
+            this.battleTitle.style.background = 'none';
+            this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${name} 勝</span>`;
             this.battleTitle.style.animation = 'none';
             void this.battleTitle.offsetWidth;
             this.battleTitle.style.animation = 'outcome-title-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both';
@@ -4924,18 +4925,15 @@ export class CombatUI {
             else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
         }
         
+        const titleHtml = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${title}</span>`;
+        this.battleTitle.style.background = 'none';
+        this.battleTitle.style.border = 'none';
+        this.battleTitle.style.boxShadow = 'none';
         if (suffix) {
-            // 徽标不能直接放进 background-clip:text 的标题背景中：其位移会让 Chromium
-            // 在原位置额外裁出一份文字，表现为地名上方重复的“险要/名城”。
-            this.battleTitle.style.background = 'none';
-            this.battleTitle.style.webkitBackgroundClip = 'border-box';
-            this.battleTitle.style.backgroundClip = 'border-box';
-            this.battleTitle.innerHTML = `<span style="color:transparent;background:linear-gradient(180deg,#fffcd5 0%,#ffdf73 35%,#d4951a 60%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;">${title}</span><span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:bottom;transform:translateY(-6px);letter-spacing:normal;">${suffix}</span>`;
+            const badgeHtml = `<span class="combat-title-badge" style="display:inline-block;padding:2px 7px;border:1px solid rgba(212,175,55,0.75);border-radius:4px;font-size:0.42em;font-weight:700;line-height:1.2;background:rgba(25,18,12,0.85);margin-left:10px;color:#ffdf73;vertical-align:middle;transform:translateY(-3px);letter-spacing:1px;box-shadow:0 2px 6px rgba(0,0,0,0.85),inset 0 0 5px rgba(212,175,55,0.25);">${suffix}</span>`;
+            this.battleTitle.innerHTML = `${titleHtml}${badgeHtml}`;
         } else {
-            this.battleTitle.style.background = 'linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%)';
-            this.battleTitle.style.webkitBackgroundClip = 'text';
-            this.battleTitle.style.backgroundClip = 'text';
-            this.battleTitle.textContent = title;
+            this.battleTitle.innerHTML = titleHtml;
         }
         
         this.battleYear.textContent = year;
