@@ -747,6 +747,9 @@ export class GameApp {
                 quests.leaveHost();
                 this.cameraFollowUI.refreshPlayerFollow();
             },
+            followCamera: () => this.cameraFollowUI.followPlayer(),
+            releaseCamera: () => this.cameraFollowUI.cancelFollow(),
+            isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
         });
         this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War);
 

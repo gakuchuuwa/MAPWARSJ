@@ -45,6 +45,7 @@ export class CameraFollowUI {
 
     // DOM Elements
     private listButton: HTMLButtonElement | null = null;
+    private drawerButton: HTMLButtonElement | null = null;
     private listPanel: HTMLDivElement | null = null;
     private followBanner: HTMLDivElement | null = null;
     public isListOpen: boolean = false;
@@ -311,6 +312,17 @@ export class CameraFollowUI {
         listContainer.style.cssText = `padding: 4px 0;`;
         panel.appendChild(listContainer);
 
+        // 侧边常驻外露抽屉按钮（折叠时贴在屏幕左边）
+        const drawerBtn = document.createElement('button');
+        drawerBtn.id = 'army-panel-drawer-btn';
+        drawerBtn.type = 'button';
+        drawerBtn.className = 'army-panel-drawer-btn';
+        drawerBtn.innerHTML = '▶<span class="drawer-label">军团</span>';
+        drawerBtn.title = '展开军团面板';
+        drawerBtn.addEventListener('click', () => this.toggleList());
+        panel.appendChild(drawerBtn);
+        this.drawerButton = drawerBtn;
+
         document.body.appendChild(panel);
         this.listPanel = panel;
     }
@@ -363,6 +375,12 @@ export class CameraFollowUI {
             this.listButton.textContent = this.isListOpen ? '▲ 收起' : '▼ 展开';
             this.listButton.setAttribute('aria-expanded', String(this.isListOpen));
         }
+        if (this.drawerButton) {
+            this.drawerButton.innerHTML = this.isListOpen
+                ? '◀<span class="drawer-label">收起</span>'
+                : '▶<span class="drawer-label">军团</span>';
+            this.drawerButton.title = this.isListOpen ? '收起军团面板' : '展开军团面板';
+        }
         if (this.listHeader) {
             this.listHeader.textContent = `⚔ 军团·势力榜 (${count}) ⚔`;
         }
@@ -400,7 +418,7 @@ export class CameraFollowUI {
             this.preScene13ListOpen = false;
             this.openList();
         }
-        if (this.preScene13FollowBannerVisible && this.followedArmyId) {
+        if (this.preScene13FollowBannerVisible && this.followedArmyId && !this.isFollowingPlayer()) {
             this.preScene13FollowBannerVisible = false;
             if (this.followBanner) this.followBanner.style.display = 'flex';
         }
@@ -999,7 +1017,8 @@ export class CameraFollowUI {
         if (text) text.innerHTML = label;
         if (this.followBanner) {
             const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
-            this.followBanner.style.display = inScene13 ? 'none' : 'flex';
+            const isHero = this.isFollowingPlayer();
+            this.followBanner.style.display = inScene13 || isHero ? 'none' : 'flex';
         }
         this.syncFollowedHighlight();
 
