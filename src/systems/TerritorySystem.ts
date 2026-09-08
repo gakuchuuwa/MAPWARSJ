@@ -83,17 +83,19 @@ const DE_CASTLE_FALLBACK: Record<string, string> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（12 种：定居点 / 棚屋 A~G / 蒙古包 A~D，随机取 9 种，2026-09-03 主人定；删 FOLWARK 波兰农庄）
+// 城寨建筑池（14 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站，随机取 9 种，2026-09-08 主人定）
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
+    'OUTPOST', 'FORTIFIED_OUTPOST',
 ];
 
 const DE_STOCKADE_SCALES: Record<string, number> = {
-    SETTLEMENT: 0.40,
-    HUT_A: 0.30, HUT_B: 0.30, HUT_C: 0.32, HUT_D: 0.30, HUT_E: 0.30, HUT_F: 0.30, HUT_G: 0.30,
-    YURT_A: 0.30, YURT_B: 0.30, YURT_C: 0.30, YURT_D: 0.30,
+    SETTLEMENT: 0.34,
+    HUT_A: 0.25, HUT_B: 0.25, HUT_C: 0.26, HUT_D: 0.25, HUT_E: 0.25, HUT_F: 0.25, HUT_G: 0.25,
+    YURT_A: 0.25, YURT_B: 0.25, YURT_C: 0.25, YURT_D: 0.25,
+    OUTPOST: 0.26, FORTIFIED_OUTPOST: 0.26,
 };
 
 // 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
@@ -113,6 +115,7 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
     ['MILL', 'AGE3'],
     ['MONASTERY', 'AGE3'],
     ['SIEGE_WORKSHOP', 'AGE3'],
+    ['TOWER', 'AGE4'], // [2026-09-08 主人定] 大型箭塔辅选项
 ];
 
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘/中城按文化套用）──
@@ -547,7 +550,7 @@ interface PalisadeGridPiece {
 
 /** 木栅栏绕城一圈：四角碉楼 + 四条边(每边 9 段紧密咬合) + 正南木城门，
  *  基于 DE 官方 anchor 精准对齐，零缝隙连贯闭合；锚点参数与步长沿用既有设定。 */
-function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGridPiece[] {
+function computePalisadeWallAndGate(baseSize: number, S: number = 5, fourGates: boolean = false): PalisadeGridPiece[] {
     const stepX = baseSize * 0.075; // 紧凑步长（7.5px，保证段与段之间、段与碉楼之间深度咬合）
     const stepY = stepX * 0.58;
     const AX = 2 * S;
@@ -558,11 +561,11 @@ function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGr
     const northY = -AX * stepY;
     const southY = AX * stepY;
 
-    // 四角木碉楼（正南木门取消：门改为两扇，分别嵌在西北边与东南边的墙段中部）
-    pieces.push({ x: westX, y: 0, type: 'POST' });            // 西角木碉楼
-    pieces.push({ x: 0, y: northY, type: 'POST' });           // 北角木碉楼
-    pieces.push({ x: eastX, y: 0, type: 'POST' });            // 东角木碉楼
-    pieces.push({ x: 0, y: southY, type: 'POST' });           // 南角木碉楼（闭合南端）
+    // 四角木碉楼/角楼
+    pieces.push({ x: westX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: northY, type: 'POST' });
+    pieces.push({ x: eastX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: southY, type: 'POST' });
 
     // 西北边：西角→北角（右上 = NE 段），k=S-1..S+1 让给城门（嵌墙中部）
     for (let k = 1; k < AX; k++) {
@@ -570,16 +573,31 @@ function computePalisadeWallAndGate(baseSize: number, S: number = 5): PalisadeGr
         pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
     }
     pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部城门
-    // 东北边：北角→东角（右下 = SE 段）
-    for (let k = 1; k < AX; k++) pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+
+    // 东北边：北角→东角（右下 = SE 段），fourGates 为 true 时添加镜像城门
+    for (let k = 1; k < AX; k++) {
+        if (fourGates && k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+    }
+    if (fourGates) {
+        pieces.push({ x: S * stepX, y: northY + S * stepY, type: 'GATE', flipX: true });
+    }
+
     // 东南边：东角→南门（左下 = SE 镜像），k=S-1..S+1 让给城门
     for (let k = 1; k < AX; k++) {
         if (k >= S - 1 && k <= S + 1) continue;
         pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
     }
-    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部城门（与西北门朝向一致，共用 NE 款）
-    // 西南边：南门→西角（左上 = NE 镜像）
-    for (let k = 1; k < AX; k++) pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部城门
+
+    // 西南边：南门→西角（左上 = NE 镜像），fourGates 为 true 时添加镜像城门
+    for (let k = 1; k < AX; k++) {
+        if (fourGates && k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+    }
+    if (fourGates) {
+        pieces.push({ x: -S * stepX, y: southY - S * stepY, type: 'GATE', flipX: true });
+    }
 
     return pieces;
 }
@@ -635,20 +653,28 @@ function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeG
         if (k >= S - 1 && k <= S + 1) continue;
         pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
     }
-    pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部双塔加固城门（关闭状态）
+    pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部双塔加固城门（原门，东北西南走向）
 
-    // 东北边：北角→东角（SE右下走向）
-    for (let k = 1; k < AX; k++) pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+    // 东北边：北角→东角（SE右下走向），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+    }
+    pieces.push({ x: S * stepX, y: northY + S * stepY, type: 'GATE', flipX: true }); // 东北墙中部双塔加固城门（镜像门）
 
     // 东南边：东角→南角（SE左下走向，带镜像），k=S-1..S+1 让给城门
     for (let k = 1; k < AX; k++) {
         if (k >= S - 1 && k <= S + 1) continue;
         pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
     }
-    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部双塔加固城门（关闭状态，与西北门朝向一致，共用 NE 款）
+    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部双塔加固城门（原门，东北西南走向）
 
-    // 西南边：南角→西角（NE左上走向，带镜像）
-    for (let k = 1; k < AX; k++) pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+    // 西南边：南角→西角（NE左上走向，带镜像），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+    }
+    pieces.push({ x: -S * stepX, y: southY - S * stepY, type: 'GATE', flipX: true }); // 西南墙中部双塔加固城门（镜像门）
 
     return pieces;
 }
@@ -753,7 +779,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
 
     // 中间 1 个建筑（随机选，居中）+ 自然地基
     const centerB = ring[0];
-    const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.35) * 1.15;
+    const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.28) * 1.15;
     const centerGroundW = centerW * 2.3;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
@@ -773,7 +799,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         const r = (0.32 + rnd() * 0.10) * baseSize;
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;
-        const bW = baseSize * (DE_STOCKADE_SCALES[b] || 0.30);
+        const bW = baseSize * (DE_STOCKADE_SCALES[b] || 0.25);
         const zIndex = Math.round(100 + y);
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
 
@@ -906,7 +932,10 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />`
     );
-    // 西北门与东南门通门石路
+    // [2026-09-08 主人定] 中城随机两种城墙样式之一：第一种双门（现有不动），第二种四门（四面皆门）
+    const isFourGates = (deHashString(cityId + '|medium_wall_style') & 1) === 1;
+
+    // 通门石路：双门时西北+东南两路；四门时四方皆通
     const gateW = baseSize * 0.85, gateH = gateW * 0.58;
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(6 * stepX).toFixed(1)}px),calc(-50% - ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
@@ -914,6 +943,14 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(6 * stepX).toFixed(1)}px),calc(-50% + ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
     );
+    if (isFourGates) {
+        groundParts.push(
+            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(6 * stepX).toFixed(1)}px),calc(-50% - ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+        );
+        groundParts.push(
+            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(6 * stepX).toFixed(1)}px),calc(-50% + ${(6 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+        );
+    }
     parts.push(
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
@@ -935,14 +972,22 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         const bW = baseSize * 0.32 * AUTO; // 统一大小 0.32
         const zIndex = Math.round(500 + slot.y);
         const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+
+        // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
+
         parts.push(
             `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
         );
     });
 
-    // 石墙绕城一圈（S=6；带 1.25x 雄伟城门）
-    const wallPieces = computePalisadeWallAndGate(baseSize, 6);
-    if (rnd() < 0.5) {
+    // 石墙绕城一圈（S=6；带 1.25x 雄伟城门；随机两种之一：双门 / 四门）
+    const wallPieces = computePalisadeWallAndGate(baseSize, 6, isFourGates);
+    if (!isFourGates && rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
     wallPieces.forEach((w) => {
@@ -965,19 +1010,20 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
-    // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 8 选 6 种 AGE3，共 9 栋建筑
+    // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 9 选 6 辅助建筑（含大型箭塔），共 9 栋建筑
     const noble: Array<[string, string]> = [
         ['TOWN_CENTER', 'AGE4'],
         ['MARKET', 'AGE4'],
         ['UNIVERSITY', 'AGE4'],
     ];
-    const age3Pool = DE_IMPERIAL_CITY_POOL.filter(([, a]) => a === 'AGE3');        // 8 种 AGE3
-    const age3 = [...age3Pool];
-    for (let i = age3.length - 1; i > 0; i--) {
+    const nobleKeys = new Set(noble.map(([b]) => b));
+    const secondaryPool = DE_IMPERIAL_CITY_POOL.filter(([b]) => !nobleKeys.has(b));
+    const secondary = [...secondaryPool];
+    for (let i = secondary.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
-        [age3[i], age3[j]] = [age3[j], age3[i]];
+        [secondary[i], secondary[j]] = [secondary[j], secondary[i]];
     }
-    const pool: Array<[string, string]> = [...noble, ...age3.slice(0, 6)];
+    const pool: Array<[string, string]> = [...noble, ...secondary.slice(0, 6)];
     // 9 建筑整体洗牌打乱（中心不再固定，位置完全随机）
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
@@ -1001,13 +1047,19 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />`
     );
-    // 西北门与东南门通门石路
+    // 四大城门通门石路（西北、东南原门 + 东北、西南镜像门）
     const gateW = baseSize * 0.9, gateH = gateW * 0.58;
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(7 * stepX).toFixed(1)}px),calc(-50% - ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
     );
     groundParts.push(
         `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(7 * stepX).toFixed(1)}px),calc(-50% + ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+    );
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% + ${(7 * stepX).toFixed(1)}px),calc(-50% - ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
+    );
+    groundParts.push(
+        `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${gateW.toFixed(1)}px;height:${gateH.toFixed(1)}px;transform:translate(calc(-50% - ${(7 * stepX).toFixed(1)}px),calc(-50% + ${(7 * stepY).toFixed(1)}px));opacity:0.95;pointer-events:none;" />`
     );
     parts.push(
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
@@ -1030,6 +1082,14 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         const bW = baseSize * 0.32 * AUTO; // 9 建筑统一大小 0.32
         const zIndex = Math.round(500 + slot.y);
         const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+
+        // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+        );
+
         parts.push(
             `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
         );
