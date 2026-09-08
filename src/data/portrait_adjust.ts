@@ -6487,7 +6487,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/INDIA/zhuluo_lajindela.png": {
+        "/assets/INDIA/__闲置__INDIA_03.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -6

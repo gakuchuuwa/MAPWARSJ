@@ -1945,6 +1945,10 @@ export const FACTIONS: Faction[] = [
     { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏斯·卡里亚王国（阿尔特米西亚）
     { id: 'bosidiguo', name: '波斯帝国' },        // 克拉佐美奈·阿契美尼德波斯帝国（老阿尔塔弗涅斯）
     { id: 'jikelazes', name: '基克拉泽斯' },        // 提洛·爱琴海基克拉泽斯群岛（达提斯）
+    { id: 'adiyabeina', name: '阿迪亚贝纳' },        // 阿尔贝拉·亚述故地阿迪亚贝纳王国（克雷图斯）
+    { id: 'youbeiya', name: '优卑亚' },        // 卡里斯托斯·优卑亚岛（达提斯）
+    { id: 'zeta', name: '泽塔' },        // 安提瓦里·中世纪泽塔公国（柏朗嘉宾）
+    { id: 'haerjijiji', name: '哈尔基季基' },        // 奥林索斯·哈尔基季基半岛（腓力二世）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
     { id: 'manding', name: '曼丁哥' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）

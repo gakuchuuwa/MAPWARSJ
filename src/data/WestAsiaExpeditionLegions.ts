@@ -14,6 +14,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     yashu: { name: '亚述战车', tier: 1 },          // 尼尼微·萨尔贡：新亚述战略主力，战车＋攻城工程重塑近东版图，建制延续数百年
     luomu: { name: '古拉姆军', tier: 1 },          // 伊科尼乌姆·基利杰：罗姆苏丹国建都于此的古拉姆常备军。基利杰·阿尔斯兰二世
     osman: { name: '苏丹亲兵', tier: 1 },          // 布尔萨·穆罕默德二世：奥斯曼禁卫军火枪手；1453 攻陷君士坦丁堡、1526 莫哈奇，T1 功勋
+    adiyabeina: { name: '王家骑兵', tier: 1 },       // 阿尔贝拉·克雷图斯：近卫骑兵团(Agema)，楔形突击波斯中军
     aosimanbeiyiguo: { name: '加齐骑兵', tier: 2 },   // 瑟于特·奥斯曼一世：加齐圣战骑兵
 
     // ── T2 特色之兵：特定战役有明确战术高光 ──

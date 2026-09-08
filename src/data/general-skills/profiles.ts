@@ -3228,6 +3228,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_perdiccas: { generalId: 'gen_perdiccas', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 帝国摄政，征埃及兵败被弑 → 普将
     gen_artemisia: { generalId: 'gen_artemisia', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 卡里亚女王，萨拉米斯助波斯无胜绩 → 普将
     gen_artaphernes: { generalId: 'gen_artaphernes', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' }, // 吕底亚总督，以弗所会战全歼雅典远征军 → 名将
+    gen_datis: { generalId: 'gen_datis', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 米底贵族，连克纳克索斯/埃雷特里亚/卡里斯托斯，马拉松失利 → 名将
+    gen_cleitus: { generalId: 'gen_cleitus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 近卫骑兵团长，格拉尼库斯救主、高加米拉楔形突击，无独立统帅 → 普将
+    gen_aristides: { generalId: 'gen_aristides', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 普拉提亚统雅典军、普赛塔利亚歼波斯精锐、主持提洛同盟贡赋 → 名将
+    gen_philip_ii: { generalId: 'gen_philip_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 马其顿方阵缔造者，喀罗尼亚大捷统一希腊 → 名将
+    gen_carpini: { generalId: 'gen_carpini', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' }, // 方济各使节·安提瓦里大主教，非战将 → 普将
+    zhuluo_lajialajia: { generalId: 'zhuluo_lajialajia', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' }, // 朱罗海权开创者，建布里哈迪希瓦拉神庙、跨海征服锡兰 → 名将
 };
 
 

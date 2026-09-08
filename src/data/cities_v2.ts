@@ -2987,6 +2987,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 30000, region: 'GREEK', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯' },
     { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'bosidiguo', lat: 38.36, lng: 26.77, type: 'small_city', troops: 30000, region: 'GREEK', note: '爱奥尼亚半岛海港要塞，老阿尔塔弗涅斯497年亲统波斯第三军团强攻收复' },
     { id: 'city_tiluo', name: '提洛', factionId: 'jikelazes', lat: 37.39, lng: 25.27, type: 'small_city', troops: 30000, region: 'GREEK', note: '爱琴海阿波罗圣地岛，达提斯490年主祭阿波罗、焚香300他连得并归还神像' },
+    { id: 'city_aerbeila', name: '阿尔贝拉', factionId: 'adiyabeina', lat: 36.19, lng: 44.01, type: 'medium_city', troops: 30000, region: 'ASSYRIAN', note: '今伊拉克埃尔比勒，高加米拉/阿尔贝拉战役之地，克雷图斯率近卫骑兵楔形突击波斯中军' },
+    { id: 'city_kalisituosi', name: '卡里斯托斯', factionId: 'youbeiya', lat: 38.01, lng: 24.42, type: 'small_city', troops: 30000, region: 'GREEK', note: '优卑亚岛南端要塞，达提斯490年筑壕合围、焦土迫降' },
+    { id: 'city_antiwali', name: '安提瓦里', factionId: 'zeta', lat: 42.10, lng: 19.10, type: 'small_city', troops: 30000, region: 'SLAVIC', note: '今黑山巴尔港，柏朗嘉宾1248–1252任该地大主教并卒于此' },
+    { id: 'city_aolinsuosi', name: '奥林索斯', factionId: 'haerjijiji', lat: 40.29, lng: 23.35, type: 'small_city', troops: 30000, region: 'GREEK', note: '卡尔基季基同盟首府，腓力二世348年攻克并夷平' },
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.51, lng: 36.29, type: 'big_city', troops: 30000, region: 'ORIE', note: '倭马亚都，西亚千年都会' },
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'big_city', troops: 30000, region: 'HEBREWS', note: '大卫王定都与所罗门圣殿所在地，三大一神教圣城' },

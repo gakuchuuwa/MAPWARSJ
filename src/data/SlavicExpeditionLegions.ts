@@ -72,4 +72,5 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     valois_angouleme: { name: '国王宪兵', tier: 1 },
     bolan: { name: '翼骑兵', tier: 3 },
     dabolan: { name: '瓦尔塔骑', tier: 3 },
+    zeta: { name: '泽塔骑兵', tier: 3 },          // 安提瓦里·柏朗嘉宾：泽塔公国骑兵（编）
 };

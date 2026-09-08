@@ -16,6 +16,7 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
+import { getCultureLegionName } from '../types/CultureFormations';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import {
     applyPortraitAdjustToElement,
@@ -1492,12 +1493,18 @@ export class CombatUI {
         this.attackerDisplayName = attFactionName;
         this.defenderDisplayName = defFactionName;
 
+        const attRegion = init.attackerFactionId
+            ? resolveUnitCultureRegion({ factionId: init.attackerFactionId, unitType: 'legion', getPosition: () => ({ lat: 0, lng: 0 }) } as any)
+            : 'CENTRAL';
+        const defRegion = init.defenderFactionId
+            ? resolveUnitCultureRegion({ factionId: init.defenderFactionId, unitType: 'legion', getPosition: () => ({ lat: 0, lng: 0 }) } as any)
+            : 'CENTRAL';
         const attLegionName = (init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
             ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
-            : (attFactionName !== '攻方' ? `${attFactionName}军团` : '');
+            : getCultureLegionName(attRegion);
         const defLegionName = (init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
             ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
-            : (defFactionName !== '守方' ? `${defFactionName}军团` : '');
+            : getCultureLegionName(defRegion);
 
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
         const defenderLegionTag = this.sideElement('defender', this.leftLegionTag, this.rightLegionTag);
@@ -2063,7 +2070,7 @@ export class CombatUI {
             const lines: string[] = [];
             const shown = reinfUnits.slice(0, MAX_REINF_LINES);
             for (const u of shown) {
-                const dName = this.resolveBattleUnitListName(u) || (u.unitType === 'city' ? '据点驻军' : '援军');
+                const dName = this.resolveBattleUnitListName(u, side) || (u.unitType === 'city' ? '据点驻军' : '援军');
                 const t = Math.floor(u.troops);
                 const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
                 const ns = `<span style="white-space: nowrap; color: rgba(255, 235, 200, 0.95);">${dName}</span>`;
@@ -3510,10 +3517,6 @@ export class CombatUI {
         const factionId = army.getFactionId?.() ?? army.factionId;
         this.setPortrait(this.leftPortrait, { generalId, factionId, id: army.id, name: army.name } as any, generalId, factionId, undefined, 'attacker');
         this.fillGeneralNameTag(this.leftGeneralNameTag, { generalId, factionId, id: army.id, name: army.name } as any, 'attacker');
-        if (this.leftLegionTag) {
-            this.leftLegionTag.textContent = army.name || '';
-            this.leftLegionTag.style.display = army.name ? 'block' : 'none';
-        }
         if (this.leftFamousBadge) {
             this.leftFamousBadge.style.display = (generalId && getGeneralProfile(generalId)?.tier === 'famous') ? 'block' : 'none';
         }
@@ -3804,25 +3807,11 @@ export class CombatUI {
     }
 
     /**
-     * 侧栏参战名单用名：读实体实时名（军团改名/精锐番号），勿用 adapter 创建快照。
+     * 侧栏参战名单用名：显示军团名（如「耀州军团」「商州军团」）。
+     * ⚠️ 铁律：名字下面显示的是军团，不是精锐；精锐显示在战力标签（MultiplierBadges）中。
      */
-    private resolveBattleUnitListName(u: IBattleUnit): string {
-        if (u.unitType === 'city') {
-            const garrisonElite = readSiegeGarrisonEliteName(u.getEntity?.());
-            if (garrisonElite) return garrisonElite;
-            const city = u.getEntity?.() as { name?: string } | undefined;
-            const cityName = (city?.name ?? '').trim();
-            if (cityName) return `${cityName}驻军`;
-            return (u.name || '驻军').trim();
-        }
-        const army = u.getEntity?.() as Army | undefined;
-        if (army) {
-            const live = (army.name ?? '').trim();
-            if (live) return live;
-            const elite = getLegionEliteLegionName(army);
-            if (elite) return elite;
-        }
-        return (u.name || '军团').trim();
+    private resolveBattleUnitListName(u: IBattleUnit, side: 'attacker' | 'defender' = 'attacker'): string {
+        return this.resolveUnitLegionName(u, side);
     }
 
     private buildWaveGroupedSideName(units: IBattleUnit[], side: 'attacker' | 'defender'): string {
@@ -3832,7 +3821,7 @@ export class CombatUI {
         // 第二行 = 文字主位（本城 / 开局波次），与立绘选角解耦（2026-08-06）
         const primary = this.pickSideNameUnit(activeUnits, side) ?? activeUnits[0];
 
-        const displayName = this.resolveBattleUnitListName(primary);
+        const displayName = this.resolveBattleUnitListName(primary, side);
         if (!displayName) return '';
 
         const isAtt = side === 'attacker';
@@ -5680,23 +5669,17 @@ export class CombatUI {
 
     private resolveUnitLegionName(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
         const factionId = unit.factionId;
-        // ① 军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名，如「秦国军团」）。
-        //    番号（army.name，如「范阳军团」「北府兵」）另走精锐标签 getLegionEliteBadgeName，此处不混。
+        // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;
         }
-        // ② 番号兜底（未登记军团名的势力：显示实时番号；番号≠军团名，不再加「军团」后缀）
-        const entity = unit.getEntity?.();
-        const raw = ((entity?.name ?? unit.name) || '').trim();
-        if (raw && raw !== '军队' && raw !== '军团' && !raw.includes('守军')) {
-            return raw;
+        // ② 时代 + 文化军团（如「古典先秦军团」「古典秦汉军团」「封建高句丽军团」「城堡蒙古军团」）
+        const region = resolveUnitCultureRegion(unit);
+        const cultureLegionName = getCultureLegionName(region);
+        if (cultureLegionName) {
+            return cultureLegionName;
         }
-        // ③ 势力名 + 军团
-        const factionName = factionId ? (window as any).game?.cityManager?.getFactionName?.(factionId) : null;
-        if (factionName) {
-            return `${factionName}军团`;
-        }
-        return side === 'attacker' ? '攻方军团' : '守方军团';
+        return side === 'attacker' ? '古典先秦军团' : '古典秦汉军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {

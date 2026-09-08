@@ -239,16 +239,16 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
         const waterWeight = Math.max(2.0 * zoomMult, 1.0);
         return {
-            color: '#496D72',
-            weight: waterWeight + 1.2,
-            opacity: 0.45,
+            color: '#294F62',
+            weight: waterWeight + 1.6,
+            opacity: 0.75,
             lineCap: 'round',
             lineJoin: 'round',
             className: 'vector-river-border'
         };
     }
 
-    // 水流主体与 RiverWorker 的宽河道、湖海水面使用同一灰蓝色。
+    // 水流主体与 RiverWorker 的宽河道、湖海水面使用同一蓝色。
     private static getWaterStyle(feature: any, zoom: number): L.PathOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -260,7 +260,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
         return {
-            color: '#6899AD',
+            color: '#347FA8',
             weight: Math.max(2.0 * zoomMult, 1.0),
             opacity: 1.0,
             lineCap: 'round',

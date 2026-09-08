@@ -38,4 +38,7 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     qiesuonisuosi: { name: '斯巴达舰队', tier: 1 },          // 羊河·吕山德：斯巴达海军舰队，405 全歼雅典海军
     mixiya: { name: '帖撒利骑', tier: 2 },          // 格拉尼库斯·帕曼纽：帖撒利重骑兵，左翼破阵
     xiaaiji: { name: '马其顿方阵', tier: 1 },          // 佩鲁西姆·佩尔狄卡斯：马其顿方阵步兵
+    jikelazes: { name: '雅典重步', tier: 2 },          // 提洛·阿里斯提德：雅典重步兵，主持提洛同盟贡赋评估
+    youbeiya: { name: '波斯远征军', tier: 1 },          // 卡里斯托斯·达提斯：前490马拉松远征波斯水陆大军
+    haerjijiji: { name: '萨里沙枪阵', tier: 1 },          // 奥林索斯·腓力二世：萨里沙超长矛马其顿方阵
 };
