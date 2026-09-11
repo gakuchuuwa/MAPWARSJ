@@ -12,6 +12,12 @@
 
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
 import { perfDoctor } from '../../debug/PerfDoctor';
+import SpriteTintWorker from '../../workers/SpriteTintWorker?worker';
+import { tintMaskPixels } from './MaskTintPixels';
+
+export type TintedSprite = HTMLImageElement | (ImageBitmap & {
+    naturalWidth: number; naturalHeight: number; complete: true; src: string;
+});
 
 /**
  * 缓存键用的稳定标识：优先源文件路径（`sourceUrl`），退回 `src`。
@@ -31,7 +37,7 @@ function tintKeyOf(img: HTMLImageElement): string {
 }
 
 /** 估算一张图占的堆字节：解码位图 w×h×4，加上 src 字符串（data URL 时非常大，UTF-16 2 字节/字符）。 */
-function imgBytes(img: HTMLImageElement): number {
+function imgBytes(img: TintedSprite): number {
     const px = (img.naturalWidth || 0) * (img.naturalHeight || 0) * 4;
     const src = img.src && img.src.startsWith('data:') ? img.src.length * 2 : 0;
     return px + src;
@@ -51,7 +57,7 @@ export class SpriteTinter {
 
     // 缓存染色后的精灵图，避免每帧重复处理
     // Key: `${originalSrc}_${factionId}`；mask 染色的 key 前缀 `mask:` 区分
-    private static tintedSpriteCache: Map<string, HTMLImageElement> = new Map();
+    private static tintedSpriteCache: Map<string, TintedSprite> = new Map();
     /**
      * 染色图缓存**字节**预算。
      *
@@ -119,7 +125,7 @@ export class SpriteTinter {
     public static getTintedSprite(
         originalSprite: HTMLImageElement,
         factionId: string
-    ): HTMLImageElement {
+    ): TintedSprite {
         // 检查是否需要染色
         if (!FactionTintSystem.shouldTint(factionId)) {
             return originalSprite;
@@ -145,7 +151,163 @@ export class SpriteTinter {
     }
 
     /** 同一「图 × 势力」的**在途染色**去重表（见 getTintedSpriteReady 的说明）。 */
-    private static readyInflight: Map<string, Promise<HTMLImageElement>> = new Map();
+    private static readyInflight: Map<string, Promise<TintedSprite>> = new Map();
+    private static tintWorker: Worker | null = null;
+    private static workerFailed = false;
+    private static workerJobId = 0;
+    private static workerJobs = new Map<number, { resolve: (bitmap: ImageBitmap) => void; reject: (error: Error) => void }>();
+    private static workerBusy = 0;
+    private static workerWaiters: Array<{ key: string; resume: () => void }> = [];
+    private static criticalTintKeys = new Set<string>();
+    private static workerTintKeys = new Set<string>();
+
+    private static getTintWorker(): Worker {
+        if (this.tintWorker) return this.tintWorker;
+        const worker = new SpriteTintWorker();
+        worker.onmessage = ({ data }) => {
+            const job = this.workerJobs.get(data.id);
+            if (!job) return;
+            this.workerJobs.delete(data.id);
+            if (data.error) job.reject(new Error(data.error));
+            else job.resolve(data.bitmap);
+        };
+        worker.onerror = () => {
+            this.workerFailed = true;
+            worker.terminate();
+            this.tintWorker = null;
+            for (const job of this.workerJobs.values()) job.reject(new Error('染色 Worker 不可用'));
+            this.workerJobs.clear();
+        };
+        this.tintWorker = worker;
+        return worker;
+    }
+
+    private static async tintReadyInWorker(sprite: HTMLImageElement, factionId: string): Promise<TintedSprite> {
+        if (this.workerFailed || typeof Worker === 'undefined' || typeof OffscreenCanvas === 'undefined'
+            || typeof createImageBitmap === 'undefined') return this.tintReadyUncached(sprite, factionId);
+        const tint = FactionTintSystem.getTintColor(factionId);
+        if (!tint) return sprite;
+        const source = (sprite as any).sourceUrl || sprite.src;
+        const dir = source.slice(0, source.lastIndexOf('/') + 1);
+        if (this.dirHasMask.get(dir) === false) return this.tintReadyUncached(sprite, factionId);
+        const maskSrc = source.replace(/\.png$/, '.pc.png');
+        let mask = this.maskCache.get(maskSrc);
+        if (!mask) {
+            const image = new Image();
+            image.fetchPriority = this.criticalTintKeys.has(`${tintKeyOf(sprite)}_${factionId}`) ? 'high' : 'low';
+            image.onload = () => { this.maskCachePut(maskSrc, image); this.dirHasMask.set(dir, true); };
+            image.onerror = () => {
+                this.maskCachePut(maskSrc, 'none');
+                if (this.dirHasMask.get(dir) !== true) this.dirHasMask.set(dir, false);
+            };
+            image.src = maskSrc;
+            this.maskCachePut(maskSrc, image);
+            mask = image;
+        }
+        if (mask === 'none') return this.tintReadyUncached(sprite, factionId);
+        if (!mask.complete) await new Promise<void>(resolve => {
+            const done = () => { mask.removeEventListener('load', done); mask.removeEventListener('error', done); resolve(); };
+            mask.addEventListener('load', done); mask.addEventListener('error', done);
+            if (mask.complete) done();
+        });
+        if (!mask.naturalWidth) return this.tintReadyUncached(sprite, factionId);
+        const key = `mask:${tintKeyOf(sprite)}_${factionId}_${FactionTintSystem.getTintHex(factionId) ?? 'raw'}`;
+        const cached = this.tintedSpriteCache.get(key);
+        if (cached) {
+            await this.imageExports.get(cached);
+            if (cached instanceof HTMLImageElement && !cached.complete) await cached.decode();
+            if (cached.naturalWidth) { this.touchTinted(key, cached); return cached; }
+        }
+        // 限制在途位图，避免几百张雪碧图同时复制占满内存。
+        this.workerTintKeys.add(key);
+        const flightKey = `${tintKeyOf(sprite)}_${factionId}`;
+        if (this.workerBusy >= 2) await new Promise<void>(resume => this.workerWaiters.push({ key: flightKey, resume }));
+        else this.workerBusy++;
+        let mainBitmap: ImageBitmap | null = null, maskBitmap: ImageBitmap | null = null;
+        try {
+            if (this.workerFailed) throw new Error('染色 Worker 不可用');
+            mainBitmap = await createImageBitmap(sprite);
+            maskBitmap = await createImageBitmap(mask);
+            const worker = this.getTintWorker();
+            const id = ++this.workerJobId;
+            const bitmap = await new Promise<ImageBitmap>((resolve, reject) => {
+                this.workerJobs.set(id, { resolve, reject });
+                try {
+                    worker.postMessage({ id, sprite: mainBitmap, mask: maskBitmap, tint,
+                        weakCoverage: this.WEAK_PC_COVERAGE, extraTint: this.WEAK_EXTRA_TINT }, [mainBitmap!, maskBitmap!]);
+                } catch (error) { this.workerJobs.delete(id); reject(error); }
+            });
+            // 可直接 drawImage 的位图，不再经历 PNG 编码 → 图片解码往返。
+            const image = Object.assign(bitmap, { naturalWidth: bitmap.width, naturalHeight: bitmap.height,
+                complete: true as const, src: '' });
+            this.tintedCachePut(key, image);
+            return this.tintedSpriteCache.get(key) ?? image;
+        } finally {
+            this.workerTintKeys.delete(key);
+            mainBitmap?.close(); maskBitmap?.close();
+            // 行走/攻击先完成，不能让开场等在尚未使用的死亡、残局动作后面。
+            const critical = this.workerWaiters.findIndex(waiter => this.criticalTintKeys.has(waiter.key));
+            const next = this.workerWaiters.splice(critical < 0 ? 0 : critical, 1)[0];
+            if (next) next.resume(); else this.workerBusy--;
+        }
+    }
+    private static imageExports = new WeakMap<TintedSprite, Promise<void>>();
+    private static tintWork: Array<() => void> = [];
+    private static tintWorkScheduled = false;
+
+    /** 限制实际像素处理，而不是限制遮罩网络请求的启动次数。 */
+    private static scheduleTint<T>(work: () => T): Promise<T> {
+        return new Promise((resolve, reject) => {
+            this.tintWork.push(() => {
+                try { resolve(work()); } catch (error) { reject(error); }
+            });
+            if (this.tintWorkScheduled) return;
+            this.tintWorkScheduled = true;
+            const drain = () => {
+                const deadline = performance.now() + 4;
+                do { this.tintWork.shift()?.(); }
+                while (this.tintWork.length && performance.now() < deadline);
+                // 切换期浏览器合成繁忙时 rAF 很稀疏，不能让素材加载等下一张画面才推进。
+                // 每个短任务后让回事件循环，输入/绘制仍有机会执行。
+                if (this.tintWork.length) setTimeout(drain, 0);
+                else this.tintWorkScheduled = false;
+            };
+            setTimeout(drain, 0);
+        });
+    }
+
+    /** toBlob 在调用时快照画布；后续染色可安全复用画布，避免同步 PNG/base64 编码。 */
+    private static exportCanvas(canvas: HTMLCanvasElement, fallback: HTMLImageElement): HTMLImageElement {
+        const img = new Image();
+        const ready = new Promise<void>((resolve) => {
+            let objectUrl: string | null = null;
+            const finish = () => {
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                img.removeEventListener('load', finish);
+                img.removeEventListener('error', failed);
+                resolve();
+            };
+            const failed = () => {
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                objectUrl = null;
+                img.removeEventListener('error', failed);
+                img.addEventListener('error', finish, { once: true });
+                img.src = fallback.src;
+            };
+            img.addEventListener('load', finish, { once: true });
+            img.addEventListener('error', failed, { once: true });
+            try {
+                canvas.toBlob(blob => {
+                    if (!blob) { failed(); return; }
+                    objectUrl = URL.createObjectURL(blob);
+                    img.src = objectUrl;
+                }, 'image/png');
+            } catch { failed(); }
+        });
+        this.imageExports.set(img, ready);
+        void ready.then(() => this.imageExports.delete(img));
+        return img;
+    }
 
     /**
      * 等待玩家色遮罩完成探测后再返回最终染色图。
@@ -160,14 +322,17 @@ export class SpriteTinter {
      */
     public static async getTintedSpriteReady(
         originalSprite: HTMLImageElement,
-        factionId: string
-    ): Promise<HTMLImageElement> {
+        factionId: string,
+        critical = false
+    ): Promise<TintedSprite> {
         if (!FactionTintSystem.shouldTint(factionId)) return originalSprite;
         const flightKey = `${tintKeyOf(originalSprite)}_${factionId}`;
+        if (critical) this.criticalTintKeys.add(flightKey);
         const flying = this.readyInflight.get(flightKey);
         if (flying) return flying;
-        const job = this.tintReadyUncached(originalSprite, factionId)
-            .finally(() => { this.readyInflight.delete(flightKey); });
+        const job = this.tintReadyInWorker(originalSprite, factionId)
+            .catch(() => this.tintReadyUncached(originalSprite, factionId))
+            .finally(() => { this.readyInflight.delete(flightKey); this.criticalTintKeys.delete(flightKey); });
         this.readyInflight.set(flightKey, job);
         return job;
     }
@@ -176,8 +341,8 @@ export class SpriteTinter {
     private static async tintReadyUncached(
         originalSprite: HTMLImageElement,
         factionId: string
-    ): Promise<HTMLImageElement> {
-        let tinted = this.getTintedSprite(originalSprite, factionId);
+    ): Promise<TintedSprite> {
+        let tinted = await this.scheduleTint(() => this.getTintedSprite(originalSprite, factionId));
         if (!FactionTintSystem.shouldTint(factionId)) return tinted;
 
         const sourceUrl: string = (originalSprite as any).sourceUrl || originalSprite.src;
@@ -194,15 +359,24 @@ export class SpriteTinter {
                 });
             }
             // 遮罩成功则生成精确玩家色；确认不存在则在这里稳定回退亮度染色。
-            tinted = this.getTintedSprite(originalSprite, factionId);
+            tinted = await this.scheduleTint(() => this.getTintedSprite(originalSprite, factionId));
         }
 
-        if (!tinted.complete) {
+        // 同步绘制入口在编码中返回原图；战术素材库必须等最终染色图解码完成。
+        const suffix = `${tintKeyOf(originalSprite)}_${factionId}_${FactionTintSystem.getTintHex(factionId) ?? 'raw'}`;
+        const cached = this.tintedSpriteCache.get(`mask:${suffix}`) ?? this.tintedSpriteCache.get(suffix);
+        if (cached) {
+            await this.imageExports.get(cached);
+            tinted = cached;
+        }
+
+        if (tinted instanceof HTMLImageElement && !tinted.complete) {
+            const image = tinted;
             await new Promise<void>((resolve) => {
                 const done = () => resolve();
-                tinted.addEventListener('load', done, { once: true });
-                tinted.addEventListener('error', done, { once: true });
-                if (tinted.complete) resolve();
+                image.addEventListener('load', done, { once: true });
+                image.addEventListener('error', done, { once: true });
+                if (image.complete) resolve();
             });
         }
         return tinted;
@@ -228,18 +402,18 @@ export class SpriteTinter {
      *    那批士兵贴图**，于是每帧都在重新染色、每帧拿到的都是还没解码的新图，
      *    军团士兵就一直画不出来。改成 LRU：正在用的那批永远排在队尾，不会被顶掉。
      */
-    private static touchTinted(key: string, img: HTMLImageElement): void {
+    private static touchTinted(key: string, img: TintedSprite): void {
         this.tintedSpriteCache.delete(key);
         this.tintedSpriteCache.set(key, img);
     }
 
-    private static tintedCachePut(key: string, img: HTMLImageElement): void {
+    private static tintedCachePut(key: string, img: TintedSprite): void {
         if (this.tintedSpriteCache.has(key)) return;
         if (this.evictedTintKeys.delete(key)) this.churnStats.tintedReAdds++;
         let counted = imgBytes(img);
         this.tintedSpriteCache.set(key, img);
         this.tintedCacheBytes += counted;
-        if (!img.complete || img.naturalWidth === 0) {
+        if (img instanceof HTMLImageElement && (!img.complete || img.naturalWidth === 0)) {
             img.addEventListener('load', () => {
                 // 仍在缓存里才补记，已被淘汰的不再计入（否则字节数会漂）
                 if (this.tintedSpriteCache.get(key) !== img) return;
@@ -324,7 +498,7 @@ export class SpriteTinter {
         tint: TintColor,
         tintHex: string | null,
         dir = ''
-    ): HTMLImageElement {
+    ): TintedSprite {
         // 🔴 [2026-08-30 修 13 卡顿·堆撞 4GB 天花板] key 必须用**源路径**，不能用 sprite.src。
         //    13 的素材经抠绿后 src 是 data URL，实测单张 **0.81MB**（576 张共 468MB）。
         //    拿它当 Map 的 key，等于每条缓存额外背一个 0.81MB 的字符串；
@@ -333,12 +507,15 @@ export class SpriteTinter {
         //    （8 方向共用同一文件时必然发生）合并成同一条缓存，少染 7 次、少存 7 份位图。
         const cacheKey = `mask:${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete) { this.touchTinted(cacheKey, cached); return cached; }
+        if (cached && cached.complete && cached.naturalWidth > 0 && !this.imageExports.has(cached)) { this.touchTinted(cacheKey, cached); return cached; }
         // 🔴 [2026-08-31 修「军团士兵不显示」] 已在缓存但**还没解码完**：直接返回**原图**，
         //    绝不再新建一张。调用方（LegionPhalanxDrawer:1425）拿到结果**不检查 .complete**
         //    就去算帧、drawImage —— 未解码图 naturalWidth = 0，帧数算成 0，整格什么都画不出来。
         //    返回原图最多是「这一瞬间没染上势力色」，比整支军团消失好得多。
         if (cached) return sprite;
+
+        // 战术异步请求已接管同一张图，不让战略绘制入口重复在主线程染一次。
+        if (this.workerTintKeys.has(cacheKey)) return sprite;
 
         const maskState = this.maskCache.get(maskSrc);
         if (maskState === 'none') {
@@ -358,7 +535,7 @@ export class SpriteTinter {
             if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
             const tinted = this.applyMaskTint(sprite, maskState, tint, maskSrc);
             this.tintedCachePut(cacheKey, tinted);
-            return tinted;
+            return sprite;
         }
         // 首次：发起遮罩加载，本帧返回原图（不染全身，避免脸/皮肤被亮度染色误伤）
         if (!maskState) {
@@ -391,11 +568,11 @@ export class SpriteTinter {
         factionId: string,
         tint: TintColor,
         tintHex: string | null
-    ): HTMLImageElement {
+    ): TintedSprite {
         // key 用源路径而非 data URL，理由同 getMaskTinted（见那里的长注释）。
         const cacheKey = `${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete) { this.touchTinted(cacheKey, cached); return cached; }
+        if (cached && cached.complete && cached.naturalWidth > 0 && !this.imageExports.has(cached)) { this.touchTinted(cacheKey, cached); return cached; }
         if (cached) return sprite;   // 同上：未解码时回退原图，别让调用方拿到 naturalWidth=0 的图
 
         // 如果原图未加载完成，返回原图
@@ -403,7 +580,7 @@ export class SpriteTinter {
 
         const tintedSprite = this.applyTint(sprite, tint);
         this.tintedCachePut(cacheKey, tintedSprite);
-        return tintedSprite;
+        return sprite;
     }
 
     /**
@@ -476,61 +653,13 @@ export class SpriteTinter {
         //   增益 2.2：把 main 灰阶提亮到接近 AoE2「高光耀眼/阴影分明」的对比度。
         //      注：原注释称 main 灰阶均值 ~42，实测为 48~90（因兵种而异），但 2.2 的实际观感经对比图验证仍最好，
         //      故保持不变；试过配 gamma 色阶曲线替代，在暗底兵种（条顿骑士均值 48）上反而更闷，已否决。
-        const GAIN = 2.2;
-        const n = Math.min(main.length, maskData.length);
-
-        // 🔴 [2026-08-17 主人定] 玩家色覆盖太少的兵种，额外叠一层整体淡色。
-        //    起因：主人「有的染了红色，有的没染色」。实测 306 个目录的玩家色覆盖率差 30 倍——
-        //    条顿骑士 79.9%（整个人通红）、投石车只有 2.6%（一小块布，缩到 40px 根本看不见）。
-        //    这是 DE 美术本身的分布，不是漏染；但我们把人缩得比帝国时代小得多，低覆盖的就认不出阵营了。
-        //    做法：覆盖率 < WEAK_PC_COVERAGE 时，全身按 WEAK_EXTRA_TINT 的比例混入势力色，
-        //    并保留各自的明暗（按像素自身灰阶调制），所以金属/皮肤只是**略微偏色**而不是被涂平。
-        //    实测命中 30 个目录（约 9%）：投石车/弩炮/攻城槌/战犬/骑士/游侠/骠骑兵等。
-        //    🔴 必须**逐像素全采**，别图省事隔几个采一次：精灵图是横向排帧的，
-        //       采样步长会和帧宽产生混叠 —— 实测隔 8 采样把精锐轻标枪兵的 26.0% 采成 8.4%，
-        //       154 个边界带目录里误判了 5 个。全采一遍 384 张约 281ms，
-        //       再按**遮罩 URL 缓存**（同一张遮罩两个阵营各染一次，缓存后只算一次）就够便宜了。
-        let weak = this.weakCoverCache.get(maskSrc);
-        if (weak === undefined) {
-            let bodyPx = 0, pcPx = 0;
-            for (let i = 3; i < n; i += 4) {
-                if (main[i] > 16) bodyPx++;
-                if (maskData[i] > 16) pcPx++;
-            }
-            weak = bodyPx > 0 && pcPx / bodyPx < SpriteTinter.WEAK_PC_COVERAGE;
-            this.weakCoverCache.set(maskSrc, weak);
-        }
-        const K = weak ? SpriteTinter.WEAK_EXTRA_TINT : 0;
-
-        for (let i = 0; i < n; i += 4) {
-            const w = maskData[i + 3] / 255;   // 玩家色覆盖权重（DE 原生渐变）
-            if (w === 0) {
-                // 非玩家色区域（脸/皮肤/金属/武器/马）：正常情况保持 main 原样；
-                // 低覆盖兵种额外混入一点势力色，好歹能认出是哪一方（见上方 WEAK_* 说明）。
-                if (K > 0 && main[i + 3] > 16) {
-                    const l0 = (0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2]) / 255;
-                    main[i] = Math.round(main[i] * (1 - K) + tint.r * l0 * K);
-                    main[i + 1] = Math.round(main[i + 1] * (1 - K) + tint.g * l0 * K);
-                    main[i + 2] = Math.round(main[i + 2] * (1 - K) + tint.b * l0 * K);
-                }
-                continue;
-            }
-
-            // main 灰阶 = 布料明暗（褶皱），作为玩家色的亮度调制
-            const lum = 0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2];
-            const s = Math.min(255, lum * GAIN);
-            // 按覆盖权重混回原像素：w=1 纯玩家色，w 越低越保留原色，边缘自然过渡
-            main[i] = Math.round((tint.r * s / 255) * w + main[i] * (1 - w));
-            main[i + 1] = Math.round((tint.g * s / 255) * w + main[i + 1] * (1 - w));
-            main[i + 2] = Math.round((tint.b * s / 255) * w + main[i + 2] * (1 - w));
-            // Alpha 保持 main 的 alpha（不透明/抗锯齿边缘）
-        }
+        const weak = tintMaskPixels(main, maskData, tint,
+            this.WEAK_PC_COVERAGE, this.WEAK_EXTRA_TINT, this.weakCoverCache.get(maskSrc));
+        this.weakCoverCache.set(maskSrc, weak);
 
         ctx.putImageData(mainImageData, 0, 0);
 
-        const tintedImage = new Image();
-        tintedImage.src = canvas.toDataURL('image/png');
-        return tintedImage;
+        return this.exportCanvas(canvas, sprite);
     }
 
     /**
@@ -634,11 +763,7 @@ export class SpriteTinter {
 
         ctx.putImageData(imageData, 0, 0);
 
-        // 3. 创建新的Image对象
-        const tintedImage = new Image();
-        tintedImage.src = canvas.toDataURL('image/png');
-
-        return tintedImage;
+        return this.exportCanvas(canvas, sprite);
     }
 
     // ── PerfDoctor 体检访问器（私有 static 在类外读不到，这里开只读口子）──
@@ -672,15 +797,7 @@ export class SpriteTinter {
 
         for (const sprite of sprites) {
             for (const factionId of factionIds) {
-                promises.push(new Promise<void>((resolve) => {
-                    const tinted = this.getTintedSprite(sprite, factionId);
-                    if (tinted.complete) {
-                        resolve();
-                    } else {
-                        tinted.onload = () => resolve();
-                        tinted.onerror = () => resolve();
-                    }
-                }));
+                promises.push(this.getTintedSpriteReady(sprite, factionId).then(() => {}));
             }
         }
 

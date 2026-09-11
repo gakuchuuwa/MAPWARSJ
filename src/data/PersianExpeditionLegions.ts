@@ -43,8 +43,8 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     guzgan: { name: '古兹根军', tier: 4 },          // 法里亚布·古兹根
     baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹
     hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔
-    yisatisi: { name: '亚兹德圣火卫', tier: 4 },
     kerman_bam: { name: '萨法尔骑', tier: 2 },
     aqimeinide: { name: '不死军', tier: 2 },
     asaibaijiang: { name: '伊儿汗怯薛', tier: 1 },
+    yisatisi: { name: '圣火卫', tier: 3 },
 };

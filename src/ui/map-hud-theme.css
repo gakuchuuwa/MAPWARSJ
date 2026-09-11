@@ -118,9 +118,9 @@
     left: 50% !important;
     right: auto !important;
     top: 0 !important;
-    width: clamp(280px, 20vw, 340px) !important;
-    padding: 12px 16px 10px !important;
-    font-size: clamp(13px, .85vw, 15px) !important;
+    width: min(920px, calc(100vw - 32px)) !important;
+    padding: 10px 16px 8px !important;
+    font-size: 13px !important;
     max-height: calc(100dvh - 120px);
     overflow: visible !important;
     border-top: none !important;
@@ -149,7 +149,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 16px 7px;
+    padding: 5px 16px 6px;
     background: var(--map-hud-bg);
     border: 1px solid var(--map-hud-line);
     border-top: none;
@@ -172,19 +172,36 @@
     color: #fffcee;
 }
 
+#player-hero-panel .player-hud-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+@media (max-width: 768px) {
+    #player-hero-panel .player-hud-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+#player-hero-panel .player-hud-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
 #player-hero-panel .player-hud-row {
-    padding: 4px 0;
+    padding: 2px 0;
     border-bottom: 1px solid #d4b57d0c;
     align-items: baseline;
 }
 #player-hero-panel .player-hud-row > span:first-child { flex-shrink: 0; }
 #player-hero-panel select {
-    min-height: 30px;
+    min-height: 26px;
     font-size: 12px !important;
-    margin-top: 4px !important;
+    margin-top: 2px !important;
 }
 #player-hero-panel select:disabled { opacity: .8; }
-#player-hero-panel label { padding: 4px 0; }
+#player-hero-panel label { padding: 2px 0; }
 
 #follow-banner { padding: 9px 14px !important; }
 #follow-banner button { min-height: 28px; }
@@ -357,6 +374,57 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), inset 0 0 5px rgba(212, 175, 55, 0.25);
     vertical-align: middle;
     transform: translateY(-3px);
+}
+
+/* 🔴 [2026-09-10 主人定] 战术模式下战斗标题移入顶部玩家面板（#player-scene13-bar） */
+#player-scene13-bar .combat-title {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 10px 0 0 !important;
+    border: none !important;
+    border-right: 1px solid rgba(212, 175, 55, 0.4) !important;
+    font-size: 13px !important;
+    letter-spacing: 1.5px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95)) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+#player-scene13-bar .combat-title-text {
+    font-family: 'Noto Serif SC', 'SimSun', serif !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+    letter-spacing: 1.5px !important;
+    color: transparent !important;
+    background: linear-gradient(180deg, #fffbe0 0%, #ffdf73 35%, #d4951a 65%, #8f5a0a 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+#player-scene13-bar .combat-title-badge {
+    display: inline-block !important;
+    padding: 1px 6px !important;
+    margin-left: 6px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 1px !important;
+    color: #ffdf73 !important;
+    background: rgba(25, 18, 12, 0.85) !important;
+    border: 1px solid rgba(212, 175, 55, 0.75) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), inset 0 0 4px rgba(212, 175, 55, 0.2) !important;
+    vertical-align: middle !important;
+    transform: none !important;
 }
 
 #combat-ui-panel:not(.is-scene13) .combat-bar-track {

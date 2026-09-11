@@ -67,6 +67,9 @@ export interface TechEffect {
     bonusClass?: number;
 }
 
+/** 四时代（与四时代文化体系同一把尺）：古典 –400 / 封建 400–1050 / 城堡 1050–1500 / 帝国 1500–1900 */
+export type TechEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
+
 export interface MilitaryTech {
     id: string;
     /** 中文名（播报用） */
@@ -75,6 +78,8 @@ export interface MilitaryTech {
     de: string;
     /** 生效年份；null = 开局自带（早于时间线起点 -334） */
     year: number | null;
+    /** 所属四时代（由 year 归位；null/上古 → 古典） */
+    era: TechEra;
     /**
      * 史实依据 = **给 `year` 找的断代锚点**（这条技术什么时候算成立），
      * 🔴 **不是 `cultures` 的适用范围依据** —— 两者不对应是常态，别拿 basis 去"纠正" cultures：
@@ -126,26 +131,30 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     // ── 近战攻击线（冶金）：步兵6 / 骑兵12（含象、车）────────────────────────
     {
         id: 'forging', name: '锻造', de: 'Forging', year: null,
+        era: 'antiquity',
         basis: '铁兵器普及早于时间线起点（-334 已是铁器时代）',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 45, 46, 47, 50] }],
         cultures: null,
     },
     {
         id: 'iron_casting', name: '铸铁', de: 'Iron casting', year: -100,
+        era: 'antiquity',
         basis: '汉代炒钢／百炼钢工艺成熟',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 45, 46, 47, 50] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
+        era: 'antiquity',
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 45, 46, 47, 50] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'KHMER', 'MAYANS', 'MAPUCHE', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
     {
         id: 'scale_mail', name: '步兵鳞甲', de: 'Scale Mail Armor', year: null,
+        era: 'antiquity',
         basis: '鳞甲远早于时间线起点',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
@@ -155,55 +164,61 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     },
     {
         id: 'chain_mail', name: '步兵锁甲', de: 'Chain Mail Armor', year: -100,
+        era: 'antiquity',
         basis: '凯尔特人前 3 世纪发明，罗马前 1 世纪普遍装备',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
+        era: 'castle',
         basis: '欧洲全身板甲成熟期；板甲是西欧独有工艺',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'GURJARAS', 'VIETNAMESE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS'],
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
     {
         id: 'scale_barding', name: '骑兵鳞甲', de: 'Scale Barding Armor', year: -50,
+        era: 'antiquity',
         basis: '帕提亚／萨珊具装甲骑（cataphract）成型',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'chain_barding', name: '骑兵锁甲', de: 'Chain Barding Armor', year: 1100,
+        era: 'castle',
         basis: '中世纪盛期骑士马铠',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_barding', name: '骑兵钢甲', de: 'Plate Barding Armor', year: 1450,
+        era: 'castle',
         basis: '全身板甲马铠，西欧独有',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'HUNS', 'TEUTONS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
     {
         id: 'fletching', name: '箭羽', de: 'Fletching', year: null,
+        era: 'antiquity',
         basis: '基础箭羽工艺',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
@@ -214,6 +229,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     },
     {
         id: 'bodkin', name: '锥子箭', de: 'Bodkin Arrow', year: 1200,
+        era: 'castle',
         basis: '破甲锥头箭（bodkin point）应对锁甲普及',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
@@ -224,18 +240,20 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     },
     {
         id: 'bracer', name: '护腕', de: 'Bracer', year: 1400,
+        era: 'castle',
         basis: '复合护具与拉距改良',
         effects: [
             { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'THRACIAN', 'BRITONS', 'GOTHS', 'HUNS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', ],
     },
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
     {
         id: 'padded_archer', name: '射手软甲', de: 'Padded Archer Armor', year: null,
+        era: 'antiquity',
         basis: '织物／皮质轻甲',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
@@ -245,87 +263,392 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     },
     {
         id: 'leather_archer', name: '射手皮甲', de: 'Leather Archer Armor', year: 800,
+        era: 'feudal',
         basis: '硬化皮甲工艺',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'ring_archer', name: '射手锁甲', de: 'Ring Archer Armor', year: 1300,
+        era: 'castle',
         basis: '环片复合甲',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'THRACIAN', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'MAGYAR', 'LITHUANIANS', 'BOHEMIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'TUPI', 'ARMENIANS'],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 附加四条 ──────────────────────────────────────────────────────────
     {
         id: 'husbandry', name: '畜牧', de: 'Husbandry', year: 477,
+        era: 'feudal',
         basis: '马镫在南北朝定型并西传，骑兵机动力质变',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'BRITONS', 'GOTHS', 'HUNS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
+        era: 'antiquity',
         basis: '汉武帝得大宛汗血马，良种马育种',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 23, 36, 47] }],
-        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'THRACIAN', 'PERSIAN', 'CUMAN', 'GOTHS', 'HUNS', 'TEUTONS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'PERSIAN', ],
     },
     {
         id: 'thumb_ring', name: '扳指', de: 'Thumb Ring', year: 1206,
+        era: 'castle',
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
-        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', 'CUMAN', 'HUNS', 'ITALIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'GURJARAS', 'VIETNAMESE', 'MAYANS', 'MUISCA', ],
+        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
+        era: 'antiquity',
         basis: '卡莱战役，帕提亚回马射战术定名',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [36] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [36] },
             { attr: 'bonus', op: 'add', value: 2, classes: [36], bonusClass: 27 },
         ],
-        cultures: ['CENTRAL', 'NORTH', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'THRACIAN', 'PERSIAN', 'CUMAN', 'HUNS', 'BULGARIANS', 'MAGYAR', 'KHMER', 'GEORGIANS', ],
+        cultures: ['CENTRAL', 'NORTH', 'WESTERN', 'TIBET', 'STEPPE', 'JAPAN', 'CENTRAL_ASIA', 'ORIE', 'PERSIAN', ],
     },
 
     // ── 步兵软甲／行军（兵营）─────────────────────────────────────────
     {
         id: 'gambesons', name: '软甲', de: 'Gambesons', year: 800,
+        era: 'feudal',
         basis: '步兵软垫护甲（gambeson）工艺成熟',
         // DE 效果 = 步兵线 +1 穿刺护甲；🔴 印度/柏柏尔（DE 印度斯坦/柏柏尔）禁用
         effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'BRITONS', 'TEUTONS', 'VIKINGS', 'SICILIANS', 'BULGARIANS', 'SPANISH', 'PORTUGUESE', 'BENGALIS', 'ARMENIANS', 'GEORGIANS'],
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'squires', name: '护卫', de: 'Squires', year: 1000,
+        era: 'feudal',
         basis: '步兵行军与耐力训练',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6, 46] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'MAYANS', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+    },
+    {
+        id: 'tracking', name: '追踪', de: 'Tracking', year: null,
+        era: 'antiquity',
+        basis: '循迹侦察自古有之（步兵 +2 视野）',
+        effects: [{ attr: 'los', op: 'add', value: 2, classes: [6] }],
+        cultures: null,
+    },
+    {
+        id: 'arson', name: '纵火', de: 'Arson', year: null,
+        era: 'antiquity',
+        basis: '火攻自古有之（步兵对标准建筑 +2）',
+        effects: [{ attr: 'bonus', op: 'add', value: 2, classes: [6], bonusClass: 21 }],
+        cultures: null,
+    },
+    {
+        id: 'shield', name: '盾牌', de: 'Shield', year: null,
+        era: 'antiquity',
+        basis: '盾牌自古有之（希腊重盾、罗马方盾），步兵近防 +1',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 1, classes: [6] }],
+        cultures: null,
     },
 
     // ── 化学（大学）：远程/火器 +1 穿刺攻击 ────────────────────────────
     {
         id: 'chemistry', name: '化学', de: 'Chemistry', year: 1100,
+        era: 'castle',
         basis: '火药兵器（硝石提纯）成熟，远程投射物威力跃升',
         // DE 效果 = 弓箭手/弓骑/火枪 +1 穿刺攻击
         effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 44] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', 'CUMAN', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS', 'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES', 'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'GURJARAS', 'VIETNAMESE', 'KHMER', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'ARMENIANS', 'GEORGIANS'],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 攻城技师（大学）：攻城器械/弩炮 +1 射程 ────────────────────────
     {
         id: 'siege_engineers', name: '攻城技师', de: 'Siege Engineers', year: 1300,
+        era: 'castle',
         basis: '中世纪攻城技术（配重投石机/攻城器械改良）',
         effects: [
             { attr: 'range', op: 'add', value: 1, classes: [13, 55] },
             { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', 'BRITONS', 'TEUTONS', 'VIKINGS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'POLES', 'BOHEMIANS', 'PORTUGUESE', 'ETHIOPIANS', 'BENGALIS', 'VIETNAMESE', 'KHMER', 'MAPUCHE', 'MUISCA', 'GEORGIANS', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', ],
+    },
+
+    // ── 火器（帝国 1500–1900）：DE 本体无此段科技，按史实补 ────────────
+    {
+        id: 'firearm_improvement', name: '火器改良', de: 'Firearm Improvement', year: 1600,
+        era: 'imperial',
+        basis: '火绳枪→燧发枪成熟（16–17 世纪），火枪步兵装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [44] }],
+        cultures: null,
+    },
+    {
+        id: 'bayonet', name: '刺刀', de: 'Bayonet', year: 1680,
+        era: 'imperial',
+        basis: '法军首创插管刺刀（1680s），火枪步兵获得反骑兵近战能力',
+        effects: [{ attr: 'bonus', op: 'add', value: 2, classes: [44], bonusClass: 8 }],
+        cultures: null,
+    },
+    {
+        id: 'rifling', name: '线膛', de: 'Rifling', year: 1800,
+        era: 'imperial',
+        basis: '来复枪膛线（19 世纪普及），火枪射程与精度跃升',
+        effects: [{ attr: 'range', op: 'add', value: 1, classes: [44] }],
+        cultures: null,
+    },
+
+    // ── 文化专属独特科技（DE 本体 Unique Tech，按文化区映射）────────────────
+    {
+        id: 'sagaris', name: '波斯战斧', de: 'Sagaris', year: -500,
+        era: 'antiquity',
+        basis: '阿契美尼德骑兵战斧，对有机单位加成',
+        effects: [{ attr: 'bonus', op: 'add', value: 2, classes: [12], bonusClass: 31 }],
+        cultures: ['PERSIAN'],
+    },
+    {
+        id: 'sparabaras', name: '盾牌兵', de: 'Sparabaras', year: -500,
+        era: 'antiquity',
+        basis: '阿契美尼德重装盾矛步兵，步兵双甲强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 2, classes: [6] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
+        cultures: ['PERSIAN'],
+    },
+    {
+        id: 'reed_arrows', name: '芦苇箭', de: 'Reed Arrows', year: -500,
+        era: 'antiquity',
+        basis: '阿契美尼德芦苇杆箭，弓手装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0] }],
+        cultures: ['PERSIAN'],
+    },
+    {
+        id: 'skeuophoroi', name: '盾牌扈从', de: 'Skeuophoroi', year: -400,
+        era: 'antiquity',
+        basis: '斯巴达重装步兵扈从，步兵近攻强化',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6] }],
+        cultures: ['GREEK'],
+    },
+    {
+        id: 'hippagretai', name: '王伴骑兵', de: 'Hippagretai', year: -400,
+        era: 'antiquity',
+        basis: '斯巴达王伴精锐骑兵，骑兵血量强化',
+        effects: [{ attr: 'hp', op: 'add', value: 50, classes: [12] }],
+        cultures: ['GREEK'],
+    },
+    {
+        id: 'ballistas', name: '罗马弩炮', de: 'Ballistas', year: -100,
+        era: 'antiquity',
+        basis: '罗马弩炮，弩炮装填与穿刺强化',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.75, classes: [55] },
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [55] }],
+        cultures: ['IMPERIAL_ROME'],
+    },
+    {
+        id: 'ming_kuang_armor', name: '明光铠', de: 'Ming-Kuang Armor', year: 600,
+        era: 'feudal',
+        basis: '魏晋至隋唐明光铠，具装骑兵近防强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [47, 12, 36, 23] }],
+        cultures: ['CENTRAL'],
+    },
+    {
+        id: 'viking_chieftains', name: '维京酋长', de: 'Chieftains', year: 900,
+        era: 'feudal',
+        basis: '维京酋长亲卫，步兵对骑兵/骆驼加成',
+        effects: [{ attr: 'bonus', op: 'add', value: 5, classes: [6], bonusClass: 8 },
+            { attr: 'bonus', op: 'add', value: 4, classes: [6], bonusClass: 30 }],
+        cultures: ['VIKINGS'],
+    },
+    {
+        id: 'zealotry', name: '狂热', de: 'Zealotry', year: 900,
+        era: 'feudal',
+        basis: '撒拉逊狂热教团，骆驼血量强化',
+        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [30] }],
+        cultures: ['ORIE'],
+    },
+    {
+        id: 'logistica', name: '后勤', de: 'Logistica', year: 1000,
+        era: 'feudal',
+        basis: '拜占庭甲胄骑兵后勤，骑兵对步兵加成',
+        effects: [{ attr: 'bonus', op: 'add', value: 6, classes: [12], bonusClass: 1 }],
+        cultures: ['BYZANTINE'],
+    },
+    {
+        id: 'bearded_axe', name: '阔斧', de: 'Bearded Axe', year: 800,
+        era: 'feudal',
+        basis: '法兰克掷斧兵阔斧，掷斧射程强化',
+        effects: [{ attr: 'range', op: 'add', value: 2, classes: [37] },
+            { attr: 'los', op: 'add', value: 2, classes: [37] }],
+        cultures: ['FRANKS'],
+    },
+    {
+        id: 'british_yeoman', name: '英长弓手', de: 'Yeoman', year: 1400,
+        era: 'castle',
+        basis: '不列颠自由民长弓，步弓射程强化',
+        effects: [{ attr: 'range', op: 'add', value: 1, classes: [0] },
+            { attr: 'los', op: 'add', value: 1, classes: [0] }],
+        cultures: ['BRITONS'],
+    },
+    {
+        id: 'celtic_furor', name: '凯尔特之怒', de: 'Furor Celtica', year: 1100,
+        era: 'castle',
+        basis: '凯尔特狂战士攻城，攻城器械血量强化',
+        effects: [{ attr: 'hp', op: 'mul', value: 1.4, classes: [13, 55] }],
+        cultures: ['CELTS_FEUDAL'],
+    },
+    {
+        id: 'mongol_siege_drill', name: '蒙古攻城钻', de: 'Siege Drill', year: 1200,
+        era: 'castle',
+        basis: '蒙古攻城钻机，攻城器械移速强化',
+        effects: [{ attr: 'speed', op: 'mul', value: 1.5, classes: [13, 55] }],
+        cultures: ['STEPPE'],
+    },
+    {
+        id: 'aztec_garland_wars', name: '花环战争', de: 'Garland Wars', year: 1450,
+        era: 'castle',
+        basis: '阿兹特克荣冠之战，步兵近攻强化',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 4, classes: [6] }],
+        cultures: ['AMERICA'],
+    },
+    {
+        id: 'teutons_ironclad', name: '条顿铁甲', de: 'Ironclad', year: 1200,
+        era: 'castle',
+        basis: '条顿铁甲，攻城器械近防强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [13, 55] }],
+        cultures: ['TEUTONS'],
+    },
+    {
+        id: 'sipahi', name: '西帕希', de: 'Sipahi', year: 1400,
+        era: 'castle',
+        basis: '奥斯曼西帕希骑兵，弓骑血量强化',
+        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [36] }],
+        cultures: ['TURKS'],
+    },
+    {
+        id: 'pavise', name: '帕维塞盾', de: 'Pavise', year: 1300,
+        era: 'castle',
+        basis: '意大利帕维塞大盾，步弓双甲强化',
+        effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [0] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [0] }],
+        cultures: ['ITALIANS'],
+    },
+    {
+        id: 'shatagni', name: '印度弩', de: 'Shatagni', year: 1400,
+        era: 'castle',
+        basis: '印度斯坦火枪弩，弓骑射程与穿刺强化',
+        effects: [{ attr: 'los', op: 'add', value: 1, classes: [36] },
+            { attr: 'range', op: 'add', value: 1, classes: [36] },
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [36] }],
+        cultures: ['INDIA'],
+    },
+    {
+        id: 'farimba', name: '法林巴', de: 'Farimba', year: 1300,
+        era: 'castle',
+        basis: '马里法林巴骑兵，骑兵近攻强化',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 5, classes: [12, 47] }],
+        cultures: ['AFRICA'],
+    },
+    {
+        id: 'manipur_cavalry', name: '曼尼普尔骑兵', de: 'Manipur Cavalry', year: 1200,
+        era: 'castle',
+        basis: '缅甸曼尼普尔骑兵，骑兵对射手加成',
+        effects: [{ attr: 'bonus', op: 'add', value: 4, classes: [12, 47], bonusClass: 15 }],
+        cultures: ['BURMESE'],
+    },
+    {
+        id: 'double_crossbow', name: '双弩', de: 'Double Crossbow', year: 1200,
+        era: 'castle',
+        basis: '高棉双弩，骑兵/斥候装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.75, classes: [47, 12] }],
+        cultures: ['KHMER'],
+    },
+    {
+        id: 'thalassocracy', name: '海上霸权', de: 'Thalassocracy', year: 1400,
+        era: 'castle',
+        basis: '马来海上霸权，弓骑双甲强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 1, classes: [36] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [36] }],
+        cultures: ['MALAY'],
+    },
+    {
+        id: 'fereters', name: '费列泰斯', de: 'Fereters', year: 1200,
+        era: 'castle',
+        basis: '亚美尼亚费列泰斯步兵，步兵血量强化',
+        effects: [{ attr: 'hp', op: 'add', value: 30, classes: [6] }],
+        cultures: ['ARMENIANS'],
+    },
+    {
+        id: 'herbalism', name: '草医', de: 'Herbalism', year: 1400,
+        era: 'castle',
+        basis: '穆伊斯卡草医，步弓移速强化',
+        effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [0] }],
+        cultures: ['MUISCA'],
+    },
+    {
+        id: 'el_dorado', name: '黄金国', de: 'El Dorado', year: 1300,
+        era: 'castle',
+        basis: '玛雅黄金国，鹰勇士血量强化',
+        effects: [{ attr: 'hp', op: 'add', value: 40, classes: [29] }],
+        cultures: ['MAYANS'],
+    },
+    {
+        id: 'hauberk', name: '锁子甲', de: 'Hauberk', year: 1100,
+        era: 'castle',
+        basis: '西西里锁子甲，骑兵双甲强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 1, classes: [12] },
+            { attr: 'pierceArmor', op: 'add', value: 2, classes: [12] }],
+        cultures: ['SICILIANS'],
+    },
+    {
+        id: 'paiks', name: '孟加拉战象', de: 'Paiks', year: 1300,
+        era: 'castle',
+        basis: '孟加拉战象，战象装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.833, classes: [12] }],
+        cultures: ['BENGALIS'],
+    },
+    {
+        id: 'frontier_guards', name: '边境卫队', de: 'Frontier Guards', year: 1100,
+        era: 'castle',
+        basis: '瞿折罗边境卫队，步兵近防强化',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [6] }],
+        cultures: ['GURJARAS'],
+    },
+    {
+        id: 'wagenburg', name: '车堡战术', de: 'Wagenburg Tactics', year: 1400,
+        era: 'castle',
+        basis: '波希米亚胡斯车堡，火枪/攻城移速强化',
+        effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [44, 13] }],
+        cultures: ['BOHEMIANS'],
+    },
+    {
+        id: 'kataparuto', name: '片仓', de: 'Kataparuto', year: 1200,
+        era: 'castle',
+        basis: '日本片仓工法，攻城器械装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.75, classes: [13] }],
+        cultures: ['JAPAN'],
+    },
+    {
+        id: 'rocketry', name: '火箭', de: 'Rocketry', year: 1300,
+        era: 'castle',
+        basis: '华夏火箭，弩炮穿刺强化',
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [55] }],
+        cultures: ['CENTRAL'],
+    },
+    {
+        id: 'huaracas', name: '瓦拉卡投石', de: 'Huaracas', year: 1400,
+        era: 'castle',
+        basis: '穆伊斯卡瓦拉卡投石，投石射程强化',
+        effects: [{ attr: 'range', op: 'add', value: 1, classes: [0] },
+            { attr: 'los', op: 'add', value: 1, classes: [0] }],
+        cultures: ['MUISCA'],
+    },
+    {
+        id: 'caciques', name: '卡西克', de: 'Caciques', year: 1400,
+        era: 'castle',
+        basis: '图皮卡西克首领，弓手装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0] }],
+        cultures: ['TUPI'],
     },
 ];
 

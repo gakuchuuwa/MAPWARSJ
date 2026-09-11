@@ -7,7 +7,8 @@
 
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { getCityRegion } from '../systems/RegionSystem';
+import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
+import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { getCultureLegionName } from '../types/CultureFormations';
 
 interface FactionRow {
@@ -47,7 +48,12 @@ interface FactionRow {
 
 interface EntityData {
     factions: Array<{ id: string; name: string }>;
-    cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string; tier?: number; mirror?: boolean }>;
+    cities: Array<{
+        id: string; name: string; factionId: string; lat: number; lng: number;
+        type: string; troops: number; region?: string; tier?: number; mirror?: boolean;
+        /** 2026-09-11 加：据点编辑器要显示/编辑这三项（服务端 /api/entity-data 已同步返回） */
+        buildingStyle?: string; note?: string;
+    }>;
     flags: Record<string, string>;
     capitals: Record<string, string>;
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
@@ -134,11 +140,15 @@ app.innerHTML = `
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
     <button type="button" id="bm-export" class="bm-btn">导出名册</button>
     <button type="button" id="bm-skill-coverage" class="bm-btn bm-btn-warn" title="只检查武将可佩戴技能；不含长驱深入、据险而守、守土继绝">检查技能覆盖</button>
-    <button type="button" id="bm-name-audit" class="bm-btn bm-btn-warn" title="武将/精锐/势力/据点名称须 ≤5 字且全局不重名；武将名本名优先，重名用称呼">名称审计</button>
+    <button type="button" id="bm-name-audit" class="bm-btn bm-btn-warn" title="精锐 ≤5 字、武将/势力/据点 ≤9 字且全局不重名；武将名本名优先，重名用称呼">名称审计</button>
     <button type="button" id="bm-validate" class="bm-btn bm-btn-warn">运行校验</button>
   </div>
 </header>
-<div class="bm-toolbar">
+<div class="bm-viewbar">
+  <button type="button" id="bm-view-entities" class="bm-btn bm-btn-primary">🧩 实体录入（现有）</button>
+  <button type="button" id="bm-view-cities" class="bm-btn">🏙️ 据点编辑（全部据点）</button>
+</div>
+<div class="bm-toolbar" id="bm-toolbar-entities">
   <input id="bm-search" class="bm-input" type="search" placeholder="搜索 ID / 名称 / 旗号…" />
   <select id="bm-filter" class="bm-select">
     <option value="all">全部</option>
@@ -153,12 +163,35 @@ app.innerHTML = `
   <span id="bm-stats" class="bm-stats"></span>
   <button type="button" id="bm-add-new" class="bm-btn bm-btn-primary">+ 新增实体</button>
 </div>
-<div class="bm-body">
+<div class="bm-body" id="bm-body-entities">
   <main class="bm-main">
     <div id="bm-table-wrap" class="bm-table-wrap"></div>
   </main>
   <aside id="bm-panel" class="bm-panel" style="display:none">
     <div id="bm-panel-content"></div>
+  </aside>
+</div>
+
+<!-- 🔴 [2026-09-11 主人需求] 据点编辑视图：全部据点列出 + 编辑属性（含建筑风格下拉） -->
+<div class="bm-toolbar" id="bm-toolbar-cities" style="display:none">
+  <input id="bm-city-search" class="bm-input" type="search" placeholder="搜索 据点名 / ID / 势力 / 备注…" />
+  <select id="bm-city-type" class="bm-select">
+    <option value="all">全部等级</option>
+    <option value="big_city">大城 big_city</option>
+    <option value="medium_city">中城 medium_city</option>
+    <option value="small_city">小城 small_city</option>
+    <option value="pass">险要 pass</option>
+    <option value="stockade">城寨 stockade</option>
+  </select>
+  <select id="bm-city-style" class="bm-select"><option value="all">全部建筑风格</option></select>
+  <span id="bm-city-stats" class="bm-stats"></span>
+</div>
+<div class="bm-body" id="bm-body-cities" style="display:none">
+  <main class="bm-main">
+    <div id="bm-city-table-wrap" class="bm-table-wrap"></div>
+  </main>
+  <aside id="bm-city-panel" class="bm-panel" style="display:none">
+    <div id="bm-city-panel-content"></div>
   </aside>
 </div>
 <div id="bm-validation" class="bm-validation" style="display:none">
@@ -184,6 +217,20 @@ const els = {
     validationTitle: document.getElementById('bm-validation-title')!,
     validationList: document.getElementById('bm-validation-list')!,
     toast: document.getElementById('bm-toast')!,
+    // 据点编辑视图
+    viewEntities: document.getElementById('bm-view-entities') as HTMLButtonElement,
+    viewCities: document.getElementById('bm-view-cities') as HTMLButtonElement,
+    toolbarEntities: document.getElementById('bm-toolbar-entities')!,
+    toolbarCities: document.getElementById('bm-toolbar-cities')!,
+    bodyEntities: document.getElementById('bm-body-entities')!,
+    bodyCities: document.getElementById('bm-body-cities')!,
+    citySearch: document.getElementById('bm-city-search') as HTMLInputElement,
+    cityType: document.getElementById('bm-city-type') as HTMLSelectElement,
+    cityStyle: document.getElementById('bm-city-style') as HTMLSelectElement,
+    cityStats: document.getElementById('bm-city-stats')!,
+    cityTableWrap: document.getElementById('bm-city-table-wrap')!,
+    cityPanel: document.getElementById('bm-city-panel')!,
+    cityPanelContent: document.getElementById('bm-city-panel-content')!,
 };
 
 function injectStyles(): void {
@@ -756,6 +803,20 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
     // 跨类型：据点名 vs 已有势力名
     check(cityName, '据点', 'name', '势力');
     return warnings;
+}
+
+/** 🔴 [2026-09-11 主人定] 势力、武将重名报错（阻止提交）。返回错误信息，null=通过。 */
+function checkFactionGeneralNameConflict(factionName: string, generalName: string, excludeFactionId?: string): string | null {
+    for (const row of rows) {
+        if (excludeFactionId && row.id === excludeFactionId) continue; // 编辑自身时排除自己
+        if (factionName && factionName.length >= 2 && row.name === factionName) {
+            return `势力名重名："${factionName}" 与已有势力"${row.name}"(${row.id}) 完全同名`;
+        }
+        if (generalName && generalName.length >= 2 && row.generalName === generalName) {
+            return `武将名重名："${generalName}" 与已有武将"${row.generalName}"(${row.name}) 完全同名`;
+        }
+    }
+    return null;
 }
 
 // ── Edit / Add Panel ──
@@ -1379,7 +1440,14 @@ async function handleQuickSubmit(): Promise<void> {
         return;
     }
 
-    // 重名：只提醒，不阻止（预览区已实时列出全部重名）
+    // 🔴 [2026-09-11 主人定] 势力、武将重名要报错（阻止提交）
+    const nameConflict = checkFactionGeneralNameConflict(f.factionName, f.genName);
+    if (nameConflict) {
+        showToast(`❌ ${nameConflict}，禁止提交`, true);
+        return;
+    }
+
+    // 据点/精锐重名：只提醒，不阻止（预览区已实时列出全部重名）
     const dupWarnings = checkNameDuplicates(f.cityName, f.factionName, f.genName, f.eliteName);
     if (dupWarnings.length > 0) {
         showToast(`⚠ 重名提醒（继续提交）: ${dupWarnings[0]}${dupWarnings.length > 1 ? ` 等 ${dupWarnings.length} 条` : ''}`, true);
@@ -1629,6 +1697,12 @@ async function handleFormSubmit(e: Event): Promise<void> {
         showToast(`武将「${generalName}」缺少品阶，请选择后再保存`, true);
         return;
     }
+    // 🔴 [2026-09-11 主人定] 势力、武将重名要报错（阻止提交）；编辑自身时排除自己
+    const nameConflict = checkFactionGeneralNameConflict(factionName, generalName, isNew ? undefined : factionId);
+    if (nameConflict) {
+        showToast(`❌ ${nameConflict}，禁止提交`, true);
+        return;
+    }
     const attackStyle = get('attackStyle');
 
     try {
@@ -1795,7 +1869,7 @@ async function runSkillCoverageCheck(): Promise<void> {
     }
 }
 
-/** 名称审计（2026-08-03 主人定）：武将/精锐/势力/据点名称 ≤5 字且全局不重名。
+/** 名称审计（2026-08-03 主人定，2026-09-11 主人修订）：精锐 ≤5 字、武将/势力/据点 ≤9 字，均全局不重名。
  *  武将名分层标准：①本名/本名+序数（阿方索六世、腓特烈二世）——本身就是大众熟知叫法，用之；
  *  ②通用历史符号型称呼（成吉思汗、熙德、黑太子、巴巴罗萨）——大众比本名更熟且称呼已成通用名，用之；
  *  ③纯描述性绰号/封号（勇敢者、沉默者、救主、左贤王）——不像名字看不出是谁，必须用本名。 */
@@ -1803,7 +1877,8 @@ function runNameAudit(): void {
     if (!entityData) { showToast('数据未加载，请先刷新', true); return; }
     const ed = entityData; // 收窄引用（闭包内 entityData 不被 null 检查收窄）
     const problems: ValidationIssue[] = [];
-    const over5 = (s: string) => s.length > 5;
+    const over5 = (s: string) => s.length > 5;  // 精锐番号 ≤5 字
+    const over9 = (s: string) => s.length > 9;  // 武将/势力/据点 ≤9 字
     const facNameOf = (fid: string) => ed.factions.find(f => f.id === fid)?.name ?? fid;
 
     // 武将名
@@ -1811,7 +1886,7 @@ function runNameAudit(): void {
     for (const [fid, g] of Object.entries(ed.generals)) {
         const n = g.generalName;
         if (!n) continue;
-        if (over5(n)) problems.push({ level: 'error', msg: `武将名超5字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        if (over9(n)) problems.push({ level: 'error', msg: `武将名超9字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
         if (genByName.has(n)) problems.push({ level: 'error', msg: `武将名重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${genByName.get(n)}` });
         else genByName.set(n, fid);
     }
@@ -1829,7 +1904,7 @@ function runNameAudit(): void {
     // 势力名
     const facByName = new Map<string, string>();
     for (const f of ed.factions) {
-        if (over5(f.name)) problems.push({ level: 'error', msg: `势力名超5字: "${f.name}"(${f.name.length}字) @ ${f.id}` });
+        if (over9(f.name)) problems.push({ level: 'error', msg: `势力名超9字: "${f.name}"(${f.name.length}字) @ ${f.id}` });
         if (facByName.has(f.name)) problems.push({ level: 'error', msg: `势力名重复: "${f.name}" @ ${f.id} 与 ${facByName.get(f.name)}` });
         else facByName.set(f.name, f.id);
     }
@@ -1837,7 +1912,7 @@ function runNameAudit(): void {
     // 据点名
     const cityByName = new Map<string, string>();
     for (const c of ed.cities) {
-        if (over5(c.name)) problems.push({ level: 'error', msg: `据点名超5字: "${c.name}"(${c.name.length}字) @ ${c.id}` });
+        if (over9(c.name)) problems.push({ level: 'error', msg: `据点名超9字: "${c.name}"(${c.name.length}字) @ ${c.id}` });
         if (cityByName.has(c.name)) problems.push({ level: 'error', msg: `据点名重复: "${c.name}" @ ${c.id} 与 ${cityByName.get(c.name)}` });
         else cityByName.set(c.name, c.id);
     }
@@ -1845,18 +1920,18 @@ function runNameAudit(): void {
     const errs = problems.filter(p => p.level === 'error').length;
     problems.push({
         level: errs === 0 ? 'info' : 'warn',
-        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；上限 5 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
+        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；精锐 ≤5 字、武将/势力/据点 ≤9 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
     });
 
     issues = problems;
-    els.validationTitle.textContent = '名称审计（≤5 字 · 不重名）';
+    els.validationTitle.textContent = '名称审计（精锐≤5 · 武将/势力/据点≤9 · 不重名）';
     renderValidation();
     els.validation.style.display = 'block';
     applyFilter();
     renderTable();
     updateStats();
     showToast(
-        errs === 0 ? '✓ 全部名称合规（≤5 字、无重名）' : `名称违规：${errs} 处（超5字/重名）`,
+        errs === 0 ? '✓ 全部名称合规（精锐≤5字、武将/势力/据点≤9字、无重名）' : `名称违规：${errs} 处（超字数/重名）`,
         errs > 0,
     );
 }
@@ -2056,6 +2131,269 @@ function exportCatalog(): void {
     showToast(`✓ 已导出 ${exportRows.length} 势力 → MAPWAR名册_${stamp}.md`);
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// 🏙️ 据点编辑视图（2026-09-11 主人需求）
+//   全部据点列出 → 点一行 → 右侧编辑据点属性
+//   属性：据点名 / ID / 等级 / 文化区 / **建筑风格(下拉)** / 势力 / 兵力 / 纬度 / 经度 / 层级 / 镜像立绘 / 备注
+//   保存走 /api/save-city：**只改传入字段**，note / buildingStyle / tier 等其余字段一个不丢；
+//   改坐标会先过 50km 邻近检查（§2.1.1 铁律），不通过则整条不写盘。
+// ═══════════════════════════════════════════════════════════════════
+
+/** 建筑风格：**与游戏侧一一对应**（cities_v2.BuildingStyle 16 套 + TerritorySystem 显式支持的 YURT 毡帐）。 */
+const BUILDING_STYLES: Array<[string, string]> = [
+    ['ASIA', '东亚'], ['WEST', '西欧'], ['EAST', '东南欧'], ['SLAV', '东北欧'],
+    ['MEDI', '地中海'], ['ORIE', '中东'], ['CEAS', '中亚'], ['INDI', '印度'],
+    ['PURU', '普鲁'], ['SEAS', '东南亚'], ['MESO', '中美'], ['ANDE', '安第斯'],
+    ['AFRI', '非洲'], ['PERSIAN', '波斯'], ['GREEK', '希腊'], ['THRACIAN', '色雷斯'],
+    ['YURT', '草原毡帐营地（TerritorySystem 显式支持，城堡=MONG_CASTLE_AGE3）'],
+];
+
+const CITY_TYPES: Array<[string, string]> = [
+    ['big_city', '大城 big_city'], ['medium_city', '中城 medium_city'], ['small_city', '小城 small_city'],
+    ['pass', '险要 pass'], ['stockade', '城寨 stockade'],
+];
+
+// 视图与筛选记忆：保存会改写 cities_v2.ts → Vite 整页热重载，记忆后回到原位（2026-09-11）
+let viewMode: 'entities' | 'cities' = localStorage.getItem('bm-view') === 'cities' ? 'cities' : 'entities';
+let citySearch = localStorage.getItem('bm-city-search') ?? '';
+let cityTypeFilter = localStorage.getItem('bm-city-type') ?? 'all';
+let cityStyleFilter = localStorage.getItem('bm-city-style') ?? 'all';
+let selectedCityId: string | null = localStorage.getItem('bm-city-selected') || null;
+
+function cityList(): EntityData['cities'] {
+    return entityData?.cities ?? [];
+}
+
+function setView(mode: 'entities' | 'cities'): void {
+    viewMode = mode;
+    localStorage.setItem('bm-view', mode);
+    const isCities = mode === 'cities';
+    els.toolbarEntities.style.display = isCities ? 'none' : '';
+    els.bodyEntities.style.display = isCities ? 'none' : '';
+    els.toolbarCities.style.display = isCities ? '' : 'none';
+    els.bodyCities.style.display = isCities ? '' : 'none';
+    els.viewEntities.className = 'bm-btn' + (isCities ? '' : ' bm-btn-primary');
+    els.viewCities.className = 'bm-btn' + (isCities ? ' bm-btn-primary' : '');
+    if (isCities) {
+        els.cityStyle.innerHTML = '<option value="all">全部建筑风格</option>'
+            + BUILDING_STYLES.map(([k, cn]) => `<option value="${k}">${k} ${cn}</option>`).join('')
+            + '<option value="__none__">（未设建筑风格）</option>';
+        els.citySearch.value = citySearch;
+        els.cityType.value = cityTypeFilter;
+        els.cityStyle.value = cityStyleFilter;
+        renderCityTable();
+        // 热重载后自动回到上次编辑的那座据点
+        if (selectedCityId && cityList().some(c => c.id === selectedCityId)) openCityPanel(selectedCityId);
+    }
+}
+
+function filterCities(): EntityData['cities'] {
+    const q = citySearch.toLowerCase();
+    return cityList().filter(c => {
+        if (cityTypeFilter !== 'all' && c.type !== cityTypeFilter) return false;
+        if (cityStyleFilter === '__none__') { if (c.buildingStyle) return false; }
+        else if (cityStyleFilter !== 'all' && c.buildingStyle !== cityStyleFilter) return false;
+        if (!q) return true;
+        return `${c.name} ${c.id} ${c.factionId} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.note ?? ''}`
+            .toLowerCase().includes(q);
+    });
+}
+
+function renderCityTable(): void {
+    const list = filterCities();
+    const styleCn = new Map(BUILDING_STYLES);
+    const typeCn = new Map(CITY_TYPES);
+    const tbody = list.map(c => {
+        const sel = c.id === selectedCityId ? ' class="selected"' : '';
+        const note = (c.note ?? '').slice(0, 24);
+        return `<tr${sel} data-cid="${c.id}">
+            <td>${c.name}</td>
+            <td class="cell-id">${c.id}</td>
+            <td>${typeCn.get(c.type) ?? c.type}</td>
+            <td class="cell-region">${c.region ?? '<span class="cell-miss">✗</span>'}</td>
+            <td class="cell-region">${c.buildingStyle ?? '<span class="cell-miss">未设</span>'}</td>
+            <td>${c.factionId}</td>
+            <td>${c.troops ?? ''}</td>
+            <td class="cell-region">${c.lat?.toFixed(2)}, ${c.lng?.toFixed(2)}</td>
+            <td class="cell-region" title="${(c.note ?? '').replace(/"/g, '&quot;')}">${note}</td>
+        </tr>`;
+    }).join('');
+
+    els.cityTableWrap.innerHTML = `<table class="bm-table"><thead><tr>
+        <th>据点</th><th>ID</th><th>等级</th><th>文化区</th><th>建筑风格</th>
+        <th>势力</th><th>兵力</th><th>坐标</th><th>备注</th>
+    </tr></thead><tbody>${tbody}</tbody></table>`;
+
+    els.cityTableWrap.querySelectorAll('tr[data-cid]').forEach(tr => {
+        tr.addEventListener('click', () => {
+            selectedCityId = (tr as HTMLElement).dataset.cid!;
+            localStorage.setItem('bm-city-selected', selectedCityId);
+            openCityPanel(selectedCityId);
+            renderCityTable();
+        });
+    });
+    els.cityStats.textContent = `共 ${cityList().length} 座据点 · 当前显示 ${list.length} 座`
+        + `（风格表 ${BUILDING_STYLES.length} 套）`;
+    void styleCn;
+}
+
+function openCityPanel(cityId: string): void {
+    const c = cityList().find(x => x.id === cityId);
+    if (!c) return;
+    // 🔴 [2026-09-11 主人「和游戏同步」] 文化区下拉 = **游戏全量 RegionType**
+    //   （REGION_ORDER 169 + 数据里在用的 NORTH/EAST 等 = 171），不再是服务端那份 67 项的旧表
+    //   —— 旧表缺 MING 等区，选到没有该选项的据点时会把 region 存空。
+    const regions = [...new Set<string>([
+        ...REGION_ORDER,
+        ...(entityData?.cities ?? []).map(x => x.region).filter(Boolean) as string[],
+    ])].sort();
+    const factions = entityData?.factions ?? [];
+    const styleOpts = BUILDING_STYLES.map(([k, cn]) =>
+        `<option value="${k}" ${c.buildingStyle === k ? 'selected' : ''}>${k} ${cn}</option>`).join('');
+    // 游戏实际会采用的建筑风格（战略地图与战术战场同源）—— 让「编辑值」和「游戏结果」一眼可比
+    const gameStyle = resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
+    const steppeForced = !!(c.region && (c.region.includes('STEPPE') || c.region.includes('MONGOL')));
+    const gameStyleLine = gameStyle
+        ? `<div id="bm-city-game-style" style="margin:6px 0 10px;padding:6px 8px;border:1px dashed #5a5040;border-radius:6px;background:#1a1710;font-size:12px">
+             🎮 游戏实际采用建筑风格：<b style="color:#f5d78e">${gameStyle}</b>
+             ${steppeForced ? '<span style="color:#c8a05a">（文化区属草原/蒙古：游戏强制毡帐 YURT，此处另选别的不会生效）</span>' : ''}
+             <div style="color:#8a8272;margin-top:2px">战略地图与 ZOOM13 战术战场共用这一套解析</div>
+           </div>`
+        : `<div id="bm-city-game-style" style="margin:6px 0 10px;padding:6px 8px;border:1px dashed #5a5040;border-radius:6px;background:#1a1710;font-size:12px">
+             🎮 游戏实际采用建筑风格：<b style="color:#b87c7c">（无 → 该据点走兜底渲染）</b>
+           </div>`;
+
+    els.cityPanel.style.display = '';
+    els.cityPanelContent.innerHTML = `
+      <form class="bm-form" id="bm-city-form">
+        <h3>🏙️ 编辑据点：${c.name}</h3>
+        <div class="form-row">
+          <label><span>据点 ID（只读）</span><input value="${c.id}" readonly /></label>
+          <label><span>据点名称</span><input name="name" value="${c.name}" required /></label>
+        </div>
+        <label><span>据点等级 (type)</span>
+          <select name="type">
+            ${CITY_TYPES.map(([k, cn]) => `<option value="${k}" ${c.type === k ? 'selected' : ''}>${cn}</option>`).join('')}
+          </select>
+        </label>
+        ${gameStyleLine}
+        <label><span>文化区 (region)</span>
+          <select name="region">
+            <option value="" ${!c.region ? 'selected' : ''}>（未设）</option>
+            ${regions.map(r => `<option value="${r}" ${c.region === r ? 'selected' : ''}>${r}</option>`).join('')}
+          </select>
+        </label>
+        <label><span>建筑风格 (buildingStyle)</span>
+          <select name="buildingStyle">
+            <option value="" ${!c.buildingStyle ? 'selected' : ''}>（未设 → 跟文化区走）</option>
+            ${styleOpts}
+          </select>
+        </label>
+        <label><span>势力 (factionId)</span>
+          <select name="factionId">
+            ${factions.map(f => `<option value="${f.id}" ${c.factionId === f.id ? 'selected' : ''}>${f.name}（${f.id}）</option>`).join('')}
+          </select>
+        </label>
+        <div class="form-row">
+          <label><span>兵力 (troops)</span><input name="troops" type="number" value="${c.troops ?? ''}" /></label>
+          <label><span>层级 (tier)</span><input name="tier" type="number" value="${c.tier ?? ''}" placeholder="0/1/2/4" /></label>
+        </div>
+        <div class="form-row">
+          <label><span>纬度 (lat)</span><input name="lat" type="number" step="any" value="${c.lat ?? ''}" /></label>
+          <label><span>经度 (lng)</span><input name="lng" type="number" step="any" value="${c.lng ?? ''}" /></label>
+        </div>
+        <label class="bm-checkbox-label">
+          <input type="checkbox" name="mirror" ${c.mirror ? 'checked' : ''} />
+          <span>镜像立绘 (mirror)</span>
+        </label>
+        <label><span>备注 (note)</span>
+          <textarea name="note" rows="4" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:12px">${c.note ?? ''}</textarea>
+        </label>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button type="submit" class="bm-btn bm-btn-primary">保存到 cities_v2</button>
+          <button type="button" id="bm-city-reset" class="bm-btn">重置</button>
+          <button type="button" id="bm-city-close" class="bm-btn">关闭</button>
+        </div>
+        <p style="font-size:11px;color:#8a8272;margin-top:8px;line-height:1.6">
+          保存只改你动过的字段，其余字段（备注/建筑风格等）原样保留。<br />
+          改坐标会先做 50km 邻近检查（项目铁律），不过关则整条不写盘。
+        </p>
+      </form>`;
+
+    const form = document.getElementById('bm-city-form') as HTMLFormElement;
+    form.addEventListener('submit', (e) => { e.preventDefault(); void saveCityEdits(c.id, form); });
+    // 改了「建筑风格 / 文化区 / 等级」就立刻重算「游戏实际采用」那一行（草原强制毡帐等规则一眼可见）
+    const refreshGameStyleHint = (): void => {
+        const el = document.getElementById('bm-city-game-style');
+        if (!el) return;
+        const fd = new FormData(form);
+        const s = resolveCityDeBuildingStyle(
+            c.id,
+            String(fd.get('type') ?? c.type),
+            String(fd.get('region') ?? ''),
+            Number(fd.get('lat') ?? c.lat),
+            Number(fd.get('lng') ?? c.lng),
+            String(fd.get('buildingStyle') ?? ''),
+        );
+        const rg = String(fd.get('region') ?? '');
+        const forced = rg.includes('STEPPE') || rg.includes('MONGOL');
+        el.innerHTML = `🎮 游戏实际采用建筑风格：<b style="color:${s ? '#f5d78e' : '#b87c7c'}">${s ?? '（无 → 兜底渲染）'}</b>`
+            + (forced ? '<span style="color:#c8a05a">（文化区属草原/蒙古：游戏强制毡帐 YURT，此处另选别的不会生效）</span>' : '')
+            + '<div style="color:#8a8272;margin-top:2px">战略地图与 ZOOM13 战术战场共用这一套解析</div>';
+    };
+    for (const sel of ['buildingStyle', 'region', 'type', 'lat', 'lng']) {
+        (form.elements.namedItem(sel) as HTMLElement | null)?.addEventListener('change', refreshGameStyleHint);
+    }
+    document.getElementById('bm-city-reset')!.addEventListener('click', () => openCityPanel(c.id));
+    document.getElementById('bm-city-close')!.addEventListener('click', () => {
+        els.cityPanel.style.display = 'none';
+        selectedCityId = null;
+        localStorage.removeItem('bm-city-selected');
+        renderCityTable();
+    });
+}
+
+async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<void> {
+    const fd = new FormData(form);
+    const fields: Record<string, string | number | boolean | null> = {
+        name: String(fd.get('name') ?? '').trim(),
+        type: String(fd.get('type') ?? ''),
+        factionId: String(fd.get('factionId') ?? ''),
+        region: String(fd.get('region') ?? ''),
+        buildingStyle: String(fd.get('buildingStyle') ?? ''),
+        troops: String(fd.get('troops') ?? '').trim(),
+        tier: String(fd.get('tier') ?? '').trim(),
+        lat: String(fd.get('lat') ?? '').trim(),
+        lng: String(fd.get('lng') ?? '').trim(),
+        mirror: fd.get('mirror') === 'on',
+        note: String(fd.get('note') ?? ''),
+    };
+    try {
+        // 写盘会触发 Vite 整页热重载 → 提示会被冲掉；先落一个跨重载的"保存回执"，boot 时再弹
+        localStorage.setItem('bm-city-saving', cityId);
+        const res = await fetch('/api/save-city', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: cityId, fields }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        const changed: string[] = json.changed ?? [];
+        if (changed.length === 0) {
+            localStorage.removeItem('bm-city-saving');
+            showToast('没有字段变化，未写盘');
+        } else {
+            localStorage.setItem('bm-city-saved-msg', `✓ 已保存 ${cityId}：${changed.join(', ')}`);
+        }
+        await loadData();
+        renderCityTable();
+        openCityPanel(cityId);
+    } catch (err: any) {
+        localStorage.removeItem('bm-city-saving');
+        showToast(`保存失败：${err.message}`, true);
+    }
+}
+
 // ── Events ──
 
 function bindEvents(): void {
@@ -2095,6 +2433,25 @@ function bindEvents(): void {
     document.getElementById('bm-close-validation')!.addEventListener('click', () => {
         els.validation.style.display = 'none';
     });
+
+    // ── 据点编辑视图（2026-09-11 主人需求）──
+    els.viewEntities.addEventListener('click', () => setView('entities'));
+    els.viewCities.addEventListener('click', () => setView('cities'));
+    els.citySearch.addEventListener('input', () => {
+        citySearch = els.citySearch.value.trim();
+        localStorage.setItem('bm-city-search', citySearch);
+        renderCityTable();
+    });
+    els.cityType.addEventListener('change', () => {
+        cityTypeFilter = els.cityType.value;
+        localStorage.setItem('bm-city-type', cityTypeFilter);
+        renderCityTable();
+    });
+    els.cityStyle.addEventListener('change', () => {
+        cityStyleFilter = els.cityStyle.value;
+        localStorage.setItem('bm-city-style', cityStyleFilter);
+        renderCityTable();
+    });
 }
 
 // ── Boot ──
@@ -2107,6 +2464,11 @@ async function boot(): Promise<void> {
     els.filter.value = filterMode;
     await loadData();
     await runValidation();
+    // 上次停在「据点编辑」视图 → 热重载后回到那里
+    if (viewMode === 'cities') setView('cities');
+    // 上一次保存若被热重载冲掉了提示，这里补弹一次
+    const savedMsg = localStorage.getItem('bm-city-saved-msg');
+    if (savedMsg) { localStorage.removeItem('bm-city-saved-msg'); localStorage.removeItem('bm-city-saving'); showToast(savedMsg); }
     const errN = issues.filter(i => i.level === 'error').length;
     const noSkillN = rows.filter(r => rowHasSkillError(r)).length;
     if (errN > 0 || noSkillN > 0) {

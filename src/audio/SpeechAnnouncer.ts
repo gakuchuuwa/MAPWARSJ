@@ -474,7 +474,7 @@ export class SpeechAnnouncer {
    * 攻占城池（仅跟随军团）。攻方只报势力军（武将+精锐刚放过技，不重复），势=跟随军团这一仗的势：
    *   无将 → 「秦国军，攻占邯郸」（守方无武将，不续守方句）
    *   有将 → 「秦国军，{胜法}，攻占邯郸。{守将}，{败象}，{降服}」（优/均/劣三套词）
-   * 文化中心（regionLabel 有值）额外走 S 级：慢语速 + 「中原中心」前缀。
+   * 文化中心（regionLabel 有值）额外走 S 级：慢语速（🔴 2026-09-11 主人定：不加「XX中心」前缀，没有什么文化中心）。
    */
   public announceCityCapture(opts: {
     attackerFactionId: string;
@@ -488,7 +488,8 @@ export class SpeechAnnouncer {
     this.clearSkillQueue(); // 攻占是战斗收尾，清掉未念完的技能脉冲
     const att = getFactionNameForSpeech(opts.attackerFactionId);
     const isCenter = !!opts.regionLabel;
-    const cityPhrase = isCenter ? `${opts.regionLabel}中心，${opts.cityName}` : opts.cityName;
+    // 🔴 2026-09-11 主人定：攻占播报不加「XX中心」前缀，没有什么文化中心
+    const cityPhrase = opts.cityName;
     const defGeneral = opts.defenderGeneralId ? getGeneralRecordByGeneralId(opts.defenderGeneralId) : null;
     const ju = opts.ju;
 

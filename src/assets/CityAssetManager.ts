@@ -570,7 +570,7 @@ export class CityAssetManager {
 'zhadalan': '扎答',
         'zhuerqi': '主儿',
         'chechen': '车臣',
-        'pisha': '毗沙',
+'pisha': '毗沙',
         'yumi': '扜弥',
         'keliya': '克雅',
         'xiye': '西夜',
@@ -947,7 +947,7 @@ export class CityAssetManager {
         'bosiniya': '波斯',
         'taolika': '陶里',
 'shengdian_qishi': '圣殿',
-        'yelusalengwg': '耶路',
+'yelusalengwg': '耶路',
         'mozeer': '摩泽',
 'seleisi': '色雷',
         'maerta_qishi': '马耳',
@@ -996,10 +996,10 @@ export class CityAssetManager {
     'keernuwaye': '康沃',
     'aodesuosi': '奥德',
     'disidelusi': '蒂斯',
-    'yisatisi': '伊萨',
+'yisatisi': '伊萨',
     'wuer': '乌尔',
     'pidisha': '毗底',
-    'jiaye': '伽耶',
+'jiaye': '伽耶',
     'jienei': '杰内',
 'kuertaiya': '巴萨',
 'muwaxide': '穆瓦',
@@ -1280,6 +1280,8 @@ export class CityAssetManager {
         if (this.backgroundDrainActive) return;
         this.backgroundDrainActive = true;
         const step = () => {
+            // 战术画面不使用战略地图旗面，保留队列，退场后继续补载。
+            if (this.isTacticalSceneActive()) { setTimeout(step, 250); return; }
             const next = this.dequeueNextBackgroundFaction();
             if (!next) {
                 this.backgroundDrainActive = false;
@@ -1867,25 +1869,15 @@ export class CityAssetManager {
      *     而一格源图正好 128×160（`renderScale=4`）—— **刚好够，没有余量**，降到 3 倍就在高分屏发糊。
      *   · **砍雪碧图行数**：据点旗只用第 4 行，但 `LegionFlagDrawer.drawFlag` 按朝向取 6 行都要用，砍了军团旗就没字。
      *
-     * 所以这里**一个像素都不改**，只把生成摊开：每 16ms 窗口最多生成 `FLAG_TEXT_PER_FRAME` 张，
-     * 超出的排队，由 `requestIdleCallback` 在浏览器空闲时补齐，补齐后就地给该势力的据点打上文字补丁。
-     * 代价只有「刚进视野的新势力，旗号文字晚一两帧出现」，旗面本身一直都在。
+     * 保留像素与字号，所有缺失旗号统一排队：空闲时绘字，异步编码，完成后再处理下一张。
+     * 生成期间 isFlagTextPending 保持为 true，调用方保留已有文字，完成后就地补齐。
      */
-    private static readonly FLAG_TEXT_PER_FRAME = 2;
-    private static flagTextWindowAt = 0;
-    private static flagTextBudget = 0;
     private static flagTextQueue = new Set<string>();
     private static flagTextDrainScheduled = false;
 
-    private static takeFlagTextBudget(): boolean {
-        const now = performance.now();
-        if (now - this.flagTextWindowAt >= 16) {
-            this.flagTextWindowAt = now;
-            this.flagTextBudget = this.FLAG_TEXT_PER_FRAME;
-        }
-        if (this.flagTextBudget <= 0) return false;
-        this.flagTextBudget--;
-        return true;
+    private static isTacticalSceneActive(): boolean {
+        const game = (window as any).game;
+        return game?.battleScene?.isActive?.() === true || game?.scene13War?.isActive?.() === true;
     }
 
     /** 这个势力的旗号文字是不是「排队中」（而不是「本来就没有」）——调用方据此决定要不要抹掉已有文字 */
@@ -1893,28 +1885,94 @@ export class CityAssetManager {
         return this.flagTextQueue.has(factionId);
     }
 
+    /**
+     * 一轮生成旗号文字的毫秒预算（单张实测 5.2ms，所以是「至少一张、超预算就停」）。
+     * 页面可见：8ms，跟着 rAF 走，一帧一两张，不影响帧率。
+     * 页面隐藏：浏览器把定时器节流到 1s/轮，此时没有掉帧风险，放大预算免得切回来一片空白旗。
+     */
+    private static readonly FLAG_TEXT_BUDGET_VISIBLE_MS = 8;
+    private static readonly FLAG_TEXT_BUDGET_HIDDEN_MS = 50;
+    /** 浏览器给了空闲余量时的一轮预算（见 scheduleFlagTextDrain 的三档分量） */
+    private static readonly FLAG_TEXT_BUDGET_IDLE_MS = 30;
+    /** 追赶期（有新旗入队后 1.5s）每轮预算：小步连跑，尽快把玩家眼前那批字补齐 */
+    private static readonly FLAG_TEXT_BUDGET_BURST_MS = 12;
+    /** 追赶期截止时刻（有新势力入队就顺延） */
+    private static flagTextBurstUntil = 0;
+
+    /**
+     * 🔴 [2026-09-11 主人报「玩家抵达新区域后旗上的字刷新很慢，过去了也不显示」]
+     *   根因（实测）：这条排水沟**绑死在 rAF 上** —— 每帧只跑一轮 8ms 预算，
+     *   而单张旗号文字实测 6.54ms（画布 512×960，绘制仅 0.19ms、PNG 编码 0.37ms），
+     *   于是**一帧最多出 1 张**，吞吐 = 帧率：60fps 约 90 张/秒还行，一旦掉到 10~20fps
+     *   就变成 10~20 张/秒（headless 实测 ~1.1 张/秒），而一次视口同步能带进 40~60 面新旗
+     *   → 玩家都走过去了字还没出来。
+     *   改法：**页面可见时改用 requestIdleCallback**（`timeout` 保底，忙时也一定轮得到），
+     *   空闲帧里按 `timeRemaining()` 连续出图（一帧可出好几张），游戏忙时自动让路 ——
+     *   吞吐跟着「浏览器有没有空」走，而不是跟着帧率走。rAF 只作没有 idle 能力时的兜底。
+     */
     private static scheduleFlagTextDrain(): void {
         if (this.flagTextDrainScheduled) return;
         this.flagTextDrainScheduled = true;
-        const run = (): void => {
+        // 🔴 [2026-09-11 主人「刷新快点」] 追赶期：一旦有**新势力**入队（= 玩家视口里出现了新旗子），
+        //   接下来 1.5s 内不等帧、用 setTimeout(0) 小步连跑，把这一批字尽快出完；
+        //   追平或超时后自动回到 idle 模式（不再抢帧）。
+        const bursting = performance.now() < this.flagTextBurstUntil;
+        const run = (idle?: { timeRemaining?: () => number; didTimeout?: boolean }): void => {
             this.flagTextDrainScheduled = false;
-            const next = this.flagTextQueue.values().next();
-            if (next.done) return;
-            const factionId = next.value;
-            this.flagTextQueue.delete(factionId);
-            this.buildFlagText(factionId);
-            // 🔴 只 patch、**不能**走 CityManager.refreshFactionFlagText：那个会先删缓存，
-            //    删完 patch 又要重新生成一张，等于把刚省下的活儿原样做回去（还会无限循环）。
-            try {
-                (window as unknown as {
-                    game?: { cityManager?: { getTerritorySystem?(): { patchFactionFlagText?(id: string): void } } };
-                }).game?.cityManager?.getTerritorySystem?.()?.patchFactionFlagText?.(factionId);
-            } catch { /* 渲染层还没就绪就算了，下次自然重绘会补上 */ }
+            if (this.isTacticalSceneActive()) {
+                if (this.flagTextQueue.size > 0) this.scheduleFlagTextDrain();
+                return;
+            }
+            const hidden = document.hidden;
+            // 🔴 [2026-09-11] 预算分三档：页面隐藏 50ms（有 1s 节流，不抢帧）；
+            //   浏览器真给空闲余量 30ms；追赶期 12ms（有活干就别等帧）；其余 8ms（安分守己，不碰帧率）。
+            const idleSlack = !!idle && !idle.didTimeout;
+            const budget = hidden
+                ? this.FLAG_TEXT_BUDGET_HIDDEN_MS
+                : (bursting ? this.FLAG_TEXT_BUDGET_BURST_MS
+                    : (idleSlack ? this.FLAG_TEXT_BUDGET_IDLE_MS : this.FLAG_TEXT_BUDGET_VISIBLE_MS));
+            const hardDeadline = performance.now() + budget;
+            /** 空闲回调里：既守 8ms 预算，也守浏览器给的空闲余量（余量不足 2ms 就让路） */
+            const canContinue = (): boolean => {
+                if (performance.now() >= hardDeadline) return false;
+                if (idle?.timeRemaining && idle.timeRemaining() < 2) return false;
+                return true;
+            };
+            do {
+                const next = this.flagTextQueue.values().next();
+                if (next.done) return;
+                const factionId = next.value;
+                this.flagTextQueue.delete(factionId);
+                try {
+                    this.buildFlagTextSync(factionId);
+                    // 只 patch，不能走会先删除缓存的 CityManager.refreshFactionFlagText。
+                    (window as unknown as {
+                        game?: { cityManager?: { getTerritorySystem?(): { patchFactionFlagText?(id: string): void } } };
+                    }).game?.cityManager?.getTerritorySystem?.()?.patchFactionFlagText?.(factionId);
+                } catch (error) {
+                    console.warn('[CityAssetManager] 旗号文字生成失败:', factionId, error);
+                }
+            } while (canContinue());
             if (this.flagTextQueue.size > 0) this.scheduleFlagTextDrain();
         };
-        const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
-        if (typeof ric === 'function') ric(run, { timeout: 500 });
-        else setTimeout(run, 30);
+        // 🔴 [2026-09-10 主人报「旗帜上的字有的不显示」] 根因：**一轮只出一张**。
+        //    原实现每轮 await generateAsync（toBlob + FileReader），一轮只生成一个势力，
+        //    1000+ 势力就得排 1000+ 轮；只要一轮的间隔被拉长，绝大多数旗到死都没轮到。
+        //    实测（后台标签）一轮恒定 1010ms —— 那是浏览器把定时器/任务节流到 1s 的结果，
+        //    同一页面同步 toDataURL 只要 5~9ms，可见慢的是「一轮一张 + 等异步任务」这个结构。
+        //    改成同步编码 + 每轮 8ms 预算连续出图：一轮能出一两张，前台 60fps ≈ 60~100 张/秒。
+        //    ⚠️ 调度必须两条腿：页面可见走 idle（有空就连出、忙了自动停），页面隐藏时 idle 不触发，
+        //       必须回落 setTimeout，否则切走标签页后队列彻底停摆，切回来才动。
+        if (document.hidden) {
+            setTimeout(run, 0);
+        } else if (bursting && this.flagTextQueue.size > 0) {
+            // 追赶期：不等帧，尽快把这一批新旗子的字出完（每轮 12ms，跑完或超时自动退回 idle）
+            setTimeout(run, 0);
+        } else if (typeof (window as any).requestIdleCallback === 'function') {
+            (window as any).requestIdleCallback(run, { timeout: 250 });
+        } else {
+            requestAnimationFrame(() => run());
+        }
     }
 
     /** 旗号文字的渲染参数（文字内容 + 配色 + 缓存键），生成与查缓存共用一份，避免两处算歪 */
@@ -1937,13 +1995,13 @@ export class CityAssetManager {
         return {
             variantKey: `dynamic_text_${factionId}_${useWhiteText ? 'w' : 'b'}`,
             text: textToRender,
-            fill: useWhiteText ? '#f0f0e8' : '#1a1a1a',
-            stroke: useWhiteText ? 'rgba(0,0,0,0.80)' : 'rgba(255,255,255,0.70)',
+            fill: useWhiteText ? '#f8f8f4' : '#111111',
+            stroke: useWhiteText ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)',
         };
     }
 
-    /** 真正生成并入缓存（不受预算限制，供队列补齐调用） */
-    private static buildFlagText(factionId: string): string {
+    /** 真正生成并入缓存（同步编码，供队列按帧预算调用） */
+    private static buildFlagTextSync(factionId: string): string | null {
         const spec = this.resolveFlagTextSpec(factionId);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
@@ -1967,14 +2025,29 @@ export class CityAssetManager {
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
 
-        // 本窗口配额用完 → 排队，交给空闲回调补齐（见 FLAG_TEXT_PER_FRAME 上方说明）
-        if (!this.takeFlagTextBudget()) {
-            this.flagTextQueue.add(factionId);
-            this.scheduleFlagTextDrain();
-            return null;
-        }
-        this.flagTextQueue.delete(factionId);
-        return this.buildFlagText(factionId);
+        // 绘制与旗面加载回调只入队；不在调用栈中同步编码 PNG。
+        // 🔴 [2026-09-11 主人「刷新快点」] **插到队首**：刚被请求的势力 = 玩家此刻视口里新出现的旗，
+        //   必须排在旧积压（已离开视口的区域）前面，否则要等前面积压全部清完才轮得到它。
+        if (this.flagTextQueue.has(factionId)) this.flagTextQueue.delete(factionId);
+        this.flagTextQueue = new Set([factionId, ...this.flagTextQueue]);
+        this.flagTextBurstUntil = performance.now() + 1500;   // 有新旗子 → 开追赶期
+        this.scheduleFlagTextDrain();
+        return null;
+    }
+
+    /**
+     * 🔴 [2026-09-10 主人报「军团旗字看不见」] 军团旗（行军中的军团，数量少）不能排队等：
+     *    排队按插入顺序清、1087 个据点旗排在前面，军团旗要等十几秒才轮得到。
+     *    军团旗改走这里——同步编码、立即返回并写缓存（据点旗排队命中缓存即可，不重复生成）。
+     */
+    public static getProcessedFlagTextSync(factionId: string): string | null {
+        if (!factionId || factionId === 'panjun') return null;
+        const spec = this.resolveFlagTextSpec(factionId);
+        const cached = this.processedFlagCache.get(spec.variantKey);
+        if (cached) return cached;
+        const url = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
+        this.processedFlagCache.set(spec.variantKey, url);
+        return url;
     }
 
     /**

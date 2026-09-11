@@ -4,7 +4,6 @@ import { resolveTerrainTile } from '../ui/Scene13Biome';
 import { queryBaseTile } from '../ui/scene13/WorldBaseMap';
 import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
-import { lngToDemGlobalX, latToDemGlobalY } from '../world/land-sea/ElevationSampler';
 import { perfDoctor } from '../debug/PerfDoctor';
 import {
     loadStrategicForestMask,
@@ -27,19 +26,14 @@ const TREE_BASE_PX = 26;
 const TREE_OPACITY = 0.78;
 /** 树根处的轻微接地阴影，只用于消除贴图悬浮感。 */
 const TREE_SHADOW_OPACITY = 0.14;
-/** 森林掩膜内部的采样步长；相邻簇互相咬合，形成连续林冠。 */
-const CLUSTER_STRIDE = SAMPLE_STEP * 1.15;
-/** 簇半径略大于半个步长，使相邻森林格没有规则空带。 */
-const CLUSTER_RADIUS = CLUSTER_STRIDE * 0.58;
-
-/**
- * 季节渐变窗口：季末 45% 的时间里，同一棵树进行平滑换装；
- * 前 55% 时间保持纯正当季风貌，后 45% 时间平缓过渡到下一季。
- *
- * 游戏季节有 4 个（春夏秋冬）但树只有 3 态（春夏/秋/冬），所以真正会换装的过渡是
- * 夏→秋、秋→冬、冬→春 三处；春→夏两边都是 0 态，`pickTree` 结果相同，天然不触发混合。
- */
-const SEASON_BLEND_WINDOW = 0.45;
+/** 林片中心的采样步长，位置固定在世界坐标中。
+ *  🔴 [2026-09-11 主人定「片更大、分布不用这么多」= 方案 B] 网格 129px(×1.15) → **232px(×2.07)**：
+ *     1280×800 / zoom 9 一屏的采样格 62 → 19，林地林片数 约 34 → 约 10（−70%）；
+ *     每片棵树 13~23 → 52~76（见下方 count），片内半径按 √count 自动 33px → 63px（片宽约 126px）
+ *     ——「半格一片林」，连片成林又留出大片空地。树总量基本持平（一屏几百棵），性能不变。 */
+const CLUSTER_STRIDE = SAMPLE_STEP * 2.07;
+/** 黄金角错列，避免树木排成行，也避免随机撒点产生大片空隙。 */
+const FOREST_GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 
 /**
  * 一棵树的采样结果。
@@ -91,13 +85,6 @@ if (import.meta.env.DEV) {
     });
 }
 
-/**
- * 水陆判定的纠偏层：海拔说「低于海平面」时，再问一次 WaterMask 是不是其实是陆地。
- */
-function maskSaysLand(lat: number, lng: number): boolean {
-    return LandSeaSystem.getWaterSampler().isWaterSync(lat, lng) === false;
-}
-
 function hash(x: number, y: number, salt = 0): number {
     const n = Math.sin(x * 12.9898 + y * 78.233 + salt * 37.719) * 43758.5453123;
     return n - Math.floor(n);
@@ -138,28 +125,43 @@ function currentGameSeason(): number {
     return typeof season === 'number' && season >= 0 && season <= 3 ? season : 0;
 }
 
+/** 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 树种与游戏四季 **1:1**：春0 夏1 秋2 冬3。
+ *  改前是"春夏共用一态"的三态映射 → 樱花/桃花整个夏天都开着（日本更是全年樱花）。 */
 function currentTreeSeason(): TreeSeason {
-    const season = currentGameSeason();
-    if (season === 2) return 1;
-    if (season === 3) return 2;
-    return 0;
+    const s = currentGameSeason();
+    return (s >= 0 && s <= 3 ? s : 0) as TreeSeason;
 }
 
+/** 下一季：四季轮转（春→夏→秋→冬→春） */
 function nextTreeSeason(s: TreeSeason): TreeSeason {
-    const gs = currentGameSeason();
-    if (gs === 1) return 1;   // 夏 → 下一季是秋
-    if (gs === 2) return 2;   // 秋 → 冬
-    if (gs === 3) return 0;   // 冬 → 春
-    return s;                 // 春 → 夏，树态不变
+    return (((s + 1) % 4) as TreeSeason);
 }
 
 /** 0 = 不混合；>0 = 下一季占的全局基准权重 */
-function seasonBlend(): number {
-    const p = (window as any).game?.timeSystem?.getSeasonProgress?.();
-    if (typeof p !== 'number') return 0;
-    if (p <= 1 - SEASON_BLEND_WINDOW) return 0;
-    const t = (p - (1 - SEASON_BLEND_WINDOW)) / SEASON_BLEND_WINDOW;   // 0→1 线性
-    // smoothstep 曲线：起手和收尾极柔，到换季那一刻严密收敛为 1.0
+/**
+ * 季末交叉淡出窗口：**按秒算，不按季长比例算**。
+ *
+ * 🔴 [2026-09-11 主人报「植被渐变不对，变着变着就消失了。游戏中是有季节的 15 秒一个季节，你对应了吗」]
+ *   原实现 `SEASON_BLEND_WINDOW = 0.45`（**季长的 45%**）→ 按 `GameConfig.TIME.SEASON_DURATION = 15`
+ *   （15 游戏秒/季）折算就是 **6.75 秒**都在渐变 —— 将近一半时间树都是半透明的，
+ *   再叠加交叉淡出自身的透明度塌陷，视觉上就是"淡着淡着没了"。
+ *   改为读 `TimeSystem.getTimeToNextSeason()`（剩余**游戏秒**）：只在季末最后 **2 秒**才淡出，
+ *   1× 倍速下占一季 13%（原来 45%）。口径与季节长度自动同步，以后改 SEASON_DURATION 不用再动这里。
+ */
+const SEASON_BLEND_SECONDS = 2.0;
+
+/**
+ * 淡出进度 0..1。
+ * @param offsetSec 该树自己的错峰延迟（0~0.35 秒）：整片林依次换装，不是齐刷一变。
+ */
+function seasonBlend(offsetSec = 0): number {
+    const remain = (window as any).game?.timeSystem?.getTimeToNextSeason?.();
+    if (typeof remain !== 'number') return 0;
+    const span = Math.max(0.25, SEASON_BLEND_SECONDS - offsetSec);
+    const elapsed = SEASON_BLEND_SECONDS - Math.max(0, remain) - offsetSec;   // 已进入窗口多少秒
+    if (elapsed <= 0) return 0;
+    const t = Math.min(1, elapsed / span);
+    // smoothstep：起手收尾都柔，换季那一刻恰好收敛到 1
     return Math.min(1, Math.max(0, t * t * (3 - 2 * t)));
 }
 
@@ -191,9 +193,9 @@ const PATCH_COLOR_WINTER: Record<'conifer' | 'broadleaf' | 'arid' | 'dead', [num
 
 function colorFor(asset: string, season: TreeSeason): [number, number, number] {
     const c = hueClass(asset);
-    if (season === 1) return PATCH_COLOR_AUTUMN[c];
-    if (season === 2) return PATCH_COLOR_WINTER[c];
-    return PATCH_COLOR[c];
+    if (season === 2) return PATCH_COLOR_AUTUMN[c];   // 秋
+    if (season === 3) return PATCH_COLOR_WINTER[c];   // 冬
+    return PATCH_COLOR[c];                            // 春 / 夏
 }
 
 export class VegetationLayer {
@@ -294,6 +296,7 @@ export class VegetationLayer {
 
         this.seasonTimer = window.setInterval(() => {
             if (!this.visible) return;
+            if (this.paintDeferred && this.map.getContainer().style.visibility !== 'hidden') this.paint();
             const gameSeason = currentGameSeason();
             if (this.sampledGameSeason !== gameSeason) {
                 this.lastRenderKey = '';
@@ -309,6 +312,7 @@ export class VegetationLayer {
     private seasonTimer: number | null = null;
     private rafId: number | null = null;
     private sampledGameSeason = -1;
+    private paintDeferred = false;
 
     private trees: TreeDrawCommand[] = [];
 
@@ -319,6 +323,9 @@ export class VegetationLayer {
      * - 对称 Cross-Fade 交叉淡出，彻底消除换季跳闪与树木消失。
      */
     private paint(): void {
+        // 战略地图被独立战场覆盖时，换季渐变不再反复重画屏下的整层树木。
+        if (this.map.getContainer().style.visibility === 'hidden') { this.paintDeferred = true; return; }
+        this.paintDeferred = false;
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (!this.visible || this.trees.length === 0) return;
@@ -326,10 +333,11 @@ export class VegetationLayer {
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) return;
 
         const gameSeason = currentGameSeason();
+        // 淡出窗口按**剩余游戏秒**判定（见 SEASON_BLEND_SECONDS）；刚换季那帧 sampledGameSeason 还没跟上，
+        // 此时先按"不淡"处理，等下一次 render 用新季贴图重算。
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
-            : 1;
-        const seasonProgress = (window as any).game?.timeSystem?.getSeasonProgress?.() ?? 0;
+            : 0;
         const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
 
@@ -366,24 +374,23 @@ export class VegetationLayer {
 
             if (cur || nxt) drawContactShadow(it);
 
-            // 每棵树基于经纬度哈希进行微小错峰（范围 ±0.06），模拟自然森林参差换季
+            // 每棵树基于经纬度哈希做**秒级**错峰（0~0.35 秒）：整片林依次换装，不是齐刷一变
             let treeBlend = baseBlend;
             if (baseBlend > 0 && it.c.assetNext !== it.c.asset) {
-                const offset = (hash(it.c.lat, it.c.lng, 99) - 0.5) * 0.12;
-                const start = Math.max(0.1, Math.min(0.9, (1 - SEASON_BLEND_WINDOW) + offset));
-                if (seasonProgress <= start) {
-                    treeBlend = 0;
-                } else {
-                    const t = (seasonProgress - start) / (1 - start);
-                    treeBlend = Math.min(1, Math.max(0, t * t * (3 - 2 * t)));
-                }
+                treeBlend = seasonBlend(hash(it.c.lat, it.c.lng, 99) * 0.35);
             }
 
             if (cur && nxt && cur !== nxt && treeBlend > 0) {
-                // 严密对称 Cross-Fade：本季平滑淡出 (1 - treeBlend)，下季平滑淡入 (treeBlend)
-                // 在换季交接点 (treeBlend=1) 与新季首帧 (treeBlend=0) 像素级 100% 严密吻合
+                // 🔴 [2026-09-11 主人报「植被变着变着就消失了」] 交叉淡出**不许掉不透明度**：
+                //   旧写法本季 ×(1−b) + 下季 ×b —— 两张**不同**贴图叠出来的覆盖度是 `1−b(1−b)`，
+                //   中点塌到 0.75，再乘 TREE_OPACITY 0.78 → 0.585，所以看着就是"淡着淡着没了"。
+                //   现按「两层叠合覆盖度恒定 = 单棵树 TREE_OPACITY」反解下季那层的 alpha：
+                //     1−(1−a₁)(1−a₂) = TREE_OPACITY，取 a₁ = (1−b)·TREE_OPACITY  →  a₂ = 1 − (1−TREE_OPACITY)/(1−a₁)
+                //   b=0 → a₂=0、b=1 → a₂=TREE_OPACITY，两端与"单棵树"完全一致，中点也不再塌陷。
+                const a1 = (1 - treeBlend) * TREE_OPACITY;
+                const a2 = 1 - (1 - TREE_OPACITY) / (1 - a1);
                 drawOne(cur, it, 1 - treeBlend);
-                drawOne(nxt, it, treeBlend);
+                drawOne(nxt, it, a2 / TREE_OPACITY);
             } else if (cur) {
                 drawOne(cur, it, 1);
             } else if (nxt) {
@@ -453,7 +460,7 @@ export class VegetationLayer {
         let pendingImages = 0;
         let drawnTrees = 0;
         const drawCommands: TreeDrawCommand[] = [];
-        const probeLand = LandSeaSystem.createBlockProber();
+        const waterSampler = LandSeaSystem.getWaterSampler();
 
         const paddedBounds = bounds.pad(0.08);
         const visibleCities = CITIES_V2
@@ -473,7 +480,8 @@ export class VegetationLayer {
                 if (elev === null) { missingTiles++; continue; }
                 if (elev > 3600) continue;
 
-                if (elev < 0 && !maskSaysLand(clusterLatLng.lat, clusterLatLng.lng)) continue;
+                const clusterWater = waterSampler.isWaterSync(clusterLatLng.lat, clusterLatLng.lng);
+                if (clusterWater !== false) { if (clusterWater === null) missingTiles++; continue; }
 
                 // 🔴 [2026-09-01 修复「树木有时候有、有时候消失」]
                 //    林区采样必须统一使用【常态自然地理底图】(isWinter: false / season: 0)！
@@ -488,20 +496,35 @@ export class VegetationLayer {
                 const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity);
                 if (hash(cx, cy, 46) > clusterWeight) continue;
 
-                const count = Math.round(13 + clusterWeight * 6 + hash(cx, cy, 45) * 4);
+                // 🔴 [2026-09-11 主人定] ① 片更大、分布更少；② 主人补「大小别都差不多，有的可以更大」：
+                //    尺寸做**长尾分布**，并按郁闭度放大差异 ——
+                //      · 疏林/林缘（canopy≈0）      → 15~26 棵的小片（半径约 20~26px）
+                //      · 普通林地                    → 30~90 棵
+                //      · 密林（canopy≈1）掷到大值    → 150~200 棵的**大片**（半径约 110px，片宽 220px）
+                //    半径仍按 √count 推导，所以大片自然铺开、小片自然收拢，密度（棵/像素²）与原来一致。
+                const canopy = Math.max(0, Math.min(1, (canopyDensity - 8) / 62));
+                const sizeRoll = hash(cx, cy, 45);                        // 0~1：这片是"小丛"还是"大林"
+                const sizeMul = 0.6 + Math.pow(sizeRoll, 2.5) * (0.4 + canopy * 1.6);
+                const count = Math.round((18 + clusterWeight * 60) * sizeMul);
 
+                // 同样的树数收拢成林片：林内树冠相接，外围少数树拉开形成疏林缘。
+                // 半径按树冠尺寸和棵数推导，不再把二十来棵树撒满直径约 150px 的圆。
+                const radius = TREE_BASE_PX * Math.sqrt(count) * 0.30;
+                const rotation = hash(cx, cy, 47) * Math.PI * 2;
+                const stretch = 1.05 + hash(cx, cy, 48) * 0.35;
+                const coreCount = count - 2;
                 for (let i = 0; i < count; i++) {
-                    const ang = hash(cx, cy, i + 50) * Math.PI * 2;
-                    const radiusHash = hash(cx, cy, i + 60);
-                    const rad = Math.sqrt(radiusHash) * CLUSTER_RADIUS;
-                    const px = cxJ + Math.cos(ang) * rad;
-                    const py = cyJ + Math.sin(ang) * rad;
+                    const ang = rotation + i * FOREST_GOLDEN_ANGLE;
+                    const fraction = i < coreCount ? Math.sqrt((i + 0.5) / coreCount) : 1.25 + (i - coreCount) * 0.18;
+                    const rad = radius * fraction * (0.94 + hash(cx, cy, i + 60) * 0.12);
+                    const px = cxJ + Math.cos(ang) * rad * stretch;
+                    const py = cyJ + Math.sin(ang) * rad * 0.70;
                     const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
 
-                    const ptKind = probeLand(
-                        lngToDemGlobalX(ptLatLng.lng), latToDemGlobalY(ptLatLng.lat),
-                    );
-                    if (ptKind !== 'land') { if (ptKind === 'pending') missingTiles++; continue; }
+                    // 植被按水域掩膜逐株落地：海拔非负也不代表不是水面。
+                    // 掩膜未就绪先不种，瓦片到达后由现有重绘事件补齐。
+                    const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
+                    if (water !== false) { if (water === null) missingTiles++; continue; }
 
                     const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: false })
                         ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, 0);
@@ -525,10 +548,17 @@ export class VegetationLayer {
             }
         }
 
-        this.trees = drawCommands;
+        // 🔴 [2026-09-11 主人报「植被在渐变的过程中有一段消失的状态」]
+        //   实测成因：视口的地形/水域掩膜尚未就绪时，采样会**整片跳过**（missingTiles>0），
+        //   于是 drawCommands 为空 → this.trees = [] → paint() 清完画布就 return（`trees.length===0` 早退）
+        //   → **整层植被空白**，要等掩膜到齐（下面的 15 次重试）才回来；换季要重算整层，正好撞上这个空窗。
+        //   因此：**新采样为空 + 旧列表非空 + 确有瓦片未就绪** → 保留旧列表继续显示（跟拍移动时旧树大多仍在屏内，不会闪白），
+        //   并沿用下面的重试逻辑，等掩膜到了再换成新列表。
+        const keepOldTrees = drawCommands.length === 0 && this.trees.length > 0 && missingTiles > 0;
+        if (!keepOldTrees) this.trees = drawCommands;
         this.sampledGameSeason = gameSeason;
         this.paint();
-        drawnTrees = drawCommands.length;
+        drawnTrees = this.trees.length;
 
         this.lastTreeCount = drawnTrees;
         if (pendingImages > 0) this.lastRenderKey = '';

@@ -189,6 +189,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     GORYEO: 'goryeo',
     JOSEON: 'joseon',
     GOJOSEON: 'chen3',
+    PRE_QIN: 'zhou',
     MING: 'ming_d',
     HUAXIA_IMPERIAL: 'dashun',
     DALI: 'dali',

@@ -33,12 +33,18 @@
 | 文件名 | SoundKey | 触发时机 | 时长 | 来源 |
 |--------|----------|----------|------|------|
 | `march_loop.ogg` | `march_loop` | 跟拍军团行军中（循环） | 9s | 6月25日(1).WAV |
+| `cavalry_march_loop.aud` | `cavalry_march_loop` | 纯骑军团（草原/青藏/中亚）行军中（循环） | 25s | — |
+| `player_march_loop.aud` | `player_march_loop` | 跟拍**玩家本人**（乱入者独骑）行军中（循环） | 22s | 玩家骑马.WAV（主人 2026-09-11 提供） |
 | `battle_start.ogg` | `battle_start` | 跟拍军团进入战斗 | 11s | 6月25日(2).WAV |
 | `battle_loop.ogg` | `battle_loop` | 跟拍军团战斗中（循环） | 31s | 6月25日.WAV |
 | `general_skill.ogg` | `general_skill` | 跟拍军团释放武将技 | 2s | 6月25日(5).WAV |
 | `battle_victory.ogg` | `battle_victory` | 跟拍军团战胜 | 5s | 6月25日(3).WAV |
 | `battle_defeat.ogg` | `battle_defeat` | 跟拍军团战败/覆没 | 8s | 6月25日(4).WAV |
+| `wall_collapse.aud` | `wall_collapse` | 攻城战开战 **30 秒**城墙随机塌一半（13 内，每场一次） | 5.4s | 城墙倒塌.WAV（主人 2026-09-11 提供） |
 | — | `battle_end` | 已废弃（被胜负拆分替代） | — | — |
+
+**三条行军循环音互斥（三者取一）**：玩家独骑 → `player_march_loop`；纯骑军团 → `cavalry_march_loop`；其余 → `march_loop`。
+随军时跟拍对象报的是**所在军团**，所以自动走军团那两条；玩家独骑时才走玩家骑马音（`GameAppLoop` 传 `isPlayer`）。
 
 跟拍军团完整听觉链路：
 ```
@@ -92,6 +98,9 @@ MAPWAR 是即时战略沙盘，全图同时最多 20 支军团行动。每帧都
 - `BattleField.ts` 构造器：跟拍军团参战 → `battle_start`
 - `GeneralSkillCombat.ts` `emitTacticalUi()`：跟拍军团释放战术技 → `general_skill`（与 UI 技能名闪现同步延迟）
 - `BattleField.ts` `resolve()`：胜负方判断 → `battle_victory` / `battle_defeat`
+- `Scene13WarLayer.collapseFrontWalls()`：开战 30 秒城墙随机塌一半 → `wall_collapse`
+  （**全片唯一**的塌墙点：士兵凿墙只做破损贴图、墙 hp 归零也不破墙，见该方法内注释；
+  放在 `wallsCollapsed` 闸门之后 → 每场只响一次）
 - `GameAppLoop.ts`：每帧同步跟拍军团状态 → `march_loop` / `battle_loop` 循环切换
 
 ### 战术技共用 1 个音效
@@ -101,7 +110,16 @@ MAPWAR 是即时战略沙盘，全图同时最多 20 支军团行动。每帧都
 ### 技术备忘
 
 - 音效目录：`public/sfx/`
-- AudioManager 路径：`/sfx/{name}.ogg`
+- AudioManager 路径：`/sfx/{name}.aud` —— **`.aud` 实为 ogg 字节**，用非媒体扩展名规避 IDM/迅雷 等下载器按扩展名抓取；
+  取回后重标 `audio/ogg` 生成 blob URL 再播（见 `AudioManager.fetchObjectUrl`）。
 - 格式优先级：OGG > MP3
-- 原始 WAV 保留在 `public/sfx/` 供日后重转
-- 新增音效源文件后 `ffmpeg -i xxx.WAV -c:a libvorbis -q:a 4 {name}.ogg` 转换
+- 原始 WAV 保留在 `public/sfx/`（与转换产物同目录）供日后重转
+- 新增音效源文件后转换（**必须先输出 `.ogg` 再改名 `.aud`**：`.aud` 不是 ffmpeg 认识的容器，
+  直接输出到 `.aud` 会报 `Nothing was written into output file`）：
+  ```
+  ffmpeg -y -i xxx.WAV -c:a libvorbis -q:a 4 -ar 44100 {name}.ogg
+  copy {name}.ogg {name}.aud
+  ```
+- **响度对齐**：新素材音量不能照抄别条，要按 EBU R128 实测折算。
+  例：`player_march_loop` 实测 -24.3 LUFS，比 `march_loop`(-12.8@0.15) / `cavalry_march_loop`(-12.0@0.18)
+  低约 12dB，故取 0.7 把听感拉回同一档（照抄 0.18 = 低 12dB ≈ 听不见）。

@@ -1,4 +1,5 @@
 import { drawUnitLabel } from './UnitLabelCache';
+import { PLAYER_FALLBACK_HERO_KEY } from '../player/PlayerConfig';
 import L from 'leaflet';
 import { GameMap } from './GameMap';
 import { OrientationSystem } from '../core/OrientationSystem';
@@ -520,7 +521,6 @@ export class GlobalUnitRenderer {
     private projectileSystem: ProjectileRenderer;
 
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
-    private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
     /** 航迹采样：unitId → 上次采样时的屏幕坐标（按屏幕距离判断是否推入新航迹点） */
     private navalTrailLast = new Map<string, { x: number; y: number }>();
     /** 航迹采样最小屏幕间距（px）：约 0.4 旗舰船身，太密会 40 点覆盖不足 8 艘总长 */
@@ -611,52 +611,6 @@ export class GlobalUnitRenderer {
      *  非跟拍不放大，按平时城型底宽。图 4:3。阵心对齐图片边缘。只动渲染。 */
     private static readonly CITY_ICON_HW_RATIO = CITY_ART_NATIVE_HEIGHT_PX / CITY_ART_NATIVE_WIDTH_PX;
 
-    /**
-     * 攻城团复制偏移（单位 = 攻城间距格，随军团 direction 一起旋转）。
-     *
-     * 一个「攻城团」= 5 件器械（冲车 ×1 / 井阑 ×2 / 投石 ×2）。
-     * 团在阵内的占位约：横向 ±1.7（井阑最外）、纵向 -2.0 ~ +1.9（冲车最前 ~ 投石最后）。
-     *
-     * - 非战斗场景（zoom13 以外）：返回单个 {0,0} → 与改动前逐像素一致，其他层级不受影响。
-     * - zoom13 战斗场景：返回 4 个偏移 → 4 个攻城团（2×2 排布，团间留约 1.4 格缝）。
-     *
-     * 想改 4 个团的疏密，只调这里的 GX / GY，不要动器械自身的 posOffset（那张表全 zoom 共用）。
-     */
-    private static getSiegeGroupOffsets(
-        unit: IAnimatedUnit,
-        directionIndex: number,
-        siegeScale: number,
-    ): readonly { x: number; y: number }[] {
-        const sceneActive = GlobalUnitRenderer.isBattleScene13();
-        if (!sceneActive) return GlobalUnitRenderer.SIEGE_GROUP_SINGLE;
-
-        // 与 LegionPhalanxDrawer.draw 同一套资源 id 归一（不同 id → 不同 refSprite → 间距对不上）
-        const rawType = unit.legionType || 'mixed';
-        const assetsId: LegionType =
-            rawType === 'cavalry' || rawType === 'archer_cavalry' || rawType === 'mixed' || rawType === 'infantry'
-                ? rawType
-                : 'mixed';
-
-        const sp = LegionPhalanxDrawer.getDenseSquadSpacing(
-            assetsId,
-            unit.legionType || 'infantry',
-            directionIndex,
-            siegeScale,
-            unit.cultureScales || null,
-        );
-        // 资源未就绪：退回单团原行为，不自己猜数值
-        if (!sp) return GlobalUnitRenderer.SIEGE_GROUP_SINGLE;
-
-        // 「井」字四个交叉点 = 3×3 格位的四个格缝中心 = 相对阵心 ±0.5 格
-        const hx = sp.x * 0.5;
-        const hy = sp.y * 0.5;
-        return [
-            { x: -hx, y: -hy }, { x: +hx, y: -hy },
-            { x: -hx, y: +hy }, { x: +hx, y: +hy },
-        ];
-    }
-
-    private static readonly SIEGE_GROUP_SINGLE: readonly { x: number; y: number }[] = [{ x: 0, y: 0 }];
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -786,7 +740,6 @@ export class GlobalUnitRenderer {
             this.unitFightingStates.delete(id);
             LegionPhalanxStateManager.dispose(id);
             LegionPhalanxDrawer.disposeUnit(id); // 注销：方阵 + 攻城器械状态全清
-            this.siegeGearAnchors.delete(id);
             this.siegePushCache.delete(id); // 外推量平滑缓存随单位注销清理
             this.navalSpeedTrack.delete(id); // 船速跟踪随舰队注销清理
         }
@@ -969,6 +922,14 @@ export class GlobalUnitRenderer {
 
     private animate(time: number): void {
         if (!this.isRunning) return;
+        // 独立战场已经覆盖战略地图时，保留上一帧，不再重画屏下的军团与标签。
+        // 更新时间戳并保留重绘标记，退出战场后正常接回，避免累积整场的动画时差。
+        if (this.map.getContainer().style.visibility === 'hidden') {
+            this.lastTime = time;
+            this.mapNeedsRedraw = true;
+            requestAnimationFrame(this.animate.bind(this));
+            return;
+        }
 
         // [2026-08-09 编队独立移动] 场景退出/非激活 → 清空编队推进状态，防下次战斗残留
         const sceneActiveNow = (window as any).game?.battleScene?.isActive?.() === true;
@@ -2424,7 +2385,7 @@ export class GlobalUnitRenderer {
                     const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = hostR.isAttacking ? 'ATTACK' : hostR.isMoving ? 'MOVE' : 'IDLE';
                     const off = HeroSpriteDrawer.forwardOffset(dir, 96 * scale);
                     hx += off.x; hy += off.y;
-                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? 'guanyu', { x: hx, y: hy }, heroState, dir, scale,
+                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: hx, y: hy }, heroState, dir, scale,
                         hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
                     unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
                     return;
@@ -2444,7 +2405,7 @@ export class GlobalUnitRenderer {
                 if (!isNaval) {
                     // 独行陆地形态：画单骑小人
                     const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = unit.isMoving ? 'MOVE' : 'IDLE';
-                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? 'guanyu', { x: centerPoint.x, y: centerPoint.y }, heroState, directionIndex, scale,
+                    HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: centerPoint.x, y: centerPoint.y }, heroState, directionIndex, scale,
                         hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
                     unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
                     return;
@@ -2544,42 +2505,8 @@ export class GlobalUnitRenderer {
                 );
             }
 
-            // ── 攻城器械（仅攻城方陆战；覆灭后留尸体同步士兵）──
-            if (!useNavalVisual && (activelySieging || LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear))) {
-                // [2026-07-18] 乘胜追击不休整时军团立即开拔，器械须留在城下原地渐隐（史实：器械就地弃置）。
-                // 攻城期间每帧刷新锚点＝城下位置（含攻城视觉补偿，战终渐隐不跳位）；战后按锚点换算屏幕坐标并冻结朝向。
-                if (activelySieging) {
-                    const anchorLL = this.map.containerPointToLatLng(L.point(centerPoint.x, centerPoint.y));
-                    this.siegeGearAnchors.set(unitIdForGear, { lat: anchorLL.lat, lng: anchorLL.lng, dir: directionIndex });
-                }
-                const gearAnchor = activelySieging ? null : this.siegeGearAnchors.get(unitIdForGear);
-                const gearCenter = gearAnchor
-                    ? this.map.latLngToContainerPoint([gearAnchor.lat, gearAnchor.lng])
-                    : centerPoint;
-                const gearDir = gearAnchor ? gearAnchor.dir : directionIndex;
-                const siegeScale = scale * (unit.previewScale ?? 1);
-                const baseH = 75;
-                const rH = baseH * siegeScale;
-                const ramSpacingY = rH * 0.42;
-                const ramSpacingX = rH * 0.8 * 0.50;
-                LegionPhalanxDrawer.drawSiegeGear(
-                    ctx,
-                    { x: gearCenter.x, y: gearCenter.y },
-                    state,
-                    gearDir,
-                    siegeScale,
-                    Date.now(),
-                    ramSpacingX,
-                    ramSpacingY,
-                    unitIdForGear,
-                    troops,
-                    GlobalUnitRenderer.getSiegeGroupOffsets(unit, gearDir, siegeScale),
-                );
-                // 渐隐走完（drawSiegeGear 内部已清器械状态）→ 锚点同步清除
-                if (!activelySieging && !LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear)) {
-                    this.siegeGearAnchors.delete(unitIdForGear);
-                }
-            }
+            // ── 攻城器械已整套删除（2026-09-09 主人定）：原来那套读三国志10 素材 /SUCAI/S10DB/，
+            //    素材移除后全是 404，画面上本就没有器械。攻城演出归 13 战术模式。
 
             // ── 攻城额外士兵（弓步兵）已删除（2026-08-16 主人定：攻城只留 5 件器械，不要弓箭手）──
 

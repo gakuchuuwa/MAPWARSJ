@@ -94,7 +94,7 @@ const REGION_FOLDER_ALIASES: Partial<Record<RegionType, RegionType>> = {
     SICILIANS: 'LATIN',
     PORTUGUESE: 'LATIN',
     GOTHS: 'LATIN',
-    // 东欧斯拉夫 → SLAVIC（立陶宛/波兰）
+    // 东欧 → SLAVIC（立陶宛/波兰）
     LITHUANIANS: 'SLAVIC',
     POLES: 'SLAVIC',
     // 草原 → STEPPE（匈人）

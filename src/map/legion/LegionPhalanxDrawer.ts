@@ -3,7 +3,6 @@ import { perfDoctor } from '../../debug/PerfDoctor';
 import type { NavalFormationMode } from '../../types/CultureFormations';
 import { FACTION_COMPOSITIONS } from '../../data/FactionCompositions';
 import { SPRITE_PATHS } from '../../config/GameConfig';
-import { GeneralDrawer } from '../GeneralDrawer';
 import {LegionPhalanxStateManager} from './LegionPhalanxState';
 import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
@@ -276,7 +275,7 @@ export class LegionPhalanxDrawer {
      * [2026-08-09 13场景阵型] 攻城类型判定：是否展开为 2×2 四人小阵。
      * 主人 2026-08-09 定：象兵/床弩/冲车/井阑/投石均属攻城类。
      * 在槽位数据中实际出现的是 elephant（象兵）与 ballista（床弩兵，拉丁蝎子弩）；
-     * 冲车/井阑/投石为独立器械系统（SIEGE_GEAR_DEFS），不占编队槽位。
+     * 冲车/井阑/投石那套独立器械系统已于 2026-09-09 整套删除（素材是三国志10 的，已随素材一起清）。
      */
     private static isSiegeType(type: string): boolean {
         // 🔴 [2026-08-18 修·主人报「双轮战车的阵型不对」]
@@ -599,140 +598,15 @@ export class LegionPhalanxDrawer {
     // [PERF-FIX] Re-entrancy guard：防止被并发调用时重复跑全量 canvas 处理
     private static loadingPromise: Promise<void> | null = null;
 
-    // ─── 攻城器械通用系统（2026-07-18）────────────────────────────
-    private static readonly SIEGE_GEAR_DEFS = {
-        ram: {
-            attackIds: [731, 732, 733, 734, 735, 736, 737, 738],
-            deathIds: [755, 756, 757, 758, 759, 760, 761, 762],
-            posOffsetX: 0,      // 正中
-            posOffsetY: -2.0,  // 第一排前
-            scaleMul: 0.70,
-        },
-        well_lan: {
-            attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
-            deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
-            posOffsetX: -1.7,    // 第三排左
-            posOffsetY: +0.75,   // 左稍前
-            scaleMul: 0.70,
-        },
-        well_lan_r: {
-            attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
-            deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
-            posOffsetX: +1.7,    // 第三排右
-            posOffsetY: +0.85,
-            scaleMul: 0.70,
-        },
-        catapult_l: {
-            attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
-            deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
-            posOffsetX: -0.8,     // 第三排后左
-            posOffsetY: +1.70,    // 左稍前
-            scaleMul: 0.70,
-            frameStagger: 0,
-            frameSpeed: 250,
-        },
-        catapult_r: {
-            attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
-            deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
-            posOffsetX: +0.8,     // 第三排后右
-            posOffsetY: +1.90,    // 右稍后
-            scaleMul: 0.70,
-            frameStagger: 4,      // 错开半周期
-            frameSpeed: 250,      // 投石慢速（ms/帧）
-        },
-    } as const;
+    /**
+     * 🔴 [2026-09-09 主人定] 大地图那套攻城器械（冲车/井阑/投石）**整套删除**。
+     *    它读的是三国志10 素材 `/SUCAI/S10DB/{id}-1.png`，主人已把三国志10 兵种素材全部移除，
+     *    这套图 100% 404、画面上一个器械都出不来。攻城演出的正主是 13 战术模式，
+     *    那边用的是 DE 器械素材（见 src/data/SiegeWeaponsByCulture.ts），与本文件无关。
+     *    一并删掉的还有：SIEGE_GEAR_DEFS / 器械缓存与加载 / 渐显渐隐计时 / drawSiegeGear /
+     *    GlobalUnitRenderer 里的调用与锚点。⚠️ 别再照着旧注释把它加回来。
+     */
 
-    /** 每场攻城随机交换井阑/投石机位置：key = unitId（+ 团索引，13 场景 4 团各自独立随机） */
-    private static gearShuffle = new Map<string, Record<string, 'well' | 'catapult'>>();
-    private static readonly SHUFFLE_GEAR_KEYS = ['well_lan', 'well_lan_r', 'catapult_l', 'catapult_r'] as const;
-
-    private static ensureGearShuffle(unitId: string, groupIndex = 0): Record<string, 'well' | 'catapult'> {
-        // [2026-08-09 主人定] 4 个攻城团完全一样 → 每团独立随机（key 含团索引），
-        // 团与团之间的井阑/投石分布不再相同。
-        const key = `${unitId}|${groupIndex}`;
-        let s = this.gearShuffle.get(key);
-        if (!s) {
-            const types: ('well' | 'catapult')[] = ['well', 'well', 'catapult', 'catapult'];
-            for (let i = types.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [types[i], types[j]] = [types[j], types[i]];
-            }
-            s = {};
-            for (let i = 0; i < this.SHUFFLE_GEAR_KEYS.length; i++) {
-                s[this.SHUFFLE_GEAR_KEYS[i]] = types[i];
-            }
-            this.gearShuffle.set(key, s);
-        }
-        return s;
-    }
-
-
-    private static siegeGearCaches = new Map<string, any>();
-
-    private static getGearCache(type: string): any {
-        let c = this.siegeGearCaches.get(type);
-        if (!c) {
-            c = {
-                attackSprites: [],
-                deathSprites: [],
-                deathStarts: new Map(),
-                deathThresholds: new Map(),
-                loaded: false,
-                loading: false,
-            } as any;
-            this.siegeGearCaches.set(type, c);
-        }
-        return c;
-    }
-
-    /** 外部查询：该 unit 是否曾参与攻城（用于覆灭后保留器械尸体） */
-    public static wasSiegeUnit(unitId: string): boolean {
-        for (const cache of this.siegeGearCaches.values()) {
-            if (cache.deathThresholds.has(unitId)) return true;
-        }
-        return false;
-    }
-
-    /** 攻城器械渐显起始 tick：key = unitId */
-    private static gearSpawnTicks = new Map<string, number>();
-    private static readonly GEAR_SPAWN_DURATION = 2000; // 2 秒渐显
-    /** 攻城器械渐隐起始 tick：key = unitId（胜利后 4 秒淡出） */
-    private static gearFadeOutStarts = new Map<string, number>();
-    private static readonly GEAR_FADE_OUT_DURATION = 4000; // 4 秒渐隐
-
-    private static async ensureSiegeGearLoaded(type: string): Promise<void> {
-        const cache = this.getGearCache(type);
-        if (cache.loaded) return;
-        if (cache.loading) {
-            let waited = 0;
-            while (cache.loading && waited < 100) {
-                await new Promise(r => setTimeout(r, 50));
-                waited++;
-            }
-            return;
-        }
-        cache.loading = true;
-        const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
-        try {
-            const allPaths = [
-                ...def.attackIds.map((id: number) => `/SUCAI/S10DB/${id}-1.png`),
-                ...def.deathIds.map((id: number) => `/SUCAI/S10DB/${id}-1.png`),
-            ];
-            await AssetLoader.preloadImages(allPaths);
-            for (const id of def.attackIds) {
-                const raw = AssetLoader.getImage(`/SUCAI/S10DB/${id}-1.png`);
-                if (raw) cache.attackSprites.push(await this.processImage(raw));
-            }
-            for (const id of def.deathIds) {
-                const raw = AssetLoader.getImage(`/SUCAI/S10DB/${id}-1.png`);
-                if (raw) cache.deathSprites.push(await this.processImage(raw));
-            }
-            cache.loaded = true;
-            gameLog('unit', `🔨 攻城器械 ${type} 加载完成`);
-        } finally {
-            cache.loading = false;
-        }
-    }
 
     public static async preload(): Promise<void> {
         if (this.isLoaded) return;
@@ -757,14 +631,6 @@ export class LegionPhalanxDrawer {
         //       原来开机和按需各写一份，按需那份漏了 SHOOT/CHARGE/SECONDARY/TERTIARY，
         //       结果圣殿骑士军团的二三线掉回兜底集，十字军阵里出现三国志10 的兵。
         await this._loadNavalAssets([...EAGER_BOOT_UNIT_IDS]);
-
-        await GeneralDrawer.preload();
-
-        // 预载攻城器械素材（避免首次攻城时懒加载延迟）
-        gameLog('unit', '🔨 预载攻城器械素材...');
-        for (const gearType of Object.keys(LegionPhalanxDrawer.SIEGE_GEAR_DEFS)) {
-            await LegionPhalanxDrawer.ensureSiegeGearLoaded(gearType);
-        }
 
         this.isLoaded = true;
         LegionPhalanxDrawer.startSpriteEvictLoop();
@@ -1161,25 +1027,11 @@ export class LegionPhalanxDrawer {
 
     public static resetUnit(unitId: string): void {
         LegionPhalanxStateManager.reset(unitId);
-        // 攻城器械 deathThresholds / spawn / fade 故意保留：
-        // 战终后仍靠 wasSiegeUnit 继续画 4s 渐隐；真正清理由 clearSiegeGearState。
-    }
-
-    /** 攻城器械相关 Map 全清（渐隐结束 / 单位注销） */
-    public static clearSiegeGearState(unitId: string): void {
-        this.gearSpawnTicks.delete(unitId);
-        this.gearFadeOutStarts.delete(unitId);
-        this.gearShuffle.delete(unitId);
-        for (const cache of this.siegeGearCaches.values()) {
-            cache.deathStarts?.delete(unitId);
-            cache.deathThresholds?.delete(unitId);
-        }
     }
 
     /** 单位从渲染器移除：方阵 + 器械状态一并释放 */
     public static disposeUnit(unitId: string): void {
         this.resetUnit(unitId);
-        this.clearSiegeGearState(unitId);
         this.resetNavalDeath(unitId);
         NavalPhalanxStateManager.dispose(unitId);
         navalOarPhase.delete(unitId);
@@ -1187,7 +1039,7 @@ export class LegionPhalanxDrawer {
     }
 
     // [NEW] Helper: Get Frame Count based on Aspect Ratio
-    private static getFrameCount(img: HTMLImageElement | null): number {
+    private static getFrameCount(img: { naturalWidth: number; naturalHeight: number } | null): number {
         if (!img || img.naturalWidth === 0) return 1;
         // If width approx equals height (< 2x), it's single frame (S10DB/NPC)
         if (img.naturalWidth < img.naturalHeight * 2) return 1;
@@ -1740,7 +1592,9 @@ export class LegionPhalanxDrawer {
                     // [2026-05-30] DEATH 不循环, 播 1 次冻结末帧
                     const startT = slot.stateStartTime || tick;
                     const timeDead = tick - startT;
-                    const deathFrame = Math.floor(timeDead / 150);
+                    // [2026-09-11 主人：阵亡动作太慢] 对齐 zoom13 战术模式（DEATH_ANIM=8帧/6fps≈1.33s）：
+                    //   DE 全帧素材按整轮 1.33s 动态算，S10DB 8 帧素材保持 150ms/帧不变。
+                    const deathFrame = Math.floor(timeDead / (dynEntry ? 1333 / spriteTotalFrames : 150));
                     currentFrameIndex = Math.min(deathFrame, spriteTotalFrames - 1);
                 } else if (animState === 'MOVE' || animState === 'ATTACK' || animState === 'DAMAGE') {
                     // 帧循环
@@ -1765,7 +1619,8 @@ export class LegionPhalanxDrawer {
                     currentFrameIndex = 0; // Single frame corpse
                 } else {
                     const timeDead = tick - slot.stateStartTime;
-                    const deathFrame = Math.floor(timeDead / 150);
+                    // [2026-09-11 主人：阵亡动作太慢] 对齐 zoom13 战术模式（DEATH_ANIM≈1.33s 整轮），S10DB 保持 150ms/帧。
+                    const deathFrame = Math.floor(timeDead / (dynEntry ? 1333 / spriteTotalFrames : 150));
                     currentFrameIndex = Math.min(deathFrame, spriteTotalFrames - 1);
                 }
 
@@ -2219,8 +2074,36 @@ export class LegionPhalanxDrawer {
         };
     }
 
-    public static drawNaval(
-        ctx: CanvasRenderingContext2D,
+    /**
+     * 🔴 [2026-09-11 主人「用游戏海上行船的专业帮我设计」] 舰队**视觉航向**（course over ground）。
+     *
+     * 为什么要限回转率：船的转向是划弧，不是原地拧头。军团路径在拐点是**瞬间**换向的，
+     * 若把 16 向贴图钉死在逻辑航向上，拐点那一帧就会出现「旗舰朝北、压在旧航段上的僚舰朝西」。
+     *
+     * 数值取 **120°/s**：满舵 90° 约 0.75 秒完成 —— 桨帆船/盖伦的量级（真实帆船满舵几十秒，
+     * 但 RTS 里要"看得见地转过来"而不是"瞬间换向"，0.6~1.0 秒是 AoE2 一档的手感）。
+     * 逐舰队各自记（key = unitId），互不串味；tick 不前进（同帧多 pane 各画一次）时步长为 0，不会重复推进。
+     */
+    private static readonly NAVAL_TURN_RATE_DEG_PER_SEC = 120;
+    private static navalCourseByUnit = new Map<string, { deg: number; tick: number }>();
+
+    private static stepNavalCourse(unitId: string, targetDeg: number, tick: number): number {
+        const key = unitId || '__default__';
+        const prev = this.navalCourseByUnit.get(key);
+        if (!prev || !Number.isFinite(prev.deg)) {
+            this.navalCourseByUnit.set(key, { deg: targetDeg, tick });
+            return targetDeg;
+        }
+        const dt = Math.max(0, Math.min(0.25, tick - prev.tick));   // 卡顿/切标签页后不要一步甩过半个圆
+        const diff = ((targetDeg - prev.deg + 540) % 360) - 180;    // 最短转向差（-180..180）
+        const maxStep = LegionPhalanxDrawer.NAVAL_TURN_RATE_DEG_PER_SEC * dt;
+        const step = Math.max(-maxStep, Math.min(maxStep, diff));
+        const deg = ((prev.deg + step) % 360 + 360) % 360;
+        this.navalCourseByUnit.set(key, { deg, tick });
+        return deg;
+    }
+
+    public static drawNaval(        ctx: CanvasRenderingContext2D,
         center: { x: number; y: number },
         state: PhalanxAnimState,
         direction: number,
@@ -2387,7 +2270,18 @@ export class LegionPhalanxDrawer {
         //        每船朝向 = 自己所在那段航迹的切线 → 转弯自动排成蛇形，也不会切弯插上岸。
         //     ② 每船各自量化出 16 向帧，量化丢掉的 ±11.25° 用 ctx.rotate 补回去，台阶消失。
         //   无航迹（军团编辑器预览、刚下水第一帧、静止待命）→ sampleNavalPath 退化为直线，保持整齐朝向。
-        const headDeg = headingDeg ?? (45 + 22.5 * direction);
+        // 🔴🔴 [2026-09-11 主人「我不懂，请你用游戏海上行船的专业，帮我设计游戏」]
+        //     舰队航向分**两条**，别再混用：
+        //       · 逻辑航向 logicalDeg = 军团路径给的方向（headingDeg）——转弯时**瞬间跳 90°**，位置/航迹照它走；
+        //       · 视觉航向 courseDeg  = 本函数维护的「对地航向」，按**回转率上限**平滑逼近逻辑航向。
+        //     专业依据（真实桨帆船 + AoE2 海战一致）：船没有原地拧头这回事，整队是"划出一道弧"。
+        //     旧实现把 16 向帧直接钉在逻辑航向上 → 拐点那一帧旗舰朝新向、僚舰还压在旧航段上朝旧向，
+        //     整列看起来就是主人报的「旗舰已调头向北、二舰船头却朝西」。现在全队共用这条限速航向：
+        //     转弯变成弧、队首队尾方向一致，位置仍沿旗舰真实航迹依次拉过弯（不切弯插上岸）。
+        //     ⚠️ 逻辑航向不动（军团寻路/战斗判定照旧读它），这里只影响**画出来的朝向**。
+        const logicalDeg = headingDeg ?? (45 + 22.5 * direction);
+        const courseDeg = LegionPhalanxDrawer.stepNavalCourse(unitId, logicalDeg, tick);
+        const headDeg = courseDeg;
         const flagAng = headDeg * Math.PI / 180 - Math.PI / 2;   // 屏幕数学角（前进方向）
         // 🔴 [2026-09-02 主人「海战后面的船跟一根木棍似的」] 用不用航迹，判据是**航迹方向对不对得上当前航向**，
         //    不是 state。改前写 `state === 'MOVE' ? trail : undefined`：海战里军团是 isAttacking、
@@ -2415,7 +2309,7 @@ export class LegionPhalanxDrawer {
         const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
-        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
+        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number }[] = [];
 
         // 逐军团相位种子（只依赖 unitId）：站位误差与浮沉横摇共用，避免同屏所有舰队同频共振
@@ -2444,6 +2338,8 @@ export class LegionPhalanxDrawer {
             }
             let node: { x: number; y: number };
             let localAng: number;
+            // 贴图朝向角：舰队航向（旗舰与所有僚舰一致）。横向站位仍走下面的 localAng（当地法线）。
+            const faceAng = flagAng;
             if (backDist <= 0.0001) {
                 // 旗舰（及横列阵同排船）：位置就是逻辑点，朝向永远用精确航向，不受航迹采样抖动影响
                 node = { x: center.x, y: center.y };
@@ -2460,7 +2356,14 @@ export class LegionPhalanxDrawer {
             const dy = node.y + origX * Math.cos(localAng);
 
             // ③ 该船自己的 16 向帧 + 量化残差角
-            let shipDeg = (localAng + Math.PI / 2) * 180 / Math.PI;
+            // 🔴 [2026-09-11 主人报「旗舰已调头向北，二舰船头却朝西，然后船才向北」]
+            //   真因：僚舰的**朝向**原先取「自己所在那段航迹的切线」(localAng)。急转弯时航迹最新一段
+            //   还停在**转弯前的旧航向**（航迹要跑完才更新），于是僚舰顶着旧方向、位置却已被拖向新方向。
+            //   现拆成两个角：
+            //     · localAng —— 仍用于**沿当地法线**摆横向站位（蛇形队列不变，2026-08-27 §A 的设计保留）；
+            //     · faceAng  —— 只管**贴图朝向**，一律取舰队航向 flagAng（与旗舰同源），
+            //       僚舰因此和旗舰同向、转弯即时跟手，不会再有"船头朝西、人往北走"。
+            let shipDeg = (faceAng + Math.PI / 2) * 180 / Math.PI;
             shipDeg = ((shipDeg % 360) + 360) % 360;
             const shipDir = ((Math.round((shipDeg - 45) / 22.5) % 16) + 16) % 16;
             let resDeg = shipDeg - (45 + 22.5 * shipDir);
@@ -2631,208 +2534,6 @@ export class LegionPhalanxDrawer {
     }
 
     // [NEW] Custom Formation Offset Calculation
-    // ─── 攻城器械通用绘制（2026-07-18）────────────────────────────
-
-    /** 绘制所有攻城器械（冲车、井阑等） */
-    public static drawSiegeGear(
-        ctx: CanvasRenderingContext2D,
-        center: { x: number, y: number },
-        state: PhalanxAnimState,
-        direction: number,
-        scale: number,
-        tick: number,
-        spacingX: number,
-        spacingY: number,
-        unitId: string,
-        troops: number,
-        /**
-         * 攻城团整体复制偏移，**单位是像素**（阵内坐标，旋转前叠加，随 direction 一起转）。
-         * 用像素是为了能和 3×3 编队格位对齐——两边的「格」不是同一个单位
-         * （器械走 ramSpacing≈30px，编队格位走 getDenseSquadSpacing）。
-         * 默认单个 {0,0} = 与改动前逐像素一致，其他 zoom 不受影响。
-         */
-        groupOffsets: readonly { x: number; y: number }[] = [{ x: 0, y: 0 }],
-    ): void {
-        // [2026-08-09 13锁死] 13 战斗场景：编队推进 state=MOVE / 交战 ATTACK，战斗仍在进行——
-        // 器械不得因非 ATTACK 状态误判「胜利渐隐」而淡出消失（主人实锤 13 看不到冲车）。
-        // 13 下器械一律定格攻击姿态（与士兵同节奏），仅 zoom 已到 13 才生效。
-        const scene13 = (window as any).game?.battleScene?.isActive?.() === true
-            && ((window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0) >= 13;
-        if (scene13 && state !== 'DEATH') {
-            state = 'ATTACK';
-            LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
-        }
-        // 多器械类型共用 unitId 的 spawn/fade 标记；整轮画完后再删，避免同帧后几种器械重开渐隐
-        let fadeFullyDone = false;
-        for (const gearType of Object.keys(LegionPhalanxDrawer.SIEGE_GEAR_DEFS) as string[]) {
-            drawSingleGear(gearType);
-        }
-        if (fadeFullyDone) {
-            LegionPhalanxDrawer.clearSiegeGearState(unitId);
-        }
-
-        function drawSingleGear(origType: string): void {
-            // 冲车独立编队（13 场景，主人 2026-08-09 定）：不随 4 攻城团复制，
-            // 4 台一字横排顶在最前排中央——冲车攻城门，后排够不到城门，只能一排 4 个。
-            // 横向间距 2.5 格（≈105px，冲车宽 ≈103px，几乎不重叠）；
-            // 偏移单位 = 格（×spacingX/Y），叠加在 ram 自身「第一排前」posOffset 之上；
-            // 其余器械仍走 groupOffsets（像素，整团复制）。
-            const ramFrontExtra = [
-                { x: -3.75, y: -1.2 }, { x: -1.25, y: -1.2 },
-                { x: +1.25, y: -1.2 }, { x: +3.75, y: -1.2 },
-            ] as const;
-            const useRamFront = origType === 'ram'
-                && (window as any).game?.battleScene?.isActive?.() === true
-                // 13 锁死：仅 zoom 已到 13 才独立排冲车（flyTo 途中/非 13 保持整团复制）
-                && ((window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0) >= 13;
-            const offsets = useRamFront ? ramFrontExtra : groupOffsets;
-            // [2026-08-09 主人定] 4 个攻城团各自独立随机：井阑/投石互换按团索引取映射，
-            // 团与团之间的器械分布不再相同。
-            for (let gi = 0; gi < offsets.length; gi++) {
-                const g = offsets[gi];
-                // 井阑/投石 4 个位置随机交换：用互换类型的精灵帧，保持原坐标
-                let type = origType;
-                let extraPosOverride: { x?: number; y?: number } = {};
-                if ((LegionPhalanxDrawer.SHUFFLE_GEAR_KEYS as readonly string[]).includes(origType)) {
-                    const shuffle = LegionPhalanxDrawer.ensureGearShuffle(unitId, gi);
-                    if (shuffle[origType] !== (origType.startsWith('catapult') ? 'catapult' : 'well')) {
-                        type = origType.startsWith('catapult')
-                            ? (origType === 'catapult_l' ? 'well_lan' : 'well_lan_r')
-                            : (origType === 'well_lan' ? 'catapult_l' : 'catapult_r');
-                        const rawDef = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[origType];
-                        extraPosOverride = { x: rawDef.posOffsetX, y: rawDef.posOffsetY };
-                    }
-                }
-                const cache = LegionPhalanxDrawer.getGearCache(type);
-                const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
-
-                if (!cache.loaded) {
-                    void LegionPhalanxDrawer.ensureSiegeGearLoaded(type);
-                    continue;
-                }
-
-            // 战斗结束 + 兵力 > 0 = 胜利，器械渐隐
-            if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
-                if (!LegionPhalanxDrawer.gearFadeOutStarts.has(unitId)) {
-                    LegionPhalanxDrawer.gearFadeOutStarts.set(unitId, tick);
-                }
-                const fadeStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId)!;
-                const fadeElapsed = tick - fadeStart;
-                if (fadeElapsed >= LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION) {
-                    // 渐隐完毕，清本器械状态；共享 spawn/fade 等整轮结束后再删
-                    cache.deathStarts.delete(unitId);
-                    cache.deathThresholds.delete(unitId);
-                    fadeFullyDone = true;
-                    continue;
-                }
-                // 继续画，alpha 由下面统一处理
-            } else {
-                // 战斗中，清除渐隐标记
-                LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
-            }
-
-            // 首次攻城：记录渐显起始 tick
-            if (!LegionPhalanxDrawer.gearSpawnTicks.has(unitId)) {
-                LegionPhalanxDrawer.gearSpawnTicks.set(unitId, tick);
-            }
-            const spawnStart = LegionPhalanxDrawer.gearSpawnTicks.get(unitId)!;
-            const spawnElapsed = tick - spawnStart;
-            let gearAlpha = Math.min(1, spawnElapsed / LegionPhalanxDrawer.GEAR_SPAWN_DURATION);
-
-            // 胜利渐隐（与渐显取较暗值：速胜时器械未显全，若直接覆盖会先跳亮再淡出）
-            const fadeOutStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId);
-            if (fadeOutStart !== undefined) {
-                const fadeElapsed = tick - fadeOutStart;
-                gearAlpha = Math.min(gearAlpha, Math.max(0, 1 - fadeElapsed / LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION));
-            }
-
-            // 随机阵亡阈值，首次设置
-            if (!cache.deathThresholds.has(unitId)) {
-                cache.deathThresholds.set(unitId, 0.05 + Math.random() * 0.90);
-            }
-            const threshold = cache.deathThresholds.get(unitId)!;
-
-            const phState = LegionPhalanxStateManager.getState(unitId);
-            const maxT = phState?.maxTroops ?? troops;
-            const aliveRatio = maxT > 0 ? troops / maxT : 0;
-
-            if (!cache.deathStarts.has(unitId) && aliveRatio <= threshold) {
-                cache.deathStarts.set(unitId, tick);
-            }
-            const gearDead = cache.deathStarts.has(unitId);
-
-            const dirIdx = ((direction % 8) + 8) % 8;
-            let sprite: HTMLImageElement | null = null;
-            let frameCount = 1;
-            let frameIndex = 0;
-
-            if (state === 'DEATH' || gearDead) {
-                sprite = cache.deathSprites[dirIdx] ?? null;
-                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) continue;
-                frameCount = Math.floor(sprite.width / sprite.height);
-                let deathStart = cache.deathStarts.get(unitId);
-                if (deathStart === undefined) {
-                    deathStart = tick;
-                    cache.deathStarts.set(unitId, deathStart);
-                }
-                const elapsed = tick - deathStart;
-                frameIndex = Math.min(Math.floor(elapsed / 150), frameCount - 1);
-            } else if (state === 'ATTACK' || fadeOutStart !== undefined) {
-                // [修复 2026-07-18] 胜利渐隐期 state 已非 ATTACK，原先掉进末尾 return 导致器械瞬间消失
-                // （4 秒渐隐计时空转、无物可画）。渐隐期继续画攻击贴图，帧定格在战斗结束瞬间。
-                sprite = cache.attackSprites[dirIdx] ?? null;
-                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) continue;
-                frameCount = Math.floor(sprite.width / sprite.height);
-                const speed = def.frameSpeed ?? 150;
-                const animTick = fadeOutStart !== undefined ? fadeOutStart : tick;
-                frameIndex = (Math.floor((animTick / speed)) + (def.frameStagger ?? 0)) % frameCount;
-            } else {
-                continue;
-            }
-
-            const frameW = sprite.width / frameCount;
-            const frameH = sprite.height;
-
-            // ── 位置 ──
-            const angle = (direction + 1) * Math.PI / 4;
-            const cos = Math.cos(angle);
-            const sin = Math.sin(angle);
-            const baseOffX = extraPosOverride.x ?? def.posOffsetX;
-            const baseOffY = extraPosOverride.y ?? def.posOffsetY;
-
-            // ── 尺寸 ──
-            const baseHeight = 60;
-            const currentRatio = frameW / frameH;
-            const frameHeightNorm = frameH / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
-            const targetH = baseHeight * scale * def.scaleMul * frameHeightNorm;
-            const targetW = targetH * currentRatio;
-
-            const sx = frameIndex * frameW;
-            const prevAlpha = ctx.globalAlpha;
-            ctx.globalAlpha = prevAlpha * gearAlpha;
-
-            // 攻城团整体复制：团偏移在旋转前加到器械自身偏移上，整团随 direction 一起转。
-            // groupOffsets 默认单元素 {0,0} → 与改动前逐像素一致。
-            // 冲车（useRamFront）不走团复制：4 台一字横排顶最前，偏移是格单位 ×spacing。
-            // 当前团 = 外层 gi 循环的 g（每团独立随机器械分布）。
-            const origX = useRamFront
-                ? (baseOffX + g.x) * spacingX
-                : baseOffX * spacingX + g.x;
-            const origY = useRamFront
-                ? (baseOffY + g.y) * spacingY
-                : baseOffY * spacingY + g.y;
-            const gx = center.x + (origX * cos - origY * sin);
-            const gy = center.y + (origX * sin + origY * cos);
-            ctx.drawImage(
-                sprite,
-                sx, 0, frameW, frameH,
-                gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
-            );
-            ctx.globalAlpha = prevAlpha;
-            } // end for gi（攻城团循环）
-        }
-    }
-
     /** 攻城额外士兵（弓步兵）已删除（2026-08-16 主人定：攻城只留 5 件器械） */
 
     private static getFormationOffset(

@@ -19,7 +19,6 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
     dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团
     aosiruowen: { name: '伯国骑士', tier: 3 },       // 埃德萨·鲍德温：十字军埃德萨伯国骑军（风土/建制符号；无独立战略大捷故 T3）
-    yelusalengwg: { name: '圣墓骑士', tier: 3 },     // 阿卡·鲍德温四世：耶路撒冷王国圣墓骑士团（风土/建制符号）
 
     // ── T3 风土之兵 ──
     nabatai: { name: '香路驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明

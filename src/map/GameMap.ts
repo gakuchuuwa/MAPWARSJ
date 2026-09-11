@@ -775,6 +775,17 @@ export class GameMap {
                         <input type="checkbox" id="chk-editor-army">
                         <b>⚔ 军队编辑</b>
                     </label>
+
+                    <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #555;">
+                        <div style="font-weight:bold;margin-bottom:4px;font-size:12px;color:#999;">🔗 外部编辑器（新标签页）</div>
+                        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
+                            <a href="/batch-manager.html" target="_blank" style="color:#cbb98e;text-decoration:none;">📋 实体管理</a>
+                            <a href="/portrait-tuner.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🖼 立绘调校</a>
+                            <a href="/skill-editor.html" target="_blank" style="color:#cbb98e;text-decoration:none;">⚙ 技能管理</a>
+                            <a href="/legion-editor.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🛡 军团方阵</a>
+                            <a href="/scratch/_siege_preview.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🏞 战场背景</a>
+                        </div>
+                    </div>
                     `;
                 }
                 

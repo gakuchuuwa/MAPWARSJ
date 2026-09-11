@@ -189,6 +189,16 @@ function renderHillshade(
     const hasRegions = !!(regions && regions.length > 0 && tileBounds);
     const regionLatStep = hasRegions ? (tileBounds!.south - tileBounds!.north) / height : 0;
     const regionLngStep = hasRegions ? (tileBounds!.east - tileBounds!.west) / width : 0;
+    const preparedRegions = hasRegions ? regions!.map(reg => {
+        const span = reg.elevMax - reg.elevMin;
+        const fade = span > 0 ? Math.min(180, span * 0.25) : 0;
+        const invFade = fade > 0 ? 1.0 / fade : 0;
+        return {
+            ...reg,
+            fade,
+            invFade,
+        };
+    }) : [];
 
     // Process params
     const azimuthRad = (params.azimuth * Math.PI) / 180;
@@ -341,16 +351,30 @@ function renderHillshade(
                 if (hasRegions && (zC > 0 || zC >= -500)) {
                     const lat = tileBounds!.north + y * regionLatStep;
                     const lng = tileBounds!.west + x * regionLngStep;
-                    for (let ri = 0; ri < regions!.length; ri++) {
-                        const reg = regions![ri];
+                    for (let ri = 0; ri < preparedRegions.length; ri++) {
+                        const reg = preparedRegions[ri];
                         if (zC < reg.elevMin || zC > reg.elevMax) continue;
                         const dLat = (lat - reg.center[0]) / reg.radii[0];
                         const dLng = (lng - reg.center[1]) / reg.radii[1];
                         const d2 = dLat * dLat + dLng * dLng;
                         if (d2 >= 1.0) continue;
-                        // 椭圆衰减(平方曲线), 边缘 0 中心 1
+
+                        // 椭圆空间衰减(平方曲线), 边缘 0 中心 1
                         const falloff = (1.0 - d2) * (1.0 - d2);
-                        const w = falloff * reg.blendStrength;
+
+                        // 高程垂直羽化(Smoothstep), 上下限边缘平滑淡化，消除生硬等高线切边
+                        let elevFalloff = 1.0;
+                        if (reg.fade > 0) {
+                            if (zC < reg.elevMin + reg.fade) {
+                                const t = (zC - reg.elevMin) * reg.invFade;
+                                elevFalloff = t * t * (3.0 - 2.0 * t);
+                            } else if (zC > reg.elevMax - reg.fade) {
+                                const t = (reg.elevMax - zC) * reg.invFade;
+                                elevFalloff = t * t * (3.0 - 2.0 * t);
+                            }
+                        }
+
+                        const w = falloff * elevFalloff * reg.blendStrength;
                         const iw = 1.0 - w;
                         r = r * iw + reg.color[0] * w;
                         g = g * iw + reg.color[1] * w;

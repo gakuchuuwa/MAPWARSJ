@@ -174,6 +174,29 @@ export class CityEditor implements IEditor {
             </div>
 
             <div style="margin-bottom: 10px;">
+                <label>建筑风格 (16种):</label>
+                <select id="ce-building-style" style="width: 100%; background: #333; color: #fff; border: 1px solid #555; padding: 4px;">
+                    <option value="">-- 未选择 --</option>
+                    <option value="ASIA">ASIA 东亚</option>
+                    <option value="WEST">WEST 西欧</option>
+                    <option value="EAST">EAST 拜占庭</option>
+                    <option value="SLAV">SLAV 东欧</option>
+                    <option value="MEDI">MEDI 地中海</option>
+                    <option value="ORIE">ORIE 中东</option>
+                    <option value="CEAS">CEAS 中亚</option>
+                    <option value="INDI">INDI 印度</option>
+                    <option value="PURU">PURU 普鲁</option>
+                    <option value="SEAS">SEAS 东南亚</option>
+                    <option value="MESO">MESO 中美</option>
+                    <option value="ANDE">ANDE 安第斯</option>
+                    <option value="AFRI">AFRI 非洲</option>
+                    <option value="PERSIAN">PERSIAN 波斯</option>
+                    <option value="GREEK">GREEK 希腊</option>
+                    <option value="THRACIAN">THRACIAN 色雷斯</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 10px;">
                 <label>初始兵力:</label>
                 <input type="number" id="ce-troops" value="1000" min="0" step="1000" style="width: 100%; background: #222; color: #fff; border: 1px solid #555; padding: 4px;">
             </div>
@@ -269,6 +292,7 @@ export class CityEditor implements IEditor {
 
         (this.container.querySelector('#ce-mirror') as HTMLInputElement)!.checked = city.mirror || false;
         (this.container.querySelector('#ce-region') as HTMLSelectElement)!.value = city.region || '';
+        (this.container.querySelector('#ce-building-style') as HTMLSelectElement)!.value = (city as any).buildingStyle || '';
 
         // [NEW] 刷新"自动判定"提示
         const hint = this.container.querySelector('#ce-region-auto') as HTMLElement;
@@ -504,6 +528,7 @@ export class CityEditor implements IEditor {
                 const troops = parseInt((this.container!.querySelector('#ce-troops') as HTMLInputElement).value) || 10000;
                 const mirror = (this.container!.querySelector('#ce-mirror') as HTMLInputElement).checked;
                 const region = (this.container!.querySelector('#ce-region') as HTMLSelectElement).value;
+                const buildingStyle = (this.container!.querySelector('#ce-building-style') as HTMLSelectElement).value;
 
                 // [FIX] Use getCityImage to resolve correct asset based on Region/Type
                 // For preview/update, we need the image path immediately
@@ -528,6 +553,7 @@ export class CityEditor implements IEditor {
                         troops: troops,
                         mirror: mirror,
                         region: region || undefined,
+                        buildingStyle: buildingStyle || undefined,
                         image: resolvedImage // [FIX] Now providing image
                     });
 
@@ -557,6 +583,7 @@ export class CityEditor implements IEditor {
                         troops: troops,
                         mirror: mirror,
                         region: region || undefined,
+                        buildingStyle: buildingStyle || undefined,
                         image: resolvedImage // [FIX] Now providing image
                     });
                     this.setStatus('👁️ 预览中 - 点击"新建城市"按钮保存到文件');
@@ -949,8 +976,9 @@ export class CityEditor implements IEditor {
 
         const mirror = (container.querySelector('#ce-mirror') as HTMLInputElement)?.checked;
         const region = (container.querySelector('#ce-region') as HTMLSelectElement)?.value;
+        const buildingStyle = (container.querySelector('#ce-building-style') as HTMLSelectElement)?.value;
 
-        console.log(`[CityEditor] generateCityCode 读取: name=${name}, lat=${lat}, lng=${lng}, region=${region}`);
+        console.log(`[CityEditor] generateCityCode 读取: name=${name}, lat=${lat}, lng=${lng}, region=${region}, buildingStyle=${buildingStyle}`);
 
         if (!lat || !lng) {
             alert('请填写完整信息');
@@ -966,10 +994,11 @@ export class CityEditor implements IEditor {
 
         const mirrorCode = mirror ? ", mirror: true" : "";
         const regionCode = region ? `, region: '${region}'` : "";
+        const styleCode = buildingStyle ? `, buildingStyle: '${buildingStyle}'` : "";
         const startYearCode = startYearStr ? `, startYear: ${startYearStr}` : "";
         const endYearCode = endYearStr ? `, endYear: ${endYearStr}` : "";
 
-        return `{ id: '${id}', name: '${name}', factionId: '${faction}', lat: ${lat}, lng: ${lng}, type: '${type}'${regionCode}, troops: ${troops}${mirrorCode}${startYearCode}${endYearCode} }`;
+        return `{ id: '${id}', name: '${name}', factionId: '${faction}', lat: ${lat}, lng: ${lng}, type: '${type}'${regionCode}${styleCode}, troops: ${troops}${mirrorCode}${startYearCode}${endYearCode} }`;
     }
 
     private updatePendingUI(): void {
@@ -1331,6 +1360,7 @@ export class CityEditor implements IEditor {
         setVal('#ce-name', '');
         setVal('#ce-faction', '');
         setVal('#ce-region', '');
+        setVal('#ce-building-style', '');
         setVal('#ce-lat', '');
         setVal('#ce-lng', '');
         setVal('#ce-troops', '1000');

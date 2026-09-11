@@ -28,7 +28,7 @@ export interface PlayerRank {
     name: string;
     /** 达到此功勋即晋升（功勋 = 玩家本人 + 玩家指挥编队的击杀精灵数，1 精灵 = 20 兵） */
     merit: number;
-    /** 战术模式指挥范围：none 只管自己 / one 前排一个编队 / front 整个前排 / all 三排 */
+    /** 战术模式指挥范围：none 单枪匹马 / one 率队前驱 / front 独当一面 / all 节制三军 */
     control: 'none' | 'one' | 'front' | 'all';
     /** 第九环·玩家官阶战力乘数（1.1 ~ 1.9，九阶段各配一档战力） */
     powerMult: number;
@@ -76,17 +76,20 @@ export function nextRankAfter(rank: PlayerRank): PlayerRank | null {
     return PLAYER_RANKS[idx + 1] ?? null;
 }
 
-/** 玩家素材 key（UnitAssets.UNIT_ASSETS / Scene13 WAR_TYPES 同名）。
- *  🔴 [2026-09-07] 这是「乱入者」的默认/顶层形象；**开局不是它**，见下面的 heroKeyForRank。
- *  ⚠️ [2026-09-09] `'guanyu'` **只是借用的 DE 素材目录名**（u_cav_hero_guan_yu），
- *     玩家角色叫「乱入者」，**不是关羽**，跟势力武将 chu_guanyu 也毫无关系。
- *     别因为这个 key 就在文档/对话里管玩家叫关羽。 */
-export const PLAYER_HERO_KEY = 'guanyu';
-
-/** 官阶 → 玩家在地图与 13 里的素材 key。
+/**
+ * 玩家兜底素材 key（UnitAssets.UNIT_ASSETS / Scene13 WAR_TYPES 同名）。
  *
- *  🔴 [2026-09-09 主人定「玩家陆军初始形象改为古典斥候骑兵」] 开局是 antiquity_scout_cavalry，
- *     不是关羽（关羽是投效势力、升上去之后的乱入者本尊）。
+ * 🔴 [2026-09-09 主人定「玩家怎么显示成关羽了，赶紧删除」] 这里原本是 `'guanyu'`
+ *    —— DE 的关羽英雄素材（绿袍赤兔），玩家一升到斥候、在还没收到兵模的那段时间里
+ *    就会顶着关羽在地图上跑。**玩家任何时候都不许显示成关羽**，已改为古典斥候骑兵。
+ *    `guanyu` 素材本身留在 UNIT_ASSETS（别处可能用），但**玩家系统不再引用它**。
+ */
+export const PLAYER_FALLBACK_HERO_KEY = 'antiquity_scout_cavalry';
+
+/** 官阶 → 玩家在地图与 13 里的素材 key。**没有任何一档是关羽。**
+ *
+ *  🔴 [2026-09-09 主人定「玩家陆军初始形象改为古典斥候骑兵」] 开局是 antiquity_scout_cavalry。
+ *     升上去之后穿什么由**收到的兵模**决定（凑卡玩法），不是靠这张表升级形象。
  *     ⚠️ 这个 key 同时决定 **13 里的血/攻/防**（Scene13 用 statsFor(heroKey) 取 WAR_TYPES）：
  *        古典斥候骑兵 hp45 / atk3 / 近防0 远防2 / 速130，所以换 key = 连外观带数值一起换。
  *     ⚠️ 它还决定**地图行军速度大类**：cls='cav' → moveClassForHeroKey 返回 CAVALRY
@@ -98,8 +101,26 @@ export const PLAYER_RANK_HERO_KEYS: Readonly<Partial<Record<PlayerRankId, string
     civilian: 'antiquity_scout_cavalry',
 };
 
+/**
+ * 🔴 [2026-09-09 主人定]「玩家初始的海上兵模是独木舟 canoe」。
+ * 船是所在军团四种兵模里的第四种，按官阶档位随机抽到即入 PlayerHero.learnedShips（终身保留）。
+ * 有势力时海上一律画势力舰队兵模，无势力时才用自己这条。
+ */
+export const PLAYER_START_SHIP_KEY = 'CANOE';
+
 export function heroKeyForRank(rankId: PlayerRankId): string {
-    return PLAYER_RANK_HERO_KEYS[rankId] ?? PLAYER_HERO_KEY;
+    return PLAYER_RANK_HERO_KEYS[rankId] ?? PLAYER_FALLBACK_HERO_KEY;
+}
+
+/** 无势力自动换装顺序：骑兵 → 战车 → 象兵 → 步兵。 */
+export function factionlessAppearancePriority(unitKey: string): number {
+    const unit = WAR_TYPES[unitKey];
+    // 战车与象兵也可能挂骑兵分类，须先分离，弓骑则仍算骑兵。
+    if (/chariot|wagon|ratha/.test(unitKey)) return 1;
+    if (unit?.armorTags?.includes(5)) return 2;
+    if (unit?.cls === 'cav' || unit?.armorTags?.includes(8)) return 0;
+    if (unit && !unit.armorTags?.includes(20)) return 3;
+    return 4;
 }
 
 /** 玩家素材 → 地图行军大类。
@@ -118,11 +139,45 @@ export const PLAYER_HERO_NAME = '乱入者';
 export const PLAYER_START_CITY_ID = 'city_changan';
 /** 单骑行军速度倍率（相对军团统一行军速度） */
 export const PLAYER_HERO_SPEED_MULT = 1.5;
-/** 任务军团起兵兵力（与远征脚本一致：起兵一律 2 万） */
-export const PLAYER_QUEST_LEGION_TROOPS = 20000;
 /** 玩家自带精锐编队的兵力（探马及以上，选了精锐才带） */
 export const PLAYER_ELITE_SQUAD_TROOPS = 1500;
 /** 历史任务目标搜索：沿路网最多几跳 */
 export const PLAYER_QUEST_TARGET_MAX_HOPS = 5;
 /** 抵达据点判定半径（度） */
 export const PLAYER_CITY_ARRIVE_DIST = 0.06;
+
+/**
+ * 🔴 [2026-09-11 主人定]「玩家军团战败后，玩家要停留 3 秒再移动去下个目标。」
+ * （同日先定 5 秒，当天改 3 秒，以本行为准。）
+ *
+ * 随军军团在大地图战败、玩家脱离军团之后，玩家原地停留这么久（毫秒）才允许再移动。
+ *
+ * 实现口径（2026-09-11 核对后改准，别照旧注释理解）：闸门只有一道 —— `PlayerHero.update` 里
+ * `if (!this.isHeld())` 跳过 `army.update(dt)` 与 `stepChase()`，所以**坐标钉死**、走路动画也不播。
+ * `travelToCity` / `travelToArmy` 本身**没有**停顿闸，指令照常受理、army 照常进 marching 状态，
+ * 只是没人推进它，停顿一结束就自然出发。
+ *
+ * 🔴 停顿要落在**两条**路上，缺一条就等于没有（2026-09-11 主人报「一战败就移动，不等」的根因）：
+ *   ① `onHostBattleEnd('defeat')` —— 军团战败但还活着；
+ *   ② `update()` 里 `!host || isDestroyed || troops<=0` —— 军团被打光，这条更常见，
+ *      而且它 detach 后会让 ① 的触发条件 `getHostLegionId() === this.id` 失效，① 根本轮不上。
+ */
+export const PLAYER_DEFEAT_HOLD_MS = 3000;
+
+/**
+ * 🔴 [2026-09-11 主人定]「调整下玩家移动速度，平地慢一小点，山地快一小点。」
+ *
+ * 这两个系数**只乘在玩家身上**，乘在 MOVEMENT_MATRIX 查出来的地形倍率上（见 PlayerHero 设置处）。
+ * 为什么不直接改 MOVEMENT_MATRIX：那张表是**全体军团共用**的，改 CAVALRY 那一行
+ * 等于把全世界骑兵军团的战略机动一起改了 —— 主人要的是玩家一个人。
+ *
+ * 为什么做成系数而不是写死「平原 1.8 / 山地 1.05」：玩家的行军大类会随身上兵模变
+ * （骑兵 2.0/0.9、步兵 1.4/1.1、象兵 1.2/0.7，见 moveClassForHeroKey），
+ * 写死数值等于把凑到的兵模差别抹平；系数则让「平地略慢、山地略快」这条对每种形象一致成立。
+ *
+ * ⚠️ 幅度 0.90 / 1.15 是我按「一小点」定的，主人没给具体数字 —— 嫌不够/过头直接调这两行。
+ *    当前玩家是古典斥候骑兵：平原 2.0 → 1.80，山地 0.90 → 1.035（两者都还要再乘
+ *    PLAYER_HERO_SPEED_MULT = 1.5）。海上不受影响：上船走 SEA_SPEED_MULTIPLIER，兵种/地形加成整个失效。
+ */
+export const PLAYER_PLAIN_SPEED_SCALE = 0.90;
+export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.15;

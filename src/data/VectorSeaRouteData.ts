@@ -6186,5 +6186,112 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "淡马锡-马六甲",
+                type: "sea",
+                id: "sea_city_danmaxi_city_malacca_1788932580935",
+                startConnection: "city_danmaxi",
+                endConnection: "city_malacca"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [103.85, 1.29],
+                    [103.763466, 1.259893],
+                    [103.658066, 1.197766],
+                    [103.6, 1.1],
+                    [102, 2],
+                    [102.25, 2.19],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "淡马锡-阿瑜陀耶",
+                type: "sea",
+                id: "sea_city_danmaxi_city_ayutthaya_1788932599343",
+                startConnection: "city_danmaxi",
+                endConnection: "city_ayutthaya"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [103.85, 1.29],
+                    [103.861103, 1.171415],
+                    [104.145848, 1.249295],
+                    [104.482294, 1.341312],
+                    [104.217199, 3.507041],
+                    [103.912411, 4.696465],
+                    [103.533639, 5.511174],
+                    [102.439502, 7.769072],
+                    [102.041019, 9.16096],
+                    [101.026963, 11.756932],
+                    [100.706177, 12.573329],
+                    [100.600433, 12.971104],
+                    [100.58, 14.35],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阇槃-淡马锡",
+                type: "sea",
+                id: "sea_city_dupan_city_danmaxi_1788932620488",
+                startConnection: "city_dupan",
+                endConnection: "city_danmaxi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [109.11, 13.93],
+                    [109.624875, 13.892702],
+                    [109.758911, 12.146746],
+                    [109.58333, 11.83333],
+                    [109.58333, 11.33333],
+                    [109.25, 11],
+                    [109.25, 10.16667],
+                    [108.5, 10.08333],
+                    [108.41667, 10.33333],
+                    [108.16667, 10.41667],
+                    [107.16667, 9.91667],
+                    [106.91667, 9.5],
+                    [107.08333, 9.16667],
+                    [107, 8.25],
+                    [107.3207, 7.6091],
+                    [104.482294, 1.341312],
+                    [104.145848, 1.249295],
+                    [103.861103, 1.171415],
+                    [103.85, 1.29],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "淡马锡-巨港",
+                type: "sea",
+                id: "sea_city_danmaxi_city_sanfoqi_1788932625811",
+                startConnection: "city_danmaxi",
+                endConnection: "city_sanfoqi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [103.85, 1.29],
+                    [103.763466, 1.259893],
+                    [103.658066, 1.197766],
+                    [103.6, 1.1],
+                    [103.623047, 0.73881],
+                    [103.842773, 0.568533],
+                    [104.137095, -0.58662],
+                    [105.063239, -2.168977],
+                    [104.75, -2.99],
+                ]
+            }
+        },
     ]
 };

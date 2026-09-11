@@ -43,16 +43,25 @@ else {
         bad(`还有 ${fullCanvas.length} 处 fillRect 按整张画布铺：${fullCanvas.join(' / ')}`);
     } else ok(`${fills.length} 处 fillRect 全部收窄到 patch 包围盒`);
 
-    // ③ 必须有 bbox 兜底（算不出时退回全画布，宁可慢也不能漏画）。兜底写的是 w: W（W=ctx.canvas.width）
-    if (!/waterBBoxOf\(p\) \?\? \{ x: 0, y: 0, w: W, h: H \}/.test(body)) {
-        bad('bbox 没有兜底 —— 算不出包围盒时会漏画水面');
-    } else ok('bbox 算不出时退回全画布（不会漏画）');
+    // ③ 有效水域必须按包围盒裁切；没有几何形状的 patch 不参与绘制。
+    if (/const bb = this\.waterBBoxOf\(p\);\s*if \(!bb\) continue;/.test(body)
+        && /if \(bw <= 0 \|\| bh <= 0\) continue;/.test(body)) {
+        ok('按水域几何计算包围盒，空区域跳过');
+    } else bad('缺少有效水域包围盒或空区域检查');
 
-    // ④ blur 羽化不得对整张画布做高斯模糊（2026-08-28 实锤：drawImage(maskCv,0,0) 带 blur(14px)
-    //   是 O(全 4K 画布)，有水战斗 render 从 7ms 涨到 60ms 就是它 —— fillRect 收窄那次漏了这处）
-    if (/drawImage\(maskCv,\s*0,\s*0\)/.test(body)) {
-        bad('blur(14px) 羽化仍对整张画布 drawImage(maskCv,0,0) —— 应改成 9 参数 drawImage 收窄到水面 bbox');
-    } else ok('blur 羽化已收窄到水面 bbox（不再对全画布做高斯模糊）');
+    // ④ maskCv 已是局部尺寸：drawImage(maskCv, 0, 0) 只模糊水域，不是整张战场。
+    if (/maskCv\.width = bw;/.test(body) && /maskCv\.height = bh;/.test(body)
+        && /softMask\.width = bw;/.test(body) && /softMask\.height = bh;/.test(body)) {
+        ok('遮罩与羽化画布均限制在水域局部尺寸');
+    } else bad('水面遮罩或羽化画布未限制在局部尺寸');
+
+    if (/this\.composedWaterPattern\(img, pat, t\)/.test(body)
+        && /canvas\.width = img\.naturalWidth;/.test(SRC)
+        && /canvas\.height = img\.naturalHeight;/.test(SRC)
+        && /if \(tile\.at === t\) return tile\.pattern;/.test(SRC)) {
+        ok('双层水纹与微光在纹理尺寸内合成，同帧同素材复用');
+    } else bad('纹理合成未限制尺寸或缺少同帧复用');
+
 }
 
 console.log('\n包围盒来源：');

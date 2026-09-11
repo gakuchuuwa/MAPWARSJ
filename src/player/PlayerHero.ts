@@ -1,5 +1,5 @@
 import { getFactionCultureRegion } from '../config/portrait_defaults';
-import { CULTURE_TIERS_MAP } from '../types/CultureFormations';
+import { CULTURE_TIERS_MAP, getFactionCompositionSlots } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
 /**
  * PlayerHero —— 玩家单骑（乱入者）在战略地图上的本体。
@@ -14,20 +14,24 @@ import { WAR_TYPES } from '../data/WarTypes';
  */
 import { Army } from '../legion/Army';
 import type { GameMap } from '../map/GameMap';
-import { getCultureNavalShip } from '../types/NavalShipTiers';
+import { getCultureNavalShip, getNavalShipChineseName } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import {
     PLAYER_CITY_ARRIVE_DIST,
+    PLAYER_DEFEAT_HOLD_MS,
     PLAYER_ELITE_SQUAD_TROOPS,
-    PLAYER_HERO_KEY,
     heroKeyForRank,
+    factionlessAppearancePriority,
+    PLAYER_START_SHIP_KEY,
     moveClassForHeroKey,
     type PlayerRankId,
     PLAYER_HERO_NAME,
     PLAYER_HERO_SPEED_MULT,
+    PLAYER_PLAIN_SPEED_SCALE,
+    PLAYER_MOUNTAIN_SPEED_SCALE,
     PLAYER_RANKS,
     rankForMerit,
     rankFor,
@@ -61,6 +65,16 @@ export interface PlayerSaveState {
     factionId: string | null;
     learnedElites: LearnedElite[];
     learnedUnits?: LearnedUnit[];
+    /** 玩家亲手换过兵模：读档后不许再自动换装 */
+    manualUnitPick?: boolean;
+    /** 就近寻找武将（默认关 = 同档随机） */
+    nearbyFirst?: boolean;
+    /** 自动选择兵模（默认开） */
+    autoPickUnit?: boolean;
+    /** 已获海上兵模（战船 AssetId），终身保留 */
+    learnedShips?: string[];
+    /** 无势力时自选的战船下标；-1 = 独木舟 */
+    selectedShip?: number;
     selectedUnit?: number;
     selectedElite: number;
     lat: number;
@@ -115,21 +129,59 @@ export class PlayerHero {
     /** 🔴 [2026-09-07 主人定] 本势力已学兵种：斥候学 1 个、探马再 1 个、先锋再 1 个，
      *  到先锋集齐该势力文化军团的三排。学到的兵种即玩家自己的素材（可在面板里挑）。 */
     public learnedUnits: LearnedUnit[] = [];
-    /** 面板选中的已学兵种下标；-1 = 还没学到（用近东民兵） */
+    /**
+     * 🔴 [2026-09-09 主人定] 海上兵模：**初始独木舟 CANOE，升到将军才可拥有所在军团的战船**。
+     * 与陆上兵模同一套规矩：终身不回收，加入军团时若已到将军就把该军团的战船收进来并换上。
+     * 没有任何一条时一律独木舟 —— 白身在海上就该是独木舟。
+     */
+    public learnedShips: string[] = [];
+    /**
+     * ⚠️ 已废弃（2026-09-10）：原「玩家亲手换过就不再自动换装」的隐式锁，
+     * 已被面板上的显式开关 `autoPickUnit`（自动选择兵模）取代 —— 主人要的是一个看得见的功能，
+     * 而不是"点过一次就永久变了脾气"。字段只为读旧存档保留，不再参与任何判据。
+     */
+    private manualUnitPick = false;
+    /** 面板选中的已收兵模下标；-1 = 还没收到（用官阶兜底形象，白身=古典斥候骑兵） */
     public selectedUnit = -1;
     /** 选中带入战术模式的精锐下标（-1 = 不带） */
     public selectedElite = -1;
 
     private hostLegionId: string | null = null;
     private travelCityId: string | null = null;
+    /**
+     * 🔴 [2026-09-09 主人定]「到了城里总是没人就换武将，改成直接去找武将，无论在不在城中」。
+     * 追的是**军团**（武将带着军团在外行军），不是据点。追击期间照常沿路网走，
+     * 只是目的地锚点跟着军团走：军团换城/走远了就重新规划一段。
+     */
+    private chaseArmyId: string | null = null;
+    /** 追击的那位武将名（HUD「追击武将【XXX】」显示用；追的是军团，但对话锚定的是人） */
+    private chaseGeneralName: string | null = null;
     /** 自动模式：自动选据点（优先名将+双行）、自动入伍、军团战败自动换下一个势力。
      *  🔴 [2026-09-09 主人定「玩家开局默认自动」] 默认开启，HUD 里可随时手动关掉。 */
     public autoMode = true;
+    /**
+     * 🔴 [2026-09-09 主人定] 「就近寻找武将」开关，**默认关**。
+     * 开：同档候选里挑离自己最近的；关：同档里**随机**挑一个。
+     * 关掉的理由是主人实测「自从加了就近，就再也不去其他文化了」——
+     * 开局全图据点兵力都是 10000，「兵最多」这条筛不掉任何城，同档集合极大，
+     * 就近于是把玩家永久锁在出生地周边。随机才会满世界跑。
+     */
+    public nearbyFirst = false;
+    /**
+     * 🔴 [2026-09-10 主人定]「你在玩家面板添加一个功能，自动选择兵模」。
+     * 开（默认）：
+     *   · 有势力 → 按凑卡玩法走：加入军团时换成该军团的兵模；
+     *   · 无势力 → 已获形象按 骑兵 → 战车 → 象兵 → 步兵 自动优选。
+     * 关：一切自动换装停手，只用玩家在面板上选的那个。
+     */
+    public autoPickUnit = true;
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
     /** 抵达据点回调（PlayerQuestSystem 接管对话） */
     public onArriveCity: ((city: City) => void) | null = null;
+    /** 追上带着武将的军团（不在城中时的会面入口） */
+    public onMeetArmy: ((army: Army) => void) | null = null;
     /** 入伍军团覆灭/解散回调 */
     public onHostLost: ((lastHostId: string) => void) | null = null;
 
@@ -172,7 +224,7 @@ export class PlayerHero {
      *  ⚠️ 同时决定 13 里的血/攻/防 —— Scene13 用 statsFor(heroKey) 取 WAR_TYPES。 */
     public get heroKey(): string {
         // 🔴 [2026-09-07 主人定「学到的兵种给玩家套用」] 优先用面板选中的本势力已学兵种；
-        //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（平民=近东民兵）。
+        //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（白身=古典斥候骑兵）。
         return this.getSelectedUnit()?.unitKey ?? heroKeyForRank(this.getRank().id);
     }
     public rename(newName: string): void {
@@ -187,7 +239,27 @@ export class PlayerHero {
     /** 同步玩家的地图行军大类（骑=CAVALRY 平原2.0 / 步=INFANTRY 平原1.4·山地1.1）。
      *  海上不归它管：登船后全军统一 SEA_SPEED_MULTIPLIER，兵种加成失效。 */
     private syncMoveProfile(): void {
+        if (!this.factionId && this.autoPickUnit) {
+            let picked = this.getSelectedUnit() ? this.selectedUnit : -1;
+            for (let i = 0; i < this.learnedUnits.length; i++) {
+                if (picked < 0 || factionlessAppearancePriority(this.learnedUnits[i].unitKey)
+                    < factionlessAppearancePriority(this.learnedUnits[picked].unitKey)) picked = i;
+            }
+            // 🔴 修复（2026-09-10）：无势力自动换装里骑兵有保底（初始斥候 = 官阶兜底，优先级 0）。
+            //    若学到的兵模里没有骑兵（最优优先级 > 0），回落到官阶兜底「古典斥候骑兵」，
+            //    别套用步兵/战车/象兵——否则加入步兵势力解散后就停在步兵、回不到骑兵。
+            if (picked >= 0 && factionlessAppearancePriority(this.learnedUnits[picked].unitKey) > 0) {
+                picked = -1;
+            }
+            this.selectedUnit = picked;
+        }
         this.army.preferredMoveClass = moveClassForHeroKey(this.heroKey);
+        // 🔴 [2026-09-11 主人定]「平地慢一小点，山地快一小点」—— 只作用于玩家这一支，
+        //    幅度见 PLAYER_PLAIN_SPEED_SCALE / PLAYER_MOUNTAIN_SPEED_SCALE 的头注。
+        this.army.terrainSpeedScale = {
+            plain: PLAYER_PLAIN_SPEED_SCALE,
+            mountain: PLAYER_MOUNTAIN_SPEED_SCALE,
+        };
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
@@ -199,6 +271,17 @@ export class PlayerHero {
         this.autoMode = on;
         this.emitChange();
     }
+    public setNearbyFirst(on: boolean): void {
+        if (this.nearbyFirst === on) return;
+        this.nearbyFirst = on;
+        this.emitChange();
+    }
+    public setAutoPickUnit(on: boolean): void {
+        if (this.autoPickUnit === on) return;
+        this.autoPickUnit = on;
+        if (on) this.syncMoveProfile();   // 打开即按当前状态重选一次
+        this.emitChange();
+    }
     public getHostLegion(): Army | undefined {
         return this.hostLegionId ? this.deps.getLegionById(this.hostLegionId) : undefined;
     }
@@ -206,7 +289,11 @@ export class PlayerHero {
     public isAttachedTo(armyId: string | null | undefined): boolean {
         return !!armyId && this.hostLegionId === armyId;
     }
-    public isTraveling(): boolean { return this.travelCityId != null; }
+    public isTraveling(): boolean { return this.travelCityId != null || this.chaseArmyId != null; }
+    /** 正在追某支军团找武将 */
+    public isChasingArmy(): boolean { return this.chaseArmyId != null; }
+    public getChaseArmyId(): string | null { return this.chaseArmyId; }
+    public getChaseGeneralName(): string | null { return this.chaseGeneralName; }
     public getTravelCityId(): string | null { return this.travelCityId; }
 
     public onChange(fn: () => void): void { this.changeListeners.add(fn); }
@@ -257,9 +344,26 @@ export class PlayerHero {
         this.emitChange();
     }
 
+    // ── 战败停顿（🔴 2026-09-11 主人定「玩家军团战败后，玩家要停留 3 秒再移动去下个目标」）──
+    /** 停顿截止时刻（Date.now() 口径）；≤ 现在 = 没在停顿 */
+    private holdUntilMs = 0;
+
+    /** 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS） */
+    private holdAfterDefeat(): void {
+        this.holdUntilMs = Date.now() + PLAYER_DEFEAT_HOLD_MS;
+    }
+
+    /** 是否正处在战败停顿中（停顿期玩家不动） */
+    public isHeld(): boolean {
+        return Date.now() < this.holdUntilMs;
+    }
+
     /** 大地图战略战斗结算：随军军团战胜时，按歼敌兵力与官阶指挥分成获得战略战功；战败则功勋归零降职 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
         if (result === 'defeat') {
+            // 🔴 [2026-09-11 主人定]「玩家军团战败后，玩家要停留 3 秒再移动去下个目标。」
+            //    先落停顿，再走脱军流程：脱军团后玩家立刻能自由行动，这 3 秒就是它的「整备」时间。
+            this.holdAfterDefeat();
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
             // 走 onHostLost → finishQuest(false) → detach() 统一清场（含 factionId / host / 权限乘数 / 自动模式）。
             this.resetMerit('随军战败');
@@ -281,22 +385,82 @@ export class PlayerHero {
         this.deps.notify(`🚩 大捷！随军斩敌 ${enemyKilled.toLocaleString()}，按【${rank.name}】军职记战功 ${gained.toLocaleString()}`);
     }
 
-    // ── 本势力兵种（按官阶学） ──────────────────────────────
-    /** 该官阶应当已学会几个本势力兵种：斥候1 / 探马2 / 先锋及以上3。 */
+    // ── 兵模收集（凑卡玩法核心，见 docs/AGENTS/player-rules-verbatim.md 第零节）──
+    /**
+     * 该官阶在**当前军团这 4 种兵模**里应当已收到几种。
+     * 🔴 [2026-09-09 主人定]「每个军团有四种兵模，三排 + 船；斥候/探马/先锋/将军几个级别随机奖励；
+     *    加入一个军团就可以获得一个兵模，升级到探马、先锋、将军，该军团获得齐全。」
+     */
     private learnQuotaForRank(rankId: PlayerRankId): number {
         const idx = PLAYER_RANKS.findIndex((r) => r.id === rankId);
         const q = (id: PlayerRankId) => PLAYER_RANKS.findIndex((r) => r.id === id);
-        if (idx >= q('vanguard')) return 3;   // 先锋起：集齐三排
-        if (idx >= q('outrider')) return 2;   // 探马：两个
-        if (idx >= q('scout')) return 1;      // 斥候：一个
-        return 0;                              // 平民：还没入伙，用近东民兵
+        if (idx >= q('general')) return 4;    // 将军起：该军团四种齐全
+        if (idx >= q('vanguard')) return 3;   // 先锋：三种
+        if (idx >= q('outrider')) return 2;   // 探马：两种
+        if (idx >= q('scout')) return 1;      // 斥候：一种
+        return 0;                              // 平民：还没入伙，用官阶兜底形象（古典斥候骑兵）
     }
 
     /**
-     * 按当前官阶补齐应学的本势力兵种。
+     * 当前该按谁的三排学：入伍了就看**所在军团实际编成**（`army.cultureSlots` 是运行时真值，
+     * 势力专属番号编制/文化军团都已在里面），独行期回落到文化区默认表。
+     * 返回按首次出现顺序去重后的兵种 key —— 就是这支军团的「三排兵模」。
+     */
+    private legionUnitKeys(): string[] {
+        const host = this.getHostLegion();
+        const expanded = host?.cultureSlots;
+        if (expanded && expanded.length) {
+            const seen: string[] = [];
+            for (const k of expanded) if (k && !seen.includes(k)) seen.push(k);
+            if (seen.length) return seen;
+        }
+        // 还没入伍（joinFaction 先于 attachTo）：按势力专属番号编制 → 文化区默认表，
+        // 与他马上要加入的那支军团同源（铁律「一势力一军团一种编制」）
+        const region = this.factionId ? getFactionCultureRegion(this.factionId) : null;
+        const slots = (this.factionId ? getFactionCompositionSlots(this.factionId) : null)
+            ?? (region ? (CULTURE_TIERS_MAP[region]?.[0]?.slots ?? []) : []);
+        const seen: string[] = [];
+        for (const sl of slots as Array<{ type: string }>) if (sl.type && !seen.includes(sl.type)) seen.push(sl.type);
+        return seen;
+    }
+
+    /** 所在军团的战船（池子里的第四种）；独行期按势力文化区取，取不到返回 null */
+    private legionShipKey(): string | null {
+        const host = this.getHostLegion();
+        if (host) return host.navalShipAssetLock ?? getCultureNavalShip(host.cultureRegion, host.getFactionId());
+        if (!this.factionId) return null;
+        return getCultureNavalShip(getFactionCultureRegion(this.factionId), this.factionId) ?? null;
+    }
+
+    /**
+     * 🔴 [2026-09-09 主人定]「加入哪个军团，就变成此军团三排兵模的其中一种」。
+     * 入伍时调用：先按官阶配额从**该军团**三排里补学，再自动换上该军团的兵模。
+     * 关掉面板的「自动选择兵模」→ 只获得、不换装。
+     */
+    public onJoinLegion(): void {
+        this.syncLearnedUnits();
+        if (!this.autoPickUnit) return;   // 关掉自动选择 = 只用玩家手选的那个
+        const keys = this.legionUnitKeys();
+        if (!keys.length) return;
+        // 只在「该军团三排里、他已经拥有的」兵模中随机换一件（配额没到就换不了新的那件，属正常）
+        const owned = this.learnedUnits
+            .map((u, i) => ({ u, i }))
+            .filter((x) => keys.includes(x.u.unitKey));
+        if (!owned.length) return;
+        const pick = owned[Math.floor(Math.random() * owned.length)];
+        if (pick.i === this.selectedUnit) return;
+        this.selectedUnit = pick.i;
+        this.syncMoveProfile();
+        this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
+        this.emitChange();
+    }
+
+    /**
+     * 按当前官阶补齐应学的兵模。
      * 🔴 [2026-09-07 主人定]「斥候学一个（三排随机）→ 探马再一个 → 先锋再一个，集齐三排」。
      *    随机只在**还没学过的排**里抽，所以到先锋必然三排各一个，不会重复。
-     *    学到即可套用：玩家素材 = 选中的已学兵种（见 heroKey）。
+     *    学到即可套用：玩家素材 = 选中的已学兵模（见 heroKey）。
+     * 规则全文见 docs/AGENTS/player-hero.md。
      */
     public syncLearnedUnits(): void {
         // 🔴 [2026-09-09 主人定「这种是玩家奖励，终身获取的」]
@@ -306,25 +470,37 @@ export class PlayerHero {
         //    配额只约束「本势力还能再学几个」，按**当前势力已学数**算，不看历史总数，
         //    所以改投新势力后照样能从头学三排，旧势力学的也还留着能选。
         const want = this.learnQuotaForRank(this.getRank().id);
-        if (!this.factionId) return;               // 独行期：不新学，但旧的原样保留
-        const region = getFactionCultureRegion(this.factionId);
-        const slots = region ? (CULTURE_TIERS_MAP[region]?.[0]?.slots ?? []) : [];
-        if (!slots.length) return;
+        if (!this.factionId) return;               // 独行期：不新收，但旧的原样保留
+        // 🔴 [2026-09-09 主人定] 池子 = **所加入的那支军团**的四种兵模：三排 + 船
+        // 🔴 [2026-09-10 主人定] 第一次只给陆地三排其一：该军团三排陆地还没学到任何一个时，
+        //    战船不进抽取池，避免斥候首抽落空在船上、陆战兵模不变。
+        const landKeys = this.legionUnitKeys();
+        const shipKeyOfLegion = this.legionShipKey();
+        const landLearned = landKeys.some((k) => this.learnedUnits.some((u) => u.unitKey === k));
+        const pool: Array<{ key: string; row: number; ship: boolean }> = [
+            ...landKeys.map((key, row) => ({ key, row, ship: false })),
+            ...(shipKeyOfLegion && landLearned ? [{ key: shipKeyOfLegion, row: -1, ship: true }] : []),
+        ];
+        if (!pool.length) return;
 
-        const mineCount = () => this.learnedUnits.filter((u) => u.factionId === this.factionId).length;
-        while (mineCount() < want && mineCount() < slots.length) {
-            // 只在「本势力还没学过的排」里抽，历史上别家学的不占本势力的排
-            const taken = new Set(
-                this.learnedUnits.filter((u) => u.factionId === this.factionId).map((u) => u.row),
-            );
-            const pool = (slots as Array<{ type: string; count: number }>)
-                .map((sl, row) => ({ sl, row })).filter((x) => !taken.has(x.row));
-            if (!pool.length) break;
-            const pick = pool[Math.floor(Math.random() * pool.length)];
-            const name = WAR_TYPES[pick.sl.type]?.name ?? pick.sl.type;
-            this.learnedUnits.push({ unitKey: pick.sl.type, unitName: name, factionId: this.factionId, row: pick.row });
-            if (this.selectedUnit < 0) this.selectedUnit = this.learnedUnits.length - 1;
-            this.deps.notify(`🗡️ 学会本势力兵种【${name}】`);
+        // 「已收到几种」只数**这个池子里的**，与别处收的互不干扰
+        const owns = (p: { key: string; ship: boolean }) => p.ship
+            ? this.learnedShips.includes(p.key)
+            : this.learnedUnits.some((u) => u.unitKey === p.key);
+        const got = () => pool.filter(owns).length;
+        while (got() < want) {
+            const rest = pool.filter((p) => !owns(p));
+            if (!rest.length) break;               // 这个军团的四种已收齐
+            const pick = rest[Math.floor(Math.random() * rest.length)];
+            if (pick.ship) {
+                this.learnedShips.push(pick.key);
+                this.deps.notify(`⚓ 得军团战船【${getNavalShipChineseName(pick.key)}】`);
+            } else {
+                const name = WAR_TYPES[pick.key]?.name ?? pick.key;
+                this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
+                if (this.selectedUnit < 0) this.selectedUnit = this.learnedUnits.length - 1;
+                this.deps.notify(`🗡️ 得军团兵模【${name}】`);
+            }
         }
     }
 
@@ -332,6 +508,35 @@ export class PlayerHero {
     public selectUnit(idx: number): void {
         this.selectedUnit = idx >= 0 && idx < this.learnedUnits.length ? idx : -1;
         this.syncMoveProfile();
+        this.emitChange();
+    }
+
+    /** 无势力时玩家自选的战船下标（指向 learnedShips）；-1 = 独木舟 */
+    public selectedShip = -1;
+
+    /**
+     * 当前海上兵模。🔴 [2026-09-09 主人定] 分两种情况，别混：
+     *   · **有势力** → 一律画**该势力的舰队兵模**，玩家自己那条不显示、也不可选。
+     *     入伍了就用所在军团的船（同一支舰队），没入伍就按势力文化区取舰队船。
+     *   · **无势力**（单骑独行）→ 才轮到玩家自己挑：已获战船里选一条，没有就独木舟。
+     * 已获战船（learnedShips，随军团四种兵模的档位随机抽到）只在**无势力**时才用得上，
+     * 有势力时它只是收藏，不影响画面。
+     */
+    public get shipKey(): string {
+        if (this.factionId) {
+            const host = this.getHostLegion();
+            if (host) return host.navalShipAssetLock ?? getCultureNavalShip(host.cultureRegion, host.getFactionId());
+            return getCultureNavalShip(getFactionCultureRegion(this.factionId), this.factionId);
+        }
+        return this.learnedShips[this.selectedShip] ?? PLAYER_START_SHIP_KEY;
+    }
+
+    /** 无势力时才允许换船（有势力一律随势力舰队） */
+    public canPickShip(): boolean { return !this.factionId; }
+
+    public selectShip(idx: number): void {
+        if (!this.canPickShip()) return;
+        this.selectedShip = idx >= 0 && idx < this.learnedShips.length ? idx : -1;
         this.emitChange();
     }
 
@@ -370,11 +575,14 @@ export class PlayerHero {
 
     // ── 入伍 / 离队 ──────────────────────────────────────
     public attachTo(host: Army): void {
+        this.cancelChase();
         this.cancelTravel();
         this.hostLegionId = host.id;
         // 第九环·玩家官阶：入伍时把官阶战力乘数 + 4 字官阶名写到军团
         host.playerHostPowerMult = this.getRank().powerMult;
         host.playerHostRankName = this.getRank().name;
+        // 🔴 [2026-09-09 主人定] 加入军团即从该军团三排里取兵模并换上（见 docs/AGENTS/player-hero.md）
+        this.onJoinLegion();
         const p = host.getPosition();
         this.army.setPosition(p.lat, p.lng);
         this.deps.followCamera();
@@ -396,8 +604,8 @@ export class PlayerHero {
         // [2026-09-05 玩家] 退出势力：离队后不再属于该势力，不挂势力旗帜
         this.factionId = null;
         this.army.setFactionId('');
-        this.syncLearnedUnits();  // 退出势力：清空已学兵种（学的是「该势力的兵」）
-        this.syncMoveProfile();   // 素材回近东民兵（步）
+        this.syncLearnedUnits();  // 退出势力：已学兵模**不回收**（终身奖励），这里只是刷新配额口径
+        this.syncMoveProfile();   // 素材回官阶兜底形象（古典斥候骑兵，骑兵档）
         const rr = this.army.getRenderer();
         if (rr) rr.factionId = undefined;
         this.deps.releaseCamera();
@@ -405,10 +613,15 @@ export class PlayerHero {
     }
 
     // ── 行军 ──────────────────────────────────────────────
-    /** 点据点：沿路网前往。入伍中不可单独行动。 */
-    public travelToCity(cityId: string): boolean {
+    /**
+     * 点据点：沿路网前往。入伍中不可单独行动。
+     * @param keepChase 追击续航内部调用时为 true —— 这段路只是追人的一程，不算玩家改主意。
+     *   玩家手点据点时为 false（默认），会放弃正在进行的追击。
+     */
+    public travelToCity(cityId: string, keepChase = false): boolean {
+        if (!keepChase) this.cancelChase();
         if (this.hostLegionId) {
-            this.deps.notify('你正在军中，随军出征，军团覆灭前不可离开');
+            this.deps.notify('你正在军中，随军出征，军团解散前不可离开');
             return false;
         }
         const city = this.deps.cityManager.getCity(cityId);
@@ -417,7 +630,8 @@ export class PlayerHero {
         const target = { lat: city.latitude, lng: city.longitude };
         if (getEuclideanDistance(pos, target) <= PLAYER_CITY_ARRIVE_DIST) {
             this.cancelTravel();
-            this.onArriveCity?.(city);
+            // 追人途中锚点城正好在脚下：只是路过，不触发城中对话（同 handleArrive 的闸门）
+            if (!this.chaseArmyId) this.onArriveCity?.(city);
             return true;
         }
         if (!roadRegistry.isInitialized()) return false;
@@ -437,6 +651,78 @@ export class PlayerHero {
         return true;
     }
 
+    /**
+     * 去找带着武将的那支军团（在不在城中都能找）。每帧由 stepChase 续航：
+     * 军团走了就重新规划，够近了就触发会面。入伍中不可单独行动。
+     */
+    /** 彻底放弃追击（玩家改点别处、入伍、离队） */
+    public cancelChase(): void { this.chaseArmyId = null; this.chaseGeneralName = null; }
+
+    public travelToArmy(armyId: string, generalName?: string): boolean {
+        if (this.hostLegionId) {
+            this.deps.notify('你正在军中，随军出征，军团解散前不可离开');
+            return false;
+        }
+        const army = this.deps.getLegionById(armyId);
+        if (!army || army.isDestroyed || army.getTroops() <= 0) return false;
+        this.chaseArmyId = armyId;
+        this.chaseGeneralName = generalName ?? null;
+        this.stepChase(true);
+        return this.chaseArmyId != null;
+    }
+
+    /**
+     * 追击续航（每帧，未入伍时调）：
+     *   ① 军团没了 → 放弃，交回自动模式重新选目标
+     *   ② 够近了 → 停下会面
+     *   ③ 否则：锚点城 = 军团正在去的城 ?? 军团脚下最近的城；锚点变了或自己停下了就重新规划
+     * 🔴 重新规划走的还是 travelToCity（沿路网），只是抵达锚点城时**不触发城中对话**
+     *    —— 见 handleArrive 里的 chaseArmyId 闸门，追人途中路过的城不算数。
+     */
+    private stepChase(force = false): void {
+        const id = this.chaseArmyId;
+        if (!id) return;
+        const army = this.deps.getLegionById(id);
+        if (!army || army.isDestroyed || army.getTroops() <= 0) {
+            this.chaseArmyId = null;
+            this.chaseGeneralName = null;
+            this.cancelTravel();
+            this.deps.notify('要找的将领所部已覆灭，另寻他人');
+            this.emitChange();
+            return;
+        }
+        const me = this.army.getPosition();
+        const it = army.getPosition();
+        if (getEuclideanDistance(me, it) <= PLAYER_CITY_ARRIVE_DIST) {
+            this.chaseArmyId = null;
+            this.chaseGeneralName = null;
+            this.cancelTravel();
+            this.deps.followCamera();
+            this.emitChange();
+            this.onMeetArmy?.(army);
+            return;
+        }
+        // 锚点：军团正在去的城优先（追它的落脚点比追它的当前坐标更省路）
+        const anchor: string | null = army.getTargetCity()?.id
+            ?? roadRegistry.getNearestCityId(it.lat, it.lng)
+            ?? null;
+        if (!anchor) return;
+        if (force || this.travelCityId !== anchor || this.army.isIdle()) {
+            const keep = this.chaseArmyId;
+            const ok = this.travelToCity(anchor, true);
+            this.chaseArmyId = keep;   // travelToCity 内部可能触发到达清理，追击标记要留住
+            // 🔴 规划失败（无路可达/路网未就绪）就放弃追击：不放弃的话下一帧还会走到这儿，
+            //    「无路可达」的提示会每帧刷屏，玩家也永远停在原地。
+            if (!ok) {
+                this.chaseArmyId = null;
+                this.chaseGeneralName = null;
+                this.emitChange();
+            }
+        }
+    }
+
+    /** 停止行军。⚠️ 不清 chaseArmyId —— 追击靠它续航，停的只是当前这一段路。
+     *  要彻底放弃追击请用 cancelChase()。 */
     public cancelTravel(): void {
         if (!this.travelCityId && this.army.isIdle()) return;
         this.travelCityId = null;
@@ -449,6 +735,8 @@ export class PlayerHero {
         if (this.travelCityId !== cityId) return;
         this.travelCityId = null;
         this.army.setTargetCity(null);
+        // 追人途中：锚点城只是路上的一站，不谈事；下一帧 stepChase 会继续往军团那边走
+        if (this.chaseArmyId) { this.emitChange(); return; }
         const city = this.deps.cityManager.getCity(cityId);
         this.deps.releaseCamera();
         this.emitChange();
@@ -462,10 +750,18 @@ export class PlayerHero {
             const host = this.getHostLegion();
             if (!host || host.isDestroyed || host.getTroops() <= 0) {
                 const lastId = this.hostLegionId;
+                // 🔴 [2026-09-11 修「玩家依然是军团一战败就移动，不等」] 停顿必须**也**落在这条路上。
+                //    原来只有 onHostBattleEnd('defeat') 里落停顿，而那个回调的触发条件是
+                //    `game.playerHero.getHostLegionId() === this.id`（见 Army.onBattleEnd）——
+                //    军团被打光时，玩家 update 往往**先**跑到这里检测到 isDestroyed / troops<=0，
+                //    detach() 把 hostLegionId 清成 null，等 Army.onBattleEnd 再回调时条件已不成立，
+                //    onHostBattleEnd 根本不会执行，停顿也就从没落过 —— 主人看到的就是「一战败就走」。
+                //    两条路都落一次，holdAfterDefeat 是幂等的（只改截止时刻），重复调用无害。
+                this.holdAfterDefeat();
                 // 🔴 不清 hostLegionId：让 onHostLost → finishQuest(false)/detach() 统一「清军团+退出势力+归零」。
                 //    ⚠️ [2026-09-08] onHostLost 现在**无论有没有任务都会 detach**（见 PlayerQuestSystem.onHostLost），
                 //    否则这里每帧重入、玩家被钉在死军团上动不了、自动模式也永不触发。
-                this.resetMerit('随军军团覆灭');
+                this.resetMerit('随军军团解散');
                 this.emitChange();
                 this.onHostLost?.(lastId);
                 // 兜底：回调没接线或它没解绑时自己清掉，绝不让这个分支空转
@@ -477,7 +773,9 @@ export class PlayerHero {
             this.army.isOnSea = host.isOnSea;
             const hr = host.getRenderer();
             if (host.isOnSea) {
-                const hostShip = host.navalShipAssetLock ?? getCultureNavalShip(host.cultureRegion, host.getFactionId());
+                // 🔴 [2026-09-09 主人定] 有势力 → 画势力舰队兵模（shipKey 内部已按势力/军团取），
+                //    玩家自己那条船在有势力时不显示。
+                const hostShip = this.shipKey;
                 this.army.navalShipAssetLock = hostShip;
                 if (r) (r as any).navalShipAssetLock = hostShip;
             } else {
@@ -496,17 +794,30 @@ export class PlayerHero {
             }
             return;
         }
-        this.army.update(dt);
+        // 🔴 [2026-09-11 主人定]「军团战败，玩家停留 5 秒再移动」：
+        //    停顿期内不吃 dt、不续航追击 —— 坐标就钉在战败那一刻，5 秒后照令继续赶路。
+        //    指令本身照常受理（没有加「停顿期不许下令」这条额外约束）：
+        //    这 5 秒里自动模式重新选的目标、玩家手点的城，都会在停顿结束后自然出发。
+        if (!this.isHeld()) {
+            this.army.update(dt);
+            // 追将领：每帧续航（军团在动，锚点跟着变；够近了就会面）
+            if (this.chaseArmyId) this.stepChase();
+        }
         if (this.army.isOnSea) {
-            this.army.navalShipAssetLock = 'MERCHANT_SHIP';
-            if (r) (r as any).navalShipAssetLock = 'MERCHANT_SHIP';
+            // 🔴 [2026-09-09 修] 原来写死 MERCHANT_SHIP（商船），与「初始海上兵模是独木舟」的定案不符。
+            //    改成走 shipKey：有势力 = 势力舰队船，无势力 = 玩家自选（默认独木舟）。
+            const ship = this.shipKey;
+            this.army.navalShipAssetLock = ship;
+            if (r) (r as any).navalShipAssetLock = ship;
         } else {
             this.army.navalShipAssetLock = null;
             if (r) (r as any).navalShipAssetLock = null;
         }
         if (r) {
             r.isOnSea = this.army.isOnSea;
-            r.isMoving = this.army.isMarching();
+            // 停顿期内人是钉住的：即便这 5 秒里已受理了新的行军指令（army 处于 marching），
+            // 也不能播走路动画，否则会看到「原地踏步」
+            r.isMoving = !this.isHeld() && this.army.isMarching();
             r.isAttacking = false;
             r.currentBattleType = null;
         }
@@ -552,6 +863,11 @@ export class PlayerHero {
             learnedElites: this.learnedElites.map((e) => ({ ...e })),
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
             selectedUnit: this.selectedUnit,
+            manualUnitPick: this.manualUnitPick,
+            nearbyFirst: this.nearbyFirst,
+            autoPickUnit: this.autoPickUnit,
+            learnedShips: [...this.learnedShips],
+            selectedShip: this.selectedShip,
             selectedElite: this.selectedElite,
             lat: p.lat,
             lng: p.lng,
@@ -560,14 +876,27 @@ export class PlayerHero {
 
     public restoreSaveState(s: PlayerSaveState): void {
         this.hostLegionId = null;
+        this.cancelChase();
         this.cancelTravel();
         this.merit = s.merit ?? 0;
         this.heroDowns = s.heroDowns ?? 0;
         this.learnedElites = (s.learnedElites ?? []).map((e) => ({ ...e }));
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
         this.selectedUnit = s.selectedUnit ?? -1;
+        this.manualUnitPick = s.manualUnitPick ?? false;
+        this.nearbyFirst = s.nearbyFirst ?? false;
+        this.autoPickUnit = s.autoPickUnit ?? true;
+        this.learnedShips = [...(s.learnedShips ?? [])];
+        this.selectedShip = s.selectedShip ?? -1;
         this.selectedElite = Math.min(this.learnedElites.length - 1, s.selectedElite ?? -1);
         if (s.factionId) this.joinFaction(s.factionId);
+        else {
+            this.factionId = null;
+            this.army.setFactionId('');
+            const renderer = this.army.getRenderer();
+            if (renderer) renderer.factionId = '';
+            this.syncMoveProfile();
+        }
         if (Number.isFinite(s.lat) && Number.isFinite(s.lng)) this.army.setPosition(s.lat, s.lng);
         this.emitChange();
     }

@@ -1,10 +1,11 @@
 /**
- * PlayerScene13Control —— 战术模式（13）里的玩家输入与指挥条。
+ * PlayerScene13Control —— 战术模式（13）里的玩家输入与指挥条（玩家面板）。
  *
  *   · WASD / 方向键：移动玩家（屏幕方向，左右对调由 Scene13WarLayer 自己换算）
  *   · 点战场地面：玩家前往该点
  *   · Q：受控编队全军攻击（自动索敌）；E：待命（不移动，够得着照打）
- *   · 指挥条（底部居中）：官阶 / 本场击杀 / 攻击·待命按钮 / 受控编队数
+ *   · 退出战斗：按当前战况自动结算战果并退出
+ *   · 指挥条/玩家面板（顶部居中）：官阶 / 本场击杀 / 攻击·待命·退出战斗按钮 / 受控编队数
  */
 import type { PlayerHero } from './PlayerHero';
 
@@ -14,10 +15,12 @@ export interface Scene13PlayerApi {
     setHeroInput(v: { dx: number; dy: number } | null): void;
     setHeroMoveToScreen(x: number, y: number): void;
     setPlayerCommand(cmd: 'attack' | 'hold'): void;
+    requestExitWithResult(): void;
     getPlayerBattleState(): {
         heroAlive: boolean;
         heroHp: number;
         heroMaxHp: number;
+        heroRespawnSec?: number;
         controlledLanes: number;
         controlledMen: number;
         command: 'attack' | 'hold';
@@ -32,6 +35,8 @@ export class PlayerScene13Control {
     private info: HTMLSpanElement | null = null;
     private btnAttack: HTMLButtonElement | null = null;
     private btnHold: HTMLButtonElement | null = null;
+    private btnExit: HTMLButtonElement | null = null;
+    private hint: HTMLSpanElement | null = null;
     private keys = new Set<string>();
     private timer: number | null = null;
 
@@ -98,12 +103,12 @@ export class PlayerScene13Control {
         this.scene.setHeroMoveToScreen(e.clientX, e.clientY);
     }
 
-    // ── 指挥条 ────────────────────────────────────────────
+    // ── 指挥条 / 战术模式玩家面板 ────────────────────────────
     private createBar(): void {
         const bar = document.createElement('div');
         bar.id = 'player-scene13-bar';
         bar.style.cssText = `
-            position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:10055; display:none;
+            position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:10055; display:none;
             align-items:center; gap:10px; padding:8px 14px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.6); border-radius:10px; pointer-events:auto; user-select:none;
@@ -124,40 +129,94 @@ export class PlayerScene13Control {
         //    自动 = 玩家本人与受控编队一起索敌开打；待命 = 都不主动动，够得着才还手。
         this.btnAttack = mk('Q 自动', 'attack');
         this.btnHold = mk('E 待命', 'hold');
+
+        // 🔴 [2026-09-10 主人定] 战术模式退出战斗按钮移入战术模式玩家面板
+        const btnExit = document.createElement('button');
+        btnExit.textContent = '退出战斗';
+        btnExit.title = '点击后按当前战况自动结算战果并退出';
+        btnExit.style.cssText = `
+            padding:4px 12px; cursor:pointer; font-family:inherit; font-weight:900; font-size:13px; color:#f5e6c8;
+            background:linear-gradient(180deg, rgba(60,20,20,0.85) 0%, rgba(30,10,10,0.9) 100%);
+            border:1px solid rgba(212,175,55,0.6); border-radius:6px; transition:all 0.2s ease;
+            box-shadow:0 1px 4px rgba(0,0,0,0.4);`;
+        btnExit.addEventListener('mouseenter', () => {
+            btnExit.style.borderColor = '#ffd700';
+            btnExit.style.color = '#ffffff';
+            btnExit.style.boxShadow = '0 0 8px rgba(255,215,0,0.4)';
+        });
+        btnExit.addEventListener('mouseleave', () => {
+            btnExit.style.borderColor = 'rgba(212,175,55,0.6)';
+            btnExit.style.color = '#f5e6c8';
+            btnExit.style.boxShadow = '0 1px 4px rgba(0,0,0,0.4)';
+        });
+        btnExit.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btnExit.disabled = true;
+            this.scene.requestExitWithResult();
+        });
+        bar.appendChild(btnExit);
+        this.btnExit = btnExit;
+
         const hint = document.createElement('span');
         hint.style.cssText = 'font-size:11px; color:#c9b58a;';
         hint.textContent = 'WASD 移动 · 点地面前往';
         bar.appendChild(hint);
+        this.hint = hint;
+
         document.body.appendChild(bar);
         this.bar = bar;
         this.info = info;
     }
 
-    private refresh(): void {
+    public refresh(): void {
         if (!this.bar || !this.info) return;
-        const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
-        if (!st) {
+        if (!this.scene.isActive()) {
             this.bar.style.display = 'none';
+            if (this.btnExit) this.btnExit.disabled = false;
             return;
         }
         this.bar.style.display = 'flex';
-        const rank = this.hero.getRank();
-        const hp = Math.max(0, Math.round(st.heroHp));
-        const ctl = st.controlledLanes > 0
-            ? `指挥 ${st.controlledLanes} 队 ${st.controlledMen} 人`
-            : '只管自己';
-        this.info.innerHTML =
-            `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
-            + `血 ${st.heroAlive ? `${hp}/${Math.round(st.heroMaxHp)}` : '落马'} · `
-            + `本场斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit} · ${ctl}`;
-        const on = 'rgba(212,175,55,0.35)';
-        const off = 'rgba(255,255,255,0.06)';
-        if (this.btnAttack) this.btnAttack.style.background = st.command === 'attack' ? on : off;
-        if (this.btnHold) this.btnHold.style.background = st.command === 'hold' ? on : off;
-        // 🔴 [2026-09-09] 原来「没有受控编队就禁用两个按钮」—— 平民阶只管自己，
-        //    按钮全灰、切都切不了。现在自动/待命也管**玩家本人**，所以始终可用。
-        if (this.btnAttack) this.btnAttack.disabled = false;
-        if (this.btnHold) this.btnHold.disabled = false;
+        const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
+        if (st) {
+            const rank = this.hero.getRank();
+            const hp = Math.max(0, Math.round(st.heroHp));
+            const ctlMap: Record<'none' | 'one' | 'front' | 'all', string> = {
+                none: '单枪匹马',
+                one: '率队前驱',
+                front: '独当一面',
+                all: '节制三军',
+            };
+            const ctl = ctlMap[rank.control] || '单枪匹马';
+            const respawnSec = Math.ceil(st.heroRespawnSec ?? 0);
+            const hpText = st.heroAlive
+                ? `血 ${hp}/${Math.round(st.heroMaxHp)}`
+                : (respawnSec > 0
+                    ? `<span style="color:#ff6b6b; font-weight:900;">阵亡（${respawnSec}秒后复活）</span>`
+                    : '<span style="color:#ff8585; font-weight:900;">阵亡复活中</span>');
+            this.info.innerHTML =
+                `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
+                + `${hpText} · `
+                + `本场斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit} · ${ctl}`;
+            const on = 'rgba(212,175,55,0.35)';
+            const off = 'rgba(255,255,255,0.06)';
+            if (this.btnAttack) {
+                this.btnAttack.style.display = 'inline-block';
+                this.btnAttack.style.background = st.command === 'attack' ? on : off;
+                this.btnAttack.disabled = false;
+            }
+            if (this.btnHold) {
+                this.btnHold.style.display = 'inline-block';
+                this.btnHold.style.background = st.command === 'hold' ? on : off;
+                this.btnHold.disabled = false;
+            }
+            if (this.hint) this.hint.style.display = 'inline';
+        } else {
+            this.info.innerHTML = `<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
+            if (this.btnAttack) this.btnAttack.style.display = 'none';
+            if (this.btnHold) this.btnHold.style.display = 'none';
+            if (this.hint) this.hint.style.display = 'none';
+        }
+        if (this.btnExit) this.btnExit.style.display = 'inline-block';
     }
 
     public dispose(): void {

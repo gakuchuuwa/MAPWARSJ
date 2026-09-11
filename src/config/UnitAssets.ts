@@ -41,9 +41,12 @@ export const SPRITE_PATHS = {
     // Allows defining sprites for specific unit types (e.g. 'huaxia_infantry', 'roman_legion')
     UNIT_ASSETS: {
         'guanyu': {
-            // 【guanyu】玩家「乱入者」的顶层形象。目录名沿用 DE 素材 u_cav_hero_guan_yu，
-            //   **角色不是关羽**，与势力武将 chu_guanyu 无关。2026-09-05 接线：
-            //   大地图单骑 + 13 战术模式玩家本体；IDLE 45 帧 / MOVE 30 帧 / ATTACK 45 帧 / DEATH 45 帧（_meta.json）
+            // 【guanyu】DE 关羽英雄素材（u_cav_hero_guan_yu）。
+            //   🔴 [2026-09-09 主人定「玩家怎么显示成关羽了，赶紧删除」] **玩家系统已不再引用它**：
+            //      2026-09-05 曾把它当玩家「乱入者」的顶层形象，结果玩家一升斥候、兵模还没收到时
+            //      就顶着绿袍赤兔在地图上跑。现在玩家兜底一律 antiquity_scout_cavalry，
+            //      升上去穿什么由收到的兵模决定。素材本身留着（别处可能用），别再挂回玩家。
+            //   IDLE 45 帧 / MOVE 30 帧 / ATTACK 45 帧 / DEATH 45 帧（_meta.json）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/idle_${dir}.png`),
@@ -268,7 +271,7 @@ export const SPRITE_PATHS = {
         },
         // 🔴 [2026-09-07] 英雄类素材原本只登记在 SPRITE_PATHS.GENERAL 里，而军团渲染
         //    （LegionPhalanxDrawer / Scene13WarLayer）只读 UNIT_ASSETS —— 主人把「英雄·马其顿指挥官」
-        //    编进古典马其顿军团后，那两个格位在战场上画不出来。这里补一份，让它在军团里也能显示。
+        //    编进古典时代马其顿军团后，那两个格位在战场上画不出来。这里补一份，让它在军团里也能显示。
         'hero_macedonian_commander': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
@@ -1190,6 +1193,30 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
+            DEATH: [],
+        },
+        'JUNK': {
+            // 中式帆船（商队船模转战船，SUCAI_TRADE 只有 16 向 idle，move/attack 复用 idle）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/JUNK/idle_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/JUNK/idle_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/JUNK/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/JUNK/idle_${d}.png`),
+            DEATH: [],
+        },
+        'TRADE_COG': {
+            // 柯克货船（商队船模转战船，SUCAI_TRADE 只有 16 向 idle，move/attack 复用 idle）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRADE_COG/idle_${d}.png`),
+            DEATH: [],
+        },
+        'TRANSPORT_SHIP': {
+            // 运输船/渡船（商队船模转战船，SUCAI_TRADE 只有 16 向 idle，move/attack 复用 idle）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${d}.png`),
             DEATH: [],
         },
         'ANT_WAR_GALLEY': {
@@ -3796,6 +3823,30 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MERCHANT_SHIP/idle_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MERCHANT_SHIP/idle_${dir}.png`),
         },
+        // 【中式帆船】8方向，商队船模（SUCAI_TRADE 只有 idle 帧，move/attack 复用 idle）
+        'junk': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/JUNK/idle_${dir}.png`),
+        },
+        // 【柯克货船】8方向，商队船模（SUCAI_TRADE 只有 idle 帧，move/attack 复用 idle）
+        'trade_cog': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_COG/idle_${dir}.png`),
+        },
+        // 【运输船/渡船】8方向，商队船模（SUCAI_TRADE 只有 idle 帧，move/attack 复用 idle）
+        'transport_ship': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRANSPORT_SHIP/idle_${dir}.png`),
+        },
         // 【中国楼船】8方向，AoE2 DE SLD 素材
         'lou_chuan': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LOU_CHUAN/move_${dir}.png`),
@@ -3847,10 +3898,7 @@ export const SPRITE_PATHS = {
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
     // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
-    GENERAL: {
-        IDLE: '/SUCAI/S10B/42-1.png',
-        MOVE: '/SUCAI/S10B/43-1.png',
-        ATTACK: '/SUCAI/S10B/42-1.png',
-        DAMAGE: '/SUCAI/S10B/92-1.png'
-    },
+    // GENERAL（三国志10 武将精灵 /SUCAI/S10B/）已于 2026-09-09 删除：
+    // 素材随三国志10 兵种一起移除，且 GeneralDrawer.draw() 全项目从未被调用过——
+    // 这四张图开机加载完就丢在那儿，画面上一帧都没出现过。别再加回来。
 } as const;

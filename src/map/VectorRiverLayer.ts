@@ -226,6 +226,16 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
     // --- Styling Logic ---
 
+    /** 按数据的显示等级分配线宽；scalerank 不是实测河宽，不用于海陆或通行判断。 */
+    private static getWaterWeight(feature: any, zoom: number): number {
+        const rank = feature?.properties?.scalerank;
+        const rankScale = typeof rank === 'number' && Number.isFinite(rank)
+            ? 1.35 - (Math.max(1, Math.min(10, rank)) - 1) * 0.065
+            : 1;
+        const base = Math.max(2.0 * VectorRiverLayer.getScaleMultiplier(zoom), 1.0) * 1.15;
+        return Math.max(1.15, base * rankScale);
+    }
+
     // 河岸用较薄的半透明灰青描边，与地面融合，同时保留山谷中的可读性。
     private static getBorderStyle(feature: any, zoom: number): L.PathOptions {
         const featureCla = feature?.properties?.featurecla;
@@ -236,12 +246,11 @@ export class VectorRiverLayer extends L.FeatureGroup {
             };
         }
 
-        const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
-        const waterWeight = Math.max(2.0 * zoomMult, 1.0);
+        const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            color: '#294F62',
+            color: '#365968',
             weight: waterWeight + 1.6,
-            opacity: 0.75,
+            opacity: 0.62,
             lineCap: 'round',
             lineJoin: 'round',
             className: 'vector-river-border'
@@ -258,10 +267,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
             };
         }
 
-        const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
         return {
-            color: '#347FA8',
-            weight: Math.max(2.0 * zoomMult, 1.0),
+            color: '#3E809E',
+            weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 1.0,
             lineCap: 'round',
             lineJoin: 'round',

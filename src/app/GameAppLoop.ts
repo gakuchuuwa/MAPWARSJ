@@ -498,6 +498,9 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     inCombat: followedArmy?.getIsInCombat?.() ?? false,
                     isCavalry: followedArmy?.isCavalryArmy?.() ?? false,
                     isNaval: followedArmy?.isOnSea ?? false,
+                    // 🔴 [2026-09-11 主人定] 跟拍对象 = 玩家本人（乱入者独骑）→ 播「玩家骑马」行军音。
+                    //    随军时 getFollowedArmyId 报的是所在军团 id，这里自然为 false，仍播军团那两条行军音。
+                    isPlayer: !!(app.playerHero && followedArmy === app.playerHero.army),
                 });
                 const now = performance.now();
                 if (now - lastFollowFlagPriorityKick >= FOLLOW_FLAG_PRIORITY_INTERVAL_MS) {

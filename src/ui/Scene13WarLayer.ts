@@ -33,15 +33,19 @@ import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { type RegionType } from '../systems/RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
+// 🔴 [2026-09-11 主人「和游戏同步」] 守方据点的建筑风格改成与战略地图**同一个解析源**
+import { CITIES_V2 } from '../data/cities_v2';
+import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
 import { resolveTimeOfDay, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
-import { unlockedTechs, applyTechsToStats } from '../systems/MilitaryTechState';
+import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
+import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
@@ -166,6 +170,7 @@ let cleanCacheBytes = 0;
  *    （SpriteTinter 的染色缓存 key 也因此天然命中，见 tintKeyOf）。
  */
 const CLEAN_INFLIGHT = new Map<string, Promise<HTMLImageElement | null>>();
+const CLEAN_LOADING = new Map<string, HTMLImageElement>();
 
 /**
  * 取「抠绿后的干净图」：缓存命中直接返回，在途则搭同一班车，否则发起唯一一次加载。
@@ -173,12 +178,32 @@ const CLEAN_INFLIGHT = new Map<string, Promise<HTMLImageElement | null>>();
  */
 function ensureCleanImage(
     url: string,
-    dechroma: (img: HTMLImageElement) => Promise<string>,
+    /**
+     * 抠绿函数；传 null = **这张图不需要抠绿，原图直接用**。
+     *
+     * 🔴 [2026-09-09 修「战术模式很肉、一顿一顿」] DE 素材本来就是透明 PNG，抠绿判据
+     *    （g>150 且 r<110 且 b<110）在它们身上**一个像素都命中不了** —— 实测抽样 16 张
+     *    DE strip 共 385 万不透明像素，命中 0 个，抠绿是**可证明的空操作**。
+     *    可代价是实打实的：每张图要走
+     *      createImageBitmap → Worker（getImageData + 逐像素 + putImageData + **PNG 重编码**）
+     *      → FileReader 转 base64 → 主线程 `new Image(dataUrl)` **第二次解码**，
+     *    而 DechromaWorker 只有一条线程、几百张图串行排队，PNG 重编码又是重活
+     *    （单张 strip 可达 13680×180）。开场几百张一起来，队列几十秒都排不完 ——
+     *    `pending > 0` 期间 tick() 整个 return，画面就是冻住／一顿一顿。
+     *    实测证据 scratch/scene13_probe_latest.json：一场 39.4 秒的攻城战 `frames: 0`
+     *    （一帧都没跑），最后被 30 秒防死锁计时器强制判负，退场时 `pending` 还有 78。
+     *    绿幕素材（三国志 10 那批，不在 DE_DYN_DIRS 里）照旧走抠绿，判据一字未改。
+     */
+    dechroma: ((img: HTMLImageElement) => Promise<string>) | null,
+    critical = false,
 ): Promise<HTMLImageElement | null> {
     const hit = CLEAN_CACHE.get(url);
     if (hit && hit.complete && hit.naturalWidth > 0) return Promise.resolve(hit);
     const flying = CLEAN_INFLIGHT.get(url);
-    if (flying) return flying;
+    if (flying) {
+        if (critical) { const image = CLEAN_LOADING.get(url); if (image) image.fetchPriority = 'high'; }
+        return flying;
+    }
     const job = new Promise<HTMLImageElement | null>((resolve) => {
         const toClean = (dataUrl: string) => {
             const clean = new Image();
@@ -189,8 +214,19 @@ function ensureCleanImage(
             clean.src = dataUrl;
         };
         const im = new Image();
+        im.fetchPriority = critical ? 'high' : 'low';
+        CLEAN_LOADING.set(url, im);
         im.onload = () => {
             try {
+                // 不需要抠绿（DE 透明素材）：原图即干净图，省掉 Worker 往返 + PNG 重编码 + 第二次解码。
+                // sourceUrl 照挂：SpriteTinter 靠它推导 `.pc.png` 玩家色遮罩，并用 `de:` 前缀
+                // 与战略地图那条链路分开存（见 tintKeyOf 的键碰撞注释）。
+                if (!dechroma) {
+                    (im as unknown as { sourceUrl: string }).sourceUrl = url;
+                    cleanCachePut(url, im);
+                    resolve(im);
+                    return;
+                }
                 // 🔴 抠绿在 Worker 里做（dechromaToDataUrl 异步）：原来的同步版本
                 //    （getImageData 回读 + 逐像素 + toDataURL）挤在 onload 回调里排队，
                 //    是「偶发几百 ms 尖峰」的根源。命中 DECROMA_CACHE 则连 Worker 都不走。
@@ -205,7 +241,7 @@ function ensureCleanImage(
         };
         im.onerror = () => resolve(null);
         im.src = url;
-    }).finally(() => { CLEAN_INFLIGHT.delete(url); });
+    }).finally(() => { CLEAN_INFLIGHT.delete(url); CLEAN_LOADING.delete(url); });
     CLEAN_INFLIGHT.set(url, job);
     return job;
 }
@@ -479,6 +515,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     GORYEO: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     JOSEON: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
     GOJOSEON: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
+    PRE_QIN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     MING: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     HUAXIA_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     DALI: { battering_ram: true, capped_ram: true, mangonel: true },
@@ -898,6 +935,29 @@ const SIGHT_MAP: Record<string, number> = {
  */
 
 /**
+ * 🔴 [2026-09-09 主人定] 玩家本人（乱入者）在 13 里的加成 —— **只作用于玩家自己那一个身位**，
+ * 不碰他带的兵、不碰编队、不碰八环。
+ *
+ * 主人原话：「不要加攻击力，要加攻击频率、血、防；不死才是硬道理，不然玩家一直死就没意思了，
+ * 要给人感觉玩家是战斗到最后一个的那个人。」所以这里**只堆出手频率与生存**，攻击力保持原样：
+ *   · HERO_ATTACK_RATE   出手频率倍率：装填时间 ÷ 它。动作节奏与伤害同步（两处都乘，
+ *     只改一处会出现「刀挥得飞快但伤害没涨」或反过来）。单刀伤害不变，快只体现在出手次数。
+ *   · HERO_HP_MULT       最大血量倍率（出生血、落马重整回血、HUD 血条上限三处同源）。
+ *   · HERO_DAMAGE_TAKEN  受伤倍率，等效「防」。
+ *     🔴 为什么不是去加 meleeArmor/pierceArmor：DE 的护甲是减法，且 statsFor 按
+ *     「兵种 key + 阵营」缓存，而 heroKey 是玩家当前所选的**已学兵种** —— 往那份分表里加防，
+ *     同兵种的所有小兵会跟着变硬。挂在挨打这一刻是唯一只影响玩家一个人的位置。
+ *
+ * ⚠️ 不叠官阶 powerMult：官阶那份已经走第九环进了所属军团的战力，再乘一遍就是
+ *    名将被算两遍那种重复（见 dmgVs 头注）。玩家个人强度只由这几个常量定。
+ *
+ * 现值合计：出手快 1 倍，有效血量 ≈ 3 / 0.3 ≈ 10 倍 —— 打不动他，但也不会一刀秒人。
+ */
+const HERO_ATTACK_RATE = 2.0;
+const HERO_HP_MULT = 3.0;
+const HERO_DAMAGE_TAKEN = 0.3;
+
+/**
  * 单次出手伤害（纯 DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)。
  *
  * 🔴 [2026-08-31 主人定·删掉 13 本地名将加成] 这里**不再有任何名将/精锐系数**。
@@ -1119,7 +1179,7 @@ const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 const BATTLEFIELD_BASE_URL = '/SUCAI_BATTLEFIELD/';
-/** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定；TIBET 暂用印度，待查藏式 MOD）。
+/** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定）。
  *  风格前缀 + 建筑名 + AGE3 = 素材目录名（如 `WEST_CASTLE_AGE3`、`ASIA_BARRACKS_AGE3`）。 */
 const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     SLAVIC: 'SLAV',
@@ -1139,13 +1199,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     JIANGNAN: 'ASIA',
      // [2026-08-27] SEAS→ASIA（主人定滇缅归中国区，与战略一致）
     HEXI: 'ASIA',
-    WESTERN: 'ASIA',   // [2026-08-27] CEAS→ASIA（主人定西域归中国区，与战略一致）
-    WESTERN_FEUDAL: 'ASIA',
-    WESTERN_CASTLE: 'ASIA',
-    WESTERN_IMPERIAL: 'ASIA',
-    TIBET: 'INDI',
-    TIBET_CASTLE: 'INDI',
-    TIBET_IMPERIAL: 'INDI',
+    WESTERN: 'CEAS',   // 主人定：西域用中亚（CEAS）
+    WESTERN_FEUDAL: 'CEAS',
+    WESTERN_CASTLE: 'CEAS',
+    WESTERN_IMPERIAL: 'CEAS',
+    TIBET: 'PURU',     // 🔴 [2026-09-11 主人定「同步游戏和程序」] 三层建筑风格：吐蕃=南亚古典 PURU 粗石红褐石墙，
+    TIBET_CASTLE: 'PURU',   //    与战略地图 REGION_TO_DE_STYLE 和 _citytest.html 预览页完全一致；
+    TIBET_IMPERIAL: 'PURU', //    守城宗堡仍走 castleAssetFor() → TIBET_CASTLE_AGE3 藏式金顶宗堡（不受本表影响）。
     STEPPE: 'CEAS',    // 草原特例：战术无蒙古包，用库曼建筑近似（保持不动）
     STEPPE_IMPERIAL: 'CEAS',
     STEPPE_ANTIQUITY: 'CEAS',
@@ -1183,17 +1243,17 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     PURU: 'PURU',     // [2026-08-27] 南亚达罗毗荼（朱罗/潘地亚）
     ORIE: 'ORIE',     // [2026-08-27] 阿拉伯（埃及/黎凡特/阿拉伯半岛）
     ORIE_ANTIQUITY: 'ORIE',
-    EAST: 'EAST',     // [2026-08-27] 东欧（哥特/匈人/条顿/维京/罗斯）
+    EAST: 'EAST',     // 拜占庭
     GREEK: 'GREEK',   // [2026-09-07] 古典希腊 → DE 的 GREEK 风格集（183 件已补提，不再 404）
     THRACIAN: 'THRACIAN',   // [2026-09-07] 古典色雷斯 → DE 的 THRACIAN 风格集（165 件已补提）
     PERSIAN: 'PERSIAN', // [2026-08-27] 波斯（阿契美尼德/萨珊）
     PERSIAN_CASTLE: 'PERSIAN',
     CUMAN: 'CEAS',      // [2026-08-27] 库曼（钦察/鞑靼草原）
     BRITONS: 'WEST',  // 不列颠[2026-08-28]
-    GOTHS: 'EAST',  // 哥特[2026-08-28]
-    HUNS: 'EAST',  // 匈人[2026-08-28]
-    TEUTONS: 'EAST',  // 条顿[2026-08-28]
-    VIKINGS: 'EAST',  // 维京[2026-08-28]
+    GOTHS: 'WEST',  // 哥特[2026-08-28]
+    HUNS: 'CEAS',  // 匈人[2026-08-28]
+    TEUTONS: 'WEST',  // 条顿[2026-08-28]
+    VIKINGS: 'WEST',  // 维京[2026-08-28]
      // 凯尔特[2026-08-28]
     CELTS_FEUDAL: 'WEST',
     ITALIANS: 'MEDI',  // 意大利[2026-08-28]
@@ -1256,19 +1316,21 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     MANCHU: 'ASIA',
     MUGHAL: 'INDI',
     SAFAVID: 'PERSIAN',   // [2026-09-07] 帝国波斯：PERS 只有 3 件城堡，是拼写掉字，风格集叫 PERSIAN
-    RUSSIAN: 'EAST',
+    RUSSIAN: 'SLAV',
     SIKH: 'INDI',
     HEBREWS: 'ORIE',
     WUSUN: 'CEAS',
     QIANG: 'ASIA',
-    YARLUNG: 'ASIA',
+    YARLUNG: 'PURU',   // 🔴 [2026-09-11 主人「萨噶是羌，是青藏，是吐蕃，请按历史修复」]
+                       //    古典雅隆＝吐蕃发祥地 → 与战略地图、_citytest.html 预览页统一走青藏三层风格的 PURU 底座
+                       //    （守城宗堡仍走 castleAssetFor() → TIBET_CASTLE_AGE3）。原写 'ASIA' 与战略表的 'INDI' 打架。
     NABATAEANS: 'ORIE',
     HEPHTHALITES: 'CEAS',
     AINU: 'ASIA',
       // [2026-09-07] 城堡瑞士：EUROPE 不是 DE 风格集
     PASHTUN: 'CENTRAL_ASIA',
-    SWEDISH: 'EAST',   // [2026-09-07] 帝国瑞典：EUROPE 不是 DE 风格集；与封建维京同用 EAST
-    MACEDONIAN: 'GREEK',   // [2026-09-07] 古典马其顿
+    SWEDISH: 'WEST',   // 帝国瑞典：与北欧日耳曼同用 WEST
+    MACEDONIAN: 'GREEK',   // 古典马其顿
     HELLENIC: 'GREEK',   // [2026-09-07] 古典希伦（雅典/斯巴达/底比斯）
     IMPERIAL_ROME: 'MEDI',   // [2026-09-07] 古典罗马禁卫 → 罗马是地中海风格，不是希腊
     GREEK_MERCENARY: 'GREEK',   // [2026-09-07] 古典希腊雇佣
@@ -1279,12 +1341,13 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     GORYEO: 'ASIA',
     JOSEON: 'ASIA',
     GOJOSEON: 'ASIA',
+    PRE_QIN: 'ASIA',
     MING: 'ASIA',
     HUAXIA_IMPERIAL: 'ASIA',
     DALI: 'SEAS',
     MAMLUKS: 'ORIE',
     CRUSADERS: 'WEST',
-    RUS: 'EAST',
+    RUS: 'SLAV',
     KARA_KHITAN: 'CEAS',
     TIMURID: 'CEAS',
     DELHI: 'INDI',
@@ -1315,10 +1378,10 @@ const FACTION_BUILDING_STYLE: Readonly<Record<string, string>> = {
     inca: 'ANDE', mapuche: 'ANDE', muisca: 'ANDE', tupi: 'ANDE',
     // ── 波斯（PERSIAN）：三代波斯 + 埃兰 ──
     aqimeinide: 'PERSIAN', ansxi: 'PERSIAN', sashan: 'PERSIAN', ailan: 'PERSIAN',
-    // ── 东欧 / 日耳曼东部（EAST）：哥特 / 匈人 / 条顿 / 维京 ──
-    donggete: 'EAST', xigete: 'EAST', xiongren: 'EAST', xiongnu: 'EAST',
-    tiaodun_qishi: 'EAST', danmai: 'EAST', ruidian_si: 'EAST', ruidian_yota: 'EAST',
-    nuosi: 'EAST', weijing_york: 'EAST', luosi: 'EAST',
+    // ── 东欧 / 日耳曼东部：哥特 / 匈人 / 条顿 / 维京（原 EAST 风格已拆）──
+    donggete: 'WEST', xigete: 'WEST', xiongren: 'CEAS', xiongnu: 'CEAS',
+    tiaodun_qishi: 'WEST', danmai: 'WEST', ruidian_si: 'WEST', ruidian_yota: 'WEST',
+    nuosi: 'WEST', weijing_york: 'WEST', luosi: 'SLAV',
     // ── 南亚（PURU）：与 INDI 分开，给南印度/恒河诸国 ──
     zhuluo: 'PURU', pangzha: 'PURU', kongque: 'PURU', mojietuo: 'PURU',
 };
@@ -1756,6 +1819,7 @@ const FIREARM_TYPES = new Set([
 const PROJ_ANGLE_OFFSET: Record<string, number> = {
     PROJ_SHOT: Math.PI / 2,
     PROJ_GUNPOWDER: Math.PI / 2,
+    PROJ_FIRE: Math.PI / 4,    // 猛火油柜喷火：素材等轴测斜 45°，补偿 π/4 使火舌正向水平喷射
 };
 /** 连弩/火箭车连发箭数（AoE2 wiki：诸葛弩 3/5 支；风琴炮 5 弹；火箭车 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
@@ -1805,7 +1869,9 @@ const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_GUNPOWDER: 30 * 40,
     PROJ_FIRE_LANCER: 7.5 * 40,
     PROJ_HUSSITE_WAGON: 7 * 40,
-    PROJ_BOMBARD_BALL: 4 * 40,
+    // 手推攻城火炮/榴弹炮炮弹：DE 原始 4 格/秒（160px/s）太慢，满射程 560px 要飞 3.5s。
+    // 提速到 10 格/秒（400px/s），满射程约 1.4s，仍比弩矢(14格)稍慢以保留高抛弧线感。
+    PROJ_BOMBARD_BALL: 10 * 40,
     PROJ_GRENADE: 4.5 * 40,
 };
 /** DE 弹丸素材逐帧时长（秒）；未列出的单帧/定向素材不播放序列。 */
@@ -1836,6 +1902,15 @@ const MIN_RANGE_TYPES: Record<string, number> = {
 const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 const FIRE_LANCER_VOLLEY = 3;
 const FIRE_LANCER_CHARGE = 30;
+
+/** 背刺（奇袭）白名单：第二波起从敌军背后出生（🔴 2026-09-11 主人定：只带精锐的兵种）。
+ *  忍者（无精锐，原型）+ 马来爪刀 + 凯尔特靛蓝突袭者 + 图皮战棍（各含精锐）。 */
+const FLANK_TYPES = new Set([
+    'ninja',
+    'karambit_warrior', 'karambit_warrior_elite',
+    'woad_raider', 'elite_woad_raider',
+    'ibirapema_warrior', 'elite_ibirapema_warrior',
+]);
 
 // ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
 // 素材已瘦身到 public/SUCAI_FX/（抽帧 8~10 + 裁透明边 + 16 向降 8 向，7GB→71MB）。
@@ -2556,8 +2631,12 @@ interface WarMan {
     ph: number;
     st: 0 | 1 | 2;
     foe: WarMan | WarBuilding | null;
+    /** 帧开始时预登记的目标；轮到本人更新时先释放，再登记最终选择。 */
+    reservedFoe?: WarMan | WarBuilding | null;
+    rangeWait?: number;
     /** 【被攻击反击】最近一次攻击我的人（WarMan）。被攻击的兵下次索敌时优先锁定它，无视围殴封顶 SPREAD_CAP */
     hurtBy?: WarMan | null;
+    hurtAt?: number;
     next: number;
     fightT: number;
     aimT: number;
@@ -2904,6 +2983,37 @@ interface WarBank {
      * 渲染时把 hotspot 对齐单位位置，脚底随动作浮动（AoE2 原生），不再脚底对齐。
      */
     dyn?: Record<string, Record<string, { fw: number; fh: number; hx: number; hy: number }>>;
+    /**
+     * 🔴 [2026-09-09] 各动作在 AoE2 DE 里的真实时长（秒）= dat 的 frame_count × frame_duration，
+     * 由 `_meta.json` 的 `dur` 字段带过来；**只有循环动作（move/idle）按它播**，攻击不按
+     * （攻击窗口 animDur=min(reload,1.5) 是 2026-08-20 主人拍板的压缩站立时间，不动）。
+     * 没有 dur 的目录维持原速（绝大多数 DE 动作 0.7~1.5s，落在窗口附近，看不出差别）。
+     * 补齐动机：床弩车 idle 是 DE 全部攻城器械里最长的 4.0s，压进 1.5s 窗口 = 2.7 倍速抽动，
+     * 而它装填 3.6s、攻击动作只占 1.5s，剩下 2.1s 全在播这段待命 —— 主人描述「跟走马灯似的」。
+     */
+    dur?: Record<string, number>;
+}
+
+/**
+ * 🔴 [2026-09-09] 循环动作（移动/待命）的播放倍率 —— 让有 DE 时长数据的素材按 DE 自己的节奏播。
+ *
+ * ph 是「相位」不是秒：走路一律 `ph += dt*8`（8 相位 = 1.0s 走完一轮），
+ * 待命一律 `ph += dt*8/1.5`（8 相位 = 1.5s 一轮）—— 下面两个窗口常量必须与那些推进式保持一致。
+ * 有 dur（DE 真实时长）时按 窗口/dur 缩放 ph→帧的映射，没有就返回 1（维持原速）。
+ *
+ * 触发这条的实例：华夏攻城床弩车 idle 在 DE 里是 4.0s（全部攻城器械里最长），
+ * 压进 1.5s 窗口 = 2.7 倍速抽动；走路 1.4s 压进 1.0s = 1.4 倍速。主人报「跟走马灯似的」。
+ * ⚠️ 攻击/近战/冲锋不走这条：那条路的窗口 animDur=min(reload,1.5) 是 2026-08-20 拍板的
+ *    「压缩站立时间」，且开火相位 shootPhase 绑在 8 相位刻度上，缩放会把放箭时刻一起挪走。
+ */
+const LOOP_WINDOW_MOVE_SEC = 1.0;
+const LOOP_WINDOW_IDLE_SEC = 1.5;
+function loopRate(b: WarBank, set: string): number {
+    const dur = b.dur?.[set];
+    if (!dur || dur <= 0) return 1;
+    if (set === 'move') return LOOP_WINDOW_MOVE_SEC / dur;
+    if (set === 'idle') return LOOP_WINDOW_IDLE_SEC / dur;
+    return 1;
 }
 
 export interface Scene13WarInit {
@@ -2961,9 +3071,10 @@ export class Scene13WarLayer {
     /** 战斗类型（siege 攻城 / field 野战）——决定出兵口建筑是否双方都布 */
     private battleType: BattleType = 'field';
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池时代 */
-    private defenderCityType: CityType | null = null;
-    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
+    private defenderCityType: CityType | null = null;    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
     private defenderCityId: string | null = null;
+    /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
+    private defenderMapStyle: string | null = null;
     /** [2026-08-31 主人定] 攻守两侧左右对调：跟随军团在守方侧时置 true，把守方（城）放到屏幕左边、攻方到右边。 */
     private flipSides = false;
     private men: WarMan[] = [];
@@ -3021,6 +3132,28 @@ export class Scene13WarLayer {
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
     private projBank: Record<string, ProjAsset> = {};
     private pending = 0;
+    private bankSides = new Map<string, Set<0 | 1>>();
+    private deferredAssetLoads: Array<() => void> = [];
+    private coveredMap: { element: HTMLElement; visibility: string; priority: string } | null = null;
+    private decorHasTerrain = false;
+
+    private restoreStrategyMap(): void {
+        const saved = this.coveredMap;
+        if (!saved) return;
+        saved.element.style.setProperty('visibility', saved.visibility, saved.priority);
+        this.coveredMap = null;
+    }
+
+    private coverStrategyMap(): void {
+        // 战场底图铺满后，底下的地图不再参与浏览器绘制/合成；保留尺寸和镜头状态。
+        // 地形缺图时仍显示原地图，不能用空白战场盖住它。
+        if (this.coveredMap || !this.decorHasTerrain) return;
+        const element = document.getElementById('map');
+        if (!element) return;
+        this.coveredMap = { element, visibility: element.style.getPropertyValue('visibility'),
+            priority: element.style.getPropertyPriority('visibility') };
+        element.style.setProperty('visibility', 'hidden');
+    }
     /**
      * 素材加载的**场次代号**：每次 start() 自增，`pending` 归零的同时作废上一场的在途回调。
      *
@@ -3122,6 +3255,8 @@ export class Scene13WarLayer {
     /** 玩家键盘移动输入（屏幕方向单位向量；null = 没按） */
     private heroInput: { dx: number; dy: number } | null = null;
     private heroMan: WarMan | null = null;
+    /** 🔴 [2026-09-09 主人定] 玩家阵亡复活倒计时（秒；0=活着/未在倒计时） */
+    private heroRespawnTimer = 0;
     /** 本场玩家（本人 + 受控编队）击杀精灵数 */
     private playerKills = 0;
 
@@ -3130,13 +3265,13 @@ export class Scene13WarLayer {
     /** 键盘移动：屏幕方向 → 逻辑方向（左右对调时 x 取反） */
     public setHeroInput(v: { dx: number; dy: number } | null): void {
         this.heroInput = v;
-        if (!v && this.heroMan) { this.heroMan.tx = this.heroMan.x; this.heroMan.ty = this.heroMan.y; }
+        if (!v && this.heroMan && this.heroMan.hp > 0) { this.heroMan.tx = this.heroMan.x; this.heroMan.ty = this.heroMan.y; }
     }
 
     /** 点战场地面 → 玩家前往（屏幕坐标 → 逻辑坐标，含左右对调换算） */
     public setHeroMoveToScreen(x: number, y: number): void {
         const m = this.heroMan;
-        if (!m || !this.active) return;
+        if (!m || !this.active || m.hp <= 0) return;
         const W = this.canvas?.width ?? window.innerWidth;
         const lx = this.flipSides ? W - x : x;
         [m.tx, m.ty] = this.fieldBound(lx, y);
@@ -3147,7 +3282,7 @@ export class Scene13WarLayer {
     public getPlayerCommand(): 'attack' | 'hold' { return this.playerCmd; }
 
     public getPlayerBattleState(): {
-        heroAlive: boolean; heroHp: number; heroMaxHp: number;
+        heroAlive: boolean; heroHp: number; heroMaxHp: number; heroRespawnSec: number;
         controlledLanes: number; controlledMen: number; command: 'attack' | 'hold'; kills: number;
     } | null {
         if (!this.playerSetup || !this.heroMan) return null;
@@ -3156,8 +3291,9 @@ export class Scene13WarLayer {
         const f = this.playerSetup.side;
         return {
             heroAlive: this.heroMan.hp > 0 && this.men.includes(this.heroMan),
-            heroHp: this.heroMan.hp,
-            heroMaxHp: this.statsFor(this.heroMan.key, f).hp,
+            heroHp: Math.max(0, this.heroMan.hp),
+            heroMaxHp: this.heroMaxHp(this.heroMan.key, f),
+            heroRespawnSec: this.heroRespawnTimer,
             controlledLanes: this.playerCtlLanes.size,
             controlledMen,
             command: this.playerCmd,
@@ -3168,7 +3304,7 @@ export class Scene13WarLayer {
     /** 玩家落点（屏幕坐标，含对调）；HUD/镜头用 */
     public getHeroScreenPos(): { x: number; y: number } | null {
         const m = this.heroMan;
-        if (!m) return null;
+        if (!m || m.hp <= 0) return null;
         const W = this.canvas?.width ?? window.innerWidth;
         return { x: this.flipSides ? W - m.x : m.x, y: m.y };
     }
@@ -3183,6 +3319,7 @@ export class Scene13WarLayer {
         this.playerCmd = 'attack';
         this.heroInput = null;
         this.heroMan = null;
+        this.heroRespawnTimer = 0;
         this.playerKills = 0;
         const game = (window as any).game;
         const setup: Scene13PlayerSetup | null =
@@ -3197,7 +3334,7 @@ export class Scene13WarLayer {
 
         if (setup.eliteLane) {
             const key = setup.eliteLane.key;
-            this.ensureType(key);
+            this.ensureType(key, f);
             if (this.statsFor(key, f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
             if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');
             const pop = popCostOf(key);
@@ -3232,7 +3369,7 @@ export class Scene13WarLayer {
             if (pick) this.playerCtlLanes.add(pick.lane);
         }
 
-        this.ensureType(setup.heroKey);
+        this.ensureType(setup.heroKey, f);
         const hx = frontX + toward * depth * 0.9;
         const hy = midY;
         const fadeDur = DEPLOY_FADE;
@@ -3240,7 +3377,7 @@ export class Scene13WarLayer {
             f, key: setup.heroKey, jx: 0, jy: 0, lane: -1, hero: true,
             zid: this.manSeq++,
             x: hx, y: hy, tx: hx, ty: hy,
-            hp: this.statsFor(setup.heroKey, f).hp,
+            hp: this.heroMaxHp(setup.heroKey, f),
             dir: f === 0 ? 2 : 6,
             ph: 0, st: 0, foe: null, next: 0.1,
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
@@ -3292,19 +3429,40 @@ export class Scene13WarLayer {
         }
     }
 
+    /** 玩家本人的最大血量：兵种血 × HERO_HP_MULT。出生 / 落马重整 / HUD 血条上限只准走这里，别再各写各的。 */
+    private heroMaxHp(key: string, f: number): number {
+        return Math.max(1, Math.round(this.statsFor(key, f).hp * HERO_HP_MULT));
+    }
+
     private heroDown(m: WarMan): void {
+        if (this.heroRespawnTimer > 0) return; // 正在倒计时复活中，防重复触发
+        m.hp = 0;
+        this.pushCorpse(m);
+        this.heroRespawnTimer = 10;
+        this.heroInput = null;
+        this.playerSetup?.onHeroDown();
+        this.diagPush('heroDown', { sec: +this.battleSec.toFixed(1) });
+    }
+
+    /** 🔴 [2026-09-09 主人定] 阵亡 10 秒后复活：在本方后方重生并重置满血 */
+    private respawnHero(): void {
+        const m = this.heroMan;
+        if (!m || !this.playerSetup) return;
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
         const mx = Math.max(60, vw * 0.07);
         const x = m.f === 0 ? mx * 0.6 : vw - mx * 0.6;
         const y = vh / 2;
-        m.hp = this.statsFor(m.key, m.f).hp;
+        m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
+        m.dir = m.f === 0 ? 2 : 6;
         m.foe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
         m.fadeT = 2; m.fadeMax = 2;
         this.heroInput = null;
-        this.playerSetup?.onHeroDown();
-        this.diagPush('heroDown', { sec: +this.battleSec.toFixed(1) });
+        if (!this.men.includes(m)) {
+            this.men.push(m);
+        }
+        this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
     }
 
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
@@ -3324,40 +3482,10 @@ export class Scene13WarLayer {
         this.ground.width = cv.width;
         this.ground.height = cv.height;
         this.groundCtx = this.ground.getContext('2d', { alpha: true });
-        // [2026-08-19 主人需求] 13 战斗退出按钮：canvas 是 pointer-events:none 的，
-        // 按钮必须独立 DOM（z-index 高于 canvas 的 400），点击后自动结算战果。
-        if (!this.exitBtn) {
-            const btn = document.createElement('button');
-            btn.textContent = '退出战斗';
-            btn.title = '点击后按当前战况自动结算战果并退出';
-            btn.style.cssText = [
-                'position:fixed',
-                // 🔴 [2026-08-19 修「找不到退出按钮」] 原为 top:14px / z-index:450，被顶部科技行整个盖住：
-                //   #top-center-hud 是 z-index 10002 且横跨全屏宽，守方科技胶囊（1920 屏约 730px 宽）
-                //   的右端正好压在 right:14px 这个位置上。改为下移到科技行之下 + 层级抬到 HUD 之上。
-                'top:14px',
-                'right:14px',
-                'z-index:10050',
-                'padding:6px 16px',
-                'background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%)',
-                'border:1px solid rgba(212,175,55,0.6)',
-                'border-radius:6px',
-                'color:#f5e6c8',
-                "font-family:'Noto Serif SC','Cinzel',serif",
-                'font-size:14px',
-                'font-weight:bold',
-                'cursor:pointer',
-                'pointer-events:auto',
-                'user-select:none',
-                'display:none',
-                'box-shadow:0 2px 10px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25)',
-            ].join(';');
-            btn.addEventListener('click', () => this.requestExitWithResult());
-            document.body.appendChild(btn);
-            this.exitBtn = btn;
-        }
+        // [2026-09-10 主人需求] 战术模式右上角退出战斗按钮已删除/移入战术模式玩家面板（PlayerScene13Control）
         const onResize = () => {
             if (!this.canvas) return;
+            this.restoreStrategyMap();
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
             if (this.ground) {
@@ -3420,7 +3548,7 @@ export class Scene13WarLayer {
         let v = this.techStats[f].get(key);
         if (!v) {
             const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
-            const techs = unlockedTechs(y, this.sideCulture[f] as RegionType);
+            const techs = selectLegionTechs(y, this.sideCulture[f] as RegionType, this.sideFaction[f]);
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
             // 🔴 [2026-08-31] 八环质量优势分给血量的那一半（见 start() 的拆分说明）。
             //    挂在这里而不是 spawn 处，是为了让**所有**读血的地方自动一致 ——
@@ -3457,8 +3585,8 @@ export class Scene13WarLayer {
         if (this.techListYear !== year || !this.techListCache) {
             this.techListYear = year;
             this.techListCache = {
-                attacker: unlockedTechs(year, this.sideCulture[0] as RegionType),
-                defender: unlockedTechs(year, this.sideCulture[1] as RegionType),
+                attacker: selectLegionTechs(year, this.sideCulture[0] as RegionType, this.sideFaction[0]),
+                defender: selectLegionTechs(year, this.sideCulture[1] as RegionType, this.sideFaction[1]),
             };
         }
         return this.techListCache;
@@ -3492,10 +3620,13 @@ export class Scene13WarLayer {
         this.fallenFlags = [];
         this.clouds = [];
         this.clearGround();
+        this.restoreStrategyMap();
         // [2026-08-16 修·进 13 闪旧尸体] 主画布同步清空：stop 只隐藏 canvas 不清内容，
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.bank = {};
+        this.bankSides.clear();
+        this.deferredAssetLoads = [];
         this.pending = 0;
         this.assetGen++;             // 上一场在途素材的回调从此不再加减本场 pending（见 assetGen）
         this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 30s）
@@ -3564,6 +3695,14 @@ export class Scene13WarLayer {
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
+        // 🔴 [2026-09-11 主人「和游戏同步」] 守方据点建筑风格：与战略地图同一解析源（只算一次，存起来）
+        this.defenderMapStyle = (() => {
+            const c: any = this.defenderCityId
+                ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
+                : null;
+            if (!c) return null;
+            return resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
+        })();
         // [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边。
         this.flipSides = init.followedOnDefenderSide === true;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
@@ -3615,7 +3754,7 @@ export class Scene13WarLayer {
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
-                    this.ensureType(key);
+                    this.ensureType(key, side.f);
                     // 🔴 [2026-08-17 修·「刚一交战就卡一下」] 抛射物素材必须**开战前**就跟着兵种一起预载。
                     //    原来是第一次放箭那一刻才 ensureProj（懒加载），而 ensureProj 会把 pending +1，
                     //    tick() 只要 pending>0 就整场 return —— 不推进也不渲染。
@@ -3664,6 +3803,7 @@ export class Scene13WarLayer {
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds(VW, VH);
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
+            const __e0 = performance.now();
             this.environmentPlan = generateEnvironment({
                 lat: init.centerLat,
                 lng: init.centerLng,
@@ -3698,6 +3838,7 @@ export class Scene13WarLayer {
                     return 0;                      // 春/夏 → 绿
                 },
             });
+            const __envMs = performance.now() - __e0;
             this.sceneSeason = this.environmentPlan.season;
             // [2026-09-03 主人定] 时段色调：按环境种子确定性抽时段，叠季节/群系/纬度偏色，每场看起来都不一样
             {
@@ -3712,9 +3853,11 @@ export class Scene13WarLayer {
                 this.timeOfDay.begin(grade, performance.now());
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
             }
+            const __d0 = performance.now();
             this.initTerrain();
             // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
+            this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
             //    跟随军团永远不动）。走 forceResultByRatio 判负通道：它调 onDecision →
@@ -3742,9 +3885,15 @@ export class Scene13WarLayer {
      */
     private buildingStyleFor(side: 0 | 1): string {
         const fid = this.sideFaction[side];
+        const culture = this.sideCulture[side] as RegionType;
+        // 🔴 [2026-09-11 主人「和游戏同步」] 守方 = 本场被攻据点：走**与战略地图同一个**解析
+        //   （据点显式 buildingStyle → 区域表；草原/蒙古强制毡帐 YURT 也在其中）。
+        //   修的是两件事：① 编辑器里改据点建筑风格，战场不跟着变；② 战场自己的
+        //   REGION_BUILDING_STYLE 缺 BASHU/SEAS 两区，实测 77 座据点在战场被画成西欧 WEST。
+        if (side === 1 && this.defenderMapStyle) return this.defenderMapStyle;
         const byFaction = fid ? FACTION_BUILDING_STYLE[fid] : undefined;
         if (byFaction) return byFaction;
-        return REGION_BUILDING_STYLE[this.sideCulture[side] as RegionType] ?? 'WEST';
+        return REGION_BUILDING_STYLE[culture] ?? REGION_TO_DE_STYLE[culture] ?? 'WEST';
     }
 
     /**
@@ -3759,104 +3908,15 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-09-06 主人定] 攻城战前 30 秒攻城武器体系（严格遵循三大铁律）：
-     * 1. 符合历史：每个文化所采用的攻城武器均根据真实历史与战术传统精准对应；
-     * 2. 纯冷兵器：彻底排除火药火炮等热兵器，只能采用攻城类冷兵器；
-     * 3. 全素材物尽其用：将库内全部 26 种攻城冷兵器素材（含古典器械、床弩车、赫勒波利斯巨塔、骆驼投石机、弩炮战象、攻城塔等）100% 全部用上。
-     * 每场攻城战攻方生成 9 辆器械：破门冲车/冲象 ×3 + 投石/抛石机 ×3 + 弩炮/床弩/象弩 ×2 + 特色/巨型攻城器 ×1。
+     * 攻城战前 30 秒的攻城武器：按【文化 + 军团时代】发，逻辑在 src/data/SiegeWeaponsByCulture.ts。
+     * 🔴 [2026-09-09 主人定] 时代闸：古典军团只用古典器械，封建可用古典+封建，
+     *    城堡再加城堡冷兵器与城堡时代热兵器，帝国全部冷热皆可。
      */
-    private getColdSiegeWeaponsForCulture(culture: RegionType): string[] {
-        const CHINESE = new Set(['CENTRAL', 'NORTH', 'JIANGNAN', 'NORTHEAST', 'KOREA']);
-        const CLASSICAL = new Set(['GREEK', 'LATIN', 'THRACIAN', 'ACHAEMENIDS', 'MACEDONIAN', 'HELLENIC', 'IMPERIAL_ROME', 'GREEK_MERCENARY', 'MAGNA_GRAECIA']);
-        const SOUTH_ASIAN = new Set(['INDIA', 'PURU', 'BENGALIS', 'GURJARAS']);
-        const SE_ASIAN = new Set(['KHMER', 'BURMESE', 'MALAY', 'VIETNAMESE']);
-        // 🔴 [2026-09-06 主人定] 骆驼投石机只给真正的沙漠文化 + 河西（西夏发祥，党项骆驼砲）
-        const NOMAD_DESERT = new Set(['CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'ORIE', 'HEXI']);
-
-        const items: string[] = [];
-
-        // 1. 破门冲撞器 (3 辆)
-        if (SOUTH_ASIAN.has(culture)) {
-            // 印度/南亚：装甲攻城战象（披甲破门巨象）
-            items.push('armored_elephant', 'armored_elephant', 'elite_armored_elephant');
-        } else if (CLASSICAL.has(culture)) {
-            // 古典文明：古典轻/装甲/重型攻城槌
-            items.push('antiquity_battering_ram', 'antiquity_capped_ram', 'antiquity_siege_ram');
-        } else if (culture === 'KHMER' || culture === 'BURMESE') {
-            // 东南亚：冲车配合坚固装甲
-            items.push('battering_ram', 'capped_ram', 'capped_ram');
-        } else {
-            // 华夏、西洋中世纪与常规文明：中世纪轻/装甲/重型攻城槌
-            items.push('battering_ram', 'capped_ram', 'siege_ram');
-        }
-
-        // 2. 投石/重型抛石器 (3 辆)
-        if (CHINESE.has(culture)) {
-            // 华夏系：牵引投石机·砲 (3 辆人力拉索巨抛)
-            items.push('traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet');
-        } else if (CLASSICAL.has(culture)) {
-            // 古典文明：古典轻/中/重型投石车
-            items.push('antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager');
-        } else if (NOMAD_DESERT.has(culture)) {
-            // 沙漠：骆驼投石机 + 中型投石车
-            items.push('mounted_trebuchet', 'mounted_trebuchet', 'onager');
-        } else {
-            // 西洋及其他常规文明：轻/中/重型投石车
-            items.push('mangonel', 'onager', 'siege_onager');
-        }
-
-        // 3. 远程射击/压制器 (2 辆)
-        if (CHINESE.has(culture)) {
-            // 华夏系：攻城床弩车 (大弓床子弩) + 重型弩炮
-            items.push('siege_ballista', 'heavy_scorpion');
-        } else if (culture === 'KHMER') {
-            // 高棉：吴哥弩炮战象 (双弦巨弩象)
-            items.push('ballista_elephant', 'elite_ballista_elephant');
-        } else if (CLASSICAL.has(culture)) {
-            // 古典文明：古典弩炮 + 古典重型弩炮
-            items.push('antiquity_scorpion', 'antiquity_heavy_scorpion');
-        } else if (SE_ASIAN.has(culture)) {
-            // 东南亚其他：弩炮战象 + 重型弩炮
-            items.push('ballista_elephant', 'heavy_scorpion');
-        } else {
-            // 西洋及其他常规文明：弩炮 + 重型弩炮
-            items.push('scorpion', 'heavy_scorpion');
-        }
-
-        // 4. 特色/巨型攻城器 (1 辆)
-        if (CLASSICAL.has(culture)) {
-            // 希腊马其顿：世界古代第一赫勒波利斯攻城巨塔；罗马等：古典攻城塔
-            if (culture === 'GREEK') {
-                items.push('helepolis');
-            } else {
-                items.push('antiquity_siege_tower');
-            }
-        } else if (CHINESE.has(culture)) {
-            // 华夏：临冲攻城云梯塔
-            items.push('siege_tower');
-        } else if (SOUTH_ASIAN.has(culture)) {
-            // 印度南亚：装甲攻城巨象
-            items.push('armored_elephant');
-        } else if (culture === 'KHMER') {
-            // 高棉：精锐弩炮战象
-            items.push('elite_ballista_elephant');
-        } else if (NOMAD_DESERT.has(culture)) {
-            // 沙漠：骆驼投石机
-            items.push('mounted_trebuchet');
-        } else if (culture === 'STEPPE') {
-            // 草原/鞑靼：鞑靼火焰骆驼（自爆火焰破门）
-            items.push('flaming_camel');
-        } else {
-            // 西洋中世纪：攻城塔 + 爆破工兵（自爆炸药破门）
-            items.push('siege_tower', 'petard');
-        }
-
-        return items.slice(0, 10);
-    }
 
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
-        const nine = this.getColdSiegeWeaponsForCulture(culture);
+        const nine = getSiegeWeaponsForCulture(culture);
+        // 美洲原住民不发攻城器械（没有冲车/投石机传统），城墙走 30 秒随机坍塌那条路
         if (!nine.length) return;
 
         // 位置：攻方出兵口（row0）与城墙之间的中间。
@@ -3866,7 +3926,7 @@ export class Scene13WarLayer {
         const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
         for (const key of nine) {
-            this.ensureType(key);
+            this.ensureType(key, 0);
             const x = lineX;
             const y = yMin + Math.random() * (yMax - yMin);
             const hp = this.statsFor(key, 0).hp;
@@ -4121,6 +4181,8 @@ export class Scene13WarLayer {
     }
 
     public stop(reason = 'unknown', keepFrame = false): void {
+        if (!keepFrame) this.restoreStrategyMap();
+        this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
         this.lingering = false;
@@ -4160,6 +4222,7 @@ export class Scene13WarLayer {
         this.playerCtlLanes.clear();
         this.heroInput = null;
         this.heroMan = null;
+        this.heroRespawnTimer = 0;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         if (!keepFrame && this.canvas) {
@@ -4433,7 +4496,9 @@ export class Scene13WarLayer {
     }
 
     private applyBuildingsForSide(f: 0 | 1): void {
-        const side = this.spawns.filter((s) => s.f === f);
+        // 玩家自带精锐是临时追加的战术出兵位，不属于军团九格编制；
+        // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
+        const side = this.spawns.filter((s) => s.f === f && !s.playerElite);
         // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)守方**都在最前排营地前铺一道木桩拒马线。
         // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
         const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade';
@@ -4931,6 +4996,7 @@ export class Scene13WarLayer {
         g.clearRect(0, 0, cv.width, cv.height);
         const terrain = this.groundPainter.terrain;
         if (terrain) g.drawImage(terrain, 0, 0);
+        this.decorHasTerrain = this.groundPainter.isTerrainReady();
         for (const p of this.decorPatches) {
             // 🔴 动态水体由 renderDynamicWater 逐帧动态渲染，不烙进静态底图 decor，根除底层静态水纹导致的重影与凝滞
             if (p.isWater) continue;
@@ -4949,6 +5015,45 @@ export class Scene13WarLayer {
      * DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以舒缓自然的 2:1 流速平铺流动水波与波光反射
      */
     private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
+    private waterTileCache = new WeakMap<HTMLImageElement, {
+        canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; at: number; pattern: CanvasPattern | null;
+    }>();
+
+    /** 两层水纹和微光先在一个可平铺纹理单元内合成，避免每个大水域反复做三次混合。 */
+    private composedWaterPattern(img: HTMLImageElement, source: CanvasPattern, t: number): CanvasPattern | null {
+        let tile = this.waterTileCache.get(img);
+        if (!tile) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            tile = { canvas, ctx: canvas.getContext('2d')!, at: -Infinity, pattern: null };
+            this.waterTileCache.set(img, tile);
+        }
+        if (tile.at === t) return tile.pattern;
+        const g = tile.ctx, w = tile.canvas.width, h = tile.canvas.height;
+        g.clearRect(0, 0, w, h);
+        g.save();
+        g.fillStyle = source;
+        g.translate((t * 8) % w - w, (t * 4) % h - h);
+        g.fillRect(-w, -h, w * 4, h * 4);
+        g.restore();
+        g.save();
+        g.globalCompositeOperation = 'source-atop';
+        g.globalAlpha = 0.22;
+        g.fillStyle = source;
+        g.translate((-t * 3.5) % w - w, (t * 5) % h - h);
+        g.fillRect(-w, -h, w * 4, h * 4);
+        g.restore();
+        g.save();
+        g.globalCompositeOperation = 'source-atop';
+        g.globalAlpha = 0.10;
+        g.fillStyle = '#60c8e8';
+        g.fillRect(0, 0, w, h);
+        g.restore();
+        tile.pattern = g.createPattern(tile.canvas, 'repeat');
+        tile.at = t;
+        return tile.pattern;
+    }
     private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
     private waterSoftMaskCache = new WeakMap<object, HTMLCanvasElement>();
     /** 🔴 [2026-09-03] 每个水块各自一张离屏画布。此前全部水块共用一张：两块尺寸不同就每帧
@@ -4964,6 +5069,8 @@ export class Scene13WarLayer {
     private perfWaterOps = { compose: 0, blit: 0, composeN: 0, blitN: 0 };
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
+    private waterBlurCv: HTMLCanvasElement | null = null;
+    private waterBlurCtx: CanvasRenderingContext2D | null = null;
 
     /**
      * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
@@ -5003,11 +5110,15 @@ export class Scene13WarLayer {
             this.waterMaskCv = document.createElement('canvas');
             this.waterMaskCtx = this.waterMaskCv.getContext('2d')!;
         }
+        if (!this.waterBlurCv) {
+            this.waterBlurCv = document.createElement('canvas');
+            this.waterBlurCtx = this.waterBlurCv.getContext('2d')!;
+        }
         const maskCv = this.waterMaskCv, maskCtx = this.waterMaskCtx!;
+        const blurCv = this.waterBlurCv, blurCtx = this.waterBlurCtx!;
 
         for (const p of waterPatches) {
             const img = p.img!;
-            const tw = img.naturalWidth || 64, th = img.naturalHeight || 32;
             const a = p.alpha ?? 1;
             const bb = this.waterBBoxOf(p);
             if (!bb) continue;
@@ -5026,22 +5137,34 @@ export class Scene13WarLayer {
                 softMask.height = bh;
                 const softCtx = softMask.getContext('2d')!;
 
-                if (maskCv.width !== bw || maskCv.height !== bh) {
-                    maskCv.width = bw;
-                    maskCv.height = bh;
+                // 🔴 [2026-09-10 修复边缘漏地] 外海/侧翼水域延伸至屏幕外时，若在 [0, W] 硬裁切后再 blur，
+                //    会在屏幕外边缘处与空白背景虚化衰减，导致外海最外侧露出底层陆地。
+                //    使用 pad 外扩缓冲区生成遮罩并在带边框内做高斯模糊，再裁剪回 (bw, bh)，
+                //    确保延展至屏幕外的水域在屏幕边缘保持 100% 满不透明度，内陆岸线侧正常自然羽化。
+                const mw = bw + pad * 2;
+                const mh = bh + pad * 2;
+                if (maskCv.width !== mw || maskCv.height !== mh) {
+                    maskCv.width = mw;
+                    maskCv.height = mh;
                 }
-                maskCtx.clearRect(0, 0, bw, bh);
+                if (blurCv.width !== mw || blurCv.height !== mh) {
+                    blurCv.width = mw;
+                    blurCv.height = mh;
+                }
+                maskCtx.clearRect(0, 0, mw, mh);
                 maskCtx.fillStyle = '#ffffff';
+                const ox = bx - pad;
+                const oy = by - pad;
                 if (p.polygon && p.polygon.length >= 3) {
                     maskCtx.beginPath();
-                    maskCtx.moveTo(p.polygon[0].x - bx, p.polygon[0].y - by);
-                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x - bx, p.polygon[i].y - by);
+                    maskCtx.moveTo(p.polygon[0].x - ox, p.polygon[0].y - oy);
+                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x - ox, p.polygon[i].y - oy);
                     maskCtx.closePath();
                     maskCtx.fill();
                 } else {
                     maskCtx.beginPath();
                     for (const [gx, gy] of p.cells) {
-                        const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - by;
+                        const sx = this.isoCellX(gx, gy) - ox, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - oy;
                         maskCtx.moveTo(sx, sy - TILE_H / 2);
                         maskCtx.lineTo(sx + TILE_W / 2, sy);
                         maskCtx.lineTo(sx, sy + TILE_H / 2);
@@ -5051,10 +5174,14 @@ export class Scene13WarLayer {
                     maskCtx.fill();
                 }
 
-                softCtx.save();
-                softCtx.filter = `blur(${blurRadius}px)`;
-                softCtx.drawImage(maskCv, 0, 0);
-                softCtx.restore();
+                blurCtx.clearRect(0, 0, mw, mh);
+                blurCtx.save();
+                blurCtx.filter = `blur(${blurRadius}px)`;
+                blurCtx.drawImage(maskCv, 0, 0);
+                blurCtx.restore();
+
+                softCtx.clearRect(0, 0, bw, bh);
+                softCtx.drawImage(blurCv, pad, pad, bw, bh, 0, 0, bw, bh);
                 this.waterSoftMaskCache.set(p, softMask);
             }
 
@@ -5097,45 +5224,17 @@ export class Scene13WarLayer {
             offCtx.save();
             offCtx.globalCompositeOperation = 'source-in';
 
-            // 🔴 舒缓水流速度（动起来但不过快，沿 2:1 等距视角微风拂水）：
-            // 主波流速：8 px/s（X方向 8，Y方向 4）
-            const dx = (t * 8) % tw;
-            const dy = (t * 4) % th;
             let pat = this.waterPatternCache.get(img) ?? null;
             if (!pat) {
                 pat = offCtx.createPattern(img, 'repeat');
                 if (pat) this.waterPatternCache.set(img, pat);
             }
-            if (pat) {
-                // 主流动波（source-in 裁切入遮罩）
-                const ox = ((dx - bx) % tw + tw) % tw - tw;
-                const oy = ((dy - by) % th + th) % th - th;
-                offCtx.translate(ox, oy);
-                offCtx.fillStyle = pat;
-                offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
-                offCtx.setTransform(R, 0, 0, R, 0, 0);
-
-                // 切换为 source-atop：仅在已有水体像素上叠加，不溢出遮罩且绝不破坏目标 alpha
-                offCtx.globalCompositeOperation = 'source-atop';
-
-                // 次级微波干涉（轻微反向慢速干涉，产生自然波光层次）
-                offCtx.globalAlpha = 0.22;
-                const dx2 = (-t * 3.5) % tw;
-                const dy2 = (t * 5) % th;
-                const ox2 = ((dx2 - bx) % tw + tw) % tw - tw;
-                const oy2 = ((dy2 - by) % th + th) % th - th;
-                offCtx.translate(ox2, oy2);
-                offCtx.fillStyle = pat;
-                offCtx.fillRect(-tw, -th, bw + tw * 2, bh + th * 2);
-                offCtx.setTransform(R, 0, 0, R, 0, 0);
-            } else {
-                offCtx.globalCompositeOperation = 'source-atop';
+            const composed = pat ? this.composedWaterPattern(img, pat, t) : null;
+            if (composed) {
+                offCtx.translate(-bx, -by);
+                offCtx.fillStyle = composed;
+                offCtx.fillRect(bx, by, bw, bh);
             }
-
-            // 清澈碧蓝浅水微光（source-atop 叠加）
-            offCtx.globalAlpha = 0.10;
-            offCtx.fillStyle = '#60c8e8';
-            offCtx.fillRect(0, 0, bw, bh);
             offCtx.restore();
             offCtx.setTransform(1, 0, 0, 1, 0, 0);
             if (import.meta.env.DEV) { this.perfWaterOps.compose += performance.now() - _c0; this.perfWaterOps.composeN++; }
@@ -5286,42 +5385,54 @@ export class Scene13WarLayer {
 
 
     /** 读 AoE2 DE 素材的 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），映射到 slot。 */
-    private async loadDynMeta(dir: string): Promise<{ dyn: NonNullable<WarBank['dyn']>; frames: Record<string, number> } | null> {
+    private async loadDynMeta(dir: string): Promise<{ dyn: NonNullable<WarBank['dyn']>; frames: Record<string, number>; dur: Record<string, number> } | null> {
         try {
             const res = await fetch(`${dir}_meta.json`);
             if (!res.ok) return null;
             const meta: any = await res.json();
             const dyn: NonNullable<WarBank['dyn']> = {};
             const frames: Record<string, number> = {};
+            const dur: Record<string, number> = {};
             // _meta.json 的 action 键 → slot；melee/charge 复用 attack 的元数据。
             const map: Record<string, string[]> = {
                 idle: ['idle'], move: ['move'], attack: ['atk', 'melee', 'charge'], death: ['die'],
             };
             for (const [act, slots] of Object.entries(map)) {
                 if (!meta[act]) continue;
-                for (const slot of slots) { dyn[slot] = meta[act].dirs; frames[slot] = meta[act].frames; }
+                for (const slot of slots) {
+                    dyn[slot] = meta[act].dirs;
+                    frames[slot] = meta[act].frames;
+                    if (typeof meta[act].dur === 'number') dur[slot] = meta[act].dur;
+                }
             }
-            return { dyn, frames };
+            return { dyn, frames, dur };
         } catch { return null; }
     }
 
-    private ensureType(key: string): void {
-        if (this.bank[key]) return;
+    private ensureType(key: string, side: 0 | 1): void {
+        // 只准备实际出场方的染色；同兵种出现在双方时分别补齐，共享原图和元数据。
+        let sides = this.bankSides.get(key);
+        if (sides?.has(side)) return;
+        if (!sides) { sides = new Set(); this.bankSides.set(key, sides); }
+        sides.add(side);
+        const gen = this.assetGen;
+        const faction = this.sideFaction[side];
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
             if (!assets) { this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
-            const b: WarBank = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            const existing = this.bank[key];
+            const b: WarBank = existing ?? { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
             const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
             const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
             b.isDE = isDE;
-            if (isDE) {
+            if (isDE && !existing) {
                 const dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
                 this.pending++;
                 this.loadDynMeta(dir).then(meta => {
-                    if (meta) { b.dyn = meta.dyn; Object.assign(b.frames, meta.frames); }
-                    this.pending--;
-                }).catch(() => { this.pending--; });
+                    if (gen !== this.assetGen) return;
+                    if (meta) { b.dyn = meta.dyn; Object.assign(b.frames, meta.frames); b.dur = meta.dur; }
+                }).finally(() => { if (gen === this.assetGen) this.pending--; });
             }
             const ranged = RANGED_TYPES.has(key);
             // 远程：atk = SHOOT（射击 +40），melee = ATTACK（近战 +8）；近战/骑兵：atk = ATTACK
@@ -5365,8 +5476,9 @@ export class Scene13WarLayer {
                     this.pending += inc;
                     // 🔴 [2026-08-30] 取图统一走 ensureCleanImage：缓存命中 / 正在加载 / 全新加载
                     //    三条路合一，**同一个 url 全场只加载+抠绿+解码一次**（见该函数注释）。
-                    void ensureCleanImage(url, (img) => this.dechromaToDataUrl(img)).then((clean) => {
-                        if (!clean) return;
+                    // DE 素材（isDE）跳过抠绿：判据在透明 PNG 上恒不命中，纯浪费（见 ensureCleanImage 注释）
+                    const load = () => { void ensureCleanImage(url, isDE ? null : (img) => this.dechromaToDataUrl(img), blocking).then((clean) => {
+                        if (!clean || gen !== this.assetGen) return;
                         // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
                         if (!isDE) {
                             b.fh = clean.naturalHeight;
@@ -5374,18 +5486,16 @@ export class Scene13WarLayer {
                             //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
                             b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
                         }
-                        // 染色仍走主游戏正牌链路 SpriteTinter（势力色每局变，不进 Worker）：
+                        // 染色走 SpriteTinter 共用算法，后台线程处理像素并返回可直接绘制的位图：
                         // 🔴 不能自己「盖一层半透明势力色」——那会把贴图洗白、和素材底色混成脏色
                         //    （主人 2026-08-11 截图实锤「色不正」，一军发紫一军发黄）。
-                        return Promise.all([
-                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[0]),
-                            SpriteTinter.getTintedSpriteReady(clean, this.sideFaction[1]),
-                        ]).then(([attacker, defender]) => {
-                            b.sets[slot][0][d] = attacker;
-                            b.sets[slot][1][d] = defender;
+                        // SpriteTinter 限制在途位图数量，避免大批素材同时复制占满内存。
+                        return SpriteTinter.getTintedSpriteReady(clean, faction, blocking).then((tinted) => {
+                            if (gen !== this.assetGen) return;
+                            b.sets[slot][side][d] = tinted;
                         }).catch((e) => {
-                            b.sets[slot][0][d] = clean;
-                            b.sets[slot][1][d] = clean;
+                            if (gen !== this.assetGen) return;
+                            b.sets[slot][side][d] = clean;
                             console.warn('[Scene13WarLayer] 染色失败（回退原图）:', key, slot, d, e);
                         });
                     }).catch((e) => {
@@ -5395,7 +5505,10 @@ export class Scene13WarLayer {
                         //    `pending > 0` → 演出冻结、战斗面板数字不动（2026-08-11 实锤过）。
                         //    但跨场的回调不许减（见 assetGen）：那一场的 pending 早已整体清零。
                         if (gen === this.assetGen) this.pending -= inc;
-                    });
+                    }); };
+                    // 后用动作等开场素材齐全再加载，避免网络连接被死亡/残局动作占满。
+                    if (blocking || this.assetsReadyOnce) load();
+                    else this.deferredAssetLoads.push(load);
                 }
             }
             this.bank[key] = b;
@@ -5599,9 +5712,9 @@ export class Scene13WarLayer {
             let batch = SIDE_CAP;                  // 一次补 324（固定批量）
             for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
-            /* ── 【忍者奇袭】──────────────────────────────────────────────────────
-             * 开局那批照常从己方出兵口列阵；**第二波起**的补兵，所有忍者
-             * 都绕到敌军背后出生。
+            /* ── 【背刺奇袭】──────────────────────────────────────────────────────
+             * 开局那批照常从己方出兵口列阵；**第二波起**的补兵，白名单
+             * （FLANK_TYPES：忍者/马来爪刀/靛蓝突袭者/图皮战棍）都绕到敌军背后出生。
              *   · 为什么只改出生点：13 的「编队自主寻敌」试过五次全败（见文件头），
              *     出路是剧本法。奇袭在这里就是一条剧本 —— 换个地方出生，之后照常索敌，
              *     不新增任何自主决策，也不碰判负。
@@ -5619,7 +5732,7 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                const isFlank = isSupplyWave && s.key === 'ninja';
+                const isFlank = isSupplyWave && FLANK_TYPES.has(s.key);
                 // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
                 // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
                 const tgt = isFlank
@@ -5848,13 +5961,72 @@ export class Scene13WarLayer {
      * 实测（war_sim，同兵种对镜）：横向铺开 30→36px（+20%）、攻击/移动状态切换 0.30→0.26 次/人·秒；
      * 克制三边方向不变、幅度差 1~7%；时长在噪声内。
      */
-    private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0): WarMan | WarBuilding | null {
+    /**
+     * 🔴 [2026-09-11] 最小射程**只在分配新目标时**起作用（search 的 free / inRange 两级优先），
+     *    绝不用来「丢锁 / 禁止出手 / 过滤范围伤」——2026-09-09 那版三处都判了盲区，结果是
+     *    投石机被贴到 120px 内直接丢锁、`st=0` 站着不还手，而重搜与 aimAt 的 `best` 兜底
+     *    照样返回那个贴脸的人，于是「呆站一帧 → 朝他走一帧」来回循环，成了活靶子。
+     *    2026-08-17 定稿的原话就写在 search 头注里：「实在只剩贴脸的才打（总比呆站着强）」。
+     *    贴脸时不出弹丸这件事另有出口（见下面出手处的 tooClose），伤害照结算，别再往回改。
+     */
+    private canKeepTarget(m: WarMan, sight: number): boolean {
+        const target = m.foe;
+        if (!target || target.f === m.f) return false;
+        if ('sprite' in target && (target.sprite.destroyed || target.sprite.obstructionDisabled)) return false;
+        const wallKeep = 'sprite' in target && target.linked === true && !target.sprite.obstructionDisabled
+            && this.battleType === 'siege' && m.f === 0 && this.defenderHolding;
+        return (target.hp > 0 || wallKeep)
+            && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight * 1.44;
+    }
+
+    private recentAttacker(m: WarMan, sight: number): WarMan | null {
+        const attacker = m.hurtBy;
+        // 只响应最近半秒内的实际受伤；旧记录不能长期牵引寻敌。
+        if (!attacker || m.hurtAt === undefined || this.battleSec - m.hurtAt > 0.5
+            || attacker.hp <= 0 || attacker.f === m.f) {
+            m.hurtBy = null;
+            m.hurtAt = undefined;
+            return null;
+        }
+        // 贴脸的攻击者照样要回头反击（最小射程只管分配新目标，见 canKeepTarget 头注）。
+        const distance2 = (attacker.x - m.x) ** 2 + (attacker.y - m.y) ** 2;
+        return distance2 < sight * sight * 1.44 ? attacker : null;
+    }
+
+    private reserveExistingTargets(deploying: boolean): void {
+        for (const target of this.men) target.claims = 0;
+        for (const target of this.wallGates) target.claims = 0;
+        for (const m of this.men) {
+            m.reservedFoe = null;
+            if (deploying || m.hp <= 0 || (this.defenderHolding && !m.siegeW)) continue;
+            if (this.canKeepTarget(m, this.statsFor(m.key, m.f).sight ?? 160)) {
+                m.reservedFoe = m.foe;
+                m.foe!.claims++;
+            }
+        }
+    }
+
+    private releaseReservedTarget(m: WarMan): void {
+        if (m.reservedFoe) {
+            m.reservedFoe.claims--;
+            m.reservedFoe = null;
+        }
+    }
+
+    private waitAtRangeEdge(m: WarMan, inBand: boolean, dt: number): boolean {
+        m.rangeWait = inBand ? (m.rangeWait ?? 0) + dt : 0;
+        // 保留短暂防抖；最多等待一个索敌周期，之后沿原追击流程接敌。
+        return inBand && m.rangeWait <= 0.2;
+    }
+
+    private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
         const r2 = radius * radius;
-        let best: WarMan | WarBuilding | null = null, bd = r2;      // 最近的未满目标（最小射程兜底）
+        let best: WarMan | WarBuilding | null = null, bd = r2;      // 最近敌人，最后兜底
+        let inRange: WarMan | null = null, rd = r2;                // 满员时仍优先选最小射程以外的敌人
         let free: WarMan | WarBuilding | null = null, fd = r2;      // 最近的未满且满足最小射程目标
         // 🔴 [2026-08-17] 投石车/投石机有最小射程：贴太近就抛不出去（DE 同款）。
         //    原来只在**放弹丸**那一步判 tooClose，结果贴脸时「照样扣血、就是不出石弹」——
@@ -5862,13 +6034,10 @@ export class Scene13WarLayer {
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
         for (let ring = 0; ring <= span; ring++) {
-            // 已有候选，且它比下一环任何格子的最小可能距离都近 → 不可能更近了，停
-            // （按真正会被返回的那个候选判，否则会在还能找到空闲目标时提前收工）
-            const cand = free ?? best;
-            const cd = free ? fd : bd;
-            if (cand) {
+            // 只有找到未满且满足最小射程的目标才能提前结束；兜底目标不能遮蔽外环的合适敌人。
+            if (free) {
                 const floor = (ring - 1) * cell;
-                if (floor > 0 && cd < floor * floor) break;
+                if (floor > 0 && fd < floor * floor) break;
             }
             for (let gx = cx - ring; gx <= cx + ring; gx++) {
                 for (let gy = cy - ring; gy <= cy + ring; gy++) {
@@ -5884,6 +6053,7 @@ export class Scene13WarLayer {
                         // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
                         // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
                         if (d < bd) { bd = d; best = o; }
+                        if (!tooNear && d < rd) { rd = d; inRange = o; }
                         if (o.claims >= SPREAD_CAP) continue;
                         if (!tooNear && d < fd) { fd = d; free = o; }
                     }
@@ -5911,7 +6081,7 @@ export class Scene13WarLayer {
                 if (d < bwd) { bwd = d; bw = b; }
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
-            if (bw) { bw.claims++; return bw; }
+            if (bw) { if (reserve) bw.claims++; return bw; }
             // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙
             //    → 不锁城内守军（守方按兵不动），返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭。
             if (this.defenderHolding) return null;
@@ -5927,8 +6097,8 @@ export class Scene13WarLayer {
             if (d < bd) { bd = d; best = b; }
             if (!tooNear && d < fd) { fd = d; free = b; }
         }
-        const chosen = free ?? best;
-        if (chosen) chosen.claims++;
+        const chosen = free ?? inRange ?? best;
+        if (chosen && reserve) chosen.claims++;
         return chosen;
     }
 
@@ -5943,6 +6113,11 @@ export class Scene13WarLayer {
         //    否则士兵每打破一段残墙又触发一次"塌一半"，反复迭代到全塌。
         if (this.wallsCollapsed) { this.defenderHolding = false; return; }
         this.wallsCollapsed = true;
+        // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候请用城墙倒塌.WAV 音效」
+        //    这里是**全片唯一**的塌墙点：开战 WALL_AUTO_COLLAPSE_SEC(30s) 保底随机塌一半城墙；
+        //    士兵凿墙只做破损贴图、墙 hp 归零也不破墙不联动（见 step 里 2026-08-23 那条注释），
+        //    所以这一声 = 「30 秒城墙倒塌」那一下。放在 wallsCollapsed 闸门之后 → 每场只响一次。
+        audioManager.play('wall_collapse');
         // 🔴 [2026-08-23 主人定] 坍塌后**彻底移除碰撞体**：obstruction = undefined（字段语义
         //    「未设置即不阻挡」，resolveWorldObstructions 第一关 !obstruction 直接跳过）+
         //    obstructionDisabled = true 双保险。遍历**所有** wallGates（含已 hp=0、城门 extra），
@@ -6111,8 +6286,14 @@ export class Scene13WarLayer {
         const target = this.statsFor(foe.key, foe.f);
         const dmg = Math.max(1, t.atk - target.pierceArmor);
         foe.atkNext++;
-        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul();
-        if (foe.hp <= 0) this.pushCorpse(foe);
+        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+            * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
+        // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
+        //    而不是走落马重整（heroDown）。攻城战守方满墙箭塔，这条路正是「玩家一直死」的大头。
+        if (foe.hp <= 0) {
+            if (foe.hero) this.heroDown(foe);
+            else this.pushCorpse(foe);
+        }
         const ax = foe.x - fireX, ay = foe.y - fireY;
         const ad = Math.hypot(ax, ay) || 1;
         // 🔴 [2026-08-29 主人需求] 攻击特效 = 诸葛连弩：一次连发 3 支（复用 WarArrow.delay 连发机制，
@@ -6156,7 +6337,7 @@ export class Scene13WarLayer {
         return Math.min(ATTRITION_CAP, 1 + over / ATTRITION_RAMP_SEC);
     }
 
-    private splash(m: WarMan, radius: number, shooter: WarType, dt: number): void {
+    private splash(m: WarMan, radius: number, shooter: WarType, dt: number, mult = 1): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
         for (let gx = cx - span; gx <= cx + span; gx++) {
@@ -6166,11 +6347,16 @@ export class Scene13WarLayer {
                 for (const o of a) {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
+                    // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult / shooter.reload;
                     o.atkNext++;
-                    o.hurtBy = m;   // 【被攻击反击】范围伤也记录攻击者
-                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt;
+                    if (dps > 0) {
+                        o.hurtBy = m;
+                        o.hurtAt = this.battleSec;
+                    }
+                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt
+                        * (o.hero ? HERO_DAMAGE_TAKEN : 1);   // 范围伤同样给玩家免伤
                     if (o.hp <= 0) this.onManKilled(o, m);
                 }
             }
@@ -6250,7 +6436,7 @@ export class Scene13WarLayer {
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
-        const near = this.search(m, MARCH_R);
+        const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, false);
         if (near) return { x: near.x, y: near.y };
         // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
         //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
@@ -6392,6 +6578,14 @@ export class Scene13WarLayer {
             }
         }
         this.spawnTick(dt);
+        // 🔴 [2026-09-09 主人定] 玩家阵亡 10 秒复活倒计时
+        if (this.heroRespawnTimer > 0) {
+            this.heroRespawnTimer -= dt;
+            if (this.heroRespawnTimer <= 0) {
+                this.heroRespawnTimer = 0;
+                this.respawnHero();
+            }
+        }
         // 🔴 [2026-08-23 主人改] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
         //    随机坍塌一次——即使攻城武器还没打穿墙，30 秒后也强制随机塌一批，留出足够缺口。
         //    🔴 [2026-09-03 主人定] 城寨(stockade)无 30 秒坍塌——被攻方打穿才塌，和野战一样。
@@ -6422,11 +6616,10 @@ export class Scene13WarLayer {
         this.marchTick(dt, deploying);
 
         this.rebuild();
-        // 本帧从零登记追击名额；search 选中目标时立即占位，避免同一帧的一批士兵
-        // 都读到上一帧的旧计数后同时扑向同一个人。
-        for (const target of this.men) target.claims = 0;
-        for (const b of this.wallGates) b.claims = 0;
+        // 先登记全体有效锁定，新索敌者才能看见排在自己后面的同伴已占用的名额。
+        this.reserveExistingTargets(deploying);
         for (const m of this.men) {
+            this.releaseReservedTarget(m);
             if (m.hp <= 0) continue;
             // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
             if (deploying) {
@@ -6487,9 +6680,6 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方锁定的正面 linked 墙/门：打墙不封顶——
             //    DE 攻方人挤人攻墙，墙是长条，separate 软推挤会沿墙铺开不会挤一个点；
             //    否则 300+ 攻方兵只有 ~85 名额锁到墙，其余每帧锁不到墙 → 丢目标 → 穿墙蹭。
-            const siegeWallKeep = m.foe && 'sprite' in m.foe && m.foe.linked
-                && !m.foe.sprite.obstructionDisabled
-                && this.battleType === 'siege' && m.f === 0;
             // 🔴 [2026-08-23 主人定·重设计] 攻城武器凿墙：锁定的墙 hp 归零（视觉破损到顶 D75）也继续凿到
             //    40 秒墙塌（obstructionDisabled → siegeWallKeep 失效）才丢目标——防攻城锤打空一段后
             //    转追墙内守兵、撞墙（墙 40 秒前仍阻挡）来回蹭。
@@ -6507,16 +6697,22 @@ export class Scene13WarLayer {
             //    SPREAD_CAP 的设计本意是**分配新目标时**分流（search 里的 free 分支：
             //    「让第 5 个人去找次近的空闲目标」），不是把已经在交战的人赶走。DE 同理：
             //    单位锁定目标后打到目标死，不会因为「这人已经被 4 个人打了」自己走开。
-            const keep = m.foe && (m.foe.hp > 0 || (siegeWallKeep && this.defenderHolding))
-                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < SIGHT * SIGHT * 1.44;
-            if (keep && m.foe) m.foe.claims++;
-            if (!keep && m.next <= 0) {
-                // 【被攻击反击】优先锁定最近攻击我的人（无视围殴封顶 SPREAD_CAP）：
-                // 残兵追着打时，被残兵贴身砍的兵即使 claim 不到残兵（已被 4 人占满），
-                // 也要回头反击，而不是继续走巡逻航路。
-                const hb = m.hurtBy;
-                if (hb && hb.hp > 0 && hb.f !== m.f
-                    && (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 < SIGHT * SIGHT * 1.44) {
+            const previousTarget = m.foe;
+            const keep = this.canKeepTarget(m, SIGHT);
+            const hb = this.recentAttacker(m, SIGHT);
+            const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
+                && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
+                && (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 < 65 * 65;
+            if (!keep) m.rangeWait = 0;
+            if (reactWhileChasing) {
+                // 正在追赶打不到的敌人时，优先反击贴身攻击者；已能交战则保持原目标。
+                m.foe = hb;
+                hb.claims++;
+                m.next = 0.2;
+            } else if (keep && m.foe) {
+                m.foe.claims++;
+            } else if (m.next <= 0) {
+                if (hb) {
                     m.foe = hb;
                     hb.claims++;
                 } else {
@@ -6524,6 +6720,10 @@ export class Scene13WarLayer {
                 }
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
+            if (m.foe !== previousTarget) {
+                m.fightT = 0;
+                m.rangeWait = 0;
+            }
 
             // DE Attack Move：没有发现敌人时保持编队推进；个人视野内一旦锁敌，立即脱离编队交战。
             if (m.march && m.foe) {
@@ -6555,6 +6755,8 @@ export class Scene13WarLayer {
 
             const foe = m.foe;
             if (foe) {
+                // 🔴 [2026-09-11] 这里**没有**最小射程出口：只剩贴脸目标时照常出手扣血，
+                //    只是不生成弹丸（见下面 tooClose）。理由见 canKeepTarget 头注。
                 const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
                 /* ── 【放风筝】主人 2026-08-22 定「被攻击才撤、撤一段就停」──────────────
                  * 触发 = 被近战贴脸（kd < 65，敌人已挥刀砍过来），不是 70px 预判跑——
@@ -6626,6 +6828,7 @@ export class Scene13WarLayer {
                 //    抖动来自贴身互推（每帧一两个像素），25px 足够盖住，不需要更宽。
                 const hystBand = REACH + Math.min(REACH * 0.2, 25);
                 const inHystBand = !inReach && engaged && fd2 < hystBand ** 2;
+                const waitInHystBand = this.waitAtRangeEdge(m, inHystBand, dt);
                 // 缠斗 4 秒脱离。
                 // 🔴 [2026-08-17 修] 只在**够得着**的时候计时——把「跑过去的路上」也算进这 4 秒，
                 //    会让慢速大视野兵种永远打不到人：象兵 LOS 280、贴身 65、速度 40，
@@ -6635,9 +6838,9 @@ export class Scene13WarLayer {
                     // 接触交战音景：两军接触起**循环**垫底，直到演出退场（stop 里停）。
                     // 不在列阵期起（deploying 分支已 continue），只在真正接敌那一刻。
                     // contactSfxPlayed 只为省掉每帧重复调用，startSceneLoop 本身是幂等的。
-                    // 🔴 [2026-08-23 主人定] 攻城战改在城墙坍塌后起（collapseFrontWalls），
-                    //    攻城武器打墙（inReach 出手）不该提前起；野战照旧在此处起。
-                    if (!this.contactSfxPlayed && this.battleType !== 'siege') {
+                    // 普通城池在 30 秒塌墙前仍由 defenderHolding 拦住；野战与无需塌墙的城寨
+                    // 在首次真正进入攻击距离时启动战斗音效。
+                    if (!this.contactSfxPlayed && !this.defenderHolding) {
                         this.contactSfxPlayed = true;
                         audioManager.startSceneLoop('land_contact');
                     }
@@ -6676,7 +6879,7 @@ export class Scene13WarLayer {
                     continue;
                 }
                 // 够不着 → 追击（DE「看见就冲上去」；近战从 LOS 圈走向贴身，远程够射程前走位）
-                if (inHystBand) {
+                if (waitInHystBand) {
                     // 迟滞带：被推挤挤出攻击距离一点点，站住别动，姿势保持不变（见上面的说明）。
                     // 不改 m.st，所以渲染继续用上一帧那套帧，不会在攻击帧/移动帧之间来回跳。
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -6761,7 +6964,9 @@ export class Scene13WarLayer {
                 // 交战中也走迟滞：贴身互推时目标方位每帧摆动，直接 dir8 会让贴图在两个朝向间跳
                 m.dir = this.dir8Hyst(m.dir, foe.x - m.x, foe.y - m.y);
                 m.lock = (m.lock ?? 0) - dt;
-                const reloadTime = stats.reload || 2.0;
+                // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快
+                const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
+                const reloadTime = (stats.reload || 2.0) / heroRate;
                 if (m.lock <= 0) {
                     m.lock = reloadTime; m.ph = 0;
                     m.shot = false;   // 新一轮：等攻击动画播到放箭相位再射
@@ -6774,7 +6979,7 @@ export class Scene13WarLayer {
                         : undefined;
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
-                    if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
+                    if (this.bank[m.key]?.sets.charge?.[m.f]?.length) m.atkFlip = !m.atkFlip;
                     // 火矛手充能喷火（DE：进战先喷 3 发短程火枪弹，30 秒充能）
                     if (FIRE_LANCER_TYPES.has(m.key) && (m.chargeCd ?? 0) <= 0 && foe && !('sprite' in foe)) {
                         m.chargeCd = FIRE_LANCER_CHARGE;
@@ -6873,14 +7078,18 @@ export class Scene13WarLayer {
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
                     : 0;
                 const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
-                const dps = (primaryDamage + secondaryDamage) / shooter.reload;
-                if (wt.aoe) this.splash(m, REACH, shooter, dt);
+                const dps = (primaryDamage + secondaryDamage) * heroRate / shooter.reload;
+                if (wt.aoe) this.splash(m, REACH, shooter, dt, heroRate);
                 else {
                     foe.atkNext++;
-                    if (!('sprite' in foe)) foe.hurtBy = m;   // 【被攻击反击】记录攻击者（建筑不反击）
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (dps > 0) {
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        if (!('sprite' in foe)) {
+                            foe.hurtBy = m;
+                            foe.hurtAt = this.battleSec;
+                        }
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt
+                            * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
@@ -7220,6 +7429,9 @@ export class Scene13WarLayer {
         //    开战后缺图不影响推演：抛射物渲染本来就是「img 未就绪跳过不画」，顶多少画几支箭。
         //    （这一版还顺手把抛射物挪到开场预载了，正常已经不会走到这条；留着是防下一次有人再加懒加载。）
         if (this.pending > 0 && !this.assetsReadyOnce) {
+            // 先显示已经就绪的战场，素材等待不再迫使浏览器反复合成底下的战略地图。
+            // 此处只绘制，部队部署与战斗计时仍等必需素材全部就绪才开始。
+            if (this.decorHasTerrain) this.render();
             // 🔴 [2026-08-11 实锤] 素材 pending 卡死 = 演出冻结 + 引擎冻结（scene13Frozen）
             //    → 跟随军团永远不动、战斗面板数字不动（主人截图实锤）。
             //    素材若 30 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
@@ -7244,6 +7456,11 @@ export class Scene13WarLayer {
         this.pendingStartedAt = 0;
         // 首批素材齐了 → 从此这场仗不再为任何素材停下（见上面那道闸）
         if (this.pending <= 0) this.assetsReadyOnce = true;
+        if (this.assetsReadyOnce && this.deferredAssetLoads.length) {
+            const loads = this.deferredAssetLoads;
+            this.deferredAssetLoads = [];
+            for (const load of loads) load();
+        }
         if (!this.diagAssetsReady) {   // 素材就绪的那一刻打点（诊断用，见 diagPush）
             this.diagAssetsReady = true;
             this.diagPush('assetsReady');
@@ -7392,7 +7609,7 @@ export class Scene13WarLayer {
             //   ① 移动时**逐轮交替**：一轮移动、一轮冲锋（见 CHARGE_CYCLE）；
             //   ② 攻击时按出手轮次与攻击帧交替（m.atkFlip 每轮出手翻转）。
             // 其余兵种不受影响：赶路一律移动帧、攻击固定攻击帧。白刃（st=2）用近战帧。
-            const hasChg = !!this.bank[m.key]?.sets.charge?.[0]?.length;
+            const hasChg = !!this.bank[m.key]?.sets.charge?.[m.f]?.length;
             let set: string;
             // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）。
             // 🔴 [2026-08-30 修·滑步] 部署期（deployT>0）step 的 deploying 分支对**所有**兵 continue（静止）、
@@ -7400,14 +7617,14 @@ export class Scene13WarLayer {
             //    之前误加 !m.march && !m.siegeW，让静止的列阵兵播走路帧 = 原地踏步/滑步。
             //    攻城武器真正开动是 deployT 归零后的 defenderHolding 打墙阶段，由下面 !m.siegeW 单独管。
             if (this.lingering || this.deployT > 0 || (this.defenderHolding && !m.siegeW)) {
-                set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
+                set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
             //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
             //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
             // 首批列阵仍在整体推进时，骑兵会用自身高速追上按最慢兵种前移的槽位，随后多帧停在
             // ARRIVE_EPS 内等槽位继续前移；这不是堵死，不能因 stuckT 改播 idle，避免骑兵静止滑行。
-            else if (!m.march && m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[0]?.length) {
+            else if (!m.march && m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
             else if (m.st === 0) {
@@ -7420,7 +7637,7 @@ export class Scene13WarLayer {
             //    动作固定 1.5s 播完，而火炮装填 6.5s（僵 5s）、牵引投石机 11s（僵 9.5s）。
             //    （短装填兵种 reload≈2s 只僵 0.5s，本来就看不出来。）
             //    没有 idle 素材的兵种退回原样定格末帧 —— 绝不退回 move，站着原地迈腿更假。
-            else if (m.ph >= 8 && (m.lock ?? 0) > 0 && this.bank[m.key]?.sets.idle?.[0]?.length) {
+            else if (m.ph >= 8 && (m.lock ?? 0) > 0 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
             else if (m.st === 2) set = 'melee';
@@ -7493,7 +7710,7 @@ export class Scene13WarLayer {
             const fr = v.set === 'die'
                 ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
                 : (v.set === 'move' || v.set === 'idle' || v.st === 0)
-                    ? Math.floor(v.fr * n / 8) % n                     // 移动/待命/走路：循环
+                    ? Math.floor(v.fr * n * loopRate(b, v.set) / 8) % n // 移动/待命/走路：循环
                     : Math.min(n - 1, Math.floor(v.fr * n / 8));       // 攻击/近战/冲锋：播满停末帧（ph=8 不再溢出回第一帧）
             const dm = b.dyn?.[v.set]?.[v.dir];
             // 🔴 DE 素材 meta 未就绪：跳过本帧，S10DB 正方形假设（fh=84）会切错 DE 非正方形 strip（144px 等）
@@ -7801,6 +8018,7 @@ export class Scene13WarLayer {
             }
         }
         if (flip) ctx.restore();
+        this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
         if (this.timeOfDay.active) {
             const _tt0 = import.meta.env.DEV ? performance.now() : 0;

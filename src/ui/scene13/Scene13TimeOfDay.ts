@@ -58,7 +58,7 @@ const BASE_MULTIPLY: Record<DayPhase, RGB> = {
     noon:      [255, 255, 250],
     afternoon: [255, 241, 216],
     dusk:      [226, 188, 168],
-    night:     [138, 156, 204],
+    night:     [138, 156, 204],   // ⚠️ 已停用：2026-09-11 主人「夜晚的滤镜删除」→ resolveTimeOfDay 对 night 直接返回恒等
 };
 
 const BASE_SCREEN: Record<DayPhase, ScreenGlow> = {
@@ -67,7 +67,7 @@ const BASE_SCREEN: Record<DayPhase, ScreenGlow> = {
     noon:      { rgb: [255, 255, 235], top: 0.05, fadeTo: 0 },
     afternoon: { rgb: [255, 225, 170], top: 0.10, fadeTo: 0.65 },
     dusk:      { rgb: [255, 120, 55],  top: 0.24, fadeTo: 0.70 },
-    night:     { rgb: [80, 100, 175],  top: 0.08, fadeTo: 0 },
+    night:     { rgb: [80, 100, 175],  top: 0.08, fadeTo: 0 },   // ⚠️ 同上，已停用
 };
 
 /** 各时段抽取权重（战斗多在白天；夜战存在但少） */
@@ -135,6 +135,18 @@ function forcedPhase(): DayPhase | null {
 
 export function resolveTimeOfDay(input: ResolveInput): TimeOfDayGrade {
     const phase = forcedPhase() ?? pickPhase(input.seed, input);
+    // 🔴 [2026-09-11 主人定]「把战斗模式中，夜晚的滤镜删除。」
+    //    夜晚不再套任何色调滤镜：multiply / screen 都回到**恒等**（白 = 不改变），
+    //    也**不再叠**季节与群系偏移 —— 夜战就是原色战场，跟正午一样清亮。
+    //    （时段本身仍保留在池里：dusk 的"黄昏入夜"漂移、其余五个时段配色一律照旧，未动。）
+    if (phase === 'night') {
+        return {
+            phase,
+            multiply: [255, 255, 255],
+            screen: { rgb: [255, 255, 255], top: 0, fadeTo: 0 },
+            driftTo: null,
+        };
+    }
     const multiply = round(applyClimate(BASE_MULTIPLY[phase], phase, input));
     let driftTo: RGB | null = null;
     // 黄昏在一场仗里慢慢入夜、黎明慢慢放亮：60s 内可见，但不到夜战那么暗

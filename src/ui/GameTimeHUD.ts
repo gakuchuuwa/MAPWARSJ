@@ -21,6 +21,22 @@ export class GameTimeHUD {
     private seasonEl: HTMLElement | null = null;
     private runBtn: HTMLElement | null = null;
     private zoomLevelEl: HTMLElement | null = null;
+    private collapseIconEl: HTMLElement | null = null;
+    private collapseLabelEl: HTMLElement | null = null;
+
+    /**
+     * 折叠/展开右下角 HUD。persist=true 才写入偏好（仅手点）。
+     */
+    public setCollapsed(collapsed: boolean, persist: boolean): void {
+        if (!this.root) return;
+        this.root.classList.toggle('is-collapsed', collapsed);
+        if (this.collapseIconEl) this.collapseIconEl.textContent = collapsed ? '▲' : '▼';
+        if (this.collapseLabelEl) this.collapseLabelEl.textContent = collapsed ? '控制' : '收起';
+        if (!persist) return;
+        try {
+            localStorage.setItem('mapwar_time_hud_collapsed', collapsed ? '1' : '0');
+        } catch {}
+    }
 
     init(): void {
         this.root = document.getElementById('game-time-hud');
@@ -37,30 +53,27 @@ export class GameTimeHUD {
 
         // 折叠/展开控制按钮
         const toggleBtn = document.getElementById('toggle-time-hud-btn');
-        const toggleIcon = document.getElementById('toggle-time-hud-icon');
-        const toggleLabel = document.getElementById('toggle-time-hud-label');
-        const applyCollapseState = (collapsed: boolean) => {
-            if (!this.root) return;
-            this.root.classList.toggle('is-collapsed', collapsed);
-            if (toggleIcon) toggleIcon.textContent = collapsed ? '▲' : '▼';
-            if (toggleLabel) toggleLabel.textContent = collapsed ? '控制' : '收起';
-            try {
-                localStorage.setItem('mapwar_time_hud_collapsed', collapsed ? '1' : '0');
-            } catch {}
-        };
+        this.collapseIconEl = document.getElementById('toggle-time-hud-icon');
+        this.collapseLabelEl = document.getElementById('toggle-time-hud-label');
 
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 const isCollapsed = this.root?.classList.contains('is-collapsed') ?? false;
-                applyCollapseState(!isCollapsed);
+                this.setCollapsed(!isCollapsed, true);
             });
             // 恢复之前保存的折叠偏好
             try {
                 if (localStorage.getItem('mapwar_time_hud_collapsed') === '1') {
-                    applyCollapseState(true);
+                    this.setCollapsed(true, false);
                 }
             } catch {}
         }
+
+        // [2026-09-09 主人需求] 开播 → 右下角面板自动收起。
+        // 不写 localStorage：那份是主人自己的开发期偏好，直播不该把它覆掉。
+        window.addEventListener('stream-mode-change', (e: Event) => {
+            if ((e as CustomEvent<{ on: boolean }>).detail?.on) this.setCollapsed(true, false);
+        });
 
         if (this.runBtn) {
             this.runBtn.setAttribute('aria-label', '播放');

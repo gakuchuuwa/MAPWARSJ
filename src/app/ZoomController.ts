@@ -11,7 +11,9 @@
  *   3. **战术层（zoom13 独立画布）激活期间冻结**，一格都不动 —— 13 自己管镜头
  *        （进场 flyTo 13、退场 flyTo 回 8）。
  *   5. **陆/海行军连续 15 秒 → 切到目标 zoom**（2026-09-02 二修）：
- *        陆上行军 15 秒 → 9（除非已经在 9）；海上行军 15 秒 → 10（除非已经在 10）。
+ *        陆上行军 15 秒 → 9（除非已经在 9）；**海上行军 15 秒 → 9**（2026-09-11 主人定，
+ *        原为 10，改因海上跟拍在 10 的单次顿挫是 9 的两倍长，实测依据见 NAVAL_MARCH_ZOOM 头注；
+ *        **海战开打仍走规则 2 的 10**，那是演出，与行军两码事）。
  *        **无论当前 zoom 是几**（8/9/10 都算），只看「是否已到目标 zoom」。
  *        计时口径 = **真实秒**（卡顿是真实时间现象，与游戏倍速无关）。
  *        计时器在这些时刻清零重来：开打、进 13、换人（规则 1 回 8）、军团停下
@@ -29,10 +31,27 @@
  */
 import { GameMap } from '../map/GameMap';
 
-/** 陆军战后 zoom */
+/** 陆地战开打 zoom（🔴 2026-09-11 主人定：改回 9） */
 const LAND_ZOOM = 9;
-/** 海军战后 zoom */
-const NAVAL_ZOOM = 10;
+/** 规则 5 用：陆上行军连续 15 秒后的目标 zoom（🔴 2026-09-11 主人定：改回 9） */
+const LAND_MARCH_ZOOM = 9;
+/** 规则 2 用：海战开打 zoom（🔴 2026-09-11 主人定：改回 9） */
+const NAVAL_BATTLE_ZOOM = 9;
+/**
+ * 规则 5 用：**海上行军**的目标 zoom。
+ *
+ * 🔴 [2026-09-11 主人定「海上移动走 9，海战保留 10」] 依据是行军顿挫探针的实测落盘
+ * （scratch/stuck_legion_log.jsonl，1636 批 / 110 万采样帧，取「一批全同环境」的纯净批次、
+ *  滤掉 frameMs>2000 那些切后台与进 13 的假长帧）：
+ *      海 z9 ：28031 帧 / 149 次顿挫 = 5.32 次每千帧，longFrame 中位 **184ms**
+ *      海 z10：40132 帧 / 234 次顿挫 = 5.83 次每千帧，longFrame 中位 **389ms**
+ *  顿的**频率**两档在噪声内（5.32 vs 5.83），总顿挫时间占比也相当（1.15 vs 1.13 ms/帧），
+ *  差别在**单次多久** —— z10 把同样多的卡顿攒成「少而长」的几下，389ms 一下是肉眼可见的
+ *  「卡住了」，184ms 只是滑一下。直播观赏性上 9 明显占优。
+ *  机理：同样航速下 z10 的像素位移是 z9 的两倍，跟拍平移更快、跨瓦片边界频率翻倍。
+ * ⚠️ 别把这一条和规则 2 的 NAVAL_BATTLE_ZOOM 合回一个常量：那是演出，这是顿挫，两码事。
+ */
+const NAVAL_MARCH_ZOOM = 9;
 /** 开始跟随一支新军团时的 zoom（首次跟随 / 战败换人都用它） */
 const FOLLOW_START_ZOOM = 8;
 /** 规则 5：陆/海行军连续多久（真实毫秒）后切到目标 zoom */
@@ -47,7 +66,7 @@ export class ZoomController {
     /**
      * 当前跟随的是不是玩家（独行 或 入伍随军都算）。
      * 🔴 **只用来关规则 1**（跟随新目标 → 8）：玩家的镜头交给玩家自己。
-     *    规则 5（行军 15 秒 → 陆 9 / 海 10）对玩家照常生效 ——
+     *    规则 5（行军 15 秒 → 陆 9 / 海 9）对玩家照常生效 ——
      *    2026-09-05 主人报「玩家行军 15 秒 ZOOM 不变」，根因就是当时把玩家整个排除在
      *    ZoomController 之外（getFollowedArmy 对玩家返回 null），连规则 5 一起关掉了。
      */
@@ -94,7 +113,7 @@ export class ZoomController {
         // ── 规则 2：战略地图上一开打就按形态切（海战 10 / 陆地战 9，攻城=陆地战）──
         //    战术层（13 独立画布）自己管镜头，激活期间让位给规则 3 的冻结。
         if (inBattle && armyId && armyAlive && !this.getIsTacticalScene()) {
-            this.applyZoom(ZoomController.isNavalBattle(army) ? NAVAL_ZOOM : LAND_ZOOM);
+            this.applyZoom(ZoomController.isNavalBattle(army) ? NAVAL_BATTLE_ZOOM : LAND_ZOOM);
             this.lastArmyId = armyId;
             return;
         }
@@ -114,21 +133,21 @@ export class ZoomController {
             if (armyId && armyAlive && !this.getIsPlayerHost()) this.applyZoom(FOLLOW_START_ZOOM);
         }
 
-        // ── 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆 9 / 海 10）──
+        // ── 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆 9 / 海 9；海战的 10 归规则 2）──
         this.tickMarchZoomSwitch(army, armyId, armyAlive);
 
         // 其余情况：保持当前 zoom 不动（行军途中、战后待命都锁定）
     }
 
     /**
-     * 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆→9、海→10），除非已经到目标。
+     * 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆→9、海→9），除非已经到目标。
      * **不看当前 zoom 是几**（8/9/10 都触发），只看「是否已到目标」。
      * 军团一停 / 陆↔海切换 / 已到目标，计时清零重来。
      */
     private tickMarchZoomSwitch(army: any, armyId: string | null, armyAlive: boolean): void {
         const marching = typeof army?.isMarching === 'function' ? army.isMarching() === true : false;
         const isOnSea = army?.isOnSea === true;
-        const targetZoom = isOnSea ? NAVAL_ZOOM : LAND_ZOOM;
+        const targetZoom = isOnSea ? NAVAL_MARCH_ZOOM : LAND_MARCH_ZOOM;
         const atTarget = Math.abs(this.map.getLeafletMap().getZoom() - targetZoom) < 0.01;
         if (!armyId || !armyAlive || !marching || atTarget || this.marchSeaType !== isOnSea) {
             this.marchZoomSinceMs = null;

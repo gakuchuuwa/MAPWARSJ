@@ -230,11 +230,187 @@
   .bldg-tag.st-RUBBLE { background:#4a5568; color:#cbd5e0; }
   .bldg-tag.use-regular { background:#2a4365; color:#90cdf4; }
   .bldg-tag.use-special { background:#7b341e; color:#fbd38d; font-weight:600; }
+  .bldg-tag.use-castle { background:#742a2a; color:#fbd38d; font-weight:600; border:1px solid #9b2c2c; }
+  .bldg-tag.use-wonder { background:#702459; color:#fbb6ce; font-weight:600; border:1px solid #97266d; }
   .bldg-tag.use-defense { background:#285e61; color:#81e6d9; }
+  .bldg-tag.use-landmark { background:#553c9a; color:#d6bcfa; }
   .bldg-tag.use-decor { background:#2d3748; color:#718096; }
-  .bldg-tag.grp-style { background:#22543d; color:#9ae6b4; }
-  .bldg-tag.grp-civ { background:#553c9a; color:#d6bcfa; }
+  .bldg-tag.grp-style, .bldg-tag.grp-de16 { background:#22543d; color:#9ae6b4; }
+  .bldg-tag.grp-civ, .bldg-tag.grp-civ_castle { background:#742a2a; color:#fbd38d; }
+  .bldg-tag.grp-civ_wonder { background:#702459; color:#fbb6ce; }
+  .bldg-tag.grp-shared_era { background:#2c5282; color:#bee3f8; }
+  .bldg-tag.grp-custom_yurt { background:#744210; color:#faf089; }
   .bldg-tag.grp-misc { background:#2d3748; color:#a0aec0; }
+  .bldg-tag.tag-special-note { background:#744210; color:#fefcbf; border:1px solid #d69e2e; font-weight:600; }
+
+  /* ===== DE 建筑资产权威体系与实测统计看板 ===== */
+  .de-board {
+    background: #111823;
+    border: 1px solid #233044;
+    border-radius: 10px;
+    margin: 16px 20px 18px 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  }
+  .de-board-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #233044;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+  .de-board-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #63b3ed;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .de-board-badge {
+    font-size: 11px;
+    background: #2b6cb0;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .de-board-subtitle {
+    font-size: 12px;
+    color: #a0aec0;
+    margin-top: 4px;
+  }
+  .de-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .de-metric-card {
+    background: #16202e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .de-metric-card:hover {
+    border-color: #63b3ed;
+    background: #1c2a3e;
+    transform: translateY(-2px);
+  }
+  .de-metric-card.active {
+    border-color: #48bb78;
+    background: #1a2f26;
+  }
+  .de-metric-card .num {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ecc94b;
+    line-height: 1.1;
+  }
+  .de-metric-card .label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-top: 4px;
+  }
+  .de-metric-card .desc {
+    font-size: 11px;
+    color: #718096;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .de-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #cbd5e0;
+    margin: 16px 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .de-section-title span.tag {
+    font-size: 11px;
+    color: #63b3ed;
+    font-weight: normal;
+  }
+  .de-styles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .de-style-chip {
+    background: #16202e;
+    border: 1px solid #2b3748;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 12px;
+    color: #cbd5e0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.15s;
+  }
+  .de-style-chip:hover {
+    background: #233044;
+    border-color: #63b3ed;
+    color: #fff;
+  }
+  .de-style-chip.active {
+    background: #2b6cb0;
+    border-color: #63b3ed;
+    color: #fff;
+    font-weight: 600;
+  }
+  .de-style-chip .badge {
+    font-size: 10px;
+    background: #243246;
+    color: #90cdf4;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .de-special-notes {
+    background: #141c28;
+    border: 1px solid #2d3748;
+    border-left: 4px solid #ecc94b;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 14px;
+  }
+  .de-special-notes-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ecc94b;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .de-notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 10px;
+    font-size: 12px;
+    color: #a0aec0;
+    line-height: 1.55;
+  }
+  .de-note-item {
+    background: #0d131b;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #202b3c;
+  }
+  .de-note-item strong {
+    color: #f7fafc;
+  }
   /* 放大查看 */
   .bldg-modal {
     position:fixed; inset:0; background:rgba(5,8,12,.94); z-index:999;
@@ -270,31 +446,53 @@
     </div>
 
     <div class="ctrl">
-      <label>文化风格：</label>
+      <label>一层建筑风格 (16)：</label>
       <select id="selStyle">
-        <option value="ASIA" selected>ASIA · 华夏东亚</option>
-        <option value="WEST">WEST · 西欧法兰克</option>
-        <option value="MEDI">MEDI · 罗马地中海</option>
-        <option value="CEAS">CEAS · 游牧草原/中亚</option>
-        <option value="ORIE">ORIE · 中东近东/阿拉伯</option>
-        <option value="INDI">INDI · 印度次大陆</option>
-        <option value="MESO">MESO · 美洲玛雅</option>
-        <option value="SLAV">SLAV · 东欧斯拉夫</option>
-        <option value="EAST">EAST · 拜占庭东欧</option>
-        <option value="PERSIAN">PERSIAN · 波斯萨珊</option>
+        <option value="ASIA" selected>ASIA 东亚（160 件）</option>
+        <option value="WEST">WEST 西欧（151 件）</option>
+        <option value="EAST">EAST 东南欧（125 件）</option>
+        <option value="SLAV">SLAV 东北欧（153 件）</option>
+        <option value="MEDI">MEDI 地中海（154 件）</option>
+        <option value="ORIE">ORIE 中东（151 件）</option>
+        <option value="CEAS">CEAS 中亚（149 件）</option>
+        <option value="INDI">INDI 印度（151 件）</option>
+        <option value="PURU">PURU 普鲁（125 件）</option>
+        <option value="SEAS">SEAS 东南亚（150 件）</option>
+        <option value="MESO">MESO 中美（124 件）</option>
+        <option value="ANDE">ANDE 安第斯（121 件）</option>
+        <option value="AFRI">AFRI 非洲（149 件）</option>
+        <option value="PERSIAN">PERSIAN 波斯（123 件）</option>
+        <option value="GREEK">GREEK 希腊（126 件）</option>
+        <option value="THRACIAN">THRACIAN 色雷斯（122 件）</option>
+      </select>
+    </div>
+
+    <div class="ctrl">
+      <label>二层文明分支 (59)：</label>
+      <select id="selCulture" style="min-width:160px;">
+        <option value="" selected>── 全部 59 套文明分支 ──</option>
+      </select>
+    </div>
+
+    <div class="ctrl">
+      <label>三层专属定制：</label>
+      <select id="selCustom" style="min-width:160px;">
+        <option value="" selected>── 第三层专属定制风格 ──</option>
       </select>
     </div>
 
     <div class="ctrl">
       <label>险要城堡：</label>
       <select id="selCastle">
-        <option value="auto" selected>自动对号入座（按当前文化）</option>
+        <option value="auto" selected>自动对号入座（按当前建筑风格）</option>
       </select>
     </div>
 
     <button id="btnMirror" class="active" style="background:#b7791f;border-color:#f6e05e;color:#fff;">城墙镜像: 🎲 随机</button>
     <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机二选一</button>
     <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机三选一</button>
+    <button id="btnCenterCastle" style="background:#243246;border-color:#4a5568;">城心城堡: 自动 (按分支)</button>
+    <button id="btnPalisadeSet" style="background:#243246;border-color:#4a5568;">营地栅栏: 🎲 随机二选一</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
     <button id="btnShuffle" style="background:#6b46c1;border-color:#9f7aea;color:#fff;font-weight:600;">🎲 9建筑重新随机布局/镜像</button>
 
@@ -470,54 +668,6 @@
   </div>
 </div>
 
-
-  <!-- 三、城门地基优化方案实机效果对比与验收 -->
-  <div class="sec-title">三、大城城门地基与建筑尺寸优化方案实机对比（解决城门悬空与底圈空虚）</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:16px;margin-bottom:28px;">
-    <div class="card" style="border:2px solid #38a169;">
-      <div class="card-header" style="background:#1c4532;"><span style="color:#68d391;font-weight:bold;">⭐ 方案二：只放大地基（主人选定 · 已正式实装）</span><span class="tag" style="background:#276749;color:#9ae6b4;">最终采纳 / 实机效果</span></div>
-      <div style="background:#090d14;padding:10px;text-align:center;">
-        <img src="/ground_test/plan_ground_only.png" style="max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5);" />
-      </div>
-      <div class="card-desc">
-        <strong>实机效果：</strong>
-        <ul>
-          <li><strong>城门完全坐实</strong>：城门两根大石柱与门楼稳稳压在大理石石板基座上，彻底消除城墙与城门周围的深色漏底与悬空。</li>
-          <li><strong>建筑保持原生比例</strong>：建筑模型尺寸保持 1.0x、散布半径保持 1.0x 原生紧凑设定，保留原有真实细腻的建筑尺度！</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span>方案三：黄金组合（建筑微展+微放）</span><span class="tag tag-med">备选方案</span></div>
-      <div style="background:#090d14;padding:10px;text-align:center;">
-        <img src="/ground_test/plan_combo.png" style="max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5);" />
-      </div>
-      <div class="card-desc">
-        <strong>方案特点：</strong>地基铺满城门 + 建筑散布微展 12% + 建筑微调 1.1x。
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span>方案一：只放大建筑</span><span class="tag tag-pas">不推荐</span></div>
-      <div style="background:#090d14;padding:10px;text-align:center;">
-        <img src="/ground_test/plan_bldg_only.png" style="max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5);" />
-      </div>
-      <div class="card-desc">
-        <strong>问题所在：</strong>建筑过大互相严重遮挡，且城门内外依然光秃悬空，无法解决地面空虚的根源。
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span>修改前现状：城门空圈</span><span class="tag tag-stk">修改前</span></div>
-      <div style="background:#090d14;padding:10px;text-align:center;">
-        <img src="/ground_test/plan_current.png" style="max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5);" />
-      </div>
-      <div class="card-desc">
-        <strong>历史问题：</strong>地基只有中间一小圈，城门周围为深色虚空背景，城门像悬空贴图。
-      </div>
-    </div>
-  </div>
 </div> <!-- 闭合 viewAll -->
 
 <!-- 单类型全屏展示视区 -->
@@ -529,12 +679,122 @@
     </div>
   </div>
 
-  <div class="sec-title">该类型在主流文化风格下的渲染效果</div>
+  <div class="sec-title">该类型在 16 种建筑风格下的渲染效果</div>
   <div class="all-cultures-grid" id="cultureGrid"></div>
 </div>
 
 <!-- 视图三：DE 建筑鉴赏（全量素材图鉴，数据来自 /assets/de_buildings_catalog.json）-->
 <div id="viewBuildings" style="display:none;">
+
+  <!-- DE 建筑资产权威体系与实测统计看板 -->
+  <div class="de-board" id="deBoard">
+    <div class="de-board-header">
+      <div>
+        <div class="de-board-title">
+          <span>🏛️ 帝国时代2决定版（AoE2DE）建筑资产权威体系与实测看板</span>
+          <span class="de-board-badge">DRS 物理文件实测基准</span>
+        </div>
+        <div class="de-board-subtitle">
+          全图鉴经 DE 本体底层图形数据（drs/graphics）严格检验，彻底厘清 16 套成套风格集、2 套单时代共用外观、1 套自建民居、59 座专属城堡与 59 座专属奇观
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button type="button" id="btnResetAllFilters" style="background:#243246;border-color:#4a5568;font-size:12px;padding:6px 14px;color:#edf2f7;border-radius:6px;">🔄 重置全部筛选</button>
+      </div>
+    </div>
+
+    <!-- 五大核心指标卡片 -->
+    <div class="de-metrics-row">
+      <div class="de-metric-card" id="cardDe16" title="点击筛选 DE 官方 16 套建筑风格集">
+        <div class="num">16 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">套</span></div>
+        <div class="label">🌐 DE 官方成套建筑风格集</div>
+        <div class="desc">拥有完整 Age2/Age3 城镇中心、民居与军事全套体系（每套 165~199 个文件）</div>
+      </div>
+
+      <div class="de-metric-card" id="cardCastles64" title="点击一键筛选 59 座文明专属独立城堡">
+        <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
+        <div class="label">🏰 文明专属独立城堡</div>
+        <div class="desc">去重孔雀帝国科技强化态与色雷斯单复数同义目录后的物理独立城堡实数</div>
+      </div>
+
+      <div class="de-metric-card" id="cardWonders61" title="点击一键筛选 59 座文明专属奇观">
+        <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
+        <div class="label">🏛️ 文明专属奇观</div>
+        <div class="desc">含 58 个文明专属奇观 + 罗马斗兽场（SCEN_COLOSSEUM）</div>
+      </div>
+
+      <div class="de-metric-card" id="cardSharedEra" title="点击筛选跨文明单时代共用外观">
+        <div class="num">2 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">套</span></div>
+        <div class="label">⛺ 单时代跨区共用外观</div>
+        <div class="desc">DARK 黑暗时代（59件）与 ARCHAIC 古典时代（50件），全文明初始共用</div>
+      </div>
+
+      <div class="de-metric-card" id="cardCustomYurt" title="点击筛选本项目自建草原毡帐">
+        <div class="num">1 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">套</span></div>
+        <div class="label">🏕️ 本项目自建聚落风格</div>
+        <div class="desc">YURT 草原毡帐民居（12 件 A~L 款），DE 原生无独立成套 b_yurt_* 建筑集</div>
+      </div>
+    </div>
+
+    <!-- DE 官方 16 套建筑风格集列表 -->
+    <div class="de-section-title">
+      <span>🌐 DE 官方 16 套成套建筑风格集</span>
+      <span class="tag">（每套均含完整的城镇中心、房屋、兵营、马厩、靶场、工坊等，点击任意一套直接过滤查看）</span>
+    </div>
+    <div class="de-styles-grid" id="deStylesGrid">
+      <!-- 动态填充 16 套风格集按钮 -->
+    </div>
+
+    <!-- 2 套单时代共用 + 1 套自建风格快捷条 -->
+    <div class="de-section-title">
+      <span>⛺ 跨区共用单时代外观 & 本项目自建风格</span>
+      <span class="tag">（非地区成套风格，点击快捷查看）</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+      <div class="de-style-chip" id="chipDark" style="min-width:240px;" data-prefix="DARK">
+        <span>🌑 DARK · 黑暗时代全文明共用</span>
+        <span class="badge" id="badgeDark">12 目录 (原生59件)</span>
+      </div>
+      <div class="de-style-chip" id="chipArchaic" style="min-width:240px;" data-prefix="ARCHAIC">
+        <span>🏛️ ARCHAIC · 古典时代罗马归来共用</span>
+        <span class="badge" id="badgeArchaic">3 目录 (原生50件)</span>
+      </div>
+      <div class="de-style-chip" id="chipYurt" style="min-width:240px;" data-prefix="YURT">
+        <span>⛺ YURT · 草原毡帐自建民居</span>
+        <span class="badge" id="badgeYurt">12 目录 (A~L款)</span>
+      </div>
+    </div>
+
+    <!-- 五大特殊问题权威说明看板 -->
+    <div class="de-special-notes">
+      <div class="de-special-notes-title">
+        <span>⚠️ DE 建筑体系五大特殊问题权威澄清与排错指南</span>
+      </div>
+      <div class="de-notes-list">
+        <div class="de-note-item">
+          <strong>1. 罗马（ROMA）无独立常规城镇建筑集：</strong>
+          DE 官方原生 DRS 图形中 <code>b_roma_*</code> 仅有 3 个文件（完好/受损/废墟 1 座城堡），常规城镇建筑（城镇中心/民居/兵营/马厩等）在 DE 中直接套用 <strong>地中海（medi）</strong> 风格集；其专属奇观为罗马斗兽场（<code>SCEN_COLOSSEUM</code>）。
+        </div>
+        <div class="de-note-item">
+          <strong>2. 普鲁城堡（PURU）三强化态为同 1 座城堡：</strong>
+          <code>PURU_CASTLE_AGE3</code> 虽有 <code>ATTACKUP</code>（攻击强化）、<code>DEFENSEUP</code>（防御强化）、<code>BOTHUP</code>（攻防双强）三个目录，但实为孔雀帝国城堡在科技升级后的外观形态，物理去重后严格算 <strong>1 座独立城堡</strong>。
+        </div>
+        <div class="de-note-item">
+          <strong>3. 色雷斯单复数目录同义合并：</strong>
+          <code>THRACIAN_CASTLE_AGE3</code> 与 <code>THRACIANS_CASTLE_AGE3</code> 图像帧与包围盒（500×408）完全一致，为单复数同义重复目录，去重后严格算 <strong>1 座独立城堡</strong>。
+        </div>
+        <div class="de-note-item">
+          <strong>4. 巴比伦与埃及（Babylon & Egypt）无独立模型：</strong>
+          <code>babylon</code> 在全 DE 仅有一份调色板 <code>05_buildings_babylon.pal</code> 文件，无任何建筑模型；<code>egypt</code> 亦无独立建筑模型，均不可列为独立建筑风格集。
+        </div>
+        <div class="de-note-item">
+          <strong>5. 单时代共用与自建风格边界界定：</strong>
+          本项目实装 17 套建筑风格 = DE 原生 16 套 + 自建 YURT 1 套；<code>dark</code>（59件）与 <code>archaic</code>（50件）为跨文明跨区域单时代共用外观，不构成地区风格集。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="bldg-toolbar">
     <input type="search" id="bldgSearch" placeholder="搜索 目录名 / 建筑类型 / 前缀…" />
     <select id="bldgUsage"><option value="all">全部用途</option></select>
@@ -562,139 +822,351 @@
 </div>
 
 <script>
-const META = {"ASIA": {"FORTIFIED": {"NE": {"name": "ASIA_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "SE": {"name": "ASIA_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "POST": {"name": "ASIA_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_asia_wall_fortified"}, "GATE_NE": {"name": "ASIA_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 259, "anchor_x": 184, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_fortified_ne_closed + b_asia_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ASIA_WALL_STONE_NE", "frames": 1, "box_w": 99, "box_h": 91, "anchor_x": 60, "anchor_y": 71, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ASIA_WALL_STONE_SE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ASIA_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 245, "anchor_x": 177, "anchor_y": 182, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_stone_ne_closed + b_asia_gate_stone_corner"}}}, "WEST": {"FORTIFIED": {"NE": {"name": "WEST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 88, "anchor_y": 100, "sld_source": "b_west_wall_fortified"}, "SE": {"name": "WEST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 132, "anchor_x": 88, "anchor_y": 104, "sld_source": "b_west_wall_fortified"}, "POST": {"name": "WEST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 188, "anchor_x": 120, "anchor_y": 160, "sld_source": "b_west_wall_fortified"}, "GATE_NE": {"name": "WEST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 257, "anchor_x": 189, "anchor_y": 195, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_fortified_ne_closed + b_west_gate_fortified_corner"}}, "STONE": {"NE": {"name": "WEST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "WEST_WALL_STONE_SE", "frames": 1, "box_w": 109, "box_h": 100, "anchor_x": 66, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "WEST_GATE_STONE_NE", "frames": 1, "box_w": 307, "box_h": 254, "anchor_x": 184, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_stone_ne_closed + b_west_gate_stone_corner"}}}, "MEDI": {"FORTIFIED": {"NE": {"name": "MEDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_medi_wall_fortified"}, "SE": {"name": "MEDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_medi_wall_fortified"}, "POST": {"name": "MEDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 192, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_medi_wall_fortified"}, "GATE_NE": {"name": "MEDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 311, "box_h": 259, "anchor_x": 189, "anchor_y": 197, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_fortified_ne_closed + b_medi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MEDI_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MEDI_WALL_STONE_SE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MEDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_stone_ne_closed + b_medi_gate_stone_corner"}}}, "CEAS": {"FORTIFIED": {"NE": {"name": "CEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "SE": {"name": "CEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "POST": {"name": "CEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_ceas_wall_fortified"}, "GATE_NE": {"name": "CEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 301, "box_h": 257, "anchor_x": 181, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_fortified_ne_closed + b_ceas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "CEAS_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 98, "anchor_x": 63, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "CEAS_WALL_STONE_SE", "frames": 1, "box_w": 104, "box_h": 98, "anchor_x": 62, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "CEAS_GATE_STONE_NE", "frames": 1, "box_w": 297, "box_h": 245, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_stone_ne_closed + b_ceas_gate_stone_corner"}}}, "ORIE": {"FORTIFIED": {"NE": {"name": "ORIE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 120, "anchor_x": 80, "anchor_y": 92, "sld_source": "b_orie_wall_fortified"}, "SE": {"name": "ORIE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_orie_wall_fortified"}, "POST": {"name": "ORIE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 156, "box_h": 180, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_orie_wall_fortified"}, "GATE_NE": {"name": "ORIE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 178, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_fortified_ne_closed + b_orie_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ORIE_WALL_STONE_NE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ORIE_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ORIE_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 248, "anchor_x": 182, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_stone_ne_closed + b_orie_gate_stone_corner"}}}, "INDI": {"FORTIFIED": {"NE": {"name": "INDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "SE": {"name": "INDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "POST": {"name": "INDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 152, "box_h": 180, "anchor_x": 100, "anchor_y": 152, "sld_source": "b_indi_wall_fortified"}, "GATE_NE": {"name": "INDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 293, "box_h": 246, "anchor_x": 171, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_fortified_ne_closed + b_indi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "INDI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "INDI_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 79, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "INDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 241, "anchor_x": 175, "anchor_y": 179, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_stone_ne_closed + b_indi_gate_stone_corner"}}}, "MESO": {"FORTIFIED": {"NE": {"name": "MESO_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "SE": {"name": "MESO_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "POST": {"name": "MESO_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_meso_wall_fortified"}, "GATE_NE": {"name": "MESO_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 258, "anchor_x": 180, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_fortified_ne_closed + b_meso_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MESO_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 97, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MESO_WALL_STONE_SE", "frames": 1, "box_w": 107, "box_h": 98, "anchor_x": 64, "anchor_y": 75, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MESO_GATE_STONE_NE", "frames": 1, "box_w": 299, "box_h": 249, "anchor_x": 178, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_stone_ne_closed + b_meso_gate_stone_corner"}}}, "SLAV": {"FORTIFIED": {"NE": {"name": "SLAV_WALL_FORTIFIED_NE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "SE": {"name": "SLAV_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "POST": {"name": "SLAV_WALL_FORTIFIED_POST", "frames": 1, "box_w": 188, "box_h": 244, "anchor_x": 124, "anchor_y": 212, "sld_source": "b_slav_wall_fortified"}, "GATE_NE": {"name": "SLAV_GATE_FORTIFIED_NE", "frames": 1, "box_w": 327, "box_h": 312, "anchor_x": 194, "anchor_y": 247, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_fortified_ne_closed + b_slav_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SLAV_WALL_STONE_NE", "frames": 1, "box_w": 113, "box_h": 110, "anchor_x": 71, "anchor_y": 88, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SLAV_WALL_STONE_SE", "frames": 1, "box_w": 115, "box_h": 110, "anchor_x": 72, "anchor_y": 89, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SLAV_GATE_STONE_NE", "frames": 1, "box_w": 315, "box_h": 282, "anchor_x": 188, "anchor_y": 218, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_stone_ne_closed + b_slav_gate_stone_corner"}}}, "EAST": {"FORTIFIED": {"NE": {"name": "EAST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "SE": {"name": "EAST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "POST": {"name": "EAST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 204, "anchor_x": 124, "anchor_y": 172, "sld_source": "b_east_wall_fortified"}, "GATE_NE": {"name": "EAST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 325, "box_h": 269, "anchor_x": 195, "anchor_y": 205, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_fortified_ne_closed + b_east_gate_fortified_corner"}}, "STONE": {"NE": {"name": "EAST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 101, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "EAST_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "EAST_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 250, "anchor_x": 185, "anchor_y": 189, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_stone_ne_closed + b_east_gate_stone_corner"}}}, "AFRI": {"FORTIFIED": {"NE": {"name": "AFRI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "SE": {"name": "AFRI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "POST": {"name": "AFRI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 188, "anchor_x": 112, "anchor_y": 160, "sld_source": "b_afri_wall_fortified"}, "GATE_NE": {"name": "AFRI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 255, "anchor_x": 182, "anchor_y": 193, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_fortified_ne_closed + b_afri_gate_fortified_corner"}}, "STONE": {"NE": {"name": "AFRI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 94, "anchor_x": 63, "anchor_y": 71, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "AFRI_WALL_STONE_SE", "frames": 1, "box_w": 106, "box_h": 96, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "AFRI_GATE_STONE_NE", "frames": 1, "box_w": 313, "box_h": 254, "anchor_x": 182, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_stone_ne_closed + b_afri_gate_stone_corner"}}}, "ANDE": {"FORTIFIED": {"NE": {"name": "ANDE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "SE": {"name": "ANDE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "POST": {"name": "ANDE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_ande_wall_fortified"}, "GATE_NE": {"name": "ANDE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 254, "anchor_x": 179, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_fortified_ne_closed + b_ande_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ANDE_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 93, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ANDE_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 96, "anchor_x": 63, "anchor_y": 72, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ANDE_GATE_STONE_NE", "frames": 1, "box_w": 298, "box_h": 248, "anchor_x": 172, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_stone_ne_closed + b_ande_gate_stone_corner"}}}, "PURU": {"FORTIFIED": {"NE": {"name": "PURU_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_puru_wall_fortified"}, "SE": {"name": "PURU_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_puru_wall_fortified"}, "POST": {"name": "PURU_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_puru_wall_fortified"}, "GATE_NE": {"name": "PURU_GATE_FORTIFIED_NE", "frames": 1, "box_w": 305, "box_h": 257, "anchor_x": 177, "anchor_y": 194, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_fortified_ne_closed + b_puru_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PURU_WALL_STONE_NE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PURU_WALL_STONE_SE", "frames": 1, "box_w": 111, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PURU_GATE_STONE_NE", "frames": 1, "box_w": 321, "box_h": 261, "anchor_x": 186, "anchor_y": 199, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_stone_ne_closed + b_puru_gate_stone_corner"}}}, "SEAS": {"FORTIFIED": {"NE": {"name": "SEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 136, "anchor_x": 76, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "SE": {"name": "SEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 136, "anchor_x": 72, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "POST": {"name": "SEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 212, "anchor_x": 124, "anchor_y": 184, "sld_source": "b_seas_wall_fortified"}, "GATE_NE": {"name": "SEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 318, "box_h": 280, "anchor_x": 190, "anchor_y": 217, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_fortified_ne_closed + b_seas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SEAS_WALL_STONE_NE", "frames": 1, "box_w": 98, "box_h": 93, "anchor_x": 55, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SEAS_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 57, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SEAS_GATE_STONE_NE", "frames": 1, "box_w": 305, "box_h": 263, "anchor_x": 180, "anchor_y": 201, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_stone_ne_closed + b_seas_gate_stone_corner"}}}, "PERSIAN": {"FORTIFIED": {"NE": {"name": "PERSIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "SE": {"name": "PERSIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "POST": {"name": "PERSIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 176, "box_h": 196, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_persian_wall_fortified"}, "GATE_NE": {"name": "PERSIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 264, "anchor_x": 186, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_fortified_ne_closed + b_persian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PERSIAN_WALL_STONE_NE", "frames": 1, "box_w": 128, "box_h": 118, "anchor_x": 81, "anchor_y": 94, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PERSIAN_WALL_STONE_SE", "frames": 1, "box_w": 125, "box_h": 122, "anchor_x": 76, "anchor_y": 98, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PERSIAN_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 252, "anchor_x": 182, "anchor_y": 188, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_stone_ne_closed + b_persian_gate_stone_corner"}}}, "GREEK": {"FORTIFIED": {"NE": {"name": "GREEK_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_greek_wall_fortified"}, "SE": {"name": "GREEK_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 136, "anchor_x": 84, "anchor_y": 108, "sld_source": "b_greek_wall_fortified"}, "POST": {"name": "GREEK_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 184, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_greek_wall_fortified"}, "GATE_NE": {"name": "GREEK_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 251, "anchor_x": 186, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_greek_gate_fortified_ne_closed + b_greek_gate_fortified_corner"}}, "STONE": {"NE": {"name": "GREEK_WALL_STONE_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "GREEK_WALL_STONE_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "GREEK_GATE_STONE_NE", "frames": 1, "box_w": 188, "box_h": 212, "anchor_x": 128, "anchor_y": 188, "sld_source": "b_greek_gate_stone_ne_open"}}}, "THRACIAN": {"FORTIFIED": {"NE": {"name": "THRACIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_thracian_wall_fortified"}, "SE": {"name": "THRACIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_thracian_wall_fortified"}, "POST": {"name": "THRACIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 184, "anchor_x": 116, "anchor_y": 156, "sld_source": "b_thracian_wall_fortified"}, "GATE_NE": {"name": "THRACIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 254, "anchor_x": 185, "anchor_y": 191, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_thracian_gate_fortified_ne_closed + b_thracian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "THRACIAN_WALL_STONE_NE", "frames": 1, "box_w": 104, "box_h": 96, "anchor_x": 58, "anchor_y": 70, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "THRACIAN_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "THRACIAN_GATE_STONE_NE", "frames": 1, "box_w": 176, "box_h": 176, "anchor_x": 108, "anchor_y": 144, "sld_source": "b_thracian_gate_stone_ne_open"}}}};
+const META = {"ASIA": {"FORTIFIED": {"NE": {"name": "ASIA_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "SE": {"name": "ASIA_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 120, "anchor_x": 76, "anchor_y": 92, "sld_source": "b_asia_wall_fortified"}, "POST": {"name": "ASIA_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_asia_wall_fortified"}, "GATE_NE": {"name": "ASIA_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 259, "anchor_x": 184, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_fortified_ne_closed + b_asia_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ASIA_WALL_STONE_NE", "frames": 1, "box_w": 99, "box_h": 91, "anchor_x": 60, "anchor_y": 71, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ASIA_WALL_STONE_SE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_asia_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ASIA_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 245, "anchor_x": 177, "anchor_y": 182, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_asia_gate_stone_ne_closed + b_asia_gate_stone_corner"}}}, "WEST": {"FORTIFIED": {"NE": {"name": "WEST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 88, "anchor_y": 100, "sld_source": "b_west_wall_fortified"}, "SE": {"name": "WEST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 132, "anchor_x": 88, "anchor_y": 104, "sld_source": "b_west_wall_fortified"}, "POST": {"name": "WEST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 188, "anchor_x": 120, "anchor_y": 160, "sld_source": "b_west_wall_fortified"}, "GATE_NE": {"name": "WEST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 257, "anchor_x": 189, "anchor_y": 195, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_fortified_ne_closed + b_west_gate_fortified_corner"}}, "STONE": {"NE": {"name": "WEST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "WEST_WALL_STONE_SE", "frames": 1, "box_w": 109, "box_h": 100, "anchor_x": 66, "anchor_y": 78, "sld_source": "b_west_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "WEST_GATE_STONE_NE", "frames": 1, "box_w": 307, "box_h": 254, "anchor_x": 184, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_west_gate_stone_ne_closed + b_west_gate_stone_corner"}}}, "MEDI": {"FORTIFIED": {"NE": {"name": "MEDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_medi_wall_fortified"}, "SE": {"name": "MEDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_medi_wall_fortified"}, "POST": {"name": "MEDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 192, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_medi_wall_fortified"}, "GATE_NE": {"name": "MEDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 311, "box_h": 259, "anchor_x": 189, "anchor_y": 197, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_fortified_ne_closed + b_medi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MEDI_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MEDI_WALL_STONE_SE", "frames": 1, "box_w": 103, "box_h": 99, "anchor_x": 64, "anchor_y": 79, "sld_source": "b_medi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MEDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_medi_gate_stone_ne_closed + b_medi_gate_stone_corner"}}}, "CEAS": {"FORTIFIED": {"NE": {"name": "CEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "SE": {"name": "CEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_ceas_wall_fortified"}, "POST": {"name": "CEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_ceas_wall_fortified"}, "GATE_NE": {"name": "CEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 301, "box_h": 257, "anchor_x": 181, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_fortified_ne_closed + b_ceas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "CEAS_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 98, "anchor_x": 63, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "CEAS_WALL_STONE_SE", "frames": 1, "box_w": 104, "box_h": 98, "anchor_x": 62, "anchor_y": 76, "sld_source": "b_ceas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "CEAS_GATE_STONE_NE", "frames": 1, "box_w": 297, "box_h": 245, "anchor_x": 177, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ceas_gate_stone_ne_closed + b_ceas_gate_stone_corner"}}}, "ORIE": {"FORTIFIED": {"NE": {"name": "ORIE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 120, "anchor_x": 80, "anchor_y": 92, "sld_source": "b_orie_wall_fortified"}, "SE": {"name": "ORIE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_orie_wall_fortified"}, "POST": {"name": "ORIE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 156, "box_h": 180, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_orie_wall_fortified"}, "GATE_NE": {"name": "ORIE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 296, "box_h": 244, "anchor_x": 178, "anchor_y": 184, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_fortified_ne_closed + b_orie_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ORIE_WALL_STONE_NE", "frames": 1, "box_w": 100, "box_h": 93, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ORIE_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_orie_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ORIE_GATE_STONE_NE", "frames": 1, "box_w": 301, "box_h": 248, "anchor_x": 182, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_orie_gate_stone_ne_closed + b_orie_gate_stone_corner"}}}, "INDI": {"FORTIFIED": {"NE": {"name": "INDI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "SE": {"name": "INDI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_indi_wall_fortified"}, "POST": {"name": "INDI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 152, "box_h": 180, "anchor_x": 100, "anchor_y": 152, "sld_source": "b_indi_wall_fortified"}, "GATE_NE": {"name": "INDI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 293, "box_h": 246, "anchor_x": 171, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_fortified_ne_closed + b_indi_gate_fortified_corner"}}, "STONE": {"NE": {"name": "INDI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "INDI_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 79, "sld_source": "b_indi_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "INDI_GATE_STONE_NE", "frames": 1, "box_w": 296, "box_h": 241, "anchor_x": 175, "anchor_y": 179, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_indi_gate_stone_ne_closed + b_indi_gate_stone_corner"}}}, "MESO": {"FORTIFIED": {"NE": {"name": "MESO_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "SE": {"name": "MESO_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 76, "anchor_y": 100, "sld_source": "b_meso_wall_fortified"}, "POST": {"name": "MESO_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 192, "anchor_x": 112, "anchor_y": 164, "sld_source": "b_meso_wall_fortified"}, "GATE_NE": {"name": "MESO_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 258, "anchor_x": 180, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_fortified_ne_closed + b_meso_gate_fortified_corner"}}, "STONE": {"NE": {"name": "MESO_WALL_STONE_NE", "frames": 1, "box_w": 105, "box_h": 97, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "MESO_WALL_STONE_SE", "frames": 1, "box_w": 107, "box_h": 98, "anchor_x": 64, "anchor_y": 75, "sld_source": "b_meso_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "MESO_GATE_STONE_NE", "frames": 1, "box_w": 299, "box_h": 249, "anchor_x": 178, "anchor_y": 187, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_meso_gate_stone_ne_closed + b_meso_gate_stone_corner"}}}, "SLAV": {"FORTIFIED": {"NE": {"name": "SLAV_WALL_FORTIFIED_NE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "SE": {"name": "SLAV_WALL_FORTIFIED_SE", "frames": 1, "box_w": 144, "box_h": 140, "anchor_x": 92, "anchor_y": 112, "sld_source": "b_slav_wall_fortified"}, "POST": {"name": "SLAV_WALL_FORTIFIED_POST", "frames": 1, "box_w": 188, "box_h": 244, "anchor_x": 124, "anchor_y": 212, "sld_source": "b_slav_wall_fortified"}, "GATE_NE": {"name": "SLAV_GATE_FORTIFIED_NE", "frames": 1, "box_w": 327, "box_h": 312, "anchor_x": 194, "anchor_y": 247, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_fortified_ne_closed + b_slav_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SLAV_WALL_STONE_NE", "frames": 1, "box_w": 113, "box_h": 110, "anchor_x": 71, "anchor_y": 88, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SLAV_WALL_STONE_SE", "frames": 1, "box_w": 115, "box_h": 110, "anchor_x": 72, "anchor_y": 89, "sld_source": "b_slav_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SLAV_GATE_STONE_NE", "frames": 1, "box_w": 315, "box_h": 282, "anchor_x": 188, "anchor_y": 218, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_slav_gate_stone_ne_closed + b_slav_gate_stone_corner"}}}, "EAST": {"FORTIFIED": {"NE": {"name": "EAST_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "SE": {"name": "EAST_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 96, "sld_source": "b_east_wall_fortified"}, "POST": {"name": "EAST_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 204, "anchor_x": 124, "anchor_y": 172, "sld_source": "b_east_wall_fortified"}, "GATE_NE": {"name": "EAST_GATE_FORTIFIED_NE", "frames": 1, "box_w": 325, "box_h": 269, "anchor_x": 195, "anchor_y": 205, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_fortified_ne_closed + b_east_gate_fortified_corner"}}, "STONE": {"NE": {"name": "EAST_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 101, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "EAST_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 65, "anchor_y": 78, "sld_source": "b_east_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "EAST_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 250, "anchor_x": 185, "anchor_y": 189, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_east_gate_stone_ne_closed + b_east_gate_stone_corner"}}}, "AFRI": {"FORTIFIED": {"NE": {"name": "AFRI_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "SE": {"name": "AFRI_WALL_FORTIFIED_SE", "frames": 1, "box_w": 128, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_afri_wall_fortified"}, "POST": {"name": "AFRI_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 188, "anchor_x": 112, "anchor_y": 160, "sld_source": "b_afri_wall_fortified"}, "GATE_NE": {"name": "AFRI_GATE_FORTIFIED_NE", "frames": 1, "box_w": 306, "box_h": 255, "anchor_x": 182, "anchor_y": 193, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_fortified_ne_closed + b_afri_gate_fortified_corner"}}, "STONE": {"NE": {"name": "AFRI_WALL_STONE_NE", "frames": 1, "box_w": 107, "box_h": 94, "anchor_x": 63, "anchor_y": 71, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "AFRI_WALL_STONE_SE", "frames": 1, "box_w": 106, "box_h": 96, "anchor_x": 61, "anchor_y": 73, "sld_source": "b_afri_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "AFRI_GATE_STONE_NE", "frames": 1, "box_w": 313, "box_h": 254, "anchor_x": 182, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_afri_gate_stone_ne_closed + b_afri_gate_stone_corner"}}}, "ANDE": {"FORTIFIED": {"NE": {"name": "ANDE_WALL_FORTIFIED_NE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "SE": {"name": "ANDE_WALL_FORTIFIED_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 82, "anchor_y": 98, "sld_source": "b_ande_wall_fortified"}, "POST": {"name": "ANDE_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_ande_wall_fortified"}, "GATE_NE": {"name": "ANDE_GATE_FORTIFIED_NE", "frames": 1, "box_w": 303, "box_h": 254, "anchor_x": 179, "anchor_y": 192, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_fortified_ne_closed + b_ande_gate_fortified_corner"}}, "STONE": {"NE": {"name": "ANDE_WALL_STONE_NE", "frames": 1, "box_w": 103, "box_h": 93, "anchor_x": 62, "anchor_y": 73, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "ANDE_WALL_STONE_SE", "frames": 1, "box_w": 110, "box_h": 96, "anchor_x": 63, "anchor_y": 72, "sld_source": "b_ande_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "ANDE_GATE_STONE_NE", "frames": 1, "box_w": 298, "box_h": 248, "anchor_x": 172, "anchor_y": 186, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_ande_gate_stone_ne_closed + b_ande_gate_stone_corner"}}}, "PURU": {"FORTIFIED": {"NE": {"name": "PURU_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 124, "anchor_x": 76, "anchor_y": 96, "sld_source": "b_puru_wall_fortified"}, "SE": {"name": "PURU_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 100, "sld_source": "b_puru_wall_fortified"}, "POST": {"name": "PURU_WALL_FORTIFIED_POST", "frames": 1, "box_w": 164, "box_h": 188, "anchor_x": 108, "anchor_y": 160, "sld_source": "b_puru_wall_fortified"}, "GATE_NE": {"name": "PURU_GATE_FORTIFIED_NE", "frames": 1, "box_w": 305, "box_h": 257, "anchor_x": 177, "anchor_y": 194, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_fortified_ne_closed + b_puru_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PURU_WALL_STONE_NE", "frames": 1, "box_w": 110, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PURU_WALL_STONE_SE", "frames": 1, "box_w": 111, "box_h": 101, "anchor_x": 67, "anchor_y": 78, "sld_source": "b_puru_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PURU_GATE_STONE_NE", "frames": 1, "box_w": 321, "box_h": 261, "anchor_x": 186, "anchor_y": 199, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_puru_gate_stone_ne_closed + b_puru_gate_stone_corner"}}}, "SEAS": {"FORTIFIED": {"NE": {"name": "SEAS_WALL_FORTIFIED_NE", "frames": 1, "box_w": 128, "box_h": 136, "anchor_x": 76, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "SE": {"name": "SEAS_WALL_FORTIFIED_SE", "frames": 1, "box_w": 124, "box_h": 136, "anchor_x": 72, "anchor_y": 108, "sld_source": "b_seas_wall_fortified"}, "POST": {"name": "SEAS_WALL_FORTIFIED_POST", "frames": 1, "box_w": 184, "box_h": 212, "anchor_x": 124, "anchor_y": 184, "sld_source": "b_seas_wall_fortified"}, "GATE_NE": {"name": "SEAS_GATE_FORTIFIED_NE", "frames": 1, "box_w": 318, "box_h": 280, "anchor_x": 190, "anchor_y": 217, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_fortified_ne_closed + b_seas_gate_fortified_corner"}}, "STONE": {"NE": {"name": "SEAS_WALL_STONE_NE", "frames": 1, "box_w": 98, "box_h": 93, "anchor_x": 55, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "SEAS_WALL_STONE_SE", "frames": 1, "box_w": 99, "box_h": 94, "anchor_x": 57, "anchor_y": 72, "sld_source": "b_seas_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "SEAS_GATE_STONE_NE", "frames": 1, "box_w": 305, "box_h": 263, "anchor_x": 180, "anchor_y": 201, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_seas_gate_stone_ne_closed + b_seas_gate_stone_corner"}}}, "PERSIAN": {"FORTIFIED": {"NE": {"name": "PERSIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "SE": {"name": "PERSIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_persian_wall_fortified"}, "POST": {"name": "PERSIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 176, "box_h": 196, "anchor_x": 120, "anchor_y": 164, "sld_source": "b_persian_wall_fortified"}, "GATE_NE": {"name": "PERSIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 313, "box_h": 264, "anchor_x": 186, "anchor_y": 196, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_fortified_ne_closed + b_persian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "PERSIAN_WALL_STONE_NE", "frames": 1, "box_w": 128, "box_h": 118, "anchor_x": 81, "anchor_y": 94, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "PERSIAN_WALL_STONE_SE", "frames": 1, "box_w": 125, "box_h": 122, "anchor_x": 76, "anchor_y": 98, "sld_source": "b_persian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "PERSIAN_GATE_STONE_NE", "frames": 1, "box_w": 309, "box_h": 252, "anchor_x": 182, "anchor_y": 188, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_persian_gate_stone_ne_closed + b_persian_gate_stone_corner"}}}, "GREEK": {"FORTIFIED": {"NE": {"name": "GREEK_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 132, "anchor_x": 84, "anchor_y": 104, "sld_source": "b_greek_wall_fortified"}, "SE": {"name": "GREEK_WALL_FORTIFIED_SE", "frames": 1, "box_w": 136, "box_h": 136, "anchor_x": 84, "anchor_y": 108, "sld_source": "b_greek_wall_fortified"}, "POST": {"name": "GREEK_WALL_FORTIFIED_POST", "frames": 1, "box_w": 168, "box_h": 184, "anchor_x": 108, "anchor_y": 152, "sld_source": "b_greek_wall_fortified"}, "GATE_NE": {"name": "GREEK_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 251, "anchor_x": 186, "anchor_y": 185, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_greek_gate_fortified_ne_closed + b_greek_gate_fortified_corner"}}, "STONE": {"NE": {"name": "GREEK_WALL_STONE_NE", "frames": 1, "box_w": 132, "box_h": 132, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "GREEK_WALL_STONE_SE", "frames": 1, "box_w": 140, "box_h": 128, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_greek_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "GREEK_GATE_STONE_NE", "frames": 1, "box_w": 188, "box_h": 212, "anchor_x": 128, "anchor_y": 188, "sld_source": "b_greek_gate_stone_ne_open"}}}, "THRACIAN": {"FORTIFIED": {"NE": {"name": "THRACIAN_WALL_FORTIFIED_NE", "frames": 1, "box_w": 136, "box_h": 124, "anchor_x": 84, "anchor_y": 100, "sld_source": "b_thracian_wall_fortified"}, "SE": {"name": "THRACIAN_WALL_FORTIFIED_SE", "frames": 1, "box_w": 132, "box_h": 128, "anchor_x": 80, "anchor_y": 104, "sld_source": "b_thracian_wall_fortified"}, "POST": {"name": "THRACIAN_WALL_FORTIFIED_POST", "frames": 1, "box_w": 172, "box_h": 184, "anchor_x": 116, "anchor_y": 156, "sld_source": "b_thracian_wall_fortified"}, "GATE_NE": {"name": "THRACIAN_GATE_FORTIFIED_NE", "frames": 1, "box_w": 316, "box_h": 254, "anchor_x": 185, "anchor_y": 191, "is_complete_twin_tower_gate": true, "span_dx": 72, "span_dy": 36, "sld_source": "b_thracian_gate_fortified_ne_closed + b_thracian_gate_fortified_corner"}}, "STONE": {"NE": {"name": "THRACIAN_WALL_STONE_NE", "frames": 1, "box_w": 104, "box_h": 96, "anchor_x": 58, "anchor_y": 70, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 0}, "SE": {"name": "THRACIAN_WALL_STONE_SE", "frames": 1, "box_w": 108, "box_h": 100, "anchor_x": 62, "anchor_y": 74, "sld_source": "b_thracian_wall_stone_x1.sld", "frame_idx": 1}, "GATE_NE": {"name": "THRACIAN_GATE_STONE_NE", "frames": 1, "box_w": 176, "box_h": 176, "anchor_x": 108, "anchor_y": 144, "sld_source": "b_thracian_gate_stone_ne_open"}}}, "YURT": {} };
 
-/** 16 套 DE 建筑风格集的中文名（与 TerritorySystem 的 REGION_TO_DE_STYLE 值域一致）。 */
+/** 16 套建筑风格标准键名列表（严格按规范顺序） */
+const STYLE_KEYS_16 = [
+  'ASIA', 'WEST', 'EAST', 'SLAV', 'MEDI', 'ORIE', 'CEAS', 'INDI',
+  'PURU', 'SEAS', 'MESO', 'ANDE', 'AFRI', 'PERSIAN', 'GREEK', 'THRACIAN'
+];
+
+/** 16 套 DE 建筑风格集的中文名及件数说明（全量规范 16 种）。 */
 const STYLE_LABELS = {
-  ASIA: '华夏东亚', WEST: '西欧法兰克', MEDI: '罗马地中海', CEAS: '游牧草原/中亚',
-  ORIE: '中东近东/阿拉伯', INDI: '印度次大陆', MESO: '美洲玛雅', SLAV: '东欧斯拉夫',
-  EAST: '拜占庭东欧', PERSIAN: '波斯萨珊', AFRI: '非洲', ANDE: '安第斯',
-  PURU: '普鲁', SEAS: '东南亚', GREEK: '希腊', THRACIAN: '色雷斯',
+  ASIA: '东亚（160 件）',
+  WEST: '西欧（151 件）',
+  EAST: '东南欧（125 件）',
+  SLAV: '东北欧（153 件）',
+  MEDI: '地中海（154 件）',
+  ORIE: '中东（151 件）',
+  CEAS: '中亚（149 件）',
+  INDI: '印度（151 件）',
+  PURU: '普鲁（125 件）',
+  SEAS: '东南亚（150 件）',
+  MESO: '中美（124 件）',
+  ANDE: '安第斯（121 件）',
+  AFRI: '非洲（149 件）',
+  PERSIAN: '波斯（123 件）',
+  GREEK: '希腊（126 件）',
+  THRACIAN: '色雷斯（122 件）'
 };
 
-/** 风格下拉按 META 的实际覆盖动态生成，别再手写 option —— 手写那版只列了 10 个，漏了 6 套。 */
+/** 建筑风格下拉严格按 16 种标准总风格生成。 */
 function fillStyleSelect() {
   const sel = document.getElementById('selStyle');
   if (!sel) return;
-  const keys = Object.keys(META);
-  sel.innerHTML = keys.map(function (k) {
+  sel.innerHTML = STYLE_KEYS_16.map(function (k) {
     return '<option value="' + k + '"' + (k === curStyle ? ' selected' : '') + '>'
-      + k + ' · ' + (STYLE_LABELS[k] || k) + '</option>';
+      + k + ' ' + (STYLE_LABELS[k] || k) + '</option>';
   }).join('');
 }
 
-/** 65 种完整城堡素材按 7 大历史文化圈对号入座分组 */
-const CASTLE_GROUPS = [
+/**
+ * 文化区 → { deStyle: DE建筑风格, castle: 默认城堡 } 映射表
+ * 对应 TerritorySystem.ts 的 REGION_TO_DE_STYLE + deCastleAssets.ts 的城堡归属
+ */
+/**
+ * 59 套文明与建筑风格分支（按 7 大历史文化圈归类，严格 59 套）
+ * 每一套分支联动：
+ * 1. deStyle: 所属第一层 16 种 DE 基础建筑风格母体之一
+ * 2. castle: 所属 59 座文明专属独立城堡之一
+ * 3. label: 分支专属名称与 Emoji 标识
+ */
+const CULTURE_GROUPS = [
   {
-    group: '🌎 美洲与安第斯 (6 座)',
-    castles: [
-      { id: 'INCA_CASTLE_AGE3', name: '印加萨克赛瓦曼石堡（安第斯主轴）' },
-      { id: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡黄金国城堡（北安第斯）' },
-      { id: 'MAPU_CASTLE_AGE3', name: '马普切山地要塞（南安第斯）' },
-      { id: 'MAYA_CASTLE_AGE3', name: '玛雅阶梯金字塔石堡（中美洲）' },
-      { id: 'MESO_CASTLE_AGE3', name: '阿兹特克重装金字塔（中美洲）' },
-      { id: 'TUPI_CASTLE_AGE3', name: '图皮热带丛林木石要塞（南美）' }
+    group: '🏯 华夏与东亚 (8套)',
+    branches: [
+      { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3',      label: '🏯 日本（东亚重檐天守阁）' },
+      { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3',      label: '🏯 华夏·北方华北（汉唐城楼）' },
+      { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',       label: '🏯 华夏·曹魏中原（高台阙楼）' },
+      { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',        label: '🏯 华夏·孙吴江南（水榭坞堡）' },
+      { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',       label: '🏯 华夏·蜀汉巴蜀（剑阁高台木关）' },
+      { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3',      label: '🏯 契丹（辽式边墙要塞）' },
+      { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3',      label: '🏯 满洲·女真（居庸金代山城）' },
+      { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3',      label: '🏯 朝鲜·高丽（半岛山城要塞）' },
     ]
   },
   {
-    group: '🏯 华夏与东亚 (13 座)',
+    group: '🏛️ 地中海古典与南欧 (9套)',
+    branches: [
+      { key: 'LATIN',       deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3',       label: '🏛️ 地中海（通用古典石堡）' },
+      { key: 'ROMA',        deStyle: 'MEDI', castle: 'ROMA_CASTLE_AGE3',       label: '🏛️ 罗马（军团古典方石堡）' },
+      { key: 'SICILIANS',   deStyle: 'MEDI', castle: 'SICI_CASTLE_AGE3',       label: '🏛️ 西西里（诺曼阿拉伯石堡）' },
+      { key: 'SPANISH',     deStyle: 'MEDI', castle: 'SPAN_CASTLE_AGE3',       label: '🛡️ 西班牙（塞哥维亚高塔要塞）' },
+      { key: 'PORTUGUESE',  deStyle: 'MEDI', castle: 'PORT_CASTLE_AGE3',       label: '🛡️ 葡萄牙（贝伦塔大西洋海堡）' },
+      { key: 'ATHENIANS',   deStyle: 'GREEK', castle: 'ATHENIANS_CASTLE_AGE3', label: '🏛️ 雅典（阿提卡卫城要塞）' },
+      { key: 'SPARTANS',    deStyle: 'GREEK', castle: 'SPARTANS_CASTLE_AGE3',  label: '🏛️ 斯巴达（拉哥尼亚军营石堡）' },
+      { key: 'MACEDONIAN',  deStyle: 'GREEK', castle: 'MACEDONIAN_CASTLE_AGE3',label: '🏛️ 马其顿（希马鲁石塔城堡）' },
+      { key: 'THRACIAN',    deStyle: 'THRACIAN', castle: 'THRACIAN_CASTLE_AGE3', label: '🏛️ 色雷斯（古典要塞）' },
+    ]
+  },
+  {
+    group: '🛡️ 西欧与北欧 (6套)',
+    branches: [
+      { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 日耳曼（西欧通用石堡）' },
+      { key: 'FRANKS',      deStyle: 'WEST', castle: 'FRAN_CASTLE_AGE3',       label: '🛡️ 法兰克（加洛林石堡）' },
+      { key: 'BURGUNDIANS', deStyle: 'WEST', castle: 'BURG_CASTLE_AGE3',       label: '🛡️ 勃艮第（重装城堡）' },
+      { key: 'BRITONS',     deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 不列颠/凯尔特（苏格兰高地圆塔）' },
+      { key: 'VIKINGS',     deStyle: 'WEST', castle: 'VIKI_CASTLE_AGE3',       label: '🛡️ 维京（诺斯长屋环形要塞）' },
+      { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3',       label: '🛡️ 哥特（蛮族厚重石堡）' },
+    ]
+  },
+  {
+    group: '🌲 东欧与高加索 (10套)',
+    branches: [
+      { key: 'POLES',       deStyle: 'SLAV', castle: 'POLE_CASTLE_AGE3',       label: '🛡️ 波兰（马尔堡红砖城堡）' },
+      { key: 'BOHEMIANS',   deStyle: 'SLAV', castle: 'BOHE_CASTLE_AGE3',       label: '🛡️ 波希米亚（卡尔施泰因城堡）' },
+      { key: 'MAGYAR',      deStyle: 'SLAV', castle: 'MAGY_CASTLE_AGE3',       label: '🛡️ 马扎尔（匈牙利科文堡）' },
+      { key: 'SLAVIC',      deStyle: 'SLAV', castle: 'SLAV_CASTLE_AGE3',       label: '⚔️ 东北欧（洋葱顶木石要塞）' },
+      { key: 'LITHUANIANS', deStyle: 'SLAV', castle: 'LITH_CASTLE_AGE3',       label: '⚔️ 立陶宛（特拉凯湖中堡）' },
+      { key: 'BULGARIANS',  deStyle: 'SLAV', castle: 'BULG_CASTLE_AGE3',       label: '⚔️ 保加利亚（沙皇要塞）' },
+      { key: 'BYZANTINE',   deStyle: 'EAST', castle: 'BYZA_CASTLE_AGE3',       label: '🏛️ 拜占庭（东罗马·希腊语帝国要塞）' },
+      { key: 'EAST',        deStyle: 'EAST', castle: 'EAST_CASTLE_AGE3',       label: '⚔️ 东南欧（通用石堡）' },
+      { key: 'ARMENIANS',   deStyle: 'EAST', castle: 'ARME_CASTLE_AGE3',       label: '⚔️ 亚美尼亚（高山石堡）' },
+      { key: 'GEORGIANS',   deStyle: 'EAST', castle: 'GEOR_CASTLE_AGE3',       label: '⚔️ 格鲁吉亚（高加索石碉）' },
+    ]
+  },
+  {
+    group: '🕌 中东、西亚与北非 (8套)',
+    branches: [
+      { key: 'ORIE',         deStyle: 'ORIE', castle: 'ORIE_CASTLE_AGE3',      label: '🕌 阿拉伯（萨拉森生土要塞）' },
+      { key: 'SASANIAN',     deStyle: 'PERSIAN', castle: 'PERS_CASTLE_AGE3',   label: '🏛️ 萨珊波斯（巴姆圆城要塞）' },
+      { key: 'PERSIAN',      deStyle: 'PERSIAN', castle: 'PERSIAN_CASTLE_AGE3',label: '🏛️ 波斯传统（阿契美尼德石堡）' },
+      { key: 'MONGOL',    deStyle: 'CEAS', castle: 'MONG_CASTLE_AGE3',      label: '⛺ 蒙古草原（塞外王帐石堡）' },
+      { key: 'HUNS',        deStyle: 'CEAS', castle: 'HUNS_CASTLE_AGE3',       label: '⚔️ 匈人（游牧营垒木石要塞）' },
+      { key: 'CUMAN',       deStyle: 'CEAS', castle: 'CUMA_CASTLE_AGE3',       label: '⚔️ 库曼（草原要塞）' },
+      { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3',      label: '🕌 突厥/奥斯曼（海峡要塞）' },
+      { key: 'CENTRAL_ASIA', deStyle: 'CEAS', castle: 'CEAS_CASTLE_AGE3',      label: '🐴 中亚（鞑靼赫拉特城堡）' },
+    ]
+  },
+  {
+    group: '🐘 南亚、东南亚与非洲 (12套)',
+    branches: [
+      { key: 'INDIA',       deStyle: 'INDI', castle: 'INDI_CASTLE_AGE3',       label: '🕌 印度（达罗毗荼石圆塔）' },
+      { key: 'MUGHAL',      deStyle: 'INDI', castle: 'HIND_CASTLE_AGE3',       label: '🕌 印度斯坦/莫卧儿（红砂岩堡）' },
+      { key: 'BENGALIS',    deStyle: 'INDI', castle: 'BENG_CASTLE_AGE3',       label: '🕌 孟加拉（比什努布尔红砖堡）' },
+      { key: 'GURJARAS',    deStyle: 'INDI', castle: 'GURJ_CASTLE_AGE3',       label: '🕌 瞿折罗（瓜廖尔石堡）' },
+      { key: 'KHMER',       deStyle: 'SEAS', castle: 'SEAS_CASTLE_AGE3',       label: '🌴 东南亚/高棉（吴哥窟砂岩塔）' },
+      { key: 'BURMESE',     deStyle: 'SEAS', castle: 'BURM_CASTLE_AGE3',       label: '🌴 缅甸（蒲甘佛塔城堡）' },
+      { key: 'VIETNAMESE',  deStyle: 'SEAS', castle: 'VIET_CASTLE_AGE3',       label: '🌴 大越（升龙城重檐）' },
+      { key: 'MALAY',       deStyle: 'SEAS', castle: 'MALA_CASTLE_AGE3',       label: '🌴 马来（满剌加木石水寨）' },
+      { key: 'PURU',        deStyle: 'PURU', castle: 'PURU_CASTLE_AGE3',       label: '🛕 普鲁（孔雀帝国粗石圆塔）' },
+      { key: 'BERBER',       deStyle: 'AFRI', castle: 'BERB_CASTLE_AGE3',      label: '🕌 北非柏柏尔（卡斯巴土堡）' },
+      { key: 'AFRICA',      deStyle: 'AFRI', castle: 'AFRI_CASTLE_AGE3',       label: '🌍 西非马里（生土要塞）' },
+      { key: 'ETHIOPIANS',  deStyle: 'AFRI', castle: 'ETHI_CASTLE_AGE3',       label: '🌍 埃塞俄比亚（法西尔盖比石堡）' },
+    ]
+  },
+  {
+    group: '🌎 美洲与安第斯 (6套)',
+    branches: [
+      { key: 'INCA',     deStyle: 'ANDE', castle: 'INCA_CASTLE_AGE3', label: '🌎 印加（安第斯主轴）' },
+      { key: 'MUISCA',   deStyle: 'ANDE', castle: 'MUIS_CASTLE_AGE3', label: '🌎 穆伊斯卡（北安第斯）' },
+      { key: 'MAPUCHE',  deStyle: 'ANDE', castle: 'MAPU_CASTLE_AGE3', label: '🌎 马普切（南安第斯）' },
+      { key: 'TUPI',     deStyle: 'ANDE', castle: 'TUPI_CASTLE_AGE3', label: '🌎 图皮（南美丛林要塞）' },
+      { key: 'MAYANS',   deStyle: 'MESO', castle: 'MAYA_CASTLE_AGE3', label: '🌎 玛雅（阶梯金字塔）' },
+      { key: 'AMERICA',  deStyle: 'MESO', castle: 'MESO_CASTLE_AGE3', label: '🌎 阿兹特克/墨西加（中美重装金字塔）' },
+    ]
+  },
+];
+
+/**
+ * 第三层：专属定制文明建筑风格列表
+ * 在一层 16 母体 + 二层 59 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
+ */
+const LAYER3_CUSTOM_GROUPS = [
+  {
+    group: '🏔️ 青藏高原与高原专属宗堡',
+    branches: [
+      { key: 'TIBET',    deStyle: 'PURU', castle: 'TIBET_CASTLE_AGE3', label: '🏔️ 吐蕃·青藏（藏式金顶宗堡）' },
+    ]
+  },
+  {
+    // 🔴 [2026-09-11 主人定] 第三层第二个专属建筑风格：西域
+    //    与游戏侧 TerritorySystem / deCastleAssets 完全对齐：
+    //    WESTERN / WESTERN_FEUDAL / WESTERN_CASTLE / WESTERN_IMPERIAL 四区 → 底座 CEAS（中亚），
+    //    专属城堡 WESTERN_CASTLE_AGE3「汉伊高台绿洲要塞」（高昌/龟兹/于阗/疏勒/焉耆/鄯善/楼兰/莎车/伊吾/亦都护同源）。
+    group: '🏜️ 西域绿洲与专属高台要塞',
+    branches: [
+      { key: 'WESTERN',  deStyle: 'CEAS', castle: 'WESTERN_CASTLE_AGE3', label: '🏜️ 西域·绿洲（汉伊高台绿洲要塞）' },
+    ]
+  },
+];
+
+/** 全量 59 套二层分支映射字典 */
+const CULTURE_MAP = {};
+CULTURE_GROUPS.forEach(g => {
+  g.branches.forEach(b => {
+    CULTURE_MAP[b.key] = { deStyle: b.deStyle, castle: b.castle, label: b.label };
+  });
+});
+
+/** 第三层专属定制文明映射字典 */
+const LAYER3_MAP = {};
+LAYER3_CUSTOM_GROUPS.forEach(g => {
+  g.branches.forEach(b => {
+    LAYER3_MAP[b.key] = { deStyle: b.deStyle, castle: b.castle, label: b.label };
+    CULTURE_MAP[b.key] = LAYER3_MAP[b.key]; // 兼容历史调用与 URL 参数
+  });
+});
+
+// 兼容历史 URL 参数与别名
+CULTURE_MAP['NORTH'] = CULTURE_MAP['CENTRAL'];
+CULTURE_MAP['HEXI'] = CULTURE_MAP['WESTERN'];
+CULTURE_MAP['STEPPE'] = CULTURE_MAP['MONGOL'];
+CULTURE_MAP['WEST_ASIA'] = CULTURE_MAP['TURKS'];
+CULTURE_MAP['OTTOMAN'] = CULTURE_MAP['TURKS'];
+CULTURE_MAP['RUSSIAN'] = CULTURE_MAP['SLAVIC'];
+CULTURE_MAP['ANDE'] = CULTURE_MAP['INCA'];
+CULTURE_MAP['TIBET_CASTLE'] = CULTURE_MAP['TIBET'];
+CULTURE_MAP['TIBET_IMPERIAL'] = CULTURE_MAP['TIBET'];
+
+let curCulture = ''; // 当前选中的二层建筑风格分支 key，空=不指定
+let curCustom = '';  // 当前选中的三层专属定制风格 key，空=不指定
+
+/** 填充 59 种二层建筑风格分支下拉框 */
+function fillCultureSelect() {
+  const sel = document.getElementById('selCulture');
+  if (!sel) return;
+  let html = '<option value=""' + (curCulture === '' ? ' selected' : '') + '>── 全部 59 套二层文明分支 ──</option>';
+  CULTURE_GROUPS.forEach(function(g) {
+    html += '<optgroup label="' + g.group + '">';
+    g.branches.forEach(function(b) {
+      html += '<option value="' + b.key + '"' + (curCulture === b.key ? ' selected' : '') + '>'
+        + b.label + ' → ' + b.deStyle + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
+
+/** 填充第三层专属定制文明建筑风格下拉框 */
+function fillCustomSelect() {
+  const sel = document.getElementById('selCustom');
+  if (!sel) return;
+  let html = '<option value=""' + (curCustom === '' ? ' selected' : '') + '>── 第三层专属定制风格 ──</option>';
+  LAYER3_CUSTOM_GROUPS.forEach(function(g) {
+    html += '<optgroup label="' + g.group + '">';
+    g.branches.forEach(function(b) {
+      html += '<option value="' + b.key + '"' + (curCustom === b.key ? ' selected' : '') + '>'
+        + b.label + ' → 底座 ' + b.deStyle + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
+
+/** 专属独立城堡素材按文化圈对号入座分组（严格 60 座） */
+const CASTLE_GROUPS = [
+  {
+    group: '🏔️ 青藏高原与专属宗堡 (1 座)',
+    castles: [
+      { id: 'TIBET_CASTLE_AGE3', name: '吐蕃藏式金顶宗堡（布达拉红白木石要塞）' },
+    ]
+  },
+  {
+    group: '🏯 华夏与东亚 (8 座)',
     castles: [
       { id: 'ASIA_CASTLE_AGE3', name: '华夏东亚重檐楼阁（通用天守阁）' },
       { id: 'CHIN_CASTLE_AGE3', name: '汉唐城楼（北方华北）' },
       { id: 'WEI_CASTLE_AGE3', name: '曹魏高台阙楼（中原）' },
       { id: 'WU_CASTLE_AGE3', name: '孙吴水榭坞堡（江南水乡）' },
       { id: 'SHU_CASTLE_AGE3', name: '蜀汉高台木关（巴蜀剑阁）' },
-      { id: 'DIANQIAN_CASTLE_AGE3', name: '大理苍山洱海云关（滇黔）' },
-      { id: 'LINGNAN_CASTLE_AGE3', name: '南越广府镬耳围楼（岭南）' },
-      { id: 'TIBET_CASTLE_AGE3', name: '吐蕃雪域金顶宗堡（青藏）' },
-      { id: 'WESTERN_CASTLE_AGE3', name: '汉伊高台绿洲要塞（西域）' },
-      { id: 'MONG_CASTLE_AGE3', name: '蒙古草原王帐石堡（塞外）' },
       { id: 'KHIT_CASTLE_AGE3', name: '契丹辽式边墙要塞（北疆）' },
       { id: 'JURC_CASTLE_AGE3', name: '女真金代居庸关山城（东北）' },
-      { id: 'KORE_CASTLE_AGE3', name: '半岛高丽山城要塞（朝鲜）' }
+      { id: 'KORE_CASTLE_AGE3', name: '半岛高丽山城要塞（朝鲜）' },
     ]
   },
   {
-    group: '🏛️ 地中海古典与南欧 (10 座)',
+    group: '🏛️ 地中海古典与南欧 (9 座)',
     castles: [
       { id: 'MEDI_CASTLE_AGE3', name: '地中海古典石堡（MEDI）' },
-      { id: 'ROMA_CASTLE_AGE3', name: '罗马军团古典方石堡' },
-      { id: 'GREEK_CASTLE_AGE3', name: '古希腊卫城城堡（GREEK）' },
+      { id: 'ROMA_CASTLE_AGE3', name: '罗马军团古典方石堡（城镇套用medi）' },
+      { id: 'SICI_CASTLE_AGE3', name: '西西里诺曼阿拉伯石堡' },
+      { id: 'SPAN_CASTLE_AGE3', name: '西班牙塞哥维亚高塔要塞' },
+      { id: 'PORT_CASTLE_AGE3', name: '葡萄牙贝伦塔大西洋海堡' },
       { id: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城阿提卡要塞' },
       { id: 'SPARTANS_CASTLE_AGE3', name: '斯巴达拉哥尼亚军营石堡' },
       { id: 'MACEDONIAN_CASTLE_AGE3', name: '马其顿希马鲁石塔城堡' },
-      { id: 'THRACIAN_CASTLE_AGE3', name: '色雷斯古典要塞（THRACIAN）' },
-      { id: 'THRACIANS_CASTLE_AGE3', name: '比提尼亚色雷斯要塞' },
-      { id: 'BYZA_CASTLE_AGE3', name: '东罗马拜占庭要塞' },
-      { id: 'SICI_CASTLE_AGE3', name: '西西里诺曼阿拉伯石堡' }
+      { id: 'THRACIAN_CASTLE_AGE3', name: '色雷斯古典要塞（THRACIAN/THRACIANS合并）' },
     ]
   },
   {
-    group: '🛡️ 西欧与北欧 (11 座)',
+    group: '🛡️ 西欧与北欧 (6 座)',
     castles: [
       { id: 'WEST_CASTLE_AGE3', name: '西欧重装石堡（WEST）' },
       { id: 'FRAN_CASTLE_AGE3', name: '法兰克加洛林石堡' },
       { id: 'BURG_CASTLE_AGE3', name: '勃艮第重装城堡' },
-      { id: 'SPAN_CASTLE_AGE3', name: '西班牙塞哥维亚高塔要塞' },
-      { id: 'PORT_CASTLE_AGE3', name: '葡萄牙贝伦塔大西洋海堡' },
       { id: 'CELT_CASTLE_AGE3', name: '苏格兰圆形高地塔堡' },
       { id: 'VIKI_CASTLE_AGE3', name: '维京诺斯长屋环形要塞' },
       { id: 'GOTH_CASTLE_AGE3', name: '哥特蛮族厚重石堡' },
+    ]
+  },
+  {
+    group: '🌲 东欧与高加索 (10 座)',
+    castles: [
       { id: 'POLE_CASTLE_AGE3', name: '波兰马尔堡红砖城堡' },
       { id: 'BOHE_CASTLE_AGE3', name: '波希米亚卡尔施泰因城堡' },
-      { id: 'MAGY_CASTLE_AGE3', name: '马扎尔匈牙利科文堡' }
-    ]
-  },
-  {
-    group: '🌲 东欧与高加索 (8 座)',
-    castles: [
-      { id: 'EAST_CASTLE_AGE3', name: '东欧通用石堡（EAST）' },
-      { id: 'SLAV_CASTLE_AGE3', name: '斯拉夫洋葱顶木石要塞（SLAV）' },
+      { id: 'MAGY_CASTLE_AGE3', name: '马扎尔匈牙利科文堡' },
+      { id: 'SLAV_CASTLE_AGE3', name: '东北欧洋葱顶木石要塞（SLAV）' },
       { id: 'LITH_CASTLE_AGE3', name: '立陶宛特拉凯湖中堡' },
       { id: 'BULG_CASTLE_AGE3', name: '保加利亚沙皇要塞' },
+      { id: 'BYZA_CASTLE_AGE3', name: '东罗马拜占庭要塞' },
+      { id: 'EAST_CASTLE_AGE3', name: '东南欧通用石堡（EAST）' },
       { id: 'ARME_CASTLE_AGE3', name: '亚美尼亚高山石堡' },
       { id: 'GEOR_CASTLE_AGE3', name: '格鲁吉亚高加索石碉' },
-      { id: 'HUNS_CASTLE_AGE3', name: '匈人游牧营垒木石要塞' },
-      { id: 'CUMA_CASTLE_AGE3', name: '库曼汗国草原要塞' }
     ]
   },
   {
-    group: '🕌 中东、西亚与北非 (7 座)',
+    group: '🕌 中东、西亚与北非 (9 座)',
     castles: [
       { id: 'ORIE_CASTLE_AGE3', name: '阿拉伯萨拉森生土要塞（ORIE）' },
-      { id: 'BERB_CASTLE_AGE3', name: '北非柏柏尔卡斯巴土堡' },
-      { id: 'TURK_CASTLE_AGE3', name: '突厥奥斯曼海峡要塞' },
       { id: 'PERS_CASTLE_AGE3', name: '萨珊波斯巴姆圆城要塞' },
-      { id: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', name: '古代阿契美尼德波斯宫阙' },
-      { id: 'PERSIAN_CASTLE_AGE3', name: '波斯传统石堡（PERSIAN）' },
-      { id: 'CEAS_CASTLE_AGE3', name: '中亚鞑靼赫拉特城堡（CEAS）' }
+      { id: 'PERSIAN_CASTLE_AGE3', name: '波斯传统石堡（PERSIAN，含阿契美尼德宫阙）' },
+      { id: 'MONG_CASTLE_AGE3', name: '蒙古草原王帐石堡（塞外）' },
+      { id: 'HUNS_CASTLE_AGE3', name: '匈人游牧营垒木石要塞' },
+      { id: 'CUMA_CASTLE_AGE3', name: '库曼汗国草原要塞' },
+      { id: 'TURK_CASTLE_AGE3', name: '突厥奥斯曼海峡要塞' },
+      { id: 'CEAS_CASTLE_AGE3', name: '中亚鞑靼赫拉特城堡（CEAS）' },
+      { id: 'WESTERN_CASTLE_AGE3', name: '西域汉伊高台绿洲要塞（西域四区专属）' },
     ]
   },
   {
-    group: '🐘 南亚、东南亚与非洲 (10 座)',
+    group: '🐘 南亚、东南亚与非洲 (12 座)',
     castles: [
       { id: 'INDI_CASTLE_AGE3', name: '达罗毗荼南亚石圆塔（INDI）' },
       { id: 'HIND_CASTLE_AGE3', name: '德里莫卧儿红砂岩堡' },
       { id: 'BENG_CASTLE_AGE3', name: '孟加拉比什努布尔红砖堡' },
       { id: 'GURJ_CASTLE_AGE3', name: '瞿折罗瓜廖尔石堡' },
-      { id: 'PURU_CASTLE_AGE3', name: '孔雀帝国粗石圆塔（PURU）' },
       { id: 'SEAS_CASTLE_AGE3', name: '东南亚吴哥窟砂岩塔（SEAS）' },
       { id: 'BURM_CASTLE_AGE3', name: '缅甸蒲甘佛塔城堡' },
       { id: 'VIET_CASTLE_AGE3', name: '大越升龙城式重檐' },
       { id: 'MALA_CASTLE_AGE3', name: '马来满剌加木石水寨' },
+      { id: 'PURU_CASTLE_AGE3', name: '孔雀帝国粗石圆塔（PURU三强化态同座）' },
+      { id: 'BERB_CASTLE_AGE3', name: '北非柏柏尔卡斯巴土堡' },
       { id: 'AFRI_CASTLE_AGE3', name: '西非马里生土要塞（AFRI）' },
-      { id: 'ETHI_CASTLE_AGE3', name: '埃塞俄比亚法西尔盖比石堡' }
+      { id: 'ETHI_CASTLE_AGE3', name: '埃塞俄比亚法西尔盖比石堡' },
     ]
-  }
+  },
+  {
+    group: '🌎 美洲与安第斯 (6 座)',
+    castles: [
+      { id: 'INCA_CASTLE_AGE3', name: '印加萨克赛瓦曼石堡（安第斯主轴）' },
+      { id: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡黄金国城堡（北安第斯）' },
+      { id: 'MAPU_CASTLE_AGE3', name: '马普切山地要塞（南安第斯）' },
+      { id: 'TUPI_CASTLE_AGE3', name: '图皮热带丛林木石要塞（南美）' },
+      { id: 'MAYA_CASTLE_AGE3', name: '玛雅阶梯金字塔石堡（中美洲）' },
+      { id: 'MESO_CASTLE_AGE3', name: '阿兹特克重装金字塔（中美洲）' },
+    ]
+  },
+
 ];
 
 let curCastle = 'auto';
 
-/** 填充 65 种城堡下拉框 */
+/** 填充 59 种专属城堡下拉框（严格 59 座） */
 function fillCastleSelect() {
   const sel = document.getElementById('selCastle');
   if (!sel) return;
-  let html = '<option value="auto"' + (curCastle === 'auto' ? ' selected' : '') + '>🎯 自动对号入座（按当前文化风格）</option>';
+  let html = '<option value="auto"' + (curCastle === 'auto' ? ' selected' : '') + '>🎯 自动对号入座（按当前建筑风格）</option>';
   CASTLE_GROUPS.forEach(function(g) {
     html += '<optgroup label=\"' + g.group + '\">';
     g.castles.forEach(function(c) {
@@ -726,11 +1198,36 @@ let curBldgScale = 1.0;
 let curGateScale = 1.0;
 let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
 let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon'
+let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
+let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
+
+/** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐） */
+function isCenterCastleActive() {
+  if (curCenterCastle === 'on') return true;
+  if (curCenterCastle === 'off') return false;
+  return curCulture === 'JAPAN' || curCulture === 'TIBET';
+}
 
 const PALISADE_ANCHORS = {
   NE: { pctX: 53.8, pctY: 74.1, widthFactor: 0.165, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_NE/preview.png' },
   SE: { pctX: 53.8, pctY: 74.1, widthFactor: 0.165, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_SE/preview.png' },
-  POST: { pctX: 60.0, pctY: 75.0, widthFactor: 0.165, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png' },
+  POST: { pctX: 60.0, pctY: 75.0, widthFactor: 0.23, path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png' }, // 2026-09-10 主人定：加高栅栏木垛
+  GATE: { pctX: 58.6, pctY: 75.9, widthFactor: 0.34, path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png' }
+};
+
+// 🔴 [2026-09-10 主人定] 草原营地套系 1：DE 经典原木尖桩栅栏 DARK_WALL_PALISADE（b_dark_wall_palisade）
+const DARK_PALISADE_ANCHORS = {
+  NE: { pctX: 50.0, pctY: 72.7, widthFactor: 0.165, path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_NE/preview.png' },
+  SE: { pctX: 52.2, pctY: 72.7, widthFactor: 0.165, path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_SE/preview.png' },
+  POST: { pctX: 56.3, pctY: 75.9, widthFactor: 0.27, path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png' }, // 2026-09-10 主人定：加高栅栏木垛
+  GATE: { pctX: 58.6, pctY: 75.9, widthFactor: 0.34, path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png' }
+};
+
+// 🔴 [2026-09-10 主人定] 草原营地套系 2：DE 横木平切栅栏 ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade）
+const ARCHAIC_PALISADE_ANCHORS = {
+  NE: { pctX: 60.0, pctY: 80.8, widthFactor: 0.165, path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_NE/preview.png' },
+  SE: { pctX: 60.0, pctY: 80.8, widthFactor: 0.165, path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_SE/preview.png' },
+  POST: { pctX: 56.3, pctY: 75.9, widthFactor: 0.27, path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png' }, // 2026-09-10 主人定：加高栅栏木垛
   GATE: { pctX: 58.6, pctY: 75.9, widthFactor: 0.34, path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png' }
 };
 
@@ -1029,7 +1526,7 @@ function computeRingWall(baseSize, S, fourGates = false) {
 }
 
 // 矩形险要要塞拓扑计算
-function computeRectWall(baseSize, LSeg, WSeg, rnd) {
+function computeRectWall(baseSize, LSeg, WSeg, rnd, extraGateTower) {
   const sx = baseSize * 0.075, sy = sx * 0.58;
   const P0 = { x: 0, y: 0 };
   const P1 = { x: LSeg * sx, y: LSeg * sy };
@@ -1059,6 +1556,8 @@ function computeRectWall(baseSize, LSeg, WSeg, rnd) {
     put(P0.x + k * sx, P0.y + k * sy, 'SE');
   }
   put(P0.x + halfL * sx, P0.y + halfL * sy, 'GATE', true);
+  // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要额外第 5 座箭塔（门楼箭塔，占城门右侧空槽；与 TerritorySystem 同步）
+  if (extraGateTower) put(P0.x + (halfL + 1) * sx, P0.y + (halfL + 1) * sy, 'TOWER_AGE4');
 
   // 右边 P1→P2
   for (let k = 1; k < WSeg; k++) put(P1.x + k * sx, P1.y - k * sy, 'NE');
@@ -1198,22 +1697,100 @@ const CITY_TIER_SCALE = {
   pass:     1.32
 };
 
+// 🔴 [2026-09-10 主人定] 草原营地（YURT）——对照 TerritorySystem.buildYurtCampHtml：
+//    8 蒙古包（YURT_E~L）+ 1 亚洲瞭望塔（ASIA_TOWER_AGE2）洗牌散布，围一圈 ARCHAIC 栅栏，无地基无石路。
+function renderYurtCampHtml(baseSize, style, type) {
+  const rnd = mulberry32(hashString(style + '_' + type + '_yurt_' + randomSeedOffset));
+  const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+  const TOWER = 'TOWER';
+  const items = [...yurts, TOWER]; // 8 帐篷 + 1 亚洲塔 = 9 物件
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  const rotation = rnd() * 360;
+  const parts = [];
+  const srcOf = (k) => k === TOWER ? '/SUCAI_BUILDING/ASIA_TOWER_AGE2/preview.png' : '/SUCAI_BUILDING/' + k + '/preview.png';
+  const sizeOf = (k, center) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
+
+  const isCastleMode = (type === 'pass') || (isCenterCastleActive() && (type === 'big' || type === 'medium'));
+  const castleDir = (curCastle && curCastle !== 'auto') ? curCastle : 'MONG_CASTLE_AGE3';
+
+  // 中间 1 个：若为城堡模式（险要或城心开启）则放置蒙古汗王要塞城堡，否则放置可汗牙帐大蒙古包
+  if (isCastleMode) {
+    const cW = baseSize * 0.60 * curBldgScale;
+    const cgW = cW * 1.6, cgH = cgW * 0.58;
+    const cFlip = rnd() < 0.5;
+    parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />');
+    parts.push('<img src="/SUCAI_BUILDING/' + castleDir + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(-50%,-65%)' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  } else {
+    const centerY = items[0];
+    const centerW = sizeOf(centerY, true);
+    const centerGroundW = centerW * 2.3, centerGroundH = centerGroundW * 0.58;
+    parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + centerGroundW.toFixed(1) + 'px;height:' + centerGroundH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />');
+    parts.push('<img src="' + srcOf(centerY) + '" style="position:absolute;left:50%;top:50%;width:' + centerW.toFixed(1) + 'px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  }
+
+  // 周围扇区散布（若为城堡模式取 4 栋留出四门开阔纵深，普通模式取 8 栋）
+  const surroundCount = isCastleMode ? 4 : 8;
+  const surround = items.slice(1, 1 + surroundCount);
+  surround.forEach((y, i) => {
+    const baseAngle = rotation + i * (360 / surround.length);
+    const angleJitter = isCastleMode ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
+    const angle = (baseAngle + angleJitter) * Math.PI / 180;
+    const r = (isCastleMode ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;
+    const x = Math.cos(angle) * r;
+    const yy = Math.sin(angle) * r * 0.58;
+    const yw = sizeOf(y, false);
+    const zIndex = Math.round(100 + yy);
+    const bGroundW = yw * 2.3, bGroundH = bGroundW * 0.58;
+    parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + yy.toFixed(1) + 'px));z-index:' + (zIndex - 1) + ';opacity:0.92;pointer-events:none;" />');
+    parts.push('<img src="' + srcOf(y) + '" style="position:absolute;left:50%;top:50%;width:' + yw.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + yy.toFixed(1) + 'px - 15%));z-index:' + zIndex + ';filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />');
+  });
+
+  // 围一圈栅栏（对照 computePalisadeWallAndGate(baseSize, S=5)）
+  // 🔴 [2026-09-10 主人定] 蒙古险要去掉围墙；两套栅栏图（DARK 尖桩原木套 / ARCHAIC 横木平切套）随机二选一
+  if (type !== 'pass') {
+    const palisadeAnchors = (curPalisadeSet === 'dark') ? DARK_PALISADE_ANCHORS
+      : (curPalisadeSet === 'archaic') ? ARCHAIC_PALISADE_ANCHORS
+      : ((hashString(style + '_' + type + '_palisade_' + randomSeedOffset) & 1) === 0 ? DARK_PALISADE_ANCHORS : ARCHAIC_PALISADE_ANCHORS);
+    const wallPieces = computeRingWall(baseSize, 5);
+    if (rnd() < 0.5) {
+      for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+    }
+    wallPieces.forEach((w) => {
+      const a = palisadeAnchors[w.type];
+      const zIndex = Math.round(100 + w.y);
+      const pW = baseSize * a.widthFactor;
+      const pctX = w.flipX ? (100 - a.pctX) : a.pctX;
+      const flip = w.flipX ? ' scaleX(-1)' : '';
+      parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + pW.toFixed(1) + 'px;transform:translate(calc(-' + pctX.toFixed(1) + '% + ' + w.x.toFixed(1) + 'px),calc(-' + a.pctY.toFixed(1) + '% + ' + w.y.toFixed(1) + 'px))' + flip + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />');
+    });
+  }
+
+  return parts.join('');
+}
+
 function renderBuildings(baseSize, style, type, seedKey = '') {
   if (!showBuildings) return '';
   const rnd = mulberry32(hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset));
   const tierScale = CITY_TIER_SCALE[type] || 1.00;
   const rotation = rnd() * 360; // 360 度随机主旋转角度（与 TerritorySystem 一模一样）
   const parts = [];
+  const isCenterCastle = (type !== 'stockade') && isCenterCastleActive();
+  const castleDir = (curCastle && curCastle !== 'auto') ? curCastle : resolvePassCastle(style);
 
   if (type === 'pass') {
-    // 险要：核心城堡 + 警戒箭塔（统一采用 500 + y 地面深度系统；8x4保持不变；比例微调并Y轴后移8px，恢复随机镜像翻转不出圈）
+    // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，统一走通用险要：
+    //    石墙墙圈 + 中心城堡 + 四角箭塔，不留民政建筑（与 TerritorySystem.buildDePassStackHtml 同步）。
+    //    险要：核心城堡 + 警戒箭塔（统一采用 500 + y 地面深度系统；8x4保持不变；比例微调并Y轴后移8px，恢复随机镜像翻转不出圈）
     const cW = baseSize * 0.42 * tierScale * curBldgScale;
     const cgW = cW * 1.55, cgH = cgW * 0.58;
     const cFlip = rnd() < 0.5;
     const cOffsetY = -8;
     const cZ = Math.round(500 + cOffsetY);
     parts.push('<img src="/SUCAI_TERRAIN/rck_plaza.png" style="position:absolute;left:50%;top:calc(50% + ' + cOffsetY + 'px);width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />');
-    // 城堡解析：支持 65 种文化城堡对号入座，安第斯对号入座 INCA_CASTLE_AGE3
+    // 城堡解析：支持 65 种文化城堡对号入座，安第斯对号入座 INCA_CASTLE_AGE3；青藏 = TIBET_CASTLE_AGE3 藏式金顶宗堡
     const castleDir = resolvePassCastle(style);
     parts.push('<img src="/SUCAI_BUILDING/' + castleDir + '/preview.png" style="position:absolute;left:50%;top:calc(50% + ' + cOffsetY + 'px);width:' + cW.toFixed(1) + 'px;transform:translate(-50%,-65%)' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + cZ + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
 
@@ -1308,32 +1885,60 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     groundParts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (7*stepX).toFixed(1) + 'px),calc(-50% + ' + (7*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
     parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:10;pointer-events:none;">' + groundParts.join('') + '</div>');
 
-    // 大城中的 9 建筑按 3*3 排列
+    // 大城中的建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30 * curRadiusMult;
     const slots = [];
-    for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) {
-        const x = (c - r) * step;
-        const y = (c + r) * step * 0.58;
-        slots.push({ x, y });
+    if (isCenterCastle) {
+      slots.push({ x: 0, y: 0, isCenter: true });
+      const cornerStep = step * 1.05;
+      const corners = [
+        { r: -1, c: -1 },
+        { r: -1, c: 1 },
+        { r: 1, c: -1 },
+        { r: 1, c: 1 }
+      ];
+      corners.forEach(c => {
+        slots.push({
+          x: (c.c - c.r) * cornerStep,
+          y: (c.c + c.r) * cornerStep * 0.58,
+          isCenter: false
+        });
+      });
+    } else {
+      for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+          const x = (c - r) * step;
+          const y = (c + r) * step * 0.58;
+          slots.push({ x, y, isCenter: (r === 0 && c === 0) });
+        }
       }
     }
     slots.sort((a, b) => a.y - b.y);
 
+    let otherIdx = 0;
     // 位置随机（洗牌后的 pool 分配到 9 个槽位）+ 随机镜像
     slots.forEach((slot, i) => {
-      const b = pool[i];
-      const bW = baseSize * b.s * tierScale * curBldgScale;
-      const zIndex = Math.round(500 + slot.y);
-      const isFlip = rnd() < 0.5;
+      if (isCenterCastle && slot.isCenter) {
+        const cW = baseSize * 0.56 * tierScale * curBldgScale;
+        const cgW = cW * 1.6, cgH = cgW * 0.58;
+        const zIndex = Math.round(500 + slot.y);
+        const cFlip = rnd() < 0.5;
+        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
+        parts.push('<img src="/SUCAI_BUILDING/' + castleDir + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-65% + ' + slot.y.toFixed(1) + 'px))' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+      } else {
+        const b = isCenterCastle ? pool[otherIdx++] : pool[i];
+        const bW = baseSize * b.s * tierScale * curBldgScale;
+        const zIndex = Math.round(500 + slot.y);
+        const isFlip = rnd() < 0.5;
 
-      // 建筑独立地基（和小城一样，在全城大广场基础上增强单体建筑底座与层次）
-      const bGroundW = bW * 2.3;
-      const bGroundH = bGroundW * 0.58;
-      parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
+        // 建筑独立地基（和小城一样，在全城大广场基础上增强单体建筑底座与层次）
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+        parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
 
-      const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
-      parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+        const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+        parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+      }
     });
 
     return parts.join('');
@@ -1363,38 +1968,67 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     }
     parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:10;pointer-events:none;">' + groundParts.join('') + '</div>');
 
-    // 中城 9 建筑按 3*3 排列（步长微展至 baseSize * 0.30）
+    // 中城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30 * curRadiusMult;
     const slots = [];
-    for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) {
-        const x = (c - r) * step;
-        const y = (c + r) * step * 0.58;
-        slots.push({ x, y });
+    if (isCenterCastle) {
+      slots.push({ x: 0, y: 0, isCenter: true });
+      const cornerStep = step * 1.05;
+      const corners = [
+        { r: -1, c: -1 },
+        { r: -1, c: 1 },
+        { r: 1, c: -1 },
+        { r: 1, c: 1 }
+      ];
+      corners.forEach(c => {
+        slots.push({
+          x: (c.c - c.r) * cornerStep,
+          y: (c.c + c.r) * cornerStep * 0.58,
+          isCenter: false
+        });
+      });
+    } else {
+      for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+          const x = (c - r) * step;
+          const y = (c + r) * step * 0.58;
+          slots.push({ x, y, isCenter: (r === 0 && c === 0) });
+        }
       }
     }
     slots.sort((a, b) => a.y - b.y);
 
+    let otherIdx = 0;
     // 9 建筑统一大小 0.32、位置完全随机打乱、独立随机镜像
     slots.forEach((slot, i) => {
-      const b = pool[i];
-      const bW = baseSize * 0.32 * tierScale * curBldgScale;
-      const zIndex = Math.round(500 + slot.y);
-      const isFlip = rnd() < 0.5;
+      if (isCenterCastle && slot.isCenter) {
+        const cW = baseSize * 0.56 * tierScale * curBldgScale;
+        const cgW = cW * 1.6, cgH = cgW * 0.58;
+        const zIndex = Math.round(500 + slot.y);
+        const cFlip = rnd() < 0.5;
+        parts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
+        parts.push('<img src="/SUCAI_BUILDING/' + castleDir + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-65% + ' + slot.y.toFixed(1) + 'px))' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+      } else {
+        const b = isCenterCastle ? pool[otherIdx++] : pool[i];
+        const bW = baseSize * 0.32 * tierScale * curBldgScale;
+        const zIndex = Math.round(500 + slot.y);
+        const isFlip = rnd() < 0.5;
 
-      // 建筑独立地基（和小城一样，在全城大广场基础上增强单体建筑底座与层次）
-      const bGroundW = bW * 2.3;
-      const bGroundH = bGroundW * 0.58;
-      parts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
+        // 建筑独立地基（和小城一样，在全城大广场基础上增强单体建筑底座与层次）
+        const bGroundW = bW * 2.3;
+        const bGroundH = bGroundW * 0.58;
+        parts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
 
-      const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
-      parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+        const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+        parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+      }
     });
 
     return parts.join('');
   }
 
   // [2026-09-08 主人定] 小城底层菱形 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（S=5, AX=10）
+  // 🔴 [2026-09-11 主人定] 险要不再走小城样式（含青藏/日本），此处只服务小城
   if (type === 'small') {
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 10;
@@ -1403,32 +2037,40 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
   }
 
-  // 1. 中间建筑（带自然随机偏移，不钉死在绝对 0,0）
+  // 1. 中间建筑（中心城堡严格居中 0,0；普通建筑带自然微偏移）
   const centerItem = pool[0];
-  const centerOffsetX = (rnd() - 0.5) * baseSize * 0.12;
-  const centerOffsetY = (rnd() - 0.5) * baseSize * 0.12 * 0.58;
-  const cW = baseSize * centerItem.s * tierScale * curBldgScale;
+  const centerOffsetX = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12;
+  const centerOffsetY = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12 * 0.58;
+  const cW = isCenterCastle
+    ? (baseSize * 0.68 * curBldgScale)
+    : (baseSize * centerItem.s * tierScale * curBldgScale);
   const cFlip = rnd() < 0.5;
   const cZIndex = Math.round(500 + centerOffsetY);
 
   if (type !== 'big') {
-    const cgW = cW * 2.3, cgH = cgW * 0.58;
+    const cgW = cW * (isCenterCastle ? 1.6 : 2.3), cgH = cgW * 0.58;
     const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
     parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
   }
-  const cPath = (type === 'stockade')
-    ? ('/SUCAI_BUILDING/' + centerItem.b + '/preview.png')
-    : ('/SUCAI_BUILDING/' + style + '_' + centerItem.b + '_' + centerItem.age + '/preview.png');
-  parts.push('<img src="' + cPath + '" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px - 15%))' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + cZIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  const cPath = isCenterCastle
+    ? ('/SUCAI_BUILDING/' + castleDir + '/preview.png')
+    : ((type === 'stockade')
+      ? ('/SUCAI_BUILDING/' + centerItem.b + '/preview.png')
+      : ('/SUCAI_BUILDING/' + style + '_' + centerItem.b + '_' + centerItem.age + '/preview.png'));
+  const cTransform = isCenterCastle
+    ? ('transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-65% + ' + centerOffsetY.toFixed(1) + 'px))' + (cFlip ? ' scaleX(-1)' : ''))
+    : ('transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px - 15%))' + (cFlip ? ' scaleX(-1)' : ''));
+  parts.push('<img src="' + cPath + '" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;' + cTransform + ';z-index:' + cZIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
 
-  // 2. 周围 8 个建筑（原汁原味 45° 极坐标扇区，基于 rotation 全角度旋转 + 扇区扰动 + 随机镜像）
-  const surround = pool.slice(1);
+  // 2. 周围建筑（中心城堡时取 4 栋，90° 扇区四角环卫；普通时取 8 栋 45° 扇区；主人 2026-09-10 定）
+  const surroundCount = isCenterCastle ? 4 : 8;
+  const surround = isCenterCastle ? pool.slice(0, surroundCount) : pool.slice(1);
   surround.forEach((b, i) => {
-    const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
-    const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
+    const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
+    const angleJitter = isCenterCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
     const angle = (baseAngle + angleJitter) * Math.PI / 180;
-    const rBase = (type === 'big') ? 0.40 : (type === 'medium') ? 0.36 : 0.32;
-    const r = (rBase + rnd() * 0.10) * baseSize * (type === 'big' ? curRadiusMult : 1.0);
+    const rBase = (type === 'big') ? 0.40 : (type === 'medium') ? 0.36 : (isCenterCastle ? 0.36 : 0.32);
+    const r = (rBase + rnd() * (isCenterCastle ? 0.08 : 0.10)) * baseSize * (type === 'big' ? curRadiusMult : 1.0);
     const x = Math.cos(angle) * r;
     const y = Math.sin(angle) * r * 0.58;
     const bW = baseSize * b.s * tierScale * curBldgScale;
@@ -1451,6 +2093,9 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
 }
 // 渲染完整据点形态 HTML
 function renderCityTypeHtml(baseSize, style, type, mirror) {
+  // 🔴 [2026-09-10 主人定] 草原毡帐营地特化（属于 CEAS 风格下的蒙古/草原游牧分支，城寨除外走 buildYurtCampHtml）。
+  const isYurt = (style === 'YURT') || (curCulture === 'MONGOL' || curCulture === 'STEPPE');
+  if (isYurt && type !== 'stockade') return renderYurtCampHtml(baseSize, style, type);
   const parts = [renderBuildings(baseSize, style, type, 'base')];
   let pieces = [];
   let anchors = {};
@@ -1489,7 +2134,9 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     anchors = FENCE_ANCHORS;
   } else if (type === 'pass') {
     const rndWall = mulberry32(hashString(style + '_' + type + '_' + randomSeedOffset + '_passtower'));
-    pieces = computeRectWall(baseSize, 8, 4, rndWall);
+    // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要 = 城堡 + 5 座箭塔（多一座门楼箭塔）；与 TerritorySystem 同步
+    const isJpTibet = curCulture === 'JAPAN' || curCulture === 'TIBET';
+    pieces = computeRectWall(baseSize, 8, 4, rndWall, isJpTibet);
     anchors = getStoneAnchors(style);
   }
 
@@ -1532,6 +2179,18 @@ function renderGateCloseup(style, type) {
   const parts = [];
   const baseW = Math.round(140 * curZoom);
 
+  const isYurt = (style === 'YURT') || (curCulture === 'MONGOL' || curCulture === 'STEPPE');
+  if (isYurt) {
+    if (type === 'pass') {
+      return '<div style="color:#718096;font-size:12px;text-align:center;line-height:80px;">（蒙古险要·无外圈围墙）</div>';
+    }
+    const chosenPalisade = (curPalisadeSet === 'dark') ? DARK_PALISADE_ANCHORS : ARCHAIC_PALISADE_ANCHORS;
+    const a = (type === 'stockade') ? FENCE_ANCHORS.GATE : chosenPalisade.GATE;
+    const gW = baseW * a.widthFactor * (type === 'stockade' ? 1.2 : 1.0) * curGateScale;
+    parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
+    return parts.join('');
+  }
+
   if (type === 'big') {
     const a = getFortifiedAnchors(style).GATE;
     const gW = baseW * 0.34 * 1.2 * curGateScale;
@@ -1549,6 +2208,7 @@ function renderGateCloseup(style, type) {
     const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'pass') {
+    // 🔴 [2026-09-11 主人定] 险要统一用石墙城门（含青藏/日本），不再走小城木栅栏门
     const a = getStoneAnchors(style).GATE;
     const gW = baseW * 0.34 * 1.1 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
@@ -1584,15 +2244,13 @@ function refresh() {
     document.getElementById('singleTitle').innerText = names[curType] + ' · 战略据点放大特写与细节呈现';
     document.getElementById('singleStage').innerHTML = renderCityTypeHtml(Math.round(180 * curZoom), curStyle, curType, curMirror);
 
-    // 渲染 8 主流文化风格矩阵
-    // [2026-09-08 主人定：全部显示] 原来写死 8 个主流风格，漏掉 AFRI/ANDE/PURU/SEAS/
-    // GREEK/THRACIAN/EAST/PERSIAN 一半。改成跟着 META 走 —— META、两张锚点表都是 16 套，
-    // 数据层本来就全的，以后 DE 加风格也会自动出现在这里。
-    const cults = Object.keys(META);
+    // 渲染 16 种建筑风格矩阵
+    const cults = STYLE_KEYS_16;
     let gridHtml = '';
     cults.forEach(c => {
+      const label = STYLE_LABELS[c] || c;
       gridHtml += '<div class="card">' +
-        '<div class="card-header"><span>' + c + ' 风格 · ' + names[curType] + '</span><span class="tag tag-med">实时渲染</span></div>' +
+        '<div class="card-header"><span>' + c + ' · ' + label + '</span><span class="tag tag-med">实时渲染</span></div>' +
         '<div class="mini-viewport"><div style="position:relative;width:280px;height:280px;">' + renderCityTypeHtml(105, c, curType, false) + '</div></div>' +
         '</div>';
     });
@@ -1612,6 +2270,61 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 document.getElementById('selStyle').addEventListener('change', e => {
   curStyle = e.target.value;
+  // 手动切换风格时，清空分支选择
+  curCulture = '';
+  const selCul = document.getElementById('selCulture');
+  if (selCul) selCul.value = '';
+  // 一层已切走，三层专属定制同步归位（避免下拉仍显示青藏而实际按 ASIA 渲染）
+  curCustom = '';
+  const selCus = document.getElementById('selCustom');
+  if (selCus) selCus.value = '';
+  syncCenterCastleBtn();
+  refresh();
+});
+
+// 建筑风格分支下拉：选择分支后自动联动 16 种建筑风格 + 城堡
+document.getElementById('selCulture').addEventListener('change', e => {
+  curCulture = e.target.value;
+  // 二层分支已接管，三层专属定制同步归位
+  curCustom = '';
+  const selCus = document.getElementById('selCustom');
+  if (selCus) selCus.value = '';
+  if (curCulture && CULTURE_MAP[curCulture]) {
+    const cm = CULTURE_MAP[curCulture];
+    // 联动 DE 建筑风格
+    curStyle = cm.deStyle;
+    const selSt = document.getElementById('selStyle');
+    if (selSt) selSt.value = curStyle;
+    // 联动城堡
+    curCastle = cm.castle;
+    const selCa = document.getElementById('selCastle');
+    if (selCa) selCa.value = curCastle;
+  }
+  syncCenterCastleBtn();
+  refresh();
+});
+
+// 第三层专属定制下拉（青藏）：选中后给据点套上三层风格 —— 底座 DE 建筑风格 + 专属独立宗堡，
+// 与 TerritorySystem 的 REGION_TO_DE_STYLE / deCastleAssets 完全对齐
+// （青藏 = PURU 粗石红褐石墙底座 + TIBET_CASTLE_AGE3 藏式金顶宗堡 + 城心宗堡自动开启）。
+document.getElementById('selCustom').addEventListener('change', e => {
+  curCustom = e.target.value;
+  if (curCustom && LAYER3_MAP[curCustom]) {
+    const cm = LAYER3_MAP[curCustom];
+    // 三层文明身份与本命底座
+    curCulture = curCustom;
+    curStyle = cm.deStyle;
+    const selSt = document.getElementById('selStyle');
+    if (selSt) selSt.value = curStyle;
+    // 专属独立城堡（三层分支自带，不再走 style + '_CASTLE_AGE3' 拼名）
+    curCastle = cm.castle;
+    const selCa = document.getElementById('selCastle');
+    if (selCa) selCa.value = curCastle;
+    // 三层已选，二层分支下拉归位到「全部」（二层 59 套里不含第三层文明）
+    const selCul = document.getElementById('selCulture');
+    if (selCul) selCul.value = '';
+  }
+  syncCenterCastleBtn();
   refresh();
 });
 
@@ -1619,6 +2332,39 @@ const selCastleEl = document.getElementById('selCastle');
 if (selCastleEl) {
   selCastleEl.addEventListener('change', e => {
     curCastle = e.target.value;
+    refresh();
+  });
+}
+
+/** 城心城堡按钮外观与状态同步 */
+function syncCenterCastleBtn() {
+  const b = document.getElementById('btnCenterCastle');
+  if (!b) return;
+  const active = isCenterCastleActive();
+  if (curCenterCastle === 'auto') {
+    b.innerText = '城心城堡: 自动 (' + (active ? '开启·' + (curCulture === 'JAPAN' ? '日本' : curCulture === 'TIBET' ? '青藏' : curCulture) : '关') + ')';
+    b.style.background = active ? '#2b6cb0' : '#243246';
+    b.style.borderColor = active ? '#63b3ed' : '#4a5568';
+    b.style.color = '#fff';
+  } else if (curCenterCastle === 'on') {
+    b.innerText = '城心城堡: 强制开启';
+    b.style.background = '#805ad5';
+    b.style.borderColor = '#b794f4';
+    b.style.color = '#fff';
+  } else {
+    b.innerText = '城心城堡: 强制关闭';
+    b.style.background = '#243246';
+    b.style.borderColor = '#4a5568';
+    b.style.color = '#a0aec0';
+  }
+  b.classList.toggle('active', active);
+}
+
+const btnCenterCastleEl = document.getElementById('btnCenterCastle');
+if (btnCenterCastleEl) {
+  btnCenterCastleEl.addEventListener('click', () => {
+    curCenterCastle = (curCenterCastle === 'auto') ? 'on' : (curCenterCastle === 'on') ? 'off' : 'auto';
+    syncCenterCastleBtn();
     refresh();
   });
 }
@@ -1718,6 +2464,19 @@ if (urlParams.has('style')) {
   const sel = document.getElementById('selStyle');
   if (sel) sel.value = curStyle;
 }
+if (urlParams.has('branch') || urlParams.has('culture')) {
+  const ck = urlParams.get('branch') || urlParams.get('culture');
+  if (CULTURE_MAP[ck]) {
+    curCulture = ck;
+    const cm = CULTURE_MAP[ck];
+    curStyle = cm.deStyle;
+    curCastle = cm.castle;
+    const sel = document.getElementById('selStyle');
+    if (sel) sel.value = curStyle;
+    const selCul = document.getElementById('selCulture');
+    if (selCul) selCul.value = curCulture;
+  }
+}
 if (urlParams.has('castle')) {
   curCastle = urlParams.get('castle');
 }
@@ -1730,6 +2489,12 @@ if (urlParams.has('gateScale')) {
 }
 if (urlParams.has('seed')) {
   randomSeedOffset = parseInt(urlParams.get('seed')) || 0;
+}
+if (urlParams.has('centerCastle')) {
+  const cc = urlParams.get('centerCastle');
+  if (['auto', 'on', 'off'].includes(cc)) {
+    curCenterCastle = cc;
+  }
 }
 if (urlParams.has('mediumGates')) {
   const g = urlParams.get('mediumGates');
@@ -1832,9 +2597,57 @@ if (btnStkShape) {
   });
 }
 
-fillCastleSelect(); // 填充 65 种城堡（7 大历史文化圈对号入座）
+if (urlParams.has('palisadeSet')) {
+  const p = urlParams.get('palisadeSet');
+  if (['rnd', 'dark', 'archaic'].includes(p)) {
+    curPalisadeSet = p;
+  }
+}
+
+/** 营地栅栏按钮外观与状态同步 */
+function syncPalisadeSetBtn() {
+  const btn = document.getElementById('btnPalisadeSet');
+  if (!btn) return;
+  if (curPalisadeSet === 'dark') {
+    btn.innerText = '营地栅栏: 🪵 套系1 (DARK 尖桩原木)';
+    btn.style.background = '#2b6cb0';
+    btn.style.borderColor = '#63b3ed';
+    btn.style.color = '#fff';
+  } else if (curPalisadeSet === 'archaic') {
+    btn.innerText = '营地栅栏: 🪵 套系2 (ARCHAIC 横木加固)';
+    btn.style.background = '#805ad5';
+    btn.style.borderColor = '#b794f4';
+    btn.style.color = '#fff';
+  } else {
+    btn.innerText = '营地栅栏: 🎲 随机二选一';
+    btn.style.background = '#243246';
+    btn.style.borderColor = '#4a5568';
+    btn.style.color = '#fff';
+  }
+}
+
+const btnPalisadeSet = document.getElementById('btnPalisadeSet');
+if (btnPalisadeSet) {
+  btnPalisadeSet.addEventListener('click', () => {
+    if (curPalisadeSet === 'rnd') {
+      curPalisadeSet = 'dark';
+    } else if (curPalisadeSet === 'dark') {
+      curPalisadeSet = 'archaic';
+    } else {
+      curPalisadeSet = 'rnd';
+    }
+    syncPalisadeSetBtn();
+    refresh();
+  });
+}
+
+fillCultureSelect(); // 填充建筑风格分支下拉（严格 59 套文明分支→DE 16 种建筑风格+专属城堡联动）
+fillCustomSelect();  // 填充第三层专属定制下拉（青藏→底座 PURU + TIBET_CASTLE_AGE3 藏式宗堡）
+fillCastleSelect(); // 填充 59 种专属城堡（7 大历史文化圈对号入座）
 fillStyleSelect();  // 16 套风格全部列进下拉（原 HTML 只写死了 10 个）
 syncMirrorBtn();   // 无 ?mirror 参数时也要让按钮外观与默认态一致
+syncCenterCastleBtn(); // 初始化城心城堡按钮状态
+syncPalisadeSetBtn();  // 初始化营地栅栏套系按钮状态
 refresh();
 
 /* ==========================================================================
@@ -1847,6 +2660,7 @@ refresh();
  * ========================================================================== */
 (function initBuildingCatalog() {
   var rows = [], filtered = [], modalIdx = -1;
+  var catalogMeta = null;
 
   var el = {
     grid: document.getElementById('bldgGrid'),
@@ -1864,7 +2678,17 @@ refresh();
     modal: document.getElementById('bldgModal'),
     modalImg: document.getElementById('bldgModalImg'),
     modalTitle: document.getElementById('bldgModalTitle'),
-    modalMeta: document.getElementById('bldgModalMeta')
+    modalMeta: document.getElementById('bldgModalMeta'),
+    stylesGrid: document.getElementById('deStylesGrid'),
+    btnResetAll: document.getElementById('btnResetAllFilters'),
+    cardDe16: document.getElementById('cardDe16'),
+    cardCastles64: document.getElementById('cardCastles64'),
+    cardWonders61: document.getElementById('cardWonders61'),
+    cardSharedEra: document.getElementById('cardSharedEra'),
+    cardCustomYurt: document.getElementById('cardCustomYurt'),
+    chipDark: document.getElementById('chipDark'),
+    chipArchaic: document.getElementById('chipArchaic'),
+    chipYurt: document.getElementById('chipYurt')
   };
 
   /* 据点评估视图的所有顶层块：切到建筑鉴赏时整体隐藏 */
@@ -1875,11 +2699,6 @@ refresh();
         && n.tagName !== 'SCRIPT';
     });
   }
-
-  /* 图片懒加载用浏览器原生 loading="lazy"，不自己写 IntersectionObserver。
-   * 🔴 [2026-09-08] 原来用 IO + data-src，实测在页面未获得渲染焦点时**回调根本不派发**
-   * （布局正常、元素在视口内、IO 也存在，但一张都没换上 src）→ 满屏空白卡片。
-   * 原生 lazy 由浏览器自己调度，没有这个坑，代码也少一半。 */
 
   function countBy(key, val) {
     var n = 0;
@@ -1902,20 +2721,39 @@ refresh();
   }
 
   function buildFilters() {
-    var groups = [], prefixes = [], types = [], ages = [];
+    var rawGroups = [], prefixes = [], types = [], ages = [];
     var seen = {};
     rows.forEach(function (r) {
-      if (!seen['g' + r.groupLabel]) { seen['g' + r.groupLabel] = 1; groups.push(r.groupLabel); }
+      if (!seen['g' + r.groupLabel]) { seen['g' + r.groupLabel] = 1; rawGroups.push(r.groupLabel); }
       if (!seen['p' + r.prefix]) { seen['p' + r.prefix] = 1; prefixes.push(r.prefix); }
       if (!seen['t' + r.building]) { seen['t' + r.building] = 1; types.push(r.building); }
       if (r.age && !seen['a' + r.age]) { seen['a' + r.age] = 1; ages.push(r.age); }
     });
-    groups.sort(); prefixes.sort(); types.sort(); ages.sort();
+    prefixes.sort(); types.sort(); ages.sort();
 
-    /* 用途是最主要的维度，按「常规 → 特殊 → 城防 → 装饰」固定顺序，不排字母序 */
+    // 智能排序分组：DE 官方 16 套排在最前，随后专属城堡与奇观，单时代共用与自建，最后城防、地标、临时
+    var deGroups = rawGroups.filter(function(g) { return g.indexOf('DE 官方:') === 0; }).sort();
+    var otherOrder = [
+      '文明专属城堡 (59座)',
+      '文明专属奇观 (59座)',
+      '黑暗时代 (全文明共用)',
+      '古典时代 (罗马归来共用)',
+      '草原毡帐 (本项目自建民居)',
+      '城防构件',
+      '战役地标·遗迹',
+      '临时素材'
+    ];
+    var otherGroups = otherOrder.filter(function(g) { return rawGroups.indexOf(g) >= 0; });
+    var groups = deGroups.concat(otherGroups);
+
+    /* 用途是最主要的维度，按「常规 → 专属城堡 → 专属奇观 → 城防 → 地标 → 装饰」固定顺序 */
     var USAGE_ORDER = [
-      ['regular', '常规建筑'], ['special', '特殊建筑'],
-      ['defense', '城防构件'], ['decor', '装饰·其他']
+      ['regular', '常规建筑'],
+      ['castle', '专属城堡 (59座)'],
+      ['wonder', '专属奇观 (59座)'],
+      ['defense', '城防构件'],
+      ['landmark', '战役地标·遗迹'],
+      ['decor', '装饰·临时素材']
     ];
     el.usage.innerHTML = '';
     var uAll = document.createElement('option');
@@ -1936,7 +2774,7 @@ refresh();
     fillSelect(el.type, types, 'building', '全部建筑类型 (' + types.length + ' 种)');
     fillSelect(el.age, ages, 'age', '全部时代 (' + ages.length + ' 档)');
 
-    /* 状态默认「仅完好」—— 一上来就 2471 张（含受损/摧毁/废墟）太乱 */
+    /* 状态默认「仅完好」—— 完好态下正好呈现 64 独立城堡与 61 专属奇观 */
     var stateLabel = { NORMAL: '完好', DAMAGED: '受损', DESTR: '摧毁', RUBBLE: '废墟' };
     el.state.innerHTML = '';
     ['NORMAL', 'DAMAGED', 'DESTR', 'RUBBLE', 'all'].forEach(function (v) {
@@ -1948,6 +2786,143 @@ refresh();
       el.state.appendChild(o);
     });
     el.state.value = 'NORMAL';
+  }
+
+  function renderStyleChips() {
+    if (!el.stylesGrid) return;
+    var de16 = (catalogMeta && catalogMeta.de16Styles) || {};
+    var html = Object.keys(de16).map(function (k) {
+      var name = de16[k];
+      var cnt = rows.filter(function (r) { return r.prefix === k; }).length;
+      return '<div class="de-style-chip" data-prefix="' + k + '" title="点击查看 ' + k + ' · ' + name + ' 全套建筑">'
+        + '<span><strong>' + k + '</strong> · ' + name + '</span>'
+        + '<span class="badge">' + cnt + ' 件</span>'
+        + '</div>';
+    }).join('');
+    el.stylesGrid.innerHTML = html;
+
+    el.stylesGrid.querySelectorAll('.de-style-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var p = chip.dataset.prefix;
+        resetFilterInputs();
+        el.prefix.value = p;
+        highlightActiveBoardItem(chip);
+        applyFilters();
+        scrollToToolbar();
+      });
+    });
+  }
+
+  function resetFilterInputs() {
+    el.search.value = '';
+    el.usage.value = 'all';
+    el.group.value = 'all';
+    el.prefix.value = 'all';
+    el.type.value = 'all';
+    el.age.value = 'all';
+    el.state.value = 'NORMAL';
+    document.querySelectorAll('.de-metric-card, .de-style-chip').forEach(function(c) {
+      c.classList.remove('active');
+    });
+  }
+
+  function highlightActiveBoardItem(activeEl) {
+    document.querySelectorAll('.de-metric-card, .de-style-chip').forEach(function(c) {
+      c.classList.remove('active');
+    });
+    if (activeEl) activeEl.classList.add('active');
+  }
+
+  function scrollToToolbar() {
+    var tb = document.querySelector('.bldg-toolbar');
+    if (tb) tb.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function bindBoardEvents() {
+    if (el.btnResetAll) {
+      el.btnResetAll.addEventListener('click', function() {
+        resetFilterInputs();
+        applyFilters();
+      });
+    }
+
+    if (el.cardDe16) {
+      el.cardDe16.addEventListener('click', function() {
+        resetFilterInputs();
+        highlightActiveBoardItem(el.cardDe16);
+        el.stylesGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    if (el.cardCastles64) {
+      el.cardCastles64.addEventListener('click', function() {
+        resetFilterInputs();
+        el.usage.value = 'castle';
+        highlightActiveBoardItem(el.cardCastles64);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.cardWonders61) {
+      el.cardWonders61.addEventListener('click', function() {
+        resetFilterInputs();
+        el.usage.value = 'wonder';
+        highlightActiveBoardItem(el.cardWonders61);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.cardSharedEra) {
+      el.cardSharedEra.addEventListener('click', function() {
+        resetFilterInputs();
+        el.search.value = 'DARK';
+        highlightActiveBoardItem(el.cardSharedEra);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.cardCustomYurt) {
+      el.cardCustomYurt.addEventListener('click', function() {
+        resetFilterInputs();
+        el.prefix.value = 'YURT';
+        highlightActiveBoardItem(el.cardCustomYurt);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.chipDark) {
+      el.chipDark.addEventListener('click', function() {
+        resetFilterInputs();
+        el.prefix.value = 'DARK';
+        highlightActiveBoardItem(el.chipDark);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.chipArchaic) {
+      el.chipArchaic.addEventListener('click', function() {
+        resetFilterInputs();
+        el.prefix.value = 'ARCHAIC';
+        highlightActiveBoardItem(el.chipArchaic);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
+
+    if (el.chipYurt) {
+      el.chipYurt.addEventListener('click', function() {
+        resetFilterInputs();
+        el.prefix.value = 'YURT';
+        highlightActiveBoardItem(el.chipYurt);
+        applyFilters();
+        scrollToToolbar();
+      });
+    }
   }
 
   function applyFilters() {
@@ -1978,6 +2953,9 @@ refresh();
         + '<span class="bldg-tag grp-' + r.group + '">' + r.groupLabel + '</span>';
       if (r.age) { tags += '<span class="bldg-tag age">' + r.age + '</span>'; }
       if (r.state !== 'NORMAL') { tags += '<span class="bldg-tag st-' + r.state + '">' + r.stateLabel + '</span>'; }
+      if (r.specialNote) {
+        tags += '<span class="bldg-tag tag-special-note" title="' + r.specialNote + '">💡 特殊说明</span>';
+      }
       tags += '<span class="bldg-tag">' + r.w + '×' + r.h + '</span>';
       return '<div class="bldg-card" data-i="' + i + '">'
         + '<div class="bldg-thumb"><img src="' + r.img + '" alt="' + r.dir + '" loading="lazy" decoding="async" /></div>'
@@ -1992,12 +2970,16 @@ refresh();
     var r = filtered[i];
     el.modalImg.src = r.img;
     el.modalTitle.textContent = r.dir;
+    var noteHtml = r.specialNote
+      ? '<div style="margin-top:10px;padding:8px 14px;background:#2d2415;border:1px solid #d69e2e;color:#fefcbf;border-radius:6px;font-size:12px;text-align:left;line-height:1.5;">💡 <b>特殊问题说明：</b>' + r.specialNote + '</div>'
+      : '';
     el.modalMeta.innerHTML = r.usageLabel + '　·　' + r.groupLabel + '　·　建筑 ' + r.building
       + (r.age ? '　·　' + r.age : '') + '　·　' + r.stateLabel + '<br>'
       + '图片 ' + r.w + '×' + r.h + ' px　·　帧数 ' + (r.frames == null ? '—' : r.frames)
       + '　·　DE 包围盒 ' + (r.boxW == null ? '—' : r.boxW + '×' + r.boxH)
       + '　·　素材 ' + r.kb + ' KB<br>'
-      + '<span style="color:#4a5568;">' + r.img + '</span><br>'
+      + '<span style="color:#4a5568;">' + r.img + '</span>'
+      + noteHtml + '<br>'
       + '第 ' + (i + 1) + ' / ' + filtered.length + ' 个';
     el.modal.classList.add('open');
   }
@@ -2042,9 +3024,12 @@ refresh();
         return r.json();
       })
       .then(function (json) {
+        catalogMeta = json;
         rows = json.rows || [];
         el.count.textContent = '(' + rows.length + ')';
         buildFilters();
+        renderStyleChips();
+        bindBoardEvents();
         applyFilters();
       })
       .catch(function (err) {
