@@ -101,7 +101,9 @@ export class BattleSceneLayer {
         // [2026-08-11 战败停留] 战败后（无活跃战斗 + 演出已停）不立即 exit：
         // 保持 13 冻结画面 5 秒，让 tickFollowCamera 的延迟切换期间镜头留在战场。
         const game = (window as any).game;
-        const followedId = game?.cameraFollowUI?.getFollowedArmyId?.();
+        // 战斗结算可能先移除/切换当前跟拍军团；收尾必须继续认进场时保存的参战军团，
+        // 否则 followedId 变空后会跳过残局待命与退场，战术场景永久停在最后一帧。
+        const followedId = this.followUnitId ?? game?.cameraFollowUI?.getFollowedArmyId?.();
         if (followedId) {
             const fields: any[] = game?.combatSystem?.getActiveBattleFields?.() ?? [];
             const stillFieldFight = fields.some(

@@ -750,6 +750,11 @@ export class GameApp {
             followCamera: () => this.cameraFollowUI.followPlayer(),
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
+            setCompanionPanelsExpanded: (expanded) => {
+                if (expanded) this.cameraFollowUI.openList();
+                else this.cameraFollowUI.closeList();
+                this.brawlFeedPanel?.setExpanded(expanded);
+            },
         });
         this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War);
 

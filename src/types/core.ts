@@ -71,6 +71,7 @@ export interface City {
     mirror?: boolean;
     tier?: 0 | 1 | 2 | 4; // 据点分级（与 cities_v2 对齐，0/1 为核心大城级）
     region?: string; // [NEW] Region ID
+    buildingStyle?: string; // 建筑风格 (ASIA, WEST, EAST, SLAV, MEDI, ORIE, CEAS, INDI, PURU, SEAS, MESO, ANDE, AFRI, PERSIAN, GREEK, THRACIAN)
     startYear?: number; // [NEW] Start Year (Visible from this year)
     endYear?: number;   // [NEW] End Year (Visible until this year)
     image?: string;     // [NEW] Image path injected by RegionSystem

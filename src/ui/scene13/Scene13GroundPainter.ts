@@ -179,6 +179,7 @@ export class Scene13GroundPainter {
 
     /** 异步素材（地形贴图 / blend 遮罩）到货时通知调用方重绘 */
     private onNeedRepaint: () => void;
+    private terrainImages = new Map<string, HTMLImageElement>();
 
     constructor(onNeedRepaint: () => void = () => {}) {
         this.onNeedRepaint = onNeedRepaint;
@@ -204,15 +205,23 @@ export class Scene13GroundPainter {
         this.terrain.width = width;
         this.terrain.height = height;
         this.terrainTile = tile;
-        this.terrainImg = null;
+        const cached = this.terrainImages.get(tile);
+        this.terrainImg = cached?.complete && cached.naturalWidth ? cached : null;
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
+        // 同一地形再次进场或调整窗口，直接复用已解码图，不再等图片 onload 才接管地图。
+        if (cached) return;
         const im = new Image();
+        im.fetchPriority = 'high';
+        this.terrainImages.set(tile, im);
+        if (this.terrainImages.size > 8) this.terrainImages.delete(this.terrainImages.keys().next().value!);
         im.onload = () => {
+            if (this.terrainTile !== tile) return;
             this.terrainImg = im;
             this.paintTerrain();
             this.elevCacheReady = false;
             this.onNeedRepaint();
         };
+        im.onerror = () => { if (this.terrainImages.get(tile) === im) this.terrainImages.delete(tile); };
         im.src = TERRAIN_BASE_URL + this.terrainTile + '.png';
     }
 
@@ -228,6 +237,10 @@ export class Scene13GroundPainter {
      *   等 P1 接回 DE 树再看。若仍嫌单调，正确手段是叠一层极淡的大尺度低频噪声
      *   （柔和明暗斑块，尺度远大于 tile，无硬边），绝不再用旋转镜像。
      */
+    isTerrainReady(): boolean {
+        return !!(this.terrainImg?.complete && this.terrainImg.naturalWidth && this.terrain);
+    }
+
     paintTerrain(): void {
         const cv = this.terrain, g = this.terrainCtx;
         if (!cv || !g) return;
@@ -574,14 +587,19 @@ export class Scene13GroundPainter {
         if (!this.blurCv) { this.blurCv = document.createElement('canvas'); this.blurCtx = this.blurCv.getContext('2d')!; }
         const mcv = this.maskCv, mctx = this.maskCtx!;
         const bcv = this.blurCv, bctx = this.blurCtx!;
-        if (mcv.width !== bw || mcv.height !== bh) { mcv.width = bw; mcv.height = bh; bcv.width = bw; bcv.height = bh; }
+        const pad = (p.polygon && p.polygon.length >= 3) ? blurRadius * 3 : 0;
+        const mw = bw + pad * 2;
+        const mh = bh + pad * 2;
+        if (mcv.width !== mw || mcv.height !== mh) { mcv.width = mw; mcv.height = mh; bcv.width = mw; bcv.height = mh; }
         // 1. 白形状（斑块格，局部坐标）
-        mctx.clearRect(0, 0, bw, bh);
+        mctx.clearRect(0, 0, mw, mh);
         mctx.fillStyle = '#fff';
+        const ox = bx - pad;
+        const oy = by - pad;
         if (p.polygon && p.polygon.length >= 3) {
             mctx.beginPath();
-            mctx.moveTo(p.polygon[0].x - bx, p.polygon[0].y - by);
-            for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x - bx, p.polygon[i].y - by);
+            mctx.moveTo(p.polygon[0].x - ox, p.polygon[0].y - oy);
+            for (let i = 1; i < p.polygon.length; i++) mctx.lineTo(p.polygon[i].x - ox, p.polygon[i].y - oy);
             mctx.closePath();
             mctx.fill();
         } else {
@@ -590,7 +608,7 @@ export class Scene13GroundPainter {
             mctx.beginPath();
             for (const [gx, gy] of p.cells) {
                 // 斑块必须跟着地面一起抬升，否则高地上的草/土斑会浮在坡面下方错位
-                const sx = this.isoCellX(gx, gy) - bx, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - by;
+                const sx = this.isoCellX(gx, gy) - ox, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - oy;
                 mctx.moveTo(sx, sy - TILE_H / 2);
                 mctx.lineTo(sx + TILE_W / 2, sy);
                 mctx.lineTo(sx, sy + TILE_H / 2);
@@ -611,26 +629,36 @@ export class Scene13GroundPainter {
         }
         if (!ragged) {
             // 高斯模糊（polygon 斑块 / 道路 / 地基 / 无 blend 图时）：平滑软化边界，形成自然柔和的渐变羽化
-            bctx.clearRect(0, 0, bw, bh);
+            bctx.clearRect(0, 0, mw, mh);
             bctx.filter = `blur(${blurRadius}px)`;
             bctx.drawImage(mcv, 0, 0);
             bctx.filter = 'none';
         }
         // 3. source-in 填纹理（纹理只在最终遮罩形状内）
+        //
+        // 🔴 [2026-09-11 修「下城门外的大道不见了」] 这里原本是
+        //      `bctx.save(); bctx.translate(-ox, -oy); bctx.fillRect(0, 0, mw, mh); bctx.restore();`
+        //    —— 平移之后那个 fillRect 在**画布坐标系**里整体挪到 (ox, oy) 之外：
+        //      斑块 bbox 原点 (bx,by) 不是 (0,0) 时，填充区与画布**不相交**，
+        //      而 source-in 的语义是「新内容只在重叠处保留、其余一律清空」，
+        //      于是整块斑块被填成 0 像素 —— 画不出来。
+        //    实锤（1600x900 洛阳攻城战，逐块跑本函数数不透明像素）：
+        //      城池地基 bbox 原点 (936,0) → 0 像素；上城门道 (0,0) → 108618 像素；
+        //      下城门道 (0,684) → 0 像素。所以"上城门外有路、下城门外没路"，
+        //      根因不是没铺路（addGateFoundation 两座门都铺了），而是这一行把路清没了。
+        //    改法：不平移，直接铺满本斑块的离屏画布 —— bbox 原点 (0,0) 的斑块结果
+        //      **逐像素与改前相同**（原来的 translate 对它们是恒等），其余斑块恢复可见。
         bctx.globalCompositeOperation = 'source-in';
         const pat = bctx.createPattern(img, 'repeat');
         if (pat) {
-            bctx.save();
-            bctx.translate(-bx, -by);
             bctx.fillStyle = pat;
-            bctx.fillRect(bx, by, bw, bh);
-            bctx.restore();
+            bctx.fillRect(0, 0, mw, mh);
         }
         bctx.globalCompositeOperation = 'source-over';
         // 4. 存缓存（bcv 是共享暂存画布，下一块斑块就会覆盖，必须拷出来）
         const cache = document.createElement('canvas');
         cache.width = bw; cache.height = bh;
-        cache.getContext('2d')!.drawImage(bcv, 0, 0);
+        cache.getContext('2d')!.drawImage(bcv, pad, pad, bw, bh, 0, 0, bw, bh);
         p.cache = cache; p.cacheX = bx; p.cacheY = by;
         // 5. 合成到装饰层（只贴 bbox 区域）
         if (p.alpha < 1) g.globalAlpha = p.alpha;

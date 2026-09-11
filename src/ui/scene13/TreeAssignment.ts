@@ -24,7 +24,7 @@
  */
 
 /** 季节：0=春夏 1=秋 2=冬（与 Scene13EnvironmentPlan.season 同源） */
-export type TreeSeason = 0 | 1 | 2;
+export type TreeSeason = 0 | 1 | 2 | 3;   // 春0 / 夏1 / 秋2 / 冬3（与 TimeSystem 的四季 1:1）
 
 /**
  * 季节变体表：夏 → [秋, 冬]。
@@ -104,6 +104,12 @@ interface RegionTree {
     /** 只对这些底图生效；不填 = 该地区通用 */
     bases?: readonly string[];
     tree: string;
+    /**
+     * 逐季树种（春/夏/秋/冬）——**四季各不相同**的地方填这个；不填就用 `tree` 一树到底
+     * （竹、梭梭、藏柏、棕榈这类常绿/不换装的，本来就不该换）。
+     * 🔴 [2026-09-11 主人定「既然是 4 季节，每个季节一张图」] 见 docs 里植被四季说明。
+     */
+    trees?: readonly [string, string, string, string];
     /** 注释用，说明为什么是这棵 */
     why: string;
 }
@@ -111,8 +117,14 @@ interface RegionTree {
 const REGION_TREES: readonly RegionTree[] = [
     // ── 东亚 ──
     // ds4 必须带上：江户就是 ds4，漏了它日本会长出橄榄树
+    // 🔴 [2026-09-11 主人「日本全年樱花是硬伤」] 日本按**四季换装**：
+    //    春=樱、夏=绿枫（列岛夏季的深绿阔叶）、秋=红枫（紅葉）、冬=雪松。
+    //    素材全部 DE 原版：n_tree_peach_blossom / n_tree_asian_maple_green /
+    //    n_tree_asian_maple_autumn / n_tree_snow_pine。
     { box: [30.0, 46.0, 129.0, 146.0], bases: ['ds3', 'ds4', 'gr2', 'grs', 'for'],
-      tree: 'PEACH_BLOSSOM', why: '日本 —— 樱花' },
+      tree: 'PEACH_BLOSSOM',
+      trees: ['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'],
+      why: '日本 —— 春樱 / 夏绿 / 秋枫 / 冬雪松' },
     { box: [33.0, 43.5, 124.0, 131.0], bases: ['ds3', 'ds4', 'gr2', 'grs', 'for'],
       tree: 'SCENARIO_TREE_B', why: '朝鲜半岛 —— 阔叶大树' },
     // 🔴 [2026-08-31] qs2 必须带上：江陵/当阳/竟陵/云梦/郊郢/巴陵 是**云梦泽**——
@@ -136,7 +148,11 @@ const REGION_TREES: readonly RegionTree[] = [
     //    温带落叶阔叶（栎、槭），桦是偏北方的种，压进来等于让文登长错树，
     //    还把 ASIAN_MAPLE_GREEN 挤成全局零使用。**是注释写错了，不是框划错了。**
     { box: [38.0, 54.0, 118.0, 136.0], bases: ['gr4', 'gr3', 'gr2', 'for'],
-      tree: 'BIRCH_GREEN', why: '东北 —— 白桦（gr2/for 也覆盖，沈阳/勃利/襄平别长枫或橡；文登在框外，走 gr2 默认的槭）' },
+      tree: 'BIRCH_GREEN',
+      // 🔴 [2026-09-11] 白桦在 DE 里就带三段（见 scratch/aoe2de_nature_extract.py：绿 0-7 / 黄 8-20;24-29;33-41 / 枯 21-23;30-32）
+      //    → 东北四季：春绿、夏绿、秋黄、冬枯。原版像素，非调色派生。
+      trees: ['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'],
+      why: '东北 —— 白桦（春/夏 绿、秋 黄、冬 枯；gr2/for 也覆盖，沈阳/勃利/襄平别长枫或橡；文登在框外，走 gr2 默认的槭）' },
     { box: [24.0, 34.0, 97.0, 110.0], bases: ['ds4', 'ds3', 'gr2', 'grs', 'for'],
       tree: 'BAMBOO', why: '巴蜀/云贵 —— 成都平原的红土长竹樟，不是橄榄' },
     { box: [32.0, 42.0, 108.0, 122.0], bases: ['ds3', 'gr2', 'grs', 'for', 'gr3'],
@@ -361,6 +377,9 @@ const FALLBACK_TREE = 'OAK';
 /**
  * 查这一战该长什么树。
  * 顺序：地区覆盖 → 底图默认 → 兜底；拿到之后套季节变体。
+ *
+ * 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 地区覆盖现在**可以逐季给树**（`trees[四季]`）：
+ *    填了就用当季那张，没填就 `tree` 一树到底（竹/梭梭/藏柏/棕榈这类本来不换装的）。
  */
 export function pickTree(q: TreeQuery): string {
     let tree: string | undefined;
@@ -369,7 +388,7 @@ export function pickTree(q: TreeQuery): string {
         const [s, n, w, e] = r.box;
         if (q.lat < s || q.lat > n || q.lng < w || q.lng > e) continue;
         if (r.bases && !r.bases.includes(q.baseTile)) continue;
-        tree = r.tree;
+        tree = r.trees?.[q.season] ?? r.tree;
         break;
     }
     if (!tree) tree = TREE_BY_BASE[q.baseTile];
@@ -378,10 +397,14 @@ export function pickTree(q: TreeQuery): string {
     // 攻城战不出枯树：城郊的枯木早被拾去烧了。换成耐旱的活树。
     if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) tree = 'PALM';
 
-    if (q.season === 0) return tree;
+    // 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 变体表口径仍是「夏 → [秋, 冬]」，但**取值要按四季**：
+    //    春(0)、夏(1) 都用原树（新绿 / 深绿），秋(2) 取 [0]、冬(3) 取 [1]。
+    //    改前三态写法是 `season === 1 ? [0] : [1]` —— 四季制下把"夏"误当成"秋"，
+    //    实测就是：日本夏天长红枫、东北夏天长黄桦（见 scratch/verify_tree_four_seasons.mts）。
+    if (q.season === 0 || q.season === 1) return tree;      // 春 / 夏 = 原树
     const variant = SEASON_VARIANT[tree];
-    if (!variant) return tree;          // 针叶/棕榈/热带树四季同形
-    return q.season === 1 ? variant[0] : variant[1];
+    if (!variant) return tree;                              // 针叶/棕榈/热带树四季同形
+    return q.season === 2 ? variant[0] : variant[1];        // 秋 / 冬
 }
 
 /** 调试/验收用：把三张表暴露出去 */

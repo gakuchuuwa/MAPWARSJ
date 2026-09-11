@@ -20,8 +20,8 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     qimu: { name: '奇穆战士', tier: 3 },  // 昌昌·明查凯曼：奇穆王国武士，1470年被印加征服
     talasike: { name: '塔拉斯科兵', tier: 3 },  // 钦聪灿·齐齐潘达夸雷：普雷佩查铜制武器军，1470年代大破阿兹特克入侵
     tailuona: { name: '泰罗纳战士', tier: 3 },  // 特尤纳·库查西克：泰罗纳失落之城武士，抗西班牙殖民
-    teweierqie: { name: '特维尔切战士', tier: 3 },  // 圣胡利安港·卡西米罗·比格：特维尔切(阿奥尼肯)巴塔哥尼亚猎手
-    xinnidelan: { name: '新尼德兰守军', tier: 4 },  // 新阿姆斯特丹·斯泰弗森特：荷兰西印度公司殖民地守军
-    xinfalanxi: { name: '新法兰西民兵', tier: 4 },  // 魁北克·尚普兰：新法兰西殖民民兵
-    xinxibanya: { name: '圣迭戈堡守军', tier: 4 },  // 阿卡普尔科·乌尔达内塔：1617年圣迭戈堡防海盗守军
+    teweierqie: { name: '特维尔战士', tier: 3 },  // 圣胡利安港·卡西米罗·比格：特维尔切(阿奥尼肯)巴塔哥尼亚猎手
+    xinnidelan: { name: '新尼守军', tier: 4 },  // 新阿姆斯特丹·斯泰弗森特：荷兰西印度公司殖民地守军
+    xinfalanxi: { name: '新法民兵', tier: 4 },  // 魁北克·尚普兰：新法兰西殖民民兵
+    xinxibanya: { name: '迭戈守军', tier: 4 },  // 阿卡普尔科·乌尔达内塔：1617年圣迭戈堡防海盗守军
 };

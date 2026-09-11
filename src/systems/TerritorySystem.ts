@@ -1,4 +1,6 @@
 import * as L from 'leaflet';
+import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
+export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
 import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
 import { City } from '../types/core';
@@ -56,7 +58,6 @@ function deMulberry32(seed: number): () => number {
     };
 }
 // 实验白名单：先只对特诺奇提特兰（阿兹特克 MESO）做小城组合渲染
-const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
 
 // 各类建筑在据点内的相对占地尺寸比例（2026-08-26 主人定「建筑大小尽量一致」：统一 0.40，塔细高略小 0.36，城镇中心稍大 0.42）
 const DE_BUILDING_SCALES: Record<string, number> = {
@@ -120,162 +121,16 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
 //   CENTRAL_ASIA(波斯/塞尔柱/花拉子模/帖木儿)→CEAS(鞑靼/中亚草原，2026-08-30 主人改：西域套鞑靼·赫拉特城堡风格)；BERBER(柏柏尔)→ORIE(北非)；
 //   EAST(哥特/维京/匈人/条顿)→EAST 套装；ANDE(马普切/穆伊斯卡/图皮)→ANDE 套装；
 //   (拜占庭已迁 LATIN，君士坦丁堡奇观=MEDI_WONDER_BYZANTINES，与 WEST_ASIA 无关)
-const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = {
-    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
-    HEXI: 'ASIA', WESTERN: 'ASIA', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
-    TIBET: 'INDI',
-    STEPPE: 'YURT',
-    SLAVIC: 'SLAV', SLAVIC_FEUDAL: 'SLAV', SLAVIC_CASTLE: 'SLAV', SLAVIC_IMPERIAL: 'SLAV', GERMANIC: 'WEST', GERMANIC_FEUDAL: 'WEST', GERMANIC_IMPERIAL: 'WEST', GERMANIC_CASTLE: 'WEST', LATIN: 'MEDI', LATIN_CASTLE: 'MEDI', LATIN_IMPERIAL: 'MEDI',
-    INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'CEAS',
-    AFRICA: 'AFRI', BERBER: 'ORIE', MALAY: 'SEAS',
-    AMERICA: 'MESO',
-    ANDE: 'ANDE',
-    PURU: 'PURU',
-    ORIE: 'ORIE',
-    EAST: 'EAST',
-    PERSIAN: 'PERSIAN', // DE 波斯 = PERSIAN 套装（PERSIAN_WONDER_ACHAEMENIDS 阿契美尼德奇观在此）
-    CUMAN: 'CEAS', // DE 库曼/鞑靼 = CEAS 套装（CEAS_WONDER_CUMANS/TATARS 在此）
-    GREEK: 'GREEK', // [2026-09-08] 改回 GREEK 本套。原挂 MEDI 的理由是「greek 无 AGE3 建筑池」——
-                    // 那是没提取造成的，现已补提 119 件（含 13 件 AGE3）。拜占庭奇观仍在 MEDI，不影响这里。
-    THRACIAN: 'THRACIAN', // [2026-09-08] 同上，已补提 115 件（含 13 件 AGE3）。
-                          // 保加利亚奇观仍在 SLAV，不影响这里。
-    // ── [2026-08-29 补全→08-29 修正] 支文化/细分势力：DE 具体文明无 AGE2 素材，归到 DE 权威建筑风格
-    //   （fandom Architecture set）。每个区 1 个据点。权威归属：
-    //   中欧(EAST)=哥特/匈奴/条顿/维京；东欧(SLAV)=马扎尔/波西米亚/保加利亚/立陶宛/波兰；
-    //   地中海(MEDI)=意大利/西西里/西班牙/葡萄牙/亚美尼亚/格鲁吉亚/雅典/斯巴达/马其顿；
-    //   东亚(ASIA)=越南；东南亚(SEAS)=高棉；南美(ANDE)=马普切/穆伊斯卡/图皮；中美洲(MESO)=玛雅。
-    BRITONS: 'WEST', CELTS_FEUDAL: 'WEST', BURGUNDIANS: 'WEST',
-    GOTHS: 'EAST', TEUTONS: 'EAST', VIKINGS: 'EAST', HUNS: 'EAST',
-    ITALIANS: 'MEDI', SICILIANS: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI',
-    ARMENIANS: 'MEDI', GEORGIANS: 'MEDI',
-    LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV', MAGYAR: 'SLAV',
-    ACHAEMENIDS: 'PERSIAN',
-    BENGALIS: 'INDI', GURJARAS: 'INDI', PORUS: 'INDI',
-    VIETNAMESE: 'ASIA', KHMER: 'SEAS',
-    MAYANS: 'MESO',
-    MAPUCHE: 'ANDE', TUPI: 'ANDE', MUISCA: 'ANDE',
-    ETHIOPIANS: 'AFRI',
-    BURMESE: 'SEAS',
-    LATIN_FEUDAL: 'MEDI',
-    WESTERN_FEUDAL: 'ASIA',
-    WESTERN_CASTLE: 'ASIA',
-    WESTERN_IMPERIAL: 'ASIA',
-    TIBET_CASTLE: 'INDI',
-    TIBET_IMPERIAL: 'INDI',
-    STEPPE_IMPERIAL: 'YURT',
-    STEPPE_ANTIQUITY: 'YURT',
-    STEPPE_FEUDAL: 'YURT',
-    JAPAN_ANTIQUITY: 'ASIA',
-    JAPAN_IMPERIAL: 'ASIA',
-    CENTRAL_ASIA_IMPERIAL: 'CEAS',
-    CENTRAL_ASIA_ANTIQUITY: 'CEAS',
-    CENTRAL_ASIA_CASTLE: 'CEAS',
-    INDIA_FEUDAL: 'INDI',
-    INDIA_CASTLE: 'INDI',
-    INDIA_IMPERIAL: 'INDI',
-    WEST_ASIA_ANTIQUITY: 'ORIE',
-    WEST_ASIA_CASTLE: 'ORIE',
-    NORTHAM_IMPERIAL: 'MESO',
-    AFRICA_IMPERIAL: 'AFRI',
-    AFRICA_ANTIQUITY: 'AFRI',
-    AFRICA_CASTLE: 'AFRI',
-    SEASIA_ANTIQUITY: 'SEAS',
-    SEASIA_IMPERIAL: 'SEAS',
-    SEASIA_CASTLE: 'SEAS',
-    SEASIA_FEUDAL: 'SEAS',
-    SOUTHAM_IMPERIAL: 'ANDE',
-    ORIE_ANTIQUITY: 'ORIE',
-    PERSIAN_CASTLE: 'PERSIAN',
-    IROQUOIS: 'MESO',
-    CHIMU: 'ANDE',
-    TARASCAN: 'MESO',
-    TAIRONA: 'ANDE',
-    TEHUELCHE: 'ANDE',
-    EGYPT: 'ORIE',
-    CARTHAGE: 'MEDI',
-    BABYLON: 'ORIE',
-    HITTITES: 'ORIE',
-    ASSYRIAN: 'ORIE',
-    SCYTHIANS: 'CEAS',
-    BYZANTINE: 'MEDI',
-    FRANKS: 'WEST',
-    SASANIAN: 'PERSIAN',
-    TURKS: 'CEAS',
-    NANZHAO: 'ASIA',
-    SRIVIJAYA: 'SEAS',
-    KUSHAN: 'CEAS',
-    KUSH: 'AFRI',
-    KHITAN: 'ASIA',
-    UIGHUR: 'CEAS',
-    MOHE: 'ASIA',
-    ANGLO_SAXON: 'WEST',
-    GHANA: 'AFRI',
-    KHAZARS: 'CEAS',
-    VANDALS: 'WEST',
-    LOMBARDS: 'WEST',
-    ROURAN: 'CEAS',
-    SOGDIANS: 'CEAS',
-    TANGUT: 'ASIA',
-    JAVANESE: 'SEAS',
-    JURCHEN: 'ASIA',
-    SELJUQ: 'CEAS',
-    OTTOMAN: 'ORIE',
-    FRENCH: 'WEST',
-    MANCHU: 'ASIA',
-    MUGHAL: 'INDI',
-    SAFAVID: 'PERSIAN',
-    RUSSIAN: 'EAST',
-    SIKH: 'INDI',
-    HEBREWS: 'ORIE',
-    WUSUN: 'CEAS',
-    QIANG: 'ASIA',
-    YARLUNG: 'ASIA',
-    NABATAEANS: 'ORIE',
-    HEPHTHALITES: 'CEAS',
-    AINU: 'ASIA',
-    PASHTUN: 'CEAS',
-    SWEDISH: 'EAST',
-    MACEDONIAN: 'GREEK',
-    HELLENIC: 'GREEK',
-    IMPERIAL_ROME: 'MEDI',
-    GREEK_MERCENARY: 'GREEK',
-    MAGNA_GRAECIA: 'GREEK',
-    AMAZONS: 'GREEK',
-    SONG: 'ASIA',
-    GORYEO: 'ASIA',
-    JOSEON: 'ASIA',
-    GOJOSEON: 'ASIA',
-    MING: 'ASIA',
-    HUAXIA_IMPERIAL: 'ASIA',
-    DALI: 'SEAS',
-    MAMLUKS: 'ORIE',
-    CRUSADERS: 'WEST',
-    RUS: 'EAST',
-    KARA_KHITAN: 'CEAS',
-    TIMURID: 'CEAS',
-    DELHI: 'INDI',
-    CASTILE: 'WEST',
-    SCOTLAND: 'WEST',
-    HRE: 'WEST',
-    ALMOHAD: 'ORIE',
-    SERBIA: 'SLAV',
-    ILKHANATE: 'CEAS',
-    ARAGON: 'MEDI',
-};
 
-/** 判断某城是否用小城 DE 建筑组合渲染；是则返回 DE 风格前缀，否则 null。 */
-function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion: string | undefined, lat: number, lng: number): string | null {
-    if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
-    // 小城/关隘/中城/大城都按文化套用 DE 建筑（2026-08-27 扩充大城，帝国时代）
-    if (cityType !== 'small_city' && cityType !== 'stockade' && cityType !== 'pass' && cityType !== 'medium_city' && cityType !== 'big_city') return null;
-    const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
-    return REGION_TO_DE_STYLE[region] ?? null;
-}
+
+
+
 
 /** 草原营地（YURT 特例）：逐水草而居——无地基/无石路。
  *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。
- *  2026-09-03 主人定：草原**大城/中城**围一圈硬木栅栏（fence=true，同战术 PALISADE），小城/城寨/关隘仍无栅栏（纯游牧驻牧）。 */
-function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): string {
+ *  若为险要或开启城心城堡，中间耸立成吉思汗蒙古王帐城堡（MONG_CASTLE_AGE3），四周4蒙古包环卫。
+ *  2026-09-03 主人定：草原**大城/中城/小城/险要**围一圈硬木栅栏（fence=true，同战术 PALISADE），城寨仍无栅栏（纯游牧驻牧）。 */
+function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, centerCastle = false, factionId?: string, region?: string): string {
     const rnd = deMulberry32(deHashString(cityId));
     const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L']; // 8 蒙古包全用满（不剔，与战术一致）
     const TOWER = 'TOWER';
@@ -290,23 +145,38 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
     const srcOf = (k: string) => k === TOWER ? '/SUCAI_BUILDING/ASIA_TOWER_AGE2/preview.png' : `/SUCAI_BUILDING/${k}/preview.png`;
     const sizeOf = (k: string, center: boolean) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
 
-    // 中间 1 个（随机，可能是帐篷或瞭望塔）
-    const centerY = items[0];
-    const centerW = sizeOf(centerY, true);
-    const centerGroundW = centerW * 2.3;
-    const centerGroundH = centerGroundW * 0.58;
-    parts.push(
-        `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
-    );
-    parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+    if (centerCastle) {
+        const castleDir = resolveCastleAsset('YURT', factionId, region);
+        const cW = baseSize * 0.56;
+        const cgW = cW * 1.6;
+        const cgH = cgW * 0.58;
+        const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cgW.toFixed(1)}px;height:${cgH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
+        );
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(-50%,-65%)${cFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        );
+    } else {
+        // 中间 1 个（随机，可能是帐篷或瞭望塔）
+        const centerY = items[0];
+        const centerW = sizeOf(centerY, true);
+        const centerGroundW = centerW * 2.3;
+        const centerGroundH = centerGroundW * 0.58;
+        parts.push(
+            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
+        );
+        parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`);
+    }
 
-    // 周围 8 个扇区散布（45° 扇区，随机取样）
-    const surround = items.slice(1);
+    // 周围散布：若为城堡模式取 4 栋（留出四门纵深），普通模式取 8 栋
+    const surroundCount = centerCastle ? 4 : 8;
+    const surround = items.slice(1, 1 + surroundCount);
     surround.forEach((y, i) => {
         const baseAngle = rotation + i * (360 / surround.length);
-        const angleJitter = rnd() * 30 - 15;
+        const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.32 + rnd() * 0.10) * baseSize;
+        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;
         const x = Math.cos(angle) * r;
         const yy = Math.sin(angle) * r * 0.58;
         const yw = sizeOf(y, false);
@@ -321,14 +191,19 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false): str
         parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));" />`);
     });
 
-    // 2026-09-03 主人定：草原营地(大/中/小城)围一圈「栅栏」ARCHAIC_WALL_PALISADE（非硬木）——computePalisadeWallAndGate + DE_ARCHAIC_PALISADE_ANCHORS
+    // 🔴 [2026-09-10 主人定] 草原营地(大/中/小城)两套栅栏图随机使用：
+    //    套系 1：DARK 经典原木尖桩栅栏套（b_dark_wall_palisade）
+    //    套系 2：ARCHAIC 横木平切栅栏套（b_archaic_wall_palisade）
     if (fence) {
+        const palisadeSet = (deHashString(cityId + '|palisade_variant') & 1) === 0
+            ? DE_DARK_PALISADE_ANCHORS
+            : DE_ARCHAIC_PALISADE_ANCHORS;
         const wallPieces = computePalisadeWallAndGate(baseSize);
         if (rnd() < 0.5) {
             for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
         }
         wallPieces.forEach((w) => {
-            const anchor = DE_ARCHAIC_PALISADE_ANCHORS[w.type];
+            const anchor = palisadeSet[w.type];
             const zIndex = Math.round(100 + w.y);
             const pieceW = baseSize * anchor.widthFactor;
             const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
@@ -362,7 +237,7 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
     POST: {
         pctX: 60.0,
         pctY: 75.0,
-        widthFactor: 0.165,
+        widthFactor: 0.23, // 2026-09-10 主人定：加高栅栏木垛
         path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png',
     },
     GATE: {
@@ -373,8 +248,35 @@ const DE_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFac
     },
 };
 
-// 🔴 [2026-09-03 主人定] 草原营地围栏专用：DE 正式「栅栏」ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade，两端平切口整齐栅栏），
-//    不是硬木栅栏 HARDWOOD（参差尖桩）、也不是篱笆 b_scen_fence（编织）。锚点按 ARCHAIC _meta 重算。
+// 🔴 [2026-09-10 主人定] 草原营地套系 1：DE 经典原木尖桩栅栏 DARK_WALL_PALISADE（b_dark_wall_palisade，垂直尖原木桩，无横梁不对称反面）
+const DE_DARK_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
+    NE: {
+        pctX: 50.0,
+        pctY: 72.7,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_NE/preview.png',
+    },
+    SE: {
+        pctX: 52.2,
+        pctY: 72.7,
+        widthFactor: 0.165,
+        path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_SE/preview.png',
+    },
+    POST: {
+        pctX: 56.3,
+        pctY: 75.9,
+        widthFactor: 0.27, // 2026-09-10 主人定：加高栅栏木垛
+        path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png',
+    },
+    GATE: {
+        pctX: 58.6,
+        pctY: 75.9,
+        widthFactor: 0.34,
+        path: '/SUCAI_BUILDING/DARK_GATE_PALISADE_NE/preview.png',
+    },
+};
+
+// 🔴 [2026-09-10 主人定] 草原营地套系 2：DE 横木平切栅栏 ARCHAIC_WALL_PALISADE（b_archaic_wall_palisade，两端平切口横木加固栅栏）
 const DE_ARCHAIC_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> = {
     NE: {
         pctX: 60.0,
@@ -389,9 +291,9 @@ const DE_ARCHAIC_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: number; 
         path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_SE/preview.png',
     },
     POST: {
-        pctX: 56.0,
-        pctY: 77.1,
-        widthFactor: 0.165,
+        pctX: 56.3,
+        pctY: 75.9,
+        widthFactor: 0.27, // 2026-09-10 主人定：加高栅栏木垛
         path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png',
     },
     GATE: {
@@ -437,7 +339,7 @@ const DE_FENCE_ANCHORS: Record<string, { pctX: number; pctY: number; widthFactor
     },
 };
 
-// 中城石墙（STONE_WALL）部件锚点：按文化风格取各自素材与锚点（2026-08-27 从 DE _meta.json 提取，pct = anchor/box×100）
+// 中城石墙（STONE_WALL）部件锚点：按建筑风格取各自素材与锚点（2026-08-27 从 DE _meta.json 提取，pct = anchor/box×100）
 // 每个风格用自己风格的城墙/城门素材（非统一 ASIA），锚点各风格独立（否则错位）
 const DE_STONE_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }>> = {
     AFRI: {
@@ -734,7 +636,12 @@ function computePalisadeWallAndGate(baseSize: number, S: number = 5, fourGates: 
 }
 
 /** 险要矩形城墙：长 = LSeg 个 SE 段+门，宽 = WSeg 个 NE 段，两门朝外一致、四角箭塔随机洗牌（2026-08 主人定矩形城样式，2026-09-08 主人定四角箭塔随机分布） */
-function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () => number): PalisadeGridPiece[] {
+/**
+ * 矩形险要围墙拓扑。
+ * @param extraGateTower 🔴 [2026-09-11 主人定] 日本 / 青藏 险要：城堡 + **5** 座箭塔（比通用险要多一座门楼箭塔）。
+ *   城门所在长边（底边）的 k=halfL±1 两个槽位本来就是给门留的**空位**，正好放这座门楼箭塔，不动任何墙段。
+ */
+function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () => number, extraGateTower = false): PalisadeGridPiece[] {
     const sx = baseSize * 0.075, sy = sx * 0.58;
     const P0 = { x: 0, y: 0 };
     const P1 = { x: LSeg * sx, y: LSeg * sy };
@@ -761,6 +668,8 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () 
     // 底边 P0→P1（右下=SE）长边+门
     for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P0.x + k * sx, P0.y + k * sy, 'SE'); }
     put(P0.x + halfL * sx, P0.y + halfL * sy, 'GATE', true);
+    // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要额外加第 5 座箭塔（门楼箭塔，占城门右侧那个本来就空着的槽位）
+    if (extraGateTower) put(P0.x + (halfL + 1) * sx, P0.y + (halfL + 1) * sy, 'TOWER_AGE4');
     // 右边 P1→P2（右上=NE）短边纯墙
     for (let k = 1; k < WSeg; k++) put(P1.x + k * sx, P1.y - k * sy, 'NE');
     // 顶边 P2→P3（左上=NE镜像）长边+门（与底门同翻转=朝外一致）
@@ -908,8 +817,8 @@ function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeG
     return pieces;
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原小城也围栅栏
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string): string {
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     const ring = [...DE_SMALL_CITY_POOL];
     for (let i = ring.length - 1; i > 0; i--) {
@@ -936,23 +845,26 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
     const centerW = baseSize * (centerCastle ? 0.68 : (DE_BUILDING_SCALES[centerB] || 0.4));
-    const centerGroundW = centerW * 2.3;
+    const centerGroundW = centerW * (centerCastle ? 1.6 : 2.3);
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
+    const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region) : null;
+    const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png`;
     parts.push(
         `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
     );
     parts.push(
-        `<img src="/SUCAI_BUILDING/${style}_${centerB}_AGE${centerCastle ? 3 : 2}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+        `<img src="${centerImgSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
     );
 
-    // 周围 8 个扇区随机散布（每建筑一个 45° 扇区，角度+半径双重扰动）
-    const surround = ring.slice(1);
+    // 周围建筑散布：中心城堡时取 4 栋（90° 扇区四角环卫，避免拥挤；主人 2026-09-10 定）；普通时取 8 栋（45° 扇区）
+    const surroundCount = centerCastle ? 4 : 8;
+    const surround = ring.slice(1, 1 + surroundCount);
     surround.forEach((b, i) => {
-        const baseAngle = rotation + i * (360 / surround.length); // 8 建筑 = 45° 扇区
-        const angleJitter = (rnd() * 30 - 15);                    // 扇区内部安全扰动 (±15°)
+        const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
+        const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (0.32 + rnd() * 0.10) * baseSize;               // 半径在 0.32~0.42 之间自然错落
+        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;               // 半径错落
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
         const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32);
@@ -1087,7 +999,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原险要也围栅栏（同大/中/小城 ARCHAIC 栅栏）
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
 
     // 险要矩形城容器（长8段+门 × 宽4段）
     const W = baseSize * 2.6;
@@ -1112,8 +1024,11 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     );
 
     // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、四角箭塔随机洗牌分布
+    // 🔴 [2026-09-11 主人定] 日本 / 青藏 的险要是「城堡 + 5」共 6 个建筑（通用险要是「城堡 + 4」）：
+    //   多出来的第 5 座是**门楼箭塔**，见 computeRectWall 的 extraGateTower。
+    const isJpTibet = !!region && (region.includes('JAPAN') || region.includes('TIBET'));
     const passTowerRnd = deMulberry32(deHashString(cityId + '|pass_towers'));
-    const wallPieces = computeRectWall(baseSize, 8, 4, passTowerRnd);
+    const wallPieces = computeRectWall(baseSize, 8, 4, passTowerRnd, isJpTibet);
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(500 + w.y);
@@ -1134,8 +1049,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 // 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城；城门与城墙完全1.0x自然咬合）
-function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原中城围栅栏
+function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string): string {
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
     // 12 种城堡时代建筑随机洗牌，取前 9 栋
@@ -1191,34 +1106,66 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // [2026-09-08 主人定] 中城 9 建筑按 3*3 等轴网格排列（步长微展至 baseSize * 0.30），位置完全随机，独立随机镜像，尺寸统一 0.32
+    // [2026-09-08 主人定] 中城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30;
-    const slots: Array<{ x: number; y: number }> = [];
-    for (let r = -1; r <= 1; r++) {
-        for (let c = -1; c <= 1; c++) {
-            const x = (c - r) * step;
-            const y = (c + r) * step * 0.58;
-            slots.push({ x, y });
+    const slots: Array<{ x: number; y: number; isCenter: boolean }> = [];
+    if (centerCastle) {
+        slots.push({ x: 0, y: 0, isCenter: true });
+        const cornerStep = step * 1.05;
+        const corners = [
+            { r: -1, c: -1 },
+            { r: -1, c: 1 },
+            { r: 1, c: -1 },
+            { r: 1, c: 1 },
+        ];
+        corners.forEach(({ r, c }) => {
+            const x = (c - r) * cornerStep;
+            const y = (c + r) * cornerStep * 0.58;
+            slots.push({ x, y, isCenter: false });
+        });
+    } else {
+        for (let r = -1; r <= 1; r++) {
+            for (let c = -1; c <= 1; c++) {
+                const x = (c - r) * step;
+                const y = (c + r) * step * 0.58;
+                slots.push({ x, y, isCenter: (r === 0 && c === 0) });
+            }
         }
     }
     slots.sort((a, b) => a.y - b.y);
 
+    let otherIdx = 0;
     slots.forEach((slot, i) => {
-        const b = pool[i];
-        const bW = baseSize * 0.32 * AUTO; // 统一大小 0.32
-        const zIndex = Math.round(500 + slot.y);
-        const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+        if (centerCastle && slot.isCenter) {
+            const castleDir = resolveCastleAsset(style, factionId, region);
+            const cW = baseSize * 0.56;
+            const zIndex = Math.round(500 + slot.y);
+            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            const cGroundW = cW * 1.6;
+            const cGroundH = cGroundW * 0.58;
+            parts.push(
+                `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${cGroundW.toFixed(1)}px;height:${cGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            );
+            parts.push(
+                `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            );
+        } else {
+            const b = centerCastle ? pool[otherIdx++] : pool[i];
+            const bW = baseSize * 0.32 * AUTO; // 统一大小 0.32
+            const zIndex = Math.round(500 + slot.y);
+            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
 
-        // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
-        const bGroundW = bW * 2.3;
-        const bGroundH = bGroundW * 0.58;
-        parts.push(
-            `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
-        );
+            // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
+            const bGroundW = bW * 2.3;
+            const bGroundH = bGroundW * 0.58;
+            parts.push(
+                `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            );
 
-        parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
-        );
+            parts.push(
+                `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            );
+        }
     });
 
     // 石墙绕城一圈（S=6；城门与城墙完全1.0x自然咬合门楼；随机两种之一：双门 / 四门）
@@ -1241,8 +1188,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 }
 
 // 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城）
-function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true); // 2026-09-03 主人定：草原大城围栅栏
+function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string): string {
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
     // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 9 选 6 辅助建筑（含大型箭塔），共 9 栋建筑
@@ -1300,34 +1247,66 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // [2026-09-08 主人定] 大城 9 建筑按 3*3 等轴网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32
+    // [2026-09-08 主人定] 大城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30;
-    const slots: Array<{ x: number; y: number }> = [];
-    for (let r = -1; r <= 1; r++) {
-        for (let c = -1; c <= 1; c++) {
-            const x = (c - r) * step;
-            const y = (c + r) * step * 0.58;
-            slots.push({ x, y });
+    const slots: Array<{ x: number; y: number; isCenter: boolean }> = [];
+    if (centerCastle) {
+        slots.push({ x: 0, y: 0, isCenter: true });
+        const cornerStep = step * 1.05;
+        const corners = [
+            { r: -1, c: -1 },
+            { r: -1, c: 1 },
+            { r: 1, c: -1 },
+            { r: 1, c: 1 },
+        ];
+        corners.forEach(({ r, c }) => {
+            const x = (c - r) * cornerStep;
+            const y = (c + r) * cornerStep * 0.58;
+            slots.push({ x, y, isCenter: false });
+        });
+    } else {
+        for (let r = -1; r <= 1; r++) {
+            for (let c = -1; c <= 1; c++) {
+                const x = (c - r) * step;
+                const y = (c + r) * step * 0.58;
+                slots.push({ x, y, isCenter: (r === 0 && c === 0) });
+            }
         }
     }
     slots.sort((a, b) => a.y - b.y);
 
+    let otherIdx = 0;
     slots.forEach((slot, i) => {
-        const [b, age] = pool[i];
-        const bW = baseSize * 0.32 * AUTO; // 9 建筑统一大小 0.32
-        const zIndex = Math.round(500 + slot.y);
-        const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+        if (centerCastle && slot.isCenter) {
+            const castleDir = resolveCastleAsset(style, factionId, region);
+            const cW = baseSize * 0.56;
+            const zIndex = Math.round(500 + slot.y);
+            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            const cGroundW = cW * 1.6;
+            const cGroundH = cGroundW * 0.58;
+            parts.push(
+                `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cGroundW.toFixed(1)}px;height:${cGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            );
+            parts.push(
+                `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            );
+        } else {
+            const [b, age] = centerCastle ? pool[otherIdx++] : pool[i];
+            const bW = baseSize * 0.32 * AUTO; // 9 建筑统一大小 0.32
+            const zIndex = Math.round(500 + slot.y);
+            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
 
-        // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
-        const bGroundW = bW * 2.3;
-        const bGroundH = bGroundW * 0.58;
-        parts.push(
-            `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
-        );
+            // [2026-09-08 主人定] 在全城大广场地基基础上，为每栋建筑单独添加独立地基（对齐小城）
+            const bGroundW = bW * 2.3;
+            const bGroundH = bGroundW * 0.58;
+            parts.push(
+                `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            );
 
-        parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
-        );
+            parts.push(
+                `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />`
+            );
+        }
     });
 
     // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
@@ -2346,9 +2325,12 @@ export class TerritorySystem {
         // [2026-09-03 主人] 中原/北方/江南小城用中城同款石墙（默认木栅）
         const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
         const useStoneWall = cityRegion === 'CENTRAL' || cityRegion === 'NORTH' || cityRegion === 'JIANGNAN';
+        const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
+        const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
+        const centerCastle = isJapan || isTibet;
 
-        // [2026-08-26 第三步] 小城/关隘按文化区套用 DE 建筑组合（非小城返回 null → 用整图）
-        const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng);
+        // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
+        const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
 
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
@@ -2423,16 +2405,20 @@ export class TerritorySystem {
                      ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
                           ${(deStyle
                               ? (city.type === 'big_city'
-                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle)
+                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion)
                                   : city.type === 'medium_city'
-                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle)
+                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion)
                                       : city.type === 'pass'
-                                          ? (city.region === 'JAPAN'
-                                              ? buildDeSmallCityStackHtml(baseSize, city.id, deStyle, false, true)  // 2026-09-05 主人定：日本险要=小城样式+中间城堡
-                                              : buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region, city.mirror))
+                                          // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，
+                                          //    统一走通用险要：**石墙墙圈(8+4段+双门) + 中心城堡 + 四角4座箭塔，不留民政建筑**。
+                                          //    理由：① 藏式宗堡是石砌宗山+碉楼，硬木尖桩栅栏是汉地小城/游牧语汇，不合历史；
+                                          //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
+                                          //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
+                                          //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
+                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
                                           : city.type === 'stockade'
                                               ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
-                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall))
+                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;
@@ -2561,15 +2547,15 @@ export class TerritorySystem {
         return CityAssetManager.getProcessedFlagText(city.factionId);
     }
 
-    private patchFlagTextOverlay(flagBody: HTMLElement, city: City): void {
+    private patchFlagTextOverlay(flagBody: HTMLElement, factionId: string): void {
         const flagScale = 1.4;
-        const textUrl = this.getEffectiveFlagTextUrl(city);
+        const textUrl = CityAssetManager.getProcessedFlagText(factionId);
         let overlay = flagBody.querySelector<HTMLElement>('.city-flag-text-overlay');
 
         if (!textUrl) {
             // [2026-09-05] 「排队中」不等于「没有文字」：分帧生成时会短暂返回 null，
             // 这时抹掉已有文字会让旗号一闪一闪。等空闲补齐后 patchFactionFlagText 会再来一次。
-            if (CityAssetManager.isFlagTextPending(city.factionId)) return;
+            if (CityAssetManager.isFlagTextPending(factionId)) return;
             overlay?.remove();
             return;
         }
@@ -2626,26 +2612,29 @@ export class TerritorySystem {
         ));
         flagBody.classList.add('city-flag-body', nextClass);
 
-        this.patchFlagTextOverlay(flagBody, city);
+        this.patchFlagTextOverlay(flagBody, city.factionId);
         this.updateCityLabel(city);
         return true;
     }
 
-    /** 旗号染色完成后，刷新该势力所有据点的字色 overlay（黑字白边 / 白字黑边） */
+    /** 旗号染色/文字生成完成后，刷新该势力**所有已建 marker** 的字色 overlay（黑字白边 / 白字黑边） */
     public patchFactionFlagText(factionId: string): void {
-        for (const city of this.cities) {
-            if (city.factionId !== factionId) continue;
-            const marker = this.cityMarkers.get(city.id);
-            if (!marker) continue;
+        // 🔴 [2026-09-11 主人报「玩家抵达新区域后旗上的字刷新很慢、过去了也不显示」]
+        //   真根因不在"慢"，而在**永远不 patch 到那些旗**：
+        //   · 跟拍走进新区域时，新据点是 appendCityMarkers() 追加的，
+        //     而它**从不更新 this.cities**（只有 renderCitiesOnly / updateTerritoryOnly 会赋值）；
+        //   · 这里原先按 this.cities 遍历 → 新区域的 marker 根本不在遍历范围内
+        //     → 字早就在缓存里了，却永远贴不到旗上（实测跳过去 24 秒也不出）。
+        //   改为直接遍历 cityMarkers（marker 注册表，追加过的都在里面），
+        //   用旗面 class 判势力，不再依赖 this.cities 这个"启动时的快照"。
+        for (const marker of this.cityMarkers.values()) {
             const root = marker.getElement()?.querySelector('.city-image-container');
             if (!root) continue;
-            const flagBodies = root.querySelectorAll<HTMLElement>('.city-flag-body');
-            for (const el of flagBodies) {
-                const cls = el.className;
-                if (cls.includes('flag-faction-') || cls.includes('flag-rebel-')) {
-                    this.patchFlagTextOverlay(el, city);
-                    break;
-                }
+            for (const el of root.querySelectorAll<HTMLElement>('.city-flag-body')) {
+                const m = /flag-faction-([A-Za-z_0-9]+)/.exec(el.className);
+                if (!m || m[1] !== factionId) continue;
+                this.patchFlagTextOverlay(el, factionId);
+                break;
             }
         }
     }

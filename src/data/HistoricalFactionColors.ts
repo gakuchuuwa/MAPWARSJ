@@ -39,7 +39,7 @@ const _FIXED: Record<string, string> = {
 
     // ── 黄·土德尚黄 ──
     wei: '#3058A9', // 魏（曹魏蓝，与 cao_d 统一）
-    tang: '#F0CC40', // 唐（明亮赭黄；与魏深黄对照）
+    tang: '#241E22', // 唐·李世民（玄色·玄甲黑旗）
     'weizhou': '#F0CC63', // 唐系近色
     'shanzhou': '#F0CC62', // 唐系近色
     manzhou_d: '#D4A528', // 大清

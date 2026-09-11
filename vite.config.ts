@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import { execFile, execSync } from 'child_process';
 import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
+import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -764,6 +765,30 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // [2026-09-11 主人需求] /api/save-city
+                //   据点编辑器单城保存：只改传入字段，其余原样保留；改坐标先过 50km 检查
+                //   body: { id: 'city_xxx', fields: { name?, type?, region?, buildingStyle?, ... } }
+                // ========================================================
+                server.middlewares.use('/api/save-city', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ ok: false, error: 'Method not allowed' })); return; }
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(bodyChunks).toString('utf-8'));
+                            const result = serverSaveCity(data);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.statusCode = result.ok ? 200 : 400;
+                            res.end(JSON.stringify(result));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // [NEW 2026-06-29] /api/save-general
                 //   写 FactionGenerals.ts + GeneralSkills.ts
                 // ========================================================
@@ -1068,6 +1093,144 @@ export default defineConfig({
                             console.log(`[SaveFactionCompositions] ✅ 势力军团配置已写入 FactionCompositions.ts`);
                         } catch (err: any) {
                             console.error(`❌ [SaveFactionCompositions] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
+                // 兵种改名 /api/rename-unit
+                // ========================================================
+                const mainTsPath = path.resolve(__dirname, 'src/legion-editor/main.ts');
+                const warTypesPath = path.resolve(__dirname, 'src/data/WarTypes.ts');
+                const navalShipTiersPath = path.resolve(__dirname, 'src/types/NavalShipTiers.ts');
+
+                server.middlewares.use('/api/rename-unit', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
+                    req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
+                        try {
+                            const { unitId, newName } = JSON.parse(body || '{}');
+                            if (!unitId || !newName || typeof newName !== 'string' || !newName.trim()) {
+                                res.statusCode = 400;
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(JSON.stringify({ ok: false, error: '缺少 unitId 或 newName' }));
+                                return;
+                            }
+                            const trimmedName = newName.trim();
+                            // 1. 更新 main.ts
+                            if (fs.existsSync(mainTsPath)) {
+                                let mainText = fs.readFileSync(mainTsPath, 'utf-8');
+                                const reMain = new RegExp(`({\\s*id:\\s*['"]${unitId}['"],\\s*name:\\s*['"])([^'"]+)(['"])`);
+                                if (reMain.test(mainText)) {
+                                    mainText = mainText.replace(reMain, `$1${trimmedName}$3`);
+                                    markLegionSaveWrite();
+                                    serverSafeWriteFileSync(mainTsPath, mainText);
+                                }
+                            }
+                            // 2. 更新 WarTypes.ts
+                            if (fs.existsSync(warTypesPath)) {
+                                let warText = fs.readFileSync(warTypesPath, 'utf-8');
+                                const reWar = new RegExp(`(['"]?${unitId}['"]?\\s*:\\s*{\\s*name:\\s*['"])([^'"]+)(['"])`);
+                                if (reWar.test(warText)) {
+                                    warText = warText.replace(reWar, `$1${trimmedName}$3`);
+                                    markLegionSaveWrite();
+                                    serverSafeWriteFileSync(warTypesPath, warText);
+                                }
+                            }
+                            // 3. 更新 NavalShipTiers.ts (若有对应战船)
+                            if (fs.existsSync(navalShipTiersPath)) {
+                                let navalText = fs.readFileSync(navalShipTiersPath, 'utf-8');
+                                const reNaval = new RegExp(`(['"]?${unitId.toUpperCase()}['"]?\\s*:\\s*['"])([^'"]+)(['"])`);
+                                if (reNaval.test(navalText)) {
+                                    navalText = navalText.replace(reNaval, `$1${trimmedName}$3`);
+                                    markLegionSaveWrite();
+                                    serverSafeWriteFileSync(navalShipTiersPath, navalText);
+                                }
+                            }
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, unitId, newName: trimmedName }));
+                            console.log(`[RenameUnit] ✅ 兵种 ${unitId} 改名为 "${trimmedName}"`);
+                        } catch (err: any) {
+                            console.error(`❌ [RenameUnit] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
+                // 兵种分类与时代更新 /api/update-unit-meta
+                // ========================================================
+                server.middlewares.use('/api/update-unit-meta', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    const bodyChunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
+                    req.on('end', () => {
+                        body = Buffer.concat(bodyChunks).toString('utf-8');
+                        try {
+                            const { unitId, category, subcategory, age } = JSON.parse(body || '{}');
+                            if (!unitId || typeof unitId !== 'string') {
+                                res.statusCode = 400;
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(JSON.stringify({ ok: false, error: '缺少 unitId' }));
+                                return;
+                            }
+                            if (fs.existsSync(mainTsPath)) {
+                                let mainText = fs.readFileSync(mainTsPath, 'utf-8');
+                                
+                                // 1. 更新 DE_UNITS_CATALOG 中的 category 和 age
+                                const reEntry = new RegExp(`({\\s*id:\\s*['"]${unitId}['"][^}]+})`);
+                                const match = mainText.match(reEntry);
+                                if (match) {
+                                    let entryStr = match[1];
+                                    if (category && typeof category === 'string') {
+                                        entryStr = entryStr.replace(/category:\s*['"][^'"]+['"]/, `category: '${category.trim()}'`);
+                                    }
+                                    if (age && typeof age === 'string') {
+                                        entryStr = entryStr.replace(/age:\s*['"][^'"]+['"]/, `age: '${age.trim()}'`);
+                                    }
+                                    mainText = mainText.replace(reEntry, entryStr);
+                                }
+
+                                // 2. 更新 UNIT_SUBCATEGORY
+                                if (subcategory && typeof subcategory === 'string') {
+                                    const trimmedSub = subcategory.trim();
+                                    const reSub = new RegExp(`(\\b${unitId}:\\s*['"])([^'"]+)(['"])`);
+                                    if (reSub.test(mainText)) {
+                                        mainText = mainText.replace(reSub, `$1${trimmedSub}$3`);
+                                    } else {
+                                        const reSubMap = /(export const UNIT_SUBCATEGORY: Record<string, SubCategory> = \{)/;
+                                        if (reSubMap.test(mainText)) {
+                                            mainText = mainText.replace(reSubMap, `$1\n    ${unitId}: '${trimmedSub}',`);
+                                        }
+                                    }
+                                }
+
+                                markLegionSaveWrite();
+                                serverSafeWriteFileSync(mainTsPath, mainText);
+                            }
+
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, unitId, category, subcategory, age }));
+                            console.log(`[UpdateUnitMeta] ✅ 兵种 ${unitId} 分类更新：category=${category}, subcategory=${subcategory}, age=${age}`);
+                        } catch (err: any) {
+                            console.error(`❌ [UpdateUnitMeta] Failed:`, err);
                             res.statusCode = 500;
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: false, error: err.message }));
@@ -2296,72 +2459,15 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
  * [NEW] Replace a tier block in CultureFormations.ts 
  */
 function serverReplaceTierBlock(text: string, culture: string, newSlots: any[]): string {
-    const keyword = `export const ${culture}_TIERS: CompositionTier[] = [`;
-    const startIdx = text.indexOf(keyword);
-    if (startIdx === -1) throw new Error(`Cannot find ${keyword}`);
-    
-    // Find matching ]
-    let balance = 0, endIdx = -1;
-    for (let i = startIdx + keyword.length - 1; i < text.length; i++) {
-        if (text[i] === '[') balance++;
-        else if (text[i] === ']') {
-            balance--;
-            if (balance === 0) {
-                endIdx = i + 1;
-                break;
-            }
-        }
-    }
-    if (endIdx === -1) throw new Error('Cannot find matching ]');
-    
-    // Eat trailing semicolon and whitespace
-    let realEnd = endIdx;
-    while (realEnd < text.length && /[ ;\n\r]/.test(text[realEnd])) realEnd++;
-    
-    // Generate new block
-    const slotsStr = newSlots.map(s => {
-        const scalePart = s.scale != null && s.scale !== '' ? `, scale: ${s.scale}` : '';
-        return `            { type: '${s.type}', count: ${s.count}${scalePart} }`;
-    }).join(',\n');
-    const newBlock = `${keyword}
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-${slotsStr}
-        ]
-    }
-];\n`;
-
-    return text.slice(0, startIdx) + newBlock + text.slice(realEnd);
+    return replaceCultureSlots(text, culture, newSlots);
 }
 
-/** 更新 CULTURE_FORMATION_MODE 中某文化的阵型类型 */
-/**
- * 改文化军团名：只动 CULTURE_LEGION_NAMES 里那一行。
- * [2026-09-07] 补这个函数之前，军团编辑器保存**只写编制不写名字** ——
- *    主人「选一个军团 -> 编辑 -> 保存」，编制换了名字没换，界面与落盘对不上。
- *    定位必须先切到 CULTURE_LEGION_NAMES 这段再找 key，否则会误伤别的表里的同名 key。
- */
 function serverReplaceCultureLegionName(text: string, culture: string, name: string): string {
-    const marker = 'export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {';
-    const start = text.indexOf(marker);
-    if (start === -1) throw new Error('Cannot find CULTURE_LEGION_NAMES');
-    const end = text.indexOf('\n};', start);
-    if (end === -1) throw new Error('Cannot find end of CULTURE_LEGION_NAMES');
-    const block = text.slice(start, end);
-    const pattern = new RegExp(`(\\n\\s*${culture}:\\s*)'[^']*'`);
-    if (!pattern.test(block)) throw new Error(`Cannot find legion name entry for ${culture}`);
-    return text.slice(0, start) + block.replace(pattern, `$1'${name}'`) + text.slice(end);
+    return replaceCultureValue(text, 'CULTURE_LEGION_NAMES', culture, name);
 }
 
 function serverReplaceFormationMode(text: string, culture: string, mode: string): string {
-    const pattern = new RegExp(`(\\s+${culture}:\\s*)'[a-z_]+'`);
-    if (!pattern.test(text)) {
-        throw new Error(`Cannot find formation mode entry for ${culture}`);
-    }
-    return text.replace(pattern, `$1'${mode}'`);
+    return replaceCultureValue(text, 'CULTURE_FORMATION_MODE', culture, mode);
 }
 
 /** 从 portrait_adjust.ts 解析 DEFAULT_PORTRAIT_ADJUST 对象 */
@@ -2941,8 +3047,145 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     WALLACHIA: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承斯拉夫精锐文件
 };
 
-function serverReadAllEntityData() {
-    const factionText = fs.readFileSync(path.resolve(__dirname, 'src/data/factions.ts'), 'utf-8');
+/**
+ * 🔴 [2026-09-11 主人需求] 据点编辑器：按 id 精确改写 `cities_v2.ts` 里**一座**据点的字段。
+ *
+ * 设计原则（宁可少写，绝不误伤）：
+ *   · **只动传入的字段**；note / buildingStyle / tier / mirror / 将来新增的字段一律原样保留
+ *     （不走 batch-import —— 那条路会用 entry 重建整行，会把 buildingStyle 与 note 抹掉）；
+ *   · 字段本来就有 → 原地替换；本来没有 → 按固定顺序补在条目末尾；
+ *   · 传空串 / null 表示**删除**该字段（mirror=false、region='' 等）；
+ *   · **改坐标要先过 50km 邻近检查**（AGENTS §2.1.1 铁律）：不通过就整条不写盘，并回是谁、差多少 km。
+ */
+function serverSaveCity(payload: {
+    id?: string;
+    fields?: Record<string, string | number | boolean | null | undefined>;
+}): { ok: boolean; changed?: string[]; error?: string } {
+    const id = String(payload?.id ?? '').trim();
+    const fields = payload?.fields ?? {};
+    if (!id) return { ok: false, error: '缺少据点 id' };
+
+    const citiesPath = path.resolve(__dirname, 'src/data/cities_v2.ts');
+    const text0 = fs.readFileSync(citiesPath, 'utf-8');
+    const idIdx = text0.indexOf(`id: '${id}'`);
+    if (idIdx < 0) return { ok: false, error: `cities_v2 里找不到据点 ${id}` };
+
+    // 条目块：city 条目内无嵌套花括号（已实测 note 里也不含 { }），故取最近的一对 {} 即可
+    const open = text0.lastIndexOf('{', idIdx);
+    const close = text0.indexOf('}', idIdx);
+    if (open < 0 || close < 0) return { ok: false, error: `据点 ${id} 条目边界解析失败` };
+    let block = text0.slice(open, close + 1);
+
+    // ── 坐标：改动前先做 50km 邻近检查（不含自己）──
+    const curLat = parseFloat(block.match(/lat:\s*(-?[\d.]+)/)?.[1] ?? 'NaN');
+    const curLng = parseFloat(block.match(/lng:\s*(-?[\d.]+)/)?.[1] ?? 'NaN');
+    const newLat = fields.lat !== undefined ? Number(fields.lat) : curLat;
+    const newLng = fields.lng !== undefined ? Number(fields.lng) : curLng;
+    const moving = (fields.lat !== undefined || fields.lng !== undefined)
+        && (Math.abs(newLat - curLat) > 1e-9 || Math.abs(newLng - curLng) > 1e-9);
+    if (moving) {
+        if (!Number.isFinite(newLat) || !Number.isFinite(newLng)) {
+            return { ok: false, error: '坐标非法（必须是数字）' };
+        }
+        const near = serverCheckProximity(text0, newLat, newLng, id);
+        if (near.length) {
+            return { ok: false, error: `新坐标距「${near[0].name}」仅 ${near[0].km.toFixed(1)}km（<50km），整条未写盘` };
+        }
+    }
+
+    const out: string[] = [];
+    const esc = (s: string): string => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    /** 字符串字段：有则替换，无则追加；值空串或 null => 删除该字段 */
+    const setStr = (key: string, raw: unknown): void => {
+        if (raw === undefined) return;
+        if (raw === null) {
+            const re0 = new RegExp(`${key}:\\s*'[^']*'`);
+            if (re0.test(block)) {
+                block = block.replace(new RegExp(`,\\s*${key}:\\s*'[^']*'`), '')
+                    .replace(new RegExp(`${key}:\\s*'[^']*',\\s*`), '');
+                out.push(key + '(删除)');
+            }
+            return;
+        }
+        const val = String(raw).trim();
+        const re = new RegExp(`${key}:\\s*'[^']*'`);
+        if (val === '') {
+            if (re.test(block)) {
+                block = block.replace(new RegExp(`,\\s*${key}:\\s*'[^']*'`), '')
+                    .replace(new RegExp(`${key}:\\s*'[^']*',\\s*`), '');
+                out.push(key + '(删除)');
+            }
+            return;
+        }
+        const next = `${key}: '${esc(val)}'`;
+        const hit = block.match(re)?.[0];
+        if (hit) {
+            if (hit !== next) { block = block.replace(re, next); out.push(key); }
+        } else {
+            block = block.replace(/\s*\}$/, `, ${next} }`);
+            out.push(key + '(新增)');
+        }
+    };
+    /** 数值字段：有则替换，无则追加；值空串或 null => 删除 */
+    const setNum = (key: string, raw: unknown): void => {
+        if (raw === undefined) return;
+        if (raw === null) {
+            const re0 = new RegExp(`,\\s*${key}:\\s*-?[\\d.]+`);
+            if (re0.test(block)) { block = block.replace(re0, ''); out.push(key + '(删除)'); }
+            return;
+        }
+        const s = String(raw).trim();
+        if (s === '') {
+            const re = new RegExp(`,\\s*${key}:\\s*-?[\\d.]+`);
+            if (re.test(block)) { block = block.replace(re, ''); out.push(key + '(删除)'); }
+            return;
+        }
+        const v = Number(s);
+        if (!Number.isFinite(v)) return;
+        const re = new RegExp(`${key}:\\s*-?[\\d.]+`);
+        const next = `${key}: ${v}`;
+        const hit = block.match(re)?.[0];
+        if (hit) {
+            if (hit !== next) { block = block.replace(re, next); out.push(key); }
+        } else {
+            block = block.replace(/\s*\}$/, `, ${next} }`);
+            out.push(key + '(新增)');
+        }
+    };
+    /** 布尔字段（目前只有 mirror）：true 追加/保留，false 删除 */
+    const setBool = (key: string, raw: unknown): void => {
+        if (raw === undefined) return;
+        const on = raw === true || raw === 'true' || raw === 1 || raw === '1';
+        const re = new RegExp(`,\\s*${key}:\\s*(?:true|false)`);
+        const has = re.test(block);
+        if (on) {
+            if (!has) { block = block.replace(/\s*\}$/, `, ${key}: true }`); out.push(key + '(新增)'); }
+        } else if (has) {
+            block = block.replace(re, ''); out.push(key + '(删除)');
+        }
+    };
+
+    // 白名单：只允许这几项（id 是主键，不许改）
+    setStr('name', fields.name);
+    setStr('factionId', fields.factionId);
+    setStr('type', fields.type);
+    setStr('region', fields.region);
+    setStr('buildingStyle', fields.buildingStyle);
+    setNum('troops', fields.troops);
+    setNum('lat', fields.lat);
+    setNum('lng', fields.lng);
+    setNum('tier', fields.tier);
+    setBool('mirror', fields.mirror);
+    setStr('note', fields.note);
+
+    if (!out.length) return { ok: true, changed: [] };
+    const nextText = text0.slice(0, open) + block + text0.slice(close + 1);
+    fs.writeFileSync(citiesPath, nextText, 'utf-8');
+    console.log(`[SaveCity] ${id}: ${out.join(', ')}`);
+    return { ok: true, changed: out };
+}
+
+function serverReadAllEntityData() {    const factionText = fs.readFileSync(path.resolve(__dirname, 'src/data/factions.ts'), 'utf-8');
     const citiesText = fs.readFileSync(path.resolve(__dirname, 'src/data/cities_v2.ts'), 'utf-8');
     const sdnText = fs.readFileSync(path.resolve(__dirname, 'src/data/SandboxDisplayNames.ts'), 'utf-8');
     const scText = fs.readFileSync(path.resolve(__dirname, 'src/data/StartingCapitals.ts'), 'utf-8');
@@ -2957,7 +3200,13 @@ function serverReadAllEntityData() {
         .map(m => ({ id: m[1], name: m[2] }));
 
     // cities: parse block by block
-    const cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string; mirror?: boolean }> = [];
+    // 🔴 [2026-09-11 主人需求「据点编辑器」] 除原有字段外，再带上 buildingStyle / tier / note，
+    //    否则据点编辑器里没法显示与编辑「建筑风格」等属性（界面缺字段 = 看着像没这个属性）。
+    const cities: Array<{
+        id: string; name: string; factionId: string; lat: number; lng: number;
+        type: string; troops: number; region?: string; mirror?: boolean;
+        buildingStyle?: string; tier?: number; note?: string;
+    }> = [];
     for (const m of citiesText.matchAll(/\{[^{}]*id:\s*'([^']+)'[^{}]*\}/g)) {
         const block = m[0];
         const id = m[1];
@@ -2969,7 +3218,15 @@ function serverReadAllEntityData() {
         const troops = parseInt(block.match(/troops:\s*(\d+)/)?.[1] ?? '5000');
         const region = block.match(/region:\s*'([^']+)'/)?.[1];
         const mirror = /mirror:\s*true/.test(block) || undefined;
-        if (name && fId) cities.push({ id, name, factionId: fId, lat, lng, type, troops, region, mirror });
+        const buildingStyle = block.match(/buildingStyle:\s*'([^']+)'/)?.[1];
+        const tierRaw = block.match(/tier:\s*(\d+)/)?.[1];
+        const note = block.match(/note:\s*'([^']*)'/)?.[1];
+        if (name && fId) {
+            cities.push({
+                id, name, factionId: fId, lat, lng, type, troops, region, mirror,
+                buildingStyle, tier: tierRaw != null ? parseInt(tierRaw) : undefined, note,
+            });
+        }
     }
 
     // flags: { [factionId]: flagText } — keys may or may not be quoted

@@ -32,7 +32,16 @@ function shouldBlock(): boolean {
     const running = inBattleScene || (timeSystem ? !timeSystem.isGamePaused() : false);
     // F2 立绘校正打开时强制闸门关：校正需暂停推演，若按「暂停=可刷新」会让整页刷新打断校正
     const correctorOpen = (window as any).__portraitCorrectorOpen === true;
-    return running || correctorOpen;
+    // 🔴 [2026-09-11 修「玩家一到接任务那里游戏就重启」] 玩家任务对话框同理：
+    //    它为了让主人看清而自己 setPaused(true)，那是**功能要的暂停**，不是「主人在修游戏」的信号。
+    //    不挡的话，本局期间只要动过任何 src 文件，一弹对话就会被补发的整页刷新刷掉（必现）。
+    //    判据必须是「有没有别的东西正占着暂停」，不能只看 isGamePaused —— 以后再有这种
+    //    自己暂停推演的玩法功能（结算面板、剧情演出等），照样加到这一行来。
+    //    ⚠️ 用 DOM 存在性而不是全局布尔：布尔要靠关闭路径去清，任何一条漏清（异常、切场景、
+    //       直接 remove 节点）都会把闸门**永久焊死**，主人改文件再也刷不出来。对话框节点一没，
+    //       这个判据自动失效，不存在卡住的状态。
+    const dialogueOpen = document.getElementById('player-dialogue-overlay') !== null;
+    return running || correctorOpen || dialogueOpen;
 }
 
 /**

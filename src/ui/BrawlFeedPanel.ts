@@ -218,9 +218,11 @@ export class BrawlFeedPanel {
         this.setExpanded(false);
 
         // 监听直播模式切换
+        // [2026-09-09 主人需求] 开播 → 收起（原来是开播即展开，方向反过来了）。
+        // 关播不自动展开：那时主人在修游戏，面板开不开由他手点。
         window.addEventListener('stream-mode-change', (e: Event) => {
             const { on } = (e as CustomEvent<{ on: boolean }>).detail;
-            this.setExpanded(on);
+            if (on) this.setExpanded(false);
         });
 
         this.root.style.display = 'block';

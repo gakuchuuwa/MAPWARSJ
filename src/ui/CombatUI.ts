@@ -315,6 +315,7 @@ export class CombatUI {
     /** [军事科技] 双方科技徽记区（内容由 renderTechSide 重绘） */
     /** [13 布局] 当前是否处于战术模式专属布局；进入/退出各执行一次，不逐帧重排 */
     private scene13LayoutOn = false;
+    private scene13TechSizeObserver: ResizeObserver | null = null;
     /** [13 布局] 进入 13 前的内联样式快照，退出时逐字还原（保证 8/9/10 逐像素不变） */
     private scene13SavedCss = new Map<HTMLElement, string>();
     /** [13 布局] 被临时移到 body 的元素 → 原父节点与原位置，退出时插回原处 */
@@ -1256,7 +1257,7 @@ export class CombatUI {
     /**
      * [13 布局] 战术模式（ZOOM 13）专属面板布局。主人 2026-08-26 定：
      *   · 人物立绘分置屏幕**左下角 / 右下角**
-     *   · 上方只保留「战争地点 + 战争类型」标题与血槽
+     *   · 血槽与「战争地点 + 战争类型」标题放到底部科技栏上方
      *   · 纪年、事件描述、双方兵力 HUD 都是大地图的信息 → 13 期间隐藏
      *   · 科技从顶部 HUD（#top-center-hud）移到屏幕**下方**
      *
@@ -1270,6 +1271,8 @@ export class CombatUI {
         this.container.classList.toggle('is-scene13', on);
 
         if (!on) {
+            this.scene13TechSizeObserver?.disconnect();
+            this.scene13TechSizeObserver = null;
             // 分隔徽记挂在 body、不在样式快照里，退出时手动收起
             if (this.techDivider) {
                 this.techDivider.style.opacity = '0';
@@ -1300,8 +1303,12 @@ export class CombatUI {
                 }
             }
             this.scene13Reparented.clear();
+            if (this.exitBattleBtn && this.isVisible) this.exitBattleBtn.style.display = 'block';
             return;
         }
+
+        // 🔴 [2026-09-10 主人定] 战术模式右上角不显示退出战斗按钮（已移入战术模式玩家面板）
+        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'none';
 
         const topHud = document.getElementById('top-center-hud');
         const save = (el?: HTMLElement | null) => {
@@ -1312,6 +1319,19 @@ export class CombatUI {
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.centerSituationRow, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
             this.rightTotalMultBadge, this.leftBarTroopsBadge, this.rightBarTroopsBadge, topHud]) save(el);
+
+        // 🔴 [2026-09-10 主人定] 战役标题与据点攻防/险要徽章移入顶部玩家面板（player-scene13-bar），避免在血槽中央遮挡兵力
+        const playerBar = document.getElementById('player-scene13-bar');
+        if (this.battleTitle && this.battleTitle.parentElement) {
+            this.scene13Reparented.set(this.battleTitle, { parent: this.battleTitle.parentElement, next: this.battleTitle.nextSibling });
+            this.battleTitle.dataset.combatUiDetached = 'true';
+            if (playerBar) {
+                playerBar.insertBefore(this.battleTitle, playerBar.firstChild);
+                (window as any).game?.playerScene13Control?.refresh?.();
+            } else {
+                document.body.appendChild(this.battleTitle);
+            }
+        }
 
         // 移出 #combat-ui-panel 挂到 body，避免受任何容器 transform 影响
         const detach = (el?: HTMLElement | null) => {
@@ -1333,11 +1353,11 @@ export class CombatUI {
             frame.style.display = 'block';
         }
 
-        // ② 上方条：血槽两端加长直达屏幕边缘，地点战役标题居中，兵力胶囊分列左右两侧（零重叠极简美观）
+        // ② 血槽在最下（固定贴底 0px）
         if (this.centerPanel) {
             this.centerPanel.style.position = 'fixed';
-            this.centerPanel.style.top = '0';
-            this.centerPanel.style.bottom = 'auto';
+            this.centerPanel.style.top = 'auto';
+            this.centerPanel.style.bottom = '0px';
             this.centerPanel.style.left = '0';
             this.centerPanel.style.right = '0';
             this.centerPanel.style.width = '100vw';
@@ -1363,20 +1383,25 @@ export class CombatUI {
             this.healthBarContainer.style.position = 'relative';
         }
 
-        // 战役标题居中浮现在血槽正中央，舒展大气
+        // 🔴 [2026-09-10 主人定] 战役标题移入顶部玩家面板（player-scene13-bar），避免在血槽中央遮挡兵力
         if (this.battleTitle) {
-            this.battleTitle.style.position = 'absolute';
-            this.battleTitle.style.top = '50%';
-            this.battleTitle.style.left = '50%';
-            this.battleTitle.style.transform = 'translate(-50%, -50%)';
+            this.battleTitle.style.position = 'relative';
+            this.battleTitle.style.top = 'auto';
+            this.battleTitle.style.left = 'auto';
+            this.battleTitle.style.transform = 'none';
             this.battleTitle.style.margin = '0';
-            this.battleTitle.style.padding = '0';
-            this.battleTitle.style.fontSize = '15px';
+            this.battleTitle.style.padding = '0 10px 0 0';
+            this.battleTitle.style.border = 'none';
+            this.battleTitle.style.borderRight = '1px solid rgba(212, 175, 55, 0.4)';
+            this.battleTitle.style.fontSize = '13px';
             this.battleTitle.style.fontWeight = '900';
-            this.battleTitle.style.letterSpacing = '5px';
-            this.battleTitle.style.zIndex = '15';
+            this.battleTitle.style.letterSpacing = '1.5px';
+            this.battleTitle.style.display = 'inline-flex';
+            this.battleTitle.style.alignItems = 'center';
+            this.battleTitle.style.whiteSpace = 'nowrap';
+            this.battleTitle.style.zIndex = '1';
             this.battleTitle.style.pointerEvents = 'none';
-            this.battleTitle.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.95)) drop-shadow(0 2px 8px rgba(0,0,0,0.85))';
+            this.battleTitle.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.95))';
         }
         // 隐藏多余的独立 64px 黑色大底板，释放全部纵向视野
         if (this.centerBackdrop) {
@@ -1394,10 +1419,10 @@ export class CombatUI {
         if (topHud) {
             topHud.style.display = 'none';
         }
-        // ③ 科技 → 屏幕下方居中左右分列（按着底，向上折行）
+        // ③ 科技 → 屏幕下方居中左右分列（位于血槽上方，科技折行时向上生长）
         if (this.leftTechBox) {
             this.leftTechBox.style.position = 'fixed';
-            this.leftTechBox.style.bottom = '0px';
+            this.leftTechBox.style.bottom = '38px';
             this.leftTechBox.style.top = 'auto';
             this.leftTechBox.style.right = '50.5vw';
             this.leftTechBox.style.left = 'auto';
@@ -1407,7 +1432,7 @@ export class CombatUI {
         }
         if (this.rightTechBox) {
             this.rightTechBox.style.position = 'fixed';
-            this.rightTechBox.style.bottom = '0px';
+            this.rightTechBox.style.bottom = '38px';
             this.rightTechBox.style.top = 'auto';
             this.rightTechBox.style.left = '50.5vw';
             this.rightTechBox.style.right = 'auto';
@@ -1415,7 +1440,7 @@ export class CombatUI {
             this.rightTechBox.style.color = '#e8dcc0';
             this.rightTechBox.style.alignItems = 'flex-end';
         }
-        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（底边与两盒贴底对齐）
+        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（血槽正上方中央）
         if (this.techDivider) {
             const size = uiPx(T.sideBar.centerVsIconSize);
             this.techDivider.style.width = size;
@@ -1423,7 +1448,7 @@ export class CombatUI {
             this.techDivider.style.left = '50%';
             this.techDivider.style.right = 'auto';
             this.techDivider.style.top = 'auto';
-            this.techDivider.style.bottom = '2px';
+            this.techDivider.style.bottom = '40px';
             this.techDivider.style.transform = 'translateX(-50%)';
             this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
         }
@@ -1713,6 +1738,7 @@ export class CombatUI {
         }
 
         // 科技列表（每个科技一个垂直对齐的独立卡片/小列，按着底向上折行）
+        // 🔴 [2026-09-10 主人定] 科技标签第二行优先从中间对齐，避免阻挡左右两侧武将立绘
         const chipsWrap = document.createElement('div');
         chipsWrap.style.cssText = `
             display: flex;
@@ -1720,7 +1746,7 @@ export class CombatUI {
             gap: 3px;
             max-width: 100%;
             align-items: flex-end;
-            justify-content: ${box === this.leftTechBox ? 'flex-start' : 'flex-end'};
+            justify-content: ${box === this.leftTechBox ? 'flex-end' : 'flex-start'};
         `;
 
         for (const t of own) {
@@ -3381,7 +3407,7 @@ export class CombatUI {
         this.currentBattleType = battle.type;
         this.isVisible = true;
         this.container.classList.add('is-battle-visible');
-        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
+        if (this.exitBattleBtn && !this.scene13LayoutOn) this.exitBattleBtn.style.display = 'block';
         this.refreshCorrectorDataOnBattleOpen();
         this.resetBattleOverlays();
         this.attackerFactionId = battle.attacker.factionId;
@@ -3423,7 +3449,7 @@ export class CombatUI {
         this.currentBattle = null;
         this.currentRegionalUnits = { attackers, defenders };
         this.boundRegionalBattleField = battleField ?? null;
-        if (this.exitBattleBtn) this.exitBattleBtn.style.display = 'block';
+        if (this.exitBattleBtn && !this.scene13LayoutOn) this.exitBattleBtn.style.display = 'block';
         this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
@@ -4943,6 +4969,9 @@ export class CombatUI {
         this.battleTitle.style.background = 'none';
         this.battleTitle.style.border = 'none';
         this.battleTitle.style.boxShadow = 'none';
+        if (this.scene13LayoutOn) {
+            this.battleTitle.style.borderRight = '1px solid rgba(212, 175, 55, 0.4)';
+        }
         if (suffix) {
             const badgeHtml = `<span class="combat-title-badge" style="display:inline-block;padding:2px 7px;border:1px solid rgba(212,175,55,0.75);border-radius:4px;font-size:0.42em;font-weight:700;line-height:1.2;background:rgba(25,18,12,0.85);margin-left:10px;color:#ffdf73;vertical-align:middle;transform:translateY(-3px);letter-spacing:1px;box-shadow:0 2px 6px rgba(0,0,0,0.85),inset 0 0 5px rgba(212,175,55,0.25);">${suffix}</span>`;
             this.battleTitle.innerHTML = `${titleHtml}${badgeHtml}`;
@@ -5700,13 +5729,13 @@ export class CombatUI {
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;
         }
-        // ② 时代 + 文化军团（如「古典先秦军团」「古典秦汉军团」「封建高句丽军团」「城堡蒙古军团」）
+        // ② 时代 + 文化军团（如「古典时代先秦军团」「古典时代秦汉军团」「封建时代高句丽军团」「城堡时代蒙古军团」）
         const region = resolveUnitCultureRegion(unit);
         const cultureLegionName = getCultureLegionName(region);
         if (cultureLegionName) {
             return cultureLegionName;
         }
-        return side === 'attacker' ? '古典华夏军团' : '古典秦汉军团';
+        return side === 'attacker' ? '古典时代华夏军团' : '古典时代秦汉军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {

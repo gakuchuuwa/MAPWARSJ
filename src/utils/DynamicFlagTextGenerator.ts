@@ -10,12 +10,35 @@ export class DynamicFlagTextGenerator {
      * @param strokeColor 描边颜色（默认半透明白边，与默认黑字配合用于浅色旗帜）
      */
     public static generate(text: string, color: string = '#1a1a1a', strokeColor: string = 'rgba(255, 255, 255, 0.7)'): string {
+        return this.render(text, color, strokeColor).toDataURL('image/png');
+    }
+
+    /**
+     * ⚠️ [2026-09-10 实测] 这条异步路单张恒定 **1010ms**（同页面同步 generate 只要 5~9ms），
+     * 代价在 toBlob + FileReader 本身，不是主线程忙。旗号生成已全部改回同步 generate，
+     * 此函数无调用方，勿用来「优化卡顿」——用它等于让旗号一秒只出一张。
+     */
+    public static async generateAsync(text: string, color: string = '#1a1a1a', strokeColor: string = 'rgba(255, 255, 255, 0.7)'): Promise<string> {
+        const canvas = this.render(text, color, strokeColor);
+        const blob = await new Promise<Blob>((resolve, reject) => {
+            canvas.toBlob(value => value ? resolve(value) : reject(new Error('旗号 PNG 编码失败')), 'image/png');
+        });
+        return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(reader.error ?? new Error('旗号 PNG 读取失败'));
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    private static render(text: string, color: string, strokeColor: string): HTMLCanvasElement {
         // 使用 4 倍超高分辨率渲染 Canvas，彻底解决拉近放大后的字体马赛克/模糊问题
         const renderScale = 4;
         const canvas = document.createElement('canvas');
         canvas.width = 128 * renderScale;
         canvas.height = 240 * renderScale;
-        const ctx = canvas.getContext('2d')!;
+        // 这张画布只用于导出 PNG，直接使用 CPU 画布，避免编码快照时同步回读 GPU。
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
         
         // 缩放上下文，这样后续的所有绘图坐标（如 32, 40）和字号都不需要修改，自动按高分屏渲染
         ctx.scale(renderScale, renderScale);
@@ -28,7 +51,7 @@ export class DynamicFlagTextGenerator {
 
         // 截取前两个字进行展示（兼容单字与双字复姓，防止超长字符导致排版崩溃）
         const cleanText = text.trim().slice(0, 2);
-        if (!cleanText) return canvas.toDataURL('image/png');
+        if (!cleanText) return canvas;
 
         // 使用美观的古风楷体/宋体（优雅回退）
         const fontName = 'STKaiti, KaiTi, "Kaiti SC", "Microsoft YaHei", serif';
@@ -68,7 +91,7 @@ export class DynamicFlagTextGenerator {
 
                 // 5. 绘字排版逻辑
                 // 文字/描边颜色由调用方决定（按旗帜亮度自适应）, 旗帜浅 → 黑字白边, 旗帜深 → 白字黑边
-                ctx.globalAlpha = 0.85;
+                ctx.globalAlpha = 1.0;
                 ctx.fillStyle = color;
                 ctx.lineWidth = 1.6;
 
@@ -100,7 +123,6 @@ export class DynamicFlagTextGenerator {
             }
         }
 
-        // 返回生成的透明 PNG Base64 Data URL
-        return canvas.toDataURL('image/png');
+        return canvas;
     }
 }

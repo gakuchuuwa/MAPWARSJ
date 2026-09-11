@@ -26,7 +26,7 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { isNearStrategicRiver } from '../../map/StrategicRiverProximity';
 import { RandomSource, createRandom, hashString } from './Random';
 import {queryBaseTile} from './WorldBaseMap';
-import { pickTree, treeDensityFor } from './TreeAssignment';
+import { pickTree, treeDensityFor, type TreeSeason } from './TreeAssignment';
 import { filterDecor, groundDecorFor, countForCover, assetTiles,
          SCATTER_COVER, FLAT_COVER, type DecorFitQuery } from './DecorFit';
 import {
@@ -262,11 +262,9 @@ const DE_HALF_TILE_OBJECTS = new Set([
     'LUSH_BAMBOO', 'BAMBOO', 'GREEN_OAK', 'BIRCH_GREEN', 'BIRCH_AUTUMN',
     'BIRCH_WINTER', 'WILLOW', 'ROCK_FORMATION1', 'ROCK_FORMATION2',
     'ROCK_LIMESTONE', 'ROCK_JUNGLE', 'ROCK1', 'ROCK2', 'ROCK3',
-    // 🔴 [2026-08-21 素材全覆盖] 战场遗迹（木桶/墓碑/骸骨）。地毯 RUGS 已移出此集合：
-    //    主人 2026-08-21 定「地毯只贴图」——RUGS 不再挂 HALF_TILE_OBSTRUCTION，不参与碰撞/阻挡，仅作地面装饰。
+    // 🔴 [2026-08-21 素材全覆盖] 战场遗迹（木桶/墓碑/骸骨）。地毯/石矿/果灌木/残桩已移出此集合：
+    //    主人 2026-08-21 定「地毯只贴图」，2026-09-10 定「石矿只贴图」——不再挂 HALF_TILE_OBSTRUCTION，不参与碰撞/阻挡，仅作地面装饰。
     'BARRELS', 'GRAVES', 'SKELETON',
-    'FORAGE_BUSH', 'MINE_STONE', 'FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_BAOBAB', 'FELLED_LUSH_BAMBOO',
-    'STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_BAOBAB', 'STUMP_LUSH_BAMBOO',
     'SCENARIO_TREE_A', 'SCENARIO_TREE_B', 'SCENARIO_TREE_C', 'SCENARIO_TREE_D',
     'SCENARIO_TREE_E', 'SCENARIO_TREE_F', 'SCENARIO_TREE_G', 'SCENARIO_TREE_H',
     'SCENARIO_TREE_I', 'SCENARIO_TREE_J', 'SCENARIO_TREE_K', 'SCENARIO_TREE_L',
@@ -282,9 +280,22 @@ const DE_OBJECT_OBSTRUCTION: Readonly<Record<string, { x: number; y: number }>> 
 function attachDeObjectObstruction(objects: EnvironmentObjectPlan[]): void {
     for (const object of objects) {
         const a = object.asset;
-        // 纯贴图（无碰撞）：树木、岩石、木桶、墓碑、骸骨、芦苇、睡莲。
-        // 树仍按 world 层深度排序绘制，只是不再推挤、阻挡士兵。
-        if (DE_TREE_OBJECTS.has(a) || a.startsWith('ROCK') || a === 'BARRELS' || a === 'GRAVES' || a === 'SKELETON' || a === 'REEDS' || a === 'WATER_LILY' || a === 'OYSTERS') {
+        // 纯贴图（无碰撞）：树木、岩石、石矿、果树灌木、倒木与树桩、木桶、墓碑、骸骨、芦苇、睡莲。
+        // 仍按 world 层深度排序绘制，只是不再推挤、阻挡士兵。
+        if (
+            DE_TREE_OBJECTS.has(a) ||
+            a.startsWith('ROCK') ||
+            a.startsWith('MINE_') ||
+            a.startsWith('FORAGE_') ||
+            a.startsWith('FELLED_') ||
+            a.startsWith('STUMP_') ||
+            a === 'BARRELS' ||
+            a === 'GRAVES' ||
+            a === 'SKELETON' ||
+            a === 'REEDS' ||
+            a === 'WATER_LILY' ||
+            a === 'OYSTERS'
+        ) {
             object.obstruction = undefined;
             object.obstructionReleaseAfterSec = undefined;
             continue;
@@ -1119,10 +1130,15 @@ function buildCoastline(
     if (dryBeach.length > 0) {
         patches.push({ tile: actualBeachTile, cells: dryBeach, polygon: bandPolygon(wetBeachW * 0.5, dryBeachW), alpha: 0.88, category: 'shore', blur: 18 });
     }
-    // 4. 外海深水水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green）
-    if (deep.length > 0) {
-        patches.push({ tile: actualWaterTile, cells: deep, polygon: bandPolygon(-VW, -shallowW * 0.6), alpha: 0.90, category: 'shore', blur: 18 });
-    }
+    // 4. 外海深水水域：清澈蔚蓝海水（wtr / wt5 / river_clean_green），彻底向外海无缝延展，严禁外侧边缘漏出陆地泥土
+    patches.push({
+        tile: actualWaterTile,
+        cells: deep,
+        polygon: bandPolygon(-VW * 2, -shallowW * 0.3),
+        alpha: 1.0,
+        category: 'shore',
+        blur: 18,
+    });
     // 5. 近岸浅水带（sh2 = 极度通透的浅水层，水下金沙一览无余，与深水和沙滩柔和交融）
     if (shallow.length > 0) {
         patches.push({ tile: 'sh2', cells: shallow, polygon: bandPolygon(-shallowW * 1.3, 0), alpha: 0.55, category: 'shore', blur: 20 });
@@ -1580,8 +1596,12 @@ function buildVegetation(
     //    只有拿不到经纬度（旧调用/单测）才回落到按主题挑一把树。
     let primaryTree: string;
     let secondaryTree: string | null = null;
+    // 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 树种表已升为**四季**（春0/夏1/秋2/冬3），
+    //   而本函数的 `season` 是**战场地表季节**（绿0/橙1/白2，地形/底色仍按三态走）。
+    //   对齐取最近的当季：绿→夏、橙→秋、白→冬（战场地表没有单独"春花"档）。
+    const treeSeason4 = ((season + 1) % 4) as TreeSeason;
     if (lat !== undefined && lng !== undefined) {
-        primaryTree = pickTree({ baseTile, lat, lng, season, isSiege });
+        primaryTree = pickTree({ baseTile, lat, lng, season: treeSeason4, isSiege });
     } else {
         const treeAssets = treesForTheme(theme, season, elevationBand, lat, elev, biome, lng);
         primaryTree = rng.pick(treeAssets);
@@ -1730,6 +1750,7 @@ function buildVegetation(
         const tx = isoCellX(gx, gy, ox) + jx;
         const ty = isoCellY(gx, gy, oy) + jy;
         if (tx < 0 || tx > VW || ty < 0 || ty > VH) continue;
+        if (isWater(tx, ty)) continue; // 格内偏移后重新检查，树根不能越过岸线。
         const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
         // 🔴 placementGroup 让同组物件互不排斥。没有它，enforceAllObjectSpacing 会按
         //    树的斥力半径 65px（两棵树最小间距 130px ≈ 隔两格）把密林剔成稀疏散点——

@@ -4,7 +4,8 @@
  * 一键隐藏所有开发者 UI，给无解说直播一个干净画面：
  *   隐藏：右侧调试面板（#debug-control-panel）、左下坐标/六边形/地形框（.hud-map-panel）、
  *         性能按钮（#perf-toggle-btn）
- *   保留：播放/倍速、日期条、军情面板、军团列表、势力榜、跟拍横幅、远征 UI
+ *   保留：日期条、跟拍横幅、远征 UI
+ *   收起：军团面板、玩家面板、军情面板、右下角时间/控制面板（2026-09-09 主人定，开播即最小化）
  *
  * 状态存 localStorage（mapwar-stream-mode），刷新后保持。
  *
@@ -123,11 +124,13 @@ export class StreamModeToggle {
             this.button.style.color = on ? '#e8b25a' : '';
         }
         if (on) {
-            // 直播 = 纯画面开关（2026-08-05 分离）：只隐藏开发 UI、打开跟拍列表，
+            // 直播 = 纯画面开关（2026-08-05 分离）：只隐藏开发 UI、收起各面板，
             // 不碰推演运行状态（ReloadGate 08-01 已定「直播按钮只是画面开关，不代表游戏在不在跑」；
             // 开播推演由 UnattendedStream.autoStart 显式做，播放/暂停只归「播放」按钮）。
+            // [2026-09-09 主人需求] 军团面板改为开播即收起（原来是开播即展开）；
+            // 玩家/军情/右下角三块各自监听 stream-mode-change 自行收起。
             const game = (window as any).game;
-            game?.cameraFollowUI?.openList?.();
+            game?.cameraFollowUI?.closeList?.();
         }
         // 通知其他 UI：直播模式已变更
         window.dispatchEvent(new CustomEvent('stream-mode-change', { detail: { on } }));

@@ -246,6 +246,12 @@ export class Army implements IBattleUnit {
      *        这是既有规则，船速的区分靠的就是「上船即换成海速」这一档。 */
     public preferredMoveClass: MovementClass | null = null;
 
+    /** 地形倍率缩放：只有玩家会设（见 PLAYER_PLAIN_SPEED_SCALE / PLAYER_MOUNTAIN_SPEED_SCALE）。
+     *  🔴 [2026-09-11 主人定「玩家移动速度平地慢一小点，山地快一小点」]
+     *     不能去改 MOVEMENT_MATRIX —— 那张表全体军团共用，改一行等于改全世界同类军团。
+     *     null = 不缩放（所有 AI 军团都走这条，行为与本字段加入前完全一致）。 */
+    public terrainSpeedScale: Readonly<{ plain: number; mountain: number }> | null = null;
+
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
 
@@ -975,7 +981,9 @@ export class Army implements IBattleUnit {
 
             const moveClass = this.preferredMoveClass
                 ?? (this.cultureRegion ? getCultureMovementClass(this.cultureRegion) : 'MIXED');
-            this.terrainSpeedTarget = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
+            const base = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
+            // 玩家专属缩放（AI 军团 terrainSpeedScale 恒为 null，走原路）
+            this.terrainSpeedTarget = base * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
         }
 
         // 平滑：约 TERRAIN_SPEED_LERP_TAU_SEC 内贴近目标；构造/瞬移 deltaTime≤0 则贴齐

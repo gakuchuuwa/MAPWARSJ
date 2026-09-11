@@ -2,9 +2,9 @@
  * PlayerQuestSystem —— 据点对话与两层任务（2026-09-05 主人定）。
  *
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
- *   第一层：据点不是原势力的 → 武将（遗臣）请玩家助其复国。同意 → 遗臣起兵 2 万（本城精锐+本将）
+ *   第一层：据点不是原势力的 → 武将（遗臣）请玩家助其复国。同意 → 遗臣起兵 1 万（本城精锐+本将）
  *           围攻本城，玩家入伍随军；城归原势力即复国成功。
- *   第二层：据点仍是原势力的 → 武将请玩家随他出征一座据点（沿路网最近的敌城）。同意 → 起兵 2 万远征；
+ *   第二层：据点仍是原势力的 → 武将请玩家随他出征一座据点（沿路网最近的敌城）。同意 → 起兵 1 万远征；
  *           占领目标后玩家学会该势力的主力精锐兵种（可选一支带进战术模式）。
  *
  * 军团一律走现成远征机制（expeditionTargetCityId + 行为树），本系统只发令、跟踪结果、收尾。
@@ -23,7 +23,7 @@ import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
-import { PLAYER_QUEST_LEGION_TROOPS, PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
+import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 
 export type PlayerQuestKind = 'restore' | 'campaign';
 
@@ -107,6 +107,8 @@ export class PlayerQuestSystem {
             if (c.factionId) this.initialFaction.set(c.id, c.factionId);
         }
         deps.hero.onArriveCity = (city) => this.onArrive(city);
+        // 🔴 [2026-09-09 主人定] 在野外追上带兵的武将 → 直接谈随军（见 onMeetArmy）
+        deps.hero.onMeetArmy = (army) => this.onMeetArmy(army);
         deps.hero.onHostLost = (lastId) => this.onHostLost(lastId);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
     }
@@ -142,8 +144,18 @@ export class PlayerQuestSystem {
         const g = this.generalInCity(city.id);
         if (!g) {
             const anchored = getCityAnchoredGeneral(city.id);
+            // 🔴 [2026-09-09 主人定] 扑空不再换人：他既然带兵出去了，就追出去找他。
+            //    （赶路途中武将出征是常态，原来在这里直接放弃，玩家就一直在空跑。）
+            const army = anchored ? this.armyOfGeneral(anchored.generalId) : null;
+            if (anchored && army) {
+                this.chaseCityId = city.id;
+                if (this.deps.hero.travelToArmy(army.id, anchored.generalName)) {
+                    this.deps.notify(`抵达【${city.name}】：${anchored.generalName}已率军在外，追往其军中`);
+                    return;
+                }
+            }
             this.deps.notify(anchored
-                ? `抵达【${city.name}】：${anchored.generalName}已率军在外，城中无将`
+                ? `抵达【${city.name}】：${anchored.generalName}已率军在外，且无从追及`
                 : `抵达【${city.name}】：城中无将可谈`);
             return;
         }
@@ -249,9 +261,12 @@ export class PlayerQuestSystem {
         targetCityId: string,
     ): Army | null {
         const eliteName = getCityEliteLegionName(city.id) ?? `${general.generalName}部`;
+        // 🔴 [2026-09-10 主人定] 玩家起兵 = 势力本身的兵力（本城城防），不凭空造固定值；
+        //    起兵即本城兵力转入军团、据点城防归零（兵力守恒，和其他无关）。
+        const troops = Math.max(1, city.troops || 0);
         const army = this.deps.legionManager.createLegion(
             { lat: city.latitude, lng: city.longitude },
-            PLAYER_QUEST_LEGION_TROOPS,
+            troops,
             factionId,
             eliteName,
             undefined,
@@ -261,7 +276,8 @@ export class PlayerQuestSystem {
             true,
         );
         if (!army || !this.deps.legionManager.getLegionById(army.id)) return null;
-        army.setTroops(PLAYER_QUEST_LEGION_TROOPS);
+        army.setTroops(troops);
+        city.troops = 0;
         army.isElite = true;
         army.name = eliteName;
         army.homeCityId = city.id;
@@ -363,7 +379,93 @@ export class PlayerQuestSystem {
     /** 自动选据点前往：优先「名将 + 双行」武将的势力据点，同分随机取一个 */
     private autoTravelToBestCity(): void {
         const city = this.pickAutoCity();
-        if (city) this.deps.hero.travelToCity(city.id);
+        if (!city) return;
+        const g = getCityAnchoredGeneral(city.id);
+        const army = g ? this.armyOfGeneral(g.generalId) : null;
+        if (army) {
+            // 人不在城中 → 直接去野外找他（PlayerHero.stepChase 每帧续航）
+            this.chaseCityId = city.id;
+            if (this.deps.hero.travelToArmy(army.id, g!.generalName)) {
+                this.deps.notify(`🐎 ${g!.generalName}已率军在外，前往其军中相见`);
+                return;
+            }
+        }
+        this.chaseCityId = null;
+        this.deps.hero.travelToCity(city.id);
+    }
+
+    /** 追击中的那位武将的**本城**（会面后谈事仍以这座城的势力/目标为准） */
+    private chaseCityId: string | null = null;
+
+    /**
+     * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。
+     * 与城中对话的区别只有一个 —— **不用起兵**，那支军团已经在打仗了，直接入伍即可。
+     */
+    public onMeetArmy(army: Army): void {
+        const hero = this.deps.hero;
+        if (hero.isAttached() || this.quest) return;
+        const cityId = this.chaseCityId;
+        this.chaseCityId = null;
+        const city = cityId ? this.deps.cityManager.getCity(cityId) : null;
+        const gid = army.generalId;
+        if (!city || !gid) return;
+        const rec = getGeneralRecordByGeneralId(gid);
+        const generalName = rec?.generalName ?? '将军';
+        const factionId = army.getFactionId() || city.factionId;
+        const factionName = this.deps.cityManager.getFactionName(factionId);
+        const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
+            factionId,
+            region: getCityRegion(city),
+        });
+        const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
+        const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
+        const targetName = target?.name ?? '前方敌城';
+        const eliteName = getCityEliteLegionName(city.id) ?? `${generalName}部`;
+        this.deps.showDialogue({
+            speaker: generalName,
+            portrait,
+            factionName,
+            text: `壮士竟寻到军中来了。某正提兵往【${targetName}】，军旅之中不便设宴。`
+                + `壮士若不嫌鞍马劳顿，便随某同去，克城之日当以「${eliteName}」之战法相授。`,
+            options: [
+                { label: `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName, eliteName) },
+                { label: '告辞', onPick: () => this.deps.closeDialogue() },
+            ],
+        });
+    }
+
+    /** 野外会面后入伍：军团现成的，不起兵，其余与 startCampaign 同口径 */
+    private joinMarchingArmy(city: City, army: Army, generalName: string, eliteName: string): void {
+        this.deps.closeDialogue();
+        const factionId = army.getFactionId() || city.factionId;
+        const factionName = this.deps.cityManager.getFactionName(factionId);
+        const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
+        const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
+        if (!target) {
+            this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
+            return;
+        }
+        const unitKey = this.mainUnitKeyOf(factionId, army.generalId ?? '');
+        this.quest = {
+            kind: 'campaign',
+            cityId: city.id,
+            cityName: city.name,
+            factionId,
+            factionName,
+            generalId: army.generalId ?? '',
+            generalName,
+            legionId: army.id,
+            targetCityId: target.id,
+            targetCityName: target.name,
+            reward: unitKey ? { name: eliteName, unitKey } : undefined,
+        };
+        this.deps.hero.joinFaction(factionId);
+        this.deps.hero.attachTo(army);
+        this.deps.ensureUnpaused();
+        this.deps.kickLegionAi(army.id);
+        this.deps.notify(`🐎 于军中投${generalName}，同征【${target.name}】`);
+        gameLog('expedition', `[玩家] 野外入伍：${generalName} 部 ${army.name} → ${target.name}`);
+        this.emitChange();
     }
 
     /** 两点球面距离（公里），只用来在同档候选里比远近，不需要高精度。 */
@@ -383,16 +485,23 @@ export class PlayerQuestSystem {
      *       ② **只在与第一名完全同档的候选里**，挑离玩家最近的那个。
      *     绝不能反过来先按距离分圈再挑将——那样近处没名将时就会选到次优的，
      *     等于把「必须」降成了「优先」。 */
+    /** 这位武将此刻带着的军团（在外行军中）；没带兵就返回 null = 人在城里 */
+    private armyOfGeneral(generalId: string): Army | null {
+        return this.deps.legionManager.getArmies().find(
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId,
+        ) ?? null;
+    }
+
     private pickAutoCity(): City | null {
         const candidates: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const g = getCityAnchoredGeneral(c.id);
             if (!g) continue;
-            const away = this.deps.legionManager.getArmies().some(
-                (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId,
-            );
-            if (away) continue;
+            // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
+            //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
+            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除）
+            if ((c.troops || 0) < 10000) continue;
             candidates.push(c);
         }
         if (!candidates.length) return null;
@@ -416,7 +525,15 @@ export class PlayerQuestSystem {
         const tied = sorted.filter((c) => keyOf(c) === bestKey);
         if (tied.length === 1) return best;
 
-        // ③ 同档之间才比远近
+        // ③ 同档之间怎么挑，由玩家面板的「就近寻找武将」开关决定（PlayerHero.nearbyFirst）
+        //    · 关（默认）→ **随机**：主人实测就近会把玩家永久锁在出生地周边，
+        //      因为开局全图据点兵力都是 10000，「兵最多」筛不掉任何城，同档集合极大。
+        //    · 开 → 挑最近的，省赶路时间。
+        //    ⚠️ 随机必须在这里显式取，别指望 sort 的随机比较器——那个只是打平时返回
+        //      Math.random()-0.5，比较器不自洽，排出来的第一名不是均匀随机。
+        if (!this.deps.hero.nearbyFirst) {
+            return tied[Math.floor(Math.random() * tied.length)] ?? best;
+        }
         const me = this.deps.hero.getPosition();
         if (!me || typeof me.lat !== 'number') return best;
         let pick = tied[0];
@@ -440,7 +557,6 @@ export class PlayerQuestSystem {
             this.finishQuest(false);
         } else {
             this.deps.hero.detach();
-            this.deps.notify('所在军团已覆灭，你留在原地');
         }
     }
 
@@ -449,8 +565,8 @@ export class PlayerQuestSystem {
         if (!q) return;
         this.quest = null;
         const hero = this.deps.hero;
-        // [2026-09-05 玩家] 任务成功不 detach：玩家继续跟着军团，直到军团覆灭才恢复自由。
-        // 只有任务失败（军团覆灭）才 detach。
+        // [2026-09-05 玩家] 任务成功不 detach：玩家继续跟着军团，直到军团解散才恢复自由。
+        // 只有任务失败（军团解散）才 detach。
         if (!success) {
             hero.resetMerit('随军任务失败');
             hero.detach();
@@ -485,8 +601,8 @@ export class PlayerQuestSystem {
             }
         } else {
             this.deps.notify(q.kind === 'restore'
-                ? `❌ 义军覆灭，${q.factionName}复国失败`
-                : `❌ 出征【${q.targetCityName}】失败，军团覆灭`);
+                ? `❌ 义军解散，${q.factionName}复国失败`
+                : `❌ 出征【${q.targetCityName}】失败，军团解散`);
             gameLog('expedition', `[玩家] 任务失败：${q.kind} ${q.targetCityName}`);
         }
         this.emitChange();

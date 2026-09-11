@@ -7,6 +7,7 @@
  */
 import { LegionPhalanxDrawer } from '../legion/LegionPhalanxDrawer';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
+import { moveClassForHeroKey } from '../../player/PlayerConfig';
 
 type AnimState = 'IDLE' | 'MOVE' | 'ATTACK';
 
@@ -59,7 +60,12 @@ export class HeroSpriteDrawer {
         const dynEntry = assets.dyn?.[setName];
         const dynDir = dynEntry?.dirs?.[String(d)];
         const frames = dynEntry ? dynEntry.frames : Math.max(1, Math.round(raw.naturalWidth / raw.naturalHeight));
-        const cycleMs = setName === 'ATTACK' ? 1500 : setName === 'MOVE' ? 1000 : 2000;
+        const moveClass = moveClassForHeroKey(key);
+        // 🔴 [2026-09-10 主人反馈] 400ms 偏快出现快进感。
+        //    调整至适中自然节奏：原 1000ms 慢滑步，400ms 过快，收拢至 680ms（每秒约 1.47 轮自然奔驰步频）；
+        //    步兵 800ms，象兵 950ms，既不滑步也不鬼畜。
+        const moveCycleMs = moveClass === 'CAVALRY' ? 680 : moveClass === 'INFANTRY' ? 800 : 950;
+        const cycleMs = setName === 'ATTACK' ? 1500 : setName === 'MOVE' ? moveCycleMs : 2000;
         const fr = frames > 1 ? Math.floor(tick / (cycleMs / frames)) % frames : 0;
         const fw = dynDir ? dynDir.fw : raw.naturalWidth / frames;
         const fh = dynDir ? dynDir.fh : raw.naturalHeight;

@@ -90,4 +90,13 @@ export function setupGameAppMapListeners(app: GameApp): void {
     window.addEventListener('click', () => {
         app.audioManager.unlock();
     }, { capture: true, passive: true });
+
+    // 🔴 [2026-09-11 主人需求] 编辑器导航栏「据点编辑」跳转 /index.html?_editor=city 时自动打开城市编辑
+    const editorParam = new URLSearchParams(window.location.search).get('_editor');
+    if (editorParam === 'city') {
+        setTimeout(() => {
+            if (app.cityEditor) app.cityEditor.show();
+            if (app.cityManager) app.cityManager.setEditorMode(true);
+        }, 600);
+    }
 }

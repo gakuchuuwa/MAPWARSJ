@@ -86,7 +86,7 @@ export function getNavalShipDrawScale(shipId?: string): number {
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
-    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'SONG'] },
+    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'PRE_QIN', 'NORTH', 'JIANGNAN', 'HEXI', 'SONG'] },
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
     { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DALI'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
@@ -273,6 +273,9 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     HEAVY_DEMO_SHIP: '重型爆破船',
     INCENDIARY_RAFT: '燃烧木筏',
     MERCHANT_SHIP: '商船',
+    JUNK: '中式帆船',
+    TRADE_COG: '柯克货船',
+    TRANSPORT_SHIP: '运输船',
     ONAGER_SHIP: '中型投石舰',
     WAR_HULK: '重装霍克船',
     HULK: '霍克船',

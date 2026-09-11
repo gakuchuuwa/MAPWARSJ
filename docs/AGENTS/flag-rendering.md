@@ -133,6 +133,34 @@
 - [ ] 是否避免启动全图领土 `update()`？  
 - [ ] `factions.ts` 是否仍**无** `color` 字段？`FactionManager` 是否每局随机色（未读数据 hex）？
 - [ ] 旗号汉字是否仍走 **§10.2.1** 单一阈值 `FLAG_TEXT_LUM_THRESHOLD=128`（深旗白字/浅旗黑字）？
+- [ ] **旗号文字 patch 是否按 `cityMarkers` 遍历**（不是 `this.cities` 快照）？见 §10.6。
+
+### 10.6 旗号文字的 patch 遍历源 + 排水预算（2026-09-11 主人报「走进新区域字刷新很慢、过去了也不显示」）
+
+**症状**：玩家（或镜头）进入新区域后，新出现的据点旗**没有汉字**，走过去了也一直不出（不是慢，是**永远不出**）。
+
+**根因（两条，都实测）**：
+
+| # | 位置 | 问题 |
+|---|---|---|
+| ① | `TerritorySystem.appendCityMarkers()` | 跟拍走进新区域时据点由它**追加**，但它**从不更新 `this.cities`**（只有 `renderCitiesOnly` / `updateTerritoryOnly` 会赋值）。而 `patchFactionFlagText()` 原先按 **`this.cities`** 遍历 → 新区域的 marker 根本不在遍历范围内 → 字早在缓存里，却永远贴不到旗上。实测：跳过去 **24 秒仍 0 面补齐**，探针显示 `有图没贴上 = 0、从未生成 = 23~32` 面。 |
+| ② | `CityAssetManager.scheduleFlagTextDrain()` | 排水**绑死 rAF**：每帧只跑一轮 8ms，而单张实测 **6.54ms**（512×960 画布；绘制 0.19ms、PNG 编码 0.37ms，其余是建画布+编码）→ **一帧最多 1 张**，吞吐 = 帧率（headless 实测 ~1~2 张/秒）。 |
+
+**矫正**：
+
+1. `patchFactionFlagText(factionId)` 改为**遍历 `cityMarkers`**（marker 注册表，追加过的都在里面），用旗面 class 判势力；`patchFlagTextOverlay(flagBody, factionId)` 改收 factionId，不再依赖 `this.cities` 快照。
+2. `getProcessedFlagText()` 命中失败时：**插到队首**（新出现的旗优先于旧积压）并开启 **1.5s 追赶期**。
+3. `scheduleFlagTextDrain()` 预算分四档：页面隐藏 50ms / 浏览器真给空闲余量 30ms / **追赶期 12ms（`setTimeout(0)` 连跑，不等帧）** / 其余 8ms（安分守己）；调度用 `requestIdleCallback(run, {timeout:250})`，无该能力时回落 rAF。
+
+**验收**（`scratch/_measure_flagtext_dom2.mjs`，只统计正规势力旗，叛军本来不写字）：
+
+| 场景 | 改前 | 改后 |
+|---|---|---|
+| 开局 | 41 面旗仅 23 面带字 | 47 面 **全部带字** |
+| 跳到长安 | >30000ms（且 23~32 面永不补齐） | **356ms** |
+| 跳到撒马尔罕 / 京都 / 逻些 | 同上 | **986ms / 486ms / 667ms** |
+
+**红线**：旗号文字的「贴图」遍历范围必须是 **`cityMarkers`**（已建 marker 全集），不得再用 `this.cities` 之类的**阶段性快照**——那只是"当时视口/当时一次渲染"的列表，追加进来的新据点不在其中。
 
 
 ---

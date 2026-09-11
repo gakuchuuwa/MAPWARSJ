@@ -22,6 +22,7 @@
  * 跑法：npx tsx tools/audit-scene13-targeting.mts
  */
 import { readFileSync } from 'node:fs';
+import './test-scene13-targeting.mjs';
 
 const SRC = readFileSync('src/ui/Scene13WarLayer.ts', 'utf8');
 const SIM = readFileSync('scratch/war_sim.mjs', 'utf8');
@@ -33,16 +34,16 @@ const bad = (msg: string) => { console.log(`  🔴 ${msg}`); fail++; };
 console.log('索敌结构：');
 
 // ① keep 里不得再有 claims 闸
-const keepBlock = /const keep = m\.foe &&[\s\S]{0,400}?SIGHT \* SIGHT \* 1\.44;/.exec(SRC)?.[0] ?? '';
+const keepBlock = /private canKeepTarget\([\s\S]*?\n    \}/.exec(SRC)?.[0] ?? '';
 if (!keepBlock) bad('找不到 keep 的定义（结构变了，先看代码再改这个脚本）');
-else if (/claims\s*<\s*SPREAD_CAP/.test(keepBlock)) {
+else if (/claims/.test(keepBlock)) {
     bad('keep 里又出现了 `claims < SPREAD_CAP` —— 会把交战中的兵挤掉、原地发呆 0.2 秒');
 } else ok('keep 不带 claims 闸（交战中的兵不会被挤掉）');
 
 // ② search 的兜底必须在：没有空闲目标时照旧返回最近的，绝不让人没目标
-if (!/const chosen = free \?\? best;/.test(SRC)) {
-    bad('search 丢了 `free ?? best` 兜底 —— 没有空闲目标时会返回 null，兵原地发呆');
-} else ok('search 保留 `free ?? best` 兜底（视野内有敌人就一定有目标）');
+if (!/const chosen = free \?\? inRange \?\? best;/.test(SRC)) {
+    bad('search 丢了最小射程优先及最近敌人兜底');
+} else ok('search 保留可射击目标优先及最近敌人兜底');
 
 // ③ SPREAD_CAP 仍在「分配新目标」时分流（去掉的是 keep，不是分流本身）
 if (!/if \(o\.claims >= SPREAD_CAP\) continue;/.test(SRC)) {
@@ -87,6 +88,11 @@ console.log('\n残局待命（战斗结束后那 5 秒）：');
     if (calls < 2) bad(`stepEffects 只被调用 ${calls} 次（step 与 lingerStep 都该调）`);
     else ok(`step 与 lingerStep 都调用了（共 ${calls} 处）`);
 }
+
+console.log('\n交战音效：');
+if (!/if \(!this\.contactSfxPlayed && !this\.defenderHolding\)/.test(SRC)) {
+    bad('首次交战音效没有按 defenderHolding 判断——城寨可能无声，普通城池也可能提前播放');
+} else ok('野战/城寨首次交战播放，普通城池仍等待塌墙');
 
 if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }
 console.log('\n✅ 全部符合');

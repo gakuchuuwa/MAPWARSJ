@@ -188,7 +188,8 @@ export const FACTIONS: Faction[] = [
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
-  { id: 'yelusalengwg', name: '耶路撒冷王国' },        // 阿卡·十字军耶路撒冷王国（1191–1291 都城）
+  { id: 'yelusalengwg', name: '耶路撒冷王国' },
+        // 阿卡·十字军耶路撒冷王国（1191–1291 都城）
   { id: 'shengdian_qishi', name: '圣殿骑士团' },
   { id: 'maerta_qishi', name: '圣约翰' },
   { id: 'danmai', name: '丹麦' },
@@ -691,6 +692,7 @@ export const FACTIONS: Faction[] = [
     { id: 'nongzhigao', name: '大南' },
         // 南疆橙 - 侬智高南天国(邕州)
     { id: 'fangla', name: '圣公' },
+
             // 明教紫 - 方腊起义(清溪)
     // ── 2026-05-26 北宋辽金势力 v2 ──
     { id: 'zhongxiang', name: '鼎州' },
@@ -1097,6 +1099,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-27 新增：青衣(雅州)、五溪(八面山)、姑蔑(衢州) ──
     { id: 'qingyi', name: '青衣' },
+
                        // 青衣羌(青衣江流域/雅州/川西古羌)
     { id: 'wuxi', name: '武陵' },
 
@@ -1348,6 +1351,7 @@ export const FACTIONS: Faction[] = [
 
               // 雁门关·元岳（旗=元岳，避恒州「恒」撞旗）
     { id: 'pisha', name: '毗沙' },
+
    
     { id: 'yumi', name: '扜弥' },
     { id: 'keliya', name: '克里雅' },              // 阿什库尔·昆仑克里雅山口
@@ -2006,9 +2010,11 @@ export const FACTIONS: Faction[] = [
     { id: 'aodesuosi', name: '奥德索斯' },
     { id: 'disidelusi', name: '蒂斯德鲁斯' },
     { id: 'yisatisi', name: '伊萨提斯' },
+
     { id: 'wuer', name: '乌尔' },
     { id: 'pidisha', name: '毗底沙' },
     { id: 'jiaye', name: '伽耶' },
+
     { id: 'jienei', name: '杰内' },
     { id: 'kuertaiya', name: '巴萨拉布' },
 

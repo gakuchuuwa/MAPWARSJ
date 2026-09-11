@@ -37,10 +37,11 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     lagoniya: 'SPARTANS_CASTLE_AGE3',      // 拉哥尼亚（斯巴达本土）
     boootiya: 'GREEK_CASTLE_AGE3',         // 波奥蒂亚（底比斯）
     yipilusi: 'GREEK_CASTLE_AGE3',         // 伊庇鲁斯
-    kelite: 'GREEK_CASTLE_AGE3',           // 克里特
+    kelite: 'BYZA_CASTLE_AGE3',            // 克里特（拜占庭名将福卡斯收复克里特海防要塞，配拜占庭专属城堡）
     luodesi: 'GREEK_CASTLE_AGE3',          // 多德卡尼斯（罗得岛）
     bitiniya: 'THRACIANS_CASTLE_AGE3',     // 比提尼亚（色雷斯人在小亚建的王国）
     gaolu_luoma: 'ROMA_CASTLE_AGE3',       // 高卢罗曼
+    disidelusi: 'ROMA_CASTLE_AGE3',        // 蒂斯德鲁斯（杰姆圆形竞技斗兽要塞城）
     // ── 不列颠凯尔特系：皮克特(苏格兰) / 盖尔(爱尔兰) / 坎布里亚(威尔士) ──
     piketai: 'CELT_CASTLE_AGE3',
     gaer: 'CELT_CASTLE_AGE3',
@@ -55,17 +56,19 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
      * 那其实是印度式石砌堡垒（拉贾斯坦那类粗石圆塔）。**判风格要看整套，别只看一张。**
      * 三个 _UP 是同一座堡的防御工事强化态；本作无城堡升级机制，分给南亚诸势力。
      */
-    zhuluo: 'INDI_CASTLE_AGE3',                       // 朱罗（南印度·泰米尔，达罗毗荼；DE 继承印度人 castle）
+    zhuluo: 'PURU_CASTLE_AGE3',                       // 朱罗（南印度·泰米尔，达罗毗荼；用 PURU 达罗毗荼本套城堡）
     pangzha: 'PURU_CASTLE_AGE3_ATTACKUP',             // 旁遮普
     kongque: 'PURU_CASTLE_AGE3_BOTHUP',               // 孔雀帝国
     mojietuo: 'PURU_CASTLE_AGE3_DEFENSEUP',           // 摩揭陀王国
     // ── 孟加拉：波罗帝国(Pala)统治孟加拉-比哈尔，都城高达(Gauda)即孟加拉古称 ──
     boluo: 'BENG_CASTLE_AGE3',             // 波罗帝国
     sumo: 'BENG_CASTLE_AGE3',              // 苏摩国（耽摩栗底，恒河三角洲）
+    varendra: 'BENG_CASTLE_AGE3',          // 伐连陀（索玛普利要塞·提婆波罗）
     luosi: 'EAST_CASTLE_AGE3',             // 罗斯（东欧风格集，DE 里罗斯就是这套）
     // ── 波斯三代：阿契美尼德有自己那张，安息/萨珊分用另两张 ──
     ailan: 'PERSIAN_CASTLE_AGE3',          // 埃兰（波斯前身，两河东南）
     aqimeinide: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3',
+    xiaofulijiya: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 小弗里吉亚（达斯基利翁要塞·阿尔西提斯波斯总督）
     ansxi: 'PERS_CASTLE_AGE3',             // 安息帝国（帕提亚）
     sashan: 'PERS_CASTLE_AGE3',            // 萨珊
     // ── 突厥系 ──
@@ -76,6 +79,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     wulaertu: 'ARME_CASTLE_AGE3',          // 亚美尼亚（乌拉尔图）
     gelujiya: 'GEOR_CASTLE_AGE3',          // 格鲁吉亚
     baojialiya: 'BULG_CASTLE_AGE3',        // 保加利亚
+    walajiyia: 'POENARI_CASTLE',           // 瓦拉几亚（波耶纳里山堡·穿刺公弗拉德三世）
     mazhaer: 'MAGY_CASTLE_AGE3',           // 匈牙利（马扎尔）
     xiongyati: 'MAGY_CASTLE_AGE3',          // 匈雅提（马扎尔·科文城堡）
     litaowan: 'LITH_CASTLE_AGE3',          // 立陶宛
@@ -94,6 +98,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     falanji: 'FRAN_CASTLE_AGE3',           // 法兰克
     gaolu: 'FRAN_CASTLE_AGE3',             // 法兰西（高卢）
     bogendi: 'BURG_CASTLE_AGE3',           // 勃艮第
+    bogendigongguo: 'BURG_CASTLE_AGE3',    // 勃艮第公国（蒙特罗要塞·无畏的约翰）
     xixiliwangguo: 'SICI_CASTLE_AGE3',     // 西西里王国
     xilagu: 'SICI_CASTLE_AGE3',            // 叙拉古（在西西里）
     kasidiliya: 'SPAN_CASTLE_AGE3',        // 卡斯蒂利亚
@@ -105,6 +110,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     mulabite: 'BERB_CASTLE_AGE3',          // 穆拉比特（柏柏尔）
     // ── 三国：DE 罗马复兴带了蜀/吴/魏三张 ──
     shu: 'SHU_CASTLE_AGE3',
+    lizhou_d: 'SHU_CASTLE_AGE3',          // 蜀汉大将廖化（剑门关）
     wu: 'WU_CASTLE_AGE3',
     sunwu_d: 'WU_CASTLE_AGE3',             // 孙吴
     wei: 'WEI_CASTLE_AGE3',
@@ -128,8 +134,11 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     // ── 东南亚 / 南亚 ──
     zhancheng: 'VIET_CASTLE_AGE3',         // 占城
     dayue: 'VIET_CASTLE_AGE3',             // 大越
+    jing: 'VIET_CASTLE_AGE3',              // 京族（华闾万胜王丁部领）
+    champa: 'SEAS_CASTLE_AGE3',            // 占婆（美山关隘·制蓬峨）
     pagan: 'BURM_CASTLE_AGE3',             // 缅国（蒲甘）
     hantawadi: 'BURM_CASTLE_AGE3',         // 汉达瓦底
+    miandian: 'BURM_CASTLE_AGE3',          // 缅甸（三塔关摩诃·悉都）
     malacca: 'MALA_CASTLE_AGE3',           // 满剌加
     medang: 'MALA_CASTLE_AGE3',           // 马打蓝
     yelusalengwg: 'MEDI_CASTLE_AGE3',      // 耶路撒冷王国(十字军)
@@ -167,10 +176,13 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     mu_lijiang: 'DIANQIAN_CASTLE_AGE3',    // 丽江木氏土司
     luchuan: 'DIANQIAN_CASTLE_AGE3',       // 麓川平缅
     kunming_yi: 'DIANQIAN_CASTLE_AGE3',    // 昆明夷
+    wuman: 'DIANQIAN_CASTLE_AGE3',         // 乌蛮（乌蒙山爨归王）
+    zangke: 'DIANQIAN_CASTLE_AGE3',        // 牂牁（胜境关谢龙羽）
     // ── 岭南 ──
     nanyue: 'LINGNAN_CASTLE_AGE3',         // 南越国
     minyue: 'LINGNAN_CASTLE_AGE3',         // 闽越国
     nanhan: 'LINGNAN_CASTLE_AGE3',         // 南汉
+    yingzhou: 'LINGNAN_CASTLE_AGE3',       // 英州（湟溪关·南汉开国皇帝刘龑）
     min_wang: 'LINGNAN_CASTLE_AGE3',       // 闽国
     li_clan: 'LINGNAN_CASTLE_AGE3',        // 俚人/洗夫人
     ming_zheng: 'LINGNAN_CASTLE_AGE3',     // 明郑（台湾/金门）
@@ -207,9 +219,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     // ── 1. 东亚 / 中华文化区 (13 个) ──
     CENTRAL: 'WEI_CASTLE_AGE3',             // 中原：曹魏高台（主人 2026-09-08 定：中原=曹魏 / 川蜀=蜀汉 / 江南=孙吴，三国配套）
 
-    NORTH: 'CHIN_CASTLE_AGE3',               // 北方：中国城楼
+    NORTH: 'WEI_CASTLE_AGE3',               // 北方：曹魏高台（主人 2026-09-11 定：中原北方套曹魏）
     JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：孙吴水榭坞堡
-                   // 巴蜀：蜀汉高台阙楼
+                   // 巴蜀：BASHU 不在 RegionType 枚举，走 59 支兜底 → SHU_CASTLE_AGE3 蜀汉高台阙楼
     HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用契丹/黑水城形制
 
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
@@ -362,7 +374,8 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
     QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
-    YARLUNG: 'KHIT_CASTLE_AGE3',
+    YARLUNG: 'TIBET_CASTLE_AGE3',             // 🔴 [2026-09-11 主人「萨噶是羌，是青藏，是吐蕃，请按历史修复」]
+                                              //    古典雅隆＝雅隆河谷＝吐蕃发祥地，宗堡用藏式金顶（原误挂 KHIT 契丹堡）
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
@@ -382,6 +395,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     GORYEO: 'KORE_CASTLE_AGE3',             // 高丽
     JOSEON: 'KORE_CASTLE_AGE3',             // 朝鲜王朝，承高丽
     GOJOSEON: 'KORE_CASTLE_AGE3',           // 古典朝鲜，承高丽朝鲜屋形
+    PRE_QIN: 'CHIN_CASTLE_AGE3',            // 古典先秦，承华夏古建屋形
     DALI: 'DIANQIAN_CASTLE_AGE3',             // 大理在云南横断山地，属古滇文化圈；原挂马来（MALA）是明显错配
                 // 角斯罗：青唐吐蕃宗喀山寨城堡
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
@@ -399,6 +413,247 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     ARAGON: 'SPAN_CASTLE_AGE3',             // 阿拉贡（拉莫塔堡在卡斯蒂利亚—阿拉贡界），取西班牙套
 };
 
+export const REGION_TO_BRANCH: Record<string, string> = {
+  ACHAEMENIDS: 'PERSIAN',
+  AFRICA: 'AFRICA',
+  AFRICA_ANTIQUITY: 'AFRICA',
+  AFRICA_CASTLE: 'AFRICA',
+  AFRICA_IMPERIAL: 'AFRICA',
+  AINU: 'NORTHEAST',
+  ALMOHAD: 'ORIE',
+  AMAZONS: 'ATHENIANS',
+  AMERICA: 'AMERICA',
+  ANDE: 'INCA',
+  ANGLO_SAXON: 'BRITONS',
+  ARAGON: 'SPANISH',
+  ARMENIANS: 'ARMENIANS',
+  ASSYRIAN: 'ORIE',
+  BABYLON: 'ORIE',
+  BASHU: 'BASHU',
+  BENGALIS: 'BENGALIS',
+  BERBER: 'BERBER',
+  BOHEMIANS: 'BOHEMIANS',
+  BRITONS: 'BRITONS',
+  BULGARIANS: 'BULGARIANS',
+  BURGUNDIANS: 'BURGUNDIANS',
+  BURMESE: 'BURMESE',
+  BYZANTINE: 'BYZANTINE',
+  CARTHAGE: 'ORIE',
+  CASTILE: 'SPANISH',
+  CELTS_FEUDAL: 'BRITONS',
+  CENTRAL: 'CENTRAL',
+  CENTRAL_ASIA: 'CENTRAL_ASIA',
+  CENTRAL_ASIA_ANTIQUITY: 'CENTRAL',
+  CENTRAL_ASIA_CASTLE: 'CENTRAL',
+  CENTRAL_ASIA_IMPERIAL: 'CENTRAL',
+  CHIMU: 'INCA',
+  CRUSADERS: 'FRANKS',
+  CUMAN: 'CUMAN',
+  DALI: 'BASHU',
+  DELHI: 'INDIA',
+  EAST: 'EAST',
+  EGYPT: 'ORIE',
+  ETHIOPIANS: 'ETHIOPIANS',
+  FRANKS: 'FRANKS',
+  FRENCH: 'FRANKS',
+  GEORGIANS: 'GEORGIANS',
+  GERMANIC: 'GERMANIC',
+  GERMANIC_CASTLE: 'GERMANIC',
+  GERMANIC_FEUDAL: 'GERMANIC',
+  GERMANIC_IMPERIAL: 'GERMANIC',
+  GHANA: 'AFRICA',
+  GOJOSEON: 'KOREA',
+  GORYEO: 'KOREA',
+  GOTHS: 'GOTHS',
+  GREEK: 'ATHENIANS',
+  GREEK_MERCENARY: 'ATHENIANS',
+  GURJARAS: 'GURJARAS',
+  HEBREWS: 'ORIE',
+  HELLENIC: 'ATHENIANS',
+  HEPHTHALITES: 'CENTRAL_ASIA',
+  HEXI: 'CENTRAL',
+  HITTITES: 'ORIE',
+  HRE: 'GERMANIC',
+  HUAXIA_IMPERIAL: 'CENTRAL',
+  HUNS: 'HUNS',
+  ILKHANATE: 'CENTRAL_ASIA',
+  IMPERIAL_ROME: 'LATIN',
+  INDIA: 'INDIA',
+  INDIA_CASTLE: 'INDIA',
+  INDIA_FEUDAL: 'INDIA',
+  INDIA_IMPERIAL: 'INDIA',
+  IROQUOIS: 'AMERICA',
+  ITALIANS: 'LATIN',
+  JAPAN: 'JAPAN',
+  JAPAN_ANTIQUITY: 'JAPAN',
+  JAPAN_IMPERIAL: 'JAPAN',
+  JAVANESE: 'MALAY',
+  JIANGNAN: 'JIANGNAN',
+  JOSEON: 'KOREA',
+  JURCHEN: 'NORTHEAST',
+  KARA_KHITAN: 'CENTRAL_ASIA',
+  KHAZARS: 'CENTRAL_ASIA',
+  KHITAN: 'KHITAN',
+  KHMER: 'KHMER',
+  KOREA: 'KOREA',
+  KUSH: 'AFRICA',
+  KUSHAN: 'CENTRAL_ASIA',
+  LATIN: 'LATIN',
+  LATIN_CASTLE: 'LATIN',
+  LATIN_FEUDAL: 'LATIN',
+  LATIN_IMPERIAL: 'LATIN',
+  LITHUANIANS: 'LITHUANIANS',
+  LOMBARDS: 'GERMANIC',
+  MACEDONIAN: 'MACEDONIAN',
+  MAGNA_GRAECIA: 'ATHENIANS',
+  MAGYAR: 'MAGYAR',
+  MALAY: 'MALAY',
+  MAMLUKS: 'ORIE',
+  MANCHU: 'NORTHEAST',
+  MAPUCHE: 'MAPUCHE',
+  MAYANS: 'MAYANS',
+  MING: 'CENTRAL',
+  MOHE: 'NORTHEAST',
+  MONGOL: 'MONGOL',
+  MONGOLS: 'YURT',
+  MUGHAL: 'MUGHAL',
+  MUISCA: 'MUISCA',
+  NABATAEANS: 'ORIE',
+  NANZHAO: 'BASHU',
+  NORTH: 'CENTRAL',
+  NORTHAM_IMPERIAL: 'AMERICA',
+  NORTHEAST: 'NORTHEAST',
+  ORIE: 'ORIE',
+  ORIE_ANTIQUITY: 'ORIE',
+  OTTOMAN: 'ORIE',
+  PASHTUN: 'CENTRAL_ASIA',
+  PERSIAN: 'PERSIAN',
+  PERSIAN_CASTLE: 'PERSIAN',
+  POLES: 'POLES',
+  PORTUGUESE: 'PORTUGUESE',
+  PORUS: 'INDIA',
+  PRE_QIN: 'CENTRAL',
+  PURU: 'PURU',
+  QIANG: 'CENTRAL',
+  ROURAN: 'MONGOL',
+  RUS: 'SLAVIC',
+  RUSSIAN: 'SLAVIC',
+  SAFAVID: 'PERSIAN',
+  SASANIAN: 'SASANIAN',
+  SCOTLAND: 'BRITONS',
+  SCYTHIANS: 'MONGOL',
+  SEASIA_ANTIQUITY: 'MALAY',
+  SEASIA_CASTLE: 'MALAY',
+  SEASIA_FEUDAL: 'MALAY',
+  SEASIA_IMPERIAL: 'MALAY',
+  SELJUQ: 'TURKS',
+  SERBIA: 'SLAVIC',
+  SICILIANS: 'SICILIANS',
+  SIKH: 'INDIA',
+  SLAVIC: 'SLAVIC',
+  SLAVIC_CASTLE: 'SLAVIC',
+  SLAVIC_FEUDAL: 'SLAVIC',
+  SLAVIC_IMPERIAL: 'SLAVIC',
+  SOGDIANS: 'CENTRAL_ASIA',
+  SONG: 'CENTRAL',
+  SOUTHAM_IMPERIAL: 'INCA',
+  SPANISH: 'SPANISH',
+  SRIVIJAYA: 'MALAY',
+  STEPPE: 'YURT',
+  STEPPE_ANTIQUITY: 'YURT',
+  STEPPE_FEUDAL: 'YURT',
+  STEPPE_IMPERIAL: 'YURT',
+  SWEDISH: 'GERMANIC',
+  TAIRONA: 'INCA',
+  TANGUT: 'CENTRAL',
+  TARASCAN: 'AMERICA',
+  TEHUELCHE: 'INCA',
+  TEUTONS: 'GERMANIC',
+  THRACIAN: 'THRACIAN',
+  TIBET: 'TIBET',
+  TIBET_CASTLE: 'TIBET',
+  TIBET_IMPERIAL: 'TIBET',
+  TIMURID: 'CENTRAL_ASIA',
+  TUPI: 'TUPI',
+  TURKS: 'TURKS',
+  UIGHUR: 'TURKS',
+  VANDALS: 'GERMANIC',
+  VIETNAMESE: 'VIETNAMESE',
+  VIKINGS: 'VIKINGS',
+  WESTERN: 'MONGOL',
+  WESTERN_CASTLE: 'MONGOL',
+  WESTERN_FEUDAL: 'MONGOL',
+  WESTERN_IMPERIAL: 'MONGOL',
+  WEST_ASIA: 'ORIE',
+  WEST_ASIA_ANTIQUITY: 'ORIE',
+  WEST_ASIA_CASTLE: 'ORIE',
+  WUSUN: 'CENTRAL_ASIA',
+  YARLUNG: 'TIBET',   // 🔴 [2026-09-11 主人「萨噶是羌，是青藏，是吐蕃」] 雅隆归青藏，不再归印度
+};
+
+export const BRANCH_CASTLE: Record<string, string> = {
+  AFRICA: 'AFRI_CASTLE_AGE3',
+  AMERICA: 'MESO_CASTLE_AGE3',
+  ARMENIANS: 'ARME_CASTLE_AGE3',
+  ATHENIANS: 'ATHENIANS_CASTLE_AGE3',
+  BASHU: 'SHU_CASTLE_AGE3',
+  BENGALIS: 'BENG_CASTLE_AGE3',
+  BERBER: 'BERB_CASTLE_AGE3',
+  BOHEMIANS: 'BOHE_CASTLE_AGE3',
+  BRITONS: 'CELT_CASTLE_AGE3',
+  BULGARIANS: 'BULG_CASTLE_AGE3',
+  BURGUNDIANS: 'BURG_CASTLE_AGE3',
+  BURMESE: 'BURM_CASTLE_AGE3',
+  BYZANTINE: 'BYZA_CASTLE_AGE3',
+  CENTRAL: 'CHIN_CASTLE_AGE3',
+  CENTRAL_ASIA: 'CEAS_CASTLE_AGE3',
+  CUMAN: 'CUMA_CASTLE_AGE3',
+  EAST: 'EAST_CASTLE_AGE3',
+  ETHIOPIANS: 'ETHI_CASTLE_AGE3',
+  FRANKS: 'FRAN_CASTLE_AGE3',
+  GEORGIANS: 'GEOR_CASTLE_AGE3',
+  GERMANIC: 'WEST_CASTLE_AGE3',
+  GOTHS: 'GOTH_CASTLE_AGE3',
+  GURJARAS: 'GURJ_CASTLE_AGE3',
+  HUNS: 'HUNS_CASTLE_AGE3',
+  INCA: 'INCA_CASTLE_AGE3',
+  INDIA: 'INDI_CASTLE_AGE3',
+  JAPAN: 'ASIA_CASTLE_AGE3',
+  JIANGNAN: 'WU_CASTLE_AGE3',
+  KHITAN: 'KHIT_CASTLE_AGE3',
+  KHMER: 'SEAS_CASTLE_AGE3',
+  KOREA: 'KORE_CASTLE_AGE3',
+  LATIN: 'MEDI_CASTLE_AGE3',
+  LITHUANIANS: 'LITH_CASTLE_AGE3',
+  MACEDONIAN: 'MACEDONIAN_CASTLE_AGE3',
+  MAGYAR: 'MAGY_CASTLE_AGE3',
+  MALAY: 'MALA_CASTLE_AGE3',
+  MAPUCHE: 'MAPU_CASTLE_AGE3',
+  MAYANS: 'MAYA_CASTLE_AGE3',
+  MONGOL: 'MONG_CASTLE_AGE3',
+  MUGHAL: 'HIND_CASTLE_AGE3',
+  MUISCA: 'MUIS_CASTLE_AGE3',
+  NORTHEAST: 'JURC_CASTLE_AGE3',
+  ORIE: 'ORIE_CASTLE_AGE3',
+  PERSIAN: 'PERSIAN_CASTLE_AGE3',
+  POLES: 'POLE_CASTLE_AGE3',
+  PORTUGUESE: 'PORT_CASTLE_AGE3',
+  PURU: 'PURU_CASTLE_AGE3',
+  ROMA: 'ROMA_CASTLE_AGE3',
+  SASANIAN: 'PERS_CASTLE_AGE3',
+  SICILIANS: 'SICI_CASTLE_AGE3',
+  SLAVIC: 'SLAV_CASTLE_AGE3',
+  SPANISH: 'SPAN_CASTLE_AGE3',
+  SPARTANS: 'SPARTANS_CASTLE_AGE3',
+  THRACIAN: 'THRACIAN_CASTLE_AGE3',
+  TIBET: 'TIBET_CASTLE_AGE3',
+  TUPI: 'TUPI_CASTLE_AGE3',
+  TURKS: 'TURK_CASTLE_AGE3',
+  VIETNAMESE: 'VIET_CASTLE_AGE3',
+  VIKINGS: 'VIKI_CASTLE_AGE3',
+  WEI: 'WEI_CASTLE_AGE3',
+};
+
 /** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
 export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null): string {
     if (factionId) {
@@ -408,7 +663,11 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
     if (region) {
         const byRegion = REGION_CASTLE[region as RegionType];
         if (byRegion) return byRegion;
+        // 59 支兜底：region → 建筑分支 → 专属城堡
+        const branch = REGION_TO_BRANCH[region];
+        if (branch && BRANCH_CASTLE[branch]) return BRANCH_CASTLE[branch];
     }
     if (style === 'ANDE') return 'INCA_CASTLE_AGE3';
+    if (style === 'YURT') return 'MONG_CASTLE_AGE3';
     return `${style}_CASTLE_AGE3`;
 }

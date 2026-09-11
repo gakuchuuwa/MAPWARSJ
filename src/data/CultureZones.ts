@@ -1,80 +1,107 @@
 /**
- * 文化二层体系：大区(20) × 时代(4) × 民族/朝代(二层)。
+ * 文化二层体系：
+ * 第一层 = 16 大基础文化母体（与 16 套建筑风格 1:1 严格对齐，对齐 DE 本体 16 套建筑素材风格集）；
+ * 第二层 = 在母体之下，原第一层多余文化（如日本、朝鲜、满洲、青藏、西域、中亚、中东、西亚、北美等）
+ *          与各朝代时代文明（古典/封建/城堡/帝国）在此分支派生。
  *
- * 第一层 = 20 个泛指大地区民族文化；
- * 第二层 = 在大区之内，按「民族/朝代」再分（如 华夏×古典=古典先秦/古典秦汉，
- *          华夏×封建=封建隋唐、×城堡=城堡两宋、×帝国=帝国大明；朝鲜×古典=古典朝鲜……）。
- *
- * ⚠️ 口径（主人 2026-09 定）/ 二层规则：
- *   · 希腊、色雷斯 → 拉丁；埃及 → 中东；布匿(迦太基) → 非洲。
- *   · 党项/西夏 → 青藏（羌族）；南诏/大理 → 东南亚；马穆鲁克 → 中东；十字军 → 拉丁；柏柏尔 → 非洲。
- *   · 欧洲严格三元(日耳曼/拉丁/斯拉夫)按语言演变与地缘裁定：
- *       日耳曼 = 不列颠/盎格鲁-撒克逊/苏格兰/瑞典/瑞士/神圣罗马/条顿/哥特/汪达尔/伦巴第/法兰克/维京/勃艮第；
- *       拉丁   = 法兰西/凯尔特/十字军/亚马逊/罗马·意大利/西班牙/葡萄牙/西西里/希腊·色雷斯·马其顿·希伦·雇佣·大希腊；
- *       斯拉夫 = 立陶宛/马扎尔/罗斯/保加利亚/波兰/波西米亚/瓦拉几亚/塞尔维亚/东欧。
- *   · 草原带：游牧无固定城池，作为大区但不以城池/据点锚（匈奴/蒙古/突厥/契丹/库曼/柔然/可萨/阿瓦尔/斯基泰/马扎尔后期不如此）。吴三桂 → 帝国大明（帝国时代·华夏）。
- *   · 第四时代 = 帝国时代（无「帝王时代」）。
- *
- * 本表为「region → 大区」的权威映射，供逐武将归位与稀疏格检视使用。
+ * ⚠️ 铁律（主人 2026-09-10 定，2026-09-11 校准回 16）：
+ *   · 16 套文化、建筑属于第一层文化、建筑、军团，其他所有都在第一层上分支。
+ *   · 按 DE 本体素材：16 套建筑风格（含东欧 EAST、印度 INDI），马其顿无成套城镇素材归希腊。
  */
 
-/** 20 大区（顺序即展示/统计顺序） */
+/** 第一层：16 大基础母体文化区（与 16 套建筑风格严格 1:1） */
 export const CULTURE_ZONES = [
-    '日本', '朝鲜', '满洲', '草原', '华夏',
-    '西域', '青藏', '印度', '东南亚', '波斯',
-    '中亚', '中东', '西亚', '阿拉伯', '斯拉夫',
-    '拉丁', '日耳曼', '非洲', '北美', '南美',
+    '东亚', '中亚', '印度', '西欧', '普鲁',
+    '中东', '地中海', '斯拉夫', '东欧', '波斯',
+    '东南亚', '希腊', '色雷斯', '安第斯', '中美', '非洲',
 ] as const;
 
 export type CultureZone = (typeof CULTURE_ZONES)[number];
 
-/** 四时代（一层大区 × 时代 → 80 保底格） */
+/** 四时代（古典、封建、城堡、帝国） */
 export const CULTURE_ERAS = ['古典', '封建', '城堡', '帝国'] as const;
 export type CultureEra = (typeof CULTURE_ERAS)[number];
 
-/** region → 大区 */
+/** region (第二层分支) → 第一层母体大区 */
 export const REGION_TO_ZONE: Record<string, CultureZone> = {
-    // ── 东亚 ──
-    JAPAN: '日本', AINU: '日本', JAPAN_ANTIQUITY: '日本', JAPAN_IMPERIAL: '日本',
-    KOREA: '朝鲜', GORYEO: '朝鲜', JOSEON: '朝鲜', GOJOSEON: '朝鲜',
-    NORTHEAST: '满洲', MANCHU: '满洲', JURCHEN: '满洲', MOHE: '满洲',
-    STEPPE: '草原', CUMAN: '草原', HUNS: '草原', TURKS: '草原', UIGHUR: '草原', STEPPE_IMPERIAL: '草原', STEPPE_ANTIQUITY: '草原', STEPPE_FEUDAL: '草原',
-    ROURAN: '草原', KHAZARS: '草原', AVARS: '草原', SCYTHIANS: '草原', KHITAN: '草原', TANGUT: '青藏',
-    // ── 华夏系（按朝代在二层分，一层均为「华夏」）──
-    CENTRAL: '华夏', NORTH: '华夏', JIANGNAN: '华夏', BASHU: '华夏',
-    HEXI: '华夏', SONG: '华夏', MING: '华夏', HUAXIA_IMPERIAL: '华夏',
-    // ── 西域 / 青藏 ──
-    WESTERN: '西域', WUSUN: '西域', TIBET: '青藏', QIANG: '青藏', TIBET_IMPERIAL: '青藏', TIBET_CASTLE: '青藏', YARLUNG: '青藏', WESTERN_FEUDAL: '西域', WESTERN_CASTLE: '西域', WESTERN_IMPERIAL: '西域',
-    // ── 南亚 / 东南亚 ──
-    INDIA: '印度', PURU: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
-    INDIA_FEUDAL: '印度', INDIA_CASTLE: '印度', INDIA_IMPERIAL: '印度',
-    BENGALIS: '印度', SIKH: '印度', PASHTUN: '印度',
-    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东南亚', KHMER: '东南亚', SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚', SEASIA_CASTLE: '东南亚', SEASIA_FEUDAL: '东南亚',
-    BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东南亚', DALI: '东南亚',
-    // ── 波斯 / 中亚 ──
-    PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
-    CENTRAL_ASIA: '中亚', SOGDIANS: '中亚', HEPHTHALITES: '中亚', KUSHAN: '中亚', CENTRAL_ASIA_IMPERIAL: '中亚', CENTRAL_ASIA_ANTIQUITY: '中亚', CENTRAL_ASIA_CASTLE: '中亚',
+    // ── 东亚（二层分支：华夏本部、日本、朝鲜、满洲、青藏、西域等）──
+    CENTRAL: '东亚', PRE_QIN: '东亚', NORTH: '东亚', JIANGNAN: '东亚', BASHU: '东亚',
+    HEXI: '东亚', SONG: '东亚', MING: '东亚', HUAXIA_IMPERIAL: '东亚',
+    JAPAN: '东亚', AINU: '东亚', JAPAN_ANTIQUITY: '东亚', JAPAN_IMPERIAL: '东亚',
+    KOREA: '东亚', GORYEO: '东亚', JOSEON: '东亚', GOJOSEON: '东亚',
+    NORTHEAST: '东亚', MANCHU: '东亚', JURCHEN: '东亚', MOHE: '东亚',
+    WESTERN: '中亚', WUSUN: '中亚', WESTERN_FEUDAL: '中亚', WESTERN_CASTLE: '中亚', WESTERN_IMPERIAL: '中亚',
+    TIBET: '印度', QIANG: '东亚', TIBET_IMPERIAL: '印度', TIBET_CASTLE: '印度', YARLUNG: '印度', TANGUT: '东亚',
+
+    // ── 草原（二层分支：欧亚游牧诸部、中亚游牧等）──
+    STEPPE: '中亚', CUMAN: '中亚', HUNS: '中亚', TURKS: '中亚', UIGHUR: '中亚',
+    STEPPE_IMPERIAL: '中亚', STEPPE_ANTIQUITY: '中亚', STEPPE_FEUDAL: '中亚',
+    ROURAN: '中亚', KHAZARS: '中亚', AVARS: '中亚', SCYTHIANS: '中亚', KHITAN: '东亚',
+    CENTRAL_ASIA: '中亚', SOGDIANS: '中亚', HEPHTHALITES: '中亚', KUSHAN: '中亚',
+    CENTRAL_ASIA_IMPERIAL: '中亚', CENTRAL_ASIA_ANTIQUITY: '中亚', CENTRAL_ASIA_CASTLE: '中亚',
     SELJUQ: '中亚', TIMURID: '中亚', ILKHANATE: '中亚', KARA_KHITAN: '中亚',
-    // ── 中东 / 西亚 / 阿拉伯 ──
-    BABYLON: '中东', ASSYRIAN: '中东', HITTITES: '中东', HEBREWS: '中东', NABATAEANS: '中东', EGYPT: '中东', MAMLUKS: '中东',
-    WEST_ASIA: '西亚', BYZANTINE: '西亚', ARMENIANS: '西亚', GEORGIANS: '西亚', OTTOMAN: '西亚', WEST_ASIA_ANTIQUITY: '西亚', WEST_ASIA_CASTLE: '西亚',
-    ORIE: '阿拉伯', ALMOHAD: '阿拉伯', ORIE_ANTIQUITY: '阿拉伯',
-    // ── 斯拉夫 / 拉丁 / 日耳曼 ──
-    SLAVIC: '斯拉夫', EAST: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '斯拉夫', SLAVIC_FEUDAL: '斯拉夫', SLAVIC_CASTLE: '斯拉夫', SLAVIC_IMPERIAL: '斯拉夫',
-    BOHEMIANS: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '斯拉夫', MAGYAR: '斯拉夫',
-    LATIN: '拉丁', ITALIANS: '拉丁', SPANISH: '拉丁', PORTUGUESE: '拉丁', SICILIANS: '拉丁', IMPERIAL_ROME: '拉丁', LATIN_FEUDAL: '拉丁', LATIN_CASTLE: '拉丁', LATIN_IMPERIAL: '拉丁',
-    GREEK: '拉丁', THRACIAN: '拉丁', MACEDONIAN: '拉丁', HELLENIC: '拉丁', GREEK_MERCENARY: '拉丁', MAGNA_GRAECIA: '拉丁',
-    AMAZONS: '拉丁', CRUSADERS: '拉丁', CASTILE: '拉丁', ARAGON: '拉丁', CELTS_FEUDAL: '拉丁', FRENCH: '拉丁',
-    GERMANIC: '日耳曼', TEUTONS: '日耳曼', VIKINGS: '日耳曼', GOTHS: '日耳曼', VANDALS: '日耳曼', LOMBARDS: '日耳曼', GERMANIC_FEUDAL: '日耳曼', GERMANIC_IMPERIAL: '日耳曼', GERMANIC_CASTLE: '日耳曼',
-    FRANKS: '日耳曼', BURGUNDIANS: '日耳曼', BRITONS: '日耳曼', SCOTLAND: '日耳曼', HRE: '日耳曼',
-    SWEDISH: '日耳曼', ANGLO_SAXON: '日耳曼',
-    // ── 非洲 / 美洲 ──
-    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '非洲', BERBER: '非洲', AFRICA_IMPERIAL: '非洲', AFRICA_ANTIQUITY: '非洲', AFRICA_CASTLE: '非洲',
-    AMERICA: '北美', MAYANS: '北美', IROQUOIS: '北美', TAIRONA: '北美', NORTHAM_IMPERIAL: '北美', NORTHAM_FEUDAL: '北美',
-    ANDE: '南美', MAPUCHE: '南美', MUISCA: '南美', TUPI: '南美', TEHUELCHE: '南美', CHIMU: '南美', TARASCAN: '南美', SOUTHAM_IMPERIAL: '南美',
+
+    // ── 印度（二层分支：孔雀、笈多、德里、莫卧儿等）──
+    INDIA: '印度', MUGHAL: '印度', DELHI: '印度', GURJARAS: '印度',
+    INDIA_FEUDAL: '印度', INDIA_CASTLE: '印度', INDIA_IMPERIAL: '印度',
+    BENGALIS: '印度', SIKH: '印度', PASHTUN: '波斯',
+
+    // ── 普鲁（二层分支：古典南亚、达罗毗荼等）──
+    PURU: '普鲁',
+
+    // ── 东南亚（二层分支：吴哥、蒲甘、大越、南诏大理、室利佛逝等）──
+    MALAY: '东南亚', SRIVIJAYA: '东南亚', VIETNAMESE: '东亚', KHMER: '东南亚',
+    SEASIA_ANTIQUITY: '东南亚', SEASIA_IMPERIAL: '东南亚', SEASIA_CASTLE: '东南亚', SEASIA_FEUDAL: '东南亚',
+    BURMESE: '东南亚', JAVANESE: '东南亚', NANZHAO: '东亚', DALI: '东亚',
+
+    // ── 波斯（二层分支：阿契美尼德、萨珊、萨法维等）──
+    PERSIAN: '波斯', SAFAVID: '波斯', ACHAEMENIDS: '波斯', SASANIAN: '波斯', PERSIAN_CASTLE: '波斯',
+
+    // ── 阿拉伯（二层分支：中东古文明、四大哈里发、马穆鲁克、小亚细亚等）──
+    BABYLON: '中东', ASSYRIAN: '中东', HITTITES: '中东', HEBREWS: '中东',
+    NABATAEANS: '中东', EGYPT: '中东', MAMLUKS: '中东',
+    ORIE: '中东', ALMOHAD: '中东', ORIE_ANTIQUITY: '中东',
+    WEST_ASIA: '中东', WEST_ASIA_ANTIQUITY: '中东', WEST_ASIA_CASTLE: '中东',
+
+    // ── 拜占庭（二层分支：东罗马军区、格鲁吉亚、亚美尼亚、奥斯曼等）──
+    EAST: '希腊', BYZANTINE: '东欧', ARMENIANS: '地中海', GEORGIANS: '地中海', OTTOMAN: '中东',
+
+    // ── 斯拉夫（二层分支：罗斯、波兰、立陶宛、保加利亚、波希米亚等）──
+    SLAVIC: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '东欧',
+    SLAVIC_FEUDAL: '斯拉夫', SLAVIC_CASTLE: '斯拉夫', SLAVIC_IMPERIAL: '斯拉夫',
+    BOHEMIANS: '斯拉夫', SERBIA: '斯拉夫', RUS: '斯拉夫', LITHUANIANS: '东欧', MAGYAR: '东欧',
+
+    // ── 拉丁（二层分支：古罗马、意大利、西班牙、葡萄牙、十字军、法国等）──
+    LATIN: '地中海', ITALIANS: '地中海', SPANISH: '地中海', PORTUGUESE: '地中海', SICILIANS: '地中海',
+    IMPERIAL_ROME: '地中海', LATIN_FEUDAL: '地中海', LATIN_CASTLE: '地中海', LATIN_IMPERIAL: '地中海',
+    AMAZONS: '地中海', CRUSADERS: '西欧', CASTILE: '地中海', ARAGON: '地中海', CELTS_FEUDAL: '西欧', FRENCH: '西欧',
+
+    // ── 希腊（二层分支：马其顿、雅典/斯巴达、希伦、大希腊等）──
+    GREEK: '希腊', MACEDONIAN: '希腊', HELLENIC: '希腊', GREEK_MERCENARY: '希腊', MAGNA_GRAECIA: '希腊',
+
+    // ── 色雷斯（二层分支：古典色雷斯、萨尔马提亚等）──
+    THRACIAN: '色雷斯',
+
+    // ── 日耳曼（二层分支：条顿、维京、哥特、法兰克、不列颠、神圣罗马等）──
+    GERMANIC: '西欧', TEUTONS: '西欧', VIKINGS: '斯拉夫', GOTHS: '西欧', VANDALS: '西欧',
+    LOMBARDS: '西欧', GERMANIC_FEUDAL: '西欧', GERMANIC_IMPERIAL: '西欧', GERMANIC_CASTLE: '西欧',
+    FRANKS: '西欧', BURGUNDIANS: '西欧', BRITONS: '西欧', SCOTLAND: '西欧', HRE: '西欧',
+    SWEDISH: '西欧', ANGLO_SAXON: '西欧',
+
+    // ── 非洲（二层分支：努比亚、阿克苏姆、加纳、马里、柏柏尔、迦太基等）──
+    AFRICA: '非洲', GHANA: '非洲', ETHIOPIANS: '非洲', KUSH: '非洲', CARTHAGE: '地中海', BERBER: '中东',
+    AFRICA_IMPERIAL: '非洲', AFRICA_ANTIQUITY: '非洲', AFRICA_CASTLE: '非洲',
+
+    // ── 中美洲（二层分支：玛雅、阿兹特克、北美易洛魁等）──
+    AMERICA: '地中海', MAYANS: '中美', IROQUOIS: '中美', TAIRONA: '安第斯', TARASCAN: '中美',
+    NORTHAM_IMPERIAL: '中美', NORTHAM_FEUDAL: '中美',
+
+    // ── 安第斯（二层分支：印加、奇穆、马普切、图皮等）──
+    ANDE: '安第斯', MAPUCHE: '安第斯', MUISCA: '安第斯', TUPI: '安第斯', TEHUELCHE: '安第斯',
+    CHIMU: '安第斯', SOUTHAM_IMPERIAL: '安第斯',
 };
 
-/** 一键取大区（未知回华夏） */
+/** 一键取第一层母体大区（未知回华夏） */
 export function zoneOfRegion(region: string | null | undefined): CultureZone {
-    return (region && REGION_TO_ZONE[region]) || '华夏';
+    return (region && REGION_TO_ZONE[region]) || '东亚';
 }

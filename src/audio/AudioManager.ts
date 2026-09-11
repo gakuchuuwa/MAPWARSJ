@@ -6,6 +6,9 @@ import { extractPortraitFolder } from '../config/PortraitAdjust';
 export type SoundKey =
     | 'march_loop'
     | 'cavalry_march_loop'
+    | 'player_march_loop'
+    | 'naval_march_loop'
+    | 'naval_battle_loop'
     | 'battle_loop'
     | 'battle_victory'
     | 'battle_defeat'
@@ -21,6 +24,8 @@ export type SoundKey =
     | 'explosion'
     // 陆战接触音景（2026-08-19 主人提供：两军接触起循环垫底、13 退场停，66.9s）
     | 'land_contact'
+    // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候用城墙倒塌.WAV 音效」
+    | 'wall_collapse'
     | 'siege_impact'
     | 'siege_launch'
     | 'bgm_main';
@@ -97,6 +102,19 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     march_loop: sound('battle', 'march_loop', 0.15, 0),
     // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
     cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.18, 0),
+    // 🔴 [2026-09-11 主人定]「把这个改为玩家行军音效」——玩家（乱入者）**独骑**行军专用循环音。
+    //    素材：主人提供的 `玩家骑马.WAV`（44.1k 立体声 22.04s），转 vorbis → public/sfx/player_march_loop.aud。
+    //    音量 0.7 是**响度对齐**的结果，不是随手写的：EBU R128 实测
+    //      march_loop -12.8 LUFS @0.15 → 折算 -29.3；cavalry_march_loop -12.0 LUFS @0.18 → -26.9；
+    //      本文件 -24.3 LUFS（峰值 -0.0 dBFS，马蹄瞬态多、整体偏轻，比那两条低约 12dB）。
+    //    取 0.7 → 折算 -27.4，正好落在两条行军循环之间；照抄 0.18 会低 12dB，等于听不见。
+    player_march_loop: sound('battle', 'player_march_loop', 0.7, 0),
+    // 主人提供的“航海.WAV”：海军实际航行期间循环，停航/交战/取消跟拍时淡出。
+    // 原文件 EBU R128 -23.0 LUFS；0.55 后约 -28.2 LUFS，与现有三条行军循环响度相当。
+    naval_march_loop: sound('battle', 'naval_march_loop', 0.55, 0),
+    // 主人提供的“海战音效.WAV”：跟拍舰队交战期间循环，与航海行军音、陆战循环音互斥。
+    // 原文件 -14.1 LUFS，与 battle_loop 的 -13.7 LUFS 接近，沿用 0.7 保持战斗响度一致。
+    naval_battle_loop: sound('battle', 'naval_battle_loop', 0.7, 0),
     battle_loop: sound('battle', 'battle_loop', 0.7, 0),
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
@@ -114,6 +132,13 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 两军接触起循环垫底、13 退场停。13 期间不播旧的 battle_loop（见 syncFollowedLegionAudio），
     // 这条就是那块空缺的底噪；具体的刀剑/枪炮事件音效叠在它上面。
     land_contact: sound('battle', 'land_contact', 0.42, 0),
+    // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候请用城墙倒塌.WAV 音效」
+    //    触发点唯一：Scene13WarLayer.collapseFrontWalls()（开战 30 秒保底随机塌一半城墙，
+    //    全片唯一的塌墙处）→ 每场只响一次。
+    //    音量 0.6 是响度对齐的结果：EBU R128 实测本文件 -14.7 LUFS，
+    //    而反复凿墙的 siege_impact_de -18.8 LUFS @0.62（折算 -22.9）——
+    //    塌墙是「一次性大事」，取 0.6 折算 -19.1，比凿墙撞击高约 3.8dB，进得了戏又不炸耳。
+    wall_collapse: sound('battle', 'wall_collapse', 0.6, 0),
     // 攻城武器（2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」）。
     // ⚠️ 素材是**借用**同一批 DE 战斗音效，不是攻城武器的原声——
     //    DE 的攻城音效封在 Wwise `.pck` 里（resources/wwise/Base.pck），
@@ -191,7 +216,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
     age_of_kings: 0.427,  // -13.6 LUFS · 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
     fallen_army: 0.603,  // -16.6 LUFS · （2026-08-04 通用随机曲）
-    game_of_thrones: 0.708,  // -18.0 LUFS · （2026-08-04 通用随机曲）
+    game_of_thrones: 0.79,  // -18.0 LUFS · 用户要求单曲小幅提高约 1dB（通用随机曲）
     shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
     daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
@@ -212,7 +237,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
     SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
     STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
-    TIBET: 0.708,  // -18.0 LUFS
+    TIBET: 0.79,  // -18.0 LUFS · 千年的祈祷，用户要求单曲小幅提高约 1dB
     WESTERN: 0.708,  // -18.0 LUFS
     WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
     victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
@@ -275,7 +300,9 @@ export class AudioManager {
         inCombat: boolean;
         isCavalry: boolean;
         isNaval: boolean;
-    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false };
+        /** [2026-09-11] 跟拍对象是否玩家本人（独骑）——决定行军音走 player_march_loop */
+        isPlayer: boolean;
+    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false };
     /** 播报进行中：音效 + 音乐压低（优先级闪避） */
     private speechDucking = false;
     private bgmAudio: HTMLAudioElement | null = null;
@@ -498,55 +525,62 @@ export class AudioManager {
         inCombat: boolean;
         isCavalry?: boolean;
         isNaval?: boolean;
+        /** 🔴 [2026-09-11 主人定] 跟拍对象就是玩家本人（乱入者独骑）→ 走玩家骑马音 */
+        isPlayer?: boolean;
     }): void {
         const isCavalry = state.isCavalry ?? false;
         const isNaval = state.isNaval ?? false;
+        const isPlayer = state.isPlayer ?? false;
         if (
             this.followedAudioState.armyId === state.armyId &&
             this.followedAudioState.marching === state.marching &&
             this.followedAudioState.inCombat === state.inCombat &&
             this.followedAudioState.isCavalry === isCavalry &&
-            this.followedAudioState.isNaval === isNaval
+            this.followedAudioState.isNaval === isNaval &&
+            this.followedAudioState.isPlayer === isPlayer
         ) {
             return;
         }
 
-        this.followedAudioState = { ...state, isCavalry, isNaval };
+        this.followedAudioState = { ...state, isCavalry, isNaval, isPlayer };
 
-        // 纯骑（草原/青藏/中亚）走专用行军音，步骑/纯步走 march_loop
-        const marchKey: SoundKey = isCavalry ? 'cavalry_march_loop' : 'march_loop';
-        const otherMarchKey: SoundKey = isCavalry ? 'march_loop' : 'cavalry_march_loop';
+        // 四条行军循环音互斥：航海优先；陆上再按玩家独骑、纯骑军团、其他军团区分。
+        const marchKey: SoundKey = isNaval ? 'naval_march_loop'
+            : isPlayer ? 'player_march_loop'
+            : isCavalry ? 'cavalry_march_loop' : 'march_loop';
+        const otherMarchKeys = (['march_loop', 'cavalry_march_loop', 'player_march_loop', 'naval_march_loop'] as SoundKey[])
+            .filter((k) => k !== marchKey);
 
         if (!state.armyId || !this.settings.enabled) {
-            this.stopLoop('march_loop');
-            this.stopLoop('cavalry_march_loop');
+            for (const k of otherMarchKeys) this.stopLoop(k);
+            this.stopLoop(marchKey);
             this.stopLoop('battle_loop');
+            this.stopLoop('naval_battle_loop');
             return;
         }
 
         if (state.inCombat) {
-            this.stopLoop('march_loop');
-            this.stopLoop('cavalry_march_loop');
-            // 海战：不播陆军 battle_loop（脚步/刀剑声与海战观感冲突），由海战事件音效（naval_sink 等）驱动
-            // 13 微观看：同样不播 battle_loop（旧环境音），由具体 DE 陆战音效（gun_fire/explosion）驱动
+            for (const k of otherMarchKeys) this.stopLoop(k);
+            this.stopLoop(marchKey);
+            // 13 微观看由具体 DE 战斗音效驱动；战略层海战改播专用海战循环音。
             const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
-            if (isNaval || inScene13) {
+            if (inScene13) {
                 this.stopLoop('battle_loop');
+                this.stopLoop('naval_battle_loop');
+            } else if (isNaval) {
+                this.stopLoop('battle_loop');
+                this.startLoop('naval_battle_loop');
             } else {
+                this.stopLoop('naval_battle_loop');
                 this.startLoop('battle_loop');
             }
             return;
         }
 
         this.stopLoop('battle_loop');
-        // 海上（海军贴图）行军：关闭行军循环音，避免陆军脚步/马蹄与海军观感冲突。
-        if (isNaval) {
-            this.stopLoop('march_loop');
-            this.stopLoop('cavalry_march_loop');
-            return;
-        }
-        // 切换军团或下马/上马时，先停掉另一种行军音，避免两条同时循环
-        this.stopLoop(otherMarchKey);
+        this.stopLoop('naval_battle_loop');
+        // 切换军团、上下船、上马下马或玩家独骑与随军互切时，先停掉其他行军音。
+        for (const k of otherMarchKeys) this.stopLoop(k);
         if (state.marching) {
             this.startLoop(marchKey);
         } else {
@@ -911,7 +945,7 @@ export class AudioManager {
 
     private reapplyFollowedLegionAudio(): void {
         const state = { ...this.followedAudioState };
-        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false };
+        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false };
         this.syncFollowedLegionAudio(state);
     }
 
@@ -1023,11 +1057,12 @@ export class AudioManager {
     private duckFactor(category: AudioCategory): number {
         if (category === 'bgm') {
             if (this.speechDucking) return DUCK.bgmUnderSpeech;
-            if (this.wantedLoops.has('battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
+            if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
             // 🔴 [2026-08-19] land_contact（13 接触音景）必须在这里登记，否则它循环起来时
             //    BGM 一点都不会被压 —— 本表只认列出来的 key，新增循环音不登记就是「静默失效」。
             if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.85（少压一点，2026-09-02 由 0.60 上调）
-            if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')) {
+            if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
+                || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
                 return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
             }
             return 1;

@@ -158,6 +158,7 @@ export type RegionType =
     | 'ILKHANATE' // 伊利汗（城堡伊利汗：旭烈兀西征伊兰波斯具装铁骑与蒙古强弓铁骑突袭）
     | 'ARAGON' // 阿拉贡（城堡阿拉贡：加泰罗尼亚阿尔加瓦长剑勇士、地中海远洋大帆船与阿拉贡重骑士）
     | 'GOJOSEON' // 朝鲜（古典朝鲜：古朝鲜/三韩/辰国/伽倻，步弓与轻骑）
+    | 'PRE_QIN' // 华夏（古典先秦：西周封建/春秋五霸/战国七雄，先秦战车步弩协同体系）
     | 'MING' // 大明（帝国大明：明王朝）
     | 'JAPAN_IMPERIAL' // 帝国日本（帝国时代：战国末至江户）
     | 'HUAXIA_IMPERIAL' // 帝国华夏（帝国时代·汉族民间/流寇/土司，非明廷非清廷）
@@ -285,6 +286,7 @@ export const REGION_ORDER: RegionType[] = [
     'GORYEO',
     'JOSEON',
     'GOJOSEON',
+    'PRE_QIN',
     'MING',
     'JAPAN_IMPERIAL',
     'HUAXIA_IMPERIAL',
@@ -392,10 +394,10 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SEASIA_FEUDAL: '封建东南亚',
     ANDE: '城堡印加',
     SOUTHAM_IMPERIAL: '帝国南美',
-    PURU: '封建达罗毗荼',
+    PURU: '古典普鲁',
     ORIE: '封建阿拉伯',
     ORIE_ANTIQUITY: '古典阿拉伯',
-    EAST: '封建罗斯',
+    EAST: '封建拜占庭',
     GREEK: '古典希腊',
     THRACIAN: '古典色雷斯',
     PERSIAN: '古典波斯',
@@ -413,7 +415,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MAGYAR: '城堡马扎尔',
     LITHUANIANS: '城堡立陶宛',
     POLES: '城堡波兰',
-    BOHEMIANS: '城堡波希米亚',
+    BOHEMIANS: '城堡捷克',
     BURGUNDIANS: '城堡勃艮第',
     SPANISH: '帝国西班牙',
     PORTUGUESE: '帝国葡萄牙',
@@ -489,6 +491,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
+    PRE_QIN: '古典先秦',
     MING: '帝国大明',
     HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
@@ -573,10 +576,10 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SEASIA_FEUDAL: '封建东南亚',
     ANDE: '城堡印加',
     SOUTHAM_IMPERIAL: '帝国南美',
-    PURU: '封建达罗毗荼',
+    PURU: '古典普鲁',
     ORIE: '封建阿拉伯',
     ORIE_ANTIQUITY: '古典阿拉伯',
-    EAST: '封建罗斯',
+    EAST: '封建拜占庭',
     GREEK: '古典希腊',
     THRACIAN: '古典色雷斯',
     PERSIAN: '古典波斯',
@@ -594,7 +597,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MAGYAR: '城堡马扎尔',
     LITHUANIANS: '城堡立陶宛',
     POLES: '城堡波兰',
-    BOHEMIANS: '城堡波希米亚',
+    BOHEMIANS: '城堡捷克',
     BURGUNDIANS: '城堡勃艮第',
     SPANISH: '帝国西班牙',
     PORTUGUESE: '帝国葡萄牙',
@@ -670,6 +673,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GORYEO: '城堡高丽',
     JOSEON: '帝国朝鲜',
     GOJOSEON: '古典朝鲜',
+    PRE_QIN: '古典先秦',
     MING: '帝国大明',
     HUAXIA_IMPERIAL: '帝国华夏',
     DALI: '城堡大理',
@@ -999,6 +1003,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     GORYEO: '#1565c0',
     JOSEON: '#e65100',
     GOJOSEON: '#2e7d32',
+    PRE_QIN: '#C68A4C',
     MING: '#7A1418',
     HUAXIA_IMPERIAL: '#8B0000',
     DALI: '#00897b',
@@ -1205,6 +1210,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/korea_medium.png'),
         big: resolvePath('/cities/korea_big.png'),
         pass: resolvePath('/cities/korea_pass.png')
+    },
+    PRE_QIN: { // ✅ 复用中原素材（古典先秦）
+        small: resolvePath('/cities/central_small.png'),
+        medium: resolvePath('/cities/central_medium.png'),
+        big: resolvePath('/cities/central_big.png'),
+        pass: resolvePath('/cities/central_pass.png')
     },
     JAPAN: { // ✅ 已有
         small: resolvePath('/cities/japan_small.png'),
@@ -2193,6 +2204,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL:      ['city_luoyang'],                // 洛阳
     GOJOSEON:     ['city_gimhae'],                 // 金海（古典朝鲜/迦罗伽倻）
+    PRE_QIN:      ['city_qishan'],                 // 岐山（周原发祥圣地·古典先秦）
     MING:         ['city_beijing'],                // 北京（大明京师）
     HUAXIA_IMPERIAL: ['city_ziwu'],               // 子午谷（帝国华夏·李自成大顺）
     NORTH:        ['city_changan'],                  // 长安 [2026-09-07 主人定] 秦汉都关中长安，非北京；⚠️长安实属 CENTRAL 区，NORTH 已解散(不在 REGION_ORDER)故无本区据点可选
@@ -2226,12 +2238,12 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SLAVIC_FEUDAL: ['city_kelakefu'],                     // 克拉科夫（封建斯拉夫·皮雅斯特）
     SLAVIC_CASTLE: ['city_teernuowo'],                    // 特尔诺沃（城堡斯拉夫·保加利亚第二帝国）
     SLAVIC_IMPERIAL: ['city_huasha'],                     // 华沙（帝国斯拉夫·波兰立陶宛）
-    EAST:         ['city_jifu'],                          // [2026-09-07] 东欧区已解散(不在 REGION_ORDER)，此项仅为类型占位，跟随 SLAVIC 指向基辅
+    EAST:         ['city_junshitandingbao'],                // 君士坦丁堡 (拜占庭帝国都城)
     GERMANIC:     ['city_meiyinci'],                      // 美因茨 [2026-09-07] 罗马 Mogontiacum＝日耳曼尼亚上省首府，古典日耳曼本区最大城；原挂科隆已划归 FRANKS 区
     GERMANIC_FEUDAL: ['city_magedebao'],                  // 马格德堡（封建日耳曼·奥托一世萨克森）
     GERMANIC_IMPERIAL: ['city_hague'],                    // 海牙（帝国日耳曼·尼德兰）
     GERMANIC_CASTLE: ['city_gebenhagen'],                 // 哥本哈根（城堡日耳曼·丹麦）
-    LATIN:        ['city_naples'],                     // 那不勒斯 [2026-09-07] 罗马城已划归 IMPERIAL_ROME(禁卫军驻都城)，古典罗马军团＝行省军团，锚意大利本土最大本区城 Neapolis
+    LATIN:        ['city_naples'],                     // 那不勒斯 [2026-09-07] 罗马城已划归 IMPERIAL_ROME(禁卫军驻都城)，古典时代罗马军团＝行省军团，锚意大利本土最大本区城 Neapolis
     LATIN_CASTLE: ['city_lisiben'],                    // 里斯本（城堡拉丁·葡萄牙勃艮第王朝）
     LATIN_IMPERIAL: ['city_genoa'],                    // 热那亚（帝国拉丁·意大利）
     LATIN_FEUDAL: ['city_naples'],                     // 那不勒斯（封建拉丁）
@@ -2260,7 +2272,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     THRACIAN:     ['city_seuthopolis'],               // 塞乌托波利 [2026-09-07] 奥德里西亚色雷斯王国王都，正合古典代；原挂特尔诺沃是保加利亚第二帝国都(1185)且已划归 BULGARIANS
     PERSIAN:      ['city_hamadan'],                   // 哈马丹 [2026-09-07] 埃克巴坦那，米底/阿契美尼德都城，正合古典代；原挂伊斯法罕是萨法维(1500+)都且已划归 SAFAVID
     PERSIAN_CASTLE: ['city_bosibolisi'],             // 波斯波利斯（城堡波斯）
-    CUMAN:        ['city_salai'],                     // 萨莱 (金帐汗国帝都; 2026-08-27 新增库曼区)
+    CUMAN:        ['city_salatuofu'],                 // 萨拉托夫 [2026-09-10] 钦察抗蒙首领巴奇曼大本营；萨莱(拔都金帐)已归入蒙古 STEPPE
     BRITONS: ['city_winchester'],  // 温彻斯特 [2026-09-07] 本区唯一据点；⚠️史实上温彻斯特是盎格鲁-撒克逊王都、伦敦是诺曼后英格兰王都，现两城的 region 归属与史实相反，待主人裁决
     GOTHS: ['city_ravenna'],  // 拉文纳 [2026-09-07] 东哥特王国都城 493–540，正合封建代；原挂图卢兹(西哥特都)已划归 LATIN 区
     HUNS: ['city_saigede'],  // 匈人（中心据点已挂）
@@ -2273,7 +2285,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     MAGYAR: ['city_budapeisi'],  // 马扎尔（中心据点已挂）
     LITHUANIANS: ['city_weierniwusi'],  // 立陶宛（中心据点已挂）
     POLES: ['city_kelakefu'],  // 波兰（中心据点已挂）
-    BOHEMIANS: ['city_bulage'],  // 波希米亚（中心据点已挂）
+    BOHEMIANS: ['city_bulage'],  // 城堡捷克（中心据点已挂）
     BURGUNDIANS: ['city_dijon'],  // 勃艮第（中心据点已挂）
     SPANISH: ['city_lima'],  // 利马 [2026-09-07] 本区唯一据点(帝国西班牙＝哈布斯堡殖民帝国，利马为秘鲁总督区首府)；原挂托莱多已划归 CASTILE 区
     PORTUGUESE: ['city_lisiben'],  // 葡萄牙（中心据点已挂）

@@ -1,4 +1,10 @@
 /**
+ * 🔴 军团编辑器最高铁律：一个军团只能有一种编制。
+ * 三排兵种按前/中/后顺序一致 + 阵型一样 = 同一种编制。
+ * 武将换军团只改归属；编辑军团必须全体同步，严禁同名多编制。
+ * 所有编写者必须先读本目录 AGENTS.md；界面、快捷键、保存接口遵守同一规则。
+ */
+/**
  * MAPWAR 军团方阵编辑器 (Legion Editor)
  * 访问：http://localhost:5173/legion-editor.html
  *
@@ -22,6 +28,7 @@ import {
     getDefaultSlotsForMode,
     convertSlotsToMode,
     getCultureLegionName,
+    getBase16FormationConfig,
 } from '../types/CultureFormations';
 import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
@@ -30,6 +37,7 @@ import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower } from '../data/CombatPower';
 import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
+import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -75,6 +83,23 @@ export const AGE_ORDER: UnitAge[] = ['antiquity', 'feudal', 'castle', 'imperial'
  *    - 封建时代为轻装交锋生态（轻步、轻骑、轻射手），杜绝火器早产与重型攻城武器前置；
  *    - 城堡时代为主力城堡特色兵、重骑兵、攻城武器厂器械盛期；
  *    - 帝国时代为火器（火枪手、加农火炮）、大航海战舰（盖伦帆船、卡拉克船）与终极精锐进阶。
+ *
+ * 4. 🔴 [2026-09-09 主人定] 攻城冷兵器 26 件按【三个时代】铺开（帝国时代不放冷兵器攻城器）：
+ *    原先只有古典与城堡两档，封建时代一件都没有 —— 断代尺度里 400–1050 这 650 年空着不合理。
+ *    - 古典 12：古典冲车三档 / 古典投石三档 / 古典弩炮两档 / 古典攻城塔 /
+ *        赫勒波利斯（前 305 罗德岛围城）/ 华夏牵引投石机（汉末霹雳车，官渡之战已有）/
+ *        阿契美尼德攻城弩炮（DE dat 归属 civ Achaemenids，编年史「希腊之战」波斯专属）
+ *    - 封建 6（400–1050，全是基础/轻型形态，不违反「重型攻城武器不前置」）：
+ *        轻型攻城槌（早期中世纪木冲车）、欧洲轻型投石车（阿瓦尔人 6 世纪带进欧洲的牵引砲）、
+ *        欧洲弩炮（罗马晚期→拜占庭延续的扭力弩炮）、攻城塔（法兰克/维京/拜占庭围城连续使用）、
+ *        沙漠骆驼投石机（阿拉伯征服期驮载曼加尼克）、高棉弩炮战象（吴哥王朝 802 年起）
+ *    - 城堡 8（1050–1500，全是装甲/重型/精锐档，器械盛期）：
+ *        装甲攻城槌、重型攻城槌、中型投石车、重型投石车、重型弩炮、
+ *        精锐弩炮战象、火焰骆驼（帖木儿 1398 德里之战）、爆破工兵
+ *    进阶链全部满足「同代或差一代」：轻冲车封建→装甲/重型城堡；轻投石封建→中/重城堡；
+ *    弩炮封建→重弩炮城堡；弩炮象封建→精锐城堡。
+ *    实际发放（哪个文化、哪个时代发哪几件）在 src/data/SiegeWeaponsByCulture.ts，
+ *    验收 `npm run siege:era-audit`。
  */
 export const AGE_YEARS: Record<UnitAge, { span: string; anchor: string }> = {
     antiquity: { span: '起始 – 公元 400 年', anchor: '起始至公元 400 年' },
@@ -169,12 +194,12 @@ export interface DeUnitDef {
 }
 
 export const DE_UNITS_CATALOG: DeUnitDef[] = [
-    { id: 'swordsman', name: '剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SWORDSMAN/' },
-    { id: 'champion', name: '欧洲冠军剑士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
+    { id: 'swordsman', name: '欧洲剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SWORDSMAN/' },
+    { id: 'champion', name: '欧洲双手剑士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
     { id: 'liao_dao', name: '契丹辽刀手', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/LIAO_DAO/' },
     { id: 'elite_liao_dao', name: '契丹辽刀手精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
     { id: 'kamayuk', name: '枪兵长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
-    { id: 'jian_swordsman', name: '华夏刀剑手高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
+    { id: 'jian_swordsman', name: '华夏盾牌步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
     { id: 'ninja', name: '日本忍者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/NINJA/' },
     { id: 'samurai', name: '日本武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_DE/' },
     { id: 'samurai_elite', name: '日本武士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },
@@ -184,9 +209,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_white_feather_guard', name: '蜀白毦兵精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_WHITE_FEATHER_GUARD/' },
     { id: 'karambit_warrior', name: '马来爪刀勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR/' },
     { id: 'karambit_warrior_elite', name: '马来爪刀勇士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KARAMBIT_WARRIOR_ELITE/' },
-    { id: 'elite_guardsman', name: '近卫军高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GUARDSMAN/' },
-    { id: 'eastern_swordsman', name: '东方剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EASTERN_SWORDSMAN/' },
-    { id: 'legionary', name: '罗马军团步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
+    { id: 'elite_guardsman', name: '波斯近卫精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GUARDSMAN/' },
+    { id: 'eastern_swordsman', name: '穆斯林剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EASTERN_SWORDSMAN/' },
+    { id: 'legionary', name: '罗马军团步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
     { id: 'throwing_axeman', name: '法兰克掷斧兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/THROWING_AXEMAN/' },
     { id: 'heavy_pikeman', name: '长枪兵重装', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVY_PIKEMAN/' },
     { id: 'pikeman', name: '长枪兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PIKEMAN/' },
@@ -231,16 +256,16 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'battle_elephant', name: '战斗象', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/BATTLEELEPHANT/' },
     { id: 'armored_elephant', name: '装甲攻城战象', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ARMORED_ELEPHANT/' },
     { id: 'elite_armored_elephant', name: '装甲攻城战象高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEARMOREDELEPHANT/' },
-    { id: 'ballista_elephant', name: '高棉弩炮战象', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/BALLISTA_ELEPHANT/' },
+    { id: 'ballista_elephant', name: '高棉弩炮战象', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/BALLISTA_ELEPHANT/' },
     { id: 'elephant_archer', name: '象弓骑兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ELEPHANT_ARCHER/' },
     { id: 'amazon_archer', name: '亚马逊女弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/AMAZONARCHER/' },
     { id: 'amazon_warrior', name: '亚马逊女战士', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/AMAZONWARRIOR/' },
     { id: 'bactrian_archer', name: '巴克特里亚弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/BACTRIAN_ARCHER/' },
-    { id: 'battering_ram', name: '轻型攻城槌', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/BATTERINGRAM/' },
+    { id: 'battering_ram', name: '轻型攻城槌', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/BATTERINGRAM/' },
     { id: 'berserk', name: '维京狂战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/BERSERK/' },
     { id: 'blackwood_archer', name: '图皮黑木弓箭手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/BLACKWOODARCHER/' },
     { id: 'bolas_rider', name: '马普切套索骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/BOLASRIDER/' },
-    { id: 'bombard_cannon', name: '欧洲攻城火炮重装', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/BOMBARDCANNON/' },
+    { id: 'bombard_cannon', name: '手推攻城火炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/BOMBARDCANNON/' },
     { id: 'camel_archer', name: '柏柏尔骆驼弓骑', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAMELARCHER/' },
     { id: 'camel_raider', name: '沙漠骆驼突袭者高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAMEL_RAIDER/' },
     { id: 'camel_rider', name: '骆驼骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMELRIDER/' },
@@ -323,7 +348,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'genoese_crossbowman', name: '意大利热那亚弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
     { id: 'ghulam', name: '印度斯坦古拉姆', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/GHULAM/' },
     { id: 'greek_noble_cavalry', name: '希腊贵族骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/GREEK_NOBLE_CAVALRY/' },
-    { id: 'grenadier', name: '女真掷弹兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GRENADIER/' },
+    { id: 'grenadier', name: '掷弹兵', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/GRENADIER/' },
     { id: 'guecha_warrior', name: '穆伊斯卡格查勇士', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GUECHAWARRIOR/' },
     { id: 'hand_cannoneer', name: '火枪手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/HANDCANNONEER/' },
     { id: 'heavy_rocket_cart', name: '重型火箭车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HEAVYROCKETCART/' },
@@ -332,16 +357,16 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hippeus', name: '斯巴达希皮乌斯高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HIPPEUS/' },
     { id: 'hoplite', name: '希腊重装步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HOPLITE/' },
     { id: 'strategos', name: '雅典将军卫队高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/STRATEGOS/' },
-    { id: 'houfnice', name: '波希米亚榴弹炮重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HOUFNICE/' },
+    { id: 'houfnice', name: '手推榴弹炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HOUFNICE/' },
     { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/HUSKARL/' },
     { id: 'hussar', name: '欧洲骠骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
     { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
     { id: 'ibirapema_warrior', name: '图皮战棍勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'immortal_ranged', name: '波斯长生军弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
-    { id: 'imperial_camel_rider', name: '印度斯坦骆驼骑兵重装', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
+    { id: 'imperial_camel_rider', name: '印度斯坦骆驼骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
     { id: 'imperial_centurion', name: '罗马百夫长重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
-    { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
+    { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
     { id: 'iroquois_warrior', name: '易洛魁战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IROQUOISWARRIOR/' },
     { id: 'jaguar_warrior', name: '阿兹特克豹勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JAGUARWARRIOR/' },
     { id: 'janissary', name: '土耳其苏丹亲兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/JANISSARY/' },
@@ -353,11 +378,11 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'longbowman', name: '不列颠长弓兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/LONGBOWMAN/' },
     { id: 'magyar_huszar', name: '马扎尔骠骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAGYARHUSZAR/' },
     { id: 'mameluke', name: '萨拉森马穆鲁克', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAMELUKE/' },
-    { id: 'mangonel', name: '欧洲轻型投石车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/MANGONEL/' },
+    { id: 'mangonel', name: '欧洲轻型投石车', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MANGONEL/' },
     { id: 'mercenary_hoplite', name: '希腊雇佣重步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_HOPLITE/' },
     { id: 'militia', name: '中东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'monaspa', name: '格鲁吉亚莫纳斯帕', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MONASPA/' },
-    { id: 'mounted_trebuchet', name: '沙漠骆驼投石机高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
+    { id: 'mounted_trebuchet', name: '沙漠骆驼投石机高级', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
     { id: 'obuch', name: '波兰奥布奇战锤兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/OBUCH/' },
     { id: 'onager', name: '欧洲中型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ONAGER/' },
     { id: 'organ_gun', name: '葡萄牙风琴炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ORGANGUN/' },
@@ -373,7 +398,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'royal_janissary', name: '奥斯曼皇家亲兵高级', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
     { id: 'sacred_band', name: '希腊底比斯圣队高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SACRED_BAND/' },
     { id: 'sannahya', name: '孔雀桑纳亚战象高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
-    { id: 'scorpion', name: '欧洲弩炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SCORPION/' },
+    { id: 'scorpion', name: '欧洲弩炮', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SCORPION/' },
     { id: 'scythian_axe_cavalry', name: '斯基泰斧骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
     { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
     { id: 'serjeant', name: '西西里军士长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SERJEANT/' },
@@ -392,7 +417,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'teutonic_knight', name: '条顿武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },
     { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
     { id: 'thracian_peltast', name: '色雷斯标枪手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
-    { id: 'traction_trebuchet', name: '华夏牵引投石机重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
+    { id: 'traction_trebuchet', name: '华夏牵引投石机重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
     { id: 'two_handed_swordsman', name: '欧洲双手剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
     { id: 'urumi_swordsman', name: '达罗毗荼软剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/URUMISWORDSMAN/' },
     { id: 'war_chariot', name: '双轮战车', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/WAR_CHARIOT/' },
@@ -407,22 +432,22 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'champi_warrior', name: '印加尚皮勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIWARRIOR/' },
     { id: 'champi_runner', name: '印加尚皮飞毛腿', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
     { id: 'champi_scout', name: '印加尚皮斥候', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
-    { id: 'jian_swordman_unshielded', name: '华夏双手剑士高级', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/JIAN_SWORDMAN_UNSHIELDED/' },
+    { id: 'jian_swordman_unshielded', name: '华夏双手剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/JIAN_SWORDMAN_UNSHIELDED/' },
     { id: 'cavalier', name: '骑士重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAVALIER/' },
     { id: 'flamethrower', name: '华夏猛火油柜重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/FLAMETHROWER/' },
     { id: 'helepolis', name: '希腊赫勒波利斯攻城塔重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/HELEPOLIS/' },
-    { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGETOWER/' },
+    { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
     { id: 'halberdier', name: '欧洲重装戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
     { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
-    { id: 'sosso_guard', name: '西非索索禁卫军高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
+    { id: 'sosso_guard', name: '西非索索禁卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
     { id: 'elite_greek_cavalry', name: '希腊贵族骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
-    { id: 'jian_swordman_shielded', name: '华夏持盾刀剑手高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
+    { id: 'jian_swordman_shielded', name: '华夏持盾刀剑手', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
     { id: 'levy', name: '近东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEVY/' },
     { id: 'gastraphetes', name: '希腊腹弩手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/GASTRAPHETES/' },
     { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
     { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
     { id: 'paragon', name: '十字军圣殿楷模武士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
-    { id: 'shock_cavalry', name: '希腊化冲击骑兵重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
+    { id: 'shock_cavalry', name: '冲击骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
     { id: 'imperial_cavalry', name: '波斯具装铁骑重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
     { id: 'sarmatian', name: '萨尔马提亚重装铁骑', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
@@ -431,7 +456,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'bowman', name: '弓兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/BOWMAN/' },
     { id: 'crusader_knight', name: '欧洲十字军骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CRUSADERKNIGHT/' },
     { id: 'raider', name: '掠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/RAIDER/' },
-    { id: 'guardsman', name: '近卫军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/GUARDSMAN/' },
+    { id: 'guardsman', name: '波斯近卫', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/GUARDSMAN/' },
     { id: 'antiquity_skirmisher', name: '古典掷矛手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_SKIRMISHER/' },
     { id: 'elite_antiquity_skirmisher', name: '古典掷矛手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/' },
     { id: 'antiquity_cavalry_archer', name: '古典骑射手', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_CAVALRY_ARCHER/' },
@@ -457,13 +482,13 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'fire_ship', name: '喷火船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/FIRE_SHIP/' },
     { id: 'fast_fire_ship', name: '快速喷火船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/FAST_FIRE_SHIP/' },
     { id: 'incendiary_ship', name: '燃烧战船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/INCENDIARY_SHIP/' },
-    { id: 'heavy_incendiary_ship', name: '重型燃烧战船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/HEAVY_INCENDIARY_SHIP/' },
+    { id: 'heavy_incendiary_ship', name: '重型燃烧战船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/HEAVY_INCENDIARY_SHIP/' },
     { id: 'cannon_galleon', name: '炮舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/CANNON_GALLEON/' },
     { id: 'elite_cannon_galleon', name: '炮舰高级', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/ELITE_CANNON_GALLEON/' },
     { id: 'caravel', name: '卡拉维尔帆船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/CARAVEL/' },
     { id: 'elite_caravel', name: '卡拉维尔帆船高级', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ELITE_CARAVEL/' },
     { id: 'demo_ship', name: '爆破舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/DEMO_SHIP/' },
-    { id: 'heavy_demo_ship', name: '重型爆破舰', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/HEAVY_DEMO_SHIP/' },
+    { id: 'heavy_demo_ship', name: '重型爆破舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/HEAVY_DEMO_SHIP/' },
     { id: 'longboat', name: '维京长船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/LONGBOAT/' },
     { id: 'elite_longboat', name: '维京长船高级', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/ELITE_LONGBOAT/' },
     { id: 'turtle_ship', name: '龟船', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/TURTLE_SHIP/' },
@@ -562,7 +587,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
     { id: 'frankish_paladin', name: '法兰克圣骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
-    { id: 'siege_ballista', name: '华夏攻城床弩车重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
+    { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
     { id: 'bireme', name: '双列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/BIREME/' },
     { id: 'trireme', name: '三列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/TRIREME/' },
@@ -580,6 +605,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'incendiary_raft', name: '燃烧木筏', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/INCENDIARY_RAFT/' },
     { id: 'canoe', name: '独木舟', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/CANOE/' },
     { id: 'merchant_ship', name: '商船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/MERCHANT_SHIP/' },
+    { id: 'junk', name: '中式帆船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI_TRADE/JUNK/' },
+    { id: 'trade_cog', name: '柯克货船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI_TRADE/TRADE_COG/' },
+    { id: 'transport_ship', name: '运输船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI_TRADE/TRANSPORT_SHIP/' },
     { id: 'lou_chuan', name: '中国楼船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/LOU_CHUAN/' },
     { id: 'leviathan', name: '利维坦', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/LEVIATHAN/' },
     { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
@@ -625,6 +653,9 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     incendiary_raft: 'fire_ship',
     canoe: 'warship',
     merchant_ship: 'warship',
+    junk: 'warship',
+    trade_cog: 'warship',
+    transport_ship: 'warship',
     lou_chuan: 'warship',
     leviathan: 'warship',
 
@@ -688,7 +719,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     chakram_thrower: 'thrown', elite_chakram_thrower: 'thrown', gbeto: 'thrown', elite_gbeto: 'thrown',
     guecha_warrior: 'thrown', elite_guecha_warrior: 'thrown', elite_skirmisher: 'thrown', skirmisher: 'thrown',
     rhodian_slinger: 'thrown', slinger: 'thrown', thracian_peltast: 'thrown', elite_peltast: 'thrown',
-    antiquity_skirmisher: 'thrown', elite_antiquity_skirmisher: 'thrown', grenadier: 'thrown',
+    antiquity_skirmisher: 'thrown', elite_antiquity_skirmisher: 'thrown', grenadier: 'gunpowder_siege',
     // 火器
     hand_cannoneer: 'gunpowder', janissary: 'gunpowder', elite_janissary: 'gunpowder',
     royal_janissary: 'gunpowder',
@@ -912,15 +943,23 @@ let selectedRegionFilter: string = 'all';
 let animState: 'idle' | 'move' | 'attack' = 'idle';
 let animDirection: number = 2; // 默认朝东南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
 let animTimer: number | null = null;
-let previewViewMode: 'single' | 'three' | 'phalanx' = 'three';
+let previewViewMode: 'single' | 'three' | 'phalanx' | 'strategic' = 'three';
 /** 兵种缩略图全体朝向（选择兵种弹窗可改，默认东南=2） */
 let unitThumbDir: number = 2;
 let singlePreviewRow: number = 0; // 0=前排, 1=中坚, 2=后排
 let sortCol: string = 'region';
 let sortAsc: boolean = true;
 
+// ── 战略地图军团鉴赏状态 ──
+let stratAction: 'idle' | 'move' | 'attack' = 'idle';
+let stratDir: number = 2; // 默认朝东南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
+let stratZoom: number = 1.0; // 默认 1.00x，支持 0.70x (Zoom 9) 与 1.25x
+let stratShowCollision: boolean = true;
+let stratChariotOverrideScale: number | null = null;
+let stratAnimTimer: number | null = null;
+
 // ── 兵种图鉴视图状态 ──
-type MainView = 'factions' | 'units' | 'naval';
+type MainView = 'factions' | 'units' | 'naval' | 'strategic';
 let mainView: MainView = 'factions';
 let catalogRows: DeUnitDef[] = [];
 let catalogSearch = '';
@@ -952,13 +991,18 @@ app.innerHTML = `
     <button type="button" id="le-check-legions" class="le-btn">🧹 检查军团命名</button>
   </div>
 </header>
+<aside id="le-composition-rule" style="flex-shrink:0;padding:10px 20px;border-bottom:1px solid #8a6038;background:#302016;color:#f3d7aa;font-size:13px;line-height:1.6;">
+  <strong>🔴 铁律：一个军团只能有一种编制，严禁同一军团多种编制。</strong><br>
+  前排、中排、后排兵种一致，且阵型一样，就是同一种编制。<b>武将换军团，只改归属；编辑军团编制，所有使用者全部同步。</b>
+</aside>
 <div class="le-viewtabs">
   <button type="button" class="le-viewtab active" data-view="factions">⚔ 势力军团编排</button>
   <button type="button" class="le-viewtab" data-view="naval">🚢 海军编排</button>
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
+  <button type="button" class="le-viewtab" data-view="strategic">🗺️ 战略地图军团鉴赏</button>
 </div>
 <div class="le-toolbar" id="le-toolbar-factions">
-  <input id="le-search" class="le-input" type="search" placeholder="搜索 军团 / 据点 / 势力 / 武将 / 精锐 / 旗号 / ID…" />
+  <input id="le-search" class="le-input" type="search" placeholder="搜索 军团 / 兵种 / 据点 / 势力 / 武将 / 精锐 / 旗号 / ID…" />
   <select id="le-region-filter" class="le-select">
     <option value="all">全部文化区 (18)</option>
     ${REGION_ORDER.map(r => `<option value="${r}">${REGION_LABELS[r]} (${r})</option>`).join('')}
@@ -1074,8 +1118,8 @@ function injectStyles(): void {
       .le-btn-primary { background:#5a4a28; border-color:#8a7038; color:#fff8e8; }
       .le-btn-primary:hover { background:#705c32; border-color:#a88844; }
       .le-btn-warn { background:#5a2828; border-color:#8a3838; color:#ffdede; }
-      .le-btn-warn:hover { background:#703232; }
       .le-btn-sm { padding:3px 8px; font-size:12px; }
+      .le-btn-xs { padding:2px 6px; font-size:11px; }
 
       /* 视图切换页签 */
       .le-viewtabs {
@@ -1141,8 +1185,29 @@ function injectStyles(): void {
         overflow-y:auto; padding:16px; flex-shrink:0; display:flex; flex-direction:column;
       }
       /* 只有图鉴视图才加宽到 620：单兵预览的统一比例尺需要这个宽度。
+         战略地图鉴赏加宽到 760：大地图方阵与全景沙盘需要足够的视界。
          势力编排视图保持 520，免得把 925 行大表的九列挤没了。 */
       .le-panel.is-units { width:620px; }
+      .le-panel.is-strategic { width:760px; }
+      .le-strat-stage { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+      .le-strat-canvas-wrap {
+        position:relative; width:100%; height:380px; background:#141f12;
+        border:1px solid #2a3824; border-radius:6px; overflow:hidden;
+        box-shadow:inset 0 0 35px rgba(0,0,0,0.6);
+      }
+      .le-strat-canvas { width:100%; height:100%; display:block; }
+      .le-strat-toolbar {
+        display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+        background:#1a1714; border:1px solid #302a22; padding:8px 10px; border-radius:5px;
+      }
+      .le-overlap-alert {
+        background:#301414; border:1px solid #702828; color:#ffb0a0;
+        border-radius:5px; padding:10px 14px; font-size:12px; line-height:1.6; margin-bottom:12px;
+      }
+      .le-overlap-ok {
+        background:#162618; border:1px solid #2c5430; color:#b0e8b8;
+        border-radius:5px; padding:10px 14px; font-size:12px; line-height:1.6; margin-bottom:12px;
+      }
       .le-empty-hint {
         color:#7a7266; font-size:13px; text-align:center; padding:60px 20px;
       }
@@ -1459,13 +1524,23 @@ function applyFilter(): void {
     filteredRows = allRows.filter(r => {
         if (selectedRegionFilter !== 'all' && r.region !== selectedRegionFilter) return false;
         if (q) {
+            const shipAssetId = getCultureNavalShip(r.region, r.factionId);
+            const shipName = getNavalShipChineseName(shipAssetId);
+            const slotMatch = r.slots.some(s => {
+                if (!s?.type) return false;
+                const name = getUnitDisplayName(s.type).toLowerCase();
+                return s.type.toLowerCase().includes(q) || name.includes(q);
+            });
             const match = r.factionId.toLowerCase().includes(q)
                 || r.factionName.toLowerCase().includes(q)
                 || r.flagText.toLowerCase().includes(q)
                 || (r.capitalCityName && r.capitalCityName.toLowerCase().includes(q))
                 || (r.generalName && r.generalName.toLowerCase().includes(q))
                 || (r.eliteName && r.eliteName.toLowerCase().includes(q))
-                || effectiveLegionName(r).toLowerCase().includes(q);
+                || effectiveLegionName(r).toLowerCase().includes(q)
+                || slotMatch
+                || shipName.toLowerCase().includes(q)
+                || shipAssetId.toLowerCase().includes(q);
             if (!match) return false;
         }
         return true;
@@ -1476,6 +1551,27 @@ function applyFilter(): void {
     els.stats.innerHTML = `当前显示: <b>${filteredRows.length}</b>`;
 }
 
+/**
+ * 🔴 军团编制唯一铁律（2026-09-09 主人重申）
+ * 一个军团只能有一种编制，不然就报错！一种编制是指三排兵种排列一样。
+ * 检查当前所有势力中，哪些军团名存在 2 种及以上编制签名。
+ */
+function getMultiCompositionLegionNames(): Set<string> {
+    const nameSigs = new Map<string, Set<string>>();
+    for (const r of allRows) {
+        const n = effectiveLegionName(r);
+        if (!n) continue;
+        if (!nameSigs.has(n)) nameSigs.set(n, new Set());
+        nameSigs.get(n)!.add(legionSig(r));
+    }
+    const conflicts = new Set<string>();
+    // ② 同名不同编
+    for (const [name, sigs] of nameSigs.entries()) {
+        if (sigs.size > 1) conflicts.add(name);
+    }
+    return conflicts;
+}
+
 function renderTable(): void {
     if (filteredRows.length === 0) {
         els.tableWrap.innerHTML = `<div class="le-empty-hint">没有匹配的势力</div>`;
@@ -1483,6 +1579,7 @@ function renderTable(): void {
     }
 
     const sortArrow = (col: string) => sortCol === col ? (sortAsc ? ' <span style="color:#e0c888;">▲</span>' : ' <span style="color:#e0c888;">▼</span>') : '';
+    const conflictLegions = getMultiCompositionLegionNames();
 
     const html = `
     <table class="le-table">
@@ -1501,8 +1598,11 @@ function renderTable(): void {
         </tr>
       </thead>
       <tbody>
-        ${filteredRows.map(r => `
-          <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''}">
+        ${filteredRows.map(r => {
+          const rowLegionName = effectiveLegionName(r);
+          const hasConflict = conflictLegions.has(rowLegionName);
+          return `
+          <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''} ${hasConflict ? 'has-conflict' : ''}" style="${hasConflict ? 'background:rgba(120,20,20,0.18);' : ''}">
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
             <td>
               <b style="font-size:13px;color:#f5e6c8;">${r.generalName || r.factionName}</b>
@@ -1522,10 +1622,10 @@ function renderTable(): void {
             <td><span class="cell-unit">${getUnitDisplayName(r.row2Type)}</span></td>
             <td><span class="cell-unit">${getUnitDisplayName(r.row3Type)}</span></td>
             <td>${r.legionName
-                ? `<span style="color:#c9a86a;font-size:11px;">${r.legionName}</span>`
+                ? `<span style="color:${hasConflict ? '#ff8a80' : '#c9a86a'};font-size:11px;font-weight:${hasConflict ? 'bold' : 'normal'};">${r.legionName}</span>${hasConflict ? '<span style="background:#5a1e1e;color:#ff9e9e;padding:1px 5px;border-radius:3px;font-size:10px;margin-left:4px;border:1px solid #a03030;font-weight:bold;" title="❌ 编制冲突：一个军团只能有一种编制！同名必须同编制（三排兵种+阵型相同=同一种编制）。">⚠️ 冲突</span>' : ''}`
                 : `<span style="color:#7a7266;font-size:11px;">—</span>`}</td>
           </tr>
-        `).join('')}
+        `;}).join('')}
       </tbody>
     </table>
     `;
@@ -1578,16 +1678,26 @@ function selectFaction(factionId: string): void {
     // 加载当前军团配置
     const custom = localCustomCompositions[factionId];
     if (custom) {
+        // 🔴 [2026-09-10 主人定] custom 省略 legionName = 跟随文化军团名，必须兜底，
+        //    否则「保存军团编制」把军团名当成「势力名+军团」走错分支，只改一家不联动同名势力，
+        //    → 同名不同编（主人报「城堡时代马扎尔军团：匈牙利 ↔ 匈雅提」）。
         currentEditingLegion = {
-            legionName: custom.legionName,
-            legionType: custom.legionType,
+            legionName: custom.legionName || getCultureLegionName(row.region),
+            legionType: custom.legionType || 'region',
             formationMode: custom.formationMode,
             navalFormation: custom.navalFormation ?? 'auto',
             slots: custom.slots.map(s => ({ ...s })),
         };
     } else {
+        // 🔴 [2026-09-09 修复] 势力没有自定义编成时，它跟随**所属文化军团**，必须补齐
+        //    军团名 + legionType='region'。原来这里只填阵型和兵种，currentEditingLegion.legionName
+        //    为空 → 「保存军团编制」会把军团名当成「势力名+军团」，走错成特定军团分支：
+        //    文化军团改不动、还额外在内存里多出一份同编制军团（主人报「点保存没用 / 出现两支」）。
         currentEditingLegion = {
+            legionName: row.legionName || getCultureLegionName(row.region),
+            legionType: 'region',
             formationMode: row.formationMode,
+            navalFormation: 'auto',
             slots: row.slots.map(s => ({ ...s })),
         };
     }
@@ -1597,6 +1707,7 @@ function selectFaction(factionId: string): void {
 
     renderTable();
     if (mainView === 'naval') renderNavalPanel(row);
+    else if (mainView === 'strategic') renderStrategicPanel(row);
     else renderEditPanel(row);
 }
 
@@ -1608,22 +1719,19 @@ function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
     return { formationMode, slots: slots.map(s => ({ ...s })) };
 }
 
-/** 构建文化军团配置（文化区默认名 + 默认阵型/兵种 + legionType='region'） */
-function buildCultureLegion(region: RegionType): CustomFactionLegion {
-    const def = getRegionDefaultLegion(region);
-    return {
-        legionName: getCultureLegionName(region),
-        legionType: 'region',
-        formationMode: def.formationMode,
-        navalFormation: 'auto',
-        slots: def.slots.map(s => ({ ...s })),
-    };
+/** 取一级16母体文化军团专属默认编成（与二层时代军团彻底物理隔离） */
+function getBase16RegionDefaultLegion(region: RegionType): CustomFactionLegion {
+    const base16 = getBase16FormationConfig(region);
+    if (base16) {
+        return { formationMode: base16.formationMode, slots: base16.slots.map(s => ({ ...s })) };
+    }
+    return getRegionDefaultLegion(region);
 }
 
-/** 删除特定军团：用它的势力全部恢复为所在文化的文化军团（文化军团不可删） */
+/** 删除二级制定军团：用它的势力全部恢复为所在文化的一级文化军团（一级文化军团不可删） */
 async function deleteSpecificLegion(legionName: string): Promise<void> {
     if (isRegionLegionName(legionName)) {
-        showToast('❌ 文化军团不可删除', true);
+        showToast('❌ 一级文化军团不可删除', true);
         return;
     }
     const affected: string[] = [];
@@ -1641,7 +1749,7 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     buildRows();
     applyFilter();
     await saveAllCompositions();
-    showToast(`🗑 已删除军团【${legionName}】，${affected.length} 个势力恢复为所在文化军团`);
+    showToast(`🗑 已删除二级制定军团【${legionName}】，${affected.length} 个势力恢复为所在文化的一级文化军团`);
 }
 
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
@@ -1660,7 +1768,7 @@ let legionSearchQuery = '';
 /** 军团时代筛选（文化军团按四时代分开看） */
 let legionEraFilter: 'all' | UnitAge = 'all';
 
-/** 军团名前缀 → 时代。文化军团名本身就带时代（如「城堡阿兹特克军团」），名字即权威。 */
+/** 军团名前缀 → 时代。文化军团名本身就带时代（如「城堡时代阿兹特克军团」），名字即权威。 */
 const LEGION_ERA_PREFIX: Record<string, UnitAge> = {
     '古典': 'antiquity', '封建': 'feudal', '城堡': 'castle', '帝国': 'imperial',
 };
@@ -1691,6 +1799,31 @@ interface LayerLegionOption {
     shipName?: string;
 }
 
+/** 16 母体的代表 region（一级文化军团 = 16 母体各一支；按母体默认军团名识别，覆盖「蒙古/罗马/罗斯/马来/克丘亚/墨西加/曼丁哥」等文明名） */
+export const BASE_16_REGIONS = [
+    'CENTRAL', 'STEPPE', 'INDIA', 'GERMANIC', 'PURU',
+    'ORIE', 'LATIN', 'SLAVIC', 'EAST', 'PERSIAN',
+    'MALAY', 'GREEK', 'THRACIAN', 'ANDE', 'AMERICA', 'AFRICA',
+] as const;
+
+/** 🔴 [2026-09-10 主人定] 第一层文化军团名 = 16 母体地区名 + 军团（跨时代母体，不带时代前缀） */
+export const BASE_16_LEGION_NAMES: Record<string, string> = {
+    CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
+    PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '斯拉夫军团',
+    EAST: '东南欧军团', PERSIAN: '波斯军团', MALAY: '东南亚军团', GREEK: '希腊军团',
+    THRACIAN: '色雷斯军团', ANDE: '安第斯军团', AMERICA: '中美军团', AFRICA: '非洲军团',
+};
+
+/** 取第一层文化军团名（16 母体地区名 + 军团）；未知母体兜底东亚军团 */
+export function getBase16LegionName(region: RegionType | null | undefined): string {
+    return (region && BASE_16_LEGION_NAMES[region]) || BASE_16_LEGION_NAMES.CENTRAL;
+}
+
+/** 判断军团名是否属于「一级：16 母体文化军团」（= 16 母体地区名 + 军团） */
+export function isBase16CultureLegion(name: string): boolean {
+    return Object.values(BASE_16_LEGION_NAMES).includes(name);
+}
+
 /** 地区军团名基（文化区默认军团名的「地区名」部分） */
 const REGION_LEGION_BASE_SET = new Set<string>(
     Object.values(CULTURE_LEGION_NAMES).map(n => n.replace(/军团$/, '')),
@@ -1704,10 +1837,11 @@ function isRegionLegionName(name: string): boolean {
     return REGION_LEGION_BASE_SET.has(base) || REGION_TAB_LABEL_SET.has(base);
 }
 
-/** 🔴 [2026-09-06 主人铁律] 军团只有两种：文化军团（名字是 65 个文化军团名之一）/ 特定军团（其余全部）。
- *  「时代军团」branch 那一层已彻底删除，别再加回来 —— 多一类就是误导。 */
+/** 🔴 [2026-09-10 主人定] 两级军团分类：
+ *  一级：文化军团（16母体文化军团）
+ *  二级：制定军团（从16母体延伸出来的军团 + 势力自建制定军团） */
 function classifyLegionTab(name: string, _sharedCount: number): 'culture' | 'sub' {
-    return isRegionLegionName(name) ? 'culture' : 'sub';
+    return isBase16CultureLegion(name) ? 'culture' : 'sub';
 }
 
 /** 全部独立军团（=地区默认 + 所有自定义军团），按军团名聚合 */
@@ -1720,12 +1854,20 @@ interface DistinctLegionEntry {
 }
 function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     const map = new Map<string, DistinctLegionEntry>();
-    // 1. 文化区默认军团
+    // 1. 文化区默认军团（二层时代文明军团）
     for (const rg of REGION_ORDER) {
         const def = getRegionDefaultLegion(rg);
         const name = getCultureLegionName(rg);
         if (!map.has(name)) {
             map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
+        }
+    }
+    // 1.5 一级：16 母体文化军团（与二层时代军团彻底物理隔离，互不影响）
+    for (const rg of BASE_16_REGIONS) {
+        const name = getBase16LegionName(rg as RegionType);
+        if (!map.has(name)) {
+            const def = getBase16RegionDefaultLegion(rg as RegionType);
+            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg as RegionType });
         }
     }
     // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。
@@ -1741,7 +1883,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             map.set(name, entry);
         }
         entry.fids.push(row.factionId);
-        if (entry.fids.length === 1 && custom) {
+        if (entry.fids.length === 1 && custom && !entry.region) {
             entry.formationMode = custom.formationMode;
             entry.slots = custom.slots.map(s => ({ ...s }));
         }
@@ -1749,61 +1891,50 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     return map;
 }
 
-/** 取三类军团的全部可选军团（按名字语义判型：地区 / 时代 / 独立） */
+/** 取两类军团的全部可选军团（一级：16母体文化军团 / 二级：16母体延伸军团 + 制定军团） */
 function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: string): LayerLegionOption[] {
     const all = getAllDistinctLegions();
     const options: LayerLegionOption[] = [];
 
-    // 🔴 [2026-09-01 主人铁律] 一个文化一个军团，65个文化必须正好65个文化军团，不可篡改、不能多、不能少！
+    // 🔴 [2026-09-10 主人定] 一级：文化军团（严格只收 16 母体文化军团，名字 = 地区名 + 军团，跨时代母体不带时代）
     if (layer === 'culture') {
-        // 🔴 按**军团名**去重，不是按文化区。一支军团可以服务多个文化区
-        //    （古典希腊军团覆盖 4 区、古典秦汉军团覆盖北方+河西），
-        //    列表的单位是「军团」，同一支不该出多张卡。卡片上标出它服务哪几个区。
-        const seen = new Map<string, string[]>();
-        for (const rg of REGION_ORDER) {
-            const name = getCultureLegionName(rg);
-            const label = REGION_LABELS[rg] ?? rg;
-            if (seen.has(name)) { seen.get(name)!.push(label); continue; }
-            seen.set(name, [label]);
-
-            const def = getRegionDefaultLegion(rg);
-            const shipId = getCultureNavalShip(rg, null);
+        for (const rg of BASE_16_REGIONS) {
+            const name = getBase16LegionName(rg as RegionType);
+            const cultName = name.replace(/军团$/, '');
+            const def = getBase16RegionDefaultLegion(rg as RegionType);
+            const shipId = getCultureNavalShip(rg as RegionType, null);
             const shipName = getNavalShipChineseName(shipId);
+            const fidsCount = all.get(name)?.fids.length ?? 0;
             options.push({
                 key: `culture:${name}`,
-                label: `🏛️ ${name}`,
+                label: `🏛️ ${name} (${cultName})`,
                 legionName: name,
                 formationMode: def.formationMode,
                 slots: def.slots.map(s => ({ ...s })),
-                description: '',   // 下面统一填，等所有同名区都归拢完
+                description: `${cultName} · ${fidsCount ? `${fidsCount} 势力使用` : '文化默认'} · ${legionSummary(def.formationMode, def.slots)}`,
                 shipId,
                 shipName,
             });
         }
-        for (const o of options) {
-            const regions = [...new Set(seen.get(o.legionName) ?? [])];
-            const fidsCount = all.get(o.legionName)?.fids.length ?? 0;
-            o.label = `🏛️ ${o.legionName} (${regions.join('、')})`;
-            o.description = `${regions.join('、')}${regions.length > 1 ? ` · ${regions.length} 区共用` : ''}`
-                + `${fidsCount ? ` · ${fidsCount} 势力使用` : ' · 文化默认'} · ${legionSummary(o.formationMode, o.slots)}`;
-        }
         return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
     }
 
+    // 🔴 [2026-09-10 主人定] 二级：制定军团（从 16 母体延伸派生的军团 + 势力自建制定军团）
     for (const entry of all.values()) {
         const tab = classifyLegionTab(entry.name, entry.fids.length);
         if (tab !== layer) continue;
 
         const fid = entry.fids[0];
         const row = fid ? allRows.find(r => r.factionId === fid) : undefined;
-        const owner = row?.generalName ? `武将:${row.generalName}` : (row ? `势力:${row.factionName}` : '');
-        const label = `⭐ ${entry.name} (${owner} · ${row?.regionLabel ?? ''})`;
-        const description = `${row?.regionLabel ?? ''} · ${entry.fids.length} 势力使用 · ${legionSummary(entry.formationMode, entry.slots)}`;
-        const shipId = getCultureNavalShip(row?.region ?? null, fid);
+        const regLabel = row?.regionLabel || (entry.region ? (REGION_LABELS[entry.region] || entry.region) : '');
+        const countText = entry.fids.length ? `${entry.fids.length} 势力` : '文化默认';
+        const label = `⭐ ${entry.name} (${regLabel ? `${regLabel} · ` : ''}${countText})`;
+        const description = `${regLabel ? `${regLabel} · ` : ''}${entry.fids.length ? `${entry.fids.length} 势力使用` : '文化默认'} · ${legionSummary(entry.formationMode, entry.slots)}`;
+        const shipId = getCultureNavalShip(row?.region ?? entry.region ?? null, fid ?? null);
         const shipName = getNavalShipChineseName(shipId);
 
         options.push({
-            key: `${tab}:${entry.name}`,
+            key: `sub:${entry.name}`,
             label,
             legionName: entry.name,
             formationMode: entry.formationMode,
@@ -1820,29 +1951,24 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
 
 /** 层全名（信息卡 / 步骤标题用） */
 const LAYER_FULL_LABEL: Record<'culture' | 'sub', string> = {
-    culture: '文化军团',
-    sub: '特定军团',
+    culture: '一级：文化军团',
+    sub: '二级：制定军团',
 };
 
-/** 编成签名：阵型 + slots 的 type:count 序列（同名铁律判据） */
+/** 编制铁律：前/中/后三排兵种 + 阵型；缩放不产生新编制，人数由阵型确定。 */
 function legionSig(v: { formationMode: string; slots: { type: string; count: number }[] }): string {
-    return v.formationMode + '|' + v.slots.map(s => `${s.type}:${s.count}`).join(',');
+    return v.formationMode + '|' + v.slots.map(s => s.type).join(',');
 }
 
-/** 当前军团属于哪一类：legionType 优先；无则按名字语义/共用人数推断 */
+/** 当前军团属于哪一类：一级16母体文化 / 二级16母体延伸+制定军团 */
 function resolveCurrentLayer(row: FactionLegionRow): 'culture' | 'sub' {
+    const name = currentEditingLegion?.legionName?.trim() || effectiveLegionName(row);
+    if (name) {
+        return isBase16CultureLegion(name) ? 'culture' : 'sub';
+    }
     const lt = currentEditingLegion?.legionType;
-    if (lt === 'region') return 'culture';
-    if (lt === 'solo' || lt === 'era') return 'sub';   // era 已废，一律并入特定军团
-    const name = currentEditingLegion?.legionName?.trim();
-    if (!name) return 'culture';
-    // 🔴 [2026-09-07 修「保存把别的文化区冲了」] 这里原来拿名字去比**全部 109 个文化军团名**，
-    //    只要撞上任何一个就判成文化层 —— 多德卡尼斯的势力军团叫「古典希腊雇佣军团」
-    //    （那是 GREEK_MERCENARY 的名字），于是 💾 被路由进它自己所在的 GREEK 区，
-    //    把古典希腊军团整个冲成了雇佣那套。同样的事故在罗马身上也发生过一次。
-    //    正确判据：只有当名字 == **该势力自己文化区**的军团名时，才是在编文化军团。
-    if (name === getCultureLegionName(row.region)) return 'culture';
-    return 'sub';
+    if (lt === 'sub') return 'sub';
+    return isBase16CultureLegion(getBase16LegionName(row.region)) ? 'culture' : 'sub';
 }
 
 /** 军团卡是否处于「当前生效」态：显式选中 > 与当前编辑配置同编成同名 */
@@ -1857,6 +1983,11 @@ function isOptionActive(opt: LayerLegionOption, current: CustomFactionLegion | n
 /** 🚢 海军编排面板：独立栏目，与陆军阵型各管各的（主人定：不许混在陆军面板里） */
 function renderNavalPanel(row: FactionLegionRow): void {
     if (!currentEditingLegion) return;
+    if (stratAnimTimer !== null) {
+        cancelAnimationFrame(stratAnimTimer);
+        stratAnimTimer = null;
+    }
+    els.panel.classList.remove('is-strategic');
     const cur: NavalFormationMode = currentEditingLegion.navalFormation ?? 'auto';
     const desc: Record<NavalFormationMode, string> = {
         auto: '鱼贯而行 · 战列线（默认，等同单纵队）',
@@ -1946,8 +2077,657 @@ function renderNavalPanel(row: FactionLegionRow): void {
     });
 }
 
+// ============================================================
+// 5.5 战略地图军团鉴赏 (Strategic Map Legion Appreciation)
+// ============================================================
+
+function isChariotUnit(unitId: string): boolean {
+    const sub = getUnitSubcategory(unitId);
+    return sub === 'chariot' || unitId.includes('chariot') || unitId.includes('wagon') || unitId.includes('ratha');
+}
+
+function isElephantUnit(unitId: string): boolean {
+    const sub = getUnitSubcategory(unitId);
+    return sub === 'elephant' || unitId.includes('elephant');
+}
+
+function getFormation9Layout(mode: FormationMode): readonly { r: number; c: number; rowIdx: number }[] {
+    switch (mode) {
+        case 'triangle': // 2 + 3 + 4
+            return [
+                { r: 0, c: -0.5, rowIdx: 0 }, { r: 0, c: 0.5, rowIdx: 0 },
+                { r: 1, c: -1.0, rowIdx: 1 }, { r: 1, c: 0, rowIdx: 1 }, { r: 1, c: 1.0, rowIdx: 1 },
+                { r: 2, c: -1.5, rowIdx: 2 }, { r: 2, c: -0.5, rowIdx: 2 }, { r: 2, c: 0.5, rowIdx: 2 }, { r: 2, c: 1.5, rowIdx: 2 },
+            ];
+        case 'echelon': // 4 + 3 + 2
+            return [
+                { r: 0, c: -1.5, rowIdx: 0 }, { r: 0, c: -0.5, rowIdx: 0 }, { r: 0, c: 0.5, rowIdx: 0 }, { r: 0, c: 1.5, rowIdx: 0 },
+                { r: 1, c: -1.0, rowIdx: 1 }, { r: 1, c: 0, rowIdx: 1 }, { r: 1, c: 1.0, rowIdx: 1 },
+                { r: 2, c: -0.5, rowIdx: 2 }, { r: 2, c: 0.5, rowIdx: 2 },
+            ];
+        case 'fish_scale': // 3 + 4 + 2
+            return [
+                { r: 0, c: -1.0, rowIdx: 0 }, { r: 0, c: 0, rowIdx: 0 }, { r: 0, c: 1.0, rowIdx: 0 },
+                { r: 1, c: -1.5, rowIdx: 1 }, { r: 1, c: -0.5, rowIdx: 1 }, { r: 1, c: 0.5, rowIdx: 1 }, { r: 1, c: 1.5, rowIdx: 1 },
+                { r: 2, c: -1.0, rowIdx: 2 }, { r: 2, c: 1.0, rowIdx: 2 },
+            ];
+        case 'crane_wing': // 2 + 4 + 3
+            return [
+                { r: 0, c: -1.0, rowIdx: 0 }, { r: 0, c: 1.0, rowIdx: 0 },
+                { r: 1, c: -1.5, rowIdx: 1 }, { r: 1, c: -0.5, rowIdx: 1 }, { r: 1, c: 0.5, rowIdx: 1 }, { r: 1, c: 1.5, rowIdx: 1 },
+                { r: 2, c: -1.0, rowIdx: 2 }, { r: 2, c: 0, rowIdx: 2 }, { r: 2, c: 1.0, rowIdx: 2 },
+            ];
+        case 'crescent': // 3 + 2 + 4
+            return [
+                { r: 0, c: -1.0, rowIdx: 0 }, { r: 0, c: 0, rowIdx: 0 }, { r: 0, c: 1.0, rowIdx: 0 },
+                { r: 1, c: -0.5, rowIdx: 1 }, { r: 1, c: 0.5, rowIdx: 1 },
+                { r: 2, c: -1.5, rowIdx: 2 }, { r: 2, c: -0.5, rowIdx: 2 }, { r: 2, c: 0.5, rowIdx: 2 }, { r: 2, c: 1.5, rowIdx: 2 },
+            ];
+        case 'balance_yoke': // 4 + 2 + 3
+            return [
+                { r: 0, c: -1.5, rowIdx: 0 }, { r: 0, c: -0.5, rowIdx: 0 }, { r: 0, c: 0.5, rowIdx: 0 }, { r: 0, c: 1.5, rowIdx: 0 },
+                { r: 1, c: -0.5, rowIdx: 1 }, { r: 1, c: 0.5, rowIdx: 1 },
+                { r: 2, c: -1.0, rowIdx: 2 }, { r: 2, c: 0, rowIdx: 2 }, { r: 2, c: 1.0, rowIdx: 2 },
+            ];
+        case 'square': // 3 + 3 + 3
+        default:
+            return [
+                { r: 0, c: -1.0, rowIdx: 0 }, { r: 0, c: 0, rowIdx: 0 }, { r: 0, c: 1.0, rowIdx: 0 },
+                { r: 1, c: -1.0, rowIdx: 1 }, { r: 1, c: 0, rowIdx: 1 }, { r: 1, c: 1.0, rowIdx: 1 },
+                { r: 2, c: -1.0, rowIdx: 2 }, { r: 2, c: 0, rowIdx: 2 }, { r: 2, c: 1.0, rowIdx: 2 },
+            ];
+    }
+}
+
+function drawCompass(ctx: CanvasRenderingContext2D, x: number, y: number, dir: number): void {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.arc(0, 0, 20, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(18, 28, 16, 0.75)';
+    ctx.fill();
+    ctx.strokeStyle = '#3a5036';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#a0b898';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('N', 0, -13);
+    ctx.fillText('S', 0, 13);
+    ctx.fillText('E', 13, 0);
+    ctx.fillText('W', -13, 0);
+
+    const angle = (dir + 1) * Math.PI / 4;
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -9);
+    ctx.lineTo(3.5, 4);
+    ctx.lineTo(0, 1.5);
+    ctx.lineTo(-3.5, 4);
+    ctx.closePath();
+    ctx.fillStyle = '#e0c060';
+    ctx.fill();
+    ctx.restore();
+}
+
+function drawLegionFlag(ctx: CanvasRenderingContext2D, x: number, y: number, color: string, text: string, frame: number): void {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.strokeStyle = '#8a7040';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 14);
+    ctx.lineTo(0, -22);
+    ctx.stroke();
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.arc(0, -23, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const wave = Math.sin(frame * 0.08) * 3;
+    ctx.fillStyle = color || '#a02020';
+    ctx.beginPath();
+    ctx.moveTo(0, -22);
+    ctx.lineTo(24, -20 + wave);
+    ctx.lineTo(20, -6 + wave);
+    ctx.lineTo(0, -8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#f5e6c8';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px "Microsoft YaHei", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text || '军', 10, -14 + wave * 0.5);
+    ctx.restore();
+}
+
+function drawLegionHUD(ctx: CanvasRenderingContext2D, cx: number, cy: number, flagChar: string, legionName: string): void {
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const text = `${flagChar ? `[${flagChar}] ` : ''}${legionName}`;
+    ctx.font = 'bold 13px "Noto Serif SC", serif';
+    const tw = ctx.measureText(text).width;
+    const pw = Math.max(130, tw + 24);
+    const ph = 26;
+
+    ctx.fillStyle = 'rgba(18, 16, 14, 0.85)';
+    ctx.strokeStyle = '#4a3c28';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(cx - pw / 2, cy - ph / 2, pw, ph, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#f5e6c8';
+    ctx.fillText(text, cx, cy - 2);
+
+    const barW = pw - 16;
+    const barH = 3;
+    const barY = cy + 8;
+    ctx.fillStyle = '#2a1a14';
+    ctx.fillRect(cx - barW / 2, barY, barW, barH);
+    ctx.fillStyle = '#4ade80';
+    ctx.fillRect(cx - barW / 2, barY, barW, barH);
+    ctx.restore();
+}
+
+function renderStrategicDiagnostics(
+    mode: FormationMode,
+    slots: CompositionSlot[],
+    activeChariotScale: number,
+): string {
+    const chariotSlot = slots.find(s => isChariotUnit(s.type));
+    if (chariotSlot) {
+        if (activeChariotScale >= 0.9) {
+            return `
+            <div class="le-overlap-alert">
+              ⚠️ <b>【换排警报 · 战车 1.00x 原大】后排战车车头侵入中坚排（越界 9px · 换排混杂）！</b><br>
+              🔴 <b>铁律准则：同排密集左右重叠没事，关键是绝不跨排侵入、三排兵必须清晰分明！</b><br>
+              实测物理数据：战略地图标准排距常数为 <b>63px</b>，而先秦远程战车 1.00x 原大时车体纵深长达 144px，车头与战马向前冲出 <b>72px</b>。<br>
+              换排实测后果：后排战车车头<b>直接跨过中坚排基准线向前侵占 9px</b>，车头战马直接扎进中坚排步兵身位中！前后排兵模互相践踏穿插，导致<b>视觉上“后排跑到中排”，发生严重换排，三排次序彻底混淆</b>！
+            </div>
+            `;
+        } else {
+            return `
+            <div class="le-overlap-ok">
+              ✅ <b>【三排清晰 · 战车 0.57x 规整】纵深保持 22px 明确净空缓冲，绝不换排！</b><br>
+              🔴 <b>铁律准则：同排重叠没事，关键是不要换排，三排兵要清晰！</b><br>
+              实测物理数据：战车适配 0.57x 后，纵深绘制尺寸收至 82px，车头前伸仅 41px。<br>
+              三排清晰呈现：后排战车车头与中坚排基准线保持 <b>22px 纵深安全缓冲净空</b>，战车规规矩矩待在后排，<b>前排、中坚、后排三排阵线层次分明、各安其位、绝对不换排、三排兵种清清楚楚！</b>
+            </div>
+            `;
+        }
+    }
+    return `
+    <div class="le-overlap-ok">
+      ✅ <b>【三排清晰 · 阵型合格】</b>：同排兵种密集重叠属于正常方阵；前中后三排排距充足（纵深 63px），各排留有安全缓冲，<b>三排兵种独立清晰、绝不换排</b>。
+    </div>
+    `;
+}
+
+function renderStrategicPanel(row: FactionLegionRow): void {
+    if (!currentEditingLegion) return;
+    if (animTimer !== null) {
+        cancelAnimationFrame(animTimer);
+        animTimer = null;
+    }
+    els.panel.classList.add('is-strategic');
+    const mode = currentEditingLegion.formationMode;
+    const slots = currentEditingLegion.slots;
+    const currentLegionName = currentEditingLegion.legionName?.trim()
+        || (row.legionName || getCultureLegionName(row.region));
+    const power = getLegionPower(slots);
+
+    const chariotSlot = slots.find(s => isChariotUnit(s.type));
+    const hasChariot = !!chariotSlot;
+    const activeChariotScale = (stratChariotOverrideScale !== null)
+        ? stratChariotOverrideScale
+        : (chariotSlot?.scale ?? 1.0);
+
+    const modeLabels: Record<FormationMode, string> = {
+        square: '3+3+3 方阵（九宫等边·攻守均衡）',
+        echelon: '4+3+2 雁行阵（前排4档·重装推进）',
+        fish_scale: '3+4+2 鱼鳞阵（中坚4档·重拳突破）',
+        crane_wing: '2+4+3 鹤翼阵（中坚4档·合围包抄）',
+        triangle: '2+3+4 锥形阵（后排4档·后劲冲锋）',
+        crescent: '3+2+4 偃月阵（后排4档·后发制人）',
+        balance_yoke: '4+2+3 衡轭阵（前排4档·前线硬碰）',
+    };
+
+    els.panelContent.innerHTML = `
+    <!-- 军团名片头 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px 14px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="cell-flag" style="background:${row.flagColor};width:36px;height:36px;line-height:36px;font-size:18px;">${row.flagText}</span>
+        <div>
+          <div style="font-size:17px;font-weight:bold;color:#f5e6c8;display:flex;align-items:center;gap:8px;">
+            <span>${currentLegionName}</span>
+            <span style="font-size:11px;padding:2px 6px;border-radius:3px;background:#3a2c10;color:#f5d78e;border:1px solid #7a6224;">战力: ${power}</span>
+          </div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:3px;">
+            据点：${row.capitalCityName || '无'} | 势力：${row.factionName} | 文化区：${row.regionLabel} | 守将：<span style="color:#d8b888;">${row.generalName || '无'}</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:bold;color:#e0c888;">${modeLabels[mode] || mode}</div>
+        <div style="font-size:10px;color:#8ab4c4;margin-top:2px;">战略地图真机参数：间距 46×63 · 身高 68px</div>
+      </div>
+    </div>
+
+    <!-- 战略地图可视化舞台 -->
+    <div class="le-strat-stage">
+      <div class="le-strat-toolbar">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-size:12px;color:#a89f8f;">动作:</span>
+          <button type="button" class="le-btn le-btn-sm ${stratAction === 'idle' ? 'le-btn-primary' : ''}" id="le-strat-act-idle">待机</button>
+          <button type="button" class="le-btn le-btn-sm ${stratAction === 'move' ? 'le-btn-primary' : ''}" id="le-strat-act-move">行军</button>
+          <button type="button" class="le-btn le-btn-sm ${stratAction === 'attack' ? 'le-btn-primary' : ''}" id="le-strat-act-attack">攻击</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-left:8px;">
+          <span style="font-size:12px;color:#a89f8f;">朝向:</span>
+          <select id="le-strat-dir" class="le-select" style="padding:2px 6px;font-size:12px;">
+            <option value="3" ${stratDir === 3 ? 'selected' : ''}>南 (3)</option>
+            <option value="2" ${stratDir === 2 ? 'selected' : ''}>东南 (2 - 默认)</option>
+            <option value="1" ${stratDir === 1 ? 'selected' : ''}>东 (1)</option>
+            <option value="0" ${stratDir === 0 ? 'selected' : ''}>东北 (0)</option>
+            <option value="7" ${stratDir === 7 ? 'selected' : ''}>北 (7)</option>
+            <option value="6" ${stratDir === 6 ? 'selected' : ''}>西北 (6)</option>
+            <option value="5" ${stratDir === 5 ? 'selected' : ''}>西 (5)</option>
+            <option value="4" ${stratDir === 4 ? 'selected' : ''}>西南 (4)</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-left:8px;">
+          <span style="font-size:12px;color:#a89f8f;">缩放:</span>
+          <select id="le-strat-zoom" class="le-select" style="padding:2px 6px;font-size:12px;">
+            <option value="0.7" ${stratZoom === 0.7 ? 'selected' : ''}>0.70x (Zoom 9 大地图实测)</option>
+            <option value="1.0" ${stratZoom === 1.0 ? 'selected' : ''}>1.00x (100% 原始基准尺寸)</option>
+            <option value="1.25" ${stratZoom === 1.25 ? 'selected' : ''}>1.25x (特写放大)</option>
+          </select>
+        </div>
+        <label style="font-size:12px;color:#a89f8f;display:flex;align-items:center;gap:4px;margin-left:auto;cursor:pointer;">
+          <input type="checkbox" id="le-strat-show-collision" ${stratShowCollision ? 'checked' : ''} /> 📐 三排排线与换排监测
+        </label>
+      </div>
+
+      ${hasChariot ? `
+      <!-- 战车专属对比切换栏（核心防换排检测工具） -->
+      <div style="display:flex;align-items:center;gap:10px;background:#261d15;border:1px solid #704820;border-radius:5px;padding:8px 12px;">
+        <span style="font-size:12px;font-weight:bold;color:#f3d7aa;">战车换排检测对比:</span>
+        <button type="button" class="le-btn le-btn-sm ${activeChariotScale === 1.0 ? 'le-btn-primary' : ''}" id="le-strat-chariot-10">战车 1.0 (原大 · 测换排)</button>
+        <button type="button" class="le-btn le-btn-sm ${activeChariotScale === 0.57 ? 'le-btn-primary' : ''}" id="le-strat-chariot-057">战车 0.57 (规整 · 三排清晰)</button>
+        <span style="font-size:11px;color:#d8b888;margin-left:auto;">当前测试缩放: <b>${activeChariotScale}x</b></span>
+      </div>
+      ` : ''}
+
+      <div class="le-strat-canvas-wrap">
+        <canvas id="le-strategic-canvas" width="720" height="380" class="le-strat-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- 阵型物理排布诊断与换排提示 -->
+    ${renderStrategicDiagnostics(mode, slots, activeChariotScale)}
+
+    <!-- 战略地图三排实测参数表（防换排监控） -->
+    <div class="le-form-section">
+      <div class="le-section-title">
+        <span>战略地图三排兵种实测参数（防换排监控）</span>
+        <span style="font-size:11px;color:#8ab4c4;font-weight:normal;">排距常数：纵向 63px · 横向 46px · 基准身高 68px</span>
+      </div>
+      <table class="le-table" style="font-size:11px;">
+        <thead>
+          <tr>
+            <th>排位</th>
+            <th>兵种</th>
+            <th>格数</th>
+            <th>缩放 (Scale)</th>
+            <th>实测绘制宽×高</th>
+            <th>纵向前伸 (Reach)</th>
+            <th>排前安全净距 (Clearance)</th>
+            <th>三排清晰度判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${slots.map((s, idx) => {
+            const rowNames = ['前排', '中坚', '后排'];
+            const u = DE_UNITS_MAP.get(s.type);
+            const isC = isChariotUnit(s.type);
+            const effectiveScale = (isC && stratChariotOverrideScale !== null) ? stratChariotOverrideScale : (s.scale ?? 1.0);
+            const approxW = Math.round((isC ? 152 : 64) * effectiveScale * (SPRITE_BASE_H / 64));
+            const approxH = Math.round((isC ? 136 : 64) * effectiveScale * (SPRITE_BASE_H / 64));
+            const reach = Math.round((isC ? 68 : 32) * effectiveScale * (SPRITE_BASE_H / 64));
+            const clearanceVal = 63 - reach;
+            const clearance = idx === 0 ? '—— (前锋顶线)' : `${clearanceVal > 0 ? '+' : ''}${clearanceVal} px`;
+            const isInvaded = idx > 0 && clearanceVal < 0;
+            return `
+            <tr>
+              <td style="color:#e0c888;font-weight:bold;">${rowNames[idx]}</td>
+              <td>${getUnitDisplayName(s.type)} <span style="color:#6a6258;">(${s.type})</span></td>
+              <td><b>${s.count}</b></td>
+              <td><span class="tier-tag ${effectiveScale !== 1.0 ? 'tier-elite' : 'tier-base'}">${effectiveScale}x</span></td>
+              <td style="font-family:monospace;">${approxW} × ${approxH} px</td>
+              <td style="font-family:monospace;">${reach} px</td>
+              <td style="font-family:monospace;font-weight:bold;color:${isInvaded ? '#ff7777' : (idx === 0 ? '#aaa' : '#77ff88')};">${clearance}</td>
+              <td>${isInvaded ? '<span style="color:#ff7777;font-weight:bold;">⚠️ 侵入前排 (换排混杂)</span>' : '<span style="color:#77ff88;">✅ 层次清晰 (绝不换排)</span>'}</td>
+            </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    `;
+
+    bindStrategicEvents(row);
+    startStrategicCanvas(row);
+}
+
+function bindStrategicEvents(row: FactionLegionRow): void {
+    document.getElementById('le-strat-act-idle')?.addEventListener('click', () => {
+        stratAction = 'idle';
+        renderStrategicPanel(row);
+    });
+    document.getElementById('le-strat-act-move')?.addEventListener('click', () => {
+        stratAction = 'move';
+        renderStrategicPanel(row);
+    });
+    document.getElementById('le-strat-act-attack')?.addEventListener('click', () => {
+        stratAction = 'attack';
+        renderStrategicPanel(row);
+    });
+    document.getElementById('le-strat-dir')?.addEventListener('change', (e) => {
+        stratDir = parseInt((e.target as HTMLSelectElement).value, 10);
+        startStrategicCanvas(row);
+    });
+    document.getElementById('le-strat-zoom')?.addEventListener('change', (e) => {
+        stratZoom = parseFloat((e.target as HTMLSelectElement).value);
+        startStrategicCanvas(row);
+    });
+    document.getElementById('le-strat-show-collision')?.addEventListener('change', (e) => {
+        stratShowCollision = (e.target as HTMLInputElement).checked;
+        startStrategicCanvas(row);
+    });
+    document.getElementById('le-strat-chariot-10')?.addEventListener('click', () => {
+        stratChariotOverrideScale = 1.0;
+        renderStrategicPanel(row);
+    });
+    document.getElementById('le-strat-chariot-057')?.addEventListener('click', () => {
+        stratChariotOverrideScale = 0.57;
+        renderStrategicPanel(row);
+    });
+}
+
+function startStrategicCanvas(row: FactionLegionRow): void {
+    if (stratAnimTimer !== null) {
+        cancelAnimationFrame(stratAnimTimer);
+        stratAnimTimer = null;
+    }
+
+    const canvas = document.getElementById('le-strategic-canvas') as HTMLCanvasElement;
+    if (!canvas || !currentEditingLegion) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const mode = currentEditingLegion.formationMode;
+    const slots = currentEditingLegion.slots;
+    const layout = getFormation9Layout(mode);
+
+    const spacingX = STRATEGIC_SPACING_X * stratZoom;
+    const spacingY = STRATEGIC_SPACING_Y * stratZoom;
+    const fAngle = (stratDir + 1) * Math.PI / 4;
+    const cos = Math.cos(fAngle);
+    const sin = Math.sin(fAngle);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2 + 15;
+
+    const unitPositions: Array<{
+        x: number;
+        y: number;
+        type: string;
+        scale: number;
+        rowIdx: number;
+        slotIdx: number;
+        c: number;
+        r: number;
+    }> = [];
+
+    layout.forEach((pos, idx) => {
+        const rowSlot = slots[pos.rowIdx];
+        if (!rowSlot) return;
+        const uType = rowSlot.type;
+        const isC = isChariotUnit(uType);
+        const slotScale = (isC && stratChariotOverrideScale !== null)
+            ? stratChariotOverrideScale
+            : (rowSlot.scale ?? 1.0);
+
+        const originalX = pos.c * spacingX;
+        const originalY = (pos.r - 1.0) * spacingY;
+        const rx = originalX * cos - originalY * sin;
+        const ry = originalX * sin + originalY * cos;
+
+        unitPositions.push({
+            x: cx + rx,
+            y: cy + ry,
+            type: uType,
+            scale: slotScale,
+            rowIdx: pos.rowIdx,
+            slotIdx: idx,
+            c: pos.c,
+            r: pos.r,
+        });
+    });
+
+    let frame = 0;
+    const renderLoop = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. 战略地图写实地形底色
+        const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        grad.addColorStop(0, '#162315');
+        grad.addColorStop(1, '#111b10');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. 战略经纬坐标网格（46×63 真实步长）
+        ctx.strokeStyle = 'rgba(38, 62, 36, 0.4)';
+        ctx.lineWidth = 1;
+        const stepX = Math.max(20, spacingX);
+        const stepY = Math.max(20, spacingY);
+        for (let x = (cx % stepX); x < canvas.width; x += stepX) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = (cy % stepY); y < canvas.height; y += stepY) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // 3. 战略罗盘方向标（右上角）
+        drawCompass(ctx, canvas.width - 45, 45, stratDir);
+
+        // 4. 脚底占位与三排阵线标记（主人铁律：重叠没事，关键是不要换排，三排兵要清晰）
+        if (stratShowCollision) {
+            // 4.1 三排基准排位线
+            const rowLineLabels = ['【前排】', '【中坚】', '【后排】'];
+            const rowLineColors = ['rgba(234, 179, 8, 0.75)', 'rgba(56, 189, 248, 0.75)', 'rgba(192, 132, 252, 0.75)'];
+            const halfW = 160 * stratZoom;
+
+            for (let r = 0; r < 3; r++) {
+                const oy = (r - 1.0) * spacingY;
+                const x1 = cx + (-halfW) * cos - oy * sin;
+                const y1 = cy + (-halfW) * sin + oy * cos;
+                const x2 = cx + (+halfW) * cos - oy * sin;
+                const y2 = cy + (+halfW) * sin + oy * cos;
+
+                ctx.save();
+                ctx.strokeStyle = rowLineColors[r];
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 5]);
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+
+                ctx.setLineDash([]);
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillStyle = rowLineColors[r];
+                ctx.textBaseline = 'middle';
+                const slotType = slots[r]?.type;
+                const slotName = slotType ? getUnitDisplayName(slotType) : '';
+                ctx.fillText(`${rowLineLabels[r]} ${slotName}`, x1 + (x1 < x2 ? -8 : 8), y1);
+                ctx.restore();
+            }
+
+            // 4.2 脚底格位准星
+            unitPositions.forEach(u => {
+                ctx.save();
+                ctx.translate(u.x, u.y);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 16 * stratZoom, 8 * stratZoom, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(70, 150, 60, 0.2)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(100, 200, 90, 0.5)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.strokeStyle = 'rgba(130, 230, 110, 0.7)';
+                ctx.beginPath();
+                ctx.moveTo(-5, 0); ctx.lineTo(5, 0);
+                ctx.moveTo(0, -3); ctx.lineTo(0, 3);
+                ctx.stroke();
+                ctx.restore();
+            });
+        }
+
+        // 5. 准备待绘制 Sprite
+        const drawItems: Array<{
+            u: typeof unitPositions[0];
+            img: HTMLImageElement;
+            sx: number; sy: number; sw: number; sh: number;
+            dx: number; dy: number; dw: number; dh: number;
+        }> = [];
+
+        unitPositions.forEach(u => {
+            const prefix = getUnitPathPrefix(u.type);
+            const actionName = stratAction;
+            const imgUrl = `${prefix}${actionName}_${stratDir}.png`;
+
+            if (!metaCache.has(prefix)) {
+                loadMeta(prefix).catch(() => {});
+            }
+            if (!spriteCache.has(imgUrl)) {
+                loadSprite(imgUrl).catch(() => {});
+            }
+            const meta = metaCache.get(prefix) || null;
+            const img = spriteCache.get(imgUrl);
+
+            if (img && img.complete && img.naturalWidth > 0) {
+                const actMeta = meta?.[actionName];
+                const dirMeta = actMeta?.dirs?.[String(stratDir)];
+
+                let totalFrames = 1;
+                let fw = 0; let fh = 0; let hx = 0; let hy = 0;
+                if (actMeta && dirMeta) {
+                    totalFrames = actMeta.frames;
+                    fw = dirMeta.fw; fh = dirMeta.fh; hx = dirMeta.hx; hy = dirMeta.hy;
+                } else {
+                    totalFrames = Math.max(1, Math.round(img.naturalWidth / img.naturalHeight));
+                    fw = img.naturalWidth / totalFrames; fh = img.naturalHeight;
+                    hx = fw / 2; hy = fh / 2;
+                }
+
+                const speedDivisor = stratAction === 'idle' ? 3 : 2;
+                const curFrame = Math.floor(frame / speedDivisor) % totalFrames;
+                const sx = curFrame * fw;
+                const sy = 0;
+                const sw = fw;
+                const sh = fh;
+
+                // 🔴 战略地图真机绘制比例公式（与 LegionPhalanxDrawer.ts 1813 行逐像素对齐）：
+                const baseHeight = SPRITE_BASE_H; // 68
+                const s = (baseHeight * stratZoom * u.scale) / 64;
+                const dw = fw * s;
+                const dh = fh * s;
+                const dx = u.x - hx * s;
+                const dy = u.y - hy * s;
+
+                drawItems.push({ u, img, sx, sy, sw, sh, dx, dy, dw, dh });
+            }
+        });
+
+        // 6. 跨排侵占（换排）检测（主人铁律：同排重叠没事，关键是不要换排，三排兵要清晰）
+        if (stratShowCollision) {
+            for (let i = 0; i < drawItems.length; i++) {
+                for (let j = i + 1; j < drawItems.length; j++) {
+                    const a = drawItems[i];
+                    const b = drawItems[j];
+                    // 仅检测不同排之间（跨排穿模即为换排）
+                    if (a.u.rowIdx !== b.u.rowIdx) {
+                        const left = Math.max(a.dx, b.dx);
+                        const right = Math.min(a.dx + a.dw, b.dx + b.dw);
+                        const top = Math.max(a.dy, b.dy);
+                        const bottom = Math.min(a.dy + a.dh, b.dy + b.dh);
+                        if (right > left && bottom > top) {
+                            const overlapWidth = right - left;
+                            const overlapHeight = bottom - top;
+                            if (overlapWidth > 8 && overlapHeight > 8) {
+                                ctx.save();
+                                ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+                                ctx.fillRect(left, top, overlapWidth, overlapHeight);
+                                ctx.strokeStyle = 'rgba(239, 68, 68, 0.9)';
+                                ctx.lineWidth = 1.5;
+                                ctx.setLineDash([4, 3]);
+                                ctx.strokeRect(left, top, overlapWidth, overlapHeight);
+
+                                ctx.setLineDash([]);
+                                ctx.fillStyle = '#fca5a5';
+                                ctx.font = 'bold 11px sans-serif';
+                                ctx.fillText(`⚠️ 跨排侵占(换排) ${Math.round(overlapHeight / stratZoom)}px`, left + 2, top - 4);
+                                ctx.restore();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 7. Y 轴排序后绘制 Sprite
+        drawItems.sort((a, b) => a.u.y - b.u.y);
+        drawItems.forEach(item => {
+            ctx.drawImage(item.img, item.sx, item.sy, item.sw, item.sh, item.dx, item.dy, item.dw, item.dh);
+            if (stratShowCollision) {
+                ctx.strokeStyle = 'rgba(150, 180, 140, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(item.dx, item.dy, item.dw, item.dh);
+            }
+        });
+
+        // 8. 绘制军团战旗
+        drawLegionFlag(ctx, cx, cy - 75 * stratZoom, row.flagColor, row.flagText, frame);
+
+        // 9. 顶部军团信息浮牌
+        drawLegionHUD(ctx, cx, 24, row.flagText, currentEditingLegion?.legionName || row.legionName || '军团');
+
+        frame++;
+        stratAnimTimer = requestAnimationFrame(renderLoop);
+    };
+
+    renderLoop();
+}
+
 function renderEditPanel(row: FactionLegionRow): void {
     if (!currentEditingLegion) return;
+    if (stratAnimTimer !== null) {
+        cancelAnimationFrame(stratAnimTimer);
+        stratAnimTimer = null;
+    }
+    els.panel.classList.remove('is-strategic');
 
     // 记住「高级微调」折叠面板的展开状态（重渲染时恢复，避免自动收缩）
     const tuneDetailsOpen = (document.getElementById('le-tune-details') as HTMLDetailsElement | null)?.open ?? true;
@@ -1960,9 +2740,9 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     // 三步向导状态：当前层 / 三层选项 / 当前层可选军团
     const curLayer = resolveCurrentLayer(row);
-    const curLegionType: 'region' | 'solo' = currentEditingLegion?.legionType === 'region' ? 'region' : 'solo';
+    const curLegionType: 'region' | 'sub' = isBase16CultureLegion(currentEditingLegion?.legionName || '') ? 'region' : 'sub';
     const currentLegionName = currentEditingLegion.legionName?.trim()
-        || (curLayer === 'culture' ? getCultureLegionName(row.region) : `${row.factionName}军团`);
+        || (curLayer === 'culture' ? getBase16LegionName(row.region) : `${row.factionName}军团`);
     const optCulture = getLayerLegionOptions('culture', row.factionId);
     const optSub = getLayerLegionOptions('sub', row.factionId);
     const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture : optSub;
@@ -1994,6 +2774,11 @@ function renderEditPanel(row: FactionLegionRow): void {
     const row3Type = slots[backIdx]?.type || 'archer';
     const row3Scale = slots[backIdx]?.scale ?? DE_UNITS_MAP.get(row3Type)?.defaultScale ?? 1.0;
 
+    const conflictLegions = getMultiCompositionLegionNames();
+    const isMultiComp = conflictLegions.has(currentLegionName);
+    const savedLegion = getAllDistinctLegions().get(currentLegionName);
+    const isModified = savedLegion && legionSig(savedLegion) !== legionSig(currentEditingLegion);
+
     const html = `
     <!-- 武将信息卡 -->
     <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:12px;">
@@ -2014,23 +2799,42 @@ function renderEditPanel(row: FactionLegionRow): void {
       <span style="font-size:11px;padding:2px 7px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;">🚢 套用战舰：${getNavalShipChineseName(getCultureNavalShip(row.region, row.factionId))}</span>
     </div>
 
+    ${isMultiComp ? `
+    <!-- 🔴 军团编制冲突报错 -->
+    <div style="background:#3d1414;border:1px solid #9e2a2a;border-radius:6px;padding:10px 14px;margin-bottom:12px;color:#ffb4a8;">
+      <div style="font-weight:bold;font-size:13px;color:#ff6b6b;display:flex;align-items:center;gap:6px;">
+        <span>❌ 军团编制冲突：一个军团只能有一种编制，不然就报错！</span>
+      </div>
+      <div style="font-size:12px;margin-top:6px;color:#f0c0b8;line-height:1.5;">
+        军团【${currentLegionName}】当前在多个势力间存在不同编制。<b>一种编制是指三排兵种排列一样（前排、中坚、后排兵种相同且阵型相同）。</b><br/>
+        若要统一该军团编制，请选择或配置好三排兵种后，点击下方<b>「② 保存军团编制 · 全体同步」</b>！
+      </div>
+    </div>
+    ` : (isModified ? `
+    <!-- ⚠️ 编制未保存修改提示 -->
+    <div style="background:#2d2010;border:1px solid #735020;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#e8d098;line-height:1.5;">
+      ⚠️ <b>编制已修改（未保存）：</b>当前三排兵种排列与已保存编制不一致。<b>一个军团只能有一种编制，不然就报错。</b><br/>
+      若要更新此军团所有使用者，请点击下方<b>「② 保存军团编制 · 全体同步」</b>；若要创建独立新军团，请点击下方<b>「③ 另存为新军团」</b>。
+    </div>
+    ` : '')}
+
     <!-- 选军团：从现有军团套用（同名同编制） -->
     <div class="le-wizard-step">
       <div class="le-step-no">选军团</div>
-      <div class="le-step-title">从现有军团套用（点击卡片即套用，再点底部「保存」落盘）</div>
+      <div class="le-step-title">从现有军团选择（选好后点「保存武将换军团」；修改兵种或阵型后点「保存军团编制」）</div>
       <div class="le-layer-grid" style="margin-bottom:8px;">
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
-          <div class="le-layer-title">🏛️ 文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
+          <div class="le-layer-title">🏛️ 一级：文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
-          <div class="le-layer-title">⭐ 特定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
+          <div class="le-layer-title">⭐ 二级：制定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
         </button>
       </div>
-      <div class="le-era-tabs">
+      <div class="le-era-tabs" style="${selectedLayerTab === 'culture' ? 'display:none;' : ''}">
         <button type="button" class="le-era-btn ${legionEraFilter === 'all' ? 'active' : ''}" data-legionera="all">全部</button>
         ${AGE_ORDER.map(a => '<button type="button" class="le-era-btn ' + (legionEraFilter === a ? 'active' : '') + '" data-legionera="' + a + '" title="' + AGE_YEARS[a].span + '　' + AGE_YEARS[a].anchor + '">' + AGE_LABEL[a] + '</button>').join('')}
       </div>
-      <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
+      <input id="le-legion-search" class="le-input" type="search" placeholder="🔍 搜索军团名 / 兵种…" style="width:100%;margin-bottom:8px;box-sizing:border-box;" value="${legionSearchQuery}" />
       <div class="le-legion-grid"></div>
     </div>
 
@@ -2118,15 +2922,15 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 第三步 · 军团种类 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第三步</div>
-      <div class="le-step-title">军团种类（文化军团 / 特定军团）</div>
+      <div class="le-step-title">军团层级（一级：文化军团 / 二级：制定军团）</div>
       <div class="le-layer-grid">
         <button type="button" class="le-layer-btn ${curLegionType === 'region' ? 'active' : ''}" data-legiontype="region">
-          <div class="le-layer-title">🏛️ 文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
-          <div class="le-layer-desc">一文化一个<br/>一键可恢复</div>
+          <div class="le-layer-title">🏛️ 一级：文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
+          <div class="le-layer-desc">16大区文化<br/>一文化一个·一键可恢复</div>
         </button>
-        <button type="button" class="le-layer-btn ${curLegionType === 'solo' ? 'active' : ''}" data-legiontype="solo">
-          <div class="le-layer-title">⭐ 特定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
-          <div class="le-layer-desc">自己创建<br/>独立不联动</div>
+        <button type="button" class="le-layer-btn ${curLegionType === 'sub' ? 'active' : ''}" data-legiontype="sub">
+          <div class="le-layer-title">⭐ 二级：制定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
+          <div class="le-layer-desc">从16文化母体延伸<br/>专属独立制定</div>
         </button>
       </div>
     </div>
@@ -2135,10 +2939,10 @@ function renderEditPanel(row: FactionLegionRow): void {
     <div class="le-form-section">
       <div class="le-section-title">
         <span>军团名称</span>
-        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">必须以「军团」二字结尾</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">须包含时代且以「军团」二字结尾</span>
       </div>
-      <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || row.factionName + '军团'}" placeholder="例如：秦国军团、大秦长城军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
-      ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''} · 选「特定军团」自动命名为【${row.eliteName}军团】</div>` : ''}
+      <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || ''}" placeholder="例如：古典时代秦汉军团、城堡时代蒙古军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
+      ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''}</div>` : ''}
     </div>
 
     <!-- 实时预览（折叠） -->
@@ -2152,6 +2956,7 @@ function renderEditPanel(row: FactionLegionRow): void {
           <button type="button" class="le-btn le-btn-sm ${previewViewMode === 'single' ? 'le-btn-primary' : ''}" id="le-view-single">🔍 单兵特写</button>
           <button type="button" class="le-btn le-btn-sm ${previewViewMode === 'three' ? 'le-btn-primary' : ''}" id="le-view-three">🛡️ 三排各1兵</button>
           <button type="button" class="le-btn le-btn-sm ${previewViewMode === 'phalanx' ? 'le-btn-primary' : ''}" id="le-view-phalanx">⚔ 9人方阵</button>
+          <button type="button" class="le-btn le-btn-sm ${previewViewMode === 'strategic' ? 'le-btn-primary' : ''}" id="le-view-strategic">🗺️ 战略真机</button>
           ${previewViewMode === 'single' ? `
           <div style="display:flex;gap:4px;margin-left:8px;">
             <button type="button" class="le-btn le-btn-sm ${singlePreviewRow === 0 ? 'le-btn-primary' : ''}" id="le-single-r0">前排</button>
@@ -2176,21 +2981,28 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     <!-- 保存：两件事分开（2026-09-07 主人定「一个是武将套用军团，一个编辑军团，分开了」） -->
     <div class="le-form-section">
-      <div class="le-section-title"><span>① 套用军团给这个势力</span></div>
+      <div class="le-section-title"><span>① 保存武将换军团 · 只改归属</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
-        只改【${row.factionName}】一家：把上面选中的军团挂到它头上。<b>不会动军团本身，也不会影响别的势力。</b>
+        把已保存的【${currentLegionName}】套用给【${row.generalName || row.factionName}】，只改归属。<b>修改过三排兵种或阵型，请先用下方按钮保存军团编制，全体同步。</b>
       </div>
-      <button type="button" id="le-btn-apply-faction" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">🎖️ 套用【${currentLegionName}】给【${row.generalName || row.factionName}】</button>
-      <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">↺ 取消套用，回到文化军团【${getCultureLegionName(row.region)}】</button>
+      <button type="button" id="le-btn-apply-faction" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">💾 保存武将换军团：【${row.generalName || row.factionName}】→【${currentLegionName}】</button>
+      <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">↺ 恢复并保存归属：一级文化军团【${getCultureLegionName(row.region)}】</button>
     </div>
 
     <div class="le-form-section">
-      <div class="le-section-title"><span>② 编辑军团本身</span></div>
+      <div class="le-section-title"><span>② 保存军团编制 · 全体同步</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
-        改的是【${currentLegionName}】这支军团的编成，<b>所有用它的文化区和势力一起变</b>（一个军团名只能有一种编制）。
+        改的是【${currentLegionName}】这支军团的编成，<b>所有用它的文化区和势力一起变</b>。<b>前/中/后三排兵种与阵型统一，严禁只给一家保存同名的另一套编制。</b>
       </div>
-      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">✏️ 保存【${currentLegionName}】的编成（同名一起改）</button>
-      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为新军团（起个新名字，只给这一家）</button>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">💾 保存军团编制：【${currentLegionName}】（全体同步 · Ctrl+S）</button>
+    </div>
+
+    <div class="le-form-section">
+      <div class="le-section-title"><span>③ 另存为二级制定军团 · 新名称</span></div>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
+        将当前编制保存为一个新名称的二级制定军团，并给【${row.generalName || row.factionName}】使用。已有军团名请使用上方「保存军团编制」。
+      </div>
+      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为二级制定军团（起个新名字，只给这一家）</button>
     </div>
     `;
 
@@ -2256,6 +3068,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     document.getElementById('le-view-single')?.addEventListener('click', () => { previewViewMode = 'single'; renderEditPanel(row); });
     document.getElementById('le-view-three')?.addEventListener('click', () => { previewViewMode = 'three'; renderEditPanel(row); });
     document.getElementById('le-view-phalanx')?.addEventListener('click', () => { previewViewMode = 'phalanx'; renderEditPanel(row); });
+    document.getElementById('le-view-strategic')?.addEventListener('click', () => { previewViewMode = 'strategic'; renderEditPanel(row); });
     document.getElementById('le-single-r0')?.addEventListener('click', () => { singlePreviewRow = 0; renderEditPanel(row); });
     document.getElementById('le-single-r1')?.addEventListener('click', () => { singlePreviewRow = 1; renderEditPanel(row); });
     document.getElementById('le-single-r2')?.addEventListener('click', () => { singlePreviewRow = 2; renderEditPanel(row); });
@@ -2276,28 +3089,33 @@ function bindPanelEvents(row: FactionLegionRow): void {
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        showToast(`↺ 已恢复【${row.factionName}】为文化军团【${getCultureLegionName(row.region)}】`);
+        showToast(`↺ 已恢复【${row.factionName}】为一级文化军团【${getCultureLegionName(row.region)}】`);
     });
 
-    // ① 套用军团给这个势力：只写 FactionCompositions 一条，绝不碰文化军团、也不碰别的势力。
+    // ① 保存武将换军团 · 只改归属：只写 FactionCompositions 一条，绝不碰文化军团、也不碰别的势力。
     //    🔴 [2026-09-07 主人定「一个是武将套用军团，一个编辑军团，分开了」]
     //       原来只有一个 💾，它会按「当前是不是文化层」自己决定写哪儿 —— 结果主人想给
     //       某个武将换支军团，却把整个文化区冲掉（罗马、希腊、赫梯先后中招三次）。
     document.getElementById('le-btn-apply-faction')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
         const name = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
+        const savedLegion = getAllDistinctLegions().get(name);
+        if (!savedLegion || legionSig(savedLegion) !== legionSig(currentEditingLegion)) {
+            showToast('❌ 一个军团只能有一种编制。一种编制是指三排兵种排列一样！请先保存军团编制（全体同步），再给武将换军团。', true);
+            return;
+        }
         localCustomCompositions[row.factionId] = {
             legionName: name,
             legionType: currentEditingLegion.legionType,
-            formationMode: currentEditingLegion.formationMode,
+            formationMode: savedLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
-            slots: currentEditingLegion.slots.map(s => ({ ...s })),
+            slots: savedLegion.slots.map(s => ({ ...s })),
         };
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
         if (await saveAllCompositions()) {
-            showToast(`🎖️ 已把【${name}】套用给【${row.generalName || row.factionName}】（只改这一家）`);
+            showToast(`✅ 武将换军团已保存：【${row.generalName || row.factionName}】→【${name}】（只改归属）`);
         }
     });
 
@@ -2313,7 +3131,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         // 🔴 [2026-09-07 主人定] 这个按钮只干一件事：**改这支军团本身**。
         //    落到哪个文化区，看的是**军团名归谁**，不是「当前势力在哪个区」——
         //    原来按势力所在区写，于是给奇里乞亚（在赫梯区）套罗马军团再保存，
-        //    就把古典赫梯军团整个冲成了罗马那套（罗马、希腊、赫梯先后被冲三次）。
+        //    就把古典时代赫梯军团整个冲成了罗马那套（罗马、希腊、赫梯先后被冲三次）。
         const savedLegionName = inputLegionName || `${row.factionName}军团`;
         const owningCultures = (REGION_ORDER as RegionType[]).filter(
             r => getCultureLegionName(r) === savedLegionName,
@@ -2335,15 +3153,19 @@ function bindPanelEvents(row: FactionLegionRow): void {
             slots: currentEditingLegion.slots.map(s => ({ ...s })),
         };
 
-        // 编制同步：同名军团共享阵型 + 三排兵种（名字/legionType/海军阵型各自保留）
+        // 编制同步：所有使用该军团名（含隐式默认）的势力全部同步为同一套三排兵种与阵型
         let compSyncCount = 0;
         if (newLegionName) {
-            for (const fid of Object.keys(localCustomCompositions)) {
-                const comp = localCustomCompositions[fid];
-                if (fid !== row.factionId && comp?.legionName?.trim() === newLegionName) {
-                    localCustomCompositions[fid] = {
-                        ...comp,
+            for (const r of allRows) {
+                if (r.factionId === row.factionId) continue;
+                if (effectiveLegionName(r) === newLegionName) {
+                    const existing = localCustomCompositions[r.factionId];
+                    localCustomCompositions[r.factionId] = {
+                        ...(existing || {}),
+                        legionName: newLegionName,
+                        legionType: existing?.legionType || 'region',
                         formationMode: currentEditingLegion.formationMode,
+                        navalFormation: existing?.navalFormation ?? 'auto',
                         slots: currentEditingLegion.slots.map(s => ({ ...s })),
                     };
                     compSyncCount++;
@@ -2356,7 +3178,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         selectFaction(row.factionId);
         // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
         // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
-        await saveAllCompositions();
+        if (!await saveAllCompositions()) return;
         showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
             + (compSyncCount > 0 ? `；同名军团编制同步了 ${compSyncCount} 个势力` : ''));
     });
@@ -2367,6 +3189,10 @@ function bindPanelEvents(row: FactionLegionRow): void {
         const curName = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
         const newName = (window.prompt('输入新军团名（另存为独立军团，不会同步到其他同名势力）：', curName))?.trim();
         if (!newName) return;
+        if (getAllDistinctLegions().has(newName)) {
+            showToast(`❌ 军团【${newName}】已存在。一个军团只能有一种编制（三排兵种排列一样），请使用「保存军团编制（全体同步）」或填写未被占用的新名称！`, true);
+            return;
+        }
         if (newName.includes('军军团')) {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
             return;
@@ -2382,20 +3208,17 @@ function bindPanelEvents(row: FactionLegionRow): void {
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        await saveAllCompositions();
-        showToast(`✅ 已另存为【${newName}】独立军团并写入文件（未联动其他势力）`);
+        if (!await saveAllCompositions()) return;
+        showToast(`✅ 已另存为【${newName}】二级制定军团并写入文件（未联动其他势力）`);
     });
 
     // 军团种类选择（第三步）
     els.panelContent.querySelectorAll('.le-layer-btn[data-legiontype]').forEach(btn => {
         btn.addEventListener('click', () => {
-            const lt = (btn as HTMLElement).dataset.legiontype as 'region' | 'solo';
+            const lt = (btn as HTMLElement).dataset.legiontype as 'region' | 'sub';
             if (currentEditingLegion) {
                 currentEditingLegion.legionType = lt;
-                // 特定军团 → 军团名自动命名「精锐番号 + 军团」（如 蕃落骑 → 蕃落骑军团）
-                if (lt === 'solo' && row.eliteName) {
-                    currentEditingLegion.legionName = row.eliteName.replace(/军+$/, '') + '军团';
-                }
+                // 🔴 [2026-09-10 主人定] 军团命名都要加时代，不再自动命名
                 renderEditPanel(row);
             }
         });
@@ -2425,13 +3248,21 @@ function bindPanelEvents(row: FactionLegionRow): void {
     });
 }
 
-/** 按当前搜索词过滤「第二步」军团卡片（仅匹配军团名） */
+/** 按当前搜索词过滤「第二步」军团卡片（匹配军团名与所含兵种） */
 function filterLegionOptionsByQuery(options: LayerLegionOption[]): LayerLegionOption[] {
     const q = legionSearchQuery.trim().toLowerCase();
-    return q ? options.filter(o => o.legionName.toLowerCase().includes(q)) : options;
+    if (!q) return options;
+    return options.filter(o => {
+        if (o.legionName.toLowerCase().includes(q)) return true;
+        return o.slots.some(s => {
+            if (!s?.type) return false;
+            const name = getUnitDisplayName(s.type).toLowerCase();
+            return s.type.toLowerCase().includes(q) || name.includes(q);
+        });
+    });
 }
 
-/** 绑定单个「选军团」卡片点击（选中即套用） */
+/** 点击卡片只选择；换归属与编辑编制由各自保存按钮落盘。 */
 function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
     card.addEventListener('click', () => {
         const key = card.dataset.key!;
@@ -2445,10 +3276,11 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
             formationMode: target.formationMode,
             navalFormation: currentEditingLegion?.navalFormation ?? 'auto',
             slots: target.slots.map(s => ({ ...s })),
+            legionType: isBase16CultureLegion(target.legionName) ? 'region' : 'sub',
         };
         selectedLayerKey = key;
         renderEditPanel(row);
-        showToast(`⬇ 已为【${row.generalName || row.factionName}】套用【${target.legionName}】(${LAYER_FULL_LABEL[selectedLayerTab]})，点底部保存落盘`);
+        showToast(`已选中【${target.legionName}】；给【${row.generalName || row.factionName}】换军团请点「保存武将换军团」，修改编制请点「保存军团编制」`);
     });
 }
 
@@ -2456,15 +3288,20 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
 function renderLegionCardGrid(row: FactionLegionRow): void {
     const gridEl = els.panelContent.querySelector('.le-legion-grid');
     if (!gridEl) return;
+    const isCultureLayer = selectedLayerTab === 'culture';
+    const eraTabsEl = els.panelContent.querySelector('.le-era-tabs') as HTMLElement | null;
+    if (eraTabsEl) {
+        eraTabsEl.style.display = isCultureLayer ? 'none' : 'flex';
+    }
     const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
     const visible = filterLegionOptionsByQuery(options)
-        .filter(o => legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
+        .filter(o => isCultureLayer || legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
     const isSubLayer = selectedLayerTab === 'sub';
     const eraCount = (a: UnitAge) => options.filter(o => getLegionEra(o.legionName, o.slots) === a).length;
     gridEl.innerHTML = visible.map(opt => `
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
         <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}
-          <span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>
+          ${isBase16CultureLegion(opt.legionName) || isCultureLayer ? '' : `<span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>`}
           ${opt.shipName ? `<span class="le-ship-tag" style="font-size:9px;padding:1px 5px;margin-left:4px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;font-weight:normal;" title="套用战舰：${opt.shipName} (${opt.shipId})">🚢 ${opt.shipName}</span>` : ''}
           ${(() => {
             const lp = getLegionPower(opt.slots);
@@ -2475,7 +3312,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
           })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
-        ${isSubLayer ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此军团，用它的势力恢复为所在文化军团">🗑</button>` : ''}
+        ${isSubLayer && !isRegionLegionName(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此二级制定军团，用它的势力恢复为所在文化的一级文化军团">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
@@ -2491,12 +3328,16 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
         });
     });
     gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
-    // 删除军团（仅特定军团层渲染删除按钮；文化军团不渲染，天然不可删）
+    // 删除军团（仅二级自建军团渲染删除按钮；文化军团不渲染，天然不可删）
     gridEl.querySelectorAll('.le-legion-delete[data-delete-name]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             const name = (btn as HTMLElement).dataset.deleteName!;
-            if (!window.confirm(`删除军团【${name}】？用它的所有势力将恢复为所在文化的文化军团。`)) return;
+            if (isRegionLegionName(name)) {
+                showToast('❌ 文化军团不可删除', true);
+                return;
+            }
+            if (!window.confirm(`删除二级制定军团【${name}】？用它的所有势力将恢复为所在文化的一级文化军团。`)) return;
             await deleteSpecificLegion(name);
             renderEditPanel(row);
         });
@@ -2522,9 +3363,8 @@ function isLegionUsedByOther(factionId: string, legionName: string): boolean {
 }
 
 /**
- * 军团命名铁律自动校验：
- *   ① 相同编制（阵型 + 兵种 type:count 序列 = legionSig）的军团必须同名；
- *   ② 军团不能重名（同名军团必须同编制）。
+ * 军团命名铁律自动校验（2026-09-10 主人定）：唯一铁律「一个军团只能有一种编制」。
+ *   同名军团（前/中/后三排兵种 + 阵型）必须一致，不一致 = 违规。
  * 返回违规信息列表；无违规则空数组。
  */
 function computeLegionNameViolations(): string[] {
@@ -2539,27 +3379,7 @@ function computeLegionNameViolations(): string[] {
         hasCustom: !!localCustomCompositions[r.factionId],
     }));
 
-    // ① 相同编制必须同名
-    const sigMap = new Map<string, string[]>();
-    const sigFactions = new Map<string, string[]>();
-    for (const e of eff) {
-        if (!sigMap.has(e.sig)) { sigMap.set(e.sig, []); sigFactions.set(e.sig, []); }
-        if (!sigMap.get(e.sig)!.includes(e.name)) sigMap.get(e.sig)!.push(e.name);
-        sigFactions.get(e.sig)!.push(e.factionName);
-    }
-    for (const [sig, names] of sigMap.entries()) {
-        if (names.length > 1) {
-            // 🔴 [2026-08-31 修·豁免过宽] 只有**整组都是文化军团**才豁免 ——
-            //    不同文化区复用父文化编制（东欧军团 / 瓦拉几亚军团）是正常的，不该报错。
-            //    但原来写的是 `names.some(...)`：只要组里**有一个**文化军团就整组放行，
-            //    于是「特定军团编制 == 文化军团编制」这种**最该被合并**的情况永远检不出来，
-            //    一键修复也就永远不会把它归成文化军团（主人 2026-08-31 要的正是这条）。
-            if (names.every(n => isRegionLegionName(n))) continue;
-            violations.push(`相同编制（${sig}）但军团名不同：${sigFactions.get(sig)!.join('、')} → 名字 ${names.join(' / ')}（相同编制军团必须同名）`);
-        }
-    }
-
-    // ② 军团不能重名（同名不同编）
+    // 🔴 [2026-09-10 主人定] 唯一铁律：一个军团只能有一种编制（前/中/后三排兵种 + 阵型一致）。
     const nameSigs = new Map<string, Set<string>>();
     const nameFactions = new Map<string, string[]>();
     for (const e of eff) {
@@ -2581,66 +3401,49 @@ function computeLegionNameViolations(): string[] {
             const entries = [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
             const side = (fs: string[]) => fs.length > 4 ? `${fs.slice(0, 4).join('、')}等 ${fs.length} 家` : fs.join('、');
             violations.push(
-                `【${name}】编制不一致：` + entries.map(([, fs]) => side(fs)).join('　↔　'),
+                `【${name}】编制不一致（一个军团只能有一种编制，三排兵种排列必须一样）：` + entries.map(([, fs]) => side(fs)).join('　↔　'),
             );
         }
     }
 
-    // ③ 特定军团只能一个势力套用
-    const soloUsers = new Map<string, string[]>();
-    for (const row of allRows) {
-        const custom = localCustomCompositions[row.factionId];
-        if (custom?.legionType === 'solo') {
-            const n = custom.legionName?.trim();
-            if (!n) continue;
-            if (!soloUsers.has(n)) soloUsers.set(n, []);
-            soloUsers.get(n)!.push(row.factionName);
-        }
+    // 🔴 [2026-09-10 主人定] 兵种套用检查：步兵/骑兵/远程兵种没被任何军团套用 → 报错。
+    const usedUnitTypes = new Set<string>();
+    for (const r of allRows) {
+        for (const s of r.slots) usedUnitTypes.add(s.type);
     }
-    for (const [name, users] of soloUsers.entries()) {
-        if (users.length > 1) {
-            violations.push(`特定军团【${name}】被多个势力使用（只能一个套用）：${users.join('、')}`);
+    for (const cat of ['infantry', 'cavalry', 'ranged'] as const) {
+        const uncovered = DE_UNITS_CATALOG.filter(u => u.category === cat && !usedUnitTypes.has(u.id));
+        if (uncovered.length > 0) {
+            violations.push(
+                `【${CATEGORY_LABEL[cat]}】${uncovered.length} 种兵种未在任何军团中套用：${uncovered.map(u => `${u.name}（${u.id}）`).join('、')}`,
+            );
         }
     }
 
-    // ④ 文化军团没有任何势力套用（每个文化军团至少一个势力使用默认名）
-    const usedNames = new Set<string>();
-    for (const row of allRows) {
-        usedNames.add(effectiveLegionName(row));
+    // 🔴 [2026-09-11 主人定] 武将套用检查：军团没被武将套用 → 报错（所有军团必须都被武将套用）。
+    const nameHasGeneral = new Map<string, boolean>();
+    for (const r of allRows) {
+        const n = effectiveLegionName(r);
+        if (!n) continue;
+        if (!nameHasGeneral.has(n)) nameHasGeneral.set(n, false);
+        if (r.generalName) nameHasGeneral.set(n, true);
     }
-    for (const region of REGION_ORDER) {
-        // 🔴 [2026-08-31] 先查「这个文化到底有没有保底军团」。
-        //    getCultureLegionName 查不到时会**静默回落到 CENTRAL 的名字**，
-        //    于是缺条目的文化会伪装成「有军团」，检查白跑（主人要求①：每个文化都要有保底军团）。
-        if (!CULTURE_LEGION_NAMES[region]) {
-            violations.push(`文化【${REGION_LABELS[region] ?? region}】没有保底军团（CULTURE_LEGION_NAMES 缺条目，当前静默回落到 CENTRAL）`);
-        }
-    }
-    // 🔴 [2026-08-31 主人要求①「对应着据点文化」] 原判据是「文化军团没人套用就报错」，
-    //    那条会**误伤合理设计**：阿契美尼德只有一个势力、用的是特定军团【不死军团】（史实正确），
-    //    于是「阿契美尼德军团无人套用」被报成违规，但它并没有错 —— 保底军团存在即可，不必有人用。
-    //    真正该抓的是**用了别的文化的军团**：瓦拉几亚的势力在用【拉丁军团】【东欧军团】，
-    //    据点文化和军团文化对不上，这才违反「对应着据点文化」。
-    // 🔴 [2026-08-31 实测发现] 有势力的 region 压根**不在 65 个文化里**
-    //    （塔万廷苏尤=INCAS、库特布朝=INDIANS、克尔曼=PERSIANS、奥德里西亚=THRACIANS，
-    //     看着像 AoE2 文明名混进了 RegionType）。这些势力 getCultureLegionName 查不到，
-    //    **静默回落成【中原军团】** —— 界面上文化列还显示原始 ID 而非中文标签。
-    //    这类据点等于没有对应文化的保底军团，正是主人要求①要抓的。
-    const knownRegions = new Set<string>(REGION_ORDER as readonly string[]);
-    const unknownRegionFactions = new Map<string, string[]>();
-    for (const row of allRows) {
-        if (knownRegions.has(row.region)) continue;
-        if (!unknownRegionFactions.has(row.region)) unknownRegionFactions.set(row.region, []);
-        unknownRegionFactions.get(row.region)!.push(row.factionName);
-    }
-    for (const [rg, fs] of unknownRegionFactions) {
-        violations.push(`据点文化【${rg}】不在 65 个文化区内（REGION_ORDER 无此项），保底军团被静默算成【${getCultureLegionName(rg as RegionType)}】：${fs.join('、')}（请把这些据点的文化改成正式文化区）`);
+    for (const [name, has] of nameHasGeneral.entries()) {
+        if (!has) violations.push(`【${name}】没有被武将套用（所有军团必须都被武将套用）`);
     }
 
-    // 🔴 [2026-09-01 主人拍板] 「跨文化借用军团」的提示已删除：
-    //    实测 66 个多为子文化有意复用，**根本不用改**，却刷出十几条刷屏，把真错误淹掉。
-    //    这里只报真正要改的：相同编制不同名 / 重名不同编 / 个人军团被多家套用 /
-    //    文化缺保底军团 / 据点文化不在 65 区内。不用改的一律不提示。
+    // 🔴 [2026-09-11 主人定] 象兵/战车检查：一个军团只能一排象兵或一排战车，同时出现象兵+战车也要报错。
+    const seenEleChariot = new Set<string>();
+    for (const r of allRows) {
+        const n = effectiveLegionName(r);
+        if (!n || seenEleChariot.has(n)) continue;
+        seenEleChariot.add(n);
+        const ele = r.slots.filter(s => getUnitSubcategory(s.type) === 'elephant').length;
+        const cha = r.slots.filter(s => getUnitSubcategory(s.type) === 'chariot').length;
+        if (ele > 1 || cha > 1 || (ele > 0 && cha > 0)) {
+            violations.push(`【${n}】象兵/战车违规：象兵 ${ele} 排、战车 ${cha} 排（一个军团只能一排象兵或一排战车，不能同时出现）`);
+        }
+    }
 
     return violations;
 }
@@ -2650,103 +3453,29 @@ function reportLegionNameViolations(silentWhenClean = false): void {
     const violations = computeLegionNameViolations();
     if (violations.length === 0) {
         // 打开编辑器时的自动校验走 silent：没错就别弹绿条打扰
-        if (!silentWhenClean) showToast('✅ 军团命名检查通过：无同名/相同编制不同名违规');
+        if (!silentWhenClean) showToast('✅ 军团命名检查通过：无同名不同编违规');
         return;
     }
     openLegionViolationsModal(violations);
 }
 
 /**
- * 一键修复（2026-08-31 主人重定规则）。
+ * 一键修复（2026-09-10 主人定）：唯一铁律「一个军团只能有一种编制」。
  *
- * 规则（按优先级）：
- *   ① **相同编制必须同名**。组里若有文化军团 → 全组归**文化军团**（文化军团是保底，永不被改名）；
- *      优先归**势力自己所在文化**的那个（避免据点挂着别的文化的军团名），否则取 REGION_ORDER 最靠前的。
- *   ② 全是特定军团 → 归**更早的**那个（文件顺序靠前）。
- *   ③ **同名不同编** → 最早的那个保留原名，后来的按「原名·文化标签」改名（必要时加序号）。
+ * 规则：**同名不同编** → 最早的那个保留原名，后来的按「原名·文化标签」改名（必要时加序号）。
  *      不采用「直接回落文化军团」，因为那会**丢掉人工调好的编制**；改名只动名字，数据不丢。
- *
- * 🔴 归并到文化军团时必须**连 legionType 一起改**（'region'），只改 legionName 会留下
- *    legionType='solo' 的势力，反而触发「个人军团只能一个套用」的新违规 —— 修一个造一个。
- *    若归位的正好是该势力**自己文化**的军团，直接删掉 override 让它跟随默认，最干净。
  */
 async function autoFixLegions(): Promise<string> {
     const actions: string[] = [];
     let changed = 0;
 
-    // 文化军团编制签名表：sig → region[]（用默认编制，不受势力 override 影响）
-    const cultureSigToRegions = new Map<string, RegionType[]>();
+    // 文化区 → 文化军团名（同名不同编修复时判「是不是文化军团」用）
     const cultureNameByRegion = new Map<RegionType, string>();
     for (const rg of REGION_ORDER) {
-        const def = getRegionDefaultLegion(rg);
-        const sig = legionSig({ formationMode: def.formationMode, slots: def.slots });
-        if (!cultureSigToRegions.has(sig)) cultureSigToRegions.set(sig, []);
-        cultureSigToRegions.get(sig)!.push(rg);
         cultureNameByRegion.set(rg, getCultureLegionName(rg));
     }
 
-    // ── ① + ② 相同编制归并 ──────────────────────────────────────
-    // 名字 → 首次出现顺序（"更早" 的判据）
-    const nameOrder = new Map<string, number>();
-    let ord = 0;
-    for (const row of allRows) {
-        const n = effectiveLegionName(row);
-        if (!nameOrder.has(n)) nameOrder.set(n, ord++);
-    }
-    // 按编制分组（只看非文化军团的势力：文化军团是基准，不动）
-    const sigGroups = new Map<string, FactionLegionRow[]>();
-    for (const row of allRows) {
-        const sig = legionSig(row);
-        if (!sigGroups.has(sig)) sigGroups.set(sig, []);
-        sigGroups.get(sig)!.push(row);
-    }
-    for (const [sig, rows] of sigGroups) {
-        const names = [...new Set(rows.map(r => effectiveLegionName(r)))];
-        if (names.length <= 1) continue;
-        const cultureRegions = cultureSigToRegions.get(sig) ?? [];
-        for (const row of rows) {
-            const cur = effectiveLegionName(row);
-            if (isRegionLegionName(cur)) continue;   // 文化军团不改名
-            let target: RegionType | null = null;
-            if (cultureRegions.includes(row.region as RegionType)) {
-                target = row.region as RegionType;            // 优先自己文化
-            } else if (cultureRegions.length > 0) {
-                target = cultureRegions[0];                    // 否则最靠前的文化
-            }
-            if (target) {
-                // ① 归文化军团
-                const targetName = cultureNameByRegion.get(target)!;
-                if (cur === targetName) continue;
-                if (target === row.region) {
-                    delete localCustomCompositions[row.factionId];   // 跟随本文化默认，最干净
-                } else {
-                    localCustomCompositions[row.factionId] = {
-                        ...buildCultureLegion(target),
-                    };
-                }
-                actions.push(`${row.factionName}：${cur} → ${targetName}（编制同文化军团）`);
-                changed++;
-            } else {
-                // ② 全是特定军团 → 归更早的
-                const keep = names.slice().sort((a, b) => (nameOrder.get(a) ?? 0) - (nameOrder.get(b) ?? 0))[0];
-                if (cur === keep) continue;
-                const custom = localCustomCompositions[row.factionId];
-                if (!custom) continue;
-                localCustomCompositions[row.factionId] = { ...custom, legionName: keep };
-                actions.push(`${row.factionName}：${cur} → ${keep}（同编制归更早军团）`);
-                changed++;
-            }
-        }
-    }
-
-    // ── ④ 「用了别的文化的军团」**只报告、不自动改** ─────────────
-    //    🔴 [2026-08-31] 实测这类势力有 **66 个**，而且形态明显是**子文化有意复用**：
-    //       库曼×9 用草原军团、印度×7 用补噜军团、拉丁×5 用西班牙军团 / ×4 用意大利军团……
-    //       这些是设计，不是错误。自动归位会把 66 份编制一起改掉，属于不可逆的数据破坏。
-    //    所以校验里照常列出来给主人看（computeLegionNameViolations 末段），
-    //    但**一键修复绝不碰它**。要归位请在编辑器里逐个确认。
-
-    // ── ③ 同名不同编 → 后来者改名（保编制，不丢数据）────────────
+    // ── 同名不同编 → 后来者改名（保编制，不丢数据）────────────
     const nameToSigs = new Map<string, Map<string, FactionLegionRow[]>>();
     for (const row of allRows) {
         const n = effectiveLegionName(row);
@@ -2781,14 +3510,19 @@ async function autoFixLegions(): Promise<string> {
             for (const row of rows) {
                 const custom = localCustomCompositions[row.factionId];
                 if (!custom) continue;   // 跟随文化默认的不动（文化军团保名）
-                localCustomCompositions[row.factionId] = { ...custom, legionName: candidate, legionType: 'solo' };
+                localCustomCompositions[row.factionId] = { ...custom, legionName: candidate, legionType: 'sub' };
                 actions.push(`${row.factionName}：${name} → ${candidate}（同名不同编，保留编制改名）`);
                 changed++;
             }
         }
     }
 
-    if (changed === 0) return '✅ 没有需要修复的军团（相同编制已同名、无重名）';
+    if (changed === 0) {
+        const remain = computeLegionNameViolations();
+        return remain.length === 0
+            ? '✅ 没有需要修复的军团（同名不同编已修复）'
+            : '⚠️ 仍有同名不同编的军团，请在编辑器里逐个改出相同编制或改名。';
+    }
     buildRows();
     applyFilter();
     await saveAllCompositions();
@@ -2800,18 +3534,20 @@ async function autoFixLegions(): Promise<string> {
 }
 
 function openLegionViolationsModal(violations: string[]): void {
+    const existing = document.querySelector('.le-modal-overlay');
+    if (existing) existing.remove();
     const overlay = document.createElement('div');
     overlay.className = 'le-modal-overlay';
     overlay.innerHTML = `
     <div class="le-modal" style="width:720px;">
       <div class="le-modal-header">
-        <span style="color:#ffb4a8;">⚠️ 军团命名铁律违规 (${violations.length})</span>
+        <span style="color:#ffb4a8;">⚠️ 军团校验违规 (${violations.length})</span>
         <button type="button" class="le-btn le-btn-sm" id="le-viol-close">✕</button>
       </div>
       <div class="le-modal-body" style="grid-template-columns:1fr;gap:8px;max-height:70vh;">
-        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">相同编制必须同名 / 同名必须同编制。请先修复以下违规再落盘：</div>
+        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">① 一个军团只能有一种编制（同名同编）；② 步兵/骑兵/远程兵种都要被军团套用；③ 所有军团必须都被武将套用；④ 一个军团只能一排象兵或一排战车（不能同时出现）。以下违规请查看：</div>
         ${violations.map(v => `<div style="background:#2a1616;border:1px solid #5a2a2a;border-radius:4px;padding:8px 10px;font-size:12px;color:#ffd0c0;">${v}</div>`).join('')}
-        <button type="button" class="le-btn le-btn-primary" id="le-auto-fix" style="width:100%;font-size:13px;padding:9px;margin-top:4px;">🛠 一键修复（相同编制自动合并：特定军团归文化军团 / 归更早的）</button>
+        <button type="button" class="le-btn le-btn-primary" id="le-auto-fix" style="width:100%;font-size:13px;padding:9px;margin-top:4px;">🛠 一键修复（同名不同编：后来的自动改名）</button>
       </div>
     </div>`;
     document.body.appendChild(overlay);
@@ -2864,6 +3600,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     let currentTab: UnitCategory = 'infantry';
     let unitSearch = '';
     let isSearchComposing = false;
+    /** 兵种鉴赏同款「子分类」筛选（刀盾/长矛/弓手/弩手/战骑/弓骑…） */
+    let currentSub: 'all' | SubCategory = 'all';
     const rowTitle = ['前排', '中坚', '后排'][rowIdx];
 
     const closeModal = () => {
@@ -2882,7 +3620,10 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         const units = (q
             ? DE_UNITS_CATALOG.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
             : DE_UNITS_CATALOG.filter(u => u.category === currentTab))
+            .filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub)
             .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
+        const subOptions = SUBCATEGORY_BY_CATEGORY[currentTab] || [];
+        const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => getUnitSubcategory(u.id) === s).length;
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -2896,6 +3637,13 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
             <div class="le-modal-tab ${currentTab === 'naval' ? 'active' : ''}" data-cat="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u=>u.category==='naval').length})</div>
             <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>u.category==='hero').length})</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 12px 0;">
+            <span style="font-size:11px;color:#a89f8f;white-space:nowrap;">子分类:</span>
+            <select id="le-unit-subfilter" class="le-select" style="flex:1;padding:2px 6px;font-size:12px;">
+              <option value="all">全部子类 (${DE_UNITS_CATALOG.filter(u => u.category === currentTab).length})</option>
+              ${subOptions.map(s => `<option value="${s}" ${currentSub === s ? 'selected' : ''}>${SUBCATEGORY_LABEL[s]} (${subCount(s)})</option>`).join('')}
+            </select>
           </div>
           <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
           <div style="display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:8px;">
@@ -2934,8 +3682,15 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             tab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentTab = (tab as HTMLElement).dataset.cat as UnitCategory;
+                currentSub = 'all';
                 renderModalContent();
             });
+        });
+
+        // 子分类筛选（兵种鉴赏同款二级分类）
+        overlay.querySelector('#le-unit-subfilter')?.addEventListener('change', (e) => {
+            currentSub = ((e.target as HTMLSelectElement).value || 'all') as 'all' | SubCategory;
+            renderModalContent();
         });
 
         // 🔴 兵种搜索：防抖后过滤（重建 DOM 后恢复 value 并重新聚焦，避免每敲一字失焦清空）
@@ -3010,10 +3765,16 @@ function switchMainView(view: MainView): void {
         cancelAnimationFrame(animTimer);
         animTimer = null;
     }
+    if (stratAnimTimer !== null) {
+        cancelAnimationFrame(stratAnimTimer);
+        stratAnimTimer = null;
+    }
 
     const isUnits = view === 'units';
     const isNaval = view === 'naval';   // 海军栏目复用左侧势力表与搜索栏
+    const isStrategic = view === 'strategic';
     els.panel.classList.toggle('is-units', isUnits);
+    els.panel.classList.toggle('is-strategic', isStrategic);
     els.toolbarFactions.style.display = isUnits ? 'none' : '';
     els.toolbarUnits.style.display = isUnits ? '' : 'none';
     els.tableWrap.style.display = isUnits ? 'none' : '';
@@ -3037,6 +3798,7 @@ function switchMainView(view: MainView): void {
         const row = allRows.find(r => r.factionId === selectedFactionId);
         if (row) {
             if (isNaval) renderNavalPanel(row);
+            else if (isStrategic) renderStrategicPanel(row);
             else renderEditPanel(row);
         } else {
             els.panelContent.innerHTML = `<div class="le-empty-hint">← 请在左侧点击任意势力</div>`;
@@ -3156,6 +3918,7 @@ function renderCatalogTable(): void {
         return;
     }
 
+    const prevScroll = els.catTableWrap.scrollTop;
     const arrow = (col: string) => catalogSortCol === col
         ? (catalogSortAsc ? ' <span style="color:#e0c888;">▲</span>' : ' <span style="color:#e0c888;">▼</span>')
         : '';
@@ -3190,7 +3953,12 @@ function renderCatalogTable(): void {
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
             <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
-            <td><b style="font-size:13px;">${u.name}</b></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <b style="font-size:13px;">${u.name}</b>
+                <button type="button" class="le-quick-rename-btn" data-uid="${u.id}" data-uname="${u.name}" title="修改兵种名称" style="background:transparent;border:none;cursor:pointer;font-size:12px;opacity:0.6;padding:1px 3px;border-radius:3px;color:#f5e6c8;">✏️</button>
+              </div>
+            </td>
             <td><span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].span}　${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}</span></td>
             <td>${tier === 'elite'
                 ? `<span class="tier-tag tier-elite">⭐ 精锐</span>`
@@ -3231,7 +3999,131 @@ function renderCatalogTable(): void {
         });
     });
 
+    els.catTableWrap.querySelectorAll('.le-quick-rename-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const uid = (btn as HTMLElement).dataset.uid!;
+            selectedUnitId = uid;
+            els.catTableWrap.querySelectorAll('tr[data-uid]').forEach(o => {
+                o.classList.toggle('selected', (o as HTMLElement).dataset.uid === selectedUnitId);
+            });
+            renderUnitPanel(selectedUnitId);
+            const currentName = (btn as HTMLElement).dataset.uname || '';
+            const newName = window.prompt(`修改兵种名称（ID: ${uid}）：`, currentName);
+            if (newName !== null && newName.trim() && newName.trim() !== currentName) {
+                doRenameUnit(uid, newName.trim());
+            }
+        });
+    });
+
     observeThumbs(els.catTableWrap);
+    els.catTableWrap.scrollTop = prevScroll;
+}
+
+/**
+ * 兵种改名：同步修改 main.ts (DE_UNITS_CATALOG), WarTypes.ts, NavalShipTiers.ts 并写盘
+ */
+async function doRenameUnit(unitId: string, newName: string): Promise<boolean> {
+    const trimmed = newName.trim();
+    if (!trimmed) {
+        showToast('❌ 兵种名称不能为空', true);
+        return false;
+    }
+    const u = DE_UNITS_MAP.get(unitId);
+    if (u && u.name === trimmed) {
+        showToast('名称未改变');
+        return false;
+    }
+    try {
+        const res = await fetch('/api/rename-unit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ unitId, newName: trimmed }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+            showToast(`❌ 改名失败: ${data.error || res.statusText}`, true);
+            return false;
+        }
+        if (u) u.name = trimmed;
+        const catalogItem = DE_UNITS_CATALOG.find(x => x.id === unitId);
+        if (catalogItem) catalogItem.name = trimmed;
+        if (WAR_TYPES[unitId]) {
+            WAR_TYPES[unitId].name = trimmed;
+        }
+
+        showToast(`✅ 兵种改名已保存：【${trimmed}】`);
+        applyCatalogFilter();
+        renderCatalogTable();
+        renderUnitPanel(unitId);
+        buildRows();
+        applyFilter();
+        renderTable();
+        return true;
+    } catch (err: any) {
+        showToast(`❌ 改名网络错误: ${err.message}`, true);
+        return false;
+    }
+}
+
+/**
+ * 兵种类别、子分类与时代更新：同步修改 main.ts (DE_UNITS_CATALOG, UNIT_SUBCATEGORY) 并写盘
+ */
+async function doUpdateUnitClassification(
+    unitId: string,
+    newCategory: UnitCategory,
+    newSubcategory: SubCategory,
+    newAge: UnitAge
+): Promise<boolean> {
+    const u = DE_UNITS_MAP.get(unitId);
+    const oldSub = getUnitSubcategory(unitId);
+    if (u && u.category === newCategory && oldSub === newSubcategory && u.age === newAge) {
+        showToast('分类与时代未作改动');
+        return false;
+    }
+    try {
+        const res = await fetch('/api/update-unit-meta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                unitId,
+                category: newCategory,
+                subcategory: newSubcategory,
+                age: newAge,
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+            showToast(`❌ 分类保存失败: ${data.error || res.statusText}`, true);
+            return false;
+        }
+
+        // 更新内存状态
+        if (u) {
+            u.category = newCategory;
+            u.age = newAge;
+        }
+        const catalogItem = DE_UNITS_CATALOG.find(x => x.id === unitId);
+        if (catalogItem) {
+            catalogItem.category = newCategory;
+            catalogItem.age = newAge;
+        }
+        UNIT_SUBCATEGORY[unitId] = newSubcategory;
+
+        showToast(`✅ 兵种分类已更新：【${u?.name || unitId}】（${AGE_LABEL[newAge]} · ${CATEGORY_LABEL[newCategory]} · ${SUBCATEGORY_LABEL[newSubcategory]}）`);
+
+        populateSubFilter();
+        applyCatalogFilter();
+        renderCatalogTable();
+        renderUnitPanel(unitId);
+        buildRows();
+        applyFilter();
+        renderTable();
+        return true;
+    } catch (err: any) {
+        showToast(`❌ 保存网络错误: ${err.message}`, true);
+        return false;
+    }
 }
 
 /** 右侧面板的「战斗属性」段：陆战兵种读 WAR_TYPES，船只读 NavalShipTiers。 */
@@ -3314,24 +4206,90 @@ function renderUnitStatsSection(u: DeUnitDef): string {
     </div>`;
 }
 
+/** 查询使用指定兵种的所有军团及其势力 */
+function getLegionsUsingUnit(unitId: string): { legionName: string; factions: string[] }[] {
+    const map = new Map<string, Set<string>>();
+    for (const r of allRows) {
+        if (r.slots.some(s => s.type === unitId)) {
+            const legName = effectiveLegionName(r);
+            if (!map.has(legName)) {
+                map.set(legName, new Set());
+            }
+            map.get(legName)!.add(r.factionName);
+        }
+    }
+    return Array.from(map.entries()).map(([legionName, factionSet]) => ({
+        legionName,
+        factions: Array.from(factionSet),
+    }));
+}
+
 /** 右侧面板：单兵种动作预览 + 素材帧信息 */
 function renderUnitPanel(unitId: string): void {
+    if (stratAnimTimer !== null) {
+        cancelAnimationFrame(stratAnimTimer);
+        stratAnimTimer = null;
+    }
+    els.panel.classList.remove('is-strategic');
     const u = DE_UNITS_MAP.get(unitId);
     if (!u) return;
     const tier = getUnitTier(u);
     const sub = getUnitSubcategory(u.id);
+    const legionsUsing = getLegionsUsingUnit(unitId);
 
     els.panelContent.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
-      <div>
-        <div style="font-size:17px;font-weight:bold;color:#f5e6c8;">${u.name}</div>
-        <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
+    <div style="background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-size:17px;font-weight:bold;color:#f5e6c8;" id="le-unit-title-name">${u.name}</div>
+            <button type="button" id="le-unit-btn-toggle-rename" class="le-btn le-btn-xs" style="background:#2a2620;border:1px solid #4a4235;color:#e0c060;cursor:pointer;" title="修改兵种名称">✏️ 改名</button>
+          </div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}　<span style="opacity:.65;font-weight:normal;">${AGE_YEARS[u.age].span}</span></span>
+          <span class="cat-tag">${CATEGORY_LABEL[u.category]}</span>
+          ${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : ''}
+          ${tier === 'elite' ? `<span class="tier-tag tier-elite">⭐ 精锐</span>` : `<span class="tier-tag tier-base">普通</span>`}
+          <button type="button" id="le-unit-btn-toggle-classify" class="le-btn le-btn-xs" style="background:#202820;border:1px solid #3c5a3c;color:#a0d8a0;cursor:pointer;margin-left:4px;" title="修改兵种类别、子分类与时代">⚙️ 设定分类/时代</button>
+        </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}　<span style="opacity:.65;font-weight:normal;">${AGE_YEARS[u.age].span}</span></span>
-        <span class="cat-tag">${CATEGORY_LABEL[u.category]}</span>
-        ${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : ''}
-        ${tier === 'elite' ? `<span class="tier-tag tier-elite">⭐ 精锐</span>` : `<span class="tier-tag tier-base">普通</span>`}
+      <div id="le-unit-rename-row" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #332d24;">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="text" id="le-unit-rename-input" value="${u.name}" style="background:#100e0c;border:1px solid #5a4f3d;color:#f5e6c8;padding:4px 8px;border-radius:4px;font-size:13px;width:180px;" placeholder="输入新兵种名">
+          <button type="button" id="le-unit-rename-save" class="le-btn le-btn-sm le-btn-primary" style="cursor:pointer;">💾 保存</button>
+          <button type="button" id="le-unit-rename-cancel" class="le-btn le-btn-sm" style="background:#222;border:1px solid #444;color:#aaa;cursor:pointer;">取消</button>
+        </div>
+      </div>
+      <div id="le-unit-classify-row" style="display:none;margin-top:10px;padding:10px 12px;background:#141210;border:1px solid #3a3225;border-radius:5px;">
+        <div style="font-size:12px;font-weight:bold;color:#e0c888;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+          <span>⚙️ 兵种类别、子分类与时代设定</span>
+          <span style="font-size:11px;color:#8a8175;font-weight:normal;">自动同步 DE_UNITS_CATALOG 与 UNIT_SUBCATEGORY</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div>
+            <label style="display:block;font-size:11px;color:#a89f8f;margin-bottom:4px;">时代</label>
+            <select id="le-edit-unit-age" class="le-select" style="width:100%;padding:4px 6px;font-size:12px;">
+              ${AGE_ORDER.map(a => `<option value="${a}" ${u.age === a ? 'selected' : ''}>${AGE_LABEL[a]} (${AGE_YEARS[a].span})</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;color:#a89f8f;margin-bottom:4px;">类别</label>
+            <select id="le-edit-unit-category" class="le-select" style="width:100%;padding:4px 6px;font-size:12px;">
+              ${CATEGORY_ORDER.map(c => `<option value="${c}" ${u.category === c ? 'selected' : ''}>${CATEGORY_LABEL[c]}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;color:#a89f8f;margin-bottom:4px;">子分类</label>
+            <select id="le-edit-unit-subcategory" class="le-select" style="width:100%;padding:4px 6px;font-size:12px;">
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+          <button type="button" id="le-unit-classify-save" class="le-btn le-btn-sm le-btn-primary" style="cursor:pointer;padding:3px 12px;">💾 保存分类与时代</button>
+          <button type="button" id="le-unit-classify-cancel" class="le-btn le-btn-sm" style="background:#222;border:1px solid #444;color:#aaa;cursor:pointer;">取消</button>
+        </div>
       </div>
     </div>
 
@@ -3355,6 +4313,20 @@ function renderUnitPanel(unitId: string): void {
     ${renderUnitStatsSection(u)}
 
     <div class="le-form-section">
+      <div class="le-section-title"><span>所属军团 (${legionsUsing.length})</span></div>
+      <div style="font-size:12px;color:#a89f8f;line-height:1.8;">
+        ${legionsUsing.length === 0
+            ? '<span style="color:#7a7266;">暂无军团编制使用此兵种</span>'
+            : legionsUsing.map(l => `
+                <div style="margin-bottom:6px;">
+                  <b style="color:#e0c888;">${l.legionName}</b>
+                  <div style="color:#8a8175;font-size:11px;">使用势力（${l.factions.length}个）：${l.factions.slice(0, 10).join('、')}${l.factions.length > 10 ? ' 等' : ''}</div>
+                </div>
+              `).join('')}
+      </div>
+    </div>
+
+    <div class="le-form-section">
       <div class="le-section-title"><span>素材信息</span></div>
       <div style="font-size:12px;color:#a89f8f;line-height:1.9;">
         素材目录：<span class="cell-path" style="font-size:11px;">${u.pathPrefix}</span>
@@ -3371,6 +4343,96 @@ function renderUnitPanel(unitId: string): void {
         animDirection = parseInt(dirSel.value, 10);
         startUnitCanvasPreview(unitId);
     });
+
+    const btnToggleRename = document.getElementById('le-unit-btn-toggle-rename');
+    const renameRow = document.getElementById('le-unit-rename-row');
+    const renameInput = document.getElementById('le-unit-rename-input') as HTMLInputElement | null;
+    const renameSave = document.getElementById('le-unit-rename-save');
+    const renameCancel = document.getElementById('le-unit-rename-cancel');
+
+    if (btnToggleRename && renameRow && renameInput) {
+        btnToggleRename.addEventListener('click', () => {
+            const isHidden = renameRow.style.display === 'none';
+            renameRow.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                renameInput.value = u.name;
+                renameInput.focus();
+                renameInput.select();
+            }
+        });
+
+        const executeRename = () => {
+            const newName = renameInput.value.trim();
+            if (newName && newName !== u.name) {
+                doRenameUnit(unitId, newName);
+            } else if (!newName) {
+                showToast('❌ 兵种名称不能为空', true);
+            } else {
+                renameRow.style.display = 'none';
+            }
+        };
+
+        renameSave?.addEventListener('click', executeRename);
+        renameCancel?.addEventListener('click', () => {
+            renameRow.style.display = 'none';
+        });
+
+        renameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeRename();
+            } else if (e.key === 'Escape') {
+                renameRow.style.display = 'none';
+            }
+        });
+    }
+
+    const btnToggleClassify = document.getElementById('le-unit-btn-toggle-classify');
+    const classifyRow = document.getElementById('le-unit-classify-row');
+    const selCat = document.getElementById('le-edit-unit-category') as HTMLSelectElement | null;
+    const selSub = document.getElementById('le-edit-unit-subcategory') as HTMLSelectElement | null;
+    const selAge = document.getElementById('le-edit-unit-age') as HTMLSelectElement | null;
+    const saveClassify = document.getElementById('le-unit-classify-save');
+    const cancelClassify = document.getElementById('le-unit-classify-cancel');
+
+    const updateSubcatOptions = (cat: UnitCategory, targetSub?: SubCategory) => {
+        if (!selSub) return;
+        const subList = SUBCATEGORY_BY_CATEGORY[cat] || [];
+        selSub.innerHTML = subList.map(s => `<option value="${s}">${SUBCATEGORY_LABEL[s] || s}</option>`).join('');
+        if (targetSub && subList.includes(targetSub)) {
+            selSub.value = targetSub;
+        } else if (subList.length > 0) {
+            selSub.value = subList[0];
+        }
+    };
+
+    if (btnToggleClassify && classifyRow && selCat && selSub && selAge) {
+        btnToggleClassify.addEventListener('click', () => {
+            const isHidden = classifyRow.style.display === 'none';
+            classifyRow.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                selCat.value = u.category;
+                selAge.value = u.age;
+                updateSubcatOptions(u.category, sub);
+            }
+        });
+
+        selCat.addEventListener('change', () => {
+            const newCat = selCat.value as UnitCategory;
+            updateSubcatOptions(newCat);
+        });
+
+        saveClassify?.addEventListener('click', () => {
+            const newCat = selCat.value as UnitCategory;
+            const newSub = selSub.value as SubCategory;
+            const newAge = selAge.value as UnitAge;
+            doUpdateUnitClassification(unitId, newCat, newSub, newAge);
+        });
+
+        cancelClassify?.addEventListener('click', () => {
+            classifyRow.style.display = 'none';
+        });
+    }
 
     startUnitCanvasPreview(unitId);
     fillUnitMeta(u);
@@ -3683,9 +4745,10 @@ function startCanvasPreview(): void {
         unitPositions.push({ x: cx - 140, y: cy - 10, type: t2, scale: s2, label: `后排 · ${getUnitDisplayName(t2)}` });
     } else {
         // 9 人方阵排布模式（根据 animDirection 朝向自然旋转阵型）
-        const spacingX = 52;
-        const spacingY = 66; // 前后排距拉开为 60% 长方形军阵
-        const pScale = 1.15;
+        const isStrat = previewViewMode === 'strategic';
+        const spacingX = isStrat ? STRATEGIC_SPACING_X : 52;
+        const spacingY = isStrat ? STRATEGIC_SPACING_Y : 66; // 前后排距拉开为 60% 长方形军阵
+        const pScale = isStrat ? (SPRITE_BASE_H / 64) : 1.15;
 
         // 旋转角度与游戏主引擎 LegionPhalanxDrawer 完全统一：angle = (animDirection + 1) * π / 4
         const fAngle = (animDirection + 1) * Math.PI / 4;
@@ -3985,20 +5048,32 @@ async function saveCultureComposition(culture: RegionType, legion: CustomFaction
             (CULTURE_LEGION_NAMES as Record<string, string>)[r] = legionName;
             (CULTURE_FORMATION_MODE as Record<string, FormationMode>)[r] = formationMode;
             const tiers = (CULTURE_TIERS_MAP as Record<string, any>)[r];
-            if (tiers?.[0]) tiers[0].slots = slots.map(s => ({ ...s }));
+            if (tiers?.[0]) (CULTURE_TIERS_MAP as Record<string, any>)[r] = [
+                { ...tiers[0], slots: slots.map(s => ({ ...s })) }, ...tiers.slice(1),
+            ];
         }
 
-        // ③ 势力表里同名的势力军团也一起覆盖（同名 = 同一个军团）
+        // ③ 势力表里同名的势力军团也一起覆盖（同名 = 同一个军团，全体同步）
         let factionSync = 0;
-        for (const fid of Object.keys(localCustomCompositions)) {
-            const comp = localCustomCompositions[fid];
-            if (comp?.legionName?.trim() !== legionName) continue;
-            localCustomCompositions[fid] = { ...comp, formationMode, slots: slots.map(s => ({ ...s })) };
+        for (const r of allRows) {
+            if (effectiveLegionName(r) !== legionName) continue;
+            const existing = localCustomCompositions[r.factionId];
+            localCustomCompositions[r.factionId] = {
+                ...(existing || {}),
+                legionName,
+                legionType: existing?.legionType || 'region',
+                formationMode,
+                navalFormation: existing?.navalFormation ?? 'auto',
+                slots: slots.map(s => ({ ...s })),
+            };
             factionSync++;
         }
-        if (factionSync > 0) await saveAllCompositions();
+        if (factionSync > 0 && !await saveAllCompositions()) {
+            showToast('❌ 文化军团已写入，但同名势力同步失败，请再次保存。', true);
+            return;
+        }
 
-        showToast(`✅ 已保存【${legionName}】`
+        showToast(`✅ 军团编制已保存：【${legionName}】（所有使用者同步）`
             + (alsoCultures.length ? `，同名文化区同步 ${alsoCultures.length} 个` : '')
             + (factionSync ? `，同名势力同步 ${factionSync} 个` : ''));
 
@@ -4012,6 +5087,19 @@ async function saveCultureComposition(culture: RegionType, legion: CustomFaction
 }
 
 async function saveAllCompositions(): Promise<boolean> {
+    // 🔴 强闸门（2026-09-10 主人定）：唯一铁律「一个军团只能有一种编制」。
+    //    同名军团前/中/后三排兵种 + 阵型不一致 → 拦截，不许保存，提示错误。
+    const violations = computeLegionNameViolations();
+    const multiCompViolations = violations.filter(v =>
+        v.includes('编制不一致') || v.includes('多种编制')
+        || v.includes('没有被武将套用') || v.includes('象兵/战车违规'),
+    );
+    if (multiCompViolations.length > 0) {
+        showToast('❌ 保存已被拦截：一个军团只能有一种编制，不然就报错！', true);
+        openLegionViolationsModal(violations);
+        return false;
+    }
+
     try {
         const res = await fetch('/api/save-faction-compositions', {
             method: 'POST',
@@ -4093,11 +5181,13 @@ document.getElementById('le-check-legions')?.addEventListener('click', () => {
     reportLegionNameViolations();
 });
 
-// 快捷键 Ctrl+S 保存
+// Ctrl+S 明确对应「保存军团编制」；武将换军团使用独立的归属保存按钮。
 window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        saveAllCompositions();
+        const saveButton = document.getElementById('le-btn-save-single')
+            ?? document.getElementById('le-btn-save-naval');
+        if (saveButton) saveButton.click();
     }
 });
 

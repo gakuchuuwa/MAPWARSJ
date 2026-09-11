@@ -19,7 +19,7 @@ export const THRACIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T3 风土之兵 ──
     seleisi: { name: '保加利亚骑', tier: 3 },          // 普罗夫迪夫·色雷斯
-    aodesuosi: { name: '奥德索斯水军', tier: 4 },
+    aodesuosi: { name: '奥德水军', tier: 4 },
     duonaobaojia: { name: '不朽军', tier: 1 },
     lumiliya: { name: '阿肯骑兵', tier: 3 },
     odrysian_late: { name: '色雷斯骑', tier: 3 },

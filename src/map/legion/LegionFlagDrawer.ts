@@ -75,7 +75,8 @@ export class LegionFlagDrawer {
      * Dynamically retrieve or asynchronously load the faction flag text mask.
      */
     private static getOrLoadFactionText(factionId: string): HTMLImageElement | null {
-        const textUrl = CityAssetManager.getProcessedFlagText(factionId);
+        // 🔴 [2026-09-10 主人报「军团旗字看不见」] 军团旗不排队，走同步生成立即拿到文字。
+        const textUrl = CityAssetManager.getProcessedFlagTextSync(factionId);
         if (!textUrl) {
             return null;
         }

@@ -181,17 +181,28 @@ export function resolveTerrainTileAtElevation(
 // ── 植被树种表（P3，2026-08-20）——照抄工单 §B，勿自创 ──────────────────────────
 // 资产名 = public/SUCAI_NATURE/<名>/ 的目录名（大写）。
 
-/** biome × 季节(0绿/1橙/2白) → 树种候选（每场随机选 2~3 种混布） */
-export const BIOME_TREES: Record<Biome, [string[], string[], string[]]> = {
-    tropical_rainforest: [['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD']],
-    savanna: [['ACACIA', 'BAOBAB'], ['ACACIA', 'BAOBAB'], ['ACACIA', 'DEAD_TREE']],
-    desert: [['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE']],
-    mediterranean: [['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'CYPRESS_DEC'], ['OLIVE', 'CYPRESS'], ['CYPRESS', 'DEAD_TREE']],
-    cold_steppe: [['PINE', 'DEAD_TREE'], ['PINE', 'DEAD_TREE'], ['SNOW_PINE', 'DEAD_TREE']],
-    temperate_grass: [['GREEN_OAK', 'BIRCH_GREEN'], ['AUTUMN_OAK', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'BIRCH_WINTER']],
-    temperate_forest: [['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN', 'PEACH_BLOSSOM'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
-    boreal: [['PINE', 'ASIAN_PINE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
-    tundra_snow: [['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE']],
+/**
+ * biome × 季节 → 树种候选（每场随机选 2~3 种混布）。
+ *
+ * 🔴 [2026-09-11 主人定「既然是 4 季节，每个季节一张图」] 从**三态**（春夏/秋/冬）改为**四态**
+ * （春0/夏1/秋2/冬3），与 TimeSystem 的四季 1:1。两处史实错随之修掉：
+ *   ① 花树（`PEACH_BLOSSOM`）原先挂在"春夏"共态里 → 樱花/桃花整个夏天都开着；
+ *   ② 日本区（`REGION_TREES`）整年樱花 → 现在只有春那 15 秒开（见 TreeAssignment.ts）。
+ * 常绿/不换装的（雨林、沙漠、苔原、竹、梭梭、藏柏）四季同表，本来就不该换。
+ * 素材全部 DE 原版：绿 `n_tree_green_oak`/`_asian_maple_green`、秋 `_autumn_oak`/`_asian_maple_autumn`、
+ * 冬 `_snow_pine`/`_snow_autumn_oak`/`_dead`、花 `_peach_blossom`。
+ */
+export const BIOME_TREES: Record<Biome, [string[], string[], string[], string[]]> = {
+    //                      春（花/新绿）                                    夏（深绿）                                        秋（红叶）                                       冬（雪/枯）
+    tropical_rainforest: [['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD'], ['JUNGLE', 'RAINFOREST', 'BRAZILWOOD']],
+    savanna: [['ACACIA', 'BAOBAB'], ['ACACIA', 'BAOBAB'], ['ACACIA', 'BAOBAB'], ['ACACIA', 'DEAD_TREE']],
+    desert: [['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE'], ['PALM', 'WAX_PALM', 'DEAD_TREE']],
+    mediterranean: [['OLIVE', 'CYPRESS_DEC', 'ITALIAN_PINE'], ['OLIVE', 'CYPRESS', 'ITALIAN_PINE'], ['OLIVE', 'CYPRESS'], ['CYPRESS', 'DEAD_TREE']],
+    cold_steppe: [['PINE', 'DEAD_TREE'], ['PINE', 'DEAD_TREE'], ['PINE', 'DEAD_TREE'], ['SNOW_PINE', 'DEAD_TREE']],
+    temperate_grass: [['PEACH_BLOSSOM', 'GREEN_OAK', 'BIRCH_GREEN'], ['GREEN_OAK', 'BIRCH_GREEN'], ['AUTUMN_OAK', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'BIRCH_WINTER']],
+    temperate_forest: [['PEACH_BLOSSOM', 'BIRCH_GREEN', 'WILLOW', 'GREEN_OAK'], ['GREEN_OAK', 'BIRCH_GREEN', 'WILLOW', 'ASIAN_MAPLE_GREEN'], ['AUTUMN_OAK', 'ASIAN_MAPLE_AUTUMN', 'BIRCH_AUTUMN'], ['SNOW_AUTUMN_OAK', 'SNOW_PINE', 'BIRCH_WINTER', 'DEAD_TREE']],
+    boreal: [['PINE', 'ASIAN_PINE', 'BIRCH_GREEN'], ['PINE', 'ASIAN_PINE'], ['PINE', 'AUTUMN_OAK'], ['SNOW_PINE', 'DEAD_TREE']],
+    tundra_snow: [['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE'], ['DEAD_TREE', 'SNOW_PINE']],
 };
 
 /** biome → 灌木/草/花/岩石（低频散布，尺寸小、数量约为树的 2~3 倍） */
@@ -245,8 +256,8 @@ export const SUBTROPICAL_EXCLUDED_TREES: ReadonlySet<string> = new Set([
 ]);
 
 /** 从树种池随机选 2~3 种混布（树可混种，与地形不同；非东亚过滤掉樱花/竹/亚洲枫） */
-export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2, rng: RandomSource = mathRandomSource, isEastAsia = true, isSubtropical = false): string[] {
-    let pool = BIOME_TREES[biome][season];
+export function pickTreeSpecies(biome: Biome, season: 0 | 1 | 2 | 3, rng: RandomSource = mathRandomSource, isEastAsia = true, isSubtropical = false): string[] {
+    let pool = BIOME_TREES[biome][season] ?? BIOME_TREES[biome][1];   // 越界兜底到"夏"，别让战场一棵树都不出
     if (!isEastAsia) pool = pool.filter((t) => !EAST_ASIA_ONLY_TREES.has(t));
     if (isSubtropical) pool = pool.filter((t) => !SUBTROPICAL_EXCLUDED_TREES.has(t));
     const n = Math.min(pool.length, 2 + rng.int(0, 1));
