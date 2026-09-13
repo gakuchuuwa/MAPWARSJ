@@ -18,7 +18,7 @@ import type { GameMap } from '../map/GameMap';
 import { getCultureNavalShip, getNavalShipChineseName } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
-import { getEuclideanDistance } from '../core/DistanceUtils';
+import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import {
     PLAYER_CITY_ARRIVE_DIST,
@@ -188,7 +188,7 @@ export class PlayerHero {
      * 取代 2026-09-11 早些时候那套「开局 10 秒 / 玩家入伍」自动判定 ——
      * 主人实测「还是有其他军团来捣乱」，故改为**看得见的手动开关**。
      */
-    public noLegionSpawn = GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS;
+    public noLegionSpawn = false;   // [2026-09-14] 剧本删除后不再跟剧本开关走；默认出军团（乱斗常态）
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -678,6 +678,49 @@ export class PlayerHero {
     /** 彻底放弃追击（玩家改点别处、入伍、离队） */
     public cancelChase(): void { this.chaseArmyId = null; this.chaseGeneralName = null; }
 
+    /**
+     * 🔴 [2026-09-14 主人定]「玩家要抵达战场才能触发」—— 战场**不是据点**，不在路网里，
+     *    所以 `travelToCity` 用不上（它只认 city id）。
+     *
+     *    走法：沿路网走到离战场最近的路点，最后一段直接走过去。实测两个战场分别距现成道路
+     *    10.2 km 与 0.2 km，所以**不需要给战场画任何专用道路**。
+     *    抵达后回调，由任务系统弹选边对话。
+     */
+    public travelToPoint(
+        target: { lat: number; lng: number },
+        label: string,
+        onArrive?: () => void,
+    ): boolean {
+        this.cancelChase();
+        if (this.hostLegionId) {
+            this.deps.notify('你正在军中，随军出征，军团解散前不可离开');
+            return false;
+        }
+        const pos = this.army.getPosition();
+        if (getEuclideanDistance(pos, target) * 111 <= 2) {
+            onArrive?.();       // 已经站在跟前了
+            return true;
+        }
+        const path = roadRegistry.findPathOnRoad(pos, target);
+        if (!path || path.length < 2) {
+            this.deps.notify(`无路可达【${label}】`);
+            return false;
+        }
+        const marchPath = joinStartToRoadPolyline(pos, path, GameConfig.ROAD.JOIN_EPS);
+        this.travelCityId = null;
+        this.army.setTargetCity(null);
+        let fired = false;
+        this.army.setOnArriveCallback(() => {
+            if (fired) return;   // 到达回调只认一次，避免停步抖动重复触发
+            fired = true;
+            onArrive?.();
+        });
+        this.army.moveAlongPath(marchPath.slice(1).map((p: any) => ({ lat: p.lat, lng: p.lng, sea: p.sea })));
+        this.deps.followCamera();
+        this.emitChange();
+        return true;
+    }
+
     public travelToArmy(armyId: string, generalName?: string): boolean {
         if (this.hostLegionId) {
             this.deps.notify('你正在军中，随军出征，军团解散前不可离开');
@@ -907,7 +950,7 @@ export class PlayerHero {
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.nearbyFirst = s.nearbyFirst ?? false;
         this.autoPickUnit = s.autoPickUnit ?? true;
-        this.noLegionSpawn = s.noLegionSpawn ?? GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS;
+        this.noLegionSpawn = s.noLegionSpawn ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
         this.selectedElite = Math.min(this.learnedElites.length - 1, s.selectedElite ?? -1);

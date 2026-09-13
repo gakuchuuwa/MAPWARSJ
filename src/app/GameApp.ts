@@ -748,8 +748,14 @@ export class GameApp {
             feed: this.brawlFeedPanel,
             // 自动模式去接"当年剧本任务"用（主人 2026-09-11 定：-334 年必须去找亚历山大）
             getYear: () => this.timeSystem.getYear(),
+            // 🔴 [2026-09-14] 战场玩法：点击战场 → 选边 → 开打（规则全在 HistoricalEventManager 里）
+            battlefields: {
+                checkReady: (bfId, pos) => this.historicalEventManager.checkBattlefieldReady(bfId, pos),
+                findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
+                locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
+                start: (bfId, onSpawned) => this.historicalEventManager.startBattlefieldBattle(bfId, onSpawned),
+            },
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
-            getScriptObjective: (armyId) => this.historicalEventManager.getScriptObjective(armyId),
         });
         this.playerQuests = quests;
 

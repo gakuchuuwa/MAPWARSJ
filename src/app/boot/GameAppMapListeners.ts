@@ -74,11 +74,15 @@ export function setupGameAppMapListeners(app: GameApp): void {
         }
     });
 
-    window.addEventListener('toggle-script-mode', (e: Event) => {
-        const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
-        app.historicalEventManager?.setScriptModeEnabled(!!detail?.enabled);
-        if (!detail?.enabled) app.playerHero?.setNoLegionSpawn(false);
+    // 🔴 [2026-09-14 主人定] 点击战场 → 立刻打那一场真实战役（与剧本模式无关，见
+    //    HistoricalEventManager.startBattlefieldBattle）。打完由它点亮战场形态。
+    window.addEventListener('battlefield-click', (e: Event) => {
+        const d = (e as CustomEvent<{ id?: string; name?: string }>).detail;
+        if (!d?.id) return;
+        // 抵达判定、武将在城判定、选边对话全在任务系统里（它握着 hero 与对话 UI）
+        app.playerQuests?.onBattlefieldClicked(d.id, d.name ?? '战场');
     });
+
 
     const leaflet = app.map?.getLeafletMap?.();
     if (leaflet) {
