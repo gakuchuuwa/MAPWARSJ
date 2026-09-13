@@ -1,6 +1,7 @@
 
 import L from 'leaflet';
 import { gameLog } from '../utils/GameLogger';
+import { STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
 
 /**
  * VectorRiverLayer
@@ -134,14 +135,14 @@ export class VectorRiverLayer extends L.FeatureGroup {
      * Reduces code duplication.
      */
     private fillRiverGroup(group: L.FeatureGroup, data: any, pane?: string): L.FeatureGroup {
-        // 1. 底层描边（Border/Casing Layer）：深墨蓝，切断山谷杂乱阴影，提升山间河流辨识度
+        // 1. 轻微的同色系河岸过渡，避免深描边把河流画成绳索。
         const border = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getBorderStyle(feature, 9),
             pane: pane
         });
         (border as any).riverType = 'border';
 
-        // 2. 顶层水体线（Water Layer）：纯正浅蓝，亮丽不透明
+        // 2. 河流主体与海、湖共用基色；窄河保持干净，不铺海浪纹理。
         const water = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getWaterStyle(feature, 9),
             pane: pane
@@ -232,12 +233,12 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const rankScale = typeof rank === 'number' && Number.isFinite(rank)
             ? 1.35 - (Math.max(1, Math.min(10, rank)) - 1) * 0.065
             : 1;
-        // 变宽加粗：基础线宽提升，保证河流无论在山脊谷底还是平原沙漠都清晰分明
-        // 🔴 [2026-09-12 主人「河道宽一点是不是更好」→ 是] 叠加系数 1.25 → **1.45**（全河网约 +16%）。
-        //    干流（scalerank 小）加得更多、支流克制，不会糊成一片；矢量层在 riverPane z=340
-        //    （低于领土/道路 350），加宽也不会盖住道路与据点。
+        // 按显示等级加宽：1–3 级 +25%，4–6 级 +12.5%，其余及缺失等级保持原宽。
+        const widthBoost = typeof rank === 'number' && Number.isFinite(rank)
+            ? (rank <= 3 ? 1.25 : rank <= 6 ? 1.125 : 1)
+            : 1;
         const base = Math.max(2.8 * VectorRiverLayer.getScaleMultiplier(zoom), 1.4) * 1.45;
-        return Math.max(1.6, base * rankScale);
+        return Math.max(1.6, base * rankScale) * widthBoost;
     }
 
     /**
@@ -256,7 +257,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return VectorRiverLayer.getScaleMultiplier(zoom) === 1.0 ? VectorRiverLayer.ZOOM9_SMOOTH : 1.0;
     }
 
-    // 河岸描边：使用深青灰底色与 0.65 不透明度，提供清晰轮廓，同时与水系底色同相
+    // 河岸采用共享近岸色的轻柔过渡。
     private static getBorderStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -268,11 +269,10 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            // 🔴 [2026-09-12 主人「两层要融合，看着像一种」] 岸线由深青灰 #24485A @0.65 改为**同色系浅岸**
-            //    #2E6B86 @0.35、描边由 +1.8 收到 +1.2 —— 与栅格层的柔边同观感，两层不再各有一道边。
-            color: '#2E6B86',
-            weight: waterWeight + 1.2,
-            opacity: 0.35,
+            // 岸色从海湖共用配色派生，不再单独硬编码另一套蓝色。
+            color: STRATEGIC_RIVER_BANK_COLOR,
+            weight: waterWeight + 1.0,
+            opacity: 0.22,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -280,7 +280,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         };
     }
 
-    // 水流主体：饱满清晰的深湖蓝水色 (#367E9E)，与湖泊水域同源同系，水体明晰不发虚
+    // 水流主体：海、湖、河同一基色，保持不透明以压住底图杂色。
     private static getWaterStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -291,7 +291,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: '#367E9E',
+            color: STRATEGIC_WATER_COLOR,
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 1.0,
             lineCap: 'round',

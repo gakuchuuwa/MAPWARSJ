@@ -19,7 +19,7 @@ export class RiverOverlayLayer extends L.GridLayer {
 
     private worker: Worker;
     private msgIdCounter: number = 0;
-    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback }> = new Map();
+    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean }> = new Map();
 
     constructor(options?: L.GridLayerOptions) {
         super({
@@ -35,6 +35,13 @@ export class RiverOverlayLayer extends L.GridLayer {
         this.worker = new Worker(new URL('../workers/RiverWorker.ts', import.meta.url), { type: 'module' });
 
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
+        this.on('tileunload', (event: L.TileEvent) => {
+            for (const [id, task] of this.pendingTiles) {
+                if (task.tile !== event.tile) continue;
+                this.pendingTiles.delete(id);
+                this.worker.postMessage({ removeId: id });
+            }
+        });
         gameLog('startup', '💧 [RiverOverlayLayer] Web Worker Initialized.');
 
         // ESRI World Shaded Relief URL (256px tiles)——buildTileUrl 只用这一个源
@@ -54,8 +61,10 @@ export class RiverOverlayLayer extends L.GridLayer {
             ctx.putImageData(imgData, 0, 0);
 
             // Mark done
-            done(undefined, tile);
-            this.pendingTiles.delete(id);
+            if (!task.completed) {
+                task.completed = true;
+                done(undefined, tile);
+            }
         }
     }
 
@@ -175,6 +184,11 @@ export class RiverOverlayLayer extends L.GridLayer {
 
         // 加载图片
         const esriImg = new Image();
+        let unloaded = false;
+        const onUnload = (event: L.TileEvent) => {
+            if ((event.tile as HTMLElement) === tile) { unloaded = true; this.off('tileunload', onUnload); }
+        };
+        this.on('tileunload', onUnload);
         esriImg.crossOrigin = 'Anonymous';
 
         esriImg.onload = async () => {
@@ -190,26 +204,31 @@ export class RiverOverlayLayer extends L.GridLayer {
 
                 // [OPTIMIZATION] Use createImageBitmap to avoid main thread canvas read
                 const bitmap = await createImageBitmap(source as ImageBitmapSource);
+                if (unloaded) { bitmap.close(); return; }
+                this.off('tileunload', onUnload);
                 const reqId = this.msgIdCounter++;
 
                 // Store callback info
-                this.pendingTiles.set(reqId, { ctx, tile, done });
+                this.pendingTiles.set(reqId, { ctx, tile, done, completed: false });
 
                 // Send to worker with bitmap transfer
                 this.worker.postMessage({
                     id: reqId,
                     width: size.x,
                     height: size.y,
+                    x: coords.x, y: coords.y, z: coords.z,
                     bitmap: bitmap // Pass bitmap instead of raw data
                 }, [bitmap]); // Transfer ownership
 
             } catch (err) {
+                this.off('tileunload', onUnload);
                 console.error('River bitmap creation failed:', err);
                 done(undefined, tile);
             }
         };
 
         esriImg.onerror = () => {
+            this.off('tileunload', onUnload);
             done(undefined, tile);
         };
 
