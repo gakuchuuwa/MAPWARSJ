@@ -230,6 +230,25 @@
 > 军团的「另存为…」按钮属于**三级**（不是二级）；**"专属一家"这种说法不存在**（AI 曾自行脑补，被主人纠正 ✗）。
 >> **实现纪律**：必须**复用页面自有的三张表**（`selStyle` 16 / `CULTURE_MAP` 59 / `LAYER3_CUSTOM_GROUPS`），
 > **禁止**自造第三套选择器，禁止用项目内部文化区键冒充"二级文明分支"。
+> 🔴 **[2026-09-12 主人令「记下来，别总是搞错」] 建筑风格速查（以下每条都是实测，别再用猜的）：**
+> · **一级 = 16** = DE 的 16 套成套建筑母体：ASIA CEAS INDI PURU WEST ORIE MEDI SLAV EAST PERSIAN SEAS GREEK THRACIAN ANDE MESO AFRI
+>   （页面 `STYLE_KEYS_16` 实测 16 个 ✓）—— **永久冻结，AI 禁止改动**（改名/改键/增删/改映射都不许）。
+> · **二级 = 59** = DE 的 59 个可玩文明 = 59 座文明专属城堡（页面 `CULTURE_GROUPS` 实测 59 条 ✓ / 7 组 ✓；
+>   DE dat `empires2_x2_p1.dat` 实测 60 项含 Gaia → 59 ✓）。
+> · **三级 = 2** = 主人自建（`LAYER3_CUSTOM_GROUPS`：TIBET / WESTERN ✓）。
+> · **两套键别混**（这是 AI 反复搞错的地方）：页面分支键（59+2）**≠** `RegionType`。
+>   军团名表 `CULTURE_LEGION_NAMES` 与编制表 `CULTURE_TIERS_MAP` 都是 `Record<RegionType, …>` ✓；
+>   59 个二级键里 **52 个已在 `RegionType` 里** ✓、**7 个不在** ✗：
+>   **WEI / BASHU / ROMA / ATHENIANS / SPARTANS / MONGOL / INCA**。
+> · 现成军团名共 **137 个、无重名** ✓（新建军团前必须先查重，见「一个军团只能有一个名称」铁律）。
+> 🔴 **[2026-09-12 主人定] 59 个二级建筑风格 = DE 本体的 59 座文明专属城堡**（不是项目自造）：
+> 已实测（`scratch/_verify59castle.cjs`）：59 个二级分支的 `castle` 值**逐个都能在 DE 素材目录
+> `public/assets/de_buildings_catalog.json` 里找到**（59/59 ✓，无重复 ✓）。
+> **一级 16 = DE 的 16 套成套建筑母体** ✓；**二级 59 = DE 的 59 座文明专属城堡** ✓。
+> 另（实测 DE dat：`empires2_x2_p1.dat` 60 项含 Gaia → **可玩文明 59** ✓）：
+> **DE 本体确实有** `Wei`/`Shu`/`Wu`/`Athenians`/`Spartans`/`Macedonians`/`Khitans`/`Jurchens`/
+> `Achaemenids`/`Puru`/`Muisca`/`Mapuche`/`Tupi` 等文明 ✓ —— **是项目还没给它们建军团** ✗，
+> 不是"DE 没有" ✗（AI 曾误判，被主人纠正）。
 > ### 三之二、建筑风格 = 一层 16 + 二层 59（2026-09-11 主人定）
 > - **一层 16**：16 套基础建筑风格 = 16 个文化母体（见上表），对齐 DE 本体实测的 16 套建筑素材（`b_*_` 前缀，城墙 16/16、箭塔 16/16 全覆盖）。
 > - **二层 59**：DE 本体 `civilization_list` 实测 **59 个可玩文明**（另有 Gaia 为自然/中立，非文明），按民族史实归入这 16 个文化。详细归位表见 [`docs/02-design/four-eras-civilizations.md`](docs/02-design/four-eras-civilizations.md) §三之二。

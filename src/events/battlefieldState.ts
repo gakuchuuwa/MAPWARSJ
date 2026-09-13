@@ -43,3 +43,19 @@ export function onBattlefieldFought(cb: (battlefieldId: string) => void): () => 
 export function resetBattlefieldState(): void {
     foughtBattlefieldIds.clear();
 }
+
+/**
+ * 🔴 [2026-09-14 主人报障「玩家面板中没有战役名称，应该是XXX战役」]
+ *    当前正在打的那场战役的名字（如「格拉尼库斯河战役」）。
+ *    开战时由 HistoricalEventManager 设上，打完清掉；13 顶部的玩家面板读它来显示。
+ *    乱斗里的普通遭遇战没有战役名，此时恒为 null，面板照旧不显示。
+ */
+let activeBattleTitle: string | null = null;
+
+export function setActiveBattleTitle(title: string | null): void {
+    activeBattleTitle = title;
+}
+
+export function getActiveBattleTitle(): string | null {
+    return activeBattleTitle;
+}

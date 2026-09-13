@@ -8,6 +8,7 @@
  *   · 指挥条/玩家面板（顶部居中）：官阶 / 本场击杀 / 攻击·待命·退出战斗按钮 / 受控编队数
  */
 import type { PlayerHero } from './PlayerHero';
+import { getActiveBattleTitle } from '../events/battlefieldState';
 
 export interface Scene13PlayerApi {
     isActive(): boolean;
@@ -193,8 +194,11 @@ export class PlayerScene13Control {
                 : (respawnSec > 0
                     ? `<span style="color:#ff6b6b; font-weight:900;">阵亡（${respawnSec}秒后复活）</span>`
                     : '<span style="color:#ff8585; font-weight:900;">阵亡复活中</span>');
+            // 历史战役打的是有名有姓的一仗，名字排在最前面；乱斗遭遇战没有名字就不显示
+            const battleTitle = getActiveBattleTitle();
             this.info.innerHTML =
-                `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
+                (battleTitle ? `<b style="color:#ff9e5e;">⚔ ${battleTitle}</b> · ` : '')
+                + `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
                 + `${hpText} · `
                 + `本场斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit} · ${ctl}`;
             const on = 'rgba(212,175,55,0.35)';
@@ -211,7 +215,10 @@ export class PlayerScene13Control {
             }
             if (this.hint) this.hint.style.display = 'inline';
         } else {
-            this.info.innerHTML = `<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
+            const titleIdle = getActiveBattleTitle();
+            this.info.innerHTML =
+                (titleIdle ? `<b style="color:#ff9e5e;">⚔ ${titleIdle}</b> · ` : '')
+                + `<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
             if (this.btnAttack) this.btnAttack.style.display = 'none';
             if (this.btnHold) this.btnHold.style.display = 'none';
             if (this.hint) this.hint.style.display = 'none';

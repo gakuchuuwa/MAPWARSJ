@@ -753,7 +753,25 @@ export class GameApp {
                 checkReady: (bfId, pos) => this.historicalEventManager.checkBattlefieldReady(bfId, pos),
                 findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
                 locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
-                start: (bfId, onSpawned, onFinished) => this.historicalEventManager.startBattlefieldBattle(bfId, onSpawned, onFinished),
+                start: (bfId, onSpawned, onFinished) => this.historicalEventManager.startBattlefieldBattle(
+                    bfId,
+                    onSpawned,
+                    (sides) => {
+                        onFinished(sides);
+                        // 🔴 [2026-09-14 主人报障「战场结束后，不退出」]
+                        //    通用退场挂在 `onRegionalBattleEnd` 上，而那条的前置是
+                        //    「**当前跟拍的军团**参与了这场战斗」。战场战斗里镜头跟的是**玩家**
+                        //    （单骑或随军的玩家本人），军团 id 对不上 → 直接 return → 13 永不收场，
+                        //    画面就卡在尸横遍野的残局里。所以这里主动收一次场。
+                        //    `beginLinger` 自带 `if (!this.active) return`，与通用路径重复触发也无害。
+                        this.scene13War?.beginLinger();
+                        if (this.battleScene?.isActive?.()) {
+                            this.battleScene.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
+                        } else {
+                            this.battleScene?.exit();
+                        }
+                    },
+                ),
             },
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
         });
