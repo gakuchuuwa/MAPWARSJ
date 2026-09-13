@@ -58,7 +58,7 @@ import type { Scene13PlayerSetup } from '../player/PlayerHero'; // [2026-09-05 �
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis', 'siege_ballista']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'elite_immortal_ranged', 'elite_pattiyoda_longbowman', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis', 'siege_ballista']);
 
 /** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
  *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
@@ -817,6 +817,7 @@ const SIGHT_MAP: Record<string, number> = {
     hill_tribesman: 160,
     hippeus: 160,
     hoplite: 160,
+    elite_hoplite: 160,
     horse_archer: 200,
     houfnice: 560,
     huskarl: 120,
@@ -824,7 +825,9 @@ const SIGHT_MAP: Record<string, number> = {
     hussite_wagon: 320,
     ibirapema_warrior: 200,
     immortal: 200,
+    elite_immortal: 200,
     immortal_ranged: 200,
+    elite_immortal_ranged: 200,
     imperial_camel_rider: 200,
     imperial_centurion: 200,
     imperial_skirmisher: 280,
@@ -868,6 +871,7 @@ const SIGHT_MAP: Record<string, number> = {
     pattiyoda_longbowman: 200,
     petard: 160,
     phalangite: 160,
+    elite_phalangite: 160,
     pikeman: 160,
     plumed_archer: 240,
     porus_elephant: 280,
@@ -878,14 +882,17 @@ const SIGHT_MAP: Record<string, number> = {
     rattan_archer_elite: 240,
     rhodian_slinger: 280,
     rhomphaia_warrior: 160,
+    elite_rhomphaia_warrior: 160,
     rocket_cart: 360,
     royal_janissary: 400,
     sacred_band: 160,
     samurai: 160,
     samurai_elite: 200,
     sannahya: 280,
+    elite_sannahya: 280,
     savar: 200,
     scorpion: 360,
+    siege_ballista: 360,
     scythian_axe_cavalry: 200,
     scythian_horse_archer: 200,
     serjeant: 120,
@@ -1147,7 +1154,7 @@ const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
+const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
 
 // ── 场景云装饰（三国群英传素材，`云/9..10.png`，927×817 大朵积云）──
 // 🔴 云盖在**最上层**（士兵、旗帜、箭矢之上），半透明横向飘过——俯视视角下云本来就在人上面。
@@ -1546,6 +1553,7 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     heavy_scorpion: 1.6,
     organ_gun: 1.6,
     scorpion: 1.6,
+    siege_ballista: 1.6,
     traction_trebuchet: 1.78,
     conquistador: 2.31,
     elite_conquistador: 2.31,
@@ -1609,6 +1617,7 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     genoese_crossbowman: 4.0,
     hand_cannoneer: 4.0,
     immortal_ranged: 4.0,
+    elite_immortal_ranged: 4.0,
     rattan_archer: 4.09,
     rattan_archer_elite: 4.09,
     cretan_archer: 4.27,
@@ -1618,6 +1627,7 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     bolas_rider: 5.07,
     elite_bolas_rider: 5.07,
     phalangite: 5.07,
+    elite_phalangite: 5.07,
     elite_war_wagon: 5.69,
     war_wagon: 5.69,
     cav_archer_heavy: 6.13,
@@ -1636,6 +1646,7 @@ const PROJ_SCALE_OVERRIDE: Record<string, number> = {
 };
 /** 多种 DE 弹丸单位可以共用同一张 SLD，但保留独立 key 以使用各自的飞行参数。 */
 const PROJ_ASSET_KEY: Record<string, string> = {
+    PROJ_CROSSBOW: 'PROJ_ARROW',   // [2026-09-14] 弩兵：画的是 DE 小箭，只是飞得比弓箭平（见 PROJ_ARC_RATIO）
     PROJ_WAR_WAGON: 'PROJ_BOLT',
     PROJ_HELEPOLIS: 'PROJ_BOLT',
     PROJ_GUNPOWDER: 'PROJ_SHOT',
@@ -1687,6 +1698,20 @@ const PROJ_TYPE: Record<string, string> = {
     rocket_cart: 'PROJ_ARROW_FIRE',
     heavy_rocket_cart: 'PROJ_ARROW_FIRE',
     tarantine_cavalry: 'PROJ_SPEAR',
+    // 🔴 [2026-09-14 主人「弩箭是不是应该直一点？和标枪」] 弩兵此前与弓兵共用 PROJ_ARROW，
+    //    于是跟着吃 0.3 的弓箭弧度 —— 而弩射程最远（280~320），min(len×0.3,100) 让它峰值 84~96px，
+    //    **比弓兵还高一倍**，正好反了：弩射得远恰恰因为初速高、弹道平。
+    //    ⚠️ 但**不能挂 PROJ_BOLT**：那是弩炮的粗弩矛（52×12、**仅 1 帧**，朝哪射都同一个角度），
+    //       而 DE 里弩手与诸葛弩射的就是小箭（见下方注释「箭：弓手/弩手/…/诸葛弩」）。
+    //    故新建逻辑弹丸 PROJ_CROSSBOW：**素材仍用 PROJ_ARROW 小箭**（11 帧带方向），
+    //    只借独立 key 拿自己的飞行参数（0.09 平直）—— 正是 PROJ_ASSET_KEY 那层间接的用途。
+    crossbowman: 'PROJ_CROSSBOW',
+    arbalest: 'PROJ_CROSSBOW',
+    chukonu: 'PROJ_CROSSBOW',
+    elite_chukonu: 'PROJ_CROSSBOW',
+    genoese_crossbowman: 'PROJ_CROSSBOW',
+    elite_genoese_crossbowman: 'PROJ_CROSSBOW',
+    gastraphetes: 'PROJ_CROSSBOW',
     skirmisher: 'PROJ_SPEAR',
     elite_skirmisher: 'PROJ_SPEAR',
     imperial_skirmisher: 'PROJ_SPEAR',
@@ -1779,12 +1804,14 @@ const ACCURACY_BY_TYPE: Record<string, number> = {
     elite_war_wagon: 100,
     scorpion: 100,
     heavy_scorpion: 100,
+    siege_ballista: 100,
     thracian_peltast: 95,
     traction_trebuchet: 30,
     flamethrower: 75,
     helepolis: 100,
     siege_tower: 90,
     immortal_ranged: 70,
+    elite_immortal_ranged: 80,
     grenadier: 100,
 };
 
@@ -1837,15 +1864,21 @@ const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
     PROJ_BOMBARD_BALL: 0.04,   // 手推攻城火炮/榴弹炮：平射微抛（正数 0.04，消除原 -0.05 钻地下坠）
     PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
+    // ── [2026-09-14 主人定] 按初速分三档：**弩最直 < 标枪 < 弓**（弓走默认 0.3，不写在表里）──
+    //    判据是物理而非 DE 数值：弩初速最高、弹道最平；标枪人力投掷但投距近；弓居中。
+    //    实算峰值（弧高 = min(射程×系数, 100)，峰值 = 4×弧高×0.25）：
+    //      弩兵 280 → 25px ｜ 热那亚弩手 320 → 29px ｜ 标枪 150 → 27px ｜ 弓兵 160 → 48px
+    PROJ_CROSSBOW: 0.09,       // 弩兵（弩/诸葛弩/热那亚弩/腹弩）：初速最高，弹道最平
+    PROJ_SPEAR: 0.18,          // 标枪/投矛：比弓箭直，仍看得出抛投
+    PROJ_SPEAR_SMALL: 0.18,    // 小标枪（战车投矛）同档
     // ── [2026-09-12 新增] 平射弹按 DE 的负 arc ──
-    // 🔴 [2026-09-14 主人报障「弓箭弩箭的飞行弧度改坏了」] 由 −0.06 改为 **0.04**。
-    //    根因：本渲染器的 y = groundY − flightLift − **arc**，arc 为负 = 弹道**沉到地面以下**。
-    //    09-12 那次「照 DE dat 实值重填」把箭填成 −0.06，实算 arcH = len×(−0.06) ≈ −9.6px，
-    //    中点比地面低约 10px（士兵才 40px 高）→ 箭一路**穿地飞**，就是主人看到的坏弧度。
-    //    ⚠️ DE 的 projectile_arc 与本渲染器的屏幕弧高**不是一个语义**，不能照搬数值。
-    //    0.04 = 平射微抛，既不穿地，又保住 DE 里「箭近乎平射」的观感。
-    PROJ_ARROW: 0.04,
-    PROJ_ARROW_FIRE: 0.04,     // 同上（火箭类同族）
+    // 🔴 [2026-09-14 主人定]「看看战略地图上军团的射箭弧度（哪个是好的）」——**以战略地图那套为准**。
+    //    战略地图 ProjectileRenderer 的公式与这里**逐字相同**：arcHeight = min(dist × 0.3, 100)，
+    //    visualZ = 4 × arcHeight × p × (1−p)；区别只在系数恒为 **0.3**，且永不取负。
+    //    09-12 那次「照 DE dat 实值重填」把弓/弩箭填成 −0.06，而本渲染器 y = groundY − lift − arc，
+    //    **负 arc = 弹道沉到地面以下**，实算中点低于地面约 9.6px（士兵才 40px 高）→ 箭一路穿地。
+    //    现把这两项**整个删除**，回落到默认 0.3：弓箭 / 弩箭（弩兵与弓兵共用 PROJ_ARROW）/ 标枪
+    //    三者与战略地图一模一样。⚠️ DE 的 projectile_arc 与本渲染器的屏幕弧高不是一个语义，别再照搬数值。
     // ── 投石族按 DE 细分（原先统一走"高抛翻倍 0.5"✗）──
     PROJ_MANGONEL: 0.40,       // DE Projectile Mangonel (Primary) = **0.40**
     PROJ_ROCK: 0.65,           // DE Projectile Trebuchet = **0.65**（巨型投石车，抛物线最高）
@@ -2460,13 +2493,16 @@ const UNIT_RADIUS: Record<string, number> = {
     hippeus: 8.0,
     elite_hippeus: 8.0,
     hoplite: 8.0,
+    elite_hoplite: 8.0,
     horse_archer: 10.0,
     houfnice: 20.0,
     huskarl: 8.0,
     hussar: 10.0,
     hussite_wagon: 18.0,
     immortal: 8.0,
+    elite_immortal: 8.0,
     immortal_ranged: 8.0,
+    elite_immortal_ranged: 8.0,
     imperial_camel_rider: 10.0,
     imperial_centurion: 10.0,
     imperial_skirmisher: 8.0,
@@ -2513,6 +2549,7 @@ const UNIT_RADIUS: Record<string, number> = {
     elite_pattiyoda_longbowman: 8.0,
     petard: 8.0,
     phalangite: 9.0,
+    elite_phalangite: 9.0,
     pikeman: 8.0,
     plumed_archer: 8.0,
     porus_elephant: 10.0,
@@ -2523,14 +2560,17 @@ const UNIT_RADIUS: Record<string, number> = {
     rattan_archer_elite: 8.0,
     rhodian_slinger: 8.0,
     rhomphaia_warrior: 8.0,
+    elite_rhomphaia_warrior: 8.0,
     rocket_cart: 20.0,
     royal_janissary: 8.0,
     sacred_band: 8.0,
     samurai: 8.0,
     samurai_elite: 8.0,
     sannahya: 10.0,
+    elite_sannahya: 10.0,
     savar: 10.0,
     scorpion: 20.0,
+    siege_ballista: 20.0,
     scythian_axe_cavalry: 10.0,
     scythian_horse_archer: 10.0,
     serjeant: 8.0,
@@ -5518,7 +5558,7 @@ export class Scene13WarLayer {
             const b: WarBank = existing ?? { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
             const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
-            const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
+            const isDE = _firstUrl.includes('/SUCAI/') || DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
             b.isDE = isDE;
             if (isDE && !existing) {
                 const dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);

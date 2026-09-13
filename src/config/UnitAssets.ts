@@ -2087,6 +2087,14 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/death_${dir}.png`),
         },
+        'elite_hoplite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/death_${dir}.png`),
+        },
         'houfnice': {
             // 【榴弹炮】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOUFNICE/move_${dir}.png`),
@@ -2137,8 +2145,23 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/death_${dir}.png`),
         },
+        'elite_immortal': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMMORTAL/death_${dir}.png`),
+        },
         'immortal_ranged': {
             // 【不死军弓手】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/death_${dir}.png`),
+        },
+        'elite_immortal_ranged': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RANGED_IMMORTAL/idle_${dir}.png`),
@@ -2347,6 +2370,14 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/death_${dir}.png`),
         },
+        'elite_phalangite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PHALANGITE/death_${dir}.png`),
+        },
         'plumed_archer': {
             // 【羽箭手】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PLUMEDARCHER/move_${dir}.png`),
@@ -2406,6 +2437,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/death_${dir}.png`),
         },
+        'elite_rhomphaia_warrior': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RHOMPHAIA_WARRIOR/death_${dir}.png`),
+        },
         'rocket_cart': {
             // 【火箭车】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROCKETCART/move_${dir}.png`),
@@ -2435,6 +2473,13 @@ export const SPRITE_PATHS = {
         },
         'sannahya': {
             // 【桑纳亚】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/death_${dir}.png`),
+        },
+        'elite_sannahya': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SANNAHYA/idle_${dir}.png`),
@@ -2864,6 +2909,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGE_BALLISTA/death_${dir}.png`),
         },
         // 【强弩兵】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材）
