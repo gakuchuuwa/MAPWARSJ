@@ -21,7 +21,7 @@ import { joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { GameConfig } from '../config/GameConfig';
-import { markBattlefieldFought, isBattlefieldFought } from './battlefieldState';
+import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
 import { BATTLEFIELDS } from '../data/Battlefields';
 
 /**
@@ -362,6 +362,8 @@ export class HistoricalEventManager {
         if (!defender) return `【${bf.name}】守方军团没能建起来`;
 
         this.battlefieldBattleRunning = bfId;
+        // 13 顶部玩家面板要显示「XXX战役」，名字从这里传出去
+        setActiveBattleTitle(fb.title ?? `${bf.name}战役`);
         onSpawned?.({ attacker, defender });
         gameLog('expedition',
             `⚔️ [战场]【${fb.title ?? bf.name}】开打：${attacker.name} vs ${defender.name}`
@@ -371,6 +373,7 @@ export class HistoricalEventManager {
             { ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name },
             () => {
                 this.battlefieldBattleRunning = null;
+                setActiveBattleTitle(null);
                 // 打完了才叫战场：从这一刻起显示遗址形态，且这个战场此后不能再打
                 markBattlefieldFought(bfId);
                 gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);

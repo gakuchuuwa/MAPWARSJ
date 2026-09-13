@@ -1831,12 +1831,11 @@ const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_GUNPOWDER: 0.05,      // DE Projectile Gunpowder (Primary) 0.05 ✓（原值就对）
     PROJ_FIRE_LANCER: 0.55,    // 🔴 DE Projectile Rocket Cart = **0.55**（原写 0.05，差 11 倍 ✗ 已改正）
     PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
-    PROJ_BOMBARD_BALL: 0.04,   // 手推攻城火炮/榴弹炮：平射微抛（正数 0.04，消除原 -0.05 钻地下坠）
+    PROJ_BOMBARD_BALL: -0.05,  // DE Projectile Bombard Cannon = **−0.05** ✓（与原值一致 ✓ 平射）
     PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
-    // ── [2026-09-14 方案B修复] 弓箭抛物线弧度修正（消除负弧度钻地，恢复优美高抛）──
-    PROJ_ARROW: 0.18,          // 羽箭：自然仰角高抛（0.18），如天降箭雨
-    PROJ_ARROW_FIRE: 0.18,     // 火箭：同族抛物线
-    PROJ_SPEAR: 0.16,          // 标枪/掷矛：沉重抛射
+    // ── [2026-09-12 新增] 平射弹按 DE 的负 arc ──
+    PROJ_ARROW: -0.06,         // DE Projectile ARC（弓手/塔箭）**−0.06** —— 原先不在表里 → 走默认高抛 0.3 ✗
+    PROJ_ARROW_FIRE: -0.06,    // 同上（火箭类同族）
     // ── 投石族按 DE 细分（原先统一走"高抛翻倍 0.5"✗）──
     PROJ_MANGONEL: 0.40,       // DE Projectile Mangonel (Primary) = **0.40**
     PROJ_ROCK: 0.65,           // DE Projectile Trebuchet = **0.65**（巨型投石车，抛物线最高）
@@ -1920,14 +1919,7 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //    所以按项目尺度整体提速，只保留 DE 的**相对快慢**（攻城塔 7.0 > 弩矢 6.0）：
     //      弩矢   14 格/秒 = 560px/s → 弩炮战象(200px) 0.36s、蝎弩/床弩(280px) 0.50s
     //      攻城塔 16 格/秒 = 640px/s → 塔上弩机(240px) 0.375s，仍比弩矢快 1/6，与 DE 同序
-    // 羽箭/火箭（DE 速度 7.0 格/秒，项目按快节奏演出提至 11 格/秒 = 440px/s，飞行时间随真实交战距离动态变化）
-    PROJ_ARROW: 11 * 40,
-    PROJ_ARROW_FIRE: 11 * 40,
-    // 标枪/掷矛（比羽箭稍重稍慢，9 格/秒 = 360px/s）
-    PROJ_SPEAR: 9 * 40,
-    PROJ_SPEAR_SMALL: 10 * 40,
-    // 破甲弩矢（弩机爆发力高初速，15 格/秒 = 600px/s，平直疾速破空）
-    PROJ_BOLT: 15 * 40,
+    PROJ_BOLT: 14 * 40,
     PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 14 * 40,
     PROJ_SHOT: 7.5 * 40,
@@ -7912,7 +7904,7 @@ export class Scene13WarLayer {
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
-                const arcRatio = Math.max(0, PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3));
+                const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
                 const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
                 const flatFlight = !!a.towerFlight || PROJ_FLAT.has(a.proj);
                 const arc = flatFlight ? 0 : 4 * arcH * p * (1 - p);
