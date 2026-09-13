@@ -13,6 +13,7 @@ import type { Army } from '../legion/Army';
 import type { City } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
+import { WAR_TYPES } from '../data/WarTypes';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
@@ -102,8 +103,11 @@ export interface PlayerQuestDeps {
         /** 战场坐标（玩家赶路用；战场不是据点，不在路网里） */
         locate(bfId: string): { lat: number; lng: number } | null;
         findBattle(bfId: string): { attackerFactionId: string; defenderFactionId: string;
-            attackerGeneralId?: string; defenderGeneralId?: string; title?: string } | null;
-        start(bfId: string, onSpawned: (sides: { attacker: Army; defender: Army }) => void): string | null;
+            attackerGeneralId?: string; defenderGeneralId?: string; title?: string;
+            attackerSourceCityId?: string; defenderSourceCityId?: string } | null;
+        start(bfId: string,
+            onSpawned: (sides: { attacker: Army; defender: Army }) => void,
+            onFinished: (sides: { attacker: Army; defender: Army }) => void): string | null;
     };
 }
 
@@ -265,13 +269,46 @@ export class PlayerQuestSystem {
 
         const join = (side: 'attacker' | 'defender' | null) => {
             this.deps.closeDialogue();
-            const msg = bfApi.start(bfId, ({ attacker, defender }) => {
-                if (!side) return;   // 只观战
-                const host = side === 'attacker' ? attacker : defender;
-                this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);
-                this.deps.hero.attachTo(host);
-                this.deps.notify(`⚔ 你加入${side === 'attacker' ? atkName : defName}，随${side === 'attacker' ? atkGeneral : defGeneral}出战`);
-            });
+            const msg = bfApi.start(
+                bfId,
+                ({ attacker, defender }) => {
+                    if (!side) return;   // 只观战
+                    const host = side === 'attacker' ? attacker : defender;
+                    this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);
+                    this.deps.hero.attachTo(host);
+                    this.deps.notify(`⚔ 你加入${side === 'attacker' ? atkName : defName}，随${side === 'attacker' ? atkGeneral : defGeneral}出战`);
+                },
+                () => {
+                    if (!side) return;   // 只观战：没参战，不授战法
+                    // 🔴 [2026-09-14 主人定]「无论谁赢，玩家可以获得一个兵模，然后继续找其他势力。」
+                    //    奖的是**所投那一方**的主力兵种，与胜负无关 —— 亲历此役即得其战法。
+                    const joinedFaction = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
+                    const joinedGeneral = (side === 'attacker' ? fb.attackerGeneralId : fb.defenderGeneralId) ?? '';
+                    const sourceCityId = side === 'attacker' ? fb.attackerSourceCityId : fb.defenderSourceCityId;
+                    const unitKey = this.mainUnitKeyOf(joinedFaction, joinedGeneral);
+                    if (unitKey) {
+                        // 番号优先取出兵那座城的精锐番号，没有就用兵种本名
+                        const eliteName = (sourceCityId ? getCityEliteLegionName(sourceCityId) : null)
+                            ?? WAR_TYPES[unitKey]?.name ?? unitKey;
+                        const learned = this.deps.hero.learnElite({
+                            name: eliteName,
+                            unitKey,
+                            factionId: joinedFaction,
+                            factionName: this.deps.cityManager.getFactionName(joinedFaction),
+                        });
+                        this.deps.notify(learned
+                            ? `⚔ 【${bfName}】战毕，习得「${eliteName}」之战法`
+                            : `⚔ 【${bfName}】战毕（「${eliteName}」已会）`);
+                    }
+                    // 战后双方军团会撤场（见 withdrawBattlefieldLegions）。玩家若还挂在上面，
+                    // 军团一没就成了"随一支不存在的军团"，所以这里把他放回单骑，好去找下一家。
+                    if (this.deps.hero.isAttached()) {
+                        this.deps.hero.detach();
+                        this.deps.notify('解甲归为单骑，可另寻他处');
+                    }
+                    this.emitChange();
+                },
+            );
             if (msg) { this.deps.notify(msg); return; }
             this.deps.ensureUnpaused();
         };

@@ -404,7 +404,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     SRIVIJAYA: 'crane_wing',
     KUSHAN:       'crane_wing',     // 古典月氏：锥形阵 2+3+4 尖刀波鲁斯战象2+中坚粟特铁骑3+底边古典重装骑射4档主力
     KUSH: 'crane_wing',   // 古典努比亚：鹤翼阵 2+4+3 前锋麦查伊飞矛+中坚先锋重步主力+后排努比亚强弓
-    KHITAN: 'triangle',
+    KHITAN: "echelon",
     UIGHUR: 'triangle',
     MOHE: 'fish_scale',
     ANGLO_SAXON: 'fish_scale',
@@ -2957,7 +2957,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SRIVIJAYA: '封建时代三佛齐军团',
     KUSHAN: '古典时代月氏军团',
     KUSH: '古典时代努比亚军团',
-    KHITAN: '封建时代契丹军团',
+    KHITAN: "封建时代契丹军团",
     UIGHUR: '封建时代回鹘军团',
     MOHE: '封建时代靺鞨军团',
     ANGLO_SAXON: '封建时代盎格鲁-撒克逊军团',
@@ -3668,18 +3668,23 @@ export const KUSH_TIERS: CompositionTier[] = [
 ];
 
 /** 契丹 皮室具装重铁骑+反曲角弓骑+铁骨朵精兵（三角阵 4+3+2） */
-export const KHITAN_TIERS: CompositionTier[] = [
+export const KHITAN_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'steppe_lancer', count: 2 },   // 尖刀 = 草原枪骑兵
-            { type: 'liao_dao', count: 3 },   // 中坚 = 契丹辽刀手
-            { type: 'elite_liao_dao', count: 4 }   // 底边主力 = 契丹辽刀手精锐（精锐留本文化）
-        ]
+        "type": "elite_liao_dao",
+        "count": 4,
+        "scale": 1
+    },
+    {
+        "type": "iron_pagoda",
+        "count": 3,
+        "scale": 1
+    },
+    {
+        "type": "cav_archer_heavy",
+        "count": 2,
+        "scale": 1
     }
-];
+] }];
 
 /** 回鹘 金镞角弓骑+回鹘突骑+长刀轻骑（三角阵 2+3+4） */
 export const UIGHUR_TIERS: CompositionTier[] = [

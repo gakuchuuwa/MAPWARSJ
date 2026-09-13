@@ -3390,8 +3390,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "xianhai": {
@@ -3813,52 +3813,52 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "qidan": {
         legionName: "封建时代契丹军团",
-        legionType: "region",
+        legionType: "sub",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "liao_d": {
         legionName: "封建时代契丹军团",
-        legionType: "region",
+        legionType: "sub",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "dongdan": {
         legionName: "封建时代契丹军团",
-        legionType: "region",
+        legionType: "sub",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "yel": {
         legionName: "封建时代契丹军团",
-        legionType: "region",
+        legionType: "sub",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "kumoxi": {
         legionName: "封建时代契丹军团",
-        legionType: "region",
+        legionType: "sub",
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "cav_archer_heavy", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
     "sumo": {
@@ -3899,6 +3899,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "white_feather_guard", count: 3 },
             { type: "elite_chukonu", count: 4 },
             { type: "tiger_rider", count: 2 },
+        ],
+    },
+    "shazhou": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "cav_archer_heavy", count: 2 },
         ],
     },
 };
