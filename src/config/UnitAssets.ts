@@ -903,6 +903,14 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/death_${dir}.png`),
         },
+        'elite_pattiyoda_longbowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/death_${dir}.png`),
+        },
         // 【岭南皮甲战象】Armored Elephant 装甲战象（8方向，AoE2 DE SLD 素材，u_ele_armored_elephant）
         'armored_elephant': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/move_${dir}.png`),
@@ -1238,6 +1246,13 @@ export const SPRITE_PATHS = {
         // 【马其顿方阵】Macedonian Phalanx（8方向萨里沙超长矛方阵）
         // 【马其顿伙友重骑兵】Companion Cavalry（8方向突骑）
         'companion_cavalry': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/death_${dir}.png`),
+        },
+        'elite_companion_cavalry': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/idle_${dir}.png`),
@@ -2056,6 +2071,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/death_${dir}.png`),
         },
+        'elite_hippeus': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/death_${dir}.png`),
+        },
         'hoplite': {
             // 【希腊重装步兵】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HOPLITE/move_${dir}.png`),
@@ -2546,6 +2568,13 @@ export const SPRITE_PATHS = {
         },
         'strategos': {
             // 【将军卫队】AoE2 DE 素材，2026-08-16 全兵种批量接入
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/death_${dir}.png`),
+        },
+        'elite_strategos': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/idle_${dir}.png`),

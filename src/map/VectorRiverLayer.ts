@@ -131,7 +131,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
     }
 
     /**
-     * 辅助方法：创建统一的双层河流组 (Border + Water)
+     * 创建河岸、水面与宽河内部的轻微色调层。
      * Reduces code duplication.
      */
     private fillRiverGroup(group: L.FeatureGroup, data: any, pane?: string): L.FeatureGroup {
@@ -151,6 +151,21 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         group.addLayer(border);
         group.addLayer(water);
+
+        // 只为主要河流增加内部明暗，细支流不增加路径或纹理。
+        const tone = new L.GeoJSON({
+            ...data,
+            features: data.features.filter((feature: any) => {
+                const rank = feature.properties?.scalerank;
+                return typeof rank === 'number' && Number.isFinite(rank) && rank <= 6;
+            }),
+        }, {
+            style: (feature) => VectorRiverLayer.getToneStyle(feature, 9),
+            pane,
+            interactive: false,
+        });
+        (tone as any).riverType = 'tone';
+        group.addLayer(tone);
 
         return group;
     }
@@ -221,6 +236,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
                 layer.setStyle((feature: any) => VectorRiverLayer.getBorderStyle(feature, zoom));
             } else if (layer.riverType === 'water') {
                 layer.setStyle((feature: any) => VectorRiverLayer.getWaterStyle(feature, zoom));
+            } else if (layer.riverType === 'tone') {
+                layer.setStyle((feature: any) => VectorRiverLayer.getToneStyle(feature, zoom));
             }
         });
     }
@@ -271,8 +288,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return {
             // 岸色从海湖共用配色派生，不再单独硬编码另一套蓝色。
             color: STRATEGIC_RIVER_BANK_COLOR,
-            weight: waterWeight + 1.0,
-            opacity: 0.22,
+            weight: waterWeight + 2.4,
+            opacity: 0.14,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -298,6 +315,20 @@ export class VectorRiverLayer extends L.FeatureGroup {
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
             className: 'vector-river-water'
+        };
+    }
+
+    private static getToneStyle(feature: any, zoom: number): L.PolylineOptions {
+        const weight = VectorRiverLayer.getWaterWeight(feature, zoom);
+        return {
+            stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 4.5,
+            color: STRATEGIC_RIVER_BANK_COLOR,
+            weight: weight * 0.65,
+            opacity: 0.3,
+            lineCap: 'round',
+            lineJoin: 'round',
+            smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
+            className: 'vector-river-tone',
         };
     }
 
