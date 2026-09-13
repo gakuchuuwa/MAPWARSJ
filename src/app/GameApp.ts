@@ -753,7 +753,7 @@ export class GameApp {
                 checkReady: (bfId, pos) => this.historicalEventManager.checkBattlefieldReady(bfId, pos),
                 findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
                 locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
-                start: (bfId, onSpawned) => this.historicalEventManager.startBattlefieldBattle(bfId, onSpawned),
+                start: (bfId, onSpawned, onFinished) => this.historicalEventManager.startBattlefieldBattle(bfId, onSpawned, onFinished),
             },
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
         });

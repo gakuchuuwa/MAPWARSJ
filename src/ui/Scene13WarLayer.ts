@@ -1653,17 +1653,6 @@ const PROJ_TYPE: Record<string, string> = {
     antiquity_scorpion: 'PROJ_BOLT',
     antiquity_heavy_scorpion: 'PROJ_BOLT',
     antiquity_siege_tower: 'PROJ_HELEPOLIS',   // DE: SIEGTWR → Projectile Helepolis → p_bolt（塔上弩机）
-    // ── 步兵弩手：改用 DE 短粗破甲弩矢（PROJ_BOLT），平直飞行破甲，与普通步弓羽箭区分 ──
-    crossbowman: 'PROJ_BOLT',
-    arbalest: 'PROJ_BOLT',
-    arbalester: 'PROJ_BOLT',
-    chukonu: 'PROJ_BOLT',
-    elite_chukonu: 'PROJ_BOLT',
-    chu_ko_nu: 'PROJ_BOLT',
-    elite_chu_ko_nu: 'PROJ_BOLT',
-    genoese_crossbowman: 'PROJ_BOLT',
-    elite_genoese_crossbowman: 'PROJ_BOLT',
-    gastraphetes: 'PROJ_BOLT',
     flamethrower: 'PROJ_FIRE',         // 猛火油柜喷火：用火焰抛射物（30 帧火舌，非弹丸）
     helepolis: 'PROJ_HELEPOLIS',           // 攻城塔射弩箭
     // 🔴 [2026-08-18 修·主人报「车的攻击效果还是射箭」] 胡斯战车是**火铳车**，不射箭：
@@ -6404,7 +6393,7 @@ export class Scene13WarLayer {
             this.arrows.push({
                 x: fireX, y: fireY,
                 dx: ax / ad, dy: ay / ad, len: ad,
-                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW_FIRE ?? 440), f: 1, proj: 'PROJ_ARROW_FIRE',
+                t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW_FIRE',
                 delay: v * PROJ_VOLLEY_DELAY,
                 towerFlight: {
                     startLift: this.elevationLiftAt(fireX, t.y),

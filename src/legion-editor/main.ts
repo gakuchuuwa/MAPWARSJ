@@ -1868,6 +1868,18 @@ function isRegionLegionName(name: string): boolean {
     return REGION_LEGION_BASE_SET.has(base) || REGION_TAB_LABEL_SET.has(base);
 }
 
+/**
+ * 🔴 [2026-09-14 主人报障「点保存后军团自动改名叫契丹军团，也没有时代了，再改就改不了」]
+ *    军团名为空时的兜底**绝不能用 `势力名 + 军团`** —— 势力「契丹」会落成「契丹军团」，
+ *    丢掉时代前缀，违反命名铁律（时代 + 民族 + 军团）；更要命的是这个名字匹配不上任何
+ *    文化区，于是被当成**新建的三级自建军团**存了下去，原来的二级军团再也改不回来。
+ *    实测已污染 6 个契丹系势力（后辽/契丹/辽/东丹/耶律/库莫奚），已一并改回。
+ *    正确兜底 = 该势力所在文化区的军团名（「封建时代契丹军团」）。
+ */
+function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: string }): string {
+    return getCultureLegionName(r.region as RegionType) || `${r.factionName}军团`;
+}
+
 /** 🔴 [2026-09-11 主人定] **三级军团分类** */
 export type LegionLayer = 'culture' | 'sub' | 'custom';
 
@@ -3095,11 +3107,11 @@ function renderEditPanel(row: FactionLegionRow): void {
     </div>
 
     <div class="le-form-section">
-      <div class="le-section-title"><span>③ 另存为二级制定军团 · 新名称</span></div>
+      <div class="le-section-title"><span>③ 另存为三级制定军团 · 新名称</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
-        将当前编制保存为一个新名称的二级制定军团，并给【${row.generalName || row.factionName}】使用。已有军团名请使用上方「保存军团编制」。
+        将当前编制保存为一个新名称的三级制定军团，并给【${row.generalName || row.factionName}】使用。已有军团名请使用上方「保存军团编制」。
       </div>
-      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为二级制定军团（起个新名字，只给这一家）</button>
+      <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为三级制定军团（起个新名字，只给这一家）</button>
     </div>
     `;
 
@@ -3195,7 +3207,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     //       某个武将换支军团，却把整个文化区冲掉（罗马、希腊、赫梯先后中招三次）。
     document.getElementById('le-btn-apply-faction')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
-        const name = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
+        const name = currentEditingLegion.legionName?.trim() || fallbackLegionNameOf(row);
         const savedLegion = getAllDistinctLegions().get(name);
         if (!savedLegion || legionSig(savedLegion) !== legionSig(currentEditingLegion)) {
             showToast('❌ 一个军团只能有一种编制。一种编制是指三排兵种排列一样！请先保存军团编制（全体同步），再给武将换军团。', true);
@@ -3229,7 +3241,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         //    落到哪个文化区，看的是**军团名归谁**，不是「当前势力在哪个区」——
         //    原来按势力所在区写，于是给奇里乞亚（在赫梯区）套罗马军团再保存，
         //    就把古典时代赫梯军团整个冲成了罗马那套（罗马、希腊、赫梯先后被冲三次）。
-        const savedLegionName = inputLegionName || `${row.factionName}军团`;
+        const savedLegionName = inputLegionName || fallbackLegionNameOf(row);
         const owningCultures = (REGION_ORDER as RegionType[]).filter(
             r => getCultureLegionName(r) === savedLegionName,
         );
@@ -3283,7 +3295,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 另存为新军团：独立命名，不联动同名势力
     document.getElementById('le-btn-save-as')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
-        const curName = currentEditingLegion.legionName?.trim() || `${row.factionName}军团`;
+        const curName = currentEditingLegion.legionName?.trim() || fallbackLegionNameOf(row);
         const newName = (window.prompt('输入新军团名（另存为独立军团，不会同步到其他同名势力）：', curName))?.trim();
         if (!newName) return;
         if (getAllDistinctLegions().has(newName)) {
@@ -3306,7 +3318,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         applyFilter();
         selectFaction(row.factionId);
         if (!await saveAllCompositions()) return;
-        showToast(`✅ 已另存为【${newName}】二级制定军团并写入文件（未联动其他势力）`);
+        showToast(`✅ 已另存为【${newName}】三级制定军团并写入文件（未联动其他势力）`);
     });
 
     // 军团种类选择（第三步）

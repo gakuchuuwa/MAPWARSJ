@@ -214,6 +214,29 @@ export class HistoricalEventManager {
     /** 玩家要走到这么近（km）才算「抵达战场」，可以触发 */
     public static readonly BATTLEFIELD_TRIGGER_KM = 30;
 
+    /**
+     * 战役打完 → 双方军团**撤场**（不留在乱斗棋盘上）。
+     *
+     * 🔴 [2026-09-14 主人问「是继续随军参战呢，还是直接消失呢」] 选择「撤场」，硬理由有三条：
+     *   ① **主帅必须回城，否则下一个战场永远打不开。** 按主人自己定的规矩「必须武将在城，
+     *      再能触发战场事件」，亚历山大要是打完格拉尼库斯就一直挂在场上带兵，
+     *      伊苏斯（同样由他主战）就永远触发不了 —— 两个战场直接废掉一个。
+     *   ② 这两支军团是**为这一仗凭空生成的史实兵力**（4 万 / 8 万），而乱斗里一座城才 3 万、
+     *      出兵门槛 2 万。留下等于白送一支超规格大军，棋盘立刻被扰乱。
+     *   ③ 历史痕迹已经由**战场遗址**留在图上了，不需要军团继续杵在那儿。
+     *
+     * 停 8 秒再撤：让 13 打完的结算画面走完，观众看清战果，不至于一结束就凭空蒸发。
+     */
+    private withdrawBattlefieldLegions(bfName: string, ...armies: Army[]): void {
+        setTimeout(() => {
+            for (const army of armies) {
+                if (!army || !this.legionManager.getLegionById(army.id)) continue;   // 已经没了就别重复清
+                this.legionManager.removeArmy(army);
+            }
+            gameLog('expedition', `⚔️ [战场]【${bfName}】双方班师，主帅归城（下一个战场方可触发）`);
+        }, 8000);
+    }
+
     /** 战场坐标（玩家赶路用） */
     public locateBattlefield(bfId: string): { lat: number; lng: number } | null {
         const bf = BATTLEFIELDS.find((b) => b.id === bfId);
@@ -326,6 +349,7 @@ export class HistoricalEventManager {
     public startBattlefieldBattle(
         bfId: string,
         onSpawned?: (sides: { attacker: Army; defender: Army }) => void,
+        onFinished?: (sides: { attacker: Army; defender: Army }) => void,
     ): string | null {
         const blocked = this.checkBattlefieldReady(bfId);
         if (blocked) return blocked;
@@ -350,6 +374,8 @@ export class HistoricalEventManager {
                 // 打完了才叫战场：从这一刻起显示遗址形态，且这个战场此后不能再打
                 markBattlefieldFought(bfId);
                 gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);
+                onFinished?.({ attacker, defender });
+                this.withdrawBattlefieldLegions(bf.name, attacker, defender);
             },
         );
         return null;
