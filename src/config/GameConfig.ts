@@ -11,8 +11,8 @@ export class GameConfig {
          *   war_sim 的平衡结论按开关分两套，别跨口径引用。
          */
         ENABLE_HISTORICAL_EVENTS: false,
-        // 剧本推进与乱斗调度共用此开关；军事科技年份门控保持独立。
-        ENABLE_SCRIPT_EVENTS: false,
+        // [2026-09-14 删除] ENABLE_SCRIPT_EVENTS：主人定「以后没有剧本了，就是乱斗模式中加战场玩法」。
+        //   逐年剧本事件链已整套删除；战场玩法走 HistoricalEventManager.startBattlefieldBattle，不看任何开关。
         SANDBOX_MODE: true,
     };
     /**

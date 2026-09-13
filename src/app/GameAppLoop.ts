@@ -171,10 +171,9 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
                 app.combatSystem.update(gameDelta);
             }
         }
-        // 🔴 [2026-09-12 主人定「分模式」] 剧本模式（历史脚本开）下，乱斗的自主攻伐与募兵一律停：
-        //    其他势力「老老实实等着」，不抢跑、不自行扩张；只有乱斗模式才跑 AI + 募兵。
-        const brawlMode = !GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS;
-        if (app.aiController && brawlMode) {
+        // 🔴 [2026-09-14 主人定]「以后没有剧本了，就是乱斗模式中加战场玩法。」
+        //    原先这里有个剧本模式闸（剧本跑时停 AI 与募兵），剧本已整套删除，故恒定跑。
+        if (app.aiController) {
             if (dev) {
                 perfDoctor.measure('AIController.update', () => app.aiController!.update(),
                     'src/ai/AIController.ts:update');
@@ -182,7 +181,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
                 app.aiController.update();
             }
         }
-        if (app.recruitmentSystem && brawlMode) {
+        if (app.recruitmentSystem) {
             if (dev) {
                 perfDoctor.measure('RecruitmentSystem.update(募兵)',
                     () => app.recruitmentSystem!.update(gameDelta),
@@ -254,8 +253,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             }
 
             perfMonitor.startTimer('ai');
-            // 🔴 [2026-09-12 主人定「分模式」] 剧本模式下乱斗 AI 停（与后台心跳同一闸门）。
-            if (app.aiController && !GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS) {
+            if (app.aiController) {
                 // [2026-08-31] PerfDoctor 采样：AI 一帧的总成本。
                 //   2026-08-31 实测修前 p90 89ms / p99 339ms（五帧一爆预算），根因在
                 //   RoadRegistry.findNearestRoadEntry；修后 p90 1.0ms。两条曲线要一起看。
@@ -269,7 +267,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.endTimer('ai');
 
             perfMonitor.startTimer('recruitment');
-            if (app.recruitmentSystem && !GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS) {
+            if (app.recruitmentSystem) {
                 app.recruitmentSystem.update(gameDelta);
             }
             perfMonitor.endTimer('recruitment');

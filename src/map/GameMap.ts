@@ -618,10 +618,6 @@ export class GameMap {
                         <span id="control-panel-toggle-icon" style="color:#5b7a66;">▼</span>
                     </div>
                     <div id="control-panel-content" style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1d3326;" title="默认关闭，使用乱斗模式；关闭后已开打的战斗正常结算，不再接下一章">
-                        <input type="checkbox" id="chk-script-mode">
-                        <b>📜 亚历山大剧本</b>
-                    </label>
                     <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#9c302f;">地图切换</div>
                     
                     <button id="btn-source-esri" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">
@@ -916,7 +912,6 @@ export class GameMap {
                 if (!panelContent) return;
                 const inputs: Record<string, string | boolean> = {};
                 panelContent.querySelectorAll<HTMLInputElement>('input[id]').forEach((input) => {
-                    if (input.id === 'chk-script-mode') return;
                     if (input.id === 'chk-terrain-relief-experiment' || input.id === 'chk-valley-relief-experiment') return;
                     inputs[input.id] = input.type === 'checkbox' ? input.checked : input.value;
                 });
@@ -1293,15 +1288,6 @@ export class GameMap {
 
             syncAudioControls();
 
-            const chkScriptMode = document.getElementById('chk-script-mode') as HTMLInputElement | null;
-            if (chkScriptMode) {
-                chkScriptMode.checked = GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS;
-                chkScriptMode.addEventListener('change', () => {
-                    window.dispatchEvent(new CustomEvent('toggle-script-mode', {
-                        detail: { enabled: chkScriptMode.checked }
-                    }));
-                });
-            }
 
 
             // [FIX] 编辑器复选框事件绑定 (之前缺失，导致编辑器无法打开)
@@ -1355,7 +1341,6 @@ export class GameMap {
                     savedInputs['rng-con'] = '114';
                 }
                 for (const [id, value] of Object.entries(savedInputs)) {
-                    if (id === 'chk-script-mode') continue;
                     if (id === 'chk-terrain-relief-experiment' || id === 'chk-valley-relief-experiment') continue;
                     const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
                     if (!input) continue;

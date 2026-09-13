@@ -85,11 +85,16 @@ export class BattlefieldLayer {
                 iconAnchor: [canvasW / 2, (canvasH + labelH) / 2],
             });
 
+            // 🔴 [2026-09-14 主人定]「玩家点击战场后，触发真实的战役战斗。不用接任务了，这样简单。」
+            //    战场仍然不是据点、没有详情面板，点击只有一个用途：打这一场真实战役。
             const marker = L.marker([bf.lat, bf.lng], {
                 icon,
-                interactive: false,          // 战场不吃点击（它不是据点，没有详情面板）
+                interactive: true,
                 pane: 'battlefieldPane',
             }).addTo(this.layerGroup);
+            marker.on('click', () => {
+                window.dispatchEvent(new CustomEvent('battlefield-click', { detail: { id: bf.id, name: bf.name } }));
+            });
 
             this.markers.set(bf.id, marker);
         }
@@ -117,7 +122,8 @@ export class BattlefieldLayer {
                 height: ${canvasH.toFixed(0)}px;
                 transform: scale(var(--battlefield-scale, 1));
                 transform-origin: 50% 50%;
-                pointer-events: none;
+                pointer-events: auto;
+                cursor: pointer;
             ">
                 ${morph}
                 <!-- 地名标牌（打完前**只有这个**） -->

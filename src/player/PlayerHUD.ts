@@ -216,11 +216,7 @@ export class PlayerHUD {
         const questText = quest
             ? (quest.kind === 'restore'
                 ? `助${quest.generalName}复国【${quest.cityName}】`
-                // 🔴 [2026-09-11 主人定 A 方案] 剧本任务显示**真历史目标**
-                //    （如「随亚历山大进军格拉尼库斯」），不显示引擎那套「攻【某城】」
-                : quest.scriptObjective
-                    ? `随${quest.generalName}${quest.scriptObjective.label}`
-                    : `随${quest.generalName}攻【${quest.targetCityName}】`)
+                : `随${quest.generalName}攻【${quest.targetCityName}】`)
             : '到据点找武将';
         this.body.innerHTML = '';
 
