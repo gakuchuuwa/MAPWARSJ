@@ -559,9 +559,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
  *    FactionCompositions，不经这条攻城槽，删了反而误伤。
  */
 const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>> = {
-    CENTRAL: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     NORTH: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
-    JIANGNAN: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     HEXI: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     NORTHEAST: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
     KOREA: ['traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet'],
@@ -738,6 +736,7 @@ const SIGHT_MAP: Record<string, number> = {
     elite_chakram_thrower: 320,
     elite_champi_warrior: 240,
     elite_chukonu: 240,
+    elite_companion_cavalry: 200,
     elite_composite_bowman: 280,
     elite_conquistador: 360,
     elite_coustillier: 200,
@@ -751,6 +750,7 @@ const SIGHT_MAP: Record<string, number> = {
     elite_ghulam: 240,
     elite_guardsman: 160,
     elite_guecha_warrior: 200,
+    elite_hippeus: 160,
     elite_huskarl: 200,
     elite_hussite_wagon: 320,
     elite_ibirapema_warrior: 200,
@@ -770,6 +770,7 @@ const SIGHT_MAP: Record<string, number> = {
     elite_monaspa: 200,
     elite_obuch: 120,
     elite_organ_gun: 360,
+    elite_pattiyoda_longbowman: 200,
     elite_plumed_archer: 240,
     elite_ratha_melee: 240,
     elite_ratha_ranged: 240,
@@ -779,6 +780,7 @@ const SIGHT_MAP: Record<string, number> = {
     elite_shrivamsha_rider: 240,
     elite_skirmisher: 280,
     elite_steppe_lancer: 200,
+    elite_strategos: 240,
     elite_tarkan: 280,
     elite_temple_guard: 240,
     elite_teutonic_knight: 200,
@@ -1553,6 +1555,7 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     longbowman_elite: 2.67,
     elite_fire_archer: 2.67,
     pattiyoda_longbowman: 2.67,
+    elite_pattiyoda_longbowman: 2.67,
     amazon_archer: 2.67,
     elite_plumed_archer: 2.67,
     longbowman: 2.67,
@@ -1808,7 +1811,7 @@ function accuracyOf(key: string, wt: WarType): number {
     // 阿兰拜飞镖（DE 20%，散射极大）
     if (key === 'arambai' || key === 'elite_arambai') return 20;
     // 长弓（DE 70%）
-    if (key === 'longbowman' || key === 'longbowman_elite' || key === 'pattiyoda_longbowman') return 70;
+    if (key === 'longbowman' || key === 'longbowman_elite' || key === 'pattiyoda_longbowman' || key === 'elite_pattiyoda_longbowman') return 70;
     // 弩（弩兵/劲弩/热那亚弩/连弩/腹弩/弩炮/弩炮战象/高丽战车/攻城塔）
     if (key.includes('crossbow') || key.includes('arbalest') || key.includes('ballista') || key.includes('scorpion') || key.includes('gastraphetes') || key.includes('chukonu') || key.includes('war_wagon') || key === 'siege_tower' || key === 'helepolis') return 85;
     // 掷矛/标枪/投石（掷矛手/标枪骑兵/色雷斯标枪/格查勇士/投石兵/套索骑兵/先秦战车）
@@ -1834,10 +1837,15 @@ const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
     PROJ_BOMBARD_BALL: 0.04,   // 手推攻城火炮/榴弹炮：平射微抛（正数 0.04，消除原 -0.05 钻地下坠）
     PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
-    // ── [2026-09-14 对齐DE] 弓箭/标枪抛物线弧度（DE 实值 0.06，低伸平射微弧，13.5° 仰角/俯冲角）──
-    PROJ_ARROW: 0.06,          // 羽箭：对齐 DE projectile_arc 实值（0.06，低伸平射微弧）
-    PROJ_ARROW_FIRE: 0.06,     // 火箭：同族低伸平射微弧
-    PROJ_SPEAR: 0.06,          // 标枪/掷矛：对齐 DE 真实微弧平抛
+    // ── [2026-09-12 新增] 平射弹按 DE 的负 arc ──
+    // 🔴 [2026-09-14 主人报障「弓箭弩箭的飞行弧度改坏了」] 由 −0.06 改为 **0.04**。
+    //    根因：本渲染器的 y = groundY − flightLift − **arc**，arc 为负 = 弹道**沉到地面以下**。
+    //    09-12 那次「照 DE dat 实值重填」把箭填成 −0.06，实算 arcH = len×(−0.06) ≈ −9.6px，
+    //    中点比地面低约 10px（士兵才 40px 高）→ 箭一路**穿地飞**，就是主人看到的坏弧度。
+    //    ⚠️ DE 的 projectile_arc 与本渲染器的屏幕弧高**不是一个语义**，不能照搬数值。
+    //    0.04 = 平射微抛，既不穿地，又保住 DE 里「箭近乎平射」的观感。
+    PROJ_ARROW: 0.04,
+    PROJ_ARROW_FIRE: 0.04,     // 同上（火箭类同族）
     // ── 投石族按 DE 细分（原先统一走"高抛翻倍 0.5"✗）──
     PROJ_MANGONEL: 0.40,       // DE Projectile Mangonel (Primary) = **0.40**
     PROJ_ROCK: 0.65,           // DE Projectile Trebuchet = **0.65**（巨型投石车，抛物线最高）
@@ -1921,12 +1929,6 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //    所以按项目尺度整体提速，只保留 DE 的**相对快慢**（攻城塔 7.0 > 弩矢 6.0）：
     //      弩矢   14 格/秒 = 560px/s → 弩炮战象(200px) 0.36s、蝎弩/床弩(280px) 0.50s
     //      攻城塔 16 格/秒 = 640px/s → 塔上弩机(240px) 0.375s，仍比弩矢快 1/6，与 DE 同序
-    // 羽箭/火箭（DE 速度 7.0 格/秒，项目按快节奏演出提至 11 格/秒 = 440px/s，飞行时间随真实射距动态变化）
-    PROJ_ARROW: 11 * 40,
-    PROJ_ARROW_FIRE: 11 * 40,
-    // 标枪/掷矛（比羽箭稍重稍慢，9 格/秒 = 360px/s）
-    PROJ_SPEAR: 9 * 40,
-    PROJ_SPEAR_SMALL: 10 * 40,
     PROJ_BOLT: 14 * 40,
     PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 14 * 40,
@@ -1982,7 +1984,7 @@ const FLANK_TYPES = new Set([
     'karambit_warrior', 'karambit_warrior_elite',
     'woad_raider', 'elite_woad_raider',
     'ibirapema_warrior', 'elite_ibirapema_warrior',
-    'companion_cavalry',            // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
+    'companion_cavalry', 'elite_companion_cavalry',  // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
 ]);
 
 // ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
@@ -2361,6 +2363,7 @@ const UNIT_RADIUS: Record<string, number> = {
     champion: 8.0,
     chukonu: 8.0,
     companion_cavalry: 10.0,
+    elite_companion_cavalry: 10.0,
     composite_bowman: 8.0,
     condottiero: 8.0,
     conquistador: 10.0,
@@ -2455,6 +2458,7 @@ const UNIT_RADIUS: Record<string, number> = {
     helepolis: 18.0,
     hill_tribesman: 8.0,
     hippeus: 8.0,
+    elite_hippeus: 8.0,
     hoplite: 8.0,
     horse_archer: 10.0,
     houfnice: 20.0,
@@ -2506,6 +2510,7 @@ const UNIT_RADIUS: Record<string, number> = {
     organ_gun: 16.0,
     paladin: 10.0,
     pattiyoda_longbowman: 8.0,
+    elite_pattiyoda_longbowman: 8.0,
     petard: 8.0,
     phalangite: 9.0,
     pikeman: 8.0,
@@ -2544,6 +2549,7 @@ const UNIT_RADIUS: Record<string, number> = {
     spearman: 8.0,
     steppe_lancer: 10.0,
     strategos: 8.0,
+    elite_strategos: 8.0,
     swordsman: 8.0,
     sakan_axeman: 8.0,
     tarantine_cavalry: 10.0,
@@ -7898,7 +7904,7 @@ export class Scene13WarLayer {
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
-                const arcRatio = Math.max(0, PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3));
+                const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
                 const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
                 const flatFlight = !!a.towerFlight || PROJ_FLAT.has(a.proj);
                 const arc = flatFlight ? 0 : 4 * arcH * p * (1 - p);
