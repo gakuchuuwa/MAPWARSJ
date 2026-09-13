@@ -1683,6 +1683,7 @@ const PROJ_TYPE: Record<string, string> = {
     elite_fire_archer: 'PROJ_ARROW_FIRE',
     rocket_cart: 'PROJ_ARROW_FIRE',
     heavy_rocket_cart: 'PROJ_ARROW_FIRE',
+    tarantine_cavalry: 'PROJ_SPEAR',
     skirmisher: 'PROJ_SPEAR',
     elite_skirmisher: 'PROJ_SPEAR',
     imperial_skirmisher: 'PROJ_SPEAR',
@@ -1831,11 +1832,12 @@ const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_GUNPOWDER: 0.05,      // DE Projectile Gunpowder (Primary) 0.05 ✓（原值就对）
     PROJ_FIRE_LANCER: 0.55,    // 🔴 DE Projectile Rocket Cart = **0.55**（原写 0.05，差 11 倍 ✗ 已改正）
     PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
-    PROJ_BOMBARD_BALL: -0.05,  // DE Projectile Bombard Cannon = **−0.05** ✓（与原值一致 ✓ 平射）
+    PROJ_BOMBARD_BALL: 0.04,   // 手推攻城火炮/榴弹炮：平射微抛（正数 0.04，消除原 -0.05 钻地下坠）
     PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
-    // ── [2026-09-12 新增] 平射弹按 DE 的负 arc ──
-    PROJ_ARROW: -0.06,         // DE Projectile ARC（弓手/塔箭）**−0.06** —— 原先不在表里 → 走默认高抛 0.3 ✗
-    PROJ_ARROW_FIRE: -0.06,    // 同上（火箭类同族）
+    // ── [2026-09-14 对齐DE] 弓箭/标枪抛物线弧度（DE 实值 0.06，低伸平射微弧，13.5° 仰角/俯冲角）──
+    PROJ_ARROW: 0.06,          // 羽箭：对齐 DE projectile_arc 实值（0.06，低伸平射微弧）
+    PROJ_ARROW_FIRE: 0.06,     // 火箭：同族低伸平射微弧
+    PROJ_SPEAR: 0.06,          // 标枪/掷矛：对齐 DE 真实微弧平抛
     // ── 投石族按 DE 细分（原先统一走"高抛翻倍 0.5"✗）──
     PROJ_MANGONEL: 0.40,       // DE Projectile Mangonel (Primary) = **0.40**
     PROJ_ROCK: 0.65,           // DE Projectile Trebuchet = **0.65**（巨型投石车，抛物线最高）
@@ -1919,6 +1921,12 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //    所以按项目尺度整体提速，只保留 DE 的**相对快慢**（攻城塔 7.0 > 弩矢 6.0）：
     //      弩矢   14 格/秒 = 560px/s → 弩炮战象(200px) 0.36s、蝎弩/床弩(280px) 0.50s
     //      攻城塔 16 格/秒 = 640px/s → 塔上弩机(240px) 0.375s，仍比弩矢快 1/6，与 DE 同序
+    // 羽箭/火箭（DE 速度 7.0 格/秒，项目按快节奏演出提至 11 格/秒 = 440px/s，飞行时间随真实射距动态变化）
+    PROJ_ARROW: 11 * 40,
+    PROJ_ARROW_FIRE: 11 * 40,
+    // 标枪/掷矛（比羽箭稍重稍慢，9 格/秒 = 360px/s）
+    PROJ_SPEAR: 9 * 40,
+    PROJ_SPEAR_SMALL: 10 * 40,
     PROJ_BOLT: 14 * 40,
     PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 14 * 40,
@@ -4844,7 +4852,7 @@ export class Scene13WarLayer {
             this.ensureNatureAsset('BUILDING:' + arrowTowerAsset + '_DAMAGED');   // 30 秒「破损」形态
             this.ensureNatureAsset('BUILDINGANIM:' + arrowTowerAsset + '_DESTR'); // 30 秒「残骸」倒塌动画
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
-            this.ensureProj('PROJ_ARROW_FIRE');
+            this.ensureProj('PROJ_ARROW');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
             this.ensureFx('FX_WALL_DUST');
             const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8, atk: 7 }
@@ -6385,26 +6393,12 @@ export class Scene13WarLayer {
             this.arrows.push({
                 x: fireX, y: fireY,
                 dx: ax / ad, dy: ay / ad, len: ad,
-                t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW_FIRE',
+                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
                 delay: v * PROJ_VOLLEY_DELAY,
                 towerFlight: {
                     startLift: this.elevationLiftAt(fireX, t.y),
                     endLift: this.elevationLiftAt(foe.x, foe.y),
                 },
-            });
-        }
-        // 攻击特效：塔顶开火闪光（火花）
-        const ang = Math.atan2(ay, ax);
-        for (let i = 0; i < 5; i++) {
-            const spd = 18 + Math.random() * 30;
-            const spread = (Math.random() - 0.5) * 0.7;
-            this.sparks.push({
-                x: fireX, y: fireY,
-                vx: Math.cos(ang + spread) * spd,
-                vy: Math.sin(ang + spread) * spd - 8,
-                t: 0, dur: 0.10 + Math.random() * 0.12,
-                color: ['#FFF4D0', '#FFD800', '#FF8C00', '#FFFFFF'][(Math.random() * 4) | 0],
-                size: 1.3 + Math.random() * 1.5,
             });
         }
         t.cd = t.reload;
@@ -7904,7 +7898,7 @@ export class Scene13WarLayer {
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
-                const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
+                const arcRatio = Math.max(0, PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3));
                 const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
                 const flatFlight = !!a.towerFlight || PROJ_FLAT.has(a.proj);
                 const arc = flatFlight ? 0 : 4 * arcH * p * (1 - p);
