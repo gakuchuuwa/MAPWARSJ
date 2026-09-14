@@ -1114,9 +1114,9 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'cataphract', count: 3 },
-        { type: 'elite_cataphract', count: 4 },
-        { type: 'composite_bowman', count: 2 },
+        { type: 'sakan_axeman', count: 2 },
+        { type: 'antiquity_light_cavalry', count: 3 },
+        { type: 'antiquity_heavy_cavalry_archer', count: 4 },
     ]
     }
 ];
@@ -1653,7 +1653,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     RUSSIAN: '帝国时代俄罗斯军团',
     SIKH: '帝国时代锡克军团',
     HEBREWS: '古典时代希伯来军团',
-    WUSUN: '古典时代乌孙军团',
+    WUSUN: "东亚军团",
     QIANG: "古典时代羌族军团",
     YARLUNG: '古典时代雅隆军团',
     NABATAEANS: '古典时代纳巴泰军团',
@@ -1857,7 +1857,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         tiers: AFRICA_BASE_TIERS,
     },
     CENTRAL: {
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         tiers: CENTRAL_BASE_TIERS,
     },
     ANDE: {
