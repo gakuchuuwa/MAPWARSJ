@@ -61,7 +61,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '古典时代凯尔特军团', civ: '凯尔特', age: 'antiquity', deStyle: 'WEST', region: 'BRITONS' as RegionType,
+        name: '古典时代凯尔特军团', civ: '凯尔特', age: 'antiquity', deStyle: 'WEST', region: 'CELTS' as RegionType,
         castleId: 'CELT_CASTLE_AGE3', castleName: '不列颠/凯尔特 苏格兰高地圆塔',
         formationMode: 'echelon',
         slots: [
@@ -291,7 +291,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代条顿军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'GERMANIC' as RegionType,
+        name: '城堡时代条顿军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         castleId: 'WEST_CASTLE_AGE3', castleName: '西欧/条顿 莱茵河方型石砌堡',
         formationMode: 'echelon',
         slots: [
@@ -351,7 +351,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代朝鲜军团', civ: '朝鲜', age: 'castle', deStyle: 'ASIA', region: 'KOREA' as RegionType,
+        name: '城堡时代高丽军团', civ: '高丽', age: 'castle', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
         castleId: 'KORE_CASTLE_AGE3', castleName: '朝鲜 汉阳南汉山城堞楼',
         formationMode: 'triangle',
         slots: [
@@ -361,7 +361,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代意大利军团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'LATIN' as RegionType,
+        name: '城堡时代意大利军团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'triangle',
         slots: [
@@ -411,7 +411,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代马里军团', civ: '马里', age: 'castle', deStyle: 'AFRI', region: 'AFRICA' as RegionType,
+        name: '城堡时代马里军团', civ: '马里', age: 'castle', deStyle: 'AFRI', region: 'MALI' as RegionType,
         castleId: 'AFRI_CASTLE_AGE3', castleName: '非洲/马里 杰内大清真寺泥石堡',
         formationMode: 'triangle',
         slots: [
@@ -591,7 +591,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '帝国时代奥斯曼军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'TURKS' as RegionType,
+        name: '帝国时代奥斯曼军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
         slots: [
@@ -627,6 +627,12 @@ if (ottomanLegion) {
     LEVEL_2_CIV_CIV_MAP.set('土耳其', ottomanLegion);
     LEVEL_2_CIV_59_MAP.set('帝国时代突厥军团', ottomanLegion);
     LEVEL_2_CIV_59_MAP.set('帝国时代土耳其军团', ottomanLegion);
+}
+// 兼容高丽/朝鲜别名
+const goryeoLegion = LEVEL_2_CIV_59_LEGIONS.find(l => l.civ === '高丽');
+if (goryeoLegion) {
+    LEVEL_2_CIV_CIV_MAP.set('朝鲜', goryeoLegion);
+    LEVEL_2_CIV_59_MAP.set('城堡时代朝鲜军团', goryeoLegion);
 }
 // 兼容简写别名（如不含“时代”二字的旧名）
 LEVEL_2_CIV_59_MAP.set('古典华夏中原军团', LEVEL_2_CIV_59_LEGIONS[0]);
