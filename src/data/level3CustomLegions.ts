@@ -502,8 +502,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
-            { type: 'cavalier', count: 4 },
-            { type: 'knight', count: 2 },
+            { type: 'magyar_huszar', count: 4 },
+            { type: 'crossbowman', count: 2 },
         ],
         regions: ['SERBIA'],
     },
@@ -761,7 +761,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代东南亚军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
+            { type: 'elephant_archer', count: 2 },
             { type: 'eastern_swordsman', count: 4 },
             { type: 'archer', count: 3 },
         ],
