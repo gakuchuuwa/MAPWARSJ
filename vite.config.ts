@@ -1017,6 +1017,61 @@ export default defineConfig({
                 });
 
 
+
+                // ========================================================
+                // 🔴 [2026-09-14 主人报障「这 12 支我都删除了」]
+                //   /api/delete-legion   body: { legionName }
+                //   删除**军团本身那条记录**。原来的删除只解开了势力和文化区的挂靠，
+                //   军团记录还留在表里，于是「删了还在、还报无人套用」。
+                //   一级 16 母体（底座）和二级 59（定数）不许删，只删三级。
+                // ========================================================
+                server.middlewares.use('/api/delete-legion', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const legionName: string = String(data?.legionName ?? '').trim();
+                            if (!legionName) throw new Error('缺少军团名');
+                            if (BASE_16_LEGION_TO_REGION[legionName]) throw new Error('一级 16 母体军团是底座，不可删除');
+                            markLegionSaveWrite();
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            if (safeReadFileSync(p2).includes("name: '" + legionName + "'")) {
+                                throw new Error('二级 59 文明军团是定数，不可删除');
+                            }
+                            const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
+                            const text = safeReadFileSync(p3);
+                            const at = text.indexOf("name: '" + legionName + "'");
+                            if (at < 0) throw new Error('三级表里没有【' + legionName + '】');
+                            const open = text.lastIndexOf('{', at);
+                            let depth = 0, end = -1;
+                            for (let j = open; j < text.length; j++) {
+                                if (text[j] === '{') depth++;
+                                else if (text[j] === '}') { depth--; if (depth === 0) { end = j; break; } }
+                            }
+                            if (end < 0) throw new Error('三级表结构异常，条目边界解析失败');
+                            let tail = end + 1;
+                            if (text[tail] === ',') tail++;
+                            while (text[tail] === '\n' || text[tail] === '\r') tail++;
+                            let headStart = open;
+                            while (headStart > 0 && (text[headStart - 1] === ' ' || text[headStart - 1] === '\t')) headStart--;
+                            safeWriteFileSync(p3, text.slice(0, headStart) + text.slice(tail));
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                            console.log('[DeleteLegion] 🗑 【' + legionName + '】已从三级表删除');
+                        } catch (err: any) {
+                            console.error('❌ [DeleteLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
                 // ========================================================
                 // 🔴 [2026-09-14 主人定「这个功能只有一个，就是保存编辑好的军团」]
                 //   /api/save-legion-composition
@@ -2355,54 +2410,32 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
 
     const renderEntry = (fid: string, comp: any): string => {
         const out: string[] = [];
+        // 🔴 [2026-09-14] 势力表只存指针。这里原来还写 formationMode + slots，
+        //    于是编辑器每保存一次就把已删掉的 460 份编制副本整批写回来。
         out.push('    ' + JSON.stringify(fid) + ': {');
-        if (comp.legionName) out.push('        legionName: ' + JSON.stringify(comp.legionName) + ',');
+        out.push('        legionName: ' + JSON.stringify(comp.legionName) + ',');
         if (comp.legionType) out.push('        legionType: ' + JSON.stringify(comp.legionType) + ',');
-        out.push('        formationMode: ' + JSON.stringify(comp.formationMode || 'square') + ',');
         if (comp.navalFormation && comp.navalFormation !== 'auto') {
             out.push('        navalFormation: ' + JSON.stringify(comp.navalFormation) + ',');
         }
-        out.push('        slots: [');
-        for (const slot of comp.slots) {
-            const scaleStr = slot.scale != null && !Number.isNaN(Number(slot.scale)) && Number(slot.scale) !== 1.0
-                ? ', scale: ' + Number(slot.scale)
-                : '';
-            out.push('            { type: ' + JSON.stringify(slot.type) + ', count: ' + slot.count + scaleStr + ' },');
-        }
-        out.push('        ],');
         out.push('    },');
         return out.join(NL);
     };
 
     /** 把一个条目的原文解析成可比较的形状（判断有没有真的改过） */
-    const parseEntry = (text: string): { formationMode: string; slots: any[] } | null => {
-        const fm = /formationMode:\s*['"]([^'"]+)['"]/.exec(text);
-        if (!fm) return null;
-        const nf = /navalFormation:\s*['"]([^'"]+)['"]/.exec(text);
+    const parseEntry = (text: string): any | null => {
         const ln = /legionName:\s*['"]([^'"]*)['"]/.exec(text);
+        if (!ln) return null;
+        const nf = /navalFormation:\s*['"]([^'"]+)['"]/.exec(text);
         const lt = /legionType:\s*['"]([^'"]+)['"]/.exec(text);
-        const slots: any[] = [];
-        const re = /\{\s*type:\s*['"]([^'"]+)['"]\s*,\s*count:\s*([0-9.]+)\s*(?:,\s*scale:\s*([0-9.]+)\s*)?\}/g;
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(text)) !== null) {
-            slots.push({ type: m[1], count: Number(m[2]), scale: m[3] != null ? Number(m[3]) : 1.0 });
-        }
-        return { formationMode: fm[1], navalFormation: nf ? nf[1] : 'auto', legionName: ln ? ln[1] : '', legionType: lt ? lt[1] : '', slots } as any;
+        return { legionName: ln[1], legionType: lt ? lt[1] : '', navalFormation: nf ? nf[1] : 'auto' };
     };
 
     const sameEntry = (a: any, b: any): boolean => {
         if (!a || !b) return false;
-        if ((a.formationMode || 'square') !== (b.formationMode || 'square')) return false;
-        if ((a.navalFormation || 'auto') !== (b.navalFormation || 'auto')) return false;
         if ((a.legionName || '') !== (b.legionName || '')) return false;
         if ((a.legionType || '') !== (b.legionType || '')) return false;
-        const as = a.slots || [], bs = b.slots || [];
-        if (as.length !== bs.length) return false;
-        for (let i = 0; i < as.length; i++) {
-            if (as[i].type !== bs[i].type) return false;
-            if (Number(as[i].count) !== Number(bs[i].count)) return false;
-            if (Number(as[i].scale != null ? as[i].scale : 1.0) !== Number(bs[i].scale != null ? bs[i].scale : 1.0)) return false;
-        }
+        if ((a.navalFormation || 'auto') !== (b.navalFormation || 'auto')) return false;
         return true;
     };
 
@@ -2438,7 +2471,7 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
     for (const e of entries) {
         const comp = compositions[e.fid];
         seen.add(e.fid);
-        if (!comp || !Array.isArray(comp.slots)) continue;           // 编辑器里删掉了 → 不写回
+        if (!comp || !comp.legionName) continue;                     // 没挂军团 → 不写回
         if (sameEntry(parseEntry(e.text), comp)) {
             pieces.push(e.text.replace(/\s+$/, ''));                 // 没改 → 原文照搬，注释全保
         } else {
@@ -2448,7 +2481,7 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
     }
     for (const [fid, comp] of Object.entries(compositions)) {
         if (seen.has(fid)) continue;
-        if (!comp || !Array.isArray((comp as any).slots)) continue;
+        if (!comp || !(comp as any).legionName) continue;
         pieces.push(renderEntry(fid, comp as any));
     }
 

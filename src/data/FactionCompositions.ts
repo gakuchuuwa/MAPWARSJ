@@ -29,6 +29,30 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "sanfoqi": {
+        legionName: "封建时代三佛齐军团",
+        legionType: "sub",
+    },
+    "lunbadi": {
+        legionName: "封建时代伦巴第军团",
+        legionType: "sub",
+    },
+    "suosuo": {
+        legionName: "封建时代加纳军团",
+        legionType: "sub",
+    },
+    "yipilusi": {
+        legionName: "古典时代希腊雇佣军团",
+        legionType: "sub",
+    },
+    "kushi": {
+        legionName: "古典时代非洲军团",
+        legionType: "sub",
+    },
+    "mozeer": {
+        legionName: "古典时代罗马禁卫军团",
+        legionType: "sub",
+    },
     "dian": {
         legionName: "封建时代白蛮军团",
         legionType: "region",

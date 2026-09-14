@@ -1114,10 +1114,10 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordman_shielded', count: 4 },
-            { type: 'chukonu', count: 3 },
-            { type: 'hei_kuang', count: 2 }
-        ]
+        { type: 'cataphract', count: 3 },
+        { type: 'elite_cataphract', count: 4 },
+        { type: 'composite_bowman', count: 2 },
+    ]
     }
 ];
 
@@ -1594,12 +1594,12 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     MAGYAR: "城堡时代马扎尔军团",
     LITHUANIANS: "城堡时代立陶宛军团",
     POLES: "城堡时代波兰军团",
-    BOHEMIANS: '城堡时代捷克军团',
+    BOHEMIANS: "城堡时代波希米亚军团",
     BURGUNDIANS: "城堡时代勃艮第军团",
     SPANISH: '帝国时代西班牙军团',
     PORTUGUESE: '帝国时代葡萄牙军团',
     ETHIOPIANS: '封建时代埃塞俄比亚军团',
-    BENGALIS: '封建时代孟加拉军团',
+    BENGALIS: '古典时代孟加拉军团',
     BENGALIS_ANTIQUITY: '古典时代孟加拉军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代瞿折罗军团',
     VIETNAMESE: "城堡时代京族军团",
@@ -1622,7 +1622,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     HITTITES: '古典时代赫梯军团',
     ASSYRIAN: "古典时代亚述军团",
     SCYTHIANS: '古典时代斯基泰军团',
-    BYZANTINE: '封建时代希腊军团',
+    BYZANTINE: "封建时代拜占庭军团",
     FRANKS: '封建时代法兰克军团',
     SASANIAN: '封建时代波斯军团',
     TURKS: '封建时代突厥军团',
@@ -1644,7 +1644,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     JAVANESE: '封建时代爪哇军团',
     JURCHEN: "城堡时代女真军团",
     SELJUQ: '城堡时代塞尔柱军团',
-    OTTOMAN: '城堡时代奥斯曼军团',
+    OTTOMAN: "帝国时代奥斯曼军团",
     OTTOMAN_IMPERIAL: '帝国时代奥斯曼军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: '城堡时代法兰西军团',
     MANCHU: "帝国时代满洲军团",
@@ -1675,8 +1675,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     CRUSADERS: "城堡时代十字军团",
     RUS: '城堡时代罗斯军团',
     KARA_KHITAN: '城堡时代西辽军团',
-    TIMURID: "城堡时代帖木儿军团",
-    DELHI: '城堡时代德里军团',
+    TIMURID: "城堡时代鞑靼军团",
+    DELHI: "城堡时代印度斯坦军团",
     CASTILE: '城堡时代卡斯蒂利亚军团',
     SCOTLAND: '城堡时代苏格兰军团',
     HRE: '城堡时代神圣罗马军团',
@@ -1857,7 +1857,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         tiers: AFRICA_BASE_TIERS,
     },
     CENTRAL: {
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         tiers: CENTRAL_BASE_TIERS,
     },
     ANDE: {
@@ -1927,6 +1927,16 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
  * 同一支军团的编制能在两处打架（实测 30 支对不上），已整体删除。
  * ═══════════════════════════════════════════════════════════════ */
 
+/** 已删除的军团（编辑器删完立刻生效，不等 HMR 重新导入静态表） */
+const LEGION_DELETED = new Set<string>();
+
+/** 编辑器删掉一支军团后，立刻让内存里也查不到它 */
+export function dropLegionFromMemory(name: string): void {
+    if (!name) return;
+    LEGION_DELETED.add(name);
+    LEGION_RUNTIME_PATCH.delete(name);
+}
+
 /** 按**军团名**直接打内存补丁（编辑器保存后立刻生效，不等 HMR） */
 export function patchLegionComposition(
     name: string,
@@ -1943,7 +1953,7 @@ const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slo
 export function getLegionCompositionByName(
     name: string | null | undefined,
 ): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
-    if (!name) return null;
+    if (!name || LEGION_DELETED.has(name)) return null;
     const patched = LEGION_RUNTIME_PATCH.get(name);
     if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })) };
 

@@ -25,6 +25,7 @@ import {
     getLegionCompositionByName,
     applyCultureFormationPatch,
     patchLegionComposition,
+    dropLegionFromMemory,
     CULTURE_LEGION_NAMES,
     FormationMode,
     getDefaultSlotsForMode,
@@ -47,6 +48,7 @@ import {
     LEVEL_2_CIV_59_MAP,
     isCivEraLegion,
 } from '../data/level2Civ59Legions';
+import { LEVEL_3_LEGION_NAMES } from '../data/level3CustomLegions';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -1810,17 +1812,34 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
         });
     }
 
-    if (affected.length === 0 && cultures.length === 0) {
-        showToast('该军团当前无势力、无文化区使用');
+    // 🔴 [2026-09-14 主人报障「这 12 支我都删除了」] ③ **删军团本身那条记录**。
+    //    原来只解开①势力②文化区的挂靠，军团记录还留在三级表里 ——
+    //    于是「删了还在」，无人套用的报错也永远消不掉；
+    //    而且这 12 支本来就没人挂，原来会直接 return，等于什么都没干。
+    try {
+        const res = await fetch('/api/delete-legion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ legionName }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        dropLegionFromMemory(legionName);
+    } catch (e: any) {
+        showToast('❌ 删除失败：' + (e?.message || e), true);
         return;
     }
 
+    localCustomCompositions = buildLocalCompositions();
     buildRows();
     applyFilter();
-    await saveAllCompositions();
+    renderTable();
+    if (affected.length > 0) await saveAllCompositions();
     showToast(
-        `🗑 已删除【${legionName}】：${affected.length} 个势力 + ${cultures.length} 个文化区`
-        + `回落为所在文化的母体军团`,
+        `🗑 已删除军团【${legionName}】`
+        + (affected.length || cultures.length
+            ? `：${affected.length} 个势力 + ${cultures.length} 个文化区回落为母体军团`
+            : '（此前无势力、无文化区使用）'),
     );
 }
 
@@ -3309,19 +3328,39 @@ function bindPanelEvents(row: FactionLegionRow): void {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
             return;
         }
+        // 🔴 [2026-09-14 修] 势力表只存指针后，这里**必须先把新军团本身建出来**：
+        //    原来只写 localCustomCompositions（= 指针）再 saveAllCompositions，
+        //    而那条路径已经不写编制了 —— 新军团只有名字没有编制，刷新后就成了
+        //    「势力指向不存在的军团」，三排兵种全丢。
+        const slots = currentEditingLegion.slots.map(s => ({ ...s }));
+        const formationMode = currentEditingLegion.formationMode;
+        try {
+            const res = await fetch('/api/save-legion-composition', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ legionName: newName, formationMode, slots }),
+            });
+            const json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        } catch (e: any) {
+            showToast('❌ 新军团创建失败：' + (e?.message || e), true);
+            return;
+        }
+        patchLegionComposition(newName, slots, formationMode);
         currentEditingLegion.legionName = newName;
         localCustomCompositions[row.factionId] = {
+            ...localCustomCompositions[row.factionId],
             legionName: newName,
             legionType: currentEditingLegion.legionType,
-            formationMode: currentEditingLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
-            slots: currentEditingLegion.slots.map(s => ({ ...s })),
+            formationMode,
+            slots,
         };
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
         if (!await saveAllCompositions()) return;
-        showToast(`✅ 已另存为【${newName}】三级制定军团并写入文件（未联动其他势力）`);
+        showToast(`✅ 已另存为【${newName}】三级军团：编制已建，【${row.factionName}】已挂上`);
     });
 
     // 军团种类选择（第三步）
@@ -3575,6 +3614,25 @@ function computeLegionNameViolations(): string[] {
         if (uncovered.length > 0) {
             violations.push(
                 `【${CATEGORY_LABEL[cat]}】${uncovered.length} 种兵种未在任何军团中套用：${uncovered.map(u => `${u.name}（${u.id}）`).join('、')}`,
+            );
+        }
+    }
+
+    // 🔴 [2026-09-14 主人定] 军团套用检查：二级 / 三级军团没有任何势力套用 → 报错。
+    //    （一级 16 母体是底座，允许 0 势力，不在此列。）
+    const legionUsers = new Map<string, number>();
+    for (const r of allRows) {
+        const n = effectiveLegionName(r);
+        if (n) legionUsers.set(n, (legionUsers.get(n) ?? 0) + 1);
+    }
+    for (const [label, names] of [
+        ['二级', LEVEL_2_CIV_59_NAMES as ReadonlySet<string>],
+        ['三级', LEVEL_3_LEGION_NAMES as ReadonlySet<string>],
+    ] as const) {
+        const unused = [...names].filter(n => !legionUsers.has(n));
+        if (unused.length > 0) {
+            violations.push(
+                `【${label}军团】${unused.length} 支没有任何势力套用：${unused.join('、')}`,
             );
         }
     }
