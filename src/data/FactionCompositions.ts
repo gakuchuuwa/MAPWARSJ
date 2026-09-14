@@ -1849,4 +1849,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代两宋军团",
         legionType: "sub",
     },
+    "wusun": {
+        legionName: "东亚军团",
+        legionType: "region",
+    },
 };

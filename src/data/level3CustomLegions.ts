@@ -48,16 +48,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CENTRAL_ASIA_ANTIQUITY'],
     },
     {
-        name: '古典时代乌孙军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'sakan_axeman', count: 2 },
-            { type: 'antiquity_light_cavalry', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-        ],
-        regions: ['WUSUN'],
-    },
-    {
         name: '古典时代亚美尼亚军团',
         formationMode: 'crescent',
         slots: [
@@ -139,10 +129,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '古典时代塞种军团',
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         slots: [
-            { type: 'sakan_axeman', count: 2 },
-            { type: 'bactrian_archer', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 3 },
+            { type: 'scythian_horse_archer', count: 2 },
             { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['WESTERN'],
@@ -811,7 +801,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代印度军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'elephant_archer', count: 2 },
+            { type: 'ratha_melee', count: 2 },
             { type: 'shrivamsha_rider', count: 4 },
             { type: 'chakram_thrower', count: 3 },
         ],
