@@ -1034,28 +1034,26 @@ export default defineConfig({
                         body = Buffer.concat(bodyChunks).toString('utf-8');
                         try {
                             const data = JSON.parse(body);
+                            markLegionSaveWrite();
+                            // 🔴 [2026-09-14] 文化表已删：编制写进该军团自己的表（一级16 / 二级59 / 三级），
+                            //    文化区这边只更新「默认挂哪支军团」这个指针。
+                            //    同名军团天然只有一份编制，不必再逐个 alsoCultures 覆盖编制。
+                            const legionName: string = data.legionName;
+                            if (!legionName) throw new Error('缺少 legionName，无法定位要保存的军团');
+                            const writtenFile = serverSaveLegionComposition(legionName, data.slots, data.formationMode);
                             const filePath = path.resolve(__dirname, 'src/types/CultureFormations.ts');
                             let text = fs.readFileSync(filePath, 'utf-8');
-                            text = serverReplaceTierBlock(text, data.culture, data.slots);
-                            if (data.formationMode) {
-                                text = serverReplaceFormationMode(text, data.culture, data.formationMode);
-                            }
-                            if (data.legionName) {
-                                text = serverReplaceCultureLegionName(text, data.culture, data.legionName);
-                            }
+                            text = serverReplaceCultureLegionName(text, data.culture, legionName);
                             // [2026-09-07 主人定]「重名就覆盖」：同名的其他文化区一并刷成同一份编制。
                             //   一个军团名只能有一种编制，否则每存一次就多留一份「同名不同编」，
                             //   界面弹「编制不一致」，军团越改越多。
                             for (const other of (data.alsoCultures || []) as string[]) {
-                                text = serverReplaceTierBlock(text, other, data.slots);
-                                if (data.formationMode) text = serverReplaceFormationMode(text, other, data.formationMode);
-                                if (data.legionName) text = serverReplaceCultureLegionName(text, other, data.legionName);
+                                text = serverReplaceCultureLegionName(text, other, legionName);
                             }
-                            markLegionSaveWrite();
                             fs.writeFileSync(filePath, text, 'utf-8');
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
-                            console.log(`[SaveCulture] ✅ ${data.culture} saved to CultureFormations.ts`);
+                            console.log('[SaveCulture] ✅ 【' + legionName + '】编制已写入 ' + path.basename(writtenFile));
                         } catch (err: any) {
                             console.error(`❌ [SaveCulture] Failed:`, err);
                             res.statusCode = 500;
@@ -2453,6 +2451,85 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     lines.push(`};`);
     lines.push(``);
     return lines.join('\n');
+}
+
+
+/**
+ * 🔴 [2026-09-14 主人定「文化表全部清除」] 按**军团名**把编制写进它自己的表：
+ *   一级 16 母体 → `src/types/CultureFormations.ts` 的 `XXX_BASE_TIERS` + `BASE_16_TIERS_MAP`
+ *   二级 59 文明 → `src/data/level2Civ59Legions.ts`
+ *   三级 自建   → `src/data/level3CustomLegions.ts`
+ * 原来是往 `CULTURE_TIERS_MAP` / `CULTURE_FORMATION_MODE` 里按文化区写，
+ * 那两张表（连同 183 个 `XXX_TIERS`）已整体删除，再往那儿写就是写进空气。
+ */
+const BASE_16_LEGION_TO_REGION: Record<string, string> = {
+    东亚军团: 'CENTRAL', 中亚军团: 'STEPPE', 印度军团: 'INDIA', 西欧军团: 'GERMANIC',
+    普鲁军团: 'PURU', 中东军团: 'ORIE', 地中海军团: 'LATIN', 东北欧军团: 'SLAVIC',
+    东南欧军团: 'EAST', 波斯军团: 'PERSIAN', 东南亚军团: 'MALAY', 希腊军团: 'GREEK',
+    色雷斯军团: 'THRACIAN', 安第斯军团: 'ANDE', 中美军团: 'AMERICA', 非洲军团: 'AFRICA',
+};
+
+function serverSlotLines(slots: any[], indent: string): string {
+    return slots.map((s: any) => indent + '{ type: ' + JSON.stringify(s.type).replace(/"/g, "'") + ', count: ' + s.count + ' },').join('\n');
+}
+
+/** 找到 fromIdx 之后第一个 `slots: [ ... ]` 的方括号范围 */
+function serverFindSlotsArray(text: string, fromIdx: number): { open: number; close: number } | null {
+    const sAt = text.indexOf('slots: [', fromIdx);
+    if (sAt < 0) return null;
+    const open = text.indexOf('[', sAt);
+    let depth = 0;
+    for (let j = open; j < text.length; j++) {
+        if (text[j] === '[') depth++;
+        else if (text[j] === ']') { depth--; if (depth === 0) return { open, close: j }; }
+    }
+    return null;
+}
+
+/** 在 name/slots 型条目表（level2 / level3）里替换某支军团的编制；未命中返回 null */
+function serverReplaceLegionEntry(text: string, legionName: string, slots: any[], mode?: string): string | null {
+    const at = text.indexOf("name: '" + legionName + "'");
+    if (at < 0) return null;
+    const range = serverFindSlotsArray(text, at);
+    if (!range) return null;
+    let out = text.slice(0, range.open + 1) + '\n' + serverSlotLines(slots, '            ') + '\n        ' + text.slice(range.close);
+    if (mode) {
+        const headEnd = out.indexOf('slots: [', at);
+        const head = out.slice(at, headEnd);
+        out = out.slice(0, at) + head.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + out.slice(headEnd);
+    }
+    return out;
+}
+
+/** 保存一支军团的编制（自动判层），返回被改动的文件路径 */
+function serverSaveLegionComposition(legionName: string, slots: any[], mode?: string): string {
+    const region = BASE_16_LEGION_TO_REGION[legionName];
+    if (region) {
+        const p = path.resolve(__dirname, 'src/types/CultureFormations.ts');
+        let text = fs.readFileSync(p, 'utf-8');
+        const at = text.indexOf('export const ' + region + '_BASE_TIERS: CompositionTier[] = [');
+        if (at < 0) throw new Error('一级母体军团 ' + legionName + ' 找不到 ' + region + '_BASE_TIERS');
+        const range = serverFindSlotsArray(text, at);
+        if (!range) throw new Error(region + '_BASE_TIERS 的 slots 解析失败');
+        text = text.slice(0, range.open + 1) + '\n' + serverSlotLines(slots, '        ') + '\n    ' + text.slice(range.close);
+        if (mode) {
+            const mapAt = text.indexOf('BASE_16_TIERS_MAP');
+            const entryAt = text.indexOf('    ' + region + ': {', mapAt);
+            if (entryAt > 0) {
+                const endAt = text.indexOf('},', entryAt);
+                const seg = text.slice(entryAt, endAt);
+                text = text.slice(0, entryAt) + seg.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + text.slice(endAt);
+            }
+        }
+        fs.writeFileSync(p, text, 'utf-8');
+        return p;
+    }
+    for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
+        const p = path.resolve(__dirname, rel);
+        const out = serverReplaceLegionEntry(fs.readFileSync(p, 'utf-8'), legionName, slots, mode);
+        if (out) { fs.writeFileSync(p, out, 'utf-8'); return p; }
+    }
+    throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存编制');
 }
 
 /** 

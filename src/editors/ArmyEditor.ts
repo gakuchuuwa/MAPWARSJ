@@ -17,7 +17,7 @@ import {REGION_LABELS, REGION_ORDER, RegionType} from '../systems/RegionSystem';
 import {
     applyCultureFormationPatch,
     convertSlotsToMode,
-    CULTURE_TIERS_MAP,
+    getRegionLegionComposition,
     FormationMode,
     getCultureFormationMode,
     getDefaultSlotsForMode,
@@ -310,9 +310,10 @@ export class ArmyEditor {
         }
 
         this.currentFormationMode = getCultureFormationMode(culture);
-        const tiers = CULTURE_TIERS_MAP[culture];
-        if (tiers && tiers.length > 0) {
-            this.currentSlots = tiers[0].slots.map(s => ({ ...s }));
+        // 🔴 [2026-09-14] 文化表已删：编制从该区默认军团取（一级16 / 二级59 / 三级）
+        const comp = getRegionLegionComposition(culture);
+        if (comp && comp.slots.length > 0) {
+            this.currentSlots = comp.slots.map(s => ({ ...s }));
         } else {
             this.currentSlots = getDefaultSlotsForMode(this.currentFormationMode);
         }
