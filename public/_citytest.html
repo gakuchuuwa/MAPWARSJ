@@ -3361,6 +3361,19 @@ refresh();
     <button id="ceReload" style="background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;padding:6px 12px;cursor:pointer">↻ 刷新</button>
     <span id="ceMsg" style="flex:1 1 260px;min-width:180px;color:#68d391"></span>
   </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+    <!-- 🔴 [2026-09-14 主人「我要编辑据点类型」] 据点类型就地可改，与风格同一个保存按钮一起写盘。
+         五种城型是 AGENTS.md §6.2 定死的全集，不自造第六种。 -->
+    <span style="color:#f6e05e;min-width:86px;font-weight:600">据点类型</span>
+    <select id="ceType" style="flex:1 1 200px;min-width:170px;background:#0b1320;border:1px solid #2c3a4d;color:#e2e8f0;border-radius:4px;padding:5px 8px">
+      <option value="big_city">大城 big_city</option>
+      <option value="medium_city">中城 medium_city</option>
+      <option value="small_city">小城 small_city</option>
+      <option value="stockade">城寨 stockade</option>
+      <option value="pass">险要 pass（关隘/要塞/堡垒）</option>
+    </select>
+    <span id="ceTypeHint" style="flex:1 1 420px;min-width:240px;color:#8fa3bb;font-size:12px"></span>
+  </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <span style="color:#8fa3bb;min-width:86px">① 城墙 (16)</span>
     <select id="ceWall" style="flex:1 1 260px;min-width:200px;background:#0b1320;border:1px solid #2c3a4d;color:#e2e8f0;border-radius:4px;padding:5px 8px"></select>
@@ -3375,7 +3388,21 @@ refresh();
   var K = { city: 'ce-city', search: 'ce-search', wall: 'ce-wall', castle: 'ce-castle', custom: 'ce-custom' };
   var wall = document.getElementById('ceWall'), castle = document.getElementById('ceCastle'),
       custom = document.getElementById('ceCustom'), city = document.getElementById('ceCity'),
-      flt = document.getElementById('ceFilter'), msg = document.getElementById('ceMsg');
+      flt = document.getElementById('ceFilter'), msg = document.getElementById('ceMsg'),
+      ctype = document.getElementById('ceType'), ctypeHint = document.getElementById('ceTypeHint');
+  /* 🔴 据点类型的中文名与判级口径（AGENTS.md §6.2，主人 2026-09-11 定死）：
+   *    先分性质（关隘/要塞/堡垒 → pass），其余按城居人口 >50万/>10万/>1万/<1万 分四档。
+   *    这里只做提示，不替主人判级。 */
+  var TYPE_CN = {
+    big_city: '大城', medium_city: '中城', small_city: '小城', stockade: '城寨', pass: '险要',
+  };
+  var TYPE_HINT = {
+    big_city: '§6.2：城居人口 > 50 万',
+    medium_city: '§6.2：城居人口 > 10 万',
+    small_city: '§6.2：城居人口 > 1 万',
+    stockade: '§6.2：城居人口 < 1 万；有城内奇观的据点不得为城寨',
+    pass: '§6.2：关隘 / 要塞 / 堡垒（军事据点，不按人口判级）',
+  };
   function copyOpts(src, dst) {
     dst.innerHTML = '';
     Array.prototype.slice.call(src.children).forEach(function (node) {
@@ -3404,6 +3431,9 @@ refresh();
   function syncFromCity(keepStored) {
     var x = CITIES.find(function (y) { return y.id === city.value; });
     if (!x) return;
+    // 据点类型永远跟着据点走（是据点自身属性，不是用户偏好，故不进 localStorage）
+    if (x.type && ctype.querySelector('option[value="' + x.type + '"]')) ctype.value = x.type;
+    syncTypeHint();
     if (!keepStored) { custom.value = ''; castle.value = ''; }
     if (x.buildingStyle && wall.querySelector('option[value="' + x.buildingStyle + '"]')) wall.value = x.buildingStyle;
     if (x.region) {
@@ -3429,11 +3459,20 @@ refresh();
     t = cnOf(castle, code);
     return t;
   }
+  function syncTypeHint() {
+    var x = CITIES.find(function (y) { return y.id === city.value; });
+    var cur = x && x.type ? x.type : '';
+    var changed = cur && cur !== ctype.value;
+    ctypeHint.style.color = changed ? '#f6e05e' : '#8fa3bb';
+    ctypeHint.textContent = (TYPE_HINT[ctype.value] || '')
+      + (changed ? '　⚠ 原为「' + (TYPE_CN[cur] || cur) + '」，点保存才写盘' : '');
+  }
   function render(restoring) {
     var kw = (flt.value || '').trim();
     city.innerHTML = CITIES.filter(function (x) { return !kw || x.name.indexOf(kw) >= 0 || x.id.indexOf(kw) >= 0; })
       .map(function (x) {
-        return '<option value="' + x.id + '">' + x.name + '（' + x.id + '）· 风格 ' + styleCn(x.buildingStyle)
+        return '<option value="' + x.id + '">' + x.name + '（' + x.id + '）· ' + (TYPE_CN[x.type] || x.type || '—')
+          + ' · 风格 ' + styleCn(x.buildingStyle)
           + ' · 区 ' + regionCn(x.region) + '</option>';
       }).join('');
     if (restoring) {
@@ -3456,18 +3495,19 @@ refresh();
     flt.addEventListener('input', function () { remember(); render(false); });
     city.addEventListener('change', function () { remember(); syncFromCity(false); });
     wall.addEventListener('change', remember); castle.addEventListener('change', remember); custom.addEventListener('change', remember);
+    ctype.addEventListener('change', syncTypeHint);
     document.getElementById('ceReload').addEventListener('click', function () { location.reload(); });
     document.getElementById('ceSave').addEventListener('click', function () {
       var x = CITIES.find(function (y) { return y.id === city.value; });
       if (!x) { msg.style.color = '#fc8181'; msg.textContent = '请先选据点'; return; }
-      var fields = { buildingStyle: wall.value };
+      var fields = { buildingStyle: wall.value, type: ctype.value };
       if (custom.value) fields.region = custom.value; else if (castle.value) fields.region = castle.value;
       remember();                                   // 先记住选择：Vite 因写盘整页重载后能回到原处
       msg.style.color = '#f6e05e'; msg.textContent = '保存中…（写盘后页面会自动重载，选择已记住）';
       fetch('/api/save-city', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: x.id, fields: fields }) })
         .then(function (r) { return r.json(); }).then(function (res) {
-          if (res.ok) { x.buildingStyle = wall.value; if (fields.region) x.region = fields.region;
-            msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + '（正在刷新预览…）';
+          if (res.ok) { x.buildingStyle = wall.value; x.type = ctype.value; if (fields.region) x.region = fields.region;
+            msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → ' + (TYPE_CN[ctype.value] || ctype.value) + ' / 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + '（正在刷新预览…）';
             // 本页是静态页、不 import cities_v2.ts → Vite 不会自动重载 ✗，所以保存成功后自己刷新一次；
             // 选择已存 localStorage，刷新后会回到原处（下面 render(true) 那套恢复逻辑）。
             setTimeout(function () { location.reload(); }, 700); }

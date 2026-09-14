@@ -1053,7 +1053,7 @@ buildingStyle: 'ASIA', troops: 10000, tier: 0,
 buildingStyle: 'ASIA', troops: 10000,
         note: '岐山；周国小城；定级依据§6.2：岐山非关隘/要塞/堡垒（先周—西周岐邑王都；狭义周原遗址约30km²、西周大城垣5.2km²），按城市判级；人口查无可靠估计，按都邑规模与该据点"周国小城"定 → 小城',
     },
-    { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.14917, type: 'medium_city', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.14917, type: 'medium_city', troops: 10000, region: 'KHITAN', buildingStyle: 'ASIA' },
 
 
     { id: 'city_qiuchi', name: '上禄', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'ASIA' },
