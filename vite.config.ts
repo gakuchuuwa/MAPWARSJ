@@ -1018,6 +1018,51 @@ export default defineConfig({
 
 
 
+
+                // ========================================================
+                // 🔴 [2026-09-15 主人定「把这个分开，一个编辑势力归属，一个专门编辑军团」]
+                //   /api/save-faction-legion   body: { factionId, legionName|null }
+                //   **单条写入**：只改这一个势力的 legionName，其余条目一个字不碰。
+                //   legionName=null → 删掉这条（该势力回落跟随文化区）。
+                //   与整表覆盖的 /api/save-faction-compositions 彻底分开 ——
+                //   2026-09-15 那次 465 条被洗成 1 条，就是整表覆盖干的。
+                // ========================================================
+                server.middlewares.use('/api/save-faction-legion', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const factionId = String(data?.factionId ?? '').trim();
+                            if (!factionId) throw new Error('缺少势力 id');
+                            const legionName: string | null =
+                                data?.legionName == null ? null : String(data.legionName).trim();
+                            markLegionSaveWrite();
+                            const p = path.resolve(__dirname, 'src/data/FactionCompositions.ts');
+                            const text = safeReadFileSync(p);
+                            const before = (text.match(/legionName:/g) || []).length;
+                            const out = serverWriteOneFactionLegion(text, factionId, legionName, data?.legionType);
+                            const after = (out.match(/legionName:/g) || []).length;
+                            if (Math.abs(after - before) > 1) {
+                                throw new Error('条目数异常（' + before + ' → ' + after + '），已保护原文件不动');
+                            }
+                            safeWriteFileSync(p, out);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, entries: after }));
+                            console.log('[FactionLegion] ✅ ' + factionId + ' → ' + (legionName ?? '(跟随文化区)'));
+                        } catch (err: any) {
+                            console.error('❌ [FactionLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
                 // ========================================================
                 // 🔴 [2026-09-14 主人报障「这 12 支我都删除了」]
                 //   /api/delete-legion   body: { legionName }
@@ -2403,6 +2448,17 @@ function getBigrams(s: string): string[] {
  */
 function serverPatchFactionCompositions(prevText: string, compositions: Record<string, any>): string {
     const NL = String.fromCharCode(10);
+    // 🔴 [2026-09-15 事故] 编辑器曾提交过一份只剩 1 条的 compositions，
+    //    这里照单全收，把 465 条势力归属整表清空（只剩那一条）。
+    //    数据表**不许被一次提交砍掉大半** —— 少于现有条目 70% 直接拒绝，宁可保存失败。
+    const prevCount = (prevText.match(/legionName:/g) || []).length;
+    const nextCount = Object.values(compositions).filter((c: any) => c && c.legionName).length;
+    if (prevCount >= 20 && nextCount < prevCount * 0.7) {
+        throw new Error(
+            '保存被拒绝：提交了 ' + nextCount + ' 条势力归属，而文件里现有 ' + prevCount
+            + ' 条，差太多（疑似前端状态丢失）。已保护原文件不动。',
+        );
+    }
     const headIdx = prevText.indexOf('export const FACTION_COMPOSITIONS');
     if (headIdx < 0) return serverFormatFactionCompositions(compositions);
     const braceIdx = prevText.indexOf('{', headIdx);
@@ -2628,10 +2684,69 @@ function serverReplaceLegionEntry(text: string, legionName: string, slots: any[]
 
 /** 保存一支军团的编制（自动判层），返回被改动的文件路径 */
 
+
+/**
+ * 势力归属**单条**写入 `FactionCompositions.ts`：
+ *   legionName 有值 → 改写/插入这一条；null → 删掉这一条（回落跟随文化区）。
+ * 只动目标那一条的文本区间，其余原样保留（注释也保留）。
+ */
+function serverWriteOneFactionLegion(
+    text: string,
+    factionId: string,
+    legionName: string | null,
+    legionType?: string,
+): string {
+    const key = JSON.stringify(factionId) + ': {';
+    const at = text.indexOf(key);
+
+    const render = (): string => {
+        const lines = ['    ' + JSON.stringify(factionId) + ': {'];
+        lines.push('        legionName: ' + JSON.stringify(legionName) + ',');
+        if (legionType) lines.push('        legionType: ' + JSON.stringify(legionType) + ',');
+        lines.push('    },');
+        return lines.join(String.fromCharCode(10));
+    };
+
+    if (at < 0) {
+        if (legionName == null) return text;                       // 本来就没有，删了等于没删
+        const head = text.indexOf('export const FACTION_COMPOSITIONS');
+        const brace = text.indexOf('{', head);
+        if (brace < 0) throw new Error('FactionCompositions.ts 结构异常');
+        const NL = String.fromCharCode(10);
+        return text.slice(0, brace + 1) + NL + render() + text.slice(brace + 1);
+    }
+
+    const open = text.indexOf('{', at);
+    let depth = 0, end = -1;
+    for (let j = open; j < text.length; j++) {
+        if (text[j] === '{') depth++;
+        else if (text[j] === '}') { depth--; if (depth === 0) { end = j; break; } }
+    }
+    if (end < 0) throw new Error('势力 ' + factionId + ' 条目边界解析失败');
+    let tail = end + 1;
+    if (text[tail] === ',') tail++;
+    let headStart = at;
+    while (headStart > 0 && (text[headStart - 1] === ' ' || text[headStart - 1] === '\t')) headStart--;
+
+    if (legionName == null) {
+        let cut = tail;
+        while (text[cut] === '\r' || text[cut] === '\n') cut++;
+        return text.slice(0, headStart) + text.slice(cut);
+    }
+    return text.slice(0, headStart) + render() + text.slice(tail);
+}
+
 /** 保存一支军团的编制；军团名不在三层表里就在**三级表**新建一条。返回被改动的文件路径 */
 function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: string): string {
     try {
-        return serverSaveLegionComposition(legionName, slots, mode).file;
+        const r = serverSaveLegionComposition(legionName, slots, mode);
+        // 🔴 [2026-09-15 修] 一级 16 母体那条分支**不自己写盘**（为了避免两次写同一个文件），
+        //    它把改好的文本回给调用方。这里原来只取 .file 就返回了，文本被丢掉 ——
+        //    于是保存一级文化军团时接口返回 ok，实际上一个字也没写进去。
+        if (r.cultureFormationsText != null) {
+            safeWriteFileSync(path.resolve(__dirname, 'src/types/CultureFormations.ts'), r.cultureFormationsText);
+        }
+        return r.file;
     } catch (err: any) {
         if (!String(err?.message ?? '').includes('不在一级16')) throw err;
     }

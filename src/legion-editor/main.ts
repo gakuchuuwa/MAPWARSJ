@@ -49,6 +49,7 @@ import {
     isCivEraLegion,
 } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_NAMES } from '../data/level3CustomLegions';
+import { mountLegionPanel } from '../legion-panel/main';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -1000,7 +1001,7 @@ let stratChariotOverrideScale: number | null = null;
 let stratAnimTimer: number | null = null;
 
 // ── 兵种图鉴视图状态 ──
-type MainView = 'factions' | 'units' | 'naval' | 'strategic';
+type MainView = 'factions' | 'units' | 'naval' | 'strategic' | 'legions';
 let mainView: MainView = 'factions';
 let catalogRows: DeUnitDef[] = [];
 let catalogSearch = '';
@@ -1032,12 +1033,10 @@ app.innerHTML = `
     <button type="button" id="le-check-legions" class="le-btn">🧹 检查军团命名</button>
   </div>
 </header>
-<aside id="le-composition-rule" style="flex-shrink:0;padding:10px 20px;border-bottom:1px solid #8a6038;background:#302016;color:#f3d7aa;font-size:13px;line-height:1.6;">
-  <strong>🔴 铁律：一个军团只能有一种编制，严禁同一军团多种编制。</strong><br>
-  前排、中排、后排兵种一致，且阵型一样，就是同一种编制。<b>武将换军团，只改归属；编辑军团编制，所有使用者全部同步。</b>
-</aside>
+<aside id="le-composition-rule" style="flex-shrink:0;padding:2px 16px;border-bottom:1px solid #8a6038;background:#302016;color:#9c8a6e;font-size:10px;line-height:1.35;">🔴 铁律：一个军团只能有一种编制，严禁同一军团多种编制 —— 前排/中排/后排兵种一致且阵型一样即同一种编制；武将换军团只改归属，编辑军团编制时所有使用者全部同步。</aside>
 <div class="le-viewtabs">
   <button type="button" class="le-viewtab active" data-view="factions">⚔ 势力军团编排</button>
+  <button type="button" class="le-viewtab" data-view="legions">🏵 军团编辑</button>
   <button type="button" class="le-viewtab" data-view="naval">🚢 海军编排</button>
   <button type="button" class="le-viewtab" data-view="units">🗂 兵种鉴赏 (${DE_UNITS_CATALOG.length})</button>
   <button type="button" class="le-viewtab" data-view="strategic">🗺️ 战略地图军团鉴赏</button>
@@ -1080,6 +1079,8 @@ app.innerHTML = `
   <main class="le-main">
     <div id="le-table-wrap" class="le-table-wrap"></div>
     <div id="le-cat-table-wrap" class="le-table-wrap" style="display:none;"></div>
+    <!-- 🔴 [2026-09-15 主人「为什么不放一起」] 军团编辑与其它视图并排，占满整个主区 -->
+    <div id="le-legion-wrap" style="display:none;flex:1;min-height:0;flex-direction:column;"></div>
   </main>
   <!-- 右侧：军团配置与实时预览面板 -->
   <aside id="le-panel" class="le-panel">
@@ -1834,7 +1835,10 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     buildRows();
     applyFilter();
     renderTable();
-    if (affected.length > 0) await saveAllCompositions();
+    for (const r of allRows) {
+        if (!affected.includes(r.factionName)) continue;
+        await saveOneFactionLegion(r.factionId, null);
+    }
     showToast(
         `🗑 已删除军团【${legionName}】`
         + (affected.length || cultures.length
@@ -3234,7 +3238,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         if (!currentEditingLegion) return;
         const previous = localCustomCompositions[row.factionId];
         delete localCustomCompositions[row.factionId];
-        const saved = await saveAllCompositions();
+        const saved = await saveOneFactionLegion(row.factionId, null);
         if (!saved) {
             if (previous) localCustomCompositions[row.factionId] = previous;
             buildRows();
@@ -3270,8 +3274,8 @@ function bindPanelEvents(row: FactionLegionRow): void {
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        if (await saveAllCompositions()) {
-            showToast(`✅ 武将换军团已保存：【${row.generalName || row.factionName}】→【${name}】（只改归属）`);
+        if (await saveOneFactionLegion(row.factionId, name, currentEditingLegion.legionType || 'sub')) {
+            showToast(`✅ 武将换军团已保存：【${row.generalName || row.factionName}】→【${name}】（只改这一家的归属）`);
         }
     });
 
@@ -3359,7 +3363,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
         buildRows();
         applyFilter();
         selectFaction(row.factionId);
-        if (!await saveAllCompositions()) return;
+        if (!await saveOneFactionLegion(row.factionId, newName, 'sub')) return;
         showToast(`✅ 已另存为【${newName}】三级军团：编制已建，【${row.factionName}】已挂上`);
     });
 
@@ -3990,12 +3994,24 @@ function switchMainView(view: MainView): void {
     const isUnits = view === 'units';
     const isNaval = view === 'naval';   // 海军栏目复用左侧势力表与搜索栏
     const isStrategic = view === 'strategic';
+    // 🔴 [2026-09-15] 军团编辑：独占主区，右侧势力配置面板和两个工具栏一起收起
+    const isLegions = view === 'legions';
+    const legionWrap = document.getElementById('le-legion-wrap')!;
+    legionWrap.style.display = isLegions ? 'flex' : 'none';
+    els.panel.style.display = isLegions ? 'none' : '';
     els.panel.classList.toggle('is-units', isUnits);
     els.panel.classList.toggle('is-strategic', isStrategic);
-    els.toolbarFactions.style.display = isUnits ? 'none' : '';
+    els.toolbarFactions.style.display = (isUnits || isLegions) ? 'none' : '';
     els.toolbarUnits.style.display = isUnits ? '' : 'none';
-    els.tableWrap.style.display = isUnits ? 'none' : '';
+    els.tableWrap.style.display = (isUnits || isLegions) ? 'none' : '';
     els.catTableWrap.style.display = isUnits ? '' : 'none';
+    if (isLegions) {
+        mountLegionPanel(legionWrap);
+        document.querySelectorAll('.le-viewtab').forEach(x => {
+            x.classList.toggle('active', (x as HTMLElement).dataset.view === view);
+        });
+        return;
+    }
 
     document.querySelectorAll('.le-viewtab').forEach(t => {
         t.classList.toggle('active', (t as HTMLElement).dataset.view === view);
@@ -5297,6 +5313,25 @@ async function saveCultureComposition(culture: RegionType, legion: EditableLegio
         if (selectedFactionId) selectFaction(selectedFactionId);
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
+    }
+}
+
+/** 🔴 [2026-09-15 主人定「把这个分开」] 势力归属**单条**落盘。
+ *  军团编辑器从此不再走整表覆盖的 /api/save-faction-compositions ——
+ *  那条路曾把 465 条势力归属洗成 1 条。要批量改归属请去「势力归属」那一页。 */
+async function saveOneFactionLegion(factionId: string, legionName: string | null, legionType?: string): Promise<boolean> {
+    try {
+        const res = await fetch('/api/save-faction-legion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ factionId, legionName, legionType }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        return true;
+    } catch (e: any) {
+        showToast('❌ 归属保存失败：' + (e?.message || e), true);
+        return false;
     }
 }
 
