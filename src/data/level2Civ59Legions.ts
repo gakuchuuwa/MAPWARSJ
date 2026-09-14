@@ -407,7 +407,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'elite_magyar_huszar', count: 4 },
-            { type: 'magyar_huszar', count: 3 },
+            { type: 'hussite_wagon', count: 3 },
             { type: 'recurve_bowman', count: 2 },
         ],
     },

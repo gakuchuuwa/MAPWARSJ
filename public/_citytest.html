@@ -3337,6 +3337,14 @@ refresh();
       <option value="pass">险要 pass（关隘/要塞/堡垒）</option>
     </select>
     <span id="ceTypeHint" style="flex:1 1 420px;min-width:240px;color:#8fa3bb;font-size:12px"></span>
+    <!-- 🔴 [2026-09-14 主人] 战略地图镜像：只对「险要 pass」开放（与 batch-manager.html 同一口径）。
+         写的是既有字段 city.mirror（TerritorySystem.ts:2007 给据点立绘加 scaleX(-1)，沿垂直轴左右翻转、城门朝向反过来）；
+         大/中/小城/城寨的 mirror 由 rollSessionCityMirror 每局随机，数据值不生效，故此处不给它们开口子。 -->
+    <label id="ceMirrorWrap" title="战略地图上把该险要的立绘沿垂直轴左右翻转（城门朝向反过来）。仅险要 pass 可改。"
+           style="display:none;align-items:center;gap:6px;color:#f6e05e;font-weight:600;cursor:pointer">
+      <input id="ceMirror" type="checkbox" style="width:16px;height:16px;accent-color:#d4af37;cursor:pointer">
+      镜像立绘 mirror
+    </label>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <span style="color:#8fa3bb;min-width:86px">① 城墙 (16)</span>
@@ -3353,7 +3361,8 @@ refresh();
   var wall = document.getElementById('ceWall'), castle = document.getElementById('ceCastle'),
       custom = document.getElementById('ceCustom'), city = document.getElementById('ceCity'),
       flt = document.getElementById('ceFilter'), msg = document.getElementById('ceMsg'),
-      ctype = document.getElementById('ceType'), ctypeHint = document.getElementById('ceTypeHint');
+      ctype = document.getElementById('ceType'), ctypeHint = document.getElementById('ceTypeHint'),
+      mirrorWrap = document.getElementById('ceMirrorWrap'), mirrorBox = document.getElementById('ceMirror');
   /* 🔴 据点类型的中文名与判级口径（AGENTS.md §6.2，主人 2026-09-11 定死）：
    *    先分性质（关隘/要塞/堡垒 → pass），其余按城居人口 >50万/>10万/>1万/<1万 分四档。
    *    这里只做提示，不替主人判级。 */
@@ -3397,6 +3406,8 @@ refresh();
     if (!x) return;
     // 据点类型永远跟着据点走（是据点自身属性，不是用户偏好，故不进 localStorage）
     if (x.type && ctype.querySelector('option[value="' + x.type + '"]')) ctype.value = x.type;
+    // 镜像立绘跟着据点走（据点自身属性，与 ceType 同理：不进 localStorage）
+    if (mirrorBox) mirrorBox.checked = !!x.mirror;
     syncTypeHint();
     if (!keepStored) { custom.value = ''; castle.value = ''; }
     if (x.buildingStyle && wall.querySelector('option[value="' + x.buildingStyle + '"]')) wall.value = x.buildingStyle;
@@ -3430,6 +3441,8 @@ refresh();
     ctypeHint.style.color = changed ? '#f6e05e' : '#8fa3bb';
     ctypeHint.textContent = (TYPE_HINT[ctype.value] || '')
       + (changed ? '　⚠ 原为「' + (TYPE_CN[cur] || cur) + '」，点保存才写盘' : '');
+    // 镜像立绘：只对险要(pass)开放（大中小城/城寨的镜像由每局随机决定，数据值不生效）
+    if (mirrorWrap) mirrorWrap.style.display = ctype.value === 'pass' ? 'inline-flex' : 'none';
   }
   function render(restoring) {
     var kw = (flt.value || '').trim();
@@ -3466,12 +3479,17 @@ refresh();
       if (!x) { msg.style.color = '#fc8181'; msg.textContent = '请先选据点'; return; }
       var fields = { buildingStyle: wall.value, type: ctype.value };
       if (custom.value) fields.region = custom.value; else if (castle.value) fields.region = castle.value;
+      // 镜像立绘：只在选中的类型是险要(pass)时提交 —— 控件当时可见才写盘。
+      // 非险要一律不带 mirror 字段：那类据点的数据值本来就不生效，带上只会把别人填的值删掉。
+      // 服务端口径（vite.config.ts:3414 setBool）：true 写入/保留，false 删除该字段。
+      if (ctype.value === 'pass' && mirrorBox) fields.mirror = mirrorBox.checked;
       remember();                                   // 先记住选择：Vite 因写盘整页重载后能回到原处
       msg.style.color = '#f6e05e'; msg.textContent = '保存中…（写盘后页面会自动重载，选择已记住）';
       fetch('/api/save-city', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: x.id, fields: fields }) })
         .then(function (r) { return r.json(); }).then(function (res) {
           if (res.ok) { x.buildingStyle = wall.value; x.type = ctype.value; if (fields.region) x.region = fields.region;
-            msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → ' + (TYPE_CN[ctype.value] || ctype.value) + ' / 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + '（正在刷新预览…）';
+            if (fields.mirror !== undefined) x.mirror = fields.mirror || undefined;
+            msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → ' + (TYPE_CN[ctype.value] || ctype.value) + ' / 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + (fields.mirror !== undefined ? ' / 镜像 ' + (fields.mirror ? '开' : '关') : '') + '（正在刷新预览…）';
             // 本页是静态页、不 import cities_v2.ts → Vite 不会自动重载 ✗，所以保存成功后自己刷新一次；
             // 选择已存 localStorage，刷新后会回到原处（下面 render(true) 那套恢复逻辑）。
             setTimeout(function () { location.reload(); }, 700); }

@@ -467,7 +467,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'gastraphetes', name: '希腊腹弩手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/GASTRAPHETES/' },
     { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
     { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
-    { id: 'paragon', name: '十字军圣殿楷模武士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
+    { id: 'paragon', name: '武士楷模', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
     { id: 'shock_cavalry', name: '枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
     { id: 'imperial_cavalry', name: '波斯具装铁骑重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
