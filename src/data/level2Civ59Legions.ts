@@ -4,7 +4,8 @@
  * 军团兵种编制铁律：严格对齐史实特色兵种与精锐/高级档，总数=9
  */
 import type { RegionType } from '../systems/RegionSystem';
-import type { FormationMode, CompositionSlot } from '../types/CultureFormations';
+import type { FormationMode } from '../types/CultureFormations';
+import type { CompositionSlot } from '../types/LegionComposition';
 
 export interface Level2CivLegionDef {
     name: string;
