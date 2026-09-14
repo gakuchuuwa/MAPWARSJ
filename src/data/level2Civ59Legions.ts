@@ -24,10 +24,15 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代华夏中原军团', civ: '中国', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中国 北方华北·汉唐城楼',
         formationMode: 'square',
+        // 🔴 [2026-09-14 主人定] 二级军团一律「城堡兵 + 精锐兵 + 缺补兵」。
+        //    原先三排全是精锐（白毦精锐/诸葛弩精锐/火焰弓精锐），凑不出「城堡兵 + 该兵精锐」这一对。
+        //    城堡兵取诸葛弩（中国专属城堡兵），精锐取诸葛弩精锐；
+        //    缺补兵取蜀白毦兵 —— 《三国志》裴注引《零陵先贤传》「先主帐下白毦，西方上兵也」，
+        //    陈到所领近卫精兵，古典中原本土，合史实。
         slots: [
-            { type: 'elite_white_feather_guard', count: 3 },
+            { type: 'chukonu', count: 3 },
             { type: 'elite_chukonu', count: 3 },
-            { type: 'elite_fire_archer', count: 3 },
+            { type: 'white_feather_guard', count: 3 },
         ],
     },
     {
@@ -254,10 +259,16 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代瞿折罗军团', civ: '瞿折罗', age: 'feudal', deStyle: 'INDI', region: 'GURJARAS' as RegionType,
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
         formationMode: 'triangle',
+        // 🔴 [2026-09-14 主人定] 二级军团一律「城堡兵 + 精锐兵 + 缺补兵」。
+        //    原先两个精锐（什里瓦姆沙骑手精锐 + 飞轮掷手精锐）、没有城堡兵本体；
+        //    且飞轮掷手是帝国档兵种，塞进封建军团也过不了时代闸。
+        //    城堡兵取什里瓦姆沙骑手（瞿折罗专属城堡兵），精锐取其精锐档；
+        //    缺补兵留骆驼斥候 —— 阿拉伯史家苏莱曼《中国印度见闻录》记瞿折罗-普腊蒂哈拉
+        //    「拥有印度最好的骑兵」，其本部拉贾斯坦沙漠正是骆驼骑兵之乡，合史实。
         slots: [
             { type: 'camel_scout', count: 2 },
-            { type: 'elite_shrivamsha_rider', count: 3 },
-            { type: 'elite_chakram_thrower', count: 4 },
+            { type: 'shrivamsha_rider', count: 3 },
+            { type: 'elite_shrivamsha_rider', count: 4 },
         ],
     },
     {
