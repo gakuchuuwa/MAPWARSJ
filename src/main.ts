@@ -22,11 +22,25 @@ function showBootError(err: unknown): void {
     showGameAppErrorOverlay(msg);
 }
 
+// MetaMask 注入脚本的连接失败不代表游戏启动失败；仍保留浏览器原始错误日志。
+function isMetaMaskExtensionError(error: unknown, filename = ''): boolean {
+    if (!error || typeof error !== 'object') return false;
+    const { message, stack } = error as { message?: unknown; stack?: unknown };
+    if (message !== 'Failed to connect to MetaMask') return false;
+    const firstFrame = typeof stack === 'string'
+        ? stack.split('\n').find((line) => /^\s*at\s/.test(line)) ?? ''
+        : '';
+    return /^chrome-extension:\/\//.test(filename)
+        || /^\s*at\s+(?:.*?\()?chrome-extension:\/\//.test(firstFrame);
+}
+
 window.addEventListener('error', (event) => {
+    if (isMetaMaskExtensionError(event.error ?? { message: event.message }, event.filename)) return;
     showBootError(event.error ?? event.message);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
+    if (isMetaMaskExtensionError(event.reason)) return;
     showBootError(event.reason);
 });
 

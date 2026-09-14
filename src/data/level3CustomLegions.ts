@@ -221,9 +221,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代斯基泰军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'scythian_axe_cavalry', count: 2 },
-            { type: 'scythian_horse_archer', count: 3 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
+            { type: 'sarmatian', count: 2 },
+            { type: 'scythian_axe_cavalry', count: 3 },
+            { type: 'scythian_horse_archer', count: 4 },
         ],
         regions: ['SCYTHIANS'],
     },
@@ -332,7 +332,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'hoplite', count: 4 },
-            { type: 'shock_cavalry', count: 3 },
+            { type: 'companion_cavalry', count: 3 },
             { type: 'rhodian_slinger', count: 2 },
         ],
         regions: ['WEST_ASIA_ANTIQUITY'],
@@ -811,7 +811,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代印度军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'elite_elephant_archer', count: 2 },
+            { type: 'elephant_archer', count: 2 },
             { type: 'shrivamsha_rider', count: 4 },
             { type: 'chakram_thrower', count: 3 },
         ],
@@ -881,9 +881,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代日耳曼军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'scout_cavalry', count: 2 },
+            { type: 'light_riders', count: 2 },
             { type: 'elite_throwing_axeman', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
+            { type: 'skirmisher', count: 3 },
         ],
         regions: ['GERMANIC_FEUDAL'],
     },
@@ -1291,7 +1291,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代锡克军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'chakram_thrower', count: 3 },
+            { type: 'elite_chakram_thrower', count: 3 },
             { type: 'urumi_swordsman', count: 4 },
             { type: 'shrivamsha_rider', count: 2 },
         ],
@@ -1313,7 +1313,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'genitour', count: 3 },
             { type: 'elite_genitour', count: 4 },
-            { type: 'hand_cannoneer', count: 2 },
+            { type: 'royal_janissary', count: 2 },
         ],
         regions: ['AFRICA_IMPERIAL'],
     },
