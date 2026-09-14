@@ -1,5 +1,5 @@
 import { getFactionCultureRegion } from '../config/portrait_defaults';
-import { CULTURE_TIERS_MAP, getFactionCompositionSlots } from '../types/CultureFormations';
+import { getRegionLegionComposition, getFactionCompositionSlots } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
 import { GameConfig } from '../config/GameConfig';
 /**
@@ -438,7 +438,7 @@ export class PlayerHero {
         // 与他马上要加入的那支军团同源（铁律「一势力一军团一种编制」）
         const region = this.factionId ? getFactionCultureRegion(this.factionId) : null;
         const slots = (this.factionId ? getFactionCompositionSlots(this.factionId) : null)
-            ?? (region ? (CULTURE_TIERS_MAP[region]?.[0]?.slots ?? []) : []);
+            ?? (region ? (getRegionLegionComposition(region)?.slots ?? []) : []);
         const seen: string[] = [];
         for (const sl of slots as Array<{ type: string }>) if (sl.type && !seen.includes(sl.type)) seen.push(sl.type);
         return seen;

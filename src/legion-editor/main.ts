@@ -21,8 +21,8 @@ import { REGION_LABELS, REGION_ORDER, RegionType, getCityRegion } from '../syste
 import {
     NavalFormationMode,
     NAVAL_FORMATION_LABEL,
-    CULTURE_TIERS_MAP,
-    CULTURE_FORMATION_MODE,
+    getRegionLegionComposition,
+    applyCultureFormationPatch,
     CULTURE_LEGION_NAMES,
     FormationMode,
     getDefaultSlotsForMode,
@@ -1476,9 +1476,11 @@ function buildRows(): void {
 
         const custom = localCustomCompositions[f.id];
 
-        let formationMode: FormationMode = custom?.formationMode ?? CULTURE_FORMATION_MODE[region] ?? 'square';
+        // 🔴 [2026-09-14] 文化表已删：兜底编制 = 该区默认军团（一级16 / 二级59 / 三级）的编制
+        const regionComp = getRegionLegionComposition(region);
+        let formationMode: FormationMode = custom?.formationMode ?? regionComp?.formationMode ?? 'square';
         let slots: CompositionSlot[] = custom?.slots
-            ?? CULTURE_TIERS_MAP[region]?.[0]?.slots
+            ?? regionComp?.slots
             ?? getDefaultSlotsForMode(formationMode);
 
         const r1 = slots[0]?.type || 'swordsman';
@@ -1730,9 +1732,9 @@ function selectFaction(factionId: string): void {
 
 /** 取某文化区的默认编成（与 buildRows 的兜底同源，勿另起一套） */
 function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
-    const formationMode: FormationMode = CULTURE_FORMATION_MODE[region] ?? 'square';
-    const slots: CompositionSlot[] = CULTURE_TIERS_MAP[region]?.[0]?.slots
-        ?? getDefaultSlotsForMode(formationMode);
+    const comp = getRegionLegionComposition(region);
+    const formationMode: FormationMode = comp?.formationMode ?? 'square';
+    const slots: CompositionSlot[] = comp?.slots ?? getDefaultSlotsForMode(formationMode);
     return { formationMode, slots: slots.map(s => ({ ...s })) };
 }
 
@@ -5204,13 +5206,10 @@ async function saveCultureComposition(culture: RegionType, legion: CustomFaction
         if (!res.ok) throw new Error(await res.text());
 
         // ② 内存同步（否则下面重绘会把界面刷回旧编制）
+        // 🔴 [2026-09-14] 文化表已删：内存同步改成「按军团名打补丁」，文化区只更新指针
         for (const r of [culture, ...alsoCultures]) {
             (CULTURE_LEGION_NAMES as Record<string, string>)[r] = legionName;
-            (CULTURE_FORMATION_MODE as Record<string, FormationMode>)[r] = formationMode;
-            const tiers = (CULTURE_TIERS_MAP as Record<string, any>)[r];
-            if (tiers?.[0]) (CULTURE_TIERS_MAP as Record<string, any>)[r] = [
-                { ...tiers[0], slots: slots.map(s => ({ ...s })) }, ...tiers.slice(1),
-            ];
+            applyCultureFormationPatch(r as RegionType, slots, formationMode);
         }
 
         // ③ 势力表里同名的势力军团也一起覆盖（同名 = 同一个军团，全体同步）
