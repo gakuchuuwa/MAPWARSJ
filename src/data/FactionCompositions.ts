@@ -53,6 +53,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代罗马禁卫军团",
         legionType: "sub",
     },
+    "didi": {
+        legionName: "城堡时代佛兰德军团",
+        legionType: "sub",
+    },
     "dian": {
         legionName: "封建时代白蛮军团",
         legionType: "region",

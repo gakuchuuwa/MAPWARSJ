@@ -567,7 +567,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'elite_temple_guard', count: 2 },
-            { type: 'guecha_warrior', count: 3 },
+            { type: 'temple_guard', count: 3 },
             { type: 'elite_guecha_warrior', count: 4 },
         ],
     },
