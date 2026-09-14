@@ -81,8 +81,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'elite_ratha_melee', count: 4 },
-            { type: 'ratha_melee', count: 3 },
-            { type: 'elite_ratha_ranged', count: 2 },
+            { type: 'indian_tribesman', count: 3 },
+            { type: 'archer', count: 2 },
         ],
     },
     {
@@ -334,10 +334,10 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '城堡时代蒙古军团', civ: '蒙古', age: 'castle', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         slots: [
-            { type: 'elite_keshik', count: 2 },
-            { type: 'mangudai', count: 3 },
+            { type: 'elite_keshik', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'mangudai_elite', count: 4 },
         ],
     },
@@ -367,7 +367,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'jian_swordman_shielded', count: 2 },
-            { type: 'war_wagon', count: 3 },
+            { type: 'fire_archer', count: 3 },
             { type: 'elite_war_wagon', count: 4 },
         ],
     },
@@ -426,7 +426,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'AFRI_CASTLE_AGE3', castleName: '非洲/马里 杰内大清真寺泥石堡',
         formationMode: 'triangle',
         slots: [
-            { type: 'cavalier', count: 2 },
+            { type: 'camel_raider', count: 2 },
             { type: 'gbeto', count: 3 },
             { type: 'elite_gbeto', count: 4 },
         ],
@@ -446,7 +446,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'triangle',
         slots: [
-            { type: 'heavy_pikeman', count: 2 },
+            { type: 'vanguard', count: 2 },
             { type: 'arambai', count: 3 },
             { type: 'elite_arambai', count: 4 },
         ],
@@ -467,7 +467,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'elite_keshik', count: 2 },
-            { type: 'mangudai', count: 3 },
+            { type: 'keshik', count: 3 },
             { type: 'mangudai_elite', count: 4 },
         ],
     },
@@ -498,7 +498,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_coustillier', count: 4 },
             { type: 'coustillier', count: 3 },
-            { type: 'flemish_pikeman', count: 2 },
+            { type: 'flemish_pikeman_f', count: 2 },
         ],
     },
     {
