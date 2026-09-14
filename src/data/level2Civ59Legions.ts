@@ -30,9 +30,9 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         //    缺补兵取蜀白毦兵 —— 《三国志》裴注引《零陵先贤传》「先主帐下白毦，西方上兵也」，
         //    陈到所领近卫精兵，古典中原本土，合史实。
         slots: [
-            { type: 'chukonu', count: 3 },
-            { type: 'elite_chukonu', count: 3 },
             { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_chukonu', count: 3 },
+            { type: 'elite_fire_archer', count: 3 },
         ],
     },
     {
@@ -72,7 +72,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_woad_raider', count: 4 },
             { type: 'woad_raider', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
+            { type: 'longbowman_elite', count: 2 },
         ],
     },
     {
@@ -101,7 +101,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'elite_immortal', count: 4 },
-            { type: 'immortal', count: 3 },
+            { type: 'elite_guardsman', count: 3 },
             { type: 'elite_immortal_ranged', count: 2 },
         ],
     },
@@ -182,7 +182,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_cataphract', count: 4 },
             { type: 'cataphract', count: 3 },
-            { type: 'heavy_pikeman', count: 2 },
+            { type: 'elite_composite_bowman', count: 2 },
         ],
     },
     {
@@ -212,7 +212,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_tarkan', count: 4 },
             { type: 'tarkan', count: 3 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
         ],
     },
     {
@@ -240,8 +240,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
         formationMode: 'triangle',
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'ballista_elephant', count: 3 },
+            { type: 'antiquity_spearman', count: 2 },
+            { type: 'antiquity_skirmisher', count: 3 },
             { type: 'elite_ballista_elephant', count: 4 },
         ],
     },
@@ -287,7 +287,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'elite_liao_dao', count: 4 },
-            { type: 'liao_dao', count: 3 },
+            { type: 'recurve_bowman', count: 3 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
@@ -398,7 +398,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_champi_warrior', count: 4 },
             { type: 'champi_warrior', count: 3 },
-            { type: 'slinger', count: 2 },
+            { type: 'elite_kamayuk', count: 2 },
         ],
     },
     {
@@ -596,7 +596,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'triangle',
         slots: [
-            { type: 'cavalier', count: 2 },
+            { type: 'heavy_pikeman', count: 2 },
             { type: 'organ_gun', count: 3 },
             { type: 'elite_organ_gun', count: 4 },
         ],
@@ -604,11 +604,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '帝国时代奥斯曼军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         slots: [
-            { type: 'hussar', count: 2 },
-            { type: 'janissary', count: 3 },
-            { type: 'elite_janissary', count: 4 },
+            { type: 'halberdier', count: 4 },
+            { type: 'royal_janissary', count: 3 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
     {
