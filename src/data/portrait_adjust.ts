@@ -983,7 +983,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/CENTRAL/gaoqi_d_gaohuan.png": {
-            "scale": 0.85,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -5
         },

@@ -1,13 +1,8 @@
 
 import L from 'leaflet';
+import { smoothRiverLine } from './RiverGeometry';
 import { gameLog } from '../utils/GameLogger';
-import { STRATEGIC_WATER_PALETTE, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
-
-// 从全球海湖基色降低饱和度，保持蓝青辨识度；不按地区臆测水质或含沙量。
-const waterBase = STRATEGIC_WATER_PALETTE.base;
-const waterLuminance = waterBase[0] * 0.2126 + waterBase[1] * 0.7152 + waterBase[2] * 0.0722;
-const riverColor = `rgb(${waterBase.map(value => Math.round(value * 0.75 + waterLuminance * 0.25 + 4)).join(',')})`;
-const riverBankColor = `rgb(${waterBase.map(value => Math.round(value * 0.65)).join(',')})`;
+import { STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
 
 /**
  * VectorRiverLayer
@@ -51,17 +46,10 @@ export class VectorRiverLayer extends L.FeatureGroup {
     constructor(data: any, options?: L.LayerOptions) {
         super([], options); // Initialize empty FeatureGroup
 
-        // [SMOOTHING] 对 GeoJSON 坐标应用 Chaikin 拐角曲线平滑算法，消除硬直角折线感
-        //
-        // [PERF 2026-07-27] 迭代次数 2 → 1。每轮 Chaikin 顶点数约翻倍，2 轮 ≈ 原始的 4 倍，
-        // 而 Leaflet 在每次 zoomend 都要把全部顶点重新投影（实测 330~600ms，缩放卡顿的剩余大头）。
-        // Chaikin 收敛很快：1 轮已把直角切成圆角，第 2 轮的增量在 2~4px 线宽下肉眼难辨。
-        // 🔴 [2026-08-31] 先把**永远不画的湖心线**扔掉，再做任何处理。
-        //    `getBorderStyle`/`getWaterStyle` 对 `Lake Centerline` 都返回 `stroke:false, opacity:0`，
-        //    实测 2910 条 path 里有 **506 条**是它（占 17% 的 path、39736 个顶点），
-        //    一根都画不出来，却照样参与每次 zoomend 的全量重投影。
+        // Only visible watercourses need geometry. Round bends once at startup;
+        // the adaptive sampler keeps detail near corners and fixes river endpoints.
         const drawableData = VectorRiverLayer.dropNeverDrawn(data);
-        const smoothedData = VectorRiverLayer.applyChaikinSmoothing(drawableData, 1);
+        const smoothedData = VectorRiverLayer.smoothGeometry(drawableData);
 
         this.sourceWgs84 = smoothedData;
         // [PERFORMANCE] GCJ02 偏移在启动时算一次
@@ -75,7 +63,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         this.gcj02Group = new L.FeatureGroup();
         this.addLayer(this.wgs84Group);
 
-        gameLog('startup', '[VectorRiverLayer] Initialized with Chaikin Curve Smoothing & Dual-Buffer ready.');
+        gameLog('startup', '[VectorRiverLayer] Initialized with adaptive river curves & dual-buffer ready.');
     }
 
     /** 扔掉样式上永远不绘制的要素（目前只有 Lake Centerline）。 */
@@ -272,12 +260,12 @@ export class VectorRiverLayer extends L.FeatureGroup {
      *     因为样式只在**跨档**时重建（同档内换 zoom 值不重设），跟档位走才能保证 8↔9 切换时新值生效 ✓。
      * ⚠️ 若 zoom 9 平移变卡，把 ZOOM9_SMOOTH 调回 1.0（Leaflet 默认）即可回到原状。
      */
-    private static readonly ZOOM9_SMOOTH = 0.35;
+    private static readonly ZOOM9_SMOOTH = 0.18;
     private static smoothFactorFor(zoom: number): number {
         return VectorRiverLayer.getScaleMultiplier(zoom) === 1.0 ? VectorRiverLayer.ZOOM9_SMOOTH : 1.0;
     }
 
-    // 窄幅半透明暗岸：浅色沙漠、雪地上有边界，深色地形上不形成黑色粗描边。
+    // 同栅格水面一样用浅岸过渡，不叠加独立的黑色轮廓。
     private static getBorderStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -289,9 +277,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            color: riverBankColor,
-            weight: waterWeight + 1.8,
-            opacity: 0.28,
+            color: STRATEGIC_RIVER_BANK_COLOR,
+            weight: waterWeight + 1.2,
+            opacity: 0.22,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -310,7 +298,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: riverColor,
+            color: STRATEGIC_RIVER_BANK_COLOR,
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 1.0,
             lineCap: 'round',
@@ -324,9 +312,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const weight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
             stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 4.5,
-            color: STRATEGIC_RIVER_BANK_COLOR,
-            weight: weight * 0.75,
-            opacity: 0.18,
+            color: STRATEGIC_WATER_COLOR,
+            weight: weight * 0.68,
+            opacity: 1.0,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -399,50 +387,19 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return newData;
     }
 
-    /**
-     * [Chaikin Smoothing Algorithm]
-     * 对 GeoJSON 的折线坐标做角点切削平滑，把生硬的直角折线转成自然水流曲线。
-     * 轮数由调用方给（当前 1 轮，见构造函数处的性能说明），每轮顶点数约翻倍。
-     */
-    private static applyChaikinSmoothing(geojson: any, iterations: number = 1): any {
+    /** Render-only curves; the original GeoJSON remains the geography source. */
+    private static smoothGeometry(geojson: any): any {
         if (!geojson) return geojson;
         const newData = JSON.parse(JSON.stringify(geojson));
-
-        const smoothLine = (coords: [number, number][]): [number, number][] => {
-            if (!coords || coords.length <= 2) return coords;
-            let current = coords;
-            for (let it = 0; it < iterations; it++) {
-                const smoothed: [number, number][] = [];
-                smoothed.push(current[0]);
-                for (let i = 0; i < current.length - 1; i++) {
-                    const p0 = current[i];
-                    const p1 = current[i + 1];
-
-                    const q: [number, number] = [
-                        0.75 * p0[0] + 0.25 * p1[0],
-                        0.75 * p0[1] + 0.25 * p1[1]
-                    ];
-                    const r: [number, number] = [
-                        0.25 * p0[0] + 0.75 * p1[0],
-                        0.25 * p0[1] + 0.75 * p1[1]
-                    ];
-                    smoothed.push(q);
-                    smoothed.push(r);
-                }
-                smoothed.push(current[current.length - 1]);
-                current = smoothed;
-            }
-            return current;
-        };
 
         if (newData.type === 'FeatureCollection' && Array.isArray(newData.features)) {
             for (const feature of newData.features) {
                 if (feature.geometry && feature.geometry.coordinates) {
                     const geomType = feature.geometry.type;
                     if (geomType === 'LineString') {
-                        feature.geometry.coordinates = smoothLine(feature.geometry.coordinates);
+                        feature.geometry.coordinates = smoothRiverLine(feature.geometry.coordinates);
                     } else if (geomType === 'MultiLineString') {
-                        feature.geometry.coordinates = feature.geometry.coordinates.map((line: any) => smoothLine(line));
+                        feature.geometry.coordinates = feature.geometry.coordinates.map((line: any) => smoothRiverLine(line));
                     }
                 }
             }
