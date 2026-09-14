@@ -121,8 +121,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代印度军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
-            { type: 'ratha_melee', count: 4 },
+            { type: 'elite_sannahya', count: 2 },
+            { type: 'indian_tribesman', count: 4 },
             { type: 'sickle_warrior', count: 3 },
         ],
         regions: ['INDIA'],
@@ -452,7 +452,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'teutonic_knight', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'frankish_paladin', count: 3 },
             { type: 'crusader_knight', count: 4 },
         ],
         regions: ['CRUSADERS'],

@@ -1043,7 +1043,7 @@ buildingStyle: 'ASIA', troops: 10000, tier: 0,
     }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
         { id: 'city_haeju', name: '瀑池', factionId: 'hai2', lat: 38.03, lng: 125.71, type: 'stockade', troops: 10000, region: 'GORYEO', buildingStyle: 'ASIA' },
 
-    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA' },
+    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA', mirror: true },
 
     // === 第三批新增据点 ===
     { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
