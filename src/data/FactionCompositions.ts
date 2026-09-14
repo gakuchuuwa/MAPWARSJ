@@ -46,7 +46,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kushi": {
-        legionName: "古典时代非洲军团",
+        legionName: "古典时代努比亚军团",
         legionType: "sub",
     },
     "mozeer": {
@@ -1733,10 +1733,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代意大利军团",
         legionType: "sub",
     },
-    "lunbadi": {
-        legionName: "城堡时代意大利军团",
-        legionType: "sub",
-    },
     "tuosikana": {
         legionName: "城堡时代意大利军团",
         legionType: "sub",
@@ -1766,10 +1762,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "malai": {
-        legionName: "城堡时代马来军团",
-        legionType: "sub",
-    },
-    "sanfoqi": {
         legionName: "城堡时代马来军团",
         legionType: "sub",
     },

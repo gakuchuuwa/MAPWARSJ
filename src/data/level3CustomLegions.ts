@@ -368,16 +368,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['YARLUNG'],
     },
     {
-        name: '古典时代非洲军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'shotel_warrior', count: 3 },
-            { type: 'elite_shotel_warrior', count: 4 },
-            { type: 'camel_scout', count: 2 },
-        ],
-        regions: ['AFRICA_ANTIQUITY'],
-    },
-    {
         name: '古典时代鲜卑军团',
         formationMode: 'crescent',
         slots: [
@@ -596,16 +586,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_plumed_archer', count: 2 },
         ],
         regions: ['IROQUOIS'],
-    },
-    {
-        name: '城堡时代曼丁哥军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'sosso_guard', count: 3 },
-            { type: 'elite_gbeto', count: 4 },
-            { type: 'camel_archer', count: 2 },
-        ],
-        regions: ['AFRICA'],
     },
     {
         name: '城堡时代法兰西军团',
