@@ -163,7 +163,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_war_chariot', count: 4 },
             { type: 'guardsman', count: 2 },
-            { type: 'elite_guardsman', count: 3 },
+            { type: 'militia', count: 3 },
         ],
         regions: ['BABYLON'],
     },
@@ -201,7 +201,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代希腊军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'hoplite', count: 3 },
+            { type: 'elite_hoplite', count: 3 },
             { type: 'elite_greek_cavalry', count: 4 },
             { type: 'gastraphetes', count: 2 },
         ],
@@ -873,7 +873,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_boyar', count: 4 },
             { type: 'composite_bowman', count: 3 },
-            { type: 'berserk', count: 2 },
+            { type: 'konnik_foot', count: 2 },
         ],
         regions: ['SLAVIC_FEUDAL'],
     },
@@ -993,7 +993,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'boyar', count: 3 },
             { type: 'elite_composite_bowman', count: 4 },
-            { type: 'berserk', count: 2 },
+            { type: 'norse_warrior', count: 2 },
         ],
         regions: ['SLAVIC'],
     },
@@ -1396,6 +1396,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_skirmisher', count: 4 },
         ],
         regions: [],
+    },
+    {
+        name: '城堡时代佛兰德军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'flemish_pikeman', count: 4 },
+            { type: 'coustillier', count: 3 },
+            { type: 'crossbowman', count: 2 },
+        ],
+        regions: ['HRE'],
     },
 ];
 
