@@ -1114,9 +1114,9 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'sakan_axeman', count: 2 },
-        { type: 'antiquity_light_cavalry', count: 3 },
-        { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+        { type: 'elite_white_feather_guard', count: 2 },
+        { type: 'elite_chukonu', count: 3 },
+        { type: 'elite_fire_archer', count: 4 },
     ]
     }
 ];
@@ -1145,10 +1145,10 @@ export const STEPPE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'steppe_lancer', count: 4 },
-            { type: 'kipchak', count: 3 },
-            { type: 'laminated_bowman', count: 2 }
-        ]
+        { type: 'elite_steppe_lancer', count: 2 },
+        { type: 'sogdian_cataphract', count: 3 },
+        { type: 'elite_kipchak', count: 4 },
+    ]
     }
 ];
 
@@ -1199,10 +1199,10 @@ export const SLAVIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'boyar', count: 2 },
-            { type: 'obuch', count: 4 },
-            { type: 'recurve_bowman', count: 3 }
-        ]
+        { type: 'sarmatian', count: 2 },
+        { type: 'elite_boyar', count: 4 },
+        { type: 'elite_leitis', count: 3 },
+    ]
     }
 ];
 
@@ -1219,10 +1219,10 @@ export const GERMANIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'huskarl', count: 4 },
-            { type: 'coustillier', count: 2 },
-            { type: 'throwing_axeman', count: 3 }
-        ]
+        { type: 'elite_huskarl', count: 4 },
+        { type: 'longbowman_elite', count: 2 },
+        { type: 'frankish_paladin', count: 3 },
+    ]
     }
 ];
 
@@ -1244,10 +1244,10 @@ export const LATIN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'centurion', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 }
-        ]
+        { type: 'legionary', count: 4 },
+        { type: 'elite_genoese_crossbowman', count: 2 },
+        { type: 'paladin', count: 3 },
+    ]
     }
 ];
 
@@ -1271,10 +1271,10 @@ export const INDIA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'imperial_camel_rider', count: 2 },
-            { type: 'ghulam', count: 4 },
-            { type: 'chakram_thrower', count: 3 }
-        ]
+        { type: 'imperial_camel_rider', count: 2 },
+        { type: 'elite_ghulam', count: 4 },
+        { type: 'elite_skirmisher', count: 3 },
+    ]
     }
 ];
 
@@ -1300,10 +1300,10 @@ export const GREEK_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'hoplite', count: 4 },
-            { type: 'greek_noble_cavalry', count: 2 },
-            { type: 'gastraphetes', count: 3 }
-        ]
+        { type: 'hoplite', count: 4 },
+        { type: 'gastraphetes', count: 2 },
+        { type: 'elite_greek_cavalry', count: 3 },
+    ]
     }
 ];
 
@@ -1328,10 +1328,10 @@ export const PERSIAN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'shock_cavalry', count: 2 },
-            { type: 'sparabara', count: 4 },
-            { type: 'immortal_ranged', count: 3 }
-        ]
+        { type: 'savar', count: 2 },
+        { type: 'qizilbash_warrior', count: 4 },
+        { type: 'imperial_cavalry', count: 3 },
+    ]
     }
 ];
 
@@ -1366,10 +1366,10 @@ export const MALAY_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'arambai', count: 2 },
-            { type: 'karambit_warrior', count: 3 },
-            { type: 'rattan_archer', count: 4 }
-        ]
+        { type: 'elite_arambai', count: 2 },
+        { type: 'karambit_warrior_elite', count: 3 },
+        { type: 'rattan_archer_elite', count: 4 },
+    ]
     }
 ];
 
@@ -1424,10 +1424,10 @@ export const EAST_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'monaspa', count: 3 },
-            { type: 'cataphract', count: 4 },
-            { type: 'composite_bowman', count: 2 }
-        ]
+        { type: 'elite_cataphract', count: 3 },
+        { type: 'elite_monaspa', count: 4 },
+        { type: 'elite_magyar_huszar', count: 2 },
+    ]
     }
 ];
 
@@ -1445,10 +1445,10 @@ export const PURU_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'indian_tribesman', count: 4 },
-            { type: 'shrivamsha_rider', count: 2 },
-            { type: 'pattiyoda_longbowman', count: 3 }
-        ]
+        { type: 'elite_chakram_thrower', count: 4 },
+        { type: 'elite_pattiyoda_longbowman', count: 2 },
+        { type: 'elite_shrivamsha_rider', count: 3 },
+    ]
     }
 ];
 
@@ -1491,10 +1491,10 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'kamayuk', count: 4 },
-            { type: 'blackwood_archer', count: 3 },
-            { type: 'bolas_rider', count: 2 }
-        ]
+        { type: 'elite_temple_guard', count: 4 },
+        { type: 'elite_blackwood_archer', count: 3 },
+        { type: 'elite_bolas_rider', count: 2 },
+    ]
     }
 ];
 
@@ -1706,10 +1706,10 @@ export const ORIE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'longswordsman', count: 4 },
-            { type: 'mameluke', count: 2 },
-            { type: 'cav_archer', count: 3 }
-        ]
+        { type: 'camel_heavy', count: 4 },
+        { type: 'mameluke', count: 2 },
+        { type: 'cav_archer_heavy', count: 3 },
+    ]
     }
 ];
 
@@ -1729,10 +1729,10 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'rhomphaia_warrior', count: 4 },
-            { type: 'tarantine_cavalry', count: 2 },
-            { type: 'thracian_peltast', count: 3 }
-        ]
+        { type: 'elite_rhomphaia_warrior', count: 4 },
+        { type: 'elite_peltast', count: 2 },
+        { type: 'tarantine_cavalry', count: 3 },
+    ]
     }
 ];
 
@@ -1893,7 +1893,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         tiers: GERMANIC_BASE_TIERS,
     },
     STEPPE: {
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         tiers: STEPPE_BASE_TIERS,
     },
     ORIE: {

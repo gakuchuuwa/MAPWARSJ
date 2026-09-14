@@ -24,7 +24,10 @@ import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { WAR_TYPES } from '../data/WarTypes';
-import { DE_UNITS_CATALOG, CATEGORY_LABEL } from '../legion-editor/main';
+import {
+    DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
+    getUnitSubcategory, getUnitTier, observeThumbs, drawUnitThumb,
+} from '../legion-editor/main';
 
 const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
@@ -96,6 +99,11 @@ let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
 let draft: { mode: FormationMode; types: [string, string, string] } | null = null;
 let host: HTMLElement;
+/** 🔴 [2026-09-15 主人报障「搜索框打不出汉字」]
+ *  这两个搜索框每敲一下就 innerHTML 重建整块，输入框节点被换掉，
+ *  中文输入法正在进行的「组合（composition）」当场被打断 —— 拼音上不了屏。
+ *  解法：组合期间只记值、不重绘，等 compositionend 再重绘一次。 */
+let composing = false;
 
 function esc(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -111,20 +119,115 @@ function toast(msg: string, bad = false): void {
     setTimeout(() => el.remove(), 4200);
 }
 
-function unitOptions(current: string): string {
-    const byCat = new Map<string, { id: string; name: string }[]>();
-    for (const u of DE_UNITS_CATALOG) {
-        const label = (CATEGORY_LABEL as Record<string, string>)[u.category] ?? u.category;
-        if (!byCat.has(label)) byCat.set(label, []);
-        byCat.get(label)!.push({ id: u.id, name: u.name });
-    }
-    let html = '';
-    for (const [label, list] of byCat) {
-        html += `<optgroup label="${esc(label)}">`
-            + list.map(u => `<option value="${esc(u.id)}" ${u.id === current ? 'selected' : ''}>${esc(u.name)}</option>`).join('')
-            + '</optgroup>';
-    }
-    return html;
+/** 兵种的子分类中文名（剑盾兵 / 长枪兵 / 弓骑兵…），选择器和摘要都用它 */
+function subLabelOf(unitId: string): string {
+    const sub = getUnitSubcategory(unitId);
+    const u = DE_UNITS_CATALOG.find(x => x.id === unitId);
+    const cat = u ? (CATEGORY_LABEL as Record<string, string>)[u.category] ?? '' : '';
+    const subCn = sub ? (SUBCATEGORY_LABEL as Record<string, string>)[sub] ?? sub : '';
+    const tier = u && getUnitTier(u) === 'elite' ? ' · ⭐精锐' : '';
+    return [cat, subCn].filter(Boolean).join(' / ') + tier;
+}
+
+/** 选兵种：带图 + 按子分类分组的弹窗（2026-09-15 主人「选兵种的时候，要有图，要有子分类」） */
+let pickerKeyword = '';
+let pickerCat: string = 'all';
+
+function openUnitPicker(rowIdx: number): void {
+    if (!draft) return;
+    document.getElementById('lp-picker')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'lp-picker';
+    overlay.style.cssText = `position:fixed;inset:0;z-index:16000;background:rgba(0,0,0,.72);
+        display:flex;align-items:center;justify-content:center;`;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    const box = document.createElement('div');
+    box.style.cssText = `width:min(1100px,92vw);height:min(760px,88vh);background:#141210;
+        border:1px solid #3a342c;border-radius:6px;display:flex;flex-direction:column;overflow:hidden;`;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    const cats = ['all', ...new Set(DE_UNITS_CATALOG.map(u => u.category))];
+
+    const paint = (): void => {
+        const kw = pickerKeyword.trim();
+        const list = DE_UNITS_CATALOG.filter(u => {
+            if (pickerCat !== 'all' && u.category !== pickerCat) return false;
+            if (!kw) return true;
+            return u.name.includes(kw) || u.id.includes(kw) || subLabelOf(u.id).includes(kw);
+        });
+        // 按子分类分组
+        const groups = new Map<string, typeof list>();
+        for (const u of list) {
+            const sub = getUnitSubcategory(u.id);
+            const key = sub ? (SUBCATEGORY_LABEL as Record<string, string>)[sub] ?? sub : '未分类';
+            if (!groups.has(key)) groups.set(key, [] as unknown as typeof list);
+            groups.get(key)!.push(u);
+        }
+        box.innerHTML = `
+          <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <b style="color:#f6e05e;">选兵种 · ${['前排', '中坚', '后排'][rowIdx]}</b>
+            <input id="lp-pk-search" placeholder="搜兵种名 / 子分类 / ID" value="${esc(pickerKeyword)}"
+              style="width:220px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
+            ${cats.map(c => `<button data-cat="${c}" class="lp-pk-cat" style="background:${pickerCat === c ? '#5a3c28' : '#243246'};
+              border:1px solid ${pickerCat === c ? '#8a6038' : '#4a5568'};color:#e8e0d0;border-radius:4px;padding:5px 11px;cursor:pointer;font-size:12px;">
+              ${c === 'all' ? '全部' : esc((CATEGORY_LABEL as Record<string, string>)[c] ?? c)}</button>`).join('')}
+            <span style="color:#8a8378;font-size:12px;">${list.length} 个</span>
+            <button id="lp-pk-close" style="margin-left:auto;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;padding:5px 12px;cursor:pointer;">✕</button>
+          </div>
+          <div id="lp-pk-body" style="flex:1;overflow:auto;padding:12px 14px;">
+            ${[...groups.entries()].map(([sub, us]) => `
+              <div style="color:#c8a84b;font-size:12px;margin:10px 0 6px;border-bottom:1px solid #2a2520;padding-bottom:4px;">
+                ${esc(sub)} <span style="color:#6a6358;">${us.length}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
+                ${us.map(u => `
+                  <div class="lp-pk-card" data-uid="${esc(u.id)}" style="display:flex;gap:8px;align-items:center;
+                       background:${u.id === draft!.types[rowIdx] ? '#3a2f1e' : '#201d18'};
+                       border:1px solid ${u.id === draft!.types[rowIdx] ? '#c8a84b' : '#363024'};
+                       border-radius:4px;padding:6px 8px;cursor:pointer;">
+                    <canvas data-uid="${esc(u.id)}" width="48" height="48"
+                      style="width:48px;height:48px;flex:0 0 48px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+                    <div style="min-width:0;">
+                      <div style="color:#e8e0d0;font-size:12px;">${esc(u.name)}</div>
+                      <div style="color:#6a6358;font-size:10px;">${getUnitTier(u) === 'elite' ? '⭐精锐' : ''}</div>
+                    </div>
+                  </div>`).join('')}
+              </div>`).join('')}
+          </div>`;
+
+        observeThumbs(box);
+        const pkSearch = document.getElementById('lp-pk-search') as HTMLInputElement | null;
+        const repaintSearch = (v: string): void => {
+            pickerKeyword = v;
+            paint();
+            const s = document.getElementById('lp-pk-search') as HTMLInputElement;
+            s.focus(); s.setSelectionRange(s.value.length, s.value.length);
+        };
+        pkSearch?.addEventListener('compositionstart', () => { composing = true; });
+        pkSearch?.addEventListener('compositionend', e => {
+            composing = false;
+            repaintSearch((e.target as HTMLInputElement).value);
+        });
+        pkSearch?.addEventListener('input', e => {
+            const v = (e.target as HTMLInputElement).value;
+            pickerKeyword = v;
+            if (composing) return;             // 同上：组合期间不重绘
+            repaintSearch(v);
+        });
+        box.querySelectorAll('.lp-pk-cat').forEach(b => b.addEventListener('click', () => {
+            pickerCat = (b as HTMLElement).dataset.cat!;
+            paint();
+        }));
+        document.getElementById('lp-pk-close')?.addEventListener('click', () => overlay.remove());
+        box.querySelectorAll('.lp-pk-card').forEach(c => c.addEventListener('click', () => {
+            if (draft) draft.types[rowIdx] = (c as HTMLElement).dataset.uid!;
+            overlay.remove();
+            render();
+        }));
+    };
+    paint();
 }
 
 function visible(): LegionRow[] {
@@ -179,7 +282,14 @@ function render(): void {
                 <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : '#c0a0e0'};">${r.layer}</td>
                 <td style="padding:6px 10px;color:#e8e0d0;">${esc(r.name)}</td>
                 <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[r.mode] ?? r.mode}</td>
-                ${[0, 1, 2].map(i => `<td style="padding:6px 10px;color:#d8c898;">${esc(cn(r.slots[i]?.type ?? '—'))}<span style="color:#6a6358;"> ×${r.slots[i]?.count ?? 0}</span></td>`).join('')}
+                ${[0, 1, 2].map(i => {
+                    const u = r.slots[i];
+                    return `<td style="padding:4px 10px;color:#d8c898;">
+                      <div style="display:flex;align-items:center;gap:6px;">
+                        ${u ? `<canvas data-uid="${esc(u.type)}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                        <span>${esc(cn(u?.type ?? '—'))}<span style="color:#6a6358;"> ×${u?.count ?? 0}</span></span>
+                      </div></td>`;
+                }).join('')}
                 <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
               </tr>`).join('')}
           </tbody>
@@ -201,9 +311,18 @@ function render(): void {
 
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
-            <select data-row="${i}" class="lp-unit" style="width:100%;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:12px;">
-              ${unitOptions(draft!.types[i])}
-            </select>`).join('')}
+            <div class="lp-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+                 background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+              <canvas id="lp-thumb-${i}" width="64" height="64"
+                style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+              <div style="flex:1;min-width:0;">
+                <div style="color:#e8e0d0;font-size:13px;">${esc(cn(draft!.types[i]))}</div>
+                <div style="color:#6a6358;font-size:11px;">
+                  ${esc(subLabelOf(draft!.types[i]))} · 点击更换
+                </div>
+              </div>
+              <span style="color:#8a8378;font-size:16px;">▾</span>
+            </div>`).join('')}
 
           <button id="lp-save" style="width:100%;padding:10px;background:${dirty ? '#5a3c28' : '#2a2520'};border:1px solid ${dirty ? '#8a6038' : '#3a342c'};color:#fff;border-radius:4px;font-size:14px;cursor:pointer;">
             💾 保存军团编制${dirty ? '（有改动未保存）' : ''}
@@ -226,8 +345,18 @@ function render(): void {
       </div>
     </div>`;
 
-    (document.getElementById('lp-search') as HTMLInputElement | null)?.addEventListener('input', e => {
+    const search = document.getElementById('lp-search') as HTMLInputElement | null;
+    search?.addEventListener('compositionstart', () => { composing = true; });
+    search?.addEventListener('compositionend', e => {
+        composing = false;
         keyword = (e.target as HTMLInputElement).value;
+        render();
+        const s = document.getElementById('lp-search') as HTMLInputElement;
+        s.focus(); s.setSelectionRange(s.value.length, s.value.length);
+    });
+    search?.addEventListener('input', e => {
+        keyword = (e.target as HTMLInputElement).value;
+        if (composing) return;                 // 拼音还在组合中，绝不能重建输入框
         render();
         const s = document.getElementById('lp-search') as HTMLInputElement;
         s.focus(); s.setSelectionRange(s.value.length, s.value.length);
@@ -247,13 +376,20 @@ function render(): void {
         if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
         render();
     });
-    host.querySelectorAll('.lp-unit').forEach(s => {
-        s.addEventListener('change', e => {
-            const idx = Number((e.target as HTMLElement).dataset.row);
-            if (draft) draft.types[idx] = (e.target as HTMLSelectElement).value;
-            render();
+    host.querySelectorAll('.lp-unit').forEach(el => {
+        el.addEventListener('click', () => {
+            openUnitPicker(Number((el as HTMLElement).dataset.row));
         });
     });
+    // 兵种图：列表用懒加载（滚进视口才画），右侧三张立刻画
+    observeThumbs(host);
+    if (draft) {
+        for (let i = 0; i < 3; i++) {
+            const c = document.getElementById('lp-thumb-' + i) as HTMLCanvasElement | null;
+            if (c && draft.types[i]) void drawUnitThumb(c, draft.types[i]);
+        }
+    }
+
     document.getElementById('lp-reset')?.addEventListener('click', () => { draft = null; render(); });
     document.getElementById('lp-save')?.addEventListener('click', () => { void save(); });
     document.getElementById('lp-delete')?.addEventListener('click', () => { void remove(); });

@@ -238,9 +238,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'tarkan', name: '匈奴答剌罕骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/TARKAN/' },
     { id: 'elite_tarkan', name: '匈奴答剌罕骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
     { id: 'boyar', name: '斯拉夫贵族铁骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
-    { id: 'savar', name: '波斯萨瓦尔重骑高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
+    { id: 'savar', name: '萨珊萨瓦兰骑兵重装', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
     { id: 'camel_heavy', name: '骆驼骑兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
-    { id: 'paladin', name: '骑士游侠', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
+    { id: 'paladin', name: '骑士游侠重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
     { id: 'coustillier', name: '勃艮第马上轻骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
     { id: 'light_riders', name: '中世纪轻骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHT_RIDERS/' },
     { id: 'chukonu', name: '中国诸葛弩', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/CHUKONU/' },
@@ -472,7 +472,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'shock_cavalry', name: '枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
     { id: 'imperial_cavalry', name: '波斯具装铁骑重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
-    { id: 'sarmatian', name: '萨尔马提亚重装铁骑', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
+    { id: 'sarmatian', name: '东欧萨尔马提亚骑兵重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
     { id: 'elite_peltast', name: '色雷斯标枪手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
     { id: 'vanguard', name: '先锋重装步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'bowman', name: '弓兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/BOWMAN/' },
@@ -607,7 +607,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
-    { id: 'frankish_paladin', name: '中世纪枪骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
+    { id: 'frankish_paladin', name: '中世纪枪骑兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
@@ -4865,7 +4865,7 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
 }
 
 /** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
-async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
+export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
     const prefix = getUnitPathPrefix(unitId);
     const imgUrl = `${prefix}idle_${unitThumbDir}.png`;
     try {
@@ -4893,7 +4893,7 @@ async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise
  * （实测搜索每敲一字 148ms）。改为只画滚进视口的那些，已画过的打标不重画。
  */
 let thumbObserver: IntersectionObserver | null = null;
-function observeThumbs(root: ParentNode): void {
+export function observeThumbs(root: ParentNode): void {
     if (!thumbObserver) {
         thumbObserver = new IntersectionObserver((entries) => {
             for (const en of entries) {
