@@ -351,7 +351,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_woad_raider', name: '凯尔特靛蓝突袭者精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITEWOADRAIDER/' },
     { id: 'flaming_camel', name: '鞑靼火焰骆驼', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/FLAMINGCAMEL/' },
     { id: 'flemish_pikeman', name: '勃艮第佛兰德民兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FLEMISHPIKEMAN/' },
-    { id: 'flemish_pikeman_f', name: '勃艮第佛兰德民兵F', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FLEMISHPIKEMAN_F/' },
+    { id: 'flemish_pikeman_f', name: '勃艮第佛兰德民兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FLEMISHPIKEMAN_F/' },
     { id: 'gbeto', name: '马里格贝托女兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GBETO/' },
     { id: 'genitour', name: '标枪骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/GENITOUR/' },
     { id: 'genoese_crossbowman', name: '意大利热那亚弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
@@ -596,7 +596,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_williamwallace', name: '英雄·威廉·华莱士', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
     { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
-    { id: 'manatarms', name: '武士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
+    { id: 'manatarms', name: '欧洲剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
@@ -1961,6 +1961,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。
     //    隐式势力（无显式 legionName）的军团 = 文化区默认名，必须算进文化军团的 fids，
     //    否则「文化军团」页签会误显示 0 势力（2026-08-30 主人：65 个文化军团每个都该有势力）。
+    const l2Overridden = new Set<string>();
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
         const name = effectiveLegionName(row);
@@ -1974,6 +1975,19 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         if (entry.fids.length === 1 && custom && !entry.region) {
             entry.formationMode = custom.formationMode;
             entry.slots = custom.slots.map(s => ({ ...s }));
+        }
+        // 🔴 [2026-09-14 修「二级军团编制存不住」] 二级 59 文明军团的编制写在
+        //    level2Civ59Legions.ts 里，**没有任何保存接口能写它**；而「保存军团编制」
+        //    只会把新编制写进 FactionCompositions.ts。上面 1.6 步无条件用 L2 硬表
+        //    覆盖 entry.slots，于是保存完的编制在军团卡片里被硬表盖回去 ——
+        //    主人点了保存、看着就是没存上（古典时代马其顿军团实锤：势力表存的是
+        //    鹤翼 phalangite/hoplite/companion_cavalry，卡片一直显示硬表那套雁行）。
+        //    判据：**势力表里存过的，就是主人手改过的，优先于硬表兜底**。
+        //    只对二级军团生效，一级文化军团有 CultureFormations 写盘接口，不走这条。
+        if (!l2Overridden.has(name) && custom?.slots?.length && LEVEL_2_CIV_59_MAP.has(name)) {
+            entry.formationMode = custom.formationMode;
+            entry.slots = custom.slots.map(s => ({ ...s }));
+            l2Overridden.add(name);
         }
     }
     return map;
@@ -3506,7 +3520,14 @@ function computeLegionNameViolations(): string[] {
     }
 
     // 🔴 [2026-09-10 主人定] 兵种套用检查：步兵/骑兵/远程兵种没被任何军团套用 → 报错。
+    // 🔴 [2026-09-14 修] 原来只扫 allRows（= 势力身上生效的编成），
+    //    于是「军团定义里明明用了，但暂时没有势力挂这个军团」的兵种被误报成「未套用」
+    //    （古典时代雅典/斯巴达/色雷斯军团就是这种：0 势力采用）。
+    //    判据应当是「有没有军团用它」而不是「有没有势力用它」——改扫全部独立军团定义。
     const usedUnitTypes = new Set<string>();
+    for (const entry of getAllDistinctLegions().values()) {
+        for (const s of entry.slots) usedUnitTypes.add(s.type);
+    }
     for (const r of allRows) {
         for (const s of r.slots) usedUnitTypes.add(s.type);
     }

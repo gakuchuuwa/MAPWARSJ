@@ -282,7 +282,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     KOREA:        "echelon",   // 朝鲜：剑士步兵(2) + 黑光铠骑兵主力(4) + 火焰弓后排(3)
     SLAVIC:       "fish_scale",   // 斯拉夫：复合弓箭手(3) + 精锐贵族铁骑主力(4) + 精锐草原枪骑(2) [2026-08-30 主人设计]
     SLAVIC_FEUDAL: "echelon",
-    SLAVIC_CASTLE: "fish_scale",
+    SLAVIC_CASTLE: "echelon",
     SLAVIC_IMPERIAL: "echelon",
     GERMANIC:     "crane_wing",   // 古典日耳曼：鹤翼阵 2+4+3 前锋日耳曼轻骑+中坚先锋重步主力+后排Framea高级飞矛
     GERMANIC_FEUDAL: 'crane_wing',
@@ -367,9 +367,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: "crescent",  // 马扎尔[2026-09-05 主人定：正规马扎尔军团偃月阵 3+2+4]
     LITHUANIANS: "fish_scale",  // [2026-09-06] 与该文化势力实际编制统一
-    POLES: "fish_scale",  // 波兰[2026-08-28 暂复用父文化]
+    POLES: "echelon",  // 波兰[2026-08-28 暂复用父文化]
     BOHEMIANS: 'echelon',  // [2026-09-06] 与同名势力专属军团对齐
-    BURGUNDIANS: 'triangle',  // [2026-09-06] 与同名势力专属军团对齐
+    BURGUNDIANS: "echelon",  // [2026-09-06] 与同名势力专属军团对齐
     SPANISH: 'fish_scale',  // 西班牙[2026-08-28 暂复用父文化]
     PORTUGUESE: 'balance_yoke',  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: 'echelon',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
@@ -2306,14 +2306,15 @@ export const CUMAN_TIERS: CompositionTier[] = [
 export const POLES_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
         "type": "elite_obuch",
-        "count": 3
-    },
-    {
-        "type": "winged_hussar",
         "count": 4
     },
     {
-        "type": "magyar_huszar",
+        "type": "obuch",
+        "count": 3,
+        "scale": 1
+    },
+    {
+        "type": "winged_hussar",
         "count": 2,
         "scale": 1
     }
@@ -2922,7 +2923,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     LITHUANIANS: "城堡时代立陶宛军团",
     POLES: "城堡时代波兰军团",
     BOHEMIANS: '城堡时代捷克军团',
-    BURGUNDIANS: '城堡时代勃艮第军团',
+    BURGUNDIANS: "城堡时代勃艮第军团",
     SPANISH: '帝国时代西班牙军团',
     PORTUGUESE: '帝国时代葡萄牙军团',
     ETHIOPIANS: '封建时代埃塞俄比亚军团',
@@ -3179,18 +3180,21 @@ export const BOHEMIANS_TIERS: CompositionTier[] = [
 
 /** 勃艮第 火枪手+佛兰德长枪兵+精锐扈从骑兵（三角阵 2+3+4：火枪手尖刀 + 长枪兵中坚 + 扈从骑兵主力底边）
  *  [2026-09-06] 编制取自主人已写好的同名势力专属军团（勃艮第），文化保底与它对齐，消除「同名不同编」。 */
-export const BURGUNDIANS_TIERS: CompositionTier[] = [
+export const BURGUNDIANS_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'flemish_pikeman_f', count: 2 },   // 尖刀 = 勃艮第佛兰德民兵F（与基础档同队）
-            { type: 'flemish_pikeman', count: 3 },   // 中坚 = 勃艮第佛兰德民兵
-            { type: 'elite_coustillier', count: 4 }   // 底边主力 = 勃艮第马上轻骑精锐
-        ]
+        "type": "elite_coustillier",
+        "count": 4
+    },
+    {
+        "type": "coustillier",
+        "count": 3
+    },
+    {
+        "type": "flemish_pikeman_f",
+        "count": 2,
+        "scale": 1
     }
-];
+] }];
 
 /** VIETNAMESE 文化军团（triangle 2+3+4）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 1 个势力实际在用的这套
@@ -4675,14 +4679,14 @@ export const SLAVIC_IMPERIAL_EDITOR_TIERS: CompositionTier[] = [{ minTroops: 0, 
 export const SLAVIC_CASTLE_EDITOR_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
         "type": "elite_boyar",
-        "count": 3
-    },
-    {
-        "type": "composite_bowman",
         "count": 4
     },
     {
-        "type": "konnik_foot",
+        "type": "boyar",
+        "count": 3
+    },
+    {
+        "type": "recurve_bowman",
         "count": 2,
         "scale": 1
     }
