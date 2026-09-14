@@ -418,7 +418,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_boyar', count: 4 },
             { type: 'boyar', count: 3 },
-            { type: 'heavy_pikeman', count: 2 },
+            { type: 'recurve_bowman', count: 2 },
         ],
     },
     {
@@ -558,7 +558,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_iron_pagoda', count: 4 },
             { type: 'iron_pagoda', count: 3 },
-            { type: 'jian_swordman_shielded', count: 2 },
+            { type: 'antiquity_cavalry_archer', count: 2 },
         ],
     },
     {
