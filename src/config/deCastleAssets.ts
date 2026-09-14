@@ -71,10 +71,11 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     xiaofulijiya: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 小弗里吉亚（达斯基利翁要塞·阿尔西提斯波斯总督）
     ansxi: 'PERS_CASTLE_AGE3',             // 安息帝国（帕提亚）
     sashan: 'PERS_CASTLE_AGE3',            // 萨珊
-    // ── 突厥系 ──
+    // ── 突厥系 / 中亚 ──
     tujue: 'TURK_CASTLE_AGE3',
     seljuq: 'TURK_CASTLE_AGE3',
     osman: 'TURK_CASTLE_AGE3',
+    tiemuer: 'CEAS_CASTLE_AGE3',           // 帖木儿（撒马尔罕·中亚鞑靼）
     // ── 高加索 / 东欧 ──
     wulaertu: 'ARME_CASTLE_AGE3',          // 亚美尼亚（乌拉尔图）
     gelujiya: 'GEOR_CASTLE_AGE3',          // 格鲁吉亚
@@ -84,8 +85,10 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     xiongyati: 'MAGY_CASTLE_AGE3',          // 匈雅提（马扎尔·科文城堡）
     litaowan: 'LITH_CASTLE_AGE3',          // 立陶宛
     bolan: 'POLE_CASTLE_AGE3',             // 波兰
+    piyasite: 'POLE_CASTLE_AGE3',          // 皮雅斯特（波兰·克拉科夫）
     boximiya: 'BOHE_CASTLE_AGE3',          // 波西米亚
     qincha: 'CUMA_CASTLE_AGE3',            // 钦察（库曼）
+    jinzhang: 'CUMA_CASTLE_AGE3',          // 金帐汗国（萨莱·库曼）
     xiongren: 'HUNS_CASTLE_AGE3',          // 匈人
     xiongnu: 'HUNS_CASTLE_AGE3',           // 匈奴
     // ── 西欧 ──
@@ -108,6 +111,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     ethiopia: 'ETHI_CASTLE_AGE3',          // 埃塞俄比亚
     jienei: 'AFRI_CASTLE_AGE3',            // 杰内/马里帝国（非洲城堡=阿伊特本哈杜）
     mulabite: 'BERB_CASTLE_AGE3',          // 穆拉比特（柏柏尔）
+    wuzhou_d: 'CHIN_CASTLE_AGE3',          // 武周（神都洛阳·汉唐华夏都城）
     // ── 三国：DE 罗马复兴带了蜀/吴/魏三张 ──
     shu: 'SHU_CASTLE_AGE3',
     lizhou_d: 'SHU_CASTLE_AGE3',          // 蜀汉大将廖化（剑门关）
@@ -659,8 +663,84 @@ export const BRANCH_CASTLE: Record<string, string> = {
   WEI: 'WEI_CASTLE_AGE3',
 };
 
-/** 城堡素材三层选择：**势力专属 → 文化区 → 风格集默认**。 */
-export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null): string {
+/**
+ * 59 个代表据点与 59 文明专属城堡对应表（2026-09-14 主人定）
+ * 大地图 59 个文明专属城堡与代表据点中心城堡一一对应。
+ */
+export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
+    // ── 古典时代 (13 座) ──
+    city_luoyang: 'CHIN_CASTLE_AGE3',                 // 中国（洛阳）：北方华北·汉唐城楼
+    city_chengdu: 'SHU_CASTLE_AGE3',                  // 蜀（成都）：蜀汉高台斗拱望楼
+    city_gusu: 'WU_CASTLE_AGE3',                      // 吴（姑苏）：孙吴水乡飞檐水榭
+    city_hedong: 'WEI_CASTLE_AGE3',                   // 曹魏（安邑）：邺城重檐铜雀楼
+    city_dublin: 'CELT_CASTLE_AGE3',                  // 凯尔特（都柏林）：苏格兰高地圆塔
+    city_gaodacheng: 'BENG_CASTLE_AGE3',              // 孟加拉（高达城）：恒河三角洲砖石堡
+    city_luoma: 'ROMA_CASTLE_AGE3',                   // 罗马（罗马城）：帝国古典方石要塞
+    city_bosibolisi: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', // 阿契美尼德（波斯波利斯）：万国门石台
+    city_yadian: 'ATHENIANS_CASTLE_AGE3',             // 雅典（雅典）：卫城多立克柱廊卫堡
+    city_sparta: 'SPARTANS_CASTLE_AGE3',              // 斯巴达（斯巴达）：泰格特斯山青石重垒
+    city_salonica: 'MACEDONIAN_CASTLE_AGE3',          // 马其顿（佩拉）：佩拉要塞重石堡
+    city_plovdiv: 'THRACIAN_CASTLE_AGE3',             // 色雷斯（普罗夫迪夫）：罗多彼山蛮族巨石堡
+    city_atuoke: 'PURU_CASTLE_AGE3',                  // 普鲁（阿托克）：旁遮普红砂岩堡 (关隘)
+
+    // ── 封建时代 (13 座) ──
+    city_bali: 'FRAN_CASTLE_AGE3',                    // 法兰克（巴黎）：卢瓦尔河双圆塔石堡
+    city_toledo: 'GOTH_CASTLE_AGE3',                  // 哥特（托莱多）：早期蛮族石砌据点
+    city_junshitandingbao: 'BYZA_CASTLE_AGE3',         // 拜占庭（君士坦丁堡）：君士坦丁堡红砖穹顶堡
+    city_feiluzhabade: 'PERS_CASTLE_AGE3',            // 波斯（菲鲁扎巴德）：萨珊泰西封砖石穹顶堡 (关隘)
+    city_wupusala: 'VIKI_CASTLE_AGE3',                // 维京（乌普萨拉）：斯堪的纳维亚环形堡垒 (关隘)
+    city_saigede: 'HUNS_CASTLE_AGE3',                 // 匈人（塞格德）：简易木石混合要塞 (关隘)
+    city_aksum: 'ETHI_CASTLE_AGE3',                   // 埃塞俄比亚（阿克苏姆）：阿克苏姆巨石柱堡
+    city_feisi: 'BERB_CASTLE_AGE3',                   // 柏柏尔（非斯）：撒哈拉泥砖防御碉堡
+    city_angkor: 'SEAS_CASTLE_AGE3',                  // 高棉（吴哥）：吴哥窟砂岩塔
+    city_teernuowo: 'BULG_CASTLE_AGE3',               // 保加利亚（特尔诺沃）：普雷斯拉夫圆顶城堡
+    city_patan: 'GURJ_CASTLE_AGE3',                   // 瞿折罗（帕坦）：索姆纳特多层砂岩堡
+    city_ailiwen: 'ARME_CASTLE_AGE3',                 // 亚美尼亚（埃里温）：埃奇米阿津石砌山顶堡
+    city_linhuang: 'KHIT_CASTLE_AGE3',                // 契丹（临潢府）：辽阳八角木石塔楼
+
+    // ── 城堡时代 (29 座) ──
+    city_lundun: 'CELT_CASTLE_AGE3',                  // 不列颠（伦敦）：苏格兰高地圆塔
+    city_kenisibao: 'WEST_CASTLE_AGE3',               // 条顿（柯尼斯堡）：莱茵河方型石砌堡 (关隘)
+    city_kyoto: 'ASIA_CASTLE_AGE3',                   // 日本（京都）：姬路式多重天守阁
+    city_damasikusi: 'ORIE_CASTLE_AGE3',              // 萨拉森（大马士革）：开罗萨拉丁大城堡
+    city_karakorum: 'MONG_CASTLE_AGE3',               // 蒙古（哈拉和林）：哈拉和林木石大斡耳朵
+    city_tenochtitlan: 'MESO_CASTLE_AGE3',            // 阿兹特克（特诺奇提特兰）：特诺奇蒂特兰金字塔
+    city_tikal: 'MAYA_CASTLE_AGE3',                   // 玛雅（蒂卡尔）：奇琴伊察阶梯神庙堡
+    city_kaesong: 'KORE_CASTLE_AGE3',                 // 高丽（开城）：汉阳南汉山城堞楼
+    city_venice: 'MEDI_CASTLE_AGE3',                  // 意大利（威尼斯）：威尼斯总督红顶宫
+    city_deli: 'HIND_CASTLE_AGE3',                    // 印度斯坦（德里）：德里红堡莫卧儿红砂岩
+    city_cusco: 'INCA_CASTLE_AGE3',                   // 印加（库斯科）：库斯科萨克萨瓦曼巨石堡
+    city_budapeisi: 'MAGY_CASTLE_AGE3',               // 马扎尔（布达佩斯）：布达佩斯多瑙河石堡
+    city_jifu: 'SLAV_CASTLE_AGE3',                    // 斯拉夫（基辅）：莫斯科白石克里姆林
+    city_timbuktu: 'AFRI_CASTLE_AGE3',                // 马里（廷巴克图）：杰内大清真寺泥石堡
+    city_malacca: 'MALA_CASTLE_AGE3',                 // 马来（马六甲）：马六甲海峡水上海堡
+    city_pagan: 'BURM_CASTLE_AGE3',                   // 缅甸（蒲甘）：蒲甘千佛塔金顶堡
+    city_shenglong: 'VIET_CASTLE_AGE3',               // 越南（昇龙）：顺化京城多檐城门楼
+    city_samaerhan: 'CEAS_CASTLE_AGE3',               // 鞑靼（撒马尔罕）：撒马尔罕帖木儿蓝顶堡
+    city_salai: 'CUMA_CASTLE_AGE3',                   // 库曼（萨莱）：黑海北岸克里米亚要塞
+    city_weierniwusi: 'LITH_CASTLE_AGE3',             // 立陶宛（维尔纽斯）：特拉凯湖心红砖城堡
+    city_dijon: 'BURG_CASTLE_AGE3',                   // 勃艮第（第戎）：第戎公爵宫圆锥塔
+    city_palermo: 'SICI_CASTLE_AGE3',                 // 西西里（巴勒莫）：诺曼巴勒莫王宫堡
+    city_kelakefu: 'POLE_CASTLE_AGE3',                // 波兰（克拉科夫）：马尔堡红砖条顿古堡
+    city_bulage: 'BOHE_CASTLE_AGE3',                  // 波希米亚（布拉格）：卡尔施泰因城堡
+    city_tanjiawuer: 'INDI_CASTLE_AGE3',              // 达罗毗荼（坦贾武尔）：坦贾武尔寺庙高塔堡
+    city_dibilisi: 'GEOR_CASTLE_AGE3',                // 格鲁吉亚（第比利斯）：高加索斯万石塔古堡
+    city_huining: 'JURC_CASTLE_AGE3',                 // 女真（会宁府）：会宁府上京双檐角楼
+    city_bacata: 'MUIS_CASTLE_AGE3',                  // 穆伊斯卡（巴卡塔）：瓜塔维塔黄金湖石堡
+    city_guanabara: 'TUPI_CASTLE_AGE3',               // 图皮（瓜纳巴拉）：亚马逊雨林木栅重垒 (关隘)
+
+    // ── 帝国时代 (4 座) ──
+    city_madeli: 'SPAN_CASTLE_AGE3',                  // 西班牙（马德里）：塞戈维亚阿尔卡萨堡
+    city_lisiben: 'PORT_CASTLE_AGE3',                 // 葡萄牙（里斯本）：贝伦塔大西洋海堡
+    city_buersa: 'TURK_CASTLE_AGE3',                  // 奥斯曼（布尔萨）：托普卡珀皇宫圆堡
+    city_tucapel: 'MAPU_CASTLE_AGE3',                 // 马普切（图卡佩尔）：安第斯南麓木石据点 (关隘)
+};
+
+/** 城堡素材解析：**代表据点 → 势力专属 → 文化区 → 风格集默认**。 */
+export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null, cityId?: string | null): string {
+    if (cityId && REP_59_CITY_CASTLES[cityId]) {
+        return REP_59_CITY_CASTLES[cityId];
+    }
     if (factionId) {
         const byFaction = FACTION_CASTLE[factionId];
         if (byFaction) return byFaction;
@@ -676,3 +756,4 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
     if (style === 'YURT') return 'MONG_CASTLE_AGE3';
     return `${style}_CASTLE_AGE3`;
 }
+

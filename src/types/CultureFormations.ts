@@ -1920,6 +1920,15 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
  * 同一支军团的编制能在两处打架（实测 30 支对不上），已整体删除。
  * ═══════════════════════════════════════════════════════════════ */
 
+/** 按**军团名**直接打内存补丁（编辑器保存后立刻生效，不等 HMR） */
+export function patchLegionComposition(
+    name: string,
+    slots: CompositionSlot[],
+    formationMode: FormationMode,
+): void {
+    LEGION_RUNTIME_PATCH.set(name, { formationMode, slots: slots.map(s => ({ ...s })) });
+}
+
 /** 运行时覆盖（编辑器保存后立刻生效，不依赖 HMR）：军团名 → 编制 */
 const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[] }>();
 

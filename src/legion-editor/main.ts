@@ -23,6 +23,7 @@ import {
     NAVAL_FORMATION_LABEL,
     getRegionLegionComposition,
     applyCultureFormationPatch,
+    patchLegionComposition,
     CULTURE_LEGION_NAMES,
     FormationMode,
     getDefaultSlotsForMode,
@@ -3105,11 +3106,11 @@ function renderEditPanel(row: FactionLegionRow): void {
     </div>
 
     <div class="le-form-section">
-      <div class="le-section-title"><span>② 保存军团编制 · 全体同步</span></div>
+      <div class="le-section-title"><span>② 保存军团编制</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
-        改的是【${currentLegionName}】这支军团的编成，<b>所有用它的文化区和势力一起变</b>。<b>前/中/后三排兵种与阵型统一，严禁只给一家保存同名的另一套编制。</b>
+        把上面编好的三排兵种与阵型，写进【${currentLegionName}】这一条记录。用它的势力自动跟着变。
       </div>
-      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">💾 保存军团编制：【${currentLegionName}】（全体同步 · Ctrl+S）</button>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">💾 保存军团编制：【${currentLegionName}】（Ctrl+S）</button>
     </div>
 
     <div class="le-form-section">
@@ -3235,67 +3236,37 @@ function bindPanelEvents(row: FactionLegionRow): void {
     });
 
     // 保存单条专属
+    // 🔴 [2026-09-14 主人定「这个功能只有一个，就是保存编辑好的军团，别给我搞别的」]
+    //    ② 保存军团编制 —— 只把当前编好的三排兵种 + 阵型写进**这支军团那一条记录**。
+    //    不写势力表、不写文化区指针、没有「全体同步」：编制只有一份，
+    //    用它的势力读的就是这一份，本来就会跟着变，没有第二份需要同步。
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
-        // 🔴 军团名不得含「军军团」（军 + 军团重复），违者报错禁止建立
-        const inputLegionName = currentEditingLegion.legionName?.trim();
-        if (inputLegionName && inputLegionName.includes('军军团')) {
+        const legionName = currentEditingLegion.legionName?.trim() || fallbackLegionNameOf(row);
+        if (legionName.includes('军军团')) {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
             return;
         }
-        // 🔴 [2026-09-07 主人定] 这个按钮只干一件事：**改这支军团本身**。
-        //    落到哪个文化区，看的是**军团名归谁**，不是「当前势力在哪个区」——
-        //    原来按势力所在区写，于是给奇里乞亚（在赫梯区）套罗马军团再保存，
-        //    就把古典时代赫梯军团整个冲成了罗马那套（罗马、希腊、赫梯先后被冲三次）。
-        const savedLegionName = inputLegionName || fallbackLegionNameOf(row);
-        const owningCultures = (REGION_ORDER as RegionType[]).filter(
-            r => getCultureLegionName(r) === savedLegionName,
-        );
-        if (owningCultures.length > 0) {
-            // 这个名字是某个文化军团的 → 写到它自己的文化区（saveCultureComposition 内部会把同名的一并覆盖）
-            await saveCultureComposition(owningCultures[0], currentEditingLegion);
-            return;
+        const slots = currentEditingLegion.slots.map(s => ({ ...s }));
+        const formationMode = currentEditingLegion.formationMode;
+        try {
+            const res = await fetch('/api/save-legion-composition', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ legionName, formationMode, slots }),
+            });
+            const json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+            // 内存同步：静态表是页面加载时导入的，不同步的话下面重绘会把界面刷回旧编制
+            patchLegionComposition(legionName, slots, formationMode);
+            buildRows();
+            applyFilter();
+            renderTable();
+            if (selectedFactionId) selectFaction(selectedFactionId);
+            showToast(`✅ 【${legionName}】编制已保存（写入 ${json.file}）`);
+        } catch (e: any) {
+            showToast('❌ 保存失败：' + (e?.message || e), true);
         }
-
-        // 🔴 [2026-08-30 主人] 改名不连锁（改一个势力名只改它自己——之前青藏→唐朝→川蜀的灾难根因），
-        //    但同名军团共享编制（编制同步）：同名 = 同一军团 = 同编制（铁律要求）。
-        const newLegionName = currentEditingLegion.legionName?.trim();
-        localCustomCompositions[row.factionId] = {
-            legionName: currentEditingLegion.legionName,
-            legionType: currentEditingLegion.legionType,
-            formationMode: currentEditingLegion.formationMode,
-            navalFormation: currentEditingLegion.navalFormation ?? 'auto',
-            slots: currentEditingLegion.slots.map(s => ({ ...s })),
-        };
-
-        // 编制同步：所有使用该军团名（含隐式默认）的势力全部同步为同一套三排兵种与阵型
-        let compSyncCount = 0;
-        if (newLegionName) {
-            for (const r of allRows) {
-                if (r.factionId === row.factionId) continue;
-                if (effectiveLegionName(r) === newLegionName) {
-                    const existing = localCustomCompositions[r.factionId];
-                    localCustomCompositions[r.factionId] = {
-                        ...(existing || {}),
-                        legionName: newLegionName,
-                        legionType: existing?.legionType || 'region',
-                        formationMode: currentEditingLegion.formationMode,
-                        navalFormation: existing?.navalFormation ?? 'auto',
-                        slots: currentEditingLegion.slots.map(s => ({ ...s })),
-                    };
-                    compSyncCount++;
-                }
-            }
-        }
-
-        buildRows();
-        applyFilter();
-        selectFaction(row.factionId);
-        // [2026-08-20] 点保存 = 直接落盘。原来分「存内存」+「顶部保存全部配置」两步，
-        // 结果就是主人点了保存、刷新后没了（实锤「保存不上」）。所见即所存，不留陷阱。
-        if (!await saveAllCompositions()) return;
-        showToast(`✅ 已为【${row.factionName}】保存【${savedLegionName}】配置并写入文件`
-            + (compSyncCount > 0 ? `；同名军团编制同步了 ${compSyncCount} 个势力` : ''));
     });
 
     // 另存为新军团：独立命名，不联动同名势力
