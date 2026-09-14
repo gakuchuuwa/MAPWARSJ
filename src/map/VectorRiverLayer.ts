@@ -1,7 +1,13 @@
 
 import L from 'leaflet';
 import { gameLog } from '../utils/GameLogger';
-import { STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
+import { STRATEGIC_WATER_PALETTE, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
+
+// 从全球海湖基色降低饱和度，保持蓝青辨识度；不按地区臆测水质或含沙量。
+const waterBase = STRATEGIC_WATER_PALETTE.base;
+const waterLuminance = waterBase[0] * 0.2126 + waterBase[1] * 0.7152 + waterBase[2] * 0.0722;
+const riverColor = `rgb(${waterBase.map(value => Math.round(value * 0.75 + waterLuminance * 0.25 + 4)).join(',')})`;
+const riverBankColor = `rgb(${waterBase.map(value => Math.round(value * 0.65)).join(',')})`;
 
 /**
  * VectorRiverLayer
@@ -142,7 +148,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         });
         (border as any).riverType = 'border';
 
-        // 2. 河流主体与海、湖共用基色；窄河保持干净，不铺海浪纹理。
+        // 2. 河流主体从海、湖基色派生；窄河保持干净，不铺海浪纹理。
         const water = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getWaterStyle(feature, 9),
             pane: pane
@@ -248,14 +254,11 @@ export class VectorRiverLayer extends L.FeatureGroup {
     private static getWaterWeight(feature: any, zoom: number): number {
         const rank = feature?.properties?.scalerank;
         const rankScale = typeof rank === 'number' && Number.isFinite(rank)
-            ? 1.35 - (Math.max(1, Math.min(10, rank)) - 1) * 0.065
+            ? 1.55 - (Math.max(1, Math.min(10, rank)) - 1) * 0.095
             : 1;
-        // 按显示等级加宽：1–3 级 +25%，4–6 级 +12.5%，其余及缺失等级保持原宽。
-        const widthBoost = typeof rank === 'number' && Number.isFinite(rank)
-            ? (rank <= 3 ? 1.25 : rank <= 6 ? 1.125 : 1)
-            : 1;
+        // 连续等级梯度替代额外分段加宽，减小相邻等级河段的粗细跳变。
         const base = Math.max(2.8 * VectorRiverLayer.getScaleMultiplier(zoom), 1.4) * 1.45;
-        return Math.max(1.6, base * rankScale) * widthBoost;
+        return Math.max(1.6, base * rankScale);
     }
 
     /**
@@ -274,7 +277,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return VectorRiverLayer.getScaleMultiplier(zoom) === 1.0 ? VectorRiverLayer.ZOOM9_SMOOTH : 1.0;
     }
 
-    // 河岸采用共享近岸色的轻柔过渡。
+    // 窄幅半透明暗岸：浅色沙漠、雪地上有边界，深色地形上不形成黑色粗描边。
     private static getBorderStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -286,10 +289,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            // 岸色从海湖共用配色派生，不再单独硬编码另一套蓝色。
-            color: STRATEGIC_RIVER_BANK_COLOR,
-            weight: waterWeight + 2.4,
-            opacity: 0.14,
+            color: riverBankColor,
+            weight: waterWeight + 1.8,
+            opacity: 0.28,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -297,7 +299,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         };
     }
 
-    // 水流主体：海、湖、河同一基色，保持不透明以压住底图杂色。
+    // 水流主体：延续海湖色系，降低饱和度；保持不透明以压住底图杂色。
     private static getWaterStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -308,7 +310,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: STRATEGIC_WATER_COLOR,
+            color: riverColor,
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 1.0,
             lineCap: 'round',
@@ -323,8 +325,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return {
             stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 4.5,
             color: STRATEGIC_RIVER_BANK_COLOR,
-            weight: weight * 0.65,
-            opacity: 0.3,
+            weight: weight * 0.75,
+            opacity: 0.18,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
