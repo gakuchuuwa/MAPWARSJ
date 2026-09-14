@@ -542,8 +542,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'crane_wing',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'crossbowman', count: 4 },
-            { type: 'jian_swordman_shielded', count: 3 },
+            { type: 'jian_swordman_shielded', count: 4 },
+            { type: 'elite_chukonu', count: 3 },
         ],
         regions: ['DALI'],
     },
@@ -558,54 +558,14 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CHIMU'],
     },
     {
-        name: '城堡时代奥斯曼军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'janissary', count: 3 },
-            { type: 'elite_janissary', count: 2 },
-            { type: 'royal_janissary', count: 4 },
-        ],
-        regions: ['OTTOMAN'],
-    },
-    {
-        name: '城堡时代帖木儿军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'elite_keshik', count: 4 },
-            { type: 'mangudai_elite', count: 3 },
-            { type: 'elite_steppe_lancer', count: 2 },
-        ],
-        regions: ['TIMURID'],
-    },
-    {
-        name: '城堡时代德里军团',
+        name: '城堡时代拉丁军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'elite_armored_elephant', count: 2 },
-            { type: 'elite_ghulam', count: 3 },
-            { type: 'ghulam', count: 4 },
-        ],
-        regions: ['DELHI'],
-    },
-    {
-        name: '城堡时代拉丁军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'cavalier', count: 4 },
+            { type: 'swordsman', count: 2 },
             { type: 'halberdier', count: 3 },
-            { type: 'arbalest', count: 2 },
+            { type: 'arbalest', count: 4 },
         ],
         regions: ['LATIN_CASTLE'],
-    },
-    {
-        name: '城堡时代捷克军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'halberdier', count: 4 },
-            { type: 'arbalest', count: 3 },
-            { type: 'elite_hussite_wagon', count: 2 },
-        ],
-        regions: ['BOHEMIANS'],
     },
     {
         name: '城堡时代摩洛哥军团',
@@ -916,26 +876,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['UIGHUR'],
-    },
-    {
-        name: '封建时代孟加拉军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'elite_ratha_melee', count: 4 },
-            { type: 'sickle_warrior', count: 3 },
-            { type: 'chakram_thrower', count: 2 },
-        ],
-        regions: ['BENGALIS'],
-    },
-    {
-        name: '封建时代希腊军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'cataphract', count: 3 },
-            { type: 'elite_cataphract', count: 4 },
-            { type: 'composite_bowman', count: 2 },
-        ],
-        regions: ['BYZANTINE'],
     },
     {
         name: '封建时代拉丁军团',
