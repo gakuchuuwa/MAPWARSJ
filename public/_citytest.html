@@ -939,6 +939,7 @@ function fillStyleSelect() {
  */
 /**
  * 59 套文明与建筑风格分支（按 7 大历史文化圈归类，严格 59 套）
+ * 59 套文明与建筑风格分支（按 16 大建筑母体归类，严格 59 套）
  * 每一套分支联动：
  * 1. deStyle: 所属第一层 16 种 DE 基础建筑风格母体之一
  * 2. castle: 所属 59 座文明专属独立城堡之一
@@ -946,34 +947,21 @@ function fillStyleSelect() {
  */
 const CULTURE_GROUPS = [
   {
-    group: '🏯 华夏与东亚 (8套)',
+    group: '🏯 ASIA 东亚 (9套)',
     branches: [
-      { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3',      label: '🏯 日本（东亚重檐天守阁）' },
-      { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3',      label: '🏯 华夏·北方华北（汉唐城楼）' },
-      { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',       label: '🏯 华夏·曹魏中原（高台阙楼）' },
-      { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',        label: '🏯 华夏·孙吴江南（水榭坞堡）' },
-      { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',       label: '🏯 华夏·蜀汉巴蜀（剑阁高台木关）' },
+      { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3',      label: '🏯 日本（重檐天守阁）' },
+      { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3',      label: '🏯 中国（北方华北·汉唐城楼）' },
+      { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',       label: '🏯 曹魏（中原高台阙楼）' },
+      { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',        label: '🏯 孙吴（江南水榭坞堡）' },
+      { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',       label: '🏯 蜀汉（巴蜀剑阁木关）' },
       { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3',      label: '🏯 契丹（辽式边墙要塞）' },
-      { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3',      label: '🏯 满洲·女真（居庸金代山城）' },
-      { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3',      label: '🏯 朝鲜·高丽（半岛山城要塞）' },
+      { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3',      label: '🏯 女真（居庸金代山城）' },
+      { key: 'MONGOL',    deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3',      label: '⛺ 蒙古（塞外王帐石堡）' },
+      { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3',      label: '🏯 朝鲜（半岛山城要塞）' },
     ]
   },
   {
-    group: '🏛️ 地中海古典与南欧 (9套)',
-    branches: [
-      { key: 'LATIN',       deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3',       label: '🏛️ 地中海（通用古典石堡）' },
-      { key: 'ROMA',        deStyle: 'MEDI', castle: 'ROMA_CASTLE_AGE3',       label: '🏛️ 罗马（军团古典方石堡）' },
-      { key: 'SICILIANS',   deStyle: 'MEDI', castle: 'SICI_CASTLE_AGE3',       label: '🏛️ 西西里（诺曼阿拉伯石堡）' },
-      { key: 'SPANISH',     deStyle: 'MEDI', castle: 'SPAN_CASTLE_AGE3',       label: '🛡️ 西班牙（塞哥维亚高塔要塞）' },
-      { key: 'PORTUGUESE',  deStyle: 'MEDI', castle: 'PORT_CASTLE_AGE3',       label: '🛡️ 葡萄牙（贝伦塔大西洋海堡）' },
-      { key: 'ATHENIANS',   deStyle: 'GREEK', castle: 'ATHENIANS_CASTLE_AGE3', label: '🏛️ 雅典（阿提卡卫城要塞）' },
-      { key: 'SPARTANS',    deStyle: 'GREEK', castle: 'SPARTANS_CASTLE_AGE3',  label: '🏛️ 斯巴达（拉哥尼亚军营石堡）' },
-      { key: 'MACEDONIAN',  deStyle: 'GREEK', castle: 'MACEDONIAN_CASTLE_AGE3',label: '🏛️ 马其顿（希马鲁石塔城堡）' },
-      { key: 'THRACIAN',    deStyle: 'THRACIAN', castle: 'THRACIAN_CASTLE_AGE3', label: '🏛️ 色雷斯（古典要塞）' },
-    ]
-  },
-  {
-    group: '🛡️ 西欧与北欧 (6套)',
+    group: '🛡️ WEST 西欧 (6套)',
     branches: [
       { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 日耳曼（西欧通用石堡）' },
       { key: 'FRANKS',      deStyle: 'WEST', castle: 'FRAN_CASTLE_AGE3',       label: '🛡️ 法兰克（加洛林石堡）' },
@@ -984,14 +972,8 @@ const CULTURE_GROUPS = [
     ]
   },
   {
-    group: '🌲 东欧与高加索 (10套)',
+    group: '🏛️ EAST 东南欧 (4套)',
     branches: [
-      { key: 'POLES',       deStyle: 'SLAV', castle: 'POLE_CASTLE_AGE3',       label: '🛡️ 波兰（马尔堡红砖城堡）' },
-      { key: 'BOHEMIANS',   deStyle: 'SLAV', castle: 'BOHE_CASTLE_AGE3',       label: '🛡️ 波希米亚（卡尔施泰因城堡）' },
-      { key: 'MAGYAR',      deStyle: 'SLAV', castle: 'MAGY_CASTLE_AGE3',       label: '🛡️ 马扎尔（匈牙利科文堡）' },
-      { key: 'SLAVIC',      deStyle: 'SLAV', castle: 'SLAV_CASTLE_AGE3',       label: '⚔️ 东北欧（洋葱顶木石要塞）' },
-      { key: 'LITHUANIANS', deStyle: 'SLAV', castle: 'LITH_CASTLE_AGE3',       label: '⚔️ 立陶宛（特拉凯湖中堡）' },
-      { key: 'BULGARIANS',  deStyle: 'SLAV', castle: 'BULG_CASTLE_AGE3',       label: '⚔️ 保加利亚（沙皇要塞）' },
       { key: 'BYZANTINE',   deStyle: 'EAST', castle: 'BYZA_CASTLE_AGE3',       label: '🏛️ 拜占庭（东罗马·希腊语帝国要塞）' },
       { key: 'EAST',        deStyle: 'EAST', castle: 'EAST_CASTLE_AGE3',       label: '⚔️ 东南欧（通用石堡）' },
       { key: 'ARMENIANS',   deStyle: 'EAST', castle: 'ARME_CASTLE_AGE3',       label: '⚔️ 亚美尼亚（高山石堡）' },
@@ -999,12 +981,35 @@ const CULTURE_GROUPS = [
     ]
   },
   {
-    group: '🕌 中东、西亚与北非 (8套)',
+    group: '🌲 SLAV 东北欧 (6套)',
+    branches: [
+      { key: 'POLES',       deStyle: 'SLAV', castle: 'POLE_CASTLE_AGE3',       label: '🛡️ 波兰（马尔堡红砖城堡）' },
+      { key: 'BOHEMIANS',   deStyle: 'SLAV', castle: 'BOHE_CASTLE_AGE3',       label: '🛡️ 波希米亚（卡尔施泰因城堡）' },
+      { key: 'MAGYAR',      deStyle: 'SLAV', castle: 'MAGY_CASTLE_AGE3',       label: '🛡️ 马扎尔（匈牙利科文堡）' },
+      { key: 'SLAVIC',      deStyle: 'SLAV', castle: 'SLAV_CASTLE_AGE3',       label: '⚔️ 东北欧（洋葱顶木石要塞）' },
+      { key: 'LITHUANIANS', deStyle: 'SLAV', castle: 'LITH_CASTLE_AGE3',       label: '⚔️ 立陶宛（特拉凯湖中堡）' },
+      { key: 'BULGARIANS',  deStyle: 'SLAV', castle: 'BULG_CASTLE_AGE3',       label: '⚔️ 保加利亚（沙皇要塞）' },
+    ]
+  },
+  {
+    group: '🏛️ MEDI 地中海 (5套)',
+    branches: [
+      { key: 'LATIN',       deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3',       label: '🏛️ 地中海（通用古典石堡）' },
+      { key: 'ROMA',        deStyle: 'MEDI', castle: 'ROMA_CASTLE_AGE3',       label: '🏛️ 罗马（军团古典方石堡）' },
+      { key: 'SICILIANS',   deStyle: 'MEDI', castle: 'SICI_CASTLE_AGE3',       label: '🏛️ 西西里（诺曼阿拉伯石堡）' },
+      { key: 'SPANISH',     deStyle: 'MEDI', castle: 'SPAN_CASTLE_AGE3',       label: '🛡️ 西班牙（塞哥维亚高塔要塞）' },
+      { key: 'PORTUGUESE',  deStyle: 'MEDI', castle: 'PORT_CASTLE_AGE3',       label: '🛡️ 葡萄牙（贝伦塔大西洋海堡）' },
+    ]
+  },
+  {
+    group: '🕌 ORIE 中东 (1套)',
     branches: [
       { key: 'ORIE',         deStyle: 'ORIE', castle: 'ORIE_CASTLE_AGE3',      label: '🕌 阿拉伯（萨拉森生土要塞）' },
-      { key: 'SASANIAN',     deStyle: 'PERSIAN', castle: 'PERS_CASTLE_AGE3',   label: '🏛️ 萨珊波斯（巴姆圆城要塞）' },
-      { key: 'PERSIAN',      deStyle: 'PERSIAN', castle: 'PERSIAN_CASTLE_AGE3',label: '🏛️ 波斯传统（阿契美尼德石堡）' },
-      { key: 'MONGOL',    deStyle: 'CEAS', castle: 'MONG_CASTLE_AGE3',      label: '⛺ 蒙古草原（塞外王帐石堡）' },
+    ]
+  },
+  {
+    group: '🐴 CEAS 中亚 (4套)',
+    branches: [
       { key: 'HUNS',        deStyle: 'CEAS', castle: 'HUNS_CASTLE_AGE3',       label: '⚔️ 匈人（游牧营垒木石要塞）' },
       { key: 'CUMAN',       deStyle: 'CEAS', castle: 'CUMA_CASTLE_AGE3',       label: '⚔️ 库曼（草原要塞）' },
       { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3',      label: '🕌 突厥/奥斯曼（海峡要塞）' },
@@ -1012,31 +1017,72 @@ const CULTURE_GROUPS = [
     ]
   },
   {
-    group: '🐘 南亚、东南亚与非洲 (12套)',
+    group: '🕌 INDI 印度 (4套)',
     branches: [
       { key: 'INDIA',       deStyle: 'INDI', castle: 'INDI_CASTLE_AGE3',       label: '🕌 印度（达罗毗荼石圆塔）' },
       { key: 'MUGHAL',      deStyle: 'INDI', castle: 'HIND_CASTLE_AGE3',       label: '🕌 印度斯坦/莫卧儿（红砂岩堡）' },
       { key: 'BENGALIS',    deStyle: 'INDI', castle: 'BENG_CASTLE_AGE3',       label: '🕌 孟加拉（比什努布尔红砖堡）' },
       { key: 'GURJARAS',    deStyle: 'INDI', castle: 'GURJ_CASTLE_AGE3',       label: '🕌 瞿折罗（瓜廖尔石堡）' },
+    ]
+  },
+  {
+    group: '🛕 PURU 普鲁 (1套)',
+    branches: [
+      { key: 'PURU',        deStyle: 'PURU', castle: 'PURU_CASTLE_AGE3',       label: '🛕 普鲁（孔雀帝国粗石圆塔）' },
+    ]
+  },
+  {
+    group: '🌴 SEAS 东南亚 (4套)',
+    branches: [
       { key: 'KHMER',       deStyle: 'SEAS', castle: 'SEAS_CASTLE_AGE3',       label: '🌴 东南亚/高棉（吴哥窟砂岩塔）' },
       { key: 'BURMESE',     deStyle: 'SEAS', castle: 'BURM_CASTLE_AGE3',       label: '🌴 缅甸（蒲甘佛塔城堡）' },
       { key: 'VIETNAMESE',  deStyle: 'SEAS', castle: 'VIET_CASTLE_AGE3',       label: '🌴 大越（升龙城重檐）' },
       { key: 'MALAY',       deStyle: 'SEAS', castle: 'MALA_CASTLE_AGE3',       label: '🌴 马来（满剌加木石水寨）' },
-      { key: 'PURU',        deStyle: 'PURU', castle: 'PURU_CASTLE_AGE3',       label: '🛕 普鲁（孔雀帝国粗石圆塔）' },
+    ]
+  },
+  {
+    group: '🌎 MESO 中美 (2套)',
+    branches: [
+      { key: 'MAYANS',   deStyle: 'MESO', castle: 'MAYA_CASTLE_AGE3', label: '🌎 玛雅（阶梯金字塔）' },
+      { key: 'AMERICA',  deStyle: 'MESO', castle: 'MESO_CASTLE_AGE3', label: '🌎 阿兹特克/墨西加（中美重装金字塔）' },
+    ]
+  },
+  {
+    group: '🌎 ANDE 安第斯 (4套)',
+    branches: [
+      { key: 'INCA',     deStyle: 'ANDE', castle: 'INCA_CASTLE_AGE3', label: '🌎 印加（安第斯主轴）' },
+      { key: 'MUISCA',   deStyle: 'ANDE', castle: 'MUIS_CASTLE_AGE3', label: '🌎 穆伊斯卡（北安第斯）' },
+      { key: 'MAPUCHE',  deStyle: 'ANDE', castle: 'MAPU_CASTLE_AGE3', label: '🌎 马普切（南安第斯）' },
+      { key: 'TUPI',     deStyle: 'ANDE', castle: 'TUPI_CASTLE_AGE3', label: '🌎 图皮（南美丛林要塞）' },
+    ]
+  },
+  {
+    group: '🌍 AFRI 非洲 (3套)',
+    branches: [
       { key: 'BERBER',       deStyle: 'AFRI', castle: 'BERB_CASTLE_AGE3',      label: '🕌 北非柏柏尔（卡斯巴土堡）' },
       { key: 'AFRICA',      deStyle: 'AFRI', castle: 'AFRI_CASTLE_AGE3',       label: '🌍 西非马里（生土要塞）' },
       { key: 'ETHIOPIANS',  deStyle: 'AFRI', castle: 'ETHI_CASTLE_AGE3',       label: '🌍 埃塞俄比亚（法西尔盖比石堡）' },
     ]
   },
   {
-    group: '🌎 美洲与安第斯 (6套)',
+    group: '🏛️ PERSIAN 波斯 (2套)',
     branches: [
-      { key: 'INCA',     deStyle: 'ANDE', castle: 'INCA_CASTLE_AGE3', label: '🌎 印加（安第斯主轴）' },
-      { key: 'MUISCA',   deStyle: 'ANDE', castle: 'MUIS_CASTLE_AGE3', label: '🌎 穆伊斯卡（北安第斯）' },
-      { key: 'MAPUCHE',  deStyle: 'ANDE', castle: 'MAPU_CASTLE_AGE3', label: '🌎 马普切（南安第斯）' },
-      { key: 'TUPI',     deStyle: 'ANDE', castle: 'TUPI_CASTLE_AGE3', label: '🌎 图皮（南美丛林要塞）' },
-      { key: 'MAYANS',   deStyle: 'MESO', castle: 'MAYA_CASTLE_AGE3', label: '🌎 玛雅（阶梯金字塔）' },
-      { key: 'AMERICA',  deStyle: 'MESO', castle: 'MESO_CASTLE_AGE3', label: '🌎 阿兹特克/墨西加（中美重装金字塔）' },
+      { key: 'SASANIAN',     deStyle: 'PERSIAN', castle: 'PERS_CASTLE_AGE3',   label: '🏛️ 萨珊波斯（巴姆圆城要塞）' },
+      { key: 'PERSIAN',      deStyle: 'PERSIAN', castle: 'PERSIAN_CASTLE_AGE3',label: '🏛️ 波斯传统（阿契美尼德石堡）' },
+    ]
+  },
+  {
+    group: '🏛️ GREEK 希腊 (3套)',
+    branches: [
+      { key: 'ATHENIANS',   deStyle: 'GREEK', castle: 'ATHENIANS_CASTLE_AGE3', label: '🏛️ 雅典（阿提卡卫城要塞）' },
+      { key: 'SPARTANS',    deStyle: 'GREEK', castle: 'SPARTANS_CASTLE_AGE3',  label: '🏛️ 斯巴达（拉哥尼亚军营石堡）' },
+      { key: 'MACEDONIAN',  deStyle: 'GREEK', castle: 'MACEDONIAN_CASTLE_AGE3',label: '🏛️ 马其顿（希马鲁石塔城堡）' },
+    ]
+  },
+  {
+    group: '🏛️ THRACIAN 色雷斯 (1套)',
+    branches: [
+      { key: 'THRACIAN',    deStyle: 'THRACIAN', castle: 'THRACIAN_CASTLE_AGE3', label: '🏛️ 色雷斯（古典要塞）' },
     ]
   },
 ];
@@ -1130,40 +1176,28 @@ function fillCustomSelect() {
 /** 专属独立城堡素材按文化圈对号入座分组（严格 60 座） */
 const CASTLE_GROUPS = [
   {
-    group: '🏔️ 青藏高原与专属宗堡 (1 座)',
+    group: '🏔️ 第三层专属定制宗堡与要塞 (2 座)',
     castles: [
-      { id: 'TIBET_CASTLE_AGE3', name: '吐蕃藏式金顶宗堡（布达拉红白木石要塞）' },
+      { id: 'TIBET_CASTLE_AGE3', name: '吐蕃藏式金顶宗堡（布达拉红白木石要塞 · 底座 PURU）' },
+      { id: 'WESTERN_CASTLE_AGE3', name: '西域汉伊高台绿洲要塞（高昌龟兹绿洲堡 · 底座 CEAS）' },
     ]
   },
   {
-    group: '🏯 华夏与东亚 (8 座)',
+    group: '🏯 ASIA 东亚 (9 座)',
     castles: [
-      { id: 'ASIA_CASTLE_AGE3', name: '华夏东亚重檐楼阁（通用天守阁）' },
+      { id: 'ASIA_CASTLE_AGE3', name: '东亚重檐楼阁（通用天守阁）' },
       { id: 'CHIN_CASTLE_AGE3', name: '汉唐城楼（北方华北）' },
       { id: 'WEI_CASTLE_AGE3', name: '曹魏高台阙楼（中原）' },
       { id: 'WU_CASTLE_AGE3', name: '孙吴水榭坞堡（江南水乡）' },
       { id: 'SHU_CASTLE_AGE3', name: '蜀汉高台木关（巴蜀剑阁）' },
       { id: 'KHIT_CASTLE_AGE3', name: '契丹辽式边墙要塞（北疆）' },
       { id: 'JURC_CASTLE_AGE3', name: '女真金代居庸关山城（东北）' },
+      { id: 'MONG_CASTLE_AGE3', name: '蒙古草原王帐石堡（塞外）' },
       { id: 'KORE_CASTLE_AGE3', name: '半岛高丽山城要塞（朝鲜）' },
     ]
   },
   {
-    group: '🏛️ 地中海古典与南欧 (9 座)',
-    castles: [
-      { id: 'MEDI_CASTLE_AGE3', name: '地中海古典石堡（MEDI）' },
-      { id: 'ROMA_CASTLE_AGE3', name: '罗马军团古典方石堡（城镇套用medi）' },
-      { id: 'SICI_CASTLE_AGE3', name: '西西里诺曼阿拉伯石堡' },
-      { id: 'SPAN_CASTLE_AGE3', name: '西班牙塞哥维亚高塔要塞' },
-      { id: 'PORT_CASTLE_AGE3', name: '葡萄牙贝伦塔大西洋海堡' },
-      { id: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城阿提卡要塞' },
-      { id: 'SPARTANS_CASTLE_AGE3', name: '斯巴达拉哥尼亚军营石堡' },
-      { id: 'MACEDONIAN_CASTLE_AGE3', name: '马其顿希马鲁石塔城堡' },
-      { id: 'THRACIAN_CASTLE_AGE3', name: '色雷斯古典要塞（THRACIAN/THRACIANS合并）' },
-    ]
-  },
-  {
-    group: '🛡️ 西欧与北欧 (6 座)',
+    group: '🛡️ WEST 西欧 (6 座)',
     castles: [
       { id: 'WEST_CASTLE_AGE3', name: '西欧重装石堡（WEST）' },
       { id: 'FRAN_CASTLE_AGE3', name: '法兰克加洛林石堡' },
@@ -1174,14 +1208,8 @@ const CASTLE_GROUPS = [
     ]
   },
   {
-    group: '🌲 东欧与高加索 (10 座)',
+    group: '🏛️ EAST 东南欧 (4 座)',
     castles: [
-      { id: 'POLE_CASTLE_AGE3', name: '波兰马尔堡红砖城堡' },
-      { id: 'BOHE_CASTLE_AGE3', name: '波希米亚卡尔施泰因城堡' },
-      { id: 'MAGY_CASTLE_AGE3', name: '马扎尔匈牙利科文堡' },
-      { id: 'SLAV_CASTLE_AGE3', name: '东北欧洋葱顶木石要塞（SLAV）' },
-      { id: 'LITH_CASTLE_AGE3', name: '立陶宛特拉凯湖中堡' },
-      { id: 'BULG_CASTLE_AGE3', name: '保加利亚沙皇要塞' },
       { id: 'BYZA_CASTLE_AGE3', name: '东罗马拜占庭要塞' },
       { id: 'EAST_CASTLE_AGE3', name: '东南欧通用石堡（EAST）' },
       { id: 'ARME_CASTLE_AGE3', name: '亚美尼亚高山石堡' },
@@ -1189,48 +1217,110 @@ const CASTLE_GROUPS = [
     ]
   },
   {
-    group: '🕌 中东、西亚与北非 (9 座)',
+    group: '🌲 SLAV 东北欧 (6 座)',
+    castles: [
+      { id: 'POLE_CASTLE_AGE3', name: '波兰马尔堡红砖城堡' },
+      { id: 'BOHE_CASTLE_AGE3', name: '波希米亚卡尔施泰因城堡' },
+      { id: 'MAGY_CASTLE_AGE3', name: '马扎尔匈牙利科文堡' },
+      { id: 'SLAV_CASTLE_AGE3', name: '东北欧洋葱顶木石要塞（SLAV）' },
+      { id: 'LITH_CASTLE_AGE3', name: '立陶宛特拉凯湖中堡' },
+      { id: 'BULG_CASTLE_AGE3', name: '保加利亚沙皇要塞' },
+    ]
+  },
+  {
+    group: '🏛️ MEDI 地中海 (5 座)',
+    castles: [
+      { id: 'MEDI_CASTLE_AGE3', name: '地中海古典石堡（MEDI）' },
+      { id: 'ROMA_CASTLE_AGE3', name: '罗马军团古典方石堡（城镇套用medi）' },
+      { id: 'SICI_CASTLE_AGE3', name: '西西里诺曼阿拉伯石堡' },
+      { id: 'SPAN_CASTLE_AGE3', name: '西班牙塞哥维亚高塔要塞' },
+      { id: 'PORT_CASTLE_AGE3', name: '葡萄牙贝伦塔大西洋海堡' },
+    ]
+  },
+  {
+    group: '🕌 ORIE 中东 (1 座)',
     castles: [
       { id: 'ORIE_CASTLE_AGE3', name: '阿拉伯萨拉森生土要塞（ORIE）' },
-      { id: 'PERS_CASTLE_AGE3', name: '萨珊波斯巴姆圆城要塞' },
-      { id: 'PERSIAN_CASTLE_AGE3', name: '波斯传统石堡（PERSIAN，含阿契美尼德宫阙）' },
-      { id: 'MONG_CASTLE_AGE3', name: '蒙古草原王帐石堡（塞外）' },
+    ]
+  },
+  {
+    group: '🐴 CEAS 中亚 (4 座)',
+    castles: [
       { id: 'HUNS_CASTLE_AGE3', name: '匈人游牧营垒木石要塞' },
       { id: 'CUMA_CASTLE_AGE3', name: '库曼汗国草原要塞' },
       { id: 'TURK_CASTLE_AGE3', name: '突厥奥斯曼海峡要塞' },
       { id: 'CEAS_CASTLE_AGE3', name: '中亚鞑靼赫拉特城堡（CEAS）' },
-      { id: 'WESTERN_CASTLE_AGE3', name: '西域汉伊高台绿洲要塞（西域四区专属）' },
     ]
   },
   {
-    group: '🐘 南亚、东南亚与非洲 (12 座)',
+    group: '🕌 INDI 印度 (4 座)',
     castles: [
       { id: 'INDI_CASTLE_AGE3', name: '达罗毗荼南亚石圆塔（INDI）' },
       { id: 'HIND_CASTLE_AGE3', name: '德里莫卧儿红砂岩堡' },
       { id: 'BENG_CASTLE_AGE3', name: '孟加拉比什努布尔红砖堡' },
       { id: 'GURJ_CASTLE_AGE3', name: '瞿折罗瓜廖尔石堡' },
+    ]
+  },
+  {
+    group: '🛕 PURU 普鲁 (1 座)',
+    castles: [
+      { id: 'PURU_CASTLE_AGE3', name: '孔雀帝国粗石圆塔（PURU三强化态同座）' },
+    ]
+  },
+  {
+    group: '🌴 SEAS 东南亚 (4 座)',
+    castles: [
       { id: 'SEAS_CASTLE_AGE3', name: '东南亚吴哥窟砂岩塔（SEAS）' },
       { id: 'BURM_CASTLE_AGE3', name: '缅甸蒲甘佛塔城堡' },
       { id: 'VIET_CASTLE_AGE3', name: '大越升龙城式重檐' },
       { id: 'MALA_CASTLE_AGE3', name: '马来满剌加木石水寨' },
-      { id: 'PURU_CASTLE_AGE3', name: '孔雀帝国粗石圆塔（PURU三强化态同座）' },
+    ]
+  },
+  {
+    group: '🌎 MESO 中美 (2 座)',
+    castles: [
+      { id: 'MAYA_CASTLE_AGE3', name: '玛雅阶梯金字塔石堡（中美洲）' },
+      { id: 'MESO_CASTLE_AGE3', name: '阿兹特克重装金字塔（中美洲）' },
+    ]
+  },
+  {
+    group: '🌎 ANDE 安第斯 (4 座)',
+    castles: [
+      { id: 'INCA_CASTLE_AGE3', name: '印加萨克赛瓦曼石堡（安第斯主轴）' },
+      { id: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡黄金国城堡（北安第斯）' },
+      { id: 'MAPU_CASTLE_AGE3', name: '马普切山地要塞（南安第斯）' },
+      { id: 'TUPI_CASTLE_AGE3', name: '图皮热带丛林木石要塞（南美）' },
+    ]
+  },
+  {
+    group: '🌍 AFRI 非洲 (3 座)',
+    castles: [
       { id: 'BERB_CASTLE_AGE3', name: '北非柏柏尔卡斯巴土堡' },
       { id: 'AFRI_CASTLE_AGE3', name: '西非马里生土要塞（AFRI）' },
       { id: 'ETHI_CASTLE_AGE3', name: '埃塞俄比亚法西尔盖比石堡' },
     ]
   },
   {
-    group: '🌎 美洲与安第斯 (6 座)',
+    group: '🏛️ PERSIAN 波斯 (2 座)',
     castles: [
-      { id: 'INCA_CASTLE_AGE3', name: '印加萨克赛瓦曼石堡（安第斯主轴）' },
-      { id: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡黄金国城堡（北安第斯）' },
-      { id: 'MAPU_CASTLE_AGE3', name: '马普切山地要塞（南安第斯）' },
-      { id: 'TUPI_CASTLE_AGE3', name: '图皮热带丛林木石要塞（南美）' },
-      { id: 'MAYA_CASTLE_AGE3', name: '玛雅阶梯金字塔石堡（中美洲）' },
-      { id: 'MESO_CASTLE_AGE3', name: '阿兹特克重装金字塔（中美洲）' },
+      { id: 'PERS_CASTLE_AGE3', name: '萨珊波斯巴姆圆城要塞' },
+      { id: 'PERSIAN_CASTLE_AGE3', name: '波斯传统石堡（PERSIAN，含阿契美尼德宫阙）' },
     ]
   },
-
+  {
+    group: '🏛️ GREEK 希腊 (3 座)',
+    castles: [
+      { id: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城阿提卡要塞' },
+      { id: 'SPARTANS_CASTLE_AGE3', name: '斯巴达拉哥尼亚军营石堡' },
+      { id: 'MACEDONIAN_CASTLE_AGE3', name: '马其顿希马鲁石塔城堡' },
+    ]
+  },
+  {
+    group: '🏛️ THRACIAN 色雷斯 (1 座)',
+    castles: [
+      { id: 'THRACIAN_CASTLE_AGE3', name: '色雷斯古典要塞（THRACIAN/THRACIANS合并）' },
+    ]
+  },
 ];
 
 let curCastle = 'auto';
