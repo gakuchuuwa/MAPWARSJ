@@ -38,6 +38,13 @@ import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower } from '../data/CombatPower';
 import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
 import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
+import {
+    Level2CivLegionDef,
+    LEVEL_2_CIV_59_LEGIONS,
+    LEVEL_2_CIV_59_NAMES,
+    LEVEL_2_CIV_59_MAP,
+    isCivEraLegion,
+} from '../data/level2Civ59Legions';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -1817,6 +1824,8 @@ const LEGION_ERA_PREFIX: Record<string, UnitAge> = {
 /** 一支军团的时代：**以军团名的时代前缀为准**（作者写死的意图）；
  *  没有前缀的（部分特定军团）才退回按编成里最晚那个兵种推定。 */
 function getLegionEra(legionName: string, slots: Array<{ type: string }>): UnitAge {
+    const l2Def = LEVEL_2_CIV_59_MAP.get(legionName);
+    if (l2Def) return l2Def.age;
     const m = legionName.match(/^(古典|封建|城堡|帝国)/);
     if (m) return LEGION_ERA_PREFIX[m[1]];
     let idx = 0;
@@ -1850,7 +1859,7 @@ export const BASE_16_REGIONS = [
 /** 🔴 [2026-09-10 主人定] 第一层文化军团名 = 16 母体地区名 + 军团（跨时代母体，不带时代前缀） */
 export const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
-    PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '斯拉夫军团',
+    PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '东北欧军团',
     EAST: '东南欧军团', PERSIAN: '波斯军团', MALAY: '东南亚军团', GREEK: '希腊军团',
     THRACIAN: '色雷斯军团', ANDE: '安第斯军团', AMERICA: '中美军团', AFRICA: '非洲军团',
 };
@@ -1893,63 +1902,13 @@ function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: stri
 /** 🔴 [2026-09-11 主人定] **三级军团分类** */
 export type LegionLayer = 'culture' | 'sub' | 'custom';
 
-/**
- * 「二级：文明 × 时代」的 **59 个 DE 文明名**。
- * 抄自 `docs/02-design/four-eras-civilizations.md` §三之二（16 文化 × 59 文明），
- * 与建筑风格二层那张「59 个 DE 文明」名单**同一份**（合计 7+6+4+7+1+1+5+6+3+2+4+3+1+4+2+3 = 59）。
- */
-const CIV_59_NAMES: readonly string[] = [
-    // ASIA 华夏东亚（9）
-    '中国', '日本', '朝鲜', '蜀', '吴', '魏', '女真', '契丹', '蒙古',
-    // CEAS 游牧草原·中亚（4）
-    '匈人', '鞑靼', '库曼', '突厥',
-    // INDI 印度次大陆（4）
-    '印度斯坦', '瞿折罗', '达罗毗荼', '孟加拉',
-    // WEST 西欧日耳曼（7）
-    '不列颠', '法兰克', '哥特', '条顿', '凯尔特', '勃艮第', '维京',
-    // PURU 普鲁·南亚古典（1）
-    '普鲁',
-    // ORIE 中东近东·阿拉伯（1）
-    '萨拉森',
-    // MEDI 地中海罗马（5）
-    '罗马', '意大利', '西班牙', '葡萄牙', '西西里',
-    // SLAV 东欧斯拉夫（6）
-    '斯拉夫', '波兰', '波希米亚', '保加利亚', '立陶宛', '马扎尔',
-    // EAST 拜占庭东欧（3）
-    '拜占庭', '亚美尼亚', '格鲁吉亚',
-    // PERSIAN 波斯萨珊（2）
-    '波斯', '阿契美尼德',
-    // SEAS 东南亚（4）
-    '高棉', '马来', '缅甸', '越南',
-    // GREEK 希腊古典（3）
-    '雅典', '斯巴达', '马其顿',
-    // THRACIAN 色雷斯古典（1）
-    '色雷斯',
-    // ANDE 安第斯（4）
-    '印加', '穆伊斯卡', '马普切', '图皮',
-    // MESO 中美玛雅（2）
-    '阿兹特克', '玛雅',
-    // AFRI 非洲（3）
-    '埃塞俄比亚', '马里', '柏柏尔',
-];
-const CIV_59_SET = new Set(CIV_59_NAMES);
+export { isCivEraLegion, LEVEL_2_CIV_59_LEGIONS, LEVEL_2_CIV_59_NAMES, LEVEL_2_CIV_59_MAP };
+export type { Level2CivLegionDef };
 
-/**
- * 军团名是否属于「**二级：文明 × 时代**」——
- * 带时代前缀（古典/封建/城堡/帝国 + 时代）**且**去掉前缀后的基名 = 59 个 DE 文明之一。
- * 例：「封建时代法兰克军团」✅二级；「古典时代华夏军团」❌（华夏不在这 59 之内 → 三级自建）。
- */
-export function isCivEraLegion(name: string): boolean {
-    const m = (name || '').match(/^(古典|封建|城堡|帝国)时代/);
-    if (!m) return false;
-    const base = name.slice(m[0].length).replace(/军团$/, '').trim();
-    return CIV_59_SET.has(base);
-}
-
-/** 🔴 [2026-09-11 主人定] 三级军团分类：
- *  一级 culture：**16 母体文化军团**（`BASE_16_LEGION_NAMES`，与建筑风格一层对齐）
- *  二级 sub    ：**文明 × 时代**（59 DE 文明 × 4 时代 = 236，与建筑风格二层对齐）
- *  三级 custom ：**其余全部** —— 主人自建 / 延伸出来的军团 */
+/** 🔴 [2026-09-14 主人定] 三级军团分类：
+ *  一级 culture：**16 母体文化军团**（`BASE_16_LEGION_NAMES`，与建筑风格一层 16 母体对齐）
+ *  二级 sub    ：**文明 × 时代（59 文明专属军团）**（与建筑风格二层 59 文明专属城堡对齐）
+ *  三级 custom ：**其余全部** —— 主人自建 / 延伸出来的军团（已彻底去重） */
 function classifyLegionTab(name: string, _sharedCount: number): LegionLayer {
     if (isBase16CultureLegion(name)) return 'culture';
     return isCivEraLegion(name) ? 'sub' : 'custom';
@@ -1979,6 +1938,24 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         if (!map.has(name)) {
             const def = getBase16RegionDefaultLegion(rg as RegionType);
             map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg as RegionType });
+        }
+    }
+    // 1.6 二级：59 个文明专属军团（权威定义：59 文明 × 时代专属城堡）
+    for (const l2 of LEVEL_2_CIV_59_LEGIONS) {
+        if (!map.has(l2.name)) {
+            map.set(l2.name, {
+                name: l2.name,
+                formationMode: l2.formationMode,
+                slots: l2.slots.map(s => ({ ...s })),
+                fids: [],
+                region: l2.region as RegionType,
+            });
+        } else {
+            // 若已有占位（例如来自文化默认），校准为 59 文明权威编制
+            const existing = map.get(l2.name)!;
+            existing.formationMode = l2.formationMode;
+            existing.slots = l2.slots.map(s => ({ ...s }));
+            if (!existing.region) existing.region = l2.region as RegionType;
         }
     }
     // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。
@@ -2033,7 +2010,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
         return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
     }
 
-    // 🔴 [2026-09-10 主人定] 二级：制定军团（从 16 母体延伸派生的军团 + 势力自建制定军团）
+    // 🔴 [2026-09-10 主人定] 二级/三级军团
     for (const entry of all.values()) {
         const tab = classifyLegionTab(entry.name, entry.fids.length);
         if (tab !== layer) continue;
@@ -2041,9 +2018,12 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
         const fid = entry.fids[0];
         const row = fid ? allRows.find(r => r.factionId === fid) : undefined;
         const regLabel = row?.regionLabel || (entry.region ? (REGION_LABELS[entry.region] || entry.region) : '');
-        const countText = entry.fids.length ? `${entry.fids.length} 势力` : '文化默认';
-        const label = `⭐ ${entry.name} (${regLabel ? `${regLabel} · ` : ''}${countText})`;
-        const description = `${regLabel ? `${regLabel} · ` : ''}${entry.fids.length ? `${entry.fids.length} 势力使用` : '文化默认'} · ${legionSummary(entry.formationMode, entry.slots)}`;
+        const countText = entry.fids.length ? `${entry.fids.length} 势力` : (layer === 'sub' ? '文明默认' : '文化默认');
+        const l2Def = LEVEL_2_CIV_59_MAP.get(entry.name);
+        const icon = layer === 'sub' ? '🏰' : '⭐';
+        const label = `${icon} ${entry.name} (${regLabel ? `${regLabel} · ` : ''}${countText})`;
+        const castlePrefix = l2Def ? `🏰 ${l2Def.castleName} · ` : '';
+        const description = `${castlePrefix}${regLabel ? `${regLabel} · ` : ''}${entry.fids.length ? `${entry.fids.length} 势力使用` : (layer === 'sub' ? '文明默认' : '文化默认')} · ${legionSummary(entry.formationMode, entry.slots)}`;
         const shipId = getCultureNavalShip(row?.region ?? entry.region ?? null, fid ?? null);
         const shipName = getNavalShipChineseName(shipId);
 
@@ -2066,7 +2046,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
 /** 层全名（信息卡 / 步骤标题用） */
 const LAYER_FULL_LABEL: Record<LegionLayer, string> = {
     culture: '一级：文化军团（16 母体）',
-    sub: '二级：文明 × 时代（59 文明 × 4 时代）',
+    sub: '二级：文明 × 时代（59 文明）',
     custom: '三级：自建军团',
 };
 
