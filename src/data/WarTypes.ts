@@ -126,7 +126,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     savar: { name: '波斯萨瓦尔重骑高级', cls: 'cav', sz: 1, hp: 145, atk: 14, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
     elite_kipchak: { name: '库曼钦察弓骑精锐', cls: 'cav', sz: 1, kite: 70, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
     elite_composite_bowman: { name: '亚美尼亚复合弓手精锐', cls: 'ranged', sz: 1, hp: 50, atk: 4, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
-    camel_heavy: { name: '骆驼兵重装', cls: 'cav', sz: 1, hp: 120, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
+    camel_heavy: { name: '骆驼骑兵重装', cls: 'cav', sz: 1, hp: 120, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
     cav_archer_heavy: { name: '骑射手重装', cls: 'cav', sz: 1, kite: 70, hp: 60, atk: 7, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 4 }, armorTags: [28, 15, 8, 31] },
     composite_bowman: { name: '亚美尼亚复合弓手', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     elite_steppe_lancer: { name: '草原枪骑兵高级', cls: 'cav', sz: 1, hp: 80, atk: 11, meleeArmor: 0, pierceArmor: 2, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },

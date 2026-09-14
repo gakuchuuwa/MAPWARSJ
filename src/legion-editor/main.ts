@@ -236,7 +236,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_tarkan', name: '匈奴答剌罕骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
     { id: 'boyar', name: '斯拉夫贵族铁骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
     { id: 'savar', name: '波斯萨瓦尔重骑高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
-    { id: 'camel_heavy', name: '骆驼兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
+    { id: 'camel_heavy', name: '骆驼骑兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
     { id: 'paladin', name: '欧洲游侠高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
     { id: 'coustillier', name: '勃艮第马上轻骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
     { id: 'light_riders', name: '中世纪轻骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHT_RIDERS/' },
@@ -3280,6 +3280,11 @@ function bindPanelEvents(row: FactionLegionRow): void {
             if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
             // 内存同步：静态表是页面加载时导入的，不同步的话下面重绘会把界面刷回旧编制
             patchLegionComposition(legionName, slots, formationMode);
+            // 🔴 [2026-09-14 主人报障「保存后为什么不刷新」] 只打补丁不够：
+            //    localCustomCompositions 是**页面加载时按军团记录解出来的快照**，
+            //    保存后它还留着旧编制，buildRows 优先读它 → 表格纹丝不动。
+            //    必须拿打完补丁的军团记录重新解一遍。
+            localCustomCompositions = buildLocalCompositions();
             buildRows();
             applyFilter();
             renderTable();
