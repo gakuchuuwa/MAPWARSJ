@@ -1845,4 +1845,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代马普切军团",
         legionType: "sub",
     },
+    "song": {
+        legionName: "城堡时代两宋军团",
+        legionType: "sub",
+    },
 };

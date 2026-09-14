@@ -16,7 +16,7 @@
  * 渲染：全屏透明 canvas 叠在地图上，只画精灵/尸体；出兵口不画。
  */
 
-import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
 import {
     Scene13GroundPainter,
     TILE_W,
@@ -4036,14 +4036,28 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 攻城战前 30 秒的攻城武器：按【文化 + 军团时代】发，逻辑在 src/data/SiegeWeaponsByCulture.ts。
+     * 这一侧在用的**军团名**：势力自己的军团（FACTION_COMPOSITIONS）→ 文化区默认军团（指针）。
+     *
+     * 🔴 [2026-09-14 主人令「一级的没有时代，就看二级和三级军团吧，二级军团和三级军团都有时代」]
+     *   攻城武器按**军团自己名里的时代**发，不再只按地区指针 —— 一个 region 上挂着不同时代的
+     *   军团（如 KHMER 既有封建时代高棉军团、又有城堡时代高棉军团），只按指针发就会张冠李戴。
+     *   口径与 CombatUI 的战斗面板军团名完全同源（同一句 FACTION_COMPOSITIONS ?? getCultureLegionName）。
+     */
+    private sideLegionName(side: 0 | 1): string {
+        const fid = this.sideFaction[side];
+        const byFaction = fid ? FACTION_COMPOSITIONS[fid]?.legionName : undefined;
+        if (byFaction) return byFaction;
+        return getCultureLegionName(this.sideCulture[side] as RegionType) || '';
+    }
+
+    /**
+     * 攻城战前 30 秒的攻城武器：按【军团时代 + 文化】发，逻辑在 src/data/SiegeWeaponsByCulture.ts。
      * 🔴 [2026-09-09 主人定] 时代闸：古典军团只用古典器械，封建可用古典+封建，
      *    城堡再加城堡冷兵器与城堡时代热兵器，帝国全部冷热皆可。
      */
-
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
-        const nine = getSiegeWeaponsForCulture(culture);
+        const nine = getSiegeWeaponsForCulture(culture, this.sideLegionName(0));
         // 美洲原住民不发攻城器械（没有冲车/投石机传统），城墙走 30 秒随机坍塌那条路
         if (!nine.length) return;
 

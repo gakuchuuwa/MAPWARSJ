@@ -16,11 +16,15 @@
  *   · 槽位 6（重型火力 1 辆）：第 3 辆抛石，或胡斯榴弹炮（城堡）/ 攻城重炮 / 重型火箭车（帝国）。
  *   · 槽位 7（穿甲压制 1 辆）：弩炮 / 弩炮象 / 攻城弩炮。
  *   · 槽位 8（近距攻城 1 辆）：重型弩炮，或猛火油柜 / 神机箭（城堡）/ 风琴炮（帝国）。
- *   · 槽位 9（特色突击 1 辆）：赫勒波利斯巨塔 / 火焰骆驼 / 攻城塔，或掷弹兵（城堡/帝国）。
+ *   · 槽位 9（特色突击 1 辆）：赫勒波利斯巨塔 / 火焰骆驼 / 攻城塔，
+ *     欧洲城堡=爆破工兵 petard、欧洲帝国/其余城堡帝国=掷弹兵、葡萄牙帝国=风琴炮精锐。
  *   · 美洲原住民：历史无复杂机械器械，依铁律允许样式重复，由本时代 9 辆破门攻城槌满编排阵。
  */
 import type { RegionType } from '../systems/RegionSystem';
 import { CULTURE_LEGION_NAMES } from '../types/CultureFormations';
+import { LEVEL_2_CIV_59_LEGIONS } from './level2Civ59Legions';
+import { LEVEL_3_LEGIONS } from './level3CustomLegions';
+import { zoneOfRegion } from './CultureZones';
 
 export type SiegeAge = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
@@ -29,10 +33,34 @@ const ERA_PREFIX_TO_AGE: Record<string, SiegeAge> = {
     古典: 'antiquity', 封建: 'feudal', 城堡: 'castle', 帝国: 'imperial',
 };
 
-/** 军团时代 = 该文化区军团名的时代前缀（名字即权威）。取不到按古典算，宁可发旧的也不超发。 */
+/**
+ * 指针表缺这个 region 时的第二权威：二级/三级军团表里声明归它的那支军团。
+ *
+ * 🔴 [2026-09-14 主人令「一级的没有时代，就看二级和三级军团吧」]
+ *   实测指针表 `CULTURE_LEGION_NAMES` 里**没有**这 9 个 region：
+ *   BASHU / WEI / CELTS / ROMA / ATHENIANS / SPARTANS / MONGOL / INCA / MALI。
+ *   原写法查不到名字就按古典兜底（"宁可发旧的也不超发"），于是
+ *   **MONGOL / INCA / MALI 三支城堡时代军团只拿到古典器械**（少了城堡档器械）。
+ *   现改为先问二级/三级军团表——军团名自带时代，问得到就用军团自己的时代，
+ *   表里也没有才回古典兜底。
+ */
+const REGION_LEGION_FALLBACK: Readonly<Record<string, string>> = (() => {
+    const m: Record<string, string> = {};
+    for (const L of LEVEL_2_CIV_59_LEGIONS) if (!m[String(L.region)]) m[String(L.region)] = L.name;
+    for (const L of LEVEL_3_LEGIONS) for (const r of L.regions) if (!m[r]) m[r] = L.name;
+    return m;
+})();
+
+/** 军团时代 = 该文化区**在用那支军团**的名字前缀（名字即权威）。
+ *  ① 先问指针表 CULTURE_LEGION_NAMES（这个区默认挂哪支军团）；
+ *  ② 指针表没这个区 → 问二级/三级军团表；③ 都问不到才按古典（宁可发旧的也不超发）。 */
 export function legionSiegeAge(culture: RegionType): SiegeAge {
-    const name = (CULTURE_LEGION_NAMES as Record<string, string>)[culture] ?? '';
-    return ERA_PREFIX_TO_AGE[name.slice(0, 2)] ?? 'antiquity';
+    const key = String(culture);
+    const pointerName = (CULTURE_LEGION_NAMES as Record<string, string>)[key] ?? '';
+    const fromPointer = ERA_PREFIX_TO_AGE[pointerName.slice(0, 2)];
+    if (fromPointer) return fromPointer;
+    const fallbackName = REGION_LEGION_FALLBACK[key] ?? '';
+    return ERA_PREFIX_TO_AGE[fallbackName.slice(0, 2)] ?? 'antiquity';
 }
 
 /** 职能：破门 / 抛石 / 压制 / 特色 */
@@ -179,9 +207,13 @@ function imperialGunpowderFor(culture: string): string | null {
  * 6. 每个军团的攻城武器必须是 9 个。可以样式重复，但是不能增减数量！
  * 7. 必须有冲车。
  */
-export function getSiegeWeaponsForCulture(culture: RegionType): string[] {
+export function getSiegeWeaponsForCulture(culture: RegionType, legionName?: string | null): string[] {
     const key = String(culture);
-    const cap = legionSiegeAge(culture);
+    // 🔴 [2026-09-14 主人令「一级的没有时代，就看二级和三级军团吧，二级军团和三级军团都有时代」]
+    //   时代优先取**在场军团自己名里的时代**：同一个 region 上挂着不同时代的军团
+    //   （如 KHMER 有封建/城堡两支），只按地区指针发就会张冠李戴。
+    //   军团名没带时代（一级 16 母体是跨时代名）才回退到文化区指针。
+    const cap = (legionName ? ERA_PREFIX_TO_AGE[legionName.slice(0, 2)] : undefined) ?? legionSiegeAge(culture);
     const capRank = AGE_RANK[cap];
 
     // 美洲原住民：历史无复杂机械器械，依铁律允许样式重复，由本时代破门攻城槌满编排满 9 辆
@@ -270,17 +302,34 @@ export function getSiegeWeaponsForCulture(culture: RegionType): string[] {
             tacticalGunpowder = 'flamethrower'; // 猛火油柜
         }
     }
-    if (capRank >= AGE_RANK.imperial && culture === 'PORTUGUESE') {
+    // 🔴 [2026-09-14] 专属热兵器按**军团**判，不只按 region：
+    //   实测葡萄牙势力（`putaoya`，里斯本）城池 region = `LATIN_CASTLE`，不是 `PORTUGUESE`，
+    //   原来 `culture === 'PORTUGUESE'` 判不中 → **风琴炮一件都发不出来**（实测 0 支势力拿到）。
+    //   现在 region 或军团名命中「葡萄牙」都算正主。
+    const isPortuguese = key === 'PORTUGUESE' || /葡萄牙/.test(legionName ?? '');
+
+    if (capRank >= AGE_RANK.imperial && isPortuguese) {
         tacticalGunpowder = 'organ_gun'; // 葡萄牙风琴炮
     }
     items.push(tacticalGunpowder ?? resolveItem(b2, 'bolt'));
 
     // ⑥ 槽位 9：特色 / 突击攻城 1 辆
+    //   🔴 [2026-09-14 主人令「分配所有的攻城武器」] 补上原来一支军团都拿不到的 2 件：
+    //     · petard 爆破工兵（城堡档）：**欧洲本土**火药破门工兵（法语 pétard，16 世纪炸城门）
+    //       → 只发 西欧 / 地中海 母体的城堡军团；帝国档换回掷弹兵（掷弹兵 17 世纪末才有）。
+    //     · elite_organ_gun 葡萄牙风琴炮精锐（帝国档）：风琴炮是葡萄牙专属，
+    //       与槽位 8 的基础档 organ_gun 各占一格（同线不塌成一格的铁律）。
+    const zone = zoneOfRegion(culture);
+    const europeanMusket = zone === '西欧' || zone === '地中海';
     let specialUnit: string | null = null;
     if (HELEPOLIS_CULTURES.has(culture)) {
         specialUnit = 'helepolis';
     } else if (STEPPE_FIRE_CAMEL.has(culture) && capRank >= AGE_RANK.castle) {
         specialUnit = 'flaming_camel';
+    } else if (capRank >= AGE_RANK.imperial && isPortuguese) {
+        specialUnit = 'elite_organ_gun';
+    } else if (capRank === AGE_RANK.castle && europeanMusket) {
+        specialUnit = 'petard';
     } else if (capRank >= AGE_RANK.castle) {
         // 城堡与帝国时代：热兵器掷弹兵攻城
         specialUnit = 'grenadier';
