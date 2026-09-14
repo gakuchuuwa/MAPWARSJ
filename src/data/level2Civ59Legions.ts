@@ -20,7 +20,7 @@ export interface Level2CivLegionDef {
 
 export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
-        name: '古典华夏中原军团', civ: '中国', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '古典时代华夏中原军团', civ: '中国', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中国 北方华北·汉唐城楼',
         formationMode: 'square',
         slots: [
@@ -30,7 +30,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '古典华夏巴蜀军团', civ: '蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        name: '古典时代华夏巴蜀军团', civ: '蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         castleId: 'SHU_CASTLE_AGE3', castleName: '蜀汉 汉式斗拱望楼',
         formationMode: 'echelon',
         slots: [
@@ -40,7 +40,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '古典华夏江南军团', civ: '吴', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        name: '古典时代华夏江南军团', civ: '吴', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         castleId: 'WU_CASTLE_AGE3', castleName: '东吴 水乡飞檐水榭',
         formationMode: 'triangle',
         slots: [
@@ -50,7 +50,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '古典华夏北方军团', civ: '曹魏', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        name: '古典时代华夏北方军团', civ: '曹魏', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
         castleId: 'WEI_CASTLE_AGE3', castleName: '曹魏 邺城重檐铜雀楼',
         formationMode: 'echelon',
         slots: [
@@ -590,8 +590,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '帝国时代土耳其军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'TURKS' as RegionType,
-        castleId: 'TURK_CASTLE_AGE3', castleName: '土耳其/奥斯曼 托普卡珀皇宫圆堡',
+        name: '帝国时代奥斯曼军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'TURKS' as RegionType,
+        castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
         slots: [
             { type: 'hussar', count: 2 },
@@ -619,12 +619,19 @@ export const LEVEL_2_CIV_59_MAP: Map<string, Level2CivLegionDef> = new Map(
 export const LEVEL_2_CIV_CIV_MAP: Map<string, Level2CivLegionDef> = new Map(
     LEVEL_2_CIV_59_LEGIONS.map(l => [l.civ, l])
 );
-// 兼容突厥别名
-const turkLegion = LEVEL_2_CIV_59_LEGIONS.find(l => l.civ === '土耳其');
-if (turkLegion) {
-    LEVEL_2_CIV_CIV_MAP.set('突厥', turkLegion);
-    LEVEL_2_CIV_59_MAP.set('帝国时代突厥军团', turkLegion);
+// 兼容突厥/土耳其别名
+const ottomanLegion = LEVEL_2_CIV_59_LEGIONS.find(l => l.civ === '奥斯曼');
+if (ottomanLegion) {
+    LEVEL_2_CIV_CIV_MAP.set('突厥', ottomanLegion);
+    LEVEL_2_CIV_CIV_MAP.set('土耳其', ottomanLegion);
+    LEVEL_2_CIV_59_MAP.set('帝国时代突厥军团', ottomanLegion);
+    LEVEL_2_CIV_59_MAP.set('帝国时代土耳其军团', ottomanLegion);
 }
+// 兼容简写别名（如不含“时代”二字的旧名）
+LEVEL_2_CIV_59_MAP.set('古典华夏中原军团', LEVEL_2_CIV_59_LEGIONS[0]);
+LEVEL_2_CIV_59_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_59_LEGIONS[1]);
+LEVEL_2_CIV_59_MAP.set('古典华夏江南军团', LEVEL_2_CIV_59_LEGIONS[2]);
+LEVEL_2_CIV_59_MAP.set('古典华夏北方军团', LEVEL_2_CIV_59_LEGIONS[3]);
 
 /**
  * 军团名是否属于「**二级：文明 × 时代（59 文明专属军团）**」——
