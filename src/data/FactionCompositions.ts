@@ -483,11 +483,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "maqidun": {
         legionName: "古典时代马其顿军团",
         legionType: "sub",
-        formationMode: "crescent",
+        formationMode: "echelon",
         slots: [
+            { type: "elite_phalangite", count: 4 },
             { type: "phalangite", count: 3 },
-            { type: "hoplite", count: 2 },
-            { type: "companion_cavalry", count: 4 },
+            { type: "elite_companion_cavalry", count: 2 },
         ],
     },
     "xiqin": {
@@ -495,8 +495,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_iron_pagoda", count: 4 },
-            { type: "kipchak", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "iron_pagoda", count: 3 },
+            { type: "jian_swordman_shielded", count: 2 },
         ],
     },
     "li_s": {
@@ -547,21 +547,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "mazhaer": {
         legionName: "城堡时代马扎尔军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "echelon",
         slots: [
-            { type: "obuch", count: 3 },
-            { type: "hussite_wagon", count: 2 },
             { type: "elite_magyar_huszar", count: 4 },
+            { type: "magyar_huszar", count: 3 },
+            { type: "recurve_bowman", count: 2 },
         ],
     },
     "xiongyati": {
         legionName: "城堡时代马扎尔军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "echelon",
         slots: [
-            { type: "obuch", count: 3 },
-            { type: "hussite_wagon", count: 2 },
             { type: "elite_magyar_huszar", count: 4 },
+            { type: "magyar_huszar", count: 3 },
+            { type: "recurve_bowman", count: 2 },
         ],
     },
     "qiekase": {
@@ -611,7 +611,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "mengtainiya": {
@@ -621,7 +621,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "moerdaweiya": {
@@ -631,7 +631,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "walajiyia": {
@@ -641,7 +641,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "duobuluojia": {
@@ -651,7 +651,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "kuertaiya": {
@@ -661,7 +661,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "vidin_tsardom": {
@@ -671,7 +671,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "shaiyue": {
@@ -721,7 +721,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_boyar", count: 4 },
             { type: "boyar", count: 3 },
-            { type: "recurve_bowman", count: 2 },
+            { type: "heavy_pikeman", count: 2 },
         ],
     },
     "luosi": {
@@ -2817,21 +2817,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "baojian_qishi": {
         legionName: "城堡时代条顿军团",
         legionType: "region",
-        formationMode: "triangle",
+        formationMode: "echelon",
         slots: [
-            { type: "crusader_knight", count: 2 },
-            { type: "crossbowman", count: 3 },
             { type: "elite_teutonic_knight", count: 4 },
+            { type: "teutonic_knight", count: 3 },
+            { type: "arbalest", count: 2 },
         ],
     },
     "tiaodun_qishi": {
         legionName: "城堡时代条顿军团",
         legionType: "region",
-        formationMode: "triangle",
+        formationMode: "echelon",
         slots: [
-            { type: "crusader_knight", count: 2 },
-            { type: "crossbowman", count: 3 },
             { type: "elite_teutonic_knight", count: 4 },
+            { type: "teutonic_knight", count: 3 },
+            { type: "arbalest", count: 2 },
         ],
     },
     "boumeilaniyan": {
@@ -2877,51 +2877,51 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "bolisiya": {
         legionName: "城堡时代立陶宛军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "echelon",
         slots: [
-            { type: "winged_hussar", count: 3 },
             { type: "elite_leitis", count: 4 },
-            { type: "leitis", count: 2 },
+            { type: "leitis", count: 3 },
+            { type: "winged_hussar", count: 2 },
         ],
     },
     "litaowan": {
         legionName: "城堡时代立陶宛军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "echelon",
         slots: [
-            { type: "winged_hussar", count: 3 },
             { type: "elite_leitis", count: 4 },
-            { type: "leitis", count: 2 },
+            { type: "leitis", count: 3 },
+            { type: "winged_hussar", count: 2 },
         ],
     },
     "nieman": {
         legionName: "城堡时代立陶宛军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "echelon",
         slots: [
-            { type: "winged_hussar", count: 3 },
             { type: "elite_leitis", count: 4 },
-            { type: "leitis", count: 2 },
+            { type: "leitis", count: 3 },
+            { type: "winged_hussar", count: 2 },
         ],
     },
     "weijiebusike_gongguo": {
         legionName: "城堡时代立陶宛军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "echelon",
         slots: [
-            { type: "winged_hussar", count: 3 },
             { type: "elite_leitis", count: 4 },
-            { type: "leitis", count: 2 },
+            { type: "leitis", count: 3 },
+            { type: "winged_hussar", count: 2 },
         ],
     },
     "telakaigongguo": {
         legionName: "城堡时代立陶宛军团",
         legionType: "region",
-        formationMode: "fish_scale",
+        formationMode: "echelon",
         slots: [
-            { type: "winged_hussar", count: 3 },
             { type: "elite_leitis", count: 4 },
-            { type: "leitis", count: 2 },
+            { type: "leitis", count: 3 },
+            { type: "winged_hussar", count: 2 },
         ],
     },
     "yashu": {
@@ -3117,270 +3117,270 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "jinzhang": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "baojiaer": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "kelimiya": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "fuerjia": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "kelie": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "wala": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "wuliangha": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "dongshengwei": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "menggu_d": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "kumo": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "ogodei": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "kereyid": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "naiman": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "tatar": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "merkit": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "ongut": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "dada_ming": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "chahar": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "yuan_d": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "da_yuan": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "kiyad": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "borjigin": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "jalair": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "hongirad": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "choros": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "zhadalan": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "zhuerqi": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
@@ -3390,87 +3390,87 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "xianhai": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "mengwu": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "zubu": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "wugu_d": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "chenli_d": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "manghuti": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "salai": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
     "aertai": {
         legionName: "城堡时代蒙古军团",
         legionType: "region",
-        formationMode: "crescent",
+        formationMode: "triangle",
         slots: [
-            { type: "elite_keshik", count: 3 },
-            { type: "steppe_lancer", count: 2 },
+            { type: "elite_keshik", count: 2 },
+            { type: "mangudai", count: 3 },
             { type: "mangudai_elite", count: 4 },
         ],
     },
@@ -3487,11 +3487,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "tuolemi": {
         legionName: "古典时代马其顿军团",
         legionType: "sub",
-        formationMode: "crescent",
+        formationMode: "echelon",
         slots: [
+            { type: "elite_phalangite", count: 4 },
             { type: "phalangite", count: 3 },
-            { type: "hoplite", count: 2 },
-            { type: "companion_cavalry", count: 4 },
+            { type: "elite_companion_cavalry", count: 2 },
         ],
     },
     "siam": {
@@ -3817,8 +3817,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "liao_d": {
@@ -3827,8 +3827,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "dongdan": {
@@ -3837,8 +3837,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "yel": {
@@ -3847,8 +3847,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "kumoxi": {
@@ -3857,8 +3857,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "sumo": {
@@ -3907,8 +3907,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: "echelon",
         slots: [
             { type: "elite_liao_dao", count: 4 },
-            { type: "iron_pagoda", count: 3 },
-            { type: "cav_archer_heavy", count: 2 },
+            { type: "liao_dao", count: 3 },
+            { type: "hei_kuang_heavy", count: 2 },
         ],
     },
     "aztec": {
@@ -3928,7 +3928,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_coustillier", count: 4 },
             { type: "coustillier", count: 3 },
-            { type: "flemish_pikeman_f", count: 2 },
+            { type: "flemish_pikeman", count: 2 },
         ],
     },
     "bogendigongguo": {
@@ -3938,7 +3938,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_coustillier", count: 4 },
             { type: "coustillier", count: 3 },
-            { type: "flemish_pikeman_f", count: 2 },
+            { type: "flemish_pikeman", count: 2 },
         ],
     },
     "bogengnidielan": {
@@ -3948,7 +3948,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         slots: [
             { type: "elite_coustillier", count: 4 },
             { type: "coustillier", count: 3 },
-            { type: "flemish_pikeman_f", count: 2 },
+            { type: "flemish_pikeman", count: 2 },
         ],
     },
     "aquidan": {
