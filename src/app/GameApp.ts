@@ -793,6 +793,14 @@ export class GameApp {
                 if (expanded) this.cameraFollowUI.openList();
                 else this.cameraFollowUI.closeList();
                 this.brawlFeedPanel?.setExpanded(expanded);
+                // [2026-09-14 主人] 右下角信息面板（#game-time-hud：坐标/六边形/地形）并入**同一条**势力规则：
+                //   没势力 → 展开，加入势力 → 缩小（与军团/军情/玩家三面板一致）。
+                //   persist=false：绝不写 localStorage —— 那份 mapwar_time_hud_collapsed 是主人自己的开发期偏好，
+                //   不能被这条自动规则覆掉（与 GameTimeHUD 开播自动收起同一口径）。
+                //   ⚠️ 顺序依赖：GameTimeHUD.init()（GameApp 354 行）先注册 stream-mode-change 监听、
+                //   PlayerHUD 后注册（setupPlayer → 628 行），所以开播那一下本面板先被收起、
+                //   再被这条规则按势力裁决回来 —— 与军团面板「closeList() 先收 → 再发事件」同构。
+                this.gameTimeHUD?.setCollapsed(!expanded, false);
             },
         });
         this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War);
