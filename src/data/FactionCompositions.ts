@@ -221,14 +221,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "dianguo": {
         legionName: "古典时代先秦军团",
     },
-    "zhen": {
-        legionType: "region",
-    },
     "ming_d": {
         legionName: "帝国时代大明军团",
         legionType: "region",
-    },
-    "yizhi": {
     },
     "mazhaer": {
         legionName: "城堡时代马扎尔军团",

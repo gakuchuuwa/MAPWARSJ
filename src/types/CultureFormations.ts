@@ -1015,8 +1015,15 @@ export function isBerberDynasty(factionId?: string | null, generalId?: string | 
  *  既不是自己番号、也不是所属文化的第三套编制，正是铁律的破口。
  *  ⚠️ 别再加回来。要给某个势力特殊编制，就在 FACTION_COMPOSITIONS 里给它一个**有番号名**的条目。 */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
-    const custom = FACTION_COMPOSITIONS[factionId];
-    return custom ? [...custom.slots] : null;
+    // 🔴 [2026-09-14] 势力表已不存编制，只存「挂哪支军团」。编制按军团名去三层表查。
+    return getFactionLegionComposition(factionId)?.slots ?? null;
+}
+
+/** 势力挂的那支军团的编制（三层表里查）；势力没挂军团名则 null */
+export function getFactionLegionComposition(
+    factionId: string,
+): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+    return getLegionCompositionByName(FACTION_COMPOSITIONS[factionId]?.legionName);
 }
 
 export interface LegionCompositionTarget {
@@ -1061,7 +1068,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
               : 'mixed';
 
     // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 鹤翼阵(步骑远) / 鱼鳞阵(2近1远) / 三角阵(骑+弓骑) / 雁行阵(2远1近) → 文化区默认
-    const custom = FACTION_COMPOSITIONS[army.factionId];
+    const custom = getFactionLegionComposition(army.factionId);
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
     } else if (isQin || isHan || isTang || isSong || isPer || isPol || isTeu || isSen) {

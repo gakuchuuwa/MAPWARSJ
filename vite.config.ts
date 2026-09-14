@@ -2458,39 +2458,36 @@ function serverPatchFactionCompositions(prevText: string, compositions: Record<s
 function serverFormatFactionCompositions(compositions: Record<string, any>): string {
     const lines: string[] = [];
     lines.push(`/**`);
-    lines.push(` * 势力自定义军团方阵数据表 (Faction Legion Compositions)`);
+    lines.push(` * 势力军团归属表 (Faction Legion Assignments)`);
     lines.push(` * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。`);
+    lines.push(` *`);
+    lines.push(` * 🔴 [2026-09-14 主人定] 本表**只存指针，不存编制**：一条只回答「这个势力挂哪支军团」。`);
+    lines.push(` *   编制在三层军团表里，一支军团一份：`);
+    lines.push(` *     一级 16 母体 → CultureFormations.ts 的 BASE_16_TIERS_MAP`);
+    lines.push(` *     二级 59 文明 → level2Civ59Legions.ts`);
+    lines.push(` *     三级 145 自建 → level3CustomLegions.ts`);
+    lines.push(` *   不许再往这里写 slots / formationMode。`);
     lines.push(` */`);
     lines.push(``);
-    lines.push(`import type { FormationMode, NavalFormationMode } from '../types/CultureFormations';`);
-    lines.push(`import type { CompositionSlot } from '../types/LegionComposition';`);
+    lines.push(`import type { NavalFormationMode } from '../types/CultureFormations';`);
     lines.push(``);
     lines.push(`export interface CustomFactionLegion {`);
     lines.push(`    legionName?: string;`);
-    lines.push(`    legionType?: 'region' | 'era' | 'solo';`);
-    lines.push(`    formationMode: FormationMode;`);
-    lines.push(`    slots: CompositionSlot[];`);
+    lines.push(`    legionType?: 'region' | 'sub';`);
     lines.push(`    navalFormation?: NavalFormationMode;`);
     lines.push(`}`);
     lines.push(``);
     lines.push(`export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {`);
+    // 🔴 [2026-09-14 主人定「谁让你各存了，给我删了」] 势力表**只写指针**。
+    //    编制一律写进三层军团表；这里再写一次就是把副本又造回来。
     for (const [fid, comp] of Object.entries(compositions)) {
-        if (!comp || !Array.isArray(comp.slots)) continue;
+        if (!comp || !comp.legionName) continue;
         lines.push(`    ${JSON.stringify(fid)}: {`);
-        if (comp.legionName) lines.push(`        legionName: ${JSON.stringify(comp.legionName)},`);
+        lines.push(`        legionName: ${JSON.stringify(comp.legionName)},`);
         if (comp.legionType) lines.push(`        legionType: ${JSON.stringify(comp.legionType)},`);
-        lines.push(`        formationMode: ${JSON.stringify(comp.formationMode || 'square')},`);
         if (comp.navalFormation && comp.navalFormation !== 'auto') {
             lines.push(`        navalFormation: ${JSON.stringify(comp.navalFormation)},`);
         }
-        lines.push(`        slots: [`);
-        for (const slot of comp.slots) {
-            const scaleStr = slot.scale != null && !Number.isNaN(Number(slot.scale)) && Number(slot.scale) !== 1.0
-                ? `, scale: ${Number(slot.scale)}`
-                : '';
-            lines.push(`            { type: ${JSON.stringify(slot.type)}, count: ${slot.count}${scaleStr} },`);
-        }
-        lines.push(`        ],`);
         lines.push(`    },`);
     }
     lines.push(`};`);
