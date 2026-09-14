@@ -188,11 +188,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代波斯军团', civ: '波斯', age: 'feudal', deStyle: 'PERSIAN', region: 'SASANIAN' as RegionType,
         castleId: 'PERS_CASTLE_AGE3', castleName: '波斯 萨珊泰西封砖石穹顶堡',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'elite_war_elephant', count: 4 },
-            { type: 'war_elephant', count: 3 },
-            { type: 'savar', count: 2 },
+            { type: 'elite_war_elephant', count: 2 },
+            { type: 'sparabara', count: 3 },
+            { type: 'savar', count: 4 },
         ],
     },
     {
@@ -527,7 +527,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'heavy_pikeman', count: 2 },
-            { type: 'hussite_wagon', count: 3 },
+            { type: 'arbalest', count: 3 },
             { type: 'elite_hussite_wagon', count: 4 },
         ],
     },

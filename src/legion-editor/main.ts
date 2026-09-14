@@ -22,6 +22,7 @@ import {
     NavalFormationMode,
     NAVAL_FORMATION_LABEL,
     getRegionLegionComposition,
+    getLegionCompositionByName,
     applyCultureFormationPatch,
     patchLegionComposition,
     CULTURE_LEGION_NAMES,
@@ -948,12 +949,32 @@ interface FactionLegionRow {
     row3Type: string;
 }
 
-let localCustomCompositions: Record<string, CustomFactionLegion> = { ...FACTION_COMPOSITIONS };
+/** 编辑器内存态：势力表本身**只存指针**（2026-09-14 副本已删），
+ *  编辑界面要显示/改三排兵种，所以在内存里把它挂的那支军团的编制取出来带上。
+ *  这份编制**不会**再被写回势力表——保存只写军团自己那条记录。 */
+type EditableLegion = CustomFactionLegion & { formationMode: FormationMode; slots: CompositionSlot[] };
+
+function toEditableLegion(c: CustomFactionLegion): EditableLegion {
+    const comp = getLegionCompositionByName(c.legionName);
+    return {
+        ...c,
+        formationMode: comp?.formationMode ?? 'square',
+        slots: (comp?.slots ?? []).map(s => ({ ...s })),
+    };
+}
+
+function buildLocalCompositions(): Record<string, EditableLegion> {
+    const out: Record<string, EditableLegion> = {};
+    for (const [fid, c] of Object.entries(FACTION_COMPOSITIONS)) out[fid] = toEditableLegion(c);
+    return out;
+}
+
+let localCustomCompositions: Record<string, EditableLegion> = buildLocalCompositions();
 let allRows: FactionLegionRow[] = [];
 let filteredRows: FactionLegionRow[] = [];
 let selectedFactionId: string | null = null;
-let currentEditingLegion: CustomFactionLegion | null = null;
-let clipboardLegion: CustomFactionLegion | null = null;
+let currentEditingLegion: EditableLegion | null = null;
+let clipboardLegion: EditableLegion | null = null;
 // 3-layer selection state is declared below
 
 let searchQuery = '';
@@ -1732,7 +1753,7 @@ function selectFaction(factionId: string): void {
 }
 
 /** 取某文化区的默认编成（与 buildRows 的兜底同源，勿另起一套） */
-function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
+function getRegionDefaultLegion(region: RegionType): EditableLegion {
     const comp = getRegionLegionComposition(region);
     const formationMode: FormationMode = comp?.formationMode ?? 'square';
     const slots: CompositionSlot[] = comp?.slots ?? getDefaultSlotsForMode(formationMode);
@@ -1740,7 +1761,7 @@ function getRegionDefaultLegion(region: RegionType): CustomFactionLegion {
 }
 
 /** 取一级16母体文化军团专属默认编成（与二层时代军团彻底物理隔离） */
-function getBase16RegionDefaultLegion(region: RegionType): CustomFactionLegion {
+function getBase16RegionDefaultLegion(region: RegionType): EditableLegion {
     const base16 = getBase16FormationConfig(region);
     if (base16) {
         return { formationMode: base16.formationMode, slots: base16.slots.map(s => ({ ...s })) };
@@ -2083,7 +2104,7 @@ function legionSig(v: { formationMode: string; slots: { type: string; count: num
 }
 
 /** 军团卡是否处于「当前生效」态：显式选中 > 与当前编辑配置同编成同名 */
-function isOptionActive(opt: LayerLegionOption, current: CustomFactionLegion | null): boolean {
+function isOptionActive(opt: LayerLegionOption, current: EditableLegion | null): boolean {
     if (selectedLayerKey) return selectedLayerKey === opt.key;
     if (!current) return false;
     if ((current.legionName ?? '').trim() !== opt.legionName) return false;
@@ -3701,7 +3722,7 @@ function openLegionViolationsModal(violations: string[]): void {
     });
 }
 
-function updateRowUnit(legion: CustomFactionLegion, rowIdx: number, unitId: string): void {
+function updateRowUnit(legion: EditableLegion, rowIdx: number, unitId: string): void {
     const mode = legion.formationMode;
     const def = DE_UNITS_MAP.get(unitId);
     const defScale = def?.defaultScale ?? 1.0;
@@ -3718,7 +3739,7 @@ function updateRowUnit(legion: CustomFactionLegion, rowIdx: number, unitId: stri
     legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
 }
 
-function updateRowScale(legion: CustomFactionLegion, rowIdx: number, scale: number): void {
+function updateRowScale(legion: EditableLegion, rowIdx: number, scale: number): void {
     if (legion.slots[rowIdx]) legion.slots[rowIdx].scale = scale;
 }
 
@@ -5158,7 +5179,7 @@ function startCanvasPreview(): void {
  *      而保存后又立刻 buildRows/renderTable 用这份旧内存重绘 —— 于是「选了阵型、点保存、
  *      阵型自己弹回去」。文件其实是对的，是界面拿旧数据把自己覆盖了。
  */
-async function saveCultureComposition(culture: RegionType, legion: CustomFactionLegion): Promise<void> {
+async function saveCultureComposition(culture: RegionType, legion: EditableLegion): Promise<void> {
     try {
         const legionName = legion.legionName?.trim() || getCultureLegionName(culture);
         const slots = legion.slots.map(s => ({ ...s }));
@@ -5295,7 +5316,7 @@ els.ageFilter.addEventListener('change', () => {
 });
 
 els.btnReload.addEventListener('click', () => {
-    localCustomCompositions = { ...FACTION_COMPOSITIONS };
+    localCustomCompositions = buildLocalCompositions();
     buildRows();
     applyFilter();
     renderTable();

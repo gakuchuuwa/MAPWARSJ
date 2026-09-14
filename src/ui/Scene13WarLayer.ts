@@ -16,7 +16,7 @@
  * 渲染：全屏透明 canvas 叠在地图上，只画精灵/尸体；出兵口不画。
  */
 
-import { getCultureTier, getFactionCompositionSlots, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
 import {
     Scene13GroundPainter,
     TILE_W,
@@ -4394,7 +4394,8 @@ export class Scene13WarLayer {
     private formationModeOf(region: string, factionId?: string | null, generalId?: string | null): FormationMode {
         try {
             if (factionId) {
-                const custom = FACTION_COMPOSITIONS[factionId];
+                // 🔴 [2026-09-14] 势力表只剩指针，阵型跟着它挂的那支军团走
+                const custom = getFactionLegionComposition(factionId);
                 if (custom?.formationMode) return custom.formationMode;
                 const factionSlots = getFactionCompositionSlots(factionId, generalId);
                 if (factionSlots?.length) return inferFormationModeFromSlots(factionSlots);
