@@ -1,14 +1,17 @@
-
 import L from 'leaflet';
 import { smoothRiverLine } from './RiverGeometry';
 import { gameLog } from '../utils/GameLogger';
-import { STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
+import { STRATEGIC_WATER_PALETTE, STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
+
+// 柔和河岸微阴影：从水体基色派生微暗半透明色，模拟细河嵌进地形的微河床边缘
+const RIVER_BED_SHADOW_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(v => Math.round(v * 0.58)).join(',')})`;
 
 /**
  * VectorRiverLayer
  * 
  * 使用 GeoJSON 矢量数据渲染真实的河流层。
  * 数据源: Natural Earth Rivers + Lake Centerlines (1:10m)
+
  * 
  * [ENHANCEMENT] 双层渲染 (Casing)
  * 为了模拟真实地图的"黑边"效果，我们使用两层 GeoJSON：
@@ -265,7 +268,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         return VectorRiverLayer.getScaleMultiplier(zoom) === 1.0 ? VectorRiverLayer.ZOOM9_SMOOTH : 1.0;
     }
 
-    // 同栅格水面一样用浅岸过渡，不叠加独立的黑色轮廓。
+    // 河床微阴影描边：为矢量河流底层提供微弱的凹陷半透明接触阴影，使细河自然嵌进地表沙土中
     private static getBorderStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -277,9 +280,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            color: STRATEGIC_RIVER_BANK_COLOR,
-            weight: waterWeight + 1.2,
-            opacity: 0.22,
+            color: RIVER_BED_SHADOW_COLOR,
+            weight: waterWeight + 1.4,
+            opacity: 0.25,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -287,7 +290,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         };
     }
 
-    // 水流主体：延续海湖色系，降低饱和度；保持不透明以压住底图杂色。
+    // 水流主体：延续海湖基色，赋予轻度水体透光通透度（0.92），融入底图水面质感。
     private static getWaterStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
@@ -298,9 +301,9 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: STRATEGIC_RIVER_BANK_COLOR,
+            color: STRATEGIC_WATER_COLOR,
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
-            opacity: 1.0,
+            opacity: 0.92,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -308,13 +311,14 @@ export class VectorRiverLayer extends L.FeatureGroup {
         };
     }
 
+    // 河心微光/明暗：为主要宽河增加浅滩反光过渡，与栅格水面柔和呼应。
     private static getToneStyle(feature: any, zoom: number): L.PolylineOptions {
         const weight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 4.5,
-            color: STRATEGIC_WATER_COLOR,
-            weight: weight * 0.68,
-            opacity: 1.0,
+            stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 3.6,
+            color: STRATEGIC_RIVER_BANK_COLOR,
+            weight: Math.max(1.0, weight * 0.45),
+            opacity: 0.35,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
@@ -328,6 +332,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         else if (zoom <= 7) return 0.5;
         return 1.0;
     }
+
 
     // GCJ-02 Offset Logic (Mars Coordinates)
     private static applyGCJ02Offset(geojson: any): any {

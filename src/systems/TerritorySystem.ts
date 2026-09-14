@@ -170,8 +170,8 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;" />`);
     }
 
-    // 周围散布：若为城堡模式取 4 栋（留出四门纵深），普通模式取 8 栋
-    const surroundCount = centerCastle ? 4 : 8;
+    // 周围散布：一律取 8 栋（45° 扇区，9 建筑满配）
+    const surroundCount = 8;
     const surround = items.slice(1, 1 + surroundCount);
     surround.forEach((y, i) => {
         const baseAngle = rotation + i * (360 / surround.length);
@@ -491,7 +491,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
-    const centerW = baseSize * (centerCastle ? 0.68 : (DE_BUILDING_SCALES[centerB] || 0.4));
+    const centerW = baseSize * (centerCastle ? 0.55 : (DE_BUILDING_SCALES[centerB] || 0.4));
     const centerGroundW = centerW * (centerCastle ? 1.6 : 2.3);
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
@@ -504,8 +504,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         `<img src="${centerImgSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
     );
 
-    // 周围建筑散布：中心城堡时取 4 栋（90° 扇区四角环卫，避免拥挤；主人 2026-09-10 定）；普通时取 8 栋（45° 扇区）
-    const surroundCount = centerCastle ? 4 : 8;
+    // 周围建筑散布：一律取 8 栋（45° 扇区，9 建筑满配）
+    const surroundCount = 8;
     const surround = ring.slice(1, 1 + surroundCount);
     surround.forEach((b, i) => {
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
@@ -753,30 +753,14 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // [2026-09-08 主人定] 中城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
+    // [2026-09-14 主人定方案 A] 中城全城严格 3*3 网格 9 建筑：代表名城时专属城堡居中统领八方，周围 8 栋环卫
     const step = baseSize * 0.30;
     const slots: Array<{ x: number; y: number; isCenter: boolean }> = [];
-    if (centerCastle) {
-        slots.push({ x: 0, y: 0, isCenter: true });
-        const cornerStep = step * 1.05;
-        const corners = [
-            { r: -1, c: -1 },
-            { r: -1, c: 1 },
-            { r: 1, c: -1 },
-            { r: 1, c: 1 },
-        ];
-        corners.forEach(({ r, c }) => {
-            const x = (c - r) * cornerStep;
-            const y = (c + r) * cornerStep * 0.58;
-            slots.push({ x, y, isCenter: false });
-        });
-    } else {
-        for (let r = -1; r <= 1; r++) {
-            for (let c = -1; c <= 1; c++) {
-                const x = (c - r) * step;
-                const y = (c + r) * step * 0.58;
-                slots.push({ x, y, isCenter: (r === 0 && c === 0) });
-            }
+    for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+            const x = (c - r) * step;
+            const y = (c + r) * step * 0.58;
+            slots.push({ x, y, isCenter: (r === 0 && c === 0) });
         }
     }
     slots.sort((a, b) => a.y - b.y);
@@ -785,11 +769,11 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
-            const cW = baseSize * 0.56;
+            const cW = baseSize * 0.48;
+            const cGroundW = cW * 1.5;
+            const cGroundH = cGroundW * 0.58;
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
-            const cGroundW = cW * 1.6;
-            const cGroundH = cGroundW * 0.58;
             parts.push(
                 `<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:${cGroundW.toFixed(1)}px;height:${cGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
             );
@@ -894,30 +878,14 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%);z-index:10;pointer-events:none;">${groundParts.join('')}</div>`
     );
 
-    // [2026-09-08 主人定] 大城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
+    // [2026-09-14 主人定方案 A] 大城全城严格 3*3 网格 9 建筑：代表名城时专属城堡居中统领八方，周围 8 栋环卫
     const step = baseSize * 0.30;
     const slots: Array<{ x: number; y: number; isCenter: boolean }> = [];
-    if (centerCastle) {
-        slots.push({ x: 0, y: 0, isCenter: true });
-        const cornerStep = step * 1.05;
-        const corners = [
-            { r: -1, c: -1 },
-            { r: -1, c: 1 },
-            { r: 1, c: -1 },
-            { r: 1, c: 1 },
-        ];
-        corners.forEach(({ r, c }) => {
-            const x = (c - r) * cornerStep;
-            const y = (c + r) * cornerStep * 0.58;
-            slots.push({ x, y, isCenter: false });
-        });
-    } else {
-        for (let r = -1; r <= 1; r++) {
-            for (let c = -1; c <= 1; c++) {
-                const x = (c - r) * step;
-                const y = (c + r) * step * 0.58;
-                slots.push({ x, y, isCenter: (r === 0 && c === 0) });
-            }
+    for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+            const x = (c - r) * step;
+            const y = (c + r) * step * 0.58;
+            slots.push({ x, y, isCenter: (r === 0 && c === 0) });
         }
     }
     slots.sort((a, b) => a.y - b.y);
@@ -926,11 +894,11 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
-            const cW = baseSize * 0.56;
+            const cW = baseSize * 0.48;
+            const cGroundW = cW * 1.5;
+            const cGroundH = cGroundW * 0.58;
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
-            const cGroundW = cW * 1.6;
-            const cGroundH = cGroundW * 0.58;
             parts.push(
                 `<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cGroundW.toFixed(1)}px;height:${cGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
             );
@@ -1977,8 +1945,8 @@ export class TerritorySystem {
         const useStoneWall = shouldUseStoneWall(cityRegion);
         const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
         const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
-        const isRep59City = !!REP_59_CITY_CASTLES[city.id];
-        const centerCastle = isJapan || isTibet || isRep59City;
+        const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
+        const centerCastle = isJapan || isTibet || isRep52City;
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);

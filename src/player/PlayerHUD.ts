@@ -14,6 +14,9 @@ import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
+/** 🔴 [2026-09-14 主人定] 没势力自动展开后停留多久 → 到时四个面板一起收起 */
+const NO_FACTION_EXPAND_MS = 15000;
+
 export class PlayerHUD {
     private panel: HTMLDivElement | null = null;
     private body: HTMLDivElement | null = null;
@@ -23,6 +26,8 @@ export class PlayerHUD {
     private minimized = true; // 默认划入上方收起
     private lastPanelFactionId: string | null | undefined = undefined;
     private panelsWereInScene13 = false;
+    /** 没势力展开后的 15 秒收起计时（每次展开重新计时；有势力则取消） */
+    private autoCollapseTimer: number | null = null;
     private panelSizeObserver: ResizeObserver | null = null;
     private overlay: HTMLDivElement | null = null;
     private toast: HTMLDivElement | null = null;
@@ -176,18 +181,38 @@ export class PlayerHUD {
         }
     }
 
+    /**
+     * 🔴 [2026-09-14 主人定] 没势力的展开只是**临时**的：15 秒后四个面板一起收起。
+     *   展开时重新计时；有势力则取消计时并立即收起（由调用处 setMinimized/setCompanionPanelsExpanded 完成）。
+     *   四个面板一次收齐：玩家面板走 setMinimized，军团/军情/右下角信息面板走 setCompanionPanelsExpanded。
+     */
+    private scheduleAutoCollapse(expanded: boolean): void {
+        if (this.autoCollapseTimer !== null) {
+            window.clearTimeout(this.autoCollapseTimer);
+            this.autoCollapseTimer = null;
+        }
+        if (!expanded) return;
+        this.autoCollapseTimer = window.setTimeout(() => {
+            this.autoCollapseTimer = null;
+            this.setMinimized(true);
+            this.deps.setCompanionPanelsExpanded(false);
+        }, NO_FACTION_EXPAND_MS);
+    }
+
     public refresh(): void {
         if (!this.panel || !this.body) return;
         const inScene13 = this.deps.isScene13Active();
         if (inScene13) {
             this.panelsWereInScene13 = true;
         } else if (this.lastPanelFactionId !== this.hero.factionId || this.panelsWereInScene13) {
-            // 🔴 [主人定] 没有势力 → 军团/军情/玩家三面板自动展开；加入势力 → 自动缩小。
+            // 🔴 [主人定] 没有势力 → 军团/军情/玩家/右下角信息四面板自动展开，**15 秒后自动收起**；
+            //    加入势力 → 立即缩小（不排队）。
             //    lastPanelFactionId 初值 undefined ≠ null，所以**开局第一次 refresh 就会应用一次**。
             //    ⚠️ 这是这条规则的**唯一实现**，别在 PlayerHero 或别处再写一份（2026-09-10 我重复写过一次，已删）。
             const expanded = !this.hero.factionId;
             this.setMinimized(!expanded);
             this.deps.setCompanionPanelsExpanded(expanded);
+            this.scheduleAutoCollapse(expanded);
             this.lastPanelFactionId = this.hero.factionId;
             this.panelsWereInScene13 = false;
         }

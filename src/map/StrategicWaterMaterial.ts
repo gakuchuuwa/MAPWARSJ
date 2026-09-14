@@ -3,11 +3,11 @@ const SIZE = 128;
 /** 海、湖与矢量河流共用的水色；近岸增量只表达视觉过渡。 */
 export const STRATEGIC_WATER_PALETTE = {
     base: [64, 117, 141] as const,
-    shoreLift: [17, 24.5, 19.5] as const,
+    shoreLift: [24, 35, 27] as const,
 };
 export const STRATEGIC_WATER_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.join(',')})`;
 export const STRATEGIC_RIVER_BANK_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(
-    (value, channel) => Math.round(value + STRATEGIC_WATER_PALETTE.shoreLift[channel] * 0.65),
+    (value, channel) => Math.round(value + STRATEGIC_WATER_PALETTE.shoreLift[channel] * 0.35),
 ).join(',')})`;
 let texture: Promise<Float32Array | null> | undefined;
 
@@ -102,14 +102,13 @@ export function renderStrategicWater(
         // 拉长 DE 水纹形成有方向的细浪，双线性采样避免斜向像素台阶。
         const warp = Math.sin(wx / 143 + wy / 219) * 4;
         const swell = waterDetailAt(detail, (wx + wy * 0.25) * 0.22, (wy - wx * 0.12) * 0.8 + warp);
-        const grain = waterDetailAt(detail, wx, wy) * 0.15 + swell * 0.45;
-        const tone = waterToneAt(wx, wy) * 0.75;
-        // 岸边亮度与过渡宽度取原效果和减弱版的中间值，突出海岸层次。
-        const reach = 7 + Math.sin(wx / 39 + wy / 57) * 2;
+        const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
+        const tone = waterToneAt(wx, wy);
+        const reach = 10 + Math.sin(wx / 39 + wy / 57) * 3;
         const shore = water[i] ? Math.pow(Math.max(0, 1 - distance[i] / reach), 1.4) : 0;
         // 浪花仅少量点缀岸边，不连续描白边。
         const glint = water[i] && distance[i] < 1.5
-            ? Math.max(0, Math.sin(wx / 7 + Math.sin(wy / 11)) - 0.65) * 24 : 0;
+            ? Math.max(0, Math.sin(wx / 7 + Math.sin(wy / 11)) - 0.65) * 38 : 0;
         out[o] = base[0] + tone * 0.8 + grain * 0.70 + shore * shoreLift[0] + glint;
         out[o+1] = base[1] + tone * 1.3 + grain + shore * shoreLift[1] + glint;
         out[o+2] = base[2] + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;

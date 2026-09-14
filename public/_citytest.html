@@ -1798,29 +1798,11 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     // 大城中的建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30 * curRadiusMult;
     const slots = [];
-    if (isCenterCastle) {
-      slots.push({ x: 0, y: 0, isCenter: true });
-      const cornerStep = step * 1.05;
-      const corners = [
-        { r: -1, c: -1 },
-        { r: -1, c: 1 },
-        { r: 1, c: -1 },
-        { r: 1, c: 1 }
-      ];
-      corners.forEach(c => {
-        slots.push({
-          x: (c.c - c.r) * cornerStep,
-          y: (c.c + c.r) * cornerStep * 0.58,
-          isCenter: false
-        });
-      });
-    } else {
-      for (let r = -1; r <= 1; r++) {
-        for (let c = -1; c <= 1; c++) {
-          const x = (c - r) * step;
-          const y = (c + r) * step * 0.58;
-          slots.push({ x, y, isCenter: (r === 0 && c === 0) });
-        }
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        const x = (c - r) * step;
+        const y = (c + r) * step * 0.58;
+        slots.push({ x, y, isCenter: (r === 0 && c === 0) });
       }
     }
     slots.sort((a, b) => a.y - b.y);
@@ -1829,7 +1811,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     // 位置随机（洗牌后的 pool 分配到 9 个槽位）+ 随机镜像
     slots.forEach((slot, i) => {
       if (isCenterCastle && slot.isCenter) {
-        const cW = baseSize * 0.56 * tierScale * curBldgScale;
+        const cW = baseSize * 0.48 * tierScale * curBldgScale;
         const cgW = cW * 1.6, cgH = cgW * 0.58;
         const zIndex = Math.round(500 + slot.y);
         const cFlip = rnd() < 0.5;
@@ -1881,29 +1863,11 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     // 中城建筑排列：中心城堡时 4 建筑四角环卫（2026-09-10 主人定），普通时 3*3 网格 9 建筑
     const step = baseSize * 0.30 * curRadiusMult;
     const slots = [];
-    if (isCenterCastle) {
-      slots.push({ x: 0, y: 0, isCenter: true });
-      const cornerStep = step * 1.05;
-      const corners = [
-        { r: -1, c: -1 },
-        { r: -1, c: 1 },
-        { r: 1, c: -1 },
-        { r: 1, c: 1 }
-      ];
-      corners.forEach(c => {
-        slots.push({
-          x: (c.c - c.r) * cornerStep,
-          y: (c.c + c.r) * cornerStep * 0.58,
-          isCenter: false
-        });
-      });
-    } else {
-      for (let r = -1; r <= 1; r++) {
-        for (let c = -1; c <= 1; c++) {
-          const x = (c - r) * step;
-          const y = (c + r) * step * 0.58;
-          slots.push({ x, y, isCenter: (r === 0 && c === 0) });
-        }
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        const x = (c - r) * step;
+        const y = (c + r) * step * 0.58;
+        slots.push({ x, y, isCenter: (r === 0 && c === 0) });
       }
     }
     slots.sort((a, b) => a.y - b.y);
@@ -1912,7 +1876,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
     // 9 建筑统一大小 0.32、位置完全随机打乱、独立随机镜像
     slots.forEach((slot, i) => {
       if (isCenterCastle && slot.isCenter) {
-        const cW = baseSize * 0.56 * tierScale * curBldgScale;
+        const cW = baseSize * 0.48 * tierScale * curBldgScale;
         const cgW = cW * 1.6, cgH = cgW * 0.58;
         const zIndex = Math.round(500 + slot.y);
         const cFlip = rnd() < 0.5;
