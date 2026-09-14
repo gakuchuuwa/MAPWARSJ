@@ -1397,6 +1397,86 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['AFRICA_IMPERIAL'],
     },
+    {
+        name: '古典时代魏晋军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'elite_tiger_cavalry', count: 2 },
+        ],
+        regions: [],
+    },
+    {
+        name: '城堡时代岳家军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'liao_dao', count: 4 },
+            { type: 'elite_chukonu', count: 3 },
+            { type: 'elite_keshik', count: 2 },
+        ],
+        regions: [],
+    },
+    {
+        name: '城堡时代孟加拉军团',
+        formationMode: 'triangle',
+        slots: [
+            { type: 'ghulam', count: 2 },
+            { type: 'chakram_thrower', count: 3 },
+            { type: 'elite_ratha_ranged', count: 4 },
+        ],
+        regions: [],
+    },
+    {
+        name: '古典时代摩揭陀军团',
+        formationMode: 'triangle',
+        slots: [
+            { type: 'sickle_warrior', count: 2 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'ratha_ranged', count: 4 },
+        ],
+        regions: [],
+    },
+    {
+        name: '古典时代加拉太军团',
+        formationMode: 'triangle',
+        slots: [
+            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'war_chariot', count: 4 },
+        ],
+        regions: [],
+    },
+    {
+        name: '古典时代波斯联合军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'mercenary_hoplite', count: 3 },
+            { type: 'lancer', count: 4 },
+            { type: 'antiquity_skirmisher', count: 2 },
+        ],
+        regions: [],
+    },
+    {
+        name: '古典时代迦南军团',
+        formationMode: 'crescent',
+        slots: [
+            { type: 'mercenary_hoplite', count: 3 },
+            { type: 'sparabara', count: 2 },
+            { type: 'antiquity_skirmisher', count: 4 },
+        ],
+        regions: [],
+    },
+    {
+        name: '古典时代腓利斯丁军团',
+        formationMode: 'crescent',
+        slots: [
+            { type: 'sparabara', count: 3 },
+            { type: 'lancer', count: 2 },
+            { type: 'antiquity_skirmisher', count: 4 },
+        ],
+        regions: [],
+    },
 ];
 
 export const LEVEL_3_LEGION_MAP: ReadonlyMap<string, Level3LegionDef> =

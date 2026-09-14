@@ -10,7 +10,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
-import { resolveCastleAsset } from '../config/deCastleAssets';
+import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAssets';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 // [PERF] Import Territory Worker
@@ -147,7 +147,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
     const sizeOf = (k: string, center: boolean) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
 
     if (centerCastle) {
-        const castleDir = resolveCastleAsset('YURT', factionId, region);
+        const castleDir = resolveCastleAsset('YURT', factionId, region, cityId);
         const cW = baseSize * 0.56;
         const cgW = cW * 1.6;
         const cgH = cgW * 0.58;
@@ -495,7 +495,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     const centerGroundW = centerW * (centerCastle ? 1.6 : 2.3);
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
-    const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region) : null;
+    const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId) : null;
     const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png`;
     parts.push(
         `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
@@ -655,7 +655,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const parts: string[] = [];
 
     // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认，ANDE 自动对号入座 INCA_CASTLE_AGE3）
-    const castleDir = resolveCastleAsset(style, factionId, region);
+    const castleDir = resolveCastleAsset(style, factionId, region, cityId);
     // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
     const centerW = baseSize * 0.56;
     const centerGroundW = centerW * 1.55;
@@ -784,7 +784,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     let otherIdx = 0;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region);
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             const cW = baseSize * 0.56;
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
@@ -925,7 +925,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     let otherIdx = 0;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region);
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             const cW = baseSize * 0.56;
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
@@ -1977,7 +1977,8 @@ export class TerritorySystem {
         const useStoneWall = shouldUseStoneWall(cityRegion);
         const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
         const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
-        const centerCastle = isJapan || isTibet;
+        const isRep59City = !!REP_59_CITY_CASTLES[city.id];
+        const centerCastle = isJapan || isTibet || isRep59City;
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);

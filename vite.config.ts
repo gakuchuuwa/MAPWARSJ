@@ -1016,6 +1016,44 @@ export default defineConfig({
                     });
                 });
 
+
+                // ========================================================
+                // 🔴 [2026-09-14 主人定「这个功能只有一个，就是保存编辑好的军团」]
+                //   /api/save-legion-composition
+                //   body: { legionName, formationMode, slots }
+                //   干且只干一件事：把这支军团的编制写进**它自己那条记录**
+                //   （一级 16 母体 / 二级 59 文明 / 三级自建，按名自动判层；
+                //    名字是新的就在三级表里新建一条）。
+                //   不碰文化区指针、不碰势力表、没有「全体同步」——
+                //   编制只有一份，用它的势力自然跟着变，没有第二份要同步。
+                // ========================================================
+                server.middlewares.use('/api/save-legion-composition', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const legionName: string = String(data?.legionName ?? '').trim();
+                            if (!legionName) throw new Error('缺少军团名');
+                            if (!Array.isArray(data?.slots) || data.slots.length === 0) throw new Error('缺少三排兵种');
+                            markLegionSaveWrite();
+                            const file = serverSaveOrCreateLegion(legionName, data.slots, data.formationMode);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, file: path.basename(file) }));
+                            console.log('[SaveLegion] ✅ 【' + legionName + '】→ ' + path.basename(file));
+                        } catch (err: any) {
+                            console.error('❌ [SaveLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
                 // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
@@ -1040,9 +1078,16 @@ export default defineConfig({
                             //    同名军团天然只有一份编制，不必再逐个 alsoCultures 覆盖编制。
                             const legionName: string = data.legionName;
                             if (!legionName) throw new Error('缺少 legionName，无法定位要保存的军团');
-                            const writtenFile = serverSaveLegionComposition(legionName, data.slots, data.formationMode);
                             const filePath = path.resolve(__dirname, 'src/types/CultureFormations.ts');
-                            let text = fs.readFileSync(filePath, 'utf-8');
+                            // 🔴 [2026-09-14] CultureFormations.ts **只读一次、只写一次**。
+                            //    原来一级母体军团会先写一次编制、紧接着再写一次指针，
+                            //    两次写之间 Vite 正回读这个文件做 HMR，Windows 直接抛
+                            //    「UNKNOWN: unknown error, open ...」——主人报的就是这个。
+                            const saved = serverSaveLegionComposition(
+                                legionName, data.slots, data.formationMode, safeReadFileSync(filePath),
+                            );
+                            const writtenFile = saved.file;
+                            let text = saved.cultureFormationsText ?? safeReadFileSync(filePath);
                             text = serverReplaceCultureLegionName(text, data.culture, legionName);
                             // [2026-09-07 主人定]「重名就覆盖」：同名的其他文化区一并刷成同一份编制。
                             //   一个军团名只能有一种编制，否则每存一次就多留一份「同名不同编」，
@@ -1050,7 +1095,7 @@ export default defineConfig({
                             for (const other of (data.alsoCultures || []) as string[]) {
                                 text = serverReplaceCultureLegionName(text, other, legionName);
                             }
-                            fs.writeFileSync(filePath, text, 'utf-8');
+                            safeWriteFileSync(filePath, text);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
                             console.log('[SaveCulture] ✅ 【' + legionName + '】编制已写入 ' + path.basename(writtenFile));
@@ -2462,6 +2507,56 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
  * 原来是往 `CULTURE_TIERS_MAP` / `CULTURE_FORMATION_MODE` 里按文化区写，
  * 那两张表（连同 183 个 `XXX_TIERS`）已整体删除，再往那儿写就是写进空气。
  */
+
+/**
+ * 🔴 [2026-09-14 主人报障「点了保存还是出错：UNKNOWN: unknown error, open ...CultureFormations.ts」]
+ *
+ * Windows 上这不是代码逻辑错，是**文件正被别的进程占着**：保存写盘 → Vite 的文件监听
+ * 立刻回读这个文件做 HMR（外加 Windows Defender 实时扫描、编辑器/备份进程），
+ * 与我们紧接着的第二次写撞在同一瞬间，`open()` 就报 `UNKNOWN` / `EBUSY` / `EPERM`。
+ * 文件越大、被 import 的地方越多，撞上的概率越高 —— 所以只有这个文件天天犯。
+ *
+ * 两手都要：
+ *   ① **写临时文件再 rename**：rename 在同盘是原子操作，绝不会留下写了一半的源码。
+ *   ② **撞上就重试**：退让 40/80/120…ms，最多 8 次，把瞬时占用扛过去。
+ */
+function safeWriteFileSync(filePath: string, text: string): void {
+    const tmp = filePath + '.tmp' + process.pid;
+    const transient = new Set(['UNKNOWN', 'EBUSY', 'EPERM', 'EACCES', 'EEXIST']);
+    let lastErr: any = null;
+    for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+            fs.writeFileSync(tmp, text, 'utf-8');
+            fs.renameSync(tmp, filePath);
+            return;
+        } catch (err: any) {
+            lastErr = err;
+            try { if (fs.existsSync(tmp)) fs.unlinkSync(tmp); } catch { /* ignore */ }
+            if (!transient.has(err?.code)) break;
+            const until = Date.now() + 40 * (attempt + 1);
+            while (Date.now() < until) { /* 同步退让：中间件里不能 await */ }
+        }
+    }
+    throw new Error('写入 ' + path.basename(filePath) + ' 失败（文件被占用，已重试 8 次）：' + (lastErr?.message ?? lastErr));
+}
+
+/** 同理，读也可能撞上占用 */
+function safeReadFileSync(filePath: string): string {
+    const transient = new Set(['UNKNOWN', 'EBUSY', 'EPERM', 'EACCES']);
+    let lastErr: any = null;
+    for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+            return fs.readFileSync(filePath, 'utf-8');
+        } catch (err: any) {
+            lastErr = err;
+            if (!transient.has(err?.code)) break;
+            const until = Date.now() + 40 * (attempt + 1);
+            while (Date.now() < until) { /* 同步退让 */ }
+        }
+    }
+    throw new Error('读取 ' + path.basename(filePath) + ' 失败（文件被占用，已重试 8 次）：' + (lastErr?.message ?? lastErr));
+}
+
 const BASE_16_LEGION_TO_REGION: Record<string, string> = {
     东亚军团: 'CENTRAL', 中亚军团: 'STEPPE', 印度军团: 'INDIA', 西欧军团: 'GERMANIC',
     普鲁军团: 'PURU', 中东军团: 'ORIE', 地中海军团: 'LATIN', 东北欧军团: 'SLAVIC',
@@ -2502,11 +2597,46 @@ function serverReplaceLegionEntry(text: string, legionName: string, slots: any[]
 }
 
 /** 保存一支军团的编制（自动判层），返回被改动的文件路径 */
-function serverSaveLegionComposition(legionName: string, slots: any[], mode?: string): string {
+
+/** 保存一支军团的编制；军团名不在三层表里就在**三级表**新建一条。返回被改动的文件路径 */
+function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: string): string {
+    try {
+        return serverSaveLegionComposition(legionName, slots, mode).file;
+    } catch (err: any) {
+        if (!String(err?.message ?? '').includes('不在一级16')) throw err;
+    }
+    const p = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
+    const text = safeReadFileSync(p);
+    const tail = '];';
+    const at = text.lastIndexOf(tail, text.indexOf('export const LEVEL_3_LEGION_MAP'));
+    if (at < 0) throw new Error('level3CustomLegions.ts 结构异常，无法新建军团');
+    const entry = [
+        '    {',
+        "        name: '" + legionName + "',",
+        "        formationMode: '" + (mode || 'square') + "',",
+        '        slots: [',
+        serverSlotLines(slots, '            '),
+        '        ],',
+        '        regions: [],',
+        '    },',
+    ].join('\n') + '\n';
+    safeWriteFileSync(p, text.slice(0, at) + entry + text.slice(at));
+    return p;
+}
+
+/** 保存一支军团的编制（自动判层）。一级母体落在 CultureFormations.ts 上，
+ *  为了不和随后的「指针更新」两次写同一个文件（正是 UNKNOWN 报错的来源），
+ *  这一分支**不自己写盘**，而是把改好的文本回给调用方合并成一次写。 */
+function serverSaveLegionComposition(
+    legionName: string,
+    slots: any[],
+    mode?: string,
+    cultureFormationsText?: string,
+): { file: string; cultureFormationsText?: string } {
     const region = BASE_16_LEGION_TO_REGION[legionName];
     if (region) {
         const p = path.resolve(__dirname, 'src/types/CultureFormations.ts');
-        let text = fs.readFileSync(p, 'utf-8');
+        let text = cultureFormationsText ?? safeReadFileSync(p);
         const at = text.indexOf('export const ' + region + '_BASE_TIERS: CompositionTier[] = [');
         if (at < 0) throw new Error('一级母体军团 ' + legionName + ' 找不到 ' + region + '_BASE_TIERS');
         const range = serverFindSlotsArray(text, at);
@@ -2521,13 +2651,12 @@ function serverSaveLegionComposition(legionName: string, slots: any[], mode?: st
                 text = text.slice(0, entryAt) + seg.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + text.slice(endAt);
             }
         }
-        fs.writeFileSync(p, text, 'utf-8');
-        return p;
+        return { file: p, cultureFormationsText: text };
     }
     for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
         const p = path.resolve(__dirname, rel);
-        const out = serverReplaceLegionEntry(fs.readFileSync(p, 'utf-8'), legionName, slots, mode);
-        if (out) { fs.writeFileSync(p, out, 'utf-8'); return p; }
+        const out = serverReplaceLegionEntry(safeReadFileSync(p), legionName, slots, mode);
+        if (out) { safeWriteFileSync(p, out); return { file: p }; }
     }
     throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存编制');
 }
