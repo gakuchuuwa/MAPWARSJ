@@ -607,8 +607,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'halberdier', count: 4 },
-            { type: 'royal_janissary', count: 3 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: 'janissary', count: 3 },
+            { type: 'elite_janissary', count: 2 },
         ],
     },
     {
