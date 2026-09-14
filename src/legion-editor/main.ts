@@ -3500,6 +3500,29 @@ function computeLegionNameViolations(): string[] {
         nameSigs.get(e.name)!.add(e.sig);
         nameFactions.get(e.name)!.push(e.factionName);
     }
+
+    // 🔴 [2026-09-14 主人定] 基准预设对照：一级母体文化军团与二级59文明军团基准编制检查。
+    //    凡势力使用了系统预设的军团名，其实际编制必须与该军团的系统基准编制一致；
+    //    若有势力使用了该军团名但编制与基准不符，必须即刻报错。
+    const distinctMap = getAllDistinctLegions();
+    for (const [distName, distDef] of distinctMap.entries()) {
+        const isBase16 = BASE_16_REGIONS.some(rg => getBase16LegionName(rg as RegionType) === distName);
+        const isLevel2 = LEVEL_2_CIV_59_NAMES.has(distName);
+        if (!isBase16 && !isLevel2) continue;
+
+        const distSig = `${distDef.formationMode}:${distDef.slots.map(s => `${s.type}x${s.count}`).join('+')}`;
+        for (const e of eff) {
+            if (e.name === distName && e.sig !== distSig) {
+                if (!nameSigs.has(distName)) {
+                    nameSigs.set(distName, new Set());
+                    nameFactions.set(distName, []);
+                }
+                nameSigs.get(distName)!.add(distSig);
+                nameSigs.get(distName)!.add(e.sig);
+            }
+        }
+    }
+
     for (const [name, sigs] of nameSigs.entries()) {
         if (sigs.size > 1) {
             // 🔴 [2026-09-07 主人改口] 只写**哪两拨势力的编制不一样**就够，不要逐格 diff。
@@ -3510,6 +3533,13 @@ function computeLegionNameViolations(): string[] {
                 if (e.name !== name) continue;
                 if (!groups.has(e.sig)) groups.set(e.sig, []);
                 groups.get(e.sig)!.push(e.factionName);
+            }
+            if (distinctMap.has(name)) {
+                const dDef = distinctMap.get(name)!;
+                const dSig = `${dDef.formationMode}:${dDef.slots.map(s => `${s.type}x${s.count}`).join('+')}`;
+                if (!groups.has(dSig)) {
+                    groups.set(dSig, ['系统基准预设']);
+                }
             }
             const entries = [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
             const side = (fs: string[]) => fs.length > 4 ? `${fs.slice(0, 4).join('、')}等 ${fs.length} 家` : fs.join('、');

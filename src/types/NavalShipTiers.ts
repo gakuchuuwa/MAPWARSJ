@@ -86,7 +86,7 @@ export function getNavalShipDrawScale(shipId?: string): number {
  */
 const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     // ── 东亚 ────────────────────────────────────────────────
-    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'PRE_QIN', 'NORTH', 'JIANGNAN', 'HEXI', 'SONG'] },
+    { ship: 'LOU_CHUAN', why: '中国楼船：高层甲板巨舰，赤壁/襄樊水战主力', regions: ['CENTRAL', 'PRE_QIN', 'NORTH', 'JIANGNAN', 'HEXI', 'SONG', 'BASHU', 'WEI'] },
     { ship: 'DRAGON_SHIP', why: '龙首战船：岭南珠江/南海龙舟形制', regions: ['LINGNAN'] },
     { ship: 'INCENDIARY_SHIP', why: '火攻艨艟：西南内河（澜沧江/怒江）快船', regions: ['DALI'] },
     { ship: 'GALLEY', why: '金人水军小型战船：松花江/黑龙江水系', regions: ['NORTHEAST'] },
@@ -96,7 +96,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'LOU_CHUAN', why: '金军楼船：完颜亮南侵所用宋式大舰，一一六一年陈家岛海战为李宝火攻所破', regions: ['JURCHEN'] },
     { ship: 'INCENDIARY_SHIP', why: '洱海火攻快船：南诏水军扼洱海，天宝战争两度全歼唐军于洱海之滨', regions: ['NANZHAO'] },
     { ship: 'TURTLE_SHIP', why: 'DE 朝鲜专属龟甲船：李舜臣铁甲冲撞舰（鸣梁/闲山岛海战）', regions: ['JOSEON'] },
-    { ship: 'GALLEY', why: '高句丽水军战船：隋唐东征高句丽，水军沿渤海/黄海之滨与鸭绿江、大同江出击（612 隋炀帝遣水军趋平壤、645 唐军水陆攻安市）', regions: ['KOREA'] },
+    { ship: 'GALLEY', why: '高句丽/高丽水军战船：隋唐东征与高丽抵御倭寇水军战船，鸭绿江、大同江与黄海海岸作战主力', regions: ['KOREA', 'GORYEO'] },
     // DE 没有日本专属战船。安宅船是高舷箱型大舰，先用古代大型桨帆战船顶着（⚠️无 death 帧）
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },
 
@@ -109,9 +109,9 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '伊洛瓦底江重型内河战船', regions: ['BURMESE'] },
 
     // ── 地中海古典 ──────────────────────────────────────────
-    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK', 'GREEK_MERCENARY', 'MAGNA_GRAECIA'] },
+    { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战的希腊主力', regions: ['GREEK', 'GREEK_MERCENARY', 'MAGNA_GRAECIA', 'ATHENIANS', 'SPARTANS'] },
     { ship: 'TRIREME', why: '三列桨座主力战舰：迦太基西地中海海上霸权核心主力（第一次布匿战争埃加迪群岛海战形制）', regions: ['CARTHAGE'] },
-    { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN', 'IMPERIAL_ROME'] },
+    { ship: 'TRIREME', why: '三列桨座主力战舰与乌鸦吊桥战船：罗马帝国地中海霸权主力（布匿战争与阿克提姆海战形制，地中海成为帝国“内湖”）', regions: ['LATIN', 'IMPERIAL_ROME', 'ROMA'] },
     { ship: 'TRIREME', why: '三列桨座战船：亚历山大大帝提尔之围与尼阿卡斯印度洋远征舰队主力（爱琴海与东地中海战舰形制）', regions: ['MACEDONIAN'] },
     { ship: 'TRIREME', why: '三列桨座战船：萨拉米斯海战雅典与希伦同盟主力舰队（击溃波斯大舰队之决定性战舰）', regions: ['HELLENIC'] },
     { ship: 'BIREME', why: '双列桨战船：阿契美尼德海军由腓尼基人操舟（萨拉米斯海战大舰队主力）', regions: ['ACHAEMENIDS', 'PERSIAN'] },
@@ -120,7 +120,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'MONOREME', why: '新王国单列桨帆战船：拉美西斯三世三角洲海战大破海上民族（麦地那哈布浮雕所绘船形）', regions: ['EGYPT'] },
     { ship: 'MONOREME', why: '青铜时代单列桨战船：赫梯苏庇路里乌玛二世征调安纳托利亚/奇里乞亚舰队，在塞浦路斯近海进行人类有文字记载的最早海战', regions: ['HITTITES'] },
     { ship: 'MONOREME', why: '尼罗河单列桨帆战船：努比亚黑法老皮耶北伐全埃及（麦罗埃与纳帕塔尼罗河水军舰队主力）', regions: ['KUSH'] },
-    { ship: 'MONOREME', why: '涅达姆单列长船：日耳曼北海与波罗的海沿岸突击战船（丹麦涅达姆沼泽发掘形制，维京长船最直接始祖）', regions: ['GERMANIC'] },
+    { ship: 'MONOREME', why: '涅达姆单列长船与凯尔特战舟：日耳曼北海与波罗的海沿岸突击战船，古典凯尔特皮舟/单列木长舟', regions: ['GERMANIC', 'CELTS'] },
     { ship: 'HEAVY_LEMBOS', why: '重型伦博斯：哥特/汪达尔渡海劫掠地中海', regions: ['GOTHS', 'VANDALS'] },
     { ship: 'MONOREME', why: '红海他施船队：所罗门与推罗王希兰合建，自以旬迦别出航俄斐（《列王纪上》9:26-28）', regions: ['HEBREWS'] },
     { ship: 'MONOREME', why: '印度河-阿拉伯海单列桨帆船：贵霜控巴巴里孔（Barbaricum）与巴利加扎，经营罗马-印度洋香料航路', regions: ['KUSHAN'] },
@@ -154,15 +154,15 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'WAR_GALLEY', why: '黑海-地中海桨帆战船：罗姆苏丹凯考巴德一世建锡诺普与阿拉尼亚两处船厂', regions: ['SELJUQ'] },
     { ship: 'WAR_GALLEY', why: '奥斯曼桨帆舰队：普雷韦扎（1538）与勒班陀（1571）的地中海主力形制', regions: ['OTTOMAN'] },
     { ship: 'CANOE', why: '板缀舟 itaomacip：阿伊努渡北海道-库页岛-千岛列岛的缝合板舟，兼作海兽猎舟', regions: ['AINU'] },
-    { ship: 'CANOE', why: '尼日尔河战舟：西非内陆帝国以河船控尼日尔河湾商道，加纳-马里皆恃之', regions: ['GHANA'] },
+    { ship: 'CANOE', why: '尼日尔河战舟与大湖区水网战船：西非内陆帝国以河船控尼日尔河湾商道（加纳、马里皆恃之），非洲原住民传统水战主力独木战舟', regions: ['GHANA', 'MALI', 'AFRICA'] },
 
     // ── 美洲 ────────────────────────────────────────────────
-    { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'] },
+    { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'INCA'] },
 
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'AFRICA', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE'] },
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE', 'MONGOL'] },
     { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },

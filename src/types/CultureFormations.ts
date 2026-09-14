@@ -355,7 +355,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PERSIAN:      'fish_scale',  // 古典波斯：鱼鳞阵 3+4+2 中坚古典重装骑射主力
     PERSIAN_CASTLE:'fish_scale',
     CUMAN:        'triangle',    // 库曼弓骑主力（钦察骑射）
-    BRITONS: 'fish_scale',  // [2026-09-06] 与该文化势力实际编制统一
+    BRITONS: "triangle",  // [2026-09-06] 与该文化势力实际编制统一
     GOTHS: 'fish_scale',  // 哥特[2026-09-05 主人定：雁行阵 4+3+2]
     HUNS: 'balance_yoke',  // [2026-09-06] 与该文化势力实际编制统一
     TEUTONS: "triangle",  // [2026-09-06] 与同名势力专属军团对齐
@@ -443,7 +443,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     ACHAEMENIDS:     'fish_scale', // 古典阿契美尼德：鱼鳞阵 3+4+2 不死军矛兵3 + 古典重装骑射4 + 不死军弓手2
     AMAZONS:         'crane_wing', // 古典亚马逊：鹤翼阵 2+4+3 女弓手2 + 斯基泰骑射手高级4 + 女战士3
     SONG:            'balance_yoke', // 城堡赵宋：衡轭阵 4+2+3 持盾刀剑手4 + 攻城床弩2 + 骑士重装3
-    GORYEO:          'triangle',   // 城堡高丽：鹤翼阵 2+4+3 长枪兵重装2 + 女真铁浮屠4 + 越南藤弓兵3
+    GORYEO:          "triangle",   // 城堡高丽：鹤翼阵 2+4+3 长枪兵重装2 + 女真铁浮屠4 + 越南藤弓兵3
     JOSEON:          'crane_wing', // 帝国朝鲜：鹤翼阵 2+4+3 牌刀手2 + 高丽战车4 + 火枪兵3
     GOJOSEON:        'square',     // 古典朝鲜：方阵 3+3+3 古典长矛兵3 + 古典掷矛手3 + 古典骑射手3
     PRE_QIN:         'echelon',    // 古典先秦：雁行阵 4+3+2 白毦甲士4 + 火焰步弓3 + 先秦远程战车2
@@ -2258,18 +2258,16 @@ export const BULGARIANS_TIERS: CompositionTier[] = [
     }
 ];
 
-/** BRITONS 文化军团（fish_scale 3+4+2）
- *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 2 个势力实际在用的这套
- *  （麦西亚、英格兰），原文化表那份已过时，作废。 */
+/** 城堡时代不列颠军团（三角阵 234） */
 export const BRITONS_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'champion', count: 3 },   // Row 0
-            { type: 'longbowman_elite', count: 4 },   // Row 1
-            { type: 'light_riders', count: 2 }   // Row 2
+            { type: 'paladin', count: 2 },
+            { type: 'longbowman', count: 3 },
+            { type: 'longbowman_elite', count: 4 }
         ]
     }
 ];
@@ -2910,7 +2908,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     PERSIAN: '古典时代波斯军团',
     PERSIAN_CASTLE: '城堡时代波斯军团',
     CUMAN: '城堡时代库曼军团',
-    BRITONS: '城堡时代英格兰军团',
+    BRITONS: '城堡时代不列颠军团',
     GOTHS: '封建时代哥特军团',
     HUNS: '封建时代匈人军团',
     TEUTONS: "城堡时代条顿军团",
@@ -4316,16 +4314,16 @@ export const SONG_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 高丽 长枪兵重装抗线+铁浮屠具装铁骑突击+高丽硬弓手密集抛射（鹤翼阵 2+4+3，综合战力 69） */
+/** 高丽 华夏持盾刀剑手护阵+高丽战车中坚厚甲弩车+高丽战车精锐主力炮塔车（鹤翼阵 2+3+4） */
 export const GORYEO_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spearman', count: 2, scale: 1 },
-            { type: 'elite_war_wagon', count: 3, scale: 0.53 },
-            { type: 'fire_archer', count: 4, scale: 1 }
+            { type: 'jian_swordman_shielded', count: 2, scale: 1 },
+            { type: 'war_wagon', count: 3, scale: 0.53 },
+            { type: 'elite_war_wagon', count: 4, scale: 0.53 }
         ]
     }
 ];
