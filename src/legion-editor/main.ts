@@ -3510,7 +3510,11 @@ function computeLegionNameViolations(): string[] {
         const isLevel2 = LEVEL_2_CIV_59_NAMES.has(distName);
         if (!isBase16 && !isLevel2) continue;
 
-        const distSig = `${distDef.formationMode}:${distDef.slots.map(s => `${s.type}x${s.count}`).join('+')}`;
+        // 🔴 [2026-09-14 修] 这里原本自己拼 `mode:typexN+…`，而势力那边的 `e.sig` 是
+        //    `legionSig()` 拼的 `mode|type,type,type` —— 两套格式**永远不可能相等**，
+        //    于是每一支一级/二级军团都被判成「↔ 系统基准预设」（实测 35 条全是这么来的）。
+        //    编制铁律只看「三排兵种 + 阵型」，人数由阵型定，必须走同一个 legionSig。
+        const distSig = legionSig(distDef);
         for (const e of eff) {
             if (e.name === distName && e.sig !== distSig) {
                 if (!nameSigs.has(distName)) {
@@ -3536,7 +3540,7 @@ function computeLegionNameViolations(): string[] {
             }
             if (distinctMap.has(name)) {
                 const dDef = distinctMap.get(name)!;
-                const dSig = `${dDef.formationMode}:${dDef.slots.map(s => `${s.type}x${s.count}`).join('+')}`;
+                const dSig = legionSig(dDef);   // [2026-09-14 修] 同上，必须与 e.sig 同一套拼法
                 if (!groups.has(dSig)) {
                     groups.set(dSig, ['系统基准预设']);
                 }
@@ -3557,6 +3561,12 @@ function computeLegionNameViolations(): string[] {
     const usedUnitTypes = new Set<string>();
     for (const entry of getAllDistinctLegions().values()) {
         for (const s of entry.slots) usedUnitTypes.add(s.type);
+    }
+    // 二级 59 文明军团的**权威硬表**也要算：势力存过自己的副本时，
+    // getAllDistinctLegions 会优先显示副本（见上面「二级军团编制存不住」那处修复），
+    // 硬表里的兵种就被遮住了 —— 但它确确实实写在一支军团的编制里，不算「没套用」。
+    for (const l2 of LEVEL_2_CIV_59_LEGIONS) {
+        for (const s of l2.slots) usedUnitTypes.add(s.type);
     }
     for (const r of allRows) {
         for (const s of r.slots) usedUnitTypes.add(s.type);

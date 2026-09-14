@@ -310,7 +310,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     STEPPE_IMPERIAL:"balance_yoke",
     STEPPE_ANTIQUITY:"square",
     STEPPE_FEUDAL:"triangle",
-    JIANGNAN:     'echelon',     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
+    JIANGNAN:     "balance_yoke",     // 江南：刀剑手(2) + 诸葛弩(3) + 精锐火焰弓箭手主力(4)
      // 古典百越：雁行阵 4+3+2 前排先锋重步主力
     CENTRAL_ASIA: "triangle", // 中亚：萨瓦尔铁骑(4) + 精锐草原枪兵(2) + 精锐钦察主力(3)
     CENTRAL_ASIA_IMPERIAL: 'balance_yoke',
@@ -362,7 +362,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     VIKINGS: 'fish_scale',  // [2026-09-06] 与同名势力专属军团对齐
      // 古典凯尔特：鱼鳞阵 3+4+2 中坚先锋重步主力
     CELTS_FEUDAL: 'crane_wing',
-    ITALIANS: 'crescent',  // [2026-09-06] 与该文化势力实际编制统一
+    ITALIANS: "triangle",  // [2026-09-06] 与该文化势力实际编制统一
     SICILIANS: 'crane_wing',  // [2026-09-06] 与同名势力专属军团对齐
     BULGARIANS: 'fish_scale',  // 保加利亚[2026-08-28 暂复用父文化]
     MAGYAR: "crescent",  // 马扎尔[2026-09-05 主人定：正规马扎尔军团偃月阵 3+2+4]
@@ -1524,18 +1524,22 @@ export const BASHU_TIERS: CompositionTier[] = [
 ];
 
 /** 9. 封建时代华夏军团 华夏双手剑士高级+诸葛弩+南北朝黑光铠骑兵重装（锥形阵 2+3+4：双手剑先锋 + 诸葛弩中坚 + 黑光重装底边主力，战力72） */
-export const JIANGNAN_TIERS: CompositionTier[] = [
+export const JIANGNAN_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'liao_dao', count: 4, scale: 1 },
-            { type: 'elite_chukonu', count: 3, scale: 1 },
-            { type: 'hei_kuang_heavy', count: 2 }
-        ]
+        "type": "liao_dao",
+        "count": 4,
+        "scale": 1
+    },
+    {
+        "type": "elite_chukonu",
+        "count": 2,
+        "scale": 1
+    },
+    {
+        "type": "hei_kuang_heavy",
+        "count": 3
     }
-];
+] }];
 /** 古典时代百越军团（雁行 4+3+2，主力在前排）。
  *  严格遵守军团 4 档铁律：军团中必须有一个重装/精锐/高级，并安排到 4 档。
  *  史实依据（古典越国—南越/骆越/西瓯）：
@@ -2801,18 +2805,20 @@ export const CELTS_TIERS: CompositionTier[] = [
 /** ITALIANS 文化军团（crescent 3+2+4）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 5 个势力实际在用的这套
  *  （利古里亚、阿诺、托斯卡纳、伦巴第…），原文化表那份已过时，作废。 */
-export const ITALIANS_TIERS: CompositionTier[] = [
+export const ITALIANS_TIERS: CompositionTier[] = [{ minTroops: 0, maxTroops: Infinity, gridSize: 3, slots: [
     {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'condottiero', count: 3 },   // Row 0
-            { type: 'genoese_crossbowman', count: 2 },   // Row 1
-            { type: 'elite_genoese_crossbowman', count: 4 }   // Row 2
-        ]
+        "type": "condottiero",
+        "count": 2
+    },
+    {
+        "type": "genoese_crossbowman",
+        "count": 3
+    },
+    {
+        "type": "elite_genoese_crossbowman",
+        "count": 4
     }
-];
+] }];
 
 /** LITHUANIANS 文化军团（fish_scale 3+4+2）
  *  [2026-09-06 铁律 一文化=一军团=一编制] 统一到该文化 2 个势力实际在用的这套
@@ -2849,7 +2855,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     STEPPE_ANTIQUITY: "古典时代草原军团",
     STEPPE_FEUDAL: "封建时代草原军团",
     HEXI: "古典时代秦汉军团",
-    JIANGNAN: '封建时代隋唐军团',
+    JIANGNAN: "封建时代隋唐军团",
     TIBET: "封建时代吐蕃军团",
     TIBET_CASTLE: '城堡时代吐蕃军团',
     TIBET_IMPERIAL: "帝国时代青藏军团",
@@ -2914,7 +2920,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TEUTONS: "城堡时代条顿军团",
     VIKINGS: '封建时代维京军团',
     CELTS_FEUDAL: '封建时代凯尔特军团',
-    ITALIANS: '城堡时代意大利军团',
+    ITALIANS: "城堡时代意大利军团",
     SICILIANS: '城堡时代诺曼军团',
     BULGARIANS: '封建时代保加利亚军团',
     MAGYAR: "城堡时代马扎尔军团",
