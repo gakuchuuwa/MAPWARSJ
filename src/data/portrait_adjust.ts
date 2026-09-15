@@ -3068,9 +3068,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/JIANGNAN/yang_zhou_yangxingmi.png": {
-            "scale": 0.9,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": -22
+            "offsetY": -24
         },
         "/assets/DIANQIAN/pagan_anultuo.png": {
             "scale": 1,

@@ -261,9 +261,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代波斯军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'sparabara', count: 3 },
+            { type: 'immortal', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'immortal', count: 2 },
+            { type: 'immortal_ranged', count: 2 },
         ],
         regions: ['PERSIAN'],
     },
@@ -1011,8 +1011,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代西域军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'cav_archer', count: 3 },
+            { type: 'sakan_axeman', count: 2 },
+            { type: 'tarkan', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
         regions: ['WESTERN_FEUDAL'],
