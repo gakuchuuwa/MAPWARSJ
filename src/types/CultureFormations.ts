@@ -1199,7 +1199,7 @@ export const SLAVIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'sarmatian', count: 2 },
+        { type: 'winged_hussar', count: 2 },
         { type: 'elite_boyar', count: 4 },
         { type: 'elite_leitis', count: 3 },
     ]
@@ -1397,10 +1397,10 @@ export const AFRICA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'sosso_guard', count: 3 },
-            { type: 'shotel_warrior', count: 4 },
-            { type: 'camel_archer', count: 2 }
-        ]
+        { type: 'sosso_guard', count: 3 },
+        { type: 'elite_shotel_warrior', count: 4 },
+        { type: 'elite_camel_archer', count: 2 },
+    ]
     }
 ];
 
@@ -1468,10 +1468,10 @@ export const AMERICA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eagle_warrior', count: 2 },
-            { type: 'jaguar_warrior', count: 4 },
-            { type: 'plumed_archer', count: 3 }
-        ]
+        { type: 'elite_eagle_warrior', count: 2 },
+        { type: 'elite_jaguar_warrior', count: 4 },
+        { type: 'elite_plumed_archer', count: 3 },
+    ]
     }
 ];
 
