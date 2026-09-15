@@ -402,46 +402,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "里贝拉-里斯本",
-                type: "sea",
-                id: "sea_city_ribeira_city_lisiben_1787683270286",
-                startConnection: "city_ribeira",
-                endConnection: "city_lisiben"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-23.6, 14.92],
-                    [-23.4118, 14.7267],
-                    [-23, 15],
-                    [-20.5422, 18.0164],
-                    [-18, 21],
-                    [-15.12817, 27.99925],
-                    [-15.14581, 28.53833],
-                    [-15.17212, 29.3375],
-                    [-13.9051, 32.4093],
-                    [-13.32875, 34.06524],
-                    [-13.11489, 34.6797],
-                    [-12.83978, 35.47013],
-                    [-12.7612, 35.69589],
-                    [-12.60854, 36.13452],
-                    [-12.49398, 36.46366],
-                    [-11.90023, 36.88145],
-                    [-11.64446, 37.06142],
-                    [-11.30311, 37.30161],
-                    [-11.13864, 37.41734],
-                    [-10.70267, 37.72411],
-                    [-9.99896, 38.21927],
-                    [-9.6, 38.5],
-                    [-9.2895, 38.6804],
-                    [-9.1137, 38.6997],
-                    [-9.13, 38.72],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "萨尔瓦多-里贝拉",
                 type: "sea",
                 id: "sea_city_salvador_city_ribeira_1787683270301",
@@ -6290,6 +6250,27 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.137095, -0.58662],
                     [105.063239, -2.168977],
                     [104.75, -2.99],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里贝拉-特尔德",
+                type: "sea",
+                id: "sea_city_ribeira_city_telde_1789440388564",
+                startConnection: "city_ribeira",
+                endConnection: "city_telde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-23.6, 14.92],
+                    [-23, 15],
+                    [-20.5422, 18.0164],
+                    [-18, 21],
+                    [-15.128174, 27.999252],
+                    [-15.42, 28],
                 ]
             }
         },

@@ -541,7 +541,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代拉丁军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'swordsman', count: 2 },
+            { type: 'champion', count: 2 },
             { type: 'halberdier', count: 3 },
             { type: 'arbalest', count: 4 },
         ],
@@ -902,8 +902,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'cavalier', count: 4 },
-            { type: 'lancer', count: 3 },
-            { type: 'scout_cavalry', count: 2 },
+            { type: 'swordsman', count: 3 },
+            { type: 'laminated_bowman', count: 2 },
         ],
         regions: ['VANDALS'],
     },

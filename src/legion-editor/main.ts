@@ -684,7 +684,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
 
     // ── 步兵 ──
     // 刀盾（单手近战 + 盾：刀/剑/斧/棒/锤等单手兵器，含盾斧兵、盾棒兵）
-    swordsman: 'sword_shield', champion: 'sword_shield',
+    swordsman: 'sword_shield', champion: 'two_handed',
     jian_swordsman: 'sword_shield',
     eastern_swordsman: 'sword_shield', legionary: 'sword_shield',
     elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield',
