@@ -503,6 +503,7 @@ export class PlayerQuestSystem {
     private autoTravelToBestCity(): void {
         const city = this.pickAutoCity();
         if (!city) return;
+        this.rememberVisit(city);
         const g = getCityAnchoredGeneral(city.id);
         const army = g ? this.armyOfGeneral(g.generalId) : null;
         if (army) {
@@ -656,24 +657,85 @@ export class PlayerQuestSystem {
         const tied = sorted.filter((c) => keyOf(c) === bestKey);
         if (tied.length === 1) return best;
 
-        // ③ 同档之间怎么挑，由玩家面板的「就近寻找武将」开关决定（PlayerHero.nearbyFirst）
-        //    · 关（默认）→ **随机**：主人实测就近会把玩家永久锁在出生地周边，
-        //      因为开局全图据点兵力都是 10000，「兵最多」筛不掉任何城，同档集合极大。
-        //    · 开 → 挑最近的，省赶路时间。
-        //    ⚠️ 随机必须在这里显式取，别指望 sort 的随机比较器——那个只是打平时返回
-        //      Math.random()-0.5，比较器不自洽，排出来的第一名不是均匀随机。
-        if (!this.deps.hero.nearbyFirst) {
+        // ③-0 🔴 [2026-09-15 主人定]「一般就是就近，10 次后有一次不就近」——**远游**。
+        //    没有它玩家永远到不了美洲：旧大陆到新大陆最短城距是里斯本→安格拉 1568km，
+        //    在软半径 800km 的四次方衰减下权重只有 1/77，实测 2000 次寻将踏上美洲 0 次。
+        //    这一签**只看兵多名将、完全不看距离**（就是旧的全随机行为），在同档候选里均匀抽。
+        //    实测每 10 次一远游：2000 次寻将踏上美洲 36~65 次、走遍 850~900 座城，
+        //    中位跳距 543→579~633km（远游只占 1/10，抬不了多少）。验算脚本 scratch/_hunt_america.ts。
+        this.huntCount++;
+        if (this.huntCount % PlayerQuestSystem.VOYAGE_EVERY === 0) {
             return tied[Math.floor(Math.random() * tied.length)] ?? best;
         }
+
+        // ③ 同档之间怎么挑：**距离加权随机**（软就近）。
+        //    🔴 [2026-09-15 主人报障]「全世界找 → 全浪费在路上；就近 → 又太近，只在一个势力里转，
+        //       很多武将永远不会去找」。硬二选一两头都不对：
+        //       · 均匀随机：922 座同档城，期望距离就是半个地球，一辈子在赶路；
+        //       · 取最小值：结果是**唯一确定**的那一座城，打完回来还是它，永久锁死。
+        //    改成按距离给权重再抽签：w = 1 / (1 + d/D0)^FALLOFF。
+        //       近处概率高（不用长途奔波），但同一圈里有几十座城在抽（不会锁死一座），
+        //       远处概率小而非零（打着打着自然向外迁徙，能摸到别的文化）。
+        //    D0 是「软半径」：到 D0 处权重降到 1/16，到 3×D0 降到 1/256（指数见 FALLOFF）。
+        //    面板「就近寻将」不再是硬开关，只是把软半径收紧一档。
         const me = this.deps.hero.getPosition();
-        if (!me || typeof me.lat !== 'number') return best;
-        let pick = tied[0];
-        let pickD = Infinity;
+        if (!me || typeof me.lat !== 'number') {
+            return tied[Math.floor(Math.random() * tied.length)] ?? best;
+        }
+        const D0 = this.deps.hero.nearbyFirst
+            ? PlayerQuestSystem.SOFT_RADIUS_NEAR_KM
+            : PlayerQuestSystem.SOFT_RADIUS_KM;
+        const weights: number[] = [];
+        let total = 0;
         for (const c of tied) {
             const d = PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude });
-            if (d < pickD) { pickD = d; pick = c; }
+            let w = 1 / ((1 + d / D0) ** PlayerQuestSystem.FALLOFF);
+            // 刚去过的城几乎不再抽到、刚投过的势力压一档：
+            // 这条专治「只在一个敌方找」—— 没有它，权重最高的那几座城会来回轮流吃掉所有名额。
+            if (this.recentCityIds.includes(c.id)) w *= 0.04;
+            else if (c.factionId && this.recentFactionIds.includes(c.factionId)) w *= 0.25;
+            weights.push(w);
+            total += w;
         }
-        return pick;
+        if (!(total > 0)) return tied[Math.floor(Math.random() * tied.length)] ?? best;
+        let r = Math.random() * total;
+        for (let i = 0; i < tied.length; i++) {
+            r -= weights[i]!;
+            if (r <= 0) return tied[i] ?? best;
+        }
+        return tied[tied.length - 1] ?? best;
+    }
+
+    /** 软半径（公里）：权重衰减的尺度，不是硬边界，越远只是越少抽到。 */
+    private static readonly SOFT_RADIUS_KM = 800;
+    /** 面板开「就近寻将」时收紧到这个软半径。 */
+    private static readonly SOFT_RADIUS_NEAR_KM = 400;
+    /**
+     * 衰减指数。**必须 ≥3，2 是错的**：全图城池铺在球面上，
+     * 距离 d 那一圈的城**数量**本身正比于 d，1/d² 的权重正好被圈上的城数抵消掉，
+     * 于是远处那一大片合起来照样能压过身边几座 —— 实测 1088 城下 ^2 的中位跳距还有
+     * 919km（@500）/1231km（@1500），等于没治好「全浪费在路上」。
+     * ^4 把中位跳距压到 299km（@400）/534km（@800），而 400 次寻将仍走遍 290/308 座不同的城。
+     * 离线验算脚本：scratch/_hunt_sim.ts。
+     */
+    private static readonly FALLOFF = 4;
+    /** 每多少次寻将放一次「远游」（不看距离的均匀抽签）。 */
+    private static readonly VOYAGE_EVERY = 10;
+    /** 已自动寻将次数，只用来数远游节拍。 */
+    private huntCount = 0;
+    /** 最近去过的城（去重冷却，先进先出） */
+    private recentCityIds: string[] = [];
+    /** 最近投过的势力（同上，窗口更短：换城可以，连着换回同一家就没意思了） */
+    private recentFactionIds: string[] = [];
+
+    /** 选定一座城后记一笔，供下次加权时降权。窗口写死，超出就挤掉最老的。 */
+    private rememberVisit(city: City): void {
+        this.recentCityIds.push(city.id);
+        if (this.recentCityIds.length > 12) this.recentCityIds.shift();
+        if (city.factionId) {
+            this.recentFactionIds.push(city.factionId);
+            if (this.recentFactionIds.length > 4) this.recentFactionIds.shift();
+        }
     }
 
     private onHostLost(_lastId: string): void {

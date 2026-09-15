@@ -482,7 +482,7 @@ export class PlayerHUD {
         // 📍 就近寻将
         const nearLabel = document.createElement('label');
         nearLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#dfc28c; font-weight:700; user-select:none;';
-        nearLabel.title = '开：优先寻访离自己最近的武将；关：在同等条件的武将中随机挑';
+        nearLabel.title = '开：只在身边一圈里抽签寻访，赶路最短；关：放宽到一州之地，更容易遇上别处的名将。两档都是加权抽签，不会死盯同一座城';
         const nearCheck = document.createElement('input');
         nearCheck.type = 'checkbox';
         nearCheck.checked = hero.nearbyFirst;
