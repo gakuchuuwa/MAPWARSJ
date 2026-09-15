@@ -461,7 +461,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
     { id: 'halberdier', name: '欧洲重装戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
     { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
-    { id: 'sosso_guard', name: '西非索索禁卫军', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
+    { id: 'sosso_guard', name: '西非索索禁卫高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
     { id: 'elite_greek_cavalry', name: '希腊贵族骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
     { id: 'jian_swordman_shielded', name: '华夏持盾刀剑手', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
     { id: 'levy', name: '近东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEVY/' },

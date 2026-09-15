@@ -351,7 +351,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     siege_tower: { name: '欧洲攻城塔', cls: 'ranged', sz: 1, hp: 220, atk: 6, meleeArmor: -2, pierceArmor: 100, rng: 240, reload: 4.0, spd: 40, dmgType: 'pierce', bonus: { 11: 6 }, armorTags: [20, 17, 31] },
     halberdier: { name: '欧洲重装戟兵', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     norse_warrior: { name: '诺斯狂暴战士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
-    sosso_guard: { name: '西非索索禁卫军', cls: 'melee', sz: 1, hp: 95, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
+    sosso_guard: { name: '西非索索禁卫高级', cls: 'melee', sz: 1, hp: 95, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
     elite_greek_cavalry: { name: '希腊贵族骑兵高级', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     jian_swordman_shielded: { name: '华夏持盾刀剑手', cls: 'melee', sz: 1, hp: 70, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 4, 21: 2 }, armorTags: [1, 29, 19, 31] },
     levy: { name: '近东民兵', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
