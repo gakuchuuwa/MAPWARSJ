@@ -1,1 +1,12 @@
-{"name": "INDI_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 184, "box_h": 140, "anchor_x": 92, "anchor_y": 68, "sld_source": "b_indi_gate_fortified_ne_rubble"}
+{
+  "name": "INDI_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 325,
+  "box_h": 168,
+  "anchor_x": 172,
+  "anchor_y": 92,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_indi_gate_fortified_ne_rubble + b_indi_gate_fortified_corner_rubble"
+}

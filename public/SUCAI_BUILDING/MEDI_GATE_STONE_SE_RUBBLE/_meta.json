@@ -1,1 +1,12 @@
-{"name": "MEDI_GATE_STONE_SE_RUBBLE", "frames": 1, "box_w": 232, "box_h": 96, "anchor_x": 128, "anchor_y": 52, "sld_source": "b_medi_gate_stone_se_rubble"}
+{
+  "name": "MEDI_GATE_STONE_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 287,
+  "box_h": 146,
+  "anchor_x": 145,
+  "anchor_y": 74,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_medi_gate_stone_se_rubble + b_medi_gate_stone_corner_rubble"
+}

@@ -1,1 +1,12 @@
-{"name": "ASIA_GATE_FORTIFIED_SE_RUBBLE", "frames": 1, "box_w": 248, "box_h": 104, "anchor_x": 124, "anchor_y": 60, "sld_source": "b_asia_gate_fortified_se_rubble"}
+{
+  "name": "ASIA_GATE_FORTIFIED_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 306,
+  "box_h": 154,
+  "anchor_x": 154,
+  "anchor_y": 78,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_asia_gate_fortified_se_rubble + b_asia_gate_fortified_corner_rubble"
+}

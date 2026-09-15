@@ -1,1 +1,12 @@
-{"name": "THRACIAN_GATE_STONE_NE_DESTR", "frames": 97, "box_w": 200, "box_h": 164, "anchor_x": 104, "anchor_y": 116, "sld_source": "b_thracian_gate_stone_ne_destruction"}
+{
+  "name": "THRACIAN_GATE_STONE_NE_DESTR",
+  "frames": 100,
+  "box_w": 327,
+  "box_h": 252,
+  "anchor_x": 166,
+  "anchor_y": 173,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_thracian_gate_stone_ne_destruction + b_thracian_gate_stone_corner_destruction"
+}

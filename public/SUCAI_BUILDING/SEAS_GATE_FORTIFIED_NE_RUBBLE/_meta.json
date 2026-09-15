@@ -1,1 +1,12 @@
-{"name": "SEAS_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 224, "box_h": 136, "anchor_x": 108, "anchor_y": 72, "sld_source": "b_seas_gate_fortified_ne_rubble"}
+{
+  "name": "SEAS_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 172,
+  "anchor_x": 166,
+  "anchor_y": 94,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_seas_gate_fortified_ne_rubble + b_seas_gate_fortified_corner_rubble"
+}

@@ -1,1 +1,12 @@
-{"name": "MEDI_GATE_FORTIFIED_SE_DESTR", "frames": 100, "box_w": 300, "box_h": 188, "anchor_x": 148, "anchor_y": 136, "sld_source": "b_medi_gate_fortified_se_destruction"}
+{
+  "name": "MEDI_GATE_FORTIFIED_SE_DESTR",
+  "frames": 100,
+  "box_w": 361,
+  "box_h": 285,
+  "anchor_x": 184,
+  "anchor_y": 197,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_medi_gate_fortified_se_destruction + b_medi_gate_fortified_corner_destruction"
+}

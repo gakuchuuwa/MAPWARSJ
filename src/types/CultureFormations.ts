@@ -1937,6 +1937,28 @@ export function dropLegionFromMemory(name: string): void {
     LEGION_RUNTIME_PATCH.delete(name);
 }
 
+/** 运行时改名（编辑器改名后立刻生效，不等 HMR）：旧名 → 新名 */
+const LEGION_RENAMED = new Map<string, string>();
+
+/**
+ * 编辑器把一支军团改名后，让内存里也立刻认新名。
+ * 🔴 只动**查编制**这条路：新名沿用旧名那份编制，旧名当场作废。
+ *    势力归属 / 文化区指针由服务端写文件，HMR 回来后自然是新名。
+ */
+export function renameLegionInMemory(oldName: string, newName: string): void {
+    if (!oldName || !newName || oldName === newName) return;
+    const comp = getLegionCompositionByName(oldName);
+    if (comp) LEGION_RUNTIME_PATCH.set(newName, { formationMode: comp.formationMode, slots: comp.slots.map(s => ({ ...s })) });
+    LEGION_RENAMED.set(oldName, newName);
+    LEGION_DELETED.add(oldName);
+    LEGION_RUNTIME_PATCH.delete(oldName);
+}
+
+/** 这支军团改名后的新名；没改过就返回原名。列表构建用它把旧名换成新名。 */
+export function resolveRenamedLegion(name: string): string {
+    return LEGION_RENAMED.get(name) ?? name;
+}
+
 /** 按**军团名**直接打内存补丁（编辑器保存后立刻生效，不等 HMR） */
 export function patchLegionComposition(
     name: string,

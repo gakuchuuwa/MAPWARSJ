@@ -1,1 +1,12 @@
-{"name": "ORIE_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 168, "box_h": 132, "anchor_x": 92, "anchor_y": 68, "sld_source": "b_orie_gate_fortified_ne_rubble"}
+{
+  "name": "ORIE_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 285,
+  "box_h": 143,
+  "anchor_x": 143,
+  "anchor_y": 75,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_orie_gate_fortified_ne_rubble + b_orie_gate_fortified_corner_rubble"
+}

@@ -1,1 +1,12 @@
-{"name": "SLAV_GATE_FORTIFIED_NE_DESTR", "frames": 100, "box_w": 220, "box_h": 212, "anchor_x": 124, "anchor_y": 152, "sld_source": "b_slav_gate_fortified_ne_destruction"}
+{
+  "name": "SLAV_GATE_FORTIFIED_NE_DESTR",
+  "frames": 100,
+  "box_w": 349,
+  "box_h": 326,
+  "anchor_x": 187,
+  "anchor_y": 246,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_slav_gate_fortified_ne_destruction + b_slav_gate_fortified_corner_destruction"
+}

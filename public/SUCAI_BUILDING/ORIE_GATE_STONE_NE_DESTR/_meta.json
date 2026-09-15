@@ -1,1 +1,12 @@
-{"name": "ORIE_GATE_STONE_NE_DESTR", "frames": 100, "box_w": 232, "box_h": 232, "anchor_x": 124, "anchor_y": 144, "sld_source": "b_orie_gate_stone_ne_destruction"}
+{
+  "name": "ORIE_GATE_STONE_NE_DESTR",
+  "frames": 100,
+  "box_w": 341,
+  "box_h": 275,
+  "anchor_x": 173,
+  "anchor_y": 187,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_orie_gate_stone_ne_destruction + b_orie_gate_stone_corner_destruction"
+}

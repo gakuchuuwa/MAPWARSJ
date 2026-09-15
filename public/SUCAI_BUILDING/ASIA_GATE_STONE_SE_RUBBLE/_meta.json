@@ -1,1 +1,12 @@
-{"name": "ASIA_GATE_STONE_SE_RUBBLE", "frames": 1, "box_w": 308, "box_h": 100, "anchor_x": 152, "anchor_y": 56, "sld_source": "b_asia_gate_stone_se_rubble"}
+{
+  "name": "ASIA_GATE_STONE_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 302,
+  "box_h": 141,
+  "anchor_x": 149,
+  "anchor_y": 71,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_asia_gate_stone_se_rubble + b_asia_gate_stone_corner_rubble"
+}

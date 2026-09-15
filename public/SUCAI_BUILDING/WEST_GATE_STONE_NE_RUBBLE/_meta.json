@@ -1,1 +1,12 @@
-{"name": "WEST_GATE_STONE_NE_RUBBLE", "frames": 1, "box_w": 160, "box_h": 128, "anchor_x": 76, "anchor_y": 64, "sld_source": "b_west_gate_stone_ne_rubble"}
+{
+  "name": "WEST_GATE_STONE_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 298,
+  "box_h": 155,
+  "anchor_x": 147,
+  "anchor_y": 80,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_west_gate_stone_ne_rubble + b_west_gate_stone_corner_rubble"
+}

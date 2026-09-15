@@ -1,1 +1,12 @@
-{"name": "GREEK_GATE_STONE_SE_DESTR", "frames": 100, "box_w": 196, "box_h": 196, "anchor_x": 104, "anchor_y": 136, "sld_source": "b_greek_gate_stone_se_destruction"}
+{
+  "name": "GREEK_GATE_STONE_SE_DESTR",
+  "frames": 100,
+  "box_w": 330,
+  "box_h": 270,
+  "anchor_x": 176,
+  "anchor_y": 186,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_greek_gate_stone_se_destruction + b_greek_gate_stone_corner_destruction"
+}

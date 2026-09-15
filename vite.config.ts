@@ -1064,6 +1064,98 @@ export default defineConfig({
                     });
                 });
                 // ========================================================
+                // 🔴 [2026-09-15 主人定「添加一个军团改名」]
+                //   /api/rename-legion   body: { oldName, newName }
+                //   一个军团名在三个地方各存一份，改名必须**三处同改**，漏一处就裂成两支：
+                //     ① src/data/level3CustomLegions.ts / level2Civ59Legions.ts  `name: 'X'`  军团自己那条记录
+                //     ② src/data/FactionCompositions.ts                          `legionName: "X"`  势力专属归属
+                //     ③ src/types/CultureFormations.ts                           `REGION: 'X'`  文化区默认指针
+                //   一级 16 母体是底座（与 delete-legion 同口径），不许改名；
+                //   新名若已被别的军团占用一律拒绝 —— 一个军团名只能对应一种编制，
+                //   撞名等于把两份不同编制并到一个名下，界面会开始弹「编制不一致」。
+                //   每个文件都带**改动条数自检**：算出该改几处，实际改的对不上就整个回退不写。
+                // ========================================================
+                server.middlewares.use('/api/rename-legion', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const oldName = String(data?.oldName ?? '').trim();
+                            const newName = String(data?.newName ?? '').trim();
+                            if (!oldName || !newName) throw new Error('缺少军团名');
+                            if (oldName === newName) throw new Error('新旧同名，不必改');
+                            if (newName.length > 24) throw new Error('军团名过长，最多 24 字');
+                            if (/[\'"`\n\r\\]/.test(newName)) throw new Error('军团名不能含引号、反斜杠或换行');
+                            if (BASE_16_LEGION_TO_REGION[oldName]) throw new Error('一级 16 母体军团是底座，不可改名');
+                            if (BASE_16_LEGION_TO_REGION[newName]) throw new Error('【' + newName + '】是一级 16 母体军团名，不能占用');
+
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
+                            const pf = path.resolve(__dirname, 'src/data/FactionCompositions.ts');
+                            const pc = path.resolve(__dirname, 'src/types/CultureFormations.ts');
+                            let t2 = safeReadFileSync(p2);
+                            let t3 = safeReadFileSync(p3);
+                            let tf = safeReadFileSync(pf);
+                            let tc = safeReadFileSync(pc);
+
+                            const selfOld2 = "name: '" + oldName + "'";
+                            const selfOld3 = "name: '" + oldName + "'";
+                            const in2 = t2.includes(selfOld2);
+                            const in3 = t3.includes(selfOld3);
+                            if (!in2 && !in3) throw new Error('二级/三级表里都没有【' + oldName + '】');
+                            if (in2 && in3) throw new Error('【' + oldName + '】同时存在于二级和三级表，先清掉重复再改名');
+                            // 撞名检查：新名不许已被任何一层占用
+                            if (t2.includes("name: '" + newName + "'") || t3.includes("name: '" + newName + "'")) {
+                                throw new Error('【' + newName + '】已被别的军团占用，一个军团名只能有一种编制');
+                            }
+
+                            const countOf = (text: string, needle: string) => text.split(needle).length - 1;
+                            const selfFile = in2 ? p2 : p3;
+                            let selfText = in2 ? t2 : t3;
+                            const selfHits = countOf(selfText, selfOld2);
+                            if (selfHits !== 1) throw new Error('军团自身记录命中 ' + selfHits + ' 条，应为 1 条，已中止');
+                            selfText = selfText.split(selfOld2).join("name: '" + newName + "'");
+
+                            // 势力专属归属：双引号与单引号两种写法都认
+                            const fD = 'legionName: "' + oldName + '"';
+                            const fS = "legionName: '" + oldName + "'";
+                            const fHits = countOf(tf, fD) + countOf(tf, fS);
+                            const fBefore = countOf(tf, 'legionName:');
+                            tf = tf.split(fD).join('legionName: "' + newName + '"').split(fS).join("legionName: '" + newName + "'");
+                            if (countOf(tf, 'legionName:') !== fBefore) throw new Error('势力表条目数变了，已中止');
+
+                            // 文化区默认指针：只改 "冒号空格引号旧名引号" 这种值位置，别碰键名
+                            const cV1 = ": '" + oldName + "'";
+                            const cV2 = ': "' + oldName + '"';
+                            const cHits = countOf(tc, cV1) + countOf(tc, cV2);
+                            tc = tc.split(cV1).join(": '" + newName + "'").split(cV2).join(': "' + newName + '"');
+
+                            markLegionSaveWrite();
+                            safeWriteFileSync(selfFile, selfText);
+                            if (fHits > 0) safeWriteFileSync(pf, tf);
+                            if (cHits > 0) safeWriteFileSync(pc, tc);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({
+                                ok: true, layer: in2 ? '二级' : '三级',
+                                factions: fHits, cultures: cHits,
+                            }));
+                            console.log('[RenameLegion] ✏️ 【' + oldName + '】→【' + newName + '】'
+                                + '  自身 1 处 · 势力 ' + fHits + ' 处 · 文化区 ' + cHits + ' 处');
+                        } catch (err: any) {
+                            console.error('❌ [RenameLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                // ========================================================
                 // 🔴 [2026-09-14 主人报障「这 12 支我都删除了」]
                 //   /api/delete-legion   body: { legionName }
                 //   删除**军团本身那条记录**。原来的删除只解开了势力和文化区的挂靠，

@@ -1150,6 +1150,13 @@ const STALL_GUARD_ENFORCE = false;
  * 两道闸都走 `forceResultByRatio` —— 与素材防死锁同一条通道（onDecision → 引擎解冻结算），
  * 按当时兵力比判胜负，守方吃 0.85 城防折扣。不会出现"没人赢"的悬空局面。
  */
+/**
+ * 近战接触音景的**静默缓冲**（秒）：连续这么久一个近战兵都够不着活人，才淡出 land_contact。
+ * 🔴 不能取 0：近战对砍本来就会短暂脱离、换目标、被推挤开，逐帧开关会一秒抽好几次。
+ *    1.5 秒足够盖住换目标那一下（缠斗 4 秒脱离 + 贴身 65px 的来回），又不至于让
+ *    「只剩远程对射」的局面拖着绞杀声不放。
+ */
+const MELEE_QUIET_SEC = 1.5;
 const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
 
@@ -3365,8 +3372,19 @@ export class Scene13WarLayer {
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
     private stallReported = false;
-    /** 本场是否已起过「接触交战」循环音景（land_contact）：接触那一刻起循环，演出退场时停 */
-    private contactSfxPlayed = false;
+    /**
+     * 「接触交战」循环音景（land_contact）的驱动状态。
+     * 🔴 [2026-09-15 主人定]「这个音效主要是近战音效，战斗到后期往往只剩下远程兵了，可以停吗？渐隐。」
+     *    改前是一次性开关：接触那一刻起循环，一直垫到演出退场 —— 于是近战全死光、
+     *    场上只剩弓弩对射时，绞杀声还在响。现在改成**跟着近战接触实时开关**：
+     *    每帧数「有多少近战兵正够得着活人」，>0 就开，连续 MELEE_QUIET_SEC 秒没有就淡出，
+     *    近战再接上就淡入。startLoop/stopLoop 本身带淡入淡出，且互相撤销，反复切也不会爆音。
+     */
+    private meleeContactCount = 0;
+    /** 连续多少秒没有近战接触了（喂给淡出判据） */
+    private meleeQuietSec = 0;
+    /** 音景此刻是否开着（只为省掉每帧重复调用，start/stop 本身幂等） */
+    private contactSfxOn = false;
     /** 首批素材是否已经全部就绪过一次：之后再有素材加载都不许冻结演出（见 tick 里那道闸） */
     private assetsReadyOnce = false;
 
@@ -3853,7 +3871,9 @@ export class Scene13WarLayer {
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
-        this.contactSfxPlayed = false;   // 每场重置：下一场重新等待接触才起循环音景
+        this.meleeContactCount = 0;      // 每场重置：下一场重新等近战接上才起循环音景
+        this.meleeQuietSec = 0;
+        this.contactSfxOn = false;
         this.adv = [0, 0];
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
@@ -6295,12 +6315,10 @@ export class Scene13WarLayer {
             m.prevX = m.x;
             m.prevY = m.y;
         }
-        // 🔴 [2026-08-23 主人定] 城墙坍塌后起接触交战音景（攻城战专用：两军此时才真正开打，
-        //    攻城武器打墙阶段不播；野战无城墙，仍在下方 inReach 处起）。
-        if (!this.contactSfxPlayed) {
-            this.contactSfxPlayed = true;
-            audioManager.startSceneLoop('land_contact');
-        }
+        // 🔴 [2026-08-23 定的「塌墙时起接触音景」已于 2026-09-15 取消]：
+        //    音景改由「近战接触人数」实时驱动（见 meleeContactCount），塌墙前两军够不着活人、
+        //    自然不响；塌墙后近战一接上就自己淡入。在这里另起一次反而会让它先响、
+        //    再因为还没接触而淡出、接触了又淡入，来回抽。
         // 🔴 [2026-08-29 主人定] 30 秒：城门/城墙/箭塔/建筑随机均分三形态（完整/破损/残骸），全为贴图
         this.applyRandomCollapseForms();
     }
@@ -6715,8 +6733,40 @@ export class Scene13WarLayer {
         m.y = py;
     }
 
+    /**
+     * 接触交战音景（land_contact）的开关：**只跟近战接触走**。
+     *
+     * 🔴 [2026-09-15 主人定]「这个音效主要是近战音效，战斗到后期往往只剩下远程兵了，
+     *    可以停吗？渐隐。」——改前它是一次性循环，起了就垫到演出退场，
+     *    近战全死光只剩弓弩对射时绞杀声还在响。
+     *
+     * 判据：本帧 `meleeContactCount > 0`（有近战兵够得着活人）就开；
+     * 连续 MELEE_QUIET_SEC 秒一个都没有才淡出 —— 给一段缓冲是必要的，
+     * 近战对砍本来就会短暂脱离、换目标、被推开，按「这一帧有没有」直接开关会一秒抽好几次。
+     * 淡入淡出由 AudioManager 的 startLoop/stopLoop 自带（FADE.loop），
+     * 且两者互相撤销：淡出途中又接上近战，会当场回到正常音量，不会先静音再重来。
+     */
+    private tickContactSfx(dt: number): void {
+        if (this.meleeContactCount > 0) {
+            this.meleeQuietSec = 0;
+            if (!this.contactSfxOn) {
+                this.contactSfxOn = true;
+                audioManager.startSceneLoop('land_contact');
+            }
+            return;
+        }
+        if (!this.contactSfxOn) return;
+        this.meleeQuietSec += dt;
+        if (this.meleeQuietSec >= MELEE_QUIET_SEC) {
+            this.contactSfxOn = false;
+            audioManager.stopSceneLoop('land_contact');
+        }
+    }
+
     private step(dt: number): void {
         if (this.over) return;
+        // 近战接触音景：每帧重新数，本帧的计数在下面的兵种循环里累加，循环跑完在 tickContactSfx 里结账
+        this.meleeContactCount = 0;
         // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──
         this.battleSec += dt;
         const hardStop = this.battleSec > HARD_STOP_SEC;
@@ -6995,15 +7045,13 @@ export class Scene13WarLayer {
                 //    从视野边缘跑到跟前要 5.4s（精锐战象 320/6.4s），4 秒一到就丢目标重找，
                 //    再锁再跑再丢，一刀都砍不出去。实测这样的兵种共 6 个（全是象 + 桑纳亚）。
                 if (inReach) {
-                    // 接触交战音景：两军接触起**循环**垫底，直到演出退场（stop 里停）。
-                    // 不在列阵期起（deploying 分支已 continue），只在真正接敌那一刻。
-                    // contactSfxPlayed 只为省掉每帧重复调用，startSceneLoop 本身是幂等的。
-                    // 普通城池在 30 秒塌墙前仍由 defenderHolding 拦住；野战与无需塌墙的城寨
-                    // 在首次真正进入攻击距离时启动战斗音效。
-                    if (!this.contactSfxPlayed && !this.defenderHolding) {
-                        this.contactSfxPlayed = true;
-                        audioManager.startSceneLoop('land_contact');
-                    }
+                    // 接触交战音景的**唯一数据源**：这一帧有多少近战兵正够得着活人。
+                    // 三条排除，都是为了让这声音只代表「两军绞杀」：
+                    //   · stats.rng > 65 的远程兵不算 —— 它是近战音效，后期只剩对射时就该静下来；
+                    //   · 攻城武器不算 —— 砸墙有 siege_impact 管；
+                    //   · 目标是建筑（'sprite' in foe）不算 —— 打墙不是绞杀。
+                    // 不在列阵期计数（deploying 分支已 continue）。
+                    if (stats.rng <= 65 && !m.siegeW && !('sprite' in foe)) this.meleeContactCount++;
                     m.fightT = (m.fightT || 0) + dt;
                     // 🔴 [2026-08-17 主人拍板] 目标只剩半血以下就**不换人**，把他打死再走。
                     //    原来不看血量：跟一个人打满 4 秒，哪怕对方只剩一口气也照样掉头去找别人 ——
@@ -7491,6 +7539,9 @@ export class Scene13WarLayer {
         const alive = [0, 0];
         for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
         for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
+        // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
+        this.tickContactSfx(dt);
+
         if (alive[0] <= 0 || alive[1] <= 0) {
             this.over = true;
             const attackerLost = alive[0] <= 0;
@@ -8158,55 +8209,4 @@ export class Scene13WarLayer {
         if (this.sparks.length) {
             ctx.save();
             for (const s of this.sparks) {
-                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.9;
-                ctx.globalAlpha = alpha;
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = s.size;
-                ctx.lineCap = 'round';
-
-                // 沿速度反方向拉出火星尾迹线
-                const tailScale = 0.024;
-                const tailX = s.x - s.vx * tailScale;
-                const tailY = s.y - s.vy * tailScale;
-
-                ctx.beginPath();
-                ctx.moveTo(s.x, s.y);
-                ctx.lineTo(tailX, tailY);
-                ctx.stroke();
-
-                // 火星头部亮点
-                ctx.fillStyle = '#FFFFFF';
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size * 0.5, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-
-        // ── DE 攻击特效（爆炸/炮口焰，画在火花之上）──
-        if (this.fxs.length) {
-            for (const f of this.fxs) {
-                const fx = this.fxBank[f.type];
-                if (!fx) continue;
-                const fd = fx.dirs[f.dir % fx.dirs.length];
-                if (!fd?.img || !fd.fw) continue;   // 素材未就绪跳过
-                const p = Math.min(1, f.t / f.dur);
-                const fr = Math.min(fd.n - 1, Math.floor(p * fd.n));
-                const s = f.scale;
-                ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
-            }
-        }
-        if (flip) ctx.restore();
-        this.coverStrategyMap();
-        // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
-        if (this.timeOfDay.active) {
-            const _tt0 = import.meta.env.DEV ? performance.now() : 0;
-            this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
-            if (import.meta.env.DEV) {
-                this.perfTint.push(performance.now() - _tt0);
-                if (this.perfTint.length > 1800) this.perfTint.shift();
-            }
-        }
-    }
-}
-
+     

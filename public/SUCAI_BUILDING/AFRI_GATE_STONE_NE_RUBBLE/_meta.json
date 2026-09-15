@@ -1,1 +1,12 @@
-{"name": "AFRI_GATE_STONE_NE_RUBBLE", "frames": 1, "box_w": 188, "box_h": 104, "anchor_x": 96, "anchor_y": 52, "sld_source": "b_afri_gate_stone_ne_rubble"}
+{
+  "name": "AFRI_GATE_STONE_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 276,
+  "box_h": 152,
+  "anchor_x": 134,
+  "anchor_y": 81,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_afri_gate_stone_ne_rubble + b_afri_gate_stone_corner_rubble"
+}

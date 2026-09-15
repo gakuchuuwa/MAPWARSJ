@@ -1,1 +1,12 @@
-{"name": "THRACIAN_GATE_STONE_SE_RUBBLE", "frames": 1, "box_w": 164, "box_h": 72, "anchor_x": 76, "anchor_y": 40, "sld_source": "b_thracian_gate_stone_se_rubble"}
+{
+  "name": "THRACIAN_GATE_STONE_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 255,
+  "box_h": 124,
+  "anchor_x": 138,
+  "anchor_y": 59,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_thracian_gate_stone_se_rubble + b_thracian_gate_stone_corner_rubble"
+}

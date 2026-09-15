@@ -1,1 +1,12 @@
-{"name": "PERSIAN_GATE_STONE_SE_RUBBLE", "frames": 1, "box_w": 136, "box_h": 72, "anchor_x": 76, "anchor_y": 40, "sld_source": "b_persian_gate_stone_se_rubble"}
+{
+  "name": "PERSIAN_GATE_STONE_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 241,
+  "box_h": 126,
+  "anchor_x": 121,
+  "anchor_y": 64,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_persian_gate_stone_se_rubble + b_persian_gate_stone_corner_rubble"
+}
