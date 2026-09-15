@@ -1080,7 +1080,10 @@ app.innerHTML = `
     <div id="le-table-wrap" class="le-table-wrap"></div>
     <div id="le-cat-table-wrap" class="le-table-wrap" style="display:none;"></div>
     <!-- 🔴 [2026-09-15 主人「为什么不放一起」] 军团编辑与其它视图并排，占满整个主区 -->
-    <div id="le-legion-wrap" style="display:none;flex:1;min-height:0;flex-direction:column;"></div>
+    <!-- 🔴 [2026-09-15] height:100% 是必须的：父级 .le-main 是 block+overflow:auto，
+         flex:1 在这里不生效，wrap 会被内容撑到近万像素，右侧 420px 编辑栏跟着被顶到顶部、
+         一往下拉就滚出屏幕。锁成一屏高之后，左表自己滚、右编辑栏常驻。 -->
+    <div id="le-legion-wrap" style="display:none;height:100%;min-height:0;flex-direction:column;overflow:hidden;"></div>
   </main>
   <!-- 右侧：军团配置与实时预览面板 -->
   <aside id="le-panel" class="le-panel">

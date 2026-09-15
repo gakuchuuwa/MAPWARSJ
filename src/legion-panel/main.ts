@@ -251,6 +251,10 @@ function render(): void {
     const dirty = !!(sel && draft && (draft.mode !== sel.mode
         || draft.types.join(',') !== sel.slots.map(s => s.type).join(',')));
 
+    // 🔴 [2026-09-15] 整表是 innerHTML 重建的，点一支军团就换新节点，
+    //     不记住滚动位置的话列表会弹回顶部，往下拉着编根本编不下去。
+    const keepScroll = document.getElementById('lp-list')?.scrollTop ?? 0;
+
     host.innerHTML = `
     <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <input id="lp-search" placeholder="搜军团名 / 兵种" value="${esc(keyword)}"
@@ -263,7 +267,7 @@ function render(): void {
     </div>
 
     <div style="flex:1;display:flex;min-height:0;">
-      <div style="flex:1;overflow:auto;">
+      <div id="lp-list" style="flex:1;overflow:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead style="position:sticky;top:0;background:#1a1714;">
             <tr style="color:#b8ab8e;text-align:left;">
@@ -344,6 +348,9 @@ function render(): void {
         ` : '<div style="color:#6a6358;font-size:13px;padding-top:40px;text-align:center;">左边点一支军团</div>'}
       </div>
     </div>`;
+
+    const listBox = document.getElementById('lp-list');
+    if (listBox && keepScroll > 0) listBox.scrollTop = keepScroll;
 
     const search = document.getElementById('lp-search') as HTMLInputElement | null;
     search?.addEventListener('compositionstart', () => { composing = true; });

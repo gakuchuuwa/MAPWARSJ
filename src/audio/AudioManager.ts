@@ -215,8 +215,16 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
 const BGM_REGION_GAIN: Record<string, number> = {
     // [2026-09-12 主人「所有曲子音量肯定不一致吧，请统一一个音量大小」]
     //    以下三首**原先压根不在表里** → 按 1.0 播放、无任何补偿（比其它曲响 3dB），现按实测 LUFS 补进表。
+    // 🔴 [2026-09-15 主人授权「只动最差的那 4 首」] DIANQIAN/pugan/zhaosong/TIBET 已**裁掉安静前奏**。
+    //    起因：整首平均响度本来就统一（37 首实测全落在 -21.0±0.45dB），但 BGM 是从头播的，
+    //    观众听到的是**前十几秒** —— 实测前15s 极差达 20.7dB，这 4 首是离群值：
+    //      DIANQIAN/pugan -39.5dB（几乎全无声）、zhaosong -29.5dB、TIBET -27.0dB。
+    //    裁切点由 ebur128 逐秒短时响度定（scratch/probe_bgm_intro_cut.cjs + try_bgm_cuts.cjs）：
+    //      DIANQIAN/pugan 裁 26s（前15s -39.1 → -21.4）、zhaosong 裁 37s（-29.4 → -22.8）、
+    //      TIBET 裁 20s（-27.0 → -22.4），全部进入其余 33 首的同一档（优于 -25dB）。
+    //    原文件备份在 `音乐素材/bgm_原始备份_20260915/*.orig`（这 4 首无母带，删备份即不可逆）。
     BASHU: 0.708,      // 实测 -18.0 LUFS · 巴蜀
-    DIANQIAN: 0.70,    // 实测 -18.3 LUFS · 滇黔
+    DIANQIAN: 0.718,   // 实测 -18.12 LUFS · 滇黔（2026-09-15 裁前奏 26s 后重测）
     LINGNAN: 0.708,    // 实测 -18.0 LUFS · 岭南
     CENTRAL: 0.7,  // -17.9 LUFS
     CENTRAL_ASIA: 0.708,  // -18.0 LUFS
@@ -248,18 +256,18 @@ const BGM_REGION_GAIN: Record<string, number> = {
     manqing: 0.708,
     NORTH: 0.716,  // -18.1 LUFS
     NORTHEAST: 0.708,  // -18.0 LUFS
-    pugan: 0.733,  // -18.3 LUFS
+    pugan: 0.718,  // -18.12 LUFS · = DIANQIAN 同曲 cp（2026-09-15 裁前奏 26s 后重测）
     rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
     SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
     STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
-    TIBET: 0.708,  // -18.0 LUFS · 千年的祈祷，用户要求单曲小幅提高约 1dB
+    TIBET: 0.709,  // -18.01 LUFS · 千年的祈祷（2026-09-15 裁前奏 20s 后重测）
     WESTERN: 0.708,  // -18.0 LUFS
     WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
     victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
     wuzhou: 0.7,  // -17.9 LUFS
     xianqin: 0.708,  // -18.0 LUFS
     yingqin: 0.708,  // -18.0 LUFS
-    zhaosong: 0.708,  // -18.0 LUFS
+    zhaosong: 0.697,  // -17.87 LUFS · 兰陵王入阵曲（2026-09-15 裁前奏 37s 后重测）
 };
 
 /**
