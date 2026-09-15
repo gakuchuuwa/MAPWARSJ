@@ -78,11 +78,15 @@ export class PlayerHUD {
             // 🔴 [2026-09-10 主人定「开局也是」] 开播那一下不再无条件收玩家面板。
             // 🔴 [2026-09-15 主人定] 这三个面板（军团/军情/玩家）已改归**轮播规则**管
             //    （展开 30s / 收起 60s 往复，见 PANEL_CYCLE_*），不再归旧的「势力规则」。
-            //    开播只是让 refresh 再跑一次；轮播相位与计时**不受开播影响**，
-            //    若开播那一下 StreamModeToggle 收了面板，下一次相位翻转会把它带回来。
+            //    开播只是让 refresh 再跑一次；轮播相位与计时**不受开播影响**。
             //    置回 undefined 是为了不让下面那脚「势力变化 → 立即收起」被开播误触发。
-            //    （右下角时间面板不在这三个之内，仍由 StreamModeToggle 按开播收起。）
+            // 🔴 [2026-09-15 主人报障「开局的时候四个面板都展开」] 原来这里只说「下一次相位翻转
+            //    会把它带回来」就不管了 —— 实测开播在 t≈5s 触发，把军团/军情/右下角三块收掉，
+            //    而下一次翻转是 t=30s 翻到**收起**相，四面板要到 t=90s 才回来。
+            //    开局那 30 秒的展开相等于没有。现在：**只要当前是展开相，就把四面板贴回展开**，
+            //    开播收的那一下当场撤销。轮播相位与计时仍然不受影响。
             this.lastPanelFactionId = undefined;
+            if (this.cycleStarted && this.cyclePhaseExpanded) this.applyCyclePhase(true);
             this.refresh();
         };
         window.addEventListener('stream-mode-change', this.onStreamModeChange);
@@ -228,10 +232,18 @@ export class PlayerHUD {
                 this.scheduleNextCyclePhase();
                 return;
             }
+            // 第一个展开相走完 → 开局保护解除，之后「入伍即收起」那一脚才生效
+            this.initialExpandDone = true;
             this.applyCyclePhase(!this.cyclePhaseExpanded);
             this.scheduleNextCyclePhase();
         }, hold);
     }
+
+    /**
+     * 开局第一个展开相是否已走完。false = 还在开局那 30 秒里，
+     * 此期间「入伍即收起」不许生效（见 kickCycleToCollapsed）。
+     */
+    private initialExpandDone = false;
 
     /** 启动轮播（幂等，只启一次）。开局从**展开**相起步，让观众先看一眼四面板。 */
     private startPanelCycle(): void {
@@ -245,9 +257,27 @@ export class PlayerHUD {
      * 🔴 [2026-09-15 主人定] 入伍加入势力那一刻**立即收起**（不等计时走完），
      *    然后从「收起 60s」重新起算，轮播照常接上。
      *    这一下不是多余的：它是个转场信号——面板唰地收起 = 「上路了」。
+     *
+     * 🔴 [2026-09-15 主人报障「开局的时候四个面板都展开」] **开局第一个展开相内不许踢收**。
+     *    玩家开着自动模式，实测 t≈4~16s 就入伍拿到势力，这一脚正好落在开局那 30 秒里，
+     *    观众根本没看到过四面板。第一个展开相走完（initialExpandDone）之后这脚才生效。
      */
     private kickCycleToCollapsed(): void {
+        if (!this.initialExpandDone) return;
         this.applyCyclePhase(false);
+        this.scheduleNextCyclePhase();
+    }
+
+    /**
+     * 🔴 [2026-09-15 主人定]「军团战败后，4 面板也不展开」——脱离势力那一刻**立即展开**，
+     *    然后从「展开 30s」重新起算。
+     *    与入伍那一脚是对称的一对转场信号：入伍 = 上路了，收起让路给画面；
+     *    战败脱军 = 回到自由身，观众正需要看四面板（下一个目标是谁、场上什么局势）。
+     *    改前这两种情况共用 kickCycleToCollapsed，于是战败后反而把面板收了 ——
+     *    实测战败 3.34s 后四面板齐刷刷收起，正是主人报的那一幕。
+     */
+    private kickCycleToExpanded(): void {
+        this.applyCyclePhase(true);
         this.scheduleNextCyclePhase();
     }
 
@@ -266,7 +296,9 @@ export class PlayerHUD {
             //    lastPanelFactionId 初值 undefined ≠ null，但开局那一次已由 startPanelCycle
             //    置成展开相，所以这里只在**真正发生过势力变化**时才踢一脚。
             if (this.lastPanelFactionId !== undefined && this.lastPanelFactionId !== this.hero.factionId) {
-                this.kickCycleToCollapsed();
+                // 有势力 → 无势力 = 战败脱军，展开给观众看；无 → 有 = 入伍上路，收起让画面。
+                if (this.hero.factionId) this.kickCycleToCollapsed();
+                else this.kickCycleToExpanded();
             }
             this.lastPanelFactionId = this.hero.factionId;
             this.panelsWereInScene13 = false;

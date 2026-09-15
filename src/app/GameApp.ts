@@ -58,7 +58,8 @@ import { PlayerHero } from '../player/PlayerHero';
 import { PlayerQuestSystem } from '../player/PlayerQuestSystem';
 import { PlayerHUD } from '../player/PlayerHUD';
 import { PlayerScene13Control } from '../player/PlayerScene13Control';
-import { PLAYER_START_CITY_ID, PLAYER_START_OFFSET } from '../player/PlayerConfig';
+import { PLAYER_START_CITY_ID, PLAYER_START_OFFSET, PLAYER_CITY_ARRIVE_DIST } from '../player/PlayerConfig';
+import { getEuclideanDistance } from '../core/DistanceUtils';
 import type { LegionManager } from '../legion/LegionManager';
 import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
@@ -711,20 +712,49 @@ export class GameApp {
     }
 
     /**
-     * [2026-09-05 玩家] 乱入者：出生在出生据点（现为长安）城外一段距离，镜头从此永远跟玩家；
-     * 点据点前往 → 抵达对话 → 接任务入伍 → 随军进 13 亲自砍人攒功勋。
-     * 🔴 [2026-09-11 主人定「留一段距离」] 玩家出生点 = 出生据点 + `PLAYER_START_OFFSET`
-     *    （城外约 81 km，取现成官道节点，保证在路网上）。**镜头仍落在据点本身**，
-     *    故开局画面是「长安城 + 城东侧不远处的玩家」，玩家须自己走过去才能面见城中武将。
-     *    🔴 [2026-09-15 主人定「开局画面改回长安」] 出生据点由佩拉改回长安。
+     * [2026-09-05 玩家] 乱入者：开局随机出现在世界的某一处（随机据点城外路网上）。
+     * 镜头开局对准该处，玩家可自行前往面见城中武将接任务入伍，或在世界大地图自由漫游。
+     * 🔴 [2026-09-15 主人定]「请在游戏开局，让玩家随机出现在世界的某一处」
      */
     private setupPlayer(legionManager: LegionManager): void {
-        const startCity = this.cityManager.getCity(PLAYER_START_CITY_ID) ?? this.cityManager.getCities()[0];
-        if (!startCity) return;
-        const spawnPos = {
-            lat: startCity.latitude + PLAYER_START_OFFSET.lat,
-            lng: startCity.longitude + PLAYER_START_OFFSET.lng,
-        };
+        const allCities = this.cityManager.getCities();
+        if (allCities.length === 0) return;
+        // 随机在世界所有据点中挑选一个出生据点
+        const startCity = allCities[Math.floor(Math.random() * allCities.length)];
+
+        let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
+        const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
+        // 优先连通的陆地道路，保证玩家落在合法陆地路网上
+        const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
+        const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
+
+        if (candidateEdges.length > 0) {
+            const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
+            // 沿道路挑一个离开据点一定距离的节点（>= 判定到达阈值，保证在城外）
+            let picked: [number, number] | null = null;
+            for (let i = 1; i < edge.coordinates.length; i++) {
+                const c = edge.coordinates[i];
+                const d = getEuclideanDistance({ lat: startCity.latitude, lng: startCity.longitude }, { lat: c[1], lng: c[0] });
+                if (d >= PLAYER_CITY_ARRIVE_DIST) {
+                    picked = c;
+                    break;
+                }
+            }
+            if (!picked && edge.coordinates.length > 1) {
+                picked = edge.coordinates[edge.coordinates.length - 1];
+            }
+            if (picked) {
+                spawnPos = { lat: picked[1], lng: picked[0] };
+            }
+        } else {
+            // 无连通边时城外安全微小偏移
+            const angle = Math.random() * Math.PI * 2;
+            spawnPos = {
+                lat: startCity.latitude + Math.sin(angle) * (PLAYER_CITY_ARRIVE_DIST + 0.02),
+                lng: startCity.longitude + Math.cos(angle) * (PLAYER_CITY_ARRIVE_DIST + 0.02),
+            };
+        }
+
         const hero = new PlayerHero({
             map: this.map,
             cityManager: this.cityManager,
@@ -810,8 +840,8 @@ export class GameApp {
         hero.onChange(() => this.cameraFollowUI.refreshPlayerFollow());
         // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
         const lMap = this.map.getLeafletMap();
-        lMap.setView([startCity.latitude, startCity.longitude], lMap.getZoom(), { animate: false });
-        gameLog('startup', `👤 [玩家] ${hero.name}登场于【${startCity.name}】`);
+        lMap.setView([spawnPos.lat, spawnPos.lng], lMap.getZoom(), { animate: false });
+        gameLog('startup', `👤 [玩家] ${hero.name}随机登场于【${startCity.name}】(${startCity.id}) 城外 [${spawnPos.lat.toFixed(2)}, ${spawnPos.lng.toFixed(2)}]`);
     }
 
     private exposeGlobals(): void {

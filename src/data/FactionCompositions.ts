@@ -1850,7 +1850,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "song": {
-        legionName: "城堡时代两宋军团",
+        legionName: "城堡时代宋禁军团",
         legionType: "sub",
     },
     "wusun": {

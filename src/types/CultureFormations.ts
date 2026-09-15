@@ -1663,7 +1663,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SWEDISH: '帝国时代瑞典军团',
     MACEDONIAN: "古典时代马其顿军团",
     HELLENIC: '古典时代希伦军团',
-    SONG: '城堡时代两宋军团',
+    SONG: '城堡时代宋禁军团',
     GORYEO: '城堡时代高丽军团',
     JOSEON: '帝国时代朝鲜军团',
     GOJOSEON: '古典时代朝鲜军团',

@@ -378,7 +378,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SEASIA_CASTLE'],
     },
     {
-        name: '城堡时代两宋军团',
+        name: '城堡时代宋禁军团',
         formationMode: 'balance_yoke',
         slots: [
             { type: 'liao_dao', count: 4 },

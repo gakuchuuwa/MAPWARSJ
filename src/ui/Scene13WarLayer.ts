@@ -6386,26 +6386,21 @@ export class Scene13WarLayer {
                 const damaged = 'BUILDING:' + towerName + '_DAMAGED';
                 if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
             } else {
-                // 残骸(RUBBLE 30%)：塔塌了 → 停火
+                // 🔴 残骸(DESTR → RUBBLE 30%)：播放倒塌动画，停火（不可直接切 rubble 绕过倒塌动画）
                 t.down = true;
-                const rubble = 'BUILDINGANIM:' + towerName + '_RUBBLE';
-                if (this.natureCache[rubble]?.img?.complete) { t.sprite.asset = rubble; t.sprite.frame = 0; }
-                else this.collapseToRubble(t.sprite, towerName);
+                this.collapseToRubble(t.sprite, towerName);
             }
         }
-        for (const b of this.cityBuildings) {
-            if (b.sprite.indestructible || b.name.includes('CASTLE')) continue;
-            const r = Math.random();
-            if (r < 0.4) continue;   // 40% 保持完整
-            if (r < 0.8) {
-                // 破损（DAMAGED）：焦黑残缺、还立着 → 残垣断壁主视觉；无破损档则塌残骸
-                const damaged = 'BUILDING:' + b.name + '_DAMAGED';
-                if (this.natureCache[damaged]?.img?.complete) { b.sprite.asset = damaged; b.sprite.frame = 0; }
-                else this.collapseToRubble(b.sprite, b.name);
-            } else {
-                // 残骸（DESTR → RUBBLE）
-                this.collapseToRubble(b.sprite, b.name);
+        // 🔴 [2026-09-15 主人定] 所有坍塌模式中，50%的建筑坍塌，只有城堡不坍塌
+        const targetBuildings = this.cityBuildings.filter(b => !b.sprite.indestructible && !b.name.includes('CASTLE'));
+        const shuffled = [...targetBuildings].sort(() => Math.random() - 0.5);
+        const collapseCount = Math.round(shuffled.length * 0.5);
+        for (let i = 0; i < shuffled.length; i++) {
+            if (i < collapseCount) {
+                // 50% 坍塌：播放倒塌动画，最终转为残骸
+                this.collapseToRubble(shuffled[i].sprite, shuffled[i].name);
             }
+            // 剩余 50% 保持完好立着
         }
     }
 
@@ -8209,4 +8204,55 @@ export class Scene13WarLayer {
         if (this.sparks.length) {
             ctx.save();
             for (const s of this.sparks) {
-     
+                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.9;
+                ctx.globalAlpha = alpha;
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = s.size;
+                ctx.lineCap = 'round';
+
+                // 沿速度反方向拉出火星尾迹线
+                const tailScale = 0.024;
+                const tailX = s.x - s.vx * tailScale;
+                const tailY = s.y - s.vy * tailScale;
+
+                ctx.beginPath();
+                ctx.moveTo(s.x, s.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.stroke();
+
+                // 火星头部亮点
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // ── DE 攻击特效（爆炸/炮口焰，画在火花之上）──
+        if (this.fxs.length) {
+            for (const f of this.fxs) {
+                const fx = this.fxBank[f.type];
+                if (!fx) continue;
+                const fd = fx.dirs[f.dir % fx.dirs.length];
+                if (!fd?.img || !fd.fw) continue;   // 素材未就绪跳过
+                const p = Math.min(1, f.t / f.dur);
+                const fr = Math.min(fd.n - 1, Math.floor(p * fd.n));
+                const s = f.scale;
+                ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
+            }
+        }
+        if (flip) ctx.restore();
+        this.coverStrategyMap();
+        // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
+        if (this.timeOfDay.active) {
+            const _tt0 = import.meta.env.DEV ? performance.now() : 0;
+            this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
+            if (import.meta.env.DEV) {
+                this.perfTint.push(performance.now() - _tt0);
+                if (this.perfTint.length > 1800) this.perfTint.shift();
+            }
+        }
+    }
+}
+

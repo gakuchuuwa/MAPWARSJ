@@ -177,8 +177,10 @@ export const PLAYER_QUEST_TARGET_MAX_HOPS = 5;
 export const PLAYER_CITY_ARRIVE_DIST = 0.06;
 
 /**
- * 🔴 [2026-09-11 主人定]「玩家军团战败后，玩家要停留 3 秒再移动去下个目标。」
- * （同日先定 5 秒，当天改 3 秒，以本行为准。）
+ * 🔴 [2026-09-15 主人定]「军团战败后，玩家应该停留 5 秒再移动。」——**以本行为准，5 秒**。
+ * （沿革：2026-09-11 先定 5 秒、当天改 3 秒；9-15 主人复述 5 秒，改回 5000。
+ *   当时只改了常量没改注释，`PlayerHero.update` 里两处注释一直写着「停留 5 秒」，
+ *   而常量是 3000 —— 实测战败后 3.06s 就解除停顿，对不上主人要的 5 秒。）
  *
  * 随军军团在大地图战败、玩家脱离军团之后，玩家原地停留这么久（毫秒）才允许再移动。
  *
@@ -192,7 +194,7 @@ export const PLAYER_CITY_ARRIVE_DIST = 0.06;
  *   ② `update()` 里 `!host || isDestroyed || troops<=0` —— 军团被打光，这条更常见，
  *      而且它 detach 后会让 ① 的触发条件 `getHostLegionId() === this.id` 失效，① 根本轮不上。
  */
-export const PLAYER_DEFEAT_HOLD_MS = 3000;
+export const PLAYER_DEFEAT_HOLD_MS = 5000;
 
 /**
  * 🔴 [2026-09-11 主人定]「调整下玩家移动速度，平地慢一小点，山地快一小点。」
