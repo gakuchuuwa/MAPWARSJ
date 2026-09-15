@@ -12,8 +12,45 @@ import type { GameApp } from './GameApp';
 const FOLLOW_RECENTER_DEADZONE_M = 120;
 /** 距离过大（切换跟随目标等）时直接吸附，不做插值 */
 const FOLLOW_SNAP_DISTANCE_M = 12000;
-/** 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔）。0.22 滞后太大，玩家拐弯时镜头「冲过头再退回来」 */
-const FOLLOW_LERP_FACTOR = 0.5;
+/**
+ * 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔）。0.22 滞后太大，玩家拐弯时镜头「冲过头再退回来」。
+ *
+ * 🔴 [2026-09-15 修「战略地图玩家移动时画面发抖」] 这个 0.5 是**按 60fps 一帧**定的基准值，
+ *    **不能直接当每帧系数用**，必须经 `followLerpFactor(dt)` 按真实帧长换算 —— 见下。
+ */
+const FOLLOW_LERP_BASE_PER_FRAME = 0.5;
+/** `FOLLOW_LERP_BASE_PER_FRAME` 对应的参考帧长（60fps 一帧，毫秒） */
+const FOLLOW_LERP_REF_FRAME_MS = 1000 / 60;
+
+/**
+ * 🔴 [2026-09-15 修「战略地图玩家移动时画面发抖」] 帧率无关的指数平滑系数。
+ *
+ * **病灶**：原来每帧一律用固定的 0.5 去追目标。指数平滑的语义是「每单位时间衰减固定比例」，
+ * 把它当成「每帧固定比例」，追赶速度就直接与帧长成反比 —— 帧长抖多少，镜头追赶量就抖多少。
+ *
+ * 实测（无头 Chrome，玩家行军 240 帧，scratch/probe_camera_jitter.mjs）：
+ *   帧间隔 zoom8 p50=29ms/max=145ms、zoom9 p50=16.5ms/max=192ms —— 最长帧是最短帧的 12 倍。
+ *   镜头本身单向平移（零位移帧 0%、方向反转 0~1 次 / 238），**但主角相对镜头中心的屏幕偏移**
+ *   zoom8 sd=1.15/1.25px 峰峰 6.4/6.5px、方向反转 41%/44%；
+ *   zoom9 sd=1.33/1.46px 峰峰 8.5/8.5px、方向反转 39%/53%。
+ *   = 主角在屏幕上以 ±4px 幅度、每两帧换一次方向来回摆 —— 盯着主角看就是「地图在抖」。
+ *   zoom9 比 zoom8 更晃：250m/px 下同样航速的像素速度快一倍，抖出来的绝对位移随之翻倍。
+ *
+ * **解法**（指数平滑的标准写法）：把「每参考帧衰减 (1-k)」换算到真实帧长：
+ *   k(dt) = 1 - (1 - k_ref) ^ (dt / refFrame)
+ * dt = refFrame 时精确退化为原来的 0.5，行为不变；长帧追得多、短帧追得少，追赶**速度**恒定。
+ *
+ * 模拟对比（scratch/sim_camera_jitter_causes.mjs，用实测帧间隔分布跑 5000 帧）：
+ *   现状（固定 lerp + 整像素）  偏移 sd 1.05px 峰峰 8.74px
+ *   仅本修（dt 归一化）         偏移 sd 0.43px 峰峰 2.66px   ← 抖幅降到 ~1/3
+ *   再叠分数平移（未做）        偏移 sd 0.25px 峰峰 1.12px
+ *
+ * dt 上游已由 `clampFrameDelta` 夹到 (0, 0.1]s，这里再夹一次只为防御直接调用。
+ */
+function followLerpFactor(deltaSeconds: number): number {
+    const dtMs = Math.min(100, Math.max(1, deltaSeconds * 1000));
+    return 1 - Math.pow(1 - FOLLOW_LERP_BASE_PER_FRAME, dtMs / FOLLOW_LERP_REF_FRAME_MS);
+}
 
 /**
  * 🔴 [2026-08-31 修「zoom9 行军跟拍一顿一顿」] 跟拍平移的**亚像素残差**。
@@ -398,9 +435,11 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             }
                             // 每帧向目标插值一小段（指数平滑追踪）：
                             // 比「攒距离整步跳」平滑，比 panTo 动画叠加可控。
+                            // 🔴 [2026-09-15] 系数按真实帧长换算（followLerpFactor），不再用固定 0.5 —— 见其注释。
+                            const k = followLerpFactor(deltaTime);
                             const next = L.latLng(
-                                center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
-                                center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
+                                center.lat + (target.lat - center.lat) * k,
+                                center.lng + (target.lng - center.lng) * k,
                             );
                             // [2026-08-28 修卡顿] 像素级 panBy 替代 setView：setView 每帧触发 Leaflet
                             // _resetView（全量重定位领土 SVG + 据点 DOM + 河流 path），跟拍实测帧时间
@@ -474,9 +513,11 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                     lMap2.setView(target, currentZoom, { animate: false });
                                     return;
                                 }
+                                // 🔴 [2026-09-15] 同上：系数按真实帧长换算，不再用固定 0.5。
+                                const k2 = followLerpFactor(deltaTime);
                                 const next = L.latLng(
-                                    center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
-                                    center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
+                                    center.lat + (target.lat - center.lat) * k2,
+                                    center.lng + (target.lng - center.lng) * k2,
                                 );
                                 // 同上：像素级 panBy 替代 setView，避免每帧 _resetView 全量重定位。
                                 const _p1 = lMap2.project(center, currentZoom);

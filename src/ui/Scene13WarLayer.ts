@@ -7518,6 +7518,11 @@ export class Scene13WarLayer {
     private pushCorpse(m: WarMan): void {
         // 死人打点：唯一的死亡入口，卡死检测（NO_KILL_SEC）就靠它。留尸/溃逃两条路都要记。
         this.lastKillSec = this.battleSec;
+        // 🔴 [2026-09-15 主人定] 攻城武器阵亡不能逃跑，只能留下尸体（残骸），永不进 fleers 通道。
+        if (m.siegeW) {
+            this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
+            return;
+        }
         if (this.takeCorpseSlot()) {
             // 尸体朝向随机：每具倒向不同方向，避免全部同朝向呆板（主人 2026-08-21 定）
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
