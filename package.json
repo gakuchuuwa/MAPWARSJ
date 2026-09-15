@@ -67,6 +67,7 @@
     "portrait:surplus-audit": "node tools/audit_surplus_deletable.mjs",
     "culture:audit": "node tools/culture_audit.mjs",
     "legion:no-composition-copies": "node tools/legion_no_composition_copies.mjs",
+    "scene13:nine-lanes": "node tools/scene13_nine_lanes.mjs",
     "bgm:audit": "node tools/bgm_audit.mjs",
     "portrait:folder-audit": "node scratch/dedupe_portraits_within_folder.mjs --audit",
     "portrait:folder-dedupe": "node scratch/dedupe_portraits_within_folder.mjs",
