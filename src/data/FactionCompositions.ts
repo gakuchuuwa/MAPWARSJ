@@ -601,8 +601,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "qifu_d": {
-        legionName: "封建时代吐蕃军团",
-        legionType: "region",
+        legionName: "古典时代鲜卑军团",
+        legionType: "sub",
     },
     "tuyu_d": {
         legionName: "封建时代吐蕃军团",

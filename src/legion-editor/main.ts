@@ -1504,12 +1504,22 @@ function buildRows(): void {
 
         const custom = localCustomCompositions[f.id];
 
-        // 🔴 [2026-09-14] 文化表已删：兜底编制 = 该区默认军团（一级16 / 二级59 / 三级）的编制
-        const regionComp = getRegionLegionComposition(region);
-        let formationMode: FormationMode = custom?.formationMode ?? regionComp?.formationMode ?? 'square';
-        let slots: CompositionSlot[] = custom?.slots
-            ?? regionComp?.slots
-            ?? getDefaultSlotsForMode(formationMode);
+        // 🔴 [2026-09-15 治本·主人报「城堡时代女真军团有两个」]
+        //    编制**只有一个权威 = 军团自己那条记录**，这里一律按军团名**实时**解析。
+        //
+        //    改前是「势力快照的 slots 优先、文化区实时解析兜底」，等于同一个军团名有两条取数路：
+        //      · 势力在势力表里有条目 → 读 localCustomCompositions[fid].slots
+        //        （那是 toEditableLegion 在**页面加载时**解出来的快照）
+        //      · 势力跟随文化区       → 读 getRegionLegionComposition(region)（每次重绘实时解）
+        //    军团编制一改而快照没重建，这两条就给出不同的三排 —— 同一个军团名当场裂成两种编制，
+        //    界面弹「军团编制冲突」。女真那次就是：3 家有条目的读到旧编制（古典骑射手），
+        //    7 家跟文化区的读到新编制（库曼钦察弓骑）。
+        //    现在两条路合并成一条，**快照再陈旧也影响不到三排**，物理上不可能裂。
+        //    快照只剩它该管的事：这家势力挂哪支军团（legionName / legionType / navalFormation）。
+        const effName = (custom as any)?.legionName?.trim() || getCultureLegionName(region);
+        const liveComp = getLegionCompositionByName(effName) ?? getRegionLegionComposition(region);
+        let formationMode: FormationMode = liveComp?.formationMode ?? 'square';
+        let slots: CompositionSlot[] = liveComp?.slots ?? getDefaultSlotsForMode(formationMode);
 
         const r1 = slots[0]?.type || 'swordsman';
         const r2 = slots.length > 2 ? slots[1]?.type : slots[0]?.type;
@@ -1728,12 +1738,15 @@ function selectFaction(factionId: string): void {
         // 🔴 [2026-09-10 主人定] custom 省略 legionName = 跟随文化军团名，必须兜底，
         //    否则「保存军团编制」把军团名当成「势力名+军团」走错分支，只改一家不联动同名势力，
         //    → 同名不同编（主人报「城堡时代马扎尔军团：匈牙利 ↔ 匈雅提」）。
+        // 🔴 [2026-09-15 治本] 编辑态的三排也**按军团名现查**，不再吃势力快照。
+        //    `row` 是 buildRows 刚按军团记录实时解出来的，直接用它即可；
+        //    读快照的话，快照一旧，编辑面板会显示旧编制，一按保存就把旧编制写回军团记录。
         currentEditingLegion = {
             legionName: custom.legionName || getCultureLegionName(row.region),
             legionType: custom.legionType || 'region',
-            formationMode: custom.formationMode,
+            formationMode: row.formationMode,
             navalFormation: custom.navalFormation ?? 'auto',
-            slots: custom.slots.map(s => ({ ...s })),
+            slots: row.slots.map(s => ({ ...s })),
         };
     } else {
         // 🔴 [2026-09-09 修复] 势力没有自定义编成时，它跟随**所属文化军团**，必须补齐
@@ -2011,34 +2024,33 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。
     //    隐式势力（无显式 legionName）的军团 = 文化区默认名，必须算进文化军团的 fids，
     //    否则「文化军团」页签会误显示 0 势力（2026-08-30 主人：65 个文化军团每个都该有势力）。
-    const l2Overridden = new Set<string>();
+    // 🔴 [2026-09-15 治本] 这一步**只挂势力，不碰编制**。
+    //    编制在上面 1 / 1.5 / 1.6 三步里已经按军团自己那条记录填好了；
+    //    这里再拿势力快照 custom.slots 去覆盖，就是给同一个军团名立第二份权威 ——
+    //    快照一旦陈旧，同名军团当场裂成两种编制（女真那次就是这么来的）。
+    //    名字还没登记过的（三级自建军团）按军团名现查一次，仍然只认军团记录。
     for (const row of allRows) {
-        const custom = localCustomCompositions[row.factionId];
         const name = effectiveLegionName(row);
         if (!name) continue;
         let entry = map.get(name);
         if (!entry) {
-            entry = { name, formationMode: custom?.formationMode ?? 'square', slots: (custom?.slots ?? []).map(s => ({ ...s })), fids: [] };
+            const live = getLegionCompositionByName(name);
+            entry = {
+                name,
+                formationMode: live?.formationMode ?? 'square',
+                slots: (live?.slots ?? []).map(s => ({ ...s })),
+                fids: [],
+            };
             map.set(name, entry);
         }
         entry.fids.push(row.factionId);
-        if (entry.fids.length === 1 && custom && !entry.region) {
-            entry.formationMode = custom.formationMode;
-            entry.slots = custom.slots.map(s => ({ ...s }));
-        }
-        // 🔴 [2026-09-14 修「二级军团编制存不住」] 二级 59 文明军团的编制写在
-        //    level2Civ59Legions.ts 里，**没有任何保存接口能写它**；而「保存军团编制」
-        //    只会把新编制写进 FactionCompositions.ts。上面 1.6 步无条件用 L2 硬表
-        //    覆盖 entry.slots，于是保存完的编制在军团卡片里被硬表盖回去 ——
-        //    主人点了保存、看着就是没存上（古典时代马其顿军团实锤：势力表存的是
-        //    鹤翼 phalangite/hoplite/companion_cavalry，卡片一直显示硬表那套雁行）。
-        //    判据：**势力表里存过的，就是主人手改过的，优先于硬表兜底**。
-        //    只对二级军团生效，一级文化军团有 CultureFormations 写盘接口，不走这条。
-        if (!l2Overridden.has(name) && custom?.slots?.length && LEVEL_2_CIV_59_MAP.has(name)) {
-            entry.formationMode = custom.formationMode;
-            entry.slots = custom.slots.map(s => ({ ...s }));
-            l2Overridden.add(name);
-        }
+        // 🔴 [2026-09-15 治本] 这里原有一条「势力表副本优先于二级硬表」的分支，已整条删除。
+        //    它 2026-09-14 加进来的前提是「二级 59 表没有任何保存接口能写它」——
+        //    这个前提**现在是假的**：vite.config 的 serverSaveLegionComposition 会依次尝试
+        //    level2Civ59Legions.ts / level3CustomLegions.ts 并直接写盘（已核对源码）。
+        //    前提没了，这条分支就只剩害处：它让「势力表里的编制副本」压过军团自己那条记录，
+        //    等于给同一个军团名立了第二份权威 —— 正是 [势力表不许存文化军团副本] 那条铁律
+        //    禁的东西，副本必漂移。女真裂成两种编制就是它放行的。
     }
     return map;
 }

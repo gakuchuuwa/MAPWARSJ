@@ -1091,9 +1091,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代北美军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_conquistador', count: 3 },
+            { type: 'elite_jaguar_warrior', count: 3 },
             { type: 'iroquois_warrior', count: 4 },
-            { type: 'hand_cannoneer', count: 2 },
+            { type: 'elite_plumed_archer', count: 2 },
         ],
         regions: ['NORTHAM_IMPERIAL'],
     },
