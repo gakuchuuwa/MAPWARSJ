@@ -1978,8 +1978,14 @@ const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_GUNPOWDER: 30 * 40,
     PROJ_FIRE_LANCER: 7.5 * 40,
     PROJ_HUSSITE_WAGON: 7 * 40,
-    // 手推攻城火炮/榴弹炮炮弹：DE 原始 4 格/秒（160px/s）太慢，满射程 560px 要飞 3.5s。
-    // 提速到 10 格/秒（400px/s），满射程约 1.4s，仍比弩矢(14格)稍慢以保留高抛弧线感。
+    // 手推攻城火炮/榴弹炮炮弹（DE: BCANN id36 / HOUFNICE id1709 → Projectile Bombard Cannon id368）。
+    // 🔴 [2026-09-15 核对 DE 本体 dat 后改准] 原注释两个数字都是错的：写「满射程 560px 要飞 3.5s」，
+    //    但 560 是 bombard_cannon 的**视野**（SIGHT_MAP），射程是 480px = 12 格；3.5s 则是
+    //    DE 里 HLORR(14 格) 的时间，不是手推炮的。验算脚本 scratch/_de_bombard_speed.py。
+    //    DE 实测：射程 12 格 / 最小射程 5 格 / 装填 6.5s / 弹速 4.0 格·秒 → 满射程飞 3.00s。
+    //    本项目射程 480px、最小射程 200px、装填 6.5s 与 DE 一模一样，只有弹速按项目节奏提速：
+    //      10 格/秒（400px/s）→ 满射程 1.20s。提速倍率 2.50×，与弩矢 2.33×、攻城塔 2.29× 同档。
+    //    仍比弩矢(14 格)慢，与 DE 的相对快慢同序（DE 炮弹 4.0 < 弩矢 6.0），保留高抛弧线感。
     PROJ_BOMBARD_BALL: 10 * 40,
     PROJ_GRENADE: 4.5 * 40,
 };

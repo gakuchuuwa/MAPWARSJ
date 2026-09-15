@@ -5286,6 +5286,16 @@ async function saveCultureComposition(culture: RegionType, legion: EditableLegio
             applyCultureFormationPatch(r as RegionType, slots, formationMode);
         }
 
+        // 🔴 [2026-09-15 主人报障「城堡时代女真军团有两个」] 保存后**必须整体重建快照**。
+        //    表格里同一个军团名之所以会裂成两种编制，是因为它有**两条解析路径**：
+        //      · 势力有专属条目 → 读 localCustomCompositions[fid].slots（**页面加载时解出来的快照**）
+        //      · 势力跟随文化区 → 读 getRegionLegionComposition(region)（**每次重绘实时解**）
+        //    只要快照没跟着刷新，这两条就会给出不同的三排 —— 界面就弹「军团编制冲突」。
+        //    下面 ③ 逐行覆盖只补了「名字对得上」的那些行，与 save-legion-composition 那条路
+        //    （3313 行整体 buildLocalCompositions）口径不一致；这里补齐成同一口径，
+        //    让快照永远不可能和实时解析打架。
+        localCustomCompositions = buildLocalCompositions();
+
         // ③ 势力表里同名的势力军团也一起覆盖（同名 = 同一个军团，全体同步）
         let factionSync = 0;
         for (const r of allRows) {

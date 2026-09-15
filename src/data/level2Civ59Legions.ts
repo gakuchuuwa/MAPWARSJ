@@ -558,7 +558,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_iron_pagoda', count: 4 },
             { type: 'iron_pagoda', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 2 },
+            { type: 'kipchak', count: 2 },
         ],
     },
     {
