@@ -101,7 +101,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     elite_chukonu: { name: '中国诸葛弩精锐', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     tarkan: { name: '匈奴答剌罕骑兵', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 8, 13: 12, 22: 8, 26: 10 }, armorTags: [8, 19, 31] },
     elite_tarkan: { name: '匈奴答剌罕骑兵精锐', cls: 'cav', sz: 1, hp: 150, atk: 11, meleeArmor: 1, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 10, 13: 12, 22: 10, 26: 10 }, armorTags: [8, 19, 31] },
-    elite_guardsman: { name: '近卫步兵', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
+    elite_guardsman: { name: '近卫步兵高级', cls: 'melee', sz: 1, hp: 65, atk: 7, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     steppe_lancer: { name: '草原枪骑兵', cls: 'cav', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     // 🔴 [2026-08-19 主人定] 忍者 spd 55→115：全表骑兵统一 130、近战 40~55，原来的 55 是步兵档，
     //    绕后奇袭要走很长一段才接敌，慢得看不出突击感。取 115 = 骑兵的 88%，「比骑兵慢一点」。
@@ -368,7 +368,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     bowman: { name: '弓兵', cls: 'ranged', sz: 1, hp: 30, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
     crusader_knight: { name: '欧洲十字军骑士高级', cls: 'cav', sz: 1, hp: 100, atk: 18, meleeArmor: 4, pierceArmor: 4, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     raider: { name: '掠骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
-    guardsman: { name: '近卫军', cls: 'melee', sz: 1, hp: 65, atk: 7, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    guardsman: { name: '近卫步兵', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 18, 8: 20, 16: 10, 21: 1, 29: 1, 30: 15 }, armorTags: [27, 1, 31] },
     antiquity_skirmisher: { name: '古典掷矛手', cls: 'ranged', sz: 1, hp: 30, atk: 2, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 3, 27: 3, 35: 2 }, armorTags: [15, 31, 38] },
     elite_antiquity_skirmisher: { name: '古典掷矛手高级', cls: 'ranged', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
     antiquity_cavalry_archer: { name: '古典骑射手', cls: 'cav', sz: 1, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },

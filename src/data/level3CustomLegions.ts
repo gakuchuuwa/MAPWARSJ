@@ -182,7 +182,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'fish_scale',
         slots: [
             { type: 'levy', count: 3 },
-            { type: 'vanguard', count: 4 },
+            { type: 'elite_guardsman', count: 4 },
             { type: 'war_chariot', count: 2 },
         ],
         regions: ['HEBREWS'],
@@ -221,9 +221,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代日本军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'samurai', count: 3 },
+            { type: 'antiquity_skirmisher', count: 3 },
             { type: 'samurai_elite', count: 4 },
-            { type: 'ninja', count: 2 },
+            { type: 'rattan_archer', count: 2 },
         ],
         regions: ['JAPAN_ANTIQUITY'],
     },
@@ -1171,7 +1171,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代日本军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'samurai', count: 3 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'samurai_elite', count: 4 },
             { type: 'ninja', count: 2 },
         ],
@@ -1399,11 +1399,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代忍者军团',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         slots: [
-            { type: 'samurai', count: 3 },
-            { type: 'samurai_elite', count: 4 },
-            { type: 'ninja', count: 2 },
+            { type: 'rattan_archer', count: 2 },
+            { type: 'ninja', count: 3 },
+            { type: 'ninja', count: 4 },
         ],
         regions: [],
     },
