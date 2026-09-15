@@ -1156,6 +1156,15 @@ const STALL_GUARD_ENFORCE = false;
  *    1.5 秒足够盖住换目标那一下（缠斗 4 秒脱离 + 贴身 65px 的来回），又不至于让
  *    「只剩远程对射」的局面拖着绞杀声不放。
  */
+/**
+ * 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」。
+ * 攻守两方各自的出兵口（编队）恒为 9 —— 不随援军、不随玩家自带精锐、不随阵型变化。
+ * 七种阵型的 LAYOUT 表都正好 9 口，编制九格位总和也恒为 9，两边对得上。
+ * 玩家带精锐时**顶替**编制里的一口（见 setupPlayerUnits），绝不新增第 10 口。
+ * 攻城武器不算「军队」，它是开战前砸墙的器械，不计入本条。
+ * 验收：npm run scene13:nine-lanes
+ */
+const SIDE_LANES = 9;
 const MELEE_QUIET_SEC = 1.5;
 const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
@@ -3490,14 +3499,38 @@ export class Scene13WarLayer {
             if (this.statsFor(key, f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
             if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');
             const pop = popCostOf(key);
-            this.spawns.push({
-                f, key,
-                x: frontX + toward * depth * 0.55,
-                y: midY,
-                pool: Math.max(1, Math.round(setup.eliteLane.troops / SPRITE_TROOPS / pop)),
-                pop, spawned: 0, slotN: 0,
-                lane: this.spawns.length, row: -1, playerElite: true,
-            });
+            // 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」——硬不变式。
+            //    玩家自带精锐**顶替**编制里的一口，绝不 push 成第 10 口（改前就是 push，每方变 10 口）。
+            //    顶替谁：前排最靠中线的那一口（row 0 里最靠前的），精锐本来就画在前排之前，位置对得上。
+            //    兵力守恒：被顶掉那口的 pool 并进精锐，一个兵都不少。
+            const takeOver = row0.reduce(
+                (best, s) => (best === null ? s : ((f === 0 ? s.x > best.x : s.x < best.x) ? s : best)),
+                null as (typeof row0)[number] | null,
+            );
+            const elitePool = Math.max(1, Math.round(setup.eliteLane.troops / SPRITE_TROOPS / pop));
+            if (takeOver) {
+                // 被顶掉那口的兵折算成精锐的精灵数（pop 不同要换算，守恒的是兵额不是精灵数）
+                const carried = Math.round(takeOver.pool * takeOver.pop / pop);
+                takeOver.key = key;
+                takeOver.pool = Math.max(1, elitePool + carried);
+                takeOver.pop = pop;
+                takeOver.spawned = 0;
+                takeOver.slotN = 0;
+                takeOver.x = frontX + toward * depth * 0.55;
+                takeOver.y = midY;
+                takeOver.row = -1;
+                takeOver.playerElite = true;
+            } else {
+                // 前排一口都没有（异常编制）才退回 push —— 此时本方本来就不足 9 口，不是本条造成的
+                this.spawns.push({
+                    f, key,
+                    x: frontX + toward * depth * 0.55,
+                    y: midY,
+                    pool: elitePool,
+                    pop, spawned: 0, slotN: 0,
+                    lane: this.spawns.length, row: -1, playerElite: true,
+                });
+            }
         }
         // 🔴 [2026-09-07 主人定]「探马控同兵种的一队、先锋控同兵种的一排」。
         //    setup.unitKey = 玩家面板选中的本势力兵种；本方阵中 key 相同的口才归他指挥。
@@ -3938,6 +3971,23 @@ export class Scene13WarLayer {
             }
             // [2026-09-05 玩家] 玩家在军中 → 布置玩家 + 自带精锐编队 + 受控编队（在 initPool 之前，精锐兵力计入本方总量）
             this.setupPlayerUnits(init, depth, midY);
+
+            // 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」——运行期把关。
+            //    这一刻两方的出兵口已经全部就位（编制 9 口 + 玩家精锐已顶替），
+            //    不是 9 就是有人又往 spawns 里塞东西了，落诊断 + 控制台点名，别让它悄悄漂。
+            //    ⚠️ 攻城武器在下面才追加，它不是「军队」不计入这条（见该段注释），所以校验放在这里。
+            const laneCount: [number, number] = [
+                this.spawns.filter((s) => s.f === 0).length,
+                this.spawns.filter((s) => s.f === 1).length,
+            ];
+            this.diagPush('laneCount', { attacker: laneCount[0], defender: laneCount[1] });
+            if (laneCount[0] !== SIDE_LANES || laneCount[1] !== SIDE_LANES) {
+                console.warn(
+                    `⚠️ [Scene13War] 编队数铁律被破坏：攻方 ${laneCount[0]} 口 / 守方 ${laneCount[1]} 口，`
+                    + `应恒为 ${SIDE_LANES} 口（主人 2026-09-15「永远是 9」）。`,
+                );
+            }
+
             // 开局总兵力存档（精灵），供 getInitialTroops 回写战斗面板演出进度用
             this.initPool = [0, 1].map(f =>
                 Math.max(1, this.spawns.reduce((n, s) => n + (s.f === f ? s.pool * s.pop : 0), 0)),
