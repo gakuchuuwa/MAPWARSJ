@@ -644,17 +644,20 @@ export class PlayerQuestSystem {
         const best = sorted[0];
         if (!best) return null;
 
-        // ② 取出与第一名**完全同档**的那一批：比较器在判据都打平时返回 Math.random()-0.5
-        //    （随机数），不能直接拿它判等 —— 必须逐项比对。
-        //    🔴 [2026-09-15] 同档键随判据一起砍到两项：兵力 + 是否名将。
-        //       attackStyle 已按主人指示去掉，若留在键里会把同档集合白白切碎。
-        const keyOf = (c: City) => {
+        // ② 取出与第一名同档的那一批（🔴 [2026-09-15 方案A 主人定]）：
+        //    不要用 troops 绝对数值判定同档，改为梯队容差：
+        //    驻军差在 500 人以内、或同属 10000+ 满编档（差值在 1000 内）即视为同档；
+        //    欧洲 10,180 兵与华夏 10,220 兵同属第一梯队名将城，欧洲名将城不会被淘汰。
+        const bestIsFamous = (getGeneralProfile(getCityAnchoredGeneral(best.id)?.generalId || '')?.tier === 'famous');
+        const bestTroops = best.troops || 0;
+        const tied = sorted.filter((c) => {
             const g = getCityAnchoredGeneral(c.id);
             const p = g ? getGeneralProfile(g.generalId) : null;
-            return `${c.troops || 0}|${p ? (p.tier === 'famous' ? 1 : 0) : -1}`;
-        };
-        const bestKey = keyOf(best);
-        const tied = sorted.filter((c) => keyOf(c) === bestKey);
+            const isFamous = p?.tier === 'famous';
+            if (isFamous !== bestIsFamous) return false;
+            const diff = bestTroops - (c.troops || 0);
+            return diff <= 500 || (bestTroops >= 10000 && (c.troops || 0) >= 10000 && diff <= 1000);
+        });
         if (tied.length === 1) return best;
 
         // ③-0 **远游**：每 VOYAGE_EVERY 次寻将放一次不看距离的均匀抽签。

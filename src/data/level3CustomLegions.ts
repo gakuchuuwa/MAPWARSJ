@@ -1259,11 +1259,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代莫卧儿军团',
-        formationMode: 'crane_wing',
+        formationMode: 'crescent',
         slots: [
-            { type: 'war_elephant', count: 2 },
-            { type: 'archer', count: 4 },
-            { type: 'imperial_camel_rider', count: 3 },
+            { type: 'janissary', count: 3 },
+            { type: 'armored_elephant', count: 2 },
+            { type: 'imperial_cavalry', count: 4 },
         ],
         regions: ['MUGHAL'],
     },
@@ -1396,6 +1396,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crossbowman', count: 2 },
         ],
         regions: ['HRE'],
+    },
+    {
+        name: '帝国时代忍者军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'samurai', count: 3 },
+            { type: 'samurai_elite', count: 4 },
+            { type: 'ninja', count: 2 },
+        ],
+        regions: [],
     },
 ];
 

@@ -98,11 +98,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代阿契美尼德军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         castleId: 'ACHA_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'elite_immortal', count: 4 },
-            { type: 'elite_guardsman', count: 3 },
-            { type: 'elite_immortal_ranged', count: 2 },
+            { type: 'war_elephant', count: 2 },
+            { type: 'elite_immortal', count: 3 },
+            { type: 'elite_immortal_ranged', count: 4 },
         ],
     },
     {

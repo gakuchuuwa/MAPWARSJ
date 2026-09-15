@@ -61,8 +61,10 @@ export function comparePlayerGeneralsByPriority(a: GeneralCandidateLike, b: Gene
     if (!pa && !pb) return Math.random() - 0.5;
     if (!pa) return 1;
     if (!pb) return -1;
-    // 1 兵最多
-    if (a.troops !== b.troops) return b.troops - a.troops;
+    // 1 兵最多（🔴 2026-09-15 方案A 主人定：按 500 兵阶梯分档，容差内同档继续比名将，避免各地季产兵几十人差值切碎同档）
+    const tierA = Math.floor((a.troops || 0) / 500);
+    const tierB = Math.floor((b.troops || 0) / 500);
+    if (tierA !== tierB) return tierB - tierA;
     // 2 名将
     const fa = pa.tier === 'famous';
     const fb = pb.tier === 'famous';

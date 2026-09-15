@@ -154,8 +154,20 @@ function openUnitPicker(rowIdx: number): void {
 
     const cats = ['all', ...new Set(DE_UNITS_CATALOG.map(u => u.category))];
 
+    // 🔴 保持 DE_UNITS_CATALOG 原始子分类顺序（分类绝对不可乱）
+    const SUB_ORDER = (() => {
+        const arr: string[] = [];
+        for (const u of DE_UNITS_CATALOG) {
+            const sub = getUnitSubcategory(u.id);
+            const key = sub ? (SUBCATEGORY_LABEL as Record<string, string>)[sub] ?? sub : '未分类';
+            if (!arr.includes(key)) arr.push(key);
+        }
+        return arr;
+    })();
+
     const paint = (): void => {
         const kw = pickerKeyword.trim();
+        // 🔴 保持分类顺序：不要在最外层全局按名字排序，否则会把冷兵器等搞到最前面
         const list = DE_UNITS_CATALOG.filter(u => {
             if (pickerCat !== 'all' && u.category !== pickerCat) return false;
             if (!kw) return true;
@@ -169,6 +181,14 @@ function openUnitPicker(rowIdx: number): void {
             if (!groups.has(key)) groups.set(key, [] as unknown as typeof list);
             groups.get(key)!.push(u);
         }
+        // 🔴 兵种按名称排序：仅在每个子分类组内按中文拼音排序
+        for (const us of groups.values()) {
+            us.sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
+        }
+        // 🔴 分类顺序严格按系统原始分类顺序排列（刀盾、双手、长矛...）
+        const sortedGroups = [...groups.entries()].sort(
+            ([a], [b]) => (SUB_ORDER.indexOf(a) === -1 ? 999 : SUB_ORDER.indexOf(a)) - (SUB_ORDER.indexOf(b) === -1 ? 999 : SUB_ORDER.indexOf(b))
+        );
         box.innerHTML = `
           <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <b style="color:#f6e05e;">选兵种 · ${['前排', '中坚', '后排'][rowIdx]}</b>
@@ -181,7 +201,7 @@ function openUnitPicker(rowIdx: number): void {
             <button id="lp-pk-close" style="margin-left:auto;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;padding:5px 12px;cursor:pointer;">✕</button>
           </div>
           <div id="lp-pk-body" style="flex:1;overflow:auto;padding:12px 14px;">
-            ${[...groups.entries()].map(([sub, us]) => `
+            ${sortedGroups.map(([sub, us]) => `
               <div style="color:#c8a84b;font-size:12px;margin:10px 0 6px;border-bottom:1px solid #2a2520;padding-bottom:4px;">
                 ${esc(sub)} <span style="color:#6a6358;">${us.length}</span>
               </div>
