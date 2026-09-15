@@ -17,7 +17,7 @@ import { WAR_TYPES } from '../data/WarTypes';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
-import { compareGeneralsByPriority } from '../data/generalSelection';
+import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
 import { getFactionCompositionSlots } from '../types/CultureFormations';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
@@ -496,7 +496,8 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 自动选据点前往：优先「名将 + 双行」武将的势力据点，同分随机取一个。
+     * 自动选据点前往：判据只有「兵多 → 名将」两条，同档随机/就近取一个。
+     * 🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将。去掉其他的条件。」
      * [2026-09-14] 原有的「当年剧本主角优先」已随剧本系统一并删除。
      */
     private autoTravelToBestCity(): void {
@@ -606,10 +607,10 @@ export class PlayerQuestSystem {
     }
 
     /** 遍历据点，找城中武将在（未率军在外）的。
-     *  🔴 [2026-09-09 主人定]「**必须**选兵多的、**必须**选名将、**必须**选双行」
-     *     —— 这三条是**硬条件，不因为距离而降级**。所以顺序是：
-     *       ① 先用 compareGeneralsByPriority 排出最优档（兵最多→名将→双行→擅攻）；
-     *       ② **只在与第一名完全同档的候选里**，挑离玩家最近的那个。
+     *  🔴 [2026-09-15 主人定]「玩家找武将，改为**兵多、名将**。去掉其他的条件。」
+     *     判据只剩两条，攻防风格（双行/擅攻）**完全不参与**。顺序是：
+     *       ① 先用 comparePlayerGeneralsByPriority 排出最优档（兵最多→名将）；
+     *       ② **只在与第一名完全同档的候选里**，按面板开关决定随机还是就近。
      *     绝不能反过来先按距离分圈再挑将——那样近处没名将时就会选到次优的，
      *     等于把「必须」降成了「优先」。 */
     /** 这位武将此刻带着的军团（在外行军中）；没带兵就返回 null = 人在城里 */
@@ -633,20 +634,23 @@ export class PlayerQuestSystem {
         }
         if (!candidates.length) return null;
 
-        // ① [2026-09-05 主人定] 与军团出征共用同一套选将优先级（compareGeneralsByPriority）
-        const sorted = [...candidates].sort((a, b) => compareGeneralsByPriority(
+        // ① [2026-09-15 主人定]「兵多、名将，去掉其他的条件」→ 玩家专用两条判据比较器。
+        //    ⚠️ 不再用 compareGeneralsByPriority（那套含双行/擅攻，仍归军团出征用）。
+        const sorted = [...candidates].sort((a, b) => comparePlayerGeneralsByPriority(
             { troops: a.troops || 0, cityId: a.id },
             { troops: b.troops || 0, cityId: b.id },
         ));
         const best = sorted[0];
         if (!best) return null;
 
-        // ② 取出与第一名**完全同档**的那一批：compareGeneralsByPriority 在四项判据都打平时
-        //    返回 Math.random()-0.5（随机数），不能直接拿它判等 —— 必须逐项比对。
+        // ② 取出与第一名**完全同档**的那一批：比较器在判据都打平时返回 Math.random()-0.5
+        //    （随机数），不能直接拿它判等 —— 必须逐项比对。
+        //    🔴 [2026-09-15] 同档键随判据一起砍到两项：兵力 + 是否名将。
+        //       attackStyle 已按主人指示去掉，若留在键里会把同档集合白白切碎。
         const keyOf = (c: City) => {
             const g = getCityAnchoredGeneral(c.id);
             const p = g ? getGeneralProfile(g.generalId) : null;
-            return `${c.troops || 0}|${p ? (p.tier === 'famous' ? 1 : 0) : -1}|${p?.attackStyle ?? '-'}`;
+            return `${c.troops || 0}|${p ? (p.tier === 'famous' ? 1 : 0) : -1}`;
         };
         const bestKey = keyOf(best);
         const tied = sorted.filter((c) => keyOf(c) === bestKey);

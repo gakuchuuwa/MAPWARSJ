@@ -14,8 +14,20 @@ import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
-/** 🔴 [2026-09-14 主人定] 没势力自动展开后停留多久 → 到时四个面板一起收起 */
-const NO_FACTION_EXPAND_MS = 15000;
+/**
+ * 🔴 [2026-09-15 主人定]「改为 30 秒缩小，然后 1 分钟后再次展示，30 秒后再次缩小」——
+ *    即战略地图上四面板**无限轮播**：展开 30s → 收起 60s → 展开 30s → …
+ *
+ * 为什么不再看「有没有势力」（原 2026-09-14 规则：没势力才展开、入伍后永不再展开）：
+ *   主人明确「我这是自动直播，哪有手动」。自动直播里玩家开局几十秒就入伍、之后永久有势力，
+ *   若沿用旧判据，这套轮播只在开局那一小段有效，整场直播四面板全程隐身 ——
+ *   而观众恰恰是在**入伍之后**（跟着军团打仗）才最需要看军团/军情面板。
+ *   旧判据的前提「没势力 = 玩家还在找武将、需要看信息」是给**人操作**设计的，自动直播里不成立。
+ */
+/** 轮播·展开停留时长（毫秒） */
+const PANEL_CYCLE_EXPAND_MS = 30_000;
+/** 轮播·收起停留时长（毫秒） */
+const PANEL_CYCLE_COLLAPSE_MS = 60_000;
 
 export class PlayerHUD {
     private panel: HTMLDivElement | null = null;
@@ -26,8 +38,12 @@ export class PlayerHUD {
     private minimized = true; // 默认划入上方收起
     private lastPanelFactionId: string | null | undefined = undefined;
     private panelsWereInScene13 = false;
-    /** 没势力展开后的 15 秒收起计时（每次展开重新计时；有势力则取消） */
+    /** 轮播相位翻转计时（见 scheduleNextCyclePhase；dispose 时清） */
     private autoCollapseTimer: number | null = null;
+    /** 🔴 [2026-09-15] 轮播当前处于「展开」还是「收起」相（进 13 时冻结，出来接着走） */
+    private cyclePhaseExpanded = false;
+    /** 🔴 [2026-09-15] 轮播是否已启动（只启一次，别每次 refresh 都重排计时） */
+    private cycleStarted = false;
     private panelSizeObserver: ResizeObserver | null = null;
     private overlay: HTMLDivElement | null = null;
     private toast: HTMLDivElement | null = null;
@@ -60,9 +76,11 @@ export class PlayerHUD {
         this.onStreamModeChange = (e: Event) => {
             if (!(e as CustomEvent<{ on: boolean }>).detail?.on) return;
             // 🔴 [2026-09-10 主人定「开局也是」] 开播那一下不再无条件收玩家面板。
-            //    这三个面板（军团/军情/玩家）归**势力规则**管：没势力就展开、加入势力才缩小。
-            //    开局玩家本来就没势力，若在这里强收，等于开播把主人要的展开状态又抹掉。
-            //    做法是把 lastPanelFactionId 置回 undefined，让下面 refresh 的势力分支重新裁决一次。
+            // 🔴 [2026-09-15 主人定] 这三个面板（军团/军情/玩家）已改归**轮播规则**管
+            //    （展开 30s / 收起 60s 往复，见 PANEL_CYCLE_*），不再归旧的「势力规则」。
+            //    开播只是让 refresh 再跑一次；轮播相位与计时**不受开播影响**，
+            //    若开播那一下 StreamModeToggle 收了面板，下一次相位翻转会把它带回来。
+            //    置回 undefined 是为了不让下面那脚「势力变化 → 立即收起」被开播误触发。
             //    （右下角时间面板不在这三个之内，仍由 StreamModeToggle 按开播收起。）
             this.lastPanelFactionId = undefined;
             this.refresh();
@@ -182,21 +200,55 @@ export class PlayerHUD {
     }
 
     /**
-     * 🔴 [2026-09-14 主人定] 没势力的展开只是**临时**的：15 秒后四个面板一起收起。
-     *   展开时重新计时；有势力则取消计时并立即收起（由调用处 setMinimized/setCompanionPanelsExpanded 完成）。
+     * 🔴 [2026-09-15 主人定] 四面板轮播：展开 30s → 收起 60s → 往复，**无限循环**。
      *   四个面板一次收齐：玩家面板走 setMinimized，军团/军情/右下角信息面板走 setCompanionPanelsExpanded。
+     *
+     * ⚠️ 用「一次性 setTimeout + 到点再排下一个」而不是 setInterval：
+     *    两相时长不等（30/60），setInterval 排不出来；且进 13 时要能整段暂停。
      */
-    private scheduleAutoCollapse(expanded: boolean): void {
+    private applyCyclePhase(expanded: boolean): void {
+        this.cyclePhaseExpanded = expanded;
+        this.setMinimized(!expanded);
+        this.deps.setCompanionPanelsExpanded(expanded);
+    }
+
+    /** 排下一次相位翻转；`expanded` = 当前相位，到点后翻到另一相 */
+    private scheduleNextCyclePhase(): void {
         if (this.autoCollapseTimer !== null) {
             window.clearTimeout(this.autoCollapseTimer);
             this.autoCollapseTimer = null;
         }
-        if (!expanded) return;
+        const hold = this.cyclePhaseExpanded ? PANEL_CYCLE_EXPAND_MS : PANEL_CYCLE_COLLAPSE_MS;
         this.autoCollapseTimer = window.setTimeout(() => {
             this.autoCollapseTimer = null;
-            this.setMinimized(true);
-            this.deps.setCompanionPanelsExpanded(false);
-        }, NO_FACTION_EXPAND_MS);
+            // 🔴 在 13 里不翻相：面板本来就 display:none，翻了观众也看不见，
+            //    反而会把「刚回到战略地图就立刻收起」这种难看的时序做出来。
+            //    直接原地重排，等回到战略地图再继续。
+            if (this.deps.isScene13Active()) {
+                this.scheduleNextCyclePhase();
+                return;
+            }
+            this.applyCyclePhase(!this.cyclePhaseExpanded);
+            this.scheduleNextCyclePhase();
+        }, hold);
+    }
+
+    /** 启动轮播（幂等，只启一次）。开局从**展开**相起步，让观众先看一眼四面板。 */
+    private startPanelCycle(): void {
+        if (this.cycleStarted) return;
+        this.cycleStarted = true;
+        this.applyCyclePhase(true);
+        this.scheduleNextCyclePhase();
+    }
+
+    /**
+     * 🔴 [2026-09-15 主人定] 入伍加入势力那一刻**立即收起**（不等计时走完），
+     *    然后从「收起 60s」重新起算，轮播照常接上。
+     *    这一下不是多余的：它是个转场信号——面板唰地收起 = 「上路了」。
+     */
+    private kickCycleToCollapsed(): void {
+        this.applyCyclePhase(false);
+        this.scheduleNextCyclePhase();
     }
 
     public refresh(): void {
@@ -204,15 +256,18 @@ export class PlayerHUD {
         const inScene13 = this.deps.isScene13Active();
         if (inScene13) {
             this.panelsWereInScene13 = true;
-        } else if (this.lastPanelFactionId !== this.hero.factionId || this.panelsWereInScene13) {
-            // 🔴 [主人定] 没有势力 → 军团/军情/玩家/右下角信息四面板自动展开，**15 秒后自动收起**；
-            //    加入势力 → 立即缩小（不排队）。
-            //    lastPanelFactionId 初值 undefined ≠ null，所以**开局第一次 refresh 就会应用一次**。
+        } else {
+            // 🔴 [2026-09-15 主人定] 四面板在战略地图上**无限轮播**：展开 30s → 收起 60s → 往复。
+            //    不再看「有没有势力」——主人「我这是自动直播，哪有手动」，旧那条
+            //    （没势力才展开、入伍后永不再展开）在自动直播里等于全程隐身，见常量处注释。
             //    ⚠️ 这是这条规则的**唯一实现**，别在 PlayerHero 或别处再写一份（2026-09-10 我重复写过一次，已删）。
-            const expanded = !this.hero.factionId;
-            this.setMinimized(!expanded);
-            this.deps.setCompanionPanelsExpanded(expanded);
-            this.scheduleAutoCollapse(expanded);
+            this.startPanelCycle();
+            // 入伍/脱离势力那一刻：立即收起 + 从「收起 60s」重新起算（转场信号）。
+            //    lastPanelFactionId 初值 undefined ≠ null，但开局那一次已由 startPanelCycle
+            //    置成展开相，所以这里只在**真正发生过势力变化**时才踢一脚。
+            if (this.lastPanelFactionId !== undefined && this.lastPanelFactionId !== this.hero.factionId) {
+                this.kickCycleToCollapsed();
+            }
             this.lastPanelFactionId = this.hero.factionId;
             this.panelsWereInScene13 = false;
         }
@@ -692,6 +747,8 @@ export class PlayerHUD {
         this.panelSizeObserver?.disconnect();
         document.documentElement.style.removeProperty('--player-hud-bottom');
         if (this.refreshTimer) window.clearInterval(this.refreshTimer);
+        // 🔴 [2026-09-15] 轮播计时也要清，否则 dispose 后它还会翻相位、去动已移除的面板
+        if (this.autoCollapseTimer !== null) window.clearTimeout(this.autoCollapseTimer);
         this.closeDialogue();
         this.panel?.remove();
         this.toast?.remove();

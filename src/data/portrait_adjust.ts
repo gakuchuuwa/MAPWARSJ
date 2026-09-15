@@ -6403,7 +6403,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/AMERICA/maya_yasinachang.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -6908,9 +6908,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/AMERICA/xingelana_daweila.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": -26
+            "scale": 0.99,
+            "offsetX": 13,
+            "offsetY": -29
         },
         "/assets/AMERICA/xiyindu_batuoluomei.png": {
             "scale": 0.85,

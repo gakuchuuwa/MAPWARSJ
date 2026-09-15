@@ -308,7 +308,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_teutonic_knight', count: 4 },
             { type: 'teutonic_knight', count: 3 },
-            { type: 'arbalest', count: 2 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     {
@@ -326,7 +326,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'triangle',
         slots: [
-            { type: 'eastern_swordsman', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'mameluke', count: 3 },
             { type: 'elite_mameluke', count: 4 },
         ],

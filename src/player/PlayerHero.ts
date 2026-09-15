@@ -159,7 +159,8 @@ export class PlayerHero {
     private chaseArmyId: string | null = null;
     /** 追击的那位武将名（HUD「追击武将【XXX】」显示用；追的是军团，但对话锚定的是人） */
     private chaseGeneralName: string | null = null;
-    /** 自动模式：自动选据点（优先名将+双行）、自动入伍、军团战败自动换下一个势力。
+    /** 自动模式：自动选据点（兵多 + 名将）、自动入伍、军团战败自动换下一个势力。
+     *  🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将，去掉其他的条件」——判据只剩这两条。
      *  🔴 [2026-09-09 主人定「玩家开局默认自动」] 默认开启，HUD 里可随时手动关掉。 */
     public autoMode = true;
     /**
