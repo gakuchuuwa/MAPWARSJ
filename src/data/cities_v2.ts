@@ -17,7 +17,7 @@
  * - 已校验所有 T0 之间满足
  *
  * 14 区文化中心 (14 城, 见 RegionSystem.REGION_CENTERS):
- * - 开局兵力统一 troops: 30000（大城/中城均有）
+ * - 开局兵力统一 troops: 10000（全部 1088 座，五种城型一视同仁；主人 2026-09-15 复述「开局所有兵力是 10000」）
  *
  * 界城 region 标准（环线锚点 vs 实际文化，详见 RegionSystem.ts REGION_BOUNDARY_LOOPS 注释）:
  * - 环线代称: 威海卫→文登、钓鱼岛城→钓鱼岛、也迷离→也迷里
@@ -2496,7 +2496,7 @@ buildingStyle: 'CEAS', troops: 10000,
     },
     { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'medium_city', troops: 10000, region: 'TIMURID', buildingStyle: 'CEAS' },
 
-    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'pass', troops: 20000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
+    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'pass', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
 
 
 
@@ -3006,7 +3006,7 @@ buildingStyle: 'ASIA', troops: 10000,
 buildingStyle: 'CEAS', troops: 10000,
         note: '乌布萨泊；坚昆小城',
     },
-    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'stockade', troops: 20000, region: 'SLAVIC', mirror: true },
+    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'stockade', troops: 10000, region: 'SLAVIC', mirror: true },
 //镜像
     { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.91539, type: 'pass', troops: 10000, region: 'MANCHU', buildingStyle: 'ASIA' },
 
