@@ -1,5 +1,11 @@
 /**
- * 文化六维属性审计（2026-07-29 立，2026-07-31 废除规则③）
+ * 文化六维属性审计（2026-07-29 立；2026-09-15 改为 16 母体口径）
+ *
+ * 🔴 [2026-09-15 主人定]「文化只有 16 种，就是 16 个建筑风格」——六维表不再按 172 个
+ *    文化区开键（那样只填得动 29 个，55.4% 的据点静默回落 1.0），改为只在
+ *    `BASE16_CULTURES` 这 16 个母体上开键，文化区一律经 `toBase16()` 归入母体。
+ *    本脚本的「键完整性」因此改成两条：① 16 母体 × 5 表齐全且无多余键；
+ *    ② 172 个文化区在 BASE16_OF_REGION 里**一个不漏**（漏一个就会回落东亚而不报错）。
  * ------------------------------------------------------------------
  * 校验 GameConfig.CULTURE_COMBAT 的两条约束（表头注释同款，改表后必跑）：
  *
@@ -57,14 +63,34 @@ const TABLES = {
     CITY_TROOP_CAP_TABLE: grabTable('CITY_TROOP_CAP_TABLE'),
 };
 
-const ORDER = [...regionSrc
+/** 16 母体 + 中文名 + 区→母体映射，全部从 CultureBase16.ts 读，避免第二份权威 */
+const b16Src = fs.readFileSync(path.join(ROOT, 'src/systems/CultureBase16.ts'), 'utf-8');
+/** 取 `export const <name> ... = [...]` / `= {...}` 的字面量体（按括号配对，别用 indexOf(']；')
+ *  —— 数组是 `] as const;` 结尾，那样会一路吞掉后面的表，实测会让 16 母体重复出现几十遍。 */
+const grabBlock = (name) => {
+    const i = b16Src.indexOf('export const ' + name);
+    if (i < 0) throw new Error('CultureBase16.ts 里找不到 ' + name);
+    const eq = b16Src.indexOf('=', i);
+    let start = eq + 1;
+    while (/\s/.test(b16Src[start])) start++;
+    const open = b16Src[start];
+    const close = open === '[' ? ']' : '}';
+    let depth = 0;
+    for (let k = start; k < b16Src.length; k++) {
+        if (b16Src[k] === open) depth++;
+        else if (b16Src[k] === close) { depth--; if (depth === 0) return b16Src.slice(start, k + 1); }
+    }
+    throw new Error(name + ' 括号不配对');
+};
+const ORDER = [...grabBlock('BASE16_CULTURES').matchAll(/'(\w+)'/g)].map((m) => m[1]);
+const NAMES = {};
+for (const m of grabBlock('BASE16_NAMES').matchAll(/(\w+)\s*:\s*'([^']+)'/g)) NAMES[m[1]] = m[2];
+/** 全部文化区（REGION_ORDER）与它们的母体归属 */
+const ALL_REGIONS = [...regionSrc
     .slice(regionSrc.indexOf('REGION_ORDER'), regionSrc.indexOf('REGION_LABELS'))
     .matchAll(/'(\w+)'/g)].map((m) => m[1]);
-
-const NAMES = {};
-for (const m of regionSrc
-    .slice(regionSrc.indexOf('CULTURE_NAMES'), regionSrc.indexOf('getCultureName'))
-    .matchAll(/(\w+)\s*:\s*'([^']+)'/g)) NAMES[m[1]] = m[2];
+const REGION_TO_B16 = {};
+for (const m of grabBlock('BASE16_OF_REGION').matchAll(/(\w+)\s*:\s*'(\w+)'/g)) REGION_TO_B16[m[1]] = m[2];
 
 const MOVE_CLASS = {};
 for (const m of formSrc
@@ -82,7 +108,7 @@ let failed = 0;
 const fail = (msg) => { failed++; console.log('  ✗ ' + msg); };
 
 // ── 0) 键完整性 ──
-console.log(`=== 键完整性（${ORDER.length} 文化 × 5 张表；缺键会静默回落 1.0）===`);
+console.log(`=== 键完整性（${ORDER.length} 母体 × 5 张表；缺键会静默回落 1.0）===`);
 let keyBad = false;
 for (const [tn, t] of Object.entries(TABLES)) {
     const miss = ORDER.filter((r) => !(r in t));
@@ -93,7 +119,13 @@ for (const [tn, t] of Object.entries(TABLES)) {
 for (const r of ORDER) {
     if (!(r in MOVE_CLASS)) { fail(`CULTURE_MOVEMENT_CLASS 缺 ${r}`); keyBad = true; }
 }
-if (!keyBad) console.log('  ✓ 齐全');
+if (ORDER.length !== 16) { fail(`母体应为 16 个，实为 ${ORDER.length} 个`); keyBad = true; }
+// 文化区归属完整性：漏一个区 → toBase16 回落东亚，且零报错，是最隐蔽的坑
+const unmapped = ALL_REGIONS.filter((r) => !(r in REGION_TO_B16));
+const badTarget = Object.entries(REGION_TO_B16).filter(([, b]) => !ORDER.includes(b));
+if (unmapped.length) { fail(`BASE16_OF_REGION 漏了 ${unmapped.length} 个文化区（会静默回落东亚）: ${unmapped.join(', ')}`); keyBad = true; }
+if (badTarget.length) { fail(`BASE16_OF_REGION 指向了非母体: ${badTarget.map(([r, b]) => `${r}→${b}`).join(', ')}`); keyBad = true; }
+if (!keyBad) console.log(`  ✓ 齐全（16 母体 × 5 表；${ALL_REGIONS.length} 个文化区全部有母体归属）`);
 
 // 缺键的文化区无法算六维（引擎对它们静默回落 ×1.0）——上面已报红，这里跳过以免审计中途崩溃
 const SKIPPED = ORDER.filter((r) => !TABLES.TIER_TABLE[r]);
@@ -157,9 +189,22 @@ for (const x of rows) {
 }
 if (!weakBad) console.log('  ✓ 每个文化都有真实代价');
 
-// ── ③ 文化标签文案覆盖 ──
+// ── ③ 纯骑不得进前三 ──
+// 真正的机动差距在 MOVEMENT_MATRIX（平原 象1.2/步1.4/步骑1.5/纯骑2.4，差 100%），
+// 六维的速只是 ±10% 微调；纯骑若再把六维合计也做到最高，就是没有代价的全面强势。
+console.log('\n=== ③ 纯骑六维合计不得进前三 ===');
+const ranked = [...rows].sort((a, b) => b.total - a.total);
+let cavBad = 0;
+ranked.forEach((x, i) => {
+    if (x.cls !== 'CAVALRY') return;
+    if (i < 3) { cavBad++; fail(`纯骑文化 ${x.name} 合计排第 ${i + 1}（${x.total.toFixed(2)}），须退出前三`); }
+    else console.log(`  · ${x.name} 第 ${i + 1}（${x.total.toFixed(2)}）`);
+});
+if (!cavBad) console.log('  ✓ 纯骑均在前三之外');
+
+// ── ④ 文化标签文案覆盖 ──
 // 战报技能条上的「能征惯战 / 山河险固」名牌按系数档精确查表，查不到会静默消失（2026-07-29 踩过）
-console.log('\n=== ③ 文化标签文案覆盖（CombatUI 的 CULTURE_TAG_*_LABELS 需含每个档位）===');
+console.log('\n=== ④ 文化标签文案覆盖（CombatUI 的 CULTURE_TAG_*_LABELS 需含每个档位）===');
 const uiSrc = fs.readFileSync(path.join(ROOT, 'src/ui/CombatUI.ts'), 'utf-8');
 function grabLabels(constName) {
     const i = uiSrc.indexOf(constName);

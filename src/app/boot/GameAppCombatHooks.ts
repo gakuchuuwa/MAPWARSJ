@@ -166,7 +166,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (!isInvolved) return;
         gameLog('startup', '⚔️ [GameApp] Battle Started (followed army involved) - showing Combat UI');
         app.combatUI.show(battle);
-        // [2026-08-30 主人改] 进 13 条件：开关开 + 双方兵力都 ≥1万 + 双方不能都是海军 + 双方都有武将+精锐。
+        // [2026-08-30 主人改｜2026-09-15 门槛下调] 进 13 条件：开关开 + 双方兵力都 ≥5000 + 双方不能都是海军 + 双方都有武将+精锐。
         //   （海军 vs 要塞仍按 siege 类型进 13）
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const bigEnough = battle.attacker.troops >= minTroops && battle.defender.troops >= minTroops;
@@ -179,7 +179,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         // 🔴 [2026-09-09 主人报障「游戏不进入战术模式」] 去掉 2026-09-05 加的 `!playerIn`。
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
-        //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥1万 / 不都是海军 / 双方都有将+精锐）不变。
+        //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite);
@@ -225,9 +225,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             `⚔️ [GameApp] Regional Battle (followed army involved) - ${attackers.length} vs ${defenders.length}`
         );
         const scale = 1;
-        // [2026-08-30 主人改] 进 13 条件：开关开 + 双方兵力都 ≥1万（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
+        // [2026-08-30 主人改｜2026-09-15 门槛下调] 进 13 条件：开关开 + 双方兵力都 ≥5000（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
         // [2026-08-16 主人改·含援军] 兵力门槛看每方**合计**（含所有已编入的援军），
-        //   不再是「每个单位单独 ≥1万」。因为 13 冻结引擎暂停游戏，开战时编入的援军
+        //   不再是「每个单位单独 ≥5000」。因为 13 冻结引擎暂停游戏，开战时编入的援军
         //   就是全部、不会有中途加入的援军——开战时看双方总兵力即可。
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
