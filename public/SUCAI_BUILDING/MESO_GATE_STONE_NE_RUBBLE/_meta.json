@@ -1,1 +1,12 @@
-{"name": "MESO_GATE_STONE_NE_RUBBLE", "frames": 1, "box_w": 180, "box_h": 132, "anchor_x": 104, "anchor_y": 72, "sld_source": "b_meso_gate_stone_ne_rubble"}
+{
+  "name": "MESO_GATE_STONE_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 300,
+  "box_h": 160,
+  "anchor_x": 152,
+  "anchor_y": 80,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_meso_gate_stone_ne_rubble + b_meso_gate_stone_corner_rubble"
+}

@@ -16,6 +16,8 @@ import {
     getLegionCompositionByName,
     patchLegionComposition,
     dropLegionFromMemory,
+    renameLegionInMemory,
+    resolveRenamedLegion,
     type FormationMode,
 } from '../types/CultureFormations';
 import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
@@ -81,7 +83,9 @@ function countUsers(): Map<string, number> {
 function buildRows(): LegionRow[] {
     const users = countUsers();
     const out: LegionRow[] = [];
-    const push = (name: string, layer: Layer) => {
+    const push = (rawName: string, layer: Layer) => {
+        // 改名后静态表还是旧名（要等 HMR），这里先换成新名再查编制
+        const name = resolveRenamedLegion(rawName);
         const c = getLegionCompositionByName(name);
         if (!c) return;
         out.push({ name, layer, mode: c.formationMode, slots: c.slots.map(s => ({ type: s.type, count: s.count })), users: users.get(name) ?? 0 });
@@ -307,6 +311,17 @@ function render(): void {
             ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
           </div>
 
+          ${sel.layer === '一级' ? `
+            <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
+              一级 16 母体是底座军团，不可改名。
+            </div>` : `
+            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
+            <div style="display:flex;gap:6px;margin-bottom:14px;">
+              <input id="lp-rename" value="${esc(sel.name)}" maxlength="24"
+                style="flex:1;min-width:0;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;">
+              <button id="lp-rename-go" style="flex:0 0 auto;padding:7px 12px;background:#2a2520;border:1px solid #5a5040;color:#e0d8c0;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;">✏️ 改名</button>
+            </div>`}
+
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">阵型</div>
           <select id="lp-mode" style="width:100%;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;">
             ${(Object.keys(MODE_ROWS) as FormationMode[]).map(m =>
@@ -379,6 +394,13 @@ function render(): void {
             render();
         });
     });
+    const renameGo = document.getElementById('lp-rename-go');
+    const renameIn = document.getElementById('lp-rename') as HTMLInputElement | null;
+    renameGo?.addEventListener('click', () => { void rename(renameIn?.value ?? ''); });
+    renameIn?.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter') void rename(renameIn.value);
+    });
+
     document.getElementById('lp-mode')?.addEventListener('change', e => {
         if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
         render();
@@ -400,6 +422,45 @@ function render(): void {
     document.getElementById('lp-reset')?.addEventListener('click', () => { draft = null; render(); });
     document.getElementById('lp-save')?.addEventListener('click', () => { void save(); });
     document.getElementById('lp-delete')?.addEventListener('click', () => { void remove(); });
+}
+
+/**
+ * 改名。一个军团名在三处各存一份（军团自身记录 / 势力专属归属 / 文化区默认指针），
+ * 服务端 `/api/rename-legion` 三处同改并带条数自检，这里只管交互与本地内存刷新。
+ * 🔴 有未保存的编制改动时先拦下来——改名会重新拉表，草稿会丢。
+ */
+async function rename(raw: string): Promise<void> {
+    const oldName = selected;
+    const newName = (raw ?? '').trim();
+    if (!oldName) return;
+    if (!newName || newName === oldName) return;
+    const sel = rows.find(r => r.name === oldName);
+    if (sel && draft && (draft.mode !== sel.mode
+        || draft.types.join(',') !== sel.slots.map(s => s.type).join(','))) {
+        toast('⚠️ 先保存或放弃编制改动，再改名', true);
+        return;
+    }
+    if (rows.some(r => r.name === newName)) {
+        toast(`❌ 【${newName}】已存在，一个军团名只能有一种编制`, true);
+        return;
+    }
+    try {
+        const res = await fetch('/api/rename-legion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldName, newName }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        renameLegionInMemory(oldName, newName);
+        selected = newName;
+        draft = null;
+        rows = buildRows();
+        render();
+        toast(`✏️ 【${oldName}】→【${newName}】　势力归属 ${json.factions} 处 · 文化区指针 ${json.cultures} 处已同改`);
+    } catch (e) {
+        toast('❌ 改名失败：' + ((e as Error)?.message ?? String(e)), true);
+    }
 }
 
 async function save(): Promise<void> {

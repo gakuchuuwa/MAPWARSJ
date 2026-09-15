@@ -1,1 +1,12 @@
-{"name": "INDI_GATE_FORTIFIED_SE_DESTR", "frames": 100, "box_w": 256, "box_h": 204, "anchor_x": 132, "anchor_y": 140, "sld_source": "b_indi_gate_fortified_se_destruction"}
+{
+  "name": "INDI_GATE_FORTIFIED_SE_DESTR",
+  "frames": 100,
+  "box_w": 360,
+  "box_h": 273,
+  "anchor_x": 177,
+  "anchor_y": 185,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_indi_gate_fortified_se_destruction + b_indi_gate_fortified_corner_destruction"
+}

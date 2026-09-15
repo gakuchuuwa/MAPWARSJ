@@ -1,1 +1,12 @@
-{"name": "SEAS_GATE_STONE_NE_RUBBLE", "frames": 1, "box_w": 228, "box_h": 184, "anchor_x": 100, "anchor_y": 96, "sld_source": "b_seas_gate_stone_ne_rubble"}
+{
+  "name": "SEAS_GATE_STONE_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 281,
+  "box_h": 177,
+  "anchor_x": 137,
+  "anchor_y": 94,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_seas_gate_stone_ne_rubble + b_seas_gate_stone_corner_rubble"
+}

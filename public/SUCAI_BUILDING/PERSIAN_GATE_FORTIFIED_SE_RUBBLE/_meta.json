@@ -1,1 +1,12 @@
-{"name": "PERSIAN_GATE_FORTIFIED_SE_RUBBLE", "frames": 1, "box_w": 172, "box_h": 96, "anchor_x": 76, "anchor_y": 48, "sld_source": "b_persian_gate_fortified_se_rubble"}
+{
+  "name": "PERSIAN_GATE_FORTIFIED_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 270,
+  "box_h": 132,
+  "anchor_x": 133,
+  "anchor_y": 63,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_persian_gate_fortified_se_rubble + b_persian_gate_fortified_corner_rubble"
+}

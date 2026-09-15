@@ -1,1 +1,12 @@
-{"name": "EAST_GATE_FORTIFIED_SE_DESTR", "frames": 100, "box_w": 276, "box_h": 180, "anchor_x": 124, "anchor_y": 136, "sld_source": "b_east_gate_fortified_se_destruction"}
+{
+  "name": "EAST_GATE_FORTIFIED_SE_DESTR",
+  "frames": 100,
+  "box_w": 366,
+  "box_h": 292,
+  "anchor_x": 189,
+  "anchor_y": 207,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_east_gate_fortified_se_destruction + b_east_gate_fortified_corner_destruction"
+}

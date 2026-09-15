@@ -1,1 +1,12 @@
-{"name": "ANDE_GATE_FORTIFIED_SE_RUBBLE", "frames": 1, "box_w": 156, "box_h": 100, "anchor_x": 80, "anchor_y": 60, "sld_source": "b_ande_gate_fortified_se_rubble"}
+{
+  "name": "ANDE_GATE_FORTIFIED_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 344,
+  "box_h": 178,
+  "anchor_x": 169,
+  "anchor_y": 92,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_ande_gate_fortified_se_rubble + b_ande_gate_fortified_corner_rubble"
+}

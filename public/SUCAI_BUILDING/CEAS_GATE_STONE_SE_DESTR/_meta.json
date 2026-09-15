@@ -1,1 +1,12 @@
-{"name": "CEAS_GATE_STONE_SE_DESTR", "frames": 100, "box_w": 256, "box_h": 220, "anchor_x": 132, "anchor_y": 160, "sld_source": "b_ceas_gate_stone_se_destruction"}
+{
+  "name": "CEAS_GATE_STONE_SE_DESTR",
+  "frames": 100,
+  "box_w": 351,
+  "box_h": 268,
+  "anchor_x": 175,
+  "anchor_y": 183,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_ceas_gate_stone_se_destruction + b_ceas_gate_stone_corner_destruction"
+}

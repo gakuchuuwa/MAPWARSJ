@@ -1,1 +1,12 @@
-{"name": "AFRI_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 288, "box_h": 120, "anchor_x": 136, "anchor_y": 60, "sld_source": "b_afri_gate_fortified_ne_rubble"}
+{
+  "name": "AFRI_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 299,
+  "box_h": 151,
+  "anchor_x": 149,
+  "anchor_y": 78,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_afri_gate_fortified_ne_rubble + b_afri_gate_fortified_corner_rubble"
+}

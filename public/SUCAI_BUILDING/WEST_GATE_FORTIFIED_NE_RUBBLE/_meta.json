@@ -1,1 +1,12 @@
-{"name": "WEST_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 184, "box_h": 128, "anchor_x": 92, "anchor_y": 68, "sld_source": "b_west_gate_fortified_ne_rubble"}
+{
+  "name": "WEST_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 308,
+  "box_h": 153,
+  "anchor_x": 153,
+  "anchor_y": 77,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_west_gate_fortified_ne_rubble + b_west_gate_fortified_corner_rubble"
+}

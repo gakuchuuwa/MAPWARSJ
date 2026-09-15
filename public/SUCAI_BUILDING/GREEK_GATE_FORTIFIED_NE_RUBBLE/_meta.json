@@ -1,1 +1,12 @@
-{"name": "GREEK_GATE_FORTIFIED_NE_RUBBLE", "frames": 1, "box_w": 160, "box_h": 84, "anchor_x": 80, "anchor_y": 40, "sld_source": "b_greek_gate_fortified_ne_rubble"}
+{
+  "name": "GREEK_GATE_FORTIFIED_NE_RUBBLE",
+  "frames": 1,
+  "box_w": 269,
+  "box_h": 139,
+  "anchor_x": 135,
+  "anchor_y": 65,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_greek_gate_fortified_ne_rubble + b_greek_gate_fortified_corner_rubble"
+}
