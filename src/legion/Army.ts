@@ -33,6 +33,7 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
+import { toBase16 } from '../systems/CultureBase16';
 
 /**
  * 行军路点。`sea` 是路网给的**这一段属于海路还是陆路**（RoadRegistry.GraphEdge.isSea），
@@ -1031,8 +1032,9 @@ export class Army implements IBattleUnit {
     }
 
     private getSpeed(): number {
+        // 🔴 [2026-09-15] SPEED_TABLE 只在 16 母体上开键，先归母体再取值
         const regionSpeedMult = this.cultureRegion
-            ? (GameConfig.CULTURE_COMBAT.SPEED_TABLE[this.cultureRegion] ?? 1.0)
+            ? (GameConfig.CULTURE_COMBAT.SPEED_TABLE[toBase16(this.cultureRegion)] ?? 1.0)
             : 1.0;
         return (
             PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED

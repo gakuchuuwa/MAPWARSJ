@@ -38,10 +38,12 @@ import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
 export { type CultureCombatRole, resolveUnitCultureRegion } from './CultureRegion';
 
 const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
+import { toBase16 } from './CultureBase16';
 
-/** 文化区固定攻防系数（非随机，不含关隘类型加成）——五级表，未列出区 ×1.0 */
+/** 文化攻防系数（非随机，不含关隘类型加成）。
+ *  🔴 [2026-09-15] 表只在 16 母体上开键，文化区先经 toBase16() 归入母体，不存在「未列出区」。 */
 export function getCultureCombatMultiplier(region: RegionType, role: CultureCombatRole): number {
-    const tier = TIER_TABLE[region];
+    const tier = TIER_TABLE[toBase16(region)];
     if (!tier) return 1;
     return role === 'field' ? tier[0] : tier[1];
 }

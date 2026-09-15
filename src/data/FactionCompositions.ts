@@ -184,8 +184,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "cao_d": {
-        legionName: "古典时代魏晋军团",
-        legionType: "region",
+        legionName: "古典时代华夏北方军团",
+        legionType: "sub",
     },
     "sima_d": {
         legionName: "古典时代魏晋军团",
@@ -1064,7 +1064,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "wei": {
-        legionName: "古典时代华夏北方军团",
+        legionName: "古典时代先秦军团",
         legionType: "sub",
     },
     "liangshidu": {
