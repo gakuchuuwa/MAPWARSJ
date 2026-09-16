@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_N",
+  "frames": 1,
+  "box_w": 80,
+  "box_h": 96,
+  "anchor_x": 64,
+  "anchor_y": 88,
+  "sld_source": "s_flag_n",
+  "note": "残破战旗·深灰破布，边缘撕裂（最像残破战旗）"
+}

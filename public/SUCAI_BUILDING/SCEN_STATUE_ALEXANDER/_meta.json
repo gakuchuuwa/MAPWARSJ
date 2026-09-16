@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_STATUE_ALEXANDER",
+  "frames": 8,
+  "box_w": 148,
+  "box_h": 164,
+  "anchor_x": 96,
+  "anchor_y": 136,
+  "sld_source": "s_statue_alexander"
+}

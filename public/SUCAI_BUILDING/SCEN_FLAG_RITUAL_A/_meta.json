@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_RITUAL_A",
+  "frames": 1,
+  "box_w": 76,
+  "box_h": 136,
+  "anchor_x": 54,
+  "anchor_y": 122,
+  "sld_source": "s_flag_ritual_a",
+  "note": "只剩旗杆（旗布没了），1 帧"
+}

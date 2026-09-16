@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_CART_BROKEN",
+  "frames": 5,
+  "box_w": 132,
+  "box_h": 100,
+  "anchor_x": 68,
+  "anchor_y": 52,
+  "sld_source": "s_cart_broken"
+}

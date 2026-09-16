@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_U",
+  "frames": 1,
+  "box_w": 80,
+  "box_h": 96,
+  "anchor_x": 64,
+  "anchor_y": 88,
+  "sld_source": "s_flag_u",
+  "note": "残破战旗·白旗破边（小）"
+}

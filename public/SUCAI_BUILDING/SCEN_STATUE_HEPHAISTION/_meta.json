@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_STATUE_HEPHAISTION",
+  "frames": 8,
+  "box_w": 112,
+  "box_h": 128,
+  "anchor_x": 66,
+  "anchor_y": 102,
+  "sld_source": "s_statue_hephaistion"
+}
