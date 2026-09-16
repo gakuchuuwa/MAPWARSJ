@@ -652,8 +652,17 @@ export class GlobalUnitRenderer {
             this.viewDrawBatch = null;
             this.viewDrawBatchIdx = 0;
         };
+        /* 🔴 [2026-09-13 主人报障「战败军团的尸体会跟着镜头动一下」] 这里**不再**重定位画布。
+         *   实测（在投影那一刻同时读画布实际位置与应有位置）：跟拍时两者最大错位 11.7px，
+         *   强制每帧 panBy(3,2) 时稳定错位 [6,-2] ≈ 两帧位移 —— 因为
+         *     · 重定位挂在 Leaflet 的 `move` 事件上（地图一动立刻挪画布）；
+         *     · 绘制在 GlobalUnitRenderer 自己的 rAF 里（用的是它跑到那一刻的视图）；
+         *   两者不同步，画布就带着「旧视图画的内容」被挪到了新位置 → 画布上所有东西
+         *   整体偏几像素，镜头停下又回正。活人在动看不出来，尸体本该钉死，一眼就看出在飘。
+         *   改为**只在绘制那一刻重定位**（见 animate 里的 updateCanvasPosition）：
+         *   位置与内容永远出自同一次视图读取，与两个 rAF 谁先谁后无关。
+         *   不重定位期间画布跟着 map pane 的世界变换走，内容照样钉在地面上，不会反向漂。 */
         const onMapViewChange = () => {
-            this.updateCanvasPosition();
             resetViewDrawBatch();
             const now = performance.now();
             if (now - this.lastViewRedrawAt >= GlobalUnitRenderer.VIEW_REDRAW_MIN_INTERVAL_MS) {
@@ -665,7 +674,7 @@ export class GlobalUnitRenderer {
             }
         };
         const flushViewRedraw = () => {
-            this.updateCanvasPosition();
+            // 🔴 同上：不在事件里挪画布，交给绘制那一刻统一对齐（见 onMapViewChange 的说明）
             resetViewDrawBatch();
             this.pendingViewRedraw = false;
             this.lastViewRedrawAt = performance.now();
@@ -857,6 +866,20 @@ export class GlobalUnitRenderer {
     /** 强制下一帧重绘（状态变更但无动画驱动时，避免旧帧残留） */
     public invalidateView(): void {
         this.mapNeedsRedraw = true;
+    }
+
+    /**
+     * 🔴 [2026-09-12 主人定] 重置阵亡尸体计时：13 残局（FOLLOW_SWITCH_DELAY_MS）期间战略地图不画尸体，
+     *   残局时长若与尸体时长（CORPSE_DISPLAY_MS）重叠，退场时尸体已渐隐完毕 → 战略地图看不到阵亡。
+     *   退场（BattleSceneLayer.exit）时调用本方法，把尚未清除的尸体重置为「从现在起再保留 15 秒渐隐」。
+     */
+    public resetCorpseTimers(): void {
+        for (const unit of this.units) {
+            if (unit.isDestroyed && unit.destroyTime !== undefined) {
+                unit.destroyTime = Date.now();
+            }
+        }
+        this.invalidateView();
     }
 
     // [OPTIMIZATION]
@@ -1136,6 +1159,23 @@ export class GlobalUnitRenderer {
             this.mapNeedsRedraw = false;
             this.pendingViewRedraw = false;
         }
+
+        // 🔴 位置与内容必须出自同一次视图读取（见构造函数里 onMapViewChange 的说明）：
+        //    先把画布对齐到**此刻**的视图，紧接着用同一视图投影绘制，中间不夹任何地图变更。
+        if (import.meta.env.DEV) {
+            // 对齐之前先量一量「画布此刻偏了多少」——这就是修复前每帧带进画面的错位量。
+            const want = this.map.containerPointToLayerPoint([0, 0]);
+            const have = L.DomUtil.getPosition(this.canvas);
+            if (have) {
+                const d = Math.hypot(have.x - want.x, have.y - want.y);
+                const w = window as unknown as { __unitCanvasDrift?: { max: number; n: number; last: number[] } };
+                if (!w.__unitCanvasDrift) w.__unitCanvasDrift = { max: 0, n: 0, last: [0, 0] };
+                w.__unitCanvasDrift.n++;
+                w.__unitCanvasDrift.last = [+(have.x - want.x).toFixed(1), +(have.y - want.y).toFixed(1)];
+                if (d > w.__unitCanvasDrift.max) w.__unitCanvasDrift.max = d;
+            }
+        }
+        this.updateCanvasPosition();
 
         if (clearBeforeDraw) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -2563,6 +2603,13 @@ export class GlobalUnitRenderer {
                     navalTrail,
                     navalHeadingDeg,
                     navalSpeedFactor,
+                    {
+                        toWorld: point => {
+                            const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));
+                            return { x: ll.lng, y: ll.lat };
+                        },
+                        toScreen: point => this.map.latLngToContainerPoint([point.y, point.x]),
+                    },
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer

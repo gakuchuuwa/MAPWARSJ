@@ -281,7 +281,15 @@ export const WAR_TYPES: Record<string, WarType> = {
     onager: { name: '欧洲中型投石车高级', cls: 'ranged', aoe: true, sz: 1, hp: 60, atk: 50, meleeArmor: 0, pierceArmor: 7, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 45, 20: 12, 37: 50 }, armorTags: [20, 31] },
     organ_gun: { name: '葡萄牙风琴炮', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 2, pierceArmor: 4, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
     petard: { name: '爆破工兵', cls: 'melee', sz: 1, hp: 50, atk: 25, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 0, spd: 55, dmgType: 'melee', bonus: { 11: 500, 20: 60, 22: 900, 26: 100 }, armorTags: [31] },
-    phalangite: { name: '马其顿方阵步兵', cls: 'melee', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 72, reload: 2.5, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 6, 30: 4 }, armorTags: [1, 19, 31] },
+    // 🔴 [2026-09-12 主人令「拒马（已做）+ 方阵反骑 +6→+22 一起上」]
+    //    **反骑兵(护甲类 8) 6 → 22**：与 DE 长枪兵同档。这是一次**有意偏离 dat 真值**的改动，理由：
+    //      ① 史料——萨里沙长枪阵（4.5–6.4m，前五排平举）的作用就是正面拒马，亚历山大以方阵为「砧」；
+    //         DE 的 +6 与「长枪阵」这个身份对不上（普通长枪兵都是 +22）；
+    //      ② 实测——13 规则模拟器：方阵 vs 同数量伙伴骑兵，改前 0/8 胜；+22 且配上「迎面拒马」后翻盘
+    //         （长枪兵同条件 8/8）。算式：方阵→骑兵 27/2.5s = 10.8dps（杀一骑 8.3s）
+    //         vs 骑兵→方阵 15/1.9s = 7.9dps（拒马生效后 3.95dps，杀一方阵 12.7s）。
+    //    ⚠️ 其余五维（血 50 / 攻 6 / 装填 2.5 / 移速 50 / 远近防）一律保持 dat 真值，不动。
+    phalangite: { name: '马其顿方阵步兵', cls: 'melee', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 72, reload: 2.5, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 22, 30: 4 }, armorTags: [1, 19, 31] },
     plumed_archer: { name: '玛雅羽箭手', cls: 'ranged', sz: 1, hp: 50, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 1.9, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 27: 2 }, armorTags: [15, 19, 31] },
     qizilbash_warrior: { name: '波斯红头骑士高级', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
     ratha_melee: { name: '孟加拉拉塔战车', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 15, 19, 28, 31] },
@@ -341,7 +349,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     laminated_bowman: { name: '层压复合弓手', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     recurve_bowman: { name: '反曲长弓手', cls: 'ranged', sz: 1, hp: 35, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     paragon: { name: '十字军圣殿楷模武士高级', cls: 'melee', sz: 1, hp: 80, atk: 15, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 19, 31] },
-    shock_cavalry: { name: '冲击骑兵', cls: 'cav', sz: 1, hp: 120, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
+    shock_cavalry: { name: '枪骑兵高级', cls: 'cav', sz: 1, hp: 120, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
     imperial_cavalry: { name: '波斯具装铁骑重装', cls: 'cav', sz: 1, hp: 130, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 10 }, armorTags: [8, 19, 31] },
     equites: { name: '罗马伴随骑士高级', cls: 'cav', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
     sarmatian: { name: '萨尔马提亚重装铁骑', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },

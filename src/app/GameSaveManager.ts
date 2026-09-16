@@ -48,6 +48,7 @@ const AUTO_SAVE_FORCE_AFTER_MS = 30 * 60_000;
 export interface CitySnapshot {
     id: string;
     factionId: string;
+    /** 驻军兵力（🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点一律有兵力，必填） */
     troops: number;
     /** 该据点是否已刷出过将领（读档恢复时可防重复刷将） */
     spawnGeneralUsed: boolean;

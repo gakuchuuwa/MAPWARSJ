@@ -77,6 +77,7 @@ export function setupGameAppMapListeners(app: GameApp): void {
     window.addEventListener('toggle-script-mode', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
         app.historicalEventManager?.setScriptModeEnabled(!!detail?.enabled);
+        if (!detail?.enabled) app.playerHero?.setNoLegionSpawn(false);
     });
 
     const leaflet = app.map?.getLeafletMap?.();

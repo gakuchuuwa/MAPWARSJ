@@ -15,7 +15,7 @@ import { SPRITE_BASE_H, STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y } from '../../c
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 import { NavalPhalanxStateManager, shipCountForTroops, type NavalUnitState } from './NavalPhalanxState';
-import { NavalWakeDrawer } from './NavalWakeDrawer';
+import { NavalWakeDrawer, type WakeProjection } from './NavalWakeDrawer';
 import { audioManager } from '../../audio/AudioManager';
 
 // 海战音效节流（模块级，避免每帧触发；仅跟拍军团实际发声）
@@ -32,6 +32,18 @@ let navalSfxUnitId = '';
 /** [2026-08-27 §② 划桨随速] 逐舰队连续划桨相位（帧单位）与上帧 tick：变速只影响后续推进，不跳帧 */
 const navalOarPhase = new Map<string, number>();
 const navalOarTick = new Map<string, number>();
+
+/**
+ * 阵亡动画整轮时长（ms）——DE 全帧素材（30~60 帧）按帧数动态摊在这段时间里播完，播完冻结末帧。
+ *
+ * 🔴 [2026-09-12 主人：「战败军团阵亡动画太快了，以前没这么快」] 取值唯一真源 =
+ *    战术模式 13 的 `Scene13WarLayer.DEATH_ANIM`（3 秒）—— 主人当天已经把 13 从
+ *    8帧/6fps(≈1.33s) 放慢到 3s，理由原话是「倒下太快」。
+ *    而 2026-09-11 那版「对齐 zoom13」写死的 1333 是 13 的**旧**值，改完 13 之后没跟着走，
+ *    于是战略地图的阵亡比战术模式快了 2.26 倍。两处必须同源，改 13 的时候记得一起改。
+ *    S10DB 8 帧老素材不走这条（保持 150ms/帧，与 2026-09-11 之前完全一致）。
+ */
+const DEATH_ANIM_TOTAL_MS = 3000;
 
 /** 炮响 → 炮弹落水的间隔（ms），按 DE 里炮弹的飞行观感取值 */
 const NAVAL_SPLASH_DELAY_MS = 700;
@@ -1283,22 +1295,26 @@ export class LegionPhalanxDrawer {
         // 用 isFighting=true 保住战中槽位，由下方 DEATH 分支画尸体，保留 CORPSE_DISPLAY_MS。
         // [2026-08-09 阵亡位置] 位置回调叠加编队推进偏移（squadOffsets 旋转前 → 转屏幕）：
         // 否则编队推进后阵亡，deadLat/deadLng 还是「原地」位置，尸体倒在没推进的原地（主人实锤）。
+        // 槽位 idx → 相对军团中心的屏幕偏移（含编队推进偏移的旋转）。
+        // 提成具名函数是因为**两处**要用同一口径：侵蚀阵亡（StateManager 内）与整军覆灭（下面那段）。
+        const slotOffsetOf = (idx: number) => {
+            const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind);
+            const squadOff = squadOffsets && squadOffsets[idx];
+            if (!squadOff) return baseOff;
+            const sa = (direction + 1) * Math.PI / 4;
+            const sc = Math.cos(sa);
+            const ss = Math.sin(sa);
+            return {
+                x: baseOff.x + squadOff.x * sc - squadOff.y * ss,
+                y: baseOff.y + squadOff.x * ss + squadOff.y * sc,
+            };
+        };
+
         const currentState = LegionPhalanxStateManager.update(
             unitId, troops, rows, cols, count, direction, tick,
             isFighting || state === 'DEATH',
             center, unprojectFn,
-            (idx) => {
-                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind);
-                const squadOff = squadOffsets && squadOffsets[idx];
-                if (!squadOff) return baseOff;
-                const sa = (direction + 1) * Math.PI / 4;
-                const sc = Math.cos(sa);
-                const ss = Math.sin(sa);
-                return {
-                    x: baseOff.x + squadOff.x * sc - squadOff.y * ss,
-                    y: baseOff.y + squadOff.x * ss + squadOff.y * sc,
-                };
-            },
+            slotOffsetOf,
             // [2026-08-09 编队级阵亡] 13 场景（denseFront）：关闭整军随机侵蚀，
             // 槽位死亡改由 squadStates[i]='DEATH' 逐编队驱动（见下方 effState==='DEATH' 分支）。
             // 8/9/10 denseFront=false → skipErosion=false → 整军侵蚀逐像素不变。
@@ -1307,13 +1323,32 @@ export class LegionPhalanxDrawer {
 
         // 整军 DEATH 且兵力归零：残留 ALIVE 格一并标死，避免只画「活着的站桩」
         if (state === 'DEATH' && troops <= 0) {
-            for (const slot of currentState.slots) {
+            for (let i = 0; i < currentState.slots.length; i++) {
+                const slot = currentState.slots[i];
                 if (slot.state === 'ALIVE') {
                     slot.state = 'DYING';
                     if (slot.deathDirection === undefined) {
                         slot.deathDirection = Math.floor(Math.random() * 8);
                     }
                     slot.stateStartTime = tick;
+                    /* 🔴 [2026-09-13 主人报障「战败军团的尸体像漂浮，还会动」] 这里以前只改 state，
+                     *   **没钉世界坐标** —— 而绘制那边（本函数下面）是
+                     *     `if (DEAD|DYING && deadLat && deadLng) 用 projectFn(deadLat,deadLng)`
+                     *     `else drawX = center.x + 当前编队偏移`
+                     *   没有 deadLat 就落进 else：尸体每帧跟着**军团中心 + 实时编队偏移**走，
+                     *   地图一平移、朝向一变，整片尸体就跟着飘、跟着转。
+                     *   侵蚀阵亡（LegionPhalanxState 的 Erosion 分支）早就钉了 deadLat/deadLng，
+                     *   编队级阵亡 2026-08-10 也补过，唯独**整军覆灭**这条漏了 ——
+                     *   而「战败军团」正好全走这条（兵力一次归零，侵蚀每帧只杀 5%，轮不到它）。
+                     *   口径与那两处完全一致：同一个 slotOffsetOf + unproject(center+offset)。 */
+                    const off = slotOffsetOf(i);
+                    slot.deadOffsetX = off.x;
+                    slot.deadOffsetY = off.y;
+                    if (unprojectFn) {
+                        const world = unprojectFn(center.x + off.x, center.y + off.y);
+                        slot.deadLat = world.lat;
+                        slot.deadLng = world.lng;
+                    }
                 }
             }
         }
@@ -1592,9 +1627,9 @@ export class LegionPhalanxDrawer {
                     // [2026-05-30] DEATH 不循环, 播 1 次冻结末帧
                     const startT = slot.stateStartTime || tick;
                     const timeDead = tick - startT;
-                    // [2026-09-11 主人：阵亡动作太慢] 对齐 zoom13 战术模式（DEATH_ANIM=8帧/6fps≈1.33s）：
-                    //   DE 全帧素材按整轮 1.33s 动态算，S10DB 8 帧素材保持 150ms/帧不变。
-                    const deathFrame = Math.floor(timeDead / (dynEntry ? 1333 / spriteTotalFrames : 150));
+                    // 对齐 zoom13 战术模式的整轮时长（见 DEATH_ANIM_TOTAL_MS）：
+                    //   DE 全帧素材按整轮动态算，S10DB 8 帧素材保持 150ms/帧不变。
+                    const deathFrame = Math.floor(timeDead / (dynEntry ? DEATH_ANIM_TOTAL_MS / spriteTotalFrames : 150));
                     currentFrameIndex = Math.min(deathFrame, spriteTotalFrames - 1);
                 } else if (animState === 'MOVE' || animState === 'ATTACK' || animState === 'DAMAGE') {
                     // 帧循环
@@ -1619,8 +1654,8 @@ export class LegionPhalanxDrawer {
                     currentFrameIndex = 0; // Single frame corpse
                 } else {
                     const timeDead = tick - slot.stateStartTime;
-                    // [2026-09-11 主人：阵亡动作太慢] 对齐 zoom13 战术模式（DEATH_ANIM≈1.33s 整轮），S10DB 保持 150ms/帧。
-                    const deathFrame = Math.floor(timeDead / (dynEntry ? 1333 / spriteTotalFrames : 150));
+                    // 对齐 zoom13 战术模式的整轮时长（见 DEATH_ANIM_TOTAL_MS），S10DB 保持 150ms/帧。
+                    const deathFrame = Math.floor(timeDead / (dynEntry ? DEATH_ANIM_TOTAL_MS / spriteTotalFrames : 150));
                     currentFrameIndex = Math.min(deathFrame, spriteTotalFrames - 1);
                 }
 
@@ -2124,6 +2159,7 @@ export class LegionPhalanxDrawer {
          * 驱动划桨帧率：快船快桨、慢船慢桨、停船收桨。缺省 1 = 改动前 150ms 固定步。
          */
         speedFactor?: number,
+        wakeProjection?: WakeProjection,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -2510,6 +2546,8 @@ export class LegionPhalanxDrawer {
             state === 'MOVE',
             trail,
             shipDepth,
+            unitId,
+            wakeProjection,
         );
 
         // 队尾先画、旗舰最后画（旗舰盖在最上层）

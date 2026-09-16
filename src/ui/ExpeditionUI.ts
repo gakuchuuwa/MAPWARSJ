@@ -49,7 +49,7 @@ interface ExpeditionCity {
     longitude: number;
     /** 据点类型（big_city/medium_city/small_city/pass）— 远征候选排序用 */
     type: string;
-    /** 驻军兵力 — 同类型据点按此降序 */
+    /** 驻军兵力 — 同类型据点按此降序（🔴 [2026-09-12] 战场已独立出据点体系 → 据点一律有兵力） */
     troops: number;
 }
 

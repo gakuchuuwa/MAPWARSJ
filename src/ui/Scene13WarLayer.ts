@@ -46,6 +46,9 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
+// 🔴 [2026-09-12 主人「你只改战略，不改战术呀…其他的战术也要同步」] 战术攻城的城墙材质
+//    与战略地图**共用同一个判据**（cityWallShared.shouldUseStoneWall），不再各判一次。
+import { shouldUseStoneWall } from '../systems/cityWallShared';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
@@ -321,8 +324,11 @@ function gunpowderTrailSprite(): HTMLCanvasElement {
 
 /** 🔴 [2026-08-23 主人改] 攻城战开战多少秒后，随机坍塌一半城墙贴图（纯视觉演出） */
 const WALL_AUTO_COLLAPSE_SEC = 30;
-/** 🔴 [2026-08-29] 建筑/塔/城门「残骸」倒塌动画总时长（秒）：DESTR 帧铺满，播完切 rubble。 */
-const COLLAPSE_ANIM_DUR = 1.4;
+/** 🔴 [2026-08-29] 建筑/塔/城门「残骸」倒塌动画总时长（秒）：DESTR 帧铺满，播完切 rubble。
+ *  🔴 [2026-09-12 主人定「改为一致」] 原 1.4 秒（≈35.7fps）比 DE 快约 6 倍——
+ *  DE 实测（dat graphic 表）frame_duration=0.0833s/帧 × 100 帧 = **8.33 秒**（≈12fps）。
+ *  改 8.33 对齐 DE 的坍塌速度。 */
+const COLLAPSE_ANIM_DUR = 8.33;
 
 /** 冲车降级链（重→轻）：配兵表指定档若该文化区没有，逐级降级。 */
 const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'battering_ram'];
@@ -445,6 +451,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     PORTUGUESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true },
     ETHIOPIANS: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, siege_onager: true },
     BENGALIS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true, armored_elephant: true },
+    BENGALIS_ANTIQUITY: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true, armored_elephant: true },
     GURJARAS: { scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, armored_elephant: true },
     VIETNAMESE: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, onager: true, battle_elephant: true },
     KHMER: { battering_ram: true, capped_ram: true, siege_ram: true, scorpion: true, heavy_scorpion: true, mangonel: true, onager: true, battle_elephant: true },
@@ -489,6 +496,7 @@ const SIEGE_TECH_BY_CULTURE: Record<RegionType, Record<string, boolean>> = {
     JURCHEN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, traction_trebuchet: true },
     SELJUQ: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true },
     OTTOMAN: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
+    OTTOMAN_IMPERIAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
     FRENCH: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, trebuchet: true },
     MANCHU: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
     MUGHAL: { battering_ram: true, capped_ram: true, scorpion: true, mangonel: true, bombard_cannon: true },
@@ -1268,6 +1276,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     PORTUGUESE: 'MEDI',  // 葡萄牙[2026-08-28]
     ETHIOPIANS: 'AFRI',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: 'INDI',  // 孟加拉[2026-08-28]
+    BENGALIS_ANTIQUITY: 'INDI',  // 孟加拉[2026-08-28]
     GURJARAS: 'INDI',  // 瞿折罗[2026-08-28]
     VIETNAMESE: 'ASIA',  // 越南[2026-08-28]
     KHMER: 'SEAS',  // 高棉[2026-08-28]
@@ -1312,6 +1321,7 @@ const REGION_BUILDING_STYLE: Record<RegionType, string> = {
     JURCHEN: 'ASIA',
     SELJUQ: 'CEAS',
     OTTOMAN: 'ORIE',
+    OTTOMAN_IMPERIAL: 'ORIE',
     FRENCH: 'WEST',
     MANCHU: 'ASIA',
     MUGHAL: 'INDI',
@@ -1440,6 +1450,44 @@ const ROAD_EDGE_BLUR = 10;
 function gangMul(victim: WarMan | WarBuilding): number {
     return 1 + GANG_K * Math.min(GANG_CAP, Math.max(0, victim.atkers - 1));
 }
+
+/* ── 【迎面拒马】长枪/方阵类兵种正面顶住骑兵（2026-09-12 主人定「先做1试试」）────────────
+ * 史料：萨里沙长枪方阵（4.5–6.4m 长枪，前五排平举）的作用就是**让骑兵不敢正面撞**——
+ *   亚历山大以方阵为「砧」、伙伴骑兵为「锤」。正面撞枪林 = 冲不进来；侧面/背后照旧好打
+ *   （史实上方阵最怕被侧后包抄）。
+ * 本层怎么表达：骑兵（发起攻击的一方）打**长枪类**、且长枪兵**正面朝着它**、且长枪兵
+ *   处于阵列（没有在追击途中）时，**骑兵这一击的伤害 ×PIKE_BRACE_TAKEN**。
+ *   ⚠️ 本引擎没有「冲锋」与「阵型散乱」两个模型，所以：
+ *      · 「正面」用 8 向朝向 m.dir 判定（±60° 扇区）；
+ *      · 「阵列」用「未在追击」（m.march 列阵推进中，或已进入出手状态 st≠0）近似。
+ *   这两条是 AI 在可用数据里挑的等价判据，不是主人逐字指定的，故单列在此备查。
+ * 调参：只动下面两个常量即可；PIKE_BRACE_ENABLED=false 可一键关闭本规则。
+ */
+const PIKE_BRACE_ENABLED = true;
+const PIKE_BRACE_FRONT_DEG = 60;   // 「正面」扇区半角（度）
+const PIKE_BRACE_TAKEN = 0.5;      // 骑兵正面撞枪林时，这一击的伤害倍率（0.5 = 减半）
+
+/** 长枪类：DE 护甲类 27（长枪）**或** 对骑兵(护甲类 8)有实质加成。两种写法都只认数据、不认名字。导出=供离线自检 */
+export function isPikeBraceType(t: WarType | null | undefined): boolean {
+    if (!t) return false;
+    if (t.armorTags?.includes(27)) return true;
+    return (t.bonus?.[8] ?? 0) >= 6;
+}
+/** 骑兵类：class 为 cav，或护甲类含 8（DE 骑兵类，战象亦归此类）。导出=供离线自检 */
+export function isCavalryType(t: WarType | null | undefined): boolean {
+    if (!t) return false;
+    return t.cls === 'cav' || t.armorTags?.includes(8) === true;
+}
+/** 8 向朝向 → 方位角（度）。与 dir8() 的映射互逆：dir1=E(0°) dir0=NE(45°) dir7=N(90°) dir5=W(180°) …。导出=供离线自检 */
+export function faceAngleDeg(dir: number): number {
+    return ((((9 - dir) % 8) + 8) % 8) * 45;
+}
+/** 攻击者是否落在该单位正面扇区内（dx,dy = 攻击者相对该单位的位移，屏幕坐标 +y 向下）。导出=供离线自检 */
+export function inFrontArc(dir: number, dx: number, dy: number, halfDeg: number): boolean {
+    const bearing = ((Math.atan2(-dy, dx) * 180 / Math.PI) % 360 + 360) % 360;
+    const d = Math.abs(bearing - faceAngleDeg(dir));
+    return Math.min(d, 360 - d) <= halfDeg;
+}
 /**
  * 箭矢**每个远程兵每轮出手都射一支**（主人 2026-08-11 定），只是飞法学大地图：
  *   飞行 420ms + 抛物线（弧高 = 距离×0.3，封顶 100px），与 ProjectileRenderer 同参数。
@@ -1447,8 +1495,9 @@ function gangMul(victim: WarMan | WarBuilding): number {
  *    420ms 的慢弧线才是箭该有的样子 —— 大地图的箭就是这么飞的。
  *    伤害仍按秒结算，箭只是画面，不改平衡。
  */
-/** 死亡动画时长（8 帧 × 6fps）。播完就把最后一帧烙进地面图，尸体永久保留 */
-const DEATH_ANIM = 8 / 6;
+/** 死亡动画时长（秒）。播完就把最后一帧烙进地面图，尸体永久保留。
+ *  🔴 [2026-09-12 主人定] 原 8/6(≈1.33s) 倒下太快 → 放慢到 3s。 */
+const DEATH_ANIM = 3;
 const ARROW_DUR = 0.42;
 /**
  * 各兵种发射/出手相位表（0~8 相位）：shootPhase = DE type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
@@ -1774,13 +1823,23 @@ const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM'
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_BOMBARD_BALL', 'PROJ_MANGONEL', 'PROJ_ROCK', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
 const PROJ_ARC_RATIO: Record<string, number> = {
-    PROJ_WAR_WAGON: 0.05,
-    PROJ_HELEPOLIS: 0.01,
-    PROJ_GUNPOWDER: 0.05,
-    PROJ_FIRE_LANCER: 0.05,
-    PROJ_HUSSITE_WAGON: 0.05,
-    PROJ_BOMBARD_BALL: -0.05,
-    PROJ_GRENADE: 0.4,
+    // 🔴 [2026-09-12 主人「要和 DE 一致」] 全表按 DE 本体 dat **实测**的 projectile_arc 重填
+    //    （抽取脚本 scratch/de_proj_arc5.py：type_50.projectile_unit_id → 弹丸 unit.projectile.projectile_arc）。
+    //    DE 真值要点：**箭/弩/掷矛是负数（≈−0.03~−0.08＝几乎平射、微下坠）**，只有投石/巨投/火箭车才是大抛物线。
+    PROJ_WAR_WAGON: 0.05,      // DE 高丽战车弹丸 0.05 ✓（原值就对）
+    PROJ_HELEPOLIS: 0.01,      // DE 攻城塔弹丸 0.01 ✓（原值就对）
+    PROJ_GUNPOWDER: 0.05,      // DE Projectile Gunpowder (Primary) 0.05 ✓（原值就对）
+    PROJ_FIRE_LANCER: 0.55,    // 🔴 DE Projectile Rocket Cart = **0.55**（原写 0.05，差 11 倍 ✗ 已改正）
+    PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
+    PROJ_BOMBARD_BALL: -0.05,  // DE Projectile Bombard Cannon = **−0.05** ✓（与原值一致 ✓ 平射）
+    PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
+    // ── [2026-09-12 新增] 平射弹按 DE 的负 arc ──
+    PROJ_ARROW: -0.06,         // DE Projectile ARC（弓手/塔箭）**−0.06** —— 原先不在表里 → 走默认高抛 0.3 ✗
+    PROJ_ARROW_FIRE: -0.06,    // 同上（火箭类同族）
+    // ── 投石族按 DE 细分（原先统一走"高抛翻倍 0.5"✗）──
+    PROJ_MANGONEL: 0.40,       // DE Projectile Mangonel (Primary) = **0.40**
+    PROJ_ROCK: 0.65,           // DE Projectile Trebuchet = **0.65**（巨型投石车，抛物线最高）
+    PROJ_BALL: 0.40,           // 攻城炮石弹（按投石车同档）
 };
 /** 具有火药发射炮口焰/枪口焰的火器单位。 */
 /**
@@ -1904,12 +1963,18 @@ const FIRE_LANCER_VOLLEY = 3;
 const FIRE_LANCER_CHARGE = 30;
 
 /** 背刺（奇袭）白名单：第二波起从敌军背后出生（🔴 2026-09-11 主人定：只带精锐的兵种）。
- *  忍者（无精锐，原型）+ 马来爪刀 + 凯尔特靛蓝突袭者 + 图皮战棍（各含精锐）。 */
+ *  忍者（无精锐，原型）+ 马来爪刀 + 凯尔特靛蓝突袭者 + 图皮战棍（各含精锐）。
+ *  🔴 [2026-09-12 主人令「把伙伴骑兵改为和忍者一样的…方式，第一波正常，以后从敌人那侧出兵」]
+ *     加入 **马其顿伙伴骑兵**（`companion_cavalry`）：它是马其顿的 T0 精锐番号，符合「只给带精锐的兵种」。
+ *     史实依据：伙伴骑兵就是亚历山大「锤砧战术」里的**锤** —— 伊苏斯强渡后冲击波斯左翼/中军、
+ *     高加米拉右翼迂回后直插大流士中军缺口；骑兵的战术价值本就在**侧后冲击**，正面撞长枪阵是找死。
+ *     与本层新做的「迎面拒马」（只判正面 ±60°）正好构成历史闭环：正面撞枪林被拒、绕后则不受拒马。 */
 const FLANK_TYPES = new Set([
     'ninja',
     'karambit_warrior', 'karambit_warrior_elite',
     'woad_raider', 'elite_woad_raider',
     'ibirapema_warrior', 'elite_ibirapema_warrior',
+    'companion_cavalry',            // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
 ]);
 
 // ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
@@ -2653,6 +2718,11 @@ interface WarMan {
     avoidT?: number;
     /** 出生时所在的 y（巡逻航路要用：航点①是敌方底边的**本路** y，航点③是己方底边的对角 y） */
     y0: number;
+    /**
+     * 【本兵已走到当前巡逻航点】——见 aimAt / advanceRoute。
+     * 置位后不再朝那个航点走（人已经在那儿了），改扑敌军重心；全军航点推进时统一清零。
+     */
+    routeDone?: boolean;
     /** 上一帧位置（算真实位移用，见 stuckT） */
     prevX: number;
     prevY: number;
@@ -2776,6 +2846,8 @@ interface WarArrow {
     proj: string;
     /** 连发发射延迟（秒）：t < delay 尚未射出（诸葛弩 3/5 支依次射）。 */
     delay?: number;
+    /** 箭塔直射：发射时锁定两端高度，空中不再贴地形修正。 */
+    towerFlight?: { startLift: number; endLift: number };
 }
 
 /** DE 抛射物素材缓存：一张横排 fly_0.png + _meta.json 的帧框/hotspot。 */
@@ -3054,6 +3126,8 @@ export interface Scene13WarInit {
     defenderCityType?: CityType | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
+    /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */
+    title?: string | null;
     /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，让跟随军团固定在屏幕左边。 */
     followedOnDefenderSide?: boolean;
 }
@@ -4692,8 +4766,14 @@ export class Scene13WarLayer {
             //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
             // 城寨用 DE 细编篱笆（s_archaic_fence），小城与游牧为 PALISADE 木栅（2026-09-03 主人改：用DE里的篱笆）
             // 主人 2026-09-03：中原/北方/江南小城用中城同款石墙（STONE），其余小城与游牧仍用木栅
-            const stoneSmallCityRegions = new Set<string>(['CENTRAL', 'NORTH', 'JIANGNAN']);
-            const wallMat = (this.defenderCityType === 'small_city' && stoneSmallCityRegions.has(this.sideCulture[1])) ? 'STONE'
+            // 🔴 [2026-09-12 主人「你只改战略，不改战术呀，全面检查，其他的战术也要同步」]
+            //    这里原先**又硬编码了一份小城名单**（只有 CENTRAL/NORTH/JIANGNAN），与战略层
+            //    `cityWallShared.shouldUseStoneWall()` **两处各判一次** → 三处不同步：
+            //      ① 希腊（2026-09-11 战略层已加石墙）在战术层仍是木栅 ✗
+            //      ② 中东近东 ORIE（2026-09-12 战略层加石墙）战术层仍是木栅 ✗ ← 主人截图看到的
+            //      ③ 波斯 PERSIAN（同日）同上 ✗
+            //    现在改为**调用同一个共享判据**，战略/战术从此只有一处真相。
+            const wallMat = (this.defenderCityType === 'small_city' && shouldUseStoneWall(this.sideCulture[1])) ? 'STONE'
                 : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
@@ -5732,7 +5812,10 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                const isFlank = isSupplyWave && FLANK_TYPES.has(s.key);
+                // 🔴 [2026-09-13 主人定]「攻防战中，忍者、伙伴骑等，不能背刺、不能出现在敌方出兵口，
+                //    只有野战可以。」——攻城战里敌方出兵口在城墙之内，绕后出生等于凭空出现在城里，
+                //    既不合理也把攻城的正面强攻逻辑（砸墙→破口→压上）架空。背刺只在野战成立。
+                const isFlank = isSupplyWave && this.battleType === 'field' && FLANK_TYPES.has(s.key);
                 // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
                 // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
                 const tgt = isFlank
@@ -6304,6 +6387,10 @@ export class Scene13WarLayer {
                 dx: ax / ad, dy: ay / ad, len: ad,
                 t: 0, dur: ARROW_DUR, f: 1, proj: 'PROJ_ARROW_FIRE',
                 delay: v * PROJ_VOLLEY_DELAY,
+                towerFlight: {
+                    startLift: this.elevationLiftAt(fireX, t.y),
+                    endLift: this.elevationLiftAt(foe.x, foe.y),
+                },
             });
         }
         // 攻击特效：塔顶开火闪光（火花）
@@ -6373,32 +6460,34 @@ export class Scene13WarLayer {
     /**
      * 推进两方的巡逻航点（每方一个共享进度，见 routeWp / aimAt）。
      *
-     * 判据：本方**过半**的兵已经进到当前航点 ROUTE_ARRIVE 范围内 → 整军转向下一个航点。
+     * 判据：**正在走航路的兵**（没敌人可打、不在列阵行军）过半已经到点 → 整军转向下一个航点。
      * 用「过半」而不是「有人到了就转」：先头部队刚摸到就全军掉头的话，后队会在半路上被反复调头，
      * 看起来同样是乱走。也不用「全部到齐」——总有被缠住的散兵永远到不了，那样航点会卡死不推进。
+     *
+     * 🔴 [2026-09-12 修·「兵走到屏幕右边就不动了」] 分母原来是**全军存活兵**，把正在交战的人
+     *    也算了进去 —— 而交战的人全挤在中场，永远进不了敌方底边的 200px 圈，于是分子压根追不上
+     *    分母。实测（puppeteer 挂 dev server，90000vs30000 与 90000vs20000 两场各跑满）：
+     *    `routeWp` 整场 112 秒**一次都没推进**，`arrived` 恒为 0，而走到 x≈1785(=vw*0.93) 的那批兵
+     *    `noFoe` 且离 tx/ty 不到 8px —— 就是主人看到的「抵达屏幕右边后不动了」。
+     *    航路是给「没人可打的兵」用的，分母就只该数这些兵；交战的人本来也不走航路。
      */
     private advanceRoute(): void {
-        const vw = this.canvas?.width ?? 1920;
-        const vh = this.canvas?.height ?? 1080;
         for (let f = 0 as 0 | 1; f <= 1; f = (f + 1) as 0 | 1) {
             // 航点刚切换、驻足搜索残敌期间：不推进航点（停留结束再继续走航路）
             if (this.routeHoldT[f] > 0) continue;
-            const homeX = f === 0 ? vw * 0.07 : vw * 0.93;
-            const foeX = f === 0 ? vw * 0.93 : vw * 0.07;
-            const idx = this.routeWp[f] % 4;
             let total = 0, arrived = 0;
             for (const m of this.men) {
-                if (m.f !== f || m.hp <= 0) continue;
+                // 只数真正在走航路的兵：有目标在打的、还在列阵推进的都不算（他们不走航路）
+                if (m.f !== f || m.hp <= 0 || m.foe || m.march) continue;
                 total++;
-                // 航点①③ 的 y 是各兵自己的出生路/对角路，所以逐兵算
-                const t = idx === 0 ? { x: foeX, y: m.y0 }
-                    : idx === 2 ? { x: homeX, y: vh - m.y0 }
-                        : { x: vw / 2, y: vh / 2 };
-                if ((t.x - m.x) ** 2 + (t.y - m.y) ** 2 < ROUTE_ARRIVE * ROUTE_ARRIVE) arrived++;
+                // 到没到点由 aimAt 逐兵判定后记在 routeDone 上（口径与 aimAt 完全一致，
+                // 且到点后改扑重心走开了也仍然算「这个点我已经搜过」，不会边走边掉计数）
+                if (m.routeDone) arrived++;
             }
             if (total > 0 && arrived * 2 >= total) {
                 this.routeWp[f] = (this.routeWp[f] + 1) % 4;
                 this.routeHoldT[f] = ROUTE_HOLD_SEC;   // 变更目的地后驻足搜索残敌
+                for (const m of this.men) if (m.f === f) m.routeDone = false;   // 新航点重新算
             }
         }
     }
@@ -6495,7 +6584,23 @@ export class Scene13WarLayer {
             { x: vw / 2, y: vh / 2 },
         ];
         // 用**本方共享**的航点进度（推进逻辑在 step 里按全军统一判定，见 advanceRoute）
-        return jit(route[this.routeWp[m.f] % route.length]);
+        const wp = route[this.routeWp[m.f] % route.length];
+        /* 🔴 [2026-09-12 修·「抵达屏幕右边后不动了」] 到点之后**不许再返回同一个航点**。
+         *   原来到点仍返回 wp：tx≈x，移动分支的 `d > ARRIVE_EPS` 不成立 → 人就停在航点上站死，
+         *   一直等到全军过半也到齐才转向；而交战的兵永远到不了，等于**永远站着**（实测见 advanceRoute 头注）。
+         *   改为退回**敌军重心**：重心每帧按存活敌兵重算，永远指向还有人的方向，
+         *   兵一路压过去，路上进 MARCH_R 就被上面 ① 接管锁敌 —— 这才是「不断寻敌」。
+         *   仍然只用共享航点，不是每人一套航点进度（那条 2026-08-18 已被主人否决：会朝四面八方乱走）；
+         *   到点后全军去的也是**同一个**重心，方向一致，不散。
+         */
+        if (!m.routeDone && (wp.x - m.x) ** 2 + (wp.y - m.y) ** 2 < ROUTE_ARRIVE * ROUTE_ARRIVE) {
+            m.routeDone = true;
+        }
+        if (m.routeDone) {
+            const cen = this.enemyCen[1 - m.f];
+            if (cen) return jit(cen);
+        }
+        return jit(wp);
     }
 
     /**
@@ -7071,6 +7176,15 @@ export class Scene13WarLayer {
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
                 const target = this.statsFor(foe.key, foe.f);
+                // ── 迎面拒马：骑兵正面撞长枪/方阵列，冲不进来（见 PIKE_BRACE_* 长注释）──
+                let braceTaken = 1;
+                if (PIKE_BRACE_ENABLED && !('sprite' in foe)
+                    && isCavalryType(shooter) && isPikeBraceType(target)) {
+                    const braced = foe.march === true || foe.st !== 0;   // 阵列中 / 已站定交手（非追击途中）
+                    if (braced && inFrontArc(foe.dir, m.x - foe.x, m.y - foe.y, PIKE_BRACE_FRONT_DEG)) {
+                        braceTaken = PIKE_BRACE_TAKEN;
+                    }
+                }
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
                 const primaryDamage = m.accHit !== false ? dmgVs(shooter, target) * projectileDamageCount : 0;
@@ -7088,7 +7202,7 @@ export class Scene13WarLayer {
                             foe.hurtBy = m;
                             foe.hurtAt = this.battleSec;
                         }
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
@@ -7328,7 +7442,7 @@ export class Scene13WarLayer {
             // [2026-08-11 诊断] 主人报「兵没死光就结束」。这条日志证明是不是演出自己判的：
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
-            console.warn(`🏁 [Scene13War] 演出判负：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=10兵）`);
+            console.warn(`🏁 [Scene13War] 演出判负：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=${SPRITE_TROOPS}兵）`);
             this.diagPush('decision', { winner: attackerLost ? 'defender' : 'attacker', alive });
             this.diagFlush('decision');
             this.onDecision?.(
@@ -7792,12 +7906,16 @@ export class Scene13WarLayer {
                 // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
                 const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
                 const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
-                const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
+                const flatFlight = !!a.towerFlight || PROJ_FLAT.has(a.proj);
+                const arc = flatFlight ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const groundY = a.y + a.dy * d;
-                const y = groundY - this.elevationLiftAt(x, groundY) - arc;
+                const flightLift = a.towerFlight
+                    ? a.towerFlight.startLift + (a.towerFlight.endLift - a.towerFlight.startLift) * p
+                    : this.elevationLiftAt(x, groundY);
+                const y = groundY - flightLift - arc;
 
-                const startLift = this.elevationLiftAt(a.x, a.y);
+                const startLift = a.towerFlight?.startLift ?? this.elevationLiftAt(a.x, a.y);
                 const startX = a.x;
                 const startY = a.y - startLift;
 
@@ -7845,7 +7963,8 @@ export class Scene13WarLayer {
 
                 // 🔴 [2026-08-16 修复向北及全向弹道切线角]
                 const vx = a.dx * a.len;
-                const vy = a.dy * a.len - (PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * (1 - 2 * p));
+                const vy = a.dy * a.len - (flatFlight ? 0 : 4 * arcH * (1 - 2 * p))
+                    - (a.towerFlight ? a.towerFlight.endLift - a.towerFlight.startLift : 0);
                 const angle = Math.atan2(vy, vx) + (PROJ_ANGLE_OFFSET[a.proj] ?? 0);
 
                 const S = PROJ_SCALE * (PROJ_SCALE_OVERRIDE[a.proj] ?? 1);

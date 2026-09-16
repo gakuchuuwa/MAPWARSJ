@@ -32,7 +32,7 @@ import {
 } from '../types/CultureFormations';
 import { CompositionSlot } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
-import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower } from '../data/CombatPower';
@@ -447,7 +447,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
     { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
     { id: 'paragon', name: '十字军圣殿楷模武士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
-    { id: 'shock_cavalry', name: '冲击骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
+    { id: 'shock_cavalry', name: '枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
     { id: 'imperial_cavalry', name: '波斯具装铁骑重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
     { id: 'sarmatian', name: '萨尔马提亚重装铁骑', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
@@ -582,9 +582,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'manatarms', name: '武士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
-    { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LANCER/' },
-    { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
-    { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
+    { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
+    { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
+    { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
     { id: 'frankish_paladin', name: '法兰克圣骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
@@ -1477,7 +1477,7 @@ function buildRows(): void {
             capitalCityName: capCity?.name || '未知',
             region,
             regionLabel,
-            generalName: FACTION_GENERALS[f.id]?.generalName,
+            generalName: getFactionGeneral(f.id)?.generalName,
             eliteName: getExpeditionEliteConfig(f.id)?.name,
             eliteTier: getExpeditionEliteConfig(f.id)?.tier,
             // 🔴 [2026-09-06] 势力没有专属军团名时，回退显示**所属文化区的军团名**。
@@ -1728,12 +1728,27 @@ function getBase16RegionDefaultLegion(region: RegionType): CustomFactionLegion {
     return getRegionDefaultLegion(region);
 }
 
-/** 删除二级制定军团：用它的势力全部恢复为所在文化的一级文化军团（一级文化军团不可删） */
+/**
+ * 删除军团（2026-09-11 主人定「在第三级军团旁边添加删除功能」后扩展）。
+ *
+ * 三级自建军团可能挂在**两个层级**上，两边都要回落：
+ *   ① **势力级**：`localCustomCompositions[factionId].legionName === 该名` → 删掉该势力条目，
+ *      它恢复为所在文化的军团；
+ *   ② **文化区级**：`CULTURE_LEGION_NAMES[region] === 该名` → 把该文化区**回落成 16 母体文化军团**
+ *      （`getBase16LegionName` + 母体默认编成），走 `saveCultureComposition` 落盘。
+ *
+ * **唯一不可删的是「一级：16 母体文化军团」本身**（`isBase16CultureLegion`）——
+ * 那是全游戏 16 个母体底座，删了没有东西可回落。
+ * ⚠️ 旧版拦的是 `isRegionLegionName`（凡名字等于"某文化区默认军团名"就禁删），
+ *    结果**三级里 128 个文化区级军团全被挡住、一个删除按钮都不显示**，正是主人报的那个问题。
+ */
 async function deleteSpecificLegion(legionName: string): Promise<void> {
-    if (isRegionLegionName(legionName)) {
-        showToast('❌ 一级文化军团不可删除', true);
+    if (isBase16CultureLegion(legionName)) {
+        showToast('❌ 一级：16 母体文化军团不可删除（可删的是二/三级军团）', true);
         return;
     }
+
+    // ① 势力级制定条目
     const affected: string[] = [];
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
@@ -1742,14 +1757,30 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
             affected.push(row.factionName);
         }
     }
-    if (affected.length === 0) {
-        showToast('该军团当前无势力使用');
+
+    // ② 文化区级：用这个名字的文化区 → 回落成各自的 16 母体文化军团
+    const cultures = (REGION_ORDER as RegionType[]).filter(r => getCultureLegionName(r) === legionName);
+    for (const r of cultures) {
+        const base = getBase16RegionDefaultLegion(r);
+        await saveCultureComposition(r, {
+            legionName: getBase16LegionName(r),
+            formationMode: base.formationMode,
+            slots: base.slots.map(s => ({ ...s })),
+        });
+    }
+
+    if (affected.length === 0 && cultures.length === 0) {
+        showToast('该军团当前无势力、无文化区使用');
         return;
     }
+
     buildRows();
     applyFilter();
     await saveAllCompositions();
-    showToast(`🗑 已删除二级制定军团【${legionName}】，${affected.length} 个势力恢复为所在文化的一级文化军团`);
+    showToast(
+        `🗑 已删除【${legionName}】：${affected.length} 个势力 + ${cultures.length} 个文化区`
+        + `回落为所在文化的母体军团`,
+    );
 }
 
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
@@ -1761,7 +1792,7 @@ function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
     return `${names}（${getFormationModeLabel(mode)}）`;
 }
 
-let selectedLayerTab: 'culture' | 'sub' = 'culture';
+let selectedLayerTab: LegionLayer = 'culture';
 let selectedLayerKey: string = '';
 /** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
 let legionSearchQuery = '';
@@ -1837,11 +1868,69 @@ function isRegionLegionName(name: string): boolean {
     return REGION_LEGION_BASE_SET.has(base) || REGION_TAB_LABEL_SET.has(base);
 }
 
-/** 🔴 [2026-09-10 主人定] 两级军团分类：
- *  一级：文化军团（16母体文化军团）
- *  二级：制定军团（从16母体延伸出来的军团 + 势力自建制定军团） */
-function classifyLegionTab(name: string, _sharedCount: number): 'culture' | 'sub' {
-    return isBase16CultureLegion(name) ? 'culture' : 'sub';
+/** 🔴 [2026-09-11 主人定] **三级军团分类** */
+export type LegionLayer = 'culture' | 'sub' | 'custom';
+
+/**
+ * 「二级：文明 × 时代」的 **59 个 DE 文明名**。
+ * 抄自 `docs/02-design/four-eras-civilizations.md` §三之二（16 文化 × 59 文明），
+ * 与建筑风格二层那张「59 个 DE 文明」名单**同一份**（合计 7+6+4+7+1+1+5+6+3+2+4+3+1+4+2+3 = 59）。
+ */
+const CIV_59_NAMES: readonly string[] = [
+    // ASIA 华夏东亚（7）
+    '中国', '日本', '朝鲜', '蜀', '吴', '魏', '女真',
+    // CEAS 游牧草原·中亚（6）
+    '蒙古', '匈人', '鞑靼', '库曼', '契丹', '突厥',
+    // INDI 印度次大陆（4）
+    '印度斯坦', '瞿折罗', '达罗毗荼', '孟加拉',
+    // WEST 西欧日耳曼（7）
+    '不列颠', '法兰克', '哥特', '条顿', '凯尔特', '勃艮第', '维京',
+    // PURU 普鲁·南亚古典（1）
+    '普鲁',
+    // ORIE 中东近东·阿拉伯（1）
+    '萨拉森',
+    // MEDI 地中海罗马（5）
+    '罗马', '意大利', '西班牙', '葡萄牙', '西西里',
+    // SLAV 东欧斯拉夫（6）
+    '斯拉夫', '波兰', '波希米亚', '保加利亚', '立陶宛', '马扎尔',
+    // EAST 拜占庭东欧（3）
+    '拜占庭', '亚美尼亚', '格鲁吉亚',
+    // PERSIAN 波斯萨珊（2）
+    '波斯', '阿契美尼德',
+    // SEAS 东南亚（4）
+    '高棉', '马来', '缅甸', '越南',
+    // GREEK 希腊古典（3）
+    '雅典', '斯巴达', '马其顿',
+    // THRACIAN 色雷斯古典（1）
+    '色雷斯',
+    // ANDE 安第斯（4）
+    '印加', '穆伊斯卡', '马普切', '图皮',
+    // MESO 中美玛雅（2）
+    '阿兹特克', '玛雅',
+    // AFRI 非洲（3）
+    '埃塞俄比亚', '马里', '柏柏尔',
+];
+const CIV_59_SET = new Set(CIV_59_NAMES);
+
+/**
+ * 军团名是否属于「**二级：文明 × 时代**」——
+ * 带时代前缀（古典/封建/城堡/帝国 + 时代）**且**去掉前缀后的基名 = 59 个 DE 文明之一。
+ * 例：「封建时代法兰克军团」✅二级；「古典时代华夏军团」❌（华夏不在这 59 之内 → 三级自建）。
+ */
+export function isCivEraLegion(name: string): boolean {
+    const m = (name || '').match(/^(古典|封建|城堡|帝国)时代/);
+    if (!m) return false;
+    const base = name.slice(m[0].length).replace(/军团$/, '').trim();
+    return CIV_59_SET.has(base);
+}
+
+/** 🔴 [2026-09-11 主人定] 三级军团分类：
+ *  一级 culture：**16 母体文化军团**（`BASE_16_LEGION_NAMES`，与建筑风格一层对齐）
+ *  二级 sub    ：**文明 × 时代**（59 DE 文明 × 4 时代 = 236，与建筑风格二层对齐）
+ *  三级 custom ：**其余全部** —— 主人自建 / 延伸出来的军团 */
+function classifyLegionTab(name: string, _sharedCount: number): LegionLayer {
+    if (isBase16CultureLegion(name)) return 'culture';
+    return isCivEraLegion(name) ? 'sub' : 'custom';
 }
 
 /** 全部独立军团（=地区默认 + 所有自定义军团），按军团名聚合 */
@@ -1891,8 +1980,11 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     return map;
 }
 
-/** 取两类军团的全部可选军团（一级：16母体文化军团 / 二级：16母体延伸军团 + 制定军团） */
-function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: string): LayerLegionOption[] {
+/** 取三层军团的全部可选军团
+ *  一级 culture：16 母体文化军团
+ *  二级 sub    ：文明 × 时代（59 DE 文明 × 4 时代）
+ *  三级 custom ：其余全部（主人自建 / 延伸军团） */
+function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): LayerLegionOption[] {
     const all = getAllDistinctLegions();
     const options: LayerLegionOption[] = [];
 
@@ -1934,7 +2026,7 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
         const shipName = getNavalShipChineseName(shipId);
 
         options.push({
-            key: `sub:${entry.name}`,
+            key: `${layer}:${entry.name}`,
             label,
             legionName: entry.name,
             formationMode: entry.formationMode,
@@ -1950,25 +2042,25 @@ function getLayerLegionOptions(layer: 'culture' | 'sub', currentFactionId: strin
 
 
 /** 层全名（信息卡 / 步骤标题用） */
-const LAYER_FULL_LABEL: Record<'culture' | 'sub', string> = {
-    culture: '一级：文化军团',
-    sub: '二级：制定军团',
+const LAYER_FULL_LABEL: Record<LegionLayer, string> = {
+    culture: '一级：文化军团（16 母体）',
+    sub: '二级：文明 × 时代（59 文明 × 4 时代）',
+    custom: '三级：自建军团',
 };
 
-/** 编制铁律：前/中/后三排兵种 + 阵型；缩放不产生新编制，人数由阵型确定。 */
-function legionSig(v: { formationMode: string; slots: { type: string; count: number }[] }): string {
-    return v.formationMode + '|' + v.slots.map(s => s.type).join(',');
-}
-
-/** 当前军团属于哪一类：一级16母体文化 / 二级16母体延伸+制定军团 */
-function resolveCurrentLayer(row: FactionLegionRow): 'culture' | 'sub' {
+/** 当前军团属于哪一类：一级16母体 / 二级文明×时代 / 三级自建 */
+function resolveCurrentLayer(row: FactionLegionRow): LegionLayer {
     const name = currentEditingLegion?.legionName?.trim() || effectiveLegionName(row);
     if (name) {
-        return isBase16CultureLegion(name) ? 'culture' : 'sub';
+        return classifyLegionTab(name, 0);
     }
     const lt = currentEditingLegion?.legionType;
     if (lt === 'sub') return 'sub';
-    return isBase16CultureLegion(getBase16LegionName(row.region)) ? 'culture' : 'sub';
+    return classifyLegionTab(getBase16LegionName(row.region), 0);
+}
+/** 编制铁律：前/中/后三排兵种 + 阵型；缩放不产生新编制，人数由阵型确定。 */
+function legionSig(v: { formationMode: string; slots: { type: string; count: number }[] }): string {
+    return v.formationMode + '|' + v.slots.map(s => s.type).join(',');
 }
 
 /** 军团卡是否处于「当前生效」态：显式选中 > 与当前编辑配置同编成同名 */
@@ -2745,8 +2837,10 @@ function renderEditPanel(row: FactionLegionRow): void {
         || (curLayer === 'culture' ? getBase16LegionName(row.region) : `${row.factionName}军团`);
     const optCulture = getLayerLegionOptions('culture', row.factionId);
     const optSub = getLayerLegionOptions('sub', row.factionId);
-    const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture : optSub;
-    const legionCounts = { culture: optCulture.length, sub: optSub.length };
+    const optCustom = getLayerLegionOptions('custom', row.factionId);
+    const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture
+        : selectedLayerTab === 'sub' ? optSub : optCustom;
+    const legionCounts = { culture: optCulture.length, sub: optSub.length, custom: optCustom.length };
 
     const rowLabels = mode === 'triangle'
         ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人 · 4档主力)']
@@ -2824,10 +2918,13 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-step-title">从现有军团选择（选好后点「保存武将换军团」；修改兵种或阵型后点「保存军团编制」）</div>
       <div class="le-layer-grid" style="margin-bottom:8px;">
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'culture' ? 'active' : ''}" data-legiontab="culture">
-          <div class="le-layer-title">🏛️ 一级：文化军团 <span style="color:#e0c888;">${legionCounts.culture}</span></div>
+          <div class="le-layer-title">🏛️ 一级：文化军团（16 母体） <span style="color:#e0c888;">${legionCounts.culture}</span></div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
-          <div class="le-layer-title">⭐ 二级：制定军团 <span style="color:#e0c888;">${legionCounts.sub}</span></div>
+          <div class="le-layer-title">⭐ 二级：文明 × 时代（59 文明） <span style="color:#e0c888;">${legionCounts.sub}</span></div>
+        </button>
+        <button type="button" class="le-layer-btn ${selectedLayerTab === 'custom' ? 'active' : ''}" data-legiontab="custom">
+          <div class="le-layer-title">✍️ 三级：自建军团 <span style="color:#e0c888;">${legionCounts.custom}</span></div>
         </button>
       </div>
       <div class="le-era-tabs" style="${selectedLayerTab === 'culture' ? 'display:none;' : ''}">
@@ -3227,7 +3324,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 选军团 · 三层切换（仅更新标签高亮 + 重绘卡片，不整屏重渲染，保住搜索框焦点）
     els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(btn => {
         btn.addEventListener('click', () => {
-            selectedLayerTab = (btn as HTMLElement).dataset.legiontab as 'culture' | 'sub';
+            selectedLayerTab = (btn as HTMLElement).dataset.legiontab as LegionLayer;
             els.panelContent.querySelectorAll('.le-layer-btn[data-legiontab]').forEach(b => {
                 b.classList.toggle('active', (b as HTMLElement).dataset.legiontab === selectedLayerTab);
             });
@@ -3296,7 +3393,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
     const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
     const visible = filterLegionOptionsByQuery(options)
         .filter(o => isCultureLayer || legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
-    const isSubLayer = selectedLayerTab === 'sub';
+    const isSubLayer = selectedLayerTab !== 'culture';   // 二级 / 三级都算"非一级"（都可有时代筛选、都可删）
     const eraCount = (a: UnitAge) => options.filter(o => getLegionEra(o.legionName, o.slots) === a).length;
     gridEl.innerHTML = visible.map(opt => `
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
@@ -3312,7 +3409,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
           })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
-        ${isSubLayer && !isRegionLegionName(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此二级制定军团，用它的势力恢复为所在文化的一级文化军团">🗑</button>` : ''}
+        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此二/三级军团；用它的势力与文化区将回落为所在文化的母体军团（16 母体一级军团不可删）">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
@@ -3328,16 +3425,16 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
         });
     });
     gridEl.querySelectorAll('.le-legion-card[data-key]').forEach(card => bindLegionCard(card as HTMLElement, row));
-    // 删除军团（仅二级自建军团渲染删除按钮；文化军团不渲染，天然不可删）
+    // 删除军团（二/三级都渲染删除按钮；只有「一级 16 母体军团」不渲染，天然不可删）
     gridEl.querySelectorAll('.le-legion-delete[data-delete-name]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             const name = (btn as HTMLElement).dataset.deleteName!;
-            if (isRegionLegionName(name)) {
-                showToast('❌ 文化军团不可删除', true);
+            if (isBase16CultureLegion(name)) {
+                showToast('❌ 一级：16 母体文化军团不可删除', true);
                 return;
             }
-            if (!window.confirm(`删除二级制定军团【${name}】？用它的所有势力将恢复为所在文化的一级文化军团。`)) return;
+            if (!window.confirm(`删除军团【${name}】？用它的势力与文化区将回落为所在文化的母体军团。`)) return;
             await deleteSpecificLegion(name);
             renderEditPanel(row);
         });

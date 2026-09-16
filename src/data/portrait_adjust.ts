@@ -4017,11 +4017,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_16.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 21
-        },
         "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_17.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -4051,11 +4046,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 26
-        },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_24.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 25
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_30.png": {
             "scale": 0.93,
@@ -4182,11 +4172,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/WEST_ASIA/__闲置__CENTRAL_ASIA_53.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 9
-        },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_55.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -4206,11 +4191,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 9
-        },
-        "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_02.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_65.png": {
             "scale": 1.05,
@@ -4688,9 +4668,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/WESTERN/weili_weilifan.png": {
-            "scale": 0.86,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": 7
+            "offsetY": 8
         },
         "/assets/WESTERN/qiemo_anmoshenpan.png": {
             "scale": 0.83,
@@ -7831,6 +7811,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": 9
+        },
+        "/assets/GREEK/qiesuonisuosi_lvshande.png": {
+            "scale": 1.38,
+            "offsetX": -2,
+            "offsetY": 43
+        },
+        "/assets/SLAVIC/duobuluojia_yiwaiyiluo.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/SLAVIC/image.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/SLAVIC/jialiboli_kaluoyang.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/WEST_ASIA/daliushi_iii.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_60.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/CENTRAL_ASIA/daliushi_iii.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/WEST_ASIA/kanan_azemier.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_61.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/WEST_ASIA/feilisidin_batisi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

@@ -27,7 +27,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
 
-  ayinu_ezo: '虾夷',
+  ayinu_ezo: '阿伊',   // 🔴 [2026-09-12] 原「虾夷」与 ayinu(虾夷)撞旗 → 按势力名「阿伊努」取前两字「阿伊」
 
   boootiya: '波奥',
   luodesi: '多德',
@@ -54,7 +54,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   qiekase: '第聂',
   baojialiya: '保加',
   saierdika: '索非',
-'bosiniya': '波斯',
+'bosiniya': '波黑',  // 🔴 [2026-09-12] 原「波斯」与 boluosi(波斯帝国·已删，与阿契美尼德重复)撞旗 → 取中文标准简称「波黑」
 
   mulabite: '穆',
 
@@ -970,7 +970,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'nvguo': '女',
     'jiashi': '迦湿',
     'jiashi_d': '迦尸',
-    'wuhu': '乌护',
+'wuhu': '乌护',
 'sanada_d': '信浓',
   jiazini: '伽色',
 'jibin': '罽宾',
@@ -1151,7 +1151,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'kaliya': '卡里',
     'bosidiguo': '波帝',
     'jikelazes': '基克',
-    'adiyabeina': '阿迪',
+    'adiyabeina': '亚贝', // 🔴 [2026-09-12] 原「阿迪」与 adile(阿迪勒)撞旗 → 取「阿迪亚贝纳」中段「亚贝」
     'youbeiya': '优卑',
     'zeta': '泽塔',
     'haerjijiji': '基季',
@@ -1229,6 +1229,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'dunhe': '顿河',
     'bulu': '补',
     'xiaofulijiya': '小弗',
+    'kanan': '迦南',
+    'feilisidin': '腓利',
 'mallabhum': '末罗',
     'vidin_tsardom': '维丁',
     'gondarine': '贡德',
@@ -1241,9 +1243,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'tutul_xiu': '休',
     'kerman_bam': '克尔',
     'lesser_poland': '小波',
-    'braganza_house': '布拉',
+    'braganza_house': '布干', // 🔴 [2026-09-12] 原「布拉」与 bulat(布拉特)撞旗 → 取「布拉干萨」首末两字「布干」
     'trastamara': '特拉',
     'odrysian_late': '奥德里',
+    'jialiboli': '加里',
     'naxos_ancient': '纳克',
     'yamaxun': '亚马',
 };

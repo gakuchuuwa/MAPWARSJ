@@ -198,10 +198,10 @@ export class MonumentLayer {
                         filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
                         transition: transform 0.2s ease;
                     " onmouseover="this.style.transform='translateX(-50%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translateX(-50%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
-                    <!-- 金色名胜标牌 -->
+                    <!-- 金色名胜标牌（🔴 2026-09-14 修复据点名与特殊建筑名重叠：下移至 -32px，形成清晰双行排版） -->
                     <div style="
                         position: absolute;
-                        bottom: -4px;
+                        bottom: -32px;
                         left: 50%;
                         transform: translateX(-50%);
                         white-space: nowrap;

@@ -254,6 +254,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     INDIA: 'HIND_CASTLE_AGE3',               // 印度：德里莫卧儿红砂岩堡
     GURJARAS: 'GURJ_CASTLE_AGE3',            // 瞿折罗：瓜廖尔石堡
     BENGALIS: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
+    BENGALIS_ANTIQUITY: 'BENG_CASTLE_AGE3',            // 孟加拉：比什努布尔红砖堡
     PURU: 'PURU_CASTLE_AGE3',                // 达罗毗荼/南印度：DE 普鲁（PURU）建筑集本套城堡，同名同源；原用 INDI 导致 PURU 基础城堡 65 个里唯一闲置
     INDIA_FEUDAL: 'HIND_CASTLE_AGE3',        // 封建印度：德里莫卧儿红砂岩堡
     INDIA_CASTLE: 'HIND_CASTLE_AGE3',        // 城堡印度：德里莫卧儿红砂岩堡
@@ -365,6 +366,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     JURCHEN: 'JURC_CASTLE_AGE3',             // 女真：金式边墙要塞
     SELJUQ: 'TURK_CASTLE_AGE3',              // 塞尔柱：塞尔柱苏丹要塞
     OTTOMAN: 'TURK_CASTLE_AGE3',             // 奥斯曼：鲁梅利海峡要塞
+    OTTOMAN_IMPERIAL: 'TURK_CASTLE_AGE3',    // 帝国奥斯曼：鲁梅利海峡要塞（复用）
     FRENCH: 'FRAN_CASTLE_AGE3',              // 法兰西：百年战争法兰西石堡
     MANCHU: 'JURC_CASTLE_AGE3',             // 满洲即女真后裔
     MUGHAL: 'INDI_CASTLE_AGE3',              // 莫卧儿：阿格拉莫卧儿红堡
@@ -431,6 +433,7 @@ export const REGION_TO_BRANCH: Record<string, string> = {
   BABYLON: 'ORIE',
   BASHU: 'BASHU',
   BENGALIS: 'BENGALIS',
+  BENGALIS_ANTIQUITY: 'BENGALIS',
   BERBER: 'BERBER',
   BOHEMIANS: 'BOHEMIANS',
   BRITONS: 'BRITONS',
@@ -526,6 +529,7 @@ export const REGION_TO_BRANCH: Record<string, string> = {
   ORIE: 'ORIE',
   ORIE_ANTIQUITY: 'ORIE',
   OTTOMAN: 'ORIE',
+  OTTOMAN_IMPERIAL: 'ORIE',
   PASHTUN: 'CENTRAL_ASIA',
   PERSIAN: 'PERSIAN',
   PERSIAN_CASTLE: 'PERSIAN',
@@ -598,6 +602,7 @@ export const BRANCH_CASTLE: Record<string, string> = {
   ATHENIANS: 'ATHENIANS_CASTLE_AGE3',
   BASHU: 'SHU_CASTLE_AGE3',
   BENGALIS: 'BENG_CASTLE_AGE3',
+  BENGALIS_ANTIQUITY: 'BENG_CASTLE_AGE3',
   BERBER: 'BERB_CASTLE_AGE3',
   BOHEMIANS: 'BOHE_CASTLE_AGE3',
   BRITONS: 'CELT_CASTLE_AGE3',

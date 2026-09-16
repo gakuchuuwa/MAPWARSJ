@@ -412,7 +412,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'an_xibanni': 16,                                    // 昔班尼 · an · 布哈拉
     'ansxi_aershake': -3,                                // 阿尔沙克 · ansxi · 尼萨
     'anushidgin_yile': 12,                               // 伊勒 · anushidgin · 希瓦
-    'aqimeinide_daliushi': -6,                           // 大流士 · aqimeinide · 波斯波利斯
+    'aqimeinide_daliushi': -6,
+    'daliushi_iii': -4,                           // 大流士 · aqimeinide · 波斯波利斯
     'asaibaijiang_xuliewu': 13,                          // 旭烈兀 · asaibaijiang · 马拉盖
     'babuer_babuer': 16,                                 // 巴布尔 · babuer · 喀布尔
     'badakhshan_yaerbeige': 17,                          // 雅尔贝格 · badakhshan · 法扎巴德
@@ -615,6 +616,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ailao_leilao': 1,                                  // 类牢 · ailao · 永昌
     'ava_minye_kyawswa': 15,                             // 明耶觉苏瓦 · ava · 因瓦
     'baiman_gaoshengtai': 11,                            // 高升泰 · baiman · 威楚
+    'boluo_vijaya': -6,                              // 毗阇耶 · 波罗帝国 · 高达城（约前543年，古典）
     'boluo_damoboluo': 8,                               // 达磨波罗 · boluo · 高达城
     'chenla_duyebamo': 12,                               // 阇耶跋摩 · chenla · 吴哥
     'cuanshi_cuanlongyan': 5,                           // 爨龙颜 · cuanshi · 曲靖
@@ -991,7 +993,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
 
     // ══════ GREEK（7 人，已标 0）—— 2026-08-19 起属 LATIN 拉丁支文化 ══════
     'gen_alexander_great': -4,                           // 亚历山大 · maqidun · 佩拉
-    'xiaofulijiya_aerxitis': -4,                        // 阿尔西提斯 · 小弗里吉亚 · 达斯基利翁
+    'xiaofulijiya_aerxitis': -4,
+    'kanan_azemier': -4,
+    'feilisidin_batisi': -4,                            // 巴提斯 · 腓利斯丁 · 加沙（前332年加沙围城战守将）                               // 阿泽米尔 · 腓尼基 · 推罗（前332年推罗围城战守将）                        // 阿尔西提斯 · 小弗里吉亚 · 达斯基利翁
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
     'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚
@@ -1004,6 +1008,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'chatigangren_wumeide': 17,
     'duonaobaojia_tzimiskes': 10,
     'lumiliya_lalashahin': 14,
+    'jialiboli_kaluoyang': 13,                           // 卡洛扬 · 加里波利 · 鲁西翁（1206 鲁西翁之战成名 → 13 世纪）
     'yilaka_tundama': 16,
     'xingelana_dawila': 16,
     'gualani_nicolas': 17,

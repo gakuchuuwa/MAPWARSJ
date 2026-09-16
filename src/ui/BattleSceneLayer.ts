@@ -12,6 +12,7 @@
  */
 
 import { GameConfig } from '../config/GameConfig'; // [2026-08-11 战败停留] FOLLOW_SWITCH_DELAY_MS 兜底
+import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 
 export class BattleSceneLayer {
     /** 场景是否处于「激活」状态（演出中） */
@@ -165,6 +166,9 @@ export class BattleSceneLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onExitBattleScene13?.();
         game?.brawlFeedPanel?.onExitBattleScene13?.();
+        // 🔴 [2026-09-12 主人定] 残局结束退场 → 重置尸体计时，让战略地图重新渐隐 15 秒
+        //    （否则 FOLLOW_SWITCH_DELAY_MS 残局时长会吞掉 CORPSE_DISPLAY_MS 尸体时长，地图上看不到阵亡）。
+        getGlobalUnitRenderer()?.resetCorpseTimers();
     }
 
     /**

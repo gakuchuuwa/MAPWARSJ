@@ -3257,6 +3257,20 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         generals[m[1]] = { generalId: m[2], generalName: m[3], portrait: m[4] };
     }
 
+    // 🔴 [2026-09-12 主人「一势力一将，这个规则取消」] **多将数组写法**也要认：
+    //    `factionId: [ {generalId…}, {generalId…} ]` 里的对象**没有键前缀**（键在 `[` 的前一行），
+    //    上面那条正则匹配不到 → 这些势力会被误报成「无武将」✗（主人实测：阿契美尼德 / 波罗帝国）。
+    //    这里取**第一个**对象＝该势力守将，与运行时 `getFactionGeneral()` 取数组首位的口径一致 ✓。
+    for (const m of fgText.matchAll(/(\w+):\s*\[\s*\{([\s\S]*?)\}/g)) {
+        const fId = m[1];
+        if (generals[fId]) continue;                    // 单行写法优先，绝不覆盖
+        const inner = m[2];
+        const gi = inner.match(/generalId:\s*'([^']*)'/);
+        const gn = inner.match(/generalName:\s*'([^']*)'/);
+        const po = inner.match(/portrait:\s*'([^']*)'/);
+        if (gi) generals[fId] = { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
+    }
+
     // generalProfiles: { [generalId]: { tier, tacticalSkillId, strategicSkillId? } }
     // [FIX 2026-07-08] 档案解析不再依赖字段顺序/单行格式：
     //   旧正则要求 strategicSkillId 紧跟 tacticalSkillId，三格(advantage/balance/disadvantage)插在中间

@@ -52,14 +52,28 @@ export class RecruitmentSystem {
     /** 63 文化区（REGION_ORDER）轮流出兵：记录下一季从哪个区开始找 */
     private nextSpawnRegionIndex = 0;
 
+    /**
+     * 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」闸门（`PlayerHero.noLegionSpawn`，**默认开**）。
+     * 主人原话：「在玩家面板添加一个功能选项，**默认不出军团**」。
+     *
+     * 返回 true = 不生军团，**两条路一起闸**（由 GameApp 注入，判据 = 面板那个勾）：
+     *   · `runInitialSpawn`（播放时的开局首发）
+     *   · `runSeasonTick` → `trySpawnLegions`（季末募兵）
+     * **不闸**季初的 `recruitSeasonGarrison`（往城里补驻军，不产军团、也不把武将调出城）。
+     * 剧本主角军团由剧本自己 `forceCreate`，不走本系统，**不受此闸影响**。
+     */
+    private readonly isLegionSpawnPaused: () => boolean;
+
     constructor(
         cityManager: CityManager,
         legionManager: LegionManager,
-        siegeManager?: SiegeManager
+        siegeManager?: SiegeManager,
+        isLegionSpawnPaused?: () => boolean
     ) {
         this.cityManager = cityManager;
         this.legionManager = legionManager;
         this.siegeManager = siegeManager ?? null;
+        this.isLegionSpawnPaused = isLegionSpawnPaused ?? (() => false);
     }
 
     /** 攻城进行中：驻军已作为 city 单位参战，禁止再募兵/季末补进驻军 */
@@ -83,6 +97,15 @@ export class RecruitmentSystem {
     public runInitialSpawn(): void {
         if (this.hasRunInitialSpawn) return;
         this.hasRunInitialSpawn = true;
+
+        // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」默认开 → **连开局首发也不生**。
+        //    （先前只闸季末那条，主人实测「还是有其他军团来捣乱」——
+        //      捣乱的正是播放时这一批首发。）
+        //    hasRunInitialSpawn 已在上面置位：事后关掉开关也**不会补跑**首发（开局一次性事件）。
+        if (this.isLegionSpawnPaused()) {
+            gameLog('recruitment', '💂 [募兵] 面板「不出军团」为开 → 跳过开局首发（全图不生军团）');
+            return;
+        }
 
         this.legionManager.trimLegionsToCap();
 
@@ -157,7 +180,10 @@ export class RecruitmentSystem {
         this.recruitSeasonGarrison(cities);
         // 季初重算据点将/精名额：上季覆灭或解散的军团所占名额在此释放（方案A）
         this.legionManager.syncCitySpawnTierConsumption();
-        this.trySpawnLegions(cities);
+        // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」（默认开）→ 季末也不生军团。
+        if (!this.isLegionSpawnPaused()) {
+            this.trySpawnLegions(cities);
+        }
         this.legionManager.tickLegionTiers(); // 兵力长到 4万的军团晋升精锐（含名将）
         PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
     }
@@ -169,6 +195,8 @@ export class RecruitmentSystem {
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
         for (const city of cities) {
             if (!city.factionId || city.factionId === '' || city.factionId === 'panjun') continue;
+            // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→
+            //    据点一律是驻军据点、一律参与每季募兵。（原「战场不补驻军」的特判已撤销。）
 
             const cfg = CITY_CONFIG[city.type];
             if (!cfg) continue;

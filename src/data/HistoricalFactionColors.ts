@@ -256,7 +256,7 @@ const _FIXED: Record<string, string> = {
     bandun: '#6A8858', // 板楯·賨人勇士（汉昌巴人绿）
     kui: '#789868', // 夔·白毦兵（白帝城青绿）
     langzhou: '#2E7D34', // 阆州（张飞·蜀绿）
-    'zhuoshi': '#2E7D39', // 卓·连弩士（临邛·蜀汉绿）
+    'zhuoshi': '#8A4B2A', // 卓氏·井阑劲卒（临邛冶铁巨商 -> 铁褐；原 #2E7D39 是蜀汉绿，与卓氏无关）
     boren: '#4A6858', // 僰·悬棺武士（僰道苔绿）
     chenghan: '#26221C', // 成汉·六夷突骑（鹿头关；据成都水德尚黑）
     shuixi: '#527088', // 水西·罗罗兵（毕节青灰）
@@ -809,6 +809,8 @@ const _FIXED: Record<string, string> = {
     'heti': '#955020',
     'fulijiya': '#A06828',
     'xiaofulijiya': '#9E6830', // 小弗里吉亚·达斯基利翁（赫勒斯滂古金褐）
+    'kanan': '#6B0F3A',
+    'feilisidin': '#1F9E8C', // 加沙·腓利斯丁（青绿/绿松石 —— 阿契美尼德驻军色系，主人给定） // 腓尼基·推罗（泰尔紫 Tyrian Purple；骨螺紫染料发源地，史料尚色固定。⚠️ 马其顿 #C9A227 不动）
     'ldiya': '#B88820',
     'pajiama': '#285E7B',
     'bitiniya': '#486078',
@@ -1110,6 +1112,7 @@ const _FIXED: Record<string, string> = {
     'braganza_house': '#356A8C',
     'trastamara': '#8B2436',
     'odrysian_late': '#6B4A8E',
+    'jialiboli': '#A0793A', // 加里波利·鲁西翁（加里波利金褐）[2026-09-11 新增，手配待主人可改]
     'naxos_ancient': '#2F5A78',
     'hongluseniya': '#A83A28', // 红鲁塞尼亚·利沃夫（红鲁塞尼亚王冠红）
     'yiluokui': '#6A3A7E', // 易洛魁联盟·奥农多加（海华沙贝壳珠串紫）

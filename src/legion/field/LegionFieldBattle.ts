@@ -120,6 +120,10 @@ export function tryEngageFieldBattle(
 ): boolean {
     if (isArmyInActiveSandboxFieldBattle(deps, army.id)) return false;
 
+    // 🔴 [2026-09-11 主人定] 剧本行军豁免：本方赶赴战场途中不主动开战
+    //    （「让剧本军团直接赶赴战场，期间，不予其他任何人交战」）
+    if (army.scriptMarchExempt) return false;
+
     const marchSegment: LatLng[] =
         Math.abs(oldPos.lat - newPos.lat) > 1e-9 || Math.abs(oldPos.lng - newPos.lng) > 1e-9
             ? [oldPos, newPos]
@@ -136,6 +140,11 @@ export function tryEngageFieldBattle(
     for (const otherArmy of nearbyArmies) {
         if (otherArmy === army || otherArmy.isDestroyed || otherArmy.getTroops() <= 0) continue;
         if (otherArmy.getFactionId() === army.getFactionId()) continue;
+
+        // 🔴 [2026-09-11 主人定] 剧本行军豁免**必须判两边**：
+        //    上面那道 gate 只挡住"剧本军主动开战"；敌军自己那一轮循环也会走到这里，
+        //    不判这一句，敌军照样能把赶路的剧本军拖进野战。
+        if (otherArmy.scriptMarchExempt) continue;
 
         const opPos = otherArmy.getPosition();
         if (!areArmiesInFieldContact(marchSegment, opPos)) continue;

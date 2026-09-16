@@ -1258,6 +1258,8 @@ export const FACTIONS: Faction[] = [
     { id: 'tiemuer', name: '图兰' },
 
     { id: 'kawusi', name: '卡乌斯' },
+
+
     { id: 'keerkezi', name: '柯尔克孜' },
     { id: 'yiduhu', name: '亦都护' },
     { id: 'yangshao', name: '三川' },
@@ -1684,6 +1686,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jiashi', name: '迦湿弥罗' },
 
     { id: 'wuhu', name: '乌护' },
+
     
     
     
@@ -2039,6 +2042,8 @@ export const FACTIONS: Faction[] = [
     { id: 'samtskhe', name: '萨姆茨赫' },
     { id: 'tomara_gwalior', name: '托摩罗' },
     { id: 'tawantinsuyu', name: '塔万廷苏尤' },
+    { id: 'kanan', name: '迦南' },   // 推罗（腓尼基母城）· 2026-09-12 主人批；亚历山大剧本第三章「推罗围城战」守方
+    { id: 'feilisidin', name: '腓利斯丁' },   // 加沙（腓利斯丁五城之一）· 主人「加沙用什么看历史」；第四章「加沙围城战」守方
     { id: 'qutb_shahi', name: '库特布朝' },
     { id: 'minangkabau', name: '米南加保' },
     { id: 'tutul_xiu', name: '休族' },
@@ -2047,6 +2052,7 @@ export const FACTIONS: Faction[] = [
     { id: 'braganza_house', name: '布拉干萨家' },
     { id: 'trastamara', name: '特拉斯塔' },
     { id: 'odrysian_late', name: '奥德里西亚' },
+    { id: 'jialiboli', name: '加里波利' },  // 鲁西翁·加里波利（奥斯曼加里波利桑贾克辖境含 Keşan 一带，鲁西翁在其中）
     { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
     { id: 'wangdaer', name: '汪达尔' },

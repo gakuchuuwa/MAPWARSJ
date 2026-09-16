@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/9/11 21:23:17（共 60 条）
+ * 生成时间：2026/9/14 02:12:38（共 56 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -17,6 +17,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_11.png": "/assets/AMERICA/zhibuluotuo_enlike.png",
     "/assets/PERSIAN/__暂留__PERSIAN_04.png": "/assets/CENTRAL_ASIA/aba_shapuer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_05.png": "/assets/CENTRAL_ASIA/aqimeinide_daliushi.png",
+    "/assets/PERSIAN/__暂留__PERSIAN_02.png": "/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_06.png": "/assets/CENTRAL_ASIA/gelujiya_tamaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_07.png": "/assets/CENTRAL_ASIA/kawusi_haidaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_08.png": "/assets/CENTRAL_ASIA/keerjisi_bagelate.png",
@@ -28,7 +29,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/PERSIAN/__暂留__PERSIAN_14.png": "/assets/CENTRAL_ASIA/wulaertu_guo_saerduli.png",
     "/assets/PERSIAN/__暂留__PERSIAN_15.png": "/assets/CENTRAL_ASIA/yisatisi_yisatisi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_01.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_01.png",
-    "/assets/PERSIAN/__暂留__PERSIAN_02.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_02.png",
     "/assets/PERSIAN/__暂留__PERSIAN_03.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_03.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_03.png": "/assets/DIANQIAN/chenla_duyebamo.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_04.png": "/assets/DIANQIAN/dai_daoyingmeng.png",
@@ -54,10 +54,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__暂留__GREEK_09.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__暂留__GREEK_10.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",
-    "/assets/SLAVIC/bolan_suobiesiji.png": "/assets/SLAVIC/__多余__SLAVIC_04.png",
-    "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": "/assets/SLAVIC/__多余__SLAVIC_03.png",
-    "/assets/SLAVIC/nuowei_halaer.png": "/assets/SLAVIC/__多余__SLAVIC_01.png",
-    "/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png": "/assets/SLAVIC/__多余__SLAVIC_02.png",
     "/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png": "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png",
     "/assets/SPANISH/trastamara_feidinanershi.png": "/assets/SPANISH/__多余__SPANISH_03.png",
     "/assets/STEPPE/dingling_weilu.png": "/assets/STEPPE/__多余__STEPPE_03.png",

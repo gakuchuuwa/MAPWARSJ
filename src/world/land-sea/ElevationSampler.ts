@@ -181,8 +181,12 @@ export class ElevationSampler {
             const img = await new Promise<HTMLImageElement>((resolve, reject) => {
                 const el = new Image();
                 el.crossOrigin = 'Anonymous';
-                el.onload = () => resolve(el);
-                el.onerror = () => reject(new Error(`Terrarium tile failed: ${url}`));
+                const timer = setTimeout(() => {
+                    el.src = '';
+                    reject(new Error(`Terrarium tile timeout: ${url}`));
+                }, 12000);
+                el.onload = () => { clearTimeout(timer); resolve(el); };
+                el.onerror = () => { clearTimeout(timer); reject(new Error(`Terrarium tile failed: ${url}`)); };
                 el.src = url;
             });
 

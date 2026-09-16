@@ -77,4 +77,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     fangla: { name: '圣公兵', tier: 3 },
     yelusalengwg: { name: '圣墓骑士', tier: 3 },
     pisha: { name: '毗沙都督卫', tier: 4 },
+    wuhu: { name: '乌护游骑', tier: 4 },
+    kawusi: { name: '卡乌斯铁卫', tier: 4 },
 };

@@ -15,6 +15,7 @@ import {
     shortestLongitudeDelta,
     unwrapLongitudePath,
 } from '../utils/GeoLongitude';
+import { ROAD_TERRAIN_COST } from '../data/RoadTerrainCost';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { smoothRoad } from '../utils/GeometryUtils';
@@ -35,7 +36,15 @@ interface GraphEdge {
     id: string;          // 道路ID
     from: string;        // 起点 node ID
     to: string;          // 终点 node ID
-    weight: number;      // 距离 (km)
+    /**
+     * **寻路代价** = 真实里程 × 地形通行代价（见 src/data/RoadTerrainCost.ts）。
+     * 🔴 不等于公里数！要真实里程用 `lengthKm`。
+     *    青海道比河西走廊只近 1.2%，纯按里程寻路就永远走那条 3000~4000m 的高原路，
+     *    所以边权必须带上「这条路好不好走」，否则地理真实性无从谈起。
+     */
+    weight: number;
+    /** 真实里程 (km)，不含任何地形加权 */
+    lengthKm: number;
     coordinates: [number, number][]; // [lng, lat][] 完整路径坐标
     roadFeature: VectorRoadFeature;  // 原始道路数据引用
     /**
@@ -234,11 +243,13 @@ export class RoadRegistry {
             path[0] = [fromNode.lng, fromNode.lat];
             path[path.length - 1] = [toNode.lng, toNode.lat];
 
+            const seaLengthKm = this.calculatePathLength(path);
             this.addEdge({
                 id: props.id,
                 from: props.startConnection,
                 to: props.endConnection,
-                weight: this.calculatePathLength(path),
+                weight: seaLengthKm,   // 海路不吃陆地地形代价
+                lengthKm: seaLengthKm,
                 coordinates: path,
                 roadFeature: feature as unknown as VectorRoadFeature,
                 isSea: true,   // 军团走这条边 = 海军形态（见 GraphEdge.isSea）
@@ -318,13 +329,16 @@ export class RoadRegistry {
             // 海上顶点取自航线网，平滑会把它推离航道甚至推上岸。
             const unwrapped = unwrapLongitudePath(coords);
             const smoothedCoords = (props as { hasSeaLeg?: boolean }).hasSeaLeg ? unwrapped : smoothRoad(unwrapped, 3);
-            const weight = this.calculatePathLength(smoothedCoords);
+            const lengthKm = this.calculatePathLength(smoothedCoords);
+            // 地形通行代价：平原绿洲 1.0，高原与高山隘道最高约 2.5（见 RoadTerrainCost.ts 头注）
+            const terrainCost = ROAD_TERRAIN_COST[props.id] ?? 1;
 
             this.addEdge({
                 id: props.id,
                 from: fromId,
                 to: toId,
-                weight,
+                weight: lengthKm * terrainCost,
+                lengthKm,
                 coordinates: smoothedCoords,
                 roadFeature: feature
             });
@@ -509,15 +523,17 @@ export class RoadRegistry {
         return {
             nodes,
             edges,
-            totalDistance: dist.get(endNodeId) || 0,
+            // 真实里程：Dijkstra 的 dist 是**代价**（含地形加权），不能直接当公里用
+            totalDistance: edges.reduce((sum, e) => sum + e.lengthKm, 0),
             coordinates,
             seaFlags,
         };
     }
 
     /**
-     * 从起点到所有可达节点的道路距离 (km)。
+     * 从起点到所有可达节点的**通行代价**（量纲是 km，但高原/山路会被放大，见 GraphEdge.weight）。
      * 供 AI 目标评估等批量查询；同一起点在同帧内复用缓存。
+     * 对 AI 来说这正是想要的：翻 4000m 高原才够得着的目标，本来就该判得比同里程的平原目标更远。
      */
     public getRoadDistancesKmFrom(startCityId: string): ReadonlyMap<string, number> {
         return this.getDijkstraFrom(startCityId)?.distances ?? new Map();

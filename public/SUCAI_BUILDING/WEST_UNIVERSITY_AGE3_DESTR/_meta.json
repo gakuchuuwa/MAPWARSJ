@@ -1,8 +1,8 @@
 {
   "name": "WEST_UNIVERSITY_AGE3_DESTR",
-  "frames": 60,
+  "frames": 101,
   "box_w": 496,
-  "box_h": 256,
+  "box_h": 260,
   "anchor_x": 232,
   "anchor_y": 164,
   "sld_source": "b_west_university_age3_destruction"

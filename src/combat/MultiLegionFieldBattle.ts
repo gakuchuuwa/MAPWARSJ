@@ -22,7 +22,18 @@ import { gameLog } from '../utils/GameLogger';
 
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 
-const BATTLE_OFFSET = 0.14;
+/**
+ * 野战对阵展开量（度）：攻方落在 `location.lng - BATTLE_OFFSET`、守方落在 `+BATTLE_OFFSET`，
+ * 两军隔着 2×0.14° 相向列阵。
+ *
+ * 🔴 [2026-09-12] 导出给剧本用（HistoricalEventManager.ensureDefenderLegion）：
+ *    剧本守军原本就地刷在 `location` 上，开战时被本文件按上式往东拽 0.14°（≈12 km）——
+ *    主人报障「抵达伊苏斯后守军也跟着动、还要转圈圈」。伊苏斯的战场坐标正好压在
+ *    据点伊苏斯上（在路网上），`findPathOnRoad` 给得出路，守军就真沿着路绕过去了；
+ *    格拉尼库斯那场因战场离路网 10 km、无路可走走的是"直接落位"分支，所以看不出来。
+ *    让剧本**直接把守军刷在这个位置上**，距离为 0 → 走"即时抵达"分支，一步不挪。
+ */
+export const BATTLE_OFFSET = 0.14;
 
 export class MultiLegionFieldBattle {
     private legionManager: LegionManager;
@@ -405,8 +416,30 @@ export class MultiLegionFieldBattle {
                 const marchPath = joinStartToRoadPolyline(startPos, path, GameConfig.ROAD.JOIN_EPS);
                 army.moveAlongPath(marchPath.slice(1));
             } else {
-                console.warn(`[MultiLegion] Army ${army.name} 无道路可达战场，停止行军`);
+                // 🔴 [2026-09-11 修·剧本军卡死] 原来这里只打一句 warn 就完事 ——
+                //    **`onEachArrived()` 永不调用** → `arrivedCount` 永远到不了 `totalArmies`
+                //    → `startRegionalBattle` 永不触发 → **整场野战无声卡死、永远打不起来**。
+                //    剧本军正好踩中：野战场坐标 (40.23, 27.24) 在路网外约 10 km
+                //    （最近的格拉尼库斯城距它 10.9 km），`findPathOnRoad` 给不出路径。
+                //    主人截图「剧本军团擅自攻击洋河」就是它的下游表现 ——
+                //    旧代码此刻已解除行军豁免 → 军团回落常规 AI → 就近攻打洋河。
+                //
+                //    修法：与上面那条"极短距离即时抵达"同口径 —— **无路可走即当场视为抵达**，
+                //    就地落位（贴得上路网就贴，贴不上就用战场精确坐标），保证野战一定能开打。
+                //    绝不再静默停摆。
+                const snap = roadRegistry.findNearestRoadPoint(armyTarget.lat, armyTarget.lng, 10);
+                const finalPos = (snap && snap.distance < 2)
+                    ? { lat: snap.lat, lng: snap.lng }
+                    : armyTarget;   // 离路网太远 → 直接用战场精确坐标（剧本写死的交战地点）
+                console.warn(
+                    `[MultiLegion] Army ${army.name} 无道路可达战场 → 直接落位 `
+                    + `(${finalPos.lat.toFixed(4)}, ${finalPos.lng.toFixed(4)}) 并视为抵达（避免野战静默卡死）`
+                );
+                army.setPosition(finalPos.lat, finalPos.lng);
                 army.setSpeedMultiplier(1.0);
+                army.ignoreCityCollision = false;
+                army.ignoreUnitCollision = false;
+                onEachArrived();
             }
         });
     }

@@ -2277,11 +2277,8 @@ function openCityPanel(cityId: string): void {
           </select>
         </label>
         ${gameStyleLine}
-        <label><span>文化区 (region)</span>
-          <select name="region">
-            <option value="" ${!c.region ? 'selected' : ''}>（未设）</option>
-            ${regions.map(r => `<option value="${r}" ${c.region === r ? 'selected' : ''}>${r}</option>`).join('')}
-          </select>
+        <label><span>文化区 (region · 只读，不再保存)</span>
+          <input value="${c.region ?? '（未设）'}" readonly title="文化区不再在此保存——保存只改建筑风格等字段" />
         </label>
         <label><span>建筑风格 (buildingStyle)</span>
           <select name="buildingStyle">
@@ -2330,12 +2327,12 @@ function openCityPanel(cityId: string): void {
         const s = resolveCityDeBuildingStyle(
             c.id,
             String(fd.get('type') ?? c.type),
-            String(fd.get('region') ?? ''),
+            c.region ?? '',
             Number(fd.get('lat') ?? c.lat),
             Number(fd.get('lng') ?? c.lng),
             String(fd.get('buildingStyle') ?? ''),
         );
-        const rg = String(fd.get('region') ?? '');
+        const rg = c.region ?? '';
         const forced = rg.includes('STEPPE') || rg.includes('MONGOL');
         el.innerHTML = `🎮 游戏实际采用建筑风格：<b style="color:${s ? '#f5d78e' : '#b87c7c'}">${s ?? '（无 → 兜底渲染）'}</b>`
             + (forced ? '<span style="color:#c8a05a">（文化区属草原/蒙古：游戏强制毡帐 YURT，此处另选别的不会生效）</span>' : '')
@@ -2359,7 +2356,6 @@ async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<voi
         name: String(fd.get('name') ?? '').trim(),
         type: String(fd.get('type') ?? ''),
         factionId: String(fd.get('factionId') ?? ''),
-        region: String(fd.get('region') ?? ''),
         buildingStyle: String(fd.get('buildingStyle') ?? ''),
         troops: String(fd.get('troops') ?? '').trim(),
         tier: String(fd.get('tier') ?? '').trim(),

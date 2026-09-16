@@ -66,6 +66,8 @@ export interface City {
     latitude: number;
     longitude: number;
     type: CityType;
+    /** 驻军兵力。🔴 [2026-09-12 主人定] 必填：战场已独立出去（`src/data/Battlefields.ts`），
+     *  **据点一律有兵力**，故这里不再可选。（原先为「战场没有兵力」把本字段改成可选的补丁已撤销。） */
     troops: number;
 
     mirror?: boolean;
@@ -88,6 +90,9 @@ export interface City {
     spawnEliteUsed?: boolean;
     /** 失陷年份（易主时写入；复国须距此至少 1 游戏年） */
     fallenAtYear?: number;
+    // 🔴 [2026-09-12 主人定] 这里原先有个 `battlefield?: boolean`（战场当时挂在据点上）。
+    //    主人改定「把战场独立出来，不做为据点，就叫战场。一个地名而已。类似奇观」，
+    //    战场已迁到 `src/data/Battlefields.ts`（`bf_*`）+ `src/map/BattlefieldLayer.ts`，故本字段已删。
 }
 
 // 游戏状态
@@ -115,6 +120,12 @@ export interface SiegeData {
     defenderGeneralId?: string; // [NEW] 防守方将领ID
     attackerTroops?: number;
     defenderTroops?: number; // [NEW] Override city defender troops
+    /**
+     * 🔴 [2026-09-12 主人令「写呀，不写怎么继续？」] 逐事件独立行军航点（**攻城剧本用**）。
+     * 与 `FieldBattleData.marchWaypoints` 同口径（军团逐段以据点为目标）；区别是走完航点后
+     * **奔向目标城**（`defenderCityId`）、抵达城下即交给 `SiegeManager` 开打，而不是去野战场坐标。
+     */
+    marchWaypoints?: string[];
     result?: 'attacker_win' | 'defender_win';
     customDuration?: number; // [NEW] Director-controlled battle duration in seconds (overrides troop-based calculation)
     speedMultiplier?: number; // [NEW] Custom movement speed for this event
@@ -170,6 +181,7 @@ export interface FieldBattleData {
 
     location?: { lat: number, lng: number }; // 战场坐标(遗留直接填坐标)
     locationCityId?: string; // [NEW] 使用预定义战场据点ID (如 bf_pingyang)
+    marchWaypoints?: string[]; // [2026-09-12 主人定] 逐事件独立行军航点（军团逐段以据点为目标；最后一段走 location 野战场坐标）
     result?: 'attacker_win' | 'defender_win';
     title?: string;
     description?: string;

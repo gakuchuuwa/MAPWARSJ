@@ -216,7 +216,11 @@ export class PlayerHUD {
         const questText = quest
             ? (quest.kind === 'restore'
                 ? `助${quest.generalName}复国【${quest.cityName}】`
-                : `随${quest.generalName}攻【${quest.targetCityName}】`)
+                // 🔴 [2026-09-11 主人定 A 方案] 剧本任务显示**真历史目标**
+                //    （如「随亚历山大进军格拉尼库斯」），不显示引擎那套「攻【某城】」
+                : quest.scriptObjective
+                    ? `随${quest.generalName}${quest.scriptObjective.label}`
+                    : `随${quest.generalName}攻【${quest.targetCityName}】`)
             : '到据点找武将';
         this.body.innerHTML = '';
 
@@ -411,6 +415,19 @@ export class PlayerHUD {
         nearLabel.appendChild(nearCheck);
         nearLabel.appendChild(document.createTextNode('📍 就近寻将'));
         ctrlRow.appendChild(nearLabel);
+
+        // 🚫 不出军团（[2026-09-11 主人定]「在玩家面板添加一个功能选项，默认不出军团」）
+        const noLegionLabel = document.createElement('label');
+        noLegionLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#dfc28c; font-weight:700; user-select:none;';
+        noLegionLabel.title = '开：全图不生任何军团，武将都留在城里；关：恢复常规募兵（开局首发属一次性事件，不会补跑）。乱斗开局默认关闭此项';
+        const noLegionCheck = document.createElement('input');
+        noLegionCheck.type = 'checkbox';
+        noLegionCheck.checked = hero.noLegionSpawn;
+        noLegionCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37;';
+        noLegionCheck.addEventListener('change', () => hero.setNoLegionSpawn(noLegionCheck.checked));
+        noLegionLabel.appendChild(noLegionCheck);
+        noLegionLabel.appendChild(document.createTextNode('🚫 不出军团'));
+        ctrlRow.appendChild(noLegionLabel);
 
         if (this.deps.followCamera) {
             const followBtn = document.createElement('button');

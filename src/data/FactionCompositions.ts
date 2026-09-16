@@ -3095,13 +3095,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "inca": {
-        legionName: "安第斯军团",
+        legionName: "城堡时代克丘亚军团",
         legionType: "region",
         formationMode: "echelon",
         slots: [
-            { type: "kamayuk", count: 4 },
-            { type: "blackwood_archer", count: 3 },
-            { type: "bolas_rider", count: 2 },
+            { type: "champi_warrior", count: 4 },
+            { type: "elite_kamayuk", count: 3 },
+            { type: "champi_scout", count: 2 },
         ],
     },
     "tang": {
@@ -3385,13 +3385,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "houliao": {
-        legionName: "城堡时代蒙古军团",
-        legionType: "region",
-        formationMode: "crescent",
+        legionName: "封建时代契丹军团",
+        legionType: "sub",
+        formationMode: "echelon",
         slots: [
-            { type: "elite_keshik", count: 3 },
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
             { type: "steppe_lancer", count: 2 },
-            { type: "mangudai_elite", count: 4 },
         ],
     },
     "xianhai": {
@@ -3525,13 +3525,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         ],
     },
     "kongque": {
-        legionName: "古典时代东南亚军团",
+        legionName: "古典时代印度军团",
         legionType: "sub",
         formationMode: "crane_wing",
         slots: [
-            { type: "sannahya", count: 2 },
-            { type: "vanguard", count: 4 },
-            { type: "antiquity_skirmisher", count: 3 },
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "ratha_melee", count: 4 },
+            { type: "sickle_warrior", count: 3 },
         ],
     },
     "tiemuer": {
@@ -3572,6 +3572,333 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
             { type: "antiquity_skirmisher", count: 2 },
             { type: "antiquity_spearman", count: 3 },
             { type: "war_chariot", count: 4, scale: 0.66 },
+        ],
+    },
+    "osman": {
+        legionName: "城堡时代奥斯曼军团",
+        legionType: "region",
+        formationMode: "triangle",
+        slots: [
+            { type: "janissary", count: 2 },
+            { type: "elite_janissary", count: 3 },
+            { type: "elite_mameluke", count: 4 },
+        ],
+    },
+    "aosimanbeiyiguo": {
+        legionName: "城堡时代奥斯曼军团",
+        legionType: "region",
+        formationMode: "triangle",
+        slots: [
+            { type: "janissary", count: 2 },
+            { type: "elite_janissary", count: 3 },
+            { type: "elite_mameluke", count: 4 },
+        ],
+    },
+    "lumiliya": {
+        legionName: "帝国时代奥斯曼军团",
+        legionType: "region",
+        formationMode: "triangle",
+        slots: [
+            { type: "royal_janissary", count: 2 },
+            { type: "longswordsman", count: 3 },
+            { type: "elite_mameluke", count: 4 },
+        ],
+    },
+    "saierdika": {
+        legionName: "封建时代保加利亚军团",
+        legionType: "region",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "konnik", count: 3 },
+            { type: "elite_konnik_foot", count: 4 },
+            { type: "recurve_bowman", count: 2 },
+        ],
+    },
+    "duonaobaojia": {
+        legionName: "封建时代保加利亚军团",
+        legionType: "region",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "konnik", count: 3 },
+            { type: "elite_konnik_foot", count: 4 },
+            { type: "recurve_bowman", count: 2 },
+        ],
+    },
+    "jialiboli": {
+        legionName: "封建时代保加利亚军团",
+        legionType: "sub",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "konnik", count: 3 },
+            { type: "elite_konnik_foot", count: 4 },
+            { type: "recurve_bowman", count: 2 },
+        ],
+    },
+    "kesa": {
+        legionName: "封建时代可萨军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "konnik_foot", count: 2 },
+            { type: "elite_konnik", count: 4 },
+            { type: "cav_archer", count: 3 },
+        ],
+    },
+    "xiemian": {
+        legionName: "封建时代可萨军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "konnik_foot", count: 2 },
+            { type: "elite_konnik", count: 4 },
+            { type: "cav_archer", count: 3 },
+        ],
+    },
+    "yidier": {
+        legionName: "封建时代可萨军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "konnik_foot", count: 2 },
+            { type: "elite_konnik", count: 4 },
+            { type: "cav_archer", count: 3 },
+        ],
+    },
+    "aqimeinide": {
+        legionName: "古典时代阿契美尼德军团",
+        legionType: "region",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "shock_cavalry", count: 3 },
+            { type: "sparabara", count: 4 },
+            { type: "immortal_ranged", count: 2 },
+        ],
+    },
+    "xiaofulijiya": {
+        legionName: "古典时代波斯联合军团",
+        legionType: "sub",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "mercenary_hoplite", count: 3 },
+            { type: "lancer", count: 4 },
+            { type: "antiquity_skirmisher", count: 2 },
+        ],
+    },
+    // 🔴 [2026-09-12 主人批新增推罗/腓尼基] 亚历山大剧本第三段「推罗围城战」守方编制。
+    //    军团名按命名铁律 = 时代+文化+军团；阵型 = 偃月（crescent 3-2-4，前阻中虚后重，守岛城后发制人）。
+    //    兵种按「子分类 + 文化区挨着」选：前 3 希腊雇佣重步兵（腓尼基城邦的典型雇佣兵，东地中海）、
+    //    中 2 波斯系持盾长矛兵（腓尼基为阿契美尼德附庸）、后 4 古典散兵（标枪/投石，守城投掷）。
+    "kanan": {
+        legionName: "古典时代迦南军团",
+        legionType: "sub",
+        formationMode: "crescent",
+        slots: [
+            { type: "mercenary_hoplite", count: 3 },
+            { type: "sparabara", count: 2 },
+            { type: "antiquity_skirmisher", count: 4 },
+        ],
+    },
+    "tawantinsuyu": {
+        legionName: "城堡时代克丘亚军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "champi_warrior", count: 4 },
+            { type: "elite_kamayuk", count: 3 },
+            { type: "champi_scout", count: 2 },
+        ],
+    },
+    // 🔴 [2026-09-12 主人「加沙用什么看历史」] 加沙（腓利斯丁）：要塞守军编制。
+    //    阵型偃月 3-2-4（守城后发制人）；兵种按「子分类 + 文化区挨着」：
+    //    前 3 波斯系持盾矛兵（驻军主体）、中 2 近东枪骑兵、后 4 古典散兵（守城投掷）。
+    "feilisidin": {
+        legionName: "古典时代腓利斯丁军团",
+        legionType: "region",
+        formationMode: "crescent",
+        slots: [
+            { type: "sparabara", count: 3 },
+            { type: "lancer", count: 2 },
+            { type: "antiquity_skirmisher", count: 4 },
+        ],
+    },
+    "xianbei": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "wuhuan": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "fuyu": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "donghu": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "murong": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "yingzhou_ying_d": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "yilou": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "xiongding": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "sub",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "dingzhou": {
+        legionName: "古典时代鲜卑军团",
+        legionType: "sub",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "iron_pagoda", count: 2 },
+            { type: "xianbei_raider", count: 4 },
+            { type: "antiquity_heavy_cavalry_archer", count: 3 },
+        ],
+    },
+    "qidan": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+        ],
+    },
+    "liao_d": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+        ],
+    },
+    "dongdan": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+        ],
+    },
+    "yel": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+        ],
+    },
+    "kumoxi": {
+        legionName: "封建时代契丹军团",
+        legionType: "region",
+        formationMode: "echelon",
+        slots: [
+            { type: "elite_liao_dao", count: 4 },
+            { type: "cav_archer_heavy", count: 3 },
+            { type: "steppe_lancer", count: 2 },
+        ],
+    },
+    "sumo": {
+        legionName: "古典时代印度军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "ratha_melee", count: 4 },
+            { type: "sickle_warrior", count: 3 },
+        ],
+    },
+    "jiashi_d": {
+        legionName: "古典时代印度军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "antiquity_heavy_cavalry_archer", count: 2 },
+            { type: "ratha_melee", count: 4 },
+            { type: "sickle_warrior", count: 3 },
+        ],
+    },
+    "funan": {
+        legionName: "古典时代东南亚军团",
+        legionType: "region",
+        formationMode: "crane_wing",
+        slots: [
+            { type: "sannahya", count: 2 },
+            { type: "vanguard", count: 4 },
+            { type: "antiquity_skirmisher", count: 3 },
+        ],
+    },
+    "xichu": {
+        legionName: "古典时代秦汉军团",
+        legionType: "sub",
+        formationMode: "fish_scale",
+        slots: [
+            { type: "white_feather_guard", count: 3 },
+            { type: "elite_chukonu", count: 4 },
+            { type: "tiger_rider", count: 2 },
         ],
     },
 };

@@ -45,6 +45,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV', MAGYAR: 'SLAV',
     ACHAEMENIDS: 'PERSIAN',
     BENGALIS: 'INDI', GURJARAS: 'INDI', PORUS: 'INDI',
+    BENGALIS_ANTIQUITY: 'INDI',   // 2026-09-12 古典孟加拉：与孟加拉同风格
     VIETNAMESE: 'ASIA', KHMER: 'SEAS',
     MAYANS: 'MESO',
     MAPUCHE: 'ANDE', TUPI: 'ANDE', MUISCA: 'ANDE',
@@ -114,6 +115,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     JURCHEN: 'ASIA',
     SELJUQ: 'CEAS',
     OTTOMAN: 'ORIE',
+    OTTOMAN_IMPERIAL: 'ORIE',
     FRENCH: 'WEST',
     MANCHU: 'ASIA',
     MUGHAL: 'INDI',

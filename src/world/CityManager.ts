@@ -665,12 +665,12 @@ export class CityManager {
                 const available = city.troops - GameConfig.CITY.MIN_GARRISON;
 
                 if (available <= amountPerCity) {
-                    city.troops -= available;
+                    city.troops = city.troops - available;
                     remainingToDeduct -= available;
                     capableCities.splice(i, 1);
                     this.territorySystem.updateCityLabel(city);
                 } else {
-                    city.troops -= amountPerCity;
+                    city.troops = city.troops - amountPerCity;
                     remainingToDeduct -= amountPerCity;
                     this.territorySystem.updateCityLabel(city);
                 }

@@ -13,27 +13,54 @@ import {
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
-const SAMPLE_STEP = 112;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
-const CITY_CLEAR_PX = 42;
+const CITY_CLEAR_PX = 46;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
-/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。每偏离一级 zoom ×1.35。 */
-const TREE_BASE_PX = 26;
-/** 战略树木保持为环境层，避免压过城池、军团、道路和势力边界。 */
-const TREE_OPACITY = 0.78;
+/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。Z9 为 22px，Z10 随缩放自然展开至约 28px。 */
+const TREE_BASE_PX = 22;
+/** 战略树木保持为环境层，透光度自然，不压过城池、军团、道路和势力边界。 */
+const TREE_OPACITY = 0.82;
 /** 树根处的轻微接地阴影，只用于消除贴图悬浮感。 */
-const TREE_SHADOW_OPACITY = 0.14;
-/** 林片中心的采样步长，位置固定在世界坐标中。
- *  🔴 [2026-09-11 主人定「片更大、分布不用这么多」= 方案 B] 网格 129px(×1.15) → **232px(×2.07)**：
- *     1280×800 / zoom 9 一屏的采样格 62 → 19，林地林片数 约 34 → 约 10（−70%）；
- *     每片棵树 13~23 → 52~76（见下方 count），片内半径按 √count 自动 33px → 63px（片宽约 126px）
- *     ——「半格一片林」，连片成林又留出大片空地。树总量基本持平（一屏几百棵），性能不变。 */
-const CLUSTER_STRIDE = SAMPLE_STEP * 2.07;
-/** 黄金角错列，避免树木排成行，也避免随机撒点产生大片空隙。 */
-const FOREST_GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const TREE_SHADOW_OPACITY = 0.16;
+
+export interface TreeAssetMeta {
+    boxW: number;
+    boxH: number;
+    anchorX: number;
+    anchorY: number;
+    frames: number[];
+}
+
+/** 24 种自然树木资产的精确元数据与站立健康帧变体白名单（彻底剔除采伐/倒伏/枯木桩动作帧） */
+export const TREE_METAS: Record<string, TreeAssetMeta> = {
+    OAK: { boxW: 332, boxH: 228, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
+    GREEN_OAK: { boxW: 184, boxH: 200, anchorX: 112, anchorY: 172, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
+    AUTUMN_OAK: { boxW: 332, boxH: 232, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
+    SNOW_AUTUMN_OAK: { boxW: 204, boxH: 224, anchorX: 128, anchorY: 192, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
+    ASIAN_MAPLE_GREEN: { boxW: 336, boxH: 352, anchorX: 136, anchorY: 192, frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+    ASIAN_MAPLE_AUTUMN: { boxW: 340, boxH: 348, anchorX: 140, anchorY: 188, frames: [0, 2, 4, 6, 8, 10, 12, 14, 16] },
+    ASIAN_PINE: { boxW: 232, boxH: 196, anchorX: 130, anchorY: 146, frames: [0, 1, 2, 3] },
+    PINE: { boxW: 156, boxH: 192, anchorX: 92, anchorY: 164, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
+    SNOW_PINE: { boxW: 152, boxH: 188, anchorX: 92, anchorY: 160, frames: [3, 6, 9, 12, 15, 21, 24] },
+    BIRCH_GREEN: { boxW: 204, boxH: 244, anchorX: 136, anchorY: 216, frames: [0, 1, 2, 3, 4, 5, 6, 7] },
+    BIRCH_AUTUMN: { boxW: 212, boxH: 240, anchorX: 140, anchorY: 216, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
+    BIRCH_WINTER: { boxW: 200, boxH: 196, anchorX: 128, anchorY: 176, frames: [3, 4, 5] },
+    PALM: { boxW: 208, boxH: 208, anchorX: 128, anchorY: 180, frames: [6, 12, 15, 21, 27, 30] },
+    OLIVE: { boxW: 216, boxH: 176, anchorX: 140, anchorY: 156, frames: [0, 3, 6, 9, 12, 15, 18, 21] },
+    CYPRESS: { boxW: 128, boxH: 192, anchorX: 100, anchorY: 184, frames: [0, 3, 6, 9] },
+    WILLOW: { boxW: 240, boxH: 240, anchorX: 152, anchorY: 200, frames: [0, 1, 2] },
+    BAMBOO: { boxW: 108, boxH: 100, anchorX: 68, anchorY: 76, frames: [9, 10, 11] },
+    LUSH_BAMBOO: { boxW: 212, boxH: 180, anchorX: 118, anchorY: 146, frames: [0, 3, 6, 9] },
+    PEACH_BLOSSOM: { boxW: 224, boxH: 172, anchorX: 130, anchorY: 138, frames: [0, 1, 2, 3] },
+    DEAD_TREE: { boxW: 368, boxH: 232, anchorX: 168, anchorY: 200, frames: [0, 1, 2, 6, 7, 8, 9, 11, 12] },
+    RAINFOREST: { boxW: 348, boxH: 240, anchorX: 148, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
+    BAOBAB: { boxW: 348, boxH: 236, anchorX: 148, anchorY: 200, frames: [0, 3, 6, 9] },
+    DRAGON_TREE: { boxW: 200, boxH: 172, anchorX: 124, anchorY: 144, frames: [0, 2, 4, 6] },
+    ACACIA: { boxW: 340, boxH: 236, anchorX: 140, anchorY: 196, frames: [0, 3, 6, 9] },
+};
 
 /**
  * 一棵树的采样结果。
@@ -49,14 +76,17 @@ interface TreeDrawCommand {
     asset: string;
     /** 下一季的树种（季末交叉淡出用；与 asset 相同表示这棵不换装） */
     assetNext: string;
+    /** 稳定分配的健康形态变体索引 */
+    variant: number;
 }
 
-/**
- * 战略地图树贴图缓存：树名 → `public/SUCAI_NATURE/<树名>/preview.png`（DE 单棵成品图）。
- */
+/** 战略地图树贴图缓存：树名 → preview.png（DE 单棵成品图，第 0 帧） */
 const TREE_IMG = new Map<string, HTMLImageElement>();
-/** 已确认加载失败的树名（不再重试，免得每帧刷 404） */
 const TREE_IMG_FAILED = new Set<string>();
+
+/** 战略地图多变体精灵图缓存：树名 → frames.png */
+const TREE_FRAMES_IMG = new Map<string, HTMLImageElement>();
+const TREE_FRAMES_FAILED = new Set<string>();
 
 function treeImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_IMG_FAILED.has(asset)) return null;
@@ -67,6 +97,18 @@ function treeImage(asset: string, onReady: () => void): HTMLImageElement | null 
     img.onerror = () => { TREE_IMG.delete(asset); TREE_IMG_FAILED.add(asset); };
     img.src = `/SUCAI_NATURE/${asset}/preview.png`;
     TREE_IMG.set(asset, img);
+    return null;
+}
+
+function treeFramesImage(asset: string, onReady: () => void): HTMLImageElement | null {
+    if (TREE_FRAMES_FAILED.has(asset)) return null;
+    const hit = TREE_FRAMES_IMG.get(asset);
+    if (hit) return hit.complete && hit.naturalWidth > 0 ? hit : null;
+    const img = new Image();
+    img.onload = () => onReady();
+    img.onerror = () => { TREE_FRAMES_IMG.delete(asset); TREE_FRAMES_FAILED.add(asset); };
+    img.src = `/SUCAI_NATURE/${asset}/frames.png`;
+    TREE_FRAMES_IMG.set(asset, img);
     return null;
 }
 
@@ -97,13 +139,46 @@ const BASE_FOREST_TILES = new Set([
     'snf',
 ]);
 
+/** 🔴 绝对禁止长树的地表材质：沙漠沙丘、流沙、干涸盐壳、戈壁砾石、高山裸岩与冰雪 */
+const NON_VEGETATION_TILES = new Set([
+    'pal',             // 砂质沙漠（塔克拉玛干、撒哈拉等流动沙丘）
+    'qs',              // 沙漠流沙（腹地沙丘）
+    'pal1',            // 裂开沙漠 / 干涸盐壳（罗布泊、艾丁湖）
+    'ds5',             // 戈壁沙漠（砾石戈壁滩）
+    'des',             // 极旱荒漠泥地
+    'gravel_default',  // 高山高寒砾石 / 流石滩
+    'rck',             // 陡峻山地裸岩 / 刃脊
+    'sno',             // 积雪雪原
+    'sn2',             // 松软深雪
+    'snd',             // 雪地地基
+    'ice',             // 冰川冰原
+]);
+
+/**
+ * 基于经纬度的多频连续世界坐标密度场 (0..1)
+ * 纯数学函数，无任何随机状态，保证相同经纬度在任何时候、任何缩放级别下输出绝对恒定
+ */
+function forestNoise(lat: number, lng: number): number {
+    // 低频宏观轮廓 (~1.5度波长，约150km，塑造大尺度林区连绵与开阔原野)
+    const n1 = Math.sin(lat * 0.85 + lng * 0.62) * Math.cos(lat * 0.71 - lng * 0.79);
+    // 中频林缘凹凸与林隙 (~0.35度波长，约35km，塑造有机自然林缘、山谷林隙)
+    const n2 = Math.sin(lat * 3.21 - lng * 2.85) * Math.cos(lat * 2.67 + lng * 3.43);
+    // 高频林缘毛边与散树 (~0.08度波长，约8km，形成自然的稀疏林缘过渡)
+    const n3 = Math.sin(lat * 11.45 + lng * 13.27) * Math.cos(lat * 14.12 - lng * 9.87);
+
+    return 0.5 + 0.30 * n1 + 0.14 * n2 + 0.06 * n3;
+}
+
+const RESOLVE_FOREST_BIOMES = new Set([1, 2, 3, 4, 5, 6, 12, 14]);
+
 function isStrategicForestArea(biome: number, tile: string, elevation: number, lat: number): boolean {
-    if (biome === 0) return false;
+    // 荒漠、流沙、盐壳、高山裸岩与冰雪一票否决
+    if (NON_VEGETATION_TILES.has(tile)) return false;
+    if (biome === 13) return false;
+    // 真实森林群系（RESOLVE 2017: 1, 2, 3, 4, 5, 6, 12, 14）
+    if (RESOLVE_FOREST_BIOMES.has(biome)) return true;
+    // 地表材质标注森林
     if (BASE_FOREST_TILES.has(tile)) return true;
-    if (biome === 14) return true;
-    if (biome === 6) return Math.abs(lat) >= 50;
-    if (biome === 1 || biome === 3) return tile === 'gr6' || elevation >= 350;
-    if (biome === 2 || biome === 4 || biome === 5 || biome === 12) return elevation >= 450;
     return false;
 }
 
@@ -111,13 +186,34 @@ function forestClusterWeight(
     biome: number,
     tile: string,
     canopyDensity: number,
+    noiseVal: number,
 ): number {
-    const canopy = Math.max(0, Math.min(1, (canopyDensity - 8) / 62));
-    let historicalFloor = 0.14;
-    if (BASE_FOREST_TILES.has(tile)) historicalFloor = 0.55;
-    else if (biome === 6) historicalFloor = 0.34;
-    else if (biome === 1 || biome === 3) historicalFloor = 0.22;
-    return Math.max(historicalFloor, canopy);
+    if (NON_VEGETATION_TILES.has(tile) || biome === 13) return 0;
+
+    const isForestBiome = RESOLVE_FOREST_BIOMES.has(biome);
+    const isForestTile = BASE_FOREST_TILES.has(tile);
+    if (!isForestBiome && !isForestTile) return 0;
+
+    // 🔴 解决「有的地方的树是不是太多了」：
+    // 1. 真实郁闭度低于 22% 属于开阔农田平原、干草原、平川河谷，坚决不长树；
+    //    把平原（汾河谷地、太原盆地、关中平原、华北大平原）彻底还给开阔农田与沃野！
+    // 2. 地表材质显式标注森林的（for, fo2, snf），即使 canopy 偏低也给予适当树林呈现；
+    // 3. 聚簇门控：连续世界坐标场低于 0.38 的直接留白，高于 0.38 的凝聚成块状/带状自然林海。
+    let baseWeight = 0;
+    if (isForestTile) {
+        const canopy = Math.max(0, Math.min(1, canopyDensity / 100));
+        baseWeight = Math.max(0.35, canopy);
+    } else if (isForestBiome) {
+        if (canopyDensity < 22) return 0; // 开阔平原农田/干旱荒草坚决 0 树木
+        const norm = Math.min(1.0, (canopyDensity - 22) / 53);
+        baseWeight = 0.20 + 0.60 * norm;
+    }
+
+    // 连续噪声场强门控：消除均匀撒点感，塑造有致的林带与山川留白
+    if (noiseVal < 0.38) return 0;
+    const clusterFactor = Math.pow((noiseVal - 0.38) / 0.62, 1.25);
+
+    return baseWeight * clusterFactor;
 }
 
 function currentGameSeason(): number {
@@ -198,6 +294,28 @@ function colorFor(asset: string, season: TreeSeason): [number, number, number] {
     return PATCH_COLOR[c];                            // 春 / 夏
 }
 
+/**
+ * 真实自然地理林线（树木生长的高程上限，米）：
+ * 超出林线为高寒草甸、流石滩、冰川与裸岩，树木无法成活。
+ * - 青藏高原/喜马拉雅：4000m~4200m
+ * - 阿尔卑斯山/中欧高地（纬度 44°~54°）：2150m
+ * - 低纬度高山：3600m~3800m
+ * - 高纬度寒温带：1200m~1500m
+ */
+function getTreeLine(lat: number, lng?: number): number {
+    const absLat = Math.abs(lat);
+    if (lng !== undefined && lng >= 75 && lng <= 105 && absLat >= 26 && absLat <= 40) {
+        return 4100;
+    }
+    if (absLat < 30) return 3800;
+    if (absLat < 44) return 2600;
+    if (absLat < 54) return 2150; // 阿尔卑斯山、欧洲高地
+    if (absLat < 64) return 1400;
+    return 600;
+}
+
+const TREE_GRID_STEP = 42;
+
 export class VegetationLayer {
     private readonly map: L.Map;
     private readonly canvas: HTMLCanvasElement;
@@ -209,13 +327,21 @@ export class VegetationLayer {
     private retryKey = '';
     private retryCount = 0;
 
-    private readonly onViewportChanged = () => this.scheduleRender();
-    private readonly onResize = () => { this.resize(); this.scheduleRender(); };
+    private terrainReadyTimer: number | null = null;
+    private readonly onViewportChanged = () => { this.lastRenderKey = ''; this.scheduleRender(); };
+    private readonly onResize = () => { this.resize(); this.lastRenderKey = ''; this.scheduleRender(); };
     private readonly onCanvasFollow = () => {
         L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
         this.paint();
     };
-    private readonly onTerrainReady = () => { this.lastRenderKey = ''; this.scheduleRender(200); };
+    private readonly onTerrainReady = () => {
+        if (this.terrainReadyTimer !== null) return;
+        this.terrainReadyTimer = window.setTimeout(() => {
+            this.terrainReadyTimer = null;
+            this.lastRenderKey = '';
+            this.scheduleRender(0);
+        }, 250);
+    };
 
     constructor(map: L.Map) {
         this.map = map;
@@ -350,51 +476,71 @@ export class VegetationLayer {
         }
         items.sort((a, b) => a.y - b.y || a.x - b.x);
 
-        const drawOne = (im: HTMLImageElement, it: { x: number; y: number; h: number }, alpha: number) => {
+        const drawTreeAsset = (
+            asset: string,
+            variant: number,
+            it: { x: number; y: number; h: number },
+            alpha: number,
+        ) => {
             if (alpha <= 0.002) return;
-            const w = it.h * (im.naturalWidth / im.naturalHeight);
+            const meta = TREE_METAS[asset];
             ctx.globalAlpha = alpha * TREE_OPACITY;
-            ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+
+            if (meta) {
+                const framesImg = treeFramesImage(asset, this.onTreeImageReady);
+                const prevImg = treeImage(asset, this.onTreeImageReady);
+
+                const w = it.h * (meta.boxW / meta.boxH);
+                const dx = it.x - w * (meta.anchorX / meta.boxW);
+                const dy = it.y - it.h * (meta.anchorY / meta.boxH);
+
+                if (framesImg) {
+                    const frameIdx = meta.frames[variant % meta.frames.length];
+                    const sx = frameIdx * meta.boxW;
+                    ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, it.h);
+                    return;
+                }
+                if (prevImg) {
+                    ctx.drawImage(prevImg, 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, it.h);
+                    return;
+                }
+            } else {
+                // 兜底：未配置元数据的资产按底部居中对齐
+                const im = treeImage(asset, this.onTreeImageReady);
+                if (im) {
+                    const w = it.h * (im.naturalWidth / im.naturalHeight);
+                    ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+                }
+            }
         };
 
         const drawContactShadow = (it: { x: number; y: number; h: number }) => {
             ctx.save();
             ctx.globalAlpha = TREE_SHADOW_OPACITY;
-            ctx.fillStyle = '#182016';
+            ctx.fillStyle = '#141c12';
             ctx.beginPath();
-            ctx.ellipse(it.x, it.y - 1, it.h * 0.28, Math.max(1.2, it.h * 0.07), 0, 0, Math.PI * 2);
+            // 椭圆中心严格落在 (it.x, it.y)，与树根锚点接地处完全重合
+            ctx.ellipse(it.x, it.y, it.h * 0.22, Math.max(1.0, it.h * 0.06), 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         };
 
         for (const it of items) {
-            const cur = treeImage(it.c.asset, this.onTreeImageReady);
-            const nxt = it.c.assetNext !== it.c.asset
-                ? treeImage(it.c.assetNext, this.onTreeImageReady) : cur;
+            drawContactShadow(it);
 
-            if (cur || nxt) drawContactShadow(it);
-
-            // 每棵树基于经纬度哈希做**秒级**错峰（0~0.35 秒）：整片林依次换装，不是齐刷一变
+            // 每棵树基于经纬度哈希做秒级错峰（0~0.35 秒）：整片林依次换装
             let treeBlend = baseBlend;
             if (baseBlend > 0 && it.c.assetNext !== it.c.asset) {
                 treeBlend = seasonBlend(hash(it.c.lat, it.c.lng, 99) * 0.35);
             }
 
-            if (cur && nxt && cur !== nxt && treeBlend > 0) {
-                // 🔴 [2026-09-11 主人报「植被变着变着就消失了」] 交叉淡出**不许掉不透明度**：
-                //   旧写法本季 ×(1−b) + 下季 ×b —— 两张**不同**贴图叠出来的覆盖度是 `1−b(1−b)`，
-                //   中点塌到 0.75，再乘 TREE_OPACITY 0.78 → 0.585，所以看着就是"淡着淡着没了"。
-                //   现按「两层叠合覆盖度恒定 = 单棵树 TREE_OPACITY」反解下季那层的 alpha：
-                //     1−(1−a₁)(1−a₂) = TREE_OPACITY，取 a₁ = (1−b)·TREE_OPACITY  →  a₂ = 1 − (1−TREE_OPACITY)/(1−a₁)
-                //   b=0 → a₂=0、b=1 → a₂=TREE_OPACITY，两端与"单棵树"完全一致，中点也不再塌陷。
+            if (it.c.assetNext !== it.c.asset && treeBlend > 0) {
                 const a1 = (1 - treeBlend) * TREE_OPACITY;
                 const a2 = 1 - (1 - TREE_OPACITY) / (1 - a1);
-                drawOne(cur, it, 1 - treeBlend);
-                drawOne(nxt, it, a2 / TREE_OPACITY);
-            } else if (cur) {
-                drawOne(cur, it, 1);
-            } else if (nxt) {
-                drawOne(nxt, it, 1);
+                drawTreeAsset(it.c.asset, it.c.variant, it, 1 - treeBlend);
+                drawTreeAsset(it.c.assetNext, it.c.variant, it, a2 / TREE_OPACITY);
+            } else {
+                drawTreeAsset(it.c.asset, it.c.variant, it, 1);
             }
             ctx.globalAlpha = 1;
         }
@@ -406,9 +552,15 @@ export class VegetationLayer {
 
     private scheduleRender(delay = 0): void {
         if (!this.visible) return;
-        if (this.renderTimer !== null) window.clearTimeout(this.renderTimer);
         const since = performance.now() - this.lastRenderAt;
         const wait = Math.max(delay, since >= MIN_RENDER_INTERVAL_MS ? 0 : MIN_RENDER_INTERVAL_MS - since);
+        if (this.renderTimer !== null) {
+            if (delay === 0 && wait === 0) {
+                window.clearTimeout(this.renderTimer);
+            } else {
+                return;
+            }
+        }
         this.renderTimer = window.setTimeout(() => {
             this.renderTimer = null;
             this.render();
@@ -441,10 +593,10 @@ export class VegetationLayer {
         const bounds = this.map.getBounds();
         const nw = this.map.project(bounds.getNorthWest(), SAMPLE_ZOOM);
         const se = this.map.project(bounds.getSouthEast(), SAMPLE_ZOOM);
-        const xMin = Math.floor(nw.x / CLUSTER_STRIDE) * CLUSTER_STRIDE;
-        const xMax = Math.ceil(se.x / CLUSTER_STRIDE) * CLUSTER_STRIDE;
-        const yMin = Math.floor(nw.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
-        const yMax = Math.ceil(se.y / CLUSTER_STRIDE) * CLUSTER_STRIDE;
+        const xMin = Math.floor(nw.x / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const xMax = Math.ceil(se.x / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const yMin = Math.floor(nw.y / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const yMax = Math.ceil(se.y / TREE_GRID_STEP) * TREE_GRID_STEP;
 
         const gameSeason = currentGameSeason();
         const season = currentTreeSeason();
@@ -467,83 +619,90 @@ export class VegetationLayer {
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
             .map((city) => this.map.latLngToContainerPoint([city.lat, city.lng]));
 
-        for (let cy = yMin; cy <= yMax; cy += CLUSTER_STRIDE) {
-            for (let cx = xMin; cx <= xMax; cx += CLUSTER_STRIDE) {
-                const cxJ = cx + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 41) - 0.5) * CLUSTER_STRIDE * 0.5;
-                const cyJ = cy + CLUSTER_STRIDE * 0.5 + (hash(cx, cy, 42) - 0.5) * CLUSTER_STRIDE * 0.5;
-                const clusterLatLng = this.map.unproject([cxJ, cyJ], SAMPLE_ZOOM);
-                if (clusterLatLng.lat < -58 || clusterLatLng.lat > 75) continue;
+        for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
+            for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
+                // 有机微抖动：打破网格机械感
+                const px = gx + TREE_GRID_STEP * 0.5 + (hash(gx, gy, 11) - 0.5) * (TREE_GRID_STEP * 0.65);
+                const py = gy + TREE_GRID_STEP * 0.5 + (hash(gx, gy, 12) - 0.5) * (TREE_GRID_STEP * 0.65);
+                const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
+                if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
 
+                const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
+                if (water !== false) {
+                    if (water === null) missingTiles++;
+                    continue;
+                }
+
+                // 据点避让
+                const center = this.map.latLngToContainerPoint(ptLatLng);
+                if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
+
+                // 自然地理林线与高寒冻土门控：
+                // 1. 阿尔卑斯山（44°~54°N）林线 2150m，青藏高原 4100m，高纬度 1400m；
+                // 2. 超出林线或裸岩、高山雪原一律不长树，刃脊与雪峰自然裸露。
+                const treeLine = getTreeLine(ptLatLng.lat, ptLatLng.lng);
                 const elev = LandSeaSystem.getElevationAtMapPixel(
-                    cxJ, cyJ, SAMPLE_ZOOM, clusterLatLng.lat, clusterLatLng.lng,
+                    px, py, SAMPLE_ZOOM, ptLatLng.lat, ptLatLng.lng,
                 );
-                if (elev === null) { missingTiles++; continue; }
-                if (elev > 3600) continue;
+                // 🔴 高程瓦片未就绪时：极高海拔区（青藏高原/喜马拉雅）严格等待真瓦片剔除超林线树，
+                //    平原与已知低地丘陵先放行渲染，避免外网瓦片慢时整层树木被饿死/全图秃光。
+                const isHighPlateau = ptLatLng.lng >= 75 && ptLatLng.lng <= 105 && Math.abs(ptLatLng.lat) >= 26 && Math.abs(ptLatLng.lat) <= 40;
+                if (elev === null) {
+                    missingTiles++;
+                    if (isHighPlateau) continue;
+                } else if (elev > treeLine || elev < 0) {
+                    continue;
+                }
 
-                const clusterWater = waterSampler.isWaterSync(clusterLatLng.lat, clusterLatLng.lng);
-                if (clusterWater !== false) { if (clusterWater === null) missingTiles++; continue; }
+                // 地表材质与生物群系判定
+                const tile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: false })
+                    ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, 0);
+                if (NON_VEGETATION_TILES.has(tile)) continue;
 
-                // 🔴 [2026-09-01 修复「树木有时候有、有时候消失」]
-                //    林区采样必须统一使用【常态自然地理底图】(isWinter: false / season: 0)！
-                //    严禁传入随季节变化的 isWinter: true，否则冬季大量温带林地被判定为雪原而判定失败，
-                //    导致大片森林在冬天凭空消失、春天又突然冒出。森林空间分布是恒定的地理现实！
-                const tile = queryBaseTile({ lat: clusterLatLng.lat, lng: clusterLatLng.lng, isSiege: false, isWinter: false })
-                    ?? resolveTerrainTile(clusterLatLng.lat, clusterLatLng.lng, 0);
-                const forestBiome = queryStrategicForestBiome(clusterLatLng.lat, clusterLatLng.lng);
-                if (!isStrategicForestArea(forestBiome, tile, elev, clusterLatLng.lat)) continue;
+                const forestBiome = queryStrategicForestBiome(ptLatLng.lat, ptLatLng.lng);
+                if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
 
-                const canopyDensity = queryStrategicCanopyDensity(clusterLatLng.lat, clusterLatLng.lng);
-                const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity);
-                if (hash(cx, cy, 46) > clusterWeight) continue;
+                // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
+                if (!isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
 
-                // 🔴 [2026-09-11 主人定] ① 片更大、分布更少；② 主人补「大小别都差不多，有的可以更大」：
-                //    尺寸做**长尾分布**，并按郁闭度放大差异 ——
-                //      · 疏林/林缘（canopy≈0）      → 15~26 棵的小片（半径约 20~26px）
-                //      · 普通林地                    → 30~90 棵
-                //      · 密林（canopy≈1）掷到大值    → 150~200 棵的**大片**（半径约 110px，片宽 220px）
-                //    半径仍按 √count 推导，所以大片自然铺开、小片自然收拢，密度（棵/像素²）与原来一致。
-                const canopy = Math.max(0, Math.min(1, (canopyDensity - 8) / 62));
-                const sizeRoll = hash(cx, cy, 45);                        // 0~1：这片是"小丛"还是"大林"
-                const sizeMul = 0.6 + Math.pow(sizeRoll, 2.5) * (0.4 + canopy * 1.6);
-                const count = Math.round((18 + clusterWeight * 60) * sizeMul);
+                // 连续世界坐标密度场：消除椭圆规则感，呈现犬牙交错与山谷林隙
+                const noiseVal = forestNoise(ptLatLng.lat, ptLatLng.lng);
 
-                // 同样的树数收拢成林片：林内树冠相接，外围少数树拉开形成疏林缘。
-                // 半径按树冠尺寸和棵数推导，不再把二十来棵树撒满直径约 150px 的圆。
-                const radius = TREE_BASE_PX * Math.sqrt(count) * 0.30;
-                const rotation = hash(cx, cy, 47) * Math.PI * 2;
-                const stretch = 1.05 + hash(cx, cy, 48) * 0.35;
-                const coreCount = count - 2;
+                // 真实卫星郁闭度驱动（0~100%）：决定当前格点是否生长树木
+                const canopyDensity = queryStrategicCanopyDensity(ptLatLng.lat, ptLatLng.lng);
+                const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal);
+                if (clusterWeight <= 0 || hash(gx, gy, 46) > clusterWeight) continue;
+
+                // 绝大多数单棵点缀自然透气，只有核心密林且聚簇中心偶有 2 棵成小丛
+                const count = canopyDensity >= 65 && noiseVal > 0.72 && hash(gx, gy, 53) > 0.65 ? 2 : 1;
+
                 for (let i = 0; i < count; i++) {
-                    const ang = rotation + i * FOREST_GOLDEN_ANGLE;
-                    const fraction = i < coreCount ? Math.sqrt((i + 0.5) / coreCount) : 1.25 + (i - coreCount) * 0.18;
-                    const rad = radius * fraction * (0.94 + hash(cx, cy, i + 60) * 0.12);
-                    const px = cxJ + Math.cos(ang) * rad * stretch;
-                    const py = cyJ + Math.sin(ang) * rad * 0.70;
-                    const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
+                    let curPx = px;
+                    let curPy = py;
+                    if (i > 0) {
+                        const ang = hash(gx, gy, i * 17 + 31) * Math.PI * 2;
+                        const dist = 10 + hash(gx, gy, i * 19 + 32) * 12;
+                        curPx += Math.cos(ang) * dist;
+                        curPy += Math.sin(ang) * dist * 0.75;
+                    }
+                    const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
-                    // 植被按水域掩膜逐株落地：海拔非负也不代表不是水面。
-                    // 掩膜未就绪先不种，瓦片到达后由现有重绘事件补齐。
-                    const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
-                    if (water !== false) { if (water === null) missingTiles++; continue; }
-
-                    const ptTile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: false })
-                        ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, 0);
-                    const ptBiome = queryStrategicForestBiome(ptLatLng.lat, ptLatLng.lng);
-                    if (!isStrategicForestArea(ptBiome, ptTile, elev, ptLatLng.lat)) continue;
-
-                    const center = this.map.latLngToContainerPoint(ptLatLng);
-                    if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
-
-                    const asset = pickTree({ baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng, season, isSiege: false });
+                    // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转
+                    const asset = pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season, isSiege: false });
                     const assetNext = pickTree({
-                        baseTile: ptTile, lat: ptLatLng.lat, lng: ptLatLng.lng,
+                        baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng,
                         season: nextSeason, isSiege: false,
                     });
 
-                    if (!treeImage(asset, this.onTreeImageReady)) pendingImages++;
-                    if (assetNext !== asset) treeImage(assetNext, this.onTreeImageReady);
-                    const jitter = 0.85 + hash(cx, cy, i + 70) * 0.35;
-                    drawCommands.push({ lat: ptLatLng.lat, lng: ptLatLng.lng, jitter, asset, assetNext });
+                    // 预热多变体精灵图与单棵成品预览图
+                    if (!treeFramesImage(asset, this.onTreeImageReady) && !treeImage(asset, this.onTreeImageReady)) pendingImages++;
+                    if (assetNext !== asset) {
+                        if (!treeFramesImage(assetNext, this.onTreeImageReady) && !treeImage(assetNext, this.onTreeImageReady)) pendingImages++;
+                    }
+
+                    const jitter = 0.85 + hash(gx, gy, i * 23 + 71) * 0.35;
+                    const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
+                    drawCommands.push({ lat: curLatLng.lat, lng: curLatLng.lng, jitter, asset, assetNext, variant });
                 }
             }
         }

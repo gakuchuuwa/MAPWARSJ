@@ -1051,6 +1051,9 @@ export function clearStrategicSkillOverride(unitId: string): void {
  *  随机 override 唯一来源（2026-08-03 起无档案固定技）。
  *  惰性兜底：存量名将军团（创建早于随机分配逻辑）首次查询时补一次随机分配，之后恒读 override，不会逐帧闪变。 */
 export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
+    // 🔴 [2026-09-12 主人定] 剧本模式武将没有战略技能：剧本军团（isScriptArmy）不配战略技。
+    // 亚历山大恢复常规战略技能（2026-09-13）。
+    if ((unit as any).isScriptArmy === true && unit.generalId !== 'gen_alexander_great') return null;
     let overrideId = strategicOverrideByUnitId.get(unit.id);
     if (!overrideId && canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
@@ -1065,7 +1068,7 @@ export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
 
 /** 是否持有指定战略效果 */
 export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEffect): boolean {
-    // 平衡规则：仅跟拍军团可以使用武将战略技
+    // 平衡规则：仅跟拍军团可以使用武将战略技（剧本军团不豁免，跟拍它时照常生效）。
     if (unit.id !== getFollowedArmyId()) return false;
     const skill = getGeneralStrategicSkillDef(unit);
     return skill?.effect === effect;
@@ -1078,8 +1081,10 @@ export function generalIdHasStrategicEffect(
     effect: StrategicEffect,
     unitId?: string,
 ): boolean {
-    // 平衡规则：仅跟拍军团可以使用武将战略技
-    if (unitId !== undefined && unitId !== getFollowedArmyId()) return false;
+    // 平衡规则：仅跟拍军团可以使用武将战略技（剧本军团不豁免，跟拍它时照常生效）。
+    if (unitId !== undefined) {
+        if (unitId !== getFollowedArmyId()) return false;
+    }
     // 运行时 override 优先
     if (unitId) {
         const overrideId = strategicOverrideByUnitId.get(unitId);
