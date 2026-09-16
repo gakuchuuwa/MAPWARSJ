@@ -41,14 +41,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 0,
         type: 'field_battle',
         title: '公元前334年 格拉尼库斯河战役',
-        description:
-            '马其顿大胜：亚历山大强渡急流击溃波斯联军，小亚细亚门户大开；'
-            + '阿尔西提斯战后自尽。',
+        description: '马其顿大胜：亚历山大强渡急流击溃波斯联军，小亚细亚门户大开；阿尔西提斯战后自尽。',
         fieldBattleData: {
             title: '格拉尼库斯河战役',
-            description:
-                '亚历山大亲率伙伴骑兵强渡格拉尼库斯河，击溃波斯联军；'
-                + '阿尔西提斯战后自尽。',
+            description: '亚历山大亲率伙伴骑兵强渡格拉尼库斯河，击溃波斯联军；阿尔西提斯战后自尽。',
 
             // 主人指定的野战坐标。注：与据点「格拉尼库斯」city_gelanikusi(40.32, 27.28)
             // 相距约 10 km；本役是野战，故用 location 而非 locationCityId。
@@ -84,9 +80,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
 
         // 「据点归亚历山大」的落点：达斯基利翁（波斯方本营、阿尔西提斯治所）。
         // 主人只说「据点归亚历山大」未指定具体哪座城，此处依史实选定，可一句话更换。
-        cityUpdates: [
-            { cityId: 'city_dasijiliweng', factionId: 'maqidun' },
-        ],
+        cityUpdates: [{ cityId: 'city_dasijiliweng', factionId: 'maqidun' }],
     },
     {
         year: -333,
